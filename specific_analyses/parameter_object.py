@@ -532,13 +532,15 @@ class Param_list(object):
         return self._err[name]
 
 
-    def grid_lower(self, name):
+    def grid_lower(self, name, model_info=None):
         """Return the default lower grid bound for the parameter.
 
-        @param name:    The name of the parameter.
-        @type name:     str
-        @return:        The lower bound for the grid search.
-        @rtype:         int
+        @param model_info:  The model information from the model_loop() specific API method.  If the lower bound is a function, this information is sent into it.
+        @type model_info:   int
+        @param name:        The name of the parameter.
+        @type name:         str
+        @return:            The lower bound for the grid search.
+        @rtype:             int
         """
 
         # Parameter check.
@@ -546,19 +548,21 @@ class Param_list(object):
 
         # Call any function or method.
         if isinstance(self._grid_lower[name], FunctionType) or isinstance(self._grid_lower[name], MethodType):
-            return self._grid_lower[name]()
+            return self._grid_lower[name](model_info)
 
         # Return the value.
         return self._grid_lower[name]
 
 
-    def grid_upper(self, name):
+    def grid_upper(self, name, model_info=None):
         """Return the default upper grid bound for the parameter.
 
-        @param name:    The name of the parameter.
-        @type name:     str
-        @return:        The upper bound for the grid search.
-        @rtype:         int
+        @param model_info:  The model information from the model_loop() specific API method.  If the upper bound is a function, this information is sent into it.
+        @type model_info:   int
+        @param name:        The name of the parameter.
+        @type name:         str
+        @return:            The upper bound for the grid search.
+        @rtype:             int
         """
 
         # Parameter check.
@@ -566,7 +570,7 @@ class Param_list(object):
 
         # Call any function or method.
         if isinstance(self._grid_upper[name], FunctionType) or isinstance(self._grid_upper[name], MethodType):
-            return self._grid_upper[name]()
+            return self._grid_upper[name](model_info)
 
         # Return the value.
         return self._grid_upper[name]
