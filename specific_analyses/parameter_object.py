@@ -63,6 +63,7 @@ class Param_list(object):
         self._grid_upper = {}
         self._set = {}
         self._err = {}
+        self._scaling = {}
         self._sim = {}
 
         # Add some spin specific objects.
@@ -94,7 +95,7 @@ class Param_list(object):
         return cls._instance
 
 
-    def _add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, set='all', conv_factor=None, grid_lower=None, grid_upper=None, grace_string=None, err=False, sim=False):
+    def _add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, set='all', conv_factor=None, scaling=1.0, grid_lower=None, grid_upper=None, grace_string=None, err=False, sim=False):
         """Add a parameter to the list.
 
         @param name:            The name of the parameter.  This will be used as the variable name.
@@ -115,6 +116,8 @@ class Param_list(object):
         @type set:              str
         @keyword conv_factor:   The factor of conversion between different parameter units.
         @type conv_factor:      None, float or func
+        @keyword scaling:       The diagonal scaling factor for optimisation.
+        @type scaling:          float or function
         @keyword grid_lower:    The lower bound for the grid search.
         @type grid_lower:       int or function
         @keyword grid_upper:    The upper bound for the grid search.
@@ -149,6 +152,7 @@ class Param_list(object):
         self._sim[name] = sim
         self._grid_lower[name] = grid_lower
         self._grid_upper[name] = grid_upper
+        self._scaling[name] = scaling
 
         # The parameter string.
         if string:
@@ -638,6 +642,28 @@ class Param_list(object):
             for name in self.base_loop(set=set):
                 if self.simulation_flag(name):
                     yield name + '_sim'
+
+
+    def scaling(self, name, model_info=None):
+        """Return the scaling factor for the parameter.
+
+        @param model_info:  The model information from the model_loop() specific API method.  If the scaling factor is a function, this information is sent into it.
+        @type model_info:   int
+        @param name:        The name of the parameter.
+        @type name:         str
+        @return:            The scaling factor for optimisation.
+        @rtype:             int
+        """
+
+        # Parameter check.
+        self.check_param(name)
+
+        # Call any function or method.
+        if isinstance(self._scaling[name], FunctionType) or isinstance(self._scaling[name], MethodType):
+            return self._scaling[name](model_info)
+
+        # Return the scaling factor.
+        return self._scaling[name]
 
 
     def scope(self, name):
