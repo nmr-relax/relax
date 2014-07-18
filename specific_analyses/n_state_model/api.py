@@ -588,7 +588,7 @@ class N_state_model(API_base, API_common):
         chi2 - the chi-squared value.
 
 
-        @keyword model_info:    The data returned from model_loop() (unused).
+        @keyword model_info:    The model information from model_loop().  This is unused.
         @type model_info:       None
         @keyword spin_id:       The spin identification string.  This is ignored in the N-state model.
         @type spin_id:          None or str
@@ -707,15 +707,15 @@ class N_state_model(API_base, API_common):
         return mc_errors
 
 
-    def set_error(self, model_info, index, error):
+    def set_error(self, index, error, model_info=None):
         """Set the parameter errors.
 
-        @param model_info:  The global model index originating from model_loop().
-        @type model_info:   int
-        @param index:       The index of the parameter to set the errors for.
-        @type index:        int
-        @param error:       The error value.
-        @type error:        float
+        @param index:           The index of the parameter to set the errors for.
+        @type index:            int
+        @param error:           The error value.
+        @type error:            float
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
         """
 
         # Align parameters.
@@ -870,15 +870,15 @@ class N_state_model(API_base, API_common):
                 container.pcs_sim[data_id[2]].append(sim_data[i][0])
 
 
-    def sim_return_param(self, model_info, index):
+    def sim_return_param(self, index, model_info=None):
         """Return the array of simulation parameter values.
 
-        @param model_info:  The global model index originating from model_loop().
-        @type model_info:   int
-        @param index:       The index of the parameter to return the array of values for.
-        @type index:        int
-        @return:            The array of simulation parameter values.
-        @rtype:             list of float
+        @param index:           The index of the parameter to return the array of values for.
+        @type index:            int
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
+        @return:                The array of simulation parameter values.
+        @rtype:                 list of float
         """
 
         # Align parameters.

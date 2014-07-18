@@ -626,14 +626,17 @@ class Model_free(API_base, API_common):
         return mc_data
 
 
-    def data_init(self, data_cont, sim=False):
+    def data_init(self, data, sim=False):
         """Initialise the spin specific data structures.
 
-        @param data_cont:   The spin data container.
-        @type data_cont:    SpinContainer instance
-        @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
-        @type sim:          bool
+        @param data:    The spin ID string from the _base_data_loop_spin() method.
+        @type data:     str
+        @keyword sim:   The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
+        @type sim:      bool
         """
+
+        # Get the spin container.
+        spin = return_spin(data)
 
         # Loop over the data structure names.
         for name in self._PARAMS.loop(scope='spin'):
@@ -653,18 +656,18 @@ class Model_free(API_base, API_common):
                 if name == 'select':
                     init_data = True
 
-            # If the name is not in 'data_cont', add it.
-            if not hasattr(data_cont, name):
-                setattr(data_cont, name, init_data)
+            # If the name is not in the spin container, add it.
+            if not hasattr(spin, name):
+                setattr(spin, name, init_data)
 
 
-    def deselect(self, model_info, sim_index=None):
+    def deselect(self, sim_index=None, model_info=None):
         """Deselect models or simulations.
 
-        @param model_info:      The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:       int
         @keyword sim_index:     The optional Monte Carlo simulation index.  If None, then models will be deselected, otherwise the given simulation will.
         @type sim_index:        None or int
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
         """
 
         # Determine the model type.
@@ -702,7 +705,7 @@ class Model_free(API_base, API_common):
         @type pipe_from:        str
         @keyword pipe_to:       The data pipe to copy the data to.
         @type pipe_to:          str
-        @param model_info:      The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
         @type model_info:       int
         @keyword global_stats:  The global statistics flag.
         @type global_stats:     bool
@@ -871,21 +874,21 @@ class Model_free(API_base, API_common):
             dp_to.mol = deepcopy(dp_from.mol)
 
 
-    def eliminate(self, name, value, model_info, args, sim=None):
+    def eliminate(self, name, value, args, sim=None, model_info=None):
         """Model-free model elimination, parameter by parameter.
 
-        @param name:        The parameter name.
-        @type name:         str
-        @param value:       The parameter value.
-        @type value:        float
-        @param model_info:  The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:   int
-        @param args:        The c1 and c2 elimination constant overrides.
-        @type args:         None or tuple of float
-        @keyword sim:       The Monte Carlo simulation index.
-        @type sim:          int
-        @return:            True if the model is to be eliminated, False otherwise.
-        @rtype:             bool
+        @param name:            The parameter name.
+        @type name:             str
+        @param value:           The parameter value.
+        @type value:            float
+        @param args:            The c1 and c2 elimination constant overrides.
+        @type args:             None or tuple of float
+        @keyword sim:           The Monte Carlo simulation index.
+        @type sim:              int
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
+        @return:                True if the model is to be eliminated, False otherwise.
+        @rtype:                 bool
         """
 
         # Default values.
@@ -939,7 +942,7 @@ class Model_free(API_base, API_common):
     def get_param_names(self, model_info=None):
         """Return a vector of parameter names.
 
-        @keyword model_info:    The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
         @type model_info:       int
         @return:                The vector of parameter names.
         @rtype:                 list of str
@@ -962,7 +965,7 @@ class Model_free(API_base, API_common):
     def get_param_values(self, model_info=None, sim_index=None):
         """Return a vector of parameter values.
 
-        @keyword model_info:    The model index from model_info().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
         @type model_info:       int
         @keyword sim_index:     The Monte Carlo simulation index.
         @type sim_index:        int
@@ -1405,13 +1408,13 @@ class Model_free(API_base, API_common):
         processor.run_queue()
 
 
-    def model_desc(self, model_info):
+    def model_desc(self, model_info=None):
         """Return a description of the model.
 
-        @param model_info:  The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:   int
-        @return:            The model description.
-        @rtype:             str
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
+        @return:                The model description.
+        @rtype:                 str
         """
 
         # Determine the model type.
@@ -1439,7 +1442,7 @@ class Model_free(API_base, API_common):
         the global spin index is yielded.
 
 
-        @return:    The model index.  This is zero for the global models or equal to the global spin
+        @return:    The model index.  This index is zero for the global models or equal to the global spin
                     index (which covers the molecule, residue, and spin indices).
         @rtype:     int
         """
@@ -1471,7 +1474,7 @@ class Model_free(API_base, API_common):
         chi2 - the chi-squared value.
 
 
-        @keyword model_info:    The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
         @type model_info:       int
         @keyword spin_id:       The spin identification string.  Either this or the instance keyword argument must be supplied.
         @type spin_id:          None or str
@@ -1730,15 +1733,15 @@ class Model_free(API_base, API_common):
             print("No spins have been deselected.")
 
 
-    def set_error(self, model_info, index, error):
+    def set_error(self, index, error, model_info=None):
         """Set the parameter errors.
 
-        @param model_info:  The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:   int
-        @param index:       The index of the parameter to set the errors for.
-        @type index:        int
-        @param error:       The error value.
-        @type error:        float
+        @param index:           The index of the parameter to set the errors for.
+        @type index:            int
+        @param error:           The error value.
+        @type error:            float
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
         """
 
         # Parameter increment counter.
@@ -1898,13 +1901,13 @@ class Model_free(API_base, API_common):
                 setattr(spin, mf_params[i], mf_vals[i])
 
 
-    def set_selected_sim(self, model_info, select_sim):
+    def set_selected_sim(self, select_sim, model_info=None):
         """Set all simulation selection flags.
 
-        @param model_info:  The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:   int
-        @param select_sim:  The selection flags.
-        @type select_sim:   bool
+        @param select_sim:      The selection flags.
+        @type select_sim:       bool
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
         """
 
         # Determine the model type.
@@ -2093,15 +2096,15 @@ class Model_free(API_base, API_common):
                         sim_object.append(deepcopy(getattr(spin, object_name)))
 
 
-    def sim_return_chi2(self, model_info, index=None):
+    def sim_return_chi2(self, index=None, model_info=None):
         """Return the simulation chi-squared values.
 
-        @param model_info:  The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:   int
-        @keyword index:     The optional simulation index.
-        @type index:        int
-        @return:            The list of simulation chi-squared values.  If the index is supplied, only a single value will be returned.
-        @rtype:             list of float or float
+        @keyword index:         The optional simulation index.
+        @type index:            int
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
+        @return:                The list of simulation chi-squared values.  If the index is supplied, only a single value will be returned.
+        @rtype:                 list of float or float
         """
 
         # Determine the model type.
@@ -2120,15 +2123,15 @@ class Model_free(API_base, API_common):
             return spin.chi2_sim
 
 
-    def sim_return_param(self, model_info, index):
+    def sim_return_param(self, index, model_info=None):
         """Return the array of simulation parameter values.
 
-        @param model_info:  The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:   int
-        @param index:       The index of the parameter to return the array of values for.
-        @type index:        int
-        @return:            The array of simulation parameter values.
-        @rtype:             list of float
+        @param index:           The index of the parameter to return the array of values for.
+        @type index:            int
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
+        @return:                The array of simulation parameter values.
+        @rtype:                 list of float
         """
 
         # Parameter increment counter.
@@ -2230,13 +2233,13 @@ class Model_free(API_base, API_common):
                 inc = inc + 1
 
 
-    def sim_return_selected(self, model_info):
+    def sim_return_selected(self, model_info=None):
         """Return the array of selected simulation flags for the spin.
 
-        @param model_info:  The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:   int
-        @return:            The array of selected simulation flags.
-        @rtype:             list of int
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
+        @return:                The array of selected simulation flags.
+        @rtype:                 list of int
         """
 
         # Determine the model type.
@@ -2259,10 +2262,10 @@ class Model_free(API_base, API_common):
             return spin.select_sim
 
 
-    def skip_function(self, model_info):
+    def skip_function(self, model_info=None):
         """Skip certain data.
 
-        @param model_info:      The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
         @type model_info:       int
         @return:                True if the data should be skipped, False otherwise.
         @rtype:                 bool

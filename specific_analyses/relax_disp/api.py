@@ -232,13 +232,13 @@ class Relax_disp(API_base, API_common):
         return values
 
 
-    def deselect(self, model_info, sim_index=None):
+    def deselect(self, sim_index=None, model_info=None):
         """Deselect models or simulations.
 
-        @param model_info:      The spin ID list from the model_loop() API method.
-        @type model_info:       int
         @keyword sim_index:     The optional Monte Carlo simulation index.  If None, then models will be deselected, otherwise the given simulation will.
         @type sim_index:        None or int
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
         """
 
         # Loop over all the spins and deselect them.
@@ -262,8 +262,8 @@ class Relax_disp(API_base, API_common):
         @type pipe_from:        str
         @keyword pipe_to:       The data pipe to copy the data to.
         @type pipe_to:          str
-        @keyword model_info:    The model index from model_info().
-        @type model_info:       int
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
         @keyword global_stats:  The global statistics flag.
         @type global_stats:     bool
         @keyword verbose:       A flag which if True will cause info to be printed out.
@@ -341,21 +341,21 @@ class Relax_disp(API_base, API_common):
                 setattr(dp_to.mol[spin._mol_index].res[spin._res_index].spin[spin._spin_index], name, new_obj)
 
 
-    def eliminate(self, name, value, model_info, args, sim=None):
+    def eliminate(self, name, value, args, sim=None, model_info=None):
         """Relaxation dispersion model elimination, parameter by parameter.
 
-        @param name:        The parameter name.
-        @type name:         str
-        @param value:       The parameter value.
-        @type value:        float
-        @param model_info:  The list of spin IDs from the model_loop() API method.
-        @type model_info:   int
-        @param args:        The c1 and c2 elimination constant overrides.
-        @type args:         None or tuple of float
-        @keyword sim:       The Monte Carlo simulation index.
-        @type sim:          int
-        @return:            True if the model is to be eliminated, False otherwise.
-        @rtype:             bool
+        @param name:            The parameter name.
+        @type name:             str
+        @param value:           The parameter value.
+        @type value:            float
+        @param args:            The c1 and c2 elimination constant overrides.
+        @type args:             None or tuple of float
+        @keyword sim:           The Monte Carlo simulation index.
+        @type sim:              int
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
+        @return:                True if the model is to be eliminated, False otherwise.
+        @rtype:                 bool
         """
 
         # Skip the R2eff model parameters.
@@ -400,8 +400,8 @@ class Relax_disp(API_base, API_common):
     def get_param_names(self, model_info=None):
         """Return a vector of parameter names.
 
-        @keyword model_info:    The list spin ID strings from the model_loop() API method.
-        @type model_info:       list of str
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
         @return:                The vector of parameter names.
         @rtype:                 list of str
         """
@@ -430,8 +430,8 @@ class Relax_disp(API_base, API_common):
     def get_param_values(self, model_info=None, sim_index=None):
         """Return a vector of parameter values.
 
-        @keyword model_info:    The model index from model_info().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:       int
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
         @keyword sim_index:     The Monte Carlo simulation index.
         @type sim_index:        int
         @return:                The vector of parameter values.
@@ -645,13 +645,13 @@ class Relax_disp(API_base, API_common):
             processor.add_to_queue(command, memo)
 
 
-    def model_desc(self, model_info):
+    def model_desc(self, model_info=None):
         """Return a description of the model.
 
-        @param model_info:  The model index from model_info().
-        @type model_info:   int
-        @return:            The model description.
-        @rtype:             str
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
+        @return:                The model description.
+        @rtype:                 str
         """
 
         # The model loop is over the spin clusters, so return a description of the cluster.
@@ -662,7 +662,7 @@ class Relax_disp(API_base, API_common):
         """Loop over the spin groupings for one model applied to multiple spins.
 
         @return:    The list of spins per block will be yielded, as well as the list of spin IDs.
-        @rtype:     tuple of list of SpinContainer instances and list of spin IDs
+        @rtype:     tuple of list of SpinContainer instances and list of str
         """
 
         # The cluster loop.
@@ -678,8 +678,8 @@ class Relax_disp(API_base, API_common):
         chi2 - the chi-squared value.
 
 
-        @keyword model_info:    The model information originating from model_loop().
-        @type model_info:       unknown
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
         @keyword spin_id:       The spin ID string to override the model_info argument.  This is ignored in the N-state model.
         @type spin_id:          None or str
         @keyword global_stats:  A parameter which determines if global or local statistics are returned.  For the N-state model, this argument is ignored.
@@ -768,8 +768,8 @@ class Relax_disp(API_base, API_common):
     def print_model_title(self, model_info=None):
         """Print out the model title.
 
-        @keyword model_info:    The model information from model_info().
-        @type model_info:       int
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
         """
 
         # The printout.
@@ -889,15 +889,15 @@ class Relax_disp(API_base, API_common):
         return value, error
 
 
-    def set_error(self, model_info, index, error):
+    def set_error(self, index, error, model_info=None):
         """Set the parameter errors.
 
-        @param model_info:  The spin container originating from model_loop().
-        @type model_info:   unknown
-        @param index:       The index of the parameter to set the errors for.
-        @type index:        int
-        @param error:       The error value.
-        @type error:        float
+        @param index:           The index of the parameter to set the errors for.
+        @type index:            int
+        @param error:           The error value.
+        @type error:            float
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
         """
 
         # Unpack the data.
@@ -1028,13 +1028,13 @@ class Relax_disp(API_base, API_common):
                     setattr(spin, obj_name, value[i])
 
 
-    def set_selected_sim(self, model_info, select_sim):
+    def set_selected_sim(self, select_sim, model_info=None):
         """Set the simulation selection flag.
 
-        @param model_info:  The list of spins and spin IDs per cluster originating from model_loop().
-        @type model_info:   tuple of list of SpinContainer instances and list of spin IDs
-        @param select_sim:  The selection flag for the simulations.
-        @type select_sim:   bool
+        @param select_sim:      The selection flag for the simulations.
+        @type select_sim:       bool
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
         """
 
         # Unpack the data.
@@ -1199,15 +1199,15 @@ class Relax_disp(API_base, API_common):
                 proton.r2eff_sim = sim_data
 
 
-    def sim_return_param(self, model_info, index):
+    def sim_return_param(self, index, model_info=None):
         """Return the array of simulation parameter values.
 
-        @param model_info:  The model information originating from model_loop().
-        @type model_info:   unknown
-        @param index:       The index of the parameter to return the array of values for.
-        @type index:        int
-        @return:            The array of simulation parameter values.
-        @rtype:             list of float
+        @param index:           The index of the parameter to return the array of values for.
+        @type index:            int
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
+        @return:                The array of simulation parameter values.
+        @rtype:                 list of float
         """
 
         # Unpack the data.
@@ -1273,13 +1273,13 @@ class Relax_disp(API_base, API_common):
         return sim_data
 
 
-    def sim_return_selected(self, model_info):
+    def sim_return_selected(self, model_info=None):
         """Return the array of selected simulation flags.
 
-        @param model_info:  The list of spins and spin IDs per cluster originating from model_loop().
-        @type model_info:   tuple of list of SpinContainer instances and list of spin IDs
-        @return:            The array of selected simulation flags.
-        @rtype:             list of int
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
+        @return:                The array of selected simulation flags.
+        @rtype:                 list of int
         """
 
         # Unpack the data.

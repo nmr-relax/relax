@@ -77,30 +77,30 @@ class API_common:
         return data
 
 
-    def _data_init_dummy(self, data_cont, sim=False):
+    def _data_init_dummy(self, data, sim=False):
         """Dummy method for initialising data structures.
 
         This method does nothing!
 
 
-        @param data_cont:   The data container.
-        @type data_cont:    instance
-        @keyword sim:       The unused Monte Carlo simulation flag.
-        @type sim:          bool
+        @param data:    The data from the base_data_loop() method.
+        @type data:     instance
+        @keyword sim:   The unused Monte Carlo simulation flag.
+        @type sim:      bool
         """
 
 
-    def _data_init_spin(self, model_info, sim=False):
+    def _data_init_spin(self, data, sim=False):
         """Initialise data structures (spin system specific).
 
-        @param model_info:  The spin container and the spin ID string from the _model_loop_spin() method.
-        @type model_info:   SpinContainer instance, str
-        @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
-        @type sim:          bool
+        @param data:    The spin container and the spin ID string from the _base_data_loop_spin() method.
+        @type data:     SpinContainer instance, str
+        @keyword sim:   The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
+        @type sim:      bool
         """
 
         # Unpack the data.
-        spin, spin_id = model_info
+        spin, spin_id = data
 
         # Loop over the parameters.
         for name in self._PARAMS.loop(set='params', scope='spin', error_names=False, sim_names=sim):
@@ -153,8 +153,8 @@ class API_common:
         @type name:         str
         @param value:       The parameter value.
         @type value:        float
-        @param model_info:  The model index from model_info().
-        @type model_info:   int
+        @param model_info:  The model information from model_loop().
+        @type model_info:   unknown
         @param args:        The elimination constant overrides.
         @type args:         None or tuple of float
         @keyword sim:       The Monte Carlo simulation index.
@@ -305,10 +305,10 @@ class API_common:
 
 
     def _print_model_title_spin(self, model_info=None):
-        """Default method for when the model_info() method simply loops over spins.
+        """Default method for when the model_loop() method simply loops over spins.
 
-        @keyword model_info:    The model information from model_info().
-        @type model_info:       int
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
         """
 
         # The printout.

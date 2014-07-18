@@ -111,14 +111,17 @@ class Relax_fit(API_base, API_common):
         return mc_data
 
 
-    def data_init(self, data_cont, sim=False):
+    def data_init(self, data, sim=False):
         """Initialise the spin specific data structures.
 
-        @param data_cont:   The spin container.
-        @type data_cont:    SpinContainer instance
-        @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
-        @type sim:          bool
+        @param data:    The spin ID string from the _base_data_loop_spin() method.
+        @type data:     str
+        @keyword sim:   The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
+        @type sim:      bool
         """
+
+        # Get the spin container.
+        spin = return_spin(data)
 
         # Loop over the data structure names.
         for name in self.data_names(set='params'):
@@ -131,9 +134,9 @@ class Relax_fit(API_base, API_common):
             else:
                 init_data = None
 
-            # If the name is not in 'data_cont', add it.
-            if not hasattr(data_cont, name):
-                setattr(data_cont, name, init_data)
+            # If the name is not in the spin container, add it.
+            if not hasattr(spin, name):
+                setattr(spin, name, init_data)
 
 
     def get_param_names(self, model_info=None):

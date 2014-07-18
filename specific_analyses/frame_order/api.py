@@ -208,8 +208,8 @@ class Frame_order(API_base, API_common):
         @type pipe_from:        str
         @keyword pipe_to:       The data pipe to copy the data to.
         @type pipe_to:          str
-        @param model_info:      The model index from model_loop().
-        @type model_info:       int
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
         @keyword global_stats:  The global statistics flag.
         @type global_stats:     bool
         @keyword verbose:       Unused.
@@ -224,21 +224,21 @@ class Frame_order(API_base, API_common):
         pipes.copy(pipe_from=pipe_from, pipe_to=pipe_to)
 
 
-    def eliminate(self, name, value, model_info, args, sim=None):
+    def eliminate(self, name, value, args, sim=None, model_info=None):
         """Model elimination method.
 
-        @param name:        The parameter name.
-        @type name:         str
-        @param value:       The parameter value.
-        @type value:        float
-        @param model_info:  The model index from model_info().
-        @type model_info:   int
-        @param args:        The elimination constant overrides.
-        @type args:         None or tuple of float
-        @keyword sim:       The Monte Carlo simulation index.
-        @type sim:          int
-        @return:            True if the model is to be eliminated, False otherwise.
-        @rtype:             bool
+        @param name:            The parameter name.
+        @type name:             str
+        @param value:           The parameter value.
+        @type value:            float
+        @param args:            The elimination constant overrides.
+        @type args:             None or tuple of float
+        @keyword sim:           The Monte Carlo simulation index.
+        @type sim:              int
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
+        @return:                True if the model is to be eliminated, False otherwise.
+        @rtype:                 bool
         """
 
         # Text to print out if a model failure occurs.
@@ -298,8 +298,8 @@ class Frame_order(API_base, API_common):
     def get_param_names(self, model_info=None):
         """Return a vector of parameter names.
 
-        @keyword model_info:    The model index from model_info().
-        @type model_info:       int
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
         @return:                The vector of parameter names.
         @rtype:                 list of str
         """
@@ -314,8 +314,8 @@ class Frame_order(API_base, API_common):
     def get_param_values(self, model_info=None, sim_index=None):
         """Return a vector of parameter values.
 
-        @keyword model_info:    The model index from model_info().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:       int
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
         @keyword sim_index:     The Monte Carlo simulation index.
         @type sim_index:        int
         @return:                The vector of parameter values.
@@ -567,13 +567,13 @@ class Frame_order(API_base, API_common):
         store_bc_data(model)
 
 
-    def model_desc(self, model_info):
+    def model_desc(self, model_info=None):
         """Return a description of the model.
 
-        @param model_info:  The model index from model_loop().
-        @type model_info:   int
-        @return:            The model description.
-        @rtype:             str
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
+        @return:                The model description.
+        @rtype:                 str
         """
 
         return ""
@@ -587,7 +587,7 @@ class Frame_order(API_base, API_common):
         chi2 - the chi-squared value.
 
 
-        @keyword model_info:    Unused.
+        @keyword model_info:    The model information from model_loop().  This is unused.
         @type model_info:       None
         @keyword spin_id:       Unused.
         @type spin_id:          None
@@ -669,15 +669,15 @@ class Frame_order(API_base, API_common):
         return mc_errors
 
 
-    def set_error(self, model_info, index, error):
+    def set_error(self, index, error, model_info=None):
         """Set the parameter errors.
 
-        @param model_info:  The model information originating from model_loop() (unused).
-        @type model_info:   None
-        @param index:       The index of the parameter to set the errors for.
-        @type index:        int
-        @param error:       The error value.
-        @type error:        float
+        @param index:           The index of the parameter to set the errors for.
+        @type index:            int
+        @param error:           The error value.
+        @type error:            float
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
         """
 
         # Parameter increment counter.
@@ -701,14 +701,13 @@ class Frame_order(API_base, API_common):
             setattr(cdp, 'cone_theta_err', error)
 
 
-
-    def set_selected_sim(self, model_info, select_sim):
+    def set_selected_sim(self, select_sim, model_info=None):
         """Set the simulation selection flag for the spin.
 
-        @param model_info:  The model information originating from model_loop() (unused).
-        @type model_info:   None
-        @param select_sim:  The selection flag for the simulations.
-        @type select_sim:   bool
+        @param select_sim:      The selection flag for the simulations.
+        @type select_sim:       bool
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
         """
 
         # Set the array.
@@ -834,13 +833,15 @@ class Frame_order(API_base, API_common):
                 spin.pcs_sim[data_id[2]].append(sim_data[i][0])
 
 
-    def sim_return_param(self, model_info, index):
+    def sim_return_param(self, index, model_info=None):
         """Return the array of simulation parameter values.
 
-        @param model_info:  The model information originating from model_loop().
-        @type model_info:   unknown
-        @param index:       The index of the parameter to return the array of values for.
-        @type index:        int
+        @param index:           The index of the parameter to return the array of values for.
+        @type index:            int
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
+        @return:                The array of simulation parameter values.
+        @rtype:                 list of float
         """
 
         # Parameter increment counter.
@@ -867,13 +868,13 @@ class Frame_order(API_base, API_common):
             return getattr(cdp, 'cone_theta_sim')
 
 
-    def sim_return_selected(self, model_info):
+    def sim_return_selected(self, model_info=None):
         """Return the array of selected simulation flags for the spin.
 
-        @param model_info:  The model information originating from model_loop() (unused).
-        @type model_info:   None
-        @return:            The array of selected simulation flags.
-        @rtype:             list of int
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
+        @return:                The array of selected simulation flags.
+        @rtype:                 list of int
         """
 
         # Return the array.
