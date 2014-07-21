@@ -211,7 +211,7 @@ class Consistency_tests(API_base, API_common):
             # Monte Carlo simulated consistency tests values.
             else:
                 # Initialise the simulation data structures.
-                self.data_init(spin, sim=1)
+                self.data_init(id, sim=1)
                 if spin.j0_sim == None:
                     spin.j0_sim = []
                     spin.f_eta_sim = []
