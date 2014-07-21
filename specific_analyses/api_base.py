@@ -669,10 +669,10 @@ class API_base(object):
     def set_selected_sim(self, select_sim, model_info=None):
         """Set the simulation selection flag.
 
-        @keyword model_info:    The model information from model_loop().
-        @type model_info:       unknown
         @param select_sim:      The selection flag for the simulations.
         @type select_sim:       bool
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
         """
 
         # Not implemented.
