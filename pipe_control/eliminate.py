@@ -107,9 +107,9 @@ def eliminate(function=None, args=None):
                 flag = False
                 for k in range(len(names)):
                     # Eliminate function.
-                    if api.eliminate(names[k], values[k], model_info, args, sim=j):
+                    if api.eliminate(names[k], values[k], args, sim=j, model_info=model_info):
                         flag = True
 
                 # Deselect.
                 if flag:
-                    api.deselect(model_info, sim_index=j)
+                    api.deselect(sim_index=j, model_info=model_info)
