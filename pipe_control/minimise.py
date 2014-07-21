@@ -61,6 +61,11 @@ def assemble_scaling_matrix(scaling=True):
         # Get the parameter names.
         names = api.get_param_names(model_info)
 
+        # No parameters for this model.
+        if names == None or len(names) == 0:
+            scaling_matrix.append(None)
+            continue
+
         # The parameter number.
         n = len(names)
 
@@ -222,6 +227,13 @@ def grid_setup(lower=None, upper=None, inc=None):
         # Get the parameter names and current values.
         names = api.get_param_names(model_info)
         values = api.get_param_values(model_info)
+
+        # No parameters for this model.
+        if names == None or len(names) == 0:
+            model_lower.append(None)
+            model_upper.append(None)
+            model_inc.append(None)
+            continue
 
         # The parameter number.
         n = len(names)
