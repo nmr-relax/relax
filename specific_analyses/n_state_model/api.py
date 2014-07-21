@@ -133,18 +133,20 @@ class N_state_model(API_base, API_common):
                     yield data
 
 
-    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+    def calculate(self, spin_id=None, scaling_matrix=None, verbosity=1, sim_index=None):
         """Calculation function.
 
         Currently this function simply calculates the NOESY flat-bottom quadratic energy potential,
         if NOE restraints are available.
 
-        @keyword spin_id:   The spin identification string (unused).
-        @type spin_id:      None or str
-        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:    int
-        @keyword sim_index: The MC simulation index (unused).
-        @type sim_index:    None
+        @keyword spin_id:           The spin identification string (unused).
+        @type spin_id:              None or str
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The MC simulation index (unused).
+        @type sim_index:            None
         """
 
         # Set up the target function for direct calculation.

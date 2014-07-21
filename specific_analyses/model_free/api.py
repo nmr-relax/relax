@@ -404,15 +404,17 @@ class Model_free(API_base, API_common):
         star.write()
 
 
-    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+    def calculate(self, spin_id=None, scaling_matrix=None, verbosity=1, sim_index=None):
         """Calculation of the model-free chi-squared value.
 
-        @keyword spin_id:   The spin identification string.
-        @type spin_id:      str
-        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:    int
-        @keyword sim_index: The optional MC simulation index.
-        @type sim_index:    int
+        @keyword spin_id:           The spin identification string.
+        @type spin_id:              str
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The optional MC simulation index.
+        @type sim_index:            int
         """
 
         # Test if sequence data is loaded.

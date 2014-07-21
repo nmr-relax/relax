@@ -53,7 +53,7 @@ class Noe(API_base, API_common):
         self._PARAMS = Noe_params()
 
 
-    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+    def calculate(self, spin_id=None, scaling_matrix=None, verbosity=1, sim_index=None):
         """Calculate the NOE and its error.
 
         The error for each peak is calculated using the formula::
@@ -62,12 +62,14 @@ class Noe(API_base, API_common):
             sd(NOE) = -----------------------------------------------
                                           I(unsat)^2
 
-        @keyword spin_id:   The spin identification string.
-        @type spin_id:      None or str
-        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:    int
-        @keyword sim_index: The MC simulation index (unused).
-        @type sim_index:    None
+        @keyword spin_id:           The spin identification string.
+        @type spin_id:              None or str
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The MC simulation index (unused).
+        @type sim_index:            None
         """
 
         # Test if the current pipe exists.

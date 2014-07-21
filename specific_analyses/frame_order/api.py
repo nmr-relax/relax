@@ -105,15 +105,17 @@ class Frame_order(API_base, API_common):
                 yield ['pcs', spin_id, align_id]
 
 
-    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+    def calculate(self, spin_id=None, scaling_matrix=None, verbosity=1, sim_index=None):
         """Calculate the chi-squared value for the current parameter values.
 
-        @keyword spin_id:   The spin identification string (unused).
-        @type spin_id:      None
-        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:    int
-        @keyword sim_index: The optional MC simulation index (unused).
-        @type sim_index:    None or int
+        @keyword spin_id:           The spin identification string (unused).
+        @type spin_id:              None
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The optional MC simulation index (unused).
+        @type sim_index:            None or int
         """
 
         # Set up the target function for direct calculation.
