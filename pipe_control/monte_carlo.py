@@ -273,7 +273,7 @@ def select_all_sims(number=None, all_select_sim=None):
             select_sim = all_select_sim[i]
 
         # Set the selected simulation array.
-        api.set_selected_sim(model_info, select_sim)
+        api.set_selected_sim(select_sim, model_info=model_info)
 
         # Model index.
         i += 1
