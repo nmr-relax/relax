@@ -93,14 +93,15 @@ class API_common:
     def _data_init_spin(self, data, sim=False):
         """Initialise data structures (spin system specific).
 
-        @param data:    The spin container and the spin ID string from the _base_data_loop_spin() method.
-        @type data:     SpinContainer instance, str
+        @param data:    The spin ID string from the _base_data_loop_spin() method.
+        @type data:     str
         @keyword sim:   The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
         @type sim:      bool
         """
 
-        # Unpack the data.
-        spin, spin_id = data
+        # Alias the data and get the spin container.
+        spin_id = data
+        spin = return_spin(spin_id)
 
         # Loop over the parameters.
         for name in self._PARAMS.loop(set='params', scope='spin', error_names=False, sim_names=sim):
