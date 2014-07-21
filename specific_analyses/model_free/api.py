@@ -1060,7 +1060,7 @@ class Model_free(API_base, API_common):
             return [-100 * 1e-6, -300 * 1e-6]
 
 
-    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling_matrix=None, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Model-free minimisation function.
 
         Three categories of models exist for which the approach to minimisation is different.  These
@@ -1081,37 +1081,25 @@ class Model_free(API_base, API_common):
         @type min_algor:            str
         @keyword min_options:       An array of options to be used by the minimisation algorithm.
         @type min_options:          array of str
-        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.
-                                    Setting this to None turns of the check.
+        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation. Setting this to None turns of the check.
         @type func_tol:             None or float
-        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.
-                                    Setting this to None turns of the check.
+        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation. Setting this to None turns of the check.
         @type grad_tol:             None or float
         @keyword max_iterations:    The maximum number of iterations for the algorithm.
         @type max_iterations:       int
         @keyword constraints:       If True, constraints are used during optimisation.
         @type constraints:          bool
-        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow
-                                    the problem to be better conditioned.
-        @type scaling:              bool
-        @keyword verbosity:         The amount of information to print.  The higher the value, the
-                                    greater the verbosity.
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:            int
-        @keyword sim_index:         The index of the simulation to optimise.  This should be None if
-                                    normal optimisation is desired.
+        @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:            None or int
-        @keyword lower:             The lower bounds of the grid search which must be equal to the
-                                    number of parameters in the model.  This optional argument is only
-                                    used when doing a grid search.
+        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
         @type lower:                array of numbers
-        @keyword upper:             The upper bounds of the grid search which must be equal to the
-                                    number of parameters in the model.  This optional argument is only
-                                    used when doing a grid search.
+        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
         @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid search.
-                                    The number of elements in the array must equal to the number of
-                                    parameters in the model.  This argument is only used when doing a
-                                    grid search.
+        @keyword inc:               The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
         @type inc:                  array of int
         """
 

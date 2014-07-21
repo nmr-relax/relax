@@ -548,7 +548,7 @@ class Relax_disp(API_base, API_common):
                 return [lower_new[i], upper_new[i]]
 
 
-    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling_matrix=None, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Relaxation dispersion curve fitting function.
 
         @keyword min_algor:         The minimisation algorithm to use.
@@ -563,8 +563,8 @@ class Relax_disp(API_base, API_common):
         @type max_iterations:       int
         @keyword constraints:       If True, constraints are used during optimisation.
         @type constraints:          bool
-        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
-        @type scaling:              bool
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
         @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:            int
         @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
