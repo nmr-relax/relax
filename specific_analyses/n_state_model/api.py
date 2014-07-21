@@ -258,19 +258,21 @@ class N_state_model(API_base, API_common):
         return mc_data
 
 
-    def grid_search(self, lower=None, upper=None, inc=None, constraints=False, verbosity=0, sim_index=None):
+    def grid_search(self, lower=None, upper=None, inc=None, scaling_matrix=None, constraints=False, verbosity=0, sim_index=None):
         """The grid search function.
 
-        @param lower:       The lower bounds of the grid search which must be equal to the number of parameters in the model.
-        @type lower:        array of numbers
-        @param upper:       The upper bounds of the grid search which must be equal to the number of parameters in the model.
-        @type upper:        array of numbers
-        @param inc:         The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
-        @type inc:          array of int
-        @param constraints: If True, constraints are applied during the grid search (elinating parts of the grid).  If False, no constraints are used.
-        @type constraints:  bool
-        @param verbosity:   A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:    int
+        @param lower:           The lower bounds of the grid search which must be equal to the number of parameters in the model.
+        @type lower:            array of numbers
+        @param upper:           The upper bounds of the grid search which must be equal to the number of parameters in the model.
+        @type upper:            array of numbers
+        @param inc:             The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
+        @type inc:              array of int
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @param constraints:     If True, constraints are applied during the grid search (elinating parts of the grid).  If False, no constraints are used.
+        @type constraints:      bool
+        @param verbosity:       A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:        int
         """
 
         # Test if the N-state model has been set up.
@@ -381,7 +383,7 @@ class N_state_model(API_base, API_common):
 
         # All other minimisation.
         else:
-            self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+            self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def is_spin_param(self, name):

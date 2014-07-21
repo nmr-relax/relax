@@ -328,21 +328,23 @@ class Frame_order(API_base, API_common):
         return assemble_param_vector(sim_index=sim_index)
 
 
-    def grid_search(self, lower=None, upper=None, inc=None, constraints=False, verbosity=0, sim_index=None):
+    def grid_search(self, lower=None, upper=None, inc=None, scaling_matrix=None, constraints=False, verbosity=0, sim_index=None):
         """Perform a grid search.
 
-        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.
-        @type lower:            list of float
-        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.
-        @type upper:            list of float
-        @keyword inc:           The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.
-        @type inc:              int or list of int
-        @keyword constraints:   If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
-        @type constraints:      bool
-        @keyword verbosity:     A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:        int
-        @keyword sim_index:     The Monte Carlo simulation index.
-        @type sim_index:        None or int
+        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.
+        @type lower:                list of float
+        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.
+        @type upper:                list of float
+        @keyword inc:               The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.
+        @type inc:                  int or list of int
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword constraints:       If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
+        @type constraints:          bool
+        @keyword verbosity:         A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The Monte Carlo simulation index.
+        @type sim_index:            None or int
         """
 
         # Test if the Frame Order model has been set up.
@@ -480,7 +482,7 @@ class Frame_order(API_base, API_common):
                     indices[j] = 0
 
         # Minimisation.
-        self.minimise(min_algor='grid', min_options=pts, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        self.minimise(min_algor='grid', min_options=pts, scaling_matrix=scaling_matrix, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def map_bounds(self, param, spin_id=None):
