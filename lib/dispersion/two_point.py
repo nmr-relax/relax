@@ -32,7 +32,7 @@ def calc_two_point_r2eff(relax_time=None, I_ref=None, I=None):
 
     The formula is::
 
-                  -1         / I1 \ 
+                  -1         / I1 \
         R2eff = ------- * ln | -- | ,
                 relax_T      \ I0 /
 
