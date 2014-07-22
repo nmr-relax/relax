@@ -200,8 +200,8 @@ def return_parameter_object(analysis_type=None, pipe_name=None):
 
     # The N-state model.
     elif analysis_type == 'N-state':
-        from specific_analyses.n_state_model.parameter_object import N_state_model_params
-        return N_state_model_params()
+        from specific_analyses.n_state_model.parameter_object import N_state_params
+        return N_state_params()
 
     # NOE calculation.
     elif analysis_type == 'noe':
