@@ -73,19 +73,19 @@ def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spi
 
 
     @keyword r1rho_prime:       The R1rho_prime parameter value (R1rho with no exchange).
-    @type r1rho_prime:          numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type r1rho_prime:          numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword phi_ex:            The phi_ex parameter value (pA * pB * delta_omega^2).
-    @type phi_ex:               numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type phi_ex:               numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword kex:               The kex parameter value (the exchange rate in rad/s).
     @type kex:                  float
     @keyword theta:             The rotating frame tilt angles for each dispersion point.
-    @type theta:                numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type theta:                numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword R1:                The R1 relaxation rate.
-    @type R1:                   numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type R1:                   numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword spin_lock_fields2: The R1rho spin-lock field strengths squared (in rad^2.s^-2).
-    @type spin_lock_fields2:    numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type spin_lock_fields2:    numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to the combination of theta and spin lock field.
-    @type back_calc:            numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type back_calc:            numpy float array of rank [NE][NS][NM][NO][ND]
     """
 
     # Flag to tell if values should be replaced if numer is zero.

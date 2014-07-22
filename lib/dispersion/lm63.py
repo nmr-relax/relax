@@ -74,15 +74,15 @@ def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None):
 
 
     @keyword r20:           The R20 parameter value (R2 with no exchange).
-    @type r20:              numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type r20:              numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword phi_ex:        The phi_ex parameter value (pA * pB * delta_omega^2).
-    @type phi_ex:           numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type phi_ex:           numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
-    @type cpmg_frqs:        numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type cpmg_frqs:        numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type back_calc:        numpy float array of rank [NE][NS][NM][NO][ND]
     """
 
     # Flag to tell if values should be replaced if phi_ex is zero.

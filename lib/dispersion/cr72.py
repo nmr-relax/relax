@@ -105,25 +105,25 @@ def r2eff_CR72(r20a=None, r20a_orig=None, r20b=None, r20b_orig=None, pA=None, dw
 
 
     @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
-    @type r20a:             numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type r20a:             numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword r20a_orig:     The R20 parameter value of state A (R2 with no exchange). This is only for faster checking of zero value, which result in no exchange.
     @type r20a_orig:        numpy float array of rank-1
     @keyword r20b:          The R20 parameter value of state B (R2 with no exchange).
-    @type r20b:             numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type r20b:             numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword r20b_orig:     The R20 parameter value of state B (R2 with no exchange). This is only for faster checking of zero value, which result in no exchange.
     @type r20b_orig:        numpy float array of rank-1
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
-    @type dw:               numpy array of rank [NE][NS][[NM][NO][ND]
+    @type dw:               numpy array of rank [NE][NS][NM][NO][ND]
     @keyword dw_orig:       The chemical exchange difference between states A and B in ppm. This is only for faster checking of zero value, which result in no exchange.
     @type dw_orig:          numpy float array of rank-1
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
-    @type cpmg_frqs:        numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type cpmg_frqs:        numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type back_calc:        numpy float array of rank [NE][NS][NM][NO][ND]
     """
 
     # Flag to tell if values should be replaced if max_etapos in cosh function is violated.

@@ -105,31 +105,31 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
     @keyword m2:            A complex numpy matrix to be populated.
     @type m2:               numpy rank-2, 2D complex64 array
     @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
-    @type R20A:             numpy float array of rank [NS][[NM][NO][ND]
+    @type R20A:             numpy float array of rank [NS][NM][NO][ND]
     @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
-    @type R20B:             numpy float array of rank [NS][[NM][NO][ND]
+    @type R20B:             numpy float array of rank [NS][NM][NO][ND]
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword pB:            The population of state B.
     @type pB:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
-    @type dw:               numpy float array of rank [NS][[NM][NO][ND]
+    @type dw:               numpy float array of rank [NS][NM][NO][ND]
     @keyword dwH:           The proton chemical exchange difference between states A and B in rad/s.
-    @type dwH:              numpy float array of rank [NS][[NM][NO][ND]
+    @type dwH:              numpy float array of rank [NS][NM][NO][ND]
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
     @type k_AB:             float
     @keyword k_BA:          The rate of exchange from site B to A (rad/s).
     @type k_BA:             float
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
-    @type inv_tcpmg:        numpy float array of rank [NS][[NM][NO][ND]
+    @type inv_tcpmg:        numpy float array of rank [NS][NM][NO][ND]
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
-    @type tcp:              numpy float array of rank [NS][[NM][NO][ND]
+    @type tcp:              numpy float array of rank [NS][NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy float array of rank [NS][[NM][NO][ND]
+    @type back_calc:        numpy float array of rank [NS][NM][NO][ND]
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
-    @type num_points:       numpy int array of rank [NS][[NM][NO][ND]
+    @type num_points:       numpy int array of rank [NS][NM][NO]
     @keyword power:         The matrix exponential power array.
-    @type power:            numpy int array of rank [NS][[NM][NO][ND]
+    @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
 
     # Extract shape of experiment.
@@ -142,11 +142,11 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
             # Loop over offsets:
             for oi in range(NO):
 
-                r20a_si_mi_oi = R20A[si][mi][oi][0]
-                r20b_si_mi_oi = R20B[si][mi][oi][0]
-                dw_si_mi_oi = dw[si][mi][oi][0]
-                dwH_si_mi_oi = dwH[si][mi][oi][0]
-                num_points_si_mi_oi = num_points[si][mi][oi]
+                r20a_si_mi_oi = R20A[si, mi, oi, 0]
+                r20b_si_mi_oi = R20B[si, mi, oi, 0]
+                dw_si_mi_oi = dw[si, mi, oi, 0]
+                dwH_si_mi_oi = dwH[si, mi, oi, 0]
+                num_points_si_mi_oi = num_points[si, mi, oi]
 
                 # Populate the m1 and m2 matrices (only once per function call for speed).
                 populate_matrix(matrix=m1, R20A=r20a_si_mi_oi, R20B=r20b_si_mi_oi, dw=-dw_si_mi_oi - dwH_si_mi_oi, k_AB=k_AB, k_BA=k_BA)     # D+ matrix component.
@@ -155,8 +155,8 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_si_mi_oi):
                     # The M1 and M2 matrices.
-                    M1 = matrix_exponential(m1*tcp[si][mi][oi][i])    # Equivalent to D+.
-                    M2 = matrix_exponential(m2*tcp[si][mi][oi][i])    # Equivalent to Z-.
+                    M1 = matrix_exponential(m1*tcp[si, mi, oi, i])    # Equivalent to D+.
+                    M2 = matrix_exponential(m2*tcp[si, mi, oi, i])    # Equivalent to Z-.
 
                     # The complex conjugates M1* and M2*
                     M1_star = conj(M1)    # Equivalent to D+*.
@@ -173,7 +173,7 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
                     M2_M1_M1_M2_star = dot(M2_M1_star, M1_M2_star)
 
                     # Special case of 1 CPMG block - the power is zero.
-                    if power[si][mi][oi][i] == 1:
+                    if power[si, mi, oi, i] == 1:
                         # M1.M2.
                         A = M1_M2
 
@@ -187,9 +187,9 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
                         D = M2_M1_star
 
                     # Matrices for even number of CPMG blocks.
-                    elif power[si][mi][oi][i] % 2 == 0:
+                    elif power[si, mi, oi, i] % 2 == 0:
                         # The power factor (only calculate once).
-                        fact = int(floor(power[si][mi][oi][i] / 2))
+                        fact = int(floor(power[si, mi, oi, i] / 2))
 
                         # (M1.M2.M2.M1)^(n/2).
                         A = square_matrix_power(M1_M2_M2_M1, fact)
@@ -206,7 +206,7 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
                     # Matrices for odd number of CPMG blocks.
                     else:
                         # The power factor (only calculate once).
-                        fact = int(floor((power[si][mi][oi][i] - 1) / 2))
+                        fact = int(floor((power[si, mi, oi, i] - 1) / 2))
 
                         # (M1.M2.M2.M1)^((n-1)/2).M1.M2.
                         A = square_matrix_power(M1_M2_M2_M1, fact)
@@ -230,9 +230,9 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
                     Mx = dot(dot(F_vector, (A_B + C_D)), M0)
                     Mx = Mx.real / 2.0
                     if Mx <= 0.0 or isNaN(Mx):
-                        back_calc[si][mi][oi][i] = 1e99
+                        back_calc[si, mi, oi, i] = 1e99
                     else:
-                        back_calc[si][mi][oi][i]= -inv_tcpmg[si][mi][oi][i] * log(Mx / pA)
+                        back_calc[si, mi, oi, i]= -inv_tcpmg[si, mi, oi, i] * log(Mx / pA)
 
 
 def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
@@ -254,31 +254,31 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
     @keyword m2:            A complex numpy matrix to be populated.
     @type m2:               numpy rank-2, 2D complex64 array
     @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
-    @type R20A:             numpy float array of rank [NS][[NM][NO][ND]
+    @type R20A:             numpy float array of rank [NS][NM][NO][ND]
     @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
-    @type R20B:             numpy float array of rank [NS][[NM][NO][ND]
+    @type R20B:             numpy float array of rank [NS][NM][NO][ND]
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword pB:            The population of state B.
     @type pB:               float
     @keyword dw:            The combined chemical exchange difference between states A and B in rad/s.  It should be set to dwH for 1H SQ data, dw for heteronuclear SQ data, dwH-dw for ZQ data, and dwH+dw for DQ data.
-    @type dw:               numpy float array of rank [NS][[NM][NO][ND]
+    @type dw:               numpy float array of rank [NS][NM][NO][ND]
     @keyword dwH:           Unused - this is simply to match the r2eff_ns_mmq_2site_mq() function arguments.
-    @type dwH:              numpy float array of rank [NS][[NM][NO][ND]
+    @type dwH:              numpy float array of rank [NS][NM][NO][ND]
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
     @type k_AB:             float
     @keyword k_BA:          The rate of exchange from site B to A (rad/s).
     @type k_BA:             float
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
-    @type inv_tcpmg:        numpy float array of rank [NS][[NM][NO][ND]
+    @type inv_tcpmg:        numpy float array of rank [NS][NM][NO][ND]
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
-    @type tcp:              numpy float array of rank [NS][[NM][NO][ND]
+    @type tcp:              numpy float array of rank [NS][NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy float array of rank [NS][[NM][NO][ND]
+    @type back_calc:        numpy float array of rank [NS][NM][NO][ND]
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
-    @type num_points:       numpy int array of rank [NS][[NM][NO]
+    @type num_points:       numpy int array of rank [NS][NM][NO]
     @keyword power:         The matrix exponential power array.
-    @type power:            numpy int array of rank [NS][[NM][NO][ND]
+    @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
 
 
@@ -292,10 +292,10 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
             # Loop over offsets:
             for oi in range(NO):
 
-                r20a_si_mi_oi = R20A[si][mi][oi][0]
-                r20b_si_mi_oi = R20B[si][mi][oi][0]
-                dw_si_mi_oi = dw[si][mi][oi][0]
-                num_points_si_mi_oi = num_points[si][mi][oi]
+                r20a_si_mi_oi = R20A[si, mi, oi, 0]
+                r20b_si_mi_oi = R20B[si, mi, oi, 0]
+                dw_si_mi_oi = dw[si, mi, oi, 0]
+                num_points_si_mi_oi = num_points[si, mi, oi]
 
                 # Populate the m1 and m2 matrices (only once per function call for speed).
                 populate_matrix(matrix=m1, R20A=r20a_si_mi_oi , R20B=r20b_si_mi_oi, dw=dw_si_mi_oi, k_AB=k_AB, k_BA=k_BA)
@@ -304,19 +304,19 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_si_mi_oi):
                     # The A+/- matrices.
-                    A_pos = matrix_exponential(m1*tcp[si][mi][oi][i])
-                    A_neg = matrix_exponential(m2*tcp[si][mi][oi][i])
+                    A_pos = matrix_exponential(m1*tcp[si, mi, oi, i])
+                    A_neg = matrix_exponential(m2*tcp[si, mi, oi, i])
 
                     # The evolution for one n.
                     evol_block = dot(A_pos, dot(A_neg, dot(A_neg, A_pos)))
 
                     # The full evolution.
-                    evol = square_matrix_power(evol_block, power[si][mi][oi][i])
+                    evol = square_matrix_power(evol_block, power[si, mi, oi, i])
 
                     # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
                     Mx = dot(F_vector, dot(evol, M0))
                     Mx = Mx.real
                     if Mx <= 0.0 or isNaN(Mx):
-                        back_calc[si][mi][oi][i] = 1e99
+                        back_calc[si, mi, oi, i] = 1e99
                     else:
-                        back_calc[si][mi][oi][i] = -inv_tcpmg[si][mi][oi][i] * log(Mx / pA)
+                        back_calc[si, mi, oi, i] = -inv_tcpmg[si, mi, oi, i] * log(Mx / pA)

@@ -257,25 +257,25 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, dw_orig=None, kex=N
 
 
     @keyword r20:               The R2 value for both states A and B in the absence of exchange.
-    @type r20:                  numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type r20:                  numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword pA:                The population of state A.
     @type pA:                   float
     @keyword dw:                The chemical exchange difference between states A and B in rad/s.
-    @type dw:                   numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type dw:                   numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword dw_orig:           The chemical exchange difference between states A and B in ppm. This is only for faster checking of zero value, which result in no exchange.
     @type dw_orig:              numpy float array of rank-1
     @keyword kex:               The kex parameter value (the exchange rate in rad/s).
     @type kex:                  float
     @keyword relax_time:        The total relaxation time period (in seconds).
-    @type relax_time:           numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type relax_time:           numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword inv_relax_time:    The inverse of the total relaxation time period (in inverse seconds).
-    @type inv_relax_time:       numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type inv_relax_time:       numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword tcp:               The tau_CPMG times (1 / 4.nu1).
-    @type tcp:                  numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type tcp:                  numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword back_calc:         The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:            numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type back_calc:            numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword num_cpmg:          The array of numbers of CPMG blocks.
-    @type num_cpmg:             numpy int16 array of rank [NE][NS][[NM][NO][ND]
+    @type num_cpmg:             numpy int16 array of rank [NE][NS][NM][NO][ND]
     """
 
     # Flag to tell if values should be replaced if math function is violated.

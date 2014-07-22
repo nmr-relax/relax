@@ -3554,9 +3554,8 @@ class Relax_disp(SystemTestCase):
         spin.dwH = -0.27258970590969
         spin.kex = 360.516132791038
 
-        # Low precision optimisation.
-        #self.interpreter.grid_search(lower=None, upper=None, inc=10, constraints=True, verbosity=1)
-        self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1)
+        # Calc the chi2 values at these parameters.
+        self.interpreter.calc(verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -3586,7 +3585,7 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g\n" % ("chi2", spin.chi2))
 
         # Checks for residue :9.
-        self.assertAlmostEqual(spin.chi2, 162.511988511609, 3)
+        self.assertAlmostEqual(spin.chi2/1000, 162.511988511609/1000, 3)
 
 
     def test_kteilum_fmpoulsen_makke_cpmg_data_048m_guhcl_to_cr72(self):

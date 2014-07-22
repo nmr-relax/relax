@@ -123,25 +123,25 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, nc
 
 
     @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
-    @type r20a:             numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type r20a:             numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword r20b:          The R20 parameter value of state B (R2 with no exchange).
-    @type r20b:             numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type r20b:             numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
-    @type dw:               numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type dw:               numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword dw_orig:       The chemical exchange difference between states A and B in ppm. This is only for faster checking of zero value, which result in no exchange.
     @type dw_orig:          numpy float array of rank-1
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
     @keyword ncyc:          The matrix exponential power array. The number of CPMG blocks.
-    @type ncyc:             numpy int16 array of rank [NE][NS][[NM][NO][ND]
+    @type ncyc:             numpy int16 array of rank [NE][NS][NM][NO][ND]
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
-    @type inv_tcpmg:        numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type inv_tcpmg:        numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
-    @type tcp:              numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type tcp:              numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type back_calc:        numpy float array of rank [NE][NS][NM][NO][ND]
     """
 
     # Flag to tell if values should be replaced if math function is violated.
