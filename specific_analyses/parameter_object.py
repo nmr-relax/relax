@@ -175,6 +175,72 @@ class Param_list(object):
         self._add('rdc', scope='spin', grace_string='Residual dipolar coupling', units='Hz', desc='The residual dipolar coupling (RDC)', py_type=float)
 
 
+    def _add_align_tensor(self):
+        """Add the alignment tensor parameters."""
+
+        # Add the parameters.
+        self._add(
+            'Axx',
+            scope = 'global',
+            desc = 'The Axx component of the alignment tensor',
+            py_type = float,
+            set = 'params',
+            grid_lower = -1e-3,
+            grid_upper = 1e-3,
+            grace_string = '\qA\sxx\N',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Ayy',
+            scope = 'global',
+            desc = 'The Ayy component of the alignment tensor',
+            py_type = float,
+            set = 'params',
+            grid_lower = -1e-3,
+            grid_upper = 1e-3,
+            grace_string = '\qA\syy\N',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Axy',
+            scope = 'global',
+            desc = 'The Axy component of the alignment tensor',
+            py_type = float,
+            set = 'params',
+            grid_lower = -1e-3,
+            grid_upper = 1e-3,
+            grace_string = '\qA\sxy\N',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Axz',
+            scope = 'global',
+            desc = 'The Axz component of the alignment tensor',
+            py_type = float,
+            set = 'params',
+            grid_lower = -1e-3,
+            grid_upper = 1e-3,
+            grace_string = '\qA\sxz\N',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Ayz',
+            scope = 'global',
+            desc = 'The Ayz component of the alignment tensor',
+            py_type = float,
+            set = 'params',
+            grid_lower = -1e-3,
+            grid_upper = 1e-3,
+            grace_string = '\qA\syz\N',
+            err = True,
+            sim = True
+        )
+
+
     def _add_csa(self, default=None, set='fixed', err=False, sim=False):
         """Add the CSA parameter 'csa'.
 
