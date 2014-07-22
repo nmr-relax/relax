@@ -60,14 +60,6 @@ except ImportError:
 
 # Optional packages.
 ####################
-
-# numpy einsum import.
-try:
-    from numpy import einsum
-    einsum_module = True
-except ImportError:
-    einsum_module = False
-
 # Bmrblib python package check.
 try:
     import bmrblib
