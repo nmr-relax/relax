@@ -228,8 +228,8 @@ def r2eff_ns_cpmg_2site_star(M0=None, r20a=None, r20b=None, pA=None, dw=None, dw
 
     # Preform the matrix.
     # This is the propagator for an element of [delay tcp; 180 deg pulse; 2 times delay tcp; 180 deg pulse; delay tau], i.e. for 2 times tau-180-tau.
-    prop_2_mat = evolution_matrix_mat = einsum('...ij,...jk', eR_mat, ecR2_mat)
-    prop_2_mat = evolution_matrix_mat = einsum('...ij,...jk', prop_2_mat, eR_mat)
+    prop_2_mat = evolution_matrix_mat = einsum('...ij, ...jk', eR_mat, ecR2_mat)
+    prop_2_mat = evolution_matrix_mat = einsum('...ij, ...jk', prop_2_mat, eR_mat)
 
     # Loop over the spins
     for si in range(NS):
