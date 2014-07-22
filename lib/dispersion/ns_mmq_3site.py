@@ -210,7 +210,7 @@ def rmmq_3site_rankN(R20A=None, R20B=None, R20C=None, dw_AB=None, dw_AC=None, k_
     return matrix
 
 
-def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None, R20B=None, R20C=None, pA=None, pB=None, dw_AB=None, dw_AC=None, dwH_AB=None, dwH_AC=None, kex_AB=None, kex_BC=None, kex_AC=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None, R20B=None, R20C=None, pA=None, pB=None, dw_AB=None, dw_BC=None, dwH_AB=None, dwH_BC=None, kex_AB=None, kex_BC=None, kex_AC=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 3-site numerical solution to the Bloch-McConnell equation for MQ data.
 
     The notation used here comes from:
@@ -240,12 +240,12 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None
     @type pB:               float
     @keyword dw_AB:         The chemical exchange difference between states A and B in rad/s.
     @type dw_AB:            numpy float array of rank [NS][NM][NO][ND]
-    @keyword dw_AC:         The chemical exchange difference between states A and C in rad/s.
-    @type dw_AC:            numpy float array of rank [NS][NM][NO][ND]
+    @keyword dw_BC:         The chemical exchange difference between states B and C in rad/s.
+    @type dw_BC:            numpy float array of rank [NS][NM][NO][ND]
     @keyword dwH_AB:        The proton chemical exchange difference between states A and B in rad/s.
     @type dwH_AB:           numpy float array of rank [NS][NM][NO][ND]
-    @keyword dwH_AC:        The proton chemical exchange difference between states A and C in rad/s.
-    @type dwH_AC:           numpy float array of rank [NS][NM][NO][ND]
+    @keyword dwH_BC:        The proton chemical exchange difference between states B and C in rad/s.
+    @type dwH_BC:           numpy float array of rank [NS][NM][NO][ND]
     @keyword kex_AB:        The exchange rate between sites A and B for 3-site exchange with kex_AB = k_AB + k_BA (rad.s^-1)
     @type kex_AB:           float
     @keyword kex_BC:        The exchange rate between sites A and C for 3-site exchange with kex_AC = k_AC + k_CA (rad.s^-1)
@@ -265,6 +265,8 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None
     """
 
     # Once off parameter conversions.
+    dw_AC = dw_AB + dw_BC
+    dwH_AC = dwH_AB + dwH_BC
     pC = 1.0 - pA - pB
     pA_pB = pA + pB
     pA_pC = pA + pC
@@ -397,7 +399,7 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None
                         back_calc[si, mi, oi, i]= -inv_tcpmg[si, mi, oi, i] * log(Mx / pA)
 
 
-def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None, R20B=None, R20C=None, pA=None, pB=None, dw_AB=None, dw_AC=None, dwH_AB=None, dwH_AC=None, kex_AB=None, kex_BC=None, kex_AC=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None, R20B=None, R20C=None, pA=None, pB=None, dw_AB=None, dw_BC=None, dwH_AB=None, dwH_BC=None, kex_AB=None, kex_BC=None, kex_AC=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 3-site numerical solution to the Bloch-McConnell equation for SQ, ZQ, and DQ data.
 
     The notation used here comes from:
@@ -423,12 +425,12 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), R20
     @type pB:               float
     @keyword dw_AB:         The combined chemical exchange difference between states A and B in rad/s.  It should be set to dwH for 1H SQ data, dw for heteronuclear SQ data, dwH-dw for ZQ data, and dwH+dw for DQ data.
     @type dw_AB:            numpy float array of rank [NS][NM][NO][ND]
-    @keyword dw_AC:         The combined chemical exchange difference between states A and C in rad/s.  It should be set to dwH for 1H SQ data, dw for heteronuclear SQ data, dwH-dw for ZQ data, and dwH+dw for DQ data.
-    @type dw_AC:            numpy float array of rank [NS][NM][NO][ND]
+    @keyword dw_BC:         The combined chemical exchange difference between states B and C in rad/s.  It should be set to dwH for 1H SQ data, dw for heteronuclear SQ data, dwH-dw for ZQ data, and dwH+dw for DQ data.
+    @type dw_BC:            numpy float array of rank [NS][NM][NO][ND]
     @keyword dwH_AB:        Unused - this is simply to match the r2eff_mmq_3site_mq() function arguments.
     @type dwH_AB:           numpy float array of rank [NS][NM][NO][ND]
-    @keyword dwH_AC:        Unused - this is simply to match the r2eff_mmq_3site_mq() function arguments.
-    @type dwH_AC:           numpy float array of rank [NS][NM][NO][ND]
+    @keyword dwH_BC:        Unused - this is simply to match the r2eff_mmq_3site_mq() function arguments.
+    @type dwH_BC:           numpy float array of rank [NS][NM][NO][ND]
     @keyword kex_AB:        The exchange rate between sites A and B for 3-site exchange with kex_AB = k_AB + k_BA (rad.s^-1)
     @type kex_AB:           float
     @keyword kex_BC:        The exchange rate between sites A and C for 3-site exchange with kex_AC = k_AC + k_CA (rad.s^-1)
@@ -448,6 +450,7 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), R20
     """
 
     # Once off parameter conversions.
+    dw_AC = dw_AB + dw_BC
     pC = 1.0 - pA - pB
     pA_pB = pA + pB
     pA_pC = pA + pC

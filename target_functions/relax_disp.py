@@ -244,10 +244,9 @@ class Dispersion:
         self.dw_struct = deepcopy(numpy_array_zeros)
         self.dwH_struct = deepcopy(numpy_array_zeros)
         self.dw_AB_struct = deepcopy(numpy_array_zeros)
-        self.dw_AC_struct = deepcopy(numpy_array_zeros)
         self.dw_BC_struct = deepcopy(numpy_array_zeros)
         self.dwH_AB_struct = deepcopy(numpy_array_zeros)
-        self.dwH_AC_struct = deepcopy(numpy_array_zeros)
+        self.dwH_BC_struct = deepcopy(numpy_array_zeros)
         self.phi_ex_struct = deepcopy(numpy_array_zeros)
         self.phi_ex_B_struct = deepcopy(numpy_array_zeros)
         self.phi_ex_C_struct = deepcopy(numpy_array_zeros)
@@ -693,15 +692,11 @@ class Dispersion:
         @rtype:             float
         """
 
-        # Once off parameter conversions.
-        dw_AC = dw_AB + dw_BC
-        dwH_AC = dwH_AB + dwH_BC
-
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
         multiply( multiply.outer( dw_AB.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_AB_struct )
-        multiply( multiply.outer( dw_AC.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_AC_struct )
+        multiply( multiply.outer( dw_BC.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_BC_struct )
         multiply( multiply.outer( dwH_AB.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_H, out=self.dwH_AB_struct )
-        multiply( multiply.outer( dwH_AC.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_H, out=self.dwH_AC_struct )
+        multiply( multiply.outer( dwH_BC.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_H, out=self.dwH_BC_struct )
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
         self.r20a_struct[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
@@ -714,38 +709,38 @@ class Dispersion:
             r20b = self.r20b_struct[ei]
             r20c = self.r20b_struct[ei]
             dw_AB_frq = self.dw_AB_struct[ei]
-            dw_AC_frq = self.dw_AC_struct[ei]
+            dw_BC_frq = self.dw_BC_struct[ei]
             dwH_AB_frq = self.dwH_AB_struct[ei]
-            dwH_AC_frq = self.dwH_AC_struct[ei]
+            dwH_BC_frq = self.dwH_BC_struct[ei]
 
             # Alias the dw frequency combinations.
             aliased_dwH_AB = 0.0 * self.dwH_AB_struct[ei]
-            aliased_dwH_AC = 0.0 * self.dwH_AC_struct[ei]
+            aliased_dwH_BC = 0.0 * self.dwH_BC_struct[ei]
             if self.exp_types[ei] == EXP_TYPE_CPMG_SQ:
                 aliased_dw_AB = dw_AB_frq
-                aliased_dw_AC = dw_AC_frq
+                aliased_dw_BC = dw_BC_frq
             elif self.exp_types[ei] == EXP_TYPE_CPMG_PROTON_SQ:
                 aliased_dw_AB = dwH_AB_frq
-                aliased_dw_AC = dwH_AC_frq
+                aliased_dw_BC = dwH_BC_frq
             elif self.exp_types[ei] == EXP_TYPE_CPMG_DQ:
                 aliased_dw_AB = dw_AB_frq + dwH_AB_frq
-                aliased_dw_AC = dw_AC_frq + dwH_AC_frq
+                aliased_dw_BC = dw_BC_frq + dwH_BC_frq
             elif self.exp_types[ei] == EXP_TYPE_CPMG_ZQ:
                 aliased_dw_AB = dw_AB_frq - dwH_AB_frq
-                aliased_dw_AC = dw_AC_frq - dwH_AC_frq
+                aliased_dw_BC = dw_BC_frq - dwH_BC_frq
             elif self.exp_types[ei] == EXP_TYPE_CPMG_MQ:
                 aliased_dw_AB = dw_AB_frq
-                aliased_dw_AC = dw_AC_frq
+                aliased_dw_BC = dw_BC_frq
                 aliased_dwH_AB = dwH_AB_frq
-                aliased_dwH_AC = dwH_AC_frq
+                aliased_dwH_BC = dwH_BC_frq
             elif self.exp_types[ei] == EXP_TYPE_CPMG_PROTON_MQ:
                 aliased_dw_AB = dwH_AB_frq
-                aliased_dw_AC = dwH_AC_frq
+                aliased_dw_BC = dwH_BC_frq
                 aliased_dwH_AB = dw_AB_frq
-                aliased_dwH_AC = dw_AC_frq
+                aliased_dwH_BC = dw_BC_frq
 
             # Back calculate the R2eff values for each experiment type.
-            self.r2eff_ns_mmq[ei](M0=self.M0, R20A=r20a, R20B=r20b, R20C=r20c, pA=pA, pB=pB, dw_AB=aliased_dw_AB, dw_AC=aliased_dw_AC, dwH_AB=aliased_dwH_AB, dwH_AC=aliased_dwH_AC, kex_AB=kex_AB, kex_BC=kex_BC, kex_AC=kex_AC, inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
+            self.r2eff_ns_mmq[ei](M0=self.M0, R20A=r20a, R20B=r20b, R20C=r20c, pA=pA, pB=pB, dw_AB=aliased_dw_AB, dw_BC=aliased_dw_BC, dwH_AB=aliased_dwH_AB, dwH_BC=aliased_dwH_BC, kex_AB=kex_AB, kex_BC=kex_BC, kex_AC=kex_AC, inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
