@@ -377,10 +377,8 @@ class Dispersion:
         # This is to make sure, that the chi2 values is not affected by missing values.
         self.mask_replace_blank = masked_equal(self.missing, 1.0)
 
-        # Check if eisum is available for numerical models.
-        if dep_check.einsum_module:
-            # Check the experiment types, simplifying the data structures as needed.
-            self.experiment_type_setup()
+        # Check the experiment types, simplifying the data structures as needed.
+        self.experiment_type_setup()
 
         # Scaling initialisation.
         self.scaling_flag = False
