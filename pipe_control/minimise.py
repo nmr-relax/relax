@@ -242,6 +242,12 @@ def grid_setup(lower=None, upper=None, inc=None):
         if n == 0:
             raise RelaxError("Cannot run a grid search on a model with zero parameters.")
 
+        # Check that the user supplied bound lengths are ok.
+        if lower != None and len(lower) != n:
+            raise RelaxLenError('lower bounds', n)
+        if upper != None and len(upper) != n:
+            raise RelaxLenError('upper bounds', n)
+
         # Check the user supplied increments.
         if isinstance(inc, list) and len(inc) != n:
             raise RelaxLenError('increment', n)
@@ -258,35 +264,33 @@ def grid_setup(lower=None, upper=None, inc=None):
         else:
             model_inc.append(inc)
 
-        # The lower and upper bounds have been supplied by the user, so use those unmodified instead.
-        if lower != None or upper != None:
-            # Check that the user supplied bound lengths are ok.
-            if len(lower) != n:
-                raise RelaxLenError('lower bounds', n)
-            if len(upper) != n:
-                raise RelaxLenError('upper bounds', n)
-
-            # Append the values.
-            model_lower.append(lower)
-            model_upper.append(upper)
-
-            # Skip the rest of the loop.
-            continue
-
         # Print out the model title.
         api.print_model_title(model_info)
 
-        # Build the bounds.
+        # Append empty lists for the bounds to be built up.
         model_lower.append([])
         model_upper.append([])
+
+        # Loop over the parameters.
         for i in range(n):
-            # Obtain the bounds.
-            lower_i = param_object.grid_lower(names[i], model_info=model_info)
-            upper_i = param_object.grid_upper(names[i], model_info=model_info)
+            # The lower bound for this parameter.
+            if lower != None:
+                lower_i = lower[i]
+            else:
+                lower_i = param_object.grid_lower(names[i], model_info=model_info)
+
+            # The upper bound for this parameter.
+            if upper != None:
+                upper_i = upper[i]
+            else:
+                upper_i = param_object.grid_upper(names[i], model_info=model_info)
+
+            # The scaling factor.
 
             # Scale the bounds.
-            lower_i /= param_object.scaling(names[i], model_info=model_info)
-            upper_i /= param_object.scaling(names[i], model_info=model_info)
+            scaling = param_object.scaling(names[i], model_info=model_info)
+            lower_i /= scaling
+            upper_i /= scaling
 
             # Append.
             model_lower[-1].append(lower_i)
