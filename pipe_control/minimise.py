@@ -137,7 +137,7 @@ def calc(verbosity=1):
     processor.run_queue()
 
 
-def grid_search(lower=None, upper=None, inc=None, verbosity=1, constraints=True):
+def grid_search(lower=None, upper=None, inc=None, verbosity=1, constraints=True, skip_preset=True):
     """The grid search function.
 
     @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.
@@ -150,6 +150,8 @@ def grid_search(lower=None, upper=None, inc=None, verbosity=1, constraints=True)
     @type verbosity:        int
     @keyword constraints:   If True, constraints are applied during the grid search (elinating parts of the grid).  If False, no constraints are used.
     @type constraints:      bool
+    @keyword skip_preset:   This argument, when True, allows any parameter which already has a value set to be skipped in the grid search.
+    @type skip_preset:      bool
     """
 
     # Test if the current data pipe exists.
@@ -162,7 +164,7 @@ def grid_search(lower=None, upper=None, inc=None, verbosity=1, constraints=True)
     api.overfit_deselect()
 
     # Determine the model specific grid bounds, and allow for the zooming grid search, and check the inc argument.
-    model_lower, model_upper, model_inc = grid_setup(lower, upper, inc, verbosity=verbosity)
+    model_lower, model_upper, model_inc = grid_setup(lower, upper, inc, verbosity=verbosity, skip_preset=skip_preset)
 
     # Create the scaling matrix.
     scaling_matrix = assemble_scaling_matrix()
@@ -202,19 +204,21 @@ def grid_search(lower=None, upper=None, inc=None, verbosity=1, constraints=True)
     processor.run_queue()
 
 
-def grid_setup(lower=None, upper=None, inc=None, verbosity=1):
+def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
     """Determine the per-model grid bounds, allowing for the zooming grid search.
 
-    @keyword lower:     The user supplied lower bounds of the grid search which must be equal to the number of parameters in the model.
-    @type lower:        list of numbers
-    @keyword upper:     The user supplied upper bounds of the grid search which must be equal to the number of parameters in the model.
-    @type upper:        list of numbers
-    @keyword inc:       The user supplied grid search increments.
-    @type inc:          int or list of int
-    @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
-    @type verbosity:    int
-    @return:            The per-model grid upper and lower bounds.  The first dimension of each structure corresponds to the model, the second the model parameters.
-    @rtype:             tuple of lists of lists of float, lists of lists of float, list of lists of int
+    @keyword lower:         The user supplied lower bounds of the grid search which must be equal to the number of parameters in the model.
+    @type lower:            list of numbers
+    @keyword upper:         The user supplied upper bounds of the grid search which must be equal to the number of parameters in the model.
+    @type upper:            list of numbers
+    @keyword inc:           The user supplied grid search increments.
+    @type inc:              int or list of int
+    @keyword verbosity:     The amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:        int
+    @keyword skip_preset:   This argument, when True, allows any parameter which already has a value set to be skipped in the grid search.
+    @type skip_preset:      bool
+    @return:                The per-model grid upper and lower bounds.  The first dimension of each structure corresponds to the model, the second the model parameters.
+    @rtype:                 tuple of lists of lists of float, lists of lists of float, list of lists of int
     """
 
     # The specific analysis API object and parameter object.
@@ -290,7 +294,11 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1):
             else:
                 upper_i = param_object.grid_upper(names[i], model_info=model_info)
 
-            # The scaling factor.
+            # Skip preset values.
+            if skip_preset and values[i] != None:
+                lower_i = values[i]
+                upper_i = values[i]
+                model_inc[-1][i] = 1
 
             # Scale the bounds.
             scaling = param_object.scaling(names[i], model_info=model_info)

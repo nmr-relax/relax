@@ -98,6 +98,13 @@ uf.add_keyarg(
     desc_short = "constraints flag",
     desc = "A boolean flag specifying whether the parameters should be constrained.  The default is to turn constraints on (constraints=True)."
 )
+uf.add_keyarg(
+    name = "skip_preset",
+    default = True,
+    py_type = "bool",
+    desc_short = "skip preset parameter flag",
+    desc = "This argument, when True, allows any parameter which already has a value set to be skipped in the grid search."
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will perform a grid search across the parameter space.")
