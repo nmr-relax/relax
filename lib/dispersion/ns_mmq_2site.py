@@ -142,18 +142,18 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
             # Loop over offsets:
             for oi in range(NO):
 
-                r20a_si_mi_oi = R20A[si, mi, oi, 0]
-                r20b_si_mi_oi = R20B[si, mi, oi, 0]
-                dw_si_mi_oi = dw[si, mi, oi, 0]
-                dwH_si_mi_oi = dwH[si, mi, oi, 0]
-                num_points_si_mi_oi = num_points[si, mi, oi]
+                r20a_i = R20A[si, mi, oi, 0]
+                r20b_i = R20B[si, mi, oi, 0]
+                dw_i = dw[si, mi, oi, 0]
+                dwH_i = dwH[si, mi, oi, 0]
+                num_points_i = num_points[si, mi, oi]
 
                 # Populate the m1 and m2 matrices (only once per function call for speed).
-                populate_matrix(matrix=m1, R20A=r20a_si_mi_oi, R20B=r20b_si_mi_oi, dw=-dw_si_mi_oi - dwH_si_mi_oi, k_AB=k_AB, k_BA=k_BA)     # D+ matrix component.
-                populate_matrix(matrix=m2, R20A=r20a_si_mi_oi, R20B=r20b_si_mi_oi, dw=dw_si_mi_oi - dwH_si_mi_oi, k_AB=k_AB, k_BA=k_BA)    # Z- matrix component.
+                populate_matrix(matrix=m1, R20A=r20a_i, R20B=r20b_i, dw=-dw_i - dwH_i, k_AB=k_AB, k_BA=k_BA)     # D+ matrix component.
+                populate_matrix(matrix=m2, R20A=r20a_i, R20B=r20b_i, dw=dw_i - dwH_i, k_AB=k_AB, k_BA=k_BA)    # Z- matrix component.
 
                 # Loop over the time points, back calculating the R2eff values.
-                for i in range(num_points_si_mi_oi):
+                for i in range(num_points_i):
                     # The M1 and M2 matrices.
                     M1 = matrix_exponential(m1*tcp[si, mi, oi, i])    # Equivalent to D+.
                     M2 = matrix_exponential(m2*tcp[si, mi, oi, i])    # Equivalent to Z-.
@@ -292,17 +292,17 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
             # Loop over offsets:
             for oi in range(NO):
 
-                r20a_si_mi_oi = R20A[si, mi, oi, 0]
-                r20b_si_mi_oi = R20B[si, mi, oi, 0]
-                dw_si_mi_oi = dw[si, mi, oi, 0]
-                num_points_si_mi_oi = num_points[si, mi, oi]
+                r20a_i = R20A[si, mi, oi, 0]
+                r20b_i = R20B[si, mi, oi, 0]
+                dw_i = dw[si, mi, oi, 0]
+                num_points_i = num_points[si, mi, oi]
 
                 # Populate the m1 and m2 matrices (only once per function call for speed).
-                populate_matrix(matrix=m1, R20A=r20a_si_mi_oi , R20B=r20b_si_mi_oi, dw=dw_si_mi_oi, k_AB=k_AB, k_BA=k_BA)
-                populate_matrix(matrix=m2, R20A=r20a_si_mi_oi , R20B=r20b_si_mi_oi, dw=-dw_si_mi_oi, k_AB=k_AB, k_BA=k_BA)
+                populate_matrix(matrix=m1, R20A=r20a_i , R20B=r20b_i, dw=dw_i, k_AB=k_AB, k_BA=k_BA)
+                populate_matrix(matrix=m2, R20A=r20a_i , R20B=r20b_i, dw=-dw_i, k_AB=k_AB, k_BA=k_BA)
 
                 # Loop over the time points, back calculating the R2eff values.
-                for i in range(num_points_si_mi_oi):
+                for i in range(num_points_i):
                     # The A+/- matrices.
                     A_pos = matrix_exponential(m1*tcp[si, mi, oi, i])
                     A_neg = matrix_exponential(m2*tcp[si, mi, oi, i])
