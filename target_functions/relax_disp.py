@@ -1257,7 +1257,6 @@ class Dispersion:
 
         # Loop over the experiment types.
         for ei in range(self.NE):
-
             r20 = self.r20_struct[ei]
             dw_frq = self.dw_struct[ei]
             dwH_frq = self.dwH_struct[ei]
@@ -1495,7 +1494,6 @@ class Dispersion:
 
         # Loop over the experiment types.
         for ei in range(self.NE):
-
             r20 = self.r20_struct[ei]
             dw_frq = self.dw_struct[ei]
             dwH_frq = self.dwH_struct[ei]
