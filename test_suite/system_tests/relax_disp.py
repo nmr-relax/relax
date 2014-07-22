@@ -691,6 +691,64 @@ class Relax_disp(SystemTestCase):
         self.interpreter.calc(verbosity=1)
 
 
+    def setup_tp02_data_to_ns_r1rho_2site(self, clustering=False):
+        """Setup data for the test of relaxation dispersion 'NS R1rho 2-site' model fitting against the 'TP02' test data."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Create the data pipe and load the base data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'r1rho_off_res_tp02'
+        self.interpreter.state.load(data_path+sep+'r2eff_values')
+
+        # The model data pipe.
+        model = 'NS R1rho 2-site'
+        pipe_name = "%s - relax_disp" % model
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=pipe_name, bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name=pipe_name)
+
+        # Set the model.
+        self.interpreter.relax_disp.select_model(model=model)
+
+        # Copy the data.
+        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=pipe_name, param='r2eff')
+
+        # Alias the spins.
+        spin1 = cdp.mol[0].res[0].spin[0]
+        spin2 = cdp.mol[0].res[1].spin[0]
+
+        # The R20 keys.
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=800e6)
+
+        # Set the initial parameter values.
+        spin1.r2 = {r20_key1: 9.9963793866185, r20_key2: 15.0056724422684}
+        spin1.pA = 0.779782428085762
+        spin1.dw = 7.57855284496424
+        spin1.kex = 1116.7911285203
+        spin2.r2 = {r20_key1: 11.9983346935434, r20_key2: 18.0076097513337}
+        spin2.pA = 0.826666229688602
+        spin2.dw = 9.5732624231366
+        spin2.kex = 1380.46162655657
+
+        # Test the values when clustering.
+        if clustering:
+            self.interpreter.relax_disp.cluster(cluster_id='all', spin_id=":1-100")
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:1)", "Value (:2)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin1.r2[r20_key1], spin2.r2[r20_key1]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin1.r2[r20_key2], spin2.r2[r20_key2]))
+        print("%-20s %20.15g %20.15g" % ("pA", spin1.pA, spin2.pA))
+        print("%-20s %20.15g %20.15g" % ("dw", spin1.dw, spin2.dw))
+        print("%-20s %20.15g %20.15g" % ("kex", spin1.kex, spin2.kex))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin1.chi2, spin2.chi2))
+
+
     def test_baldwin_synthetic(self):
         """Test synthetic data of Andrew J. Baldwin B14 model  whereby the simplification R20A = R20B is assumed.
 
@@ -6013,24 +6071,8 @@ class Relax_disp(SystemTestCase):
     def test_tp02_data_to_ns_r1rho_2site(self, model=None):
         """Test the relaxation dispersion 'NS R1rho 2-site' model fitting against the 'TP02' test data."""
 
-        # Reset.
-        self.interpreter.reset()
-
-        # Create the data pipe and load the base data.
-        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'r1rho_off_res_tp02'
-        self.interpreter.state.load(data_path+sep+'r2eff_values')
-
-        # The model data pipe.
-        model = 'NS R1rho 2-site'
-        pipe_name = "%s - relax_disp" % model
-        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=pipe_name, bundle_to='relax_disp')
-        self.interpreter.pipe.switch(pipe_name=pipe_name)
-
-        # Set the model.
-        self.interpreter.relax_disp.select_model(model=model)
-
-        # Copy the data.
-        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=pipe_name, param='r2eff')
+        # Setup the data.
+        self.setup_tp02_data_to_ns_r1rho_2site()
 
         # Alias the spins.
         spin1 = cdp.mol[0].res[0].spin[0]
@@ -6039,29 +6081,6 @@ class Relax_disp(SystemTestCase):
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=500e6)
         r20_key2 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=800e6)
-
-        # Set the initial parameter values.
-        spin1.r2 = {r20_key1: 9.9963793866185, r20_key2: 15.0056724422684}
-        spin1.pA = 0.779782428085762
-        spin1.dw = 7.57855284496424
-        spin1.kex = 1116.7911285203
-        spin2.r2 = {r20_key1: 11.9983346935434, r20_key2: 18.0076097513337}
-        spin2.pA = 0.826666229688602
-        spin2.dw = 9.5732624231366
-        spin2.kex = 1380.46162655657
-
-        # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
-
-        # Printout.
-        print("\n\nOptimised parameters:\n")
-        print("%-20s %-20s %-20s" % ("Parameter", "Value (:1)", "Value (:2)"))
-        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin1.r2[r20_key1], spin2.r2[r20_key1]))
-        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin1.r2[r20_key2], spin2.r2[r20_key2]))
-        print("%-20s %20.15g %20.15g" % ("pA", spin1.pA, spin2.pA))
-        print("%-20s %20.15g %20.15g" % ("dw", spin1.dw, spin2.dw))
-        print("%-20s %20.15g %20.15g" % ("kex", spin1.kex, spin2.kex))
-        print("%-20s %20.15g %20.15g\n" % ("chi2", spin1.chi2, spin2.chi2))
 
         # Checks for residue :1.
         self.assertAlmostEqual(spin1.r2[r20_key1], 8.50207717367548, 4)
@@ -6078,6 +6097,37 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin2.dw, 9.5505714779503, 4)
         self.assertAlmostEqual(spin2.kex/1000, 1454.45726998929/1000, 4)
         self.assertAlmostEqual(spin2.chi2, 0.000402231563481261, 4)
+
+
+    def test_tp02_data_to_ns_r1rho_2site_cluster(self, model=None):
+        """Test the relaxation dispersion 'NS R1rho 2-site' model fitting against the 'TP02' test data, when performing clustering."""
+
+        # Setup the data.
+        self.setup_tp02_data_to_ns_r1rho_2site(clustering=True)
+
+        # Alias the spins.
+        spin1 = cdp.mol[0].res[0].spin[0]
+        spin2 = cdp.mol[0].res[1].spin[0]
+
+        # The R20 keys.
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=800e6)
+
+        # Checks for residue :1.
+        self.assertAlmostEqual(spin1.r2[r20_key1], 8.48607207881462, 4)
+        self.assertAlmostEqual(spin1.r2[r20_key2], 13.4527609061722, 4)
+        self.assertAlmostEqual(spin1.pA, 0.863093838784425, 4)
+        self.assertAlmostEqual(spin1.dw, 8.86218096536618, 4)
+        self.assertAlmostEqual(spin1.kex/1000, 1186.22749648299/1000, 4)
+        self.assertAlmostEqual(spin1.chi2, 3.09500996065247, 4)
+
+        # Checks for residue :2.
+        self.assertAlmostEqual(spin2.r2[r20_key1], 10.4577906018883, 4)
+        self.assertAlmostEqual(spin2.r2[r20_key2], 16.4455550953792, 4)
+        self.assertAlmostEqual(spin2.pA, 0.863093838784425, 4)
+        self.assertAlmostEqual(spin2.dw, 11.5841168862587, 4)
+        self.assertAlmostEqual(spin2.kex/1000, 1186.22749648299/1000, 4)
+        self.assertAlmostEqual(spin2.chi2, 3.09500996065247, 4)
 
 
     def test_tp02_data_to_mp05(self):

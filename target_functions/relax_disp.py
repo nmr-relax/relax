@@ -26,8 +26,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import pi
-from numpy import add, array, asarray, complex64, dot, float64, int16, max, multiply, ones, sum, tile, zeros
+from numpy import arctan2, cos, dot, float64, int16, multiply, ones, rollaxis, pi, sin, sum, zeros
 from numpy.ma import masked_equal
 
 # relax module imports.
@@ -401,12 +400,43 @@ class Dispersion:
         if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
             self.M0 = zeros(3, float64)
         if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL]:
-            self.M0 = zeros(7, float64)
-            self.M0[0] = 0.5
+            M0_0 = zeros( [self.NE, self.NS, self.NM, self.NO, self.ND,7, 1], float64)
+            M0_0[:, :, :, :, :, 0, 0] = 0.5
+            self.M0 = M0_0
+            # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
+            self.M0_T = rollaxis(self.M0, 6, 5)
         if model in [MODEL_NS_R1RHO_2SITE]:
-            self.M0 = zeros(6, float64)
+            # Offset of spin-lock from A.
+            da_mat = self.chemical_shifts - self.offset
+            # The following lines rotate the magnetization previous to spin-lock into the weff frame.
+            theta_mat = arctan2(self.spin_lock_omega1, da_mat)
+            M0_0 = zeros([6, 1], float64)
+            M0_0[0, 0] = 1
+            M0_sin = multiply.outer( sin(theta_mat), M0_0 )
+            M0_2 = zeros([6, 1], float64)
+            M0_2[2, 0] = 1
+            M0_cos = multiply.outer( cos(theta_mat), M0_2 )
+            self.M0 = M0_sin + M0_cos
+            # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
+            self.M0_T = rollaxis(self.M0, 6, 5)
+
         if model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
             self.M0 = zeros(9, float64)
+            # Offset of spin-lock from A.
+            da_mat = self.chemical_shifts - self.offset
+            # The following lines rotate the magnetization previous to spin-lock into the weff frame.
+            theta_mat = arctan2(self.spin_lock_omega1, da_mat)
+            M0_0 = zeros([9, 1], float64)
+            M0_0[0, 0] = 1
+            # The A state initial X magnetisation.
+            M0_sin = multiply.outer( sin(theta_mat), M0_0 )
+            M0_2 = zeros([9, 1], float64)
+            M0_2[2, 0] = 1
+            # The A state initial Z magnetisation.
+            M0_cos = multiply.outer( cos(theta_mat), M0_2 )
+            self.M0 = M0_sin + M0_cos
+            # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
+            self.M0_T = rollaxis(self.M0, 6, 5)
 
         # Set up the model.
         if model == MODEL_NOREX:
@@ -569,7 +599,7 @@ class Dispersion:
         self.r20b_struct[:] = multiply.outer( R20B.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Back calculate the R2eff values.
-        r2eff_ns_cpmg_2site_3D(r180x=self.r180x, M0=self.M0, r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, dw=self.dw_struct, dw_orig=dw, kex=kex, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.back_calc, num_points=self.num_disp_points, power=self.power)
+        r2eff_ns_cpmg_2site_3D(r180x=self.r180x, M0=self.M0, M0_T=self.M0_T, r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, dw=self.dw_struct, dw_orig=dw, kex=kex, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.back_calc, num_points=self.num_disp_points, power=self.power)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
@@ -747,7 +777,7 @@ class Dispersion:
         self.r20_struct[:] = multiply.outer( r1rho_prime.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Back calculate the R2eff values for each experiment type.
-        ns_r1rho_3site(M0=self.M0, r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, r1=self.r1, pA=pA, pB=pB, dw_AB=self.dw_AB_struct, dw_BC=self.dw_BC_struct, kex_AB=kex_AB, kex_BC=kex_BC, kex_AC=kex_AC, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc, num_points=self.num_disp_points)
+        ns_r1rho_3site(M0=self.M0, M0_T=self.M0_T, r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, r1=self.r1, pA=pA, pB=pB, dw_AB=self.dw_AB_struct, dw_BC=self.dw_BC_struct, kex_AB=kex_AB, kex_BC=kex_BC, kex_AC=kex_AC, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc, num_points=self.num_disp_points)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
@@ -1575,7 +1605,7 @@ class Dispersion:
         self.r20_struct[:] = multiply.outer( r1rho_prime.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Back calculate the R2eff values.
-        ns_r1rho_2site(M0=self.M0, r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, r1=self.r1, pA=pA, dw=self.dw_struct, kex=kex, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc, num_points=self.num_disp_points)
+        ns_r1rho_2site(M0=self.M0, M0_T=self.M0_T, r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, r1=self.r1, pA=pA, dw=self.dw_struct, kex=kex, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc, num_points=self.num_disp_points)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct

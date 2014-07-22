@@ -109,7 +109,7 @@ class Profile(Dispersion):
     Class Profile inherits the Dispersion container class object.
     """
 
-    def __init__(self, num_spins=1, model=None, r2=None, r2a=None, r2b=None, phi_ex=None, dw=None, pA=None, kex=None, spins_params=None):
+    def __init__(self, num_spins=1, model=None, r2=None, r2a=None, r2b=None, phi_ex=None, dw=None, dw_AB=None, dw_BC=None, pA=None, kex=None, kex_AB=None, pB=None, kex_BC=None, kex_AC=None, spins_params=None):
         """
         Special method __init__() is called first (acts as Constructor).
         It brings in data from outside the class like the variable num_spins.
@@ -172,7 +172,7 @@ class Profile(Dispersion):
         self.chemical_shift = 1.0
 
         # Assemble param vector.
-        self.params = self.assemble_param_vector(r2=r2, r2a=r2a, r2b=r2b, phi_ex=phi_ex, dw=dw, pA=pA, kex=kex, spins_params=spins_params)
+        self.params = self.assemble_param_vector(r2=r2, r2a=r2a, r2b=r2b, phi_ex=phi_ex, dw=dw, dw_AB=dw_AB, dw_BC=dw_BC, pA=pA, kex=kex, kex_AB=kex_AB, pB=pB, kex_BC=kex_BC, kex_AC=kex_AC, spins_params=spins_params)
 
         # Make nested list arrays of data. And return them.
         values, errors, cpmg_frqs, missing, frqs, exp_types, relax_times, offsets, spin_lock_nu1 = self.return_r2eff_arrays()
@@ -402,7 +402,7 @@ class Profile(Dispersion):
         return values, errors, None, missing, frqs, exp_types, relax_times, offsets, asarray(spin_lock_nu1)
 
 
-    def assemble_param_vector(self, r2=None, r2a=None, r2b=None, phi_ex=None, dw=None, pA=None, kex=None, spins_params=None):
+    def assemble_param_vector(self, r2=None, r2a=None, r2b=None, phi_ex=None, dw=None, dw_AB=None, dw_BC=None, pA=None, kex=None, kex_AB=None, pB=None, kex_BC=None, kex_AC=None, spins_params=None):
         """Assemble the dispersion relaxation dispersion curve fitting parameter vector.
 
         @keyword r2:            The transversal relaxation rate.
@@ -443,10 +443,22 @@ class Profile(Dispersion):
                 value = phi_ex + spin_index
             elif param_name == 'dw':
                 value = dw + spin_index
+            elif param_name == 'dw_AB':
+                value = dw_AB + spin_index
+            elif param_name == 'dw_BC':
+                value = dw_BC + spin_index
             elif param_name == 'pA':
                 value = pA
             elif param_name == 'kex':
                 value = kex
+            elif param_name == 'kex_AB':
+                value = kex_AB
+            elif param_name == 'pB':
+                value = pB
+            elif param_name == 'kex_BC':
+                value = kex_BC
+            elif param_name == 'kex_AC':
+                value = kex_AC
 
             # Add to the vector.
             param_vector.append(value)
@@ -502,15 +514,31 @@ class Profile(Dispersion):
                 yield 'padw2', pspin_index, 0
             if 'dw' in spins_params:
                 yield 'dw', spin_index, 0
+            if 'dw_AB' in spins_params:
+                yield 'dw_AB', spin_index, 0
+            if 'dw_BC' in spins_params:
+                yield 'dw_BC', spin_index, 0
 
         # All other parameters (one per spin cluster).
         for param in spins_params:
             if not param in ['r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AB', 'dwH', 'dwH_AB', 'dwH_BC', 'dwH_AB']:
                 if param == 'pA':
                     yield 'pA', 0, 0
+
                 elif param == 'kex':
                     yield 'kex', 0, 0
 
+                elif param == 'kex_AB':
+                    yield 'kex_AB', 0, 0
+
+                elif param == 'pB':
+                    yield 'pB', 0, 0
+
+                elif param == 'kex_BC':
+                    yield 'kex_BC', 0, 0
+
+                elif param == 'kex_AC':
+                    yield 'kex_AC', 0, 0
 
     def calc(self, params):
         """Calculate chi2 values.
@@ -522,11 +550,11 @@ class Profile(Dispersion):
         """
 
         # Return chi2 value.
-        chi2 = self.model.func_ns_r1rho_2site(params)
+        chi2 = self.model.func_ns_r1rho_3site(params)
         return chi2
 
 
-def single(num_spins=1, model=MODEL_NS_R1RHO_2SITE, iter=None):
+def single(num_spins=1, model=MODEL_NS_R1RHO_3SITE, iter=None):
     """Calculate for a single spin.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -540,7 +568,7 @@ def single(num_spins=1, model=MODEL_NS_R1RHO_2SITE, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=1.0, pA=0.9, kex=5000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw_AB=1.0, dw_BC=2.0, pA=0.8, kex_AB=5000.0, pB=0.1, kex_BC=3000.0, kex_AC=1000.0, spins_params=['r2', 'dw_AB', 'dw_BC', 'pA', 'kex_AB', 'pB', 'kex_BC', 'kex_AC'])
 
     # Loop 100 times for each spin in the clustered analysis (to make the timing numbers equivalent).
     for spin_index in xrange(100):
@@ -550,7 +578,7 @@ def single(num_spins=1, model=MODEL_NS_R1RHO_2SITE, iter=None):
     print("chi2 single:", chi2)
 
 
-def cluster(num_spins=100, model=MODEL_NS_R1RHO_2SITE, iter=None):
+def cluster(num_spins=100, model=MODEL_NS_R1RHO_3SITE, iter=None):
     """Calculate for a number of clustered spins.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -564,7 +592,7 @@ def cluster(num_spins=100, model=MODEL_NS_R1RHO_2SITE, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=1.0, pA=0.9, kex=5000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw_AB=1.0, dw_BC=2.0, pA=0.8, kex_AB=5000.0, pB=0.1, kex_BC=3000.0, kex_AC=1000.0, spins_params=['r2', 'dw_AB', 'dw_BC', 'pA', 'kex_AB', 'pB', 'kex_BC', 'kex_AC'])
 
     # Repeat the function call, to simulate minimisation.
     for i in xrange(iter):

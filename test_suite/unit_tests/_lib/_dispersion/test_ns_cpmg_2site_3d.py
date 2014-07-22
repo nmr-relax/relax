@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, ones, pi, zeros
+from numpy import array, float64, ones, pi, rollaxis, zeros
 from unittest import TestCase
 
 # relax module imports.
@@ -45,10 +45,6 @@ class Test_ns_cpmg_2site_3d(TestCase):
         # The 3D rotation matrix for an imperfect X-axis pi-pulse.
         self.r180x = r180x_3d()
 
-        # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
-        self.M0 = zeros(7, float64)
-        self.M0[0] = 0.5
-
         self.num_points = 7
         self.ncyc = array([2, 4, 8, 10, 20, 40, 500])
         relax_times = 0.04
@@ -62,18 +58,25 @@ class Test_ns_cpmg_2site_3d(TestCase):
         # The spin Larmor frequencies.
         self.sfrq = 200. * 1E6
 
+        # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
+        M0_0 = zeros( [1, 1, 1, 1, 1, 7, 1], float64)
+        M0_0[:, :, :, :, :, 0, 0] = 0.5
+        self.M0 = M0_0
+        # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
+        self.M0_T = rollaxis(self.M0, 6, 5)
+
 
     def calc_r2eff(self):
         """Calculate and check the R2eff values."""
 
         # Parameter conversions.
-        k_AB, k_BA, pB, dw_frq, M0 = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq, M0=self.M0)
+        k_AB, k_BA, pB, dw_frq = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
         a = ones(self.array_shape)
         b = ones([1, 1, 1, 1])
 
         # Calculate the R2eff values.
-        r2eff_ns_cpmg_2site_3D(r180x=self.r180x, M0=M0, r20a=self.r20a*a, r20b=self.r20b*a, pA=self.pA, dw=dw_frq*a, dw_orig=dw_frq*a, kex=self.kex, inv_tcpmg=self.inv_relax_times*a, tcp=self.tau_cpmg*a, back_calc=self.R2eff, num_points=self.num_points*b, power=self.ncyc*a)
+        r2eff_ns_cpmg_2site_3D(r180x=self.r180x, M0=self.M0, M0_T=self.M0_T, r20a=self.r20a*a, r20b=self.r20b*a, pA=self.pA, dw=dw_frq*a, dw_orig=dw_frq*a, kex=self.kex, inv_tcpmg=self.inv_relax_times*a, tcp=self.tau_cpmg*a, back_calc=self.R2eff, num_points=self.num_points*b, power=self.ncyc*a)
 
         if self.kex >= 1.e5:
             for i in range(self.num_points):
@@ -83,7 +86,7 @@ class Test_ns_cpmg_2site_3d(TestCase):
                 self.assertAlmostEqual(self.R2eff[0][0][0][0][i], self.r20a)
 
 
-    def param_conversion(self, pA=None, kex=None, dw=None, sfrq=None, M0=None):
+    def param_conversion(self, pA=None, kex=None, dw=None, sfrq=None):
         """Convert the parameters.
 
         @keyword pA:    The population of state A.
@@ -103,10 +106,6 @@ class Test_ns_cpmg_2site_3d(TestCase):
         # Calculate pB.
         pB = 1.0 - pA
 
-        # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
-        M0[1] = pA
-        M0[4] = pB
-
         # Exchange rates.
         k_BA = pA * kex
         k_AB = pB * kex
@@ -118,7 +117,7 @@ class Test_ns_cpmg_2site_3d(TestCase):
         dw_frq = dw * frqs / 1.e6
 
         # Return all values.
-        return k_AB, k_BA, pB, dw_frq, M0
+        return k_AB, k_BA, pB, dw_frq
 
 
     def test_ns_cpmg_2site_3D_no_rex1(self):

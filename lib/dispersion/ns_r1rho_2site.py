@@ -50,11 +50,10 @@ More information on the NS R1rho 2-site model can be found in the:
 """
 
 # Python module imports.
-from math import atan2
-from numpy import array, cos, dot, float64, log, multiply, sin, sum
+from numpy import array, einsum, float64, isfinite, log, min, multiply, sin, sum
+from numpy.ma import fix_invalid, masked_less
 
 # relax module imports.
-from lib.float import isNaN
 from lib.dispersion.matrix_exponential import matrix_exponential_rank_NE_NS_NM_NO_ND_x_x
 
 # Repetitive calculations (to speed up calculations).
@@ -188,14 +187,16 @@ def rr1rho_3d_2site_rankN(R1=None, r1rho_prime=None, dw=None, omega=None, offset
     return matrix
 
 
-def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, dw=None, kex=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
+def ns_r1rho_2site(M0=None, M0_T=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, dw=None, kex=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for R1rho data.
 
     This function calculates and stores the R1rho values.
 
 
     @keyword M0:                This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
-    @type M0:                   numpy float64, rank-1, 7D array
+    @type M0:                   numpy float array of rank [NE][NS][NM][NO][ND][6][1]
+    @keyword M0_T:              This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations, where the outer two axis has been swapped for efficient dot operations.
+    @type M0_T:                 numpy float array of rank [NE][NS][NM][NO][ND][1][6]
     @keyword r1rho_prime:       The R1rho_prime parameter value (R1rho with no exchange).
     @type r1rho_prime:          numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword omega:             The chemical shift for the spin in rad/s.
@@ -236,35 +237,25 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
     # This matrix is a propagator that will evolve the magnetization with the matrix R.
     Rexpo_mat = matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(R_mat)
 
-    # Loop over spins.
-    for si in range(NS):
-        # Loop over the spectrometer frequencies.
-        for mi in range(NM):
-            # Loop over offsets:
-            for oi in range(NO):
-                # Extract number of points.
-                num_points_i = num_points[0, si, mi, oi]
+    # Magnetization evolution.
+    Rexpo_M0_mat = einsum('...ij,...jk', Rexpo_mat, M0)
 
-                # Repetitive calculations (to speed up calculations).
-                # Offset of spin-lock from A.
-                dA = omega[0, si, mi, oi, 0] - offset[0, si, mi, oi, 0]
+    # Magnetization evolution, which include all dimensions.
+    MA_mat = einsum('...ij,...jk', M0_T, Rexpo_M0_mat)[:, :, :, :, :, 0, 0]
 
-                # Loop over the time points, back calculating the R2eff values.
-                for j in range(num_points_i):
-                    # The following lines rotate the magnetization previous to spin-lock into the weff frame.
-                    theta = atan2(spin_lock_fields[0, si, mi, oi, j], dA)
-                    M0[0] = sin(theta)    # The A state initial X magnetisation.
-                    M0[2] = cos(theta)    # The A state initial Z magnetisation.
+    # Insert safe checks.
+    if min(MA_mat) < 0.0:
+        mask_min_MA_mat = masked_less(MA_mat, 0.0)
+        # Fill with high values.
+        MA_mat[mask_min_MA_mat.mask] = 1e100
 
-                    # This matrix is a propagator that will evolve the magnetization with the matrix R.
-                    Rexpo_i = Rexpo_mat[0, si, mi, oi, j]
+    # Do back calculation.
+    back_calc[:] = -inv_relax_time * log(MA_mat)
 
-                    # Magnetization evolution.
-                    MA = dot(Rexpo_i, M0)
-                    MA = dot(M0, MA)
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(back_calc)):
+        # Replaces nan, inf, etc. with fill value.
+        fix_invalid(back_calc, copy=False, fill_value=1e100)
 
-                    # The next lines calculate the R1rho using a two-point approximation, i.e. assuming that the decay is mono-exponential.
-                    if MA <= 0.0 or isNaN(MA):
-                        back_calc[0, si, mi, oi, j] = 1e99
-                    else:
-                        back_calc[0, si, mi, oi, j]= -inv_relax_time[0, si, mi, oi, j] * log(MA)
+

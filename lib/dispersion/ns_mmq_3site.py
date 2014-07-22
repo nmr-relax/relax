@@ -57,12 +57,12 @@ More information on the NS MMQ 3-site model can be found in the:
 
 # Python module imports.
 from math import floor
-from numpy import array, conj, dot, float64, log, multiply, sum
+from numpy import array, conj, dot, einsum, float64, log, multiply, sum
+from numpy.linalg import matrix_power
 
 # relax module imports.
 from lib.float import isNaN
 from lib.dispersion.matrix_exponential import matrix_exponential_rank_NS_NM_NO_ND_x_x
-from lib.linear_algebra.matrix_power import square_matrix_power
 
 # Repetitive calculations (to speed up calculations).
 # R20.
@@ -297,8 +297,20 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None
     M2_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m2_mat)
 
     # The complex conjugates M1* and M2*
+    # Equivalent to D+*.
     M1_star_mat = conj(M1_mat)
+    # Equivalent to Z-*.
     M2_star_mat = conj(M2_mat)
+
+    # Repetitive dot products (minimised for speed).
+    M1_M2_mat = einsum('...ij,...jk', M1_mat, M2_mat)
+    M2_M1_mat = einsum('...ij,...jk', M2_mat, M1_mat)
+    M1_M2_M2_M1_mat = einsum('...ij,...jk', M1_M2_mat, M2_M1_mat)
+    M2_M1_M1_M2_mat = einsum('...ij,...jk', M2_M1_mat, M1_M2_mat)
+    M1_M2_star_mat = einsum('...ij,...jk', M1_star_mat, M2_star_mat)
+    M2_M1_star_mat = einsum('...ij,...jk', M2_star_mat, M1_star_mat)
+    M1_M2_M2_M1_star_mat = einsum('...ij,...jk', M1_M2_star_mat, M2_M1_star_mat)
+    M2_M1_M1_M2_star_mat = einsum('...ij,...jk', M2_M1_star_mat, M1_M2_star_mat)
 
     # Loop over spins.
     for si in range(NS):
@@ -311,79 +323,68 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None
 
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
-                    # The M1 and M2 matrices.
-                    # Equivalent to D+.
-                    M1_i = M1_mat[si, mi, oi, i]
-                    # Equivalent to Z-.
-                    M2_i = M2_mat[si, mi, oi, i]
-
-                    # The complex conjugates M1* and M2*
-                    # Equivalent to D+*.
-                    M1_star_i = M1_star_mat[si, mi, oi, i]
-                    # Equivalent to Z-*.
-                    M2_star_i = M2_star_mat[si, mi, oi, i]
-
-                    # Repetitive dot products (minimised for speed).
-                    M1_M2 = dot(M1_i, M2_i)
-                    M2_M1 = dot(M2_i, M1_i)
-                    M1_M2_M2_M1 = dot(M1_M2, M2_M1)
-                    M2_M1_M1_M2 = dot(M2_M1, M1_M2)
-                    M1_M2_star = dot(M1_star_i, M2_star_i)
-                    M2_M1_star = dot(M2_star_i, M1_star_i)
-                    M1_M2_M2_M1_star = dot(M1_M2_star, M2_M1_star)
-                    M2_M1_M1_M2_star = dot(M2_M1_star, M1_M2_star)
+                    # Extract data from array.
+                    power_i = int(power[si, mi, oi, i])
+                    M1_M2_i = M1_M2_mat[si, mi, oi, i]
+                    M1_M2_star_i = M1_M2_star_mat[si, mi, oi, i]
+                    M2_M1_i = M2_M1_mat[si, mi, oi, i]
+                    M2_M1_star_i = M2_M1_star_mat[si, mi, oi, i]
+                    M1_M2_M2_M1_i = M1_M2_M2_M1_mat[si, mi, oi, i]
+                    M2_M1_M1_M2_star_i = M2_M1_M1_M2_star_mat[si, mi, oi, i]
+                    M2_M1_M1_M2_i = M2_M1_M1_M2_mat[si, mi, oi, i]
+                    M1_M2_M2_M1_star_i = M1_M2_M2_M1_star_mat[si, mi, oi, i]
 
                     # Special case of 1 CPMG block - the power is zero.
-                    if power[si, mi, oi, i] == 1:
+                    if power_i == 1:
                         # M1.M2.
-                        A = M1_M2
+                        A = M1_M2_i
 
                         # M1*.M2*.
-                        B = M1_M2_star
+                        B = M1_M2_star_i
 
                         # M2.M1.
-                        C = M2_M1
+                        C = M2_M1_i
 
                         # M2*.M1*.
-                        D = M2_M1_star
+                        D = M2_M1_star_i
 
                     # Matrices for even number of CPMG blocks.
-                    elif power[si, mi, oi, i] % 2 == 0:
+                    elif power_i % 2 == 0:
                         # The power factor (only calculate once).
-                        fact = int(floor(power[si, mi, oi, i] / 2))
+                        fact = int(floor(power_i / 2))
 
                         # (M1.M2.M2.M1)^(n/2).
-                        A = square_matrix_power(M1_M2_M2_M1, fact)
+                        A = matrix_power(M1_M2_M2_M1_i, fact)
 
                         # (M2*.M1*.M1*.M2*)^(n/2).
-                        B = square_matrix_power(M2_M1_M1_M2_star, fact)
+                        B = matrix_power(M2_M1_M1_M2_star_i, fact)
 
                         # (M2.M1.M1.M2)^(n/2).
-                        C = square_matrix_power(M2_M1_M1_M2, fact)
+                        C = matrix_power(M2_M1_M1_M2_i, fact)
 
                         # (M1*.M2*.M2*.M1*)^(n/2).
-                        D = square_matrix_power(M1_M2_M2_M1_star, fact)
+                        D = matrix_power(M1_M2_M2_M1_star_i, fact)
 
                     # Matrices for odd number of CPMG blocks.
                     else:
                         # The power factor (only calculate once).
-                        fact = int(floor((power[si, mi, oi, i] - 1) / 2))
+                        fact = int(floor((power_i - 1) / 2))
 
                         # (M1.M2.M2.M1)^((n-1)/2).M1.M2.
-                        A = square_matrix_power(M1_M2_M2_M1, fact)
-                        A = dot(A, M1_M2)
+                        A = matrix_power(M1_M2_M2_M1_i, fact)
+                        A = dot(A, M1_M2_i)
 
                         # (M1*.M2*.M2*.M1*)^((n-1)/2).M1*.M2*.
-                        B = square_matrix_power(M1_M2_M2_M1_star, fact)
-                        B = dot(B, M1_M2_star)
+                        B = matrix_power(M1_M2_M2_M1_star_i, fact)
+                        B = dot(B, M1_M2_star_i)
 
                         # (M2.M1.M1.M2)^((n-1)/2).M2.M1.
-                        C = square_matrix_power(M2_M1_M1_M2, fact)
-                        C = dot(C, M2_M1)
+                        C = matrix_power(M2_M1_M1_M2_i, fact)
+                        C = dot(C, M2_M1_i)
 
                         # (M2*.M1*.M1*.M2*)^((n-1)/2).M2*.M1*.
-                        D = square_matrix_power(M2_M1_M1_M2_star, fact)
-                        D = dot(D, M2_M1_star)
+                        D = matrix_power(M2_M1_M1_M2_star_i, fact)
+                        D = dot(D, M2_M1_star_i)
 
                     # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
                     A_B = dot(A, B)
@@ -476,6 +477,11 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), R20
     A_pos_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m1_mat)
     A_neg_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m2_mat)
 
+    # The evolution for one n.
+    evol_block_mat = einsum('...ij,...jk', A_neg_mat, A_pos_mat)
+    evol_block_mat = einsum('...ij,...jk', A_neg_mat, evol_block_mat)
+    evol_block_mat = einsum('...ij,...jk', A_pos_mat, evol_block_mat)
+
     # Loop over spins.
     for si in range(NS):
         # Loop over the spectrometer frequencies.
@@ -487,15 +493,12 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), R20
 
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
-                    # The A+/- matrices.
-                    A_pos_i = A_pos_mat[si, mi, oi, i]
-                    A_neg_i = A_neg_mat[si, mi, oi, i]
-
-                    # The evolution for one n.
-                    evol_block = dot(A_pos_i, dot(A_neg_i, dot(A_neg_i, A_pos_i)))
+                    # Extract data from array.
+                    power_i = int(power[si, mi, oi, i])
+                    evol_block_i = evol_block_mat[si, mi, oi, i]
 
                     # The full evolution.
-                    evol = square_matrix_power(evol_block, power[si, mi, oi, i])
+                    evol = matrix_power(evol_block_i, power_i)
 
                     # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
                     Mx = dot(F_vector, dot(evol, M0))
