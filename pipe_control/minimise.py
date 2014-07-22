@@ -282,6 +282,15 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
         # Loop over the parameters.
         data = []
         for i in range(n):
+            # A comment for user feedback.
+            comment = 'Default bounds'
+            if lower != None and upper != None:
+                comment = 'User supplied lower and upper bound'
+            elif lower != None:
+                comment = 'User supplied lower bound'
+            elif upper != None:
+                comment = 'User supplied upper bound'
+
             # The lower bound for this parameter.
             if lower != None:
                 lower_i = lower[i]
@@ -299,6 +308,7 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
                 lower_i = values[i]
                 upper_i = values[i]
                 model_inc[-1][i] = 1
+                comment = 'Preset value'
 
             # Scale the bounds.
             scaling = param_object.scaling(names[i], model_info=model_info)
@@ -310,11 +320,11 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
             model_upper[-1].append(upper_i)
 
             # Add to the data list for printing out.
-            data.append([names[i], "%20s" % lower_i, "%20s" % upper_i, "%20s" % model_inc[-1][i]])
+            data.append([names[i], "%15s" % lower_i, "%15s" % upper_i, "%15s" % model_inc[-1][i], comment])
 
         # Printout.
         if verbosity:
-            write_data(out=sys.stdout, headings=["Parameter", "Lower", "Upper", "Increments"], data=data)
+            write_data(out=sys.stdout, headings=["Parameter", "Lower", "Upper", "Increments", "Comment"], data=data)
 
     # Return the bounds.
     return model_lower, model_upper, model_inc
