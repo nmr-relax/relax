@@ -36,7 +36,7 @@ import pstats
 import tempfile
 
 from numpy.lib.stride_tricks import as_strided
-from numpy import any, arange, array, asarray, int16, sum, zeros
+from numpy import any, arange, int16, zeros
 from numpy.linalg import matrix_power
 
 def main():

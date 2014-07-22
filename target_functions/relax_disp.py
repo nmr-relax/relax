@@ -26,11 +26,10 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import arctan2, cos, dot, float64, int16, multiply, ones, rollaxis, pi, sin, sum, zeros
+from numpy import arctan2, cos, dot, float64, int16, multiply, ones, rollaxis, pi, sin, zeros
 from numpy.ma import masked_equal
 
 # relax module imports.
-import dep_check
 from lib.dispersion.b14 import r2eff_B14
 from lib.dispersion.cr72 import r2eff_CR72
 from lib.dispersion.dpl94 import r1rho_DPL94
@@ -41,24 +40,22 @@ from lib.dispersion.m61 import r1rho_M61
 from lib.dispersion.m61b import r1rho_M61b
 from lib.dispersion.mp05 import r1rho_MP05
 from lib.dispersion.mmq_cr72 import r2eff_mmq_cr72
+from lib.dispersion.ns_cpmg_2site_3d import r2eff_ns_cpmg_2site_3D
 from lib.dispersion.ns_cpmg_2site_expanded import r2eff_ns_cpmg_2site_expanded
+from lib.dispersion.ns_cpmg_2site_star import r2eff_ns_cpmg_2site_star
+from lib.dispersion.ns_mmq_3site import r2eff_ns_mmq_3site_mq, r2eff_ns_mmq_3site_sq_dq_zq
+from lib.dispersion.ns_mmq_2site import r2eff_ns_mmq_2site_mq, r2eff_ns_mmq_2site_sq_dq_zq
+from lib.dispersion.ns_r1rho_2site import ns_r1rho_2site
+from lib.dispersion.ns_r1rho_3site import ns_r1rho_3site
 from lib.dispersion.ns_matrices import r180x_3d
 from lib.dispersion.tp02 import r1rho_TP02
 from lib.dispersion.tap03 import r1rho_TAP03
 from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from lib.float import isNaN
-from target_functions.chi2 import chi2, chi2_rankN
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_CPMG_FULL, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from target_functions.chi2 import chi2_rankN
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 
-# Check if eisum is available for numerical models.
-if dep_check.einsum_module:
-    from lib.dispersion.ns_cpmg_2site_3d import r2eff_ns_cpmg_2site_3D
-    from lib.dispersion.ns_cpmg_2site_star import r2eff_ns_cpmg_2site_star
-    from lib.dispersion.ns_mmq_3site import r2eff_ns_mmq_3site_mq, r2eff_ns_mmq_3site_sq_dq_zq
-    from lib.dispersion.ns_mmq_2site import r2eff_ns_mmq_2site_mq, r2eff_ns_mmq_2site_sq_dq_zq
-    from lib.dispersion.ns_r1rho_2site import ns_r1rho_2site
-    from lib.dispersion.ns_r1rho_3site import ns_r1rho_3site
 
 class Dispersion:
     def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, exp_types=None, values=None, errors=None, missing=None, frqs=None, frqs_H=None, cpmg_frqs=None, spin_lock_nu1=None, chemical_shifts=None, offset=None, tilt_angles=None, r1=None, relax_times=None, scaling_matrix=None, recalc_tau=True):
@@ -238,19 +235,20 @@ class Dispersion:
         # Create special numpy structures.
         self.no_nd_ones = ones([self.NO, self.ND], float64)
         self.nm_no_nd_ones = ones([self.NM, self.NO, self.ND], float64)
+
         # Structure of r20a and r20b. The full and outer dimensions structures.
         self.r20_struct = deepcopy(numpy_array_zeros)
         self.r20a_struct = deepcopy(numpy_array_zeros)
         self.r20b_struct = deepcopy(numpy_array_zeros)
         self.r20c_struct = deepcopy(numpy_array_zeros)
+
         # Structure of dw. The full and the outer dimensions structures.
         self.dw_struct = deepcopy(numpy_array_zeros)
         self.dwH_struct = deepcopy(numpy_array_zeros)
         self.dw_AB_struct = deepcopy(numpy_array_zeros)
-        self.dw_AC_struct = deepcopy(numpy_array_zeros)
         self.dw_BC_struct = deepcopy(numpy_array_zeros)
         self.dwH_AB_struct = deepcopy(numpy_array_zeros)
-        self.dwH_AC_struct = deepcopy(numpy_array_zeros)
+        self.dwH_BC_struct = deepcopy(numpy_array_zeros)
         self.phi_ex_struct = deepcopy(numpy_array_zeros)
         self.phi_ex_B_struct = deepcopy(numpy_array_zeros)
         self.phi_ex_C_struct = deepcopy(numpy_array_zeros)
@@ -327,9 +325,11 @@ class Dispersion:
 
                             for di in range(num_disp_points):
                                 cpmg_frq = cpmg_frqs[ei][mi][oi][di]
+
                                 # Missing data for an entire field strength.
                                 if isNaN(relax_time):
                                     power = 0
+
                                 # Normal value.
                                 else:
                                     power = int(round(cpmg_frq * relax_time))
@@ -339,7 +339,7 @@ class Dispersion:
                                 if recalc_tau:
                                     tau_cpmg = 0.25 * relax_time / power
                                 else:
-                                    tau_cpmg = 0.25 / frq
+                                    tau_cpmg = 0.25 / cpmg_frq
                                 self.tau_cpmg[ei, si, mi, oi, di] = tau_cpmg
 
                         elif spin_lock_nu1 != None and len(spin_lock_nu1[ei][mi][oi]):
@@ -363,9 +363,11 @@ class Dispersion:
                             # For R1rho data.
                             if model in MODEL_LIST_R1RHO_FULL and model != MODEL_NOREX:
                                 self.disp_struct[ei, si, mi, oi, di] = 1.0
+
                                 # Get the tilt angles.
                                 self.tilt_angles[ei, si, mi, oi, di] = tilt_angles[ei][si][mi][oi][di]
                                 self.offset[ei, si, mi, oi] = offset[ei][si][mi][oi]
+
                                 # Convert the spin-lock data to rad.s^-1.
                                 self.spin_lock_omega1[ei, si, mi, oi, di] = 2.0 * pi * spin_lock_nu1[ei][mi][oi][di]
                                 self.spin_lock_omega1_squared[ei, si, mi, oi, di] = self.spin_lock_omega1[ei, si, mi, oi, di] ** 2
@@ -377,10 +379,8 @@ class Dispersion:
         # This is to make sure, that the chi2 values is not affected by missing values.
         self.mask_replace_blank = masked_equal(self.missing, 1.0)
 
-        # Check if eisum is available for numerical models.
-        if dep_check.einsum_module:
-            # Check the experiment types, simplifying the data structures as needed.
-            self.experiment_type_setup()
+        # Check the experiment types, simplifying the data structures as needed.
+        self.experiment_type_setup()
 
         # Scaling initialisation.
         self.scaling_flag = False
@@ -414,17 +414,22 @@ class Dispersion:
         # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
         if model in [MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE]:
             self.M0 = zeros(2, float64)
+
         if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
             self.M0 = zeros(3, float64)
+
         if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL]:
-            M0_0 = zeros( [self.NE, self.NS, self.NM, self.NO, self.ND,7, 1], float64)
+            M0_0 = zeros( [self.NE, self.NS, self.NM, self.NO, self.ND, 7, 1], float64)
             M0_0[:, :, :, :, :, 0, 0] = 0.5
             self.M0 = M0_0
+
             # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
             self.M0_T = rollaxis(self.M0, 6, 5)
+
         if model in [MODEL_NS_R1RHO_2SITE]:
             # Offset of spin-lock from A.
             da_mat = self.chemical_shifts - self.offset
+
             # The following lines rotate the magnetization previous to spin-lock into the weff frame.
             theta_mat = arctan2(self.spin_lock_omega1, da_mat)
             M0_0 = zeros([6, 1], float64)
@@ -434,24 +439,30 @@ class Dispersion:
             M0_2[2, 0] = 1
             M0_cos = multiply.outer( cos(theta_mat), M0_2 )
             self.M0 = M0_sin + M0_cos
+
             # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
             self.M0_T = rollaxis(self.M0, 6, 5)
 
         if model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
             self.M0 = zeros(9, float64)
+
             # Offset of spin-lock from A.
             da_mat = self.chemical_shifts - self.offset
+
             # The following lines rotate the magnetization previous to spin-lock into the weff frame.
             theta_mat = arctan2(self.spin_lock_omega1, da_mat)
             M0_0 = zeros([9, 1], float64)
             M0_0[0, 0] = 1
+
             # The A state initial X magnetisation.
             M0_sin = multiply.outer( sin(theta_mat), M0_0 )
             M0_2 = zeros([9, 1], float64)
             M0_2[2, 0] = 1
+
             # The A state initial Z magnetisation.
             M0_cos = multiply.outer( cos(theta_mat), M0_2 )
             self.M0 = M0_sin + M0_cos
+
             # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
             self.M0_T = rollaxis(self.M0, 6, 5)
 
@@ -698,15 +709,11 @@ class Dispersion:
         @rtype:             float
         """
 
-        # Once off parameter conversions.
-        dw_AC = dw_AB + dw_BC
-        dwH_AC = dwH_AB + dwH_BC
-
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
         multiply( multiply.outer( dw_AB.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_AB_struct )
-        multiply( multiply.outer( dw_AC.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_AC_struct )
+        multiply( multiply.outer( dw_BC.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_BC_struct )
         multiply( multiply.outer( dwH_AB.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_H, out=self.dwH_AB_struct )
-        multiply( multiply.outer( dwH_AC.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_H, out=self.dwH_AC_struct )
+        multiply( multiply.outer( dwH_BC.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_H, out=self.dwH_BC_struct )
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
         self.r20a_struct[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
@@ -715,43 +722,42 @@ class Dispersion:
 
         # Loop over the experiment types.
         for ei in range(self.NE):
-
             r20a = self.r20a_struct[ei]
             r20b = self.r20b_struct[ei]
             r20c = self.r20b_struct[ei]
             dw_AB_frq = self.dw_AB_struct[ei]
-            dw_AC_frq = self.dw_AC_struct[ei]
+            dw_BC_frq = self.dw_BC_struct[ei]
             dwH_AB_frq = self.dwH_AB_struct[ei]
-            dwH_AC_frq = self.dwH_AC_struct[ei]
+            dwH_BC_frq = self.dwH_BC_struct[ei]
 
             # Alias the dw frequency combinations.
             aliased_dwH_AB = 0.0 * self.dwH_AB_struct[ei]
-            aliased_dwH_AC = 0.0 * self.dwH_AC_struct[ei]
+            aliased_dwH_BC = 0.0 * self.dwH_BC_struct[ei]
             if self.exp_types[ei] == EXP_TYPE_CPMG_SQ:
                 aliased_dw_AB = dw_AB_frq
-                aliased_dw_AC = dw_AC_frq
+                aliased_dw_BC = dw_BC_frq
             elif self.exp_types[ei] == EXP_TYPE_CPMG_PROTON_SQ:
                 aliased_dw_AB = dwH_AB_frq
-                aliased_dw_AC = dwH_AC_frq
+                aliased_dw_BC = dwH_BC_frq
             elif self.exp_types[ei] == EXP_TYPE_CPMG_DQ:
                 aliased_dw_AB = dw_AB_frq + dwH_AB_frq
-                aliased_dw_AC = dw_AC_frq + dwH_AC_frq
+                aliased_dw_BC = dw_BC_frq + dwH_BC_frq
             elif self.exp_types[ei] == EXP_TYPE_CPMG_ZQ:
                 aliased_dw_AB = dw_AB_frq - dwH_AB_frq
-                aliased_dw_AC = dw_AC_frq - dwH_AC_frq
+                aliased_dw_BC = dw_BC_frq - dwH_BC_frq
             elif self.exp_types[ei] == EXP_TYPE_CPMG_MQ:
                 aliased_dw_AB = dw_AB_frq
-                aliased_dw_AC = dw_AC_frq
+                aliased_dw_BC = dw_BC_frq
                 aliased_dwH_AB = dwH_AB_frq
-                aliased_dwH_AC = dwH_AC_frq
+                aliased_dwH_BC = dwH_BC_frq
             elif self.exp_types[ei] == EXP_TYPE_CPMG_PROTON_MQ:
                 aliased_dw_AB = dwH_AB_frq
-                aliased_dw_AC = dwH_AC_frq
+                aliased_dw_BC = dwH_BC_frq
                 aliased_dwH_AB = dw_AB_frq
-                aliased_dwH_AC = dw_AC_frq
+                aliased_dwH_BC = dw_BC_frq
 
             # Back calculate the R2eff values for each experiment type.
-            self.r2eff_ns_mmq[ei](M0=self.M0, R20A=r20a, R20B=r20b, R20C=r20c, pA=pA, pB=pB, dw_AB=aliased_dw_AB, dw_AC=aliased_dw_AC, dwH_AB=aliased_dwH_AB, dwH_AC=aliased_dwH_AC, kex_AB=kex_AB, kex_BC=kex_BC, kex_AC=kex_AC, inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
+            self.r2eff_ns_mmq[ei](M0=self.M0, R20A=r20a, R20B=r20b, R20C=r20c, pA=pA, pB=pB, dw_AB=aliased_dw_AB, dw_BC=aliased_dw_BC, dwH_AB=aliased_dwH_AB, dwH_BC=aliased_dwH_BC, kex_AB=kex_AB, kex_BC=kex_BC, kex_AC=kex_AC, inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
@@ -1074,6 +1080,7 @@ class Dispersion:
         # Return the total chi-squared value.
         return chi2_rankN(self.values, self.back_calc, self.errors)
 
+
     def func_LM63(self, params):
         """Target function for the Luz and Meiboom (1963) fast 2-site exchange model.
 
@@ -1261,7 +1268,6 @@ class Dispersion:
 
         # Loop over the experiment types.
         for ei in range(self.NE):
-
             r20 = self.r20_struct[ei]
             dw_frq = self.dw_struct[ei]
             dwH_frq = self.dwH_struct[ei]
@@ -1494,12 +1500,8 @@ class Dispersion:
         # Reshape R20 to per experiment, spin and frequency.
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
-        # Initialise.
-        chi2_sum = 0.0
-
         # Loop over the experiment types.
         for ei in range(self.NE):
-
             r20 = self.r20_struct[ei]
             dw_frq = self.dw_struct[ei]
             dwH_frq = self.dwH_struct[ei]
@@ -1804,11 +1806,12 @@ class Dispersion:
         # Return the total chi-squared value.
         return chi2_rankN(self.values, self.back_calc, self.errors)
 
+
     def get_back_calc(self):
         """Class function to return back_calc as lists of lists.  Number of values in should match number of dispersion points or spin_lock.
 
-        @return:        back_calc in structure of list of lists.
-        @rtype:         float
+        @return:        back calculation of the R2eff/R1rho values in structure of list of lists.  The dimensions are {Ei, Si, Mi, Oi, Di}.
+        @rtype:         rank-4 list of numpy rank-1 float arrays
         """
 
         back_calc_return = deepcopy(self.values_orig)

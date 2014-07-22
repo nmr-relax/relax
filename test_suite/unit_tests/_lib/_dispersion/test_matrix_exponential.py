@@ -20,8 +20,8 @@
 ###############################################################################
 
 # Python module imports.
-from os import path, sep
-from numpy import complex64, complex128, dot, einsum, load, sum
+from os import sep
+from numpy import complex64, load, sum
 from unittest import TestCase
 
 # relax module imports.

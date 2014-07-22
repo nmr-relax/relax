@@ -59,7 +59,7 @@ def matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(A, dtype=None):
     @rtype:         numpy float array of rank [NE][NS][NM][NO][ND][X][X]
     """
 
-   # Extract shape.
+    # Extract shape.
     NE, NS, NM, NO, ND, Row, Col = A.shape
 
     # Convert dtype, if specified.
@@ -100,13 +100,13 @@ def matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(A, dtype=None):
     # Make dot products for higher dimension.
     # "...", the Ellipsis notation, is designed to mean to insert as many full slices (:)
     # to extend the multi-dimensional slice to all dimensions.
-    dot_V_W = einsum('...ij,...jk', V, W_exp_diag)
+    dot_V_W = einsum('...ij, ...jk', V, W_exp_diag)
 
     # Compute the (multiplicative) inverse of a matrix.
     inv_V = inv(V)
 
     # Calculate the exact exponential.
-    eA = einsum('...ij,...jk', dot_V_W, inv_V)
+    eA = einsum('...ij, ...jk', dot_V_W, inv_V)
 
     # Return the complex matrix.
     if complex_flag:
@@ -171,13 +171,13 @@ def matrix_exponential_rank_NS_NM_NO_ND_x_x(A, dtype=None):
     # Make dot products for higher dimension.
     # "...", the Ellipsis notation, is designed to mean to insert as many full slices (:)
     # to extend the multi-dimensional slice to all dimensions.
-    dot_V_W = einsum('...ij,...jk', V, W_exp_diag)
+    dot_V_W = einsum('...ij, ...jk', V, W_exp_diag)
 
     # Compute the (multiplicative) inverse of a matrix.
     inv_V = inv(V)
 
     # Calculate the exact exponential.
-    eA = einsum('...ij,...jk', dot_V_W, inv_V)
+    eA = einsum('...ij, ...jk', dot_V_W, inv_V)
 
     # Return the complex matrix.
     if complex_flag:
@@ -247,7 +247,7 @@ def matrix_exponential_rank_NS_NM_NO_ND_2_2(A, dtype=None):
         # If dis is negative: two complex roots
 
         # Eigenvalues lambda_1, lambda_2.
-        l1 = (-b + dis) / (2*a) 
+        l1 = (-b + dis) / (2*a)
         l2 = (-b - dis) / (2*a)
 
         # Define M: M = V^-1 * [ [l1 0], [0 l2] ] * V

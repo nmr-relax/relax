@@ -22,16 +22,12 @@
 # Script for calculating synthetics CPMG data.
 
 # Python module imports.
-from os import sep
-from tempfile import mkdtemp
 from math import sqrt
-import sys
 
 # relax module imports.
-from auto_analyses.relax_disp import Relax_disp
 from lib.io import open_write_file
 from data_store import Relax_data_store; ds = Relax_data_store()
-from pipe_control.mol_res_spin import return_spin, spin_loop
+from pipe_control.mol_res_spin import return_spin
 from specific_analyses.relax_disp.data import generate_r20_key, loop_exp_frq, loop_offset_point
 from specific_analyses.relax_disp import optimisation
 from status import Status; status = Status()

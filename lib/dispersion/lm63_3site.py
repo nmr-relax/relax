@@ -94,10 +94,13 @@ def r2eff_LM63_3site(r20=None, phi_ex_B=None, phi_ex_C=None, kB=None, kC=None, c
     # Once off parameter conversions.
     # The phi_ex_B / kB parameter value.
     rex_B = phi_ex_B / kB
+
     # The phi_ex_C / kC parameter value.
     rex_C = phi_ex_C / kC
+
     # Approximate chemical exchange rate constant between sites A and B (the exchange rate in rad/s) divided by 4.
     quart_kB = kB / 4.0
+
     # Approximate chemical exchange rate constant between sites A and C (the exchange rate in rad/s) divided by 4.
     quart_kC = kC / 4.0
 

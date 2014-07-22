@@ -64,6 +64,7 @@ More information on the M61 skew model can be found in the:
 from numpy import any, isfinite, min, sum
 from numpy.ma import fix_invalid, masked_where
 
+
 def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields2=None, back_calc=None):
     """Calculate the R1rho values for the M61 skew model.
 
@@ -108,7 +109,7 @@ def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields2=N
     denom = kex2_pA2dw2 + spin_lock_fields2
 
     # Catch math domain error of dividing with 0.
-    # This is when denom=0.
+    # This is when denom = 0.
     mask_denom_zero = denom == 0.0
     if any(mask_denom_zero):
         t_denom_zero = True

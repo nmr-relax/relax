@@ -34,6 +34,7 @@ import tempfile
 # Python 3 support.
 try:
     import __builtin__
+    del __builtin__
 except ImportError:
     import builtins
     builtins.xrange = builtins.range

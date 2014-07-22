@@ -24,28 +24,25 @@
 
 """Python script for obtaining profiling statistics for multiple models between the current and an alternative version of relax.
 
-There are 3 ways to use this script.  The first is to modify the path_new and path_old variables in this script, where path_new is the newer relax version, and then run it as:
+There are 2 ways to use this script.  The first is to modify the path variable in this script and then run it as:
 
-$ ./disp_profile_all.py
+$ ./disp_profile_single.py
 
-The second is to run this by supplying the path of the alternate relax version:
+The second is to run this by supplying the relax path:
 
-$ ./disp_profile_all.py /data/relax/tags/3.2.1
-
-The final way is to supply the path for both relax versions, where the first argument is the newer version of relax:
-
-$ ./disp_profile_all.py /data/relax/tags/3.2.2 /data/relax/tags/3.2.1
+$ ./disp_profile_single.py /data/relax/tags/3.2.1
 """
 
 # Python module imports.
 from numpy import average, arange, array, float64, std, zeros
-from os import pardir, path
+from os import pardir
+from os.path import join
 from re import search
 from subprocess import PIPE, Popen
 import sys
 
 # Modify the system path to add the base directory of the current relax version.
-sys.path.append(path.join(pardir, pardir, pardir, pardir))
+sys.path.append(join(pardir, pardir, pardir, pardir))
 
 # relax module imports.
 import info
@@ -84,57 +81,28 @@ models = [
     ['NS R1rho 3-site', 'profiling_ns_r1rho_3site.py', 10, 10],
 ]
 
-# Paths to the two relax versions.
-path_new = '.'
-path_old = '/data/relax/tags/3.2.2'
-if len(sys.argv) == 3:
-    path_new = sys.argv[1]
-    path_old = sys.argv[2]
-elif len(sys.argv) == 2:
-    path_old = sys.argv[1]
+# Path to the relax version.
+path = '.'
+if len(sys.argv) == 2:
+    path = sys.argv[1]
 current = False
-if path_new == '.':
+if path == '.':
     current = True
-    path_new = path.join(pardir, pardir, pardir, pardir)
+    path = join(pardir, pardir, pardir, pardir)
 
 # The Python executable name.
 python = 'python'
 
 
-# First print out the system information for the record.
+# Print out the system information for the record.
 info.print_sys_info()
 
-# Then a printout of the relax versions to be compared.
-data = [
-    ['New', path_new],
-    ['Old', path_old]
-]
-sys.stdout.write("\n\n")
-for iter, path in data:
-    # Intro text.
-    sys.stdout.write("\n%s relax version:  " % iter)
-
-    # The command to obtain the version.
-    cmd = "cd %s; ./relax -v" % path
-    pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
-
-    # Close the pipe.
-    pipe.stdin.close()
-
-    # Write out the output.
-    for line in pipe.stdout.readlines():
-        sys.stdout.write(line[:-1])
-sys.stdout.write("\n\n\n\n")
-
 # Initialise structures for the timing statistics.
-timings_new = {}
-timings_alt = {}
+timings = {}
 for i in range(len(models)):
     # Alias.
     model, script, iter, scaling_factor = models[i]
-    timings_new[model] = zeros((2, N), float64)
-    timings_alt[model] = zeros((2, N), float64)
-timings = [timings_new, timings_alt]
+    timings[model] = zeros((2, N), float64)
 
 # Loop over the execution iterations.
 for exec_iter in range(N):
@@ -144,69 +112,59 @@ for exec_iter in range(N):
     # Loop over each model.
     for i in range(len(models)):
         model, script, iter, scaling_factor = models[i]
-        # The commands to run.
-        cmds = []
+        # The command to run.
         if current:
-            cmds.append("%s %s" % (python, script))
+            cmd = "%s %s" % (python, script)
         else:
-            cmds.append("%s %s %s" % (python, script, path_new))
-        cmds.append("%s %s %s" % (python, script, path_old))
+            cmd = "%s %s %s" % (python, script, path_new)
 
-        # Loop over the commands.
-        for cmd_index in range(2):
-            # Printout.
-            print("$ %s" % cmds[cmd_index])
+        # Printout.
+        print("$ %s" % cmd)
 
-            # Execute the current script.
-            pipe = Popen(cmds[cmd_index], shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+        # Execute the current script.
+        pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
-            # Close the pipe.
-            pipe.stdin.close()
+        # Close the pipe.
+        pipe.stdin.close()
 
-            # Write all errors to stderr.
-            err_lines = pipe.stderr.readlines()
-            for line in err_lines:
-                # Decode Python 3 byte arrays.
-                if hasattr(line, 'decode'):
-                    line = line.decode()
+        # Write all errors to stderr.
+        err_lines = pipe.stderr.readlines()
+        for line in err_lines:
+            # Decode Python 3 byte arrays.
+            if hasattr(line, 'decode'):
+                line = line.decode()
 
-                # Write.
-                sys.stderr.write(line)
+            # Write.
+            sys.stderr.write(line)
 
-            # Process the output.
-            index = 0
-            for line in pipe.stdout.readlines():
-                # Decode Python 3 byte arrays.
-                if hasattr(line, 'decode'):
-                    line = line.decode()
+        # Process the output.
+        index = 0
+        for line in pipe.stdout.readlines():
+            # Decode Python 3 byte arrays.
+            if hasattr(line, 'decode'):
+                line = line.decode()
 
-                # Find the profiling stats for the target function method.
-                if not search('func_', line):
-                    continue
+            # Find the profiling stats for the target function method.
+            if not search('func_', line):
+                continue
 
-                # Printout for the record.
-                print(line[:-1])
+            # Printout for the record.
+            print(line[:-1])
 
-                # Split the line.
-                row = line.split()
+            # Split the line.
+            row = line.split()
 
-                # The timing.
-                timings[cmd_index][model][index, exec_iter] = float(row[3])
+            # The timing.
+            timings[model][index, exec_iter] = float(row[3])
 
-                # Increment the index.
-                index += 1
+            # Increment the index.
+            index += 1
 
 # Statistics.
-ave_new = {}
-ave_new_cluster = {}
-ave_alt = {}
-ave_alt_cluster = {}
-sd_new = {}
-sd_new_cluster = {}
-sd_alt = {}
-sd_alt_cluster = {}
-speed_up = {}
-speed_up_cluster = {}
+ave = {}
+ave_cluster = {}
+sd = {}
+sd_cluster = {}
 
 # Loop over the models.
 for i in range(len(models)):
@@ -214,20 +172,12 @@ for i in range(len(models)):
     model, script, iter, scaling_factor = models[i]
 
     # The averages (scaled for different nr_iter).
-    ave_new[model] = average(timings_new[model][0]) * scaling_factor
-    ave_new_cluster[model] = average(timings_new[model][1]) * scaling_factor
-    ave_alt[model] = average(timings_alt[model][0]) * scaling_factor
-    ave_alt_cluster[model] = average(timings_alt[model][1]) * scaling_factor
+    ave[model] = average(timings[model][0]) * scaling_factor
+    ave_cluster[model] = average(timings[model][1]) * scaling_factor
 
     # The SD.
-    sd_new[model] = std(timings_new[model][0]) * scaling_factor
-    sd_new_cluster[model] = std(timings_new[model][1]) * scaling_factor
-    sd_alt[model] = std(timings_alt[model][0]) * scaling_factor
-    sd_alt_cluster[model] = std(timings_alt[model][1]) * scaling_factor
-
-    # The speed up.
-    speed_up[model] = ave_alt[model] / ave_new[model]
-    speed_up_cluster[model] = ave_alt_cluster[model] / ave_new_cluster[model]
+    sd[model] = std(timings[model][0]) * scaling_factor
+    sd_cluster[model] = std(timings[model][1]) * scaling_factor
 
 # Print background for analysis
 fields = array([600. * 1E6, 800. * 1E6, 900. * 1E6])
@@ -278,17 +228,9 @@ len(fields), len(spin_lock_offsets), len(spin_lock_fields), r1rho_points_nr_near
 
 # Final printout.
 print("\n100 single spins analysis:")
-for i in range(len(models)):
-    # Alias.
-    model, script, iter, scaling_factor = models[i]
-    print("%-25s  %7.3f+/-%.3f -> %7.3f+/-%.3f, %7.3fx faster." % (model+':', ave_alt[model], sd_alt[model], ave_new[model], sd_new[model], speed_up[model]))
+for model, script, iter, scaling_factor in models:
+    print("http://wiki.nmr-relax.com/%-25s  %7.3f+/-%.3f seconds" % (model.replace(' ', '_'), ave[model], sd[model]))
 
 print("\nCluster of 100 spins analysis:")
-for i in range(len(models)):
-    # Alias.
-    model, script, iter, scaling_factor = models[i]
-    if model == 'IT99':
-        comment = "IT99: Cluster of only 1 spin analysis, since v. 3.2.2 had a bug with clustering analysis.:"
-    else:
-        comment = ""
-    print("%-25s  %7.3f+/-%.3f -> %7.3f+/-%.3f, %7.3fx faster. %s" % (model+':', ave_alt_cluster[model], sd_alt_cluster[model], ave_new_cluster[model], sd_new_cluster[model], speed_up_cluster[model], comment) )
+for model, script, iter, scaling_factor in models:
+    print("http://wiki.nmr-relax.com/%-25s  %7.3f+/-%.3f seconds" % (model.replace(' ', '_'), ave_cluster[model], sd_cluster[model]))

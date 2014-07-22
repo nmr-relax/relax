@@ -33,6 +33,7 @@ import tempfile
 # Python 3 support.
 try:
     import __builtin__
+    del __builtin__
 except ImportError:
     import builtins
     builtins.xrange = builtins.range
@@ -53,7 +54,7 @@ sys.path.reverse()
 # relax module imports.
 from lib.physical_constants import g1H, g15N
 from target_functions.relax_disp import Dispersion
-from specific_analyses.relax_disp.variables import MODEL_NS_MMQ_3SITE, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ
+from specific_analyses.relax_disp.variables import MODEL_NS_MMQ_3SITE, EXP_TYPE_CPMG_MQ
 
 
 # Alter setup.

@@ -162,8 +162,8 @@ def rr1rho_3d_2site_rankN(R1=None, r1rho_prime=None, dw=None, omega=None, offset
     #d = W - offset
 
     # Alias to original parameter name.
-    wA=dA
-    wB=dB
+    wA = dA
+    wB = dB
 
     # Multiply and expand.
     mat_r1rho_prime = multiply.outer( r1rho_prime * relax_time, m_r1rho_prime )
@@ -238,10 +238,10 @@ def ns_r1rho_2site(M0=None, M0_T=None, r1rho_prime=None, omega=None, offset=None
     Rexpo_mat = matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(R_mat)
 
     # Magnetization evolution.
-    Rexpo_M0_mat = einsum('...ij,...jk', Rexpo_mat, M0)
+    Rexpo_M0_mat = einsum('...ij, ...jk', Rexpo_mat, M0)
 
     # Magnetization evolution, which include all dimensions.
-    MA_mat = einsum('...ij,...jk', M0_T, Rexpo_M0_mat)[:, :, :, :, :, 0, 0]
+    MA_mat = einsum('...ij, ...jk', M0_T, Rexpo_M0_mat)[:, :, :, :, :, 0, 0]
 
     # Insert safe checks.
     if min(MA_mat) < 0.0:

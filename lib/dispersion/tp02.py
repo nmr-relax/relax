@@ -100,13 +100,23 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, dw=None, kex=
     pB = 1.0 - pA
 
     # Repetitive calculations (to speed up calculations).
-    Wa = omega                  # Larmor frequency [s^-1].
-    Wb = omega + dw             # Larmor frequency [s^-1].
     kex2 = kex**2
-    W = pA*Wa + pB*Wb           # Pop-averaged Larmor frequency [s^-1].
-    da = Wa - offset            # Offset of spin-lock from A.
-    db = Wb - offset            # Offset of spin-lock from B.
-    d = W - offset              # Offset of spin-lock from pop-average.
+
+    # Larmor frequency [s^-1].
+    Wa = omega
+    Wb = omega + dw
+
+    # Pop-averaged Larmor frequency [s^-1].
+    W = pA*Wa + pB*Wb
+
+    # Offset of spin-lock from A.
+    da = Wa - offset
+
+    # Offset of spin-lock from B.
+    db = Wb - offset
+
+    # Offset of spin-lock from pop-average.
+    d = W - offset
     da2 = da**2
     db2 = db**2
     d2 = d**2
@@ -115,9 +125,14 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, dw=None, kex=
     numer = pA * pB * dw**2 * kex
 
     # We assume that A resonates at 0 [s^-1], without loss of generality.
-    waeff2 = spin_lock_fields2 + da2       # Effective field at A.
-    wbeff2 = spin_lock_fields2 + db2       # Effective field at B.
-    weff2 = spin_lock_fields2 + d2         # Effective field at pop-average.
+    # Effective field at A.
+    waeff2 = spin_lock_fields2 + da2
+
+    # Effective field at B.
+    wbeff2 = spin_lock_fields2 + db2
+
+    # Effective field at pop-average.
+    weff2 = spin_lock_fields2 + d2
 
     # The rotating frame flip angle.
     theta = arctan2(spin_lock_fields, d)
@@ -136,7 +151,7 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, dw=None, kex=
     # Denominator.
     denom = waeff2 * wbeff2 / weff2 + kex2
     #denom_extended = waeff2*wbeff2/weff2+kex2-2*sin_theta2*pA*pB*dw**2
- 
+
     # R1rho calculation.
     back_calc[:] = R1_cos_theta2 + R1rho_prime_sin_theta2 + sin_theta2 * numer / denom
 
