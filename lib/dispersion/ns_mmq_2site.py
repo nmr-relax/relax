@@ -126,7 +126,7 @@ def rmmq_2site_rankN(R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None, tcp=No
 
     # Collect matrix.
     matrix = (m_r20a_tcp + m_r20b_tcp + m_k_AB_tcp + m_k_BA_tcp + m_dw_tcp_C)
-    
+
     return matrix
 
 
@@ -203,14 +203,14 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), R20A=None, R
     M2_star_mat = conj(M2_mat)
 
     # Repetitive dot products (minimised for speed).
-    M1_M2_mat = einsum('...ij,...jk', M1_mat, M2_mat)
-    M2_M1_mat = einsum('...ij,...jk', M2_mat, M1_mat)
-    M1_M2_M2_M1_mat = einsum('...ij,...jk', M1_M2_mat, M2_M1_mat)
-    M2_M1_M1_M2_mat = einsum('...ij,...jk', M2_M1_mat, M1_M2_mat)
-    M1_M2_star_mat = einsum('...ij,...jk', M1_star_mat, M2_star_mat)
-    M2_M1_star_mat = einsum('...ij,...jk', M2_star_mat, M1_star_mat)
-    M1_M2_M2_M1_star_mat = einsum('...ij,...jk', M1_M2_star_mat, M2_M1_star_mat)
-    M2_M1_M1_M2_star_mat = einsum('...ij,...jk', M2_M1_star_mat, M1_M2_star_mat)
+    M1_M2_mat = einsum('...ij, ...jk', M1_mat, M2_mat)
+    M2_M1_mat = einsum('...ij, ...jk', M2_mat, M1_mat)
+    M1_M2_M2_M1_mat = einsum('...ij, ...jk', M1_M2_mat, M2_M1_mat)
+    M2_M1_M1_M2_mat = einsum('...ij, ...jk', M2_M1_mat, M1_M2_mat)
+    M1_M2_star_mat = einsum('...ij, ...jk', M1_star_mat, M2_star_mat)
+    M2_M1_star_mat = einsum('...ij, ...jk', M2_star_mat, M1_star_mat)
+    M1_M2_M2_M1_star_mat = einsum('...ij, ...jk', M1_M2_star_mat, M2_M1_star_mat)
+    M2_M1_M1_M2_star_mat = einsum('...ij, ...jk', M2_M1_star_mat, M1_M2_star_mat)
 
     # Loop over spins.
     for si in range(NS):
@@ -351,13 +351,13 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), R20A=N
     m2_mat = rmmq_2site_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
 
     # The A+/- matrices.
-    A_pos_mat =  matrix_exponential_rank_NS_NM_NO_ND_x_x(m1_mat, dtype=complex64)
-    A_neg_mat =  matrix_exponential_rank_NS_NM_NO_ND_x_x(m2_mat, dtype=complex64)
+    A_pos_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m1_mat, dtype=complex64)
+    A_neg_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m2_mat, dtype=complex64)
 
     # The evolution for one n.
-    evol_block_mat = einsum('...ij,...jk', A_neg_mat, A_pos_mat)
-    evol_block_mat = einsum('...ij,...jk', A_neg_mat, evol_block_mat)
-    evol_block_mat = einsum('...ij,...jk', A_pos_mat, evol_block_mat)
+    evol_block_mat = einsum('...ij, ...jk', A_neg_mat, A_pos_mat)
+    evol_block_mat = einsum('...ij, ...jk', A_neg_mat, evol_block_mat)
+    evol_block_mat = einsum('...ij, ...jk', A_pos_mat, evol_block_mat)
 
     # Loop over spins.
     for si in range(NS):
