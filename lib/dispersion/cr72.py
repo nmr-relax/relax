@@ -99,6 +99,7 @@ from numpy.ma import fix_invalid, masked_greater_equal, masked_where
 # Repetitive calculations (to speed up calculations).
 eta_scale = 2.0**(-3.0/2.0)
 
+
 def r2eff_CR72(r20a=None, r20a_orig=None, r20b=None, r20b_orig=None, pA=None, dw=None, dw_orig=None, kex=None, cpmg_frqs=None, back_calc=None):
     """Calculate the R2eff values for the CR72 model.
 
@@ -188,7 +189,7 @@ def r2eff_CR72(r20a=None, r20a_orig=None, r20b=None, r20b_orig=None, pA=None, dw
         return
 
     # Calculate R2eff. This uses the temporary buffer and fill directly to back_calc.
-    multiply(cpmg_frqs,  arccosh(fact), out=back_calc)
+    multiply(cpmg_frqs, arccosh(fact), out=back_calc)
     subtract(r20_kex, back_calc, out=back_calc)
 
     # Replace data in array.
