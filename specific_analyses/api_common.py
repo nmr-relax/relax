@@ -24,6 +24,7 @@
 
 # Python module imports.
 from copy import deepcopy
+from string import split
 import sys
 
 # relax module imports.
@@ -303,6 +304,22 @@ class API_common:
 
     def _overfit_deselect_dummy(self, data_check=True, verbose=True):
         """Dummy method, normally for deselecting spins with insufficient data for minimisation."""
+
+
+    def _print_model_title_global(self, prefix=None, model_info=None):
+        """Default method for when the model_loop() method simply loops over a single global model.
+
+        @keyword prefix:        The starting text of the title.  This should be printed out first, followed by the model information text.
+        @type prefix:           str
+        @keyword model_info:    The model information from _model_loop_single_global().  This should be zero for the single global model.
+        @type model_info:       int
+        """
+
+        # Strip out the text from the colon.
+        text = split(prefix, ':')[0]
+
+        # The printout.
+        subsection(file=sys.stdout, text=text, prespace=2)
 
 
     def _print_model_title_spin(self, prefix=None, model_info=None):
