@@ -67,33 +67,43 @@ More information on the TSMFK01 model can be found in the:
 """
 
 # Python module imports.
-from numpy import array, min, sin, isfinite, sum
+from numpy import array, fabs, min, sin, isfinite, sum
+from numpy.ma import fix_invalid, masked_where
 
 
-def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, tcp=None, back_calc=None, num_points=None):
+def r2eff_TSMFK01(r20a=None, dw=None, dw_orig=None, k_AB=None, tcp=None, back_calc=None):
     """Calculate the R2eff values for the TSMFK01 model.
 
     See the module docstring for details.
 
 
     @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
-    @type r20a:             float
+    @type r20a:             numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
-    @type dw:               float
+    @type dw:               numpy float array of rank [NE][NS][[NM][NO][ND]
+    @keyword dw_orig:       The chemical exchange difference between states A and B in ppm. This is only for faster checking of zero value, which result in no exchange.
+    @type dw_orig:          numpy float array of rank-1
     @keyword k_AB:          The k_AB parameter value (the forward exchange rate in rad/s).
     @type k_AB:             float
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
-    @type tcp:              numpy rank-1 float array.
+    @type tcp:              numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
-    @type num_points:       int
+    @type back_calc:        numpy float array of rank [NE][NS][[NM][NO][ND]
     """
 
+    # Flag to tell if values should be replaced if max_etapos in cosh function is violated.
+    t_dw_zero = False
+
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
-    if dw == 0.0 or k_AB == 0.0:
-        back_calc[:] = array([r20a]*num_points)
+    # Test if k_AB is zero.
+    if k_AB == 0.0:
+        back_calc[:] = r20a
         return
+
+    # Test if dw is zero. Wait for replacement, since this is spin specific.
+    if min(fabs(dw_orig)) == 0.0:
+        t_dw_zero = True
+        mask_dw_zero = masked_where(dw == 0.0, dw)
 
     # Denominator.
     denom = dw * tcp
@@ -103,16 +113,20 @@ def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, tcp=None, back_calc=None, num_p
 
     # Catch zeros (to avoid pointless mathematical operations).
     # This will result in no exchange, returning flat lines.
-    if min(numer) == 0.0:
-        back_calc[:] = array([r20a + k_AB]*num_points)
-        return
+    if min(fabs(numer)) == 0.0:
+        # Calculate R2eff for forward.
+        back_calc[:] = r20a + k_AB
+    else:
+        # Calculate R2eff.
+        back_calc[:] = r20a + k_AB - k_AB * numer / denom
 
-    # Calculate R2eff.
-    R2eff = r20a + k_AB - k_AB * numer / denom
+    # Replace data in array.
+    # If dw is zero.
+    if t_dw_zero:
+        back_calc[mask_dw_zero.mask] = r20a[mask_dw_zero.mask]
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
-    if not isfinite(sum(R2eff)):
-        R2eff = array([1e100]*num_points)
-
-    back_calc[:] = R2eff
+    if not isfinite(sum(back_calc)):
+        # Replaces nan, inf, etc. with fill value.
+        fix_invalid(back_calc, copy=False, fill_value=1e100)

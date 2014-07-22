@@ -165,7 +165,7 @@ class Test_cr72_full_cluster_one_field(TestCase):
                 self.dw_frq_a[0][si][mi][0] = array( [dw_frq] * self.max_num_disp_points, float64)
 
         ## Back calculate the R2eff values.
-        r2eff_CR72(r20a=self.R20A_a, r20b=self.R20B_a, pA=pA, dw=self.dw_frq_a, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        r2eff_CR72(r20a_orig=self.R20A_a, r20b_orig=self.R20B_a, dw_orig=self.dw_frq_a, r20a=self.R20A_a, r20b=self.R20B_a, pA=pA, dw=self.dw_frq_a, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a)
 
         # Now return the values back to the structure of self.back_calc object.
         ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.

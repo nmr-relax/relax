@@ -246,46 +246,56 @@ More information on the NS CPMG 2-site expanded model can be found in the:
 """
 
 # Python module imports.
-from numpy import array, argmax, exp, isfinite, power, log, min, sqrt, sum
-
-# relax module imports.
-from lib.float import isNaN
+from numpy import exp, isfinite, fabs, power, log, min, sqrt, sum
+from numpy.ma import fix_invalid, masked_where
 
 
-def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=None, relax_time=None, inv_relax_time=None, tcp=None, back_calc=None, num_points=None, num_cpmg=None):
+def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, dw_orig=None, kex=None, relax_time=None, inv_relax_time=None, tcp=None, back_calc=None, num_cpmg=None):
     """The 2-site numerical solution to the Bloch-McConnell equation using complex conjugate matrices.
 
     This function calculates and stores the R2eff values.
 
 
     @keyword r20:               The R2 value for both states A and B in the absence of exchange.
-    @type r20:                  float
+    @type r20:                  numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword pA:                The population of state A.
     @type pA:                   float
     @keyword dw:                The chemical exchange difference between states A and B in rad/s.
-    @type dw:                   float
-    @keyword k_AB:              The rate of exchange from site A to B (rad/s).
-    @type k_AB:                 float
-    @keyword k_BA:              The rate of exchange from site B to A (rad/s).
-    @type k_BA:                 float
+    @type dw:                   numpy float array of rank [NE][NS][[NM][NO][ND]
+    @keyword dw_orig:           The chemical exchange difference between states A and B in ppm. This is only for faster checking of zero value, which result in no exchange.
+    @type dw_orig:              numpy float array of rank-1
+    @keyword kex:               The kex parameter value (the exchange rate in rad/s).
+    @type kex:                  float
     @keyword relax_time:        The total relaxation time period (in seconds).
-    @type relax_time:           float
+    @type relax_time:           numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword inv_relax_time:    The inverse of the total relaxation time period (in inverse seconds).
-    @type inv_relax_time:       float
+    @type inv_relax_time:       numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword tcp:               The tau_CPMG times (1 / 4.nu1).
-    @type tcp:                  numpy rank-1 float array
+    @type tcp:                  numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword back_calc:         The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:            numpy rank-1 float array
-    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
-    @type num_points:           int
+    @type back_calc:            numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword num_cpmg:          The array of numbers of CPMG blocks.
-    @type num_cpmg:             numpy int16, rank-1 array
+    @type num_cpmg:             numpy int16 array of rank [NE][NS][[NM][NO][ND]
     """
 
+    # Flag to tell if values should be replaced if math function is violated.
+    t_dw_zero = False
+
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
-    if dw == 0.0 or pA == 1.0 or k_AB == 0.0:
-        back_calc[:] = array([r20]*num_points)
+    if pA == 1.0 or kex == 0.0:
+        back_calc[:] = r20
         return
+
+    # Test if dw is zero. Wait for replacement, since this is spin specific.
+    if min(fabs(dw_orig)) == 0.0:
+        t_dw_zero = True
+        mask_dw_zero = masked_where(dw == 0.0, dw)
+
+    # Once off parameter conversions.
+    pB = 1.0 - pA
+    k_BA = pA * kex
+    k_AB = pB * kex
+
 
     # Repeditive calculations.
     half_tcp = 0.5 * tcp
@@ -370,11 +380,15 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=Non
     Mx = intensity / intensity0
 
     # Calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential, and store it for each dispersion point.
-    R2eff = -inv_relax_time * log(Mx)
+    back_calc[:] = -inv_relax_time * log(Mx)
+
+    # Replace data in array.
+    # If dw is zero.
+    if t_dw_zero:
+        back_calc[mask_dw_zero.mask] = r20[mask_dw_zero.mask]
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
-    if not isfinite(sum(R2eff)) or min(Mx) <= 0.0 or not isfinite(sum(Mx)):
-        R2eff = array([1e100]*num_points)
-
-    back_calc[:] = R2eff
+    if not isfinite(sum(back_calc)):
+        # Replaces nan, inf, etc. with fill value.
+        fix_invalid(back_calc, copy=False, fill_value=1e100)

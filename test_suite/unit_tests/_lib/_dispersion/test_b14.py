@@ -63,7 +63,7 @@ class Test_b14(TestCase):
         a = ones([self.num_points])
 
         # Calculate the R2eff values.
-        r2eff_B14(r20a=self.r20a*a, r20b=self.r20b*a, pA=self.pA, pB=pB, dw=dw_frq*a, kex=self.kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.ncyc, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.R2eff, num_points=self.num_points)
+        r2eff_B14(r20a=self.r20a*a, r20b=self.r20b*a, pA=self.pA, dw=dw_frq*a, dw_orig=dw_frq*a, kex=self.kex, ncyc=self.ncyc, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.R2eff)
 
         # Check all R2eff values.
         for i in range(self.num_points):

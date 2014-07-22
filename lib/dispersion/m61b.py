@@ -60,29 +60,32 @@ More information on the M61 skew model can be found in the:
 """
 
 # Python module imports.
-from numpy import abs, array, isfinite, min, sum
+from numpy import abs, any, array, isfinite, min, sum
+from numpy.ma import fix_invalid, masked_where
 
-def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields2=None, back_calc=None, num_points=None):
+def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields2=None, back_calc=None):
     """Calculate the R1rho values for the M61 skew model.
 
     See the module docstring for details.
 
 
     @keyword r1rho_prime:       The R1rho_prime parameter value (R1rho with no exchange).
-    @type r1rho_prime:          float
+    @type r1rho_prime:          numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword pA:                The population of state A.
     @type pA:                   float
     @keyword dw:                The chemical exchange difference between states A and B in rad/s.
-    @type dw:                   float
+    @type dw:                   numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword kex:               The kex parameter value (the exchange rate in rad/s).
     @type kex:                  float
     @keyword spin_lock_fields2: The R1rho spin-lock field strengths squared (in rad^2.s^-2).
-    @type spin_lock_fields2:    numpy rank-1 float array
+    @type spin_lock_fields2:    numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to the combination of spin lock field.
-    @type back_calc:            numpy rank-1 float array
-    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields and back_calc arguments.
-    @type num_points:           int
+    @type back_calc:            numpy float array of rank [NE][NS][[NM][NO][ND]
     """
+
+    # Flag to tell if values should be replaced if numer is zero.
+    t_numer_zero = False
+    t_denom_zero = False
 
     # The B population.
     pB = 1.0 - pA
@@ -96,26 +99,34 @@ def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields2=N
 
     # Catch zeros (to avoid pointless mathematical operations).
     # This will result in no exchange, returning flat lines.
-    if numer == 0.0:
-        back_calc[:] = array([r1rho_prime]*num_points)
-        return
+    if min(numer) == 0.0:
+        t_numer_zero = True
+        mask_numer_zero = masked_where(numer == 0.0, numer)
 
     # Denominator.
     denom = kex2_pA2dw2 + spin_lock_fields2
 
     # Catch math domain error of dividing with 0.
     # This is when denom=0.
-    if min(abs(denom)) == 0:
-        back_calc[:] = array([1e100]*num_points)
-        return
-
+    mask_denom_zero = denom == 0.0
+    if any(mask_denom_zero):
+        t_denom_zero = True
+        denom[mask_denom_zero] = 1.0
 
     # R1rho calculation.
-    R1rho = r1rho_prime + numer / denom
+    back_calc[:] = r1rho_prime + numer / denom
+
+    # Replace data in array.
+    # If numer is zero.
+    if t_numer_zero:
+        back_calc[mask_numer_zero.mask] = r1rho_prime[mask_numer_zero.mask]
+
+    # If denom is zero.
+    if t_denom_zero:
+        back_calc[mask_denom_zero] = 1e100
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
-    if not isfinite(sum(R1rho)):
-        R1rho = array([1e100]*num_points)
-
-    back_calc[:] = R1rho
+    if not isfinite(sum(back_calc)):
+        # Replaces nan, inf, etc. with fill value.
+        fix_invalid(back_calc, copy=False, fill_value=1e100)

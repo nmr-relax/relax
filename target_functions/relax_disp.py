@@ -55,7 +55,7 @@ from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from lib.float import isNaN
 from target_functions.chi2 import chi2, chi2_rankN
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_CPMG_FULL, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -394,8 +394,11 @@ class Dispersion:
         if model == MODEL_NS_MMQ_3SITE_LINEAR:
             self.func = self.func_ns_mmq_3site_linear
 
+
         # Setup special numpy array structures, for higher dimensional computation.
-        if model in [MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL]:
+        test_models = [MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01]
+
+        if model in test_models + [MODEL_NOREX]:
             # Get the shape of back_calc structure.
             # If using just one field, or having the same number of dispersion points, the shape would extend to that number.
             # Shape has to be: [ei][si][mi][oi].
@@ -427,26 +430,47 @@ class Dispersion:
             self.values_a = deepcopy(zeros_a)
             self.errors_a = deepcopy(ones_a)
             missing_a = zeros(self.numpy_array_shape)
-            
-            self.cpmg_frqs_a = deepcopy(ones_a)
-            self.num_disp_points_a = deepcopy(zeros_a)
-            self.inv_relax_times_a = deepcopy(zeros_a)
-            self.tau_cpmg_a = deepcopy(zeros_a)
-            self.power_a = ones(self.numpy_array_shape, int16)
 
-            self.frqs_a = deepcopy(zeros_a)
+            self.num_disp_points_a = deepcopy(zeros_a)
             self.disp_struct = deepcopy(zeros_a)
             self.has_missing = False
 
             # Create special numpy structures.
-            # Structure of dw. The full and the outer dimensions structures.
-            self.dw_struct = deepcopy(zeros_a)
+            self.no_nd_struct = ones([self.NO, self.ND], float64)
             self.nm_no_nd_struct = ones([self.NM, self.NO, self.ND], float64)
 
             # Structure of r20a and r20b. The full and outer dimensions structures.
+            # Structure of dw. The full and the outer dimensions structures.
+            self.r20_struct = deepcopy(zeros_a)
             self.r20a_struct = deepcopy(zeros_a)
             self.r20b_struct = deepcopy(zeros_a)
-            self.no_nd_struct = ones([self.NO, self.ND], float64)
+            self.dw_struct = deepcopy(zeros_a)
+
+        # Setup special numpy array structures, for higher dimensional computation.
+        if model in test_models + [MODEL_NOREX]:
+            if model in test_models:
+                # Extract the frequencies to numpy array.
+                self.frqs_a = multiply.outer( asarray(self.frqs).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
+
+            if model in MODEL_LIST_CPMG_FULL:
+                self.cpmg_frqs_a = deepcopy(ones_a)
+                self.phi_ex_struct = deepcopy(zeros_a)
+
+            if model in [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_TSMFK01, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
+                self.relax_times_a = deepcopy(zeros_a)
+                self.inv_relax_times_a = deepcopy(zeros_a)
+                self.tau_cpmg_a = deepcopy(zeros_a)
+                self.power_a = zeros(self.numpy_array_shape, int16)
+
+            # For R1rho data.
+            if model in MODEL_LIST_R1RHO_FULL:
+                self.tilt_angles_a = deepcopy(zeros_a)
+                self.spin_lock_omega1_squared_a = deepcopy(zeros_a)
+                self.spin_lock_omega1_a = deepcopy(zeros_a)
+                self.phi_ex_struct = deepcopy(zeros_a)
+                self.offset_a = deepcopy(zeros_a)
+                self.r1_a = multiply.outer( self.r1.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
+                self.chemical_shifts_a = multiply.outer( self.chemical_shifts, self.no_nd_struct )
 
             # Loop over the experiment types.
             for ei in range(self.NE):
@@ -459,34 +483,49 @@ class Dispersion:
                             # Extract number of dispersion points.
                             num_disp_points = self.num_disp_points[ei][si][mi][oi]
 
-                            # Extract cpmg_frqs and num_disp_points from lists.
-                            self.cpmg_frqs_a[ei][si][mi][oi][:num_disp_points] = self.cpmg_frqs[ei][mi][oi]
-                            self.num_disp_points_a[ei][si][mi][oi][:num_disp_points] = self.num_disp_points[ei][si][mi][oi]
-                            self.inv_relax_times_a[ei][si][mi][oi][:num_disp_points] = 1.0 / self.relax_times[ei][mi]
+                            if model in MODEL_LIST_CPMG_FULL and model != MODEL_NOREX:
+                                # Extract cpmg_frqs and num_disp_points from lists.
+                                self.cpmg_frqs_a[ei][si][mi][oi][:num_disp_points] = self.cpmg_frqs[ei][mi][oi]
+                                self.num_disp_points_a[ei][si][mi][oi][:num_disp_points] = self.num_disp_points[ei][si][mi][oi]
+
+                                # Make a spin 1/0 file.
+                                self.disp_struct[ei][si][mi][oi][:num_disp_points] = ones(num_disp_points)
 
                             # Extract the errors and values to numpy array.
                             self.errors_a[ei][si][mi][oi][:num_disp_points] = self.errors[ei][si][mi][oi]
                             self.values_a[ei][si][mi][oi][:num_disp_points] = self.values[ei][si][mi][oi]
 
-                            # Extract the frequencies to numpy array.
-                            self.frqs_a[ei][si][mi][oi][:num_disp_points] = self.frqs[ei][si][mi]
-                            
-                            # Make a spin 1/0 file.
-                            self.disp_struct[ei][si][mi][oi][:num_disp_points] = ones(num_disp_points)
-
-                            for di in range(self.num_disp_points[ei][si][mi][oi]):
+                            # Loop over dispersion points.
+                            for di in range(num_disp_points):
                                 if self.missing[ei][si][mi][oi][di]:
                                     self.has_missing = True
                                     missing_a[ei][si][mi][oi][di] = 1.0
-                                if model in [MODEL_B14, MODEL_B14_FULL]:
-                                    self.power_a[ei][si][mi][oi][di] = int(round(self.cpmg_frqs[ei][mi][0][di] * self.relax_times[ei][mi]))
-                                    self.tau_cpmg_a[ei][si][mi][oi][di] = 0.25 / self.cpmg_frqs[ei][mi][0][di]
+                                if model in [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_TSMFK01, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
+                                    self.relax_times_a[ei][si][mi][oi][di] = self.relax_times[ei][mi]
+                                    self.tau_cpmg_a[ei][si][mi][oi][di] = self.tau_cpmg[ei][mi][di]
+                                    self.power_a[ei][si][mi][oi][di] = self.power[ei][mi][di]
+
+                                    if model != MODEL_TSMFK01:
+                                        self.inv_relax_times_a[ei][si][mi][oi][di] = self.inv_relax_times[ei][mi]
+
+                                # For R1rho data.
+                                if model in MODEL_LIST_R1RHO_FULL and model != MODEL_NOREX:
+                                    self.disp_struct[ei][si][mi][oi][di] = 1.0
+
+                                    # Extract the frequencies to numpy array.
+                                    self.tilt_angles_a[ei][si][mi][oi][di] = self.tilt_angles[ei][si][mi][oi][di]
+                                    self.spin_lock_omega1_squared_a[ei][si][mi][oi][di] = self.spin_lock_omega1_squared[ei][mi][oi][di]
+                                    self.spin_lock_omega1_a[ei][si][mi][oi][di] = self.spin_lock_omega1[ei][mi][oi][di]
+                                    self.offset_a[ei][si][mi][oi] = self.offset[ei][si][mi][oi]
+
+                                    if spin_lock_nu1 != None and len(spin_lock_nu1[ei][mi][oi]):
+                                        self.num_disp_points_a[ei][si][mi][oi][di] = num_disp_points
+                                    else:
+                                        self.num_disp_points_a[ei][si][mi][oi][di] = 0
 
             # Make copy of values structure.
             self.back_calc_a = deepcopy(self.values_a)
-
-            # Pre calculate frqs structure
-            self.frqs_struct = self.frqs_a * self.disp_struct
+            self.back_calc = self.back_calc_a
 
             # Find the numpy mask, which tells where values should be replaced.
             self.mask_replace_blank = masked_equal(missing_a, 1.0)
@@ -510,20 +549,15 @@ class Dispersion:
         @rtype:         float
         """
 
-        # Once off parameter conversions.
-        pB = 1.0 - pA
-        k_BA = pA * kex
-        k_AB = pB * kex
-
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct, out=self.dw_struct )
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
         self.r20a_struct[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
         self.r20b_struct[:] = multiply.outer( R20B.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
         # Back calculate the R2eff values.
-        r2eff_B14(r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, pB=pB, dw=self.dw_struct, kex=kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.power_a, inv_tcpmg=self.inv_relax_times_a, tcp=self.tau_cpmg_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        r2eff_B14(r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, dw=self.dw_struct, dw_orig=dw, kex=kex, ncyc=self.power_a, inv_tcpmg=self.inv_relax_times_a, tcp=self.tau_cpmg_a, back_calc=self.back_calc_a)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc_a = self.back_calc_a*self.disp_struct
@@ -555,14 +589,14 @@ class Dispersion:
         """
 
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct, out=self.dw_struct )
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
         self.r20a_struct[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
         self.r20b_struct[:] = multiply.outer( R20B.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
         ## Back calculate the R2eff values.
-        r2eff_CR72(r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, dw=self.dw_struct, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        r2eff_CR72(r20a=self.r20a_struct, r20a_orig=R20A, r20b=self.r20b_struct, r20b_orig=R20B, pA=pA, dw=self.dw_struct, dw_orig=dw, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc_a = self.back_calc_a*self.disp_struct
@@ -1029,34 +1063,25 @@ class Dispersion:
         phi_ex = params[self.end_index[0]:self.end_index[1]]
         kex = params[self.end_index[1]]
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Convert phi_ex from ppm^2 to (rad/s)^2. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( phi_ex.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a*self.frqs_a, out=self.phi_ex_struct )
 
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(self.num_frq):
-                # The R20 index.
-                r20_index = mi + si*self.num_frq
+        # Reshape R20 to per experiment, spin and frequency.
+        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
-                # Convert phi_ex from ppm^2 to (rad/s)^2.
-                phi_ex_scaled = phi_ex[si] * self.frqs[0][si][mi]**2
+        # Back calculate the R2eff values.
+        r1rho_DPL94(r1rho_prime=self.r20_struct, phi_ex=self.phi_ex_struct, kex=kex, theta=self.tilt_angles_a, R1=self.r1_a, spin_lock_fields2=self.spin_lock_omega1_squared_a, back_calc=self.back_calc_a)
 
-                # Loop over the offsets.
-                for oi in range(self.num_offsets[0][si][mi]):
-                    # Back calculate the R2eff values.
-                    r1rho_DPL94(r1rho_prime=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, theta=self.tilt_angles[0][si][mi][oi], R1=self.r1[si, mi], spin_lock_fields2=self.spin_lock_omega1_squared[0][mi][oi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc_a = self.back_calc_a*self.disp_struct
 
-                    # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                    for di in range(self.num_disp_points[0][si][mi][oi]):
-                        if self.missing[0][si][mi][oi][di]:
-                            self.back_calc[0][si][mi][oi][di] = self.values[0][si][mi][oi][di]
-
-                    # Calculate and return the chi-squared value.
-                    chi2_sum += chi2(self.values[0][si][mi][oi], self.back_calc[0][si][mi][oi], self.errors[0][si][mi][oi])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc_a[self.mask_replace_blank.mask] = self.values_a[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
+        return chi2_rankN(self.values_a, self.back_calc_a, self.errors_a)
 
 
     def func_IT99(self, params):
@@ -1078,35 +1103,25 @@ class Dispersion:
         pA = params[self.end_index[1]]
         tex = params[self.end_index[1]+1]
 
-        # Once off parameter conversions.
-        pB = 1.0 - pA
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Reshape R20 to per experiment, spin and frequency.
+        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(self.num_frq):
-                # The R20 index.
-                r20_index = mi + si*self.num_frq
+        # Back calculate the R2eff values.
+        r2eff_IT99(r20=self.r20_struct, pA=pA, dw=self.dw_struct, dw_orig=dw, tex=tex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a)
 
-                # Convert dw from ppm to rad/s.
-                dw_frq = dw[si] * self.frqs[0][si][mi]
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc_a = self.back_calc_a*self.disp_struct
 
-                # Back calculate the R2eff values.
-                r2eff_IT99(r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, tex=tex, cpmg_frqs=self.cpmg_frqs[0][mi][0], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
-
-                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                for di in range(self.num_disp_points[0][si][mi][0]):
-                    if self.missing[0][si][mi][0][di]:
-                        self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
-
-                # Calculate and return the chi-squared value.
-                chi2_sum += chi2(self.values[0][si][mi][0], self.back_calc[0][si][mi][0], self.errors[0][si][mi][0])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc_a[self.mask_replace_blank.mask] = self.values_a[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
+        return chi2_rankN(self.values_a, self.back_calc_a, self.errors_a)
 
 
     def func_LM63_3site(self, params):
@@ -1183,32 +1198,25 @@ class Dispersion:
         phi_ex = params[self.end_index[0]:self.end_index[1]]
         kex = params[self.end_index[1]]
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Convert phi_ex from ppm^2 to (rad/s)^2. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( phi_ex.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a*self.frqs_a, out=self.phi_ex_struct )
 
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(self.num_frq):
-                # The R20 index.
-                r20_index = mi + si*self.num_frq
+        # Reshape R20 to per experiment, spin and frequency.
+        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
-                # Convert phi_ex from ppm^2 to (rad/s)^2.
-                phi_ex_scaled = phi_ex[si] * self.frqs[0][si][mi]**2
+        # Back calculate the R2eff values.
+        r2eff_LM63(r20=self.r20_struct, phi_ex=self.phi_ex_struct, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a)
 
-                # Back calculate the R2eff values.
-                r2eff_LM63(r20=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, cpmg_frqs=self.cpmg_frqs[0][mi][0], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc_a = self.back_calc_a*self.disp_struct
 
-                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                for di in range(self.num_disp_points[0][si][mi][0]):
-                    if self.missing[0][si][mi][0][di]:
-                        self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
-
-                # Calculate and return the chi-squared value.
-                chi2_sum += chi2(self.values[0][si][mi][0], self.back_calc[0][si][mi][0], self.errors[0][si][mi][0])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc_a[self.mask_replace_blank.mask] = self.values_a[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
+        return chi2_rankN(self.values_a, self.back_calc_a, self.errors_a)
 
 
     def func_M61(self, params):
@@ -1229,32 +1237,25 @@ class Dispersion:
         phi_ex = params[self.end_index[0]:self.end_index[1]]
         kex = params[self.end_index[1]]
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Convert phi_ex from ppm^2 to (rad/s)^2. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( phi_ex.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a*self.frqs_a, out=self.phi_ex_struct )
 
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(self.num_frq):
-                # The R20 index.
-                r20_index = mi + si*self.num_frq
+        # Reshape R20 to per experiment, spin and frequency.
+        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
-                # Convert phi_ex from ppm^2 to (rad/s)^2.
-                phi_ex_scaled = phi_ex[si] * self.frqs[0][si][mi]**2
+        # Back calculate the R2eff values.
+        r1rho_M61(r1rho_prime=self.r20_struct, phi_ex=self.phi_ex_struct, kex=kex, spin_lock_fields2=self.spin_lock_omega1_squared_a, back_calc=self.back_calc_a)
 
-                # Back calculate the R2eff values.
-                r1rho_M61(r1rho_prime=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, spin_lock_fields2=self.spin_lock_omega1_squared[0][mi][0], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc_a = self.back_calc_a*self.disp_struct
 
-                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                for di in range(self.num_disp_points[0][si][mi][0]):
-                    if self.missing[0][si][mi][0][di]:
-                        self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
-
-                # Calculate and return the chi-squared value.
-                chi2_sum += chi2(self.values[0][si][mi][0], self.back_calc[0][si][mi][0], self.errors[0][si][mi][0])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc_a[self.mask_replace_blank.mask] = self.values_a[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
+        return chi2_rankN(self.values_a, self.back_calc_a, self.errors_a)
 
 
     def func_M61b(self, params):
@@ -1276,32 +1277,25 @@ class Dispersion:
         pA = params[self.end_index[1]]
         kex = params[self.end_index[1]+1]
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(self.num_frq):
-                # The R20 index.
-                r20_index = mi + si*self.num_frq
+        # Reshape R20 to per experiment, spin and frequency.
+        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
-                # Convert dw from ppm to rad/s.
-                dw_frq = dw[si] * self.frqs[0][si][mi]
+        # Back calculate the R1rho values.
+        r1rho_M61b(r1rho_prime=self.r20_struct, pA=pA, dw=self.dw_struct, kex=kex, spin_lock_fields2=self.spin_lock_omega1_squared_a, back_calc=self.back_calc_a)
 
-                # Back calculate the R1rho values.
-                r1rho_M61b(r1rho_prime=R20[r20_index], pA=pA, dw=dw_frq, kex=kex, spin_lock_fields2=self.spin_lock_omega1_squared[0][mi][0], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc_a = self.back_calc_a*self.disp_struct
 
-                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                for di in range(self.num_disp_points[0][si][mi][0]):
-                    if self.missing[0][si][mi][0][di]:
-                        self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
-
-                # Calculate and return the chi-squared value.
-                chi2_sum += chi2(self.values[0][si][mi][0], self.back_calc[0][si][mi][0], self.errors[0][si][mi][0])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc_a[self.mask_replace_blank.mask] = self.values_a[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
+        return chi2_rankN(self.values_a, self.back_calc_a, self.errors_a)
 
 
     def func_MP05(self, params):
@@ -1323,37 +1317,25 @@ class Dispersion:
         pA = params[self.end_index[1]]
         kex = params[self.end_index[1]+1]
 
-        # Once off parameter conversions.
-        pB = 1.0 - pA
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Reshape R20 to per experiment, spin and frequency.
+        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(self.num_frq):
-                # The R20 index.
-                r20_index = mi + si*self.num_frq
+        # Back calculate the R1rho values.
+        r1rho_MP05(r1rho_prime=self.r20_struct, omega=self.chemical_shifts_a, offset=self.offset_a, pA=pA, dw=self.dw_struct, kex=kex, R1=self.r1_a, spin_lock_fields=self.spin_lock_omega1_a, spin_lock_fields2=self.spin_lock_omega1_squared_a, back_calc=self.back_calc_a)
 
-                # Convert dw from ppm to rad/s.
-                dw_frq = dw[si] * self.frqs[0][si][mi]
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc_a = self.back_calc_a*self.disp_struct
 
-                # Loop over the offsets.
-                for oi in range(self.num_offsets[0][si][mi]):
-                    # Back calculate the R1rho values.
-                    r1rho_MP05(r1rho_prime=R20[r20_index], omega=self.chemical_shifts[0][si][mi], offset=self.offset[0][si][mi][oi], pA=pA, pB=pB, dw=dw_frq, kex=kex, R1=self.r1[si, mi], spin_lock_fields=self.spin_lock_omega1[0][mi][oi], spin_lock_fields2=self.spin_lock_omega1_squared[0][mi][oi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
-
-                    # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                    for di in range(self.num_disp_points[0][si][mi][oi]):
-                        if self.missing[0][si][mi][oi][di]:
-                            self.back_calc[0][si][mi][oi][di] = self.values[0][si][mi][oi][di]
-
-                    # Calculate and return the chi-squared value.
-                    chi2_sum += chi2(self.values[0][si][mi][oi], self.back_calc[0][si][mi][oi], self.errors[0][si][mi][oi])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc_a[self.mask_replace_blank.mask] = self.values_a[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
+        return chi2_rankN(self.values_a, self.back_calc_a, self.errors_a)
 
 
     def func_mmq_CR72(self, params):
@@ -1445,34 +1427,16 @@ class Dispersion:
         # Unpack the parameter values.
         R20 = params
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Reshape R20 to per experiment, spin and frequency.
+        self.back_calc_a[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
-        # Loop over the experiment types.
-        for ei in range(self.num_exp):
-            # Loop over the spins.
-            for si in range(self.num_spins):
-                # Loop over the spectrometer frequencies.
-                for mi in range(self.num_frq):
-                    # The R20 index.
-                    r20_index = mi + si*self.num_frq
-
-                    # Loop over the offsets.
-                    for oi in range(self.num_offsets[ei][si][mi]):
-                        # The R2eff values as R20 values.
-                        for di in range(self.num_disp_points[ei][si][mi][oi]):
-                            self.back_calc[ei][si][mi][oi][di] = R20[r20_index]
-
-                        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                        for di in range(self.num_disp_points[ei][si][mi][oi]):
-                            if self.missing[ei][si][mi][oi][di]:
-                                self.back_calc[ei][si][mi][oi][di] = self.values[ei][si][mi][oi][di]
-
-                        # Calculate and return the chi-squared value.
-                        chi2_sum += chi2(self.values[ei][si][mi][oi], self.back_calc[ei][si][mi][oi], self.errors[ei][si][mi][oi])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc_a[self.mask_replace_blank.mask] = self.values_a[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
+        return chi2_rankN(self.values_a, self.back_calc_a, self.errors_a)
 
 
     def func_ns_cpmg_2site_3D(self, params):
@@ -1542,37 +1506,25 @@ class Dispersion:
         pA = params[self.end_index[1]]
         kex = params[self.end_index[1]+1]
 
-        # Once off parameter conversions.
-        pB = 1.0 - pA
-        k_BA = pA * kex
-        k_AB = pB * kex
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
-        # Chi-squared initialisation.
-        chi2_sum = 0.0
+        # Reshape R20A and R20B to per experiment, spin and frequency.
+        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(self.num_frq):
-                # The R20 index.
-                r20_index = mi + si*self.num_frq
+        # Back calculate the R2eff values.
+        r2eff_ns_cpmg_2site_expanded(r20=self.r20_struct, pA=pA, dw=self.dw_struct, dw_orig=dw, kex=kex, relax_time=self.relax_times_a, inv_relax_time=self.inv_relax_times_a, tcp=self.tau_cpmg_a, back_calc=self.back_calc_a, num_cpmg=self.power_a)
 
-                # Convert dw from ppm to rad/s.
-                dw_frq = dw[si] * self.frqs[0][si][mi]
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc_a = self.back_calc_a*self.disp_struct
 
-                # Back calculate the R2eff values.
-                r2eff_ns_cpmg_2site_expanded(r20=R20[r20_index], pA=pA, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, relax_time=self.relax_times[0][mi], inv_relax_time=self.inv_relax_times[0][mi], tcp=self.tau_cpmg[0][mi], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0], num_cpmg=self.power[0][mi])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc_a[self.mask_replace_blank.mask] = self.values_a[self.mask_replace_blank.mask]
 
-                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                for di in range(self.num_disp_points[0][si][mi][0]):
-                    if self.missing[0][si][mi][0][di]:
-                        self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
-
-                # Calculate and return the chi-squared value.
-                chi2_sum += chi2(self.values[0][si][mi][0], self.back_calc[0][si][mi][0], self.errors[0][si][mi][0])
-
-        # Return the total chi-squared value.
-        return chi2_sum
+        ## Calculate the chi-squared statistic.
+        return chi2_rankN(self.values_a, self.back_calc_a, self.errors_a)
 
 
     def func_ns_cpmg_2site_star(self, params):
@@ -1886,37 +1838,25 @@ class Dispersion:
         pA = params[self.end_index[1]]
         kex = params[self.end_index[1]+1]
 
-        # Once off parameter conversions.
-        pB = 1.0 - pA
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Reshape R20 to per experiment, spin and frequency.
+        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(self.num_frq):
-                # The R20 index.
-                r20_index = mi + si*self.num_frq
+        # Back calculate the R1rho values.
+        r1rho_TAP03(r1rho_prime=self.r20_struct, omega=self.chemical_shifts_a, offset=self.offset_a, pA=pA, dw=self.dw_struct, kex=kex, R1=self.r1_a, spin_lock_fields=self.spin_lock_omega1_a, spin_lock_fields2=self.spin_lock_omega1_squared_a, back_calc=self.back_calc_a)
 
-                # Convert dw from ppm to rad/s.
-                dw_frq = dw[si] * self.frqs[0][si][mi]
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc_a = self.back_calc_a*self.disp_struct
 
-                # Loop over the offsets.
-                for oi in range(self.num_offsets[0][si][mi]):
-                    # Back calculate the R1rho values.
-                    r1rho_TAP03(r1rho_prime=R20[r20_index], omega=self.chemical_shifts[0][si][mi], offset=self.offset[0][si][mi][oi], pA=pA, pB=pB, dw=dw_frq, kex=kex, R1=self.r1[si, mi], spin_lock_fields=self.spin_lock_omega1[0][mi][oi], spin_lock_fields2=self.spin_lock_omega1_squared[0][mi][oi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
-
-                    # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                    for di in range(self.num_disp_points[0][si][mi][oi]):
-                        if self.missing[0][si][mi][oi][di]:
-                            self.back_calc[0][si][mi][oi][di] = self.values[0][si][mi][oi][di]
-
-                    # Calculate and return the chi-squared value.
-                    chi2_sum += chi2(self.values[0][si][mi][oi], self.back_calc[0][si][mi][oi], self.errors[0][si][mi][oi])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc_a[self.mask_replace_blank.mask] = self.values_a[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
+        return chi2_rankN(self.values_a, self.back_calc_a, self.errors_a)
 
 
     def func_TP02(self, params):
@@ -1938,37 +1878,26 @@ class Dispersion:
         pA = params[self.end_index[1]]
         kex = params[self.end_index[1]+1]
 
-        # Once off parameter conversions.
-        pB = 1.0 - pA
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Reshape R20 to per experiment, spin and frequency.
+        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(self.num_frq):
-                # The R20 index.
-                r20_index = mi + si*self.num_frq
+        # Back calculate the R1rho values.
+        r1rho_TP02(r1rho_prime=self.r20_struct, omega=self.chemical_shifts_a, offset=self.offset_a, pA=pA, dw=self.dw_struct, kex=kex, R1=self.r1_a, spin_lock_fields=self.spin_lock_omega1_a, spin_lock_fields2=self.spin_lock_omega1_squared_a, back_calc=self.back_calc_a)
 
-                # Convert dw from ppm to rad/s.
-                dw_frq = dw[si] * self.frqs[0][si][mi]
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc_a = self.back_calc_a*self.disp_struct
 
-                # Loop over the offsets.
-                for oi in range(self.num_offsets[0][si][mi]):
-                    # Back calculate the R1rho values.
-                    r1rho_TP02(r1rho_prime=R20[r20_index], omega=self.chemical_shifts[0][si][mi], offset=self.offset[0][si][mi][oi], pA=pA, pB=pB, dw=dw_frq, kex=kex, R1=self.r1[si, mi], spin_lock_fields=self.spin_lock_omega1[0][mi][oi], spin_lock_fields2=self.spin_lock_omega1_squared[0][mi][oi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
-
-                    # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                    for di in range(self.num_disp_points[0][si][mi][oi]):
-                        if self.missing[0][si][mi][oi][di]:
-                            self.back_calc[0][si][mi][oi][di] = self.values[0][si][mi][oi][di]
-
-                    # Calculate and return the chi-squared value.
-                    chi2_sum += chi2(self.values[0][si][mi][oi], self.back_calc[0][si][mi][oi], self.errors[0][si][mi][oi])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc_a[self.mask_replace_blank.mask] = self.values_a[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
+        return chi2_rankN(self.values_a, self.back_calc_a, self.errors_a)
+
 
 
     def func_TSMFK01(self, params):
@@ -1989,29 +1918,22 @@ class Dispersion:
         dw = params[self.end_index[0]:self.end_index[1]]
         k_AB = params[self.end_index[1]]
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(self.num_frq):
-                # The R20 index.
-                r20a_index = mi + si*self.num_frq
+        # Reshape R20A and R20B to per experiment, spin and frequency.
+        self.r20a_struct[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
-                # Convert dw from ppm to rad/s.
-                dw_frq = dw[si] * self.frqs[0][si][mi]
+        # Back calculate the R2eff values.
+        r2eff_TSMFK01(r20a=self.r20a_struct, dw=self.dw_struct, dw_orig=dw, k_AB=k_AB, tcp=self.tau_cpmg_a, back_calc=self.back_calc_a)
 
-                # Back calculate the R2eff values.
-                r2eff_TSMFK01(r20a=R20A[r20a_index], dw=dw_frq, k_AB=k_AB, tcp=self.tau_cpmg[0][mi], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc_a = self.back_calc_a*self.disp_struct
 
-                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                for di in range(self.num_disp_points[0][si][mi][0]):
-                    if self.missing[0][si][mi][0][di]:
-                        self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
-
-                # Calculate and return the chi-squared value.
-                chi2_sum += chi2(self.values[0][si][mi][0], self.back_calc[0][si][mi][0], self.errors[0][si][mi][0])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc_a[self.mask_replace_blank.mask] = self.values_a[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
+        return chi2_rankN(self.values_a, self.back_calc_a, self.errors_a)

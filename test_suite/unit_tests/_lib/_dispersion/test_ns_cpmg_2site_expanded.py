@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, int16, pi, zeros
+from numpy import array, float64, int16, ones, pi, zeros
 from unittest import TestCase
 
 # relax module imports.
@@ -55,8 +55,10 @@ class Test_ns_cpmg_2site_expanded(TestCase):
         # Parameter conversions.
         k_AB, k_BA, dw_frq = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
+        a = ones([self.num_points])
+
         # Calculate the R2eff values.
-        r2eff_ns_cpmg_2site_expanded(r20=self.r20, pA=self.pA, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, relax_time=0.3, inv_relax_time=1/0.3, tcp=self.tcp, back_calc=self.R2eff, num_points=self.num_points, num_cpmg=self.num_cpmg)
+        r2eff_ns_cpmg_2site_expanded(r20=self.r20*a, pA=self.pA, dw=dw_frq*a, dw_orig=dw_frq*a, kex=self.kex, relax_time=0.3, inv_relax_time=1/0.3, tcp=self.tcp, back_calc=self.R2eff, num_cpmg=self.num_cpmg)
 
         # Check all R2eff values.
         if self.kex >= 1.e5:

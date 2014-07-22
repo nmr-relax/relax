@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, pi, zeros
+from numpy import array, float64, ones, pi, zeros
 from unittest import TestCase
 
 # relax module imports.
@@ -62,9 +62,10 @@ class Test_m61(TestCase):
         # Parameter conversions.
         phi_ex_scaled, spin_lock_omega1_squared = self.param_conversion(pA=self.pA, dw=self.dw, sfrq=self.sfrq, spin_lock_nu1=self.spin_lock_nu1)
 
-        # Calculate the R1rho values.
-        r1rho_M61(r1rho_prime=self.r1rho_prime, phi_ex=phi_ex_scaled, kex=self.kex, spin_lock_fields2=spin_lock_omega1_squared, back_calc=self.R1rho, num_points=self.num_points)
+        a = ones([self.num_points])
 
+        # Calculate the R1rho values.
+        r1rho_M61(r1rho_prime=self.r1rho_prime*a, phi_ex=phi_ex_scaled*a, kex=self.kex, spin_lock_fields2=spin_lock_omega1_squared, back_calc=self.R1rho)
 
         # Check all R1rho values.
         if self.kex > 1.e5:

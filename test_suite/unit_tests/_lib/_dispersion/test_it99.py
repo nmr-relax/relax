@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, pi, zeros
+from numpy import array, float64, ones, pi, zeros
 from unittest import TestCase
 
 # relax module imports.
@@ -56,8 +56,10 @@ class Test_it99(TestCase):
         # Parameter conversions.
         pB, dw_frq, tex = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
+        a = ones([self.num_points])
+
         # Calculate the R2eff values.
-        r2eff_IT99(r20=self.r20, pA=self.pA, pB=pB, dw=dw_frq, tex=tex, cpmg_frqs=self.cpmg_frqs, back_calc=self.R2eff, num_points=self.num_points)
+        r2eff_IT99(r20=self.r20*a, pA=self.pA, dw=dw_frq*a, dw_orig=dw_frq*a, tex=tex, cpmg_frqs=self.cpmg_frqs, back_calc=self.R2eff)
 
         # Check all R2eff values.
         if self.kex > 1.e5:

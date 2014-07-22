@@ -98,7 +98,7 @@ from numpy.ma import fix_invalid, masked_greater_equal, masked_less, masked_wher
 # Repetitive calculations (to speed up calculations).
 eta_scale = 2.0**(-3.0/2.0)
 
-def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_CR72(r20a=None, r20a_orig=None, r20b=None, r20b_orig=None, pA=None, dw=None, dw_orig=None, kex=None, cpmg_frqs=None, back_calc=None):
     """Calculate the R2eff values for the CR72 model.
 
     See the module docstring for details.
@@ -106,20 +106,24 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
 
     @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
     @type r20a:             numpy float array of rank [NE][NS][[NM][NO][ND]
+    @keyword r20a_orig:     The R20 parameter value of state A (R2 with no exchange). This is only for faster checking of zero value, which result in no exchange.
+    @type r20a_orig:        numpy float array of rank-1
     @keyword r20b:          The R20 parameter value of state B (R2 with no exchange).
     @type r20b:             numpy float array of rank [NE][NS][[NM][NO][ND]
+    @keyword r20b_orig:     The R20 parameter value of state B (R2 with no exchange). This is only for faster checking of zero value, which result in no exchange.
+    @type r20b_orig:        numpy float array of rank-1
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
     @type dw:               numpy array of rank [NE][NS][[NM][NO][ND]
+    @keyword dw_orig:       The chemical exchange difference between states A and B in ppm. This is only for faster checking of zero value, which result in no exchange.
+    @type dw_orig:          numpy float array of rank-1
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
     @type cpmg_frqs:        numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
     @type back_calc:        numpy float array of rank [NE][NS][[NM][NO][ND]
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
-    @type num_points:       int
     """
 
     # Flag to tell if values should be replaced if max_etapos in cosh function is violated.
@@ -129,11 +133,11 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
     # Test if pA or kex is zero.
     if kex == 0.0 or pA == 1.0:
-            back_calc[:] = r20a
-            return
+        back_calc[:] = r20a
+        return
 
     # Test if dw is zero. Wait for replacement, since this is spin specific.
-    if min(fabs(dw)) == 0.0:
+    if min(fabs(dw_orig)) == 0.0:
         t_dw_zero = True
         mask_dw_zero = masked_where(dw == 0.0, dw)
 
@@ -147,7 +151,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     k_AB = pB * kex
 
     # The Psi and zeta values.
-    if sum(r20a - r20b) != 0.0:
+    if sum(r20a_orig - r20b_orig) != 0.0:
         fact = r20a - r20b - k_BA + k_AB
         Psi = fact**2 - dw2 + 4.0*pA*pB*kex**2
         zeta = 2.0*dw * fact

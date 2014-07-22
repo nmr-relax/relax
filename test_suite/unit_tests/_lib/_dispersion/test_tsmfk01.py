@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, pi, zeros
+from numpy import array, float64, ones, pi, zeros
 from unittest import TestCase
 
 # relax module imports.
@@ -57,8 +57,10 @@ class Test_tsmfk01(TestCase):
         # Parameter conversions.
         k_AB, k_BA, pB, dw_frq = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
+        a = ones([self.num_points])
+
         # Calculate the R2eff values.
-        r2eff_TSMFK01(r20a=self.r20a, dw=dw_frq, k_AB=k_AB, tcp=self.cpmg_frqs, back_calc=self.R2eff, num_points=self.num_points)
+        r2eff_TSMFK01(r20a=self.r20a*a, dw=dw_frq*a, dw_orig=dw_frq, k_AB=k_AB, tcp=self.cpmg_frqs, back_calc=self.R2eff)
 
         # Check all R2eff values.
         for i in range(self.num_points):

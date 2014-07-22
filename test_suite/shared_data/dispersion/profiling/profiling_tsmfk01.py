@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2014 Troels E. Linnet                                         #
@@ -20,42 +22,124 @@
 ###############################################################################
 
 # Python module imports.
-from copy import deepcopy
-from numpy import array, arange, asarray, int32, float64, max, ones, pi, zeros
-from unittest import TestCase
+import cProfile
+from os import getcwd, path
+from numpy import array, arange, asarray, int32, float64, ones, pi, zeros
+import numpy as np
+import pstats
+import sys
+import tempfile
+
+# Add to system path, according to 
+if len(sys.argv) == 1:
+    path_to_base = path.join(getcwd(), '..', '..', '..', '..')
+else:
+    path_to_base = path.abspath(sys.argv[1])
+
+# Reverse sys path.
+sys.path.reverse()
+# Add to path.
+sys.path.append(path_to_base)
+# Reverse sys path.
+sys.path.reverse()
 
 # relax module imports.
-from lib.dispersion.cr72 import r2eff_CR72
-
-"""The 1H gyromagnetic ratio."""
-g1H = 26.7522212 * 1e7
-
-"""The 15N gyromagnetic ratio."""
-g15N = -2.7126 * 1e7
+from lib.physical_constants import g1H, g15N
+from lib.dispersion.tsmfk01 import r2eff_TSMFK01
+from target_functions.chi2 import chi2
+from target_functions.relax_disp import Dispersion
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_TSMFK01
 
 
-class Test_cr72_full_cluster_three_fields(TestCase):
-    """Unit tests for the lib.dispersion.cr72 relax module."""
+# Alter setup.
+def main():
+    if True:
+        # Nr of iterations.
+        nr_iter = 1
 
-    def setUp(self):
-        """Set up for all unit tests."""
+        # Print statistics.
+        verbose = True
 
-        # Default parameter values.
-        self.r2 = None
-        self.r2a = 5.0
-        self.r2b = 10.0
-        self.dw = 3.0
-        self.pA = 0.9
-        self.kex = 1000.0
-        self.spins_params = ['r2a', 'r2b', 'dw', 'pA', 'kex']
+        # Calc for single.
+        s_filename = tempfile.NamedTemporaryFile(delete=False).name
+        # Profile for a single spin.
+        cProfile.run('single(iter=%s)'%nr_iter, s_filename)
+
+        # Read all stats files into a single object
+        s_stats = pstats.Stats(s_filename)
+
+        # Clean up filenames for the report
+        s_stats.strip_dirs()
+
+        # Sort the statistics by the cumulative time spent in the function. cumulative, time, calls
+        s_stats.sort_stats('cumulative')
+
+        # Print report for single.
+        if verbose:
+            s_stats.print_stats()
+
+    if True:
+        # Calc for cluster.
+        c_filename = tempfile.NamedTemporaryFile(delete=False).name
+        # Profile for a cluster of 100 spins.
+        cProfile.run('cluster(iter=%s)'%nr_iter, c_filename)
+
+        # Read all stats files into a single object
+        c_stats = pstats.Stats(c_filename)
+
+        # Clean up filenames for the report
+        c_stats.strip_dirs()
+
+        # Sort the statistics by the cumulative time spent in the function. cumulative, time, calls
+        c_stats.sort_stats('cumulative')
+
+        # Print report for clustered.
+        if verbose:
+            c_stats.print_stats()
+
+
+class Profile(Dispersion):
+    """
+    Class Profile inherits the Dispersion container class object.
+    """
+
+    def __init__(self, num_spins=1, model=None, r2=None, r2a=None, r2b=None, dw=None, pA=None, kex=None, spins_params=None):
+        """
+        Special method __init__() is called first (acts as Constructor).
+        It brings in data from outside the class like the variable num_spins.
+        (in this case num_spins is also set to a default value of 1)
+        The first parameter of any method/function in the class is always self,
+        the name self is used by convention.  Assigning num_spins to self.num_spins allows it
+        to be passed to all methods within the class.  Think of self as a carrier,
+        or if you want impress folks call it target instance object.
+
+        @keyword num_spins:     Number of spins in the cluster.
+        @type num_spins:        integer
+        @keyword model:         The dispersion model to instantiate the Dispersion class with.
+        @type model:            string
+        @keyword r2:            The transversal relaxation rate.
+        @type r2:               float
+        @keyword r2a:           The transversal relaxation rate for state A in the absence of exchange.
+        @type r2a:              float
+        @keyword r2b:           The transversal relaxation rate for state B in the absence of exchange.
+        @type r2b:              float
+        @keyword dw:            The chemical exchange difference between states A and B in ppm.
+        @type dw:               float
+        @keyword pA:            The population of state A.
+        @type pA:               float
+        @keyword kex:           The rate of exchange.
+        @type kex:              float
+        @keyword spins_params:  List of parameter strings used in dispersion model.
+        @type spins_params:     array of strings
+        """
 
         # Define parameters
-        self.model = "CR72 full"
-        self.num_spins = 2
+        self.model = model
+        self.num_spins = num_spins
         #self.fields = array([800. * 1E6])
         #self.fields = array([600. * 1E6, 800. * 1E6])
         self.fields = array([600. * 1E6, 800. * 1E6, 900. * 1E6])
-        self.exp_type = ['SQ CPMG']
+        self.exp_type = [EXP_TYPE_CPMG_SQ]
         self.offset = [0]
 
         # Required data structures.
@@ -64,132 +148,52 @@ class Test_cr72_full_cluster_three_fields(TestCase):
         self.points = []
         self.value = []
         self.error = []
-        self.num_disp_points = []
-
+        self.tau_cpmg_list = []
         for i in range(len(self.fields)):
             ncyc = arange(2, 1000. * self.relax_times[i], 4)
             #ncyc = arange(2, 42, 2)
             self.ncycs.append(ncyc)
-            #print("sfrq: ", self.fields[i], "number of cpmg frq", len(ncyc), ncyc)
+            print("sfrq: ", self.fields[i], "number of cpmg frq", len(ncyc), ncyc)
 
             cpmg_point = ncyc / self.relax_times[i]
+            tau_cpmg = 0.25 / cpmg_point
 
-            nr_cpmg_points = len(cpmg_point)
-            self.num_disp_points.append(nr_cpmg_points)
+            self.tau_cpmg_list.append(list(tau_cpmg))
 
             self.points.append(list(cpmg_point))
             self.value.append([2.0]*len(cpmg_point))
             self.error.append([1.0]*len(cpmg_point))
 
-
-    def calc_r2eff(self):
-        """Calculate and check the R2eff values."""
-
         # Assemble param vector.
-        self.params = self.assemble_param_vector(r2=self.r2, r2a=self.r2a, r2b=self.r2b, dw=self.dw, pA=self.pA, kex=self.kex, spins_params=self.spins_params)
+        self.params = self.assemble_param_vector(r2=r2, r2a=r2a, r2b=r2b, dw=dw, pA=pA, kex=kex, spins_params=spins_params)
 
         # Make nested list arrays of data. And return them.
         values, errors, cpmg_frqs, missing, frqs, exp_types, relax_times, offsets = self.return_r2eff_arrays()
 
-        # Unpack the parameter values.
-        # Initialise the post spin parameter indices.
-        end_index = []
-        # The spin and frequency dependent R2 parameters.
-        end_index.append(len(self.exp_type) * self.num_spins * len(self.fields))
-        if self.model in ["CR72 full"]:
-            end_index.append(2 * len(self.exp_type) * self.num_spins * len(self.fields))
-        # The spin and dependent parameters (phi_ex, dw, padw2).
-        end_index.append(end_index[-1] + self.num_spins)
-
-        # Unpack the parameter values.
-        R20 = self.params[:end_index[1]].reshape(self.num_spins*2, len(self.fields))
-        R20A = R20[::2].flatten()
-        R20B = R20[1::2].flatten()
-        dw = self.params[end_index[1]:end_index[2]]
-        pA = self.params[end_index[2]]
-        kex = self.params[end_index[2]+1]
-
-        # Copy value structure
-        self.back_calc = deepcopy(values)
-
-        # Setup special numpy array structures, for higher dimensional computation.
-        # Get the shape of back_calc structure.
-        back_calc_shape = list( asarray(self.back_calc).shape )[:4]
-
-        # Find which frequency has the maximum number of disp points.
-        # To let the numpy array operate well together, the broadcast size has to be equal for all shapes.
-        self.max_num_disp_points = max(self.num_disp_points)
-
-        # Create numpy arrays to pass to the lib function.
-        # All numpy arrays have to have same shape to allow to multiply together.
-        # The dimensions should be [ei][si][mi][oi][di]. [Experiment][spins][spec. frq][offset][disp points].
-        # The number of disp point can change per spectrometer, so we make the maximum size.
-        self.R20A_a = ones(back_calc_shape + [self.max_num_disp_points])
-        self.R20B_a = ones(back_calc_shape + [self.max_num_disp_points])
-        self.dw_frq_a = ones(back_calc_shape + [self.max_num_disp_points])
-        self.cpmg_frqs_a = ones(back_calc_shape + [self.max_num_disp_points])
-        self.num_disp_points_a = ones(back_calc_shape + [self.max_num_disp_points])
-        self.back_calc_a = ones(back_calc_shape + [self.max_num_disp_points])
-
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(len(self.fields)):
-                # Extract number of dispersion points.
-                num_disp_points = self.num_disp_points[mi]
-
-                # Extract cpmg_frqs and num_disp_points from lists.
-                self.cpmg_frqs_a[0][si][mi][0][:num_disp_points] = cpmg_frqs[0][mi][0]
-                self.num_disp_points_a[0][si][mi][0][:num_disp_points] = self.num_disp_points[mi]
-
-        # Now calculate.
-
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(len(self.fields)):
-                # Extract number of dispersion points.
-                num_disp_points = len(cpmg_frqs[0][mi][0])
-
-                # The R20 index.
-                r20_index = mi + si*len(self.fields)
-
-                # Store r20a and r20b values per disp point.
-                self.R20A_a[0][si][mi][0] = array( [R20A[r20_index]] * self.max_num_disp_points, float64)
-                self.R20B_a[0][si][mi][0] = array( [R20B[r20_index]] * self.max_num_disp_points, float64)
-
-                # Convert dw from ppm to rad/s.
-                dw_frq = dw[si] * frqs[0][si][mi]
-
-                # Store dw_frq per disp point.
-                self.dw_frq_a[0][si][mi][0] = array( [dw_frq] * self.max_num_disp_points, float64)
-
-        ## Back calculate the R2eff values.
-        r2eff_CR72(r20a_orig=self.R20A_a, r20b_orig=self.R20B_a, dw_orig=self.dw_frq_a, r20a=self.R20A_a, r20b=self.R20B_a, pA=pA, dw=self.dw_frq_a, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a)
-
-        # Now return the values back to the structure of self.back_calc object.
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(len(self.fields)):
-                # Extract number of dispersion points.
-                num_disp_points = self.num_disp_points[mi]
-
-                # Extract the value
-                self.back_calc[0][si][mi][0][:] = self.back_calc_a[0][si][mi][0][:num_disp_points]
-
-                # Check values.
-                for di in range(num_disp_points):
-                    self.assertAlmostEqual(self.back_calc[0][si][mi][0][di], self.R20A_a[0][si][mi][0][di])
+        # Init the Dispersion Class.
+        self.model = Dispersion(model=self.model, num_params=None, num_spins=self.num_spins, num_frq=len(self.fields), exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=None, cpmg_frqs=cpmg_frqs, spin_lock_nu1=None, chemical_shifts=None, offset=offsets, tilt_angles=None, r1=None, relax_times=relax_times, scaling_matrix=None)
 
 
     def return_r2eff_arrays(self):
         """Return numpy arrays of the R2eff/R1rho values and errors.
 
         @return:    The numpy array structures of the R2eff/R1rho values, errors, missing data, and corresponding Larmor frequencies.  For each structure, the first dimension corresponds to the experiment types, the second the spins of a spin block, the third to the spectrometer field strength, and the fourth is the dispersion points.  For the Larmor frequency structure, the fourth dimension is omitted.  For R1rho-type data, an offset dimension is inserted between the spectrometer field strength and the dispersion points.
-        @rtype:     lists of numpy float arrays, lists of numpy float arrays, lists of numpy float arrays, numpy rank-2 int array
+        @rtype:         lists of numpy float arrays, lists of numpy float arrays, lists of numpy float arrays, numpy rank-2 int array
         """
+
+        # Unpack the parameter values.
+        # Initialise the post spin parameter indices.
+        end_index = []
+        # The spin and frequency dependent R2 parameters.
+        end_index.append(len(self.exp_type) * self.num_spins * len(self.fields))
+
+        # The spin and dependent parameters (phi_ex, dw, padw2).
+        end_index.append(end_index[-1] + self.num_spins)
+
+        # Unpack the parameter values.
+        R20A = self.params[:end_index[0]]
+        dw = self.params[end_index[0]:end_index[1]]
+        k_AB = self.params[end_index[1]]
 
         # Initialise the data structures for the target function.
         exp_types = []
@@ -261,15 +265,28 @@ class Test_cr72_full_cluster_three_fields(TestCase):
                     # Get the cpmg frq.
                     cpmg_frqs[ei][mi][oi] = self.points[mi]
 
+                    # Calculate how the value should be, so chi2 gets zero.
+                    # The R20 index.
+                    r20_index = mi + si*len(self.fields)
+                    # Convert dw from ppm to rad/s.
+                    dw_frq = dw[si] * frqs[ei][si][mi]
+                    r20a=R20A[r20_index]
+                    back_calc = array([0.0]*len(cpmg_frqs[ei][mi][oi]))
+
+                    # Initialise call to function.
+                    r2eff_TSMFK01(r20a=r20a, dw=dw_frq, dw_orig=dw_frq, k_AB=k_AB, tcp=array(self.tau_cpmg_list[mi]), back_calc=back_calc, num_points=len(back_calc))
+
                     for oi in range(len(self.offset)):
                         for di in range(len(self.points[mi])):
 
                             missing[ei][si][mi][oi].append(0)
 
                             # Values
-                            values[ei][si][mi][oi].append(self.value[mi][di])
+                            #values[ei][si][mi][oi].append(self.value[mi][di])
+                            values[ei][si][mi][oi].append(back_calc[di])
                             # The errors.
                             errors[ei][si][mi][oi].append(self.error[mi][di])
+                            #print self.value[mi][di], self.error[mi][di]
 
                             # The relaxation times.
                             # Found.
@@ -331,7 +348,7 @@ class Test_cr72_full_cluster_three_fields(TestCase):
                 value = r2b
                 value = value + mi + spin_index*0.1
             elif param_name == 'dw':
-                value = dw
+                value = dw + spin_index
             elif param_name == 'pA':
                 value = pA
             elif param_name == 'kex':
@@ -392,86 +409,99 @@ class Test_cr72_full_cluster_three_fields(TestCase):
                     yield 'kex', 0, 0
 
 
-    def test_cr72_full_cluster_three_fields_no_rex1(self):
-        """Test the r2eff_cr72() function for no exchange when dw = 0.0."""
+    def calc(self, params):
+        """Calculate chi2 values.
 
-        # Parameter reset.
-        self.dw = 0.0
+        @keyword params:  List of parameter strings used in dispersion model.
+        @type params:     array of strings
+        @return:          Chi2 value.
+        @rtype:           float
+        """
 
-        # Calculate and check the R2eff values.
-        self.calc_r2eff()
-
-
-    def test_cr72_full_cluster_three_fields_no_rex2(self):
-        """Test the r2eff_cr72() function for no exchange when pA = 1.0."""
-
-        # Parameter reset.
-        self.pA = 1.0
-
-        # Calculate and check the R2eff values.
-        self.calc_r2eff()
+        # Return chi2 value.
+        chi2 = self.model.func_TSMFK01(params)
+        return chi2
 
 
-    def test_cr72_full_cluster_three_fields_no_rex3(self):
-        """Test the r2eff_cr72() function for no exchange when kex = 0.0."""
+def single(num_spins=1, model=MODEL_TSMFK01, iter=None):
+    """Calculate for a single spin.
 
-        # Parameter reset.
-        self.kex = 0.0
+    @keyword num_spins:     Number of spins in the cluster.
+    @type num_spins:        integer
+    @keyword model:         The dispersion model to instantiate the Dispersion class with.
+    @type model:            string
+    @keyword iter:          The number of iterations to perform the function call.
+    @type iter:             int
+    @return:                Chi2 value.
+    @rtype:                 float
+    """
 
-        # Calculate and check the R2eff values.
-        self.calc_r2eff()
+    # Instantiate class
+    C1 = Profile(num_spins=num_spins, model=model, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
 
-
-    def test_cr72_full_cluster_three_fields_no_rex4(self):
-        """Test the r2eff_cr72() function for no exchange when dw = 0.0 and pA = 1.0."""
-
-        # Parameter reset.
-        self.pA = 1.0
-        self.dw = 0.0
-
-        # Calculate and check the R2eff values.
-        self.calc_r2eff()
-
-
-    def test_cr72_full_cluster_three_fields_no_rex5(self):
-        """Test the r2eff_cr72() function for no exchange when dw = 0.0 and kex = 0.0."""
-
-        # Parameter reset.
-        self.dw = 0.0
-        self.kex = 0.0
-
-        # Calculate and check the R2eff values.
-        self.calc_r2eff()
+    # Repeat the function call, to simulate minimisation.
+    for i in xrange(iter):
+        chi2 = C1.calc(C1.params)
+    print("chi2 single:", chi2)
 
 
-    def test_cr72_full_cluster_three_fields_no_rex6(self):
-        """Test the r2eff_cr72() function for no exchange when pA = 1.0 and kex = 0.0."""
+def cluster(num_spins=100, model=MODEL_TSMFK01, iter=None):
+    """Calculate for a number of clustered spins.
 
-        # Parameter reset.
-        self.pA = 1.0
-        self.kex = 0.0
+    @keyword num_spins:     Number of spins in the cluster.
+    @type num_spins:        integer
+    @keyword model:         The dispersion model to instantiate the Dispersion class with.
+    @type model:            string
+    @keyword iter:          The number of iterations to perform the function call.
+    @type iter:             int
+    @return:                Chi2 value.
+    @rtype:                 float
+    """
 
-        # Calculate and check the R2eff values.
-        self.calc_r2eff()
+    # Instantiate class
+    C1 = Profile(num_spins=num_spins, model=model, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
+
+    # Repeat the function call, to simulate minimisation.
+    for i in xrange(iter):
+        chi2 = C1.calc(C1.params)
+    print("chi2 cluster:", chi2)
 
 
-    def test_cr72_full_cluster_three_fields_no_rex7(self):
-        """Test the r2eff_cr72() function for no exchange when dw = 0.0, pA = 1.0, and kex = 0.0."""
+# Execute main function.
+if __name__ == "__main__":
+    main()
 
-        # Parameter reset.
-        self.dw = 0.0
-        self.pA = 1.0
-        self.kex = 0.0
+def test_reshape():
+    C1 = Profile(num_spins=1, model=MODEL_TSMFK01, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
+    end_index = C1.model.end_index
+    #print("end_index:", end_index)
+    num_spins = C1.model.num_spins
+    #print("num_spins:", num_spins)
+    num_frq = C1.model.num_frq
+    #print("num_frq:", num_frq)
+    params = C1.params
+    #print("params", params)
 
-        # Calculate and check the R2eff values.
-        self.calc_r2eff()
+    R20 = params[:end_index[1]].reshape(num_spins*2, num_frq)
+    R20A = R20[::2].flatten()
+    R20B = R20[1::2].flatten()
+    dw = params[end_index[1]:end_index[2]]
+    pA = params[end_index[2]]
+    kex = params[end_index[2]+1]
+    print("R20A", R20A, len(R20A))
+    print("R20B", R20B, len(R20B))
+    print("dw", dw, len(dw))
+    print("dw", pA)
+    print("kex", kex)
 
+    for si in range(num_spins):
+        for mi in range(num_frq):
+            r20_index = mi + si*num_frq
+            r20a=R20A[r20_index]
+            r20b=R20B[r20_index]
+            print("r20a", r20a, "r20b", r20b)
 
-    def test_cr72_full_cluster_three_fields_no_rex8(self):
-        """Test the r2eff_cr72() function for no exchange when kex = 1e7."""
+    model = C1.calc(params)
+    print(model)
 
-        # Parameter reset.
-        self.kex = 1e7
-
-        # Calculate and check the R2eff values.
-        self.calc_r2eff()
+#test_reshape()

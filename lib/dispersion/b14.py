@@ -116,7 +116,7 @@ from numpy.ma import fix_invalid, masked_greater_equal, masked_where
 # Repetitive calculations (to speed up calculations).
 g_fact = 1/sqrt(2)
 
-def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=None, k_BA=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None):
+def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None):
     """Calculate the R2eff values for the CR72 model.
 
     See the module docstring for details.
@@ -128,16 +128,12 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     @type r20b:             numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword pA:            The population of state A.
     @type pA:               float
-    @keyword pB:            The population of state B.
-    @type pB:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
     @type dw:               numpy float array of rank [NE][NS][[NM][NO][ND]
+    @keyword dw_orig:       The chemical exchange difference between states A and B in ppm. This is only for faster checking of zero value, which result in no exchange.
+    @type dw_orig:          numpy float array of rank-1
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
-    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
-    @type k_AB:             float
-    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
-    @type k_BA:             float
     @keyword ncyc:          The matrix exponential power array. The number of CPMG blocks.
     @type ncyc:             numpy int16 array of rank [NE][NS][[NM][NO][ND]
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
@@ -146,8 +142,6 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     @type tcp:              numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
     @type back_calc:        numpy float array of rank [NE][NS][[NM][NO][ND]
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
-    @type num_points:       int
     """
 
     # Flag to tell if values should be replaced if math function is violated.
@@ -159,13 +153,18 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
     # Test if pA or kex is zero.
     if kex == 0.0 or pA == 1.0:
-            back_calc[:] = r20a
-            return
+        back_calc[:] = r20a
+        return
 
     # Test if dw is zero. Wait for replacement, since this is spin specific.
-    if min(fabs(dw)) == 0.0:
+    if min(fabs(dw_orig)) == 0.0:
         t_dw_zero = True
         mask_dw_zero = masked_where(dw == 0.0, dw)
+
+    # Parameter conversions.
+    pB = 1.0 - pA
+    k_BA = pA * kex
+    k_AB = pB * kex
 
     # Repetitive calculations (to speed up calculations).
     deltaR2 = r20a - r20b

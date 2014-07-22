@@ -64,50 +64,55 @@ More information on the LM63 model can be found in the:
 """
 
 # Python module imports.
-from numpy import array, isfinite, sum, tanh
+from numpy import any, array, isfinite, min, sum, tanh
+from numpy.ma import fix_invalid, masked_where
 
-
-def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None):
     """Calculate the R2eff values for the LM63 model.
 
     See the module docstring for details.
 
 
     @keyword r20:           The R20 parameter value (R2 with no exchange).
-    @type r20:              float
+    @type r20:              numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword phi_ex:        The phi_ex parameter value (pA * pB * delta_omega^2).
-    @type phi_ex:           float
+    @type phi_ex:           numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
-    @type cpmg_frqs:        numpy rank-1 float array
+    @type cpmg_frqs:        numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
-    @type num_points:       int
+    @type back_calc:        numpy float array of rank [NE][NS][[NM][NO][ND]
     """
+
+    # Flag to tell if values should be replaced if phi_ex is zero.
+    t_phi_ex_zero = False
 
     # Catch divide with zeros (to avoid pointless mathematical operations).
     if kex == 0.0:
-        back_calc[:] = array([r20]*num_points)
+        back_calc[:] = r20
         return
 
     # Catch zeros (to avoid pointless mathematical operations).
     # This will result in no exchange, returning flat lines.
-    if phi_ex == 0.0:
-        back_calc[:] = array([r20]*num_points)
-        return
+    if min(phi_ex) == 0.0:
+        t_phi_ex_zero = True
+        mask_phi_ex_zero = masked_where(phi_ex == 0.0, phi_ex)
 
     # Repetitive calculations (to speed up calculations).
     rex = phi_ex / kex
     kex_4 = 4.0 / kex
 
     # Calculate R2eff.
-    R2eff = r20 + rex * (1.0 - kex_4 * cpmg_frqs * tanh(kex / (4.0 * cpmg_frqs)))
+    back_calc[:] = r20 + rex * (1.0 - kex_4 * cpmg_frqs * tanh(kex / (4.0 * cpmg_frqs)))
+
+    # Replace data in array.
+    # If phi_ex is zero.
+    if t_phi_ex_zero:
+        back_calc[mask_phi_ex_zero.mask] = r20[mask_phi_ex_zero.mask]
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
-    if not isfinite(sum(R2eff)):
-        R2eff = array([1e100]*num_points)
-
-    back_calc[:] = R2eff
+    if not isfinite(sum(back_calc)):
+        # Replaces nan, inf, etc. with fill value.
+        fix_invalid(back_calc, copy=False, fill_value=1e100)

@@ -275,7 +275,7 @@ class Profile(Dispersion):
                     back_calc = array([0.0]*len(cpmg_frqs[ei][mi][oi]))
 
                     # Initialise call to function.
-                    r2eff_CR72(r20a=r20a, r20b=r20b, pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=array(cpmg_frqs[ei][mi][oi]), back_calc=back_calc, num_points=len(back_calc))
+                    r2eff_CR72(r20a_orig=R20A, r20b_orig=R20B, r20a=r20a, r20b=r20b, pA=pA, dw_orig=dw_frq, dw=dw_frq, kex=kex, cpmg_frqs=array(cpmg_frqs[ei][mi][oi]), back_calc=back_calc, num_points=len(back_calc))
 
                     for oi in range(len(self.offset)):
                         for di in range(len(self.points[mi])):

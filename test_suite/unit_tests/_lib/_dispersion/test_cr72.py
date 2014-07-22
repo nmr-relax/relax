@@ -60,8 +60,15 @@ class Test_cr72(TestCase):
         # Convert to array.
         a = ones([self.num_points])
 
+        r20a=self.r20a*a
+        r20a_orig=r20a
+        r20b=self.r20b*a
+        r20b_orig=r20b
+        dw=dw_frq*a
+        dw_orig=dw_frq*a
+
         # Calculate the R2eff values.
-        r2eff_CR72(r20a=self.r20a*a, r20b=self.r20b*a, pA=self.pA, dw=dw_frq*a, kex=self.kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.R2eff, num_points=self.num_points)
+        r2eff_CR72(r20a=r20a, r20a_orig=r20a_orig, r20b=r20b, r20b_orig=r20b_orig, pA=self.pA, dw=dw, dw_orig=dw_orig,  kex=self.kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.R2eff)
 
         # Check all R2eff values.
         for i in range(self.num_points):
