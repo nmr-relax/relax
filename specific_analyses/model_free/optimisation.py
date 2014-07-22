@@ -34,7 +34,6 @@ from re import match
 import lib.arg_check
 from lib.errors import RelaxError, RelaxInfError, RelaxMultiVectorError, RelaxNaNError
 from lib.float import isNaN, isInf
-from lib.optimisation import test_grid_ops
 from lib.physical_constants import return_gyromagnetic_ratio
 from multi import Memo, Result_command, Slave_command
 from pipe_control import pipes
