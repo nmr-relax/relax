@@ -305,16 +305,18 @@ class API_common:
         """Dummy method, normally for deselecting spins with insufficient data for minimisation."""
 
 
-    def _print_model_title_spin(self, model_info=None):
+    def _print_model_title_spin(self, prefix=None, model_info=None):
         """Default method for when the model_loop() method simply loops over spins.
 
+        @keyword prefix:        The starting text of the title.  This should be printed out first, followed by the model information text.
+        @type prefix:           str
         @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() method.
         @type model_info:       SpinContainer instance, str
         """
 
         # The printout.
         spin_id = model_info[1]
-        text = "The spin %s" % spin_id
+        text = prefix + "The spin %s" % spin_id
         subsection(file=sys.stdout, text=text, prespace=2)
 
 
