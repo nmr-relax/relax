@@ -69,7 +69,6 @@ uf.add_keyarg(
     desc = "An array of the lower bound parameter values for the grid search.  The length of the array should be equal to the number of parameters in the model.",
     can_be_none = True
 )
-
 uf.add_keyarg(
     name = "upper",
     py_type = "num_list",
@@ -77,7 +76,6 @@ uf.add_keyarg(
     desc = "An array of the upper bound parameter values for the grid search.  The length of the array should be equal to the number of parameters in the model.",
     can_be_none = True
 )
-
 uf.add_keyarg(
     name = "inc",
     default = 21,
@@ -86,21 +84,19 @@ uf.add_keyarg(
     desc = "The number of increments to search over.  If a single integer is given then the number of increments will be equal in all dimensions.  Different numbers of increments in each direction can be set if 'inc' is set to an array of integers of length equal to the number of parameters.",
     none_elements = True
 )
-
-uf.add_keyarg(
-    name = "constraints",
-    default = True,
-    py_type = "bool",
-    desc_short = "constraints flag",
-    desc = "A boolean flag specifying whether the parameters should be constrained.  The default is to turn constraints on (constraints=True)."
-)
-
 uf.add_keyarg(
     name = "verbosity",
     default = 1,
     py_type = "int",
     desc_short = "verbosity level",
     desc = "The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1."
+)
+uf.add_keyarg(
+    name = "constraints",
+    default = True,
+    py_type = "bool",
+    desc_short = "constraints flag",
+    desc = "A boolean flag specifying whether the parameters should be constrained.  The default is to turn constraints on (constraints=True)."
 )
 # Description.
 uf.desc.append(Desc_container())
