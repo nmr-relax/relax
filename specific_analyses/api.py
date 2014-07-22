@@ -151,7 +151,6 @@ def return_api(analysis_type=None, pipe_name=None):
     raise RelaxError("The analysis type '%s' is unknown." % analysis_type)
 
 
-
 def return_parameter_object(analysis_type=None, pipe_name=None):
     """Return the specific analysis API parameter object corresponding to the function type.
 
@@ -221,4 +220,3 @@ def return_parameter_object(analysis_type=None, pipe_name=None):
     # Unknown analysis.
     else:
         raise RelaxError("The analysis type '%s' is unknown." % analysis_type)
-
