@@ -235,11 +235,13 @@ class Dispersion:
         # Create special numpy structures.
         self.no_nd_ones = ones([self.NO, self.ND], float64)
         self.nm_no_nd_ones = ones([self.NM, self.NO, self.ND], float64)
+
         # Structure of r20a and r20b. The full and outer dimensions structures.
         self.r20_struct = deepcopy(numpy_array_zeros)
         self.r20a_struct = deepcopy(numpy_array_zeros)
         self.r20b_struct = deepcopy(numpy_array_zeros)
         self.r20c_struct = deepcopy(numpy_array_zeros)
+
         # Structure of dw. The full and the outer dimensions structures.
         self.dw_struct = deepcopy(numpy_array_zeros)
         self.dwH_struct = deepcopy(numpy_array_zeros)
@@ -323,9 +325,11 @@ class Dispersion:
 
                             for di in range(num_disp_points):
                                 cpmg_frq = cpmg_frqs[ei][mi][oi][di]
+
                                 # Missing data for an entire field strength.
                                 if isNaN(relax_time):
                                     power = 0
+
                                 # Normal value.
                                 else:
                                     power = int(round(cpmg_frq * relax_time))
@@ -359,9 +363,11 @@ class Dispersion:
                             # For R1rho data.
                             if model in MODEL_LIST_R1RHO_FULL and model != MODEL_NOREX:
                                 self.disp_struct[ei, si, mi, oi, di] = 1.0
+
                                 # Get the tilt angles.
                                 self.tilt_angles[ei, si, mi, oi, di] = tilt_angles[ei][si][mi][oi][di]
                                 self.offset[ei, si, mi, oi] = offset[ei][si][mi][oi]
+
                                 # Convert the spin-lock data to rad.s^-1.
                                 self.spin_lock_omega1[ei, si, mi, oi, di] = 2.0 * pi * spin_lock_nu1[ei][mi][oi][di]
                                 self.spin_lock_omega1_squared[ei, si, mi, oi, di] = self.spin_lock_omega1[ei, si, mi, oi, di] ** 2
@@ -408,17 +414,22 @@ class Dispersion:
         # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
         if model in [MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE]:
             self.M0 = zeros(2, float64)
+
         if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
             self.M0 = zeros(3, float64)
+
         if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL]:
             M0_0 = zeros( [self.NE, self.NS, self.NM, self.NO, self.ND, 7, 1], float64)
             M0_0[:, :, :, :, :, 0, 0] = 0.5
             self.M0 = M0_0
+
             # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
             self.M0_T = rollaxis(self.M0, 6, 5)
+
         if model in [MODEL_NS_R1RHO_2SITE]:
             # Offset of spin-lock from A.
             da_mat = self.chemical_shifts - self.offset
+
             # The following lines rotate the magnetization previous to spin-lock into the weff frame.
             theta_mat = arctan2(self.spin_lock_omega1, da_mat)
             M0_0 = zeros([6, 1], float64)
@@ -428,24 +439,30 @@ class Dispersion:
             M0_2[2, 0] = 1
             M0_cos = multiply.outer( cos(theta_mat), M0_2 )
             self.M0 = M0_sin + M0_cos
+
             # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
             self.M0_T = rollaxis(self.M0, 6, 5)
 
         if model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
             self.M0 = zeros(9, float64)
+
             # Offset of spin-lock from A.
             da_mat = self.chemical_shifts - self.offset
+
             # The following lines rotate the magnetization previous to spin-lock into the weff frame.
             theta_mat = arctan2(self.spin_lock_omega1, da_mat)
             M0_0 = zeros([9, 1], float64)
             M0_0[0, 0] = 1
+
             # The A state initial X magnetisation.
             M0_sin = multiply.outer( sin(theta_mat), M0_0 )
             M0_2 = zeros([9, 1], float64)
             M0_2[2, 0] = 1
+
             # The A state initial Z magnetisation.
             M0_cos = multiply.outer( cos(theta_mat), M0_2 )
             self.M0 = M0_sin + M0_cos
+
             # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
             self.M0_T = rollaxis(self.M0, 6, 5)
 
