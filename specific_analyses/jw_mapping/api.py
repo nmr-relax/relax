@@ -242,6 +242,19 @@ class Jw_mapping(API_base, API_common):
                 setattr(spin, name, None)
 
 
+    def get_param_names(self, model_info=None):
+        """Return a vector of parameter names.
+
+        @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() method.
+        @type model_info:       SpinContainer instance, str
+        @return:                The vector of parameter names.
+        @rtype:                 list of str
+        """
+
+        # Return the fixed list.
+        return ['j0', 'jwx', 'jwh']
+
+
     def overfit_deselect(self, data_check=True, verbose=True):
         """Deselect spins which have insufficient data to support calculation.
 
