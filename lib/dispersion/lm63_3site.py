@@ -44,10 +44,10 @@ Equations
 The equation used is::
 
                    _3_
-                   \    phi_ex_i   /     4 * nu_cpmg         /     ki      \ \
+                   \    phi_ex_i   /     4 * nu_cpmg         /     ki      \ \ 
     R2eff = R20 +   >   -------- * | 1 - -----------  * tanh | ----------- | | .
                    /__     ki      \         ki              \ 4 * nu_cpmg / /
-                   i = 2
+                   i=2
 
 For deconvoluting the parameters, see the relax user manual or the reference:
 

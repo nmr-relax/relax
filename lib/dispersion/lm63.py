@@ -43,7 +43,7 @@ Equations
 
 The equation used is::
 
-                  phi_ex   /     4 * nu_cpmg         /     kex     \ \
+                  phi_ex   /     4 * nu_cpmg         /     kex     \ \ 
     R2eff = R20 + ------ * | 1 - -----------  * tanh | ----------- | | ,
                    kex     \         kex             \ 4 * nu_cpmg / /
 
