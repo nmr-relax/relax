@@ -1483,9 +1483,6 @@ class Dispersion:
         # Reshape R20 to per experiment, spin and frequency.
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
-        # Initialise.
-        chi2_sum = 0.0
-
         # Loop over the experiment types.
         for ei in range(self.NE):
             r20 = self.r20_struct[ei]
