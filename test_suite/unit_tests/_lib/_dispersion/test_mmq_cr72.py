@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, pi, zeros
+from numpy import array, float64, ones, pi, zeros
 from unittest import TestCase
 
 # relax module imports.
@@ -41,7 +41,7 @@ class Test_mmq_cr72(TestCase):
         self.kex = 1000.0
 
         # Required data structures.
-        self.num_points = 7
+        self.num_points = 6
         self.ncyc = array([2, 4, 8, 10, 20, 40])
         relax_times = 0.04
         self.cpmg_frqs = self.ncyc / relax_times
@@ -59,8 +59,10 @@ class Test_mmq_cr72(TestCase):
         # Parameter conversions.
         k_AB, k_BA, pB, dw_frq, dwH_frq = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, dwH=self.dwH, sfrq=self.sfrq)
 
+        a = ones(self.ncyc.shape)
+
         # Calculate the R2eff values.
-        r2eff_mmq_cr72(r20=self.r20, pA=self.pA, pB=pB, dw=dw_frq, dwH=dwH_frq, kex=self.kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.R2eff, num_points=self.num_points, power=self.ncyc)
+        r2eff_mmq_cr72(r20=self.r20*a, pA=self.pA, pB=pB, dw=dw_frq*a, dwH=dwH_frq*a, kex=self.kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.R2eff)
 
         # Check all R2eff values.
         for i in range(self.num_points):
@@ -184,10 +186,10 @@ class Test_mmq_cr72(TestCase):
 
 
     def test_mmq_cr72_no_rex8(self):
-        """Test the r2eff_mmq_cr72() function for no exchange when kex = 1e5."""
+        """Test the r2eff_mmq_cr72() function for no exchange when kex = 1e8."""
 
         # Parameter reset.
-        self.kex = 1e5
+        self.kex = 1e8
 
         # Calculate and check the R2eff values.
         self.calc_r2eff()

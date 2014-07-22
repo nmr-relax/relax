@@ -117,7 +117,7 @@ def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
         M0[2] = cos(theta)    # The A state initial Z magnetisation.
 
         # This matrix is a propagator that will evolve the magnetization with the matrix R.
-        Rexpo = matrix_exponential(matrix*relax_time)
+        Rexpo = matrix_exponential(matrix*relax_time[i])
 
         # Magnetization evolution.
         MA = dot(M0, dot(Rexpo, M0))
@@ -126,6 +126,6 @@ def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
         if MA <= 0.0 or isNaN(MA):
             back_calc[i] = 1e99
         else:
-            back_calc[i]= -inv_relax_time * log(MA)
+            back_calc[i]= -inv_relax_time[i] * log(MA)
 
 

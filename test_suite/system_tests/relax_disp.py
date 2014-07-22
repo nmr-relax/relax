@@ -3494,6 +3494,101 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin.chi2/1000, 162.511988511609/1000, 3)
 
 
+    def test_korzhnev_2005_all_data_disp_speed_bug(self):
+        """Optimisation of all the Korzhnev et al., 2005 CPMG data using the 'NS MMQ 2-site' model.
+
+        This uses the data from Dmitry Korzhnev's paper at U{DOI: 10.1021/ja054550e<http://dx.doi.org/10.1021/ja054550e>}.  This is the 1H SQ, 15N SQ, ZQ, DQ, 1H MQ and 15N MQ data for residue Asp 9 of the Fyn SH3 domain mutant.
+
+        Here all data will be optimised.  The values found by cpmg_fit using just this data are:
+
+            - r2 = {'H-S 500':  6.671649051677150, 'H-S 600':  6.988634195648529, 'H-S 800':  5.527971316790596,
+                    'N-S 500':  8.394988400015988, 'N-S 600':  8.891359568401835, 'N-S 800': 10.405356669006709,
+                    'NHZ 500':  5.936446687394352, 'NHZ 600':  6.717058062814535, 'NHZ 800':  6.838733853403030,
+                    'NHD 500':  8.593136215779710, 'NHD 600': 10.651511259239674, 'NHD 800': 12.567902357560627,
+                    'HNM 500':  7.851325614877817, 'HNM 600':  8.408803624020202, 'HNM 800': 11.227489645758979,
+                    'NHM 500':  9.189159145380575, 'NHM 600':  9.856814478405868, 'NHM 800': 11.967910041807118},
+            - pA = 0.943125351763911,
+            - dw = 4.421827493809807,
+            - dwH = -0.272637034755752,
+            - kex = 360.609744568697238,
+            - chi2 = 162.589570340050813.
+        """
+
+        # Base data setup.
+        self.setup_korzhnev_2005_data(data_list=['SQ', '1H SQ', 'DQ', 'ZQ', 'MQ', '1H MQ'])
+
+        # Alias the spin.
+        spin = return_spin(":9@N")
+
+        # The R20 keys.
+        r20_key1  = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=500e6)
+        r20_key2  = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=600e6)
+        r20_key3  = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=800e6)
+        r20_key4  = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key5  = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=600e6)
+        r20_key6  = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
+        r20_key7  = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=500e6)
+        r20_key8  = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=600e6)
+        r20_key9  = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=800e6)
+        r20_key10 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=500e6)
+        r20_key11 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=600e6)
+        r20_key12 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=800e6)
+        r20_key13 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=500e6)
+        r20_key14 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=600e6)
+        r20_key15 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=800e6)
+        r20_key16 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=500e6)
+        r20_key17 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=600e6)
+        r20_key18 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=800e6)
+
+        # Set the initial parameter values.
+        spin.r2 = {
+            r20_key1:   6.67288025927458, r20_key2:   6.98951408255098, r20_key3:   5.52959273852704,
+            r20_key4:   8.39471048876782, r20_key5:   8.89290699178799, r20_key6:  10.40770687236930,
+            r20_key7:   5.93611174376373, r20_key8:   6.71735669582514, r20_key9:   6.83835225518265,
+            r20_key10:  8.59615074668922, r20_key11: 10.65121378892910, r20_key12: 12.57108229191090,
+            r20_key13:  7.85956711501608, r20_key14:  8.41891642907918, r20_key15: 11.23620892230380,
+            r20_key16:  9.19654863789350, r20_key17:  9.86031627358462, r20_key18: 11.97523755925750
+        }
+        spin.pA = 0.943129019477673
+        spin.dw = 4.42209952545181
+        spin.dwH = -0.27258970590969
+        spin.kex = 360.516132791038
+
+        # Low precision optimisation.
+        #self.interpreter.grid_search(lower=None, upper=None, inc=10, constraints=True, verbosity=1)
+        self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s" % ("Parameter", "Value (:9)"))
+        print("%-20s %20.15g" % ("R2 (1H SQ - 500 MHz)", spin.r2[r20_key1]))
+        print("%-20s %20.15g" % ("R2 (1H SQ - 600 MHz)", spin.r2[r20_key2]))
+        print("%-20s %20.15g" % ("R2 (1H SQ - 800 MHz)", spin.r2[r20_key3]))
+        print("%-20s %20.15g" % ("R2 (SQ - 500 MHz)", spin.r2[r20_key4]))
+        print("%-20s %20.15g" % ("R2 (SQ - 600 MHz)", spin.r2[r20_key5]))
+        print("%-20s %20.15g" % ("R2 (SQ - 800 MHz)", spin.r2[r20_key6]))
+        print("%-20s %20.15g" % ("R2 (ZQ - 500 MHz)", spin.r2[r20_key7]))
+        print("%-20s %20.15g" % ("R2 (ZQ - 600 MHz)", spin.r2[r20_key8]))
+        print("%-20s %20.15g" % ("R2 (ZQ - 800 MHz)", spin.r2[r20_key9]))
+        print("%-20s %20.15g" % ("R2 (DQ - 500 MHz)", spin.r2[r20_key10]))
+        print("%-20s %20.15g" % ("R2 (DQ - 600 MHz)", spin.r2[r20_key11]))
+        print("%-20s %20.15g" % ("R2 (DQ - 800 MHz)", spin.r2[r20_key12]))
+        print("%-20s %20.15g" % ("R2 (1H MQ - 500 MHz)", spin.r2[r20_key13]))
+        print("%-20s %20.15g" % ("R2 (1H MQ - 600 MHz)", spin.r2[r20_key14]))
+        print("%-20s %20.15g" % ("R2 (1H MQ - 800 MHz)", spin.r2[r20_key15]))
+        print("%-20s %20.15g" % ("R2 (MQ - 500 MHz)", spin.r2[r20_key16]))
+        print("%-20s %20.15g" % ("R2 (MQ - 600 MHz)", spin.r2[r20_key17]))
+        print("%-20s %20.15g" % ("R2 (MQ - 800 MHz)", spin.r2[r20_key18]))
+        print("%-20s %20.15g" % ("pA", spin.pA))
+        print("%-20s %20.15g" % ("dw", spin.dw))
+        print("%-20s %20.15g" % ("dwH", spin.dwH))
+        print("%-20s %20.15g" % ("kex", spin.kex))
+        print("%-20s %20.15g\n" % ("chi2", spin.chi2))
+
+        # Checks for residue :9.
+        self.assertAlmostEqual(spin.chi2, 162.511988511609, 3)
+
+
     def test_kteilum_fmpoulsen_makke_cpmg_data_048m_guhcl_to_cr72(self):
         """Optimisation of Kaare Teilum, Flemming M Poulsen, Mikael Akke 2006 "acyl-CoA binding protein" CPMG data to the CR72 dispersion model.
 

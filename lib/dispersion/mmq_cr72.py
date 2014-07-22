@@ -47,25 +47,26 @@ More information on the MMQ CR72 model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, array, cos, cosh, isfinite, log, max, sin, sqrt, sum
+from numpy import arccosh, cos, cosh, isfinite, fabs, log, min, max, sin, sqrt, sum
+from numpy.ma import fix_invalid, masked_greater_equal, masked_where
 
 
-def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=None, k_BA=None, cpmg_frqs=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=None, k_BA=None, cpmg_frqs=None, inv_tcpmg=None, tcp=None, back_calc=None):
     """The CR72 model extended to MMQ CPMG data.
 
     This function calculates and stores the R2eff values.
 
 
     @keyword r20:           The R2 value in the absence of exchange.
-    @type r20:              float
+    @type r20:              numpy float array of rank [NS][[NM][NO][ND]
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword pB:            The population of state B.
     @type pB:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
-    @type dw:               float
+    @type dw:               numpy float array of rank [NS][[NM][NO][ND]
     @keyword dwH:           The proton chemical exchange difference between states A and B in rad/s.
-    @type dwH:              float
+    @type dwH:              numpy float array of rank [NS][[NM][NO][ND]
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
@@ -73,23 +74,29 @@ def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB
     @keyword k_BA:          The rate of exchange from site B to A (rad/s).
     @type k_BA:             float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
-    @type cpmg_frqs:        numpy rank-1 float array
+    @type cpmg_frqs:        numpy float array of rank [NS][[NM][NO][ND]
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
-    @type inv_tcpmg:        float
+    @type inv_tcpmg:        numpy float array of rank [NS][[NM][NO][ND]
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
-    @type tcp:              numpy rank-1 float array
+    @type tcp:              numpy float array of rank [NS][[NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
-    @type num_points:       int
-    @keyword power:         The matrix exponential power array.
-    @type power:            numpy int16, rank-1 array
+    @type back_calc:        numpy float array of rank [NS][[NM][NO][ND]
     """
 
-    # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
-    if (dw == 0.0 and dwH == 0.0) or pA == 1.0 or k_AB == 0.0:
-        back_calc[:] = array([r20]*num_points)
+    # Flag to tell if values should be replaced if max_etapos in cosh function is violated.
+    t_dw_dw_H_zero = False
+    t_max_etapos = False
+
+    # Test if pA or kex is zero.
+    if kex == 0.0 or pA == 1.0:
+        back_calc[:] = r20
         return
+
+    # Test if dw is zero. Wait for replacement, since this is spin specific.
+    if min(fabs(dw)) == 0.0 and min(fabs(dwH)) == 0.0:
+        t_dw_dw_H_zero = True
+        mask_dw_zero = masked_where(dw == 0.0, dw)
+        mask_dw_H_zero = masked_where(dwH == 0.0, dwH)
 
     # Repetitive calculations (to speed up calculations).
     dw2 = dw**2
@@ -133,8 +140,10 @@ def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB
     # Catch math domain error of cosh(val > 710).
     # This is when etapos > 710.
     if max(etapos) > 700:
-        back_calc[:] = array([r20]*num_points)
-        return
+        t_max_etapos = True
+        mask_max_etapos = masked_greater_equal(etapos, 700.0)
+        # To prevent math errors, set etapos to 1.
+        etapos[mask_max_etapos.mask] = 1.0
 
     # The full eta - values.
     etaneg = etaneg_part / cpmg_frqs
@@ -153,11 +162,21 @@ def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB
     lambda1 = r20_kex - cpmg_frqs * arccosh(Dpos * cosh(etapos) - Dneg * cos(etaneg))
 
     # The full formula.
-    R2eff = lambda1.real - inv_tcpmg * log(Q)
+    back_calc[:] = lambda1.real - inv_tcpmg * log(Q)
+
+    # Replace data in array.
+    # If eta_pos above 700.
+    if t_max_etapos:
+        back_calc[mask_max_etapos.mask] = r20[mask_max_etapos.mask]
+
+    # Replace data in array.
+    # If dw and dwH is zero.
+    if t_dw_dw_H_zero:
+        back_calc[mask_dw_zero.mask] = r20[mask_dw_zero.mask]
+        back_calc[mask_dw_H_zero.mask] = r20[mask_dw_H_zero.mask]
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
-    if not isfinite(sum(R2eff)):
-        R2eff = array([1e100]*num_points)
-
-    back_calc[:] = R2eff
+    if not isfinite(sum(back_calc)):
+        # Replaces nan, inf, etc. with fill value.
+        fix_invalid(back_calc, copy=False, fill_value=r20)

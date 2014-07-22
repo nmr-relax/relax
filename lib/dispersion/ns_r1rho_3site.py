@@ -146,4 +146,4 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
         if MA <= 0.0 or isNaN(MA):
             back_calc[i] = 1e99
         else:
-            back_calc[i]= -inv_relax_time * log(MA)
+            back_calc[i]= -inv_relax_time[i] * log(MA)
