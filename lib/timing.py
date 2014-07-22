@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2014 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,44 +19,15 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relax-lib package - a collection of functions, objects, and methods for the study of dynamics."""
+# Module docstring.
+"""Module for various timing purposes."""
 
-__all__ = [
-    'alignment',
-    'ansi',
-    'arg_check',
-    'auto_relaxation',
-    'check_types',
-    'chemical_shift',
-    'compat',
-    'curve_fit',
-    'diffusion',
-    'dispersion',
-    'errors',
-    'float',
-    'frame_order',
-    'geometry',
-    'io',
-    'linear_algebra',
-    'list',
-    'mathematics',
-    'model_selection',
-    'nmr',
-    'optimisation',
-    'order',
-    'periodic_table',
-    'physical_constants',
-    'regex',
-    'selection',
-    'sequence',
-    'software',
-    'spectral_densities',
-    'spectrum',
-    'statistics',
-    'structure',
-    'text',
-    'timing',
-    'warnings',
-    'xml'
-]
+# Python module imports.
+from time import asctime
+
+
+def print_time():
+    """Print the current date and time."""
+
+    # Just print out the output from time.asctime() with spacing.
+    print("%s\n" % asctime())
