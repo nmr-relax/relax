@@ -324,7 +324,7 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
 
         # Printout.
         if verbosity:
-            write_data(out=sys.stdout, headings=["Parameter", "Lower", "Upper", "Increments", "Comment"], data=data)
+            write_data(out=sys.stdout, headings=["Parameter", "Lower bound", "Upper bound", "Increments", "Comment"], data=data)
 
     # Return the bounds.
     return model_lower, model_upper, model_inc
