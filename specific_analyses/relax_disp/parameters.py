@@ -70,58 +70,6 @@ def assemble_param_vector(spins=None, key=None, sim_index=None):
     return array(param_vector, float64)
 
 
-def assemble_scaling_matrix(spins=None, key=None, scaling=True):
-    """Create and return the scaling matrix.
-
-    @keyword spins:         The list of spin data containers for the block.
-    @type spins:            list of SpinContainer instances
-    @keyword key:           The key for the R2eff and I0 parameters.
-    @type key:              str or None
-    @keyword scaling:       A flag which if False will cause the identity matrix to be returned.
-    @type scaling:          bool
-    @return:                The diagonal and square scaling matrix.
-    @rtype:                 numpy diagonal matrix
-    """
-
-    # Initialise.
-    scaling_matrix = identity(param_num(spins=spins), float64)
-    i = 0
-    param_index = 0
-
-    # No diagonal scaling.
-    if not scaling:
-        return scaling_matrix
-
-    # Loop over the parameters of the cluster.
-    for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
-        # Transversal relaxation rate scaling.
-        if param_name in ['r2', 'r2a', 'r2b']:
-            scaling_matrix[param_index, param_index] = 10
-
-        # The pA.pB.dw**2, phi_ex_B, phi_ex_C and pA.dw**2 parameters.
-        elif param_name in ['phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2']:
-            scaling_matrix[param_index, param_index] = 1
-
-        # Chemical shift difference between states A and B scaling.
-        elif param_name in ['dw', 'dw_AB', 'dw_AC', 'dw_BC', 'dwH', 'dwH_AB', 'dwH_AC', 'dwH_BC']:
-            scaling_matrix[param_index, param_index] = 1
-
-        # The population of state X.
-        elif param_name in ['pA', 'pB', 'pC']:
-            scaling_matrix[param_index, param_index] = 1
-
-        # Exchange rate scaling.
-        elif param_name in ['kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC']:
-            scaling_matrix[param_index, param_index] = 10000
-
-        # Time of exchange scaling.
-        elif param_name == 'tex':
-            scaling_matrix[param_index, param_index] = 1e-4
-
-    # Return the scaling matrix.
-    return scaling_matrix
-
-
 def copy(pipe_from=None, pipe_to=None):
     """Copy dispersion parameters from one data pipe to another, taking the median of previous values to a start value for clusters.
     Taking the median prevent averaging extreme outliers.
@@ -373,11 +321,13 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
         set_value(value=param_vector[param_index], key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, r20_key=r20_key)
 
 
-def get_param_names(spins=None):
+def get_param_names(spins=None, full=False):
     """Generate a list of dispersion parameter names for the given spins.
 
-    @keyword spins:         The list of spin data containers for the block.
-    @type spins:            list of SpinContainer instances
+    @keyword spins: The list of spin data containers for the block.
+    @type spins:    list of SpinContainer instances
+    @keyword full:  A flag which if True will add the R2 key to the parameter names.
+    @type full:     bool
     """
 
     # Initialise the structure.
@@ -389,7 +339,7 @@ def get_param_names(spins=None):
         param_text = param_name
 
         # The parameters with additional details.
-        if param_name in ['r2', 'r2a', 'r2b']:
+        if full and param_name in ['r2', 'r2a', 'r2b']:
             param_text += " (%s)" % r20_key
  
         # Append the text.
@@ -418,8 +368,8 @@ def get_value(key=None, spins=None, sim_index=None, param_name=None, spin_index=
     @rtype:                 float
     """
 
-    # Default value of 0.0.
-    value = 0.0
+    # Default value of None.
+    value = None
 
     # Spin specific parameters.
     if spin_index != None:
