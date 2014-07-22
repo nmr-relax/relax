@@ -710,7 +710,6 @@ class Dispersion:
 
         # Loop over the experiment types.
         for ei in range(self.NE):
-
             r20a = self.r20a_struct[ei]
             r20b = self.r20b_struct[ei]
             r20c = self.r20b_struct[ei]
