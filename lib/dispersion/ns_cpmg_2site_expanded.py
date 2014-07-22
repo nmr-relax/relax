@@ -74,9 +74,9 @@ For reference, the original Maple script written by Nikolai for the expansion of
     #tcp:=0.040/N;
     
     Ksym:=sqrt(Ka*Kb);
-    #dX:=(Ka-Kb+I*dw)/2;	# Ra=Rb
+    #dX:=(Ka-Kb+I*dw)/2;    # Ra=Rb
     dX:=((Ra-Rb)+(Ka-Kb)+I*dw)/2;
-    
+
     L:=([[-dX, Ksym], [Ksym, dX]]);
      
     # in the end everything is multiplied by exp(-0.5*(Ra+Rb+Ka+Kb)*(Tc+2*tpalmer))
@@ -117,7 +117,7 @@ For reference, the original Maple script written by Nikolai for the expansion of
     cGG:=evalm(GG2&*Pspalmer&*GG1);
     
     #s0:=array([Kb, Ka]);
-    s0:=array([sqrt(Kb),sqrt(Ka)]);	# accounts for exchange symmetrization
+    s0:=array([sqrt(Kb),sqrt(Ka)]); # accounts for exchange symmetrization
     st:=evalm(cGG&*s0);
     #obs:=(1/(Ka+Kb))*st[1];
     obs:=(sqrt(Kb)/(Ka+Kb))*st[1];  # accounts for exchange symmetrization
