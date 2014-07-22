@@ -28,6 +28,7 @@ import sys
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxIntListIntError, RelaxLenError
+from lib.float import isNaN
 from lib.io import write_data
 from multi import Processor_box
 from pipe_control.mol_res_spin import return_spin, spin_loop
@@ -304,7 +305,7 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
                 upper_i = param_object.grid_upper(names[i], model_info=model_info)
 
             # Skip preset values.
-            if skip_preset and not values[i] in [None, {}, []]:
+            if skip_preset and not values[i] in [None, {}, []] and not isNaN(values[i]):
                 lower_i = values[i]
                 upper_i = values[i]
                 model_inc[-1][i] = 1
