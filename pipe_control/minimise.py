@@ -86,7 +86,7 @@ def assemble_scaling_matrix(scaling=True):
 def calc(verbosity=1):
     """Function for calculating the function value.
 
-    @param verbosity:   The amount of information to print.  The higher the value, the greater the verbosity.
+    @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:    int
     """
 
@@ -140,16 +140,16 @@ def calc(verbosity=1):
 def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1):
     """The grid search function.
 
-    @param lower:       The lower bounds of the grid search which must be equal to the number of parameters in the model.
-    @type lower:        array of numbers
-    @param upper:       The upper bounds of the grid search which must be equal to the number of parameters in the model.
-    @type upper:        array of numbers
-    @param inc:         The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
-    @type inc:          int or list of int
-    @param constraints: If True, constraints are applied during the grid search (elinating parts of the grid).  If False, no constraints are used.
-    @type constraints:  bool
-    @param verbosity:   The amount of information to print.  The higher the value, the greater the verbosity.
-    @type verbosity:    int
+    @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.
+    @type lower:            array of numbers
+    @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.
+    @type upper:            array of numbers
+    @keyword inc:           The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
+    @type inc:              int or list of int
+    @keyword constraints:   If True, constraints are applied during the grid search (elinating parts of the grid).  If False, no constraints are used.
+    @type constraints:      bool
+    @keyword verbosity:     The amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:        int
     """
 
     # Test if the current data pipe exists.
@@ -211,7 +211,7 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1):
     @type upper:        list of numbers
     @keyword inc:       The user supplied grid search increments.
     @type inc:          int or list of int
-    @param verbosity:   The amount of information to print.  The higher the value, the greater the verbosity.
+    @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:    int
     @return:            The per-model grid upper and lower bounds.  The first dimension of each structure corresponds to the model, the second the model parameters.
     @rtype:             tuple of lists of lists of float, lists of lists of float, list of lists of int
@@ -435,9 +435,9 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
 def reset_min_stats(data_pipe=None, spin=None):
     """Function for resetting the minimisation statistics.
 
-    @param data_pipe:   The name of the data pipe to reset the minimisation statisics of.  This defaults to the current data pipe.
+    @keyword data_pipe: The name of the data pipe to reset the minimisation statisics of.  This defaults to the current data pipe.
     @type data_pipe:    str
-    @param spin:        The spin data container if spin specific data is to be reset.
+    @keyword spin:      The spin data container if spin specific data is to be reset.
     @type spin:         SpinContainer
     """
 
