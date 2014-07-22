@@ -66,7 +66,7 @@ More information on the TSMFK01 model can be found in the:
 """
 
 # Python module imports.
-from numpy import array, fabs, min, sin, isfinite, sum
+from numpy import fabs, min, sin, isfinite, sum
 from numpy.ma import fix_invalid, masked_where
 
 

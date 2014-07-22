@@ -50,7 +50,7 @@ More information on the NS R1rho 2-site model can be found in the:
 """
 
 # Python module imports.
-from numpy import array, einsum, float64, isfinite, log, min, multiply, sin, sum
+from numpy import array, einsum, float64, isfinite, log, min, multiply, sum
 from numpy.ma import fix_invalid, masked_less
 
 # relax module imports.

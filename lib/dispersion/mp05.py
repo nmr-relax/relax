@@ -61,7 +61,7 @@ More information on the MP05 model can be found in the:
 """
 
 # Python module imports.
-from numpy import abs, arctan2, array, isfinite, min, sin, sum
+from numpy import arctan2, isfinite, min, sin, sum
 from numpy.ma import fix_invalid, masked_where
 
 

@@ -110,7 +110,7 @@ Comparison to CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import any, arccosh, arctan2, array, cos, cosh, fabs, isfinite, log, max, min, power, sin, sinh, sqrt, sum
+from numpy import any, arccosh, arctan2, cos, cosh, fabs, isfinite, log, max, min, power, sin, sinh, sqrt, sum
 from numpy.ma import fix_invalid, masked_greater_equal, masked_where
 
 # Repetitive calculations (to speed up calculations).
@@ -169,21 +169,20 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, nc
 
     # Repetitive calculations (to speed up calculations).
     deltaR2 = r20a - r20b
+    dw2 = dw**2
+    two_tcp = 2.0 * tcp
 
     # The Carver and Richards (1972) alpha_minus short notation.
     alpha_m = deltaR2 + k_AB - k_BA
     zeta = 2.0 * dw * alpha_m
-    Psi = alpha_m**2 + 4.0 * k_BA * k_AB - dw**2
-
-    # Repetitive calculations (to speed up calculations).
-    dw2 = dw**2
-    two_tcp = 2.0 * tcp
+    Psi = alpha_m**2 + 4.0 * k_BA * k_AB - dw2
 
     # Get the real and imaginary components of the exchange induced shift.
     # Trigonometric functions faster than square roots.
     quad_zeta2_Psi2 = (zeta**2 + Psi**2)**0.25
-    g3 = cos(0.5 * arctan2(-zeta, Psi)) * quad_zeta2_Psi2
-    g4 = sin(0.5 * arctan2(-zeta, Psi)) * quad_zeta2_Psi2
+    fact = 0.5 * arctan2(-zeta, Psi)
+    g3 = cos(fact) * quad_zeta2_Psi2
+    g4 = sin(fact) * quad_zeta2_Psi2
 
     # Repetitive calculations (to speed up calculations).
     g32 = g3**2

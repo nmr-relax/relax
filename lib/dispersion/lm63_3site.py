@@ -65,7 +65,7 @@ More information on the LM63 3-site model can be found in the:
 """
 
 # Python module imports.
-from numpy import any, fabs, min, tanh, isfinite, sum
+from numpy import fabs, min, tanh, isfinite, sum
 from numpy.ma import fix_invalid, masked_where
 
 

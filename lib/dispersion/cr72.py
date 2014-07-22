@@ -93,8 +93,8 @@ More information on the CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, array, cos, cosh, isfinite, fabs, min, max, multiply, sqrt, subtract, sum
-from numpy.ma import fix_invalid, masked_greater_equal, masked_less, masked_where
+from numpy import arccosh, cos, cosh, isfinite, fabs, min, max, multiply, sqrt, subtract, sum
+from numpy.ma import fix_invalid, masked_greater_equal, masked_where
 
 # Repetitive calculations (to speed up calculations).
 eta_scale = 2.0**(-3.0/2.0)
@@ -154,7 +154,7 @@ def r2eff_CR72(r20a=None, r20a_orig=None, r20b=None, r20b_orig=None, pA=None, dw
     # The Psi and zeta values.
     if sum(r20a_orig - r20b_orig) != 0.0:
         fact = r20a - r20b - k_BA + k_AB
-        Psi = fact**2 - dw2 + 4.0*pA*pB*kex**2
+        Psi = fact**2 - dw2 + 4.0*k_BA*k_AB
         zeta = 2.0*dw * fact
     else:
         Psi = kex**2 - dw2
@@ -164,13 +164,14 @@ def r2eff_CR72(r20a=None, r20a_orig=None, r20b=None, r20b_orig=None, pA=None, dw
     sqrt_psi2_zeta2 = sqrt(Psi**2 + zeta**2)
 
     # The D+/- values.
-    D_part = (Psi + 2.0*dw2) / sqrt_psi2_zeta2
-    Dpos = 0.5 * (1.0 + D_part)
-    Dneg = 0.5 * (-1.0 + D_part)
+    D_part = (0.5*Psi + dw2) / sqrt_psi2_zeta2
+    Dpos = 0.5 + D_part
+    Dneg = -0.5 + D_part
 
     # Partial eta+/- values.
-    etapos = eta_scale * sqrt(Psi + sqrt_psi2_zeta2) / cpmg_frqs
-    etaneg = eta_scale * sqrt(-Psi + sqrt_psi2_zeta2) / cpmg_frqs
+    eta_fact = eta_scale / cpmg_frqs
+    etapos = eta_fact * sqrt(Psi + sqrt_psi2_zeta2)
+    etaneg = eta_fact * sqrt(-Psi + sqrt_psi2_zeta2)
 
     # Catch math domain error of cosh(val > 710).
     # This is when etapos > 710.

@@ -61,7 +61,7 @@ More information on the TAP03 model can be found in the:
 """
 
 # Python module imports.
-from numpy import any, arctan2, array, isfinite, min, sin, sqrt, sum
+from numpy import any, arctan2, isfinite, min, sin, sqrt, sum
 from numpy.ma import fix_invalid, masked_where
 
 

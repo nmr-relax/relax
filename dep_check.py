@@ -61,6 +61,23 @@ except ImportError:
 # Optional packages.
 ####################
 
+# numpy einsum import.
+try:
+    from numpy import einsum
+    einsum_module = True
+except ImportError:
+    einsum_module = False
+
+# numpy "out" argument to numpy.multiply or numpy.add.
+try:
+    a = numpy.array([1])
+    numpy.multiply(1, 1, a)
+    numpy.add(1, 1, a)
+    numpy.subtract(1, 1, a)
+    numpy_out = True
+except ValueError:
+    numpy_out = False
+
 # Bmrblib python package check.
 try:
     import bmrblib

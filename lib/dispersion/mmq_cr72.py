@@ -128,16 +128,14 @@ def r2eff_mmq_cr72(r20=None, pA=None, dw=None, dwH=None, kex=None, cpmg_frqs=Non
     sqrt_psi2_zeta2 = sqrt(Psi**2 + zeta**2)
 
     # The D+/- values.
-    D_part = (Psi + 2.0*dw2) / sqrt_psi2_zeta2
-    Dpos = 0.5 * (1.0 + D_part)
-    Dneg = 0.5 * (-1.0 + D_part)
+    D_part = (0.5*Psi + dw2) / sqrt_psi2_zeta2
+    Dpos = 0.5 + D_part
+    Dneg = -0.5 + D_part
 
-    # Partial eta+/- values.
-    etapos_part = eta_scale * sqrt(Psi + sqrt_psi2_zeta2)
-    etaneg_part = eta_scale * sqrt(-Psi + sqrt_psi2_zeta2)
-
-    # The full eta+ values.
-    etapos = etapos_part / cpmg_frqs
+    # The eta+/- values.
+    eta_fact = eta_scale / cpmg_frqs
+    etapos = eta_fact * sqrt(Psi + sqrt_psi2_zeta2)
+    etaneg = eta_fact * sqrt(-Psi + sqrt_psi2_zeta2)
 
     # Catch math domain error of cosh(val > 710).
     # This is when etapos > 710.
@@ -146,9 +144,6 @@ def r2eff_mmq_cr72(r20=None, pA=None, dw=None, dwH=None, kex=None, cpmg_frqs=Non
         mask_max_etapos = masked_greater_equal(etapos, 700.0)
         # To prevent math errors, set etapos to 1.
         etapos[mask_max_etapos.mask] = 1.0
-
-    # The full eta - values.
-    etaneg = etaneg_part / cpmg_frqs
 
     # The mD value.
     mD = isqrt_pApBkex2 / (dpos * zpos) * (zpos + 2.0*dw*sin(zpos*tcp)/sin((dpos + zpos)*tcp))

@@ -65,7 +65,7 @@ More information on the M61 model can be found in the:
 """
 
 # Python module imports.
-from numpy import abs, any, array, isfinite, min, sum
+from numpy import any, isfinite, min, sum
 from numpy.ma import fix_invalid, masked_where
 
 def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, spin_lock_fields2=None, back_calc=None):

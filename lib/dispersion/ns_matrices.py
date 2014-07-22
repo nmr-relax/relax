@@ -32,7 +32,7 @@ These are for the numerical solutions to the Bloch-McConnell equations for relax
 
 # Python module imports.
 from math import cos, sin, pi
-from numpy import add, array, conj, complex64, float64, matrix, multiply
+from numpy import array, float64, matrix
 
 
 def r180x_2d(flip=pi):

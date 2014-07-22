@@ -74,7 +74,7 @@ More information on the IT99 model can be found in the:
 """
 
 # Python module imports.
-from numpy import array, isfinite, fabs, sqrt, sum
+from numpy import isfinite, fabs, sqrt, sum
 from numpy.ma import fix_invalid, masked_where
 
 
@@ -117,9 +117,7 @@ def r2eff_IT99(r20=None, pA=None, dw=None, dw_orig=None, tex=None, cpmg_frqs=Non
     pB = 1.0 - pA
 
     # Repetitive calculations (to speed up calculations).
-    dw2 = dw**2
-    tex2 = tex**2
-    padw2 = pA * dw2
+    padw2 = pA * dw**2
     pa2dw4 = padw2**2
 
     # The numerator.
@@ -130,7 +128,7 @@ def r2eff_IT99(r20=None, pA=None, dw=None, dw_orig=None, tex=None, cpmg_frqs=Non
 
     # Denominator.
     omega_a2 = sqrt(omega_1eff4 + pa2dw4)
-    denom = 1.0 + omega_a2 * tex2
+    denom = 1.0 + omega_a2 * tex**2
 
     # R2eff calculation.
     back_calc[:] = r20 + numer / denom

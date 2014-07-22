@@ -23,7 +23,7 @@
 
 # Python module imports.
 from os import F_OK, access, getcwd, path, sep
-from numpy import array, median
+from numpy import array, median, version
 import re, math
 from tempfile import mkdtemp
 
@@ -68,6 +68,73 @@ class Relax_disp(SystemTestCase):
             if methodName in to_skip:
                 status.skipped_tests.append([methodName, 'Relax curve-fitting C module', self._skip_type])
 
+        # Missing numpy "out" argument in numpy.multiply, numpy.add, numpy.subtract.
+        if not dep_check.numpy_out:
+            # The list of tests to skip.
+            to_skip = [
+                "test_baldwin_synthetic",
+                "test_baldwin_synthetic_full",
+                "test_bug_21460_disp_cluster_fail",
+                "test_bug_22146_unpacking_r2a_r2b_cluster_B14",
+                "test_bug_22146_unpacking_r2a_r2b_cluster_CR72",
+                "test_bug_22146_unpacking_r2a_r2b_cluster_NS_3D",
+                "test_bug_22146_unpacking_r2a_r2b_cluster_NS_STAR",
+                "test_cpmg_synthetic_b14_to_ns3d_cluster",
+                "test_cpmg_synthetic_b14_to_ns_star_cluster",
+                "test_cpmg_synthetic_dx_map_points",
+                "test_cpmg_synthetic_ns3d_to_b14",
+                "test_cpmg_synthetic_ns3d_to_cr72",
+                "test_cpmg_synthetic_ns3d_to_cr72_noise_cluster",
+                "test_dpl94_data_to_dpl94",
+                "test_hansen_cpmg_data_auto_analysis",
+                "test_hansen_cpmg_data_auto_analysis_numeric",
+                "test_hansen_cpmg_data_auto_analysis_r2eff",
+                "test_hansen_cpmg_data_missing_auto_analysis",
+                "test_hansen_cpmg_data_to_cr72",
+                "test_hansen_cpmg_data_to_cr72_full",
+                "test_hansen_cpmg_data_to_it99",
+                "test_hansen_cpmg_data_to_lm63",
+                "test_hansen_cpmg_data_to_ns_cpmg_2site_3D",
+                "test_hansen_cpmg_data_to_ns_cpmg_2site_3D_full",
+                "test_hansen_cpmg_data_to_ns_cpmg_2site_expanded",
+                "test_hansen_cpmg_data_to_ns_cpmg_2site_star",
+                "test_hansen_cpmg_data_to_ns_cpmg_2site_star_full",
+                "test_korzhnev_2005_15n_dq_data",
+                "test_korzhnev_2005_15n_mq_data",
+                "test_korzhnev_2005_15n_sq_data",
+                "test_korzhnev_2005_15n_zq_data",
+                "test_korzhnev_2005_1h_mq_data",
+                "test_korzhnev_2005_1h_sq_data",
+                "test_korzhnev_2005_all_data",
+                "test_korzhnev_2005_all_data_disp_speed_bug",
+                "test_kteilum_fmpoulsen_makke_cpmg_data_048m_guhcl_to_cr72",
+                "test_kteilum_fmpoulsen_makke_cpmg_data_048m_guhcl_to_cr72_full",
+                "test_kteilum_fmpoulsen_makke_cpmg_data_048m_guhcl_to_tsmfk01",
+                "test_kteilum_fmpoulsen_makke_cpmg_data_101m_guhcl_to_tsmfk01",
+                "test_lm63_3site_synthetic",
+                "test_m61_data_to_m61",
+                "test_m61_exp_data_to_m61",
+                "test_ns_mmq_3site",
+                "test_ns_mmq_3site_linear",
+                "test_ns_r1rho_3site",
+                "test_ns_r1rho_3site_linear",
+                "test_r1rho_kjaergaard_auto",
+                "test_r1rho_kjaergaard_man",
+                "test_r1rho_kjaergaard_missing_r1",
+                "test_r20_from_min_r2eff_cpmg",
+                "test_sod1wt_t25_to_cr72",
+                "test_sprangers_data_to_mmq_cr72",
+                "test_sprangers_data_to_ns_mmq_2site",
+                "test_tp02_data_to_mp05",
+                "test_tp02_data_to_ns_r1rho_2site",
+                "test_tp02_data_to_ns_r1rho_2site_cluster",
+                "test_tp02_data_to_tap03",
+                "test_tp02_data_to_tp02"
+            ]
+
+            # Store in the status object.
+            if methodName in to_skip:
+                status.skipped_tests.append([methodName, 'numpy out arg miss in %s'%version.version, self._skip_type])
 
     def setUp(self):
         """Set up for all the functional tests."""

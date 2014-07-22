@@ -30,6 +30,7 @@ from numpy import arctan2, cos, dot, float64, int16, multiply, ones, rollaxis, p
 from numpy.ma import masked_equal
 
 # relax module imports.
+import dep_check
 from lib.dispersion.b14 import r2eff_B14
 from lib.dispersion.cr72 import r2eff_CR72
 from lib.dispersion.dpl94 import r1rho_DPL94
@@ -40,13 +41,7 @@ from lib.dispersion.m61 import r1rho_M61
 from lib.dispersion.m61b import r1rho_M61b
 from lib.dispersion.mp05 import r1rho_MP05
 from lib.dispersion.mmq_cr72 import r2eff_mmq_cr72
-from lib.dispersion.ns_cpmg_2site_3d import r2eff_ns_cpmg_2site_3D
 from lib.dispersion.ns_cpmg_2site_expanded import r2eff_ns_cpmg_2site_expanded
-from lib.dispersion.ns_cpmg_2site_star import r2eff_ns_cpmg_2site_star
-from lib.dispersion.ns_mmq_3site import r2eff_ns_mmq_3site_mq, r2eff_ns_mmq_3site_sq_dq_zq
-from lib.dispersion.ns_mmq_2site import r2eff_ns_mmq_2site_mq, r2eff_ns_mmq_2site_sq_dq_zq
-from lib.dispersion.ns_r1rho_2site import ns_r1rho_2site
-from lib.dispersion.ns_r1rho_3site import ns_r1rho_3site
 from lib.dispersion.ns_matrices import r180x_3d
 from lib.dispersion.tp02 import r1rho_TP02
 from lib.dispersion.tap03 import r1rho_TAP03
@@ -56,6 +51,14 @@ from lib.float import isNaN
 from target_functions.chi2 import chi2, chi2_rankN
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_CPMG_FULL, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 
+# Check if eisum is available for numerical models.
+if dep_check.einsum_module:
+    from lib.dispersion.ns_cpmg_2site_3d import r2eff_ns_cpmg_2site_3D
+    from lib.dispersion.ns_cpmg_2site_star import r2eff_ns_cpmg_2site_star
+    from lib.dispersion.ns_mmq_3site import r2eff_ns_mmq_3site_mq, r2eff_ns_mmq_3site_sq_dq_zq
+    from lib.dispersion.ns_mmq_2site import r2eff_ns_mmq_2site_mq, r2eff_ns_mmq_2site_sq_dq_zq
+    from lib.dispersion.ns_r1rho_2site import ns_r1rho_2site
+    from lib.dispersion.ns_r1rho_3site import ns_r1rho_3site
 
 class Dispersion:
     def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, exp_types=None, values=None, errors=None, missing=None, frqs=None, frqs_H=None, cpmg_frqs=None, spin_lock_nu1=None, chemical_shifts=None, offset=None, tilt_angles=None, r1=None, relax_times=None, scaling_matrix=None, recalc_tau=True):
@@ -105,8 +108,22 @@ class Dispersion:
             - Ei:  The index for each experiment type.
             - Si:  The index for each spin of the spin cluster.
             - Mi:  The index for each magnetic field strength.
-            - Oi:  The index for each spin-lock offset.  In the case of CPMG-type data, this index is always zero.
+            - Oi:  The index for each spin-lock offset.  In the case of CPMG-type data, this index is currently always zero.
             - Di:  The index for each dispersion point (either the spin-lock field strength or the nu_CPMG frequency).
+            - Ti:  The index for each time point.  This is currently unused but might change in the future.
+
+
+        Counts
+        ======
+
+        The indices in the previous section have a corresponding count:
+
+            - NE:  The total number of experiment types.
+            - NS:  The total number of spins of the spin cluster.
+            - NM:  The total number of magnetic field strengths.
+            - NO:  The total number of spin-lock offsets.
+            - ND:  The total number of dispersion points (either the spin-lock field strength or the nu_CPMG frequency).
+            - NT:  The total number of time points.  This is currently unused but might change in the future.
 
 
         @keyword model:             The relaxation dispersion model to fit.
@@ -167,8 +184,6 @@ class Dispersion:
         # Store the arguments.
         self.model = model
         self.num_params = num_params
-        self.num_spins = num_spins
-        self.num_frq = num_frq
         self.exp_types = exp_types
         self.scaling_matrix = scaling_matrix
         self.values_orig = values
@@ -179,8 +194,8 @@ class Dispersion:
         # Define the shape of all the numpy arrays.
         # The total numbers of experiments, number of spins, number of magnetic field strength, maximum number of offsets, maximum number of dispersion point.
         self.NE = len(self.exp_types)
-        self.NS = self.num_spins
-        self.NM = self.num_frq
+        self.NS = num_spins
+        self.NM = num_frq
 
         # The number of offsets points can vary. We need to find the maximum elements in the numpy array list.
         max_NO = 1
@@ -362,8 +377,10 @@ class Dispersion:
         # This is to make sure, that the chi2 values is not affected by missing values.
         self.mask_replace_blank = masked_equal(self.missing, 1.0)
 
-        # Check the experiment types, simplifying the data structures as needed.
-        self.experiment_type_setup()
+        # Check if eisum is available for numerical models.
+        if dep_check.einsum_module:
+            # Check the experiment types, simplifying the data structures as needed.
+            self.experiment_type_setup()
 
         # Scaling initialisation.
         self.scaling_flag = False
@@ -374,21 +391,21 @@ class Dispersion:
         self.end_index = []
 
         # The spin and frequency dependent R2 parameters.
-        self.end_index.append(self.num_exp * self.num_spins * self.num_frq)
+        self.end_index.append(self.NE * self.NS * self.NM)
         if model in [MODEL_B14_FULL, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
-            self.end_index.append(2 * self.num_exp * self.num_spins * self.num_frq)
+            self.end_index.append(2 * self.NE * self.NS * self.NM)
 
         # The spin and dependent parameters (phi_ex, dw, padw2).
-        self.end_index.append(self.end_index[-1] + self.num_spins)
+        self.end_index.append(self.end_index[-1] + self.NS)
         if model in [MODEL_IT99, MODEL_LM63_3SITE, MODEL_MMQ_CR72, MODEL_NS_MMQ_2SITE]:
-            self.end_index.append(self.end_index[-1] + self.num_spins)
+            self.end_index.append(self.end_index[-1] + self.NS)
         elif model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
-            self.end_index.append(self.end_index[-1] + self.num_spins)
-            self.end_index.append(self.end_index[-1] + self.num_spins)
+            self.end_index.append(self.end_index[-1] + self.NS)
+            self.end_index.append(self.end_index[-1] + self.NS)
         elif model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
-            self.end_index.append(self.end_index[-1] + self.num_spins)
-            self.end_index.append(self.end_index[-1] + self.num_spins)
-            self.end_index.append(self.end_index[-1] + self.num_spins)
+            self.end_index.append(self.end_index[-1] + self.NS)
+            self.end_index.append(self.end_index[-1] + self.NS)
+            self.end_index.append(self.end_index[-1] + self.NS)
 
         # Pi-pulse propagators.
         if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL]:
@@ -697,7 +714,7 @@ class Dispersion:
         self.r20c_struct[:] = multiply.outer( R20C.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Loop over the experiment types.
-        for ei in range(self.num_exp):
+        for ei in range(self.NE):
 
             r20a = self.r20a_struct[ei]
             r20b = self.r20b_struct[ei]
@@ -797,16 +814,13 @@ class Dispersion:
         For the single experiment type models, the first dimension of the values, errors, and missing data structures will be removed to simplify the target functions.
         """
 
-        # The number of experiments.
-        self.num_exp = len(self.exp_types)
-
         # The MMQ combined data type models.
         if self.model in MODEL_LIST_MMQ:
             # Alias the r2eff functions.
             self.r2eff_ns_mmq = []
 
             # Loop over the experiment types.
-            for ei in range(self.num_exp):
+            for ei in range(self.NE):
                 # SQ, DQ and ZQ data types.
                 if self.exp_types[ei] in [EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_ZQ]:
                     if self.model == MODEL_NS_MMQ_2SITE:
@@ -875,7 +889,7 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[1]].reshape(self.num_spins*2, self.num_frq)
+        R20 = params[:self.end_index[1]].reshape(self.NS*2, self.NM)
         R20A = R20[::2].flatten()
         R20B = R20[1::2].flatten()
         dw = params[self.end_index[1]:self.end_index[2]]
@@ -929,7 +943,7 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[1]].reshape(self.num_spins*2, self.num_frq)
+        R20 = params[:self.end_index[1]].reshape(self.NS*2, self.NM)
         R20A = R20[::2].flatten()
         R20B = R20[1::2].flatten()
         dw = params[self.end_index[1]:self.end_index[2]]
@@ -1246,7 +1260,7 @@ class Dispersion:
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Loop over the experiment types.
-        for ei in range(self.num_exp):
+        for ei in range(self.NE):
 
             r20 = self.r20_struct[ei]
             dw_frq = self.dw_struct[ei]
@@ -1352,7 +1366,7 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[1]].reshape(self.num_spins*2, self.num_frq)
+        R20 = params[:self.end_index[1]].reshape(self.NS*2, self.NM)
         R20A = R20[::2].flatten()
         R20B = R20[1::2].flatten()
         dw = params[self.end_index[1]:self.end_index[2]]
@@ -1443,7 +1457,7 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[1]].reshape(self.num_spins*2, self.num_frq)
+        R20 = params[:self.end_index[1]].reshape(self.NS*2, self.NM)
         R20A = R20[::2].flatten()
         R20B = R20[1::2].flatten()
         dw = params[self.end_index[1]:self.end_index[2]]
@@ -1484,7 +1498,7 @@ class Dispersion:
         chi2_sum = 0.0
 
         # Loop over the experiment types.
-        for ei in range(self.num_exp):
+        for ei in range(self.NE):
 
             r20 = self.r20_struct[ei]
             dw_frq = self.dw_struct[ei]

@@ -55,7 +55,7 @@ More information on the NS CPMG 2-site 3D full model can be found in the:
 """
 
 # Python module imports.
-from numpy import array, dot, fabs, float64, einsum, isfinite, log, min, multiply, rollaxis, sum, tile
+from numpy import array, dot, fabs, float64, einsum, isfinite, log, min, multiply, rollaxis, sum
 from numpy.linalg import matrix_power
 from numpy.ma import fix_invalid, masked_where
 

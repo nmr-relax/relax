@@ -51,7 +51,7 @@ More information on the NS MMQ 2-site model can be found in the:
 
 # Python module imports.
 from math import floor
-from numpy import array, conj, complex64, dot, einsum, float64, log, multiply, sum
+from numpy import array, conj, complex64, dot, einsum, float64, log, multiply
 from numpy.linalg import matrix_power
 
 # relax module imports.

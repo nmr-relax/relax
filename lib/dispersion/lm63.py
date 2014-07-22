@@ -65,7 +65,7 @@ More information on the LM63 model can be found in the:
 """
 
 # Python module imports.
-from numpy import any, array, isfinite, min, sum, tanh
+from numpy import isfinite, min, sum, tanh
 from numpy.ma import fix_invalid, masked_where
 
 def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None):
