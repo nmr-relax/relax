@@ -137,7 +137,7 @@ def calc(verbosity=1):
     processor.run_queue()
 
 
-def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1):
+def grid_search(lower=None, upper=None, inc=None, verbosity=1, constraints=True):
     """The grid search function.
 
     @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.
@@ -146,10 +146,10 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     @type upper:            array of numbers
     @keyword inc:           The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
     @type inc:              int or list of int
-    @keyword constraints:   If True, constraints are applied during the grid search (elinating parts of the grid).  If False, no constraints are used.
-    @type constraints:      bool
     @keyword verbosity:     The amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:        int
+    @keyword constraints:   If True, constraints are applied during the grid search (elinating parts of the grid).  If False, no constraints are used.
+    @type constraints:      bool
     """
 
     # Test if the current data pipe exists.
