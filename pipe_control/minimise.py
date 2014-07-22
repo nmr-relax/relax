@@ -269,7 +269,7 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1):
             model_inc.append(inc)
 
         # Print out the model title.
-        api.print_model_title(model_info)
+        api.print_model_title(prefix="Grid search setup:  ", model_info=model_info)
 
         # Append empty lists for the bounds to be built up.
         model_lower.append([])
