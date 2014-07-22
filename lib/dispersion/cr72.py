@@ -92,8 +92,7 @@ More information on the CR72 full model can be found in the:
 """
 
 # Python module imports.
-import numpy as np
-from numpy import arccosh, array, cos, cosh, isfinite, min, max, sqrt, sum
+from numpy import allclose, arccosh, array, cos, cosh, isfinite, min, max, ndarray, ones, sqrt, sum, zeros
 
 # Repetitive calculations (to speed up calculations).
 eta_scale = 2.0**(-3.0/2.0)
@@ -124,7 +123,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
 
     # Determine if calculating in numpy rank-1 float array, of higher dimensions.
     rank_1 = True
-    if isinstance(num_points, np.ndarray):
+    if isinstance(num_points, ndarray):
         rank_1 = False
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
@@ -135,7 +134,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
             return
     # For higher dimensions, return same structure.
     else:
-        if np.allclose(dw, np.zeros(dw.shape)) or np.allclose(pA, np.ones(dw.shape)) or np.allclose(kex, np.zeros(dw.shape)):
+        if allclose(dw, zeros(dw.shape)) or allclose(pA, ones(dw.shape)) or allclose(kex, zeros(dw.shape)):
             back_calc[:] = r20a
             return
 
@@ -149,7 +148,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     k_AB = pB * kex
 
     # The Psi and zeta values.
-    if not np.allclose(r20a, r20b):
+    if not allclose(r20a, r20b):
         fact = r20a - r20b - k_BA + k_AB
         Psi = fact**2 - dw2 + 4.0*pA*pB*kex**2
         zeta = 2.0*dw * fact
@@ -199,6 +198,6 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
         if rank_1:
             R2eff = array([1e100]*num_points)
         else:
-            R2eff = np.ones(R2eff.shape) * 1e100
+            R2eff = ones(R2eff.shape) * 1e100
 
     back_calc[:] = R2eff

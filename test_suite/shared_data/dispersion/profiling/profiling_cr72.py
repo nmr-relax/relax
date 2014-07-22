@@ -57,7 +57,7 @@ def main():
         # Calc for single.
         s_filename = tempfile.NamedTemporaryFile(delete=False).name
         # Profile for a single spin.
-        cProfile.run('single(iter=1000)', s_filename)
+        cProfile.run('single(iter=100)', s_filename)
 
         # Read all stats files into a single object
         s_stats = pstats.Stats(s_filename)
@@ -75,7 +75,7 @@ def main():
         # Calc for cluster.
         c_filename = tempfile.NamedTemporaryFile(delete=False).name
         # Profile for a cluster of 100 spins.
-        cProfile.run('cluster(iter=1000)', c_filename)
+        cProfile.run('cluster(iter=100)', c_filename)
 
         # Read all stats files into a single object
         c_stats = pstats.Stats(c_filename)
