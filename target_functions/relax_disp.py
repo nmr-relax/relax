@@ -55,7 +55,7 @@ from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from lib.float import isNaN
 from target_functions.chi2 import chi2, chi2_rankN
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_CPMG_FULL, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_CPMG_FULL, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -172,8 +172,11 @@ class Dispersion:
         self.num_frq = num_frq
         self.exp_types = exp_types
         self.scaling_matrix = scaling_matrix
+        self.values_orig = values
+        self.cpmg_frqs_orig = cpmg_frqs
+        self.spin_lock_nu1_orig = spin_lock_nu1
 
-        ### Initialise higher order numpy structures.
+        # Initialise higher order numpy structures.
         # Define the shape of all the numpy arrays.
         # The total numbers of experiments, number of spins, number of magnetic field strength, maximum number of offsets, maximum number of dispersion point.
         self.NE = len(self.exp_types)
@@ -234,6 +237,8 @@ class Dispersion:
         self.dwH_AB_struct = deepcopy(numpy_array_zeros)
         self.dwH_AC_struct = deepcopy(numpy_array_zeros)
         self.phi_ex_struct = deepcopy(numpy_array_zeros)
+        self.phi_ex_B_struct = deepcopy(numpy_array_zeros)
+        self.phi_ex_C_struct = deepcopy(numpy_array_zeros)
 
         # Structure of values, errors and missing.
         self.values = deepcopy(numpy_array_zeros)
@@ -270,20 +275,23 @@ class Dispersion:
                     frq = frqs[ei][si][mi]
                     self.frqs[ei, si, mi, :] = frq
                     self.frqs_squared[ei, si, mi, :] = frq**2
-                    frq_H = frqs_H[ei][si][mi]
-                    self.frqs_H[ei, si, mi, :] = frq_H
+                    if frqs_H != None:
+                        frq_H = frqs_H[ei][si][mi]
+                        self.frqs_H[ei, si, mi, :] = frq_H
 
                     # Fill the relaxation time.
                     relax_time = relax_times[ei, mi]
                     self.relax_times[ei, si, mi, :] = relax_time
 
                     # Fill r1.
-                    r1_l = r1[si][mi]
-                    self.r1[ei, si, mi, :] = r1_l
+                    if r1 != None:
+                        r1_l = r1[si][mi]
+                        self.r1[ei, si, mi, :] = r1_l
 
                     # Fill chemical shift.
-                    chemical_shift = chemical_shifts[ei][si][mi]
-                    self.chemical_shifts[ei, si, mi, :] = chemical_shift
+                    if chemical_shifts != None:
+                        chemical_shift = chemical_shifts[ei][si][mi]
+                        self.chemical_shifts[ei, si, mi, :] = chemical_shift
 
                     # The inverted relaxation delay.
                     if model in [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
@@ -343,7 +351,7 @@ class Dispersion:
                                 # Get the tilt angles.
                                 self.tilt_angles[ei, si, mi, oi, di] = tilt_angles[ei][si][mi][oi][di]
                                 self.offset[ei, si, mi, oi] = offset[ei][si][mi][oi]
-                                ## Convert the spin-lock data to rad.s^-1.
+                                # Convert the spin-lock data to rad.s^-1.
                                 self.spin_lock_omega1[ei, si, mi, oi, di] = 2.0 * pi * spin_lock_nu1[ei][mi][oi][di]
                                 self.spin_lock_omega1_squared[ei, si, mi, oi, di] = self.spin_lock_omega1[ei, si, mi, oi, di] ** 2
 
@@ -513,7 +521,7 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
@@ -546,18 +554,18 @@ class Dispersion:
         self.r20a_struct[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
         self.r20b_struct[:] = multiply.outer( R20B.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
-        ## Back calculate the R2eff values.
+        # Back calculate the R2eff values.
         r2eff_CR72(r20a=self.r20a_struct, r20a_orig=R20A, r20b=self.r20b_struct, r20b_orig=R20B, pA=pA, dw=self.dw_struct, dw_orig=dw, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
 
-        ## Calculate the chi-squared statistic.
+        # Calculate the chi-squared statistic.
         return chi2_rankN(self.values, self.back_calc, self.errors)
 
 
@@ -591,12 +599,12 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
 
-        ## Calculate the chi-squared statistic.
+        # Calculate the chi-squared statistic.
         return chi2_rankN(self.values, self.back_calc, self.errors)
 
 
@@ -630,12 +638,12 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
 
-        ## Calculate the chi-squared statistic.
+        # Calculate the chi-squared statistic.
         return chi2_rankN(self.values, self.back_calc, self.errors)
 
 
@@ -741,7 +749,7 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
@@ -797,7 +805,7 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
@@ -985,7 +993,7 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
@@ -1025,7 +1033,7 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
@@ -1060,34 +1068,26 @@ class Dispersion:
         quart_kB = kB / 4.0
         quart_kC = kC / 4.0
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Convert phi_ex (or rex) from ppm^2 to (rad/s)^2.
+        multiply( multiply.outer( rex_B.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_B_struct )
+        multiply( multiply.outer( rex_C.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_C_struct )
 
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(self.num_frq):
-                # The R20 index.
-                r20_index = mi + si*self.num_frq
+        # Reshape R20 to per experiment, spin and frequency.
+        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
-                # Convert phi_ex (or rex) from ppm^2 to (rad/s)^2.
-                rex_B_scaled = rex_B[si] * self.frqs_squared[0, si, mi, 0, 0]
-                rex_C_scaled = rex_C[si] * self.frqs_squared[0, si, mi, 0, 0]
+        # Back calculate the R2eff values.
+        r2eff_LM63_3site(r20=self.r20_struct, rex_B=self.phi_ex_B_struct, rex_C=self.phi_ex_C_struct, quart_kB=quart_kB, quart_kC=quart_kC, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc)
 
-                # Back calculate the R2eff values.
-                r2eff_LM63_3site(r20=R20[r20_index], rex_B=rex_B_scaled, rex_C=rex_C_scaled, quart_kB=quart_kB, quart_kC=quart_kC, cpmg_frqs=self.cpmg_frqs[0, si, mi, 0], back_calc=self.back_calc[0, si, mi, 0], num_points=self.num_disp_points[0, si, mi, 0])
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc = self.back_calc*self.disp_struct
 
-                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                for di in range(self.num_disp_points[0, si, mi, 0]):
-                    if self.missing[0, si, mi, 0, di]:
-                        self.back_calc[0, si, mi, 0, di] = self.values[0, si, mi, 0, di]
-
-                # Calculate and return the chi-squared value.
-                chi2_sum += chi2(self.values[0, si, mi, 0], self.back_calc[0, si, mi, 0], self.errors[0, si, mi, 0])
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
-
+        return chi2_rankN(self.values, self.back_calc, self.errors)
 
     def func_LM63(self, params):
         """Target function for the Luz and Meiboom (1963) fast 2-site exchange model.
@@ -1119,7 +1119,7 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
@@ -1158,7 +1158,7 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
@@ -1198,7 +1198,7 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
@@ -1238,7 +1238,7 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
@@ -1309,12 +1309,12 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
 
-        ## Calculate the chi-squared statistic.
+        # Calculate the chi-squared statistic.
         return chi2_rankN(self.values, self.back_calc, self.errors)
 
 
@@ -1340,7 +1340,7 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
@@ -1428,12 +1428,12 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
 
-        ## Calculate the chi-squared statistic.
+        # Calculate the chi-squared statistic.
         return chi2_rankN(self.values, self.back_calc, self.errors)
 
 
@@ -1556,7 +1556,7 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
@@ -1658,7 +1658,7 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
@@ -1751,7 +1751,7 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
@@ -1791,7 +1791,7 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
@@ -1830,10 +1830,35 @@ class Dispersion:
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
 
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
             # Replace with values.
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
         return chi2_rankN(self.values, self.back_calc, self.errors)
+
+    def get_back_calc(self):
+        """Class function to return back_calc as lists of lists.  Number of values in should match number of dispersion points or spin_lock.
+
+        @return:        back_calc in structure of list of lists.
+        @rtype:         float
+        """
+
+        back_calc_return = deepcopy(self.values_orig)
+
+        # Loop over experiments
+        for ei in range(self.NE):
+            exp_type = self.exp_types[ei]
+            for si in range(self.NS):
+                for mi in range(self.NM):
+                    for oi in range(self.NO):
+                        back_calc_return[ei][si][mi].append([])
+                        if exp_type in EXP_TYPE_LIST_CPMG:
+                            num = len(self.cpmg_frqs_orig[ei][mi][oi])
+                        else:
+                            num = len(self.spin_lock_nu1_orig[ei][mi][oi])
+                        back_calc_return[ei][si][mi][oi][:] = self.back_calc[ei, si, mi, oi, :num]
+
+        return back_calc_return
+

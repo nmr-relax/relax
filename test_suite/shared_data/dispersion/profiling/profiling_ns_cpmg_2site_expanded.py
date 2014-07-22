@@ -55,7 +55,7 @@ sys.path.reverse()
 from lib.physical_constants import g1H, g15N
 from target_functions.chi2 import chi2
 from target_functions.relax_disp import Dispersion
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_B14_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL
 
 
 # Alter setup.
@@ -151,12 +151,10 @@ class Profile(Dispersion):
 
         # Required data structures.
         self.relax_times = self.fields / (100 * 100. *1E6 )
-        self.inv_relax_times = 1.0 / self.relax_times
         self.ncycs = []
         self.points = []
         self.value = []
         self.error = []
-        self.tau_cpmg_list = []
         for i in range(len(self.fields)):
             ncyc = arange(2, 1000. * self.relax_times[i], 4)
             #ncyc = arange(2, 42, 2)
@@ -164,9 +162,6 @@ class Profile(Dispersion):
             print("sfrq: ", self.fields[i], "number of cpmg frq", len(ncyc), ncyc)
 
             cpmg_point = ncyc / self.relax_times[i]
-            tau_cpmg = 0.25 / cpmg_point
-
-            self.tau_cpmg_list.append(list(tau_cpmg))
 
             self.points.append(list(cpmg_point))
             self.value.append([2.0]*len(cpmg_point))
@@ -194,7 +189,7 @@ class Profile(Dispersion):
         end_index = []
         # The spin and frequency dependent R2 parameters.
         end_index.append(len(self.exp_type) * self.num_spins * len(self.fields))
-        if self.model in [MODEL_B14_FULL, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
+        if self.model in [MODEL_B14_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
             end_index.append(2 * len(self.exp_type) * self.num_spins * len(self.fields))
         # The spin and dependent parameters (phi_ex, dw, padw2).
         end_index.append(end_index[-1] + self.num_spins)
@@ -206,9 +201,6 @@ class Profile(Dispersion):
         dw = self.params[end_index[1]:end_index[2]]
         pA = self.params[end_index[2]]
         kex = self.params[end_index[2]+1]
-        pB = 1.0 - pA
-        k_BA = pA * kex
-        k_AB = pB * kex
 
         # Initialise the data structures for the target function.
         exp_types = []
@@ -432,11 +424,11 @@ class Profile(Dispersion):
         """
 
         # Return chi2 value.
-        chi2 = self.model.func_B14_full(params)
+        chi2 = self.model.func_ns_cpmg_2site_expanded(params)
         return chi2
 
 
-def single(num_spins=1, model=MODEL_B14_FULL, iter=None):
+def single(num_spins=1, model=MODEL_NS_CPMG_2SITE_EXPANDED, iter=None):
     """Calculate for a single spin.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -460,7 +452,7 @@ def single(num_spins=1, model=MODEL_B14_FULL, iter=None):
     print("chi2 single:", chi2)
 
 
-def cluster(num_spins=100, model=MODEL_B14_FULL, iter=None):
+def cluster(num_spins=100, model=MODEL_NS_CPMG_2SITE_EXPANDED, iter=None):
     """Calculate for a number of clustered spins.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -487,7 +479,7 @@ if __name__ == "__main__":
     main()
 
 def test_reshape():
-    C1 = Profile(num_spins=1, model=MODEL_B14_FULL, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=1, model=MODEL_NS_CPMG_2SITE_EXPANDED, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
     end_index = C1.model.end_index
     #print("end_index:", end_index)
     num_spins = C1.model.num_spins

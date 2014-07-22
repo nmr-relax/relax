@@ -192,7 +192,7 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_nu1=None,
         spin.chi2 = chi2
 
     # Return the structure.
-    return model.back_calc
+    return model.get_back_calc()
 
 
 def calculate_r2eff():
@@ -766,7 +766,7 @@ class Disp_minimise_command(Slave_command):
                 print("%-20s %25.15f" % (self.param_names[i], param_vector[i]*self.scaling_matrix[i, i]))
 
         # Create the result command object to send back to the master.
-        processor.return_object(Disp_result_command(processor=processor, memo_id=self.memo_id, param_vector=param_vector, chi2=chi2, iter_count=iter_count, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning, missing=self.missing, back_calc=model.back_calc, completed=False))
+        processor.return_object(Disp_result_command(processor=processor, memo_id=self.memo_id, param_vector=param_vector, chi2=chi2, iter_count=iter_count, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning, missing=self.missing, back_calc=model.get_back_calc(), completed=False))
 
 
 

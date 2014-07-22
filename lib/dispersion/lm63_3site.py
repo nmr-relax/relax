@@ -2,6 +2,7 @@
 #                                                                             #
 # Copyright (C) 2009 Sebastien Morin                                          #
 # Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -64,45 +65,74 @@ More information on the LM63 3-site model can be found in the:
 """
 
 # Python module imports.
-from math import tanh
+from numpy import any, fabs, min, tanh, isfinite, sum
+from numpy.ma import fix_invalid, masked_where
 
 
-def r2eff_LM63_3site(r20=None, rex_B=None, rex_C=None, quart_kB=None, quart_kC=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_LM63_3site(r20=None, rex_B=None, rex_C=None, quart_kB=None, quart_kC=None, cpmg_frqs=None, back_calc=None):
     """Calculate the R2eff values for the LM63 3-site model.
 
     See the module docstring for details.
 
 
     @keyword r20:           The R20 parameter value (R2 with no exchange).
-    @type r20:              float
+    @type r20:              numpy float array of rank [NS][NM][NO][ND]
     @keyword rex_B:         The phi_ex_B / kB parameter value.
-    @type rex_B:            float
+    @type rex_B:            numpy float array of rank [NS][NM][NO][ND]
     @keyword rex_C:         The phi_ex_C / kC parameter value.
-    @type rex_C:            float
+    @type rex_C:            numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword quart_kB:      Approximate chemical exchange rate constant between sites A and B (the exchange rate in rad/s) divided by 4.
     @type quart_kB:         float
     @keyword quart_kC:      Approximate chemical exchange rate constant between sites A and C (the exchange rate in rad/s) divided by 4.
     @type quart_kC:         float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
-    @type cpmg_frqs:        numpy rank-1 float array
+    @type cpmg_frqs:        numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
-    @type num_points:       int
+    @type back_calc:        numpy float array of rank [NE][NS][NM][NO][ND]
     """
 
-    # Loop over the time points, back calculating the R2eff values.
-    for i in range(num_points):
-        # Catch zeros.
-        if rex_B == 0.0 and rex_C == 0.0:
-            back_calc[i] = r20
+    # Flag to tell if values should be replaced.
+    t_rex_zero = False
+    t_quart_kB_zero = False
+    t_quart_kC_zero = False
+    t_quart_kB_kC_zero = False
 
-        # Avoid divide by zero.
-        elif quart_kB == 0.0 or quart_kC == 0.0:
-            back_calc[i] = 1e100
+    # Avoid divide by zero.
+    if quart_kB == 0.0:
+        t_quart_kB_zero = True
 
-        # The full formula.
-        else:
-            back_calc[i] = r20
-            back_calc[i] += rex_B * (1.0 - cpmg_frqs[i] * tanh(quart_kB / cpmg_frqs[i]) / quart_kB)
-            back_calc[i] += rex_C * (1.0 - cpmg_frqs[i] * tanh(quart_kC / cpmg_frqs[i]) / quart_kC)
+    if quart_kC == 0.0:
+        t_quart_kC_zero = True
+
+    # Test it both is zero.
+    if t_quart_kB_zero and t_quart_kC_zero:
+        t_quart_kB_kC_zero = True
+
+    # Test if rex is zero. Wait for replacement, since this is spin specific.
+    if min(fabs(rex_B)) == 0.0 and min(fabs(rex_C)) == 0.0:
+        t_rex_zero = True
+        mask_rex_B_zero = masked_where(rex_B == 0.0, rex_B)
+        mask_rex_C_zero = masked_where(rex_C == 0.0, rex_C)
+
+    # Replace data in array.
+    # If both quart_kB and quart_kC is zero.
+    if t_quart_kB_kC_zero:
+        back_calc[:] = r20
+    elif t_quart_kB_zero:
+        back_calc[:] = r20 + rex_C * (1.0 - cpmg_frqs * tanh(quart_kC / cpmg_frqs) / quart_kC)
+    elif t_quart_kC_zero:
+        back_calc[:] = r20 + rex_B * (1.0 - cpmg_frqs * tanh(quart_kB / cpmg_frqs) / quart_kB)
+    else:
+        # Calc R2eff.
+        back_calc[:] = r20 + rex_B * (1.0 - cpmg_frqs * tanh(quart_kB / cpmg_frqs) / quart_kB) + rex_C * (1.0 - cpmg_frqs * tanh(quart_kC / cpmg_frqs) / quart_kC)
+
+    # If rex is zero.
+    if t_rex_zero:
+        back_calc[mask_rex_B_zero.mask] = r20[mask_rex_B_zero.mask]
+        back_calc[mask_rex_C_zero.mask] = r20[mask_rex_C_zero.mask]
+
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(back_calc)):
+        # Replaces nan, inf, etc. with fill value.
+        fix_invalid(back_calc, copy=False, fill_value=1e100)

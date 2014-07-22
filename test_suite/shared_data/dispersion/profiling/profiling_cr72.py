@@ -3,6 +3,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2014 Troels E. Linnet                                         #
+# Copyright (C) 2014 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -30,6 +31,13 @@ import pstats
 import sys
 import tempfile
 
+# Python 3 support.
+try:
+    import __builtin__
+except ImportError:
+    import builtins
+    builtins.xrange = builtins.range
+
 # Add to system path, according to 
 if len(sys.argv) == 1:
     path_to_base = path.join(getcwd(), '..', '..', '..', '..')
@@ -45,7 +53,6 @@ sys.path.reverse()
 
 # relax module imports.
 from lib.physical_constants import g1H, g15N
-from lib.dispersion.cr72 import r2eff_CR72
 from target_functions.chi2 import chi2
 from target_functions.relax_disp import Dispersion
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL
@@ -55,7 +62,7 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_B14_F
 def main():
     if True:
         # Nr of iterations.
-        nr_iter = 1
+        nr_iter = 1000
 
         # Print statistics.
         verbose = True
@@ -274,9 +281,6 @@ class Profile(Dispersion):
                     r20b=R20B[r20_index]
                     back_calc = array([0.0]*len(cpmg_frqs[ei][mi][oi]))
 
-                    # Initialise call to function.
-                    r2eff_CR72(r20a_orig=R20A, r20b_orig=R20B, r20a=r20a, r20b=r20b, pA=pA, dw_orig=dw_frq, dw=dw_frq, kex=kex, cpmg_frqs=array(cpmg_frqs[ei][mi][oi]), back_calc=back_calc, num_points=len(back_calc))
-
                     for oi in range(len(self.offset)):
                         for di in range(len(self.points[mi])):
 
@@ -440,9 +444,11 @@ def single(num_spins=1, model=MODEL_CR72_FULL, iter=None):
     # Instantiate class
     C1 = Profile(num_spins=num_spins, model=model, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
 
-    # Repeat the function call, to simulate minimisation.
-    for i in range(iter):
-        chi2 = C1.calc(C1.params)
+    # Loop 100 times for each spin in the clustered analysis (to make the timing numbers equivalent).
+    for spin_index in range(100):
+        # Repeat the function call, to simulate minimisation.
+        for i in range(iter):
+            chi2 = C1.calc(C1.params)
     print("chi2 single:", chi2)
 
 
