@@ -229,80 +229,35 @@ def rr1rho_3d_3site_rankN(R1=None, r1rho_prime=None, dw_AB=None, dw_AC=None, ome
     @type relax_time:       numpy float array of rank [NE][NS][NM][NO][ND]
     """
 
-    # The AB auto-block.
-    #matrix[0, 0] = -r1rho_prime - k_AB - k_AC
-    #matrix[0, 1] = -wA
-    #matrix[1, 0] = wA
-    #matrix[1, 1] = -r1rho_prime - k_AB - k_AC
-    #matrix[1, 2] = -w1
-    #matrix[2, 1] = w1
-    #matrix[2, 2] = -R1 - k_AB - k_AC
-
-    # The AC auto-block.
-    #matrix[3, 3] = -r1rho_prime - k_BA - k_BC
-    #matrix[3, 4] = -wB
-    #matrix[4, 3] = wB
-    #matrix[4, 4] = -r1rho_prime - k_BA - k_BC
-    #matrix[4, 5] = -w1
-    #matrix[5, 4] = w1
-    #matrix[5, 5] = -R1 - k_BA - k_BC
-
-    # The BC auto-block.
-    #matrix[6, 6] = -r1rho_prime - k_CA - k_CB
-    #matrix[6, 7] = -wC
-    #matrix[7, 6] = wC
-    #matrix[7, 7] = -r1rho_prime - k_CA - k_CB
-    #matrix[7, 8] = -w1
-    #matrix[8, 7] = w1
-    #matrix[8, 8] = -R1 - k_CA - k_CB
-
-    # The AB cross-block.
-    #matrix[0, 3] = k_BA
-    #matrix[1, 4] = k_BA
-    #matrix[2, 5] = k_BA
-    #matrix[3, 0] = k_AB
-    #matrix[4, 1] = k_AB
-    #matrix[5, 2] = k_AB
-
-    # The AC cross-block.
-    #matrix[0, 6] = k_CA
-    #matrix[1, 7] = k_CA
-    #matrix[2, 8] = k_CA
-    #matrix[6, 0] = k_AC
-    #matrix[7, 1] = k_AC
-    #matrix[8, 2] = k_AC
-
-    # The BC cross-block.
-    #matrix[3, 6] = k_CB
-    #matrix[4, 7] = k_CB
-    #matrix[5, 8] = k_CB
-    #matrix[6, 3] = k_BC
-    #matrix[7, 4] = k_BC
-    #matrix[8, 5] = k_BC
-
     # Repetitive calculations (to speed up calculations).
     # The chemical shift offset of state A from the spin-lock. Larmor frequency for state A [s^-1].
     Wa = omega
+
     # The chemical shift offset of state B from the spin-lock. Larmor frequency for state B [s^-1].
     Wb = omega + dw_AB
+
     # The chemical shift offset of state C from the spin-lock. Larmor frequency for state C [s^-1].
     Wc = omega + dw_AC
 
     # Population-averaged Larmor frequency [s^-1].
     #W = pA*Wa + pB*Wb + pC*Wc
+
     # Offset of spin-lock from A.
     dA = Wa - offset
+
     # Offset of spin-lock from B.
     dB = Wb - offset
+
     # Offset of spin-lock from C.
     dC = Wc - offset
-    # Offset of spin-lock from population-average 
+
+    # Offset of spin-lock from population-average.
     #d = W - offset_i
 
     # Parameter alias.
-    wA=dA
-    wB=dB
-    wC=dC
+    wA = dA
+    wB = dB
+    wC = dC
 
     # Multiply and expand.
     mat_R1 = multiply.outer( R1 * relax_time, m_R1 )
@@ -397,10 +352,10 @@ def ns_r1rho_3site(M0=None, M0_T=None, r1rho_prime=None, omega=None, offset=None
     Rexpo_mat = matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(R_mat)
 
     # Magnetization evolution.
-    Rexpo_M0_mat = einsum('...ij,...jk', Rexpo_mat, M0)
+    Rexpo_M0_mat = einsum('...ij, ...jk', Rexpo_mat, M0)
 
     # Magnetization evolution, which include all dimensions.
-    MA_mat = einsum('...ij,...jk', M0_T, Rexpo_M0_mat)[:, :, :, :, :, 0, 0]
+    MA_mat = einsum('...ij, ...jk', M0_T, Rexpo_M0_mat)[:, :, :, :, :, 0, 0]
 
     # Insert safe checks.
     if min(MA_mat) < 0.0:
