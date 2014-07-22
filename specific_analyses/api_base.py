@@ -492,9 +492,11 @@ class API_base(object):
         raise RelaxImplementError('overfit_deselect')
 
 
-    def print_model_title(self, model_info=None):
+    def print_model_title(self, prefix=None, model_info=None):
         """Print out the model title.
 
+        @keyword prefix:        The starting text of the title.  This should be printed out first, followed by the model information text.
+        @type prefix:           str
         @keyword model_info:    The model information from model_loop().
         @type model_info:       unknown
         """
