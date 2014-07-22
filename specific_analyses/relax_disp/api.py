@@ -45,7 +45,7 @@ from specific_analyses.relax_disp.data import average_intensity, calc_rotating_f
 from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, back_calc_peak_intensities, back_calc_r2eff, calculate_r2eff, grid_search_setup, minimise_r2eff
 from specific_analyses.relax_disp.parameter_object import Relax_disp_params
 from specific_analyses.relax_disp.parameters import assemble_scaling_matrix, get_param_names, get_value, loop_parameters, param_index_to_param_info, param_num
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_MMQ, PARAMS_R20
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_MMQ, MODEL_R2EFF, PARAMS_R20
 
 
 class Relax_disp(API_base, API_common):
@@ -78,7 +78,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The R2eff model data (the base data is peak intensities).
-        if cdp.model_type == 'R2eff':
+        if cdp.model_type == MODEL_R2EFF:
             # Loop over the sequence.
             for spin in spin_loop():
                 # Skip deselected spins.
@@ -139,8 +139,8 @@ class Relax_disp(API_base, API_common):
         check_mol_res_spin_data()
         check_model_type()
 
-        # Special exponential curve-fitting for the 'R2eff' model.
-        if cdp.model_type == 'R2eff':
+        # Special exponential curve-fitting for the R2eff model.
+        if cdp.model_type == MODEL_R2EFF:
             calculate_r2eff()
 
         # Calculate the chi-squared value.
@@ -187,7 +187,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The R2eff model (with peak intensity base data).
-        if cdp.model_type == 'R2eff':
+        if cdp.model_type == MODEL_R2EFF:
             # Unpack the data.
             spin, exp_type, frq, offset, point = data_id
 
@@ -595,8 +595,8 @@ class Relax_disp(API_base, API_common):
         if not hasattr(cdp, 'spin_lock_nu1_list'):
             cdp.spin_lock_nu1_list = []
 
-        # Special exponential curve-fitting for the 'R2eff' model.
-        if cdp.model_type == 'R2eff':
+        # Special exponential curve-fitting for the R2eff model.
+        if cdp.model_type == MODEL_R2EFF:
             # Sanity checks.
             if not has_exponential_exp_type():
                 raise RelaxError("The R2eff model with the fixed time period dispersion experiments cannot be optimised.")
@@ -668,6 +668,8 @@ class Relax_disp(API_base, API_common):
         @return:    The list of spins per block will be yielded, as well as the list of spin IDs.
         @rtype:     tuple of list of SpinContainer instances and list of str
         """
+
+        # Loop over individual spins for the R2eff model.
 
         # The cluster loop.
         for spin_ids in loop_cluster(skip_desel=False):
@@ -790,7 +792,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The R2eff model.
-        if cdp.model_type == 'R2eff':
+        if cdp.model_type == MODEL_R2EFF:
             # Unpack the data.
             spin, exp_type, frq, offset, point = data_id
 
@@ -812,7 +814,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The R2eff model.
-        if cdp.model_type == 'R2eff':
+        if cdp.model_type == MODEL_R2EFF:
             # Unpack the data.
             spin, exp_type, frq, offset, point = data_id
 
@@ -1154,7 +1156,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The R2eff model (with peak intensity base data).
-        if cdp.model_type == 'R2eff':
+        if cdp.model_type == MODEL_R2EFF:
             # Unpack the data.
             spin, exp_type, frq, offset, point = data_id
 
