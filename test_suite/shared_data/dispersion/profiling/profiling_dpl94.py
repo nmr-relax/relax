@@ -3,6 +3,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2014 Troels E. Linnet                                         #
+# Copyright (C) 2014 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,11 +25,18 @@
 # Python module imports.
 import cProfile
 from os import getcwd, path
-from numpy import array, arange, asarray, int32, float64, ones, pi, zeros
-import numpy as np
+from numpy import array, asarray, int32, float64, ones, pi
+from math import atan2, sqrt
 import pstats
 import sys
 import tempfile
+
+# Python 3 support.
+try:
+    import __builtin__
+except ImportError:
+    import builtins
+    builtins.xrange = builtins.range
 
 # Add to system path, according to 
 if len(sys.argv) == 1:
@@ -45,8 +53,6 @@ sys.path.reverse()
 
 # relax module imports.
 from lib.physical_constants import g1H, g15N
-from lib.dispersion.dpl94 import r1rho_DPL94
-from target_functions.chi2 import chi2
 from target_functions.relax_disp import Dispersion
 from specific_analyses.relax_disp.variables import EXP_TYPE_R1RHO, MODEL_DPL94
 
@@ -55,7 +61,7 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_R1RHO, MODEL_DPL94
 def main():
     if True:
         # Nr of iterations.
-        nr_iter = 1
+        nr_iter = 100
 
         # Print statistics.
         verbose = True
@@ -103,7 +109,7 @@ class Profile(Dispersion):
     Class Profile inherits the Dispersion container class object.
     """
 
-    def __init__(self, num_spins=1, model=None, r2=None, r2a=None, r2b=None, dw=None, pA=None, kex=None, spins_params=None):
+    def __init__(self, num_spins=1, model=None, r2=None, r2a=None, r2b=None, phi_ex=None, dw=None, pA=None, kex=None, spins_params=None):
         """
         Special method __init__() is called first (acts as Constructor).
         It brings in data from outside the class like the variable num_spins.
@@ -123,6 +129,8 @@ class Profile(Dispersion):
         @type r2a:              float
         @keyword r2b:           The transversal relaxation rate for state B in the absence of exchange.
         @type r2b:              float
+        @keyword phi_ex:        The phi_ex = pA.pB.dw**2 value (ppm^2)
+        @type phi_ex:           float
         @keyword dw:            The chemical exchange difference between states A and B in ppm.
         @type dw:               float
         @keyword pA:            The population of state A.
@@ -140,34 +148,142 @@ class Profile(Dispersion):
         #self.fields = array([600. * 1E6, 800. * 1E6])
         self.fields = array([600. * 1E6, 800. * 1E6, 900. * 1E6])
         self.exp_type = [EXP_TYPE_R1RHO]
-        self.offset = [0]
 
         # Required data structures.
         self.relax_times = self.fields / (100 * 100. *1E6 )
-        self.ncycs = []
-        self.points = []
         self.value = []
         self.error = []
+        self.points = []
+
+        # Set The spin-lock field strength, nu1, in Hz
+        self.spin_lock_fields = [431.0, 651.2, 800.5, 984.0, 1341.11]
+
         for i in range(len(self.fields)):
-            ncyc = arange(2, 1000. * self.relax_times[i], 4)
-            #ncyc = arange(2, 42, 2)
-            self.ncycs.append(ncyc)
-            print("sfrq: ", self.fields[i], "number of cpmg frq", len(ncyc), ncyc)
+            points = self.spin_lock_fields
 
-            cpmg_point = ncyc / self.relax_times[i]
+            self.points.append(list(points))
+            self.value.append([2.0]*len(self.spin_lock_fields))
+            self.error.append([1.0]*len(self.spin_lock_fields))
 
-            self.points.append(list(cpmg_point))
-            self.value.append([2.0]*len(cpmg_point))
-            self.error.append([1.0]*len(cpmg_point))
+        # Spin lock offsets in ppm.
+        self.spin_lock_offsets = range(10)
+
+        # Chemical shift in ppm.
+        self.chemical_shift = 1.0
 
         # Assemble param vector.
-        self.params = self.assemble_param_vector(r2=r2, r2a=r2a, r2b=r2b, dw=dw, pA=pA, kex=kex, spins_params=spins_params)
+        self.params = self.assemble_param_vector(r2=r2, r2a=r2a, r2b=r2b, phi_ex=phi_ex, dw=dw, pA=pA, kex=kex, spins_params=spins_params)
 
         # Make nested list arrays of data. And return them.
-        values, errors, cpmg_frqs, missing, frqs, exp_types, relax_times, offsets = self.return_r2eff_arrays()
+        values, errors, cpmg_frqs, missing, frqs, exp_types, relax_times, offsets, spin_lock_nu1 = self.return_r2eff_arrays()
+
+        # The offset and R1 data.
+        chemical_shifts, offsets, tilt_angles, Delta_omega, w_eff = self.return_offset_data()
+
+        r1 = ones([self.num_spins, self.fields.shape[0]])
 
         # Init the Dispersion Class.
-        self.model = Dispersion(model=self.model, num_params=None, num_spins=self.num_spins, num_frq=len(self.fields), exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=None, cpmg_frqs=cpmg_frqs, spin_lock_nu1=None, chemical_shifts=None, offset=offsets, tilt_angles=None, r1=None, relax_times=relax_times, scaling_matrix=None)
+        self.model = Dispersion(model=self.model, num_params=None, num_spins=self.num_spins, num_frq=len(self.fields), exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=None, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, scaling_matrix=None)
+
+
+    def return_offset_data(self):
+        """Return numpy arrays of the chemical shifts, offsets and tilt angles.
+
+        @keyword field_count:   The number of spectrometer field strengths.  This may not be equal to the length of the fields list as the user may not have set the field strength.
+        @type field_count:      int
+        @keyword fields:        The spin-lock field strengths to use instead of the user loaded values - to enable interpolation.  The dimensions are {Ei, Mi}.
+        @type fields:           rank-2 list of floats
+        """
+
+        # spins=[spin], spin_ids=[spin_id], field_count=field_count, fields=spin_lock_nu1
+
+
+        # Initialise the data structures for the target function.
+        shifts = []
+        offsets = []
+        theta = []
+        Domega = []
+        w_e = []
+        for ei in range(len(self.exp_type)):
+            shifts.append([])
+            offsets.append([])
+            theta.append([])
+            Domega.append([])
+            w_e.append([])
+            for si in range(self.num_spins):
+                shifts[ei].append([])
+                offsets[ei].append([])
+                theta[ei].append([])
+                Domega[ei].append([])
+                w_e[ei].append([])
+                for mi in range(len(self.fields)):
+                    shifts[ei][si].append(None)
+                    offsets[ei][si].append([])
+                    theta[ei][si].append([])
+                    Domega[ei][si].append([])
+                    w_e[ei][si].append([])
+                    for oi in range(len(self.spin_lock_offsets)):
+                        offsets[ei][si][mi].append(None)
+                        theta[ei][si][mi].append([])
+                        Domega[ei][si][mi].append([])
+                        w_e[ei][si][mi].append([])
+
+        # Assemble the data.
+        si = 0
+        for spin_index in range(self.num_spins):
+
+            for ei in range(len(self.exp_type)):
+                exp_type = self.exp_type[ei]
+                # Add the experiment type.
+
+                for mi in range(len(self.fields)):
+                    # Get the frq.
+                    frq = self.fields[mi]
+
+                    for oi in range(len(self.spin_lock_offsets)):
+                        # The spin-lock data.
+
+                        # Convert the shift from ppm to rad/s and store it.
+                        shifts[ei][si][mi] = self.chemical_shift * 2.0 * pi * frq / g1H * g15N * 1e-6
+
+                        # Set The spin-lock offset, omega_rf, in ppm.
+                        offset = self.spin_lock_offsets[oi]
+
+                        # Store the offset in rad/s.  Only once and using the first key.
+                        offsets[ei][si][mi][oi] = offset * 2.0 * pi * frq / g1H * g15N * 1e-6
+
+                        # Loop over the dispersion points.
+                        for di in range(len(self.spin_lock_fields)):
+                            # Alias the point.
+                            point = self.spin_lock_fields[di]
+
+                            # Skip reference spectra.
+                            if point == None:
+                                continue
+
+                            # Calculate the tilt angle.
+                            omega1 = point * 2.0 * pi
+                            Delta_omega = shifts[ei][si][mi] - offsets[ei][si][mi][oi]
+                            Domega[ei][si][mi][oi].append(Delta_omega)
+                            if Delta_omega == 0.0:
+                                theta[ei][si][mi][oi].append(pi / 2.0)
+                            # Calculate the theta angle describing the tilted rotating frame relative to the laboratory.
+                            # theta = atan(omega1 / Delta_omega).
+                            # If Delta_omega is negative, there follow the symmetry of atan, that atan(-x) = - atan(x).
+                            # Then it should be: theta = pi + atan(-x) = pi - atan(x) = pi - abs(atan( +/- x)).
+                            # This is taken care of with the atan2(y, x) function, which return atan(y / x), in radians, and the result is between -pi and pi.
+                            else:
+                                theta[ei][si][mi][oi].append(atan2(omega1, Delta_omega))
+
+                            # Calculate effective field in rotating frame
+                            w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
+                            w_e[ei][si][mi][oi].append(w_eff)
+
+            # Increment the spin index.
+            si += 1
+
+        # Return the structures.
+        return shifts, offsets, theta, Domega, w_e
 
 
     def return_r2eff_arrays(self):
@@ -178,22 +294,6 @@ class Profile(Dispersion):
         """
 
         # Unpack the parameter values.
-        # Initialise the post spin parameter indices.
-        end_index = []
-        # The spin and frequency dependent R2 parameters.
-        end_index.append(len(self.exp_type) * self.num_spins * len(self.fields))
-        if self.model in [MODEL_DPL94]:
-            end_index.append(2 * len(self.exp_type) * self.num_spins * len(self.fields))
-        # The spin and dependent parameters (phi_ex, dw, padw2).
-        end_index.append(end_index[-1] + self.num_spins)
-
-        # Unpack the parameter values.
-        R20 = self.params[:end_index[1]].reshape(self.num_spins*2, len(self.fields))
-        R20A = R20[::2].flatten()
-        R20B = R20[1::2].flatten()
-        dw = self.params[end_index[1]:end_index[2]]
-        pA = self.params[end_index[2]]
-        kex = self.params[end_index[2]+1]
 
         # Initialise the data structures for the target function.
         exp_types = []
@@ -226,7 +326,7 @@ class Profile(Dispersion):
                     frqs[ei][si].append(0.0)
                     frqs_H[ei][si].append(0.0)
                     offsets[ei][si].append([])
-                    for oi in range(len(self.offset)):
+                    for oi in range(len(self.spin_lock_offsets)):
                         values[ei][si][mi].append([])
                         errors[ei][si][mi].append([])
                         missing[ei][si][mi].append([])
@@ -234,20 +334,18 @@ class Profile(Dispersion):
             for mi in range(len(self.fields)):
                 relax_times[ei].append(None)
 
-        cpmg_frqs = []
+        spin_lock_nu1 = []
         for ei in range(len(self.exp_type)):
-            cpmg_frqs.append([])
+            spin_lock_nu1.append([])
             for mi in range(len(self.fields)):
-                cpmg_frqs[ei].append([])
-                for oi in range(len(self.offset)):
+                spin_lock_nu1[ei].append([])
+                for oi in range(len(self.spin_lock_offsets)):
                     #cpmg_frqs[ei][mi].append(self.points)
-                    cpmg_frqs[ei][mi].append([])
-
+                    spin_lock_nu1[ei][mi].append([])
 
         # Pack the R2eff/R1rho data.
         si = 0
         for spin_index in range(self.num_spins):
-            data_flag = True
 
             for ei in range(len(self.exp_type)):
                 exp_type = self.exp_type[ei]
@@ -262,23 +360,13 @@ class Profile(Dispersion):
                     # The Larmor frequency for this spin (and that of an attached proton for the MMQ models) and field strength (in MHz*2pi to speed up the ppm to rad/s conversion).
                     frqs[ei][si][mi] = 2.0 * pi * frq / g1H * g15N * 1e-6
 
-                    # Get the cpmg frq.
-                    cpmg_frqs[ei][mi][oi] = self.points[mi]
+                    for oi in range(len(self.spin_lock_offsets)):
+                        # Get the spin_lock_nu1 frq.
+                        spin_lock_nu1[ei][mi][oi] = self.points[mi]
 
-                    # Calculate how the value should be, so chi2 gets zero.
-                    # The R20 index.
-                    r20_index = mi + si*len(self.fields)
-                    # Convert dw from ppm to rad/s.
-                    dw_frq = dw[si] * frqs[ei][si][mi]
-                    r20a=R20A[r20_index]
-                    r20b=R20B[r20_index]
-                    back_calc = array([0.0]*len(cpmg_frqs[ei][mi][oi]))
+                        back_calc = array([0.0]*len(spin_lock_nu1[ei][mi][oi]))
 
-                    # Initialise call to function.
-                    r2eff_CR72(r20a=r20a, r20b=r20b, pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=array(cpmg_frqs[ei][mi][oi]), back_calc=back_calc, num_points=len(back_calc))
-
-                    for oi in range(len(self.offset)):
-                        for di in range(len(self.points[mi])):
+                        for di in range(len(self.spin_lock_fields)):
 
                             missing[ei][si][mi][oi].append(0)
 
@@ -304,16 +392,17 @@ class Profile(Dispersion):
         for ei in range(len(self.exp_type)):
             for si in range(self.num_spins):
                 for mi in range(len(self.fields)):
-                    for oi in range(len(self.offset)):
+                    for oi in range(len(self.spin_lock_offsets)):
+                        spin_lock_nu1[ei][mi][oi] = array(spin_lock_nu1[ei][mi][oi], float64)
                         values[ei][si][mi][oi] = array(values[ei][si][mi][oi], float64)
                         errors[ei][si][mi][oi] = array(errors[ei][si][mi][oi], float64)
                         missing[ei][si][mi][oi] = array(missing[ei][si][mi][oi], int32)
 
         # Return the structures.
-        return values, errors, cpmg_frqs, missing, frqs, exp_types, relax_times, offsets
+        return values, errors, None, missing, frqs, exp_types, relax_times, offsets, asarray(spin_lock_nu1)
 
 
-    def assemble_param_vector(self, r2=None, r2a=None, r2b=None, dw=None, pA=None, kex=None, spins_params=None):
+    def assemble_param_vector(self, r2=None, r2a=None, r2b=None, phi_ex=None, dw=None, pA=None, kex=None, spins_params=None):
         """Assemble the dispersion relaxation dispersion curve fitting parameter vector.
 
         @keyword r2:            The transversal relaxation rate.
@@ -322,6 +411,8 @@ class Profile(Dispersion):
         @type r2a:              float
         @keyword r2b:           The transversal relaxation rate for state B in the absence of exchange.
         @type r2b:              float
+        @keyword phi_ex:        The phi_ex = pA.pB.dw**2 value (ppm^2)
+        @type phi_ex:           float
         @keyword dw:            The chemical exchange difference between states A and B in ppm.
         @type dw:               float
         @keyword pA:            The population of state A.
@@ -348,6 +439,8 @@ class Profile(Dispersion):
             elif param_name == 'r2b':
                 value = r2b
                 value = value + mi + spin_index*0.1
+            elif param_name == 'phi_ex':
+                value = phi_ex + spin_index
             elif param_name == 'dw':
                 value = dw + spin_index
             elif param_name == 'pA':
@@ -398,6 +491,15 @@ class Profile(Dispersion):
         # Then the chemical shift difference parameters 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AB' (one per spin).
         for spin_index in range(self.num_spins):
 
+            # Yield the data.
+            if 'phi_ex' in spins_params:
+                yield 'phi_ex', spin_index, 0
+            if 'phi_ex_B' in spins_params:
+                yield 'phi_ex_B', spin_index, 0
+            if 'phi_ex_C' in spins_params:
+                yield 'phi_ex_C', spin_index, 0
+            if 'padw2' in spins_params:
+                yield 'padw2', pspin_index, 0
             if 'dw' in spins_params:
                 yield 'dw', spin_index, 0
 
@@ -420,7 +522,7 @@ class Profile(Dispersion):
         """
 
         # Return chi2 value.
-        chi2 = self.model.func_CR72_full(params)
+        chi2 = self.model.func_DPL94(params)
         return chi2
 
 
@@ -438,7 +540,7 @@ def single(num_spins=1, model=MODEL_DPL94, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, phi_ex=1.0, kex=5000.0, spins_params=['r2', 'phi_ex', 'kex'])
 
     # Loop 100 times for each spin in the clustered analysis (to make the timing numbers equivalent).
     for spin_index in xrange(100):
@@ -462,7 +564,7 @@ def cluster(num_spins=100, model=MODEL_DPL94, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, phi_ex=1.0, kex=5000.0, spins_params=['r2', 'phi_ex', 'kex'])
 
     # Repeat the function call, to simulate minimisation.
     for i in xrange(iter):
@@ -471,40 +573,5 @@ def cluster(num_spins=100, model=MODEL_DPL94, iter=None):
 
 
 # Execute main function.
-#if __name__ == "__main__":
-#    main()
-
-def test_reshape():
-    C1 = Profile(num_spins=1, model=MODEL_DPL94, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
-    end_index = C1.model.end_index
-    #print("end_index:", end_index)
-    num_spins = C1.model.num_spins
-    #print("num_spins:", num_spins)
-    num_frq = C1.model.num_frq
-    #print("num_frq:", num_frq)
-    params = C1.params
-    #print("params", params)
-
-    R20 = params[:end_index[1]].reshape(num_spins*2, num_frq)
-    R20A = R20[::2].flatten()
-    R20B = R20[1::2].flatten()
-    dw = params[end_index[1]:end_index[2]]
-    pA = params[end_index[2]]
-    kex = params[end_index[2]+1]
-    print("R20A", R20A, len(R20A))
-    print("R20B", R20B, len(R20B))
-    print("dw", dw, len(dw))
-    print("dw", pA)
-    print("kex", kex)
-
-    for si in range(num_spins):
-        for mi in range(num_frq):
-            r20_index = mi + si*num_frq
-            r20a=R20A[r20_index]
-            r20b=R20B[r20_index]
-            print("r20a", r20a, "r20b", r20b)
-
-    #model = C1.calc(params)
-    #print(model)
-
-test_reshape()
+if __name__ == "__main__":
+    main()

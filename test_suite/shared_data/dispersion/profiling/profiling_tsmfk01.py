@@ -25,8 +25,7 @@
 # Python module imports.
 import cProfile
 from os import getcwd, path
-from numpy import array, arange, asarray, int32, float64, ones, pi, zeros
-import numpy as np
+from numpy import array, arange, int32, float64, pi
 import pstats
 import sys
 import tempfile
@@ -53,7 +52,6 @@ sys.path.reverse()
 
 # relax module imports.
 from lib.physical_constants import g1H, g15N
-from target_functions.chi2 import chi2
 from target_functions.relax_disp import Dispersion
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_TSMFK01
 
@@ -62,7 +60,7 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_TSMFK
 def main():
     if True:
         # Nr of iterations.
-        nr_iter = 1000
+        nr_iter = 100
 
         # Print statistics.
         verbose = True
@@ -110,7 +108,7 @@ class Profile(Dispersion):
     Class Profile inherits the Dispersion container class object.
     """
 
-    def __init__(self, num_spins=1, model=None, r2=None, r2a=None, r2b=None, dw=None, pA=None, kex=None, spins_params=None):
+    def __init__(self, num_spins=1, model=None, r2=None, r2a=None, r2b=None, dw=None, pA=None, kex=None, k_AB=None, spins_params=None):
         """
         Special method __init__() is called first (acts as Constructor).
         It brings in data from outside the class like the variable num_spins.
@@ -136,6 +134,8 @@ class Profile(Dispersion):
         @type pA:               float
         @keyword kex:           The rate of exchange.
         @type kex:              float
+        @keyword k_AB:          The exchange rate from state A to state B
+        @type k_AB:             float
         @keyword spins_params:  List of parameter strings used in dispersion model.
         @type spins_params:     array of strings
         """
@@ -172,7 +172,7 @@ class Profile(Dispersion):
             self.error.append([1.0]*len(cpmg_point))
 
         # Assemble param vector.
-        self.params = self.assemble_param_vector(r2=r2, r2a=r2a, r2b=r2b, dw=dw, pA=pA, kex=kex, spins_params=spins_params)
+        self.params = self.assemble_param_vector(r2=r2, r2a=r2a, r2b=r2b, dw=dw, pA=pA, kex=kex, k_AB=k_AB, spins_params=spins_params)
 
         # Make nested list arrays of data. And return them.
         values, errors, cpmg_frqs, missing, frqs, exp_types, relax_times, offsets = self.return_r2eff_arrays()
@@ -308,6 +308,7 @@ class Profile(Dispersion):
             for si in range(self.num_spins):
                 for mi in range(len(self.fields)):
                     for oi in range(len(self.offset)):
+                        cpmg_frqs[ei][mi][oi] = array(cpmg_frqs[ei][mi][oi], float64)
                         values[ei][si][mi][oi] = array(values[ei][si][mi][oi], float64)
                         errors[ei][si][mi][oi] = array(errors[ei][si][mi][oi], float64)
                         missing[ei][si][mi][oi] = array(missing[ei][si][mi][oi], int32)
@@ -316,7 +317,7 @@ class Profile(Dispersion):
         return values, errors, cpmg_frqs, missing, frqs, exp_types, relax_times, offsets
 
 
-    def assemble_param_vector(self, r2=None, r2a=None, r2b=None, dw=None, pA=None, kex=None, spins_params=None):
+    def assemble_param_vector(self, r2=None, r2a=None, r2b=None, dw=None, pA=None, kex=None, k_AB=None, spins_params=None):
         """Assemble the dispersion relaxation dispersion curve fitting parameter vector.
 
         @keyword r2:            The transversal relaxation rate.
@@ -331,6 +332,8 @@ class Profile(Dispersion):
         @type pA:               float
         @keyword kex:           The rate of exchange.
         @type kex:              float
+        @keyword k_AB:          The exchange rate from state A to state B
+        @type k_AB:             float
         @keyword spins_params:  List of parameter strings used in dispersion model.
         @type spins_params:     array of strings
         @return:                An array of the parameter values of the dispersion relaxation model.
@@ -357,6 +360,8 @@ class Profile(Dispersion):
                 value = pA
             elif param_name == 'kex':
                 value = kex
+            elif param_name == 'k_AB':
+                value = k_AB
 
             # Add to the vector.
             param_vector.append(value)
@@ -411,6 +416,8 @@ class Profile(Dispersion):
                     yield 'pA', 0, 0
                 elif param == 'kex':
                     yield 'kex', 0, 0
+                elif param == 'k_AB':
+                    yield 'k_AB', 0, 0
 
 
     def calc(self, params):
@@ -441,7 +448,7 @@ def single(num_spins=1, model=MODEL_TSMFK01, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2a=5.0, dw=3.0, k_AB=10.0, spins_params=['r2a', 'dw', 'k_AB'])
 
     # Loop 100 times for each spin in the clustered analysis (to make the timing numbers equivalent).
     for spin_index in xrange(100):
@@ -465,7 +472,7 @@ def cluster(num_spins=100, model=MODEL_TSMFK01, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2a=5.0, dw=3.0, k_AB=10.0, spins_params=['r2a', 'dw', 'k_AB'])
 
     # Repeat the function call, to simulate minimisation.
     for i in xrange(iter):
@@ -476,38 +483,3 @@ def cluster(num_spins=100, model=MODEL_TSMFK01, iter=None):
 # Execute main function.
 if __name__ == "__main__":
     main()
-
-def test_reshape():
-    C1 = Profile(num_spins=1, model=MODEL_TSMFK01, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
-    end_index = C1.model.end_index
-    #print("end_index:", end_index)
-    num_spins = C1.model.num_spins
-    #print("num_spins:", num_spins)
-    num_frq = C1.model.num_frq
-    #print("num_frq:", num_frq)
-    params = C1.params
-    #print("params", params)
-
-    R20 = params[:end_index[1]].reshape(num_spins*2, num_frq)
-    R20A = R20[::2].flatten()
-    R20B = R20[1::2].flatten()
-    dw = params[end_index[1]:end_index[2]]
-    pA = params[end_index[2]]
-    kex = params[end_index[2]+1]
-    print("R20A", R20A, len(R20A))
-    print("R20B", R20B, len(R20B))
-    print("dw", dw, len(dw))
-    print("dw", pA)
-    print("kex", kex)
-
-    for si in range(num_spins):
-        for mi in range(num_frq):
-            r20_index = mi + si*num_frq
-            r20a=R20A[r20_index]
-            r20b=R20B[r20_index]
-            print("r20a", r20a, "r20b", r20b)
-
-    model = C1.calc(params)
-    print(model)
-
-#test_reshape()

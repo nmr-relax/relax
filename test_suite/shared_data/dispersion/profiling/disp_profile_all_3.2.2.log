@@ -1,293 +1,1263 @@
 
 
+Current relax version:  repository checkout
+
+Copying: model=No Rex script=profiling_norex.py iterations=100 scale=1
+Copying: model=LM63 script=profiling_lm63.py iterations=100 scale=1
+Copying: model=CR72 script=profiling_cr72.py iterations=100 scale=1
+Copying: model=CR72 full script=profiling_cr72_full.py iterations=100 scale=1
+Copying: model=IT99 script=profiling_it99.py iterations=100 scale=1
+Copying: model=TSMFK01 script=profiling_tsmfk01.py iterations=100 scale=1
+Copying: model=B14 script=profiling_b14.py iterations=100 scale=1
+Copying: model=B14 full script=profiling_b14_full.py iterations=100 scale=1
+Copying: model=NS CPMG 2-site 3D script=profiling_ns_cpmg_2site_3D.py iterations=10 scale=10
+Copying: model=NS CPMG 2-site 3D full script=profiling_ns_cpmg_2site_3D_full.py iterations=10 scale=10
+Copying: model=NS CPMG 2-site expanded script=profiling_ns_cpmg_2site_expanded.py iterations=100 scale=1
+Copying: model=NS CPMG 2-site star script=profiling_ns_cpmg_2site_star.py iterations=10 scale=10
+Copying: model=NS CPMG 2-site star full script=profiling_ns_cpmg_2site_star_full.py iterations=10 scale=10
+Copying: model=M61 script=profiling_m61.py iterations=100 scale=1
+Copying: model=DPL94 script=profiling_dpl94.py iterations=100 scale=1
+Copying: model=TP02 script=profiling_tp02.py iterations=100 scale=1
+Copying: model=TAP03 script=profiling_tap03.py iterations=100 scale=1
+Copying: model=MP05 script=profiling_mp05.py iterations=100 scale=1
+Copying: model=NS R1rho 2-site script=profiling_ns_r1rho_2site.py iterations=10 scale=10
+
+
 Execution iteration 1
 
+$ python profiling_norex.py
+    10000    0.084    0.000    0.436    0.000 relax_disp.py:1257(func_NOREX)
+      100    0.002    0.000    0.013    0.000 relax_disp.py:1257(func_NOREX)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_norex.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.498    0.000    1.263    0.000 relax_disp.py:1352(func_NOREX)
+      100    0.480    0.005    1.219    0.012 relax_disp.py:1352(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.168    0.000    1.212    0.000 relax_disp.py:1033(func_LM63)
+      100    0.004    0.000    0.058    0.001 relax_disp.py:1033(func_LM63)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_lm63.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.499    0.000    2.496    0.000 relax_disp.py:1088(func_LM63)
+      100    0.475    0.005    2.443    0.024 relax_disp.py:1088(func_LM63)
 $ python profiling_cr72.py
-     1000    0.008    0.000    0.202    0.000 relax_disp.py:938(func_CR72_full)
-     1000    0.008    0.000    1.119    0.001 relax_disp.py:938(func_CR72_full)
-$ python /data/relax/tags/3.2.2/profiling_cr72.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.304    0.000 relax_disp.py:907(func_CR72_full)
-     1000    0.003    0.000   30.746    0.031 relax_disp.py:907(func_CR72_full)
+    10000    0.037    0.000    2.643    0.000 relax_disp.py:859(func_CR72)
+      100    0.000    0.000    0.207    0.002 relax_disp.py:859(func_CR72)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.033    0.000    4.204    0.000 relax_disp.py:881(func_CR72)
+      100    0.000    0.000    4.133    0.041 relax_disp.py:881(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.124    0.000    2.835    0.000 relax_disp.py:885(func_CR72_full)
+      100    0.001    0.000    0.213    0.002 relax_disp.py:885(func_CR72_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.034    0.000    4.218    0.000 relax_disp.py:907(func_CR72_full)
+      100    0.000    0.000    4.213    0.042 relax_disp.py:907(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.180    0.000    1.401    0.000 relax_disp.py:952(func_IT99)
+      100    0.002    0.000    0.015    0.000 relax_disp.py:952(func_IT99)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_it99.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.446    0.000    2.912    0.000 relax_disp.py:982(func_IT99)
+      100    0.005    0.000    0.029    0.000 relax_disp.py:982(func_IT99)
 $ python profiling_tsmfk01.py
-     1000    0.011    0.000    0.073    0.000 relax_disp.py:1803(func_TSMFK01)
-     1000    0.026    0.000    0.354    0.000 relax_disp.py:1803(func_TSMFK01)
-$ python /data/relax/tags/3.2.2/profiling_tsmfk01.py /data/relax/tags/3.2.2
-     1000    0.027    0.000    0.160    0.000 relax_disp.py:1892(func_TSMFK01)
-     1000    2.611    0.003   16.066    0.016 relax_disp.py:1892(func_TSMFK01)
+    10000    0.174    0.000    1.172    0.000 relax_disp.py:1725(func_TSMFK01)
+      100    0.004    0.000    0.061    0.001 relax_disp.py:1725(func_TSMFK01)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tsmfk01.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.423    0.000    2.596    0.000 relax_disp.py:1892(func_TSMFK01)
+      100    0.407    0.004    2.582    0.026 relax_disp.py:1892(func_TSMFK01)
 $ python profiling_b14.py
-     1000    0.007    0.000    0.386    0.000 relax_disp.py:884(func_B14_full)
-     1000    0.009    0.000    5.016    0.005 relax_disp.py:884(func_B14_full)
-$ python /data/relax/tags/3.2.2/profiling_b14.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.568    0.001 relax_disp.py:854(func_B14_full)
-     1000    0.003    0.000   57.462    0.057 relax_disp.py:854(func_B14_full)
+    10000    0.038    0.000    6.261    0.001 relax_disp.py:805(func_B14)
+      100    0.000    0.000    0.938    0.009 relax_disp.py:805(func_B14)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.036    0.000    9.078    0.001 relax_disp.py:828(func_B14)
+      100    0.000    0.000    9.066    0.091 relax_disp.py:828(func_B14)
+$ python profiling_b14_full.py
+    10000    0.127    0.000    6.262    0.001 relax_disp.py:831(func_B14_full)
+      100    0.001    0.000    0.809    0.008 relax_disp.py:831(func_B14_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.039    0.000    9.005    0.001 relax_disp.py:854(func_B14_full)
+      100    0.000    0.000    8.949    0.089 relax_disp.py:854(func_B14_full)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.004    0.000    7.326    0.007 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    6.707    0.671 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   35.382    0.035 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   35.509    3.551 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.012    0.000    7.281    0.007 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    6.712    0.671 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   35.633    0.036 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   35.536    3.554 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
 $ python profiling_ns_cpmg_2site_expanded.py
-     1000    0.019    0.000    0.441    0.000 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-     1000    0.278    0.000    6.783    0.007 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-$ python /data/relax/tags/3.2.2/profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.2.2
-     1000    0.043    0.000    0.808    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
-     1000    3.989    0.004   78.725    0.079 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+    10000    0.279    0.000    6.151    0.001 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+      100    0.042    0.000    1.037    0.010 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_expanded.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.683    0.000   12.356    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+      100    0.641    0.006   12.324    0.123 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.004    0.000   13.689    0.014 relax_disp.py:1376(func_ns_cpmg_2site_star)
+       10    0.000    0.000   12.886    1.289 relax_disp.py:1376(func_ns_cpmg_2site_star)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   32.628    0.033 relax_disp.py:1497(func_ns_cpmg_2site_star)
+       10    0.000    0.000   32.747    3.275 relax_disp.py:1497(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.013    0.000   13.623    0.014 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   12.939    1.294 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   33.033    0.033 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   32.777    3.278 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py
+    10000    0.189    0.000    1.427    0.000 relax_disp.py:1072(func_M61)
+      100    0.008    0.000    0.058    0.001 relax_disp.py:1072(func_M61)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_m61.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.390    0.000    2.509    0.000 relax_disp.py:1134(func_M61)
+      100    0.386    0.004    2.506    0.025 relax_disp.py:1134(func_M61)
+$ python profiling_dpl94.py
+    10000    0.188    0.000    1.773    0.000 relax_disp.py:913(func_DPL94)
+      100    0.008    0.000    0.233    0.002 relax_disp.py:913(func_DPL94)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_dpl94.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    2.930    0.000   35.491    0.004 relax_disp.py:934(func_DPL94)
+      100    2.917    0.029   35.119    0.351 relax_disp.py:934(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.208    0.000    1.907    0.000 relax_disp.py:1685(func_TP02)
+      100    0.020    0.000    0.284    0.003 relax_disp.py:1685(func_TP02)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tp02.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.129    0.000   30.472    0.003 relax_disp.py:1840(func_TP02)
+      100    3.088    0.031   30.322    0.303 relax_disp.py:1840(func_TP02)
+$ python profiling_tap03.py
+    10000    0.235    0.000    3.145    0.000 relax_disp.py:1645(func_TAP03)
+      100    0.024    0.000    0.496    0.005 relax_disp.py:1645(func_TAP03)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tap03.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.321    0.000   49.054    0.005 relax_disp.py:1788(func_TAP03)
+      100    3.465    0.035   49.614    0.496 relax_disp.py:1788(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.222    0.000    2.262    0.000 relax_disp.py:1151(func_MP05)
+      100    0.022    0.000    0.321    0.003 relax_disp.py:1151(func_MP05)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_mp05.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.369    0.000   39.028    0.004 relax_disp.py:1227(func_MP05)
+      100    3.472    0.035   39.257    0.393 relax_disp.py:1227(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.026    0.000    8.796    0.009 relax_disp.py:1552(func_ns_r1rho_2site)
+       10    0.018    0.002    8.124    0.812 relax_disp.py:1552(func_ns_r1rho_2site)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_r1rho_2site.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.395    0.000   41.495    0.041 relax_disp.py:1681(func_ns_r1rho_2site)
+       10    0.404    0.040   41.147    4.115 relax_disp.py:1681(func_ns_r1rho_2site)
 
 
 Execution iteration 2
 
+$ python profiling_norex.py
+    10000    0.080    0.000    0.420    0.000 relax_disp.py:1257(func_NOREX)
+      100    0.002    0.000    0.013    0.000 relax_disp.py:1257(func_NOREX)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_norex.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.484    0.000    1.227    0.000 relax_disp.py:1352(func_NOREX)
+      100    0.475    0.005    1.202    0.012 relax_disp.py:1352(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.166    0.000    1.201    0.000 relax_disp.py:1033(func_LM63)
+      100    0.004    0.000    0.058    0.001 relax_disp.py:1033(func_LM63)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_lm63.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.514    0.000    2.521    0.000 relax_disp.py:1088(func_LM63)
+      100    0.495    0.005    2.481    0.025 relax_disp.py:1088(func_LM63)
 $ python profiling_cr72.py
-     1000    0.007    0.000    0.172    0.000 relax_disp.py:938(func_CR72_full)
-     1000    0.008    0.000    1.101    0.001 relax_disp.py:938(func_CR72_full)
-$ python /data/relax/tags/3.2.2/profiling_cr72.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.306    0.000 relax_disp.py:907(func_CR72_full)
-     1000    0.003    0.000   30.061    0.030 relax_disp.py:907(func_CR72_full)
+    10000    0.036    0.000    2.572    0.000 relax_disp.py:859(func_CR72)
+      100    0.000    0.000    0.204    0.002 relax_disp.py:859(func_CR72)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.033    0.000    4.273    0.000 relax_disp.py:881(func_CR72)
+      100    0.000    0.000    4.155    0.042 relax_disp.py:881(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.124    0.000    2.841    0.000 relax_disp.py:885(func_CR72_full)
+      100    0.001    0.000    0.212    0.002 relax_disp.py:885(func_CR72_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.035    0.000    4.282    0.000 relax_disp.py:907(func_CR72_full)
+      100    0.000    0.000    4.181    0.042 relax_disp.py:907(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.185    0.000    1.411    0.000 relax_disp.py:952(func_IT99)
+      100    0.002    0.000    0.014    0.000 relax_disp.py:952(func_IT99)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_it99.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.451    0.000    2.919    0.000 relax_disp.py:982(func_IT99)
+      100    0.005    0.000    0.029    0.000 relax_disp.py:982(func_IT99)
 $ python profiling_tsmfk01.py
-     1000    0.011    0.000    0.072    0.000 relax_disp.py:1803(func_TSMFK01)
-     1000    0.025    0.000    0.347    0.000 relax_disp.py:1803(func_TSMFK01)
-$ python /data/relax/tags/3.2.2/profiling_tsmfk01.py /data/relax/tags/3.2.2
-     1000    0.026    0.000    0.157    0.000 relax_disp.py:1892(func_TSMFK01)
-     1000    2.588    0.003   15.937    0.016 relax_disp.py:1892(func_TSMFK01)
+    10000    0.171    0.000    1.180    0.000 relax_disp.py:1725(func_TSMFK01)
+      100    0.004    0.000    0.062    0.001 relax_disp.py:1725(func_TSMFK01)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tsmfk01.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.426    0.000    2.556    0.000 relax_disp.py:1892(func_TSMFK01)
+      100    0.480    0.005    2.922    0.029 relax_disp.py:1892(func_TSMFK01)
 $ python profiling_b14.py
-     1000    0.007    0.000    0.376    0.000 relax_disp.py:884(func_B14_full)
-     1000    0.009    0.000    4.926    0.005 relax_disp.py:884(func_B14_full)
-$ python /data/relax/tags/3.2.2/profiling_b14.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.555    0.001 relax_disp.py:854(func_B14_full)
-     1000    0.003    0.000   55.743    0.056 relax_disp.py:854(func_B14_full)
+    10000    0.039    0.000    6.199    0.001 relax_disp.py:805(func_B14)
+      100    0.000    0.000    0.932    0.009 relax_disp.py:805(func_B14)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.035    0.000    8.905    0.001 relax_disp.py:828(func_B14)
+      100    0.000    0.000    8.922    0.089 relax_disp.py:828(func_B14)
+$ python profiling_b14_full.py
+    10000    0.129    0.000    6.264    0.001 relax_disp.py:831(func_B14_full)
+      100    0.001    0.000    0.821    0.008 relax_disp.py:831(func_B14_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.038    0.000    9.011    0.001 relax_disp.py:854(func_B14_full)
+      100    0.000    0.000    8.935    0.089 relax_disp.py:854(func_B14_full)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.004    0.000    7.365    0.007 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    6.831    0.683 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   37.164    0.037 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   37.032    3.703 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.013    0.000    7.587    0.008 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    7.065    0.707 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   36.551    0.037 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   36.482    3.648 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
 $ python profiling_ns_cpmg_2site_expanded.py
-     1000    0.018    0.000    0.439    0.000 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-     1000    0.246    0.000    6.538    0.007 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-$ python /data/relax/tags/3.2.2/profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.2.2
-     1000    0.041    0.000    0.781    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
-     1000    3.816    0.004   77.514    0.078 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+    10000    0.281    0.000    6.156    0.001 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+      100    0.042    0.000    1.042    0.010 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_expanded.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.674    0.000   11.979    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+      100    0.628    0.006   11.910    0.119 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.004    0.000   13.848    0.014 relax_disp.py:1376(func_ns_cpmg_2site_star)
+       10    0.000    0.000   13.421    1.342 relax_disp.py:1376(func_ns_cpmg_2site_star)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   32.926    0.033 relax_disp.py:1497(func_ns_cpmg_2site_star)
+       10    0.000    0.000   32.611    3.261 relax_disp.py:1497(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.013    0.000   13.818    0.014 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   12.973    1.297 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   32.890    0.033 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   32.451    3.245 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py
+    10000    0.189    0.000    1.423    0.000 relax_disp.py:1072(func_M61)
+      100    0.008    0.000    0.058    0.001 relax_disp.py:1072(func_M61)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_m61.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.393    0.000    2.512    0.000 relax_disp.py:1134(func_M61)
+      100    0.380    0.004    2.481    0.025 relax_disp.py:1134(func_M61)
+$ python profiling_dpl94.py
+    10000    0.189    0.000    1.778    0.000 relax_disp.py:913(func_DPL94)
+      100    0.008    0.000    0.231    0.002 relax_disp.py:913(func_DPL94)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_dpl94.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.054    0.000   36.621    0.004 relax_disp.py:934(func_DPL94)
+      100    3.096    0.031   36.996    0.370 relax_disp.py:934(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.217    0.000    1.988    0.000 relax_disp.py:1685(func_TP02)
+      100    0.021    0.000    0.291    0.003 relax_disp.py:1685(func_TP02)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tp02.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.221    0.000   31.397    0.003 relax_disp.py:1840(func_TP02)
+      100    3.255    0.033   31.371    0.314 relax_disp.py:1840(func_TP02)
+$ python profiling_tap03.py
+    10000    0.233    0.000    3.059    0.000 relax_disp.py:1645(func_TAP03)
+      100    0.024    0.000    0.492    0.005 relax_disp.py:1645(func_TAP03)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tap03.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.309    0.000   48.970    0.005 relax_disp.py:1788(func_TAP03)
+      100    3.430    0.034   49.324    0.493 relax_disp.py:1788(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.217    0.000    2.231    0.000 relax_disp.py:1151(func_MP05)
+      100    0.021    0.000    0.305    0.003 relax_disp.py:1151(func_MP05)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_mp05.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.303    0.000   38.524    0.004 relax_disp.py:1227(func_MP05)
+      100    3.339    0.033   38.655    0.387 relax_disp.py:1227(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.027    0.000    8.747    0.009 relax_disp.py:1552(func_ns_r1rho_2site)
+       10    0.015    0.001    8.099    0.810 relax_disp.py:1552(func_ns_r1rho_2site)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_r1rho_2site.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.390    0.000   41.528    0.042 relax_disp.py:1681(func_ns_r1rho_2site)
+       10    0.400    0.040   41.215    4.122 relax_disp.py:1681(func_ns_r1rho_2site)
 
 
 Execution iteration 3
 
+$ python profiling_norex.py
+    10000    0.080    0.000    0.424    0.000 relax_disp.py:1257(func_NOREX)
+      100    0.002    0.000    0.013    0.000 relax_disp.py:1257(func_NOREX)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_norex.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.486    0.000    1.232    0.000 relax_disp.py:1352(func_NOREX)
+      100    0.476    0.005    1.209    0.012 relax_disp.py:1352(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.167    0.000    1.208    0.000 relax_disp.py:1033(func_LM63)
+      100    0.004    0.000    0.058    0.001 relax_disp.py:1033(func_LM63)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_lm63.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.504    0.000    2.505    0.000 relax_disp.py:1088(func_LM63)
+      100    0.482    0.005    2.446    0.024 relax_disp.py:1088(func_LM63)
 $ python profiling_cr72.py
-     1000    0.007    0.000    0.175    0.000 relax_disp.py:938(func_CR72_full)
-     1000    0.008    0.000    1.089    0.001 relax_disp.py:938(func_CR72_full)
-$ python /data/relax/tags/3.2.2/profiling_cr72.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.301    0.000 relax_disp.py:907(func_CR72_full)
-     1000    0.003    0.000   30.104    0.030 relax_disp.py:907(func_CR72_full)
+    10000    0.036    0.000    2.524    0.000 relax_disp.py:859(func_CR72)
+      100    0.000    0.000    0.201    0.002 relax_disp.py:859(func_CR72)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.033    0.000    4.152    0.000 relax_disp.py:881(func_CR72)
+      100    0.000    0.000    4.123    0.041 relax_disp.py:881(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.125    0.000    2.948    0.000 relax_disp.py:885(func_CR72_full)
+      100    0.001    0.000    0.216    0.002 relax_disp.py:885(func_CR72_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.035    0.000    4.236    0.000 relax_disp.py:907(func_CR72_full)
+      100    0.000    0.000    4.111    0.041 relax_disp.py:907(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.189    0.000    1.441    0.000 relax_disp.py:952(func_IT99)
+      100    0.002    0.000    0.015    0.000 relax_disp.py:952(func_IT99)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_it99.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.438    0.000    2.871    0.000 relax_disp.py:982(func_IT99)
+      100    0.004    0.000    0.029    0.000 relax_disp.py:982(func_IT99)
 $ python profiling_tsmfk01.py
-     1000    0.011    0.000    0.071    0.000 relax_disp.py:1803(func_TSMFK01)
-     1000    0.025    0.000    0.346    0.000 relax_disp.py:1803(func_TSMFK01)
-$ python /data/relax/tags/3.2.2/profiling_tsmfk01.py /data/relax/tags/3.2.2
-     1000    0.026    0.000    0.156    0.000 relax_disp.py:1892(func_TSMFK01)
-     1000    2.486    0.002   15.511    0.016 relax_disp.py:1892(func_TSMFK01)
+    10000    0.167    0.000    1.149    0.000 relax_disp.py:1725(func_TSMFK01)
+      100    0.004    0.000    0.061    0.001 relax_disp.py:1725(func_TSMFK01)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tsmfk01.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.418    0.000    2.543    0.000 relax_disp.py:1892(func_TSMFK01)
+      100    0.407    0.004    2.519    0.025 relax_disp.py:1892(func_TSMFK01)
 $ python profiling_b14.py
-     1000    0.007    0.000    0.373    0.000 relax_disp.py:884(func_B14_full)
-     1000    0.009    0.000    4.924    0.005 relax_disp.py:884(func_B14_full)
-$ python /data/relax/tags/3.2.2/profiling_b14.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.555    0.001 relax_disp.py:854(func_B14_full)
-     1000    0.003    0.000   55.573    0.056 relax_disp.py:854(func_B14_full)
+    10000    0.038    0.000    6.125    0.001 relax_disp.py:805(func_B14)
+      100    0.000    0.000    0.939    0.009 relax_disp.py:805(func_B14)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.034    0.000    8.980    0.001 relax_disp.py:828(func_B14)
+      100    0.000    0.000    9.020    0.090 relax_disp.py:828(func_B14)
+$ python profiling_b14_full.py
+    10000    0.129    0.000    6.179    0.001 relax_disp.py:831(func_B14_full)
+      100    0.001    0.000    0.812    0.008 relax_disp.py:831(func_B14_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.040    0.000    9.123    0.001 relax_disp.py:854(func_B14_full)
+      100    0.000    0.000    9.069    0.091 relax_disp.py:854(func_B14_full)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.004    0.000    7.310    0.007 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    6.742    0.674 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   37.214    0.037 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   37.456    3.746 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.012    0.000    7.442    0.007 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    6.878    0.688 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   36.743    0.037 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   36.577    3.658 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
 $ python profiling_ns_cpmg_2site_expanded.py
-     1000    0.018    0.000    0.432    0.000 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-     1000    0.266    0.000    6.652    0.007 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-$ python /data/relax/tags/3.2.2/profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.2.2
-     1000    0.041    0.000    0.783    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
-     1000    3.900    0.004   77.599    0.078 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+    10000    0.284    0.000    6.203    0.001 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+      100    0.042    0.000    1.046    0.010 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_expanded.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.713    0.000   12.877    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+      100    0.665    0.007   12.729    0.127 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.004    0.000   13.711    0.014 relax_disp.py:1376(func_ns_cpmg_2site_star)
+       10    0.000    0.000   12.934    1.293 relax_disp.py:1376(func_ns_cpmg_2site_star)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   32.962    0.033 relax_disp.py:1497(func_ns_cpmg_2site_star)
+       10    0.000    0.000   32.833    3.283 relax_disp.py:1497(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.013    0.000   13.637    0.014 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   13.009    1.301 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   31.931    0.032 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   31.603    3.160 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py
+    10000    0.189    0.000    1.430    0.000 relax_disp.py:1072(func_M61)
+      100    0.008    0.000    0.058    0.001 relax_disp.py:1072(func_M61)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_m61.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.399    0.000    2.525    0.000 relax_disp.py:1134(func_M61)
+      100    0.386    0.004    2.490    0.025 relax_disp.py:1134(func_M61)
+$ python profiling_dpl94.py
+    10000    0.199    0.000    1.846    0.000 relax_disp.py:913(func_DPL94)
+      100    0.008    0.000    0.234    0.002 relax_disp.py:913(func_DPL94)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_dpl94.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.014    0.000   36.454    0.004 relax_disp.py:934(func_DPL94)
+      100    3.090    0.031   36.530    0.365 relax_disp.py:934(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.214    0.000    1.954    0.000 relax_disp.py:1685(func_TP02)
+      100    0.019    0.000    0.272    0.003 relax_disp.py:1685(func_TP02)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tp02.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.188    0.000   31.402    0.003 relax_disp.py:1840(func_TP02)
+      100    3.172    0.032   31.395    0.314 relax_disp.py:1840(func_TP02)
+$ python profiling_tap03.py
+    10000    0.228    0.000    3.026    0.000 relax_disp.py:1645(func_TAP03)
+      100    0.022    0.000    0.472    0.005 relax_disp.py:1645(func_TAP03)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tap03.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.352    0.000   48.782    0.005 relax_disp.py:1788(func_TAP03)
+      100    3.488    0.035   49.513    0.495 relax_disp.py:1788(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.226    0.000    2.315    0.000 relax_disp.py:1151(func_MP05)
+      100    0.022    0.000    0.326    0.003 relax_disp.py:1151(func_MP05)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_mp05.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.231    0.000   38.519    0.004 relax_disp.py:1227(func_MP05)
+      100    3.275    0.033   38.334    0.383 relax_disp.py:1227(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.027    0.000    8.727    0.009 relax_disp.py:1552(func_ns_r1rho_2site)
+       10    0.018    0.002    8.068    0.807 relax_disp.py:1552(func_ns_r1rho_2site)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_r1rho_2site.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.389    0.000   41.637    0.042 relax_disp.py:1681(func_ns_r1rho_2site)
+       10    0.399    0.040   41.440    4.144 relax_disp.py:1681(func_ns_r1rho_2site)
 
 
 Execution iteration 4
 
+$ python profiling_norex.py
+    10000    0.081    0.000    0.436    0.000 relax_disp.py:1257(func_NOREX)
+      100    0.003    0.000    0.013    0.000 relax_disp.py:1257(func_NOREX)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_norex.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.508    0.000    1.289    0.000 relax_disp.py:1352(func_NOREX)
+      100    0.501    0.005    1.274    0.013 relax_disp.py:1352(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.166    0.000    1.212    0.000 relax_disp.py:1033(func_LM63)
+      100    0.004    0.000    0.058    0.001 relax_disp.py:1033(func_LM63)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_lm63.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.511    0.000    2.485    0.000 relax_disp.py:1088(func_LM63)
+      100    0.490    0.005    2.446    0.024 relax_disp.py:1088(func_LM63)
 $ python profiling_cr72.py
-     1000    0.007    0.000    0.170    0.000 relax_disp.py:938(func_CR72_full)
-     1000    0.008    0.000    1.087    0.001 relax_disp.py:938(func_CR72_full)
-$ python /data/relax/tags/3.2.2/profiling_cr72.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.300    0.000 relax_disp.py:907(func_CR72_full)
-     1000    0.003    0.000   30.164    0.030 relax_disp.py:907(func_CR72_full)
+    10000    0.037    0.000    2.671    0.000 relax_disp.py:859(func_CR72)
+      100    0.000    0.000    0.210    0.002 relax_disp.py:859(func_CR72)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.033    0.000    4.221    0.000 relax_disp.py:881(func_CR72)
+      100    0.000    0.000    4.152    0.042 relax_disp.py:881(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.123    0.000    2.894    0.000 relax_disp.py:885(func_CR72_full)
+      100    0.001    0.000    0.216    0.002 relax_disp.py:885(func_CR72_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.037    0.000    4.301    0.000 relax_disp.py:907(func_CR72_full)
+      100    0.000    0.000    4.257    0.043 relax_disp.py:907(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.187    0.000    1.427    0.000 relax_disp.py:952(func_IT99)
+      100    0.002    0.000    0.014    0.000 relax_disp.py:952(func_IT99)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_it99.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.450    0.000    2.880    0.000 relax_disp.py:982(func_IT99)
+      100    0.005    0.000    0.030    0.000 relax_disp.py:982(func_IT99)
 $ python profiling_tsmfk01.py
-     1000    0.010    0.000    0.071    0.000 relax_disp.py:1803(func_TSMFK01)
-     1000    0.025    0.000    0.347    0.000 relax_disp.py:1803(func_TSMFK01)
-$ python /data/relax/tags/3.2.2/profiling_tsmfk01.py /data/relax/tags/3.2.2
-     1000    0.026    0.000    0.156    0.000 relax_disp.py:1892(func_TSMFK01)
-     1000    2.452    0.002   15.447    0.015 relax_disp.py:1892(func_TSMFK01)
+    10000    0.172    0.000    1.178    0.000 relax_disp.py:1725(func_TSMFK01)
+      100    0.004    0.000    0.061    0.001 relax_disp.py:1725(func_TSMFK01)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tsmfk01.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.426    0.000    2.547    0.000 relax_disp.py:1892(func_TSMFK01)
+      100    0.409    0.004    2.523    0.025 relax_disp.py:1892(func_TSMFK01)
 $ python profiling_b14.py
-     1000    0.007    0.000    0.373    0.000 relax_disp.py:884(func_B14_full)
-     1000    0.009    0.000    4.927    0.005 relax_disp.py:884(func_B14_full)
-$ python /data/relax/tags/3.2.2/profiling_b14.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.562    0.001 relax_disp.py:854(func_B14_full)
-     1000    0.003    0.000   55.802    0.056 relax_disp.py:854(func_B14_full)
+    10000    0.038    0.000    6.150    0.001 relax_disp.py:805(func_B14)
+      100    0.000    0.000    0.927    0.009 relax_disp.py:805(func_B14)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.036    0.000    9.218    0.001 relax_disp.py:828(func_B14)
+      100    0.000    0.000    9.136    0.091 relax_disp.py:828(func_B14)
+$ python profiling_b14_full.py
+    10000    0.129    0.000    6.367    0.001 relax_disp.py:831(func_B14_full)
+      100    0.001    0.000    0.834    0.008 relax_disp.py:831(func_B14_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.041    0.000    9.164    0.001 relax_disp.py:854(func_B14_full)
+      100    0.000    0.000    9.090    0.091 relax_disp.py:854(func_B14_full)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.004    0.000    7.294    0.007 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    6.741    0.674 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   37.107    0.037 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   36.601    3.660 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.012    0.000    7.460    0.007 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    6.883    0.688 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   35.499    0.035 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   35.873    3.587 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
 $ python profiling_ns_cpmg_2site_expanded.py
-     1000    0.018    0.000    0.433    0.000 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-     1000    0.265    0.000    6.662    0.007 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-$ python /data/relax/tags/3.2.2/profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.2.2
-     1000    0.041    0.000    0.783    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
-     1000    3.953    0.004   77.886    0.078 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+    10000    0.304    0.000    6.674    0.001 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+      100    0.043    0.000    1.060    0.011 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_expanded.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.674    0.000   12.193    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+      100    0.641    0.006   12.244    0.122 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.004    0.000   13.734    0.014 relax_disp.py:1376(func_ns_cpmg_2site_star)
+       10    0.000    0.000   13.015    1.301 relax_disp.py:1376(func_ns_cpmg_2site_star)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   33.283    0.033 relax_disp.py:1497(func_ns_cpmg_2site_star)
+       10    0.000    0.000   32.238    3.224 relax_disp.py:1497(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.013    0.000   13.808    0.014 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   13.095    1.310 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   31.979    0.032 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   32.006    3.201 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py
+    10000    0.184    0.000    1.413    0.000 relax_disp.py:1072(func_M61)
+      100    0.008    0.000    0.058    0.001 relax_disp.py:1072(func_M61)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_m61.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.412    0.000    2.552    0.000 relax_disp.py:1134(func_M61)
+      100    0.408    0.004    2.584    0.026 relax_disp.py:1134(func_M61)
+$ python profiling_dpl94.py
+    10000    0.189    0.000    1.808    0.000 relax_disp.py:913(func_DPL94)
+      100    0.008    0.000    0.234    0.002 relax_disp.py:913(func_DPL94)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_dpl94.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.051    0.000   36.656    0.004 relax_disp.py:934(func_DPL94)
+      100    3.030    0.030   36.119    0.361 relax_disp.py:934(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.218    0.000    1.990    0.000 relax_disp.py:1685(func_TP02)
+      100    0.020    0.000    0.278    0.003 relax_disp.py:1685(func_TP02)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tp02.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.223    0.000   31.452    0.003 relax_disp.py:1840(func_TP02)
+      100    3.250    0.033   31.232    0.312 relax_disp.py:1840(func_TP02)
+$ python profiling_tap03.py
+    10000    0.231    0.000    3.013    0.000 relax_disp.py:1645(func_TAP03)
+      100    0.024    0.000    0.493    0.005 relax_disp.py:1645(func_TAP03)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tap03.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.422    0.000   49.932    0.005 relax_disp.py:1788(func_TAP03)
+      100    3.474    0.035   50.617    0.506 relax_disp.py:1788(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.214    0.000    2.200    0.000 relax_disp.py:1151(func_MP05)
+      100    0.022    0.000    0.320    0.003 relax_disp.py:1151(func_MP05)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_mp05.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.352    0.000   38.617    0.004 relax_disp.py:1227(func_MP05)
+      100    3.427    0.034   38.594    0.386 relax_disp.py:1227(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.026    0.000    8.689    0.009 relax_disp.py:1552(func_ns_r1rho_2site)
+       10    0.015    0.001    8.040    0.804 relax_disp.py:1552(func_ns_r1rho_2site)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_r1rho_2site.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.397    0.000   41.910    0.042 relax_disp.py:1681(func_ns_r1rho_2site)
+       10    0.412    0.041   42.012    4.201 relax_disp.py:1681(func_ns_r1rho_2site)
 
 
 Execution iteration 5
 
+$ python profiling_norex.py
+    10000    0.082    0.000    0.428    0.000 relax_disp.py:1257(func_NOREX)
+      100    0.002    0.000    0.013    0.000 relax_disp.py:1257(func_NOREX)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_norex.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.486    0.000    1.245    0.000 relax_disp.py:1352(func_NOREX)
+      100    0.483    0.005    1.231    0.012 relax_disp.py:1352(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.165    0.000    1.198    0.000 relax_disp.py:1033(func_LM63)
+      100    0.004    0.000    0.058    0.001 relax_disp.py:1033(func_LM63)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_lm63.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.529    0.000    2.537    0.000 relax_disp.py:1088(func_LM63)
+      100    0.510    0.005    2.488    0.025 relax_disp.py:1088(func_LM63)
 $ python profiling_cr72.py
-     1000    0.007    0.000    0.169    0.000 relax_disp.py:938(func_CR72_full)
-     1000    0.008    0.000    1.091    0.001 relax_disp.py:938(func_CR72_full)
-$ python /data/relax/tags/3.2.2/profiling_cr72.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.306    0.000 relax_disp.py:907(func_CR72_full)
-     1000    0.003    0.000   30.389    0.030 relax_disp.py:907(func_CR72_full)
+    10000    0.036    0.000    2.567    0.000 relax_disp.py:859(func_CR72)
+      100    0.000    0.000    0.202    0.002 relax_disp.py:859(func_CR72)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.033    0.000    4.194    0.000 relax_disp.py:881(func_CR72)
+      100    0.000    0.000    4.170    0.042 relax_disp.py:881(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.122    0.000    2.822    0.000 relax_disp.py:885(func_CR72_full)
+      100    0.001    0.000    0.214    0.002 relax_disp.py:885(func_CR72_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.036    0.000    4.278    0.000 relax_disp.py:907(func_CR72_full)
+      100    0.000    0.000    4.239    0.042 relax_disp.py:907(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.185    0.000    1.410    0.000 relax_disp.py:952(func_IT99)
+      100    0.002    0.000    0.014    0.000 relax_disp.py:952(func_IT99)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_it99.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.441    0.000    2.889    0.000 relax_disp.py:982(func_IT99)
+      100    0.004    0.000    0.029    0.000 relax_disp.py:982(func_IT99)
 $ python profiling_tsmfk01.py
-     1000    0.010    0.000    0.070    0.000 relax_disp.py:1803(func_TSMFK01)
-     1000    0.025    0.000    0.346    0.000 relax_disp.py:1803(func_TSMFK01)
-$ python /data/relax/tags/3.2.2/profiling_tsmfk01.py /data/relax/tags/3.2.2
-     1000    0.027    0.000    0.157    0.000 relax_disp.py:1892(func_TSMFK01)
-     1000    2.555    0.003   15.785    0.016 relax_disp.py:1892(func_TSMFK01)
+    10000    0.171    0.000    1.174    0.000 relax_disp.py:1725(func_TSMFK01)
+      100    0.004    0.000    0.062    0.001 relax_disp.py:1725(func_TSMFK01)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tsmfk01.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.444    0.000    2.568    0.000 relax_disp.py:1892(func_TSMFK01)
+      100    0.429    0.004    2.580    0.026 relax_disp.py:1892(func_TSMFK01)
 $ python profiling_b14.py
-     1000    0.007    0.000    0.375    0.000 relax_disp.py:884(func_B14_full)
-     1000    0.010    0.000    4.993    0.005 relax_disp.py:884(func_B14_full)
-$ python /data/relax/tags/3.2.2/profiling_b14.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.559    0.001 relax_disp.py:854(func_B14_full)
-     1000    0.003    0.000   55.780    0.056 relax_disp.py:854(func_B14_full)
+    10000    0.038    0.000    6.165    0.001 relax_disp.py:805(func_B14)
+      100    0.000    0.000    0.931    0.009 relax_disp.py:805(func_B14)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.035    0.000    8.971    0.001 relax_disp.py:828(func_B14)
+      100    0.000    0.000    8.941    0.089 relax_disp.py:828(func_B14)
+$ python profiling_b14_full.py
+    10000    0.130    0.000    6.238    0.001 relax_disp.py:831(func_B14_full)
+      100    0.001    0.000    0.813    0.008 relax_disp.py:831(func_B14_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.040    0.000    8.963    0.001 relax_disp.py:854(func_B14_full)
+      100    0.000    0.000    8.888    0.089 relax_disp.py:854(func_B14_full)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.004    0.000    7.456    0.007 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    6.866    0.687 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   35.688    0.036 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   35.677    3.568 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.013    0.000    7.398    0.007 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    6.832    0.683 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   37.152    0.037 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   37.314    3.731 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
 $ python profiling_ns_cpmg_2site_expanded.py
-     1000    0.018    0.000    0.435    0.000 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-     1000    0.245    0.000    6.555    0.007 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-$ python /data/relax/tags/3.2.2/profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.2.2
-     1000    0.042    0.000    0.787    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
-     1000    3.965    0.004   77.883    0.078 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+    10000    0.282    0.000    6.243    0.001 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+      100    0.047    0.000    1.092    0.011 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_expanded.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.692    0.000   12.349    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+      100    0.641    0.006   12.319    0.123 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.004    0.000   13.636    0.014 relax_disp.py:1376(func_ns_cpmg_2site_star)
+       10    0.000    0.000   13.923    1.392 relax_disp.py:1376(func_ns_cpmg_2site_star)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   32.091    0.032 relax_disp.py:1497(func_ns_cpmg_2site_star)
+       10    0.000    0.000   31.328    3.133 relax_disp.py:1497(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.013    0.000   13.802    0.014 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   13.111    1.311 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.005    0.000   32.406    0.032 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   31.960    3.196 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py
+    10000    0.185    0.000    1.411    0.000 relax_disp.py:1072(func_M61)
+      100    0.008    0.000    0.057    0.001 relax_disp.py:1072(func_M61)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_m61.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.403    0.000    2.476    0.000 relax_disp.py:1134(func_M61)
+      100    0.381    0.004    2.454    0.025 relax_disp.py:1134(func_M61)
+$ python profiling_dpl94.py
+    10000    0.187    0.000    1.770    0.000 relax_disp.py:913(func_DPL94)
+      100    0.008    0.000    0.230    0.002 relax_disp.py:913(func_DPL94)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_dpl94.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.019    0.000   36.242    0.004 relax_disp.py:934(func_DPL94)
+      100    3.095    0.031   36.843    0.368 relax_disp.py:934(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.209    0.000    1.928    0.000 relax_disp.py:1685(func_TP02)
+      100    0.021    0.000    0.293    0.003 relax_disp.py:1685(func_TP02)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tp02.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.108    0.000   30.762    0.003 relax_disp.py:1840(func_TP02)
+      100    3.111    0.031   30.606    0.306 relax_disp.py:1840(func_TP02)
+$ python profiling_tap03.py
+    10000    0.225    0.000    2.997    0.000 relax_disp.py:1645(func_TAP03)
+      100    0.024    0.000    0.492    0.005 relax_disp.py:1645(func_TAP03)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tap03.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.399    0.000   48.616    0.005 relax_disp.py:1788(func_TAP03)
+      100    3.554    0.036   49.656    0.497 relax_disp.py:1788(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.213    0.000    2.209    0.000 relax_disp.py:1151(func_MP05)
+      100    0.021    0.000    0.306    0.003 relax_disp.py:1151(func_MP05)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_mp05.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.368    0.000   38.335    0.004 relax_disp.py:1227(func_MP05)
+      100    3.341    0.033   38.183    0.382 relax_disp.py:1227(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.026    0.000    8.632    0.009 relax_disp.py:1552(func_ns_r1rho_2site)
+       10    0.017    0.002    8.018    0.802 relax_disp.py:1552(func_ns_r1rho_2site)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_r1rho_2site.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.388    0.000   40.897    0.041 relax_disp.py:1681(func_ns_r1rho_2site)
+       10    0.394    0.039   41.036    4.104 relax_disp.py:1681(func_ns_r1rho_2site)
 
 
 Execution iteration 6
 
+$ python profiling_norex.py
+    10000    0.087    0.000    0.457    0.000 relax_disp.py:1257(func_NOREX)
+      100    0.002    0.000    0.013    0.000 relax_disp.py:1257(func_NOREX)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_norex.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.521    0.000    1.304    0.000 relax_disp.py:1352(func_NOREX)
+      100    0.515    0.005    1.271    0.013 relax_disp.py:1352(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.166    0.000    1.208    0.000 relax_disp.py:1033(func_LM63)
+      100    0.004    0.000    0.057    0.001 relax_disp.py:1033(func_LM63)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_lm63.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.507    0.000    2.486    0.000 relax_disp.py:1088(func_LM63)
+      100    0.483    0.005    2.437    0.024 relax_disp.py:1088(func_LM63)
 $ python profiling_cr72.py
-     1000    0.007    0.000    0.170    0.000 relax_disp.py:938(func_CR72_full)
-     1000    0.008    0.000    1.091    0.001 relax_disp.py:938(func_CR72_full)
-$ python /data/relax/tags/3.2.2/profiling_cr72.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.304    0.000 relax_disp.py:907(func_CR72_full)
-     1000    0.003    0.000   30.143    0.030 relax_disp.py:907(func_CR72_full)
+    10000    0.036    0.000    2.541    0.000 relax_disp.py:859(func_CR72)
+      100    0.000    0.000    0.203    0.002 relax_disp.py:859(func_CR72)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.033    0.000    4.129    0.000 relax_disp.py:881(func_CR72)
+      100    0.000    0.000    4.069    0.041 relax_disp.py:881(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.123    0.000    2.856    0.000 relax_disp.py:885(func_CR72_full)
+      100    0.001    0.000    0.212    0.002 relax_disp.py:885(func_CR72_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.035    0.000    4.154    0.000 relax_disp.py:907(func_CR72_full)
+      100    0.000    0.000    4.117    0.041 relax_disp.py:907(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.182    0.000    1.393    0.000 relax_disp.py:952(func_IT99)
+      100    0.002    0.000    0.014    0.000 relax_disp.py:952(func_IT99)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_it99.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.443    0.000    2.903    0.000 relax_disp.py:982(func_IT99)
+      100    0.005    0.000    0.029    0.000 relax_disp.py:982(func_IT99)
 $ python profiling_tsmfk01.py
-     1000    0.010    0.000    0.070    0.000 relax_disp.py:1803(func_TSMFK01)
-     1000    0.025    0.000    0.347    0.000 relax_disp.py:1803(func_TSMFK01)
-$ python /data/relax/tags/3.2.2/profiling_tsmfk01.py /data/relax/tags/3.2.2
-     1000    0.026    0.000    0.155    0.000 relax_disp.py:1892(func_TSMFK01)
-     1000    2.494    0.002   15.641    0.016 relax_disp.py:1892(func_TSMFK01)
+    10000    0.166    0.000    1.139    0.000 relax_disp.py:1725(func_TSMFK01)
+      100    0.004    0.000    0.061    0.001 relax_disp.py:1725(func_TSMFK01)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tsmfk01.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.422    0.000    2.532    0.000 relax_disp.py:1892(func_TSMFK01)
+      100    0.405    0.004    2.543    0.025 relax_disp.py:1892(func_TSMFK01)
 $ python profiling_b14.py
-     1000    0.007    0.000    0.373    0.000 relax_disp.py:884(func_B14_full)
-     1000    0.009    0.000    4.991    0.005 relax_disp.py:884(func_B14_full)
-$ python /data/relax/tags/3.2.2/profiling_b14.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.555    0.001 relax_disp.py:854(func_B14_full)
-     1000    0.003    0.000   55.583    0.056 relax_disp.py:854(func_B14_full)
+    10000    0.037    0.000    6.167    0.001 relax_disp.py:805(func_B14)
+      100    0.000    0.000    0.920    0.009 relax_disp.py:805(func_B14)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.036    0.000    8.916    0.001 relax_disp.py:828(func_B14)
+      100    0.000    0.000    8.937    0.089 relax_disp.py:828(func_B14)
+$ python profiling_b14_full.py
+    10000    0.126    0.000    6.147    0.001 relax_disp.py:831(func_B14_full)
+      100    0.001    0.000    0.827    0.008 relax_disp.py:831(func_B14_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.039    0.000    9.088    0.001 relax_disp.py:854(func_B14_full)
+      100    0.000    0.000    9.041    0.090 relax_disp.py:854(func_B14_full)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.004    0.000    7.615    0.008 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    6.870    0.687 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   35.965    0.036 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   35.937    3.594 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.012    0.000    7.331    0.007 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    6.766    0.677 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   38.169    0.038 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   37.918    3.792 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
 $ python profiling_ns_cpmg_2site_expanded.py
-     1000    0.018    0.000    0.435    0.000 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-     1000    0.240    0.000    6.557    0.007 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-$ python /data/relax/tags/3.2.2/profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.2.2
-     1000    0.043    0.000    0.787    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
-     1000    3.986    0.004   77.889    0.078 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+    10000    0.292    0.000    6.420    0.001 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+      100    0.044    0.000    1.052    0.011 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_expanded.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.663    0.000   12.042    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+      100    0.631    0.006   12.058    0.121 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.004    0.000   13.694    0.014 relax_disp.py:1376(func_ns_cpmg_2site_star)
+       10    0.000    0.000   12.959    1.296 relax_disp.py:1376(func_ns_cpmg_2site_star)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   31.872    0.032 relax_disp.py:1497(func_ns_cpmg_2site_star)
+       10    0.000    0.000   31.220    3.122 relax_disp.py:1497(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.013    0.000   13.745    0.014 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   13.231    1.323 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   31.858    0.032 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   31.354    3.135 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py
+    10000    0.186    0.000    1.452    0.000 relax_disp.py:1072(func_M61)
+      100    0.008    0.000    0.058    0.001 relax_disp.py:1072(func_M61)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_m61.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.396    0.000    2.499    0.000 relax_disp.py:1134(func_M61)
+      100    0.384    0.004    2.480    0.025 relax_disp.py:1134(func_M61)
+$ python profiling_dpl94.py
+    10000    0.193    0.000    1.817    0.000 relax_disp.py:913(func_DPL94)
+      100    0.008    0.000    0.232    0.002 relax_disp.py:913(func_DPL94)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_dpl94.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.018    0.000   36.793    0.004 relax_disp.py:934(func_DPL94)
+      100    3.022    0.030   36.539    0.365 relax_disp.py:934(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.213    0.000    1.954    0.000 relax_disp.py:1685(func_TP02)
+      100    0.021    0.000    0.289    0.003 relax_disp.py:1685(func_TP02)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tp02.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.392    0.000   32.442    0.003 relax_disp.py:1840(func_TP02)
+      100    3.330    0.033   32.119    0.321 relax_disp.py:1840(func_TP02)
+$ python profiling_tap03.py
+    10000    0.233    0.000    3.079    0.000 relax_disp.py:1645(func_TAP03)
+      100    0.023    0.000    0.477    0.005 relax_disp.py:1645(func_TAP03)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tap03.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.434    0.000   49.518    0.005 relax_disp.py:1788(func_TAP03)
+      100    3.484    0.035   49.335    0.493 relax_disp.py:1788(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.219    0.000    2.252    0.000 relax_disp.py:1151(func_MP05)
+      100    0.020    0.000    0.300    0.003 relax_disp.py:1151(func_MP05)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_mp05.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.338    0.000   38.514    0.004 relax_disp.py:1227(func_MP05)
+      100    3.338    0.033   38.495    0.385 relax_disp.py:1227(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.026    0.000    8.733    0.009 relax_disp.py:1552(func_ns_r1rho_2site)
+       10    0.018    0.002    8.101    0.810 relax_disp.py:1552(func_ns_r1rho_2site)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_r1rho_2site.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.413    0.000   42.652    0.043 relax_disp.py:1681(func_ns_r1rho_2site)
+       10    0.415    0.042   42.481    4.248 relax_disp.py:1681(func_ns_r1rho_2site)
 
 
 Execution iteration 7
 
+$ python profiling_norex.py
+    10000    0.078    0.000    0.412    0.000 relax_disp.py:1257(func_NOREX)
+      100    0.002    0.000    0.012    0.000 relax_disp.py:1257(func_NOREX)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_norex.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.490    0.000    1.242    0.000 relax_disp.py:1352(func_NOREX)
+      100    0.485    0.005    1.228    0.012 relax_disp.py:1352(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.167    0.000    1.200    0.000 relax_disp.py:1033(func_LM63)
+      100    0.004    0.000    0.057    0.001 relax_disp.py:1033(func_LM63)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_lm63.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.508    0.000    2.483    0.000 relax_disp.py:1088(func_LM63)
+      100    0.485    0.005    2.435    0.024 relax_disp.py:1088(func_LM63)
 $ python profiling_cr72.py
-     1000    0.007    0.000    0.173    0.000 relax_disp.py:938(func_CR72_full)
-     1000    0.008    0.000    1.093    0.001 relax_disp.py:938(func_CR72_full)
-$ python /data/relax/tags/3.2.2/profiling_cr72.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.303    0.000 relax_disp.py:907(func_CR72_full)
-     1000    0.003    0.000   30.110    0.030 relax_disp.py:907(func_CR72_full)
+    10000    0.037    0.000    2.609    0.000 relax_disp.py:859(func_CR72)
+      100    0.000    0.000    0.205    0.002 relax_disp.py:859(func_CR72)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.033    0.000    4.206    0.000 relax_disp.py:881(func_CR72)
+      100    0.000    0.000    4.140    0.041 relax_disp.py:881(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.121    0.000    2.770    0.000 relax_disp.py:885(func_CR72_full)
+      100    0.001    0.000    0.209    0.002 relax_disp.py:885(func_CR72_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.035    0.000    4.146    0.000 relax_disp.py:907(func_CR72_full)
+      100    0.000    0.000    4.117    0.041 relax_disp.py:907(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.185    0.000    1.400    0.000 relax_disp.py:952(func_IT99)
+      100    0.002    0.000    0.014    0.000 relax_disp.py:952(func_IT99)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_it99.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.452    0.000    2.901    0.000 relax_disp.py:982(func_IT99)
+      100    0.005    0.000    0.029    0.000 relax_disp.py:982(func_IT99)
 $ python profiling_tsmfk01.py
-     1000    0.010    0.000    0.071    0.000 relax_disp.py:1803(func_TSMFK01)
-     1000    0.026    0.000    0.349    0.000 relax_disp.py:1803(func_TSMFK01)
-$ python /data/relax/tags/3.2.2/profiling_tsmfk01.py /data/relax/tags/3.2.2
-     1000    0.026    0.000    0.156    0.000 relax_disp.py:1892(func_TSMFK01)
-     1000    2.505    0.003   15.566    0.016 relax_disp.py:1892(func_TSMFK01)
+    10000    0.167    0.000    1.156    0.000 relax_disp.py:1725(func_TSMFK01)
+      100    0.004    0.000    0.061    0.001 relax_disp.py:1725(func_TSMFK01)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tsmfk01.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.426    0.000    2.533    0.000 relax_disp.py:1892(func_TSMFK01)
+      100    0.408    0.004    2.507    0.025 relax_disp.py:1892(func_TSMFK01)
 $ python profiling_b14.py
-     1000    0.007    0.000    0.375    0.000 relax_disp.py:884(func_B14_full)
-     1000    0.009    0.000    4.926    0.005 relax_disp.py:884(func_B14_full)
-$ python /data/relax/tags/3.2.2/profiling_b14.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.557    0.001 relax_disp.py:854(func_B14_full)
-     1000    0.003    0.000   55.634    0.056 relax_disp.py:854(func_B14_full)
+    10000    0.037    0.000    5.991    0.001 relax_disp.py:805(func_B14)
+      100    0.000    0.000    0.937    0.009 relax_disp.py:805(func_B14)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.034    0.000    8.891    0.001 relax_disp.py:828(func_B14)
+      100    0.000    0.000    8.948    0.089 relax_disp.py:828(func_B14)
+$ python profiling_b14_full.py
+    10000    0.133    0.000    6.574    0.001 relax_disp.py:831(func_B14_full)
+      100    0.001    0.000    0.857    0.009 relax_disp.py:831(func_B14_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.039    0.000    8.941    0.001 relax_disp.py:854(func_B14_full)
+      100    0.000    0.000    8.882    0.089 relax_disp.py:854(func_B14_full)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.004    0.000    7.368    0.007 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    6.803    0.680 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   37.387    0.037 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   37.509    3.751 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.013    0.000    7.367    0.007 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    6.762    0.676 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   35.680    0.036 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   35.966    3.597 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
 $ python profiling_ns_cpmg_2site_expanded.py
-     1000    0.020    0.000    0.437    0.000 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-     1000    0.259    0.000    6.637    0.007 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-$ python /data/relax/tags/3.2.2/profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.2.2
-     1000    0.042    0.000    0.790    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
-     1000    3.943    0.004   77.840    0.078 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+    10000    0.282    0.000    6.142    0.001 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+      100    0.042    0.000    1.033    0.010 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_expanded.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.687    0.000   12.166    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+      100    0.647    0.006   12.281    0.123 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.004    0.000   13.850    0.014 relax_disp.py:1376(func_ns_cpmg_2site_star)
+       10    0.000    0.000   13.120    1.312 relax_disp.py:1376(func_ns_cpmg_2site_star)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   32.399    0.032 relax_disp.py:1497(func_ns_cpmg_2site_star)
+       10    0.000    0.000   31.503    3.150 relax_disp.py:1497(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.013    0.000   14.034    0.014 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   13.170    1.317 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   31.947    0.032 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   31.293    3.129 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py
+    10000    0.189    0.000    1.439    0.000 relax_disp.py:1072(func_M61)
+      100    0.008    0.000    0.057    0.001 relax_disp.py:1072(func_M61)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_m61.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.398    0.000    2.504    0.000 relax_disp.py:1134(func_M61)
+      100    0.385    0.004    2.479    0.025 relax_disp.py:1134(func_M61)
+$ python profiling_dpl94.py
+    10000    0.187    0.000    1.788    0.000 relax_disp.py:913(func_DPL94)
+      100    0.008    0.000    0.231    0.002 relax_disp.py:913(func_DPL94)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_dpl94.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.083    0.000   36.847    0.004 relax_disp.py:934(func_DPL94)
+      100    3.092    0.031   36.519    0.365 relax_disp.py:934(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.219    0.000    1.971    0.000 relax_disp.py:1685(func_TP02)
+      100    0.020    0.000    0.273    0.003 relax_disp.py:1685(func_TP02)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tp02.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.233    0.000   31.174    0.003 relax_disp.py:1840(func_TP02)
+      100    3.173    0.032   31.022    0.310 relax_disp.py:1840(func_TP02)
+$ python profiling_tap03.py
+    10000    0.233    0.000    3.098    0.000 relax_disp.py:1645(func_TAP03)
+      100    0.022    0.000    0.483    0.005 relax_disp.py:1645(func_TAP03)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tap03.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.439    0.000   48.976    0.005 relax_disp.py:1788(func_TAP03)
+      100    3.502    0.035   48.922    0.489 relax_disp.py:1788(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.217    0.000    2.249    0.000 relax_disp.py:1151(func_MP05)
+      100    0.023    0.000    0.330    0.003 relax_disp.py:1151(func_MP05)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_mp05.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.297    0.000   38.277    0.004 relax_disp.py:1227(func_MP05)
+      100    3.363    0.034   38.310    0.383 relax_disp.py:1227(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.027    0.000    8.856    0.009 relax_disp.py:1552(func_ns_r1rho_2site)
+       10    0.018    0.002    8.166    0.817 relax_disp.py:1552(func_ns_r1rho_2site)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_r1rho_2site.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.392    0.000   41.476    0.041 relax_disp.py:1681(func_ns_r1rho_2site)
+       10    0.406    0.041   41.634    4.163 relax_disp.py:1681(func_ns_r1rho_2site)
 
 
 Execution iteration 8
 
+$ python profiling_norex.py
+    10000    0.082    0.000    0.433    0.000 relax_disp.py:1257(func_NOREX)
+      100    0.003    0.000    0.013    0.000 relax_disp.py:1257(func_NOREX)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_norex.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.508    0.000    1.292    0.000 relax_disp.py:1352(func_NOREX)
+      100    0.502    0.005    1.274    0.013 relax_disp.py:1352(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.179    0.000    1.281    0.000 relax_disp.py:1033(func_LM63)
+      100    0.004    0.000    0.058    0.001 relax_disp.py:1033(func_LM63)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_lm63.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.519    0.000    2.536    0.000 relax_disp.py:1088(func_LM63)
+      100    0.497    0.005    2.501    0.025 relax_disp.py:1088(func_LM63)
 $ python profiling_cr72.py
-     1000    0.007    0.000    0.171    0.000 relax_disp.py:938(func_CR72_full)
-     1000    0.008    0.000    1.104    0.001 relax_disp.py:938(func_CR72_full)
-$ python /data/relax/tags/3.2.2/profiling_cr72.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.300    0.000 relax_disp.py:907(func_CR72_full)
-     1000    0.003    0.000   30.064    0.030 relax_disp.py:907(func_CR72_full)
+    10000    0.036    0.000    2.607    0.000 relax_disp.py:859(func_CR72)
+      100    0.000    0.000    0.205    0.002 relax_disp.py:859(func_CR72)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.033    0.000    4.231    0.000 relax_disp.py:881(func_CR72)
+      100    0.000    0.000    4.176    0.042 relax_disp.py:881(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.125    0.000    2.912    0.000 relax_disp.py:885(func_CR72_full)
+      100    0.002    0.000    0.216    0.002 relax_disp.py:885(func_CR72_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.035    0.000    4.311    0.000 relax_disp.py:907(func_CR72_full)
+      100    0.000    0.000    4.265    0.043 relax_disp.py:907(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.188    0.000    1.432    0.000 relax_disp.py:952(func_IT99)
+      100    0.002    0.000    0.014    0.000 relax_disp.py:952(func_IT99)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_it99.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.477    0.000    2.999    0.000 relax_disp.py:982(func_IT99)
+      100    0.005    0.000    0.030    0.000 relax_disp.py:982(func_IT99)
 $ python profiling_tsmfk01.py
-     1000    0.010    0.000    0.071    0.000 relax_disp.py:1803(func_TSMFK01)
-     1000    0.026    0.000    0.348    0.000 relax_disp.py:1803(func_TSMFK01)
-$ python /data/relax/tags/3.2.2/profiling_tsmfk01.py /data/relax/tags/3.2.2
-     1000    0.026    0.000    0.156    0.000 relax_disp.py:1892(func_TSMFK01)
-     1000    2.528    0.003   15.683    0.016 relax_disp.py:1892(func_TSMFK01)
+    10000    0.172    0.000    1.187    0.000 relax_disp.py:1725(func_TSMFK01)
+      100    0.004    0.000    0.063    0.001 relax_disp.py:1725(func_TSMFK01)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tsmfk01.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.452    0.000    2.645    0.000 relax_disp.py:1892(func_TSMFK01)
+      100    0.438    0.004    2.613    0.026 relax_disp.py:1892(func_TSMFK01)
 $ python profiling_b14.py
-     1000    0.007    0.000    0.374    0.000 relax_disp.py:884(func_B14_full)
-     1000    0.009    0.000    4.998    0.005 relax_disp.py:884(func_B14_full)
-$ python /data/relax/tags/3.2.2/profiling_b14.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.558    0.001 relax_disp.py:854(func_B14_full)
-     1000    0.003    0.000   55.662    0.056 relax_disp.py:854(func_B14_full)
+    10000    0.038    0.000    6.244    0.001 relax_disp.py:805(func_B14)
+      100    0.000    0.000    0.932    0.009 relax_disp.py:805(func_B14)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.037    0.000    9.322    0.001 relax_disp.py:828(func_B14)
+      100    0.000    0.000    9.301    0.093 relax_disp.py:828(func_B14)
+$ python profiling_b14_full.py
+    10000    0.129    0.000    6.256    0.001 relax_disp.py:831(func_B14_full)
+      100    0.001    0.000    0.839    0.008 relax_disp.py:831(func_B14_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.038    0.000    8.889    0.001 relax_disp.py:854(func_B14_full)
+      100    0.000    0.000    8.828    0.088 relax_disp.py:854(func_B14_full)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.004    0.000    7.437    0.007 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    6.886    0.689 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   35.748    0.036 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   36.172    3.617 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.013    0.000    7.414    0.007 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    6.838    0.684 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   35.841    0.036 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   35.480    3.548 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
 $ python profiling_ns_cpmg_2site_expanded.py
-     1000    0.019    0.000    0.455    0.000 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-     1000    0.281    0.000    6.840    0.007 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-$ python /data/relax/tags/3.2.2/profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.2.2
-     1000    0.042    0.000    0.789    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
-     1000    3.921    0.004   78.166    0.078 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+    10000    0.285    0.000    6.278    0.001 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+      100    0.042    0.000    1.051    0.011 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_expanded.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.667    0.000   11.850    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+      100    0.621    0.006   11.815    0.118 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.004    0.000   13.660    0.014 relax_disp.py:1376(func_ns_cpmg_2site_star)
+       10    0.000    0.000   12.924    1.292 relax_disp.py:1376(func_ns_cpmg_2site_star)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   32.176    0.032 relax_disp.py:1497(func_ns_cpmg_2site_star)
+       10    0.000    0.000   31.175    3.118 relax_disp.py:1497(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.013    0.000   13.660    0.014 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   12.991    1.299 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   31.867    0.032 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   31.441    3.144 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py
+    10000    0.186    0.000    1.410    0.000 relax_disp.py:1072(func_M61)
+      100    0.008    0.000    0.057    0.001 relax_disp.py:1072(func_M61)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_m61.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.389    0.000    2.487    0.000 relax_disp.py:1134(func_M61)
+      100    0.383    0.004    2.502    0.025 relax_disp.py:1134(func_M61)
+$ python profiling_dpl94.py
+    10000    0.188    0.000    1.783    0.000 relax_disp.py:913(func_DPL94)
+      100    0.008    0.000    0.232    0.002 relax_disp.py:913(func_DPL94)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_dpl94.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.058    0.000   36.844    0.004 relax_disp.py:934(func_DPL94)
+      100    3.118    0.031   37.123    0.371 relax_disp.py:934(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.214    0.000    1.962    0.000 relax_disp.py:1685(func_TP02)
+      100    0.021    0.000    0.290    0.003 relax_disp.py:1685(func_TP02)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tp02.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.250    0.000   31.528    0.003 relax_disp.py:1840(func_TP02)
+      100    3.246    0.032   31.464    0.315 relax_disp.py:1840(func_TP02)
+$ python profiling_tap03.py
+    10000    0.234    0.000    3.089    0.000 relax_disp.py:1645(func_TAP03)
+      100    0.024    0.000    0.499    0.005 relax_disp.py:1645(func_TAP03)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tap03.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.417    0.000   49.189    0.005 relax_disp.py:1788(func_TAP03)
+      100    3.471    0.035   49.167    0.492 relax_disp.py:1788(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.218    0.000    2.263    0.000 relax_disp.py:1151(func_MP05)
+      100    0.021    0.000    0.309    0.003 relax_disp.py:1151(func_MP05)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_mp05.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.323    0.000   38.187    0.004 relax_disp.py:1227(func_MP05)
+      100    3.370    0.034   38.209    0.382 relax_disp.py:1227(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.026    0.000    8.711    0.009 relax_disp.py:1552(func_ns_r1rho_2site)
+       10    0.018    0.002    8.090    0.809 relax_disp.py:1552(func_ns_r1rho_2site)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_r1rho_2site.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.397    0.000   41.703    0.042 relax_disp.py:1681(func_ns_r1rho_2site)
+       10    0.428    0.043   43.054    4.305 relax_disp.py:1681(func_ns_r1rho_2site)
 
 
 Execution iteration 9
 
+$ python profiling_norex.py
+    10000    0.079    0.000    0.421    0.000 relax_disp.py:1257(func_NOREX)
+      100    0.003    0.000    0.013    0.000 relax_disp.py:1257(func_NOREX)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_norex.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.497    0.000    1.269    0.000 relax_disp.py:1352(func_NOREX)
+      100    0.487    0.005    1.240    0.012 relax_disp.py:1352(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.165    0.000    1.206    0.000 relax_disp.py:1033(func_LM63)
+      100    0.004    0.000    0.058    0.001 relax_disp.py:1033(func_LM63)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_lm63.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.521    0.000    2.490    0.000 relax_disp.py:1088(func_LM63)
+      100    0.505    0.005    2.472    0.025 relax_disp.py:1088(func_LM63)
 $ python profiling_cr72.py
-     1000    0.007    0.000    0.170    0.000 relax_disp.py:938(func_CR72_full)
-     1000    0.008    0.000    1.090    0.001 relax_disp.py:938(func_CR72_full)
-$ python /data/relax/tags/3.2.2/profiling_cr72.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.306    0.000 relax_disp.py:907(func_CR72_full)
-     1000    0.003    0.000   30.075    0.030 relax_disp.py:907(func_CR72_full)
+    10000    0.035    0.000    2.588    0.000 relax_disp.py:859(func_CR72)
+      100    0.000    0.000    0.202    0.002 relax_disp.py:859(func_CR72)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.033    0.000    4.181    0.000 relax_disp.py:881(func_CR72)
+      100    0.000    0.000    4.105    0.041 relax_disp.py:881(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.124    0.000    2.859    0.000 relax_disp.py:885(func_CR72_full)
+      100    0.001    0.000    0.211    0.002 relax_disp.py:885(func_CR72_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.035    0.000    4.295    0.000 relax_disp.py:907(func_CR72_full)
+      100    0.000    0.000    4.208    0.042 relax_disp.py:907(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.184    0.000    1.412    0.000 relax_disp.py:952(func_IT99)
+      100    0.002    0.000    0.014    0.000 relax_disp.py:952(func_IT99)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_it99.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.437    0.000    2.872    0.000 relax_disp.py:982(func_IT99)
+      100    0.004    0.000    0.029    0.000 relax_disp.py:982(func_IT99)
 $ python profiling_tsmfk01.py
-     1000    0.010    0.000    0.071    0.000 relax_disp.py:1803(func_TSMFK01)
-     1000    0.025    0.000    0.345    0.000 relax_disp.py:1803(func_TSMFK01)
-$ python /data/relax/tags/3.2.2/profiling_tsmfk01.py /data/relax/tags/3.2.2
-     1000    0.026    0.000    0.155    0.000 relax_disp.py:1892(func_TSMFK01)
-     1000    2.502    0.003   15.660    0.016 relax_disp.py:1892(func_TSMFK01)
+    10000    0.170    0.000    1.179    0.000 relax_disp.py:1725(func_TSMFK01)
+      100    0.004    0.000    0.061    0.001 relax_disp.py:1725(func_TSMFK01)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tsmfk01.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.428    0.000    2.575    0.000 relax_disp.py:1892(func_TSMFK01)
+      100    0.414    0.004    2.554    0.026 relax_disp.py:1892(func_TSMFK01)
 $ python profiling_b14.py
-     1000    0.007    0.000    0.375    0.000 relax_disp.py:884(func_B14_full)
-     1000    0.009    0.000    4.929    0.005 relax_disp.py:884(func_B14_full)
-$ python /data/relax/tags/3.2.2/profiling_b14.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.562    0.001 relax_disp.py:854(func_B14_full)
-     1000    0.003    0.000   55.817    0.056 relax_disp.py:854(func_B14_full)
+    10000    0.037    0.000    6.102    0.001 relax_disp.py:805(func_B14)
+      100    0.000    0.000    0.922    0.009 relax_disp.py:805(func_B14)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.035    0.000    9.009    0.001 relax_disp.py:828(func_B14)
+      100    0.000    0.000    9.110    0.091 relax_disp.py:828(func_B14)
+$ python profiling_b14_full.py
+    10000    0.125    0.000    6.128    0.001 relax_disp.py:831(func_B14_full)
+      100    0.001    0.000    0.811    0.008 relax_disp.py:831(func_B14_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.039    0.000    9.154    0.001 relax_disp.py:854(func_B14_full)
+      100    0.000    0.000    9.168    0.092 relax_disp.py:854(func_B14_full)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.004    0.000    7.378    0.007 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    6.858    0.686 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   35.665    0.036 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   35.823    3.582 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.013    0.000    7.314    0.007 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    6.763    0.676 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   37.019    0.037 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   37.137    3.714 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
 $ python profiling_ns_cpmg_2site_expanded.py
-     1000    0.018    0.000    0.432    0.000 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-     1000    0.279    0.000    6.747    0.007 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-$ python /data/relax/tags/3.2.2/profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.2.2
-     1000    0.041    0.000    0.783    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
-     1000    3.984    0.004   77.533    0.078 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+    10000    0.291    0.000    6.349    0.001 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+      100    0.043    0.000    1.086    0.011 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_expanded.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.705    0.000   12.234    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+      100    0.658    0.007   12.217    0.122 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.004    0.000   13.950    0.014 relax_disp.py:1376(func_ns_cpmg_2site_star)
+       10    0.000    0.000   12.955    1.295 relax_disp.py:1376(func_ns_cpmg_2site_star)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   32.059    0.032 relax_disp.py:1497(func_ns_cpmg_2site_star)
+       10    0.000    0.000   31.557    3.156 relax_disp.py:1497(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.013    0.000   13.835    0.014 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   13.211    1.321 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   32.232    0.032 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   31.781    3.178 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py
+    10000    0.186    0.000    1.431    0.000 relax_disp.py:1072(func_M61)
+      100    0.008    0.000    0.059    0.001 relax_disp.py:1072(func_M61)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_m61.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.395    0.000    2.527    0.000 relax_disp.py:1134(func_M61)
+      100    0.390    0.004    2.527    0.025 relax_disp.py:1134(func_M61)
+$ python profiling_dpl94.py
+    10000    0.191    0.000    1.807    0.000 relax_disp.py:913(func_DPL94)
+      100    0.008    0.000    0.233    0.002 relax_disp.py:913(func_DPL94)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_dpl94.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.069    0.000   37.029    0.004 relax_disp.py:934(func_DPL94)
+      100    3.184    0.032   37.623    0.376 relax_disp.py:934(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.215    0.000    1.983    0.000 relax_disp.py:1685(func_TP02)
+      100    0.019    0.000    0.273    0.003 relax_disp.py:1685(func_TP02)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tp02.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.317    0.000   32.291    0.003 relax_disp.py:1840(func_TP02)
+      100    3.369    0.034   32.203    0.322 relax_disp.py:1840(func_TP02)
+$ python profiling_tap03.py
+    10000    0.237    0.000    3.134    0.000 relax_disp.py:1645(func_TAP03)
+      100    0.023    0.000    0.481    0.005 relax_disp.py:1645(func_TAP03)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tap03.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.387    0.000   48.788    0.005 relax_disp.py:1788(func_TAP03)
+      100    3.459    0.035   49.008    0.490 relax_disp.py:1788(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.216    0.000    2.240    0.000 relax_disp.py:1151(func_MP05)
+      100    0.020    0.000    0.301    0.003 relax_disp.py:1151(func_MP05)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_mp05.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.266    0.000   37.586    0.004 relax_disp.py:1227(func_MP05)
+      100    3.339    0.033   37.710    0.377 relax_disp.py:1227(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.026    0.000    8.742    0.009 relax_disp.py:1552(func_ns_r1rho_2site)
+       10    0.018    0.002    8.095    0.809 relax_disp.py:1552(func_ns_r1rho_2site)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_r1rho_2site.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.427    0.000   43.664    0.044 relax_disp.py:1681(func_ns_r1rho_2site)
+       10    0.432    0.043   43.478    4.348 relax_disp.py:1681(func_ns_r1rho_2site)
 
 
 Execution iteration 10
 
+$ python profiling_norex.py
+    10000    0.078    0.000    0.421    0.000 relax_disp.py:1257(func_NOREX)
+      100    0.002    0.000    0.013    0.000 relax_disp.py:1257(func_NOREX)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_norex.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.505    0.000    1.273    0.000 relax_disp.py:1352(func_NOREX)
+      100    0.506    0.005    1.260    0.013 relax_disp.py:1352(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.171    0.000    1.240    0.000 relax_disp.py:1033(func_LM63)
+      100    0.004    0.000    0.058    0.001 relax_disp.py:1033(func_LM63)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_lm63.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.502    0.000    2.471    0.000 relax_disp.py:1088(func_LM63)
+      100    0.483    0.005    2.434    0.024 relax_disp.py:1088(func_LM63)
 $ python profiling_cr72.py
-     1000    0.008    0.000    0.205    0.000 relax_disp.py:938(func_CR72_full)
-     1000    0.008    0.000    1.086    0.001 relax_disp.py:938(func_CR72_full)
-$ python /data/relax/tags/3.2.2/profiling_cr72.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.304    0.000 relax_disp.py:907(func_CR72_full)
-     1000    0.003    0.000   30.064    0.030 relax_disp.py:907(func_CR72_full)
+    10000    0.034    0.000    2.575    0.000 relax_disp.py:859(func_CR72)
+      100    0.000    0.000    0.200    0.002 relax_disp.py:859(func_CR72)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.032    0.000    4.093    0.000 relax_disp.py:881(func_CR72)
+      100    0.000    0.000    4.053    0.041 relax_disp.py:881(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.121    0.000    2.846    0.000 relax_disp.py:885(func_CR72_full)
+      100    0.001    0.000    0.212    0.002 relax_disp.py:885(func_CR72_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_cr72_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.036    0.000    4.244    0.000 relax_disp.py:907(func_CR72_full)
+      100    0.000    0.000    4.196    0.042 relax_disp.py:907(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.187    0.000    1.439    0.000 relax_disp.py:952(func_IT99)
+      100    0.002    0.000    0.014    0.000 relax_disp.py:952(func_IT99)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_it99.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.445    0.000    2.861    0.000 relax_disp.py:982(func_IT99)
+      100    0.005    0.000    0.029    0.000 relax_disp.py:982(func_IT99)
 $ python profiling_tsmfk01.py
-     1000    0.010    0.000    0.071    0.000 relax_disp.py:1803(func_TSMFK01)
-     1000    0.025    0.000    0.347    0.000 relax_disp.py:1803(func_TSMFK01)
-$ python /data/relax/tags/3.2.2/profiling_tsmfk01.py /data/relax/tags/3.2.2
-     1000    0.026    0.000    0.157    0.000 relax_disp.py:1892(func_TSMFK01)
-     1000    2.526    0.003   15.617    0.016 relax_disp.py:1892(func_TSMFK01)
+    10000    0.170    0.000    1.173    0.000 relax_disp.py:1725(func_TSMFK01)
+      100    0.004    0.000    0.062    0.001 relax_disp.py:1725(func_TSMFK01)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tsmfk01.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.426    0.000    2.581    0.000 relax_disp.py:1892(func_TSMFK01)
+      100    0.405    0.004    2.538    0.025 relax_disp.py:1892(func_TSMFK01)
 $ python profiling_b14.py
-     1000    0.007    0.000    0.384    0.000 relax_disp.py:884(func_B14_full)
-     1000    0.009    0.000    5.003    0.005 relax_disp.py:884(func_B14_full)
-$ python /data/relax/tags/3.2.2/profiling_b14.py /data/relax/tags/3.2.2
-     1000    0.002    0.000    0.557    0.001 relax_disp.py:854(func_B14_full)
-     1000    0.003    0.000   55.471    0.055 relax_disp.py:854(func_B14_full)
+    10000    0.037    0.000    6.083    0.001 relax_disp.py:805(func_B14)
+      100    0.000    0.000    0.911    0.009 relax_disp.py:805(func_B14)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.035    0.000    8.978    0.001 relax_disp.py:828(func_B14)
+      100    0.000    0.000    9.029    0.090 relax_disp.py:828(func_B14)
+$ python profiling_b14_full.py
+    10000    0.126    0.000    6.189    0.001 relax_disp.py:831(func_B14_full)
+      100    0.001    0.000    0.831    0.008 relax_disp.py:831(func_B14_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_b14_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.039    0.000    8.976    0.001 relax_disp.py:854(func_B14_full)
+      100    0.000    0.000    8.922    0.089 relax_disp.py:854(func_B14_full)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.004    0.000    7.443    0.007 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    6.860    0.686 relax_disp.py:1288(func_ns_cpmg_2site_3D)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   36.242    0.036 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   36.761    3.676 relax_disp.py:1398(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.012    0.000    7.208    0.007 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    6.652    0.665 relax_disp.py:1311(func_ns_cpmg_2site_3D_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_3D_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   35.884    0.036 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   35.824    3.582 relax_disp.py:1421(func_ns_cpmg_2site_3D_full)
 $ python profiling_ns_cpmg_2site_expanded.py
-     1000    0.018    0.000    0.434    0.000 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-     1000    0.274    0.000    6.707    0.007 relax_disp.py:1400(func_ns_cpmg_2site_expanded)
-$ python /data/relax/tags/3.2.2/profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.2.2
-     1000    0.041    0.000    0.784    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
-     1000    3.978    0.004   77.680    0.078 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+    10000    0.284    0.000    6.184    0.001 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+      100    0.041    0.000    1.039    0.010 relax_disp.py:1336(func_ns_cpmg_2site_expanded)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_expanded.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.672    0.000   12.011    0.001 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+      100    0.633    0.006   12.001    0.120 relax_disp.py:1445(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.004    0.000   13.587    0.014 relax_disp.py:1376(func_ns_cpmg_2site_star)
+       10    0.000    0.000   12.881    1.288 relax_disp.py:1376(func_ns_cpmg_2site_star)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   31.691    0.032 relax_disp.py:1497(func_ns_cpmg_2site_star)
+       10    0.000    0.000   31.116    3.112 relax_disp.py:1497(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.012    0.000   13.652    0.014 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   12.973    1.297 relax_disp.py:1402(func_ns_cpmg_2site_star_full)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_cpmg_2site_star_full.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.004    0.000   32.142    0.032 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   31.597    3.160 relax_disp.py:1523(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py
+    10000    0.192    0.000    1.459    0.000 relax_disp.py:1072(func_M61)
+      100    0.008    0.000    0.059    0.001 relax_disp.py:1072(func_M61)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_m61.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    0.400    0.000    2.508    0.000 relax_disp.py:1134(func_M61)
+      100    0.385    0.004    2.495    0.025 relax_disp.py:1134(func_M61)
+$ python profiling_dpl94.py
+    10000    0.196    0.000    1.836    0.000 relax_disp.py:913(func_DPL94)
+      100    0.008    0.000    0.234    0.002 relax_disp.py:913(func_DPL94)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_dpl94.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.004    0.000   36.612    0.004 relax_disp.py:934(func_DPL94)
+      100    3.076    0.031   36.885    0.369 relax_disp.py:934(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.211    0.000    1.939    0.000 relax_disp.py:1685(func_TP02)
+      100    0.020    0.000    0.287    0.003 relax_disp.py:1685(func_TP02)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tp02.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.115    0.000   31.408    0.003 relax_disp.py:1840(func_TP02)
+      100    3.133    0.031   31.047    0.310 relax_disp.py:1840(func_TP02)
+$ python profiling_tap03.py
+    10000    0.229    0.000    3.015    0.000 relax_disp.py:1645(func_TAP03)
+      100    0.022    0.000    0.466    0.005 relax_disp.py:1645(func_TAP03)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_tap03.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.488    0.000   49.040    0.005 relax_disp.py:1788(func_TAP03)
+      100    3.558    0.036   49.287    0.493 relax_disp.py:1788(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.219    0.000    2.235    0.000 relax_disp.py:1151(func_MP05)
+      100    0.020    0.000    0.301    0.003 relax_disp.py:1151(func_MP05)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_mp05.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+    10000    3.205    0.000   38.012    0.004 relax_disp.py:1227(func_MP05)
+      100    3.257    0.033   38.054    0.381 relax_disp.py:1227(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.026    0.000    8.720    0.009 relax_disp.py:1552(func_ns_r1rho_2site)
+       10    0.018    0.002    8.078    0.808 relax_disp.py:1552(func_ns_r1rho_2site)
+$ python /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2/profiling_ns_r1rho_2site.py /sbinlab2/tlinnet/software/NMR-relax/tags_relax/3.2.2
+     1000    0.400    0.000   41.386    0.041 relax_disp.py:1681(func_ns_r1rho_2site)
+       10    0.407    0.041   41.096    4.110 relax_disp.py:1681(func_ns_r1rho_2site)
+60 20
+
+##########################
+#Background for analysis:#
+##########################
+
+For CPMG statistics:
+--------------------
+3 fields, with each 20 nr of cpmg points.
+Total number of dispersion points per spin is: 60
+
+For R1rho experiments:
+----------------------
+3 fields, with each 10 nr of spin lock offsets, where each offset has been measured at 5 different spin lock fields.
+Per field, there is 50 dispersion points.
+Total number of dispersion points per spin is: 150
 
 
-Single spin analysis:
-CR72      :  0.303+/-0.002 -> 0.178+/-0.013, 1.707x faster.
-TSMFK01   :  0.157+/-0.001 -> 0.071+/-0.001, 2.201x faster.
-B14       :  0.559+/-0.004 -> 0.376+/-0.004, 1.485x faster.
-NS CPMG 2-site expanded:  0.787+/-0.007 -> 0.437+/-0.007, 1.801x faster.
+
+100 single spins analysis:
+No Rex:                      1.264+/-0.025 ->   0.429+/-0.012,   2.947x faster.
+LM63:                        2.501+/-0.022 ->   1.217+/-0.024,   2.056x faster.
+CR72:                        4.188+/-0.050 ->   2.590+/-0.042,   1.617x faster.
+CR72 full:                   4.247+/-0.056 ->   2.858+/-0.047,   1.486x faster.
+IT99:                        2.901+/-0.037 ->   1.417+/-0.016,   2.048x faster.
+TSMFK01:                     2.568+/-0.033 ->   1.169+/-0.015,   2.197x faster.
+B14:                         9.027+/-0.134 ->   6.149+/-0.075,   1.468x faster.
+B14 full:                    9.031+/-0.090 ->   6.260+/-0.123,   1.443x faster.
+NS CPMG 2-site 3D:         363.562+/-7.365 ->  73.992+/-0.895,   4.914x faster.
+NS CPMG 2-site 3D full:    364.171+/-8.193 ->  73.802+/-1.004,   4.934x faster.
+NS CPMG 2-site expanded:    12.206+/-0.272 ->   6.280+/-0.157,   1.944x faster.
+NS CPMG 2-site star:       324.087+/-4.967 -> 137.359+/-1.067,   2.359x faster.
+NS CPMG 2-site star full:  322.285+/-4.027 -> 137.614+/-1.200,   2.342x faster.
+M61:                         2.510+/-0.020 ->   1.430+/-0.016,   1.756x faster.
+DPL94:                      36.559+/-0.413 ->   1.801+/-0.025,  20.304x faster.
+TP02:                       31.433+/-0.566 ->   1.958+/-0.026,  16.057x faster.
+TAP03:                      49.087+/-0.367 ->   3.065+/-0.049,  16.013x faster.
+MP05:                       38.360+/-0.367 ->   2.246+/-0.030,  17.082x faster.
+NS R1rho 2-site:           418.348+/-7.413 ->  87.353+/-0.567,   4.789x faster.
 
 Cluster of 100 spins analysis:
-CR72      :  30.192+/-0.207 -> 1.095+/-0.010, 27.570x faster.
-TSMFK01   :  15.691+/-0.181 -> 0.348+/-0.002, 45.142x faster.
-B14       :  55.853+/-0.547 -> 4.963+/-0.037, 11.253x faster.
-NS CPMG 2-site expanded:  77.871+/-0.342 -> 6.668+/-0.097, 11.679x faster.
+No Rex:                      1.241+/-0.026 ->   0.013+/-0.000,  96.186x faster. 
+LM63:                        2.458+/-0.024 ->   0.058+/-0.000,  42.531x faster. 
+CR72:                        4.128+/-0.039 ->   0.204+/-0.003,  20.243x faster. 
+CR72 full:                   4.190+/-0.055 ->   0.213+/-0.002,  19.664x faster. 
+IT99:                        0.029+/-0.000 ->   0.014+/-0.000,   2.056x faster. IT99: Cluster of only 1 spin analysis, since v. 3.2.2 had a bug with clustering analysis.:
+TSMFK01:                     2.588+/-0.116 ->   0.061+/-0.001,  42.083x faster. 
+B14:                         9.041+/-0.112 ->   0.929+/-0.009,   9.733x faster. 
+B14 full:                    8.977+/-0.103 ->   0.825+/-0.015,  10.876x faster. 
+NS CPMG 2-site 3D:         364.477+/-6.934 ->  68.164+/-0.611,   5.347x faster. 
+NS CPMG 2-site 3D full:    364.107+/-7.817 ->  68.151+/-1.082,   5.343x faster. 
+NS CPMG 2-site expanded:    12.190+/-0.247 ->   1.054+/-0.019,  11.567x faster. 
+NS CPMG 2-site star:       318.328+/-6.609 -> 131.018+/-3.132,   2.430x faster. 
+NS CPMG 2-site star full:  318.263+/-4.588 -> 130.703+/-1.020,   2.435x faster. 
+M61:                         2.500+/-0.034 ->   0.058+/-0.001,  43.174x faster. 
+DPL94:                      36.630+/-0.636 ->   0.232+/-0.001, 157.614x faster. 
+TP02:                       31.278+/-0.557 ->   0.283+/-0.008, 110.523x faster. 
+TAP03:                      49.444+/-0.452 ->   0.485+/-0.010, 101.926x faster. 
+MP05:                       38.380+/-0.392 ->   0.312+/-0.011, 123.053x faster. 
+NS R1rho 2-site:           418.593+/-8.287 ->  80.879+/-0.393,   5.176x faster. 

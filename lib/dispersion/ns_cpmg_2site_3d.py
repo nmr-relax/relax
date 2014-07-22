@@ -55,14 +55,173 @@ More information on the NS CPMG 2-site 3D full model can be found in the:
 """
 
 # Python module imports.
-from numpy import asarray, dot, fabs, isfinite, log, min, sum
+from numpy import array, dot, fabs, float64, einsum, isfinite, log, min, multiply, sum
 from numpy.ma import fix_invalid, masked_where
 
-
 # relax module imports.
-from lib.dispersion.ns_matrices import rcpmg_3d
 from lib.float import isNaN
-from lib.linear_algebra.matrix_exponential import matrix_exponential
+from lib.dispersion.matrix_exponential import matrix_exponential_rank_NE_NS_NM_NO_ND_x_x
+
+# Repetitive calculations (to speed up calculations).
+m_r10a = array([
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [1,  0,  0, -1,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0]], float64)
+
+m_pA = array([
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [2,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0]], float64)
+
+m_r10b = array([
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [1,  0,  0,  0,  0,  0, -1]], float64)
+
+m_pB = array([
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [2,  0,  0,  0,  0,  0,  0]], float64)
+
+m_r20a = array([
+    [0,  0,  0,  0,  0,  0,  0],
+    [0, -1,  0,  0,  0,  0,  0],
+    [0,  0, -1,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0]], float64)
+
+m_r20b = array([
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0, -1,  0,  0],
+    [0,  0,  0,  0,  0, -1,  0],
+    [0,  0,  0,  0,  0,  0,  0]], float64)
+
+m_k_AB = array([
+    [0,  0,  0,  0,  0,  0,  0],
+    [0, -1,  0,  0,  0,  0,  0],
+    [0,  0, -1,  0,  0,  0,  0],
+    [0,  0,  0, -1,  0,  0,  0],
+    [0,  1,  0,  0,  0,  0,  0],
+    [0,  0,  1,  0,  0,  0,  0],
+    [0,  0,  0,  1,  0,  0,  0]], float64)
+
+m_k_BA = array([
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  1,  0,  0],
+    [0,  0,  0,  0,  0,  1,  0],
+    [0,  0,  0,  0,  0,  0,  1],
+    [0,  0,  0,  0, -1,  0,  0],
+    [0,  0,  0,  0,  0, -1,  0],
+    [0,  0,  0,  0,  0,  0, -1]], float64)
+
+m_wA = array([
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0, -1,  0,  0,  0,  0],
+    [0,  1,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0]], float64)
+
+m_wB = array([
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0],
+    [0,  0,  0,  0,  0, -1,  0],
+    [0,  0,  0,  0,  1,  0,  0],
+    [0,  0,  0,  0,  0,  0,  0]], float64)
+
+
+def rcpmg_3d_rankN(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, tcp=None):
+    """Definition of the 3D exchange matrix, for rank [NE][NS][NM][NO][ND][7][7].
+
+    @keyword R1A:   The longitudinal, spin-lattice relaxation rate for state A.
+    @type R1A:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword R1B:   The longitudinal, spin-lattice relaxation rate for state B.
+    @type R1B:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword R2A:   The transverse, spin-spin relaxation rate for state A.
+    @type R2A:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword R2B:   The transverse, spin-spin relaxation rate for state B.
+    @type R2B:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword pA:    The population of state A.
+    @type pA:       float
+    @keyword pB:    The population of state B.
+    @type pB:       float
+    @keyword dw:    The chemical exchange difference between states A and B in rad/s.
+    @type dw:       numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword k_AB:  The forward exchange rate from state A to state B.
+    @type k_AB:     float
+    @keyword k_BA:  The reverse exchange rate from state B to state A.
+    @type k_BA:     float
+    @keyword tcp:   The tau_CPMG times (1 / 4.nu1).
+    @type tcp:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @return:        The relaxation matrix.
+    @rtype:         numpy float array of rank [NE][NS][NM][NO][ND][7][7]
+    """
+
+    # The omega frequencies for states A and B (state A is assumed to be at zero frequency).
+    wA = 0.0
+    wB = dw
+
+    r10a_tcp = R1A * tcp
+    r10b_tcp = R1B * tcp
+    r20a_tcp = R2A * tcp
+    r20b_tcp = R2B * tcp
+    pA_tcp = pA * tcp
+    pB_tcp = pB * tcp
+    dw_tcp = dw * tcp
+    k_AB_tcp = k_AB * tcp
+    k_BA_tcp = k_BA * tcp
+    wA_tcp = wA * tcp
+    wB_tcp = wB * tcp
+
+    # Create the matrix.
+    # Multiply and expand.
+    m_r10a_tcp = multiply.outer( r10a_tcp, m_r10a )
+    m_pA_tcp = multiply.outer( pA_tcp, m_pA )
+
+    m_r10b_tcp = multiply.outer( r10b_tcp, m_r10b )
+    m_pB_tcp = multiply.outer( pB_tcp, m_pB )
+
+    m_r20a_tcp = multiply.outer( r20a_tcp, m_r20a )
+    m_r20b_tcp = multiply.outer( r20b_tcp, m_r20b )
+
+    m_k_AB_tcp = multiply.outer( k_AB_tcp, m_k_AB )
+    m_k_BA_tcp = multiply.outer( k_BA_tcp, m_k_BA )
+
+    m_wA_tcp = multiply.outer( wA_tcp, m_wA )
+    m_wB_tcp = multiply.outer( wB_tcp, m_wB )
+
+    # Collect matrix.
+    c_mat = (m_r10a_tcp * m_pA_tcp + m_r10b_tcp * m_pB_tcp
+        + m_r20a_tcp + m_r20b_tcp
+        + m_k_AB_tcp + m_k_BA_tcp
+        + m_wA_tcp + m_wB_tcp )
+
+    # Return the matrix.
+    return c_mat
 
 
 def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
@@ -111,7 +270,7 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
         back_calc[:] = r20a
         return
 
-    # Test if dw is zero. Wait for replacement, since this is spin specific.
+    # Test if dw is zero. Create a mask for the affected spins to replace these with R20 at the end of the calculationWait for replacement, since this is spin specific.
     if min(fabs(dw_orig)) == 0.0:
         t_dw_zero = True
         mask_dw_zero = masked_where(dw == 0.0, dw)
@@ -128,47 +287,46 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
     # Extract the total numbers of experiments, number of spins, number of magnetic field strength, number of offsets, maximum number of dispersion point.
     NE, NS, NM, NO, ND = back_calc.shape
 
+    # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
+    R_mat = rcpmg_3d_rankN(R1A=r10a, R1B=r10b, R2A=r20a, R2B=r20b, pA=pA, pB=pB, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+
+    # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
+    Rexpo_mat = matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(R_mat)
+
+    # The the essential evolution matrix.
+    # This is a dot product of the outer [7][7] matrix of the Rexpo_mat and r180x matrixes, which
+    # have the shape [NE][NS][NM][NO][ND][7][7] and [7][7].
+    # This can be achieved by using numpy einsum, and where ellipsis notation will use the last axis.
+    evolution_matrix_mat = einsum('...ij,...jk', Rexpo_mat, r180x)
+    evolution_matrix_mat = einsum('...ij,...jk', evolution_matrix_mat, Rexpo_mat)
+    evolution_matrix_mat = einsum('...ij,...jk', evolution_matrix_mat, evolution_matrix_mat)
+
     # Loop over the spins
     for si in range(NS):
         # Loop over the spectrometer frequencies.
         for mi in range(NM):
-
-            # Extract the values from the higher dimensional arrays.
-            R2A_si_mi=r20a[0, si, mi, 0, 0]
-            R2B_si_mi=r20b[0, si, mi, 0, 0]
-            dw_si_mi = dw[0, si, mi, 0, 0]
+            # Extract number of points.
             num_points_si_mi = int(num_points[0, si, mi, 0])
-
-            # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-            R = rcpmg_3d(R1A=r10a, R1B=r10b, R2A=R2A_si_mi, R2B=R2B_si_mi, pA=pA, pB=pB, dw=dw_si_mi, k_AB=k_AB, k_BA=k_BA)
 
             # Loop over the time points, back calculating the R2eff values.
             for di in range(num_points_si_mi):
                 # Extract the values from the higher dimensional arrays.
-                tcp_si_mi_di = tcp[0, si, mi, 0, di]
                 inv_tcpmg_si_mi_di = inv_tcpmg[0, si, mi, 0, di]
                 power_si_mi_di = int(power[0, si, mi, 0, di])
                 r20a_si_mi_di = r20a[0, si, mi, 0, di]
 
                 # Initial magnetisation.
-                Mint = M0
+                Mint_i = M0
 
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-                Rexpo = matrix_exponential(R*tcp_si_mi_di)
-
-                # The essential evolution matrix.
-                # This is the first round.
-                evolution_matrix = dot(Rexpo, r180x)
-                evolution_matrix = dot(evolution_matrix, Rexpo)
-                # The second round.
-                evolution_matrix = dot(evolution_matrix, evolution_matrix )
+                evolution_matrix_i = evolution_matrix_mat[0, si, mi, 0, di]
 
                 # Loop over the CPMG elements, propagating the magnetisation.
                 for j in range(power_si_mi_di):
-                    Mint = dot(evolution_matrix, Mint)
+                    Mint_i = dot(evolution_matrix_i, Mint_i)
 
                 # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
-                Mx = Mint[1] / pA
+                Mx = Mint_i[1] / pA
                 if Mx <= 0.0 or isNaN(Mx):
                     back_calc[0, si, mi, 0, di] = r20a_si_mi_di
                 else:

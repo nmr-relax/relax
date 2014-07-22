@@ -51,39 +51,86 @@ More information on the NS MMQ 2-site model can be found in the:
 
 # Python module imports.
 from math import floor
-from numpy import array, conj, dot, float64, log
+from numpy import array, conj, complex64, dot, float64, log, multiply, sum
 
 # relax module imports.
 from lib.float import isNaN
-from lib.linear_algebra.matrix_exponential import matrix_exponential
+from lib.dispersion.matrix_exponential import matrix_exponential_rank_NS_NM_NO_ND_x_x
 from lib.linear_algebra.matrix_power import square_matrix_power
 
+# Repetitive calculations (to speed up calculations).
+m_r20a = array([
+    [-1,  0],
+    [ 0,  0]], float64)
 
-def populate_matrix(matrix=None, R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None):
-    """The Bloch-McConnell matrix for 2-site exchange.
+m_r20b = array([
+    [ 0,  0],
+    [ 0, -1]], float64)
 
-    @keyword matrix:        The matrix to populate.
-    @type matrix:           numpy rank-2, 2D complex64 array
+m_k_AB = array([
+    [-1,  0],
+    [ 1,  0]], float64)
+
+m_k_BA = array([
+    [ 0,  1],
+    [ 0, -1]], float64)
+
+m_dw = array([
+    [ 0,  0],
+    [ 0,  1]], float64)
+
+
+def rmmq_2site_rankN(R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None, tcp=None):
+    """The Bloch-McConnell matrix for 2-site exchange, for rank [NE][NS][NM][NO][ND][2][2].
+
     @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
-    @type R20A:             float
+    @type R20A:             numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
-    @type R20B:             float
+    @type R20B:             numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword dw:            The combined chemical exchange difference parameters between states A and B in rad/s.  This can be any combination of dw and dwH.
-    @type dw:               float
+    @type dw:               numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
     @type k_AB:             float
     @keyword k_BA:          The rate of exchange from site B to A (rad/s).
     @type k_BA:             float
+    @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
+    @type tcp:              numpy float array of rank [NE][NS][NM][NO][ND]
+    @return:                The relaxation matrix.
+    @rtype:                 numpy float array of rank [NE][NS][NM][NO][ND][2][2]
     """
 
+    # Pre-multiply with tcp.
+    r20a_tcp = R20A * tcp
+    r20b_tcp = R20B * tcp
+    k_AB_tcp = k_AB * tcp
+    k_BA_tcp = k_BA * tcp
+    # Complex dw.
+    dw_tcp_C = dw * tcp * 1j
+
     # Fill in the elements.
-    matrix[0, 0] = -k_AB - R20A
-    matrix[0, 1] = k_BA
-    matrix[1, 0] = k_AB
-    matrix[1, 1] = -k_BA + 1.j*dw - R20B
+    #matrix[0, 0] = -k_AB - R20A
+    #matrix[0, 1] = k_BA
+    #matrix[1, 0] = k_AB
+    #matrix[1, 1] = -k_BA + 1.j*dw - R20B
+
+    # Multiply and expand.
+    m_r20a_tcp = multiply.outer( r20a_tcp, m_r20a )
+    m_r20b_tcp = multiply.outer( r20b_tcp, m_r20b )
+
+    # Multiply and expand.
+    m_k_AB_tcp = multiply.outer( k_AB_tcp, m_k_AB )
+    m_k_BA_tcp = multiply.outer( k_BA_tcp, m_k_BA )
+
+    # Multiply and expand.
+    m_dw_tcp_C = multiply.outer( dw_tcp_C, m_dw )
+
+    # Collect matrix.
+    matrix = (m_r20a_tcp + m_r20b_tcp + m_k_AB_tcp + m_k_BA_tcp + m_dw_tcp_C)
+    
+    return matrix
 
 
-def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), R20A=None, R20B=None, pA=None, dw=None, dwH=None, kex=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for MQ data.
 
     The notation used here comes from:
@@ -101,26 +148,18 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
     @type M0:               numpy float64, rank-1, 7D array
     @keyword F_vector:      The observable magnitisation vector.  This defaults to [1, 0] for X observable magnitisation.
     @type F_vector:         numpy rank-1, 2D float64 array
-    @keyword m1:            A complex numpy matrix to be populated.
-    @type m1:               numpy rank-2, 2D complex64 array
-    @keyword m2:            A complex numpy matrix to be populated.
-    @type m2:               numpy rank-2, 2D complex64 array
     @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
     @type R20A:             numpy float array of rank [NS][NM][NO][ND]
     @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
     @type R20B:             numpy float array of rank [NS][NM][NO][ND]
     @keyword pA:            The population of state A.
     @type pA:               float
-    @keyword pB:            The population of state B.
-    @type pB:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
     @type dw:               numpy float array of rank [NS][NM][NO][ND]
     @keyword dwH:           The proton chemical exchange difference between states A and B in rad/s.
     @type dwH:              numpy float array of rank [NS][NM][NO][ND]
-    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
-    @type k_AB:             float
-    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
-    @type k_BA:             float
+    @keyword kex:           The kex parameter value (the exchange rate in rad/s).
+    @type kex:              float
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
     @type inv_tcpmg:        numpy float array of rank [NS][NM][NO][ND]
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
@@ -133,8 +172,33 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
     @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
 
+    # Once off parameter conversions.
+    pB = 1.0 - pA
+    k_BA = pA * kex
+    k_AB = pB * kex
+
+    # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
+    M0[0] = pA
+    M0[1] = pB
+
     # Extract shape of experiment.
     NS, NM, NO = num_points.shape
+
+    # Populate the m1 and m2 matrices (only once per function call for speed).
+    # D+ matrix component.
+    m1_mat = rmmq_2site_rankN(R20A=R20A, R20B=R20B, dw=-dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+    # Z- matrix component.
+    m2_mat = rmmq_2site_rankN(R20A=R20A, R20B=R20B, dw=dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+
+    # The M1 and M2 matrices.
+    # Equivalent to D+.
+    M1_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m1_mat, dtype=complex64)
+    # Equivalent to Z-.
+    M2_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m2_mat, dtype=complex64)
+
+    # The complex conjugates M1* and M2*
+    M1_star_mat = conj(M1_mat)
+    M2_star_mat = conj(M2_mat)
 
     # Loop over spins.
     for si in range(NS):
@@ -142,34 +206,29 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
         for mi in range(NM):
             # Loop over offsets:
             for oi in range(NO):
-
-                r20a_i = R20A[si, mi, oi, 0]
-                r20b_i = R20B[si, mi, oi, 0]
-                dw_i = dw[si, mi, oi, 0]
-                dwH_i = dwH[si, mi, oi, 0]
                 num_points_i = num_points[si, mi, oi]
-
-                # Populate the m1 and m2 matrices (only once per function call for speed).
-                populate_matrix(matrix=m1, R20A=r20a_i, R20B=r20b_i, dw=-dw_i - dwH_i, k_AB=k_AB, k_BA=k_BA)     # D+ matrix component.
-                populate_matrix(matrix=m2, R20A=r20a_i, R20B=r20b_i, dw=dw_i - dwH_i, k_AB=k_AB, k_BA=k_BA)    # Z- matrix component.
 
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
                     # The M1 and M2 matrices.
-                    M1 = matrix_exponential(m1*tcp[si, mi, oi, i])    # Equivalent to D+.
-                    M2 = matrix_exponential(m2*tcp[si, mi, oi, i])    # Equivalent to Z-.
+                    # Equivalent to D+.
+                    M1_i = M1_mat[si, mi, oi, i]
+                    # Equivalent to Z-.
+                    M2_i = M2_mat[si, mi, oi, i]
 
                     # The complex conjugates M1* and M2*
-                    M1_star = conj(M1)    # Equivalent to D+*.
-                    M2_star = conj(M2)    # Equivalent to Z-*.
+                    # Equivalent to D+*.
+                    M1_star_i = M1_star_mat[si, mi, oi, i]
+                    # Equivalent to Z-*.
+                    M2_star_i = M2_star_mat[si, mi, oi, i]
 
                     # Repetitive dot products (minimised for speed).
-                    M1_M2 = dot(M1, M2)
-                    M2_M1 = dot(M2, M1)
+                    M1_M2 = dot(M1_i, M2_i)
+                    M2_M1 = dot(M2_i, M1_i)
                     M1_M2_M2_M1 = dot(M1_M2, M2_M1)
                     M2_M1_M1_M2 = dot(M2_M1, M1_M2)
-                    M1_M2_star = dot(M1_star, M2_star)
-                    M2_M1_star = dot(M2_star, M1_star)
+                    M1_M2_star = dot(M1_star_i, M2_star_i)
+                    M2_M1_star = dot(M2_star_i, M1_star_i)
                     M1_M2_M2_M1_star = dot(M1_M2_star, M2_M1_star)
                     M2_M1_M1_M2_star = dot(M2_M1_star, M1_M2_star)
 
@@ -236,7 +295,7 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
                         back_calc[si, mi, oi, i]= -inv_tcpmg[si, mi, oi, i] * log(Mx / pA)
 
 
-def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), R20A=None, R20B=None, pA=None, dw=None, dwH=None, kex=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for SQ, ZQ, and DQ data.
 
     The notation used here comes from:
@@ -250,26 +309,18 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
     @type M0:               numpy float64, rank-1, 7D array
     @keyword F_vector:      The observable magnitisation vector.  This defaults to [1, 0] for X observable magnitisation.
     @type F_vector:         numpy rank-1, 2D float64 array
-    @keyword m1:            A complex numpy matrix to be populated.
-    @type m1:               numpy rank-2, 2D complex64 array
-    @keyword m2:            A complex numpy matrix to be populated.
-    @type m2:               numpy rank-2, 2D complex64 array
     @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
     @type R20A:             numpy float array of rank [NS][NM][NO][ND]
     @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
     @type R20B:             numpy float array of rank [NS][NM][NO][ND]
     @keyword pA:            The population of state A.
     @type pA:               float
-    @keyword pB:            The population of state B.
-    @type pB:               float
     @keyword dw:            The combined chemical exchange difference between states A and B in rad/s.  It should be set to dwH for 1H SQ data, dw for heteronuclear SQ data, dwH-dw for ZQ data, and dwH+dw for DQ data.
     @type dw:               numpy float array of rank [NS][NM][NO][ND]
     @keyword dwH:           Unused - this is simply to match the r2eff_ns_mmq_2site_mq() function arguments.
     @type dwH:              numpy float array of rank [NS][NM][NO][ND]
-    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
-    @type k_AB:             float
-    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
-    @type k_BA:             float
+    @keyword kex:           The kex parameter value (the exchange rate in rad/s).
+    @type kex:              float
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
     @type inv_tcpmg:        numpy float array of rank [NS][NM][NO][ND]
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
@@ -282,9 +333,25 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
     @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
 
+    # Once off parameter conversions.
+    pB = 1.0 - pA
+    k_BA = pA * kex
+    k_AB = pB * kex
+
+    # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
+    M0[0] = pA
+    M0[1] = pB
 
     # Extract shape of experiment.
     NS, NM, NO = num_points.shape
+
+    # Populate the m1 and m2 matrices (only once per function call for speed).
+    m1_mat = rmmq_2site_rankN(R20A=R20A, R20B=R20B, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+    m2_mat = rmmq_2site_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+
+    # The A+/- matrices.
+    A_pos_mat =  matrix_exponential_rank_NS_NM_NO_ND_x_x(m1_mat, dtype=complex64)
+    A_neg_mat =  matrix_exponential_rank_NS_NM_NO_ND_x_x(m2_mat, dtype=complex64)
 
     # Loop over spins.
     for si in range(NS):
@@ -292,24 +359,17 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
         for mi in range(NM):
             # Loop over offsets:
             for oi in range(NO):
-
-                r20a_i = R20A[si, mi, oi, 0]
-                r20b_i = R20B[si, mi, oi, 0]
-                dw_i = dw[si, mi, oi, 0]
+                # Extract number of points.
                 num_points_i = num_points[si, mi, oi]
-
-                # Populate the m1 and m2 matrices (only once per function call for speed).
-                populate_matrix(matrix=m1, R20A=r20a_i , R20B=r20b_i, dw=dw_i, k_AB=k_AB, k_BA=k_BA)
-                populate_matrix(matrix=m2, R20A=r20a_i , R20B=r20b_i, dw=-dw_i, k_AB=k_AB, k_BA=k_BA)
 
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
                     # The A+/- matrices.
-                    A_pos = matrix_exponential(m1*tcp[si, mi, oi, i])
-                    A_neg = matrix_exponential(m2*tcp[si, mi, oi, i])
+                    A_pos_i = A_pos_mat[si, mi, oi, i]
+                    A_neg_i = A_neg_mat[si, mi, oi, i]
 
                     # The evolution for one n.
-                    evol_block = dot(A_pos, dot(A_neg, dot(A_neg, A_pos)))
+                    evol_block = dot(A_pos_i, dot(A_neg_i, dot(A_neg_i, A_pos_i)))
 
                     # The full evolution.
                     evol = square_matrix_power(evol_block, power[si, mi, oi, i])

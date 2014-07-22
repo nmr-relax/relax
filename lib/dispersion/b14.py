@@ -149,6 +149,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, nc
     t_max_e = False
     t_v3_N_zero = False
     t_log_tog_neg = False
+    t_v1c_less_one = False
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
     # Test if pA or kex is zero.
@@ -156,7 +157,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, nc
         back_calc[:] = r20a
         return
 
-    # Test if dw is zero. Wait for replacement, since this is spin specific.
+    # Test if dw is zero. Create a mask for the affected spins to replace these with R20 at the end of the calculationWait for replacement, since this is spin specific.
     if min(fabs(dw_orig)) == 0.0:
         t_dw_zero = True
         mask_dw_zero = masked_where(dw == 0.0, dw)
@@ -241,6 +242,13 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, nc
     # Real. The v_1c in paper.
     v1c = F0 * cosh(E0) - F2 * cos(E2)
 
+    # Catch math domain error of sqrt of negative.
+    # This is when v1c is less than 1.
+    mask_v1c_less_one = v1c < 1.0
+    if any(mask_v1c_less_one):
+        t_v1c_less_one = True
+        v1c[mask_v1c_less_one] = 1.0
+
     # Exact result for v2v3.
     v3 = sqrt(v1c**2 - 1.)
 
@@ -285,6 +293,10 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, nc
     # If E0 is above 700.
     if t_max_e:
         back_calc[mask_max_e.mask] = r20a[mask_max_e.mask]
+
+    # If v1c is less than 1.
+    if t_v1c_less_one:
+        back_calc[mask_v1c_less_one] = 1e100
 
     # If Tog_div is zero.
     if t_v3_N_zero:

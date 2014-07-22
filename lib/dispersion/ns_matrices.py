@@ -5,6 +5,7 @@
 # Copyright (C) 2013 Mathilde Lescanne                                        #
 # Copyright (C) 2013 Dominique Marion                                         #
 # Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,7 +32,7 @@ These are for the numerical solutions to the Bloch-McConnell equations for relax
 
 # Python module imports.
 from math import cos, sin, pi
-from numpy import array, float64, matrix
+from numpy import add, array, conj, complex64, float64, matrix, multiply
 
 
 def r180x_2d(flip=pi):
@@ -160,6 +161,130 @@ def rcpmg_3d(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=None, 
     return temp
 
 
+def rmmq_2site(matrix=None, R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None):
+    """The Bloch-McConnell matrix for 2-site exchange.
+
+    @keyword matrix:        The matrix to populate.
+    @type matrix:           numpy rank-2, 2D complex64 array
+    @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
+    @type R20A:             float
+    @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
+    @type R20B:             float
+    @keyword dw:            The combined chemical exchange difference parameters between states A and B in rad/s.  This can be any combination of dw and dwH.
+    @type dw:               float
+    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
+    @type k_AB:             float
+    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
+    @type k_BA:             float
+    """
+
+    # Fill in the elements.
+    matrix[0, 0] = -k_AB - R20A
+    matrix[0, 1] = k_BA
+    matrix[1, 0] = k_AB
+    matrix[1, 1] = -k_BA + 1.j*dw - R20B
+
+
+def rmmq_3site(matrix=None, R20A=None, R20B=None, R20C=None, dw_AB=None, dw_AC=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None):
+    """The Bloch-McConnell matrix for 3-site exchange.
+
+    @keyword matrix:        The matrix to populate.
+    @type matrix:           numpy rank-2, 3D complex64 array
+    @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
+    @type R20A:             float
+    @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
+    @type R20B:             float
+    @keyword R20C:          The transverse, spin-spin relaxation rate for state C.
+    @type R20C:             float
+    @keyword dw_AB:         The combined chemical exchange difference parameters between states A and B in rad/s.  This can be any combination of dw and dwH.
+    @type dw_AB:            float
+    @keyword dw_AC:         The combined chemical exchange difference parameters between states A and C in rad/s.  This can be any combination of dw and dwH.
+    @type dw_AC:            float
+    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
+    @type k_AB:             float
+    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
+    @type k_BA:             float
+    @keyword k_BC:          The rate of exchange from site B to C (rad/s).
+    @type k_BC:             float
+    @keyword k_CB:          The rate of exchange from site C to B (rad/s).
+    @type k_CB:             float
+    @keyword k_AC:          The rate of exchange from site A to C (rad/s).
+    @type k_AC:             float
+    @keyword k_CA:          The rate of exchange from site C to A (rad/s).
+    @type k_CA:             float
+    """
+
+    # The first row.
+    matrix[0, 0] = -k_AB - k_AC - R20A
+    matrix[0, 1] = k_BA
+    matrix[0, 2] = k_CA
+
+    # The second row.
+    matrix[1, 0] = k_AB
+    matrix[1, 1] = -k_BA - k_BC + 1.j*dw_AB - R20B
+    matrix[1, 2] = k_CB
+
+    # The third row.
+    matrix[2, 0] = k_AC
+    matrix[2, 1] = k_BC
+    matrix[2, 2] = -k_CB - k_CA + 1.j*dw_AC - R20C
+
+
+def rr1rho_3d_2site(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, wA=None, wB=None, w1=None, k_AB=None, k_BA=None):
+    """Definition of the 3D exchange matrix.
+
+    This code originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file https://gna.org/support/download.php?file_id=18404 attached to https://gna.org/task/?7712#comment5).
+
+
+    @keyword matrix:        The matrix to fill.
+    @type matrix:           numpy rank-2 6D array
+    @keyword R1:            The longitudinal, spin-lattice relaxation rate.
+    @type R1:               float
+    @keyword r1rho_prime:   The R1rho transverse, spin-spin relaxation rate in the absence of exchange.
+    @type r1rho_prime:      float
+    @keyword pA:            The population of state A.
+    @type pA:               float
+    @keyword pB:            The population of state B.
+    @type pB:               float
+    @keyword wA:            The chemical shift offset of state A from the spin-lock.
+    @type wA:               float
+    @keyword wB:            The chemical shift offset of state A from the spin-lock.
+    @type wB:               float
+    @keyword w1:            The spin-lock field strength in rad/s.
+    @type w1:               float
+    @keyword k_AB:          The forward exchange rate from state A to state B.
+    @type k_AB:             float
+    @keyword k_BA:          The reverse exchange rate from state B to state A.
+    @type k_BA:             float
+    """
+
+    # The AB auto-block.
+    matrix[0, 0] = -r1rho_prime - k_AB
+    matrix[0, 1] = -wA
+    matrix[1, 0] = wA
+    matrix[1, 1] = -r1rho_prime - k_AB
+    matrix[1, 2] = -w1
+    matrix[2, 1] = w1
+    matrix[2, 2] = -R1 - k_AB
+
+    # The BA auto-block.
+    matrix[3, 3] = -r1rho_prime - k_BA
+    matrix[3, 4] = -wB
+    matrix[4, 3] = wB
+    matrix[4, 4] = -r1rho_prime - k_BA
+    matrix[4, 5] = -w1
+    matrix[5, 4] = w1
+    matrix[5, 5] = -R1 - k_BA
+
+    # The AB cross-block.
+    matrix[0, 3] = k_BA
+    matrix[1, 4] = k_BA
+    matrix[2, 5] = k_BA
+    matrix[3, 0] = k_AB
+    matrix[4, 1] = k_AB
+    matrix[5, 2] = k_AB
+
+
 def rr1rho_3d_3site(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, pC=None, wA=None, wB=None, wC=None, w1=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None):
     """Definition of the 3D exchange matrix.
 
@@ -247,58 +372,3 @@ def rr1rho_3d_3site(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, pC
     matrix[6, 3] = k_BC
     matrix[7, 4] = k_BC
     matrix[8, 5] = k_BC
-
-
-def rr1rho_3d(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, wA=None, wB=None, w1=None, k_AB=None, k_BA=None):
-    """Definition of the 3D exchange matrix.
-
-    This code originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file https://gna.org/support/download.php?file_id=18404 attached to https://gna.org/task/?7712#comment5).
-
-
-    @keyword matrix:        The matrix to fill.
-    @type matrix:           numpy rank-2 6D array
-    @keyword R1:            The longitudinal, spin-lattice relaxation rate.
-    @type R1:               float
-    @keyword r1rho_prime:   The R1rho transverse, spin-spin relaxation rate in the absence of exchange.
-    @type r1rho_prime:      float
-    @keyword pA:            The population of state A.
-    @type pA:               float
-    @keyword pB:            The population of state B.
-    @type pB:               float
-    @keyword wA:            The chemical shift offset of state A from the spin-lock.
-    @type wA:               float
-    @keyword wB:            The chemical shift offset of state A from the spin-lock.
-    @type wB:               float
-    @keyword w1:            The spin-lock field strength in rad/s.
-    @type w1:               float
-    @keyword k_AB:          The forward exchange rate from state A to state B.
-    @type k_AB:             float
-    @keyword k_BA:          The reverse exchange rate from state B to state A.
-    @type k_BA:             float
-    """
-
-    # The AB auto-block.
-    matrix[0, 0] = -r1rho_prime - k_AB
-    matrix[0, 1] = -wA
-    matrix[1, 0] = wA
-    matrix[1, 1] = -r1rho_prime - k_AB
-    matrix[1, 2] = -w1
-    matrix[2, 1] = w1
-    matrix[2, 2] = -R1 - k_AB
-
-    # The BA auto-block.
-    matrix[3, 3] = -r1rho_prime - k_BA
-    matrix[3, 4] = -wB
-    matrix[4, 3] = wB
-    matrix[4, 4] = -r1rho_prime - k_BA
-    matrix[4, 5] = -w1
-    matrix[5, 4] = w1
-    matrix[5, 5] = -R1 - k_BA
-
-    # The AB cross-block.
-    matrix[0, 3] = k_BA
-    matrix[1, 4] = k_BA
-    matrix[2, 5] = k_BA
-    matrix[3, 0] = k_AB
-    matrix[4, 1] = k_AB
-    matrix[5, 2] = k_AB

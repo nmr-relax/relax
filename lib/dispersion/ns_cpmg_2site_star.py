@@ -57,29 +57,116 @@ More information on the NS CPMG 2-site star full model can be found in the:
 """
 
 # Python module imports.
-from numpy import add, complex, conj, dot, fabs, isfinite, log, min, sum
+from numpy import add, array, conj, dot, fabs, float64, isfinite, log, min, multiply, sum
 from numpy.ma import fix_invalid, masked_where
 
 # relax module imports.
 from lib.float import isNaN
-from lib.linear_algebra.matrix_exponential import matrix_exponential
+from lib.dispersion.matrix_exponential import matrix_exponential_rank_NE_NS_NM_NO_ND_x_x
 from lib.linear_algebra.matrix_power import square_matrix_power
 
+# Repetitive calculations (to speed up calculations).
+m_r20a = array([
+    [-1,  0],
+    [ 0,  0]], float64)
 
-def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+m_r20b = array([
+    [ 0,  0],
+    [ 0, -1]], float64)
+
+m_k_AB = array([
+    [-1,  0],
+    [ 1,  0]], float64)
+
+m_k_BA = array([
+    [ 0,  1],
+    [ 0, -1]], float64)
+
+m_dw = array([
+    [ 0,  0],
+    [ 0,  1]], float64)
+
+
+def rcpmg_star_rankN(R2A=None, R2B=None, dw=None, k_AB=None, k_BA=None, tcp=None):
+    """Definition of the exchange matrix, for rank [NE][NS][NM][NO][ND][2][2].
+
+    @keyword R2A:   The transverse, spin-spin relaxation rate for state A.
+    @type R2A:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword R2B:   The transverse, spin-spin relaxation rate for state B.
+    @type R2B:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword dw:    The chemical exchange difference between states A and B in rad/s.
+    @type dw:       numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword k_AB:  The forward exchange rate from state A to state B.
+    @type k_AB:     float
+    @keyword k_BA:  The reverse exchange rate from state B to state A.
+    @type k_BA:     float
+    @keyword tcp:   The tau_CPMG times (1 / 4.nu1).
+    @type tcp:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @return:        The relaxation matrix R and complex conjugate cR2.
+    @rtype:         numpy float array of rank [NE][NS][NM][NO][ND][2][2]
+    """
+
+    # Pre-multiply with tcp.
+    r20a_tcp = R2A * tcp
+    r20b_tcp = R2B * tcp
+    k_AB_tcp = k_AB * tcp
+    k_BA_tcp = k_BA * tcp
+    # Complex dw.
+    dw_tcp_C = dw * tcp * -1j
+
+    # Create matrix for collection of Rr matrix.
+    # The matrix that contains only the R2 relaxation terms ("Redfield relaxation", i.e. non-exchange broadening).
+    #Rr[0, 0] = -R2A_si_mi
+    #Rr[1, 1] = -R2B_si_mi
+
+    # Multiply and expand.
+    m_r20a_tcp = multiply.outer( r20a_tcp, m_r20a )
+    m_r20b_tcp = multiply.outer( r20b_tcp, m_r20b )
+
+    # Collect Rr matrix.
+    Rr_mat = (m_r20a_tcp + m_r20b_tcp)
+
+    # Create matrix for collection of Rex.
+    # Set up the matrix that contains the exchange terms between the two states A and B.
+    #Rex[0, 0] = -k_AB
+    #Rex[0, 1] = k_BA
+    #Rex[1, 0] = k_AB
+    #Rex[1, 1] = -k_BA
+
+    # Multiply and expand.
+    m_k_AB_tcp = multiply.outer( k_AB_tcp, m_k_AB )
+    m_k_BA_tcp = multiply.outer( k_BA_tcp, m_k_BA )
+
+    # Collect Rex matrix.
+    Rex_mat = (m_k_AB_tcp + m_k_BA_tcp)
+
+    # Create the matrix for RCS.
+    # The matrix that contains the chemical shift evolution.  It works here only with X magnetization, and the complex notation allows to evolve in the transverse plane (x, y).  The chemical shift for state A is assumed to be zero.
+    #RCS[1, 1] = complex(0.0, -dw_si_mi)
+
+    # Multiply and expand.
+    m_dw_tcp_C = multiply.outer( dw_tcp_C, m_dw )
+
+    # Collect RCS matrix.
+    RCS_mat = m_dw_tcp_C
+
+    # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
+    R_mat = add(Rr_mat, Rex_mat)
+    R_mat = add(R_mat, RCS_mat)
+
+    # This is the complex conjugate of the above.  It allows the chemical shift to run in the other direction, i.e. it is used to evolve the shift after a 180 deg pulse.  The factor of 2 is to minimise the number of multiplications for the prop_2 matrix calculation.
+    cR2_mat = conj(R_mat) * 2.0
+
+    # Return the matrixes.
+    return R_mat, cR2_mat, Rr_mat, Rex_mat, RCS_mat
+
+
+def r2eff_ns_cpmg_2site_star(M0=None, r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation using complex conjugate matrices.
 
     This function calculates and stores the R2eff values.
 
 
-    @keyword Rr:            The matrix that contains only the R2 relaxation terms ("Redfield relaxation", i.e. non-exchange broadening).
-    @type Rr:               numpy complex64, rank-2, 2D array
-    @keyword Rex:           The matrix that contains the exchange terms between the two states A and B.
-    @type Rex:              numpy complex64, rank-2, 2D array
-    @keyword RCS:           The matrix that contains the chemical shift evolution.  It works here only with X magnetization, and the complex notation allows to evolve in the transverse plane (x, y).
-    @type RCS:              numpy complex64, rank-2, 2D array
-    @keyword R:             The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-    @type R:                numpy complex64, rank-2, 2D array
     @keyword M0:            This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
     @type M0:               numpy float64, rank-1, 2D array
     @keyword r20a:          The R2 value for state A in the absence of exchange.
@@ -114,7 +201,7 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
         back_calc[:] = r20a
         return
 
-    # Test if dw is zero. Wait for replacement, since this is spin specific.
+    # Test if dw is zero. Create a mask for the affected spins to replace these with R20 at the end of the calculationWait for replacement, since this is spin specific.
     if min(fabs(dw_orig)) == 0.0:
         t_dw_zero = True
         mask_dw_zero = masked_where(dw == 0.0, dw)
@@ -124,12 +211,6 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
     k_BA = pA * kex
     k_AB = pB * kex
 
-    # Set up the matrix that contains the exchange terms between the two states A and B.
-    Rex[0, 0] = -k_AB
-    Rex[0, 1] = k_BA
-    Rex[1, 0] = k_AB
-    Rex[1, 1] = -k_BA
-
     # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
     M0[0] = pA
     M0[1] = pB
@@ -137,44 +218,31 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
     # Extract the total numbers of experiments, number of spins, number of magnetic field strength, number of offsets, maximum number of dispersion point.
     NE, NS, NM, NO, ND = back_calc.shape
 
+    # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
+    R_mat, cR2_mat, Rr_mat, Rex_mat, RCS_mat = rcpmg_star_rankN(R2A=r20a, R2B=r20b, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+
+    eR_mat = matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(R_mat)
+    ecR2_mat = matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(cR2_mat)
+
     # Loop over the spins
     for si in range(NS):
         # Loop over the spectrometer frequencies.
         for mi in range(NM):
-
             # Extract the values from the higher dimensional arrays.
-            R2A_si_mi=r20a[0, si, mi, 0, 0]
-            R2B_si_mi=r20b[0, si, mi, 0, 0]
-            dw_si_mi = dw[0, si, mi, 0, 0]
             num_points_si_mi = int(num_points[0, si, mi, 0])
-
-            # The matrix that contains only the R2 relaxation terms ("Redfield relaxation", i.e. non-exchange broadening).
-            Rr[0, 0] = -R2A_si_mi
-            Rr[1, 1] = -R2B_si_mi
-
-            # The matrix that contains the chemical shift evolution.  It works here only with X magnetization, and the complex notation allows to evolve in the transverse plane (x, y).  The chemical shift for state A is assumed to be zero.
-            RCS[1, 1] = complex(0.0, -dw_si_mi)
-
-            # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-            R = add(Rr, Rex)
-            R = add(R, RCS)
-
-            # This is the complex conjugate of the above.  It allows the chemical shift to run in the other direction, i.e. it is used to evolve the shift after a 180 deg pulse.  The factor of 2 is to minimise the number of multiplications for the prop_2 matrix calculation.
-            cR2 = conj(R) * 2.0
 
             # Loop over the time points, back calculating the R2eff values.
             for di in range(num_points_si_mi):
                 # Extract the values from the higher dimensional arrays.
-                tcp_si_mi_di = tcp[0, si, mi, 0, di]
-                inv_tcpmg_si_mi_di = inv_tcpmg[0, si, mi, 0, di]
                 power_si_mi_di = int(power[0, si, mi, 0, di])
-                r20a_si_mi_di = r20a[0, si, mi, 0, di]
 
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-                eR_tcp = matrix_exponential(R*tcp_si_mi_di)
+                eR_tcp = eR_mat[0, si, mi, 0, di]
+                ecR2_tcp = ecR2_mat[0, si, mi, 0, di]
 
                 # This is the propagator for an element of [delay tcp; 180 deg pulse; 2 times delay tcp; 180 deg pulse; delay tau], i.e. for 2 times tau-180-tau.
-                prop_2 = dot(dot(eR_tcp, matrix_exponential(cR2*tcp_si_mi_di)), eR_tcp)
+                prop_2 = dot(eR_tcp, ecR2_tcp)
+                prop_2 = dot(prop_2, eR_tcp)
 
                 # Now create the total propagator that will evolve the magnetization under the CPMG train, i.e. it applies the above tau-180-tau-tau-180-tau so many times as required for the CPMG frequency under consideration.
                 prop_total = square_matrix_power(prop_2, power_si_mi_di)
@@ -187,7 +255,7 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
                 if Mx <= 0.0 or isNaN(Mx):
                     back_calc[0, si, mi, 0, di] = 1e99
                 else:
-                    back_calc[0, si, mi, 0, di]= -inv_tcpmg_si_mi_di * log(Mx)
+                    back_calc[0, si, mi, 0, di]= -inv_tcpmg[0, si, mi, 0, di] * log(Mx)
 
     # Replace data in array.
     # If dw is zero.

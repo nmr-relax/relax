@@ -137,7 +137,7 @@ def r2eff_CR72(r20a=None, r20a_orig=None, r20b=None, r20b_orig=None, pA=None, dw
         back_calc[:] = r20a
         return
 
-    # Test if dw is zero. Wait for replacement, since this is spin specific.
+    # Test if dw is zero. Create a mask for the affected spins to replace these with R20 at the end of the calculationWait for replacement, since this is spin specific.
     if min(fabs(dw_orig)) == 0.0:
         t_dw_zero = True
         mask_dw_zero = masked_where(dw == 0.0, dw)

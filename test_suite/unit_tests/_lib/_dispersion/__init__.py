@@ -34,6 +34,7 @@ __all__ = [
     'test_ns_cpmg_2site_expanded',
     'test_m61',
     'test_m61b',
+    'test_matrix_exponential',
     'test_mmq_cr72',
     'mp05',
     'tap03',

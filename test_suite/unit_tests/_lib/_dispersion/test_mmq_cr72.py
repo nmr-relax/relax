@@ -62,7 +62,7 @@ class Test_mmq_cr72(TestCase):
         a = ones(self.ncyc.shape)
 
         # Calculate the R2eff values.
-        r2eff_mmq_cr72(r20=self.r20*a, pA=self.pA, pB=pB, dw=dw_frq*a, dwH=dwH_frq*a, kex=self.kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.R2eff)
+        r2eff_mmq_cr72(r20=self.r20*a, pA=self.pA, dw=dw_frq*a, dwH=dwH_frq*a, kex=self.kex, cpmg_frqs=self.cpmg_frqs, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.R2eff)
 
         # Check all R2eff values.
         for i in range(self.num_points):

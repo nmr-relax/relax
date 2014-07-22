@@ -25,8 +25,7 @@
 # Python module imports.
 import cProfile
 from os import getcwd, path
-from numpy import array, arange, asarray, int32, float64, ones, pi, zeros
-import numpy as np
+from numpy import array, arange, int32, float64, pi
 import pstats
 import sys
 import tempfile
@@ -53,16 +52,15 @@ sys.path.reverse()
 
 # relax module imports.
 from lib.physical_constants import g1H, g15N
-from target_functions.chi2 import chi2
 from target_functions.relax_disp import Dispersion
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_CR72
 
 
 # Alter setup.
 def main():
     if True:
         # Nr of iterations.
-        nr_iter = 1000
+        nr_iter = 100
 
         # Print statistics.
         verbose = True
@@ -184,24 +182,6 @@ class Profile(Dispersion):
         @rtype:         lists of numpy float arrays, lists of numpy float arrays, lists of numpy float arrays, numpy rank-2 int array
         """
 
-        # Unpack the parameter values.
-        # Initialise the post spin parameter indices.
-        end_index = []
-        # The spin and frequency dependent R2 parameters.
-        end_index.append(len(self.exp_type) * self.num_spins * len(self.fields))
-        if self.model in [MODEL_B14_FULL, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
-            end_index.append(2 * len(self.exp_type) * self.num_spins * len(self.fields))
-        # The spin and dependent parameters (phi_ex, dw, padw2).
-        end_index.append(end_index[-1] + self.num_spins)
-
-        # Unpack the parameter values.
-        R20 = self.params[:end_index[1]].reshape(self.num_spins*2, len(self.fields))
-        R20A = R20[::2].flatten()
-        R20B = R20[1::2].flatten()
-        dw = self.params[end_index[1]:end_index[2]]
-        pA = self.params[end_index[2]]
-        kex = self.params[end_index[2]+1]
-
         # Initialise the data structures for the target function.
         exp_types = []
         values = []
@@ -272,13 +252,6 @@ class Profile(Dispersion):
                     # Get the cpmg frq.
                     cpmg_frqs[ei][mi][oi] = self.points[mi]
 
-                    # Calculate how the value should be, so chi2 gets zero.
-                    # The R20 index.
-                    r20_index = mi + si*len(self.fields)
-                    # Convert dw from ppm to rad/s.
-                    dw_frq = dw[si] * frqs[ei][si][mi]
-                    r20a=R20A[r20_index]
-                    r20b=R20B[r20_index]
                     back_calc = array([0.0]*len(cpmg_frqs[ei][mi][oi]))
 
                     for oi in range(len(self.offset)):
@@ -309,6 +282,7 @@ class Profile(Dispersion):
             for si in range(self.num_spins):
                 for mi in range(len(self.fields)):
                     for oi in range(len(self.offset)):
+                        cpmg_frqs[ei][mi][oi] = array(cpmg_frqs[ei][mi][oi], float64)
                         values[ei][si][mi][oi] = array(values[ei][si][mi][oi], float64)
                         errors[ei][si][mi][oi] = array(errors[ei][si][mi][oi], float64)
                         missing[ei][si][mi][oi] = array(missing[ei][si][mi][oi], int32)
@@ -424,11 +398,11 @@ class Profile(Dispersion):
         """
 
         # Return chi2 value.
-        chi2 = self.model.func_CR72_full(params)
+        chi2 = self.model.func_CR72(params)
         return chi2
 
 
-def single(num_spins=1, model=MODEL_CR72_FULL, iter=None):
+def single(num_spins=1, model=MODEL_CR72, iter=None):
     """Calculate for a single spin.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -442,7 +416,7 @@ def single(num_spins=1, model=MODEL_CR72_FULL, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
 
     # Loop 100 times for each spin in the clustered analysis (to make the timing numbers equivalent).
     for spin_index in range(100):
@@ -452,7 +426,7 @@ def single(num_spins=1, model=MODEL_CR72_FULL, iter=None):
     print("chi2 single:", chi2)
 
 
-def cluster(num_spins=100, model=MODEL_CR72_FULL, iter=None):
+def cluster(num_spins=100, model=MODEL_CR72, iter=None):
     """Calculate for a number of clustered spins.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -466,7 +440,7 @@ def cluster(num_spins=100, model=MODEL_CR72_FULL, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
 
     # Repeat the function call, to simulate minimisation.
     for i in range(iter):
@@ -477,38 +451,3 @@ def cluster(num_spins=100, model=MODEL_CR72_FULL, iter=None):
 # Execute main function.
 if __name__ == "__main__":
     main()
-
-def test_reshape():
-    C1 = Profile(num_spins=1, model=MODEL_CR72_FULL, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
-    end_index = C1.model.end_index
-    #print("end_index:", end_index)
-    num_spins = C1.model.num_spins
-    #print("num_spins:", num_spins)
-    num_frq = C1.model.num_frq
-    #print("num_frq:", num_frq)
-    params = C1.params
-    #print("params", params)
-
-    R20 = params[:end_index[1]].reshape(num_spins*2, num_frq)
-    R20A = R20[::2].flatten()
-    R20B = R20[1::2].flatten()
-    dw = params[end_index[1]:end_index[2]]
-    pA = params[end_index[2]]
-    kex = params[end_index[2]+1]
-    print("R20A", R20A, len(R20A))
-    print("R20B", R20B, len(R20B))
-    print("dw", dw, len(dw))
-    print("dw", pA)
-    print("kex", kex)
-
-    for si in range(num_spins):
-        for mi in range(num_frq):
-            r20_index = mi + si*num_frq
-            r20a=R20A[r20_index]
-            r20b=R20B[r20_index]
-            print("r20a", r20a, "r20b", r20b)
-
-    model = C1.calc(params)
-    print(model)
-
-#test_reshape()

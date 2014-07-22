@@ -247,7 +247,7 @@ More information on the NS CPMG 2-site expanded model can be found in the:
 """
 
 # Python module imports.
-from numpy import exp, isfinite, fabs, power, log, min, sqrt, sum
+from numpy import any, exp, isfinite, fabs, power, log, min, sqrt, sum
 from numpy.ma import fix_invalid, masked_where
 
 
@@ -281,13 +281,15 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, dw_orig=None, kex=N
 
     # Flag to tell if values should be replaced if math function is violated.
     t_dw_zero = False
+    t_t108_zero = False
+    t_t112_zero = False
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
     if pA == 1.0 or kex == 0.0:
         back_calc[:] = r20
         return
 
-    # Test if dw is zero. Wait for replacement, since this is spin specific.
+    # Test if dw is zero. Create a mask for the affected spins to replace these with R20 at the end of the calculationWait for replacement, since this is spin specific.
     if min(fabs(dw_orig)) == 0.0:
         t_dw_zero = True
         mask_dw_zero = masked_where(dw == 0.0, dw)
@@ -297,8 +299,7 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, dw_orig=None, kex=N
     k_BA = pA * kex
     k_AB = pB * kex
 
-
-    # Repeditive calculations.
+    # Repetitive calculations.
     half_tcp = 0.5 * tcp
     k_AB_plus_k_BA = k_AB + k_BA
     k_BA_minus_k_AB = k_BA - k_AB
@@ -360,7 +361,21 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, dw_orig=None, kex=N
     t99 = t92 + t96
     t102 = t99**2
     t108 = t62 * t88 + t82 * t31
+
+    # If t108 is zero.
+    mask_t108_zero = t108 == 0.0
+    if any(mask_t108_zero):
+        t_t108_zero = True
+        t108[mask_t108_zero] = 1.0
+
     t112 = sqrt(t98 - 2.0 * t99 * t97 + t102 + 2.0 * (t91 * t68 + t95 * t55) * t108)
+
+    # If t112 is zero.
+    mask_t112_zero = t112 == 0.0
+    if any(mask_t112_zero):
+        t_t112_zero = True
+        t112[mask_t112_zero] = 1.0
+
     t97_t99 = t97 + t99
     t97_nt99 = t97 - t99
     t113 = t97_nt99 - t112
@@ -387,6 +402,14 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, dw_orig=None, kex=N
     # If dw is zero.
     if t_dw_zero:
         back_calc[mask_dw_zero.mask] = r20[mask_dw_zero.mask]
+
+    # If t108 is zero.
+    if t_t108_zero:
+        back_calc[mask_t108_zero] = 1e100
+
+    # If t112 is zero.
+    if t_t112_zero:
+        back_calc[mask_t112_zero] = 1e100
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).

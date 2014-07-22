@@ -234,6 +234,7 @@ class Dispersion:
         self.dwH_struct = deepcopy(numpy_array_zeros)
         self.dw_AB_struct = deepcopy(numpy_array_zeros)
         self.dw_AC_struct = deepcopy(numpy_array_zeros)
+        self.dw_BC_struct = deepcopy(numpy_array_zeros)
         self.dwH_AB_struct = deepcopy(numpy_array_zeros)
         self.dwH_AC_struct = deepcopy(numpy_array_zeros)
         self.phi_ex_struct = deepcopy(numpy_array_zeros)
@@ -390,20 +391,6 @@ class Dispersion:
             self.end_index.append(self.end_index[-1] + self.num_spins)
             self.end_index.append(self.end_index[-1] + self.num_spins)
 
-        # Set up the matrices for the numerical solutions.
-        if model in [MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL]:
-            # The matrix that contains only the R2 relaxation terms ("Redfield relaxation", i.e. non-exchange broadening).
-            self.Rr = zeros((2, 2), complex64)
-
-            # The matrix that contains the exchange terms between the two states A and B.
-            self.Rex = zeros((2, 2), complex64)
-
-            # The matrix that contains the chemical shift evolution.  It works here only with X magnetization, and the complex notation allows to evolve in the transverse plane (x, y).
-            self.RCS = zeros((2, 2), complex64)
-
-            # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-            self.R = zeros((2, 2), complex64)
-
         # Pi-pulse propagators.
         if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL]:
             self.r180x = r180x_3d()
@@ -420,18 +407,6 @@ class Dispersion:
             self.M0 = zeros(6, float64)
         if model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
             self.M0 = zeros(9, float64)
-
-        # Special storage matrices for the multi-quantum CPMG N-site numerical models.
-        if model == MODEL_NS_MMQ_2SITE:
-            self.m1 = zeros((2, 2), complex64)
-            self.m2 = zeros((2, 2), complex64)
-        elif model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
-            self.m1 = zeros((3, 3), complex64)
-            self.m2 = zeros((3, 3), complex64)
-        elif model == MODEL_NS_R1RHO_2SITE:
-            self.matrix = zeros((6, 6), float64)
-        elif model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
-            self.matrix = zeros((9, 9), float64)
 
         # Set up the model.
         if model == MODEL_NOREX:
@@ -633,7 +608,7 @@ class Dispersion:
         self.r20b_struct[:] = multiply.outer( R20B.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Back calculate the R2eff values.
-        r2eff_ns_cpmg_2site_star(Rr=self.Rr, Rex=self.Rex, RCS=self.RCS, R=self.R, M0=self.M0, r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, dw=self.dw_struct, dw_orig=dw, kex=kex, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.back_calc, num_points=self.num_disp_points, power=self.power)
+        r2eff_ns_cpmg_2site_star(M0=self.M0, r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, dw=self.dw_struct, dw_orig=dw, kex=kex, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.back_calc, num_points=self.num_disp_points, power=self.power)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
@@ -677,23 +652,8 @@ class Dispersion:
         """
 
         # Once off parameter conversions.
-        pC = 1.0 - pA - pB
-        pA_pB = pA + pB
-        pA_pC = pA + pC
-        pB_pC = pB + pC
-        k_BA = pA * kex_AB / pA_pB
-        k_AB = pB * kex_AB / pA_pB
-        k_CB = pB * kex_BC / pB_pC
-        k_BC = pC * kex_BC / pB_pC
-        k_CA = pA * kex_AC / pA_pC
-        k_AC = pC * kex_AC / pA_pC
         dw_AC = dw_AB + dw_BC
         dwH_AC = dwH_AB + dwH_BC
-
-        # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
-        self.M0[0] = pA
-        self.M0[1] = pB
-        self.M0[2] = pC
 
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
         multiply( multiply.outer( dw_AB.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_AB_struct )
@@ -744,7 +704,7 @@ class Dispersion:
                 aliased_dwH_AC = dw_AC_frq
 
             # Back calculate the R2eff values for each experiment type.
-            self.r2eff_ns_mmq[ei](M0=self.M0, m1=self.m1, m2=self.m2, R20A=r20a, R20B=r20b, R20C=r20c, pA=pA, pB=pB, pC=pC, dw_AB=aliased_dw_AB, dw_AC=aliased_dw_AC, dwH_AB=aliased_dwH_AB, dwH_AC=aliased_dwH_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
+            self.r2eff_ns_mmq[ei](M0=self.M0, R20A=r20a, R20B=r20b, R20C=r20c, pA=pA, pB=pB, dw_AB=aliased_dw_AB, dw_AC=aliased_dw_AC, dwH_AB=aliased_dwH_AB, dwH_AC=aliased_dwH_AC, kex_AB=kex_AB, kex_BC=kex_BC, kex_AC=kex_AC, inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
@@ -779,28 +739,15 @@ class Dispersion:
         @rtype:                 float
         """
 
-        # Once off parameter conversions.
-        pC = 1.0 - pA - pB
-        pA_pB = pA + pB
-        pA_pC = pA + pC
-        pB_pC = pB + pC
-        k_BA = pA * kex_AB / pA_pB
-        k_AB = pB * kex_AB / pA_pB
-        k_CB = pB * kex_BC / pB_pC
-        k_BC = pC * kex_BC / pB_pC
-        k_CA = pA * kex_AC / pA_pC
-        k_AC = pC * kex_AC / pA_pC
-        dw_AC = dw_AB + dw_BC
-
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
         multiply( multiply.outer( dw_AB.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_AB_struct )
-        multiply( multiply.outer( dw_AC.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_AC_struct )
+        multiply( multiply.outer( dw_BC.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_BC_struct )
 
         # Reshape R20 to per experiment, spin and frequency.
         self.r20_struct[:] = multiply.outer( r1rho_prime.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Back calculate the R2eff values for each experiment type.
-        ns_r1rho_3site(M0=self.M0, matrix=self.matrix, r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, r1=self.r1, pA=pA, pB=pB, pC=pC, dw_AB=self.dw_AB_struct, dw_AC=self.dw_AC_struct, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc, num_points=self.num_disp_points)
+        ns_r1rho_3site(M0=self.M0, r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, r1=self.r1, pA=pA, pB=pB, dw_AB=self.dw_AB_struct, dw_BC=self.dw_BC_struct, kex_AB=kex_AB, kex_BC=kex_BC, kex_AC=kex_AC, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc, num_points=self.num_disp_points)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
@@ -1062,21 +1009,15 @@ class Dispersion:
         kB = params[self.end_index[2]]
         kC = params[self.end_index[2]+1]
 
-        # Once off parameter conversions.
-        rex_B = phi_ex_B / kB
-        rex_C = phi_ex_C / kC
-        quart_kB = kB / 4.0
-        quart_kC = kC / 4.0
-
         # Convert phi_ex (or rex) from ppm^2 to (rad/s)^2.
-        multiply( multiply.outer( rex_B.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_B_struct )
-        multiply( multiply.outer( rex_C.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_C_struct )
+        multiply( multiply.outer( phi_ex_B.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_B_struct )
+        multiply( multiply.outer( phi_ex_C.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_C_struct )
 
         # Reshape R20 to per experiment, spin and frequency.
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Back calculate the R2eff values.
-        r2eff_LM63_3site(r20=self.r20_struct, rex_B=self.phi_ex_B_struct, rex_C=self.phi_ex_C_struct, quart_kB=quart_kB, quart_kC=quart_kC, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc)
+        r2eff_LM63_3site(r20=self.r20_struct, phi_ex_B=self.phi_ex_B_struct, phi_ex_C=self.phi_ex_C_struct, kB=kB, kC=kC, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
@@ -1267,11 +1208,6 @@ class Dispersion:
         pA = params[self.end_index[2]]
         kex = params[self.end_index[2]+1]
 
-        # Once off parameter conversions.
-        pB = 1.0 - pA
-        k_BA = pA * kex
-        k_AB = pB * kex
-
         # Convert dw and dwH from ppm to rad/s. Use the out argument, to pass directly to structure.
         multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
         multiply( multiply.outer( dwH.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_H, out=self.dwH_struct )
@@ -1304,7 +1240,7 @@ class Dispersion:
                 aliased_dwH = dw_frq
 
             # Back calculate the R2eff values.
-            r2eff_mmq_cr72(r20=r20, pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs[ei], inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei])
+            r2eff_mmq_cr72(r20=r20, pA=pA, dw=aliased_dw, dwH=aliased_dwH, kex=kex, cpmg_frqs=self.cpmg_frqs[ei], inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei])
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
@@ -1508,20 +1444,11 @@ class Dispersion:
         pA = params[self.end_index[2]]
         kex = params[self.end_index[2]+1]
 
-        # Once off parameter conversions.
-        pB = 1.0 - pA
-        k_BA = pA * kex
-        k_AB = pB * kex
-
         multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
         multiply( multiply.outer( dwH.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_H, out=self.dwH_struct )
 
         # Reshape R20 to per experiment, spin and frequency.
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
-
-        # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
-        self.M0[0] = pA
-        self.M0[1] = pB
 
         # Initialise.
         chi2_sum = 0.0
@@ -1551,7 +1478,7 @@ class Dispersion:
                 aliased_dwH = dw_frq
 
             # Back calculate the R2eff values for each experiment type.
-            self.r2eff_ns_mmq[ei](M0=self.M0, m1=self.m1, m2=self.m2, R20A=r20, R20B=r20, pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
+            self.r2eff_ns_mmq[ei](M0=self.M0, R20A=r20, R20B=r20, pA=pA, dw=aliased_dw, dwH=aliased_dwH, kex=kex, inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
@@ -1641,11 +1568,6 @@ class Dispersion:
         pA = params[self.end_index[1]]
         kex = params[self.end_index[1]+1]
 
-        # Once off parameter conversions.
-        pB = 1.0 - pA
-        k_BA = pA * kex
-        k_AB = pB * kex
-
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
         multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
 
@@ -1653,7 +1575,7 @@ class Dispersion:
         self.r20_struct[:] = multiply.outer( r1rho_prime.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Back calculate the R2eff values.
-        ns_r1rho_2site(M0=self.M0, matrix=self.matrix, r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, r1=self.r1, pA=pA, pB=pB, dw=self.dw_struct, k_AB=k_AB, k_BA=k_BA, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc, num_points=self.num_disp_points)
+        ns_r1rho_2site(M0=self.M0, r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, r1=self.r1, pA=pA, dw=self.dw_struct, kex=kex, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc, num_points=self.num_disp_points)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct

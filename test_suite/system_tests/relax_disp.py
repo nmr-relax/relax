@@ -1186,6 +1186,298 @@ class Relax_disp(SystemTestCase):
         self.setup_bug_22146_unpacking_r2a_r2b_cluster(folder='ns_cpmg_2site_star_full', model_analyse = MODEL_NS_CPMG_2SITE_STAR_FULL, places = 4)
 
 
+    def test_cpmg_synthetic_b14_to_ns3d_cluster(self):
+        """Test synthetic cpmg data.  Created with B14, analysed with NS CPMG 2site 3D, for clustered analysis.
+
+        This is part of: U{Task #7807 <https://gna.org/task/index.php?7807>}: Speed-up of dispersion models for Clustered analysis.
+
+        This script will produce synthetic CPMG R2eff values according to the selected model, and the fit the selected model.
+        """
+
+        # Reset.
+        #self.interpreter.reset()
+
+        ## Set Experiments.
+        model_create = 'B14'
+        #model_create = 'NS CPMG 2-site expanded'
+        model_analyse = 'NS CPMG 2-site 3D'
+
+        # Exp 1
+        sfrq_1 = 599.8908617*1E6
+        r20_key_1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_1)
+        time_T2_1 = 0.06
+        ncycs_1 = [2, 4, 8, 10, 20, 30, 40, 60]
+        #r2eff_errs_1 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
+        r2eff_errs_1 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        exp_1 = [sfrq_1, time_T2_1, ncycs_1, r2eff_errs_1]
+
+        sfrq_2 = 499.8908617*1E6
+        r20_key_2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_2)
+        time_T2_2 = 0.05
+        ncycs_2 = [2, 4, 8, 10, 30, 35, 40, 50]
+        #r2eff_errs_2 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
+        r2eff_errs_2 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        exp_2 = [sfrq_2, time_T2_2, ncycs_2, r2eff_errs_2]
+
+        # Collect all exps
+        exps = [exp_1, exp_2]
+
+        spins = [
+            ['Ala', 1, 'N', {'r2': {r20_key_1:10., r20_key_2:11.5}, 'r2a': {r20_key_1:10., r20_key_2:11.5}, 'r2b': {r20_key_1:10., r20_key_2:11.5}, 'kex': 1000., 'pA': 0.95, 'dw': 2.} ],
+            ['Ala', 2, 'N', {'r2': {r20_key_1:13., r20_key_2:14.5}, 'r2a': {r20_key_1:13., r20_key_2:14.5}, 'r2b': {r20_key_1:13., r20_key_2:14.5}, 'kex': 1000., 'pA': 0.95, 'dw': 1.} ]
+            ]
+
+        # Collect the data to be used.
+        ds.data = [model_create, model_analyse, spins, exps]
+
+        # The tmp directory. None is the local directory.
+        ds.tmpdir = ds.tmpdir
+
+        # The results directory. None is the local directory.
+        #ds.resdir = None
+        ds.resdir = ds.tmpdir
+
+        # Do r20_from_min_r2eff ?.
+        ds.r20_from_min_r2eff = True
+
+        # Remove insignificant level.
+        ds.insignificance = 0.0
+
+        # The grid search size (the number of increments per dimension).
+        ds.GRID_INC = None
+
+        # The do clustering.
+        ds.do_cluster = True
+
+        # The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.
+        # The default value is 1e-25.
+        ds.set_func_tol = 1e-1
+
+        # The maximum number of iterations.
+        # The default value is 1e7.
+        ds.set_max_iter = 1000
+
+        # The verbosity level.
+        ds.verbosity = 1
+
+        # The rel_change WARNING level.
+        ds.rel_change = 0.05
+
+        # The plot_curves.
+        ds.plot_curves = False
+
+        # The conversion for ShereKhan at http://sherekhan.bionmr.org/.
+        ds.sherekhan_input = False
+
+        # Make a dx map to be opened om OpenDX. To map the hypersurface of chi2, when altering kex, dw and pA.
+        ds.opendx = False
+
+        # The set r2eff err.
+        ds.r2eff_err = 0.1
+
+        # The print result info.
+        ds.print_res = True
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'cpmg_synthetic.py')
+
+        cur_spins = ds.data[2]
+        # Compare results.
+        for i in range(len(cur_spins)):
+            res_name, res_num, spin_name, params = cur_spins[i]
+            cur_spin_id = ":%i@%s"%(res_num, spin_name)
+            cur_spin = return_spin(cur_spin_id)
+
+            grid_params = ds.grid_results[i][3]
+
+            # Extract the clust results.
+            min_params = ds.clust_results[i][3]
+            # Now read the parameters.
+            print("For spin: '%s'"%cur_spin_id)
+            for mo_param in cur_spin.params:
+                # The R2 is a dictionary, depending on spectrometer frequency.
+                if isinstance(getattr(cur_spin, mo_param), dict):
+                    grid_r2 = grid_params[mo_param]
+                    min_r2 = min_params[mo_param]
+                    set_r2 = params[mo_param]
+                    for key, val in set_r2.items():
+                        grid_r2_frq = grid_r2[key]
+                        min_r2_frq = min_r2[key]
+                        set_r2_frq = set_r2[key]
+                        frq = float(key.split(EXP_TYPE_CPMG_SQ+' - ')[-1].split('MHz')[0])
+                        rel_change = math.sqrt( (min_r2_frq - set_r2_frq)**2/(min_r2_frq)**2 )
+                        print("%s %s %s %s %.1f GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, frq, grid_r2_frq, min_r2_frq, set_r2_frq, rel_change) )
+                        if rel_change > ds.rel_change:
+                            print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
+                            print("###################################")
+
+                        ## Make test on R2.
+                        self.assertAlmostEqual(set_r2_frq, min_r2_frq, 1)
+                else:
+                    grid_val = grid_params[mo_param]
+                    min_val = min_params[mo_param]
+                    set_val = params[mo_param]
+                    rel_change = math.sqrt( (min_val - set_val)**2/(min_val)**2 )
+                    print("%s %s %s %s GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, grid_val, min_val, set_val, rel_change) )
+                    if rel_change > ds.rel_change:
+                        print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
+                        print("###################################")
+
+                    ## Make test on parameters.
+                    if mo_param == 'dw':
+                        self.assertAlmostEqual(set_val/10, min_val/10, 1)
+                    elif mo_param == 'kex':
+                        self.assertAlmostEqual(set_val/1000, min_val/1000, 1)
+                    elif mo_param == 'pA':
+                        self.assertAlmostEqual(set_val, min_val, 2)
+
+
+    def test_cpmg_synthetic_b14_to_ns_star_cluster(self):
+        """Test synthetic cpmg data.  Created with B14, analysed with NS CPMG 2site STAR, for clustered analysis.
+
+        This is part of: U{Task #7807 <https://gna.org/task/index.php?7807>}: Speed-up of dispersion models for Clustered analysis.
+
+        This script will produce synthetic CPMG R2eff values according to the selected model, and the fit the selected model.
+        """
+
+        # Reset.
+        #self.interpreter.reset()
+
+        ## Set Experiments.
+        model_create = 'B14'
+        #model_create = 'NS CPMG 2-site expanded'
+        model_analyse = 'NS CPMG 2-site star'
+
+        # Exp 1
+        sfrq_1 = 599.8908617*1E6
+        r20_key_1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_1)
+        time_T2_1 = 0.06
+        ncycs_1 = [2, 4, 8, 10, 20, 30, 40, 60]
+        #r2eff_errs_1 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
+        r2eff_errs_1 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        exp_1 = [sfrq_1, time_T2_1, ncycs_1, r2eff_errs_1]
+
+        sfrq_2 = 499.8908617*1E6
+        r20_key_2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_2)
+        time_T2_2 = 0.05
+        ncycs_2 = [2, 4, 8, 10, 30, 35, 40, 50]
+        #r2eff_errs_2 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
+        r2eff_errs_2 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        exp_2 = [sfrq_2, time_T2_2, ncycs_2, r2eff_errs_2]
+
+        # Collect all exps
+        exps = [exp_1, exp_2]
+
+        spins = [
+            ['Ala', 1, 'N', {'r2': {r20_key_1:10., r20_key_2:11.5}, 'r2a': {r20_key_1:10., r20_key_2:11.5}, 'r2b': {r20_key_1:10., r20_key_2:11.5}, 'kex': 1000., 'pA': 0.95, 'dw': 2.} ],
+            ['Ala', 2, 'N', {'r2': {r20_key_1:13., r20_key_2:14.5}, 'r2a': {r20_key_1:13., r20_key_2:14.5}, 'r2b': {r20_key_1:13., r20_key_2:14.5}, 'kex': 1000., 'pA': 0.95, 'dw': 1.} ]
+            ]
+
+        # Collect the data to be used.
+        ds.data = [model_create, model_analyse, spins, exps]
+
+        # The tmp directory. None is the local directory.
+        ds.tmpdir = ds.tmpdir
+
+        # The results directory. None is the local directory.
+        #ds.resdir = None
+        ds.resdir = ds.tmpdir
+
+        # Do r20_from_min_r2eff ?.
+        ds.r20_from_min_r2eff = True
+
+        # Remove insignificant level.
+        ds.insignificance = 0.0
+
+        # The grid search size (the number of increments per dimension).
+        ds.GRID_INC = None
+
+        # The do clustering.
+        ds.do_cluster = True
+
+        # The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.
+        # The default value is 1e-25.
+        ds.set_func_tol = 1e-1
+
+        # The maximum number of iterations.
+        # The default value is 1e7.
+        ds.set_max_iter = 1000
+
+        # The verbosity level.
+        ds.verbosity = 1
+
+        # The rel_change WARNING level.
+        ds.rel_change = 0.05
+
+        # The plot_curves.
+        ds.plot_curves = False
+
+        # The conversion for ShereKhan at http://sherekhan.bionmr.org/.
+        ds.sherekhan_input = False
+
+        # Make a dx map to be opened om OpenDX. To map the hypersurface of chi2, when altering kex, dw and pA.
+        ds.opendx = False
+
+        # The set r2eff err.
+        ds.r2eff_err = 0.1
+
+        # The print result info.
+        ds.print_res = True
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'cpmg_synthetic.py')
+
+        cur_spins = ds.data[2]
+        # Compare results.
+        for i in range(len(cur_spins)):
+            res_name, res_num, spin_name, params = cur_spins[i]
+            cur_spin_id = ":%i@%s"%(res_num, spin_name)
+            cur_spin = return_spin(cur_spin_id)
+
+            grid_params = ds.grid_results[i][3]
+
+            # Extract the clust results.
+            min_params = ds.clust_results[i][3]
+            # Now read the parameters.
+            print("For spin: '%s'"%cur_spin_id)
+            for mo_param in cur_spin.params:
+                # The R2 is a dictionary, depending on spectrometer frequency.
+                if isinstance(getattr(cur_spin, mo_param), dict):
+                    grid_r2 = grid_params[mo_param]
+                    min_r2 = min_params[mo_param]
+                    set_r2 = params[mo_param]
+                    for key, val in set_r2.items():
+                        grid_r2_frq = grid_r2[key]
+                        min_r2_frq = min_r2[key]
+                        set_r2_frq = set_r2[key]
+                        frq = float(key.split(EXP_TYPE_CPMG_SQ+' - ')[-1].split('MHz')[0])
+                        rel_change = math.sqrt( (min_r2_frq - set_r2_frq)**2/(min_r2_frq)**2 )
+                        print("%s %s %s %s %.1f GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, frq, grid_r2_frq, min_r2_frq, set_r2_frq, rel_change) )
+                        if rel_change > ds.rel_change:
+                            print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
+                            print("###################################")
+
+                        ## Make test on R2.
+                        self.assertAlmostEqual(set_r2_frq, min_r2_frq, 1)
+                else:
+                    grid_val = grid_params[mo_param]
+                    min_val = min_params[mo_param]
+                    set_val = params[mo_param]
+                    rel_change = math.sqrt( (min_val - set_val)**2/(min_val)**2 )
+                    print("%s %s %s %s GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, grid_val, min_val, set_val, rel_change) )
+                    if rel_change > ds.rel_change:
+                        print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
+                        print("###################################")
+
+                    ## Make test on parameters.
+                    if mo_param == 'dw':
+                        self.assertAlmostEqual(set_val/10, min_val/10, 1)
+                    elif mo_param == 'kex':
+                        self.assertAlmostEqual(set_val/1000, min_val/1000, 1)
+                    elif mo_param == 'pA':
+                        self.assertAlmostEqual(set_val, min_val, 2)
+
+
     def test_cpmg_synthetic_ns3d_to_cr72(self):
         """Test synthetic cpmg data.
 
@@ -2916,10 +3208,10 @@ class Relax_disp(SystemTestCase):
 
         # Checks for residue :71.
         self.assertAlmostEqual(spin71.r2[r20_key1], 4.992594256544, 1)
-        self.assertAlmostEqual(spin71.pA, 0.992258541625787, 2)
-        self.assertAlmostEqual(spin71.dw/100, 2.75140650899058/100, 2)
-        self.assertAlmostEqual(spin71.kex/100000, 2106.60885247431/100000, 2)
-        self.assertAlmostEqual(spin71.chi2/100, 17.3293856656588/100, 1)
+        self.assertAlmostEqual(spin71.pA, 0.986716058519642, 2)
+        self.assertAlmostEqual(spin71.dw/100, 2.09292495350993/100, 2)
+        self.assertAlmostEqual(spin71.kex/100000, 2438.04423541463/100000, 2)
+        self.assertAlmostEqual(spin71.chi2/100, 15.1644902423334/100, 1)
 
         # Test the conversion to k_AB from kex and pA.
         self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
@@ -3318,7 +3610,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin.r2[r20_key3], 10.219320492033058, 1)
         self.assertAlmostEqual(spin.pA, 0.950310172115387, 3)
         self.assertAlmostEqual(spin.dw, 4.356737157889636, 2)
-        self.assertAlmostEqual(spin.kex/1000, 433.176323890829849/1000, 3)
+        self.assertAlmostEqual(spin.kex/1000, 433.176323890829849/1000, 2)
         self.assertAlmostEqual(spin.chi2, 17.37460582872912, 1)
 
 
@@ -3529,7 +3821,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin.r2[r20_key2], 6.99888898689085, 2)
         self.assertAlmostEqual(spin.r2[r20_key3], 5.52012880268077, 2)
         self.assertAlmostEqual(spin.pA, 0.946990967372467, 4)
-        self.assertAlmostEqual(spin.dwH, -0.265308128403529, 4)
+        self.assertAlmostEqual(spin.dwH, -0.265308128403529, 3)
         self.assertAlmostEqual(spin.kex/1000, 406.843250675648/1000, 2)
         self.assertAlmostEqual(spin.chi2, 50.3431330819767, 1)
 

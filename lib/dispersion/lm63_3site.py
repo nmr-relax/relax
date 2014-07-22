@@ -69,7 +69,7 @@ from numpy import any, fabs, min, tanh, isfinite, sum
 from numpy.ma import fix_invalid, masked_where
 
 
-def r2eff_LM63_3site(r20=None, rex_B=None, rex_C=None, quart_kB=None, quart_kC=None, cpmg_frqs=None, back_calc=None):
+def r2eff_LM63_3site(r20=None, phi_ex_B=None, phi_ex_C=None, kB=None, kC=None, cpmg_frqs=None, back_calc=None):
     """Calculate the R2eff values for the LM63 3-site model.
 
     See the module docstring for details.
@@ -77,19 +77,29 @@ def r2eff_LM63_3site(r20=None, rex_B=None, rex_C=None, quart_kB=None, quart_kC=N
 
     @keyword r20:           The R20 parameter value (R2 with no exchange).
     @type r20:              numpy float array of rank [NS][NM][NO][ND]
-    @keyword rex_B:         The phi_ex_B / kB parameter value.
-    @type rex_B:            numpy float array of rank [NS][NM][NO][ND]
-    @keyword rex_C:         The phi_ex_C / kC parameter value.
-    @type rex_C:            numpy float array of rank [NE][NS][NM][NO][ND]
-    @keyword quart_kB:      Approximate chemical exchange rate constant between sites A and B (the exchange rate in rad/s) divided by 4.
-    @type quart_kB:         float
-    @keyword quart_kC:      Approximate chemical exchange rate constant between sites A and C (the exchange rate in rad/s) divided by 4.
-    @type quart_kC:         float
+    @keyword phi_ex_B:      The fast exchange factor between sites A and B (ppm^2)
+    @type phi_ex_B:         numpy float array of rank [NS][NM][NO][ND]
+    @keyword phi_ex_C:      The fast exchange factor between sites A and C (ppm^2)
+    @type phi_ex_C:         numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword kB:            Approximate chemical exchange rate constant between sites A and B (the exchange rate in rad/s).
+    @type kB:               float
+    @keyword kC:            Approximate chemical exchange rate constant between sites A and C (the exchange rate in rad/s).
+    @type kC:               float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
     @type cpmg_frqs:        numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
     @type back_calc:        numpy float array of rank [NE][NS][NM][NO][ND]
     """
+
+    # Once off parameter conversions.
+    # The phi_ex_B / kB parameter value.
+    rex_B = phi_ex_B / kB
+    # The phi_ex_C / kC parameter value.
+    rex_C = phi_ex_C / kC
+    # Approximate chemical exchange rate constant between sites A and B (the exchange rate in rad/s) divided by 4.
+    quart_kB = kB / 4.0
+    # Approximate chemical exchange rate constant between sites A and C (the exchange rate in rad/s) divided by 4.
+    quart_kC = kC / 4.0
 
     # Flag to tell if values should be replaced.
     t_rex_zero = False
@@ -108,7 +118,7 @@ def r2eff_LM63_3site(r20=None, rex_B=None, rex_C=None, quart_kB=None, quart_kC=N
     if t_quart_kB_zero and t_quart_kC_zero:
         t_quart_kB_kC_zero = True
 
-    # Test if rex is zero. Wait for replacement, since this is spin specific.
+    # Test if rex is zero. Create a mask for the affected spins to replace these with R20 at the end of the calculationWait for replacement, since this is spin specific.
     if min(fabs(rex_B)) == 0.0 and min(fabs(rex_C)) == 0.0:
         t_rex_zero = True
         mask_rex_B_zero = masked_where(rex_B == 0.0, rex_B)
