@@ -412,7 +412,7 @@ class Dispersion:
         if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
             self.M0 = zeros(3, float64)
         if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL]:
-            M0_0 = zeros( [self.NE, self.NS, self.NM, self.NO, self.ND,7, 1], float64)
+            M0_0 = zeros( [self.NE, self.NS, self.NM, self.NO, self.ND, 7, 1], float64)
             M0_0[:, :, :, :, :, 0, 0] = 0.5
             self.M0 = M0_0
             # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
@@ -1068,6 +1068,7 @@ class Dispersion:
 
         # Return the total chi-squared value.
         return chi2_rankN(self.values, self.back_calc, self.errors)
+
 
     def func_LM63(self, params):
         """Target function for the Luz and Meiboom (1963) fast 2-site exchange model.
@@ -1798,6 +1799,7 @@ class Dispersion:
 
         # Return the total chi-squared value.
         return chi2_rankN(self.values, self.back_calc, self.errors)
+
 
     def get_back_calc(self):
         """Class function to return back_calc as lists of lists.  Number of values in should match number of dispersion points or spin_lock.
