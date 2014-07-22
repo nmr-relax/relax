@@ -94,9 +94,6 @@ def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spi
     t_numer_zero = False
     t_denom_zero = False
 
-    # Repetitive calculations (to speed up calculations).
-    kex2 = kex**2
-
     # The non-Rex factors.
     sin_theta2 = sin(theta)**2
     R1_R2 = R1 * cos(theta)**2 + r1rho_prime * sin_theta2
@@ -111,7 +108,7 @@ def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spi
         mask_numer_zero = masked_where(numer == 0.0, numer)
 
     # Denominator.
-    denom = kex2 + spin_lock_fields2
+    denom = kex**2 + spin_lock_fields2
 
     # Catch math domain error of dividing with 0.
     # This is when denom =0.
