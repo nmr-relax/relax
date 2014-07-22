@@ -393,6 +393,52 @@ class Dispersion:
         if model == MODEL_NS_MMQ_3SITE_LINEAR:
             self.func = self.func_ns_mmq_3site_linear
 
+        # Setup special numpy array structures, for higher dimensional computation.
+        if model in [MODEL_CR72, MODEL_CR72_FULL]:
+            # Get the shape of back_calc structure.
+            # If using just one field, or having the same number of dispersion points, the shape would extend to that number.
+            # Shape has to be: [ei][si][mi][oi].
+            back_calc_shape = list( np.asarray(self.back_calc).shape )[:4]
+
+            # Find which frequency has the maximum number of disp points.
+            # To let the numpy array operate well together, the broadcast size has to be equal for all shapes.
+            self.max_num_disp_points = np.max(self.num_disp_points)
+
+            # Create numpy arrays to pass to the lib function.
+            # All numpy arrays have to have same shape to allow to multiply together.
+            # The dimensions should be [ei][si][mi][oi][di]. [Experiment][spins][spec. frq][offset][disp points].
+            # The number of disp point can change per spectrometer, so we make the maximum size.
+            self.R20A_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.R20B_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.pA_a = np.zeros(back_calc_shape + [self.max_num_disp_points])
+            self.dw_frq_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.kex_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.cpmg_frqs_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.num_disp_points_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.back_calc_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.errors_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.values_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.has_missing = False
+
+            # Loop over the experiment types.
+            for ei in range(self.num_exp):
+                # Loop over the spins.
+                for si in range(self.num_spins):
+                    # Loop over the spectrometer frequencies.
+                    for mi in range(self.num_frq):
+                        # Loop over the offsets.
+                        for oi in range(self.num_offsets[ei][si][mi]):
+                            # Extract number of dispersion points.
+                            num_disp_points = self.num_disp_points[ei][si][mi][oi]
+
+                            # Extract cpmg_frqs and num_disp_points from lists.
+                            self.cpmg_frqs_a[ei][si][mi][oi][:num_disp_points] = self.cpmg_frqs[ei][mi][oi]
+                            self.num_disp_points_a[ei][si][mi][oi][:num_disp_points] = self.num_disp_points[ei][si][mi][oi]
+
+                            for di in range(self.num_disp_points[ei][si][mi][oi]):
+                                if self.missing[ei][si][mi][oi][di]:
+                                    self.has_missing = True
+
 
     def calc_B14_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
         """Calculate the chi-squared value of the Baldwin (2014) 2-site exact solution model for all time scales.
@@ -470,29 +516,55 @@ class Dispersion:
         @rtype:         float
         """
 
-        # Initialise.
-        chi2_sum = 0.0
-
         # Loop over the spins.
         for si in range(self.num_spins):
             # Loop over the spectrometer frequencies.
             for mi in range(self.num_frq):
-                # The R20 index.
+                # Extract number of dispersion points.
+                num_disp_points = self.num_disp_points[0][si][mi][0]
+
+                 # The R20 index.
                 r20_index = mi + si*self.num_frq
+
+                # Store r20a and r20b values per disp point.
+                self.R20A_a[0][si][mi][0][:num_disp_points] = np.array( [R20A[r20_index]] * num_disp_points, float64)
+                self.R20B_a[0][si][mi][0][:num_disp_points]  = np.array( [R20B[r20_index]] * num_disp_points, float64)
 
                 # Convert dw from ppm to rad/s.
                 dw_frq = dw[si] * self.frqs[0][si][mi]
 
-                # Back calculate the R2eff values.
-                r2eff_CR72(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=self.cpmg_frqs[0][mi][0], back_calc = self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
+                # Store dw_frq per disp point.
+                self.dw_frq_a[0][si][mi][0][:num_disp_points] = np.array( [dw_frq] * num_disp_points, float64)
 
-                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                for di in range(self.num_disp_points[0][si][mi][0]):
-                    if self.missing[0][si][mi][0][di]:
-                        self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
+                # Store pA and kex per disp point.
+                self.pA_a[0][si][mi][0][:num_disp_points] = np.array( [pA] * num_disp_points, float64)
+                self.kex_a[0][si][mi][0][:num_disp_points] = np.array( [kex] * num_disp_points, float64)
 
-                # Calculate and return the chi-squared value.
-                chi2_sum += chi2(self.values[0][si][mi][0], self.back_calc[0][si][mi][0], self.errors[0][si][mi][0])
+                # Extract the errors and values to numpy array.
+                self.errors_a[0][si][mi][0][:num_disp_points] = self.errors[0][si][mi][0]
+                self.values_a[0][si][mi][0][:num_disp_points] = self.values[0][si][mi][0]
+
+        ## Back calculate the R2eff values.
+        r2eff_CR72(r20a=self.R20A_a, r20b=self.R20B_a, pA=self.pA_a, dw=self.dw_frq_a, kex=self.kex_a, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+
+
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Loop over the spins.
+            for si in range(self.num_spins):
+                # Loop over the spectrometer frequencies.
+                for mi in range(self.num_frq):
+                    # Loop over the dispersion points.
+                    for di in range(self.num_disp_points[0][si][mi][0]):
+                        if self.missing[0][si][mi][0][di]:
+                            #self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
+                            self.back_calc_a[0][si][mi][0][di] = self.values[0][si][mi][0][di]
+
+                    ## Calculate and return the chi-squared value.
+                    #chi2_sum += chi2(self.values[0][si][mi][0], self.back_calc[0][si][mi][0], self.errors[0][si][mi][0])
+
+        ## Calculate the chi-squared statistic.
+        chi2_sum = np.sum((1.0 / self.errors_a * (self.values_a - self.back_calc_a))**2)
 
         # Return the total chi-squared value.
         return chi2_sum

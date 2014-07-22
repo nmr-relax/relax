@@ -92,6 +92,7 @@ More information on the CR72 full model can be found in the:
 """
 
 # Python module imports.
+import numpy as np
 from numpy import arccosh, array, cos, cosh, isfinite, min, max, sqrt, sum
 
 # Repetitive calculations (to speed up calculations).
@@ -121,10 +122,22 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     @type num_points:       int
     """
 
+    # Determine if calculating in numpy rank-1 float array, of higher dimensions.
+    rank_1 = True
+    if isinstance(num_points, np.ndarray):
+        rank_1 = False
+
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
-    if dw == 0.0 or pA == 1.0 or kex == 0.0:
-        back_calc[:] = array([r20a]*num_points)
-        return
+    # For rank-1 float array.
+    if rank_1:
+        if dw == 0.0 or pA == 1.0 or kex == 0.0:
+            back_calc[:] = array([r20a]*num_points)
+            return
+    # For higher dimensions, return same structure.
+    else:
+        if np.allclose(dw, np.zeros(dw.shape)) or np.allclose(pA, np.ones(dw.shape)) or np.allclose(kex, np.zeros(dw.shape)):
+            back_calc[:] = r20a
+            return
 
     # The B population.
     pB = 1.0 - pA
@@ -136,7 +149,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     k_AB = pB * kex
 
     # The Psi and zeta values.
-    if r20a != r20b:
+    if not np.allclose(r20a, r20b):
         fact = r20a - r20b - k_BA + k_AB
         Psi = fact**2 - dw2 + 4.0*pA*pB*kex**2
         zeta = 2.0*dw * fact
@@ -159,14 +172,23 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     # Catch math domain error of cosh(val > 710).
     # This is when etapos > 710.
     if max(etapos) > 700:
-        back_calc[:] = array([r20a]*num_points)
-        return
+        if rank_1:
+            back_calc[:] = array([r20a]*num_points)
+            return
+        # For higher dimensions, return same structure.
+        else:
+            back_calc[:] = r20a
+            return
 
     # The arccosh argument - catch invalid values.
     fact = Dpos * cosh(etapos) - Dneg * cos(etaneg)
     if min(fact) < 1.0:
-        back_calc[:] = array([r20_kex]*num_points)
-        return
+        if rank_1:
+            back_calc[:] = array([r20_kex]*num_points)
+            return
+        else:
+            back_calc[:] = r20_kex
+            return
 
     # Calculate R2eff.
     R2eff = r20_kex - cpmg_frqs * arccosh( fact )
@@ -174,6 +196,9 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
     if not isfinite(sum(R2eff)):
-        R2eff = array([1e100]*num_points)
+        if rank_1:
+            R2eff = array([1e100]*num_points)
+        else:
+            R2eff = np.ones(R2eff.shape) * 1e100
 
     back_calc[:] = R2eff
