@@ -24,9 +24,11 @@
 
 # Python module imports.
 from numpy import float64, identity
+import sys
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxIntListIntError, RelaxLenError
+from lib.io import write_data
 from multi import Processor_box
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control import pipes
@@ -160,7 +162,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     api.overfit_deselect()
 
     # Determine the model specific grid bounds, and allow for the zooming grid search, and check the inc argument.
-    model_lower, model_upper, model_inc = grid_setup(lower, upper, inc)
+    model_lower, model_upper, model_inc = grid_setup(lower, upper, inc, verbosity=verbosity)
 
     # Create the scaling matrix.
     scaling_matrix = assemble_scaling_matrix()
@@ -200,7 +202,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     processor.run_queue()
 
 
-def grid_setup(lower=None, upper=None, inc=None):
+def grid_setup(lower=None, upper=None, inc=None, verbosity=1):
     """Determine the per-model grid bounds, allowing for the zooming grid search.
 
     @keyword lower:     The user supplied lower bounds of the grid search which must be equal to the number of parameters in the model.
@@ -209,6 +211,8 @@ def grid_setup(lower=None, upper=None, inc=None):
     @type upper:        list of numbers
     @keyword inc:       The user supplied grid search increments.
     @type inc:          int or list of int
+    @param verbosity:   The amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:    int
     @return:            The per-model grid upper and lower bounds.  The first dimension of each structure corresponds to the model, the second the model parameters.
     @rtype:             tuple of lists of lists of float, lists of lists of float, list of lists of int
     """
@@ -272,6 +276,7 @@ def grid_setup(lower=None, upper=None, inc=None):
         model_upper.append([])
 
         # Loop over the parameters.
+        data = []
         for i in range(n):
             # The lower bound for this parameter.
             if lower != None:
@@ -295,6 +300,13 @@ def grid_setup(lower=None, upper=None, inc=None):
             # Append.
             model_lower[-1].append(lower_i)
             model_upper[-1].append(upper_i)
+
+            # Add to the data list for printing out.
+            data.append([names[i], "%20s" % lower_i, "%20s" % upper_i])
+
+        # Printout.
+        if verbosity:
+            write_data(out=sys.stdout, headings=["Parameter", "Lower", "Upper"], data=data)
 
     # Return the bounds.
     return model_lower, model_upper, model_inc
