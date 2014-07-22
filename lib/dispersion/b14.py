@@ -116,6 +116,7 @@ from numpy.ma import fix_invalid, masked_greater_equal, masked_where
 # Repetitive calculations (to speed up calculations).
 g_fact = 1/sqrt(2)
 
+
 def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None):
     """Calculate the R2eff values for the CR72 model.
 
@@ -210,7 +211,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, nc
 
     # Derived from relaxation.
     # E0 = -2.0 * tcp * (F00R - f11R).
-    E0 =  two_tcp * g3
+    E0 = two_tcp * g3
 
     # Catch math domain error of sinh(val > 710).
     # This is when E0 > 710.
@@ -220,8 +221,8 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, nc
         # To prevent math errors, set e_zero to 1.
         E0[mask_max_e.mask] = 1.0
 
-    # Derived from chemical shifts  #E2 = complex(0,-2.0 * tcp * (F00I - f11I)).
-    E2 =  two_tcp * g4
+    # Derived from chemical shifts  #E2 = complex(0, -2.0 * tcp * (F00I - f11I)).
+    E2 = two_tcp * g4
 
     # Mixed term (complex) (E0 - iE2)/2.
     E1 = (g3 - g4*1j) * tcp
@@ -282,7 +283,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, nc
         Tog.real[mask_log_tog_neg] = 1.0
 
     # Fastest calculation.
-    back_calc[:] = (r20a + r20b + kex) / 2.0  - inv_tcpmg * ( ncyc *  arccosh(v1c.real) + log(Tog.real) )
+    back_calc[:] = (r20a + r20b + kex) / 2.0 - inv_tcpmg * ( ncyc * arccosh(v1c.real) + log(Tog.real) )
 
     # Replace data in array.
     # If dw is zero.
