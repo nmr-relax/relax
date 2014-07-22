@@ -302,11 +302,11 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1):
             model_upper[-1].append(upper_i)
 
             # Add to the data list for printing out.
-            data.append([names[i], "%20s" % lower_i, "%20s" % upper_i])
+            data.append([names[i], "%20s" % lower_i, "%20s" % upper_i, "%20s" % model_inc[-1][i]])
 
         # Printout.
         if verbosity:
-            write_data(out=sys.stdout, headings=["Parameter", "Lower", "Upper"], data=data)
+            write_data(out=sys.stdout, headings=["Parameter", "Lower", "Upper", "Increments"], data=data)
 
     # Return the bounds.
     return model_lower, model_upper, model_inc
