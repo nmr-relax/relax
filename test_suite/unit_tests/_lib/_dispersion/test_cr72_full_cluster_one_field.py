@@ -126,9 +126,7 @@ class Test_cr72_full_cluster_one_field(TestCase):
         # The number of disp point can change per spectrometer, so we make the maximum size.
         self.R20A_a = ones(back_calc_shape + [self.max_num_disp_points])
         self.R20B_a = ones(back_calc_shape + [self.max_num_disp_points])
-        self.pA_a = zeros(back_calc_shape + [self.max_num_disp_points])
         self.dw_frq_a = ones(back_calc_shape + [self.max_num_disp_points])
-        self.kex_a = ones(back_calc_shape + [self.max_num_disp_points])
         self.cpmg_frqs_a = ones(back_calc_shape + [self.max_num_disp_points])
         self.num_disp_points_a = ones(back_calc_shape + [self.max_num_disp_points])
         self.back_calc_a = ones(back_calc_shape + [self.max_num_disp_points])
@@ -166,12 +164,8 @@ class Test_cr72_full_cluster_one_field(TestCase):
                 # Store dw_frq per disp point.
                 self.dw_frq_a[0][si][mi][0] = array( [dw_frq] * self.max_num_disp_points, float64)
 
-                # Store pA and kex per disp point.
-                self.pA_a[0][si][mi][0] = array( [pA] * self.max_num_disp_points, float64)
-                self.kex_a[0][si][mi][0] = array( [kex] * self.max_num_disp_points, float64)
-
         ## Back calculate the R2eff values.
-        r2eff_CR72(r20a=self.R20A_a, r20b=self.R20B_a, pA=self.pA_a, dw=self.dw_frq_a, kex=self.kex_a, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        r2eff_CR72(r20a=self.R20A_a, r20b=self.R20B_a, pA=pA, dw=self.dw_frq_a, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
 
         # Now return the values back to the structure of self.back_calc object.
         ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
@@ -474,10 +468,10 @@ class Test_cr72_full_cluster_one_field(TestCase):
 
 
     def test_cr72_full_cluster_one_field_no_rex8(self):
-        """Test the r2eff_cr72() function for no exchange when kex = 1e5."""
+        """Test the r2eff_cr72() function for no exchange when kex = 1e7."""
 
         # Parameter reset.
-        self.kex = 1e5
+        self.kex = 1e7
 
         # Calculate and check the R2eff values.
         self.calc_r2eff()

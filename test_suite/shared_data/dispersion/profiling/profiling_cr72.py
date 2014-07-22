@@ -54,10 +54,16 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_B14_F
 # Alter setup.
 def main():
     if True:
+        # Nr of iterations.
+        nr_iter = 1
+
+        # Print statistics.
+        verbose = True
+
         # Calc for single.
         s_filename = tempfile.NamedTemporaryFile(delete=False).name
         # Profile for a single spin.
-        cProfile.run('single(iter=100)', s_filename)
+        cProfile.run('single(iter=%s)'%nr_iter, s_filename)
 
         # Read all stats files into a single object
         s_stats = pstats.Stats(s_filename)
@@ -69,13 +75,14 @@ def main():
         s_stats.sort_stats('cumulative')
 
         # Print report for single.
-        s_stats.print_stats()
+        if verbose:
+            s_stats.print_stats()
 
     if True:
         # Calc for cluster.
         c_filename = tempfile.NamedTemporaryFile(delete=False).name
         # Profile for a cluster of 100 spins.
-        cProfile.run('cluster(iter=100)', c_filename)
+        cProfile.run('cluster(iter=%s)'%nr_iter, c_filename)
 
         # Read all stats files into a single object
         c_stats = pstats.Stats(c_filename)
@@ -87,7 +94,8 @@ def main():
         c_stats.sort_stats('cumulative')
 
         # Print report for clustered.
-        c_stats.print_stats()
+        if verbose:
+            c_stats.print_stats()
 
 
 class Profile(Dispersion):

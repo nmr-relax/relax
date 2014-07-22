@@ -92,7 +92,8 @@ More information on the CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import allclose, arccosh, array, cos, cosh, isfinite, min, max, ndarray, ones, sqrt, sum, zeros
+from numpy import arccosh, array, cos, cosh, isfinite, fabs, min, max, multiply, sqrt, subtract, sum
+from numpy.ma import fix_invalid, masked_greater_equal, masked_less, masked_where
 
 # Repetitive calculations (to speed up calculations).
 eta_scale = 2.0**(-3.0/2.0)
@@ -104,39 +105,37 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
 
 
     @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
-    @type r20a:             float
+    @type r20a:             numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword r20b:          The R20 parameter value of state B (R2 with no exchange).
-    @type r20b:             float
+    @type r20b:             numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
-    @type dw:               float
+    @type dw:               numpy array of rank [NE][NS][[NM][NO][ND]
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
-    @type cpmg_frqs:        numpy rank-1 float array
+    @type cpmg_frqs:        numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
+    @type back_calc:        numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
     @type num_points:       int
     """
 
-    # Determine if calculating in numpy rank-1 float array, of higher dimensions.
-    rank_1 = True
-    if isinstance(num_points, ndarray):
-        rank_1 = False
+    # Flag to tell if values should be replaced if max_etapos in cosh function is violated.
+    t_dw_zero = False
+    t_max_etapos = False
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
-    # For rank-1 float array.
-    if rank_1:
-        if dw == 0.0 or pA == 1.0 or kex == 0.0:
-            back_calc[:] = array([r20a]*num_points)
-            return
-    # For higher dimensions, return same structure.
-    else:
-        if allclose(dw, zeros(dw.shape)) or allclose(pA, ones(dw.shape)) or allclose(kex, zeros(dw.shape)):
+    # Test if pA or kex is zero.
+    if kex == 0.0 or pA == 1.0:
             back_calc[:] = r20a
             return
+
+    # Test if dw is zero. Wait for replacement, since this is spin specific.
+    if min(fabs(dw)) == 0.0:
+        t_dw_zero = True
+        mask_dw_zero = masked_where(dw == 0.0, dw)
 
     # The B population.
     pB = 1.0 - pA
@@ -148,7 +147,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     k_AB = pB * kex
 
     # The Psi and zeta values.
-    if not allclose(r20a, r20b):
+    if sum(r20a - r20b) != 0.0:
         fact = r20a - r20b - k_BA + k_AB
         Psi = fact**2 - dw2 + 4.0*pA*pB*kex**2
         zeta = 2.0*dw * fact
@@ -171,33 +170,32 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     # Catch math domain error of cosh(val > 710).
     # This is when etapos > 710.
     if max(etapos) > 700:
-        if rank_1:
-            back_calc[:] = array([r20a]*num_points)
-            return
-        # For higher dimensions, return same structure.
-        else:
-            back_calc[:] = r20a
-            return
+        t_max_etapos = True
+        mask_max_etapos = masked_greater_equal(etapos, 700.0)
+        # To prevent math errors, set etapos to 1.
+        etapos[mask_max_etapos.mask] = 1.0
 
     # The arccosh argument - catch invalid values.
     fact = Dpos * cosh(etapos) - Dneg * cos(etaneg)
     if min(fact) < 1.0:
-        if rank_1:
-            back_calc[:] = array([r20_kex]*num_points)
-            return
-        else:
-            back_calc[:] = r20_kex
-            return
+        back_calc[:] = r20_kex
+        return
 
-    # Calculate R2eff.
-    R2eff = r20_kex - cpmg_frqs * arccosh( fact )
+    # Calculate R2eff. This uses the temporary buffer and fill directly to back_calc.
+    multiply(cpmg_frqs,  arccosh(fact), out=back_calc)
+    subtract(r20_kex, back_calc, out=back_calc)
+
+    # Replace data in array.
+    # If dw is zero.
+    if t_dw_zero:
+        back_calc[mask_dw_zero.mask] = r20a[mask_dw_zero.mask]
+
+    # If eta_pos above 700.
+    if t_max_etapos:
+        back_calc[mask_max_etapos.mask] = r20a[mask_max_etapos.mask]
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
-    if not isfinite(sum(R2eff)):
-        if rank_1:
-            R2eff = array([1e100]*num_points)
-        else:
-            R2eff = ones(R2eff.shape) * 1e100
-
-    back_calc[:] = R2eff
+    if not isfinite(sum(back_calc)):
+        # Replaces nan, inf, etc. with fill value.
+        fix_invalid(back_calc, copy=False, fill_value=1e100)

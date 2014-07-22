@@ -65,6 +65,46 @@ def chi2(data, back_calc_vals, errors):
     return sum((1.0 / errors * (data - back_calc_vals))**2, axis=0)
 
 
+# Chi-squared value for multi-dimensional axis.
+####################
+
+
+def chi2_rankN(data, back_calc_vals, errors):
+    """Function to calculate the chi-squared value for multiple numpy array axis.
+
+    The chi-squared equation
+    ========================
+
+    The equation is::
+
+                        _n_
+                        \    (yi - yi(theta)) ** 2
+        chi^2(theta)  =  >   ---------------------
+                        /__      sigma_i ** 2
+                        i=1
+
+    where
+        - i is the index over data sets.
+        - theta is the parameter vector.
+        - yi are the values of the measured data set.
+        - yi(theta) are the values of the back calculated data set.
+        - sigma_i are the values of the error set.
+
+
+    @param data:            The multi dimensional vectors of yi values.
+    @type data:             numpy multi dimensional array
+    @param back_calc_vals:  The multi dimensional vectors of yi(theta) values.
+    @type back_calc_vals:   numpy multi dimensional array
+    @param errors:          The multi dimensional vectors of sigma_i values.
+    @type errors:           numpy multi dimensional array
+    @return:                The chi-squared value.
+    @rtype:                 float
+    """
+
+    # Calculate the chi-squared statistic.
+    return sum((1.0 / errors * (data - back_calc_vals))**2)
+
+
 # Chi-squared gradient.
 #######################
 

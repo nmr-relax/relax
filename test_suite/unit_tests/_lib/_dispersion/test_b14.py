@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, pi, zeros
+from numpy import array, float64, ones, pi, zeros
 from unittest import TestCase
 
 # relax module imports.
@@ -59,8 +59,11 @@ class Test_b14(TestCase):
         # Parameter conversions.
         k_AB, k_BA, pB, dw_frq = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
+        # Convert to array.
+        a = ones([self.num_points])
+
         # Calculate the R2eff values.
-        r2eff_B14(r20a=self.r20a, r20b=self.r20b, pA=self.pA, pB=pB, dw=dw_frq, kex=self.kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.ncyc, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.R2eff, num_points=self.num_points)
+        r2eff_B14(r20a=self.r20a*a, r20b=self.r20b*a, pA=self.pA, pB=pB, dw=dw_frq*a, kex=self.kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.ncyc, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.R2eff, num_points=self.num_points)
 
         # Check all R2eff values.
         for i in range(self.num_points):
@@ -174,10 +177,10 @@ class Test_b14(TestCase):
 
 
     def test_b14_no_rex8(self):
-        """Test the r2eff_b14() function for no exchange when kex = 1e5."""
+        """Test the r2eff_b14() function for no exchange when kex = 1e8."""
 
         # Parameter reset.
-        self.kex = 1e5
+        self.kex = 1e8
 
         # Calculate and check the R2eff values.
         self.calc_r2eff()
