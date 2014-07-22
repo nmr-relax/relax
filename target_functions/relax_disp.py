@@ -1793,8 +1793,8 @@ class Dispersion:
     def get_back_calc(self):
         """Class function to return back_calc as lists of lists.  Number of values in should match number of dispersion points or spin_lock.
 
-        @return:        back_calc in structure of list of lists.
-        @rtype:         float
+        @return:        back calculation of the R2eff/R1rho values in structure of list of lists.  The dimensions are {Ei, Si, Mi, Oi, Di}.
+        @rtype:         rank-4 list of numpy rank-1 float arrays
         """
 
         back_calc_return = deepcopy(self.values_orig)
