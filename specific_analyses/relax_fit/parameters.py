@@ -51,7 +51,7 @@ def assemble_param_vector(spin=None, sim_index=None):
             if sim_index != None:
                 param_vector.append(spin.rx_sim[sim_index])
             elif spin.rx == None:
-                param_vector.append(0.0)
+                param_vector.append(None)
             else:
                 param_vector.append(spin.rx)
 
@@ -60,7 +60,7 @@ def assemble_param_vector(spin=None, sim_index=None):
             if sim_index != None:
                 param_vector.append(spin.i0_sim[sim_index])
             elif spin.i0 == None:
-                param_vector.append(0.0)
+                param_vector.append(None)
             else:
                 param_vector.append(spin.i0)
 
@@ -69,7 +69,7 @@ def assemble_param_vector(spin=None, sim_index=None):
             if sim_index != None:
                 param_vector.append(spin.iinf_sim[sim_index])
             elif spin.iinf == None:
-                param_vector.append(0.0)
+                param_vector.append(None)
             else:
                 param_vector.append(spin.iinf)
 
