@@ -29,9 +29,11 @@ from specific_analyses.parameter_object import Param_list
 from specific_analyses.relax_disp.variables import MODEL_LIST_MMQ, MODEL_M61B
 
 
-def dw_lower(model_info):
+def dw_lower(incs=None, model_info=None):
     """Determine the lower grid bound for the dw parameters.
 
+    @keyword incs:          The number of grid search increments.
+    @type incs:             int
     @keyword model_info:    The spin ID strings from the model_loop() specific API method.
     @type model_info:       list of str
     @return:                The lower grid search bound for the dw parameters.
@@ -50,9 +52,11 @@ def dw_lower(model_info):
         return 0.0
 
 
-def dwH_lower(model_info):
+def dwH_lower(incs=None, model_info=None):
     """Determine the lower grid bound for the dwH parameters.
 
+    @keyword incs:          The number of grid search increments.
+    @type incs:             int
     @keyword model_info:    The spin ID strings from the model_loop() specific API method.
     @type model_info:       list of str
     @return:                The lower grid search bound for the dwH parameters.
@@ -71,9 +75,11 @@ def dwH_lower(model_info):
         return 0.0
 
 
-def pA_lower(model_info):
+def pA_lower(incs=None, model_info=None):
     """Determine the lower grid bound for the pA parameter.
 
+    @keyword incs:          The number of grid search increments.
+    @type incs:             int
     @keyword model_info:    The spin containers and the spin ID strings from the model_loop() specific API method.
     @type model_info:       list of SpinContainer instances, list of str
     @return:                The lower grid search bound for the pA parameter.
@@ -92,12 +98,14 @@ def pA_lower(model_info):
         return 0.5
 
 
-def i0_upper(model_info):
+def i0_upper(incs=None, model_info=None):
     """Find the maximum peak intensity for the cluster.
 
     This is for the grid search upper bound for the I0 parameter.
 
 
+    @keyword incs:          The number of grid search increments.
+    @type incs:             int
     @keyword model_info:    The spin containers and the spin ID strings from the model_loop() specific API method.
     @type model_info:       list of SpinContainer instances, list of str
     @return:                The maximum peak intensity of all spins and time points.

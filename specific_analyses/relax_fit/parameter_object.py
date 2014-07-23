@@ -30,7 +30,7 @@ from lib.mathematics import round_to_next_order
 from specific_analyses.parameter_object import Param_list
 
 
-def i_scaling(model_info):
+def i_scaling(model_info=None):
     """Determine the scaling factor for the peak intensities.
 
     This is for the scaling of the I0 and Iinf parameters during optimisation.  The maximum intensity will be used to scale all values.
@@ -49,12 +49,14 @@ def i_scaling(model_info):
     return round_to_next_order(max(spin.peak_intensity.values()))
 
 
-def i0(model_info):
+def i0(incs=None, model_info=None):
     """Find the average intensity of the first time point.
 
     This is for the grid search upper bound for the I0 parameter.
 
 
+    @keyword incs:          The number of grid search increments.
+    @type incs:             int
     @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() specific API method.
     @type model_info:       SpinContainer instance, str
     @return:                The average peak intensity of the first time point.
@@ -75,12 +77,14 @@ def i0(model_info):
     return average(spin.peak_intensity[id])
 
 
-def iinf(model_info):
+def iinf(incs=None, model_info=None):
     """Find the average intensity of the last time point.
 
     This is for the grid search upper bound for the Iinf parameter.
 
 
+    @keyword incs:          The number of grid search increments.
+    @type incs:             int
     @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() specific API method.
     @type model_info:       SpinContainer instance, str
     @return:                The average peak intensity of the last time point.

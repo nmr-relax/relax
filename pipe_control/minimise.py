@@ -292,17 +292,20 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
             elif upper != None:
                 comment = 'User supplied upper bound'
 
+            # Alias the number of increments for this parameter.
+            incs = model_inc[-1][i]
+
             # The lower bound for this parameter.
             if lower != None:
                 lower_i = lower[i]
             else:
-                lower_i = param_object.grid_lower(names[i], model_info=model_info)
+                lower_i = param_object.grid_lower(names[i], incs=incs, model_info=model_info)
 
             # The upper bound for this parameter.
             if upper != None:
                 upper_i = upper[i]
             else:
-                upper_i = param_object.grid_upper(names[i], model_info=model_info)
+                upper_i = param_object.grid_upper(names[i], incs=incs, model_info=model_info)
 
             # Skip preset values.
             if skip_preset and not values[i] in [None, {}, []] and not isNaN(values[i]):
@@ -321,7 +324,7 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
             model_upper[-1].append(upper_i)
 
             # Add to the data list for printing out.
-            data.append([names[i], "%15s" % lower_i, "%15s" % upper_i, "%15s" % model_inc[-1][i], comment])
+            data.append([names[i], "%15s" % lower_i, "%15s" % upper_i, "%15s" % incs, comment])
 
         # Printout.
         if verbosity:

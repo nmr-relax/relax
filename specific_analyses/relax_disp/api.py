@@ -533,7 +533,7 @@ class Relax_disp(API_base, API_common):
             # Test if the parameter is in the list:
 
             if param_names[i] == param:
-                return [self._PARAMS.grid_lower(param, [spin_id]), self._PARAMS.grid_upper(param, [spin_id])]
+                return [self._PARAMS.grid_lower(param, incs=0, model_info=[spin_id]), self._PARAMS.grid_upper(param, incs=0, model_info=[spin_id])]
 
 
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling_matrix=None, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
