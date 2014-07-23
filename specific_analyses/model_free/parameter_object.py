@@ -22,11 +22,43 @@
 # Module docstring.
 """The module for the Lipari-Szabo model-free parameter list object."""
 
+# Python module imports.
+from math import pi
+
 # relax module imports.
 from lib.physical_constants import N15_CSA
 from pipe_control import relax_data
 from specific_analyses.parameter_object import Param_list
 from specific_analyses.model_free.parameters import conv_factor_rex, units_rex
+
+
+def rex_scaling(model_info=None):
+    """Determine the scaling factor for the Rex parameter.
+
+    @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+    @type model_info:       int
+    @return:                The scaling factor for the Rex parameter.
+    @rtype:                 float
+    """
+
+    # Return the scaling factor.
+    return 1.0 / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]])**2
+
+
+def rex_upper(incs=None, model_info=None):
+    """Determine the grid search upper bound for the Rex parameter.
+
+    @keyword incs:          The number of grid search increments.
+    @type incs:             int
+    @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+    @type model_info:       int
+    @return:                The grid search upper bound for the Rex parameter.
+    @rtype:                 float
+    """
+
+    # Return the upper bound.
+    return 5.0 / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]])**2
+
 
 
 class Model_free_params(Param_list):
@@ -76,6 +108,8 @@ class Model_free_params(Param_list):
             desc = 'S2, the model-free generalised order parameter (S2 = S2f.S2s)',
             py_type = float,
             set = 'params',
+            grid_lower = 0.0,
+            grid_upper = 1.0,
             grace_string = '\\qS\\v{0.4}\\z{0.71}2\\Q',
             err = True,
             sim = True
@@ -87,6 +121,8 @@ class Model_free_params(Param_list):
             desc = 'S2f, the faster motion model-free generalised order parameter',
             py_type = float,
             set = 'params',
+            grid_lower = 0.0,
+            grid_upper = 1.0,
             grace_string = '\\qS\\sf\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q',
             err = True,
             sim = True
@@ -98,6 +134,8 @@ class Model_free_params(Param_list):
             desc = 'S2s, the slower motion model-free generalised order parameter',
             py_type = float,
             set = 'params',
+            grid_lower = 0.0,
+            grid_upper = 1.0,
             grace_string = '\\qS\\ss\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q',
             err = True,
             sim = True
@@ -109,6 +147,9 @@ class Model_free_params(Param_list):
             desc = 'The spin specific global correlation time (seconds)',
             py_type = float,
             set = 'params',
+            scaling = 1e-12,
+            grid_lower = 1.0 * 1e-9,
+            grid_upper = 12.0 * 1e-9,
             grace_string = '\\xt\\f{}\\sm',
             units = 'ns',
             err = True,
@@ -121,6 +162,9 @@ class Model_free_params(Param_list):
             desc = 'Single motion effective internal correlation time (seconds)',
             py_type = float,
             set = 'params',
+            scaling = 1e-12,
+            grid_lower = 0.0,
+            grid_upper = 500.0 * 1e-12,
             conv_factor = 1e-12,
             grace_string = '\\xt\\f{}\\se',
             units = 'ps',
@@ -134,6 +178,9 @@ class Model_free_params(Param_list):
             desc = 'Faster motion effective internal correlation time (seconds)',
             py_type = float,
             set = 'params',
+            scaling = 1e-12,
+            grid_lower = 0.0,
+            grid_upper = 500.0 * 1e-12,
             conv_factor = 1e-12,
             grace_string = '\\xt\\f{}\\sf',
             units = 'ps',
@@ -147,6 +194,9 @@ class Model_free_params(Param_list):
             desc = 'Slower motion effective internal correlation time (seconds)',
             py_type = float,
             set = 'params', 
+            scaling = 1e-12,
+            grid_lower = 0.0,
+            grid_upper = 500.0 * 1e-12,
             conv_factor = 1e-12,
             grace_string = '\\xt\\f{}\\ss',
             units = 'ps',
@@ -160,12 +210,31 @@ class Model_free_params(Param_list):
             desc = 'Chemical exchange relaxation (sigma_ex = Rex / omega**2)',
             py_type = float,
             set = 'params',
+            scaling = rex_scaling,
+            grid_lower = 0.0,
+            grid_upper = rex_upper,
             conv_factor = conv_factor_rex,
             units = units_rex,
             grace_string = '\\qR\\sex\\Q',
             err = True,
             sim = True
         )
+        # FIXME:  This interatomic parameter should be activated.
+        #self._add(
+        #    'r',
+        #    scope = 'interatomic',
+        #    default = 1.02e-10,
+        #    desc = 'The XH bond length',
+        #    py_type = float,
+        #    set = 'params',
+        #    scaling = 1e-10,
+        #    grid_lower = 1.0 * 1e-10,
+        #    grid_upper = 1.05 * 1e-10,
+        #    units = 'm',
+        #    grace_string = 'Bond length (m)',
+        #    err = True,
+        #    sim = True
+        #)
         self._add_csa(
             default = N15_CSA,
             set = 'params',

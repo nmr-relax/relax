@@ -36,6 +36,43 @@ from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
+def da_lower(incs=None, model_info=None):
+    """Determine the lower grid bound for the Da diffusion parameter.
+
+    @keyword incs:          The number of grid search increments.
+    @type incs:             int
+    @keyword model_info:    The model information from model_loop().
+    @type model_info:       unknown
+    @return:                The lower grid search bound for the Da diffusion parameter.
+    @rtype:                 float
+    """
+
+    # Return the lower bound.
+    if (cdp.diff_tensor.type == 'spheroid' and cdp.diff_tensor.spheroid_type == 'prolate') or cdp.diff_tensor.type == 'ellipsoid':
+        return 0.0
+    else:
+        return -1e7
+
+
+def da_upper(incs=None, model_info=None):
+    """Determine the upper grid bound for the Da diffusion parameter.
+
+    @keyword incs:          The number of grid search increments.
+    @type incs:             int
+    @keyword model_info:    The model information from model_loop().
+    @type model_info:       unknown
+    @return:                The upper grid search bound for the Da diffusion parameter.
+    @rtype:                 float
+    """
+
+    # Return the upper bound.
+    if cdp.diff_tensor.type == 'spheroid' and cdp.diff_tensor.spheroid_type == 'oblate':
+        return 0.0
+    else:
+        return 1e7
+
+
+
 class Param_list(object):
     """A special object for handling global and spin parameters."""
 
@@ -288,6 +325,9 @@ class Param_list(object):
             desc = 'Chemical shift anisotropy (unitless)',
             py_type = float,
             set = set,
+            scaling = 1e-4,
+            grid_lower = -120 * 1e-6,
+            grid_upper = -200 * 1e-6,
             conv_factor = 1e-6,
             grace_string = '\\qCSA\\Q',
             err = err,
@@ -308,6 +348,9 @@ class Param_list(object):
             desc = 'Global correlation time',
             py_type = float,
             set = 'params',
+            scaling = 1e-12,
+            grid_lower = 1.0 * 1e-9,
+            grid_upper = 12.0 * 1e-9,
             conv_factor = 1e-9,
             err = True,
             sim = True
@@ -392,6 +435,9 @@ class Param_list(object):
             desc = 'Anisotropic component of the diffusion tensor',
             py_type = float,
             set = 'params',
+            scaling = 1e7,
+            grid_lower = da_lower,
+            grid_upper = da_upper,
             conv_factor = 1e6,
             err = True,
             sim = True
@@ -403,6 +449,8 @@ class Param_list(object):
             desc = 'Rhombic component of the diffusion tensor',
             py_type = float,
             set = 'params',
+            grid_lower = 0.0,
+            grid_upper = 1.0,
             err = True,
             sim = True
         )
@@ -424,6 +472,8 @@ class Param_list(object):
             desc = 'The first Euler angle of the ellipsoid diffusion tensor',
             py_type = float,
             set = 'params',
+            grid_lower = 0.0,
+            grid_upper = pi,
             conv_factor = (2.0*pi) / 360.0,
             err = True,
             sim = True
@@ -436,6 +486,8 @@ class Param_list(object):
             desc = 'The second Euler angle of the ellipsoid diffusion tensor',
             py_type = float,
             set = 'params',
+            grid_lower = 0.0,
+            grid_upper = pi,
             conv_factor = (2.0*pi) / 360.0,
             err = True,
             sim = True
@@ -448,6 +500,8 @@ class Param_list(object):
             desc = 'The third Euler angle of the ellipsoid diffusion tensor',
             py_type = float,
             set = 'params',
+            grid_lower = 0.0,
+            grid_upper = pi,
             conv_factor = (2.0*pi) / 360.0,
             err = True,
             sim = True
@@ -460,6 +514,8 @@ class Param_list(object):
             desc = 'The polar angle defining the major axis of the spheroid diffusion tensor',
             py_type = float,
             set = 'params',
+            grid_lower = 0.0,
+            grid_upper = pi,
             conv_factor = (2.0*pi) / 360.0,
             err = True,
             sim = True
@@ -472,6 +528,8 @@ class Param_list(object):
             desc = 'The azimuthal angle defining the major axis of the spheroid diffusion tensor',
             py_type = float,
             set = 'params',
+            grid_lower = 0.0,
+            grid_upper = pi,
             conv_factor = (2.0*pi) / 360.0,
             err = True,
             sim = True

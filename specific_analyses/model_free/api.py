@@ -33,6 +33,7 @@ from numpy import array, dot, float64, int32, zeros
 from numpy.linalg import inv
 from re import match, search
 import string
+import sys
 from types import MethodType
 from warnings import warn
 
@@ -41,6 +42,7 @@ from lib.arg_check import is_num_list, is_str_list
 from lib.errors import RelaxError, RelaxFault, RelaxNoModelError, RelaxNoSequenceError, RelaxNoTensorError
 from lib.float import isInf
 from lib.physical_constants import h_bar, mu0, return_gyromagnetic_ratio
+from lib.text.sectioning import subsection
 from lib.warnings import RelaxDeselectWarning, RelaxWarning
 from multi import Processor_box
 from pipe_control import diffusion_tensor, interatomic, mol_res_spin, pipes, relax_data, sequence
@@ -54,8 +56,8 @@ from specific_analyses.model_free.bmrb import sf_csa_read, sf_model_free_read, t
 from specific_analyses.model_free.data import compare_objects
 from specific_analyses.model_free.molmol import Molmol
 from specific_analyses.model_free.model import determine_model_type
-from specific_analyses.model_free.parameters import are_mf_params_set, assemble_param_names, assemble_param_vector, assemble_scaling_matrix, linear_constraints
-from specific_analyses.model_free.optimisation import MF_grid_command, MF_memo, MF_minimise_command, grid_search_config, minimise_data_setup, relax_data_opt_structs, reset_min_stats
+from specific_analyses.model_free.parameters import are_mf_params_set, assemble_param_names, assemble_param_vector, linear_constraints
+from specific_analyses.model_free.optimisation import MF_grid_command, MF_memo, MF_minimise_command, minimise_data_setup, relax_data_opt_structs, reset_min_stats
 from specific_analyses.model_free.parameter_object import Model_free_params
 from specific_analyses.model_free.pymol import Pymol
 from target_functions.mf import Mf
@@ -1001,12 +1003,12 @@ class Model_free(API_base, API_common):
     def grid_search(self, lower=None, upper=None, inc=None, scaling_matrix=None, constraints=True, verbosity=1, sim_index=None):
         """The model-free grid search function.
 
-        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.
-        @type lower:                array of numbers
-        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.
-        @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.
-        @type inc:                  array of int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.
+        @type lower:                list of lists of numbers
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.
+        @type upper:                list of lists of numbers
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.
+        @type inc:                  list of lists of int
         @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
         @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
         @keyword constraints:       If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
@@ -1095,12 +1097,12 @@ class Model_free(API_base, API_common):
         @type verbosity:            int
         @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:            None or int
-        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type lower:                array of numbers
-        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
-        @type inc:                  array of int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type lower:                list of lists of numbers
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type upper:                list of lists of numbers
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
+        @type inc:                  list of lists of int
         """
 
         # Test if sequence data is loaded.
@@ -1231,17 +1233,14 @@ class Model_free(API_base, API_common):
 
         # Number of spins, minimisation instances, and data sets for each model type.
         if data_store.model_type == 'mf' or data_store.model_type == 'local_tm':
-            num_instances = count_spins(skip_desel=False)
             num_data_sets = 1
             data_store.num_spins = 1
         elif data_store.model_type == 'diff' or data_store.model_type == 'all':
-            num_instances = 1
             num_data_sets = count_spins(skip_desel=False)
             data_store.num_spins = count_spins()
 
         # Number of spins, minimisation instances, and data sets for the back-calculate function.
         if min_algor == 'back_calc':
-            num_instances = 1
             num_data_sets = 0
             data_store.num_spins = 1
 
@@ -1249,10 +1248,8 @@ class Model_free(API_base, API_common):
         processor_box = Processor_box() 
         processor = processor_box.processor
 
-        # Loop over the minimisation instances.
-        #######################################
-
-        for i in range(num_instances):
+        # Loop over the models.
+        for index in self.model_loop():
             # Get the spin container if required.
             if data_store.model_type == 'diff' or data_store.model_type == 'all':
                 spin_index = None
@@ -1261,7 +1258,7 @@ class Model_free(API_base, API_common):
                 spin_index = opt_params.min_options[0]
                 spin, data_store.spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
             else:
-                spin_index = i
+                spin_index = index
                 spin, data_store.spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
 
             # Individual spin stuff.
@@ -1296,14 +1293,18 @@ class Model_free(API_base, API_common):
                 num_params = len(opt_params.param_vector)
 
                 # Diagonal scaling.
-                data_store.scaling_matrix = assemble_scaling_matrix(num_params, model_type=data_store.model_type, spin=spin, scaling=scaling)
-                if len(data_store.scaling_matrix):
+                data_store.scaling_matrix = scaling_matrix[index]
+                if data_store.scaling_matrix != None:
                     opt_params.param_vector = dot(inv(data_store.scaling_matrix), opt_params.param_vector)
 
-            # Configure the grid search.
-            opt_params.inc, opt_params.lower, opt_params.upper = None, None, None
-            if match('^[Gg]rid', min_algor):
-                opt_params.inc, opt_params.lower, opt_params.upper = grid_search_config(num_params, spin=spin, lower=lower, upper=upper, inc=inc, scaling_matrix=data_store.scaling_matrix)
+            # Store the grid search options.
+            opt_params.lower, opt_params.upper, opt_params.inc = None, None, None
+            if lower != None:
+                opt_params.lower = lower[index]
+            if upper != None:
+                opt_params.upper = upper[index]
+            if inc != None:
+                opt_params.inc = inc[index]
 
             # Scaling of values for the set function.
             if match('^[Ss]et', min_algor):
@@ -1365,7 +1366,7 @@ class Model_free(API_base, API_common):
                     command.store_data(deepcopy(data_store), deepcopy(opt_params))
 
                     # Set up the model-free memo and add it to the processor queue.
-                    memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling=scaling, scaling_matrix=data_store.scaling_matrix)
+                    memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling_matrix=data_store.scaling_matrix)
                     processor.add_to_queue(command, memo)
 
                 # Execute the queued elements.
@@ -1386,7 +1387,7 @@ class Model_free(API_base, API_common):
             command.store_data(deepcopy(data_store), deepcopy(opt_params))
 
             # Set up the model-free memo and add it to the processor queue.
-            memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling=scaling, scaling_matrix=data_store.scaling_matrix)
+            memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling_matrix=data_store.scaling_matrix)
             processor.add_to_queue(command, memo)
 
         # Execute the queued elements.
@@ -1716,6 +1717,31 @@ class Model_free(API_base, API_common):
         # Final printout.
         if verbose and not deselect_flag:
             print("No spins have been deselected.")
+
+
+    def print_model_title(self, prefix=None, model_info=None):
+        """Print out the model title.
+
+        @keyword prefix:        The starting text of the title.  This should be printed out first, followed by the model information text.
+        @type prefix:           str
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
+        """
+
+        # Determine the model type.
+        model_type = determine_model_type()
+
+        # Local models.
+        if model_type == 'mf' or model_type == 'local_tm':
+            spin, spin_id = return_spin_from_index(global_index=model_info, return_spin_id=True)
+            text = "%sSpin '%s'" % (prefix, spin_id)
+
+        # Global models.
+        else:
+            text = prefix + "Global model"
+
+        # The printout.
+        subsection(file=sys.stdout, text=text, prespace=2)
 
 
     def set_error(self, index, error, model_info=None):
