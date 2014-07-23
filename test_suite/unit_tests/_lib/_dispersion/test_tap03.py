@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import arctan2, array, cos, float64, pi, sin, zeros
+from numpy import arctan2, array, cos, float64, pi, sin, ones, zeros
 from unittest import TestCase
 
 # relax module imports.
@@ -68,8 +68,11 @@ class Test_tap03(TestCase):
         # Parameter conversions.
         pB, dw_frq, spin_lock_omega1, spin_lock_omega1_squared = self.param_conversion(pA=self.pA, dw=self.dw, sfrq=self.sfrq, spin_lock_nu1=self.spin_lock_nu1)
 
+        # Convert to numpy array.
+        a = ones([self.num_points])
+
         # Calculate the R1rho values.
-        r1rho_TAP03(r1rho_prime=self.r1rho_prime, omega=self.omega, offset=self.offset, pA=self.pA, pB=pB, dw=dw_frq, kex=self.kex, R1=self.r1, spin_lock_fields=spin_lock_omega1, spin_lock_fields2=spin_lock_omega1_squared, back_calc=self.R1rho, num_points=self.num_points)
+        r1rho_TAP03(r1rho_prime=self.r1rho_prime, omega=self.omega, offset=self.offset, pA=self.pA, dw=dw_frq*a, kex=self.kex, R1=self.r1, spin_lock_fields=spin_lock_omega1, spin_lock_fields2=spin_lock_omega1_squared, back_calc=self.R1rho)
 
         # Compare to function value.
         # Larmor frequency [s^-1].

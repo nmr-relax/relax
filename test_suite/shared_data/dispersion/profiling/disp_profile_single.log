@@ -1,0 +1,954 @@
+
+Hardware information:
+    Machine:                 x86_64
+    Processor:               x86_64
+    Processor name:          Intel(R) Core(TM) i7-3820 CPU @ 3.60GHz
+    Endianness:              little
+    Total RAM size:          32127 Mb
+    Total swap size:         7992 Mb
+
+Operating system information:
+    System:                  Linux
+    Release:                 3.12.21-desktop-2.mga4
+    Version:                 #1 SMP Thu Jun 5 21:33:44 UTC 2014
+    GNU/Linux version:       Mageia 4 Official
+    Distribution:            mandrake 4 Official
+    Full platform string:    Linux-3.12.21-desktop-2.mga4-x86_64-with-mandrake-4-Official
+
+Python information:
+    Architecture:            64bit ELF
+    Python version:          2.7.6
+    Python branch:           
+    Python build:            default, Mar 18 2014 22:18:46
+    Python compiler:         GCC 4.8.2
+    Libc version:            glibc 2.2.5
+    Python implementation:   CPython
+    Python revision:         
+    Python executable:       /usr/bin/python
+    Python flags:            sys.flags(debug=0, py3k_warning=0, division_warning=0, division_new=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, tabcheck=0, verbose=0, unicode=0, bytes_warning=0, hash_randomization=0)
+    Python float info:       sys.float_info(max=1.7976931348623157e+308, max_exp=1024, max_10_exp=308, min=2.2250738585072014e-308, min_exp=-1021, min_10_exp=-307, dig=15, mant_dig=53, epsilon=2.220446049250313e-16, radix=2, rounds=1)
+    Python module path:      ['/data/relax/branches/disp_spin_speed/test_suite/shared_data/dispersion/profiling', '/usr/lib/python27.zip', '/usr/lib64/python2.7', '/usr/lib64/python2.7/plat-linux2', '/usr/lib64/python2.7/lib-tk', '/usr/lib64/python2.7/lib-old', '/usr/lib64/python2.7/lib-dynload', '/usr/lib64/python2.7/site-packages', '/usr/lib64/python2.7/site-packages/gst-0.10', '/usr/lib64/python2.7/site-packages/gtk-2.0', '/usr/lib64/python2.7/site-packages/wx-2.8-gtk2-unicode', '/usr/lib/python2.7/site-packages', '../../../..']
+
+Python packages and modules (most are optional):
+
+Name               Installed    Version                    Path                                                           
+minfx              True         1.0.7                      /usr/lib/python2.7/site-packages/minfx                         
+bmrblib            True         1.0.3                      /usr/lib/python2.7/site-packages/bmrblib                       
+numpy              True         1.8.0                      /usr/lib64/python2.7/site-packages/numpy                       
+scipy              True         0.13.0                     /usr/lib64/python2.7/site-packages/scipy                       
+wxPython           True         2.8.12.1 (gtk2-unicode)    /usr/lib64/python2.7/site-packages/wx-2.8-gtk2-unicode/wx      
+matplotlib         True         1.3.0                      /usr/lib64/python2.7/site-packages/matplotlib                  
+mpi4py             True         1.3.1                      /usr/lib64/python2.7/site-packages/mpi4py                      
+epydoc             True         3.0.1                      /usr/lib/python2.7/site-packages/epydoc                        
+optparse           True         1.5.3                      /usr/lib64/python2.7/optparse.pyc                              
+readline           True                                    /usr/lib64/python2.7/lib-dynload/readline.so                   
+profile            True                                    /usr/lib64/python2.7/profile.pyc                               
+bz2                True                                    /usr/lib64/python2.7/lib-dynload/bz2.so                        
+gzip               True                                    /usr/lib64/python2.7/gzip.pyc                                  
+io                 True                                    /usr/lib64/python2.7/io.pyc                                    
+xml                True         0.8.4 (PyXML)              /usr/lib64/python2.7/site-packages/_xmlplus/__init__.pyc       
+xml.dom.minidom    True                                    /usr/lib64/python2.7/site-packages/_xmlplus/dom/minidom.pyc    
+
+relax information:
+    Version:                 repository checkout r24360 svn+ssh://bugman@svn.gna.org/svn/relax/branches/disp_spin_speed
+
+relax C modules:
+
+Module                        Compiled    File type                                                                                                                                           Path                                         
+target_functions.relax_fit    True        ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, BuildID[sha1]=d27cd98073b12fecc8d43cbac1c42251fcc78ec1, not stripped    ../../../../target_functions/relax_fit.so    
+
+
+
+
+Execution iteration 1
+
+$ python profiling_norex.py
+    10000    0.056    0.000    0.287    0.000 relax_disp.py:1301(func_NOREX)
+      100    0.001    0.000    0.008    0.000 relax_disp.py:1301(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.112    0.000    0.817    0.000 relax_disp.py:1077(func_LM63)
+      100    0.003    0.000    0.038    0.000 relax_disp.py:1077(func_LM63)
+$ python profiling_lm63_3site.py
+    10000    0.141    0.000    1.042    0.000 relax_disp.py:1036(func_LM63_3site)
+      100    0.004    0.000    0.068    0.001 relax_disp.py:1036(func_LM63_3site)
+$ python profiling_cr72.py
+    10000    0.022    0.000    1.615    0.000 relax_disp.py:903(func_CR72)
+      100    0.000    0.000    0.110    0.001 relax_disp.py:903(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.072    0.000    1.752    0.000 relax_disp.py:929(func_CR72_full)
+      100    0.001    0.000    0.112    0.001 relax_disp.py:929(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.114    0.000    0.889    0.000 relax_disp.py:996(func_IT99)
+      100    0.001    0.000    0.009    0.000 relax_disp.py:996(func_IT99)
+$ python profiling_tsmfk01.py
+    10000    0.106    0.000    0.739    0.000 relax_disp.py:1769(func_TSMFK01)
+      100    0.003    0.000    0.040    0.000 relax_disp.py:1769(func_TSMFK01)
+$ python profiling_b14.py
+    10000    0.025    0.000    3.970    0.000 relax_disp.py:849(func_B14)
+      100    0.000    0.000    0.509    0.005 relax_disp.py:849(func_B14)
+$ python profiling_b14_full.py
+    10000    0.076    0.000    3.977    0.000 relax_disp.py:875(func_B14_full)
+      100    0.001    0.000    0.484    0.005 relax_disp.py:875(func_B14_full)
+$ python profiling_ns_cpmg_2site_expanded.py
+    10000    0.178    0.000    4.322    0.000 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+      100    0.026    0.000    0.717    0.007 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.003    0.000    4.451    0.004 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    4.069    0.407 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.008    0.000    4.480    0.004 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    4.104    0.410 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.003    0.000    3.559    0.004 relax_disp.py:1420(func_ns_cpmg_2site_star)
+       10    0.000    0.000    3.076    0.308 relax_disp.py:1420(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.008    0.000    3.594    0.004 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000    3.050    0.305 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+$ python profiling_mmq_cr72.py
+    10000    0.217    0.000    4.125    0.000 relax_disp.py:1235(func_mmq_CR72)
+      100    0.012    0.000    0.863    0.009 relax_disp.py:1235(func_mmq_CR72)
+$ python profiling_ns_mmq_2site.py
+     1000    0.024    0.000    8.100    0.008 relax_disp.py:1471(func_ns_mmq_2site)
+       10    0.002    0.000    7.525    0.752 relax_disp.py:1471(func_ns_mmq_2site)
+$ python profiling_ns_mmq_3site_linear.py
+     1000    0.005    0.000    9.064    0.009 relax_disp.py:1568(func_ns_mmq_3site_linear)
+       10    0.000    0.000    8.192    0.819 relax_disp.py:1568(func_ns_mmq_3site_linear)
+$ python profiling_ns_mmq_3site.py
+     1000    0.005    0.000    9.186    0.009 relax_disp.py:1539(func_ns_mmq_3site)
+       10    0.000    0.000    8.347    0.835 relax_disp.py:1539(func_ns_mmq_3site)
+$ python profiling_m61.py
+    10000    0.113    0.000    0.867    0.000 relax_disp.py:1116(func_M61)
+      100    0.004    0.000    0.035    0.000 relax_disp.py:1116(func_M61)
+$ python profiling_dpl94.py
+    10000    0.120    0.000    1.119    0.000 relax_disp.py:957(func_DPL94)
+      100    0.004    0.000    0.136    0.001 relax_disp.py:957(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.139    0.000    1.237    0.000 relax_disp.py:1729(func_TP02)
+      100    0.011    0.000    0.171    0.002 relax_disp.py:1729(func_TP02)
+$ python profiling_tap03.py
+    10000    0.142    0.000    1.902    0.000 relax_disp.py:1689(func_TAP03)
+      100    0.013    0.000    0.291    0.003 relax_disp.py:1689(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.146    0.000    1.505    0.000 relax_disp.py:1195(func_MP05)
+      100    0.012    0.000    0.187    0.002 relax_disp.py:1195(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.016    0.000    3.551    0.004 relax_disp.py:1596(func_ns_r1rho_2site)
+       10    0.021    0.002    3.246    0.325 relax_disp.py:1596(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_3site_linear.py
+     1000    0.004    0.000    7.455    0.007 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+       10    0.000    0.000    6.409    0.641 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+$ python profiling_ns_r1rho_3site.py
+     1000    0.004    0.000    7.108    0.007 relax_disp.py:1636(func_ns_r1rho_3site)
+       10    0.000    0.000    7.167    0.717 relax_disp.py:1636(func_ns_r1rho_3site)
+
+
+Execution iteration 2
+
+$ python profiling_norex.py
+    10000    0.053    0.000    0.279    0.000 relax_disp.py:1301(func_NOREX)
+      100    0.001    0.000    0.008    0.000 relax_disp.py:1301(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.108    0.000    0.780    0.000 relax_disp.py:1077(func_LM63)
+      100    0.003    0.000    0.038    0.000 relax_disp.py:1077(func_LM63)
+$ python profiling_lm63_3site.py
+    10000    0.141    0.000    1.033    0.000 relax_disp.py:1036(func_LM63_3site)
+      100    0.004    0.000    0.068    0.001 relax_disp.py:1036(func_LM63_3site)
+$ python profiling_cr72.py
+    10000    0.021    0.000    1.536    0.000 relax_disp.py:903(func_CR72)
+      100    0.000    0.000    0.107    0.001 relax_disp.py:903(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.070    0.000    1.709    0.000 relax_disp.py:929(func_CR72_full)
+      100    0.001    0.000    0.109    0.001 relax_disp.py:929(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.112    0.000    0.874    0.000 relax_disp.py:996(func_IT99)
+      100    0.001    0.000    0.009    0.000 relax_disp.py:996(func_IT99)
+$ python profiling_tsmfk01.py
+    10000    0.108    0.000    0.744    0.000 relax_disp.py:1769(func_TSMFK01)
+      100    0.003    0.000    0.039    0.000 relax_disp.py:1769(func_TSMFK01)
+$ python profiling_b14.py
+    10000    0.024    0.000    3.892    0.000 relax_disp.py:849(func_B14)
+      100    0.000    0.000    0.503    0.005 relax_disp.py:849(func_B14)
+$ python profiling_b14_full.py
+    10000    0.076    0.000    3.936    0.000 relax_disp.py:875(func_B14_full)
+      100    0.001    0.000    0.483    0.005 relax_disp.py:875(func_B14_full)
+$ python profiling_ns_cpmg_2site_expanded.py
+    10000    0.174    0.000    4.153    0.000 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+      100    0.028    0.000    0.704    0.007 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.003    0.000    4.452    0.004 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    4.077    0.408 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.008    0.000    4.522    0.005 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    4.138    0.414 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.003    0.000    3.665    0.004 relax_disp.py:1420(func_ns_cpmg_2site_star)
+       10    0.000    0.000    3.070    0.307 relax_disp.py:1420(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.008    0.000    3.597    0.004 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000    3.071    0.307 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+$ python profiling_mmq_cr72.py
+    10000    0.219    0.000    4.148    0.000 relax_disp.py:1235(func_mmq_CR72)
+      100    0.012    0.000    0.856    0.009 relax_disp.py:1235(func_mmq_CR72)
+$ python profiling_ns_mmq_2site.py
+     1000    0.025    0.000    8.310    0.008 relax_disp.py:1471(func_ns_mmq_2site)
+       10    0.002    0.000    7.672    0.767 relax_disp.py:1471(func_ns_mmq_2site)
+$ python profiling_ns_mmq_3site_linear.py
+     1000    0.005    0.000    9.089    0.009 relax_disp.py:1568(func_ns_mmq_3site_linear)
+       10    0.000    0.000    8.325    0.832 relax_disp.py:1568(func_ns_mmq_3site_linear)
+$ python profiling_ns_mmq_3site.py
+     1000    0.005    0.000    9.280    0.009 relax_disp.py:1539(func_ns_mmq_3site)
+       10    0.000    0.000    8.366    0.837 relax_disp.py:1539(func_ns_mmq_3site)
+$ python profiling_m61.py
+    10000    0.115    0.000    0.878    0.000 relax_disp.py:1116(func_M61)
+      100    0.004    0.000    0.035    0.000 relax_disp.py:1116(func_M61)
+$ python profiling_dpl94.py
+    10000    0.120    0.000    1.111    0.000 relax_disp.py:957(func_DPL94)
+      100    0.004    0.000    0.137    0.001 relax_disp.py:957(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.135    0.000    1.241    0.000 relax_disp.py:1729(func_TP02)
+      100    0.011    0.000    0.173    0.002 relax_disp.py:1729(func_TP02)
+$ python profiling_tap03.py
+    10000    0.143    0.000    1.939    0.000 relax_disp.py:1689(func_TAP03)
+      100    0.013    0.000    0.295    0.003 relax_disp.py:1689(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.136    0.000    1.437    0.000 relax_disp.py:1195(func_MP05)
+      100    0.012    0.000    0.190    0.002 relax_disp.py:1195(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.016    0.000    3.533    0.004 relax_disp.py:1596(func_ns_r1rho_2site)
+       10    0.020    0.002    3.239    0.324 relax_disp.py:1596(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_3site_linear.py
+     1000    0.003    0.000    6.965    0.007 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+       10    0.000    0.000    6.416    0.642 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+$ python profiling_ns_r1rho_3site.py
+     1000    0.004    0.000    7.363    0.007 relax_disp.py:1636(func_ns_r1rho_3site)
+       10    0.000    0.000    6.584    0.658 relax_disp.py:1636(func_ns_r1rho_3site)
+
+
+Execution iteration 3
+
+$ python profiling_norex.py
+    10000    0.053    0.000    0.283    0.000 relax_disp.py:1301(func_NOREX)
+      100    0.001    0.000    0.008    0.000 relax_disp.py:1301(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.108    0.000    0.785    0.000 relax_disp.py:1077(func_LM63)
+      100    0.003    0.000    0.038    0.000 relax_disp.py:1077(func_LM63)
+$ python profiling_lm63_3site.py
+    10000    0.138    0.000    1.026    0.000 relax_disp.py:1036(func_LM63_3site)
+      100    0.004    0.000    0.068    0.001 relax_disp.py:1036(func_LM63_3site)
+$ python profiling_cr72.py
+    10000    0.021    0.000    1.591    0.000 relax_disp.py:903(func_CR72)
+      100    0.000    0.000    0.106    0.001 relax_disp.py:903(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.068    0.000    1.673    0.000 relax_disp.py:929(func_CR72_full)
+      100    0.001    0.000    0.109    0.001 relax_disp.py:929(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.120    0.000    0.933    0.000 relax_disp.py:996(func_IT99)
+      100    0.001    0.000    0.009    0.000 relax_disp.py:996(func_IT99)
+$ python profiling_tsmfk01.py
+    10000    0.112    0.000    0.767    0.000 relax_disp.py:1769(func_TSMFK01)
+      100    0.003    0.000    0.040    0.000 relax_disp.py:1769(func_TSMFK01)
+$ python profiling_b14.py
+    10000    0.024    0.000    4.040    0.000 relax_disp.py:849(func_B14)
+      100    0.000    0.000    0.517    0.005 relax_disp.py:849(func_B14)
+$ python profiling_b14_full.py
+    10000    0.079    0.000    4.103    0.000 relax_disp.py:875(func_B14_full)
+      100    0.001    0.000    0.497    0.005 relax_disp.py:875(func_B14_full)
+$ python profiling_ns_cpmg_2site_expanded.py
+    10000    0.181    0.000    4.317    0.000 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+      100    0.028    0.000    0.720    0.007 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.003    0.000    4.527    0.005 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    4.137    0.414 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.009    0.000    4.569    0.005 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    4.108    0.411 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.003    0.000    3.657    0.004 relax_disp.py:1420(func_ns_cpmg_2site_star)
+       10    0.000    0.000    3.099    0.310 relax_disp.py:1420(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.008    0.000    3.691    0.004 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000    3.047    0.305 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+$ python profiling_mmq_cr72.py
+    10000    0.221    0.000    4.171    0.000 relax_disp.py:1235(func_mmq_CR72)
+      100    0.012    0.000    0.851    0.009 relax_disp.py:1235(func_mmq_CR72)
+$ python profiling_ns_mmq_2site.py
+     1000    0.025    0.000    8.489    0.008 relax_disp.py:1471(func_ns_mmq_2site)
+       10    0.002    0.000    7.901    0.790 relax_disp.py:1471(func_ns_mmq_2site)
+$ python profiling_ns_mmq_3site_linear.py
+     1000    0.005    0.000    9.076    0.009 relax_disp.py:1568(func_ns_mmq_3site_linear)
+       10    0.000    0.000    8.250    0.825 relax_disp.py:1568(func_ns_mmq_3site_linear)
+$ python profiling_ns_mmq_3site.py
+     1000    0.005    0.000    9.223    0.009 relax_disp.py:1539(func_ns_mmq_3site)
+       10    0.000    0.000    8.275    0.827 relax_disp.py:1539(func_ns_mmq_3site)
+$ python profiling_m61.py
+    10000    0.121    0.000    0.907    0.000 relax_disp.py:1116(func_M61)
+      100    0.004    0.000    0.036    0.000 relax_disp.py:1116(func_M61)
+$ python profiling_dpl94.py
+    10000    0.118    0.000    1.105    0.000 relax_disp.py:957(func_DPL94)
+      100    0.004    0.000    0.137    0.001 relax_disp.py:957(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.133    0.000    1.233    0.000 relax_disp.py:1729(func_TP02)
+      100    0.011    0.000    0.171    0.002 relax_disp.py:1729(func_TP02)
+$ python profiling_tap03.py
+    10000    0.146    0.000    1.980    0.000 relax_disp.py:1689(func_TAP03)
+      100    0.013    0.000    0.294    0.003 relax_disp.py:1689(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.136    0.000    1.446    0.000 relax_disp.py:1195(func_MP05)
+      100    0.012    0.000    0.193    0.002 relax_disp.py:1195(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.016    0.000    3.567    0.004 relax_disp.py:1596(func_ns_r1rho_2site)
+       10    0.021    0.002    3.261    0.326 relax_disp.py:1596(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_3site_linear.py
+     1000    0.004    0.000    7.215    0.007 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+       10    0.000    0.000    6.384    0.638 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+$ python profiling_ns_r1rho_3site.py
+     1000    0.004    0.000    7.593    0.008 relax_disp.py:1636(func_ns_r1rho_3site)
+       10    0.000    0.000    6.455    0.645 relax_disp.py:1636(func_ns_r1rho_3site)
+
+
+Execution iteration 4
+
+$ python profiling_norex.py
+    10000    0.057    0.000    0.302    0.000 relax_disp.py:1301(func_NOREX)
+      100    0.002    0.000    0.009    0.000 relax_disp.py:1301(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.106    0.000    0.780    0.000 relax_disp.py:1077(func_LM63)
+      100    0.003    0.000    0.037    0.000 relax_disp.py:1077(func_LM63)
+$ python profiling_lm63_3site.py
+    10000    0.146    0.000    1.073    0.000 relax_disp.py:1036(func_LM63_3site)
+      100    0.004    0.000    0.070    0.001 relax_disp.py:1036(func_LM63_3site)
+$ python profiling_cr72.py
+    10000    0.023    0.000    1.627    0.000 relax_disp.py:903(func_CR72)
+      100    0.000    0.000    0.105    0.001 relax_disp.py:903(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.070    0.000    1.702    0.000 relax_disp.py:929(func_CR72_full)
+      100    0.001    0.000    0.110    0.001 relax_disp.py:929(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.114    0.000    0.889    0.000 relax_disp.py:996(func_IT99)
+      100    0.001    0.000    0.009    0.000 relax_disp.py:996(func_IT99)
+$ python profiling_tsmfk01.py
+    10000    0.112    0.000    0.779    0.000 relax_disp.py:1769(func_TSMFK01)
+      100    0.003    0.000    0.040    0.000 relax_disp.py:1769(func_TSMFK01)
+$ python profiling_b14.py
+    10000    0.025    0.000    4.057    0.000 relax_disp.py:849(func_B14)
+      100    0.000    0.000    0.516    0.005 relax_disp.py:849(func_B14)
+$ python profiling_b14_full.py
+    10000    0.076    0.000    3.973    0.000 relax_disp.py:875(func_B14_full)
+      100    0.001    0.000    0.496    0.005 relax_disp.py:875(func_B14_full)
+$ python profiling_ns_cpmg_2site_expanded.py
+    10000    0.175    0.000    4.177    0.000 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+      100    0.027    0.000    0.702    0.007 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.003    0.000    4.477    0.004 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    4.116    0.412 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.008    0.000    4.503    0.005 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    4.111    0.411 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.003    0.000    3.728    0.004 relax_disp.py:1420(func_ns_cpmg_2site_star)
+       10    0.000    0.000    3.177    0.318 relax_disp.py:1420(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.008    0.000    3.631    0.004 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000    3.095    0.309 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+$ python profiling_mmq_cr72.py
+    10000    0.232    0.000    4.408    0.000 relax_disp.py:1235(func_mmq_CR72)
+      100    0.012    0.000    0.877    0.009 relax_disp.py:1235(func_mmq_CR72)
+$ python profiling_ns_mmq_2site.py
+     1000    0.025    0.000    8.439    0.008 relax_disp.py:1471(func_ns_mmq_2site)
+       10    0.002    0.000    7.859    0.786 relax_disp.py:1471(func_ns_mmq_2site)
+$ python profiling_ns_mmq_3site_linear.py
+     1000    0.005    0.000    9.437    0.009 relax_disp.py:1568(func_ns_mmq_3site_linear)
+       10    0.000    0.000    8.457    0.846 relax_disp.py:1568(func_ns_mmq_3site_linear)
+$ python profiling_ns_mmq_3site.py
+     1000    0.005    0.000    9.257    0.009 relax_disp.py:1539(func_ns_mmq_3site)
+       10    0.000    0.000    8.335    0.833 relax_disp.py:1539(func_ns_mmq_3site)
+$ python profiling_m61.py
+    10000    0.121    0.000    0.914    0.000 relax_disp.py:1116(func_M61)
+      100    0.004    0.000    0.035    0.000 relax_disp.py:1116(func_M61)
+$ python profiling_dpl94.py
+    10000    0.120    0.000    1.110    0.000 relax_disp.py:957(func_DPL94)
+      100    0.004    0.000    0.137    0.001 relax_disp.py:957(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.132    0.000    1.212    0.000 relax_disp.py:1729(func_TP02)
+      100    0.011    0.000    0.170    0.002 relax_disp.py:1729(func_TP02)
+$ python profiling_tap03.py
+    10000    0.141    0.000    1.921    0.000 relax_disp.py:1689(func_TAP03)
+      100    0.014    0.000    0.297    0.003 relax_disp.py:1689(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.136    0.000    1.429    0.000 relax_disp.py:1195(func_MP05)
+      100    0.013    0.000    0.204    0.002 relax_disp.py:1195(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.016    0.000    3.576    0.004 relax_disp.py:1596(func_ns_r1rho_2site)
+       10    0.019    0.002    3.235    0.323 relax_disp.py:1596(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_3site_linear.py
+     1000    0.004    0.000    7.281    0.007 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+       10    0.000    0.000    6.417    0.642 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+$ python profiling_ns_r1rho_3site.py
+     1000    0.004    0.000    7.160    0.007 relax_disp.py:1636(func_ns_r1rho_3site)
+       10    0.000    0.000    6.467    0.647 relax_disp.py:1636(func_ns_r1rho_3site)
+
+
+Execution iteration 5
+
+$ python profiling_norex.py
+    10000    0.055    0.000    0.289    0.000 relax_disp.py:1301(func_NOREX)
+      100    0.001    0.000    0.008    0.000 relax_disp.py:1301(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.105    0.000    0.771    0.000 relax_disp.py:1077(func_LM63)
+      100    0.003    0.000    0.038    0.000 relax_disp.py:1077(func_LM63)
+$ python profiling_lm63_3site.py
+    10000    0.142    0.000    1.051    0.000 relax_disp.py:1036(func_LM63_3site)
+      100    0.004    0.000    0.068    0.001 relax_disp.py:1036(func_LM63_3site)
+$ python profiling_cr72.py
+    10000    0.022    0.000    1.539    0.000 relax_disp.py:903(func_CR72)
+      100    0.000    0.000    0.105    0.001 relax_disp.py:903(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.072    0.000    1.757    0.000 relax_disp.py:929(func_CR72_full)
+      100    0.001    0.000    0.126    0.001 relax_disp.py:929(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.121    0.000    0.929    0.000 relax_disp.py:996(func_IT99)
+      100    0.001    0.000    0.010    0.000 relax_disp.py:996(func_IT99)
+$ python profiling_tsmfk01.py
+    10000    0.108    0.000    0.744    0.000 relax_disp.py:1769(func_TSMFK01)
+      100    0.003    0.000    0.039    0.000 relax_disp.py:1769(func_TSMFK01)
+$ python profiling_b14.py
+    10000    0.025    0.000    4.073    0.000 relax_disp.py:849(func_B14)
+      100    0.000    0.000    0.518    0.005 relax_disp.py:849(func_B14)
+$ python profiling_b14_full.py
+    10000    0.074    0.000    3.907    0.000 relax_disp.py:875(func_B14_full)
+      100    0.001    0.000    0.482    0.005 relax_disp.py:875(func_B14_full)
+$ python profiling_ns_cpmg_2site_expanded.py
+    10000    0.177    0.000    4.209    0.000 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+      100    0.027    0.000    0.705    0.007 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.003    0.000    4.433    0.004 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    4.066    0.407 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.008    0.000    4.516    0.005 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    4.142    0.414 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.003    0.000    3.657    0.004 relax_disp.py:1420(func_ns_cpmg_2site_star)
+       10    0.000    0.000    3.094    0.309 relax_disp.py:1420(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.008    0.000    3.629    0.004 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000    3.056    0.306 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+$ python profiling_mmq_cr72.py
+    10000    0.221    0.000    4.158    0.000 relax_disp.py:1235(func_mmq_CR72)
+      100    0.012    0.000    0.862    0.009 relax_disp.py:1235(func_mmq_CR72)
+$ python profiling_ns_mmq_2site.py
+     1000    0.026    0.000    8.703    0.009 relax_disp.py:1471(func_ns_mmq_2site)
+       10    0.002    0.000    7.490    0.749 relax_disp.py:1471(func_ns_mmq_2site)
+$ python profiling_ns_mmq_3site_linear.py
+     1000    0.005    0.000    9.072    0.009 relax_disp.py:1568(func_ns_mmq_3site_linear)
+       10    0.000    0.000    8.344    0.834 relax_disp.py:1568(func_ns_mmq_3site_linear)
+$ python profiling_ns_mmq_3site.py
+     1000    0.005    0.000    9.339    0.009 relax_disp.py:1539(func_ns_mmq_3site)
+       10    0.000    0.000    8.399    0.840 relax_disp.py:1539(func_ns_mmq_3site)
+$ python profiling_m61.py
+    10000    0.114    0.000    0.871    0.000 relax_disp.py:1116(func_M61)
+      100    0.004    0.000    0.035    0.000 relax_disp.py:1116(func_M61)
+$ python profiling_dpl94.py
+    10000    0.122    0.000    1.128    0.000 relax_disp.py:957(func_DPL94)
+      100    0.005    0.000    0.139    0.001 relax_disp.py:957(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.134    0.000    1.224    0.000 relax_disp.py:1729(func_TP02)
+      100    0.011    0.000    0.171    0.002 relax_disp.py:1729(func_TP02)
+$ python profiling_tap03.py
+    10000    0.148    0.000    1.959    0.000 relax_disp.py:1689(func_TAP03)
+      100    0.013    0.000    0.295    0.003 relax_disp.py:1689(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.136    0.000    1.435    0.000 relax_disp.py:1195(func_MP05)
+      100    0.012    0.000    0.189    0.002 relax_disp.py:1195(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.016    0.000    3.618    0.004 relax_disp.py:1596(func_ns_r1rho_2site)
+       10    0.021    0.002    3.406    0.341 relax_disp.py:1596(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_3site_linear.py
+     1000    0.004    0.000    7.263    0.007 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+       10    0.000    0.000    6.403    0.640 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+$ python profiling_ns_r1rho_3site.py
+     1000    0.004    0.000    7.149    0.007 relax_disp.py:1636(func_ns_r1rho_3site)
+       10    0.000    0.000    6.749    0.675 relax_disp.py:1636(func_ns_r1rho_3site)
+
+
+Execution iteration 6
+
+$ python profiling_norex.py
+    10000    0.053    0.000    0.273    0.000 relax_disp.py:1301(func_NOREX)
+      100    0.001    0.000    0.008    0.000 relax_disp.py:1301(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.105    0.000    0.771    0.000 relax_disp.py:1077(func_LM63)
+      100    0.003    0.000    0.037    0.000 relax_disp.py:1077(func_LM63)
+$ python profiling_lm63_3site.py
+    10000    0.140    0.000    1.034    0.000 relax_disp.py:1036(func_LM63_3site)
+      100    0.004    0.000    0.068    0.001 relax_disp.py:1036(func_LM63_3site)
+$ python profiling_cr72.py
+    10000    0.020    0.000    1.540    0.000 relax_disp.py:903(func_CR72)
+      100    0.000    0.000    0.105    0.001 relax_disp.py:903(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.070    0.000    1.706    0.000 relax_disp.py:929(func_CR72_full)
+      100    0.001    0.000    0.110    0.001 relax_disp.py:929(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.112    0.000    0.875    0.000 relax_disp.py:996(func_IT99)
+      100    0.001    0.000    0.009    0.000 relax_disp.py:996(func_IT99)
+$ python profiling_tsmfk01.py
+    10000    0.108    0.000    0.743    0.000 relax_disp.py:1769(func_TSMFK01)
+      100    0.003    0.000    0.039    0.000 relax_disp.py:1769(func_TSMFK01)
+$ python profiling_b14.py
+    10000    0.024    0.000    3.897    0.000 relax_disp.py:849(func_B14)
+      100    0.000    0.000    0.503    0.005 relax_disp.py:849(func_B14)
+$ python profiling_b14_full.py
+    10000    0.075    0.000    3.904    0.000 relax_disp.py:875(func_B14_full)
+      100    0.001    0.000    0.480    0.005 relax_disp.py:875(func_B14_full)
+$ python profiling_ns_cpmg_2site_expanded.py
+    10000    0.188    0.000    4.109    0.000 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+      100    0.027    0.000    0.702    0.007 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.003    0.000    4.574    0.005 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    4.095    0.410 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.009    0.000    4.528    0.005 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    4.144    0.414 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.003    0.000    3.592    0.004 relax_disp.py:1420(func_ns_cpmg_2site_star)
+       10    0.000    0.000    3.044    0.304 relax_disp.py:1420(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.008    0.000    3.618    0.004 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000    3.216    0.322 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+$ python profiling_mmq_cr72.py
+    10000    0.217    0.000    4.138    0.000 relax_disp.py:1235(func_mmq_CR72)
+      100    0.014    0.000    0.865    0.009 relax_disp.py:1235(func_mmq_CR72)
+$ python profiling_ns_mmq_2site.py
+     1000    0.026    0.000    8.442    0.008 relax_disp.py:1471(func_ns_mmq_2site)
+       10    0.003    0.000    7.642    0.764 relax_disp.py:1471(func_ns_mmq_2site)
+$ python profiling_ns_mmq_3site_linear.py
+     1000    0.005    0.000    9.002    0.009 relax_disp.py:1568(func_ns_mmq_3site_linear)
+       10    0.000    0.000    8.300    0.830 relax_disp.py:1568(func_ns_mmq_3site_linear)
+$ python profiling_ns_mmq_3site.py
+     1000    0.005    0.000    9.456    0.009 relax_disp.py:1539(func_ns_mmq_3site)
+       10    0.000    0.000    8.403    0.840 relax_disp.py:1539(func_ns_mmq_3site)
+$ python profiling_m61.py
+    10000    0.115    0.000    0.885    0.000 relax_disp.py:1116(func_M61)
+      100    0.004    0.000    0.035    0.000 relax_disp.py:1116(func_M61)
+$ python profiling_dpl94.py
+    10000    0.120    0.000    1.113    0.000 relax_disp.py:957(func_DPL94)
+      100    0.004    0.000    0.137    0.001 relax_disp.py:957(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.142    0.000    1.289    0.000 relax_disp.py:1729(func_TP02)
+      100    0.012    0.000    0.176    0.002 relax_disp.py:1729(func_TP02)
+$ python profiling_tap03.py
+    10000    0.140    0.000    1.946    0.000 relax_disp.py:1689(func_TAP03)
+      100    0.013    0.000    0.295    0.003 relax_disp.py:1689(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.135    0.000    1.408    0.000 relax_disp.py:1195(func_MP05)
+      100    0.012    0.000    0.187    0.002 relax_disp.py:1195(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.020    0.000    4.152    0.004 relax_disp.py:1596(func_ns_r1rho_2site)
+       10    0.025    0.003    3.326    0.333 relax_disp.py:1596(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_3site_linear.py
+     1000    0.004    0.000    7.175    0.007 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+       10    0.000    0.000    6.417    0.642 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+$ python profiling_ns_r1rho_3site.py
+     1000    0.004    0.000    7.411    0.007 relax_disp.py:1636(func_ns_r1rho_3site)
+       10    0.000    0.000    6.587    0.659 relax_disp.py:1636(func_ns_r1rho_3site)
+
+
+Execution iteration 7
+
+$ python profiling_norex.py
+    10000    0.053    0.000    0.277    0.000 relax_disp.py:1301(func_NOREX)
+      100    0.001    0.000    0.008    0.000 relax_disp.py:1301(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.111    0.000    0.806    0.000 relax_disp.py:1077(func_LM63)
+      100    0.003    0.000    0.044    0.000 relax_disp.py:1077(func_LM63)
+$ python profiling_lm63_3site.py
+    10000    0.139    0.000    1.026    0.000 relax_disp.py:1036(func_LM63_3site)
+      100    0.004    0.000    0.068    0.001 relax_disp.py:1036(func_LM63_3site)
+$ python profiling_cr72.py
+    10000    0.022    0.000    1.631    0.000 relax_disp.py:903(func_CR72)
+      100    0.000    0.000    0.109    0.001 relax_disp.py:903(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.073    0.000    1.757    0.000 relax_disp.py:929(func_CR72_full)
+      100    0.001    0.000    0.112    0.001 relax_disp.py:929(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.114    0.000    0.892    0.000 relax_disp.py:996(func_IT99)
+      100    0.001    0.000    0.009    0.000 relax_disp.py:996(func_IT99)
+$ python profiling_tsmfk01.py
+    10000    0.106    0.000    0.736    0.000 relax_disp.py:1769(func_TSMFK01)
+      100    0.003    0.000    0.039    0.000 relax_disp.py:1769(func_TSMFK01)
+$ python profiling_b14.py
+    10000    0.024    0.000    3.915    0.000 relax_disp.py:849(func_B14)
+      100    0.000    0.000    0.506    0.005 relax_disp.py:849(func_B14)
+$ python profiling_b14_full.py
+    10000    0.075    0.000    3.942    0.000 relax_disp.py:875(func_B14_full)
+      100    0.001    0.000    0.487    0.005 relax_disp.py:875(func_B14_full)
+$ python profiling_ns_cpmg_2site_expanded.py
+    10000    0.175    0.000    4.188    0.000 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+      100    0.030    0.000    0.707    0.007 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.003    0.000    4.457    0.004 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    4.085    0.408 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.008    0.000    4.533    0.005 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    4.244    0.424 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.003    0.000    3.642    0.004 relax_disp.py:1420(func_ns_cpmg_2site_star)
+       10    0.000    0.000    3.085    0.309 relax_disp.py:1420(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.008    0.000    3.585    0.004 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000    3.068    0.307 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+$ python profiling_mmq_cr72.py
+    10000    0.226    0.000    4.219    0.000 relax_disp.py:1235(func_mmq_CR72)
+      100    0.012    0.000    0.859    0.009 relax_disp.py:1235(func_mmq_CR72)
+$ python profiling_ns_mmq_2site.py
+     1000    0.025    0.000    8.088    0.008 relax_disp.py:1471(func_ns_mmq_2site)
+       10    0.003    0.000    7.886    0.789 relax_disp.py:1471(func_ns_mmq_2site)
+$ python profiling_ns_mmq_3site_linear.py
+     1000    0.005    0.000    9.315    0.009 relax_disp.py:1568(func_ns_mmq_3site_linear)
+       10    0.000    0.000    8.352    0.835 relax_disp.py:1568(func_ns_mmq_3site_linear)
+$ python profiling_ns_mmq_3site.py
+     1000    0.006    0.000    9.324    0.009 relax_disp.py:1539(func_ns_mmq_3site)
+       10    0.000    0.000    8.432    0.843 relax_disp.py:1539(func_ns_mmq_3site)
+$ python profiling_m61.py
+    10000    0.116    0.000    0.901    0.000 relax_disp.py:1116(func_M61)
+      100    0.005    0.000    0.036    0.000 relax_disp.py:1116(func_M61)
+$ python profiling_dpl94.py
+    10000    0.124    0.000    1.145    0.000 relax_disp.py:957(func_DPL94)
+      100    0.005    0.000    0.140    0.001 relax_disp.py:957(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.134    0.000    1.237    0.000 relax_disp.py:1729(func_TP02)
+      100    0.011    0.000    0.171    0.002 relax_disp.py:1729(func_TP02)
+$ python profiling_tap03.py
+    10000    0.144    0.000    1.965    0.000 relax_disp.py:1689(func_TAP03)
+      100    0.014    0.000    0.297    0.003 relax_disp.py:1689(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.137    0.000    1.437    0.000 relax_disp.py:1195(func_MP05)
+      100    0.012    0.000    0.187    0.002 relax_disp.py:1195(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.017    0.000    3.681    0.004 relax_disp.py:1596(func_ns_r1rho_2site)
+       10    0.027    0.003    3.360    0.336 relax_disp.py:1596(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_3site_linear.py
+     1000    0.004    0.000    7.219    0.007 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+       10    0.000    0.000    6.452    0.645 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+$ python profiling_ns_r1rho_3site.py
+     1000    0.004    0.000    7.409    0.007 relax_disp.py:1636(func_ns_r1rho_3site)
+       10    0.000    0.000    6.658    0.666 relax_disp.py:1636(func_ns_r1rho_3site)
+
+
+Execution iteration 8
+
+$ python profiling_norex.py
+    10000    0.055    0.000    0.285    0.000 relax_disp.py:1301(func_NOREX)
+      100    0.001    0.000    0.008    0.000 relax_disp.py:1301(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.110    0.000    0.806    0.000 relax_disp.py:1077(func_LM63)
+      100    0.003    0.000    0.039    0.000 relax_disp.py:1077(func_LM63)
+$ python profiling_lm63_3site.py
+    10000    0.140    0.000    1.035    0.000 relax_disp.py:1036(func_LM63_3site)
+      100    0.004    0.000    0.069    0.001 relax_disp.py:1036(func_LM63_3site)
+$ python profiling_cr72.py
+    10000    0.022    0.000    1.632    0.000 relax_disp.py:903(func_CR72)
+      100    0.000    0.000    0.111    0.001 relax_disp.py:903(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.072    0.000    1.766    0.000 relax_disp.py:929(func_CR72_full)
+      100    0.001    0.000    0.112    0.001 relax_disp.py:929(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.115    0.000    0.888    0.000 relax_disp.py:996(func_IT99)
+      100    0.001    0.000    0.009    0.000 relax_disp.py:996(func_IT99)
+$ python profiling_tsmfk01.py
+    10000    0.108    0.000    0.748    0.000 relax_disp.py:1769(func_TSMFK01)
+      100    0.003    0.000    0.040    0.000 relax_disp.py:1769(func_TSMFK01)
+$ python profiling_b14.py
+    10000    0.025    0.000    4.054    0.000 relax_disp.py:849(func_B14)
+      100    0.000    0.000    0.515    0.005 relax_disp.py:849(func_B14)
+$ python profiling_b14_full.py
+    10000    0.079    0.000    4.118    0.000 relax_disp.py:875(func_B14_full)
+      100    0.001    0.000    0.497    0.005 relax_disp.py:875(func_B14_full)
+$ python profiling_ns_cpmg_2site_expanded.py
+    10000    0.202    0.000    4.327    0.000 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+      100    0.030    0.000    0.722    0.007 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.003    0.000    4.522    0.005 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    4.191    0.419 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.009    0.000    4.752    0.005 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    4.303    0.430 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.003    0.000    3.809    0.004 relax_disp.py:1420(func_ns_cpmg_2site_star)
+       10    0.000    0.000    3.208    0.321 relax_disp.py:1420(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.009    0.000    3.707    0.004 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000    3.145    0.314 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+$ python profiling_mmq_cr72.py
+    10000    0.227    0.000    4.271    0.000 relax_disp.py:1235(func_mmq_CR72)
+      100    0.014    0.000    0.866    0.009 relax_disp.py:1235(func_mmq_CR72)
+$ python profiling_ns_mmq_2site.py
+     1000    0.025    0.000    8.081    0.008 relax_disp.py:1471(func_ns_mmq_2site)
+       10    0.003    0.000    7.519    0.752 relax_disp.py:1471(func_ns_mmq_2site)
+$ python profiling_ns_mmq_3site_linear.py
+     1000    0.005    0.000    9.377    0.009 relax_disp.py:1568(func_ns_mmq_3site_linear)
+       10    0.000    0.000    8.350    0.835 relax_disp.py:1568(func_ns_mmq_3site_linear)
+$ python profiling_ns_mmq_3site.py
+     1000    0.005    0.000    9.219    0.009 relax_disp.py:1539(func_ns_mmq_3site)
+       10    0.000    0.000    8.278    0.828 relax_disp.py:1539(func_ns_mmq_3site)
+$ python profiling_m61.py
+    10000    0.116    0.000    0.882    0.000 relax_disp.py:1116(func_M61)
+      100    0.004    0.000    0.035    0.000 relax_disp.py:1116(func_M61)
+$ python profiling_dpl94.py
+    10000    0.118    0.000    1.127    0.000 relax_disp.py:957(func_DPL94)
+      100    0.004    0.000    0.137    0.001 relax_disp.py:957(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.136    0.000    1.228    0.000 relax_disp.py:1729(func_TP02)
+      100    0.011    0.000    0.172    0.002 relax_disp.py:1729(func_TP02)
+$ python profiling_tap03.py
+    10000    0.150    0.000    2.007    0.000 relax_disp.py:1689(func_TAP03)
+      100    0.013    0.000    0.294    0.003 relax_disp.py:1689(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.137    0.000    1.421    0.000 relax_disp.py:1195(func_MP05)
+      100    0.012    0.000    0.190    0.002 relax_disp.py:1195(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.016    0.000    3.574    0.004 relax_disp.py:1596(func_ns_r1rho_2site)
+       10    0.029    0.003    3.308    0.331 relax_disp.py:1596(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_3site_linear.py
+     1000    0.004    0.000    7.442    0.007 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+       10    0.000    0.000    6.591    0.659 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+$ python profiling_ns_r1rho_3site.py
+     1000    0.004    0.000    7.515    0.008 relax_disp.py:1636(func_ns_r1rho_3site)
+       10    0.000    0.000    6.743    0.674 relax_disp.py:1636(func_ns_r1rho_3site)
+
+
+Execution iteration 9
+
+$ python profiling_norex.py
+    10000    0.064    0.000    0.330    0.000 relax_disp.py:1301(func_NOREX)
+      100    0.002    0.000    0.009    0.000 relax_disp.py:1301(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.110    0.000    0.803    0.000 relax_disp.py:1077(func_LM63)
+      100    0.003    0.000    0.037    0.000 relax_disp.py:1077(func_LM63)
+$ python profiling_lm63_3site.py
+    10000    0.138    0.000    1.024    0.000 relax_disp.py:1036(func_LM63_3site)
+      100    0.004    0.000    0.068    0.001 relax_disp.py:1036(func_LM63_3site)
+$ python profiling_cr72.py
+    10000    0.022    0.000    1.563    0.000 relax_disp.py:903(func_CR72)
+      100    0.000    0.000    0.107    0.001 relax_disp.py:903(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.069    0.000    1.696    0.000 relax_disp.py:929(func_CR72_full)
+      100    0.001    0.000    0.110    0.001 relax_disp.py:929(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.112    0.000    0.875    0.000 relax_disp.py:996(func_IT99)
+      100    0.001    0.000    0.009    0.000 relax_disp.py:996(func_IT99)
+$ python profiling_tsmfk01.py
+    10000    0.113    0.000    0.763    0.000 relax_disp.py:1769(func_TSMFK01)
+      100    0.003    0.000    0.039    0.000 relax_disp.py:1769(func_TSMFK01)
+$ python profiling_b14.py
+    10000    0.024    0.000    3.906    0.000 relax_disp.py:849(func_B14)
+      100    0.000    0.000    0.503    0.005 relax_disp.py:849(func_B14)
+$ python profiling_b14_full.py
+    10000    0.075    0.000    3.930    0.000 relax_disp.py:875(func_B14_full)
+      100    0.001    0.000    0.486    0.005 relax_disp.py:875(func_B14_full)
+$ python profiling_ns_cpmg_2site_expanded.py
+    10000    0.187    0.000    4.152    0.000 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+      100    0.032    0.000    0.725    0.007 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.003    0.000    4.919    0.005 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    4.450    0.445 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.009    0.000    4.733    0.005 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    4.171    0.417 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.003    0.000    3.800    0.004 relax_disp.py:1420(func_ns_cpmg_2site_star)
+       10    0.000    0.000    3.249    0.325 relax_disp.py:1420(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.009    0.000    3.686    0.004 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000    3.106    0.311 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+$ python profiling_mmq_cr72.py
+    10000    0.219    0.000    4.187    0.000 relax_disp.py:1235(func_mmq_CR72)
+      100    0.012    0.000    0.859    0.009 relax_disp.py:1235(func_mmq_CR72)
+$ python profiling_ns_mmq_2site.py
+     1000    0.026    0.000    8.702    0.009 relax_disp.py:1471(func_ns_mmq_2site)
+       10    0.003    0.000    8.083    0.808 relax_disp.py:1471(func_ns_mmq_2site)
+$ python profiling_ns_mmq_3site_linear.py
+     1000    0.005    0.000    9.055    0.009 relax_disp.py:1568(func_ns_mmq_3site_linear)
+       10    0.000    0.000    8.575    0.857 relax_disp.py:1568(func_ns_mmq_3site_linear)
+$ python profiling_ns_mmq_3site.py
+     1000    0.005    0.000    9.319    0.009 relax_disp.py:1539(func_ns_mmq_3site)
+       10    0.000    0.000    8.468    0.847 relax_disp.py:1539(func_ns_mmq_3site)
+$ python profiling_m61.py
+    10000    0.115    0.000    0.894    0.000 relax_disp.py:1116(func_M61)
+      100    0.004    0.000    0.036    0.000 relax_disp.py:1116(func_M61)
+$ python profiling_dpl94.py
+    10000    0.128    0.000    1.184    0.000 relax_disp.py:957(func_DPL94)
+      100    0.005    0.000    0.142    0.001 relax_disp.py:957(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.133    0.000    1.224    0.000 relax_disp.py:1729(func_TP02)
+      100    0.012    0.000    0.177    0.002 relax_disp.py:1729(func_TP02)
+$ python profiling_tap03.py
+    10000    0.143    0.000    1.945    0.000 relax_disp.py:1689(func_TAP03)
+      100    0.013    0.000    0.294    0.003 relax_disp.py:1689(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.142    0.000    1.496    0.000 relax_disp.py:1195(func_MP05)
+      100    0.012    0.000    0.188    0.002 relax_disp.py:1195(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.017    0.000    3.729    0.004 relax_disp.py:1596(func_ns_r1rho_2site)
+       10    0.030    0.003    3.348    0.335 relax_disp.py:1596(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_3site_linear.py
+     1000    0.004    0.000    7.027    0.007 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+       10    0.000    0.000    6.938    0.694 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+$ python profiling_ns_r1rho_3site.py
+     1000    0.004    0.000    7.128    0.007 relax_disp.py:1636(func_ns_r1rho_3site)
+       10    0.000    0.000    6.537    0.654 relax_disp.py:1636(func_ns_r1rho_3site)
+
+
+Execution iteration 10
+
+$ python profiling_norex.py
+    10000    0.056    0.000    0.296    0.000 relax_disp.py:1301(func_NOREX)
+      100    0.001    0.000    0.008    0.000 relax_disp.py:1301(func_NOREX)
+$ python profiling_lm63.py
+    10000    0.110    0.000    0.798    0.000 relax_disp.py:1077(func_LM63)
+      100    0.003    0.000    0.038    0.000 relax_disp.py:1077(func_LM63)
+$ python profiling_lm63_3site.py
+    10000    0.147    0.000    1.075    0.000 relax_disp.py:1036(func_LM63_3site)
+      100    0.004    0.000    0.070    0.001 relax_disp.py:1036(func_LM63_3site)
+$ python profiling_cr72.py
+    10000    0.022    0.000    1.610    0.000 relax_disp.py:903(func_CR72)
+      100    0.000    0.000    0.108    0.001 relax_disp.py:903(func_CR72)
+$ python profiling_cr72_full.py
+    10000    0.071    0.000    1.712    0.000 relax_disp.py:929(func_CR72_full)
+      100    0.001    0.000    0.109    0.001 relax_disp.py:929(func_CR72_full)
+$ python profiling_it99.py
+    10000    0.116    0.000    0.891    0.000 relax_disp.py:996(func_IT99)
+      100    0.001    0.000    0.009    0.000 relax_disp.py:996(func_IT99)
+$ python profiling_tsmfk01.py
+    10000    0.108    0.000    0.750    0.000 relax_disp.py:1769(func_TSMFK01)
+      100    0.003    0.000    0.039    0.000 relax_disp.py:1769(func_TSMFK01)
+$ python profiling_b14.py
+    10000    0.024    0.000    3.950    0.000 relax_disp.py:849(func_B14)
+      100    0.000    0.000    0.504    0.005 relax_disp.py:849(func_B14)
+$ python profiling_b14_full.py
+    10000    0.076    0.000    3.936    0.000 relax_disp.py:875(func_B14_full)
+      100    0.001    0.000    0.489    0.005 relax_disp.py:875(func_B14_full)
+$ python profiling_ns_cpmg_2site_expanded.py
+    10000    0.183    0.000    4.381    0.000 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+      100    0.031    0.000    0.710    0.007 relax_disp.py:1380(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_3D.py
+     1000    0.003    0.000    4.562    0.005 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+       10    0.000    0.000    4.140    0.414 relax_disp.py:1332(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py
+     1000    0.009    0.000    4.818    0.005 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000    4.221    0.422 relax_disp.py:1355(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_star.py
+     1000    0.003    0.000    3.683    0.004 relax_disp.py:1420(func_ns_cpmg_2site_star)
+       10    0.000    0.000    3.107    0.311 relax_disp.py:1420(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py
+     1000    0.008    0.000    3.607    0.004 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000    3.079    0.308 relax_disp.py:1446(func_ns_cpmg_2site_star_full)
+$ python profiling_mmq_cr72.py
+    10000    0.230    0.000    4.286    0.000 relax_disp.py:1235(func_mmq_CR72)
+      100    0.015    0.000    0.867    0.009 relax_disp.py:1235(func_mmq_CR72)
+$ python profiling_ns_mmq_2site.py
+     1000    0.025    0.000    8.122    0.008 relax_disp.py:1471(func_ns_mmq_2site)
+       10    0.003    0.000    7.547    0.755 relax_disp.py:1471(func_ns_mmq_2site)
+$ python profiling_ns_mmq_3site_linear.py
+     1000    0.005    0.000    9.190    0.009 relax_disp.py:1568(func_ns_mmq_3site_linear)
+       10    0.000    0.000    8.219    0.822 relax_disp.py:1568(func_ns_mmq_3site_linear)
+$ python profiling_ns_mmq_3site.py
+     1000    0.005    0.000    9.427    0.009 relax_disp.py:1539(func_ns_mmq_3site)
+       10    0.000    0.000    8.397    0.840 relax_disp.py:1539(func_ns_mmq_3site)
+$ python profiling_m61.py
+    10000    0.142    0.000    1.072    0.000 relax_disp.py:1116(func_M61)
+      100    0.005    0.000    0.040    0.000 relax_disp.py:1116(func_M61)
+$ python profiling_dpl94.py
+    10000    0.122    0.000    1.135    0.000 relax_disp.py:957(func_DPL94)
+      100    0.005    0.000    0.139    0.001 relax_disp.py:957(func_DPL94)
+$ python profiling_tp02.py
+    10000    0.133    0.000    1.232    0.000 relax_disp.py:1729(func_TP02)
+      100    0.012    0.000    0.172    0.002 relax_disp.py:1729(func_TP02)
+$ python profiling_tap03.py
+    10000    0.142    0.000    1.960    0.000 relax_disp.py:1689(func_TAP03)
+      100    0.013    0.000    0.292    0.003 relax_disp.py:1689(func_TAP03)
+$ python profiling_mp05.py
+    10000    0.135    0.000    1.437    0.000 relax_disp.py:1195(func_MP05)
+      100    0.012    0.000    0.190    0.002 relax_disp.py:1195(func_MP05)
+$ python profiling_ns_r1rho_2site.py
+     1000    0.016    0.000    3.566    0.004 relax_disp.py:1596(func_ns_r1rho_2site)
+       10    0.030    0.003    3.298    0.330 relax_disp.py:1596(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_3site_linear.py
+     1000    0.004    0.000    7.309    0.007 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+       10    0.000    0.000    6.436    0.644 relax_disp.py:1663(func_ns_r1rho_3site_linear)
+$ python profiling_ns_r1rho_3site.py
+     1000    0.004    0.000    7.164    0.007 relax_disp.py:1636(func_ns_r1rho_3site)
+       10    0.000    0.000    6.443    0.644 relax_disp.py:1636(func_ns_r1rho_3site)
+60 20
+
+##########################
+#Background for analysis:#
+##########################
+
+For CPMG statistics:
+--------------------
+3 fields, with each 20 nr of cpmg points.
+Total number of dispersion points per spin is: 60
+
+For R1rho experiments:
+----------------------
+3 fields, with each 10 nr of spin lock offsets, where each offset has been measured at 5 different spin lock fields.
+Per field, there is 50 dispersion points.
+Total number of dispersion points per spin is: 150
+
+
+
+100 single spins analysis:
+http://wiki.nmr-relax.com/No_Rex                       0.290+/-0.016 seconds
+http://wiki.nmr-relax.com/LM63                         0.792+/-0.015 seconds
+http://wiki.nmr-relax.com/LM63_3-site                  1.042+/-0.018 seconds
+http://wiki.nmr-relax.com/CR72                         1.588+/-0.038 seconds
+http://wiki.nmr-relax.com/CR72_full                    1.723+/-0.030 seconds
+http://wiki.nmr-relax.com/IT99                         0.894+/-0.020 seconds
+http://wiki.nmr-relax.com/TSMFK01                      0.751+/-0.013 seconds
+http://wiki.nmr-relax.com/B14                          3.975+/-0.070 seconds
+http://wiki.nmr-relax.com/B14_full                     3.973+/-0.073 seconds
+http://wiki.nmr-relax.com/NS_CPMG_2-site_expanded      4.234+/-0.089 seconds
+http://wiki.nmr-relax.com/NS_CPMG_2-site_3D           45.374+/-1.355 seconds
+http://wiki.nmr-relax.com/NS_CPMG_2-site_3D_full      45.954+/-1.165 seconds
+http://wiki.nmr-relax.com/NS_CPMG_2-site_star         36.792+/-0.765 seconds
+http://wiki.nmr-relax.com/NS_CPMG_2-site_star_full    36.345+/-0.420 seconds
+http://wiki.nmr-relax.com/MMQ_CR72                     4.211+/-0.084 seconds
+http://wiki.nmr-relax.com/NS_MMQ_2-site               83.476+/-2.326 seconds
+http://wiki.nmr-relax.com/NS_MMQ_3-site_linear        91.677+/-1.460 seconds
+http://wiki.nmr-relax.com/NS_MMQ_3-site               93.030+/-0.840 seconds
+http://wiki.nmr-relax.com/M61                          0.907+/-0.057 seconds
+http://wiki.nmr-relax.com/DPL94                        1.128+/-0.022 seconds
+http://wiki.nmr-relax.com/TP02                         1.236+/-0.019 seconds
+http://wiki.nmr-relax.com/TAP03                        1.952+/-0.028 seconds
+http://wiki.nmr-relax.com/MP05                         1.445+/-0.029 seconds
+http://wiki.nmr-relax.com/NS_R1rho_2-site             36.547+/-1.757 seconds
+http://wiki.nmr-relax.com/NS_R1rho_3-site_linear      72.351+/-1.483 seconds
+http://wiki.nmr-relax.com/NS_R1rho_3-site             73.000+/-1.696 seconds
+
+Cluster of 100 spins analysis:
+http://wiki.nmr-relax.com/No_Rex                       0.008+/-0.000 seconds
+http://wiki.nmr-relax.com/LM63                         0.038+/-0.002 seconds
+http://wiki.nmr-relax.com/LM63_3-site                  0.069+/-0.001 seconds
+http://wiki.nmr-relax.com/CR72                         0.107+/-0.002 seconds
+http://wiki.nmr-relax.com/CR72_full                    0.112+/-0.005 seconds
+http://wiki.nmr-relax.com/IT99                         0.009+/-0.000 seconds
+http://wiki.nmr-relax.com/TSMFK01                      0.039+/-0.000 seconds
+http://wiki.nmr-relax.com/B14                          0.509+/-0.006 seconds
+http://wiki.nmr-relax.com/B14_full                     0.488+/-0.006 seconds
+http://wiki.nmr-relax.com/NS_CPMG_2-site_expanded      0.711+/-0.008 seconds
+http://wiki.nmr-relax.com/NS_CPMG_2-site_3D           41.426+/-1.090 seconds
+http://wiki.nmr-relax.com/NS_CPMG_2-site_3D_full      41.686+/-0.632 seconds
+http://wiki.nmr-relax.com/NS_CPMG_2-site_star         31.209+/-0.635 seconds
+http://wiki.nmr-relax.com/NS_CPMG_2-site_star_full    30.933+/-0.496 seconds
+http://wiki.nmr-relax.com/MMQ_CR72                     0.863+/-0.007 seconds
+http://wiki.nmr-relax.com/NS_MMQ_2-site               77.124+/-1.951 seconds
+http://wiki.nmr-relax.com/NS_MMQ_3-site_linear        83.364+/-1.075 seconds
+http://wiki.nmr-relax.com/NS_MMQ_3-site               83.700+/-0.595 seconds
+http://wiki.nmr-relax.com/M61                          0.036+/-0.001 seconds
+http://wiki.nmr-relax.com/DPL94                        0.138+/-0.002 seconds
+http://wiki.nmr-relax.com/TP02                         0.172+/-0.002 seconds
+http://wiki.nmr-relax.com/TAP03                        0.294+/-0.002 seconds
+http://wiki.nmr-relax.com/MP05                         0.191+/-0.005 seconds
+http://wiki.nmr-relax.com/NS_R1rho_2-site             33.027+/-0.549 seconds
+http://wiki.nmr-relax.com/NS_R1rho_3-site_linear      64.863+/-1.602 seconds
+http://wiki.nmr-relax.com/NS_R1rho_3-site             66.390+/-2.050 seconds

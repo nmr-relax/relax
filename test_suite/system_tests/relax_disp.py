@@ -58,7 +58,9 @@ class Relax_disp(SystemTestCase):
                 "test_bug_21344_sparse_time_spinlock_acquired_r1rho_fail_relax_disp",
                 "test_exp_fit",
                 "test_m61_exp_data_to_m61",
-                "test_r1rho_kjaergaard",
+                "test_r1rho_kjaergaard_auto",
+                "test_r1rho_kjaergaard_man",
+                "test_r1rho_kjaergaard_missing_r1",
                 "test_value_write_calc_rotating_frame_params_auto_analysis"
             ]
 
@@ -232,6 +234,173 @@ class Relax_disp(SystemTestCase):
             # Test chi2.
             # At this point the chi-squared value at the solution should be zero, as the relaxation data was created with the same parameter values.
             self.assertAlmostEqual(cur_spin.chi2, 0.0, places = places)
+
+
+    def setup_r1rho_kjaergaard(self, cluster_ids=[], read_R1=True):
+        """Set up the data for the test_r1rho_kjaergaard_*() system tests.
+
+        """
+
+        # The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'
+
+        # Set pipe name, bundle and type.
+        ds.pipe_name = 'base pipe'
+        ds.pipe_bundle = 'relax_disp'
+        ds.pipe_type= 'relax_disp'
+
+        # Create the data pipe.
+        self.interpreter.pipe.create(pipe_name=ds.pipe_name, bundle=ds.pipe_bundle, pipe_type=ds.pipe_type)
+
+        # Read the spins.
+        self.interpreter.spectrum.read_spins(file='1_0_46_0_max_standard.ser', dir=data_path+sep+'peak_lists')
+
+        # Name the isotope for field strength scaling.
+        self.interpreter.spin.isotope(isotope='15N')
+
+        # Set number of experiments to be used.
+        NR_exp = 70
+
+        # Load the experiments settings file.
+        expfile = open(data_path+sep+'exp_parameters_sort.txt', 'r')
+        expfileslines = expfile.readlines()[:NR_exp]
+        expfile.close()
+
+        # In MHz
+        yOBS = 81.050
+        # In ppm
+        yCAR = 118.078
+        centerPPM_N15 = yCAR
+
+        ## Read the chemical shift data.
+        self.interpreter.chemical_shift.read(file='1_0_46_0_max_standard.ser', dir=data_path+sep+'peak_lists')
+
+        # The lock power to field, has been found in an calibration experiment.
+        spin_lock_field_strengths_Hz = {'35': 431.0, '39': 651.2, '41': 800.5, '43': 984.0, '46': 1341.11, '48': 1648.5}
+
+        # Apply spectra settings.
+        # Count settings
+        j = 0
+        for i in range(len(expfileslines)):
+            line=expfileslines[i]
+            if line[0] == "#":
+                continue
+            else:
+                # DIRN I deltadof2 dpwr2slock ncyc trim ss sfrq
+                DIRN = line.split()[0]
+                I = int(line.split()[1])
+                deltadof2 = line.split()[2]
+                dpwr2slock = line.split()[3]
+                ncyc = int(line.split()[4])
+                trim = float(line.split()[5])
+                ss = int(line.split()[6])
+                set_sfrq = float(line.split()[7])
+                apod_rmsd = float(line.split()[8])
+                spin_lock_field_strength = spin_lock_field_strengths_Hz[dpwr2slock]
+
+                # Calculate spin_lock time
+                time_sl = 2*ncyc*trim
+
+                # Define file name for peak list.
+                FNAME = "%s_%s_%s_%s_max_standard.ser"%(I, deltadof2, dpwr2slock, ncyc)
+                sp_id = "%s_%s_%s_%s"%(I, deltadof2, dpwr2slock, ncyc)
+
+                # Load the peak intensities.
+                self.interpreter.spectrum.read_intensities(file=FNAME, dir=data_path+sep+'peak_lists', spectrum_id=sp_id, int_method='height')
+
+                # Set the peak intensity errors, as defined as the baseplane RMSD.
+                self.interpreter.spectrum.baseplane_rmsd(error=apod_rmsd, spectrum_id=sp_id)
+
+                # Set the relaxation dispersion experiment type.
+                self.interpreter.relax_disp.exp_type(spectrum_id=sp_id, exp_type='R1rho')
+
+                # Set The spin-lock field strength, nu1, in Hz
+                self.interpreter.relax_disp.spin_lock_field(spectrum_id=sp_id, field=spin_lock_field_strength)
+
+                # Calculating the spin-lock offset in ppm, from offsets values provided in Hz.
+                frq_N15_Hz = yOBS * 1E6
+                offset_ppm_N15 = float(deltadof2) / frq_N15_Hz * 1E6
+                omega_rf_ppm = centerPPM_N15 + offset_ppm_N15
+
+                # Set The spin-lock offset, omega_rf, in ppm.
+                self.interpreter.relax_disp.spin_lock_offset(spectrum_id=sp_id, offset=omega_rf_ppm)
+
+                # Set the relaxation times (in s).
+                self.interpreter.relax_disp.relax_time(spectrum_id=sp_id, time=time_sl)
+
+                # Set the spectrometer frequency.
+                self.interpreter.spectrometer.frequency(id=sp_id, frq=set_sfrq, units='MHz')
+
+                # Add to counter
+                j += 1
+
+
+        print("Testing the number of settings")
+        print("Number of settings iterations is: %s. Number of cdp.exp_type.keys() is: %s"%(i, len(cdp.exp_type.keys() ) ) )
+        self.assertEqual(70, len(expfileslines))
+        self.assertEqual(69, j)
+        self.assertEqual(69, len(cdp.exp_type.keys()) )
+
+        # Cluster spins
+        for curspin in cluster_ids:
+            print("Adding spin %s to cluster"%curspin)
+            self.interpreter.relax_disp.cluster('model_cluster', curspin)
+
+        # De-select for analysis those spins who have not been clustered
+        for free_spin in cdp.clustering['free spins']:
+            print("Deselecting free spin %s"%free_spin)
+            self.interpreter.deselect.spin(spin_id=free_spin, change_all=False)
+
+
+        #Paper         reference values
+        #              Resi   Resn         R1_rad_s   R1err_rad_s   R2_rad_s   R2err_rad_s   kEX_rad_s      kEXerr_rad_s  phi_rad2_s2     phierr_rad2_s2    phi_ppm2         phierr_ppm2
+        # Scaling rad2_s2 to ppm2: scaling_rad2_s2 = frequency_to_ppm(frq=1/(2*pi), B0=cdp.spectrometer_frq_list[0], isotope='15N')**2 = 3.85167990165e-06
+        ds.ref = dict()
+        ds.ref[':13@N'] = [13,   'L13N-HN',   1.32394,   0.14687,      8.16007,   1.01237,      13193.82986,   2307.09152,   58703.06446,    22413.09854,      0.2261054135,    0.0863280812]
+        ds.ref[':15@N'] = [15,   'R15N-HN',   1.34428,   0.14056,      7.83256,   0.67559,      13193.82986,   2307.09152,   28688.33492,    13480.72253,      0.110498283,     0.051923428]
+        ds.ref[':16@N'] = [16,   'T16N-HN',   1.71514,   0.13651,      17.44216,  0.98583,      13193.82986,   2307.09152,   57356.77617,    21892.44205,      0.220919942,     0.084322679]
+        ds.ref[':25@N'] = [25,   'Q25N-HN',   1.82412,   0.15809,      9.09447,   2.09215,      13193.82986,   2307.09152,   143111.13431,   49535.80302,      0.5512182797,    0.1907960569]
+        ds.ref[':26@N'] = [26,   'Q26N-HN',   1.45746,   0.14127,      10.22801,  0.67116,      13193.82986,   2307.09152,   28187.06876,    13359.01615,      0.1085675662,    0.051454654]
+        ds.ref[':28@N'] = [28,   'Q28N-HN',   1.48095,   0.14231,      10.33552,  0.691,        13193.82986,   2307.09152,   30088.0686,     13920.25654,      0.1158896091,    0.0536163723]
+        ds.ref[':39@N'] = [39,   'L39N-HN',   1.46094,   0.14514,      8.02194,   0.84649,      13193.82986,   2307.09152,   44130.18538,    18104.55064,      0.1699753481,    0.0697329338]
+        ds.ref[':40@N'] = [40,   'M40N-HN',   1.21381,   0.14035,      12.19112,  0.81418,      13193.82986,   2307.09152,   41834.90493,    17319.92156,      0.1611346625,    0.0667107938]
+        ds.ref[':41@N'] = [41,   'A41N-HN',   1.29296,   0.14286,      9.29941,   0.66246,      13193.82986,   2307.09152,   26694.8921,     13080.66782,      0.1028201794,    0.0503825453]
+        ds.ref[':43@N'] = [43,   'F43N-HN',   1.33626,   0.14352,      12.73816,  1.17386,      13193.82986,   2307.09152,   70347.63797,    26648.30524,      0.2709565833,    0.1026407417]
+        ds.ref[':44@N'] = [44,   'I44N-HN',   1.28487,   0.1462,       12.70158,  1.52079,      13193.82986,   2307.09152,   95616.20461,    35307.79817,      0.3682830136,    0.1359943366]
+        ds.ref[':45@N'] = [45,   'K45N-HN',   1.59227,   0.14591,      9.54457,   0.95596,      13193.82986,   2307.09152,   53849.7826,     21009.89973,      0.2074121253,    0.0809234085]
+        ds.ref[':49@N'] = [49,   'A49N-HN',   1.38521,   0.14148,      4.44842,   0.88647,      13193.82986,   2307.09152,   40686.65286,    18501.20774,      0.1567119631,    0.07126073]
+        ds.ref[':52@N'] = [52,   'V52N-HN',   1.57531,   0.15042,      6.51945,   1.43418,      13193.82986,   2307.09152,   93499.92172,    33233.23039,      0.3601317693,    0.1280037656]
+        ds.ref[':53@N'] = [53,   'A53N-HN',   1.27214,   0.13823,      4.0705,    0.85485,      13193.82986,   2307.09152,   34856.18636,    17505.02393,      0.1342548725,    0.0674237488]
+
+        ds.guess = dict()
+        ds.guess[':13@N'] = [13,   'L13N-HN',   1.32394,   0.14687,      8.16007,   1.01237,      13193.82986,   2307.09152,   58703.06446,    22413.09854,      0.2261054135,    0.0863280812]
+        ds.guess[':15@N'] = [15,   'R15N-HN',   1.34428,   0.14056,      7.83256,   0.67559,      13193.82986,   2307.09152,   28688.33492,    13480.72253,      0.110498283,     0.051923428]
+        ds.guess[':16@N'] = [16,   'T16N-HN',   1.71514,   0.13651,      17.44216,  0.98583,      13193.82986,   2307.09152,   57356.77617,    21892.44205,      0.220919942,     0.084322679]
+        ds.guess[':25@N'] = [25,   'Q25N-HN',   1.82412,   0.15809,      9.09447,   2.09215,      13193.82986,   2307.09152,   143111.13431,   49535.80302,      0.5512182797,    0.1907960569]
+        ds.guess[':26@N'] = [26,   'Q26N-HN',   1.45746,   0.14127,      10.22801,  0.67116,      13193.82986,   2307.09152,   28187.06876,    13359.01615,      0.1085675662,    0.051454654]
+        ds.guess[':28@N'] = [28,   'Q28N-HN',   1.48095,   0.14231,      10.33552,  0.691,        13193.82986,   2307.09152,   30088.0686,     13920.25654,      0.1158896091,    0.0536163723]
+        ds.guess[':39@N'] = [39,   'L39N-HN',   1.46094,   0.14514,      8.02194,   0.84649,      13193.82986,   2307.09152,   44130.18538,    18104.55064,      0.1699753481,    0.0697329338]
+        ds.guess[':40@N'] = [40,   'M40N-HN',   1.21381,   0.14035,      12.19112,  0.81418,      13193.82986,   2307.09152,   41834.90493,    17319.92156,      0.1611346625,    0.0667107938]
+        ds.guess[':41@N'] = [41,   'A41N-HN',   1.29296,   0.14286,      9.29941,   0.66246,      13193.82986,   2307.09152,   26694.8921,     13080.66782,      0.1028201794,    0.0503825453]
+        ds.guess[':43@N'] = [43,   'F43N-HN',   1.33626,   0.14352,      12.73816,  1.17386,      13193.82986,   2307.09152,   70347.63797,    26648.30524,      0.2709565833,    0.1026407417]
+        ds.guess[':44@N'] = [44,   'I44N-HN',   1.28487,   0.1462,       12.70158,  1.52079,      13193.82986,   2307.09152,   95616.20461,    35307.79817,      0.3682830136,    0.1359943366]
+        ds.guess[':45@N'] = [45,   'K45N-HN',   1.59227,   0.14591,      9.54457,   0.95596,      13193.82986,   2307.09152,   53849.7826,     21009.89973,      0.2074121253,    0.0809234085]
+        ds.guess[':49@N'] = [49,   'A49N-HN',   1.38521,   0.14148,      4.44842,   0.88647,      13193.82986,   2307.09152,   40686.65286,    18501.20774,      0.1567119631,    0.07126073]
+        ds.guess[':52@N'] = [52,   'V52N-HN',   1.57531,   0.15042,      6.51945,   1.43418,      13193.82986,   2307.09152,   93499.92172,    33233.23039,      0.3601317693,    0.1280037656]
+        ds.guess[':53@N'] = [53,   'A53N-HN',   1.27214,   0.13823,      4.0705,    0.85485,      13193.82986,   2307.09152,   34856.18636,    17505.02393,      0.1342548725,    0.0674237488]
+
+        # Assign guess values.
+        for spin, spin_id in spin_loop(return_id=True):
+            if spin_id in cluster_ids:
+                print("spin_id %s in cluster ids"%(spin_id))
+                spin.kex = ds.guess[spin_id][6]
+                spin.phi_ex = ds.guess[spin_id][10]
+            else:
+                print("spin_id %s NOT in cluster ids"%(spin_id))
+
+        if read_R1:
+            # Read the R1 data
+            self.interpreter.relax_data.read(ri_id='R1', ri_type='R1', frq=cdp.spectrometer_frq_list[0], file='R1_fitted_values.txt', dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 
 
     def setup_hansen_cpmg_data(self, model=None):
@@ -520,6 +689,64 @@ class Relax_disp(SystemTestCase):
         self.interpreter.relax_disp.select_model(model=MODEL)
         # Calculate R2eff values
         self.interpreter.minimise.calculate(verbosity=1)
+
+
+    def setup_tp02_data_to_ns_r1rho_2site(self, clustering=False):
+        """Setup data for the test of relaxation dispersion 'NS R1rho 2-site' model fitting against the 'TP02' test data."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Create the data pipe and load the base data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'r1rho_off_res_tp02'
+        self.interpreter.state.load(data_path+sep+'r2eff_values')
+
+        # The model data pipe.
+        model = 'NS R1rho 2-site'
+        pipe_name = "%s - relax_disp" % model
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=pipe_name, bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name=pipe_name)
+
+        # Set the model.
+        self.interpreter.relax_disp.select_model(model=model)
+
+        # Copy the data.
+        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=pipe_name, param='r2eff')
+
+        # Alias the spins.
+        spin1 = cdp.mol[0].res[0].spin[0]
+        spin2 = cdp.mol[0].res[1].spin[0]
+
+        # The R20 keys.
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=800e6)
+
+        # Set the initial parameter values.
+        spin1.r2 = {r20_key1: 9.9963793866185, r20_key2: 15.0056724422684}
+        spin1.pA = 0.779782428085762
+        spin1.dw = 7.57855284496424
+        spin1.kex = 1116.7911285203
+        spin2.r2 = {r20_key1: 11.9983346935434, r20_key2: 18.0076097513337}
+        spin2.pA = 0.826666229688602
+        spin2.dw = 9.5732624231366
+        spin2.kex = 1380.46162655657
+
+        # Test the values when clustering.
+        if clustering:
+            self.interpreter.relax_disp.cluster(cluster_id='all', spin_id=":1-100")
+
+        # Low precision optimisation.
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:1)", "Value (:2)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin1.r2[r20_key1], spin2.r2[r20_key1]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin1.r2[r20_key2], spin2.r2[r20_key2]))
+        print("%-20s %20.15g %20.15g" % ("pA", spin1.pA, spin2.pA))
+        print("%-20s %20.15g %20.15g" % ("dw", spin1.dw, spin2.dw))
+        print("%-20s %20.15g %20.15g" % ("kex", spin1.kex, spin2.kex))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin1.chi2, spin2.chi2))
 
 
     def test_baldwin_synthetic(self):
@@ -1015,6 +1242,298 @@ class Relax_disp(SystemTestCase):
 
         # Base data setup.
         self.setup_bug_22146_unpacking_r2a_r2b_cluster(folder='ns_cpmg_2site_star_full', model_analyse = MODEL_NS_CPMG_2SITE_STAR_FULL, places = 4)
+
+
+    def test_cpmg_synthetic_b14_to_ns3d_cluster(self):
+        """Test synthetic cpmg data.  Created with B14, analysed with NS CPMG 2site 3D, for clustered analysis.
+
+        This is part of: U{Task #7807 <https://gna.org/task/index.php?7807>}: Speed-up of dispersion models for Clustered analysis.
+
+        This script will produce synthetic CPMG R2eff values according to the selected model, and the fit the selected model.
+        """
+
+        # Reset.
+        #self.interpreter.reset()
+
+        ## Set Experiments.
+        model_create = 'B14'
+        #model_create = 'NS CPMG 2-site expanded'
+        model_analyse = 'NS CPMG 2-site 3D'
+
+        # Exp 1
+        sfrq_1 = 599.8908617*1E6
+        r20_key_1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_1)
+        time_T2_1 = 0.06
+        ncycs_1 = [2, 4, 8, 10, 20, 30, 40, 60]
+        #r2eff_errs_1 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
+        r2eff_errs_1 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        exp_1 = [sfrq_1, time_T2_1, ncycs_1, r2eff_errs_1]
+
+        sfrq_2 = 499.8908617*1E6
+        r20_key_2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_2)
+        time_T2_2 = 0.05
+        ncycs_2 = [2, 4, 8, 10, 30, 35, 40, 50]
+        #r2eff_errs_2 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
+        r2eff_errs_2 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        exp_2 = [sfrq_2, time_T2_2, ncycs_2, r2eff_errs_2]
+
+        # Collect all exps
+        exps = [exp_1, exp_2]
+
+        spins = [
+            ['Ala', 1, 'N', {'r2': {r20_key_1:10., r20_key_2:11.5}, 'r2a': {r20_key_1:10., r20_key_2:11.5}, 'r2b': {r20_key_1:10., r20_key_2:11.5}, 'kex': 1000., 'pA': 0.95, 'dw': 2.} ],
+            ['Ala', 2, 'N', {'r2': {r20_key_1:13., r20_key_2:14.5}, 'r2a': {r20_key_1:13., r20_key_2:14.5}, 'r2b': {r20_key_1:13., r20_key_2:14.5}, 'kex': 1000., 'pA': 0.95, 'dw': 1.} ]
+            ]
+
+        # Collect the data to be used.
+        ds.data = [model_create, model_analyse, spins, exps]
+
+        # The tmp directory. None is the local directory.
+        ds.tmpdir = ds.tmpdir
+
+        # The results directory. None is the local directory.
+        #ds.resdir = None
+        ds.resdir = ds.tmpdir
+
+        # Do r20_from_min_r2eff ?.
+        ds.r20_from_min_r2eff = True
+
+        # Remove insignificant level.
+        ds.insignificance = 0.0
+
+        # The grid search size (the number of increments per dimension).
+        ds.GRID_INC = None
+
+        # The do clustering.
+        ds.do_cluster = True
+
+        # The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.
+        # The default value is 1e-25.
+        ds.set_func_tol = 1e-1
+
+        # The maximum number of iterations.
+        # The default value is 1e7.
+        ds.set_max_iter = 1000
+
+        # The verbosity level.
+        ds.verbosity = 1
+
+        # The rel_change WARNING level.
+        ds.rel_change = 0.05
+
+        # The plot_curves.
+        ds.plot_curves = False
+
+        # The conversion for ShereKhan at http://sherekhan.bionmr.org/.
+        ds.sherekhan_input = False
+
+        # Make a dx map to be opened om OpenDX. To map the hypersurface of chi2, when altering kex, dw and pA.
+        ds.opendx = False
+
+        # The set r2eff err.
+        ds.r2eff_err = 0.1
+
+        # The print result info.
+        ds.print_res = True
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'cpmg_synthetic.py')
+
+        cur_spins = ds.data[2]
+        # Compare results.
+        for i in range(len(cur_spins)):
+            res_name, res_num, spin_name, params = cur_spins[i]
+            cur_spin_id = ":%i@%s"%(res_num, spin_name)
+            cur_spin = return_spin(cur_spin_id)
+
+            grid_params = ds.grid_results[i][3]
+
+            # Extract the clust results.
+            min_params = ds.clust_results[i][3]
+            # Now read the parameters.
+            print("For spin: '%s'"%cur_spin_id)
+            for mo_param in cur_spin.params:
+                # The R2 is a dictionary, depending on spectrometer frequency.
+                if isinstance(getattr(cur_spin, mo_param), dict):
+                    grid_r2 = grid_params[mo_param]
+                    min_r2 = min_params[mo_param]
+                    set_r2 = params[mo_param]
+                    for key, val in set_r2.items():
+                        grid_r2_frq = grid_r2[key]
+                        min_r2_frq = min_r2[key]
+                        set_r2_frq = set_r2[key]
+                        frq = float(key.split(EXP_TYPE_CPMG_SQ+' - ')[-1].split('MHz')[0])
+                        rel_change = math.sqrt( (min_r2_frq - set_r2_frq)**2/(min_r2_frq)**2 )
+                        print("%s %s %s %s %.1f GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, frq, grid_r2_frq, min_r2_frq, set_r2_frq, rel_change) )
+                        if rel_change > ds.rel_change:
+                            print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
+                            print("###################################")
+
+                        ## Make test on R2.
+                        self.assertAlmostEqual(set_r2_frq, min_r2_frq, 1)
+                else:
+                    grid_val = grid_params[mo_param]
+                    min_val = min_params[mo_param]
+                    set_val = params[mo_param]
+                    rel_change = math.sqrt( (min_val - set_val)**2/(min_val)**2 )
+                    print("%s %s %s %s GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, grid_val, min_val, set_val, rel_change) )
+                    if rel_change > ds.rel_change:
+                        print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
+                        print("###################################")
+
+                    ## Make test on parameters.
+                    if mo_param == 'dw':
+                        self.assertAlmostEqual(set_val/10, min_val/10, 1)
+                    elif mo_param == 'kex':
+                        self.assertAlmostEqual(set_val/1000, min_val/1000, 1)
+                    elif mo_param == 'pA':
+                        self.assertAlmostEqual(set_val, min_val, 2)
+
+
+    def test_cpmg_synthetic_b14_to_ns_star_cluster(self):
+        """Test synthetic cpmg data.  Created with B14, analysed with NS CPMG 2site STAR, for clustered analysis.
+
+        This is part of: U{Task #7807 <https://gna.org/task/index.php?7807>}: Speed-up of dispersion models for Clustered analysis.
+
+        This script will produce synthetic CPMG R2eff values according to the selected model, and the fit the selected model.
+        """
+
+        # Reset.
+        #self.interpreter.reset()
+
+        ## Set Experiments.
+        model_create = 'B14'
+        #model_create = 'NS CPMG 2-site expanded'
+        model_analyse = 'NS CPMG 2-site star'
+
+        # Exp 1
+        sfrq_1 = 599.8908617*1E6
+        r20_key_1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_1)
+        time_T2_1 = 0.06
+        ncycs_1 = [2, 4, 8, 10, 20, 30, 40, 60]
+        #r2eff_errs_1 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
+        r2eff_errs_1 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        exp_1 = [sfrq_1, time_T2_1, ncycs_1, r2eff_errs_1]
+
+        sfrq_2 = 499.8908617*1E6
+        r20_key_2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_2)
+        time_T2_2 = 0.05
+        ncycs_2 = [2, 4, 8, 10, 30, 35, 40, 50]
+        #r2eff_errs_2 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
+        r2eff_errs_2 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        exp_2 = [sfrq_2, time_T2_2, ncycs_2, r2eff_errs_2]
+
+        # Collect all exps
+        exps = [exp_1, exp_2]
+
+        spins = [
+            ['Ala', 1, 'N', {'r2': {r20_key_1:10., r20_key_2:11.5}, 'r2a': {r20_key_1:10., r20_key_2:11.5}, 'r2b': {r20_key_1:10., r20_key_2:11.5}, 'kex': 1000., 'pA': 0.95, 'dw': 2.} ],
+            ['Ala', 2, 'N', {'r2': {r20_key_1:13., r20_key_2:14.5}, 'r2a': {r20_key_1:13., r20_key_2:14.5}, 'r2b': {r20_key_1:13., r20_key_2:14.5}, 'kex': 1000., 'pA': 0.95, 'dw': 1.} ]
+            ]
+
+        # Collect the data to be used.
+        ds.data = [model_create, model_analyse, spins, exps]
+
+        # The tmp directory. None is the local directory.
+        ds.tmpdir = ds.tmpdir
+
+        # The results directory. None is the local directory.
+        #ds.resdir = None
+        ds.resdir = ds.tmpdir
+
+        # Do r20_from_min_r2eff ?.
+        ds.r20_from_min_r2eff = True
+
+        # Remove insignificant level.
+        ds.insignificance = 0.0
+
+        # The grid search size (the number of increments per dimension).
+        ds.GRID_INC = None
+
+        # The do clustering.
+        ds.do_cluster = True
+
+        # The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.
+        # The default value is 1e-25.
+        ds.set_func_tol = 1e-1
+
+        # The maximum number of iterations.
+        # The default value is 1e7.
+        ds.set_max_iter = 1000
+
+        # The verbosity level.
+        ds.verbosity = 1
+
+        # The rel_change WARNING level.
+        ds.rel_change = 0.05
+
+        # The plot_curves.
+        ds.plot_curves = False
+
+        # The conversion for ShereKhan at http://sherekhan.bionmr.org/.
+        ds.sherekhan_input = False
+
+        # Make a dx map to be opened om OpenDX. To map the hypersurface of chi2, when altering kex, dw and pA.
+        ds.opendx = False
+
+        # The set r2eff err.
+        ds.r2eff_err = 0.1
+
+        # The print result info.
+        ds.print_res = True
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'cpmg_synthetic.py')
+
+        cur_spins = ds.data[2]
+        # Compare results.
+        for i in range(len(cur_spins)):
+            res_name, res_num, spin_name, params = cur_spins[i]
+            cur_spin_id = ":%i@%s"%(res_num, spin_name)
+            cur_spin = return_spin(cur_spin_id)
+
+            grid_params = ds.grid_results[i][3]
+
+            # Extract the clust results.
+            min_params = ds.clust_results[i][3]
+            # Now read the parameters.
+            print("For spin: '%s'"%cur_spin_id)
+            for mo_param in cur_spin.params:
+                # The R2 is a dictionary, depending on spectrometer frequency.
+                if isinstance(getattr(cur_spin, mo_param), dict):
+                    grid_r2 = grid_params[mo_param]
+                    min_r2 = min_params[mo_param]
+                    set_r2 = params[mo_param]
+                    for key, val in set_r2.items():
+                        grid_r2_frq = grid_r2[key]
+                        min_r2_frq = min_r2[key]
+                        set_r2_frq = set_r2[key]
+                        frq = float(key.split(EXP_TYPE_CPMG_SQ+' - ')[-1].split('MHz')[0])
+                        rel_change = math.sqrt( (min_r2_frq - set_r2_frq)**2/(min_r2_frq)**2 )
+                        print("%s %s %s %s %.1f GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, frq, grid_r2_frq, min_r2_frq, set_r2_frq, rel_change) )
+                        if rel_change > ds.rel_change:
+                            print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
+                            print("###################################")
+
+                        ## Make test on R2.
+                        self.assertAlmostEqual(set_r2_frq, min_r2_frq, 1)
+                else:
+                    grid_val = grid_params[mo_param]
+                    min_val = min_params[mo_param]
+                    set_val = params[mo_param]
+                    rel_change = math.sqrt( (min_val - set_val)**2/(min_val)**2 )
+                    print("%s %s %s %s GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, grid_val, min_val, set_val, rel_change) )
+                    if rel_change > ds.rel_change:
+                        print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
+                        print("###################################")
+
+                    ## Make test on parameters.
+                    if mo_param == 'dw':
+                        self.assertAlmostEqual(set_val/10, min_val/10, 1)
+                    elif mo_param == 'kex':
+                        self.assertAlmostEqual(set_val/1000, min_val/1000, 1)
+                    elif mo_param == 'pA':
+                        self.assertAlmostEqual(set_val, min_val, 2)
 
 
     def test_cpmg_synthetic_ns3d_to_cr72(self):
@@ -2481,11 +3000,11 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[r20_key1], 6.7436229263957, 5)
-        self.assertAlmostEqual(spin70.r2[r20_key2], 6.57406788826655, 5)
-        self.assertAlmostEqual(spin70.phi_ex, 0.31273301746411, 5)
-        self.assertAlmostEqual(spin70.kex/1000, 4723.09901154387/1000, 5)
-        self.assertAlmostEqual(spin70.chi2, 363.534044873483, 5)
+        self.assertAlmostEqual(spin70.r2[r20_key1], 6.74362294539099)
+        self.assertAlmostEqual(spin70.r2[r20_key2], 6.57406797067481, 6)
+        self.assertAlmostEqual(spin70.phi_ex, 0.312733013751449)
+        self.assertAlmostEqual(spin70.kex/1000, 4723.09897146338/1000, 6)
+        self.assertAlmostEqual(spin70.chi2, 363.534044873483)
 
         # Checks for residue :71.
         self.assertAlmostEqual(spin71.r2[r20_key1], 5.00776657729728, 5)
@@ -2747,10 +3266,10 @@ class Relax_disp(SystemTestCase):
 
         # Checks for residue :71.
         self.assertAlmostEqual(spin71.r2[r20_key1], 4.992594256544, 1)
-        self.assertAlmostEqual(spin71.pA, 0.992258541625787, 2)
-        self.assertAlmostEqual(spin71.dw/100, 2.75140650899058/100, 2)
-        self.assertAlmostEqual(spin71.kex/100000, 2106.60885247431/100000, 2)
-        self.assertAlmostEqual(spin71.chi2/100, 17.3293856656588/100, 1)
+        self.assertAlmostEqual(spin71.pA, 0.986716058519642, 2)
+        self.assertAlmostEqual(spin71.dw/100, 2.09292495350993/100, 2)
+        self.assertAlmostEqual(spin71.kex/100000, 2438.04423541463/100000, 2)
+        self.assertAlmostEqual(spin71.chi2/100, 15.1644902423334/100, 1)
 
         # Test the conversion to k_AB from kex and pA.
         self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
@@ -3149,7 +3668,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin.r2[r20_key3], 10.219320492033058, 1)
         self.assertAlmostEqual(spin.pA, 0.950310172115387, 3)
         self.assertAlmostEqual(spin.dw, 4.356737157889636, 2)
-        self.assertAlmostEqual(spin.kex/1000, 433.176323890829849/1000, 3)
+        self.assertAlmostEqual(spin.kex/1000, 433.176323890829849/1000, 2)
         self.assertAlmostEqual(spin.chi2, 17.37460582872912, 1)
 
 
@@ -3360,7 +3879,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin.r2[r20_key2], 6.99888898689085, 2)
         self.assertAlmostEqual(spin.r2[r20_key3], 5.52012880268077, 2)
         self.assertAlmostEqual(spin.pA, 0.946990967372467, 4)
-        self.assertAlmostEqual(spin.dwH, -0.265308128403529, 4)
+        self.assertAlmostEqual(spin.dwH, -0.265308128403529, 3)
         self.assertAlmostEqual(spin.kex/1000, 406.843250675648/1000, 2)
         self.assertAlmostEqual(spin.chi2, 50.3431330819767, 1)
 
@@ -3491,6 +4010,100 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin.dw, 4.42209952545181, 4)
         self.assertAlmostEqual(spin.dwH, -0.27258970590969, 4)
         self.assertAlmostEqual(spin.kex/1000, 360.516132791038/1000, 4)
+        self.assertAlmostEqual(spin.chi2/1000, 162.511988511609/1000, 3)
+
+
+    def test_korzhnev_2005_all_data_disp_speed_bug(self):
+        """Optimisation of all the Korzhnev et al., 2005 CPMG data using the 'NS MMQ 2-site' model.
+
+        This uses the data from Dmitry Korzhnev's paper at U{DOI: 10.1021/ja054550e<http://dx.doi.org/10.1021/ja054550e>}.  This is the 1H SQ, 15N SQ, ZQ, DQ, 1H MQ and 15N MQ data for residue Asp 9 of the Fyn SH3 domain mutant.
+
+        Here all data will be optimised.  The values found by cpmg_fit using just this data are:
+
+            - r2 = {'H-S 500':  6.671649051677150, 'H-S 600':  6.988634195648529, 'H-S 800':  5.527971316790596,
+                    'N-S 500':  8.394988400015988, 'N-S 600':  8.891359568401835, 'N-S 800': 10.405356669006709,
+                    'NHZ 500':  5.936446687394352, 'NHZ 600':  6.717058062814535, 'NHZ 800':  6.838733853403030,
+                    'NHD 500':  8.593136215779710, 'NHD 600': 10.651511259239674, 'NHD 800': 12.567902357560627,
+                    'HNM 500':  7.851325614877817, 'HNM 600':  8.408803624020202, 'HNM 800': 11.227489645758979,
+                    'NHM 500':  9.189159145380575, 'NHM 600':  9.856814478405868, 'NHM 800': 11.967910041807118},
+            - pA = 0.943125351763911,
+            - dw = 4.421827493809807,
+            - dwH = -0.272637034755752,
+            - kex = 360.609744568697238,
+            - chi2 = 162.589570340050813.
+        """
+
+        # Base data setup.
+        self.setup_korzhnev_2005_data(data_list=['SQ', '1H SQ', 'DQ', 'ZQ', 'MQ', '1H MQ'])
+
+        # Alias the spin.
+        spin = return_spin(":9@N")
+
+        # The R20 keys.
+        r20_key1  = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=500e6)
+        r20_key2  = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=600e6)
+        r20_key3  = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=800e6)
+        r20_key4  = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key5  = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=600e6)
+        r20_key6  = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
+        r20_key7  = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=500e6)
+        r20_key8  = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=600e6)
+        r20_key9  = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=800e6)
+        r20_key10 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=500e6)
+        r20_key11 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=600e6)
+        r20_key12 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=800e6)
+        r20_key13 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=500e6)
+        r20_key14 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=600e6)
+        r20_key15 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=800e6)
+        r20_key16 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=500e6)
+        r20_key17 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=600e6)
+        r20_key18 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=800e6)
+
+        # Set the initial parameter values.
+        spin.r2 = {
+            r20_key1:   6.67288025927458, r20_key2:   6.98951408255098, r20_key3:   5.52959273852704,
+            r20_key4:   8.39471048876782, r20_key5:   8.89290699178799, r20_key6:  10.40770687236930,
+            r20_key7:   5.93611174376373, r20_key8:   6.71735669582514, r20_key9:   6.83835225518265,
+            r20_key10:  8.59615074668922, r20_key11: 10.65121378892910, r20_key12: 12.57108229191090,
+            r20_key13:  7.85956711501608, r20_key14:  8.41891642907918, r20_key15: 11.23620892230380,
+            r20_key16:  9.19654863789350, r20_key17:  9.86031627358462, r20_key18: 11.97523755925750
+        }
+        spin.pA = 0.943129019477673
+        spin.dw = 4.42209952545181
+        spin.dwH = -0.27258970590969
+        spin.kex = 360.516132791038
+
+        # Calc the chi2 values at these parameters.
+        self.interpreter.minimise.calculate(verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s" % ("Parameter", "Value (:9)"))
+        print("%-20s %20.15g" % ("R2 (1H SQ - 500 MHz)", spin.r2[r20_key1]))
+        print("%-20s %20.15g" % ("R2 (1H SQ - 600 MHz)", spin.r2[r20_key2]))
+        print("%-20s %20.15g" % ("R2 (1H SQ - 800 MHz)", spin.r2[r20_key3]))
+        print("%-20s %20.15g" % ("R2 (SQ - 500 MHz)", spin.r2[r20_key4]))
+        print("%-20s %20.15g" % ("R2 (SQ - 600 MHz)", spin.r2[r20_key5]))
+        print("%-20s %20.15g" % ("R2 (SQ - 800 MHz)", spin.r2[r20_key6]))
+        print("%-20s %20.15g" % ("R2 (ZQ - 500 MHz)", spin.r2[r20_key7]))
+        print("%-20s %20.15g" % ("R2 (ZQ - 600 MHz)", spin.r2[r20_key8]))
+        print("%-20s %20.15g" % ("R2 (ZQ - 800 MHz)", spin.r2[r20_key9]))
+        print("%-20s %20.15g" % ("R2 (DQ - 500 MHz)", spin.r2[r20_key10]))
+        print("%-20s %20.15g" % ("R2 (DQ - 600 MHz)", spin.r2[r20_key11]))
+        print("%-20s %20.15g" % ("R2 (DQ - 800 MHz)", spin.r2[r20_key12]))
+        print("%-20s %20.15g" % ("R2 (1H MQ - 500 MHz)", spin.r2[r20_key13]))
+        print("%-20s %20.15g" % ("R2 (1H MQ - 600 MHz)", spin.r2[r20_key14]))
+        print("%-20s %20.15g" % ("R2 (1H MQ - 800 MHz)", spin.r2[r20_key15]))
+        print("%-20s %20.15g" % ("R2 (MQ - 500 MHz)", spin.r2[r20_key16]))
+        print("%-20s %20.15g" % ("R2 (MQ - 600 MHz)", spin.r2[r20_key17]))
+        print("%-20s %20.15g" % ("R2 (MQ - 800 MHz)", spin.r2[r20_key18]))
+        print("%-20s %20.15g" % ("pA", spin.pA))
+        print("%-20s %20.15g" % ("dw", spin.dw))
+        print("%-20s %20.15g" % ("dwH", spin.dwH))
+        print("%-20s %20.15g" % ("kex", spin.kex))
+        print("%-20s %20.15g\n" % ("chi2", spin.chi2))
+
+        # Checks for residue :9.
         self.assertAlmostEqual(spin.chi2/1000, 162.511988511609/1000, 3)
 
 
@@ -3963,133 +4576,14 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].chi2, 0.030959849811015544, 3)
 
 
-    def test_r1rho_kjaergaard(self):
+    def test_r1rho_kjaergaard_auto(self):
         """Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
 
         This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
 
+        This uses the automatic analysis.
+
         """
-
-        # The path to the data files.
-        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'
-
-        # Set pipe name, bundle and type.
-        pipe_name = 'base pipe'
-        pipe_bundle = 'relax_disp'
-        pipe_type= 'relax_disp'
-
-        # Create the data pipe.
-        self.interpreter.pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type=pipe_type)
-
-        # Read the spins.
-        self.interpreter.spectrum.read_spins(file='1_0_46_0_max_standard.ser', dir=data_path+sep+'peak_lists')
-
-        # Test some of the sequence.
-        self.assertEqual(len(cdp.mol), 1)
-        self.assertEqual(cdp.mol[0].name, None)
-        self.assertEqual(len(cdp.mol[0].res), 48)
-
-        # Name the isotope for field strength scaling.
-        self.interpreter.spin.isotope(isotope='15N')
-
-        # Set number of experiments to be used.
-        NR_exp = 70
-
-        # Load the experiments settings file.
-        expfile = open(data_path+sep+'exp_parameters_sort.txt', 'r')
-        expfileslines = expfile.readlines()[:NR_exp]
-        expfile.close()
-
-        # In MHz
-        yOBS = 81.050
-        # In ppm
-        yCAR = 118.078
-        centerPPM_N15 = yCAR
-
-        ## Read the chemical shift data.
-        self.interpreter.chemical_shift.read(file='1_0_46_0_max_standard.ser', dir=data_path+sep+'peak_lists')
-
-        # Test the chemical shift data.
-        cs = [122.223, 122.162, 114.250, 125.852, 118.626, 117.449, 119.999, 122.610, 118.602, 118.291, 115.393,
-        121.288, 117.448, 116.378, 116.316, 117.263, 122.211, 118.748, 118.103, 119.421, 119.317, 119.386, 117.279,
-        122.103, 120.038, 116.698, 111.811, 118.639, 118.285, 121.318, 117.770, 119.948, 119.759, 118.314, 118.160,
-        121.442, 118.714, 113.080, 125.706, 119.183, 120.966, 122.361, 126.675, 117.069, 120.875, 109.372, 119.811, 126.048]
-
-        i = 0
-        for spin, spin_id in spin_loop(return_id=True):
-            # Check the chemical shift.
-            self.assertEqual(spin.chemical_shift, cs[i])
-
-            # Increment the index.
-            i += 1
-
-        # The lock power to field, has been found in an calibration experiment.
-        spin_lock_field_strengths_Hz = {'35': 431.0, '39': 651.2, '41': 800.5, '43': 984.0, '46': 1341.11, '48': 1648.5}
-
-        # Apply spectra settings.
-        # Count settings
-        j = 0
-        for i in range(len(expfileslines)):
-            line=expfileslines[i]
-            if line[0] == "#":
-                continue
-            else:
-                # DIRN I deltadof2 dpwr2slock ncyc trim ss sfrq
-                DIRN = line.split()[0]
-                I = int(line.split()[1])
-                deltadof2 = line.split()[2]
-                dpwr2slock = line.split()[3]
-                ncyc = int(line.split()[4])
-                trim = float(line.split()[5])
-                ss = int(line.split()[6])
-                set_sfrq = float(line.split()[7])
-                apod_rmsd = float(line.split()[8])
-                spin_lock_field_strength = spin_lock_field_strengths_Hz[dpwr2slock]
-
-                # Calculate spin_lock time
-                time_sl = 2*ncyc*trim
-
-                # Define file name for peak list.
-                FNAME = "%s_%s_%s_%s_max_standard.ser"%(I, deltadof2, dpwr2slock, ncyc)
-                sp_id = "%s_%s_%s_%s"%(I, deltadof2, dpwr2slock, ncyc)
-
-                # Load the peak intensities.
-                self.interpreter.spectrum.read_intensities(file=FNAME, dir=data_path+sep+'peak_lists', spectrum_id=sp_id, int_method='height')
-
-                # Set the peak intensity errors, as defined as the baseplane RMSD.
-                self.interpreter.spectrum.baseplane_rmsd(error=apod_rmsd, spectrum_id=sp_id)
-
-                # Set the relaxation dispersion experiment type.
-                self.interpreter.relax_disp.exp_type(spectrum_id=sp_id, exp_type='R1rho')
-
-                # Set The spin-lock field strength, nu1, in Hz
-                self.interpreter.relax_disp.spin_lock_field(spectrum_id=sp_id, field=spin_lock_field_strength)
-
-                # Calculating the spin-lock offset in ppm, from offsets values provided in Hz.
-                frq_N15_Hz = yOBS * 1E6
-                offset_ppm_N15 = float(deltadof2) / frq_N15_Hz * 1E6
-                omega_rf_ppm = centerPPM_N15 + offset_ppm_N15
-
-                # Set The spin-lock offset, omega_rf, in ppm.
-                self.interpreter.relax_disp.spin_lock_offset(spectrum_id=sp_id, offset=omega_rf_ppm)
-
-                # Set the relaxation times (in s).
-                self.interpreter.relax_disp.relax_time(spectrum_id=sp_id, time=time_sl)
-
-                # Set the spectrometer frequency.
-                self.interpreter.spectrometer.frequency(id=sp_id, frq=set_sfrq, units='MHz')
-
-                # Add to counter
-                j += 1
-
-        # Read the R1 data
-        self.interpreter.relax_data.read(ri_id='R1', ri_type='R1', frq=cdp.spectrometer_frq_list[0], file='R1_fitted_values.txt', dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
-
-        print("Testing the number of settings")
-        print("Number of settings iterations is: %s. Number of cdp.exp_type.keys() is: %s"%(i, len(cdp.exp_type.keys() ) ) )
-        self.assertEqual(70, len(expfileslines))
-        self.assertEqual(69, j)
-        self.assertEqual(69, len(cdp.exp_type.keys()) )
 
         # Cluster residues
         cluster_ids = [
@@ -4109,15 +4603,27 @@ class Relax_disp(SystemTestCase):
         ":52@N",
         ":53@N"]
 
-        # Cluster spins
-        for curspin in cluster_ids:
-            print("Adding spin %s to cluster"%curspin)
-            self.interpreter.relax_disp.cluster('model_cluster', curspin)
+        # Load the data.
+        self.setup_r1rho_kjaergaard(cluster_ids=cluster_ids)
 
-        # De-select for analysis those spins who have not been clustered
-        for free_spin in cdp.clustering['free spins']:
-            print("Deselecting free spin %s"%free_spin)
-            self.interpreter.deselect.spin(spin_id=free_spin, change_all=False)
+        # Test some of the sequence.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(cdp.mol[0].name, None)
+        self.assertEqual(len(cdp.mol[0].res), 48)
+
+        # Test the chemical shift data.
+        cs = [122.223, 122.162, 114.250, 125.852, 118.626, 117.449, 119.999, 122.610, 118.602, 118.291, 115.393,
+        121.288, 117.448, 116.378, 116.316, 117.263, 122.211, 118.748, 118.103, 119.421, 119.317, 119.386, 117.279,
+        122.103, 120.038, 116.698, 111.811, 118.639, 118.285, 121.318, 117.770, 119.948, 119.759, 118.314, 118.160,
+        121.442, 118.714, 113.080, 125.706, 119.183, 120.966, 122.361, 126.675, 117.069, 120.875, 109.372, 119.811, 126.048]
+
+        i = 0
+        for spin, spin_id in spin_loop(return_id=True):
+            # Check the chemical shift.
+            self.assertEqual(spin.chemical_shift, cs[i])
+
+            # Increment the index.
+            i += 1
 
         # Initialize counter
         i = 0
@@ -4133,111 +4639,65 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(i, len(cluster_ids))
         self.assertEqual(j, 48-len(cluster_ids))
 
-        #Paper         reference values
-        #              Resi   Resn         R1_rad_s   R1err_rad_s   R2_rad_s   R2err_rad_s   kEX_rad_s      kEXerr_rad_s  phi_rad2_s2     phierr_rad2_s2    phi_ppm2         phierr_ppm2
-        # Scaling rad2_s2 to ppm2: scaling_rad2_s2 = frequency_to_ppm(frq=1/(2*pi), B0=cdp.spectrometer_frq_list[0], isotope='15N')**2 = 3.85167990165e-06
-        ref = dict()
-        ref[':13@N'] = [13,   'L13N-HN',   1.32394,   0.14687,      8.16007,   1.01237,      13193.82986,   2307.09152,   58703.06446,    22413.09854,      0.2261054135,    0.0863280812]
-        ref[':15@N'] = [15,   'R15N-HN',   1.34428,   0.14056,      7.83256,   0.67559,      13193.82986,   2307.09152,   28688.33492,    13480.72253,      0.110498283,     0.051923428]
-        ref[':16@N'] = [16,   'T16N-HN',   1.71514,   0.13651,      17.44216,  0.98583,      13193.82986,   2307.09152,   57356.77617,    21892.44205,      0.220919942,     0.084322679]
-        ref[':25@N'] = [25,   'Q25N-HN',   1.82412,   0.15809,      9.09447,   2.09215,      13193.82986,   2307.09152,   143111.13431,   49535.80302,      0.5512182797,    0.1907960569]
-        ref[':26@N'] = [26,   'Q26N-HN',   1.45746,   0.14127,      10.22801,  0.67116,      13193.82986,   2307.09152,   28187.06876,    13359.01615,      0.1085675662,    0.051454654]
-        ref[':28@N'] = [28,   'Q28N-HN',   1.48095,   0.14231,      10.33552,  0.691,        13193.82986,   2307.09152,   30088.0686,     13920.25654,      0.1158896091,    0.0536163723]
-        ref[':39@N'] = [39,   'L39N-HN',   1.46094,   0.14514,      8.02194,   0.84649,      13193.82986,   2307.09152,   44130.18538,    18104.55064,      0.1699753481,    0.0697329338]
-        ref[':40@N'] = [40,   'M40N-HN',   1.21381,   0.14035,      12.19112,  0.81418,      13193.82986,   2307.09152,   41834.90493,    17319.92156,      0.1611346625,    0.0667107938]
-        ref[':41@N'] = [41,   'A41N-HN',   1.29296,   0.14286,      9.29941,   0.66246,      13193.82986,   2307.09152,   26694.8921,     13080.66782,      0.1028201794,    0.0503825453]
-        ref[':43@N'] = [43,   'F43N-HN',   1.33626,   0.14352,      12.73816,  1.17386,      13193.82986,   2307.09152,   70347.63797,    26648.30524,      0.2709565833,    0.1026407417]
-        ref[':44@N'] = [44,   'I44N-HN',   1.28487,   0.1462,       12.70158,  1.52079,      13193.82986,   2307.09152,   95616.20461,    35307.79817,      0.3682830136,    0.1359943366]
-        ref[':45@N'] = [45,   'K45N-HN',   1.59227,   0.14591,      9.54457,   0.95596,      13193.82986,   2307.09152,   53849.7826,     21009.89973,      0.2074121253,    0.0809234085]
-        ref[':49@N'] = [49,   'A49N-HN',   1.38521,   0.14148,      4.44842,   0.88647,      13193.82986,   2307.09152,   40686.65286,    18501.20774,      0.1567119631,    0.07126073]
-        ref[':52@N'] = [52,   'V52N-HN',   1.57531,   0.15042,      6.51945,   1.43418,      13193.82986,   2307.09152,   93499.92172,    33233.23039,      0.3601317693,    0.1280037656]
-        ref[':53@N'] = [53,   'A53N-HN',   1.27214,   0.13823,      4.0705,    0.85485,      13193.82986,   2307.09152,   34856.18636,    17505.02393,      0.1342548725,    0.0674237488]
-
-        guess = dict()
-        guess[':13@N'] = [13,   'L13N-HN',   1.32394,   0.14687,      8.16007,   1.01237,      13193.82986,   2307.09152,   58703.06446,    22413.09854,      0.2261054135,    0.0863280812]
-        guess[':15@N'] = [15,   'R15N-HN',   1.34428,   0.14056,      7.83256,   0.67559,      13193.82986,   2307.09152,   28688.33492,    13480.72253,      0.110498283,     0.051923428]
-        guess[':16@N'] = [16,   'T16N-HN',   1.71514,   0.13651,      17.44216,  0.98583,      13193.82986,   2307.09152,   57356.77617,    21892.44205,      0.220919942,     0.084322679]
-        guess[':25@N'] = [25,   'Q25N-HN',   1.82412,   0.15809,      9.09447,   2.09215,      13193.82986,   2307.09152,   143111.13431,   49535.80302,      0.5512182797,    0.1907960569]
-        guess[':26@N'] = [26,   'Q26N-HN',   1.45746,   0.14127,      10.22801,  0.67116,      13193.82986,   2307.09152,   28187.06876,    13359.01615,      0.1085675662,    0.051454654]
-        guess[':28@N'] = [28,   'Q28N-HN',   1.48095,   0.14231,      10.33552,  0.691,        13193.82986,   2307.09152,   30088.0686,     13920.25654,      0.1158896091,    0.0536163723]
-        guess[':39@N'] = [39,   'L39N-HN',   1.46094,   0.14514,      8.02194,   0.84649,      13193.82986,   2307.09152,   44130.18538,    18104.55064,      0.1699753481,    0.0697329338]
-        guess[':40@N'] = [40,   'M40N-HN',   1.21381,   0.14035,      12.19112,  0.81418,      13193.82986,   2307.09152,   41834.90493,    17319.92156,      0.1611346625,    0.0667107938]
-        guess[':41@N'] = [41,   'A41N-HN',   1.29296,   0.14286,      9.29941,   0.66246,      13193.82986,   2307.09152,   26694.8921,     13080.66782,      0.1028201794,    0.0503825453]
-        guess[':43@N'] = [43,   'F43N-HN',   1.33626,   0.14352,      12.73816,  1.17386,      13193.82986,   2307.09152,   70347.63797,    26648.30524,      0.2709565833,    0.1026407417]
-        guess[':44@N'] = [44,   'I44N-HN',   1.28487,   0.1462,       12.70158,  1.52079,      13193.82986,   2307.09152,   95616.20461,    35307.79817,      0.3682830136,    0.1359943366]
-        guess[':45@N'] = [45,   'K45N-HN',   1.59227,   0.14591,      9.54457,   0.95596,      13193.82986,   2307.09152,   53849.7826,     21009.89973,      0.2074121253,    0.0809234085]
-        guess[':49@N'] = [49,   'A49N-HN',   1.38521,   0.14148,      4.44842,   0.88647,      13193.82986,   2307.09152,   40686.65286,    18501.20774,      0.1567119631,    0.07126073]
-        guess[':52@N'] = [52,   'V52N-HN',   1.57531,   0.15042,      6.51945,   1.43418,      13193.82986,   2307.09152,   93499.92172,    33233.23039,      0.3601317693,    0.1280037656]
-        guess[':53@N'] = [53,   'A53N-HN',   1.27214,   0.13823,      4.0705,    0.85485,      13193.82986,   2307.09152,   34856.18636,    17505.02393,      0.1342548725,    0.0674237488]
-
-        # Assign guess values.
-        for spin, spin_id in spin_loop(return_id=True):
-            if spin_id in cluster_ids:
-                print("spin_id %s in cluster ids"%(spin_id))
-                spin.kex = guess[spin_id][6]
-                spin.phi_ex = guess[spin_id][10]
-            else:
-                print("spin_id %s NOT in cluster ids"%(spin_id))
-
         # Check the initial setup.
         self.assertEqual(cdp.mol[0].res[7].num, 13)
-        self.assertEqual(cdp.mol[0].res[7].spin[0].kex, guess[':13@N'][6])
-        self.assertEqual(cdp.mol[0].res[7].spin[0].ri_data['R1'], ref[':13@N'][2])
+        self.assertEqual(cdp.mol[0].res[7].spin[0].kex, ds.guess[':13@N'][6])
+        self.assertEqual(cdp.mol[0].res[7].spin[0].ri_data['R1'], ds.ref[':13@N'][2])
 
         self.assertEqual(cdp.mol[0].res[9].num, 15)
-        self.assertEqual(cdp.mol[0].res[9].spin[0].kex, guess[':15@N'][6])
-        self.assertEqual(cdp.mol[0].res[9].spin[0].ri_data['R1'], ref[':15@N'][2])
+        self.assertEqual(cdp.mol[0].res[9].spin[0].kex, ds.guess[':15@N'][6])
+        self.assertEqual(cdp.mol[0].res[9].spin[0].ri_data['R1'], ds.ref[':15@N'][2])
 
         self.assertEqual(cdp.mol[0].res[10].num, 16)
-        self.assertEqual(cdp.mol[0].res[10].spin[0].kex, guess[':16@N'][6])
+        self.assertEqual(cdp.mol[0].res[10].spin[0].kex, ds.guess[':16@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[10].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[16].num, 25)
-        self.assertEqual(cdp.mol[0].res[16].spin[0].kex, guess[':25@N'][6])
+        self.assertEqual(cdp.mol[0].res[16].spin[0].kex, ds.guess[':25@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[16].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[17].num, 26)
-        self.assertEqual(cdp.mol[0].res[17].spin[0].kex, guess[':26@N'][6])
+        self.assertEqual(cdp.mol[0].res[17].spin[0].kex, ds.guess[':26@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[17].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[19].num, 28)
-        self.assertEqual(cdp.mol[0].res[19].spin[0].kex, guess[':28@N'][6])
+        self.assertEqual(cdp.mol[0].res[19].spin[0].kex, ds.guess[':28@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[19].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[29].num, 39)
-        self.assertEqual(cdp.mol[0].res[29].spin[0].kex, guess[':39@N'][6])
+        self.assertEqual(cdp.mol[0].res[29].spin[0].kex, ds.guess[':39@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[29].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[30].num, 40)
-        self.assertEqual(cdp.mol[0].res[30].spin[0].kex, guess[':40@N'][6])
+        self.assertEqual(cdp.mol[0].res[30].spin[0].kex, ds.guess[':40@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[30].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[31].num, 41)
-        self.assertEqual(cdp.mol[0].res[31].spin[0].kex, guess[':41@N'][6])
+        self.assertEqual(cdp.mol[0].res[31].spin[0].kex, ds.guess[':41@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[31].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[33].num, 43)
-        self.assertEqual(cdp.mol[0].res[33].spin[0].kex, guess[':43@N'][6])
+        self.assertEqual(cdp.mol[0].res[33].spin[0].kex, ds.guess[':43@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[33].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[34].num, 44)
-        self.assertEqual(cdp.mol[0].res[34].spin[0].kex, guess[':44@N'][6])
+        self.assertEqual(cdp.mol[0].res[34].spin[0].kex, ds.guess[':44@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[34].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[35].num, 45)
-        self.assertEqual(cdp.mol[0].res[35].spin[0].kex, guess[':45@N'][6])
+        self.assertEqual(cdp.mol[0].res[35].spin[0].kex, ds.guess[':45@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[35].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[38].num, 49)
-        self.assertEqual(cdp.mol[0].res[38].spin[0].kex, guess[':49@N'][6])
+        self.assertEqual(cdp.mol[0].res[38].spin[0].kex, ds.guess[':49@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[38].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[41].num, 52)
-        self.assertEqual(cdp.mol[0].res[41].spin[0].kex, guess[':52@N'][6])
+        self.assertEqual(cdp.mol[0].res[41].spin[0].kex, ds.guess[':52@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[41].spin[0], 'ri_data'))
 
         self.assertEqual(cdp.mol[0].res[42].num, 53)
-        self.assertEqual(cdp.mol[0].res[42].spin[0].kex, guess[':53@N'][6])
+        self.assertEqual(cdp.mol[0].res[42].spin[0].kex, ds.guess[':53@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[42].spin[0], 'ri_data'))
 
         # The dispersion models.
@@ -4259,173 +4719,297 @@ class Relax_disp(SystemTestCase):
         OPT_MAX_ITERATIONS = 1000
         relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
 
-        analysis_mode = "auto"
+        result_dir_name = ds.tmpdir
 
-        if analysis_mode == "auto":
-            # Make all spins free
-            for curspin in cluster_ids:
-                self.interpreter.relax_disp.cluster('free spins', curspin)
-                # Shut them down
-                self.interpreter.deselect.spin(spin_id=curspin, change_all=False)
+        # Make all spins free
+        for curspin in cluster_ids:
+            self.interpreter.relax_disp.cluster('free spins', curspin)
+            # Shut them down
+            self.interpreter.deselect.spin(spin_id=curspin, change_all=False)
 
-            # Select only a subset of spins for global fitting
-            #self.interpreter.select.spin(spin_id=':41@N', change_all=False)
-            #self.interpreter.relax_disp.cluster('model_cluster', ':41@N')
+        # Select only a subset of spins for global fitting
+        #self.interpreter.select.spin(spin_id=':41@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':41@N')
 
-            #self.interpreter.select.spin(spin_id=':40@N', change_all=False)
-            #self.interpreter.relax_disp.cluster('model_cluster', ':40@N')
+        #self.interpreter.select.spin(spin_id=':40@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':40@N')
 
-            self.interpreter.select.spin(spin_id=':52@N', change_all=False)
-            #self.interpreter.relax_disp.cluster('model_cluster', ':52@N')
+        self.interpreter.select.spin(spin_id=':52@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':52@N')
 
-            # Run the analysis.
-            relax_disp.Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+        # Run the analysis.
+        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
 
-            # Check the kex value of residue 52
-            #self.assertAlmostEqual(cdp.mol[0].res[41].spin[0].kex, ref[':52@N'][6])
+        # Check the kex value of residue 52
+        #self.assertAlmostEqual(cdp.mol[0].res[41].spin[0].kex, ds.ref[':52@N'][6])
 
-        ###########
-        elif analysis_mode == "man":
-            for curspin in cluster_ids:
-                self.interpreter.relax_disp.cluster('free spins', curspin)
 
-            # Do the analysis manual
-            self.interpreter.spectrum.error_analysis(subset=['46_0_35_0', '48_0_35_4', '47_0_35_10', '49_0_35_20', '36_0_39_0', '39_0_39_4', '37_0_39_10', '40_0_39_20', '38_0_39_40', '41_0_41_0', '44_0_41_4', '42_0_41_10', '45_0_41_20', '43_0_41_40', '31_0_43_0', '34_0_43_4', '32_0_43_10', '35_0_43_20', '33_0_43_40', '1_0_46_0', '4_0_46_4', '2_0_46_10', '5_0_46_20', '3_0_46_40', '60_0_48_0', '63_0_48_4', '61_0_48_10', '62_0_48_14', '64_0_48_20', '11_500_46_0', '14_500_46_4', '12_500_46_10', '15_500_46_20', '13_500_46_40', '50_1000_41_0', '53_1000_41_4', '51_1000_41_10', '54_1000_41_20', '52_1000_41_40', '21_1000_46_0', '24_1000_46_4', '22_1000_46_10', '25_1000_46_20', '23_1000_46_40', '65_1000_48_0', '68_1000_48_4', '66_1000_48_10', '67_1000_48_14', '69_1000_48_20', '55_2000_41_0', '58_2000_41_4', '56_2000_41_10', '59_2000_41_20', '57_2000_41_40', '6_2000_46_0', '9_2000_46_4', '7_2000_46_10', '10_2000_46_20', '8_2000_46_40', '16_5000_46_0', '19_5000_46_4', '17_5000_46_10', '20_5000_46_20', '18_5000_46_40', '26_10000_46_0', '29_10000_46_4', '27_10000_46_10', '30_10000_46_20', '28_10000_46_40'])
+    def test_r1rho_kjaergaard_man(self):
+        """Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
 
-            ##- The 'R2eff' model -
-            self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='R2eff - relax_disp', bundle_to='relax_disp')
-            self.interpreter.pipe.switch(pipe_name='R2eff - relax_disp')
-            self.interpreter.relax_disp.select_model(model='R2eff')
-            self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+        This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
 
-            self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
-            self.interpreter.eliminate(function=None, args=None)
-            self.interpreter.monte_carlo.setup(number=MC_NUM)
-            self.interpreter.monte_carlo.create_data(method='back_calc')
-            self.interpreter.monte_carlo.initial_values()
+        This uses the manual analysis.
 
-            self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
-            self.interpreter.eliminate(function=None, args=None)
-            self.interpreter.monte_carlo.error_analysis()
+        """
 
-            # Write results
-            #self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
-            #self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'R2eff', force=True, norm=True)
-            #self.interpreter.relax_disp.plot_disp_curves(dir=ds.tmpdir+sep+'resultsR1'+sep+'R2eff', num_points=1000, extend=500.0, force=True)
-            #self.interpreter.relax_disp.write_disp_curves(dir=ds.tmpdir+sep+'resultsR1'+sep+'R2eff', force=True)
-            #self.interpreter.value.write(param='r2eff', file='r2eff.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'R2eff', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', spin_id=None, plot_data='value', file='r2eff.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
-            #self.interpreter.value.write(param='i0', file='i0.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'R2eff', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', spin_id=None, plot_data='value', file='i0.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
-            #self.interpreter.value.write(param='chi2', file='chi2.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'R2eff', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
+        # Cluster residues
+        cluster_ids = [
+        ":13@N",
+        ":15@N",
+        ":16@N",
+        ":25@N",
+        ":26@N",
+        ":28@N",
+        ":39@N",
+        ":40@N",
+        ":41@N",
+        ":43@N",
+        ":44@N",
+        ":45@N",
+        ":49@N",
+        ":52@N",
+        ":53@N"]
 
-            ## Save results as state
-            #self.interpreter.results.write(file='results', dir=ds.tmpdir+sep+'resultsR1'+sep+'R2eff', compress_type=1, force=True)
 
-            ##- The 'No Rex' model -
-            self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='No Rex - relax_disp', bundle_to='relax_disp')
-            self.interpreter.pipe.switch(pipe_name='No Rex - relax_disp')
-            self.interpreter.relax_disp.select_model(model='No Rex')
-            self.interpreter.value.copy(pipe_from='R2eff - relax_disp', pipe_to='No Rex - relax_disp', param='r2eff')
-            self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+        # Load the data.
+        self.setup_r1rho_kjaergaard(cluster_ids=cluster_ids)
 
-            self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
-            self.interpreter.eliminate(function=None, args=None)
 
-            ## Write results
-            #self.interpreter.relax_disp.plot_disp_curves(dir=ds.tmpdir+sep+'resultsR1'+sep+'No Rex', num_points=1000, extend=500.0, force=True)
-            #self.interpreter.relax_disp.write_disp_curves(dir=ds.tmpdir+sep+'resultsR1'+sep+'No Rex', force=True)
-            #self.interpreter.value.write(param='chi2', file='chi2.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'No Rex', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'No Rex', force=True, norm=False)
+        # The grid search size (the number of increments per dimension).
+        GRID_INC = 4
 
-            ## Save results as state
-            self.interpreter.results.write(file='results', dir=ds.tmpdir+sep+'resultsR1'+sep+'No Rex', compress_type=1, force=True)
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        MC_NUM = 3
 
-            ##- The 'DPL94' model -
-            self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='DPL94 - relax_disp', bundle_to='relax_disp')
-            self.interpreter.pipe.switch(pipe_name='DPL94 - relax_disp')
-            self.interpreter.relax_disp.select_model(model='DPL94')
-            self.interpreter.value.copy(pipe_from='R2eff - relax_disp', pipe_to='DPL94 - relax_disp', param='r2eff')
-            self.interpreter.relax_disp.insignificance(level=1.0)
-            self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+        # Execute the auto-analysis (fast).
+        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        OPT_FUNC_TOL = 1e-1
+        OPT_MAX_ITERATIONS = 1000
 
-            self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
-            self.interpreter.eliminate(function=None, args=None)
+        result_dir_name = ds.tmpdir
 
-            ## Write results
-            #self.interpreter.relax_disp.plot_disp_curves(dir=ds.tmpdir+sep+'resultsR1'+sep+'DPL94', num_points=1000, extend=500.0, force=True)
-            #self.interpreter.relax_disp.write_disp_curves(dir=ds.tmpdir+sep+'resultsR1'+sep+'DPL94', force=True)
-            #self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', spin_id=None, plot_data='value', file='phi_ex.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
-            #self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.value.write(param='kex', file='kex.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.value.write(param='tex', file='tex.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', spin_id=None, plot_data='value', file='k_AB.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', spin_id=None, plot_data='value', file='kex.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', spin_id=None, plot_data='value', file='tex.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
-            #self.interpreter.value.write(param='chi2', file='chi2.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
+        # Make all spins free, and select a subset.
+        for curspin in cluster_ids:
+            self.interpreter.relax_disp.cluster('free spins', curspin)
+            # Shut them down
+            self.interpreter.deselect.spin(spin_id=curspin, change_all=False)
 
-            ## Save results as state
-            #self.interpreter.results.write(file='results', dir=ds.tmpdir+sep+'resultsR1'+sep+'DPL94', compress_type=1, force=True)
+        self.interpreter.select.spin(spin_id=':52@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':52@N')
 
-            ##- The 'final' model -
-            self.interpreter.model_selection(method='AIC', modsel_pipe='final - relax_disp', bundle='relax_disp', pipes=['No Rex - relax_disp', 'DPL94 - relax_disp'])
-            self.interpreter.monte_carlo.setup(number=MC_NUM)
-            self.interpreter.monte_carlo.create_data(method='back_calc')
-            self.interpreter.monte_carlo.initial_values()
+        # Do the analysis manual
+        self.interpreter.spectrum.error_analysis(subset=['46_0_35_0', '48_0_35_4', '47_0_35_10', '49_0_35_20', '36_0_39_0', '39_0_39_4', '37_0_39_10', '40_0_39_20', '38_0_39_40', '41_0_41_0', '44_0_41_4', '42_0_41_10', '45_0_41_20', '43_0_41_40', '31_0_43_0', '34_0_43_4', '32_0_43_10', '35_0_43_20', '33_0_43_40', '1_0_46_0', '4_0_46_4', '2_0_46_10', '5_0_46_20', '3_0_46_40', '60_0_48_0', '63_0_48_4', '61_0_48_10', '62_0_48_14', '64_0_48_20', '11_500_46_0', '14_500_46_4', '12_500_46_10', '15_500_46_20', '13_500_46_40', '50_1000_41_0', '53_1000_41_4', '51_1000_41_10', '54_1000_41_20', '52_1000_41_40', '21_1000_46_0', '24_1000_46_4', '22_1000_46_10', '25_1000_46_20', '23_1000_46_40', '65_1000_48_0', '68_1000_48_4', '66_1000_48_10', '67_1000_48_14', '69_1000_48_20', '55_2000_41_0', '58_2000_41_4', '56_2000_41_10', '59_2000_41_20', '57_2000_41_40', '6_2000_46_0', '9_2000_46_4', '7_2000_46_10', '10_2000_46_20', '8_2000_46_40', '16_5000_46_0', '19_5000_46_4', '17_5000_46_10', '20_5000_46_20', '18_5000_46_40', '26_10000_46_0', '29_10000_46_4', '27_10000_46_10', '30_10000_46_20', '28_10000_46_40'])
 
-            self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
-            self.interpreter.eliminate(function=None, args=None)
-            self.interpreter.monte_carlo.error_analysis()
+        ##- The 'R2eff' model -
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='R2eff - relax_disp', bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='R2eff - relax_disp')
+        self.interpreter.relax_disp.select_model(model='R2eff')
+        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
 
-            ## Write results
-            #self.interpreter.relax_disp.plot_disp_curves(dir=ds.tmpdir+sep+'resultsR1'+sep+'final', num_points=1000, extend=500.0, force=True)
-            #self.interpreter.relax_disp.write_disp_curves(dir=ds.tmpdir+sep+'resultsR1'+sep+'final', force=True)
-            #self.interpreter.value.write(param='model', file='model.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.value.write(param='pA', file='pA.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.value.write(param='pB', file='pB.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='pA', spin_id=None, plot_data='value', file='pA.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='pB', spin_id=None, plot_data='value', file='pB.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', spin_id=None, plot_data='value', file='phi_ex.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.value.write(param='phi_ex_B', file='phi_ex_B.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.value.write(param='phi_ex_C', file='phi_ex_C.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_B', spin_id=None, plot_data='value', file='phi_ex_B.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_C', spin_id=None, plot_data='value', file='phi_ex_C.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.value.write(param='dw', file='dw.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw', spin_id=None, plot_data='value', file='dw.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.value.write(param='dwH', file='dwH.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='dwH', spin_id=None, plot_data='value', file='dwH.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            self.interpreter.value.write(param='kex', file='kex.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.value.write(param='tex', file='tex.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', spin_id=None, plot_data='value', file='k_AB.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', spin_id=None, plot_data='value', file='kex.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', spin_id=None, plot_data='value', file='tex.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', spin_id=None, plot_data='value', file='k_AB.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.value.write(param='kB', file='kB.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.value.write(param='kC', file='kC.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kB', spin_id=None, plot_data='value', file='kB.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kC', spin_id=None, plot_data='value', file='kC.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.value.write(param='chi2', file='chi2.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.eliminate(function=None, args=None)
+        self.interpreter.monte_carlo.setup(number=MC_NUM)
+        self.interpreter.monte_carlo.create_data(method='back_calc')
+        self.interpreter.monte_carlo.initial_values()
 
-            # Test of new parameters to write out.
-            self.interpreter.value.write(param='theta', file='theta.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.value.write(param='theta', file='theta.out', dir='~', scaling=1.0, comment=None, bc=False, force=True)
-            #self.assert_(hasattr(cdp.mol[0].res[7].spin[0], 'theta'))
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.eliminate(function=None, args=None)
+        self.interpreter.monte_carlo.error_analysis()
 
-            ## Save results as state
-            #self.interpreter.results.write(file='results', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', compress_type=1, force=True)
-            ## Save all results in all pipes in state
-            #self.interpreter.state.save(state='final_state', dir=ds.tmpdir+sep+'resultsR1', compress_type=1, force=True)
+        # Write results
+        #self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
+        #self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=True)
+        #self.interpreter.relax_disp.plot_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', num_points=1000, extend=500.0, force=True)
+        #self.interpreter.relax_disp.write_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True)
+        #self.interpreter.value.write(param='r2eff', file='r2eff.out', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', spin_id=None, plot_data='value', file='r2eff.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
+        #self.interpreter.value.write(param='i0', file='i0.out', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', spin_id=None, plot_data='value', file='i0.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
+        #self.interpreter.value.write(param='chi2', file='chi2.out', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
 
-            # Assert the file existence of the written value files
-            self.assert_(access(ds.tmpdir+sep+'resultsR1'+sep+'final'+sep+'phi_ex.out', F_OK))
-            self.assert_(access(ds.tmpdir+sep+'resultsR1'+sep+'final'+sep+'kex.out', F_OK))
+        ## Save results as state
+        #self.interpreter.results.write(file='results', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', compress_type=1, force=True)
+
+        ##- The 'No Rex' model -
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='No Rex - relax_disp', bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='No Rex - relax_disp')
+        self.interpreter.relax_disp.select_model(model='No Rex')
+        self.interpreter.value.copy(pipe_from='R2eff - relax_disp', pipe_to='No Rex - relax_disp', param='r2eff')
+        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.eliminate(function=None, args=None)
+
+        ## Write results
+        #self.interpreter.relax_disp.plot_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', num_points=1000, extend=500.0, force=True)
+        #self.interpreter.relax_disp.write_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', force=True)
+        #self.interpreter.value.write(param='chi2', file='chi2.out', dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', force=True, norm=False)
+
+        ## Save results as state
+        self.interpreter.results.write(file='results', dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', compress_type=1, force=True)
+
+        ##- The 'DPL94' model -
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='DPL94 - relax_disp', bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='DPL94 - relax_disp')
+        self.interpreter.relax_disp.select_model(model='DPL94')
+        self.interpreter.value.copy(pipe_from='R2eff - relax_disp', pipe_to='DPL94 - relax_disp', param='r2eff')
+        self.interpreter.relax_disp.insignificance(level=1.0)
+        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.eliminate(function=None, args=None)
+
+        ## Write results
+        #self.interpreter.relax_disp.plot_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', num_points=1000, extend=500.0, force=True)
+        #self.interpreter.relax_disp.write_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True)
+        #self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', spin_id=None, plot_data='value', file='phi_ex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
+        #self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.value.write(param='kex', file='kex.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.value.write(param='tex', file='tex.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', spin_id=None, plot_data='value', file='k_AB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', spin_id=None, plot_data='value', file='kex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', spin_id=None, plot_data='value', file='tex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
+        #self.interpreter.value.write(param='chi2', file='chi2.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
+
+        ## Save results as state
+        #self.interpreter.results.write(file='results', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', compress_type=1, force=True)
+
+        ##- The 'final' model -
+        self.interpreter.model_selection(method='AIC', modsel_pipe='final - relax_disp', bundle='relax_disp', pipes=['No Rex - relax_disp', 'DPL94 - relax_disp'])
+        self.interpreter.monte_carlo.setup(number=MC_NUM)
+        self.interpreter.monte_carlo.create_data(method='back_calc')
+        self.interpreter.monte_carlo.initial_values()
+
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.eliminate(function=None, args=None)
+        self.interpreter.monte_carlo.error_analysis()
+
+        ## Write results
+        #self.interpreter.relax_disp.plot_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'final', num_points=1000, extend=500.0, force=True)
+        #self.interpreter.relax_disp.write_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True)
+        #self.interpreter.value.write(param='model', file='model.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.value.write(param='pA', file='pA.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.value.write(param='pB', file='pB.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='pA', spin_id=None, plot_data='value', file='pA.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='pB', spin_id=None, plot_data='value', file='pB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', spin_id=None, plot_data='value', file='phi_ex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.value.write(param='phi_ex_B', file='phi_ex_B.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.value.write(param='phi_ex_C', file='phi_ex_C.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_B', spin_id=None, plot_data='value', file='phi_ex_B.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_C', spin_id=None, plot_data='value', file='phi_ex_C.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.value.write(param='dw', file='dw.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw', spin_id=None, plot_data='value', file='dw.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.value.write(param='dwH', file='dwH.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='dwH', spin_id=None, plot_data='value', file='dwH.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        self.interpreter.value.write(param='kex', file='kex.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.value.write(param='tex', file='tex.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', spin_id=None, plot_data='value', file='k_AB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', spin_id=None, plot_data='value', file='kex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', spin_id=None, plot_data='value', file='tex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', spin_id=None, plot_data='value', file='k_AB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.value.write(param='kB', file='kB.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.value.write(param='kC', file='kC.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kB', spin_id=None, plot_data='value', file='kB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kC', spin_id=None, plot_data='value', file='kC.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.value.write(param='chi2', file='chi2.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+
+        # Test of new parameters to write out.
+        self.interpreter.value.write(param='theta', file='theta.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.value.write(param='theta', file='theta.out', dir='~', scaling=1.0, comment=None, bc=False, force=True)
+        #self.assert_(hasattr(cdp.mol[0].res[7].spin[0], 'theta'))
+
+        ## Save results as state
+        #self.interpreter.results.write(file='results', dir=result_dir_name+sep+'resultsR1'+sep+'final', compress_type=1, force=True)
+        ## Save all results in all pipes in state
+        #self.interpreter.state.save(state='final_state', dir=result_dir_name+sep+'resultsR1', compress_type=1, force=True)
+
+        # Assert the file existence of the written value files
+        self.assert_(access(result_dir_name+sep+'resultsR1'+sep+'final'+sep+'phi_ex.out', F_OK))
+        self.assert_(access(result_dir_name+sep+'resultsR1'+sep+'final'+sep+'kex.out', F_OK))
+        self.assert_(access(result_dir_name+sep+'resultsR1'+sep+'final'+sep+'theta.out', F_OK))
+
+
+    def test_r1rho_kjaergaard_missing_r1(self):
+        """Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
+
+        This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
+
+        This uses the automatic analysis, with missing loading R1.
+
+        """
+
+        # Cluster residues
+        cluster_ids = [
+        ":13@N",
+        ":15@N",
+        ":16@N",
+        ":25@N",
+        ":26@N",
+        ":28@N",
+        ":39@N",
+        ":40@N",
+        ":41@N",
+        ":43@N",
+        ":44@N",
+        ":45@N",
+        ":49@N",
+        ":52@N",
+        ":53@N"]
+
+        # Load the data.
+        self.setup_r1rho_kjaergaard(cluster_ids=cluster_ids, read_R1=False)
+
+        # The dispersion models.
+        MODELS = ['R2eff', 'DPL94']
+
+        # The grid search size (the number of increments per dimension).
+        GRID_INC = 4
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        MC_NUM = 3
+
+        # Model selection technique.
+        MODSEL = 'AIC'
+
+        # Execute the auto-analysis (fast).
+        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        OPT_FUNC_TOL = 1e-1
+        relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
+        OPT_MAX_ITERATIONS = 1000
+        relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
+
+        result_dir_name = ds.tmpdir
+
+        # Make all spins free
+        for curspin in cluster_ids:
+            self.interpreter.relax_disp.cluster('free spins', curspin)
+            # Shut them down
+            self.interpreter.deselect.spin(spin_id=curspin, change_all=False)
+
+        # Select only a subset of spins for global fitting
+        #self.interpreter.select.spin(spin_id=':41@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':41@N')
+
+        #self.interpreter.select.spin(spin_id=':40@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':40@N')
+
+        self.interpreter.select.spin(spin_id=':52@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':52@N')
+
+        # Run the analysis.
+        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+
+        # Check the kex value of residue 52
+        #self.assertAlmostEqual(cdp.mol[0].res[41].spin[0].kex, ds.ref[':52@N'][6])
 
 
     def test_r2eff_read(self):
@@ -5487,24 +6071,8 @@ class Relax_disp(SystemTestCase):
     def test_tp02_data_to_ns_r1rho_2site(self, model=None):
         """Test the relaxation dispersion 'NS R1rho 2-site' model fitting against the 'TP02' test data."""
 
-        # Reset.
-        self.interpreter.reset()
-
-        # Create the data pipe and load the base data.
-        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'r1rho_off_res_tp02'
-        self.interpreter.state.load(data_path+sep+'r2eff_values')
-
-        # The model data pipe.
-        model = 'NS R1rho 2-site'
-        pipe_name = "%s - relax_disp" % model
-        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=pipe_name, bundle_to='relax_disp')
-        self.interpreter.pipe.switch(pipe_name=pipe_name)
-
-        # Set the model.
-        self.interpreter.relax_disp.select_model(model=model)
-
-        # Copy the data.
-        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=pipe_name, param='r2eff')
+        # Setup the data.
+        self.setup_tp02_data_to_ns_r1rho_2site()
 
         # Alias the spins.
         spin1 = cdp.mol[0].res[0].spin[0]
@@ -5513,29 +6081,6 @@ class Relax_disp(SystemTestCase):
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=500e6)
         r20_key2 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=800e6)
-
-        # Set the initial parameter values.
-        spin1.r2 = {r20_key1: 9.9963793866185, r20_key2: 15.0056724422684}
-        spin1.pA = 0.779782428085762
-        spin1.dw = 7.57855284496424
-        spin1.kex = 1116.7911285203
-        spin2.r2 = {r20_key1: 11.9983346935434, r20_key2: 18.0076097513337}
-        spin2.pA = 0.826666229688602
-        spin2.dw = 9.5732624231366
-        spin2.kex = 1380.46162655657
-
-        # Low precision optimisation.
-        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
-
-        # Printout.
-        print("\n\nOptimised parameters:\n")
-        print("%-20s %-20s %-20s" % ("Parameter", "Value (:1)", "Value (:2)"))
-        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin1.r2[r20_key1], spin2.r2[r20_key1]))
-        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin1.r2[r20_key2], spin2.r2[r20_key2]))
-        print("%-20s %20.15g %20.15g" % ("pA", spin1.pA, spin2.pA))
-        print("%-20s %20.15g %20.15g" % ("dw", spin1.dw, spin2.dw))
-        print("%-20s %20.15g %20.15g" % ("kex", spin1.kex, spin2.kex))
-        print("%-20s %20.15g %20.15g\n" % ("chi2", spin1.chi2, spin2.chi2))
 
         # Checks for residue :1.
         self.assertAlmostEqual(spin1.r2[r20_key1], 8.50207717367548, 4)
@@ -5552,6 +6097,37 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin2.dw, 9.5505714779503, 4)
         self.assertAlmostEqual(spin2.kex/1000, 1454.45726998929/1000, 4)
         self.assertAlmostEqual(spin2.chi2, 0.000402231563481261, 4)
+
+
+    def test_tp02_data_to_ns_r1rho_2site_cluster(self, model=None):
+        """Test the relaxation dispersion 'NS R1rho 2-site' model fitting against the 'TP02' test data, when performing clustering."""
+
+        # Setup the data.
+        self.setup_tp02_data_to_ns_r1rho_2site(clustering=True)
+
+        # Alias the spins.
+        spin1 = cdp.mol[0].res[0].spin[0]
+        spin2 = cdp.mol[0].res[1].spin[0]
+
+        # The R20 keys.
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=800e6)
+
+        # Checks for residue :1.
+        self.assertAlmostEqual(spin1.r2[r20_key1], 8.48607207881462, 4)
+        self.assertAlmostEqual(spin1.r2[r20_key2], 13.4527609061722, 4)
+        self.assertAlmostEqual(spin1.pA, 0.863093838784425, 4)
+        self.assertAlmostEqual(spin1.dw, 8.86218096536618, 4)
+        self.assertAlmostEqual(spin1.kex/1000, 1186.22749648299/1000, 4)
+        self.assertAlmostEqual(spin1.chi2, 3.09500996065247, 4)
+
+        # Checks for residue :2.
+        self.assertAlmostEqual(spin2.r2[r20_key1], 10.4577906018883, 4)
+        self.assertAlmostEqual(spin2.r2[r20_key2], 16.4455550953792, 4)
+        self.assertAlmostEqual(spin2.pA, 0.863093838784425, 4)
+        self.assertAlmostEqual(spin2.dw, 11.5841168862587, 4)
+        self.assertAlmostEqual(spin2.kex/1000, 1186.22749648299/1000, 4)
+        self.assertAlmostEqual(spin2.chi2, 3.09500996065247, 4)
 
 
     def test_tp02_data_to_mp05(self):

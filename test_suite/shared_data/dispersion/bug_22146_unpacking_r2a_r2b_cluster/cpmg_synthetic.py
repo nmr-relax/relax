@@ -22,7 +22,6 @@
 # Script for calculating synthetics CPMG data.
 
 # Python module imports.
-from os import sep
 from math import sqrt
 
 # relax module imports.

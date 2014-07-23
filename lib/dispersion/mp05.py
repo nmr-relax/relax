@@ -3,6 +3,7 @@
 # Copyright (C) 2000-2001 Nikolai Skrynnikov                                  #
 # Copyright (C) 2000-2001 Martin Tollinger                                    #
 # Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -60,58 +61,76 @@ More information on the MP05 model can be found in the:
 """
 
 # Python module imports.
-from numpy import abs, arctan2, array, isfinite, min, sin, sum
+from numpy import arctan2, isfinite, min, sin, sum
+from numpy.ma import fix_invalid, masked_where
 
 
-def r1rho_MP05(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=None, kex=None, R1=0.0, spin_lock_fields=None, spin_lock_fields2=None, back_calc=None, num_points=None):
+def r1rho_MP05(r1rho_prime=None, omega=None, offset=None, pA=None, dw=None, kex=None, R1=0.0, spin_lock_fields=None, spin_lock_fields2=None, back_calc=None):
     """Calculate the R1rho' values for the TP02 model.
 
     See the module docstring for details.  This is the Miloushev and Palmer (2005) equation according to Korzhnev (J. Biomol. NMR (2003), 26, 39-48).
 
 
     @keyword r1rho_prime:       The R1rho_prime parameter value (R1rho with no exchange).
-    @type r1rho_prime:          float
+    @type r1rho_prime:          numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword omega:             The chemical shift for the spin in rad/s.
-    @type omega:                float
+    @type omega:                numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword offset:            The spin-lock offsets for the data.
-    @type offset:               numpy rank-1 float array
+    @type offset:               numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword pA:                The population of state A.
     @type pA:                   float
-    @keyword pB:                The population of state B.
-    @type pB:                   float
     @keyword dw:                The chemical exchange difference between states A and B in rad/s.
-    @type dw:                   float
+    @type dw:                   numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword kex:               The kex parameter value (the exchange rate in rad/s).
     @type kex:                  float
     @keyword R1:                The R1 relaxation rate.
-    @type R1:                   float
+    @type R1:                   numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword spin_lock_fields:  The R1rho spin-lock field strengths (in rad.s^-1).
-    @type spin_lock_fields:     numpy rank-1 float array
+    @type spin_lock_fields:     numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword spin_lock_fields2: The R1rho spin-lock field strengths squared (in rad^2.s^-2).  This is for speed.
-    @type spin_lock_fields2:    numpy rank-1 float array
+    @type spin_lock_fields2:    numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to the combination of offset and spin lock field.
-    @type back_calc:            numpy rank-1 float array
-    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields and back_calc arguments.
-    @type num_points:           int
+    @type back_calc:            numpy float array of rank [NE][NS][NM][NO][ND]
     """
 
+    # Flag to tell if values should be replaced if numer is zero.
+    t_numer_zero = False
+
+    # Parameter conversions.
+    pB = 1.0 - pA
+
     # Repetitive calculations (to speed up calculations).
-    Wa = omega                  # Larmor frequency [s^-1].
-    Wb = omega + dw             # Larmor frequency [s^-1].
     kex2 = kex**2
+
+    # Larmor frequency [s^-1].
+    Wa = omega
+    Wb = omega + dw
 
     # The numerator.
     phi_ex = pA * pB * dw**2
     numer = phi_ex * kex
 
     # We assume that A resonates at 0 [s^-1], without loss of generality.
-    W = pA*Wa + pB*Wb                           # Pop-averaged Larmor frequency [s^-1].
-    da = Wa - offset                            # Offset of spin-lock from A.
-    db = Wb - offset                            # Offset of spin-lock from B.
-    d = W - offset                              # Offset of spin-lock from pop-average.
-    waeff2 = spin_lock_fields2 + da**2       # Effective field at A.
-    wbeff2 = spin_lock_fields2 + db**2       # Effective field at B.
-    weff2 = spin_lock_fields2 + d**2         # Effective field at pop-average.
+    # Pop-averaged Larmor frequency [s^-1].
+    W = pA*Wa + pB*Wb
+
+    # Offset of spin-lock from A.
+    da = Wa - offset
+
+    # Offset of spin-lock from B.
+    db = Wb - offset
+
+    # Offset of spin-lock from pop-average.
+    d = W - offset
+
+    # Effective field at A.
+    waeff2 = spin_lock_fields2 + da**2
+
+    # Effective field at B.
+    wbeff2 = spin_lock_fields2 + db**2
+
+    # Effective field at pop-average.
+    weff2 = spin_lock_fields2 + d**2
 
     # The rotating frame flip angle.
     theta = arctan2(spin_lock_fields, d)
@@ -123,9 +142,9 @@ def r1rho_MP05(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
 
     # Catch zeros (to avoid pointless mathematical operations).
     # This will result in no exchange, returning flat lines.
-    if numer == 0.0:
-        back_calc[:] = R1_cos_theta2 + R1rho_prime_sin_theta2
-        return
+    if min(numer) == 0.0:
+        t_numer_zero = True
+        mask_numer_zero = masked_where(numer == 0.0, numer)
 
     # Denominator.
     waeff2_wbeff2 = waeff2*wbeff2
@@ -133,14 +152,18 @@ def r1rho_MP05(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
 
     fact = 1.0 + 2.0*kex2*(pA*waeff2 + pB*wbeff2) / fact_denom
     denom = waeff2_wbeff2/weff2 + kex2 - sin_theta2*phi_ex*(fact)
- 
+
     # R1rho calculation.
-    R1rho = R1_cos_theta2 + R1rho_prime_sin_theta2 + sin_theta2 * numer / denom
+    back_calc[:] = R1_cos_theta2 + R1rho_prime_sin_theta2 + sin_theta2 * numer / denom
+
+    # Replace data in array.
+    # If numer is zero.
+    if t_numer_zero:
+        replace = R1_cos_theta2 + R1rho_prime_sin_theta2
+        back_calc[mask_numer_zero.mask] = replace[mask_numer_zero.mask]
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
-    if not isfinite(sum(R1rho)):
-        R1rho = array([1e100]*num_points)
-
-    back_calc[:] = R1rho
-
+    if not isfinite(sum(back_calc)):
+        # Replaces nan, inf, etc. with fill value.
+        fix_invalid(back_calc, copy=False, fill_value=1e100)
