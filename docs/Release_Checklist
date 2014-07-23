@@ -70,7 +70,7 @@ Package bundling
 
 Bundle minfx and bmrblib by checking out the latest stable release tags, for example:
 
-$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.8/minfx
+$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.9/minfx
 $ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.3/bmrblib
 
 
@@ -107,7 +107,7 @@ Build other distribution packages by checking out the tag and bundling minfx and
 
 $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
 $ cd 2.0.1
-$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.8/minfx
+$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.9/minfx
 $ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.3/bmrblib
 $ scons binary_dist key=xxxxx
 
@@ -115,7 +115,7 @@ Or:
 
 $ svn co http://svn.gna.org/svn/relax/tags/2.0.1
 $ cd 2.0.1
-$ svn co http://svn.gna.org/svn/minfx/tags/1.0.8/minfx
+$ svn co http://svn.gna.org/svn/minfx/tags/1.0.9/minfx
 $ svn co http://svn.gna.org/svn/bmrblib/tags/1.0.3/bmrblib
 $ scons binary_dist
 
