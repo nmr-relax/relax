@@ -145,9 +145,24 @@ class Relax_disp_params(Param_list):
         self._add_peak_intensity()
 
         # Add the base information for the dispersion analysis.
-        self._add('relax_times', scope='spin', py_type=dict, grace_string='\\qRelaxation time period (s)\\Q')
-        self._add('cpmg_frqs', scope='spin', py_type=dict, grace_string='\\qCPMG pulse train frequency (Hz)\\Q')
-        self._add('spin_lock_nu1', scope='spin', py_type=dict, grace_string='\\qSpin-lock field strength (Hz)\\Q')
+        self._add(
+            'relax_times',
+            scope = 'spin',
+            py_type = dict,
+            grace_string = '\\qRelaxation time period (s)\\Q'
+        )
+        self._add(
+            'cpmg_frqs',
+            scope = 'spin',
+            py_type = dict,
+            grace_string = '\\qCPMG pulse train frequency (Hz)\\Q'
+        )
+        self._add(
+            'spin_lock_nu1',
+            scope = 'spin',
+            py_type = dict,
+            grace_string = '\\qSpin-lock field strength (Hz)\\Q'
+        )
 
         # Add the model variables.
         self._add_model_info()

@@ -45,7 +45,16 @@ class Noe_params(Param_list):
         self._add_peak_intensity()
 
         # Add the single model parameter.
-        self._add('noe', scope='spin', desc='The steady-state NOE value', py_type=float, set='params', grace_string='\\qNOE\\Q', err=True, sim=True)
+        self._add(
+            'noe',
+            scope = 'spin',
+            desc = 'The steady-state NOE value',
+            py_type = float,
+            set = 'params',
+            grace_string = '\\qNOE\\Q',
+            err = True,
+            sim = True
+        )
 
         # Set up the user function documentation.
         self._set_uf_title("Steady-state NOE parameters")

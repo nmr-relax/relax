@@ -68,8 +68,19 @@ class Param_list(object):
 
         # Add some spin specific objects.
         if self.spin_data:
-            self._add('select', scope='spin', desc='The spin selection flag', py_type=bool, sim=True)
-            self._add('fixed', scope='spin', desc='The fixed flag', py_type=bool)
+            self._add(
+                'select',
+                scope = 'spin',
+                desc = 'The spin selection flag',
+                py_type = bool,
+                sim = True
+            )
+            self._add(
+                'fixed',
+                scope = 'spin',
+                desc = 'The fixed flag',
+                py_type = bool
+            )
 
         # Default user function documentation.
         self._uf_title = "Parameters"
@@ -171,8 +182,22 @@ class Param_list(object):
         """Add the PCS and RDC data."""
 
         # Add the data.
-        self._add('pcs', scope='spin', grace_string='Pseudo-contact shift', units='ppm', desc='The pseudo-contact shift (PCS)', py_type=float)
-        self._add('rdc', scope='spin', grace_string='Residual dipolar coupling', units='Hz', desc='The residual dipolar coupling (RDC)', py_type=float)
+        self._add(
+            'pcs',
+            scope = 'spin',
+            grace_string = 'Pseudo-contact shift',
+            units = 'ppm',
+            desc = 'The pseudo-contact shift (PCS)',
+            py_type = float
+        )
+        self._add(
+            'rdc',
+            scope = 'spin',
+            grace_string = 'Residual dipolar coupling',
+            units = 'Hz',
+            desc = 'The residual dipolar coupling (RDC)',
+            py_type = float
+        )
 
 
     def _add_align_tensor(self):
@@ -255,28 +280,202 @@ class Param_list(object):
         """
 
         # Add the CSA structure.
-        self._add('csa', scope='spin', default=default, units='ppm', desc='Chemical shift anisotropy (unitless)', py_type=float, set=set, conv_factor=1e-6, grace_string='\\qCSA\\Q', err=err, sim=sim)
+        self._add(
+            'csa',
+            scope = 'spin',
+            default = default,
+            units = 'ppm',
+            desc = 'Chemical shift anisotropy (unitless)',
+            py_type = float,
+            set = set,
+            conv_factor = 1e-6,
+            grace_string = '\\qCSA\\Q',
+            err = err,
+            sim = sim
+        )
 
 
     def _add_diffusion_params(self):
         """Add the Brownian rotational diffusion parameters to the list."""
 
         # Add the CSA structure.
-        self._add('tm', scope='global', default=10.0 * 1e-9, grace_string='\\xt\\f{}\\sm', units='ns', desc='Global correlation time', py_type=float, set='params', conv_factor=1e-9, err=True, sim=True)
-        self._add('Diso', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Isotropic component of the diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
-        self._add('Dx', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Eigenvalue associated with the x-axis of the diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
-        self._add('Dy', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Eigenvalue associated with the y-axis of the diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
-        self._add('Dz', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Eigenvalue associated with the z-axis of the diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
-        self._add('Dpar', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Diffusion coefficient parallel to the major axis of the spheroid diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
-        self._add('Dper', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Diffusion coefficient perpendicular to the major axis of the spheroid diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
-        self._add('Da', scope='global', default=0.0, units='1e6 1/s', desc='Anisotropic component of the diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
-        self._add('Dr', scope='global', default=0.0, desc='Rhombic component of the diffusion tensor', py_type=float, set='params', err=True, sim=True)
-        self._add('Dratio', scope='global', default=1.0, desc='Ratio of the parallel and perpendicular components of the spheroid diffusion tensor', py_type=float, set='params', err=True, sim=True)
-        self._add('alpha', scope='global', default=0.0, units='deg', desc='The first Euler angle of the ellipsoid diffusion tensor', py_type=float, set='params', conv_factor=(2.0*pi) / 360.0, err=True, sim=True)
-        self._add('beta', scope='global', default=0.0, units='deg', desc='The second Euler angle of the ellipsoid diffusion tensor', py_type=float, set='params', conv_factor=(2.0*pi) / 360.0, err=True, sim=True)
-        self._add('gamma', scope='global', default=0.0, units='deg', desc='The third Euler angle of the ellipsoid diffusion tensor', py_type=float, set='params', conv_factor=(2.0*pi) / 360.0, err=True, sim=True)
-        self._add('theta', scope='global', default=0.0, units='deg', desc='The polar angle defining the major axis of the spheroid diffusion tensor', py_type=float, set='params', conv_factor=(2.0*pi) / 360.0, err=True, sim=True)
-        self._add('phi', scope='global', default=0.0, units='deg', desc='The azimuthal angle defining the major axis of the spheroid diffusion tensor', py_type=float, set='params', conv_factor=(2.0*pi) / 360.0, err=True, sim=True)
+        self._add(
+            'tm',
+            scope = 'global',
+            default = 10.0 * 1e-9,
+            grace_string = '\\xt\\f{}\\sm',
+            units = 'ns',
+            desc = 'Global correlation time',
+            py_type = float,
+            set = 'params',
+            conv_factor = 1e-9,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Diso',
+            scope = 'global',
+            default = 1.666 * 1e7,
+            units = '1e6 1/s',
+            desc = 'Isotropic component of the diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = 1e6,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Dx',
+            scope = 'global',
+            default = 1.666 * 1e7,
+            units = '1e6 1/s',
+            desc = 'Eigenvalue associated with the x-axis of the diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = 1e6,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Dy',
+            scope = 'global',
+            default = 1.666 * 1e7,
+            units = '1e6 1/s',
+            desc = 'Eigenvalue associated with the y-axis of the diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = 1e6,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Dz',
+            scope = 'global',
+            default = 1.666 * 1e7,
+            units = '1e6 1/s',
+            desc = 'Eigenvalue associated with the z-axis of the diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = 1e6,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Dpar',
+            scope = 'global',
+            default = 1.666 * 1e7,
+            units = '1e6 1/s',
+            desc = 'Diffusion coefficient parallel to the major axis of the spheroid diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = 1e6,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Dper',
+            scope = 'global',
+            default = 1.666 * 1e7,
+            units = '1e6 1/s',
+            desc = 'Diffusion coefficient perpendicular to the major axis of the spheroid diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = 1e6,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Da',
+            scope = 'global',
+            default = 0.0,
+            units = '1e6 1/s',
+            desc = 'Anisotropic component of the diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = 1e6,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Dr',
+            scope = 'global',
+            default = 0.0,
+            desc = 'Rhombic component of the diffusion tensor',
+            py_type = float,
+            set = 'params',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Dratio',
+            scope = 'global',
+            default = 1.0,
+            desc = 'Ratio of the parallel and perpendicular components of the spheroid diffusion tensor',
+            py_type = float,
+            set = 'params',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'alpha',
+            scope = 'global',
+            default = 0.0,
+            units = 'deg',
+            desc = 'The first Euler angle of the ellipsoid diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = (2.0*pi) / 360.0,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'beta',
+            scope = 'global',
+            default = 0.0,
+            units = 'deg',
+            desc = 'The second Euler angle of the ellipsoid diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = (2.0*pi) / 360.0,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'gamma',
+            scope = 'global',
+            default = 0.0,
+            units = 'deg',
+            desc = 'The third Euler angle of the ellipsoid diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = (2.0*pi) / 360.0,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'theta',
+            scope = 'global',
+            default = 0.0,
+            units = 'deg',
+            desc = 'The polar angle defining the major axis of the spheroid diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = (2.0*pi) / 360.0,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'phi',
+            scope = 'global',
+            default = 0.0,
+            units = 'deg',
+            desc = 'The azimuthal angle defining the major axis of the spheroid diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = (2.0*pi) / 360.0,
+            err = True,
+            sim = True
+        )
 
 
     def _add_min_data(self, min_stats_global=False, min_stats_spin=False):
@@ -306,12 +505,65 @@ class Param_list(object):
                 scope = 'spin'
 
             # The minimisation parameters.
-            self._add('chi2', scope=scope, desc='Chi-squared value', py_type=float, set='min', grace_string='\\xc\\S2', err=False, sim=True)
-            self._add('iter', scope=scope, desc='Optimisation iterations', py_type=int, set='min', grace_string='Iteration count', err=False, sim=True)
-            self._add('f_count', scope=scope, desc='Number of function calls', py_type=int, set='min', grace_string='Function call count', err=False, sim=True)
-            self._add('g_count', scope=scope, desc='Number of gradient calls', py_type=int, set='min', grace_string='Gradient call count', err=False, sim=True)
-            self._add('h_count', scope=scope, desc='Number of Hessian calls', py_type=int, set='min', grace_string='Hessian call count', err=False, sim=True)
-            self._add('warning', scope=scope, desc='Optimisation warning', py_type=str, set='min', err=False, sim=True)
+            self._add(
+                'chi2',
+                scope = scope,
+                desc = 'Chi-squared value',
+                py_type = float,
+                set = 'min',
+                grace_string = '\\xc\\S2',
+                err = False,
+                sim = True
+            )
+            self._add(
+                'iter',
+                scope = scope,
+                desc = 'Optimisation iterations',
+                py_type = int,
+                set = 'min',
+                grace_string = 'Iteration count',
+                err = False,
+                sim = True
+            )
+            self._add(
+                'f_count',
+                scope = scope,
+                desc = 'Number of function calls',
+                py_type = int,
+                set = 'min',
+                grace_string = 'Function call count',
+                err = False,
+                sim = True
+            )
+            self._add(
+                'g_count',
+                scope = scope,
+                desc = 'Number of gradient calls',
+                py_type = int,
+                set = 'min',
+                grace_string = 'Gradient call count',
+                err = False,
+                sim = True
+            )
+            self._add(
+                'h_count',
+                scope = scope,
+                desc = 'Number of Hessian calls',
+                py_type = int,
+                set = 'min',
+                grace_string = 'Hessian call count',
+                err = False,
+                sim = True
+            )
+            self._add(
+                'warning',
+                scope = scope,
+                desc = 'Optimisation warning',
+                py_type = str,
+                set = 'min',
+                err = False,
+                sim = True
+            )
 
 
     def _add_model_info(self, scope='spin', model_flag=True, equation_flag=False):
@@ -325,21 +577,42 @@ class Param_list(object):
 
         # Add the model structure.
         if model_flag:
-            self._add('model', scope=scope, desc='The model name', py_type=str)
+            self._add(
+                'model',
+                scope = scope,
+                desc = 'The model name',
+                py_type = str
+            )
 
         # The equation information.
         if equation_flag:
-            self._add('equation', scope=scope, desc='The model equation', py_type=str)
+            self._add(
+                'equation',
+                scope = scope,
+                desc = 'The model equation',
+                py_type = str
+            )
 
         # Add the parameter name list structure.
-        self._add('params', scope=scope, desc='The parameters of the model', py_type=list)
+        self._add(
+            'params',
+            scope = scope,
+            desc = 'The parameters of the model',
+            py_type = list
+        )
 
 
     def _add_peak_intensity(self):
         """Add the peak intensity structure 'peak_intensity'."""
 
         # Add the peak intensity structure.
-        self._add('peak_intensity', scope='spin', desc='The peak intensities', py_type=dict, grace_string='\\qPeak intensities\\Q')
+        self._add(
+            'peak_intensity',
+            scope = 'spin',
+            desc = 'The peak intensities',
+            py_type = dict,
+            grace_string = '\\qPeak intensities\\Q'
+        )
 
 
     def _set_uf_title(self, title):

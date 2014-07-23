@@ -126,7 +126,12 @@ class Relax_fit_params(Param_list):
         self._add_peak_intensity()
 
         # Add the base information for the analysis.
-        self._add('relax_times', scope='spin', py_type=dict, grace_string='\\qRelaxation time period (s)\\Q')
+        self._add(
+            'relax_times',
+            scope = 'spin',
+            py_type = dict,
+            grace_string = '\\qRelaxation time period (s)\\Q'
+        )
 
         # Add the model variables.
         self._add_model_info(model_flag=False)

@@ -45,8 +45,22 @@ class Model_free_params(Param_list):
         Param_list.__init__(self)
 
         # Add the base data for the models.
-        self._add('ri_data', scope='spin', desc=relax_data.return_data_desc('ri_data'), py_type=dict, err=False, sim=True)
-        self._add('ri_data_err', scope='spin', desc=relax_data.return_data_desc('ri_data_err'), py_type=dict, err=False, sim=False)
+        self._add(
+            'ri_data',
+            scope = 'spin',
+            desc = relax_data.return_data_desc('ri_data'),
+            py_type = dict,
+            err = False,
+            sim = True
+        )
+        self._add(
+            'ri_data_err',
+            scope = 'spin',
+            desc = relax_data.return_data_desc('ri_data_err'),
+            py_type = dict,
+            err = False,
+            sim = False
+        )
 
         # Add the model variables.
         self._add_model_info(equation_flag=True)
@@ -55,15 +69,109 @@ class Model_free_params(Param_list):
         self._add_diffusion_params()
 
         # Add up the spin model parameters.
-        self._add('s2', scope='spin', default=0.8, desc='S2, the model-free generalised order parameter (S2 = S2f.S2s)', py_type=float, set='params', grace_string='\\qS\\v{0.4}\\z{0.71}2\\Q', err=True, sim=True)
-        self._add('s2f', scope='spin', default=0.8, desc='S2f, the faster motion model-free generalised order parameter', py_type=float, set='params', grace_string='\\qS\\sf\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q', err=True, sim=True)
-        self._add('s2s', scope='spin', default=0.8, desc='S2s, the slower motion model-free generalised order parameter', py_type=float, set='params', grace_string='\\qS\\ss\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q', err=True, sim=True)
-        self._add('local_tm', scope='spin', default=10.0 * 1e-9, desc='The spin specific global correlation time (seconds)', py_type=float, set='params', grace_string='\\xt\\f{}\\sm', units='ns', err=True, sim=True)
-        self._add('te', scope='spin', default=100.0 * 1e-12, desc='Single motion effective internal correlation time (seconds)', py_type=float, set='params', conv_factor=1e-12, grace_string='\\xt\\f{}\\se', units='ps', err=True, sim=True)
-        self._add('tf', scope='spin', default=10.0 * 1e-12, desc='Faster motion effective internal correlation time (seconds)', py_type=float, set='params', conv_factor=1e-12, grace_string='\\xt\\f{}\\sf', units='ps', err=True, sim=True)
-        self._add('ts', scope='spin', default=1000.0 * 1e-12, desc='Slower motion effective internal correlation time (seconds)', py_type=float, set='params', conv_factor=1e-12, grace_string='\\xt\\f{}\\ss', units='ps', err=True, sim=True)
-        self._add('rex', scope='spin', default=0.0, desc='Chemical exchange relaxation (sigma_ex = Rex / omega**2)', py_type=float, set='params', conv_factor=conv_factor_rex, units=units_rex, grace_string='\\qR\\sex\\Q', err=True, sim=True)
-        self._add_csa(default=N15_CSA, set='params', err=True, sim=True)
+        self._add(
+            's2',
+            scope = 'spin',
+            default = 0.8,
+            desc = 'S2, the model-free generalised order parameter (S2 = S2f.S2s)',
+            py_type = float,
+            set = 'params',
+            grace_string = '\\qS\\v{0.4}\\z{0.71}2\\Q',
+            err = True,
+            sim = True
+        )
+        self._add(
+            's2f',
+            scope = 'spin',
+            default = 0.8,
+            desc = 'S2f, the faster motion model-free generalised order parameter',
+            py_type = float,
+            set = 'params',
+            grace_string = '\\qS\\sf\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q',
+            err = True,
+            sim = True
+        )
+        self._add(
+            's2s',
+            scope = 'spin',
+            default = 0.8,
+            desc = 'S2s, the slower motion model-free generalised order parameter',
+            py_type = float,
+            set = 'params',
+            grace_string = '\\qS\\ss\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'local_tm',
+            scope = 'spin',
+            default = 10.0 * 1e-9,
+            desc = 'The spin specific global correlation time (seconds)',
+            py_type = float,
+            set = 'params',
+            grace_string = '\\xt\\f{}\\sm',
+            units = 'ns',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'te',
+            scope = 'spin',
+            default = 100.0 * 1e-12,
+            desc = 'Single motion effective internal correlation time (seconds)',
+            py_type = float,
+            set = 'params',
+            conv_factor = 1e-12,
+            grace_string = '\\xt\\f{}\\se',
+            units = 'ps',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'tf',
+            scope = 'spin',
+            default = 10.0 * 1e-12,
+            desc = 'Faster motion effective internal correlation time (seconds)',
+            py_type = float,
+            set = 'params',
+            conv_factor = 1e-12,
+            grace_string = '\\xt\\f{}\\sf',
+            units = 'ps',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'ts',
+            scope = 'spin',
+            default = 1000.0 * 1e-12,
+            desc = 'Slower motion effective internal correlation time (seconds)',
+            py_type = float,
+            set = 'params', 
+            conv_factor = 1e-12,
+            grace_string = '\\xt\\f{}\\ss',
+            units = 'ps',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'rex',
+            scope = 'spin',
+            default = 0.0,
+            desc = 'Chemical exchange relaxation (sigma_ex = Rex / omega**2)',
+            py_type = float,
+            set = 'params',
+            conv_factor = conv_factor_rex,
+            units = units_rex,
+            grace_string = '\\qR\\sex\\Q',
+            err = True,
+            sim = True
+        )
+        self._add_csa(
+            default = N15_CSA,
+            set = 'params',
+            err = True,
+            sim = True
+        )
 
         # Add the minimisation data.
         self._add_min_data(min_stats_global=True, min_stats_spin=True)
