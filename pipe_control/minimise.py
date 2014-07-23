@@ -311,7 +311,7 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
             if skip_preset and not values[i] in [None, {}, []] and not isNaN(values[i]):
                 lower_i = values[i]
                 upper_i = values[i]
-                model_inc[-1][i] = 1
+                model_inc[-1][i] = incs = 1
                 comment = 'Preset value'
 
             # Scale the bounds.
