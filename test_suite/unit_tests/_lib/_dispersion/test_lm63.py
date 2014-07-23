@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, pi, zeros
+from numpy import array, float64, ones, pi, zeros
 from unittest import TestCase
 
 # relax module imports.
@@ -55,8 +55,10 @@ class Test_lm63(TestCase):
         # Parameter conversions.
         phi_ex_scaled = self.param_conversion(pA=self.pA, dw=self.dw, sfrq=self.sfrq)
 
+        a = ones([self.num_points])
+
         # Calculate the R2eff values.
-        R2eff = r2eff_LM63(r20=self.r20, phi_ex=phi_ex_scaled, kex=self.kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.R2eff, num_points=self.num_points)
+        R2eff = r2eff_LM63(r20=self.r20*a, phi_ex=phi_ex_scaled*a, kex=self.kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.R2eff)
 
         # Check all R2eff values.
         if self.kex > 1.e5:

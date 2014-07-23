@@ -110,67 +110,80 @@ Comparison to CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, arctan2, array, cos, cosh, isfinite, log, max, power, sin, sinh, sqrt, sum
+from numpy import any, arccosh, arctan2, cos, cosh, fabs, isfinite, log, max, min, power, sin, sinh, sqrt, sum
+from numpy.ma import fix_invalid, masked_greater_equal, masked_where
 
 # Repetitive calculations (to speed up calculations).
 g_fact = 1/sqrt(2)
 
-def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=None, k_BA=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None):
+
+def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None):
     """Calculate the R2eff values for the CR72 model.
 
     See the module docstring for details.
 
 
     @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
-    @type r20a:             float
+    @type r20a:             numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword r20b:          The R20 parameter value of state B (R2 with no exchange).
-    @type r20b:             float
+    @type r20b:             numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword pA:            The population of state A.
     @type pA:               float
-    @keyword pB:            The population of state B.
-    @type pB:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
-    @type dw:               float
+    @type dw:               numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword dw_orig:       The chemical exchange difference between states A and B in ppm. This is only for faster checking of zero value, which result in no exchange.
+    @type dw_orig:          numpy float array of rank-1
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
-    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
-    @type k_AB:             float
-    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
-    @type k_BA:             float
     @keyword ncyc:          The matrix exponential power array. The number of CPMG blocks.
-    @type ncyc:             numpy int16, rank-1 array
+    @type ncyc:             numpy int16 array of rank [NE][NS][NM][NO][ND]
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
-    @type inv_tcpmg:        float
+    @type inv_tcpmg:        numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
-    @type tcp:              numpy rank-1 float array
+    @type tcp:              numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
-    @type num_points:       int
+    @type back_calc:        numpy float array of rank [NE][NS][NM][NO][ND]
     """
 
+    # Flag to tell if values should be replaced if math function is violated.
+    t_dw_zero = False
+    t_max_e = False
+    t_v3_N_zero = False
+    t_log_tog_neg = False
+    t_v1c_less_one = False
+
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
-    if dw == 0.0 or pA == 1.0 or k_AB == 0.0:
-        back_calc[:] = array([r20a]*num_points)
+    # Test if pA or kex is zero.
+    if kex == 0.0 or pA == 1.0:
+        back_calc[:] = r20a
         return
+
+    # Test if dw is zero. Create a mask for the affected spins to replace these with R20 at the end of the calculationWait for replacement, since this is spin specific.
+    if min(fabs(dw_orig)) == 0.0:
+        t_dw_zero = True
+        mask_dw_zero = masked_where(dw == 0.0, dw)
+
+    # Parameter conversions.
+    pB = 1.0 - pA
+    k_BA = pA * kex
+    k_AB = pB * kex
 
     # Repetitive calculations (to speed up calculations).
     deltaR2 = r20a - r20b
+    dw2 = dw**2
+    two_tcp = 2.0 * tcp
 
     # The Carver and Richards (1972) alpha_minus short notation.
     alpha_m = deltaR2 + k_AB - k_BA
     zeta = 2.0 * dw * alpha_m
-    Psi = alpha_m**2 + 4.0 * k_BA * k_AB - dw**2
-
-    # Repetitive calculations (to speed up calculations).
-    dw2 = dw**2
-    two_tcp = 2.0 * tcp
+    Psi = alpha_m**2 + 4.0 * k_BA * k_AB - dw2
 
     # Get the real and imaginary components of the exchange induced shift.
     # Trigonometric functions faster than square roots.
     quad_zeta2_Psi2 = (zeta**2 + Psi**2)**0.25
-    g3 = cos(0.5 * arctan2(-zeta, Psi)) * quad_zeta2_Psi2
-    g4 = sin(0.5 * arctan2(-zeta, Psi)) * quad_zeta2_Psi2
+    fact = 0.5 * arctan2(-zeta, Psi)
+    g3 = cos(fact) * quad_zeta2_Psi2
+    g4 = sin(fact) * quad_zeta2_Psi2
 
     # Repetitive calculations (to speed up calculations).
     g32 = g3**2
@@ -198,16 +211,18 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
 
     # Derived from relaxation.
     # E0 = -2.0 * tcp * (F00R - f11R).
-    E0 =  two_tcp * g3
+    E0 = two_tcp * g3
 
     # Catch math domain error of sinh(val > 710).
     # This is when E0 > 710.
     if max(E0) > 700:
-        back_calc[:] = array([r20a]*num_points)
-        return
+        t_max_e = True
+        mask_max_e = masked_greater_equal(E0, 700.0)
+        # To prevent math errors, set e_zero to 1.
+        E0[mask_max_e.mask] = 1.0
 
-    # Derived from chemical shifts  #E2 = complex(0,-2.0 * tcp * (F00I - f11I)).
-    E2 =  two_tcp * g4
+    # Derived from chemical shifts  #E2 = complex(0, -2.0 * tcp * (F00I - f11I)).
+    E2 = two_tcp * g4
 
     # Mixed term (complex) (E0 - iE2)/2.
     E1 = (g3 - g4*1j) * tcp
@@ -227,12 +242,28 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # Real. The v_1c in paper.
     v1c = F0 * cosh(E0) - F2 * cos(E2)
 
+    # Catch math domain error of sqrt of negative.
+    # This is when v1c is less than 1.
+    mask_v1c_less_one = v1c < 1.0
+    if any(mask_v1c_less_one):
+        t_v1c_less_one = True
+        v1c[mask_v1c_less_one] = 1.0
+
     # Exact result for v2v3.
     v3 = sqrt(v1c**2 - 1.)
 
     y = power( (v1c - v3) / (v1c + v3), ncyc)
 
-    Tog = 0.5 * (1. + y) + (1. - y) * v5 / (2. * v3 * N )
+    Tog_div = 2. * v3 * N
+
+    # Catch math domain error of division with 0.
+    # This is when Tog_div is zero.
+    mask_v3_N_zero = Tog_div == 0.0
+    if any(mask_v3_N_zero):
+        t_v3_N_zero = True
+        Tog_div[mask_v3_N_zero] = 1.0
+
+    Tog = 0.5 * (1. + y) + (1. - y) * v5 / Tog_div
 
     ## -1/Trel * log(LpreDyn).
     # Rpre = (r20a + r20b + kex) / 2.0
@@ -244,12 +275,39 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # Estimate R2eff. relax_time = Trel = 1/inv_tcpmg.
     # R2eff = R2eff_CR72 - inv_tcpmg * log(Tog.real)
 
+    # Catch math domain error of log of negative.
+    # This is when Tog.real is negative.
+    mask_log_tog_neg = Tog.real < 0.0
+    if any(mask_log_tog_neg):
+        t_log_tog_neg = True
+        Tog.real[mask_log_tog_neg] = 1.0
+
     # Fastest calculation.
-    R2eff = (r20a + r20b + kex) / 2.0  - inv_tcpmg * ( ncyc *  arccosh(v1c.real) + log(Tog.real) )
+    back_calc[:] = (r20a + r20b + kex) / 2.0 - inv_tcpmg * ( ncyc * arccosh(v1c.real) + log(Tog.real) )
+
+    # Replace data in array.
+    # If dw is zero.
+    if t_dw_zero:
+        back_calc[mask_dw_zero.mask] = r20a[mask_dw_zero.mask]
+
+    # If E0 is above 700.
+    if t_max_e:
+        back_calc[mask_max_e.mask] = r20a[mask_max_e.mask]
+
+    # If v1c is less than 1.
+    if t_v1c_less_one:
+        back_calc[mask_v1c_less_one] = 1e100
+
+    # If Tog_div is zero.
+    if t_v3_N_zero:
+        back_calc[mask_v3_N_zero] = 1e100
+
+    # If Tog.real is negative.
+    if t_log_tog_neg:
+        back_calc[mask_log_tog_neg] = 1e100
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
-    if not isfinite(sum(R2eff)):
-        R2eff = array([1e100]*num_points)
-
-    back_calc[:] = R2eff
+    if not isfinite(sum(back_calc)):
+        # Replaces nan, inf, etc. with fill value.
+        fix_invalid(back_calc, copy=False, fill_value=1e100)

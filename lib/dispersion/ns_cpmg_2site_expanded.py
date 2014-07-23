@@ -6,6 +6,7 @@
 # Copyright (C) 2013 Mathilde Lescanne                                        #
 # Copyright (C) 2013 Dominique Marion                                         #
 # Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -73,9 +74,9 @@ For reference, the original Maple script written by Nikolai for the expansion of
     #tcp:=0.040/N;
     
     Ksym:=sqrt(Ka*Kb);
-    #dX:=(Ka-Kb+I*dw)/2;	# Ra=Rb
+    #dX:=(Ka-Kb+I*dw)/2;    # Ra=Rb
     dX:=((Ra-Rb)+(Ka-Kb)+I*dw)/2;
-    
+
     L:=([[-dX, Ksym], [Ksym, dX]]);
      
     # in the end everything is multiplied by exp(-0.5*(Ra+Rb+Ka+Kb)*(Tc+2*tpalmer))
@@ -116,7 +117,7 @@ For reference, the original Maple script written by Nikolai for the expansion of
     cGG:=evalm(GG2&*Pspalmer&*GG1);
     
     #s0:=array([Kb, Ka]);
-    s0:=array([sqrt(Kb),sqrt(Ka)]);	# accounts for exchange symmetrization
+    s0:=array([sqrt(Kb),sqrt(Ka)]); # accounts for exchange symmetrization
     st:=evalm(cGG&*s0);
     #obs:=(1/(Ka+Kb))*st[1];
     obs:=(sqrt(Kb)/(Ka+Kb))*st[1];  # accounts for exchange symmetrization
@@ -246,48 +247,59 @@ More information on the NS CPMG 2-site expanded model can be found in the:
 """
 
 # Python module imports.
-from numpy import array, argmax, exp, isfinite, power, log, min, sqrt, sum
-
-# relax module imports.
-from lib.float import isNaN
+from numpy import any, exp, isfinite, fabs, power, log, min, sqrt, sum
+from numpy.ma import fix_invalid, masked_where
 
 
-def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=None, relax_time=None, inv_relax_time=None, tcp=None, back_calc=None, num_points=None, num_cpmg=None):
+def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, dw_orig=None, kex=None, relax_time=None, inv_relax_time=None, tcp=None, back_calc=None, num_cpmg=None):
     """The 2-site numerical solution to the Bloch-McConnell equation using complex conjugate matrices.
 
     This function calculates and stores the R2eff values.
 
 
     @keyword r20:               The R2 value for both states A and B in the absence of exchange.
-    @type r20:                  float
+    @type r20:                  numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword pA:                The population of state A.
     @type pA:                   float
     @keyword dw:                The chemical exchange difference between states A and B in rad/s.
-    @type dw:                   float
-    @keyword k_AB:              The rate of exchange from site A to B (rad/s).
-    @type k_AB:                 float
-    @keyword k_BA:              The rate of exchange from site B to A (rad/s).
-    @type k_BA:                 float
+    @type dw:                   numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword dw_orig:           The chemical exchange difference between states A and B in ppm. This is only for faster checking of zero value, which result in no exchange.
+    @type dw_orig:              numpy float array of rank-1
+    @keyword kex:               The kex parameter value (the exchange rate in rad/s).
+    @type kex:                  float
     @keyword relax_time:        The total relaxation time period (in seconds).
-    @type relax_time:           float
+    @type relax_time:           numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword inv_relax_time:    The inverse of the total relaxation time period (in inverse seconds).
-    @type inv_relax_time:       float
+    @type inv_relax_time:       numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword tcp:               The tau_CPMG times (1 / 4.nu1).
-    @type tcp:                  numpy rank-1 float array
+    @type tcp:                  numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword back_calc:         The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:            numpy rank-1 float array
-    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
-    @type num_points:           int
+    @type back_calc:            numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword num_cpmg:          The array of numbers of CPMG blocks.
-    @type num_cpmg:             numpy int16, rank-1 array
+    @type num_cpmg:             numpy int16 array of rank [NE][NS][NM][NO][ND]
     """
 
+    # Flag to tell if values should be replaced if math function is violated.
+    t_dw_zero = False
+    t_t108_zero = False
+    t_t112_zero = False
+
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
-    if dw == 0.0 or pA == 1.0 or k_AB == 0.0:
-        back_calc[:] = array([r20]*num_points)
+    if pA == 1.0 or kex == 0.0:
+        back_calc[:] = r20
         return
 
-    # Repeditive calculations.
+    # Test if dw is zero. Create a mask for the affected spins to replace these with R20 at the end of the calculationWait for replacement, since this is spin specific.
+    if min(fabs(dw_orig)) == 0.0:
+        t_dw_zero = True
+        mask_dw_zero = masked_where(dw == 0.0, dw)
+
+    # Once off parameter conversions.
+    pB = 1.0 - pA
+    k_BA = pA * kex
+    k_AB = pB * kex
+
+    # Repetitive calculations.
     half_tcp = 0.5 * tcp
     k_AB_plus_k_BA = k_AB + k_BA
     k_BA_minus_k_AB = k_BA - k_AB
@@ -349,7 +361,21 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=Non
     t99 = t92 + t96
     t102 = t99**2
     t108 = t62 * t88 + t82 * t31
+
+    # If t108 is zero.
+    mask_t108_zero = t108 == 0.0
+    if any(mask_t108_zero):
+        t_t108_zero = True
+        t108[mask_t108_zero] = 1.0
+
     t112 = sqrt(t98 - 2.0 * t99 * t97 + t102 + 2.0 * (t91 * t68 + t95 * t55) * t108)
+
+    # If t112 is zero.
+    mask_t112_zero = t112 == 0.0
+    if any(mask_t112_zero):
+        t_t112_zero = True
+        t112[mask_t112_zero] = 1.0
+
     t97_t99 = t97 + t99
     t97_nt99 = t97 - t99
     t113 = t97_nt99 - t112
@@ -370,11 +396,23 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=Non
     Mx = intensity / intensity0
 
     # Calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential, and store it for each dispersion point.
-    R2eff = -inv_relax_time * log(Mx)
+    back_calc[:] = -inv_relax_time * log(Mx)
+
+    # Replace data in array.
+    # If dw is zero.
+    if t_dw_zero:
+        back_calc[mask_dw_zero.mask] = r20[mask_dw_zero.mask]
+
+    # If t108 is zero.
+    if t_t108_zero:
+        back_calc[mask_t108_zero] = 1e100
+
+    # If t112 is zero.
+    if t_t112_zero:
+        back_calc[mask_t112_zero] = 1e100
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
-    if not isfinite(sum(R2eff)) or min(Mx) <= 0.0 or not isfinite(sum(Mx)):
-        R2eff = array([1e100]*num_points)
-
-    back_calc[:] = R2eff
+    if not isfinite(sum(back_calc)):
+        # Replaces nan, inf, etc. with fill value.
+        fix_invalid(back_calc, copy=False, fill_value=1e100)

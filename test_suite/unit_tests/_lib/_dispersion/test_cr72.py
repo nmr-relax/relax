@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, pi, zeros
+from numpy import array, float64, pi, ones, zeros
 from unittest import TestCase
 
 # relax module imports.
@@ -57,8 +57,18 @@ class Test_cr72(TestCase):
         # Parameter conversions.
         k_AB, k_BA, pB, dw_frq = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
+        # Convert to array.
+        a = ones([self.num_points])
+
+        r20a=self.r20a*a
+        r20a_orig=r20a
+        r20b=self.r20b*a
+        r20b_orig=r20b
+        dw=dw_frq*a
+        dw_orig=dw_frq*a
+
         # Calculate the R2eff values.
-        r2eff_CR72(r20a=self.r20a, r20b=self.r20b, pA=self.pA, dw=dw_frq, kex=self.kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.R2eff, num_points=self.num_points)
+        r2eff_CR72(r20a=r20a, r20a_orig=r20a_orig, r20b=r20b, r20b_orig=r20b_orig, pA=self.pA, dw=dw, dw_orig=dw_orig,  kex=self.kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.R2eff)
 
         # Check all R2eff values.
         for i in range(self.num_points):
@@ -172,10 +182,10 @@ class Test_cr72(TestCase):
 
 
     def test_cr72_no_rex8(self):
-        """Test the r2eff_cr72() function for no exchange when kex = 1e5."""
+        """Test the r2eff_cr72() function for no exchange when kex = 1e8."""
 
         # Parameter reset.
-        self.kex = 1e5
+        self.kex = 1e8
 
         # Calculate and check the R2eff values.
         self.calc_r2eff()

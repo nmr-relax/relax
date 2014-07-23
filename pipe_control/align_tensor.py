@@ -676,7 +676,7 @@ def init(tensor=None, align_id=None, params=None, scale=1.0, angle_units='deg', 
     @keyword align_id:      The alignment ID string that the tensor corresponds to.
     @type align_id:         str or None
     @keyword params:        The alignment tensor parameters.
-    @type params:           float
+    @type params:           list of float or None
     @keyword scale:         The alignment tensor eigenvalue scaling value.
     @type scale:            float
     @keyword angle_units:   The units for the angle parameters (either 'deg' or 'rad').
@@ -733,153 +733,155 @@ def init(tensor=None, align_id=None, params=None, scale=1.0, angle_units='deg', 
         else:
             tensor_obj = get_tensor_object_from_align(align_id)
 
-    # {Sxx, Syy, Sxy, Sxz, Syz}.
-    if param_types == 0:
-        # Unpack the tuple.
-        Sxx, Syy, Sxy, Sxz, Syz = params
+    # Set the parameter values.
+    if params:
+        # {Sxx, Syy, Sxy, Sxz, Syz}.
+        if param_types == 0:
+            # Unpack the tuple.
+            Sxx, Syy, Sxy, Sxz, Syz = params
 
-        # Scaling.
-        Sxx = Sxx * scale
-        Syy = Syy * scale
-        Sxy = Sxy * scale
-        Sxz = Sxz * scale
-        Syz = Syz * scale
+            # Scaling.
+            Sxx = Sxx * scale
+            Syy = Syy * scale
+            Sxy = Sxy * scale
+            Sxz = Sxz * scale
+            Syz = Syz * scale
 
-        # Set the parameters.
-        set(tensor=tensor_obj, value=[Sxx, Syy, Sxy, Sxz, Syz], param=['Sxx', 'Syy', 'Sxy', 'Sxz', 'Syz'], errors=errors)
+            # Set the parameters.
+            set(tensor=tensor_obj, value=[Sxx, Syy, Sxy, Sxz, Syz], param=['Sxx', 'Syy', 'Sxy', 'Sxz', 'Syz'], errors=errors)
 
-    # {Szz, Sxx-yy, Sxy, Sxz, Syz}.
-    elif param_types == 1:
-        # Unpack the tuple.
-        Szz, Sxxyy, Sxy, Sxz, Syz = params
+        # {Szz, Sxx-yy, Sxy, Sxz, Syz}.
+        elif param_types == 1:
+            # Unpack the tuple.
+            Szz, Sxxyy, Sxy, Sxz, Syz = params
 
-        # Scaling.
-        Szz = Szz * scale
-        Sxxyy = Sxxyy * scale
-        Sxy = Sxy * scale
-        Sxz = Sxz * scale
-        Syz = Syz * scale
+            # Scaling.
+            Szz = Szz * scale
+            Sxxyy = Sxxyy * scale
+            Sxy = Sxy * scale
+            Sxz = Sxz * scale
+            Syz = Syz * scale
 
-        # Set the parameters.
-        set(tensor=tensor_obj, value=[Szz, Sxxyy, Sxy, Sxz, Syz], param=['Szz', 'Sxxyy', 'Sxy', 'Sxz', 'Syz'], errors=errors)
+            # Set the parameters.
+            set(tensor=tensor_obj, value=[Szz, Sxxyy, Sxy, Sxz, Syz], param=['Szz', 'Sxxyy', 'Sxy', 'Sxz', 'Syz'], errors=errors)
 
-    # {Axx, Ayy, Axy, Axz, Ayz}.
-    elif param_types == 2:
-        # Unpack the tuple.
-        Axx, Ayy, Axy, Axz, Ayz = params
+        # {Axx, Ayy, Axy, Axz, Ayz}.
+        elif param_types == 2:
+            # Unpack the tuple.
+            Axx, Ayy, Axy, Axz, Ayz = params
 
-        # Scaling.
-        Axx = Axx * scale
-        Ayy = Ayy * scale
-        Axy = Axy * scale
-        Axz = Axz * scale
-        Ayz = Ayz * scale
+            # Scaling.
+            Axx = Axx * scale
+            Ayy = Ayy * scale
+            Axy = Axy * scale
+            Axz = Axz * scale
+            Ayz = Ayz * scale
 
-        # Set the parameters.
-        set(tensor=tensor_obj, value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'], errors=errors)
+            # Set the parameters.
+            set(tensor=tensor_obj, value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'], errors=errors)
 
-    # {Azz, Axx-yy, Axy, Axz, Ayz}.
-    elif param_types == 3:
-        # Unpack the tuple.
-        Azz, Axxyy, Axy, Axz, Ayz = params
+        # {Azz, Axx-yy, Axy, Axz, Ayz}.
+        elif param_types == 3:
+            # Unpack the tuple.
+            Azz, Axxyy, Axy, Axz, Ayz = params
 
-        # Scaling.
-        Azz = Azz * scale
-        Axxyy = Axxyy * scale
-        Axy = Axy * scale
-        Axz = Axz * scale
-        Ayz = Ayz * scale
+            # Scaling.
+            Azz = Azz * scale
+            Axxyy = Axxyy * scale
+            Axy = Axy * scale
+            Axz = Axz * scale
+            Ayz = Ayz * scale
 
-        # Set the parameters.
-        set(tensor=tensor_obj, value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'], errors=errors)
+            # Set the parameters.
+            set(tensor=tensor_obj, value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'], errors=errors)
 
-    # {Axx, Ayy, Axy, Axz, Ayz}.
-    elif param_types == 4:
-        # Unpack the tuple.
-        Axx, Ayy, Axy, Axz, Ayz = params
+        # {Axx, Ayy, Axy, Axz, Ayz}.
+        elif param_types == 4:
+            # Unpack the tuple.
+            Axx, Ayy, Axy, Axz, Ayz = params
 
-        # Get the bond length.
-        r = None
-        for spin in spin_loop():
-            # First spin.
-            if r == None:
-                r = spin.r
+            # Get the bond length.
+            r = None
+            for spin in spin_loop():
+                # First spin.
+                if r == None:
+                    r = spin.r
 
-            # Different value.
-            if r != spin.r:
-                raise RelaxError("Not all spins have the same bond length.")
+                # Different value.
+                if r != spin.r:
+                    raise RelaxError("Not all spins have the same bond length.")
 
-        # Scaling.
-        scale = scale / kappa() * r**3
-        Axx = Axx * scale
-        Ayy = Ayy * scale
-        Axy = Axy * scale
-        Axz = Axz * scale
-        Ayz = Ayz * scale
+            # Scaling.
+            scale = scale / kappa() * r**3
+            Axx = Axx * scale
+            Ayy = Ayy * scale
+            Axy = Axy * scale
+            Axz = Axz * scale
+            Ayz = Ayz * scale
 
-        # Set the parameters.
-        set(tensor=tensor_obj, value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'], errors=errors)
+            # Set the parameters.
+            set(tensor=tensor_obj, value=[Axx, Ayy, Axy, Axz, Ayz], param=['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'], errors=errors)
 
-    # {Azz, Axx-yy, Axy, Axz, Ayz}.
-    elif param_types == 5:
-        # Unpack the tuple.
-        Azz, Axxyy, Axy, Axz, Ayz = params
+        # {Azz, Axx-yy, Axy, Axz, Ayz}.
+        elif param_types == 5:
+            # Unpack the tuple.
+            Azz, Axxyy, Axy, Axz, Ayz = params
 
-        # Get the bond length.
-        r = None
-        for spin in spin_loop():
-            # First spin.
-            if r == None:
-                r = spin.r
+            # Get the bond length.
+            r = None
+            for spin in spin_loop():
+                # First spin.
+                if r == None:
+                    r = spin.r
 
-            # Different value.
-            if r != spin.r:
-                raise RelaxError("Not all spins have the same bond length.")
+                # Different value.
+                if r != spin.r:
+                    raise RelaxError("Not all spins have the same bond length.")
 
-        # Scaling.
-        scale = scale / kappa() * r**3
-        Azz = Azz * scale
-        Axxyy = Axxyy * scale
-        Axy = Axy * scale
-        Axz = Axz * scale
-        Ayz = Ayz * scale
+            # Scaling.
+            scale = scale / kappa() * r**3
+            Azz = Azz * scale
+            Axxyy = Axxyy * scale
+            Axy = Axy * scale
+            Axz = Axz * scale
+            Ayz = Ayz * scale
 
-        # Set the parameters.
-        set(tensor=tensor_obj, value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'], errors=errors)
+            # Set the parameters.
+            set(tensor=tensor_obj, value=[Azz, Axxyy, Axy, Axz, Ayz], param=['Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz'], errors=errors)
 
-    # {Pxx, Pyy, Pxy, Pxz, Pyz}.
-    elif param_types == 6:
-        # Unpack the tuple.
-        Pxx, Pyy, Pxy, Pxz, Pyz = params
+        # {Pxx, Pyy, Pxy, Pxz, Pyz}.
+        elif param_types == 6:
+            # Unpack the tuple.
+            Pxx, Pyy, Pxy, Pxz, Pyz = params
 
-        # Scaling.
-        Pxx = Pxx * scale
-        Pyy = Pyy * scale
-        Pxy = Pxy * scale
-        Pxz = Pxz * scale
-        Pyz = Pyz * scale
+            # Scaling.
+            Pxx = Pxx * scale
+            Pyy = Pyy * scale
+            Pxy = Pxy * scale
+            Pxz = Pxz * scale
+            Pyz = Pyz * scale
 
-        # Set the parameters.
-        set(tensor=tensor_obj, value=[Pxx, Pyy, Pxy, Pxz, Pyz], param=['Pxx', 'Pyy', 'Pxy', 'Pxz', 'Pyz'], errors=errors)
+            # Set the parameters.
+            set(tensor=tensor_obj, value=[Pxx, Pyy, Pxy, Pxz, Pyz], param=['Pxx', 'Pyy', 'Pxy', 'Pxz', 'Pyz'], errors=errors)
 
-    # {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
-    elif param_types == 7:
-        # Unpack the tuple.
-        Pzz, Pxxyy, Pxy, Pxz, Pyz = params
+        # {Pzz, Pxx-yy, Pxy, Pxz, Pyz}.
+        elif param_types == 7:
+            # Unpack the tuple.
+            Pzz, Pxxyy, Pxy, Pxz, Pyz = params
 
-        # Scaling.
-        Pzz = Pzz * scale
-        Pxxyy = Pxxyy * scale
-        Pxy = Pxy * scale
-        Pxz = Pxz * scale
-        Pyz = Pyz * scale
+            # Scaling.
+            Pzz = Pzz * scale
+            Pxxyy = Pxxyy * scale
+            Pxy = Pxy * scale
+            Pxz = Pxz * scale
+            Pyz = Pyz * scale
 
-        # Set the parameters.
-        set(tensor=tensor_obj, value=[Pzz, Pxxyy, Pxy, Pxz, Pyz], param=['Pzz', 'Pxxyy', 'Pxy', 'Pxz', 'Pyz'], errors=errors)
+            # Set the parameters.
+            set(tensor=tensor_obj, value=[Pzz, Pxxyy, Pxy, Pxz, Pyz], param=['Pzz', 'Pxxyy', 'Pxy', 'Pxz', 'Pyz'], errors=errors)
 
-    # Unknown parameter combination.
-    else:
-        raise RelaxUnknownParamCombError('param_types', param_types)
+        # Unknown parameter combination.
+        else:
+            raise RelaxUnknownParamCombError('param_types', param_types)
 
     # Set the domain and alignment ID.
     if domain:

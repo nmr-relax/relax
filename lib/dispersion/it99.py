@@ -2,6 +2,7 @@
 #                                                                             #
 # Copyright (C) 2009 Sebastien Morin                                          #
 # Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -73,62 +74,72 @@ More information on the IT99 model can be found in the:
 """
 
 # Python module imports.
-from numpy import array, isfinite, sqrt, sum
+from numpy import isfinite, fabs, sqrt, sum
+from numpy.ma import fix_invalid, masked_where
 
 
-def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_IT99(r20=None, pA=None, dw=None, dw_orig=None, tex=None, cpmg_frqs=None, back_calc=None):
     """Calculate the R2eff values for the IT99 model.
 
     See the module docstring for details.
 
 
     @keyword r20:           The R20 parameter value (R2 with no exchange).
-    @type r20:              float
+    @type r20:              numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword pA:            The population of state A.
     @type pA:               float
-    @keyword pB:            The population of state B.
-    @type pB:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
-    @type dw:               float
+    @type dw:               numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword dw_orig:       The chemical exchange difference between states A and B in ppm. This is only for faster checking of zero value, which result in no exchange.
+    @type dw_orig:          numpy float array of rank-1
     @keyword tex:           The tex parameter value (the time of exchange in s/rad).
     @type tex:              float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
-    @type cpmg_frqs:        numpy rank-1 float array
-    @type tcp:              numpy rank-1 float array
+    @type cpmg_frqs:        numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
-    @type num_points:       int
+    @type back_calc:        numpy float array of rank [NE][NS][NM][NO][ND]
     """
 
+    # Flag to tell if values should be replaced if numer is zero.
+    t_dw_zero = False
+
+    # Catch divide with zeros (to avoid pointless mathematical operations).
+    if tex == 0.0 or pA == 1.0:
+        back_calc[:] = r20
+        return
+
+    # Test if dw is zero. Create a mask for the affected spins to replace these with R20 at the end of the calculationWait for replacement, since this is spin specific.
+    if min(fabs(dw_orig)) == 0.0:
+        t_dw_zero = True
+        mask_dw_zero = masked_where(dw == 0.0, dw)
+
+    # Parameter conversions.
+    pB = 1.0 - pA
+
     # Repetitive calculations (to speed up calculations).
-    dw2 = dw**2
-    tex2 = tex**2
-    padw2 = pA * dw2
+    padw2 = pA * dw**2
     pa2dw4 = padw2**2
 
     # The numerator.
     numer = padw2 * pB * tex
-
-    # Catch zeros (to avoid pointless mathematical operations).
-    # This will result in no exchange, returning flat lines.
-    if numer == 0.0:
-        back_calc[:] = array([r20]*num_points)
-        return
 
     # The effective rotating frame field.
     omega_1eff4 = 2304.0 * cpmg_frqs**4
 
     # Denominator.
     omega_a2 = sqrt(omega_1eff4 + pa2dw4)
-    denom = 1.0 + omega_a2 * tex2
+    denom = 1.0 + omega_a2 * tex**2
 
     # R2eff calculation.
-    R2eff = r20 + numer / denom
+    back_calc[:] = r20 + numer / denom
+
+    # Replace data in array.
+    # If dw is zero.
+    if t_dw_zero:
+        back_calc[mask_dw_zero.mask] = r20[mask_dw_zero.mask]
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
-    if not isfinite(sum(R2eff)):
-        R2eff = array([1e100]*num_points)
-
-    back_calc[:] = R2eff
+    if not isfinite(sum(back_calc)):
+        # Replaces nan, inf, etc. with fill value.
+        fix_invalid(back_calc, copy=False, fill_value=1e100)

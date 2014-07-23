@@ -213,7 +213,8 @@ uf.add_keyarg(
     desc_short = "alignment tensor parameters",
     dim = 5,
     desc = "The alignment tensor data.",
-    wiz_read_only = False
+    wiz_read_only = False,
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "scale",
