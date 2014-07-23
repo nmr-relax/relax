@@ -118,7 +118,8 @@ uf.add_keyarg(
     py_type = "num_or_num_tuple",
     dim = [4, 6],
     desc_short = "diffusion tensor parameters",
-    desc = "The diffusion tensor data."
+    desc = "The diffusion tensor data.",
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "time_scale",
