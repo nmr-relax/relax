@@ -239,9 +239,9 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
 
         # No parameters for this model.
         if names == None or len(names) == 0:
-            model_lower.append(None)
-            model_upper.append(None)
-            model_inc.append(None)
+            model_lower.append([])
+            model_upper.append([])
+            model_inc.append([])
             continue
 
         # The parameter number.
