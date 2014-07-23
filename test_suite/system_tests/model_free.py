@@ -856,12 +856,36 @@ class Mf(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
 
 
+    def test_m0_grid_with_grid_search(self):
+        """Test the optimisation of the m0 model-free model against the tm0 parameter grid, testing the grid search."""
+
+        # Initialise.
+        cdp._model = 'm0'
+        cdp._value_test = self.value_test
+        cdp._grid_search = True
+
+        # Setup the data pipe for optimisation.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
+
+
     def test_m0_grid_vs_m1(self):
         """Test the optimisation of the m1 model-free model against the tm0 parameter grid."""
 
         # Initialise.
         cdp._model = 'm1'
         cdp._value_test = self.value_test
+
+        # Setup the data pipe for optimisation.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
+
+
+    def test_m0_grid_vs_m1_with_grid_search(self):
+        """Test the optimisation of the m1 model-free model against the tm0 parameter grid."""
+
+        # Initialise.
+        cdp._model = 'm1'
+        cdp._value_test = self.value_test
+        cdp._grid_search = True
 
         # Setup the data pipe for optimisation.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
