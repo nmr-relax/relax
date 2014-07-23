@@ -41,7 +41,7 @@ from specific_analyses.api_common import API_common
 from specific_analyses.frame_order.data import domain_moving
 from specific_analyses.frame_order.optimisation import grid_row, store_bc_data, target_fn_setup, unpack_opt_results
 from specific_analyses.frame_order.parameter_object import Frame_order_params
-from specific_analyses.frame_order.parameters import assemble_param_vector, assemble_scaling_matrix, linear_constraints, param_num, update_model
+from specific_analyses.frame_order.parameters import assemble_param_vector, linear_constraints, param_num, update_model
 
 
 class Frame_order(API_base, API_common):
@@ -119,7 +119,7 @@ class Frame_order(API_base, API_common):
         """
 
         # Set up the target function for direct calculation.
-        model, param_vector, scaling_matrix = target_fn_setup(sim_index=sim_index, verbosity=verbosity)
+        model, param_vector = target_fn_setup(sim_index=sim_index, verbosity=verbosity, scaling_matrix=scaling_matrix[0])
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         chi2 = model.func(param_vector)
@@ -331,12 +331,12 @@ class Frame_order(API_base, API_common):
     def grid_search(self, lower=None, upper=None, inc=None, scaling_matrix=None, constraints=False, verbosity=0, sim_index=None):
         """Perform a grid search.
 
-        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.
-        @type lower:                list of float
-        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.
-        @type upper:                list of float
-        @keyword inc:               The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.
-        @type inc:                  int or list of int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.
+        @type lower:                list of lists of numbers
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.
+        @type upper:                list of lists of numbers
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.
+        @type inc:                  list of lists of int
         @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
         @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
         @keyword constraints:       If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
@@ -351,25 +351,15 @@ class Frame_order(API_base, API_common):
         if not hasattr(cdp, 'model'):
             raise RelaxNoModelError('Frame Order')
 
-        # Parameter scaling.
-        scaling_matrix = assemble_scaling_matrix(scaling=True)
-
         # The number of parameters.
         n = param_num()
 
-        # If inc is an int, convert it into an array of that value.
-        if isinstance(inc, int):
-            incs = [inc]*n
-        else:
-            incs = inc
-
-        # Sanity check.
-        if len(incs) != n:
-            raise RelaxError("The size of the increment list %s does not match the number of parameters in %s." % (incs, cdp.params))
+        # Alias the single model grid bounds and increments.
+        lower = lower[0]
+        upper = upper[0]
+        inc = inc[0]
 
         # Initialise the grid increments structures.
-        lower_list = lower
-        upper_list = upper
         grid = []
         """This structure is a list of lists.  The first dimension corresponds to the model
         parameter.  The second dimension are the grid node positions."""
@@ -377,7 +367,7 @@ class Frame_order(API_base, API_common):
         # Generate the grid.
         for i in range(n):
             # Fixed parameter.
-            if incs[i] == None:
+            if inc[i] == None:
                 grid.append(None)
                 continue
 
@@ -385,64 +375,23 @@ class Frame_order(API_base, API_common):
             dist_type = None
             end_point = True
 
-            # The pivot point.
-            if cdp.params[i] in ['pivot_x', 'pivot_y', 'pivot_z']:
-                val = getattr(cdp, cdp.params[i])
-                lower = val - 10.0
-                upper = val + 10.0
-
-            # Average domain position translation (in a +/- 5 Angstrom box).
-            if cdp.params[i] in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z']:
-                lower = -5
-                upper = 5
-
-            # Linear angle grid from 0 to one inc before 2pi.
-            if cdp.params[i] in ['ave_pos_alpha', 'ave_pos_gamma', 'eigen_alpha', 'eigen_gamma', 'axis_phi']:
-                lower = 0.0
-                upper = 2*pi * (1.0 - 1.0/incs[i])
-
-            # Linear angle grid from -pi to one inc before pi.
-            if cdp.params[i] in ['axis_alpha']:
-                lower = -pi
-                upper = pi * (1.0 - 1.0/incs[i])
-
             # Arccos grid from 0 to pi.
             if cdp.params[i] in ['ave_pos_beta', 'eigen_beta', 'axis_theta']:
                 # Change the default increment numbers.
                 if not isinstance(inc, list):
-                    incs[i] = int(incs[i] / 2) + 1
+                    inc[i] = int(inc[i] / 2) + 1
 
                 # The distribution type and end point.
                 dist_type = 'acos'
                 end_point = False
 
-                # Set the default bounds.
-                lower = 0.0
-                upper = pi
-
-            # The isotropic cone order parameter.
-            if cdp.params[i] == 'cone_s1':
-                lower = -0.125
-                upper = 1.0
-
-            # Linear angle grid from 0 to pi excluding the outer points.
-            if cdp.params[i] in ['cone_theta', 'cone_theta_x', 'cone_theta_y', 'cone_sigma_max']:
-                lower = pi * (1.0/incs[i])
-                upper = pi * (1.0 - 1.0/incs[i])
-
-            # Over-ride the bounds.
-            if lower_list:
-                lower = lower_list[i]
-            if upper_list:
-                upper = upper_list[i]
-
             # Append the grid row.
-            row = grid_row(incs[i], lower, upper, dist_type=dist_type, end_point=end_point)
+            row = grid_row(inc[i], lower, upper, dist_type=dist_type, end_point=end_point)
             grid.append(row)
 
             # Remove an inc if the end point has been removed.
             if not end_point:
-                incs[i] -= 1
+                inc[i] -= 1
 
         # Total number of points.
         total_pts = 1
@@ -467,15 +416,15 @@ class Frame_order(API_base, API_common):
                 # Fixed parameter.
                 if grid[j] == None:
                     # Get the current parameter value.
-                    pts[i, j] = getattr(cdp, cdp.params[j]) / scaling_matrix[j, j]
+                    pts[i, j] = getattr(cdp, cdp.params[j]) / scaling_matrix[0][j, j]
 
                 # Add the point coordinate.
                 else:
-                    pts[i, j] = grid[j][indices[j]] / scaling_matrix[j, j]
+                    pts[i, j] = grid[j][indices[j]] / scaling_matrix[0][j, j]
 
             # Increment the step positions.
             for j in range(n):
-                if incs[j] != None and indices[j] < incs[j]-1:
+                if inc[j] != None and indices[j] < inc[j]-1:
                     indices[j] += 1
                     break    # Exit so that the other step numbers are not incremented.
                 else:
@@ -540,21 +489,21 @@ class Frame_order(API_base, API_common):
         @type verbosity:            int
         @param sim_index:           The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:            None or int
-        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type lower:                array of numbers
-        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
-        @type inc:                  array of int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type lower:                list of lists of numbers
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type upper:                list of lists of numbers
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
+        @type inc:                  list of lists of int
         """
 
         # Set up the target function for direct calculation.
-        model, param_vector, scaling_matrix = target_fn_setup(sim_index=sim_index, verbosity=verbosity, scaling=scaling)
+        model, param_vector = target_fn_setup(sim_index=sim_index, verbosity=verbosity, scaling_matrix=scaling_matrix[0])
 
         # Linear constraints.
         A, b = None, None
         if constraints:
-            A, b = linear_constraints(scaling_matrix=scaling_matrix)
+            A, b = linear_constraints(scaling_matrix=scaling_matrix[0])
 
         # Grid search.
         if search('^[Gg]rid', min_algor):
@@ -565,7 +514,7 @@ class Frame_order(API_base, API_common):
             results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
 
         # Unpack the results.
-        unpack_opt_results(results, scaling, scaling_matrix, sim_index)
+        unpack_opt_results(results, scaling_matrix[0], sim_index)
 
         # Store the back-calculated data.
         store_bc_data(model)
