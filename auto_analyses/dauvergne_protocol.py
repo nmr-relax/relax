@@ -605,18 +605,18 @@ class dAuvergne_protocol:
                     # Remove the tm parameter.
                     self.interpreter.model_free.remove_tm()
 
-                    # Add an arbitrary diffusion tensor which will be optimised.
+                    # Initialise the diffusion tensor.
                     if self.diff_model == 'sphere':
-                        self.interpreter.diffusion_tensor.init(10e-9, fixed=False)
+                        self.interpreter.diffusion_tensor.init(None, fixed=False)
                         inc = self.diff_tensor_grid_inc['sphere']
                     elif self.diff_model == 'prolate':
-                        self.interpreter.diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='prolate', fixed=False)
+                        self.interpreter.diffusion_tensor.init((None, None, None, None), spheroid_type='prolate', fixed=False)
                         inc = self.diff_tensor_grid_inc['prolate']
                     elif self.diff_model == 'oblate':
-                        self.interpreter.diffusion_tensor.init((10e-9, 0, 0, 0), spheroid_type='oblate', fixed=False)
+                        self.interpreter.diffusion_tensor.init((None, None, None, None), spheroid_type='oblate', fixed=False)
                         inc = self.diff_tensor_grid_inc['oblate']
                     elif self.diff_model == 'ellipsoid':
-                        self.interpreter.diffusion_tensor.init((10e-09, 0, 0, 0, 0, 0), fixed=False)
+                        self.interpreter.diffusion_tensor.init((None, None, None, None, None, None), fixed=False)
                         inc = self.diff_tensor_grid_inc['ellipsoid']
 
                     # Minimise just the diffusion tensor.
