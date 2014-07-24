@@ -335,7 +335,7 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
                 upper_zoom = values[i] + half_size
 
                 # Outside of the original lower bound, so shift the grid to fit.
-                if lower_zoom < lower_i:
+                if zoom > 0 and lower_zoom < lower_i:
                     print "low"
                     # The amount to shift by.
                     shift = lower_i - lower_zoom
@@ -344,7 +344,7 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
                     upper_i = upper_zoom + shift
 
                 # Outside of the original upper bound, so shift the grid to fit.
-                elif upper_zoom > upper_i:
+                elif zoom > 0 and upper_zoom > upper_i:
                     # The amount to shift by.
                     shift = upper_i - upper_zoom
 
