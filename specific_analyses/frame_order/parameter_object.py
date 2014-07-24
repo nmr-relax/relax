@@ -46,7 +46,7 @@ def angle_upper_excluding_bound(incs=None, model_info=None):
         return 2.0 * pi
 
     # Return the upper limit which is one inc before 2pi.
-    return 2.0*pi * (1.0 - 1.0/incs)
+    return 2.0*pi * (1.0 - 1.0/(incs+1))
 
 
 def axis_alpha_upper(incs=None, model_info=None):
@@ -65,7 +65,7 @@ def axis_alpha_upper(incs=None, model_info=None):
         return pi
 
     # Return the upper limit which is one inc before pi.
-    return pi * (1.0 - 1.0/incs)
+    return pi * (1.0 - 1.0/(incs+1))
 
 
 def cone_angle_lower(incs=None, model_info=None):
@@ -84,7 +84,7 @@ def cone_angle_lower(incs=None, model_info=None):
         return 0.0
 
     # Return the lower limit, excluding the first point.
-    return pi * (1.0/incs)
+    return pi * (1.0/(incs+2))
 
 
 def cone_angle_upper(incs=None, model_info=None):
@@ -103,7 +103,7 @@ def cone_angle_upper(incs=None, model_info=None):
         return pi
 
     # Return the upper limit, excluding the last point.
-    return pi * (1.0 - 1.0/incs)
+    return pi * (1.0 - 1.0/(incs+2))
 
 
 def pivot_grid_bound(param=None, extent=10.0):
