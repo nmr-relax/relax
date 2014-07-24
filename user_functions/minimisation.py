@@ -366,13 +366,14 @@ uf.add_keyarg(
     default = True,
     py_type = "bool",
     desc_short = "skip preset parameter flag",
-    desc = "This argument, when True, allows any parameter which already has a value set to be skipped in the grid search."
+    desc = "This argument, when True, allows any parameter which already has a value set to be skipped in the grid search.  This value will be overridden and turned off when a zooming grid search is active."
 )
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The optimisation of a mathematical model normally consists of two parts - a coarse grid search across the parameter space to find an initial set of parameter values followed by the use of a high precision optimisation algorithm to exactly find the local or global solution.  The grid search is an essential tool as it allows a non-biased initial optimisation position to be found.  It avoids the statistical bias and preconditioning introduced by using a self chosen initial parameter set.  The high computational cost of the grid search is almost always favourable to the statistical bias of a user defined starting position.")
 uf.desc[-1].add_paragraph("The region of the parameter space that the grid search covers is defined by the lower and upper grid bounds.  These will generally default to the entire parameter space except for when the parameter is non-bounded, for example a 3D position in the PDB space.  This user function will print out the grid bounds used and, if the default bounds are deemed to be insufficient, then the lower, upper or both bounds can supplied.  This only works if all active models have the same parameters.  The coarseness or fineness of the grid is defined by the number of increments to search across between the bounds.  For an alternative to using large numbers of increments, see the zooming grid search.")
 uf.desc[-1].add_paragraph("It is possible to decrease the dimensionality of the grid search, and hence drop the computational cost by orders of magnitude, if certain parameter values are know a priori.  For example if the values are determined via a different experiment.  Such parameters can be set with the value setting user function.  Then, when the skip preset flag is set, these parameters will be skipped in the grid search.  This feature should not be abused and statistical bias should be avoided at all cost.")
+uf.desc[-1].add_paragraph("The parameter skipping logic is as follows.  Firstly setting the increments argument to a list with None elements causes the corresponding parameters to be skipped in the grid search, or an error to be raised if no preset parameter is present.  This overrides all other settings.  Secondly the preset skipping flag only allows parameters to be skipped if the zooming grid search is non-active and a value is preset.")
 uf.backend = minimise.grid_search
 uf.menu_text = "&grid_search"
 uf.gui_icon = "relax.grid_search"

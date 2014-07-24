@@ -303,6 +303,10 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
             # Alias the number of increments for this parameter.
             incs = model_inc[-1][i]
 
+            # Error checking for increment values of None.
+            if incs == None and values[i] in [None, {}, []]:
+                raise RelaxError("The parameter '%s' has no preset value, therefore a grid increment of None is not valid." % names[i])
+
             # The lower bound for this parameter.
             if lower != None:
                 lower_i = lower[i]
@@ -315,15 +319,38 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
             else:
                 upper_i = param_object.grid_upper(names[i], incs=incs, model_info=model_info)
 
+            # The skipping logic.
+            skip = False
+            if skip_preset:
+                # Override the flag if the zoom is on.
+                if zoom:
+                    skip = False
+
+                # No preset value.
+                elif values[i] in [None, {}, []]:
+                    skip = False
+
+                # The preset value is a NaN value due to numpy conversions of None.
+                elif isNaN(values[i]):
+                    skip = False
+
+                # Ok, now the parameter can be skipped.
+                else:
+                    skip = True
+
+            # Override the skip flag if the incs value is None.
+            if incs == None:
+                skip = True
+
             # Skip preset values.
-            if not zoom and skip_preset and not values[i] in [None, {}, []] and not isNaN(values[i]):
+            if skip:
                 lower_i = values[i]
                 upper_i = values[i]
                 model_inc[-1][i] = incs = 1
                 comment = 'Preset value'
 
             # Zooming grid.
-            if zoom:
+            elif zoom:
                 # The full size and scaled size.
                 size = upper_i - lower_i
                 zoom_size = size * zoom_factor
