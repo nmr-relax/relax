@@ -141,6 +141,7 @@ class Relax_fit_params(Param_list):
             'rx',
             scope = 'spin',
             default = 8.0,
+            units = 'rad.s^-1',
             desc = 'Either the R1 or R2 relaxation rate',
             set = 'params',
             py_type = float,
