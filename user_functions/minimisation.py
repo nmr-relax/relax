@@ -117,42 +117,26 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
 
 # The minimise.grid_zoom user function.
 uf = uf_info.add_uf('minimise.grid_zoom')
-uf.title = "Change the zoom level for the grid search."
-uf.title_short = "Zooming grid search level."
+uf.title = "Activate the zooming grid search by setting the zoom level."
+uf.title_short = "Zooming grid search activation."
 uf.add_keyarg(
     name = "level",
     default = 0,
-    py_type = "int",
+    py_type = "num",
     desc_short = "zoom level",
-    desc = "The zooming grid search level.",
-    wiz_element_type = "combo",
-    wiz_combo_choices = [
-        "No zooming",
-        "1st level zoom",
-        "2nd level zoom",
-        "3rd level zoom"
-    ],
-    wiz_combo_data = [
-        0,
-        1,
-        2,
-        3
-    ],
-    wiz_read_only = True
+    desc = "The zooming grid search level.  This can be any number, positive or negative."
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This user function activates or deactivates a zooming grid search.  The zooming grid search level can be one of:")
-uf.desc[-1].add_item_list_element("0", "No zooming - setting this value will deactivate the zooming grid search.")
-uf.desc[-1].add_item_list_element("1", "1st level zoom.  This will activate the first zoom level.  For the frame order parameters, excluding the pivot point, this will halve the grid upper and lower bound values and center the grid at the current parameter values.")
-uf.desc[-1].add_item_list_element("2", "2nd level zoom.  This will activate the second zoom level.  For the frame order parameters, excluding the pivot point, this will zoom the grid upper and lower bound values by a quarter (1/2^2).")
-uf.desc[-1].add_item_list_element("3", "3rd level zoom.  This will activate the second zoom level.  For the frame order parameters, excluding the pivot point, this will zoom the grid upper and lower bound values by an eighth (1/2^3).")
-uf.desc[-1].add_paragraph("For all zoom levels, except for 0, the grid will be centred at the current parameter values.")
+uf.desc[-1].add_paragraph("The optimisation of a mathematical model normally consists of two parts - a coarse grid search to find an initial set of parameter values followed by the use of a high precision optimisation algorithm to exactly find the local or global solution.  But in certain situations, for example where a parallelised grid search is advantageous, a finer grid may be desired.  The zooming grid search provides a more efficient alternative to simply increasing the number of increments used in the initial grid search.  Note that in most situations, standard optimisation algorithms will be by far computationally less expensive.")
+uf.desc[-1].add_paragraph("The zooming grid search can be activated via this user function.  After setting the desired zoom level, the original grid search user function should be called again.  The zoom level is used to decrease the total area of the grid search.  The grid width for each dimension of the parameter space will be divided by 2**zoom_level.  So a level of 1 will halve all dimensions, a level of 2 will quarter the widths, a level of 3 will be an eighth of the widths, etc.")
+uf.desc[-1].add_paragraph("The zooming algorithm proceeds as follows.  The new zoomed grid will be centred at the current parameter values.  However if the new grid is outside of the bounds of the original grid, the entire grid will be translated so that it lies entirely within the original bounds.  This is to avoid grid points lying within undefined regions of the space.  An exception is when the zoom factor is negative, hence the new grid will be larger than the original.")
+uf.desc[-1].add_paragraph("An example of using the zooming grid search is to first perform a standard initial grid search, then set the zoom level to 1 and perform a second grid search.  Continue for zoom levels 2, 3, etc. until the desired fineness is obtained.")
 uf.backend = minimise.grid_zoom
 uf.menu_text = "&grid_zoom"
 uf.gui_icon = "oxygen.actions.zoom-in"
 uf.wizard_height_desc = 500
-uf.wizard_size = (900, 600)
+uf.wizard_size = (900, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
 
 
