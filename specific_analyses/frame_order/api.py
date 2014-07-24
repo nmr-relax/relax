@@ -64,6 +64,7 @@ class Frame_order(API_base, API_common):
         self.model_loop = self._model_loop_single_global
         self.model_type = self._model_type_global
         self.overfit_deselect = self._overfit_deselect_dummy
+        self.print_model_title = self._print_model_title_global
         self.return_conversion_factor = self._return_no_conversion_factor
         self.set_param_values = self._set_param_values_global
 
