@@ -41,6 +41,10 @@ def angle_upper_excluding_bound(incs=None, model_info=None):
     @rtype:                 float
     """
 
+    # Handle inc values of None or 1.
+    if incs in [None, 1]:
+        return 2.0 * pi
+
     # Return the upper limit which is one inc before 2pi.
     return 2.0*pi * (1.0 - 1.0/incs)
 
@@ -55,6 +59,10 @@ def axis_alpha_upper(incs=None, model_info=None):
     @return:                The upper grid search bound for the axis alpha angle.
     @rtype:                 float
     """
+
+    # Handle inc values of None or 1.
+    if incs in [None, 1]:
+        return pi
 
     # Return the upper limit which is one inc before pi.
     return pi * (1.0 - 1.0/incs)
@@ -71,6 +79,10 @@ def cone_angle_lower(incs=None, model_info=None):
     @rtype:                 float
     """
 
+    # Handle inc values of None or 1.
+    if incs in [None, 1]:
+        return 0.0
+
     # Return the lower limit, excluding the first point.
     return pi * (1.0/incs)
 
@@ -85,6 +97,10 @@ def cone_angle_upper(incs=None, model_info=None):
     @return:                The upper grid search bound for the cone and torsion angles.
     @rtype:                 float
     """
+
+    # Handle inc values of None or 1.
+    if incs in [None, 1]:
+        return pi
 
     # Return the upper limit, excluding the last point.
     return pi * (1.0 - 1.0/incs)
