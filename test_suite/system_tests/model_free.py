@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -192,7 +192,7 @@ class Mf(SystemTestCase):
         self.interpreter.monte_carlo.setup(number=3)
         self.interpreter.monte_carlo.create_data()
         self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise('newton')
+        self.interpreter.minimise.execute('newton')
         #self.interpreter.eliminate()
         self.interpreter.monte_carlo.error_analysis()
 
@@ -778,7 +778,7 @@ class Mf(SystemTestCase):
         self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 's2', 'te'])
 
         # Minimise.
-        self.interpreter.minimise('newton', 'gmw', 'back')
+        self.interpreter.minimise.execute('newton', 'gmw', 'back')
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[0].spin[0]
@@ -806,7 +806,7 @@ class Mf(SystemTestCase):
         self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 's2', 'te'])
 
         # Minimise.
-        self.interpreter.minimise('newton', 'gmw', 'back')
+        self.interpreter.minimise.execute('newton', 'gmw', 'back')
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[0].spin[0]
@@ -836,7 +836,7 @@ class Mf(SystemTestCase):
         self.interpreter.value.set([15.0e-9, 1.0, 0.0], ['local_tm', 's2', 'te'])
 
         # Minimise.
-        self.interpreter.minimise('newton', 'gmw', 'back')
+        self.interpreter.minimise.execute('newton', 'gmw', 'back')
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[0].spin[0]
@@ -856,12 +856,36 @@ class Mf(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
 
 
+    def test_m0_grid_with_grid_search(self):
+        """Test the optimisation of the m0 model-free model against the tm0 parameter grid, testing the grid search."""
+
+        # Initialise.
+        cdp._model = 'm0'
+        cdp._value_test = self.value_test
+        cdp._grid_search = True
+
+        # Setup the data pipe for optimisation.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
+
+
     def test_m0_grid_vs_m1(self):
         """Test the optimisation of the m1 model-free model against the tm0 parameter grid."""
 
         # Initialise.
         cdp._model = 'm1'
         cdp._value_test = self.value_test
+
+        # Setup the data pipe for optimisation.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
+
+
+    def test_m0_grid_vs_m1_with_grid_search(self):
+        """Test the optimisation of the m1 model-free model against the tm0 parameter grid."""
+
+        # Initialise.
+        cdp._model = 'm1'
+        cdp._value_test = self.value_test
+        cdp._grid_search = True
 
         # Setup the data pipe for optimisation.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_tm0_grid.py')
@@ -1147,7 +1171,7 @@ class Mf(SystemTestCase):
         self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
 
         # Minimise.
-        self.interpreter.minimise('bfgs', 'back')
+        self.interpreter.minimise.execute('bfgs', 'back')
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
@@ -1390,7 +1414,7 @@ class Mf(SystemTestCase):
         self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
 
         # Minimise.
-        self.interpreter.minimise('bfgs', 'mt')
+        self.interpreter.minimise.execute('bfgs', 'mt')
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
@@ -1575,7 +1599,7 @@ class Mf(SystemTestCase):
         self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
 
         # Minimise.
-        self.interpreter.minimise('cd', 'back', max_iter=50)
+        self.interpreter.minimise.execute('cd', 'back', max_iter=50)
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
@@ -1649,7 +1673,7 @@ class Mf(SystemTestCase):
         self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
 
         # Minimise.
-        self.interpreter.minimise('cd', 'mt')
+        self.interpreter.minimise.execute('cd', 'mt')
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
@@ -1796,7 +1820,7 @@ class Mf(SystemTestCase):
         self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
 
         # Minimise.
-        self.interpreter.minimise('newton', 'gmw', 'back')
+        self.interpreter.minimise.execute('newton', 'gmw', 'back')
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
@@ -1943,7 +1967,7 @@ class Mf(SystemTestCase):
         self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
 
         # Minimise.
-        self.interpreter.minimise('newton', 'gmw', 'mt')
+        self.interpreter.minimise.execute('newton', 'gmw', 'mt')
 
         # Monte Carlo simulations.
         self.monte_carlo()
@@ -2117,7 +2141,7 @@ class Mf(SystemTestCase):
         self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
 
         # Minimise.
-        self.interpreter.minimise('sd', 'back', max_iter=50)
+        self.interpreter.minimise.execute('sd', 'back', max_iter=50)
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
@@ -2186,7 +2210,7 @@ class Mf(SystemTestCase):
         self.interpreter.value.set([1.0, 0.0, 0.0], ['s2', 'te', 'rex'])
 
         # Minimise.
-        self.interpreter.minimise('sd', 'mt', max_iter=50)
+        self.interpreter.minimise.execute('sd', 'mt', max_iter=50)
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]
@@ -2250,7 +2274,7 @@ class Mf(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opt_setup_S2_0_970_te_2048_Rex_0_149.py')
 
         # Grid search.
-        self.interpreter.grid_search(inc=11)
+        self.interpreter.minimise.grid_search(inc=11)
 
         # Alias the relevent spin container.
         spin = cdp.mol[0].res[1].spin[0]

@@ -22,8 +22,8 @@ self._execute_uf(uf_name='frame_order.select_model', model='rigid')
 self._execute_uf(uf_name='frame_order.ref_domain', ref='a')
 
 # Optimise.
-self._execute_uf(uf_name='grid_search', inc=6)
-self._execute_uf(uf_name='minimise', min_algor='simplex', constraints=False)
+self._execute_uf(uf_name='minimise.grid_search', inc=6)
+self._execute_uf(uf_name='minimise.execute', min_algor='simplex', constraints=False)
 
 # Write the results.
 self._execute_uf(uf_name='results.write', file='devnull', dir=None, force=True)

@@ -62,31 +62,6 @@ def assemble_param_vector(sim_index=None):
     return array(param_vect, float64)
 
 
-def assemble_scaling_matrix(scaling=True):
-    """Create and return the scaling matrix.
-
-    @keyword scaling:       If False, then the identity matrix will be returned.
-    @type scaling:          bool
-    @return:                The square and diagonal scaling matrix.
-    @rtype:                 numpy rank-2 array
-    """
-
-    # Initialise.
-    scaling_matrix = identity(param_num(), float64)
-
-    # Return the identity matrix.
-    if not scaling:
-        return scaling_matrix
-
-    # The pivot point.
-    if not pivot_fixed():
-        for i in range(3):
-            scaling_matrix[i, i] = 1e2
-
-    # Return the matrix.
-    return scaling_matrix
-
-
 def linear_constraints(scaling_matrix=None):
     """Create the linear constraint matrices A and b.
 

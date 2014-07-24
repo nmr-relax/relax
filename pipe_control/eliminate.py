@@ -62,8 +62,8 @@ def eliminate(function=None, args=None):
 
         if not sim_state:
             # Get the parameter names and values.
-            names = api.get_param_names(model_info)
-            values = api.get_param_values(model_info)
+            names = api.get_param_names(model_info=model_info)
+            values = api.get_param_values(model_info=model_info)
 
             # No data.
             if names == None or values == None:
@@ -77,12 +77,12 @@ def eliminate(function=None, args=None):
             flag = False
             for j in range(len(names)):
                 # Eliminate function.
-                if api.eliminate(names[j], values[j], model_info, args):
+                if api.eliminate(names[j], values[j], args, model_info=model_info):
                     flag = True
 
             # Deselect.
             if flag:
-                api.deselect(model_info)
+                api.deselect(model_info=model_info)
 
 
         # Simulation elimination.
@@ -92,8 +92,8 @@ def eliminate(function=None, args=None):
             # Loop over the simulations.
             for j in range(cdp.sim_number):
                 # Get the parameter names and values.
-                names = api.get_param_names(model_info)
-                values = api.get_param_values(model_info, sim_index=j)
+                names = api.get_param_names(model_info=model_info)
+                values = api.get_param_values(sim_index=j, model_info=model_info)
 
                 # No data.
                 if names == None or values == None:
@@ -107,9 +107,9 @@ def eliminate(function=None, args=None):
                 flag = False
                 for k in range(len(names)):
                     # Eliminate function.
-                    if api.eliminate(names[k], values[k], model_info, args, sim=j):
+                    if api.eliminate(names[k], values[k], args, sim=j, model_info=model_info):
                         flag = True
 
                 # Deselect.
                 if flag:
-                    api.deselect(model_info, sim_index=j)
+                    api.deselect(sim_index=j, model_info=model_info)

@@ -223,7 +223,7 @@ For the fixed relaxation time period CPMG-type experiments, the $\Rtwoeff$/$\Ron
     \Rtwoeff(\nucpmg) = - \frac{1}{\Trelax} \cdot \ln \left( \frac{I_1(\nucpmg)}{I_0} \right) .
 \end{equation}
 
-The values and errors are determined with a single call of the \uf{calc} user function.
+The values and errors are determined with a single call of the \uf{minimise.calculate} user function.
 The $\Ronerho$ version of the equation is essentially the same:
 \begin{equation}
     \Ronerho(\omega_1) = - \frac{1}{\Trelax} \cdot \ln \left( \frac{I_1(\omega_1)}{I_0} \right) .
@@ -1674,12 +1674,12 @@ The relaxation dispersion auto-analysis implements many of the concepts describe
 It can be summarised as:
 \begin{description}
   \item[Peak intensity error analysis:]  An error analysis is performed to determine the peak intensity errors, if not already calculated (see Section~\ref{uf: spectrum.error_analysis} on page~\pageref{uf: spectrum.error_analysis}).
-  \item[`R2eff' model optimisation:]  Firstly the `R2eff' model is either optimised (using the \uf{minimise} user function) or simply calculated (using the \uf{calc} user function) to find the $\Rtwoeff$ or $\Ronerho$ values used as the base data for all other dispersion models (see Section~\ref{sect: dispersion: R2eff model} on page~\pageref{sect: dispersion: R2eff model}).
+  \item[`R2eff' model optimisation:]  Firstly the `R2eff' model is either optimised (using the \uf{minimise.execute} user function) or simply calculated (using the \uf{minimise.calculate} user function) to find the $\Rtwoeff$ or $\Ronerho$ values used as the base data for all other dispersion models (see Section~\ref{sect: dispersion: R2eff model} on page~\pageref{sect: dispersion: R2eff model}).
   \item[Dispersion curve insignificance:]  Spins with insignificant dispersion profiles will be deselected with the \uf{relax\ufus{}disp\ufsep{}insignificance} user function, as described below, excluding the `No Rex' model.
   \item[Model optimisation:]  Sequential optimisation of each of the specified dispersion models.
     This consists of a grid search followed by Nelder-Mead simplex optimisation constrained using the log-barrier constraint algorithm.
     Each model will be stored in a different data pipe.
-    See Section~\ref{uf: grid_search} on page~\pageref{uf: grid_search} for the grid search and Section~\ref{uf: minimise} on page~\pageref{uf: minimise} for minimisation.
+    See Section~\ref{uf: minimise.grid_search} on page~\pageref{uf: minimise.grid_search} for the grid search and Section~\ref{uf: minimise.execute} on page~\pageref{uf: minimise.execute} for minimisation.
   \item[Grid search avoidance:]  A number of tricks are used to speed up optimisation by skipping or decreasing the size of the initial grid search:
   \begin{description}
     \item[Pre-run directory:]  If a pre-run directory is supplied -- a separate directory containing the dispersion auto-analysis results from a previous run -- the optimised parameters from these previous results will be used as the starting point for optimisation rather than performing a grid search.
@@ -1779,7 +1779,7 @@ Rather than taking the median, the $\Rtwozero/\Ronerhoprime$ and $\dw$ related p
 \label{sect: Dispersion parameter grid search}
 
 One of the most statistically unbiased methods for determining an initial parameter estimate prior to optimisation is to perform a grid search.
-This is performed via the \uf{grid\ufus{}search} user function (see Section~\ref{uf: grid_search} on page~\pageref{uf: grid_search}).
+This is performed via the \uf{minimise.grid\ufus{}search} user function (see Section~\ref{uf: minimise.grid_search} on page~\pageref{uf: minimise.grid_search}).
 
 
 For some dispersion models the grid search can be too computationally expensive.
@@ -2701,7 +2701,7 @@ Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR
 \end{lstlisting}
 
 This will start the auto-analysis.
-If you are adventurous, you can replace this line with your own \uf{grid\ufus{}search}, \uf{minimise}, and \uf{monte\ufus{}carlo\ufsep{}*} user function calls and design your own protocol.
+If you are adventurous, you can replace this line with your own \uf{minimise.grid\ufus{}search}, \uf{minimise.execute}, and \uf{monte\ufus{}carlo\ufsep{}*} user function calls and design your own protocol.
 For ideas in designing your own advanced analysis, see the \file{auto\osus{}analysis\ossep{}relax\osus{}disp.py} file.
 
 

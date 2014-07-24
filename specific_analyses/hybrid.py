@@ -99,8 +99,8 @@ class Hybrid:
         @type pipe_from:        str
         @keyword pipe_to:       The data pipe to copy the data to.
         @type pipe_to:          str
-        @keyword model_info:    The model information from model_info().
-        @type model_info:       int
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
         @keyword global_stats:  The global statistics flag.
         @type global_stats:     bool
         @keyword verbose:       A flag which if True will cause info to be printed out.
@@ -123,13 +123,13 @@ class Hybrid:
         dp_to.hybrid_pipes = dp_from.hybrid_pipes
 
 
-    def model_desc(self, model_info):
+    def model_desc(self, model_info=None):
         """Return a description of the model.
 
-        @param model_info:  The model information from the model_loop().  This is unused.
-        @type model_info:   int
-        @return:            The model description.
-        @rtype:             str
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
+        @return:                The model description.
+        @rtype:                 str
         """
 
         return "hybrid model"
@@ -219,13 +219,13 @@ class Hybrid:
         return 1
 
 
-    def skip_function(self, model_info):
+    def skip_function(self, model_info=None):
         """Dummy function.
 
-        @param model_info:  The model index from model_loop().
-        @type model_info:   int
-        @return:            True if the data should be skipped, False otherwise.
-        @rtype:             bool
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
+        @return:                True if the data should be skipped, False otherwise.
+        @rtype:                 bool
         """
 
         # Don't skip data.

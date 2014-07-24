@@ -61,8 +61,13 @@ def assemble_param_vector(sim_index=None):
             if not opt_uses_tensor(cdp.align_tensors[i]):
                 continue
 
-            # Add the parameters.
-            param_vector = param_vector + list(cdp.align_tensors[i].A_5D)
+            # No values set.
+            if not hasattr(cdp.align_tensors[i], 'A_5D'):
+                param_vector += [None, None, None, None, None]
+
+            # Otherwise add the parameters.
+            else:
+                param_vector += list(cdp.align_tensors[i].A_5D)
 
     # Monte Carlo simulation data structures.
     if sim_index != None:
@@ -103,11 +108,11 @@ def assemble_param_vector(sim_index=None):
     if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
         if not hasattr(cdp, 'paramagnetic_centre'):
             for i in range(3):
-                param_vector.append(0.0)
+                param_vector.append(None)
         elif sim_index != None:
             if cdp.paramagnetic_centre_sim[sim_index] == None:
                 for i in range(3):
-                    param_vector.append(0.0)
+                    param_vector.append(None)
             else:
                 for i in range(3):
                     param_vector.append(cdp.paramagnetic_centre_sim[sim_index][i])
@@ -115,67 +120,8 @@ def assemble_param_vector(sim_index=None):
             for i in range(3):
                 param_vector.append(cdp.paramagnetic_centre[i])
 
-    # Convert all None values to zero (to avoid conversion to NaN).
-    for i in range(len(param_vector)):
-        if param_vector[i] == None:
-            param_vector[i] = 0.0
-
     # Return a numpy arrary.
     return array(param_vector, float64)
-
-
-def assemble_scaling_matrix(data_types=None, scaling=True):
-    """Create and return the scaling matrix.
-
-    @keyword data_types:    The base data types used in the optimisation.  This list can contain
-                            the elements 'rdc', 'pcs' or 'tensor'.
-    @type data_types:       list of str
-    @keyword scaling:       If False, then the identity matrix will be returned.
-    @type scaling:          bool
-    @return:                The square and diagonal scaling matrix.
-    @rtype:                 numpy rank-2 array
-    """
-
-    # Initialise.
-    scaling_matrix = identity(param_num(), float64)
-
-    # Return the identity matrix.
-    if not scaling:
-        return scaling_matrix
-
-    # Starting point of the populations.
-    pop_start = 0
-
-    # Loop over the alignments.
-    tensor_num = 0
-    for i in range(len(cdp.align_tensors)):
-        # Skip non-optimised tensors.
-        if not opt_uses_tensor(cdp.align_tensors[i]):
-            continue
-
-        # Add the 5 alignment parameters.
-        pop_start = pop_start + 5
-
-        # The alignment parameters.
-        for j in range(5):
-            scaling_matrix[5*tensor_num + j, 5*tensor_num + j] = 1.0
-
-        # Increase the tensor number.
-        tensor_num += 1
-
-    # Loop over the populations, and set the scaling factor.
-    if cdp.model in ['2-domain', 'population']:
-        factor = 0.1
-        for i in range(pop_start, pop_start + (cdp.N-1)):
-            scaling_matrix[i, i] = factor
-
-    # The paramagnetic centre.
-    if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
-        for i in range(-3, 0):
-            scaling_matrix[i, i] = 1e2
-
-    # Return the matrix.
-    return scaling_matrix
 
 
 def disassemble_param_vector(param_vector=None, data_types=None, sim_index=None):
@@ -629,7 +575,7 @@ def update_model():
         for id in cdp.align_ids:
             # No tensors initialised.
             if not hasattr(cdp, 'align_tensors'):
-                align_tensor.init(tensor=id, align_id=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+                align_tensor.init(tensor=id, align_id=id)
 
             # Find if the tensor corresponding to the id exists.
             exists = False
@@ -639,4 +585,4 @@ def update_model():
 
             # Initialise the tensor.
             if not exists:
-                align_tensor.init(tensor=id, align_id=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
+                align_tensor.init(tensor=id, align_id=id)

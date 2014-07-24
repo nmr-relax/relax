@@ -119,7 +119,7 @@ spin.dw_AC =  8.006033548997912
 spin.dw_BC = spin.dw_AC - spin.dw_AB
 
 # Calculate.
-calc()
+minimise.calculate()
 
 # Plot the dispersion curves (commented out as it is currently too slow).
 #relax_disp.plot_disp_curves(dir=ds.tmpdir, num_points=100, extend=0, force=True)

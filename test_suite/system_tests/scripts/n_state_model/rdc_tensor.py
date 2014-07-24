@@ -39,14 +39,14 @@ self._execute_uf(uf_name='rdc.read', align_id=tag, file='rdc_dy', dir=DATA_PATH,
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 
 # Minimisation.
-self._execute_uf(uf_name='grid_search', inc=3)
-self._execute_uf(uf_name='minimise', min_algor='newton', constraints=False)
+self._execute_uf(uf_name='minimise.grid_search', inc=3)
+self._execute_uf(uf_name='minimise.execute', min_algor='newton', constraints=False)
 
 # Monte Carlo simulations.
 self._execute_uf(uf_name='monte_carlo.setup', number=3)
 self._execute_uf(uf_name='monte_carlo.create_data')
 self._execute_uf(uf_name='monte_carlo.initial_values')
-self._execute_uf(uf_name='minimise', min_algor='newton', constraints=False)
+self._execute_uf(uf_name='minimise.execute', min_algor='newton', constraints=False)
 self._execute_uf(uf_name='monte_carlo.error_analysis')
 
 # Show the tensors.

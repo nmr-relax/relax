@@ -34,7 +34,6 @@ from re import match
 import lib.arg_check
 from lib.errors import RelaxError, RelaxInfError, RelaxMultiVectorError, RelaxNaNError
 from lib.float import isNaN, isInf
-from lib.optimisation import test_grid_ops
 from lib.physical_constants import return_gyromagnetic_ratio
 from multi import Memo, Result_command, Slave_command
 from pipe_control import pipes
@@ -45,7 +44,7 @@ from specific_analyses.model_free.parameters import assemble_param_vector, disas
 from target_functions.mf import Mf
 
 
-def disassemble_result(param_vector=None, func=None, iter=None, fc=None, gc=None, hc=None, warning=None, spin=None, sim_index=None, model_type=None, scaling=None, scaling_matrix=None):
+def disassemble_result(param_vector=None, func=None, iter=None, fc=None, gc=None, hc=None, warning=None, spin=None, sim_index=None, model_type=None, scaling_matrix=None):
     """Disassemble the optimisation results.
 
     @keyword param_vector:      The model-free parameter vector.
@@ -69,9 +68,6 @@ def disassemble_result(param_vector=None, func=None, iter=None, fc=None, gc=None
     @keyword model_type:        The model-free model type, one of 'mf', 'local_tm', 'diff', or
                                 'all'.
     @type model_type:           str
-    @keyword scaling:           If True, diagonal scaling is enabled during optimisation to
-                                allow the problem to be better conditioned.
-    @type scaling:              bool
     @keyword scaling_matrix:    The diagonal, square scaling matrix.
     @type scaling_matrix:       numpy diagonal matrix
     """
@@ -92,7 +88,7 @@ def disassemble_result(param_vector=None, func=None, iter=None, fc=None, gc=None
         raise RelaxNaNError('chi-squared')
 
     # Scaling.
-    if scaling:
+    if scaling_matrix != None:
         param_vector = dot(scaling_matrix, param_vector)
 
     # Check if the chi-squared value is lower.  This allows for a parallelised grid search!
@@ -207,200 +203,6 @@ def disassemble_result(param_vector=None, func=None, iter=None, fc=None, gc=None
 
             # Warning.
             cdp.warning = warning
-
-
-def grid_search_config(num_params, spin=None, spin_id=None, lower=None, upper=None, inc=None, scaling_matrix=None, verbosity=1):
-    """Configure the grid search.
-
-    @param num_params:          The number of parameters in the model.
-    @type num_params:           int
-    @keyword spin:              The spin data container.
-    @type spin:                 SpinContainer instance
-    @keyword spin_id:           The spin identification string.
-    @type spin_id:              str
-    @keyword lower:             The lower bounds of the grid search which must be equal to the
-                                number of parameters in the model.
-    @type lower:                array of numbers
-    @keyword upper:             The upper bounds of the grid search which must be equal to the
-                                number of parameters in the model.
-    @type upper:                array of numbers
-    @keyword inc:               The increments for each dimension of the space for the grid
-                                search.  The number of elements in the array must equal to the
-                                number of parameters in the model.
-    @type inc:                  array of int
-    @keyword scaling_matrix:    The diagonal, square scaling matrix.
-    @type scaling_matrix:       numpy diagonal matrix
-    @keyword verbosity:         A flag specifying the amount of information to print.  The
-                                higher the value, the greater the verbosity.
-    @type verbosity:            int
-    """
-
-    # Test the grid search options.
-    test_grid_ops(lower=lower, upper=upper, inc=inc, n=num_params)
-
-    # If inc is a single int, convert it into an array of that value.
-    if isinstance(inc, int):
-        inc = [inc]*num_params
-
-    # Set up the default bounds.
-    if not lower:
-        # Init.
-        lower = []
-        upper = []
-
-        # Determine the model type.
-        model_type = determine_model_type()
-
-        # Minimisation options for diffusion tensor parameters.
-        if model_type == 'diff' or model_type == 'all':
-            # Get the diffusion tensor specific configuration.
-            grid_search_diff_bounds(lower, upper)
-
-        # Model-free parameters (residue specific parameters).
-        if model_type != 'diff':
-            # The loop.
-            if spin:
-                loop = [spin]
-            else:
-                loop = spin_loop(spin_id)
-
-            # Loop over the spins.
-            for spin in loop:
-                # Skip deselected residues.
-                if not spin.select:
-                    continue
-
-                # Get the spin specific configuration.
-                grid_search_spin_bounds(spin, lower, upper)
-
-    # Diagonal scaling of minimisation options.
-    lower_new = []
-    upper_new = []
-    for i in range(num_params):
-        lower_new.append(lower[i] / scaling_matrix[i, i])
-        upper_new.append(upper[i] / scaling_matrix[i, i])
-
-    # Return the minimisation options.
-    return inc, lower_new, upper_new
-
-
-def grid_search_diff_bounds(lower, upper):
-    """Set up the default grid search bounds the diffusion tensor.
-
-    This method appends the default bounds to the lower and upper lists.
-
-    @param lower:       The lower bound list to append to.
-    @type lower:        list
-    @param upper:       The upper bound list to append to.
-    @type upper:        list
-    """
-
-    # Spherical diffusion {tm}.
-    if cdp.diff_tensor.type == 'sphere':
-        lower.append(1.0 * 1e-9)
-        upper.append(12.0 * 1e-9)
-
-    # Spheroidal diffusion {tm, Da, theta, phi}.
-    if cdp.diff_tensor.type == 'spheroid':
-        # tm.
-        lower.append(1.0 * 1e-9)
-        upper.append(12.0 * 1e-9)
-
-        # Da.
-        if cdp.diff_tensor.spheroid_type == 'prolate':
-            lower.append(0.0)
-            upper.append(1e7)
-        elif cdp.diff_tensor.spheroid_type == 'oblate':
-            lower.append(-1e7)
-            upper.append(0.0)
-        else:
-            lower.append(-1e7)
-            upper.append(1e7)
-
-        # theta.
-        lower.append(0.0)
-        upper.append(pi)
-
-        # phi.
-        lower.append(0.0)
-        upper.append(pi)
-
-    # Ellipsoidal diffusion {tm, Da, Dr, alpha, beta, gamma}.
-    elif cdp.diff_tensor.type == 'ellipsoid':
-        # tm.
-        lower.append(1.0 * 1e-9)
-        upper.append(12.0 * 1e-9)
-
-        # Da.
-        lower.append(0.0)
-        upper.append(1e7)
-
-        # Dr.
-        lower.append(0.0)
-        upper.append(1.0)
-
-        # alpha.
-        lower.append(0.0)
-        upper.append(pi)
-
-        # beta.
-        lower.append(0.0)
-        upper.append(pi)
-
-        # gamma.
-        lower.append(0.0)
-        upper.append(pi)
-
-
-def grid_search_spin_bounds(spin, lower, upper):
-    """Set up the default grid search bounds for a single spin.
-
-    This method appends the default bounds to the lower and upper lists.  The ordering of the
-    lists in min_options matches that of the params list in the spin container.
-
-    @param spin:        A SpinContainer object.
-    @type spin:         class instance
-    @param lower:       The lower bound list to append to.
-    @type lower:        list
-    @param upper:       The upper bound list to append to.
-    @type upper:        list
-    """
-
-    # Loop over the model-free parameters.
-    for i in range(len(spin.params)):
-        # Local tm.
-        if spin.params[i] == 'local_tm':
-            lower.append(1.0 * 1e-9)
-            upper.append(12.0 * 1e-9)
-
-        # {S2, S2f, S2s}.
-        elif match('s2', spin.params[i]):
-            lower.append(0.0)
-            upper.append(1.0)
-
-        # {te, tf, ts}.
-        elif match('t', spin.params[i]):
-            lower.append(0.0)
-            upper.append(500.0 * 1e-12)
-
-        # Rex.
-        elif spin.params[i] == 'rex':
-            lower.append(0.0)
-            upper.append(5.0 / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]])**2)
-
-        # Bond length.
-        elif spin.params[i] == 'r':
-            lower.append(1.0 * 1e-10)
-            upper.append(1.05 * 1e-10)
-
-        # CSA.
-        elif spin.params[i] == 'csa':
-            lower.append(-120 * 1e-6)
-            upper.append(-200 * 1e-6)
-
-        # Unknown option.
-        else:
-            raise RelaxError("Unknown model-free parameter.")
 
 
 def minimise_data_setup(data_store, min_algor, num_data_sets, min_options, spin=None, sim_index=None):
@@ -738,7 +540,7 @@ class MF_memo(Memo):
     Not quite a momento so a memo.
     """
 
-    def __init__(self, model_free=None, model_type=None, spin=None, sim_index=None, scaling=None, scaling_matrix=None):
+    def __init__(self, model_free=None, model_type=None, spin=None, sim_index=None, scaling_matrix=None):
         """Initialise the model-free memo class.
 
         This memo stores the model-free class instance so that the disassemble_result() method can be called to store the optimisation results.  The other args are those required by this method but not generated through optimisation.
@@ -749,8 +551,6 @@ class MF_memo(Memo):
         @type spin:                 SpinContainer instance
         @keyword sim_index:         The optional MC simulation index.
         @type sim_index:            int
-        @keyword scaling:           If True, diagonal scaling is enabled.
-        @type scaling:              bool
         @keyword scaling_matrix:    The diagonal, square scaling matrix.
         @type scaling_matrix:       numpy diagonal matrix
         """
@@ -763,7 +563,6 @@ class MF_memo(Memo):
         self.model_type = model_type
         self.spin = spin
         self.sim_index = sim_index
-        self.scaling = scaling
         self.scaling_matrix = scaling_matrix
 
 
@@ -892,4 +691,4 @@ class MF_result_command(Result_command):
         """
 
         # Disassemble the results.
-        disassemble_result(param_vector=self.param_vector, func=self.func, iter=self.iter, fc=self.fc, gc=self.gc, hc=self.hc, warning=self.warning, spin=memo.spin, sim_index=memo.sim_index, model_type=memo.model_type, scaling=memo.scaling, scaling_matrix=memo.scaling_matrix)
+        disassemble_result(param_vector=self.param_vector, func=self.func, iter=self.iter, fc=self.fc, gc=self.gc, hc=self.hc, warning=self.warning, spin=memo.spin, sim_index=memo.sim_index, model_type=memo.model_type, scaling_matrix=memo.scaling_matrix)

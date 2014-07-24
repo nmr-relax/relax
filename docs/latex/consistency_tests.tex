@@ -137,12 +137,12 @@ value.set(val=13 * 1e-9, param='tc')
 consistency_tests.set_frq(frq=600.0 * 1e6)
 
 # Consistency tests.
-calc()
+minimise.calculate()
 
 # Monte Carlo simulations.
 monte_carlo.setup(number=500)
 monte_carlo.create_data()
-calc()
+minimise.calculate()
 monte_carlo.error_analysis()
 
 # Create grace files.
@@ -263,7 +263,7 @@ Therefore the $J(0)$, $F_\eta$, and $F_{R_2}$ values are simply calculated with 
 
 \begin{lstlisting}[firstnumber=65]
 # Consistency tests.
-calc()
+minimise.calculate()
 \end{lstlisting}
 
 The propagation of errors is more complicated.
@@ -275,7 +275,7 @@ The normal Monte Carlo user functions can be called:
 # Monte Carlo simulations.
 monte_carlo.setup(number=500)
 monte_carlo.create_data()
-calc()
+minimise.calculate()
 monte_carlo.error_analysis()
 \end{lstlisting}
 

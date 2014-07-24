@@ -22,11 +22,43 @@
 # Module docstring.
 """The module for the Lipari-Szabo model-free parameter list object."""
 
+# Python module imports.
+from math import pi
+
 # relax module imports.
 from lib.physical_constants import N15_CSA
 from pipe_control import relax_data
 from specific_analyses.parameter_object import Param_list
 from specific_analyses.model_free.parameters import conv_factor_rex, units_rex
+
+
+def rex_scaling(model_info=None):
+    """Determine the scaling factor for the Rex parameter.
+
+    @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+    @type model_info:       int
+    @return:                The scaling factor for the Rex parameter.
+    @rtype:                 float
+    """
+
+    # Return the scaling factor.
+    return 1.0 / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]])**2
+
+
+def rex_upper(incs=None, model_info=None):
+    """Determine the grid search upper bound for the Rex parameter.
+
+    @keyword incs:          The number of grid search increments.
+    @type incs:             int
+    @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+    @type model_info:       int
+    @return:                The grid search upper bound for the Rex parameter.
+    @rtype:                 float
+    """
+
+    # Return the upper bound.
+    return 5.0 / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]])**2
+
 
 
 class Model_free_params(Param_list):
@@ -45,8 +77,22 @@ class Model_free_params(Param_list):
         Param_list.__init__(self)
 
         # Add the base data for the models.
-        self._add('ri_data', scope='spin', desc=relax_data.return_data_desc('ri_data'), py_type=dict, err=False, sim=True)
-        self._add('ri_data_err', scope='spin', desc=relax_data.return_data_desc('ri_data_err'), py_type=dict, err=False, sim=False)
+        self._add(
+            'ri_data',
+            scope = 'spin',
+            desc = relax_data.return_data_desc('ri_data'),
+            py_type = dict,
+            err = False,
+            sim = True
+        )
+        self._add(
+            'ri_data_err',
+            scope = 'spin',
+            desc = relax_data.return_data_desc('ri_data_err'),
+            py_type = dict,
+            err = False,
+            sim = False
+        )
 
         # Add the model variables.
         self._add_model_info(equation_flag=True)
@@ -55,15 +101,146 @@ class Model_free_params(Param_list):
         self._add_diffusion_params()
 
         # Add up the spin model parameters.
-        self._add('s2', scope='spin', default=0.8, desc='S2, the model-free generalised order parameter (S2 = S2f.S2s)', py_type=float, set='params', grace_string='\\qS\\v{0.4}\\z{0.71}2\\Q', err=True, sim=True)
-        self._add('s2f', scope='spin', default=0.8, desc='S2f, the faster motion model-free generalised order parameter', py_type=float, set='params', grace_string='\\qS\\sf\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q', err=True, sim=True)
-        self._add('s2s', scope='spin', default=0.8, desc='S2s, the slower motion model-free generalised order parameter', py_type=float, set='params', grace_string='\\qS\\ss\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q', err=True, sim=True)
-        self._add('local_tm', scope='spin', default=10.0 * 1e-9, desc='The spin specific global correlation time (seconds)', py_type=float, set='params', grace_string='\\xt\\f{}\\sm', units='ns', err=True, sim=True)
-        self._add('te', scope='spin', default=100.0 * 1e-12, desc='Single motion effective internal correlation time (seconds)', py_type=float, set='params', conv_factor=1e-12, grace_string='\\xt\\f{}\\se', units='ps', err=True, sim=True)
-        self._add('tf', scope='spin', default=10.0 * 1e-12, desc='Faster motion effective internal correlation time (seconds)', py_type=float, set='params', conv_factor=1e-12, grace_string='\\xt\\f{}\\sf', units='ps', err=True, sim=True)
-        self._add('ts', scope='spin', default=1000.0 * 1e-12, desc='Slower motion effective internal correlation time (seconds)', py_type=float, set='params', conv_factor=1e-12, grace_string='\\xt\\f{}\\ss', units='ps', err=True, sim=True)
-        self._add('rex', scope='spin', default=0.0, desc='Chemical exchange relaxation (sigma_ex = Rex / omega**2)', py_type=float, set='params', conv_factor=conv_factor_rex, units=units_rex, grace_string='\\qR\\sex\\Q', err=True, sim=True)
-        self._add_csa(default=N15_CSA, set='params', err=True, sim=True)
+        self._add(
+            's2',
+            scope = 'spin',
+            default = 0.8,
+            desc = 'S2, the model-free generalised order parameter (S2 = S2f.S2s)',
+            py_type = float,
+            set = 'params',
+            grid_lower = 0.0,
+            grid_upper = 1.0,
+            grace_string = '\\qS\\v{0.4}\\z{0.71}2\\Q',
+            err = True,
+            sim = True
+        )
+        self._add(
+            's2f',
+            scope = 'spin',
+            default = 0.8,
+            desc = 'S2f, the faster motion model-free generalised order parameter',
+            py_type = float,
+            set = 'params',
+            grid_lower = 0.0,
+            grid_upper = 1.0,
+            grace_string = '\\qS\\sf\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q',
+            err = True,
+            sim = True
+        )
+        self._add(
+            's2s',
+            scope = 'spin',
+            default = 0.8,
+            desc = 'S2s, the slower motion model-free generalised order parameter',
+            py_type = float,
+            set = 'params',
+            grid_lower = 0.0,
+            grid_upper = 1.0,
+            grace_string = '\\qS\\ss\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'local_tm',
+            scope = 'spin',
+            default = 10.0 * 1e-9,
+            desc = 'The spin specific global correlation time (seconds)',
+            py_type = float,
+            set = 'params',
+            scaling = 1e-12,
+            grid_lower = 1.0 * 1e-9,
+            grid_upper = 12.0 * 1e-9,
+            grace_string = '\\xt\\f{}\\sm',
+            units = 'ns',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'te',
+            scope = 'spin',
+            default = 100.0 * 1e-12,
+            desc = 'Single motion effective internal correlation time (seconds)',
+            py_type = float,
+            set = 'params',
+            scaling = 1e-12,
+            grid_lower = 0.0,
+            grid_upper = 500.0 * 1e-12,
+            conv_factor = 1e-12,
+            grace_string = '\\xt\\f{}\\se',
+            units = 'ps',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'tf',
+            scope = 'spin',
+            default = 10.0 * 1e-12,
+            desc = 'Faster motion effective internal correlation time (seconds)',
+            py_type = float,
+            set = 'params',
+            scaling = 1e-12,
+            grid_lower = 0.0,
+            grid_upper = 500.0 * 1e-12,
+            conv_factor = 1e-12,
+            grace_string = '\\xt\\f{}\\sf',
+            units = 'ps',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'ts',
+            scope = 'spin',
+            default = 1000.0 * 1e-12,
+            desc = 'Slower motion effective internal correlation time (seconds)',
+            py_type = float,
+            set = 'params', 
+            scaling = 1e-12,
+            grid_lower = 0.0,
+            grid_upper = 500.0 * 1e-12,
+            conv_factor = 1e-12,
+            grace_string = '\\xt\\f{}\\ss',
+            units = 'ps',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'rex',
+            scope = 'spin',
+            default = 0.0,
+            desc = 'Chemical exchange relaxation (sigma_ex = Rex / omega**2)',
+            py_type = float,
+            set = 'params',
+            scaling = rex_scaling,
+            grid_lower = 0.0,
+            grid_upper = rex_upper,
+            conv_factor = conv_factor_rex,
+            units = units_rex,
+            grace_string = '\\qR\\sex\\Q',
+            err = True,
+            sim = True
+        )
+        # FIXME:  This interatomic parameter should be activated.
+        #self._add(
+        #    'r',
+        #    scope = 'interatomic',
+        #    default = 1.02e-10,
+        #    desc = 'The XH bond length',
+        #    py_type = float,
+        #    set = 'params',
+        #    scaling = 1e-10,
+        #    grid_lower = 1.0 * 1e-10,
+        #    grid_upper = 1.05 * 1e-10,
+        #    units = 'm',
+        #    grace_string = 'Bond length (m)',
+        #    err = True,
+        #    sim = True
+        #)
+        self._add_csa(
+            default = N15_CSA,
+            set = 'params',
+            err = True,
+            sim = True
+        )
 
         # Add the minimisation data.
         self._add_min_data(min_stats_global=True, min_stats_spin=True)

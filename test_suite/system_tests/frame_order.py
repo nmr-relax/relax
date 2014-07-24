@@ -226,7 +226,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.intro_off()
 
         # Check the minimum.
-        self.interpreter.calc()
+        self.interpreter.minimise.calculate()
         print("%-20s %10.5f" % ("chi2 minimum", cdp.chi2))
         self.assertAlmostEqual(cdp.chi2, ref_chi2)
 
@@ -240,13 +240,13 @@ class Frame_order(SystemTestCase):
 
             # Deviate upwards.
             setattr(cdp, param, curr+delta)
-            self.interpreter.calc()
+            self.interpreter.minimise.calculate()
             print("%-20s %10.5f" % ("chi2 up", cdp.chi2))
             self.assert_(cdp.chi2 > ref_chi2)
 
             # Deviate downwards.
             setattr(cdp, param, curr-delta)
-            self.interpreter.calc()
+            self.interpreter.minimise.calculate()
             print("%-20s %10.5f" % ("chi2 down", cdp.chi2))
             self.assert_(cdp.chi2 > ref_chi2)
 

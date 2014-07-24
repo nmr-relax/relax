@@ -44,14 +44,59 @@ class Consistency_tests_params(Param_list):
         Param_list.__init__(self)
 
         # Add the base information for the analysis.
-        self._add_csa(default=N15_CSA)
-        self._add('orientation', scope='spin', default=15.7, units='degrees', desc="Angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor", py_type=float, set='fixed', grace_string='\\q\\xq\\Q')
-        self._add('tc', scope='spin', default=13 * 1e-9, units='ns', desc="The single global correlation time estimate/approximation", py_type=float, set='fixed', grace_string='\\q\\xt\\f{}c\\Q')
+        self._add_csa(default = N15_CSA)
+        self._add(
+            'orientation',
+            scope = 'spin',
+            default = 15.7,
+            units = 'degrees',
+            desc = "Angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor",
+            py_type = float,
+            set = 'fixed',
+            grace_string = '\\q\\xq\\Q'
+        )
+        self._add(
+            'tc',
+            scope = 'spin',
+            default = 13 * 1e-9,
+            units = 'ns',
+            desc = "The single global correlation time estimate/approximation",
+            py_type = float,
+            set = 'fixed',
+            grace_string = '\\q\\xt\\f{}c\\Q'
+        )
 
         # Add the model parameters.
-        self._add('j0', scope='spin', desc='Spectral density value at 0 MHz (from Farrow et al. (1995) JBNMR, 6: 153-162)', py_type=float, set='params', grace_string='\\qJ(0)\\Q', err=True, sim=True)
-        self._add('f_eta', scope='spin', desc='Eta-test (from Fushman et al. (1998) JACS, 120: 10947-10952)', py_type=float, set='params', grace_string='\\qF\\s\\xh\\Q', err=True, sim=True)
-        self._add('f_r2', scope='spin', desc='R2-test (from Fushman et al. (1998) JACS, 120: 10947-10952)', py_type=float, set='params', grace_string='\\qF\\sR2\\Q', err=True, sim=True)
+        self._add(
+            'j0',
+            scope = 'spin',
+            desc = 'Spectral density value at 0 MHz (from Farrow et al. (1995) JBNMR, 6: 153-162)',
+            py_type = float,
+            set = 'params',
+            grace_string = '\\qJ(0)\\Q',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'f_eta',
+            scope = 'spin',
+            desc = 'Eta-test (from Fushman et al. (1998) JACS, 120: 10947-10952)',
+            py_type = float,
+            set = 'params',
+            grace_string = '\\qF\\s\\xh\\Q',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'f_r2',
+            scope = 'spin',
+            desc = 'R2-test (from Fushman et al. (1998) JACS, 120: 10947-10952)',
+            py_type = float,
+            set = 'params',
+            grace_string = '\\qF\\sR2\\Q',
+            err = True,
+            sim = True
+        )
 
         # Set up the user function documentation.
         self._set_uf_title("Consistency testing parameters")

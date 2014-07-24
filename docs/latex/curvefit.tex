@@ -265,16 +265,16 @@ deselect.read(file='unresolved', mol_name_col=1, res_num_col=2, res_name_col=3, 
 relax_fit.select_model('exp')
 
 # Grid search.
-grid_search(inc=11)
+minimise.grid_search(inc=11)
 
 # Minimise.
-minimise('simplex', scaling=False, constraints=False)
+minimise.execute('simplex', scaling=False, constraints=False)
 
 # Monte Carlo simulations.
 monte_carlo.setup(number=500)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex', scaling=False, constraints=False)
+minimise.execute('simplex', scaling=False, constraints=False)
 monte_carlo.error_analysis()
 
 # Save the relaxation rates.
@@ -319,7 +319,7 @@ pipe.create('rx', 'relax_fit')
 
 This user function will then create a relaxation exponential curve-fitting specific data pipe labelled \promptstring{rx}.
 The second argument sets the pipe type to that of the relaxation curve-fitting.
-Setting the pipe type is important so that the program knows which user functions are compatible with the data pipe, for example in the steady-state NOE analysis the function \uf{minimise} (see page~\pageref{uf: minimise}) is meaningless as the NOE values are calculated directly rather than optimised.
+Setting the pipe type is important so that the program knows which user functions are compatible with the data pipe, for example in the steady-state NOE analysis the function \uf{minimise.execute} (see page~\pageref{uf: minimise.execute}) is meaningless as the NOE values are calculated directly rather than optimised.
 
 
 % Spin systems.
@@ -502,7 +502,7 @@ The user function for executing the grid search is
 
 \begin{lstlisting}[firstnumber=62]
 # Grid search.
-grid_search(inc=11)
+minimise.grid_search(inc=11)
 \end{lstlisting}
 
 The next step is to select one of the minimisation algorithms to optimise the model parameters.
@@ -515,7 +515,7 @@ Therefore the minimisation command for relaxation curve-fitting is forced to be
 
 \begin{lstlisting}[firstnumber=65]
 # Minimise.
-minimise('simplex', constraints=False)
+minimise.execute('simplex', constraints=False)
 \end{lstlisting}
 
 
@@ -550,7 +550,7 @@ monte_carlo.initial_values()
 Then exactly the same optimisation as was used for the model can be performed
 
 \begin{lstlisting}[firstnumber=72]
-minimise('simplex', constraints=False)
+minimise.execute('simplex', constraints=False)
 \end{lstlisting}
 
 The parameter errors are then determined as the standard deviation of the optimised parameter values of the simulations

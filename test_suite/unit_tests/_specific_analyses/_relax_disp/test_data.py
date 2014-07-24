@@ -590,7 +590,7 @@ class Test_data(UnitTestCase):
 
 
     def test_loop_exp_frq_offset_point_time_cpmg_setup(self):
-        """U{Bug #21665<https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times, using calc()."""
+        """U{Bug #21665<https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times, using minimise.calculate()."""
 
         # Load the state.
         statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21665.bz2'

@@ -41,7 +41,7 @@ from specific_analyses.api_common import API_common
 from specific_analyses.frame_order.data import domain_moving
 from specific_analyses.frame_order.optimisation import grid_row, store_bc_data, target_fn_setup, unpack_opt_results
 from specific_analyses.frame_order.parameter_object import Frame_order_params
-from specific_analyses.frame_order.parameters import assemble_param_vector, assemble_scaling_matrix, linear_constraints, param_num, update_model
+from specific_analyses.frame_order.parameters import assemble_param_vector, linear_constraints, param_num, update_model
 
 
 class Frame_order(API_base, API_common):
@@ -105,19 +105,21 @@ class Frame_order(API_base, API_common):
                 yield ['pcs', spin_id, align_id]
 
 
-    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+    def calculate(self, spin_id=None, scaling_matrix=None, verbosity=1, sim_index=None):
         """Calculate the chi-squared value for the current parameter values.
 
-        @keyword spin_id:   The spin identification string (unused).
-        @type spin_id:      None
-        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:    int
-        @keyword sim_index: The optional MC simulation index (unused).
-        @type sim_index:    None or int
+        @keyword spin_id:           The spin identification string (unused).
+        @type spin_id:              None
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The optional MC simulation index (unused).
+        @type sim_index:            None or int
         """
 
         # Set up the target function for direct calculation.
-        model, param_vector, scaling_matrix = target_fn_setup(sim_index=sim_index, verbosity=verbosity)
+        model, param_vector = target_fn_setup(sim_index=sim_index, verbosity=verbosity, scaling_matrix=scaling_matrix[0])
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         chi2 = model.func(param_vector)
@@ -208,8 +210,8 @@ class Frame_order(API_base, API_common):
         @type pipe_from:        str
         @keyword pipe_to:       The data pipe to copy the data to.
         @type pipe_to:          str
-        @param model_info:      The model index from model_loop().
-        @type model_info:       int
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
         @keyword global_stats:  The global statistics flag.
         @type global_stats:     bool
         @keyword verbose:       Unused.
@@ -224,21 +226,21 @@ class Frame_order(API_base, API_common):
         pipes.copy(pipe_from=pipe_from, pipe_to=pipe_to)
 
 
-    def eliminate(self, name, value, model_info, args, sim=None):
+    def eliminate(self, name, value, args, sim=None, model_info=None):
         """Model elimination method.
 
-        @param name:        The parameter name.
-        @type name:         str
-        @param value:       The parameter value.
-        @type value:        float
-        @param model_info:  The model index from model_info().
-        @type model_info:   int
-        @param args:        The elimination constant overrides.
-        @type args:         None or tuple of float
-        @keyword sim:       The Monte Carlo simulation index.
-        @type sim:          int
-        @return:            True if the model is to be eliminated, False otherwise.
-        @rtype:             bool
+        @param name:            The parameter name.
+        @type name:             str
+        @param value:           The parameter value.
+        @type value:            float
+        @param args:            The elimination constant overrides.
+        @type args:             None or tuple of float
+        @keyword sim:           The Monte Carlo simulation index.
+        @type sim:              int
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
+        @return:                True if the model is to be eliminated, False otherwise.
+        @rtype:                 bool
         """
 
         # Text to print out if a model failure occurs.
@@ -298,8 +300,8 @@ class Frame_order(API_base, API_common):
     def get_param_names(self, model_info=None):
         """Return a vector of parameter names.
 
-        @keyword model_info:    The model index from model_info().
-        @type model_info:       int
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
         @return:                The vector of parameter names.
         @rtype:                 list of str
         """
@@ -314,8 +316,8 @@ class Frame_order(API_base, API_common):
     def get_param_values(self, model_info=None, sim_index=None):
         """Return a vector of parameter values.
 
-        @keyword model_info:    The model index from model_info().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:       int
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
         @keyword sim_index:     The Monte Carlo simulation index.
         @type sim_index:        int
         @return:                The vector of parameter values.
@@ -326,46 +328,38 @@ class Frame_order(API_base, API_common):
         return assemble_param_vector(sim_index=sim_index)
 
 
-    def grid_search(self, lower=None, upper=None, inc=None, constraints=False, verbosity=0, sim_index=None):
+    def grid_search(self, lower=None, upper=None, inc=None, scaling_matrix=None, constraints=False, verbosity=0, sim_index=None):
         """Perform a grid search.
 
-        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.
-        @type lower:            list of float
-        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.
-        @type upper:            list of float
-        @keyword inc:           The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.
-        @type inc:              int or list of int
-        @keyword constraints:   If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
-        @type constraints:      bool
-        @keyword verbosity:     A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:        int
-        @keyword sim_index:     The Monte Carlo simulation index.
-        @type sim_index:        None or int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.
+        @type lower:                list of lists of numbers
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.
+        @type upper:                list of lists of numbers
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.
+        @type inc:                  list of lists of int
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword constraints:       If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
+        @type constraints:          bool
+        @keyword verbosity:         A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The Monte Carlo simulation index.
+        @type sim_index:            None or int
         """
 
         # Test if the Frame Order model has been set up.
         if not hasattr(cdp, 'model'):
             raise RelaxNoModelError('Frame Order')
 
-        # Parameter scaling.
-        scaling_matrix = assemble_scaling_matrix(scaling=True)
-
         # The number of parameters.
         n = param_num()
 
-        # If inc is an int, convert it into an array of that value.
-        if isinstance(inc, int):
-            incs = [inc]*n
-        else:
-            incs = inc
-
-        # Sanity check.
-        if len(incs) != n:
-            raise RelaxError("The size of the increment list %s does not match the number of parameters in %s." % (incs, cdp.params))
+        # Alias the single model grid bounds and increments.
+        lower = lower[0]
+        upper = upper[0]
+        inc = inc[0]
 
         # Initialise the grid increments structures.
-        lower_list = lower
-        upper_list = upper
         grid = []
         """This structure is a list of lists.  The first dimension corresponds to the model
         parameter.  The second dimension are the grid node positions."""
@@ -373,7 +367,7 @@ class Frame_order(API_base, API_common):
         # Generate the grid.
         for i in range(n):
             # Fixed parameter.
-            if incs[i] == None:
+            if inc[i] == None:
                 grid.append(None)
                 continue
 
@@ -381,64 +375,23 @@ class Frame_order(API_base, API_common):
             dist_type = None
             end_point = True
 
-            # The pivot point.
-            if cdp.params[i] in ['pivot_x', 'pivot_y', 'pivot_z']:
-                val = getattr(cdp, cdp.params[i])
-                lower = val - 10.0
-                upper = val + 10.0
-
-            # Average domain position translation (in a +/- 5 Angstrom box).
-            if cdp.params[i] in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z']:
-                lower = -5
-                upper = 5
-
-            # Linear angle grid from 0 to one inc before 2pi.
-            if cdp.params[i] in ['ave_pos_alpha', 'ave_pos_gamma', 'eigen_alpha', 'eigen_gamma', 'axis_phi']:
-                lower = 0.0
-                upper = 2*pi * (1.0 - 1.0/incs[i])
-
-            # Linear angle grid from -pi to one inc before pi.
-            if cdp.params[i] in ['axis_alpha']:
-                lower = -pi
-                upper = pi * (1.0 - 1.0/incs[i])
-
             # Arccos grid from 0 to pi.
             if cdp.params[i] in ['ave_pos_beta', 'eigen_beta', 'axis_theta']:
                 # Change the default increment numbers.
                 if not isinstance(inc, list):
-                    incs[i] = int(incs[i] / 2) + 1
+                    inc[i] = int(inc[i] / 2) + 1
 
                 # The distribution type and end point.
                 dist_type = 'acos'
                 end_point = False
 
-                # Set the default bounds.
-                lower = 0.0
-                upper = pi
-
-            # The isotropic cone order parameter.
-            if cdp.params[i] == 'cone_s1':
-                lower = -0.125
-                upper = 1.0
-
-            # Linear angle grid from 0 to pi excluding the outer points.
-            if cdp.params[i] in ['cone_theta', 'cone_theta_x', 'cone_theta_y', 'cone_sigma_max']:
-                lower = pi * (1.0/incs[i])
-                upper = pi * (1.0 - 1.0/incs[i])
-
-            # Over-ride the bounds.
-            if lower_list:
-                lower = lower_list[i]
-            if upper_list:
-                upper = upper_list[i]
-
             # Append the grid row.
-            row = grid_row(incs[i], lower, upper, dist_type=dist_type, end_point=end_point)
+            row = grid_row(inc[i], lower, upper, dist_type=dist_type, end_point=end_point)
             grid.append(row)
 
             # Remove an inc if the end point has been removed.
             if not end_point:
-                incs[i] -= 1
+                inc[i] -= 1
 
         # Total number of points.
         total_pts = 1
@@ -463,22 +416,22 @@ class Frame_order(API_base, API_common):
                 # Fixed parameter.
                 if grid[j] == None:
                     # Get the current parameter value.
-                    pts[i, j] = getattr(cdp, cdp.params[j]) / scaling_matrix[j, j]
+                    pts[i, j] = getattr(cdp, cdp.params[j]) / scaling_matrix[0][j, j]
 
                 # Add the point coordinate.
                 else:
-                    pts[i, j] = grid[j][indices[j]] / scaling_matrix[j, j]
+                    pts[i, j] = grid[j][indices[j]] / scaling_matrix[0][j, j]
 
             # Increment the step positions.
             for j in range(n):
-                if incs[j] != None and indices[j] < incs[j]-1:
+                if inc[j] != None and indices[j] < inc[j]-1:
                     indices[j] += 1
                     break    # Exit so that the other step numbers are not incremented.
                 else:
                     indices[j] = 0
 
         # Minimisation.
-        self.minimise(min_algor='grid', min_options=pts, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        self.minimise(min_algor='grid', min_options=pts, scaling_matrix=scaling_matrix, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def map_bounds(self, param, spin_id=None):
@@ -515,42 +468,42 @@ class Frame_order(API_base, API_common):
             return [0.0, pi]
 
 
-    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling_matrix=None, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Minimisation function.
 
-        @param min_algor:       The minimisation algorithm to use.
-        @type min_algor:        str
-        @param min_options:     An array of options to be used by the minimisation algorithm.
-        @type min_options:      array of str
-        @param func_tol:        The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
-        @type func_tol:         None or float
-        @param grad_tol:        The gradient tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
-        @type grad_tol:         None or float
-        @param max_iterations:  The maximum number of iterations for the algorithm.
-        @type max_iterations:   int
-        @param constraints:     If True, constraints are used during optimisation.
-        @type constraints:      bool
-        @param scaling:         If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
-        @type scaling:          bool
-        @param verbosity:       A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:        int
-        @param sim_index:       The index of the simulation to optimise.  This should be None if normal optimisation is desired.
-        @type sim_index:        None or int
-        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type lower:            array of numbers
-        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type upper:            array of numbers
-        @keyword inc:           The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
-        @type inc:              array of int
+        @param min_algor:           The minimisation algorithm to use.
+        @type min_algor:            str
+        @param min_options:         An array of options to be used by the minimisation algorithm.
+        @type min_options:          array of str
+        @param func_tol:            The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
+        @type func_tol:             None or float
+        @param grad_tol:            The gradient tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
+        @type grad_tol:             None or float
+        @param max_iterations:      The maximum number of iterations for the algorithm.
+        @type max_iterations:       int
+        @param constraints:         If True, constraints are used during optimisation.
+        @type constraints:          bool
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @param verbosity:           A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @param sim_index:           The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:            None or int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type lower:                list of lists of numbers
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type upper:                list of lists of numbers
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
+        @type inc:                  list of lists of int
         """
 
         # Set up the target function for direct calculation.
-        model, param_vector, scaling_matrix = target_fn_setup(sim_index=sim_index, verbosity=verbosity, scaling=scaling)
+        model, param_vector = target_fn_setup(sim_index=sim_index, verbosity=verbosity, scaling_matrix=scaling_matrix[0])
 
         # Linear constraints.
         A, b = None, None
         if constraints:
-            A, b = linear_constraints(scaling_matrix=scaling_matrix)
+            A, b = linear_constraints(scaling_matrix=scaling_matrix[0])
 
         # Grid search.
         if search('^[Gg]rid', min_algor):
@@ -561,19 +514,19 @@ class Frame_order(API_base, API_common):
             results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
 
         # Unpack the results.
-        unpack_opt_results(results, scaling, scaling_matrix, sim_index)
+        unpack_opt_results(results, scaling_matrix[0], sim_index)
 
         # Store the back-calculated data.
         store_bc_data(model)
 
 
-    def model_desc(self, model_info):
+    def model_desc(self, model_info=None):
         """Return a description of the model.
 
-        @param model_info:  The model index from model_loop().
-        @type model_info:   int
-        @return:            The model description.
-        @rtype:             str
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
+        @return:                The model description.
+        @rtype:                 str
         """
 
         return ""
@@ -587,7 +540,7 @@ class Frame_order(API_base, API_common):
         chi2 - the chi-squared value.
 
 
-        @keyword model_info:    Unused.
+        @keyword model_info:    The model information from model_loop().  This is unused.
         @type model_info:       None
         @keyword spin_id:       Unused.
         @type spin_id:          None
@@ -669,15 +622,15 @@ class Frame_order(API_base, API_common):
         return mc_errors
 
 
-    def set_error(self, model_info, index, error):
+    def set_error(self, index, error, model_info=None):
         """Set the parameter errors.
 
-        @param model_info:  The model information originating from model_loop() (unused).
-        @type model_info:   None
-        @param index:       The index of the parameter to set the errors for.
-        @type index:        int
-        @param error:       The error value.
-        @type error:        float
+        @param index:           The index of the parameter to set the errors for.
+        @type index:            int
+        @param error:           The error value.
+        @type error:            float
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
         """
 
         # Parameter increment counter.
@@ -701,14 +654,13 @@ class Frame_order(API_base, API_common):
             setattr(cdp, 'cone_theta_err', error)
 
 
-
-    def set_selected_sim(self, model_info, select_sim):
+    def set_selected_sim(self, select_sim, model_info=None):
         """Set the simulation selection flag for the spin.
 
-        @param model_info:  The model information originating from model_loop() (unused).
-        @type model_info:   None
-        @param select_sim:  The selection flag for the simulations.
-        @type select_sim:   bool
+        @param select_sim:      The selection flag for the simulations.
+        @type select_sim:       bool
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
         """
 
         # Set the array.
@@ -834,13 +786,15 @@ class Frame_order(API_base, API_common):
                 spin.pcs_sim[data_id[2]].append(sim_data[i][0])
 
 
-    def sim_return_param(self, model_info, index):
+    def sim_return_param(self, index, model_info=None):
         """Return the array of simulation parameter values.
 
-        @param model_info:  The model information originating from model_loop().
-        @type model_info:   unknown
-        @param index:       The index of the parameter to return the array of values for.
-        @type index:        int
+        @param index:           The index of the parameter to return the array of values for.
+        @type index:            int
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
+        @return:                The array of simulation parameter values.
+        @rtype:                 list of float
         """
 
         # Parameter increment counter.
@@ -867,13 +821,13 @@ class Frame_order(API_base, API_common):
             return getattr(cdp, 'cone_theta_sim')
 
 
-    def sim_return_selected(self, model_info):
+    def sim_return_selected(self, model_info=None):
         """Return the array of selected simulation flags for the spin.
 
-        @param model_info:  The model information originating from model_loop() (unused).
-        @type model_info:   None
-        @return:            The array of selected simulation flags.
-        @rtype:             list of int
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
+        @return:                The array of selected simulation flags.
+        @rtype:                 list of int
         """
 
         # Return the array.

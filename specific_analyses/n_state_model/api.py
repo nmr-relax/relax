@@ -35,10 +35,9 @@ from warnings import warn
 import lib.arg_check
 from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError
 from lib.float import isNaN, isInf
-from lib.optimisation import test_grid_ops
 from lib.warnings import RelaxWarning
 from pipe_control import align_tensor, pcs, rdc
-from pipe_control.align_tensor import opt_uses_tensor
+from pipe_control.align_tensor import opt_uses_align_data, opt_uses_tensor
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import spin_loop
 from specific_analyses.api_base import API_base
@@ -46,7 +45,7 @@ from specific_analyses.api_common import API_common
 from specific_analyses.n_state_model.data import base_data_types, calc_ave_dist, num_data_points
 from specific_analyses.n_state_model.optimisation import minimise_bc_data, target_fn_setup
 from specific_analyses.n_state_model.parameter_object import N_state_params
-from specific_analyses.n_state_model.parameters import disassemble_param_vector, linear_constraints, param_num
+from specific_analyses.n_state_model.parameters import assemble_param_vector, disassemble_param_vector, linear_constraints, param_num
 from target_functions.potential import quad_pot
 
 
@@ -62,6 +61,7 @@ class N_state_model(API_base, API_common):
         # Place methods into the API.
         self.model_loop = self._model_loop_single_global
         self.overfit_deselect = self._overfit_deselect_dummy
+        self.print_model_title = self._print_model_title_global
         self.set_selected_sim = self._set_selected_sim_global
         self.sim_return_selected = self._sim_return_selected_global
 
@@ -133,22 +133,26 @@ class N_state_model(API_base, API_common):
                     yield data
 
 
-    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+    def calculate(self, spin_id=None, scaling_matrix=None, verbosity=1, sim_index=None):
         """Calculation function.
 
         Currently this function simply calculates the NOESY flat-bottom quadratic energy potential,
         if NOE restraints are available.
 
-        @keyword spin_id:   The spin identification string (unused).
-        @type spin_id:      None or str
-        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:    int
-        @keyword sim_index: The MC simulation index (unused).
-        @type sim_index:    None
+        @keyword spin_id:           The spin identification string (unused).
+        @type spin_id:              None or str
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The MC simulation index (unused).
+        @type sim_index:            None
         """
 
         # Set up the target function for direct calculation.
-        model, param_vector, data_types, scaling_matrix = target_fn_setup()
+        if scaling_matrix != None:
+            scaling_matrix = scaling_matrix[0]
+        model, param_vector, data_types = target_fn_setup(scaling_matrix=scaling_matrix)
 
         # Calculate the chi-squared value.
         if model:
@@ -256,19 +260,79 @@ class N_state_model(API_base, API_common):
         return mc_data
 
 
-    def grid_search(self, lower=None, upper=None, inc=None, constraints=False, verbosity=0, sim_index=None):
+    def get_param_names(self, model_info=None):
+        """Return a vector of parameter names.
+
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
+        @return:                The vector of parameter names.
+        @rtype:                 list of str
+        """
+
+        # Init.
+        param_names = []
+
+        # A RDC or PCS data type requires the alignment tensors to be at the start of the parameter vector (unless the tensors are fixed).
+        if opt_uses_align_data():
+            for i in range(len(cdp.align_tensors)):
+                # Skip non-optimised tensors.
+                if not opt_uses_tensor(cdp.align_tensors[i]):
+                    continue
+
+                # Add the parameters.
+                param_names += ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz']
+
+        # Populations.
+        if cdp.model in ['2-domain', 'population']:
+            for i in range(cdp.N - 1):
+                param_names.append('probs')
+
+        # The Euler angles.
+        if cdp.model == '2-domain':
+            for i in range(cdp.N):
+                param_names.append('alpha')
+                param_names.append('beta')
+                param_names.append('gamma')
+
+        # The paramagnetic centre.
+        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+            for i in range(3):
+                param_names.append('paramagnetic_centre')
+
+        # Return the list.
+        return param_names
+
+
+    def get_param_values(self, model_info=None, sim_index=None):
+        """Return a vector of parameter values.
+
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
+        @keyword sim_index:     The optional Monte Carlo simulation index.
+        @type sim_index:        int
+        @return:                The vector of parameter values.
+        @rtype:                 list of str
+        """
+
+        # Return the vector.
+        return assemble_param_vector(sim_index=sim_index)
+
+
+    def grid_search(self, lower=None, upper=None, inc=None, scaling_matrix=None, constraints=False, verbosity=0, sim_index=None):
         """The grid search function.
 
-        @param lower:       The lower bounds of the grid search which must be equal to the number of parameters in the model.
-        @type lower:        array of numbers
-        @param upper:       The upper bounds of the grid search which must be equal to the number of parameters in the model.
-        @type upper:        array of numbers
-        @param inc:         The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
-        @type inc:          array of int
-        @param constraints: If True, constraints are applied during the grid search (elinating parts of the grid).  If False, no constraints are used.
-        @type constraints:  bool
-        @param verbosity:   A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:    int
+        @param lower:           The lower bounds of the grid search which must be equal to the number of parameters in the model.
+        @type lower:            array of numbers
+        @param upper:           The upper bounds of the grid search which must be equal to the number of parameters in the model.
+        @type upper:            array of numbers
+        @param inc:             The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
+        @type inc:              array of int
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @param constraints:     If True, constraints are applied during the grid search (elinating parts of the grid).  If False, no constraints are used.
+        @type constraints:      bool
+        @param verbosity:       A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:        int
         """
 
         # Test if the N-state model has been set up.
@@ -277,51 +341,6 @@ class N_state_model(API_base, API_common):
 
         # The number of parameters.
         n = param_num()
-
-        # Make sure that the length of the parameter array is > 0.
-        if n == 0:
-            print("Cannot run a grid search on a model with zero parameters, skipping the grid search.")
-            return
-
-        # Test the grid search options.
-        test_grid_ops(lower=lower, upper=upper, inc=inc, n=n)
-
-        # If inc is a single int, convert it into an array of that value.
-        if isinstance(inc, int):
-            inc = [inc]*n
-
-        # Setup the default bounds.
-        if not lower:
-            # Init.
-            lower = []
-            upper = []
-
-            # Loop over the parameters.
-            for i in range(n):
-                # i is in the parameter array.
-                if i < len(cdp.params):
-                    # Probabilities (default values).
-                    if search('^p', cdp.params[i]):
-                        lower.append(0.0)
-                        upper.append(1.0)
-
-                    # Angles (default values).
-                    if search('^alpha', cdp.params[i]) or search('^gamma', cdp.params[i]):
-                        lower.append(0.0)
-                        upper.append(2*pi)
-                    elif search('^beta', cdp.params[i]):
-                        lower.append(0.0)
-                        upper.append(pi)
-
-                # The paramagnetic centre.
-                elif hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed and (n - i) <= 3:
-                    lower.append(-100)
-                    upper.append(100)
-
-                # Otherwise this must be an alignment tensor component.
-                else:
-                    lower.append(-1e-3)
-                    upper.append(1e-3)
 
         # Determine the data type.
         data_types = base_data_types()
@@ -379,7 +398,7 @@ class N_state_model(API_base, API_common):
 
         # All other minimisation.
         else:
-            self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+            self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def is_spin_param(self, name):
@@ -415,37 +434,37 @@ class N_state_model(API_base, API_common):
             return [-100.0, 100.0]
 
 
-    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling_matrix=None, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Minimisation function.
 
-        @param min_algor:       The minimisation algorithm to use.
-        @type min_algor:        str
-        @param min_options:     An array of options to be used by the minimisation algorithm.
-        @type min_options:      array of str
-        @param func_tol:        The function tolerance which, when reached, terminates optimisation. Setting this to None turns of the check.
-        @type func_tol:         None or float
-        @param grad_tol:        The gradient tolerance which, when reached, terminates optimisation. Setting this to None turns of the check.
-        @type grad_tol:         None or float
-        @param max_iterations:  The maximum number of iterations for the algorithm.
-        @type max_iterations:   int
-        @param constraints:     If True, constraints are used during optimisation.
-        @type constraints:      bool
-        @param scaling:         If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
-        @type scaling:          bool
-        @param verbosity:       A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:        int
-        @param sim_index:       The index of the simulation to optimise.  This should be None if normal optimisation is desired.
-        @type sim_index:        None or int
-        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type lower:            array of numbers
-        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type upper:            array of numbers
-        @keyword inc:           The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
-        @type inc:              array of int
+        @param min_algor:           The minimisation algorithm to use.
+        @type min_algor:            str
+        @param min_options:         An array of options to be used by the minimisation algorithm.
+        @type min_options:          array of str
+        @param func_tol:            The function tolerance which, when reached, terminates optimisation. Setting this to None turns of the check.
+        @type func_tol:             None or float
+        @param grad_tol:            The gradient tolerance which, when reached, terminates optimisation. Setting this to None turns of the check.
+        @type grad_tol:             None or float
+        @param max_iterations:      The maximum number of iterations for the algorithm.
+        @type max_iterations:       int
+        @param constraints:         If True, constraints are used during optimisation.
+        @type constraints:          bool
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @param verbosity:           A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @param sim_index:           The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:            None or int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type lower:                list of lists of numbers
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type upper:                list of lists of numbers
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
+        @type inc:                  list of lists of int
         """
 
         # Set up the target function for direct calculation.
-        model, param_vector, data_types, scaling_matrix = target_fn_setup(sim_index=sim_index, scaling=scaling)
+        model, param_vector, data_types = target_fn_setup(sim_index=sim_index, scaling_matrix=scaling_matrix[0])
 
         # Nothing to do!
         if not len(param_vector):
@@ -477,21 +496,14 @@ class N_state_model(API_base, API_common):
                 raise RelaxError("For the paramagnetic centre position, as the Hessians are not yet implemented Newton optimisation cannot be performed.")
 
         # Linear constraints.
+        A, b = None, None
         if constraints:
-            A, b = linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix)
-        else:
-            A, b = None, None
+            A, b = linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix[0])
 
         # Grid search.
         if search('^[Gg]rid', min_algor):
-            # Scaling.
-            if scaling:
-                for i in range(len(param_vector)):
-                    lower[i] = lower[i] / scaling_matrix[i, i]
-                    upper[i] = upper[i] / scaling_matrix[i, i]
-
             # The search.
-            results = grid(func=model.func, args=(), num_incs=inc, lower=lower, upper=upper, A=A, b=b, verbosity=verbosity)
+            results = grid(func=model.func, args=(), num_incs=inc[0], lower=lower[0], upper=upper[0], A=A, b=b, verbosity=verbosity)
 
             # Unpack the results.
             param_vector, func, iter_count, warning = results
@@ -520,8 +532,8 @@ class N_state_model(API_base, API_common):
         chi2 = model.func(param_vector)
 
         # Scaling.
-        if scaling:
-            param_vector = dot(scaling_matrix, param_vector)
+        if scaling_matrix[0] != None:
+            param_vector = dot(scaling_matrix[0], param_vector)
 
         # Disassemble the parameter vector.
         disassemble_param_vector(param_vector=param_vector, data_types=data_types, sim_index=sim_index)
@@ -588,7 +600,7 @@ class N_state_model(API_base, API_common):
         chi2 - the chi-squared value.
 
 
-        @keyword model_info:    The data returned from model_loop() (unused).
+        @keyword model_info:    The model information from model_loop().  This is unused.
         @type model_info:       None
         @keyword spin_id:       The spin identification string.  This is ignored in the N-state model.
         @type spin_id:          None or str
@@ -707,15 +719,15 @@ class N_state_model(API_base, API_common):
         return mc_errors
 
 
-    def set_error(self, model_info, index, error):
+    def set_error(self, index, error, model_info=None):
         """Set the parameter errors.
 
-        @param model_info:  The global model index originating from model_loop().
-        @type model_info:   int
-        @param index:       The index of the parameter to set the errors for.
-        @type index:        int
-        @param error:       The error value.
-        @type error:        float
+        @param index:           The index of the parameter to set the errors for.
+        @type index:            int
+        @param error:           The error value.
+        @type error:            float
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
         """
 
         # Align parameters.
@@ -870,15 +882,15 @@ class N_state_model(API_base, API_common):
                 container.pcs_sim[data_id[2]].append(sim_data[i][0])
 
 
-    def sim_return_param(self, model_info, index):
+    def sim_return_param(self, index, model_info=None):
         """Return the array of simulation parameter values.
 
-        @param model_info:  The global model index originating from model_loop().
-        @type model_info:   int
-        @param index:       The index of the parameter to return the array of values for.
-        @type index:        int
-        @return:            The array of simulation parameter values.
-        @rtype:             list of float
+        @param index:           The index of the parameter to return the array of values for.
+        @type index:            int
+        @keyword model_info:    The model information from model_loop().  This is unused.
+        @type model_info:       None
+        @return:                The array of simulation parameter values.
+        @rtype:                 list of float
         """
 
         # Align parameters.

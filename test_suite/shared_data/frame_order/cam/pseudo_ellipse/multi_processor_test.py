@@ -91,8 +91,8 @@ value.set(param='eigen_gamma', val=4.03227550621962294031+0.1)
 value.set(param='cone_theta_x', val=0.5235987755982988+0.1)    # 30 deg.
 value.set(param='cone_theta_y', val=0.8726646259971648+0.1)    # 50 deg.
 value.set(param='cone_sigma_max', val=1.0471975511965976+0.1)    # 60 deg.
-calc()
+minimise.calculate()
 print("\nchi2: %s" % repr(cdp.chi2))
 
 # Optimise.
-minimise('simplex', constraints=False, max_iter=300)
+minimise.execute('simplex', constraints=False, max_iter=300)

@@ -389,82 +389,84 @@ def ellipsoid(params=None, time_scale=None, d_scale=None, angle_units=None, para
     # The diffusion type.
     cdp.diff_tensor.set_type('ellipsoid')
 
-    # (tm, Da, Dr, alpha, beta, gamma).
-    if param_types == 0:
-        # Unpack the tuple.
-        tm, Da, Dr, alpha, beta, gamma = params
+    # Set the parameter values.
+    if params[0] != None:
+        # (tm, Da, Dr, alpha, beta, gamma).
+        if param_types == 0:
+            # Unpack the tuple.
+            tm, Da, Dr, alpha, beta, gamma = params
 
-        # Scaling.
-        tm = tm * time_scale
-        Da = Da * d_scale
+            # Scaling.
+            tm = tm * time_scale
+            Da = Da * d_scale
 
-        # Set the parameters.
-        set(value=[tm, Da, Dr], param=['tm', 'Da', 'Dr'])
+            # Set the parameters.
+            set(value=[tm, Da, Dr], param=['tm', 'Da', 'Dr'])
 
-    # (Diso, Da, Dr, alpha, beta, gamma).
-    elif param_types == 1:
-        # Unpack the tuple.
-        Diso, Da, Dr, alpha, beta, gamma = params
+        # (Diso, Da, Dr, alpha, beta, gamma).
+        elif param_types == 1:
+            # Unpack the tuple.
+            Diso, Da, Dr, alpha, beta, gamma = params
 
-        # Scaling.
-        Diso = Diso * d_scale
-        Da = Da * d_scale
+            # Scaling.
+            Diso = Diso * d_scale
+            Da = Da * d_scale
 
-        # Set the parameters.
-        set(value=[Diso, Da, Dr], param=['Diso', 'Da', 'Dr'])
+            # Set the parameters.
+            set(value=[Diso, Da, Dr], param=['Diso', 'Da', 'Dr'])
 
-    # (Dx, Dy, Dz, alpha, beta, gamma).
-    elif param_types == 2:
-        # Unpack the tuple.
-        Dx, Dy, Dz, alpha, beta, gamma = params
+        # (Dx, Dy, Dz, alpha, beta, gamma).
+        elif param_types == 2:
+            # Unpack the tuple.
+            Dx, Dy, Dz, alpha, beta, gamma = params
 
-        # Scaling.
-        Dx = Dx * d_scale
-        Dy = Dy * d_scale
-        Dz = Dz * d_scale
+            # Scaling.
+            Dx = Dx * d_scale
+            Dy = Dy * d_scale
+            Dz = Dz * d_scale
 
-        # Set the parameters.
-        set(value=[Dx, Dy, Dz], param=['Dx', 'Dy', 'Dz'])
+            # Set the parameters.
+            set(value=[Dx, Dy, Dz], param=['Dx', 'Dy', 'Dz'])
 
-    # (Dxx, Dyy, Dzz, Dxy, Dxz, Dyz).
-    elif param_types == 3:
-        # Unpack the tuple.
-        Dxx, Dyy, Dzz, Dxy, Dxz, Dyz = params
+        # (Dxx, Dyy, Dzz, Dxy, Dxz, Dyz).
+        elif param_types == 3:
+            # Unpack the tuple.
+            Dxx, Dyy, Dzz, Dxy, Dxz, Dyz = params
 
-        # Build the tensor.
-        tensor = zeros((3, 3), float64)
-        tensor[0, 0] = Dxx
-        tensor[1, 1] = Dyy
-        tensor[2, 2] = Dzz
-        tensor[0, 1] = tensor[1, 0] = Dxy
-        tensor[0, 2] = tensor[2, 0] = Dxz
-        tensor[1, 2] = tensor[2, 1] = Dyz
+            # Build the tensor.
+            tensor = zeros((3, 3), float64)
+            tensor[0, 0] = Dxx
+            tensor[1, 1] = Dyy
+            tensor[2, 2] = Dzz
+            tensor[0, 1] = tensor[1, 0] = Dxy
+            tensor[0, 2] = tensor[2, 0] = Dxz
+            tensor[1, 2] = tensor[2, 1] = Dyz
 
-        # Scaling.
-        tensor = tensor * d_scale
+            # Scaling.
+            tensor = tensor * d_scale
 
-        # Eigenvalues.
-        Di, R, alpha, beta, gamma = tensor_eigen_system(tensor)
+            # Eigenvalues.
+            Di, R, alpha, beta, gamma = tensor_eigen_system(tensor)
 
-        # Set the parameters.
-        set(value=[Di[0], Di[1], Di[2]], param=['Dx', 'Dy', 'Dz'])
+            # Set the parameters.
+            set(value=[Di[0], Di[1], Di[2]], param=['Dx', 'Dy', 'Dz'])
 
-        # Change the angular units.
-        angle_units = 'rad'
+            # Change the angular units.
+            angle_units = 'rad'
 
-    # Unknown parameter combination.
-    else:
-        raise RelaxUnknownParamCombError('param_types', param_types)
+        # Unknown parameter combination.
+        else:
+            raise RelaxUnknownParamCombError('param_types', param_types)
 
-    # Convert the angles to radians.
-    if angle_units == 'deg':
-        print("Converting the angles from degrees to radian units.")
-        alpha = (alpha / 360.0) * 2.0 * pi
-        beta = (beta / 360.0) * 2.0 * pi
-        gamma = (gamma / 360.0) * 2.0 * pi
+        # Convert the angles to radians.
+        if angle_units == 'deg':
+            print("Converting the angles from degrees to radian units.")
+            alpha = (alpha / 360.0) * 2.0 * pi
+            beta = (beta / 360.0) * 2.0 * pi
+            gamma = (gamma / 360.0) * 2.0 * pi
 
-    # Set the orientational parameters.
-    set(value=[alpha, beta, gamma], param=['alpha', 'beta', 'gamma'])
+        # Set the orientational parameters.
+        set(value=[alpha, beta, gamma], param=['alpha', 'beta', 'gamma'])
 
 
 def fold_angles(sim_index=None):
@@ -664,7 +666,7 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     cdp.diff_tensor.set_fixed(fixed)
 
     # Spherical diffusion.
-    if isinstance(params, float):
+    if isinstance(params, float) or params == None:
         num_params = 1
         sphere(params, time_scale, param_types)
 
@@ -1216,25 +1218,27 @@ def sphere(params=None, time_scale=None, param_types=None):
     # The diffusion type.
     cdp.diff_tensor.set_type('sphere')
 
-    # tm.
-    if param_types == 0:
-        # Scaling.
-        tm = params * time_scale
+    # Set the parameter values.
+    if params != None:
+        # tm.
+        if param_types == 0:
+            # Scaling.
+            tm = params * time_scale
 
-        # Set the parameters.
-        set(value=[tm], param=['tm'])
+            # Set the parameters.
+            set(value=[tm], param=['tm'])
 
-    # Diso
-    elif param_types == 1:
-        # Scaling.
-        Diso = params * d_scale
+        # Diso
+        elif param_types == 1:
+            # Scaling.
+            Diso = params * d_scale
 
-        # Set the parameters.
-        set(value=[Diso], param=['Diso'])
+            # Set the parameters.
+            set(value=[Diso], param=['Diso'])
 
-    # Unknown parameter combination.
-    else:
-        raise RelaxUnknownParamCombError('param_types', param_types)
+        # Unknown parameter combination.
+        else:
+            raise RelaxUnknownParamCombError('param_types', param_types)
 
 
 def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param_types=None, spheroid_type=None):
@@ -1266,80 +1270,86 @@ def spheroid(params=None, time_scale=None, d_scale=None, angle_units=None, param
         raise RelaxError("The 'spheroid_type' argument " + repr(spheroid_type) + " should be 'oblate', 'prolate', or None.")
     cdp.diff_tensor.set(param='spheroid_type', value=spheroid_type)
 
-    # (tm, Da, theta, phi).
-    if param_types == 0:
-        # Unpack the tuple.
-        tm, Da, theta, phi = params
+    # Set the parameter values.
+    if params[0] != None:
+        # (tm, Da, theta, phi).
+        if param_types == 0:
+            # Unpack the tuple.
+            tm, Da, theta, phi = params
 
-        # Scaling.
-        tm = tm * time_scale
-        Da = Da * d_scale
+            # Scaling.
+            tm = tm * time_scale
+            Da = Da * d_scale
 
-        # Set the parameters.
-        set(value=[tm, Da], param=['tm', 'Da'])
+            # Set the parameters.
+            set(value=[tm, Da], param=['tm', 'Da'])
 
-    # (Diso, Da, theta, phi).
-    elif param_types == 1:
-        # Unpack the tuple.
-        Diso, Da, theta, phi = params
+        # (Diso, Da, theta, phi).
+        elif param_types == 1:
+            # Unpack the tuple.
+            Diso, Da, theta, phi = params
 
-        # Scaling.
-        Diso = Diso * d_scale
-        Da = Da * d_scale
+            # Scaling.
+            Diso = Diso * d_scale
+            Da = Da * d_scale
 
-        # Set the parameters.
-        set(value=[Diso, Da], param=['Diso', 'Da'])
+            # Set the parameters.
+            set(value=[Diso, Da], param=['Diso', 'Da'])
 
-    # (tm, Dratio, theta, phi).
-    elif param_types == 2:
-        # Unpack the tuple.
-        tm, Dratio, theta, phi = params
+        # (tm, Dratio, theta, phi).
+        elif param_types == 2:
+            # Unpack the tuple.
+            tm, Dratio, theta, phi = params
 
-        # Scaling.
-        tm = tm * time_scale
+            # Scaling.
+            tm = tm * time_scale
 
-        # Set the parameters.
-        set(value=[tm, Dratio], param=['tm', 'Dratio'])
+            # Set the parameters.
+            set(value=[tm, Dratio], param=['tm', 'Dratio'])
 
-    # (Dpar, Dper, theta, phi).
-    elif param_types == 3:
-        # Unpack the tuple.
-        Dpar, Dper, theta, phi = params
+        # (Dpar, Dper, theta, phi).
+        elif param_types == 3:
+            # Unpack the tuple.
+            Dpar, Dper, theta, phi = params
 
-        # Scaling.
-        Dpar = Dpar * d_scale
-        Dper = Dper * d_scale
+            # Scaling.
+            Dpar = Dpar * d_scale
+            Dper = Dper * d_scale
 
-        # Set the parameters.
-        set(value=[Dpar, Dper], param=['Dpar', 'Dper'])
+            # Set the parameters.
+            set(value=[Dpar, Dper], param=['Dpar', 'Dper'])
 
-    # (Diso, Dratio, theta, phi).
-    elif param_types == 4:
-        # Unpack the tuple.
-        Diso, Dratio, theta, phi = params
+        # (Diso, Dratio, theta, phi).
+        elif param_types == 4:
+            # Unpack the tuple.
+            Diso, Dratio, theta, phi = params
 
-        # Scaling.
-        Diso = Diso * d_scale
+            # Scaling.
+            Diso = Diso * d_scale
 
-        # Set the parameters.
-        set(value=[Diso, Dratio], param=['Diso', 'Dratio'])
+            # Set the parameters.
+            set(value=[Diso, Dratio], param=['Diso', 'Dratio'])
 
-    # Unknown parameter combination.
-    else:
-        raise RelaxUnknownParamCombError('param_types', param_types)
+        # Unknown parameter combination.
+        else:
+            raise RelaxUnknownParamCombError('param_types', param_types)
 
-    # Convert the angles to radians.
-    if angle_units == 'deg':
-        print("Converting the angles from degrees to radian units.")
-        theta = (theta / 360.0) * 2.0 * pi
-        phi = (phi / 360.0) * 2.0 * pi
+        # Convert the angles to radians.
+        if angle_units == 'deg':
+            print("Converting the angles from degrees to radian units.")
+            theta = (theta / 360.0) * 2.0 * pi
+            phi = (phi / 360.0) * 2.0 * pi
 
-    # Set the orientational parameters.
-    set(value=[theta, phi], param=['theta', 'phi'])
+        # Set the orientational parameters.
+        set(value=[theta, phi], param=['theta', 'phi'])
 
 
 def test_params(num_params):
     """Function for testing the validity of the input parameters."""
+
+    # No parameters were set.
+    if not hasattr(cdp.diff_tensor, 'tm'):
+        return
 
     # An allowable error to account for machine precision, optimisation quality, etc.
     error = 1e-4

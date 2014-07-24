@@ -37,8 +37,8 @@ self._execute_uf(uf_name='rdc.read', align_id='abs', file='synth_rdc_abs', dir=D
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 
 # Minimisation.
-self._execute_uf(uf_name='grid_search', inc=3)
-self._execute_uf('simplex', constraints=False, max_iter=500, uf_name='minimise')
+self._execute_uf(uf_name='minimise.grid_search', inc=3)
+self._execute_uf('simplex', constraints=False, max_iter=500, uf_name='minimise.execute')
 
 # Write out a results file.
 self._execute_uf('devnull', force=True, uf_name='results.write')

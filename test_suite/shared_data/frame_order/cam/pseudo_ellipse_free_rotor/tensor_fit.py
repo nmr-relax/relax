@@ -31,14 +31,14 @@ for i in range(len(ln)):
     n_state_model.select_model(model='fixed')
 
     # Minimisation.
-    grid_search(inc=5)
-    minimise('newton', constraints=True)
+    minimise.grid_search(inc=5)
+    minimise.execute('newton', constraints=True)
 
     # Monte Carlo simulations.
     monte_carlo.setup(number=1000)
     monte_carlo.create_data()
     monte_carlo.initial_values()
-    minimise('newton', constraints=False)
+    minimise.execute('newton', constraints=False)
     monte_carlo.error_analysis()
 
     # Alias the tensor.

@@ -42,7 +42,7 @@ value.set(-172 * 1e-6, 'csa')
 model_free.select_model(model='tm2')
 
 # Grid search.
-grid_search(inc=4)
+minimise.grid_search(inc=4)
 
 # Minimise.
-minimise('newton')
+minimise.execute('newton')

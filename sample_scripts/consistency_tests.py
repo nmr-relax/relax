@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007-2011 Sebastien Morin                                     #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -85,12 +85,12 @@ value.set(val=13 * 1e-9, param='tc')
 consistency_tests.set_frq(frq=600.0 * 1e6)
 
 # Consistency tests.
-calc()
+minimise.calculate()
 
 # Monte Carlo simulations.
 monte_carlo.setup(number=500)
 monte_carlo.create_data()
-calc()
+minimise.calculate()
 monte_carlo.error_analysis()
 
 # Create grace files.

@@ -573,7 +573,7 @@ class Stereochem_analysis:
                 self.interpreter.structure.get_pos(ave_pos=False)
 
                 # Calculate the average NOE potential.
-                self.interpreter.calc()
+                self.interpreter.minimise.calculate()
 
                 # Sum the violations.
                 cdp.sum_viol = 0.0
@@ -681,8 +681,8 @@ class Stereochem_analysis:
                 self.interpreter.interatom.unit_vectors(ave=False)
 
                 # Minimisation.
-                #grid_search(inc=4)
-                self.interpreter.minimise("simplex", constraints=False)
+                #minimise.grid_search(inc=4)
+                self.interpreter.minimise.execute("simplex", constraints=False)
 
                 # Store and write out the Q factors.
                 q_factors.append([cdp.q_rdc, ens])

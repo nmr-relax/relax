@@ -82,18 +82,18 @@ value.set(param='ave_pos_beta', val=1.1838868514111507)
 value.set(param='ave_pos_gamma', val=0.35219976958846927)
 value.set(param='axis_theta', val=0.9600799785953431)
 value.set(param='axis_phi', val=4.0322755062196229)
-calc()
+minimise.calculate()
 print("\nchi2: %s" % repr(cdp.chi2))
 
 # Optimise.
-#grid_search(inc=3)
-minimise('simplex', constraints=False)
+#minimise.grid_search(inc=3)
+minimise.execute('simplex', constraints=False)
 
 # Test Monte Carlo simulations.
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex', constraints=False)
+minimise.execute('simplex', constraints=False)
 eliminate()
 monte_carlo.error_analysis()
 

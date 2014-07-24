@@ -38,8 +38,8 @@ self._execute_uf(uf_name='j_coupling.read', file='one_bond_RDC_data_strychnine.t
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 
 # Minimisation.
-self._execute_uf(uf_name='grid_search', inc=3)
-self._execute_uf(uf_name='minimise', min_algor='simplex')
+self._execute_uf(uf_name='minimise.grid_search', inc=3)
+self._execute_uf(uf_name='minimise.execute', min_algor='simplex')
 
 # Show the tensors.
 self._execute_uf(uf_name='align_tensor.display')

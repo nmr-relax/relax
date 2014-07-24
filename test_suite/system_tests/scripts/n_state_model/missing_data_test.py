@@ -62,13 +62,13 @@ self._execute_uf(uf_name='paramag.centre', pos=[1, 2, -30])
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 
 # Minimisation.
-self._execute_uf(uf_name='minimise', min_algor='bfgs', constraints=True)
+self._execute_uf(uf_name='minimise.execute', min_algor='bfgs', constraints=True)
 
 # Monte Carlo simulations.
 self._execute_uf(uf_name='monte_carlo.setup', number=3)
 self._execute_uf(uf_name='monte_carlo.create_data')
 self._execute_uf(uf_name='monte_carlo.initial_values')
-self._execute_uf(uf_name='minimise', min_algor='bfgs', constraints=True)
+self._execute_uf(uf_name='minimise.execute', min_algor='bfgs', constraints=True)
 self._execute_uf(uf_name='monte_carlo.error_analysis')
 
 # Write out a results file.

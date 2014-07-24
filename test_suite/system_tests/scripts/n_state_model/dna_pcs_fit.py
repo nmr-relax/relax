@@ -41,7 +41,7 @@ elif ds.para_centre == 'zero':
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 
  # Minimisation.
-self._execute_uf('simplex', scaling=False, constraints=False, uf_name='minimise')
+self._execute_uf('simplex', scaling=False, constraints=False, uf_name='minimise.execute')
 
 # Show the tensors.
 self._execute_uf(uf_name='align_tensor.display')

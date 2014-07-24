@@ -79,7 +79,7 @@ for rand_index in range(200):
     #    cdp.align_tensors[i].Ayz = 0.0
 
     # Minimisation.
-    minimise('bfgs', constraints=True)
+    minimise.execute('bfgs', constraints=True)
 
     # Calculate the AIC value.
     k, n, chi2 = api.model_statistics()

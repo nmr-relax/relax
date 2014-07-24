@@ -94,8 +94,8 @@ cdp.align_tensors[0].set(param='Ayz', value=-0.286367/2000)
 #cdp.align_tensors[0].set(param='Ayz', value=0.0)
 
 # Minimisation.
-#self._execute_uf(uf_name='grid_search, inc=6)
-self._execute_uf(uf_name='minimise', min_algor='simplex', constraints=False, max_iter=500)
+#self._execute_uf(uf_name='minimise.grid_search, inc=6)
+self._execute_uf(uf_name='minimise.execute', min_algor='simplex', constraints=False, max_iter=500)
 #self._execute_uf(uf_name='calc')
 
 # Set up the errors needed for the simulations.
@@ -106,7 +106,7 @@ self._execute_uf(uf_name='pcs.set_errors', sd=0.1)
 self._execute_uf(uf_name='monte_carlo.setup', number=3)
 self._execute_uf(uf_name='monte_carlo.create_data')
 self._execute_uf(uf_name='monte_carlo.initial_values')
-self._execute_uf('simplex', constraints=False, max_iter=500, uf_name='minimise')
+self._execute_uf('simplex', constraints=False, max_iter=500, uf_name='minimise.execute')
 self._execute_uf(uf_name='monte_carlo.error_analysis')
 
 # Write out a results file.

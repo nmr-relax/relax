@@ -189,19 +189,19 @@ class Base_script:
             self._execute_uf(uf_name='value.set', val=self.CONE_S1, param='cone_s1')
         if self.CONE_SIGMA_MAX != None:
             self._execute_uf(uf_name='value.set', val=self.CONE_SIGMA_MAX, param='cone_sigma_max')
-        self._execute_uf(uf_name='calc')
+        self._execute_uf(uf_name='minimise.calculate')
         print("\nchi2: %s" % cdp.chi2)
 
         # Optimise.
         if hasattr(status, 'flag_opt') and status.flag_opt:
-            #self._execute_uf(uf_name='grid_search', inc=11)
-            self._execute_uf(uf_name='minimise', min_algor='simplex', constraints=False, max_iter=10)
+            #self._execute_uf(uf_name='minimise.grid_search', inc=11)
+            self._execute_uf(uf_name='minimise.execute', min_algor='simplex', constraints=False, max_iter=10)
 
             # Test Monte Carlo simulations.
             self._execute_uf(uf_name='monte_carlo.setup', number=3)
             self._execute_uf(uf_name='monte_carlo.create_data')
             self._execute_uf(uf_name='monte_carlo.initial_values')
-            self._execute_uf(uf_name='minimise', min_algor='simplex', constraints=False, max_iter=10)
+            self._execute_uf(uf_name='minimise.execute', min_algor='simplex', constraints=False, max_iter=10)
             self._execute_uf(uf_name='eliminate')
             self._execute_uf(uf_name='monte_carlo.error_analysis')
 

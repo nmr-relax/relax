@@ -264,9 +264,9 @@ def model_setup(model=None, equation=None, params=None, spin_id=None):
                 raise RelaxTensorError('diffusion')
 
     # Loop over the sequence.
-    for spin in spin_loop(spin_id):
+    for spin, spin_id in spin_loop(spin_id, return_id=True):
         # Initialise the data structures (if needed).
-        api_model_free.data_init(spin)
+        api_model_free.data_init(spin_id)
 
         # Model-free model, equation, and parameter types.
         spin.model = model

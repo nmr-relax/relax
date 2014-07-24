@@ -46,9 +46,39 @@ class Jw_mapping_params(Param_list):
         self._add_csa(default=N15_CSA)
 
         # Add the model parameters.
-        self._add('j0', scope='spin', string='J(0)', desc='Spectral density value at 0 MHz - J(0)', py_type=float, set='params', grace_string='\\qJ(0)\\Q', err=True, sim=True)
-        self._add('jwx', scope='spin', string='J(wX)', desc='Spectral density value at the frequency of the heteronucleus - J(wX)', py_type=float, set='params', grace_string='\\qJ(\\xw\\f{}\\sX\\N)\\Q', err=True, sim=True)
-        self._add('jwh', scope='spin', string='J(wH)', desc='Spectral density value at the frequency of the proton - J(wH)', py_type=float, set='params', grace_string='\\qJ(\\xw\\f{}\\sH\\N)\\Q', err=True, sim=True)
+        self._add(
+            'j0',
+            scope = 'spin',
+            string = 'J(0)',
+            desc = 'Spectral density value at 0 MHz - J(0)',
+            py_type = float,
+            set = 'params',
+            grace_string = '\\qJ(0)\\Q',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'jwx',
+            scope = 'spin',
+            string = 'J(wX)',
+            desc = 'Spectral density value at the frequency of the heteronucleus - J(wX)',
+            py_type = float,
+            set = 'params',
+            grace_string = '\\qJ(\\xw\\f{}\\sX\\N)\\Q',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'jwh',
+            scope = 'spin',
+            string = 'J(wH)',
+            desc = 'Spectral density value at the frequency of the proton - J(wH)',
+            py_type = float,
+            set = 'params',
+            grace_string = '\\qJ(\\xw\\f{}\\sH\\N)\\Q',
+            err = True,
+            sim = True
+        )
 
         # Set up the user function documentation.
         self._set_uf_title("Reduced spectral density mapping parameters")

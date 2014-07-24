@@ -76,16 +76,16 @@ for i in range(len(times)):
 relax_fit.select_model('exp')
 
 # Grid search.
-grid_search(inc=11)
+minimise.grid_search(inc=11)
 
 # Minimise.
-minimise('simplex', constraints=False)
+minimise.execute('simplex', constraints=False)
 
 # Monte Carlo simulations.
 monte_carlo.setup(number=500)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex', constraints=False)
+minimise.execute('simplex', constraints=False)
 monte_carlo.error_analysis()
 
 # Save the relaxation rates.
