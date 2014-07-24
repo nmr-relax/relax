@@ -49,11 +49,8 @@ def i_scaling(model_info=None):
     return round_to_next_order(max(spin.peak_intensity.values()))
 
 
-def i0(incs=None, model_info=None):
-    """Find the average intensity of the first time point.
-
-    This is for the grid search upper bound for the I0 parameter.
-
+def i0_upper(incs=None, model_info=None):
+    """Find the upper bound for the I0 parameter.
 
     @keyword incs:          The number of grid search increments.
     @type incs:             int
@@ -66,18 +63,14 @@ def i0(incs=None, model_info=None):
     # Unpack the data.
     spin, spin_id = model_info
 
-    # Find the ID of the first time point.
-    min_time = min(cdp.relax_times.values())
-    for key in list(cdp.relax_times.keys()):
-        if cdp.relax_times[key] == min_time:
-            id = key
-            break
+    # Find the maximum intensity.
+    upper = max(spin.peak_intensity.values())
 
-    # Return the averaged value.
-    return average(spin.peak_intensity[id])
+    # Multiply the value by 2.0 and then round up to the next order - this will be the upper bound.
+    return round_to_next_order(upper * 2.0)
 
 
-def iinf(incs=None, model_info=None):
+def iinf_upper(incs=None, model_info=None):
     """Find the average intensity of the last time point.
 
     This is for the grid search upper bound for the Iinf parameter.
@@ -101,9 +94,11 @@ def iinf(incs=None, model_info=None):
             id = key
             break
 
-    # Return the averaged value.
-    return average(spin.peak_intensity[id])
+    # The averaged value.
+    upper = average(spin.peak_intensity[id])
 
+    # Multiply the value by 2.0 and then round up to the next order - this will be the upper bound.
+    return round_to_next_order(upper * 2.0)
 
 
 
@@ -161,7 +156,7 @@ class Relax_fit_params(Param_list):
             set = 'params',
             scaling = i_scaling,
             grid_lower = 0.0,
-            grid_upper = i0,
+            grid_upper = i0_upper,
             grace_string = '\\qI\\s0\\Q',
             err = True,
             sim = True
@@ -175,7 +170,7 @@ class Relax_fit_params(Param_list):
             set = 'params',
             scaling = i_scaling,
             grid_lower = 0.0,
-            grid_upper = iinf,
+            grid_upper = iinf_upper,
             grace_string = '\\qI\\sinf\\Q',
             err = True,
             sim = True

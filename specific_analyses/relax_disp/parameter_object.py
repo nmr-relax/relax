@@ -24,6 +24,7 @@
 """The module for the relaxation dispersion parameter list object."""
 
 # relax module imports.
+from lib.mathematics import round_to_next_order
 from pipe_control.mol_res_spin import return_spin
 from specific_analyses.parameter_object import Param_list
 from specific_analyses.relax_disp.variables import MODEL_LIST_MMQ, MODEL_M61B
@@ -121,8 +122,8 @@ def i0_upper(incs=None, model_info=None):
         spin = return_spin(spin_ids[si])
         upper = max(upper, max(spin.peak_intensity.values()))
 
-    # Return the maximum.
-    return upper
+    # Multiply the value by 2.0 and then round up to the next order - this will be the upper bound.
+    return round_to_next_order(upper * 2.0)
 
 
 
