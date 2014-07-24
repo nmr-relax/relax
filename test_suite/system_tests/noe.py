@@ -105,7 +105,7 @@ class Noe(SystemTestCase):
         self.interpreter.spectrum.error_analysis()
 
         # Calculate the NOEs.
-        self.interpreter.calc()
+        self.interpreter.minimise.calculate()
 
         # Save the NOEs.
         self.interpreter.value.write(param='noe', file=ds.tmpfile)

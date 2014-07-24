@@ -174,23 +174,32 @@ def assemble_param_vector(spin=None, spin_id=None, sim_index=None, model_type=No
         if sim_index == None:
             # Spherical diffusion.
             if cdp.diff_tensor.type == 'sphere':
-                param_vector.append(cdp.diff_tensor.tm)
+                if hasattr(cdp.diff_tensor, 'tm'):
+                    param_vector.append(cdp.diff_tensor.tm)
+                else:
+                    param_vector.append(None)
 
             # Spheroidal diffusion.
             elif cdp.diff_tensor.type == 'spheroid':
-                param_vector.append(cdp.diff_tensor.tm)
-                param_vector.append(cdp.diff_tensor.Da)
-                param_vector.append(cdp.diff_tensor.theta)
-                param_vector.append(cdp.diff_tensor.phi)
+                if hasattr(cdp.diff_tensor, 'tm'):
+                    param_vector.append(cdp.diff_tensor.tm)
+                    param_vector.append(cdp.diff_tensor.Da)
+                    param_vector.append(cdp.diff_tensor.theta)
+                    param_vector.append(cdp.diff_tensor.phi)
+                else:
+                    param_vector += [None, None, None, None]
 
             # Ellipsoidal diffusion.
             elif cdp.diff_tensor.type == 'ellipsoid':
-                param_vector.append(cdp.diff_tensor.tm)
-                param_vector.append(cdp.diff_tensor.Da)
-                param_vector.append(cdp.diff_tensor.Dr)
-                param_vector.append(cdp.diff_tensor.alpha)
-                param_vector.append(cdp.diff_tensor.beta)
-                param_vector.append(cdp.diff_tensor.gamma)
+                if hasattr(cdp.diff_tensor, 'tm'):
+                    param_vector.append(cdp.diff_tensor.tm)
+                    param_vector.append(cdp.diff_tensor.Da)
+                    param_vector.append(cdp.diff_tensor.Dr)
+                    param_vector.append(cdp.diff_tensor.alpha)
+                    param_vector.append(cdp.diff_tensor.beta)
+                    param_vector.append(cdp.diff_tensor.gamma)
+                else:
+                    param_vector += [None, None, None, None, None, None]
 
         # Monte Carlo diffusion tensor parameters.
         else:
@@ -308,117 +317,8 @@ def assemble_param_vector(spin=None, spin_id=None, sim_index=None, model_type=No
                 else:
                     raise RelaxError("Unknown parameter.")
 
-    # Replace all instances of None with 0.0 to allow the list to be converted to a numpy array.
-    for i in range(len(param_vector)):
-        if param_vector[i] == None:
-            param_vector[i] = 0.0
-
     # Return a numpy array.
     return array(param_vector, float64)
-
-
-def assemble_scaling_matrix(num_params, model_type=None, spin=None, spin_id=None, scaling=True):
-    """Create and return the scaling matrix.
-
-    If the spin argument is supplied, then the spin_id argument will be ignored.
-
-    @param num_params:      The number of parameters in the model.
-    @type num_params:       int
-    @keyword model_type:    The model type, one of 'all', 'diff', 'mf', or 'local_tm'.
-    @type model_type:       str
-    @keyword spin:          The spin data container.
-    @type spin:             SpinContainer instance
-    @keyword spin_id:       The spin identification string.
-    @type spin_id:          str
-    @return:                The diagonal and square scaling matrix.
-    @rtype:                 numpy diagonal matrix
-    """
-
-    # Initialise.
-    if num_params == 0:
-        scaling_matrix = zeros((0, 0), float64)
-    else:
-        scaling_matrix = identity(num_params, float64)
-    i = 0
-
-    # No diagonal scaling, so return the identity matrix.
-    if not scaling:
-        return scaling_matrix
-
-    # tm, te, tf, and ts (must all be the same for diagonal scaling!).
-    ti_scaling = 1e-12
-
-    # Diffusion tensor parameters.
-    if model_type == 'diff' or model_type == 'all':
-        # Spherical diffusion.
-        if cdp.diff_tensor.type == 'sphere':
-            # tm.
-            scaling_matrix[i, i] = ti_scaling
-
-            # Increment i.
-            i = i + 1
-
-        # Spheroidal diffusion.
-        elif cdp.diff_tensor.type == 'spheroid':
-            # tm, Da, theta, phi
-            scaling_matrix[i, i] = ti_scaling
-            scaling_matrix[i+1, i+1] = 1e7
-            scaling_matrix[i+2, i+2] = 1.0
-            scaling_matrix[i+3, i+3] = 1.0
-
-            # Increment i.
-            i = i + 4
-
-        # Ellipsoidal diffusion.
-        elif cdp.diff_tensor.type == 'ellipsoid':
-            # tm, Da, Dr, alpha, beta, gamma.
-            scaling_matrix[i, i] = ti_scaling
-            scaling_matrix[i+1, i+1] = 1e7
-            scaling_matrix[i+2, i+2] = 1.0
-            scaling_matrix[i+3, i+3] = 1.0
-            scaling_matrix[i+4, i+4] = 1.0
-            scaling_matrix[i+5, i+5] = 1.0
-
-            # Increment i.
-            i = i + 6
-
-    # Model-free parameters.
-    if model_type != 'diff':
-        # The loop.
-        if spin:
-            loop = [spin]
-        else:
-            loop = spin_loop(spin_id)
-
-        # Loop over the spins.
-        for spin in loop:
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # Loop over the model-free parameters.
-            for k in range(len(spin.params)):
-                # Local tm, te, tf, and ts (must all be the same for diagonal scaling!).
-                if spin.params[k] == 'local_tm' or search('^t', spin.params[k]):
-                    scaling_matrix[i, i] = ti_scaling
-
-                # Rex.
-                elif spin.params[k] == 'rex':
-                    scaling_matrix[i, i] = 1.0 / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]]) ** 2
-
-                # Interatomic distances.
-                elif spin.params[k] == 'r':
-                    scaling_matrix[i, i] = 1e-10
-
-                # CSA.
-                elif spin.params[k] == 'csa':
-                    scaling_matrix[i, i] = 1e-4
-
-                # Increment i.
-                i = i + 1
-
-    # Return the scaling matrix.
-    return scaling_matrix
 
 
 def conv_factor_rex():

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -69,8 +69,8 @@ for name in pipes:
     model_free.select_model(model=name)
 
     # Minimise.
-    grid_search(inc=11)
-    minimise('newton')
+    minimise.grid_search(inc=11)
+    minimise.execute('newton')
 
     # Write the results.
     results.write(file='results', force=True)

@@ -37,9 +37,9 @@ from lib.warnings import RelaxDeselectWarning
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.relax_fit.optimisation import back_calc, d2func_wrapper, dfunc_wrapper, func_wrapper, grid_search_setup
+from specific_analyses.relax_fit.optimisation import back_calc, d2func_wrapper, dfunc_wrapper, func_wrapper
 from specific_analyses.relax_fit.parameter_object import Relax_fit_params
-from specific_analyses.relax_fit.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints
+from specific_analyses.relax_fit.parameters import assemble_param_vector, disassemble_param_vector, linear_constraints
 
 # C modules.
 if C_module_exp_fn:
@@ -58,6 +58,7 @@ class Relax_fit(API_base, API_common):
         # Place methods into the API.
         self.base_data_loop = self._base_data_loop_spin
         self.model_loop = self._model_loop_spin
+        self.print_model_title = self._print_model_title_spin
         self.return_conversion_factor = self._return_no_conversion_factor
         self.return_value = self._return_value_general
         self.set_error = self._set_error_spin
@@ -110,14 +111,17 @@ class Relax_fit(API_base, API_common):
         return mc_data
 
 
-    def data_init(self, data_cont, sim=False):
+    def data_init(self, data, sim=False):
         """Initialise the spin specific data structures.
 
-        @param data_cont:   The spin container.
-        @type data_cont:    SpinContainer instance
-        @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
-        @type sim:          bool
+        @param data:    The spin ID string from the _base_data_loop_spin() method.
+        @type data:     str
+        @keyword sim:   The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
+        @type sim:      bool
         """
+
+        # Get the spin container.
+        spin = return_spin(data)
 
         # Loop over the data structure names.
         for name in self.data_names(set='params'):
@@ -130,33 +134,66 @@ class Relax_fit(API_base, API_common):
             else:
                 init_data = None
 
-            # If the name is not in 'data_cont', add it.
-            if not hasattr(data_cont, name):
-                setattr(data_cont, name, init_data)
+            # If the name is not in the spin container, add it.
+            if not hasattr(spin, name):
+                setattr(spin, name, init_data)
 
 
-    def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
+    def get_param_names(self, model_info=None):
+        """Return a vector of parameter names.
+
+        @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() method.
+        @type model_info:       SpinContainer instance, str
+        @return:                The vector of parameter names.
+        @rtype:                 list of str
+        """
+
+        # Simply return the two parameter names.
+        return ['rx', 'i0']
+
+
+    def get_param_values(self, model_info=None, sim_index=None):
+        """Return a vector of parameter values.
+
+        @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() method.
+        @type model_info:       SpinContainer instance, str
+        @keyword sim_index:     The optional Monte Carlo simulation index.
+        @type sim_index:        int
+        @return:                The vector of parameter values.
+        @rtype:                 list of str
+        """
+
+        # Unpack the data.
+        spin, spin_id = model_info
+
+        # Return the vector.
+        return assemble_param_vector(spin=spin, sim_index=sim_index)
+
+
+    def grid_search(self, lower=None, upper=None, inc=None, scaling_matrix=None, constraints=True, verbosity=1, sim_index=None):
         """The exponential curve fitting grid search method.
 
-        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.
-        @type lower:            array of numbers
-        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.
-        @type upper:            array of numbers
-        @keyword inc:           The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
-        @type inc:              array of int
-        @keyword constraints:   If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
-        @type constraints:      bool
-        @keyword verbosity:     A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:        int
-        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None, the normal model is optimised.
-        @type sim_index:        int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.
+        @type lower:                list of lists of numbers
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.
+        @type upper:                list of lists of numbers
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
+        @type inc:                  list of lists of int
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword constraints:       If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
+        @type constraints:          bool
+        @keyword verbosity:         A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The index of the simulation to apply the grid search to.  If None, the normal model is optimised.
+        @type sim_index:            int
         """
 
         # Minimisation.
-        self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
-    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling_matrix=None, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Relaxation curve fitting minimisation method.
 
         @keyword min_algor:         The minimisation algorithm to use.
@@ -171,18 +208,18 @@ class Relax_fit(API_base, API_common):
         @type max_iterations:       int
         @keyword constraints:       If True, constraints are used during optimisation.
         @type constraints:          bool
-        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
-        @type scaling:              bool
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
         @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:            int
         @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:            None or int
-        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type lower:                array of numbers
-        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
-        @type inc:                  array of int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type lower:                list of lists of numbers
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type upper:                list of lists of numbers
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
+        @type inc:                  list of lists of int
         """
 
         # Test if sequence data is loaded.
@@ -190,7 +227,8 @@ class Relax_fit(API_base, API_common):
             raise RelaxNoSequenceError
 
         # Loop over the sequence.
-        for spin, mol_name, res_num, res_name in spin_loop(full_info=True):
+        model_index = 0
+        for spin, spin_id in self.model_loop():
             # Skip deselected spins.
             if not spin.select:
                 continue
@@ -203,25 +241,17 @@ class Relax_fit(API_base, API_common):
             param_vector = assemble_param_vector(spin=spin)
 
             # Diagonal scaling.
-            scaling_matrix = assemble_scaling_matrix(spin=spin, scaling=scaling)
-            if len(scaling_matrix):
-                param_vector = dot(inv(scaling_matrix), param_vector)
-
-            # Get the grid search minimisation options.
-            if match('^[Gg]rid', min_algor):
-                inc, lower_new, upper_new = grid_search_setup(spin=spin, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+            if scaling_matrix[model_index] != None:
+                param_vector = dot(inv(scaling_matrix[model_index]), param_vector)
 
             # Linear constraints.
             if constraints:
-                A, b = linear_constraints(spin=spin, scaling_matrix=scaling_matrix)
+                A, b = linear_constraints(spin=spin, scaling_matrix=scaling_matrix[model_index])
             else:
                 A, b = None, None
 
             # Print out.
             if verbosity >= 1:
-                # Get the spin id string.
-                spin_id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin.num, spin_name=spin.name)
-
                 # Individual spin printout.
                 if verbosity >= 2:
                     print("\n\n")
@@ -256,8 +286,12 @@ class Relax_fit(API_base, API_common):
 
             # The scaling matrix in a diagonalised list form.
             scaling_list = []
-            for i in range(len(scaling_matrix)):
-                scaling_list.append(scaling_matrix[i, i])
+            if scaling_matrix[model_index] == None:
+                for i in range(len(param_vector)):
+                    scaling_list.append(1.0)
+            else:
+                for i in range(len(scaling_matrix[model_index])):
+                    scaling_list.append(scaling_matrix[model_index][i, i])
 
             setup(num_params=len(spin.params), num_times=len(values), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
@@ -290,7 +324,7 @@ class Relax_fit(API_base, API_common):
 
             # Grid search.
             if search('^[Gg]rid', min_algor):
-                results = grid(func=func_wrapper, args=(), num_incs=inc, lower=lower_new, upper=upper_new, A=A, b=b, verbosity=verbosity)
+                results = grid(func=func_wrapper, args=(), num_incs=inc[model_index], lower=lower[model_index], upper=upper[model_index], A=A, b=b, verbosity=verbosity)
 
                 # Unpack the results.
                 param_vector, chi2, iter_count, warning = results
@@ -308,8 +342,8 @@ class Relax_fit(API_base, API_common):
                 param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
 
             # Scaling.
-            if scaling:
-                param_vector = dot(scaling_matrix, param_vector)
+            if scaling_matrix[model_index] != None:
+                param_vector = dot(scaling_matrix[model_index], param_vector)
 
             # Disassemble the parameter vector.
             disassemble_param_vector(param_vector=param_vector, spin=spin, sim_index=sim_index)
@@ -354,6 +388,9 @@ class Relax_fit(API_base, API_common):
 
                 # Warning.
                 spin.warning = warning
+
+            # Increment the model index.
+            model_index += 1
 
 
     def overfit_deselect(self, data_check=True, verbose=True):

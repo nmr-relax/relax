@@ -81,7 +81,7 @@ value.set(param='ave_pos_z', val=AVE_POS_Z)
 value.set(param='ave_pos_alpha', val=AVE_POS_ALPHA)
 value.set(param='ave_pos_beta', val=AVE_POS_BETA)
 value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
-calc()
+minimise.calculate()
 
 # Create the PDB representation of the true state.
 frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', dist=None, compress_type=2, force=True)
@@ -90,8 +90,8 @@ frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', dist=None,
 state.save('frame_order_true', force=True)
 
 # Optimise.
-grid_search(inc=11)
-minimise('simplex')
+minimise.grid_search(inc=11)
+minimise.execute('simplex')
 
 # Store the result.
 frame_order.pdb_model(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', dist=None, compress_type=2, force=True)
@@ -101,13 +101,13 @@ state.save('frame_order_fixed_piv', force=True)
 
 # Optimise the pivot and model.
 frame_order.pivot(pivot, fix=False)
-minimise('simplex')
+minimise.execute('simplex')
 
 # Test Monte Carlo simulations.
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex')
+minimise.execute('simplex')
 eliminate()
 monte_carlo.error_analysis()
 

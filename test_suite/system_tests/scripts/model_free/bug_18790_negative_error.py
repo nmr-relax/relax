@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -66,7 +66,7 @@ spin.isotope('1H', spin_id='@H')
 model_free.select_model(model=name)
 
 # Grid search.
-grid_search(inc=11, verbosity=1)
+minimise.grid_search(inc=11, verbosity=1)
 
 # Minimise.
-minimise('newton')
+minimise.execute('newton')

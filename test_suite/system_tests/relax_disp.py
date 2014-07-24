@@ -209,7 +209,7 @@ class Relax_disp(SystemTestCase):
 
         # Grid search
         low_arr = R20 + dw_arr + pA_arr + kex_arr
-        self.interpreter.grid_search(lower=low_arr, upper=low_arr, inc=1, constraints=True, verbosity=1)
+        self.interpreter.minimise.grid_search(lower=low_arr, upper=low_arr, inc=1, constraints=True, verbosity=1)
 
         # Then loop over the defined spins and read the parameters.
         for i in range(len(spins)):
@@ -688,7 +688,7 @@ class Relax_disp(SystemTestCase):
         MODEL = "R2eff"
         self.interpreter.relax_disp.select_model(model=MODEL)
         # Calculate R2eff values
-        self.interpreter.calc(verbosity=1)
+        self.interpreter.minimise.calculate(verbosity=1)
 
 
     def setup_tp02_data_to_ns_r1rho_2site(self, clustering=False):
@@ -884,14 +884,14 @@ class Relax_disp(SystemTestCase):
             self.interpreter.relax_disp.r20_from_min_r2eff(force=False)
 
             # Then do grid search.
-            self.interpreter.grid_search(lower=None, upper=None, inc=GRID, constraints=True, verbosity=1)
+            self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID, constraints=True, verbosity=1)
 
             # If no Grid search, set the default values.
         else:
             for param in MODEL_PARAMS[MODEL]:
                 self.interpreter.value.set(param=param, index=None)
                 # Do a grid search, which will store the chi2 value.
-            self.interpreter.grid_search(lower=None, upper=None, inc=1, constraints=True, verbosity=1)
+            self.interpreter.minimise.grid_search(lower=None, upper=None, inc=1, constraints=True, verbosity=1)
 
         # Store result.
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
@@ -901,7 +901,7 @@ class Relax_disp(SystemTestCase):
         # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
         set_func_tol = 1e-10
         set_max_iter = 1000
-        self.interpreter.minimise(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
 
         # Store result.
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
@@ -1069,14 +1069,14 @@ class Relax_disp(SystemTestCase):
             self.interpreter.relax_disp.r20_from_min_r2eff(force=False)
 
             # Then do grid search.
-            self.interpreter.grid_search(lower=None, upper=None, inc=GRID, constraints=True, verbosity=1)
+            self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID, constraints=True, verbosity=1)
 
             # If no Grid search, set the default values.
         else:
             for param in MODEL_PARAMS[MODEL]:
                 self.interpreter.value.set(param=param, index=None)
                 # Do a grid search, which will store the chi2 value.
-            self.interpreter.grid_search(lower=None, upper=None, inc=1, constraints=True, verbosity=1)
+            self.interpreter.minimise.grid_search(lower=None, upper=None, inc=1, constraints=True, verbosity=1)
 
         # Store result.
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
@@ -1086,7 +1086,7 @@ class Relax_disp(SystemTestCase):
         # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
         set_func_tol = 1e-11
         set_max_iter = 10000
-        self.interpreter.minimise(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
 
         # Store result.
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
@@ -1170,7 +1170,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_bug_21665_cpmg_two_fields_two_delaytimes_fail_calc(self):
-        """U{Bug #21665<https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times, using calc()."""
+        """U{Bug #21665<https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times, using minimise.calculate()."""
 
         # Clear the data store.
         self.interpreter.reset()
@@ -1180,7 +1180,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.state.load(state, force=True)
 
         # Run the calculation.
-        self.interpreter.calc(verbosity=1)
+        self.interpreter.minimise.calculate(verbosity=1)
 
 
     def test_bug_21665_cpmg_two_fields_two_delaytimes_fail_relax_disp(self):
@@ -2798,7 +2798,7 @@ class Relax_disp(SystemTestCase):
         spin71.kex = 1900.0
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -2864,7 +2864,7 @@ class Relax_disp(SystemTestCase):
         spin71.kex = 1900.0
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -2933,7 +2933,7 @@ class Relax_disp(SystemTestCase):
         spin71.tex = 0.1
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-10, grad_tol=None, max_iter=10000, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-10, grad_tol=None, max_iter=10000, constraints=True, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -2988,7 +2988,7 @@ class Relax_disp(SystemTestCase):
         spin71.kex = 2500.0
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -3041,7 +3041,7 @@ class Relax_disp(SystemTestCase):
         spin71.kex = 1830.044597
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=False, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=False, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -3108,7 +3108,7 @@ class Relax_disp(SystemTestCase):
         spin71.kex = 2438.2766211401
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=False, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=False, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -3179,7 +3179,7 @@ class Relax_disp(SystemTestCase):
         spin71.kex = 1900.0
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -3244,7 +3244,7 @@ class Relax_disp(SystemTestCase):
         spin71.kex = 1830.044597
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=False, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=False, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -3310,7 +3310,7 @@ class Relax_disp(SystemTestCase):
         spin71.kex = 2106.60885247431
 
         # Low precision optimisation.
-        self.interpreter.calc()
+        self.interpreter.minimise.calculate()
 
         # Checks for residue :70.
         self.assertAlmostEqual(spin70.chi2/10, 45.773987568491123/10, 2)
@@ -3494,13 +3494,13 @@ class Relax_disp(SystemTestCase):
         spin.kex = 573.704033851592
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1000)
+        self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=1000)
 
         # Monte Carlo simulations.
         self.interpreter.monte_carlo.setup(number=2)
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise(min_algor='simplex', max_iter=10)
+        self.interpreter.minimise.execute(min_algor='simplex', max_iter=10)
         self.interpreter.monte_carlo.error_analysis()
 
         # Plot the dispersion curves.
@@ -3566,13 +3566,13 @@ class Relax_disp(SystemTestCase):
         spin.kex = 344.329651956132
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1000)
+        self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=1000)
 
         # Monte Carlo simulations.
         self.interpreter.monte_carlo.setup(number=2)
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise(min_algor='simplex', max_iter=10)
+        self.interpreter.minimise.execute(min_algor='simplex', max_iter=10)
         self.interpreter.monte_carlo.error_analysis()
 
         # Plot the dispersion curves.
@@ -3636,13 +3636,13 @@ class Relax_disp(SystemTestCase):
         spin.kex = 433.176323890829849
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1000)
+        self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=1000)
 
         # Monte Carlo simulations.
         self.interpreter.monte_carlo.setup(number=2)
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise(min_algor='simplex', max_iter=10)
+        self.interpreter.minimise.execute(min_algor='simplex', max_iter=10)
         self.interpreter.monte_carlo.error_analysis()
 
         # Plot the dispersion curves.
@@ -3706,13 +3706,13 @@ class Relax_disp(SystemTestCase):
         spin.kex = 372.745483351305
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1000)
+        self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=1000)
 
         # Monte Carlo simulations.
         self.interpreter.monte_carlo.setup(number=2)
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise(min_algor='simplex', max_iter=10)
+        self.interpreter.minimise.execute(min_algor='simplex', max_iter=10)
         self.interpreter.monte_carlo.error_analysis()
 
         # Plot the dispersion curves.
@@ -3778,13 +3778,13 @@ class Relax_disp(SystemTestCase):
         spin.kex = 487.043592705469223
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=100)
+        self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=100)
 
         # Monte Carlo simulations.
         self.interpreter.monte_carlo.setup(number=2)
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise(min_algor='simplex', max_iter=10)
+        self.interpreter.minimise.execute(min_algor='simplex', max_iter=10)
         self.interpreter.monte_carlo.error_analysis()
 
         # Plot the dispersion curves.
@@ -3848,13 +3848,13 @@ class Relax_disp(SystemTestCase):
         spin.kex = 406.843250675648
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1000)
+        self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=1000)
 
         # Monte Carlo simulations.
         self.interpreter.monte_carlo.setup(number=2)
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise(min_algor='simplex', max_iter=10)
+        self.interpreter.minimise.execute(min_algor='simplex', max_iter=10)
         self.interpreter.monte_carlo.error_analysis()
 
         # Plot the dispersion curves.
@@ -3945,13 +3945,13 @@ class Relax_disp(SystemTestCase):
         spin.kex = 360.516132791038
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=10)
+        self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=10)
 
         # Monte Carlo simulations.
         self.interpreter.monte_carlo.setup(number=2)
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise(min_algor='simplex', max_iter=10)
+        self.interpreter.minimise.execute(min_algor='simplex', max_iter=10)
         self.interpreter.monte_carlo.error_analysis()
 
         # Plot the dispersion curves.
@@ -4074,7 +4074,7 @@ class Relax_disp(SystemTestCase):
         spin.kex = 360.516132791038
 
         # Calc the chi2 values at these parameters.
-        self.interpreter.calc(verbosity=1)
+        self.interpreter.minimise.calculate(verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -4129,7 +4129,7 @@ class Relax_disp(SystemTestCase):
         res61L.kex = 600.0
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -4177,7 +4177,7 @@ class Relax_disp(SystemTestCase):
         res61L.kex = 500.0
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -4231,7 +4231,7 @@ class Relax_disp(SystemTestCase):
         res61L.k_AB = 2.5
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -4297,7 +4297,7 @@ class Relax_disp(SystemTestCase):
         res61L.k_AB = 11.0
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -4354,13 +4354,13 @@ class Relax_disp(SystemTestCase):
         spin2.kC = 2500.0
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
 
         # Monte Carlo simulations.
         self.interpreter.monte_carlo.setup(number=3)
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-2, grad_tol=None, max_iter=10, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-2, grad_tol=None, max_iter=10, constraints=True, scaling=True, verbosity=1)
         self.interpreter.monte_carlo.error_analysis()
 
         # Save the results.
@@ -4775,7 +4775,6 @@ class Relax_disp(SystemTestCase):
         # Load the data.
         self.setup_r1rho_kjaergaard(cluster_ids=cluster_ids)
 
-
         # The grid search size (the number of increments per dimension).
         GRID_INC = 4
 
@@ -4805,7 +4804,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='R2eff - relax_disp', bundle_to='relax_disp')
         self.interpreter.pipe.switch(pipe_name='R2eff - relax_disp')
         self.interpreter.relax_disp.select_model(model='R2eff')
-        self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
 
         self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
         self.interpreter.eliminate(function=None, args=None)
@@ -4813,7 +4812,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
 
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
         self.interpreter.eliminate(function=None, args=None)
         self.interpreter.monte_carlo.error_analysis()
 
@@ -4837,9 +4836,9 @@ class Relax_disp(SystemTestCase):
         self.interpreter.pipe.switch(pipe_name='No Rex - relax_disp')
         self.interpreter.relax_disp.select_model(model='No Rex')
         self.interpreter.value.copy(pipe_from='R2eff - relax_disp', pipe_to='No Rex - relax_disp', param='r2eff')
-        self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
 
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
         self.interpreter.eliminate(function=None, args=None)
 
         ## Write results
@@ -4857,9 +4856,9 @@ class Relax_disp(SystemTestCase):
         self.interpreter.relax_disp.select_model(model='DPL94')
         self.interpreter.value.copy(pipe_from='R2eff - relax_disp', pipe_to='DPL94 - relax_disp', param='r2eff')
         self.interpreter.relax_disp.insignificance(level=1.0)
-        self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
 
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
         self.interpreter.eliminate(function=None, args=None)
 
         ## Write results
@@ -4885,7 +4884,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
 
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
         self.interpreter.eliminate(function=None, args=None)
         self.interpreter.monte_carlo.error_analysis()
 
@@ -5351,7 +5350,7 @@ class Relax_disp(SystemTestCase):
         ### Test just the Grid search.
         GRID_INC = 5
 
-        self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
 
         ### Then test the value.set function.
         # Change pipe.
@@ -5385,7 +5384,7 @@ class Relax_disp(SystemTestCase):
         ### Test just the Grid search.
         GRID_INC = 5
 
-        self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
 
         ### Run auto_analysis.
         # The grid search size (the number of increments per dimension).
@@ -5540,7 +5539,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.relax_disp.insignificance(level=1.0)
 
         # Perform Grid Search.
-        self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
 
         # Store result.
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
@@ -5551,7 +5550,7 @@ class Relax_disp(SystemTestCase):
         # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
         set_func_tol = 1e-9
         set_max_iter = 100000
-        self.interpreter.minimise(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
 
         # Store result.
         pA_values = []
@@ -5606,7 +5605,7 @@ class Relax_disp(SystemTestCase):
             self.assertEqual(median(kex_values), spin.kex)
 
         ## Now do minimisation.
-        self.interpreter.minimise(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
 
         # Store result.
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
@@ -5889,7 +5888,7 @@ class Relax_disp(SystemTestCase):
         spin137F.dwH = 1.4818877939e-07
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', func_tol=1e-10, max_iter=1000)
+        self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-10, max_iter=1000)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -6015,7 +6014,7 @@ class Relax_disp(SystemTestCase):
         spin137F.dwH = 0.000000001993458
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-5, grad_tol=None, max_iter=100, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-5, grad_tol=None, max_iter=100, constraints=True, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")

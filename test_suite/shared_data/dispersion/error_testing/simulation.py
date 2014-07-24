@@ -109,14 +109,14 @@ for i in range(SIM_NUM):
         int['nu_%s_ncyc7'%spin_lock[j]] = gauss(int['nu_%s_ncyc7'%spin_lock[j]], ERR)
 
         # Calculate R2eff and store it.
-        calc()
+        minimise.calculate()
         r2eff_indiv[j, i] = spin.r2eff['800.0_%.1f' % spin_lock[j]]
 
     # Randomise I0 once.
     int['ref'] = gauss(i0, ERR)
 
     # Calculate all R2eff and store them.
-    calc()
+    minimise.calculate()
     for j in range(len(spin_lock)):
         r2eff_group[j, i] = spin.r2eff['800.0_%.1f' % spin_lock[j]]
 

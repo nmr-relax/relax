@@ -154,4 +154,4 @@ if not hasattr(ds, 'model'):
 self._execute_uf(uf_name='frame_order.select_model', model=ds.model)
 
 # Calculate the chi2 value.
-self._execute_uf(uf_name='calc')
+self._execute_uf(uf_name='minimise.calculate')

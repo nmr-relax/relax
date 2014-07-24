@@ -25,6 +25,7 @@
 # Python module imports.
 from numpy import array, dot, float64, ones, zeros
 from numpy.linalg import inv
+from numpy.ma import fix_invalid
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoModelError
@@ -35,7 +36,7 @@ from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pcs import return_pcs_data
 from pipe_control.rdc import check_rdcs, return_rdc_data
 from specific_analyses.n_state_model.data import base_data_types, tensor_loop
-from specific_analyses.n_state_model.parameters import assemble_param_vector, assemble_scaling_matrix, update_model
+from specific_analyses.n_state_model.parameters import assemble_param_vector, update_model
 from target_functions.n_state_model import N_state_opt
 
 
@@ -264,13 +265,13 @@ def minimise_setup_fixed_tensors():
     return tensors
 
 
-def target_fn_setup(sim_index=None, scaling=True):
+def target_fn_setup(sim_index=None, scaling_matrix=None):
     """Initialise the target function for optimisation or direct calculation.
 
-    @param sim_index:       The index of the simulation to optimise.  This should be None if normal optimisation is desired.
-    @type sim_index:        None or int
-    @param scaling:         If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
-    @type scaling:          bool
+    @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+    @type sim_index:            None or int
+    @keyword scaling_matrix:    The diagonal and square scaling matrix.
+    @type scaling_matrix:       numpy rank-2, float64 array or None
     """
 
     # Test if the N-state model has been set up.
@@ -293,6 +294,9 @@ def target_fn_setup(sim_index=None, scaling=True):
     # Create the initial parameter vector.
     param_vector = assemble_param_vector(sim_index=sim_index)
 
+    # Replace all NaNs with 0.0.
+    fix_invalid(param_vector, copy=False, fill_value=0.0)
+
     # Determine if alignment tensors or RDCs are to be used.
     data_types = base_data_types()
 
@@ -302,9 +306,7 @@ def target_fn_setup(sim_index=None, scaling=True):
         probs = cdp.probs
 
     # Diagonal scaling.
-    scaling_matrix = None
-    if len(param_vector):
-        scaling_matrix = assemble_scaling_matrix(data_types=data_types, scaling=scaling)
+    if len(param_vector) and scaling_matrix != None:
         param_vector = dot(inv(scaling_matrix), param_vector)
 
     # Get the data structures for optimisation using the tensors as base data sets.
@@ -352,4 +354,4 @@ def target_fn_setup(sim_index=None, scaling=True):
     model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, probs=probs, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, fixed_tensors=fixed_tensors, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, T_flags=T_flags, j_couplings=j_couplings, rdc_pseudo_flags=rdc_pseudo_flags, pcs_pseudo_flags=pcs_pseudo_flags, pcs_weights=pcs_weight, rdc_weights=rdc_weight, rdc_vect=rdc_vector, temp=temp, frq=frq, dip_const=rdc_dj, absolute_rdc=absolute_rdc, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
 
     # Return the data.
-    return model, param_vector, data_types, scaling_matrix
+    return model, param_vector, data_types

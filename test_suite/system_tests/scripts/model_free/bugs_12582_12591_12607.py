@@ -35,8 +35,8 @@ for name in ['tm0', 'tm1']:
     model_free.select_model(model=name, spin_id=None)
 
     # Optimisation.
-    grid_search(lower=None, upper=None, inc=11, constraints=True, verbosity=1)
-    minimise('newton', func_tol=1e-25, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+    minimise.grid_search(lower=None, upper=None, inc=11, constraints=True, verbosity=1)
+    minimise.execute('newton', func_tol=1e-25, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
 
     # Results writing.
     results.write(file='devnull', force=True, compress_type=1)
@@ -54,4 +54,4 @@ model_selection(method='AIC', modsel_pipe='aic', pipes=['tm0', 'tm1'])
 model_free.remove_tm(spin_id=None)
 diffusion_tensor.init(params=1e-08, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=False)
 fix(element='all_spins', fixed=True)
-grid_search(lower=None, upper=None, inc=11, constraints=True, verbosity=1)
+minimise.grid_search(lower=None, upper=None, inc=11, constraints=True, verbosity=1)

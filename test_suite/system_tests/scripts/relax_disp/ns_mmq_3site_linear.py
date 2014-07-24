@@ -181,7 +181,7 @@ spin_N.dwH_AC = -1.5
 spin_N.dwH_BC = -2.0
 
 # Calculate.
-calc()
+minimise.calculate()
 
 # Plot the dispersion curves (too slow).
 #relax_disp.plot_disp_curves(dir=ds.tmpdir, num_points=100, extend=0, force=True)

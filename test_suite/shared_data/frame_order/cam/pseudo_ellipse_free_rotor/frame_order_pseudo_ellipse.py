@@ -105,18 +105,18 @@ class Analysis:
         value.set(param='cone_theta_x', val=0.5)
         value.set(param='cone_theta_y', val=0.1)
         value.set(param='cone_sigma_max', val=pi)
-        calc()
+        minimise.calculate()
         print("\nchi2: %s" % cdp.chi2)
 
         # Optimise.
-        #grid_search(inc=5)
-        minimise('simplex', constraints=False)
+        #minimise.grid_search(inc=5)
+        minimise.execute('simplex', constraints=False)
 
         # Test Monte Carlo simulations.
         monte_carlo.setup(number=5)
         monte_carlo.create_data()
         monte_carlo.initial_values()
-        minimise('simplex', constraints=False)
+        minimise.execute('simplex', constraints=False)
         eliminate()
         monte_carlo.error_analysis()
 

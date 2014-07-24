@@ -471,20 +471,20 @@ if ds.GRID_INC:
         relax_disp.r20_from_min_r2eff(force=False)
 
     # Then do grid search.
-    grid_search(lower=None, upper=None, inc=ds.GRID_INC, constraints=True, verbosity=ds.verbosity)
+    minimise.grid_search(lower=None, upper=None, inc=ds.GRID_INC, constraints=True, verbosity=ds.verbosity)
 
 # If no Grid search, set the default values.
 else:
     for param in MODEL_PARAMS[model_analyse]:
         value.set(param=param, index=None)
         # Do a grid search, which will store the chi2 value.
-    #grid_search(lower=None, upper=None, inc=10, constraints=True, verbosity=ds.verbosity)
+    #minimise.grid_search(lower=None, upper=None, inc=10, constraints=True, verbosity=ds.verbosity)
 
 # Save result.
 ds.grid_results = save_res(cur_spins)
 
 ## Now do minimisation.
-minimise(min_algor='simplex', func_tol=ds.set_func_tol, max_iter=ds.set_max_iter, constraints=True, scaling=True, verbosity=ds.verbosity)
+minimise.execute(min_algor='simplex', func_tol=ds.set_func_tol, max_iter=ds.set_max_iter, constraints=True, scaling=True, verbosity=ds.verbosity)
 
 # Save results
 ds.min_results = save_res(cur_spins)
@@ -509,7 +509,7 @@ if ds.do_cluster:
     relax_disp.parameter_copy(pipe_from=ds.pipe_name_MODEL, pipe_to=ds.pipe_name_MODEL_CLUSTER)
 
     # Now minimise.
-    minimise(min_algor='simplex', func_tol=ds.set_func_tol, max_iter=ds.set_max_iter, constraints=True, scaling=True, verbosity=ds.verbosity)
+    minimise.execute(min_algor='simplex', func_tol=ds.set_func_tol, max_iter=ds.set_max_iter, constraints=True, scaling=True, verbosity=ds.verbosity)
 
     # Save results
     ds.clust_results = save_res(cur_spins)

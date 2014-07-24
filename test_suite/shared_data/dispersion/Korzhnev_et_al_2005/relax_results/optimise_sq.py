@@ -84,13 +84,13 @@ spin_N.dw = 4.369907
 spin_N.dwH = -0.267240
 
 # Optimisation.
-minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
 
 # Monte Carlo simulations.
 monte_carlo.setup(number=3)
 monte_carlo.create_data(method='back_calc')
 monte_carlo.initial_values()
-minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
 monte_carlo.error_analysis()
 
 # Plot the dispersion curves.

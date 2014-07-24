@@ -36,6 +36,43 @@ from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
+def da_lower(incs=None, model_info=None):
+    """Determine the lower grid bound for the Da diffusion parameter.
+
+    @keyword incs:          The number of grid search increments.
+    @type incs:             int
+    @keyword model_info:    The model information from model_loop().
+    @type model_info:       unknown
+    @return:                The lower grid search bound for the Da diffusion parameter.
+    @rtype:                 float
+    """
+
+    # Return the lower bound.
+    if (cdp.diff_tensor.type == 'spheroid' and cdp.diff_tensor.spheroid_type == 'prolate') or cdp.diff_tensor.type == 'ellipsoid':
+        return 0.0
+    else:
+        return -1e7
+
+
+def da_upper(incs=None, model_info=None):
+    """Determine the upper grid bound for the Da diffusion parameter.
+
+    @keyword incs:          The number of grid search increments.
+    @type incs:             int
+    @keyword model_info:    The model information from model_loop().
+    @type model_info:       unknown
+    @return:                The upper grid search bound for the Da diffusion parameter.
+    @rtype:                 float
+    """
+
+    # Return the upper bound.
+    if cdp.diff_tensor.type == 'spheroid' and cdp.diff_tensor.spheroid_type == 'oblate':
+        return 0.0
+    else:
+        return 1e7
+
+
+
 class Param_list(object):
     """A special object for handling global and spin parameters."""
 
@@ -59,14 +96,28 @@ class Param_list(object):
         self._py_types = {}
         self._conv_factor = {}
         self._grace_string = {}
+        self._grid_lower = {}
+        self._grid_upper = {}
         self._set = {}
         self._err = {}
+        self._scaling = {}
         self._sim = {}
 
         # Add some spin specific objects.
         if self.spin_data:
-            self._add('select', scope='spin', desc='The spin selection flag', py_type=bool, sim=True)
-            self._add('fixed', scope='spin', desc='The fixed flag', py_type=bool)
+            self._add(
+                'select',
+                scope = 'spin',
+                desc = 'The spin selection flag',
+                py_type = bool,
+                sim = True
+            )
+            self._add(
+                'fixed',
+                scope = 'spin',
+                desc = 'The fixed flag',
+                py_type = bool
+            )
 
         # Default user function documentation.
         self._uf_title = "Parameters"
@@ -92,7 +143,7 @@ class Param_list(object):
         return cls._instance
 
 
-    def _add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, set='all', conv_factor=None, grace_string=None, err=False, sim=False):
+    def _add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, set='all', conv_factor=None, scaling=1.0, grid_lower=None, grid_upper=None, grace_string=None, err=False, sim=False):
         """Add a parameter to the list.
 
         @param name:            The name of the parameter.  This will be used as the variable name.
@@ -113,6 +164,12 @@ class Param_list(object):
         @type set:              str
         @keyword conv_factor:   The factor of conversion between different parameter units.
         @type conv_factor:      None, float or func
+        @keyword scaling:       The diagonal scaling factor for optimisation.
+        @type scaling:          float or function
+        @keyword grid_lower:    The lower bound for the grid search.
+        @type grid_lower:       int or function
+        @keyword grid_upper:    The upper bound for the grid search.
+        @type grid_upper:       int or function
         @keyword grace_string:  The string used for the axes in Grace plots of the data.
         @type grace_string:     None or str
         @keyword err:           A flag which if True indicates that the parameter name + '_err' error data structure can exist.
@@ -141,6 +198,9 @@ class Param_list(object):
         self._conv_factor[name] = conv_factor
         self._err[name] = err
         self._sim[name] = sim
+        self._grid_lower[name] = grid_lower
+        self._grid_upper[name] = grid_upper
+        self._scaling[name] = scaling
 
         # The parameter string.
         if string:
@@ -159,8 +219,88 @@ class Param_list(object):
         """Add the PCS and RDC data."""
 
         # Add the data.
-        self._add('pcs', scope='spin', grace_string='Pseudo-contact shift', units='ppm', desc='The pseudo-contact shift (PCS)', py_type=float)
-        self._add('rdc', scope='spin', grace_string='Residual dipolar coupling', units='Hz', desc='The residual dipolar coupling (RDC)', py_type=float)
+        self._add(
+            'pcs',
+            scope = 'spin',
+            grace_string = 'Pseudo-contact shift',
+            units = 'ppm',
+            desc = 'The pseudo-contact shift (PCS)',
+            py_type = float
+        )
+        self._add(
+            'rdc',
+            scope = 'spin',
+            grace_string = 'Residual dipolar coupling',
+            units = 'Hz',
+            desc = 'The residual dipolar coupling (RDC)',
+            py_type = float
+        )
+
+
+    def _add_align_tensor(self):
+        """Add the alignment tensor parameters."""
+
+        # Add the parameters.
+        self._add(
+            'Axx',
+            scope = 'global',
+            desc = 'The Axx component of the alignment tensor',
+            py_type = float,
+            set = 'params',
+            grid_lower = -1e-3,
+            grid_upper = 1e-3,
+            grace_string = '\qA\sxx\N',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Ayy',
+            scope = 'global',
+            desc = 'The Ayy component of the alignment tensor',
+            py_type = float,
+            set = 'params',
+            grid_lower = -1e-3,
+            grid_upper = 1e-3,
+            grace_string = '\qA\syy\N',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Axy',
+            scope = 'global',
+            desc = 'The Axy component of the alignment tensor',
+            py_type = float,
+            set = 'params',
+            grid_lower = -1e-3,
+            grid_upper = 1e-3,
+            grace_string = '\qA\sxy\N',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Axz',
+            scope = 'global',
+            desc = 'The Axz component of the alignment tensor',
+            py_type = float,
+            set = 'params',
+            grid_lower = -1e-3,
+            grid_upper = 1e-3,
+            grace_string = '\qA\sxz\N',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Ayz',
+            scope = 'global',
+            desc = 'The Ayz component of the alignment tensor',
+            py_type = float,
+            set = 'params',
+            grid_lower = -1e-3,
+            grid_upper = 1e-3,
+            grace_string = '\qA\syz\N',
+            err = True,
+            sim = True
+        )
 
 
     def _add_csa(self, default=None, set='fixed', err=False, sim=False):
@@ -177,28 +317,223 @@ class Param_list(object):
         """
 
         # Add the CSA structure.
-        self._add('csa', scope='spin', default=default, units='ppm', desc='Chemical shift anisotropy (unitless)', py_type=float, set=set, conv_factor=1e-6, grace_string='\\qCSA\\Q', err=err, sim=sim)
+        self._add(
+            'csa',
+            scope = 'spin',
+            default = default,
+            units = 'ppm',
+            desc = 'Chemical shift anisotropy (unitless)',
+            py_type = float,
+            set = set,
+            scaling = 1e-4,
+            grid_lower = -120 * 1e-6,
+            grid_upper = -200 * 1e-6,
+            conv_factor = 1e-6,
+            grace_string = '\\qCSA\\Q',
+            err = err,
+            sim = sim
+        )
 
 
     def _add_diffusion_params(self):
         """Add the Brownian rotational diffusion parameters to the list."""
 
         # Add the CSA structure.
-        self._add('tm', scope='global', default=10.0 * 1e-9, grace_string='\\xt\\f{}\\sm', units='ns', desc='Global correlation time', py_type=float, set='params', conv_factor=1e-9, err=True, sim=True)
-        self._add('Diso', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Isotropic component of the diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
-        self._add('Dx', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Eigenvalue associated with the x-axis of the diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
-        self._add('Dy', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Eigenvalue associated with the y-axis of the diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
-        self._add('Dz', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Eigenvalue associated with the z-axis of the diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
-        self._add('Dpar', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Diffusion coefficient parallel to the major axis of the spheroid diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
-        self._add('Dper', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Diffusion coefficient perpendicular to the major axis of the spheroid diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
-        self._add('Da', scope='global', default=0.0, units='1e6 1/s', desc='Anisotropic component of the diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
-        self._add('Dr', scope='global', default=0.0, desc='Rhombic component of the diffusion tensor', py_type=float, set='params', err=True, sim=True)
-        self._add('Dratio', scope='global', default=1.0, desc='Ratio of the parallel and perpendicular components of the spheroid diffusion tensor', py_type=float, set='params', err=True, sim=True)
-        self._add('alpha', scope='global', default=0.0, units='deg', desc='The first Euler angle of the ellipsoid diffusion tensor', py_type=float, set='params', conv_factor=(2.0*pi) / 360.0, err=True, sim=True)
-        self._add('beta', scope='global', default=0.0, units='deg', desc='The second Euler angle of the ellipsoid diffusion tensor', py_type=float, set='params', conv_factor=(2.0*pi) / 360.0, err=True, sim=True)
-        self._add('gamma', scope='global', default=0.0, units='deg', desc='The third Euler angle of the ellipsoid diffusion tensor', py_type=float, set='params', conv_factor=(2.0*pi) / 360.0, err=True, sim=True)
-        self._add('theta', scope='global', default=0.0, units='deg', desc='The polar angle defining the major axis of the spheroid diffusion tensor', py_type=float, set='params', conv_factor=(2.0*pi) / 360.0, err=True, sim=True)
-        self._add('phi', scope='global', default=0.0, units='deg', desc='The azimuthal angle defining the major axis of the spheroid diffusion tensor', py_type=float, set='params', conv_factor=(2.0*pi) / 360.0, err=True, sim=True)
+        self._add(
+            'tm',
+            scope = 'global',
+            default = 10.0 * 1e-9,
+            grace_string = '\\xt\\f{}\\sm',
+            units = 'ns',
+            desc = 'Global correlation time',
+            py_type = float,
+            set = 'params',
+            scaling = 1e-12,
+            grid_lower = 1.0 * 1e-9,
+            grid_upper = 12.0 * 1e-9,
+            conv_factor = 1e-9,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Diso',
+            scope = 'global',
+            default = 1.666 * 1e7,
+            units = '1e6 1/s',
+            desc = 'Isotropic component of the diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = 1e6,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Dx',
+            scope = 'global',
+            default = 1.666 * 1e7,
+            units = '1e6 1/s',
+            desc = 'Eigenvalue associated with the x-axis of the diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = 1e6,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Dy',
+            scope = 'global',
+            default = 1.666 * 1e7,
+            units = '1e6 1/s',
+            desc = 'Eigenvalue associated with the y-axis of the diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = 1e6,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Dz',
+            scope = 'global',
+            default = 1.666 * 1e7,
+            units = '1e6 1/s',
+            desc = 'Eigenvalue associated with the z-axis of the diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = 1e6,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Dpar',
+            scope = 'global',
+            default = 1.666 * 1e7,
+            units = '1e6 1/s',
+            desc = 'Diffusion coefficient parallel to the major axis of the spheroid diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = 1e6,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Dper',
+            scope = 'global',
+            default = 1.666 * 1e7,
+            units = '1e6 1/s',
+            desc = 'Diffusion coefficient perpendicular to the major axis of the spheroid diffusion tensor',
+            py_type = float,
+            set = 'params',
+            conv_factor = 1e6,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Da',
+            scope = 'global',
+            default = 0.0,
+            units = '1e6 1/s',
+            desc = 'Anisotropic component of the diffusion tensor',
+            py_type = float,
+            set = 'params',
+            scaling = 1e7,
+            grid_lower = da_lower,
+            grid_upper = da_upper,
+            conv_factor = 1e6,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Dr',
+            scope = 'global',
+            default = 0.0,
+            desc = 'Rhombic component of the diffusion tensor',
+            py_type = float,
+            set = 'params',
+            grid_lower = 0.0,
+            grid_upper = 1.0,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'Dratio',
+            scope = 'global',
+            default = 1.0,
+            desc = 'Ratio of the parallel and perpendicular components of the spheroid diffusion tensor',
+            py_type = float,
+            set = 'params',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'alpha',
+            scope = 'global',
+            default = 0.0,
+            units = 'deg',
+            desc = 'The first Euler angle of the ellipsoid diffusion tensor',
+            py_type = float,
+            set = 'params',
+            grid_lower = 0.0,
+            grid_upper = pi,
+            conv_factor = (2.0*pi) / 360.0,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'beta',
+            scope = 'global',
+            default = 0.0,
+            units = 'deg',
+            desc = 'The second Euler angle of the ellipsoid diffusion tensor',
+            py_type = float,
+            set = 'params',
+            grid_lower = 0.0,
+            grid_upper = pi,
+            conv_factor = (2.0*pi) / 360.0,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'gamma',
+            scope = 'global',
+            default = 0.0,
+            units = 'deg',
+            desc = 'The third Euler angle of the ellipsoid diffusion tensor',
+            py_type = float,
+            set = 'params',
+            grid_lower = 0.0,
+            grid_upper = pi,
+            conv_factor = (2.0*pi) / 360.0,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'theta',
+            scope = 'global',
+            default = 0.0,
+            units = 'deg',
+            desc = 'The polar angle defining the major axis of the spheroid diffusion tensor',
+            py_type = float,
+            set = 'params',
+            grid_lower = 0.0,
+            grid_upper = pi,
+            conv_factor = (2.0*pi) / 360.0,
+            err = True,
+            sim = True
+        )
+        self._add(
+            'phi',
+            scope = 'global',
+            default = 0.0,
+            units = 'deg',
+            desc = 'The azimuthal angle defining the major axis of the spheroid diffusion tensor',
+            py_type = float,
+            set = 'params',
+            grid_lower = 0.0,
+            grid_upper = pi,
+            conv_factor = (2.0*pi) / 360.0,
+            err = True,
+            sim = True
+        )
 
 
     def _add_min_data(self, min_stats_global=False, min_stats_spin=False):
@@ -228,12 +563,65 @@ class Param_list(object):
                 scope = 'spin'
 
             # The minimisation parameters.
-            self._add('chi2', scope=scope, desc='Chi-squared value', py_type=float, set='min', grace_string='\\xc\\S2', err=False, sim=True)
-            self._add('iter', scope=scope, desc='Optimisation iterations', py_type=int, set='min', grace_string='Iteration count', err=False, sim=True)
-            self._add('f_count', scope=scope, desc='Number of function calls', py_type=int, set='min', grace_string='Function call count', err=False, sim=True)
-            self._add('g_count', scope=scope, desc='Number of gradient calls', py_type=int, set='min', grace_string='Gradient call count', err=False, sim=True)
-            self._add('h_count', scope=scope, desc='Number of Hessian calls', py_type=int, set='min', grace_string='Hessian call count', err=False, sim=True)
-            self._add('warning', scope=scope, desc='Optimisation warning', py_type=str, set='min', err=False, sim=True)
+            self._add(
+                'chi2',
+                scope = scope,
+                desc = 'Chi-squared value',
+                py_type = float,
+                set = 'min',
+                grace_string = '\\xc\\S2',
+                err = False,
+                sim = True
+            )
+            self._add(
+                'iter',
+                scope = scope,
+                desc = 'Optimisation iterations',
+                py_type = int,
+                set = 'min',
+                grace_string = 'Iteration count',
+                err = False,
+                sim = True
+            )
+            self._add(
+                'f_count',
+                scope = scope,
+                desc = 'Number of function calls',
+                py_type = int,
+                set = 'min',
+                grace_string = 'Function call count',
+                err = False,
+                sim = True
+            )
+            self._add(
+                'g_count',
+                scope = scope,
+                desc = 'Number of gradient calls',
+                py_type = int,
+                set = 'min',
+                grace_string = 'Gradient call count',
+                err = False,
+                sim = True
+            )
+            self._add(
+                'h_count',
+                scope = scope,
+                desc = 'Number of Hessian calls',
+                py_type = int,
+                set = 'min',
+                grace_string = 'Hessian call count',
+                err = False,
+                sim = True
+            )
+            self._add(
+                'warning',
+                scope = scope,
+                desc = 'Optimisation warning',
+                py_type = str,
+                set = 'min',
+                err = False,
+                sim = True
+            )
 
 
     def _add_model_info(self, scope='spin', model_flag=True, equation_flag=False):
@@ -247,21 +635,42 @@ class Param_list(object):
 
         # Add the model structure.
         if model_flag:
-            self._add('model', scope=scope, desc='The model name', py_type=str)
+            self._add(
+                'model',
+                scope = scope,
+                desc = 'The model name',
+                py_type = str
+            )
 
         # The equation information.
         if equation_flag:
-            self._add('equation', scope=scope, desc='The model equation', py_type=str)
+            self._add(
+                'equation',
+                scope = scope,
+                desc = 'The model equation',
+                py_type = str
+            )
 
         # Add the parameter name list structure.
-        self._add('params', scope=scope, desc='The parameters of the model', py_type=list)
+        self._add(
+            'params',
+            scope = scope,
+            desc = 'The parameters of the model',
+            py_type = list
+        )
 
 
     def _add_peak_intensity(self):
         """Add the peak intensity structure 'peak_intensity'."""
 
         # Add the peak intensity structure.
-        self._add('peak_intensity', scope='spin', desc='The peak intensities', py_type=dict, grace_string='\\qPeak intensities\\Q')
+        self._add(
+            'peak_intensity',
+            scope = 'spin',
+            desc = 'The peak intensities',
+            py_type = dict,
+            grace_string = '\\qPeak intensities\\Q'
+        )
 
 
     def _set_uf_title(self, title):
@@ -524,6 +933,54 @@ class Param_list(object):
         return self._err[name]
 
 
+    def grid_lower(self, name, incs=None, model_info=None):
+        """Return the default lower grid bound for the parameter.
+
+        @param name:            The name of the parameter.
+        @type name:             str
+        @keyword incs:          The number of grid search increments.  This is used by some of the bound determining functions.
+        @type incs:             int
+        @keyword model_info:    The model information from the model_loop() specific API method.  If the lower bound is a function, this information is sent into it.
+        @type model_info:       int
+        @return:                The lower bound for the grid search.
+        @rtype:                 int
+        """
+
+        # Parameter check.
+        self.check_param(name)
+
+        # Call any function or method.
+        if isinstance(self._grid_lower[name], FunctionType) or isinstance(self._grid_lower[name], MethodType):
+            return self._grid_lower[name](incs=incs, model_info=model_info)
+
+        # Return the value.
+        return self._grid_lower[name]
+
+
+    def grid_upper(self, name, incs=None, model_info=None):
+        """Return the default upper grid bound for the parameter.
+
+        @param name:            The name of the parameter.
+        @type name:             str
+        @keyword incs:          The number of grid search increments.  This is used by some of the bound determining functions.
+        @type incs:             int
+        @keyword model_info:    The model information from the model_loop() specific API method.  If the upper bound is a function, this information is sent into it.
+        @type model_info:       int
+        @return:                The upper bound for the grid search.
+        @rtype:                 int
+        """
+
+        # Parameter check.
+        self.check_param(name)
+
+        # Call any function or method.
+        if isinstance(self._grid_upper[name], FunctionType) or isinstance(self._grid_upper[name], MethodType):
+            return self._grid_upper[name](incs=incs, model_info=model_info)
+
+        # Return the value.
+        return self._grid_upper[name]
+
+
     def grace_string(self, name):
         """Return the Grace string for the parameter.
 
@@ -586,6 +1043,28 @@ class Param_list(object):
             for name in self.base_loop(set=set):
                 if self.simulation_flag(name):
                     yield name + '_sim'
+
+
+    def scaling(self, name, model_info=None):
+        """Return the scaling factor for the parameter.
+
+        @param model_info:  The model information from the model_loop() specific API method.  If the scaling factor is a function, this information is sent into it.
+        @type model_info:   int
+        @param name:        The name of the parameter.
+        @type name:         str
+        @return:            The scaling factor for optimisation.
+        @rtype:             int
+        """
+
+        # Parameter check.
+        self.check_param(name)
+
+        # Call any function or method.
+        if isinstance(self._scaling[name], FunctionType) or isinstance(self._scaling[name], MethodType):
+            return self._scaling[name](model_info)
+
+        # Return the scaling factor.
+        return self._scaling[name]
 
 
     def scope(self, name):
@@ -695,7 +1174,7 @@ class Param_list(object):
 
         @param name:    The name of the parameter.
         @type name:     str
-        @return:        The units string.
+        @return:        The units string.  If no unit is present, the empty string will be returned.
         @rtype:         str
         """
 
@@ -704,7 +1183,18 @@ class Param_list(object):
 
         # Function.
         if isinstance(self._units[name], FunctionType) or isinstance(self._units[name], MethodType):
-            return self._units[name]()
+            unit = self._units[name]()
 
-        # Return the value.
-        return self._units[name]
+        # The value.
+        else:
+            unit = self._units[name]
+
+        # Convert None to an empty string.
+        if unit == None:
+            unit = ''
+
+        # Return the units.
+        print self._units[name]
+        print type(self._units[name])
+        print unit
+        return unit

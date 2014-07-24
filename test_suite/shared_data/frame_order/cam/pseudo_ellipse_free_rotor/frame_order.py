@@ -92,7 +92,7 @@ value.set(param='eigen_beta', val=EIGEN_BETA)
 value.set(param='eigen_gamma', val=EIGEN_GAMMA)
 value.set(param='cone_theta_x', val=CONE_THETA_X)
 value.set(param='cone_theta_y', val=CONE_THETA_Y)
-calc()
+minimise.calculate()
 
 # Create the PDB representation of the true state.
 frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', dist=None, compress_type=2, force=True)
@@ -102,14 +102,14 @@ state.save('frame_order_true', force=True)
 
 # Grid search (low quality for speed).
 frame_order.num_int_pts(num=100)
-grid_search(inc=[None, None, None, None, None, 7, 7, 7, 7, 7])
+minimise.grid_search(inc=[None, None, None, None, None, 7, 7, 7, 7, 7])
 
 # Iterative optimisation with increasing precision.
 num_int_pts = [100, 1000, 10000, 50000]
 func_tol = [1e-2, 1e-3, 5e-3, 1e-4]
 for i in range(len(num_int_pts)):
     frame_order.num_int_pts(num=num_int_pts[i])
-    minimise('simplex', func_tol=func_tol[i])
+    minimise.execute('simplex', func_tol=func_tol[i])
 
 # Store the result.
 frame_order.pdb_model(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', dist=None, compress_type=2, force=True)
@@ -123,14 +123,14 @@ num_int_pts = [100, 1000, 10000, 50000]
 func_tol = [1e-2, 1e-3, 5e-3, 1e-4]
 for i in range(len(num_int_pts)):
     frame_order.num_int_pts(num=num_int_pts[i])
-    minimise('simplex', func_tol=func_tol[i])
+    minimise.execute('simplex', func_tol=func_tol[i])
 
 # Test Monte Carlo simulations (at low quality for speed).
 frame_order.num_int_pts(num=100)
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex', func_tol=1e-2)
+minimise.execute('simplex', func_tol=1e-2)
 eliminate()
 monte_carlo.error_analysis()
 

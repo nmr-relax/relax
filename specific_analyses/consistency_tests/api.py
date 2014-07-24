@@ -52,6 +52,7 @@ class Consistency_tests(API_base, API_common):
         self.base_data_loop = self._base_data_loop_spin
         self.create_mc_data = self._create_mc_relax_data
         self.model_loop = self._model_loop_spin
+        self.print_model_title = self._print_model_title_spin
         self.return_conversion_factor = self._return_no_conversion_factor
         self.return_error = self._return_error_relax_data
         self.return_value = self._return_value_general
@@ -63,15 +64,17 @@ class Consistency_tests(API_base, API_common):
         self._PARAMS = Consistency_tests_params()
 
 
-    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+    def calculate(self, spin_id=None, scaling_matrix=None, verbosity=1, sim_index=None):
         """Calculation of the consistency functions.
 
-        @keyword spin_id:   The spin identification string.
-        @type spin_id:      None or str
-        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:    int
-        @keyword sim_index: The optional MC simulation index.
-        @type sim_index:    None or int
+        @keyword spin_id:           The spin identification string.
+        @type spin_id:              None or str
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The optional MC simulation index.
+        @type sim_index:            None or int
         """
 
         # Test if the frequency has been set.
@@ -208,7 +211,7 @@ class Consistency_tests(API_base, API_common):
             # Monte Carlo simulated consistency tests values.
             else:
                 # Initialise the simulation data structures.
-                self.data_init(spin, sim=1)
+                self.data_init(id, sim=1)
                 if spin.j0_sim == None:
                     spin.j0_sim = []
                     spin.f_eta_sim = []
@@ -220,14 +223,17 @@ class Consistency_tests(API_base, API_common):
                 spin.f_r2_sim.append(f_r2)
 
 
-    def data_init(self, data_cont, sim=False):
+    def data_init(self, data, sim=False):
         """Initialise the data structures.
 
-        @param data_cont:   The data container.
-        @type data_cont:    instance
-        @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
-        @type sim:          bool
+        @param data:    The spin ID string from the _base_data_loop_spin() method.
+        @type data:     str
+        @keyword sim:   The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
+        @type sim:      bool
         """
+
+        # Get the spin container.
+        spin = return_spin(data)
 
         # Get the data names.
         data_names = self.data_names()
@@ -239,10 +245,23 @@ class Consistency_tests(API_base, API_common):
                 # Add '_sim' to the names.
                 name = name + '_sim'
 
-            # If the name is not in 'data_cont', add it.
-            if not hasattr(data_cont, name):
+            # If the name is not in the spin container, add it.
+            if not hasattr(spin, name):
                 # Set the attribute.
-                setattr(data_cont, name, None)
+                setattr(spin, name, None)
+
+
+    def get_param_names(self, model_info=None):
+        """Return a vector of parameter names.
+
+        @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() method.
+        @type model_info:       SpinContainer instance, str
+        @return:                The vector of parameter names.
+        @rtype:                 list of str
+        """
+
+        # Return the fixed list.
+        return ['j0', 'f_eta', 'f_r2']
 
 
     def overfit_deselect(self, data_check=True, verbose=True):
@@ -344,19 +363,19 @@ class Consistency_tests(API_base, API_common):
             print("No spins have been deselected.")
 
 
-    def set_error(self, model_info, index, error):
+    def set_error(self, index, error, model_info=None):
         """Set the parameter errors.
 
-        @param model_info:  The spin container originating from model_loop().
-        @type model_info:   SpinContainer instance
-        @param index:       The index of the parameter to set the errors for.
-        @type index:        int
-        @param error:       The error value.
-        @type error:        float
+        @param index:           The index of the parameter to set the errors for.
+        @type index:            int
+        @param error:           The error value.
+        @type error:            float
+        @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() method.
+        @type model_info:       SpinContainer instance, str
         """
 
-        # Alias.
-        spin = model_info
+        # Unpack the data.
+        spin, spin_id = model_info
 
         # Return J(0) sim data.
         if index == 0:
@@ -371,19 +390,19 @@ class Consistency_tests(API_base, API_common):
             spin.f_r2_err = error
 
 
-    def sim_return_param(self, model_info, index):
+    def sim_return_param(self, index, model_info=None):
         """Return the array of simulation parameter values.
 
-        @param model_info:  The spin container originating from model_loop().
-        @type model_info:   SpinContainer instance
-        @param index:       The index of the parameter to return the array of values for.
-        @type index:        int
-        @return:            The array of simulation parameter values.
-        @rtype:             list of float
+        @param index:           The index of the parameter to return the array of values for.
+        @type index:            int
+        @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() method.
+        @type model_info:       SpinContainer instance, str
+        @return:                The array of simulation parameter values.
+        @rtype:                 list of float
         """
 
-        # Alias.
-        spin = model_info
+        # Unpack the data.
+        spin, spin_id = model_info
 
         # Skip deselected spins.
         if not spin.select:
@@ -402,17 +421,17 @@ class Consistency_tests(API_base, API_common):
             return spin.f_r2_sim
 
 
-    def sim_return_selected(self, model_info):
+    def sim_return_selected(self, model_info=None):
         """Return the array of selected simulation flags.
 
-        @param model_info:  The spin container originating from model_loop().
-        @type model_info:   SpinContainer instance
-        @return:            The array of selected simulation flags.
-        @rtype:             list of int
+        @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() method.
+        @type model_info:       SpinContainer instance, str
+        @return:                The array of selected simulation flags.
+        @rtype:                 list of int
         """
 
-        # Alias.
-        spin = model_info
+        # Unpack the data.
+        spin, spin_id = model_info
 
         # Multiple spins.
         return spin.select_sim

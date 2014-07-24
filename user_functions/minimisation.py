@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,10 +29,17 @@ from user_functions.data import Uf_info, Uf_tables; uf_info = Uf_info(); uf_tabl
 from user_functions.objects import Desc_container
 
 
-# The calc user function.
-uf = uf_info.add_uf('calc')
-uf.title = "Calculate the function value."
-uf.title_short = "Function value calculation."
+# The user function class.
+uf_class = uf_info.add_class('minimise')
+uf_class.title = "Class for setting parameter values."
+uf_class.menu_text = "&minimise"
+uf_class.gui_icon = "relax.rosenbrock"
+
+
+# The minimise.calculate user function.
+uf = uf_info.add_uf('minimise.calculate')
+uf.title = "Calculate the model parameters or the current target function value."
+uf.title_short = "Model parameter or target function value calculation."
 uf.display = True
 uf.add_keyarg(
     name = "verbosity",
@@ -43,69 +50,18 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will call the target function for the analysis type associated with the current data pipe using the current parameter values.  This can be used to find, for example, the chi-squared value for different parameter values.")
+uf.desc[-1].add_paragraph("The operation of this user function is two-fold and depends on whether the solution for the models of the current analysis are found by direct calculation or by optimisation.  The dual operations are:")
+uf.desc[-1].add_item_list_element("Direct calculation models", "For these models, the parameters will be directly calculated from the base data.  This will be the exact solution and the user function will store the parameter values.  The grid search and optimisation user functions are not implemented for this analysis type.")
+uf.desc[-1].add_item_list_element("Optimised models", "This will call the target function normally used for optimisation for each model using the current parameter values.  This can be used to manually find the chi-squared value for different parameter values.  The parameter values will not be affected.")
 uf.backend = minimise.calc
-uf.menu_text = "&calc"
-uf.gui_icon = "relax.minimise"
+uf.menu_text = "&calculate"
+uf.gui_icon = "oxygen.categories.applications-education"
+uf.wizard_size = (900, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
 
 
-# The grid_search user function.
-uf = uf_info.add_uf('grid_search')
-uf.title = "Perform a grid search."
-uf.title_short = "Grid search."
-uf.display = True
-uf.add_keyarg(
-    name = "lower",
-    py_type = "num_list",
-    desc_short = "lower bounds",
-    desc = "An array of the lower bound parameter values for the grid search.  The length of the array should be equal to the number of parameters in the model.",
-    can_be_none = True
-)
-
-uf.add_keyarg(
-    name = "upper",
-    py_type = "num_list",
-    desc_short = "upper bounds",
-    desc = "An array of the upper bound parameter values for the grid search.  The length of the array should be equal to the number of parameters in the model.",
-    can_be_none = True
-)
-
-uf.add_keyarg(
-    name = "inc",
-    default = 21,
-    py_type = "int_or_int_list",
-    desc_short = "incrementation value",
-    desc = "The number of increments to search over.  If a single integer is given then the number of increments will be equal in all dimensions.  Different numbers of increments in each direction can be set if 'inc' is set to an array of integers of length equal to the number of parameters.",
-    none_elements = True
-)
-
-uf.add_keyarg(
-    name = "constraints",
-    default = True,
-    py_type = "bool",
-    desc_short = "constraints flag",
-    desc = "A boolean flag specifying whether the parameters should be constrained.  The default is to turn constraints on (constraints=True)."
-)
-
-uf.add_keyarg(
-    name = "verbosity",
-    default = 1,
-    py_type = "int",
-    desc_short = "verbosity level",
-    desc = "The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1."
-)
-# Description.
-uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will perform a grid search across the parameter space.")
-uf.backend = minimise.grid_search
-uf.menu_text = "&grid_search"
-uf.gui_icon = "relax.grid_search"
-uf.wizard_size = (800, 500)
-
-
-# The minimise user function.
-uf = uf_info.add_uf('minimise')
+# The minimise.execute user function.
+uf = uf_info.add_uf('minimise.execute')
 uf.title = "Perform an optimisation."
 uf.title_short = "Minimisation."
 uf.display = True
@@ -343,22 +299,108 @@ uf.desc[-1].add_paragraph("For Newton minimisation, the default line search algo
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To apply Newton minimisation together with the GMW81 Hessian modification algorithm, the More and Thuente line search algorithm, a function tolerance of 1e-25, no gradient tolerance, a maximum of 10,000,000 iterations, constraints turned on to limit parameter values, and have normal printout, type any combination of:")
-uf.desc[-1].add_prompt("relax> minimise('newton')")
-uf.desc[-1].add_prompt("relax> minimise('Newton')")
-uf.desc[-1].add_prompt("relax> minimise('newton', 'gmw')")
-uf.desc[-1].add_prompt("relax> minimise('newton', 'mt')")
-uf.desc[-1].add_prompt("relax> minimise('newton', 'gmw', 'mt')")
-uf.desc[-1].add_prompt("relax> minimise('newton', 'mt', 'gmw')")
-uf.desc[-1].add_prompt("relax> minimise('newton', func_tol=1e-25)")
-uf.desc[-1].add_prompt("relax> minimise('newton', func_tol=1e-25, grad_tol=None)")
-uf.desc[-1].add_prompt("relax> minimise('newton', max_iter=1e7)")
-uf.desc[-1].add_prompt("relax> minimise('newton', constraints=True, max_iter=1e7)")
-uf.desc[-1].add_prompt("relax> minimise('newton', verbosity=1)")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton')")
+uf.desc[-1].add_prompt("relax> minimise.execute('Newton')")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', 'gmw')")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', 'mt')")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', 'gmw', 'mt')")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', 'mt', 'gmw')")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', func_tol=1e-25)")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', func_tol=1e-25, grad_tol=None)")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', max_iter=1e7)")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', constraints=True, max_iter=1e7)")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', verbosity=1)")
 uf.desc[-1].add_paragraph("To use constrained Simplex minimisation with a maximum of 5000 iterations, type:")
-uf.desc[-1].add_prompt("relax> minimise('simplex', constraints=True, max_iter=5000)")
+uf.desc[-1].add_prompt("relax> minimise.execute('simplex', constraints=True, max_iter=5000)")
 uf.backend = minimise.minimise
-uf.menu_text = "&minimise"
-uf.gui_icon = "relax.minimise"
+uf.menu_text = "&execute"
+uf.gui_icon = "relax.rosenbrock"
 uf.wizard_height_desc = 300
 uf.wizard_size = (1000, 750)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
+
+
+# The minimise.grid_search user function.
+uf = uf_info.add_uf('minimise.grid_search')
+uf.title = "Perform a grid search to find an initial non-biased parameter set for optimisation."
+uf.title_short = "Grid search optimisation."
+uf.display = True
+uf.add_keyarg(
+    name = "lower",
+    py_type = "num_list",
+    desc_short = "lower bounds",
+    desc = "An array of the lower bound parameter values for the grid search.  The length of the array should be equal to the number of parameters in the model.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "upper",
+    py_type = "num_list",
+    desc_short = "upper bounds",
+    desc = "An array of the upper bound parameter values for the grid search.  The length of the array should be equal to the number of parameters in the model.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "inc",
+    default = 21,
+    py_type = "int_or_int_list",
+    desc_short = "incrementation value",
+    desc = "The number of increments to search over.  If a single integer is given then the number of increments will be equal in all dimensions.  Different numbers of increments in each direction can be set if 'inc' is set to an array of integers of length equal to the number of parameters.",
+    none_elements = True
+)
+uf.add_keyarg(
+    name = "verbosity",
+    default = 1,
+    py_type = "int",
+    desc_short = "verbosity level",
+    desc = "The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1."
+)
+uf.add_keyarg(
+    name = "constraints",
+    default = True,
+    py_type = "bool",
+    desc_short = "constraints flag",
+    desc = "A boolean flag specifying whether the parameters should be constrained.  The default is to turn constraints on (constraints=True)."
+)
+uf.add_keyarg(
+    name = "skip_preset",
+    default = True,
+    py_type = "bool",
+    desc_short = "skip preset parameter flag",
+    desc = "This argument, when True, allows any parameter which already has a value set to be skipped in the grid search."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The optimisation of a mathematical model normally consists of two parts - a coarse grid search across the parameter space to find an initial set of parameter values followed by the use of a high precision optimisation algorithm to exactly find the local or global solution.  The grid search is an essential tool as it allows a non-biased initial optimisation position to be found.  It avoids the statistical bias and preconditioning introduced by using a self chosen initial parameter set.  The high computational cost of the grid search is almost always favourable to the statistical bias of a user defined starting position.")
+uf.desc[-1].add_paragraph("The region of the parameter space that the grid search covers is defined by the lower and upper grid bounds.  These will generally default to the entire parameter space except for when the parameter is non-bounded, for example a 3D position in the PDB space.  This user function will print out the grid bounds used and, if the default bounds are deemed to be insufficient, then the lower, upper or both bounds can supplied.  This only works if all active models have the same parameters.  The coarseness or fineness of the grid is defined by the number of increments to search across between the bounds.  For an alternative to using large numbers of increments, see the zooming grid search.")
+uf.desc[-1].add_paragraph("It is possible to decrease the dimensionality of the grid search, and hence drop the computational cost by orders of magnitude, if certain parameter values are know a priori.  For example if the values are determined via a different experiment.  Such parameters can be set with the value setting user function.  Then, when the skip preset flag is set, these parameters will be skipped in the grid search.  This feature should not be abused and statistical bias should be avoided at all cost.")
+uf.backend = minimise.grid_search
+uf.menu_text = "&grid_search"
+uf.gui_icon = "relax.grid_search"
+uf.wizard_height_desc = 370
+uf.wizard_size = (1000, 700)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
+
+
+# The minimise.grid_zoom user function.
+uf = uf_info.add_uf('minimise.grid_zoom')
+uf.title = "Activate the zooming grid search by setting the zoom level."
+uf.title_short = "Zooming grid search activation."
+uf.add_keyarg(
+    name = "level",
+    default = 0,
+    py_type = "num",
+    desc_short = "zoom level",
+    desc = "The zooming grid search level.  This can be any number, positive or negative."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The optimisation of a mathematical model normally consists of two parts - a coarse grid search to find an initial set of parameter values followed by the use of a high precision optimisation algorithm to exactly find the local or global solution.  But in certain situations, for example where a parallelised grid search is advantageous, a finer grid may be desired.  The zooming grid search provides a more efficient alternative to simply increasing the number of increments used in the initial grid search.  Note that in most situations, standard optimisation algorithms will be by far computationally less expensive.")
+uf.desc[-1].add_paragraph("The zooming grid search can be activated via this user function.  After setting the desired zoom level, the original grid search user function should be called again.  The zoom level is used to decrease the total area of the grid search.  The grid width for each dimension of the parameter space will be divided by 2**zoom_level.  So a level of 1 will halve all dimensions, a level of 2 will quarter the widths, a level of 3 will be an eighth of the widths, etc.")
+uf.desc[-1].add_paragraph("The zooming algorithm proceeds as follows.  The new zoomed grid will be centred at the current parameter values.  However if the new grid is outside of the bounds of the original grid, the entire grid will be translated so that it lies entirely within the original bounds.  This is to avoid grid points lying within undefined regions of the space.  An exception is when the zoom factor is negative, hence the new grid will be larger than the original.")
+uf.desc[-1].add_paragraph("An example of using the zooming grid search is to first perform a standard initial grid search, then set the zoom level to 1 and perform a second grid search.  Continue for zoom levels 2, 3, etc. until the desired fineness is obtained.  Note that convergence is not guaranteed - as the zoom level is increased to infinity, the parameter values do not necessarily converge to the local minimum.  Therefore performing standard optimisation is recommended after completing a zooming grid search. ")
+uf.backend = minimise.grid_zoom
+uf.menu_text = "&grid_zoom"
+uf.gui_icon = "oxygen.actions.zoom-in"
+uf.wizard_height_desc = 500
+uf.wizard_size = (1000, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'

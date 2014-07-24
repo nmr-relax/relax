@@ -29,5 +29,5 @@ for name in ['tm4']:
     model_free.select_model(model=name, spin_id=None)
 
     # Optimisation.
-    grid_search(lower=None, upper=None, inc=11, constraints=True, verbosity=1)
-    minimise('newton', func_tol=1e-25, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+    minimise.grid_search(lower=None, upper=None, inc=11, constraints=True, verbosity=1)
+    minimise.execute('newton', func_tol=1e-25, max_iter=10000000, constraints=True, scaling=True, verbosity=1)

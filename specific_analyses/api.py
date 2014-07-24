@@ -150,3 +150,73 @@ def return_api(analysis_type=None, pipe_name=None):
     # Unknown analysis.
     raise RelaxError("The analysis type '%s' is unknown." % analysis_type)
 
+
+def return_parameter_object(analysis_type=None, pipe_name=None):
+    """Return the specific analysis API parameter object corresponding to the function type.
+
+    @keyword analysis_type:     The specific analysis type.  This overrides the pipe_name argument.
+    @type analysis_type:        str or None
+    @keyword pipe_name:         The name of the data pipe to obtain the analysis type from.  This is ignored if the analysis_type argument is given.  If both arguments are None, then the current data pipe will be used.
+    """
+
+    # The analysis type, if not given.
+    if analysis_type is None:
+        # Check if a data pipe exists.
+        pipes.test()
+
+        # Use a custom data pipe name.
+        if pipe_name:
+            analysis_type = ds[pipe_name].pipe_type
+
+        # Use the current data pipe.
+        else:
+            analysis_type = cdp.pipe_type
+
+    # Consistency testing.
+    if analysis_type == 'ct':
+        from specific_analyses.consistency_tests.parameter_object import Consistency_tests_params
+        return Consistency_tests_params()
+
+    # The Frame Order theories.
+    elif analysis_type == 'frame order':
+        from specific_analyses.frame_order.parameter_object import Frame_order_params
+        return Frame_order_params()
+
+    # Hybrid models.
+    elif analysis_type == 'hybrid':
+        from specific_analyses.hybrid import Hybrid_params
+        return Hybrid_params()
+
+    # Reduced spectral density mapping.
+    elif analysis_type == 'jw':
+        from specific_analyses.jw_mapping.parameter_object import Jw_mapping_params
+        return Jw_mapping_params()
+
+    # Model-free analysis.
+    elif analysis_type == 'mf':
+        from specific_analyses.model_free.parameter_object import Model_free_params
+        return Model_free_params()
+
+    # The N-state model.
+    elif analysis_type == 'N-state':
+        from specific_analyses.n_state_model.parameter_object import N_state_params
+        return N_state_params()
+
+    # NOE calculation.
+    elif analysis_type == 'noe':
+        from specific_analyses.noe.parameter_object import Noe_params
+        return Noe_params()
+
+    # Relaxation dispersion curve fitting.
+    elif analysis_type == 'relax_disp':
+        from specific_analyses.relax_disp.parameter_object import Relax_disp_params
+        return Relax_disp_params()
+
+    # Relaxation curve fitting.
+    elif analysis_type == 'relax_fit':
+        from specific_analyses.relax_fit.parameter_object import Relax_fit_params
+        return Relax_fit_params()
+
+    # Unknown analysis.
+    else:
+        raise RelaxError("The analysis type '%s' is unknown." % analysis_type)

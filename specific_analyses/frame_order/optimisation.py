@@ -45,7 +45,7 @@ from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.rdc import check_rdcs
 from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.data import base_data_types, domain_moving, pivot_fixed, tensor_loop
-from specific_analyses.frame_order.parameters import assemble_param_vector, assemble_scaling_matrix, linear_constraints
+from specific_analyses.frame_order.parameters import assemble_param_vector, linear_constraints
 from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_RIGID, MODEL_ROTOR
 from target_functions.frame_order import Frame_order
 
@@ -615,15 +615,15 @@ def store_bc_data(A_5D_bc=None, pcs_theta=None, rdc_theta=None):
             rdc_index += 1
 
 
-def target_fn_data_setup(sim_index=None, verbosity=1, scaling=True):
+def target_fn_data_setup(sim_index=None, verbosity=1, scaling_matrix=None):
     """Initialise the target function for optimisation or direct calculation.
 
-    @param sim_index:       The index of the simulation to optimise.  This should be None if normal optimisation is desired.
-    @type sim_index:        None or int
-    @keyword verbosity:     The amount of information to print.  The higher the value, the greater the verbosity.
-    @type verbosity:        int
-    @param scaling:         If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
-    @type scaling:          bool
+    @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+    @type sim_index:            None or int
+    @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:            int
+    @keyword scaling_matrix:    The diagonal and square scaling matrices.
+    @type scaling_matrix:       numpy rank-2, float64 array or None
     """
 
     # Assemble the parameter vector.
@@ -633,9 +633,7 @@ def target_fn_data_setup(sim_index=None, verbosity=1, scaling=True):
     data_types = base_data_types()
 
     # Diagonal scaling.
-    scaling_matrix = None
-    if len(param_vector):
-        scaling_matrix = assemble_scaling_matrix(scaling=scaling)
+    if scaling_matrix != None and len(param_vector):
         param_vector = dot(inv(scaling_matrix), param_vector)
 
     # Get the data structures for optimisation using the tensors as base data sets.
@@ -706,7 +704,7 @@ def target_fn_data_setup(sim_index=None, verbosity=1, scaling=True):
     return param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt
 
 
-def unpack_opt_results(param_vector=None, func=None, iter_count=None, f_count=None, g_count=None, h_count=None, warning=None, scaling=False, scaling_matrix=None, sim_index=None):
+def unpack_opt_results(param_vector=None, func=None, iter_count=None, f_count=None, g_count=None, h_count=None, warning=None, scaling_matrix=None, scaling_matrix=None, sim_index=None):
     """Unpack and store the Frame Order optimisation results.
 
     @keyword param_vector:      The model-free parameter vector.
@@ -723,10 +721,8 @@ def unpack_opt_results(param_vector=None, func=None, iter_count=None, f_count=No
     @type h_count:              int
     @keyword warning:           Any optimisation warnings.
     @type warning:              str or None
-    @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
-    @type scaling:              bool
-    @keyword scaling_matrix:    The scaling matrix.
-    @type scaling_matrix:       numpy rank-2 array
+    @keyword scaling_matrix:    The diagonal and square scaling matrices.
+    @type scaling_matrix:       numpy rank-2, float64 array or None
     @keyword sim_index:         The index of the simulation to optimise.  This should be None for normal optimisation.
     @type sim_index:            None or int
      """
@@ -740,7 +736,7 @@ def unpack_opt_results(param_vector=None, func=None, iter_count=None, f_count=No
         raise RelaxNaNError('chi-squared')
 
     # Scaling.
-    if scaling:
+    if scaling_matrix != None:
         param_vector = dot(scaling_matrix, param_vector)
 
     # The parameters to wrap.

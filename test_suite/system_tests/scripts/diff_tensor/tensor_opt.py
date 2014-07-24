@@ -66,4 +66,4 @@ spin.isotope('15N', spin_id='@N')
 model_free.select_model(model='m0')
 
 # Optimisation.
-minimise('newton')
+minimise.execute('newton')

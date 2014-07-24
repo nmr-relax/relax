@@ -150,7 +150,7 @@ for model in ['rigid', 'free rotor', 'rotor', 'iso cone, torsionless', 'iso cone
     frame_order.select_model(model=model)
 
     # Calculate the chi2 value.
-    calc()
+    minimise.calculate()
 
     # Attempt to mimimise.
-    #minimise('simplex', constraints=False)
+    #minimise.execute('simplex', constraints=False)

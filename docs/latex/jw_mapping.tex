@@ -55,12 +55,12 @@ value.set(val=-172 * 1e-6, param='csa')
 jw_mapping.set_frq(frq=600.0 * 1e6)
 
 # Reduced spectral density mapping.
-calc()
+minimise.calculate()
 
 # Monte Carlo simulations (well, bootstrapping as this is a calculation and not a fit!).
 monte_carlo.setup(number=500)
 monte_carlo.create_data()
-calc()
+minimise.calculate()
 monte_carlo.error_analysis()
 
 # Create grace files.
@@ -177,7 +177,7 @@ Therefore the $J(\omega)$ values are simply calculated with the call:
 
 \begin{lstlisting}[firstnumber=31]
 # Reduced spectral density mapping.
-calc()
+minimise.calculate()
 \end{lstlisting}
 
 The propagation of errors is more complicated.
@@ -189,7 +189,7 @@ The normal Monte Carlo user functions can be called:
 # Monte Carlo simulations (well, bootstrapping as this is a calculation and not a fit!).
 monte_carlo.setup(number=500)
 monte_carlo.create_data()
-calc()
+minimise.calculate()
 monte_carlo.error_analysis()
 \end{lstlisting}
 

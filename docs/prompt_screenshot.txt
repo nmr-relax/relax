@@ -2,6 +2,6 @@ help
 pipe.create('test', 'mf')
 pipe.create('noe test', 'noe')
 pipe.display()
-minimise()
+minimise.execute()
 reset()
 state.load('results')

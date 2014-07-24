@@ -95,7 +95,7 @@ if ds.model == 'population':
         self._execute_uf(uf_name='value.set', val=1.0/NUM_STR, param='probs', index=j)
 
 # Minimisation.
-self._execute_uf('bfgs', constraints=True, max_iter=5, uf_name='minimise')
+self._execute_uf('bfgs', constraints=True, max_iter=5, uf_name='minimise.execute')
 
 # Calculate the AIC value.
 api = return_api('N-state')

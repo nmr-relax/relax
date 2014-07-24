@@ -70,8 +70,8 @@ self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 #cdp.align_tensors[0].Ayz = -0.286367/2000
 
 # Minimisation.
-self._execute_uf(uf_name='grid_search', inc=3)
-self._execute_uf('simplex', constraints=False, max_iter=500, uf_name='minimise')
+self._execute_uf(uf_name='minimise.grid_search', inc=3)
+self._execute_uf('simplex', constraints=False, max_iter=500, uf_name='minimise.execute')
 
 # Set up the errors needed for the simulations.
 if ds.mode in ['rdc', 'all']:
@@ -83,7 +83,7 @@ if ds.mode in ['pcs', 'all']:
 self._execute_uf(uf_name='monte_carlo.setup', number=3)
 self._execute_uf(uf_name='monte_carlo.create_data')
 self._execute_uf(uf_name='monte_carlo.initial_values')
-self._execute_uf('bfgs', constraints=False, max_iter=5, uf_name='minimise')
+self._execute_uf('bfgs', constraints=False, max_iter=5, uf_name='minimise.execute')
 self._execute_uf(uf_name='monte_carlo.error_analysis')
 
 # Write out a results file.

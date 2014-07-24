@@ -69,8 +69,8 @@ class Main:
 
         # Minimise just the diffusion tensor.
         fix('all_spins')
-        grid_search(inc=GRID_INC)
-        minimise(MIN_ALGOR)
+        minimise.grid_search(inc=GRID_INC)
+        minimise.execute(MIN_ALGOR)
 
         # Write the results.
         results.write(file='devnull', force=True)
@@ -89,7 +89,7 @@ class Main:
         fix('all', fixed=False)
 
         # Minimise all parameters.
-        minimise(MIN_ALGOR, max_iter=10)
+        minimise.execute(MIN_ALGOR, max_iter=10)
 
 
         # Final stage.
@@ -115,7 +115,7 @@ class Main:
         monte_carlo.setup(number=MC_NUM)
         monte_carlo.create_data()
         monte_carlo.initial_values()
-        minimise(MIN_ALGOR)
+        minimise.execute(MIN_ALGOR)
 
         # Set some MC simulation te values to 200 ns to cause them to be eliminated.
         ds['final'].mol[0].res[0].spin[0].te_sim[1] = 200*1e-9
@@ -152,7 +152,7 @@ class Main:
         monte_carlo.setup(number=MC_NUM)
         monte_carlo.create_data()
         monte_carlo.initial_values()
-        minimise(MIN_ALGOR)
+        minimise.execute(MIN_ALGOR)
         monte_carlo.error_analysis()
 
         # Write the final results.
@@ -222,8 +222,8 @@ class Main:
             model_free.select_model(model=name)
 
             # Minimise.
-            grid_search(inc=GRID_INC)
-            minimise(MIN_ALGOR)
+            minimise.grid_search(inc=GRID_INC)
+            minimise.execute(MIN_ALGOR)
 
 
 

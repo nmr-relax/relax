@@ -50,14 +50,14 @@ self._execute_uf(uf_name='spectrometer.frequency', id='synth', frq=600.0 * 1e6)
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 
 # Minimisation.
-self._execute_uf(uf_name='grid_search', inc=3)
-self._execute_uf(uf_name='minimise', min_algor='simplex', constraints=False, max_iter=500)
+self._execute_uf(uf_name='minimise.grid_search', inc=3)
+self._execute_uf(uf_name='minimise.execute', min_algor='simplex', constraints=False, max_iter=500)
 
 # Monte Carlo simulations.
 self._execute_uf(uf_name='monte_carlo.setup', number=3)
 self._execute_uf(uf_name='monte_carlo.create_data')
 self._execute_uf(uf_name='monte_carlo.initial_values')
-self._execute_uf(uf_name='minimise', min_algor='simplex', constraints=False, max_iter=500)
+self._execute_uf(uf_name='minimise.execute', min_algor='simplex', constraints=False, max_iter=500)
 self._execute_uf(uf_name='monte_carlo.error_analysis')
 
 # Write out a results file.

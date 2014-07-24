@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -77,8 +77,8 @@ for i in range(len(pipes)):
         model_free.select_model(model=pipes[i])
 
         # Minimisation of the calibration set.
-        grid_search(inc=11)
-        minimise('newton')
+        minimise.grid_search(inc=11)
+        minimise.execute('newton')
 
         # Write the results.
         results.write(force=True)
@@ -106,7 +106,7 @@ for i in range(len(pipes)):
         read.results(data_type='mf')
 
         # Calculate the chi-squared value for the validation set.
-        calc()
+        minimise.calculate()
 
 
 print("\n\n\n\n")
@@ -131,7 +131,7 @@ for i in range(len(ri_ids)):
     relax_data.read(ri_ids[i], ri_types[i], frqs[i], file_names[i])
 
 # Minimise the selected model using all relaxation data.
-minimise('newton')
+minimise.execute('newton')
 
 # Finish.
 results.write(file='results', force=True)

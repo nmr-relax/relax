@@ -58,7 +58,7 @@ self._execute_uf(uf_name='align_tensor.init', tensor='Er', align_id='Er', params
 
 # Minimisation of only the Er tensor.
 self._execute_uf(uf_name='align_tensor.fix', id='Dy', fixed=True)
-self._execute_uf('simplex', constraints=False, max_iter=500, uf_name='minimise')
+self._execute_uf('simplex', constraints=False, max_iter=500, uf_name='minimise.execute')
 
 # Write out a results file.
 self._execute_uf('devnull', dir=None, force=True, uf_name='results.write')
