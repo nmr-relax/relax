@@ -57,89 +57,6 @@ uf.gui_icon = "oxygen.categories.applications-education"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
 
 
-# The minimise.grid_search user function.
-uf = uf_info.add_uf('minimise.grid_search')
-uf.title = "Perform a grid search."
-uf.title_short = "Grid search."
-uf.display = True
-uf.add_keyarg(
-    name = "lower",
-    py_type = "num_list",
-    desc_short = "lower bounds",
-    desc = "An array of the lower bound parameter values for the grid search.  The length of the array should be equal to the number of parameters in the model.",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "upper",
-    py_type = "num_list",
-    desc_short = "upper bounds",
-    desc = "An array of the upper bound parameter values for the grid search.  The length of the array should be equal to the number of parameters in the model.",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "inc",
-    default = 21,
-    py_type = "int_or_int_list",
-    desc_short = "incrementation value",
-    desc = "The number of increments to search over.  If a single integer is given then the number of increments will be equal in all dimensions.  Different numbers of increments in each direction can be set if 'inc' is set to an array of integers of length equal to the number of parameters.",
-    none_elements = True
-)
-uf.add_keyarg(
-    name = "verbosity",
-    default = 1,
-    py_type = "int",
-    desc_short = "verbosity level",
-    desc = "The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1."
-)
-uf.add_keyarg(
-    name = "constraints",
-    default = True,
-    py_type = "bool",
-    desc_short = "constraints flag",
-    desc = "A boolean flag specifying whether the parameters should be constrained.  The default is to turn constraints on (constraints=True)."
-)
-uf.add_keyarg(
-    name = "skip_preset",
-    default = True,
-    py_type = "bool",
-    desc_short = "skip preset parameter flag",
-    desc = "This argument, when True, allows any parameter which already has a value set to be skipped in the grid search."
-)
-# Description.
-uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will perform a grid search across the parameter space.")
-uf.backend = minimise.grid_search
-uf.menu_text = "&grid_search"
-uf.gui_icon = "relax.grid_search"
-uf.wizard_size = (800, 500)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
-
-
-# The minimise.grid_zoom user function.
-uf = uf_info.add_uf('minimise.grid_zoom')
-uf.title = "Activate the zooming grid search by setting the zoom level."
-uf.title_short = "Zooming grid search activation."
-uf.add_keyarg(
-    name = "level",
-    default = 0,
-    py_type = "num",
-    desc_short = "zoom level",
-    desc = "The zooming grid search level.  This can be any number, positive or negative."
-)
-# Description.
-uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("The optimisation of a mathematical model normally consists of two parts - a coarse grid search to find an initial set of parameter values followed by the use of a high precision optimisation algorithm to exactly find the local or global solution.  But in certain situations, for example where a parallelised grid search is advantageous, a finer grid may be desired.  The zooming grid search provides a more efficient alternative to simply increasing the number of increments used in the initial grid search.  Note that in most situations, standard optimisation algorithms will be by far computationally less expensive.")
-uf.desc[-1].add_paragraph("The zooming grid search can be activated via this user function.  After setting the desired zoom level, the original grid search user function should be called again.  The zoom level is used to decrease the total area of the grid search.  The grid width for each dimension of the parameter space will be divided by 2**zoom_level.  So a level of 1 will halve all dimensions, a level of 2 will quarter the widths, a level of 3 will be an eighth of the widths, etc.")
-uf.desc[-1].add_paragraph("The zooming algorithm proceeds as follows.  The new zoomed grid will be centred at the current parameter values.  However if the new grid is outside of the bounds of the original grid, the entire grid will be translated so that it lies entirely within the original bounds.  This is to avoid grid points lying within undefined regions of the space.  An exception is when the zoom factor is negative, hence the new grid will be larger than the original.")
-uf.desc[-1].add_paragraph("An example of using the zooming grid search is to first perform a standard initial grid search, then set the zoom level to 1 and perform a second grid search.  Continue for zoom levels 2, 3, etc. until the desired fineness is obtained.")
-uf.backend = minimise.grid_zoom
-uf.menu_text = "&grid_zoom"
-uf.gui_icon = "oxygen.actions.zoom-in"
-uf.wizard_height_desc = 500
-uf.wizard_size = (900, 700)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
-
-
 # The minimise.execute user function.
 uf = uf_info.add_uf('minimise.execute')
 uf.title = "Perform an optimisation."
@@ -397,4 +314,87 @@ uf.menu_text = "&execute"
 uf.gui_icon = "relax.rosenbrock"
 uf.wizard_height_desc = 300
 uf.wizard_size = (1000, 750)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
+
+
+# The minimise.grid_search user function.
+uf = uf_info.add_uf('minimise.grid_search')
+uf.title = "Perform a grid search."
+uf.title_short = "Grid search."
+uf.display = True
+uf.add_keyarg(
+    name = "lower",
+    py_type = "num_list",
+    desc_short = "lower bounds",
+    desc = "An array of the lower bound parameter values for the grid search.  The length of the array should be equal to the number of parameters in the model.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "upper",
+    py_type = "num_list",
+    desc_short = "upper bounds",
+    desc = "An array of the upper bound parameter values for the grid search.  The length of the array should be equal to the number of parameters in the model.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "inc",
+    default = 21,
+    py_type = "int_or_int_list",
+    desc_short = "incrementation value",
+    desc = "The number of increments to search over.  If a single integer is given then the number of increments will be equal in all dimensions.  Different numbers of increments in each direction can be set if 'inc' is set to an array of integers of length equal to the number of parameters.",
+    none_elements = True
+)
+uf.add_keyarg(
+    name = "verbosity",
+    default = 1,
+    py_type = "int",
+    desc_short = "verbosity level",
+    desc = "The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1."
+)
+uf.add_keyarg(
+    name = "constraints",
+    default = True,
+    py_type = "bool",
+    desc_short = "constraints flag",
+    desc = "A boolean flag specifying whether the parameters should be constrained.  The default is to turn constraints on (constraints=True)."
+)
+uf.add_keyarg(
+    name = "skip_preset",
+    default = True,
+    py_type = "bool",
+    desc_short = "skip preset parameter flag",
+    desc = "This argument, when True, allows any parameter which already has a value set to be skipped in the grid search."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will perform a grid search across the parameter space.")
+uf.backend = minimise.grid_search
+uf.menu_text = "&grid_search"
+uf.gui_icon = "relax.grid_search"
+uf.wizard_size = (800, 500)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
+
+
+# The minimise.grid_zoom user function.
+uf = uf_info.add_uf('minimise.grid_zoom')
+uf.title = "Activate the zooming grid search by setting the zoom level."
+uf.title_short = "Zooming grid search activation."
+uf.add_keyarg(
+    name = "level",
+    default = 0,
+    py_type = "num",
+    desc_short = "zoom level",
+    desc = "The zooming grid search level.  This can be any number, positive or negative."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The optimisation of a mathematical model normally consists of two parts - a coarse grid search to find an initial set of parameter values followed by the use of a high precision optimisation algorithm to exactly find the local or global solution.  But in certain situations, for example where a parallelised grid search is advantageous, a finer grid may be desired.  The zooming grid search provides a more efficient alternative to simply increasing the number of increments used in the initial grid search.  Note that in most situations, standard optimisation algorithms will be by far computationally less expensive.")
+uf.desc[-1].add_paragraph("The zooming grid search can be activated via this user function.  After setting the desired zoom level, the original grid search user function should be called again.  The zoom level is used to decrease the total area of the grid search.  The grid width for each dimension of the parameter space will be divided by 2**zoom_level.  So a level of 1 will halve all dimensions, a level of 2 will quarter the widths, a level of 3 will be an eighth of the widths, etc.")
+uf.desc[-1].add_paragraph("The zooming algorithm proceeds as follows.  The new zoomed grid will be centred at the current parameter values.  However if the new grid is outside of the bounds of the original grid, the entire grid will be translated so that it lies entirely within the original bounds.  This is to avoid grid points lying within undefined regions of the space.  An exception is when the zoom factor is negative, hence the new grid will be larger than the original.")
+uf.desc[-1].add_paragraph("An example of using the zooming grid search is to first perform a standard initial grid search, then set the zoom level to 1 and perform a second grid search.  Continue for zoom levels 2, 3, etc. until the desired fineness is obtained.")
+uf.backend = minimise.grid_zoom
+uf.menu_text = "&grid_zoom"
+uf.gui_icon = "oxygen.actions.zoom-in"
+uf.wizard_height_desc = 500
+uf.wizard_size = (900, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
