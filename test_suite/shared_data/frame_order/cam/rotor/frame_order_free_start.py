@@ -80,14 +80,14 @@ frame_order.pivot([ 34.721619683345111,  -2.63891199102997 ,  12.941974078087899
 
 # Grid search (low quality for speed).
 frame_order.num_int_pts(num=500)
-grid_search(inc=[21, 21, 21, None, None, None, None, None, None, 21, 21])
+minimise.grid_search(inc=[21, 21, 21, None, None, None, None, None, None, 21, 21])
 
 # Iterative optimisation with increasing precision.
 num_int_pts = [500, 1000]
 func_tol = [1e-2, 1e-3]
 for i in range(len(num_int_pts)):
     frame_order.num_int_pts(num=num_int_pts[i])
-    minimise('simplex', func_tol=func_tol[i])
+    minimise.execute('simplex', func_tol=func_tol[i])
 
 # Load the full PCS data set.
 for i in range(len(ln)):
@@ -98,14 +98,14 @@ num_int_pts = [500, 1000, 10000, 100000]
 func_tol = [1e-2, 1e-3, 5e-3, 1e-4]
 for i in range(len(num_int_pts)):
     frame_order.num_int_pts(num=num_int_pts[i])
-    minimise('simplex', func_tol=func_tol[i])
+    minimise.execute('simplex', func_tol=func_tol[i])
 
 # Test Monte Carlo simulations.
 frame_order.num_int_pts(num=10000)
 monte_carlo.setup(number=200)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex', func_tol=1e-4)
+minimise.execute('simplex', func_tol=1e-4)
 eliminate()
 monte_carlo.error_analysis()
 
