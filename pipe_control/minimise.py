@@ -276,6 +276,14 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
         # Print out the model title.
         api.print_model_title(prefix="Grid search setup:  ", model_info=model_info)
 
+        # The grid zoom level.
+        zoom = 0
+        if hasattr(cdp, 'grid_zoom_level'):
+            zoom = cdp.grid_zoom_level
+        zoom_factor = 1.0 / 2.0**zoom
+        if zoom > 0:
+            print("Zooming grid level of %s, scaling the grid size by a factor of %s.\n" % (zoom, zoom_factor))
+
         # Append empty lists for the bounds to be built up.
         model_lower.append([])
         model_upper.append([])
@@ -308,11 +316,48 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
                 upper_i = param_object.grid_upper(names[i], incs=incs, model_info=model_info)
 
             # Skip preset values.
-            if skip_preset and not values[i] in [None, {}, []] and not isNaN(values[i]):
+            if not zoom and skip_preset and not values[i] in [None, {}, []] and not isNaN(values[i]):
                 lower_i = values[i]
                 upper_i = values[i]
                 model_inc[-1][i] = incs = 1
                 comment = 'Preset value'
+
+            # Zooming grid.
+            if zoom:
+                # The full size and scaled size.
+                size = upper_i - lower_i
+                zoom_size = size * zoom_factor
+                half_size = zoom_size / 2.0
+                comment = 'Zoom grid width of %s %s' % (zoom_size, param_object.units(names[i]))
+
+                # The new size around the current value.
+                lower_zoom = values[i] - half_size
+                upper_zoom = values[i] + half_size
+
+                # Outside of the original lower bound, so shift the grid to fit.
+                if lower_zoom < lower_i:
+                    print "low"
+                    # The amount to shift by.
+                    shift = lower_i - lower_zoom
+
+                    # Set the new bounds.
+                    upper_i = upper_zoom + shift
+
+                # Outside of the original upper bound, so shift the grid to fit.
+                elif upper_zoom > upper_i:
+                    # The amount to shift by.
+                    shift = upper_i - upper_zoom
+
+                    # Set the new bounds.
+                    lower_i = lower_zoom + shift
+
+                # Inside the original bounds.
+                else:
+                    lower_i = lower_zoom
+                    upper_i = upper_zoom
+
+            # Add to the data list for printing out.
+            data.append([names[i], "%15s" % lower_i, "%15s" % upper_i, "%15s" % incs, comment])
 
             # Scale the bounds.
             scaling = param_object.scaling(names[i], model_info=model_info)
@@ -322,9 +367,6 @@ def grid_setup(lower=None, upper=None, inc=None, verbosity=1, skip_preset=True):
             # Append.
             model_lower[-1].append(lower_i)
             model_upper[-1].append(upper_i)
-
-            # Add to the data list for printing out.
-            data.append([names[i], "%15s" % lower_i, "%15s" % upper_i, "%15s" % incs, comment])
 
         # Printout.
         if verbosity:
