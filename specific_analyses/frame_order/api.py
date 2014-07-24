@@ -398,7 +398,7 @@ class Frame_order(API_base, API_common):
                 end_point = False
 
             # Append the grid row.
-            row = grid_row(inc[i], lower, upper, dist_type=dist_type, end_point=end_point)
+            row = grid_row(inc[i], lower[i], upper[i], dist_type=dist_type, end_point=end_point)
             grid.append(row)
 
             # Remove an inc if the end point has been removed.
