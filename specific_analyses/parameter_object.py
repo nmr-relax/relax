@@ -1194,7 +1194,4 @@ class Param_list(object):
             unit = ''
 
         # Return the units.
-        print self._units[name]
-        print type(self._units[name])
-        print unit
         return unit
