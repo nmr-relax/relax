@@ -319,8 +319,8 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
 
 # The minimise.grid_search user function.
 uf = uf_info.add_uf('minimise.grid_search')
-uf.title = "Perform a grid search."
-uf.title_short = "Grid search."
+uf.title = "Perform a grid search to find an initial non-biased parameter set for optimisation."
+uf.title_short = "Grid search optimisation."
 uf.display = True
 uf.add_keyarg(
     name = "lower",
@@ -367,11 +367,14 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will perform a grid search across the parameter space.")
+uf.desc[-1].add_paragraph("The optimisation of a mathematical model normally consists of two parts - a coarse grid search across the parameter space to find an initial set of parameter values followed by the use of a high precision optimisation algorithm to exactly find the local or global solution.  The grid search is an essential tool as it allows a non-biased initial optimisation position to be found.  It avoids the statistical bias and preconditioning introduced by using a self chosen initial parameter set.  The high computational cost of the grid search is almost always favourable to the statistical bias of a user defined starting position.")
+uf.desc[-1].add_paragraph("The region of the parameter space that the grid search covers is defined by the lower and upper grid bounds.  These will generally default to the entire parameter space except for when the parameter is non-bounded, for example a 3D position in the PDB space.  This user function will print out the grid bounds used and, if the default bounds are deemed to be insufficient, then the lower, upper or both bounds can supplied.  This only works if all active models have the same parameters.  The coarseness or fineness of the grid is defined by the number of increments to search across between the bounds.  For an alternative to using large numbers of increments, see the zooming grid search.")
+uf.desc[-1].add_paragraph("It is possible to decrease the dimensionality of the grid search, and hence drop the computational cost by orders of magnitude, if certain parameter values are know a priori.  For example if the values are determined via a different experiment.  Such parameters can be set with the value setting user function.  Then, when the skip preset flag is set, these parameters will be skipped in the grid search.  This feature should not be abused and statistical bias should be avoided at all cost.")
 uf.backend = minimise.grid_search
 uf.menu_text = "&grid_search"
 uf.gui_icon = "relax.grid_search"
-uf.wizard_size = (800, 500)
+uf.wizard_height_desc = 370
+uf.wizard_size = (1000, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
 
 
