@@ -38,8 +38,8 @@ uf_class.gui_icon = "relax.rosenbrock"
 
 # The minimise.calculate user function.
 uf = uf_info.add_uf('minimise.calculate')
-uf.title = "Calculate the function value."
-uf.title_short = "Function value calculation."
+uf.title = "Calculate the model parameters or the current target function value."
+uf.title_short = "Model parameter or target function value calculation."
 uf.display = True
 uf.add_keyarg(
     name = "verbosity",
@@ -50,10 +50,13 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will call the target function for the analysis type associated with the current data pipe using the current parameter values.  This can be used to find, for example, the chi-squared value for different parameter values.")
+uf.desc[-1].add_paragraph("The operation of this user function is two-fold and depends on whether the solution for the models of the current analysis are found by direct calculation or by optimisation.  The dual operations are:")
+uf.desc[-1].add_item_list_element("Direct calculation models", "For these models, the parameters will be directly calculated from the base data.  This will be the exact solution and the user function will store the parameter values.  The grid search and optimisation user functions are not implemented for this analysis type.")
+uf.desc[-1].add_item_list_element("Optimised models", "This will call the target function normally used for optimisation for each model using the current parameter values.  This can be used to manually find the chi-squared value for different parameter values.  The parameter values will not be affected.")
 uf.backend = minimise.calc
 uf.menu_text = "&calculate"
 uf.gui_icon = "oxygen.categories.applications-education"
+uf.wizard_size = (900, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
 
 
