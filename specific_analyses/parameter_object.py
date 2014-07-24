@@ -1174,7 +1174,7 @@ class Param_list(object):
 
         @param name:    The name of the parameter.
         @type name:     str
-        @return:        The units string.
+        @return:        The units string.  If no unit is present, the empty string will be returned.
         @rtype:         str
         """
 
@@ -1183,7 +1183,14 @@ class Param_list(object):
 
         # Function.
         if isinstance(self._units[name], FunctionType) or isinstance(self._units[name], MethodType):
-            return self._units[name]()
+            unit = self._units[name]()
 
-        # Return the value.
-        return self._units[name]
+        # The value.
+        unit = self._units[name]
+
+        # Convert None to an empty string.
+        if unit == None:
+            unit = ''
+
+        # Return the units.
+        return unit
