@@ -736,7 +736,7 @@ class Relax_disp(SystemTestCase):
             self.interpreter.relax_disp.cluster(cluster_id='all', spin_id=":1-100")
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -4806,7 +4806,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.relax_disp.select_model(model='R2eff')
         self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
 
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
         self.interpreter.eliminate(function=None, args=None)
         self.interpreter.monte_carlo.setup(number=MC_NUM)
         self.interpreter.monte_carlo.create_data(method='back_calc')
