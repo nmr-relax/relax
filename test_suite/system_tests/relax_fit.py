@@ -27,7 +27,7 @@ from tempfile import mkdtemp
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
-from pipe_control.mol_res_spin import spin_index_loop, spin_loop
+from pipe_control.mol_res_spin import return_spin, spin_index_loop, spin_loop
 from pipe_control import pipes
 from lib.errors import RelaxError
 from status import Status; status = Status()
@@ -250,4 +250,8 @@ class Relax_fit(SystemTestCase):
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_zooming_grid.py')
 
-        # Check the curve-fitting results.
+        # Check the curve-fitting results (the values are from the optimisation of test_curve_fitting_height()).
+        spin = return_spin(":4@N")
+        self.assertAlmostEqual(spin.chi2, 2.9169526515678883)
+        self.assertAlmostEqual(spin.rx, 8.0814894974893967)
+        self.assertAlmostEqual(spin.i0/1e6, 1996050.9699629977/1e6)

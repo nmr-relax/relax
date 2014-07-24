@@ -78,7 +78,13 @@ for iter in range(2):
 # Set the relaxation curve type.
 relax_fit.select_model('exp')
 
-# Zooming grid search.
-for zoom in [0, 1, 2, 3]:
-    minimise.grid_search(inc=7)
-    minimise.grid_zoom(level=zoom)
+# Only select a single spin for speed.
+select.spin(':4', change_all=True)
+
+# Zooming grid search, starting with a zoom level of 0 for the original grid.
+for zoom in range(50):
+    # Set the zoom level.
+    minimise.grid_zoom(level=zoom/0.5)
+
+    # The grid search.
+    minimise.grid_search(inc=11)
