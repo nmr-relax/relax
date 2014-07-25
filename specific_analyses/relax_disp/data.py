@@ -2135,7 +2135,7 @@ def plot_disp_curves_loop_frq(exp_type=None, ei=None, current_spin=None, spin_id
             if Delta_omega == 0.0:
                 theta = pi / 2.0
             else:
-                theta = atan2(omega1, Delta_omega)
+                theta = atan2(Delta_omega, omega1)
 
             # Calculate effective field in rotating frame
             w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
@@ -2207,7 +2207,7 @@ def plot_disp_curves_loop_frq(exp_type=None, ei=None, current_spin=None, spin_id
             if Delta_omega == 0.0:
                 theta = pi / 2.0
             else:
-                theta = atan2(omega1, Delta_omega)
+                theta = atan2(Delta_omega, omega1)
 
             # Calculate effective field in rotating frame
             w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
@@ -2330,7 +2330,7 @@ def plot_disp_curves_loop_frq(exp_type=None, ei=None, current_spin=None, spin_id
             if Delta_omega == 0.0:
                 theta = pi / 2.0
             else:
-                theta = atan2(omega1, Delta_omega)
+                theta = atan2(Delta_omega, omega1)
 
             # Calculate effective field in rotating frame
             w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
@@ -3610,7 +3610,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, spin_lock_of
                         # Then it should be: theta = pi + atan(-x) = pi - atan(x) = pi - abs(atan( +/- x)).
                         # This is taken care of with the atan2(y, x) function, which return atan(y / x), in radians, and the result is between -pi and pi.
                         else:
-                            theta[ei][si][mi][oi].append(atan2(omega1, Delta_omega))
+                            theta[ei][si][mi][oi].append(atan2(Delta_omega, omega1))
 
                         # Calculate effective field in rotating frame
                         w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
@@ -3683,7 +3683,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, spin_lock_of
                         # Then it should be: theta = pi + atan(-x) = pi - atan(x) = pi - abs(atan( +/- x)).
                         # This is taken care of with the atan2(y, x) function, which return atan(y / x), in radians, and the result is between -pi and pi.
                         else:
-                            theta[ei][si][mi][oi].append(atan2(omega1, Delta_omega))
+                            theta[ei][si][mi][oi].append(atan2(Delta_omega, omega1))
 
                         # Calculate effective field in rotating frame
                         w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
