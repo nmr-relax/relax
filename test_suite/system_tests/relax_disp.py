@@ -3043,10 +3043,10 @@ class Relax_disp(SystemTestCase):
         spin71.kC = 3586.38798270774
 
         #self.interpreter.relax_disp.r20_from_min_r2eff(force=False)
-        #self.interpreter.grid_search(lower=None, upper=None, inc=41, constraints=True, verbosity=1)
+        #self.interpreter.minimise.grid_search(lower=None, upper=None, inc=41, constraints=True, verbosity=1)
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
