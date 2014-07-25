@@ -1561,6 +1561,46 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
     # Default hardcoded colours (one colour for each magnetic field strength).
     colour_order = [4, 15, 2, 13, 11, 1, 3, 5, 6, 7, 8, 9, 10, 12, 14] * 1000
 
+    # Plot dispersion curves, extending over number of dispersion points.
+    plot_disp_curves_disp(dir=dir, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
+
+    # Write a python "grace to PNG/EPS/SVG..." conversion script.
+    # Open the file for writing.
+    file_name = "grace2images.py"
+    file = open_write_file(file_name, dir, force)
+
+    # Write the file.
+    script_grace2images(file=file)
+
+    # Close the batch script, then make it executable (expanding any ~ characters).
+    file.close()
+    if dir:
+        dir = expanduser(dir)
+        chmod(dir + sep + file_name, S_IRWXU|S_IRGRP|S_IROTH)
+    else:
+        file_name = expanduser(file_name)
+        chmod(file_name, S_IRWXU|S_IRGRP|S_IROTH)
+
+
+def plot_disp_curves_disp(dir=None, num_points=1000, extend=500.0, force=False, proton_mmq_flag=None, colour_order=None):
+    """Custom 2D Grace plotting function for the dispersion curves, looping over dispersion points.
+
+    One file will be created per spin system.
+
+    @keyword dir:               The optional directory to place the file into.
+    @type dir:                  str
+    @keyword num_points:        The number of points to generate the interpolated fitted curves with.
+    @type num_points:           int
+    @keyword extend:            How far to extend the interpolated fitted curves to (in Hz).
+    @type extend:               float
+    @param force:               Boolean argument which if True causes the files to be overwritten if it already exists.
+    @type force:                bool
+    @keyword proton_mmq_flag:   The flag specifying if proton SQ or MQ CPMG data exists for the spin.
+    @type proton_mmq_flag:      bool
+    @keyword colour_order:      List of colours for xmgrace.
+    @type colour_order:         list of int.
+    """
+
     # Loop over each spin.
     for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
         # Skip protons for MMQ data.
@@ -1585,6 +1625,13 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
         if not spin.model in [MODEL_R2EFF]:
             # Interpolate through disp points.
             file_name, interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new = plot_disp_curves_interpolate_disp(spin, spin_id, num_points, extend)
+
+        else:
+            # The unique file name.
+            file_name = "disp%s.agr" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
+            back_calc = None
+            cpmg_frqs_new = None
+            spin_lock_nu1_new = None
 
         # Open the file for writing.
         file_path = get_file_path(file_name, dir)
@@ -1649,23 +1696,6 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
 
         # Add the file to the results file list.
         add_result_file(type='grace', label='Grace', file=file_path)
-
-    # Write a python "grace to PNG/EPS/SVG..." conversion script.
-    # Open the file for writing.
-    file_name = "grace2images.py"
-    file = open_write_file(file_name, dir, force)
-
-    # Write the file.
-    script_grace2images(file=file)
-
-    # Close the batch script, then make it executable (expanding any ~ characters).
-    file.close()
-    if dir:
-        dir = expanduser(dir)
-        chmod(dir + sep + file_name, S_IRWXU|S_IRGRP|S_IROTH)
-    else:
-        file_name = expanduser(file_name)
-        chmod(file_name, S_IRWXU|S_IRGRP|S_IROTH)
 
 
 def plot_disp_curves_interpolate_disp(spin, spin_id, num_points, extend):
