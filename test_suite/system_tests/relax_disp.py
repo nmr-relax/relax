@@ -3060,21 +3060,21 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        #self.assertAlmostEqual(spin70.r2[r20_key1], 6.74362294539099)
-        #self.assertAlmostEqual(spin70.r2[r20_key2], 6.57406797067481, 6)
-        self.assertAlmostEqual(spin70.phi_ex_B, 0.148720030582502)
-        self.assertAlmostEqual(spin70.phi_ex_C, 0.13194199234727)
-        self.assertAlmostEqual(spin70.kB/1000, 4103.67291044474/1000, 6)
-        self.assertAlmostEqual(spin70.kC/1000, 7029.00169072625/1000, 6)
-        #self.assertAlmostEqual(spin70.chi2, 363.534044873483)
+        self.assertAlmostEqual(spin70.r2[r20_key1], 6.7436230253685)
+        self.assertAlmostEqual(spin70.r2[r20_key2], 6.57406813008828, 6)
+        self.assertAlmostEqual(spin70.phi_ex_B, 0.206304023079778)
+        self.assertAlmostEqual(spin70.phi_ex_C, 0.106428983339627)
+        self.assertAlmostEqual(spin70.kB/1000, 4723.09897652589/1000, 6)
+        self.assertAlmostEqual(spin70.kC/1000, 4723.09876196409/1000, 6)
+        self.assertAlmostEqual(spin70.chi2, 363.534044873483)
 
         # Checks for residue :71.
-        #self.assertAlmostEqual(spin71.r2[r20_key1], 5.00776657712558)
-        self.assertAlmostEqual(spin71.phi_ex_B, 0.040135534855056)
-        self.assertAlmostEqual(spin71.phi_ex_C, 0.0200507484069289)
-        self.assertAlmostEqual(spin71.kB/1000, 4045.30071361214/1000)
-        self.assertAlmostEqual(spin71.kC/1000, 3586.38798270774/1000)
-        #self.assertAlmostEqual(spin71.chi2, 17.0776399916287)
+        self.assertAlmostEqual(spin71.r2[r20_key1], 4.96612095596752)
+        self.assertAlmostEqual(spin71.phi_ex_B, 0.00398262266512895)
+        self.assertAlmostEqual(spin71.phi_ex_C, 0.0555791581291262)
+        self.assertAlmostEqual(spin71.kB/1000, 1323.33195689832/1000)
+        self.assertAlmostEqual(spin71.kC/1000, 3149.58971568059/1000)
+        self.assertAlmostEqual(spin71.chi2, 16.2620934464368)
 
 
     def test_hansen_cpmg_data_to_ns_cpmg_2site_3D(self):
