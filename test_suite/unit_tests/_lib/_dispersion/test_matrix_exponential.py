@@ -182,10 +182,10 @@ class Test_matrix_exponential(TestCase):
                         diff_A_neg_imag_sum = sum(diff_A_neg_imag)
 
                         # Test that the sum difference is zero.                                        
-                        self.assertAlmostEqual(diff_A_pos_real_sum , 0.0, 6)
-                        self.assertAlmostEqual(diff_A_pos_imag_sum , 0.0, 6)
-                        self.assertAlmostEqual(diff_A_neg_real_sum , 0.0, 6)
-                        self.assertAlmostEqual(diff_A_neg_imag_sum , 0.0, 6)
+                        self.assertAlmostEqual(diff_A_pos_real_sum, 0.0, 6)
+                        self.assertAlmostEqual(diff_A_pos_imag_sum, 0.0, 6)
+                        self.assertAlmostEqual(diff_A_neg_real_sum, 0.0, 6)
+                        self.assertAlmostEqual(diff_A_neg_imag_sum, 0.0, 6)
 
 
     def test_ns_mmq_2site_korzhnev_2005_15n_dq_data_complex128(self):
