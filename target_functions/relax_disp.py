@@ -1822,7 +1822,6 @@ class Dispersion:
             for si in range(self.NS):
                 for mi in range(self.NM):
                     for oi in range(self.NO):
-                        back_calc_return[ei][si][mi].append([])
                         if exp_type in EXP_TYPE_LIST_CPMG:
                             num = len(self.cpmg_frqs_orig[ei][mi][oi])
                         else:
