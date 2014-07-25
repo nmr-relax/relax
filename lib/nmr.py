@@ -63,6 +63,23 @@ def frequency_to_ppm(frq=None, B0=None, isotope=None):
     return frq / B0 * g1H / return_gyromagnetic_ratio(isotope) / 1e-6
 
 
+def frequency_to_ppm_from_rad(frq=None, B0=None, isotope=None):
+    """Convert the given frequency from rad/s to ppm units.
+
+    @keyword frq:       The frequency in rad/s.
+    @type frq:          float
+    @keyword B0:        The magnetic field strength as the proton frequency in Hertz.
+    @type B0:           float
+    @keyword isotope:   The isotope type of the nucleus of interest.
+    @type isotope:      str
+    @return:            The frequency in ppm.
+    @rtype:             float
+    """
+
+    # Convert and return.
+    return frq / (2.0 * pi) / B0 * g1H / return_gyromagnetic_ratio(isotope) / 1e-6
+
+
 def frequency_to_rad_per_s(frq=None, B0=None, isotope=None):
     """Convert the given frequency from ppm to rad/s units.
 
