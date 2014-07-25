@@ -1582,7 +1582,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
         chmod(file_name, S_IRWXU|S_IRGRP|S_IROTH)
 
 
-def plot_disp_curves_disp(dir=None, num_points=1000, extend=500.0, force=False, proton_mmq_flag=None, colour_order=None):
+def plot_disp_curves_disp(dir=None, num_points=None, extend=None, force=None, proton_mmq_flag=None, colour_order=None):
     """Custom 2D Grace plotting function for the dispersion curves, looping over dispersion points.
 
     One file will be created per spin system.
@@ -1624,7 +1624,7 @@ def plot_disp_curves_disp(dir=None, num_points=1000, extend=500.0, force=False, 
         interpolated_flag = False
         if not spin.model in [MODEL_R2EFF]:
             # Interpolate through disp points.
-            file_name, interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new = plot_disp_curves_interpolate_disp(spin, spin_id, num_points, extend)
+            file_name, interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new = plot_disp_curves_interpolate_disp(spin=spin, spin_id=spin_id, num_points=num_points, extend=extend)
 
         else:
             # The unique file name.
@@ -1661,7 +1661,7 @@ def plot_disp_curves_disp(dir=None, num_points=1000, extend=500.0, force=False, 
                 current_spin = proton
 
             # Loop over the spectrometer frequencies and offsets.
-            err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels = plot_disp_curves_loop_frq_offset(exp_type, ei, current_spin, back_calc, cpmg_frqs_new, spin_lock_nu1_new, interpolated_flag, graph_index, colour_order, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels)
+            err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels = plot_disp_curves_loop_frq_offset(exp_type=exp_type, ei=ei, current_spin=current_spin, back_calc=back_calc, cpmg_frqs_new=cpmg_frqs_new, spin_lock_nu1_new=spin_lock_nu1_new, interpolated_flag=interpolated_flag, graph_index=graph_index, colour_order=colour_order, data=data, set_labels=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, symbol_sizes=symbol_sizes, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels)
 
             # Increment the graph index.
             graph_index += 1
@@ -1698,7 +1698,7 @@ def plot_disp_curves_disp(dir=None, num_points=1000, extend=500.0, force=False, 
         add_result_file(type='grace', label='Grace', file=file_path)
 
 
-def plot_disp_curves_interpolate_disp(spin, spin_id, num_points, extend):
+def plot_disp_curves_interpolate_disp(spin=None, spin_id=None, num_points=None, extend=None):
     """Interpolate function for 2D Grace plotting function for the dispersion curves.
 
     @keyword spin:          The specific spin data container.
@@ -1827,7 +1827,7 @@ def plot_disp_curves_interpolate_disp(spin, spin_id, num_points, extend):
     return file_name, interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new
 
 
-def plot_disp_curves_loop_frq_offset(exp_type, ei, current_spin, back_calc, cpmg_frqs_new, spin_lock_nu1_new, interpolated_flag, graph_index, colour_order, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels):
+def plot_disp_curves_loop_frq_offset(exp_type=None, ei=None, current_spin=None, back_calc=None, cpmg_frqs_new=None, spin_lock_nu1_new=None, interpolated_flag=None, graph_index=None, colour_order=None, data=None, set_labels=None, set_colours=None, x_axis_type_zero=None, symbols=None, symbol_sizes=None, linetype=None, linestyle=None, axis_labels=None):
     """Loop function over the spectrometer frequencies and offsets for 2D Grace plotting function.
 
     @keyword exp_type:          The experiment type.
