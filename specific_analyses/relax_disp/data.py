@@ -1820,9 +1820,6 @@ def plot_disp_curves_r1rho(dir=None, num_points=None, extend=None, force=None, p
         # Add the file to the results file list.
         add_result_file(type='grace', label='Grace', file=file_path)
 
-        # Add to counter
-        si += 1
-
 
 def plot_disp_curves_interpolate_disp(spin=None, spin_id=None, num_points=None, extend=None):
     """Interpolate function for 2D Grace plotting function for the dispersion curves.
@@ -2009,9 +2006,6 @@ def plot_disp_curves_interpolate_sl_offset(spin=None, spin_id=None, si=None, num
                 # Convert to a numpy array.
                 spin_lock_offset_new[ei][0][mi] = array(spin_lock_offset_new[ei][0][mi], float64)
 
-    # Back calculate R2eff data for the second sets of plots.
-    back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, spin_lock_offset=spin_lock_offset_new)
-
     # Number of spectrometer fields.
     fields = [None]
     field_count = 1
@@ -2021,6 +2015,9 @@ def plot_disp_curves_interpolate_sl_offset(spin=None, spin_id=None, si=None, num
 
     # The offset data.
     chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, spin_lock_offset=spin_lock_offset_new, fields=spin_lock_nu1)
+
+    # Back calculate R2eff data for the second sets of plots.
+    back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, spin_lock_offset=spin_lock_offset_new, spin_lock_nu1=spin_lock_fields_inter)
 
     return interpolated_flag, back_calc, spin_lock_offset_new, chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff
 
@@ -3559,7 +3556,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, spin_lock_of
             if spin_lock_offset != None:
                 for oi, offset in enumerate(spin_lock_offset[ei][si][mi]):
                     # Assign spin-lock fields to all loaded fields.
-                    fields = cdp.spin_lock_nu1_list
+                    fields = [x for x in cdp.spin_lock_nu1_list if x!=None]
 
                     # Save the fields to list.
                     spin_lock_fields_inter[ei][mi][oi] = fields

@@ -157,7 +157,7 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_offset=No
         spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
 
     # Reset the cpmg_frqs if interpolating R1rho models.
-    elif cpmg_frqs == None and spin_lock_nu1 == None and spin_lock_offset != None:
+    elif cpmg_frqs == None and spin_lock_offset != None:
         cpmg_frqs = None
         spin_lock_nu1 = spin_lock_fields_inter
 
