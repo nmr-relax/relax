@@ -2157,6 +2157,77 @@ def plot_disp_curves_loop_frq(exp_type=None, ei=None, current_spin=None, spin_id
         set_index += 1
         colour_index += 1
 
+    # Add the back calculated data.
+    colour_index = 0
+    for frq, offset, mi, oi in loop_frq_offset(exp_type=exp_type, return_indices=True):
+        # Add a new set for the data at each frequency and offset.
+        data[graph_index].append([])
+
+        # Add a new label.
+        if exp_type in EXP_TYPE_LIST_CPMG:
+            label = "Back calculated R\\s2eff\\N"
+        else:
+            label = "Back calculated R\\s2\\N"
+        if offset != None and frq != None:
+            label += " (%.1f MHz, %.3f ppm)" % (frq / 1e6, offset)
+        elif frq != None:
+            label += " (%.1f MHz)" % (frq / 1e6)
+        elif offset != None:
+            label += " (%.3f ppm)" % (offset)
+        set_labels[ei].append(label)
+
+        # The other settings.
+        set_colours[graph_index].append(colour_order[colour_index])
+        x_axis_type_zero[graph_index].append(True)
+        symbols[graph_index].append(4)
+        symbol_sizes[graph_index].append(0.45)
+        linetype[graph_index].append(1)
+        if interpolated_flag:
+            linestyle[graph_index].append(2)
+        else:
+            linestyle[graph_index].append(1)
+
+        # Loop over the dispersion points.
+        for point, di in loop_point(exp_type=exp_type, frq=frq, offset=offset, return_indices=True):
+            # The data key.
+            key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+            # No data present.
+            if not hasattr(current_spin, 'r2eff_bc') or key not in current_spin.r2eff_bc:
+                continue
+
+            # Convert offset to rad/s from ppm.
+            offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
+            # Calculate the tilt angle.
+            omega1 = point * 2.0 * pi
+            Delta_omega = chemical_shifts[ei][si][mi] - offset_rad
+            if Delta_omega == 0.0:
+                theta = pi / 2.0
+            else:
+                theta = atan2(omega1, Delta_omega)
+
+            # Calculate effective field in rotating frame
+            w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
+
+            # Set x_point.
+            x_point = w_eff
+
+            # Set y_point. When R_1 is set 0.0.
+            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+            y_point = ( current_spin.r2eff_bc[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+
+            # Add the data.
+            data[graph_index][set_index].append([x_point, y_point])
+
+            # Handle the errors.
+            if err:
+                data[graph_index][set_index][-1].append(None)
+
+        # Increment the graph set index.
+        set_index += 1
+        colour_index += 1
+
+
     # The axis labels.
     axis_labels.append(['\\qEffective field in rotating frame: w_eff \\Q', '\\qR\\s2\\N\\Q (rad.s\\S-1\\N)'])
 
