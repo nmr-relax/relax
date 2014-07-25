@@ -22,13 +22,8 @@
 # Module docstring.
 """The R1 and R2 exponential relaxation curve fitting optimisation functions."""
 
-# Python module imports.
-from numpy import average
-from re import search
-
 # relax module imports.
 from dep_check import C_module_exp_fn
-from lib.errors import RelaxError, RelaxLenError
 from specific_analyses.relax_fit.parameters import assemble_param_vector
 
 # C modules.

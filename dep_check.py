@@ -40,6 +40,7 @@ try:
     if float(numpy.version.version[:3]) < 1.6:
         sys.stderr.write("Version %s of the 'numpy' dependency is not supported, numpy >= 1.6 is required.\n" % numpy.version.version)
         sys.exit()
+    del numpy
 except ImportError:
     sys.stderr.write("The dependency 'numpy' has not been installed.\n")
     sys.exit()
@@ -47,6 +48,7 @@ except ImportError:
 # Command line option parser.
 try:
     import optparse
+    del optparse
 except ImportError:
     sys.stderr.write("The dependency 'Optik' has not been installed.\n")
     sys.exit()
@@ -54,6 +56,7 @@ except ImportError:
 # Minfx python package check.
 try:
     import minfx
+    del minfx
 except ImportError:
     sys.stderr.write("The dependency 'minfx' has not been installed (see https://gna.org/projects/minfx/).\n")
     sys.exit()
@@ -63,6 +66,7 @@ except ImportError:
 # Bmrblib python package check.
 try:
     import bmrblib
+    del bmrblib
     bmrblib_module = True
 except ImportError:
     bmrblib_module = False
@@ -70,6 +74,7 @@ except ImportError:
 # wx module.
 try:
     import wx
+    del wx
     wx_module = True
 except ImportError:
     wx_module = False
@@ -79,6 +84,7 @@ except ImportError:
 # epydoc module.
 try:
     import epydoc
+    del epydoc
     epydoc_module = True
 except ImportError:
     epydoc_module = False
@@ -89,6 +95,8 @@ try:
     if 'TERM' in os.environ and os.environ['TERM'] == 'xterm':
         os.environ['TERM'] = 'linux'
     import readline
+    del os
+    del readline
     readline_module = True
 except ImportError:
     readline_module = False
@@ -96,6 +104,7 @@ except ImportError:
 # matplotlib module.
 try:
     import matplotlib
+    del matplotlib
     matplotlib_module = True
 except ImportError:
     matplotlib_module = False
@@ -103,6 +112,7 @@ except ImportError:
 # runpy module.
 try:
     import runpy
+    del runpy
     runpy_module = True
 except ImportError:
     runpy_module = False
@@ -110,6 +120,7 @@ except ImportError:
 # profile module (python development packages required).
 try:
     import profile
+    del profile
     profile_module = True
 except ImportError:
     profile_module = False
@@ -117,6 +128,7 @@ except ImportError:
 # profile C module (python development packages required).
 try:
     import cProfile
+    del cProfile
     cprofile_module = True
 except ImportError:
     cprofile_module = False
@@ -124,6 +136,7 @@ except ImportError:
 # BZ2 compression module.
 try:
     import bz2
+    del bz2
     bz2_module = True
 except ImportError:
     message = sys.exc_info()[1]
@@ -133,6 +146,7 @@ except ImportError:
 # Gzip compression module.
 try:
     import gzip
+    del gzip
     gzip_module = True
 except ImportError:
     message = sys.exc_info()[1]
@@ -142,6 +156,7 @@ except ImportError:
 # IO module.
 try:
     import io
+    del io
     io_module = True
 except ImportError:
     message = sys.exc_info()[1]
@@ -151,6 +166,7 @@ except ImportError:
 # Scipy import.
 try:
     import scipy
+    del scipy
     scipy_module = True
 except:
     scipy_module = False
@@ -166,6 +182,7 @@ except:
 # mpi4py.
 try:
     import mpi4py
+    del mpi4py
     mpi4py_module = True
 except ImportError:
     message = sys.exc_info()[1]
@@ -184,6 +201,7 @@ except ImportError:
 # PyMOL.
 try:
     import pymol
+    del pymol
     pymol_module = True
 except ImportError:
     message = sys.exc_info()[1]
@@ -207,10 +225,12 @@ if xml_module:
     else:
         xml_version = ''
         xml_type = ''
+    del xml
 
 # subprocess module.
 try:
     import subprocess
+    del subprocess
     subprocess_module = True
 except ImportError:
     message = sys.exc_info()[1]
@@ -220,6 +240,7 @@ except ImportError:
 # ctypes module.
 try:
     import ctypes
+    del ctypes
     ctypes_module = True
 except ImportError:
     message = sys.exc_info()[1]
@@ -227,6 +248,7 @@ except ImportError:
     ctypes_module_message = message.args[0]
 try:
     from ctypes import Structure
+    del Structure
     ctypes_structure_module = True
 except ImportError:
     message = sys.exc_info()[1]
@@ -243,6 +265,7 @@ except ImportError:
 try:
     from target_functions import relax_fit
     from target_functions.relax_fit import setup
+    del relax_fit
     del setup
     C_module_exp_fn = True
 except ImportError:

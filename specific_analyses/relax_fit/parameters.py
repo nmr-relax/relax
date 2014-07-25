@@ -23,11 +23,8 @@
 """The R1 and R2 exponential relaxation curve fitting parameter functions."""
 
 # Python module imports.
-from numpy import array, float64, identity, zeros
+from numpy import array, float64, zeros
 from re import search
-
-# relax module imports.
-from lib.mathematics import round_to_next_order
 
 
 def assemble_param_vector(spin=None, sim_index=None):
