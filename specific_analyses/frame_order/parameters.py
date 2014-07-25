@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import pi
-from numpy import array, float64, identity, zeros
+from numpy import array, float64, zeros
 
 # relax module imports.
 from specific_analyses.frame_order.data import pivot_fixed, translation_fixed

@@ -24,8 +24,8 @@
 
 # Python module imports.
 from math import pi
-from numpy import array, float64, identity, int8, zeros
-from re import match, search
+from numpy import array, float64, int8, zeros
+from re import match
 
 # relax module imports.
 from lib.errors import RelaxError

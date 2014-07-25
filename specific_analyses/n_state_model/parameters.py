@@ -23,7 +23,7 @@
 """The N-state model or structural ensemble analysis parameter handling."""
 
 # Python module imports.
-from numpy import array, float64, identity, zeros
+from numpy import array, float64, zeros
 from re import search
 from warnings import warn
 

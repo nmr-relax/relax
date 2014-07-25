@@ -24,7 +24,6 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import pi
 from minfx.generic import generic_minimise
 from minfx.grid import grid
 from numpy import dot, float64, zeros

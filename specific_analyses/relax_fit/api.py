@@ -34,7 +34,7 @@ from warnings import warn
 from dep_check import C_module_exp_fn
 from lib.errors import RelaxError, RelaxNoModelError, RelaxNoSequenceError
 from lib.warnings import RelaxDeselectWarning
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_fit.optimisation import back_calc, d2func_wrapper, dfunc_wrapper, func_wrapper

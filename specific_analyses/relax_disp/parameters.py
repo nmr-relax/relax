@@ -25,7 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import array, float64, identity, median, zeros
+from numpy import array, float64, median, zeros
 import sys
 
 # relax module imports.

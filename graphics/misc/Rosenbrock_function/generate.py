@@ -1,7 +1,6 @@
 # This script generates an SVG file showing the Rosenbrock function.
 # The code originates from the public domain code at http://commons.wikimedia.org/wiki/File:Rosenbrock_function.svg.
 
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.colors import LogNorm
 import matplotlib.pyplot as plt

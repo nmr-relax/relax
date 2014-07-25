@@ -28,7 +28,6 @@ from string import split
 import sys
 
 # relax module imports.
-from data_store.mol_res_spin import SpinContainer
 import lib.arg_check
 from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.text.sectioning import subsection

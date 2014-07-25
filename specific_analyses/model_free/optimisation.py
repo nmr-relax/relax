@@ -24,11 +24,9 @@
 """The model-free analysis optimisation functions."""
 
 # Python module imports.
-from math import pi
 from minfx.generic import generic_minimise
 from minfx.grid import grid, grid_point_array
 from numpy import array, dot, float64
-from re import match
 
 # relax module imports.
 import lib.arg_check
@@ -39,7 +37,6 @@ from multi import Memo, Result_command, Slave_command
 from pipe_control import pipes
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import return_spin, return_spin_from_index, spin_loop
-from specific_analyses.model_free.model import determine_model_type
 from specific_analyses.model_free.parameters import assemble_param_vector, disassemble_param_vector
 from target_functions.mf import Mf
 
