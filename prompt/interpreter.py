@@ -264,7 +264,7 @@ class Interpreter:
         if dep_check.readline_module:
             readline.set_completer(Tab_completion(name_space=locals()).finish)
             readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:",<>/?')
-            if 'libedit' in readline.__doc__:
+            if readline.__doc__ != None and 'libedit' in readline.__doc__:
                 readline.parse_and_bind("bind ^I rl_complete")
             else:
                 readline.parse_and_bind("tab: complete")
