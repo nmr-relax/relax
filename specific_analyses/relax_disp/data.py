@@ -1604,7 +1604,8 @@ def plot_disp_curves_disp(dir=None, num_points=None, extend=None, force=None, pr
     @type colour_order:         list of int.
     """
 
-    # Loop over each spin.
+    # Loop over each spin. Initialise spin counter.
+    si = 0
     for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
         # Skip protons for MMQ data.
         if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
@@ -1630,7 +1631,7 @@ def plot_disp_curves_disp(dir=None, num_points=None, extend=None, force=None, pr
         interpolated_flag = False
         if not spin.model in [MODEL_R2EFF]:
             # Interpolate through disp points.
-            interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new = plot_disp_curves_interpolate_disp(spin=spin, spin_id=spin_id, num_points=num_points, extend=extend)
+            interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = plot_disp_curves_interpolate_disp(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend=extend)
 
         else:
             back_calc = None
@@ -1822,13 +1823,15 @@ def plot_disp_curves_r1rho(dir=None, num_points=None, extend=None, force=None, p
         add_result_file(type='grace', label='Grace', file=file_path)
 
 
-def plot_disp_curves_interpolate_disp(spin=None, spin_id=None, num_points=None, extend=None):
+def plot_disp_curves_interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend=None):
     """Interpolate function for 2D Grace plotting function for the dispersion curves.
 
     @keyword spin:          The specific spin data container.
     @type spin:             SpinContainer instance.
     @keyword spin_id:       The spin ID string.
     @type spin_id:          str
+    @keyword si:            The index of the given spin in the cluster.
+    @type si:               int
     @keyword num_points:    The number of points to generate the interpolated fitted curves with.
     @type num_points:       int
     @keyword extend:        How far to extend the interpolated fitted curves to (in Hz).
@@ -1942,10 +1945,20 @@ def plot_disp_curves_interpolate_disp(spin=None, spin_id=None, num_points=None, 
                     # Convert to a numpy array.
                     spin_lock_nu1_new[ei][mi][oi] = array(spin_lock_nu1_new[ei][mi][oi], float64)
 
+    # Number of spectrometer fields.
+    fields = [None]
+    field_count = 1
+    if hasattr(cdp, 'spectrometer_frq_count'):
+        fields = cdp.spectrometer_frq_list
+        field_count = cdp.spectrometer_frq_count
+
+    # The offset data.
+    chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, fields=spin_lock_nu1_new)
+
     # Back calculate R2eff data for the second sets of plots.
     back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, cpmg_frqs=cpmg_frqs_new, spin_lock_nu1=spin_lock_nu1_new)
 
-    return interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new
+    return interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff
 
 
 def plot_disp_curves_interpolate_sl_offset(spin=None, spin_id=None, si=None, num_points=None, extend=None):
