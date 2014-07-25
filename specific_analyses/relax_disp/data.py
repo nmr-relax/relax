@@ -1727,7 +1727,7 @@ def plot_disp_curves_r1rho(dir=None, num_points=None, extend=None, force=None, p
         if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
             continue
         # Skip for spin not in model list of r1rho models.
-        elif spin.model not in MODEL_LIST_R1RHO:
+        elif spin.model not in [MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]:
             continue
 
         # Initialise some data structures.
