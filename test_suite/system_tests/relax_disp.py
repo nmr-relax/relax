@@ -3013,6 +3013,70 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 17.0776399916287, 5)
 
 
+    def test_hansen_cpmg_data_to_lm63_3site(self):
+        """Optimisation of Dr. Flemming Hansen's CPMG data to the LM63 dispersion model.
+
+        This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
+        """
+
+        # Base data setup.
+        self.setup_hansen_cpmg_data(model='LM63 3-site')
+
+        # Alias the spins.
+        spin70 = return_spin(":70")
+        spin71 = return_spin(":71")
+
+        # The R20 keys.
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
+
+        ## Set the initial parameter values.
+        spin70.r2 = {r20_key1: 7.570370921220954, r20_key2: 8.694446951909107}
+        spin70.phi_ex_B = 0.14872003058250227
+        spin70.phi_ex_C = 0.1319419923472704
+        spin70.kB = 4103.672910444741
+        spin70.kC = 7029.001690726248
+        spin71.r2 = {r20_key1: 5.1347793381636, r20_key2: 7.156573986051575}
+        spin71.phi_ex_B = 0.04013553485505605
+        spin71.phi_ex_C = 0.020050748406928887
+        spin71.kB = 4045.3007136121364
+        spin71.kC = 3586.38798270774
+
+        #self.interpreter.relax_disp.r20_from_min_r2eff(force=False)
+        #self.interpreter.grid_search(lower=None, upper=None, inc=41, constraints=True, verbosity=1)
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[r20_key1], spin71.r2[r20_key1]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[r20_key2], spin71.r2[r20_key2]))
+        print("%-20s %20.15g %20.15g" % ("phi_ex_B", spin70.phi_ex_B, spin71.phi_ex_B))
+        print("%-20s %20.15g %20.15g" % ("phi_ex_C", spin70.phi_ex_C, spin71.phi_ex_C))
+        print("%-20s %20.15g %20.15g" % ("kB", spin70.kB, spin71.kB))
+        print("%-20s %20.15g %20.15g" % ("kC", spin70.kC, spin71.kC))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
+
+        # Checks for residue :70.
+        #self.assertAlmostEqual(spin70.r2[r20_key1], 6.74362294539099)
+        #self.assertAlmostEqual(spin70.r2[r20_key2], 6.57406797067481, 6)
+        self.assertAlmostEqual(spin70.phi_ex_B, 0.148720030582502)
+        self.assertAlmostEqual(spin70.phi_ex_C, 0.13194199234727)
+        self.assertAlmostEqual(spin70.kB/1000, 4103.67291044474/1000, 6)
+        self.assertAlmostEqual(spin70.kC/1000, 7029.00169072625/1000, 6)
+        #self.assertAlmostEqual(spin70.chi2, 363.534044873483)
+
+        # Checks for residue :71.
+        #self.assertAlmostEqual(spin71.r2[r20_key1], 5.00776657712558)
+        self.assertAlmostEqual(spin71.phi_ex_B, 0.040135534855056)
+        self.assertAlmostEqual(spin71.phi_ex_C, 0.0200507484069289)
+        self.assertAlmostEqual(spin71.kB/1000, 4045.30071361214/1000)
+        self.assertAlmostEqual(spin71.kC/1000, 3586.38798270774/1000)
+        #self.assertAlmostEqual(spin71.chi2, 17.0776399916287)
+
+
     def test_hansen_cpmg_data_to_ns_cpmg_2site_3D(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS CPMG 2-site 3D' dispersion model.
 
