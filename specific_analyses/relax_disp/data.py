@@ -1623,15 +1623,16 @@ def plot_disp_curves_disp(dir=None, num_points=None, extend=None, force=None, pr
         linetype = []
         linestyle = []
 
+        # The unique file name.
+        file_name = "disp%s.agr" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
+
         # Set up the interpolated curve data structures.
         interpolated_flag = False
         if not spin.model in [MODEL_R2EFF]:
             # Interpolate through disp points.
-            file_name, interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new = plot_disp_curves_interpolate_disp(spin=spin, spin_id=spin_id, num_points=num_points, extend=extend)
+            interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new = plot_disp_curves_interpolate_disp(spin=spin, spin_id=spin_id, num_points=num_points, extend=extend)
 
         else:
-            # The unique file name.
-            file_name = "disp%s.agr" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
             back_calc = None
             cpmg_frqs_new = None
             spin_lock_nu1_new = None
@@ -1836,9 +1837,6 @@ def plot_disp_curves_interpolate_disp(spin=None, spin_id=None, num_points=None, 
     @rtype:                 string, boolean, numpy rank-1 float64 array, numpy rank-1 float64 array, numpy rank-1 float64 array
     """
 
-    # The unique file name.
-    file_name = "disp%s.agr" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
-
     # Set the flag.
     interpolated_flag = True
 
@@ -1947,7 +1945,7 @@ def plot_disp_curves_interpolate_disp(spin=None, spin_id=None, num_points=None, 
     # Back calculate R2eff data for the second sets of plots.
     back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, cpmg_frqs=cpmg_frqs_new, spin_lock_nu1=spin_lock_nu1_new)
 
-    return file_name, interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new
+    return interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new
 
 
 def plot_disp_curves_interpolate_sl_offset(spin=None, spin_id=None, si=None, num_points=None, extend=None):
