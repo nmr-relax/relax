@@ -165,7 +165,7 @@ def calc_rotating_frame_params(spin=None, spin_id=None, fields=None, verbosity=0
     - The dispersion point data (the spin-lock field strength in Hz).
 
     The return will be for each spin,
-    - Rotating frame tilt angle ( theta = arctan(w_1 / Omega) ) [rad]
+    - Rotating frame tilt angle ( theta = arctan(Omega / w_1) ) [rad]
     - The average resonance offset in the rotating frame ( Domega = w_{pop_ave} - w_rf  ) [rad/s]
     - Effective field in rotating frame ( w_eff = sqrt( Omega^2 + w_1^2 ) ) [rad/s]
 
