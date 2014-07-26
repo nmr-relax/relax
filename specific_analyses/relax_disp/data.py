@@ -1564,8 +1564,9 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
     # Plot dispersion curves, extending over number of dispersion points.
     plot_disp_curves_disp(dir=dir, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
 
-    # For R1rho models, interpolate theta through spin-lock offset rather than spin-lock field strength.
-    plot_disp_curves_r1rho(dir=dir, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
+    # For R1rho models, interpolate through spin-lock field strength, and plot R1rho R2 as function of effective field in rotating frame w_eff.
+    if cdp.exp_type_list == [EXP_TYPE_R1RHO]:
+        plot_disp_curves_r1rho_r2_as_func_of_w_eff(dir=dir, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
 
     # Write a python "grace to PNG/EPS/SVG..." conversion script.
     # Open the file for writing.
@@ -1703,7 +1704,7 @@ def plot_disp_curves_disp(dir=None, num_points=None, extend=None, force=None, pr
         add_result_file(type='grace', label='Grace', file=file_path)
 
 
-def plot_disp_curves_r1rho(dir=None, num_points=None, extend=None, force=None, proton_mmq_flag=None, colour_order=None):
+def plot_disp_curves_r1rho_r2_as_func_of_w_eff(dir=None, num_points=None, extend=None, force=None, proton_mmq_flag=None, colour_order=None):
     """Custom 2D Grace plotting function for the dispersion curves, interpolating theta through spin-lock offset rather than spin-lock field strength.
 
     One file will be created per spin system.
@@ -1728,9 +1729,6 @@ def plot_disp_curves_r1rho(dir=None, num_points=None, extend=None, force=None, p
         # Skip protons for MMQ data.
         if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
             continue
-        # Skip for spin not in model list of r1rho models.
-        elif spin.model not in [MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]:
-            continue
 
         # Initialise some data structures.
         data = []
@@ -1749,7 +1747,7 @@ def plot_disp_curves_r1rho(dir=None, num_points=None, extend=None, force=None, p
         interpolated_flag = False
 
         # The unique file name.
-        file_name = "theta%s.agr" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
+        file_name = "r1rho_r2_as_func_of_w_eff%s.agr" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
 
         if not spin.model in [MODEL_R2EFF]:
             # Interpolate through disp points.
@@ -1757,6 +1755,16 @@ def plot_disp_curves_r1rho(dir=None, num_points=None, extend=None, force=None, p
 
         else:
             back_calc = None
+            spin_lock_nu1_new = None
+
+            # Number of spectrometer fields.
+            fields = [None]
+            field_count = 1
+            if hasattr(cdp, 'spectrometer_frq_count'):
+                fields = cdp.spectrometer_frq_list
+                field_count = cdp.spectrometer_frq_count
+
+            chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, fields=spin_lock_nu1_new)
 
         # Open the file for writing.
         file_path = get_file_path(file_name, dir)
