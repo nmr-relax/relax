@@ -1607,7 +1607,7 @@ def plot_disp_curves_disp(dir=None, num_points=None, extend=None, force=None, pr
 
     # Loop over each spin. Initialise spin counter.
     si = 0
-    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+    for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
         # Skip protons for MMQ data.
         if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
             continue
@@ -1681,7 +1681,7 @@ def plot_disp_curves_disp(dir=None, num_points=None, extend=None, force=None, pr
                             data[i][j][k][l] = 0.0
 
         # Write the header.
-        title = "Relaxation dispersion plot"
+        title = "Relaxation dispersion plot for:    %s %s"%(res_name, spin_id)
         graph_num = len(data)
         sets = []
         legend = []
@@ -1725,7 +1725,7 @@ def plot_disp_curves_r1rho_r2_as_func_of_w_eff(dir=None, num_points=None, extend
 
     # Loop over each spin. Initialise spin counter.
     si = 0
-    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+    for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
         # Skip protons for MMQ data.
         if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
             continue
@@ -1808,7 +1808,7 @@ def plot_disp_curves_r1rho_r2_as_func_of_w_eff(dir=None, num_points=None, extend
                             data[i][j][k][l] = 0.0
 
         # Write the header.
-        title = "Relaxation dispersion plot"
+        title = "Relaxation dispersion plot for:    %s %s"%(res_name, spin_id)
         subtitle = "Interpolated through Spin-lock field strength \\xw\\B\\s1\\N"
         graph_num = len(data)
         sets = []
