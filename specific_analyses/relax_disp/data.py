@@ -1801,6 +1801,7 @@ def plot_disp_curves_r1rho(dir=None, num_points=None, extend=None, force=None, p
 
         # Write the header.
         title = "Relaxation dispersion plot"
+        subtitle = "Interpolated through Spin-lock field strength \\xw\\B\\s1\\N"
         graph_num = len(data)
         sets = []
         legend = []
@@ -1808,7 +1809,7 @@ def plot_disp_curves_r1rho(dir=None, num_points=None, extend=None, force=None, p
             sets.append(len(data[gi]))
             legend.append(False)
         legend[0] = True
-        write_xy_header(file=file, title=title, graph_num=graph_num, sets=sets, set_names=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, symbol_sizes=symbol_sizes, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels, legend=legend, legend_box_fill_pattern=[0]*graph_num, legend_char_size=[0.8]*graph_num)
+        write_xy_header(file=file, title=title, subtitle=subtitle, graph_num=graph_num, sets=sets, set_names=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, symbol_sizes=symbol_sizes, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels, legend=legend, legend_box_fill_pattern=[0]*graph_num, legend_char_size=[0.8]*graph_num)
 
         # Write the data.
         graph_type = 'xy'
