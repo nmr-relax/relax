@@ -2004,7 +2004,7 @@ def plot_disp_curves_r1rho_r2_as_func_of_w_eff(dir=None, num_points=None, extend
                 current_spin = proton
 
             # Loop over the spectrometer frequencies and offsets.
-            err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels = plot_disp_curves_loop_frq(exp_type=exp_type, ei=ei, current_spin=current_spin, spin_id=spin_id, si=si, back_calc=back_calc, spin_lock_nu1_new=spin_lock_nu1_new, chemical_shifts=chemical_shifts, tilt_angles_inter=tilt_angles_inter, Delta_omega_inter=Delta_omega_inter, w_eff_inter=w_eff_inter, interpolated_flag=interpolated_flag, graph_index=graph_index, colour_order=colour_order, data=data, set_labels=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, symbol_sizes=symbol_sizes, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels)
+            err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels = return_grace_data_r1rho_r2_as_func_of_w_eff(exp_type=exp_type, ei=ei, current_spin=current_spin, spin_id=spin_id, si=si, back_calc=back_calc, spin_lock_nu1_new=spin_lock_nu1_new, chemical_shifts=chemical_shifts, tilt_angles_inter=tilt_angles_inter, Delta_omega_inter=Delta_omega_inter, w_eff_inter=w_eff_inter, interpolated_flag=interpolated_flag, graph_index=graph_index, colour_order=colour_order, data=data, set_labels=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, symbol_sizes=symbol_sizes, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels)
 
             # Increment the graph index.
             graph_index += 1
@@ -2040,336 +2040,6 @@ def plot_disp_curves_r1rho_r2_as_func_of_w_eff(dir=None, num_points=None, extend
 
         # Add the file to the results file list.
         add_result_file(type='grace', label='Grace', file=file_path)
-
-
-def plot_disp_curves_loop_frq(exp_type=None, ei=None, current_spin=None, spin_id=None, si=None, back_calc=None, spin_lock_nu1_new=None, chemical_shifts=None, spin_lock_fields_inter=None, offsets_inter=None, tilt_angles_inter=None, Delta_omega_inter=None, w_eff_inter=None, interpolated_flag=None, graph_index=None, colour_order=None, data=None, set_labels=None, set_colours=None, x_axis_type_zero=None, symbols=None, symbol_sizes=None, linetype=None, linestyle=None, axis_labels=None):
-    """Loop function over the spectrometer frequencies and offsets for 2D Grace plotting function.
-
-    @keyword exp_type:                  The experiment type.
-    @type exp_type:                     str
-    @keyword ei:                        The experiment type index.
-    @type ei:                           int
-    @keyword current_spin:              The specific spin data container.
-    @type current_spin:                 SpinContainer instance.
-    @keyword spin_id:                   The spin ID string.
-    @type spin_id:                      str
-    @keyword si:                        The index of the given spin in the cluster.
-    @type si:                           int
-    @keyword back_calc:                 The back calculated data.  The first index corresponds to the experiment type, the second is the spin of the cluster, the third is the magnetic field strength, and the fourth is the dispersion point.
-    @type back_calc:                    list of lists of lists of lists of float
-    @keyword spin_lock_nu1_new:         The interpolated spin-lock field strengths in Hertz.  The dimensions are {Ei, Mi, Oi}.
-    @type spin_lock_nu1_new:            rank-3 list of floats
-    @keyword chemical_shifts:           The chemical shifts in rad/s {Ei, Si, Mi}
-    @type chemical_shifts:              rank-3 list of floats
-    @keyword tilt_angles_inter:         The interpolated rotating frame tilt angles {Ei, Si, Mi, Oi, Di}
-    @type tilt_angles_inter:            rank-5 list of floats
-    @keyword Delta_omega_inter:         The interpolated average resonance offset in the rotating frame in rad/s {Ei, Si, Mi, Oi, Di}
-    @type Delta_omega_inter:            rank-5 list of floats
-    @keyword w_eff_inter:               The interpolated effective field in rotating frame in rad/s {Ei, Si, Mi, Oi, Di}.
-    @type w_eff_inter:                  rank-5 list of floats
-    @keyword interpolated_flag:         Flag telling if the graph should be interpolated.
-    @type interpolated_flag:            bool
-    @keyword graph_index:               Graph index for xmgrace.
-    @type graph_index:                  int
-    @keyword colour_order:              List of colours for xmgrace.
-    @type colour_order:                 list of int.
-    @keyword data:                      The 4D structure of numerical data to graph (see docstring).
-    @type data:                         list of lists of lists of float
-    @keyword set_labels:                Data labels to be used per experiment.
-    @type set_labels:                   list of list of strings
-    @keyword set_colours:               The colours for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
-    @type set_colours:                  None or list of list of int
-    @keyword x_axis_type_zero:          The flags specifying if the X-axis should be placed at zero.
-    @type x_axis_type_zero:             list of lists of bool
-    @keyword symbols:                   The symbol style for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
-    @type symbols:                      list of list of int
-    @keyword symbol_sizes:              The symbol size for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
-    @type symbol_sizes:                 list of list of int
-    @keyword linetype:                  The line type for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
-    @type linetype:                     list of list of int
-    @keyword linestyle:                 The line style for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
-    @type linestyle:                    list of list of int
-    @keyword axis_labels:               The labels for the axes (in the [X, Y] list format).  The first dimension is the graph.
-    @type axis_labels:                  list of list of str
-    """
-
-    set_index = 0
-    err = False
-    colour_index = 0
-
-    # Return r1.
-    field_count = cdp.spectrometer_frq_count
-    r1 = return_r1_data(spins=[current_spin], spin_ids=[spin_id], field_count=field_count)
-    r1_err = return_r1_err_data(spins=[current_spin], spin_ids=[spin_id], field_count=field_count)
-
-    for frq, offset, mi, oi in loop_frq_offset(exp_type=exp_type, return_indices=True):
-        # Add a new set for the data at each frequency and offset.
-        data[graph_index].append([])
-
-        # Add a new label.
-        if exp_type in EXP_TYPE_LIST_CPMG:
-            label = "R\\s2eff\\N"
-        else:
-            label = "R\\s2\\N"
-        if offset != None and frq != None:
-            label += " (%.1f MHz, %.3f ppm)" % (frq / 1e6, offset)
-        elif frq != None:
-            label += " (%.1f MHz)" % (frq / 1e6)
-        elif offset != None:
-            label += " (%.3f ppm)" % (offset)
-        set_labels[ei].append(label)
-
-        # The other settings.
-        set_colours[graph_index].append(colour_order[colour_index])
-        x_axis_type_zero[graph_index].append(True)
-        symbols[graph_index].append(1)
-        symbol_sizes[graph_index].append(0.45)
-        linetype[graph_index].append(0)
-        linestyle[graph_index].append(0)
-
-        # Loop over the dispersion points.
-        for point, di in loop_point(exp_type=exp_type, frq=frq, offset=offset, return_indices=True):
-            # The data key.
-            key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
-
-            # No data present.
-            if key not in current_spin.r2eff:
-                continue
-
-            # Convert offset to rad/s from ppm.
-            offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
-            # Calculate the tilt angle.
-            omega1 = point * 2.0 * pi
-            Delta_omega = chemical_shifts[ei][si][mi] - offset_rad
-            if Delta_omega == 0.0:
-                theta = pi / 2.0
-            else:
-                theta = atan2(omega1, Delta_omega)
-
-            # Calculate effective field in rotating frame
-            w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
-
-            # Set x_point.
-            x_point = w_eff
-
-            # Set y_point. When R_1 is set 0.0.
-            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
-            y_point = ( current_spin.r2eff[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
-
-            # Add the data.
-            data[graph_index][set_index].append([x_point, y_point])
-
-            # Add the error.
-            if hasattr(current_spin, 'r2eff_err') and key in current_spin.r2eff_err:
-                err = True
-                y_err_point = ( current_spin.r2eff_err[key] - r1_err[si][mi]*cos(theta)**2 ) / sin(theta)**2
-                data[graph_index][set_index][-1].append(y_err_point)
-
-        # Increment the graph set index.
-        set_index += 1
-        colour_index += 1
-
-    # Add the back calculated data.
-    colour_index = 0
-    for frq, offset, mi, oi in loop_frq_offset(exp_type=exp_type, return_indices=True):
-        # Add a new set for the data at each frequency and offset.
-        data[graph_index].append([])
-
-        # Add a new label.
-        if exp_type in EXP_TYPE_LIST_CPMG:
-            label = "Back calculated R\\s2eff\\N"
-        else:
-            label = "Back calculated R\\s2\\N"
-        if offset != None and frq != None:
-            label += " (%.1f MHz, %.3f ppm)" % (frq / 1e6, offset)
-        elif frq != None:
-            label += " (%.1f MHz)" % (frq / 1e6)
-        elif offset != None:
-            label += " (%.3f ppm)" % (offset)
-        set_labels[ei].append(label)
-
-        # The other settings.
-        set_colours[graph_index].append(colour_order[colour_index])
-        x_axis_type_zero[graph_index].append(True)
-        symbols[graph_index].append(4)
-        symbol_sizes[graph_index].append(0.45)
-        linetype[graph_index].append(1)
-        if interpolated_flag:
-            linestyle[graph_index].append(2)
-        else:
-            linestyle[graph_index].append(1)
-
-        # Loop over the dispersion points.
-        for point, di in loop_point(exp_type=exp_type, frq=frq, offset=offset, return_indices=True):
-            # The data key.
-            key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
-
-            # No data present.
-            if not hasattr(current_spin, 'r2eff_bc') or key not in current_spin.r2eff_bc:
-                continue
-
-            # Convert offset to rad/s from ppm.
-            offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
-            # Calculate the tilt angle.
-            omega1 = point * 2.0 * pi
-            Delta_omega = chemical_shifts[ei][si][mi] - offset_rad
-            if Delta_omega == 0.0:
-                theta = pi / 2.0
-            else:
-                theta = atan2(omega1, Delta_omega)
-
-            # Calculate effective field in rotating frame
-            w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
-
-            # Set x_point.
-            x_point = w_eff
-
-            # Set y_point. When R_1 is set 0.0.
-            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
-            y_point = ( current_spin.r2eff_bc[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
-
-            # Add the data.
-            data[graph_index][set_index].append([x_point, y_point])
-
-            # Handle the errors.
-            if err:
-                data[graph_index][set_index][-1].append(None)
-
-        # Increment the graph set index.
-        set_index += 1
-        colour_index += 1
-
-    # Add the interpolated back calculated data.
-    if interpolated_flag:
-        colour_index = 0
-        for frq, offset, mi, oi in loop_frq_offset(exp_type=exp_type, return_indices=True):
-            # Add a new set for the data at each frequency and offset.
-            data[graph_index].append([])
-
-            # Add a new label.
-            if exp_type in EXP_TYPE_LIST_CPMG:
-                label = "R\\s2eff\\N interpolated curve"
-            else:
-                label = "R\\s1\\xr\\B\\N interpolated curve"
-            if offset != None and frq != None:
-                label += " (%.1f MHz, %.3f ppm)" % (frq / 1e6, offset)
-            elif frq != None:
-                label += " (%.1f MHz)" % (frq / 1e6)
-            elif offset != None:
-                label += " (%.3f ppm)" % (offset)
-            set_labels[ei].append(label)
-
-            # The other settings.
-            set_colours[graph_index].append(colour_order[colour_index])
-            x_axis_type_zero[graph_index].append(True)
-            if current_spin.model in MODEL_LIST_NUMERIC_CPMG:
-                symbols[graph_index].append(8)
-            else:
-                symbols[graph_index].append(0)
-            symbol_sizes[graph_index].append(0.20)
-            linetype[graph_index].append(1)
-            linestyle[graph_index].append(1)
-
-            # Loop over the dispersion points.
-            for di, point in enumerate(spin_lock_nu1_new[ei][mi][oi]):
-                # Assign r2eff.
-                r2eff = back_calc[ei][si][mi][oi][di]
-
-                # Skip invalid points (values of 1e100).
-                if r2eff > 1e50:
-                    continue
-
-                # Set x_point.
-                x_point = w_eff_inter[ei][si][mi][oi][di]
-
-                theta = tilt_angles_inter[ei][si][mi][oi][di]
-
-                # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
-                y_point = ( r2eff - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
-
-                # Add the data.
-                data[graph_index][set_index].append([x_point, y_point])
-
-                # Handle the errors.
-                if err:
-                    data[graph_index][set_index][-1].append(None)
-
-            # Increment the graph set index.
-            set_index += 1
-            colour_index += 1
-
-    # Add the residuals for statistical comparison.
-    colour_index = 0
-    for frq, offset, mi, oi in loop_frq_offset(exp_type=exp_type, return_indices=True):
-        # Add a new set for the data at each frequency and offset.
-        data[graph_index].append([])
-
-        # Add a new label.
-        label = "Residuals"
-        if offset != None and frq != None:
-            label += " (%.1f MHz, %.3f ppm)" % (frq / 1e6, offset)
-        elif frq != None:
-            label += " (%.1f MHz)" % (frq / 1e6)
-        elif offset != None:
-            label += " (%.3f ppm)" % (offset)
-        set_labels[ei].append(label)
-
-        # The other settings.
-        set_colours[graph_index].append(colour_order[colour_index])
-        x_axis_type_zero[graph_index].append(True)
-        symbols[graph_index].append(9)
-        symbol_sizes[graph_index].append(0.45)
-        linetype[graph_index].append(1)
-        linestyle[graph_index].append(3)
-
-        # Loop over the dispersion points.
-        for point, di in loop_point(exp_type=exp_type, frq=frq, offset=offset, return_indices=True):
-            # The data key.
-            key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
-
-            # No data present.
-            if key not in current_spin.r2eff or not hasattr(current_spin, 'r2eff_bc') or key not in current_spin.r2eff_bc:
-                continue
-
-            # Convert offset to rad/s from ppm.
-            offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
-            # Calculate the tilt angle.
-            omega1 = point * 2.0 * pi
-            Delta_omega = chemical_shifts[ei][si][mi] - offset_rad
-            if Delta_omega == 0.0:
-                theta = pi / 2.0
-            else:
-                theta = atan2(omega1, Delta_omega)
-
-            # Calculate effective field in rotating frame
-            w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
-
-            # Set x_point.
-            x_point = w_eff
-
-            # Set y_point. When R_1 is set 0.0.
-            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
-            y_point = ( current_spin.r2eff[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
-            y_point_bc = ( current_spin.r2eff_bc[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
-            y_point_residual = y_point - y_point_bc
-
-            # Add the data.
-            data[graph_index][set_index].append([x_point, y_point_residual])
-
-            # Handle the errors.
-            if err:
-                err = True
-                y_err_point = ( current_spin.r2eff_err[key] - r1_err[si][mi]*cos(theta)**2 ) / sin(theta)**2
-                data[graph_index][set_index][-1].append(y_err_point)
-
-        # Increment the graph set index.
-        set_index += 1
-        colour_index += 1
-
-    # The axis labels.
-    axis_labels.append(['\\qEffective field in rotating frame \\xw\\B\\seff\\N\\Q (rad.s\\S-1\\N)', '\\qR\\s2\\N\\Q (rad.s\\S-1\\N)'])
-
-    return err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels
 
 
 def plot_disp_curves_loop_frq_offset(exp_type=None, ei=None, current_spin=None, back_calc=None, cpmg_frqs_new=None, spin_lock_nu1_new=None, interpolated_flag=None, graph_index=None, colour_order=None, data=None, set_labels=None, set_colours=None, x_axis_type_zero=None, symbols=None, symbol_sizes=None, linetype=None, linestyle=None, axis_labels=None):
@@ -3301,6 +2971,338 @@ def return_cpmg_frqs_single(exp_type=None, frq=None, offset=None, time=None, ref
 
     # Return the data as a numpy array.
     return array(cpmg_frqs, float64)
+
+
+def return_grace_data_r1rho_r2_as_func_of_w_eff(exp_type=None, ei=None, current_spin=None, spin_id=None, si=None, back_calc=None, spin_lock_nu1_new=None, chemical_shifts=None, spin_lock_fields_inter=None, offsets_inter=None, tilt_angles_inter=None, Delta_omega_inter=None, w_eff_inter=None, interpolated_flag=None, graph_index=None, colour_order=None, data=None, set_labels=None, set_colours=None, x_axis_type_zero=None, symbols=None, symbol_sizes=None, linetype=None, linestyle=None, axis_labels=None):
+    """Return data in lists for 2D Grace plotting function, to prepate plotting R1rho R2 as function of effective field in rotating frame w_eff.
+
+    @keyword exp_type:                  The experiment type.
+    @type exp_type:                     str
+    @keyword ei:                        The experiment type index.
+    @type ei:                           int
+    @keyword current_spin:              The specific spin data container.
+    @type current_spin:                 SpinContainer instance.
+    @keyword spin_id:                   The spin ID string.
+    @type spin_id:                      str
+    @keyword si:                        The index of the given spin in the cluster.
+    @type si:                           int
+    @keyword back_calc:                 The back calculated data.  The first index corresponds to the experiment type, the second is the spin of the cluster, the third is the magnetic field strength, and the fourth is the dispersion point.
+    @type back_calc:                    list of lists of lists of lists of float
+    @keyword spin_lock_nu1_new:         The interpolated spin-lock field strengths in Hertz.  The dimensions are {Ei, Mi, Oi}.
+    @type spin_lock_nu1_new:            rank-3 list of floats
+    @keyword chemical_shifts:           The chemical shifts in rad/s {Ei, Si, Mi}
+    @type chemical_shifts:              rank-3 list of floats
+    @keyword tilt_angles_inter:         The interpolated rotating frame tilt angles {Ei, Si, Mi, Oi, Di}
+    @type tilt_angles_inter:            rank-5 list of floats
+    @keyword Delta_omega_inter:         The interpolated average resonance offset in the rotating frame in rad/s {Ei, Si, Mi, Oi, Di}
+    @type Delta_omega_inter:            rank-5 list of floats
+    @keyword w_eff_inter:               The interpolated effective field in rotating frame in rad/s {Ei, Si, Mi, Oi, Di}.
+    @type w_eff_inter:                  rank-5 list of floats
+    @keyword interpolated_flag:         Flag telling if the graph should be interpolated.
+    @type interpolated_flag:            bool
+    @keyword graph_index:               Graph index for xmgrace.
+    @type graph_index:                  int
+    @keyword colour_order:              List of colours for xmgrace.
+    @type colour_order:                 list of int.
+    @keyword data:                      The 4D structure of numerical data to graph (see docstring).
+    @type data:                         list of lists of lists of float
+    @keyword set_labels:                Data labels to be used per experiment.
+    @type set_labels:                   list of list of strings
+    @keyword set_colours:               The colours for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type set_colours:                  None or list of list of int
+    @keyword x_axis_type_zero:          The flags specifying if the X-axis should be placed at zero.
+    @type x_axis_type_zero:             list of lists of bool
+    @keyword symbols:                   The symbol style for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type symbols:                      list of list of int
+    @keyword symbol_sizes:              The symbol size for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type symbol_sizes:                 list of list of int
+    @keyword linetype:                  The line type for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type linetype:                     list of list of int
+    @keyword linestyle:                 The line style for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type linestyle:                    list of list of int
+    @keyword axis_labels:               The labels for the axes (in the [X, Y] list format).  The first dimension is the graph.
+    @type axis_labels:                  list of list of str
+    @return:                            The xy graph or xydy error graph, the 4D structure of numerical data to grace graph, the names associated with each graph data set Gx.Sy, the colours for each graph data set Gx.Sy, flags specifying if the X-axis should be placed at zero, the symbol style for each graph data set Gx.Sy, the symbol size for each graph data set Gx.Sy, the line type for each graph data set Gx.Sy, the line style for each graph data set Gx.Sy, the labels for the axes (in the [X, Y] list format).
+    @rtype:                             boolean, list of lists of lists of float, list of list of str, list of list of int, list of lists of bool, list of list of int, list of list of int, list of list of int, list of list of int, list of list of str
+    """
+
+    set_index = 0
+    err = False
+    colour_index = 0
+
+    # Return r1.
+    field_count = cdp.spectrometer_frq_count
+    r1 = return_r1_data(spins=[current_spin], spin_ids=[spin_id], field_count=field_count)
+    r1_err = return_r1_err_data(spins=[current_spin], spin_ids=[spin_id], field_count=field_count)
+
+    for frq, offset, mi, oi in loop_frq_offset(exp_type=exp_type, return_indices=True):
+        # Add a new set for the data at each frequency and offset.
+        data[graph_index].append([])
+
+        # Add a new label.
+        if exp_type in EXP_TYPE_LIST_CPMG:
+            label = "R\\s2eff\\N"
+        else:
+            label = "R\\s2\\N"
+        if offset != None and frq != None:
+            label += " (%.1f MHz, %.3f ppm)" % (frq / 1e6, offset)
+        elif frq != None:
+            label += " (%.1f MHz)" % (frq / 1e6)
+        elif offset != None:
+            label += " (%.3f ppm)" % (offset)
+        set_labels[ei].append(label)
+
+        # The other settings.
+        set_colours[graph_index].append(colour_order[colour_index])
+        x_axis_type_zero[graph_index].append(True)
+        symbols[graph_index].append(1)
+        symbol_sizes[graph_index].append(0.45)
+        linetype[graph_index].append(0)
+        linestyle[graph_index].append(0)
+
+        # Loop over the dispersion points.
+        for point, di in loop_point(exp_type=exp_type, frq=frq, offset=offset, return_indices=True):
+            # The data key.
+            key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+            # No data present.
+            if key not in current_spin.r2eff:
+                continue
+
+            # Convert offset to rad/s from ppm.
+            offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
+            # Calculate the tilt angle.
+            omega1 = point * 2.0 * pi
+            Delta_omega = chemical_shifts[ei][si][mi] - offset_rad
+            if Delta_omega == 0.0:
+                theta = pi / 2.0
+            else:
+                theta = atan2(omega1, Delta_omega)
+
+            # Calculate effective field in rotating frame
+            w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
+
+            # Set x_point.
+            x_point = w_eff
+
+            # Set y_point. When R_1 is set 0.0.
+            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+            y_point = ( current_spin.r2eff[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+
+            # Add the data.
+            data[graph_index][set_index].append([x_point, y_point])
+
+            # Add the error.
+            if hasattr(current_spin, 'r2eff_err') and key in current_spin.r2eff_err:
+                err = True
+                y_err_point = ( current_spin.r2eff_err[key] - r1_err[si][mi]*cos(theta)**2 ) / sin(theta)**2
+                data[graph_index][set_index][-1].append(y_err_point)
+
+        # Increment the graph set index.
+        set_index += 1
+        colour_index += 1
+
+    # Add the back calculated data.
+    colour_index = 0
+    for frq, offset, mi, oi in loop_frq_offset(exp_type=exp_type, return_indices=True):
+        # Add a new set for the data at each frequency and offset.
+        data[graph_index].append([])
+
+        # Add a new label.
+        if exp_type in EXP_TYPE_LIST_CPMG:
+            label = "Back calculated R\\s2eff\\N"
+        else:
+            label = "Back calculated R\\s2\\N"
+        if offset != None and frq != None:
+            label += " (%.1f MHz, %.3f ppm)" % (frq / 1e6, offset)
+        elif frq != None:
+            label += " (%.1f MHz)" % (frq / 1e6)
+        elif offset != None:
+            label += " (%.3f ppm)" % (offset)
+        set_labels[ei].append(label)
+
+        # The other settings.
+        set_colours[graph_index].append(colour_order[colour_index])
+        x_axis_type_zero[graph_index].append(True)
+        symbols[graph_index].append(4)
+        symbol_sizes[graph_index].append(0.45)
+        linetype[graph_index].append(1)
+        if interpolated_flag:
+            linestyle[graph_index].append(2)
+        else:
+            linestyle[graph_index].append(1)
+
+        # Loop over the dispersion points.
+        for point, di in loop_point(exp_type=exp_type, frq=frq, offset=offset, return_indices=True):
+            # The data key.
+            key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+            # No data present.
+            if not hasattr(current_spin, 'r2eff_bc') or key not in current_spin.r2eff_bc:
+                continue
+
+            # Convert offset to rad/s from ppm.
+            offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
+            # Calculate the tilt angle.
+            omega1 = point * 2.0 * pi
+            Delta_omega = chemical_shifts[ei][si][mi] - offset_rad
+            if Delta_omega == 0.0:
+                theta = pi / 2.0
+            else:
+                theta = atan2(omega1, Delta_omega)
+
+            # Calculate effective field in rotating frame
+            w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
+
+            # Set x_point.
+            x_point = w_eff
+
+            # Set y_point. When R_1 is set 0.0.
+            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+            y_point = ( current_spin.r2eff_bc[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+
+            # Add the data.
+            data[graph_index][set_index].append([x_point, y_point])
+
+            # Handle the errors.
+            if err:
+                data[graph_index][set_index][-1].append(None)
+
+        # Increment the graph set index.
+        set_index += 1
+        colour_index += 1
+
+    # Add the interpolated back calculated data.
+    if interpolated_flag:
+        colour_index = 0
+        for frq, offset, mi, oi in loop_frq_offset(exp_type=exp_type, return_indices=True):
+            # Add a new set for the data at each frequency and offset.
+            data[graph_index].append([])
+
+            # Add a new label.
+            if exp_type in EXP_TYPE_LIST_CPMG:
+                label = "R\\s2eff\\N interpolated curve"
+            else:
+                label = "R\\s1\\xr\\B\\N interpolated curve"
+            if offset != None and frq != None:
+                label += " (%.1f MHz, %.3f ppm)" % (frq / 1e6, offset)
+            elif frq != None:
+                label += " (%.1f MHz)" % (frq / 1e6)
+            elif offset != None:
+                label += " (%.3f ppm)" % (offset)
+            set_labels[ei].append(label)
+
+            # The other settings.
+            set_colours[graph_index].append(colour_order[colour_index])
+            x_axis_type_zero[graph_index].append(True)
+            if current_spin.model in MODEL_LIST_NUMERIC_CPMG:
+                symbols[graph_index].append(8)
+            else:
+                symbols[graph_index].append(0)
+            symbol_sizes[graph_index].append(0.20)
+            linetype[graph_index].append(1)
+            linestyle[graph_index].append(1)
+
+            # Loop over the dispersion points.
+            for di, point in enumerate(spin_lock_nu1_new[ei][mi][oi]):
+                # Assign r2eff.
+                r2eff = back_calc[ei][si][mi][oi][di]
+
+                # Skip invalid points (values of 1e100).
+                if r2eff > 1e50:
+                    continue
+
+                # Set x_point.
+                x_point = w_eff_inter[ei][si][mi][oi][di]
+
+                theta = tilt_angles_inter[ei][si][mi][oi][di]
+
+                # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+                y_point = ( r2eff - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+
+                # Add the data.
+                data[graph_index][set_index].append([x_point, y_point])
+
+                # Handle the errors.
+                if err:
+                    data[graph_index][set_index][-1].append(None)
+
+            # Increment the graph set index.
+            set_index += 1
+            colour_index += 1
+
+    # Add the residuals for statistical comparison.
+    colour_index = 0
+    for frq, offset, mi, oi in loop_frq_offset(exp_type=exp_type, return_indices=True):
+        # Add a new set for the data at each frequency and offset.
+        data[graph_index].append([])
+
+        # Add a new label.
+        label = "Residuals"
+        if offset != None and frq != None:
+            label += " (%.1f MHz, %.3f ppm)" % (frq / 1e6, offset)
+        elif frq != None:
+            label += " (%.1f MHz)" % (frq / 1e6)
+        elif offset != None:
+            label += " (%.3f ppm)" % (offset)
+        set_labels[ei].append(label)
+
+        # The other settings.
+        set_colours[graph_index].append(colour_order[colour_index])
+        x_axis_type_zero[graph_index].append(True)
+        symbols[graph_index].append(9)
+        symbol_sizes[graph_index].append(0.45)
+        linetype[graph_index].append(1)
+        linestyle[graph_index].append(3)
+
+        # Loop over the dispersion points.
+        for point, di in loop_point(exp_type=exp_type, frq=frq, offset=offset, return_indices=True):
+            # The data key.
+            key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+            # No data present.
+            if key not in current_spin.r2eff or not hasattr(current_spin, 'r2eff_bc') or key not in current_spin.r2eff_bc:
+                continue
+
+            # Convert offset to rad/s from ppm.
+            offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
+            # Calculate the tilt angle.
+            omega1 = point * 2.0 * pi
+            Delta_omega = chemical_shifts[ei][si][mi] - offset_rad
+            if Delta_omega == 0.0:
+                theta = pi / 2.0
+            else:
+                theta = atan2(omega1, Delta_omega)
+
+            # Calculate effective field in rotating frame
+            w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
+
+            # Set x_point.
+            x_point = w_eff
+
+            # Set y_point. When R_1 is set 0.0.
+            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+            y_point = ( current_spin.r2eff[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+            y_point_bc = ( current_spin.r2eff_bc[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+            y_point_residual = y_point - y_point_bc
+
+            # Add the data.
+            data[graph_index][set_index].append([x_point, y_point_residual])
+
+            # Handle the errors.
+            if err:
+                err = True
+                y_err_point = ( current_spin.r2eff_err[key] - r1_err[si][mi]*cos(theta)**2 ) / sin(theta)**2
+                data[graph_index][set_index][-1].append(y_err_point)
+
+        # Increment the graph set index.
+        set_index += 1
+        colour_index += 1
+
+    # The axis labels.
+    axis_labels.append(['\\qEffective field in rotating frame \\xw\\B\\seff\\N\\Q (rad.s\\S-1\\N)', '\\qR\\s2\\N\\Q (rad.s\\S-1\\N)'])
+
+    return err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels
 
 
 def return_index_from_disp_point(value, exp_type=None):
