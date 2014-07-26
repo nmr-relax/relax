@@ -2358,7 +2358,7 @@ def plot_disp_curves_loop_frq(exp_type=None, ei=None, current_spin=None, spin_id
         colour_index += 1
 
     # The axis labels.
-    axis_labels.append(['\\qEffective field in rotating frame: w_eff \\Q', '\\qR\\s2\\N\\Q (rad.s\\S-1\\N)'])
+    axis_labels.append(['\\qEffective field in rotating frame \\xw\\B\\seff\\N\\Q (rad.s\\S-1\\N)', '\\qR\\s2\\N\\Q (rad.s\\S-1\\N)'])
 
     return err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels
 
