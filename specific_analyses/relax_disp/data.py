@@ -898,6 +898,78 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend=N
     return interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff
 
 
+def interpolate_offset(spin=None, spin_id=None, si=None, num_points=None, extend=None):
+    """Interpolate function for 2D Grace plotting function for the dispersion curves, interpolating through spin-lock offset in rad/s.
+
+    @keyword spin:          The specific spin data container.
+    @type spin:             SpinContainer instance.
+    @keyword spin_id:       The spin ID string.
+    @type spin_id:          str
+    @keyword si:            The index of the given spin in the cluster.
+    @type si:               int
+    @keyword num_points:    The number of points to generate the interpolated fitted curves with.
+    @type num_points:       int
+    @keyword extend:        How far to extend the interpolated fitted curves to in offset ppm.
+    @type extend:           float
+    @return:                The interpolated_flag, list of back calculated R2eff/R1rho values in rad/s {Ei, Si, Mi, Oi, Di}, list of interpolated spin-lock offsets in ppm {Ei, Si, Mi, Oi}, chemical shifts in rad/s {Ei, Si, Mi}, list of interpolated spin-lock field strength frequencies for spin_lock_fields_inter in Hz {Ei, Si, Mi, Oi, Di}, interpolated spin-lock offsets in rad/s {Ei, Si, Mi, Oi}, interpolated rotating frame tilt angles {Ei, Si, Mi, Oi, Di}, interpolated average resonance offset in the rotating frame in rad/s {Ei, Si, Mi, Oi, Di} and the interpolated effective field in rotating frame in rad/s {Ei, Si, Mi, Oi, Di}.
+    @rtype:                 boolean, rank-4 list of numpy rank-1 float arrays, rank-3 list of numpy rank-1 float arrays, rank-2 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-3 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays
+    """
+
+    # Set the flag.
+    interpolated_flag = True
+
+    # Initialise some structures.
+    spin_lock_offset_new = []
+
+    # Get the spin-lock field strengths.
+    spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
+
+    # Get the current minimum and maximum spin_lock_offset
+    if not hasattr(cdp, 'spin_lock_offset'):
+        min_offset = 0
+        max_offset = 0
+
+    else:
+        min_offset = min(cdp.spin_lock_offset_list)
+        max_offset = max(cdp.spin_lock_offset_list)
+
+    if spin_lock_nu1 != None and len(spin_lock_nu1[0][0][0]):
+        for ei in range(len(spin_lock_nu1)):
+            # Add a new dimension for ei.
+            spin_lock_offset_new.append([])
+
+            # Add a new dimension for si.
+            spin_lock_offset_new[ei].append([])
+
+            # Then loop over the spectrometer frequencies.
+            for mi in range(len(spin_lock_nu1[ei])):
+                # Add a new dimension for mi.
+                spin_lock_offset_new[ei][0].append([])
+
+                # Interpolate (adding the extended amount to the end).
+                for oi in range(num_points+1):
+                    offset_point = oi * (max_offset+extend) / num_points
+                    spin_lock_offset_new[ei][0][mi].append(offset_point)
+
+                # Convert to a numpy array.
+                spin_lock_offset_new[ei][0][mi] = array(spin_lock_offset_new[ei][0][mi], float64)
+
+    # Number of spectrometer fields.
+    fields = [None]
+    field_count = 1
+    if hasattr(cdp, 'spectrometer_frq_count'):
+        fields = cdp.spectrometer_frq_list
+        field_count = cdp.spectrometer_frq_count
+
+    # The offset data.
+    chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, spin_lock_offset=spin_lock_offset_new, fields=spin_lock_nu1)
+
+    # Back calculate R2eff data for the second sets of plots.
+    back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, spin_lock_offset=spin_lock_offset_new, spin_lock_nu1=spin_lock_fields_inter)
+
+    return interpolated_flag, back_calc, spin_lock_offset_new, chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff
+
+
 def is_cpmg_exp_type(id=None):
     """Determine if the given spectrum ID corresponds to a CPMG experiment type.
 
@@ -1968,78 +2040,6 @@ def plot_disp_curves_r1rho_r2_as_func_of_w_eff(dir=None, num_points=None, extend
 
         # Add the file to the results file list.
         add_result_file(type='grace', label='Grace', file=file_path)
-
-
-def plot_disp_curves_interpolate_sl_offset(spin=None, spin_id=None, si=None, num_points=None, extend=None):
-    """Interpolate function for 2D Grace plotting function for the dispersion curves, interpolating theta through spin-lock offset in rad/s.
-
-    @keyword spin:          The specific spin data container.
-    @type spin:             SpinContainer instance.
-    @keyword spin_id:       The spin ID string.
-    @type spin_id:          str
-    @keyword si:            The index of the given spin in the cluster.
-    @type si:               int
-    @keyword num_points:    The number of points to generate the interpolated fitted curves with.
-    @type num_points:       int
-    @keyword extend:        How far to extend the interpolated fitted curves to (in ppm).
-    @type extend:           float
-    @return:                The interpolated_flag, list of R2eff values for back_calc, list of frequencies in Hz for interpolated cpmg_frqs_new and spin_lock_nu1_new.
-    @rtype:                 boolean, numpy rank-1 float64 array, numpy rank-1 float64 array, numpy rank-1 float64 array
-    """
-
-    # Set the flag.
-    interpolated_flag = True
-
-    # Initialise some structures.
-    spin_lock_offset_new = []
-
-    # Get the spin-lock field strengths.
-    spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
-
-    # Get the current minimum and maximum spin_lock_offset
-    if not hasattr(cdp, 'spin_lock_offset'):
-        min_offset = 0
-        max_offset = 0
-
-    else:
-        min_offset = min(cdp.spin_lock_offset_list)
-        max_offset = max(cdp.spin_lock_offset_list)
-
-    if spin_lock_nu1 != None and len(spin_lock_nu1[0][0][0]):
-        for ei in range(len(spin_lock_nu1)):
-            # Add a new dimension for ei.
-            spin_lock_offset_new.append([])
-
-            # Add a new dimension for si.
-            spin_lock_offset_new[ei].append([])
-
-            # Then loop over the spectrometer frequencies.
-            for mi in range(len(spin_lock_nu1[ei])):
-                # Add a new dimension for mi.
-                spin_lock_offset_new[ei][0].append([])
-
-                # Interpolate (adding the extended amount to the end).
-                for oi in range(num_points+1):
-                    offset_point = oi * (max_offset+extend) / num_points
-                    spin_lock_offset_new[ei][0][mi].append(offset_point)
-
-                # Convert to a numpy array.
-                spin_lock_offset_new[ei][0][mi] = array(spin_lock_offset_new[ei][0][mi], float64)
-
-    # Number of spectrometer fields.
-    fields = [None]
-    field_count = 1
-    if hasattr(cdp, 'spectrometer_frq_count'):
-        fields = cdp.spectrometer_frq_list
-        field_count = cdp.spectrometer_frq_count
-
-    # The offset data.
-    chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, spin_lock_offset=spin_lock_offset_new, fields=spin_lock_nu1)
-
-    # Back calculate R2eff data for the second sets of plots.
-    back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, spin_lock_offset=spin_lock_offset_new, spin_lock_nu1=spin_lock_fields_inter)
-
-    return interpolated_flag, back_calc, spin_lock_offset_new, chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff
 
 
 def plot_disp_curves_loop_frq(exp_type=None, ei=None, current_spin=None, spin_id=None, si=None, back_calc=None, spin_lock_nu1_new=None, chemical_shifts=None, spin_lock_fields_inter=None, offsets_inter=None, tilt_angles_inter=None, Delta_omega_inter=None, w_eff_inter=None, interpolated_flag=None, graph_index=None, colour_order=None, data=None, set_labels=None, set_colours=None, x_axis_type_zero=None, symbols=None, symbol_sizes=None, linetype=None, linestyle=None, axis_labels=None):
