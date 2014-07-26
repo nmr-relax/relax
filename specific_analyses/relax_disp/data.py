@@ -760,6 +760,144 @@ def insignificance(level=0.0):
             desel_spin(spin_id)
 
 
+def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend=None):
+    """Interpolate function for 2D Grace plotting function for the dispersion curves.
+
+    @keyword spin:          The specific spin data container.
+    @type spin:             SpinContainer instance.
+    @keyword spin_id:       The spin ID string.
+    @type spin_id:          str
+    @keyword si:            The index of the given spin in the cluster.
+    @type si:               int
+    @keyword num_points:    The number of points to generate the interpolated fitted curves with.
+    @type num_points:       int
+    @keyword extend:        How far to extend the interpolated fitted curves to (in Hz).
+    @type extend:           float
+    @return:                The interpolated_flag, list of back calculated R2eff/R1rho values in rad/s {Ei, Si, Mi, Oi, Di}, list of interpolated frequencies for cpmg_frqs in Hz {Ei, Si, Mi, Oi, Di}, list of interpolated spin-lock field strength frequencies for spin_lock_nu1_new in Hz {Ei, Si, Mi, Oi, Di}, chemical shifts in rad/s {Ei, Si, Mi}, list of interpolated spin-lock field strength frequencies for spin_lock_fields_inter in Hz {Ei, Si, Mi, Oi, Di}, interpolated spin-lock offsets in rad/s {Ei, Si, Mi, Oi}, interpolated rotating frame tilt angles {Ei, Si, Mi, Oi, Di}, interpolated average resonance offset in the rotating frame in rad/s {Ei, Si, Mi, Oi, Di} and the interpolated effective field in rotating frame in rad/s {Ei, Si, Mi, Oi, Di}.
+    @rtype:                 boolean, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-2 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-3 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays
+    """
+
+    # Set the flag.
+    interpolated_flag = True
+
+    # Initialise some structures.
+    cpmg_frqs_new = None
+    spin_lock_nu1_new = None
+
+    # Interpolate the CPMG frequencies (numeric models).
+    if spin.model in MODEL_LIST_NUMERIC_CPMG or spin.model in [MODEL_B14, MODEL_B14_FULL]:
+        cpmg_frqs = return_cpmg_frqs(ref_flag=False)
+        relax_times = return_relax_times()
+        if cpmg_frqs != None and len(cpmg_frqs[0][0]):
+            cpmg_frqs_new = []
+            for ei in range(len(cpmg_frqs)):
+                # Add a new dimension.
+                cpmg_frqs_new.append([])
+
+                # Then loop over the spectrometer frequencies.
+                for mi in range(len(cpmg_frqs[ei])):
+                    # Add a new dimension.
+                    cpmg_frqs_new[ei].append([])
+
+                    # Finally the offsets.
+                    for oi in range(len(cpmg_frqs[ei][mi])):
+                        # Add a new dimension.
+                        cpmg_frqs_new[ei][mi].append([])
+
+                        # No data.
+                        if not len(cpmg_frqs[ei][mi][oi]):
+                            continue
+
+                        # The minimum frequency unit.
+                        min_frq = 1.0 / relax_times[ei][mi]
+                        max_frq = max(cpmg_frqs[ei][mi][oi]) + round(extend / min_frq) * min_frq
+                        num_points = int(round(max_frq / min_frq))
+
+                        # Interpolate (adding the extended amount to the end).
+                        for di in range(num_points):
+                            point = (di + 1) * min_frq
+                            cpmg_frqs_new[ei][mi][oi].append(point)
+
+                        # Convert to a numpy array.
+                        cpmg_frqs_new[ei][mi][oi] = array(cpmg_frqs_new[ei][mi][oi], float64)
+
+    # Interpolate the CPMG frequencies (analytic models).
+    else:
+        cpmg_frqs = return_cpmg_frqs(ref_flag=False)
+        if cpmg_frqs != None and len(cpmg_frqs[0][0]):
+            cpmg_frqs_new = []
+            for ei in range(len(cpmg_frqs)):
+                # Add a new dimension.
+                cpmg_frqs_new.append([])
+
+                # Then loop over the spectrometer frequencies.
+                for mi in range(len(cpmg_frqs[ei])):
+                    # Add a new dimension.
+                    cpmg_frqs_new[ei].append([])
+
+                    # Finally the offsets.
+                    for oi in range(len(cpmg_frqs[ei][mi])):
+                        # Add a new dimension.
+                        cpmg_frqs_new[ei][mi].append([])
+
+                        # No data.
+                        if not len(cpmg_frqs[ei][mi][oi]):
+                            continue
+
+                        # Interpolate (adding the extended amount to the end).
+                        for di in range(num_points):
+                            point = (di + 1) * (max(cpmg_frqs[ei][mi][oi])+extend) / num_points
+                            cpmg_frqs_new[ei][mi][oi].append(point)
+
+                        # Convert to a numpy array.
+                        cpmg_frqs_new[ei][mi][oi] = array(cpmg_frqs_new[ei][mi][oi], float64)
+
+    # Interpolate the spin-lock field strengths.
+    spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
+    if spin_lock_nu1 != None and len(spin_lock_nu1[0][0][0]):
+        spin_lock_nu1_new = []
+        for ei in range(len(spin_lock_nu1)):
+            # Add a new dimension.
+            spin_lock_nu1_new.append([])
+
+            # Then loop over the spectrometer frequencies.
+            for mi in range(len(spin_lock_nu1[ei])):
+                # Add a new dimension.
+                spin_lock_nu1_new[ei].append([])
+
+                # Finally the offsets.
+                for oi in range(len(spin_lock_nu1[ei][mi])):
+                    # Add a new dimension.
+                    spin_lock_nu1_new[ei][mi].append([])
+
+                    # No data.
+                    if not len(spin_lock_nu1[ei][mi][oi]):
+                        continue
+
+                    # Interpolate (adding the extended amount to the end).
+                    for di in range(num_points):
+                        point = (di + 1) * (max(spin_lock_nu1[ei][mi][oi])+extend) / num_points
+                        spin_lock_nu1_new[ei][mi][oi].append(point)
+
+                    # Convert to a numpy array.
+                    spin_lock_nu1_new[ei][mi][oi] = array(spin_lock_nu1_new[ei][mi][oi], float64)
+
+    # Number of spectrometer fields.
+    fields = [None]
+    field_count = 1
+    if hasattr(cdp, 'spectrometer_frq_count'):
+        fields = cdp.spectrometer_frq_list
+        field_count = cdp.spectrometer_frq_count
+
+    # The offset data.
+    chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, fields=spin_lock_nu1_new)
+
+    # Back calculate R2eff data for the second sets of plots.
+    back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, cpmg_frqs=cpmg_frqs_new, spin_lock_nu1=spin_lock_nu1_new)
+
+    return interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff
+
+
 def is_cpmg_exp_type(id=None):
     """Determine if the given spectrum ID corresponds to a CPMG experiment type.
 
@@ -1632,7 +1770,7 @@ def plot_disp_curves_disp(dir=None, num_points=None, extend=None, force=None, pr
         interpolated_flag = False
         if not spin.model in [MODEL_R2EFF]:
             # Interpolate through disp points.
-            interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = plot_disp_curves_interpolate_disp(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend=extend)
+            interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_disp(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend=extend)
 
         else:
             back_calc = None
@@ -1751,7 +1889,7 @@ def plot_disp_curves_r1rho_r2_as_func_of_w_eff(dir=None, num_points=None, extend
 
         if not spin.model in [MODEL_R2EFF]:
             # Interpolate through disp points.
-            interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = plot_disp_curves_interpolate_disp(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend=extend)
+            interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_disp(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend=extend)
 
         else:
             back_calc = None
@@ -1830,144 +1968,6 @@ def plot_disp_curves_r1rho_r2_as_func_of_w_eff(dir=None, num_points=None, extend
 
         # Add the file to the results file list.
         add_result_file(type='grace', label='Grace', file=file_path)
-
-
-def plot_disp_curves_interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend=None):
-    """Interpolate function for 2D Grace plotting function for the dispersion curves.
-
-    @keyword spin:          The specific spin data container.
-    @type spin:             SpinContainer instance.
-    @keyword spin_id:       The spin ID string.
-    @type spin_id:          str
-    @keyword si:            The index of the given spin in the cluster.
-    @type si:               int
-    @keyword num_points:    The number of points to generate the interpolated fitted curves with.
-    @type num_points:       int
-    @keyword extend:        How far to extend the interpolated fitted curves to (in Hz).
-    @type extend:           float
-    @return:                The file_name, the interpolated_flag, list of R2eff values for back_calc, list of frequencies in Hz for interpolated cpmg_frqs_new and spin_lock_nu1_new.
-    @rtype:                 string, boolean, numpy rank-1 float64 array, numpy rank-1 float64 array, numpy rank-1 float64 array
-    """
-
-    # Set the flag.
-    interpolated_flag = True
-
-    # Initialise some structures.
-    cpmg_frqs_new = None
-    spin_lock_nu1_new = None
-
-    # Interpolate the CPMG frequencies (numeric models).
-    if spin.model in MODEL_LIST_NUMERIC_CPMG or spin.model in [MODEL_B14, MODEL_B14_FULL]:
-        cpmg_frqs = return_cpmg_frqs(ref_flag=False)
-        relax_times = return_relax_times()
-        if cpmg_frqs != None and len(cpmg_frqs[0][0]):
-            cpmg_frqs_new = []
-            for ei in range(len(cpmg_frqs)):
-                # Add a new dimension.
-                cpmg_frqs_new.append([])
-
-                # Then loop over the spectrometer frequencies.
-                for mi in range(len(cpmg_frqs[ei])):
-                    # Add a new dimension.
-                    cpmg_frqs_new[ei].append([])
-
-                    # Finally the offsets.
-                    for oi in range(len(cpmg_frqs[ei][mi])):
-                        # Add a new dimension.
-                        cpmg_frqs_new[ei][mi].append([])
-
-                        # No data.
-                        if not len(cpmg_frqs[ei][mi][oi]):
-                            continue
-
-                        # The minimum frequency unit.
-                        min_frq = 1.0 / relax_times[ei][mi]
-                        max_frq = max(cpmg_frqs[ei][mi][oi]) + round(extend / min_frq) * min_frq
-                        num_points = int(round(max_frq / min_frq))
-
-                        # Interpolate (adding the extended amount to the end).
-                        for di in range(num_points):
-                            point = (di + 1) * min_frq
-                            cpmg_frqs_new[ei][mi][oi].append(point)
-
-                        # Convert to a numpy array.
-                        cpmg_frqs_new[ei][mi][oi] = array(cpmg_frqs_new[ei][mi][oi], float64)
-
-    # Interpolate the CPMG frequencies (analytic models).
-    else:
-        cpmg_frqs = return_cpmg_frqs(ref_flag=False)
-        if cpmg_frqs != None and len(cpmg_frqs[0][0]):
-            cpmg_frqs_new = []
-            for ei in range(len(cpmg_frqs)):
-                # Add a new dimension.
-                cpmg_frqs_new.append([])
-
-                # Then loop over the spectrometer frequencies.
-                for mi in range(len(cpmg_frqs[ei])):
-                    # Add a new dimension.
-                    cpmg_frqs_new[ei].append([])
-
-                    # Finally the offsets.
-                    for oi in range(len(cpmg_frqs[ei][mi])):
-                        # Add a new dimension.
-                        cpmg_frqs_new[ei][mi].append([])
-
-                        # No data.
-                        if not len(cpmg_frqs[ei][mi][oi]):
-                            continue
-
-                        # Interpolate (adding the extended amount to the end).
-                        for di in range(num_points):
-                            point = (di + 1) * (max(cpmg_frqs[ei][mi][oi])+extend) / num_points
-                            cpmg_frqs_new[ei][mi][oi].append(point)
-
-                        # Convert to a numpy array.
-                        cpmg_frqs_new[ei][mi][oi] = array(cpmg_frqs_new[ei][mi][oi], float64)
-
-    # Interpolate the spin-lock field strengths.
-    spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
-    if spin_lock_nu1 != None and len(spin_lock_nu1[0][0][0]):
-        spin_lock_nu1_new = []
-        for ei in range(len(spin_lock_nu1)):
-            # Add a new dimension.
-            spin_lock_nu1_new.append([])
-
-            # Then loop over the spectrometer frequencies.
-            for mi in range(len(spin_lock_nu1[ei])):
-                # Add a new dimension.
-                spin_lock_nu1_new[ei].append([])
-
-                # Finally the offsets.
-                for oi in range(len(spin_lock_nu1[ei][mi])):
-                    # Add a new dimension.
-                    spin_lock_nu1_new[ei][mi].append([])
-
-                    # No data.
-                    if not len(spin_lock_nu1[ei][mi][oi]):
-                        continue
-
-                    # Interpolate (adding the extended amount to the end).
-                    for di in range(num_points):
-                        point = (di + 1) * (max(spin_lock_nu1[ei][mi][oi])+extend) / num_points
-                        spin_lock_nu1_new[ei][mi][oi].append(point)
-
-                    # Convert to a numpy array.
-                    spin_lock_nu1_new[ei][mi][oi] = array(spin_lock_nu1_new[ei][mi][oi], float64)
-
-    # Number of spectrometer fields.
-    fields = [None]
-    field_count = 1
-    if hasattr(cdp, 'spectrometer_frq_count'):
-        fields = cdp.spectrometer_frq_list
-        field_count = cdp.spectrometer_frq_count
-
-    # The offset data.
-    chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, fields=spin_lock_nu1_new)
-
-    # Back calculate R2eff data for the second sets of plots.
-    back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, cpmg_frqs=cpmg_frqs_new, spin_lock_nu1=spin_lock_nu1_new)
-
-    return interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff
 
 
 def plot_disp_curves_interpolate_sl_offset(spin=None, spin_id=None, si=None, num_points=None, extend=None):
