@@ -1777,8 +1777,13 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
 
     # For R1rho models, interpolate through spin-lock field strength, and plot R1rho R2 as function of effective field in rotating frame w_eff.
     if cdp.exp_type_list == [EXP_TYPE_R1RHO]:
-        file_name_ini = "r1rho_r2_as_func_of_w_eff"
-        plot_disp_curves_r1rho_r2_as_func_of_w_eff(file_name_ini=file_name_ini, dir=dir, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
+        file_name_ini = "r2_r1rho_as_func_of_w_eff"
+        x_axis = "w_eff"
+        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, x_axis=x_axis, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
+
+        file_name_ini = "r1rho_as_func_of_theta_inter_w1"
+        x_axis = "theta"
+        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, x_axis=x_axis, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
 
     # Write a python "grace to PNG/EPS/SVG..." conversion script.
     # Open the file for writing.
@@ -1918,7 +1923,7 @@ def plot_disp_curves_disp(file_name_ini=None, dir=None, num_points=None, extend=
         add_result_file(type='grace', label='Grace', file=file_path)
 
 
-def plot_disp_curves_r1rho_r2_as_func_of_w_eff(file_name_ini=None, dir=None, num_points=None, extend=None, force=None, proton_mmq_flag=None, colour_order=None):
+def plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=None, dir=None, x_axis=None, num_points=None, extend=None, force=None, proton_mmq_flag=None, colour_order=None):
     """Custom 2D Grace plotting function for the dispersion curves, interpolating theta through spin-lock offset rather than spin-lock field strength.
 
     One file will be created per spin system.
@@ -1927,6 +1932,8 @@ def plot_disp_curves_r1rho_r2_as_func_of_w_eff(file_name_ini=None, dir=None, num
     @type file_name_ini:        str
     @keyword dir:               The optional directory to place the file into.
     @type dir:                  str
+    @keyword x_axis:            String flag to tell which X axis to plot for.
+    @type x_axis:               str
     @keyword num_points:        The number of points to generate the interpolated fitted curves with.
     @type num_points:           int
     @keyword extend:            How far to extend the interpolated fitted curves to (in Hz).
@@ -2014,7 +2021,7 @@ def plot_disp_curves_r1rho_r2_as_func_of_w_eff(file_name_ini=None, dir=None, num
                 current_spin = proton
 
             # Loop over the spectrometer frequencies and offsets.
-            err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels = return_grace_data_r1rho_r2_as_func_of_w_eff(exp_type=exp_type, ei=ei, current_spin=current_spin, spin_id=spin_id, si=si, back_calc=back_calc, spin_lock_nu1_new=spin_lock_nu1_new, chemical_shifts=chemical_shifts, tilt_angles_inter=tilt_angles_inter, Delta_omega_inter=Delta_omega_inter, w_eff_inter=w_eff_inter, interpolated_flag=interpolated_flag, graph_index=graph_index, colour_order=colour_order, data=data, set_labels=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, symbol_sizes=symbol_sizes, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels)
+            err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels = return_grace_data_r1rho_r2_as_func_of_rot_param(x_axis=x_axis, exp_type=exp_type, ei=ei, current_spin=current_spin, spin_id=spin_id, si=si, back_calc=back_calc, spin_lock_nu1_new=spin_lock_nu1_new, chemical_shifts=chemical_shifts, tilt_angles_inter=tilt_angles_inter, Delta_omega_inter=Delta_omega_inter, w_eff_inter=w_eff_inter, interpolated_flag=interpolated_flag, graph_index=graph_index, colour_order=colour_order, data=data, set_labels=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, symbol_sizes=symbol_sizes, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels)
 
             # Increment the graph index.
             graph_index += 1
@@ -2734,9 +2741,11 @@ def return_cpmg_frqs_single(exp_type=None, frq=None, offset=None, time=None, ref
     return array(cpmg_frqs, float64)
 
 
-def return_grace_data_r1rho_r2_as_func_of_w_eff(exp_type=None, ei=None, current_spin=None, spin_id=None, si=None, back_calc=None, spin_lock_nu1_new=None, chemical_shifts=None, spin_lock_fields_inter=None, offsets_inter=None, tilt_angles_inter=None, Delta_omega_inter=None, w_eff_inter=None, interpolated_flag=None, graph_index=None, colour_order=None, data=None, set_labels=None, set_colours=None, x_axis_type_zero=None, symbols=None, symbol_sizes=None, linetype=None, linestyle=None, axis_labels=None):
+def return_grace_data_r1rho_r2_as_func_of_rot_param(x_axis=None, exp_type=None, ei=None, current_spin=None, spin_id=None, si=None, back_calc=None, spin_lock_nu1_new=None, chemical_shifts=None, spin_lock_fields_inter=None, offsets_inter=None, tilt_angles_inter=None, Delta_omega_inter=None, w_eff_inter=None, interpolated_flag=None, graph_index=None, colour_order=None, data=None, set_labels=None, set_colours=None, x_axis_type_zero=None, symbols=None, symbol_sizes=None, linetype=None, linestyle=None, axis_labels=None):
     """Return data in lists for 2D Grace plotting function, to prepate plotting R1rho R2 as function of effective field in rotating frame w_eff.
 
+    @keyword x_axis:                    String flag to tell which X axis to plot for.
+    @type x_axis:                       str
     @keyword exp_type:                  The experiment type.
     @type exp_type:                     str
     @keyword ei:                        The experiment type index.
@@ -2839,20 +2848,37 @@ def return_grace_data_r1rho_r2_as_func_of_w_eff(exp_type=None, ei=None, current_
             # Return the rotating frame parameters.
             Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=chemical_shifts[ei][si][mi], spin_lock_offset=offset_rad, omega1=omega1)
 
-            # Set x_point.
-            x_point = w_eff
+            # Determine x,y data type.
+            if x_axis == "w_eff":
+                # Set x_point.
+                x_point = w_eff
 
-            # Set y_point. When R_1 is set 0.0.
-            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
-            y_point = ( current_spin.r2eff[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+                # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+                y_point = ( current_spin.r2eff[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+
+                # Add the error.
+                if hasattr(current_spin, 'r2eff_err') and key in current_spin.r2eff_err:
+                    err = True
+                    y_err_point = ( current_spin.r2eff_err[key] - r1_err[si][mi]*cos(theta)**2 ) / sin(theta)**2
+
+            # Determine x,y data type.
+            elif x_axis == "theta":
+                # Set x_point.
+                x_point = theta
+
+                # Set y_point.
+                y_point = current_spin.r2eff[key]
+
+                # Add the error.
+                if hasattr(current_spin, 'r2eff_err') and key in current_spin.r2eff_err:
+                    err = True
+                    y_err_point = current_spin.r2eff_err[key]
 
             # Add the data.
             data[graph_index][set_index].append([x_point, y_point])
 
-            # Add the error.
-            if hasattr(current_spin, 'r2eff_err') and key in current_spin.r2eff_err:
-                err = True
-                y_err_point = ( current_spin.r2eff_err[key] - r1_err[si][mi]*cos(theta)**2 ) / sin(theta)**2
+            # Handle the errors.
+            if err:
                 data[graph_index][set_index][-1].append(y_err_point)
 
         # Increment the graph set index.
@@ -2907,12 +2933,21 @@ def return_grace_data_r1rho_r2_as_func_of_w_eff(exp_type=None, ei=None, current_
             # Return the rotating frame parameters.
             Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=chemical_shifts[ei][si][mi], spin_lock_offset=offset_rad, omega1=omega1)
 
-            # Set x_point.
-            x_point = w_eff
+            # Determine x,y data type.
+            if x_axis == "w_eff":
+                # Set x_point.
+                x_point = w_eff
 
-            # Set y_point. When R_1 is set 0.0.
-            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
-            y_point = ( current_spin.r2eff_bc[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+                # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+                y_point = ( current_spin.r2eff_bc[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+
+            # Determine x,y data type.
+            elif x_axis == "theta":
+                # Set x_point.
+                x_point = theta
+
+                # Set y_point.
+                y_point = current_spin.r2eff_bc[key]
 
             # Add the data.
             data[graph_index][set_index].append([x_point, y_point])
@@ -2965,13 +3000,24 @@ def return_grace_data_r1rho_r2_as_func_of_w_eff(exp_type=None, ei=None, current_
                 if r2eff > 1e50:
                     continue
 
-                # Set x_point.
-                x_point = w_eff_inter[ei][si][mi][oi][di]
-
+                # Get theta.
                 theta = tilt_angles_inter[ei][si][mi][oi][di]
 
-                # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
-                y_point = ( r2eff - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+                # Determine x,y data type.
+                if x_axis == "w_eff":
+                    # Set x_point.
+                    x_point = w_eff_inter[ei][si][mi][oi][di]
+
+                    # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+                    y_point = ( r2eff - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+
+                # Determine x,y data type.
+                elif x_axis == "theta":
+                    # Set x_point.
+                    x_point = theta
+
+                    # Set y_point.
+                    y_point = r2eff
 
                 # Add the data.
                 data[graph_index][set_index].append([x_point, y_point])
@@ -3026,22 +3072,35 @@ def return_grace_data_r1rho_r2_as_func_of_w_eff(exp_type=None, ei=None, current_
             # Return the rotating frame parameters.
             Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=chemical_shifts[ei][si][mi], spin_lock_offset=offset_rad, omega1=omega1)
 
-            # Set x_point.
-            x_point = w_eff
+            # Determine x,y data type.
+            if x_axis == "w_eff":
+                # Set x_point.
+                x_point = w_eff
 
-            # Set y_point. When R_1 is set 0.0.
-            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
-            y_point = ( current_spin.r2eff[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
-            y_point_bc = ( current_spin.r2eff_bc[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
-            y_point_residual = y_point - y_point_bc
+                # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+                y_point = ( current_spin.r2eff[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+                y_point_bc = ( current_spin.r2eff_bc[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+                y_point_residual = y_point - y_point_bc
+
+                y_err_point = ( current_spin.r2eff_err[key] - r1_err[si][mi]*cos(theta)**2 ) / sin(theta)**2
+
+            # Determine x,y data type.
+            elif x_axis == "theta":
+                # Set x_point.
+                x_point = theta
+
+                # Set y_point.
+                y_point = current_spin.r2eff[key]
+                y_point_bc = current_spin.r2eff_bc[key]
+                y_point_residual = y_point - y_point_bc
+
+                y_err_point = current_spin.r2eff_err[key]
 
             # Add the data.
             data[graph_index][set_index].append([x_point, y_point_residual])
 
             # Handle the errors.
             if err:
-                err = True
-                y_err_point = ( current_spin.r2eff_err[key] - r1_err[si][mi]*cos(theta)**2 ) / sin(theta)**2
                 data[graph_index][set_index][-1].append(y_err_point)
 
         # Increment the graph set index.
@@ -3049,7 +3108,10 @@ def return_grace_data_r1rho_r2_as_func_of_w_eff(exp_type=None, ei=None, current_
         colour_index += 1
 
     # The axis labels.
-    axis_labels.append(['\\qEffective field in rotating frame \\xw\\B\\seff\\N\\Q (rad.s\\S-1\\N)', '\\qR\\s2\\N\\Q (rad.s\\S-1\\N)'])
+    if x_axis == "w_eff":
+        axis_labels.append(['\\qEffective field in rotating frame \\xw\\B\\seff\\N\\Q (rad.s\\S-1\\N)', '\\qR\\s2\\N\\Q (rad.s\\S-1\\N)'])
+    elif x_axis == "theta":
+        axis_labels.append(['\\qRotating frame tilt angle \\xq\\B\\Q (rad)', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)'])
 
     return err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels
 
