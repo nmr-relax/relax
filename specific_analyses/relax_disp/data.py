@@ -1967,6 +1967,10 @@ def plot_disp_curves_r1rho_r2_as_func_of_w_eff(dir=None, num_points=None, extend
             back_calc = None
             spin_lock_nu1_new = None
 
+            # Skip for data not having chemical shifts assigned.
+            if not hasattr(spin, 'isotope'):
+                continue
+
             # Number of spectrometer fields.
             fields = [None]
             field_count = 1
