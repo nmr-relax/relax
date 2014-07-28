@@ -235,7 +235,7 @@ relax_times = fields / (100 * 100. *1E6 )
 cpmg_points = []
 cpmg_points_nr = 0
 
-spin_lock_offsets = range(10)
+spin_lock_offsets = list(range(10))
 spin_lock_fields = [431.0, 651.2, 800.5, 984.0, 1341.11]
 r1rho_points = []
 r1rho_points_nr = 0
