@@ -27,12 +27,35 @@ from numpy import array, cross, dot, float64, zeros
 from numpy.linalg import norm
 
 # relax module imports.
-from lib.geometry.coord_transform import spherical_to_cartesian
+from lib.geometry.coord_transform import cartesian_to_spherical, spherical_to_cartesian
 from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz
 
 # Module variables.
 R = zeros((3, 3), float64)    # A rotation matrix.
 Z_AXIS = array([0, 0, 1], float64)
+
+
+def convert_axis_alpha_to_spherical(alpha=None, pivot=None, point=None):
+    """Convert the axis alpha angle to spherical angles theta and phi.
+
+    @keyword alpha: The axis alpha angle, defined as the angle between a vector perpendicular to the pivot-CoM vector in the xy-plane and the rotor axis.
+    @type alpha:    float
+    @keyword pivot: The pivot point on the rotation axis.
+    @type pivot:    numpy rank-1 3D array
+    @keyword point: The reference point in space.
+    @type point:    numpy rank-1 3D array
+    @return:        The theta and phi spherical angles.
+    @rtype:         float, float
+    """
+
+    # Create the axis.
+    axis = create_rotor_axis_alpha(alpha=alpha, pivot=pivot, point=point)
+
+    # Coordinate system transform.
+    r, theta, phi = cartesian_to_spherical(axis)
+
+    # Return the angles.
+    return theta, phi
 
 
 def create_rotor_axis_alpha(alpha=None, pivot=None, point=None):
