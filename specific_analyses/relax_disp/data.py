@@ -51,7 +51,7 @@ The data structures used in this module consist of many different index types wh
 """
 
 # Python module imports.
-from math import atan2, cos, pi, sin, sqrt
+from math import cos, pi, sin, sqrt
 from numpy import array, float64, int32, ones, zeros
 from os.path import expanduser
 from random import gauss
@@ -63,7 +63,7 @@ from warnings import warn
 from lib.errors import RelaxError, RelaxNoSpectraError, RelaxNoSpinError, RelaxSpinTypeError
 from lib.float import isNaN
 from lib.io import extract_data, get_file_path, open_write_file, strip, write_data
-from lib.nmr import frequency_to_ppm, frequency_to_ppm_from_rad, frequency_to_rad_per_s
+from lib.nmr import frequency_to_ppm, frequency_to_ppm_from_rad, frequency_to_rad_per_s, rotating_frame_params
 from lib.physical_constants import g1H, return_gyromagnetic_ratio
 from lib.sequence import read_spin_data, write_spin_data
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
@@ -2822,16 +2822,12 @@ def return_grace_data_r1rho_r2_as_func_of_w_eff(exp_type=None, ei=None, current_
 
             # Convert offset to rad/s from ppm.
             offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
-            # Calculate the tilt angle.
-            omega1 = point * 2.0 * pi
-            Delta_omega = chemical_shifts[ei][si][mi] - offset_rad
-            if Delta_omega == 0.0:
-                theta = pi / 2.0
-            else:
-                theta = atan2(omega1, Delta_omega)
 
-            # Calculate effective field in rotating frame
-            w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
+            # Convert spin-lock field strength from Hz to rad/s.
+            omega1 = point * 2.0 * pi
+
+            # Return the rotating frame parameters.
+            Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=chemical_shifts[ei][si][mi], spin_lock_offset=offset_rad, omega1=omega1)
 
             # Set x_point.
             x_point = w_eff
@@ -2894,16 +2890,12 @@ def return_grace_data_r1rho_r2_as_func_of_w_eff(exp_type=None, ei=None, current_
 
             # Convert offset to rad/s from ppm.
             offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
-            # Calculate the tilt angle.
-            omega1 = point * 2.0 * pi
-            Delta_omega = chemical_shifts[ei][si][mi] - offset_rad
-            if Delta_omega == 0.0:
-                theta = pi / 2.0
-            else:
-                theta = atan2(omega1, Delta_omega)
 
-            # Calculate effective field in rotating frame
-            w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
+            # Convert spin-lock field strength from Hz to rad/s.
+            omega1 = point * 2.0 * pi
+
+            # Return the rotating frame parameters.
+            Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=chemical_shifts[ei][si][mi], spin_lock_offset=offset_rad, omega1=omega1)
 
             # Set x_point.
             x_point = w_eff
@@ -3017,16 +3009,12 @@ def return_grace_data_r1rho_r2_as_func_of_w_eff(exp_type=None, ei=None, current_
 
             # Convert offset to rad/s from ppm.
             offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
-            # Calculate the tilt angle.
-            omega1 = point * 2.0 * pi
-            Delta_omega = chemical_shifts[ei][si][mi] - offset_rad
-            if Delta_omega == 0.0:
-                theta = pi / 2.0
-            else:
-                theta = atan2(omega1, Delta_omega)
 
-            # Calculate effective field in rotating frame
-            w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
+            # Convert spin-lock field strength from Hz to rad/s.
+            omega1 = point * 2.0 * pi
+
+            # Return the rotating frame parameters.
+            Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=chemical_shifts[ei][si][mi], spin_lock_offset=offset_rad, omega1=omega1)
 
             # Set x_point.
             x_point = w_eff
@@ -3490,7 +3478,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, spin_lock_of
     shifts = []
     offsets = []
     spin_lock_fields_inter = []
-    theta = []
+    tilt_angles = []
     Domega = []
     w_e = []
 
@@ -3498,20 +3486,20 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, spin_lock_of
         shifts.append([])
         offsets.append([])
         spin_lock_fields_inter.append([])
-        theta.append([])
+        tilt_angles.append([])
         Domega.append([])
         w_e.append([])
         for si in range(spin_num):
             shifts[ei].append([])
             offsets[ei].append([])
-            theta[ei].append([])
+            tilt_angles[ei].append([])
             Domega[ei].append([])
             w_e[ei].append([])
             for frq, mi in loop_frq(return_indices=True):
                 shifts[ei][si].append(None)
                 offsets[ei][si].append([])
                 spin_lock_fields_inter[ei].append([])
-                theta[ei][si].append([])
+                tilt_angles[ei][si].append([])
                 Domega[ei][si].append([])
                 w_e[ei][si].append([])
                 # Enable possible interpolation of spin-lock offset.
@@ -3519,14 +3507,14 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, spin_lock_of
                     for oi, offset in enumerate(spin_lock_offset[ei][si][mi]):
                         offsets[ei][si][mi].append(None)
                         spin_lock_fields_inter[ei][mi].append([])
-                        theta[ei][si][mi].append([])
+                        tilt_angles[ei][si][mi].append([])
                         Domega[ei][si][mi].append([])
                         w_e[ei][si][mi].append([])
                 else:
                     for offset, oi in loop_offset(exp_type=exp_type, frq=frq, return_indices=True):
                         offsets[ei][si][mi].append(None)
                         spin_lock_fields_inter[ei][mi].append([])
-                        theta[ei][si][mi].append([])
+                        tilt_angles[ei][si][mi].append([])
                         Domega[ei][si][mi].append([])
                         w_e[ei][si][mi].append([])
 
@@ -3611,22 +3599,15 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, spin_lock_of
                         if point == None:
                             continue
 
-                        # Calculate the tilt angle.
+                        # Convert spin-lock field strength from Hz to rad/s.
                         omega1 = point * 2.0 * pi
-                        Delta_omega = shifts[ei][si][mi] - offsets[ei][si][mi][oi]
-                        Domega[ei][si][mi][oi].append(Delta_omega)
-                        if Delta_omega == 0.0:
-                            theta[ei][si][mi][oi].append(pi / 2.0)
-                        # Calculate the theta angle describing the tilted rotating frame relative to the laboratory.
-                        # theta = atan(omega1 / Delta_omega).
-                        # If Delta_omega is negative, there follow the symmetry of atan, that atan(-x) = - atan(x).
-                        # Then it should be: theta = pi + atan(-x) = pi - atan(x) = pi - abs(atan( +/- x)).
-                        # This is taken care of with the atan2(y, x) function, which return atan(y / x), in radians, and the result is between -pi and pi.
-                        else:
-                            theta[ei][si][mi][oi].append(atan2(omega1, Delta_omega))
 
-                        # Calculate effective field in rotating frame
-                        w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
+                        # Return the rotating frame parameters.
+                        Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=shifts[ei][si][mi], spin_lock_offset=offsets[ei][si][mi][oi], omega1=omega1)
+
+                        # Assign the data to lists.
+                        Domega[ei][si][mi][oi].append(Delta_omega)
+                        tilt_angles[ei][si][mi][oi].append(theta)
                         w_e[ei][si][mi][oi].append(w_eff)
 
 
@@ -3684,22 +3665,15 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, spin_lock_of
                         if point == None:
                             continue
 
-                        # Calculate the tilt angle.
+                        # Convert spin-lock field strength from Hz to rad/s.
                         omega1 = point * 2.0 * pi
-                        Delta_omega = shifts[ei][si][mi] - offsets[ei][si][mi][oi]
-                        Domega[ei][si][mi][oi].append(Delta_omega)
-                        if Delta_omega == 0.0:
-                            theta[ei][si][mi][oi].append(pi / 2.0)
-                        # Calculate the theta angle describing the tilted rotating frame relative to the laboratory.
-                        # theta = atan(omega1 / Delta_omega).
-                        # If Delta_omega is negative, there follow the symmetry of atan, that atan(-x) = - atan(x).
-                        # Then it should be: theta = pi + atan(-x) = pi - atan(x) = pi - abs(atan( +/- x)).
-                        # This is taken care of with the atan2(y, x) function, which return atan(y / x), in radians, and the result is between -pi and pi.
-                        else:
-                            theta[ei][si][mi][oi].append(atan2(omega1, Delta_omega))
 
-                        # Calculate effective field in rotating frame
-                        w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
+                        # Return the rotating frame parameters.
+                        Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=shifts[ei][si][mi], spin_lock_offset=offsets[ei][si][mi][oi], omega1=omega1)
+
+                        # Assign the data to lists.
+                        Domega[ei][si][mi][oi].append(Delta_omega)
+                        tilt_angles[ei][si][mi][oi].append(theta)
                         w_e[ei][si][mi][oi].append(w_eff)
 
         # Increment the spin index.
@@ -3716,7 +3690,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, spin_lock_of
     #            theta[ei][si][mi] = array(theta[ei][si][mi], float64)
 
     # Return the structures.
-    return shifts, spin_lock_fields_inter, offsets, theta, Domega, w_e
+    return shifts, spin_lock_fields_inter, offsets, tilt_angles, Domega, w_e
 
 
 def return_param_key_from_data(exp_type=None, frq=0.0, offset=0.0, point=0.0):
