@@ -1772,11 +1772,13 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
     colour_order = [4, 15, 2, 13, 11, 1, 3, 5, 6, 7, 8, 9, 10, 12, 14] * 1000
 
     # Plot dispersion curves, extending over number of dispersion points.
-    plot_disp_curves_disp(dir=dir, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
+    file_name_ini = "disp"
+    plot_disp_curves_disp(file_name_ini=file_name_ini, dir=dir, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
 
     # For R1rho models, interpolate through spin-lock field strength, and plot R1rho R2 as function of effective field in rotating frame w_eff.
     if cdp.exp_type_list == [EXP_TYPE_R1RHO]:
-        plot_disp_curves_r1rho_r2_as_func_of_w_eff(dir=dir, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
+        file_name_ini = "r1rho_r2_as_func_of_w_eff"
+        plot_disp_curves_r1rho_r2_as_func_of_w_eff(file_name_ini=file_name_ini, dir=dir, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
 
     # Write a python "grace to PNG/EPS/SVG..." conversion script.
     # Open the file for writing.
@@ -1796,11 +1798,13 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
         chmod(file_name, S_IRWXU|S_IRGRP|S_IROTH)
 
 
-def plot_disp_curves_disp(dir=None, num_points=None, extend=None, force=None, proton_mmq_flag=None, colour_order=None):
+def plot_disp_curves_disp(file_name_ini=None, dir=None, num_points=None, extend=None, force=None, proton_mmq_flag=None, colour_order=None):
     """Custom 2D Grace plotting function for the dispersion curves, looping over dispersion points.
 
     One file will be created per spin system.
 
+    @keyword file_name_ini:     The first part of the file_name.
+    @type file_name_ini:        str
     @keyword dir:               The optional directory to place the file into.
     @type dir:                  str
     @keyword num_points:        The number of points to generate the interpolated fitted curves with.
@@ -1836,7 +1840,7 @@ def plot_disp_curves_disp(dir=None, num_points=None, extend=None, force=None, pr
         linestyle = []
 
         # The unique file name.
-        file_name = "disp%s.agr" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
+        file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
 
         # Set up the interpolated curve data structures.
         interpolated_flag = False
@@ -1914,11 +1918,13 @@ def plot_disp_curves_disp(dir=None, num_points=None, extend=None, force=None, pr
         add_result_file(type='grace', label='Grace', file=file_path)
 
 
-def plot_disp_curves_r1rho_r2_as_func_of_w_eff(dir=None, num_points=None, extend=None, force=None, proton_mmq_flag=None, colour_order=None):
+def plot_disp_curves_r1rho_r2_as_func_of_w_eff(file_name_ini=None, dir=None, num_points=None, extend=None, force=None, proton_mmq_flag=None, colour_order=None):
     """Custom 2D Grace plotting function for the dispersion curves, interpolating theta through spin-lock offset rather than spin-lock field strength.
 
     One file will be created per spin system.
 
+    @keyword file_name_ini:     The first part of the file_name.
+    @type file_name_ini:        str
     @keyword dir:               The optional directory to place the file into.
     @type dir:                  str
     @keyword num_points:        The number of points to generate the interpolated fitted curves with.
@@ -1957,7 +1963,7 @@ def plot_disp_curves_r1rho_r2_as_func_of_w_eff(dir=None, num_points=None, extend
         interpolated_flag = False
 
         # The unique file name.
-        file_name = "r1rho_r2_as_func_of_w_eff%s.agr" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
+        file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
 
         if not spin.model in [MODEL_R2EFF]:
             # Interpolate through disp points.
