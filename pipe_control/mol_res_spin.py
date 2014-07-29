@@ -1251,6 +1251,74 @@ def first_residue_num(selection=None):
     return mol.res[0].num
 
 
+def format_info_full(mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
+    """Format the molecule, residue, and spin information as a string, skipping missing information.
+
+    This will be a verbose representation.  If:
+
+        mol_name = 'Ubi'
+        res_name = 'Ala'
+        res_num = '10'
+        spin_num = None
+        spin_name = 'N'
+
+    Then the returned string will be "Molecule Ubi, residue Ala 10, spin N".  Any values of None will result in that part of the string being suppressed.
+
+
+    @keyword mol_name:  The molecule name.
+    @type mol_name:     str or None
+    @keyword res_num:   The residue number.
+    @type res_num:      int or None
+    @keyword res_name:  The residue name.
+    @type res_name:     str or None
+    @keyword spin_num:  The spin number.
+    @type spin_num:     int or None
+    @keyword spin_name: The spin name.
+    @type spin_name:    str or None
+    @return:            The formatted string containing all the molecule, residue and spin information.
+    @rtype:             str
+    """
+
+    # Init.
+    string = ''
+
+    # The molecule information.
+    if mol_name != None:
+        string += "Molecule %s" % mol_name
+
+    # The residue information.
+    if res_num != None or res_name != None:
+        # Starting string.
+        if not len(string):
+            string += "Residue"
+        else:
+            string += ", residue"
+
+        # The residue name.
+        if res_name != None:
+            string += " %s" % res_name
+
+        # The residue number.
+        if res_num != None:
+            string += " %s" % res_num
+
+    # The spin information.
+    if spin_num != None or spin_name != None:
+        # Starting string.
+        if not len(string):
+            string += "Spin"
+        else:
+            string += ", spin"
+
+        # The spin name.
+        if spin_name != None:
+            string += " %s" % spin_name
+
+        # The spin number.
+        if spin_num != None:
+            string += " %s" % spin_num
+
+
 def generate_spin_id(pipe_cont=None, pipe_name=None, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
     """Generate the spin selection string.
 
