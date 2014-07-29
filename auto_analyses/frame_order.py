@@ -37,15 +37,15 @@ import sys
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from pipe_control.pipes import get_pipe
-from lib.text.sectioning import section, subsection, title
-from lib.geometry.coord_transform import spherical_to_cartesian
-from prompt.interpreter import Interpreter
 from lib.errors import RelaxError
 from lib.frame_order.conversions import convert_axis_alpha_to_spherical
+from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.io import open_write_file
 from lib.order.order_parameters import iso_cone_theta_to_S
+from lib.text.sectioning import section, subsection, title
+from pipe_control.pipes import get_pipe
 from pipe_control.structure.mass import pipe_centre_of_mass
+from prompt.interpreter import Interpreter
 from specific_analyses.frame_order.data import generate_pivot
 from specific_analyses.frame_order.variables import MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_NONREDUNDANT, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from status import Status; status = Status()
