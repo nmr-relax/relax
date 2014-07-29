@@ -24,6 +24,7 @@
 
 # Python module imports.
 from numpy import array
+from os import sep
 from time import asctime, localtime
 
 # relax module imports.
@@ -180,10 +181,6 @@ for i in range(len(full)):
 
 # Set the reference domain.
 frame_order.ref_domain('N')
-
-# Link the domains to the PDB files.
-frame_order.domain_to_pdb(domain='N', pdb='1J7O_1st_NH.pdb')
-frame_order.domain_to_pdb(domain='C', pdb='1J7P_1st_NH_rot.pdb')
 
 # Set the initial pivot point.
 pivot = array([ 37.254, 0.5, 16.7465])
