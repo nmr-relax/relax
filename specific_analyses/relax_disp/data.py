@@ -2859,7 +2859,10 @@ def return_grace_data_r1rho_r2_as_func_of_rot_param(x_axis=None, exp_type=None, 
                 continue
 
             # Convert offset to rad/s from ppm.
-            offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
+            if hasattr(current_spin, 'isotope'):
+                offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
+            else:
+                offset_rad = 0.0
 
             # Convert spin-lock field strength from Hz to rad/s.
             omega1 = point * 2.0 * pi
@@ -3238,7 +3241,10 @@ def return_grace_data_r1rho_r2_as_func_of_rot_param_inter_offset(x_axis=None, ex
                     continue
 
                 # Convert offset to rad/s from ppm.
-                offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
+                if hasattr(current_spin, 'isotope'):
+                    offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
+                else:
+                    offset_rad = 0.0
 
                 # Convert spin-lock field strength from Hz to rad/s.
                 omega1 = point * 2.0 * pi
@@ -4029,7 +4035,10 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, spin_lock_of
                 raise RelaxError("The spin-lock offsets have not been set.")
 
             # Convert the shift from ppm to rad/s and store it.
-            shifts[ei][si][mi] = frequency_to_rad_per_s(frq=shift, B0=frq, isotope=spin.isotope)
+            if hasattr(spin, 'isotope'):
+                shifts[ei][si][mi] = frequency_to_rad_per_s(frq=shift, B0=frq, isotope=spin.isotope)
+            else:
+                shifts[ei][si][mi] = shift
 
             # Enable possible interpolation of spin-lock offset.
             if spin_lock_offset != None:
@@ -4061,7 +4070,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, spin_lock_of
 
                     # Store the offset in rad/s from ppm.  Only once and using the first key.
                     if offsets[ei][si][mi][oi] == None:
-                        if r1rho_flag and hasattr(cdp, 'spin_lock_offset'):
+                        if r1rho_flag and hasattr(cdp, 'spin_lock_offset') and hasattr(spin, 'isotope'):
                             offsets[ei][si][mi][oi] = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=spin.isotope)
                         else:
                             offsets[ei][si][mi][oi] = 0.0
@@ -4127,7 +4136,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, spin_lock_of
 
                     # Store the offset in rad/s.  Only once and using the first key.
                     if offsets[ei][si][mi][oi] == None:
-                        if r1rho_flag and hasattr(cdp, 'spin_lock_offset'):
+                        if r1rho_flag and hasattr(cdp, 'spin_lock_offset') and hasattr(spin, 'isotope'):
                             offsets[ei][si][mi][oi] = frequency_to_rad_per_s(frq=cdp.spin_lock_offset[id], B0=frq, isotope=spin.isotope)
                         else:
                             offsets[ei][si][mi][oi] = 0.0
