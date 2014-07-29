@@ -47,7 +47,7 @@ from pipe_control.pipes import get_pipe
 from pipe_control.structure.mass import pipe_centre_of_mass
 from prompt.interpreter import Interpreter
 from specific_analyses.frame_order.data import generate_pivot
-from specific_analyses.frame_order.variables import MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_NONREDUNDANT, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
+from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_NONREDUNDANT, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from status import Status; status = Status()
 
 
@@ -112,7 +112,9 @@ class Frame_order_analysis:
         self.mc_sim_num = mc_sim_num
         self.mc_int_pts = mc_int_pts
         self.mc_func_tol = mc_func_tol
-        self.models = models
+
+        # Re-order the models to enable the parameter nesting protocol.
+        self.models = self.reorder_models(models)
 
         # A dictionary and list of the data pipe names.
         self.pipe_name_dict = {}
@@ -698,6 +700,44 @@ class Frame_order_analysis:
 
         # Success.
         return True
+
+
+    def reorder_models(self, models=None):
+        """Reorder the frame order models to enable the nested parameter copying protocol.
+
+        @keyword models:    The frame order models to be used in the auto-analysis.
+        @type models:       list of str
+        @return:            The reordered frame order models.
+        @rtype:             list of str
+        """
+
+        # The correct order for the nesting protocol.
+        order = [
+            MODEL_RIGID,
+            MODEL_ROTOR,
+            MODEL_ISO_CONE,
+            MODEL_PSEUDO_ELLIPSE,
+            MODEL_ISO_CONE_TORSIONLESS,
+            MODEL_PSEUDO_ELLIPSE_TORSIONLESS,
+            MODEL_FREE_ROTOR,
+            MODEL_ISO_CONE_FREE_ROTOR,
+            MODEL_PSEUDO_ELLIPSE_FREE_ROTOR,
+            MODEL_DOUBLE_ROTOR
+        ]
+
+        # Create the new list.
+        new = []
+        for i in range(len(order)):
+            if order[i] in models:
+                new.append(order[i])
+
+        # Sanity check - the models must all be in this list.
+        for i in range(len(models)):
+            if models[i] not in order:
+                raise RelaxError("The frame order model '%s' is unknown." % models[i])
+
+        # Return the reordered list.
+        return new
 
 
     def visualisation(self, model=None):
