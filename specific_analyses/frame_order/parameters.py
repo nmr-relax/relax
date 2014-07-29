@@ -50,6 +50,11 @@ def assemble_param_vector(sim_index=None):
 
     # Loop over all model parameters.
     for param_name in cdp.params:
+        # The parameter does not exist yet.
+        if not hasattr(cdp, param_name+ext):
+            param_vect.append(None)
+            continue
+
         # Get the object.
         obj = getattr(cdp, param_name+ext)
 
