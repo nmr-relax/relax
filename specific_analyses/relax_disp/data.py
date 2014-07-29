@@ -1777,13 +1777,20 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
 
     # For R1rho models, interpolate through spin-lock field strength, and plot R1rho R2 as function of effective field in rotating frame w_eff.
     if cdp.exp_type_list == [EXP_TYPE_R1RHO]:
-        file_name_ini = "r2_r1rho_as_func_of_w_eff"
+        file_name_ini = "r2_r1rho_as_func_of_w_eff_inter_w1"
         x_axis = "w_eff"
-        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, x_axis=x_axis, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
+        interpolate = "disp"
+        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
 
         file_name_ini = "r1rho_as_func_of_theta_inter_w1"
         x_axis = "theta"
-        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, x_axis=x_axis, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
+        interpolate = "disp"
+        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
+
+        file_name_ini = "r1rho_as_func_of_theta_inter_offset"
+        x_axis = "theta"
+        interpolate = "offset"
+        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
 
     # Write a python "grace to PNG/EPS/SVG..." conversion script.
     # Open the file for writing.
@@ -1923,7 +1930,7 @@ def plot_disp_curves_disp(file_name_ini=None, dir=None, num_points=None, extend=
         add_result_file(type='grace', label='Grace', file=file_path)
 
 
-def plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=None, dir=None, x_axis=None, num_points=None, extend=None, force=None, proton_mmq_flag=None, colour_order=None):
+def plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=None, dir=None, x_axis=None, interpolate=None, num_points=None, extend=None, force=None, proton_mmq_flag=None, colour_order=None):
     """Custom 2D Grace plotting function for the dispersion curves, interpolating theta through spin-lock offset rather than spin-lock field strength.
 
     One file will be created per spin system.
@@ -1932,8 +1939,10 @@ def plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=None, dir=None,
     @type file_name_ini:        str
     @keyword dir:               The optional directory to place the file into.
     @type dir:                  str
-    @keyword x_axis:            String flag to tell which X axis to plot for.
+    @keyword x_axis:            String flag to tell which X axis to plot for.  Can be either "w_eff" or "theta".
     @type x_axis:               str
+    @keyword interploate:       String flag to tell which data type to interpolate for.  Can be either "disp" or "offset".
+    @type interpolate:          str
     @keyword num_points:        The number of points to generate the interpolated fitted curves with.
     @type num_points:           int
     @keyword extend:            How far to extend the interpolated fitted curves to (in Hz).
