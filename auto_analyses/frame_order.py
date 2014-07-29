@@ -44,7 +44,7 @@ from prompt.interpreter import Interpreter
 from lib.errors import RelaxError
 from lib.frame_order.conversions import convert_axis_alpha_to_spherical
 from lib.io import open_write_file
-from lib.order import iso_cone_theta_to_S
+from lib.order.order_parameters import iso_cone_theta_to_S
 from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.data import generate_pivot
 from specific_analyses.frame_order.variables import MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_NONREDUNDANT, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
