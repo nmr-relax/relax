@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import pi
-from numpy import divide, dot, multiply, sinc, swapaxes, tensordot
+from numpy import divide, dot, eye, float64, multiply, sinc, swapaxes, tensordot
 
 # relax module imports.
 from lib.compat import norm
