@@ -238,6 +238,13 @@ class Frame_order(SystemTestCase):
             setattr(cdp, param, curr)
 
 
+    def test_auto_analysis(self):
+        """Test the frame order auto-analysis using the rigid CaM test data."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=self.cam_path+'auto_analysis_to_rigid.py')
+
+
     def test_cam_double_rotor(self):
         """Test the double rotor frame order model of CaM."""
 
