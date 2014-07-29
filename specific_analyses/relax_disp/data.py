@@ -69,7 +69,7 @@ from lib.sequence import read_spin_data, write_spin_data
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
-from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
+from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, generate_spin_id_unique, generate_spin_string, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
 from pipe_control.selection import desel_spin
 from pipe_control.sequence import return_attached_protons
@@ -1913,7 +1913,8 @@ def plot_disp_curves_disp(file_name_ini=None, dir=None, num_points=None, extend=
                             data[i][j][k][l] = 0.0
 
         # Write the header.
-        title = "Relaxation dispersion plot for:    %s %s"%(res_name, spin_id)
+        spin_string = generate_spin_string(spin=spin, mol_name=mol_name, res_num=res_num, res_name=res_name)
+        title = "Relaxation dispersion plot for: %s"%(spin_string)
         graph_num = len(data)
         sets = []
         legend = []
@@ -2048,7 +2049,8 @@ def plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=None, dir=None,
                             data[i][j][k][l] = 0.0
 
         # Write the header.
-        title = "Relaxation dispersion plot for:    %s %s"%(res_name, spin_id)
+        spin_string = generate_spin_string(spin=spin, mol_name=mol_name, res_num=res_num, res_name=res_name)
+        title = "Relaxation dispersion plot for: %s"%(spin_string)
         if interpolate == "disp":
             subtitle = "Interpolated through Spin-lock field strength \\xw\\B\\s1\\N"
         elif interpolate == "offset":
