@@ -892,8 +892,11 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend=N
     # The offset data.
     chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, fields=spin_lock_nu1_new)
 
-    # Back calculate R2eff data for the second sets of plots.
-    back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, cpmg_frqs=cpmg_frqs_new, spin_lock_nu1=spin_lock_nu1_new)
+    if spin.model == MODEL_R2EFF:
+        back_calc = None
+    else:
+        # Back calculate R2eff data for the second sets of plots.
+        back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, cpmg_frqs=cpmg_frqs_new, spin_lock_nu1=spin_lock_nu1_new)
 
     return interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff
 
@@ -964,8 +967,11 @@ def interpolate_offset(spin=None, spin_id=None, si=None, num_points=None, extend
     # The offset data.
     chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, spin_lock_offset=spin_lock_offset_new, fields=spin_lock_nu1)
 
-    # Back calculate R2eff data for the second sets of plots.
-    back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, spin_lock_offset=spin_lock_offset_new, spin_lock_nu1=spin_lock_fields_inter)
+    if spin.model == MODEL_R2EFF:
+        back_calc = None
+    else:
+        # Back calculate R2eff data for the second sets of plots.
+        back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, spin_lock_offset=spin_lock_offset_new, spin_lock_nu1=spin_lock_fields_inter)
 
     return interpolated_flag, back_calc, spin_lock_offset_new, chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff
 
@@ -1790,7 +1796,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
         file_name_ini = "r1rho_as_func_of_theta_inter_offset"
         x_axis = "theta"
         interpolate = "offset"
-        #plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
+        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
 
     # Write a python "grace to PNG/EPS/SVG..." conversion script.
     # Open the file for writing.
@@ -1981,34 +1987,20 @@ def plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=None, dir=None,
         # The unique file name.
         file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
 
-        if not spin.model in [MODEL_R2EFF]:
-            if interpolate == "disp":
-                # Interpolate through disp points.
-                interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_disp(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend=extend)
+        if interpolate == "disp":
+            # Interpolate through disp points.
+            interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_disp(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend=extend)
 
-            if interpolate == "offset":
-                # Interpolate through disp points.
-                interpolated_flag, back_calc, spin_lock_offset_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_offset(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend=extend)
+        elif interpolate == "offset":
+            # Interpolate through disp points.
+            interpolated_flag, back_calc, spin_lock_offset_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_offset(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend=extend)
 
-                # The spin_lock field interpolated through each offset.
-                spin_lock_nu1_new = spin_lock_fields_inter
+            # The spin_lock field interpolated through each offset.
+            spin_lock_nu1_new = spin_lock_fields_inter
 
-        else:
-            back_calc = None
-            spin_lock_nu1_new = None
-
-            # Skip for data not having chemical shifts assigned.
-            if not hasattr(spin, 'isotope'):
-                continue
-
-            # Number of spectrometer fields.
-            fields = [None]
-            field_count = 1
-            if hasattr(cdp, 'spectrometer_frq_count'):
-                fields = cdp.spectrometer_frq_list
-                field_count = cdp.spectrometer_frq_count
-
-            chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, fields=spin_lock_nu1_new)
+        # Do not interpolate, if model is R2eff.
+        if spin.model == MODEL_R2EFF:
+            interpolated_flag = False
 
         # Open the file for writing.
         file_path = get_file_path(file_name, dir)
@@ -2038,7 +2030,11 @@ def plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=None, dir=None,
                 current_spin = proton
 
             # Loop over the spectrometer frequencies and offsets.
-            err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels = return_grace_data_r1rho_r2_as_func_of_rot_param(x_axis=x_axis, exp_type=exp_type, ei=ei, current_spin=current_spin, spin_id=spin_id, si=si, back_calc=back_calc, spin_lock_nu1_new=spin_lock_nu1_new, chemical_shifts=chemical_shifts, offsets_inter=offsets_inter, tilt_angles_inter=tilt_angles_inter, Delta_omega_inter=Delta_omega_inter, w_eff_inter=w_eff_inter, interpolated_flag=interpolated_flag, graph_index=graph_index, colour_order=colour_order, data=data, set_labels=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, symbol_sizes=symbol_sizes, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels)
+            if interpolate == "disp":
+                err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels = return_grace_data_r1rho_r2_as_func_of_rot_param(x_axis=x_axis, exp_type=exp_type, ei=ei, current_spin=current_spin, spin_id=spin_id, si=si, back_calc=back_calc, spin_lock_nu1_new=spin_lock_nu1_new, chemical_shifts=chemical_shifts, offsets_inter=offsets_inter, tilt_angles_inter=tilt_angles_inter, Delta_omega_inter=Delta_omega_inter, w_eff_inter=w_eff_inter, interpolated_flag=interpolated_flag, graph_index=graph_index, colour_order=colour_order, data=data, set_labels=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, symbol_sizes=symbol_sizes, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels)
+
+            elif interpolate == "offset":
+                err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels = return_grace_data_r1rho_r2_as_func_of_rot_param_inter_offset(x_axis=x_axis, exp_type=exp_type, ei=ei, current_spin=current_spin, spin_id=spin_id, si=si, back_calc=back_calc, spin_lock_nu1_new=spin_lock_nu1_new, chemical_shifts=chemical_shifts, offsets_inter=offsets_inter, tilt_angles_inter=tilt_angles_inter, Delta_omega_inter=Delta_omega_inter, w_eff_inter=w_eff_inter, interpolated_flag=interpolated_flag, graph_index=graph_index, colour_order=colour_order, data=data, set_labels=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, symbol_sizes=symbol_sizes, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels)
 
             # Increment the graph index.
             graph_index += 1
@@ -2053,7 +2049,11 @@ def plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=None, dir=None,
 
         # Write the header.
         title = "Relaxation dispersion plot for:    %s %s"%(res_name, spin_id)
-        subtitle = "Interpolated through Spin-lock field strength \\xw\\B\\s1\\N"
+        if interpolate == "disp":
+            subtitle = "Interpolated through Spin-lock field strength \\xw\\B\\s1\\N"
+        elif interpolate == "offset":
+            subtitle = "Interpolated through Spin-lock offset \\xw\\B\\srf\\N"
+
         graph_num = len(data)
         sets = []
         legend = []
@@ -2990,7 +2990,7 @@ def return_grace_data_r1rho_r2_as_func_of_rot_param(x_axis=None, exp_type=None, 
             if exp_type in EXP_TYPE_LIST_CPMG:
                 label = "R\\s2eff\\N interpolated curve"
             else:
-                label = "R\\s1\\xr\\B\\N interpolated curve"
+                label = "R\\s2\\N interpolated curve"
             if offset != None and frq != None:
                 label += " (%.1f MHz, %.3f ppm)" % (frq / 1e6, offset)
             elif frq != None:
@@ -3125,6 +3125,391 @@ def return_grace_data_r1rho_r2_as_func_of_rot_param(x_axis=None, exp_type=None, 
         # Increment the graph set index.
         set_index += 1
         colour_index += 1
+
+    # The axis labels.
+    if x_axis == "w_eff":
+        axis_labels.append(['\\qEffective field in rotating frame \\xw\\B\\seff\\N\\Q (rad.s\\S-1\\N)', '\\qR\\s2\\N\\Q (rad.s\\S-1\\N)'])
+    elif x_axis == "theta":
+        axis_labels.append(['\\qRotating frame tilt angle \\xq\\B\\Q (rad)', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)'])
+
+    return err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels
+
+
+def return_grace_data_r1rho_r2_as_func_of_rot_param_inter_offset(x_axis=None, exp_type=None, ei=None, current_spin=None, spin_id=None, si=None, back_calc=None, spin_lock_nu1_new=None, chemical_shifts=None, offsets_inter=None, tilt_angles_inter=None, Delta_omega_inter=None, w_eff_inter=None, interpolated_flag=None, graph_index=None, colour_order=None, data=None, set_labels=None, set_colours=None, x_axis_type_zero=None, symbols=None, symbol_sizes=None, linetype=None, linestyle=None, axis_labels=None):
+    """Return data in lists for 2D Grace plotting function, to prepate plotting R1rho R2 as function of effective field in rotating frame w_eff.
+
+    @keyword x_axis:                    String flag to tell which X axis to plot for.
+    @type x_axis:                       str
+    @keyword exp_type:                  The experiment type.
+    @type exp_type:                     str
+    @keyword ei:                        The experiment type index.
+    @type ei:                           int
+    @keyword current_spin:              The specific spin data container.
+    @type current_spin:                 SpinContainer instance.
+    @keyword spin_id:                   The spin ID string.
+    @type spin_id:                      str
+    @keyword si:                        The index of the given spin in the cluster.
+    @type si:                           int
+    @keyword back_calc:                 The back calculated data.  The first index corresponds to the experiment type, the second is the spin of the cluster, the third is the magnetic field strength, and the fourth is the dispersion point.
+    @type back_calc:                    list of lists of lists of lists of float
+    @keyword spin_lock_nu1_new:         The interpolated spin-lock field strengths in Hertz.  The dimensions are {Ei, Mi, Oi}.
+    @type spin_lock_nu1_new:            rank-3 list of floats
+    @keyword chemical_shifts:           The chemical shifts in rad/s {Ei, Si, Mi}
+    @type chemical_shifts:              rank-3 list of floats
+    @keyword offsets_inter:             Interpolated spin-lock offsets in rad/s {Ei, Si, Mi, Oi}
+    @type offsets_inter:                rank-3 list of numpy rank-1 float arrays
+    @keyword tilt_angles_inter:         The interpolated rotating frame tilt angles {Ei, Si, Mi, Oi, Di}
+    @type tilt_angles_inter:            rank-5 list of floats
+    @keyword Delta_omega_inter:         The interpolated average resonance offset in the rotating frame in rad/s {Ei, Si, Mi, Oi, Di}
+    @type Delta_omega_inter:            rank-5 list of floats
+    @keyword w_eff_inter:               The interpolated effective field in rotating frame in rad/s {Ei, Si, Mi, Oi, Di}.
+    @type w_eff_inter:                  rank-5 list of floats
+    @keyword interpolated_flag:         Flag telling if the graph should be interpolated.
+    @type interpolated_flag:            bool
+    @keyword graph_index:               Graph index for xmgrace.
+    @type graph_index:                  int
+    @keyword colour_order:              List of colours for xmgrace.
+    @type colour_order:                 list of int.
+    @keyword data:                      The 4D structure of numerical data to graph (see docstring).
+    @type data:                         list of lists of lists of float
+    @keyword set_labels:                Data labels to be used per experiment.
+    @type set_labels:                   list of list of strings
+    @keyword set_colours:               The colours for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type set_colours:                  None or list of list of int
+    @keyword x_axis_type_zero:          The flags specifying if the X-axis should be placed at zero.
+    @type x_axis_type_zero:             list of lists of bool
+    @keyword symbols:                   The symbol style for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type symbols:                      list of list of int
+    @keyword symbol_sizes:              The symbol size for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type symbol_sizes:                 list of list of int
+    @keyword linetype:                  The line type for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type linetype:                     list of list of int
+    @keyword linestyle:                 The line style for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type linestyle:                    list of list of int
+    @keyword axis_labels:               The labels for the axes (in the [X, Y] list format).  The first dimension is the graph.
+    @type axis_labels:                  list of list of str
+    @return:                            The xy graph or xydy error graph, the 4D structure of numerical data to grace graph, the names associated with each graph data set Gx.Sy, the colours for each graph data set Gx.Sy, flags specifying if the X-axis should be placed at zero, the symbol style for each graph data set Gx.Sy, the symbol size for each graph data set Gx.Sy, the line type for each graph data set Gx.Sy, the line style for each graph data set Gx.Sy, the labels for the axes (in the [X, Y] list format).
+    @rtype:                             boolean, list of lists of lists of float, list of list of str, list of list of int, list of lists of bool, list of list of int, list of list of int, list of list of int, list of list of int, list of list of str
+    """
+
+    set_index = 0
+    err = False
+    colour_index = 0
+
+    # Return r1.
+    field_count = cdp.spectrometer_frq_count
+    r1 = return_r1_data(spins=[current_spin], spin_ids=[spin_id], field_count=field_count)
+    r1_err = return_r1_err_data(spins=[current_spin], spin_ids=[spin_id], field_count=field_count)
+
+    for frq, mi in loop_frq(return_indices=True):
+        # Loop over the all the dispersion points.
+        for di, point in enumerate(spin_lock_nu1_new[ei][mi][0]):
+            # Add a new set for the data at each frequency and offset.
+            data[graph_index].append([])
+
+            # Add a new label.
+            if exp_type in EXP_TYPE_LIST_CPMG:
+                label = "R\\s2eff\\N"
+            else:
+                label = "R\\s2\\N"
+            if point != None and frq != None:
+                label += " (%.1f MHz, %.3f Hz)" % (frq / 1e6, point)
+            elif frq != None:
+                label += " (%.1f MHz)" % (frq / 1e6)
+            elif point != None:
+                label += " (%.3f Hz)" % (point)
+            set_labels[ei].append(label)
+
+            # The other settings.
+            set_colours[graph_index].append(colour_order[colour_index])
+            x_axis_type_zero[graph_index].append(True)
+            symbols[graph_index].append(1)
+            symbol_sizes[graph_index].append(0.45)
+            linetype[graph_index].append(0)
+            linestyle[graph_index].append(0)
+
+            # Loop over the spin_lock offsets.
+            for offset, oi in loop_offset(exp_type=exp_type, frq=frq, return_indices=True):
+                # The data key.
+                key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                # No data present.
+                if key not in current_spin.r2eff:
+                    continue
+
+                # Convert offset to rad/s from ppm.
+                offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
+
+                # Convert spin-lock field strength from Hz to rad/s.
+                omega1 = point * 2.0 * pi
+
+                # Return the rotating frame parameters.
+                Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=chemical_shifts[ei][si][mi], spin_lock_offset=offset_rad, omega1=omega1)
+
+                # Determine x,y data type.
+                if x_axis == "w_eff":
+                    # Set x_point.
+                    x_point = w_eff
+
+                    # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+                    y_point = ( current_spin.r2eff[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+
+                    # Add the error.
+                    if hasattr(current_spin, 'r2eff_err') and key in current_spin.r2eff_err:
+                        err = True
+                        y_err_point = ( current_spin.r2eff_err[key] - r1_err[si][mi]*cos(theta)**2 ) / sin(theta)**2
+
+                # Determine x,y data type.
+                elif x_axis == "theta":
+                    # Set x_point.
+                    x_point = theta
+
+                    # Set y_point.
+                    y_point = current_spin.r2eff[key]
+
+                    # Add the error.
+                    if hasattr(current_spin, 'r2eff_err') and key in current_spin.r2eff_err:
+                        err = True
+                        y_err_point = current_spin.r2eff_err[key]
+
+                # Add the data.
+                data[graph_index][set_index].append([x_point, y_point])
+
+                # Handle the errors.
+                if err:
+                    data[graph_index][set_index][-1].append(y_err_point)
+
+            # Increment the graph set index.
+            set_index += 1
+            colour_index += 1
+
+    # Add the back calculated data.
+    colour_index = 0
+    for frq, mi in loop_frq(return_indices=True):
+        # Loop over the all the dispersion points.
+        for di, point in enumerate(spin_lock_nu1_new[ei][mi][0]):
+            # Add a new set for the data at each frequency and offset.
+            data[graph_index].append([])
+
+            # Add a new label.
+            if exp_type in EXP_TYPE_LIST_CPMG:
+                label = "Back calculated R\\s2eff\\N"
+            else:
+                label = "Back calculated R\\s2\\N"
+            if point != None and frq != None:
+                label += " (%.1f MHz, %.3f Hz)" % (frq / 1e6, point)
+            elif frq != None:
+                label += " (%.1f MHz)" % (frq / 1e6)
+            elif point != None:
+                label += " (%.3f Hz)" % (point)
+            set_labels[ei].append(label)
+
+            # The other settings.
+            set_colours[graph_index].append(colour_order[colour_index])
+            x_axis_type_zero[graph_index].append(True)
+            symbols[graph_index].append(4)
+            symbol_sizes[graph_index].append(0.45)
+            linetype[graph_index].append(1)
+            if interpolated_flag:
+                linestyle[graph_index].append(2)
+            else:
+                linestyle[graph_index].append(1)
+
+            # Loop over the spin_lock offsets.
+            for offset, oi in loop_offset(exp_type=exp_type, frq=frq, return_indices=True):
+                # The data key.
+                key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                # No data present.
+                if not hasattr(current_spin, 'r2eff_bc') or key not in current_spin.r2eff_bc:
+                    continue
+
+                # Convert offset to rad/s from ppm.
+                offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
+
+                # Convert spin-lock field strength from Hz to rad/s.
+                omega1 = point * 2.0 * pi
+
+                # Return the rotating frame parameters.
+                Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=chemical_shifts[ei][si][mi], spin_lock_offset=offset_rad, omega1=omega1)
+
+                # Determine x,y data type.
+                if x_axis == "w_eff":
+                    # Set x_point.
+                    x_point = w_eff
+
+                    # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+                    y_point = ( current_spin.r2eff_bc[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+
+                # Determine x,y data type.
+                elif x_axis == "theta":
+                    # Set x_point.
+                    x_point = theta
+
+                    # Set y_point.
+                    y_point = current_spin.r2eff_bc[key]
+
+                # Add the data.
+                data[graph_index][set_index].append([x_point, y_point])
+
+                # Handle the errors.
+                if err:
+                    data[graph_index][set_index][-1].append(None)
+
+            # Increment the graph set index.
+            set_index += 1
+            colour_index += 1
+
+    # Add the interpolated back calculated data.
+    if interpolated_flag:
+        colour_index = 0
+        for frq, mi in loop_frq(return_indices=True):
+            # Loop over the all the dispersion points.
+            for di, point in enumerate(spin_lock_nu1_new[ei][mi][0]):
+                # Add a new set for the data at each frequency and offset.
+                data[graph_index].append([])
+
+                # Add a new label.
+                if exp_type in EXP_TYPE_LIST_CPMG:
+                    label = "R\\s2eff\\N interpolated curve"
+                else:
+                    label = "R\\s2\\N interpolated curve"
+                if point != None and frq != None:
+                    label += " (%.1f MHz, %.3f Hz)" % (frq / 1e6, point)
+                elif frq != None:
+                    label += " (%.1f MHz)" % (frq / 1e6)
+                elif point != None:
+                    label += " (%.3f Hz)" % (point)
+                set_labels[ei].append(label)
+
+                # The other settings.
+                set_colours[graph_index].append(colour_order[colour_index])
+                x_axis_type_zero[graph_index].append(True)
+                if current_spin.model in MODEL_LIST_NUMERIC_CPMG:
+                    symbols[graph_index].append(8)
+                else:
+                    symbols[graph_index].append(0)
+                symbol_sizes[graph_index].append(0.20)
+                linetype[graph_index].append(1)
+                linestyle[graph_index].append(1)
+
+                # Loop over the spin_lock offsets.
+                for oi, offset in enumerate(offsets_inter[ei][si][mi]):
+                    # Assign r2eff.
+                    r2eff = back_calc[ei][si][mi][oi][di]
+
+                    # Skip invalid points (values of 1e100).
+                    if r2eff > 1e50:
+                        continue
+
+                    # Get theta.
+                    theta = tilt_angles_inter[ei][si][mi][oi][di]
+
+                    # Determine x,y data type.
+                    if x_axis == "w_eff":
+                        # Set x_point.
+                        x_point = w_eff_inter[ei][si][mi][oi][di]
+
+                        # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+                        y_point = ( r2eff - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+
+                    # Determine x,y data type.
+                    elif x_axis == "theta":
+                        # Set x_point.
+                        x_point = theta
+
+                        # Set y_point.
+                        y_point = r2eff
+
+                    # Add the data.
+                    data[graph_index][set_index].append([x_point, y_point])
+
+                    # Handle the errors.
+                    if err:
+                        data[graph_index][set_index][-1].append(None)
+
+                # Increment the graph set index.
+                set_index += 1
+                colour_index += 1
+
+    # Add the residuals for statistical comparison.
+    colour_index = 0
+    for frq, mi in loop_frq(return_indices=True):
+        # Loop over the all the dispersion points.
+        for di, point in enumerate(spin_lock_nu1_new[ei][mi][0]):
+            # Add a new set for the data at each frequency and offset.
+            data[graph_index].append([])
+
+            # Add a new label.
+            label = "Residuals"
+            if offset != None and frq != None:
+                label += " (%.1f MHz, %.3f ppm)" % (frq / 1e6, offset)
+            elif frq != None:
+                label += " (%.1f MHz)" % (frq / 1e6)
+            elif offset != None:
+                label += " (%.3f ppm)" % (offset)
+            set_labels[ei].append(label)
+
+            # The other settings.
+            set_colours[graph_index].append(colour_order[colour_index])
+            x_axis_type_zero[graph_index].append(True)
+            symbols[graph_index].append(9)
+            symbol_sizes[graph_index].append(0.45)
+            linetype[graph_index].append(1)
+            linestyle[graph_index].append(3)
+
+            # Loop over the spin_lock offsets.
+            for offset, oi in loop_offset(exp_type=exp_type, frq=frq, return_indices=True):
+                # The data key.
+                key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                # No data present.
+                if key not in current_spin.r2eff or not hasattr(current_spin, 'r2eff_bc') or key not in current_spin.r2eff_bc:
+                    continue
+
+                # Convert offset to rad/s from ppm.
+                offset_rad = frequency_to_rad_per_s(frq=offset, B0=frq, isotope=current_spin.isotope)
+
+                # Convert spin-lock field strength from Hz to rad/s.
+                omega1 = point * 2.0 * pi
+
+                # Return the rotating frame parameters.
+                Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=chemical_shifts[ei][si][mi], spin_lock_offset=offset_rad, omega1=omega1)
+
+                # Determine x,y data type.
+                if x_axis == "w_eff":
+                    # Set x_point.
+                    x_point = w_eff
+
+                    # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+                    y_point = ( current_spin.r2eff[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+                    y_point_bc = ( current_spin.r2eff_bc[key] - r1[si][mi]*cos(theta)**2 ) / sin(theta)**2
+                    y_point_residual = y_point - y_point_bc
+
+                    y_err_point = ( current_spin.r2eff_err[key] - r1_err[si][mi]*cos(theta)**2 ) / sin(theta)**2
+
+                # Determine x,y data type.
+                elif x_axis == "theta":
+                    # Set x_point.
+                    x_point = theta
+
+                    # Set y_point.
+                    y_point = current_spin.r2eff[key]
+                    y_point_bc = current_spin.r2eff_bc[key]
+                    y_point_residual = y_point - y_point_bc
+
+                    y_err_point = current_spin.r2eff_err[key]
+
+                # Add the data.
+                data[graph_index][set_index].append([x_point, y_point_residual])
+
+                # Handle the errors.
+                if err:
+                    data[graph_index][set_index][-1].append(y_err_point)
+
+            # Increment the graph set index.
+            set_index += 1
+            colour_index += 1
 
     # The axis labels.
     if x_axis == "w_eff":
