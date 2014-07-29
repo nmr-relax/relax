@@ -523,7 +523,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_free_rotor.py')
-        self.check_chi2(0.041100762658556)
+        self.check_chi2(0.0543303786779369)
 
 
     def test_cam_pseudo_ellipse_free_rotor_pcs(self):
