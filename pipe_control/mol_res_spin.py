@@ -1318,6 +1318,9 @@ def format_info_full(mol_name=None, res_num=None, res_name=None, spin_num=None, 
         if spin_num != None:
             string += " %s" % spin_num
 
+    # Return the string.
+    return string
+
 
 def generate_spin_id(pipe_cont=None, pipe_name=None, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
     """Generate the spin selection string.
