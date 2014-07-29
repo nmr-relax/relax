@@ -1790,7 +1790,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
         file_name_ini = "r1rho_as_func_of_theta_inter_offset"
         x_axis = "theta"
         interpolate = "offset"
-        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
+        #plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
 
     # Write a python "grace to PNG/EPS/SVG..." conversion script.
     # Open the file for writing.
@@ -1941,7 +1941,7 @@ def plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=None, dir=None,
     @type dir:                  str
     @keyword x_axis:            String flag to tell which X axis to plot for.  Can be either "w_eff" or "theta".
     @type x_axis:               str
-    @keyword interploate:       String flag to tell which data type to interpolate for.  Can be either "disp" or "offset".
+    @keyword interpolate:       String flag to tell which data type to interpolate for.  Can be either "disp" or "offset".
     @type interpolate:          str
     @keyword num_points:        The number of points to generate the interpolated fitted curves with.
     @type num_points:           int
@@ -1982,8 +1982,16 @@ def plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=None, dir=None,
         file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
 
         if not spin.model in [MODEL_R2EFF]:
-            # Interpolate through disp points.
-            interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_disp(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend=extend)
+            if interpolate == "disp":
+                # Interpolate through disp points.
+                interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_disp(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend=extend)
+
+            if interpolate == "offset":
+                # Interpolate through disp points.
+                interpolated_flag, back_calc, spin_lock_offset_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_offset(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend=extend)
+
+                # The spin_lock field interpolated through each offset.
+                spin_lock_nu1_new = spin_lock_fields_inter
 
         else:
             back_calc = None
@@ -2030,7 +2038,7 @@ def plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=None, dir=None,
                 current_spin = proton
 
             # Loop over the spectrometer frequencies and offsets.
-            err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels = return_grace_data_r1rho_r2_as_func_of_rot_param(x_axis=x_axis, exp_type=exp_type, ei=ei, current_spin=current_spin, spin_id=spin_id, si=si, back_calc=back_calc, spin_lock_nu1_new=spin_lock_nu1_new, chemical_shifts=chemical_shifts, tilt_angles_inter=tilt_angles_inter, Delta_omega_inter=Delta_omega_inter, w_eff_inter=w_eff_inter, interpolated_flag=interpolated_flag, graph_index=graph_index, colour_order=colour_order, data=data, set_labels=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, symbol_sizes=symbol_sizes, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels)
+            err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels = return_grace_data_r1rho_r2_as_func_of_rot_param(x_axis=x_axis, exp_type=exp_type, ei=ei, current_spin=current_spin, spin_id=spin_id, si=si, back_calc=back_calc, spin_lock_nu1_new=spin_lock_nu1_new, chemical_shifts=chemical_shifts, offsets_inter=offsets_inter, tilt_angles_inter=tilt_angles_inter, Delta_omega_inter=Delta_omega_inter, w_eff_inter=w_eff_inter, interpolated_flag=interpolated_flag, graph_index=graph_index, colour_order=colour_order, data=data, set_labels=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, symbol_sizes=symbol_sizes, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels)
 
             # Increment the graph index.
             graph_index += 1
@@ -2750,7 +2758,7 @@ def return_cpmg_frqs_single(exp_type=None, frq=None, offset=None, time=None, ref
     return array(cpmg_frqs, float64)
 
 
-def return_grace_data_r1rho_r2_as_func_of_rot_param(x_axis=None, exp_type=None, ei=None, current_spin=None, spin_id=None, si=None, back_calc=None, spin_lock_nu1_new=None, chemical_shifts=None, spin_lock_fields_inter=None, offsets_inter=None, tilt_angles_inter=None, Delta_omega_inter=None, w_eff_inter=None, interpolated_flag=None, graph_index=None, colour_order=None, data=None, set_labels=None, set_colours=None, x_axis_type_zero=None, symbols=None, symbol_sizes=None, linetype=None, linestyle=None, axis_labels=None):
+def return_grace_data_r1rho_r2_as_func_of_rot_param(x_axis=None, exp_type=None, ei=None, current_spin=None, spin_id=None, si=None, back_calc=None, spin_lock_nu1_new=None, chemical_shifts=None, offsets_inter=None, tilt_angles_inter=None, Delta_omega_inter=None, w_eff_inter=None, interpolated_flag=None, graph_index=None, colour_order=None, data=None, set_labels=None, set_colours=None, x_axis_type_zero=None, symbols=None, symbol_sizes=None, linetype=None, linestyle=None, axis_labels=None):
     """Return data in lists for 2D Grace plotting function, to prepate plotting R1rho R2 as function of effective field in rotating frame w_eff.
 
     @keyword x_axis:                    String flag to tell which X axis to plot for.
@@ -2771,6 +2779,8 @@ def return_grace_data_r1rho_r2_as_func_of_rot_param(x_axis=None, exp_type=None, 
     @type spin_lock_nu1_new:            rank-3 list of floats
     @keyword chemical_shifts:           The chemical shifts in rad/s {Ei, Si, Mi}
     @type chemical_shifts:              rank-3 list of floats
+    @keyword offsets_inter:             Interpolated spin-lock offsets in rad/s {Ei, Si, Mi, Oi}
+    @type offsets_inter:                rank-3 list of numpy rank-1 float arrays
     @keyword tilt_angles_inter:         The interpolated rotating frame tilt angles {Ei, Si, Mi, Oi, Di}
     @type tilt_angles_inter:            rank-5 list of floats
     @keyword Delta_omega_inter:         The interpolated average resonance offset in the rotating frame in rad/s {Ei, Si, Mi, Oi, Di}
