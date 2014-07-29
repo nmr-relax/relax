@@ -580,7 +580,7 @@ class Frame_order_analysis:
         print("\n\nTranslation active - splitting the grid search and iterating.")
         for i in range(2):
             # First optimise the rotation.
-            self.interpreter.grid_search(inc=[None, None, None, self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid])
+            self.interpreter.minimise.grid_search(inc=[None, None, None, self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid])
 
             # Then the translation.
             self.interpreter.minimise.grid_search(inc=[self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid, None, None, None])
