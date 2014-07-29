@@ -578,14 +578,20 @@ class Frame_order_analysis:
         # Select the Frame Order model.
         self.interpreter.frame_order.select_model(model=model)
 
-        # Split grid search for the translation.
+        # Split zooming grid search for the translation.
         print("\n\nTranslation active - splitting the grid search and iterating.")
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
         for i in range(2):
+            # Set the zooming grid search level.
+            self.interpreter.minimise.grid_zoom(level=i)
+
             # First optimise the rotation.
-            self.interpreter.minimise.grid_search(inc=[None, None, None, self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid])
+            self.interpreter.minimise.grid_search(inc=[None, None, None, self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid], skip_preset=False)
 
             # Then the translation.
-            self.interpreter.minimise.grid_search(inc=[self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid, None, None, None])
+            self.interpreter.minimise.grid_search(inc=[self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid, None, None, None], skip_preset=False)
 
         # Minimise.
         self.interpreter.minimise.execute(self.min_algor)
