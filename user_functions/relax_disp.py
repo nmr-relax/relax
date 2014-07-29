@@ -482,7 +482,7 @@ uf.add_keyarg(
     can_be_none = False
 )
 uf.add_keyarg(
-    name = "extend",
+    name = "extend_hz",
     py_type = "num",
     default = 500.0,
     desc_short = "interpolated dispersion curve extension (in Hz)",

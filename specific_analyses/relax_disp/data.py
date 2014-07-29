@@ -760,7 +760,7 @@ def insignificance(level=0.0):
             desel_spin(spin_id)
 
 
-def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend=None):
+def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend_hz=None):
     """Interpolate function for 2D Grace plotting function for the dispersion curves.
 
     @keyword spin:          The specific spin data container.
@@ -771,8 +771,8 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend=N
     @type si:               int
     @keyword num_points:    The number of points to generate the interpolated fitted curves with.
     @type num_points:       int
-    @keyword extend:        How far to extend the interpolated fitted curves to (in Hz).
-    @type extend:           float
+    @keyword extend_hz:     How far to extend the interpolated fitted curves to (in Hz).
+    @type extend_hz:        float
     @return:                The interpolated_flag, list of back calculated R2eff/R1rho values in rad/s {Ei, Si, Mi, Oi, Di}, list of interpolated frequencies for cpmg_frqs in Hz {Ei, Si, Mi, Oi, Di}, list of interpolated spin-lock field strength frequencies for spin_lock_nu1_new in Hz {Ei, Si, Mi, Oi, Di}, chemical shifts in rad/s {Ei, Si, Mi}, list of interpolated spin-lock field strength frequencies for spin_lock_fields_inter in Hz {Ei, Si, Mi, Oi, Di}, interpolated spin-lock offsets in rad/s {Ei, Si, Mi, Oi}, interpolated rotating frame tilt angles {Ei, Si, Mi, Oi, Di}, interpolated average resonance offset in the rotating frame in rad/s {Ei, Si, Mi, Oi, Di} and the interpolated effective field in rotating frame in rad/s {Ei, Si, Mi, Oi, Di}.
     @rtype:                 boolean, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-2 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-3 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays
     """
@@ -810,7 +810,7 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend=N
 
                         # The minimum frequency unit.
                         min_frq = 1.0 / relax_times[ei][mi]
-                        max_frq = max(cpmg_frqs[ei][mi][oi]) + round(extend / min_frq) * min_frq
+                        max_frq = max(cpmg_frqs[ei][mi][oi]) + round(extend_hz / min_frq) * min_frq
                         num_points = int(round(max_frq / min_frq))
 
                         # Interpolate (adding the extended amount to the end).
@@ -846,7 +846,7 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend=N
 
                         # Interpolate (adding the extended amount to the end).
                         for di in range(num_points):
-                            point = (di + 1) * (max(cpmg_frqs[ei][mi][oi])+extend) / num_points
+                            point = (di + 1) * (max(cpmg_frqs[ei][mi][oi])+extend_hz) / num_points
                             cpmg_frqs_new[ei][mi][oi].append(point)
 
                         # Convert to a numpy array.
@@ -876,7 +876,7 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend=N
 
                     # Interpolate (adding the extended amount to the end).
                     for di in range(num_points):
-                        point = (di + 1) * (max(spin_lock_nu1[ei][mi][oi])+extend) / num_points
+                        point = (di + 1) * (max(spin_lock_nu1[ei][mi][oi])+extend_hz) / num_points
                         spin_lock_nu1_new[ei][mi][oi].append(point)
 
                     # Convert to a numpy array.
@@ -901,7 +901,7 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend=N
     return interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff
 
 
-def interpolate_offset(spin=None, spin_id=None, si=None, num_points=None, extend=None):
+def interpolate_offset(spin=None, spin_id=None, si=None, num_points=None, extend_ppm=None):
     """Interpolate function for 2D Grace plotting function for the dispersion curves, interpolating through spin-lock offset in rad/s.
 
     @keyword spin:          The specific spin data container.
@@ -912,8 +912,8 @@ def interpolate_offset(spin=None, spin_id=None, si=None, num_points=None, extend
     @type si:               int
     @keyword num_points:    The number of points to generate the interpolated fitted curves with.
     @type num_points:       int
-    @keyword extend:        How far to extend the interpolated fitted curves to in offset ppm.
-    @type extend:           float
+    @keyword extend_ppm:    How far to extend the interpolated fitted curves to in offset ppm.
+    @type extend_ppm:       float
     @return:                The interpolated_flag, list of back calculated R2eff/R1rho values in rad/s {Ei, Si, Mi, Oi, Di}, list of interpolated spin-lock offsets in ppm {Ei, Si, Mi, Oi}, chemical shifts in rad/s {Ei, Si, Mi}, list of interpolated spin-lock field strength frequencies for spin_lock_fields_inter in Hz {Ei, Si, Mi, Oi, Di}, interpolated spin-lock offsets in rad/s {Ei, Si, Mi, Oi}, interpolated rotating frame tilt angles {Ei, Si, Mi, Oi, Di}, interpolated average resonance offset in the rotating frame in rad/s {Ei, Si, Mi, Oi, Di} and the interpolated effective field in rotating frame in rad/s {Ei, Si, Mi, Oi, Di}.
     @rtype:                 boolean, rank-4 list of numpy rank-1 float arrays, rank-3 list of numpy rank-1 float arrays, rank-2 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-3 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays
     """
@@ -951,7 +951,7 @@ def interpolate_offset(spin=None, spin_id=None, si=None, num_points=None, extend
 
                 # Interpolate (adding the extended amount to the end).
                 for oi in range(num_points+1):
-                    offset_point = oi * (max_offset+extend) / num_points
+                    offset_point = oi * (max_offset+extend_ppm) / num_points
                     spin_lock_offset_new[ei][0][mi].append(offset_point)
 
                 # Convert to a numpy array.
@@ -1750,7 +1750,7 @@ def pack_back_calc_r2eff(spin=None, spin_id=None, si=None, back_calc=None, proto
         current_spin.r2eff_bc[key] = back_calc[ei][si][mi][oi][di]
 
 
-def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
+def plot_disp_curves(dir=None, y_axis="r2eff", x_axis="disp", num_points=1000, extend_hz=500.0, extend_ppm=500.0, interpolate="disp", force=False):
     """Custom 2D Grace plotting function for the dispersion curves.
 
     One file will be created per spin system.
@@ -1759,10 +1759,18 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
 
     @keyword dir:           The optional directory to place the file into.
     @type dir:              str
+    @keyword y_axis:        String flag to tell which data on Y axis to plot for.  Option can be either "r2eff" which plot 'r2eff' for CPMG experiments or 'r1rho' for R1rho experiments or option can be "r1rho_r2", which for R1rho experiments plot R2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
+    @type y_axis:           str
+    @keyword x_axis:        String flag to tell which data on X axis to plot for.  Option can be either "disp" which plot 'CPMG frequency (Hz)' for CPMG experiments or 'Spin-lock field strength (Hz)' for R1rho experiments or option can be either "w_eff" or "theta" for R1rho experiments, which plot 'Effective field in rotating frame (rad/s)' or 'Rotating frame tilt angle theta (rad)'.
+    @type x_axis:           str
     @keyword num_points:    The number of points to generate the interpolated fitted curves with.
     @type num_points:       int
-    @keyword extend:        How far to extend the interpolated fitted curves to (in Hz).
-    @type extend:           float
+    @keyword extend_hz:     How far to extend the interpolated fitted curves to, when interpolating over CPMG frequency or spin-lock field strength (in Hz).
+    @type extend_hz:        float
+    @keyword extend_ppm:    How far to extend the interpolated fitted curves to, when interpolating over spin-lock offset (in ppm).
+    @type extend_ppm:       float
+    @keyword interpolate:   How to interpolate the fitted curves.  Either by option "disp" which interpolate CPMG frequency or spin-lock field strength, or by option "offset" which interpole over spin-lock offset.
+    @type interpolate:      float
     @param force:           Boolean argument which if True causes the files to be overwritten if it already exists.
     @type force:            bool
     """
@@ -1779,24 +1787,22 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
 
     # Plot dispersion curves, extending over number of dispersion points.
     file_name_ini = "disp"
-    plot_disp_curves_disp(file_name_ini=file_name_ini, dir=dir, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
+    plot_disp_curves_disp(file_name_ini=file_name_ini, dir=dir, num_points=num_points, extend_hz=extend_hz, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
 
     # For R1rho models, interpolate through spin-lock field strength, and plot R1rho R2 as function of effective field in rotating frame w_eff.
     if cdp.exp_type_list == [EXP_TYPE_R1RHO]:
         file_name_ini = "r2_r1rho_as_func_of_w_eff_inter_w1"
         x_axis = "w_eff"
-        interpolate = "disp"
-        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
+        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
 
         file_name_ini = "r1rho_as_func_of_theta_inter_w1"
         x_axis = "theta"
-        interpolate = "disp"
-        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
+        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
 
         file_name_ini = "r1rho_as_func_of_theta_inter_offset"
         x_axis = "theta"
         interpolate = "offset"
-        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend=extend, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
+        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag, colour_order=colour_order)
 
     # Write a python "grace to PNG/EPS/SVG..." conversion script.
     # Open the file for writing.
@@ -1816,7 +1822,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
         chmod(file_name, S_IRWXU|S_IRGRP|S_IROTH)
 
 
-def plot_disp_curves_disp(file_name_ini=None, dir=None, num_points=None, extend=None, force=None, proton_mmq_flag=None, colour_order=None):
+def plot_disp_curves_disp(file_name_ini=None, dir=None, num_points=None, extend_hz=None, force=None, proton_mmq_flag=None, colour_order=None):
     """Custom 2D Grace plotting function for the dispersion curves, looping over dispersion points.
 
     One file will be created per spin system.
@@ -1827,8 +1833,8 @@ def plot_disp_curves_disp(file_name_ini=None, dir=None, num_points=None, extend=
     @type dir:                  str
     @keyword num_points:        The number of points to generate the interpolated fitted curves with.
     @type num_points:           int
-    @keyword extend:            How far to extend the interpolated fitted curves to (in Hz).
-    @type extend:               float
+    @keyword extend_hz:         How far to extend the interpolated fitted curves to (in Hz).
+    @type extend_hz:            float
     @param force:               Boolean argument which if True causes the files to be overwritten if it already exists.
     @type force:                bool
     @keyword proton_mmq_flag:   The flag specifying if proton SQ or MQ CPMG data exists for the spin.
@@ -1864,7 +1870,7 @@ def plot_disp_curves_disp(file_name_ini=None, dir=None, num_points=None, extend=
         interpolated_flag = False
         if not spin.model in [MODEL_R2EFF]:
             # Interpolate through disp points.
-            interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_disp(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend=extend)
+            interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_disp(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend_hz=extend_hz)
 
         else:
             back_calc = None
@@ -1937,7 +1943,7 @@ def plot_disp_curves_disp(file_name_ini=None, dir=None, num_points=None, extend=
         add_result_file(type='grace', label='Grace', file=file_path)
 
 
-def plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=None, dir=None, x_axis=None, interpolate=None, num_points=None, extend=None, force=None, proton_mmq_flag=None, colour_order=None):
+def plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=None, dir=None, y_axis=None, x_axis=None, interpolate=None, num_points=None, extend_hz=None, extend_ppm=None, force=None, proton_mmq_flag=None, colour_order=None):
     """Custom 2D Grace plotting function for the dispersion curves, interpolating theta through spin-lock offset rather than spin-lock field strength.
 
     One file will be created per spin system.
@@ -1946,14 +1952,18 @@ def plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=None, dir=None,
     @type file_name_ini:        str
     @keyword dir:               The optional directory to place the file into.
     @type dir:                  str
-    @keyword x_axis:            String flag to tell which X axis to plot for.  Can be either "w_eff" or "theta".
+    @keyword y_axis:            String flag to tell which data on Y axis to plot for.  Option can be either "r2eff" which plot 'r2eff' for CPMG experiments or 'r1rho' for R1rho experiments or option can be "r1rho_r2", which for R1rho experiments plot R2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
+    @type y_axis:               str
+    @keyword x_axis:            String flag to tell which data on X axis to plot for.  Option can be either "disp" which plot 'CPMG frequency (Hz)' for CPMG experiments or 'Spin-lock field strength (Hz)' for R1rho experiments or option can be either "w_eff" or "theta" for R1rho experiments, which plot 'Effective field in rotating frame (rad/s)' or 'Rotating frame tilt angle theta (rad)'.
     @type x_axis:               str
     @keyword interpolate:       String flag to tell which data type to interpolate for.  Can be either "disp" or "offset".
     @type interpolate:          str
     @keyword num_points:        The number of points to generate the interpolated fitted curves with.
     @type num_points:           int
-    @keyword extend:            How far to extend the interpolated fitted curves to (in Hz).
-    @type extend:               float
+    @keyword extend_hz:         How far to extend the interpolated fitted curves to, when interpolating over CPMG frequency or spin-lock field strength (in Hz).
+    @type extend_hz:            float
+    @keyword extend_ppm:        How far to extend the interpolated fitted curves to, when interpolating over spin-lock offset (in ppm).
+    @type extend_ppm:           float
     @param force:               Boolean argument which if True causes the files to be overwritten if it already exists.
     @type force:                bool
     @keyword proton_mmq_flag:   The flag specifying if proton SQ or MQ CPMG data exists for the spin.
@@ -1990,11 +2000,11 @@ def plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=None, dir=None,
 
         if interpolate == "disp":
             # Interpolate through disp points.
-            interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_disp(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend=extend)
+            interpolated_flag, back_calc, cpmg_frqs_new, spin_lock_nu1_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_disp(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend_hz=extend_hz)
 
         elif interpolate == "offset":
             # Interpolate through disp points.
-            interpolated_flag, back_calc, spin_lock_offset_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_offset(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend=extend)
+            interpolated_flag, back_calc, spin_lock_offset_new, chemical_shifts, spin_lock_fields_inter, offsets_inter, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_offset(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend_ppm=extend_ppm)
 
             # The spin_lock field interpolated through each offset.
             spin_lock_nu1_new = spin_lock_fields_inter
