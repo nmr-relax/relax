@@ -243,8 +243,3 @@ def update_model():
     # Cone parameters - 2nd torsion angle.
     if cdp.model in [MODEL_DOUBLE_ROTOR]:
         cdp.params.append('cone_sigma_max_2')
-
-    # Initialise the parameters in the current data pipe.
-    for param in cdp.params:
-        if not param in ['pivot_x', 'pivot_y', 'pivot_z'] and not hasattr(cdp, param):
-            setattr(cdp, param, 0.0)
