@@ -29,6 +29,7 @@ from time import asctime, localtime
 
 # relax module imports.
 from auto_analyses.frame_order import Frame_order_analysis
+from data_store import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
 
 
@@ -204,4 +205,4 @@ for i in range(len(ln)):
 ############
 
 # Do not change!
-Frame_order_analysis(data_pipe_full=DATA, data_pipe_subset=SUBSET, pipe_bundle=PIPE_BUNDLE, grid_inc=GRID_INC, grid_inc_rigid=GRID_INC_RIGID, min_algor=MIN_ALGOR, num_int_pts_grid=NUM_INT_PTS_GRID, num_int_pts_subset=NUM_INT_PTS_SUBSET, func_tol_subset=FUNC_TOL_SUBSET, num_int_pts_full=NUM_INT_PTS_FULL, func_tol_full=FUNC_TOL_FULL, mc_sim_num=MC_NUM, mc_int_pts=MC_INT_PTS, mc_func_tol=MC_FUNC_TOL, models=MODELS)
+Frame_order_analysis(data_pipe_full=DATA, data_pipe_subset=SUBSET, pipe_bundle=PIPE_BUNDLE, results_dir=ds.tmpdir, grid_inc=GRID_INC, grid_inc_rigid=GRID_INC_RIGID, min_algor=MIN_ALGOR, num_int_pts_grid=NUM_INT_PTS_GRID, num_int_pts_subset=NUM_INT_PTS_SUBSET, func_tol_subset=FUNC_TOL_SUBSET, num_int_pts_full=NUM_INT_PTS_FULL, func_tol_full=FUNC_TOL_FULL, mc_sim_num=MC_NUM, mc_int_pts=MC_INT_PTS, mc_func_tol=MC_FUNC_TOL, models=MODELS)
