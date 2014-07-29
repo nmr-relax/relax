@@ -255,6 +255,66 @@ class Test_mol_res_spin(UnitTestCase):
         self.assertRaises(RelaxNoPipeError, mol_res_spin.exists_mol_res_spin_data)
 
 
+    def test_format_info_full1(self):
+        """Test the format_info_full() function for all combinations of input."""
+
+        # The spin info and expected string - covering all possible combinations.
+        info = [
+            # 5 bits of info.
+            {'mol_name': 'Ubi', 'res_name': 'Ala', 'res_num': 10,   'spin_name': 'N',  'spin_num': 200,  'string': "Molecule Ubi, residue Ala 10, spin N 200"},
+
+            # 4 bits of info.
+            {'mol_name': None,  'res_name': 'Ala', 'res_num': 10,   'spin_name': 'N',  'spin_num': 200,  'string': "Residue Ala 10, spin N 200"},
+            {'mol_name': 'Ubi', 'res_name': None,  'res_num': 10,   'spin_name': 'N',  'spin_num': 200,  'string': "Molecule Ubi, residue 10, spin N 200"},
+            {'mol_name': 'Ubi', 'res_name': 'Ala', 'res_num': None, 'spin_name': 'N',  'spin_num': 200,  'string': "Molecule Ubi, residue Ala, spin N 200"},
+            {'mol_name': 'Ubi', 'res_name': 'Ala', 'res_num': 10,   'spin_name': None, 'spin_num': 200,  'string': "Molecule Ubi, residue Ala 10, spin 200"},
+            {'mol_name': 'Ubi', 'res_name': 'Ala', 'res_num': 10,   'spin_name': 'N',  'spin_num': None, 'string': "Molecule Ubi, residue Ala 10, spin N"},
+
+            # 3 bits of info.
+            {'mol_name': None,  'res_name': None,  'res_num': 10,   'spin_name': 'N',  'spin_num': 200,  'string': "Residue 10, spin N 200"},
+            {'mol_name': None,  'res_name': 'Ala', 'res_num': None, 'spin_name': 'N',  'spin_num': 200,  'string': "Residue Ala, spin N 200"},
+            {'mol_name': None,  'res_name': 'Ala', 'res_num': 10,   'spin_name': None, 'spin_num': 200,  'string': "Residue Ala 10, spin 200"},
+            {'mol_name': None,  'res_name': 'Ala', 'res_num': 10,   'spin_name': 'N',  'spin_num': None, 'string': "Residue Ala 10, spin N"},
+            {'mol_name': 'Ubi', 'res_name': None,  'res_num': None, 'spin_name': 'N',  'spin_num': 200,  'string': "Molecule Ubi, spin N 200"},
+            {'mol_name': 'Ubi', 'res_name': None,  'res_num': 10,   'spin_name': None, 'spin_num': 200,  'string': "Molecule Ubi, residue 10, spin 200"},
+            {'mol_name': 'Ubi', 'res_name': None,  'res_num': 10,   'spin_name': 'N',  'spin_num': None, 'string': "Molecule Ubi, residue 10, spin N"},
+            {'mol_name': 'Ubi', 'res_name': 'Ala', 'res_num': None, 'spin_name': None, 'spin_num': 200,  'string': "Molecule Ubi, residue Ala, spin 200"},
+            {'mol_name': 'Ubi', 'res_name': 'Ala', 'res_num': None, 'spin_name': 'N',  'spin_num': None, 'string': "Molecule Ubi, residue Ala, spin N"},
+            {'mol_name': 'Ubi', 'res_name': 'Ala', 'res_num': 10,   'spin_name': None, 'spin_num': None, 'string': "Molecule Ubi, residue Ala 10"},
+
+            # 2 bits of info.
+            {'mol_name': None,  'res_name': None,  'res_num': None, 'spin_name': 'N',  'spin_num': 200,  'string': "Spin N 200"},
+            {'mol_name': None,  'res_name': None,  'res_num': 10,   'spin_name': None, 'spin_num': 200,  'string': "Residue 10, spin 200"},
+            {'mol_name': None,  'res_name': None,  'res_num': 10,   'spin_name': 'N',  'spin_num': None, 'string': "Residue 10, spin N"},
+            {'mol_name': None,  'res_name': 'Ala', 'res_num': None, 'spin_name': None, 'spin_num': 200,  'string': "Residue Ala, spin 200"},
+            {'mol_name': None,  'res_name': 'Ala', 'res_num': None, 'spin_name': 'N',  'spin_num': None, 'string': "Residue Ala, spin N"},
+            {'mol_name': None,  'res_name': 'Ala', 'res_num': 10,   'spin_name': None, 'spin_num': None, 'string': "Residue Ala 10"},
+            {'mol_name': 'Ubi', 'res_name': None,  'res_num': None, 'spin_name': None, 'spin_num': 200,  'string': "Molecule Ubi, spin 200"},
+            {'mol_name': 'Ubi', 'res_name': None,  'res_num': None, 'spin_name': 'N',  'spin_num': None, 'string': "Molecule Ubi, spin N"},
+            {'mol_name': 'Ubi', 'res_name': None,  'res_num': 10,   'spin_name': None, 'spin_num': None, 'string': "Molecule Ubi, residue 10"},
+            {'mol_name': 'Ubi', 'res_name': 'Ala', 'res_num': None, 'spin_name': None, 'spin_num': None, 'string': "Molecule Ubi, residue Ala"},
+
+            # 1 bit of info.
+            {'mol_name': None,  'res_name': None,  'res_num': None, 'spin_name': None, 'spin_num': 200,  'string': "Spin 200"},
+            {'mol_name': None,  'res_name': None,  'res_num': None, 'spin_name': 'N',  'spin_num': None, 'string': "Spin N"},
+            {'mol_name': None,  'res_name': None,  'res_num': 10,   'spin_name': None, 'spin_num': None, 'string': "Residue 10"},
+            {'mol_name': None,  'res_name': 'Ala', 'res_num': None, 'spin_name': None, 'spin_num': None, 'string': "Residue Ala"},
+            {'mol_name': 'Ubi', 'res_name': None,  'res_num': None, 'spin_name': None, 'spin_num': None, 'string': "Molecule Ubi"},
+
+            # 0 bits of info.
+            {'mol_name': None,  'res_name': None,  'res_num': None, 'spin_name': None, 'spin_num': None, 'string': ""},
+        ]
+
+        # Printout.
+        print("Checking %s combinations." % len(info))
+
+        # Create and check each string.
+        for i in range(len(info)):
+            print("    Checking %s" % info[i])
+            string = mol_res_spin.format_info_full(mol_name=info[i]['mol_name'], res_name=info[i]['res_name'], res_num=info[i]['res_num'], spin_name=info[i]['spin_name'], spin_num=info[i]['spin_num'])
+            self.assertEqual(string, info[i]['string'])
+
+
     def test_generate_spin_id_data_array1(self):
         """First test of the spin ID generation function.
 
