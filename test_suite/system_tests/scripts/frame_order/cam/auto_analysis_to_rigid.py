@@ -54,21 +54,22 @@ MC_NUM = 3
 
 # Rigid model optimisation setup.
 OPT_RIGID = Optimisation_settings()
-OPT_RIGID.add_grid(inc=4, num_int_pts=1)
+OPT_RIGID.add_grid(inc=8, zoom=0)
+OPT_RIGID.add_min(min_algor='simplex', func_tol=1e-2)
 
 # PCS subset optimisation setup.
 OPT_SUBSET = Optimisation_settings()
 OPT_SUBSET.add_grid(inc=2, num_int_pts=1)
-OPT_SUBSET.add_min(min_algor='simplex', func_tol=1e-2, num_int_pts=1)
+OPT_SUBSET.add_min(min_algor='simplex', func_tol=1e-2, max_iter=20, num_int_pts=1)
 
 # Full data set optimisation setup.
 OPT_FULL = Optimisation_settings()
 OPT_FULL.add_grid(inc=2, num_int_pts=1)
-OPT_FULL.add_min(min_algor='simplex', func_tol=1e-2, num_int_pts=1)
+OPT_FULL.add_min(min_algor='simplex', func_tol=1e-2, max_iter=20, num_int_pts=1)
 
 # Monte Carlo simulation optimisation setup.
 OPT_MC = Optimisation_settings()
-OPT_MC.add_min(min_algor='simplex', func_tol=1e-2, num_int_pts=1)
+OPT_MC.add_min(min_algor='simplex', func_tol=1e-2, max_iter=20, num_int_pts=1)
 
 
 # Set up the base data pipes.
@@ -103,10 +104,10 @@ interatom.unit_vectors()
 # The lanthanides and data files.
 ln = ['dy', 'tb', 'tm', 'er']
 pcs_files = [
-    'pcs_dy.txt',
-    'pcs_tb.txt', 
-    'pcs_tm.txt', 
-    'pcs_er.txt'
+    'pcs_dy_subset.txt',
+    'pcs_tb_subset.txt', 
+    'pcs_tm_subset.txt', 
+    'pcs_er_subset.txt'
 ]
 pcs_files_subset = [
     'pcs_dy_subset.txt', 
