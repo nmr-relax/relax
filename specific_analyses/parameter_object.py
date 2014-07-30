@@ -249,7 +249,7 @@ class Param_list(object):
             set = 'params',
             grid_lower = -1e-3,
             grid_upper = 1e-3,
-            grace_string = '\qA\sxx\N',
+            grace_string = '\\qA\\sxx\\N',
             err = True,
             sim = True
         )
@@ -261,7 +261,7 @@ class Param_list(object):
             set = 'params',
             grid_lower = -1e-3,
             grid_upper = 1e-3,
-            grace_string = '\qA\syy\N',
+            grace_string = '\\qA\\syy\\N',
             err = True,
             sim = True
         )
@@ -273,7 +273,7 @@ class Param_list(object):
             set = 'params',
             grid_lower = -1e-3,
             grid_upper = 1e-3,
-            grace_string = '\qA\sxy\N',
+            grace_string = '\\qA\\sxy\\N',
             err = True,
             sim = True
         )
@@ -285,7 +285,7 @@ class Param_list(object):
             set = 'params',
             grid_lower = -1e-3,
             grid_upper = 1e-3,
-            grace_string = '\qA\sxz\N',
+            grace_string = '\\qA\\sxz\\N',
             err = True,
             sim = True
         )
@@ -297,7 +297,7 @@ class Param_list(object):
             set = 'params',
             grid_lower = -1e-3,
             grid_upper = 1e-3,
-            grace_string = '\qA\syz\N',
+            grace_string = '\\qA\\syz\\N',
             err = True,
             sim = True
         )
