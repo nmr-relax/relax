@@ -4753,6 +4753,7 @@ class Relax_disp(SystemTestCase):
         [Y_AXIS_R2_EFF, X_AXIS_THETA, INTERPOLATE_OFFSET]
         ]
 
+        # Define expected folder names.
         result_folders = MODELS + ['final']
 
         # Assign spin_id.
@@ -4768,10 +4769,46 @@ class Relax_disp(SystemTestCase):
                 # Make the file name.
                 file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
 
+                # Get the file path.
                 file_path = get_file_path(file_name, result_dir_name+sep+result_folder)
 
                 print("Testing file access to graph: %s"%file_path)
                 self.assert_(access(file_path, F_OK))
+
+        # Start testing all possible combinations of graphs.
+        y_axis_types = [Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO]
+        x_axis_types = [X_AXIS_DISP, X_AXIS_THETA, X_AXIS_W_EFF]
+        interpolate_types = [INTERPOLATE_DISP, INTERPOLATE_OFFSET]
+
+        result_dir_name = "/Users/tlinnet/test"
+
+        # Loop through all possible combinations of y_axis, x_axis and interpolation.
+        i = 1
+        for y_axis in y_axis_types:
+            for x_axis in x_axis_types:
+                for interpolate in interpolate_types:
+                    # Determine file name:
+                    file_name_ini = return_grace_file_name_ini(y_axis=y_axis, x_axis=x_axis, interpolate=interpolate)
+
+                    # Make the file name.
+                    file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
+
+                    # Set result folder.
+                    result_folder = "%i"%(i)
+
+                    # Write the curves.
+                    dir = result_dir_name+sep+result_folder
+                    self.interpreter.relax_disp.plot_disp_curves(dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, force=False)
+
+                    # Get the file path.
+                    file_path = get_file_path(file_name, dir)
+
+                    # Test the plot file exists.
+                    print("Testing file access to graph: %s"%file_path)
+                    self.assert_(access(file_path, F_OK))
+
+                    # Add to counter.
+                    i += 1
 
 
     def test_r1rho_kjaergaard_man(self):
