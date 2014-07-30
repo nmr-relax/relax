@@ -3167,6 +3167,7 @@ def return_grace_data_vs_offset(y_axis=None, x_axis=None, interpolate=None, exp_
                     else:
                         theta = tilt_angles_inter[ei][si][mi][oi][di]
                         w_eff = w_eff_inter[ei][si][mi][oi][di]
+                        offset = frequency_to_ppm_from_rad(frq=offsets_inter[ei][si][mi][oi], B0=frq, isotope=current_spin.isotope)
 
                     # Return the x and y point.
                     x_point, y_point, err, y_err_point = return_grace_x_y_point(data_type=data_type, x_axis=x_axis, y_axis=y_axis, interpolate=interpolate, data_key=key, spin=current_spin, back_calc=r2eff, offset=offset, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
