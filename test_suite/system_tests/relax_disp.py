@@ -4780,7 +4780,7 @@ class Relax_disp(SystemTestCase):
         x_axis_types = [X_AXIS_DISP, X_AXIS_THETA, X_AXIS_W_EFF]
         interpolate_types = [INTERPOLATE_DISP, INTERPOLATE_OFFSET]
 
-        result_dir_name = "/Users/tlinnet/test"
+        result_dir_name = ds.tmpdir
 
         # Loop through all possible combinations of y_axis, x_axis and interpolation.
         i = 1
@@ -4798,6 +4798,7 @@ class Relax_disp(SystemTestCase):
 
                     # Write the curves.
                     dir = result_dir_name+sep+result_folder
+                    print("Plotting combination of %s, %s, %s"%(y_axis, x_axis, interpolate))
                     self.interpreter.relax_disp.plot_disp_curves(dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, force=False)
 
                     # Get the file path.
