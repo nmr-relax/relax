@@ -223,41 +223,64 @@ class Frame_order_analysis:
 
         # Initialise the structure.
         incs = []
+
+        # The pivot parameters.
         if hasattr(cdp, 'pivot_fixed') and not cdp.pivot_fixed:
-            incs += [None, None, None]
-        incs += [None, None, None]
+            # Optimise the pivot for the rotor model.
+            if model == MODEL_ROTOR:
+                incs += [self.grid_inc, self.grid_inc, self.grid_inc]
 
-        # The rotor model.
-        if model == MODEL_ROTOR:
-            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc]
+            # Otherwise use preset values (copied from other models).
+            else:
+                incs += [None, None, None]
 
-        # The free rotor model.
+        # The 2nd pivot point parameters - the minimum inter rotor axis distance.
+        if model in [MODEL_DOUBLE_ROTOR]:
+            incs += [self.grid_inc]
+
+        # The average domain position parameters.
         if model == MODEL_FREE_ROTOR:
-            incs += [self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc]
+            incs += [self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc]
+        elif model in [MODEL_ISO_CONE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR]:
+            incs += [None, None, None, None, None]
+        else:
+            incs += [None, None, None, None, None, None]
 
-        # The torsionless isotropic cone model.
+        # The motional eigenframe and order parameters - the rotor model.
+        if model == MODEL_ROTOR:
+            incs += [self.grid_inc, self.grid_inc]
+
+        # The motional eigenframe and order parameters - the free rotor model.
+        if model == MODEL_FREE_ROTOR:
+            incs += [None]
+
+        # The motional eigenframe and order parameters - the torsionless isotropic cone model.
         if model == MODEL_ISO_CONE_TORSIONLESS:
-            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc]
+            incs += [None, None, None]
 
-        # The free rotor isotropic cone model.
+        # The motional eigenframe and order parameters - the free rotor isotropic cone model.
         if model == MODEL_ISO_CONE_FREE_ROTOR:
-            incs += [None, None, None, None, self.grid_inc]
+            incs += [None, None, None]
 
-        # The isotropic cone model.
+        # The motional eigenframe and order parameters - the isotropic cone model.
         if model == MODEL_ISO_CONE:
-            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, None]
+            incs += [None, None, self.grid_inc, None]
 
-        # The torsionless pseudo-elliptic cone model.
+        # The motional eigenframe and order parameters - the torsionless pseudo-elliptic cone model.
         if model == MODEL_PSEUDO_ELLIPSE_TORSIONLESS:
-            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None]
+            incs += [None, None, None, None, None]
 
-        # The free rotor pseudo-elliptic cone model.
+        # The motional eigenframe and order parameters - the free rotor pseudo-elliptic cone model.
         if model == MODEL_PSEUDO_ELLIPSE_FREE_ROTOR:
-            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None]
+            incs += [None, None, None, None, None]
 
-        # The pseudo-elliptic cone model.
+        # The motional eigenframe and order parameters - the pseudo-elliptic cone model.
         if model == MODEL_PSEUDO_ELLIPSE:
-            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None, None]
+            incs += [self.grid_inc, self.grid_inc, self.grid_inc, None, self.grid_inc, None]
+
+        # The motional eigenframe and order parameters - the double rotor model.
+        if model == MODEL_DOUBLE_ROTOR:
+            incs += [None, None, None, self.grid_inc, self.grid_inc]
 
         # Return the increment list.
         return incs
@@ -273,7 +296,7 @@ class Frame_order_analysis:
         # Skip the following models to allow for full optimisation.
         if model in [MODEL_RIGID, MODEL_FREE_ROTOR]:
             # Printout.
-            print("No nesting of the average domain position parameters.")
+            print("No nesting of the average domain position parameters for the '%s' model." % model)
 
             # Exit.
             return
@@ -320,7 +343,7 @@ class Frame_order_analysis:
         # Skip the following models to allow for full optimisation.
         if model in [MODEL_ROTOR, MODEL_PSEUDO_ELLIPSE]:
             # Printout.
-            print("No nesting of the eigenframe parameters.")
+            print("No nesting of the eigenframe parameters for the '%s' model." % model)
 
             # Exit.
             return
@@ -339,7 +362,7 @@ class Frame_order_analysis:
 
             # The cone axis from the axis alpha angle to spherical angles.
             if model == MODEL_ISO_CONE:
-                cdp.axis_theta, cdp_axis_phi = convert_axis_alpha_to_spherical(alpha=pipe.axis_alpha, pivot=generate_pivot(order=1, pipe_name=self.pipe_name_dict[MODEL_ROTOR]), point=pipe_centre_of_mass(verbosity=0))
+                cdp.axis_theta, cdp.axis_phi = convert_axis_alpha_to_spherical(alpha=pipe.axis_alpha, pivot=generate_pivot(order=1, pipe_name=self.pipe_name_dict[MODEL_ROTOR]), point=pipe_centre_of_mass(verbosity=0))
 
         # The cone axis from the isotropic cone model.
         elif model in [MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS]:
@@ -377,7 +400,7 @@ class Frame_order_analysis:
         # Skip the following models to allow for full optimisation.
         if model in [MODEL_ROTOR, MODEL_DOUBLE_ROTOR]:
             # Printout.
-            print("No nesting of the order parameters.")
+            print("No nesting of the order parameters for the '%s' model." % model)
 
             # Exit.
             return
@@ -417,6 +440,9 @@ class Frame_order_analysis:
 
         # The torsion from the rotor model.
         if model in [MODEL_ISO_CONE, MODEL_PSEUDO_ELLIPSE]:
+            # Printout.
+            print("Obtaining the torsion angle from the rotor model.")
+
             # Get the rotor data pipe.
             pipe = get_pipe(self.pipe_name_dict[MODEL_ROTOR])
 
@@ -434,7 +460,7 @@ class Frame_order_analysis:
         # Skip the following models to allow for full optimisation.
         if model in [MODEL_ROTOR]:
             # Printout.
-            print("No nesting of the pivot parameters.")
+            print("No nesting of the pivot parameters for the '%s' model." % model)
 
             # Exit.
             return
