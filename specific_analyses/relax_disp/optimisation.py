@@ -147,7 +147,7 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_offset=No
     values, errors, missing, frqs, frqs_H, exp_types, relax_times = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
 
     # The offset and R1 data.
-    chemical_shifts, spin_lock_fields_inter, offsets, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, spin_lock_offset=spin_lock_offset, fields=spin_lock_nu1)
+    offsets, spin_lock_fields_inter, chemical_shifts, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, spin_lock_offset=spin_lock_offset, fields=spin_lock_nu1)
     r1 = return_r1_data(spins=[spin], spin_ids=[spin_id], field_count=field_count)
 
     # The dispersion data.
@@ -740,7 +740,8 @@ class Disp_minimise_command(Slave_command):
         self.values, self.errors, self.missing, self.frqs, self.frqs_H, self.exp_types, self.relax_times = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=fields, field_count=len(fields), sim_index=sim_index)
 
         # The offset and R1 data.
-        self.chemical_shifts, spin_lock_fields_inter, self.offsets, self.tilt_angles, self.Delta_omega, self.w_eff = return_offset_data(spins=spins, spin_ids=spin_ids, field_count=len(fields))
+        self.offsets, spin_lock_fields_inter, self.chemical_shifts, self.tilt_angles, self.Delta_omega, self.w_eff = return_offset_data(spins=spins, spin_ids=spin_ids, field_count=len(fields))
+
         self.r1 = return_r1_data(spins=spins, spin_ids=spin_ids, field_count=len(fields), sim_index=sim_index)
 
         # Parameter number.
