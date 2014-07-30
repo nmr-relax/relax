@@ -239,9 +239,7 @@ class Relax_disp(SystemTestCase):
 
 
     def setup_r1rho_kjaergaard(self, cluster_ids=[], read_R1=True):
-        """Set up the data for the test_r1rho_kjaergaard_*() system tests.
-
-        """
+        """Set up the data for the test_r1rho_kjaergaard_*() system tests."""
 
         # The path to the data files.
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'
@@ -249,7 +247,7 @@ class Relax_disp(SystemTestCase):
         # Set pipe name, bundle and type.
         ds.pipe_name = 'base pipe'
         ds.pipe_bundle = 'relax_disp'
-        ds.pipe_type= 'relax_disp'
+        ds.pipe_type = 'relax_disp'
 
         # Create the data pipe.
         self.interpreter.pipe.create(pipe_name=ds.pipe_name, bundle=ds.pipe_bundle, pipe_type=ds.pipe_type)
@@ -284,7 +282,7 @@ class Relax_disp(SystemTestCase):
         # Count settings
         j = 0
         for i in range(len(expfileslines)):
-            line=expfileslines[i]
+            line = expfileslines[i]
             if line[0] == "#":
                 continue
             else:
@@ -787,10 +785,10 @@ class Relax_disp(SystemTestCase):
 
         # Set up the metadata for the experiments.
         # This value is used in Baldwin.py. It is the 1H Larmor frequency.
-        sfrq= 200. * 1E6
+        sfrq = 200. * 1E6
 
         # Total time of CPMG block.
-        Trelax=0.04
+        Trelax = 0.04
 
         # First set the
         for i in range(len(ids)):
@@ -900,7 +898,7 @@ class Relax_disp(SystemTestCase):
             grid_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
 
         ## Now do minimisation.
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         set_func_tol = 1e-10
         set_max_iter = 1000
         self.interpreter.minimise(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
@@ -918,15 +916,15 @@ class Relax_disp(SystemTestCase):
 
         # Reference values from Baldwin.py.
         # Exchange rate = k+ + k- (s-1)
-        kex=1000.
+        kex = 1000.
         # Fractional population of excited state k+/kex
-        pb=0.01
+        pb = 0.01
         # deltaOmega in ppm
-        dw_ppm=2.
+        dw_ppm = 2.
         #relaxation rate of ground (s-1)
-        R2g=2.
+        R2g = 2.
         #relaxation rate of excited (s-1)
-        R2e=2.
+        R2e = 2.
 
         # Test the parameters which created the data.
         # This is for the 1H spin.
@@ -940,7 +938,8 @@ class Relax_disp(SystemTestCase):
     def test_baldwin_synthetic_full(self):
         """Test synthetic data of Andrew J. Baldwin B14 model. Support requst sr #3154 U{https://gna.org/support/index.php?3154}.
 
-        This uses the synthetic data from paper U{DOI: 10.1016/j.jmr.2014.02.023 <http://dx.doi.org/10.1016/j.jmr.2014.02.023>}."""
+        This uses the synthetic data from paper U{DOI: 10.1016/j.jmr.2014.02.023 <http://dx.doi.org/10.1016/j.jmr.2014.02.023>}.
+        """
 
         # The path to the data files.
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Baldwin_2014'
@@ -971,10 +970,10 @@ class Relax_disp(SystemTestCase):
 
         # Set up the metadata for the experiments.
         # This value is used in Baldwin.py. It is the 1H Larmor frequency.
-        sfrq= 200. * 1E6
+        sfrq = 200. * 1E6
 
         # Total time of CPMG block.
-        Trelax=0.04
+        Trelax = 0.04
 
         # First set the
         for i in range(len(ids)):
@@ -1085,7 +1084,7 @@ class Relax_disp(SystemTestCase):
             grid_results.append([spin.r2a[r20_key], spin.r2b[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
 
         ## Now do minimisation.
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         set_func_tol = 1e-11
         set_max_iter = 10000
         self.interpreter.minimise(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
@@ -1105,15 +1104,15 @@ class Relax_disp(SystemTestCase):
 
         # Reference values from Baldwin.py.
         # Exchange rate = k+ + k- (s-1)
-        kex=1000.
+        kex = 1000.
         # Fractional population of excited state k+/kex
-        pb=0.01
+        pb = 0.01
         # deltaOmega in ppm
-        dw_ppm=2.
+        dw_ppm = 2.
         #relaxation rate of ground (s-1)
-        R2g=2.
+        R2g = 2.
         #relaxation rate of excited (s-1)
-        R2e=100.
+        R2e = 100.
 
         # Test the parameters which created the data.
         # This is for the 1H spin.
@@ -4715,7 +4714,7 @@ class Relax_disp(SystemTestCase):
         MODSEL = 'AIC'
 
         # Execute the auto-analysis (fast).
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         OPT_FUNC_TOL = 1e-1
         relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
         OPT_MAX_ITERATIONS = 1000
@@ -4775,7 +4774,7 @@ class Relax_disp(SystemTestCase):
         MODSEL = 'AIC'
 
         # Execute the auto-analysis (fast).
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         OPT_FUNC_TOL = 1e-1
         relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
         OPT_MAX_ITERATIONS = 1000
@@ -4921,7 +4920,7 @@ class Relax_disp(SystemTestCase):
         MC_NUM = 3
 
         # Execute the auto-analysis (fast).
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         OPT_FUNC_TOL = 1e-1
         OPT_MAX_ITERATIONS = 1000
 
@@ -5119,7 +5118,7 @@ class Relax_disp(SystemTestCase):
         MODSEL = 'AIC'
 
         # Execute the auto-analysis (fast).
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         OPT_FUNC_TOL = 1e-1
         relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
         OPT_MAX_ITERATIONS = 1000
@@ -5536,7 +5535,7 @@ class Relax_disp(SystemTestCase):
         MODSEL = 'AIC'
 
         # Execute the auto-analysis (fast).
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000.
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         OPT_FUNC_TOL = 1e-1
         relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
         OPT_MAX_ITERATIONS = 1000
@@ -5663,7 +5662,7 @@ class Relax_disp(SystemTestCase):
         # Then select model.
         self.interpreter.relax_disp.select_model(model=MODEL)
 
-        # GRID inc of 7 was found to be appropriate not to find pA=0.5.
+        # GRID inc of 7 was found to be appropriate not to find pA = 0.5.
         GRID_INC = 7
 
         # Store grid and minimisations results.
@@ -5686,7 +5685,7 @@ class Relax_disp(SystemTestCase):
             grid_results.append([spin.r2[r20_key_600], spin.r2[r20_key_500], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
 
         ## Now do minimisation.
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         set_func_tol = 1e-9
         set_max_iter = 100000
         self.interpreter.minimise(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
@@ -6577,7 +6576,7 @@ class Relax_disp(SystemTestCase):
         # Set pipe name, bundle and type.
         pipe_name = 'base pipe'
         pipe_bundle = 'relax_disp'
-        pipe_type= 'relax_disp'
+        pipe_type = 'relax_disp'
 
         # The path to the data files.
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'
@@ -6624,7 +6623,7 @@ class Relax_disp(SystemTestCase):
         MODSEL = 'AIC'
 
         # Execute the auto-analysis (fast).
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         OPT_FUNC_TOL = 1e-1
         relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
         OPT_MAX_ITERATIONS = 1000
