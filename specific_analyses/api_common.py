@@ -24,7 +24,6 @@
 
 # Python module imports.
 from copy import deepcopy
-from string import split
 import sys
 
 # relax module imports.
@@ -315,7 +314,7 @@ class API_common:
         """
 
         # Strip out the text from the colon.
-        text = split(prefix, ':')[0]
+        text = prefix.split(':')[0]
 
         # The printout.
         subsection(file=sys.stdout, text=text, prespace=2)
