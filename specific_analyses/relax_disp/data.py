@@ -2945,10 +2945,8 @@ def return_grace_data_vs_disp(y_axis=None, x_axis=None, interpolate=None, exp_ty
         colour_index += 1
 
     # The axis labels.
-    if x_axis == "w_eff":
-        axis_labels.append(['\\qEffective field in rotating frame \\xw\\B\\seff\\N\\Q (rad.s\\S-1\\N)', '\\qR\\s2\\N\\Q (rad.s\\S-1\\N)'])
-    elif x_axis == "theta":
-        axis_labels.append(['\\qRotating frame tilt angle \\xq\\B\\Q (rad)', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)'])
+    x_axis_label, y_axis_label = return_x_y_axis_labels(y_axis=y_axis, x_axis=x_axis, exp_type=exp_type, interpolate=interpolate)
+    axis_labels.append([x_axis_label, y_axis_label])
 
     return err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels
 
@@ -3248,10 +3246,8 @@ def return_grace_data_vs_offset(y_axis=None, x_axis=None, interpolate=None, exp_
             colour_index += 1
 
     # The axis labels.
-    if x_axis == "w_eff":
-        axis_labels.append(['\\qEffective field in rotating frame \\xw\\B\\seff\\N\\Q (rad.s\\S-1\\N)', '\\qR\\s2\\N\\Q (rad.s\\S-1\\N)'])
-    elif x_axis == "theta":
-        axis_labels.append(['\\qRotating frame tilt angle \\xq\\B\\Q (rad)', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)'])
+    x_axis_label, y_axis_label = return_x_y_axis_labels(y_axis=y_axis, x_axis=x_axis, exp_type=exp_type, interpolate=interpolate)
+    axis_labels.append([x_axis_label, y_axis_label])
 
     return err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels
 
@@ -4274,6 +4270,64 @@ def return_value_from_offset_index(ei=None, mi=None, oi=None):
             return offset
 
 
+def return_x_y_axis_labels(y_axis=None, x_axis=None, exp_type=None, interpolate=None):
+    """Return the X and Y labels and plot settings, according to selected axis to plot for.
+
+    @keyword y_axis:        String flag to tell which data on Y axis to plot for.  Option can be either "%s" which plot 'r2eff' for CPMG experiments or 'r1rho' for R1rho experiments or option can be "%s", which for R1rho experiments plot R2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
+    @type y_axis:           str
+    @keyword x_axis:        String flag to tell which data on X axis to plot for.  Option can be either "%s" which plot 'CPMG frequency (Hz)' for CPMG experiments or 'Spin-lock field strength (Hz)' for R1rho experiments or option can be either "%s" or "%s" for R1rho experiments, which plot 'Effective field in rotating frame (rad/s)' or 'Rotating frame tilt angle theta (rad)'.
+    @type x_axis:           str
+    @keyword interpolate:   How to interpolate the fitted curves.  Either by option "%s" which interpolate CPMG frequency or spin-lock field strength, or by option "%s" which interpole over spin-lock offset.
+    @type interpolate:      float
+    @return:                The X-axis label for grace plotting, yhe Y-axis label for grace plotting
+    @rtype:                 str, str
+    """%(Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, INTERPOLATE_DISP, INTERPOLATE_OFFSET)
+
+    # If x_axis is with dispersion points.
+    if x_axis == X_AXIS_DISP:
+        if interpolate == INTERPOLATE_DISP:
+            if exp_type in EXP_TYPE_LIST_CPMG:
+                # Set x_label.
+                x_label = "\\qCPMG pulse train frequency \\Q (Hz)"
+
+            elif exp_type in EXP_TYPE_LIST_R1RHO:
+                # Set x_label.
+                x_label = "\\qSpin-lock field strength \\xn\\B\\s1\\N\\Q (Hz)"
+
+        elif interpolate == INTERPOLATE_OFFSET:
+                x_label = "\\qSpin-lock offset \\Q (ppm)"
+
+    # If x_axis is effective field w_eff.
+    elif x_axis == X_AXIS_W_EFF:
+        # Set x_label.
+        x_label = "\\qEffective field in rotating frame \\xw\\B\\seff\\N\\Q (rad.s\\S-1\\N)"
+
+    # If x_axis is angle theta.
+    elif x_axis == X_AXIS_THETA:
+        # Set x_label.
+        x_label = "\\qRotating frame tilt angle \\xq\\B\\Q (rad)"
+
+    # If plotting either CPMG R2eff or R1rho.
+    if y_axis == Y_AXIS_R2_EFF:
+        if exp_type in EXP_TYPE_LIST_CPMG:
+            # Set y_label.
+            y_label = "%s - \\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)"%exp_type
+
+        elif exp_type in EXP_TYPE_LIST_R1RHO:
+            # Set y_label.
+            y_label = "%s - \\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)"%exp_type
+
+    # If plotting special R1rho R2 values.
+    # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
+    elif y_axis == Y_AXIS_R2_R1RHO:
+        if exp_type in EXP_TYPE_LIST_R1RHO:
+            # Set y_label.
+            y_label = "%s - \\qR\\s2\\N\\Q (rad.s\\S-1\\N)"%exp_type
+
+    # Return axis labels
+    return x_label, y_label
+
+
 def return_x_y_point(data_type=None, y_axis=None, x_axis=None, interpolate=None, data_key=None, spin=None, back_calc=None, offset=None, point=None, r1=None, r1_err=None, w_eff=None, theta=None, err=False):
     """Return the X and Y data point, according to selected axis to plot for.
 
@@ -4416,13 +4470,22 @@ def return_x_y_labels(spin=None, data_type=None, y_axis=None, exp_type=None, frq
     @rtype:                     str, int, float, int, int
     """
 
-    # Determine y-data type label.
-    if exp_type in EXP_TYPE_LIST_CPMG:
-        r_string = "R\\s2eff\\N"
-    elif y_axis == Y_AXIS_R2_EFF:
-        r_string = "R\\s1\\xr\\B\\N"
+    # If plotting either CPMG R2eff or R1rho.
+    if y_axis == Y_AXIS_R2_EFF:
+        if exp_type in EXP_TYPE_LIST_CPMG:
+            # Set y_label.
+            r_string = "R\\s2eff\\N"
+
+        elif exp_type in EXP_TYPE_LIST_R1RHO:
+            # Set y_label.
+            r_string = "R\\s1\\xr\\B\\N"
+
+    # If plotting special R1rho R2 values.
+    # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
     elif y_axis == Y_AXIS_R2_R1RHO:
-        r_string = "R\\s2\\N"
+        if exp_type in EXP_TYPE_LIST_R1RHO:
+            # Set y_label.
+            r_string = "R\\s2\\N"
 
     # Determine unit string.
     if offset != None and frq != None:
