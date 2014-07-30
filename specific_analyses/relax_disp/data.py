@@ -1798,25 +1798,25 @@ def plot_disp_curves(dir=None, y_axis=Y_AXIS_R2_EFF, x_axis=X_AXIS_DISP, num_poi
 
     # Plot dispersion curves, extending over number of dispersion points.
     file_name_ini = "disp"
-    plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag)
+    plot_disp_curves_to_file(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag)
 
     # For R1rho models, interpolate through spin-lock field strength, and plot R1rho R2 as function of effective field in rotating frame w_eff.
     if cdp.exp_type_list == [EXP_TYPE_R1RHO]:
         y_axis = Y_AXIS_R2_R1RHO
         x_axis = X_AXIS_W_EFF
         file_name_ini = "%s_vs_%s_inter_%s"%(y_axis, x_axis, interpolate)
-        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag)
+        plot_disp_curves_to_file(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag)
 
         y_axis = Y_AXIS_R2_EFF
         x_axis = X_AXIS_THETA
         file_name_ini = "%s_vs_%s_inter_%s"%("r1rho", x_axis, interpolate)
-        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag)
+        plot_disp_curves_to_file(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag)
 
         y_axis = Y_AXIS_R2_EFF
         x_axis = X_AXIS_THETA
         interpolate = INTERPOLATE_OFFSET
         file_name_ini = "%s_vs_%s_inter_%s"%("r1rho", x_axis, interpolate)
-        plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag)
+        plot_disp_curves_to_file(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag)
 
     # Write a python "grace to PNG/EPS/SVG..." conversion script.
     # Open the file for writing.
@@ -1955,7 +1955,7 @@ def plot_disp_curves_disp(file_name_ini=None, dir=None, num_points=None, extend_
         add_result_file(type='grace', label='Grace', file=file_path)
 
 
-def plot_disp_curves_r1rho_r2_as_func_of_rot_param(file_name_ini=None, dir=None, y_axis=None, x_axis=None, interpolate=None, num_points=None, extend_hz=None, extend_ppm=None, force=None, proton_mmq_flag=None):
+def plot_disp_curves_to_file(file_name_ini=None, dir=None, y_axis=None, x_axis=None, interpolate=None, num_points=None, extend_hz=None, extend_ppm=None, force=None, proton_mmq_flag=None):
     """Custom 2D Grace plotting function for the dispersion curves, interpolating theta through spin-lock offset rather than spin-lock field strength.
 
     One file will be created per spin system.
