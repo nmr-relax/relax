@@ -2737,7 +2737,7 @@ def return_grace_data_vs_disp(y_axis=None, x_axis=None, interpolate=None, exp_ty
         data[graph_index].append([])
 
         # Return data label plotting info.
-        label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int = return_x_y_labels(data_type=data_type, y_axis=y_axis, exp_type=exp_type, frq=frq, offset=offset, interpolated_flag=interpolated_flag)
+        label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int = return_x_y_data_labels_settings(data_type=data_type, y_axis=y_axis, exp_type=exp_type, frq=frq, offset=offset, interpolated_flag=interpolated_flag)
 
         # Save settings.
         set_labels[ei].append(label)
@@ -2772,7 +2772,7 @@ def return_grace_data_vs_disp(y_axis=None, x_axis=None, interpolate=None, exp_ty
             Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=chemical_shifts[ei][si][mi], spin_lock_offset=offset_rad, omega1=omega1)
 
             # Return the x and y point.
-            x_point, y_point, err, y_err_point = return_x_y_point(data_type=data_type, x_axis=x_axis, y_axis=y_axis, interpolate=interpolate, data_key=key, spin=current_spin, point=point, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
+            x_point, y_point, err, y_err_point = return_grace_x_y_point(data_type=data_type, x_axis=x_axis, y_axis=y_axis, interpolate=interpolate, data_key=key, spin=current_spin, point=point, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
 
             # Add the data.
             data[graph_index][set_index].append([x_point, y_point])
@@ -2793,7 +2793,7 @@ def return_grace_data_vs_disp(y_axis=None, x_axis=None, interpolate=None, exp_ty
         data[graph_index].append([])
 
         # Return data label plotting info.
-        label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int = return_x_y_labels(data_type=data_type, y_axis=y_axis, exp_type=exp_type, frq=frq, offset=offset, interpolated_flag=interpolated_flag)
+        label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int = return_x_y_data_labels_settings(data_type=data_type, y_axis=y_axis, exp_type=exp_type, frq=frq, offset=offset, interpolated_flag=interpolated_flag)
 
         # Save settings.
         set_labels[ei].append(label)
@@ -2825,7 +2825,7 @@ def return_grace_data_vs_disp(y_axis=None, x_axis=None, interpolate=None, exp_ty
             Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=chemical_shifts[ei][si][mi], spin_lock_offset=offset_rad, omega1=omega1)
 
             # Return the x and y point.
-            x_point, y_point, err, y_err_point = return_x_y_point(data_type=data_type, x_axis=x_axis, y_axis=y_axis, interpolate=interpolate, data_key=key, spin=current_spin, point=point, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
+            x_point, y_point, err, y_err_point = return_grace_x_y_point(data_type=data_type, x_axis=x_axis, y_axis=y_axis, interpolate=interpolate, data_key=key, spin=current_spin, point=point, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
 
             # Add the data.
             data[graph_index][set_index].append([x_point, y_point])
@@ -2847,7 +2847,7 @@ def return_grace_data_vs_disp(y_axis=None, x_axis=None, interpolate=None, exp_ty
             data[graph_index].append([])
 
             # Return data label plotting info.
-            label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int = return_x_y_labels(spin=current_spin, data_type=data_type, y_axis=y_axis, exp_type=exp_type, frq=frq, offset=offset, interpolated_flag=interpolated_flag)
+            label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int = return_x_y_data_labels_settings(spin=current_spin, data_type=data_type, y_axis=y_axis, exp_type=exp_type, frq=frq, offset=offset, interpolated_flag=interpolated_flag)
 
             # Save settings.
             set_labels[ei].append(label)
@@ -2878,7 +2878,7 @@ def return_grace_data_vs_disp(y_axis=None, x_axis=None, interpolate=None, exp_ty
                     w_eff = w_eff_inter[ei][si][mi][oi][di]
 
                 # Return the x and y point.
-                x_point, y_point, err, y_err_point = return_x_y_point(data_type=data_type, x_axis=x_axis, y_axis=y_axis, interpolate=interpolate, data_key=key, spin=current_spin, back_calc=r2eff, point=point, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
+                x_point, y_point, err, y_err_point = return_grace_x_y_point(data_type=data_type, x_axis=x_axis, y_axis=y_axis, interpolate=interpolate, data_key=key, spin=current_spin, back_calc=r2eff, point=point, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
 
                 # Add the data.
                 data[graph_index][set_index].append([x_point, y_point])
@@ -2899,7 +2899,7 @@ def return_grace_data_vs_disp(y_axis=None, x_axis=None, interpolate=None, exp_ty
         data[graph_index].append([])
 
         # Return data label plotting info.
-        label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int = return_x_y_labels(spin=current_spin, data_type=data_type, y_axis=y_axis, exp_type=exp_type, frq=frq, offset=offset, interpolated_flag=interpolated_flag)
+        label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int = return_x_y_data_labels_settings(spin=current_spin, data_type=data_type, y_axis=y_axis, exp_type=exp_type, frq=frq, offset=offset, interpolated_flag=interpolated_flag)
 
         # Save settings.
         set_labels[ei].append(label)
@@ -2931,7 +2931,7 @@ def return_grace_data_vs_disp(y_axis=None, x_axis=None, interpolate=None, exp_ty
             Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=chemical_shifts[ei][si][mi], spin_lock_offset=offset_rad, omega1=omega1)
 
             # Return the x and y point.
-            x_point, y_point, err, y_err_point = return_x_y_point(data_type=data_type, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, data_key=key, spin=current_spin, point=point, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
+            x_point, y_point, err, y_err_point = return_grace_x_y_point(data_type=data_type, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, data_key=key, spin=current_spin, point=point, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
 
             # Add the data.
             data[graph_index][set_index].append([x_point, y_point])
@@ -2945,7 +2945,7 @@ def return_grace_data_vs_disp(y_axis=None, x_axis=None, interpolate=None, exp_ty
         colour_index += 1
 
     # The axis labels.
-    x_axis_label, y_axis_label = return_x_y_axis_labels(y_axis=y_axis, x_axis=x_axis, exp_type=exp_type, interpolate=interpolate)
+    x_axis_label, y_axis_label = return_grace_x_y_axis_labels(y_axis=y_axis, x_axis=x_axis, exp_type=exp_type, interpolate=interpolate)
     axis_labels.append([x_axis_label, y_axis_label])
 
     return err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels
@@ -3030,7 +3030,7 @@ def return_grace_data_vs_offset(y_axis=None, x_axis=None, interpolate=None, exp_
             data[graph_index].append([])
 
             # Return data label plotting info.
-            label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int = return_x_y_labels(data_type=data_type, y_axis=y_axis, exp_type=exp_type, frq=frq, point=point, interpolated_flag=interpolated_flag)
+            label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int = return_x_y_data_labels_settings(data_type=data_type, y_axis=y_axis, exp_type=exp_type, frq=frq, point=point, interpolated_flag=interpolated_flag)
 
             # Save settings.
             set_labels[ei].append(label)
@@ -3065,7 +3065,7 @@ def return_grace_data_vs_offset(y_axis=None, x_axis=None, interpolate=None, exp_
                 Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=chemical_shifts[ei][si][mi], spin_lock_offset=offset_rad, omega1=omega1)
 
                 # Return the x and y point.
-                x_point, y_point, err, y_err_point = return_x_y_point(data_type=data_type, x_axis=x_axis, y_axis=y_axis, interpolate=interpolate, data_key=key, spin=current_spin, offset=offset, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
+                x_point, y_point, err, y_err_point = return_grace_x_y_point(data_type=data_type, x_axis=x_axis, y_axis=y_axis, interpolate=interpolate, data_key=key, spin=current_spin, offset=offset, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
 
                 # Add the data.
                 data[graph_index][set_index].append([x_point, y_point])
@@ -3088,7 +3088,7 @@ def return_grace_data_vs_offset(y_axis=None, x_axis=None, interpolate=None, exp_
             data[graph_index].append([])
 
             # Return data label plotting info.
-            label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int = return_x_y_labels(data_type=data_type, y_axis=y_axis, exp_type=exp_type, frq=frq, point=point, interpolated_flag=interpolated_flag)
+            label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int = return_x_y_data_labels_settings(data_type=data_type, y_axis=y_axis, exp_type=exp_type, frq=frq, point=point, interpolated_flag=interpolated_flag)
 
             # Save settings.
             set_labels[ei].append(label)
@@ -3120,7 +3120,7 @@ def return_grace_data_vs_offset(y_axis=None, x_axis=None, interpolate=None, exp_
                 Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=chemical_shifts[ei][si][mi], spin_lock_offset=offset_rad, omega1=omega1)
 
                 # Return the x and y point.
-                x_point, y_point, err, y_err_point = return_x_y_point(data_type=data_type, x_axis=x_axis, y_axis=y_axis, interpolate=interpolate, data_key=key, spin=current_spin, offset=offset, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
+                x_point, y_point, err, y_err_point = return_grace_x_y_point(data_type=data_type, x_axis=x_axis, y_axis=y_axis, interpolate=interpolate, data_key=key, spin=current_spin, offset=offset, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
 
                 # Add the data.
                 data[graph_index][set_index].append([x_point, y_point])
@@ -3144,7 +3144,7 @@ def return_grace_data_vs_offset(y_axis=None, x_axis=None, interpolate=None, exp_
                 data[graph_index].append([])
 
                 # Return data label plotting info.
-                label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int = return_x_y_labels(spin=current_spin, data_type=data_type, y_axis=y_axis, exp_type=exp_type, frq=frq, point=point, interpolated_flag=interpolated_flag)
+                label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int = return_x_y_data_labels_settings(spin=current_spin, data_type=data_type, y_axis=y_axis, exp_type=exp_type, frq=frq, point=point, interpolated_flag=interpolated_flag)
 
                 # Save settings.
                 set_labels[ei].append(label)
@@ -3177,7 +3177,7 @@ def return_grace_data_vs_offset(y_axis=None, x_axis=None, interpolate=None, exp_
                         w_eff = w_eff_inter[ei][si][mi][oi][di]
 
                     # Return the x and y point.
-                    x_point, y_point, err, y_err_point = return_x_y_point(data_type=data_type, x_axis=x_axis, y_axis=y_axis, interpolate=interpolate, data_key=key, spin=current_spin, back_calc=r2eff, offset=offset, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
+                    x_point, y_point, err, y_err_point = return_grace_x_y_point(data_type=data_type, x_axis=x_axis, y_axis=y_axis, interpolate=interpolate, data_key=key, spin=current_spin, back_calc=r2eff, offset=offset, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
 
                     # Add the data.
                     data[graph_index][set_index].append([x_point, y_point])
@@ -3200,7 +3200,7 @@ def return_grace_data_vs_offset(y_axis=None, x_axis=None, interpolate=None, exp_
             data[graph_index].append([])
 
             # Return data label plotting info.
-            label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int = return_x_y_labels(spin=current_spin, data_type=data_type, y_axis=y_axis, exp_type=exp_type, frq=frq, point=point, interpolated_flag=interpolated_flag)
+            label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int = return_x_y_data_labels_settings(spin=current_spin, data_type=data_type, y_axis=y_axis, exp_type=exp_type, frq=frq, point=point, interpolated_flag=interpolated_flag)
 
             # Save settings.
             set_labels[ei].append(label)
@@ -3232,7 +3232,7 @@ def return_grace_data_vs_offset(y_axis=None, x_axis=None, interpolate=None, exp_
                 Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=chemical_shifts[ei][si][mi], spin_lock_offset=offset_rad, omega1=omega1)
 
                 # Return the x and y point.
-                x_point, y_point, err, y_err_point = return_x_y_point(data_type=data_type, y_axis=y_axis, x_axis=x_axis, data_key=key, spin=current_spin, offset=offset, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
+                x_point, y_point, err, y_err_point = return_grace_x_y_point(data_type=data_type, y_axis=y_axis, x_axis=x_axis, data_key=key, spin=current_spin, offset=offset, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
 
                 # Add the data.
                 data[graph_index][set_index].append([x_point, y_point])
@@ -3246,10 +3246,295 @@ def return_grace_data_vs_offset(y_axis=None, x_axis=None, interpolate=None, exp_
             colour_index += 1
 
     # The axis labels.
-    x_axis_label, y_axis_label = return_x_y_axis_labels(y_axis=y_axis, x_axis=x_axis, exp_type=exp_type, interpolate=interpolate)
+    x_axis_label, y_axis_label = return_grace_x_y_axis_labels(y_axis=y_axis, x_axis=x_axis, exp_type=exp_type, interpolate=interpolate)
     axis_labels.append([x_axis_label, y_axis_label])
 
     return err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels
+
+
+def return_grace_x_y_axis_labels(y_axis=None, x_axis=None, exp_type=None, interpolate=None):
+    """Return the X and Y labels and plot settings, according to selected axis to plot for.
+
+    @keyword y_axis:        String flag to tell which data on Y axis to plot for.  Option can be either "%s" which plot 'r2eff' for CPMG experiments or 'r1rho' for R1rho experiments or option can be "%s", which for R1rho experiments plot R2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
+    @type y_axis:           str
+    @keyword x_axis:        String flag to tell which data on X axis to plot for.  Option can be either "%s" which plot 'CPMG frequency (Hz)' for CPMG experiments or 'Spin-lock field strength (Hz)' for R1rho experiments or option can be either "%s" or "%s" for R1rho experiments, which plot 'Effective field in rotating frame (rad/s)' or 'Rotating frame tilt angle theta (rad)'.
+    @type x_axis:           str
+    @keyword interpolate:   How to interpolate the fitted curves.  Either by option "%s" which interpolate CPMG frequency or spin-lock field strength, or by option "%s" which interpole over spin-lock offset.
+    @type interpolate:      float
+    @return:                The X-axis label for grace plotting, yhe Y-axis label for grace plotting
+    @rtype:                 str, str
+    """%(Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, INTERPOLATE_DISP, INTERPOLATE_OFFSET)
+
+    # If x_axis is with dispersion points.
+    if x_axis == X_AXIS_DISP:
+        if interpolate == INTERPOLATE_DISP:
+            if exp_type in EXP_TYPE_LIST_CPMG:
+                # Set x_label.
+                x_label = "\\qCPMG pulse train frequency \\xn\\B\\sCPMG\\N\\Q (Hz)"
+
+            elif exp_type in EXP_TYPE_LIST_R1RHO:
+                # Set x_label.
+                x_label = "\\qSpin-lock field strength \\xn\\B\\s1\\N\\Q (Hz)"
+
+        elif interpolate == INTERPOLATE_OFFSET:
+                x_label = "\\qSpin-lock offset \\Q (ppm)"
+
+    # If x_axis is effective field w_eff.
+    elif x_axis == X_AXIS_W_EFF:
+        # Set x_label.
+        x_label = "\\qEffective field in rotating frame \\xw\\B\\seff\\N\\Q (rad.s\\S-1\\N)"
+
+    # If x_axis is angle theta.
+    elif x_axis == X_AXIS_THETA:
+        # Set x_label.
+        x_label = "\\qRotating frame tilt angle \\xq\\B\\Q (rad)"
+
+    # If plotting either CPMG R2eff or R1rho.
+    if y_axis == Y_AXIS_R2_EFF:
+        if exp_type in EXP_TYPE_LIST_CPMG:
+            # Set y_label.
+            y_label = "%s - \\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)"%exp_type
+
+        elif exp_type in EXP_TYPE_LIST_R1RHO:
+            # Set y_label.
+            y_label = "%s - \\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)"%exp_type
+
+    # If plotting special R1rho R2 values.
+    # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
+    elif y_axis == Y_AXIS_R2_R1RHO:
+        if exp_type in EXP_TYPE_LIST_R1RHO:
+            # Set y_label.
+            y_label = "%s - \\qR\\s2\\N\\Q (rad.s\\S-1\\N)"%exp_type
+
+    # Return axis labels
+    return x_label, y_label
+
+
+def return_x_y_data_labels_settings(spin=None, data_type=None, y_axis=None, exp_type=None, frq=None, offset=None, point=None, interpolated_flag=None):
+    """Return the X and Y labels and plot settings, according to selected axis to plot for.
+
+    @keyword spin:              The specific spin data container.
+    @type spin:                 SpinContainer instance
+    @keyword data_type:         String flag to tell which data type to return for.  Option can be either "data", "back_calculated", "interpolated" or "residual".
+    @type data_type:            str
+    @keyword exp_type:          The experiment type.
+    @type exp_type:             str
+    @keyword y_axis:            String flag to tell which data on Y axis to plot for.  Option can be either "%s" which plot 'r2eff' for CPMG experiments or 'r1rho' for R1rho experiments or option can be "%s", which for R1rho experiments plot R2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
+    @type y_axis:               str
+    @keyword frq:               The spectrometer frequency in Hz.
+    @type frq:                  float
+    @keyword offset:            The spin-lock offset.
+    @type offset:               None or float
+    @keyword point:             The Spin-lock field strength (Hz).
+    @type point:                float
+    @keyword interpolated_flag: Flag telling if the graph should be interpolated.
+    @type interpolated_flag:    bool
+    @return:                    The data label, the data symbol, the data symbol size, the data line type, the data line style.
+    @rtype:                     str, int, float, int, int
+    """
+
+    # If plotting either CPMG R2eff or R1rho.
+    if y_axis == Y_AXIS_R2_EFF:
+        if exp_type in EXP_TYPE_LIST_CPMG:
+            # Set y_label.
+            r_string = "R\\s2eff\\N"
+
+        elif exp_type in EXP_TYPE_LIST_R1RHO:
+            # Set y_label.
+            r_string = "R\\s1\\xr\\B\\N"
+
+    # If plotting special R1rho R2 values.
+    # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
+    elif y_axis == Y_AXIS_R2_R1RHO:
+        if exp_type in EXP_TYPE_LIST_R1RHO:
+            # Set y_label.
+            r_string = "R\\s2\\N"
+
+    # Determine unit string.
+    if offset != None and frq != None:
+        u_string = " (%.1f MHz, %.3f ppm)" % (frq / 1e6, offset)
+    elif point != None and frq != None:
+        u_string = " (%.1f MHz, %.3f Hz)" % (frq / 1e6, point)
+    elif frq != None:
+        u_string = " (%.1f MHz)" % (frq / 1e6)
+    elif offset != None:
+        u_string = " (%.3f ppm)" % (offset)
+    elif point != None:
+        u_string = " (%.3f Hz)" % (point)
+
+    if data_type == "data":
+        # Add a new label.
+        label = r_string
+        label += u_string
+
+        # Set graph settings for data type.
+        symbols_int = 1
+        symbol_sizes_float = 0.45
+        linetype_int = 0
+        linestyle_int = 0
+
+    elif data_type == "back_calculated":
+        # Add a new label.
+        label = "Back calculated %s"%(r_string)
+        label += u_string
+
+        # Set graph settings for data type.
+        symbols_int = 4
+        symbol_sizes_float = 0.45
+        linetype_int = 1
+        linestyle_int = 0
+
+        if interpolated_flag:
+            linestyle_int = 2
+        else:
+            linestyle_int = 1
+
+    elif data_type == "interpolated":
+        # Add a new label.
+        label = "%s interpolated curve"%(r_string)
+        label += u_string
+
+        # Set graph settings for data type.
+        if spin.model in MODEL_LIST_NUMERIC_CPMG:
+            symbols_int =8
+        else:
+            symbols_int = 0
+
+        symbol_sizes_float = 0.20
+        linetype_int = 1
+        linestyle_int = 1
+
+    elif data_type == "residual":
+        # Add a new label.
+        label = "Residuals"
+        label += u_string
+
+        # Set graph settings for data type.
+        symbols_int = 9
+        symbol_sizes_float = 0.45
+        linetype_int = 1
+        linestyle_int = 3
+
+    return label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int
+
+
+def return_grace_x_y_point(data_type=None, y_axis=None, x_axis=None, interpolate=None, data_key=None, spin=None, back_calc=None, offset=None, point=None, r1=None, r1_err=None, w_eff=None, theta=None, err=False):
+    """Return the X and Y data point, according to selected axis to plot for.
+
+    @keyword data_type:     String flag to tell which data type to return for.  Option can be either "data", "back_calculated", "interpolated" or "residual".
+    @type data_type:        str
+    @keyword y_axis:        String flag to tell which data on Y axis to plot for.  Option can be either "%s" which plot 'r2eff' for CPMG experiments or 'r1rho' for R1rho experiments or option can be "%s", which for R1rho experiments plot R2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
+    @type y_axis:           str
+    @keyword x_axis:        String flag to tell which data on X axis to plot for.  Option can be either "%s" which plot 'CPMG frequency (Hz)' for CPMG experiments or 'Spin-lock field strength (Hz)' for R1rho experiments or option can be either "%s" or "%s" for R1rho experiments, which plot 'Effective field in rotating frame (rad/s)' or 'Rotating frame tilt angle theta (rad)'.
+    @type x_axis:           str
+    @keyword interpolate:   How to interpolate the fitted curves.  Either by option "%s" which interpolate CPMG frequency or spin-lock field strength, or by option "%s" which interpole over spin-lock offset.
+    @type interpolate:      float
+    @keyword data_key:      The unique data key.
+    @type data_key:         str
+    @keyword spin:          The specific spin data container.
+    @type spin:             SpinContainer instance.
+    @keyword back_calc:     The back calculated of CPMG R2eff value, or R1rho value.
+    @type back_calc:        float
+    @keyword offset:        The spin-lock offset.
+    @type offset:           None or float
+    @keyword point:         The CPMG pulse train frequency (Hz) or Spin-lock field strength (Hz).
+    @type point:            float
+    @keyword r1:            The R1 relaxation data point.
+    @type r1:               float
+    @keyword r1_err:        error for R1 relaxation data point.
+    @type r1_err:           float
+    @keyword w_eff:         The effective field in rotating frame (rad/s).
+    @type w_eff:            float
+    @keyword theta:         The rotating frame tilt angle theta (rad).
+    @type theta:            float
+    @keyword err:           The flag for xy graph or xydy error graph.
+    @type err:              boolean
+    @return:                The X-point, the Y-point, the flag for xy graph or xydy error graph, the Y-error value.
+    @rtype:                 float, float, boolean, float
+    """%(Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, INTERPOLATE_DISP, INTERPOLATE_OFFSET)
+
+    # Start setting y_err_point to none.
+    y_err_point = None
+
+    if x_axis == X_AXIS_DISP:
+        if interpolate == INTERPOLATE_DISP:
+            # Set x_point.
+            x_point = point
+
+        elif interpolate == INTERPOLATE_OFFSET:
+            # Set x_point.
+            x_point = offset
+
+    elif x_axis == X_AXIS_W_EFF:
+        # Set x_point.
+        x_point = w_eff
+
+    elif x_axis == X_AXIS_THETA:
+        # Set x_point.
+        x_point = theta
+
+    # Determine which data to return.
+    if data_type == "data":
+        # Determine y data type.
+        if y_axis == Y_AXIS_R2_EFF:
+            # Set y_point.
+            y_point = spin.r2eff[data_key]
+
+            # Add the error.
+            if hasattr(spin, 'r2eff_err') and data_key in spin.r2eff_err:
+                err = True
+                y_err_point = spin.r2eff_err[data_key]
+
+        elif y_axis == Y_AXIS_R2_R1RHO:
+            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+            y_point = ( spin.r2eff[data_key] - r1*cos(theta)**2 ) / sin(theta)**2
+
+            # Add the error.
+            if hasattr(spin, 'r2eff_err') and data_key in spin.r2eff_err:
+                err = True
+                y_err_point = ( spin.r2eff_err[data_key] - r1_err*cos(theta)**2 ) / sin(theta)**2
+
+    elif data_type == "back_calculated":
+        # Determine y data type.
+        if y_axis == Y_AXIS_R2_EFF:
+            # Set y_point.
+            y_point = spin.r2eff_bc[data_key]
+
+        elif y_axis == Y_AXIS_R2_R1RHO:
+            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+            y_point = ( spin.r2eff_bc[data_key] - r1*cos(theta)**2 ) / sin(theta)**2
+
+    elif data_type == "interpolated":
+        # Determine y data type.
+        if y_axis == Y_AXIS_R2_EFF:
+            # Set y_point.
+            y_point = back_calc
+
+        elif y_axis == Y_AXIS_R2_R1RHO:
+            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+            y_point = ( back_calc - r1*cos(theta)**2 ) / sin(theta)**2
+
+    elif data_type == "residual":
+        # Determine y data type.
+        if y_axis == Y_AXIS_R2_EFF:
+            # Set y_point.
+            y_point_data = spin.r2eff[data_key]
+            y_point_bc = spin.r2eff_bc[data_key]
+
+            # Calculate residual.
+            y_point = y_point_data - y_point_bc
+            y_err_point = spin.r2eff_err[data_key]
+
+        elif y_axis == Y_AXIS_R2_R1RHO:
+            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
+            y_point_data = ( spin.r2eff[data_key] - r1*cos(theta)**2 ) / sin(theta)**2
+            y_point_bc = ( spin.r2eff_bc[data_key] - r1*cos(theta)**2 ) / sin(theta)**2
+
+            # Calculate residual.
+            y_point = y_point_data - y_point_bc
+            y_err_point = ( spin.r2eff_err[data_key] - r1_err*cos(theta)**2 ) / sin(theta)**2
+
+    return x_point, y_point, err, y_err_point
 
 
 def return_index_from_disp_point(value, exp_type=None):
@@ -4268,291 +4553,6 @@ def return_value_from_offset_index(ei=None, mi=None, oi=None):
 
             # Return the offset.
             return offset
-
-
-def return_x_y_axis_labels(y_axis=None, x_axis=None, exp_type=None, interpolate=None):
-    """Return the X and Y labels and plot settings, according to selected axis to plot for.
-
-    @keyword y_axis:        String flag to tell which data on Y axis to plot for.  Option can be either "%s" which plot 'r2eff' for CPMG experiments or 'r1rho' for R1rho experiments or option can be "%s", which for R1rho experiments plot R2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
-    @type y_axis:           str
-    @keyword x_axis:        String flag to tell which data on X axis to plot for.  Option can be either "%s" which plot 'CPMG frequency (Hz)' for CPMG experiments or 'Spin-lock field strength (Hz)' for R1rho experiments or option can be either "%s" or "%s" for R1rho experiments, which plot 'Effective field in rotating frame (rad/s)' or 'Rotating frame tilt angle theta (rad)'.
-    @type x_axis:           str
-    @keyword interpolate:   How to interpolate the fitted curves.  Either by option "%s" which interpolate CPMG frequency or spin-lock field strength, or by option "%s" which interpole over spin-lock offset.
-    @type interpolate:      float
-    @return:                The X-axis label for grace plotting, yhe Y-axis label for grace plotting
-    @rtype:                 str, str
-    """%(Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, INTERPOLATE_DISP, INTERPOLATE_OFFSET)
-
-    # If x_axis is with dispersion points.
-    if x_axis == X_AXIS_DISP:
-        if interpolate == INTERPOLATE_DISP:
-            if exp_type in EXP_TYPE_LIST_CPMG:
-                # Set x_label.
-                x_label = "\\qCPMG pulse train frequency \\Q (Hz)"
-
-            elif exp_type in EXP_TYPE_LIST_R1RHO:
-                # Set x_label.
-                x_label = "\\qSpin-lock field strength \\xn\\B\\s1\\N\\Q (Hz)"
-
-        elif interpolate == INTERPOLATE_OFFSET:
-                x_label = "\\qSpin-lock offset \\Q (ppm)"
-
-    # If x_axis is effective field w_eff.
-    elif x_axis == X_AXIS_W_EFF:
-        # Set x_label.
-        x_label = "\\qEffective field in rotating frame \\xw\\B\\seff\\N\\Q (rad.s\\S-1\\N)"
-
-    # If x_axis is angle theta.
-    elif x_axis == X_AXIS_THETA:
-        # Set x_label.
-        x_label = "\\qRotating frame tilt angle \\xq\\B\\Q (rad)"
-
-    # If plotting either CPMG R2eff or R1rho.
-    if y_axis == Y_AXIS_R2_EFF:
-        if exp_type in EXP_TYPE_LIST_CPMG:
-            # Set y_label.
-            y_label = "%s - \\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)"%exp_type
-
-        elif exp_type in EXP_TYPE_LIST_R1RHO:
-            # Set y_label.
-            y_label = "%s - \\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)"%exp_type
-
-    # If plotting special R1rho R2 values.
-    # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
-    elif y_axis == Y_AXIS_R2_R1RHO:
-        if exp_type in EXP_TYPE_LIST_R1RHO:
-            # Set y_label.
-            y_label = "%s - \\qR\\s2\\N\\Q (rad.s\\S-1\\N)"%exp_type
-
-    # Return axis labels
-    return x_label, y_label
-
-
-def return_x_y_point(data_type=None, y_axis=None, x_axis=None, interpolate=None, data_key=None, spin=None, back_calc=None, offset=None, point=None, r1=None, r1_err=None, w_eff=None, theta=None, err=False):
-    """Return the X and Y data point, according to selected axis to plot for.
-
-    @keyword data_type:     String flag to tell which data type to return for.  Option can be either "data", "back_calculated", "interpolated" or "residual".
-    @type data_type:        str
-    @keyword y_axis:        String flag to tell which data on Y axis to plot for.  Option can be either "%s" which plot 'r2eff' for CPMG experiments or 'r1rho' for R1rho experiments or option can be "%s", which for R1rho experiments plot R2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
-    @type y_axis:           str
-    @keyword x_axis:        String flag to tell which data on X axis to plot for.  Option can be either "%s" which plot 'CPMG frequency (Hz)' for CPMG experiments or 'Spin-lock field strength (Hz)' for R1rho experiments or option can be either "%s" or "%s" for R1rho experiments, which plot 'Effective field in rotating frame (rad/s)' or 'Rotating frame tilt angle theta (rad)'.
-    @type x_axis:           str
-    @keyword interpolate:   How to interpolate the fitted curves.  Either by option "%s" which interpolate CPMG frequency or spin-lock field strength, or by option "%s" which interpole over spin-lock offset.
-    @type interpolate:      float
-    @keyword data_key:      The unique data key.
-    @type data_key:         str
-    @keyword spin:          The specific spin data container.
-    @type spin:             SpinContainer instance.
-    @keyword back_calc:     The back calculated of CPMG R2eff value, or R1rho value.
-    @type back_calc:        float
-    @keyword offset:        The spin-lock offset.
-    @type offset:           None or float
-    @keyword point:         The CPMG pulse train frequency (Hz) or Spin-lock field strength (Hz).
-    @type point:            float
-    @keyword r1:            The R1 relaxation data point.
-    @type r1:               float
-    @keyword r1_err:        error for R1 relaxation data point.
-    @type r1_err:           float
-    @keyword w_eff:         The effective field in rotating frame (rad/s).
-    @type w_eff:            float
-    @keyword theta:         The rotating frame tilt angle theta (rad).
-    @type theta:            float
-    @keyword err:           The flag for xy graph or xydy error graph.
-    @type err:              boolean
-    @return:                The X-point, the Y-point, the flag for xy graph or xydy error graph, the Y-error value.
-    @rtype:                 float, float, boolean, float
-    """%(Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, INTERPOLATE_DISP, INTERPOLATE_OFFSET)
-
-    # Start setting y_err_point to none.
-    y_err_point = None
-
-    if x_axis == X_AXIS_DISP:
-        if interpolate == INTERPOLATE_DISP:
-            # Set x_point.
-            x_point = point
-
-        elif interpolate == INTERPOLATE_OFFSET:
-            # Set x_point.
-            x_point = offset
-
-    elif x_axis == X_AXIS_W_EFF:
-        # Set x_point.
-        x_point = w_eff
-
-    elif x_axis == X_AXIS_THETA:
-        # Set x_point.
-        x_point = theta
-
-    # Determine which data to return.
-    if data_type == "data":
-        # Determine y data type.
-        if y_axis == Y_AXIS_R2_EFF:
-            # Set y_point.
-            y_point = spin.r2eff[data_key]
-
-            # Add the error.
-            if hasattr(spin, 'r2eff_err') and data_key in spin.r2eff_err:
-                err = True
-                y_err_point = spin.r2eff_err[data_key]
-
-        elif y_axis == Y_AXIS_R2_R1RHO:
-            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
-            y_point = ( spin.r2eff[data_key] - r1*cos(theta)**2 ) / sin(theta)**2
-
-            # Add the error.
-            if hasattr(spin, 'r2eff_err') and data_key in spin.r2eff_err:
-                err = True
-                y_err_point = ( spin.r2eff_err[data_key] - r1_err*cos(theta)**2 ) / sin(theta)**2
-
-    elif data_type == "back_calculated":
-        # Determine y data type.
-        if y_axis == Y_AXIS_R2_EFF:
-            # Set y_point.
-            y_point = spin.r2eff_bc[data_key]
-
-        elif y_axis == Y_AXIS_R2_R1RHO:
-            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
-            y_point = ( spin.r2eff_bc[data_key] - r1*cos(theta)**2 ) / sin(theta)**2
-
-    elif data_type == "interpolated":
-        # Determine y data type.
-        if y_axis == Y_AXIS_R2_EFF:
-            # Set y_point.
-            y_point = back_calc
-
-        elif y_axis == Y_AXIS_R2_R1RHO:
-            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
-            y_point = ( back_calc - r1*cos(theta)**2 ) / sin(theta)**2
-
-    elif data_type == "residual":
-        # Determine y data type.
-        if y_axis == Y_AXIS_R2_EFF:
-            # Set y_point.
-            y_point_data = spin.r2eff[data_key]
-            y_point_bc = spin.r2eff_bc[data_key]
-
-            # Calculate residual.
-            y_point = y_point_data - y_point_bc
-            y_err_point = spin.r2eff_err[data_key]
-
-        elif y_axis == Y_AXIS_R2_R1RHO:
-            # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta)
-            y_point_data = ( spin.r2eff[data_key] - r1*cos(theta)**2 ) / sin(theta)**2
-            y_point_bc = ( spin.r2eff_bc[data_key] - r1*cos(theta)**2 ) / sin(theta)**2
-
-            # Calculate residual.
-            y_point = y_point_data - y_point_bc
-            y_err_point = ( spin.r2eff_err[data_key] - r1_err*cos(theta)**2 ) / sin(theta)**2
-
-    return x_point, y_point, err, y_err_point
-
-
-def return_x_y_labels(spin=None, data_type=None, y_axis=None, exp_type=None, frq=None, offset=None, point=None, interpolated_flag=None):
-    """Return the X and Y labels and plot settings, according to selected axis to plot for.
-
-    @keyword spin:              The specific spin data container.
-    @type spin:                 SpinContainer instance
-    @keyword data_type:         String flag to tell which data type to return for.  Option can be either "data", "back_calculated", "interpolated" or "residual".
-    @type data_type:            str
-    @keyword exp_type:          The experiment type.
-    @type exp_type:             str
-    @keyword y_axis:            String flag to tell which data on Y axis to plot for.  Option can be either "%s" which plot 'r2eff' for CPMG experiments or 'r1rho' for R1rho experiments or option can be "%s", which for R1rho experiments plot R2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
-    @type y_axis:               str
-    @keyword frq:               The spectrometer frequency in Hz.
-    @type frq:                  float
-    @keyword offset:            The spin-lock offset.
-    @type offset:               None or float
-    @keyword point:             The Spin-lock field strength (Hz).
-    @type point:                float
-    @keyword interpolated_flag: Flag telling if the graph should be interpolated.
-    @type interpolated_flag:    bool
-    @return:                    The data label, the data symbol, the data symbol size, the data line type, the data line style.
-    @rtype:                     str, int, float, int, int
-    """
-
-    # If plotting either CPMG R2eff or R1rho.
-    if y_axis == Y_AXIS_R2_EFF:
-        if exp_type in EXP_TYPE_LIST_CPMG:
-            # Set y_label.
-            r_string = "R\\s2eff\\N"
-
-        elif exp_type in EXP_TYPE_LIST_R1RHO:
-            # Set y_label.
-            r_string = "R\\s1\\xr\\B\\N"
-
-    # If plotting special R1rho R2 values.
-    # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
-    elif y_axis == Y_AXIS_R2_R1RHO:
-        if exp_type in EXP_TYPE_LIST_R1RHO:
-            # Set y_label.
-            r_string = "R\\s2\\N"
-
-    # Determine unit string.
-    if offset != None and frq != None:
-        u_string = " (%.1f MHz, %.3f ppm)" % (frq / 1e6, offset)
-    elif point != None and frq != None:
-        u_string = " (%.1f MHz, %.3f Hz)" % (frq / 1e6, point)
-    elif frq != None:
-        u_string = " (%.1f MHz)" % (frq / 1e6)
-    elif offset != None:
-        u_string = " (%.3f ppm)" % (offset)
-    elif point != None:
-        u_string = " (%.3f Hz)" % (point)
-
-    if data_type == "data":
-        # Add a new label.
-        label = r_string
-        label += u_string
-
-        # Set graph settings for data type.
-        symbols_int = 1
-        symbol_sizes_float = 0.45
-        linetype_int = 0
-        linestyle_int = 0
-
-    elif data_type == "back_calculated":
-        # Add a new label.
-        label = "Back calculated %s"%(r_string)
-        label += u_string
-
-        # Set graph settings for data type.
-        symbols_int = 4
-        symbol_sizes_float = 0.45
-        linetype_int = 1
-        linestyle_int = 0
-
-        if interpolated_flag:
-            linestyle_int = 2
-        else:
-            linestyle_int = 1
-
-    elif data_type == "interpolated":
-        # Add a new label.
-        label = "%s interpolated curve"%(r_string)
-        label += u_string
-
-        # Set graph settings for data type.
-        if spin.model in MODEL_LIST_NUMERIC_CPMG:
-            symbols_int =8
-        else:
-            symbols_int = 0
-
-        symbol_sizes_float = 0.20
-        linetype_int = 1
-        linestyle_int = 1
-
-    elif data_type == "residual":
-        # Add a new label.
-        label = "Residuals"
-        label += u_string
-
-        # Set graph settings for data type.
-        symbols_int = 9
-        symbol_sizes_float = 0.45
-        linetype_int = 1
-        linestyle_int = 3
-
-    return label, symbols_int, symbol_sizes_float, linetype_int, linestyle_int
 
 
 def set_exp_type(spectrum_id=None, exp_type=None):
