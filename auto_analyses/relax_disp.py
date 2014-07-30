@@ -544,9 +544,9 @@ class Relax_disp:
 
         # Plot specific R1rho graphs.
         if has_r1rho_exp_type() and model in [None] + MODEL_LIST_R1RHO_FULL:
-            self.interpreter.relax_disp.plot_disp_curves(dir=path, x_axis=X_AXIS_THETA, force=False)
-            self.interpreter.relax_disp.plot_disp_curves(dir=path, y_axis=Y_AXIS_R2_R1RHO, x_axis=X_AXIS_W_EFF, force=False)
-            self.interpreter.relax_disp.plot_disp_curves(dir=path, y_axis=Y_AXIS_R2_EFF, x_axis=X_AXIS_THETA, interpolate=INTERPOLATE_OFFSET, force=False)
+            self.interpreter.relax_disp.plot_disp_curves(dir=path, x_axis=X_AXIS_THETA, force=True)
+            self.interpreter.relax_disp.plot_disp_curves(dir=path, y_axis=Y_AXIS_R2_R1RHO, x_axis=X_AXIS_W_EFF, force=True)
+            self.interpreter.relax_disp.plot_disp_curves(dir=path, y_axis=Y_AXIS_R2_EFF, x_axis=X_AXIS_THETA, interpolate=INTERPOLATE_OFFSET, force=True)
 
         # The selected models for the final run.
         if model == None:
