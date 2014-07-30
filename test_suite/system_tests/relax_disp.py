@@ -4745,6 +4745,55 @@ class Relax_disp(SystemTestCase):
         # Check the kex value of residue 52
         #self.assertAlmostEqual(cdp.mol[0].res[41].spin[0].kex, ds.ref[':52@N'][6])
 
+
+    def test_r1rho_kjaergaard_auto_check_graphs(self):
+        """Check of plot_disp_curves() function, after optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'R2eff' model.
+
+        This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
+
+        This uses the automatic analysis.
+
+        """
+
+        # Cluster residues
+        cluster_ids = [
+        ":52@N"]
+
+        # Load the data.
+        self.setup_r1rho_kjaergaard(cluster_ids=cluster_ids)
+
+        # The dispersion models.
+        MODELS = [MODEL_R2EFF]
+
+        # The grid search size (the number of increments per dimension).
+        GRID_INC = 4
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        MC_NUM = 3
+
+        # Model selection technique.
+        MODSEL = 'AIC'
+
+        # Execute the auto-analysis (fast).
+        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        OPT_FUNC_TOL = 1e-1
+        relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
+        OPT_MAX_ITERATIONS = 1000
+        relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
+
+        result_dir_name = ds.tmpdir
+
+        # Make all spins free
+        for curspin in cluster_ids:
+            self.interpreter.relax_disp.cluster('free spins', curspin)
+            # Shut them down
+            self.interpreter.deselect.spin(spin_id=curspin, change_all=False)
+
+        self.interpreter.select.spin(spin_id=':52@N', change_all=False)
+
+        # Run the analysis.
+        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+
         # Check the graphs produced.
         graph_comb = [
         [Y_AXIS_R2_EFF, X_AXIS_DISP, INTERPOLATE_DISP],
@@ -4754,7 +4803,7 @@ class Relax_disp(SystemTestCase):
         ]
 
         # Define expected folder names.
-        result_folders = MODELS + ['final']
+        result_folders = MODELS
 
         # Assign spin_id.
         spin_id = ':52@N'
@@ -4783,33 +4832,54 @@ class Relax_disp(SystemTestCase):
         result_dir_name = ds.tmpdir
 
         # Loop through all possible combinations of y_axis, x_axis and interpolation.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'+sep+'check_graphs'
         i = 1
-        for y_axis in y_axis_types:
-            for x_axis in x_axis_types:
-                for interpolate in interpolate_types:
-                    # Determine file name:
-                    file_name_ini = return_grace_file_name_ini(y_axis=y_axis, x_axis=x_axis, interpolate=interpolate)
 
-                    # Make the file name.
-                    file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
+        for result_folder in result_folders:
+            for y_axis in y_axis_types:
+                for x_axis in x_axis_types:
+                    for interpolate in interpolate_types:
+                        # Determine file name:
+                        file_name_ini = return_grace_file_name_ini(y_axis=y_axis, x_axis=x_axis, interpolate=interpolate)
 
-                    # Set result folder.
-                    result_folder = "%i"%(i)
+                        # Make the file name.
+                        file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
 
-                    # Write the curves.
-                    dir = result_dir_name+sep+result_folder
-                    print("Plotting combination of %s, %s, %s"%(y_axis, x_axis, interpolate))
-                    self.interpreter.relax_disp.plot_disp_curves(dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, force=False)
+                        # Set result folder.
+                        dir_folder = "%i"%(i)
 
-                    # Get the file path.
-                    file_path = get_file_path(file_name, dir)
+                        # Write the curves.
+                        dir = result_dir_name+sep+result_folder+dir_folder
+                        print("Plotting combination of %s, %s, %s"%(y_axis, x_axis, interpolate))
+                        self.interpreter.relax_disp.plot_disp_curves(dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, force=True)
 
-                    # Test the plot file exists.
-                    print("Testing file access to graph: %s"%file_path)
-                    self.assert_(access(file_path, F_OK))
+                        # Get the file path.
+                        file_path = get_file_path(file_name, dir)
 
-                    # Add to counter.
-                    i += 1
+                        # Test the plot file exists.
+                        print("Testing file access to graph: %s"%file_path)
+                        self.assert_(access(file_path, F_OK))
+
+                        # Now open, and compare content, line by line.
+                        file_prod = open(file_path)
+                        lines_prod = file_prod.readlines()
+                        file_prod.close()
+
+                        # Define file to compare against.
+                        dir_comp = data_path+sep+result_folder+sep+dir_folder
+                        file_path_comp = get_file_path(file_name, dir_comp)
+                        file_comp = open(file_path_comp)
+                        lines_comp = file_comp.readlines()
+                        file_comp.close()
+
+                        # Assert number of lines is equal.
+                        self.assertEqual(len(lines_prod), len(lines_comp))
+                        for i in range(len(lines_prod)):
+                            # Make the string test
+                            self.assertEqual(lines_prod[i], lines_comp[i])
+
+                        # Add to counter.
+                        i += 1
 
 
     def test_r1rho_kjaergaard_man(self):
