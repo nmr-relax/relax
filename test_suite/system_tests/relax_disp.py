@@ -33,7 +33,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from lib.io import get_file_path
 from pipe_control.mol_res_spin import return_spin, spin_loop
-from specific_analyses.relax_disp.data import generate_r20_key, get_curve_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, return_param_key_from_data
+from specific_analyses.relax_disp.data import generate_r20_key, get_curve_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, return_grace_file_name_ini, return_param_key_from_data
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_PARAMS, MODEL_R2EFF
 from status import Status; status = Status()
@@ -4763,13 +4763,7 @@ class Relax_disp(SystemTestCase):
             # Loop over graphs.
             for y_axis, x_axis, interpolate in graph_comb:
                 # Determine file name:
-                if y_axis == Y_AXIS_R2_EFF and x_axis == X_AXIS_DISP and interpolate == INTERPOLATE_DISP:
-                    file_name_ini = "disp"
-                # Special file name for R2_R1RHO data.
-                elif has_r1rho_exp_type and y_axis == Y_AXIS_R2_EFF and x_axis != X_AXIS_DISP:
-                    file_name_ini = "%s_vs_%s_inter_%s"%("r1rho", x_axis, interpolate)
-                else:
-                    file_name_ini = "%s_vs_%s_inter_%s"%(y_axis, x_axis, interpolate)
+                file_name_ini = return_grace_file_name_ini(y_axis=y_axis, x_axis=x_axis, interpolate=interpolate)
 
                 # Make the file name.
                 file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
