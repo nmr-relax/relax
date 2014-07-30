@@ -135,7 +135,7 @@ class Frame_order_analysis:
                 self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
                 self.interpreter.monte_carlo.create_data()
                 self.interpreter.monte_carlo.initial_values()
-                self.interpreter.minimise.execute(opt.get_min_algor(0), func_tol=opt.get_min_func_tol(0))
+                self.interpreter.minimise.execute(opt.get_min_algor(0), func_tol=opt.get_min_func_tol(0), max_iter=opt.get_min_max_iter(0))
                 self.interpreter.eliminate()
                 self.interpreter.monte_carlo.error_analysis()
 
@@ -522,9 +522,7 @@ class Frame_order_analysis:
                     self.interpreter.frame_order.num_int_pts(num=num_int_pts)
 
                 # Perform the optimisation.
-                min_algor = opt.get_min_algor(i)
-                func_tol = opt.get_min_func_tol(i)
-                self.interpreter.minimise.execute(min_algor, func_tol=func_tol)
+                self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
 
             # Copy the PCS data.
             self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
@@ -538,9 +536,7 @@ class Frame_order_analysis:
                     self.interpreter.frame_order.num_int_pts(num=num_int_pts)
 
                 # Perform the optimisation.
-                min_algor = opt.get_min_algor(i)
-                func_tol = opt.get_min_func_tol(i)
-                self.interpreter.minimise.execute(min_algor, func_tol=func_tol)
+                self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
 
             # Results printout.
             self.print_results()
@@ -621,9 +617,7 @@ class Frame_order_analysis:
                 self.interpreter.frame_order.num_int_pts(num=num_int_pts)
 
             # Perform the optimisation.
-            min_algor = opt.get_min_algor(i)
-            func_tol = opt.get_min_func_tol(i)
-            self.interpreter.minimise.execute(min_algor, func_tol=func_tol)
+            self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
 
         # Results printout.
         self.print_results()
@@ -826,6 +820,7 @@ class Optimisation_settings:
         self._min_count = 0
         self._min_algor = []
         self._min_func_tol = []
+        self._min_max_iter = []
         self._min_num_int_pts = []
 
 
@@ -874,13 +869,15 @@ class Optimisation_settings:
         self._grid_count += 1
 
 
-    def add_min(self, min_algor=None, func_tol=None, num_int_pts=None):
+    def add_min(self, min_algor='simplex', func_tol=1e-25, max_iter=1000000, num_int_pts=None):
         """Add an optimisation step.
 
         @keyword min_algor:     The optimisation technique.
         @type min_algor:        str
         @keyword func_tol:      The minimisation function tolerance cutoff to terminate optimisation (see the minimise.execute user function).
-        @type func_tol:         None or int
+        @type func_tol:         int
+        @keyword max_iter:      The maximum number of iterations for the optimisation.
+        @type max_iter:         int
         @keyword num_int_pts:   The list of the number of Sobol' points for the PCS numerical integration to use in the optimisations after the grid search.  If not supplied, then the previous value will be used.
         @type num_int_pts:      None or int
         """
@@ -888,11 +885,13 @@ class Optimisation_settings:
         # Value checking, as this will be set up by a user.
         is_str(min_algor, name='min_algor', can_be_none=False)
         is_float(func_tol, name='func_tol', can_be_none=True)
+        is_int(max_iter, name='max_iter', can_be_none=True)
         is_int(num_int_pts, name='num_int_pts', can_be_none=True)
 
         # Store the values.
         self._min_algor.append(min_algor)
         self._min_func_tol.append(func_tol)
+        self._min_max_iter.append(max_iter)
         self._min_num_int_pts.append(num_int_pts)
 
         # Increment the count.
@@ -977,6 +976,22 @@ class Optimisation_settings:
 
         # Return the value.
         return self._min_func_tol[i]
+
+
+    def get_min_max_iter(self, i):
+        """Return the maximum number of iterations for the optimisation for the given iteration.
+
+        @param i:   The minimisation iteration from the loop_min() method.
+        @type i:    int
+        @return:    The maximum number of iterations for the optimisation for the iteration.
+        @rtype:     int
+        """
+
+        # Check the index.
+        self._check_index(i, iter_type='min')
+
+        # Return the value.
+        return self._min_max_iter[i]
 
 
     def get_min_num_int_pts(self, i):
