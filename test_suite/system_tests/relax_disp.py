@@ -4832,9 +4832,10 @@ class Relax_disp(SystemTestCase):
 
         # Loop through all possible combinations of y_axis, x_axis and interpolation.
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'+sep+'check_graphs'
-        i = 1
 
         for result_folder in result_folders:
+            # Initial counter per graph, per model.
+            i = 1
             for y_axis in y_axis_types:
                 for x_axis in x_axis_types:
                     for interpolate in interpolate_types:
@@ -4848,7 +4849,7 @@ class Relax_disp(SystemTestCase):
                         dir_folder = "%i"%(i)
 
                         # Write the curves.
-                        dir = result_dir_name+sep+result_folder+dir_folder
+                        dir = result_dir_name+sep+result_folder+sep+dir_folder
                         print("Plotting combination of %s, %s, %s"%(y_axis, x_axis, interpolate))
                         self.interpreter.relax_disp.plot_disp_curves(dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, force=True)
 
@@ -4873,9 +4874,18 @@ class Relax_disp(SystemTestCase):
 
                         # Assert number of lines is equal.
                         self.assertEqual(len(lines_prod), len(lines_comp))
-                        for i in range(len(lines_prod)):
+                        for j in range(len(lines_prod)):
                             # Make the string test
-                            self.assertEqual(lines_prod[i], lines_comp[i])
+                            first_char = lines_prod[j][0]
+                            if first_char in ["@", "&"]:
+                                self.assertEqual(lines_prod[j], lines_comp[j])
+                            else:
+                                # Split string in x, y, error.
+                                # The error would change per run.
+                                x_prod, y_prod, y_prod_err = lines_prod[j].split()
+                                x_comp, y_comp, y_comp_err = lines_comp[j].split()
+                                self.assertAlmostEqual(float(x_prod), float(x_comp))
+                                self.assertAlmostEqual(float(y_prod), float(y_comp))
 
                         # Add to counter.
                         i += 1
