@@ -178,7 +178,7 @@ frame_order.ref_domain('N')
 
 # Set the initial pivot point.
 pivot = array([ 37.254, 0.5, 16.7465])
-frame_order.pivot(pivot, fix=True)
+frame_order.pivot(pivot, fix=False)
 
 # Set the paramagnetic centre position.
 paramag.centre(pos=[35.934, 12.194, -4.206])
