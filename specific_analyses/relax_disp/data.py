@@ -1800,15 +1800,7 @@ def plot_disp_curves(dir=None, y_axis=Y_AXIS_R2_EFF, x_axis=X_AXIS_DISP, num_poi
     proton_mmq_flag = has_proton_mmq_cpmg()
 
     # Determine file name:
-    if y_axis == Y_AXIS_R2_EFF and x_axis == X_AXIS_DISP and interpolate == INTERPOLATE_DISP:
-        file_name_ini = "disp"
-
-    # Special file name for R2_R1RHO data.
-    elif has_r1rho_exp_type and y_axis == Y_AXIS_R2_EFF and x_axis != X_AXIS_DISP:
-        file_name_ini = "%s_vs_%s_inter_%s"%("r1rho", x_axis, interpolate)
-
-    else:
-        file_name_ini = "%s_vs_%s_inter_%s"%(y_axis, x_axis, interpolate)
+    file_name_ini = return_grace_file_name_ini(y_axis=y_axis, x_axis=x_axis, interpolate=interpolate)
 
     # Plot dispersion curves.
     plot_disp_curves_to_file(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag)
@@ -3250,6 +3242,33 @@ def return_grace_data_vs_offset(y_axis=None, x_axis=None, interpolate=None, exp_
     axis_labels.append([x_axis_label, y_axis_label])
 
     return err, data, set_labels, set_colours, x_axis_type_zero, symbols, symbol_sizes, linetype, linestyle, axis_labels
+
+
+def return_grace_file_name_ini(y_axis=None, x_axis=None, interpolate=None):
+    """Return the initial part of the file name for the xmgrace plot files.
+
+    @keyword y_axis:        String flag to tell which data on Y axis to plot for.  Option can be either "%s" which plot 'r2eff' for CPMG experiments or 'r1rho' for R1rho experiments or option can be "%s", which for R1rho experiments plot R2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
+    @type y_axis:           str
+    @keyword x_axis:        String flag to tell which data on X axis to plot for.  Option can be either "%s" which plot 'CPMG frequency (Hz)' for CPMG experiments or 'Spin-lock field strength (Hz)' for R1rho experiments or option can be either "%s" or "%s" for R1rho experiments, which plot 'Effective field in rotating frame (rad/s)' or 'Rotating frame tilt angle theta (rad)'.
+    @type x_axis:           str
+    @keyword interpolate:   How to interpolate the fitted curves.  Either by option "%s" which interpolate CPMG frequency or spin-lock field strength, or by option "%s" which interpole over spin-lock offset.
+    @type interpolate:      float
+    @return:                The X-axis label for grace plotting, yhe Y-axis label for grace plotting
+    @rtype:                 str, str
+    """%(Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, INTERPOLATE_DISP, INTERPOLATE_OFFSET)
+
+    if y_axis == Y_AXIS_R2_EFF and x_axis == X_AXIS_DISP and interpolate == INTERPOLATE_DISP:
+        file_name_ini = "disp"
+
+    # Special file name for R2_R1RHO data.
+    elif has_r1rho_exp_type and y_axis == Y_AXIS_R2_EFF and x_axis != X_AXIS_DISP:
+        file_name_ini = "%s_vs_%s_inter_%s"%("r1rho", x_axis, interpolate)
+
+    else:
+        file_name_ini = "%s_vs_%s_inter_%s"%(y_axis, x_axis, interpolate)
+
+    # Return axis labels
+    return file_name_ini
 
 
 def return_grace_x_y_axis_labels(y_axis=None, x_axis=None, exp_type=None, interpolate=None):
