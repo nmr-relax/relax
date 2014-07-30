@@ -4108,6 +4108,114 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin.chi2/1000, 162.511988511609/1000, 3)
 
 
+    def test_kteilum_fmpoulsen_makke_check_graphs(self):
+        """Check of all possible dispersion graphs from optimisation of Kaare Teilum, Flemming M Poulsen, Mikael Akke 2006 "acyl-CoA binding protein" CPMG data to the CR72 dispersion model.
+
+        This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0509100103}.  This is CPMG data with a fixed relaxation time period.  Experiment in 0.48 M GuHCl (guanidine hydrochloride).
+
+        Figure 3 shows the ln( k_a [s^-1]) for different concentrations of GuHCl. The precise values are:
+
+          - [GuHCL][M] ln(k_a[s^-1]) k_a[s^-1]
+          - 0.483 0.89623903 2.4503699912708878
+          - 0.545 1.1694838
+          - 0.545 1.1761503
+          - 0.622 1.294
+          - 0.669 1.5176493
+          - 0.722 1.6238791
+          - 0.813 1.9395758
+          - 1.011 2.3558415 10.547000429321157
+        """
+
+        # Base data setup.
+        model = 'TSMFK01'
+        expfolder = "acbp_cpmg_disp_048MGuHCl_40C_041223"
+        self.setup_kteilum_fmpoulsen_makke_cpmg_data(model=model, expfolder=expfolder)
+
+        # Alias the spins.
+        res61L = cdp.mol[0].res[0].spin[0]
+
+        # The R20 keys.
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=599.89086220e6)
+
+        # Set the initial parameter values.
+        res61L.r2a = {r20_key1: 8.0}
+        res61L.dw = 6.5
+        res61L.k_AB = 2.5
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+
+        # Start testing all possible combinations of graphs.
+        y_axis_types = [Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO]
+        x_axis_types = [X_AXIS_DISP, X_AXIS_THETA, X_AXIS_W_EFF]
+        interpolate_types = [INTERPOLATE_DISP, INTERPOLATE_OFFSET]
+
+        # Write to temp folder.
+        result_dir_name = ds.tmpdir
+        result_folders = [model]
+        spin_id = ":61@N"
+
+        # Loop through all possible combinations of y_axis, x_axis and interpolation.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'KTeilum_FMPoulsen_MAkke_2006'+sep+expfolder+sep+'check_graphs'
+
+        for result_folder in result_folders:
+            # Initial counter per graph, per model.
+            i = 1
+            for y_axis in y_axis_types:
+                for x_axis in x_axis_types:
+                    for interpolate in interpolate_types:
+                        # Determine file name:
+                        file_name_ini = return_grace_file_name_ini(y_axis=y_axis, x_axis=x_axis, interpolate=interpolate)
+
+                        # Make the file name.
+                        file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
+
+                        # Set result folder.
+                        dir_folder = "%i"%(i)
+
+                        # Write the curves.
+                        dir = result_dir_name+sep+result_folder+sep+dir_folder
+                        print("Plotting combination of %s, %s, %s"%(y_axis, x_axis, interpolate))
+                        self.interpreter.relax_disp.plot_disp_curves(dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, force=True)
+
+                        # Get the file path.
+                        file_path = get_file_path(file_name, dir)
+
+                        # Test the plot file exists.
+                        print("Testing file access to graph: %s"%file_path)
+                        self.assert_(access(file_path, F_OK))
+
+                        # Now open, and compare content, line by line.
+                        file_prod = open(file_path)
+                        lines_prod = file_prod.readlines()
+                        file_prod.close()
+
+                        # Define file to compare against.
+                        #dir_comp = data_path+sep+result_folder+sep+dir_folder
+                        #file_path_comp = get_file_path(file_name, dir_comp)
+                        #file_comp = open(file_path_comp)
+                        #lines_comp = file_comp.readlines()
+                        #file_comp.close()
+
+                        ## Assert number of lines is equal.
+                        #self.assertEqual(len(lines_prod), len(lines_comp))
+                        #for j in range(len(lines_prod)):
+                        #    # Make the string test
+                        #    first_char = lines_prod[j][0]
+                        #    if first_char in ["@", "&"]:
+                        #        self.assertEqual(lines_prod[j], lines_comp[j])
+                        #    else:
+                        #        # Split string in x, y, error.
+                        #        # The error would change per run.
+                        #        x_prod, y_prod, y_prod_err = lines_prod[j].split()
+                        #        x_comp, y_comp, y_comp_err = lines_comp[j].split()
+                        #        self.assertAlmostEqual(float(x_prod), float(x_comp))
+                        #        self.assertAlmostEqual(float(y_prod), float(y_comp))
+
+                        # Add to counter.
+                        i += 1
+
+
     def test_kteilum_fmpoulsen_makke_cpmg_data_048m_guhcl_to_cr72(self):
         """Optimisation of Kaare Teilum, Flemming M Poulsen, Mikael Akke 2006 "acyl-CoA binding protein" CPMG data to the CR72 dispersion model.
 
