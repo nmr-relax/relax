@@ -53,6 +53,7 @@ The data structures used in this module consist of many different index types wh
 # Python module imports.
 from math import cos, pi, sin, sqrt
 from numpy import array, float64, int32, ones, zeros
+from os import F_OK, access
 from os.path import expanduser
 from random import gauss
 from re import search
@@ -1798,44 +1799,43 @@ def plot_disp_curves(dir=None, y_axis=Y_AXIS_R2_EFF, x_axis=X_AXIS_DISP, num_poi
     # 1H MMQ flag.
     proton_mmq_flag = has_proton_mmq_cpmg()
 
-    # Plot dispersion curves, extending over number of dispersion points.
-    file_name_ini = "disp"
-    plot_disp_curves_to_file(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag)
+    # Determine file name:
+    if y_axis == Y_AXIS_R2_EFF and x_axis == X_AXIS_DISP and interpolate == INTERPOLATE_DISP:
+        file_name_ini = "disp"
 
-    # For R1rho models, interpolate through spin-lock field strength, and plot R1rho R2 as function of effective field in rotating frame w_eff.
-    if cdp.exp_type_list == [EXP_TYPE_R1RHO]:
-        y_axis = Y_AXIS_R2_R1RHO
-        x_axis = X_AXIS_W_EFF
+    # Special file name for R2_R1RHO data.
+    elif has_r1rho_exp_type and y_axis == Y_AXIS_R2_EFF and x_axis != X_AXIS_DISP:
+        file_name_ini = "%s_vs_%s_inter_%s"%("r1rho", x_axis, interpolate)
+
+    else:
         file_name_ini = "%s_vs_%s_inter_%s"%(y_axis, x_axis, interpolate)
-        plot_disp_curves_to_file(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag)
 
-        y_axis = Y_AXIS_R2_EFF
-        x_axis = X_AXIS_THETA
-        file_name_ini = "%s_vs_%s_inter_%s"%("r1rho", x_axis, interpolate)
-        plot_disp_curves_to_file(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag)
-
-        y_axis = Y_AXIS_R2_EFF
-        x_axis = X_AXIS_THETA
-        interpolate = INTERPOLATE_OFFSET
-        file_name_ini = "%s_vs_%s_inter_%s"%("r1rho", x_axis, interpolate)
-        plot_disp_curves_to_file(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag)
+    # Plot dispersion curves.
+    plot_disp_curves_to_file(file_name_ini=file_name_ini, dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, num_points=num_points, extend_hz=extend_hz, extend_ppm=extend_ppm, force=force, proton_mmq_flag=proton_mmq_flag)
 
     # Write a python "grace to PNG/EPS/SVG..." conversion script.
     # Open the file for writing.
     file_name = "grace2images.py"
-    file = open_write_file(file_name, dir, force)
+    file_path = get_file_path(file_name, dir)
 
-    # Write the file.
-    script_grace2images(file=file)
+    # Prevent to write the file multiple times.
+    if access(file_path, F_OK) and not force:
+        pass
 
-    # Close the batch script, then make it executable (expanding any ~ characters).
-    file.close()
-    if dir:
-        dir = expanduser(dir)
-        chmod(dir + sep + file_name, S_IRWXU|S_IRGRP|S_IROTH)
     else:
-        file_name = expanduser(file_name)
-        chmod(file_name, S_IRWXU|S_IRGRP|S_IROTH)
+        file = open_write_file(file_name, dir, force)
+
+        # Write the file.
+        script_grace2images(file=file)
+
+        # Close the batch script, then make it executable (expanding any ~ characters).
+        file.close()
+        if dir:
+            dir = expanduser(dir)
+            chmod(dir + sep + file_name, S_IRWXU|S_IRGRP|S_IROTH)
+        else:
+            file_name = expanduser(file_name)
+            chmod(file_name, S_IRWXU|S_IRGRP|S_IROTH)
 
 
 def plot_disp_curves_to_file(file_name_ini=None, dir=None, y_axis=None, x_axis=None, interpolate=None, num_points=None, extend_hz=None, extend_ppm=None, force=None, proton_mmq_flag=None):
