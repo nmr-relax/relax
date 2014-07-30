@@ -3224,7 +3224,7 @@ def return_grace_data_vs_offset(y_axis=None, x_axis=None, interpolate=None, exp_
                 Delta_omega, theta, w_eff = rotating_frame_params(chemical_shift=chemical_shifts[ei][si][mi], spin_lock_offset=offset_rad, omega1=omega1)
 
                 # Return the x and y point.
-                x_point, y_point, err, y_err_point = return_grace_x_y_point(data_type=data_type, y_axis=y_axis, x_axis=x_axis, data_key=key, spin=current_spin, offset=offset, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
+                x_point, y_point, err, y_err_point = return_grace_x_y_point(data_type=data_type, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, data_key=key, spin=current_spin, offset=offset, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
 
                 # Add the data.
                 data[graph_index][set_index].append([x_point, y_point])
