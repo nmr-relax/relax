@@ -98,6 +98,7 @@ if win:
     kAB = "kex(AB)"
     kAC = "kex(AC)"
     kBC = "kex(BC)"
+    nu_1 = u("\u03bd")
     phi_ex = u("phi_ex")
     phi_exB = u("phi_exB")
     phi_exC = u("phi_exC")
@@ -106,3 +107,4 @@ if win:
     r2a = "R2A"
     r2b = "R2B"
     r2eff = "R2eff"
+    theta = u("theta")
