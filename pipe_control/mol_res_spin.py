@@ -1487,6 +1487,61 @@ def generate_spin_id_unique(pipe_cont=None, pipe_name=None, mol=None, res=None, 
     @rtype:             str
     """
 
+    # The info.
+    pipe_cont, mol, res, spin, mol_name, res_num, res_name, spin_num, spin_name = generate_spin_info(pipe_cont=pipe_cont, pipe_name=pipe_name, mol=mol, res=res, spin=spin, mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+
+    # Unique info.
+    unique_res_name = True
+    if res and res.name != None and mol._res_name_count[res.name] > 1:
+        unique_res_name = False
+    unique_res_num = True
+    if res and res.num != None and mol._res_num_count[res.num] > 1:
+        unique_res_num = False
+    unique_spin_name = True
+    if spin and spin.name != None and res._spin_name_count[spin.name] > 1:
+        unique_spin_name = False
+    unique_spin_num = True
+    if spin and spin.num != None and res._spin_num_count[spin.num] > 1:
+        unique_spin_num = False
+
+    # The unique ID.
+    if unique_res_num and unique_spin_name:
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol_name, res_num=res_num, spin_name=spin_name)
+    if unique_res_num and unique_spin_num:
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol_name, res_num=res_num, spin_num=spin_num)
+    if unique_res_name and unique_spin_num:
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol_name, res_name=res_name, spin_num=spin_num)
+    if unique_res_name and unique_spin_name:
+        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol_name, res_name=res_name, spin_name=spin_name)
+
+
+def generate_spin_info(pipe_cont=None, pipe_name=None, mol=None, res=None, spin=None, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None):
+    """Generate a spin info for the given set of molecule, residue and spin indices.
+
+    @keyword pipe_cont: The data pipe object.
+    @type pipe_cont:    PipeContainer instance
+    @keyword pipe_name: The data pipe name.
+    @type pipe_name:    str
+    @keyword mol:       The molecule container.
+    @type mol:          MoleculeContainer instance
+    @keyword res:       The residue container.
+    @type res:          ResidueContainer instance
+    @keyword spin:      The spin container.
+    @type spin:         SpinContainer instance
+    @keyword mol_name:  The molecule name (an alternative to the molecule container).
+    @type mol_name:     str or None
+    @keyword res_num:   The residue number (an alternative to the residue container).
+    @type res_num:      int or None
+    @keyword res_name:  The residue name (an alternative to the residue container).
+    @type res_name:     str or None
+    @keyword spin_num:  The spin number (an alternative to the spin container).
+    @type spin_num:     int or None
+    @keyword spin_name: The spin name (an alternative to the spin container).
+    @type spin_name:    str or None
+    @return:            The data pipe object, the molecule container, the residue container, the spin container, the molecule name, the residue number, the residue name, the spin number, the spin name.
+    @rtype:             PipeContainer instance, MoleculeContainer instance, ResidueContainer instance, SpinContainer instance, str or None, int or None, str or None, int or None, str or None
+    """
+
     # The data pipe.
     if pipe_cont == None:
         pipe_cont = pipes.get_pipe(pipe_name)
@@ -1517,29 +1572,62 @@ def generate_spin_id_unique(pipe_cont=None, pipe_name=None, mol=None, res=None, 
         spin_name = spin.name
         spin_num = spin.num
 
-    # Unique info.
-    unique_res_name = True
-    if res and res.name != None and mol._res_name_count[res.name] > 1:
-        unique_res_name = False
-    unique_res_num = True
-    if res and res.num != None and mol._res_num_count[res.num] > 1:
-        unique_res_num = False
-    unique_spin_name = True
-    if spin and spin.name != None and res._spin_name_count[spin.name] > 1:
-        unique_spin_name = False
-    unique_spin_num = True
-    if spin and spin.num != None and res._spin_num_count[spin.num] > 1:
-        unique_spin_num = False
+    # Return the info.
+    return pipe_cont, mol, res, spin, mol_name, res_num, res_name, spin_num, spin_name
 
-    # The unique ID.
-    if unique_res_num and unique_spin_name:
-        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol_name, res_num=res_num, spin_name=spin_name)
-    if unique_res_num and unique_spin_num:
-        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol_name, res_num=res_num, spin_num=spin_num)
-    if unique_res_name and unique_spin_num:
-        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol_name, res_name=res_name, spin_num=spin_num)
-    if unique_res_name and unique_spin_name:
-        return generate_spin_id(pipe_cont=pipe_cont, mol_name=mol_name, res_name=res_name, spin_name=spin_name)
+
+def generate_spin_string(spin=None, mol_name=None, res_num=None, res_name=None):
+    """Generate a list of spin ID variants for the given set of molecule, residue and spin indices.
+
+    @keyword spin:      The spin container.
+    @type spin:         SpinContainer instance
+    @keyword mol_name:  The molecule name.
+    @type mol_name:     str or None
+    @keyword res_num:   The residue number.
+    @type res_num:      int or None
+    @keyword res_name:  The residue name.
+    @type res_name:     str or None
+    @return:            A suitable graph formated string for the unique spin ID.
+    @rtype:             str
+    """
+
+    # Assign spin name and number string.
+    pipe_cont, mol, res, spin, mol_name, res_num, res_name, spin_num, spin_name = generate_spin_info(spin=spin, mol_name=mol_name, res_num=res_num, res_name=res_name)
+
+    # Assign molecule name string.
+    if mol_name == None:
+        mol_name_s = ""
+    else:
+        mol_name_s = "%s "%mol_name
+
+    # Assign residue number string.
+    if res_num == None:
+        res_num_s = ""
+    else:
+        res_num_s = "%s"%res_num
+
+    # Assign residue name string.
+    if res_name == None:
+        res_name_s = ""
+    else:
+        res_name_s = "%s "%res_name
+
+    # Assign spin number string.
+    if spin_num == None:
+        spin_num_s = ""
+    else:
+        spin_num_s = "%s "%spin_name
+
+    # Assign spin name string.
+    if spin_name == None:
+        spin_name_s = ""
+    else:
+        spin_name_s = "@%s"%spin_name
+
+    # Generate spin string
+    spin_string = "%s%s%s%s%s"%(mol_name_s, res_num_s, res_name_s, spin_num_s, spin_name_s)
+
+    return spin_string
 
 
 def get_molecule_ids(selection=None):

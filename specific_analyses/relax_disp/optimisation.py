@@ -104,21 +104,23 @@ def back_calc_peak_intensities(spin=None, exp_type=None, frq=None, offset=None, 
     return results
 
 
-def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_nu1=None, store_chi2=False):
+def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_offset=None, spin_lock_nu1=None, store_chi2=False):
     """Back-calculation of R2eff/R1rho values for the given spin.
 
-    @keyword spin:          The specific spin data container.
-    @type spin:             SpinContainer instance
-    @keyword spin_id:       The spin ID string for the spin container.
-    @type spin_id:          str
-    @keyword cpmg_frqs:     The CPMG frequencies to use instead of the user loaded values - to enable interpolation.
-    @type cpmg_frqs:        list of lists of numpy rank-1 float arrays
-    @keyword spin_lock_nu1: The spin-lock field strengths to use instead of the user loaded values - to enable interpolation.
-    @type spin_lock_nu1:    list of lists of numpy rank-1 float arrays
-    @keyword store_chi2:    A flag which if True will cause the spin specific chi-squared value to be stored in the spin container.
-    @type store_chi2:       bool
-    @return:                The back-calculated R2eff/R1rho value for the given spin.
-    @rtype:                 numpy rank-1 float array
+    @keyword spin:              The specific spin data container.
+    @type spin:                 SpinContainer instance
+    @keyword spin_id:           The spin ID string for the spin container.
+    @type spin_id:              str
+    @keyword cpmg_frqs:         The CPMG frequencies to use instead of the user loaded values - to enable interpolation.
+    @type cpmg_frqs:            list of lists of numpy rank-1 float arrays
+    @keyword spin_lock_offset:  The spin-lock offsets to use instead of the user loaded values - to enable interpolation.
+    @type spin_lock_offset:     list of lists of numpy rank-1 float arrays
+    @keyword spin_lock_nu1:     The spin-lock field strengths to use instead of the user loaded values - to enable interpolation.
+    @type spin_lock_nu1:        list of lists of numpy rank-1 float arrays
+    @keyword store_chi2:        A flag which if True will cause the spin specific chi-squared value to be stored in the spin container.
+    @type store_chi2:           bool
+    @return:                    The back-calculated R2eff/R1rho value for the given spin.
+    @rtype:                     numpy rank-1 float array
     """
 
     # Skip protons for MMQ data.
@@ -139,14 +141,42 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_nu1=None,
     values, errors, missing, frqs, frqs_H, exp_types, relax_times = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
 
     # The offset and R1 data.
-    chemical_shifts, offsets, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, fields=spin_lock_nu1)
+    offsets, spin_lock_fields_inter, chemical_shifts, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, spin_lock_offset=spin_lock_offset, fields=spin_lock_nu1)
     r1 = return_r1_data(spins=[spin], spin_ids=[spin_id], field_count=field_count)
 
     # The dispersion data.
     recalc_tau = True
-    if cpmg_frqs == None and spin_lock_nu1 == None:
+    if cpmg_frqs == None and spin_lock_nu1 == None and spin_lock_offset == None:
         cpmg_frqs = return_cpmg_frqs(ref_flag=False)
         spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
+
+    # Reset the cpmg_frqs if interpolating R1rho models.
+    elif cpmg_frqs == None and spin_lock_offset != None:
+        cpmg_frqs = None
+        spin_lock_nu1 = spin_lock_fields_inter
+
+        recalc_tau = False
+        values = []
+        errors = []
+        missing = []
+        for exp_type, ei in loop_exp(return_indices=True):
+            values.append([])
+            errors.append([])
+            missing.append([])
+            for si in range(1):
+                values[ei].append([])
+                errors[ei].append([])
+                missing[ei].append([])
+                for frq, mi in loop_frq(return_indices=True):
+                    values[ei][si].append([])
+                    errors[ei][si].append([])
+                    missing[ei][si].append([])
+                    for oi, offset in enumerate(offsets[ei][si][mi]):
+                        num = len(spin_lock_nu1[ei][mi][oi])
+
+                        values[ei][si][mi].append(zeros(num, float64))
+                        errors[ei][si][mi].append(ones(num, float64))
+                        missing[ei][si][mi].append(zeros(num, int32))
 
     # Reconstruct the structures for interpolation.
     else:
@@ -530,7 +560,8 @@ class Disp_minimise_command(Slave_command):
         self.values, self.errors, self.missing, self.frqs, self.frqs_H, self.exp_types, self.relax_times = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=fields, field_count=len(fields), sim_index=sim_index)
 
         # The offset and R1 data.
-        self.chemical_shifts, self.offsets, self.tilt_angles, self.Delta_omega, self.w_eff = return_offset_data(spins=spins, spin_ids=spin_ids, field_count=len(fields))
+        self.offsets, spin_lock_fields_inter, self.chemical_shifts, self.tilt_angles, self.Delta_omega, self.w_eff = return_offset_data(spins=spins, spin_ids=spin_ids, field_count=len(fields))
+
         self.r1 = return_r1_data(spins=spins, spin_ids=spin_ids, field_count=len(fields), sim_index=sim_index)
 
         # Parameter number.

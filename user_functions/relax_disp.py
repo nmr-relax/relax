@@ -33,13 +33,14 @@ else:
     FD_SAVE = -1
 
 # relax module imports.
-from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kBC, kAC, phi_ex, phi_exB, phi_exC, r1rho, r1rho_prime, r2, r2a, r2b, r2eff, tex
+from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kBC, kAC, phi_ex, phi_exB, phi_exC, nu_1, nu_cpmg, r1rho, r1rho_prime, r2, r2a, r2b, r2eff, tex, theta, w_eff, w_rf
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from specific_analyses.relax_disp.catia import catia_execute, catia_input
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
 from specific_analyses.relax_disp.data import cpmg_setup, insignificance, plot_disp_curves, plot_exp_curves, r2eff_read, r2eff_read_spin, relax_time, set_exp_type, r20_from_min_r2eff, spin_lock_field, spin_lock_offset, write_disp_curves
+from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
@@ -472,6 +473,35 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "y_axis",
+    default = Y_AXIS_R2_EFF,
+    py_type = "str",
+    desc_short = "Y axis data type",
+    desc = "Option can be either '%s' which plot 'r2eff' for CPMG experiments or 'r1rho' for R1rho experiments or option can be '%s', which for R1rho experiments plot R2."%(Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO),
+    wiz_element_type = 'combo',
+    wiz_combo_choices = [
+        "%s/%s for CPMG/%s experiments"%(r2eff, r1rho, r1rho),
+        "%s for %s experiments"%(r2, r1rho)
+    ],
+    wiz_combo_data = [Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO],
+    wiz_read_only = True
+)
+uf.add_keyarg(
+    name = "x_axis",
+    default = X_AXIS_DISP,
+    py_type = "str",
+    desc_short = "X axis data type",
+    desc = "Option can be either '%s' which plot 'CPMG frequency (Hz)' for CPMG experiments or 'Spin-lock field strength (Hz)' for R1rho experiments or option can be either '%s' or '%s' for R1rho experiments, which plot 'Effective field in rotating frame (rad/s)' or 'Rotating frame tilt angle theta (rad)'"%(X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA),
+    wiz_element_type = 'combo',
+    wiz_combo_choices = [
+        "CPMG %s (Hz)/Spin-lock %s (Hz)"%(nu_cpmg, nu_1),
+        "Eff. field in rot. frame %s (rad/s)"%(w_eff),
+        "Rot. frame tilt ang. %s (rad)"%(theta)
+    ],
+    wiz_combo_data = [X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA],
+    wiz_read_only = True
+)
+uf.add_keyarg(
     name = "num_points",
     default = 1000,
     min = 1,
@@ -482,12 +512,34 @@ uf.add_keyarg(
     can_be_none = False
 )
 uf.add_keyarg(
-    name = "extend",
+    name = "extend_hz",
     py_type = "num",
     default = 500.0,
     desc_short = "interpolated dispersion curve extension (in Hz)",
     desc = "How far to extend the interpolated dispersion curves beyond the last dispersion point, i.e. the nu_CPMG frequency or spin-lock field strength value, in Hertz.",
     can_be_none = False
+)
+uf.add_keyarg(
+    name = "extend_ppm",
+    py_type = "num",
+    default = 500.0,
+    desc_short = "interpolated offset curve extension (in ppm)",
+    desc = "How far to extend the interpolated dispersion curves beyond the last dispersion point, i.e. the spin-lock offset value, in ppm.",
+    can_be_none = False
+)
+uf.add_keyarg(
+    name = "interpolate",
+    default = INTERPOLATE_DISP,
+    py_type = "str",
+    desc_short = "option to interpolate the fitted curves",
+    desc = "Either by option '%s' which interpolate CPMG frequency or spin-lock field strength, or by option '%s' which interpole over spin-lock offset."%(INTERPOLATE_DISP, INTERPOLATE_OFFSET),
+    wiz_element_type = 'combo',
+    wiz_combo_choices = [
+        "Interpolate CPMG %s (Hz)/Spin-lock %s (Hz)"%(nu_cpmg, nu_1),
+        "Interpolate Spin-lock %s (ppm)"%(w_rf)
+    ],
+    wiz_combo_data = [INTERPOLATE_DISP, INTERPOLATE_OFFSET],
+    wiz_read_only = True
 )
 uf.add_keyarg(
     name = "force",
@@ -500,6 +552,8 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This is used to create 2D Grace plots of the dispersion curves of the nu_CPMG frequencies or spin-lock field strength verses the R2eff/R1rho values.  One file will be created per spin system with the name 'disp_x.agr', where x is related to the spin ID string.  For each file, one Grace graph will be produced for each experiment.")
 uf.desc[-1].add_paragraph("Four sets of curves of R2eff/R1rho values will be produced per experiment and per magnetic field strength.  These are the experimental values, the fitted values, the interpolated dispersion curves for the fitted solution, and the residuals.  Different dispersion models result in different interpolated dispersion curves.  For the numeric models which use CPMG-type data, the maximum interpolation resolution is constrained by the frequency of a single CPMG block for the entire relaxation period.  For all other models, the interpolation resolution is not constrained and can be as fine as desired by setting the total number of interpolation points.  Interpolated curves are not produced for the 'R2eff' model as they are not necessary.")
+uf.desc[-1].add_paragraph("For R1rho models, graphs can be interpolated against Spin-lock offset, but this feature is not available for CPMG experiment types.  It is also possible to select values on X-axis of 'Effective field in rotating frame %s (rad/s)' or 'Rotating frame tilt angle %s (rad)'."%("w_eff", "theta"))
+uf.desc[-1].add_paragraph("For R1rho models, special Y-value %s %s can for example be plotted as function of %s.  %s is calculated as: %s=(%s - %s cos^2(%s)) / sin^2(%s)."%("R2", "R1rho", "w_eff", "R2", "R2", "R1rho", "R1", "theta", "theta"))
 uf.backend = plot_disp_curves
 uf.menu_text = "&plot_disp_curves"
 uf.gui_icon = "oxygen.actions.document-save"

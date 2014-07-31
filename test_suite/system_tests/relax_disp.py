@@ -31,9 +31,11 @@ from tempfile import mkdtemp
 from auto_analyses import relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
+from lib.io import get_file_path
 from pipe_control.mol_res_spin import return_spin, spin_loop
-from specific_analyses.relax_disp.data import generate_r20_key, get_curve_type, loop_exp_frq, loop_exp_frq_offset_point, return_param_key_from_data
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_LM63, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_PARAMS, MODEL_R2EFF
+from specific_analyses.relax_disp.data import generate_r20_key, get_curve_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, return_grace_file_name_ini, return_param_key_from_data
+from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_PARAMS, MODEL_R2EFF
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
@@ -237,9 +239,7 @@ class Relax_disp(SystemTestCase):
 
 
     def setup_r1rho_kjaergaard(self, cluster_ids=[], read_R1=True):
-        """Set up the data for the test_r1rho_kjaergaard_*() system tests.
-
-        """
+        """Set up the data for the test_r1rho_kjaergaard_*() system tests."""
 
         # The path to the data files.
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'
@@ -247,7 +247,7 @@ class Relax_disp(SystemTestCase):
         # Set pipe name, bundle and type.
         ds.pipe_name = 'base pipe'
         ds.pipe_bundle = 'relax_disp'
-        ds.pipe_type= 'relax_disp'
+        ds.pipe_type = 'relax_disp'
 
         # Create the data pipe.
         self.interpreter.pipe.create(pipe_name=ds.pipe_name, bundle=ds.pipe_bundle, pipe_type=ds.pipe_type)
@@ -282,7 +282,7 @@ class Relax_disp(SystemTestCase):
         # Count settings
         j = 0
         for i in range(len(expfileslines)):
-            line=expfileslines[i]
+            line = expfileslines[i]
             if line[0] == "#":
                 continue
             else:
@@ -785,10 +785,10 @@ class Relax_disp(SystemTestCase):
 
         # Set up the metadata for the experiments.
         # This value is used in Baldwin.py. It is the 1H Larmor frequency.
-        sfrq= 200. * 1E6
+        sfrq = 200. * 1E6
 
         # Total time of CPMG block.
-        Trelax=0.04
+        Trelax = 0.04
 
         # First set the
         for i in range(len(ids)):
@@ -898,7 +898,7 @@ class Relax_disp(SystemTestCase):
             grid_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
 
         ## Now do minimisation.
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         set_func_tol = 1e-10
         set_max_iter = 1000
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
@@ -916,15 +916,15 @@ class Relax_disp(SystemTestCase):
 
         # Reference values from Baldwin.py.
         # Exchange rate = k+ + k- (s-1)
-        kex=1000.
+        kex = 1000.
         # Fractional population of excited state k+/kex
-        pb=0.01
+        pb = 0.01
         # deltaOmega in ppm
-        dw_ppm=2.
+        dw_ppm = 2.
         #relaxation rate of ground (s-1)
-        R2g=2.
+        R2g = 2.
         #relaxation rate of excited (s-1)
-        R2e=2.
+        R2e = 2.
 
         # Test the parameters which created the data.
         # This is for the 1H spin.
@@ -938,7 +938,8 @@ class Relax_disp(SystemTestCase):
     def test_baldwin_synthetic_full(self):
         """Test synthetic data of Andrew J. Baldwin B14 model. Support requst sr #3154 U{https://gna.org/support/index.php?3154}.
 
-        This uses the synthetic data from paper U{DOI: 10.1016/j.jmr.2014.02.023 <http://dx.doi.org/10.1016/j.jmr.2014.02.023>}."""
+        This uses the synthetic data from paper U{DOI: 10.1016/j.jmr.2014.02.023 <http://dx.doi.org/10.1016/j.jmr.2014.02.023>}.
+        """
 
         # The path to the data files.
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Baldwin_2014'
@@ -969,10 +970,10 @@ class Relax_disp(SystemTestCase):
 
         # Set up the metadata for the experiments.
         # This value is used in Baldwin.py. It is the 1H Larmor frequency.
-        sfrq= 200. * 1E6
+        sfrq = 200. * 1E6
 
         # Total time of CPMG block.
-        Trelax=0.04
+        Trelax = 0.04
 
         # First set the
         for i in range(len(ids)):
@@ -1083,7 +1084,7 @@ class Relax_disp(SystemTestCase):
             grid_results.append([spin.r2a[r20_key], spin.r2b[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
 
         ## Now do minimisation.
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         set_func_tol = 1e-11
         set_max_iter = 10000
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
@@ -1103,15 +1104,15 @@ class Relax_disp(SystemTestCase):
 
         # Reference values from Baldwin.py.
         # Exchange rate = k+ + k- (s-1)
-        kex=1000.
+        kex = 1000.
         # Fractional population of excited state k+/kex
-        pb=0.01
+        pb = 0.01
         # deltaOmega in ppm
-        dw_ppm=2.
+        dw_ppm = 2.
         #relaxation rate of ground (s-1)
-        R2g=2.
+        R2g = 2.
         #relaxation rate of excited (s-1)
-        R2e=100.
+        R2e = 100.
 
         # Test the parameters which created the data.
         # This is for the 1H spin.
@@ -4171,6 +4172,107 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin.chi2/1000, 162.511988511609/1000, 3)
 
 
+    def test_kteilum_fmpoulsen_makke_check_graphs(self):
+        """Check of all possible dispersion graphs from optimisation of Kaare Teilum, Flemming M Poulsen, Mikael Akke 2006 "acyl-CoA binding protein" CPMG data to the CR72 dispersion model.
+
+        This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0509100103}.  This is CPMG data with a fixed relaxation time period.  Experiment in 0.48 M GuHCl (guanidine hydrochloride).
+
+        Figure 3 shows the ln( k_a [s^-1]) for different concentrations of GuHCl. The precise values are:
+
+          - [GuHCL][M] ln(k_a[s^-1]) k_a[s^-1]
+          - 0.483 0.89623903 2.4503699912708878
+          - 0.545 1.1694838
+          - 0.545 1.1761503
+          - 0.622 1.294
+          - 0.669 1.5176493
+          - 0.722 1.6238791
+          - 0.813 1.9395758
+          - 1.011 2.3558415 10.547000429321157
+        """
+
+        # Base data setup.
+        model = 'TSMFK01'
+        expfolder = "acbp_cpmg_disp_048MGuHCl_40C_041223"
+        self.setup_kteilum_fmpoulsen_makke_cpmg_data(model=model, expfolder=expfolder)
+
+        # Alias the spins.
+        res61L = cdp.mol[0].res[0].spin[0]
+
+        # The R20 keys.
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=599.89086220e6)
+
+        # Set the initial parameter values.
+        res61L.r2a = {r20_key1: 8.0}
+        res61L.dw = 6.5
+        res61L.k_AB = 2.5
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+
+        # Start testing all possible combinations of graphs.
+        y_axis_types = [Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO]
+        x_axis_types = [X_AXIS_DISP, X_AXIS_THETA, X_AXIS_W_EFF]
+        interpolate_types = [INTERPOLATE_DISP]
+
+        # Write to temp folder.
+        result_dir_name = ds.tmpdir
+        result_folders = [model]
+        spin_id = ":61@N"
+
+        # Loop through all possible combinations of y_axis, x_axis and interpolation.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'KTeilum_FMPoulsen_MAkke_2006'+sep+expfolder+sep+'check_graphs'
+
+        for result_folder in result_folders:
+            for y_axis in y_axis_types:
+                for x_axis in x_axis_types:
+                    for interpolate in interpolate_types:
+                        # Determine file name:
+                        file_name_ini = return_grace_file_name_ini(y_axis=y_axis, x_axis=x_axis, interpolate=interpolate)
+
+                        # Make the file name.
+                        file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
+
+                        # Write the curves.
+                        dir = result_dir_name+sep+result_folder
+                        print("Plotting combination of %s, %s, %s"%(y_axis, x_axis, interpolate))
+                        self.interpreter.relax_disp.plot_disp_curves(dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, force=True)
+
+                        # Get the file path.
+                        file_path = get_file_path(file_name, dir)
+
+                        # Test the plot file exists.
+                        print("Testing file access to graph: %s"%file_path)
+                        self.assert_(access(file_path, F_OK))
+
+                        # Now open, and compare content, line by line.
+                        file_prod = open(file_path)
+                        lines_prod = file_prod.readlines()
+                        file_prod.close()
+
+                        # Define file to compare against.
+                        dir_comp = data_path+sep+result_folder
+                        file_path_comp = get_file_path(file_name, dir_comp)
+                        file_comp = open(file_path_comp)
+                        lines_comp = file_comp.readlines()
+                        file_comp.close()
+
+                        ## Assert number of lines is equal.
+                        self.assertEqual(len(lines_prod), len(lines_comp))
+                        for j in range(len(lines_prod)):
+                            # Make the string test
+                            first_char = lines_prod[j][0]
+                            if first_char in ["@", "&"]:
+                                self.assertEqual(lines_prod[j], lines_comp[j])
+                            else:
+                                # Split string in x, y, error.
+                                # The error would change per run.
+                                x_prod, y_prod, y_prod_err = lines_prod[j].split()
+                                x_comp, y_comp, y_comp_err = lines_comp[j].split()
+                                self.assertAlmostEqual(float(x_prod), float(x_comp))
+                                self.assertAlmostEqual(float(y_prod), float(y_comp))
+                                self.assertAlmostEqual(float(y_prod_err), float(y_comp_err))
+
+
     def test_kteilum_fmpoulsen_makke_cpmg_data_048m_guhcl_to_cr72(self):
         """Optimisation of Kaare Teilum, Flemming M Poulsen, Mikael Akke 2006 "acyl-CoA binding protein" CPMG data to the CR72 dispersion model.
 
@@ -4765,7 +4867,7 @@ class Relax_disp(SystemTestCase):
         self.assert_(hasattr(cdp.mol[0].res[42].spin[0], 'ri_data'))
 
         # The dispersion models.
-        MODELS = ['R2eff', 'DPL94']
+        MODELS = [MODEL_R2EFF, MODEL_NOREX, MODEL_DPL94]
 
         # The grid search size (the number of increments per dimension).
         GRID_INC = 4
@@ -4777,7 +4879,7 @@ class Relax_disp(SystemTestCase):
         MODSEL = 'AIC'
 
         # Execute the auto-analysis (fast).
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         OPT_FUNC_TOL = 1e-1
         relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
         OPT_MAX_ITERATIONS = 1000
@@ -4806,6 +4908,144 @@ class Relax_disp(SystemTestCase):
 
         # Check the kex value of residue 52
         #self.assertAlmostEqual(cdp.mol[0].res[41].spin[0].kex, ds.ref[':52@N'][6])
+
+
+    def test_r1rho_kjaergaard_auto_check_graphs(self):
+        """Check of plot_disp_curves() function, after optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'R2eff' model.
+
+        This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
+
+        This uses the automatic analysis.
+
+        """
+
+        # Cluster residues
+        cluster_ids = [
+        ":52@N"]
+
+        # Load the data.
+        self.setup_r1rho_kjaergaard(cluster_ids=cluster_ids)
+
+        # The dispersion models.
+        MODELS = [MODEL_R2EFF]
+
+        # The grid search size (the number of increments per dimension).
+        GRID_INC = 4
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        MC_NUM = 3
+
+        # Model selection technique.
+        MODSEL = 'AIC'
+
+        # Execute the auto-analysis (fast).
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
+        OPT_FUNC_TOL = 1e-1
+        relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
+        OPT_MAX_ITERATIONS = 1000
+        relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
+
+        result_dir_name = ds.tmpdir
+
+        # Make all spins free
+        for curspin in cluster_ids:
+            self.interpreter.relax_disp.cluster('free spins', curspin)
+            # Shut them down
+            self.interpreter.deselect.spin(spin_id=curspin, change_all=False)
+
+        self.interpreter.select.spin(spin_id=':52@N', change_all=False)
+
+        # Run the analysis.
+        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+
+        # Check the graphs produced.
+        graph_comb = [
+        [Y_AXIS_R2_EFF, X_AXIS_DISP, INTERPOLATE_DISP],
+        [Y_AXIS_R2_EFF, X_AXIS_THETA, INTERPOLATE_DISP],
+        [Y_AXIS_R2_R1RHO, X_AXIS_W_EFF, INTERPOLATE_DISP],
+        [Y_AXIS_R2_EFF, X_AXIS_THETA, INTERPOLATE_OFFSET]
+        ]
+
+        # Define expected folder names.
+        result_folders = MODELS
+
+        # Assign spin_id.
+        spin_id = ':52@N'
+
+        # Loop over result folders.
+        for result_folder in result_folders:
+            # Loop over graphs.
+            for y_axis, x_axis, interpolate in graph_comb:
+                # Determine file name:
+                file_name_ini = return_grace_file_name_ini(y_axis=y_axis, x_axis=x_axis, interpolate=interpolate)
+
+                # Make the file name.
+                file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
+
+                # Get the file path.
+                file_path = get_file_path(file_name, result_dir_name+sep+result_folder)
+
+                print("Testing file access to graph: %s"%file_path)
+                self.assert_(access(file_path, F_OK))
+
+        # Start testing all possible combinations of graphs.
+        y_axis_types = [Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO]
+        x_axis_types = [X_AXIS_DISP, X_AXIS_THETA, X_AXIS_W_EFF]
+        interpolate_types = [INTERPOLATE_DISP, INTERPOLATE_OFFSET]
+
+        result_dir_name = ds.tmpdir
+
+        # Loop through all possible combinations of y_axis, x_axis and interpolation.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'+sep+'check_graphs'
+
+        for result_folder in result_folders:
+            for y_axis in y_axis_types:
+                for x_axis in x_axis_types:
+                    for interpolate in interpolate_types:
+                        # Determine file name:
+                        file_name_ini = return_grace_file_name_ini(y_axis=y_axis, x_axis=x_axis, interpolate=interpolate)
+
+                        # Make the file name.
+                        file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
+
+                        # Write the curves.
+                        dir = result_dir_name+sep+result_folder
+                        print("Plotting combination of %s, %s, %s"%(y_axis, x_axis, interpolate))
+                        self.interpreter.relax_disp.plot_disp_curves(dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, force=True)
+
+                        # Get the file path.
+                        file_path = get_file_path(file_name, dir)
+
+                        # Test the plot file exists.
+                        print("Testing file access to graph: %s"%file_path)
+                        self.assert_(access(file_path, F_OK))
+
+                        # Now open, and compare content, line by line.
+                        file_prod = open(file_path)
+                        lines_prod = file_prod.readlines()
+                        file_prod.close()
+
+                        # Define file to compare against.
+                        dir_comp = data_path+sep+result_folder
+                        file_path_comp = get_file_path(file_name, dir_comp)
+                        file_comp = open(file_path_comp)
+                        lines_comp = file_comp.readlines()
+                        file_comp.close()
+
+                        # Assert number of lines is equal.
+                        self.assertEqual(len(lines_prod), len(lines_comp))
+                        for j in range(len(lines_prod)):
+                            # Make the string test
+                            first_char = lines_prod[j][0]
+                            if first_char in ["@", "&"]:
+                                self.assertEqual(lines_prod[j], lines_comp[j])
+                            else:
+                                # Split string in x, y, error.
+                                # The error would change per run.
+                                x_prod, y_prod, y_prod_err = lines_prod[j].split()
+                                x_comp, y_comp, y_comp_err = lines_comp[j].split()
+                                self.assertAlmostEqual(float(x_prod), float(x_comp))
+                                self.assertAlmostEqual(float(y_prod), float(y_comp))
 
 
     def test_r1rho_kjaergaard_man(self):
@@ -4846,7 +5086,7 @@ class Relax_disp(SystemTestCase):
         MC_NUM = 3
 
         # Execute the auto-analysis (fast).
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         OPT_FUNC_TOL = 1e-1
         OPT_MAX_ITERATIONS = 1000
 
@@ -5044,7 +5284,7 @@ class Relax_disp(SystemTestCase):
         MODSEL = 'AIC'
 
         # Execute the auto-analysis (fast).
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         OPT_FUNC_TOL = 1e-1
         relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
         OPT_MAX_ITERATIONS = 1000
@@ -5461,7 +5701,7 @@ class Relax_disp(SystemTestCase):
         MODSEL = 'AIC'
 
         # Execute the auto-analysis (fast).
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000.
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         OPT_FUNC_TOL = 1e-1
         relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
         OPT_MAX_ITERATIONS = 1000
@@ -5588,7 +5828,7 @@ class Relax_disp(SystemTestCase):
         # Then select model.
         self.interpreter.relax_disp.select_model(model=MODEL)
 
-        # GRID inc of 7 was found to be appropriate not to find pA=0.5.
+        # GRID inc of 7 was found to be appropriate not to find pA = 0.5.
         GRID_INC = 7
 
         # Store grid and minimisations results.
@@ -5611,7 +5851,7 @@ class Relax_disp(SystemTestCase):
             grid_results.append([spin.r2[r20_key_600], spin.r2[r20_key_500], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
 
         ## Now do minimisation.
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         set_func_tol = 1e-9
         set_max_iter = 100000
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
@@ -6502,7 +6742,7 @@ class Relax_disp(SystemTestCase):
         # Set pipe name, bundle and type.
         pipe_name = 'base pipe'
         pipe_bundle = 'relax_disp'
-        pipe_type= 'relax_disp'
+        pipe_type = 'relax_disp'
 
         # The path to the data files.
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'
@@ -6549,7 +6789,7 @@ class Relax_disp(SystemTestCase):
         MODSEL = 'AIC'
 
         # Execute the auto-analysis (fast).
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         OPT_FUNC_TOL = 1e-1
         relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
         OPT_MAX_ITERATIONS = 1000
