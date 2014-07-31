@@ -4148,7 +4148,7 @@ class Relax_disp(SystemTestCase):
         # Start testing all possible combinations of graphs.
         y_axis_types = [Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO]
         x_axis_types = [X_AXIS_DISP, X_AXIS_THETA, X_AXIS_W_EFF]
-        interpolate_types = [INTERPOLATE_DISP, INTERPOLATE_OFFSET]
+        interpolate_types = [INTERPOLATE_DISP]
 
         # Write to temp folder.
         result_dir_name = ds.tmpdir
@@ -4186,26 +4186,27 @@ class Relax_disp(SystemTestCase):
                         file_prod.close()
 
                         # Define file to compare against.
-                        #dir_comp = data_path+sep+result_folder
-                        #file_path_comp = get_file_path(file_name, dir_comp)
-                        #file_comp = open(file_path_comp)
-                        #lines_comp = file_comp.readlines()
-                        #file_comp.close()
+                        dir_comp = data_path+sep+result_folder
+                        file_path_comp = get_file_path(file_name, dir_comp)
+                        file_comp = open(file_path_comp)
+                        lines_comp = file_comp.readlines()
+                        file_comp.close()
 
                         ## Assert number of lines is equal.
-                        #self.assertEqual(len(lines_prod), len(lines_comp))
-                        #for j in range(len(lines_prod)):
-                        #    # Make the string test
-                        #    first_char = lines_prod[j][0]
-                        #    if first_char in ["@", "&"]:
-                        #        self.assertEqual(lines_prod[j], lines_comp[j])
-                        #    else:
-                        #        # Split string in x, y, error.
-                        #        # The error would change per run.
-                        #        x_prod, y_prod, y_prod_err = lines_prod[j].split()
-                        #        x_comp, y_comp, y_comp_err = lines_comp[j].split()
-                        #        self.assertAlmostEqual(float(x_prod), float(x_comp))
-                        #        self.assertAlmostEqual(float(y_prod), float(y_comp))
+                        self.assertEqual(len(lines_prod), len(lines_comp))
+                        for j in range(len(lines_prod)):
+                            # Make the string test
+                            first_char = lines_prod[j][0]
+                            if first_char in ["@", "&"]:
+                                self.assertEqual(lines_prod[j], lines_comp[j])
+                            else:
+                                # Split string in x, y, error.
+                                # The error would change per run.
+                                x_prod, y_prod, y_prod_err = lines_prod[j].split()
+                                x_comp, y_comp, y_comp_err = lines_comp[j].split()
+                                self.assertAlmostEqual(float(x_prod), float(x_comp))
+                                self.assertAlmostEqual(float(y_prod), float(y_comp))
+                                self.assertAlmostEqual(float(y_prod_err), float(y_comp_err))
 
 
     def test_kteilum_fmpoulsen_makke_cpmg_data_048m_guhcl_to_cr72(self):
