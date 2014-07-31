@@ -27,11 +27,13 @@
 # Python module imports.
 from copy import deepcopy
 from re import search
+import sys
 from types import MethodType
 
 # relax module imports.
 from lib.arg_check import is_list, is_str_list
 from lib.errors import RelaxError, RelaxImplementError
+from lib.text.sectioning import subsection
 from multi import Processor_box
 from pipe_control import pipes, sequence
 from pipe_control.mol_res_spin import check_mol_res_spin_data, return_spin, spin_loop
@@ -40,10 +42,10 @@ from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.checks import check_model_type
 from specific_analyses.relax_disp.data import average_intensity, calc_rotating_frame_params, find_intensity_keys, generate_r20_key, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq, loop_exp_frq_offset_point, loop_time, pack_back_calc_r2eff, return_param_key_from_data, spin_ids_to_containers
-from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, back_calc_peak_intensities, back_calc_r2eff, calculate_r2eff, grid_search_setup, minimise_r2eff
+from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, back_calc_peak_intensities, back_calc_r2eff, calculate_r2eff, minimise_r2eff
 from specific_analyses.relax_disp.parameter_object import Relax_disp_params
-from specific_analyses.relax_disp.parameters import assemble_scaling_matrix, get_param_names, get_value, loop_parameters, param_index_to_param_info, param_num
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_MMQ, PARAMS_R20
+from specific_analyses.relax_disp.parameters import get_param_names, get_value, loop_parameters, param_index_to_param_info, param_num
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_MMQ, MODEL_R2EFF, PARAMS_R20
 
 
 class Relax_disp(API_base, API_common):
@@ -76,7 +78,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The R2eff model data (the base data is peak intensities).
-        if cdp.model_type == 'R2eff':
+        if cdp.model_type == MODEL_R2EFF:
             # Loop over the sequence.
             for spin in spin_loop():
                 # Skip deselected spins.
@@ -119,15 +121,17 @@ class Relax_disp(API_base, API_common):
                 yield spin, spin_id
 
 
-    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+    def calculate(self, spin_id=None, scaling_matrix=None, verbosity=1, sim_index=None):
         """Calculate the model chi-squared value or the R2eff values for fixed time period data.
 
-        @keyword spin_id:   The spin identification string.
-        @type spin_id:      None or str
-        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:    int
-        @keyword sim_index: The MC simulation index (unused).
-        @type sim_index:    None
+        @keyword spin_id:           The spin identification string.
+        @type spin_id:              None or str
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The MC simulation index (unused).
+        @type sim_index:            None
         """
 
         # Data checks.
@@ -135,8 +139,8 @@ class Relax_disp(API_base, API_common):
         check_mol_res_spin_data()
         check_model_type()
 
-        # Special exponential curve-fitting for the 'R2eff' model.
-        if cdp.model_type == 'R2eff':
+        # Special exponential curve-fitting for the R2eff model.
+        if cdp.model_type == MODEL_R2EFF:
             calculate_r2eff()
 
         # Calculate the chi-squared value.
@@ -183,7 +187,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The R2eff model (with peak intensity base data).
-        if cdp.model_type == 'R2eff':
+        if cdp.model_type == MODEL_R2EFF:
             # Unpack the data.
             spin, exp_type, frq, offset, point = data_id
 
@@ -230,13 +234,13 @@ class Relax_disp(API_base, API_common):
         return values
 
 
-    def deselect(self, model_info, sim_index=None):
+    def deselect(self, sim_index=None, model_info=None):
         """Deselect models or simulations.
 
-        @param model_info:      The spin ID list from the model_loop() API method.
-        @type model_info:       int
         @keyword sim_index:     The optional Monte Carlo simulation index.  If None, then models will be deselected, otherwise the given simulation will.
         @type sim_index:        None or int
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
         """
 
         # Loop over all the spins and deselect them.
@@ -260,8 +264,8 @@ class Relax_disp(API_base, API_common):
         @type pipe_from:        str
         @keyword pipe_to:       The data pipe to copy the data to.
         @type pipe_to:          str
-        @keyword model_info:    The model index from model_info().
-        @type model_info:       int
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
         @keyword global_stats:  The global statistics flag.
         @type global_stats:     bool
         @keyword verbose:       A flag which if True will cause info to be printed out.
@@ -339,21 +343,21 @@ class Relax_disp(API_base, API_common):
                 setattr(dp_to.mol[spin._mol_index].res[spin._res_index].spin[spin._spin_index], name, new_obj)
 
 
-    def eliminate(self, name, value, model_info, args, sim=None):
+    def eliminate(self, name, value, args, sim=None, model_info=None):
         """Relaxation dispersion model elimination, parameter by parameter.
 
-        @param name:        The parameter name.
-        @type name:         str
-        @param value:       The parameter value.
-        @type value:        float
-        @param model_info:  The list of spin IDs from the model_loop() API method.
-        @type model_info:   int
-        @param args:        The c1 and c2 elimination constant overrides.
-        @type args:         None or tuple of float
-        @keyword sim:       The Monte Carlo simulation index.
-        @type sim:          int
-        @return:            True if the model is to be eliminated, False otherwise.
-        @rtype:             bool
+        @param name:            The parameter name.
+        @type name:             str
+        @param value:           The parameter value.
+        @type value:            float
+        @param args:            The c1 and c2 elimination constant overrides.
+        @type args:             None or tuple of float
+        @keyword sim:           The Monte Carlo simulation index.
+        @type sim:              int
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
+        @return:                True if the model is to be eliminated, False otherwise.
+        @rtype:                 bool
         """
 
         # Skip the R2eff model parameters.
@@ -398,8 +402,8 @@ class Relax_disp(API_base, API_common):
     def get_param_names(self, model_info=None):
         """Return a vector of parameter names.
 
-        @keyword model_info:    The list spin ID strings from the model_loop() API method.
-        @type model_info:       list of str
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
         @return:                The vector of parameter names.
         @rtype:                 list of str
         """
@@ -428,8 +432,8 @@ class Relax_disp(API_base, API_common):
     def get_param_values(self, model_info=None, sim_index=None):
         """Return a vector of parameter values.
 
-        @keyword model_info:    The model index from model_info().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:       int
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
         @keyword sim_index:     The Monte Carlo simulation index.
         @type sim_index:        int
         @return:                The vector of parameter values.
@@ -462,25 +466,27 @@ class Relax_disp(API_base, API_common):
         return values
 
 
-    def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
+    def grid_search(self, lower=None, upper=None, inc=None, scaling_matrix=None, constraints=True, verbosity=1, sim_index=None):
         """The relaxation dispersion curve fitting grid search function.
 
-        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.
-        @type lower:            array of numbers
-        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.
-        @type upper:            array of numbers
-        @keyword inc:           The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.
-        @type inc:              array of int
-        @keyword constraints:   If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
-        @type constraints:      bool
-        @keyword verbosity:     A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:        int
-        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None, the normal model is optimised.
-        @type sim_index:        int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.
+        @type lower:                list of list of numbers
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.
+        @type upper:                list of list of numbers
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.
+        @type inc:                  list of list of int
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword constraints:       If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
+        @type constraints:          bool
+        @keyword verbosity:         A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The index of the simulation to apply the grid search to.  If None, the normal model is optimised.
+        @type sim_index:            int
         """
 
         # Minimisation.
-        self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def map_bounds(self, param, spin_id=None):
@@ -510,9 +516,6 @@ class Relax_disp(API_base, API_common):
             # Collect the key.
             param_keys.append(param_key)
 
-        # Diagonal scaling.
-        scaling_matrix = assemble_scaling_matrix(spins=[spin], key=param_keys[0], scaling=False)
-
         # The initial parameter vector.
         param_vector = []
 
@@ -525,24 +528,15 @@ class Relax_disp(API_base, API_common):
             # Collect parameter names.
             param_names.append(param_name)
 
-
-        # Define default for grid search.
-        lower = None
-        upper = None
-        inc = 0
-
-        # Get the grid search minimisation options.
-        grid_size, inc_new, lower_new, upper_new = grid_search_setup(spins=[spin], spin_ids=[spin_id], param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
-
         # Loop over the parameter names.
         for i in range(len(param_names)):
             # Test if the parameter is in the list:
 
             if param_names[i] == param:
-                return [lower_new[i], upper_new[i]]
+                return [self._PARAMS.grid_lower(param, incs=0, model_info=[spin_id]), self._PARAMS.grid_upper(param, incs=0, model_info=[spin_id])]
 
 
-    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling_matrix=None, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Relaxation dispersion curve fitting function.
 
         @keyword min_algor:         The minimisation algorithm to use.
@@ -557,18 +551,18 @@ class Relax_disp(API_base, API_common):
         @type max_iterations:       int
         @keyword constraints:       If True, constraints are used during optimisation.
         @type constraints:          bool
-        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
-        @type scaling:              bool
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
         @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:            int
         @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:            None or int
-        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type lower:                array of numbers
-        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
-        @type inc:                  array of int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type lower:                list of list of numbers
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type upper:                list of list of numbers
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
+        @type inc:                  list of list of int
         """
 
         # Data checks.
@@ -589,18 +583,6 @@ class Relax_disp(API_base, API_common):
         if not hasattr(cdp, 'spin_lock_nu1_list'):
             cdp.spin_lock_nu1_list = []
 
-        # Special exponential curve-fitting for the 'R2eff' model.
-        if cdp.model_type == 'R2eff':
-            # Sanity checks.
-            if not has_exponential_exp_type():
-                raise RelaxError("The R2eff model with the fixed time period dispersion experiments cannot be optimised.")
-
-            # Optimisation.
-            minimise_r2eff(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index, lower=lower, upper=upper, inc=inc)
-
-            # Exit the method.
-            return
-
         # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
         processor_box = Processor_box() 
         processor = processor_box.processor
@@ -618,7 +600,11 @@ class Relax_disp(API_base, API_common):
             field_count = cdp.spectrometer_frq_count
 
         # Loop over the spin blocks.
+        model_index = -1
         for spin_ids in self.model_loop():
+            # Increment the model index.
+            model_index += 1
+
             # The spin containers.
             spins = spin_ids_to_containers(spin_ids)
 
@@ -630,26 +616,42 @@ class Relax_disp(API_base, API_common):
             if skip:
                 continue
 
-            # Diagonal scaling.
-            scaling_matrix = assemble_scaling_matrix(spins=spins, scaling=scaling)
+            # Alias the grid options.
+            lower_i, upper_i, inc_i = None, None, None
+            if min_algor == 'grid':
+                lower_i = lower[model_index]
+                upper_i = upper[model_index]
+                inc_i = inc[model_index]
+
+            # Special exponential curve-fitting for the R2eff model.
+            if cdp.model_type == MODEL_R2EFF:
+                # Sanity checks.
+                if not has_exponential_exp_type():
+                    raise RelaxError("The R2eff model with the fixed time period dispersion experiments cannot be optimised.")
+
+                # Optimisation.
+                minimise_r2eff(spins=spins, spin_ids=spin_ids, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling_matrix=scaling_matrix[model_index], verbosity=verbosity, sim_index=sim_index, lower=lower_i, upper=upper_i, inc=inc_i)
+
+                # Skip the rest.
+                continue
 
             # Set up the slave command object.
-            command = Disp_minimise_command(spins=spins, spin_ids=spin_ids, sim_index=sim_index, scaling_matrix=scaling_matrix, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, verbosity=verbosity, lower=lower, upper=upper, inc=inc, fields=fields, param_names=get_param_names(spins))
+            command = Disp_minimise_command(spins=spins, spin_ids=spin_ids, sim_index=sim_index, scaling_matrix=scaling_matrix[model_index], min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, verbosity=verbosity, lower=lower_i, upper=upper_i, inc=inc_i, fields=fields, param_names=get_param_names(spins=spins, full=True))
 
             # Set up the memo.
-            memo = Disp_memo(spins=spins, spin_ids=spin_ids, sim_index=sim_index, scaling_matrix=scaling_matrix, verbosity=verbosity)
+            memo = Disp_memo(spins=spins, spin_ids=spin_ids, sim_index=sim_index, scaling_matrix=scaling_matrix[model_index], verbosity=verbosity)
 
             # Add the slave command and memo to the processor queue.
             processor.add_to_queue(command, memo)
 
 
-    def model_desc(self, model_info):
+    def model_desc(self, model_info=None):
         """Return a description of the model.
 
-        @param model_info:  The model index from model_info().
-        @type model_info:   int
-        @return:            The model description.
-        @rtype:             str
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
+        @return:                The model description.
+        @rtype:                 str
         """
 
         # The model loop is over the spin clusters, so return a description of the cluster.
@@ -660,12 +662,24 @@ class Relax_disp(API_base, API_common):
         """Loop over the spin groupings for one model applied to multiple spins.
 
         @return:    The list of spins per block will be yielded, as well as the list of spin IDs.
-        @rtype:     tuple of list of SpinContainer instances and list of spin IDs
+        @rtype:     tuple of list of SpinContainer instances and list of str
         """
 
-        # The cluster loop.
-        for spin_ids in loop_cluster(skip_desel=False):
-            yield spin_ids
+        # Loop over individual spins for the R2eff model.
+        if cdp.model_type == MODEL_R2EFF:
+            # The spin loop.
+            for spin, spin_id in spin_loop(return_id=True):
+                # Skip deselected spins
+                if not spin.select:
+                    continue
+
+                # Yield the spin ID as a list.
+                yield [spin_id]
+
+         # The cluster loop.
+        else:
+            for spin_ids in loop_cluster(skip_desel=False):
+                yield spin_ids
 
 
     def model_statistics(self, model_info=None, spin_id=None, global_stats=None):
@@ -676,8 +690,8 @@ class Relax_disp(API_base, API_common):
         chi2 - the chi-squared value.
 
 
-        @keyword model_info:    The model information originating from model_loop().
-        @type model_info:       unknown
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
         @keyword spin_id:       The spin ID string to override the model_info argument.  This is ignored in the N-state model.
         @type spin_id:          None or str
         @keyword global_stats:  A parameter which determines if global or local statistics are returned.  For the N-state model, this argument is ignored.
@@ -763,6 +777,19 @@ class Relax_disp(API_base, API_common):
                 continue
 
 
+    def print_model_title(self, prefix=None, model_info=None):
+        """Print out the model title.
+
+        @keyword prefix:        The starting text of the title.  This should be printed out first, followed by the model information text.
+        @type prefix:           str
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
+        """
+
+        # The printout.
+        subsection(file=sys.stdout, text=prefix+"the spin block %s"%model_info, prespace=2)
+
+
     def return_data(self, data_id=None):
         """Return the peak intensity data structure.
 
@@ -773,7 +800,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The R2eff model.
-        if cdp.model_type == 'R2eff':
+        if cdp.model_type == MODEL_R2EFF:
             # Unpack the data.
             spin, exp_type, frq, offset, point = data_id
 
@@ -795,7 +822,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The R2eff model.
-        if cdp.model_type == 'R2eff':
+        if cdp.model_type == MODEL_R2EFF:
             # Unpack the data.
             spin, exp_type, frq, offset, point = data_id
 
@@ -876,15 +903,15 @@ class Relax_disp(API_base, API_common):
         return value, error
 
 
-    def set_error(self, model_info, index, error):
+    def set_error(self, index, error, model_info=None):
         """Set the parameter errors.
 
-        @param model_info:  The spin container originating from model_loop().
-        @type model_info:   unknown
-        @param index:       The index of the parameter to set the errors for.
-        @type index:        int
-        @param error:       The error value.
-        @type error:        float
+        @param index:           The index of the parameter to set the errors for.
+        @type index:            int
+        @param error:           The error value.
+        @type error:            float
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
         """
 
         # Unpack the data.
@@ -1015,13 +1042,13 @@ class Relax_disp(API_base, API_common):
                     setattr(spin, obj_name, value[i])
 
 
-    def set_selected_sim(self, model_info, select_sim):
+    def set_selected_sim(self, select_sim, model_info=None):
         """Set the simulation selection flag.
 
-        @param model_info:  The list of spins and spin IDs per cluster originating from model_loop().
-        @type model_info:   tuple of list of SpinContainer instances and list of spin IDs
-        @param select_sim:  The selection flag for the simulations.
-        @type select_sim:   bool
+        @param select_sim:      The selection flag for the simulations.
+        @type select_sim:       bool
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
         """
 
         # Unpack the data.
@@ -1137,7 +1164,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The R2eff model (with peak intensity base data).
-        if cdp.model_type == 'R2eff':
+        if cdp.model_type == MODEL_R2EFF:
             # Unpack the data.
             spin, exp_type, frq, offset, point = data_id
 
@@ -1186,15 +1213,15 @@ class Relax_disp(API_base, API_common):
                 proton.r2eff_sim = sim_data
 
 
-    def sim_return_param(self, model_info, index):
+    def sim_return_param(self, index, model_info=None):
         """Return the array of simulation parameter values.
 
-        @param model_info:  The model information originating from model_loop().
-        @type model_info:   unknown
-        @param index:       The index of the parameter to return the array of values for.
-        @type index:        int
-        @return:            The array of simulation parameter values.
-        @rtype:             list of float
+        @param index:           The index of the parameter to return the array of values for.
+        @type index:            int
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
+        @return:                The array of simulation parameter values.
+        @rtype:                 list of float
         """
 
         # Unpack the data.
@@ -1260,13 +1287,13 @@ class Relax_disp(API_base, API_common):
         return sim_data
 
 
-    def sim_return_selected(self, model_info):
+    def sim_return_selected(self, model_info=None):
         """Return the array of selected simulation flags.
 
-        @param model_info:  The list of spins and spin IDs per cluster originating from model_loop().
-        @type model_info:   tuple of list of SpinContainer instances and list of spin IDs
-        @return:            The array of selected simulation flags.
-        @rtype:             list of int
+        @keyword model_info:    The list of spins and spin IDs per cluster originating from model_loop().
+        @type model_info:       list of SpinContainer instances, list of str
+        @return:                The array of selected simulation flags.
+        @rtype:                 list of int
         """
 
         # Unpack the data.

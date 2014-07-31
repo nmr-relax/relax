@@ -41,7 +41,7 @@ spectrum.error_analysis()
 deselect.read(file='unresolved', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting', res_num_col=1)
 
 # Calculate the NOEs.
-calc()
+minimise.calculate()
 
 # Save the NOEs.
 value.write(param='noe', file='devnull', force=True)

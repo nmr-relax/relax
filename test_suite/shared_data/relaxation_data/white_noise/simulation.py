@@ -50,7 +50,7 @@ spin_cont.warning = None
 monte_carlo.setup(number=1000000)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex', constraints=False)
+minimise.execute('simplex', constraints=False)
 monte_carlo.error_analysis()
 
 # Bucket and write out the data.

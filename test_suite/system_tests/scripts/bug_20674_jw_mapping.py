@@ -38,12 +38,12 @@ self._execute_uf(uf_name='value.set', val=-172 * 1e-6, param='csa')
 self._execute_uf(uf_name='jw_mapping.set_frq', frq=700.17 * 1e6)
 
 # Consistency tests.
-self._execute_uf(uf_name='calc')
+self._execute_uf(uf_name='minimise.calculate')
 
 # Monte Carlo simulations.
 self._execute_uf(uf_name='monte_carlo.setup', number=10)
 self._execute_uf(uf_name='monte_carlo.create_data')
-self._execute_uf(uf_name='calc')
+self._execute_uf(uf_name='minimise.calculate')
 self._execute_uf(uf_name='monte_carlo.error_analysis')
 
 # Create grace files.

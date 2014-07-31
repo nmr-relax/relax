@@ -104,15 +104,17 @@ class API_base(object):
         raise RelaxImplementError('bmrb_write')
 
 
-    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+    def calculate(self, spin_id=None, scaling_matrix=None, verbosity=1, sim_index=None):
         """Calculate the chi-squared value.
 
-        @keyword spin_id:   The spin identification string.
-        @type spin_id:      None or str
-        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:    int
-        @keyword sim_index: The optional MC simulation index.
-        @type sim_index:    None or int
+        @keyword spin_id:           The spin ID string.
+        @type spin_id:              None or str
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The optional MC simulation index.
+        @type sim_index:            None or int
         """
 
         # Not implemented.
@@ -149,13 +151,13 @@ class API_base(object):
         raise RelaxImplementError('create_mc_data')
 
 
-    def data_init(self, data_cont, sim=False):
+    def data_init(self, data, sim=False):
         """Initialise the data structures.
 
-        @param data_cont:   The data container.
-        @type data_cont:    instance
-        @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
-        @type sim:          bool
+        @param data:    The data from the base_data_loop() method.
+        @type data:     unknown
+        @keyword sim:   The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
+        @type sim:      bool
         """
 
         # Not implemented.
@@ -212,13 +214,13 @@ class API_base(object):
         return self._PARAMS.default_value(param)
 
 
-    def deselect(self, model_info, sim_index=None):
+    def deselect(self, sim_index=None, model_info=None):
         """Deselect models or simulations.
 
-        @param model_info:      The model index from model_info().
-        @type model_info:       int
         @keyword sim_index:     The optional Monte Carlo simulation index.  If None, then models will be deselected, otherwise the given simulation will.
         @type sim_index:        None or int
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
         """
 
         # Not implemented.
@@ -232,8 +234,8 @@ class API_base(object):
         @type pipe_from:        str
         @keyword pipe_to:       The data pipe to copy the data to.
         @type pipe_to:          str
-        @keyword model_info:    The model index from model_info().
-        @type model_info:       int
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
         @keyword global_stats:  The global statistics flag.
         @type global_stats:     bool
         @keyword verbose:       A flag which if True will cause info to be printed out.
@@ -244,21 +246,21 @@ class API_base(object):
         raise RelaxImplementError('duplicate_data')
 
 
-    def eliminate(self, name, value, model_info, args, sim=None):
+    def eliminate(self, name, value, args, sim=None, model_info=None):
         """Model elimination method.
 
-        @param name:        The parameter name.
-        @type name:         str
-        @param value:       The parameter value.
-        @type value:        float
-        @param model_info:  The model index from model_info().
-        @type model_info:   int
-        @param args:        The elimination constant overrides.
-        @type args:         None or tuple of float
-        @keyword sim:       The Monte Carlo simulation index.
-        @type sim:          int
-        @return:            True if the model is to be eliminated, False otherwise.
-        @rtype:             bool
+        @param name:            The parameter name.
+        @type name:             str
+        @param value:           The parameter value.
+        @type value:            float
+        @param args:            The elimination constant overrides.
+        @type args:             None or tuple of float
+        @keyword sim:           The Monte Carlo simulation index.
+        @type sim:              int
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
+        @return:                True if the model is to be eliminated, False otherwise.
+        @rtype:                 bool
         """
 
         # Not implemented.
@@ -268,8 +270,8 @@ class API_base(object):
     def get_param_names(self, model_info=None):
         """Return a vector of parameter names.
 
-        @keyword model_info:    The model index from model_info().
-        @type model_info:       int
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
         @return:                The vector of parameter names.
         @rtype:                 list of str
         """
@@ -281,8 +283,8 @@ class API_base(object):
     def get_param_values(self, model_info=None, sim_index=None):
         """Return a vector of parameter values.
 
-        @keyword model_info:    The model index from model_info().
-        @type model_info:       int
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
         @keyword sim_index:     The optional Monte Carlo simulation index.
         @type sim_index:        int
         @return:                The vector of parameter values.
@@ -293,21 +295,23 @@ class API_base(object):
         raise RelaxImplementError('get_param_values')
 
 
-    def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
+    def grid_search(self, lower=None, upper=None, inc=None, scaling_matrix=None, constraints=True, verbosity=1, sim_index=None):
         """Grid search method.
 
-        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.
-        @type lower:            array of numbers
-        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.
-        @type upper:            array of numbers
-        @keyword inc:           The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
-        @type inc:              array of int
-        @keyword constraints:   If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
-        @type constraints:      bool
-        @keyword verbosity:     A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:        int
-        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None, the normal model is optimised.
-        @type sim_index:        int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.
+        @type lower:                list of lists of floats
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.
+        @type upper:                list of lists of floats
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
+        @type inc:                  list of lists of int
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword constraints:       If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
+        @type constraints:          bool
+        @keyword verbosity:         A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The index of the simulation to apply the grid search to.  If None, the normal model is optimised.
+        @type sim_index:            int
         """
 
         # Not implemented.
@@ -353,7 +357,7 @@ class API_base(object):
         raise RelaxImplementError('map_bounds')
 
 
-    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling_matrix=None, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Minimisation method.
 
         @keyword min_algor:         The minimisation algorithm to use.
@@ -368,31 +372,31 @@ class API_base(object):
         @type max_iterations:       int
         @keyword constraints:       If True, constraints are used during optimisation.
         @type constraints:          bool
-        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
-        @type scaling:              bool
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
         @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:            int
         @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:            None or int
-        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type lower:                array of numbers
-        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
-        @type inc:                  array of int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type lower:                list of lists of float
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type upper:                list of lists of float
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
+        @type inc:                  list of lists of int
         """
 
         # Not implemented.
         raise RelaxImplementError('minimise')
 
 
-    def model_desc(self, model_info):
+    def model_desc(self, model_info=None):
         """Return a description of the model.
 
-        @param model_info:  The model index from model_info().
-        @type model_info:   int
-        @return:            The model description.
-        @rtype:             str
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
+        @return:                The model description.
+        @rtype:                 str
         """
 
         # Not implemented.
@@ -418,7 +422,7 @@ class API_base(object):
         chi2 - the chi-squared value.
 
 
-        @keyword model_info:    The model information originating from model_loop().
+        @keyword model_info:    The model information from model_loop().
         @type model_info:       unknown
         @keyword spin_id:       The spin ID string to override the model_info argument.  This is ignored in the N-state model.
         @type spin_id:          None or str
@@ -486,6 +490,19 @@ class API_base(object):
 
         # Not implemented.
         raise RelaxImplementError('overfit_deselect')
+
+
+    def print_model_title(self, prefix=None, model_info=None):
+        """Print out the model title.
+
+        @keyword prefix:        The starting text of the title.  This should be printed out first, followed by the model information text.
+        @type prefix:           str
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
+        """
+
+        # Not implemented.
+        raise RelaxImplementError('print_model_title')
 
 
     def pymol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
@@ -615,15 +632,15 @@ class API_base(object):
         raise RelaxImplementError('return_value')
 
 
-    def set_error(self, model_info, index, error):
+    def set_error(self, index, error, model_info=None):
         """Set the model parameter errors.
 
-        @param model_info:  The model information originating from model_loop().
-        @type model_info:   unknown
-        @param index:       The index of the parameter to set the errors for.
-        @type index:        int
-        @param error:       The error value.
-        @type error:        float
+        @param index:           The index of the parameter to set the errors for.
+        @type index:            int
+        @param error:           The error value.
+        @type error:            float
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
         """
 
         # Not implemented.
@@ -651,13 +668,13 @@ class API_base(object):
         raise RelaxImplementError('set_param_values')
 
 
-    def set_selected_sim(self, model_info, select_sim):
+    def set_selected_sim(self, select_sim, model_info=None):
         """Set the simulation selection flag.
 
-        @param model_info:  The model information originating from model_loop().
-        @type model_info:   unknown
-        @param select_sim:  The selection flag for the simulations.
-        @type select_sim:   bool
+        @param select_sim:      The selection flag for the simulations.
+        @type select_sim:       bool
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
         """
 
         # Not implemented.
@@ -697,56 +714,56 @@ class API_base(object):
         raise RelaxImplementError('sim_pack_data')
 
 
-    def sim_return_chi2(self, model_info, index=None):
+    def sim_return_chi2(self, index=None, model_info=None):
         """Return the simulation chi-squared values.
 
-        @param model_info:  The model information originating from model_loop().
-        @type model_info:   unknown
-        @keyword index:     The optional simulation index.
-        @type index:        int
-        @return:            The list of simulation chi-squared values.  If the index is supplied, only a single value will be returned.
-        @rtype:             list of float or float
+        @keyword index:         The optional simulation index.
+        @type index:            int
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
+        @return:                The list of simulation chi-squared values.  If the index is supplied, only a single value will be returned.
+        @rtype:                 list of float or float
         """
 
         # Not implemented.
         raise RelaxImplementError('sim_return_chi2')
 
 
-    def sim_return_param(self, model_info, index):
+    def sim_return_param(self, index, model_info=None):
         """Return the array of simulation parameter values.
 
-        @param model_info:  The model information originating from model_loop().
-        @type model_info:   unknown
-        @param index:       The index of the parameter to return the array of values for.
-        @type index:        int
-        @return:            The array of simulation parameter values.
-        @rtype:             list of float
+        @param index:           The index of the parameter to return the array of values for.
+        @type index:            int
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
+        @return:                The array of simulation parameter values.
+        @rtype:                 list of float
         """
 
         # Not implemented.
         raise RelaxImplementError('sim_return_param')
 
 
-    def sim_return_selected(self, model_info):
+    def sim_return_selected(self, model_info=None):
         """Return the array of selected simulation flags for the spin.
 
-        @param model_info:  The model information originating from model_loop().
-        @type model_info:   unknown
-        @return:            The array of selected simulation flags.
-        @rtype:             list of int
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
+        @return:                The array of selected simulation flags.
+        @rtype:                 list of int
         """
 
         # Not implemented.
         raise RelaxImplementError('sim_return_selected')
 
 
-    def skip_function(self, model_info):
+    def skip_function(self, model_info=None):
         """Skip certain data.
 
-        @param model_info:  The model index from model_loop().
-        @type model_info:   int
-        @return:            True if the data should be skipped, False otherwise.
-        @rtype:             bool
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
+        @return:                True if the data should be skipped, False otherwise.
+        @rtype:                 bool
         """
 
         # Never skip.

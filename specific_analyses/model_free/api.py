@@ -33,6 +33,7 @@ from numpy import array, dot, float64, int32, zeros
 from numpy.linalg import inv
 from re import match, search
 import string
+import sys
 from types import MethodType
 from warnings import warn
 
@@ -41,6 +42,7 @@ from lib.arg_check import is_num_list, is_str_list
 from lib.errors import RelaxError, RelaxFault, RelaxNoModelError, RelaxNoSequenceError, RelaxNoTensorError
 from lib.float import isInf
 from lib.physical_constants import h_bar, mu0, return_gyromagnetic_ratio
+from lib.text.sectioning import subsection
 from lib.warnings import RelaxDeselectWarning, RelaxWarning
 from multi import Processor_box
 from pipe_control import diffusion_tensor, interatomic, mol_res_spin, pipes, relax_data, sequence
@@ -54,8 +56,8 @@ from specific_analyses.model_free.bmrb import sf_csa_read, sf_model_free_read, t
 from specific_analyses.model_free.data import compare_objects
 from specific_analyses.model_free.molmol import Molmol
 from specific_analyses.model_free.model import determine_model_type
-from specific_analyses.model_free.parameters import are_mf_params_set, assemble_param_names, assemble_param_vector, assemble_scaling_matrix, linear_constraints
-from specific_analyses.model_free.optimisation import MF_grid_command, MF_memo, MF_minimise_command, grid_search_config, minimise_data_setup, relax_data_opt_structs, reset_min_stats
+from specific_analyses.model_free.parameters import are_mf_params_set, assemble_param_names, assemble_param_vector, linear_constraints
+from specific_analyses.model_free.optimisation import MF_grid_command, MF_memo, MF_minimise_command, minimise_data_setup, relax_data_opt_structs, reset_min_stats
 from specific_analyses.model_free.parameter_object import Model_free_params
 from specific_analyses.model_free.pymol import Pymol
 from target_functions.mf import Mf
@@ -404,15 +406,17 @@ class Model_free(API_base, API_common):
         star.write()
 
 
-    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+    def calculate(self, spin_id=None, scaling_matrix=None, verbosity=1, sim_index=None):
         """Calculation of the model-free chi-squared value.
 
-        @keyword spin_id:   The spin identification string.
-        @type spin_id:      str
-        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:    int
-        @keyword sim_index: The optional MC simulation index.
-        @type sim_index:    int
+        @keyword spin_id:           The spin identification string.
+        @type spin_id:              str
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The optional MC simulation index.
+        @type sim_index:            int
         """
 
         # Test if sequence data is loaded.
@@ -626,14 +630,17 @@ class Model_free(API_base, API_common):
         return mc_data
 
 
-    def data_init(self, data_cont, sim=False):
+    def data_init(self, data, sim=False):
         """Initialise the spin specific data structures.
 
-        @param data_cont:   The spin data container.
-        @type data_cont:    SpinContainer instance
-        @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
-        @type sim:          bool
+        @param data:    The spin ID string from the _base_data_loop_spin() method.
+        @type data:     str
+        @keyword sim:   The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
+        @type sim:      bool
         """
+
+        # Get the spin container.
+        spin = return_spin(data)
 
         # Loop over the data structure names.
         for name in self._PARAMS.loop(scope='spin'):
@@ -653,18 +660,18 @@ class Model_free(API_base, API_common):
                 if name == 'select':
                     init_data = True
 
-            # If the name is not in 'data_cont', add it.
-            if not hasattr(data_cont, name):
-                setattr(data_cont, name, init_data)
+            # If the name is not in the spin container, add it.
+            if not hasattr(spin, name):
+                setattr(spin, name, init_data)
 
 
-    def deselect(self, model_info, sim_index=None):
+    def deselect(self, sim_index=None, model_info=None):
         """Deselect models or simulations.
 
-        @param model_info:      The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:       int
         @keyword sim_index:     The optional Monte Carlo simulation index.  If None, then models will be deselected, otherwise the given simulation will.
         @type sim_index:        None or int
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
         """
 
         # Determine the model type.
@@ -702,7 +709,7 @@ class Model_free(API_base, API_common):
         @type pipe_from:        str
         @keyword pipe_to:       The data pipe to copy the data to.
         @type pipe_to:          str
-        @param model_info:      The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
         @type model_info:       int
         @keyword global_stats:  The global statistics flag.
         @type global_stats:     bool
@@ -871,21 +878,21 @@ class Model_free(API_base, API_common):
             dp_to.mol = deepcopy(dp_from.mol)
 
 
-    def eliminate(self, name, value, model_info, args, sim=None):
+    def eliminate(self, name, value, args, sim=None, model_info=None):
         """Model-free model elimination, parameter by parameter.
 
-        @param name:        The parameter name.
-        @type name:         str
-        @param value:       The parameter value.
-        @type value:        float
-        @param model_info:  The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:   int
-        @param args:        The c1 and c2 elimination constant overrides.
-        @type args:         None or tuple of float
-        @keyword sim:       The Monte Carlo simulation index.
-        @type sim:          int
-        @return:            True if the model is to be eliminated, False otherwise.
-        @rtype:             bool
+        @param name:            The parameter name.
+        @type name:             str
+        @param value:           The parameter value.
+        @type value:            float
+        @param args:            The c1 and c2 elimination constant overrides.
+        @type args:             None or tuple of float
+        @keyword sim:           The Monte Carlo simulation index.
+        @type sim:              int
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
+        @return:                True if the model is to be eliminated, False otherwise.
+        @rtype:                 bool
         """
 
         # Default values.
@@ -939,7 +946,7 @@ class Model_free(API_base, API_common):
     def get_param_names(self, model_info=None):
         """Return a vector of parameter names.
 
-        @keyword model_info:    The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
         @type model_info:       int
         @return:                The vector of parameter names.
         @rtype:                 list of str
@@ -962,7 +969,7 @@ class Model_free(API_base, API_common):
     def get_param_values(self, model_info=None, sim_index=None):
         """Return a vector of parameter values.
 
-        @keyword model_info:    The model index from model_info().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
         @type model_info:       int
         @keyword sim_index:     The Monte Carlo simulation index.
         @type sim_index:        int
@@ -993,32 +1000,27 @@ class Model_free(API_base, API_common):
         return assemble_param_vector(spin=spin, sim_index=sim_index, model_type=model_type)
 
 
-    def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
+    def grid_search(self, lower=None, upper=None, inc=None, scaling_matrix=None, constraints=True, verbosity=1, sim_index=None):
         """The model-free grid search function.
 
-        @keyword lower:         The lower bounds of the grid search which must be equal to the
-                                number of parameters in the model.
-        @type lower:            array of numbers
-        @keyword upper:         The upper bounds of the grid search which must be equal to the
-                                number of parameters in the model.
-        @type upper:            array of numbers
-        @keyword inc:           The increments for each dimension of the space for the grid search.
-                                The number of elements in the array must equal to the number of
-                                parameters in the model.
-        @type inc:              array of int
-        @keyword constraints:   If True, constraints are applied during the grid search (eliminating
-                                parts of the grid).  If False, no constraints are used.
-        @type constraints:      bool
-        @keyword verbosity:     A flag specifying the amount of information to print.  The higher
-                                the value, the greater the verbosity.
-        @type verbosity:        int
-        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None,
-                                the normal model is optimised.
-        @type sim_index:        int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.
+        @type lower:                list of lists of numbers
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.
+        @type upper:                list of lists of numbers
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.
+        @type inc:                  list of lists of int
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword constraints:       If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
+        @type constraints:          bool
+        @keyword verbosity:         A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The index of the simulation to apply the grid search to.  If None, the normal model is optimised.
+        @type sim_index:            int
         """
 
         # Minimisation.
-        self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def map_bounds(self, param, spin_id=None):
@@ -1060,7 +1062,7 @@ class Model_free(API_base, API_common):
             return [-100 * 1e-6, -300 * 1e-6]
 
 
-    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling_matrix=None, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Model-free minimisation function.
 
         Three categories of models exist for which the approach to minimisation is different.  These
@@ -1081,38 +1083,26 @@ class Model_free(API_base, API_common):
         @type min_algor:            str
         @keyword min_options:       An array of options to be used by the minimisation algorithm.
         @type min_options:          array of str
-        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.
-                                    Setting this to None turns of the check.
+        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation. Setting this to None turns of the check.
         @type func_tol:             None or float
-        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.
-                                    Setting this to None turns of the check.
+        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation. Setting this to None turns of the check.
         @type grad_tol:             None or float
         @keyword max_iterations:    The maximum number of iterations for the algorithm.
         @type max_iterations:       int
         @keyword constraints:       If True, constraints are used during optimisation.
         @type constraints:          bool
-        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow
-                                    the problem to be better conditioned.
-        @type scaling:              bool
-        @keyword verbosity:         The amount of information to print.  The higher the value, the
-                                    greater the verbosity.
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:            int
-        @keyword sim_index:         The index of the simulation to optimise.  This should be None if
-                                    normal optimisation is desired.
+        @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:            None or int
-        @keyword lower:             The lower bounds of the grid search which must be equal to the
-                                    number of parameters in the model.  This optional argument is only
-                                    used when doing a grid search.
-        @type lower:                array of numbers
-        @keyword upper:             The upper bounds of the grid search which must be equal to the
-                                    number of parameters in the model.  This optional argument is only
-                                    used when doing a grid search.
-        @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid search.
-                                    The number of elements in the array must equal to the number of
-                                    parameters in the model.  This argument is only used when doing a
-                                    grid search.
-        @type inc:                  array of int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type lower:                list of lists of numbers
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type upper:                list of lists of numbers
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
+        @type inc:                  list of lists of int
         """
 
         # Test if sequence data is loaded.
@@ -1243,17 +1233,14 @@ class Model_free(API_base, API_common):
 
         # Number of spins, minimisation instances, and data sets for each model type.
         if data_store.model_type == 'mf' or data_store.model_type == 'local_tm':
-            num_instances = count_spins(skip_desel=False)
             num_data_sets = 1
             data_store.num_spins = 1
         elif data_store.model_type == 'diff' or data_store.model_type == 'all':
-            num_instances = 1
             num_data_sets = count_spins(skip_desel=False)
             data_store.num_spins = count_spins()
 
         # Number of spins, minimisation instances, and data sets for the back-calculate function.
         if min_algor == 'back_calc':
-            num_instances = 1
             num_data_sets = 0
             data_store.num_spins = 1
 
@@ -1261,10 +1248,8 @@ class Model_free(API_base, API_common):
         processor_box = Processor_box() 
         processor = processor_box.processor
 
-        # Loop over the minimisation instances.
-        #######################################
-
-        for i in range(num_instances):
+        # Loop over the models.
+        for index in self.model_loop():
             # Get the spin container if required.
             if data_store.model_type == 'diff' or data_store.model_type == 'all':
                 spin_index = None
@@ -1273,7 +1258,7 @@ class Model_free(API_base, API_common):
                 spin_index = opt_params.min_options[0]
                 spin, data_store.spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
             else:
-                spin_index = i
+                spin_index = index
                 spin, data_store.spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
 
             # Individual spin stuff.
@@ -1308,14 +1293,18 @@ class Model_free(API_base, API_common):
                 num_params = len(opt_params.param_vector)
 
                 # Diagonal scaling.
-                data_store.scaling_matrix = assemble_scaling_matrix(num_params, model_type=data_store.model_type, spin=spin, scaling=scaling)
-                if len(data_store.scaling_matrix):
+                data_store.scaling_matrix = scaling_matrix[index]
+                if data_store.scaling_matrix != None:
                     opt_params.param_vector = dot(inv(data_store.scaling_matrix), opt_params.param_vector)
 
-            # Configure the grid search.
-            opt_params.inc, opt_params.lower, opt_params.upper = None, None, None
-            if match('^[Gg]rid', min_algor):
-                opt_params.inc, opt_params.lower, opt_params.upper = grid_search_config(num_params, spin=spin, lower=lower, upper=upper, inc=inc, scaling_matrix=data_store.scaling_matrix)
+            # Store the grid search options.
+            opt_params.lower, opt_params.upper, opt_params.inc = None, None, None
+            if lower != None:
+                opt_params.lower = lower[index]
+            if upper != None:
+                opt_params.upper = upper[index]
+            if inc != None:
+                opt_params.inc = inc[index]
 
             # Scaling of values for the set function.
             if match('^[Ss]et', min_algor):
@@ -1377,7 +1366,7 @@ class Model_free(API_base, API_common):
                     command.store_data(deepcopy(data_store), deepcopy(opt_params))
 
                     # Set up the model-free memo and add it to the processor queue.
-                    memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling=scaling, scaling_matrix=data_store.scaling_matrix)
+                    memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling_matrix=data_store.scaling_matrix)
                     processor.add_to_queue(command, memo)
 
                 # Execute the queued elements.
@@ -1398,20 +1387,20 @@ class Model_free(API_base, API_common):
             command.store_data(deepcopy(data_store), deepcopy(opt_params))
 
             # Set up the model-free memo and add it to the processor queue.
-            memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling=scaling, scaling_matrix=data_store.scaling_matrix)
+            memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling_matrix=data_store.scaling_matrix)
             processor.add_to_queue(command, memo)
 
         # Execute the queued elements.
         processor.run_queue()
 
 
-    def model_desc(self, model_info):
+    def model_desc(self, model_info=None):
         """Return a description of the model.
 
-        @param model_info:  The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:   int
-        @return:            The model description.
-        @rtype:             str
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
+        @return:                The model description.
+        @rtype:                 str
         """
 
         # Determine the model type.
@@ -1439,7 +1428,7 @@ class Model_free(API_base, API_common):
         the global spin index is yielded.
 
 
-        @return:    The model index.  This is zero for the global models or equal to the global spin
+        @return:    The model index.  This index is zero for the global models or equal to the global spin
                     index (which covers the molecule, residue, and spin indices).
         @rtype:     int
         """
@@ -1471,7 +1460,7 @@ class Model_free(API_base, API_common):
         chi2 - the chi-squared value.
 
 
-        @keyword model_info:    The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
         @type model_info:       int
         @keyword spin_id:       The spin identification string.  Either this or the instance keyword argument must be supplied.
         @type spin_id:          None or str
@@ -1730,15 +1719,40 @@ class Model_free(API_base, API_common):
             print("No spins have been deselected.")
 
 
-    def set_error(self, model_info, index, error):
+    def print_model_title(self, prefix=None, model_info=None):
+        """Print out the model title.
+
+        @keyword prefix:        The starting text of the title.  This should be printed out first, followed by the model information text.
+        @type prefix:           str
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
+        """
+
+        # Determine the model type.
+        model_type = determine_model_type()
+
+        # Local models.
+        if model_type == 'mf' or model_type == 'local_tm':
+            spin, spin_id = return_spin_from_index(global_index=model_info, return_spin_id=True)
+            text = "%sSpin '%s'" % (prefix, spin_id)
+
+        # Global models.
+        else:
+            text = prefix + "Global model"
+
+        # The printout.
+        subsection(file=sys.stdout, text=text, prespace=2)
+
+
+    def set_error(self, index, error, model_info=None):
         """Set the parameter errors.
 
-        @param model_info:  The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:   int
-        @param index:       The index of the parameter to set the errors for.
-        @type index:        int
-        @param error:       The error value.
-        @type error:        float
+        @param index:           The index of the parameter to set the errors for.
+        @type index:            int
+        @param error:           The error value.
+        @type error:            float
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
         """
 
         # Parameter increment counter.
@@ -1898,13 +1912,13 @@ class Model_free(API_base, API_common):
                 setattr(spin, mf_params[i], mf_vals[i])
 
 
-    def set_selected_sim(self, model_info, select_sim):
+    def set_selected_sim(self, select_sim, model_info=None):
         """Set all simulation selection flags.
 
-        @param model_info:  The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:   int
-        @param select_sim:  The selection flags.
-        @type select_sim:   bool
+        @param select_sim:      The selection flags.
+        @type select_sim:       bool
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
         """
 
         # Determine the model type.
@@ -2093,15 +2107,15 @@ class Model_free(API_base, API_common):
                         sim_object.append(deepcopy(getattr(spin, object_name)))
 
 
-    def sim_return_chi2(self, model_info, index=None):
+    def sim_return_chi2(self, index=None, model_info=None):
         """Return the simulation chi-squared values.
 
-        @param model_info:  The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:   int
-        @keyword index:     The optional simulation index.
-        @type index:        int
-        @return:            The list of simulation chi-squared values.  If the index is supplied, only a single value will be returned.
-        @rtype:             list of float or float
+        @keyword index:         The optional simulation index.
+        @type index:            int
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
+        @return:                The list of simulation chi-squared values.  If the index is supplied, only a single value will be returned.
+        @rtype:                 list of float or float
         """
 
         # Determine the model type.
@@ -2120,15 +2134,15 @@ class Model_free(API_base, API_common):
             return spin.chi2_sim
 
 
-    def sim_return_param(self, model_info, index):
+    def sim_return_param(self, index, model_info=None):
         """Return the array of simulation parameter values.
 
-        @param model_info:  The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:   int
-        @param index:       The index of the parameter to return the array of values for.
-        @type index:        int
-        @return:            The array of simulation parameter values.
-        @rtype:             list of float
+        @param index:           The index of the parameter to return the array of values for.
+        @type index:            int
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
+        @return:                The array of simulation parameter values.
+        @rtype:                 list of float
         """
 
         # Parameter increment counter.
@@ -2230,13 +2244,13 @@ class Model_free(API_base, API_common):
                 inc = inc + 1
 
 
-    def sim_return_selected(self, model_info):
+    def sim_return_selected(self, model_info=None):
         """Return the array of selected simulation flags for the spin.
 
-        @param model_info:  The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:   int
-        @return:            The array of selected simulation flags.
-        @rtype:             list of int
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
+        @return:                The array of selected simulation flags.
+        @rtype:                 list of int
         """
 
         # Determine the model type.
@@ -2259,10 +2273,10 @@ class Model_free(API_base, API_common):
             return spin.select_sim
 
 
-    def skip_function(self, model_info):
+    def skip_function(self, model_info=None):
         """Skip certain data.
 
-        @param model_info:      The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @keyword model_info:    The model information from model_loop().  This index is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
         @type model_info:       int
         @return:                True if the data should be skipped, False otherwise.
         @rtype:                 bool

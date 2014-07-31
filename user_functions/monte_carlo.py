@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -42,19 +42,19 @@ monte_carlo_desc.add_item_list_element("7", "Failed simulations are removed usin
 monte_carlo_desc.add_item_list_element("8", "The model parameter errors are calculated from the distribution of simulation parameters.")
 monte_carlo_desc.add_paragraph("Monte Carlo simulations can be turned on or off using functions within this class.  Once the function for setting up simulations has been called, simulations will be turned on.  The effect of having simulations turned on is that the functions used for minimisation (grid search, minimise, etc) or calculation will only affect the simulation parameters and not the model parameters.  By subsequently turning simulations off using the appropriate function, the functions used in minimisation will affect the model parameters and not the simulation parameters.")
 monte_carlo_desc.add_paragraph("An example for model-free analysis using the prompt UI mode which includes only the functions required for implementing the above steps is:")
-monte_carlo_desc.add_prompt("relax> grid_search(inc=11)                                       # Step 2.")
-monte_carlo_desc.add_prompt("relax> minimise('newton')                                        # Step 2.")
+monte_carlo_desc.add_prompt("relax> minimise.grid_search(inc=11)                              # Step 2.")
+monte_carlo_desc.add_prompt("relax> minimise.execute('newton')                                # Step 2.")
 monte_carlo_desc.add_prompt("relax> monte_carlo.setup(number=500)                             # Step 3.")
 monte_carlo_desc.add_prompt("relax> monte_carlo.create_data(method='back_calc')               # Step 4.")
 monte_carlo_desc.add_prompt("relax> monte_carlo.initial_values()                              # Step 5.")
-monte_carlo_desc.add_prompt("relax> minimise('newton')                                        # Step 6.")
+monte_carlo_desc.add_prompt("relax> minimise.execute('newton')                                # Step 6.")
 monte_carlo_desc.add_prompt("relax> eliminate()                                               # Step 7.")
 monte_carlo_desc.add_prompt("relax> monte_carlo.error_analysis()                              # Step 8.")
 monte_carlo_desc.add_paragraph("An example for reduced spectral density mapping is:")
-monte_carlo_desc.add_prompt("relax> calc()                                                    # Step 2.")
+monte_carlo_desc.add_prompt("relax> minimise.calculate()                                      # Step 2.")
 monte_carlo_desc.add_prompt("relax> monte_carlo.setup(number=500)                             # Step 3.")
 monte_carlo_desc.add_prompt("relax> monte_carlo.create_data(method='back_calc')               # Step 4.")
-monte_carlo_desc.add_prompt("relax> calc()                                                    # Step 6.")
+monte_carlo_desc.add_prompt("relax> minimise.calculate()                                      # Step 6.")
 monte_carlo_desc.add_prompt("relax> monte_carlo.error_analysis()                              # Step 8.")
 
 
@@ -118,7 +118,7 @@ uf.title = "Set the initial simulation parameter values."
 uf.title_short = "Initial value setting."
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This only effects where minimisation occurs and can therefore be skipped if the values or parameters are calculated rather than minimised.  However, if accidentally run in this case, the results will be unaffected.  It should only be called after the model or run is fully minimised.  Once called, the functions 'grid_search' and 'minimise' will only effect the simulations and not the model parameters.")
+uf.desc[-1].add_paragraph("This only effects where minimisation occurs and can therefore be skipped if the values or parameters are calculated rather than minimised.  However, if accidentally run in this case, the results will be unaffected.  It should only be called after the model or run is fully minimised.  Once called, the user functions minimise.grid_search and minimise.execute will only effect the simulations and not the model parameters.")
 uf.desc[-1].add_paragraph("The initial values of the parameters for each simulation is set to the minimised parameters of the model.  A grid search can be undertaken for each simulation instead, although this is computationally expensive and unnecessary.  The minimisation function should be executed for a second time after running this function.")
 uf.desc.append(monte_carlo_desc)
 uf.backend = monte_carlo.initial_values

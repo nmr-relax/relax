@@ -31,13 +31,13 @@ cdp.mol[0].res[1].spin[0].kB = 1500.0
 cdp.mol[0].res[1].spin[0].kC = 2500.0
 
 # Optimisation.
-minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
 
 # Monte Carlo simulations.
 monte_carlo.setup(number=3)
 monte_carlo.create_data(method='back_calc')
 monte_carlo.initial_values()
-minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
 monte_carlo.error_analysis()
 
 results.write(file='results', compress_type=1, force=True)

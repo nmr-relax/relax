@@ -788,7 +788,7 @@ def is_num_or_num_tuple(arg, name=None, size=None, can_be_none=False, can_be_emp
 
         # Fail if not numbers.
         for i in range(len(arg)):
-            if not is_num(arg[i], raise_error=False):
+            if not (is_num(arg[i], raise_error=False) or (can_be_none and arg[i] == None)):
                 fail = True
 
     # Fail.
@@ -860,9 +860,9 @@ def is_num_tuple(arg, name=None, size=None, can_be_none=False, can_be_empty=Fals
         if not raise_error:
             return False
         if can_be_none and size != None:
-            raise RelaxNoneTupleNumError(name, arg, size)
+            raise RelaxNoneNumTupleNumError(name, arg, size)
         elif can_be_none:
-            raise RelaxNoneTupleNumError(name, arg)
+            raise RelaxNoneNumTupleNumError(name, arg)
         elif size != None:
             raise RelaxTupleNumError(name, arg, size)
         else:

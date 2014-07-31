@@ -42,4 +42,4 @@ self._execute_uf(uf_name='value.set', val=N15_CSA, param='csa')
 self._execute_uf(uf_name='jw_mapping.set_frq', frq=600.0 * 1e6)
 
 # Try the reduced spectral density mapping.
-self._execute_uf(uf_name='calc')
+self._execute_uf(uf_name='minimise.calculate')

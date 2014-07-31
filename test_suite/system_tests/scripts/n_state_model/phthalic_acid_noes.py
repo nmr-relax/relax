@@ -43,6 +43,6 @@ self._execute_uf(uf_name='noe.read_restraints', file=ds.file_name, dir=DATA_PATH
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 
 # Calculate the average NOE potential.
-self._execute_uf(uf_name='calc')
+self._execute_uf(uf_name='minimise.calculate')
 
 

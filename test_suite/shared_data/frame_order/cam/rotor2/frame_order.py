@@ -133,21 +133,21 @@ value.set(param='ave_pos_beta', val=AVE_POS_BETA)
 value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
 value.set(param='axis_alpha', val=alpha_angle(pivot=pivot, com=pipe_centre_of_mass(verbosity=0), axis=AXIS))
 value.set(param='cone_sigma_max', val=CONE_SIGMA_MAX)
-calc()
+minimise.calculate()
 
 # Create the PDB representation of the true state.
 frame_order.pdb_model(ave_pos_file=None, rep_file='true_frame_order.pdb', dist_file=None, force=True)
 
 # Optimise.
-grid_search(inc=5)
-minimise('simplex', constraints=True)
+minimise.grid_search(inc=5)
+minimise.execute('simplex', constraints=True)
 
 # Store the result.
 frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None, force=True)
 
 # Optimise the pivot and model.
 frame_order.pivot(pivot, fix=False)
-minimise('simplex', constraints=True)
+minimise.execute('simplex', constraints=True)
 
 # The distance from the optimised pivot and the rotation axis.
 opt_piv = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z])
@@ -164,7 +164,7 @@ print("Optimised axis:  %s" % opt_axis)
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex', constraints=False)
+minimise.execute('simplex', constraints=False)
 eliminate()
 monte_carlo.error_analysis()
 

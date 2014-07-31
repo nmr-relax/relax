@@ -46,6 +46,7 @@ class Noe(API_base, API_common):
         """Initialise the class by placing API_common methods into the API."""
 
         # Place methods into the API.
+        self.model_loop = self._model_loop_spin
         self.return_conversion_factor = self._return_no_conversion_factor
         self.return_value = self._return_value_general
 
@@ -53,7 +54,7 @@ class Noe(API_base, API_common):
         self._PARAMS = Noe_params()
 
 
-    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+    def calculate(self, spin_id=None, scaling_matrix=None, verbosity=1, sim_index=None):
         """Calculate the NOE and its error.
 
         The error for each peak is calculated using the formula::
@@ -62,12 +63,14 @@ class Noe(API_base, API_common):
             sd(NOE) = -----------------------------------------------
                                           I(unsat)^2
 
-        @keyword spin_id:   The spin identification string.
-        @type spin_id:      None or str
-        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:    int
-        @keyword sim_index: The MC simulation index (unused).
-        @type sim_index:    None
+        @keyword spin_id:           The spin identification string.
+        @type spin_id:              None or str
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The MC simulation index (unused).
+        @type sim_index:            None
         """
 
         # Test if the current pipe exists.
@@ -118,6 +121,19 @@ class Noe(API_base, API_common):
 
             # Calculate the error.
             spin.noe_err = sqrt(sat_err2 * ref**2 + ref_err2 * sat**2) / ref**2
+
+
+    def get_param_names(self, model_info=None):
+        """Return a vector of parameter names.
+
+        @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() method.
+        @type model_info:       SpinContainer instance, str
+        @return:                The vector of parameter names.
+        @rtype:                 list of str
+        """
+
+        # Simply return the two parameter names.
+        return ['noe']
 
 
     def overfit_deselect(self, data_check=True, verbose=True):

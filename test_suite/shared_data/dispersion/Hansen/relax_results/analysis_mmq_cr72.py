@@ -178,11 +178,11 @@ spin71.kex = 1935.650258540921413
 spin71.chi2 = 5.517033650699763
 
 # Optimisation.
-#grid_search(lower=None, upper=None, inc=6, constraints=True, verbosity=1)
-minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+#minimise.grid_search(lower=None, upper=None, inc=6, constraints=True, verbosity=1)
+minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
 spin70.dwH = 0.0
 spin71.dwH = 0.0
-minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
 
 # Results output.
 results_dir = data_path + sep + 'relax_results' + sep + model

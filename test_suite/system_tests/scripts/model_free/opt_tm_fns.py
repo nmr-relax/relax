@@ -139,7 +139,9 @@ def opt_and_check(spin=None, tm=None, s2=None, s2f=None, s2s=None, te=None, tf=N
         spin.rex = rex / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]])**2
 
     # Minimise.
-    interpreter.minimise('newton', 'gmw', 'back', constraints=False)
+    if hasattr(cdp, '_grid_search') and cdp._grid_search:
+        interpreter.minimise.grid_search(inc=2)
+    interpreter.minimise.execute('newton', 'gmw', 'back', constraints=False)
 
     # Check the values.
     cdp._value_test(spin, local_tm=tm_scaled, s2=s2, s2f=s2f, s2s=s2s, te=te_scaled, tf=tf_scaled, ts=ts_scaled, rex=rex_scaled, chi2=0.0)

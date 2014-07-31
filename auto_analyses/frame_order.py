@@ -137,7 +137,7 @@ class Frame_order_analysis:
                 self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
                 self.interpreter.monte_carlo.create_data()
                 self.interpreter.monte_carlo.initial_values()
-                self.interpreter.minimise(self.min_algor, func_tol=self.mc_func_tol, constraints=False)
+                self.interpreter.minimise.execute(self.min_algor, func_tol=self.mc_func_tol, constraints=False)
                 self.interpreter.eliminate()
                 self.interpreter.monte_carlo.error_analysis()
 
@@ -359,12 +359,12 @@ class Frame_order_analysis:
 
             # Grid search.
             incs = self.custom_grid_incs(model)
-            self.interpreter.grid_search(inc=incs, constraints=False)
+            self.interpreter.minimise.grid_search(inc=incs, constraints=False)
 
             # Minimise (for the PCS data subset and full RDC set).
             for i in range(len(self.num_int_pts_subset)):
                 self.interpreter.frame_order.num_int_pts(num=self.num_int_pts_subset[i])
-                self.interpreter.minimise(self.min_algor, func_tol=self.func_tol_subset[i], constraints=False)
+                self.interpreter.minimise.execute(self.min_algor, func_tol=self.func_tol_subset[i], constraints=False)
 
             # Copy the PCS data.
             self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
@@ -372,7 +372,7 @@ class Frame_order_analysis:
             # Minimise (for the full data set).
             for i in range(len(self.num_int_pts_full)):
                 self.interpreter.frame_order.num_int_pts(num=self.num_int_pts_full[i])
-                self.interpreter.minimise(self.min_algor, func_tol=self.func_tol_full[i], constraints=False)
+                self.interpreter.minimise.execute(self.min_algor, func_tol=self.func_tol_full[i], constraints=False)
 
             # Results printout.
             self.print_results()
@@ -427,17 +427,17 @@ class Frame_order_analysis:
             # Loop twice.
             for i in range(2):
                 # First optimise the rotation.
-                self.interpreter.grid_search(inc=[None, None, None, self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid], constraints=False)
+                self.interpreter.minimise.grid_search(inc=[None, None, None, self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid], constraints=False)
 
                 # Then the translation.
-                self.interpreter.grid_search(inc=[self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid, None, None, None], constraints=False)
+                self.interpreter.minimise.grid_search(inc=[self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid, None, None, None], constraints=False)
 
         # Standard grid search.
         else:
-            self.interpreter.grid_search(inc=self.grid_inc_rigid, constraints=False)
+            self.interpreter.minimise.grid_search(inc=self.grid_inc_rigid, constraints=False)
 
         # Minimise.
-        self.interpreter.minimise(self.min_algor, constraints=False)
+        self.interpreter.minimise.execute(self.min_algor, constraints=False)
 
         # Results printout.
         self.print_results()

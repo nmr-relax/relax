@@ -39,7 +39,7 @@ noe.spectrum_type(spectrum_type='sat', spectrum_id='yes2')
 spectrum.error_analysis(subset=None)
 
 # Calculate the NOEs.
-calc(verbosity=1)
+minimise.calculate(verbosity=1)
 
 # Save the NOEs.
 value.write(param='noe', file=ds.tmpfile, dir=None, scaling=1.0, comment=None, bc=False, force=True)

@@ -22,7 +22,7 @@
 # relax module imports.
 from pipe_control import align_tensor
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneListStrError, RelaxNoneStrError, RelaxTupleNumError, RelaxStrError
+from lib.errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneListStrError, RelaxNoneStrError, RelaxNoneNumTupleNumError, RelaxStrError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 # Unit test imports.
@@ -177,13 +177,13 @@ class Test_align_tensor(Align_tensor_base_class):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the tuple arguments.
-            if data[0] == 'tuple' or data[0] == 'float tuple' or data[0] == 'str tuple':
+            if data[0] == 'None' or data[0] == 'tuple' or data[0] == 'float tuple' or data[0] == 'str tuple':
                 # Correct tuple length.
-                if len(data[1]) == 5:
+                if data[0] == 'None' or len(data[1]) == 5:
                     continue
 
             # The argument test.
-            self.assertRaises(RelaxTupleNumError, self.align_tensor_fns.init, align_id='Pf1', params=data[1])
+            self.assertRaises(RelaxNoneNumTupleNumError, self.align_tensor_fns.init, align_id='Pf1', params=data[1])
 
 
     def test_init_argfail_scale(self):

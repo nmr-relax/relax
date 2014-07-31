@@ -45,13 +45,13 @@ def model_setup(model, params):
     cdp.curve_type = model
 
     # Loop over the sequence.
-    for spin in spin_loop():
+    for spin, spin_id in spin_loop(return_id=True):
         # Skip deselected spins.
         if not spin.select:
             continue
 
         # Initialise the data structures (if needed).
-        api_relax_fit.data_init(spin)
+        api_relax_fit.data_init(spin_id)
 
         # The model and parameter names.
         spin.model = model

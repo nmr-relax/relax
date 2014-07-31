@@ -138,13 +138,13 @@ def error_analysis():
     # Loop over the models.
     for model_info in api.model_loop():
         # Get the selected simulation array.
-        select_sim = api.sim_return_selected(model_info)
+        select_sim = api.sim_return_selected(model_info=model_info)
 
         # Loop over the parameters.
         index = 0
         while True:
             # Get the array of simulation parameters for the index.
-            param_array = api.sim_return_param(model_info, index)
+            param_array = api.sim_return_param(index, model_info=model_info)
 
             # Break (no more parameters).
             if param_array == None:
@@ -189,7 +189,7 @@ def error_analysis():
                 sd = None
 
             # Set the parameter error.
-            api.set_error(model_info, index, sd)
+            api.set_error(index, sd, model_info=model_info)
 
             # Increment the parameter index.
             index = index + 1
@@ -265,7 +265,7 @@ def select_all_sims(number=None, all_select_sim=None):
     i = 0
     for model_info in api.model_loop():
         # Skip function.
-        if api.skip_function(model_info):
+        if api.skip_function(model_info=model_info):
             continue
 
         # Set up the selected simulation array.
@@ -273,7 +273,7 @@ def select_all_sims(number=None, all_select_sim=None):
             select_sim = all_select_sim[i]
 
         # Set the selected simulation array.
-        api.set_selected_sim(model_info, select_sim)
+        api.set_selected_sim(select_sim, model_info=model_info)
 
         # Model index.
         i += 1

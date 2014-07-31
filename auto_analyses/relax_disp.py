@@ -377,7 +377,7 @@ class Relax_disp:
             if not nested:
                 # Grid search.
                 if self.grid_inc:
-                    self.interpreter.grid_search(inc=self.grid_inc)
+                    self.interpreter.minimise.grid_search(inc=self.grid_inc)
 
                 # Default values.
                 else:
@@ -385,7 +385,7 @@ class Relax_disp:
                         self.interpreter.value.set(param=param, index=None)
 
         # Minimise.
-        self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
+        self.interpreter.minimise.execute('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
 
         # Model elimination.
         if self.eliminate:
@@ -399,7 +399,7 @@ class Relax_disp:
                 self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
             self.interpreter.monte_carlo.create_data()
             self.interpreter.monte_carlo.initial_values()
-            self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
+            self.interpreter.minimise.execute('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
             if self.eliminate:
                 self.interpreter.eliminate()
             self.interpreter.monte_carlo.error_analysis()
@@ -485,7 +485,7 @@ class Relax_disp:
 
             # Calculate the R2eff values for the fixed relaxation time period data types.
             if model == MODEL_R2EFF and not has_exponential_exp_type():
-                self.interpreter.calc()
+                self.interpreter.minimise.calculate()
 
             # Optimise the model.
             else:
@@ -507,7 +507,7 @@ class Relax_disp:
                 self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
                 self.interpreter.monte_carlo.create_data()
                 self.interpreter.monte_carlo.initial_values()
-                self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
+                self.interpreter.minimise.execute('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
                 if self.eliminate:
                     self.interpreter.eliminate()
                 self.interpreter.monte_carlo.error_analysis()

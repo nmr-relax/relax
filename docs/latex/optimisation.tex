@@ -19,10 +19,10 @@
 
 \subsection{The interface}
 
-Optimisation or minimisation is available in relax via the \uf{grid\ufus{}search} and \uf{minimise} user functions.
+Optimisation or minimisation is available in relax via the \uf{minimise.grid\ufus{}search} and \uf{minimise.execute} user functions.
 The mathematical model optimised depends on the current data pipe type -- it is implemented differently for each specific analysis.
 For analyses such as the steady state NOE (Chapter~\ref{ch: NOE}) or reduced spectral density mapping (Chapter~\ref{ch: J(w) mapping}), the solution can be found by direct calculation rather than optimisation.
-In these cases, the \uf{calc} user function should be used instead.
+In these cases, the \uf{minimise.calculate} user function should be used instead.
 
 
 

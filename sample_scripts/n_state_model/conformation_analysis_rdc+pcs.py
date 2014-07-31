@@ -131,7 +131,7 @@ paramag.centre(atom_id=':4@C1', pipe='tag')
 n_state_model.select_model(model='fixed')
 
 # Minimisation.
-minimise('newton')
+minimise.execute('newton')
 
 # Calculate the AIC value.
 k, n, chi2 = api.model_statistics()
@@ -152,7 +152,7 @@ for j in range(NUM_STR):
     value.set(1.0/NUM_STR, 'probs', index=j)
 
 # Minimisation.
-minimise('bfgs', constraints=True)
+minimise.execute('bfgs', constraints=True)
 
 # Calculate the AIC value.
 k, n, chi2 = api.model_statistics()

@@ -26,8 +26,6 @@ from warnings import warn
 from lib.errors import RelaxNoPdbError
 from lib.structure.mass import centre_of_mass
 from lib.warnings import RelaxWarning
-from pipe_control.mol_res_spin import return_molecule, return_residue, return_spin
-
 
 
 def pipe_centre_of_mass(atom_id=None, model=None, return_mass=False, verbosity=1):
@@ -53,33 +51,20 @@ def pipe_centre_of_mass(atom_id=None, model=None, return_mass=False, verbosity=1
     coord = []
     element_list = []
     for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=True):
-        # Initialise the spin id string.
+        # Initialise the spin 
         id = ''
 
         # Get the corresponding molecule container.
-        if mol_name == None:
-            mol_cont = cdp.mol[0]
-        else:
+        if mol_name != None:
             id = id + '#' + mol_name
-            mol_cont = return_molecule(id)
 
         # Get the corresponding residue container.
-        if res_name == None and res_num == None:
-            res_cont = mol_cont.res[0]
-        else:
+        if res_num != None:
             id = id + ':' + repr(res_num)
-            res_cont = return_residue(id)
 
         # Get the corresponding spin container.
-        if atom_name == None and atom_num == None:
-            spin_cont = res_cont.spin[0]
-        else:
+        if atom_num != None:
             id = id + '@' + repr(atom_num)
-            spin_cont = return_spin(id)
-
-        # Deselected spins.
-        if spin_cont and not spin_cont.select:
-            continue
 
         # No element?
         if element == None:

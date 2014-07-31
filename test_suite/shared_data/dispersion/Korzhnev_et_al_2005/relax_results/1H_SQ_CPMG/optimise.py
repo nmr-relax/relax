@@ -105,13 +105,13 @@ spin.dw = 4.413451
 spin.dwH = -0.271799
 
 # Optimisation.
-minimise(min_algor='simplex')
+minimise.execute(min_algor='simplex')
 
 # Monte Carlo simulations.
 monte_carlo.setup(number=3)
 monte_carlo.create_data(method='back_calc')
 monte_carlo.initial_values()
-minimise(min_algor='simplex', max_iter=100)
+minimise.execute(min_algor='simplex', max_iter=100)
 monte_carlo.error_analysis()
 
 # Plot the dispersion curves.

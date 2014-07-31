@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxNumError, RelaxNumTupleNumError, RelaxStrError
+from lib.errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxNoneStrError, RelaxNumError, RelaxNoneNumTupleNumError, RelaxStrError
 from test_suite.unit_tests.diffusion_tensor_testing_base import Diffusion_tensor_base_class
 
 # Unit test imports.
@@ -87,8 +87,8 @@ class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch a single float, int, or bin, and skip them.
-            if data[0] == 'int' or data[0] == 'bin' or data[0] == 'float':
+            # Catch None, a single float, int, or bin, and skip them.
+            if data[0] == 'None' or data[0] == 'int' or data[0] == 'bin' or data[0] == 'float':
                 continue
 
             # Catch the tuple arguments.
@@ -98,7 +98,7 @@ class Test_diffusion_tensor(Diffusion_tensor_base_class, TestCase):
                     continue
 
             # The argument test.
-            self.assertRaises(RelaxNumTupleNumError, self.diffusion_tensor_fns.init, params=data[1])
+            self.assertRaises(RelaxNoneNumTupleNumError, self.diffusion_tensor_fns.init, params=data[1])
 
 
     def test_init_argfail_time_scale(self):

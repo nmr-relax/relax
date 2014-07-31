@@ -118,13 +118,13 @@ def model_setup(model, params):
         cdp.model_type = 'disp'
 
     # Loop over the sequence.
-    for spin in spin_loop(skip_desel=True):
+    for spin, spin_id in spin_loop(skip_desel=True, return_id=True):
         # The model and parameter names.
         spin.model = model
         spin.params = params
 
         # Initialise the data structures (if needed).
-        api_relax_disp.data_init(spin)
+        api_relax_disp.data_init(spin_id)
 
 
 def select_model(model=MODEL_R2EFF):
