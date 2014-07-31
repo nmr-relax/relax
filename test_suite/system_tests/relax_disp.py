@@ -4982,9 +4982,6 @@ class Relax_disp(SystemTestCase):
                                 self.assertAlmostEqual(float(x_prod), float(x_comp))
                                 self.assertAlmostEqual(float(y_prod), float(y_comp))
 
-                        # Add to counter.
-                        i += 1
-
 
     def test_r1rho_kjaergaard_man(self):
         """Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
