@@ -98,7 +98,7 @@ if win:
     kAB = "kex(AB)"
     kAC = "kex(AC)"
     kBC = "kex(BC)"
-    nu_1 = u("\u03bd")
+    nu_1 = u("\u03bd1")
     phi_ex = u("phi_ex")
     phi_exB = u("phi_exB")
     phi_exC = u("phi_exC")
