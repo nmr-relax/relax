@@ -476,7 +476,7 @@ uf.add_keyarg(
     name = "y_axis",
     default = Y_AXIS_R2_EFF,
     py_type = "str",
-    desc_short = "Select which data on Y axis to plot for",
+    desc_short = "Y axis data type",
     desc = "Option can be either '%s' which plot 'r2eff' for CPMG experiments or 'r1rho' for R1rho experiments or option can be '%s', which for R1rho experiments plot R2."%(Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO),
     wiz_element_type = 'combo',
     wiz_combo_choices = [
@@ -490,7 +490,7 @@ uf.add_keyarg(
     name = "x_axis",
     default = X_AXIS_DISP,
     py_type = "str",
-    desc_short = "Select which data on X axis to plot for",
+    desc_short = "X axis data type",
     desc = "Option can be either '%s' which plot 'CPMG frequency (Hz)' for CPMG experiments or 'Spin-lock field strength (Hz)' for R1rho experiments or option can be either '%s' or '%s' for R1rho experiments, which plot 'Effective field in rotating frame (rad/s)' or 'Rotating frame tilt angle theta (rad)'"%(X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA),
     wiz_element_type = 'combo',
     wiz_combo_choices = [
@@ -531,7 +531,7 @@ uf.add_keyarg(
     name = "interpolate",
     default = INTERPOLATE_DISP,
     py_type = "str",
-    desc_short = "How to interpolate the fitted curves",
+    desc_short = "option to interpolate the fitted curves",
     desc = "Either by option '%s' which interpolate CPMG frequency or spin-lock field strength, or by option '%s' which interpole over spin-lock offset."%(INTERPOLATE_DISP, INTERPOLATE_OFFSET),
     wiz_element_type = 'combo',
     wiz_combo_choices = [
