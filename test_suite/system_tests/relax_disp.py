@@ -4159,8 +4159,6 @@ class Relax_disp(SystemTestCase):
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'KTeilum_FMPoulsen_MAkke_2006'+sep+expfolder+sep+'check_graphs'
 
         for result_folder in result_folders:
-            # Initial counter per graph, per model.
-            i = 1
             for y_axis in y_axis_types:
                 for x_axis in x_axis_types:
                     for interpolate in interpolate_types:
@@ -4170,11 +4168,8 @@ class Relax_disp(SystemTestCase):
                         # Make the file name.
                         file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
 
-                        # Set result folder.
-                        dir_folder = "%i"%(i)
-
                         # Write the curves.
-                        dir = result_dir_name+sep+result_folder+sep+dir_folder
+                        dir = result_dir_name+sep+result_folder
                         print("Plotting combination of %s, %s, %s"%(y_axis, x_axis, interpolate))
                         self.interpreter.relax_disp.plot_disp_curves(dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, force=True)
 
@@ -4191,7 +4186,7 @@ class Relax_disp(SystemTestCase):
                         file_prod.close()
 
                         # Define file to compare against.
-                        #dir_comp = data_path+sep+result_folder+sep+dir_folder
+                        #dir_comp = data_path+sep+result_folder
                         #file_path_comp = get_file_path(file_name, dir_comp)
                         #file_comp = open(file_path_comp)
                         #lines_comp = file_comp.readlines()
@@ -4211,9 +4206,6 @@ class Relax_disp(SystemTestCase):
                         #        x_comp, y_comp, y_comp_err = lines_comp[j].split()
                         #        self.assertAlmostEqual(float(x_prod), float(x_comp))
                         #        self.assertAlmostEqual(float(y_prod), float(y_comp))
-
-                        # Add to counter.
-                        i += 1
 
 
     def test_kteilum_fmpoulsen_makke_cpmg_data_048m_guhcl_to_cr72(self):
@@ -4942,8 +4934,6 @@ class Relax_disp(SystemTestCase):
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'+sep+'check_graphs'
 
         for result_folder in result_folders:
-            # Initial counter per graph, per model.
-            i = 1
             for y_axis in y_axis_types:
                 for x_axis in x_axis_types:
                     for interpolate in interpolate_types:
@@ -4953,11 +4943,8 @@ class Relax_disp(SystemTestCase):
                         # Make the file name.
                         file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
 
-                        # Set result folder.
-                        dir_folder = "%i"%(i)
-
                         # Write the curves.
-                        dir = result_dir_name+sep+result_folder+sep+dir_folder
+                        dir = result_dir_name+sep+result_folder
                         print("Plotting combination of %s, %s, %s"%(y_axis, x_axis, interpolate))
                         self.interpreter.relax_disp.plot_disp_curves(dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, force=True)
 
@@ -4974,7 +4961,7 @@ class Relax_disp(SystemTestCase):
                         file_prod.close()
 
                         # Define file to compare against.
-                        dir_comp = data_path+sep+result_folder+sep+dir_folder
+                        dir_comp = data_path+sep+result_folder
                         file_path_comp = get_file_path(file_name, dir_comp)
                         file_comp = open(file_path_comp)
                         lines_comp = file_comp.readlines()
