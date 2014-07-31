@@ -904,7 +904,10 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend_h
         field_count = cdp.spectrometer_frq_count
 
     # The offset data.
-    offsets, spin_lock_fields_inter, chemical_shifts, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, fields=spin_lock_nu1_new)
+    if spin.model in MODEL_LIST_R1RHO_FULL and has_r1rho_exp_type():
+        offsets, spin_lock_fields_inter, chemical_shifts, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, fields=spin_lock_nu1_new)
+    else:
+        offsets, spin_lock_fields_inter, chemical_shifts, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, fields=cpmg_frqs_new)
 
     if spin.model == MODEL_R2EFF:
         back_calc = None
@@ -2865,13 +2868,11 @@ def return_grace_data_vs_disp(y_axis=None, x_axis=None, interpolate=None, exp_ty
                 # The X point.
                 if exp_type in EXP_TYPE_LIST_CPMG:
                     point = cpmg_frqs_new[ei][mi][oi][di]
-                    theta = None
-                    w_eff = None
-
                 else:
                     point = spin_lock_nu1_new[ei][mi][oi][di]
-                    theta = tilt_angles_inter[ei][si][mi][oi][di]
-                    w_eff = w_eff_inter[ei][si][mi][oi][di]
+
+                theta = tilt_angles_inter[ei][si][mi][oi][di]
+                w_eff = w_eff_inter[ei][si][mi][oi][di]
 
                 # Return the x and y point.
                 x_point, y_point, err, y_err_point = return_grace_x_y_point(data_type=data_type, x_axis=x_axis, y_axis=y_axis, interpolate=interpolate, data_key=key, spin=current_spin, back_calc=r2eff, point=point, r1=r1[si][mi], r1_err=r1_err[si][mi], w_eff=w_eff, theta=theta, err=err)
@@ -3266,8 +3267,11 @@ def return_grace_file_name_ini(y_axis=None, x_axis=None, interpolate=None):
         file_name_ini = "disp"
 
     # Special file name for R2_R1RHO data.
-    elif has_r1rho_exp_type and y_axis == Y_AXIS_R2_EFF and x_axis != X_AXIS_DISP:
+    elif has_r1rho_exp_type() and y_axis == Y_AXIS_R2_EFF and x_axis != X_AXIS_DISP:
         file_name_ini = "%s_vs_%s_inter_%s"%("r1rho", x_axis, interpolate)
+
+    elif has_cpmg_exp_type() and y_axis == Y_AXIS_R2_R1RHO:
+        file_name_ini = "%s_vs_%s_inter_%s"%("r2", x_axis, interpolate)
 
     else:
         file_name_ini = "%s_vs_%s_inter_%s"%(y_axis, x_axis, interpolate)
@@ -3326,7 +3330,11 @@ def return_grace_x_y_axis_labels(y_axis=None, x_axis=None, exp_type=None, interp
     # If plotting special R1rho R2 values.
     # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
     elif y_axis == Y_AXIS_R2_R1RHO:
-        if exp_type in EXP_TYPE_LIST_R1RHO:
+        if exp_type in EXP_TYPE_LIST_CPMG:
+            # Set y_label.
+            y_label = "%s - \\qR\\s2\\N\\Q (rad.s\\S-1\\N)"%exp_type
+
+        elif exp_type in EXP_TYPE_LIST_R1RHO:
             # Set y_label.
             y_label = "%s - \\qR\\s2\\N\\Q (rad.s\\S-1\\N)"%exp_type
 
@@ -3370,7 +3378,11 @@ def return_x_y_data_labels_settings(spin=None, data_type=None, y_axis=None, exp_
     # If plotting special R1rho R2 values.
     # R_2 = R1rho / sin^2(theta) - R_1 / tan^2(theta) = (R1rho - R_1 * cos^2(theta) ) / sin^2(theta).
     elif y_axis == Y_AXIS_R2_R1RHO:
-        if exp_type in EXP_TYPE_LIST_R1RHO:
+        if exp_type in EXP_TYPE_LIST_CPMG:
+            # Set y_label.
+            r_string = "R\\s2\\N"
+
+        elif exp_type in EXP_TYPE_LIST_R1RHO:
             # Set y_label.
             r_string = "R\\s2\\N"
 
