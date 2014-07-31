@@ -114,6 +114,20 @@ def check_exp_type_fixed_time():
             raise RelaxError("The experiment '%s' is not of the fixed relaxation time period data type." % exp_type)
 
 
+def check_interpolate_offset_cpmg_model(interpolate=None):
+    """Check interpolating through offsets in CPMG models.
+
+    @keyword interpolate:           How to interpolate the fitted curves.  Either by option "%s" which interpolate CPMG frequency or spin-lock field strength, or by option "%s" which interpole over spin-lock offset.
+    @type interpolate:              str
+    @raises RelaxFuncSetupError:    If the interpolate method is set to 'offset' for not-R1rho models.
+    """%(specific_analyses.relax_disp.data.INTERPOLATE_DISP, specific_analyses.relax_disp.data.INTERPOLATE_OFFSET)
+
+    # Check if interpolating against offset for CPMG models.
+    # This is currently not implemented, and will raise an error.
+    if not specific_analyses.relax_disp.data.has_r1rho_exp_type() and interpolate == specific_analyses.relax_disp.data.INTERPOLATE_OFFSET:
+        raise RelaxFuncSetupError("interpolating against Spin-lock offset for CPMG models")
+
+
 def check_mixed_curve_types():
     """Prevent both fixed time and exponential curves from being analysed simultaneously.
 
