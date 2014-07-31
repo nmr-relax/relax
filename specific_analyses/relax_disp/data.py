@@ -78,7 +78,7 @@ from pipe_control.spectrum import add_spectrum_id
 from pipe_control.spectrometer import check_frequency, get_frequency
 from pipe_control import value
 import specific_analyses
-from specific_analyses.relax_disp.checks import check_exp_type, check_mixed_curve_types
+from specific_analyses.relax_disp.checks import check_exp_type, check_interpolate_offset_cpmg_model, check_mixed_curve_types
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_DPL94, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_PARAMS, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, PARAMS_R20
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, sep
@@ -1795,6 +1795,10 @@ def plot_disp_curves(dir=None, y_axis=Y_AXIS_R2_EFF, x_axis=X_AXIS_DISP, num_poi
     # Checks.
     pipes.test()
     check_mol_res_spin_data()
+
+    # Check if interpolating against offset for CPMG models.
+    # This is currently not implemented, and will raise an error.
+    check_interpolate_offset_cpmg_model(interpolate=interpolate)
 
     # 1H MMQ flag.
     proton_mmq_flag = has_proton_mmq_cpmg()
