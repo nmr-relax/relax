@@ -2134,6 +2134,7 @@ Missing features include:
   \item The handling of off-resonance effects in the models of the numeric solution for CPMG-type data.
     This is specifically the `NS CPMG 2-site 3D' and `NS CPMG 2-site star' models and their `* full' equivalents.
     The necessary infrastructure is in place, but not activated yet (mainly due to a lack of synthetic data to test against).
+    Currently only the software CATIA can handle this effect.
   \item Multi-state data -- the handling of data from two sets of peaks from the same spin system is not properly supported.
     It is currently handled by assuming each state is a separate spin system but this means that $\dw$, $\dwH$ and related parameters are not shared as they should be.
   \item The van't Hoff analysis of multi-temperature dispersion data (see \url{https://en.wikipedia.org/wiki/Van\_\%27t\_Hoff\_equation}).
@@ -2142,7 +2143,9 @@ Missing features include:
   \item The \citet{Korzhnev05a} correction for constant-time $\Ronerho$ experiments for the analytic models ($\Ronerho$ = $-\lambda_1 -1/\Trelax\log{a_1}$, where $a_1$ = $1 - \pB\cos^2(\theta_A - \theta_B)$, and $\theta_A$ = $\arctan(\omegaone/\omegaA)$ and $\theta_B$ = $\arctan(\omegaone/\omegaB)$.
   \item Calculation of the dispersion $\alpha$ value from \cite{Millet00} (see \url{https://gna.org/task/?7800}).
   \item Support for CEST-type data.
-  \item Offset support for the ground state chemical shift rather than the observed peak position.  See \url{http://thread.gmane.org/gmane.science.nmr.relax.devel/5414/focus=5457}.  This is really only needed for $\Ronerho$-type data.
+  \item Offset support for the ground state chemical shift rather than the observed peak position.
+    See \url{http://thread.gmane.org/gmane.science.nmr.relax.devel/5414/focus=5457}.
+    This is really only needed for $\Ronerho$-type data.
 \end{itemize}
 
 If you would like one of these features, please contact the ``relax-devel at gna.org''\index{mailing list!relax-devel} mailing list.
