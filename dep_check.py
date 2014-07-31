@@ -54,6 +54,10 @@ except ImportError:
 # Minfx python package check.
 try:
     import minfx
+    ver = minfx.__version__.split('.')
+    if not (minfx.__version__ == 'trunk' or (int(ver[0]) <= 1 and int(ver[1]) <= 0 and int(ver[2]) <= 9)):
+        sys.stderr.write("Version %s of the 'minfx' dependency is too old, minfx >= 1.0.9 is required.\n" % minfx.__version__)
+        sys.exit()
 except ImportError:
     sys.stderr.write("The dependency 'minfx' has not been installed (see https://gna.org/projects/minfx/).\n")
     sys.exit()
