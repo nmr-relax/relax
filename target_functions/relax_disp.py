@@ -467,43 +467,6 @@ class Dispersion:
             # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
             self.M0_T = rollaxis(self.M0, 6, 5)
 
-        # If numpy version is under 1.8, it is necessary to stride through data to calculate numpy.eig() in the matrix_exponential calculation.
-        # When calculated through the strided data matrix, the data needs to be packed back into the higher order dimensional data.
-        # This is done by first making a numpy array which contains index indices to store, to store the result back to the matrix.
-        if float(version.version[:3]) < 1.8 and model in MODEL_LIST_NUMERIC:
-            # 2x2 matrix of form [NE][NS][NM][NO][ND].
-            if model == MODEL_NS_CPMG_2SITE_STAR or model == MODEL_NS_CPMG_2SITE_STAR_FULL:
-                self.index = create_index(NE=self.NE, NS=self.NS, NM=self.NM, NO=self.NO, ND=self.ND)
-
-            # 2x2 matrix of form [NS][NM][NO][ND].
-            if model == MODEL_NS_MMQ_2SITE:
-                self.index = create_index(NE=None, NS=self.NS, NM=self.NM, NO=self.NO, ND=self.ND)
-
-            # 3x3 matrix of form [NS][NM][NO][ND].
-            if model == MODEL_NS_MMQ_3SITE or model == MODEL_NS_MMQ_3SITE_LINEAR:
-                self.index = create_index(NE=None, NS=self.NS, NM=self.NM, NO=self.NO, ND=self.ND)
-
-            # 6x6 matrix of form [NE][NS][NM][NO][ND].
-            elif model == MODEL_NS_R1RHO_2SITE:
-                self.index = create_index(NE=self.NE, NS=self.NS, NM=self.NM, NO=self.NO, ND=self.ND)
-
-            # 7x7 matrix of form [NE][NS][NM][NO][ND].
-            elif model == MODEL_NS_CPMG_2SITE_3D or model == MODEL_NS_CPMG_2SITE_3D_FULL:
-                self.index = create_index(NE=self.NE, NS=self.NS, NM=self.NM, NO=self.NO, ND=self.ND)
-
-            # 9x9 matrix of form [NE][NS][NM][NO][ND].
-            elif model == MODEL_NS_R1RHO_3SITE or model == MODEL_NS_R1RHO_3SITE_LINEAR:
-                self.index = create_index(NE=self.NE, NS=self.NS, NM=self.NM, NO=self.NO, ND=self.ND)
-
-            # Get the data view of the index numpy array.
-            self.index_view = data_view_via_striding_array_col(data_array=self.index)
-
-        # For numpy versions >= 1.8, store None.
-        else:
-            self.index = None
-            self.index_view = None
-
-
         # Set up the model.
         if model == MODEL_NOREX:
             self.func = self.func_NOREX
