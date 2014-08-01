@@ -25,6 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from os import F_OK, access, getcwd, sep
+from numpy import version
 import sys
 from warnings import warn
 
@@ -37,7 +38,7 @@ from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, loop_frq
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
-from specific_analyses.relax_disp.variables import MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 from status import Status; status = Status()
 
 
@@ -115,6 +116,10 @@ class Relax_disp:
         # Data checks.
         self.check_vars()
 
+        # Check for numerical model using numpy version under 1.8.
+        # This will result in slow "for loop" calculation through data, making the analysis 5-6 times slower.
+        self.check_numpy_less_1_8_and_numerical_model()
+
         # Load the interpreter.
         self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
         self.interpreter.populate_self()
@@ -181,6 +186,31 @@ class Relax_disp:
 
         # Printout.
         print("The dispersion auto-analysis variables are OK.")
+
+
+    def check_numpy_less_1_8_and_numerical_model(self):
+        """Check for numerical model using numpy version under 1.8.  This will result in slow "for loop" calculation through data, making the analysis 5-6 times slower."""
+
+        # Some warning for the user if the pure numeric solution is selected.
+        if float(version.version[:3]) < 1.8:
+            # Store which models are in numeric.
+            models = []
+
+            # Loop through models.
+            for model in self.models:
+                if model in MODEL_LIST_NUMERIC:
+                    models.append(model)
+
+            # Write system message if numerical models is present and numpy version is below 1.8.
+            if len(models) > 0:
+                # Printout.
+                section(file=sys.stdout, text="Numpy version checking for numerical models.", prespace=2)
+                warn(RelaxWarning("Your version of numpy is %s, and below the recommended version of 1.8 for numerical models." % (version.version)))
+                warn(RelaxWarning("Please consider upgrading your numpy version to 1.8."))
+
+                # Loop over models.
+                for model in models:
+                    warn(RelaxWarning("This could make the numerical analysis with model '%s', 5 to 6 times slower." % (model)))
 
 
     def error_analysis(self):
