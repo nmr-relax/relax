@@ -214,39 +214,89 @@ def matrix_exponential_rank_NS_NM_NO_ND_x_x(A, dtype=None):
     # Is the original matrix real?
     complex_flag = any(iscomplex(A))
 
-    # The eigenvalue decomposition.
-    W, V = eig(A)
+    # If numpy is under 1.8, there would be a need to do eig(A) per matrix.
+    if float(version.version[:3]) < 1.8:
+        # Make array to store results
+        if dtype != None:
+            eA = zeros([NS, NM, NO, ND, Row, Col], dtype)
+        else:
+            eA = zeros([NS, NM, NO, ND, Row, Col], dtype)
 
-    # W: The eigenvalues, each repeated according to its multiplicity.
-    # The eigenvalues are not necessarily ordered.
-    # The resulting array will be always be of complex type. Shape [NS][NM][NO][ND][X]
-    # V: The normalized (unit 'length') eigenvectors, such that the column v[:,i]
-    # is the eigenvector corresponding to the eigenvalue w[i]. Shape [NS][NM][NO][ND][X][X]
+        # Get the data view, from the helper function.
+        A_view = stride_help_square_matrix_rank_NS_NM_NO_ND_x_x(A)
 
-    # Calculate the exponential of all elements in the input array. Shape [NS][NM][NO][ND][X]
-    # Add one axis, to allow for broadcasting multiplication.
-    W_exp = exp(W).reshape(NS, NM, NO, ND, Row, 1)
+        # Create index view.
+        index = create_index_rank_NS_NM_NO_ND_x_x(A)
+        index_view = stride_help_array_rank_NS_NM_NO_ND_x(index)
 
-    # Make a eye matrix, with Shape [NE][NS][NM][NO][ND][X][X]
-    eye_mat = tile(eye(Row)[newaxis, newaxis, newaxis, newaxis, ...], (NS, NM, NO, ND, 1, 1) )
+        # Zip them together and iterate over them.
+        for A_i, index_i in zip(A_view, index_view):
+            # The eigenvalue decomposition.
+            W_i, V_i = eig(A_i)
 
-    # Transform it to a diagonal matrix, with elements from vector down the diagonal.
-    # Use the dtype, if specified.
-    if dtype != None:
-        W_exp_diag = multiply(W_exp, eye_mat, dtype=dtype )
+            # Calculate the exponential.
+            W_exp_i = exp(W_i)
+
+            # Make a eye matrix.
+            eye_mat_i = eye(Row)
+
+            # Transform it to a diagonal matrix, with elements from vector down the diagonal.
+            # Use the dtype, if specified.
+            if dtype != None:
+                W_exp_diag_i = multiply(W_exp_i, eye_mat_i, dtype=dtype )
+            else:
+                W_exp_diag_i = multiply(W_exp_i, eye_mat_i)
+
+            # Make dot product.
+            dot_V_W_i = dot( V_i, W_exp_diag_i)
+
+            # Compute the (multiplicative) inverse of a matrix.
+            inv_V_i = inv(V_i)
+
+            # Calculate the exact exponential.
+            eA_i = dot(dot_V_W_i, inv_V_i)
+
+            # Save results.
+            # Extract index from index_view.
+            si, mi, oi, di = index_i
+
+            # Store the result.
+            eA[si, mi, oi, di, :] = eA_i
+
     else:
-        W_exp_diag = multiply(W_exp, eye_mat)
+        # The eigenvalue decomposition.
+        W, V = eig(A)
 
-    # Make dot products for higher dimension.
-    # "...", the Ellipsis notation, is designed to mean to insert as many full slices (:)
-    # to extend the multi-dimensional slice to all dimensions.
-    dot_V_W = einsum('...ij, ...jk', V, W_exp_diag)
+        # W: The eigenvalues, each repeated according to its multiplicity.
+        # The eigenvalues are not necessarily ordered.
+        # The resulting array will be always be of complex type. Shape [NS][NM][NO][ND][X]
+        # V: The normalized (unit 'length') eigenvectors, such that the column v[:,i]
+        # is the eigenvector corresponding to the eigenvalue w[i]. Shape [NS][NM][NO][ND][X][X]
 
-    # Compute the (multiplicative) inverse of a matrix.
-    inv_V = inv(V)
+        # Calculate the exponential of all elements in the input array. Shape [NS][NM][NO][ND][X]
+        # Add one axis, to allow for broadcasting multiplication.
+        W_exp = exp(W).reshape(NS, NM, NO, ND, Row, 1)
 
-    # Calculate the exact exponential.
-    eA = einsum('...ij, ...jk', dot_V_W, inv_V)
+        # Make a eye matrix, with Shape [NE][NS][NM][NO][ND][X][X]
+        eye_mat = tile(eye(Row)[newaxis, newaxis, newaxis, newaxis, ...], (NS, NM, NO, ND, 1, 1) )
+
+        # Transform it to a diagonal matrix, with elements from vector down the diagonal.
+        # Use the dtype, if specified.
+        if dtype != None:
+            W_exp_diag = multiply(W_exp, eye_mat, dtype=dtype )
+        else:
+            W_exp_diag = multiply(W_exp, eye_mat)
+
+        # Make dot products for higher dimension.
+        # "...", the Ellipsis notation, is designed to mean to insert as many full slices (:)
+        # to extend the multi-dimensional slice to all dimensions.
+        dot_V_W = einsum('...ij, ...jk', V, W_exp_diag)
+
+        # Compute the (multiplicative) inverse of a matrix.
+        inv_V = inv(V)
+
+        # Calculate the exact exponential.
+        eA = einsum('...ij, ...jk', dot_V_W, inv_V)
 
     # Return the complex matrix.
     if complex_flag:
