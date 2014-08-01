@@ -132,7 +132,7 @@ def data_view_via_striding_array_row_col(data_array=None):
 
     else:
         # Extract shapes from data.
-        NS, NM, NO, ND, Ros, Col = data_array.shape
+        NS, NM, NO, ND, Row, Col = data_array.shape
 
         # Set NE to 1.
         NE = 1
@@ -251,10 +251,12 @@ def matrix_exponential(A, dtype=None):
 
             # Save results.
             # Extract index from index_view.
-            ei, si, mi, oi, di = index_i
-
-            # Store the result.
-            eA[ei, si, mi, oi, di, :] = eA_i
+            if NE != None:
+                ei, si, mi, oi, di = index_i
+                eA[ei, si, mi, oi, di, :] = eA_i
+            else:
+                si, mi, oi, di = index_i
+                eA[si, mi, oi, di, :] = eA_i
 
     else:
         # The eigenvalue decomposition.
