@@ -28,6 +28,50 @@ from numpy.lib.stride_tricks import as_strided
 from numpy.linalg import eig, inv
 
 
+def create_index(NE=None, NS=None, NM=None, NO=None, ND=None):
+    """Method to create the helper index numpy array, to help figuring out the indices to store in the exchange data matrix.
+
+    @keyword NE:  The total number of experiment types.
+    @type NE:     None or int
+    @keyword NS:  The total number of spins of the spin cluster.
+    @type NS:     int
+    @keyword NM:  The total number of magnetic field strengths.
+    @type NM:     int
+    @keyword NO:  The total number of spin-lock offsets.
+    @type NO:     int
+    @keyword ND:  The total number of dispersion points (either the spin-lock field strength or the nu_CPMG frequency).
+    @type ND:     int
+    @return:      The numpy array for containing index indices for storing in the strided exchange data matrix.
+    @rtype:       numpy int array of rank [NE][NS][NM][NO][ND][5] or [NS][NM][NO][ND][4].
+    """
+
+    # Make array to store index.
+    if NE != None:
+        index = zeros([NE, NS, NM, NO, ND, 5], int16)
+
+    else:
+        # Make array to store index.
+        index = zeros([NS, NM, NO, ND, 4], int16)
+
+    # Make indices for storing in data matrix.
+    if NE != None:
+        for ei in range(NE):
+            for si in range(NS):
+                for mi in range(NM):
+                    for oi in range(NO):
+                        for di in range(ND):
+                            index[ei, si, mi, oi, di] = ei, si, mi, oi, di
+
+    else:
+        for si in range(NS):
+            for mi in range(NM):
+                for oi in range(NO):
+                    for di in range(ND):
+                        index[si, mi, oi, di] = si, mi, oi, di
+
+    return index
+
+
 def create_index_rank_NE_NS_NM_NO_ND_x_x(data):
     """ Method to create the helper index matrix, to help figuring out the index to store in the data matrix. """
 
