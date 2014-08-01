@@ -4207,7 +4207,7 @@ class Relax_disp(SystemTestCase):
         res61L.k_AB = 2.5
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
 
         # Start testing all possible combinations of graphs.
         y_axis_types = [Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO]
