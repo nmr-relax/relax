@@ -26,7 +26,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import arctan2, cos, dot, float64, int16, multiply, ones, rollaxis, pi, sin, zeros
+from numpy import arctan2, cos, dot, float64, int16, multiply, ones, rollaxis, pi, sin, version, zeros
 from numpy.ma import masked_equal
 
 # relax module imports.
@@ -36,6 +36,7 @@ from lib.dispersion.dpl94 import r1rho_DPL94
 from lib.dispersion.it99 import r2eff_IT99
 from lib.dispersion.lm63 import r2eff_LM63
 from lib.dispersion.lm63_3site import r2eff_LM63_3site
+from lib.dispersion.matrix_exponential import create_index
 from lib.dispersion.m61 import r1rho_M61
 from lib.dispersion.m61b import r1rho_M61b
 from lib.dispersion.mp05 import r1rho_MP05
@@ -54,7 +55,7 @@ from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from lib.float import isNaN
 from target_functions.chi2 import chi2_rankN
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -465,6 +466,38 @@ class Dispersion:
 
             # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
             self.M0_T = rollaxis(self.M0, 6, 5)
+
+        # If numpy version is under 1.8, it is necessary to stride through data to calculate numpy.eig() in the matrix_exponential calculation.
+        # When calculated through the strided data matrix, the data needs to be packed back into the higher order dimensional data.
+        # This is done by first making a numpy array which contains index indices to store, to store the result back to the matrix.
+        if float(version.version[:3]) < 1.8 and model in MODEL_LIST_NUMERIC:
+            # 2x2 matrix of form [NE][NS][NM][NO][ND][5].
+            if model == MODEL_NS_CPMG_2SITE_STAR or model == MODEL_NS_CPMG_2SITE_STAR_FULL:
+                self.index = create_index(NE=self.NE, NS=self.NS, NM=self.NM, NO=self.NO, ND=self.ND)
+
+            # 2x2 matrix of form [NS][NM][NO][ND][4].
+            if model == MODEL_NS_MMQ_2SITE:
+                self.index = create_index(NE=None, NS=self.NS, NM=self.NM, NO=self.NO, ND=self.ND)
+
+            # 3x3 matrix of form [NS][NM][NO][ND][4].
+            if model == MODEL_NS_MMQ_3SITE or model == MODEL_NS_MMQ_3SITE_LINEAR:
+                self.index = create_index(NE=None, NS=self.NS, NM=self.NM, NO=self.NO, ND=self.ND)
+
+            # 6x6 matrix of form [NE][NS][NM][NO][ND][5].
+            elif model == MODEL_NS_R1RHO_2SITE:
+                self.index = create_index(NE=self.NE, NS=self.NS, NM=self.NM, NO=self.NO, ND=self.ND)
+
+            # 7x7 matrix of form [NE][NS][NM][NO][ND][5].
+            elif model == MODEL_NS_CPMG_2SITE_3D or model == MODEL_NS_CPMG_2SITE_3D_FULL:
+                self.index = create_index(NE=self.NE, NS=self.NS, NM=self.NM, NO=self.NO, ND=self.ND)
+
+            # 9x9 matrix of form [NE][NS][NM][NO][ND][5].
+            elif model == MODEL_NS_R1RHO_3SITE or model == MODEL_NS_R1RHO_3SITE_LINEAR:
+                self.index = create_index(NE=self.NE, NS=self.NS, NM=self.NM, NO=self.NO, ND=self.ND)
+
+        # For numpy versions >= 1.8, store None.
+        else:
+            self.index = None
 
         # Set up the model.
         if model == MODEL_NOREX:
