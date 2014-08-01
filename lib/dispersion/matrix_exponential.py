@@ -50,7 +50,6 @@ def create_index(NE=None, NS=None, NM=None, NO=None, ND=None):
         index = zeros([NE, NS, NM, NO, ND, 5], int16)
 
     else:
-        # Make array to store index.
         index = zeros([NS, NM, NO, ND, 4], int16)
 
     # Make indices for storing in data matrix.
@@ -107,6 +106,51 @@ def create_index_rank_NS_NM_NO_ND_x_x(data):
                     index[si, mi, oi, di] = si, mi, oi, di
 
     return index
+
+
+def data_view_via_striding_array_col(data_array=None):
+    """Method to stride through the data matrix, extracting the outer array with nr of elements as Column length.
+
+    @keyword data:  The numpy data array to stride through.
+    @type data:     numpy array of rank [NE][NS][NM][NO][ND][Col] or [NS][NM][NO][ND][Col].
+    @return:        The data view of the full numpy array, returned as a numpy array with number of small numpy arrays corresponding to Nr_mat=NE*NS*NM*NO*ND or Nr_mat=NS*NM*NO*ND, where each small array has size Col.
+    @rtype:         numpy array of rank [NE*NS*NM*NO*ND][Col] or [NS*NM*NO*ND][Col].
+    """
+
+    # Get the expected shape of the higher dimensional column numpy array.
+    if len(data_array.shape) == 6:
+        # Extract shapes from data.
+        NE, NS, NM, NO, ND, Col = data_array.shape
+
+    else:
+        # Extract shapes from data.
+        NS, NM, NO, ND, Col = data_array.shape
+
+        # Set NE to 1.
+        NE = 1
+
+    # Calculate how many small matrices.
+    Nr_mat = NE * NS * NM * NO * ND
+
+    # Define the shape for the stride view.
+    shape = (Nr_mat, Col)
+
+    # Get itemsize, Length of one array element in bytes. Depends on dtype. float64=8, complex128=16.
+    itz = data_array.itemsize
+
+    # Bytes_between_elements
+    bbe = 1 * itz
+
+    # Bytes between row. The distance in bytes to next row is number of Columns elements multiplied with itemsize.
+    bbr = Col * itz
+
+    # Make a tuple of the strides.
+    strides = (bbr, bbe)
+
+    # Make the stride view.
+    data_view = as_strided(data_array, shape=shape, strides=strides)
+
+    return data_view
 
 
 def matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(A, dtype=None):
