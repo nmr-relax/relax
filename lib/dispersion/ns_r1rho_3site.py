@@ -60,7 +60,7 @@ from numpy import array, einsum, float64, isfinite, log, min, multiply, sum
 from numpy.ma import fix_invalid, masked_less
 
 # relax module imports.
-from lib.dispersion.matrix_exponential import matrix_exponential_rank_NE_NS_NM_NO_ND_x_x
+from lib.dispersion.matrix_exponential import matrix_exponential
 
 # Repetitive calculations (to speed up calculations).
 m_R1 = array([
@@ -349,7 +349,7 @@ def ns_r1rho_3site(M0=None, M0_T=None, r1rho_prime=None, omega=None, offset=None
     R_mat = rr1rho_3d_3site_rankN(R1=r1, r1rho_prime=r1rho_prime, omega=omega, offset=offset, dw_AB=dw_AB, dw_AC=dw_AC, w1=spin_lock_fields, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, relax_time=relax_time)
 
     # This matrix is a propagator that will evolve the magnetization with the matrix R.
-    Rexpo_mat = matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(R_mat)
+    Rexpo_mat = matrix_exponential(R_mat)
 
     # Magnetization evolution.
     Rexpo_M0_mat = einsum('...ij, ...jk', Rexpo_mat, M0)

@@ -63,7 +63,7 @@ from numpy.linalg import matrix_power
 
 # relax module imports.
 from lib.float import isNaN
-from lib.dispersion.matrix_exponential import matrix_exponential_rank_NE_NS_NM_NO_ND_x_x
+from lib.dispersion.matrix_exponential import matrix_exponential
 
 # Repetitive calculations (to speed up calculations).
 m_r20a = array([
@@ -223,8 +223,8 @@ def r2eff_ns_cpmg_2site_star(M0=None, r20a=None, r20b=None, pA=None, dw=None, dw
 
     # The the essential evolution matrix.
     # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-    eR_mat = matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(R_mat)
-    ecR2_mat = matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(cR2_mat)
+    eR_mat = matrix_exponential(R_mat)
+    ecR2_mat = matrix_exponential(cR2_mat)
 
     # Preform the matrix.
     # This is the propagator for an element of [delay tcp; 180 deg pulse; 2 times delay tcp; 180 deg pulse; delay tau], i.e. for 2 times tau-180-tau.
