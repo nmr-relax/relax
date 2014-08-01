@@ -277,7 +277,7 @@ def matrix_exponential(A, dtype=None):
         if NE != None:
             eye_mat = tile(eye(Row)[newaxis, newaxis, newaxis, newaxis, newaxis, ...], (NE, NS, NM, NO, ND, 1, 1) )
         else:
-            eye_mat = tile(eye(Row)[newaxis, newaxis, newaxis, newaxis, newaxis, ...], (NS, NM, NO, ND, 1, 1) )
+            eye_mat = tile(eye(Row)[newaxis, newaxis, newaxis, newaxis, ...], (NS, NM, NO, ND, 1, 1) )
 
         # Transform it to a diagonal matrix, with elements from vector down the diagonal.
         # Use the dtype, if specified.
