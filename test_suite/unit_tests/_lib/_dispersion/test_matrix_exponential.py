@@ -27,8 +27,8 @@ from unittest import TestCase
 # relax module imports.
 from lib.dispersion.ns_cpmg_2site_3d import rcpmg_3d_rankN
 from lib.dispersion.ns_mmq_2site import rmmq_2site_rankN
-from lib.linear_algebra.matrix_exponential import matrix_exponential
-from lib.dispersion.matrix_exponential import matrix_exponential_rank_NE_NS_NM_NO_ND_x_x, matrix_exponential_rank_NS_NM_NO_ND_x_x
+from lib.linear_algebra.matrix_exponential import matrix_exponential as np_matrix_exponential
+from lib.dispersion.matrix_exponential import matrix_exponential
 from status import Status; status = Status()
 
 
@@ -93,7 +93,7 @@ class Test_matrix_exponential(TestCase):
 
 
     def test_ns_cpmg_2site_3d_hansen_cpmg_data(self):
-        """Test the matrix_exponential_rankN() function for higher dimensional data, and compare to matrix_exponential.  This uses the data from systemtest Relax_disp.test_hansen_cpmg_data_to_ns_cpmg_2site_3D."""
+        """Test the matrix_exponential() function for higher dimensional data, and compare to matrix_exponential.  This uses the data from systemtest Relax_disp.test_hansen_cpmg_data_to_ns_cpmg_2site_3D."""
 
         fname = self.data + sep+ "test_hansen_cpmg_data_to_ns_cpmg_2site_3D"
         r180x, M0, r10a, r10b, r20a, r20b, pA, dw, dw_orig, kex, inv_tcpmg, tcp, num_points, power, back_calc, pB, k_BA, k_AB = self.return_data_ns_cpmg_2site_3d(fname)
@@ -105,7 +105,7 @@ class Test_matrix_exponential(TestCase):
         R_mat = rcpmg_3d_rankN(R1A=r10a, R1B=r10b, R2A=r20a, R2B=r20b, pA=pA, pB=pB, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
     
         # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-        Rexpo_mat = matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(R_mat)
+        Rexpo_mat = matrix_exponential(R_mat)
     
         # Loop over the spins
         for si in range(NS):
@@ -120,7 +120,7 @@ class Test_matrix_exponential(TestCase):
                     R_mat_i = R_mat[0, si, mi, 0, di]
  
                     # The lower dimensional matrix exponential.
-                    Rexpo = matrix_exponential(R_mat_i)
+                    Rexpo = np_matrix_exponential(R_mat_i)
     
                     # The higher dimensional matrix exponential.
                     Rexpo_mat_i = Rexpo_mat[0, si, mi, 0, di]
@@ -133,7 +133,7 @@ class Test_matrix_exponential(TestCase):
 
 
     def test_ns_mmq_2site_korzhnev_2005_15n_dq_data_complex64(self):
-        """Test the matrix_exponential_rankN() function for higher dimensional data, and compare to matrix_exponential.  This uses the data from systemtest Relax_disp.test_korzhnev_2005_15n_dq_data.
+        """Test the matrix_exponential() function for higher dimensional data, and compare to matrix_exponential.  This uses the data from systemtest Relax_disp.test_korzhnev_2005_15n_dq_data.
         This test does the matrix exponential in complex64."""
 
         fname = self.data + sep+ "test_korzhnev_2005_15n_dq_data"
@@ -147,8 +147,8 @@ class Test_matrix_exponential(TestCase):
         m2_mat = rmmq_2site_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
     
         # The A+/- matrices.
-        A_pos_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m1_mat, dtype=complex64)
-        A_neg_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m2_mat, dtype=complex64)
+        A_pos_mat = matrix_exponential(m1_mat, dtype=complex64)
+        A_neg_mat = matrix_exponential(m2_mat, dtype=complex64)
     
         # Loop over spins.
         for si in range(NS):
@@ -167,8 +167,8 @@ class Test_matrix_exponential(TestCase):
                         A_neg_i = A_neg_mat[si, mi, oi, i]
     
                         # The lower dimensional matrix exponential.
-                        A_pos = matrix_exponential(m1_mat[si, mi, oi, i])
-                        A_neg = matrix_exponential(m2_mat[si, mi, oi, i])
+                        A_pos = np_matrix_exponential(m1_mat[si, mi, oi, i])
+                        A_neg = np_matrix_exponential(m2_mat[si, mi, oi, i])
     
                         # Calculate differences
                         diff_A_pos_real = A_pos_i.real - A_pos.real
@@ -189,7 +189,7 @@ class Test_matrix_exponential(TestCase):
 
 
     def test_ns_mmq_2site_korzhnev_2005_15n_dq_data_complex128(self):
-        """Test the matrix_exponential_rankN() function for higher dimensional data, and compare to matrix_exponential.  This uses the data from systemtest Relax_disp.test_korzhnev_2005_15n_dq_data.
+        """Test the matrix_exponential() function for higher dimensional data, and compare to matrix_exponential.  This uses the data from systemtest Relax_disp.test_korzhnev_2005_15n_dq_data.
         This test does the matrix exponential in complex128."""
 
         fname = self.data + sep+ "test_korzhnev_2005_15n_dq_data"
@@ -203,8 +203,8 @@ class Test_matrix_exponential(TestCase):
         m2_mat = rmmq_2site_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
     
         # The A+/- matrices.
-        A_pos_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m1_mat)
-        A_neg_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m2_mat)
+        A_pos_mat = matrix_exponential(m1_mat)
+        A_neg_mat = matrix_exponential(m2_mat)
     
         # Loop over spins.
         for si in range(NS):
@@ -223,8 +223,8 @@ class Test_matrix_exponential(TestCase):
                         A_neg_i = A_neg_mat[si, mi, oi, i]
     
                         # The lower dimensional matrix exponential.
-                        A_pos = matrix_exponential(m1_mat[si, mi, oi, i])
-                        A_neg = matrix_exponential(m2_mat[si, mi, oi, i])
+                        A_pos = np_matrix_exponential(m1_mat[si, mi, oi, i])
+                        A_neg = np_matrix_exponential(m2_mat[si, mi, oi, i])
     
                         # Calculate differences
                         diff_A_pos_real = A_pos_i.real - A_pos.real
