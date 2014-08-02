@@ -197,6 +197,9 @@ MODEL_LIST_R1RHO = [MODEL_NOREX, MODEL_M61, MODEL_M61B, MODEL_DPL94, MODEL_TP02,
 MODEL_LIST_R1RHO_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_M61, MODEL_M61B, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]
 """The list of the R2eff model together with all dispersion models specifically for R1rho-type experiments."""
 
+MODEL_LIST_R1RHO_W_R1 = [MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]
+"""The list of all dispersion models specifically for R1rho-type experiments which use R1 in their equations."""
+
 MODEL_LIST_MQ_CPMG = [MODEL_NOREX, MODEL_MMQ_CR72, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]
 """The list of all dispersion models specifically for MQ CPMG-type experiments (excluding the R2eff model)."""
 
