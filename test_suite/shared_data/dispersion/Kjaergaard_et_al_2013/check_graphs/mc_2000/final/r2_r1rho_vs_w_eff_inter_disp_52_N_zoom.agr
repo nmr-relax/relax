@@ -1,0 +1,7536 @@
+# Grace project file
+#
+@version 50123
+@page size 842, 595
+@page scroll 5%
+@page inout 5%
+@link page off
+@map font 0 to "Times-Roman", "Times-Roman"
+@map font 1 to "Times-Italic", "Times-Italic"
+@map font 2 to "Times-Bold", "Times-Bold"
+@map font 3 to "Times-BoldItalic", "Times-BoldItalic"
+@map font 4 to "Helvetica", "Helvetica"
+@map font 5 to "Helvetica-Oblique", "Helvetica-Oblique"
+@map font 6 to "Helvetica-Bold", "Helvetica-Bold"
+@map font 7 to "Helvetica-BoldOblique", "Helvetica-BoldOblique"
+@map font 8 to "Courier", "Courier"
+@map font 9 to "Courier-Oblique", "Courier-Oblique"
+@map font 10 to "Courier-Bold", "Courier-Bold"
+@map font 11 to "Courier-BoldOblique", "Courier-BoldOblique"
+@map font 12 to "Symbol", "Symbol"
+@map font 13 to "ZapfDingbats", "ZapfDingbats"
+@map color 0 to (255, 255, 255), "white"
+@map color 1 to (0, 0, 0), "black"
+@map color 2 to (255, 0, 0), "red"
+@map color 3 to (0, 255, 0), "green"
+@map color 4 to (0, 0, 255), "blue"
+@map color 5 to (255, 255, 0), "yellow"
+@map color 6 to (188, 143, 143), "brown"
+@map color 7 to (220, 220, 220), "grey"
+@map color 8 to (148, 0, 211), "violet"
+@map color 9 to (0, 255, 255), "cyan"
+@map color 10 to (255, 0, 255), "magenta"
+@map color 11 to (255, 165, 0), "orange"
+@map color 12 to (114, 33, 188), "indigo"
+@map color 13 to (103, 7, 72), "maroon"
+@map color 14 to (64, 224, 208), "turquoise"
+@map color 15 to (0, 139, 0), "green4"
+@reference date 0
+@date wrap off
+@date wrap year 1950
+@default linewidth 1.0
+@default linestyle 1
+@default color 1
+@default pattern 1
+@default font 0
+@default char size 1.000000
+@default symbol size 1.000000
+@default sformat "%.8g"
+@background color 0
+@page background fill on
+@timestamp off
+@timestamp 0.03, 0.03
+@timestamp color 1
+@timestamp rot 0
+@timestamp font 0
+@timestamp char size 1.000000
+@timestamp def "Sat Aug  2 10:11:46 2014"
+@r0 off
+@link r0 to g0
+@r0 type above
+@r0 linestyle 1
+@r0 linewidth 1.0
+@r0 color 1
+@r0 line 0, 0, 0, 0
+@r1 off
+@link r1 to g0
+@r1 type above
+@r1 linestyle 1
+@r1 linewidth 1.0
+@r1 color 1
+@r1 line 0, 0, 0, 0
+@r2 off
+@link r2 to g0
+@r2 type above
+@r2 linestyle 1
+@r2 linewidth 1.0
+@r2 color 1
+@r2 line 0, 0, 0, 0
+@r3 off
+@link r3 to g0
+@r3 type above
+@r3 linestyle 1
+@r3 linewidth 1.0
+@r3 color 1
+@r3 line 0, 0, 0, 0
+@r4 off
+@link r4 to g0
+@r4 type above
+@r4 linestyle 1
+@r4 linewidth 1.0
+@r4 color 1
+@r4 line 0, 0, 0, 0
+@g0 on
+@g0 hidden false
+@g0 type XY
+@g0 stacked false
+@g0 bar hgap 0.000000
+@g0 fixedpoint off
+@g0 fixedpoint type 0
+@g0 fixedpoint xy 0.000000, 0.000000
+@g0 fixedpoint format general general
+@g0 fixedpoint prec 6, 6
+@with g0
+@    world 0, -3, 20000, 16
+@    stack world 0, 0, 0, 0
+@    znorm 1
+@    view 0.150000, 0.150000, 1.280000, 0.850000
+@    title "Relaxation dispersion plot for: 52V @N"
+@    title font 0
+@    title size 1.500000
+@    title color 1
+@    subtitle "Interpolated through Spin-lock field strength \xw\B\s1\N"
+@    subtitle font 0
+@    subtitle size 1.000000
+@    subtitle color 1
+@    xaxes scale Normal
+@    yaxes scale Normal
+@    xaxes invert off
+@    yaxes invert off
+@    xaxis  on
+@    xaxis  type zero true
+@    xaxis  offset 0.000000 , 0.000000
+@    xaxis  bar on
+@    xaxis  bar color 1
+@    xaxis  bar linestyle 1
+@    xaxis  bar linewidth 1.0
+@    xaxis  label "\qEffective field in rotating frame \xw\B\seff\N\Q (rad.s\S-1\N)"
+@    xaxis  label layout para
+@    xaxis  label place auto
+@    xaxis  label char size 1.000000
+@    xaxis  label font 0
+@    xaxis  label color 1
+@    xaxis  label place normal
+@    xaxis  tick on
+@    xaxis  tick major 5000
+@    xaxis  tick minor ticks 4
+@    xaxis  tick default 6
+@    xaxis  tick place rounded true
+@    xaxis  tick in
+@    xaxis  tick major size 0.500000
+@    xaxis  tick major color 1
+@    xaxis  tick major linewidth 0.5
+@    xaxis  tick major linestyle 1
+@    xaxis  tick major grid off
+@    xaxis  tick minor color 1
+@    xaxis  tick minor linewidth 0.5
+@    xaxis  tick minor linestyle 1
+@    xaxis  tick minor grid off
+@    xaxis  tick minor size 0.250000
+@    xaxis  ticklabel on
+@    xaxis  ticklabel format general
+@    xaxis  ticklabel prec 5
+@    xaxis  ticklabel formula ""
+@    xaxis  ticklabel append ""
+@    xaxis  ticklabel prepend ""
+@    xaxis  ticklabel angle 0
+@    xaxis  ticklabel skip 0
+@    xaxis  ticklabel stagger 0
+@    xaxis  ticklabel place normal
+@    xaxis  ticklabel offset auto
+@    xaxis  ticklabel offset 0.000000 , 0.010000
+@    xaxis  ticklabel start type auto
+@    xaxis  ticklabel start 0.000000
+@    xaxis  ticklabel stop type auto
+@    xaxis  ticklabel stop 0.000000
+@    xaxis  ticklabel char size 0.700000
+@    xaxis  ticklabel font 0
+@    xaxis  ticklabel color 1
+@    xaxis  tick place both
+@    xaxis  tick spec type none
+@    yaxis  on
+@    yaxis  type zero false
+@    yaxis  offset 0.000000 , 0.000000
+@    yaxis  bar on
+@    yaxis  bar color 1
+@    yaxis  bar linestyle 1
+@    yaxis  bar linewidth 1.0
+@    yaxis  label "R1rho - \qR\s2\N\Q (rad.s\S-1\N)"
+@    yaxis  label layout para
+@    yaxis  label place auto
+@    yaxis  label char size 1.000000
+@    yaxis  label font 0
+@    yaxis  label color 1
+@    yaxis  label place normal
+@    yaxis  tick on
+@    yaxis  tick major 5
+@    yaxis  tick minor ticks 1
+@    yaxis  tick default 6
+@    yaxis  tick place rounded true
+@    yaxis  tick in
+@    yaxis  tick major size 0.500000
+@    yaxis  tick major color 1
+@    yaxis  tick major linewidth 0.5
+@    yaxis  tick major linestyle 1
+@    yaxis  tick major grid off
+@    yaxis  tick minor color 1
+@    yaxis  tick minor linewidth 0.5
+@    yaxis  tick minor linestyle 1
+@    yaxis  tick minor grid off
+@    yaxis  tick minor size 0.250000
+@    yaxis  ticklabel on
+@    yaxis  ticklabel format general
+@    yaxis  ticklabel prec 5
+@    yaxis  ticklabel formula ""
+@    yaxis  ticklabel append ""
+@    yaxis  ticklabel prepend ""
+@    yaxis  ticklabel angle 0
+@    yaxis  ticklabel skip 0
+@    yaxis  ticklabel stagger 0
+@    yaxis  ticklabel place normal
+@    yaxis  ticklabel offset auto
+@    yaxis  ticklabel offset 0.000000 , 0.010000
+@    yaxis  ticklabel start type auto
+@    yaxis  ticklabel start 0.000000
+@    yaxis  ticklabel stop type auto
+@    yaxis  ticklabel stop 0.000000
+@    yaxis  ticklabel char size 0.700000
+@    yaxis  ticklabel font 0
+@    yaxis  ticklabel color 1
+@    yaxis  tick place both
+@    yaxis  tick spec type none
+@    altxaxis  off
+@    altyaxis  off
+@    legend off
+@    legend loctype view
+@    legend 0.85, 0.8
+@    legend box color 1
+@    legend box pattern 1
+@    legend box linewidth 1.0
+@    legend box linestyle 1
+@    legend box fill color 0
+@    legend box fill pattern 0
+@    legend font 0
+@    legend char size 0.800000
+@    legend color 1
+@    legend length 4
+@    legend vgap 1
+@    legend hgap 1
+@    legend invert false
+@    frame type 0
+@    frame linestyle 1
+@    frame linewidth 0.5
+@    frame color 1
+@    frame pattern 1
+@    frame background color 0
+@    frame background pattern 0
+@    s0 hidden false
+@    s0 type xydy
+@    s0 symbol 1
+@    s0 symbol size 0.450000
+@    s0 symbol color 4
+@    s0 symbol pattern 1
+@    s0 symbol fill color 4
+@    s0 symbol fill pattern 0
+@    s0 symbol linewidth 0.5
+@    s0 symbol linestyle 1
+@    s0 symbol char 65
+@    s0 symbol char font 0
+@    s0 symbol skip 0
+@    s0 line type 0
+@    s0 line linestyle 0
+@    s0 line linewidth 1.0
+@    s0 line color 4
+@    s0 line pattern 1
+@    s0 baseline type 0
+@    s0 baseline off
+@    s0 dropline off
+@    s0 fill type 0
+@    s0 fill rule 0
+@    s0 fill color 4
+@    s0 fill pattern 1
+@    s0 avalue off
+@    s0 avalue type 2
+@    s0 avalue char size 1.000000
+@    s0 avalue font 0
+@    s0 avalue color 4
+@    s0 avalue rot 0
+@    s0 avalue format general
+@    s0 avalue prec 3
+@    s0 avalue prepend ""
+@    s0 avalue append ""
+@    s0 avalue offset 0.000000 , 0.000000
+@    s0 errorbar on
+@    s0 errorbar place both
+@    s0 errorbar color 4
+@    s0 errorbar pattern 1
+@    s0 errorbar size 0.500000
+@    s0 errorbar linewidth 0.5
+@    s0 errorbar linestyle 1
+@    s0 errorbar riser linewidth 0.5
+@    s0 errorbar riser linestyle 1
+@    s0 errorbar riser clip off
+@    s0 errorbar riser clip length 0.100000
+@    s0 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s0 legend  "R\s2\N (799.8 MHz, 118.078 ppm)"
+@    s1 hidden false
+@    s1 type xydy
+@    s1 symbol 1
+@    s1 symbol size 0.450000
+@    s1 symbol color 15
+@    s1 symbol pattern 1
+@    s1 symbol fill color 15
+@    s1 symbol fill pattern 0
+@    s1 symbol linewidth 0.5
+@    s1 symbol linestyle 1
+@    s1 symbol char 65
+@    s1 symbol char font 0
+@    s1 symbol skip 0
+@    s1 line type 0
+@    s1 line linestyle 0
+@    s1 line linewidth 1.0
+@    s1 line color 15
+@    s1 line pattern 1
+@    s1 baseline type 0
+@    s1 baseline off
+@    s1 dropline off
+@    s1 fill type 0
+@    s1 fill rule 0
+@    s1 fill color 15
+@    s1 fill pattern 1
+@    s1 avalue off
+@    s1 avalue type 2
+@    s1 avalue char size 1.000000
+@    s1 avalue font 0
+@    s1 avalue color 15
+@    s1 avalue rot 0
+@    s1 avalue format general
+@    s1 avalue prec 3
+@    s1 avalue prepend ""
+@    s1 avalue append ""
+@    s1 avalue offset 0.000000 , 0.000000
+@    s1 errorbar on
+@    s1 errorbar place both
+@    s1 errorbar color 15
+@    s1 errorbar pattern 1
+@    s1 errorbar size 0.500000
+@    s1 errorbar linewidth 0.5
+@    s1 errorbar linestyle 1
+@    s1 errorbar riser linewidth 0.5
+@    s1 errorbar riser linestyle 1
+@    s1 errorbar riser clip off
+@    s1 errorbar riser clip length 0.100000
+@    s1 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s1 legend  "R\s2\N (799.8 MHz, 124.247 ppm)"
+@    s2 hidden false
+@    s2 type xydy
+@    s2 symbol 1
+@    s2 symbol size 0.450000
+@    s2 symbol color 2
+@    s2 symbol pattern 1
+@    s2 symbol fill color 2
+@    s2 symbol fill pattern 0
+@    s2 symbol linewidth 0.5
+@    s2 symbol linestyle 1
+@    s2 symbol char 65
+@    s2 symbol char font 0
+@    s2 symbol skip 0
+@    s2 line type 0
+@    s2 line linestyle 0
+@    s2 line linewidth 1.0
+@    s2 line color 2
+@    s2 line pattern 1
+@    s2 baseline type 0
+@    s2 baseline off
+@    s2 dropline off
+@    s2 fill type 0
+@    s2 fill rule 0
+@    s2 fill color 2
+@    s2 fill pattern 1
+@    s2 avalue off
+@    s2 avalue type 2
+@    s2 avalue char size 1.000000
+@    s2 avalue font 0
+@    s2 avalue color 2
+@    s2 avalue rot 0
+@    s2 avalue format general
+@    s2 avalue prec 3
+@    s2 avalue prepend ""
+@    s2 avalue append ""
+@    s2 avalue offset 0.000000 , 0.000000
+@    s2 errorbar on
+@    s2 errorbar place both
+@    s2 errorbar color 2
+@    s2 errorbar pattern 1
+@    s2 errorbar size 0.500000
+@    s2 errorbar linewidth 0.5
+@    s2 errorbar linestyle 1
+@    s2 errorbar riser linewidth 0.5
+@    s2 errorbar riser linestyle 1
+@    s2 errorbar riser clip off
+@    s2 errorbar riser clip length 0.100000
+@    s2 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s2 legend  "R\s2\N (799.8 MHz, 130.416 ppm)"
+@    s3 hidden false
+@    s3 type xydy
+@    s3 symbol 1
+@    s3 symbol size 0.450000
+@    s3 symbol color 13
+@    s3 symbol pattern 1
+@    s3 symbol fill color 13
+@    s3 symbol fill pattern 0
+@    s3 symbol linewidth 0.5
+@    s3 symbol linestyle 1
+@    s3 symbol char 65
+@    s3 symbol char font 0
+@    s3 symbol skip 0
+@    s3 line type 0
+@    s3 line linestyle 0
+@    s3 line linewidth 1.0
+@    s3 line color 13
+@    s3 line pattern 1
+@    s3 baseline type 0
+@    s3 baseline off
+@    s3 dropline off
+@    s3 fill type 0
+@    s3 fill rule 0
+@    s3 fill color 13
+@    s3 fill pattern 1
+@    s3 avalue off
+@    s3 avalue type 2
+@    s3 avalue char size 1.000000
+@    s3 avalue font 0
+@    s3 avalue color 13
+@    s3 avalue rot 0
+@    s3 avalue format general
+@    s3 avalue prec 3
+@    s3 avalue prepend ""
+@    s3 avalue append ""
+@    s3 avalue offset 0.000000 , 0.000000
+@    s3 errorbar on
+@    s3 errorbar place both
+@    s3 errorbar color 13
+@    s3 errorbar pattern 1
+@    s3 errorbar size 0.500000
+@    s3 errorbar linewidth 0.5
+@    s3 errorbar linestyle 1
+@    s3 errorbar riser linewidth 0.5
+@    s3 errorbar riser linestyle 1
+@    s3 errorbar riser clip off
+@    s3 errorbar riser clip length 0.100000
+@    s3 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s3 legend  "R\s2\N (799.8 MHz, 142.754 ppm)"
+@    s4 hidden false
+@    s4 type xydy
+@    s4 symbol 1
+@    s4 symbol size 0.450000
+@    s4 symbol color 11
+@    s4 symbol pattern 1
+@    s4 symbol fill color 11
+@    s4 symbol fill pattern 0
+@    s4 symbol linewidth 0.5
+@    s4 symbol linestyle 1
+@    s4 symbol char 65
+@    s4 symbol char font 0
+@    s4 symbol skip 0
+@    s4 line type 0
+@    s4 line linestyle 0
+@    s4 line linewidth 1.0
+@    s4 line color 11
+@    s4 line pattern 1
+@    s4 baseline type 0
+@    s4 baseline off
+@    s4 dropline off
+@    s4 fill type 0
+@    s4 fill rule 0
+@    s4 fill color 11
+@    s4 fill pattern 1
+@    s4 avalue off
+@    s4 avalue type 2
+@    s4 avalue char size 1.000000
+@    s4 avalue font 0
+@    s4 avalue color 11
+@    s4 avalue rot 0
+@    s4 avalue format general
+@    s4 avalue prec 3
+@    s4 avalue prepend ""
+@    s4 avalue append ""
+@    s4 avalue offset 0.000000 , 0.000000
+@    s4 errorbar on
+@    s4 errorbar place both
+@    s4 errorbar color 11
+@    s4 errorbar pattern 1
+@    s4 errorbar size 0.500000
+@    s4 errorbar linewidth 0.5
+@    s4 errorbar linestyle 1
+@    s4 errorbar riser linewidth 0.5
+@    s4 errorbar riser linestyle 1
+@    s4 errorbar riser clip off
+@    s4 errorbar riser clip length 0.100000
+@    s4 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s4 legend  "R\s2\N (799.8 MHz, 179.768 ppm)"
+@    s5 hidden false
+@    s5 type xydy
+@    s5 symbol 1
+@    s5 symbol size 0.450000
+@    s5 symbol color 1
+@    s5 symbol pattern 1
+@    s5 symbol fill color 1
+@    s5 symbol fill pattern 0
+@    s5 symbol linewidth 0.5
+@    s5 symbol linestyle 1
+@    s5 symbol char 65
+@    s5 symbol char font 0
+@    s5 symbol skip 0
+@    s5 line type 0
+@    s5 line linestyle 0
+@    s5 line linewidth 1.0
+@    s5 line color 1
+@    s5 line pattern 1
+@    s5 baseline type 0
+@    s5 baseline off
+@    s5 dropline off
+@    s5 fill type 0
+@    s5 fill rule 0
+@    s5 fill color 1
+@    s5 fill pattern 1
+@    s5 avalue off
+@    s5 avalue type 2
+@    s5 avalue char size 1.000000
+@    s5 avalue font 0
+@    s5 avalue color 1
+@    s5 avalue rot 0
+@    s5 avalue format general
+@    s5 avalue prec 3
+@    s5 avalue prepend ""
+@    s5 avalue append ""
+@    s5 avalue offset 0.000000 , 0.000000
+@    s5 errorbar on
+@    s5 errorbar place both
+@    s5 errorbar color 1
+@    s5 errorbar pattern 1
+@    s5 errorbar size 0.500000
+@    s5 errorbar linewidth 0.5
+@    s5 errorbar linestyle 1
+@    s5 errorbar riser linewidth 0.5
+@    s5 errorbar riser linestyle 1
+@    s5 errorbar riser clip off
+@    s5 errorbar riser clip length 0.100000
+@    s5 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s5 legend  "R\s2\N (799.8 MHz, 241.459 ppm)"
+@    s6 hidden false
+@    s6 type xydy
+@    s6 symbol 4
+@    s6 symbol size 0.450000
+@    s6 symbol color 4
+@    s6 symbol pattern 1
+@    s6 symbol fill color 4
+@    s6 symbol fill pattern 0
+@    s6 symbol linewidth 0.5
+@    s6 symbol linestyle 1
+@    s6 symbol char 65
+@    s6 symbol char font 0
+@    s6 symbol skip 0
+@    s6 line type 1
+@    s6 line linestyle 2
+@    s6 line linewidth 1.0
+@    s6 line color 4
+@    s6 line pattern 1
+@    s6 baseline type 0
+@    s6 baseline off
+@    s6 dropline off
+@    s6 fill type 0
+@    s6 fill rule 0
+@    s6 fill color 4
+@    s6 fill pattern 1
+@    s6 avalue off
+@    s6 avalue type 2
+@    s6 avalue char size 1.000000
+@    s6 avalue font 0
+@    s6 avalue color 4
+@    s6 avalue rot 0
+@    s6 avalue format general
+@    s6 avalue prec 3
+@    s6 avalue prepend ""
+@    s6 avalue append ""
+@    s6 avalue offset 0.000000 , 0.000000
+@    s6 errorbar on
+@    s6 errorbar place both
+@    s6 errorbar color 4
+@    s6 errorbar pattern 1
+@    s6 errorbar size 0.500000
+@    s6 errorbar linewidth 0.5
+@    s6 errorbar linestyle 1
+@    s6 errorbar riser linewidth 0.5
+@    s6 errorbar riser linestyle 1
+@    s6 errorbar riser clip off
+@    s6 errorbar riser clip length 0.100000
+@    s6 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s6 legend  "Back calculated R\s2\N (799.8 MHz, 118.078 ppm)"
+@    s7 hidden false
+@    s7 type xydy
+@    s7 symbol 4
+@    s7 symbol size 0.450000
+@    s7 symbol color 15
+@    s7 symbol pattern 1
+@    s7 symbol fill color 15
+@    s7 symbol fill pattern 0
+@    s7 symbol linewidth 0.5
+@    s7 symbol linestyle 1
+@    s7 symbol char 65
+@    s7 symbol char font 0
+@    s7 symbol skip 0
+@    s7 line type 1
+@    s7 line linestyle 2
+@    s7 line linewidth 1.0
+@    s7 line color 15
+@    s7 line pattern 1
+@    s7 baseline type 0
+@    s7 baseline off
+@    s7 dropline off
+@    s7 fill type 0
+@    s7 fill rule 0
+@    s7 fill color 15
+@    s7 fill pattern 1
+@    s7 avalue off
+@    s7 avalue type 2
+@    s7 avalue char size 1.000000
+@    s7 avalue font 0
+@    s7 avalue color 15
+@    s7 avalue rot 0
+@    s7 avalue format general
+@    s7 avalue prec 3
+@    s7 avalue prepend ""
+@    s7 avalue append ""
+@    s7 avalue offset 0.000000 , 0.000000
+@    s7 errorbar on
+@    s7 errorbar place both
+@    s7 errorbar color 15
+@    s7 errorbar pattern 1
+@    s7 errorbar size 0.500000
+@    s7 errorbar linewidth 0.5
+@    s7 errorbar linestyle 1
+@    s7 errorbar riser linewidth 0.5
+@    s7 errorbar riser linestyle 1
+@    s7 errorbar riser clip off
+@    s7 errorbar riser clip length 0.100000
+@    s7 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s7 legend  "Back calculated R\s2\N (799.8 MHz, 124.247 ppm)"
+@    s8 hidden false
+@    s8 type xydy
+@    s8 symbol 4
+@    s8 symbol size 0.450000
+@    s8 symbol color 2
+@    s8 symbol pattern 1
+@    s8 symbol fill color 2
+@    s8 symbol fill pattern 0
+@    s8 symbol linewidth 0.5
+@    s8 symbol linestyle 1
+@    s8 symbol char 65
+@    s8 symbol char font 0
+@    s8 symbol skip 0
+@    s8 line type 1
+@    s8 line linestyle 2
+@    s8 line linewidth 1.0
+@    s8 line color 2
+@    s8 line pattern 1
+@    s8 baseline type 0
+@    s8 baseline off
+@    s8 dropline off
+@    s8 fill type 0
+@    s8 fill rule 0
+@    s8 fill color 2
+@    s8 fill pattern 1
+@    s8 avalue off
+@    s8 avalue type 2
+@    s8 avalue char size 1.000000
+@    s8 avalue font 0
+@    s8 avalue color 2
+@    s8 avalue rot 0
+@    s8 avalue format general
+@    s8 avalue prec 3
+@    s8 avalue prepend ""
+@    s8 avalue append ""
+@    s8 avalue offset 0.000000 , 0.000000
+@    s8 errorbar on
+@    s8 errorbar place both
+@    s8 errorbar color 2
+@    s8 errorbar pattern 1
+@    s8 errorbar size 0.500000
+@    s8 errorbar linewidth 0.5
+@    s8 errorbar linestyle 1
+@    s8 errorbar riser linewidth 0.5
+@    s8 errorbar riser linestyle 1
+@    s8 errorbar riser clip off
+@    s8 errorbar riser clip length 0.100000
+@    s8 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s8 legend  "Back calculated R\s2\N (799.8 MHz, 130.416 ppm)"
+@    s9 hidden false
+@    s9 type xydy
+@    s9 symbol 4
+@    s9 symbol size 0.450000
+@    s9 symbol color 13
+@    s9 symbol pattern 1
+@    s9 symbol fill color 13
+@    s9 symbol fill pattern 0
+@    s9 symbol linewidth 0.5
+@    s9 symbol linestyle 1
+@    s9 symbol char 65
+@    s9 symbol char font 0
+@    s9 symbol skip 0
+@    s9 line type 1
+@    s9 line linestyle 2
+@    s9 line linewidth 1.0
+@    s9 line color 13
+@    s9 line pattern 1
+@    s9 baseline type 0
+@    s9 baseline off
+@    s9 dropline off
+@    s9 fill type 0
+@    s9 fill rule 0
+@    s9 fill color 13
+@    s9 fill pattern 1
+@    s9 avalue off
+@    s9 avalue type 2
+@    s9 avalue char size 1.000000
+@    s9 avalue font 0
+@    s9 avalue color 13
+@    s9 avalue rot 0
+@    s9 avalue format general
+@    s9 avalue prec 3
+@    s9 avalue prepend ""
+@    s9 avalue append ""
+@    s9 avalue offset 0.000000 , 0.000000
+@    s9 errorbar on
+@    s9 errorbar place both
+@    s9 errorbar color 13
+@    s9 errorbar pattern 1
+@    s9 errorbar size 0.500000
+@    s9 errorbar linewidth 0.5
+@    s9 errorbar linestyle 1
+@    s9 errorbar riser linewidth 0.5
+@    s9 errorbar riser linestyle 1
+@    s9 errorbar riser clip off
+@    s9 errorbar riser clip length 0.100000
+@    s9 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s9 legend  "Back calculated R\s2\N (799.8 MHz, 142.754 ppm)"
+@    s10 hidden false
+@    s10 type xydy
+@    s10 symbol 4
+@    s10 symbol size 0.450000
+@    s10 symbol color 11
+@    s10 symbol pattern 1
+@    s10 symbol fill color 11
+@    s10 symbol fill pattern 0
+@    s10 symbol linewidth 0.5
+@    s10 symbol linestyle 1
+@    s10 symbol char 65
+@    s10 symbol char font 0
+@    s10 symbol skip 0
+@    s10 line type 1
+@    s10 line linestyle 2
+@    s10 line linewidth 1.0
+@    s10 line color 11
+@    s10 line pattern 1
+@    s10 baseline type 0
+@    s10 baseline off
+@    s10 dropline off
+@    s10 fill type 0
+@    s10 fill rule 0
+@    s10 fill color 11
+@    s10 fill pattern 1
+@    s10 avalue off
+@    s10 avalue type 2
+@    s10 avalue char size 1.000000
+@    s10 avalue font 0
+@    s10 avalue color 11
+@    s10 avalue rot 0
+@    s10 avalue format general
+@    s10 avalue prec 3
+@    s10 avalue prepend ""
+@    s10 avalue append ""
+@    s10 avalue offset 0.000000 , 0.000000
+@    s10 errorbar on
+@    s10 errorbar place both
+@    s10 errorbar color 11
+@    s10 errorbar pattern 1
+@    s10 errorbar size 0.500000
+@    s10 errorbar linewidth 0.5
+@    s10 errorbar linestyle 1
+@    s10 errorbar riser linewidth 0.5
+@    s10 errorbar riser linestyle 1
+@    s10 errorbar riser clip off
+@    s10 errorbar riser clip length 0.100000
+@    s10 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s10 legend  "Back calculated R\s2\N (799.8 MHz, 179.768 ppm)"
+@    s11 hidden false
+@    s11 type xydy
+@    s11 symbol 4
+@    s11 symbol size 0.450000
+@    s11 symbol color 1
+@    s11 symbol pattern 1
+@    s11 symbol fill color 1
+@    s11 symbol fill pattern 0
+@    s11 symbol linewidth 0.5
+@    s11 symbol linestyle 1
+@    s11 symbol char 65
+@    s11 symbol char font 0
+@    s11 symbol skip 0
+@    s11 line type 1
+@    s11 line linestyle 2
+@    s11 line linewidth 1.0
+@    s11 line color 1
+@    s11 line pattern 1
+@    s11 baseline type 0
+@    s11 baseline off
+@    s11 dropline off
+@    s11 fill type 0
+@    s11 fill rule 0
+@    s11 fill color 1
+@    s11 fill pattern 1
+@    s11 avalue off
+@    s11 avalue type 2
+@    s11 avalue char size 1.000000
+@    s11 avalue font 0
+@    s11 avalue color 1
+@    s11 avalue rot 0
+@    s11 avalue format general
+@    s11 avalue prec 3
+@    s11 avalue prepend ""
+@    s11 avalue append ""
+@    s11 avalue offset 0.000000 , 0.000000
+@    s11 errorbar on
+@    s11 errorbar place both
+@    s11 errorbar color 1
+@    s11 errorbar pattern 1
+@    s11 errorbar size 0.500000
+@    s11 errorbar linewidth 0.5
+@    s11 errorbar linestyle 1
+@    s11 errorbar riser linewidth 0.5
+@    s11 errorbar riser linestyle 1
+@    s11 errorbar riser clip off
+@    s11 errorbar riser clip length 0.100000
+@    s11 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s11 legend  "Back calculated R\s2\N (799.8 MHz, 241.459 ppm)"
+@    s12 hidden false
+@    s12 type xydy
+@    s12 symbol 0
+@    s12 symbol size 0.200000
+@    s12 symbol color 4
+@    s12 symbol pattern 1
+@    s12 symbol fill color 4
+@    s12 symbol fill pattern 0
+@    s12 symbol linewidth 0.5
+@    s12 symbol linestyle 1
+@    s12 symbol char 65
+@    s12 symbol char font 0
+@    s12 symbol skip 0
+@    s12 line type 1
+@    s12 line linestyle 1
+@    s12 line linewidth 1.0
+@    s12 line color 4
+@    s12 line pattern 1
+@    s12 baseline type 0
+@    s12 baseline off
+@    s12 dropline off
+@    s12 fill type 0
+@    s12 fill rule 0
+@    s12 fill color 4
+@    s12 fill pattern 1
+@    s12 avalue off
+@    s12 avalue type 2
+@    s12 avalue char size 1.000000
+@    s12 avalue font 0
+@    s12 avalue color 4
+@    s12 avalue rot 0
+@    s12 avalue format general
+@    s12 avalue prec 3
+@    s12 avalue prepend ""
+@    s12 avalue append ""
+@    s12 avalue offset 0.000000 , 0.000000
+@    s12 errorbar on
+@    s12 errorbar place both
+@    s12 errorbar color 4
+@    s12 errorbar pattern 1
+@    s12 errorbar size 0.500000
+@    s12 errorbar linewidth 0.5
+@    s12 errorbar linestyle 1
+@    s12 errorbar riser linewidth 0.5
+@    s12 errorbar riser linestyle 1
+@    s12 errorbar riser clip off
+@    s12 errorbar riser clip length 0.100000
+@    s12 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s12 legend  "R\s2\N interpolated curve (799.8 MHz, 118.078 ppm)"
+@    s13 hidden false
+@    s13 type xydy
+@    s13 symbol 0
+@    s13 symbol size 0.200000
+@    s13 symbol color 15
+@    s13 symbol pattern 1
+@    s13 symbol fill color 15
+@    s13 symbol fill pattern 0
+@    s13 symbol linewidth 0.5
+@    s13 symbol linestyle 1
+@    s13 symbol char 65
+@    s13 symbol char font 0
+@    s13 symbol skip 0
+@    s13 line type 1
+@    s13 line linestyle 1
+@    s13 line linewidth 1.0
+@    s13 line color 15
+@    s13 line pattern 1
+@    s13 baseline type 0
+@    s13 baseline off
+@    s13 dropline off
+@    s13 fill type 0
+@    s13 fill rule 0
+@    s13 fill color 15
+@    s13 fill pattern 1
+@    s13 avalue off
+@    s13 avalue type 2
+@    s13 avalue char size 1.000000
+@    s13 avalue font 0
+@    s13 avalue color 15
+@    s13 avalue rot 0
+@    s13 avalue format general
+@    s13 avalue prec 3
+@    s13 avalue prepend ""
+@    s13 avalue append ""
+@    s13 avalue offset 0.000000 , 0.000000
+@    s13 errorbar on
+@    s13 errorbar place both
+@    s13 errorbar color 15
+@    s13 errorbar pattern 1
+@    s13 errorbar size 0.500000
+@    s13 errorbar linewidth 0.5
+@    s13 errorbar linestyle 1
+@    s13 errorbar riser linewidth 0.5
+@    s13 errorbar riser linestyle 1
+@    s13 errorbar riser clip off
+@    s13 errorbar riser clip length 0.100000
+@    s13 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s13 legend  "R\s2\N interpolated curve (799.8 MHz, 124.247 ppm)"
+@    s14 hidden false
+@    s14 type xydy
+@    s14 symbol 0
+@    s14 symbol size 0.200000
+@    s14 symbol color 2
+@    s14 symbol pattern 1
+@    s14 symbol fill color 2
+@    s14 symbol fill pattern 0
+@    s14 symbol linewidth 0.5
+@    s14 symbol linestyle 1
+@    s14 symbol char 65
+@    s14 symbol char font 0
+@    s14 symbol skip 0
+@    s14 line type 1
+@    s14 line linestyle 1
+@    s14 line linewidth 1.0
+@    s14 line color 2
+@    s14 line pattern 1
+@    s14 baseline type 0
+@    s14 baseline off
+@    s14 dropline off
+@    s14 fill type 0
+@    s14 fill rule 0
+@    s14 fill color 2
+@    s14 fill pattern 1
+@    s14 avalue off
+@    s14 avalue type 2
+@    s14 avalue char size 1.000000
+@    s14 avalue font 0
+@    s14 avalue color 2
+@    s14 avalue rot 0
+@    s14 avalue format general
+@    s14 avalue prec 3
+@    s14 avalue prepend ""
+@    s14 avalue append ""
+@    s14 avalue offset 0.000000 , 0.000000
+@    s14 errorbar on
+@    s14 errorbar place both
+@    s14 errorbar color 2
+@    s14 errorbar pattern 1
+@    s14 errorbar size 0.500000
+@    s14 errorbar linewidth 0.5
+@    s14 errorbar linestyle 1
+@    s14 errorbar riser linewidth 0.5
+@    s14 errorbar riser linestyle 1
+@    s14 errorbar riser clip off
+@    s14 errorbar riser clip length 0.100000
+@    s14 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s14 legend  "R\s2\N interpolated curve (799.8 MHz, 130.416 ppm)"
+@    s15 hidden false
+@    s15 type xydy
+@    s15 symbol 0
+@    s15 symbol size 0.200000
+@    s15 symbol color 13
+@    s15 symbol pattern 1
+@    s15 symbol fill color 13
+@    s15 symbol fill pattern 0
+@    s15 symbol linewidth 0.5
+@    s15 symbol linestyle 1
+@    s15 symbol char 65
+@    s15 symbol char font 0
+@    s15 symbol skip 0
+@    s15 line type 1
+@    s15 line linestyle 1
+@    s15 line linewidth 1.0
+@    s15 line color 13
+@    s15 line pattern 1
+@    s15 baseline type 0
+@    s15 baseline off
+@    s15 dropline off
+@    s15 fill type 0
+@    s15 fill rule 0
+@    s15 fill color 13
+@    s15 fill pattern 1
+@    s15 avalue off
+@    s15 avalue type 2
+@    s15 avalue char size 1.000000
+@    s15 avalue font 0
+@    s15 avalue color 13
+@    s15 avalue rot 0
+@    s15 avalue format general
+@    s15 avalue prec 3
+@    s15 avalue prepend ""
+@    s15 avalue append ""
+@    s15 avalue offset 0.000000 , 0.000000
+@    s15 errorbar on
+@    s15 errorbar place both
+@    s15 errorbar color 13
+@    s15 errorbar pattern 1
+@    s15 errorbar size 0.500000
+@    s15 errorbar linewidth 0.5
+@    s15 errorbar linestyle 1
+@    s15 errorbar riser linewidth 0.5
+@    s15 errorbar riser linestyle 1
+@    s15 errorbar riser clip off
+@    s15 errorbar riser clip length 0.100000
+@    s15 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s15 legend  "R\s2\N interpolated curve (799.8 MHz, 142.754 ppm)"
+@    s16 hidden false
+@    s16 type xydy
+@    s16 symbol 0
+@    s16 symbol size 0.200000
+@    s16 symbol color 11
+@    s16 symbol pattern 1
+@    s16 symbol fill color 11
+@    s16 symbol fill pattern 0
+@    s16 symbol linewidth 0.5
+@    s16 symbol linestyle 1
+@    s16 symbol char 65
+@    s16 symbol char font 0
+@    s16 symbol skip 0
+@    s16 line type 1
+@    s16 line linestyle 1
+@    s16 line linewidth 1.0
+@    s16 line color 11
+@    s16 line pattern 1
+@    s16 baseline type 0
+@    s16 baseline off
+@    s16 dropline off
+@    s16 fill type 0
+@    s16 fill rule 0
+@    s16 fill color 11
+@    s16 fill pattern 1
+@    s16 avalue off
+@    s16 avalue type 2
+@    s16 avalue char size 1.000000
+@    s16 avalue font 0
+@    s16 avalue color 11
+@    s16 avalue rot 0
+@    s16 avalue format general
+@    s16 avalue prec 3
+@    s16 avalue prepend ""
+@    s16 avalue append ""
+@    s16 avalue offset 0.000000 , 0.000000
+@    s16 errorbar on
+@    s16 errorbar place both
+@    s16 errorbar color 11
+@    s16 errorbar pattern 1
+@    s16 errorbar size 0.500000
+@    s16 errorbar linewidth 0.5
+@    s16 errorbar linestyle 1
+@    s16 errorbar riser linewidth 0.5
+@    s16 errorbar riser linestyle 1
+@    s16 errorbar riser clip off
+@    s16 errorbar riser clip length 0.100000
+@    s16 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s16 legend  "R\s2\N interpolated curve (799.8 MHz, 179.768 ppm)"
+@    s17 hidden false
+@    s17 type xydy
+@    s17 symbol 0
+@    s17 symbol size 0.200000
+@    s17 symbol color 1
+@    s17 symbol pattern 1
+@    s17 symbol fill color 1
+@    s17 symbol fill pattern 0
+@    s17 symbol linewidth 0.5
+@    s17 symbol linestyle 1
+@    s17 symbol char 65
+@    s17 symbol char font 0
+@    s17 symbol skip 0
+@    s17 line type 1
+@    s17 line linestyle 1
+@    s17 line linewidth 1.0
+@    s17 line color 1
+@    s17 line pattern 1
+@    s17 baseline type 0
+@    s17 baseline off
+@    s17 dropline off
+@    s17 fill type 0
+@    s17 fill rule 0
+@    s17 fill color 1
+@    s17 fill pattern 1
+@    s17 avalue off
+@    s17 avalue type 2
+@    s17 avalue char size 1.000000
+@    s17 avalue font 0
+@    s17 avalue color 1
+@    s17 avalue rot 0
+@    s17 avalue format general
+@    s17 avalue prec 3
+@    s17 avalue prepend ""
+@    s17 avalue append ""
+@    s17 avalue offset 0.000000 , 0.000000
+@    s17 errorbar on
+@    s17 errorbar place both
+@    s17 errorbar color 1
+@    s17 errorbar pattern 1
+@    s17 errorbar size 0.500000
+@    s17 errorbar linewidth 0.5
+@    s17 errorbar linestyle 1
+@    s17 errorbar riser linewidth 0.5
+@    s17 errorbar riser linestyle 1
+@    s17 errorbar riser clip off
+@    s17 errorbar riser clip length 0.100000
+@    s17 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s17 legend  "R\s2\N interpolated curve (799.8 MHz, 241.459 ppm)"
+@    s18 hidden false
+@    s18 type xydy
+@    s18 symbol 9
+@    s18 symbol size 0.450000
+@    s18 symbol color 4
+@    s18 symbol pattern 1
+@    s18 symbol fill color 4
+@    s18 symbol fill pattern 0
+@    s18 symbol linewidth 0.5
+@    s18 symbol linestyle 1
+@    s18 symbol char 65
+@    s18 symbol char font 0
+@    s18 symbol skip 0
+@    s18 line type 1
+@    s18 line linestyle 3
+@    s18 line linewidth 1.0
+@    s18 line color 4
+@    s18 line pattern 1
+@    s18 baseline type 0
+@    s18 baseline off
+@    s18 dropline off
+@    s18 fill type 0
+@    s18 fill rule 0
+@    s18 fill color 4
+@    s18 fill pattern 1
+@    s18 avalue off
+@    s18 avalue type 2
+@    s18 avalue char size 1.000000
+@    s18 avalue font 0
+@    s18 avalue color 4
+@    s18 avalue rot 0
+@    s18 avalue format general
+@    s18 avalue prec 3
+@    s18 avalue prepend ""
+@    s18 avalue append ""
+@    s18 avalue offset 0.000000 , 0.000000
+@    s18 errorbar on
+@    s18 errorbar place both
+@    s18 errorbar color 4
+@    s18 errorbar pattern 1
+@    s18 errorbar size 0.500000
+@    s18 errorbar linewidth 0.5
+@    s18 errorbar linestyle 1
+@    s18 errorbar riser linewidth 0.5
+@    s18 errorbar riser linestyle 1
+@    s18 errorbar riser clip off
+@    s18 errorbar riser clip length 0.100000
+@    s18 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s18 legend  "Residuals (799.8 MHz, 118.078 ppm)"
+@    s19 hidden false
+@    s19 type xydy
+@    s19 symbol 9
+@    s19 symbol size 0.450000
+@    s19 symbol color 15
+@    s19 symbol pattern 1
+@    s19 symbol fill color 15
+@    s19 symbol fill pattern 0
+@    s19 symbol linewidth 0.5
+@    s19 symbol linestyle 1
+@    s19 symbol char 65
+@    s19 symbol char font 0
+@    s19 symbol skip 0
+@    s19 line type 1
+@    s19 line linestyle 3
+@    s19 line linewidth 1.0
+@    s19 line color 15
+@    s19 line pattern 1
+@    s19 baseline type 0
+@    s19 baseline off
+@    s19 dropline off
+@    s19 fill type 0
+@    s19 fill rule 0
+@    s19 fill color 15
+@    s19 fill pattern 1
+@    s19 avalue off
+@    s19 avalue type 2
+@    s19 avalue char size 1.000000
+@    s19 avalue font 0
+@    s19 avalue color 15
+@    s19 avalue rot 0
+@    s19 avalue format general
+@    s19 avalue prec 3
+@    s19 avalue prepend ""
+@    s19 avalue append ""
+@    s19 avalue offset 0.000000 , 0.000000
+@    s19 errorbar on
+@    s19 errorbar place both
+@    s19 errorbar color 15
+@    s19 errorbar pattern 1
+@    s19 errorbar size 0.500000
+@    s19 errorbar linewidth 0.5
+@    s19 errorbar linestyle 1
+@    s19 errorbar riser linewidth 0.5
+@    s19 errorbar riser linestyle 1
+@    s19 errorbar riser clip off
+@    s19 errorbar riser clip length 0.100000
+@    s19 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s19 legend  "Residuals (799.8 MHz, 124.247 ppm)"
+@    s20 hidden false
+@    s20 type xydy
+@    s20 symbol 9
+@    s20 symbol size 0.450000
+@    s20 symbol color 2
+@    s20 symbol pattern 1
+@    s20 symbol fill color 2
+@    s20 symbol fill pattern 0
+@    s20 symbol linewidth 0.5
+@    s20 symbol linestyle 1
+@    s20 symbol char 65
+@    s20 symbol char font 0
+@    s20 symbol skip 0
+@    s20 line type 1
+@    s20 line linestyle 3
+@    s20 line linewidth 1.0
+@    s20 line color 2
+@    s20 line pattern 1
+@    s20 baseline type 0
+@    s20 baseline off
+@    s20 dropline off
+@    s20 fill type 0
+@    s20 fill rule 0
+@    s20 fill color 2
+@    s20 fill pattern 1
+@    s20 avalue off
+@    s20 avalue type 2
+@    s20 avalue char size 1.000000
+@    s20 avalue font 0
+@    s20 avalue color 2
+@    s20 avalue rot 0
+@    s20 avalue format general
+@    s20 avalue prec 3
+@    s20 avalue prepend ""
+@    s20 avalue append ""
+@    s20 avalue offset 0.000000 , 0.000000
+@    s20 errorbar on
+@    s20 errorbar place both
+@    s20 errorbar color 2
+@    s20 errorbar pattern 1
+@    s20 errorbar size 0.500000
+@    s20 errorbar linewidth 0.5
+@    s20 errorbar linestyle 1
+@    s20 errorbar riser linewidth 0.5
+@    s20 errorbar riser linestyle 1
+@    s20 errorbar riser clip off
+@    s20 errorbar riser clip length 0.100000
+@    s20 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s20 legend  "Residuals (799.8 MHz, 130.416 ppm)"
+@    s21 hidden false
+@    s21 type xydy
+@    s21 symbol 9
+@    s21 symbol size 0.450000
+@    s21 symbol color 13
+@    s21 symbol pattern 1
+@    s21 symbol fill color 13
+@    s21 symbol fill pattern 0
+@    s21 symbol linewidth 0.5
+@    s21 symbol linestyle 1
+@    s21 symbol char 65
+@    s21 symbol char font 0
+@    s21 symbol skip 0
+@    s21 line type 1
+@    s21 line linestyle 3
+@    s21 line linewidth 1.0
+@    s21 line color 13
+@    s21 line pattern 1
+@    s21 baseline type 0
+@    s21 baseline off
+@    s21 dropline off
+@    s21 fill type 0
+@    s21 fill rule 0
+@    s21 fill color 13
+@    s21 fill pattern 1
+@    s21 avalue off
+@    s21 avalue type 2
+@    s21 avalue char size 1.000000
+@    s21 avalue font 0
+@    s21 avalue color 13
+@    s21 avalue rot 0
+@    s21 avalue format general
+@    s21 avalue prec 3
+@    s21 avalue prepend ""
+@    s21 avalue append ""
+@    s21 avalue offset 0.000000 , 0.000000
+@    s21 errorbar on
+@    s21 errorbar place both
+@    s21 errorbar color 13
+@    s21 errorbar pattern 1
+@    s21 errorbar size 0.500000
+@    s21 errorbar linewidth 0.5
+@    s21 errorbar linestyle 1
+@    s21 errorbar riser linewidth 0.5
+@    s21 errorbar riser linestyle 1
+@    s21 errorbar riser clip off
+@    s21 errorbar riser clip length 0.100000
+@    s21 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s21 legend  "Residuals (799.8 MHz, 142.754 ppm)"
+@    s22 hidden false
+@    s22 type xydy
+@    s22 symbol 9
+@    s22 symbol size 0.450000
+@    s22 symbol color 11
+@    s22 symbol pattern 1
+@    s22 symbol fill color 11
+@    s22 symbol fill pattern 0
+@    s22 symbol linewidth 0.5
+@    s22 symbol linestyle 1
+@    s22 symbol char 65
+@    s22 symbol char font 0
+@    s22 symbol skip 0
+@    s22 line type 1
+@    s22 line linestyle 3
+@    s22 line linewidth 1.0
+@    s22 line color 11
+@    s22 line pattern 1
+@    s22 baseline type 0
+@    s22 baseline off
+@    s22 dropline off
+@    s22 fill type 0
+@    s22 fill rule 0
+@    s22 fill color 11
+@    s22 fill pattern 1
+@    s22 avalue off
+@    s22 avalue type 2
+@    s22 avalue char size 1.000000
+@    s22 avalue font 0
+@    s22 avalue color 11
+@    s22 avalue rot 0
+@    s22 avalue format general
+@    s22 avalue prec 3
+@    s22 avalue prepend ""
+@    s22 avalue append ""
+@    s22 avalue offset 0.000000 , 0.000000
+@    s22 errorbar on
+@    s22 errorbar place both
+@    s22 errorbar color 11
+@    s22 errorbar pattern 1
+@    s22 errorbar size 0.500000
+@    s22 errorbar linewidth 0.5
+@    s22 errorbar linestyle 1
+@    s22 errorbar riser linewidth 0.5
+@    s22 errorbar riser linestyle 1
+@    s22 errorbar riser clip off
+@    s22 errorbar riser clip length 0.100000
+@    s22 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s22 legend  "Residuals (799.8 MHz, 179.768 ppm)"
+@    s23 hidden false
+@    s23 type xydy
+@    s23 symbol 9
+@    s23 symbol size 0.450000
+@    s23 symbol color 1
+@    s23 symbol pattern 1
+@    s23 symbol fill color 1
+@    s23 symbol fill pattern 0
+@    s23 symbol linewidth 0.5
+@    s23 symbol linestyle 1
+@    s23 symbol char 65
+@    s23 symbol char font 0
+@    s23 symbol skip 0
+@    s23 line type 1
+@    s23 line linestyle 3
+@    s23 line linewidth 1.0
+@    s23 line color 1
+@    s23 line pattern 1
+@    s23 baseline type 0
+@    s23 baseline off
+@    s23 dropline off
+@    s23 fill type 0
+@    s23 fill rule 0
+@    s23 fill color 1
+@    s23 fill pattern 1
+@    s23 avalue off
+@    s23 avalue type 2
+@    s23 avalue char size 1.000000
+@    s23 avalue font 0
+@    s23 avalue color 1
+@    s23 avalue rot 0
+@    s23 avalue format general
+@    s23 avalue prec 3
+@    s23 avalue prepend ""
+@    s23 avalue append ""
+@    s23 avalue offset 0.000000 , 0.000000
+@    s23 errorbar on
+@    s23 errorbar place both
+@    s23 errorbar color 1
+@    s23 errorbar pattern 1
+@    s23 errorbar size 0.500000
+@    s23 errorbar linewidth 0.5
+@    s23 errorbar linestyle 1
+@    s23 errorbar riser linewidth 0.5
+@    s23 errorbar riser linestyle 1
+@    s23 errorbar riser clip off
+@    s23 errorbar riser clip length 0.100000
+@    s23 comment "r2_r1rho_vs_w_eff_inter_disp_52_N_zoom.agr"
+@    s23 legend  "Residuals (799.8 MHz, 241.459 ppm)"
+@target G0.S0
+@type xydy
+3477.955 13.238228 -0.040354847
+4637.2292 12.881529 0.0089291111
+5482.7366 12.18789 0.023963406
+6556.5109 12.064687 0.034784618
+8704.4561 11.294606 0.037453225
+10585.239 10.897384 0.032108739
+&
+@target G0.S1
+@type xydy
+8481.0647 11.24208 0.039875029
+&
+@target G0.S2
+@type xydy
+6491.7969 12.054919 -0.042305967
+9372.8641 11.081394 0.0053161588
+11141.378 10.819381 0.019521952
+&
+@target G0.S3
+@type xydy
+11544.321 10.343567 -0.57492236
+13378.284 10.419082 -0.18411071
+&
+@target G0.S4
+@type xydy
+30440.623 9.8329506 -1.6937183
+&
+@target G0.S5
+@type xydy
+61266.774 8.7375414 -7.3964796
+&
+@target G0.S6
+@type xydy
+3477.955 13.33738 0
+4637.2292 12.431314 0
+5482.7366 11.967175 0
+6556.5109 11.544638 0
+8704.4561 11.037176 0
+10585.239 10.790576 0
+&
+@target G0.S7
+@type xydy
+8481.0647 11.037176 0
+&
+@target G0.S8
+@type xydy
+6491.7969 11.967175 0
+9372.8641 11.037176 0
+11141.378 10.790576 0
+&
+@target G0.S9
+@type xydy
+11544.321 11.967175 0
+13378.284 11.037176 0
+&
+@target G0.S10
+@type xydy
+30440.623 11.037176 0
+&
+@target G0.S11
+@type xydy
+61266.774 11.037176 0
+&
+@target G0.S12
+@type xydy
+2182.3846 14.790551 0
+2182.5099 14.790392 0
+2182.7186 14.790128 0
+2183.0108 14.789758 0
+2183.3864 14.789283 0
+2183.8454 14.788702 0
+2184.3877 14.788016 0
+2185.0133 14.787224 0
+2185.7222 14.786328 0
+2186.5141 14.785326 0
+2187.389 14.784219 0
+2188.3469 14.783007 0
+2189.3876 14.781691 0
+2190.511 14.78027 0
+2191.7169 14.778745 0
+2193.0053 14.777116 0
+2194.376 14.775384 0
+2195.8288 14.773547 0
+2197.3636 14.771607 0
+2198.9802 14.769564 0
+2200.6785 14.767419 0
+2202.4581 14.765171 0
+2204.319 14.76282 0
+2206.2609 14.760368 0
+2208.2837 14.757814 0
+2210.387 14.755159 0
+2212.5707 14.752404 0
+2214.8346 14.749547 0
+2217.1783 14.746591 0
+2219.6016 14.743535 0
+2222.1043 14.74038 0
+2224.6861 14.737126 0
+2227.3468 14.733773 0
+2230.0859 14.730322 0
+2232.9034 14.726774 0
+2235.7988 14.723129 0
+2238.7718 14.719388 0
+2241.8222 14.71555 0
+2244.9496 14.711617 0
+2248.1538 14.707588 0
+2251.4343 14.703465 0
+2254.7909 14.699248 0
+2258.2232 14.694938 0
+2261.7308 14.690535 0
+2265.3135 14.686039 0
+2268.9708 14.681452 0
+2272.7024 14.676774 0
+2276.508 14.672005 0
+2280.3871 14.667146 0
+2284.3394 14.662198 0
+2288.3645 14.657161 0
+2292.462 14.652037 0
+2296.6316 14.646824 0
+2300.8729 14.641525 0
+2305.1854 14.63614 0
+2309.5687 14.63067 0
+2314.0225 14.625115 0
+2318.5463 14.619476 0
+2323.1398 14.613753 0
+2327.8025 14.607948 0
+2332.534 14.602061 0
+2337.3338 14.596092 0
+2342.2017 14.590044 0
+2347.1371 14.583915 0
+2352.1396 14.577707 0
+2357.2088 14.571422 0
+2362.3443 14.565058 0
+2367.5456 14.558618 0
+2372.8124 14.552102 0
+2378.144 14.545511 0
+2383.5403 14.538845 0
+2389.0006 14.532105 0
+2394.5245 14.525293 0
+2400.1117 14.518408 0
+2405.7616 14.511452 0
+2411.4739 14.504426 0
+2417.2481 14.497329 0
+2423.0837 14.490164 0
+2428.9803 14.482931 0
+2434.9375 14.47563 0
+2440.9548 14.468263 0
+2447.0318 14.46083 0
+2453.168 14.453333 0
+2459.363 14.445771 0
+2465.6164 14.438146 0
+2471.9276 14.430458 0
+2478.2963 14.422709 0
+2484.7221 14.4149 0
+2491.2044 14.40703 0
+2497.7428 14.399101 0
+2504.337 14.391114 0
+2510.9864 14.38307 0
+2517.6906 14.374969 0
+2524.4492 14.366812 0
+2531.2618 14.3586 0
+2538.1278 14.350334 0
+2545.047 14.342015 0
+2552.0188 14.333644 0
+2559.0428 14.325221 0
+2566.1186 14.316747 0
+2573.2458 14.308224 0
+2580.4239 14.299651 0
+2587.6525 14.29103 0
+2594.9312 14.282362 0
+2602.2596 14.273647 0
+2609.6372 14.264886 0
+2617.0637 14.256081 0
+2624.5386 14.247231 0
+2632.0615 14.238339 0
+2639.632 14.229403 0
+2647.2497 14.220427 0
+2654.9141 14.211409 0
+2662.625 14.202351 0
+2670.3818 14.193255 0
+2678.1842 14.18412 0
+2686.0318 14.174947 0
+2693.9242 14.165738 0
+2701.861 14.156492 0
+2709.8417 14.147212 0
+2717.8661 14.137897 0
+2725.9337 14.128549 0
+2734.0442 14.119168 0
+2742.1971 14.109755 0
+2750.3922 14.100311 0
+2758.6289 14.090837 0
+2766.907 14.081333 0
+2775.226 14.0718 0
+2783.5857 14.062238 0
+2791.9856 14.05265 0
+2800.4254 14.043035 0
+2808.9047 14.033394 0
+2817.4231 14.023728 0
+2825.9804 14.014038 0
+2834.5761 14.004325 0
+2843.21 13.994588 0
+2851.8816 13.984829 0
+2860.5906 13.975049 0
+2869.3367 13.965248 0
+2878.1195 13.955428 0
+2886.9387 13.945588 0
+2895.7941 13.935729 0
+2904.6851 13.925853 0
+2913.6116 13.915959 0
+2922.5731 13.906049 0
+2931.5694 13.896123 0
+2940.6002 13.886182 0
+2949.6651 13.876227 0
+2958.7638 13.866258 0
+2967.8961 13.856275 0
+2977.0615 13.846281 0
+2986.2598 13.836274 0
+2995.4907 13.826257 0
+3004.7539 13.816228 0
+3014.0491 13.80619 0
+3023.376 13.796143 0
+3032.7343 13.786087 0
+3042.1238 13.776023 0
+3051.544 13.765951 0
+3060.9948 13.755873 0
+3070.4759 13.745788 0
+3079.9869 13.735698 0
+3089.5276 13.725603 0
+3099.0978 13.715503 0
+3108.6971 13.705399 0
+3118.3253 13.695292 0
+3127.9822 13.685182 0
+3137.6674 13.67507 0
+3147.3807 13.664957 0
+3157.1218 13.654842 0
+3166.8905 13.644726 0
+3176.6866 13.634611 0
+3186.5097 13.624496 0
+3196.3596 13.614381 0
+3206.2361 13.604269 0
+3216.139 13.594158 0
+3226.0679 13.584049 0
+3236.0227 13.573944 0
+3246.0031 13.563842 0
+3256.0089 13.553744 0
+3266.0398 13.54365 0
+3276.0957 13.533562 0
+3286.1762 13.523478 0
+3296.2812 13.5134 0
+3306.4104 13.503329 0
+3316.5636 13.493264 0
+3326.7406 13.483206 0
+3336.9412 13.473156 0
+3347.1651 13.463114 0
+3357.4122 13.45308 0
+3367.6822 13.443055 0
+3377.975 13.433039 0
+3388.2902 13.423033 0
+3398.6278 13.413036 0
+3408.9875 13.40305 0
+3419.3691 13.393075 0
+3429.7724 13.383111 0
+3440.1972 13.373159 0
+3450.6433 13.363218 0
+3461.1106 13.35329 0
+3471.5987 13.343374 0
+3482.1077 13.333471 0
+3492.6372 13.323581 0
+3503.187 13.313705 0
+3513.7571 13.303843 0
+3524.3471 13.293995 0
+3534.957 13.284162 0
+3545.5865 13.274344 0
+3556.2355 13.264541 0
+3566.9038 13.254753 0
+3577.5912 13.244982 0
+3588.2976 13.235226 0
+3599.0228 13.225487 0
+3609.7666 13.215765 0
+3620.5288 13.206059 0
+3631.3093 13.196371 0
+3642.1079 13.1867 0
+3652.9246 13.177047 0
+3663.759 13.167412 0
+3674.611 13.157796 0
+3685.4806 13.148198 0
+3696.3675 13.138619 0
+3707.2716 13.129059 0
+3718.1927 13.119518 0
+3729.1307 13.109996 0
+3740.0854 13.100495 0
+3751.0567 13.091013 0
+3762.0445 13.081551 0
+3773.0486 13.07211 0
+3784.0688 13.062689 0
+3795.105 13.05329 0
+3806.1571 13.043911 0
+3817.225 13.034553 0
+3828.3085 13.025217 0
+3839.4074 13.015902 0
+3850.5217 13.006609 0
+3861.6512 12.997338 0
+3872.7957 12.988089 0
+3883.9552 12.978862 0
+3895.1295 12.969657 0
+3906.3185 12.960476 0
+3917.522 12.951317 0
+3928.74 12.94218 0
+3939.9723 12.933067 0
+3951.2188 12.923977 0
+3962.4793 12.91491 0
+3973.7538 12.905867 0
+3985.0422 12.896847 0
+3996.3442 12.887851 0
+4007.6599 12.878879 0
+4018.989 12.869931 0
+4030.3315 12.861007 0
+4041.6873 12.852107 0
+4053.0562 12.843231 0
+4064.4381 12.83438 0
+4075.833 12.825554 0
+4087.2407 12.816752 0
+4098.6611 12.807974 0
+4110.0941 12.799222 0
+4121.5396 12.790494 0
+4132.9975 12.781792 0
+4144.4677 12.773114 0
+4155.9501 12.764462 0
+4167.4446 12.755835 0
+4178.951 12.747233 0
+4190.4694 12.738657 0
+4201.9996 12.730106 0
+4213.5414 12.72158 0
+4225.0949 12.713081 0
+4236.6598 12.704606 0
+4248.2362 12.696158 0
+4259.8239 12.687735 0
+4271.4228 12.679339 0
+4283.0329 12.670968 0
+4294.654 12.662623 0
+4306.2861 12.654304 0
+4317.929 12.646011 0
+4329.5827 12.637744 0
+4341.2471 12.629503 0
+4352.9222 12.621289 0
+4364.6077 12.6131 0
+4376.3037 12.604938 0
+4388.01 12.596802 0
+4399.7266 12.588692 0
+4411.4534 12.580609 0
+4423.1903 12.572551 0
+4434.9373 12.564521 0
+4446.6941 12.556516 0
+4458.4609 12.548538 0
+4470.2374 12.540586 0
+4482.0237 12.532661 0
+4493.8196 12.524762 0
+4505.6251 12.516889 0
+4517.4401 12.509043 0
+4529.2644 12.501223 0
+4541.0981 12.49343 0
+4552.9411 12.485663 0
+4564.7933 12.477923 0
+4576.6546 12.470209 0
+4588.525 12.462521 0
+4600.4043 12.45486 0
+4612.2926 12.447225 0
+4624.1897 12.439616 0
+4636.0955 12.432034 0
+4648.0101 12.424479 0
+4659.9334 12.416949 0
+4671.8652 12.409446 0
+4683.8055 12.401969 0
+4695.7543 12.394519 0
+4707.7114 12.387095 0
+4719.6769 12.379697 0
+4731.6506 12.372325 0
+4743.6325 12.36498 0
+4755.6226 12.35766 0
+4767.6207 12.350367 0
+4779.6268 12.3431 0
+4791.6409 12.335859 0
+4803.6629 12.328644 0
+4815.6926 12.321455 0
+4827.7302 12.314292 0
+4839.7755 12.307155 0
+4851.8284 12.300044 0
+4863.889 12.292959 0
+4875.957 12.2859 0
+4888.0326 12.278866 0
+4900.1156 12.271858 0
+4912.206 12.264876 0
+4924.3037 12.25792 0
+4936.4086 12.250989 0
+4948.5208 12.244084 0
+4960.6401 12.237204 0
+4972.7666 12.23035 0
+4984.9001 12.223521 0
+4997.0406 12.216718 0
+5009.1881 12.20994 0
+5021.3425 12.203188 0
+5033.5037 12.19646 0
+5045.6717 12.189758 0
+5057.8465 12.183081 0
+5070.028 12.176429 0
+5082.2162 12.169802 0
+5094.411 12.1632 0
+5106.6123 12.156623 0
+5118.8202 12.150071 0
+5131.0345 12.143543 0
+5143.2552 12.13704 0
+5155.4824 12.130562 0
+5167.7158 12.124109 0
+5179.9556 12.11768 0
+5192.2016 12.111276 0
+5204.4538 12.104896 0
+5216.7121 12.098541 0
+5228.9766 12.09221 0
+5241.2471 12.085903 0
+5253.5237 12.07962 0
+5265.8062 12.073362 0
+5278.0947 12.067127 0
+5290.3891 12.060917 0
+5302.6894 12.05473 0
+5314.9955 12.048568 0
+5327.3073 12.042429 0
+5339.6249 12.036314 0
+5351.9483 12.030222 0
+5364.2772 12.024154 0
+5376.6118 12.01811 0
+5388.952 12.012089 0
+5401.2977 12.006092 0
+5413.6489 12.000118 0
+5426.0056 11.994167 0
+5438.3677 11.988239 0
+5450.7353 11.982335 0
+5463.1082 11.976453 0
+5475.4864 11.970595 0
+5487.8699 11.964759 0
+5500.2586 11.958946 0
+5512.6526 11.953156 0
+5525.0517 11.947389 0
+5537.456 11.941644 0
+5549.8654 11.935922 0
+5562.2799 11.930223 0
+5574.6994 11.924545 0
+5587.1239 11.91889 0
+5599.5534 11.913258 0
+5611.9879 11.907647 0
+5624.4272 11.902059 0
+5636.8715 11.896492 0
+5649.3206 11.890948 0
+5661.7745 11.885426 0
+5674.2331 11.879925 0
+5686.6966 11.874446 0
+5699.1647 11.868989 0
+5711.6376 11.863553 0
+5724.115 11.858139 0
+5736.5972 11.852746 0
+5749.0839 11.847375 0
+5761.5752 11.842024 0
+5774.071 11.836696 0
+5786.5713 11.831388 0
+5799.0762 11.826101 0
+5811.5854 11.820835 0
+5824.0991 11.815591 0
+5836.6172 11.810367 0
+5849.1396 11.805164 0
+5861.6664 11.799981 0
+5874.1975 11.794819 0
+5886.7329 11.789678 0
+5899.2725 11.784557 0
+5911.8164 11.779457 0
+5924.3644 11.774376 0
+5936.9167 11.769316 0
+5949.473 11.764277 0
+5962.0335 11.759257 0
+5974.5981 11.754257 0
+5987.1668 11.749278 0
+5999.7395 11.744318 0
+6012.3162 11.739378 0
+6024.897 11.734457 0
+6037.4816 11.729556 0
+6050.0703 11.724675 0
+6062.6628 11.719813 0
+6075.2593 11.714971 0
+6087.8596 11.710148 0
+6100.4638 11.705344 0
+6113.0717 11.70056 0
+6125.6835 11.695794 0
+6138.2991 11.691048 0
+6150.9184 11.686321 0
+6163.5415 11.681612 0
+6176.1682 11.676922 0
+6188.7986 11.672251 0
+6201.4327 11.667599 0
+6214.0705 11.662965 0
+6226.7118 11.65835 0
+6239.3568 11.653753 0
+6252.0053 11.649175 0
+6264.6574 11.644614 0
+6277.313 11.640072 0
+6289.9721 11.635549 0
+6302.6347 11.631043 0
+6315.3007 11.626555 0
+6327.9703 11.622085 0
+6340.6432 11.617633 0
+6353.3195 11.613199 0
+6365.9993 11.608783 0
+6378.6824 11.604384 0
+6391.3688 11.600003 0
+6404.0585 11.595639 0
+6416.7516 11.591293 0
+6429.448 11.586964 0
+6442.1476 11.582652 0
+6454.8504 11.578357 0
+6467.5565 11.57408 0
+6480.2658 11.56982 0
+6492.9783 11.565576 0
+6505.694 11.56135 0
+6518.4128 11.557141 0
+6531.1347 11.552948 0
+6543.8598 11.548772 0
+6556.5879 11.544612 0
+6569.3191 11.54047 0
+6582.0534 11.536343 0
+6594.7908 11.532233 0
+6607.5311 11.52814 0
+6620.2745 11.524063 0
+6633.0209 11.520002 0
+6645.7702 11.515957 0
+6658.5225 11.511928 0
+6671.2777 11.507915 0
+6684.0359 11.503919 0
+6696.797 11.499938 0
+6709.5609 11.495973 0
+6722.3278 11.492023 0
+6735.0974 11.48809 0
+6747.87 11.484172 0
+6760.6453 11.480269 0
+6773.4235 11.476382 0
+6786.2044 11.472511 0
+6798.9882 11.468655 0
+6811.7746 11.464814 0
+6824.5639 11.460988 0
+6837.3558 11.457178 0
+6850.1505 11.453382 0
+6862.9479 11.449602 0
+6875.748 11.445836 0
+6888.5507 11.442086 0
+6901.3561 11.43835 0
+6914.1641 11.434629 0
+6926.9748 11.430923 0
+6939.7881 11.427231 0
+6952.6039 11.423554 0
+6965.4224 11.419892 0
+6978.2434 11.416244 0
+6991.067 11.41261 0
+7003.8931 11.408991 0
+7016.7217 11.405386 0
+7029.5529 11.401795 0
+7042.3865 11.398218 0
+7055.2227 11.394655 0
+7068.0613 11.391107 0
+7080.9023 11.387572 0
+7093.7458 11.384051 0
+7106.5918 11.380544 0
+7119.4401 11.377051 0
+7132.2909 11.373572 0
+7145.144 11.370106 0
+7157.9996 11.366654 0
+7170.8575 11.363215 0
+7183.7177 11.35979 0
+7196.5803 11.356378 0
+7209.4453 11.35298 0
+7222.3125 11.349594 0
+7235.182 11.346223 0
+7248.0539 11.342864 0
+7260.928 11.339518 0
+7273.8044 11.336186 0
+7286.683 11.332866 0
+7299.5639 11.32956 0
+7312.447 11.326266 0
+7325.3323 11.322985 0
+7338.2199 11.319717 0
+7351.1096 11.316462 0
+7364.0015 11.313219 0
+7376.8956 11.309989 0
+7389.7919 11.306771 0
+7402.6903 11.303566 0
+7415.5908 11.300374 0
+7428.4935 11.297194 0
+7441.3983 11.294026 0
+7454.3052 11.29087 0
+7467.2142 11.287727 0
+7480.1253 11.284596 0
+7493.0384 11.281477 0
+7505.9536 11.27837 0
+7518.8709 11.275275 0
+7531.7902 11.272192 0
+7544.7116 11.269121 0
+7557.6349 11.266062 0
+7570.5603 11.263014 0
+7583.4877 11.259978 0
+7596.417 11.256954 0
+7609.3484 11.253942 0
+7622.2817 11.250941 0
+7635.217 11.247952 0
+7648.1542 11.244974 0
+7661.0933 11.242008 0
+7674.0344 11.239053 0
+7686.9774 11.236109 0
+7699.9224 11.233177 0
+7712.8692 11.230256 0
+7725.8179 11.227346 0
+7738.7685 11.224448 0
+7751.721 11.22156 0
+7764.6753 11.218683 0
+7777.6315 11.215818 0
+7790.5895 11.212963 0
+7803.5494 11.210119 0
+7816.5111 11.207286 0
+7829.4746 11.204464 0
+7842.4399 11.201653 0
+7855.407 11.198852 0
+7868.376 11.196062 0
+7881.3467 11.193282 0
+7894.3191 11.190513 0
+7907.2933 11.187755 0
+7920.2693 11.185007 0
+7933.2471 11.18227 0
+7946.2265 11.179542 0
+7959.2077 11.176826 0
+7972.1907 11.174119 0
+7985.1753 11.171423 0
+7998.1616 11.168737 0
+8011.1497 11.166061 0
+8024.1394 11.163395 0
+8037.1308 11.160739 0
+8050.1239 11.158093 0
+8063.1186 11.155457 0
+8076.115 11.152831 0
+8089.113 11.150215 0
+8102.1127 11.147609 0
+8115.114 11.145013 0
+8128.117 11.142426 0
+8141.1215 11.139849 0
+8154.1277 11.137281 0
+8167.1354 11.134724 0
+8180.1448 11.132176 0
+8193.1557 11.129637 0
+8206.1683 11.127108 0
+8219.1824 11.124588 0
+8232.198 11.122078 0
+8245.2152 11.119577 0
+8258.234 11.117085 0
+8271.2543 11.114603 0
+8284.2761 11.11213 0
+8297.2995 11.109666 0
+8310.3243 11.107211 0
+8323.3507 11.104765 0
+8336.3786 11.102329 0
+8349.408 11.099901 0
+8362.4389 11.097483 0
+8375.4713 11.095073 0
+8388.5051 11.092672 0
+8401.5404 11.090281 0
+8414.5772 11.087898 0
+8427.6155 11.085524 0
+8440.6551 11.083158 0
+8453.6963 11.080801 0
+8466.7388 11.078453 0
+8479.7828 11.076114 0
+8492.8283 11.073783 0
+8505.8751 11.071461 0
+8518.9233 11.069148 0
+8531.973 11.066842 0
+8545.024 11.064546 0
+8558.0765 11.062257 0
+8571.1303 11.059977 0
+8584.1855 11.057706 0
+8597.2421 11.055443 0
+8610.3 11.053188 0
+8623.3593 11.050941 0
+8636.42 11.048702 0
+8649.482 11.046472 0
+8662.5453 11.04425 0
+8675.61 11.042035 0
+8688.676 11.039829 0
+8701.7433 11.037631 0
+8714.812 11.035441 0
+8727.8819 11.033259 0
+8740.9532 11.031085 0
+8754.0258 11.028918 0
+8767.0996 11.02676 0
+8780.1748 11.024609 0
+8793.2512 11.022466 0
+8806.3289 11.020331 0
+8819.4079 11.018203 0
+8832.4881 11.016083 0
+8845.5696 11.013971 0
+8858.6524 11.011866 0
+8871.7364 11.009769 0
+8884.8216 11.00768 0
+8897.9081 11.005598 0
+8910.9958 11.003523 0
+8924.0847 11.001456 0
+8937.1749 10.999397 0
+8950.2663 10.997344 0
+8963.3589 10.9953 0
+8976.4527 10.993262 0
+8989.5477 10.991232 0
+9002.6439 10.989209 0
+9015.7412 10.987193 0
+9028.8398 10.985184 0
+9041.9395 10.983182 0
+9055.0405 10.981188 0
+9068.1425 10.979201 0
+9081.2458 10.977221 0
+9094.3502 10.975247 0
+9107.4558 10.973281 0
+9120.5625 10.971322 0
+9133.6703 10.96937 0
+9146.7793 10.967424 0
+9159.8894 10.965486 0
+9173.0007 10.963554 0
+9186.1131 10.961629 0
+9199.2266 10.959711 0
+9212.3412 10.9578 0
+9225.4569 10.955895 0
+9238.5737 10.953997 0
+9251.6917 10.952106 0
+9264.8107 10.950222 0
+9277.9308 10.948344 0
+9291.052 10.946473 0
+9304.1743 10.944608 0
+9317.2977 10.94275 0
+9330.4221 10.940898 0
+9343.5476 10.939053 0
+9356.6742 10.937214 0
+9369.8018 10.935382 0
+9382.9305 10.933556 0
+9396.0603 10.931736 0
+9409.191 10.929923 0
+9422.3229 10.928116 0
+9435.4557 10.926315 0
+9448.5896 10.924521 0
+9461.7245 10.922733 0
+9474.8605 10.920951 0
+9487.9975 10.919175 0
+9501.1354 10.917405 0
+9514.2744 10.915642 0
+9527.4144 10.913884 0
+9540.5555 10.912133 0
+9553.6975 10.910388 0
+9566.8405 10.908648 0
+9579.9845 10.906915 0
+9593.1294 10.905188 0
+9606.2754 10.903466 0
+9619.4223 10.901751 0
+9632.5703 10.900041 0
+9645.7192 10.898338 0
+9658.869 10.89664 0
+9672.0198 10.894948 0
+9685.1716 10.893262 0
+9698.3243 10.891581 0
+9711.478 10.889906 0
+9724.6327 10.888237 0
+9737.7882 10.886574 0
+9750.9448 10.884917 0
+9764.1022 10.883265 0
+9777.2606 10.881618 0
+9790.4199 10.879978 0
+9803.5802 10.878342 0
+9816.7413 10.876713 0
+9829.9034 10.875089 0
+9843.0664 10.87347 0
+9856.2303 10.871857 0
+9869.3951 10.870249 0
+9882.5608 10.868647 0
+9895.7274 10.867051 0
+9908.8949 10.865459 0
+9922.0633 10.863873 0
+9935.2326 10.862293 0
+9948.4028 10.860717 0
+9961.5738 10.859147 0
+9974.7458 10.857582 0
+9987.9186 10.856023 0
+10001.092 10.854469 0
+10014.267 10.85292 0
+10027.442 10.851376 0
+10040.618 10.849837 0
+10053.796 10.848304 0
+10066.974 10.846775 0
+10080.152 10.845252 0
+10093.332 10.843734 0
+10106.513 10.842221 0
+10119.694 10.840713 0
+10132.876 10.83921 0
+10146.059 10.837711 0
+10159.243 10.836218 0
+10172.428 10.83473 0
+10185.613 10.833247 0
+10198.8 10.831769 0
+10211.987 10.830295 0
+10225.175 10.828827 0
+10238.364 10.827363 0
+10251.553 10.825905 0
+10264.744 10.824451 0
+10277.935 10.823001 0
+10291.127 10.821557 0
+10304.32 10.820117 0
+10317.513 10.818683 0
+10330.708 10.817252 0
+10343.903 10.815827 0
+10357.099 10.814406 0
+10370.295 10.81299 0
+10383.493 10.811578 0
+10396.691 10.810172 0
+10409.89 10.808769 0
+10423.09 10.807372 0
+10436.291 10.805979 0
+10449.492 10.80459 0
+10462.694 10.803206 0
+10475.897 10.801826 0
+10489.101 10.800451 0
+10502.305 10.799081 0
+10515.51 10.797715 0
+10528.716 10.796353 0
+10541.923 10.794996 0
+10555.13 10.793643 0
+10568.338 10.792295 0
+10581.547 10.790951 0
+10594.757 10.789611 0
+10607.967 10.788275 0
+10621.178 10.786944 0
+10634.39 10.785617 0
+10647.602 10.784295 0
+10660.815 10.782977 0
+10674.029 10.781663 0
+10687.244 10.780353 0
+10700.459 10.779047 0
+10713.675 10.777746 0
+10726.892 10.776449 0
+10740.109 10.775156 0
+10753.328 10.773867 0
+10766.546 10.772582 0
+10779.766 10.771301 0
+10792.986 10.770025 0
+10806.207 10.768752 0
+10819.429 10.767484 0
+10832.651 10.766219 0
+10845.874 10.764959 0
+10859.098 10.763703 0
+10872.322 10.76245 0
+10885.547 10.761202 0
+10898.773 10.759957 0
+10911.999 10.758717 0
+10925.226 10.75748 0
+10938.454 10.756248 0
+10951.682 10.755019 0
+10964.911 10.753794 0
+10978.141 10.752573 0
+10991.371 10.751356 0
+11004.602 10.750143 0
+11017.834 10.748933 0
+11031.066 10.747727 0
+11044.299 10.746526 0
+11057.533 10.745327 0
+11070.767 10.744133 0
+11084.002 10.742942 0
+11097.237 10.741756 0
+11110.473 10.740572 0
+11123.71 10.739393 0
+11136.947 10.738217 0
+11150.185 10.737045 0
+11163.424 10.735877 0
+11176.663 10.734712 0
+11189.903 10.733551 0
+11203.144 10.732393 0
+11216.385 10.731239 0
+11229.627 10.730089 0
+11242.869 10.728942 0
+11256.112 10.727799 0
+11269.356 10.726659 0
+11282.6 10.725523 0
+11295.845 10.72439 0
+11309.09 10.723261 0
+11322.336 10.722136 0
+11335.582 10.721014 0
+11348.83 10.719895 0
+11362.077 10.71878 0
+11375.326 10.717668 0
+11388.575 10.716559 0
+11401.824 10.715454 0
+11415.074 10.714353 0
+11428.325 10.713255 0
+11441.576 10.71216 0
+11454.828 10.711068 0
+11468.081 10.70998 0
+11481.334 10.708895 0
+11494.587 10.707814 0
+11507.842 10.706736 0
+11521.096 10.705661 0
+11534.352 10.704589 0
+11547.608 10.703521 0
+11560.864 10.702456 0
+11574.121 10.701394 0
+11587.379 10.700335 0
+11600.637 10.69928 0
+11613.895 10.698228 0
+11627.155 10.697179 0
+11640.414 10.696133 0
+11653.675 10.69509 0
+11666.936 10.69405 0
+11680.197 10.693014 0
+11693.459 10.691981 0
+11706.721 10.690951 0
+11719.985 10.689924 0
+11733.248 10.6889 0
+11746.512 10.687879 0
+11759.777 10.686861 0
+11773.042 10.685846 0
+11786.308 10.684835 0
+11799.574 10.683826 0
+11812.841 10.68282 0
+11826.108 10.681818 0
+11839.376 10.680818 0
+11852.644 10.679822 0
+11865.913 10.678828 0
+11879.183 10.677837 0
+11892.453 10.67685 0
+11905.723 10.675865 0
+11918.994 10.674883 0
+11932.266 10.673904 0
+11945.538 10.672928 0
+11958.81 10.671955 0
+11972.083 10.670985 0
+11985.357 10.670017 0
+11998.631 10.669053 0
+12011.905 10.668091 0
+12025.18 10.667132 0
+12038.456 10.666176 0
+12051.732 10.665223 0
+12065.008 10.664273 0
+12078.285 10.663325 0
+12091.563 10.662381 0
+12104.841 10.661439 0
+12118.119 10.6605 0
+12131.398 10.659563 0
+12144.677 10.65863 0
+12157.957 10.657699 0
+12171.238 10.65677 0
+12184.519 10.655845 0
+12197.8 10.654922 0
+12211.082 10.654002 0
+12224.364 10.653085 0
+12237.647 10.65217 0
+12250.93 10.651258 0
+12264.214 10.650349 0
+12277.498 10.649442 0
+12290.783 10.648538 0
+12304.068 10.647636 0
+12317.354 10.646738 0
+12330.64 10.645841 0
+12343.926 10.644948 0
+12357.213 10.644057 0
+12370.501 10.643168 0
+12383.789 10.642282 0
+12397.077 10.641399 0
+12410.366 10.640518 0
+12423.655 10.63964 0
+12436.945 10.638764 0
+12450.235 10.637891 0
+12463.526 10.637021 0
+12476.817 10.636152 0
+12490.108 10.635287 0
+12503.4 10.634424 0
+12516.693 10.633563 0
+12529.986 10.632705 0
+12543.279 10.631849 0
+12556.573 10.630996 0
+12569.867 10.630145 0
+12583.162 10.629296 0
+12596.457 10.62845 0
+12609.752 10.627607 0
+12623.048 10.626766 0
+12636.344 10.625927 0
+12649.641 10.62509 0
+12662.938 10.624256 0
+12676.236 10.623425 0
+12689.534 10.622595 0
+12702.833 10.621769 0
+12716.132 10.620944 0
+12729.431 10.620122 0
+12742.731 10.619302 0
+12756.031 10.618484 0
+12769.332 10.617669 0
+12782.633 10.616856 0
+12795.934 10.616045 0
+12809.236 10.615237 0
+12822.538 10.614431 0
+12835.841 10.613627 0
+12849.144 10.612825 0
+12862.447 10.612026 0
+12875.751 10.611229 0
+12889.056 10.610434 0
+12902.36 10.609641 0
+12915.665 10.608851 0
+12928.971 10.608063 0
+12942.277 10.607277 0
+12955.583 10.606493 0
+12968.89 10.605711 0
+12982.197 10.604932 0
+12995.505 10.604154 0
+13008.812 10.603379 0
+13022.121 10.602606 0
+13035.429 10.601836 0
+13048.739 10.601067 0
+13062.048 10.600301 0
+13075.358 10.599536 0
+13088.668 10.598774 0
+13101.979 10.598014 0
+13115.29 10.597256 0
+13128.601 10.5965 0
+13141.913 10.595746 0
+13155.225 10.594994 0
+13168.538 10.594244 0
+13181.851 10.593497 0
+13195.164 10.592751 0
+13208.478 10.592008 0
+13221.792 10.591266 0
+13235.106 10.590527 0
+13248.421 10.589789 0
+13261.736 10.589054 0
+13275.052 10.588321 0
+13288.368 10.587589 0
+13301.684 10.58686 0
+13315.001 10.586133 0
+13328.318 10.585407 0
+13341.635 10.584684 0
+13354.953 10.583963 0
+13368.271 10.583243 0
+13381.59 10.582526 0
+13394.909 10.58181 0
+13408.228 10.581097 0
+13421.547 10.580385 0
+13434.867 10.579675 0
+13448.188 10.578967 0
+13461.508 10.578262 0
+13474.829 10.577558 0
+13488.151 10.576856 0
+13501.473 10.576155 0
+13514.795 10.575457 0
+13528.117 10.574761 0
+13541.44 10.574066 0
+13554.763 10.573374 0
+13568.086 10.572683 0
+13581.41 10.571994 0
+13594.734 10.571307 0
+13608.059 10.570622 0
+13621.384 10.569939 0
+13634.709 10.569257 0
+13648.035 10.568578 0
+13661.361 10.5679 0
+13674.687 10.567224 0
+&
+@target G0.S13
+@type xydy
+961.07062 14.790565 0
+961.27946 14.790449 0
+961.62742 14.790255 0
+962.11436 14.789983 0
+962.74005 14.789634 0
+963.50424 14.789207 0
+964.40659 14.788703 0
+965.44672 14.788122 0
+966.62418 14.787463 0
+967.93846 14.786727 0
+969.38902 14.785914 0
+970.97524 14.785023 0
+972.69646 14.784056 0
+974.55196 14.783011 0
+976.54099 14.78189 0
+978.66271 14.780692 0
+980.91628 14.779417 0
+983.30078 14.778066 0
+985.81527 14.776639 0
+988.45875 14.775135 0
+991.23019 14.773556 0
+994.12853 14.7719 0
+997.15265 14.770169 0
+1000.3014 14.768362 0
+1003.5737 14.76648 0
+1006.9682 14.764523 0
+1010.4837 14.76249 0
+1014.119 14.760383 0
+1017.8728 14.758202 0
+1021.7438 14.755946 0
+1025.7307 14.753615 0
+1029.832 14.751211 0
+1034.0466 14.748734 0
+1038.3729 14.746183 0
+1042.8095 14.743558 0
+1047.3552 14.740861 0
+1052.0084 14.738091 0
+1056.7678 14.735249 0
+1061.6319 14.732335 0
+1066.5993 14.729349 0
+1071.6685 14.726291 0
+1076.8382 14.723163 0
+1082.1068 14.719963 0
+1087.4729 14.716693 0
+1092.9352 14.713352 0
+1098.4921 14.709941 0
+1104.1422 14.706461 0
+1109.8842 14.702912 0
+1115.7165 14.699293 0
+1121.6379 14.695606 0
+1127.6468 14.691851 0
+1133.7419 14.688028 0
+1139.9218 14.684137 0
+1146.1852 14.680179 0
+1152.5306 14.676154 0
+1158.9567 14.672063 0
+1165.4623 14.667906 0
+1172.0459 14.663683 0
+1178.7062 14.659395 0
+1185.4421 14.655042 0
+1192.2521 14.650624 0
+1199.135 14.646143 0
+1206.0897 14.641598 0
+1213.1147 14.636989 0
+1220.209 14.632318 0
+1227.3713 14.627585 0
+1234.6005 14.622789 0
+1241.8953 14.617932 0
+1249.2547 14.613014 0
+1256.6774 14.608036 0
+1264.1625 14.602997 0
+1271.7087 14.597898 0
+1279.3149 14.592741 0
+1286.9803 14.587524 0
+1294.7035 14.582249 0
+1302.4838 14.576916 0
+1310.32 14.571526 0
+1318.2111 14.566079 0
+1326.1561 14.560575 0
+1334.1542 14.555016 0
+1342.2043 14.549401 0
+1350.3055 14.543731 0
+1358.4569 14.538006 0
+1366.6576 14.532227 0
+1374.9067 14.526395 0
+1383.2033 14.52051 0
+1391.5467 14.514572 0
+1399.936 14.508582 0
+1408.3702 14.502541 0
+1416.8488 14.496448 0
+1425.3707 14.490305 0
+1433.9354 14.484112 0
+1442.5419 14.477869 0
+1451.1897 14.471577 0
+1459.8779 14.465237 0
+1468.6058 14.458849 0
+1477.3727 14.452413 0
+1486.1779 14.445931 0
+1495.0208 14.439402 0
+1503.9007 14.432826 0
+1512.8169 14.426206 0
+1521.7688 14.419541 0
+1530.7558 14.412831 0
+1539.7773 14.406077 0
+1548.8325 14.399281 0
+1557.9211 14.392441 0
+1567.0423 14.385559 0
+1576.1957 14.378635 0
+1585.3806 14.371671 0
+1594.5965 14.364665 0
+1603.843 14.357619 0
+1613.1193 14.350534 0
+1622.4251 14.343409 0
+1631.7599 14.336246 0
+1641.1231 14.329045 0
+1650.5143 14.321807 0
+1659.9329 14.314531 0
+1669.3786 14.307219 0
+1678.8508 14.299871 0
+1688.3492 14.292487 0
+1697.8732 14.285069 0
+1707.4225 14.277616 0
+1716.9966 14.270129 0
+1726.5951 14.262609 0
+1736.2176 14.255057 0
+1745.8638 14.247472 0
+1755.5332 14.239855 0
+1765.2254 14.232207 0
+1774.9401 14.224528 0
+1784.6769 14.216819 0
+1794.4354 14.20908 0
+1804.2153 14.201312 0
+1814.0163 14.193515 0
+1823.8379 14.18569 0
+1833.68 14.177838 0
+1843.5421 14.169958 0
+1853.4239 14.162052 0
+1863.3251 14.154119 0
+1873.2454 14.146161 0
+1883.1845 14.138178 0
+1893.1422 14.13017 0
+1903.118 14.122138 0
+1913.1118 14.114082 0
+1923.1232 14.106004 0
+1933.152 14.097902 0
+1943.1979 14.089778 0
+1953.2607 14.081633 0
+1963.34 14.073466 0
+1973.4357 14.065279 0
+1983.5474 14.057072 0
+1993.675 14.048844 0
+2003.8182 14.040598 0
+2013.9767 14.032332 0
+2024.1504 14.024049 0
+2034.339 14.015747 0
+2044.5422 14.007428 0
+2054.7599 13.999092 0
+2064.9919 13.990739 0
+2075.2379 13.982371 0
+2085.4977 13.973987 0
+2095.7711 13.965588 0
+2106.058 13.957174 0
+2116.3581 13.948745 0
+2126.6712 13.940304 0
+2136.9972 13.931848 0
+2147.3359 13.92338 0
+2157.687 13.914899 0
+2168.0505 13.906407 0
+2178.426 13.897902 0
+2188.8136 13.889387 0
+2199.2129 13.880861 0
+2209.6238 13.872324 0
+2220.0462 13.863778 0
+2230.4798 13.855222 0
+2240.9247 13.846657 0
+2251.3804 13.838083 0
+2261.8471 13.829501 0
+2272.3244 13.820911 0
+2282.8122 13.812313 0
+2293.3104 13.803709 0
+2303.8189 13.795098 0
+2314.3375 13.78648 0
+2324.8661 13.777857 0
+2335.4044 13.769228 0
+2345.9525 13.760593 0
+2356.5102 13.751954 0
+2367.0773 13.743311 0
+2377.6537 13.734664 0
+2388.2393 13.726013 0
+2398.834 13.717358 0
+2409.4377 13.708701 0
+2420.0502 13.700041 0
+2430.6714 13.691379 0
+2441.3012 13.682715 0
+2451.9395 13.674049 0
+2462.5862 13.665382 0
+2473.2411 13.656715 0
+2483.9042 13.648047 0
+2494.5754 13.639378 0
+2505.2546 13.63071 0
+2515.9416 13.622042 0
+2526.6364 13.613375 0
+2537.3388 13.604709 0
+2548.0488 13.596045 0
+2558.7663 13.587382 0
+2569.4911 13.578722 0
+2580.2233 13.570063 0
+2590.9626 13.561408 0
+2601.709 13.552755 0
+2612.4625 13.544106 0
+2623.2229 13.53546 0
+2633.9901 13.526818 0
+2644.7641 13.51818 0
+2655.5448 13.509546 0
+2666.332 13.500917 0
+2677.1258 13.492294 0
+2687.9261 13.483675 0
+2698.7327 13.475062 0
+2709.5456 13.466455 0
+2720.3647 13.457853 0
+2731.1899 13.449258 0
+2742.0212 13.44067 0
+2752.8585 13.432088 0
+2763.7017 13.423514 0
+2774.5508 13.414947 0
+2785.4057 13.406387 0
+2796.2662 13.397835 0
+2807.1325 13.389292 0
+2818.0043 13.380756 0
+2828.8816 13.372229 0
+2839.7644 13.363711 0
+2850.6526 13.355202 0
+2861.5462 13.346702 0
+2872.445 13.338211 0
+2883.349 13.32973 0
+2894.2582 13.321259 0
+2905.1725 13.312798 0
+2916.0918 13.304347 0
+2927.0161 13.295907 0
+2937.9453 13.287477 0
+2948.8794 13.279058 0
+2959.8183 13.27065 0
+2970.762 13.262254 0
+2981.7104 13.253869 0
+2992.6635 13.245495 0
+3003.6212 13.237134 0
+3014.5834 13.228784 0
+3025.5502 13.220447 0
+3036.5214 13.212122 0
+3047.497 13.20381 0
+3058.477 13.19551 0
+3069.4613 13.187223 0
+3080.4499 13.178949 0
+3091.4427 13.170689 0
+3102.4397 13.162442 0
+3113.4408 13.154208 0
+3124.4461 13.145988 0
+3135.4553 13.137782 0
+3146.4686 13.12959 0
+3157.4859 13.121412 0
+3168.5071 13.113248 0
+3179.5321 13.105099 0
+3190.5611 13.096964 0
+3201.5938 13.088844 0
+3212.6303 13.080739 0
+3223.6705 13.072649 0
+3234.7144 13.064574 0
+3245.7619 13.056514 0
+3256.8131 13.048469 0
+3267.8678 13.04044 0
+3278.9261 13.032427 0
+3289.9879 13.024429 0
+3301.0532 13.016448 0
+3312.1219 13.008482 0
+3323.194 13.000532 0
+3334.2694 12.992598 0
+3345.3482 12.984681 0
+3356.4303 12.97678 0
+3367.5157 12.968895 0
+3378.6043 12.961027 0
+3389.6961 12.953176 0
+3400.7911 12.945341 0
+3411.8892 12.937524 0
+3422.9905 12.929723 0
+3434.0948 12.921939 0
+3445.2022 12.914173 0
+3456.3125 12.906424 0
+3467.4259 12.898692 0
+3478.5423 12.890977 0
+3489.6616 12.88328 0
+3500.7838 12.875601 0
+3511.9088 12.867939 0
+3523.0368 12.860295 0
+3534.1675 12.852668 0
+3545.3011 12.84506 0
+3556.4374 12.837469 0
+3567.5765 12.829896 0
+3578.7183 12.822342 0
+3589.8628 12.814805 0
+3601.0099 12.807287 0
+3612.1598 12.799787 0
+3623.3122 12.792305 0
+3634.4672 12.784842 0
+3645.6248 12.777396 0
+3656.785 12.76997 0
+3667.9477 12.762562 0
+3679.1129 12.755172 0
+3690.2805 12.747801 0
+3701.4507 12.740449 0
+3712.6232 12.733115 0
+3723.7982 12.7258 0
+3734.9756 12.718504 0
+3746.1553 12.711227 0
+3757.3374 12.703968 0
+3768.5218 12.696729 0
+3779.7086 12.689508 0
+3790.8976 12.682306 0
+3802.0889 12.675124 0
+3813.2824 12.66796 0
+3824.4782 12.660816 0
+3835.6762 12.65369 0
+3846.8764 12.646584 0
+3858.0787 12.639496 0
+3869.2832 12.632428 0
+3880.4898 12.625379 0
+3891.6986 12.61835 0
+3902.9094 12.611339 0
+3914.1223 12.604348 0
+3925.3373 12.597376 0
+3936.5543 12.590423 0
+3947.7734 12.58349 0
+3958.9944 12.576576 0
+3970.2175 12.569681 0
+3981.4425 12.562806 0
+3992.6695 12.555949 0
+4003.8984 12.549113 0
+4015.1293 12.542295 0
+4026.362 12.535497 0
+4037.5967 12.528719 0
+4048.8332 12.52196 0
+4060.0716 12.51522 0
+4071.3118 12.5085 0
+4082.5539 12.501799 0
+4093.7978 12.495117 0
+4105.0435 12.488455 0
+4116.2909 12.481812 0
+4127.5402 12.475189 0
+4138.7912 12.468585 0
+4150.0439 12.462 0
+4161.2984 12.455435 0
+4172.5546 12.448889 0
+4183.8125 12.442362 0
+4195.0721 12.435855 0
+4206.3333 12.429368 0
+4217.5962 12.422899 0
+4228.8608 12.41645 0
+4240.127 12.41002 0
+4251.3948 12.40361 0
+4262.6642 12.397219 0
+4273.9352 12.390847 0
+4285.2078 12.384495 0
+4296.482 12.378162 0
+4307.7577 12.371848 0
+4319.035 12.365553 0
+4330.3138 12.359277 0
+4341.5942 12.353021 0
+4352.876 12.346784 0
+4364.1594 12.340566 0
+4375.4442 12.334367 0
+4386.7305 12.328188 0
+4398.0183 12.322027 0
+4409.3075 12.315886 0
+4420.5981 12.309763 0
+4431.8902 12.30366 0
+4443.1837 12.297575 0
+4454.4787 12.29151 0
+4465.775 12.285464 0
+4477.0727 12.279436 0
+4488.3718 12.273428 0
+4499.6722 12.267438 0
+4510.974 12.261467 0
+4522.2772 12.255515 0
+4533.5817 12.249582 0
+4544.8875 12.243668 0
+4556.1946 12.237772 0
+4567.5031 12.231895 0
+4578.8128 12.226037 0
+4590.1238 12.220198 0
+4601.4361 12.214377 0
+4612.7497 12.208574 0
+4624.0645 12.202791 0
+4635.3806 12.197026 0
+4646.6979 12.191279 0
+4658.0165 12.185551 0
+4669.3363 12.179841 0
+4680.6573 12.174149 0
+4691.9794 12.168476 0
+4703.3028 12.162822 0
+4714.6274 12.157185 0
+4725.9532 12.151567 0
+4737.2801 12.145967 0
+4748.6082 12.140386 0
+4759.9374 12.134822 0
+4771.2678 12.129277 0
+4782.5994 12.123749 0
+4793.932 12.11824 0
+4805.2658 12.112749 0
+4816.6007 12.107275 0
+4827.9367 12.10182 0
+4839.2738 12.096382 0
+4850.612 12.090963 0
+4861.9513 12.085561 0
+4873.2916 12.080176 0
+4884.633 12.07481 0
+4895.9755 12.069461 0
+4907.319 12.06413 0
+4918.6636 12.058817 0
+4930.0092 12.053521 0
+4941.3559 12.048242 0
+4952.7035 12.042981 0
+4964.0522 12.037738 0
+4975.4019 12.032512 0
+4986.7526 12.027303 0
+4998.1043 12.022112 0
+5009.457 12.016938 0
+5020.8107 12.011781 0
+5032.1653 12.006641 0
+5043.5209 12.001518 0
+5054.8775 11.996413 0
+5066.235 11.991324 0
+5077.5935 11.986253 0
+5088.953 11.981198 0
+5100.3133 11.976161 0
+5111.6746 11.97114 0
+5123.0369 11.966136 0
+5134.4 11.961149 0
+5145.7641 11.956178 0
+5157.129 11.951225 0
+5168.4949 11.946288 0
+5179.8616 11.941367 0
+5191.2293 11.936463 0
+5202.5978 11.931576 0
+5213.9672 11.926705 0
+5225.3375 11.92185 0
+5236.7087 11.917012 0
+5248.0807 11.91219 0
+5259.4535 11.907385 0
+5270.8273 11.902595 0
+5282.2018 11.897822 0
+5293.5772 11.893065 0
+5304.9534 11.888324 0
+5316.3305 11.8836 0
+5327.7084 11.878891 0
+5339.0871 11.874198 0
+5350.4666 11.869521 0
+5361.8469 11.86486 0
+5373.228 11.860214 0
+5384.6099 11.855585 0
+5395.9926 11.850971 0
+5407.3761 11.846373 0
+5418.7604 11.84179 0
+5430.1455 11.837223 0
+5441.5313 11.832672 0
+5452.9179 11.828136 0
+5464.3052 11.823615 0
+5475.6933 11.81911 0
+5487.0822 11.814621 0
+5498.4718 11.810146 0
+5509.8622 11.805687 0
+5521.2532 11.801243 0
+5532.6451 11.796814 0
+5544.0376 11.7924 0
+5555.4309 11.788001 0
+5566.8249 11.783617 0
+5578.2196 11.779249 0
+5589.6151 11.774895 0
+5601.0112 11.770556 0
+5612.408 11.766232 0
+5623.8056 11.761922 0
+5635.2038 11.757628 0
+5646.6027 11.753347 0
+5658.0024 11.749082 0
+5669.4027 11.744831 0
+5680.8036 11.740595 0
+5692.2053 11.736373 0
+5703.6076 11.732166 0
+5715.0106 11.727973 0
+5726.4142 11.723794 0
+5737.8185 11.71963 0
+5749.2235 11.71548 0
+5760.6291 11.711344 0
+5772.0353 11.707222 0
+5783.4422 11.703115 0
+5794.8498 11.699021 0
+5806.258 11.694941 0
+5817.6668 11.690876 0
+5829.0762 11.686824 0
+5840.4862 11.682786 0
+5851.8969 11.678762 0
+5863.3082 11.674752 0
+5874.7201 11.670756 0
+5886.1326 11.666773 0
+5897.5457 11.662804 0
+5908.9595 11.658848 0
+5920.3738 11.654906 0
+5931.7887 11.650978 0
+5943.2042 11.647063 0
+5954.6203 11.643161 0
+5966.037 11.639273 0
+5977.4543 11.635398 0
+5988.8721 11.631536 0
+6000.2905 11.627688 0
+6011.7095 11.623853 0
+6023.1291 11.620031 0
+6034.5492 11.616222 0
+6045.9699 11.612426 0
+6057.3911 11.608643 0
+6068.8129 11.604872 0
+6080.2353 11.601115 0
+6091.6582 11.597371 0
+6103.0817 11.59364 0
+6114.5057 11.589921 0
+6125.9302 11.586215 0
+6137.3553 11.582521 0
+6148.7809 11.578841 0
+6160.207 11.575173 0
+6171.6337 11.571517 0
+6183.0609 11.567874 0
+6194.4886 11.564244 0
+6205.9168 11.560625 0
+6217.3456 11.55702 0
+6228.7749 11.553426 0
+6240.2046 11.549845 0
+6251.6349 11.546276 0
+6263.0657 11.542719 0
+6274.497 11.539174 0
+6285.9288 11.535642 0
+6297.3611 11.532121 0
+6308.7939 11.528613 0
+6320.2272 11.525116 0
+6331.661 11.521632 0
+6343.0952 11.518159 0
+6354.53 11.514698 0
+6365.9652 11.511249 0
+6377.4009 11.507812 0
+6388.8371 11.504387 0
+6400.2737 11.500973 0
+6411.7109 11.49757 0
+6423.1485 11.49418 0
+6434.5865 11.490801 0
+6446.025 11.487433 0
+6457.464 11.484077 0
+6468.9035 11.480732 0
+6480.3434 11.477399 0
+6491.7837 11.474077 0
+6503.2246 11.470766 0
+6514.6658 11.467466 0
+6526.1075 11.464178 0
+6537.5497 11.460901 0
+6548.9923 11.457635 0
+6560.4353 11.45438 0
+6571.8788 11.451136 0
+6583.3227 11.447904 0
+6594.767 11.444682 0
+6606.2118 11.441471 0
+6617.657 11.438271 0
+6629.1026 11.435081 0
+6640.5486 11.431903 0
+6651.9951 11.428735 0
+6663.442 11.425579 0
+6674.8893 11.422432 0
+6686.337 11.419297 0
+6697.7852 11.416172 0
+6709.2337 11.413057 0
+6720.6827 11.409953 0
+6732.132 11.40686 0
+6743.5818 11.403777 0
+6755.032 11.400704 0
+6766.4825 11.397642 0
+6777.9335 11.39459 0
+6789.3849 11.391549 0
+6800.8367 11.388518 0
+6812.2888 11.385496 0
+6823.7414 11.382486 0
+6835.1943 11.379485 0
+6846.6476 11.376494 0
+6858.1013 11.373513 0
+6869.5554 11.370543 0
+6881.0099 11.367582 0
+6892.4647 11.364632 0
+6903.92 11.361691 0
+6915.3756 11.35876 0
+6926.8316 11.355839 0
+6938.2879 11.352928 0
+6949.7446 11.350026 0
+6961.2017 11.347135 0
+6972.6592 11.344253 0
+6984.117 11.34138 0
+6995.5752 11.338517 0
+7007.0337 11.335664 0
+7018.4926 11.332821 0
+7029.9519 11.329986 0
+7041.4115 11.327162 0
+7052.8715 11.324347 0
+7064.3318 11.321541 0
+7075.7925 11.318744 0
+7087.2535 11.315957 0
+7098.7149 11.313179 0
+7110.1766 11.310411 0
+7121.6386 11.307651 0
+7133.101 11.304901 0
+7144.5638 11.30216 0
+7156.0269 11.299428 0
+7167.4903 11.296706 0
+7178.954 11.293992 0
+7190.4181 11.291287 0
+7201.8825 11.288591 0
+7213.3473 11.285905 0
+7224.8124 11.283227 0
+7236.2778 11.280558 0
+7247.7435 11.277898 0
+7259.2096 11.275246 0
+7270.6759 11.272604 0
+7282.1426 11.26997 0
+7293.6097 11.267345 0
+7305.077 11.264728 0
+7316.5447 11.262121 0
+7328.0126 11.259522 0
+7339.4809 11.256931 0
+7350.9495 11.254349 0
+7362.4184 11.251775 0
+7373.8877 11.24921 0
+7385.3572 11.246654 0
+7396.827 11.244106 0
+7408.2972 11.241566 0
+7419.7676 11.239035 0
+7431.2384 11.236512 0
+7442.7094 11.233997 0
+7454.1808 11.23149 0
+7465.6524 11.228992 0
+7477.1243 11.226502 0
+7488.5966 11.22402 0
+7500.0691 11.221546 0
+7511.542 11.21908 0
+7523.0151 11.216623 0
+7534.4885 11.214173 0
+7545.9622 11.211732 0
+7557.4362 11.209298 0
+7568.9104 11.206873 0
+7580.385 11.204455 0
+7591.8598 11.202045 0
+7603.335 11.199643 0
+7614.8104 11.197249 0
+7626.286 11.194863 0
+7637.762 11.192484 0
+7649.2382 11.190113 0
+7660.7148 11.18775 0
+7672.1916 11.185395 0
+7683.6686 11.183047 0
+7695.146 11.180707 0
+7706.6236 11.178374 0
+7718.1014 11.176049 0
+7729.5796 11.173732 0
+7741.058 11.171422 0
+7752.5367 11.16912 0
+7764.0156 11.166825 0
+7775.4948 11.164537 0
+7786.9743 11.162257 0
+7798.4541 11.159984 0
+7809.934 11.157719 0
+7821.4143 11.155461 0
+7832.8948 11.15321 0
+7844.3756 11.150966 0
+7855.8566 11.14873 0
+7867.3379 11.146501 0
+7878.8194 11.144279 0
+7890.3012 11.142064 0
+7901.7833 11.139856 0
+7913.2656 11.137655 0
+7924.7481 11.135462 0
+7936.2309 11.133275 0
+7947.7139 11.131096 0
+7959.1972 11.128923 0
+7970.6807 11.126757 0
+7982.1645 11.124599 0
+7993.6485 11.122447 0
+8005.1328 11.120302 0
+8016.6173 11.118164 0
+8028.102 11.116033 0
+8039.587 11.113908 0
+8051.0722 11.111791 0
+8062.5576 11.10968 0
+8074.0433 11.107576 0
+8085.5292 11.105478 0
+8097.0154 11.103388 0
+8108.5018 11.101303 0
+8119.9884 11.099226 0
+8131.4752 11.097155 0
+8142.9623 11.095091 0
+8154.4496 11.093033 0
+8165.9372 11.090982 0
+8177.4249 11.088937 0
+8188.9129 11.086898 0
+8200.4011 11.084867 0
+8211.8896 11.082841 0
+8223.3782 11.080822 0
+8234.8671 11.078809 0
+8246.3562 11.076803 0
+8257.8456 11.074803 0
+8269.3351 11.072809 0
+8280.8249 11.070822 0
+8292.3148 11.068841 0
+8303.805 11.066866 0
+8315.2955 11.064897 0
+8326.7861 11.062935 0
+8338.2769 11.060978 0
+8349.768 11.059028 0
+8361.2593 11.057084 0
+8372.7507 11.055146 0
+8384.2424 11.053214 0
+8395.7343 11.051288 0
+8407.2264 11.049368 0
+8418.7187 11.047454 0
+8430.2113 11.045547 0
+8441.704 11.043645 0
+8453.1969 11.041749 0
+8464.6901 11.039858 0
+8476.1834 11.037974 0
+8487.677 11.036096 0
+8499.1707 11.034223 0
+8510.6647 11.032357 0
+8522.1588 11.030496 0
+8533.6532 11.028641 0
+8545.1477 11.026791 0
+8556.6425 11.024948 0
+8568.1374 11.02311 0
+8579.6326 11.021278 0
+8591.1279 11.019451 0
+8602.6234 11.01763 0
+8614.1191 11.015815 0
+8625.6151 11.014005 0
+8637.1112 11.012201 0
+8648.6075 11.010403 0
+8660.104 11.00861 0
+8671.6007 11.006822 0
+8683.0975 11.005041 0
+8694.5946 11.003264 0
+8706.0918 11.001493 0
+8717.5893 10.999728 0
+8729.0869 10.997967 0
+8740.5847 10.996213 0
+8752.0827 10.994463 0
+8763.5809 10.992719 0
+8775.0793 10.990981 0
+8786.5778 10.989247 0
+8798.0765 10.987519 0
+8809.5754 10.985797 0
+8821.0745 10.984079 0
+8832.5738 10.982367 0
+8844.0733 10.98066 0
+8855.5729 10.978958 0
+8867.0727 10.977262 0
+8878.5727 10.97557 0
+8890.0728 10.973884 0
+8901.5732 10.972203 0
+8913.0737 10.970527 0
+8924.5744 10.968856 0
+8936.0752 10.96719 0
+8947.5763 10.965529 0
+8959.0775 10.963873 0
+8970.5789 10.962222 0
+8982.0804 10.960576 0
+8993.5821 10.958935 0
+9005.084 10.9573 0
+9016.5861 10.955669 0
+9028.0883 10.954043 0
+9039.5907 10.952421 0
+9051.0933 10.950805 0
+9062.596 10.949194 0
+9074.0989 10.947587 0
+9085.602 10.945986 0
+9097.1052 10.944389 0
+9108.6086 10.942797 0
+9120.1121 10.941209 0
+9131.6158 10.939627 0
+9143.1197 10.938049 0
+9154.6238 10.936476 0
+9166.128 10.934907 0
+9177.6323 10.933344 0
+9189.1368 10.931785 0
+9200.6415 10.93023 0
+9212.1464 10.928681 0
+9223.6514 10.927135 0
+9235.1565 10.925595 0
+9246.6618 10.924059 0
+9258.1673 10.922528 0
+9269.6729 10.921001 0
+9281.1787 10.919479 0
+9292.6846 10.917961 0
+9304.1907 10.916448 0
+9315.697 10.914939 0
+9327.2034 10.913435 0
+9338.7099 10.911935 0
+9350.2166 10.91044 0
+9361.7235 10.908949 0
+9373.2305 10.907462 0
+9384.7376 10.90598 0
+9396.2449 10.904502 0
+9407.7524 10.903029 0
+9419.2599 10.90156 0
+9430.7677 10.900095 0
+9442.2756 10.898634 0
+9453.7836 10.897178 0
+9465.2918 10.895726 0
+9476.8001 10.894279 0
+9488.3086 10.892835 0
+9499.8172 10.891396 0
+9511.326 10.889961 0
+9522.8349 10.888531 0
+9534.344 10.887104 0
+9545.8532 10.885682 0
+9557.3625 10.884264 0
+9568.872 10.88285 0
+9580.3816 10.88144 0
+9591.8914 10.880034 0
+9603.4013 10.878632 0
+9614.9113 10.877234 0
+9626.4215 10.875841 0
+9637.9318 10.874451 0
+9649.4422 10.873066 0
+9660.9528 10.871684 0
+9672.4636 10.870307 0
+9683.9744 10.868934 0
+9695.4854 10.867564 0
+9706.9966 10.866199 0
+9718.5078 10.864837 0
+9730.0193 10.863479 0
+9741.5308 10.862126 0
+9753.0425 10.860776 0
+9764.5543 10.85943 0
+9776.0662 10.858088 0
+9787.5783 10.85675 0
+9799.0905 10.855416 0
+9810.6028 10.854085 0
+9822.1153 10.852758 0
+9833.6279 10.851436 0
+9845.1406 10.850117 0
+9856.6535 10.848801 0
+9868.1665 10.84749 0
+9879.6796 10.846182 0
+9891.1928 10.844878 0
+9902.7062 10.843578 0
+9914.2197 10.842282 0
+9925.7333 10.840989 0
+9937.2471 10.8397 0
+9948.761 10.838414 0
+9960.275 10.837132 0
+9971.7891 10.835854 0
+9983.3033 10.83458 0
+9994.8177 10.833309 0
+10006.332 10.832042 0
+10017.847 10.830778 0
+10029.362 10.829518 0
+10040.876 10.828262 0
+10052.391 10.827009 0
+10063.907 10.825759 0
+10075.422 10.824514 0
+10086.937 10.823271 0
+10098.453 10.822032 0
+10109.968 10.820797 0
+10121.484 10.819565 0
+10133 10.818337 0
+10144.516 10.817112 0
+10156.032 10.815891 0
+10167.548 10.814673 0
+10179.064 10.813458 0
+10190.581 10.812247 0
+10202.097 10.811039 0
+10213.614 10.809835 0
+10225.131 10.808634 0
+10236.648 10.807436 0
+10248.165 10.806242 0
+10259.682 10.805051 0
+10271.199 10.803864 0
+10282.716 10.802679 0
+10294.234 10.801498 0
+10305.751 10.800321 0
+10317.269 10.799146 0
+10328.787 10.797975 0
+10340.305 10.796807 0
+10351.823 10.795643 0
+10363.341 10.794482 0
+10374.859 10.793323 0
+10386.377 10.792168 0
+10397.896 10.791017 0
+10409.415 10.789868 0
+10420.933 10.788723 0
+10432.452 10.787581 0
+10443.971 10.786442 0
+10455.49 10.785306 0
+10467.009 10.784173 0
+10478.528 10.783044 0
+10490.048 10.781917 0
+10501.567 10.780794 0
+10513.087 10.779674 0
+10524.606 10.778556 0
+10536.126 10.777442 0
+10547.646 10.776331 0
+10559.166 10.775223 0
+10570.686 10.774118 0
+10582.206 10.773016 0
+10593.726 10.771918 0
+10605.247 10.770822 0
+10616.767 10.769729 0
+10628.288 10.768639 0
+10639.809 10.767552 0
+10651.329 10.766468 0
+10662.85 10.765387 0
+10674.371 10.764309 0
+10685.892 10.763234 0
+10697.414 10.762162 0
+10708.935 10.761093 0
+10720.456 10.760026 0
+10731.978 10.758963 0
+10743.5 10.757902 0
+10755.021 10.756844 0
+10766.543 10.75579 0
+10778.065 10.754738 0
+10789.587 10.753689 0
+10801.109 10.752642 0
+10812.631 10.751599 0
+10824.154 10.750558 0
+10835.676 10.749521 0
+10847.198 10.748486 0
+10858.721 10.747453 0
+10870.244 10.746424 0
+10881.767 10.745397 0
+10893.289 10.744373 0
+10904.812 10.743352 0
+10916.335 10.742334 0
+10927.859 10.741318 0
+10939.382 10.740305 0
+10950.905 10.739295 0
+10962.429 10.738288 0
+10973.952 10.737283 0
+10985.476 10.736281 0
+10997 10.735281 0
+11008.523 10.734284 0
+11020.047 10.73329 0
+11031.571 10.732299 0
+11043.096 10.73131 0
+11054.62 10.730324 0
+11066.144 10.72934 0
+11077.668 10.728359 0
+11089.193 10.727381 0
+11100.717 10.726405 0
+11112.242 10.725432 0
+11123.767 10.724462 0
+11135.292 10.723494 0
+11146.817 10.722528 0
+11158.342 10.721565 0
+11169.867 10.720605 0
+11181.392 10.719647 0
+11192.917 10.718692 0
+11204.442 10.717739 0
+11215.968 10.716789 0
+11227.493 10.715841 0
+11239.019 10.714896 0
+11250.545 10.713953 0
+11262.071 10.713013 0
+11273.597 10.712075 0
+11285.122 10.71114 0
+11296.649 10.710207 0
+11308.175 10.709277 0
+11319.701 10.708349 0
+11331.227 10.707423 0
+11342.754 10.7065 0
+11354.28 10.70558 0
+11365.807 10.704661 0
+11377.333 10.703745 0
+11388.86 10.702832 0
+11400.387 10.701921 0
+11411.914 10.701012 0
+11423.441 10.700106 0
+11434.968 10.699202 0
+11446.495 10.6983 0
+11458.022 10.697401 0
+11469.55 10.696504 0
+11481.077 10.695609 0
+11492.604 10.694717 0
+11504.132 10.693827 0
+11515.66 10.692939 0
+11527.187 10.692053 0
+11538.715 10.69117 0
+11550.243 10.69029 0
+11561.771 10.689411 0
+11573.299 10.688535 0
+11584.827 10.687661 0
+11596.355 10.686789 0
+11607.884 10.685919 0
+&
+@target G0.S14
+@type xydy
+4104.3671 14.790551 0
+4104.4337 14.790392 0
+4104.5446 14.790128 0
+4104.7 14.789758 0
+4104.8998 14.789283 0
+4105.144 14.788702 0
+4105.4325 14.788016 0
+4105.7654 14.787224 0
+4106.1427 14.786328 0
+4106.5643 14.785326 0
+4107.0302 14.784219 0
+4107.5404 14.783007 0
+4108.095 14.781691 0
+4108.6938 14.78027 0
+4109.3369 14.778745 0
+4110.0242 14.777116 0
+4110.7557 14.775384 0
+4111.5314 14.773547 0
+4112.3513 14.771607 0
+4113.2153 14.769564 0
+4114.1235 14.767419 0
+4115.0757 14.765171 0
+4116.072 14.76282 0
+4117.1123 14.760368 0
+4118.1966 14.757814 0
+4119.3248 14.755159 0
+4120.497 14.752404 0
+4121.7131 14.749547 0
+4122.9729 14.746591 0
+4124.2766 14.743535 0
+4125.6241 14.74038 0
+4127.0152 14.737126 0
+4128.4501 14.733773 0
+4129.9285 14.730322 0
+4131.4506 14.726774 0
+4133.0162 14.723129 0
+4134.6252 14.719388 0
+4136.2777 14.71555 0
+4137.9736 14.711617 0
+4139.7128 14.707588 0
+4141.4952 14.703465 0
+4143.3209 14.699248 0
+4145.1898 14.694938 0
+4147.1017 14.690535 0
+4149.0567 14.686039 0
+4151.0547 14.681452 0
+4153.0955 14.676774 0
+4155.1793 14.672005 0
+4157.3058 14.667146 0
+4159.4751 14.662198 0
+4161.687 14.657161 0
+4163.9415 14.652037 0
+4166.2385 14.646824 0
+4168.578 14.641525 0
+4170.9598 14.63614 0
+4173.384 14.63067 0
+4175.8504 14.625115 0
+4178.3589 14.619476 0
+4180.9096 14.613753 0
+4183.5022 14.607948 0
+4186.1368 14.602061 0
+4188.8132 14.596092 0
+4191.5314 14.590044 0
+4194.2912 14.583915 0
+4197.0927 14.577707 0
+4199.9357 14.571422 0
+4202.8201 14.565058 0
+4205.7459 14.558618 0
+4208.713 14.552102 0
+4211.7212 14.545511 0
+4214.7705 14.538845 0
+4217.8608 14.532105 0
+4220.9921 14.525293 0
+4224.1641 14.518408 0
+4227.3769 14.511452 0
+4230.6303 14.504426 0
+4233.9243 14.497329 0
+4237.2587 14.490164 0
+4240.6334 14.482931 0
+4244.0484 14.47563 0
+4247.5036 14.468263 0
+4250.9988 14.46083 0
+4254.534 14.453333 0
+4258.1091 14.445771 0
+4261.7239 14.438146 0
+4265.3784 14.430458 0
+4269.0724 14.422709 0
+4272.8059 14.4149 0
+4276.5787 14.40703 0
+4280.3908 14.399101 0
+4284.2421 14.391114 0
+4288.1323 14.38307 0
+4292.0615 14.374969 0
+4296.0296 14.366812 0
+4300.0363 14.3586 0
+4304.0817 14.350334 0
+4308.1656 14.342015 0
+4312.2878 14.333644 0
+4316.4484 14.325221 0
+4320.6471 14.316747 0
+4324.8838 14.308224 0
+4329.1586 14.299651 0
+4333.4711 14.29103 0
+4337.8214 14.282362 0
+4342.2093 14.273647 0
+4346.6347 14.264886 0
+4351.0974 14.256081 0
+4355.5975 14.247231 0
+4360.1346 14.238339 0
+4364.7089 14.229403 0
+4369.32 14.220427 0
+4373.9679 14.211409 0
+4378.6526 14.202351 0
+4383.3738 14.193255 0
+4388.1314 14.18412 0
+4392.9254 14.174947 0
+4397.7556 14.165738 0
+4402.6218 14.156492 0
+4407.5241 14.147212 0
+4412.4622 14.137897 0
+4417.436 14.128549 0
+4422.4455 14.119168 0
+4427.4904 14.109755 0
+4432.5707 14.100311 0
+4437.6863 14.090837 0
+4442.837 14.081333 0
+4448.0227 14.0718 0
+4453.2433 14.062238 0
+4458.4986 14.05265 0
+4463.7886 14.043035 0
+4469.1131 14.033394 0
+4474.472 14.023728 0
+4479.8651 14.014038 0
+4485.2924 14.004325 0
+4490.7538 13.994588 0
+4496.249 13.984829 0
+4501.778 13.975049 0
+4507.3406 13.965248 0
+4512.9368 13.955428 0
+4518.5663 13.945588 0
+4524.2292 13.935729 0
+4529.9252 13.925853 0
+4535.6542 13.915959 0
+4541.4161 13.906049 0
+4547.2108 13.896123 0
+4553.0381 13.886182 0
+4558.898 13.876227 0
+4564.7902 13.866258 0
+4570.7148 13.856275 0
+4576.6714 13.846281 0
+4582.6602 13.836274 0
+4588.6808 13.826257 0
+4594.7331 13.816228 0
+4600.8172 13.80619 0
+4606.9327 13.796143 0
+4613.0797 13.786087 0
+4619.2579 13.776023 0
+4625.4672 13.765951 0
+4631.7076 13.755873 0
+4637.9789 13.745788 0
+4644.281 13.735698 0
+4650.6136 13.725603 0
+4656.9769 13.715503 0
+4663.3705 13.705399 0
+4669.7943 13.695292 0
+4676.2484 13.685182 0
+4682.7324 13.67507 0
+4689.2464 13.664957 0
+4695.7901 13.654842 0
+4702.3634 13.644726 0
+4708.9663 13.634611 0
+4715.5986 13.624496 0
+4722.2602 13.614381 0
+4728.9509 13.604269 0
+4735.6706 13.594158 0
+4742.4193 13.584049 0
+4749.1967 13.573944 0
+4756.0028 13.563842 0
+4762.8374 13.553744 0
+4769.7005 13.54365 0
+4776.5918 13.533562 0
+4783.5113 13.523478 0
+4790.4588 13.5134 0
+4797.4343 13.503329 0
+4804.4376 13.493264 0
+4811.4685 13.483206 0
+4818.527 13.473156 0
+4825.613 13.463114 0
+4832.7263 13.45308 0
+4839.8667 13.443055 0
+4847.0343 13.433039 0
+4854.2288 13.423033 0
+4861.4501 13.413036 0
+4868.6982 13.40305 0
+4875.9728 13.393075 0
+4883.274 13.383111 0
+4890.6015 13.373159 0
+4897.9552 13.363218 0
+4905.3351 13.35329 0
+4912.741 13.343374 0
+4920.1728 13.333471 0
+4927.6303 13.323581 0
+4935.1135 13.313705 0
+4942.6223 13.303843 0
+4950.1565 13.293995 0
+4957.7159 13.284162 0
+4965.3006 13.274344 0
+4972.9104 13.264541 0
+4980.5451 13.254753 0
+4988.2046 13.244982 0
+4995.8889 13.235226 0
+5003.5978 13.225487 0
+5011.3313 13.215765 0
+5019.0891 13.206059 0
+5026.8712 13.196371 0
+5034.6774 13.1867 0
+5042.5077 13.177047 0
+5050.362 13.167412 0
+5058.2401 13.157796 0
+5066.1419 13.148198 0
+5074.0673 13.138619 0
+5082.0162 13.129059 0
+5089.9885 13.119518 0
+5097.9841 13.109996 0
+5106.0029 13.100495 0
+5114.0447 13.091013 0
+5122.1094 13.081551 0
+5130.197 13.07211 0
+5138.3074 13.062689 0
+5146.4404 13.05329 0
+5154.5959 13.043911 0
+5162.7738 13.034553 0
+5170.974 13.025217 0
+5179.1964 13.015902 0
+5187.4409 13.006609 0
+5195.7075 12.997338 0
+5203.9959 12.988089 0
+5212.306 12.978862 0
+5220.6379 12.969657 0
+5228.9913 12.960476 0
+5237.3662 12.951317 0
+5245.7625 12.94218 0
+5254.1801 12.933067 0
+5262.6188 12.923977 0
+5271.0785 12.91491 0
+5279.5593 12.905867 0
+5288.0608 12.896847 0
+5296.5832 12.887851 0
+5305.1262 12.878879 0
+5313.6898 12.869931 0
+5322.2738 12.861007 0
+5330.8782 12.852107 0
+5339.5029 12.843231 0
+5348.1477 12.83438 0
+5356.8126 12.825554 0
+5365.4974 12.816752 0
+5374.2022 12.807974 0
+5382.9267 12.799222 0
+5391.6709 12.790494 0
+5400.4347 12.781792 0
+5409.218 12.773114 0
+5418.0206 12.764462 0
+5426.8426 12.755835 0
+5435.6838 12.747233 0
+5444.5441 12.738657 0
+5453.4234 12.730106 0
+5462.3216 12.72158 0
+5471.2387 12.713081 0
+5480.1745 12.704606 0
+5489.129 12.696158 0
+5498.102 12.687735 0
+5507.0935 12.679339 0
+5516.1034 12.670968 0
+5525.1316 12.662623 0
+5534.178 12.654304 0
+5543.2425 12.646011 0
+5552.325 12.637744 0
+5561.4254 12.629503 0
+5570.5437 12.621289 0
+5579.6798 12.6131 0
+5588.8335 12.604938 0
+5598.0048 12.596802 0
+5607.1936 12.588692 0
+5616.3999 12.580609 0
+5625.6234 12.572551 0
+5634.8642 12.564521 0
+5644.1222 12.556516 0
+5653.3972 12.548538 0
+5662.6892 12.540586 0
+5671.9981 12.532661 0
+5681.3239 12.524762 0
+5690.6664 12.516889 0
+5700.0255 12.509043 0
+5709.4012 12.501223 0
+5718.7935 12.49343 0
+5728.2021 12.485663 0
+5737.6271 12.477923 0
+5747.0683 12.470209 0
+5756.5257 12.462521 0
+5765.9991 12.45486 0
+5775.4886 12.447225 0
+5784.9941 12.439616 0
+5794.5154 12.432034 0
+5804.0524 12.424479 0
+5813.6052 12.416949 0
+5823.1736 12.409446 0
+5832.7575 12.401969 0
+5842.3569 12.394519 0
+5851.9717 12.387095 0
+5861.6018 12.379697 0
+5871.2472 12.372325 0
+5880.9077 12.36498 0
+5890.5834 12.35766 0
+5900.274 12.350367 0
+5909.9796 12.3431 0
+5919.7001 12.335859 0
+5929.4353 12.328644 0
+5939.1853 12.321455 0
+5948.9499 12.314292 0
+5958.7292 12.307155 0
+5968.5229 12.300044 0
+5978.3311 12.292959 0
+5988.1536 12.2859 0
+5997.9904 12.278866 0
+6007.8415 12.271858 0
+6017.7067 12.264876 0
+6027.586 12.25792 0
+6037.4793 12.250989 0
+6047.3866 12.244084 0
+6057.3077 12.237204 0
+6067.2427 12.23035 0
+6077.1914 12.223521 0
+6087.1538 12.216718 0
+6097.1298 12.20994 0
+6107.1193 12.203188 0
+6117.1223 12.19646 0
+6127.1388 12.189758 0
+6137.1686 12.183081 0
+6147.2116 12.176429 0
+6157.2679 12.169802 0
+6167.3373 12.1632 0
+6177.4198 12.156623 0
+6187.5153 12.150071 0
+6197.6238 12.143543 0
+6207.7452 12.13704 0
+6217.8794 12.130562 0
+6228.0264 12.124109 0
+6238.1861 12.11768 0
+6248.3585 12.111276 0
+6258.5434 12.104896 0
+6268.7408 12.098541 0
+6278.9508 12.09221 0
+6289.1731 12.085903 0
+6299.4077 12.07962 0
+6309.6546 12.073362 0
+6319.9138 12.067127 0
+6330.1851 12.060917 0
+6340.4685 12.05473 0
+6350.764 12.048568 0
+6361.0714 12.042429 0
+6371.3908 12.036314 0
+6381.7221 12.030222 0
+6392.0651 12.024154 0
+6402.4199 12.01811 0
+6412.7864 12.012089 0
+6423.1646 12.006092 0
+6433.5543 12.000118 0
+6443.9556 11.994167 0
+6454.3683 11.988239 0
+6464.7924 11.982335 0
+6475.228 11.976453 0
+6485.6748 11.970595 0
+6496.1328 11.964759 0
+6506.6021 11.958946 0
+6517.0825 11.953156 0
+6527.574 11.947389 0
+6538.0766 11.941644 0
+6548.5901 11.935922 0
+6559.1145 11.930223 0
+6569.6499 11.924545 0
+6580.196 11.91889 0
+6590.753 11.913258 0
+6601.3206 11.907647 0
+6611.899 11.902059 0
+6622.4879 11.896492 0
+6633.0874 11.890948 0
+6643.6975 11.885426 0
+6654.318 11.879925 0
+6664.9489 11.874446 0
+6675.5902 11.868989 0
+6686.2418 11.863553 0
+6696.9037 11.858139 0
+6707.5758 11.852746 0
+6718.2581 11.847375 0
+6728.9505 11.842024 0
+6739.653 11.836696 0
+6750.3655 11.831388 0
+6761.088 11.826101 0
+6771.8204 11.820835 0
+6782.5627 11.815591 0
+6793.3148 11.810367 0
+6804.0768 11.805164 0
+6814.8485 11.799981 0
+6825.6298 11.794819 0
+6836.4209 11.789678 0
+6847.2215 11.784557 0
+6858.0317 11.779457 0
+6868.8514 11.774376 0
+6879.6806 11.769316 0
+6890.5193 11.764277 0
+6901.3673 11.759257 0
+6912.2246 11.754257 0
+6923.0913 11.749278 0
+6933.9672 11.744318 0
+6944.8523 11.739378 0
+6955.7465 11.734457 0
+6966.6499 11.729556 0
+6977.5624 11.724675 0
+6988.4839 11.719813 0
+6999.4144 11.714971 0
+7010.3538 11.710148 0
+7021.3022 11.705344 0
+7032.2594 11.70056 0
+7043.2255 11.695794 0
+7054.2003 11.691048 0
+7065.1839 11.686321 0
+7076.1762 11.681612 0
+7087.1772 11.676922 0
+7098.1867 11.672251 0
+7109.2049 11.667599 0
+7120.2316 11.662965 0
+7131.2668 11.65835 0
+7142.3105 11.653753 0
+7153.3626 11.649175 0
+7164.4231 11.644614 0
+7175.4919 11.640072 0
+7186.5691 11.635549 0
+7197.6545 11.631043 0
+7208.7481 11.626555 0
+7219.85 11.622085 0
+7230.96 11.617633 0
+7242.0781 11.613199 0
+7253.2043 11.608783 0
+7264.3386 11.604384 0
+7275.4808 11.600003 0
+7286.6311 11.595639 0
+7297.7892 11.591293 0
+7308.9553 11.586964 0
+7320.1292 11.582652 0
+7331.311 11.578357 0
+7342.5005 11.57408 0
+7353.6978 11.56982 0
+7364.9028 11.565576 0
+7376.1155 11.56135 0
+7387.3359 11.557141 0
+7398.5638 11.552948 0
+7409.7994 11.548772 0
+7421.0425 11.544612 0
+7432.2931 11.54047 0
+7443.5512 11.536343 0
+7454.8167 11.532233 0
+7466.0896 11.52814 0
+7477.3699 11.524063 0
+7488.6576 11.520002 0
+7499.9525 11.515957 0
+7511.2548 11.511928 0
+7522.5643 11.507915 0
+7533.881 11.503919 0
+7545.2048 11.499938 0
+7556.5359 11.495973 0
+7567.874 11.492023 0
+7579.2192 11.48809 0
+7590.5715 11.484172 0
+7601.9308 11.480269 0
+7613.297 11.476382 0
+7624.6703 11.472511 0
+7636.0504 11.468655 0
+7647.4375 11.464814 0
+7658.8314 11.460988 0
+7670.2322 11.457178 0
+7681.6397 11.453382 0
+7693.054 11.449602 0
+7704.4751 11.445836 0
+7715.9029 11.442086 0
+7727.3373 11.43835 0
+7738.7785 11.434629 0
+7750.2262 11.430923 0
+7761.6805 11.427231 0
+7773.1414 11.423554 0
+7784.6089 11.419892 0
+7796.0828 11.416244 0
+7807.5632 11.41261 0
+7819.0501 11.408991 0
+7830.5434 11.405386 0
+7842.0431 11.401795 0
+7853.5492 11.398218 0
+7865.0615 11.394655 0
+7876.5802 11.391107 0
+7888.1052 11.387572 0
+7899.6365 11.384051 0
+7911.1739 11.380544 0
+7922.7176 11.377051 0
+7934.2674 11.373572 0
+7945.8234 11.370106 0
+7957.3855 11.366654 0
+7968.9537 11.363215 0
+7980.528 11.35979 0
+7992.1083 11.356378 0
+8003.6946 11.35298 0
+8015.2869 11.349594 0
+8026.8852 11.346223 0
+8038.4894 11.342864 0
+8050.0995 11.339518 0
+8061.7155 11.336186 0
+8073.3373 11.332866 0
+8084.965 11.32956 0
+8096.5985 11.326266 0
+8108.2378 11.322985 0
+8119.8828 11.319717 0
+8131.5336 11.316462 0
+8143.1901 11.313219 0
+8154.8523 11.309989 0
+8166.5201 11.306771 0
+8178.1936 11.303566 0
+8189.8726 11.300374 0
+8201.5573 11.297194 0
+8213.2475 11.294026 0
+8224.9433 11.29087 0
+8236.6446 11.287727 0
+8248.3514 11.284596 0
+8260.0636 11.281477 0
+8271.7813 11.27837 0
+8283.5045 11.275275 0
+8295.233 11.272192 0
+8306.9669 11.269121 0
+8318.7061 11.266062 0
+8330.4507 11.263014 0
+8342.2006 11.259978 0
+8353.9558 11.256954 0
+8365.7163 11.253942 0
+8377.482 11.250941 0
+8389.2529 11.247952 0
+8401.029 11.244974 0
+8412.8103 11.242008 0
+8424.5968 11.239053 0
+8436.3884 11.236109 0
+8448.1851 11.233177 0
+8459.9868 11.230256 0
+8471.7937 11.227346 0
+8483.6056 11.224448 0
+8495.4226 11.22156 0
+8507.2445 11.218683 0
+8519.0714 11.215818 0
+8530.9033 11.212963 0
+8542.7402 11.210119 0
+8554.5819 11.207286 0
+8566.4286 11.204464 0
+8578.2802 11.201653 0
+8590.1366 11.198852 0
+8601.9978 11.196062 0
+8613.8639 11.193282 0
+8625.7348 11.190513 0
+8637.6105 11.187755 0
+8649.4909 11.185007 0
+8661.3761 11.18227 0
+8673.266 11.179542 0
+8685.1606 11.176826 0
+8697.0599 11.174119 0
+8708.9638 11.171423 0
+8720.8724 11.168737 0
+8732.7856 11.166061 0
+8744.7035 11.163395 0
+8756.6259 11.160739 0
+8768.5529 11.158093 0
+8780.4845 11.155457 0
+8792.4206 11.152831 0
+8804.3612 11.150215 0
+8816.3063 11.147609 0
+8828.2559 11.145013 0
+8840.2099 11.142426 0
+8852.1684 11.139849 0
+8864.1313 11.137281 0
+8876.0987 11.134724 0
+8888.0704 11.132176 0
+8900.0465 11.129637 0
+8912.0269 11.127108 0
+8924.0117 11.124588 0
+8936.0008 11.122078 0
+8947.9942 11.119577 0
+8959.9919 11.117085 0
+8971.9938 11.114603 0
+8984 11.11213 0
+8996.0105 11.109666 0
+9008.0251 11.107211 0
+9020.044 11.104765 0
+9032.067 11.102329 0
+9044.0942 11.099901 0
+9056.1256 11.097483 0
+9068.1611 11.095073 0
+9080.2007 11.092672 0
+9092.2444 11.090281 0
+9104.2922 11.087898 0
+9116.344 11.085524 0
+9128.3999 11.083158 0
+9140.4599 11.080801 0
+9152.5239 11.078453 0
+9164.5918 11.076114 0
+9176.6638 11.073783 0
+9188.7397 11.071461 0
+9200.8196 11.069148 0
+9212.9034 11.066842 0
+9224.9912 11.064546 0
+9237.0828 11.062257 0
+9249.1784 11.059977 0
+9261.2778 11.057706 0
+9273.3811 11.055443 0
+9285.4883 11.053188 0
+9297.5993 11.050941 0
+9309.7141 11.048702 0
+9321.8327 11.046472 0
+9333.9551 11.04425 0
+9346.0813 11.042035 0
+9358.2112 11.039829 0
+9370.3449 11.037631 0
+9382.4823 11.035441 0
+9394.6234 11.033259 0
+9406.7683 11.031085 0
+9418.9168 11.028918 0
+9431.069 11.02676 0
+9443.2248 11.024609 0
+9455.3843 11.022466 0
+9467.5475 11.020331 0
+9479.7142 11.018203 0
+9491.8846 11.016083 0
+9504.0585 11.013971 0
+9516.236 11.011866 0
+9528.4171 11.009769 0
+9540.6017 11.00768 0
+9552.7899 11.005598 0
+9564.9816 11.003523 0
+9577.1768 11.001456 0
+9589.3755 10.999397 0
+9601.5776 10.997344 0
+9613.7833 10.9953 0
+9625.9924 10.993262 0
+9638.2049 10.991232 0
+9650.4209 10.989209 0
+9662.6402 10.987193 0
+9674.863 10.985184 0
+9687.0892 10.983182 0
+9699.3187 10.981188 0
+9711.5516 10.979201 0
+9723.7879 10.977221 0
+9736.0275 10.975247 0
+9748.2704 10.973281 0
+9760.5167 10.971322 0
+9772.7662 10.96937 0
+9785.0191 10.967424 0
+9797.2752 10.965486 0
+9809.5345 10.963554 0
+9821.7972 10.961629 0
+9834.063 10.959711 0
+9846.3321 10.9578 0
+9858.6044 10.955895 0
+9870.88 10.953997 0
+9883.1587 10.952106 0
+9895.4406 10.950222 0
+9907.7256 10.948344 0
+9920.0138 10.946473 0
+9932.3052 10.944608 0
+9944.5997 10.94275 0
+9956.8973 10.940898 0
+9969.198 10.939053 0
+9981.5018 10.937214 0
+9993.8087 10.935382 0
+10006.119 10.933556 0
+10018.432 10.931736 0
+10030.748 10.929923 0
+10043.067 10.928116 0
+10055.389 10.926315 0
+10067.714 10.924521 0
+10080.043 10.922733 0
+10092.374 10.920951 0
+10104.708 10.919175 0
+10117.045 10.917405 0
+10129.385 10.915642 0
+10141.728 10.913884 0
+10154.074 10.912133 0
+10166.423 10.910388 0
+10178.775 10.908648 0
+10191.13 10.906915 0
+10203.488 10.905188 0
+10215.848 10.903466 0
+10228.212 10.901751 0
+10240.578 10.900041 0
+10252.947 10.898338 0
+10265.319 10.89664 0
+10277.694 10.894948 0
+10290.072 10.893262 0
+10302.452 10.891581 0
+10314.836 10.889906 0
+10327.222 10.888237 0
+10339.611 10.886574 0
+10352.002 10.884917 0
+10364.397 10.883265 0
+10376.794 10.881618 0
+10389.194 10.879978 0
+10401.597 10.878342 0
+10414.002 10.876713 0
+10426.41 10.875089 0
+10438.821 10.87347 0
+10451.234 10.871857 0
+10463.651 10.870249 0
+10476.07 10.868647 0
+10488.491 10.867051 0
+10500.915 10.865459 0
+10513.342 10.863873 0
+10525.772 10.862293 0
+10538.204 10.860717 0
+10550.639 10.859147 0
+10563.076 10.857582 0
+10575.516 10.856023 0
+10587.959 10.854469 0
+10600.404 10.85292 0
+10612.852 10.851376 0
+10625.302 10.849837 0
+10637.755 10.848304 0
+10650.21 10.846775 0
+10662.668 10.845252 0
+10675.129 10.843734 0
+10687.592 10.842221 0
+10700.058 10.840713 0
+10712.526 10.83921 0
+10724.996 10.837711 0
+10737.469 10.836218 0
+10749.945 10.83473 0
+10762.423 10.833247 0
+10774.903 10.831769 0
+10787.386 10.830295 0
+10799.872 10.828827 0
+10812.359 10.827363 0
+10824.85 10.825905 0
+10837.342 10.824451 0
+10849.837 10.823001 0
+10862.335 10.821557 0
+10874.835 10.820117 0
+10887.337 10.818683 0
+10899.841 10.817252 0
+10912.348 10.815827 0
+10924.858 10.814406 0
+10937.37 10.81299 0
+10949.884 10.811578 0
+10962.4 10.810172 0
+10974.919 10.808769 0
+10987.44 10.807372 0
+10999.963 10.805979 0
+11012.489 10.80459 0
+11025.017 10.803206 0
+11037.547 10.801826 0
+11050.08 10.800451 0
+11062.614 10.799081 0
+11075.151 10.797715 0
+11087.691 10.796353 0
+11100.232 10.794996 0
+11112.776 10.793643 0
+11125.322 10.792295 0
+11137.871 10.790951 0
+11150.421 10.789611 0
+11162.974 10.788275 0
+11175.529 10.786944 0
+11188.086 10.785617 0
+11200.645 10.784295 0
+11213.207 10.782977 0
+11225.771 10.781663 0
+11238.336 10.780353 0
+11250.904 10.779047 0
+11263.475 10.777746 0
+11276.047 10.776449 0
+11288.622 10.775156 0
+11301.198 10.773867 0
+11313.777 10.772582 0
+11326.358 10.771301 0
+11338.941 10.770025 0
+11351.526 10.768752 0
+11364.113 10.767484 0
+11376.702 10.766219 0
+11389.294 10.764959 0
+11401.887 10.763703 0
+11414.483 10.76245 0
+11427.08 10.761202 0
+11439.68 10.759957 0
+11452.281 10.758717 0
+11464.885 10.75748 0
+11477.491 10.756248 0
+11490.099 10.755019 0
+11502.708 10.753794 0
+11515.32 10.752573 0
+11527.934 10.751356 0
+11540.55 10.750143 0
+11553.168 10.748933 0
+11565.788 10.747727 0
+11578.409 10.746526 0
+11591.033 10.745327 0
+11603.659 10.744133 0
+11616.287 10.742942 0
+11628.916 10.741756 0
+11641.548 10.740572 0
+11654.182 10.739393 0
+11666.817 10.738217 0
+11679.455 10.737045 0
+11692.094 10.735877 0
+11704.735 10.734712 0
+11717.379 10.733551 0
+11730.024 10.732393 0
+11742.671 10.731239 0
+11755.32 10.730089 0
+11767.971 10.728942 0
+11780.623 10.727799 0
+11793.278 10.726659 0
+11805.934 10.725523 0
+11818.593 10.72439 0
+11831.253 10.723261 0
+11843.915 10.722136 0
+11856.579 10.721014 0
+11869.244 10.719895 0
+11881.912 10.71878 0
+11894.581 10.717668 0
+11907.252 10.716559 0
+11919.926 10.715454 0
+11932.6 10.714353 0
+11945.277 10.713255 0
+11957.955 10.71216 0
+11970.636 10.711068 0
+11983.318 10.70998 0
+11996.002 10.708895 0
+12008.687 10.707814 0
+12021.375 10.706736 0
+12034.064 10.705661 0
+12046.755 10.704589 0
+12059.447 10.703521 0
+12072.142 10.702456 0
+12084.838 10.701394 0
+12097.536 10.700335 0
+12110.235 10.69928 0
+12122.937 10.698228 0
+12135.64 10.697179 0
+12148.344 10.696133 0
+12161.051 10.69509 0
+12173.759 10.69405 0
+12186.469 10.693014 0
+12199.181 10.691981 0
+12211.894 10.690951 0
+12224.609 10.689924 0
+12237.326 10.6889 0
+12250.044 10.687879 0
+12262.764 10.686861 0
+12275.486 10.685846 0
+12288.209 10.684835 0
+12300.934 10.683826 0
+12313.661 10.68282 0
+12326.389 10.681818 0
+12339.119 10.680818 0
+12351.85 10.679822 0
+12364.584 10.678828 0
+12377.318 10.677837 0
+12390.055 10.67685 0
+12402.793 10.675865 0
+12415.532 10.674883 0
+12428.274 10.673904 0
+12441.017 10.672928 0
+12453.761 10.671955 0
+12466.507 10.670985 0
+12479.255 10.670017 0
+12492.004 10.669053 0
+12504.755 10.668091 0
+12517.507 10.667132 0
+12530.261 10.666176 0
+12543.016 10.665223 0
+12555.773 10.664273 0
+12568.532 10.663325 0
+12581.292 10.662381 0
+12594.054 10.661439 0
+12606.817 10.6605 0
+12619.582 10.659563 0
+12632.348 10.65863 0
+12645.116 10.657699 0
+12657.885 10.65677 0
+12670.656 10.655845 0
+12683.428 10.654922 0
+12696.202 10.654002 0
+12708.977 10.653085 0
+12721.754 10.65217 0
+12734.532 10.651258 0
+12747.312 10.650349 0
+12760.094 10.649442 0
+12772.876 10.648538 0
+12785.661 10.647636 0
+12798.446 10.646738 0
+12811.233 10.645841 0
+12824.022 10.644948 0
+12836.812 10.644057 0
+12849.604 10.643168 0
+12862.397 10.642282 0
+12875.191 10.641399 0
+12887.987 10.640518 0
+12900.784 10.63964 0
+12913.583 10.638764 0
+12926.383 10.637891 0
+12939.185 10.637021 0
+12951.988 10.636152 0
+12964.792 10.635287 0
+12977.598 10.634424 0
+12990.405 10.633563 0
+13003.214 10.632705 0
+13016.024 10.631849 0
+13028.835 10.630996 0
+13041.648 10.630145 0
+13054.462 10.629296 0
+13067.278 10.62845 0
+13080.095 10.627607 0
+13092.913 10.626766 0
+13105.733 10.625927 0
+13118.554 10.62509 0
+13131.376 10.624256 0
+13144.2 10.623425 0
+13157.025 10.622595 0
+13169.851 10.621769 0
+13182.679 10.620944 0
+13195.508 10.620122 0
+13208.339 10.619302 0
+13221.171 10.618484 0
+13234.004 10.617669 0
+13246.838 10.616856 0
+13259.674 10.616045 0
+13272.511 10.615237 0
+13285.349 10.614431 0
+13298.189 10.613627 0
+13311.03 10.612825 0
+13323.872 10.612026 0
+13336.716 10.611229 0
+13349.561 10.610434 0
+13362.407 10.609641 0
+13375.255 10.608851 0
+13388.103 10.608063 0
+13400.954 10.607277 0
+13413.805 10.606493 0
+13426.657 10.605711 0
+13439.511 10.604932 0
+13452.366 10.604154 0
+13465.223 10.603379 0
+13478.081 10.602606 0
+13490.939 10.601836 0
+13503.8 10.601067 0
+13516.661 10.600301 0
+13529.524 10.599536 0
+13542.388 10.598774 0
+13555.253 10.598014 0
+13568.119 10.597256 0
+13580.987 10.5965 0
+13593.855 10.595746 0
+13606.725 10.594994 0
+13619.597 10.594244 0
+13632.469 10.593497 0
+13645.343 10.592751 0
+13658.218 10.592008 0
+13671.094 10.591266 0
+13683.971 10.590527 0
+13696.85 10.589789 0
+13709.729 10.589054 0
+13722.61 10.588321 0
+13735.492 10.587589 0
+13748.375 10.58686 0
+13761.26 10.586133 0
+13774.146 10.585407 0
+13787.032 10.584684 0
+13799.92 10.583963 0
+13812.809 10.583243 0
+13825.7 10.582526 0
+13838.591 10.58181 0
+13851.484 10.581097 0
+13864.377 10.580385 0
+13877.272 10.579675 0
+13890.168 10.578967 0
+13903.066 10.578262 0
+13915.964 10.577558 0
+13928.864 10.576856 0
+13941.764 10.576155 0
+13954.666 10.575457 0
+13967.569 10.574761 0
+13980.473 10.574066 0
+13993.378 10.573374 0
+14006.284 10.572683 0
+14019.192 10.571994 0
+14032.1 10.571307 0
+14045.01 10.570622 0
+14057.92 10.569939 0
+14070.832 10.569257 0
+14083.745 10.568578 0
+14096.659 10.5679 0
+14109.574 10.567224 0
+&
+@target G0.S15
+@type xydy
+10391.039 14.790565 0
+10391.058 14.790449 0
+10391.091 14.790255 0
+10391.136 14.789983 0
+10391.194 14.789634 0
+10391.264 14.789207 0
+10391.348 14.788703 0
+10391.445 14.788122 0
+10391.554 14.787463 0
+10391.676 14.786727 0
+10391.812 14.785914 0
+10391.96 14.785023 0
+10392.121 14.784056 0
+10392.295 14.783011 0
+10392.481 14.78189 0
+10392.681 14.780692 0
+10392.893 14.779417 0
+10393.119 14.778066 0
+10393.357 14.776639 0
+10393.608 14.775135 0
+10393.872 14.773556 0
+10394.149 14.7719 0
+10394.438 14.770169 0
+10394.741 14.768362 0
+10395.056 14.76648 0
+10395.385 14.764523 0
+10395.726 14.76249 0
+10396.08 14.760383 0
+10396.446 14.758202 0
+10396.826 14.755946 0
+10397.219 14.753615 0
+10397.624 14.751211 0
+10398.042 14.748734 0
+10398.474 14.746183 0
+10398.918 14.743558 0
+10399.374 14.740861 0
+10399.844 14.738091 0
+10400.327 14.735249 0
+10400.822 14.732335 0
+10401.33 14.729349 0
+10401.851 14.726291 0
+10402.385 14.723163 0
+10402.932 14.719963 0
+10403.491 14.716693 0
+10404.064 14.713352 0
+10404.649 14.709941 0
+10405.247 14.706461 0
+10405.858 14.702912 0
+10406.482 14.699293 0
+10407.118 14.695606 0
+10407.767 14.691851 0
+10408.43 14.688028 0
+10409.104 14.684137 0
+10409.792 14.680179 0
+10410.493 14.676154 0
+10411.206 14.672063 0
+10411.932 14.667906 0
+10412.671 14.663683 0
+10413.423 14.659395 0
+10414.188 14.655042 0
+10414.965 14.650624 0
+10415.755 14.646143 0
+10416.558 14.641598 0
+10417.374 14.636989 0
+10418.203 14.632318 0
+10419.044 14.627585 0
+10419.898 14.622789 0
+10420.765 14.617932 0
+10421.644 14.613014 0
+10422.537 14.608036 0
+10423.442 14.602997 0
+10424.36 14.597898 0
+10425.29 14.592741 0
+10426.234 14.587524 0
+10427.19 14.582249 0
+10428.159 14.576916 0
+10429.141 14.571526 0
+10430.135 14.566079 0
+10431.142 14.560575 0
+10432.162 14.555016 0
+10433.194 14.549401 0
+10434.24 14.543731 0
+10435.298 14.538006 0
+10436.369 14.532227 0
+10437.452 14.526395 0
+10438.548 14.52051 0
+10439.657 14.514572 0
+10440.778 14.508582 0
+10441.913 14.502541 0
+10443.06 14.496448 0
+10444.219 14.490305 0
+10445.392 14.484112 0
+10446.577 14.477869 0
+10447.774 14.471577 0
+10448.985 14.465237 0
+10450.208 14.458849 0
+10451.443 14.452413 0
+10452.691 14.445931 0
+10453.952 14.439402 0
+10455.226 14.432826 0
+10456.512 14.426206 0
+10457.811 14.419541 0
+10459.123 14.412831 0
+10460.447 14.406077 0
+10461.784 14.399281 0
+10463.133 14.392441 0
+10464.495 14.385559 0
+10465.87 14.378635 0
+10467.257 14.371671 0
+10468.657 14.364665 0
+10470.069 14.357619 0
+10471.494 14.350534 0
+10472.932 14.343409 0
+10474.382 14.336246 0
+10475.845 14.329045 0
+10477.32 14.321807 0
+10478.808 14.314531 0
+10480.308 14.307219 0
+10481.821 14.299871 0
+10483.347 14.292487 0
+10484.885 14.285069 0
+10486.435 14.277616 0
+10487.998 14.270129 0
+10489.574 14.262609 0
+10491.162 14.255057 0
+10492.763 14.247472 0
+10494.376 14.239855 0
+10496.002 14.232207 0
+10497.64 14.224528 0
+10499.291 14.216819 0
+10500.954 14.20908 0
+10502.63 14.201312 0
+10504.318 14.193515 0
+10506.018 14.18569 0
+10507.731 14.177838 0
+10509.457 14.169958 0
+10511.195 14.162052 0
+10512.945 14.154119 0
+10514.708 14.146161 0
+10516.483 14.138178 0
+10518.271 14.13017 0
+10520.071 14.122138 0
+10521.883 14.114082 0
+10523.708 14.106004 0
+10525.546 14.097902 0
+10527.395 14.089778 0
+10529.257 14.081633 0
+10531.132 14.073466 0
+10533.019 14.065279 0
+10534.918 14.057072 0
+10536.829 14.048844 0
+10538.753 14.040598 0
+10540.69 14.032332 0
+10542.638 14.024049 0
+10544.599 14.015747 0
+10546.572 14.007428 0
+10548.558 13.999092 0
+10550.556 13.990739 0
+10552.566 13.982371 0
+10554.588 13.973987 0
+10556.623 13.965588 0
+10558.67 13.957174 0
+10560.729 13.948745 0
+10562.801 13.940304 0
+10564.885 13.931848 0
+10566.981 13.92338 0
+10569.089 13.914899 0
+10571.21 13.906407 0
+10573.343 13.897902 0
+10575.488 13.889387 0
+10577.645 13.880861 0
+10579.814 13.872324 0
+10581.996 13.863778 0
+10584.19 13.855222 0
+10586.396 13.846657 0
+10588.614 13.838083 0
+10590.844 13.829501 0
+10593.087 13.820911 0
+10595.342 13.812313 0
+10597.609 13.803709 0
+10599.888 13.795098 0
+10602.179 13.78648 0
+10604.482 13.777857 0
+10606.797 13.769228 0
+10609.125 13.760593 0
+10611.464 13.751954 0
+10613.816 13.743311 0
+10616.18 13.734664 0
+10618.556 13.726013 0
+10620.943 13.717358 0
+10623.343 13.708701 0
+10625.755 13.700041 0
+10628.179 13.691379 0
+10630.616 13.682715 0
+10633.064 13.674049 0
+10635.524 13.665382 0
+10637.996 13.656715 0
+10640.48 13.648047 0
+10642.976 13.639378 0
+10645.484 13.63071 0
+10648.004 13.622042 0
+10650.536 13.613375 0
+10653.08 13.604709 0
+10655.636 13.596045 0
+10658.204 13.587382 0
+10660.784 13.578722 0
+10663.376 13.570063 0
+10665.98 13.561408 0
+10668.595 13.552755 0
+10671.223 13.544106 0
+10673.862 13.53546 0
+10676.513 13.526818 0
+10679.177 13.51818 0
+10681.852 13.509546 0
+10684.538 13.500917 0
+10687.237 13.492294 0
+10689.948 13.483675 0
+10692.67 13.475062 0
+10695.404 13.466455 0
+10698.15 13.457853 0
+10700.908 13.449258 0
+10703.678 13.44067 0
+10706.459 13.432088 0
+10709.252 13.423514 0
+10712.057 13.414947 0
+10714.874 13.406387 0
+10717.702 13.397835 0
+10720.542 13.389292 0
+10723.394 13.380756 0
+10726.258 13.372229 0
+10729.133 13.363711 0
+10732.02 13.355202 0
+10734.919 13.346702 0
+10737.829 13.338211 0
+10740.751 13.32973 0
+10743.685 13.321259 0
+10746.63 13.312798 0
+10749.587 13.304347 0
+10752.556 13.295907 0
+10755.536 13.287477 0
+10758.528 13.279058 0
+10761.531 13.27065 0
+10764.547 13.262254 0
+10767.573 13.253869 0
+10770.611 13.245495 0
+10773.661 13.237134 0
+10776.723 13.228784 0
+10779.795 13.220447 0
+10782.88 13.212122 0
+10785.976 13.20381 0
+10789.083 13.19551 0
+10792.202 13.187223 0
+10795.333 13.178949 0
+10798.475 13.170689 0
+10801.628 13.162442 0
+10804.793 13.154208 0
+10807.969 13.145988 0
+10811.157 13.137782 0
+10814.356 13.12959 0
+10817.567 13.121412 0
+10820.789 13.113248 0
+10824.022 13.105099 0
+10827.267 13.096964 0
+10830.523 13.088844 0
+10833.791 13.080739 0
+10837.07 13.072649 0
+10840.36 13.064574 0
+10843.662 13.056514 0
+10846.975 13.048469 0
+10850.299 13.04044 0
+10853.635 13.032427 0
+10856.982 13.024429 0
+10860.34 13.016448 0
+10863.71 13.008482 0
+10867.09 13.000532 0
+10870.482 12.992598 0
+10873.886 12.984681 0
+10877.3 12.97678 0
+10880.726 12.968895 0
+10884.163 12.961027 0
+10887.611 12.953176 0
+10891.07 12.945341 0
+10894.541 12.937524 0
+10898.023 12.929723 0
+10901.516 12.921939 0
+10905.02 12.914173 0
+10908.535 12.906424 0
+10912.061 12.898692 0
+10915.599 12.890977 0
+10919.147 12.88328 0
+10922.707 12.875601 0
+10926.277 12.867939 0
+10929.859 12.860295 0
+10933.452 12.852668 0
+10937.056 12.84506 0
+10940.671 12.837469 0
+10944.297 12.829896 0
+10947.934 12.822342 0
+10951.582 12.814805 0
+10955.241 12.807287 0
+10958.911 12.799787 0
+10962.592 12.792305 0
+10966.284 12.784842 0
+10969.987 12.777396 0
+10973.701 12.76997 0
+10977.426 12.762562 0
+10981.161 12.755172 0
+10984.908 12.747801 0
+10988.666 12.740449 0
+10992.434 12.733115 0
+10996.213 12.7258 0
+11000.004 12.718504 0
+11003.805 12.711227 0
+11007.616 12.703968 0
+11011.439 12.696729 0
+11015.273 12.689508 0
+11019.117 12.682306 0
+11022.972 12.675124 0
+11026.838 12.66796 0
+11030.715 12.660816 0
+11034.602 12.65369 0
+11038.5 12.646584 0
+11042.409 12.639496 0
+11046.329 12.632428 0
+11050.26 12.625379 0
+11054.201 12.61835 0
+11058.152 12.611339 0
+11062.115 12.604348 0
+11066.088 12.597376 0
+11070.072 12.590423 0
+11074.067 12.58349 0
+11078.072 12.576576 0
+11082.087 12.569681 0
+11086.114 12.562806 0
+11090.151 12.555949 0
+11094.198 12.549113 0
+11098.257 12.542295 0
+11102.325 12.535497 0
+11106.405 12.528719 0
+11110.494 12.52196 0
+11114.595 12.51522 0
+11118.706 12.5085 0
+11122.827 12.501799 0
+11126.959 12.495117 0
+11131.101 12.488455 0
+11135.254 12.481812 0
+11139.418 12.475189 0
+11143.591 12.468585 0
+11147.776 12.462 0
+11151.97 12.455435 0
+11156.175 12.448889 0
+11160.391 12.442362 0
+11164.617 12.435855 0
+11168.853 12.429368 0
+11173.1 12.422899 0
+11177.356 12.41645 0
+11181.624 12.41002 0
+11185.902 12.40361 0
+11190.189 12.397219 0
+11194.488 12.390847 0
+11198.796 12.384495 0
+11203.115 12.378162 0
+11207.444 12.371848 0
+11211.784 12.365553 0
+11216.134 12.359277 0
+11220.494 12.353021 0
+11224.864 12.346784 0
+11229.244 12.340566 0
+11233.635 12.334367 0
+11238.035 12.328188 0
+11242.446 12.322027 0
+11246.867 12.315886 0
+11251.299 12.309763 0
+11255.74 12.30366 0
+11260.192 12.297575 0
+11264.653 12.29151 0
+11269.125 12.285464 0
+11273.607 12.279436 0
+11278.099 12.273428 0
+11282.601 12.267438 0
+11287.113 12.261467 0
+11291.635 12.255515 0
+11296.167 12.249582 0
+11300.71 12.243668 0
+11305.262 12.237772 0
+11309.824 12.231895 0
+11314.396 12.226037 0
+11318.978 12.220198 0
+11323.571 12.214377 0
+11328.173 12.208574 0
+11332.785 12.202791 0
+11337.407 12.197026 0
+11342.038 12.191279 0
+11346.68 12.185551 0
+11351.332 12.179841 0
+11355.993 12.174149 0
+11360.665 12.168476 0
+11365.346 12.162822 0
+11370.037 12.157185 0
+11374.738 12.151567 0
+11379.449 12.145967 0
+11384.169 12.140386 0
+11388.9 12.134822 0
+11393.64 12.129277 0
+11398.39 12.123749 0
+11403.15 12.11824 0
+11407.919 12.112749 0
+11412.698 12.107275 0
+11417.487 12.10182 0
+11422.285 12.096382 0
+11427.094 12.090963 0
+11431.912 12.085561 0
+11436.739 12.080176 0
+11441.577 12.07481 0
+11446.423 12.069461 0
+11451.28 12.06413 0
+11456.146 12.058817 0
+11461.022 12.053521 0
+11465.907 12.048242 0
+11470.802 12.042981 0
+11475.707 12.037738 0
+11480.621 12.032512 0
+11485.545 12.027303 0
+11490.478 12.022112 0
+11495.421 12.016938 0
+11500.373 12.011781 0
+11505.335 12.006641 0
+11510.306 12.001518 0
+11515.286 11.996413 0
+11520.277 11.991324 0
+11525.276 11.986253 0
+11530.285 11.981198 0
+11535.304 11.976161 0
+11540.332 11.97114 0
+11545.369 11.966136 0
+11550.415 11.961149 0
+11555.472 11.956178 0
+11560.537 11.951225 0
+11565.612 11.946288 0
+11570.696 11.941367 0
+11575.789 11.936463 0
+11580.892 11.931576 0
+11586.004 11.926705 0
+11591.125 11.92185 0
+11596.256 11.917012 0
+11601.396 11.91219 0
+11606.545 11.907385 0
+11611.703 11.902595 0
+11616.871 11.897822 0
+11622.048 11.893065 0
+11627.234 11.888324 0
+11632.429 11.8836 0
+11637.633 11.878891 0
+11642.847 11.874198 0
+11648.07 11.869521 0
+11653.302 11.86486 0
+11658.543 11.860214 0
+11663.793 11.855585 0
+11669.052 11.850971 0
+11674.32 11.846373 0
+11679.598 11.84179 0
+11684.884 11.837223 0
+11690.18 11.832672 0
+11695.484 11.828136 0
+11700.798 11.823615 0
+11706.12 11.81911 0
+11711.452 11.814621 0
+11716.793 11.810146 0
+11722.142 11.805687 0
+11727.501 11.801243 0
+11732.868 11.796814 0
+11738.245 11.7924 0
+11743.63 11.788001 0
+11749.024 11.783617 0
+11754.428 11.779249 0
+11759.84 11.774895 0
+11765.261 11.770556 0
+11770.691 11.766232 0
+11776.129 11.761922 0
+11781.577 11.757628 0
+11787.033 11.753347 0
+11792.499 11.749082 0
+11797.973 11.744831 0
+11803.456 11.740595 0
+11808.947 11.736373 0
+11814.448 11.732166 0
+11819.957 11.727973 0
+11825.475 11.723794 0
+11831.001 11.71963 0
+11836.537 11.71548 0
+11842.081 11.711344 0
+11847.634 11.707222 0
+11853.195 11.703115 0
+11858.765 11.699021 0
+11864.344 11.694941 0
+11869.932 11.690876 0
+11875.528 11.686824 0
+11881.133 11.682786 0
+11886.746 11.678762 0
+11892.368 11.674752 0
+11897.999 11.670756 0
+11903.638 11.666773 0
+11909.285 11.662804 0
+11914.942 11.658848 0
+11920.607 11.654906 0
+11926.28 11.650978 0
+11931.962 11.647063 0
+11937.652 11.643161 0
+11943.351 11.639273 0
+11949.058 11.635398 0
+11954.774 11.631536 0
+11960.498 11.627688 0
+11966.231 11.623853 0
+11971.972 11.620031 0
+11977.722 11.616222 0
+11983.48 11.612426 0
+11989.246 11.608643 0
+11995.021 11.604872 0
+12000.804 11.601115 0
+12006.595 11.597371 0
+12012.395 11.59364 0
+12018.203 11.589921 0
+12024.02 11.586215 0
+12029.845 11.582521 0
+12035.678 11.578841 0
+12041.519 11.575173 0
+12047.369 11.571517 0
+12053.227 11.567874 0
+12059.093 11.564244 0
+12064.967 11.560625 0
+12070.85 11.55702 0
+12076.741 11.553426 0
+12082.64 11.549845 0
+12088.547 11.546276 0
+12094.463 11.542719 0
+12100.386 11.539174 0
+12106.318 11.535642 0
+12112.258 11.532121 0
+12118.206 11.528613 0
+12124.162 11.525116 0
+12130.126 11.521632 0
+12136.099 11.518159 0
+12142.079 11.514698 0
+12148.068 11.511249 0
+12154.064 11.507812 0
+12160.069 11.504387 0
+12166.081 11.500973 0
+12172.102 11.49757 0
+12178.131 11.49418 0
+12184.168 11.490801 0
+12190.212 11.487433 0
+12196.265 11.484077 0
+12202.325 11.480732 0
+12208.394 11.477399 0
+12214.471 11.474077 0
+12220.555 11.470766 0
+12226.647 11.467466 0
+12232.748 11.464178 0
+12238.856 11.460901 0
+12244.972 11.457635 0
+12251.096 11.45438 0
+12257.227 11.451136 0
+12263.367 11.447904 0
+12269.515 11.444682 0
+12275.67 11.441471 0
+12281.833 11.438271 0
+12288.004 11.435081 0
+12294.182 11.431903 0
+12300.369 11.428735 0
+12306.563 11.425579 0
+12312.765 11.422432 0
+12318.975 11.419297 0
+12325.192 11.416172 0
+12331.417 11.413057 0
+12337.65 11.409953 0
+12343.891 11.40686 0
+12350.139 11.403777 0
+12356.395 11.400704 0
+12362.658 11.397642 0
+12368.93 11.39459 0
+12375.208 11.391549 0
+12381.495 11.388518 0
+12387.789 11.385496 0
+12394.091 11.382486 0
+12400.4 11.379485 0
+12406.717 11.376494 0
+12413.041 11.373513 0
+12419.373 11.370543 0
+12425.713 11.367582 0
+12432.06 11.364632 0
+12438.414 11.361691 0
+12444.776 11.35876 0
+12451.146 11.355839 0
+12457.523 11.352928 0
+12463.907 11.350026 0
+12470.299 11.347135 0
+12476.699 11.344253 0
+12483.106 11.34138 0
+12489.52 11.338517 0
+12495.942 11.335664 0
+12502.371 11.332821 0
+12508.807 11.329986 0
+12515.251 11.327162 0
+12521.702 11.324347 0
+12528.161 11.321541 0
+12534.627 11.318744 0
+12541.1 11.315957 0
+12547.581 11.313179 0
+12554.069 11.310411 0
+12560.564 11.307651 0
+12567.067 11.304901 0
+12573.577 11.30216 0
+12580.094 11.299428 0
+12586.618 11.296706 0
+12593.15 11.293992 0
+12599.688 11.291287 0
+12606.234 11.288591 0
+12612.788 11.285905 0
+12619.348 11.283227 0
+12625.916 11.280558 0
+12632.491 11.277898 0
+12639.073 11.275246 0
+12645.662 11.272604 0
+12652.258 11.26997 0
+12658.862 11.267345 0
+12665.472 11.264728 0
+12672.09 11.262121 0
+12678.715 11.259522 0
+12685.346 11.256931 0
+12691.985 11.254349 0
+12698.631 11.251775 0
+12705.284 11.24921 0
+12711.945 11.246654 0
+12718.612 11.244106 0
+12725.286 11.241566 0
+12731.967 11.239035 0
+12738.655 11.236512 0
+12745.35 11.233997 0
+12752.053 11.23149 0
+12758.762 11.228992 0
+12765.478 11.226502 0
+12772.201 11.22402 0
+12778.931 11.221546 0
+12785.668 11.21908 0
+12792.411 11.216623 0
+12799.162 11.214173 0
+12805.92 11.211732 0
+12812.684 11.209298 0
+12819.456 11.206873 0
+12826.234 11.204455 0
+12833.019 11.202045 0
+12839.811 11.199643 0
+12846.609 11.197249 0
+12853.415 11.194863 0
+12860.227 11.192484 0
+12867.046 11.190113 0
+12873.872 11.18775 0
+12880.705 11.185395 0
+12887.544 11.183047 0
+12894.39 11.180707 0
+12901.243 11.178374 0
+12908.103 11.176049 0
+12914.969 11.173732 0
+12921.843 11.171422 0
+12928.722 11.16912 0
+12935.609 11.166825 0
+12942.502 11.164537 0
+12949.402 11.162257 0
+12956.308 11.159984 0
+12963.221 11.157719 0
+12970.141 11.155461 0
+12977.067 11.15321 0
+12984 11.150966 0
+12990.94 11.14873 0
+12997.886 11.146501 0
+13004.839 11.144279 0
+13011.798 11.142064 0
+13018.764 11.139856 0
+13025.736 11.137655 0
+13032.715 11.135462 0
+13039.701 11.133275 0
+13046.693 11.131096 0
+13053.691 11.128923 0
+13060.696 11.126757 0
+13067.708 11.124599 0
+13074.726 11.122447 0
+13081.75 11.120302 0
+13088.781 11.118164 0
+13095.818 11.116033 0
+13102.862 11.113908 0
+13109.912 11.111791 0
+13116.969 11.10968 0
+13124.032 11.107576 0
+13131.101 11.105478 0
+13138.177 11.103388 0
+13145.259 11.101303 0
+13152.348 11.099226 0
+13159.442 11.097155 0
+13166.544 11.095091 0
+13173.651 11.093033 0
+13180.765 11.090982 0
+13187.885 11.088937 0
+13195.012 11.086898 0
+13202.144 11.084867 0
+13209.283 11.082841 0
+13216.429 11.080822 0
+13223.58 11.078809 0
+13230.738 11.076803 0
+13237.902 11.074803 0
+13245.072 11.072809 0
+13252.249 11.070822 0
+13259.431 11.068841 0
+13266.62 11.066866 0
+13273.815 11.064897 0
+13281.017 11.062935 0
+13288.224 11.060978 0
+13295.438 11.059028 0
+13302.657 11.057084 0
+13309.883 11.055146 0
+13317.115 11.053214 0
+13324.353 11.051288 0
+13331.597 11.049368 0
+13338.848 11.047454 0
+13346.104 11.045547 0
+13353.367 11.043645 0
+13360.635 11.041749 0
+13367.91 11.039858 0
+13375.19 11.037974 0
+13382.477 11.036096 0
+13389.77 11.034223 0
+13397.069 11.032357 0
+13404.373 11.030496 0
+13411.684 11.028641 0
+13419.001 11.026791 0
+13426.324 11.024948 0
+13433.652 11.02311 0
+13440.987 11.021278 0
+13448.328 11.019451 0
+13455.674 11.01763 0
+13463.027 11.015815 0
+13470.385 11.014005 0
+13477.749 11.012201 0
+13485.119 11.010403 0
+13492.496 11.00861 0
+13499.878 11.006822 0
+13507.265 11.005041 0
+13514.659 11.003264 0
+13522.059 11.001493 0
+13529.464 10.999728 0
+13536.875 10.997967 0
+13544.292 10.996213 0
+13551.715 10.994463 0
+13559.144 10.992719 0
+13566.578 10.990981 0
+13574.019 10.989247 0
+13581.465 10.987519 0
+13588.917 10.985797 0
+13596.374 10.984079 0
+13603.838 10.982367 0
+13611.307 10.98066 0
+13618.781 10.978958 0
+13626.262 10.977262 0
+13633.748 10.97557 0
+13641.24 10.973884 0
+13648.738 10.972203 0
+13656.241 10.970527 0
+13663.75 10.968856 0
+13671.265 10.96719 0
+13678.785 10.965529 0
+13686.311 10.963873 0
+13693.842 10.962222 0
+13701.38 10.960576 0
+13708.922 10.958935 0
+13716.471 10.9573 0
+13724.025 10.955669 0
+13731.585 10.954043 0
+13739.15 10.952421 0
+13746.72 10.950805 0
+13754.297 10.949194 0
+13761.879 10.947587 0
+13769.466 10.945986 0
+13777.059 10.944389 0
+13784.658 10.942797 0
+13792.262 10.941209 0
+13799.871 10.939627 0
+13807.486 10.938049 0
+13815.107 10.936476 0
+13822.733 10.934907 0
+13830.364 10.933344 0
+13838.001 10.931785 0
+13845.643 10.93023 0
+13853.291 10.928681 0
+13860.944 10.927135 0
+13868.603 10.925595 0
+13876.267 10.924059 0
+13883.937 10.922528 0
+13891.612 10.921001 0
+13899.292 10.919479 0
+13906.977 10.917961 0
+13914.669 10.916448 0
+13922.365 10.914939 0
+13930.067 10.913435 0
+13937.774 10.911935 0
+13945.486 10.91044 0
+13953.204 10.908949 0
+13960.927 10.907462 0
+13968.655 10.90598 0
+13976.389 10.904502 0
+13984.128 10.903029 0
+13991.872 10.90156 0
+13999.622 10.900095 0
+14007.377 10.898634 0
+14015.137 10.897178 0
+14022.902 10.895726 0
+14030.673 10.894279 0
+14038.448 10.892835 0
+14046.229 10.891396 0
+14054.016 10.889961 0
+14061.807 10.888531 0
+14069.604 10.887104 0
+14077.406 10.885682 0
+14085.213 10.884264 0
+14093.025 10.88285 0
+14100.842 10.88144 0
+14108.665 10.880034 0
+14116.492 10.878632 0
+14124.325 10.877234 0
+14132.163 10.875841 0
+14140.006 10.874451 0
+14147.854 10.873066 0
+14155.707 10.871684 0
+14163.565 10.870307 0
+14171.429 10.868934 0
+14179.297 10.867564 0
+14187.171 10.866199 0
+14195.049 10.864837 0
+14202.933 10.863479 0
+14210.822 10.862126 0
+14218.716 10.860776 0
+14226.614 10.85943 0
+14234.518 10.858088 0
+14242.427 10.85675 0
+14250.341 10.855416 0
+14258.259 10.854085 0
+14266.183 10.852758 0
+14274.112 10.851436 0
+14282.046 10.850117 0
+14289.984 10.848801 0
+14297.928 10.84749 0
+14305.877 10.846182 0
+14313.83 10.844878 0
+14321.788 10.843578 0
+14329.752 10.842282 0
+14337.72 10.840989 0
+14345.693 10.8397 0
+14353.671 10.838414 0
+14361.654 10.837132 0
+14369.642 10.835854 0
+14377.635 10.83458 0
+14385.632 10.833309 0
+14393.635 10.832042 0
+14401.642 10.830778 0
+14409.654 10.829518 0
+14417.671 10.828262 0
+14425.693 10.827009 0
+14433.719 10.825759 0
+14441.751 10.824514 0
+14449.787 10.823271 0
+14457.828 10.822032 0
+14465.873 10.820797 0
+14473.924 10.819565 0
+14481.979 10.818337 0
+14490.039 10.817112 0
+14498.104 10.815891 0
+14506.173 10.814673 0
+14514.248 10.813458 0
+14522.327 10.812247 0
+14530.41 10.811039 0
+14538.499 10.809835 0
+14546.592 10.808634 0
+14554.69 10.807436 0
+14562.792 10.806242 0
+14570.899 10.805051 0
+14579.011 10.803864 0
+14587.128 10.802679 0
+14595.249 10.801498 0
+14603.374 10.800321 0
+14611.505 10.799146 0
+14619.64 10.797975 0
+14627.78 10.796807 0
+14635.924 10.795643 0
+14644.073 10.794482 0
+14652.226 10.793323 0
+14660.384 10.792168 0
+14668.547 10.791017 0
+14676.714 10.789868 0
+14684.886 10.788723 0
+14693.063 10.787581 0
+14701.244 10.786442 0
+14709.429 10.785306 0
+14717.619 10.784173 0
+14725.814 10.783044 0
+14734.013 10.781917 0
+14742.216 10.780794 0
+14750.425 10.779674 0
+14758.637 10.778556 0
+14766.854 10.777442 0
+14775.076 10.776331 0
+14783.302 10.775223 0
+14791.533 10.774118 0
+14799.768 10.773016 0
+14808.007 10.771918 0
+14816.251 10.770822 0
+14824.499 10.769729 0
+14832.752 10.768639 0
+14841.009 10.767552 0
+14849.271 10.766468 0
+14857.537 10.765387 0
+14865.808 10.764309 0
+14874.083 10.763234 0
+14882.362 10.762162 0
+14890.645 10.761093 0
+14898.934 10.760026 0
+14907.226 10.758963 0
+14915.523 10.757902 0
+14923.824 10.756844 0
+14932.129 10.75579 0
+14940.439 10.754738 0
+14948.753 10.753689 0
+14957.072 10.752642 0
+14965.394 10.751599 0
+14973.721 10.750558 0
+14982.053 10.749521 0
+14990.389 10.748486 0
+14998.729 10.747453 0
+15007.073 10.746424 0
+15015.421 10.745397 0
+15023.774 10.744373 0
+15032.131 10.743352 0
+15040.493 10.742334 0
+15048.858 10.741318 0
+15057.228 10.740305 0
+15065.602 10.739295 0
+15073.98 10.738288 0
+15082.363 10.737283 0
+15090.749 10.736281 0
+15099.14 10.735281 0
+15107.535 10.734284 0
+15115.935 10.73329 0
+15124.338 10.732299 0
+15132.746 10.73131 0
+15141.158 10.730324 0
+15149.574 10.72934 0
+15157.994 10.728359 0
+15166.418 10.727381 0
+15174.846 10.726405 0
+15183.279 10.725432 0
+15191.716 10.724462 0
+15200.156 10.723494 0
+15208.601 10.722528 0
+15217.05 10.721565 0
+15225.503 10.720605 0
+15233.961 10.719647 0
+15242.422 10.718692 0
+15250.887 10.717739 0
+15259.357 10.716789 0
+15267.83 10.715841 0
+15276.308 10.714896 0
+15284.79 10.713953 0
+15293.275 10.713013 0
+15301.765 10.712075 0
+15310.259 10.71114 0
+15318.757 10.710207 0
+15327.258 10.709277 0
+15335.764 10.708349 0
+15344.274 10.707423 0
+15352.788 10.7065 0
+15361.306 10.70558 0
+15369.827 10.704661 0
+15378.353 10.703745 0
+15386.883 10.702832 0
+15395.417 10.701921 0
+15403.954 10.701012 0
+15412.496 10.700106 0
+15421.042 10.699202 0
+15429.591 10.6983 0
+15438.145 10.697401 0
+15446.702 10.696504 0
+15455.263 10.695609 0
+15463.828 10.694717 0
+15472.398 10.693827 0
+15480.971 10.692939 0
+15489.548 10.692053 0
+15498.128 10.69117 0
+15506.713 10.69029 0
+15515.302 10.689411 0
+15523.894 10.688535 0
+15532.49 10.687661 0
+15541.09 10.686789 0
+15549.694 10.685919 0
+&
+@target G0.S16
+@type xydy
+29251.098 14.790565 0
+29251.105 14.790449 0
+29251.116 14.790255 0
+29251.132 14.789983 0
+29251.153 14.789634 0
+29251.178 14.789207 0
+29251.208 14.788703 0
+29251.242 14.788122 0
+29251.281 14.787463 0
+29251.324 14.786727 0
+29251.372 14.785914 0
+29251.425 14.785023 0
+29251.482 14.784056 0
+29251.544 14.783011 0
+29251.61 14.78189 0
+29251.681 14.780692 0
+29251.757 14.779417 0
+29251.837 14.778066 0
+29251.921 14.776639 0
+29252.011 14.775135 0
+29252.104 14.773556 0
+29252.203 14.7719 0
+29252.306 14.770169 0
+29252.413 14.768362 0
+29252.525 14.76648 0
+29252.642 14.764523 0
+29252.763 14.76249 0
+29252.889 14.760383 0
+29253.019 14.758202 0
+29253.154 14.755946 0
+29253.294 14.753615 0
+29253.438 14.751211 0
+29253.587 14.748734 0
+29253.74 14.746183 0
+29253.898 14.743558 0
+29254.06 14.740861 0
+29254.227 14.738091 0
+29254.399 14.735249 0
+29254.575 14.732335 0
+29254.755 14.729349 0
+29254.941 14.726291 0
+29255.13 14.723163 0
+29255.325 14.719963 0
+29255.524 14.716693 0
+29255.727 14.713352 0
+29255.935 14.709941 0
+29256.148 14.706461 0
+29256.365 14.702912 0
+29256.587 14.699293 0
+29256.814 14.695606 0
+29257.045 14.691851 0
+29257.28 14.688028 0
+29257.52 14.684137 0
+29257.765 14.680179 0
+29258.014 14.676154 0
+29258.268 14.672063 0
+29258.527 14.667906 0
+29258.79 14.663683 0
+29259.057 14.659395 0
+29259.329 14.655042 0
+29259.606 14.650624 0
+29259.887 14.646143 0
+29260.173 14.641598 0
+29260.463 14.636989 0
+29260.758 14.632318 0
+29261.058 14.627585 0
+29261.362 14.622789 0
+29261.671 14.617932 0
+29261.984 14.613014 0
+29262.302 14.608036 0
+29262.624 14.602997 0
+29262.951 14.597898 0
+29263.283 14.592741 0
+29263.619 14.587524 0
+29263.96 14.582249 0
+29264.305 14.576916 0
+29264.655 14.571526 0
+29265.009 14.566079 0
+29265.368 14.560575 0
+29265.732 14.555016 0
+29266.1 14.549401 0
+29266.472 14.543731 0
+29266.85 14.538006 0
+29267.231 14.532227 0
+29267.618 14.526395 0
+29268.009 14.52051 0
+29268.404 14.514572 0
+29268.804 14.508582 0
+29269.209 14.502541 0
+29269.618 14.496448 0
+29270.032 14.490305 0
+29270.45 14.484112 0
+29270.873 14.477869 0
+29271.3 14.471577 0
+29271.732 14.465237 0
+29272.169 14.458849 0
+29272.61 14.452413 0
+29273.056 14.445931 0
+29273.506 14.439402 0
+29273.961 14.432826 0
+29274.42 14.426206 0
+29274.884 14.419541 0
+29275.353 14.412831 0
+29275.826 14.406077 0
+29276.304 14.399281 0
+29276.786 14.392441 0
+29277.273 14.385559 0
+29277.764 14.378635 0
+29278.26 14.371671 0
+29278.76 14.364665 0
+29279.265 14.357619 0
+29279.775 14.350534 0
+29280.289 14.343409 0
+29280.808 14.336246 0
+29281.331 14.329045 0
+29281.859 14.321807 0
+29282.392 14.314531 0
+29282.928 14.307219 0
+29283.47 14.299871 0
+29284.016 14.292487 0
+29284.567 14.285069 0
+29285.122 14.277616 0
+29285.682 14.270129 0
+29286.246 14.262609 0
+29286.815 14.255057 0
+29287.388 14.247472 0
+29287.966 14.239855 0
+29288.549 14.232207 0
+29289.136 14.224528 0
+29289.728 14.216819 0
+29290.324 14.20908 0
+29290.925 14.201312 0
+29291.53 14.193515 0
+29292.14 14.18569 0
+29292.754 14.177838 0
+29293.373 14.169958 0
+29293.997 14.162052 0
+29294.625 14.154119 0
+29295.258 14.146161 0
+29295.895 14.138178 0
+29296.537 14.13017 0
+29297.183 14.122138 0
+29297.834 14.114082 0
+29298.489 14.106004 0
+29299.149 14.097902 0
+29299.814 14.089778 0
+29300.483 14.081633 0
+29301.157 14.073466 0
+29301.835 14.065279 0
+29302.518 14.057072 0
+29303.205 14.048844 0
+29303.897 14.040598 0
+29304.593 14.032332 0
+29305.294 14.024049 0
+29306 14.015747 0
+29306.71 14.007428 0
+29307.424 13.999092 0
+29308.143 13.990739 0
+29308.867 13.982371 0
+29309.595 13.973987 0
+29310.328 13.965588 0
+29311.065 13.957174 0
+29311.807 13.948745 0
+29312.554 13.940304 0
+29313.305 13.931848 0
+29314.06 13.92338 0
+29314.82 13.914899 0
+29315.585 13.906407 0
+29316.354 13.897902 0
+29317.128 13.889387 0
+29317.906 13.880861 0
+29318.689 13.872324 0
+29319.476 13.863778 0
+29320.268 13.855222 0
+29321.064 13.846657 0
+29321.865 13.838083 0
+29322.671 13.829501 0
+29323.481 13.820911 0
+29324.296 13.812313 0
+29325.115 13.803709 0
+29325.938 13.795098 0
+29326.767 13.78648 0
+29327.599 13.777857 0
+29328.437 13.769228 0
+29329.278 13.760593 0
+29330.125 13.751954 0
+29330.976 13.743311 0
+29331.831 13.734664 0
+29332.691 13.726013 0
+29333.556 13.717358 0
+29334.425 13.708701 0
+29335.298 13.700041 0
+29336.176 13.691379 0
+29337.059 13.682715 0
+29337.946 13.674049 0
+29338.838 13.665382 0
+29339.734 13.656715 0
+29340.635 13.648047 0
+29341.54 13.639378 0
+29342.45 13.63071 0
+29343.364 13.622042 0
+29344.283 13.613375 0
+29345.207 13.604709 0
+29346.135 13.596045 0
+29347.067 13.587382 0
+29348.004 13.578722 0
+29348.946 13.570063 0
+29349.892 13.561408 0
+29350.843 13.552755 0
+29351.798 13.544106 0
+29352.758 13.53546 0
+29353.722 13.526818 0
+29354.69 13.51818 0
+29355.664 13.509546 0
+29356.642 13.500917 0
+29357.624 13.492294 0
+29358.611 13.483675 0
+29359.602 13.475062 0
+29360.598 13.466455 0
+29361.598 13.457853 0
+29362.603 13.449258 0
+29363.613 13.44067 0
+29364.627 13.432088 0
+29365.645 13.423514 0
+29366.668 13.414947 0
+29367.696 13.406387 0
+29368.728 13.397835 0
+29369.765 13.389292 0
+29370.806 13.380756 0
+29371.851 13.372229 0
+29372.901 13.363711 0
+29373.956 13.355202 0
+29375.015 13.346702 0
+29376.079 13.338211 0
+29377.147 13.32973 0
+29378.22 13.321259 0
+29379.297 13.312798 0
+29380.379 13.304347 0
+29381.465 13.295907 0
+29382.556 13.287477 0
+29383.651 13.279058 0
+29384.751 13.27065 0
+29385.855 13.262254 0
+29386.964 13.253869 0
+29388.078 13.245495 0
+29389.196 13.237134 0
+29390.318 13.228784 0
+29391.445 13.220447 0
+29392.576 13.212122 0
+29393.712 13.20381 0
+29394.853 13.19551 0
+29395.997 13.187223 0
+29397.147 13.178949 0
+29398.301 13.170689 0
+29399.459 13.162442 0
+29400.622 13.154208 0
+29401.79 13.145988 0
+29402.962 13.137782 0
+29404.138 13.12959 0
+29405.319 13.121412 0
+29406.505 13.113248 0
+29407.695 13.105099 0
+29408.889 13.096964 0
+29410.088 13.088844 0
+29411.292 13.080739 0
+29412.499 13.072649 0
+29413.712 13.064574 0
+29414.929 13.056514 0
+29416.15 13.048469 0
+29417.376 13.04044 0
+29418.607 13.032427 0
+29419.842 13.024429 0
+29421.081 13.016448 0
+29422.325 13.008482 0
+29423.574 13.000532 0
+29424.827 12.992598 0
+29426.084 12.984681 0
+29427.346 12.97678 0
+29428.613 12.968895 0
+29429.883 12.961027 0
+29431.159 12.953176 0
+29432.439 12.945341 0
+29433.723 12.937524 0
+29435.012 12.929723 0
+29436.306 12.921939 0
+29437.603 12.914173 0
+29438.906 12.906424 0
+29440.213 12.898692 0
+29441.524 12.890977 0
+29442.84 12.88328 0
+29444.16 12.875601 0
+29445.485 12.867939 0
+29446.814 12.860295 0
+29448.148 12.852668 0
+29449.486 12.84506 0
+29450.829 12.837469 0
+29452.176 12.829896 0
+29453.528 12.822342 0
+29454.884 12.814805 0
+29456.245 12.807287 0
+29457.61 12.799787 0
+29458.979 12.792305 0
+29460.353 12.784842 0
+29461.732 12.777396 0
+29463.115 12.76997 0
+29464.503 12.762562 0
+29465.895 12.755172 0
+29467.291 12.747801 0
+29468.692 12.740449 0
+29470.097 12.733115 0
+29471.507 12.7258 0
+29472.922 12.718504 0
+29474.341 12.711227 0
+29475.764 12.703968 0
+29477.192 12.696729 0
+29478.624 12.689508 0
+29480.061 12.682306 0
+29481.502 12.675124 0
+29482.948 12.66796 0
+29484.398 12.660816 0
+29485.852 12.65369 0
+29487.311 12.646584 0
+29488.775 12.639496 0
+29490.243 12.632428 0
+29491.715 12.625379 0
+29493.192 12.61835 0
+29494.674 12.611339 0
+29496.16 12.604348 0
+29497.65 12.597376 0
+29499.145 12.590423 0
+29500.644 12.58349 0
+29502.148 12.576576 0
+29503.656 12.569681 0
+29505.168 12.562806 0
+29506.685 12.555949 0
+29508.207 12.549113 0
+29509.733 12.542295 0
+29511.263 12.535497 0
+29512.798 12.528719 0
+29514.338 12.52196 0
+29515.881 12.51522 0
+29517.43 12.5085 0
+29518.982 12.501799 0
+29520.54 12.495117 0
+29522.101 12.488455 0
+29523.667 12.481812 0
+29525.238 12.475189 0
+29526.813 12.468585 0
+29528.392 12.462 0
+29529.976 12.455435 0
+29531.564 12.448889 0
+29533.157 12.442362 0
+29534.754 12.435855 0
+29536.356 12.429368 0
+29537.962 12.422899 0
+29539.572 12.41645 0
+29541.187 12.41002 0
+29542.807 12.40361 0
+29544.431 12.397219 0
+29546.059 12.390847 0
+29547.692 12.384495 0
+29549.329 12.378162 0
+29550.97 12.371848 0
+29552.616 12.365553 0
+29554.267 12.359277 0
+29555.922 12.353021 0
+29557.581 12.346784 0
+29559.245 12.340566 0
+29560.913 12.334367 0
+29562.586 12.328188 0
+29564.263 12.322027 0
+29565.944 12.315886 0
+29567.63 12.309763 0
+29569.321 12.30366 0
+29571.015 12.297575 0
+29572.715 12.29151 0
+29574.418 12.285464 0
+29576.126 12.279436 0
+29577.839 12.273428 0
+29579.556 12.267438 0
+29581.277 12.261467 0
+29583.003 12.255515 0
+29584.733 12.249582 0
+29586.468 12.243668 0
+29588.207 12.237772 0
+29589.95 12.231895 0
+29591.698 12.226037 0
+29593.45 12.220198 0
+29595.207 12.214377 0
+29596.968 12.208574 0
+29598.734 12.202791 0
+29600.504 12.197026 0
+29602.278 12.191279 0
+29604.057 12.185551 0
+29605.84 12.179841 0
+29607.628 12.174149 0
+29609.42 12.168476 0
+29611.216 12.162822 0
+29613.017 12.157185 0
+29614.822 12.151567 0
+29616.632 12.145967 0
+29618.446 12.140386 0
+29620.265 12.134822 0
+29622.088 12.129277 0
+29623.915 12.123749 0
+29625.747 12.11824 0
+29627.583 12.112749 0
+29629.423 12.107275 0
+29631.268 12.10182 0
+29633.117 12.096382 0
+29634.971 12.090963 0
+29636.829 12.085561 0
+29638.692 12.080176 0
+29640.559 12.07481 0
+29642.43 12.069461 0
+29644.306 12.06413 0
+29646.186 12.058817 0
+29648.07 12.053521 0
+29649.959 12.048242 0
+29651.852 12.042981 0
+29653.75 12.037738 0
+29655.652 12.032512 0
+29657.559 12.027303 0
+29659.469 12.022112 0
+29661.385 12.016938 0
+29663.304 12.011781 0
+29665.228 12.006641 0
+29667.157 12.001518 0
+29669.089 11.996413 0
+29671.026 11.991324 0
+29672.968 11.986253 0
+29674.914 11.981198 0
+29676.864 11.976161 0
+29678.819 11.97114 0
+29680.778 11.966136 0
+29682.741 11.961149 0
+29684.709 11.956178 0
+29686.681 11.951225 0
+29688.658 11.946288 0
+29690.639 11.941367 0
+29692.624 11.936463 0
+29694.614 11.931576 0
+29696.608 11.926705 0
+29698.606 11.92185 0
+29700.609 11.917012 0
+29702.616 11.91219 0
+29704.628 11.907385 0
+29706.644 11.902595 0
+29708.664 11.897822 0
+29710.689 11.893065 0
+29712.718 11.888324 0
+29714.751 11.8836 0
+29716.789 11.878891 0
+29718.831 11.874198 0
+29720.878 11.869521 0
+29722.928 11.86486 0
+29724.984 11.860214 0
+29727.043 11.855585 0
+29729.107 11.850971 0
+29731.175 11.846373 0
+29733.248 11.84179 0
+29735.325 11.837223 0
+29737.406 11.832672 0
+29739.492 11.828136 0
+29741.582 11.823615 0
+29743.677 11.81911 0
+29745.775 11.814621 0
+29747.878 11.810146 0
+29749.986 11.805687 0
+29752.098 11.801243 0
+29754.214 11.796814 0
+29756.334 11.7924 0
+29758.459 11.788001 0
+29760.588 11.783617 0
+29762.722 11.779249 0
+29764.86 11.774895 0
+29767.002 11.770556 0
+29769.148 11.766232 0
+29771.299 11.761922 0
+29773.455 11.757628 0
+29775.614 11.753347 0
+29777.778 11.749082 0
+29779.946 11.744831 0
+29782.119 11.740595 0
+29784.296 11.736373 0
+29786.477 11.732166 0
+29788.663 11.727973 0
+29790.853 11.723794 0
+29793.047 11.71963 0
+29795.245 11.71548 0
+29797.448 11.711344 0
+29799.655 11.707222 0
+29801.867 11.703115 0
+29804.083 11.699021 0
+29806.303 11.694941 0
+29808.528 11.690876 0
+29810.757 11.686824 0
+29812.99 11.682786 0
+29815.227 11.678762 0
+29817.469 11.674752 0
+29819.715 11.670756 0
+29821.966 11.666773 0
+29824.22 11.662804 0
+29826.479 11.658848 0
+29828.743 11.654906 0
+29831.011 11.650978 0
+29833.283 11.647063 0
+29835.559 11.643161 0
+29837.84 11.639273 0
+29840.125 11.635398 0
+29842.414 11.631536 0
+29844.707 11.627688 0
+29847.005 11.623853 0
+29849.308 11.620031 0
+29851.614 11.616222 0
+29853.925 11.612426 0
+29856.24 11.608643 0
+29858.559 11.604872 0
+29860.883 11.601115 0
+29863.211 11.597371 0
+29865.543 11.59364 0
+29867.88 11.589921 0
+29870.221 11.586215 0
+29872.566 11.582521 0
+29874.916 11.578841 0
+29877.269 11.575173 0
+29879.627 11.571517 0
+29881.99 11.567874 0
+29884.357 11.564244 0
+29886.727 11.560625 0
+29889.103 11.55702 0
+29891.482 11.553426 0
+29893.866 11.549845 0
+29896.254 11.546276 0
+29898.647 11.542719 0
+29901.043 11.539174 0
+29903.444 11.535642 0
+29905.849 11.532121 0
+29908.259 11.528613 0
+29910.673 11.525116 0
+29913.091 11.521632 0
+29915.513 11.518159 0
+29917.94 11.514698 0
+29920.371 11.511249 0
+29922.806 11.507812 0
+29925.245 11.504387 0
+29927.689 11.500973 0
+29930.137 11.49757 0
+29932.589 11.49418 0
+29935.046 11.490801 0
+29937.507 11.487433 0
+29939.972 11.484077 0
+29942.441 11.480732 0
+29944.915 11.477399 0
+29947.393 11.474077 0
+29949.875 11.470766 0
+29952.361 11.467466 0
+29954.852 11.464178 0
+29957.347 11.460901 0
+29959.846 11.457635 0
+29962.349 11.45438 0
+29964.857 11.451136 0
+29967.369 11.447904 0
+29969.885 11.444682 0
+29972.406 11.441471 0
+29974.931 11.438271 0
+29977.459 11.435081 0
+29979.993 11.431903 0
+29982.53 11.428735 0
+29985.072 11.425579 0
+29987.618 11.422432 0
+29990.168 11.419297 0
+29992.722 11.416172 0
+29995.281 11.413057 0
+29997.844 11.409953 0
+30000.411 11.40686 0
+30002.983 11.403777 0
+30005.558 11.400704 0
+30008.138 11.397642 0
+30010.722 11.39459 0
+30013.311 11.391549 0
+30015.903 11.388518 0
+30018.5 11.385496 0
+30021.101 11.382486 0
+30023.707 11.379485 0
+30026.316 11.376494 0
+30028.93 11.373513 0
+30031.548 11.370543 0
+30034.17 11.367582 0
+30036.797 11.364632 0
+30039.427 11.361691 0
+30042.062 11.35876 0
+30044.701 11.355839 0
+30047.345 11.352928 0
+30049.992 11.350026 0
+30052.644 11.347135 0
+30055.3 11.344253 0
+30057.96 11.34138 0
+30060.625 11.338517 0
+30063.293 11.335664 0
+30065.966 11.332821 0
+30068.643 11.329986 0
+30071.324 11.327162 0
+30074.01 11.324347 0
+30076.7 11.321541 0
+30079.394 11.318744 0
+30082.092 11.315957 0
+30084.794 11.313179 0
+30087.5 11.310411 0
+30090.211 11.307651 0
+30092.926 11.304901 0
+30095.645 11.30216 0
+30098.369 11.299428 0
+30101.096 11.296706 0
+30103.828 11.293992 0
+30106.564 11.291287 0
+30109.304 11.288591 0
+30112.048 11.285905 0
+30114.797 11.283227 0
+30117.55 11.280558 0
+30120.306 11.277898 0
+30123.068 11.275246 0
+30125.833 11.272604 0
+30128.602 11.26997 0
+30131.376 11.267345 0
+30134.154 11.264728 0
+30136.936 11.262121 0
+30139.722 11.259522 0
+30142.512 11.256931 0
+30145.307 11.254349 0
+30148.106 11.251775 0
+30150.909 11.24921 0
+30153.716 11.246654 0
+30156.527 11.244106 0
+30159.343 11.241566 0
+30162.162 11.239035 0
+30164.986 11.236512 0
+30167.814 11.233997 0
+30170.646 11.23149 0
+30173.482 11.228992 0
+30176.323 11.226502 0
+30179.168 11.22402 0
+30182.016 11.221546 0
+30184.869 11.21908 0
+30187.726 11.216623 0
+30190.588 11.214173 0
+30193.453 11.211732 0
+30196.323 11.209298 0
+30199.197 11.206873 0
+30202.075 11.204455 0
+30204.957 11.202045 0
+30207.843 11.199643 0
+30210.733 11.197249 0
+30213.628 11.194863 0
+30216.527 11.192484 0
+30219.43 11.190113 0
+30222.337 11.18775 0
+30225.248 11.185395 0
+30228.163 11.183047 0
+30231.082 11.180707 0
+30234.006 11.178374 0
+30236.934 11.176049 0
+30239.866 11.173732 0
+30242.802 11.171422 0
+30245.742 11.16912 0
+30248.686 11.166825 0
+30251.635 11.164537 0
+30254.587 11.162257 0
+30257.544 11.159984 0
+30260.505 11.157719 0
+30263.47 11.155461 0
+30266.439 11.15321 0
+30269.412 11.150966 0
+30272.389 11.14873 0
+30275.371 11.146501 0
+30278.356 11.144279 0
+30281.346 11.142064 0
+30284.34 11.139856 0
+30287.338 11.137655 0
+30290.34 11.135462 0
+30293.346 11.133275 0
+30296.357 11.131096 0
+30299.371 11.128923 0
+30302.39 11.126757 0
+30305.412 11.124599 0
+30308.439 11.122447 0
+30311.47 11.120302 0
+30314.505 11.118164 0
+30317.544 11.116033 0
+30320.588 11.113908 0
+30323.635 11.111791 0
+30326.686 11.10968 0
+30329.742 11.107576 0
+30332.802 11.105478 0
+30335.865 11.103388 0
+30338.933 11.101303 0
+30342.005 11.099226 0
+30345.081 11.097155 0
+30348.162 11.095091 0
+30351.246 11.093033 0
+30354.334 11.090982 0
+30357.427 11.088937 0
+30360.523 11.086898 0
+30363.624 11.084867 0
+30366.729 11.082841 0
+30369.837 11.080822 0
+30372.95 11.078809 0
+30376.067 11.076803 0
+30379.188 11.074803 0
+30382.314 11.072809 0
+30385.443 11.070822 0
+30388.576 11.068841 0
+30391.714 11.066866 0
+30394.855 11.064897 0
+30398.001 11.062935 0
+30401.15 11.060978 0
+30404.304 11.059028 0
+30407.462 11.057084 0
+30410.624 11.055146 0
+30413.79 11.053214 0
+30416.96 11.051288 0
+30420.134 11.049368 0
+30423.312 11.047454 0
+30426.494 11.045547 0
+30429.68 11.043645 0
+30432.871 11.041749 0
+30436.065 11.039858 0
+30439.263 11.037974 0
+30442.466 11.036096 0
+30445.673 11.034223 0
+30448.883 11.032357 0
+30452.098 11.030496 0
+30455.317 11.028641 0
+30458.539 11.026791 0
+30461.766 11.024948 0
+30464.997 11.02311 0
+30468.232 11.021278 0
+30471.471 11.019451 0
+30474.714 11.01763 0
+30477.961 11.015815 0
+30481.212 11.014005 0
+30484.468 11.012201 0
+30487.727 11.010403 0
+30490.99 11.00861 0
+30494.257 11.006822 0
+30497.529 11.005041 0
+30500.804 11.003264 0
+30504.084 11.001493 0
+30507.367 10.999728 0
+30510.654 10.997967 0
+30513.946 10.996213 0
+30517.241 10.994463 0
+30520.541 10.992719 0
+30523.845 10.990981 0
+30527.152 10.989247 0
+30530.464 10.987519 0
+30533.78 10.985797 0
+30537.099 10.984079 0
+30540.423 10.982367 0
+30543.751 10.98066 0
+30547.082 10.978958 0
+30550.418 10.977262 0
+30553.758 10.97557 0
+30557.102 10.973884 0
+30560.45 10.972203 0
+30563.801 10.970527 0
+30567.157 10.968856 0
+30570.517 10.96719 0
+30573.881 10.965529 0
+30577.249 10.963873 0
+30580.621 10.962222 0
+30583.997 10.960576 0
+30587.376 10.958935 0
+30590.76 10.9573 0
+30594.148 10.955669 0
+30597.54 10.954043 0
+30600.936 10.952421 0
+30604.336 10.950805 0
+30607.74 10.949194 0
+30611.147 10.947587 0
+30614.559 10.945986 0
+30617.975 10.944389 0
+30621.395 10.942797 0
+30624.819 10.941209 0
+30628.246 10.939627 0
+30631.678 10.938049 0
+30635.114 10.936476 0
+30638.554 10.934907 0
+30641.997 10.933344 0
+30645.445 10.931785 0
+30648.897 10.93023 0
+30652.353 10.928681 0
+30655.812 10.927135 0
+30659.276 10.925595 0
+30662.743 10.924059 0
+30666.215 10.922528 0
+30669.69 10.921001 0
+30673.17 10.919479 0
+30676.653 10.917961 0
+30680.141 10.916448 0
+30683.632 10.914939 0
+30687.128 10.913435 0
+30690.627 10.911935 0
+30694.13 10.91044 0
+30697.637 10.908949 0
+30701.149 10.907462 0
+30704.664 10.90598 0
+30708.183 10.904502 0
+30711.706 10.903029 0
+30715.233 10.90156 0
+30718.764 10.900095 0
+30722.299 10.898634 0
+30725.838 10.897178 0
+30729.38 10.895726 0
+30732.927 10.894279 0
+30736.478 10.892835 0
+30740.033 10.891396 0
+30743.591 10.889961 0
+30747.154 10.888531 0
+30750.72 10.887104 0
+30754.291 10.885682 0
+30757.865 10.884264 0
+30761.443 10.88285 0
+30765.025 10.88144 0
+30768.612 10.880034 0
+30772.202 10.878632 0
+30775.796 10.877234 0
+30779.394 10.875841 0
+30782.995 10.874451 0
+30786.601 10.873066 0
+30790.211 10.871684 0
+30793.824 10.870307 0
+30797.442 10.868934 0
+30801.064 10.867564 0
+30804.689 10.866199 0
+30808.318 10.864837 0
+30811.951 10.863479 0
+30815.589 10.862126 0
+30819.23 10.860776 0
+30822.875 10.85943 0
+30826.523 10.858088 0
+30830.176 10.85675 0
+30833.833 10.855416 0
+30837.493 10.854085 0
+30841.158 10.852758 0
+30844.826 10.851436 0
+30848.499 10.850117 0
+30852.175 10.848801 0
+30855.855 10.84749 0
+30859.539 10.846182 0
+30863.227 10.844878 0
+30866.919 10.843578 0
+30870.614 10.842282 0
+30874.314 10.840989 0
+30878.017 10.8397 0
+30881.725 10.838414 0
+30885.436 10.837132 0
+30889.151 10.835854 0
+30892.87 10.83458 0
+30896.593 10.833309 0
+30900.32 10.832042 0
+30904.05 10.830778 0
+30907.785 10.829518 0
+30911.523 10.828262 0
+30915.266 10.827009 0
+30919.012 10.825759 0
+30922.762 10.824514 0
+30926.516 10.823271 0
+30930.274 10.822032 0
+30934.035 10.820797 0
+30937.801 10.819565 0
+30941.57 10.818337 0
+30945.343 10.817112 0
+30949.12 10.815891 0
+30952.901 10.814673 0
+30956.686 10.813458 0
+30960.475 10.812247 0
+30964.268 10.811039 0
+30968.064 10.809835 0
+30971.864 10.808634 0
+30975.668 10.807436 0
+30979.476 10.806242 0
+30983.288 10.805051 0
+30987.104 10.803864 0
+30990.923 10.802679 0
+30994.747 10.801498 0
+30998.574 10.800321 0
+31002.405 10.799146 0
+31006.24 10.797975 0
+31010.079 10.796807 0
+31013.921 10.795643 0
+31017.768 10.794482 0
+31021.618 10.793323 0
+31025.472 10.792168 0
+31029.33 10.791017 0
+31033.192 10.789868 0
+31037.057 10.788723 0
+31040.927 10.787581 0
+31044.8 10.786442 0
+31048.677 10.785306 0
+31052.558 10.784173 0
+31056.443 10.783044 0
+31060.331 10.781917 0
+31064.224 10.780794 0
+31068.12 10.779674 0
+31072.02 10.778556 0
+31075.924 10.777442 0
+31079.831 10.776331 0
+31083.743 10.775223 0
+31087.658 10.774118 0
+31091.577 10.773016 0
+31095.5 10.771918 0
+31099.427 10.770822 0
+31103.357 10.769729 0
+31107.291 10.768639 0
+31111.23 10.767552 0
+31115.171 10.766468 0
+31119.117 10.765387 0
+31123.067 10.764309 0
+31127.02 10.763234 0
+31130.977 10.762162 0
+31134.938 10.761093 0
+31138.903 10.760026 0
+31142.871 10.758963 0
+31146.843 10.757902 0
+31150.82 10.756844 0
+31154.799 10.75579 0
+31158.783 10.754738 0
+31162.77 10.753689 0
+31166.762 10.752642 0
+31170.757 10.751599 0
+31174.755 10.750558 0
+31178.758 10.749521 0
+31182.764 10.748486 0
+31186.774 10.747453 0
+31190.788 10.746424 0
+31194.806 10.745397 0
+31198.827 10.744373 0
+31202.853 10.743352 0
+31206.882 10.742334 0
+31210.914 10.741318 0
+31214.951 10.740305 0
+31218.991 10.739295 0
+31223.035 10.738288 0
+31227.083 10.737283 0
+31231.134 10.736281 0
+31235.19 10.735281 0
+31239.249 10.734284 0
+31243.312 10.73329 0
+31247.378 10.732299 0
+31251.449 10.73131 0
+31255.523 10.730324 0
+31259.6 10.72934 0
+31263.682 10.728359 0
+31267.767 10.727381 0
+31271.856 10.726405 0
+31275.949 10.725432 0
+31280.046 10.724462 0
+31284.146 10.723494 0
+31288.25 10.722528 0
+31292.358 10.721565 0
+31296.469 10.720605 0
+31300.585 10.719647 0
+31304.704 10.718692 0
+31308.826 10.717739 0
+31312.953 10.716789 0
+31317.083 10.715841 0
+31321.217 10.714896 0
+31325.354 10.713953 0
+31329.496 10.713013 0
+31333.641 10.712075 0
+31337.79 10.71114 0
+31341.942 10.710207 0
+31346.098 10.709277 0
+31350.258 10.708349 0
+31354.422 10.707423 0
+31358.589 10.7065 0
+31362.761 10.70558 0
+31366.935 10.704661 0
+31371.114 10.703745 0
+31375.296 10.702832 0
+31379.482 10.701921 0
+31383.672 10.701012 0
+31387.865 10.700106 0
+31392.062 10.699202 0
+31396.263 10.6983 0
+31400.467 10.697401 0
+31404.675 10.696504 0
+31408.887 10.695609 0
+31413.103 10.694717 0
+31417.322 10.693827 0
+31421.545 10.692939 0
+31425.772 10.692053 0
+31430.002 10.69117 0
+31434.236 10.69029 0
+31438.474 10.689411 0
+31442.715 10.688535 0
+31446.96 10.687661 0
+31451.209 10.686789 0
+31455.461 10.685919 0
+&
+@target G0.S17
+@type xydy
+60684.535 14.790565 0
+60684.539 14.790449 0
+60684.544 14.790255 0
+60684.552 14.789983 0
+60684.562 14.789634 0
+60684.574 14.789207 0
+60684.588 14.788703 0
+60684.605 14.788122 0
+60684.624 14.787463 0
+60684.644 14.786727 0
+60684.668 14.785914 0
+60684.693 14.785023 0
+60684.721 14.784056 0
+60684.75 14.783011 0
+60684.782 14.78189 0
+60684.816 14.780692 0
+60684.853 14.779417 0
+60684.891 14.778066 0
+60684.932 14.776639 0
+60684.975 14.775135 0
+60685.02 14.773556 0
+60685.068 14.7719 0
+60685.117 14.770169 0
+60685.169 14.768362 0
+60685.223 14.76648 0
+60685.28 14.764523 0
+60685.338 14.76249 0
+60685.399 14.760383 0
+60685.461 14.758202 0
+60685.527 14.755946 0
+60685.594 14.753615 0
+60685.663 14.751211 0
+60685.735 14.748734 0
+60685.809 14.746183 0
+60685.885 14.743558 0
+60685.963 14.740861 0
+60686.044 14.738091 0
+60686.126 14.735249 0
+60686.211 14.732335 0
+60686.298 14.729349 0
+60686.388 14.726291 0
+60686.479 14.723163 0
+60686.573 14.719963 0
+60686.669 14.716693 0
+60686.767 14.713352 0
+60686.867 14.709941 0
+60686.97 14.706461 0
+60687.075 14.702912 0
+60687.181 14.699293 0
+60687.291 14.695606 0
+60687.402 14.691851 0
+60687.516 14.688028 0
+60687.631 14.684137 0
+60687.749 14.680179 0
+60687.869 14.676154 0
+60687.992 14.672063 0
+60688.116 14.667906 0
+60688.243 14.663683 0
+60688.372 14.659395 0
+60688.503 14.655042 0
+60688.637 14.650624 0
+60688.772 14.646143 0
+60688.91 14.641598 0
+60689.05 14.636989 0
+60689.192 14.632318 0
+60689.337 14.627585 0
+60689.483 14.622789 0
+60689.632 14.617932 0
+60689.783 14.613014 0
+60689.937 14.608036 0
+60690.092 14.602997 0
+60690.25 14.597898 0
+60690.41 14.592741 0
+60690.572 14.587524 0
+60690.736 14.582249 0
+60690.902 14.576916 0
+60691.071 14.571526 0
+60691.242 14.566079 0
+60691.415 14.560575 0
+60691.59 14.555016 0
+60691.768 14.549401 0
+60691.948 14.543731 0
+60692.129 14.538006 0
+60692.314 14.532227 0
+60692.5 14.526395 0
+60692.688 14.52051 0
+60692.879 14.514572 0
+60693.072 14.508582 0
+60693.267 14.502541 0
+60693.464 14.496448 0
+60693.664 14.490305 0
+60693.866 14.484112 0
+60694.07 14.477869 0
+60694.276 14.471577 0
+60694.484 14.465237 0
+60694.695 14.458849 0
+60694.908 14.452413 0
+60695.122 14.445931 0
+60695.34 14.439402 0
+60695.559 14.432826 0
+60695.781 14.426206 0
+60696.004 14.419541 0
+60696.23 14.412831 0
+60696.459 14.406077 0
+60696.689 14.399281 0
+60696.922 14.392441 0
+60697.156 14.385559 0
+60697.393 14.378635 0
+60697.633 14.371671 0
+60697.874 14.364665 0
+60698.118 14.357619 0
+60698.363 14.350534 0
+60698.611 14.343409 0
+60698.862 14.336246 0
+60699.114 14.329045 0
+60699.369 14.321807 0
+60699.626 14.314531 0
+60699.885 14.307219 0
+60700.146 14.299871 0
+60700.409 14.292487 0
+60700.675 14.285069 0
+60700.943 14.277616 0
+60701.213 14.270129 0
+60701.485 14.262609 0
+60701.76 14.255057 0
+60702.036 14.247472 0
+60702.315 14.239855 0
+60702.596 14.232207 0
+60702.88 14.224528 0
+60703.165 14.216819 0
+60703.453 14.20908 0
+60703.743 14.201312 0
+60704.035 14.193515 0
+60704.329 14.18569 0
+60704.625 14.177838 0
+60704.924 14.169958 0
+60705.225 14.162052 0
+60705.528 14.154119 0
+60705.833 14.146161 0
+60706.141 14.138178 0
+60706.451 14.13017 0
+60706.763 14.122138 0
+60707.077 14.114082 0
+60707.393 14.106004 0
+60707.712 14.097902 0
+60708.032 14.089778 0
+60708.355 14.081633 0
+60708.68 14.073466 0
+60709.008 14.065279 0
+60709.337 14.057072 0
+60709.669 14.048844 0
+60710.003 14.040598 0
+60710.339 14.032332 0
+60710.677 14.024049 0
+60711.018 14.015747 0
+60711.361 14.007428 0
+60711.706 13.999092 0
+60712.053 13.990739 0
+60712.402 13.982371 0
+60712.754 13.973987 0
+60713.108 13.965588 0
+60713.463 13.957174 0
+60713.822 13.948745 0
+60714.182 13.940304 0
+60714.545 13.931848 0
+60714.909 13.92338 0
+60715.276 13.914899 0
+60715.646 13.906407 0
+60716.017 13.897902 0
+60716.39 13.889387 0
+60716.766 13.880861 0
+60717.144 13.872324 0
+60717.524 13.863778 0
+60717.907 13.855222 0
+60718.291 13.846657 0
+60718.678 13.838083 0
+60719.067 13.829501 0
+60719.458 13.820911 0
+60719.852 13.812313 0
+60720.247 13.803709 0
+60720.645 13.795098 0
+60721.045 13.78648 0
+60721.447 13.777857 0
+60721.852 13.769228 0
+60722.258 13.760593 0
+60722.667 13.751954 0
+60723.078 13.743311 0
+60723.491 13.734664 0
+60723.907 13.726013 0
+60724.324 13.717358 0
+60724.744 13.708701 0
+60725.166 13.700041 0
+60725.59 13.691379 0
+60726.017 13.682715 0
+60726.445 13.674049 0
+60726.876 13.665382 0
+60727.309 13.656715 0
+60727.744 13.648047 0
+60728.182 13.639378 0
+60728.622 13.63071 0
+60729.063 13.622042 0
+60729.507 13.613375 0
+60729.954 13.604709 0
+60730.402 13.596045 0
+60730.853 13.587382 0
+60731.305 13.578722 0
+60731.76 13.570063 0
+60732.218 13.561408 0
+60732.677 13.552755 0
+60733.139 13.544106 0
+60733.602 13.53546 0
+60734.068 13.526818 0
+60734.537 13.51818 0
+60735.007 13.509546 0
+60735.48 13.500917 0
+60735.955 13.492294 0
+60736.432 13.483675 0
+60736.911 13.475062 0
+60737.392 13.466455 0
+60737.876 13.457853 0
+60738.362 13.449258 0
+60738.85 13.44067 0
+60739.34 13.432088 0
+60739.832 13.423514 0
+60740.327 13.414947 0
+60740.824 13.406387 0
+60741.323 13.397835 0
+60741.824 13.389292 0
+60742.327 13.380756 0
+60742.833 13.372229 0
+60743.341 13.363711 0
+60743.851 13.355202 0
+60744.363 13.346702 0
+60744.877 13.338211 0
+60745.394 13.32973 0
+60745.913 13.321259 0
+60746.434 13.312798 0
+60746.957 13.304347 0
+60747.482 13.295907 0
+60748.01 13.287477 0
+60748.54 13.279058 0
+60749.072 13.27065 0
+60749.606 13.262254 0
+60750.142 13.253869 0
+60750.681 13.245495 0
+60751.221 13.237134 0
+60751.764 13.228784 0
+60752.31 13.220447 0
+60752.857 13.212122 0
+60753.407 13.20381 0
+60753.958 13.19551 0
+60754.512 13.187223 0
+60755.068 13.178949 0
+60755.627 13.170689 0
+60756.187 13.162442 0
+60756.75 13.154208 0
+60757.315 13.145988 0
+60757.882 13.137782 0
+60758.452 13.12959 0
+60759.023 13.121412 0
+60759.597 13.113248 0
+60760.173 13.105099 0
+60760.751 13.096964 0
+60761.331 13.088844 0
+60761.914 13.080739 0
+60762.498 13.072649 0
+60763.085 13.064574 0
+60763.675 13.056514 0
+60764.266 13.048469 0
+60764.859 13.04044 0
+60765.455 13.032427 0
+60766.053 13.024429 0
+60766.653 13.016448 0
+60767.255 13.008482 0
+60767.86 13.000532 0
+60768.467 12.992598 0
+60769.075 12.984681 0
+60769.686 12.97678 0
+60770.3 12.968895 0
+60770.915 12.961027 0
+60771.533 12.953176 0
+60772.153 12.945341 0
+60772.775 12.937524 0
+60773.399 12.929723 0
+60774.026 12.921939 0
+60774.654 12.914173 0
+60775.285 12.906424 0
+60775.918 12.898692 0
+60776.553 12.890977 0
+60777.191 12.88328 0
+60777.83 12.875601 0
+60778.472 12.867939 0
+60779.116 12.860295 0
+60779.762 12.852668 0
+60780.411 12.84506 0
+60781.061 12.837469 0
+60781.714 12.829896 0
+60782.369 12.822342 0
+60783.026 12.814805 0
+60783.686 12.807287 0
+60784.347 12.799787 0
+60785.011 12.792305 0
+60785.677 12.784842 0
+60786.345 12.777396 0
+60787.015 12.76997 0
+60787.688 12.762562 0
+60788.363 12.755172 0
+60789.04 12.747801 0
+60789.719 12.740449 0
+60790.4 12.733115 0
+60791.084 12.7258 0
+60791.769 12.718504 0
+60792.457 12.711227 0
+60793.147 12.703968 0
+60793.84 12.696729 0
+60794.534 12.689508 0
+60795.231 12.682306 0
+60795.93 12.675124 0
+60796.631 12.66796 0
+60797.334 12.660816 0
+60798.039 12.65369 0
+60798.747 12.646584 0
+60799.457 12.639496 0
+60800.169 12.632428 0
+60800.883 12.625379 0
+60801.599 12.61835 0
+60802.318 12.611339 0
+60803.039 12.604348 0
+60803.762 12.597376 0
+60804.487 12.590423 0
+60805.214 12.58349 0
+60805.944 12.576576 0
+60806.676 12.569681 0
+60807.41 12.562806 0
+60808.146 12.555949 0
+60808.884 12.549113 0
+60809.625 12.542295 0
+60810.367 12.535497 0
+60811.112 12.528719 0
+60811.859 12.52196 0
+60812.608 12.51522 0
+60813.36 12.5085 0
+60814.114 12.501799 0
+60814.869 12.495117 0
+60815.628 12.488455 0
+60816.388 12.481812 0
+60817.15 12.475189 0
+60817.915 12.468585 0
+60818.682 12.462 0
+60819.451 12.455435 0
+60820.222 12.448889 0
+60820.995 12.442362 0
+60821.771 12.435855 0
+60822.549 12.429368 0
+60823.328 12.422899 0
+60824.111 12.41645 0
+60824.895 12.41002 0
+60825.681 12.40361 0
+60826.47 12.397219 0
+60827.261 12.390847 0
+60828.054 12.384495 0
+60828.849 12.378162 0
+60829.647 12.371848 0
+60830.447 12.365553 0
+60831.248 12.359277 0
+60832.052 12.353021 0
+60832.859 12.346784 0
+60833.667 12.340566 0
+60834.478 12.334367 0
+60835.291 12.328188 0
+60836.106 12.322027 0
+60836.923 12.315886 0
+60837.742 12.309763 0
+60838.564 12.30366 0
+60839.387 12.297575 0
+60840.213 12.29151 0
+60841.041 12.285464 0
+60841.872 12.279436 0
+60842.704 12.273428 0
+60843.539 12.267438 0
+60844.376 12.261467 0
+60845.215 12.255515 0
+60846.056 12.249582 0
+60846.899 12.243668 0
+60847.745 12.237772 0
+60848.593 12.231895 0
+60849.443 12.226037 0
+60850.295 12.220198 0
+60851.149 12.214377 0
+60852.006 12.208574 0
+60852.865 12.202791 0
+60853.726 12.197026 0
+60854.589 12.191279 0
+60855.454 12.185551 0
+60856.322 12.179841 0
+60857.191 12.174149 0
+60858.063 12.168476 0
+60858.937 12.162822 0
+60859.813 12.157185 0
+60860.692 12.151567 0
+60861.572 12.145967 0
+60862.455 12.140386 0
+60863.34 12.134822 0
+60864.227 12.129277 0
+60865.117 12.123749 0
+60866.008 12.11824 0
+60866.902 12.112749 0
+60867.798 12.107275 0
+60868.696 12.10182 0
+60869.596 12.096382 0
+60870.499 12.090963 0
+60871.403 12.085561 0
+60872.31 12.080176 0
+60873.219 12.07481 0
+60874.13 12.069461 0
+60875.044 12.06413 0
+60875.959 12.058817 0
+60876.877 12.053521 0
+60877.797 12.048242 0
+60878.719 12.042981 0
+60879.643 12.037738 0
+60880.57 12.032512 0
+60881.499 12.027303 0
+60882.429 12.022112 0
+60883.362 12.016938 0
+60884.298 12.011781 0
+60885.235 12.006641 0
+60886.175 12.001518 0
+60887.116 11.996413 0
+60888.06 11.991324 0
+60889.007 11.986253 0
+60889.955 11.981198 0
+60890.905 11.976161 0
+60891.858 11.97114 0
+60892.813 11.966136 0
+60893.77 11.961149 0
+60894.729 11.956178 0
+60895.691 11.951225 0
+60896.654 11.946288 0
+60897.62 11.941367 0
+60898.588 11.936463 0
+60899.558 11.931576 0
+60900.531 11.926705 0
+60901.505 11.92185 0
+60902.482 11.917012 0
+60903.461 11.91219 0
+60904.442 11.907385 0
+60905.425 11.902595 0
+60906.41 11.897822 0
+60907.398 11.893065 0
+60908.388 11.888324 0
+60909.38 11.8836 0
+60910.374 11.878891 0
+60911.37 11.874198 0
+60912.369 11.869521 0
+60913.369 11.86486 0
+60914.372 11.860214 0
+60915.377 11.855585 0
+60916.385 11.850971 0
+60917.394 11.846373 0
+60918.406 11.84179 0
+60919.419 11.837223 0
+60920.435 11.832672 0
+60921.453 11.828136 0
+60922.474 11.823615 0
+60923.496 11.81911 0
+60924.521 11.814621 0
+60925.548 11.810146 0
+60926.577 11.805687 0
+60927.608 11.801243 0
+60928.641 11.796814 0
+60929.677 11.7924 0
+60930.715 11.788001 0
+60931.755 11.783617 0
+60932.797 11.779249 0
+60933.841 11.774895 0
+60934.887 11.770556 0
+60935.936 11.766232 0
+60936.987 11.761922 0
+60938.04 11.757628 0
+60939.095 11.753347 0
+60940.152 11.749082 0
+60941.212 11.744831 0
+60942.273 11.740595 0
+60943.337 11.736373 0
+60944.403 11.732166 0
+60945.472 11.727973 0
+60946.542 11.723794 0
+60947.615 11.71963 0
+60948.689 11.71548 0
+60949.766 11.711344 0
+60950.845 11.707222 0
+60951.927 11.703115 0
+60953.01 11.699021 0
+60954.096 11.694941 0
+60955.184 11.690876 0
+60956.274 11.686824 0
+60957.366 11.682786 0
+60958.46 11.678762 0
+60959.557 11.674752 0
+60960.655 11.670756 0
+60961.756 11.666773 0
+60962.859 11.662804 0
+60963.965 11.658848 0
+60965.072 11.654906 0
+60966.181 11.650978 0
+60967.293 11.647063 0
+60968.407 11.643161 0
+60969.523 11.639273 0
+60970.642 11.635398 0
+60971.762 11.631536 0
+60972.885 11.627688 0
+60974.009 11.623853 0
+60975.136 11.620031 0
+60976.265 11.616222 0
+60977.397 11.612426 0
+60978.53 11.608643 0
+60979.666 11.604872 0
+60980.804 11.601115 0
+60981.944 11.597371 0
+60983.086 11.59364 0
+60984.23 11.589921 0
+60985.377 11.586215 0
+60986.526 11.582521 0
+60987.676 11.578841 0
+60988.829 11.575173 0
+60989.985 11.571517 0
+60991.142 11.567874 0
+60992.302 11.564244 0
+60993.463 11.560625 0
+60994.627 11.55702 0
+60995.793 11.553426 0
+60996.962 11.549845 0
+60998.132 11.546276 0
+60999.305 11.542719 0
+61000.479 11.539174 0
+61001.656 11.535642 0
+61002.835 11.532121 0
+61004.017 11.528613 0
+61005.2 11.525116 0
+61006.386 11.521632 0
+61007.574 11.518159 0
+61008.763 11.514698 0
+61009.956 11.511249 0
+61011.15 11.507812 0
+61012.346 11.504387 0
+61013.545 11.500973 0
+61014.746 11.49757 0
+61015.949 11.49418 0
+61017.154 11.490801 0
+61018.361 11.487433 0
+61019.571 11.484077 0
+61020.782 11.480732 0
+61021.996 11.477399 0
+61023.212 11.474077 0
+61024.43 11.470766 0
+61025.651 11.467466 0
+61026.873 11.464178 0
+61028.098 11.460901 0
+61029.325 11.457635 0
+61030.554 11.45438 0
+61031.785 11.451136 0
+61033.018 11.447904 0
+61034.254 11.444682 0
+61035.491 11.441471 0
+61036.731 11.438271 0
+61037.973 11.435081 0
+61039.217 11.431903 0
+61040.464 11.428735 0
+61041.712 11.425579 0
+61042.963 11.422432 0
+61044.216 11.419297 0
+61045.471 11.416172 0
+61046.728 11.413057 0
+61047.987 11.409953 0
+61049.249 11.40686 0
+61050.512 11.403777 0
+61051.778 11.400704 0
+61053.046 11.397642 0
+61054.316 11.39459 0
+61055.589 11.391549 0
+61056.863 11.388518 0
+61058.14 11.385496 0
+61059.419 11.382486 0
+61060.7 11.379485 0
+61061.983 11.376494 0
+61063.268 11.373513 0
+61064.556 11.370543 0
+61065.845 11.367582 0
+61067.137 11.364632 0
+61068.431 11.361691 0
+61069.727 11.35876 0
+61071.026 11.355839 0
+61072.326 11.352928 0
+61073.629 11.350026 0
+61074.933 11.347135 0
+61076.24 11.344253 0
+61077.55 11.34138 0
+61078.861 11.338517 0
+61080.174 11.335664 0
+61081.49 11.332821 0
+61082.808 11.329986 0
+61084.128 11.327162 0
+61085.45 11.324347 0
+61086.774 11.321541 0
+61088.1 11.318744 0
+61089.429 11.315957 0
+61090.76 11.313179 0
+61092.093 11.310411 0
+61093.428 11.307651 0
+61094.765 11.304901 0
+61096.104 11.30216 0
+61097.446 11.299428 0
+61098.79 11.296706 0
+61100.135 11.293992 0
+61101.483 11.291287 0
+61102.834 11.288591 0
+61104.186 11.285905 0
+61105.541 11.283227 0
+61106.897 11.280558 0
+61108.256 11.277898 0
+61109.617 11.275246 0
+61110.98 11.272604 0
+61112.345 11.26997 0
+61113.713 11.267345 0
+61115.083 11.264728 0
+61116.454 11.262121 0
+61117.828 11.259522 0
+61119.204 11.256931 0
+61120.583 11.254349 0
+61121.963 11.251775 0
+61123.346 11.24921 0
+61124.73 11.246654 0
+61126.117 11.244106 0
+61127.506 11.241566 0
+61128.898 11.239035 0
+61130.291 11.236512 0
+61131.686 11.233997 0
+61133.084 11.23149 0
+61134.484 11.228992 0
+61135.886 11.226502 0
+61137.29 11.22402 0
+61138.696 11.221546 0
+61140.105 11.21908 0
+61141.516 11.216623 0
+61142.928 11.214173 0
+61144.343 11.211732 0
+61145.76 11.209298 0
+61147.18 11.206873 0
+61148.601 11.204455 0
+61150.025 11.202045 0
+61151.45 11.199643 0
+61152.878 11.197249 0
+61154.308 11.194863 0
+61155.74 11.192484 0
+61157.175 11.190113 0
+61158.611 11.18775 0
+61160.05 11.185395 0
+61161.491 11.183047 0
+61162.934 11.180707 0
+61164.379 11.178374 0
+61165.826 11.176049 0
+61167.275 11.173732 0
+61168.727 11.171422 0
+61170.181 11.16912 0
+61171.636 11.166825 0
+61173.094 11.164537 0
+61174.555 11.162257 0
+61176.017 11.159984 0
+61177.481 11.157719 0
+61178.948 11.155461 0
+61180.417 11.15321 0
+61181.888 11.150966 0
+61183.361 11.14873 0
+61184.836 11.146501 0
+61186.314 11.144279 0
+61187.793 11.142064 0
+61189.275 11.139856 0
+61190.759 11.137655 0
+61192.245 11.135462 0
+61193.733 11.133275 0
+61195.223 11.131096 0
+61196.716 11.128923 0
+61198.21 11.126757 0
+61199.707 11.124599 0
+61201.206 11.122447 0
+61202.707 11.120302 0
+61204.21 11.118164 0
+61205.715 11.116033 0
+61207.223 11.113908 0
+61208.732 11.111791 0
+61210.244 11.10968 0
+61211.758 11.107576 0
+61213.274 11.105478 0
+61214.793 11.103388 0
+61216.313 11.101303 0
+61217.835 11.099226 0
+61219.36 11.097155 0
+61220.887 11.095091 0
+61222.416 11.093033 0
+61223.947 11.090982 0
+61225.48 11.088937 0
+61227.016 11.086898 0
+61228.553 11.084867 0
+61230.093 11.082841 0
+61231.635 11.080822 0
+61233.179 11.078809 0
+61234.725 11.076803 0
+61236.273 11.074803 0
+61237.824 11.072809 0
+61239.376 11.070822 0
+61240.931 11.068841 0
+61242.488 11.066866 0
+61244.047 11.064897 0
+61245.608 11.062935 0
+61247.172 11.060978 0
+61248.737 11.059028 0
+61250.305 11.057084 0
+61251.874 11.055146 0
+61253.446 11.053214 0
+61255.02 11.051288 0
+61256.597 11.049368 0
+61258.175 11.047454 0
+61259.755 11.045547 0
+61261.338 11.043645 0
+61262.923 11.041749 0
+61264.51 11.039858 0
+61266.099 11.037974 0
+61267.69 11.036096 0
+61269.283 11.034223 0
+61270.879 11.032357 0
+61272.476 11.030496 0
+61274.076 11.028641 0
+61275.678 11.026791 0
+61277.282 11.024948 0
+61278.888 11.02311 0
+61280.497 11.021278 0
+61282.107 11.019451 0
+61283.72 11.01763 0
+61285.334 11.015815 0
+61286.951 11.014005 0
+61288.57 11.012201 0
+61290.192 11.010403 0
+61291.815 11.00861 0
+61293.44 11.006822 0
+61295.068 11.005041 0
+61296.698 11.003264 0
+61298.33 11.001493 0
+61299.964 10.999728 0
+61301.6 10.997967 0
+61303.238 10.996213 0
+61304.878 10.994463 0
+61306.521 10.992719 0
+61308.166 10.990981 0
+61309.813 10.989247 0
+61311.462 10.987519 0
+61313.113 10.985797 0
+61314.766 10.984079 0
+61316.421 10.982367 0
+61318.079 10.98066 0
+61319.739 10.978958 0
+61321.4 10.977262 0
+61323.064 10.97557 0
+61324.73 10.973884 0
+61326.399 10.972203 0
+61328.069 10.970527 0
+61329.742 10.968856 0
+61331.416 10.96719 0
+61333.093 10.965529 0
+61334.772 10.963873 0
+61336.453 10.962222 0
+61338.136 10.960576 0
+61339.821 10.958935 0
+61341.509 10.9573 0
+61343.198 10.955669 0
+61344.89 10.954043 0
+61346.584 10.952421 0
+61348.28 10.950805 0
+61349.978 10.949194 0
+61351.678 10.947587 0
+61353.381 10.945986 0
+61355.085 10.944389 0
+61356.792 10.942797 0
+61358.501 10.941209 0
+61360.212 10.939627 0
+61361.925 10.938049 0
+61363.64 10.936476 0
+61365.357 10.934907 0
+61367.077 10.933344 0
+61368.798 10.931785 0
+61370.522 10.93023 0
+61372.248 10.928681 0
+61373.976 10.927135 0
+61375.706 10.925595 0
+61377.438 10.924059 0
+61379.173 10.922528 0
+61380.909 10.921001 0
+61382.648 10.919479 0
+61384.389 10.917961 0
+61386.131 10.916448 0
+61387.876 10.914939 0
+61389.624 10.913435 0
+61391.373 10.911935 0
+61393.124 10.91044 0
+61394.878 10.908949 0
+61396.634 10.907462 0
+61398.391 10.90598 0
+61400.151 10.904502 0
+61401.913 10.903029 0
+61403.678 10.90156 0
+61405.444 10.900095 0
+61407.212 10.898634 0
+61408.983 10.897178 0
+61410.756 10.895726 0
+61412.531 10.894279 0
+61414.308 10.892835 0
+61416.087 10.891396 0
+61417.868 10.889961 0
+61419.651 10.888531 0
+61421.437 10.887104 0
+61423.224 10.885682 0
+61425.014 10.884264 0
+61426.806 10.88285 0
+61428.6 10.88144 0
+61430.396 10.880034 0
+61432.194 10.878632 0
+61433.995 10.877234 0
+61435.797 10.875841 0
+61437.602 10.874451 0
+61439.408 10.873066 0
+61441.217 10.871684 0
+61443.028 10.870307 0
+61444.841 10.868934 0
+61446.657 10.867564 0
+61448.474 10.866199 0
+61450.293 10.864837 0
+61452.115 10.863479 0
+61453.939 10.862126 0
+61455.765 10.860776 0
+61457.593 10.85943 0
+61459.423 10.858088 0
+61461.255 10.85675 0
+61463.089 10.855416 0
+61464.926 10.854085 0
+61466.764 10.852758 0
+61468.605 10.851436 0
+61470.448 10.850117 0
+61472.293 10.848801 0
+61474.14 10.84749 0
+61475.989 10.846182 0
+61477.84 10.844878 0
+61479.694 10.843578 0
+61481.549 10.842282 0
+61483.407 10.840989 0
+61485.267 10.8397 0
+61487.129 10.838414 0
+61488.993 10.837132 0
+61490.859 10.835854 0
+61492.727 10.83458 0
+61494.598 10.833309 0
+61496.47 10.832042 0
+61498.345 10.830778 0
+61500.222 10.829518 0
+61502.101 10.828262 0
+61503.982 10.827009 0
+61505.865 10.825759 0
+61507.75 10.824514 0
+61509.637 10.823271 0
+61511.527 10.822032 0
+61513.418 10.820797 0
+61515.312 10.819565 0
+61517.208 10.818337 0
+61519.106 10.817112 0
+61521.006 10.815891 0
+61522.908 10.814673 0
+61524.812 10.813458 0
+61526.719 10.812247 0
+61528.627 10.811039 0
+61530.538 10.809835 0
+61532.451 10.808634 0
+61534.365 10.807436 0
+61536.282 10.806242 0
+61538.201 10.805051 0
+61540.123 10.803864 0
+61542.046 10.802679 0
+61543.971 10.801498 0
+61545.899 10.800321 0
+61547.829 10.799146 0
+61549.76 10.797975 0
+61551.694 10.796807 0
+61553.63 10.795643 0
+61555.568 10.794482 0
+61557.509 10.793323 0
+61559.451 10.792168 0
+61561.395 10.791017 0
+61563.342 10.789868 0
+61565.291 10.788723 0
+61567.241 10.787581 0
+61569.194 10.786442 0
+61571.149 10.785306 0
+61573.107 10.784173 0
+61575.066 10.783044 0
+61577.027 10.781917 0
+61578.991 10.780794 0
+61580.956 10.779674 0
+61582.924 10.778556 0
+61584.894 10.777442 0
+61586.866 10.776331 0
+61588.84 10.775223 0
+61590.816 10.774118 0
+61592.794 10.773016 0
+61594.774 10.771918 0
+61596.757 10.770822 0
+61598.741 10.769729 0
+61600.728 10.768639 0
+61602.717 10.767552 0
+61604.708 10.766468 0
+61606.7 10.765387 0
+61608.696 10.764309 0
+61610.693 10.763234 0
+61612.692 10.762162 0
+61614.694 10.761093 0
+61616.697 10.760026 0
+61618.703 10.758963 0
+61620.71 10.757902 0
+61622.72 10.756844 0
+61624.732 10.75579 0
+61626.746 10.754738 0
+61628.762 10.753689 0
+61630.781 10.752642 0
+61632.801 10.751599 0
+61634.824 10.750558 0
+61636.848 10.749521 0
+61638.875 10.748486 0
+61640.904 10.747453 0
+61642.934 10.746424 0
+61644.967 10.745397 0
+61647.003 10.744373 0
+61649.04 10.743352 0
+61651.079 10.742334 0
+61653.12 10.741318 0
+61655.164 10.740305 0
+61657.21 10.739295 0
+61659.257 10.738288 0
+61661.307 10.737283 0
+61663.359 10.736281 0
+61665.413 10.735281 0
+61667.469 10.734284 0
+61669.527 10.73329 0
+61671.588 10.732299 0
+61673.65 10.73131 0
+61675.715 10.730324 0
+61677.781 10.72934 0
+61679.85 10.728359 0
+61681.921 10.727381 0
+61683.994 10.726405 0
+61686.069 10.725432 0
+61688.146 10.724462 0
+61690.225 10.723494 0
+61692.307 10.722528 0
+61694.39 10.721565 0
+61696.476 10.720605 0
+61698.563 10.719647 0
+61700.653 10.718692 0
+61702.745 10.717739 0
+61704.839 10.716789 0
+61706.935 10.715841 0
+61709.033 10.714896 0
+61711.133 10.713953 0
+61713.235 10.713013 0
+61715.34 10.712075 0
+61717.446 10.71114 0
+61719.555 10.710207 0
+61721.665 10.709277 0
+61723.778 10.708349 0
+61725.893 10.707423 0
+61728.01 10.7065 0
+61730.129 10.70558 0
+61732.25 10.704661 0
+61734.374 10.703745 0
+61736.499 10.702832 0
+61738.626 10.701921 0
+61740.756 10.701012 0
+61742.888 10.700106 0
+61745.021 10.699202 0
+61747.157 10.6983 0
+61749.295 10.697401 0
+61751.435 10.696504 0
+61753.577 10.695609 0
+61755.721 10.694717 0
+61757.868 10.693827 0
+61760.016 10.692939 0
+61762.167 10.692053 0
+61764.319 10.69117 0
+61766.474 10.69029 0
+61768.631 10.689411 0
+61770.789 10.688535 0
+61772.95 10.687661 0
+61775.113 10.686789 0
+61777.278 10.685919 0
+&
+@target G0.S18
+@type xydy
+3477.955 -0.099151818 -0.040354847
+4637.2292 0.45021516 0.0089291111
+5482.7366 0.22071533 0.023963406
+6556.5109 0.52004905 0.034784618
+8704.4561 0.25743045 0.037453225
+10585.239 0.10680829 0.032108739
+&
+@target G0.S19
+@type xydy
+8481.0647 0.20490422 0.039875029
+&
+@target G0.S20
+@type xydy
+6491.7969 0.087743509 -0.042305967
+9372.8641 0.044217997 0.0053161588
+11141.378 0.028805026 0.019521952
+&
+@target G0.S21
+@type xydy
+11544.321 -1.6236079 -0.57492236
+13378.284 -0.61809355 -0.18411071
+&
+@target G0.S22
+@type xydy
+30440.623 -1.2042252 -1.6937183
+&
+@target G0.S23
+@type xydy
+61266.774 -2.2996344 -7.3964796
+&
