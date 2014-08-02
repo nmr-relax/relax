@@ -79,7 +79,7 @@ from pipe_control.spectrometer import check_frequency, get_frequency
 from pipe_control import value
 import specific_analyses
 from specific_analyses.relax_disp.checks import check_exp_type, check_interpolate_offset_cpmg_model, check_mixed_curve_types
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_DPL94, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_PARAMS, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, PARAMS_R20
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_DPL94, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LIST_R1RHO_W_R1, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_PARAMS, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, PARAMS_R20
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, sep
 
@@ -4032,9 +4032,29 @@ def return_r1_data(spins=None, spin_ids=None, field_count=None, sim_index=None):
 
     # Check for the presence of data.
     if not hasattr(cdp, 'ri_ids'):
+        warn_text = "No R1 relaxation data has been loaded.  Setting it to 0.0.  This is essential for the proper handling of offsets in off-resonance R1rho experiments."
+        error_text = "No R1 relaxation data has been loaded.  This is essential for the proper handling of offsets in off-resonance R1rho experiments."
         if has_r1rho_exp_type():
-            warn(RelaxWarning("No R1 relaxation data has been loaded.  This is essential for the proper handling of offsets in off-resonance R1rho experiments."))
-        return 0.0 * r1
+            # Spin loop.
+            for si in range(spin_num):
+                # Assign spin.
+                spin=spins[si]
+
+                # For all R1rho models using R1, raise an error, if R1 has not been loaded.
+                if spin.model in MODEL_LIST_R1RHO_W_R1:
+                    raise RelaxError(error_text)
+
+                # For all models not listed in R1rho models, raise a warning, and set 0.0 as value.
+                else:
+                    warn(RelaxWarning(warn_text))
+                    r1[si] = 0.0 * r1[si]
+
+        # For all non-R1rho experiments, return 0.0.
+        else:
+            r1 = 0.0 * r1
+
+        # Return r1
+        return r1
 
     # Loop over the Rx IDs.
     flags = [False]*field_count
