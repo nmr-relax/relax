@@ -55,7 +55,7 @@ from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from lib.float import isNaN
 from target_functions.chi2 import chi2_rankN
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LIST_R1RHO_FIT_R1, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -238,6 +238,7 @@ class Dispersion:
         self.nm_no_nd_ones = ones([self.NM, self.NO, self.ND], float64)
 
         # Structure of r20a and r20b. The full and outer dimensions structures.
+        self.r1_struct = deepcopy(numpy_array_zeros)
         self.r1rho_prime_struct = deepcopy(numpy_array_zeros)
         self.r20_struct = deepcopy(numpy_array_zeros)
         self.r20a_struct = deepcopy(numpy_array_zeros)
@@ -392,8 +393,18 @@ class Dispersion:
         # Initialise the post spin parameter indices.
         self.end_index = []
 
-        # The spin and frequency dependent R2 parameters.
-        self.end_index.append(self.NE * self.NS * self.NM)
+        # The spin and frequency dependent R1 and R2 parameters, for models which fit R1.
+        if model in MODEL_LIST_R1RHO_FIT_R1:
+            # The spin and frequency dependent R1 parameters.
+            self.end_index.append(self.NE * self.NS * self.NM)
+            # The spin and frequency dependent R2 parameters.
+            self.end_index.append(self.end_index[-1] + self.NE * self.NS * self.NM)
+
+        # For all other models.
+        else:
+            # The spin and frequency dependent R2 parameters.
+            self.end_index.append(self.NE * self.NS * self.NM)
+
         if model in [MODEL_B14_FULL, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
             self.end_index.append(2 * self.NE * self.NS * self.NM)
 
@@ -1037,12 +1048,15 @@ class Dispersion:
 
         # Unpack the parameter values.
         r1 = params[:self.end_index[0]]
-        r1rho_prime = params[:self.end_index[0]]
-        phi_ex = params[self.end_index[0]:self.end_index[1]]
-        kex = params[self.end_index[1]]
+        r1rho_prime = params[self.end_index[0]:self.end_index[1]]
+        phi_ex = params[self.end_index[1]:self.end_index[2]]
+        kex = params[self.end_index[2]]
+
+        # Reshape R1 to per experiment, spin and frequency.
+        self.r1_struct[:] = multiply.outer( r1.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Calculate and return the chi-squared value.
-        return self.calc_DPL94(R1=self.r1, r1rho_prime=r1rho_prime, phi_ex=phi_ex, kex=kex)
+        return self.calc_DPL94(R1=self.r1_struct, r1rho_prime=r1rho_prime, phi_ex=phi_ex, kex=kex)
 
 
     def func_IT99(self, params):
