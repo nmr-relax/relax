@@ -430,6 +430,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
 
     The different constraints used within different models are::
 
+        0 <= R1_fit <= 200
         0 <= R2 <= 200
         0 <= R2A <= 200
         0 <= R2B <= 200
@@ -455,6 +456,10 @@ def linear_constraints(spins=None, scaling_matrix=None):
 
     In the notation A.x >= b, where A is a matrix of coefficients, x is an array of parameter values, and b is a vector of scalars, these inequality constraints are::
 
+        | 1  0  0 |     |  R1_fit  |      |    0    |
+        |         |     |          |      |         |
+        |-1  0  0 |     |  R1_fit  |      |  -200   |
+        |         |     |          |      |         |
         | 1  0  0 |     |    R2    |      |    0    |
         |         |     |          |      |         |
         |-1  0  0 |     |    R2    |      |  -200   |
@@ -535,6 +540,16 @@ def linear_constraints(spins=None, scaling_matrix=None):
             A[j][param_index] = 1.0
             b.append(0.0)
             j += 1
+
+        # The fitted longitudinal relaxation rates (0 <= r1_fit <= 200).
+        elif param_name in ['R1_fit']:
+            A.append(zero_array * 0.0)
+            A.append(zero_array * 0.0)
+            A[j][param_index] = 1.0
+            A[j+1][param_index] = -1.0
+            b.append(0.0)
+            b.append(-200.0 / scaling_matrix[param_index, param_index])
+            j += 2
 
         # The transversal relaxation rates (0 <= r2 <= 200).
         elif param_name in ['r2', 'r2a', 'r2b']:
