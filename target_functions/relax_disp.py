@@ -1022,6 +1022,29 @@ class Dispersion:
         return self.calc_DPL94(R1=self.r1, r1rho_prime=r1rho_prime, phi_ex=phi_ex, kex=kex)
 
 
+    def func_DPL94_fit_r1(self, params):
+        """Target function for the Davis, Perlman and London (1994) fast 2-site off-resonance exchange model for R1rho-type experiments, where R1 is fitted.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        r1 = params[:self.end_index[0]]
+        r1rho_prime = params[:self.end_index[0]]
+        phi_ex = params[self.end_index[0]:self.end_index[1]]
+        kex = params[self.end_index[1]]
+
+        # Calculate and return the chi-squared value.
+        return self.calc_DPL94(R1=self.r1, r1rho_prime=r1rho_prime, phi_ex=phi_ex, kex=kex)
+
+
     def func_IT99(self, params):
         """Target function for the Ishima and Torchia (1999) 2-site model for all timescales with pA >> pB.
 
