@@ -415,10 +415,6 @@ class Dispersion:
         if model in MODEL_PARAM_DW_MIX_DOUBLE:
             self.end_index.append(self.end_index[-1] + self.NS)
 
-        elif model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
-            self.end_index.append(self.end_index[-1] + self.NS)
-            self.end_index.append(self.end_index[-1] + self.NS)
-
         elif model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
             self.end_index.append(self.end_index[-1] + self.NS)
             self.end_index.append(self.end_index[-1] + self.NS)
