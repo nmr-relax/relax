@@ -659,7 +659,19 @@ def loop_parameters(spins=None):
 
     # All other models.
     else:
-        # First the R2 parameters (one per spin per field strength).
+        # First the R1 fit parameter (one per spin per field strength).
+        for spin_index in range(len(spins)):
+            # Skip deselected spins.
+            if not spins[spin_index].select:
+                continue
+
+            # The R2 parameter.
+            if 'r1_fit' in spins[0].params:
+                for exp_type, frq in loop_exp_frq():
+                    param_index += 1
+                    yield 'r1_fit', param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
+
+        # Then the R2 parameters (one per spin per field strength).
         for spin_index in range(len(spins)):
             # Skip deselected spins.
             if not spins[spin_index].select:
@@ -736,7 +748,7 @@ def loop_parameters(spins=None):
 
         # All other parameters (one per spin cluster).
         for param in spins[0].params:
-            if not param in ['r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AB', 'dwH', 'dwH_AB', 'dwH_BC', 'dwH_AB']:
+            if not param in ['r1_fit', 'r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AB', 'dwH', 'dwH_AB', 'dwH_BC', 'dwH_AB']:
                 param_index += 1
                 yield param, param_index, None, None
 
