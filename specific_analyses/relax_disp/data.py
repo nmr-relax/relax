@@ -4047,6 +4047,7 @@ def return_r1_data(spins=None, spin_ids=None, field_count=None, sim_index=None):
                 # For all R1rho models fitting R1, raise an error, set value to None.
                 elif spin.model in MODEL_LIST_R1RHO_FIT_R1:
                     warn_text = "No R1 relaxation data has been loaded.  Setting it to None.  This is essential for the proper handling of offsets in off-resonance R1rho experiments."
+                    warn(RelaxWarning(warn_text))
                     for mi in range(field_count):
                         r1[si, mi] = None
 
