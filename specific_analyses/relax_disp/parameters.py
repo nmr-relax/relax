@@ -339,7 +339,7 @@ def get_param_names(spins=None, full=False):
         param_text = param_name
 
         # The parameters with additional details.
-        if full and param_name in ['r2', 'r2a', 'r2b']:
+        if full and param_name in PARAMS_R20:
             param_text += " (%s)" % r20_key
  
         # Append the text.
@@ -552,7 +552,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
             j += 2
 
         # The transversal relaxation rates (0 <= r2 <= 200).
-        elif param_name in ['r2', 'r2a', 'r2b']:
+        elif param_name in PARAMS_R20:
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
