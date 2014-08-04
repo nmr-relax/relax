@@ -236,6 +236,9 @@ MODEL_PARAM_R20B = [MODEL_B14_FULL, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL
 MODEL_PARAM_DW_MIX_DOUBLE = [MODEL_LM63_3SITE, MODEL_MMQ_CR72, MODEL_NS_MMQ_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]
 """Models using parameters with mixed dw, and has two variables. For example with both dw and dwH or dw_AB and dw_BC or phi_ex_B and phi_ex_C."""
 
+MODEL_PARAM_DW_MIX_QUADRUPLE = [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]
+"""Models using parameters with mixed dw, and has four variables. For example with both dw_AB, dw_BC, dwH_AB and dwH_BC."""
+
 
 
 # Full model description list.
