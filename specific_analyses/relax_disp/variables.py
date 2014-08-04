@@ -233,6 +233,10 @@ MODEL_PARAM_INV_RELAX_TIMES = [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_
 MODEL_PARAM_R20B = [MODEL_B14_FULL, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]
 """Models using R20B."""
 
+MODEL_PARAM_DW_MIX_DOUBLE = [MODEL_LM63_3SITE, MODEL_MMQ_CR72, MODEL_NS_MMQ_2SITE]
+"""Models using parameters with mixed dw, and has two variables. For example with both dw and dwH or dw_AB and dw_BC or phi_ex_B and phi_ex_C."""
+
+
 
 # Full model description list.
 MODEL_DESC = {
