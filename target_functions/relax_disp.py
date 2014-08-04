@@ -238,6 +238,7 @@ class Dispersion:
         self.nm_no_nd_ones = ones([self.NM, self.NO, self.ND], float64)
 
         # Structure of r20a and r20b. The full and outer dimensions structures.
+        self.r1rho_prime_struct = deepcopy(numpy_array_zeros)
         self.r20_struct = deepcopy(numpy_array_zeros)
         self.r20a_struct = deepcopy(numpy_array_zeros)
         self.r20b_struct = deepcopy(numpy_array_zeros)
@@ -602,6 +603,42 @@ class Dispersion:
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
 
         # Calculate the chi-squared statistic.
+        return chi2_rankN(self.values, self.back_calc, self.errors)
+
+
+    def calc_DPL94(self, R1=None, r1rho_prime=None, phi_ex=None, kex=None):
+        """Calculation function for the Davis, Perlman and London (1994) fast 2-site off-resonance exchange model for R1rho-type experiments.
+
+        @keyword R1:            The R1 value.
+        @type R1:               list of float
+        @keyword r1rho_prime:   The R1rho value for all states in the absence of exchange.
+        @type r1rho_prime:      list of float
+        @keyword phi_ex:        The fast exchange factor pA.pB.dw**2 (ppm).
+        @type phi_ex:           list of float
+        @keyword kex:           The rate of exchange.
+        @type kex:              float
+        @return:                The chi-squared value.
+        @rtype:                 float
+        """
+
+        # Convert phi_ex from ppm^2 to (rad/s)^2. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( phi_ex.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_struct )
+
+        # Reshape r1rho_prime to per experiment, spin and frequency.
+        self.r1rho_prime_struct[:] = multiply.outer( r1rho_prime.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Back calculate the R2eff values.
+        r1rho_DPL94(r1rho_prime=self.r1rho_prime_struct, phi_ex=self.phi_ex_struct, kex=kex, theta=self.tilt_angles, R1=R1, spin_lock_fields2=self.spin_lock_omega1_squared, back_calc=self.back_calc)
+
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc = self.back_calc*self.disp_struct
+
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
+
+        # Return the total chi-squared value.
         return chi2_rankN(self.values, self.back_calc, self.errors)
 
 
@@ -977,29 +1014,12 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[0]]
+        r1rho_prime = params[:self.end_index[0]]
         phi_ex = params[self.end_index[0]:self.end_index[1]]
         kex = params[self.end_index[1]]
 
-        # Convert phi_ex from ppm^2 to (rad/s)^2. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( phi_ex.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_struct )
-
-        # Reshape R20 to per experiment, spin and frequency.
-        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
-
-        # Back calculate the R2eff values.
-        r1rho_DPL94(r1rho_prime=self.r20_struct, phi_ex=self.phi_ex_struct, kex=kex, theta=self.tilt_angles, R1=self.r1, spin_lock_fields2=self.spin_lock_omega1_squared, back_calc=self.back_calc)
-
-        # Clean the data for all values, which is left over at the end of arrays.
-        self.back_calc = self.back_calc*self.disp_struct
-
-        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-        if self.has_missing:
-            # Replace with values.
-            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
-
-        # Return the total chi-squared value.
-        return chi2_rankN(self.values, self.back_calc, self.errors)
+        # Calculate and return the chi-squared value.
+        return self.calc_DPL94(R1=self.r1, r1rho_prime=r1rho_prime, phi_ex=phi_ex, kex=kex)
 
 
     def func_IT99(self, params):
