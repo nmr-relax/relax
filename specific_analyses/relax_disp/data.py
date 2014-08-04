@@ -868,6 +868,7 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend_h
 
     # Interpolate the spin-lock field strengths.
     spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
+
     if spin_lock_nu1 != None and len(spin_lock_nu1[0][0][0]):
         spin_lock_nu1_new = []
         for ei in range(len(spin_lock_nu1)):
