@@ -55,7 +55,7 @@ from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from lib.float import isNaN
 from target_functions.chi2 import chi2_rankN
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LIST_R1RHO_FIT_R1, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAM_DW_MIX_DOUBLE, MODEL_PARAM_DW_MIX_QUADRUPLE, MODEL_PARAM_INV_RELAX_TIMES, MODEL_PARAM_R20B, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LIST_R1RHO_FIT_R1, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAM_DW_MIX_DOUBLE, MODEL_PARAM_DW_MIX_QUADRUPLE, MODEL_PARAM_INV_RELAX_TIMES, MODEL_PARAM_R20B, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -482,6 +482,10 @@ class Dispersion:
         # Set up the model.
         if model == MODEL_NOREX:
             self.func = self.func_NOREX
+        if model == MODEL_NOREX_R1RHO:
+            self.func = self.func_NOREX_R1RHO
+        if model == MODEL_NOREX_R1RHO_FIT_R1:
+            self.func = self.func_NOREX_R1RHO_FIT_R1
         if model == MODEL_LM63:
             self.func = self.func_LM63
         if model == MODEL_LM63_3SITE:
@@ -640,6 +644,35 @@ class Dispersion:
 
         # Back calculate the R2eff values.
         r1rho_DPL94(r1rho_prime=self.r1rho_prime_struct, phi_ex=self.phi_ex_struct, kex=kex, theta=self.tilt_angles, R1=R1, spin_lock_fields2=self.spin_lock_omega1_squared, back_calc=self.back_calc)
+
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc = self.back_calc*self.disp_struct
+
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
+
+        # Return the total chi-squared value.
+        return chi2_rankN(self.values, self.back_calc, self.errors)
+
+
+    def calc_NOREX_R1RHO(self, R1=None, r1rho_prime=None):
+        """Calculation function for no exchange, for R1rho off resonance models.
+
+        @keyword R1:            The R1 value.
+        @type R1:               list of float
+        @keyword r1rho_prime:   The R1rho value for all states in the absence of exchange.
+        @type r1rho_prime:      list of float
+        @return:                The chi-squared value.
+        @rtype:                 float
+        """
+
+        # Reshape r1rho_prime to per experiment, spin and frequency.
+        self.r1rho_prime_struct[:] = multiply.outer( r1rho_prime.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Make back calculation.
+        self.back_calc[:] = R1 * cos(self.tilt_angles)**2 + self.r1rho_prime_struct * sin(self.tilt_angles)**2
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
@@ -1393,6 +1426,50 @@ class Dispersion:
 
         # Return the total chi-squared value.
         return chi2_rankN(self.values, self.back_calc, self.errors)
+
+
+    def func_NOREX_R1RHO(self, params):
+        """Target function for no exchange, for R1rho off resonance models.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        r1rho_prime = params
+
+        # Calculate and return the chi-squared value.
+        return self.calc_NOREX_R1RHO(R1=self.r1, r1rho_prime=r1rho_prime)
+
+
+    def func_NOREX_R1RHO_FIT_R1(self, params):
+        """Target function for no exchange, for R1rho off resonance models, where R1 is fitted.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        r1 = params[:self.end_index[0]]
+        r1rho_prime = params[self.end_index[0]:self.end_index[1]]
+
+        # Reshape R1 to per experiment, spin and frequency.
+        self.r1_struct[:] = multiply.outer( r1.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Calculate and return the chi-squared value.
+        return self.calc_NOREX_R1RHO(R1=self.r1_struct, r1rho_prime=r1rho_prime)
 
 
     def func_ns_cpmg_2site_3D(self, params):
