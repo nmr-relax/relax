@@ -636,9 +636,7 @@ class Relax_disp:
         self.write_results_test(path=path, model=model, models_tested=models_tested, param='pB', model_param_list=MODEL_PARAM_PA)
 
         # The pC parameter.
-        if model in [None] + MODEL_PARAM_PB:
-            self.interpreter.value.write(param='pC', file='pC.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='pC', file='pC.agr', dir=path, force=True)
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='pC', model_param_list=MODEL_PARAM_PB)
 
         # The Phi_ex parameter.
         if model in [None, MODEL_LM63, MODEL_M61, MODEL_DPL94]:
