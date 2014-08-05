@@ -626,10 +626,8 @@ class Relax_disp:
             # The R1_fit parameter.
             self.write_results_test(path=path, model=model, models_tested=models_tested, param='r1_fit')
 
-            # The R1rho0 parameter.
-            if model in [None] + MODEL_LIST_R1RHO:
-                self.interpreter.value.write(param='r2', file='r1rho0.out', dir=path, force=True)
-                self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r1rho0.agr', dir=path, force=True)
+            # The R1rho prime parameter.
+            self.write_results_test(path=path, model=model, models_tested=models_tested, param='r2', file_name_ini='r1rho_prime')
 
         # The pA and pB parameters.
         self.write_results_test(path=path, model=model, models_tested=models_tested, param='pA')
@@ -684,7 +682,7 @@ class Relax_disp:
         self.interpreter.results.write(file='results', dir=path, force=True)
 
 
-    def write_results_test(self, path=None, model=None, models_tested=None, param=None):
+    def write_results_test(self, path=None, model=None, models_tested=None, param=None, file_name_ini=None):
         """Create a set of results, text and Grace files for the current data pipe.
 
         @keyword path:              The directory to place the files into.
@@ -695,7 +693,13 @@ class Relax_disp:
         @type model_tested:         None or list of str.
         @keyword param:             The param to write out.
         @type param:                None or list of str.
+        @keyword file_name_ini:     The initial part of the file name for the grace and text files.
+        @type file_name_ini:        None or str.
         """
+
+        # If not set, use the name of the parameter.
+        if file_name_ini == None:
+            file_name_ini = param
 
         # If the model is in the list of models which support the parameter.
         write_result = False
@@ -719,5 +723,5 @@ class Relax_disp:
 
         # Write results if some of the models supports the parameter.
         if write_result:
-            self.interpreter.value.write(param=param, file='%s.out'%param, dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type=param, file='%s.agr'%param, dir=path, force=True)
+            self.interpreter.value.write(param=param, file='%s.out'%file_name_ini, dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type=param, file='%s.agr'%file_name_ini, dir=path, force=True)
