@@ -563,6 +563,18 @@ class Relax_disp:
         # Printout.
         section(file=sys.stdout, text="Results writing", prespace=2)
 
+        # If this is the final model selection round, check which models have been tested.
+        if model == None:
+            models_tested = []
+            for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                spin_model = spin.model
+
+                # Add to list, if not in already.
+                if spin_model not in models_tested:
+                    models_tested.append(spin_model)
+        else:
+            models_tested = None
+
         # Exponential curves.
         if model == 'R2eff' and has_exponential_exp_type():
             self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=path, force=True)    # Average peak intensities.
@@ -620,11 +632,8 @@ class Relax_disp:
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='r1_fit', file='r1_fit.agr', dir=path, force=True)
 
         # The pA and pB parameters.
-        if model in [None] + MODEL_PARAM_PA:
-            self.interpreter.value.write(param='pA', file='pA.out', dir=path, force=True)
-            self.interpreter.value.write(param='pB', file='pB.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='pA', file='pA.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='pB', file='pB.agr', dir=path, force=True)
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='pA', model_param_list=MODEL_PARAM_PA)
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='pB', model_param_list=MODEL_PARAM_PA)
 
         # The pC parameter.
         if model in [None] + MODEL_PARAM_PB:
@@ -703,3 +712,38 @@ class Relax_disp:
         # Finally save the results.  This is last to allow the continuation of an interrupted analysis while ensuring that all results files have been created.
         self.interpreter.results.write(file='results', dir=path, force=True)
 
+
+    def write_results_test(self, path=None, model=None, models_tested=None, param=None, model_param_list=None):
+        """Create a set of results, text and Grace files for the current data pipe.
+
+        @keyword path:              The directory to place the files into.
+        @type path:                 str
+        @keyword model:             The model tested.
+        @type path:                 None or str
+        @keyword model_tested:      List of models tested, if the pipe is final.
+        @type model_tested:         None or list of str.
+        @keyword param:             The param to write out.
+        @type param:                None or list of str.
+        @keyword model_param_list:  The list of models which support the parameter.
+        @type model_param_list:     list of str
+        """
+
+        # If the model is in the list of models which support the parameter.
+        write_result = False
+        if model != None and model in model_param_list:
+            write_result = True
+
+        # If this is the final pipe, then check if the model has been tested at any time.
+        elif model == None:
+            # Loop through all tested models.
+            for model_tested in models_tested:
+                # If one of the models tested has a parameter which belong in the list of models which support the parameter, then write it out.
+                if model_tested in model_param_list:
+                    # Set flag to write out, and then break
+                    write_result = True
+                    break
+
+        # Write results if some of the models supports the parameter.
+        if write_result:
+            self.interpreter.value.write(param=param, file='%s.out'%param, dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type=param, file='%s.agr'%param, dir=path, force=True)
