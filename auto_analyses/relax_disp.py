@@ -604,10 +604,6 @@ class Relax_disp:
             self.interpreter.value.write(param='i0', file='i0.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', file='i0.agr', dir=path, force=True)
 
-        # The calculation of theta and w_eff parameter in R1rho experiments.
-        if model in MODEL_LIST_R1RHO_FULL and has_r1rho_exp_type():
-            self.interpreter.value.write(param='theta', file='theta.out', dir=path, force=True)
-            self.interpreter.value.write(param='w_eff', file='w_eff.out', dir=path, force=True)
 
         # The R20 parameter.
         if has_cpmg_exp_type() and model in [None, MODEL_LM63, MODEL_B14, MODEL_CR72, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
@@ -628,6 +624,11 @@ class Relax_disp:
 
             # The R1rho prime parameter.
             self.write_results_test(path=path, model=model, models_tested=models_tested, param='r2', file_name_ini='r1rho_prime')
+
+            # The calculation of theta and w_eff parameter in R1rho experiments.
+            if model in MODEL_LIST_R1RHO and has_r1rho_exp_type():
+                self.interpreter.value.write(param='theta', file='theta.out', dir=path, force=True)
+                self.interpreter.value.write(param='w_eff', file='w_eff.out', dir=path, force=True)
 
         # The pA and pB parameters.
         self.write_results_test(path=path, model=model, models_tested=models_tested, param='pA')
