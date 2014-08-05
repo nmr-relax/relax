@@ -126,14 +126,27 @@ MODEL_TP02 = 'TP02'
 MODEL_DESC_TP02 = "The Trott and Palmer (2002) off-resonance 2-site model for R1rho-type experiments."
 MODEL_PARAMS_TP02 = ['r2', 'pA', 'dw', 'kex']
 
+MODEL_TP02_FIT_R1 = "%s_fit_r1"%MODEL_TP02
+MODEL_DESC_TP02_FIT_R1 = "The Trott and Palmer (2002) off-resonance 2-site model for R1rho-type experiments, where R1 is fitted."
+MODEL_PARAMS_TP02_FIT_R1 = ['r1_fit', 'r2', 'pA', 'dw', 'kex']
+
 MODEL_TAP03 = 'TAP03'
 MODEL_DESC_TAP03 = "The Trott, Abergel and Palmer (2003) off-resonance 2-site model for R1rho-type experiments."
 MODEL_PARAMS_TAP03 = ['r2', 'pA', 'dw', 'kex']
+
+MODEL_TAP03_FIT_R1 = "%s_fit_r1"%MODEL_TAP03
+MODEL_DESC_TAP03_FIT_R1 = "The Trott, Abergel and Palmer (2003) off-resonance 2-site model for R1rho-type experiments, where R1 is fitted."
+MODEL_PARAMS_TAP03_FIT_R1 = ['r1_fit', 'r2', 'pA', 'dw', 'kex']
 
 MODEL_MP05 = 'MP05'
 """The R1rho 2-site off-resonance exchange model of Miloushev and Palmer (2005)."""
 MODEL_DESC_MP05 = "The Miloushev and Palmer (2005) off-resonance 2-site model for R1rho-type experiments."
 MODEL_PARAMS_MP05 = ['r2', 'pA', 'dw', 'kex']
+
+MODEL_MP05_FIT_R1 = "%s_fit_r1"%MODEL_MP05
+"""The R1rho 2-site off-resonance exchange model of Miloushev and Palmer (2005)."""
+MODEL_DESC_MP05_FIT_R1 = "The Miloushev and Palmer (2005) off-resonance 2-site model for R1rho-type experiments, where R1 is fitted."
+MODEL_PARAMS_MP05_FIT_R1 = ['r1_fit', 'r2', 'pA', 'dw', 'kex']
 
 
 # The Numerical model names.
@@ -160,6 +173,10 @@ MODEL_PARAMS_NS_CPMG_2SITE_EXPANDED = ['r2', 'pA', 'dw', 'kex']
 MODEL_NS_R1RHO_2SITE = 'NS R1rho 2-site'
 MODEL_DESC_NS_R1RHO_2SITE = "The reduced numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors for R1rho-type experiments, whereby the simplification R20A = R20B is assumed."
 MODEL_PARAMS_NS_R1RHO_2SITE = ['r2', 'pA', 'dw', 'kex']
+
+MODEL_NS_R1RHO_2SITE_FIT_R1 = "%s_fit_r1"%MODEL_NS_R1RHO_2SITE
+MODEL_DESC_NS_R1RHO_2SITE_FIT_R1 = "The reduced numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors for R1rho-type experiments, whereby the simplification R20A = R20B is assumed, and where R1 is fitted."
+MODEL_PARAMS_NS_R1RHO_2SITE_FIT_R1 = ['r1_fit', 'r2', 'pA', 'dw', 'kex']
 
 MODEL_NS_R1RHO_3SITE = 'NS R1rho 3-site'
 MODEL_DESC_NS_R1RHO_3SITE = "The numerical solution for the 3-site Bloch-McConnell equations using 3D magnetisation vectors for R1rho-type experiments, whereby the simplification R20A = R20B = R20C is assumed."
@@ -251,7 +268,7 @@ MODEL_LIST_ANALYTIC_R1RHO_W_R1 = [MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP
 """The list of all dispersion models specifically for analytical R1rho-type experiments which use R1 in their equations (excluding the R2eff model and model 'No Rex')."""
 
 #### Off-resonance R1rho models, where R1 will be fitted.
-MODEL_LIST_ANALYTIC_R1RHO_FIT_R1 = [MODEL_DPL94_FIT_R1]
+MODEL_LIST_ANALYTIC_R1RHO_FIT_R1 = [MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1]
 """The list of all dispersion models specifically for R1rho-type experiments which fit R1 in their equations (excluding the R2eff model and model 'No Rex')."""
 
 ### The numerical models.
@@ -260,7 +277,7 @@ MODEL_LIST_NUMERIC_R1RHO_W_R1 = [MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MOD
 """The list of all dispersion models specifically for numeric R1rho-type experiments which use R1 in their equations (excluding the R2eff model and model 'No Rex')."""
 
 #### Off-resonance R1rho models, where R1 will be fitted.
-MODEL_LIST_NUMERIC_R1RHO_FIT_R1 = []
+MODEL_LIST_NUMERIC_R1RHO_FIT_R1 = [MODEL_NS_R1RHO_2SITE_FIT_R1]
 """The list of all dispersion models specifically for numeric R1rho-type experiments which fit R1 in their equations (excluding the R2eff model and model 'No Rex')."""
 
 ### All R1rho models.
@@ -314,7 +331,7 @@ MODEL_LIST_FULL = [MODEL_R2EFF] + MODEL_LIST_DISP
 """The list of the R2eff model together with all dispersion models."""
 
 # The model lists dependent on parameter.
-MODEL_PARAM_INV_RELAX_TIMES = [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]
+MODEL_PARAM_INV_RELAX_TIMES = [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_2SITE_FIT_R1, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]
 """The inverted relaxation delay"""
 
 MODEL_PARAM_R20B = [MODEL_B14_FULL, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]
@@ -347,14 +364,18 @@ MODEL_DESC = {
     MODEL_DPL94: MODEL_DESC_DPL94,
     MODEL_DPL94_FIT_R1: MODEL_DESC_DPL94_FIT_R1,
     MODEL_TP02: MODEL_DESC_TP02,
+    MODEL_TP02_FIT_R1: MODEL_DESC_TP02_FIT_R1,
     MODEL_TAP03: MODEL_DESC_TAP03,
+    MODEL_TAP03_FIT_R1: MODEL_DESC_TAP03_FIT_R1,
     MODEL_MP05: MODEL_DESC_MP05,
+    MODEL_MP05_FIT_R1: MODEL_DESC_MP05_FIT_R1,
     MODEL_NS_CPMG_2SITE_3D: MODEL_DESC_NS_CPMG_2SITE_3D,
     MODEL_NS_CPMG_2SITE_3D_FULL: MODEL_DESC_NS_CPMG_2SITE_3D_FULL,
     MODEL_NS_CPMG_2SITE_STAR: MODEL_DESC_NS_CPMG_2SITE_STAR,
     MODEL_NS_CPMG_2SITE_STAR_FULL: MODEL_DESC_NS_CPMG_2SITE_STAR_FULL,
     MODEL_NS_CPMG_2SITE_EXPANDED: MODEL_DESC_NS_CPMG_2SITE_EXPANDED,
     MODEL_NS_R1RHO_2SITE: MODEL_DESC_NS_R1RHO_2SITE,
+    MODEL_NS_R1RHO_2SITE_FIT_R1: MODEL_DESC_NS_R1RHO_2SITE_FIT_R1,
     MODEL_NS_R1RHO_3SITE: MODEL_DESC_NS_R1RHO_3SITE,
     MODEL_NS_R1RHO_3SITE_LINEAR: MODEL_DESC_NS_R1RHO_3SITE_LINEAR,
     MODEL_MMQ_CR72: MODEL_DESC_MMQ_CR72,
@@ -382,14 +403,18 @@ MODEL_PARAMS = {
     MODEL_DPL94: MODEL_PARAMS_DPL94,
     MODEL_DPL94_FIT_R1: MODEL_PARAMS_DPL94_FIT_R1,
     MODEL_TP02: MODEL_PARAMS_TP02,
+    MODEL_TP02_FIT_R1: MODEL_PARAMS_TP02_FIT_R1,
     MODEL_TAP03: MODEL_PARAMS_TAP03,
+    MODEL_TAP03_FIT_R1: MODEL_PARAMS_TAP03_FIT_R1,
     MODEL_MP05: MODEL_PARAMS_MP05,
+    MODEL_MP05_FIT_R1: MODEL_PARAMS_MP05_FIT_R1,
     MODEL_NS_CPMG_2SITE_3D: MODEL_PARAMS_NS_CPMG_2SITE_3D,
     MODEL_NS_CPMG_2SITE_3D_FULL: MODEL_PARAMS_NS_CPMG_2SITE_3D_FULL,
     MODEL_NS_CPMG_2SITE_STAR: MODEL_PARAMS_NS_CPMG_2SITE_STAR,
     MODEL_NS_CPMG_2SITE_STAR_FULL: MODEL_PARAMS_NS_CPMG_2SITE_STAR_FULL,
     MODEL_NS_CPMG_2SITE_EXPANDED: MODEL_PARAMS_NS_CPMG_2SITE_EXPANDED,
     MODEL_NS_R1RHO_2SITE: MODEL_PARAMS_NS_R1RHO_2SITE,
+    MODEL_NS_R1RHO_2SITE_FIT_R1: MODEL_PARAMS_NS_R1RHO_2SITE_FIT_R1,
     MODEL_NS_R1RHO_3SITE: MODEL_PARAMS_NS_R1RHO_3SITE,
     MODEL_NS_R1RHO_3SITE_LINEAR: MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR,
     MODEL_MMQ_CR72: MODEL_PARAMS_MMQ_CR72,
