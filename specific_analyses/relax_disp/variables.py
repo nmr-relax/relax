@@ -190,6 +190,12 @@ MODEL_PARAMS_NS_MMQ_3SITE_LINEAR = ['r2', 'pA', 'dw_AB', 'dwH_AB', 'kex_AB', 'pB
 # The parameters.
 PARAMS_R20 = ['r2', 'r2a', 'r2b']
 
+# The defined models, which is used for nesting.
+MODEL_NEST_CPMG = MODEL_CR72
+MODEL_NEST_MMQ =  MODEL_MMQ_CR72
+MODEL_NEST_R1RHO = MODEL_MP05
+
+MODEL_LIST_NEST = [MODEL_NEST_CPMG, MODEL_NEST_MMQ, MODEL_NEST_R1RHO]
 
 # The model lists.
 ## The CPMG models
