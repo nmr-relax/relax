@@ -925,7 +925,7 @@ class Dispersion:
         multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
 
         # Back calculate the R1rho values.
-        ns_r1rho_2site(M0=self.M0, M0_T=self.M0_T, r1rho_prime=self.r1rho_prime_struct, omega=self.chemical_shifts, offset=self.offset, r1=R1, pA=pA, dw=self.dw_struct, kex=kex, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc, num_points=self.num_disp_points)
+        ns_r1rho_2site(M0=self.M0, M0_T=self.M0_T, r1rho_prime=self.r1rho_prime_struct, omega=self.chemical_shifts, offset=self.offset, r1=R1, pA=pA, dw=self.dw_struct, kex=kex, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
