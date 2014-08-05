@@ -59,150 +59,189 @@ EXP_TYPE_LIST_R1RHO = [EXP_TYPE_R1RHO]
 MODEL_R2EFF = 'R2eff'
 MODEL_DESC_R2EFF = "The model for determining the R2eff/R1rho values from peak intensities."
 MODEL_PARAMS_R2EFF = ['r2eff', 'i0']    # The 'i0' parameter is only for the exponential curve-fitting.
+# This year is fake. Just to get the order correct.
+MODEL_YEAR_R2EFF = 1950
 
 MODEL_NOREX = 'No Rex'
 MODEL_DESC_NOREX = "The model for no chemical exchange relaxation."
 MODEL_PARAMS_NOREX = ['r2']
+# This year is fake. Just to get the order correct.
+MODEL_YEAR_NOREX = 1951
 
 MODEL_NOREX_R1RHO = "No_Rex_R1rho_off_res"
 MODEL_DESC_NOREX_R1RHO = "The model for no chemical exchange relaxation, for R1rho off resonance models."
 MODEL_PARAMS_NOREX_R1RHO = ['r2']
+# This year is fake. Just to get the order correct.
+MODEL_YEAR_NOREX_R1RHO = 1952
 
 MODEL_NOREX_R1RHO_FIT_R1 = "%s_fit_r1"%MODEL_NOREX_R1RHO
 MODEL_DESC_NOREX_R1RHO_FIT_R1 = "The model for no chemical exchange relaxation, for R1rho off resonance models, where R1 is fitted."
 MODEL_PARAMS_NOREX_R1RHO_FIT_R1 = ['r1_fit', 'r2']
+# This year is fake. Just to get the order correct.
+MODEL_YEAR_NOREX_R1RHO_FIT_R1 = 1953
 
 MODEL_LM63 = 'LM63'
 MODEL_DESC_LM63 = "The Luz and Meiboom (1963) 2-site fast exchange model for SQ-CPMG experiments."
 MODEL_PARAMS_LM63 = ['r2', 'phi_ex', 'kex']
+MODEL_YEAR_LM63 = 1963
 
 MODEL_LM63_3SITE = 'LM63 3-site'
 MODEL_DESC_LM63_3SITE = "The Luz and Meiboom (1963) 3-site fast exchange model for SQ-CPMG experiments."
 MODEL_PARAMS_LM63_3SITE = ['r2', 'phi_ex_B', 'phi_ex_C', 'kB', 'kC']
+MODEL_YEAR_LM63_3SITE = 1963
 
 MODEL_CR72 = 'CR72'
 MODEL_DESC_CR72 = "The reduced Carver and Richards (1972) 2-site model for all time scales for SQ-CPMG experiments, whereby the simplification R20A = R20B is assumed."
 MODEL_PARAMS_CR72 = ['r2', 'pA', 'dw', 'kex']
+MODEL_YEAR_CR72 = 1972
 
 MODEL_CR72_FULL = 'CR72 full'
 MODEL_DESC_CR72_FULL = "The full Carver and Richards (1972) 2-site model for all time scales for SQ-CPMG experiments."
 MODEL_PARAMS_CR72_FULL = ['r2a', 'r2b', 'pA', 'dw', 'kex']
+MODEL_YEAR_CR72_FULL = 1972
 
 MODEL_IT99 = 'IT99'
 MODEL_DESC_IT99 = "The Ishima and Torchia (1999) 2-site CPMG model for all time scales for SQ-CPMG experiments, with skewed populations (pA >> pB)."
 MODEL_PARAMS_IT99 = ['r2', 'pA', 'dw', 'tex']
+MODEL_YEAR_IT99 = 1999
 
 MODEL_TSMFK01 = 'TSMFK01'
 MODEL_DESC_TSMFK01 = "The Tollinger et al. (2001) 2-site very-slow exchange model for SQ-CPMG experiments."
 MODEL_PARAMS_TSMFK01 = ['r2a', 'dw', 'k_AB']
+MODEL_YEAR_TSMFK01 = 2001
 
 MODEL_B14 = 'B14'
 MODEL_DESC_B14 = "The Baldwin (2014) 2-site CPMG exact solution model for all time scales for SQ-CPMG experiments, whereby the simplification R20A = R20B is assumed."
 MODEL_PARAMS_B14 = ['r2', 'pA', 'dw', 'kex']
+MODEL_YEAR_B14 = 2014
 
 MODEL_B14_FULL = 'B14 full'
 MODEL_DESC_B14_FULL = "The Baldwin (2014) 2-site CPMG exact solution model for all time scales for SQ-CPMG experiments."
 MODEL_PARAMS_B14_FULL = ['r2a', 'r2b', 'pA', 'dw', 'kex']
+MODEL_YEAR_B14_FULL = 2014
 
 MODEL_M61 = 'M61'
 MODEL_DESC_M61 = "The Meiboom (1961) on-resonance 2-site fast exchange model for R1rho-type experiments."
 MODEL_PARAMS_M61 = ['r2', 'phi_ex', 'kex']
+MODEL_YEAR_M61 = 1961
 
 MODEL_M61B = 'M61 skew'
 MODEL_DESC_M61B = "The Meiboom (1961) on-resonance 2-site model for R1rho-type experiments, with skewed populations (pA >> pB)."
 MODEL_PARAMS_M61B = ['r2', 'pA', 'dw', 'kex']
+MODEL_YEAR_M61B = 1961
 
 MODEL_DPL94 = 'DPL94'
 """The R1rho 2-site fast exchange model of Davis, Perlman and London (1994)."""
 MODEL_DESC_DPL94 = "The Davis, Perlman and London (1994) extension of the Meiboom (1961) model for off-resonance data."
 MODEL_PARAMS_DPL94 = ['r2', 'phi_ex', 'kex']
+MODEL_YEAR_DPL94 = 1994
 
 MODEL_DPL94_FIT_R1 = "%s_fit_r1"%MODEL_DPL94
 """The R1rho 2-site fast exchange model of Davis, Perlman and London (1994), where R1 is fitted."""
 MODEL_DESC_DPL94_FIT_R1 = "The Davis, Perlman and London (1994) extension of the Meiboom (1961) model for off-resonance data, where R1 is fitted."
 MODEL_PARAMS_DPL94_FIT_R1 = ['r1_fit', 'r2', 'phi_ex', 'kex']
+MODEL_YEAR_DPL94_FIT_R1 = 1994
 
 MODEL_TP02 = 'TP02'
 MODEL_DESC_TP02 = "The Trott and Palmer (2002) off-resonance 2-site model for R1rho-type experiments."
 MODEL_PARAMS_TP02 = ['r2', 'pA', 'dw', 'kex']
+MODEL_YEAR_TP02 = 2002
 
 MODEL_TP02_FIT_R1 = "%s_fit_r1"%MODEL_TP02
 MODEL_DESC_TP02_FIT_R1 = "The Trott and Palmer (2002) off-resonance 2-site model for R1rho-type experiments, where R1 is fitted."
 MODEL_PARAMS_TP02_FIT_R1 = ['r1_fit', 'r2', 'pA', 'dw', 'kex']
+MODEL_YEAR_TP02_FIT_R1 = 2002
 
 MODEL_TAP03 = 'TAP03'
 MODEL_DESC_TAP03 = "The Trott, Abergel and Palmer (2003) off-resonance 2-site model for R1rho-type experiments."
 MODEL_PARAMS_TAP03 = ['r2', 'pA', 'dw', 'kex']
+MODEL_YEAR_TAP03 = 2003
 
 MODEL_TAP03_FIT_R1 = "%s_fit_r1"%MODEL_TAP03
 MODEL_DESC_TAP03_FIT_R1 = "The Trott, Abergel and Palmer (2003) off-resonance 2-site model for R1rho-type experiments, where R1 is fitted."
 MODEL_PARAMS_TAP03_FIT_R1 = ['r1_fit', 'r2', 'pA', 'dw', 'kex']
+MODEL_YEAR_TAP03_FIT_R1 = 2003
 
 MODEL_MP05 = 'MP05'
 """The R1rho 2-site off-resonance exchange model of Miloushev and Palmer (2005)."""
 MODEL_DESC_MP05 = "The Miloushev and Palmer (2005) off-resonance 2-site model for R1rho-type experiments."
 MODEL_PARAMS_MP05 = ['r2', 'pA', 'dw', 'kex']
+MODEL_YEAR_MP05 = 2005
 
 MODEL_MP05_FIT_R1 = "%s_fit_r1"%MODEL_MP05
 """The R1rho 2-site off-resonance exchange model of Miloushev and Palmer (2005)."""
 MODEL_DESC_MP05_FIT_R1 = "The Miloushev and Palmer (2005) off-resonance 2-site model for R1rho-type experiments, where R1 is fitted."
 MODEL_PARAMS_MP05_FIT_R1 = ['r1_fit', 'r2', 'pA', 'dw', 'kex']
+MODEL_YEAR_MP05_FIT_R1 = 2005
 
 
 # The Numerical model names.
 MODEL_NS_CPMG_2SITE_3D = 'NS CPMG 2-site 3D'
 MODEL_DESC_NS_CPMG_2SITE_3D = "The reduced numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors for SQ CPMG experiments, whereby the simplification R20A = R20B is assumed."
 MODEL_PARAMS_NS_CPMG_2SITE_3D = ['r2', 'pA', 'dw', 'kex']
+MODEL_YEAR_NS_CPMG_2SITE_3D = 2004
 
 MODEL_NS_CPMG_2SITE_3D_FULL = 'NS CPMG 2-site 3D full'
 MODEL_DESC_NS_CPMG_2SITE_3D_FULL = "The full numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors for SQ CPMG experiments."
 MODEL_PARAMS_NS_CPMG_2SITE_3D_FULL = ['r2a', 'r2b', 'pA', 'dw', 'kex']
+MODEL_YEAR_NS_CPMG_2SITE_3D_FULL = 2004
 
 MODEL_NS_CPMG_2SITE_STAR = 'NS CPMG 2-site star'
 MODEL_DESC_NS_CPMG_2SITE_STAR = "The numerical reduced solution for the 2-site Bloch-McConnell equations using complex conjugate matrices for SQ CPMG experiments, whereby the simplification R20A = R20B is assumed."
 MODEL_PARAMS_NS_CPMG_2SITE_STAR = ['r2', 'pA', 'dw', 'kex']
+MODEL_YEAR_NS_CPMG_2SITE_STAR = 2004
 
 MODEL_NS_CPMG_2SITE_STAR_FULL = 'NS CPMG 2-site star full'
 MODEL_DESC_NS_CPMG_2SITE_STAR_FULL = "The full numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices for SQ CPMG experiments."
 MODEL_PARAMS_NS_CPMG_2SITE_STAR_FULL = ['r2a', 'r2b', 'pA', 'dw', 'kex']
+MODEL_YEAR_NS_CPMG_2SITE_STAR_FULL = 2004
 
 MODEL_NS_CPMG_2SITE_EXPANDED = 'NS CPMG 2-site expanded'
 MODEL_DESC_NS_CPMG_2SITE_EXPANDED = "The numerical solution for the 2-site Bloch-McConnell equations for SQ CPMG experiments, expanded using Maple by Nikolai Skrynnikov."
 MODEL_PARAMS_NS_CPMG_2SITE_EXPANDED = ['r2', 'pA', 'dw', 'kex']
+MODEL_YEAR_NS_CPMG_2SITE_EXPANDED = 2001
 
 MODEL_NS_R1RHO_2SITE = 'NS R1rho 2-site'
 MODEL_DESC_NS_R1RHO_2SITE = "The reduced numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors for R1rho-type experiments, whereby the simplification R20A = R20B is assumed."
 MODEL_PARAMS_NS_R1RHO_2SITE = ['r2', 'pA', 'dw', 'kex']
+MODEL_YEAR_NS_R1RHO_2SITE = 2005
 
 MODEL_NS_R1RHO_2SITE_FIT_R1 = "%s_fit_r1"%MODEL_NS_R1RHO_2SITE
 MODEL_DESC_NS_R1RHO_2SITE_FIT_R1 = "The reduced numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors for R1rho-type experiments, whereby the simplification R20A = R20B is assumed, and where R1 is fitted."
 MODEL_PARAMS_NS_R1RHO_2SITE_FIT_R1 = ['r1_fit', 'r2', 'pA', 'dw', 'kex']
+MODEL_YEAR_NS_R1RHO_2SITE_FIT_R1 = 2005
 
 MODEL_NS_R1RHO_3SITE = 'NS R1rho 3-site'
 MODEL_DESC_NS_R1RHO_3SITE = "The numerical solution for the 3-site Bloch-McConnell equations using 3D magnetisation vectors for R1rho-type experiments, whereby the simplification R20A = R20B = R20C is assumed."
 MODEL_PARAMS_NS_R1RHO_3SITE = ['r2', 'pA', 'dw_AB', 'kex_AB', 'pB', 'dw_BC', 'kex_BC', 'kex_AC']
+MODEL_YEAR_NS_R1RHO_3SITE = 2005
 
 MODEL_NS_R1RHO_3SITE_LINEAR = 'NS R1rho 3-site linear'
 MODEL_DESC_NS_R1RHO_3SITE_LINEAR = "The numerical solution for the 3-site Bloch-McConnell equations using 3D magnetisation vectors for R1rho-type experiments, linearised with kAC = kCA = 0 and whereby the simplification R20A = R20B = R20C is assumed."
 MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR = ['r2', 'pA', 'dw_AB', 'kex_AB', 'pB', 'dw_BC', 'kex_BC']
+MODEL_NS_R1RHO_3SITE_LINEAR = 2005
 
 
 # The multi-quantum data model names.
 MODEL_MMQ_CR72 = 'MMQ CR72'
 MODEL_DESC_MMQ_CR72 = "The Carver and Richards (1972) 2-site model for all time scales expanded for MMQ CPMG experiments by Korzhnev et al., 2004."
 MODEL_PARAMS_MMQ_CR72 = ['r2', 'pA', 'dw', 'dwH', 'kex']
+MODEL_YEAR_MMQ_CR72 = 2004
 
 MODEL_NS_MMQ_2SITE = 'NS MMQ 2-site'
 MODEL_DESC_NS_MMQ_2SITE = "The reduced numerical solution for the 2-site Bloch-McConnell equations for MMQ CPMG experiments, whereby the simplification R20A = R20B is assumed."
 MODEL_PARAMS_NS_MMQ_2SITE = ['r2', 'pA', 'dw', 'dwH', 'kex']
+MODEL_YEAR_NS_MMQ_2SITE = 2005
 
 MODEL_NS_MMQ_3SITE = 'NS MMQ 3-site'
 MODEL_DESC_NS_MMQ_3SITE = "The numerical solution for the 3-site Bloch-McConnell equations for MMQ CPMG experiments, whereby the simplification R20A = R20B = R20C is assumed."
 MODEL_PARAMS_NS_MMQ_3SITE = ['r2', 'pA', 'dw_AB', 'dwH_AB', 'kex_AB', 'pB', 'dw_BC', 'dwH_BC', 'kex_BC', 'kex_AC']
+MODEL_YEAR_NS_MMQ_3SITE = 2005
 
 MODEL_NS_MMQ_3SITE_LINEAR = 'NS MMQ 3-site linear'
 MODEL_DESC_NS_MMQ_3SITE_LINEAR = "The numerical solution for the 3-site Bloch-McConnell equations for MMQ CPMG experiments, linearised with kAC = kCA = 0 and whereby the simplification R20A = R20B = R20C is assumed."
 MODEL_PARAMS_NS_MMQ_3SITE_LINEAR = ['r2', 'pA', 'dw_AB', 'dwH_AB', 'kex_AB', 'pB', 'dw_BC', 'dwH_BC', 'kex_BC']
+MODEL_YEAR_NS_MMQ_3SITE_LINEAR = 2005
 
 # The parameters.
 PARAMS_R20 = ['r2', 'r2a', 'r2b']
