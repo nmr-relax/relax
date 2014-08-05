@@ -632,18 +632,18 @@ class Relax_disp:
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='r1_fit', file='r1_fit.agr', dir=path, force=True)
 
         # The pA and pB parameters.
-        self.write_results_test(path=path, model=model, models_tested=models_tested, param='pA', model_param_list=MODEL_PARAM_PA)
-        self.write_results_test(path=path, model=model, models_tested=models_tested, param='pB', model_param_list=MODEL_PARAM_PA)
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='pA')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='pB')
 
         # The pC parameter.
-        self.write_results_test(path=path, model=model, models_tested=models_tested, param='pC', model_param_list=MODEL_PARAM_PB)
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='pC')
 
         # The phi_ex parameter.
-        self.write_results_test(path=path, model=model, models_tested=models_tested, param='phi_ex', model_param_list=MODEL_PARAM_PHIEX)
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='phi_ex')
 
         # The phi_ex_B nd phi_ex_C parameters.
-        self.write_results_test(path=path, model=model, models_tested=models_tested, param='phi_ex_B', model_param_list=MODEL_PARAM_PHIEX_B_AND_C)
-        self.write_results_test(path=path, model=model, models_tested=models_tested, param='phi_ex_C', model_param_list=MODEL_PARAM_PHIEX_B_AND_C)
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='phi_ex_B')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='phi_ex_C')
 
         # The dw parameter.
         if model in [None, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61B, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_MMQ_2SITE, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_TSMFK01]:
@@ -706,7 +706,7 @@ class Relax_disp:
         self.interpreter.results.write(file='results', dir=path, force=True)
 
 
-    def write_results_test(self, path=None, model=None, models_tested=None, param=None, model_param_list=None):
+    def write_results_test(self, path=None, model=None, models_tested=None, param=None):
         """Create a set of results, text and Grace files for the current data pipe.
 
         @keyword path:              The directory to place the files into.
@@ -717,22 +717,25 @@ class Relax_disp:
         @type model_tested:         None or list of str.
         @keyword param:             The param to write out.
         @type param:                None or list of str.
-        @keyword model_param_list:  The list of models which support the parameter.
-        @type model_param_list:     list of str
         """
 
         # If the model is in the list of models which support the parameter.
         write_result = False
-        if model != None and model in model_param_list:
-            write_result = True
+        if model != None:
+            # Get the model params.
+            model_params = MODEL_PARAMS[model]
+
+            if param in model_params:
+                write_result = True
 
         # If this is the final pipe, then check if the model has been tested at any time.
         elif model == None:
             # Loop through all tested models.
             for model_tested in models_tested:
                 # If one of the models tested has a parameter which belong in the list of models which support the parameter, then write it out.
-                if model_tested in model_param_list:
-                    # Set flag to write out, and then break
+                model_params = MODEL_PARAMS[model_tested]
+
+                if param in model_params:
                     write_result = True
                     break
 
