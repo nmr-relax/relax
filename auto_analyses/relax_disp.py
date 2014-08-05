@@ -38,7 +38,7 @@ from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, loop_frq
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
-from specific_analyses.relax_disp.variables import MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FIT_R1, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_PARAM_PA, MODEL_PARAM_PB, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01, PARAMS_R20
+from specific_analyses.relax_disp.variables import MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FIT_R1, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_PARAM_PA, MODEL_PARAM_PB, MODEL_PARAM_PHIEX, MODEL_PARAM_PHIEX_B_AND_C, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01, PARAMS_R20
 from status import Status; status = Status()
 
 
@@ -638,17 +638,12 @@ class Relax_disp:
         # The pC parameter.
         self.write_results_test(path=path, model=model, models_tested=models_tested, param='pC', model_param_list=MODEL_PARAM_PB)
 
-        # The Phi_ex parameter.
-        if model in [None, MODEL_LM63, MODEL_M61, MODEL_DPL94]:
-            self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', file='phi_ex.agr', dir=path, force=True)
+        # The phi_ex parameter.
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='phi_ex', model_param_list=MODEL_PARAM_PHIEX)
 
-        # The Phi_ex_B nd Phi_ex_C parameters.
-        if model in [None, MODEL_LM63_3SITE]:
-            self.interpreter.value.write(param='phi_ex_B', file='phi_ex_B.out', dir=path, force=True)
-            self.interpreter.value.write(param='phi_ex_C', file='phi_ex_C.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_B', file='phi_ex_B.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_C', file='phi_ex_C.agr', dir=path, force=True)
+        # The phi_ex_B nd phi_ex_C parameters.
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='phi_ex_B', model_param_list=MODEL_PARAM_PHIEX_B_AND_C)
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='phi_ex_C', model_param_list=MODEL_PARAM_PHIEX_B_AND_C)
 
         # The dw parameter.
         if model in [None, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61B, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_MMQ_2SITE, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_TSMFK01]:
