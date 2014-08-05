@@ -575,10 +575,20 @@ class Relax_disp:
         else:
             models_tested = None
 
-        # Exponential curves.
-        if model == MODEL_R2EFF and has_exponential_exp_type():
-            self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=path, force=True)    # Average peak intensities.
-            self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=path, force=True, norm=True)    # Average peak intensities (normalised).
+        # Special for R2eff model.
+        if model == MODEL_R2EFF:
+            # The R2eff parameter.
+            self.interpreter.value.write(param='r2eff', file='r2eff.out', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', file='r2eff.agr', dir=path, force=True)
+
+            # Exponential curves.
+            if has_exponential_exp_type():
+                self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=path, force=True)    # Average peak intensities.
+                self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=path, force=True, norm=True)    # Average peak intensities (normalised).
+
+                # The I0 parameter.
+                self.interpreter.value.write(param='i0', file='i0.out', dir=path, force=True)
+                self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', file='i0.agr', dir=path, force=True)
 
         # Dispersion curves.
         self.interpreter.relax_disp.plot_disp_curves(dir=path, force=True)
@@ -587,16 +597,6 @@ class Relax_disp:
         # The selected models for the final run.
         if model == None:
             self.interpreter.value.write(param='model', file='model.out', dir=path, force=True)
-
-        # The R2eff parameter.
-        if model == MODEL_R2EFF:
-            self.interpreter.value.write(param='r2eff', file='r2eff.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', file='r2eff.agr', dir=path, force=True)
-
-        # The I0 parameter.
-        if model == MODEL_R2EFF and has_exponential_exp_type():
-            self.interpreter.value.write(param='i0', file='i0.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', file='i0.agr', dir=path, force=True)
 
         # For CPMG models.
         if has_cpmg_exp_type():
