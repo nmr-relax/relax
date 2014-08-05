@@ -621,15 +621,15 @@ class Relax_disp:
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2a', file='r20a.agr', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2b', file='r20b.agr', dir=path, force=True)
 
-        # The R1rho0 parameter.
-        if has_r1rho_exp_type() and model in [None] + MODEL_LIST_R1RHO:
-            self.interpreter.value.write(param='r2', file='r1rho0.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r1rho0.agr', dir=path, force=True)
+        # For R1ho models.
+        if has_r1rho_exp_type():
+            # The R1_fit parameter.
+            self.write_results_test(path=path, model=model, models_tested=models_tested, param='r1_fit')
 
-        # The R1_fit parameter.
-        if has_r1rho_exp_type() and model in [None] + MODEL_LIST_R1RHO_FIT_R1:
-            self.interpreter.value.write(param='r1_fit', file='r1_fit.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r1_fit', file='r1_fit.agr', dir=path, force=True)
+            # The R1rho0 parameter.
+            if model in [None] + MODEL_LIST_R1RHO:
+                self.interpreter.value.write(param='r2', file='r1rho0.out', dir=path, force=True)
+                self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r1rho0.agr', dir=path, force=True)
 
         # The pA and pB parameters.
         self.write_results_test(path=path, model=model, models_tested=models_tested, param='pA')
@@ -646,56 +646,34 @@ class Relax_disp:
         self.write_results_test(path=path, model=model, models_tested=models_tested, param='phi_ex_C')
 
         # The dw parameter.
-        if model in [None, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61B, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_MMQ_2SITE, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_TSMFK01]:
-            self.interpreter.value.write(param='dw', file='dw.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw', file='dw.agr', dir=path, force=True)
-        if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
-            self.interpreter.value.write(param='dw_AB', file='dw_AB.out', dir=path, force=True)
-            self.interpreter.value.write(param='dw_BC', file='dw_BC.out', dir=path, force=True)
-            self.interpreter.value.write(param='dw_AC', file='dw_AC.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw_AB', file='dw_AB.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw_BC', file='dw_BC.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw_AC', file='dw_AC.agr', dir=path, force=True)
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='dw')
+
+        # The dw_AB, dw_BC and dw_AC parameter.
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='dw_AB')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='dw_BC')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='dw_AC')
 
         # The dwH parameter.
-        if model in [None, MODEL_MMQ_CR72, MODEL_NS_MMQ_2SITE]:
-            self.interpreter.value.write(param='dwH', file='dwH.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dwH', file='dwH.agr', dir=path, force=True)
-        if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
-            self.interpreter.value.write(param='dwH_AB', file='dwH_AB.out', dir=path, force=True)
-            self.interpreter.value.write(param='dwH_BC', file='dwH_BC.out', dir=path, force=True)
-            self.interpreter.value.write(param='dwH_AC', file='dwH_AC.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dwH_AB', file='dwH_AB.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dwH_BC', file='dwH_BC.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dwH_AC', file='dwH_AC.agr', dir=path, force=True)
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='dwH')
+
+        # The dwH_AB, dwH_BC and dwH_AC parameter.
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='dwH_AB')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='dwH_BC')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='dwH_AC')
 
         # The k_AB, kex and tex parameters.
-        if model in [None, MODEL_LM63, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_MMQ_2SITE, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TAP03, MODEL_MP05]:
-            self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=path, force=True)
-            self.interpreter.value.write(param='kex', file='kex.out', dir=path, force=True)
-            self.interpreter.value.write(param='tex', file='tex.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', file='k_AB.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', file='kex.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', file='tex.agr', dir=path, force=True)
-        if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
-            self.interpreter.value.write(param='kex_AB', file='kex_AB.out', dir=path, force=True)
-            self.interpreter.value.write(param='kex_BC', file='kex_BC.out', dir=path, force=True)
-            self.interpreter.value.write(param='kex_AC', file='kex_AC.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex_AB', file='kex_AB.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex_BC', file='kex_BC.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex_AC', file='kex_AC.agr', dir=path, force=True)
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='k_AB')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='kex')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='tex')
 
-        # The k_AB parameter.
-        if model in [None, MODEL_TSMFK01]:
-            self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', file='k_AB.agr', dir=path, force=True)
+        # The kex_AB, kex_BC, kex_AC parameters.
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='kex_AB')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='kex_BC')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='kex_AC')
 
         # The kB and kC parameters.
-        if model in [None, MODEL_LM63_3SITE]:
-            self.interpreter.value.write(param='kB', file='kB.out', dir=path, force=True)
-            self.interpreter.value.write(param='kC', file='kC.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='kB', file='kB.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='kC', file='kC.agr', dir=path, force=True)
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='kB')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='kC')
 
         # Minimisation statistics.
         if not (model == 'R2eff' and has_fixed_time_exp_type()):
