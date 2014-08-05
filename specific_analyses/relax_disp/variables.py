@@ -192,47 +192,120 @@ PARAMS_R20 = ['r2', 'r2a', 'r2b']
 
 
 # The model lists.
-MODEL_LIST_DISP = [MODEL_NOREX, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_TSMFK01, MODEL_B14, MODEL_B14_FULL, MODEL_M61, MODEL_M61B, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_MMQ_CR72, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]
-"""The list of all dispersion models (excluding the R2eff model)."""
+## The CPMG models
+### The analytical CPMG models.
+MODEL_LIST_ANALYTIC_CPMG = [MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_TSMFK01, MODEL_B14, MODEL_B14_FULL]
+"""The list of all analytic CPMG models."""
 
-MODEL_LIST_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_TSMFK01, MODEL_B14, MODEL_B14_FULL, MODEL_M61, MODEL_M61B, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_MMQ_CR72, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]
-"""The list of the R2eff model together with all dispersion models."""
+### The numerical CPMG models.
+MODEL_LIST_NUMERIC_CPMG = [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED]
+"""The list of all numeric CPMG models."""
 
-MODEL_LIST_CPMG = [MODEL_NOREX, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_TSMFK01, MODEL_B14, MODEL_B14_FULL, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED]
+### All CPMG models.
+MODEL_LIST_CPMG_ONLY = MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG
+"""The list of all dispersion models specifically for CPMG-type experiments (excluding the R2eff model and model 'No Rex')."""
+
+### No Rex model + All CPMG models
+MODEL_LIST_CPMG = [MODEL_NOREX] + MODEL_LIST_CPMG_ONLY
 """The list of all dispersion models specifically for CPMG-type experiments (excluding the R2eff model)."""
 
-MODEL_LIST_CPMG_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_TSMFK01, MODEL_B14, MODEL_B14_FULL, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED]
+### R2eff + No Rex model + All CPMG models
+MODEL_LIST_CPMG_FULL = [MODEL_R2EFF] + MODEL_LIST_CPMG
 """The list of the R2eff model together with all dispersion models specifically for CPMG-type experiments."""
 
-MODEL_LIST_R1RHO = [MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_M61, MODEL_M61B, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]
-"""The list of all dispersion models specifically for R1rho-type experiments (excluding the R2eff model)."""
+## The MQ CPMG-type modelss.
+### The analytical MQ CPMG models.
+MODEL_LIST_ANALYTIC_CPMG_MMQ = [MODEL_MMQ_CR72]
+"""The list of all numeric MMQ CPMG models."""
 
-MODEL_LIST_R1RHO_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_M61, MODEL_M61B, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]
-"""The list of the R2eff model together with all dispersion models specifically for R1rho-type experiments."""
+### The numerical MQ CPMG models.
+MODEL_LIST_NUMERIC_CPMG_MMQ = [MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]
+"""The list of all numeric MMQ CPMG models."""
 
-MODEL_LIST_R1RHO_W_R1 = [MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]
-"""The list of all dispersion models specifically for R1rho-type experiments which use R1 in their equations."""
-
-MODEL_LIST_R1RHO_FIT_R1 = [MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1]
-"""The list of all dispersion models specifically for R1rho-type experiments which fit R1 in their equations."""
-
-MODEL_LIST_MQ_CPMG = [MODEL_NOREX, MODEL_MMQ_CR72, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]
-"""The list of all dispersion models specifically for MQ CPMG-type experiments (excluding the R2eff model)."""
-
-MODEL_LIST_MQ_CPMG_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_MMQ_CR72, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]
-"""The list of the R2eff model together with all dispersion models specifically for MQ CPMG-type experiments."""
-
-MODEL_LIST_MMQ = [MODEL_MMQ_CR72, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]
+### All MQ CPMG-type models.
+MODEL_LIST_MMQ = MODEL_LIST_ANALYTIC_CPMG_MMQ + MODEL_LIST_NUMERIC_CPMG_MMQ
 """The list of all dispersion models specifically for MMQ CPMG-type experiments."""
 
-MODEL_LIST_ANALYTIC = [MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_TSMFK01, MODEL_B14, MODEL_B14_FULL, MODEL_M61, MODEL_M61B, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MMQ_CR72, MODEL_MP05]
+### No Rex model + All MQ CPMG-type models.
+MODEL_LIST_MQ_CPMG = [MODEL_NOREX] + MODEL_LIST_MMQ
+"""The list of all dispersion models specifically for MQ CPMG-type experiments (excluding the R2eff model)."""
+
+### R2eff + No Rex model + All MQ CPMG-type models.
+MODEL_LIST_MQ_CPMG_FULL = [MODEL_R2EFF] + MODEL_LIST_MQ_CPMG
+"""The list of the R2eff model together with all dispersion models specifically for MQ CPMG-type experiments."""
+
+## The R1rho models.
+### The analytical models.
+#### On-resonance R1rho models.
+MODEL_LIST_R1RHO_ON_RES = [MODEL_M61, MODEL_M61B]
+"""The list of all dispersion models specifically for R1rho-type on-resonance experiments (excluding the R2eff model and model 'No Rex')."""
+
+#### Off-resonance R1rho models, where R1 has been measured.
+MODEL_LIST_ANALYTIC_R1RHO_W_R1 = [MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05]
+"""The list of all dispersion models specifically for analytical R1rho-type experiments which use R1 in their equations (excluding the R2eff model and model 'No Rex')."""
+
+#### Off-resonance R1rho models, where R1 will be fitted.
+MODEL_LIST_ANALYTIC_R1RHO_FIT_R1 = [MODEL_DPL94_FIT_R1]
+"""The list of all dispersion models specifically for R1rho-type experiments which fit R1 in their equations (excluding the R2eff model and model 'No Rex')."""
+
+### The numerical models.
+#### Off-resonance R1rho models, where R1 has been measured.
+MODEL_LIST_NUMERIC_R1RHO_W_R1 = [MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]
+"""The list of all dispersion models specifically for numeric R1rho-type experiments which use R1 in their equations (excluding the R2eff model and model 'No Rex')."""
+
+#### Off-resonance R1rho models, where R1 will be fitted.
+MODEL_LIST_NUMERIC_R1RHO_FIT_R1 = []
+"""The list of all dispersion models specifically for numeric R1rho-type experiments which fit R1 in their equations (excluding the R2eff model and model 'No Rex')."""
+
+### All R1rho models.
+#### All analytical R1rho models
+MODEL_LIST_ANALYTIC_R1RHO = MODEL_LIST_R1RHO_ON_RES + MODEL_LIST_ANALYTIC_R1RHO_W_R1 + MODEL_LIST_ANALYTIC_R1RHO_FIT_R1
+"""The list of all dispersion models specifically for analytical R1rho-type (excluding the R2eff model and model 'No Rex')."""
+
+#### All numeric R1rho models
+MODEL_LIST_NUMERIC_R1RHO = MODEL_LIST_NUMERIC_R1RHO_W_R1 + MODEL_LIST_NUMERIC_R1RHO_FIT_R1
+"""The list of all dispersion models specifically for analytical R1rho-type (excluding the R2eff model and model 'No Rex')."""
+
+#### All R1rho models which use R1.
+MODEL_LIST_R1RHO_W_R1_ONLY = MODEL_LIST_ANALYTIC_R1RHO_W_R1 + MODEL_LIST_NUMERIC_R1RHO_W_R1
+"""The list of all dispersion models specifically for R1rho-type experiments which use R1 in their equations (excluding the R2eff model and model 'No Rex')."""
+
+#### All R1rho models which fit R1.
+MODEL_LIST_R1RHO_FIT_R1_ONLY = MODEL_LIST_ANALYTIC_R1RHO_FIT_R1 + MODEL_LIST_NUMERIC_R1RHO_FIT_R1
+"""The list of all dispersion models specifically for R1rho-type experiments which fit R1 in their equations (excluding the R2eff model)."""
+
+### No Rex model + All R1rho models using/fitting R1.
+#### No Rex model + All R1rho models which use R1.
+MODEL_LIST_R1RHO_W_R1 = [MODEL_NOREX_R1RHO] + MODEL_LIST_R1RHO_W_R1_ONLY
+"""The list of all dispersion models specifically for R1rho-type experiments which use R1 in their equations (excluding the R2eff model)."""
+
+#### No Rex model + All R1rho models which fit R1.
+MODEL_LIST_R1RHO_FIT_R1 = [MODEL_NOREX_R1RHO_FIT_R1] + MODEL_LIST_R1RHO_FIT_R1_ONLY
+"""The list of all dispersion models specifically for R1rho-type experiments which fit R1 in their equations (excluding the R2eff model)."""
+
+### All R1rho models.
+#### No Rex model + All R1rho models.
+MODEL_LIST_R1RHO = [MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1] + MODEL_LIST_ANALYTIC_R1RHO + MODEL_LIST_NUMERIC_R1RHO
+"""The list of all dispersion models specifically for R1rho-type experiments (excluding the R2eff model)."""
+
+MODEL_LIST_R1RHO_FULL = [MODEL_R2EFF] + MODEL_LIST_R1RHO
+"""The list of the R2eff model together with all dispersion models specifically for R1rho-type experiments."""
+
+# Division of all models into analytic and numeric.
+## The list of all analytic models.
+MODEL_LIST_ANALYTIC = MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_ANALYTIC_R1RHO + MODEL_LIST_ANALYTIC_CPMG_MMQ
 """The list of all analytic models."""
 
-MODEL_LIST_NUMERIC = [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]
+## The list of all numeric models.
+MODEL_LIST_NUMERIC = MODEL_LIST_NUMERIC_CPMG + MODEL_LIST_NUMERIC_R1RHO + MODEL_LIST_NUMERIC_CPMG_MMQ
 """The list of all numeric models."""
 
-MODEL_LIST_NUMERIC_CPMG = [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]
-"""The list of all numeric models."""
+# List of all models.
+MODEL_LIST_DISP = [MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO] + MODEL_LIST_CPMG_ONLY + MODEL_LIST_R1RHO_ON_RES + MODEL_LIST_R1RHO_W_R1_ONLY + MODEL_LIST_R1RHO_FIT_R1_ONLY + MODEL_LIST_MMQ
+"""The list of all dispersion models (excluding the R2eff model)."""
+
+MODEL_LIST_FULL = [MODEL_R2EFF] + MODEL_LIST_DISP
+"""The list of the R2eff model together with all dispersion models."""
 
 # The model lists dependent on parameter.
 MODEL_PARAM_INV_RELAX_TIMES = [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]
