@@ -4974,6 +4974,10 @@ class Relax_disp(SystemTestCase):
 
         # Loop over result folders.
         for result_folder in result_folders:
+            # Skip the model R2eff, which does not produce graphs.
+            if result_folder == MODEL_R2EFF:
+                continue
+
             # Loop over graphs.
             for y_axis, x_axis, interpolate in graph_comb:
                 # Determine file name:
@@ -4999,6 +5003,10 @@ class Relax_disp(SystemTestCase):
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'+sep+'check_graphs'
 
         for result_folder in result_folders:
+            # Skip the model R2eff, which does not produce graphs.
+            if result_folder == MODEL_R2EFF:
+                continue
+
             for y_axis in y_axis_types:
                 for x_axis in x_axis_types:
                     for interpolate in interpolate_types:
