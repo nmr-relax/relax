@@ -20,8 +20,8 @@
 ###############################################################################
 
 # relax module imports.
-from specific_analyses.relax_disp.variables import MODEL_CR72
-from specific_analyses.relax_disp.variables import MODEL_PARAMS, MODEL_YEAR
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_MMQ_CR72
+from specific_analyses.relax_disp.variables import MODEL_EXP_TYPE, MODEL_PARAMS, MODEL_YEAR
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
@@ -47,3 +47,13 @@ class Test_variables(UnitTestCase):
 
         # Test the return.
         self.assertEqual(year_cr72, 1972)
+
+
+    def test_MODEL_EXP_TYPE(self):
+        """Unit test of the MODEL_EXP_TYPE dictionary."""
+
+        # Test model year return from model year dictionary.
+        exp_type_mmq_cr72 = MODEL_EXP_TYPE[MODEL_MMQ_CR72]
+
+        # Test the return.
+        self.assertEqual(exp_type_mmq_cr72, 'CPMG: SQ, DQ, MQ, ZQ, 1H SQ, 1H MQ')
