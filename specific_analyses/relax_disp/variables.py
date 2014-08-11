@@ -45,14 +45,14 @@ EXP_TYPE_DESC_R1RHO = "the R1rho-type experiment"
 
 
 # The experiment type lists.
-EXP_TYPE_LIST = [EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_R1RHO]
-"""The list of all dispersion experiment types."""
-
 EXP_TYPE_LIST_CPMG = [EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]
 """The list of all dispersion experiment types for CPMG-type data."""
 
 EXP_TYPE_LIST_R1RHO = [EXP_TYPE_R1RHO]
 """The list of all dispersion experiment types for R1rho-type data."""
+
+EXP_TYPE_LIST = EXP_TYPE_LIST_CPMG + EXP_TYPE_LIST_R1RHO
+"""The list of all dispersion experiment types."""
 
 
 # The model names, parameters, and descriptions.
