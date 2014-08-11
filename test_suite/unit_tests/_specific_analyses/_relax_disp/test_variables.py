@@ -21,7 +21,7 @@
 
 # relax module imports.
 from specific_analyses.relax_disp.variables import MODEL_CR72
-from specific_analyses.relax_disp.variables import MODEL_PARAMS
+from specific_analyses.relax_disp.variables import MODEL_PARAMS, MODEL_YEAR
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
@@ -38,3 +38,12 @@ class Test_variables(UnitTestCase):
         # Test the return.
         self.assertEqual(params_cr72, ['r2', 'pA', 'dw', 'kex'])
 
+
+    def test_MODEL_YEAR(self):
+        """Unit test of the MODEL_YEAR dictionary."""
+
+        # Test model year return from model year dictionary.
+        year_cr72 = MODEL_YEAR[MODEL_CR72]
+
+        # Test the return.
+        self.assertEqual(year_cr72, 1972)
