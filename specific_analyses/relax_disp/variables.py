@@ -33,7 +33,10 @@ EXP_TYPE_CPMG_ZQ = 'ZQ CPMG'
 EXP_TYPE_CPMG_PROTON_SQ = '1H SQ CPMG'
 EXP_TYPE_CPMG_PROTON_MQ = '1H MQ CPMG'
 EXP_TYPE_CPMG_MMQ = 'CPMG: SQ, DQ, MQ, ZQ, 1H SQ, 1H MQ'
+EXP_TYPE_NOREX = 'No Rex'
+EXP_TYPE_NOREX_R1RHO = 'No Rex: R1rho off res'
 EXP_TYPE_R1RHO = 'R1rho'
+EXP_TYPE_R2EFF = 'R2eff/R1rho'
 
 # Experiment type descriptions.
 EXP_TYPE_DESC_CPMG_SQ = "the standard single quantum (SQ) CPMG-type experiment"
@@ -62,28 +65,28 @@ MODEL_DESC_R2EFF = "The model for determining the R2eff/R1rho values from peak i
 MODEL_PARAMS_R2EFF = ['r2eff', 'i0']    # The 'i0' parameter is only for the exponential curve-fitting.
 # This year is fake. Just to get the order correct.
 MODEL_YEAR_R2EFF = 1950
-MODEL_EXP_TYPE_R2EFF = MODEL_R2EFF
+MODEL_EXP_TYPE_R2EFF = EXP_TYPE_R2EFF
 
 MODEL_NOREX = 'No Rex'
 MODEL_DESC_NOREX = "The model for no chemical exchange relaxation."
 MODEL_PARAMS_NOREX = ['r2']
 # This year is fake. Just to get the order correct.
 MODEL_YEAR_NOREX = 1951
-MODEL_EXP_TYPE_NOREX = MODEL_NOREX
+MODEL_EXP_TYPE_NOREX = EXP_TYPE_NOREX
 
 MODEL_NOREX_R1RHO = "No_Rex_R1rho_off_res"
 MODEL_DESC_NOREX_R1RHO = "The model for no chemical exchange relaxation, for R1rho off resonance models."
 MODEL_PARAMS_NOREX_R1RHO = ['r2']
 # This year is fake. Just to get the order correct.
 MODEL_YEAR_NOREX_R1RHO = 1952
-MODEL_EXP_TYPE_NOREX_R1RHO = MODEL_NOREX_R1RHO
+MODEL_EXP_TYPE_NOREX_R1RHO = EXP_TYPE_NOREX_R1RHO
 
 MODEL_NOREX_R1RHO_FIT_R1 = "%s_fit_r1"%MODEL_NOREX_R1RHO
 MODEL_DESC_NOREX_R1RHO_FIT_R1 = "The model for no chemical exchange relaxation, for R1rho off resonance models, where R1 is fitted."
 MODEL_PARAMS_NOREX_R1RHO_FIT_R1 = ['r1_fit', 'r2']
 # This year is fake. Just to get the order correct.
 MODEL_YEAR_NOREX_R1RHO_FIT_R1 = 1953
-MODEL_EXP_TYPE_NOREX_R1RHO_FIT_R1 = MODEL_NOREX_R1RHO
+MODEL_EXP_TYPE_NOREX_R1RHO_FIT_R1 = EXP_TYPE_NOREX_R1RHO
 
 MODEL_LM63 = 'LM63'
 MODEL_DESC_LM63 = "The Luz and Meiboom (1963) 2-site fast exchange model for SQ-CPMG experiments."
