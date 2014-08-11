@@ -20,8 +20,8 @@
 ###############################################################################
 
 # relax module imports.
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_MMQ_CR72
-from specific_analyses.relax_disp.variables import MODEL_EXP_TYPE, MODEL_PARAMS, MODEL_YEAR
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_MMQ_CR72, MODEL_NS_R1RHO_3SITE
+from specific_analyses.relax_disp.variables import MODEL_EXP_TYPE, MODEL_PARAMS, MODEL_SITES, MODEL_YEAR
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
@@ -57,3 +57,13 @@ class Test_variables(UnitTestCase):
 
         # Test the return.
         self.assertEqual(exp_type_mmq_cr72, 'CPMG: SQ, DQ, MQ, ZQ, 1H SQ, 1H MQ')
+
+
+    def test_MODEL_SITES(self):
+        """Unit test of the MODEL_SITES dictionary."""
+
+        # Test model chemical sites return from model sites dictionary.
+        model_sites = MODEL_SITES[MODEL_NS_R1RHO_3SITE]
+
+        # Test the return.
+        self.assertEqual(model_sites, 3)
