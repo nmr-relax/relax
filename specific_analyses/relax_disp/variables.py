@@ -965,6 +965,9 @@ def nesting_model(self_models=None, model=None):
                 if compa_model.model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG:
                     return model_info, compa_model
 
+        # If all fails.
+        return model_info, None
+
     # If there is no comparable models according to EXP_TYPE, check if some models can be nested anyway.
     else:
         # Define list of comparable models, to be all completed models.
