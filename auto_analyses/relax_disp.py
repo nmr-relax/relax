@@ -280,6 +280,7 @@ class Relax_disp:
         @keyword model: The model to be optimised.
         @type model:    str
         @return:        True if the model is the more complex model in a nested pair and the parameters of the simpler model have been copied.  False otherwise.
+        @return:        True if the model parameters is equivalent to the nested model, and all parameters are copied.  False if none or some of the parameters have been translated from the nested model.  Here the Grid search should still be performed.
         @rtype:         bool
         """
 
@@ -298,56 +299,113 @@ class Relax_disp:
             print("No model nesting or model equivalence detected.")
             return False
 
-        # Using the analytic solution.
+        # Copying the parameters to a numerical model from an analytic solution.
         if model_info.eq in [EQ_NUMERIC, EQ_SILICO] and comparable_model_info.eq == EQ_ANALYTIC:
             analytic = True
         else:
             analytic = False
 
-        # Printout.
-        if analytic:
-            print("Model equivalence detected, copying the optimised parameters from the analytic '%s' model rather than performing a grid search." % nested_pipe)
+        # Determine if model is equivalent or nested.
+        if model_info.params == comparable_model_info.params:
+            equivalent = True
         else:
-            print("Model nesting detected, copying the optimised parameters from the '%s' model rather than performing a grid search." % nested_pipe)
+            equivalent = False
 
-        # Loop over the spins to copy the parameters.
-        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-            # Get the nested spin.
-            nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+        # Printout.
+        if equivalent:
+            print("Model equivalence detected, copying the optimised parameters from the '%s' model rather than performing a grid search." % comparable_model_info.model)
+        else:
+            print("Model nesting detected, translating the optimised parameters %s from the '%s' model to the parameters %s of model '%s'.  A grid search is issued for the remaining parameters." % (comparable_model_info.params, comparable_model_info.model, model_info.params, model))
+        if analytic:
+            print("The parameters are copied from a %s model to a %s model." % (comparable_model_info.eq, model_info.eq))
 
+        # Loop over the parameters in comparable model.
+        for param in comparable_model_info.params:
             # The R20 parameters.
-            if hasattr(nested_spin, 'r2'):
-                if model in MODEL_PARAM_R20B:
-                    setattr(spin, 'r2a', deepcopy(nested_spin.r2))
-                    setattr(spin, 'r2b', deepcopy(nested_spin.r2))
-                else:
-                    setattr(spin, 'r2', deepcopy(nested_spin.r2))
+            if param in PARAMS_R20:
+                # If both models have same parameter.
+                if param in model_info.params:
+                    print("Copying %s." % param)
+                    # Loop over the spins to copy the parameters.
+                    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                        # Get the nested spin.
+                        nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+                        setattr(spin, param, deepcopy(getattr(nested_spin, param)))
 
-            # The LM63 3-site model parameters.
-            if model == MODEL_LM63_3SITE:
+                # If copying from a simple model to a complex model
+                elif param == 'r2' and 'r2a' in model_info.params and 'r2b' in model_info.params:
+                    print("Copying %s, to r2a and r2b." % param)
+                    # Loop over the spins to copy the parameters.
+                    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                        # Get the nested spin.
+                        nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+                        setattr(spin, 'r2a', deepcopy(getattr(nested_spin, 'r2')))
+                        setattr(spin, 'r2b', deepcopy(getattr(nested_spin, 'r2')))
+
+                # If copying from a complex model to a lower complex model
+                elif param == 'r2a' and 'r2' in model_info.params:
+                    print("Copying %s, to r2." % param)
+                    # Loop over the spins to copy the parameters.
+                    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                        # Get the nested spin.
+                        nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+                        setattr(spin, 'r2', deepcopy(getattr(nested_spin, 'r2a')))
+
+            # Special case for tex/kex.
+            elif param == 'tex' and 'kex' in model_info.params:
+                print("Translating kex from 1/%s." % param)
+                # Loop over the spins to copy the parameters.
+                for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                    # Get the nested spin.
+                    nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+                    kex = 1.0 / getattr(nested_spin, 'tex')
+                    setattr(spin, 'kex', kex)
+
+            elif param == 'kex' and 'tex' in model_info.params:
+                print("Translating tex from 1/%s." % param)
+                # Loop over the spins to copy the parameters.
+                for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                    # Get the nested spin.
+                    nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+                    tex = 1.0 / getattr(nested_spin, 'kex')
+                    setattr(spin, 'tex', tex)
+
+            # All other parameters.
+            elif param in model_info.params:
+                print("Copying %s." % param)
+                # Loop over the spins to copy the parameters.
+                for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                    # Get the nested spin.
+                    nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+                    setattr(spin, param, deepcopy(getattr(nested_spin, param)))
+
+        ## Special case for phi_ex.
+        if 'dw' in comparable_model_info.params and 'pA' in comparable_model_info.params and 'phi_ex' in model_info.params:
+            print("Translating 'phi_ex' from 'pA * pB * dw**2'.")
+            # Loop over the spins to copy the parameters.
+            for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                # Get the nested spin.
+                nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+                dw = getattr(nested_spin, 'dw')
+                pA = getattr(nested_spin, 'pA')
+                pB = 1.0 - pA
+                phi_ex = pA * pB * dw * dw
+                setattr(spin, 'phi_ex', phi_ex)
+
+        ## The LM63 3-site model parameters.
+        if 'phi_ex' in comparable_model_info.params and 'kex' in comparable_model_info.params and 'phi_ex_B' in model_info.params and 'phi_ex_C' in model_info.params and 'kB' in model_info.params and 'kC' in model_info.params:
+            print("Translating phi_ex_B=phi_ex, phi_ex_C=phi_ex, kB=kex and kC=kex.")
+            # Loop over the spins to copy the parameters.
+            for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                # Get the nested spin.
+                nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
                 setattr(spin, 'phi_ex_B', deepcopy(nested_spin.phi_ex))
                 setattr(spin, 'phi_ex_C', deepcopy(nested_spin.phi_ex))
                 setattr(spin, 'kB', deepcopy(nested_spin.kex))
                 setattr(spin, 'kC', deepcopy(nested_spin.kex))
 
-            # All other spin parameters.
-            for param in spin.params:
-                if param in PARAMS_R20:
-                    continue
-
-                # The parameter does not exist.
-                if not hasattr(nested_spin, param):
-                    continue
-
-                # Skip the LM63 3-site model parameters
-                if model == MODEL_LM63_3SITE and param in ['phi_ex', 'kex']:
-                    continue
-
-                # Copy the parameter.
-                setattr(spin, param, deepcopy(getattr(nested_spin, param)))
-
-        # Nesting.
-        return True
+        # Determine if model is equivalent, and should not be Grid searched, or if nested, and some parameters are pre-set. Here Grid search should still be issued.
+        return equivalent
 
 
     def optimise(self, model=None):
