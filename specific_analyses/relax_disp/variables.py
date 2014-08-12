@@ -785,6 +785,12 @@ class model_class:
         # Save the index of current model to order of equation type.
         self.eq_i = order_eq.index(self.eq)
 
+        # Define the order of how equation type ranks, when sorting before auto analyses.
+        order_s = [EQ_SILICO, EQ_ANALYTIC, EQ_NUMERIC]
+
+        # Save the index of current model to order of equation type.
+        self.eq_s = order_s.index(self.eq)
+
         # Save the difference in year from now, to implemented model.
         self.year_diff = date.today().year - self.year
 
@@ -983,3 +989,30 @@ def nesting_model(self_models=None, model=None):
 
         else:
             return model_info, None
+
+
+# Define function, to sort models.
+def sort_models(models=None):
+    """Determine how to order the models for analyses.
+
+    @keyword models:   The list of all models to be analysed.
+    @type models:      list of str
+    @return:           The ordered list how models should be analysed.
+    @rtype:            list of str
+    """
+
+    # Get the info of the models selected for analysis.
+    all_models_info = models_info(models)
+
+    # Sort the models according to: exp_type, equation type, chemical sites, year for model, number of parameters.
+    all_models_info_sorted = sorted(all_models_info, key=attrgetter('exp_type_i', 'eq_s', 'sites', 'year_diff', 'params_nr'))
+
+    # Define list of sorted models.
+    sorted_models = []
+
+    # Loop over the models info, and extract model.
+    for model_info in all_models_info_sorted:
+        sorted_models.append(model_info.model)
+
+    # Return sorted list of models.
+    return sorted_models
