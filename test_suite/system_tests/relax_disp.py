@@ -32,7 +32,7 @@ from auto_analyses import relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from lib.io import get_file_path
-from pipe_control.mol_res_spin import return_spin, spin_loop
+from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
 from specific_analyses.relax_disp.data import generate_r20_key, get_curve_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, return_grace_file_name_ini, return_param_key_from_data
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LM63, MODEL_M61B, MODEL_MP05_FIT_R1, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE_FIT_R1, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1
@@ -5321,6 +5321,47 @@ class Relax_disp(SystemTestCase):
 
         # Check the kex value of residue 52
         #self.assertAlmostEqual(cdp.mol[0].res[41].spin[0].kex, ds.ref[':52@N'][6])
+
+        # Print results for each model.
+        print("\n\n################")
+        print("Printing results")
+        print("################\n")
+        for model in MODELS:
+            # Skip R2eff model.
+            if model == MODEL_R2EFF:
+                continue
+
+            # Switch to pipe.
+            self.interpreter.pipe.switch(pipe_name='%s - relax_disp' % (model))
+            print("\nModel: %s" % (model))
+
+            # Loop over the spins.
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                # Generate spin string.
+                spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+                # Loop over the parameters.
+                print("Optimised parameters for spin: %s" % (spin_string))
+                for param in cur_spin.params + ['chi2']:
+                    # Get the value.
+                    if param in ['r1_fit', 'r2']:
+                        for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+                            # Generate the R20 key.
+                            r20_key = generate_r20_key(exp_type=exp_type, frq=frq)
+
+                            # Get the value.
+                            value = getattr(cur_spin, param)[r20_key]
+
+                            # Print value.
+                            print("%-10s %-6s %-6s %3.3f" % ("Parameter:", param, "Value:", value))
+
+                    # For all other parameters.
+                    else:
+                        # Get the value.
+                        value = getattr(cur_spin, param)
+
+                        # Print value.
+                        print("%-10s %-6s %-6s %3.3f" % ("Parameter:", param, "Value:", value))
 
 
     def test_r2eff_read(self):
