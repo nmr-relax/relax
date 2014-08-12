@@ -266,7 +266,7 @@ def copy(pipe_from=None, pipe_to=None):
 
             # All other spin specific parameters.
             for param in spin_from.params:
-                if param in ['r2', 'pA', 'pB', 'pC', 'kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC', 'tex']:
+                if param in ['r2', 'r2a', 'r2b', 'pA', 'pB', 'pC', 'kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC', 'tex']:
                     continue
 
                 elif param == 'r2eff':
