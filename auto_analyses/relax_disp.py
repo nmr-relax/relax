@@ -38,6 +38,7 @@ from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, loop_frq
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
+from specific_analyses.relax_disp.variables import nesting_model
 from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_LIST_ANALYTIC, MODEL_LIST_NEST, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO_FIT_R1, MODEL_LIST_R1RHO_W_R1, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAM_R20B, MODEL_PARAMS, MODEL_R2EFF, PARAMS_R20
 from status import Status; status = Status()
 
@@ -286,31 +287,11 @@ class Relax_disp:
         subsection(file=sys.stdout, text="Nesting and model equivalence checks", prespace=1)
 
         # The simpler model.
-        nested_pipe = None
-        if model == MODEL_LM63_3SITE and MODEL_LM63 in self.models:
-            nested_pipe = self.name_pipe(MODEL_LM63)
-        if model == MODEL_CR72_FULL and MODEL_CR72 in self.models:
-            nested_pipe = self.name_pipe(MODEL_CR72)
-        if model == MODEL_MMQ_CR72 and MODEL_CR72 in self.models:
-            nested_pipe = self.name_pipe(MODEL_CR72)
-        if model == MODEL_NS_CPMG_2SITE_3D_FULL and MODEL_NS_CPMG_2SITE_3D in self.models:
-            nested_pipe = self.name_pipe(MODEL_NS_CPMG_2SITE_3D)
-        if model == MODEL_NS_CPMG_2SITE_STAR_FULL and MODEL_NS_CPMG_2SITE_STAR in self.models:
-            nested_pipe = self.name_pipe(MODEL_NS_CPMG_2SITE_STAR)
-        if model == MODEL_NS_MMQ_3SITE_LINEAR and MODEL_NS_MMQ_2SITE in self.models:
-            nested_pipe = self.name_pipe(MODEL_NS_MMQ_2SITE)
-        if model == MODEL_NS_MMQ_3SITE:
-            if MODEL_NS_MMQ_3SITE_LINEAR in self.models:
-                nested_pipe = self.name_pipe(MODEL_NS_MMQ_3SITE_LINEAR)
-            elif MODEL_NS_MMQ_2SITE in self.models:
-                nested_pipe = self.name_pipe(MODEL_NS_MMQ_2SITE)
-        if model == MODEL_NS_R1RHO_3SITE_LINEAR and MODEL_NS_R1RHO_2SITE in self.models:
-            nested_pipe = self.name_pipe(MODEL_NS_R1RHO_2SITE)
-        if model == MODEL_NS_R1RHO_3SITE:
-            if MODEL_NS_R1RHO_3SITE_LINEAR in self.models:
-                nested_pipe = self.name_pipe(MODEL_NS_R1RHO_3SITE_LINEAR)
-            elif MODEL_NS_R1RHO_2SITE in self.models:
-                nested_pipe = self.name_pipe(MODEL_NS_R1RHO_2SITE)
+        nested_model = nesting_model(self_models=self.models, model=model)
+        if nested_model != None:
+            nested_pipe = self.name_pipe(nested_model)
+        else:
+            nested_pipe = None
 
 
         # Using the analytic solution.
