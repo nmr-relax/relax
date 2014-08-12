@@ -911,6 +911,10 @@ def nesting_model(self_models=None, model=None):
                 elif param == 'phi_ex' and compa_model.model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG and model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG:
                     continue
 
+                # Special situation, where 'kex'=1/tex can still be nested from IT99 model.
+                elif param == 'tex' and compa_model.model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG and model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG:
+                    continue
+
                 # Else break out of the loop.
                 else:
                     # Break the for loop, if not found.
@@ -953,6 +957,13 @@ def nesting_model(self_models=None, model=None):
                 if compa_model.model in MODEL_LIST_R1RHO_W_R1_ONLY + MODEL_LIST_R1RHO_FIT_R1_ONLY:
                     return model_info, compa_model
 
+        # Special case for IT99.
+        elif model in [MODEL_IT99]:
+            # Loop over the models.
+            for compa_model in compa_models:
+                # If one of the comparable models is in list with R1rho R1, return this.
+                if compa_model.model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG:
+                    return model_info, compa_model
 
     # If there is no comparable models according to EXP_TYPE, check if some models can be nested anyway.
     else:

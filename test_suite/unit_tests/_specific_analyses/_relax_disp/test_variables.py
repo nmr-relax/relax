@@ -151,9 +151,27 @@ class Test_variables(UnitTestCase):
         model = MODEL_CR72
 
         # Test the return.
-        print nesting_model(self_models=self_models, model=model)
         self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_LM63)
 
+        ## Test MODEL_IT99 model request, when models are CR72.
+        # Define all the models tested in the analysis.
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_CR72, MODEL_IT99]
+
+        # Define which current model is selected
+        model = MODEL_IT99
+
+        # Test the return.
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_CR72)
+
+        ## Test MODEL_CR72 model request, when models are MODEL_IT99.
+        # Define all the models tested in the analysis.
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_IT99, MODEL_CR72]
+
+        # Define which current model is selected
+        model = MODEL_CR72
+
+        # Test the return.
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_IT99)
 
 
     def test_nesting_model_cpmg_mmq(self):
