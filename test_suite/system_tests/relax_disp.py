@@ -5283,7 +5283,7 @@ class Relax_disp(SystemTestCase):
         MODELS = [MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1, MODEL_NS_R1RHO_2SITE_FIT_R1]
 
         # The grid search size (the number of increments per dimension).
-        GRID_INC = 4
+        GRID_INC = 10
 
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         MC_NUM = 3
@@ -5362,6 +5362,23 @@ class Relax_disp(SystemTestCase):
 
                         # Print value.
                         print("%-10s %-6s %-6s %3.3f" % ("Parameter:", param, "Value:", value))
+
+        # Print the final pipe.
+        self.interpreter.pipe.switch(pipe_name='%s - relax_disp' % ('final'))
+        print("\nFinal pipe")
+
+        # Loop over the spins.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Generate spin string.
+            spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+            # Loop over the parameters.
+            print("Optimised model for spin: %s" % (spin_string))
+            param = 'model'
+
+            # Get the value.
+            value = getattr(cur_spin, param)
+            print("%-10s %-6s %-6s %6s" % ("Parameter:", param, "Value:", value))
 
 
     def test_r2eff_read(self):
