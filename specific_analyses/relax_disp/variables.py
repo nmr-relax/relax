@@ -907,6 +907,10 @@ def nesting_model(self_models=None, model=None):
                 elif param == 'phi_ex' and compa_model.model in MODEL_LIST_R1RHO_W_R1_ONLY + MODEL_LIST_R1RHO_FIT_R1_ONLY and model in MODEL_LIST_R1RHO_W_R1_ONLY + MODEL_LIST_R1RHO_FIT_R1_ONLY:
                     continue
 
+                # Special situation, where 'kex' can still be nested from LM63 model.
+                elif param == 'phi_ex' and compa_model.model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG and model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG:
+                    continue
+
                 # Else break out of the loop.
                 else:
                     # Break the for loop, if not found.
