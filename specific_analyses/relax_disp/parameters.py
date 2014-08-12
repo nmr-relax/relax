@@ -269,8 +269,18 @@ def copy(pipe_from=None, pipe_to=None):
                 if param in ['r2', 'pA', 'pB', 'pC', 'kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC', 'tex']:
                     continue
 
-                # Copy the value.
-                setattr(spin_to, param, deepcopy(getattr(spin_from, param)))
+                elif param == 'r2eff':
+                    # Copy the value.
+                    setattr(spin_to, param, deepcopy(getattr(spin_from, param)))
+
+                    # If error estimation exists.
+                    param_err = '%s_err' % param
+                    if hasattr(spin_from, param_err):
+                        setattr(spin_to, param_err, deepcopy(getattr(spin_from, param_err)))
+
+                else:
+                    # Copy the value.
+                    setattr(spin_to, param, deepcopy(getattr(spin_from, param)))
 
     # Switch back to the original data pipe.
     pipes.switch(pipe_orig)
