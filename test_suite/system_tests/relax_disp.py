@@ -5361,8 +5361,11 @@ class Relax_disp(SystemTestCase):
         self.interpreter.select.spin(spin_id=':52@N', change_all=False)
         #self.interpreter.relax_disp.cluster('model_cluster', ':52@N')
 
+        # Point to directory with R2eff values, with 2000 MC simulations.
+        prev_data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013' +sep+ "check_graphs" +sep+ "mc_2000"
+
         # Run the analysis.
-        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, pre_run_dir=prev_data_path, optimise_pre_run_r2eff=False)
 
         # Check the kex value of residue 52
         #self.assertAlmostEqual(cdp.mol[0].res[41].spin[0].kex, ds.ref[':52@N'][6])
