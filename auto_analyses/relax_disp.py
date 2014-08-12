@@ -287,9 +287,9 @@ class Relax_disp:
         subsection(file=sys.stdout, text="Nesting and model equivalence checks", prespace=1)
 
         # The simpler model.
-        nested_model = nesting_model(self_models=self.models, model=model)
-        if nested_model != None:
-            nested_pipe = self.name_pipe(nested_model)
+        model_info, comparable_model_info = nesting_model(self_models=self.models, model=model)
+        if comparable_model_info != None:
+            nested_pipe = self.name_pipe(comparable_model_info.model)
         else:
             nested_pipe = None
 

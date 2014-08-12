@@ -844,8 +844,8 @@ def nesting_model(self_models=None, model=None):
     @type self_models:      list of str
     @keyword model:         The current model to analyse.
     @type model:            str
-    @return:                The model to nest from.
-    @rtype:                 str
+    @return:                The current model info, the possible nest model info.
+    @rtype:                 class, class
     """
 
 
@@ -878,7 +878,7 @@ def nesting_model(self_models=None, model=None):
         # Loop over the list of comparable models, if the parameters are the same, return that as nested model.
         for compa_model in compa_models:
             if compa_model.params == model_info.params:
-                return compa_model.model
+                return model_info, compa_model
 
         # Loop over the list of comparable models, if the parameters (other than R20 params) are the same, return that as nested model.
         for compa_model in compa_models:
@@ -891,7 +891,7 @@ def nesting_model(self_models=None, model=None):
 
             # If the partial params are the same, then return that model.
             if part_compa_model_params == part_model_params:
-                return compa_model.model
+                return model_info, compa_model
 
         # Loop over the list of comparable models, if the parameters are part of the more complex model, return that as nested model.
         for compa_model in compa_models:
@@ -915,7 +915,7 @@ def nesting_model(self_models=None, model=None):
 
             # If all parameters are found in the more complex model.
             if param_in:
-                return compa_model.model
+                return model_info, compa_model
 
         # Special case for LM63
         if model == MODEL_LM63_3SITE:
@@ -923,7 +923,7 @@ def nesting_model(self_models=None, model=None):
             for compa_model in compa_models:
                 # If one of the comparable models is MODEL_LM63, return this.
                 if compa_model.model == MODEL_LM63:
-                    return compa_model.model
+                    return model_info, compa_model
 
         # Special case for MODEL_NS_MMQ_3SITE or MODEL_NS_MMQ_3SITE_LINEAR, getting parameters from MODEL_NS_MMQ_2SITE.
         elif model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
@@ -931,7 +931,7 @@ def nesting_model(self_models=None, model=None):
             for compa_model in compa_models:
                 # If one of the comparable models is MODEL_NS_MMQ_2SITE, return this.
                 if compa_model.model == MODEL_NS_MMQ_2SITE:
-                    return compa_model.model
+                    return model_info, compa_model
 
         # Special case for MODEL_NS_R1RHO_3SITE or MODEL_NS_R1RHO_3SITE_LINEAR, getting parameters from MODEL_NS_R1RHO_2SITE.
         elif model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
@@ -939,7 +939,7 @@ def nesting_model(self_models=None, model=None):
             for compa_model in compa_models:
                 # If one of the comparable models is MODEL_NS_MMQ_2SITE, return this.
                 if compa_model.model == MODEL_NS_R1RHO_2SITE:
-                    return compa_model.model
+                    return model_info, compa_model
 
         # Special case for DPL94.
         elif model in [MODEL_DPL94, MODEL_DPL94_FIT_R1]:
@@ -947,7 +947,7 @@ def nesting_model(self_models=None, model=None):
             for compa_model in compa_models:
                 # If one of the comparable models is in list with R1rho R1, return this.
                 if compa_model.model in MODEL_LIST_R1RHO_W_R1_ONLY + MODEL_LIST_R1RHO_FIT_R1_ONLY:
-                    return compa_model.model
+                    return model_info, compa_model
 
 
     # If there is no comparable models according to EXP_TYPE, check if some models can be nested anyway.
@@ -961,7 +961,7 @@ def nesting_model(self_models=None, model=None):
             for compa_model in compa_models:
                 # If one of the comparable models is MODEL_CR72, return this.
                 if compa_model.model == MODEL_CR72:
-                    return compa_model.model
+                    return model_info, compa_model
 
         else:
-            return None
+            return model_info, None

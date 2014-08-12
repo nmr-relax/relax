@@ -91,7 +91,7 @@ class Test_variables(UnitTestCase):
         model = MODEL_NS_CPMG_2SITE_STAR
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_NS_CPMG_2SITE_3D)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_CPMG_2SITE_3D)
 
         ## Test numerical full model return.
         # Define all the models tested in the analysis.
@@ -101,7 +101,7 @@ class Test_variables(UnitTestCase):
         model = MODEL_NS_CPMG_2SITE_STAR_FULL
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_NS_CPMG_2SITE_3D_FULL)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_CPMG_2SITE_3D_FULL)
 
         ## Test silico simple return from a full model request.
         # Define all the models tested in the analysis.
@@ -111,7 +111,7 @@ class Test_variables(UnitTestCase):
         model = MODEL_B14_FULL
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_NS_CPMG_2SITE_EXPANDED)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_CPMG_2SITE_EXPANDED)
 
         ## Test LM63 model request.
         # Define all the models tested in the analysis.
@@ -121,7 +121,7 @@ class Test_variables(UnitTestCase):
         model = MODEL_LM63_3SITE
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_LM63)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_LM63)
 
         ## Test MODEL_CR72_FULL model request.
         # Define all the models tested in the analysis.
@@ -131,7 +131,7 @@ class Test_variables(UnitTestCase):
         model = MODEL_CR72_FULL
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_CR72)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_CR72)
 
         ## Test MODEL_CR72_FULL model request, when models are ordered different.
         # Define all the models tested in the analysis.
@@ -141,7 +141,7 @@ class Test_variables(UnitTestCase):
         model = MODEL_CR72_FULL
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_B14_FULL)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_B14_FULL)
 
 
     def test_nesting_model_cpmg_mmq(self):
@@ -155,7 +155,7 @@ class Test_variables(UnitTestCase):
         model = MODEL_MMQ_CR72
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_CR72)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_CR72)
 
         ## Test MODEL_NS_MMQ_3SITE_LINEAR model request, when models are MODEL_NS_MMQ_2SITE.
         # Define all the models tested in the analysis.
@@ -165,7 +165,7 @@ class Test_variables(UnitTestCase):
         model = MODEL_NS_MMQ_3SITE_LINEAR
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_NS_MMQ_2SITE)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_MMQ_2SITE)
 
         ## Test MODEL_NS_MMQ_3SITE model request, when models are MODEL_NS_MMQ_3SITE_LINEAR.
         # Define all the models tested in the analysis.
@@ -175,7 +175,7 @@ class Test_variables(UnitTestCase):
         model = MODEL_NS_MMQ_3SITE
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_NS_MMQ_3SITE_LINEAR)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_MMQ_3SITE_LINEAR)
 
         ## Test MODEL_NS_MMQ_3SITE model request, when models are MODEL_NS_MMQ_2SITE.
         # Define all the models tested in the analysis.
@@ -185,7 +185,7 @@ class Test_variables(UnitTestCase):
         model = MODEL_NS_MMQ_3SITE
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_NS_MMQ_2SITE)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_MMQ_2SITE)
 
 
     def test_nesting_model_r1rho_ns(self):
@@ -199,7 +199,7 @@ class Test_variables(UnitTestCase):
         model = MODEL_NS_R1RHO_3SITE_LINEAR
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_NS_R1RHO_2SITE)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_R1RHO_2SITE)
 
         ## Test MODEL_NS_R1RHO_3SITE model request, when models are MODEL_NS_R1RHO_3SITE_LINEAR.
         # Define all the models tested in the analysis.
@@ -209,7 +209,7 @@ class Test_variables(UnitTestCase):
         model = MODEL_NS_R1RHO_3SITE
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_NS_R1RHO_3SITE_LINEAR)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_R1RHO_3SITE_LINEAR)
 
         ## Test MODEL_NS_R1RHO_3SITE model request, when models are MODEL_NS_R1RHO_2SITE.
         # Define all the models tested in the analysis.
@@ -219,7 +219,7 @@ class Test_variables(UnitTestCase):
         model = MODEL_NS_R1RHO_3SITE
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_NS_R1RHO_2SITE)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_R1RHO_2SITE)
 
 
     def test_nesting_model_r1rho(self):
@@ -233,7 +233,7 @@ class Test_variables(UnitTestCase):
         model = MODEL_MP05_FIT_R1
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_TAP03_FIT_R1)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_TAP03_FIT_R1)
 
         ## Test MODEL_TP02_FIT_R1 model request, when models are all R1rho models with fitted R1, and MODEL_NS_R1RHO_2SITE_FIT_R1 was fitted first.
         # Define all the models tested in the analysis.
@@ -243,7 +243,7 @@ class Test_variables(UnitTestCase):
         model = MODEL_TP02_FIT_R1
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_NS_R1RHO_2SITE_FIT_R1)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_R1RHO_2SITE_FIT_R1)
 
         ## Test MODEL_DPL94_FIT_R1 model request, when models are all R1rho models with fitted R1, and MODEL_NS_R1RHO_2SITE_FIT_R1 was fitted first.
         # Define all the models tested in the analysis.
@@ -253,7 +253,7 @@ class Test_variables(UnitTestCase):
         model = MODEL_DPL94_FIT_R1
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_NS_R1RHO_2SITE_FIT_R1)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_R1RHO_2SITE_FIT_R1)
 
         ## Test MODEL_TP02_FIT_R1 model request, when model are all R1rho models with fitted R1, and MODEL_DPL94_FIT_R1 was fitted first.
         # Define all the models tested in the analysis.
@@ -263,4 +263,4 @@ class Test_variables(UnitTestCase):
         model = MODEL_TP02_FIT_R1
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model), MODEL_DPL94_FIT_R1)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_DPL94_FIT_R1)
