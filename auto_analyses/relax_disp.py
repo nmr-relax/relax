@@ -30,7 +30,8 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from lib.errors import RelaxError, RelaxNoPipeError
+from lib.errors import RelaxError, RelaxFileError, RelaxNoPipeError
+from lib.io import determine_compression, get_file_path
 from lib.text.sectioning import section, subsection, subtitle, title
 from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import return_spin, spin_loop
@@ -446,7 +447,21 @@ class Relax_disp:
             self.interpreter.relax_disp.r20_from_min_r2eff(force=True)
 
         # Use pre-run results as the optimisation starting point.
+        # Test if file exists.
         if self.pre_run_dir:
+            path = self.pre_run_dir + sep + model
+            # File path.
+            file_path = get_file_path('results', path)
+
+            # Test if the file exists and determine the compression type.
+            try:
+                compress_type, file_path = determine_compression(file_path)
+                res_file_exists = True
+
+            except RelaxFileError:
+                res_file_exists = False
+
+        if self.pre_run_dir and res_file_exists:
             self.pre_run_parameters(model=model)
 
         # Otherwise use the normal nesting check and grid search if not nested.
