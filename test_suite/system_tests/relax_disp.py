@@ -5338,9 +5338,9 @@ class Relax_disp(SystemTestCase):
 
         # Execute the auto-analysis (fast).
         # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
-        OPT_FUNC_TOL = 1e-1
+        OPT_FUNC_TOL = 1e-25
         relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
-        OPT_MAX_ITERATIONS = 1000
+        OPT_MAX_ITERATIONS = 10000000
         relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
 
         result_dir_name = ds.tmpdir
@@ -5401,7 +5401,37 @@ class Relax_disp(SystemTestCase):
                             value = getattr(cur_spin, param)[r20_key]
 
                             # Print value.
-                            print("%-10s %-6s %-6s %3.3f" % ("Parameter:", param, "Value:", value))
+                            print("%-10s %-6s %-6s %3.8f" % ("Parameter:", param, "Value:", value))
+
+                            # Compare values.
+                            if spin_id == ':52@N':
+                                if param == 'r1_fit':
+                                    if model == MODEL_NOREX_R1RHO_FIT_R1:
+                                        self.assertAlmostEqual(value, 1.46328102)
+                                    elif model == MODEL_DPL94_FIT_R1:
+                                        self.assertAlmostEqual(value, 1.45019848)
+                                    elif model == MODEL_TP02_FIT_R1:
+                                        self.assertAlmostEqual(value, 1.54352369)
+                                    elif model == MODEL_TAP03_FIT_R1:
+                                        self.assertAlmostEqual(value, 1.54354367)
+                                    elif model == MODEL_MP05_FIT_R1:
+                                        self.assertAlmostEqual(value, 1.54354372)
+                                    elif model == MODEL_NS_R1RHO_2SITE_FIT_R1:
+                                        self.assertAlmostEqual(value, 1.54354372)
+
+                                elif param == 'r2':
+                                    if model == MODEL_NOREX_R1RHO_FIT_R1:
+                                        self.assertAlmostEqual(value, 11.48040934)
+                                    elif model == MODEL_DPL94_FIT_R1:
+                                        self.assertAlmostEqual(value, 10.16304887, 6)
+                                    elif model == MODEL_TP02_FIT_R1:
+                                        self.assertAlmostEqual(value, 9.72772726)
+                                    elif model == MODEL_TAP03_FIT_R1:
+                                        self.assertAlmostEqual(value, 9.72759374, 6)
+                                    elif model == MODEL_MP05_FIT_R1:
+                                        self.assertAlmostEqual(value, 9.72759220, 6)
+                                    elif model == MODEL_NS_R1RHO_2SITE_FIT_R1:
+                                        self.assertAlmostEqual(value, 9.72759220, 6)
 
                     # For all other parameters.
                     else:
@@ -5409,7 +5439,60 @@ class Relax_disp(SystemTestCase):
                         value = getattr(cur_spin, param)
 
                         # Print value.
-                        print("%-10s %-6s %-6s %3.3f" % ("Parameter:", param, "Value:", value))
+                        print("%-10s %-6s %-6s %3.8f" % ("Parameter:", param, "Value:", value))
+
+                        # Compare values.
+                        if spin_id == ':52@N':
+                            if param == 'phi_ex':
+                                if model == MODEL_DPL94_FIT_R1:
+                                    self.assertAlmostEqual(value, 0.07561937)
+
+                            elif param == 'pA':
+                                if model == MODEL_TP02_FIT_R1:
+                                    self.assertAlmostEqual(value, 0.88807487)
+                                elif model == MODEL_TAP03_FIT_R1:
+                                    self.assertAlmostEqual(value, 0.88809318)
+                                elif model == MODEL_MP05_FIT_R1:
+                                    self.assertAlmostEqual(value, 0.88809321)
+                                elif model == MODEL_NS_R1RHO_2SITE_FIT_R1:
+                                    self.assertAlmostEqual(value, 0.88809321)
+
+                            elif param == 'dw':
+                                if model == MODEL_TP02_FIT_R1:
+                                    self.assertAlmostEqual(value, 1.08765638)
+                                elif model == MODEL_TAP03_FIT_R1:
+                                    self.assertAlmostEqual(value, 1.08726698)
+                                elif model == MODEL_MP05_FIT_R1:
+                                    self.assertAlmostEqual(value, 1.08726706)
+                                elif model == MODEL_NS_R1RHO_2SITE_FIT_R1:
+                                    self.assertAlmostEqual(value, 1.08726706)
+
+                            elif param == 'kex':
+                                if model == MODEL_DPL94_FIT_R1:
+                                    self.assertAlmostEqual(value, 4419.03917195, 2)
+                                elif model == MODEL_TP02_FIT_R1:
+                                    self.assertAlmostEqual(value, 4904.70144883, 3)
+                                elif model == MODEL_TAP03_FIT_R1:
+                                    self.assertAlmostEqual(value, 4909.86877150, 3)
+                                elif model == MODEL_MP05_FIT_R1:
+                                    self.assertAlmostEqual(value, 4909.88110195, 3)
+                                elif model == MODEL_NS_R1RHO_2SITE_FIT_R1:
+                                    self.assertAlmostEqual(value, 4909.88110195, 3)
+
+                            elif param == 'chi2':
+                                if model == MODEL_NOREX_R1RHO_FIT_R1:
+                                    self.assertAlmostEqual(value, 3363.95829122)
+                                elif model == MODEL_DPL94_FIT_R1:
+                                    self.assertAlmostEqual(value, 710.24767560)
+                                elif model == MODEL_TP02_FIT_R1:
+                                    self.assertAlmostEqual(value, 114.47142772)
+                                elif model == MODEL_TAP03_FIT_R1:
+                                    self.assertAlmostEqual(value, 114.27987534)
+                                elif model == MODEL_MP05_FIT_R1:
+                                    self.assertAlmostEqual(value, 114.28002272)
+                                #elif model == MODEL_NS_R1RHO_2SITE_FIT_R1:
+                                #    self.assertAlmostEqual(value, 0.0)
+
 
         # Print the final pipe.
         self.interpreter.pipe.switch(pipe_name='%s - relax_disp' % ('final'))
