@@ -38,9 +38,11 @@ if SYSTEM == 'Darwin':
 
 # Relaxation data GUI text elements.
 r1 = u("R\u2081")
+r1_fit = u("R\u2081_fit")
 r2 = u("R\u2082")
 if win:
     r1 = "R1"
+    r1_fit = "R1_fit"
     r2 = "R2"
 
 # Model-free GUI text elements.
