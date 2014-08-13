@@ -939,6 +939,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("A number of different dispersion models are supported.  This includes both analytic models and numerical models.  Models which are independent of the experimental data type are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the model used to determine the R2eff/R1rho values and errors required as the base data for all other models,")
+uf.desc.append(Desc_container('The no chemical exchange models'))
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX_R1RHO, "This is the model for no chemical exchange being present, for off-resonance R1rho-type experiments.  R1rho = R1 * cos(theta)^2 + r1rho_prime * sin(theta)^2")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX_R1RHO_FIT_R1, "This is the model for no chemical exchange being present, for off-resonance R1rho-type experiments where R1 is fitted.  R1rho = R1 * cos(theta)^2 + r1rho_prime * sin(theta)^2")
