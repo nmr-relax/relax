@@ -44,11 +44,11 @@ from gui.message import error_message, Missing_data
 from gui.string_conv import float_to_gui, gui_to_float, gui_to_int, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.peak_intensity import Peak_intensity_wizard
-from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kBC, kAC, padw2, phi_ex, phi_exB, phi_exC, r1, r1rho, r1rho_prime, r2, r2a, r2b, r2eff
+from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kBC, kAC, padw2, phi_ex, phi_exB, phi_exC, r1, r1rho, r1rho_prime, r1_fit, r2, r2a, r2b, r2eff
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from pipe_control.pipes import has_bundle, has_pipe
 from specific_analyses.relax_disp.data import has_cpmg_exp_type, has_r1rho_exp_type
-from specific_analyses.relax_disp.variables import MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_MP05_FIT_R1, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_2SITE_FIT_R1, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TAP03_FIT_R1, MODEL_TP02, MODEL_TP02_FIT_R1, MODEL_TSMFK01
 from status import Status; status = Status()
 
 
@@ -715,6 +715,8 @@ class Disp_model_list(Model_list):
         MODEL_R2EFF,
         None,
         MODEL_NOREX,
+        MODEL_NOREX_R1RHO,
+        MODEL_NOREX_R1RHO_FIT_R1,
         None,
         MODEL_LM63,
         MODEL_LM63_3SITE,
@@ -733,10 +735,15 @@ class Disp_model_list(Model_list):
         MODEL_M61,
         MODEL_M61B,
         MODEL_DPL94,
+        MODEL_DPL94_FIT_R1,
         MODEL_TP02,
+        MODEL_TP02_FIT_R1,
         MODEL_TAP03,
+        MODEL_TAP03_FIT_R1,
         MODEL_MP05,
+        MODEL_MP05_FIT_R1,
         MODEL_NS_R1RHO_2SITE,
+        MODEL_NS_R1RHO_2SITE_FIT_R1,
         MODEL_NS_R1RHO_3SITE_LINEAR,
         MODEL_NS_R1RHO_3SITE,
         None,
@@ -749,6 +756,8 @@ class Disp_model_list(Model_list):
         "{%s/%s, %s}" % (r2eff, r1rho, i0),
         None,
         "{%s, ...}" % (r2),
+        "{%s, ...}" % (r2),
+        "{%s, %s, ...}" % (r1_fit, r2),
         None,
         "{%s, ..., %s, %s}" % (r2, phi_ex, kex),
         "{%s, ..., %s, kB, %s, kC}" % (r2, phi_exB, phi_exC),
@@ -767,10 +776,15 @@ class Disp_model_list(Model_list):
         "{%s, ..., %s, %s}" % (r1rho_prime, phi_ex, kex),
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
         "{%s, ..., %s, %s}" % (r1rho_prime, phi_ex, kex),
+        "{%s, %s, ..., %s, %s}" % (r1_fit, r1rho_prime, phi_ex, kex),
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
+        "{%s, %s, ..., pA, %s, %s}" % (r1_fit, r1rho_prime, dw, kex),
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
+        "{%s, %s, ..., pA, %s, %s}" % (r1_fit, r1rho_prime, dw, kex),
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
+        "{%s, %s, ..., pA, %s, %s}" % (r1_fit, r1rho_prime, dw, kex),
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
+        "{%s, %s, ..., pA, %s, %s}" % (r1_fit, r1rho_prime, dw, kex),
         "{%s, ..., pA, %s, %s, pB, %s, %s}" % (r1rho_prime, dw_AB, kAB, dw_BC, kBC),
         "{%s, ..., pA, %s, %s, pB, %s, %s, %s}" % (r1rho_prime, dw_AB, kAB, dw_BC, kBC, kAC),
         None,
@@ -783,6 +797,8 @@ class Disp_model_list(Model_list):
         "The base model for determining the %s/%s values and errors for all other models." % (r2eff, r1rho),
         None,
         "The model for no chemical exchange relaxation.",
+        "The model for no chemical exchange being present, for off-resonance R1rho-type experiments.  R1rho = R1 * cos(theta)^2 + r1rho_prime * sin(theta)^2.",
+        "The model for no chemical exchange being present, for off-resonance R1rho-type experiments where R1 is fitted.  R1rho = R1 * cos(theta)^2 + r1rho_prime * sin(theta)^2.",
         None,
         "The original Luz and Meiboom (1963) 2-site fast exchange equation.",
         "The original Luz and Meiboom (1963) 3-site fast exchange equation.",
@@ -801,10 +817,15 @@ class Disp_model_list(Model_list):
         "The Meiboom (1961) 2-site fast exchange equation.",
         "The Meiboom (1961) 2-site equation for all time scales with pA >> pB.",
         "The Davis, Perlman and London (1994) 2-site fast exchange equation.",
+        "The Davis, Perlman and London (1994) 2-site fast exchange equation, where R1 is fitted.",
         "The Trott and Palmer (2002) 2-site equation for all time scales.",
+        "The Trott and Palmer (2002) 2-site equation for all time scales, where R1 is fitted.",
         "The Trott, Abergel and Palmer (2003) off-resonance 2-site equation for all time scales.",
+        "The Trott, Abergel and Palmer (2003) off-resonance 2-site equation for all time scales, where R1 is fitted.",
         "The Miloushev and Palmer (2005) off-resonance 2-site equation for all time scales.",
+        "The Miloushev and Palmer (2005) off-resonance 2-site equation for all time scales, where R1 is fitted.",
         "The 2-site numerical solution using 3D magnetisation vectors.",
+        "The 2-site numerical solution using 3D magnetisation vectors, where R1 is fitted.",
         "The 3-site linearised numerical solution using 3D magnetisation vectors.",
         "The 3-site numerical solution using 3D magnetisation vectors.",
         None,
