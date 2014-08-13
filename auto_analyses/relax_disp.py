@@ -131,7 +131,6 @@ class Relax_disp:
         else:
             self.models = models
 
-
         # No results directory, so default to the current directory.
         if not self.results_dir:
             self.results_dir = getcwd()

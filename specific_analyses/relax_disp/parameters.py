@@ -552,7 +552,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
             j += 1
 
         # The fitted longitudinal relaxation rates (0 <= r1_fit <= 200).
-        elif param_name in ['R1_fit']:
+        elif param_name in ['r1_fit']:
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
