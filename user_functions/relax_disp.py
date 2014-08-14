@@ -33,7 +33,7 @@ else:
     FD_SAVE = -1
 
 # relax module imports.
-from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kBC, kAC, phi_ex, phi_exB, phi_exC, nu_1, nu_cpmg, r1rho, r1rho_prime, r2, r2a, r2b, r2eff, tex, theta, w_eff, w_rf
+from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kBC, kAC, phi_ex, phi_exB, phi_exC, nu_1, nu_cpmg, r1rho, r1rho_prime, r1_fit, r2, r2a, r2b, r2eff, tex, theta, w_eff, w_rf
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
@@ -44,7 +44,7 @@ from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFS
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_MP05_FIT_R1, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_2SITE_FIT_R1, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TAP03_FIT_R1, MODEL_TP02, MODEL_TP02_FIT_R1, MODEL_TSMFK01
 from specific_analyses.relax_disp import uf as relax_disp_uf
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -862,6 +862,8 @@ uf.add_keyarg(
     wiz_combo_choices = [
         "%s: {%s/%s, %s}" % (MODEL_R2EFF, r2eff, r1rho, i0),
         "%s: {%s, ...}" % (MODEL_NOREX, r2),
+        "%s: {%s, ...}" % (MODEL_NOREX_R1RHO, r2),
+        "%s: {%s, %s, ...}" % (MODEL_NOREX_R1RHO_FIT_R1, r1_fit, r2),
         "%s: {%s, ..., %s, %s}" % (MODEL_LM63, r2, phi_ex, kex),
         "%s: {%s, ..., %s, kB, %s, kC}" % (MODEL_LM63_3SITE, r2, phi_exB, phi_exC),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_CR72, r2, dw, kex),
@@ -882,16 +884,23 @@ uf.add_keyarg(
         "%s: {%s, ..., %s, %s}" % (MODEL_M61, r1rho_prime, phi_ex, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_M61B, r1rho_prime, dw, kex),
         "%s: {%s, ..., %s, %s}" % (MODEL_DPL94, r1rho_prime, phi_ex, kex),
+        "%s: {%s, %s, ..., %s, %s}" % (MODEL_DPL94_FIT_R1, r1_fit, r1rho_prime, phi_ex, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_TP02, r1rho_prime, dw, kex),
+        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_TP02_FIT_R1, r1_fit, r1rho_prime, dw, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_TAP03, r1rho_prime, dw, kex),
+        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_TAP03_FIT_R1, r1_fit, r1rho_prime, dw, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_MP05, r1rho_prime, dw, kex),
+        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_MP05_FIT_R1, r1_fit, r1rho_prime, dw, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_NS_R1RHO_2SITE, r1rho_prime, dw, kex),
+        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_NS_R1RHO_2SITE_FIT_R1, r1_fit, r1rho_prime, dw, kex),
         "%s: {%s, ..., pA, %s, %s, pB, %s, %s}" % (MODEL_NS_R1RHO_3SITE_LINEAR, r2, dw_AB, kAB, dw_BC, kBC),
         "%s: {%s, ..., pA, %s, %s, pB, %s, %s, %s}" % (MODEL_NS_R1RHO_3SITE, r2, dw_AB, kAB, dw_BC, kBC, kAC)
     ],
     wiz_combo_data = [
         MODEL_R2EFF,
         MODEL_NOREX,
+        MODEL_NOREX_R1RHO,
+        MODEL_NOREX_R1RHO_FIT_R1,
         MODEL_LM63,
         MODEL_LM63_3SITE,
         MODEL_CR72,
@@ -912,10 +921,15 @@ uf.add_keyarg(
         MODEL_M61,
         MODEL_M61B,
         MODEL_DPL94,
+        MODEL_DPL94_FIT_R1,
         MODEL_TP02,
+        MODEL_TP02_FIT_R1,
         MODEL_TAP03,
+        MODEL_TAP03_FIT_R1,
         MODEL_MP05,
+        MODEL_MP05_FIT_R1,
         MODEL_NS_R1RHO_2SITE,
+        MODEL_NS_R1RHO_2SITE_FIT_R1,
         MODEL_NS_R1RHO_3SITE_LINEAR,
         MODEL_NS_R1RHO_3SITE
     ],
@@ -925,7 +939,10 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("A number of different dispersion models are supported.  This includes both analytic models and numerical models.  Models which are independent of the experimental data type are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the model used to determine the R2eff/R1rho values and errors required as the base data for all other models,")
+uf.desc.append(Desc_container('The no chemical exchange models'))
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX_R1RHO, "This is the model for no chemical exchange being present, for off-resonance R1rho-type experiments.  R1rho = R1 * cos(theta)^2 + r1rho_prime * sin(theta)^2")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX_R1RHO_FIT_R1, "This is the model for no chemical exchange being present, for off-resonance R1rho-type experiments where R1 is fitted.  R1rho = R1 * cos(theta)^2 + r1rho_prime * sin(theta)^2")
 # CPMG-type data.
 uf.desc.append(Desc_container('The SQ CPMG-type experiments'))
 uf.desc[-1].add_paragraph("The currently supported analytic models are:")
@@ -953,15 +970,22 @@ uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_MMQ_3SITE, "The numerical so
 # R1rho-type data.
 uf.desc.append(Desc_container('The R1rho-type experiments'))
 uf.desc[-1].add_paragraph("The currently supported analytic models are:")
+uf.desc[-1].add_paragraph("On-resonance models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61, "The Meiboom (1961) 2-site fast exchange equation with parameters {R1rho', ..., phi_ex, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61B, "The Meiboom (1961) 2-site equation for all time scales with pA >> pB and with parameters {R1rho', ..., pA, dw, kex},")
+uf.desc[-1].add_paragraph("Off-resonance models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_DPL94, "The Davis, Perlman and London (1994) 2-site fast exchange equation with parameters {R1rho', ..., phi_ex, kex},")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_DPL94_FIT_R1, "The Davis, Perlman and London (1994) 2-site fast exchange equation, where R1 is fitted, with parameters {R1rho', r1_fit, ..., phi_ex, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_TP02, "The Trott and Palmer (2002) 2-site equation for all time scales with parameters {R1rho', ..., pA, dw, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_TP02_FIT_R1, "The Trott and Palmer (2002) 2-site equation for all time scales, where R1 is fitted, with parameters {R1rho', r1_fit, ..., pA, dw, kex}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_TAP03, "The Trott, Abergel and Palmer (2003) off-resonance 2-site equation for all time scales with parameters {R1rho', ..., pA, dw, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_TAP03_FIT_R1, "The Trott, Abergel and Palmer (2003) off-resonance 2-site equation for all time scales, where R1 is fitted, with parameters {R1rho', r1_fit, ..., pA, dw, kex}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_MP05, "The Miloushev and Palmer (2005) 2-site off-resonance equation for all time scales with parameters {R1rho', ..., pA, dw, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_MP05_FIT_R1, "The Miloushev and Palmer (2005) 2-site off-resonance equation for all time scales, where R1 is fitted, with parameters {R1rho', r1_fit, ..., pA, dw, kex}.")
 uf.desc[-1].add_paragraph("The currently supported numeric models are:")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_2SITE, "The numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors whereby the simplification R20A = R20B = R20C is assumed and linearised with kAC = kCA = 0.  Its parameters are {R1rho', ..., pA, dw(AB), kex(AB), pB, dw(BC), kex(BC)}.")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_3SITE_LINEAR, "The numerical solution for the 3-site Bloch-McConnell equations using 3D magnetisation vectors whereby the simplification R20A = R20B = R20C is assumed.  Its parameters are {R1rho', ..., pA, dw, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_2SITE, "The numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors whereby the simplification R20A = R20B.  Its parameters are {R1rho', ..., pA, dw, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_2SITE_FIT_R1, "The numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors whereby the simplification R20A = R20B and where R1 is fitted.  Its parameters are {R1rho', r1_fit, ..., pA, dw, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_3SITE_LINEAR, "The numerical solution for the 3-site Bloch-McConnell equations using 3D magnetisation vectors whereby the simplification R20A = R20B = R20C is assumed and linearised with kAC = kCA = 0.  Its parameters are {R1rho', ..., pA, dw(AB), kex(AB), pB, dw(BC), kex(BC)}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_3SITE, "The numerical solution for the 3-site Bloch-McConnell equations using 3D magnetisation vectors.  Its parameters are {R1rho', ..., pA, dw(AB), kex(AB), pB, dw(BC), kex(BC), kex(AC)}.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))

@@ -79,7 +79,7 @@ from pipe_control.spectrometer import check_frequency, get_frequency
 from pipe_control import value
 import specific_analyses
 from specific_analyses.relax_disp.checks import check_exp_type, check_interpolate_offset_cpmg_model, check_mixed_curve_types
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_DPL94, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_PARAMS, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, PARAMS_R20
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_DPL94, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LIST_R1RHO_FIT_R1, MODEL_LIST_R1RHO_W_R1, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_PARAMS, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, PARAMS_R20
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, sep
 
@@ -868,6 +868,7 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend_h
 
     # Interpolate the spin-lock field strengths.
     spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
+
     if spin_lock_nu1 != None and len(spin_lock_nu1[0][0][0]):
         spin_lock_nu1_new = []
         for ei in range(len(spin_lock_nu1)):
@@ -4030,38 +4031,78 @@ def return_r1_data(spins=None, spin_ids=None, field_count=None, sim_index=None):
     # Initialise the data structure.
     r1 = -ones((spin_num, field_count), float64)
 
-    # Check for the presence of data.
-    if not hasattr(cdp, 'ri_ids'):
-        if has_r1rho_exp_type():
-            warn(RelaxWarning("No R1 relaxation data has been loaded.  This is essential for the proper handling of offsets in off-resonance R1rho experiments."))
-        return 0.0 * r1
-
-    # Loop over the Rx IDs.
+    # Set testing flags.
     flags = [False]*field_count
-    for ri_id in cdp.ri_ids:
-        # Only use R1 data.
-        if cdp.ri_type[ri_id] != 'R1':
-            continue
 
-        # The frequency.
-        frq = cdp.spectrometer_frq[ri_id]
-        mi = return_index_from_frq(frq)
+    # Check for the presence of data.
+    if not hasattr(cdp, 'ri_ids') and spins[0].model not in  MODEL_LIST_R1RHO_FIT_R1:
+        warn_text = "No R1 relaxation data has been loaded.  Setting it to 0.0.  This is essential for the proper handling of offsets in off-resonance R1rho experiments."
+        error_text = "No R1 relaxation data has been loaded.  This is essential for the proper handling of offsets in off-resonance R1rho experiments."
+        if has_r1rho_exp_type():
+            # For all R1rho models using R1, raise an error, if R1 has not been loaded.
+            if spins[0].model in MODEL_LIST_R1RHO_W_R1:
+                raise RelaxError(error_text)
 
-        # Flip the flag.
-        flags[mi] = True
+            # For all models not listed in R1rho models, raise a warning, and set 0.0 as value.
+            else:
+                warn(RelaxWarning(warn_text))
+                r1 = 0.0 * r1
 
+        # For all non-R1rho experiments, return 0.0.
+        else:
+            r1 = 0.0 * r1
+
+        # Return the data.
+        return r1
+
+    # For all R1rho models fitting R1.
+    elif spins[0].model in MODEL_LIST_R1RHO_FIT_R1:
         # Spin loop.
         for si in range(spin_num):
-            # FIXME:  This is a kludge - the data randomisation needs to be incorporated into the dispersion base_data_loop() method and the standard Monte Carlo simulation pathway used.
-            # Randomise the R1 data, when required.
-            if sim_index != None and (not hasattr(spins[si], 'ri_data_sim') or ri_id not in spins[si].ri_data_sim):
-                randomise_R1(spin=spins[si], ri_id=ri_id, N=cdp.sim_number)
+            # Assign spin:
+            spin = spins[si]
 
-            # Store the data.
-            if sim_index != None:
-                r1[si, mi] = spins[si].ri_data_sim[ri_id][sim_index]
-            else:
-                r1[si, mi] = spins[si].ri_data[ri_id]
+            # Loop over exp type and frq.
+            for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+                # Assign key
+                r20_key = generate_r20_key(exp_type=exp_type, frq=frq)
+
+                # If no data is available.
+                if len(spin.r1_fit) == 0:
+                    r1[si, mi] = None
+
+                else:
+                    r1[si, mi] = spin.r1_fit[r20_key]
+
+                # Flip the flag.
+                flags[mi] = True
+
+    else:
+        # Loop over the Rx IDs.
+        for ri_id in cdp.ri_ids:
+            # Only use R1 data.
+            if cdp.ri_type[ri_id] != 'R1':
+                continue
+
+            # The frequency.
+            frq = cdp.spectrometer_frq[ri_id]
+            mi = return_index_from_frq(frq)
+
+            # Flip the flag.
+            flags[mi] = True
+
+            # Spin loop.
+            for si in range(spin_num):
+                # FIXME:  This is a kludge - the data randomisation needs to be incorporated into the dispersion base_data_loop() method and the standard Monte Carlo simulation pathway used.
+                # Randomise the R1 data, when required.
+                if sim_index != None and (not hasattr(spins[si], 'ri_data_sim') or ri_id not in spins[si].ri_data_sim):
+                    randomise_R1(spin=spins[si], ri_id=ri_id, N=cdp.sim_number)
+
+                # Store the data.
+                if sim_index != None:
+                    r1[si, mi] = spins[si].ri_data_sim[ri_id][sim_index]
+                else:
+                    r1[si, mi] = spins[si].ri_data[ri_id]
 
     # Check the data to prevent user mistakes.
     for mi in range(field_count):
@@ -4102,38 +4143,78 @@ def return_r1_err_data(spins=None, spin_ids=None, field_count=None, sim_index=No
     # Initialise the data structure.
     r1_err = -ones((spin_num, field_count), float64)
 
-    # Check for the presence of data.
-    if not hasattr(cdp, 'ri_ids'):
-        if has_r1rho_exp_type():
-            warn(RelaxWarning("No R1 relaxation data has been loaded.  This is essential for the proper handling of offsets in off-resonance R1rho experiments."))
-        return 0.0 * r1_err
-
-    # Loop over the Rx IDs.
+    # Set testing flags.
     flags = [False]*field_count
-    for ri_id in cdp.ri_ids:
-        # Only use R1 data.
-        if cdp.ri_type[ri_id] != 'R1':
-            continue
 
-        # The frequency.
-        frq = cdp.spectrometer_frq[ri_id]
-        mi = return_index_from_frq(frq)
+    # Check for the presence of data.
+    if not hasattr(cdp, 'ri_ids') and spins[0].model not in  MODEL_LIST_R1RHO_FIT_R1:
+        warn_text = "No R1 relaxation data has been loaded.  Setting it to 0.0.  This is essential for the proper handling of offsets in off-resonance R1rho experiments."
+        error_text = "No R1 relaxation data has been loaded.  This is essential for the proper handling of offsets in off-resonance R1rho experiments."
+        if has_r1rho_exp_type():
+            # For all R1rho models using R1, raise an error, if R1 has not been loaded.
+            if spins[0].model in MODEL_LIST_R1RHO_W_R1:
+                raise RelaxError(error_text)
 
-        # Flip the flag.
-        flags[mi] = True
+            # For all models not listed in R1rho models, raise a warning, and set 0.0 as value.
+            else:
+                warn(RelaxWarning(warn_text))
+                r1_err = 0.0 * r1_err
 
+        # For all non-R1rho experiments, return 0.0.
+        else:
+            r1_err = 0.0 * r1_err
+
+        # Return the data.
+        return r1_err
+
+    # For all R1rho models fitting R1.
+    elif spins[0].model in MODEL_LIST_R1RHO_FIT_R1:
         # Spin loop.
         for si in range(spin_num):
-            # FIXME:  This is a kludge - the data randomisation needs to be incorporated into the dispersion base_data_loop() method and the standard Monte Carlo simulation pathway used.
-            # Randomise the R1 data, when required.
-            if sim_index != None and (not hasattr(spins[si], 'ri_data_sim') or ri_id not in spins[si].ri_data_sim):
-                randomise_R1(spin=spins[si], ri_id=ri_id, N=cdp.sim_number)
+            # Assign spin:
+            spin = spins[si]
 
-            # Store the data.
-            if sim_index != None:
-                r1_err[si, mi] = spins[si].ri_data_err_sim[ri_id][sim_index]
-            else:
-                r1_err[si, mi] = spins[si].ri_data_err[ri_id]
+            # Loop over exp type and frq.
+            for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+                # Assign key
+                r20_key = generate_r20_key(exp_type=exp_type, frq=frq)
+
+                # If no Monte-Carlo simulations has been performed, there will be no error.
+                if not hasattr(spin, 'r1_fit_err'):
+                    r1_err[si, mi] = None
+
+                else:
+                    r1_err[si, mi] = spin.r1_fit_err[r20_key]
+
+                # Flip the flag.
+                flags[mi] = True
+
+    else:
+        # Loop over the Rx IDs.
+        for ri_id in cdp.ri_ids:
+            # Only use R1 data.
+            if cdp.ri_type[ri_id] != 'R1':
+                continue
+
+            # The frequency.
+            frq = cdp.spectrometer_frq[ri_id]
+            mi = return_index_from_frq(frq)
+
+            # Flip the flag.
+            flags[mi] = True
+
+            # Spin loop.
+            for si in range(spin_num):
+                # FIXME:  This is a kludge - the data randomisation needs to be incorporated into the dispersion base_data_loop() method and the standard Monte Carlo simulation pathway used.
+                # Randomise the R1 data, when required.
+                if sim_index != None and (not hasattr(spins[si], 'ri_data_sim') or ri_id not in spins[si].ri_data_sim):
+                    randomise_R1(spin=spins[si], ri_id=ri_id, N=cdp.sim_number)
+
+                # Store the data.
+                if sim_index != None:
+                    r1_err[si, mi] = spins[si].ri_data_err_sim[ri_id][sim_index]
+                else:
+                    r1_err[si, mi] = spins[si].ri_data_err[ri_id]
 
     # Check the data to prevent user mistakes.
     for mi in range(field_count):

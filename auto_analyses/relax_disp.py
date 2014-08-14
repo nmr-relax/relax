@@ -30,7 +30,8 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from lib.errors import RelaxError, RelaxNoPipeError
+from lib.errors import RelaxError, RelaxFileError, RelaxNoPipeError
+from lib.io import determine_compression, get_file_path
 from lib.text.sectioning import section, subsection, subtitle, title
 from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import return_spin, spin_loop
@@ -38,7 +39,8 @@ from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, loop_frq
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
-from specific_analyses.relax_disp.variables import MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import nesting_model, sort_models
+from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, MODEL_LIST_ANALYTIC, MODEL_LIST_NEST, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO_FIT_R1, MODEL_LIST_R1RHO_W_R1, MODEL_LIST_R1RHO_FULL, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_PARAMS, MODEL_R2EFF, PARAMS_R20
 from status import Status; status = Status()
 
 
@@ -49,38 +51,39 @@ class Relax_disp:
     opt_func_tol = 1e-25
     opt_max_iterations = int(1e7)
 
-    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, exp_mc_sim_num=None, modsel='AIC', pre_run_dir=None, insignificance=0.0, numeric_only=False, mc_sim_all_models=False, eliminate=True, set_grid_r20=False):
+    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, exp_mc_sim_num=None, modsel='AIC', pre_run_dir=None, optimise_pre_run_r2eff=True, insignificance=0.0, numeric_only=False, mc_sim_all_models=False, eliminate=True, set_grid_r20=False):
         """Perform a full relaxation dispersion analysis for the given list of models.
 
-        @keyword pipe_name:         The name of the data pipe containing all of the data for the analysis.
-        @type pipe_name:            str
-        @keyword pipe_bundle:       The data pipe bundle to associate all spawned data pipes with.
-        @type pipe_bundle:          str
-        @keyword results_dir:       The directory where results files are saved.
-        @type results_dir:          str
-        @keyword models:            The list of relaxation dispersion models to optimise.
-        @type models:               list of str
-        @keyword grid_inc:          Number of grid search increments.  If set to None, then the grid search will be turned off and the default parameter values will be used instead.
-        @type grid_inc:             int or None
-        @keyword mc_sim_num:        The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        @type mc_sim_num:           int
-        @keyword exp_mc_sim_num:    The number of Monte Carlo simulations for the error analysis in the 'R2eff' model when exponential curves are fitted.  This defaults to the value of the mc_sim_num argument when not given.  For the 2-point fixed-time calculation for the 'R2eff' model, this argument is ignored.
-        @type exp_mc_sim_num:       int or None
-        @type
-        @keyword modsel:            The model selection technique to use in the analysis to determine which model is the best for each spin cluster.  This can currently be one of 'AIC', 'AICc', and 'BIC'.
-        @type modsel:               str
-        @keyword pre_run_dir:       The optional directory containing the dispersion auto-analysis results from a previous run.  The optimised parameters from these previous results will be used as the starting point for optimisation rather than performing a grid search.  This is essential for when large spin clusters are specified, as a grid search becomes prohibitively expensive with clusters of three or more spins.  At some point a RelaxError will occur because the grid search is impossibly large.  For the cluster specific parameters, i.e. the populations of the states and the exchange parameters, an average value will be used as the starting point.  For all other parameters, the R20 values for each spin and magnetic field, as well as the parameters related to the chemical shift difference dw, the optimised values of the previous run will be directly copied.
-        @type pre_run_dir:          None or str
-        @keyword insignificance:    The R2eff/R1rho value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.  This does not affect the 'No Rex' model.  Set this value to 0.0 to use all data.  The value will be passed on to the relax_disp.insignificance user function.
-        @type insignificance:       float
-        @keyword numeric_only:      The class of models to use in the model selection.  The default of False allows all dispersion models to be used in the analysis (no exchange, the analytic models and the numeric models).  The value of True will activate a pure numeric solution - the analytic models will be optimised, as they are very useful for replacing the grid search for the numeric models, but the final model selection will not include them.
-        @type numeric_only:         bool
-        @keyword mc_sim_all_models: A flag which if True will cause Monte Carlo simulations to be performed for each individual model.  Otherwise Monte Carlo simulations will be reserved for the final model.
-        @type mc_sim_all_models:    bool
-        @keyword eliminate:         A flag which if True will enable the elimination of failed models and failed Monte Carlo simulations through the eliminate user function.
-        @type eliminate:            bool
-        @keyword set_grid_r20:      A flag which if True will set the grid R20 values from the minimum R2eff values through the r20_from_min_r2eff user function. This will speed up the grid search with a factor GRID_INC^(Nr_spec_freq). For a CPMG experiment with two fields and standard GRID_INC=21, the speed-up is a factor 441.
-        @type set_grid_r20:         bool
+        @keyword pipe_name:                 The name of the data pipe containing all of the data for the analysis.
+        @type pipe_name:                    str
+        @keyword pipe_bundle:               The data pipe bundle to associate all spawned data pipes with.
+        @type pipe_bundle:                  str
+        @keyword results_dir:               The directory where results files are saved.
+        @type results_dir:                  str
+        @keyword models:                    The list of relaxation dispersion models to optimise.
+        @type models:                       list of str
+        @keyword grid_inc:                  Number of grid search increments.  If set to None, then the grid search will be turned off and the default parameter values will be used instead.
+        @type grid_inc:                     int or None
+        @keyword mc_sim_num:                The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        @type mc_sim_num:                   int
+        @keyword exp_mc_sim_num:            The number of Monte Carlo simulations for the error analysis in the 'R2eff' model when exponential curves are fitted.  This defaults to the value of the mc_sim_num argument when not given.  For the 2-point fixed-time calculation for the 'R2eff' model, this argument is ignored.
+        @type exp_mc_sim_num:               int or None
+        @keyword modsel:                    The model selection technique to use in the analysis to determine which model is the best for each spin cluster.  This can currently be one of 'AIC', 'AICc', and 'BIC'.
+        @type modsel:                       str
+        @keyword pre_run_dir:               The optional directory containing the dispersion auto-analysis results from a previous run.  The optimised parameters from these previous results will be used as the starting point for optimisation rather than performing a grid search.  This is essential for when large spin clusters are specified, as a grid search becomes prohibitively expensive with clusters of three or more spins.  At some point a RelaxError will occur because the grid search is impossibly large.  For the cluster specific parameters, i.e. the populations of the states and the exchange parameters, an average value will be used as the starting point.  For all other parameters, the R20 values for each spin and magnetic field, as well as the parameters related to the chemical shift difference dw, the optimised values of the previous run will be directly copied.
+        @type pre_run_dir:                  None or str
+        @keyword optimise_pre_run_r2eff:    Flag to specify if the read previous R2eff results should be optimised.  For R1rho models where the error of R2eff values are determined by Monte-Carlo simulations, it can be valuable to make an initial R2eff run with a high number of Monte-Carlo simulations.  Any subsequent model analysis can then be based on these R2eff values, without optimising the R2eff values. 
+        @type optimise_pre_run_r2eff:       bool
+        @keyword insignificance:            The R2eff/R1rho value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.  This does not affect the 'No Rex' model.  Set this value to 0.0 to use all data.  The value will be passed on to the relax_disp.insignificance user function.
+        @type insignificance:               float
+        @keyword numeric_only:              The class of models to use in the model selection.  The default of False allows all dispersion models to be used in the analysis (no exchange, the analytic models and the numeric models).  The value of True will activate a pure numeric solution - the analytic models will be optimised, as they are very useful for replacing the grid search for the numeric models, but the final model selection will not include them.
+        @type numeric_only:                 bool
+        @keyword mc_sim_all_models:         A flag which if True will cause Monte Carlo simulations to be performed for each individual model.  Otherwise Monte Carlo simulations will be reserved for the final model.
+        @type mc_sim_all_models:            bool
+        @keyword eliminate:                 A flag which if True will enable the elimination of failed models and failed Monte Carlo simulations through the eliminate user function.
+        @type eliminate:                    bool
+        @keyword set_grid_r20:              A flag which if True will set the grid R20 values from the minimum R2eff values through the r20_from_min_r2eff user function. This will speed up the grid search with a factor GRID_INC^(Nr_spec_freq). For a CPMG experiment with two fields and standard GRID_INC=21, the speed-up is a factor 441.
+        @type set_grid_r20:                 bool
         """
 
         # Printout.
@@ -97,17 +100,36 @@ class Relax_disp:
         self.pipe_name = pipe_name
         self.pipe_bundle = pipe_bundle
         self.results_dir = results_dir
-        self.models = models
         self.grid_inc = grid_inc
         self.mc_sim_num = mc_sim_num
         self.exp_mc_sim_num = exp_mc_sim_num
         self.modsel = modsel
         self.pre_run_dir = pre_run_dir
+        self.optimise_pre_run_r2eff = optimise_pre_run_r2eff
         self.insignificance = insignificance
         self.set_grid_r20 = set_grid_r20
         self.numeric_only = numeric_only
         self.mc_sim_all_models = mc_sim_all_models
         self.eliminate = eliminate
+
+        # Sort the models for analyses.
+        sorted_models = sort_models(models=models)
+        if sorted_models != models:
+            # Printout.
+            subsection(file=sys.stdout, text="Sorting models for optimal nesting of models.", prespace=1)
+            print("Models are are sorted in order:")
+            print(" - exp_type: EXP_TYPE_R2EFF, EXP_TYPE_NOREX, EXP_TYPE_NOREX_R1RHO, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_MMQ, EXP_TYPE_R1RHO")
+            print(" - equation: %s, %s, %s" % (EQ_SILICO, EQ_ANALYTIC, EQ_NUMERIC))
+            print(" - Nr of chemical sites: 2 or 3")
+            print(" - Year: Newest models first.")
+            print("-  Nr of params:")
+            print("\nPrevious model order: %s" % (models))
+            print("\nNew model order: %s" % (sorted_models))
+
+            # Store the new order of models.
+            self.models = sorted_models
+        else:
+            self.models = models
 
         # No results directory, so default to the current directory.
         if not self.results_dir:
@@ -146,7 +168,7 @@ class Relax_disp:
         """
 
         # Skip the 'R2eff' base model.
-        if model == 'R2eff':
+        if model == MODEL_R2EFF:
             return False
 
         # Do not use the analytic models.
@@ -177,7 +199,7 @@ class Relax_disp:
             # Loop over all models.
             for model in self.models:
                 # Skip the models used for nesting.
-                if model in [MODEL_CR72, MODEL_MMQ_CR72, MODEL_MP05]:
+                if model in MODEL_LIST_NEST:
                     continue
 
                 # Warnings for all other analytic models.
@@ -279,6 +301,7 @@ class Relax_disp:
         @keyword model: The model to be optimised.
         @type model:    str
         @return:        True if the model is the more complex model in a nested pair and the parameters of the simpler model have been copied.  False otherwise.
+        @return:        True if the model parameters is equivalent to the nested model, and all parameters are copied.  False if none or some of the parameters have been translated from the nested model.  Here the Grid search should still be performed.
         @rtype:         bool
         """
 
@@ -286,94 +309,124 @@ class Relax_disp:
         subsection(file=sys.stdout, text="Nesting and model equivalence checks", prespace=1)
 
         # The simpler model.
-        nested_pipe = None
-        if model == MODEL_LM63_3SITE and MODEL_LM63 in self.models:
-            nested_pipe = self.name_pipe(MODEL_LM63)
-        if model == MODEL_CR72_FULL and MODEL_CR72 in self.models:
-            nested_pipe = self.name_pipe(MODEL_CR72)
-        if model == MODEL_MMQ_CR72 and MODEL_CR72 in self.models:
-            nested_pipe = self.name_pipe(MODEL_CR72)
-        if model == MODEL_NS_CPMG_2SITE_3D_FULL and MODEL_NS_CPMG_2SITE_3D in self.models:
-            nested_pipe = self.name_pipe(MODEL_NS_CPMG_2SITE_3D)
-        if model == MODEL_NS_CPMG_2SITE_STAR_FULL and MODEL_NS_CPMG_2SITE_STAR in self.models:
-            nested_pipe = self.name_pipe(MODEL_NS_CPMG_2SITE_STAR)
-        if model == MODEL_NS_MMQ_3SITE_LINEAR and MODEL_NS_MMQ_2SITE in self.models:
-            nested_pipe = self.name_pipe(MODEL_NS_MMQ_2SITE)
-        if model == MODEL_NS_MMQ_3SITE:
-            if MODEL_NS_MMQ_3SITE_LINEAR in self.models:
-                nested_pipe = self.name_pipe(MODEL_NS_MMQ_3SITE_LINEAR)
-            elif MODEL_NS_MMQ_2SITE in self.models:
-                nested_pipe = self.name_pipe(MODEL_NS_MMQ_2SITE)
-        if model == MODEL_NS_R1RHO_3SITE_LINEAR and MODEL_NS_R1RHO_2SITE in self.models:
-            nested_pipe = self.name_pipe(MODEL_NS_R1RHO_2SITE)
-        if model == MODEL_NS_R1RHO_3SITE:
-            if MODEL_NS_R1RHO_3SITE_LINEAR in self.models:
-                nested_pipe = self.name_pipe(MODEL_NS_R1RHO_3SITE_LINEAR)
-            elif MODEL_NS_R1RHO_2SITE in self.models:
-                nested_pipe = self.name_pipe(MODEL_NS_R1RHO_2SITE)
-
-
-        # Using the analytic solution.
-        analytic = False
-        if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR] and MODEL_CR72 in self.models:
-            nested_pipe = self.name_pipe(MODEL_CR72)
-            analytic = True
-        elif model == MODEL_NS_MMQ_2SITE and MODEL_MMQ_CR72 in self.models:
-            nested_pipe = self.name_pipe(MODEL_MMQ_CR72)
-            analytic = True
-        if model == MODEL_NS_R1RHO_2SITE and MODEL_MP05 in self.models:
-            nested_pipe = self.name_pipe(MODEL_MP05)
-            analytic = True
+        model_info, comparable_model_info = nesting_model(self_models=self.models, model=model)
+        if comparable_model_info != None:
+            nested_pipe = self.name_pipe(comparable_model_info.model)
+        else:
+            nested_pipe = None
 
         # No nesting.
         if not nested_pipe:
             print("No model nesting or model equivalence detected.")
             return False
 
-        # Printout.
-        if analytic:
-            print("Model equivalence detected, copying the optimised parameters from the analytic '%s' model rather than performing a grid search." % nested_pipe)
+        # Copying the parameters to a numerical model from an analytic solution.
+        if model_info.eq in [EQ_NUMERIC, EQ_SILICO] and comparable_model_info.eq == EQ_ANALYTIC:
+            analytic = True
         else:
-            print("Model nesting detected, copying the optimised parameters from the '%s' model rather than performing a grid search." % nested_pipe)
+            analytic = False
 
-        # Loop over the spins to copy the parameters.
-        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-            # Get the nested spin.
-            nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+        # Determine if model is equivalent or nested.
+        if model_info.params == comparable_model_info.params:
+            equivalent = True
+        else:
+            equivalent = False
 
+        # Printout.
+        if equivalent:
+            print("Model equivalence detected, copying the optimised parameters from the '%s' model rather than performing a grid search." % comparable_model_info.model)
+        else:
+            print("Model nesting detected, translating the optimised parameters %s from the '%s' model to the parameters %s of model '%s'.  A grid search is issued for the remaining parameters." % (comparable_model_info.params, comparable_model_info.model, model_info.params, model))
+        if analytic:
+            print("The parameters are copied from a %s model to a %s model." % (comparable_model_info.eq, model_info.eq))
+
+        # Loop over the parameters in comparable model.
+        for param in comparable_model_info.params:
             # The R20 parameters.
-            if hasattr(nested_spin, 'r2'):
-                if model in [MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
-                    setattr(spin, 'r2a', deepcopy(nested_spin.r2))
-                    setattr(spin, 'r2b', deepcopy(nested_spin.r2))
-                else:
-                    setattr(spin, 'r2', deepcopy(nested_spin.r2))
+            if param in PARAMS_R20:
+                # If both models have same parameter.
+                if param in model_info.params:
+                    print("Copying %s." % param)
+                    # Loop over the spins to copy the parameters.
+                    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                        # Get the nested spin.
+                        nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+                        setattr(spin, param, deepcopy(getattr(nested_spin, param)))
 
-            # The LM63 3-site model parameters.
-            if model == MODEL_LM63_3SITE:
+                # If copying from a simple model to a complex model
+                elif param == 'r2' and 'r2a' in model_info.params and 'r2b' in model_info.params:
+                    print("Copying %s, to r2a and r2b." % param)
+                    # Loop over the spins to copy the parameters.
+                    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                        # Get the nested spin.
+                        nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+                        setattr(spin, 'r2a', deepcopy(getattr(nested_spin, 'r2')))
+                        setattr(spin, 'r2b', deepcopy(getattr(nested_spin, 'r2')))
+
+                # If copying from a complex model to a lower complex model
+                elif param == 'r2a' and 'r2' in model_info.params:
+                    print("Copying %s, to r2." % param)
+                    # Loop over the spins to copy the parameters.
+                    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                        # Get the nested spin.
+                        nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+                        setattr(spin, 'r2', deepcopy(getattr(nested_spin, 'r2a')))
+
+            # Special case for tex/kex.
+            elif param == 'tex' and 'kex' in model_info.params:
+                print("Translating kex from 1/%s." % param)
+                # Loop over the spins to copy the parameters.
+                for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                    # Get the nested spin.
+                    nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+                    kex = 1.0 / getattr(nested_spin, 'tex')
+                    setattr(spin, 'kex', kex)
+
+            elif param == 'kex' and 'tex' in model_info.params:
+                print("Translating tex from 1/%s." % param)
+                # Loop over the spins to copy the parameters.
+                for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                    # Get the nested spin.
+                    nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+                    tex = 1.0 / getattr(nested_spin, 'kex')
+                    setattr(spin, 'tex', tex)
+
+            # All other parameters.
+            elif param in model_info.params:
+                print("Copying %s." % param)
+                # Loop over the spins to copy the parameters.
+                for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                    # Get the nested spin.
+                    nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+                    setattr(spin, param, deepcopy(getattr(nested_spin, param)))
+
+        ## Special case for phi_ex.
+        if 'dw' in comparable_model_info.params and 'pA' in comparable_model_info.params and 'phi_ex' in model_info.params:
+            print("Translating 'phi_ex' from 'pA * pB * dw**2'.")
+            # Loop over the spins to copy the parameters.
+            for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                # Get the nested spin.
+                nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+                dw = getattr(nested_spin, 'dw')
+                pA = getattr(nested_spin, 'pA')
+                pB = 1.0 - pA
+                phi_ex = pA * pB * dw * dw
+                setattr(spin, 'phi_ex', phi_ex)
+
+        ## The LM63 3-site model parameters.
+        if 'phi_ex' in comparable_model_info.params and 'kex' in comparable_model_info.params and 'phi_ex_B' in model_info.params and 'phi_ex_C' in model_info.params and 'kB' in model_info.params and 'kC' in model_info.params:
+            print("Translating phi_ex_B=phi_ex, phi_ex_C=phi_ex, kB=kex and kC=kex.")
+            # Loop over the spins to copy the parameters.
+            for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                # Get the nested spin.
+                nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
                 setattr(spin, 'phi_ex_B', deepcopy(nested_spin.phi_ex))
                 setattr(spin, 'phi_ex_C', deepcopy(nested_spin.phi_ex))
                 setattr(spin, 'kB', deepcopy(nested_spin.kex))
                 setattr(spin, 'kC', deepcopy(nested_spin.kex))
 
-            # All other spin parameters.
-            for param in spin.params:
-                if param in ['r2', 'r2a', 'r2b']:
-                    continue
-
-                # The parameter does not exist.
-                if not hasattr(nested_spin, param):
-                    continue
-
-                # Skip the LM63 3-site model parameters
-                if model == MODEL_LM63_3SITE and param in ['phi_ex', 'kex']:
-                    continue
-
-                # Copy the parameter.
-                setattr(spin, param, deepcopy(getattr(nested_spin, param)))
-
-        # Nesting.
-        return True
+        # Determine if model is equivalent, and should not be Grid searched, or if nested, and some parameters are pre-set. Here Grid search should still be issued.
+        return equivalent
 
 
     def optimise(self, model=None):
@@ -387,7 +440,7 @@ class Relax_disp:
         section(file=sys.stdout, text="Optimisation", prespace=2)
 
         # Deselect insignificant spins.
-        if model not in ['R2eff', 'No Rex']:
+        if model not in [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1]:
             self.interpreter.relax_disp.insignificance(level=self.insignificance)
 
         # Speed-up grid-search by using minium R2eff value.
@@ -395,7 +448,21 @@ class Relax_disp:
             self.interpreter.relax_disp.r20_from_min_r2eff(force=True)
 
         # Use pre-run results as the optimisation starting point.
+        # Test if file exists.
         if self.pre_run_dir:
+            path = self.pre_run_dir + sep + model
+            # File path.
+            file_path = get_file_path('results', path)
+
+            # Test if the file exists and determine the compression type.
+            try:
+                compress_type, file_path = determine_compression(file_path)
+                res_file_exists = True
+
+            except RelaxFileError:
+                res_file_exists = False
+
+        if self.pre_run_dir and res_file_exists:
             self.pre_run_parameters(model=model)
 
         # Otherwise use the normal nesting check and grid search if not nested.
@@ -415,15 +482,22 @@ class Relax_disp:
                         self.interpreter.value.set(param=param, index=None)
 
         # Minimise.
-        self.interpreter.minimise.execute('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
+        if model == MODEL_R2EFF:
+            if self.optimise_pre_run_r2eff:
+                self.interpreter.minimise.execute('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
+            else:
+                pass
+        else:
+            self.interpreter.minimise.execute('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
+
 
         # Model elimination.
         if self.eliminate:
             self.interpreter.eliminate()
 
         # Monte Carlo simulations.
-        if self.mc_sim_all_models or len(self.models) < 2 or model == 'R2eff':
-            if model == 'R2eff' and self.exp_mc_sim_num != None:
+        if self.mc_sim_all_models or len(self.models) < 2 or (model == MODEL_R2EFF and self.optimise_pre_run_r2eff):
+            if model == MODEL_R2EFF and self.exp_mc_sim_num != None:
                 self.interpreter.monte_carlo.setup(number=self.exp_mc_sim_num)
             else:
                 self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
@@ -563,136 +637,162 @@ class Relax_disp:
         # Printout.
         section(file=sys.stdout, text="Results writing", prespace=2)
 
-        # Exponential curves.
-        if model == 'R2eff' and has_exponential_exp_type():
-            self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=path, force=True)    # Average peak intensities.
-            self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=path, force=True, norm=True)    # Average peak intensities (normalised).
+        # If this is the final model selection round, check which models have been tested.
+        if model == None:
+            models_tested = []
+            for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                spin_model = spin.model
+
+                # Add to list, if not in already.
+                if spin_model not in models_tested:
+                    models_tested.append(spin_model)
+        else:
+            models_tested = None
+
+        # Special for R2eff model.
+        if model == MODEL_R2EFF:
+            # The R2eff parameter.
+            self.interpreter.value.write(param='r2eff', file='r2eff.out', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', file='r2eff.agr', dir=path, force=True)
+
+            # Exponential curves.
+            if has_exponential_exp_type():
+                self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=path, force=True)    # Average peak intensities.
+                self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=path, force=True, norm=True)    # Average peak intensities (normalised).
+
+                # The I0 parameter.
+                self.interpreter.value.write(param='i0', file='i0.out', dir=path, force=True)
+                self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', file='i0.agr', dir=path, force=True)
 
         # Dispersion curves.
         self.interpreter.relax_disp.plot_disp_curves(dir=path, force=True)
         self.interpreter.relax_disp.write_disp_curves(dir=path, force=True)
 
-        # Plot specific R1rho graphs.
-        if has_r1rho_exp_type() and model in [None] + MODEL_LIST_R1RHO_FULL:
-            self.interpreter.relax_disp.plot_disp_curves(dir=path, x_axis=X_AXIS_THETA, force=True)
-            self.interpreter.relax_disp.plot_disp_curves(dir=path, y_axis=Y_AXIS_R2_R1RHO, x_axis=X_AXIS_W_EFF, force=True)
-            self.interpreter.relax_disp.plot_disp_curves(dir=path, y_axis=Y_AXIS_R2_EFF, x_axis=X_AXIS_THETA, interpolate=INTERPOLATE_OFFSET, force=True)
-
         # The selected models for the final run.
         if model == None:
             self.interpreter.value.write(param='model', file='model.out', dir=path, force=True)
 
-        # The R2eff parameter.
-        if model == 'R2eff':
-            self.interpreter.value.write(param='r2eff', file='r2eff.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', file='r2eff.agr', dir=path, force=True)
+        # For CPMG models.
+        if has_cpmg_exp_type():
+            # The R20 parameter.
+            self.write_results_test(path=path, model=model, models_tested=models_tested, param='r2', file_name_ini='r20')
 
-        # The I0 parameter.
-        if model == 'R2eff' and has_exponential_exp_type():
-            self.interpreter.value.write(param='i0', file='i0.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', file='i0.agr', dir=path, force=True)
+            # The R20A and R20B parameters.
+            self.write_results_test(path=path, model=model, models_tested=models_tested, param='r2a', file_name_ini='r20a')
+            self.write_results_test(path=path, model=model, models_tested=models_tested, param='r2b', file_name_ini='r20b')
 
-        # The calculation of theta and w_eff parameter in R1rho experiments.
-        if model in MODEL_LIST_R1RHO_FULL and has_r1rho_exp_type():
-            self.interpreter.value.write(param='theta', file='theta.out', dir=path, force=True)
-            self.interpreter.value.write(param='w_eff', file='w_eff.out', dir=path, force=True)
+        # For R1ho models.
+        if has_r1rho_exp_type():
+            # The R1_fit parameter.
+            self.write_results_test(path=path, model=model, models_tested=models_tested, param='r1_fit')
 
-        # The R20 parameter.
-        if has_cpmg_exp_type() and model in [None, MODEL_LM63, MODEL_B14, MODEL_CR72, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
-            self.interpreter.value.write(param='r2', file='r20.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r20.agr', dir=path, force=True)
+            # The R1rho prime parameter.
+            self.write_results_test(path=path, model=model, models_tested=models_tested, param='r2', file_name_ini='r1rho_prime')
 
-        # The R20A and R20B parameters.
-        if has_cpmg_exp_type() and model in [None, MODEL_B14_FULL, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
-            self.interpreter.value.write(param='r2a', file='r20a.out', dir=path, force=True)
-            self.interpreter.value.write(param='r2b', file='r20b.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2a', file='r20a.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2b', file='r20b.agr', dir=path, force=True)
+            # Plot specific R1rho graphs.
+            if model in [None] + MODEL_LIST_R1RHO_W_R1 + MODEL_LIST_R1RHO_FIT_R1:
+                self.interpreter.relax_disp.plot_disp_curves(dir=path, x_axis=X_AXIS_THETA, force=True)
+                self.interpreter.relax_disp.plot_disp_curves(dir=path, y_axis=Y_AXIS_R2_R1RHO, x_axis=X_AXIS_W_EFF, force=True)
+                self.interpreter.relax_disp.plot_disp_curves(dir=path, y_axis=Y_AXIS_R2_EFF, x_axis=X_AXIS_THETA, interpolate=INTERPOLATE_OFFSET, force=True)
 
-        # The R1rho0 parameter.
-        if has_r1rho_exp_type() and model in [None] + MODEL_LIST_R1RHO:
-            self.interpreter.value.write(param='r2', file='r1rho0.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r1rho0.agr', dir=path, force=True)
+            # The calculation of theta and w_eff parameter in R1rho experiments.
+            if model in MODEL_LIST_R1RHO_FULL:
+                self.interpreter.value.write(param='theta', file='theta.out', dir=path, force=True)
+                self.interpreter.value.write(param='w_eff', file='w_eff.out', dir=path, force=True)
 
-        # The pA, pB, and pC parameters.
-        if model in [None, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61B, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_MMQ_2SITE, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
-            self.interpreter.value.write(param='pA', file='pA.out', dir=path, force=True)
-            self.interpreter.value.write(param='pB', file='pB.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='pA', file='pA.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='pB', file='pB.agr', dir=path, force=True)
-        if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
-            self.interpreter.value.write(param='pC', file='pC.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='pC', file='pC.agr', dir=path, force=True)
+        # The pA and pB parameters.
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='pA')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='pB')
 
-        # The Phi_ex parameter.
-        if model in [None, MODEL_LM63, MODEL_M61, MODEL_DPL94]:
-            self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', file='phi_ex.agr', dir=path, force=True)
+        # The pC parameter.
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='pC')
 
-        # The Phi_ex_B nd Phi_ex_C parameters.
-        if model in [None, MODEL_LM63_3SITE]:
-            self.interpreter.value.write(param='phi_ex_B', file='phi_ex_B.out', dir=path, force=True)
-            self.interpreter.value.write(param='phi_ex_C', file='phi_ex_C.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_B', file='phi_ex_B.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_C', file='phi_ex_C.agr', dir=path, force=True)
+        # The phi_ex parameter.
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='phi_ex')
+
+        # The phi_ex_B nd phi_ex_C parameters.
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='phi_ex_B')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='phi_ex_C')
 
         # The dw parameter.
-        if model in [None, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61B, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_MMQ_2SITE, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_TSMFK01]:
-            self.interpreter.value.write(param='dw', file='dw.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw', file='dw.agr', dir=path, force=True)
-        if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
-            self.interpreter.value.write(param='dw_AB', file='dw_AB.out', dir=path, force=True)
-            self.interpreter.value.write(param='dw_BC', file='dw_BC.out', dir=path, force=True)
-            self.interpreter.value.write(param='dw_AC', file='dw_AC.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw_AB', file='dw_AB.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw_BC', file='dw_BC.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw_AC', file='dw_AC.agr', dir=path, force=True)
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='dw')
+
+        # The dw_AB, dw_BC and dw_AC parameter.
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='dw_AB')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='dw_BC')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='dw_AC')
 
         # The dwH parameter.
-        if model in [None, MODEL_MMQ_CR72, MODEL_NS_MMQ_2SITE]:
-            self.interpreter.value.write(param='dwH', file='dwH.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dwH', file='dwH.agr', dir=path, force=True)
-        if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
-            self.interpreter.value.write(param='dwH_AB', file='dwH_AB.out', dir=path, force=True)
-            self.interpreter.value.write(param='dwH_BC', file='dwH_BC.out', dir=path, force=True)
-            self.interpreter.value.write(param='dwH_AC', file='dwH_AC.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dwH_AB', file='dwH_AB.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dwH_BC', file='dwH_BC.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dwH_AC', file='dwH_AC.agr', dir=path, force=True)
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='dwH')
+
+        # The dwH_AB, dwH_BC and dwH_AC parameter.
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='dwH_AB')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='dwH_BC')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='dwH_AC')
 
         # The k_AB, kex and tex parameters.
-        if model in [None, MODEL_LM63, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_MMQ_2SITE, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TAP03, MODEL_MP05]:
-            self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=path, force=True)
-            self.interpreter.value.write(param='kex', file='kex.out', dir=path, force=True)
-            self.interpreter.value.write(param='tex', file='tex.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', file='k_AB.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', file='kex.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', file='tex.agr', dir=path, force=True)
-        if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
-            self.interpreter.value.write(param='kex_AB', file='kex_AB.out', dir=path, force=True)
-            self.interpreter.value.write(param='kex_BC', file='kex_BC.out', dir=path, force=True)
-            self.interpreter.value.write(param='kex_AC', file='kex_AC.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex_AB', file='kex_AB.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex_BC', file='kex_BC.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex_AC', file='kex_AC.agr', dir=path, force=True)
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='k_AB')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='kex')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='tex')
 
-        # The k_AB parameter.
-        if model in [None, MODEL_TSMFK01]:
-            self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', file='k_AB.agr', dir=path, force=True)
+        # The kex_AB, kex_BC, kex_AC parameters.
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='kex_AB')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='kex_BC')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='kex_AC')
 
         # The kB and kC parameters.
-        if model in [None, MODEL_LM63_3SITE]:
-            self.interpreter.value.write(param='kB', file='kB.out', dir=path, force=True)
-            self.interpreter.value.write(param='kC', file='kC.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='kB', file='kB.agr', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='kC', file='kC.agr', dir=path, force=True)
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='kB')
+        self.write_results_test(path=path, model=model, models_tested=models_tested, param='kC')
 
         # Minimisation statistics.
-        if not (model == 'R2eff' and has_fixed_time_exp_type()):
+        if not (model == MODEL_R2EFF and has_fixed_time_exp_type()):
             self.interpreter.value.write(param='chi2', file='chi2.out', dir=path, force=True)
             self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir=path, force=True)
 
         # Finally save the results.  This is last to allow the continuation of an interrupted analysis while ensuring that all results files have been created.
         self.interpreter.results.write(file='results', dir=path, force=True)
 
+
+    def write_results_test(self, path=None, model=None, models_tested=None, param=None, file_name_ini=None):
+        """Create a set of results, text and Grace files for the current data pipe.
+
+        @keyword path:              The directory to place the files into.
+        @type path:                 str
+        @keyword model:             The model tested.
+        @type path:                 None or str
+        @keyword model_tested:      List of models tested, if the pipe is final.
+        @type model_tested:         None or list of str.
+        @keyword param:             The param to write out.
+        @type param:                None or list of str.
+        @keyword file_name_ini:     The initial part of the file name for the grace and text files.
+        @type file_name_ini:        None or str.
+        """
+
+        # If not set, use the name of the parameter.
+        if file_name_ini == None:
+            file_name_ini = param
+
+        # If the model is in the list of models which support the parameter.
+        write_result = False
+        if model != None:
+            # Get the model params.
+            model_params = MODEL_PARAMS[model]
+
+            if param in model_params:
+                write_result = True
+
+        # If this is the final pipe, then check if the model has been tested at any time.
+        elif model == None:
+            # Loop through all tested models.
+            for model_tested in models_tested:
+                # If one of the models tested has a parameter which belong in the list of models which support the parameter, then write it out.
+                model_params = MODEL_PARAMS[model_tested]
+
+                if param in model_params:
+                    write_result = True
+                    break
+
+        # Write results if some of the models supports the parameter.
+        if write_result:
+            self.interpreter.value.write(param=param, file='%s.out'%file_name_ini, dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type=param, file='%s.agr'%file_name_ini, dir=path, force=True)

@@ -266,11 +266,21 @@ def copy(pipe_from=None, pipe_to=None):
 
             # All other spin specific parameters.
             for param in spin_from.params:
-                if param in ['r2', 'pA', 'pB', 'pC', 'kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC', 'tex']:
+                if param in ['r2', 'r2a', 'r2b', 'pA', 'pB', 'pC', 'kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC', 'tex']:
                     continue
 
-                # Copy the value.
-                setattr(spin_to, param, deepcopy(getattr(spin_from, param)))
+                elif param == 'r2eff':
+                    # Copy the value.
+                    setattr(spin_to, param, deepcopy(getattr(spin_from, param)))
+
+                    # If error estimation exists.
+                    param_err = '%s_err' % param
+                    if hasattr(spin_from, param_err):
+                        setattr(spin_to, param_err, deepcopy(getattr(spin_from, param_err)))
+
+                else:
+                    # Copy the value.
+                    setattr(spin_to, param, deepcopy(getattr(spin_from, param)))
 
     # Switch back to the original data pipe.
     pipes.switch(pipe_orig)
@@ -339,7 +349,7 @@ def get_param_names(spins=None, full=False):
         param_text = param_name
 
         # The parameters with additional details.
-        if full and param_name in ['r2', 'r2a', 'r2b']:
+        if full and param_name in PARAMS_R20:
             param_text += " (%s)" % r20_key
  
         # Append the text.
@@ -430,6 +440,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
 
     The different constraints used within different models are::
 
+        0 <= R1_fit <= 200
         0 <= R2 <= 200
         0 <= R2A <= 200
         0 <= R2B <= 200
@@ -455,6 +466,10 @@ def linear_constraints(spins=None, scaling_matrix=None):
 
     In the notation A.x >= b, where A is a matrix of coefficients, x is an array of parameter values, and b is a vector of scalars, these inequality constraints are::
 
+        | 1  0  0 |     |  R1_fit  |      |    0    |
+        |         |     |          |      |         |
+        |-1  0  0 |     |  R1_fit  |      |  -200   |
+        |         |     |          |      |         |
         | 1  0  0 |     |    R2    |      |    0    |
         |         |     |          |      |         |
         |-1  0  0 |     |    R2    |      |  -200   |
@@ -536,8 +551,18 @@ def linear_constraints(spins=None, scaling_matrix=None):
             b.append(0.0)
             j += 1
 
+        # The fitted longitudinal relaxation rates (0 <= r1_fit <= 200).
+        elif param_name in ['r1_fit']:
+            A.append(zero_array * 0.0)
+            A.append(zero_array * 0.0)
+            A[j][param_index] = 1.0
+            A[j+1][param_index] = -1.0
+            b.append(0.0)
+            b.append(-200.0 / scaling_matrix[param_index, param_index])
+            j += 2
+
         # The transversal relaxation rates (0 <= r2 <= 200).
-        elif param_name in ['r2', 'r2a', 'r2b']:
+        elif param_name in PARAMS_R20:
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
@@ -659,7 +684,19 @@ def loop_parameters(spins=None):
 
     # All other models.
     else:
-        # First the R2 parameters (one per spin per field strength).
+        # First the R1 fit parameter (one per spin per field strength).
+        for spin_index in range(len(spins)):
+            # Skip deselected spins.
+            if not spins[spin_index].select:
+                continue
+
+            # The R2 parameter.
+            if 'r1_fit' in spins[0].params:
+                for exp_type, frq in loop_exp_frq():
+                    param_index += 1
+                    yield 'r1_fit', param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
+
+        # Then the R2 parameters (one per spin per field strength).
         for spin_index in range(len(spins)):
             # Skip deselected spins.
             if not spins[spin_index].select:
@@ -736,7 +773,7 @@ def loop_parameters(spins=None):
 
         # All other parameters (one per spin cluster).
         for param in spins[0].params:
-            if not param in ['r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AB', 'dwH', 'dwH_AB', 'dwH_BC', 'dwH_AB']:
+            if not param in ['r1_fit', 'r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AB', 'dwH', 'dwH_AB', 'dwH_BC', 'dwH_AB']:
                 param_index += 1
                 yield param, param_index, None, None
 
@@ -849,6 +886,17 @@ def param_num(spins=None):
         if len(spin.params) != len(spins[0].params):
             raise RelaxError("The number of parameters for each spin in the cluster are not the same.")
 
+    # Count the number of R10 parameters.
+    for spin in spins:
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        for i in range(len(spin.params)):
+            if spin.params[i] in ['r1_fit']:
+                for exp_type, frq in loop_exp_frq():
+                    num += 1
+
     # Count the number of R20 parameters.
     for spin in spins:
         # Skip deselected spins.
@@ -872,7 +920,7 @@ def param_num(spins=None):
                 num += 1
 
     # Count all other parameters, but only for a single spin.
-    all_params = PARAMS_R20 + spin_params
+    all_params = ['r1_fit'] + PARAMS_R20 + spin_params
     for spin in spins:
         # Skip deselected spins.
         if not spin.select:

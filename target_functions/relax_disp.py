@@ -55,7 +55,7 @@ from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from lib.float import isNaN
 from target_functions.chi2 import chi2_rankN
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LIST_R1RHO_FIT_R1, MODEL_LIST_R1RHO_W_R1, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MP05_FIT_R1, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_2SITE_FIT_R1, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAM_DW_MIX_DOUBLE, MODEL_PARAM_DW_MIX_QUADRUPLE, MODEL_PARAM_INV_RELAX_TIMES, MODEL_PARAM_R20B, MODEL_TAP03, MODEL_TAP03_FIT_R1, MODEL_TP02, MODEL_TP02_FIT_R1, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -173,10 +173,10 @@ class Dispersion:
             raise RelaxError("No errors have been supplied to the target function.")
         if missing == None:
             raise RelaxError("No missing data information has been supplied to the target function.")
-        if model in [MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05]:
+        if model in MODEL_LIST_R1RHO_FIT_R1 + MODEL_LIST_R1RHO_W_R1:
             if chemical_shifts == None:
                 raise RelaxError("Chemical shifts must be supplied for the '%s' R1rho off-resonance dispersion model." % model)
-            if r1 == None:
+            if model in MODEL_LIST_R1RHO_W_R1 and r1 == None:
                 raise RelaxError("R1 relaxation rates must be supplied for the '%s' R1rho off-resonance dispersion model." % model)
 
         # Store the arguments.
@@ -238,6 +238,8 @@ class Dispersion:
         self.nm_no_nd_ones = ones([self.NM, self.NO, self.ND], float64)
 
         # Structure of r20a and r20b. The full and outer dimensions structures.
+        self.r1_struct = deepcopy(numpy_array_zeros)
+        self.r1rho_prime_struct = deepcopy(numpy_array_zeros)
         self.r20_struct = deepcopy(numpy_array_zeros)
         self.r20a_struct = deepcopy(numpy_array_zeros)
         self.r20b_struct = deepcopy(numpy_array_zeros)
@@ -308,7 +310,7 @@ class Dispersion:
                         self.chemical_shifts[ei, si, mi, :] = chemical_shift
 
                     # The inverted relaxation delay.
-                    if model in [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
+                    if model in MODEL_PARAM_INV_RELAX_TIMES:
                         self.inv_relax_times[ei, si, mi, :] = 1.0 / relax_time
 
                     # The number of offset data points.
@@ -391,19 +393,29 @@ class Dispersion:
         # Initialise the post spin parameter indices.
         self.end_index = []
 
-        # The spin and frequency dependent R2 parameters.
-        self.end_index.append(self.NE * self.NS * self.NM)
-        if model in [MODEL_B14_FULL, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
+        # The spin and frequency dependent R1 and R2 parameters, for models which fit R1.
+        if model in MODEL_LIST_R1RHO_FIT_R1:
+            # The spin and frequency dependent R1 parameters.
+            self.end_index.append(self.NE * self.NS * self.NM)
+            # The spin and frequency dependent R2 parameters.
+            self.end_index.append(self.end_index[-1] + self.NE * self.NS * self.NM)
+
+        # For all other models.
+        else:
+            # The spin and frequency dependent R2 parameters.
+            self.end_index.append(self.NE * self.NS * self.NM)
+
+        if model in MODEL_PARAM_R20B:
             self.end_index.append(2 * self.NE * self.NS * self.NM)
 
         # The spin and dependent parameters (phi_ex, dw, padw2).
         self.end_index.append(self.end_index[-1] + self.NS)
-        if model in [MODEL_IT99, MODEL_LM63_3SITE, MODEL_MMQ_CR72, MODEL_NS_MMQ_2SITE]:
+
+        # For models with both dw and dwH or dw_AB and dw_BC or phi_ex_B and phi_ex_C.
+        if model in MODEL_PARAM_DW_MIX_DOUBLE:
             self.end_index.append(self.end_index[-1] + self.NS)
-        elif model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
-            self.end_index.append(self.end_index[-1] + self.NS)
-            self.end_index.append(self.end_index[-1] + self.NS)
-        elif model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
+
+        elif model in MODEL_PARAM_DW_MIX_QUADRUPLE:
             self.end_index.append(self.end_index[-1] + self.NS)
             self.end_index.append(self.end_index[-1] + self.NS)
             self.end_index.append(self.end_index[-1] + self.NS)
@@ -427,7 +439,7 @@ class Dispersion:
             # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
             self.M0_T = rollaxis(self.M0, 6, 5)
 
-        if model in [MODEL_NS_R1RHO_2SITE]:
+        if model in [MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_2SITE_FIT_R1]:
             # Offset of spin-lock from A.
             da_mat = self.chemical_shifts - self.offset
 
@@ -470,6 +482,10 @@ class Dispersion:
         # Set up the model.
         if model == MODEL_NOREX:
             self.func = self.func_NOREX
+        if model == MODEL_NOREX_R1RHO:
+            self.func = self.func_NOREX_R1RHO
+        if model == MODEL_NOREX_R1RHO_FIT_R1:
+            self.func = self.func_NOREX_R1RHO_FIT_R1
         if model == MODEL_LM63:
             self.func = self.func_LM63
         if model == MODEL_LM63_3SITE:
@@ -502,14 +518,24 @@ class Dispersion:
             self.func = self.func_M61b
         if model == MODEL_DPL94:
             self.func = self.func_DPL94
+        if model == MODEL_DPL94_FIT_R1:
+            self.func = self.func_DPL94_fit_r1
         if model == MODEL_TP02:
             self.func = self.func_TP02
+        if model == MODEL_TP02_FIT_R1:
+            self.func = self.func_TP02_fit_r1
         if model == MODEL_TAP03:
             self.func = self.func_TAP03
+        if model == MODEL_TAP03_FIT_R1:
+            self.func = self.func_TAP03_fit_r1
         if model == MODEL_MP05:
             self.func = self.func_MP05
+        if model == MODEL_MP05_FIT_R1:
+            self.func = self.func_MP05_fit_r1
         if model == MODEL_NS_R1RHO_2SITE:
             self.func = self.func_ns_r1rho_2site
+        if model == MODEL_NS_R1RHO_2SITE_FIT_R1:
+            self.func = self.func_ns_r1rho_2site_fit_r1
         if model == MODEL_NS_R1RHO_3SITE:
             self.func = self.func_ns_r1rho_3site
         if model == MODEL_NS_R1RHO_3SITE_LINEAR:
@@ -600,6 +626,109 @@ class Dispersion:
             self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
 
         # Calculate the chi-squared statistic.
+        return chi2_rankN(self.values, self.back_calc, self.errors)
+
+
+    def calc_DPL94(self, R1=None, r1rho_prime=None, phi_ex=None, kex=None):
+        """Calculation function for the Davis, Perlman and London (1994) fast 2-site off-resonance exchange model for R1rho-type experiments.
+
+        @keyword R1:            The R1 value.
+        @type R1:               list of float
+        @keyword r1rho_prime:   The R1rho value for all states in the absence of exchange.
+        @type r1rho_prime:      list of float
+        @keyword phi_ex:        The fast exchange factor pA.pB.dw**2 (ppm).
+        @type phi_ex:           list of float
+        @keyword kex:           The rate of exchange.
+        @type kex:              float
+        @return:                The chi-squared value.
+        @rtype:                 float
+        """
+
+        # Convert phi_ex from ppm^2 to (rad/s)^2. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( phi_ex.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_struct )
+
+        # Reshape r1rho_prime to per experiment, spin and frequency.
+        self.r1rho_prime_struct[:] = multiply.outer( r1rho_prime.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Back calculate the R2eff values.
+        r1rho_DPL94(r1rho_prime=self.r1rho_prime_struct, phi_ex=self.phi_ex_struct, kex=kex, theta=self.tilt_angles, R1=R1, spin_lock_fields2=self.spin_lock_omega1_squared, back_calc=self.back_calc)
+
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc = self.back_calc*self.disp_struct
+
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
+
+        # Return the total chi-squared value.
+        return chi2_rankN(self.values, self.back_calc, self.errors)
+
+
+    def calc_MP05(self, R1=None, r1rho_prime=None, dw=None, pA=None, kex=None):
+        """Calculation function for the Miloushev and Palmer (2005) R1rho off-resonance 2-site model.
+
+        @keyword R1:            The R1 value.
+        @type R1:               list of float
+        @keyword r1rho_prime:   The R1rho value for all states in the absence of exchange.
+        @type r1rho_prime:      list of float
+        @keyword dw:            The chemical shift differences in ppm for each spin.
+        @type dw:               list of float
+        @keyword pA:            The population of state A.
+        @type pA:               float
+        @keyword kex:           The rate of exchange.
+        @type kex:              float
+        @return:                The chi-squared value.
+        @rtype:                 float
+        """
+
+        # Reshape r1rho_prime to per experiment, spin and frequency.
+        self.r1rho_prime_struct[:] = multiply.outer( r1rho_prime.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
+
+        # Back calculate the R1rho values.
+        r1rho_MP05(r1rho_prime=self.r1rho_prime_struct, omega=self.chemical_shifts, offset=self.offset, pA=pA, dw=self.dw_struct, kex=kex, R1=R1, spin_lock_fields=self.spin_lock_omega1, spin_lock_fields2=self.spin_lock_omega1_squared, back_calc=self.back_calc)
+
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc = self.back_calc*self.disp_struct
+
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
+
+        # Return the total chi-squared value.
+        return chi2_rankN(self.values, self.back_calc, self.errors)
+
+
+    def calc_NOREX_R1RHO(self, R1=None, r1rho_prime=None):
+        """Calculation function for no exchange, for R1rho off resonance models.
+
+        @keyword R1:            The R1 value.
+        @type R1:               list of float
+        @keyword r1rho_prime:   The R1rho value for all states in the absence of exchange.
+        @type r1rho_prime:      list of float
+        @return:                The chi-squared value.
+        @rtype:                 float
+        """
+
+        # Reshape r1rho_prime to per experiment, spin and frequency.
+        self.r1rho_prime_struct[:] = multiply.outer( r1rho_prime.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Make back calculation.
+        self.back_calc[:] = R1 * cos(self.tilt_angles)**2 + self.r1rho_prime_struct * sin(self.tilt_angles)**2
+
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc = self.back_calc*self.disp_struct
+
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
+
+        # Return the total chi-squared value.
         return chi2_rankN(self.values, self.back_calc, self.errors)
 
 
@@ -772,6 +901,44 @@ class Dispersion:
         return chi2_rankN(self.values, self.back_calc, self.errors)
 
 
+    def calc_ns_r1rho_2site(self, R1=None, r1rho_prime=None, dw=None, pA=None, kex=None):
+        """Calculation function for the reduced numerical solution for the 2-site Bloch-McConnell equations for R1rho data.
+
+        @keyword R1:            The R1 value.
+        @type R1:               list of float
+        @keyword r1rho_prime:   The R1rho value for all states in the absence of exchange.
+        @type r1rho_prime:      list of float
+        @keyword dw:            The chemical shift differences in ppm for each spin.
+        @type dw:               list of float
+        @keyword pA:            The population of state A.
+        @type pA:               float
+        @keyword kex:           The rate of exchange.
+        @type kex:              float
+        @return:                The chi-squared value.
+        @rtype:                 float
+        """
+
+        # Reshape r1rho_prime to per experiment, spin and frequency.
+        self.r1rho_prime_struct[:] = multiply.outer( r1rho_prime.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
+
+        # Back calculate the R1rho values.
+        ns_r1rho_2site(M0=self.M0, M0_T=self.M0_T, r1rho_prime=self.r1rho_prime_struct, omega=self.chemical_shifts, offset=self.offset, r1=R1, pA=pA, dw=self.dw_struct, kex=kex, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc)
+
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc = self.back_calc*self.disp_struct
+
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
+
+        # Return the total chi-squared value.
+        return chi2_rankN(self.values, self.back_calc, self.errors)
+
+
     def calc_ns_r1rho_3site_chi2(self, r1rho_prime=None, dw_AB=None, dw_BC=None, pA=None, pB=None, kex_AB=None, kex_BC=None, kex_AC=None):
         """Calculate the chi-squared value for the 'NS MMQ 3-site' models.
 
@@ -802,6 +969,82 @@ class Dispersion:
 
         # Back calculate the R2eff values for each experiment type.
         ns_r1rho_3site(M0=self.M0, M0_T=self.M0_T, r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, r1=self.r1, pA=pA, pB=pB, dw_AB=self.dw_AB_struct, dw_BC=self.dw_BC_struct, kex_AB=kex_AB, kex_BC=kex_BC, kex_AC=kex_AC, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc, num_points=self.num_disp_points)
+
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc = self.back_calc*self.disp_struct
+
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
+
+        # Return the total chi-squared value.
+        return chi2_rankN(self.values, self.back_calc, self.errors)
+
+
+    def calc_TAP03(self, R1=None, r1rho_prime=None, dw=None, pA=None, kex=None):
+        """Calculation function for the Trott, Abergel and Palmer (2003) R1rho off-resonance 2-site model.
+
+        @keyword R1:            The R1 value.
+        @type R1:               list of float
+        @keyword r1rho_prime:   The R1rho value for all states in the absence of exchange.
+        @type r1rho_prime:      list of float
+        @keyword dw:            The chemical shift differences in ppm for each spin.
+        @type dw:               list of float
+        @keyword pA:            The population of state A.
+        @type pA:               float
+        @keyword kex:           The rate of exchange.
+        @type kex:              float
+        @return:                The chi-squared value.
+        @rtype:                 float
+        """
+
+        # Reshape r1rho_prime to per experiment, spin and frequency.
+        self.r1rho_prime_struct[:] = multiply.outer( r1rho_prime.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
+
+        # Back calculate the R1rho values.
+        r1rho_TAP03(r1rho_prime=self.r1rho_prime_struct, omega=self.chemical_shifts, offset=self.offset, pA=pA, dw=self.dw_struct, kex=kex, R1=R1, spin_lock_fields=self.spin_lock_omega1, spin_lock_fields2=self.spin_lock_omega1_squared, back_calc=self.back_calc)
+
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc = self.back_calc*self.disp_struct
+
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
+
+        # Return the total chi-squared value.
+        return chi2_rankN(self.values, self.back_calc, self.errors)
+
+
+    def calc_TP02(self, R1=None, r1rho_prime=None, dw=None, pA=None, kex=None):
+        """Calculation function for the Trott and Palmer (2002) R1rho off-resonance 2-site model.
+
+        @keyword R1:            The R1 value.
+        @type R1:               list of float
+        @keyword r1rho_prime:   The R1rho value for all states in the absence of exchange.
+        @type r1rho_prime:      list of float
+        @keyword dw:            The chemical shift differences in ppm for each spin.
+        @type dw:               list of float
+        @keyword pA:            The population of state A.
+        @type pA:               float
+        @keyword kex:           The rate of exchange.
+        @type kex:              float
+        @return:                The chi-squared value.
+        @rtype:                 float
+        """
+
+        # Reshape r1rho_prime to per experiment, spin and frequency.
+        self.r1rho_prime_struct[:] = multiply.outer( r1rho_prime.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
+
+        # Back calculate the R1rho values.
+        r1rho_TP02(r1rho_prime=self.r1rho_prime_struct, omega=self.chemical_shifts, offset=self.offset, pA=pA, dw=self.dw_struct, kex=kex, R1=R1, spin_lock_fields=self.spin_lock_omega1, spin_lock_fields2=self.spin_lock_omega1_squared, back_calc=self.back_calc)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
@@ -975,29 +1218,38 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[0]]
+        r1rho_prime = params[:self.end_index[0]]
         phi_ex = params[self.end_index[0]:self.end_index[1]]
         kex = params[self.end_index[1]]
 
-        # Convert phi_ex from ppm^2 to (rad/s)^2. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( phi_ex.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_struct )
+        # Calculate and return the chi-squared value.
+        return self.calc_DPL94(R1=self.r1, r1rho_prime=r1rho_prime, phi_ex=phi_ex, kex=kex)
 
-        # Reshape R20 to per experiment, spin and frequency.
-        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
-        # Back calculate the R2eff values.
-        r1rho_DPL94(r1rho_prime=self.r20_struct, phi_ex=self.phi_ex_struct, kex=kex, theta=self.tilt_angles, R1=self.r1, spin_lock_fields2=self.spin_lock_omega1_squared, back_calc=self.back_calc)
+    def func_DPL94_fit_r1(self, params):
+        """Target function for the Davis, Perlman and London (1994) fast 2-site off-resonance exchange model for R1rho-type experiments, where R1 is fitted.
 
-        # Clean the data for all values, which is left over at the end of arrays.
-        self.back_calc = self.back_calc*self.disp_struct
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
 
-        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-        if self.has_missing:
-            # Replace with values.
-            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
 
-        # Return the total chi-squared value.
-        return chi2_rankN(self.values, self.back_calc, self.errors)
+        # Unpack the parameter values.
+        r1 = params[:self.end_index[0]]
+        r1rho_prime = params[self.end_index[0]:self.end_index[1]]
+        phi_ex = params[self.end_index[1]:self.end_index[2]]
+        kex = params[self.end_index[2]]
+
+        # Reshape R1 to per experiment, spin and frequency.
+        self.r1_struct[:] = multiply.outer( r1.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Calculate and return the chi-squared value.
+        return self.calc_DPL94(R1=self.r1_struct, r1rho_prime=r1rho_prime, phi_ex=phi_ex, kex=kex)
 
 
     def func_IT99(self, params):
@@ -1214,30 +1466,40 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[0]]
+        r1rho_prime = params[:self.end_index[0]]
         dw = params[self.end_index[0]:self.end_index[1]]
         pA = params[self.end_index[1]]
         kex = params[self.end_index[1]+1]
 
-        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
+        # Calculate and return the chi-squared value.
+        return self.calc_MP05(R1=self.r1, r1rho_prime=r1rho_prime, dw=dw, pA=pA, kex=kex)
 
-        # Reshape R20 to per experiment, spin and frequency.
-        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
-        # Back calculate the R1rho values.
-        r1rho_MP05(r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, pA=pA, dw=self.dw_struct, kex=kex, R1=self.r1, spin_lock_fields=self.spin_lock_omega1, spin_lock_fields2=self.spin_lock_omega1_squared, back_calc=self.back_calc)
+    def func_MP05_fit_r1(self, params):
+        """Target function for the Miloushev and Palmer (2005) R1rho off-resonance 2-site model, where R1 is fitted.
 
-        # Clean the data for all values, which is left over at the end of arrays.
-        self.back_calc = self.back_calc*self.disp_struct
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
 
-        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-        if self.has_missing:
-            # Replace with values.
-            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
 
-        # Return the total chi-squared value.
-        return chi2_rankN(self.values, self.back_calc, self.errors)
+        # Unpack the parameter values.
+        r1 = params[:self.end_index[0]]
+        r1rho_prime = params[self.end_index[0]:self.end_index[1]]
+        dw = params[self.end_index[1]:self.end_index[2]]
+        pA = params[self.end_index[2]]
+        kex = params[self.end_index[2]+1]
+
+        # Reshape R1 to per experiment, spin and frequency.
+        self.r1_struct[:] = multiply.outer( r1.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Calculate and return the chi-squared value.
+        return self.calc_MP05(R1=self.r1_struct, r1rho_prime=r1rho_prime, dw=dw, pA=pA, kex=kex)
 
 
     def func_mmq_CR72(self, params):
@@ -1334,6 +1596,50 @@ class Dispersion:
 
         # Return the total chi-squared value.
         return chi2_rankN(self.values, self.back_calc, self.errors)
+
+
+    def func_NOREX_R1RHO(self, params):
+        """Target function for no exchange, for R1rho off resonance models.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        r1rho_prime = params
+
+        # Calculate and return the chi-squared value.
+        return self.calc_NOREX_R1RHO(R1=self.r1, r1rho_prime=r1rho_prime)
+
+
+    def func_NOREX_R1RHO_FIT_R1(self, params):
+        """Target function for no exchange, for R1rho off resonance models, where R1 is fitted.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        r1 = params[:self.end_index[0]]
+        r1rho_prime = params[self.end_index[0]:self.end_index[1]]
+
+        # Reshape R1 to per experiment, spin and frequency.
+        self.r1_struct[:] = multiply.outer( r1.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Calculate and return the chi-squared value.
+        return self.calc_NOREX_R1RHO(R1=self.r1_struct, r1rho_prime=r1rho_prime)
 
 
     def func_ns_cpmg_2site_3D(self, params):
@@ -1615,25 +1921,35 @@ class Dispersion:
         pA = params[self.end_index[1]]
         kex = params[self.end_index[1]+1]
 
-        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
+        # Calculate and return the chi-squared value.
+        return self.calc_ns_r1rho_2site(R1=self.r1, r1rho_prime=r1rho_prime, dw=dw, pA=pA, kex=kex)
 
-        # Reshape R20 to per experiment, spin and frequency.
-        self.r20_struct[:] = multiply.outer( r1rho_prime.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
-        # Back calculate the R2eff values.
-        ns_r1rho_2site(M0=self.M0, M0_T=self.M0_T, r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, r1=self.r1, pA=pA, dw=self.dw_struct, kex=kex, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc, num_points=self.num_disp_points)
+    def func_ns_r1rho_2site_fit_r1(self, params):
+        """Target function for the reduced numerical solution for the 2-site Bloch-McConnell equations for R1rho data, where R1 is fitted.
 
-        # Clean the data for all values, which is left over at the end of arrays.
-        self.back_calc = self.back_calc*self.disp_struct
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
 
-        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-        if self.has_missing:
-            # Replace with values.
-            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
 
-        # Return the total chi-squared value.
-        return chi2_rankN(self.values, self.back_calc, self.errors)
+        # Unpack the parameter values.
+        r1 = params[:self.end_index[0]]
+        r1rho_prime = params[self.end_index[0]:self.end_index[1]]
+        dw = params[self.end_index[1]:self.end_index[2]]
+        pA = params[self.end_index[2]]
+        kex = params[self.end_index[2]+1]
+
+        # Reshape R1 to per experiment, spin and frequency.
+        self.r1_struct[:] = multiply.outer( r1.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Calculate and return the chi-squared value.
+        return self.calc_ns_r1rho_2site(R1=self.r1_struct, r1rho_prime=r1rho_prime, dw=dw, pA=pA, kex=kex)
 
 
     def func_ns_r1rho_3site(self, params):
@@ -1703,30 +2019,40 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[0]]
+        r1rho_prime = params[:self.end_index[0]]
         dw = params[self.end_index[0]:self.end_index[1]]
         pA = params[self.end_index[1]]
         kex = params[self.end_index[1]+1]
 
-        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
+        # Calculate and return the chi-squared value.
+        return self.calc_TAP03(R1=self.r1, r1rho_prime=r1rho_prime, dw=dw, pA=pA, kex=kex)
 
-        # Reshape R20 to per experiment, spin and frequency.
-        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
-        # Back calculate the R1rho values.
-        r1rho_TAP03(r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, pA=pA, dw=self.dw_struct, kex=kex, R1=self.r1, spin_lock_fields=self.spin_lock_omega1, spin_lock_fields2=self.spin_lock_omega1_squared, back_calc=self.back_calc)
+    def func_TAP03_fit_r1(self, params):
+        """Target function for the Trott, Abergel and Palmer (2003) R1rho off-resonance 2-site model, where R1 is fitted.
 
-        # Clean the data for all values, which is left over at the end of arrays.
-        self.back_calc = self.back_calc*self.disp_struct
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
 
-        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-        if self.has_missing:
-            # Replace with values.
-            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
 
-        # Return the total chi-squared value.
-        return chi2_rankN(self.values, self.back_calc, self.errors)
+        # Unpack the parameter values.
+        r1 = params[:self.end_index[0]]
+        r1rho_prime = params[self.end_index[0]:self.end_index[1]]
+        dw = params[self.end_index[1]:self.end_index[2]]
+        pA = params[self.end_index[2]]
+        kex = params[self.end_index[2]+1]
+
+        # Reshape R1 to per experiment, spin and frequency.
+        self.r1_struct[:] = multiply.outer( r1.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Calculate and return the chi-squared value.
+        return self.calc_TAP03(R1=self.r1_struct, r1rho_prime=r1rho_prime, dw=dw, pA=pA, kex=kex)
 
 
     def func_TP02(self, params):
@@ -1743,30 +2069,40 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[0]]
+        r1rho_prime = params[:self.end_index[0]]
         dw = params[self.end_index[0]:self.end_index[1]]
         pA = params[self.end_index[1]]
         kex = params[self.end_index[1]+1]
 
-        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
+        # Calculate and return the chi-squared value.
+        return self.calc_TP02(R1=self.r1, r1rho_prime=r1rho_prime, dw=dw, pA=pA, kex=kex)
 
-        # Reshape R20 to per experiment, spin and frequency.
-        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
-        # Back calculate the R1rho values.
-        r1rho_TP02(r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, pA=pA, dw=self.dw_struct, kex=kex, R1=self.r1, spin_lock_fields=self.spin_lock_omega1, spin_lock_fields2=self.spin_lock_omega1_squared, back_calc=self.back_calc)
+    def func_TP02_fit_r1(self, params):
+        """Target function for the Trott and Palmer (2002) R1rho off-resonance 2-site model, where R1 is fitted.
 
-        # Clean the data for all values, which is left over at the end of arrays.
-        self.back_calc = self.back_calc*self.disp_struct
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
 
-        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-        if self.has_missing:
-            # Replace with values.
-            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
 
-        # Return the total chi-squared value.
-        return chi2_rankN(self.values, self.back_calc, self.errors)
+        # Unpack the parameter values.
+        r1 = params[:self.end_index[0]]
+        r1rho_prime = params[self.end_index[0]:self.end_index[1]]
+        dw = params[self.end_index[1]:self.end_index[2]]
+        pA = params[self.end_index[2]]
+        kex = params[self.end_index[2]+1]
+
+        # Reshape R1 to per experiment, spin and frequency.
+        self.r1_struct[:] = multiply.outer( r1.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Calculate and return the chi-squared value.
+        return self.calc_TP02(R1=self.r1_struct, r1rho_prime=r1rho_prime, dw=dw, pA=pA, kex=kex)
 
 
     def func_TSMFK01(self, params):

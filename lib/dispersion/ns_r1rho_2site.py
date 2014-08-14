@@ -187,7 +187,7 @@ def rr1rho_3d_2site_rankN(R1=None, r1rho_prime=None, dw=None, omega=None, offset
     return matrix
 
 
-def ns_r1rho_2site(M0=None, M0_T=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, dw=None, kex=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
+def ns_r1rho_2site(M0=None, M0_T=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, dw=None, kex=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for R1rho data.
 
     This function calculates and stores the R1rho values.
@@ -219,17 +219,12 @@ def ns_r1rho_2site(M0=None, M0_T=None, r1rho_prime=None, omega=None, offset=None
     @type inv_relax_time:       numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword back_calc:         The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
     @type back_calc:            numpy float array of rank [NE][NS][NM][NO][ND]
-    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
-    @type num_points:           numpy int array of rank [NE][NS][NM][NO]
     """
 
     # Once off parameter conversions.
     pB = 1.0 - pA
     k_BA = pA * kex
     k_AB = pB * kex
-
-    # Extract shape of experiment.
-    NE, NS, NM, NO = num_points.shape
 
     # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
     R_mat = rr1rho_3d_2site_rankN(R1=r1, r1rho_prime=r1rho_prime, dw=dw, omega=omega, offset=offset, w1=spin_lock_fields, k_AB=k_AB, k_BA=k_BA, relax_time=relax_time)
