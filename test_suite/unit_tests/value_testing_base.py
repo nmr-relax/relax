@@ -50,6 +50,9 @@ class Value_base_class(UnitTestCase):
         # Add a reduced spectral density mapping data pipe to the data store for testing RSDM parameters.
         ds.add(pipe_name='jw', pipe_type='jw')
 
+        # Add a relaxation dispersion data pipe to the data store for testing the associated parameters.
+        ds.add(pipe_name='relax_disp', pipe_type='relax_disp')
+
         # Add a relaxation curve fitting data pipe to the data store for testing the associated parameters.
         ds.add(pipe_name='relax_fit', pipe_type='relax_fit')
 
@@ -60,6 +63,7 @@ class Value_base_class(UnitTestCase):
         self.set_up_spins(pipe_name='ct')
         self.set_up_spins(pipe_name='mf')
         self.set_up_spins(pipe_name='jw')
+        self.set_up_spins(pipe_name='relax_disp')
         self.set_up_spins(pipe_name='relax_fit')
 
         # Set up the N-state model.
