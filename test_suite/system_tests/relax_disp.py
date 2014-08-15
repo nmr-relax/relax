@@ -1266,6 +1266,61 @@ class Relax_disp(SystemTestCase):
         self.interpreter.grace.write(x_data_type='res_num', y_data_type=param, file='%s.agr'%param, dir=self.tmpdir, force=True)
 
 
+        # Test the header of the value.write  parameter r2.
+        param = 'r2'
+        self.interpreter.value.write(param=param, file='%s.out'%param, dir=self.tmpdir, force=True)
+
+        file = open(self.tmpdir+sep+'%s.out'%param)
+        lines = file.readlines()
+        file.close()
+
+        for i, line in enumerate(lines):
+            # Make the string test
+            line_split = line.split()
+            print(line_split)
+
+            if len(line_split) > 1:
+                # Break at parameter header.
+                if line_split[0] == "#" and line_split[1] == 'mol_name':
+                    nr_split_header = len(line_split)
+                    nr_split_header_i = i
+                    break
+
+        # Call the line after.
+        line_split_val = lines[nr_split_header_i + 1].split()
+        print(line_split_val)
+
+        # Assert that the number of columns is equal, plus 1 for "#".
+        self.assertEqual(nr_split_header, len(line_split_val) + 1)
+
+        # Test the header of the value.write for parameter r2eff.
+        param = 'r2eff'
+        self.interpreter.value.write(param=param, file='%s.out'%param, dir=self.tmpdir, force=True)
+
+        file = open(self.tmpdir+sep+'%s.out'%param)
+        lines = file.readlines()
+        file.close()
+
+        for i, line in enumerate(lines):
+            # Make the string test
+            line_split = line.split()
+            print(line_split)
+
+            if len(line_split) > 1:
+                # Break at parameter header.
+                if line_split[0] == "#" and line_split[1] == 'mol_name':
+                    nr_split_header = len(line_split)
+                    nr_split_header_i = i
+                    break
+
+        # Call the line after.
+        line_split_val = lines[nr_split_header_i + 1].split()
+        print(line_split_val)
+
+        # Assert that the number of columns is equal, plus 1 for "#".
+        self.assertEqual(nr_split_header, len(line_split_val) + 1)
+
+
     def test_cpmg_synthetic_b14_to_ns3d_cluster(self):
         """Test synthetic cpmg data.  Created with B14, analysed with NS CPMG 2site 3D, for clustered analysis.
 
