@@ -1001,8 +1001,29 @@ class Relax_disp(API_base, API_common):
                 if error:
                     obj_name += '_err'
 
+                # Handle the R10 parameters.
+                if param[i] in ['r1_fit']:
+                    # Loop over the current keys.
+                    for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+                        # The parameter key.
+                        key = generate_r20_key(exp_type=exp_type, frq=frq)
+
+                        # Initialise the structure if needed.
+                        if not hasattr(spin, obj_name):
+                            setattr(spin, obj_name, {})
+
+                        # Set the value.
+                        if index == None:
+                            obj = getattr(spin, obj_name)
+                            obj[key] = value[i]
+
+                        # If the index is specified, let it match the frequency index
+                        elif mi == index:
+                            obj = getattr(spin, obj_name)
+                            obj[key] = value[i]
+
                 # Handle the R20 parameters.
-                if param[i] in PARAMS_R20:
+                elif param[i] in PARAMS_R20:
                     # Loop over the current keys.
                     for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
                         # The parameter key.
