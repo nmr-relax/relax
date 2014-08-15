@@ -1245,6 +1245,21 @@ class Relax_disp(SystemTestCase):
         self.setup_bug_22146_unpacking_r2a_r2b_cluster(folder='ns_cpmg_2site_star_full', model_analyse = MODEL_NS_CPMG_2SITE_STAR_FULL, places = 4)
 
 
+    def test_bug_22477_grace_write_k_AB_mixed_analysis(self):
+        """Catch U{bug #22146<https://gna.org/bugs/?22477>}, the failure of issuing: grace.write(x_data_type='res_num', y_data_type=param) for a mixed CPMG analysis."""
+
+        # Clear the data store.
+        self.interpreter.reset()
+
+        # Load the state.
+        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_22477_grace_write_k_AB_mixed_analysis'+sep+'bug_22477_results.bz2'
+        self.interpreter.state.load(state, force=True)
+
+        # Perform write.
+        param = 'k_AB'
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type=param, file='%s.agr'%param, dir=self.tmpdir, force=True)
+
+
     def test_cpmg_synthetic_b14_to_ns3d_cluster(self):
         """Test synthetic cpmg data.  Created with B14, analysed with NS CPMG 2site 3D, for clustered analysis.
 
