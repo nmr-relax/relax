@@ -23,7 +23,8 @@
 from unittest import TestCase
 
 # relax module imports.
-from pipe_control import pipes, value
+from pipe_control import pipes, spectrometer, value
+from specific_analyses.relax_disp.data import generate_r20_key, set_exp_type
 from test_suite.unit_tests.value_testing_base import Value_base_class
 
 
@@ -153,3 +154,33 @@ class Test_value(Value_base_class, TestCase):
         self.assertEqual(spin_values, [])
         self.assertEqual(other_params, [])
         self.assertEqual(other_values, [])
+
+
+    def test_value_set_r1_rit(self):
+        """Test of the pipe_control.value.set() function."""
+
+        # Set the current data pipe to 'mf'.
+        pipes.switch('relax_disp')
+
+        # Set variables.
+        exp_type = 'R1rho'
+        frq = 800.1 * 1E6
+
+        # Set an experiment type to the pipe.
+        set_exp_type(spectrum_id='test', exp_type=exp_type)
+
+        # Set a frequency to loop through.
+        spectrometer.set_frequency(id='test', frq=frq, units='Hz')
+
+        # Generate dic key.
+        r20_key = generate_r20_key(exp_type=exp_type, frq=frq)
+
+        # Set first similar to r2.
+        value.set(val=None, param='r2')
+        self.assertEqual(cdp.mol[0].res[0].spin[0].r2[r20_key], 10.0)
+
+        # Then set for r1_fit
+        value.set(val=None, param='r1_fit')
+        print(cdp.mol[0].res[0].spin[0])
+        self.assertEqual(cdp.mol[0].res[0].spin[0].r1_fit[r20_key], 5.0)
+
