@@ -5155,7 +5155,7 @@ class Relax_disp(SystemTestCase):
         MODELS = [MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1, MODEL_NS_R1RHO_2SITE_FIT_R1]
 
         # The grid search size (the number of increments per dimension).
-        GRID_INC = 10
+        GRID_INC = None
 
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         MC_NUM = 3
@@ -5288,7 +5288,7 @@ class Relax_disp(SystemTestCase):
                                 if model == MODEL_TP02_FIT_R1:
                                     self.assertAlmostEqual(value, 1.08765638)
                                 elif model == MODEL_TAP03_FIT_R1:
-                                    self.assertAlmostEqual(value, 1.08726698)
+                                    self.assertAlmostEqual(value, 1.08726698, 6)
                                 elif model == MODEL_MP05_FIT_R1:
                                     self.assertAlmostEqual(value, 1.08726706)
                                 elif model == MODEL_NS_R1RHO_2SITE_FIT_R1:
