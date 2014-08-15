@@ -1255,8 +1255,14 @@ class Relax_disp(SystemTestCase):
         state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_22477_grace_write_k_AB_mixed_analysis'+sep+'bug_22477_results.bz2'
         self.interpreter.state.load(state, force=True)
 
-        # Perform write.
         param = 'k_AB'
+
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            print(spin_id, spin.params)
+            if param in spin.params:
+                print(spin_id, spin.k_AB, spin.k_AB_err)
+
+        # Perform write.
         self.interpreter.grace.write(x_data_type='res_num', y_data_type=param, file='%s.agr'%param, dir=self.tmpdir, force=True)
 
 
