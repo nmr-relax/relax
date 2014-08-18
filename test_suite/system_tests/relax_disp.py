@@ -2784,7 +2784,8 @@ class Relax_disp(SystemTestCase):
         ds.models = [
             MODEL_R2EFF,
             MODEL_NOREX,
-            MODEL_CR72
+            MODEL_CR72,
+            MODEL_NS_CPMG_2SITE_EXPANDED
         ]
 
         # Execute the script.
