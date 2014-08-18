@@ -30,6 +30,7 @@ __all__ = [
     'checks',
     'cpmgfit',
     'data',
+    'model',
     'nessy',
     'optimisation',
     'parameter_object',
