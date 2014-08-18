@@ -28,7 +28,6 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 from math import atan, pi
 from pipe_control import state
 from pipe_control.mol_res_spin import get_spin_ids, return_spin
-from specific_analyses.relax_disp.checks import get_times
 from specific_analyses.relax_disp.data import calc_rotating_frame_params, count_relax_times, find_intensity_keys, get_curve_type, has_exponential_exp_type, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_offset_data, return_spin_lock_nu1
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
@@ -336,23 +335,6 @@ class Test_data(UnitTestCase):
         curve_type = get_curve_type()
         print(curve_type)
         self.assertEqual(curve_type, 'fixed time')
-
-
-    def test_get_times_cpmg(self):
-        """Unit test of the get_times() function.
-
-        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
-        """
-
-        # Load the state.
-        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21665.bz2'
-        state.load_state(statefile, force=True)
-
-        # Check the return of get_times().
-        times = get_times()
-        for exp_type in times:
-            print(times[exp_type])
-            self.assertEqual(len(times[exp_type]), 2)
 
 
     def test_has_exponential_exp_type_cpmg(self):
