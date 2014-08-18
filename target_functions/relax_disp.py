@@ -1227,7 +1227,7 @@ class Dispersion:
 
 
     def func_DPL94_fit_r1(self, params):
-        """Target function for the Davis, Perlman and London (1994) fast 2-site off-resonance exchange model for R1rho-type experiments, where R1 is fitted.
+        """Target function for the Davis, Perlman and London (1994) fast 2-site off-resonance exchange model for R1rho-type experiments, whereby R1 is fitted.
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
@@ -1476,7 +1476,7 @@ class Dispersion:
 
 
     def func_MP05_fit_r1(self, params):
-        """Target function for the Miloushev and Palmer (2005) R1rho off-resonance 2-site model, where R1 is fitted.
+        """Target function for the Miloushev and Palmer (2005) R1rho off-resonance 2-site model, whereby R1 is fitted.
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
@@ -1619,7 +1619,7 @@ class Dispersion:
 
 
     def func_NOREX_R1RHO_FIT_R1(self, params):
-        """Target function for no exchange, for R1rho off resonance models, where R1 is fitted.
+        """Target function for no exchange, for R1rho off resonance models, whereby R1 is fitted.
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
@@ -1926,7 +1926,7 @@ class Dispersion:
 
 
     def func_ns_r1rho_2site_fit_r1(self, params):
-        """Target function for the reduced numerical solution for the 2-site Bloch-McConnell equations for R1rho data, where R1 is fitted.
+        """Target function for the reduced numerical solution for the 2-site Bloch-McConnell equations for R1rho data, whereby R1 is fitted.
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
@@ -2029,7 +2029,7 @@ class Dispersion:
 
 
     def func_TAP03_fit_r1(self, params):
-        """Target function for the Trott, Abergel and Palmer (2003) R1rho off-resonance 2-site model, where R1 is fitted.
+        """Target function for the Trott, Abergel and Palmer (2003) R1rho off-resonance 2-site model, whereby R1 is fitted.
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
@@ -2079,7 +2079,7 @@ class Dispersion:
 
 
     def func_TP02_fit_r1(self, params):
-        """Target function for the Trott and Palmer (2002) R1rho off-resonance 2-site model, where R1 is fitted.
+        """Target function for the Trott and Palmer (2002) R1rho off-resonance 2-site model, whereby R1 is fitted.
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
