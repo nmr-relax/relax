@@ -39,7 +39,7 @@ from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, loop_frq
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
-from specific_analyses.relax_disp.model import nesting_model, sort_models
+from specific_analyses.relax_disp.model import nesting_model
 from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, MODEL_LIST_ANALYTIC, MODEL_LIST_NEST, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO_FIT_R1, MODEL_LIST_R1RHO_W_R1, MODEL_LIST_R1RHO_FULL, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_PARAMS, MODEL_R2EFF, PARAMS_R20
 from status import Status; status = Status()
 
@@ -100,6 +100,7 @@ class Relax_disp:
         self.pipe_name = pipe_name
         self.pipe_bundle = pipe_bundle
         self.results_dir = results_dir
+        self.models = models
         self.grid_inc = grid_inc
         self.mc_sim_num = mc_sim_num
         self.exp_mc_sim_num = exp_mc_sim_num
@@ -111,25 +112,6 @@ class Relax_disp:
         self.numeric_only = numeric_only
         self.mc_sim_all_models = mc_sim_all_models
         self.eliminate = eliminate
-
-        # Sort the models for analyses.
-        sorted_models = sort_models(models=models)
-        if sorted_models != models:
-            # Printout.
-            subsection(file=sys.stdout, text="Sorting models for optimal nesting of models.", prespace=1)
-            print("Models are are sorted in order:")
-            print(" - exp_type: EXP_TYPE_R2EFF, EXP_TYPE_NOREX, EXP_TYPE_NOREX_R1RHO, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_MMQ, EXP_TYPE_R1RHO")
-            print(" - equation: %s, %s, %s" % (EQ_SILICO, EQ_ANALYTIC, EQ_NUMERIC))
-            print(" - Nr of chemical sites: 2 or 3")
-            print(" - Year: Newest models first.")
-            print("-  Nr of params:")
-            print("\nPrevious model order: %s" % (models))
-            print("\nNew model order: %s" % (sorted_models))
-
-            # Store the new order of models.
-            self.models = sorted_models
-        else:
-            self.models = models
 
         # No results directory, so default to the current directory.
         if not self.results_dir:
