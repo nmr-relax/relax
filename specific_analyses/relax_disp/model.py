@@ -191,26 +191,6 @@ def nesting_model(self_models=None, model=None):
             if part_compa_model_params == part_model_params:
                 return model_info, compa_model
 
-        # Loop over the list of comparable models, if the parameters are part of the more complex model, return that as nested model.
-        for compa_model in compa_models:
-            # If the params list are within the parameter list, then return that model.
-            param_in = False
-
-            # Loop over the parameters.
-            for param in compa_model.params:
-                if param in model_info.params:
-                    param_in = True
-
-                # Else break out of the loop.
-                else:
-                    # Break the for loop, if not found.
-                    param_in = False
-                    break
-
-            # If all parameters are found in the more complex model.
-            if param_in:
-                return model_info, compa_model
-
         # Special case for LM63
         if model == MODEL_LM63_3SITE:
             # Loop over the models.
