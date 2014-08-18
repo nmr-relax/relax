@@ -78,7 +78,7 @@ class model_class:
         self.eq_i = order_eq.index(self.eq)
 
         # Define the order of how equation type ranks, when sorting before auto analyses.
-        order_s = [EQ_ANALYTIC, EQ_SILICO, EQ_NUMERIC]
+        order_s = [EQ_SILICO, EQ_ANALYTIC, EQ_NUMERIC]
 
         # Save the index of current model to order of equation type.
         self.eq_s = order_s.index(self.eq)
@@ -297,7 +297,7 @@ def sort_models(models=None):
     all_models_info = models_info(models)
 
     # Sort the models according to: exp_type, equation type, chemical sites, year for model, number of parameters.
-    all_models_info_sorted = sorted(all_models_info, key=attrgetter('exp_type_i', 'eq_s', 'sites', 'year', 'params_nr'))
+    all_models_info_sorted = sorted(all_models_info, key=attrgetter('exp_type_i', 'eq_s', 'sites', 'year_diff', 'params_nr'))
 
     # Define list of sorted models.
     sorted_models = []
