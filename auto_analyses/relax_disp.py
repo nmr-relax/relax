@@ -354,25 +354,6 @@ class Relax_disp:
                         nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
                         setattr(spin, 'r2', deepcopy(getattr(nested_spin, 'r2a')))
 
-            # Special case for tex/kex.
-            elif param == 'tex' and 'kex' in model_info.params:
-                print("Translating kex from 1/%s." % param)
-                # Loop over the spins to copy the parameters.
-                for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-                    # Get the nested spin.
-                    nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
-                    kex = 1.0 / getattr(nested_spin, 'tex')
-                    setattr(spin, 'kex', kex)
-
-            elif param == 'kex' and 'tex' in model_info.params:
-                print("Translating tex from 1/%s." % param)
-                # Loop over the spins to copy the parameters.
-                for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-                    # Get the nested spin.
-                    nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
-                    tex = 1.0 / getattr(nested_spin, 'kex')
-                    setattr(spin, 'tex', tex)
-
             # All other parameters.
             elif param in model_info.params:
                 print("Copying %s." % param)
@@ -381,19 +362,6 @@ class Relax_disp:
                     # Get the nested spin.
                     nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
                     setattr(spin, param, deepcopy(getattr(nested_spin, param)))
-
-        ## Special case for phi_ex.
-        if 'dw' in comparable_model_info.params and 'pA' in comparable_model_info.params and 'phi_ex' in model_info.params:
-            print("Translating 'phi_ex' from 'pA * pB * dw**2'.")
-            # Loop over the spins to copy the parameters.
-            for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-                # Get the nested spin.
-                nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
-                dw = getattr(nested_spin, 'dw')
-                pA = getattr(nested_spin, 'pA')
-                pB = 1.0 - pA
-                phi_ex = pA * pB * dw * dw
-                setattr(spin, 'phi_ex', phi_ex)
 
         ## The LM63 3-site model parameters.
         if 'phi_ex' in comparable_model_info.params and 'kex' in comparable_model_info.params and 'phi_ex_B' in model_info.params and 'phi_ex_C' in model_info.params and 'kB' in model_info.params and 'kC' in model_info.params:
