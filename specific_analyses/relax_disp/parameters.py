@@ -706,7 +706,7 @@ def loop_parameters(spins=None):
             if not spins[spin_index].select:
                 continue
 
-            # The R2 parameter.
+            # The R1 parameter.
             if 'r1_fit' in spins[0].params:
                 for exp_type, frq in loop_exp_frq():
                     param_index += 1
