@@ -101,7 +101,7 @@ MODEL_EQ_NOREX_R1RHO = EQ_ANALYTIC
 
 MODEL_NOREX_R1RHO_FIT_R1 = "No Rex R1rho off res R1 fit"
 MODEL_DESC_NOREX_R1RHO_FIT_R1 = "The model for no chemical exchange relaxation, for R1rho off resonance models, where R1 is fitted."
-MODEL_PARAMS_NOREX_R1RHO_FIT_R1 = ['r1_fit', 'r2']
+MODEL_PARAMS_NOREX_R1RHO_FIT_R1 = ['r1', 'r2']
 # This year is fake. Just to get the order correct.
 MODEL_YEAR_NOREX_R1RHO_FIT_R1 = 1953
 MODEL_EXP_TYPE_NOREX_R1RHO_FIT_R1 = EXP_TYPE_NOREX_R1RHO
@@ -200,7 +200,7 @@ MODEL_EQ_DPL94 = EQ_ANALYTIC
 MODEL_DPL94_FIT_R1 = "DPL94 R1 fit"
 """The R1rho 2-site fast exchange model of Davis, Perlman and London (1994), where R1 is fitted."""
 MODEL_DESC_DPL94_FIT_R1 = "The Davis, Perlman and London (1994) extension of the Meiboom (1961) model for off-resonance data, where R1 is fitted."
-MODEL_PARAMS_DPL94_FIT_R1 = ['r1_fit', 'r2', 'phi_ex', 'kex']
+MODEL_PARAMS_DPL94_FIT_R1 = ['r1', 'r2', 'phi_ex', 'kex']
 MODEL_YEAR_DPL94_FIT_R1 = 1994
 MODEL_EXP_TYPE_DPL94_FIT_R1 = EXP_TYPE_R1RHO
 MODEL_SITES_DPL94_FIT_R1 = 2
@@ -216,7 +216,7 @@ MODEL_EQ_TP02 = EQ_ANALYTIC
 
 MODEL_TP02_FIT_R1 = "TP02 R1 fit"
 MODEL_DESC_TP02_FIT_R1 = "The Trott and Palmer (2002) off-resonance 2-site model for R1rho-type experiments, where R1 is fitted."
-MODEL_PARAMS_TP02_FIT_R1 = ['r1_fit', 'r2', 'pA', 'dw', 'kex']
+MODEL_PARAMS_TP02_FIT_R1 = ['r1', 'r2', 'pA', 'dw', 'kex']
 MODEL_YEAR_TP02_FIT_R1 = 2002
 MODEL_EXP_TYPE_TP02_FIT_R1 = EXP_TYPE_R1RHO
 MODEL_SITES_TP02_FIT_R1 = 2
@@ -232,7 +232,7 @@ MODEL_EQ_TAP03 = EQ_ANALYTIC
 
 MODEL_TAP03_FIT_R1 = "TAP03 R1 fit"
 MODEL_DESC_TAP03_FIT_R1 = "The Trott, Abergel and Palmer (2003) off-resonance 2-site model for R1rho-type experiments, where R1 is fitted."
-MODEL_PARAMS_TAP03_FIT_R1 = ['r1_fit', 'r2', 'pA', 'dw', 'kex']
+MODEL_PARAMS_TAP03_FIT_R1 = ['r1', 'r2', 'pA', 'dw', 'kex']
 MODEL_YEAR_TAP03_FIT_R1 = 2003
 MODEL_EXP_TYPE_TAP03_FIT_R1 = EXP_TYPE_R1RHO
 MODEL_SITES_TAP03_FIT_R1 = 2
@@ -250,7 +250,7 @@ MODEL_EQ_MP05 = EQ_ANALYTIC
 MODEL_MP05_FIT_R1 = "MP05 R1 fit"
 """The R1rho 2-site off-resonance exchange model of Miloushev and Palmer (2005)."""
 MODEL_DESC_MP05_FIT_R1 = "The Miloushev and Palmer (2005) off-resonance 2-site model for R1rho-type experiments, where R1 is fitted."
-MODEL_PARAMS_MP05_FIT_R1 = ['r1_fit', 'r2', 'pA', 'dw', 'kex']
+MODEL_PARAMS_MP05_FIT_R1 = ['r1', 'r2', 'pA', 'dw', 'kex']
 MODEL_YEAR_MP05_FIT_R1 = 2005
 MODEL_EXP_TYPE_MP05_FIT_R1 = EXP_TYPE_R1RHO
 MODEL_SITES_MP05_FIT_R1 = 2
@@ -308,7 +308,7 @@ MODEL_EQ_NS_R1RHO_2SITE = EQ_NUMERIC
 
 MODEL_NS_R1RHO_2SITE_FIT_R1 = "NS R1rho 2-site R1 fit"
 MODEL_DESC_NS_R1RHO_2SITE_FIT_R1 = "The reduced numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors for R1rho-type experiments, whereby the simplification R20A = R20B is assumed, and where R1 is fitted."
-MODEL_PARAMS_NS_R1RHO_2SITE_FIT_R1 = ['r1_fit', 'r2', 'pA', 'dw', 'kex']
+MODEL_PARAMS_NS_R1RHO_2SITE_FIT_R1 = ['r1', 'r2', 'pA', 'dw', 'kex']
 MODEL_YEAR_NS_R1RHO_2SITE_FIT_R1 = 2005
 MODEL_EXP_TYPE_NS_R1RHO_2SITE_FIT_R1 = EXP_TYPE_R1RHO
 MODEL_SITES_NS_R1RHO_2SITE_FIT_R1 = 2

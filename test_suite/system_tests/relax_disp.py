@@ -5006,7 +5006,7 @@ class Relax_disp(SystemTestCase):
                 print("Optimised parameters for spin: %s" % (spin_string))
                 for param in cur_spin.params + ['chi2']:
                     # Get the value.
-                    if param in ['r1_fit', 'r2']:
+                    if param in ['r1', 'r2']:
                         for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
                             # Generate the R20 key.
                             r20_key = generate_r20_key(exp_type=exp_type, frq=frq)
@@ -5274,7 +5274,7 @@ class Relax_disp(SystemTestCase):
                 print("Optimised parameters for spin: %s" % (spin_string))
                 for param in cur_spin.params + ['chi2']:
                     # Get the value.
-                    if param in ['r1_fit', 'r2']:
+                    if param in ['r1', 'r2']:
                         for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
                             # Generate the R20 key.
                             r20_key = generate_r20_key(exp_type=exp_type, frq=frq)
@@ -5287,7 +5287,7 @@ class Relax_disp(SystemTestCase):
 
                             # Compare values.
                             if spin_id == ':52@N':
-                                if param == 'r1_fit':
+                                if param == 'r1':
                                     if model == MODEL_NOREX_R1RHO_FIT_R1:
                                         self.assertAlmostEqual(value, 1.46328102)
                                     elif model == MODEL_DPL94_FIT_R1:

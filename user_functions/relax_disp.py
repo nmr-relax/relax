@@ -33,7 +33,7 @@ else:
     FD_SAVE = -1
 
 # relax module imports.
-from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kBC, kAC, phi_ex, phi_exB, phi_exC, nu_1, nu_cpmg, r1rho, r1rho_prime, r1_fit, r2, r2a, r2b, r2eff, tex, theta, w_eff, w_rf
+from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kBC, kAC, phi_ex, phi_exB, phi_exC, nu_1, nu_cpmg, r1rho, r1rho_prime, r1, r2, r2a, r2b, r2eff, tex, theta, w_eff, w_rf
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
@@ -863,7 +863,7 @@ uf.add_keyarg(
         "%s: {%s/%s, %s}" % (MODEL_R2EFF, r2eff, r1rho, i0),
         "%s: {%s, ...}" % (MODEL_NOREX, r2),
         "%s: {%s, ...}" % (MODEL_NOREX_R1RHO, r2),
-        "%s: {%s, %s, ...}" % (MODEL_NOREX_R1RHO_FIT_R1, r1_fit, r2),
+        "%s: {%s, %s, ...}" % (MODEL_NOREX_R1RHO_FIT_R1, r1, r2),
         "%s: {%s, ..., %s, %s}" % (MODEL_LM63, r2, phi_ex, kex),
         "%s: {%s, ..., %s, kB, %s, kC}" % (MODEL_LM63_3SITE, r2, phi_exB, phi_exC),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_CR72, r2, dw, kex),
@@ -884,15 +884,15 @@ uf.add_keyarg(
         "%s: {%s, ..., %s, %s}" % (MODEL_M61, r1rho_prime, phi_ex, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_M61B, r1rho_prime, dw, kex),
         "%s: {%s, ..., %s, %s}" % (MODEL_DPL94, r1rho_prime, phi_ex, kex),
-        "%s: {%s, %s, ..., %s, %s}" % (MODEL_DPL94_FIT_R1, r1_fit, r1rho_prime, phi_ex, kex),
+        "%s: {%s, %s, ..., %s, %s}" % (MODEL_DPL94_FIT_R1, r1, r1rho_prime, phi_ex, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_TP02, r1rho_prime, dw, kex),
-        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_TP02_FIT_R1, r1_fit, r1rho_prime, dw, kex),
+        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_TP02_FIT_R1, r1, r1rho_prime, dw, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_TAP03, r1rho_prime, dw, kex),
-        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_TAP03_FIT_R1, r1_fit, r1rho_prime, dw, kex),
+        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_TAP03_FIT_R1, r1, r1rho_prime, dw, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_MP05, r1rho_prime, dw, kex),
-        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_MP05_FIT_R1, r1_fit, r1rho_prime, dw, kex),
+        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_MP05_FIT_R1, r1, r1rho_prime, dw, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_NS_R1RHO_2SITE, r1rho_prime, dw, kex),
-        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_NS_R1RHO_2SITE_FIT_R1, r1_fit, r1rho_prime, dw, kex),
+        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_NS_R1RHO_2SITE_FIT_R1, r1, r1rho_prime, dw, kex),
         "%s: {%s, ..., pA, %s, %s, pB, %s, %s}" % (MODEL_NS_R1RHO_3SITE_LINEAR, r2, dw_AB, kAB, dw_BC, kBC),
         "%s: {%s, ..., pA, %s, %s, pB, %s, %s, %s}" % (MODEL_NS_R1RHO_3SITE, r2, dw_AB, kAB, dw_BC, kBC, kAC)
     ],
@@ -975,16 +975,16 @@ uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61, "The Meiboom (1961) 2-site
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61B, "The Meiboom (1961) 2-site equation for all time scales with pA >> pB and with parameters {R1rho', ..., pA, dw, kex},")
 uf.desc[-1].add_paragraph("Off-resonance models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_DPL94, "The Davis, Perlman and London (1994) 2-site fast exchange equation with parameters {R1rho', ..., phi_ex, kex},")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_DPL94_FIT_R1, "The Davis, Perlman and London (1994) 2-site fast exchange equation, where R1 is fitted, with parameters {R1rho', r1_fit, ..., phi_ex, kex},")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_DPL94_FIT_R1, "The Davis, Perlman and London (1994) 2-site fast exchange equation, where R1 is fitted, with parameters {R1rho', R1, ..., phi_ex, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_TP02, "The Trott and Palmer (2002) 2-site equation for all time scales with parameters {R1rho', ..., pA, dw, kex}.")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_TP02_FIT_R1, "The Trott and Palmer (2002) 2-site equation for all time scales, where R1 is fitted, with parameters {R1rho', r1_fit, ..., pA, dw, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_TP02_FIT_R1, "The Trott and Palmer (2002) 2-site equation for all time scales, where R1 is fitted, with parameters {R1rho', R1, ..., pA, dw, kex}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_TAP03, "The Trott, Abergel and Palmer (2003) off-resonance 2-site equation for all time scales with parameters {R1rho', ..., pA, dw, kex}.")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_TAP03_FIT_R1, "The Trott, Abergel and Palmer (2003) off-resonance 2-site equation for all time scales, where R1 is fitted, with parameters {R1rho', r1_fit, ..., pA, dw, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_TAP03_FIT_R1, "The Trott, Abergel and Palmer (2003) off-resonance 2-site equation for all time scales, where R1 is fitted, with parameters {R1rho', R1, ..., pA, dw, kex}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_MP05, "The Miloushev and Palmer (2005) 2-site off-resonance equation for all time scales with parameters {R1rho', ..., pA, dw, kex}.")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_MP05_FIT_R1, "The Miloushev and Palmer (2005) 2-site off-resonance equation for all time scales, where R1 is fitted, with parameters {R1rho', r1_fit, ..., pA, dw, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_MP05_FIT_R1, "The Miloushev and Palmer (2005) 2-site off-resonance equation for all time scales, where R1 is fitted, with parameters {R1rho', R1, ..., pA, dw, kex}.")
 uf.desc[-1].add_paragraph("The currently supported numeric models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_2SITE, "The numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors whereby the simplification R20A = R20B.  Its parameters are {R1rho', ..., pA, dw, kex}.")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_2SITE_FIT_R1, "The numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors whereby the simplification R20A = R20B and where R1 is fitted.  Its parameters are {R1rho', r1_fit, ..., pA, dw, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_2SITE_FIT_R1, "The numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors whereby the simplification R20A = R20B and where R1 is fitted.  Its parameters are {R1rho', R1, ..., pA, dw, kex}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_3SITE_LINEAR, "The numerical solution for the 3-site Bloch-McConnell equations using 3D magnetisation vectors whereby the simplification R20A = R20B = R20C is assumed and linearised with kAC = kCA = 0.  Its parameters are {R1rho', ..., pA, dw(AB), kex(AB), pB, dw(BC), kex(BC)}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_3SITE, "The numerical solution for the 3-site Bloch-McConnell equations using 3D magnetisation vectors.  Its parameters are {R1rho', ..., pA, dw(AB), kex(AB), pB, dw(BC), kex(BC), kex(AC)}.")
 # Prompt examples.

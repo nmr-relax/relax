@@ -1002,7 +1002,7 @@ class Relax_disp(API_base, API_common):
                     obj_name += '_err'
 
                 # Handle the R10 parameters.
-                if param[i] in ['r1_fit']:
+                if param[i] in ['r1']:
                     # Loop over the current keys.
                     for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
                         # The parameter key.

@@ -179,8 +179,8 @@ class Test_value(Value_base_class, TestCase):
         value.set(val=None, param='r2')
         self.assertEqual(cdp.mol[0].res[0].spin[0].r2[r20_key], 10.0)
 
-        # Then set for r1_fit
-        value.set(val=None, param='r1_fit')
+        # Then set for r1.
+        value.set(val=None, param='r1')
         print(cdp.mol[0].res[0].spin[0])
-        self.assertEqual(cdp.mol[0].res[0].spin[0].r1_fit[r20_key], 5.0)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].r1[r20_key], 5.0)
 

@@ -44,7 +44,7 @@ from gui.message import error_message, Missing_data
 from gui.string_conv import float_to_gui, gui_to_float, gui_to_int, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.peak_intensity import Peak_intensity_wizard
-from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kBC, kAC, padw2, phi_ex, phi_exB, phi_exC, r1, r1rho, r1rho_prime, r1_fit, r2, r2a, r2b, r2eff
+from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kBC, kAC, padw2, phi_ex, phi_exB, phi_exC, r1, r1rho, r1rho_prime, r1, r2, r2a, r2b, r2eff
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from pipe_control.pipes import has_bundle, has_pipe
 from specific_analyses.relax_disp.data import has_cpmg_exp_type, has_r1rho_exp_type
@@ -757,7 +757,7 @@ class Disp_model_list(Model_list):
         None,
         "{%s, ...}" % (r2),
         "{%s, ...}" % (r2),
-        "{%s, %s, ...}" % (r1_fit, r2),
+        "{%s, %s, ...}" % (r1, r2),
         None,
         "{%s, ..., %s, %s}" % (r2, phi_ex, kex),
         "{%s, ..., %s, kB, %s, kC}" % (r2, phi_exB, phi_exC),
@@ -776,15 +776,15 @@ class Disp_model_list(Model_list):
         "{%s, ..., %s, %s}" % (r1rho_prime, phi_ex, kex),
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
         "{%s, ..., %s, %s}" % (r1rho_prime, phi_ex, kex),
-        "{%s, %s, ..., %s, %s}" % (r1_fit, r1rho_prime, phi_ex, kex),
+        "{%s, %s, ..., %s, %s}" % (r1, r1rho_prime, phi_ex, kex),
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
-        "{%s, %s, ..., pA, %s, %s}" % (r1_fit, r1rho_prime, dw, kex),
+        "{%s, %s, ..., pA, %s, %s}" % (r1, r1rho_prime, dw, kex),
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
-        "{%s, %s, ..., pA, %s, %s}" % (r1_fit, r1rho_prime, dw, kex),
+        "{%s, %s, ..., pA, %s, %s}" % (r1, r1rho_prime, dw, kex),
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
-        "{%s, %s, ..., pA, %s, %s}" % (r1_fit, r1rho_prime, dw, kex),
+        "{%s, %s, ..., pA, %s, %s}" % (r1, r1rho_prime, dw, kex),
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
-        "{%s, %s, ..., pA, %s, %s}" % (r1_fit, r1rho_prime, dw, kex),
+        "{%s, %s, ..., pA, %s, %s}" % (r1, r1rho_prime, dw, kex),
         "{%s, ..., pA, %s, %s, pB, %s, %s}" % (r1rho_prime, dw_AB, kAB, dw_BC, kBC),
         "{%s, ..., pA, %s, %s, pB, %s, %s, %s}" % (r1rho_prime, dw_AB, kAB, dw_BC, kBC, kAC),
         None,

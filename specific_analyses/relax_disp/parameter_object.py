@@ -198,16 +198,16 @@ class Relax_disp_params(Param_list):
 
         # Add the parameters of all dispersion models.
         self._add(
-            'r1_fit',
+            'r1',
             scope = 'spin',
             default = 5.0,
-            desc = 'The fitted longitudinal relaxation rate',
+            desc = 'The longitudinal relaxation rate',
             py_type = dict,
             set = 'params',
             scaling = 10,
             grid_lower = 0.1,
             grid_upper = 20.0,
-            grace_string = '\\qR\\s1,fit\\N\\Q (rad.s\\S-1\\N)',
+            grace_string = '\\qR\\s1\\N\\Q (rad.s\\S-1\\N)',
             err = True,
             sim = True
         )

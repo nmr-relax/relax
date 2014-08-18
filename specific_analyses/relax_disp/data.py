@@ -4068,11 +4068,11 @@ def return_r1_data(spins=None, spin_ids=None, field_count=None, sim_index=None):
                 r20_key = generate_r20_key(exp_type=exp_type, frq=frq)
 
                 # If no data is available.
-                if len(spin.r1_fit) == 0:
+                if len(spin.r1) == 0:
                     r1[si, mi] = None
 
                 else:
-                    r1[si, mi] = spin.r1_fit[r20_key]
+                    r1[si, mi] = spin.r1[r20_key]
 
                 # Flip the flag.
                 flags[mi] = True
@@ -4180,11 +4180,11 @@ def return_r1_err_data(spins=None, spin_ids=None, field_count=None, sim_index=No
                 r20_key = generate_r20_key(exp_type=exp_type, frq=frq)
 
                 # If no Monte-Carlo simulations has been performed, there will be no error.
-                if not hasattr(spin, 'r1_fit_err'):
+                if not hasattr(spin, 'r1_err'):
                     r1_err[si, mi] = None
 
                 else:
-                    r1_err[si, mi] = spin.r1_fit_err[r20_key]
+                    r1_err[si, mi] = spin.r1_err[r20_key]
 
                 # Flip the flag.
                 flags[mi] = True

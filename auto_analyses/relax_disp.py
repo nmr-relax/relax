@@ -683,8 +683,8 @@ class Relax_disp:
 
         # For R1ho models.
         if has_r1rho_exp_type():
-            # The R1_fit parameter.
-            self.write_results_test(path=path, model=model, models_tested=models_tested, param='r1_fit')
+            # The R1 parameter.
+            self.write_results_test(path=path, model=model, models_tested=models_tested, param='r1')
 
             # The R1rho prime parameter.
             self.write_results_test(path=path, model=model, models_tested=models_tested, param='r2', file_name_ini='r1rho_prime')
