@@ -554,10 +554,8 @@ def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, 
             for key in keys:
                 # Add the data and error names if new.
                 if key not in data_names:
-                    # Replace all spaces " " with "_".
-                    key_str = key.replace(" ", "_")
-                    data_names.append(key_str)
-                    error_names.append('sd(%s)' % key_str)
+                    data_names.append(key)
+                    error_names.append('sd(%s)' % key)
 
         # List type data.
         elif isinstance(value, list):
@@ -645,6 +643,20 @@ def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, 
             # Append the scaled values and errors.
             values.append(scale(value, scaling))
             errors.append(scale(error, scaling))
+
+    # Replace all spaces " " with "_" in data_names list.
+    if isinstance(data_names, list):
+        for i, data_name in enumerate(data_names):
+            data_str = data_name.replace(" ", "_")
+            # Replace string.
+            data_names[i] = data_str
+
+    # Replace all spaces " " with "_" in error_names list.
+    if isinstance(error_names, list):
+        for i, error_name in enumerate(error_names):
+            error_str = error_name.replace(" ", "_")
+            # Replace string.
+            error_names[i] = error_str
 
     # Write the data.
     write_spin_data(file, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, data=values, data_name=data_names, error=errors, error_name=error_names)
