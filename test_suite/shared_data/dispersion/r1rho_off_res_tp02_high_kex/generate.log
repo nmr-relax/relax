@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r25065
+                                  relax repository checkout r25076
                             svn+ssh://bugman@svn.gna.org/svn/relax/trunk
 
                               Molecular dynamics by NMR data analysis
@@ -52,7 +52,7 @@ r1rho_prime = array([[10.0, 15.0], [12.0, 18.0]], float64)  # The R1rho' value p
 r1 = array([[1.0, 1.2], [1.1, 1.3]], float64)    # The R1 value per spin and per field.
 r1_err = 0.1
 pA = 0.7654321
-kex = 1e5
+kex = 2e5
 delta_omega = array([7.0, 9.0], float64)    # The chemical shift difference in ppm.
 frqs = array([-50.6985939545, -81.1177503272], float64)
 frq_label = ['500MHz', '800MHz']
