@@ -200,7 +200,7 @@ class Relax_disp_params(Param_list):
         self._add(
             'r1',
             scope = 'spin',
-            default = 5.0,
+            default = 2.0,
             desc = 'The longitudinal relaxation rate',
             py_type = dict,
             set = 'params',
