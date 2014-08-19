@@ -28,7 +28,7 @@ from functools import partial
 from operator import attrgetter, ne
 
 # relax module imports.
-from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, EXP_TYPE_CPMG_MMQ, EXP_TYPE_R1RHO, EXP_TYPE_CPMG_SQ, EXP_TYPE_NOREX, EXP_TYPE_NOREX_R1RHO, EXP_TYPE_R2EFF, MODEL_DESC, MODEL_EQ, MODEL_EXP_TYPE, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO_FIT_R1_ONLY, MODEL_LIST_R1RHO_W_R1_ONLY, MODEL_CR72, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_MMQ_CR72, MODEL_NEST, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_SITES, MODEL_YEAR, PARAMS_R20
+from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, EXP_TYPE_CPMG_MMQ, EXP_TYPE_R1RHO, EXP_TYPE_CPMG_SQ, EXP_TYPE_NOREX, EXP_TYPE_NOREX_R1RHO, EXP_TYPE_R2EFF, MODEL_DESC, MODEL_EQ, MODEL_EXP_TYPE, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO_FIT_R1_ONLY, MODEL_LIST_R1RHO_W_R1_ONLY, MODEL_CR72, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_MMQ_CR72, MODEL_NEST, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_PARAMS_LM63, MODEL_PARAMS_LM63_3SITE, MODEL_SITES, MODEL_YEAR, PARAMS_R20
 
 
 # Define class for describing the model.
@@ -173,6 +173,67 @@ def nesting_model(self_models=None, model=None):
 
         # If nothing is found, return None.
         return model_info, None
+
+
+# Define function, to determine which parameters to nest/copy over.
+def nesting_param(model_params=None, nested_model_params=None):
+    """Determine the conversion from the nested models params, to the current model params.
+
+    @keyword model_params:          The list of the current model parameters.
+    @type model_params:             list of str
+    @keyword nested_model_params:   The list of the nested model parameters.
+    @type nested_model_params:      list of str
+    @return:                        A dictionary of parameter conversion for the current model params. 
+    @rtype:                         dictionary
+    """
+
+    # Define dictionary.
+    par_dic = {}
+
+    # Loop over the parameters in the model parameters.
+    for param in model_params:
+        # The R20 parameters.
+        if param in PARAMS_R20:
+            # If both models have same parameter.
+            if param in nested_model_params:
+                par_dic[param] = param
+
+            # If copying from a simple model to a complex model.
+            elif param == 'r2a' and 'r2' in nested_model_params:
+                par_dic[param] = 'r2'
+
+            elif param == 'r2b' and 'r2' in nested_model_params:
+                par_dic[param] = 'r2'
+
+            # If copying from a complex model to a simple model.
+            elif param == 'r2' and 'r2a' in nested_model_params:
+                par_dic[param] = 'r2a'
+
+        # All other parameters.
+        elif param in nested_model_params:
+            par_dic[param] = param
+
+        else:
+            par_dic[param] = None
+
+    ## The LM63 3-site model parameters.
+    if set(model_params) == set(MODEL_PARAMS_LM63_3SITE) and set(nested_model_params) == set(MODEL_PARAMS_LM63):
+        for param in model_params:
+            if param == 'phi_ex_B':
+                par_dic[param] = 'phi_ex'
+
+            elif param == 'phi_ex_C':
+                par_dic[param] = 'phi_ex'
+
+            elif param == 'kB':
+                par_dic[param] = 'kex'
+
+            elif param == 'kC':
+                par_dic[param] = 'kex'
+
+
+    # Return the dictionary of conversion.
+    return par_dic
 
 
 # Define function, to sort models.
