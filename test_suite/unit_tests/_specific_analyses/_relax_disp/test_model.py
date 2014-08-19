@@ -29,7 +29,7 @@ class Test_model(UnitTestCase):
     """Unit tests for the functions of the specific_analyses.relax_disp.variables module."""
 
 
-    def test_nesting_model_cpmg(self):
+    def test_nesting_model_cpmg_1(self):
         """Unit test of function nesting_model, which determine which model to nest from, testing for CPMG experiments."""
 
         ## Test numerical model return.
@@ -38,9 +38,18 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_NS_CPMG_2SITE_STAR
+        model_nest = MODEL_NS_CPMG_2SITE_3D
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_CPMG_2SITE_3D)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+
+
+    def test_nesting_model_cpmg_2(self):
+        """Unit test of function nesting_model, which determine which model to nest from, testing for CPMG experiments."""
 
         ## Test numerical full model return.
         # Define all the models tested in the analysis.
@@ -48,9 +57,18 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_NS_CPMG_2SITE_STAR_FULL
+        model_nest = MODEL_NS_CPMG_2SITE_3D_FULL
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_CPMG_2SITE_3D_FULL)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+
+
+    def test_nesting_model_cpmg_3(self):
+        """Unit test of function nesting_model, which determine which model to nest from, testing for CPMG experiments."""
 
         ## Test silico simple return from a full model request.
         # Define all the models tested in the analysis.
@@ -58,9 +76,18 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_B14_FULL
+        model_nest = MODEL_NS_CPMG_2SITE_EXPANDED
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_CPMG_2SITE_EXPANDED)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+
+
+    def test_nesting_model_cpmg_4(self):
+        """Unit test of function nesting_model, which determine which model to nest from, testing for CPMG experiments."""
 
         ## Test LM63 model request.
         # Define all the models tested in the analysis.
@@ -68,9 +95,18 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_LM63_3SITE
+        model_nest = MODEL_LM63
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_LM63)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+
+
+    def test_nesting_model_cpmg_5(self):
+        """Unit test of function nesting_model, which determine which model to nest from, testing for CPMG experiments."""
 
         ## Test MODEL_CR72_FULL model request.
         # Define all the models tested in the analysis.
@@ -78,9 +114,18 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_CR72_FULL
+        model_nest = MODEL_CR72
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_CR72)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+
+
+    def test_nesting_model_cpmg_6(self):
+        """Unit test of function nesting_model, which determine which model to nest from, testing for CPMG experiments."""
 
         ## Test MODEL_CR72_FULL model request, when models are ordered different.
         # Define all the models tested in the analysis.
@@ -88,9 +133,18 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_CR72_FULL
+        model_nest = MODEL_B14_FULL
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_B14_FULL)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+
+
+    def test_nesting_model_cpmg_7(self):
+        """Unit test of function nesting_model, which determine which model to nest from, testing for CPMG experiments."""
 
         ## Test MODEL_CR72 model request, when models are LM63.
         # Define all the models tested in the analysis.
@@ -98,9 +152,18 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_CR72
+        model_nest = MODEL_LM63
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_LM63)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+
+
+    def test_nesting_model_cpmg_8(self):
+        """Unit test of function nesting_model, which determine which model to nest from, testing for CPMG experiments."""
 
         ## Test MODEL_IT99 model request, when models are CR72.
         # Define all the models tested in the analysis.
@@ -108,9 +171,18 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_IT99
+        model_nest = MODEL_CR72
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_CR72)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+
+
+    def test_nesting_model_cpmg_9(self):
+        """Unit test of function nesting_model, which determine which model to nest from, testing for CPMG experiments."""
 
         ## Test MODEL_CR72 model request, when models are MODEL_IT99.
         # Define all the models tested in the analysis.
@@ -118,12 +190,17 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_CR72
+        model_nest = MODEL_IT99
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_IT99)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
 
 
-    def test_nesting_model_cpmg_mmq(self):
+    def test_nesting_model_cpmg_mmq_1(self):
         """Unit test of function nesting_model, which determine which model to nest from, testing for CPMG MMQ experiments."""
 
         ## Test MODEL_MMQ_CR72 model request, when models are MODEL_CR72.
@@ -132,9 +209,18 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_MMQ_CR72
+        model_nest = MODEL_CR72
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_CR72)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+
+
+    def test_nesting_model_cpmg_mmq_2(self):
+        """Unit test of function nesting_model, which determine which model to nest from, testing for CPMG MMQ experiments."""
 
         ## Test MODEL_NS_MMQ_3SITE_LINEAR model request, when models are MODEL_NS_MMQ_2SITE.
         # Define all the models tested in the analysis.
@@ -142,9 +228,18 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_NS_MMQ_3SITE_LINEAR
+        model_nest = MODEL_NS_MMQ_2SITE
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_MMQ_2SITE)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+
+
+    def test_nesting_model_cpmg_mmq_3(self):
+        """Unit test of function nesting_model, which determine which model to nest from, testing for CPMG MMQ experiments."""
 
         ## Test MODEL_NS_MMQ_3SITE model request, when models are MODEL_NS_MMQ_3SITE_LINEAR.
         # Define all the models tested in the analysis.
@@ -152,9 +247,18 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_NS_MMQ_3SITE
+        model_nest = MODEL_NS_MMQ_3SITE_LINEAR
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_MMQ_3SITE_LINEAR)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+
+
+    def test_nesting_model_cpmg_mmq_4(self):
+        """Unit test of function nesting_model, which determine which model to nest from, testing for CPMG MMQ experiments."""
 
         ## Test MODEL_NS_MMQ_3SITE model request, when models are MODEL_NS_MMQ_2SITE.
         # Define all the models tested in the analysis.
@@ -162,12 +266,17 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_NS_MMQ_3SITE
+        model_nest = MODEL_NS_MMQ_2SITE
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_MMQ_2SITE)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
 
 
-    def test_nesting_model_r1rho_ns(self):
+    def test_nesting_model_r1rho_ns_1(self):
         """Unit test of function nesting_model, which determine which model to nest from, testing for numerical R1rho experiments."""
 
         ## Test MODEL_NS_R1RHO_3SITE_LINEAR model request, when models are MODEL_NS_R1RHO_2SITE.
@@ -176,9 +285,18 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_NS_R1RHO_3SITE_LINEAR
+        model_nest = MODEL_NS_R1RHO_2SITE
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_R1RHO_2SITE)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+
+
+    def test_nesting_model_r1rho_ns_2(self):
+        """Unit test of function nesting_model, which determine which model to nest from, testing for numerical R1rho experiments."""
 
         ## Test MODEL_NS_R1RHO_3SITE model request, when models are MODEL_NS_R1RHO_3SITE_LINEAR.
         # Define all the models tested in the analysis.
@@ -186,9 +304,18 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_NS_R1RHO_3SITE
+        model_nest = MODEL_NS_R1RHO_3SITE_LINEAR
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_R1RHO_3SITE_LINEAR)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+
+
+    def test_nesting_model_r1rho_ns_3(self):
+        """Unit test of function nesting_model, which determine which model to nest from, testing for numerical R1rho experiments."""
 
         ## Test MODEL_NS_R1RHO_3SITE model request, when models are MODEL_NS_R1RHO_2SITE.
         # Define all the models tested in the analysis.
@@ -196,12 +323,17 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_NS_R1RHO_3SITE
+        model_nest = MODEL_NS_R1RHO_2SITE
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_R1RHO_2SITE)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
 
 
-    def test_nesting_model_r1rho(self):
+    def test_nesting_model_r1rho_1(self):
         """Unit test of function nesting_model, which determine which model to nest from, testing for R1rho experiments."""
 
         ## Test MODEL_MP05_FIT_R1 model request, when models are all R1rho models with fitted R1.
@@ -210,9 +342,18 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_MP05_FIT_R1
+        model_nest = MODEL_TAP03_FIT_R1
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_TAP03_FIT_R1)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+
+
+    def test_nesting_model_r1rho_2(self):
+        """Unit test of function nesting_model, which determine which model to nest from, testing for R1rho experiments."""
 
         ## Test MODEL_TP02_FIT_R1 model request, when models are all R1rho models with fitted R1, and MODEL_NS_R1RHO_2SITE_FIT_R1 was fitted first.
         # Define all the models tested in the analysis.
@@ -220,9 +361,18 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_TP02_FIT_R1
+        model_nest = MODEL_NS_R1RHO_2SITE_FIT_R1
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_R1RHO_2SITE_FIT_R1)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+
+
+    def test_nesting_model_r1rho_3(self):
+        """Unit test of function nesting_model, which determine which model to nest from, testing for R1rho experiments."""
 
         ## Test MODEL_DPL94_FIT_R1 model request, when models are all R1rho models with fitted R1, and MODEL_NS_R1RHO_2SITE_FIT_R1 was fitted first.
         # Define all the models tested in the analysis.
@@ -230,9 +380,18 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_DPL94_FIT_R1
+        model_nest = MODEL_NS_R1RHO_2SITE_FIT_R1
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_NS_R1RHO_2SITE_FIT_R1)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+
+
+    def test_nesting_model_r1rho_4(self):
+        """Unit test of function nesting_model, which determine which model to nest from, testing for R1rho experiments."""
 
         ## Test MODEL_TP02_FIT_R1 model request, when model are all R1rho models with fitted R1, and MODEL_DPL94_FIT_R1 was fitted first.
         # Define all the models tested in the analysis.
@@ -240,9 +399,14 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_TP02_FIT_R1
+        model_nest = MODEL_DPL94_FIT_R1
+
+        print("self.models is:", self_models)
+        print("Current model to analyse is:", model)
+        print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, MODEL_DPL94_FIT_R1)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
 
 
     def test_sort_models(self):
