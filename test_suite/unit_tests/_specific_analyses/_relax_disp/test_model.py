@@ -152,14 +152,14 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_CR72
-        model_nest = MODEL_LM63
+        model_nest = None
 
         print("self.models is:", self_models)
         print("Current model to analyse is:", model)
         print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1], model_nest)
 
 
     def test_nesting_model_cpmg_8(self):
@@ -171,14 +171,14 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_IT99
-        model_nest = MODEL_CR72
+        model_nest = None
 
         print("self.models is:", self_models)
         print("Current model to analyse is:", model)
         print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1], model_nest)
 
 
     def test_nesting_model_cpmg_9(self):
@@ -190,14 +190,14 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_CR72
-        model_nest = MODEL_IT99
+        model_nest = None
 
         print("self.models is:", self_models)
         print("Current model to analyse is:", model)
         print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1], model_nest)
 
 
     def test_nesting_model_cpmg_mmq_1(self):
@@ -209,14 +209,14 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_MMQ_CR72
-        model_nest = MODEL_CR72
+        model_nest = None
 
         print("self.models is:", self_models)
         print("Current model to analyse is:", model)
         print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1], model_nest)
 
 
     def test_nesting_model_cpmg_mmq_2(self):
@@ -361,14 +361,14 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_TP02_FIT_R1
-        model_nest = MODEL_NS_R1RHO_2SITE_FIT_R1
+        model_nest = None
 
         print("self.models is:", self_models)
         print("Current model to analyse is:", model)
         print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1], model_nest)
 
 
     def test_nesting_model_r1rho_3(self):
@@ -380,14 +380,14 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_DPL94_FIT_R1
-        model_nest = MODEL_NS_R1RHO_2SITE_FIT_R1
+        model_nest = None
 
         print("self.models is:", self_models)
         print("Current model to analyse is:", model)
         print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1], model_nest)
 
 
     def test_nesting_model_r1rho_4(self):
@@ -399,14 +399,14 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_TP02_FIT_R1
-        model_nest = MODEL_DPL94_FIT_R1
+        model_nest = None
 
         print("self.models is:", self_models)
         print("Current model to analyse is:", model)
         print("Expected nest model is:", model_nest)
 
         # Test the return.
-        self.assertEqual(nesting_model(self_models=self_models, model=model)[1].model, model_nest)
+        self.assertEqual(nesting_model(self_models=self_models, model=model)[1], model_nest)
 
 
     def test_sort_models(self):
