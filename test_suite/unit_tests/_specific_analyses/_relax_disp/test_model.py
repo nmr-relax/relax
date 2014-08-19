@@ -20,8 +20,9 @@
 ###############################################################################
 
 # relax module imports.
-from specific_analyses.relax_disp.model import nesting_model, sort_models
+from specific_analyses.relax_disp.model import nesting_model, nesting_param, sort_models
 from specific_analyses.relax_disp.variables import MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_MMQ_CR72, MODEL_LM63, MODEL_LM63_3SITE, MODEL_MP05_FIT_R1, MODEL_NOREX, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_2SITE_FIT_R1, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import MODEL_PARAMS_B14_FULL, MODEL_PARAMS_CR72, MODEL_PARAMS_CR72_FULL, MODEL_PARAMS_LM63, MODEL_PARAMS_LM63_3SITE, MODEL_PARAMS_MMQ_CR72, MODEL_PARAMS_MP05_FIT_R1, MODEL_PARAMS_NS_MMQ_2SITE, MODEL_PARAMS_NS_MMQ_3SITE, MODEL_PARAMS_NS_MMQ_3SITE_LINEAR, MODEL_PARAMS_NS_R1RHO_2SITE, MODEL_PARAMS_NS_R1RHO_3SITE, MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS_TAP03_FIT_R1
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
@@ -407,6 +408,261 @@ class Test_model(UnitTestCase):
 
         # Test the return.
         self.assertEqual(nesting_model(self_models=self_models, model=model)[1], model_nest)
+
+
+    def test_nesting_param_1(self):
+        """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
+
+        # Define parameters
+        model_params = MODEL_PARAMS_LM63_3SITE
+        nested_model_params = MODEL_PARAMS_LM63
+
+        # Get the dictionary of parameter conversion.
+        par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
+
+        # Test the number of elements in the dictionary.
+        self.assertEqual(len(par_dic), len(model_params))
+
+        print("model parameters", model_params)
+        print("nested_model_params", nested_model_params)
+
+        # Test content of dictionary.
+        self.assertEqual(par_dic['r2'], 'r2')
+        self.assertEqual(par_dic['phi_ex_B'], 'phi_ex')
+        self.assertEqual(par_dic['phi_ex_C'], 'phi_ex')
+        self.assertEqual(par_dic['kB'], 'kex')
+        self.assertEqual(par_dic['kC'], 'kex')
+
+
+    def test_nesting_param_2(self):
+        """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
+
+        # Define parameters
+        model_params = MODEL_PARAMS_CR72_FULL
+        nested_model_params = MODEL_PARAMS_CR72
+
+        # Get the dictionary of parameter conversion.
+        par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
+
+        # Test the number of elements in the dictionary.
+        self.assertEqual(len(par_dic), len(model_params))
+
+        print("model parameters", model_params)
+        print("nested_model_params", nested_model_params)
+
+        # Test content of dictionary.
+        self.assertEqual(par_dic['r2a'], 'r2')
+        self.assertEqual(par_dic['r2b'], 'r2')
+        self.assertEqual(par_dic['pA'], 'pA')
+        self.assertEqual(par_dic['dw'], 'dw')
+        self.assertEqual(par_dic['kex'], 'kex')
+
+
+    def test_nesting_param_3(self):
+        """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
+
+        # Define parameters
+        model_params = MODEL_PARAMS_CR72
+        nested_model_params = MODEL_PARAMS_CR72_FULL
+
+        # Get the dictionary of parameter conversion.
+        par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
+
+        # Test the number of elements in the dictionary.
+        self.assertEqual(len(par_dic), len(model_params))
+
+        print("model parameters", model_params)
+        print("nested_model_params", nested_model_params)
+
+        # Test content of dictionary.
+        self.assertEqual(par_dic['r2'], 'r2a')
+        self.assertEqual(par_dic['pA'], 'pA')
+        self.assertEqual(par_dic['dw'], 'dw')
+        self.assertEqual(par_dic['kex'], 'kex')
+
+
+    def test_nesting_param_4(self):
+        """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
+
+        # Define parameters
+        model_params = MODEL_PARAMS_B14_FULL
+        nested_model_params = MODEL_PARAMS_CR72_FULL
+
+        # Get the dictionary of parameter conversion.
+        par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
+
+        # Test the number of elements in the dictionary.
+        self.assertEqual(len(par_dic), len(model_params))
+
+        print("model parameters", model_params)
+        print("nested_model_params", nested_model_params)
+
+        # Test content of dictionary.
+        self.assertEqual(par_dic['r2a'], 'r2a')
+        self.assertEqual(par_dic['r2b'], 'r2b')
+        self.assertEqual(par_dic['pA'], 'pA')
+        self.assertEqual(par_dic['dw'], 'dw')
+        self.assertEqual(par_dic['kex'], 'kex')
+
+
+    def test_nesting_param_5(self):
+        """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
+
+        # Define parameters
+        model_params = MODEL_PARAMS_TAP03_FIT_R1
+        nested_model_params = MODEL_PARAMS_MP05_FIT_R1
+
+        # Get the dictionary of parameter conversion.
+        par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
+
+        # Test the number of elements in the dictionary.
+        self.assertEqual(len(par_dic), len(model_params))
+
+        print("model parameters", model_params)
+        print("nested_model_params", nested_model_params)
+
+        # Test content of dictionary.
+        self.assertEqual(par_dic['r1'], 'r1')
+        self.assertEqual(par_dic['r2'], 'r2')
+        self.assertEqual(par_dic['pA'], 'pA')
+        self.assertEqual(par_dic['dw'], 'dw')
+        self.assertEqual(par_dic['kex'], 'kex')
+
+
+    def test_nesting_param_6(self):
+        """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
+
+        # Define parameters
+        model_params = MODEL_PARAMS_NS_R1RHO_3SITE
+        nested_model_params = MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR
+
+        # Get the dictionary of parameter conversion.
+        par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
+
+        # Test the number of elements in the dictionary.
+        self.assertEqual(len(par_dic), len(model_params))
+
+        print("model parameters", model_params)
+        print("nested_model_params", nested_model_params)
+
+        # Test content of dictionary.
+        self.assertEqual(par_dic['r2'], 'r2')
+        self.assertEqual(par_dic['pA'], 'pA')
+        self.assertEqual(par_dic['dw_AB'], 'dw_AB')
+        self.assertEqual(par_dic['kex_AB'], 'kex_AB')
+        self.assertEqual(par_dic['pB'], 'pB')
+        self.assertEqual(par_dic['dw_BC'], 'dw_BC')
+        self.assertEqual(par_dic['kex_BC'], 'kex_BC')
+        self.assertEqual(par_dic['kex_AC'], None)
+
+
+    def test_nesting_param_7(self):
+        """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
+
+        # Define parameters
+        model_params = MODEL_PARAMS_NS_R1RHO_3SITE
+        nested_model_params = MODEL_PARAMS_NS_R1RHO_2SITE
+
+        # Get the dictionary of parameter conversion.
+        par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
+
+        # Test the number of elements in the dictionary.
+        self.assertEqual(len(par_dic), len(model_params))
+
+        print("model parameters", model_params)
+        print("nested_model_params", nested_model_params)
+
+        # Test content of dictionary.
+        self.assertEqual(par_dic['r2'], 'r2')
+        self.assertEqual(par_dic['pA'], 'pA')
+        self.assertEqual(par_dic['dw_AB'], None)
+        self.assertEqual(par_dic['kex_AB'], None)
+        self.assertEqual(par_dic['pB'], None)
+        self.assertEqual(par_dic['dw_BC'], None)
+        self.assertEqual(par_dic['kex_BC'], None)
+        self.assertEqual(par_dic['kex_AC'], None)
+
+
+    def test_nesting_param_8(self):
+        """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
+
+        # Define parameters
+        model_params = MODEL_PARAMS_NS_MMQ_2SITE
+        nested_model_params = MODEL_PARAMS_MMQ_CR72
+
+        # Get the dictionary of parameter conversion.
+        par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
+
+        # Test the number of elements in the dictionary.
+        self.assertEqual(len(par_dic), len(model_params))
+
+        print("model parameters", model_params)
+        print("nested_model_params", nested_model_params)
+
+        # Test content of dictionary.
+        self.assertEqual(par_dic['r2'], 'r2')
+        self.assertEqual(par_dic['pA'], 'pA')
+        self.assertEqual(par_dic['dw'], 'dw')
+        self.assertEqual(par_dic['dwH'], 'dwH')
+        self.assertEqual(par_dic['kex'], 'kex')
+
+
+    def test_nesting_param_9(self):
+        """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
+
+        # Define parameters
+        model_params = MODEL_PARAMS_NS_MMQ_3SITE
+        nested_model_params = MODEL_PARAMS_NS_MMQ_3SITE_LINEAR
+
+        # Get the dictionary of parameter conversion.
+        par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
+
+        # Test the number of elements in the dictionary.
+        self.assertEqual(len(par_dic), len(model_params))
+
+        print("model parameters", model_params)
+        print("nested_model_params", nested_model_params)
+
+        # Test content of dictionary.
+        self.assertEqual(par_dic['r2'], 'r2')
+        self.assertEqual(par_dic['pA'], 'pA')
+        self.assertEqual(par_dic['dw_AB'], 'dw_AB')
+        self.assertEqual(par_dic['dwH_AB'], 'dwH_AB')
+        self.assertEqual(par_dic['kex_AB'], 'kex_AB')
+        self.assertEqual(par_dic['pB'], 'pB')
+        self.assertEqual(par_dic['dw_BC'], 'dw_BC')
+        self.assertEqual(par_dic['dwH_BC'], 'dwH_BC')
+        self.assertEqual(par_dic['kex_BC'], 'kex_BC')
+        self.assertEqual(par_dic['kex_AC'], None)
+
+
+    def test_nesting_param_10(self):
+        """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
+
+        # Define parameters
+        model_params = MODEL_PARAMS_NS_MMQ_3SITE
+        nested_model_params = MODEL_PARAMS_NS_MMQ_2SITE
+
+        # Get the dictionary of parameter conversion.
+        par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
+
+        # Test the number of elements in the dictionary.
+        self.assertEqual(len(par_dic), len(model_params))
+
+        print("model parameters", model_params)
+        print("nested_model_params", nested_model_params)
+
+        # Test content of dictionary.
+        self.assertEqual(par_dic['r2'], 'r2')
+        self.assertEqual(par_dic['pA'], 'pA')
+        self.assertEqual(par_dic['dw_AB'], None)
+        self.assertEqual(par_dic['dwH_AB'], None)
+        self.assertEqual(par_dic['kex_AB'], None)
+        self.assertEqual(par_dic['pB'], None)
+        self.assertEqual(par_dic['dw_BC'], None)
+        self.assertEqual(par_dic['dwH_BC'], None)
+        self.assertEqual(par_dic['kex_BC'], None)
+        self.assertEqual(par_dic['kex_AC'], None)
 
 
     def test_sort_models(self):
