@@ -34,36 +34,43 @@ from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_S
 # Define class for describing the model.
 # This class is defined to be able to make better sorting of the models.
 class model_class:
-    def __init__(self, model=None, desc=None, exp_type=None, eq=None, sites=None, year=None, params=None, params_nr=None):
+    def __init__(self, model=None):
         """Class for storing model information.
 
         @keyword model:     Current model
         @type model:        str
-        @keyword desc:      Model description.
-        @type desc:         str
-        @keyword exp_type:  Model experiment type.
-        @type exp_type:     str
-        @keyword eq:        Model equation type.
-        @type eq:           str
-        @keyword sites:     Number of chemical sites in model.
-        @type site:         int
-        @keyword year:      Which year model was described or published.
-        @type year:         int
-        @keyword params:    Parameters belonging to model.
-        @type params:       list of str
-        @keyword params_nr: Nr of parameters belonging to model.
-        @type params_nr:    int
         """
 
         # Save the info to variables.
         self.model = model
-        self.desc = desc
-        self.exp_type = exp_type
-        self.eq = eq
-        self.sites = sites
-        self.year = year
-        self.params = params
-        self.params_nr = params_nr
+
+        # model description.
+        model_DESC = MODEL_DESC[self.model]
+        self.desc = model_DESC
+
+        # model equation type: analytic, silico or numeric.
+        model_EQ = MODEL_EQ[self.model]
+        self.eq = model_EQ
+
+        # The model experiment type.
+        model_EXP_TYPE = MODEL_EXP_TYPE[self.model]
+        self.exp_type = model_EXP_TYPE
+
+        # model parameters.
+        model_PARAMS = MODEL_PARAMS[self.model]
+        self.params = model_PARAMS
+
+        # model number of parameters.
+        model_PARAMS_NR = len(model_PARAMS)
+        self.params_nr = model_PARAMS_NR
+
+        # The number of chemical sites.
+        model_SITES = MODEL_SITES[self.model]
+        self.sites = model_SITES
+
+        # year where model was developed or published.
+        model_YEAR = MODEL_YEAR[self.model]
+        self.year = model_YEAR
 
         # Define the order of how exp type ranks.
         order_exp_type = [EXP_TYPE_R2EFF, EXP_TYPE_NOREX, EXP_TYPE_NOREX_R1RHO, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_MMQ, EXP_TYPE_R1RHO]
@@ -106,29 +113,8 @@ def models_info(models=None):
 
     # Loop over models.
     for model in models:
-        # model description.
-        model_DESC = MODEL_DESC[model]
-
-        # model equation type: analytic, silico or numeric.
-        model_EQ = MODEL_EQ[model]
-
-        # The model experiment type.
-        model_EXP_TYPE = MODEL_EXP_TYPE[model]
-
-        # model parameters.
-        model_PARAMS = MODEL_PARAMS[model]
-
-        # model number of parameters.
-        model_PARAMS_NR = len(model_PARAMS)
-
-        # The number of chemical sites.
-        model_SITES = MODEL_SITES[model]
-
-        # year where model was developed or published.
-        model_YEAR = MODEL_YEAR[model]
-
         # Append to the list, the class instance of model info.
-        models_info.append(model_class(model=model, desc=model_DESC, exp_type=model_EXP_TYPE, eq=model_EQ, sites=model_SITES, year=model_YEAR, params=model_PARAMS, params_nr=model_PARAMS_NR))
+        models_info.append(model_class(model=model))
 
     # Return the list of model info.
     return models_info
