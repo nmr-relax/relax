@@ -191,6 +191,38 @@ def nesting_model(self_models=None, model=None):
             if part_compa_model_params == part_model_params:
                 return model_info, compa_model
 
+        # Loop over the list of comparable models, if the parameters are part of the more complex model, return that as nested model.
+        for compa_model in compa_models:
+            # If the params list are within the parameter list, then return that model.
+            param_in = False
+
+            # Loop over the parameters.
+            for param in compa_model.params:
+                if param in model_info.params:
+                    param_in = True
+
+                # Special situation, where 'kex' can still be nested from DPL94 model.
+                elif param == 'phi_ex' and compa_model.model in MODEL_LIST_R1RHO_W_R1_ONLY + MODEL_LIST_R1RHO_FIT_R1_ONLY and model in MODEL_LIST_R1RHO_W_R1_ONLY + MODEL_LIST_R1RHO_FIT_R1_ONLY:
+                    continue
+
+                # Special situation, where 'kex' can still be nested from LM63 model.
+                elif param == 'phi_ex' and compa_model.model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG and model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG:
+                    continue
+
+                # Special situation, where 'kex'=1/tex can still be nested from IT99 model.
+                elif param == 'tex' and compa_model.model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG and model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG:
+                    continue
+
+                # Else break out of the loop.
+                else:
+                    # Break the for loop, if not found.
+                    param_in = False
+                    break
+
+            # If all parameters are found in the more complex model.
+            if param_in:
+                return model_info, compa_model
+
         # Special case for LM63
         if model == MODEL_LM63_3SITE:
             # Loop over the models.
@@ -213,6 +245,22 @@ def nesting_model(self_models=None, model=None):
             for compa_model in compa_models:
                 # If one of the comparable models is MODEL_NS_MMQ_2SITE, return this.
                 if compa_model.model == MODEL_NS_R1RHO_2SITE:
+                    return model_info, compa_model
+
+        # Special case for DPL94.
+        elif model in [MODEL_DPL94, MODEL_DPL94_FIT_R1]:
+            # Loop over the models.
+            for compa_model in compa_models:
+                # If one of the comparable models is in list with R1rho R1, return this.
+                if compa_model.model in MODEL_LIST_R1RHO_W_R1_ONLY + MODEL_LIST_R1RHO_FIT_R1_ONLY:
+                    return model_info, compa_model
+
+        # Special case for IT99.
+        elif model in [MODEL_IT99]:
+            # Loop over the models.
+            for compa_model in compa_models:
+                # If one of the comparable models is in list with R1rho R1, return this.
+                if compa_model.model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG:
                     return model_info, compa_model
 
         # If all fails.
