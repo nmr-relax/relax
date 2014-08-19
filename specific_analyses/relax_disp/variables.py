@@ -360,13 +360,6 @@ MODEL_EQ_NS_MMQ_3SITE_LINEAR = EQ_NUMERIC
 # The parameters.
 PARAMS_R20 = ['r2', 'r2a', 'r2b']
 
-# The defined models, which is used for nesting.
-MODEL_NEST_CPMG = MODEL_CR72
-MODEL_NEST_MMQ =  MODEL_MMQ_CR72
-MODEL_NEST_R1RHO = MODEL_MP05
-
-MODEL_LIST_NEST = [MODEL_NEST_CPMG, MODEL_NEST_MMQ, MODEL_NEST_R1RHO]
-
 # The model lists.
 ## The CPMG models
 ### The analytical CPMG models.
@@ -496,6 +489,13 @@ MODEL_LIST_DW_MIX_DOUBLE = [MODEL_LM63_3SITE, MODEL_MMQ_CR72, MODEL_NS_MMQ_2SITE
 MODEL_LIST_DW_MIX_QUADRUPLE = [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]
 """Models using parameters with mixed dw, and has four variables. For example with both dw_AB, dw_BC, dwH_AB and dwH_BC."""
 
+
+# The defined models, which is used for nesting.
+MODEL_NEST_CPMG = MODEL_CR72
+MODEL_NEST_MMQ =  MODEL_MMQ_CR72
+MODEL_NEST_R1RHO = MODEL_MP05
+
+MODEL_LIST_NEST = [MODEL_NEST_CPMG, MODEL_NEST_MMQ, MODEL_NEST_R1RHO]
 
 
 # Full model description list.
