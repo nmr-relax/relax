@@ -33,7 +33,7 @@ from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_S
 
 # Define class for describing the model.
 # This class is defined to be able to make better sorting of the models.
-class model_class:
+class Model_class:
     def __init__(self, model=None):
         """Class for storing model information.
 
@@ -45,42 +45,35 @@ class model_class:
         self.model = model
 
         # model description.
-        model_DESC = MODEL_DESC[self.model]
-        self.desc = model_DESC
+        self.desc = MODEL_DESC[self.model]
 
         # model equation type: analytic, silico or numeric.
-        model_EQ = MODEL_EQ[self.model]
-        self.eq = model_EQ
+        self.eq =  MODEL_EQ[self.model]
 
         # The model experiment type.
-        model_EXP_TYPE = MODEL_EXP_TYPE[self.model]
-        self.exp_type = model_EXP_TYPE
+        self.exp_type = MODEL_EXP_TYPE[self.model]
 
         # model parameters.
-        model_PARAMS = MODEL_PARAMS[self.model]
-        self.params = model_PARAMS
+        self.params = MODEL_PARAMS[self.model]
 
         # model number of parameters.
-        model_PARAMS_NR = len(model_PARAMS)
-        self.params_nr = model_PARAMS_NR
+        self.params_nr = len(self.params)
 
         # The number of chemical sites.
-        model_SITES = MODEL_SITES[self.model]
-        self.sites = model_SITES
+        self.sites = MODEL_SITES[self.model]
 
         # year where model was developed or published.
-        model_YEAR = MODEL_YEAR[self.model]
-        self.year = model_YEAR
+        self.year = MODEL_YEAR[self.model]
 
         # Ordered lists of models to nest from.
-        model_NEST = MODEL_NEST[self.model]
+        nest_list = MODEL_NEST[self.model]
 
         # Remove the model itself from the list.
-        if model_NEST == None:
-            self.nest_list = model_NEST
+        if nest_list == None:
+            self.nest_list = nest_list
         else:
-            model_NEST = filter(partial(ne, self.model), model_NEST)
-            self.nest_list = model_NEST
+            nest_list = filter(partial(ne, self.model), nest_list)
+            self.nest_list = nest_list
 
         # Define the order of how exp type ranks.
         order_exp_type = [EXP_TYPE_R2EFF, EXP_TYPE_NOREX, EXP_TYPE_NOREX_R1RHO, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_MMQ, EXP_TYPE_R1RHO]
@@ -124,7 +117,7 @@ def models_info(models=None):
     # Loop over models.
     for model in models:
         # Append to the list, the class instance of model info.
-        models_info.append(model_class(model=model))
+        models_info.append(Model_class(model=model))
 
     # Return the list of model info.
     return models_info
