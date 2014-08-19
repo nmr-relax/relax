@@ -5378,7 +5378,8 @@ class Relax_disp(SystemTestCase):
 
 
         # Print the final pipe.
-        self.interpreter.pipe.switch(pipe_name='%s - relax_disp' % ('final'))
+        model = 'final'
+        self.interpreter.pipe.switch(pipe_name='%s - relax_disp' % (model))
         print("\nFinal pipe")
 
         # Loop over the spins.
@@ -5393,6 +5394,45 @@ class Relax_disp(SystemTestCase):
             # Get the value.
             value = getattr(cur_spin, param)
             print("%-10s %-6s %-6s %6s" % ("Parameter:", param, "Value:", value))
+
+
+        ### Now check some of the written out files.
+        file_names = ['r1rho_prime', 'r1']
+
+        for file_name_i in file_names:
+
+            # Make the file name.
+            file_name = "%s.out" % file_name_i
+
+            # Get the file path.
+            file_path = get_file_path(file_name, result_dir_name + sep + model)
+
+            # Test the file exists.
+            print("Testing file access to: %s"%file_path)
+            self.assert_(access(file_path, F_OK))
+
+            # Now open, and compare content, line by line.
+            file_prod = open(file_path)
+            lines_prod = file_prod.readlines()
+            file_prod.close()
+
+            # Loop over the lines.
+            for i, line in enumerate(lines_prod):
+                # Make the string test
+                line_split = line.split()
+
+                # Continue for comment lines.
+                if line_split[0] == "#":
+                    print(line),
+                    continue
+
+                # Assign the split of the line.
+                mol_name, res_num, res_name, spin_num, spin_name, val, sd_error = line_split
+                print mol_name, res_num, res_name, spin_num, spin_name, val, sd_error
+
+                if res_num == '52':
+                    # Assert that the value is not None.
+                    self.assertNotEqual(val, 'None')
 
 
     def test_r2eff_read(self):
