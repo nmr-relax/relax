@@ -1689,8 +1689,9 @@ It can be summarised as:
       For the cluster specific parameters, i.e.\ the populations of the states and the exchange parameters, an average value will be used as the starting point.
       For all other parameters, the $\Rtwozero$ values for each spin and magnetic field, as well as the parameters related to the chemical shift difference $\dw$, the optimised values of the previous run will be directly copied.
     \item[Model nesting:]  If two models are nested, then the parameters of the simpler will be used as the starting point for optimisation of the more complex.
-      The currently supported nested model pairs are `LM63' and `LM63 3-site', `CR72' and `CR72 full', `CR72' and `MMQ CR72', `NS CPMG 2-site 3D' and `NS CPMG 2-site 3D full', and `NS CPMG 2-site star' and `NS CPMG 2-site star full'.
-      In these cases, the $\RtwozeroA$ and $\RtwozeroB$ parameter values are set to the simpler model $\Rtwozero$ value and the grid search is bypassed.
+      The currently supported nested model sets are presented in Table~\ref{table: dispersion model nesting} on page~\pageref{table: dispersion model nesting}.
+      The models are optimised in the order presented in that table.
+      In some cases, the $\RtwozeroA$ and $\RtwozeroB$ parameter values are set to the simpler model $\Rtwozero$ value and the grid search is bypassed.
     \item[Model equivalence:]  When two models are equivalent, the optimised parameters of one model can be used as the starting point of the other rather than performing a grid search.
       This is used in the auto-analysis for avoiding the grid search in the numeric models.
       The optimised `CR72' model is used for the `NS CPMG 2-site expanded', `NS CPMG 2-site 3D', and  `NS CPMG 2-site star' models.
@@ -1722,6 +1723,103 @@ You should check very carefully for any relax warnings as these can be an indica
 If you are a power user, you are free to use all of the relax user functions, the relax library, and the relax data store to implement your own protocol.
 If you wish, the protocol can be converted into a new auto-analysis and distributed as part of relax.
 The relax test suite will ensure the protocol remains functional for the lifetime of relax.
+
+\begin{landscape}
+\begin{center}
+\begin{small}
+
+% The longtable environment.
+\begin{longtable}{ll}
+
+% Caption.
+\caption{Model nesting for the relaxation dispersion auto-analysis.}
+
+% Header.
+\\
+\toprule
+Model & Nested models\footnotemark[1] \\
+\midrule
+\endhead
+
+% Footer.
+\bottomrule
+\endfoot
+
+% Label.
+\label{table: dispersion model nesting}
+
+
+% Experiment independent models.
+\\[-5pt]
+Base models \\
+\cline{1-1}
+$\Rtwoeff/\Ronerhoprime$         & - \\
+No Rex                           & - \\
+
+% CPMG-type models.
+\\[-5pt]
+Single quantum (SQ) CPMG-type \\
+\cline{1-1}
+LM63                             & - \\
+LM63 3-site                      & LM63 \\
+CR72                             & NS CPMG 2-site 3D, NS CPMG 2-site star, NS CPMG 2-site expanded, B14 \\
+CR72 full                        & NS CPMG 2-site 3D full, NS CPMG 2-site star full, B14 full, NS CPMG 2-site 3D, \\
+                                 & NS CPMG 2-site star, NS CPMG 2-site expanded, B14, CR72 \\
+IT99                             & - \\
+TSMFK01                          & - \\
+B14                              & NS CPMG 2-site 3D, NS CPMG 2-site star, NS CPMG 2-site expanded, CR72 \\
+B14 full                         & NS CPMG 2-site 3D full, NS CPMG 2-site star full, CR72 full, NS CPMG 2-site 3D, \\
+                                 & NS CPMG 2-site star, NS CPMG 2-site expanded, B14, CR72 \\
+NS CPMG 2-site expanded          & NS CPMG 2-site 3D, NS CPMG 2-site star, B14, CR72 \\
+NS CPMG 2-site 3D                & NS CPMG 2-site star, NS CPMG 2-site expanded, B14, CR72 \\
+NS CPMG 2-site 3D full           & NS CPMG 2-site star full, B14 full, CR72 full, NS CPMG 2-site 3D, NS CPMG 2-site star, \\
+                                 & NS CPMG 2-site expanded, B14, CR72 \\
+NS CPMG 2-site star              & NS CPMG 2-site 3D, NS CPMG 2-site expanded, B14, CR722 \\
+NS CPMG 2-site star full         & NS CPMG 2-site 3D full, B14 full, CR72 full, NS CPMG 2-site 3D, NS CPMG 2-site star, \\
+                                 & NS CPMG 2-site expanded, B14, CR72 \\
+
+% SQ, ZQ, DQ and MQ CPMG-type models.
+\\[-5pt]
+MMQ (SQ, ZQ, DQ, \& MQ) CPMG-type \\
+\cline{1-1}
+MMQ CR72                         & NS MMQ 2-site \\
+NS MMQ 2-site                    & MMQ CR72 \\
+NS MMQ 3-site linear             & NS MMQ 2-site, MMQ CR72 \\
+NS MMQ 3-site                    & NS MMQ 3-site linear, NS MMQ 2-site, MMQ CR72 \\
+
+% R1rho-type models.
+\clearpage
+\\[-5pt]
+$\Ronerho$-type \\
+\cline{1-1}
+M61                              & - \\
+M61 skew                         & - \\
+DPL94                            & - \\
+DPL94 $\Rone$ fit                & DPL94 \\
+TP02                             & MP05, TAP03 \\
+TP02 $\Rone$ fit                 & MP05 $\Rone$ fit, TAP03 $\Rone$ fit \\
+TAP03                            & MP05, TP02 \\
+TAP03 $\Rone$ fit                & MP05 $\Rone$ fit, TP02 $\Rone$ fit \\
+MP05                             & TAP03, TP02 \\
+MP05 $\Rone$ fit                 & TAP03 $\Rone$ fit, TP02 $\Rone$ fit \\
+NS $\Ronerho$ 2-site             & MP05, TAP03, TP02 \\
+NS $\Ronerho$ 2-site $\Rone$ fit & MP05 $\Rone$ fit, TAP03 $\Rone$ fit, TP02 $\Rone$ fit \\
+NS $\Ronerho$ 3-site linear      & NS $\Ronerho$ 2-site, MP05, TAP03, TP02 \\
+NS $\Ronerho$ 3-site             & NS $\Ronerho$ 3-site linear, NS $\Ronerho$ 2-site, MP05, TAP03, TP02 \\
+
+\footnotetext[1]{The nested models are ordered by preference.
+The earliest model in the list which has been optimised in the auto-analysis will be used as the nested model.
+For example for the 'B14 full' model, the 'CR72 full' model is the first preference, followed by 'B14', then the final fall back is 'CR72' is neither 'CR72 full' or 'B14' have been optimised.
+If none of the nested models have been optimised, the grid search will be performed.
+In this example, 'CR72 full' is preferred as it has perfect parameter nesting -- all parameters of 'B14 full' are found in 'CR72 full'.
+The B14 and CR72 are fallbacks, and for these R20A and R20B are copied from R20 so they start optimisation as R20A == R20B.
+Hence 'CR72 full' whereby R20A != R20B is a much better starting point as R20A and R20B have been optimised to different values.
+But because of the large model instability in the 'CR72 full' model, you may wish to instead start with 'B14'.}
+
+\end{longtable}
+\end{small}
+\end{center}
+\end{landscape}
 
 
 % Dispersion curve insignificance.
