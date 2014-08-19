@@ -61,7 +61,7 @@ from numpy.ma import fix_invalid, masked_where
 
 # relax module imports.
 from lib.float import isNaN
-from lib.dispersion.matrix_exponential import matrix_exponential_rank_NE_NS_NM_NO_ND_x_x
+from lib.dispersion.matrix_exponential import matrix_exponential
 
 # Repetitive calculations (to speed up calculations).
 m_r10a = array([
@@ -296,7 +296,7 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, M0_T=None, r10a=0.0, r10b=0.0, r
     R_mat = rcpmg_3d_rankN(R1A=r10a, R1B=r10b, R2A=r20a, R2B=r20b, pA=pA, pB=pB, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
 
     # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-    Rexpo_mat = matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(R_mat)
+    Rexpo_mat = matrix_exponential(R_mat)
 
     # The the essential evolution matrix.
     # This is a dot product of the outer [7][7] matrix of the Rexpo_mat and r180x matrixes, which

@@ -56,7 +56,7 @@ from numpy.linalg import matrix_power
 
 # relax module imports.
 from lib.float import isNaN
-from lib.dispersion.matrix_exponential import matrix_exponential_rank_NS_NM_NO_ND_x_x
+from lib.dispersion.matrix_exponential import matrix_exponential
 
 # Repetitive calculations (to speed up calculations).
 m_r20a = array([
@@ -192,9 +192,9 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), R20A=None, R
 
     # The M1 and M2 matrices.
     # Equivalent to D+.
-    M1_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m1_mat, dtype=complex64)
+    M1_mat = matrix_exponential(m1_mat, dtype=complex64)
     # Equivalent to Z-.
-    M2_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m2_mat, dtype=complex64)
+    M2_mat = matrix_exponential(m2_mat, dtype=complex64)
 
     # The complex conjugates M1* and M2*
     # Equivalent to D+*.
@@ -351,8 +351,8 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), R20A=N
     m2_mat = rmmq_2site_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
 
     # The A+/- matrices.
-    A_pos_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m1_mat, dtype=complex64)
-    A_neg_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m2_mat, dtype=complex64)
+    A_pos_mat = matrix_exponential(m1_mat, dtype=complex64)
+    A_neg_mat = matrix_exponential(m2_mat, dtype=complex64)
 
     # The evolution for one n.
     evol_block_mat = einsum('...ij, ...jk', A_neg_mat, A_pos_mat)

@@ -554,8 +554,10 @@ def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, 
             for key in keys:
                 # Add the data and error names if new.
                 if key not in data_names:
-                    data_names.append(key)
-                    error_names.append('sd(%s)' % key)
+                    # Replace all spaces " " with "_".
+                    key_str = key.replace(" ", "_")
+                    data_names.append(key_str)
+                    error_names.append('sd(%s)' % key_str)
 
         # List type data.
         elif isinstance(value, list):

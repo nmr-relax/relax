@@ -31,9 +31,11 @@ from tempfile import mkdtemp
 from auto_analyses import relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
-from pipe_control.mol_res_spin import return_spin, spin_loop
-from specific_analyses.relax_disp.data import generate_r20_key, get_curve_type, loop_exp_frq, loop_exp_frq_offset_point, return_param_key_from_data
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_LM63, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_PARAMS, MODEL_R2EFF
+from lib.io import get_file_path
+from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
+from specific_analyses.relax_disp.data import generate_r20_key, get_curve_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, return_grace_file_name_ini, return_param_key_from_data
+from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LM63, MODEL_M61B, MODEL_MP05, MODEL_MP05_FIT_R1, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_2SITE_FIT_R1, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02, MODEL_TP02_FIT_R1, MODEL_TAP03, MODEL_TAP03_FIT_R1
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
@@ -237,9 +239,7 @@ class Relax_disp(SystemTestCase):
 
 
     def setup_r1rho_kjaergaard(self, cluster_ids=[], read_R1=True):
-        """Set up the data for the test_r1rho_kjaergaard_*() system tests.
-
-        """
+        """Set up the data for the test_r1rho_kjaergaard_*() system tests."""
 
         # The path to the data files.
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'
@@ -247,7 +247,7 @@ class Relax_disp(SystemTestCase):
         # Set pipe name, bundle and type.
         ds.pipe_name = 'base pipe'
         ds.pipe_bundle = 'relax_disp'
-        ds.pipe_type= 'relax_disp'
+        ds.pipe_type = 'relax_disp'
 
         # Create the data pipe.
         self.interpreter.pipe.create(pipe_name=ds.pipe_name, bundle=ds.pipe_bundle, pipe_type=ds.pipe_type)
@@ -282,7 +282,7 @@ class Relax_disp(SystemTestCase):
         # Count settings
         j = 0
         for i in range(len(expfileslines)):
-            line=expfileslines[i]
+            line = expfileslines[i]
             if line[0] == "#":
                 continue
             else:
@@ -785,10 +785,10 @@ class Relax_disp(SystemTestCase):
 
         # Set up the metadata for the experiments.
         # This value is used in Baldwin.py. It is the 1H Larmor frequency.
-        sfrq= 200. * 1E6
+        sfrq = 200. * 1E6
 
         # Total time of CPMG block.
-        Trelax=0.04
+        Trelax = 0.04
 
         # First set the
         for i in range(len(ids)):
@@ -898,7 +898,7 @@ class Relax_disp(SystemTestCase):
             grid_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
 
         ## Now do minimisation.
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         set_func_tol = 1e-10
         set_max_iter = 1000
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
@@ -916,15 +916,15 @@ class Relax_disp(SystemTestCase):
 
         # Reference values from Baldwin.py.
         # Exchange rate = k+ + k- (s-1)
-        kex=1000.
+        kex = 1000.
         # Fractional population of excited state k+/kex
-        pb=0.01
+        pb = 0.01
         # deltaOmega in ppm
-        dw_ppm=2.
+        dw_ppm = 2.
         #relaxation rate of ground (s-1)
-        R2g=2.
+        R2g = 2.
         #relaxation rate of excited (s-1)
-        R2e=2.
+        R2e = 2.
 
         # Test the parameters which created the data.
         # This is for the 1H spin.
@@ -938,7 +938,8 @@ class Relax_disp(SystemTestCase):
     def test_baldwin_synthetic_full(self):
         """Test synthetic data of Andrew J. Baldwin B14 model. Support requst sr #3154 U{https://gna.org/support/index.php?3154}.
 
-        This uses the synthetic data from paper U{DOI: 10.1016/j.jmr.2014.02.023 <http://dx.doi.org/10.1016/j.jmr.2014.02.023>}."""
+        This uses the synthetic data from paper U{DOI: 10.1016/j.jmr.2014.02.023 <http://dx.doi.org/10.1016/j.jmr.2014.02.023>}.
+        """
 
         # The path to the data files.
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Baldwin_2014'
@@ -969,10 +970,10 @@ class Relax_disp(SystemTestCase):
 
         # Set up the metadata for the experiments.
         # This value is used in Baldwin.py. It is the 1H Larmor frequency.
-        sfrq= 200. * 1E6
+        sfrq = 200. * 1E6
 
         # Total time of CPMG block.
-        Trelax=0.04
+        Trelax = 0.04
 
         # First set the
         for i in range(len(ids)):
@@ -1083,7 +1084,7 @@ class Relax_disp(SystemTestCase):
             grid_results.append([spin.r2a[r20_key], spin.r2b[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
 
         ## Now do minimisation.
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         set_func_tol = 1e-11
         set_max_iter = 10000
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
@@ -1103,15 +1104,15 @@ class Relax_disp(SystemTestCase):
 
         # Reference values from Baldwin.py.
         # Exchange rate = k+ + k- (s-1)
-        kex=1000.
+        kex = 1000.
         # Fractional population of excited state k+/kex
-        pb=0.01
+        pb = 0.01
         # deltaOmega in ppm
-        dw_ppm=2.
+        dw_ppm = 2.
         #relaxation rate of ground (s-1)
-        R2g=2.
+        R2g = 2.
         #relaxation rate of excited (s-1)
-        R2e=100.
+        R2e = 100.
 
         # Test the parameters which created the data.
         # This is for the 1H spin.
@@ -1242,6 +1243,82 @@ class Relax_disp(SystemTestCase):
 
         # Base data setup.
         self.setup_bug_22146_unpacking_r2a_r2b_cluster(folder='ns_cpmg_2site_star_full', model_analyse = MODEL_NS_CPMG_2SITE_STAR_FULL, places = 4)
+
+
+    def test_bug_22477_grace_write_k_AB_mixed_analysis(self):
+        """Catch U{bug #22146<https://gna.org/bugs/?22477>}, the failure of issuing: grace.write(x_data_type='res_num', y_data_type=param) for a mixed CPMG analysis."""
+
+        # Clear the data store.
+        self.interpreter.reset()
+
+        # Load the state.
+        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_22477_grace_write_k_AB_mixed_analysis'+sep+'bug_22477_results.bz2'
+        self.interpreter.state.load(state, force=True)
+
+        param = 'k_AB'
+
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            print(spin_id, spin.params)
+            if param in spin.params:
+                print(spin_id, spin.k_AB, spin.k_AB_err)
+
+        # Perform write.
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type=param, file='%s.agr'%param, dir=self.tmpdir, force=True)
+
+
+        # Test the header of the value.write  parameter r2.
+        param = 'r2'
+        self.interpreter.value.write(param=param, file='%s.out'%param, dir=self.tmpdir, force=True)
+
+        file = open(self.tmpdir+sep+'%s.out'%param)
+        lines = file.readlines()
+        file.close()
+
+        for i, line in enumerate(lines):
+            # Make the string test
+            line_split = line.split()
+            print(line_split)
+
+            if len(line_split) > 1:
+                # Break at parameter header.
+                if line_split[0] == "#" and line_split[1] == 'mol_name':
+                    nr_split_header = len(line_split)
+                    nr_split_header_i = i
+                    break
+
+        # Call the line after.
+        line_split_val = lines[nr_split_header_i + 1].split()
+        print(line_split_val)
+
+        # Assert that the number of columns is equal, plus 1 for "#".
+        self.assertEqual(nr_split_header, len(line_split_val) + 1)
+
+        # Test the header of the value.write for parameter r2eff.
+        param = 'r2eff'
+        self.interpreter.value.write(param=param, file='%s.out'%param, dir=self.tmpdir, force=True)
+
+        file = open(self.tmpdir+sep+'%s.out'%param)
+        lines = file.readlines()
+        file.close()
+
+        for i, line in enumerate(lines):
+            # Make the string test
+            line_split = line.split()
+            print(line_split)
+
+            if len(line_split) > 1:
+                # Break at parameter header.
+                if line_split[0] == "#" and line_split[1] == 'mol_name':
+                    nr_split_header = len(line_split)
+                    nr_split_header_i = i
+                    break
+
+        # Call the line after.
+        line_split_val = lines[nr_split_header_i + 1].split()
+        print(line_split_val)
+
+        # Assert that the number of columns is equal, plus 1 for "#".
+        self.assertEqual(nr_split_header, len(line_split_val) + 1)
 
 
     def test_cpmg_synthetic_b14_to_ns3d_cluster(self):
@@ -2599,7 +2676,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.r2[r20_key1], 4.99889337382435, 3)
         self.assertAlmostEqual(spin71.r2[r20_key2], 6.89822887466673, 3)
         self.assertAlmostEqual(spin71.pA, 0.986709050819695, 3)
-        self.assertAlmostEqual(spin71.dw, 2.09238266766502, 3)
+        self.assertAlmostEqual(spin71.dw, 2.09238266766502, 2)
         self.assertAlmostEqual(spin71.kex/10000, 2438.27019901422/10000, 3)
         self.assertAlmostEqual(spin71.chi2, 15.1644906963987, 3)
 
@@ -3000,7 +3077,7 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[r20_key1], 6.74362294539099)
+        self.assertAlmostEqual(spin70.r2[r20_key1], 6.74362294539099, 5)
         self.assertAlmostEqual(spin70.r2[r20_key2], 6.57406797067481, 6)
         self.assertAlmostEqual(spin70.phi_ex, 0.312733013751449)
         self.assertAlmostEqual(spin70.kex/1000, 4723.09897146338/1000, 6)
@@ -4171,6 +4248,107 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin.chi2/1000, 162.511988511609/1000, 3)
 
 
+    def test_kteilum_fmpoulsen_makke_check_graphs(self):
+        """Check of all possible dispersion graphs from optimisation of Kaare Teilum, Flemming M Poulsen, Mikael Akke 2006 "acyl-CoA binding protein" CPMG data to the CR72 dispersion model.
+
+        This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0509100103}.  This is CPMG data with a fixed relaxation time period.  Experiment in 0.48 M GuHCl (guanidine hydrochloride).
+
+        Figure 3 shows the ln( k_a [s^-1]) for different concentrations of GuHCl. The precise values are:
+
+          - [GuHCL][M] ln(k_a[s^-1]) k_a[s^-1]
+          - 0.483 0.89623903 2.4503699912708878
+          - 0.545 1.1694838
+          - 0.545 1.1761503
+          - 0.622 1.294
+          - 0.669 1.5176493
+          - 0.722 1.6238791
+          - 0.813 1.9395758
+          - 1.011 2.3558415 10.547000429321157
+        """
+
+        # Base data setup.
+        model = 'TSMFK01'
+        expfolder = "acbp_cpmg_disp_048MGuHCl_40C_041223"
+        self.setup_kteilum_fmpoulsen_makke_cpmg_data(model=model, expfolder=expfolder)
+
+        # Alias the spins.
+        res61L = cdp.mol[0].res[0].spin[0]
+
+        # The R20 keys.
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=599.89086220e6)
+
+        # Set the initial parameter values.
+        res61L.r2a = {r20_key1: 8.0}
+        res61L.dw = 6.5
+        res61L.k_AB = 2.5
+
+        # Low precision optimisation.
+        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+
+        # Start testing all possible combinations of graphs.
+        y_axis_types = [Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO]
+        x_axis_types = [X_AXIS_DISP, X_AXIS_THETA, X_AXIS_W_EFF]
+        interpolate_types = [INTERPOLATE_DISP]
+
+        # Write to temp folder.
+        result_dir_name = ds.tmpdir
+        result_folders = [model]
+        spin_id = ":61@N"
+
+        # Loop through all possible combinations of y_axis, x_axis and interpolation.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'KTeilum_FMPoulsen_MAkke_2006'+sep+expfolder+sep+'check_graphs'
+
+        for result_folder in result_folders:
+            for y_axis in y_axis_types:
+                for x_axis in x_axis_types:
+                    for interpolate in interpolate_types:
+                        # Determine file name:
+                        file_name_ini = return_grace_file_name_ini(y_axis=y_axis, x_axis=x_axis, interpolate=interpolate)
+
+                        # Make the file name.
+                        file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
+
+                        # Write the curves.
+                        dir = result_dir_name+sep+result_folder
+                        print("Plotting combination of %s, %s, %s"%(y_axis, x_axis, interpolate))
+                        self.interpreter.relax_disp.plot_disp_curves(dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, force=True)
+
+                        # Get the file path.
+                        file_path = get_file_path(file_name, dir)
+
+                        # Test the plot file exists.
+                        print("Testing file access to graph: %s"%file_path)
+                        self.assert_(access(file_path, F_OK))
+
+                        # Now open, and compare content, line by line.
+                        file_prod = open(file_path)
+                        lines_prod = file_prod.readlines()
+                        file_prod.close()
+
+                        # Define file to compare against.
+                        dir_comp = data_path+sep+result_folder
+                        file_path_comp = get_file_path(file_name, dir_comp)
+                        file_comp = open(file_path_comp)
+                        lines_comp = file_comp.readlines()
+                        file_comp.close()
+
+                        ## Assert number of lines is equal.
+                        self.assertEqual(len(lines_prod), len(lines_comp))
+                        for j in range(len(lines_prod)):
+                            # Make the string test
+                            first_char = lines_prod[j][0]
+                            if first_char in ["@", "&"]:
+                                self.assertEqual(lines_prod[j], lines_comp[j])
+                            else:
+                                # Split string in x, y, error.
+                                # The error would change per run.
+                                x_prod, y_prod, y_prod_err = lines_prod[j].split()
+                                x_comp, y_comp, y_comp_err = lines_comp[j].split()
+                                self.assertAlmostEqual(float(x_prod), float(x_comp))
+                                self.assertAlmostEqual(float(y_prod), float(y_comp))
+                                self.assertAlmostEqual(float(y_prod_err), float(y_comp_err))
+
+
     def test_kteilum_fmpoulsen_makke_cpmg_data_048m_guhcl_to_cr72(self):
         """Optimisation of Kaare Teilum, Flemming M Poulsen, Mikael Akke 2006 "acyl-CoA binding protein" CPMG data to the CR72 dispersion model.
 
@@ -4765,7 +4943,7 @@ class Relax_disp(SystemTestCase):
         self.assert_(hasattr(cdp.mol[0].res[42].spin[0], 'ri_data'))
 
         # The dispersion models.
-        MODELS = ['R2eff', 'DPL94']
+        MODELS = [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
 
         # The grid search size (the number of increments per dimension).
         GRID_INC = 4
@@ -4777,7 +4955,7 @@ class Relax_disp(SystemTestCase):
         MODSEL = 'AIC'
 
         # Execute the auto-analysis (fast).
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         OPT_FUNC_TOL = 1e-1
         relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
         OPT_MAX_ITERATIONS = 1000
@@ -4807,37 +4985,70 @@ class Relax_disp(SystemTestCase):
         # Check the kex value of residue 52
         #self.assertAlmostEqual(cdp.mol[0].res[41].spin[0].kex, ds.ref[':52@N'][6])
 
+        # Print results for each model.
+        print("\n\n################")
+        print("Printing results")
+        print("################\n")
+        for model in MODELS:
+            # Skip R2eff model.
+            if model == MODEL_R2EFF:
+                continue
 
-    def test_r1rho_kjaergaard_man(self):
-        """Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
+            # Switch to pipe.
+            self.interpreter.pipe.switch(pipe_name='%s - relax_disp' % (model))
+            print("\nModel: %s" % (model))
+
+            # Loop over the spins.
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                # Generate spin string.
+                spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+                # Loop over the parameters.
+                print("Optimised parameters for spin: %s" % (spin_string))
+                for param in cur_spin.params + ['chi2']:
+                    # Get the value.
+                    if param in ['r1', 'r2']:
+                        for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+                            # Generate the R20 key.
+                            r20_key = generate_r20_key(exp_type=exp_type, frq=frq)
+
+                            # Get the value.
+                            value = getattr(cur_spin, param)[r20_key]
+
+                            # Print value.
+                            print("%-10s %-6s %-6s %3.3f" % ("Parameter:", param, "Value:", value))
+
+                    # For all other parameters.
+                    else:
+                        # Get the value.
+                        value = getattr(cur_spin, param)
+
+                        # Print value.
+                        print("%-10s %-6s %-6s %3.3f" % ("Parameter:", param, "Value:", value))
+
+        # Print the final pipe.
+        self.interpreter.pipe.switch(pipe_name='%s - relax_disp' % ('final'))
+        print("\nFinal pipe")
+
+
+    def test_r1rho_kjaergaard_auto_check_graphs(self):
+        """Check of plot_disp_curves() function, after optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'R2eff' model.
 
         This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
 
-        This uses the manual analysis.
+        This uses the automatic analysis.
 
         """
 
         # Cluster residues
         cluster_ids = [
-        ":13@N",
-        ":15@N",
-        ":16@N",
-        ":25@N",
-        ":26@N",
-        ":28@N",
-        ":39@N",
-        ":40@N",
-        ":41@N",
-        ":43@N",
-        ":44@N",
-        ":45@N",
-        ":49@N",
-        ":52@N",
-        ":53@N"]
-
+        ":52@N"]
 
         # Load the data.
         self.setup_r1rho_kjaergaard(cluster_ids=cluster_ids)
+
+        # The dispersion models.
+        MODELS = [MODEL_R2EFF]
 
         # The grid search size (the number of increments per dimension).
         GRID_INC = 4
@@ -4845,160 +5056,125 @@ class Relax_disp(SystemTestCase):
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         MC_NUM = 3
 
+        # Model selection technique.
+        MODSEL = 'AIC'
+
         # Execute the auto-analysis (fast).
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         OPT_FUNC_TOL = 1e-1
+        relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
         OPT_MAX_ITERATIONS = 1000
+        relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
 
         result_dir_name = ds.tmpdir
 
-        # Make all spins free, and select a subset.
+        # Make all spins free
         for curspin in cluster_ids:
             self.interpreter.relax_disp.cluster('free spins', curspin)
             # Shut them down
             self.interpreter.deselect.spin(spin_id=curspin, change_all=False)
 
         self.interpreter.select.spin(spin_id=':52@N', change_all=False)
-        #self.interpreter.relax_disp.cluster('model_cluster', ':52@N')
 
-        # Do the analysis manual
-        self.interpreter.spectrum.error_analysis(subset=['46_0_35_0', '48_0_35_4', '47_0_35_10', '49_0_35_20', '36_0_39_0', '39_0_39_4', '37_0_39_10', '40_0_39_20', '38_0_39_40', '41_0_41_0', '44_0_41_4', '42_0_41_10', '45_0_41_20', '43_0_41_40', '31_0_43_0', '34_0_43_4', '32_0_43_10', '35_0_43_20', '33_0_43_40', '1_0_46_0', '4_0_46_4', '2_0_46_10', '5_0_46_20', '3_0_46_40', '60_0_48_0', '63_0_48_4', '61_0_48_10', '62_0_48_14', '64_0_48_20', '11_500_46_0', '14_500_46_4', '12_500_46_10', '15_500_46_20', '13_500_46_40', '50_1000_41_0', '53_1000_41_4', '51_1000_41_10', '54_1000_41_20', '52_1000_41_40', '21_1000_46_0', '24_1000_46_4', '22_1000_46_10', '25_1000_46_20', '23_1000_46_40', '65_1000_48_0', '68_1000_48_4', '66_1000_48_10', '67_1000_48_14', '69_1000_48_20', '55_2000_41_0', '58_2000_41_4', '56_2000_41_10', '59_2000_41_20', '57_2000_41_40', '6_2000_46_0', '9_2000_46_4', '7_2000_46_10', '10_2000_46_20', '8_2000_46_40', '16_5000_46_0', '19_5000_46_4', '17_5000_46_10', '20_5000_46_20', '18_5000_46_40', '26_10000_46_0', '29_10000_46_4', '27_10000_46_10', '30_10000_46_20', '28_10000_46_40'])
+        # Run the analysis.
+        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
 
-        ##- The 'R2eff' model -
-        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='R2eff - relax_disp', bundle_to='relax_disp')
-        self.interpreter.pipe.switch(pipe_name='R2eff - relax_disp')
-        self.interpreter.relax_disp.select_model(model='R2eff')
-        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+        # Check the graphs produced.
+        graph_comb = [
+        [Y_AXIS_R2_EFF, X_AXIS_DISP, INTERPOLATE_DISP],
+        [Y_AXIS_R2_EFF, X_AXIS_THETA, INTERPOLATE_DISP],
+        [Y_AXIS_R2_R1RHO, X_AXIS_W_EFF, INTERPOLATE_DISP],
+        [Y_AXIS_R2_EFF, X_AXIS_THETA, INTERPOLATE_OFFSET]
+        ]
 
-        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
-        self.interpreter.eliminate(function=None, args=None)
-        self.interpreter.monte_carlo.setup(number=MC_NUM)
-        self.interpreter.monte_carlo.create_data(method='back_calc')
-        self.interpreter.monte_carlo.initial_values()
+        # Define expected folder names.
+        result_folders = MODELS
 
-        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
-        self.interpreter.eliminate(function=None, args=None)
-        self.interpreter.monte_carlo.error_analysis()
+        # Assign spin_id.
+        spin_id = ':52@N'
 
-        # Write results
-        #self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
-        #self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=True)
-        #self.interpreter.relax_disp.plot_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', num_points=1000, extend=500.0, force=True)
-        #self.interpreter.relax_disp.write_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True)
-        #self.interpreter.value.write(param='r2eff', file='r2eff.out', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', spin_id=None, plot_data='value', file='r2eff.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
-        #self.interpreter.value.write(param='i0', file='i0.out', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', spin_id=None, plot_data='value', file='i0.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
-        #self.interpreter.value.write(param='chi2', file='chi2.out', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
+        # Loop over result folders.
+        for result_folder in result_folders:
+            # Skip the model R2eff, which does not produce graphs.
+            if result_folder == MODEL_R2EFF:
+                continue
 
-        ## Save results as state
-        #self.interpreter.results.write(file='results', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', compress_type=1, force=True)
+            # Loop over graphs.
+            for y_axis, x_axis, interpolate in graph_comb:
+                # Determine file name:
+                file_name_ini = return_grace_file_name_ini(y_axis=y_axis, x_axis=x_axis, interpolate=interpolate)
 
-        ##- The 'No Rex' model -
-        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='No Rex - relax_disp', bundle_to='relax_disp')
-        self.interpreter.pipe.switch(pipe_name='No Rex - relax_disp')
-        self.interpreter.relax_disp.select_model(model='No Rex')
-        self.interpreter.value.copy(pipe_from='R2eff - relax_disp', pipe_to='No Rex - relax_disp', param='r2eff')
-        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+                # Make the file name.
+                file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
 
-        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
-        self.interpreter.eliminate(function=None, args=None)
+                # Get the file path.
+                file_path = get_file_path(file_name, result_dir_name+sep+result_folder)
 
-        ## Write results
-        #self.interpreter.relax_disp.plot_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', num_points=1000, extend=500.0, force=True)
-        #self.interpreter.relax_disp.write_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', force=True)
-        #self.interpreter.value.write(param='chi2', file='chi2.out', dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', force=True, norm=False)
+                print("Testing file access to graph: %s"%file_path)
+                self.assert_(access(file_path, F_OK))
 
-        ## Save results as state
-        self.interpreter.results.write(file='results', dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', compress_type=1, force=True)
+        # Start testing all possible combinations of graphs.
+        y_axis_types = [Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO]
+        x_axis_types = [X_AXIS_DISP, X_AXIS_THETA, X_AXIS_W_EFF]
+        interpolate_types = [INTERPOLATE_DISP, INTERPOLATE_OFFSET]
 
-        ##- The 'DPL94' model -
-        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='DPL94 - relax_disp', bundle_to='relax_disp')
-        self.interpreter.pipe.switch(pipe_name='DPL94 - relax_disp')
-        self.interpreter.relax_disp.select_model(model='DPL94')
-        self.interpreter.value.copy(pipe_from='R2eff - relax_disp', pipe_to='DPL94 - relax_disp', param='r2eff')
-        self.interpreter.relax_disp.insignificance(level=1.0)
-        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+        result_dir_name = ds.tmpdir
 
-        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
-        self.interpreter.eliminate(function=None, args=None)
+        # Loop through all possible combinations of y_axis, x_axis and interpolation.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'+sep+'check_graphs'
 
-        ## Write results
-        #self.interpreter.relax_disp.plot_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', num_points=1000, extend=500.0, force=True)
-        #self.interpreter.relax_disp.write_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True)
-        #self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', spin_id=None, plot_data='value', file='phi_ex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
-        #self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.value.write(param='kex', file='kex.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.value.write(param='tex', file='tex.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', spin_id=None, plot_data='value', file='k_AB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', spin_id=None, plot_data='value', file='kex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', spin_id=None, plot_data='value', file='tex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
-        #self.interpreter.value.write(param='chi2', file='chi2.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
+        for result_folder in result_folders:
+            # Skip the model R2eff, which does not produce graphs.
+            if result_folder == MODEL_R2EFF:
+                continue
 
-        ## Save results as state
-        #self.interpreter.results.write(file='results', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', compress_type=1, force=True)
+            for y_axis in y_axis_types:
+                for x_axis in x_axis_types:
+                    for interpolate in interpolate_types:
+                        # Determine file name:
+                        file_name_ini = return_grace_file_name_ini(y_axis=y_axis, x_axis=x_axis, interpolate=interpolate)
 
-        ##- The 'final' model -
-        self.interpreter.model_selection(method='AIC', modsel_pipe='final - relax_disp', bundle='relax_disp', pipes=['No Rex - relax_disp', 'DPL94 - relax_disp'])
-        self.interpreter.monte_carlo.setup(number=MC_NUM)
-        self.interpreter.monte_carlo.create_data(method='back_calc')
-        self.interpreter.monte_carlo.initial_values()
+                        # Make the file name.
+                        file_name = "%s%s.agr" % (file_name_ini, spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
 
-        self.interpreter.minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
-        self.interpreter.eliminate(function=None, args=None)
-        self.interpreter.monte_carlo.error_analysis()
+                        # Write the curves.
+                        dir = result_dir_name+sep+result_folder
+                        print("Plotting combination of %s, %s, %s"%(y_axis, x_axis, interpolate))
+                        self.interpreter.relax_disp.plot_disp_curves(dir=dir, y_axis=y_axis, x_axis=x_axis, interpolate=interpolate, force=True)
 
-        ## Write results
-        #self.interpreter.relax_disp.plot_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'final', num_points=1000, extend=500.0, force=True)
-        #self.interpreter.relax_disp.write_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True)
-        #self.interpreter.value.write(param='model', file='model.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.value.write(param='pA', file='pA.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.value.write(param='pB', file='pB.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='pA', spin_id=None, plot_data='value', file='pA.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='pB', spin_id=None, plot_data='value', file='pB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-        self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', spin_id=None, plot_data='value', file='phi_ex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-        #self.interpreter.value.write(param='phi_ex_B', file='phi_ex_B.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.value.write(param='phi_ex_C', file='phi_ex_C.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_B', spin_id=None, plot_data='value', file='phi_ex_B.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_C', spin_id=None, plot_data='value', file='phi_ex_C.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-        #self.interpreter.value.write(param='dw', file='dw.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw', spin_id=None, plot_data='value', file='dw.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-        #self.interpreter.value.write(param='dwH', file='dwH.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='dwH', spin_id=None, plot_data='value', file='dwH.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-        #self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-        self.interpreter.value.write(param='kex', file='kex.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.value.write(param='tex', file='tex.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', spin_id=None, plot_data='value', file='k_AB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', spin_id=None, plot_data='value', file='kex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', spin_id=None, plot_data='value', file='tex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-        #self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', spin_id=None, plot_data='value', file='k_AB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-        #self.interpreter.value.write(param='kB', file='kB.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.value.write(param='kC', file='kC.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kB', spin_id=None, plot_data='value', file='kB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kC', spin_id=None, plot_data='value', file='kC.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-        #self.interpreter.value.write(param='chi2', file='chi2.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+                        # Get the file path.
+                        file_path = get_file_path(file_name, dir)
 
-        # Test of new parameters to write out.
-        self.interpreter.value.write(param='theta', file='theta.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-        #self.interpreter.value.write(param='theta', file='theta.out', dir='~', scaling=1.0, comment=None, bc=False, force=True)
-        #self.assert_(hasattr(cdp.mol[0].res[7].spin[0], 'theta'))
+                        # Test the plot file exists.
+                        print("Testing file access to graph: %s"%file_path)
+                        self.assert_(access(file_path, F_OK))
 
-        ## Save results as state
-        #self.interpreter.results.write(file='results', dir=result_dir_name+sep+'resultsR1'+sep+'final', compress_type=1, force=True)
-        ## Save all results in all pipes in state
-        #self.interpreter.state.save(state='final_state', dir=result_dir_name+sep+'resultsR1', compress_type=1, force=True)
+                        # Now open, and compare content, line by line.
+                        file_prod = open(file_path)
+                        lines_prod = file_prod.readlines()
+                        file_prod.close()
 
-        # Assert the file existence of the written value files
-        self.assert_(access(result_dir_name+sep+'resultsR1'+sep+'final'+sep+'phi_ex.out', F_OK))
-        self.assert_(access(result_dir_name+sep+'resultsR1'+sep+'final'+sep+'kex.out', F_OK))
-        self.assert_(access(result_dir_name+sep+'resultsR1'+sep+'final'+sep+'theta.out', F_OK))
+                        # Define file to compare against.
+                        dir_comp = data_path+sep+result_folder
+                        file_path_comp = get_file_path(file_name, dir_comp)
+                        file_comp = open(file_path_comp)
+                        lines_comp = file_comp.readlines()
+                        file_comp.close()
+
+                        # Assert number of lines is equal.
+                        self.assertEqual(len(lines_prod), len(lines_comp))
+                        for j in range(len(lines_prod)):
+                            # Make the string test
+                            first_char = lines_prod[j][0]
+                            if first_char in ["@", "&"]:
+                                self.assertEqual(lines_prod[j], lines_comp[j])
+                            else:
+                                # Split string in x, y, error.
+                                # The error would change per run.
+                                x_prod, y_prod, y_prod_err = lines_prod[j].split()
+                                x_comp, y_comp, y_comp_err = lines_comp[j].split()
+                                self.assertAlmostEqual(float(x_prod), float(x_comp))
+                                self.assertAlmostEqual(float(y_prod), float(y_comp))
 
 
     def test_r1rho_kjaergaard_missing_r1(self):
@@ -5032,10 +5208,10 @@ class Relax_disp(SystemTestCase):
         self.setup_r1rho_kjaergaard(cluster_ids=cluster_ids, read_R1=False)
 
         # The dispersion models.
-        MODELS = ['R2eff', 'DPL94']
+        MODELS = [MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1, MODEL_NS_R1RHO_2SITE_FIT_R1]
 
         # The grid search size (the number of increments per dimension).
-        GRID_INC = 4
+        GRID_INC = None
 
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         MC_NUM = 3
@@ -5044,10 +5220,10 @@ class Relax_disp(SystemTestCase):
         MODSEL = 'AIC'
 
         # Execute the auto-analysis (fast).
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
-        OPT_FUNC_TOL = 1e-1
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
+        OPT_FUNC_TOL = 1e-25
         relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
-        OPT_MAX_ITERATIONS = 1000
+        OPT_MAX_ITERATIONS = 10000000
         relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
 
         result_dir_name = ds.tmpdir
@@ -5068,11 +5244,155 @@ class Relax_disp(SystemTestCase):
         self.interpreter.select.spin(spin_id=':52@N', change_all=False)
         #self.interpreter.relax_disp.cluster('model_cluster', ':52@N')
 
+        # Point to directory with R2eff values, with 2000 MC simulations.
+        prev_data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013' +sep+ "check_graphs" +sep+ "mc_2000"
+
         # Run the analysis.
-        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, pre_run_dir=prev_data_path, optimise_pre_run_r2eff=False)
 
         # Check the kex value of residue 52
         #self.assertAlmostEqual(cdp.mol[0].res[41].spin[0].kex, ds.ref[':52@N'][6])
+
+        # Print results for each model.
+        print("\n\n################")
+        print("Printing results")
+        print("################\n")
+        for model in MODELS:
+            # Skip R2eff model.
+            if model == MODEL_R2EFF:
+                continue
+
+            # Switch to pipe.
+            self.interpreter.pipe.switch(pipe_name='%s - relax_disp' % (model))
+            print("\nModel: %s" % (model))
+
+            # Loop over the spins.
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                # Generate spin string.
+                spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+                # Loop over the parameters.
+                print("Optimised parameters for spin: %s" % (spin_string))
+                for param in cur_spin.params + ['chi2']:
+                    # Get the value.
+                    if param in ['r1', 'r2']:
+                        for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+                            # Generate the R20 key.
+                            r20_key = generate_r20_key(exp_type=exp_type, frq=frq)
+
+                            # Get the value.
+                            value = getattr(cur_spin, param)[r20_key]
+
+                            # Print value.
+                            print("%-10s %-6s %-6s %3.8f" % ("Parameter:", param, "Value:", value))
+
+                            # Compare values.
+                            if spin_id == ':52@N':
+                                if param == 'r1':
+                                    if model == MODEL_NOREX_R1RHO_FIT_R1:
+                                        self.assertAlmostEqual(value, 1.46328102)
+                                    elif model == MODEL_DPL94_FIT_R1:
+                                        self.assertAlmostEqual(value, 1.45019848)
+                                    elif model == MODEL_TP02_FIT_R1:
+                                        self.assertAlmostEqual(value, 1.54352369)
+                                    elif model == MODEL_TAP03_FIT_R1:
+                                        self.assertAlmostEqual(value, 1.54354367)
+                                    elif model == MODEL_MP05_FIT_R1:
+                                        self.assertAlmostEqual(value, 1.54354372)
+                                    elif model == MODEL_NS_R1RHO_2SITE_FIT_R1:
+                                        self.assertAlmostEqual(value, 1.54354372)
+
+                                elif param == 'r2':
+                                    if model == MODEL_NOREX_R1RHO_FIT_R1:
+                                        self.assertAlmostEqual(value, 11.48040934)
+                                    elif model == MODEL_DPL94_FIT_R1:
+                                        self.assertAlmostEqual(value, 10.16304887, 6)
+                                    elif model == MODEL_TP02_FIT_R1:
+                                        self.assertAlmostEqual(value, 9.72772726, 6)
+                                    elif model == MODEL_TAP03_FIT_R1:
+                                        self.assertAlmostEqual(value, 9.72759374, 6)
+                                    elif model == MODEL_MP05_FIT_R1:
+                                        self.assertAlmostEqual(value, 9.72759220, 6)
+                                    elif model == MODEL_NS_R1RHO_2SITE_FIT_R1:
+                                        self.assertAlmostEqual(value, 9.72759220, 6)
+
+                    # For all other parameters.
+                    else:
+                        # Get the value.
+                        value = getattr(cur_spin, param)
+
+                        # Print value.
+                        print("%-10s %-6s %-6s %3.8f" % ("Parameter:", param, "Value:", value))
+
+                        # Compare values.
+                        if spin_id == ':52@N':
+                            if param == 'phi_ex':
+                                if model == MODEL_DPL94_FIT_R1:
+                                    self.assertAlmostEqual(value, 0.07561937)
+
+                            elif param == 'pA':
+                                if model == MODEL_TP02_FIT_R1:
+                                    self.assertAlmostEqual(value, 0.88807487)
+                                elif model == MODEL_TAP03_FIT_R1:
+                                    self.assertAlmostEqual(value, 0.88809318)
+                                elif model == MODEL_MP05_FIT_R1:
+                                    self.assertAlmostEqual(value, 0.88809321)
+                                elif model == MODEL_NS_R1RHO_2SITE_FIT_R1:
+                                    self.assertAlmostEqual(value, 0.88809321)
+
+                            elif param == 'dw':
+                                if model == MODEL_TP02_FIT_R1:
+                                    self.assertAlmostEqual(value, 1.08765638)
+                                elif model == MODEL_TAP03_FIT_R1:
+                                    self.assertAlmostEqual(value, 1.08726698, 6)
+                                elif model == MODEL_MP05_FIT_R1:
+                                    self.assertAlmostEqual(value, 1.08726706)
+                                elif model == MODEL_NS_R1RHO_2SITE_FIT_R1:
+                                    self.assertAlmostEqual(value, 1.08726706)
+
+                            elif param == 'kex':
+                                if model == MODEL_DPL94_FIT_R1:
+                                    self.assertAlmostEqual(value, 4419.03917195, 2)
+                                elif model == MODEL_TP02_FIT_R1:
+                                    self.assertAlmostEqual(value, 4904.70144883, 3)
+                                elif model == MODEL_TAP03_FIT_R1:
+                                    self.assertAlmostEqual(value, 4909.86877150, 3)
+                                elif model == MODEL_MP05_FIT_R1:
+                                    self.assertAlmostEqual(value, 4909.88110195, 3)
+                                elif model == MODEL_NS_R1RHO_2SITE_FIT_R1:
+                                    self.assertAlmostEqual(value, 4909.88110195, 3)
+
+                            elif param == 'chi2':
+                                if model == MODEL_NOREX_R1RHO_FIT_R1:
+                                    self.assertAlmostEqual(value, 3363.95829122)
+                                elif model == MODEL_DPL94_FIT_R1:
+                                    self.assertAlmostEqual(value, 710.24767560)
+                                elif model == MODEL_TP02_FIT_R1:
+                                    self.assertAlmostEqual(value, 114.47142772)
+                                elif model == MODEL_TAP03_FIT_R1:
+                                    self.assertAlmostEqual(value, 114.27987534)
+                                elif model == MODEL_MP05_FIT_R1:
+                                    self.assertAlmostEqual(value, 114.28002272)
+                                #elif model == MODEL_NS_R1RHO_2SITE_FIT_R1:
+                                #    self.assertAlmostEqual(value, 0.0)
+
+
+        # Print the final pipe.
+        self.interpreter.pipe.switch(pipe_name='%s - relax_disp' % ('final'))
+        print("\nFinal pipe")
+
+        # Loop over the spins.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Generate spin string.
+            spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+            # Loop over the parameters.
+            print("Optimised model for spin: %s" % (spin_string))
+            param = 'model'
+
+            # Get the value.
+            value = getattr(cur_spin, param)
+            print("%-10s %-6s %-6s %6s" % ("Parameter:", param, "Value:", value))
 
 
     def test_r2eff_read(self):
@@ -5461,7 +5781,7 @@ class Relax_disp(SystemTestCase):
         MODSEL = 'AIC'
 
         # Execute the auto-analysis (fast).
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000.
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         OPT_FUNC_TOL = 1e-1
         relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
         OPT_MAX_ITERATIONS = 1000
@@ -5588,7 +5908,7 @@ class Relax_disp(SystemTestCase):
         # Then select model.
         self.interpreter.relax_disp.select_model(model=MODEL)
 
-        # GRID inc of 7 was found to be appropriate not to find pA=0.5.
+        # GRID inc of 7 was found to be appropriate not to find pA = 0.5.
         GRID_INC = 7
 
         # Store grid and minimisations results.
@@ -5611,7 +5931,7 @@ class Relax_disp(SystemTestCase):
             grid_results.append([spin.r2[r20_key_600], spin.r2[r20_key_500], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
 
         ## Now do minimisation.
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         set_func_tol = 1e-9
         set_max_iter = 100000
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
@@ -6502,7 +6822,7 @@ class Relax_disp(SystemTestCase):
         # Set pipe name, bundle and type.
         pipe_name = 'base pipe'
         pipe_bundle = 'relax_disp'
-        pipe_type= 'relax_disp'
+        pipe_type = 'relax_disp'
 
         # The path to the data files.
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'
@@ -6549,7 +6869,7 @@ class Relax_disp(SystemTestCase):
         MODSEL = 'AIC'
 
         # Execute the auto-analysis (fast).
-        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
         OPT_FUNC_TOL = 1e-1
         relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
         OPT_MAX_ITERATIONS = 1000

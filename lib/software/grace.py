@@ -177,8 +177,12 @@ def write_xy_data(data, file=None, graph_type=None, norm=None, autoscale=True):
 
                 # The dx and dy errors.
                 if graph_type in ['xydx', 'xydy', 'xydxdy']:
+                    # Catch if graph is a mix with and without error.
+                    if len(point) < 3:
+                        error = None
+                    else:
+                        error = point[2]
                     # Catch x or y-axis errors of None.
-                    error = point[2]
                     if error == None:
                         error = 0.0
 

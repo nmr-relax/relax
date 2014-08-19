@@ -108,8 +108,8 @@ def parse_file(file=None, dir=None):
         for j in range(len(row)):
             row[j] = row[j].strip()
 
-        # Empty line.
-        if len(row) == 0:
+        # Skip empty lines.
+        if len(row) == 0 or row == ['']:
             continue
 
         # The DC version.

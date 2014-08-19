@@ -34,7 +34,7 @@ from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
 from specific_analyses.relax_disp.data import count_spins, generate_r20_key, has_exponential_exp_type, loop_cluster, loop_exp_frq
-from specific_analyses.relax_disp.variables import MODEL_LIST_MMQ, MODEL_M61B, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, PARAMS_R20
+from specific_analyses.relax_disp.variables import MODEL_LIST_ANALYTIC_R1RHO, MODEL_LIST_CPMG_ONLY, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_R1RHO, MODEL_M61B, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, PARAMS_R20
 
 
 def assemble_param_vector(spins=None, key=None, sim_index=None):
@@ -266,11 +266,21 @@ def copy(pipe_from=None, pipe_to=None):
 
             # All other spin specific parameters.
             for param in spin_from.params:
-                if param in ['r2', 'pA', 'pB', 'pC', 'kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC', 'tex']:
+                if param in ['r2', 'r2a', 'r2b', 'pA', 'pB', 'pC', 'kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC', 'tex']:
                     continue
 
-                # Copy the value.
-                setattr(spin_to, param, deepcopy(getattr(spin_from, param)))
+                elif param == 'r2eff':
+                    # Copy the value.
+                    setattr(spin_to, param, deepcopy(getattr(spin_from, param)))
+
+                    # If error estimation exists.
+                    param_err = '%s_err' % param
+                    if hasattr(spin_from, param_err):
+                        setattr(spin_to, param_err, deepcopy(getattr(spin_from, param_err)))
+
+                else:
+                    # Copy the value.
+                    setattr(spin_to, param, deepcopy(getattr(spin_from, param)))
 
     # Switch back to the original data pipe.
     pipes.switch(pipe_orig)
@@ -339,7 +349,7 @@ def get_param_names(spins=None, full=False):
         param_text = param_name
 
         # The parameters with additional details.
-        if full and param_name in ['r2', 'r2a', 'r2b']:
+        if full and param_name in PARAMS_R20:
             param_text += " (%s)" % r20_key
  
         # Append the text.
@@ -425,11 +435,18 @@ def get_value(key=None, spins=None, sim_index=None, param_name=None, spin_index=
 def linear_constraints(spins=None, scaling_matrix=None):
     """Set up the relaxation dispersion curve fitting linear constraint matrices A and b.
 
+    The suggested restraints for 'kex' follows from article, on page 224: 
+    Nuclear Magnetic Resonance Methods for Quantifying Microsecond-to-Millisecond Motions in Biological Macromolecules.
+    Palmer-III, Arthur G., Kroenke, Christopher D., Loria, J. Patrick
+    Nucl. Magn. Reson. Biol. Macromol. B, 2001, Vol: 339, pages 204-238.
+    U{DOI: 10.1016/S0076-6879(01)39315-1<http://dx.doi.org/10.1016/S0076-6879%2801%2939315-1>}.
+
     Standard notation
     =================
 
     The different constraints used within different models are::
 
+        0 <= R1 <= 200
         0 <= R2 <= 200
         0 <= R2A <= 200
         0 <= R2B <= 200
@@ -442,12 +459,12 @@ def linear_constraints(spins=None, scaling_matrix=None):
         phi_ex_C >= 0
         padw2 >= 0
         dw >= 0
-        0 <= kex <= 2e6
-        0 <= k_AB <= 2e6
-        0 <= kB <= 2e6
-        0 <= kC <= 2e6
+        0 <= kex <= 1e4, for CPMG
+        0 <= kex <= 1e5, for R1rho
+        0 <= k_AB <= 1e4
+        0 <= kB <= 1e4
+        0 <= kC <= 1e4
         tex >= 0
-        k_AB >= 0
 
 
     Matrix notation
@@ -455,6 +472,10 @@ def linear_constraints(spins=None, scaling_matrix=None):
 
     In the notation A.x >= b, where A is a matrix of coefficients, x is an array of parameter values, and b is a vector of scalars, these inequality constraints are::
 
+        | 1  0  0 |     |    R1    |      |    0    |
+        |         |     |          |      |         |
+        |-1  0  0 |     |    R1    |      |  -200   |
+        |         |     |          |      |         |
         | 1  0  0 |     |    R2    |      |    0    |
         |         |     |          |      |         |
         |-1  0  0 |     |    R2    |      |  -200   |
@@ -487,19 +508,22 @@ def linear_constraints(spins=None, scaling_matrix=None):
         |         |     |          |      |         |
         | 1  0  0 |     |   kex    |      |    0    |
         |         |     |          |      |         |
-        |-1  0  0 |     |   kex    |      |  -2e6   |
+        |-1  0  0 |     |   kex    |      |-1e4/-1e5|
+        |         |     |          |      |         |
+        | 1  0  0 |     |   k_AB   |      |    0    |
+        |         |     |          |      |         |
+        |-1  0  0 |     |   k_AB   |      |  -1e4   |
         |         |     |          |      |         |
         | 1  0  0 |     |    kB    |      |    0    |
         |         |     |          |      |         |
-        |-1  0  0 |     |    kB    |      |  -2e6   |
+        |-1  0  0 |     |    kB    |      |  -1e4   |
         |         |     |          |      |         |
         | 1  0  0 |     |    kC    |      |    0    |
         |         |     |          |      |         |
-        |-1  0  0 |     |    kC    |      |  -2e6   |
+        |-1  0  0 |     |    kC    |      |  -1e4   |
         |         |     |          |      |         |
         | 1  0  0 |     |   tex    |      |    0    |
         |         |     |          |      |         |
-        | 1  0  0 |     |   k_AB   |      |    0    |
 
 
     @keyword spins:             The list of spin data containers for the block.
@@ -536,8 +560,18 @@ def linear_constraints(spins=None, scaling_matrix=None):
             b.append(0.0)
             j += 1
 
+        # The longitudinal relaxation rates (0 <= r1 <= 200).
+        elif param_name in ['r1']:
+            A.append(zero_array * 0.0)
+            A.append(zero_array * 0.0)
+            A[j][param_index] = 1.0
+            A[j+1][param_index] = -1.0
+            b.append(0.0)
+            b.append(-200.0 / scaling_matrix[param_index, param_index])
+            j += 2
+
         # The transversal relaxation rates (0 <= r2 <= 200).
-        elif param_name in ['r2', 'r2a', 'r2b']:
+        elif param_name in PARAMS_R20:
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
@@ -603,14 +637,21 @@ def linear_constraints(spins=None, scaling_matrix=None):
                     j += 1
                     break
 
-        # Exchange rates and times (0 <= k <= 2e6).
+        # Exchange rates and times (0 <= k <= 1e4) for CPMG and (0 <= k <= 1e5) for R1rho.
         elif param_name in ['kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC']:
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
             A[j+1][param_index] = -1.0
             b.append(0.0)
-            b.append(-2e6 / scaling_matrix[param_index, param_index])
+            # For CPMG experiments, (0 <= k <= 1e4).
+            if spins[0].model in MODEL_LIST_CPMG_ONLY + MODEL_LIST_MMQ:
+                b.append(-1e4 / scaling_matrix[param_index, param_index])
+            # For R1rho experiments, (0 <= k <= 1e5).
+            elif spins[0].model in MODEL_LIST_ANALYTIC_R1RHO + MODEL_LIST_NUMERIC_R1RHO:
+                b.append(-1e5 / scaling_matrix[param_index, param_index])
+            else:
+                b.append(-2e6 / scaling_matrix[param_index, param_index])
             j += 2
 
         # Exchange times (tex >= 0).
@@ -659,7 +700,19 @@ def loop_parameters(spins=None):
 
     # All other models.
     else:
-        # First the R2 parameters (one per spin per field strength).
+        # First the R1 fit parameter (one per spin per field strength).
+        for spin_index in range(len(spins)):
+            # Skip deselected spins.
+            if not spins[spin_index].select:
+                continue
+
+            # The R1 parameter.
+            if 'r1' in spins[0].params:
+                for exp_type, frq in loop_exp_frq():
+                    param_index += 1
+                    yield 'r1', param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
+
+        # Then the R2 parameters (one per spin per field strength).
         for spin_index in range(len(spins)):
             # Skip deselected spins.
             if not spins[spin_index].select:
@@ -736,7 +789,7 @@ def loop_parameters(spins=None):
 
         # All other parameters (one per spin cluster).
         for param in spins[0].params:
-            if not param in ['r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AB', 'dwH', 'dwH_AB', 'dwH_BC', 'dwH_AB']:
+            if not param in ['r1', 'r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AB', 'dwH', 'dwH_AB', 'dwH_BC', 'dwH_AB']:
                 param_index += 1
                 yield param, param_index, None, None
 
@@ -849,6 +902,17 @@ def param_num(spins=None):
         if len(spin.params) != len(spins[0].params):
             raise RelaxError("The number of parameters for each spin in the cluster are not the same.")
 
+    # Count the number of R10 parameters.
+    for spin in spins:
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        for i in range(len(spin.params)):
+            if spin.params[i] in ['r1']:
+                for exp_type, frq in loop_exp_frq():
+                    num += 1
+
     # Count the number of R20 parameters.
     for spin in spins:
         # Skip deselected spins.
@@ -872,7 +936,7 @@ def param_num(spins=None):
                 num += 1
 
     # Count all other parameters, but only for a single spin.
-    all_params = PARAMS_R20 + spin_params
+    all_params = ['r1'] + PARAMS_R20 + spin_params
     for spin in spins:
         # Skip deselected spins.
         if not spin.select:

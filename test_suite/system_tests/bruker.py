@@ -1,4 +1,4 @@
-###############################################################################
+##############################################################################
 #                                                                             #
 # Copyright (C) 2011-2013 Edward d'Auvergne                                   #
 #                                                                             #
@@ -37,6 +37,18 @@ class Bruker(SystemTestCase):
 
         # Create a data pipe.
         self.interpreter.pipe.create('mf', 'mf')
+
+
+    def test_bug_22411_T1_read_fail(self):
+        """Test catching U{bug #22411<https://gna.org/bugs/?22411>}, the failure in reading a Bruker DC T1 file as submitted by Olena Dobrovolska."""
+
+        # The data path.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'bruker_files'
+
+        # Create a data pipe, read the sequence, and read the Bruker DC file to trigger the bug.
+        self.interpreter.pipe.create('bug_22411', 'mf')
+        self.interpreter.sequence.read(file='bug_22411_T1_sequence', dir=path, res_num_col=2, res_name_col=1)
+        self.interpreter.bruker.read(ri_id='T1', file='bug_22411_T1.txt', dir=path)
 
 
     def test_bruker_read_noe(self):

@@ -30,7 +30,7 @@ These functions raise various RelaxErrors to help the user understand what went 
 from dep_check import C_module_exp_fn
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxNoPeakIntensityError
 import specific_analyses
-from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO
+from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, MODEL_LIST_R1RHO_W_R1_ONLY
 
 
 def check_c_modules():
@@ -114,6 +114,20 @@ def check_exp_type_fixed_time():
             raise RelaxError("The experiment '%s' is not of the fixed relaxation time period data type." % exp_type)
 
 
+def check_interpolate_offset_cpmg_model(interpolate=None):
+    """Check interpolating through offsets in CPMG models.
+
+    @keyword interpolate:           How to interpolate the fitted curves.  Either by option "%s" which interpolate CPMG frequency or spin-lock field strength, or by option "%s" which interpole over spin-lock offset.
+    @type interpolate:              str
+    @raises RelaxFuncSetupError:    If the interpolate method is set to 'offset' for not-R1rho models.
+    """%(specific_analyses.relax_disp.data.INTERPOLATE_DISP, specific_analyses.relax_disp.data.INTERPOLATE_OFFSET)
+
+    # Check if interpolating against offset for CPMG models.
+    # This is currently not implemented, and will raise an error.
+    if not specific_analyses.relax_disp.data.has_r1rho_exp_type() and interpolate == specific_analyses.relax_disp.data.INTERPOLATE_OFFSET:
+        raise RelaxFuncSetupError("interpolating against Spin-lock offset for CPMG models")
+
+
 def check_mixed_curve_types():
     """Prevent both fixed time and exponential curves from being analysed simultaneously.
 
@@ -162,6 +176,30 @@ def check_pipe_type():
     function_type = cdp.pipe_type
     if function_type != 'relax_disp':
         raise RelaxFuncSetupError(specific_analyses.setup.get_string(function_type))
+
+
+def check_missing_r1(model=None):
+    """Check if R1 data is missing for the model.
+
+    @keyword model: The model to test for.
+    @type model:    str
+    @return:        Return True if R1 data is not available for the model.
+    @rtype:         bool
+    """
+
+    # Check that the model uses R1 data.
+    if model in MODEL_LIST_R1RHO_W_R1_ONLY:
+        # If R1 ids are present.
+        if hasattr(cdp, 'ri_ids'):
+            return False
+
+        # If not present.
+        else:
+            return True
+
+    # If model does not need R1.
+    else:
+        return False
 
 
 def check_relax_times():
