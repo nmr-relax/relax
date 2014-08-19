@@ -74,7 +74,13 @@ class model_class:
 
         # Ordered lists of models to nest from.
         model_NEST = MODEL_NEST[self.model]
-        self.nest_list = model_NEST
+
+        # Remove the model itself from the list.
+        if model_NEST == None:
+            self.nest_list = model_NEST
+        else:
+            model_NEST = filter(partial(ne, self.model), model_NEST)
+            self.nest_list = model_NEST
 
         # Define the order of how exp type ranks.
         order_exp_type = [EXP_TYPE_R2EFF, EXP_TYPE_NOREX, EXP_TYPE_NOREX_R1RHO, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_MMQ, EXP_TYPE_R1RHO]
@@ -152,125 +158,21 @@ def nesting_model(self_models=None, model=None):
     # Sort the models according to: exp_type, equation type, chemical sites, year for model, number of parameters.
     completed_models_info = sorted(completed_models_info, key=attrgetter('exp_type_i', 'eq_i', 'sites', 'year_diff', 'params_nr'))
 
-    # Define list of comparable models
-    compa_models = []
-
-    # Loop over the list of model info.
-    for compl_model_info in completed_models_info:
-        # If the exp_type is the same, add to list of comparable models.
-        if compl_model_info.exp_type == model_info.exp_type:
-            compa_models.append(compl_model_info)
-
-    # Now determine how to report the nested models, if there exist comparable models.
-    if len(compa_models) >= 1:
-        # Loop over the list of comparable models, if the parameters are the same, return that as nested model.
-        for compa_model in compa_models:
-            if compa_model.params == model_info.params:
-                return model_info, compa_model
-
-        # Loop over the list of comparable models, if the parameters (other than R20 params) are the same, return that as nested model.
-        for compa_model in compa_models:
-            # Remove R20 params.
-            part_compa_model_params = compa_model.params
-            part_model_params = model_info.params
-            for r20 in PARAMS_R20:
-                part_compa_model_params = filter(partial(ne, r20), part_compa_model_params)
-                part_model_params = filter(partial(ne, r20), part_model_params)
-
-            # If the partial params are the same, then return that model.
-            if part_compa_model_params == part_model_params:
-                return model_info, compa_model
-
-        # Loop over the list of comparable models, if the parameters are part of the more complex model, return that as nested model.
-        for compa_model in compa_models:
-            # If the params list are within the parameter list, then return that model.
-            param_in = False
-
-            # Loop over the parameters.
-            for param in compa_model.params:
-                if param in model_info.params:
-                    param_in = True
-
-                # Special situation, where 'kex' can still be nested from DPL94 model.
-                elif param == 'phi_ex' and compa_model.model in MODEL_LIST_R1RHO_W_R1_ONLY + MODEL_LIST_R1RHO_FIT_R1_ONLY and model in MODEL_LIST_R1RHO_W_R1_ONLY + MODEL_LIST_R1RHO_FIT_R1_ONLY:
-                    continue
-
-                # Special situation, where 'kex' can still be nested from LM63 model.
-                elif param == 'phi_ex' and compa_model.model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG and model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG:
-                    continue
-
-                # Special situation, where 'kex'=1/tex can still be nested from IT99 model.
-                elif param == 'tex' and compa_model.model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG and model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG:
-                    continue
-
-                # Else break out of the loop.
-                else:
-                    # Break the for loop, if not found.
-                    param_in = False
-                    break
-
-            # If all parameters are found in the more complex model.
-            if param_in:
-                return model_info, compa_model
-
-        # Special case for LM63
-        if model == MODEL_LM63_3SITE:
-            # Loop over the models.
-            for compa_model in compa_models:
-                # If one of the comparable models is MODEL_LM63, return this.
-                if compa_model.model == MODEL_LM63:
-                    return model_info, compa_model
-
-        # Special case for MODEL_NS_MMQ_3SITE or MODEL_NS_MMQ_3SITE_LINEAR, getting parameters from MODEL_NS_MMQ_2SITE.
-        elif model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
-            # Loop over the models.
-            for compa_model in compa_models:
-                # If one of the comparable models is MODEL_NS_MMQ_2SITE, return this.
-                if compa_model.model == MODEL_NS_MMQ_2SITE:
-                    return model_info, compa_model
-
-        # Special case for MODEL_NS_R1RHO_3SITE or MODEL_NS_R1RHO_3SITE_LINEAR, getting parameters from MODEL_NS_R1RHO_2SITE.
-        elif model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
-            # Loop over the models.
-            for compa_model in compa_models:
-                # If one of the comparable models is MODEL_NS_MMQ_2SITE, return this.
-                if compa_model.model == MODEL_NS_R1RHO_2SITE:
-                    return model_info, compa_model
-
-        # Special case for DPL94.
-        elif model in [MODEL_DPL94, MODEL_DPL94_FIT_R1]:
-            # Loop over the models.
-            for compa_model in compa_models:
-                # If one of the comparable models is in list with R1rho R1, return this.
-                if compa_model.model in MODEL_LIST_R1RHO_W_R1_ONLY + MODEL_LIST_R1RHO_FIT_R1_ONLY:
-                    return model_info, compa_model
-
-        # Special case for IT99.
-        elif model in [MODEL_IT99]:
-            # Loop over the models.
-            for compa_model in compa_models:
-                # If one of the comparable models is in list with R1rho R1, return this.
-                if compa_model.model in MODEL_LIST_ANALYTIC_CPMG + MODEL_LIST_NUMERIC_CPMG:
-                    return model_info, compa_model
-
-        # If all fails.
+    # If no nest model list is specified, return None.
+    if model_info.nest_list == None:
         return model_info, None
 
-    # If there is no comparable models according to EXP_TYPE, check if some models can be nested anyway.
     else:
-        # Define list of comparable models, to be all completed models.
-        compa_models = completed_models_info
+        # Loop over ordered list of possible nested models.
+        for nest_model in model_info.nest_list:
+            # Then loop over list of completed models, and its associated information.
+            for completed_model_info in completed_models_info:
+                # If the nested model is in list of completed models, then return that model.
+                if nest_model == completed_model_info.model:
+                    return model_info, completed_model_info
 
-        # Special case for MODEL_MMQ_CR72.
-        if model == MODEL_MMQ_CR72:
-            # Loop over the models.
-            for compa_model in compa_models:
-                # If one of the comparable models is MODEL_CR72, return this.
-                if compa_model.model == MODEL_CR72:
-                    return model_info, compa_model
-
-        else:
-            return model_info, None
+        # If nothing is found, return None.
+        return model_info, None
 
 
 # Define function, to sort models.
