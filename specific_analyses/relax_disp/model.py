@@ -109,9 +109,14 @@ def convert_no_rex_fit_r1(self_models=None):
 
     @keyword self_models:   The list of all models analysed.
     @type self_models:      list of str
-    @return:                The corrected all models list.
-    @rtype:                 list of str
+    @return:                The corrected all models list, flag if 'No Rex' model for R1rho off-resonance was translated, flag if 'No Rex' model for R1rho off-resonance was inserted, flag if R1rho off-resonance was translated to 'R1 fit' models if no R1 data was found.
+    @rtype:                 list of str, bool, bool, bool
     """
+
+    # Flags to return.
+    no_rex_translated = False
+    no_rex_inserted = False
+    r1ho_translated = False
 
     # First check if 'No Rex' model should be converted to 'No Rex R1rho off res' for R1rho off-resonance.
     # First remove 'R2eff' model from the list.
@@ -146,6 +151,9 @@ def convert_no_rex_fit_r1(self_models=None):
             no_rex_index = self_models.index(MODEL_NOREX)
             self_models[no_rex_index] = MODEL_NOREX_R1RHO
 
+            # Change flag.
+            no_rex_translated = True
+
     # If some of the models are R1rho off-resonance, and MODEL_NOREX is present but MODEL_NOREX_R1RHO is not present.
     elif any_r1rho_off_res:
         # Then test if 'No Rex' is the only 'No Rex' model.
@@ -153,6 +161,9 @@ def convert_no_rex_fit_r1(self_models=None):
             # Then insert 'No Rex R1rho off res' after 'No Rex'.
             no_rex_index = self_models.index(MODEL_NOREX)
             self_models.insert(no_rex_index + 1, MODEL_NOREX_R1RHO)
+
+            # Change flag.
+            no_rex_inserted = True
 
     # Loop through all models, to replace with 'R1 fit' model, if R1 is missing.
     for i, model in enumerate(self_models):
@@ -171,8 +182,11 @@ def convert_no_rex_fit_r1(self_models=None):
             # Replace the model.
             self_models[i] = translated_model
 
+            # Flag if translated,
+            r1ho_translated = True
+
     # Return the model.
-    return self_models
+    return self_models, no_rex_translated, no_rex_inserted, r1ho_translated
 
 
 # Define function, to return model info.
