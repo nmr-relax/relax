@@ -33,7 +33,7 @@ from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
-from specific_analyses.relax_disp.data import count_spins, generate_r20_key, has_exponential_exp_type, is_r1_optimsed, loop_cluster, loop_exp_frq
+from specific_analyses.relax_disp.data import count_spins, generate_r20_key, has_exponential_exp_type, is_r1_optimised, loop_cluster, loop_exp_frq
 from specific_analyses.relax_disp.variables import MODEL_LIST_ANALYTIC_R1RHO, MODEL_LIST_CPMG_ONLY, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_R1RHO, MODEL_M61B, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, PARAMS_R20
 
 
@@ -951,7 +951,7 @@ def r1_setup():
             continue
 
         # Should R1 data be optimised?
-        r1_fit = is_r1_optimsed(spin.model)
+        r1_fit = is_r1_optimised(spin.model)
 
         # Prepend R1.
         if r1_fit and 'r1' not in spin.params:
