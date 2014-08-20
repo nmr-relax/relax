@@ -39,7 +39,7 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_NS_CPMG_2SITE_STAR
-        model_nest = MODEL_NS_CPMG_2SITE_3D
+        model_nest = MODEL_NS_CPMG_2SITE_EXPANDED
 
         print("self.models is:", self_models)
         print("Current model to analyse is:", model)
