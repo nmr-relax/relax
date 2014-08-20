@@ -520,6 +520,10 @@ class Relax_disp:
         path = self.pre_run_dir + sep + model
         self.interpreter.results.read(file='results', dir=path)
 
+        # Force copy of the R2eff values.
+        if model == MODEL_R2EFF:
+            self.interpreter.value.copy(pipe_from=pipe_name, pipe_to=self.name_pipe(model), param='r2eff', force=True)
+
         # Copy the parameters.
         self.interpreter.relax_disp.parameter_copy(pipe_from=pipe_name, pipe_to=self.name_pipe(model))
 
