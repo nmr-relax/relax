@@ -78,7 +78,7 @@ from pipe_control.spectrum import add_spectrum_id
 from pipe_control.spectrometer import check_frequency, get_frequency
 from pipe_control import value
 import specific_analyses
-from specific_analyses.relax_disp.checks import check_exp_type, check_interpolate_offset_cpmg_model, check_mixed_curve_types
+from specific_analyses.relax_disp.checks import check_exp_type, check_interpolate_offset_cpmg_model, check_missing_r1, check_mixed_curve_types
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_DPL94, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LIST_R1RHO_FIT_R1, MODEL_LIST_R1RHO_W_R1, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_PARAMS, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, PARAMS_R20
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, sep
@@ -1016,6 +1016,23 @@ def is_cpmg_exp_type(id=None):
 
     # Not a CPMG experiment type.
     return False
+
+
+def is_r1_optimsed(model=None):
+    """Should R1 values be optimised?
+
+    @keyword model: The model to test for.
+    @type model:    str
+    @return:        True if the R1 values should be optimised, False if loaded values should be used instead.
+    @rtype:         bool
+    """
+
+    # Firstly use the R1 fit flag as an override.
+    if hasattr(cdp, 'r1_fit'):
+        return cdp.r1_fit
+
+    # Otherwise, is the R1 data loaded?
+    return check_missing_r1(model=model)
 
 
 def is_r1rho_exp_type(id=None):
