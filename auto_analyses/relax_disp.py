@@ -124,14 +124,15 @@ class Relax_disp:
             # If 'No Rex' model was translated.
             if no_rex_translated:
                 no_rex_index = models.index(MODEL_NOREX)
-                print("\nThe 'No Rex' model for R1rho off-resonance models has been translated to the model: '%s'."%(converted_models[no_rex_index]))
+                text = "\nThe 'No Rex' model for R1rho off-resonance models has been translated to the model: '%s'."%(converted_models[no_rex_index])
+                print(text)
             if no_rex_inserted:
                 no_rex_index = models.index(MODEL_NOREX) + 1
-                print("\nThe 'No Rex' model for R1rho off-resonance models has been inserted as model: '%s'."%(converted_models[no_rex_index]))
+                text = "\nThe 'No Rex' model for R1rho off-resonance models has been inserted as model: '%s'."%(converted_models[no_rex_index])
+                print(text)
             if r1ho_translated:
-                print("\nIMPORTANT: R1 data is missing for this data-pipe.")
-                print("Therefore all of the R1rho off-resonance model has been translated into the corresponding models where R1 is fitted.")
-                print("If the R1 parameter should not fitted, consult the help pages: help(relax_data.read), to read how to load 'R1 data' before analysis.")
+                text = "R1 data is missing.  All R1rho off-resonance models have been translated to the corresponding model whereby R1 is fitted.  How to read 'R1 data' can be reviewed by 'help(relax_data.read)'."
+                warn(RelaxWarning(text))
 
             print("\nPrevious list of models: %s" % (models))
             print("\nNew list of models: %s" % (converted_models))
