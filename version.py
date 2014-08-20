@@ -22,14 +22,12 @@
 # Module docstring.
 """Module for relax version information."""
 
-# Dependencies.
-import dep_check
-
 # Python module imports.
 from os import F_OK, access, sep
-PIPE, Popen = None, None
-if dep_check.subprocess_module:
+try:
     from subprocess import PIPE, Popen
+except ImportError:
+    PIPE, Popen = None, None
 
 # relax module imports.
 import lib.structure.internal.object
