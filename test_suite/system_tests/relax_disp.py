@@ -5601,9 +5601,9 @@ class Relax_disp(SystemTestCase):
                                 elif model == MODEL_TAP03_FIT_R1:
                                     self.assertAlmostEqual(value, 1.08726698, 6)
                                 elif model == MODEL_MP05_FIT_R1:
-                                    self.assertAlmostEqual(value, 1.08726706)
+                                    self.assertAlmostEqual(value, 1.08726706, 6)
                                 elif model == MODEL_NS_R1RHO_2SITE_FIT_R1:
-                                    self.assertAlmostEqual(value, 1.08726706)
+                                    self.assertAlmostEqual(value, 1.08726706, 6)
 
                             elif param == 'kex':
                                 if model == MODEL_DPL94_FIT_R1:
