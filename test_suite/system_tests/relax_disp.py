@@ -31,11 +31,14 @@ from tempfile import mkdtemp
 from auto_analyses import relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
+from lib.errors import RelaxError
 from lib.io import get_file_path
 from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
+from specific_analyses.relax_disp.checks import check_missing_r1
 from specific_analyses.relax_disp.data import generate_r20_key, get_curve_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, return_grace_file_name_ini, return_param_key_from_data
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LM63, MODEL_M61B, MODEL_MP05, MODEL_MP05_FIT_R1, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_2SITE_FIT_R1, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02, MODEL_TP02_FIT_R1, MODEL_TAP03, MODEL_TAP03_FIT_R1
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_NUMERIC_CPMG, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MP05_FIT_R1, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_2SITE_FIT_R1, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02, MODEL_TP02_FIT_R1, MODEL_TAP03, MODEL_TAP03_FIT_R1
+from specific_analyses.relax_disp.model import convert_no_rex_fit_r1
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
@@ -691,6 +694,36 @@ class Relax_disp(SystemTestCase):
         self.interpreter.minimise.calculate(verbosity=1)
 
 
+    def setup_missing_r1_spins(self):
+        """Function for setting up a few spins for the given pipe."""
+
+        # Path to file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'
+
+        # File with spins.
+        file = open(data_path+sep+'R1_fitted_values.txt')
+        lines = file.readlines()
+        file.close()
+
+        for i, line in enumerate(lines):
+            # Make the string test
+            line_split = line.split()
+
+            if line_split[0] == "#":
+                continue
+
+            mol_name = line_split[0]
+            mol_name = None
+            res_num = int(line_split[1])
+            res_name = line_split[2]
+            spin_num = line_split[3]
+            spin_num = None
+            spin_name = line_split[4]
+
+            # Create the spin.
+            self.interpreter.spin.create(spin_name=spin_name, spin_num=spin_num, res_name=res_name, res_num=res_num, mol_name=mol_name)
+
+
     def setup_tp02_data_to_ns_r1rho_2site(self, clustering=False):
         """Setup data for the test of relaxation dispersion 'NS R1rho 2-site' model fitting against the 'TP02' test data."""
 
@@ -1319,6 +1352,228 @@ class Relax_disp(SystemTestCase):
 
         # Assert that the number of columns is equal, plus 1 for "#".
         self.assertEqual(nr_split_header, len(line_split_val) + 1)
+
+
+    def test_check_missing_r1(self):
+        """Test of the check_missing_r1() function."""
+
+        # Set up some spins.
+        self.setup_missing_r1_spins()
+
+        # Set variables.
+        exp_type = 'R1rho'
+        frq = 800.1 * 1E6
+
+        spectrum_id='test'
+
+        # Set an experiment type to the pipe.
+        self.interpreter.relax_disp.exp_type(spectrum_id=spectrum_id, exp_type=exp_type)
+
+        # Set a frequency to loop through.
+        self.interpreter.spectrometer.frequency(id=spectrum_id, frq=frq, units='Hz')
+
+        # Check R1 for DPL94.
+        check_missing_r1_return = check_missing_r1(model=MODEL_DPL94)
+        self.assertEqual(check_missing_r1_return, True)
+
+        # Check R1 for R2eff.
+        check_missing_r1_return = check_missing_r1(model=MODEL_R2EFF)
+        self.assertEqual(check_missing_r1_return, False)
+
+        # The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'
+
+        # Now load some R1 data.
+        self.interpreter.relax_data.read(ri_id='R1', ri_type='R1', frq=cdp.spectrometer_frq_list[0], file='R1_fitted_values.txt', dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+
+        # Check R1.
+        check_missing_r1_return = check_missing_r1(model=MODEL_DPL94)
+        self.assertEqual(check_missing_r1_return, False)
+
+
+    def test_convert_no_rex_fit_r1(self):
+        """Test of specific_analyses.relax_disp.model.convert_no_rex_fit_r1() function."""
+
+        # Set up some spins.
+        self.setup_missing_r1_spins()
+
+        # Set variables.
+        exp_type = 'R1rho'
+        frq = 800.1 * 1E6
+
+        spectrum_id='test'
+
+        # Set an experiment type to the pipe.
+        self.interpreter.relax_disp.exp_type(spectrum_id=spectrum_id, exp_type=exp_type)
+
+        # Set a frequency to loop through.
+        self.interpreter.spectrometer.frequency(id=spectrum_id, frq=frq, units='Hz')
+
+        ##### Test the translations, if R1 is not present.
+
+        # First check that CPMG models are not converted.
+
+        ## First check analytic.
+        ### Setup the models, which is available through the GUI.
+        self_models = [MODEL_R2EFF, MODEL_NOREX] + MODEL_LIST_ANALYTIC_CPMG
+
+        ### Get the return after the conversion.
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+
+        ### Check that the models have been translated correctly.
+        self.assertEqual(self_models_return, self_models)
+
+        ## First check numeric.
+        ### Setup the models, which is available through the GUI.
+        self_models = [MODEL_R2EFF, MODEL_NOREX] + MODEL_LIST_NUMERIC_CPMG
+
+        ### Get the return after the conversion.
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+
+        ### Check that the models have been translated correctly.
+        self.assertEqual(self_models_return, self_models)
+
+        # Then check the R1ho models which is available through the GUI.
+
+        ## Check for a normal 2 site setup.
+        ### Setup the models, which is available through the GUI.
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
+
+        ### Get the return after the conversion.
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+
+        ### Check that the models have been translated correctly.
+        self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1, MODEL_NS_R1RHO_2SITE_FIT_R1])
+
+        ## Check for a 2 site setup, including a 3 site, which should not be able to translate.
+        ### Setup the models, which is available through the GUI.
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE_LINEAR]
+
+        ### This call should raise a RelaxError, since R1 is missing, and MODEL_NS_R1RHO_3SITE_LINEAR cannot be translated to a model where R1 is fitted.
+        with self.assertRaises(RelaxError):
+            convert_no_rex_fit_r1(self_models=self_models)
+
+        ## Check for a 2 site setup, where both MODEL_NOREX and MODEL_NOREX_R1RHO are sent to auto_analyses.
+        ## This should not be possible through the GUI, but could be wished to do through scripting.
+        ## This should just make a conversion to the 'R1 fit' models, and keep MODEL_NOREX.
+
+        ### Setup the models, which is available through the GUI.
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
+
+        ### Get the return after the conversion.
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+
+        ### Check that the models have been translated correctly.
+        self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1, MODEL_NS_R1RHO_2SITE_FIT_R1])
+
+        ## Check again with MODEL_NOREX_R1RHO_FIT_R1.
+
+        ### Setup the models, which is available through the GUI.
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
+
+        ### Get the return after the conversion.
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+
+        ### Check that the models have been translated correctly.
+        self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1, MODEL_NS_R1RHO_2SITE_FIT_R1])
+
+        ## Now check if there is a mix of On-resonance and Off-resonance models.
+        ## This should insert 'MODEL_NOREX_R1RHO', if it is not present.
+        ### Setup the models, which is available through the GUI.
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_M61, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
+
+        ### Get the return after the conversion.
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+
+        ### Check that the models have been translated correctly.
+        self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO_FIT_R1, MODEL_M61, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1, MODEL_NS_R1RHO_2SITE_FIT_R1])
+
+        ##### Test the translations, if R1 is present.
+
+        ## The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'
+
+        ## Now load some R1 data.
+        self.interpreter.relax_data.read(ri_id='R1', ri_type='R1', frq=cdp.spectrometer_frq_list[0], file='R1_fitted_values.txt', dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+
+        # First check that CPMG models are not converted.
+
+        ## First check analytic.
+        ### Setup the models, which is available through the GUI.
+        self_models = [MODEL_R2EFF, MODEL_NOREX] + MODEL_LIST_ANALYTIC_CPMG
+
+        ### Get the return after the conversion.
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+
+        ### Check that the models have been translated correctly.
+        self.assertEqual(self_models_return, self_models)
+
+        ## First check numeric.
+        ### Setup the models, which is available through the GUI.
+        self_models = [MODEL_R2EFF, MODEL_NOREX] + MODEL_LIST_NUMERIC_CPMG
+
+        ### Get the return after the conversion.
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+
+        ### Check that the models have been translated correctly.
+        self.assertEqual(self_models_return, self_models)
+
+        # Then check the R1ho models which is available through the GUI.
+
+        ## Check for a normal 2 site setup.
+        ### Setup the models, which is available through the GUI.
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
+
+        ### Get the return after the conversion.
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+
+        ### Check that the models have been translated correctly.
+        self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE])
+
+        ## Check for a 2 site setup, including a 3 site.
+        ### Setup the models, which is available through the GUI.
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE_LINEAR]
+
+        ### Get the return after the conversion.
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+
+        ### Check that the models have been translated correctly.
+        self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE_LINEAR])
+
+        ## Check for a 2 site setup, where both MODEL_NOREX and MODEL_NOREX_R1RHO are sent to auto_analyses.
+        ## This should not be possible through the GUI, but could be wished to do through scripting.
+        ## This should just make a conversion to the 'R1 fit' models, and keep MODEL_NOREX.
+
+        ### Setup the models, which is available through the GUI.
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
+
+        ### Get the return after the conversion.
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+
+        ### Check that the models have been translated correctly.
+        self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE])
+
+        ## Check again with MODEL_NOREX_R1RHO_FIT_R1.
+
+        ### Setup the models, which is available through the GUI.
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
+
+        ### Get the return after the conversion.
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+
+        ### Check that the models have been translated correctly.
+        self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE])
+
+        ## Now check if there is a mix of On-resonance and Off-resonance models.
+        ## This should insert 'MODEL_NOREX_R1RHO', if it is not present.
+        ### Setup the models, which is available through the GUI.
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_M61, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
+
+        ### Get the return after the conversion.
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+
+        ### Check that the models have been translated correctly.
+        self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_M61, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE])
 
 
     def test_cpmg_synthetic_b14_to_ns3d_cluster(self):
@@ -5378,7 +5633,8 @@ class Relax_disp(SystemTestCase):
 
 
         # Print the final pipe.
-        self.interpreter.pipe.switch(pipe_name='%s - relax_disp' % ('final'))
+        model = 'final'
+        self.interpreter.pipe.switch(pipe_name='%s - relax_disp' % (model))
         print("\nFinal pipe")
 
         # Loop over the spins.
@@ -5393,6 +5649,45 @@ class Relax_disp(SystemTestCase):
             # Get the value.
             value = getattr(cur_spin, param)
             print("%-10s %-6s %-6s %6s" % ("Parameter:", param, "Value:", value))
+
+
+        ### Now check some of the written out files.
+        file_names = ['r1rho_prime', 'r1']
+
+        for file_name_i in file_names:
+
+            # Make the file name.
+            file_name = "%s.out" % file_name_i
+
+            # Get the file path.
+            file_path = get_file_path(file_name, result_dir_name + sep + model)
+
+            # Test the file exists.
+            print("Testing file access to: %s"%file_path)
+            self.assert_(access(file_path, F_OK))
+
+            # Now open, and compare content, line by line.
+            file_prod = open(file_path)
+            lines_prod = file_prod.readlines()
+            file_prod.close()
+
+            # Loop over the lines.
+            for i, line in enumerate(lines_prod):
+                # Make the string test
+                line_split = line.split()
+
+                # Continue for comment lines.
+                if line_split[0] == "#":
+                    print(line),
+                    continue
+
+                # Assign the split of the line.
+                mol_name, res_num, res_name, spin_num, spin_name, val, sd_error = line_split
+                print mol_name, res_num, res_name, spin_num, spin_name, val, sd_error
+
+                if res_num == '52':
+                    # Assert that the value is not None.
+                    self.assertNotEqual(val, 'None')
 
 
     def test_r2eff_read(self):
