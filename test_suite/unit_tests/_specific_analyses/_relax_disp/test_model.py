@@ -575,12 +575,12 @@ class Test_model(UnitTestCase):
         # Test content of dictionary.
         self.assertEqual(par_dic['r2'], 'r2')
         self.assertEqual(par_dic['pA'], 'pA')
-        self.assertEqual(par_dic['dw_AB'], None)
-        self.assertEqual(par_dic['kex_AB'], None)
-        self.assertEqual(par_dic['pB'], None)
-        self.assertEqual(par_dic['dw_BC'], None)
-        self.assertEqual(par_dic['kex_BC'], None)
-        self.assertEqual(par_dic['kex_AC'], None)
+        self.assertEqual(par_dic['dw_AB'], 'dw')
+        self.assertEqual(par_dic['kex_AB'], 'kex')
+        self.assertEqual(par_dic['pB'], '1 - pA')
+        self.assertEqual(par_dic['dw_BC'], 'dw')
+        self.assertEqual(par_dic['kex_BC'], 'kex')
+        self.assertEqual(par_dic['kex_AC'], 'kex')
 
 
     def test_nesting_param_8(self):
