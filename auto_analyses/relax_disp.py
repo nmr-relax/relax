@@ -39,7 +39,7 @@ from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, loop_frq
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
-from specific_analyses.relax_disp.model import nesting_model, nesting_param
+from specific_analyses.relax_disp.model import convert_no_rex_fit_r1, nesting_model, nesting_param
 from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, MODEL_LIST_ANALYTIC, MODEL_LIST_NEST, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO_FIT_R1, MODEL_LIST_R1RHO_W_R1, MODEL_LIST_R1RHO_FULL, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_PARAMS, MODEL_R2EFF, PARAMS_R20
 from status import Status; status = Status()
 
@@ -100,7 +100,6 @@ class Relax_disp:
         self.pipe_name = pipe_name
         self.pipe_bundle = pipe_bundle
         self.results_dir = results_dir
-        self.models = models
         self.grid_inc = grid_inc
         self.mc_sim_num = mc_sim_num
         self.exp_mc_sim_num = exp_mc_sim_num
@@ -112,6 +111,35 @@ class Relax_disp:
         self.numeric_only = numeric_only
         self.mc_sim_all_models = mc_sim_all_models
         self.eliminate = eliminate
+
+        # Possible convert the models for analyses.
+        # Determine if any model in the list of all models should be replaced or inserted as the correct 'No Rex' model.
+        # Also translate the R1rho off-resonance model to the corresponding 'R1 fit' models, if R1 is not loaded.
+        converted_models, no_rex_translated, no_rex_inserted, r1ho_translated = convert_no_rex_fit_r1(self_models=deepcopy(models))
+
+        if converted_models != models:
+            # Printout.
+            section(file=sys.stdout, text="Converting models.", prespace=2)
+
+            # If 'No Rex' model was translated.
+            if no_rex_translated:
+                no_rex_index = models.index(MODEL_NOREX)
+                print("\nThe 'No Rex' model for R1rho off-resonance models has been translated to the model: '%s'."%(converted_models[no_rex_index]))
+            if no_rex_inserted:
+                no_rex_index = models.index(MODEL_NOREX) + 1
+                print("\nThe 'No Rex' model for R1rho off-resonance models has been inserted as model: '%s'."%(converted_models[no_rex_index]))
+            if r1ho_translated:
+                print("\nIMPORTANT: R1 data is missing for this data-pipe.")
+                print("Therefore all of the R1rho off-resonance model has been translated into the corresponding models where R1 is fitted.")
+                print("If the R1 parameter should not fitted, consult the help pages: help(relax_data.read), to read how to load 'R1 data' before analysis.")
+
+            print("\nPrevious list of models: %s" % (models))
+            print("\nNew list of models: %s" % (converted_models))
+
+            # Store the new order of models.
+            self.models = converted_models
+        else:
+            self.models = models
 
         # No results directory, so default to the current directory.
         if not self.results_dir:
