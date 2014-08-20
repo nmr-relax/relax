@@ -1018,7 +1018,7 @@ def is_cpmg_exp_type(id=None):
     return False
 
 
-def is_r1_optimsed(model=None):
+def is_r1_optimised(model=None):
     """Should R1 values be optimised?
 
     @keyword model: The model to test for.

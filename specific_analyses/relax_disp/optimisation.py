@@ -39,7 +39,7 @@ from lib.text.sectioning import subsection
 from multi import Memo, Result_command, Slave_command
 from pipe_control.mol_res_spin import spin_loop
 from specific_analyses.relax_disp.checks import check_disp_points, check_exp_type, check_exp_type_fixed_time
-from specific_analyses.relax_disp.data import average_intensity, count_spins, find_intensity_keys, has_exponential_exp_type, has_proton_mmq_cpmg, loop_exp, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_frq, loop_offset, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1
+from specific_analyses.relax_disp.data import average_intensity, count_spins, find_intensity_keys, has_exponential_exp_type, has_proton_mmq_cpmg, is_r1_optimised, loop_exp, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_frq, loop_offset, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1
 from specific_analyses.relax_disp.parameters import assemble_param_vector, disassemble_param_vector, linear_constraints, param_conversion, param_num
 from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_CPMG, MODEL_CR72, MODEL_CR72_FULL, MODEL_LIST_MMQ, MODEL_LM63, MODEL_M61, MODEL_MP05, MODEL_TAP03, MODEL_TP02
 from target_functions.relax_disp import Dispersion
@@ -561,8 +561,8 @@ class Disp_minimise_command(Slave_command):
 
         # The offset and R1 data.
         self.offsets, spin_lock_fields_inter, self.chemical_shifts, self.tilt_angles, self.Delta_omega, self.w_eff = return_offset_data(spins=spins, spin_ids=spin_ids, field_count=len(fields))
-
         self.r1 = return_r1_data(spins=spins, spin_ids=spin_ids, field_count=len(fields), sim_index=sim_index)
+        self.r1_fit = is_r1_optimised(spins[0].model)
 
         # Parameter number.
         self.param_num = param_num(spins=spins)
