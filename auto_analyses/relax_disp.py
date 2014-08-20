@@ -363,16 +363,23 @@ class Relax_disp:
             if param_conv == None:
                 continue
 
-            else:
-                print("Copying parameter %s to %s." % (param, param_conv))
+            print("Copying from parameter '%s' to '%s'." % (param_conv, param))
 
-                # Loop over the spins to copy the parameters.
-                for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-                    # Get the nested spin.
-                    nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+            # Loop over the spins to copy the parameters.
+            for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                # Get the nested spin.
+                nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
 
-                    # Set the attribute.
-                    setattr(spin, param, deepcopy(getattr(nested_spin, param_conv)))
+                # Set value.
+                # Some special conversions.
+                if param_conv == '1 - pA':
+                    val = 1.0 - getattr(nested_spin, 'pA')
+
+                else:
+                    val = deepcopy(getattr(nested_spin, param_conv))
+
+                # Set the attribute.
+                setattr(spin, param, val)
 
         # Determine if model is equivalent, and should not be Grid searched, or if nested, and some parameters are pre-set. Here Grid search should still be issued.
         return equivalent
