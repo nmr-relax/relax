@@ -27,6 +27,7 @@ from os import sep
 from pipe_control import state
 from specific_analyses.relax_disp.checks import get_times
 from test_suite.unit_tests.base_classes import UnitTestCase
+from status import Status; status = Status()
 
 
 class Test_checks(UnitTestCase):
