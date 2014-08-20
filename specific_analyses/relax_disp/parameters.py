@@ -33,7 +33,7 @@ from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
-from specific_analyses.relax_disp.data import count_spins, generate_r20_key, has_exponential_exp_type, loop_cluster, loop_exp_frq
+from specific_analyses.relax_disp.data import count_spins, generate_r20_key, has_exponential_exp_type, is_r1_optimsed, loop_cluster, loop_exp_frq
 from specific_analyses.relax_disp.variables import MODEL_LIST_ANALYTIC_R1RHO, MODEL_LIST_CPMG_ONLY, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_R1RHO, MODEL_M61B, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, PARAMS_R20
 
 
@@ -949,6 +949,27 @@ def param_num(spins=None):
 
     # Return the number.
     return num
+
+
+def r1_setup():
+    """Modify the current spin parameter list to either include or exclude the R1 parameter."""
+
+    # Loop over the spins.
+    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+        # No model set up.
+        if not hasattr(spin, 'params') or not hasattr(spin, 'model'):
+            continue
+
+        # Should R1 data be optimised?
+        r1_fit = is_r1_optimsed(spin.model)
+
+        # Prepend R1.
+        if r1_fit and 'r1' not in spin.params:
+            spin.params.insert(0, 'r1')
+
+        # Remove the R1 parameter.
+        if not r1_fit and 'r1' in spin.params:
+            spin.params.remove('r1')
 
 
 def set_value(value=None, key=None, spins=None, sim_index=None, param_name=None, spin_index=None, r20_key=None):
