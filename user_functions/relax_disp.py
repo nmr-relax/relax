@@ -63,22 +63,22 @@ uf = uf_info.add_uf('relax_disp.catia_execute')
 uf.title = "Perform a relaxation dispersion optimisation using Flemming Hansen's CATIA."
 uf.title_short = "CATIA execution."
 uf.add_keyarg(
-    name = "dir",
-    py_type = "str",
-    arg_type = "dir sel",
-    desc_short = "directory name",
-    desc = "The directory containing all of the CATIA input files.",
-    can_be_none = True
+name = "dir",
+py_type = "str",
+arg_type = "dir sel",
+desc_short = "directory name",
+desc = "The directory containing all of the CATIA input files.",
+can_be_none = True
 )
 uf.add_keyarg(
-    name = "binary",
-    default = "catia",
-    py_type = "str",
-    arg_type = "file sel",
-    desc_short = "CATIA executable file",
-    desc = "The name of the executable CATIA program file.",
-    wiz_filesel_style = FD_OPEN,
-    wiz_filesel_preview = False
+name = "binary",
+default = "catia",
+py_type = "str",
+arg_type = "file sel",
+desc_short = "CATIA executable file",
+desc = "The name of the executable CATIA program file.",
+wiz_filesel_style = FD_OPEN,
+wiz_filesel_preview = False
 )
 # Description.
 uf.desc.append(Desc_container())
@@ -98,20 +98,20 @@ uf = uf_info.add_uf('relax_disp.catia_input')
 uf.title = "Create the input files for Flemming Hansen's CATIA program."
 uf.title_short = "CATIA input file creation."
 uf.add_keyarg(
-    name = "dir",
-    default = "catia",
-    py_type = "str",
-    arg_type = "dir sel",
-    desc_short = "directory name",
-    desc = "The directory to place the CATIA input files, output directory, etc.",
-    can_be_none = True
+name = "dir",
+default = "catia",
+py_type = "str",
+arg_type = "dir sel",
+desc_short = "directory name",
+desc = "The directory to place the CATIA input files, output directory, etc.",
+can_be_none = True
 )
 uf.add_keyarg(
-    name = "force",
-    default = False,
-    py_type = "bool",
-    desc_short = "force flag",
-    desc = "A flag which if set to True will cause the files to be overwritten if they already exist."
+name = "force",
+default = False,
+py_type = "bool",
+desc_short = "force flag",
+desc = "A flag which if set to True will cause the files to be overwritten if they already exist."
 )
 # Description.
 uf.desc.append(Desc_container())
@@ -129,21 +129,21 @@ uf = uf_info.add_uf('relax_disp.cluster')
 uf.title = "Define clusters of spins for joint optimisation."
 uf.title_short = "Spin clustering."
 uf.add_keyarg(
-    name = "cluster_id",
-    py_type = "str",
-    desc_short = "cluster ID",
-    desc = "The cluster identification string.",
-    wiz_element_type = 'combo',
-    wiz_combo_iter = relax_disp_uf.cluster_ids
+name = "cluster_id",
+py_type = "str",
+desc_short = "cluster ID",
+desc = "The cluster identification string.",
+wiz_element_type = 'combo',
+wiz_combo_iter = relax_disp_uf.cluster_ids
 )
 uf.add_keyarg(
-    name = "spin_id",
-    py_type = "str",
-    desc_short = "spin ID string",
-    desc = "The spin identifier string for the spin or group of spins to add to the cluster.",
-    wiz_element_type = 'combo',
-    wiz_combo_iter = get_spin_ids,
-    can_be_none = True
+name = "spin_id",
+py_type = "str",
+desc_short = "spin ID string",
+desc = "The spin identifier string for the spin or group of spins to add to the cluster.",
+wiz_element_type = 'combo',
+wiz_combo_iter = get_spin_ids,
+can_be_none = True
 )
 # Description.
 uf.desc.append(Desc_container())
@@ -168,27 +168,27 @@ uf = uf_info.add_uf('relax_disp.cpmg_setup')
 uf.title = "Set the CPMG pulse sequence information associated with a given spectrum."
 uf.title_short = "CPMG experiment setup."
 uf.add_keyarg(
-    name = "spectrum_id",
-    py_type = "str",
-    desc_short = "spectrum ID string",
-    desc = "The spectrum ID string to associate the CPMG pulse sequence information to.",
-    wiz_element_type = 'combo',
-    wiz_combo_iter = spectrum.get_ids,
-    wiz_read_only = True
+name = "spectrum_id",
+py_type = "str",
+desc_short = "spectrum ID string",
+desc = "The spectrum ID string to associate the CPMG pulse sequence information to.",
+wiz_element_type = 'combo',
+wiz_combo_iter = spectrum.get_ids,
+wiz_read_only = True
 )
 uf.add_keyarg(
-    name = "cpmg_frq",
-    py_type = "num",
-    desc_short = "CPMG frequency (Hz)",
-    desc = "The frequency, in Hz, of the CPMG pulse train.",
-    can_be_none = True
+name = "cpmg_frq",
+py_type = "num",
+desc_short = "CPMG frequency (Hz)",
+desc = "The frequency, in Hz, of the CPMG pulse train.",
+can_be_none = True
 )
 uf.add_keyarg(
-    name = "ncyc_even",
-    default = True,
-    py_type = "bool",
-    desc_short = "even ncyc flag",
-    desc = "A flag which if True means that the number of CPMG blocks must be even.  This is pulse sequence dependant."
+name = "ncyc_even",
+default = True,
+py_type = "bool",
+desc_short = "even ncyc flag",
+desc = "A flag which if True means that the number of CPMG blocks must be even.  This is pulse sequence dependant."
 )
 # Description.
 uf.desc.append(Desc_container())
@@ -212,29 +212,29 @@ uf = uf_info.add_uf('relax_disp.cpmgfit_execute')
 uf.title = "Optimisation of the CPMG data using Art Palmer's CPMGFit program."
 uf.title_short = "CPMGFit execution."
 uf.add_keyarg(
-    name = "dir",
-    py_type = "str",
-    arg_type = "dir sel",
-    desc_short = "directory name",
-    desc = "The directory containing all of the CPMGFit input files.  If not given, this defaults to the model name in lower case.",
-    can_be_none = True
+name = "dir",
+py_type = "str",
+arg_type = "dir sel",
+desc_short = "directory name",
+desc = "The directory containing all of the CPMGFit input files.  If not given, this defaults to the model name in lower case.",
+can_be_none = True
 )
 uf.add_keyarg(
-    name = "force",
-    default = False,
-    py_type = "bool",
-    desc_short = "force flag",
-    desc = "A flag which if set to True will cause the results files to be overwritten if they already exist."
+name = "force",
+default = False,
+py_type = "bool",
+desc_short = "force flag",
+desc = "A flag which if set to True will cause the results files to be overwritten if they already exist."
 )
 uf.add_keyarg(
-    name = "binary",
-    default = "cpmgfit",
-    py_type = "str",
-    arg_type = "file sel",
-    desc_short = "CPMGFit executable file",
-    desc = "The name of the executable CPMGFit program file.",
-    wiz_filesel_style = FD_OPEN,
-    wiz_filesel_preview = False
+name = "binary",
+default = "cpmgfit",
+py_type = "str",
+arg_type = "file sel",
+desc_short = "CPMGFit executable file",
+desc = "The name of the executable CPMGFit program file.",
+wiz_filesel_style = FD_OPEN,
+wiz_filesel_preview = False
 )
 # Description.
 uf.desc.append(Desc_container())
@@ -254,36 +254,36 @@ uf = uf_info.add_uf('relax_disp.cpmgfit_input')
 uf.title = "Create the input files for Art Palmer's CPMGFit program."
 uf.title_short = "CPMGFit input file creation."
 uf.add_keyarg(
-    name = "dir",
-    py_type = "str",
-    arg_type = "dir sel",
-    desc_short = "directory name",
-    desc = "The directory to place the files.  If not given, this defaults to the model name in lower case.",
-    can_be_none = True
+name = "dir",
+py_type = "str",
+arg_type = "dir sel",
+desc_short = "directory name",
+desc = "The directory to place the files.  If not given, this defaults to the model name in lower case.",
+can_be_none = True
 )
 uf.add_keyarg(
-    name = "force",
-    default = False,
-    py_type = "bool",
-    desc_short = "force flag",
-    desc = "A flag which if set to True will cause the files to be overwritten if they already exist."
+name = "force",
+default = False,
+py_type = "bool",
+desc_short = "force flag",
+desc = "A flag which if set to True will cause the files to be overwritten if they already exist."
 )
 uf.add_keyarg(
-    name = "binary",
-    default = "cpmgfit",
-    py_type = "str",
-    arg_type = "file sel",
-    desc_short = "CPMGFit executable file",
-    desc = "The name of the executable CPMGFit program file.",
-    wiz_filesel_style = FD_OPEN,
-    wiz_filesel_preview = False
+name = "binary",
+default = "cpmgfit",
+py_type = "str",
+arg_type = "file sel",
+desc_short = "CPMGFit executable file",
+desc = "The name of the executable CPMGFit program file.",
+wiz_filesel_style = FD_OPEN,
+wiz_filesel_preview = False
 )
 uf.add_keyarg(
-    name = "spin_id",
-    py_type = "str",
-    desc_short = "spin ID string",
-    desc = "The spin identification string.",
-    can_be_none = True
+name = "spin_id",
+py_type = "str",
+desc_short = "spin ID string",
+desc = "The spin identification string.",
+can_be_none = True
 )
 # Description.
 uf.desc.append(Desc_container())
@@ -304,40 +304,40 @@ uf = uf_info.add_uf('relax_disp.exp_type')
 uf.title = "Select the relaxation dispersion experiment type."
 uf.title_short = "Relaxation dispersion experiment type selection."
 uf.add_keyarg(
-    name = "spectrum_id",
-    py_type = "str",
-    desc_short = "spectrum ID string",
-    desc = "The spectrum ID string to associate the spin-lock field strength to.",
-    wiz_element_type = 'combo',
-    wiz_combo_iter = spectrum.get_ids,
-    wiz_read_only = True
+name = "spectrum_id",
+py_type = "str",
+desc_short = "spectrum ID string",
+desc = "The spectrum ID string to associate the spin-lock field strength to.",
+wiz_element_type = 'combo',
+wiz_combo_iter = spectrum.get_ids,
+wiz_read_only = True
 )
 uf.add_keyarg(
-    name = "exp_type",
-    default = EXP_TYPE_CPMG_SQ,
-    py_type = "str",
-    desc_short = "experiment type",
-    desc = "The type of relaxation dispersion experiment performed.",
-    wiz_element_type = "combo",
-    wiz_combo_choices = [
-        "Single quantum (SQ) CPMG-type data",
-        "Zero quantum (ZQ) CPMG-type data",
-        "Double quantum (DQ) CPMG-type data",
-        "Multiple quantum (MQ) CPMG-type data",
-        "1H single quantum (SQ) CPMG-type data",
-        "1H multiple quantum (SQ) CPMG-type data",
-        "%s-type data" % r1rho
-    ],
-    wiz_combo_data = [
-        EXP_TYPE_CPMG_SQ,
-        EXP_TYPE_CPMG_ZQ,
-        EXP_TYPE_CPMG_DQ,
-        EXP_TYPE_CPMG_MQ,
-        EXP_TYPE_CPMG_PROTON_SQ,
-        EXP_TYPE_CPMG_PROTON_MQ,
-        EXP_TYPE_R1RHO
-    ],
-    wiz_read_only = True
+name = "exp_type",
+default = EXP_TYPE_CPMG_SQ,
+py_type = "str",
+desc_short = "experiment type",
+desc = "The type of relaxation dispersion experiment performed.",
+wiz_element_type = "combo",
+wiz_combo_choices = [
+    "Single quantum (SQ) CPMG-type data",
+    "Zero quantum (ZQ) CPMG-type data",
+    "Double quantum (DQ) CPMG-type data",
+    "Multiple quantum (MQ) CPMG-type data",
+    "1H single quantum (SQ) CPMG-type data",
+    "1H multiple quantum (SQ) CPMG-type data",
+    "%s-type data" % r1rho
+],
+wiz_combo_data = [
+    EXP_TYPE_CPMG_SQ,
+    EXP_TYPE_CPMG_ZQ,
+    EXP_TYPE_CPMG_DQ,
+    EXP_TYPE_CPMG_MQ,
+    EXP_TYPE_CPMG_PROTON_SQ,
+    EXP_TYPE_CPMG_PROTON_MQ,
+    EXP_TYPE_R1RHO
+],
+wiz_read_only = True
 )
 # Description.
 uf.desc.append(Desc_container())
@@ -368,12 +368,12 @@ uf = uf_info.add_uf('relax_disp.insignificance')
 uf.title = "Deselect all spins with insignificant dispersion."
 uf.title_short = "Insignificant spin deselection."
 uf.add_keyarg(
-    name = "level",
-    py_type = "float",
-    default = 2.0,
-    desc_short = "insignificance level",
-    desc = "The R2eff/R1rho value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.",
-    can_be_none = False
+name = "level",
+py_type = "float",
+default = 2.0,
+desc_short = "insignificance level",
+desc = "The R2eff/R1rho value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.",
+can_be_none = False
 )
 # Description.
 uf.desc.append(Desc_container())
@@ -605,6 +605,27 @@ uf.menu_text = "&plot_exp_curves"
 uf.gui_icon = "oxygen.actions.document-save"
 uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'grace.png'
+
+
+# The relax_disp.r1_fit user function.
+uf = uf_info.add_uf('relax_disp.r1_fit')
+uf.title = "Switch between fixed or fitted R1 values for optimisation."
+uf.title_short = "R1 optimisation flag."
+uf.add_keyarg(
+    name = "fit",
+    default = True,
+    py_type = "bool",
+    desc_short = "R1 optimisation flag",
+    desc = "The flag specifying if R1 values should be optimised or if loaded R1 values should be fixed during optimisation."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This user function allows the optimisation of R1 values to be turned on an off for the relaxation dispersion dispersion models.  If turned off, the current values of R1 will be fixed.  Otherwise the R1 values will be added to the model parameter set.")
+uf.backend = relax_disp_uf.r1_fit
+uf.menu_text = "r&1_fit"
+uf.gui_icon = "oxygen.status.object-locked"
+uf.wizard_size = (800, 500)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 
 # The relax_disp.r2eff_read user function.
