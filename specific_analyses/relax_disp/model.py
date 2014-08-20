@@ -142,6 +142,10 @@ def convert_no_rex_fit_r1(self_models=None):
         else:
             all_r1rho_off_res = False
 
+    # In case, only analysing 'R2eff' or 'No Rex'
+    if len(self_models_rem_r2eff_norex) == 0:
+        all_r1rho_off_res = False
+
     # Now either replace or insert MODEL_NOREX_R1RHO.
     # If all models is R1rho off resonance.
     if all_r1rho_off_res:
