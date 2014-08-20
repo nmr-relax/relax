@@ -388,11 +388,13 @@ class Relax_disp:
         return equivalent
 
 
-    def optimise(self, model=None):
+    def optimise(self, model=None, model_path=None):
         """Optimise the model, taking model nesting into account.
 
-        @keyword model: The model to be optimised.
-        @type model:    str
+        @keyword model:         The model to be optimised.
+        @type model:            str
+        @keyword model_path:    The folder name for the model, where possible spaces has been replaced with underscore.
+        @type model:            str
         """
 
         # Printout. 
@@ -409,7 +411,7 @@ class Relax_disp:
         # Use pre-run results as the optimisation starting point.
         # Test if file exists.
         if self.pre_run_dir:
-            path = self.pre_run_dir + sep + model
+            path = self.pre_run_dir + sep + model_path
             # File path.
             file_path = get_file_path('results', path)
 
@@ -422,7 +424,7 @@ class Relax_disp:
                 res_file_exists = False
 
         if self.pre_run_dir and res_file_exists:
-            self.pre_run_parameters(model=model)
+            self.pre_run_parameters(model=model, model_path=model_path)
 
         # Otherwise use the normal nesting check and grid search if not nested.
         else:
@@ -510,11 +512,13 @@ class Relax_disp:
             self.interpreter.monte_carlo.error_analysis()
 
 
-    def pre_run_parameters(self, model=None):
+    def pre_run_parameters(self, model=None, model_path=None):
         """Copy parameters from an earlier analysis.
 
-        @keyword model: The model to be optimised.
-        @type model:    str
+        @keyword model:         The model to be optimised.
+        @type model:            str
+        @keyword model_path:    The folder name for the model, where possible spaces has been replaced with underscore.
+        @type model:            str
         """
 
         # Printout.
@@ -527,7 +531,7 @@ class Relax_disp:
         self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type='relax_disp')
 
         # Load the previous results.
-        path = self.pre_run_dir + sep + model
+        path = self.pre_run_dir + sep + model_path
         self.interpreter.results.read(file='results', dir=path)
 
         # Force copy of the R2eff values.
@@ -556,7 +560,8 @@ class Relax_disp:
             subtitle(file=sys.stdout, text="The '%s' model" % model, prespace=3)
 
             # The results directory path.
-            path = self.results_dir+sep+model
+            model_path = model.replace(" ", "_")
+            path = self.results_dir+sep+model_path
 
             # The name of the data pipe for the model.
             model_pipe = self.name_pipe(model)
@@ -598,7 +603,7 @@ class Relax_disp:
 
             # Optimise the model.
             else:
-                self.optimise(model=model)
+                self.optimise(model=model, model_path=model_path)
 
             # Write out the results.
             self.write_results(path=path, model=model)
