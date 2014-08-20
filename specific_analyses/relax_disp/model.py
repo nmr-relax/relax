@@ -28,7 +28,9 @@ from functools import partial
 from operator import attrgetter, ne
 
 # relax module imports.
-from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, EXP_TYPE_CPMG_MMQ, EXP_TYPE_R1RHO, EXP_TYPE_CPMG_SQ, EXP_TYPE_NOREX, EXP_TYPE_NOREX_R1RHO, EXP_TYPE_R2EFF, MODEL_DESC, MODEL_EQ, MODEL_EXP_TYPE, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO_FIT_R1_ONLY, MODEL_LIST_R1RHO_W_R1_ONLY, MODEL_CR72, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_MMQ_CR72, MODEL_NEST, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_PARAMS_LM63, MODEL_PARAMS_LM63_3SITE, MODEL_SITES, MODEL_YEAR, PARAMS_R20
+from lib.errors import RelaxError
+from specific_analyses.relax_disp.checks import check_missing_r1
+from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, EXP_TYPE_CPMG_MMQ, EXP_TYPE_R1RHO, EXP_TYPE_CPMG_SQ, EXP_TYPE_NOREX, EXP_TYPE_NOREX_R1RHO, EXP_TYPE_R2EFF, MODEL_DESC, MODEL_EQ, MODEL_EXP_TYPE, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO_FIT_R1_ONLY, MODEL_LIST_R1RHO_W_R1_ONLY, MODEL_CR72, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_FIT_R1, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_MMQ_CR72, MODEL_NEST, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_PARAMS_LM63, MODEL_PARAMS_LM63_3SITE, MODEL_LIST_R1RHO_FIT_R1_ONLY, MODEL_LIST_R1RHO_W_R1_ONLY, MODEL_R2EFF, MODEL_SITES, MODEL_YEAR, PARAMS_R20
 
 
 # Define class for describing the model.
@@ -99,6 +101,78 @@ class Model_class:
     # Make a readable presentation of the class object. Here a tuple.
     def __repr__(self):
         return repr((self.model, self.desc, self.exp_type, self.eq, self.sites, self.year, self.params, self.params_nr))
+
+
+# Define function, to convert/insert 'No Rex' for R1rho off-resonance models, and translates models which miss R1.
+def convert_no_rex_fit_r1(self_models=None):
+    """Determine if any model in the list of all models should be replaced or inserted as the correct 'No Rex' model and also translate the R1rho off-resonance model to the corresponding 'R1 fit' models, if R1 is not loaded.
+
+    @keyword self_models:   The list of all models analysed.
+    @type self_models:      list of str
+    @return:                The corrected all models list.
+    @rtype:                 list of str
+    """
+
+    # First check if 'No Rex' model should be converted to 'No Rex R1rho off res' for R1rho off-resonance.
+    # First remove 'R2eff' model from the list.
+    self_models_rem_r2eff = filter(partial(ne, MODEL_R2EFF), self_models)
+
+    # Then remove all 'No Rex' model.
+    self_models_rem_r2eff_norex = filter(partial(ne, MODEL_NOREX), self_models_rem_r2eff)
+    self_models_rem_r2eff_norex = filter(partial(ne, MODEL_NOREX_R1RHO), self_models_rem_r2eff_norex)
+    self_models_rem_r2eff_norex = filter(partial(ne, MODEL_NOREX_R1RHO_FIT_R1), self_models_rem_r2eff_norex)
+
+    # Then test if all or any models analysed is R1rho off-resonance models.
+    all_r1rho_off_res = True
+    any_r1rho_off_res = False
+
+    # Define the model list which is R1rho off-resonance.
+    model_list_r1rho_off_res = MODEL_LIST_R1RHO_FIT_R1_ONLY + MODEL_LIST_R1RHO_W_R1_ONLY
+
+    # Loop through models.
+    for i, model in enumerate(self_models_rem_r2eff_norex):
+        if model in model_list_r1rho_off_res:
+            any_r1rho_off_res = True
+
+        else:
+            all_r1rho_off_res = False
+
+    # Now either replace or insert MODEL_NOREX_R1RHO.
+    # If all models is R1rho off resonance.
+    if all_r1rho_off_res:
+        # Then test if 'No Rex' is the only 'No Rex' model.
+        if MODEL_NOREX in self_models and MODEL_NOREX_R1RHO not in self_models and MODEL_NOREX_R1RHO_FIT_R1 not in self_models:
+            # Then replace 'No Rex' with 'No Rex R1rho off res'
+            no_rex_index = self_models.index(MODEL_NOREX)
+            self_models[no_rex_index] = MODEL_NOREX_R1RHO
+
+    # If some of the models are R1rho off-resonance, and MODEL_NOREX is present but MODEL_NOREX_R1RHO is not present.
+    elif any_r1rho_off_res:
+        # Then test if 'No Rex' is the only 'No Rex' model.
+        if MODEL_NOREX in self_models and MODEL_NOREX_R1RHO not in self_models and MODEL_NOREX_R1RHO_FIT_R1 not in self_models:
+            # Then insert 'No Rex R1rho off res' after 'No Rex'.
+            no_rex_index = self_models.index(MODEL_NOREX)
+            self_models.insert(no_rex_index + 1, MODEL_NOREX_R1RHO)
+
+    # Loop through all models, to replace with 'R1 fit' model, if R1 is missing.
+    for i, model in enumerate(self_models):
+        # Check if R1 is missing.
+        is_missing = check_missing_r1(model=model)
+
+        # If R1 is missing, convert the model.
+        if is_missing:
+            try:
+                translated_model = MODEL_FIT_R1[model]
+
+            # If there exist no conversion model, then raise an RelaxError.
+            except KeyError:
+                raise RelaxError("The current data pipe has no R1 data loaded, and the selected model '%s' cannot not be analysed without this." % (model))
+
+            # Replace the model.
+            self_models[i] = translated_model
+
+    # Return the model.
+    return self_models
 
 
 # Define function, to return model info.
