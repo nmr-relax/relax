@@ -5597,7 +5597,7 @@ class Relax_disp(SystemTestCase):
 
                             elif param == 'dw':
                                 if model == MODEL_TP02_FIT_R1:
-                                    self.assertAlmostEqual(value, 1.08765638)
+                                    self.assertAlmostEqual(value, 1.08765638, 6)
                                 elif model == MODEL_TAP03_FIT_R1:
                                     self.assertAlmostEqual(value, 1.08726698, 6)
                                 elif model == MODEL_MP05_FIT_R1:
