@@ -30,7 +30,7 @@ from operator import attrgetter, ne
 # relax module imports.
 from lib.errors import RelaxError
 from specific_analyses.relax_disp.checks import check_missing_r1
-from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, EXP_TYPE_CPMG_MMQ, EXP_TYPE_R1RHO, EXP_TYPE_CPMG_SQ, EXP_TYPE_NOREX, EXP_TYPE_NOREX_R1RHO, EXP_TYPE_R2EFF, MODEL_DESC, MODEL_EQ, MODEL_EXP_TYPE, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO_FIT_R1_ONLY, MODEL_LIST_R1RHO_W_R1_ONLY, MODEL_CR72, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_FIT_R1, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_MMQ_CR72, MODEL_NEST, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_PARAMS_LM63, MODEL_PARAMS_LM63_3SITE, MODEL_PARAMS_NS_R1RHO_3SITE, MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS_NS_R1RHO_2SITE, MODEL_LIST_R1RHO_FIT_R1_ONLY, MODEL_LIST_R1RHO_W_R1_ONLY, MODEL_R2EFF, MODEL_SITES, MODEL_YEAR, PARAMS_R20
+from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, EXP_TYPE_CPMG_MMQ, EXP_TYPE_R1RHO, EXP_TYPE_CPMG_SQ, EXP_TYPE_NOREX, EXP_TYPE_NOREX_R1RHO, EXP_TYPE_R2EFF, MODEL_DESC, MODEL_EQ, MODEL_EXP_TYPE, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO_FIT_R1_ONLY, MODEL_LIST_R1RHO_W_R1_ONLY, MODEL_CR72, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_FIT_R1, MODEL_IT99, MODEL_LIST_R1RHO_FIT_R1_ONLY, MODEL_LIST_R1RHO_W_R1_ONLY, MODEL_LM63, MODEL_LM63_3SITE, MODEL_MMQ_CR72, MODEL_NEST, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_PARAMS_LM63, MODEL_PARAMS_LM63_3SITE, MODEL_PARAMS_NS_MMQ_2SITE, MODEL_PARAMS_NS_MMQ_3SITE, MODEL_PARAMS_NS_MMQ_3SITE_LINEAR, MODEL_PARAMS_NS_R1RHO_2SITE, MODEL_PARAMS_NS_R1RHO_3SITE, MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_SITES, MODEL_YEAR, PARAMS_R20
 
 
 # Define class for describing the model.
@@ -317,13 +317,13 @@ def nesting_param(model_params=None, nested_model_params=None):
                 par_dic[param] = 'kex'
 
     ## The 'MODEL_PARAMS_NS_R1RHO_3SITE' model parameters from 'MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR'.
-    if set(model_params) == set(MODEL_PARAMS_NS_R1RHO_3SITE) and set(nested_model_params) == set(MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR):
+    elif set(model_params) == set(MODEL_PARAMS_NS_R1RHO_3SITE) and set(nested_model_params) == set(MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR):
         for param in model_params:
             if param == 'kex_AC':
                 par_dic[param] = '0.0'
 
     ## The 'MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR' model parameters from R1RHO 2SITE.
-    if set(model_params) == set(MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR) and set(nested_model_params) == set(MODEL_PARAMS_NS_R1RHO_2SITE):
+    elif set(model_params) == set(MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR) and set(nested_model_params) == set(MODEL_PARAMS_NS_R1RHO_2SITE):
         for param in model_params:
             if param == 'dw_AB':
                 par_dic[param] = 'dw'
@@ -341,7 +341,7 @@ def nesting_param(model_params=None, nested_model_params=None):
                 par_dic[param] = '1 - pA'
 
     ## The 'MODEL_PARAMS_NS_R1RHO_3SITE' model parameters from R1RHO 2SITE.
-    if set(model_params) == set(MODEL_PARAMS_NS_R1RHO_3SITE) and set(nested_model_params) == set(MODEL_PARAMS_NS_R1RHO_2SITE):
+    elif set(model_params) == set(MODEL_PARAMS_NS_R1RHO_3SITE) and set(nested_model_params) == set(MODEL_PARAMS_NS_R1RHO_2SITE):
         for param in model_params:
             if param == 'dw_AB':
                 par_dic[param] = 'dw'
@@ -351,6 +351,63 @@ def nesting_param(model_params=None, nested_model_params=None):
 
             elif param == 'dw_BC':
                 par_dic[param] = 'dw'
+
+            elif param == 'kex_BC':
+                par_dic[param] = 'kex'
+
+            elif param == 'kex_AC':
+                par_dic[param] = 'kex'
+
+            elif param == 'pB':
+                par_dic[param] = '1 - pA'
+
+    ## The 'MODEL_PARAMS_NS_MMQ_3SITE' model parameters from 'MODEL_PARAMS_NS_MMQ_3SITE_LINEAR'.
+    elif set(model_params) == set(MODEL_PARAMS_NS_MMQ_3SITE) and set(nested_model_params) == set(MODEL_PARAMS_NS_MMQ_3SITE_LINEAR):
+        for param in model_params:
+            if param == 'kex_AC':
+                par_dic[param] = '0.0'
+
+    ## The 'MODEL_PARAMS_NS_MMQ_3SITE_LINEAR' model parameters from 'MODEL_PARAMS_NS_MMQ_2'.
+    elif set(model_params) == set(MODEL_PARAMS_NS_MMQ_3SITE_LINEAR) and set(nested_model_params) == set(MODEL_PARAMS_NS_MMQ_2SITE):
+        for param in model_params:
+            if param == 'dw_AB':
+                par_dic[param] = 'dw'
+
+            elif param == 'dwH_AB':
+                par_dic[param] = 'dwH'
+
+            elif param == 'kex_AB':
+                par_dic[param] = 'kex'
+
+            elif param == 'dw_BC':
+                par_dic[param] = 'dw'
+
+            elif param == 'dwH_BC':
+                par_dic[param] = 'dwH'
+
+            elif param == 'kex_BC':
+                par_dic[param] = 'kex'
+
+            elif param == 'pB':
+                par_dic[param] = '1 - pA'
+
+    ## The 'MODEL_PARAMS_NS_MMQ_3SITE' model parameters from 'MODEL_PARAMS_NS_MMQ_2'.
+    elif set(model_params) == set(MODEL_PARAMS_NS_MMQ_3SITE) and set(nested_model_params) == set(MODEL_PARAMS_NS_MMQ_2SITE):
+        for param in model_params:
+            if param == 'dw_AB':
+                par_dic[param] = 'dw'
+
+            elif param == 'dwH_AB':
+                par_dic[param] = 'dwH'
+
+            elif param == 'kex_AB':
+                par_dic[param] = 'kex'
+
+            elif param == 'dw_BC':
+                par_dic[param] = 'dw'
+
+            elif param == 'dwH_BC':
+                par_dic[param] = 'dwH'
 
             elif param == 'kex_BC':
                 par_dic[param] = 'kex'
