@@ -375,6 +375,9 @@ class Relax_disp:
                 if param_conv == '1 - pA':
                     val = 1.0 - getattr(nested_spin, 'pA')
 
+                elif param_conv == '0.0':
+                    val = 0.0
+
                 else:
                     val = deepcopy(getattr(nested_spin, param_conv))
 

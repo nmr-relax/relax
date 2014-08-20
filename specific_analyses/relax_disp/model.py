@@ -316,6 +316,30 @@ def nesting_param(model_params=None, nested_model_params=None):
             elif param == 'kC':
                 par_dic[param] = 'kex'
 
+    ## The 'MODEL_PARAMS_NS_R1RHO_3SITE' model parameters from 'MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR'.
+    if set(model_params) == set(MODEL_PARAMS_NS_R1RHO_3SITE) and set(nested_model_params) == set(MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR):
+        for param in model_params:
+            if param == 'kex_AC':
+                par_dic[param] = '0.0'
+
+    ## The 'MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR' model parameters from R1RHO 2SITE.
+    if set(model_params) == set(MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR) and set(nested_model_params) == set(MODEL_PARAMS_NS_R1RHO_2SITE):
+        for param in model_params:
+            if param == 'dw_AB':
+                par_dic[param] = 'dw'
+
+            elif param == 'kex_AB':
+                par_dic[param] = 'kex'
+
+            elif param == 'dw_BC':
+                par_dic[param] = 'dw'
+
+            elif param == 'kex_BC':
+                par_dic[param] = 'kex'
+
+            elif param == 'pB':
+                par_dic[param] = '1 - pA'
+
     ## The 'MODEL_PARAMS_NS_R1RHO_3SITE' model parameters from R1RHO 2SITE.
     if set(model_params) == set(MODEL_PARAMS_NS_R1RHO_3SITE) and set(nested_model_params) == set(MODEL_PARAMS_NS_R1RHO_2SITE):
         for param in model_params:
