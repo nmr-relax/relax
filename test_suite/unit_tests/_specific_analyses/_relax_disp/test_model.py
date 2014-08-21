@@ -522,7 +522,6 @@ class Test_model(UnitTestCase):
         print("nested_model_params", nested_model_params)
 
         # Test content of dictionary.
-        self.assertEqual(par_dic['r1'], 'r1')
         self.assertEqual(par_dic['r2'], 'r2')
         self.assertEqual(par_dic['pA'], 'pA')
         self.assertEqual(par_dic['dw'], 'dw')
