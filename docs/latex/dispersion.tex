@@ -292,6 +292,15 @@ More information about the R2eff model is available from:
 This model is provided for model selection purposes.
 In combination with frequentist methods, such as AIC\index{model selection!AIC}, or Bayesian methods\index{model selection!Bayesian} it can show if the presence of chemical exchange is statistically significant.
 Optimisation is still required as one $\Rtwozero$ value per magnetic field strength will be fit to the measured data for each spin system.
+If off-resonance CPMG or $\Ronerho$ data is being used, then one of the following equations will be fit:
+\begin{subequations}
+\begin{align}
+    \Rtwoeff &= \Rone \cos^2\theta  +  \Rtwozero \sin^2\theta, \\
+    \Ronerho &= \Rone \cos^2\theta  +  \Ronerhoprime \sin^2\theta.
+\end{align}
+\end{subequations}
+
+The $\Rone$ value can either be fixed to loaded experimental values or optimised.
 It is selected by setting the model to `No Rex'.
 
 More information about the No Rex model is available from the:
