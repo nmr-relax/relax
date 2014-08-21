@@ -207,6 +207,29 @@ class Relax_disp(GuiTestCase):
         wizard.Close()
 
 
+    def test_bug_22501_close_all_analyses(self):
+        """Test catching U{bug #22501<https://gna.org/bugs/index.php?22501>}, 'Close all analyses' raises error."""
+
+        # Simulate the new analysis wizard, selecting the fixed time CPMG experiment.
+        self.app.gui.analysis.menu_new(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
+        page.select_disp(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+
+        # Get the data.
+        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
+
+        # Set up the analysis.
+        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle, uf_exec=uf_exec)
+
+        # Alias the analysis.
+        analysis = self.app.gui.analysis.get_page_from_name("Relaxation dispersion")
+
+        # Closure.
+        self.app.gui.analysis.delete_analysis(0)
+
+
     def test_hansen_trunc_data(self):
         """Test the GUI analysis with Flemming Hansen's CPMG data truncated to residues 70 and 71."""
 
