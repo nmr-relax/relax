@@ -227,7 +227,7 @@ class Spectra_list(Base_list):
 
         # Launch the dialog.
         if offset_flag:
-            uf_store['relax_disp.spin_lock_offset'](field=offset, spectrum_id=id)
+            uf_store['relax_disp.spin_lock_offset'](offset=offset, spectrum_id=id)
         else:
             uf_store['relax_disp.spin_lock_offset'](spectrum_id=id)
 
