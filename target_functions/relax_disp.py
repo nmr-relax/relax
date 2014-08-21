@@ -59,7 +59,7 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CP
 
 
 class Dispersion:
-    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, exp_types=None, values=None, errors=None, missing=None, frqs=None, frqs_H=None, cpmg_frqs=None, spin_lock_nu1=None, chemical_shifts=None, offset=None, tilt_angles=None, r1=None, relax_times=None, scaling_matrix=None, recalc_tau=True):
+    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, exp_types=None, values=None, errors=None, missing=None, frqs=None, frqs_H=None, cpmg_frqs=None, spin_lock_nu1=None, chemical_shifts=None, offset=None, tilt_angles=None, r1=None, relax_times=None, scaling_matrix=None, recalc_tau=True, r1_fit=False):
         """Relaxation dispersion target functions for optimisation.
 
         Models
@@ -162,6 +162,8 @@ class Dispersion:
         @type scaling_matrix:       numpy rank-2 float array
         @keyword recalc_tau:        A flag which if True will cause tau_CPMG to be recalculated to remove user input truncation.
         @type recalc_tau:           bool
+        @keyword r1_fit:            A flag which if True will allow R1 values to be optimised.  If False, preloaded R1 values will be used instead.
+        @type r1_fit:               bool
         """
 
         # Check the args.

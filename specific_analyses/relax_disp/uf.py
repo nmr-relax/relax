@@ -127,6 +127,17 @@ def model_setup(model, params):
         api_relax_disp.data_init(spin_id)
 
 
+def r1_fit(fit=True):
+    """Set the R1 optimisation flag.
+
+    @keyword fit:   The R1 optimisation flag.
+    @type fit:      bool
+    """
+
+    # Simply store the value for later use.
+    cdp.r1_fit = fit
+
+
 def select_model(model=MODEL_R2EFF):
     """Set up the model for the relaxation dispersion analysis.
 

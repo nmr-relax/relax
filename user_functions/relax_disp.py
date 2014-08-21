@@ -607,6 +607,27 @@ uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'grace.png'
 
 
+# The relax_disp.r1_fit user function.
+uf = uf_info.add_uf('relax_disp.r1_fit')
+uf.title = "Switch between fixed or fitted R1 values for optimisation."
+uf.title_short = "R1 optimisation flag."
+uf.add_keyarg(
+    name = "fit",
+    default = True,
+    py_type = "bool",
+    desc_short = "R1 optimisation flag",
+    desc = "The flag specifying if R1 values should be optimised or if loaded R1 values should be fixed during optimisation."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This user function allows the optimisation of R1 values to be turned on an off for the relaxation dispersion dispersion models.  If turned off, the current values of R1 will be fixed.  Otherwise the R1 values will be added to the model parameter set.")
+uf.backend = relax_disp_uf.r1_fit
+uf.menu_text = "r&1_fit"
+uf.gui_icon = "oxygen.status.object-locked"
+uf.wizard_size = (800, 500)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
+
+
 # The relax_disp.r2eff_read user function.
 uf = uf_info.add_uf('relax_disp.r2eff_read')
 uf.title = "Read R2eff/R1rho values and errors from a file."

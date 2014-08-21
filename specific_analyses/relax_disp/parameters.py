@@ -33,8 +33,8 @@ from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
-from specific_analyses.relax_disp.data import count_spins, generate_r20_key, has_exponential_exp_type, loop_cluster, loop_exp_frq
-from specific_analyses.relax_disp.variables import MODEL_LIST_ANALYTIC_R1RHO, MODEL_LIST_CPMG_ONLY, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_R1RHO, MODEL_M61B, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, PARAMS_R20
+from specific_analyses.relax_disp.data import count_spins, generate_r20_key, has_exponential_exp_type, is_r1_optimised, loop_cluster, loop_exp_frq
+from specific_analyses.relax_disp.variables import MODEL_LIST_MMQ, MODEL_M61B, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, PARAMS_R20
 
 
 def assemble_param_vector(spins=None, key=None, sim_index=None):
@@ -269,18 +269,8 @@ def copy(pipe_from=None, pipe_to=None):
                 if param in ['r2', 'r2a', 'r2b', 'pA', 'pB', 'pC', 'kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC', 'tex']:
                     continue
 
-                elif param == 'r2eff':
-                    # Copy the value.
-                    setattr(spin_to, param, deepcopy(getattr(spin_from, param)))
-
-                    # If error estimation exists.
-                    param_err = '%s_err' % param
-                    if hasattr(spin_from, param_err):
-                        setattr(spin_to, param_err, deepcopy(getattr(spin_from, param_err)))
-
-                else:
-                    # Copy the value.
-                    setattr(spin_to, param, deepcopy(getattr(spin_from, param)))
+                # Copy the value.
+                setattr(spin_to, param, deepcopy(getattr(spin_from, param)))
 
     # Switch back to the original data pipe.
     pipes.switch(pipe_orig)
@@ -435,12 +425,6 @@ def get_value(key=None, spins=None, sim_index=None, param_name=None, spin_index=
 def linear_constraints(spins=None, scaling_matrix=None):
     """Set up the relaxation dispersion curve fitting linear constraint matrices A and b.
 
-    The suggested restraints for 'kex' follows from article, on page 224: 
-    Nuclear Magnetic Resonance Methods for Quantifying Microsecond-to-Millisecond Motions in Biological Macromolecules.
-    Palmer-III, Arthur G., Kroenke, Christopher D., Loria, J. Patrick
-    Nucl. Magn. Reson. Biol. Macromol. B, 2001, Vol: 339, pages 204-238.
-    U{DOI: 10.1016/S0076-6879(01)39315-1<http://dx.doi.org/10.1016/S0076-6879%2801%2939315-1>}.
-
     Standard notation
     =================
 
@@ -459,12 +443,12 @@ def linear_constraints(spins=None, scaling_matrix=None):
         phi_ex_C >= 0
         padw2 >= 0
         dw >= 0
-        0 <= kex <= 1e4, for CPMG
-        0 <= kex <= 1e5, for R1rho
-        0 <= k_AB <= 1e4
-        0 <= kB <= 1e4
-        0 <= kC <= 1e4
+        0 <= kex <= 2e6
+        0 <= k_AB <= 2e6
+        0 <= kB <= 2e6
+        0 <= kC <= 2e6
         tex >= 0
+        k_AB >= 0
 
 
     Matrix notation
@@ -508,22 +492,19 @@ def linear_constraints(spins=None, scaling_matrix=None):
         |         |     |          |      |         |
         | 1  0  0 |     |   kex    |      |    0    |
         |         |     |          |      |         |
-        |-1  0  0 |     |   kex    |      |-1e4/-1e5|
-        |         |     |          |      |         |
-        | 1  0  0 |     |   k_AB   |      |    0    |
-        |         |     |          |      |         |
-        |-1  0  0 |     |   k_AB   |      |  -1e4   |
+        |-1  0  0 |     |   kex    |      |  -2e6   |
         |         |     |          |      |         |
         | 1  0  0 |     |    kB    |      |    0    |
         |         |     |          |      |         |
-        |-1  0  0 |     |    kB    |      |  -1e4   |
+        |-1  0  0 |     |    kB    |      |  -2e6   |
         |         |     |          |      |         |
         | 1  0  0 |     |    kC    |      |    0    |
         |         |     |          |      |         |
-        |-1  0  0 |     |    kC    |      |  -1e4   |
+        |-1  0  0 |     |    kC    |      |  -2e6   |
         |         |     |          |      |         |
         | 1  0  0 |     |   tex    |      |    0    |
         |         |     |          |      |         |
+        | 1  0  0 |     |   k_AB   |      |    0    |
 
 
     @keyword spins:             The list of spin data containers for the block.
@@ -637,21 +618,14 @@ def linear_constraints(spins=None, scaling_matrix=None):
                     j += 1
                     break
 
-        # Exchange rates and times (0 <= k <= 1e4) for CPMG and (0 <= k <= 1e5) for R1rho.
+        # Exchange rates and times (0 <= k <= 2e6).
         elif param_name in ['kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC']:
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
             A[j+1][param_index] = -1.0
             b.append(0.0)
-            # For CPMG experiments, (0 <= k <= 1e4).
-            if spins[0].model in MODEL_LIST_CPMG_ONLY + MODEL_LIST_MMQ:
-                b.append(-1e4 / scaling_matrix[param_index, param_index])
-            # For R1rho experiments, (0 <= k <= 1e5).
-            elif spins[0].model in MODEL_LIST_ANALYTIC_R1RHO + MODEL_LIST_NUMERIC_R1RHO:
-                b.append(-1e5 / scaling_matrix[param_index, param_index])
-            else:
-                b.append(-2e6 / scaling_matrix[param_index, param_index])
+            b.append(-2e6 / scaling_matrix[param_index, param_index])
             j += 2
 
         # Exchange times (tex >= 0).
@@ -949,6 +923,27 @@ def param_num(spins=None):
 
     # Return the number.
     return num
+
+
+def r1_setup():
+    """Modify the current spin parameter list to either include or exclude the R1 parameter."""
+
+    # Loop over the spins.
+    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+        # No model set up.
+        if not hasattr(spin, 'params') or not hasattr(spin, 'model'):
+            continue
+
+        # Should R1 data be optimised?
+        r1_fit = is_r1_optimised(spin.model)
+
+        # Prepend R1.
+        if r1_fit and 'r1' not in spin.params:
+            spin.params.insert(0, 'r1')
+
+        # Remove the R1 parameter.
+        if not r1_fit and 'r1' in spin.params:
+            spin.params.remove('r1')
 
 
 def set_value(value=None, key=None, spins=None, sim_index=None, param_name=None, spin_index=None, r20_key=None):

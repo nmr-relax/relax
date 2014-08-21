@@ -38,7 +38,7 @@ from specific_analyses.api import return_api
 from status import Status; status = Status()
 
 
-def copy(pipe_from=None, pipe_to=None, param=None):
+def copy(pipe_from=None, pipe_to=None, param=None, force=False):
     """Copy spin specific data values from pipe_from to pipe_to.
 
     @param pipe_from:   The data pipe to copy the value from.  This defaults to the current data
@@ -48,6 +48,8 @@ def copy(pipe_from=None, pipe_to=None, param=None):
     @type pipe_to:      str
     @param param:       The name of the parameter to copy the values of.
     @type param:        str
+    @keyword force:     A flag forcing the overwriting of current values.
+    @type force:        bool
     """
 
     # The current data pipe.
@@ -72,13 +74,14 @@ def copy(pipe_from=None, pipe_to=None, param=None):
     api = return_api(pipe_name=pipe_from)
 
     # Test if the data exists for pipe_to.
-    for spin in spin_loop(pipe=pipe_to):
-        # Get the value and error for pipe_to.
-        value, error = api.return_value(spin, param)
+    if force == False:
+        for spin in spin_loop(pipe=pipe_to):
+            # Get the value and error for pipe_to.
+            value, error = api.return_value(spin, param)
 
-        # Data exists.
-        if value != None or error != None:
-            raise RelaxValueError(param, pipe_to)
+            # Data exists.
+            if value != None or error != None:
+                raise RelaxValueError(param, pipe_to)
 
     # Switch to the data pipe to copy values to.
     pipes.switch(pipe_to)
@@ -90,9 +93,9 @@ def copy(pipe_from=None, pipe_to=None, param=None):
 
         # Set the values of pipe_to.
         if value != None:
-            set(spin_id=spin_id, val=value, param=param, pipe=pipe_to)
+            set(spin_id=spin_id, val=value, param=param, pipe=pipe_to, force=force)
         if error != None:
-            set(spin_id=spin_id, val=error, param=param, pipe=pipe_to, error=True)
+            set(spin_id=spin_id, val=error, param=param, pipe=pipe_to, error=True, force=force)
 
     # Reset all minimisation statistics.
     minimise.reset_min_stats(pipe_to)

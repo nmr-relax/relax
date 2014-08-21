@@ -39,7 +39,7 @@ class Test_model(UnitTestCase):
 
         # Define which current model is selected
         model = MODEL_NS_CPMG_2SITE_STAR
-        model_nest = MODEL_NS_CPMG_2SITE_3D
+        model_nest = MODEL_NS_CPMG_2SITE_EXPANDED
 
         print("self.models is:", self_models)
         print("Current model to analyse is:", model)
@@ -553,7 +553,7 @@ class Test_model(UnitTestCase):
         self.assertEqual(par_dic['pB'], 'pB')
         self.assertEqual(par_dic['dw_BC'], 'dw_BC')
         self.assertEqual(par_dic['kex_BC'], 'kex_BC')
-        self.assertEqual(par_dic['kex_AC'], None)
+        self.assertEqual(par_dic['kex_AC'], '0.0')
 
 
     def test_nesting_param_7(self):
@@ -575,12 +575,12 @@ class Test_model(UnitTestCase):
         # Test content of dictionary.
         self.assertEqual(par_dic['r2'], 'r2')
         self.assertEqual(par_dic['pA'], 'pA')
-        self.assertEqual(par_dic['dw_AB'], None)
-        self.assertEqual(par_dic['kex_AB'], None)
-        self.assertEqual(par_dic['pB'], None)
-        self.assertEqual(par_dic['dw_BC'], None)
-        self.assertEqual(par_dic['kex_BC'], None)
-        self.assertEqual(par_dic['kex_AC'], None)
+        self.assertEqual(par_dic['dw_AB'], 'dw')
+        self.assertEqual(par_dic['kex_AB'], 'kex')
+        self.assertEqual(par_dic['pB'], '1 - pA')
+        self.assertEqual(par_dic['dw_BC'], 'dw')
+        self.assertEqual(par_dic['kex_BC'], 'kex')
+        self.assertEqual(par_dic['kex_AC'], 'kex')
 
 
     def test_nesting_param_8(self):
@@ -633,7 +633,7 @@ class Test_model(UnitTestCase):
         self.assertEqual(par_dic['dw_BC'], 'dw_BC')
         self.assertEqual(par_dic['dwH_BC'], 'dwH_BC')
         self.assertEqual(par_dic['kex_BC'], 'kex_BC')
-        self.assertEqual(par_dic['kex_AC'], None)
+        self.assertEqual(par_dic['kex_AC'], '0.0')
 
 
     def test_nesting_param_10(self):
@@ -655,14 +655,14 @@ class Test_model(UnitTestCase):
         # Test content of dictionary.
         self.assertEqual(par_dic['r2'], 'r2')
         self.assertEqual(par_dic['pA'], 'pA')
-        self.assertEqual(par_dic['dw_AB'], None)
-        self.assertEqual(par_dic['dwH_AB'], None)
-        self.assertEqual(par_dic['kex_AB'], None)
-        self.assertEqual(par_dic['pB'], None)
-        self.assertEqual(par_dic['dw_BC'], None)
-        self.assertEqual(par_dic['dwH_BC'], None)
-        self.assertEqual(par_dic['kex_BC'], None)
-        self.assertEqual(par_dic['kex_AC'], None)
+        self.assertEqual(par_dic['dw_AB'], 'dw')
+        self.assertEqual(par_dic['dwH_AB'], 'dwH')
+        self.assertEqual(par_dic['kex_AB'], 'kex')
+        self.assertEqual(par_dic['pB'], '1 - pA')
+        self.assertEqual(par_dic['dw_BC'], 'dw')
+        self.assertEqual(par_dic['dwH_BC'], 'dwH')
+        self.assertEqual(par_dic['kex_BC'], 'kex')
+        self.assertEqual(par_dic['kex_AC'], 'kex')
 
 
     def test_sort_models(self):

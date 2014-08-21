@@ -39,7 +39,7 @@ from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, loop_frq
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
-from specific_analyses.relax_disp.model import nesting_model, nesting_param
+from specific_analyses.relax_disp.model import convert_no_rex_fit_r1, nesting_model, nesting_param
 from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, MODEL_LIST_ANALYTIC, MODEL_LIST_NEST, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO_FIT_R1, MODEL_LIST_R1RHO_W_R1, MODEL_LIST_R1RHO_FULL, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_PARAMS, MODEL_R2EFF, PARAMS_R20
 from status import Status; status = Status()
 
@@ -51,7 +51,7 @@ class Relax_disp:
     opt_func_tol = 1e-25
     opt_max_iterations = int(1e7)
 
-    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, exp_mc_sim_num=None, modsel='AIC', pre_run_dir=None, optimise_pre_run_r2eff=True, insignificance=0.0, numeric_only=False, mc_sim_all_models=False, eliminate=True, set_grid_r20=False):
+    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, exp_mc_sim_num=None, modsel='AIC', pre_run_dir=None, optimise_r2eff=False, insignificance=0.0, numeric_only=False, mc_sim_all_models=False, eliminate=True, set_grid_r20=False):
         """Perform a full relaxation dispersion analysis for the given list of models.
 
         @keyword pipe_name:                 The name of the data pipe containing all of the data for the analysis.
@@ -72,8 +72,8 @@ class Relax_disp:
         @type modsel:                       str
         @keyword pre_run_dir:               The optional directory containing the dispersion auto-analysis results from a previous run.  The optimised parameters from these previous results will be used as the starting point for optimisation rather than performing a grid search.  This is essential for when large spin clusters are specified, as a grid search becomes prohibitively expensive with clusters of three or more spins.  At some point a RelaxError will occur because the grid search is impossibly large.  For the cluster specific parameters, i.e. the populations of the states and the exchange parameters, an average value will be used as the starting point.  For all other parameters, the R20 values for each spin and magnetic field, as well as the parameters related to the chemical shift difference dw, the optimised values of the previous run will be directly copied.
         @type pre_run_dir:                  None or str
-        @keyword optimise_pre_run_r2eff:    Flag to specify if the read previous R2eff results should be optimised.  For R1rho models where the error of R2eff values are determined by Monte-Carlo simulations, it can be valuable to make an initial R2eff run with a high number of Monte-Carlo simulations.  Any subsequent model analysis can then be based on these R2eff values, without optimising the R2eff values. 
-        @type optimise_pre_run_r2eff:       bool
+        @keyword optimise_r2eff:            Flag to specify if the read previous R2eff results should be optimised.  For R1rho models where the error of R2eff values are determined by Monte-Carlo simulations, it can be valuable to make an initial R2eff run with a high number of Monte-Carlo simulations.  Any subsequent model analysis can then be based on these R2eff values, without optimising the R2eff values.
+        @type optimise_r2eff:               bool
         @keyword insignificance:            The R2eff/R1rho value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.  This does not affect the 'No Rex' model.  Set this value to 0.0 to use all data.  The value will be passed on to the relax_disp.insignificance user function.
         @type insignificance:               float
         @keyword numeric_only:              The class of models to use in the model selection.  The default of False allows all dispersion models to be used in the analysis (no exchange, the analytic models and the numeric models).  The value of True will activate a pure numeric solution - the analytic models will be optimised, as they are very useful for replacing the grid search for the numeric models, but the final model selection will not include them.
@@ -100,18 +100,47 @@ class Relax_disp:
         self.pipe_name = pipe_name
         self.pipe_bundle = pipe_bundle
         self.results_dir = results_dir
-        self.models = models
         self.grid_inc = grid_inc
         self.mc_sim_num = mc_sim_num
         self.exp_mc_sim_num = exp_mc_sim_num
         self.modsel = modsel
         self.pre_run_dir = pre_run_dir
-        self.optimise_pre_run_r2eff = optimise_pre_run_r2eff
+        self.optimise_r2eff = optimise_r2eff
         self.insignificance = insignificance
         self.set_grid_r20 = set_grid_r20
         self.numeric_only = numeric_only
         self.mc_sim_all_models = mc_sim_all_models
         self.eliminate = eliminate
+
+        # Possible convert the models for analyses.
+        # Determine if any model in the list of all models should be replaced or inserted as the correct 'No Rex' model.
+        # Also translate the R1rho off-resonance model to the corresponding 'R1 fit' models, if R1 is not loaded.
+        converted_models, no_rex_translated, no_rex_inserted, r1ho_translated = convert_no_rex_fit_r1(self_models=deepcopy(models))
+
+        if converted_models != models:
+            # Printout.
+            section(file=sys.stdout, text="Converting models.", prespace=2)
+
+            # If 'No Rex' model was translated.
+            if no_rex_translated:
+                no_rex_index = models.index(MODEL_NOREX)
+                text = "\nThe 'No Rex' model for R1rho off-resonance models has been translated to the model: '%s'."%(converted_models[no_rex_index])
+                print(text)
+            if no_rex_inserted:
+                no_rex_index = models.index(MODEL_NOREX) + 1
+                text = "\nThe 'No Rex' model for R1rho off-resonance models has been inserted as model: '%s'."%(converted_models[no_rex_index])
+                print(text)
+            if r1ho_translated:
+                text = "R1 data is missing.  All R1rho off-resonance models have been translated to the corresponding model whereby R1 is fitted.  How to read 'R1 data' can be reviewed by 'help(relax_data.read)'."
+                warn(RelaxWarning(text))
+
+            print("\nPrevious list of models: %s" % (models))
+            print("\nNew list of models: %s" % (converted_models))
+
+            # Store the new order of models.
+            self.models = converted_models
+        else:
+            self.models = models
 
         # No results directory, so default to the current directory.
         if not self.results_dir:
@@ -334,26 +363,38 @@ class Relax_disp:
             if param_conv == None:
                 continue
 
-            else:
-                print("Copying parameter %s to %s." % (param, param_conv))
+            print("Copying from parameter '%s' to '%s'." % (param_conv, param))
 
-                # Loop over the spins to copy the parameters.
-                for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-                    # Get the nested spin.
-                    nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+            # Loop over the spins to copy the parameters.
+            for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                # Get the nested spin.
+                nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
 
-                    # Set the attribute.
-                    setattr(spin, param, deepcopy(getattr(nested_spin, param_conv)))
+                # Set value.
+                # Some special conversions.
+                if param_conv == '1 - pA':
+                    val = 1.0 - getattr(nested_spin, 'pA')
+
+                elif param_conv == '0.0':
+                    val = 0.0
+
+                else:
+                    val = deepcopy(getattr(nested_spin, param_conv))
+
+                # Set the attribute.
+                setattr(spin, param, val)
 
         # Determine if model is equivalent, and should not be Grid searched, or if nested, and some parameters are pre-set. Here Grid search should still be issued.
         return equivalent
 
 
-    def optimise(self, model=None):
+    def optimise(self, model=None, model_path=None):
         """Optimise the model, taking model nesting into account.
 
-        @keyword model: The model to be optimised.
-        @type model:    str
+        @keyword model:         The model to be optimised.
+        @type model:            str
+        @keyword model_path:    The folder name for the model, where possible spaces has been replaced with underscore.
+        @type model:            str
         """
 
         # Printout. 
@@ -370,7 +411,7 @@ class Relax_disp:
         # Use pre-run results as the optimisation starting point.
         # Test if file exists.
         if self.pre_run_dir:
-            path = self.pre_run_dir + sep + model
+            path = self.pre_run_dir + sep + model_path
             # File path.
             file_path = get_file_path('results', path)
 
@@ -383,7 +424,7 @@ class Relax_disp:
                 res_file_exists = False
 
         if self.pre_run_dir and res_file_exists:
-            self.pre_run_parameters(model=model)
+            self.pre_run_parameters(model=model, model_path=model_path)
 
         # Otherwise use the normal nesting check and grid search if not nested.
         else:
@@ -402,21 +443,63 @@ class Relax_disp:
                         self.interpreter.value.set(param=param, index=None)
 
         # Minimise.
+        do_minimise = False
         if model == MODEL_R2EFF:
-            if self.optimise_pre_run_r2eff:
-                self.interpreter.minimise.execute('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
-            else:
-                pass
-        else:
-            self.interpreter.minimise.execute('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
+            # Check if all spins contains 'r2eff and it associated error.
+            has_r2eff = False
 
+            # Loop over all spins.
+            for cur_spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                # Check 'r2eff'
+                if hasattr(cur_spin, 'r2eff') and hasattr(cur_spin, 'r2eff_err'):
+                    has_r2eff = True
+                else:
+                    has_r2eff = False
+                    break
+
+            # Skip optimisation, if 'r2eff' + 'r2eff_err' is present and flag for forcing optimisation is not raised.
+            if has_r2eff and not self.optimise_r2eff:
+                pass
+
+            # Do optimisation, if 'r2eff' + 'r2eff_err' is present and flag for forcing optimisation is raised.
+            elif has_r2eff and self.optimise_r2eff:
+                do_minimise = True
+
+            # Optimise, if no R2eff and error is present.
+            elif not has_r2eff:
+                do_minimise = True
+
+        else:
+            do_minimise = True
+
+        # Do the minimisation.
+        if do_minimise:
+            self.interpreter.minimise.execute('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
 
         # Model elimination.
         if self.eliminate:
             self.interpreter.eliminate()
 
         # Monte Carlo simulations.
-        if self.mc_sim_all_models or len(self.models) < 2 or (model == MODEL_R2EFF and self.optimise_pre_run_r2eff):
+        do_monte_carlo = False
+        if model == MODEL_R2EFF:
+            # Skip optimisation, if 'r2eff' + 'r2eff_err' is present and flag for forcing optimisation is not raised.
+            if has_r2eff and not self.optimise_r2eff:
+                pass
+
+            # Do optimisation, if 'r2eff' + 'r2eff_err' is present and flag for forcing optimisation is raised.
+            elif has_r2eff and self.optimise_r2eff:
+                do_monte_carlo = True
+
+            # Optimise, if no R2eff and error is present.
+            elif not has_r2eff:
+                do_monte_carlo = True
+
+        elif self.mc_sim_all_models or len(self.models) < 2:
+            do_monte_carlo = True
+
+        # Do Monte Carlo simulations.
+        if do_monte_carlo:
             if model == MODEL_R2EFF and self.exp_mc_sim_num != None:
                 self.interpreter.monte_carlo.setup(number=self.exp_mc_sim_num)
             else:
@@ -429,11 +512,13 @@ class Relax_disp:
             self.interpreter.monte_carlo.error_analysis()
 
 
-    def pre_run_parameters(self, model=None):
+    def pre_run_parameters(self, model=None, model_path=None):
         """Copy parameters from an earlier analysis.
 
-        @keyword model: The model to be optimised.
-        @type model:    str
+        @keyword model:         The model to be optimised.
+        @type model:            str
+        @keyword model_path:    The folder name for the model, where possible spaces has been replaced with underscore.
+        @type model:            str
         """
 
         # Printout.
@@ -446,8 +531,12 @@ class Relax_disp:
         self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type='relax_disp')
 
         # Load the previous results.
-        path = self.pre_run_dir + sep + model
+        path = self.pre_run_dir + sep + model_path
         self.interpreter.results.read(file='results', dir=path)
+
+        # Force copy of the R2eff values.
+        if model == MODEL_R2EFF:
+            self.interpreter.value.copy(pipe_from=pipe_name, pipe_to=self.name_pipe(model), param='r2eff', force=True)
 
         # Copy the parameters.
         self.interpreter.relax_disp.parameter_copy(pipe_from=pipe_name, pipe_to=self.name_pipe(model))
@@ -471,7 +560,8 @@ class Relax_disp:
             subtitle(file=sys.stdout, text="The '%s' model" % model, prespace=3)
 
             # The results directory path.
-            path = self.results_dir+sep+model
+            model_path = model.replace(" ", "_")
+            path = self.results_dir+sep+model_path
 
             # The name of the data pipe for the model.
             model_pipe = self.name_pipe(model)
@@ -513,7 +603,7 @@ class Relax_disp:
 
             # Optimise the model.
             else:
-                self.optimise(model=model)
+                self.optimise(model=model, model_path=model_path)
 
             # Write out the results.
             self.write_results(path=path, model=model)

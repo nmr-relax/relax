@@ -30,7 +30,7 @@ from operator import attrgetter, ne
 # relax module imports.
 from lib.errors import RelaxError
 from specific_analyses.relax_disp.checks import check_missing_r1
-from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, EXP_TYPE_CPMG_MMQ, EXP_TYPE_R1RHO, EXP_TYPE_CPMG_SQ, EXP_TYPE_NOREX, EXP_TYPE_NOREX_R1RHO, EXP_TYPE_R2EFF, MODEL_DESC, MODEL_EQ, MODEL_EXP_TYPE, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO_FIT_R1_ONLY, MODEL_LIST_R1RHO_W_R1_ONLY, MODEL_CR72, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_FIT_R1, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_MMQ_CR72, MODEL_NEST, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_PARAMS_LM63, MODEL_PARAMS_LM63_3SITE, MODEL_LIST_R1RHO_FIT_R1_ONLY, MODEL_LIST_R1RHO_W_R1_ONLY, MODEL_R2EFF, MODEL_SITES, MODEL_YEAR, PARAMS_R20
+from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, EXP_TYPE_CPMG_MMQ, EXP_TYPE_R1RHO, EXP_TYPE_CPMG_SQ, EXP_TYPE_NOREX, EXP_TYPE_NOREX_R1RHO, EXP_TYPE_R2EFF, MODEL_DESC, MODEL_EQ, MODEL_EXP_TYPE, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO_FIT_R1_ONLY, MODEL_LIST_R1RHO_W_R1_ONLY, MODEL_CR72, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_FIT_R1, MODEL_IT99, MODEL_LIST_R1RHO_FIT_R1_ONLY, MODEL_LIST_R1RHO_W_R1_ONLY, MODEL_LM63, MODEL_LM63_3SITE, MODEL_MMQ_CR72, MODEL_NEST, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_PARAMS_LM63, MODEL_PARAMS_LM63_3SITE, MODEL_PARAMS_NS_MMQ_2SITE, MODEL_PARAMS_NS_MMQ_3SITE, MODEL_PARAMS_NS_MMQ_3SITE_LINEAR, MODEL_PARAMS_NS_R1RHO_2SITE, MODEL_PARAMS_NS_R1RHO_3SITE, MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_SITES, MODEL_YEAR, PARAMS_R20
 
 
 # Define class for describing the model.
@@ -109,9 +109,14 @@ def convert_no_rex_fit_r1(self_models=None):
 
     @keyword self_models:   The list of all models analysed.
     @type self_models:      list of str
-    @return:                The corrected all models list.
-    @rtype:                 list of str
+    @return:                The corrected all models list, flag if 'No Rex' model for R1rho off-resonance was translated, flag if 'No Rex' model for R1rho off-resonance was inserted, flag if R1rho off-resonance was translated to 'R1 fit' models if no R1 data was found.
+    @rtype:                 list of str, bool, bool, bool
     """
+
+    # Flags to return.
+    no_rex_translated = False
+    no_rex_inserted = False
+    r1ho_translated = False
 
     # First check if 'No Rex' model should be converted to 'No Rex R1rho off res' for R1rho off-resonance.
     # First remove 'R2eff' model from the list.
@@ -137,6 +142,10 @@ def convert_no_rex_fit_r1(self_models=None):
         else:
             all_r1rho_off_res = False
 
+    # In case, only analysing 'R2eff' or 'No Rex'
+    if len(self_models_rem_r2eff_norex) == 0:
+        all_r1rho_off_res = False
+
     # Now either replace or insert MODEL_NOREX_R1RHO.
     # If all models is R1rho off resonance.
     if all_r1rho_off_res:
@@ -146,6 +155,9 @@ def convert_no_rex_fit_r1(self_models=None):
             no_rex_index = self_models.index(MODEL_NOREX)
             self_models[no_rex_index] = MODEL_NOREX_R1RHO
 
+            # Change flag.
+            no_rex_translated = True
+
     # If some of the models are R1rho off-resonance, and MODEL_NOREX is present but MODEL_NOREX_R1RHO is not present.
     elif any_r1rho_off_res:
         # Then test if 'No Rex' is the only 'No Rex' model.
@@ -153,6 +165,9 @@ def convert_no_rex_fit_r1(self_models=None):
             # Then insert 'No Rex R1rho off res' after 'No Rex'.
             no_rex_index = self_models.index(MODEL_NOREX)
             self_models.insert(no_rex_index + 1, MODEL_NOREX_R1RHO)
+
+            # Change flag.
+            no_rex_inserted = True
 
     # Loop through all models, to replace with 'R1 fit' model, if R1 is missing.
     for i, model in enumerate(self_models):
@@ -171,8 +186,11 @@ def convert_no_rex_fit_r1(self_models=None):
             # Replace the model.
             self_models[i] = translated_model
 
+            # Flag if translated,
+            r1ho_translated = True
+
     # Return the model.
-    return self_models
+    return self_models, no_rex_translated, no_rex_inserted, r1ho_translated
 
 
 # Define function, to return model info.
@@ -298,6 +316,107 @@ def nesting_param(model_params=None, nested_model_params=None):
             elif param == 'kC':
                 par_dic[param] = 'kex'
 
+    ## The 'MODEL_PARAMS_NS_R1RHO_3SITE' model parameters from 'MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR'.
+    elif set(model_params) == set(MODEL_PARAMS_NS_R1RHO_3SITE) and set(nested_model_params) == set(MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR):
+        for param in model_params:
+            if param == 'kex_AC':
+                par_dic[param] = '0.0'
+
+    ## The 'MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR' model parameters from R1RHO 2SITE.
+    elif set(model_params) == set(MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR) and set(nested_model_params) == set(MODEL_PARAMS_NS_R1RHO_2SITE):
+        for param in model_params:
+            if param == 'dw_AB':
+                par_dic[param] = 'dw'
+
+            elif param == 'kex_AB':
+                par_dic[param] = 'kex'
+
+            elif param == 'dw_BC':
+                par_dic[param] = 'dw'
+
+            elif param == 'kex_BC':
+                par_dic[param] = 'kex'
+
+            elif param == 'pB':
+                par_dic[param] = '1 - pA'
+
+    ## The 'MODEL_PARAMS_NS_R1RHO_3SITE' model parameters from R1RHO 2SITE.
+    elif set(model_params) == set(MODEL_PARAMS_NS_R1RHO_3SITE) and set(nested_model_params) == set(MODEL_PARAMS_NS_R1RHO_2SITE):
+        for param in model_params:
+            if param == 'dw_AB':
+                par_dic[param] = 'dw'
+
+            elif param == 'kex_AB':
+                par_dic[param] = 'kex'
+
+            elif param == 'dw_BC':
+                par_dic[param] = 'dw'
+
+            elif param == 'kex_BC':
+                par_dic[param] = 'kex'
+
+            elif param == 'kex_AC':
+                par_dic[param] = 'kex'
+
+            elif param == 'pB':
+                par_dic[param] = '1 - pA'
+
+    ## The 'MODEL_PARAMS_NS_MMQ_3SITE' model parameters from 'MODEL_PARAMS_NS_MMQ_3SITE_LINEAR'.
+    elif set(model_params) == set(MODEL_PARAMS_NS_MMQ_3SITE) and set(nested_model_params) == set(MODEL_PARAMS_NS_MMQ_3SITE_LINEAR):
+        for param in model_params:
+            if param == 'kex_AC':
+                par_dic[param] = '0.0'
+
+    ## The 'MODEL_PARAMS_NS_MMQ_3SITE_LINEAR' model parameters from 'MODEL_PARAMS_NS_MMQ_2'.
+    elif set(model_params) == set(MODEL_PARAMS_NS_MMQ_3SITE_LINEAR) and set(nested_model_params) == set(MODEL_PARAMS_NS_MMQ_2SITE):
+        for param in model_params:
+            if param == 'dw_AB':
+                par_dic[param] = 'dw'
+
+            elif param == 'dwH_AB':
+                par_dic[param] = 'dwH'
+
+            elif param == 'kex_AB':
+                par_dic[param] = 'kex'
+
+            elif param == 'dw_BC':
+                par_dic[param] = 'dw'
+
+            elif param == 'dwH_BC':
+                par_dic[param] = 'dwH'
+
+            elif param == 'kex_BC':
+                par_dic[param] = 'kex'
+
+            elif param == 'pB':
+                par_dic[param] = '1 - pA'
+
+    ## The 'MODEL_PARAMS_NS_MMQ_3SITE' model parameters from 'MODEL_PARAMS_NS_MMQ_2'.
+    elif set(model_params) == set(MODEL_PARAMS_NS_MMQ_3SITE) and set(nested_model_params) == set(MODEL_PARAMS_NS_MMQ_2SITE):
+        for param in model_params:
+            if param == 'dw_AB':
+                par_dic[param] = 'dw'
+
+            elif param == 'dwH_AB':
+                par_dic[param] = 'dwH'
+
+            elif param == 'kex_AB':
+                par_dic[param] = 'kex'
+
+            elif param == 'dw_BC':
+                par_dic[param] = 'dw'
+
+            elif param == 'dwH_BC':
+                par_dic[param] = 'dwH'
+
+            elif param == 'kex_BC':
+                par_dic[param] = 'kex'
+
+            elif param == 'kex_AC':
+                par_dic[param] = 'kex'
+
+            elif param == 'pB':
+                par_dic[param] = '1 - pA'
 
     # Return the dictionary of conversion.
     return par_dic

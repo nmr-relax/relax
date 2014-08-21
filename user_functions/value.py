@@ -85,6 +85,13 @@ uf.add_keyarg(
     wiz_combo_iter = value.get_parameters,
     wiz_read_only = True
 )
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which, if set to True, will cause the destination parameter to be overwritten."
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("If this is used to change values of previously minimised parameters, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset.")

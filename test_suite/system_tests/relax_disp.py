@@ -37,7 +37,8 @@ from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_lo
 from specific_analyses.relax_disp.checks import check_missing_r1
 from specific_analyses.relax_disp.data import generate_r20_key, get_curve_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, return_grace_file_name_ini, return_param_key_from_data
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_NUMERIC_CPMG, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MP05_FIT_R1, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_2SITE_FIT_R1, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02, MODEL_TP02_FIT_R1, MODEL_TAP03, MODEL_TAP03_FIT_R1
+from specific_analyses.relax_disp.model import models_info, nesting_param
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MP05_FIT_R1, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_2SITE_FIT_R1, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02, MODEL_TP02_FIT_R1, MODEL_TAP03, MODEL_TAP03_FIT_R1
 from specific_analyses.relax_disp.model import convert_no_rex_fit_r1
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
@@ -1418,7 +1419,7 @@ class Relax_disp(SystemTestCase):
         self_models = [MODEL_R2EFF, MODEL_NOREX] + MODEL_LIST_ANALYTIC_CPMG
 
         ### Get the return after the conversion.
-        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)[0]
 
         ### Check that the models have been translated correctly.
         self.assertEqual(self_models_return, self_models)
@@ -1428,7 +1429,7 @@ class Relax_disp(SystemTestCase):
         self_models = [MODEL_R2EFF, MODEL_NOREX] + MODEL_LIST_NUMERIC_CPMG
 
         ### Get the return after the conversion.
-        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)[0]
 
         ### Check that the models have been translated correctly.
         self.assertEqual(self_models_return, self_models)
@@ -1440,7 +1441,7 @@ class Relax_disp(SystemTestCase):
         self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
 
         ### Get the return after the conversion.
-        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)[0]
 
         ### Check that the models have been translated correctly.
         self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1, MODEL_NS_R1RHO_2SITE_FIT_R1])
@@ -1451,7 +1452,7 @@ class Relax_disp(SystemTestCase):
 
         ### This call should raise a RelaxError, since R1 is missing, and MODEL_NS_R1RHO_3SITE_LINEAR cannot be translated to a model where R1 is fitted.
         with self.assertRaises(RelaxError):
-            convert_no_rex_fit_r1(self_models=self_models)
+            convert_no_rex_fit_r1(self_models=self_models)[0]
 
         ## Check for a 2 site setup, where both MODEL_NOREX and MODEL_NOREX_R1RHO are sent to auto_analyses.
         ## This should not be possible through the GUI, but could be wished to do through scripting.
@@ -1461,7 +1462,7 @@ class Relax_disp(SystemTestCase):
         self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
 
         ### Get the return after the conversion.
-        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)[0]
 
         ### Check that the models have been translated correctly.
         self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1, MODEL_NS_R1RHO_2SITE_FIT_R1])
@@ -1472,7 +1473,7 @@ class Relax_disp(SystemTestCase):
         self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
 
         ### Get the return after the conversion.
-        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)[0]
 
         ### Check that the models have been translated correctly.
         self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1, MODEL_NS_R1RHO_2SITE_FIT_R1])
@@ -1483,7 +1484,7 @@ class Relax_disp(SystemTestCase):
         self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_M61, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
 
         ### Get the return after the conversion.
-        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)[0]
 
         ### Check that the models have been translated correctly.
         self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO_FIT_R1, MODEL_M61, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1, MODEL_NS_R1RHO_2SITE_FIT_R1])
@@ -1503,7 +1504,7 @@ class Relax_disp(SystemTestCase):
         self_models = [MODEL_R2EFF, MODEL_NOREX] + MODEL_LIST_ANALYTIC_CPMG
 
         ### Get the return after the conversion.
-        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)[0]
 
         ### Check that the models have been translated correctly.
         self.assertEqual(self_models_return, self_models)
@@ -1513,7 +1514,7 @@ class Relax_disp(SystemTestCase):
         self_models = [MODEL_R2EFF, MODEL_NOREX] + MODEL_LIST_NUMERIC_CPMG
 
         ### Get the return after the conversion.
-        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)[0]
 
         ### Check that the models have been translated correctly.
         self.assertEqual(self_models_return, self_models)
@@ -1525,7 +1526,7 @@ class Relax_disp(SystemTestCase):
         self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
 
         ### Get the return after the conversion.
-        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)[0]
 
         ### Check that the models have been translated correctly.
         self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE])
@@ -1535,7 +1536,7 @@ class Relax_disp(SystemTestCase):
         self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE_LINEAR]
 
         ### Get the return after the conversion.
-        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)[0]
 
         ### Check that the models have been translated correctly.
         self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE_LINEAR])
@@ -1548,7 +1549,7 @@ class Relax_disp(SystemTestCase):
         self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
 
         ### Get the return after the conversion.
-        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)[0]
 
         ### Check that the models have been translated correctly.
         self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE])
@@ -1559,7 +1560,7 @@ class Relax_disp(SystemTestCase):
         self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
 
         ### Get the return after the conversion.
-        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)[0]
 
         ### Check that the models have been translated correctly.
         self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE])
@@ -1570,7 +1571,7 @@ class Relax_disp(SystemTestCase):
         self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_M61, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
 
         ### Get the return after the conversion.
-        self_models_return = convert_no_rex_fit_r1(self_models=self_models)
+        self_models_return = convert_no_rex_fit_r1(self_models=self_models)[0]
 
         ### Check that the models have been translated correctly.
         self.assertEqual(self_models_return, [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_M61, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE])
@@ -3086,9 +3087,9 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin4.r2[r20_key1], 1.60463650370664, 2)
         self.assertAlmostEqual(spin4.r2[r20_key2], 1.63221675941434, 3)
         #self.assertAlmostEqual(spin4.pA, 0.818979078699935, 3)    # As dw (and kex) is zero, this parameter is not stable.
-        self.assertAlmostEqual(spin4.dw, 0.0, 6)
+        self.assertAlmostEqual(spin4.dw, 0.0, 5)
         self.assertAlmostEqual(spin4.kex/10000, 0.0, 3)
-        self.assertAlmostEqual(spin4.chi2, 26.7356711142038, 3)
+        self.assertAlmostEqual(spin4.chi2/100, 26.7356711142038/100, 3)
         self.assertAlmostEqual(spin70.r2[r20_key1], 6.97268077496405, 3)
         self.assertAlmostEqual(spin70.r2[r20_key2], 9.41028133407727, 3)
         self.assertAlmostEqual(spin70.pA, 0.989856641885939, 3)
@@ -3332,7 +3333,7 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[r20_key1], 6.74362294539099, 5)
+        self.assertAlmostEqual(spin70.r2[r20_key1], 6.74362294539099)
         self.assertAlmostEqual(spin70.r2[r20_key2], 6.57406797067481, 6)
         self.assertAlmostEqual(spin70.phi_ex, 0.312733013751449)
         self.assertAlmostEqual(spin70.kex/1000, 4723.09897146338/1000, 6)
@@ -5033,6 +5034,48 @@ class Relax_disp(SystemTestCase):
             spin_index += 1
 
 
+    def test_model_nesting_and_param(self):
+        """Test that all models which can nest, have all their parameters converted."""
+
+        # Get info for all models.
+        all_models_info = models_info(models=MODEL_LIST_FULL)
+
+        # Loop over all models.
+        print("Printing the listed of nested models for each model.")
+        print("#########################################")
+        for model_info in all_models_info:
+            print("%s"%model_info.model),
+            print("<-"),
+            nest_list = model_info.nest_list
+            if nest_list == None:
+                nest_list = ["None"]
+            print(', '.join(map(str, nest_list)))
+
+            # Skip if there is no model to nest from.
+            if nest_list == ["None"]:
+                continue
+
+            # Assign params to variable.
+            model_params = model_info.params
+
+            # Now loop over the nested models.
+            for nested_model in nest_list:
+                # Get the params for the nested model.
+                nested_model_params = MODEL_PARAMS[nested_model]
+
+                # Get the dictionary of parameter conversion.
+                par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
+
+                # Test the number of elements in the dictionary.
+                self.assertEqual(len(par_dic), len(model_params))
+
+                # Loop over dictionary.
+                for param, param_conv in par_dic.iteritems():
+                        if param != param_conv:
+                            print("Model:'%s', Nested model:'%s', Copying '%s' to '%s'." % (model_info.model, nested_model, param_conv, param))
+                        self.assertNotEqual(param_conv, None)
+
+
     def test_ns_mmq_3site(self):
         """Compare the 'NS MMQ 3-site' dispersion model to synthetic data from cpmg_fit."""
 
@@ -5503,7 +5546,7 @@ class Relax_disp(SystemTestCase):
         prev_data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013' +sep+ "check_graphs" +sep+ "mc_2000"
 
         # Run the analysis.
-        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, pre_run_dir=prev_data_path, optimise_pre_run_r2eff=False)
+        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, pre_run_dir=prev_data_path)
 
         # Check the kex value of residue 52
         #self.assertAlmostEqual(cdp.mol[0].res[41].spin[0].kex, ds.ref[':52@N'][6])
@@ -5597,13 +5640,13 @@ class Relax_disp(SystemTestCase):
 
                             elif param == 'dw':
                                 if model == MODEL_TP02_FIT_R1:
-                                    self.assertAlmostEqual(value, 1.08765638)
+                                    self.assertAlmostEqual(value, 1.08765638, 6)
                                 elif model == MODEL_TAP03_FIT_R1:
                                     self.assertAlmostEqual(value, 1.08726698, 6)
                                 elif model == MODEL_MP05_FIT_R1:
-                                    self.assertAlmostEqual(value, 1.08726706)
+                                    self.assertAlmostEqual(value, 1.08726706, 6)
                                 elif model == MODEL_NS_R1RHO_2SITE_FIT_R1:
-                                    self.assertAlmostEqual(value, 1.08726706)
+                                    self.assertAlmostEqual(value, 1.08726706, 6)
 
                             elif param == 'kex':
                                 if model == MODEL_DPL94_FIT_R1:
