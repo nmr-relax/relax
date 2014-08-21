@@ -35,7 +35,7 @@ from lib.errors import RelaxError
 from lib.io import get_file_path
 from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
 from specific_analyses.relax_disp.checks import check_missing_r1
-from specific_analyses.relax_disp.data import generate_r20_key, get_curve_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, return_grace_file_name_ini, return_param_key_from_data
+from specific_analyses.relax_disp.data import generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, return_grace_file_name_ini, return_param_key_from_data
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.model import models_info, nesting_param
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_FULL, MODEL_LIST_NUMERIC_CPMG, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02, MODEL_TAP03
@@ -1352,6 +1352,86 @@ class Relax_disp(SystemTestCase):
 
         # Assert that the number of columns is equal, plus 1 for "#".
         self.assertEqual(nr_split_header, len(line_split_val) + 1)
+
+
+    def test_bug_9999_slow_r1rho_r2eff_error_with_mc(self):
+        """Catch U{bug #9999<https://gna.org/bugs/?9999>}, The slow optimisation of R1rho R2eff error estimation with Monte Carlo simulations."""
+
+        # Define path to data 
+        prev_data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013' +sep+ "check_graphs" +sep+ "mc_2000"  +sep+ "R2eff"
+
+        # Read data.
+        self.interpreter.results.read(prev_data_path + sep + 'results')        
+
+        # Get initial offset, point, time
+        for exp_type, frq, offset, point, time, ei, mi, oi, di, ti in loop_exp_frq_offset_point_time(return_indices=True):
+            offset_i = offset
+            point_i = point
+            time_i = time
+            break
+
+        # Now count number
+        graph_nr = 0
+        for exp_type, frq, offset, point, time, ei, mi, oi, di, ti in loop_exp_frq_offset_point_time(return_indices=True):
+            print(exp_type, frq, offset, point, time)
+
+            # If different, count 1 graph.
+            if offset != offset_i or point != point_i:
+                offset_i = offset
+                point_i = point
+                graph_nr += 1
+                print("Graph %i complete\n" % graph_nr)
+
+        print(graph_nr + 1)
+
+        # Check if intensity errors have already been calculated by the user.
+        precalc = True
+        for spin in spin_loop(skip_desel=True):
+            # No structure.
+            if not hasattr(spin, 'peak_intensity_err'):
+                precalc = False
+                break
+
+            # Determine if a spectrum ID is missing from the list.
+            for id in cdp.spectrum_ids:
+                if id not in spin.peak_intensity_err:
+                    precalc = False
+                    break
+
+        # Skip.
+        if precalc:
+            print("Skipping the error analysis as it has already been performed.")
+
+        else:
+            # Loop over the spectrometer frequencies.
+            for frq in loop_frq():
+                # Generate a list of spectrum IDs matching the frequency.
+                ids = []
+                for id in cdp.spectrum_ids:
+                    # Check that the spectrometer frequency matches.
+                    match_frq = True
+                    if frq != None and cdp.spectrometer_frq[id] != frq:
+                        match_frq = False
+
+                    # Add the ID.
+                    if match_frq:
+                        ids.append(id)
+
+                # Run the error analysis on the subset.
+                self.interpreter.spectrum.error_analysis(subset=ids)
+
+        print("has_exponential_exp_type:", has_exponential_exp_type())
+
+        model = 'R2eff'
+        self.interpreter.relax_disp.select_model(model)
+
+        # Do Grid Search
+        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=11, constraints=True, verbosity=1)
+
+        # Do minimisation.
+        set_func_tol = 1e-11
+        set_max_iter = 10000
+        self.interpreter.minimise.execute(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
 
 
     def test_check_missing_r1(self):
