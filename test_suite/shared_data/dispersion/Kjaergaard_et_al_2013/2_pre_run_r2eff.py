@@ -47,7 +47,7 @@ if not hasattr(ds, 'grid_inc'):
 # For estimating the error of the fitted R2eff values,
 # a high number should be provided. Later the high quality R2eff values will be read for subsequent model analyses.
 if not hasattr(ds, 'exp_mc_sim_num'):
-    ds.exp_mc_sim_num = 10
+    ds.exp_mc_sim_num = 2000
 
 # The result directory.
 if not hasattr(ds, 'results_dir'):
