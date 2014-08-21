@@ -408,6 +408,9 @@ MODEL_LIST_DW_MIX_DOUBLE = [MODEL_LM63_3SITE, MODEL_MMQ_CR72, MODEL_NS_MMQ_2SITE
 MODEL_LIST_DW_MIX_QUADRUPLE = [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]
 """Models using parameters with mixed dw, and has four variables. For example with both dw_AB, dw_BC, dwH_AB and dwH_BC."""
 
+# The models which currently support R1 fitting via target function switching.
+MODEL_LIST_FIT_R1 = [MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
+
 
 # The defined models, which is used for nesting.
 MODEL_NEST_CPMG = MODEL_CR72
