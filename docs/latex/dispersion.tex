@@ -189,6 +189,26 @@ Except for `R2eff' and `No Rex', all models can be fit to clusterings of spins, 
 The models are described in more detail below and summarised in Table~\ref{table: dispersion models}.
 The parameters of the models and of relaxation dispersion in general are given in Table~\ref{table: dispersion parameters}.
 
+
+% R1 parameter optimisation.
+\subsubsection{$\Rone$ parameter optimisation}
+
+For a number of models, the off-resonance $\Rone$ value can be optimised.
+Normally the off-resonance models will use fixed experimental $\Rone$ values for optimisation.
+However if the experimental values are not loaded, then the $\Rone$ values will be automatically optimised.
+For finer control of this optimisation behaviour, see the \uf{relax\ufus{}disp\ufsep{}r1\ufus{}fit} user function (page~\pageref{uf: relax_disp.r1_fit}).
+The models which support off-resonance $\Rone$ fitting include:
+\begin{itemize}
+    \item `No Rex',
+    \item `DPL94',
+    \item `TP02',
+    \item `TAP03',
+    \item `MP05',
+    \item `NS R1rho 2-site'.
+\end{itemize}
+
+In the future, support for off-resonance effects in the CPMG experiments is planned (see section~\ref{sect: dispersion: TODO} on page~\pageref{sect: dispersion: TODO}).
+
 \input{dispersion_models}
 \input{dispersion_params}
 
