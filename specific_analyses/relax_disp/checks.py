@@ -30,7 +30,7 @@ These functions raise various RelaxErrors to help the user understand what went 
 from dep_check import C_module_exp_fn
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxNoPeakIntensityError
 import specific_analyses
-from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, MODEL_LIST_R1RHO_W_R1_ONLY, MODEL_NOREX_R1RHO
+from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, MODEL_LIST_R1RHO_OFF_RES, MODEL_NOREX_R1RHO
 
 
 def check_c_modules():
@@ -188,7 +188,7 @@ def check_missing_r1(model=None):
     """
 
     # Check that the model uses R1 data.
-    if model in [MODEL_NOREX_R1RHO] + MODEL_LIST_R1RHO_W_R1_ONLY:
+    if model in [MODEL_NOREX_R1RHO] + MODEL_LIST_R1RHO_OFF_RES:
         # If R1 ids are present.
         if hasattr(cdp, 'ri_ids'):
             return False
