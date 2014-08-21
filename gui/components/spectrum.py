@@ -460,6 +460,31 @@ class Spectra_list(Base_list):
         return True
 
 
+    def add_offset(self, index):
+        """Add the offset info to the element.
+
+        @param index:   The column index for the data.
+        @type index:    int
+        @return:        True if the data exists, False otherwise.
+        @rtype:         bool
+        """
+
+        # Append a column.
+        self.element.InsertColumn(index, u("Offset \u03C9_rf (ppm)"))
+
+        # No data.
+        if not hasattr(cdp, 'spectrum_ids'):
+            return True
+
+        # Set the values.
+        for i in range(len(cdp.spectrum_ids)):
+            if hasattr(cdp, 'spin_lock_offset') and cdp.spectrum_ids[i] in cdp.spin_lock_offset.keys():
+                self.element.SetStringItem(i, index, float_to_gui(cdp.spin_lock_offset[cdp.spectrum_ids[i]]))
+
+        # Successful.
+        return True
+
+
     def generate_popup_menu(self, id=None):
         """Create the popup menu.
 
@@ -732,6 +757,10 @@ class Spectra_list(Base_list):
 
         # The spin-lock field strength or CPMG pulse frequency.
         if self.relax_disp_flag and self.add_disp_point(index):
+            index += 1
+
+        # The offset.
+        if self.relax_disp_flag and self.add_offset(index):
             index += 1
 
         # The relaxation times.
