@@ -23,7 +23,7 @@
 
 # Python module imports.
 from os import F_OK, access, getcwd, path, sep
-from numpy import array, exp, median, log, sum
+from numpy import array, exp, median, log, save, sum, zeros
 import re, math
 from tempfile import mkdtemp
 
@@ -1430,6 +1430,45 @@ class Relax_disp(SystemTestCase):
         # Start dic.
         my_dic = {}
 
+        # Define counter for maximum elements in the numpy array list
+        NE = 0
+        NS = 1
+        NM = 0
+        NO = 0
+        ND = 0
+        NT = 0
+
+        for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+            # Save to counter.
+            if ei > NE:
+                NE = ei
+            if mi > NM:
+                NM = mi
+            if oi > NO:
+                NO = oi
+            if di > ND:
+               ND = di
+
+            for time, ti in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point, return_indices=True):
+                # Save to counter.
+                if ti > NT:
+                    NT = ti
+
+        # Add 1 to counter, since index start from 0.
+        NE = NE + 1
+        NM = NM + 1 
+        NO = NO + 1
+        ND = ND + 1
+        NT = NT + 1
+
+        # Make data array.
+        values_arr = zeros([NE, NS, NM, NO, ND, NT])
+        errors_arr = zeros([NE, NS, NM, NO, ND, NT])
+        times_arr = zeros([NE, NS, NM, NO, ND, NT])
+        struct_arr = zeros([NE, NS, NM, NO, ND, NT])
+        param_key_list = []
+
+
         # Loop over each spectrometer frequency and dispersion point.
         for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
             # Add key to dic.
@@ -1441,9 +1480,12 @@ class Relax_disp(SystemTestCase):
             # Loop over the parameters.
             #print("Grid optimised parameters for spin: %s" % (spin_string))
 
-            for exp_type, frq, offset, point in loop_exp_frq_offset_point():
+            for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
                 # Generate the param_key.
                 param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                # Append key.
+                param_key_list.append(param_key)
 
                 # Add key to dic.
                 my_dic[spin_id][param_key] = {}
@@ -1461,10 +1503,19 @@ class Relax_disp(SystemTestCase):
                 values = []
                 errors = []
                 times = []
-                for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
-                    values.append(average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, sim_index=None))
-                    errors.append(average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
+                for time, ti in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point, return_indices=True):
+                    value = average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, sim_index=None)
+                    values.append(value)
+
+                    error = average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True)
+                    errors.append(error)
                     times.append(time)
+
+                    # Save to numpy arrays.
+                    values_arr[ei, 0, mi, oi, di, ti] = value
+                    errors_arr[ei, 0, mi, oi, di, ti] = error
+                    times_arr[ei, 0, mi, oi, di, ti] = time
+                    struct_arr[ei, 0, mi, oi, di, ti] = 1.0
 
                 # y= A exp(x * k)
                 # w[i] = ln(y[i])
@@ -1519,6 +1570,18 @@ class Relax_disp(SystemTestCase):
 
                 print("%-10s %-6s %-6s %3.1f : %3.1f: %3.1f" % ("Parameter:", 'R2eff', "Grid : Min : Estimated:", R2eff_value_grid, R2eff_value, R2eff_est))
                 print("%-10s %-6s %-6s %3.1f : %3.1f: %3.1f" % ("Parameter:", 'i0', "Grid : Min : Estimated:", i0_value_grid, i0_value, i0_est))
+
+        print(NE, NS, NM, NO, ND, NT)
+        for param_key in param_key_list:
+            print("        '%s'," % param_key)
+        print(values_arr.shape)
+
+        # Save arrays to profiling.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting'+sep+'profiling'+sep
+        #save(data_path + "values_arr", values_arr)
+        #save(data_path + "errors_arr", errors_arr)
+        #save(data_path + "times_arr", times_arr)
+        #save(data_path + "struct_arr", struct_arr)
 
 
     def test_check_missing_r1(self):
