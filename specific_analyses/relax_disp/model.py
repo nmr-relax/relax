@@ -58,7 +58,7 @@ class Model_class:
 
         # model parameters.
         self.params = MODEL_PARAMS[self.model]
-        if is_r1_optimised:
+        if is_r1_optimised and 'r1' not in self.params:
             self.params.insert(0, 'r1')
 
         # model number of parameters.
