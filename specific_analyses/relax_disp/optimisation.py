@@ -141,8 +141,10 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_offset=No
     values, errors, missing, frqs, frqs_H, exp_types, relax_times = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
 
     # The offset and R1 data.
+    r1_setup()
     offsets, spin_lock_fields_inter, chemical_shifts, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, spin_lock_offset=spin_lock_offset, fields=spin_lock_nu1)
     r1 = return_r1_data(spins=[spin], spin_ids=[spin_id], field_count=field_count)
+    r1_fit = is_r1_optimised(spin.model)
 
     # The dispersion data.
     recalc_tau = True
@@ -206,7 +208,7 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_offset=No
                         missing[ei][si][mi].append(zeros(num, int32))
 
     # Initialise the relaxation dispersion fit functions.
-    model = Dispersion(model=spin.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, recalc_tau=recalc_tau)
+    model = Dispersion(model=spin.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, recalc_tau=recalc_tau, r1_fit=r1_fit)
 
     # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
     chi2 = model.func(param_vector)
