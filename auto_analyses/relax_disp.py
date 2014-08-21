@@ -39,8 +39,8 @@ from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, loop_frq
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
-from specific_analyses.relax_disp.model import convert_no_rex_fit_r1, nesting_model, nesting_param
-from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, MODEL_LIST_ANALYTIC, MODEL_LIST_NEST, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO_FIT_R1, MODEL_LIST_R1RHO_W_R1, MODEL_LIST_R1RHO_FULL, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_PARAMS, MODEL_R2EFF, PARAMS_R20
+from specific_analyses.relax_disp.model import convert_no_rex, nesting_model, nesting_param
+from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, MODEL_LIST_ANALYTIC, MODEL_LIST_NEST, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_PARAMS, MODEL_R2EFF, PARAMS_R20
 from status import Status; status = Status()
 
 
@@ -115,7 +115,7 @@ class Relax_disp:
         # Possible convert the models for analyses.
         # Determine if any model in the list of all models should be replaced or inserted as the correct 'No Rex' model.
         # Also translate the R1rho off-resonance model to the corresponding 'R1 fit' models, if R1 is not loaded.
-        converted_models, no_rex_translated, no_rex_inserted, r1ho_translated = convert_no_rex_fit_r1(self_models=deepcopy(models))
+        converted_models, no_rex_translated, no_rex_inserted = convert_no_rex(self_models=deepcopy(models))
 
         if converted_models != models:
             # Printout.
@@ -130,9 +130,6 @@ class Relax_disp:
                 no_rex_index = models.index(MODEL_NOREX) + 1
                 text = "\nThe 'No Rex' model for R1rho off-resonance models has been inserted as model: '%s'."%(converted_models[no_rex_index])
                 print(text)
-            if r1ho_translated:
-                text = "R1 data is missing.  All R1rho off-resonance models have been translated to the corresponding model whereby R1 is fitted.  How to read 'R1 data' can be reviewed by 'help(relax_data.read)'."
-                warn(RelaxWarning(text))
 
             print("\nPrevious list of models: %s" % (models))
             print("\nNew list of models: %s" % (converted_models))
@@ -401,7 +398,7 @@ class Relax_disp:
         section(file=sys.stdout, text="Optimisation", prespace=2)
 
         # Deselect insignificant spins.
-        if model not in [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1]:
+        if model not in [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO]:
             self.interpreter.relax_disp.insignificance(level=self.insignificance)
 
         # Speed-up grid-search by using minium R2eff value.
@@ -700,7 +697,7 @@ class Relax_disp:
             self.write_results_test(path=path, model=model, models_tested=models_tested, param='r2', file_name_ini='r1rho_prime')
 
             # Plot specific R1rho graphs.
-            if model in [None] + MODEL_LIST_R1RHO_W_R1 + MODEL_LIST_R1RHO_FIT_R1:
+            if model in [None] + MODEL_LIST_R1RHO:
                 self.interpreter.relax_disp.plot_disp_curves(dir=path, x_axis=X_AXIS_THETA, force=True)
                 self.interpreter.relax_disp.plot_disp_curves(dir=path, y_axis=Y_AXIS_R2_R1RHO, x_axis=X_AXIS_W_EFF, force=True)
                 self.interpreter.relax_disp.plot_disp_curves(dir=path, y_axis=Y_AXIS_R2_EFF, x_axis=X_AXIS_THETA, interpolate=INTERPOLATE_OFFSET, force=True)

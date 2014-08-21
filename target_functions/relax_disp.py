@@ -55,7 +55,7 @@ from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from lib.float import isNaN
 from target_functions.chi2 import chi2_rankN
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_DW_MIX_DOUBLE, MODEL_LIST_DW_MIX_QUADRUPLE, MODEL_LIST_INV_RELAX_TIMES, MODEL_LIST_R20B, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LIST_R1RHO_FIT_R1, MODEL_LIST_R1RHO_W_R1, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MP05_FIT_R1, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_2SITE_FIT_R1, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TAP03_FIT_R1, MODEL_TP02, MODEL_TP02_FIT_R1, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_DW_MIX_DOUBLE, MODEL_LIST_DW_MIX_QUADRUPLE, MODEL_LIST_INV_RELAX_TIMES, MODEL_LIST_R20B, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LIST_R1RHO_OFF_RES, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -175,11 +175,11 @@ class Dispersion:
             raise RelaxError("No errors have been supplied to the target function.")
         if missing == None:
             raise RelaxError("No missing data information has been supplied to the target function.")
-        if model in MODEL_LIST_R1RHO_FIT_R1 + MODEL_LIST_R1RHO_W_R1:
+        if model in MODEL_LIST_R1RHO_OFF_RES:
             if chemical_shifts == None:
                 raise RelaxError("Chemical shifts must be supplied for the '%s' R1rho off-resonance dispersion model." % model)
-            if model in MODEL_LIST_R1RHO_W_R1 and r1 == None:
-                raise RelaxError("R1 relaxation rates must be supplied for the '%s' R1rho off-resonance dispersion model." % model)
+            if not r1_fit and r1 == None:
+                raise RelaxError("R1 relaxation rates must be supplied for the '%s' R1rho off-resonance dispersion model when not fitting the values." % model)
 
         # Store the arguments.
         self.model = model
@@ -396,7 +396,7 @@ class Dispersion:
         self.end_index = []
 
         # The spin and frequency dependent R1 and R2 parameters, for models which fit R1.
-        if model in MODEL_LIST_R1RHO_FIT_R1:
+        if r1_fit:
             # The spin and frequency dependent R1 parameters.
             self.end_index.append(self.NE * self.NS * self.NM)
             # The spin and frequency dependent R2 parameters.
@@ -441,7 +441,7 @@ class Dispersion:
             # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
             self.M0_T = rollaxis(self.M0, 6, 5)
 
-        if model in [MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_2SITE_FIT_R1]:
+        if model in [MODEL_NS_R1RHO_2SITE]:
             # Offset of spin-lock from A.
             da_mat = self.chemical_shifts - self.offset
 
