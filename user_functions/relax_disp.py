@@ -44,7 +44,7 @@ from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFS
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FIT_R1, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FIT_R1, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 from specific_analyses.relax_disp import uf as relax_disp_uf
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -883,7 +883,6 @@ uf.add_keyarg(
     wiz_combo_choices = [
         "%s: {%s/%s, %s}" % (MODEL_R2EFF, r2eff, r1rho, i0),
         "%s: {%s, ...}" % (MODEL_NOREX, r2),
-        "%s: {%s, ...}" % (MODEL_NOREX_R1RHO, r2),
         "%s: {%s, ..., %s, %s}" % (MODEL_LM63, r2, phi_ex, kex),
         "%s: {%s, ..., %s, kB, %s, kC}" % (MODEL_LM63_3SITE, r2, phi_exB, phi_exC),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_CR72, r2, dw, kex),
@@ -914,7 +913,6 @@ uf.add_keyarg(
     wiz_combo_data = [
         MODEL_R2EFF,
         MODEL_NOREX,
-        MODEL_NOREX_R1RHO,
         MODEL_LM63,
         MODEL_LM63_3SITE,
         MODEL_CR72,
@@ -950,7 +948,6 @@ uf.desc[-1].add_paragraph("A number of different dispersion models are supported
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the model used to determine the R2eff/R1rho values and errors required as the base data for all other models,")
 uf.desc.append(Desc_container('The no chemical exchange models'))
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present.")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX_R1RHO, "This is the model for no chemical exchange being present, for off-resonance R1rho-type experiments.  R1rho = R1 * cos(theta)^2 + r1rho_prime * sin(theta)^2")
 # CPMG-type data.
 uf.desc.append(Desc_container('The SQ CPMG-type experiments'))
 uf.desc[-1].add_paragraph("The currently supported analytic models are:")
