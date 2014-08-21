@@ -21,8 +21,8 @@
 
 # relax module imports.
 from specific_analyses.relax_disp.model import nesting_model, nesting_param, sort_models
-from specific_analyses.relax_disp.variables import MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94_FIT_R1, MODEL_IT99, MODEL_MMQ_CR72, MODEL_LM63, MODEL_LM63_3SITE, MODEL_MP05_FIT_R1, MODEL_NOREX, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_2SITE_FIT_R1, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TSMFK01
-from specific_analyses.relax_disp.variables import MODEL_PARAMS_B14_FULL, MODEL_PARAMS_CR72, MODEL_PARAMS_CR72_FULL, MODEL_PARAMS_LM63, MODEL_PARAMS_LM63_3SITE, MODEL_PARAMS_MMQ_CR72, MODEL_PARAMS_MP05_FIT_R1, MODEL_PARAMS_NS_MMQ_2SITE, MODEL_PARAMS_NS_MMQ_3SITE, MODEL_PARAMS_NS_MMQ_3SITE_LINEAR, MODEL_PARAMS_NS_R1RHO_2SITE, MODEL_PARAMS_NS_R1RHO_3SITE, MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS_TAP03_FIT_R1
+from specific_analyses.relax_disp.variables import MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_MMQ_CR72, MODEL_LM63, MODEL_LM63_3SITE, MODEL_MP05, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import MODEL_PARAMS_B14_FULL, MODEL_PARAMS_CR72, MODEL_PARAMS_CR72_FULL, MODEL_PARAMS_LM63, MODEL_PARAMS_LM63_3SITE, MODEL_PARAMS_MMQ_CR72, MODEL_PARAMS_MP05, MODEL_PARAMS_NS_MMQ_2SITE, MODEL_PARAMS_NS_MMQ_3SITE, MODEL_PARAMS_NS_MMQ_3SITE_LINEAR, MODEL_PARAMS_NS_R1RHO_2SITE, MODEL_PARAMS_NS_R1RHO_3SITE, MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS_TAP03
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
@@ -337,13 +337,13 @@ class Test_model(UnitTestCase):
     def test_nesting_model_r1rho_1(self):
         """Unit test of function nesting_model, which determine which model to nest from, testing for R1rho experiments."""
 
-        ## Test MODEL_MP05_FIT_R1 model request, when models are all R1rho models with fitted R1.
+        ## Test MODEL_MP05 model request, when models are all R1rho models with fitted R1.
         # Define all the models tested in the analysis.
-        self_models = [MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1, MODEL_NS_R1RHO_2SITE_FIT_R1]
+        self_models = [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
 
         # Define which current model is selected
-        model = MODEL_MP05_FIT_R1
-        model_nest = MODEL_TAP03_FIT_R1
+        model = MODEL_MP05
+        model_nest = MODEL_TAP03
 
         print("self.models is:", self_models)
         print("Current model to analyse is:", model)
@@ -356,12 +356,12 @@ class Test_model(UnitTestCase):
     def test_nesting_model_r1rho_2(self):
         """Unit test of function nesting_model, which determine which model to nest from, testing for R1rho experiments."""
 
-        ## Test MODEL_TP02_FIT_R1 model request, when models are all R1rho models with fitted R1, and MODEL_NS_R1RHO_2SITE_FIT_R1 was fitted first.
+        ## Test MODEL_TP02 model request, when models are all R1rho models with fitted R1, and MODEL_NS_R1RHO_2SITE was fitted first.
         # Define all the models tested in the analysis.
-        self_models = [MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_R1RHO_2SITE_FIT_R1, MODEL_TP02_FIT_R1]
+        self_models = [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_NS_R1RHO_2SITE, MODEL_TP02]
 
         # Define which current model is selected
-        model = MODEL_TP02_FIT_R1
+        model = MODEL_TP02
         model_nest = None
 
         print("self.models is:", self_models)
@@ -375,12 +375,12 @@ class Test_model(UnitTestCase):
     def test_nesting_model_r1rho_3(self):
         """Unit test of function nesting_model, which determine which model to nest from, testing for R1rho experiments."""
 
-        ## Test MODEL_DPL94_FIT_R1 model request, when models are all R1rho models with fitted R1, and MODEL_NS_R1RHO_2SITE_FIT_R1 was fitted first.
+        ## Test MODEL_DPL94 model request, when models are all R1rho models with fitted R1, and MODEL_NS_R1RHO_2SITE was fitted first.
         # Define all the models tested in the analysis.
-        self_models = [MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_NS_R1RHO_2SITE_FIT_R1, MODEL_DPL94_FIT_R1]
+        self_models = [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_NS_R1RHO_2SITE, MODEL_DPL94]
 
         # Define which current model is selected
-        model = MODEL_DPL94_FIT_R1
+        model = MODEL_DPL94
         model_nest = None
 
         print("self.models is:", self_models)
@@ -394,12 +394,12 @@ class Test_model(UnitTestCase):
     def test_nesting_model_r1rho_4(self):
         """Unit test of function nesting_model, which determine which model to nest from, testing for R1rho experiments."""
 
-        ## Test MODEL_TP02_FIT_R1 model request, when model are all R1rho models with fitted R1, and MODEL_DPL94_FIT_R1 was fitted first.
+        ## Test MODEL_TP02 model request, when model are all R1rho models with fitted R1, and MODEL_DPL94 was fitted first.
         # Define all the models tested in the analysis.
-        self_models = [MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1]
+        self_models = [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02]
 
         # Define which current model is selected
-        model = MODEL_TP02_FIT_R1
+        model = MODEL_TP02
         model_nest = None
 
         print("self.models is:", self_models)
@@ -509,8 +509,8 @@ class Test_model(UnitTestCase):
         """Unit test of function nesting_param, which determine how model parameters are converted for nesting."""
 
         # Define parameters
-        model_params = MODEL_PARAMS_TAP03_FIT_R1
-        nested_model_params = MODEL_PARAMS_MP05_FIT_R1
+        model_params = MODEL_PARAMS_TAP03
+        nested_model_params = MODEL_PARAMS_MP05
 
         # Get the dictionary of parameter conversion.
         par_dic = nesting_param(model_params=model_params, nested_model_params=nested_model_params)
@@ -670,8 +670,8 @@ class Test_model(UnitTestCase):
 
         ## Test sort of models, when models are all R1rho models with fitted R1.
         # Define all the models tested in the analysis.
-        self_models = [MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1, MODEL_NS_R1RHO_2SITE_FIT_R1]
-        expected_result = [MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_MP05_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_TP02_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_NS_R1RHO_2SITE_FIT_R1]
+        self_models = [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
+        expected_result = [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_MP05, MODEL_TAP03, MODEL_TP02, MODEL_DPL94, MODEL_NS_R1RHO_2SITE]
 
         # Test the return.
         self.assertEqual(sort_models(models=self_models), expected_result)
