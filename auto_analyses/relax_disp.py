@@ -39,8 +39,8 @@ from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, is_r1_optimised, loop_frq
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
-from specific_analyses.relax_disp.model import convert_no_rex, nesting_model, nesting_param
-from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, MODEL_LIST_ANALYTIC, MODEL_LIST_NEST, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_PARAMS, MODEL_R2EFF, PARAMS_R20
+from specific_analyses.relax_disp.model import nesting_model, nesting_param
+from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, MODEL_LIST_ANALYTIC, MODEL_LIST_NEST, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_NOREX, MODEL_PARAMS, MODEL_R2EFF, PARAMS_R20
 from status import Status; status = Status()
 
 
@@ -103,6 +103,7 @@ class Relax_disp:
         self.grid_inc = grid_inc
         self.mc_sim_num = mc_sim_num
         self.exp_mc_sim_num = exp_mc_sim_num
+        self.models = models
         self.modsel = modsel
         self.pre_run_dir = pre_run_dir
         self.optimise_r2eff = optimise_r2eff
@@ -111,33 +112,6 @@ class Relax_disp:
         self.numeric_only = numeric_only
         self.mc_sim_all_models = mc_sim_all_models
         self.eliminate = eliminate
-
-        # Possible convert the models for analyses.
-        # Determine if any model in the list of all models should be replaced or inserted as the correct 'No Rex' model.
-        # Also translate the R1rho off-resonance model to the corresponding 'R1 fit' models, if R1 is not loaded.
-        converted_models, no_rex_translated, no_rex_inserted = convert_no_rex(self_models=deepcopy(models))
-
-        if converted_models != models:
-            # Printout.
-            section(file=sys.stdout, text="Converting models.", prespace=2)
-
-            # If 'No Rex' model was translated.
-            if no_rex_translated:
-                no_rex_index = models.index(MODEL_NOREX)
-                text = "\nThe 'No Rex' model for R1rho off-resonance models has been translated to the model: '%s'."%(converted_models[no_rex_index])
-                print(text)
-            if no_rex_inserted:
-                no_rex_index = models.index(MODEL_NOREX) + 1
-                text = "\nThe 'No Rex' model for R1rho off-resonance models has been inserted as model: '%s'."%(converted_models[no_rex_index])
-                print(text)
-
-            print("\nPrevious list of models: %s" % (models))
-            print("\nNew list of models: %s" % (converted_models))
-
-            # Store the new order of models.
-            self.models = converted_models
-        else:
-            self.models = models
 
         # No results directory, so default to the current directory.
         if not self.results_dir:
@@ -398,7 +372,7 @@ class Relax_disp:
         section(file=sys.stdout, text="Optimisation", prespace=2)
 
         # Deselect insignificant spins.
-        if model not in [MODEL_R2EFF, MODEL_NOREX, MODEL_NOREX_R1RHO]:
+        if model not in [MODEL_R2EFF, MODEL_NOREX]:
             self.interpreter.relax_disp.insignificance(level=self.insignificance)
 
         # Speed-up grid-search by using minium R2eff value.
