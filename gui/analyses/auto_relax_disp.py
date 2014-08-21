@@ -114,6 +114,7 @@ class Auto_relax_disp(Base_analysis):
             ds.relax_gui.analyses[data_index].pipe_bundle = pipe_bundle
 
             # Initialise the variables.
+            ds.relax_gui.analyses[data_index].r1_fit = False
             ds.relax_gui.analyses[data_index].numeric_only = False
             ds.relax_gui.analyses[data_index].grid_inc = None
             ds.relax_gui.analyses[data_index].mc_sim_num = None
@@ -286,6 +287,9 @@ class Auto_relax_disp(Base_analysis):
             if model != MODEL_NOREX and model in MODEL_LIST_R1RHO and not has_r1rho_exp_type():
                 model_mismatch.append([model, 'R1rho'])
 
+        # The R1 parameter fitting flag.
+        data.r1_fit = self.r1_fit.GetValue()
+
         # The numeric only solution.
         data.numeric_only = self.numeric_only.GetValue()
 
@@ -352,6 +356,10 @@ class Auto_relax_disp(Base_analysis):
         # Add the dispersion models GUI element, with spacing.
         self.model_field = Disp_model_list(self, box)
         self.model_field.set_value(self.data.disp_models)
+
+        # R1 parameter optimisation.
+        tooltip = "Toggle the optimisation of the off-resonance R1 parameter.\n\nThis allows the optimisation of R1 values to be turned on an off for the relaxation dispersion dispersion models.  If turned off, the current values of R1 will be fixed.  Otherwise the R1 values will be added to the model parameter set.  For models which do not support the R1 parameter for off-resonance effects, this setting will have no effect."
+        self.r1_fit = Boolean_ctrl(box, self, text="R1 parameter optimisation:", default=False, tooltip=tooltip, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # The numeric only solution.
         tooltip = "The class of models to use in the final model selection.\n\nThe default of False allows all dispersion models to be compared for statistical significance in the analysis (no exchange, the analytic models and the numeric models).  The value of True will activate a pure numeric solution - the analytic models will be optimised, as they are very useful for replacing the grid search for the numeric models, but the final model selection will not include them."
@@ -597,6 +605,12 @@ class Auto_relax_disp(Base_analysis):
         @type upload:       bool
         """
 
+        # The R1 parameter fitting flag.
+        if upload:
+            self.data.r1_fit = self.r1_fit.GetValue()
+        elif hasattr(self.data, 'r1_fit'):
+            self.r1_fit.SetValue(bool(self.data.r1_fit))
+
         # The numeric solution only flag.
         if upload:
             self.data.numeric_only = self.numeric_only.GetValue()
@@ -699,7 +713,7 @@ class Execute_relax_disp(Execute):
         Relax_disp.opt_max_iterations = self.data.opt_max_iterations
 
         # Execute.
-        Relax_disp(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, results_dir=self.data.save_dir, models=self.data.models, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, pre_run_dir=self.data.pre_run_dir, mc_sim_all_models=self.data.mc_sim_all_models, insignificance=self.data.insignificance, numeric_only=self.data.numeric_only)
+        Relax_disp(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, results_dir=self.data.save_dir, models=self.data.models, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, pre_run_dir=self.data.pre_run_dir, mc_sim_all_models=self.data.mc_sim_all_models, insignificance=self.data.insignificance, numeric_only=self.data.numeric_only, r1_fit=self.data.r1_fit)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
