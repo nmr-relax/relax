@@ -79,7 +79,7 @@ from pipe_control.spectrometer import check_frequency, get_frequency
 from pipe_control import value
 import specific_analyses
 from specific_analyses.relax_disp.checks import check_exp_type, check_interpolate_offset_cpmg_model, check_missing_r1, check_mixed_curve_types
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_DPL94, MODEL_LIST_FIT_R1, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO_FULL, MODEL_LIST_R1RHO_ON_RES, MODEL_LIST_R1RHO_OFF_RES, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_PARAMS, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, PARAMS_R20
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_DPL94, MODEL_LIST_FIT_R1, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO_FULL, MODEL_LIST_R1RHO_ON_RES, MODEL_LIST_R1RHO_OFF_RES, MODEL_MP05, MODEL_NOREX, MODEL_NS_R1RHO_2SITE, MODEL_PARAMS, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, PARAMS_R20
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, sep
 
@@ -1029,6 +1029,8 @@ def is_r1_optimised(model=None):
 
     # Return False for all models which do not support R1 optimisation.
     if model not in MODEL_LIST_FIT_R1:
+        return False
+    if model == MODEL_NOREX and (cdp != None and hasattr(cdp, 'exp_type_list') and EXP_TYPE_R1RHO not in cdp.exp_type_list):
         return False
 
     # Firstly use the R1 fit flag as an override.
@@ -4063,7 +4065,7 @@ def return_r1_data(spins=None, spin_ids=None, field_count=None, sim_index=None):
     r1_fit = is_r1_optimised(model=spins[0].model)
 
     # Check for the presence of data.
-    if not hasattr(cdp, 'ri_ids') and spins[0].model not in MODEL_LIST_R1RHO_OFF_RES:
+    if not r1_fit and not hasattr(cdp, 'ri_ids'):
         warn_text = "No R1 relaxation data has been loaded.  Setting it to 0.0.  This is essential for the proper handling of offsets in off-resonance R1rho experiments."
         error_text = "No R1 relaxation data has been loaded.  This is essential for the proper handling of offsets in off-resonance R1rho experiments."
         if has_r1rho_exp_type():
@@ -4178,7 +4180,7 @@ def return_r1_err_data(spins=None, spin_ids=None, field_count=None, sim_index=No
     r1_fit = is_r1_optimised(model=spins[0].model)
 
     # Check for the presence of data.
-    if not hasattr(cdp, 'ri_ids') and spins[0].model not in MODEL_LIST_R1RHO_OFF_RES:
+    if not r1_fit and not hasattr(cdp, 'ri_ids'):
         warn_text = "No R1 relaxation data has been loaded.  Setting it to 0.0.  This is essential for the proper handling of offsets in off-resonance R1rho experiments."
         error_text = "No R1 relaxation data has been loaded.  This is essential for the proper handling of offsets in off-resonance R1rho experiments."
         if has_r1rho_exp_type():
