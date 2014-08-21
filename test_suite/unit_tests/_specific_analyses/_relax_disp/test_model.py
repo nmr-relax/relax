@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2014 Troels E. Linnet                                         #
+# Copyright (C) 2014 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -21,7 +22,7 @@
 
 # relax module imports.
 from specific_analyses.relax_disp.model import nesting_model, nesting_param, sort_models
-from specific_analyses.relax_disp.variables import MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_MMQ_CR72, MODEL_LM63, MODEL_LM63_3SITE, MODEL_MP05, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_LIST, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_MMQ_CR72, MODEL_LM63, MODEL_LM63_3SITE, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 from specific_analyses.relax_disp.variables import MODEL_PARAMS_B14_FULL, MODEL_PARAMS_CR72, MODEL_PARAMS_CR72_FULL, MODEL_PARAMS_LM63, MODEL_PARAMS_LM63_3SITE, MODEL_PARAMS_MMQ_CR72, MODEL_PARAMS_MP05, MODEL_PARAMS_NS_MMQ_2SITE, MODEL_PARAMS_NS_MMQ_3SITE, MODEL_PARAMS_NS_MMQ_3SITE_LINEAR, MODEL_PARAMS_NS_R1RHO_2SITE, MODEL_PARAMS_NS_R1RHO_3SITE, MODEL_PARAMS_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS_TAP03
 from test_suite.unit_tests.base_classes import UnitTestCase
 
@@ -339,7 +340,7 @@ class Test_model(UnitTestCase):
 
         ## Test MODEL_MP05 model request, when models are all R1rho models with fitted R1.
         # Define all the models tested in the analysis.
-        self_models = [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
 
         # Define which current model is selected
         model = MODEL_MP05
@@ -358,7 +359,7 @@ class Test_model(UnitTestCase):
 
         ## Test MODEL_TP02 model request, when models are all R1rho models with fitted R1, and MODEL_NS_R1RHO_2SITE was fitted first.
         # Define all the models tested in the analysis.
-        self_models = [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_NS_R1RHO_2SITE, MODEL_TP02]
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_NS_R1RHO_2SITE, MODEL_TP02]
 
         # Define which current model is selected
         model = MODEL_TP02
@@ -377,7 +378,7 @@ class Test_model(UnitTestCase):
 
         ## Test MODEL_DPL94 model request, when models are all R1rho models with fitted R1, and MODEL_NS_R1RHO_2SITE was fitted first.
         # Define all the models tested in the analysis.
-        self_models = [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_NS_R1RHO_2SITE, MODEL_DPL94]
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_NS_R1RHO_2SITE, MODEL_DPL94]
 
         # Define which current model is selected
         model = MODEL_DPL94
@@ -396,7 +397,7 @@ class Test_model(UnitTestCase):
 
         ## Test MODEL_TP02 model request, when model are all R1rho models with fitted R1, and MODEL_DPL94 was fitted first.
         # Define all the models tested in the analysis.
-        self_models = [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02]
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_DPL94, MODEL_TP02]
 
         # Define which current model is selected
         model = MODEL_TP02
@@ -669,8 +670,8 @@ class Test_model(UnitTestCase):
 
         ## Test sort of models, when models are all R1rho models with fitted R1.
         # Define all the models tested in the analysis.
-        self_models = [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
-        expected_result = [MODEL_R2EFF, MODEL_NOREX_R1RHO, MODEL_MP05, MODEL_TAP03, MODEL_TP02, MODEL_DPL94, MODEL_NS_R1RHO_2SITE]
+        self_models = [MODEL_R2EFF, MODEL_NOREX, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
+        expected_result = [MODEL_R2EFF, MODEL_NOREX, MODEL_MP05, MODEL_TAP03, MODEL_TP02, MODEL_DPL94, MODEL_NS_R1RHO_2SITE]
 
         # Test the return.
         self.assertEqual(sort_models(models=self_models), expected_result)
