@@ -652,6 +652,9 @@ def loop_parameters(spins=None):
     @rtype:         str, int, int, str
     """
 
+    # Make sure that the R1 parameter is correctly set up.
+    r1_setup()
+
     # The parameter index.
     param_index = -1
 
