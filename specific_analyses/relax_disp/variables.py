@@ -367,13 +367,9 @@ MODEL_LIST_ANALYTIC_R1RHO = [MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05]
 MODEL_LIST_NUMERIC_R1RHO = [MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]
 """The list of all dispersion models specifically for numeric R1rho-type experiments which use R1 in their equations (excluding the R2eff model and model 'No Rex')."""
 
-#### All R1rho models.
-MODEL_LIST_R1RHO_OFF_RES = MODEL_LIST_ANALYTIC_R1RHO + MODEL_LIST_NUMERIC_R1RHO
+#### All off-resonance R1rho models.
+MODEL_LIST_R1RHO_OFF_RES = [MODEL_NOREX_R1RHO] + MODEL_LIST_ANALYTIC_R1RHO + MODEL_LIST_NUMERIC_R1RHO
 """The list of all dispersion models specifically for R1rho-type experiments which use R1 in their equations (excluding the R2eff model and model 'No Rex')."""
-
-### No Rex model + All R1rho models using/fitting R1.
-MODEL_LIST_R1RHO = [MODEL_NOREX_R1RHO] + MODEL_LIST_R1RHO_OFF_RES
-"""The list of all dispersion models specifically for R1rho-type experiments which use R1 in their equations (excluding the R2eff model)."""
 
 ### All R1rho models.
 #### No Rex model + All R1rho models.
