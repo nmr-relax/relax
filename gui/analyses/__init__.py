@@ -129,6 +129,8 @@ class Analysis_controller:
         # No current page.
         if self._current == None:
             return
+        if len(ds.relax_gui.analyses) == 0:
+            return
 
         # Return the name.
         return ds.relax_gui.analyses[self._current]
@@ -144,6 +146,8 @@ class Analysis_controller:
         # No current page.
         if self._current == None:
             return
+        if len(ds.relax_gui.analyses) == 0:
+            return
 
         # Return the name.
         return ds.relax_gui.analyses[self._current].analysis_name
@@ -158,6 +162,8 @@ class Analysis_controller:
 
         # No current page.
         if self._current == None:
+            return
+        if len(ds.relax_gui.analyses) == 0:
             return
 
         # Return the name.
