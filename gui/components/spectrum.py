@@ -202,6 +202,36 @@ class Spectra_list(Base_list):
             uf_store['relax_disp.spin_lock_field'](spectrum_id=id)
 
 
+    def action_relax_disp_spin_lock_offset(self, event=None, item=None):
+        """Launch the relax_disp.spin_lock_offset user function.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        @keyword item:  This is for debugging purposes only, to allow the GUI tests to select items without worrying about OS dependent wxPython bugs.
+        @type item:     None or int
+        """
+
+        # The current selection.
+        if item == None:
+            item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The offset.
+        offset = None
+        offset_flag = False
+        if hasattr(cdp, 'spin_lock_offset') and id in cdp.spin_lock_offset.keys():
+            offset = cdp.spin_lock_offset[id]
+            offset_flag = True
+
+        # Launch the dialog.
+        if offset_flag:
+            uf_store['relax_disp.spin_lock_offset'](field=offset, spectrum_id=id)
+        else:
+            uf_store['relax_disp.spin_lock_offset'](spectrum_id=id)
+
+
     def action_relax_fit_relax_time(self, event=None, item=None):
         """Launch the relax_fit.relax_time user function.
 
@@ -496,6 +526,12 @@ class Spectra_list(Base_list):
                 'text': u("Set the spin-&lock field strength \u03BD1"),
                 'icon': fetch_icon("relax.relax_disp"),
                 'method': self.action_relax_disp_spin_lock_field
+            })
+            popup_menus.append({
+                'id': wx.NewId(),
+                'text': u("Set the spin-&lock offset \u03C9_rf"),
+                'icon': fetch_icon("relax.relax_disp"),
+                'method': self.action_relax_disp_spin_lock_offset
             })
         if self.relax_disp_flag and is_cpmg_exp_type(id):
             popup_menus.append({
