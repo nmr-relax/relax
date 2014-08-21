@@ -681,7 +681,7 @@ def loop_parameters(spins=None):
                 continue
 
             # The R1 parameter.
-            if 'r1' in spins[0].params:
+            if 'r1' in spins[spin_index].params:
                 for exp_type, frq in loop_exp_frq():
                     param_index += 1
                     yield 'r1', param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
@@ -693,19 +693,19 @@ def loop_parameters(spins=None):
                 continue
 
             # The R2 parameter.
-            if 'r2' in spins[0].params:
+            if 'r2' in spins[spin_index].params:
                 for exp_type, frq in loop_exp_frq():
                     param_index += 1
                     yield 'r2', param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
 
             # The R2A parameter.
-            if 'r2a' in spins[0].params:
+            if 'r2a' in spins[spin_index].params:
                 for exp_type, frq in loop_exp_frq():
                     param_index += 1
                     yield 'r2a', param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
 
             # The R2B parameter.
-            if 'r2b' in spins[0].params:
+            if 'r2b' in spins[spin_index].params:
                 for exp_type, frq in loop_exp_frq():
                     param_index += 1
                     yield 'r2b', param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
