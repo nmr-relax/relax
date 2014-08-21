@@ -37,7 +37,7 @@ from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
-from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, loop_frq
+from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, is_r1_optimised, loop_frq
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.model import convert_no_rex, nesting_model, nesting_param
 from specific_analyses.relax_disp.variables import EQ_ANALYTIC, EQ_NUMERIC, EQ_SILICO, MODEL_LIST_ANALYTIC, MODEL_LIST_NEST, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_NOREX, MODEL_NOREX_R1RHO, MODEL_PARAMS, MODEL_R2EFF, PARAMS_R20
@@ -436,8 +436,13 @@ class Relax_disp:
 
                 # Default values.
                 else:
+                    # The standard parameters.
                     for param in MODEL_PARAMS[model]:
                         self.interpreter.value.set(param=param, index=None)
+
+                    # The optional R1 parameter.
+                    if is_r1_optimised(model=model):
+                        self.interpreter.value.set(param='r1', index=None)
 
         # Minimise.
         do_minimise = False
