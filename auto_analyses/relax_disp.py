@@ -51,7 +51,7 @@ class Relax_disp:
     opt_func_tol = 1e-25
     opt_max_iterations = int(1e7)
 
-    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, exp_mc_sim_num=None, modsel='AIC', pre_run_dir=None, optimise_r2eff=False, insignificance=0.0, numeric_only=False, mc_sim_all_models=False, eliminate=True, set_grid_r20=False):
+    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, exp_mc_sim_num=None, modsel='AIC', pre_run_dir=None, optimise_r2eff=False, insignificance=0.0, numeric_only=False, mc_sim_all_models=False, eliminate=True, set_grid_r20=False, r1_fit=False):
         """Perform a full relaxation dispersion analysis for the given list of models.
 
         @keyword pipe_name:                 The name of the data pipe containing all of the data for the analysis.
@@ -84,6 +84,7 @@ class Relax_disp:
         @type eliminate:                    bool
         @keyword set_grid_r20:              A flag which if True will set the grid R20 values from the minimum R2eff values through the r20_from_min_r2eff user function. This will speed up the grid search with a factor GRID_INC^(Nr_spec_freq). For a CPMG experiment with two fields and standard GRID_INC=21, the speed-up is a factor 441.
         @type set_grid_r20:                 bool
+        @keyword r1_fit:                    A flag which if True will activate R1 parameter fitting via relax_disp.r1_fit for the models that support it.  If False, then the relax_disp.r1_fit user function will not be called.
         """
 
         # Printout.
@@ -112,6 +113,7 @@ class Relax_disp:
         self.numeric_only = numeric_only
         self.mc_sim_all_models = mc_sim_all_models
         self.eliminate = eliminate
+        self.r1_fit = r1_fit
 
         # No results directory, so default to the current directory.
         if not self.results_dir:
@@ -528,6 +530,11 @@ class Relax_disp:
         # Peak intensity error analysis.
         if MODEL_R2EFF in self.models:
             self.error_analysis()
+
+        # R1 parameter fitting.
+        if self.r1_fit:
+            subtitle(file=sys.stdout, text="R1 parameter optimisation activation", prespace=3)
+            self.interpreter.relax_disp.r1_fit(fit=self.r1_fit)
 
         # Loop over the models.
         self.model_pipes = []
