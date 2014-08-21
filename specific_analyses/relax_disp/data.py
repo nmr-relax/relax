@@ -1031,6 +1031,10 @@ def is_r1_optimised(model=None):
     if hasattr(cdp, 'r1_fit'):
         return cdp.r1_fit
 
+    # Catch on-resonance models.
+    if model in MODEL_LIST_R1RHO_ON_RES:
+        return False
+
     # Otherwise, is the R1 data loaded?
     return check_missing_r1(model=model)
 
