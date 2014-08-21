@@ -485,9 +485,10 @@ class Dispersion:
         if model == MODEL_NOREX:
             self.func = self.func_NOREX
         if model == MODEL_NOREX_R1RHO:
-            self.func = self.func_NOREX_R1RHO
-        if model == MODEL_NOREX_R1RHO_FIT_R1:
-            self.func = self.func_NOREX_R1RHO_FIT_R1
+            if r1_fit:
+                self.func = self.func_NOREX_R1RHO_FIT_R1
+            else:
+                self.func = self.func_NOREX_R1RHO
         if model == MODEL_LM63:
             self.func = self.func_LM63
         if model == MODEL_LM63_3SITE:
@@ -519,25 +520,30 @@ class Dispersion:
         if model == MODEL_M61B:
             self.func = self.func_M61b
         if model == MODEL_DPL94:
-            self.func = self.func_DPL94
-        if model == MODEL_DPL94_FIT_R1:
-            self.func = self.func_DPL94_fit_r1
+            if r1_fit:
+                self.func = self.func_DPL94_fit_r1
+            else:
+                self.func = self.func_DPL94
         if model == MODEL_TP02:
-            self.func = self.func_TP02
-        if model == MODEL_TP02_FIT_R1:
-            self.func = self.func_TP02_fit_r1
+            if r1_fit:
+                self.func = self.func_TP02_fit_r1
+            else:
+                self.func = self.func_TP02
         if model == MODEL_TAP03:
-            self.func = self.func_TAP03
-        if model == MODEL_TAP03_FIT_R1:
-            self.func = self.func_TAP03_fit_r1
+            if r1_fit:
+                self.func = self.func_TAP03_fit_r1
+            else:
+                self.func = self.func_TAP03
         if model == MODEL_MP05:
-            self.func = self.func_MP05
-        if model == MODEL_MP05_FIT_R1:
-            self.func = self.func_MP05_fit_r1
+            if r1_fit:
+                self.func = self.func_MP05_fit_r1
+            else:
+                self.func = self.func_MP05
         if model == MODEL_NS_R1RHO_2SITE:
-            self.func = self.func_ns_r1rho_2site
-        if model == MODEL_NS_R1RHO_2SITE_FIT_R1:
-            self.func = self.func_ns_r1rho_2site_fit_r1
+            if r1_fit:
+                self.func = self.func_ns_r1rho_2site_fit_r1
+            else:
+                self.func = self.func_ns_r1rho_2site
         if model == MODEL_NS_R1RHO_3SITE:
             self.func = self.func_ns_r1rho_3site
         if model == MODEL_NS_R1RHO_3SITE_LINEAR:
