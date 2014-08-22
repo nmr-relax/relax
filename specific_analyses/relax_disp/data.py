@@ -4476,6 +4476,10 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
                 frqs[ei][si][mi] = 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(spin.isotope) * 1e-6
                 frqs_H[ei][si][mi] = 2.0 * pi * frq * 1e-6
 
+            # The relaxation times.
+            for time, ti in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point, return_indices=True):
+                relax_times[ei][mi][oi][di].append(time)
+
             # Missing data.
             if key not in current_spin.r2eff.keys():
                 values[ei][si][mi][oi].append(0.0)
@@ -4493,10 +4497,6 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
 
             # The errors.
             errors[ei][si][mi][oi].append(current_spin.r2eff_err[key])
-
-            # The relaxation times.
-            for time, ti in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point, return_indices=True):
-                relax_times[ei][mi][oi][di].append(time)
 
         # Increment the spin index.
         si += 1
