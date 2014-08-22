@@ -52,7 +52,7 @@ The data structures used in this module consist of many different index types wh
 
 # Python module imports.
 from math import cos, pi, sin, sqrt
-from numpy import array, float64, int32, ones, zeros
+from numpy import array, concatenate, float64, int32, ones, unique, zeros
 from os import F_OK, access
 from os.path import expanduser
 from random import gauss
@@ -775,7 +775,7 @@ def insignificance(level=0.0):
             desel_spin(spin_id)
 
 
-def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend_hz=None):
+def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend_hz=None, relax_times=None):
     """Interpolate function for 2D Grace plotting function for the dispersion curves.
 
     @keyword spin:          The specific spin data container.
@@ -788,6 +788,8 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend_h
     @type num_points:       int
     @keyword extend_hz:     How far to extend the interpolated fitted curves to (in Hz).
     @type extend_hz:        float
+    @keyword relax_times:   The experiment specific fixed time period for relaxation (in seconds).  The dimensions are {Ei, Mi, Oi, Di, Ti}.
+    @type relax_times:      rank-4 list of floats
     @return:                The interpolated_flag, list of back calculated R2eff/R1rho values in rad/s {Ei, Si, Mi, Oi, Di}, list of interpolated frequencies for cpmg_frqs in Hz {Ei, Si, Mi, Oi, Di}, interpolated spin-lock offsets in rad/s {Ei, Si, Mi, Oi}, list of interpolated spin-lock field strength frequencies for spin_lock_nu1_new in Hz {Ei, Si, Mi, Oi, Di}, chemical shifts in rad/s {Ei, Si, Mi}, interpolated rotating frame tilt angles theta {Ei, Si, Mi, Oi, Di}, interpolated average resonance offset in the rotating frame Omega in rad/s {Ei, Si, Mi, Oi, Di} and the interpolated effective field in rotating frame w_eff in rad/s {Ei, Si, Mi, Oi, Di}.
     @rtype:                 boolean, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-3 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-2 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays
     """
@@ -797,6 +799,7 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend_h
     # Initialise some structures.
     cpmg_frqs_new = None
     spin_lock_nu1_new = None
+    relax_times_new = None
 
     # Interpolate the CPMG frequencies (numeric models).
     if spin.model in MODEL_LIST_NUMERIC_CPMG or spin.model in [MODEL_B14, MODEL_B14_FULL]:
@@ -871,28 +874,42 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend_h
 
     if spin_lock_nu1 != None and len(spin_lock_nu1[0][0][0]):
         spin_lock_nu1_new = []
+        relax_times_new = []
         for ei in range(len(spin_lock_nu1)):
             # Add a new dimension.
             spin_lock_nu1_new.append([])
+            relax_times_new.append([])
 
             # Then loop over the spectrometer frequencies.
             for mi in range(len(spin_lock_nu1[ei])):
                 # Add a new dimension.
                 spin_lock_nu1_new[ei].append([])
+                relax_times_new[ei].append([])
 
                 # Finally the offsets.
                 for oi in range(len(spin_lock_nu1[ei][mi])):
                     # Add a new dimension.
                     spin_lock_nu1_new[ei][mi].append([])
+                    relax_times_new[ei][mi].append([])
 
                     # No data.
                     if not len(spin_lock_nu1[ei][mi][oi]):
                         continue
 
+                    # There is no way to interpolate the time points correct.
+                    # The best suggestion is to concatenate all values at original offset, and then make a unique list.
+                    relax_time_temp = array([])
+                    for di_o, times in enumerate(relax_times[ei][mi][oi]):
+                        relax_time_temp = concatenate( (relax_time_temp, times) )
+
+                    # Make a unique list.
+                    relax_time_temp = unique(relax_time_temp)
+
                     # Interpolate (adding the extended amount to the end).
                     for di in range(num_points):
                         point = (di + 1) * (max(spin_lock_nu1[ei][mi][oi])+extend_hz) / num_points
                         spin_lock_nu1_new[ei][mi][oi].append(point)
+                        relax_times_new[ei][mi][oi].append(relax_time_temp)
 
                     # Convert to a numpy array.
                     spin_lock_nu1_new[ei][mi][oi] = array(spin_lock_nu1_new[ei][mi][oi], float64)
@@ -914,12 +931,12 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend_h
         back_calc = None
     else:
         # Back calculate R2eff data for the second sets of plots.
-        back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, cpmg_frqs=cpmg_frqs_new, spin_lock_nu1=spin_lock_nu1_new)
+        back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, cpmg_frqs=cpmg_frqs_new, spin_lock_nu1=spin_lock_nu1_new, relax_times_new=relax_times_new)
 
     return interpolated_flag, back_calc, cpmg_frqs_new, offsets, spin_lock_fields_inter, chemical_shifts, tilt_angles, Delta_omega, w_eff
 
 
-def interpolate_offset(spin=None, spin_id=None, si=None, num_points=None, extend_ppm=None):
+def interpolate_offset(spin=None, spin_id=None, si=None, num_points=None, extend_ppm=None, relax_times=None):
     """Interpolate function for 2D Grace plotting function for the dispersion curves, interpolating through spin-lock offset in rad/s.
 
     @keyword spin:          The specific spin data container.
@@ -932,6 +949,8 @@ def interpolate_offset(spin=None, spin_id=None, si=None, num_points=None, extend
     @type num_points:       int
     @keyword extend_ppm:    How far to extend the interpolated fitted curves to in offset ppm.
     @type extend_ppm:       float
+    @keyword relax_times:   The experiment specific fixed time period for relaxation (in seconds).  The dimensions are {Ei, Mi, Oi, Di, Ti}.
+    @type relax_times:      rank-4 list of floats
     @return:                The interpolated_flag, list of back calculated R2eff/R1rho values in rad/s {Ei, Si, Mi, Oi, Di}, list of interpolated frequencies for cpmg_frqs in Hz {Ei, Si, Mi, Oi, Di}, interpolated spin-lock offsets in rad/s {Ei, Si, Mi, Oi}, list of interpolated spin-lock field strength frequencies for spin_lock_nu1_new in Hz {Ei, Si, Mi, Oi, Di}, chemical shifts in rad/s {Ei, Si, Mi}, interpolated rotating frame tilt angles theta {Ei, Si, Mi, Oi, Di}, interpolated average resonance offset in the rotating frame Omega in rad/s {Ei, Si, Mi, Oi, Di} and the interpolated effective field in rotating frame w_eff in rad/s {Ei, Si, Mi, Oi, Di}.
     @rtype:                 boolean, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-3 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-2 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays, rank-4 list of numpy rank-1 float arrays
     """
@@ -941,6 +960,7 @@ def interpolate_offset(spin=None, spin_id=None, si=None, num_points=None, extend
 
     # Initialise some structures.
     spin_lock_offset_new = []
+    relax_times_new = None
 
     # Get the spin-lock field strengths.
     spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
@@ -985,11 +1005,42 @@ def interpolate_offset(spin=None, spin_id=None, si=None, num_points=None, extend
     # The offset data.
     offsets, spin_lock_fields_inter, chemical_shifts, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, spin_lock_offset=spin_lock_offset_new, fields=spin_lock_nu1)
 
+    # Interpolated relaxation time.
+    if tilt_angles != None and len(tilt_angles[0][0][0]):
+        relax_times_new = []
+        for ei in range(len(tilt_angles)):
+            # Add a new dimension.
+            relax_times_new.append([])
+
+            # Then loop over the spectrometer frequencies.
+            for mi in range(len(tilt_angles[ei])):
+                # Add a new dimension.
+                relax_times_new[ei].append([])
+
+                # There is no way to interpolate the time points correct.
+                # The best suggestion is to concatenate all values at original offset and dispersion point, and then make a unique list.
+                relax_time_temp = array([])
+                for oi_o, relax_times_oi in enumerate(relax_times[ei][mi]):
+                    for di_o, times in enumerate(relax_times_oi):
+                        relax_time_temp = concatenate( (relax_time_temp, times) )
+
+                # Make a unique list.
+                relax_time_temp = unique(relax_time_temp)
+
+                # Finally the offsets.
+                for oi in range(len(tilt_angles[ei][0][mi])):
+                    # Add a new dimension.
+                    relax_times_new[ei][mi].append([])
+
+                    # Interpolate (adding the extended amount to the end).
+                    for di in range(len(tilt_angles[ei][0][mi][oi])):
+                        relax_times_new[ei][mi][oi].append(relax_time_temp)
+
     if spin.model == MODEL_R2EFF:
         back_calc = None
     else:
         # Back calculate R2eff data for the second sets of plots.
-        back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, spin_lock_offset=spin_lock_offset_new, spin_lock_nu1=spin_lock_fields_inter)
+        back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, spin_lock_offset=spin_lock_offset_new, spin_lock_nu1=spin_lock_fields_inter, relax_times_new=relax_times_new)
 
     # cpmg_frqs are not interpolated.
     cpmg_frqs_new = None
@@ -1912,6 +1963,16 @@ def plot_disp_curves_to_file(file_name_ini=None, dir=None, y_axis=None, x_axis=N
         linetype = []
         linestyle = []
 
+        # Number of spectrometer fields.
+        fields = [None]
+        field_count = 1
+        if hasattr(cdp, 'spectrometer_frq_count'):
+            fields = cdp.spectrometer_frq_list
+            field_count = cdp.spectrometer_frq_count
+
+        # Get the relax_times.
+        values, errors, missing, frqs, frqs_H, exp_types, relax_times = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
+
         # Set up the interpolated curve data structures.
         interpolated_flag = False
 
@@ -1920,11 +1981,11 @@ def plot_disp_curves_to_file(file_name_ini=None, dir=None, y_axis=None, x_axis=N
 
         if interpolate == INTERPOLATE_DISP:
             # Interpolate through disp points.
-            interpolated_flag, back_calc, cpmg_frqs_new, offsets_inter, spin_lock_nu1_new, chemical_shifts, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_disp(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend_hz=extend_hz)
+            interpolated_flag, back_calc, cpmg_frqs_new, offsets_inter, spin_lock_nu1_new, chemical_shifts, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_disp(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend_hz=extend_hz, relax_times=relax_times)
 
         elif interpolate == INTERPOLATE_OFFSET:
             # Interpolate through disp points.
-            interpolated_flag, back_calc, cpmg_frqs_new, offsets_inter, spin_lock_nu1_new, chemical_shifts, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_offset(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend_ppm=extend_ppm)
+            interpolated_flag, back_calc, cpmg_frqs_new, offsets_inter, spin_lock_nu1_new, chemical_shifts, tilt_angles_inter, Delta_omega_inter, w_eff_inter = interpolate_offset(spin=spin, spin_id=spin_id, si=si, num_points=num_points, extend_ppm=extend_ppm, relax_times=relax_times)
 
         # Do not interpolate, if model is R2eff.
         if spin.model == MODEL_R2EFF:
@@ -4318,12 +4379,14 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
                 missing[ei][si].append([])
                 frqs[ei][si].append(0.0)
                 frqs_H[ei][si].append(0.0)
+                relax_times[ei].append([])
                 for offset, oi in loop_offset(exp_type=exp_type, frq=frq, return_indices=True):
                     values[ei][si][mi].append([])
                     errors[ei][si][mi].append([])
                     missing[ei][si][mi].append([])
-        for mi in range(field_count):
-            relax_times[ei].append(None)
+                    relax_times[ei][mi].append([])
+                    for point, di in loop_point(exp_type=exp_type, frq=frq, offset=offset, return_indices=True):
+                        relax_times[ei][mi][oi].append([])
 
     # Pack the R2eff/R1rho data.
     data_flag = False
@@ -4405,34 +4468,8 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
             errors[ei][si][mi][oi].append(current_spin.r2eff_err[key])
 
             # The relaxation times.
-            relax_time = []
-            for id in cdp.spectrum_ids:
-                # Non-matching data.
-                if cdp.spectrometer_frq[id] != frq:
-                    continue
-                if cdp.exp_type[id] != exp_type:
-                    continue
-                if exp_type in EXP_TYPE_LIST_CPMG:
-                    if id not in cdp.cpmg_frqs.keys() or cdp.cpmg_frqs[id] != point:
-                        continue
-                else:
-                    if id not in cdp.spin_lock_nu1.keys() or  cdp.spin_lock_nu1[id] != point:
-                        continue
-
-                # Found.
-                relax_time.append(cdp.relax_times[id])
-
-            # Use the maximum time value found.
-            relax_time = max(relax_time)
-
-            # Check the value if already set.
-            if relax_times[ei][mi] != None:
-                if relax_times[ei][mi] != relax_time:
-                    raise RelaxError("The relaxation times do not match for all experiments.")
-                continue
-
-            # Store the time.
-            relax_times[ei][mi] = relax_time
+            for time, ti in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point, return_indices=True):
+                relax_times[ei][mi][oi][di].append(time)
 
         # Increment the spin index.
         si += 1
@@ -4442,7 +4479,6 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
         raise RelaxError("No R2eff/R1rho data could be found for the spin cluster %s." % spin_ids)
 
     # Convert to numpy arrays.
-    relax_times = array(relax_times, float64)
     for exp_type, ei in loop_exp(return_indices=True):
         for si in range(spin_num):
             for frq, mi in loop_frq(return_indices=True):
@@ -4450,6 +4486,8 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
                     values[ei][si][mi][oi] = array(values[ei][si][mi][oi], float64)
                     errors[ei][si][mi][oi] = array(errors[ei][si][mi][oi], float64)
                     missing[ei][si][mi][oi] = array(missing[ei][si][mi][oi], int32)
+                    for point, di in loop_point(exp_type=exp_type, frq=frq, offset=offset, return_indices=True):
+                        relax_times[ei][mi][oi][di] = array(relax_times[ei][mi][oi][di], float64)
 
     # Return the structures.
     return values, errors, missing, frqs, frqs_H, exp_types, relax_times
