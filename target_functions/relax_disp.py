@@ -26,7 +26,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import arctan2, cos, dot, float64, int16, multiply, ones, rollaxis, pi, sin, version, zeros
+from numpy import all, arctan2, cos, dot, float64, int16, isfinite, max, multiply, ones, rollaxis, pi, sin, sum, version, zeros
 from numpy.ma import masked_equal
 
 # relax module imports.
@@ -156,8 +156,8 @@ class Dispersion:
         @type tilt_angles:          rank-5 list of floats
         @keyword r1:                The R1 relaxation rates.  This is only used for off-resonance R1rho models.  The dimensions are {Si, Mi}.
         @type r1:                   rank-2 list of floats
-        @keyword relax_times:       The experiment specific fixed time period for relaxation (in seconds).  The dimensions are {Ei, Mi}.
-        @type relax_times:          rank-2 list of floats
+        @keyword relax_times:       The experiment specific fixed time period for relaxation (in seconds).  The dimensions are {Ei, Mi, Oi, Di, Ti}.
+        @type relax_times:          rank-4 list of floats
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 float array
         @keyword recalc_tau:        A flag which if True will cause tau_CPMG to be recalculated to remove user input truncation.
@@ -270,7 +270,8 @@ class Dispersion:
         self.frqs_squared = deepcopy(numpy_array_zeros)
         self.frqs_H = deepcopy(numpy_array_zeros)
         self.relax_times = deepcopy(numpy_array_zeros)
-        self.inv_relax_times = deepcopy(numpy_array_zeros)
+        if model in MODEL_LIST_INV_RELAX_TIMES:
+            self.inv_relax_times = deepcopy(numpy_array_zeros)
         self.tau_cpmg = deepcopy(numpy_array_zeros)
         self.power = deepcopy(numpy_array_zeros)
         self.r1 = deepcopy(numpy_array_zeros)
@@ -297,10 +298,6 @@ class Dispersion:
                         frq_H = frqs_H[ei][si][mi]
                         self.frqs_H[ei, si, mi, :] = frq_H
 
-                    # Fill the relaxation time.
-                    relax_time = relax_times[ei, mi]
-                    self.relax_times[ei, si, mi, :] = relax_time
-
                     # Fill r1.
                     if r1 != None:
                         r1_l = r1[si][mi]
@@ -310,10 +307,6 @@ class Dispersion:
                     if chemical_shifts != None:
                         chemical_shift = chemical_shifts[ei][si][mi]
                         self.chemical_shifts[ei, si, mi, :] = chemical_shift
-
-                    # The inverted relaxation delay.
-                    if model in MODEL_LIST_INV_RELAX_TIMES:
-                        self.inv_relax_times[ei, si, mi, :] = 1.0 / relax_time
 
                     # The number of offset data points.
                     if len(offset[ei][si][mi]):
@@ -377,6 +370,26 @@ class Dispersion:
                             if spin_lock_nu1 != None and len(spin_lock_nu1[ei][mi][oi]):
                                 self.spin_lock_omega1[ei, si, mi, oi, di] = 2.0 * pi * spin_lock_nu1[ei][mi][oi][di]
                                 self.spin_lock_omega1_squared[ei, si, mi, oi, di] = self.spin_lock_omega1[ei, si, mi, oi, di] ** 2
+
+                            # The relax times
+                            # Fill the relaxation time.
+                            if relax_times != None and len(relax_times[ei][mi][oi]):
+                                relax_time = max(relax_times[ei][mi][oi][di])
+                                self.relax_times[ei, si, mi, oi, di] = relax_time
+
+                                # The inverted relaxation times.
+                                if model in MODEL_LIST_INV_RELAX_TIMES:
+                                    self.inv_relax_times[ei, si, mi, oi, di] = 1.0 / relax_time
+
+        # Sanity checks.
+        if model in MODEL_LIST_INV_RELAX_TIMES:
+            # Check if values have been inserted.
+            if sum(self.inv_relax_times) == 0.0:
+                raise RelaxError("The inverted relaxation time data array all contains 0.0.  Please check your setup.")
+
+            # Check if array contains 'nan'='Not a Number', positive infinity or negative infinity values, which could stem from 1/0.0 division.
+            if not all(isfinite(self.inv_relax_times)):
+                raise RelaxError("The inverted relaxation time data array contains not finite values.  Please check your setup.")
 
         # Create the structure for holding the back-calculated R2eff values (matching the dimensions of the values structure).
         self.back_calc = deepcopy(self.values)
