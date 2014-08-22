@@ -68,12 +68,24 @@ def diffusion_tensor(mol=None, tensor=None, tensor_diag=None, diff_type=None, ro
     # Print out.
     print("\nGenerating the geometric object.")
 
+    # Swap the x and y axes for the prolate spheroid (the vector distributions are centred on the z-axis).
+    if diff_type == 'prolate':
+        # 90 deg rotation about the diffusion frame z-axis.
+        z_rot = array([[  0, -1,  0],
+                       [  1,  0,  0],
+                       [  0,  0,  1]], float64)
+
+        # Rotate the tensor and rotation matrix.
+        rotation = dot(transpose(rotation), z_rot)
+        tensor = dot(z_rot, dot(tensor_diag, transpose(z_rot)))
+        tensor = dot(rotation, dot(tensor, transpose(rotation)))
+
     # Swap the x and z axes for the oblate spheroid (the vector distributions are centred on the z-axis).
     if diff_type == 'oblate':
         # 90 deg rotation about the diffusion frame y-axis.
-        y_rot = array([[  0, 0,  1],
-                       [  0, 1,  0],
-                       [ -1, 0,  0]], float64)
+        y_rot = array([[  0,  0,  1],
+                       [  0,  1,  0],
+                       [ -1,  0,  0]], float64)
 
         # Rotate the tensor and rotation matrix.
         rotation = dot(transpose(rotation), y_rot)
