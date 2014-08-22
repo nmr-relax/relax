@@ -52,7 +52,7 @@ The data structures used in this module consist of many different index types wh
 
 # Python module imports.
 from math import cos, pi, sin, sqrt
-from numpy import array, concatenate, float64, int32, ones, unique, zeros
+from numpy import array, concatenate, float64, int32, max, ones, unique, zeros
 from os import F_OK, access
 from os.path import expanduser
 from random import gauss
@@ -804,29 +804,41 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend_h
     # Interpolate the CPMG frequencies (numeric models).
     if spin.model in MODEL_LIST_NUMERIC_CPMG or spin.model in [MODEL_B14, MODEL_B14_FULL]:
         cpmg_frqs = return_cpmg_frqs(ref_flag=False)
-        relax_times = return_relax_times()
         if cpmg_frqs != None and len(cpmg_frqs[0][0]):
             cpmg_frqs_new = []
+            relax_times_new = []
             for ei in range(len(cpmg_frqs)):
                 # Add a new dimension.
                 cpmg_frqs_new.append([])
+                relax_times_new.append([])
 
                 # Then loop over the spectrometer frequencies.
                 for mi in range(len(cpmg_frqs[ei])):
                     # Add a new dimension.
                     cpmg_frqs_new[ei].append([])
+                    relax_times_new[ei].append([])
 
                     # Finally the offsets.
                     for oi in range(len(cpmg_frqs[ei][mi])):
                         # Add a new dimension.
                         cpmg_frqs_new[ei][mi].append([])
+                        relax_times_new[ei][mi].append([])
 
                         # No data.
                         if not len(cpmg_frqs[ei][mi][oi]):
                             continue
 
+                        # There is no way to interpolate the time points correct.
+                        # The best suggestion is to concatenate all values at original offset, and then make a unique list.
+                        relax_time_temp = array([])
+                        for di_o, times in enumerate(relax_times[ei][mi][oi]):
+                            relax_time_temp = concatenate( (relax_time_temp, times) )
+
+                        # Make a unique list.
+                        relax_time_temp = unique(relax_time_temp)
+
                         # The minimum frequency unit.
-                        min_frq = 1.0 / relax_times[ei][mi]
+                        min_frq = 1.0 / max(relax_time_temp)
                         max_frq = max(cpmg_frqs[ei][mi][oi]) + round(extend_hz / min_frq) * min_frq
                         num_points = int(round(max_frq / min_frq))
 
@@ -834,6 +846,7 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend_h
                         for di in range(num_points):
                             point = (di + 1) * min_frq
                             cpmg_frqs_new[ei][mi][oi].append(point)
+                            relax_times_new[ei][mi][oi].append(relax_time_temp)
 
                         # Convert to a numpy array.
                         cpmg_frqs_new[ei][mi][oi] = array(cpmg_frqs_new[ei][mi][oi], float64)
@@ -843,28 +856,42 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend_h
         cpmg_frqs = return_cpmg_frqs(ref_flag=False)
         if cpmg_frqs != None and len(cpmg_frqs[0][0]):
             cpmg_frqs_new = []
+            relax_times_new = []
             for ei in range(len(cpmg_frqs)):
                 # Add a new dimension.
                 cpmg_frqs_new.append([])
+                relax_times_new.append([])
 
                 # Then loop over the spectrometer frequencies.
                 for mi in range(len(cpmg_frqs[ei])):
                     # Add a new dimension.
                     cpmg_frqs_new[ei].append([])
+                    relax_times_new[ei].append([])
 
                     # Finally the offsets.
                     for oi in range(len(cpmg_frqs[ei][mi])):
                         # Add a new dimension.
                         cpmg_frqs_new[ei][mi].append([])
+                        relax_times_new[ei][mi].append([])
 
                         # No data.
                         if not len(cpmg_frqs[ei][mi][oi]):
                             continue
 
+                        # There is no way to interpolate the time points correct.
+                        # The best suggestion is to concatenate all values at original offset, and then make a unique list.
+                        relax_time_temp = array([])
+                        for di_o, times in enumerate(relax_times[ei][mi][oi]):
+                            relax_time_temp = concatenate( (relax_time_temp, times) )
+
+                        # Make a unique list.
+                        relax_time_temp = unique(relax_time_temp)
+
                         # Interpolate (adding the extended amount to the end).
                         for di in range(num_points):
                             point = (di + 1) * (max(cpmg_frqs[ei][mi][oi])+extend_hz) / num_points
                             cpmg_frqs_new[ei][mi][oi].append(point)
+                            relax_times_new[ei][mi][oi].append(relax_time_temp)
 
                         # Convert to a numpy array.
                         cpmg_frqs_new[ei][mi][oi] = array(cpmg_frqs_new[ei][mi][oi], float64)
