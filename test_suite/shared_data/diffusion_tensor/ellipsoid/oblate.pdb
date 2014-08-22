@@ -4,7 +4,7 @@ REMARK  40 CREATED USING RELAX (HTTP://WWW.NMR-RELAX.COM).
 REMARK  40                                                                      
 REMARK  40 RELAX VERSION REPOSITORY CHECKOUT R25200                             
 REMARK  40 SVN+SSH://BUGMAN@SVN.GNA.ORG/SVN/RELAX/TRUNK.                        
-REMARK  40 CREATED ON FRI AUG 22 11:48:54 2014.                                 
+REMARK  40 CREATED ON FRI AUG 22 12:03:17 2014.                                 
 HET    COM  A   1       1                                                       
 HET    TNS  A   2     240                                                       
 HET    AXS  A   3       5                                                       

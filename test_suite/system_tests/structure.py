@@ -256,19 +256,6 @@ class Structure(SystemTestCase):
         self.interpreter.structure.create_diff_tensor_pdb(scale=1.8e-06, file='prolate.pdb', dir=ds.tmpdir, force=True)
 
 
-    def test_create_diff_tensor_pdb(self):
-        """Test the creation of the diffusion tensor PDB representation."""
-
-        # Delete all structural data.
-        self.interpreter.structure.delete()
-
-        # Set up a diffusion tensor.
-        self.interpreter.diffusion_tensor.init((8.5e-9, 1.1, 20.0, 20.0), param_types=2)
-
-        # Create the PDB representation.
-        self.interpreter.structure.create_diff_tensor_pdb(scale=1.8e-06, file='prolate.pdb', dir=ds.tmpdir, force=True)
-
-
     def test_create_diff_tensor_pdb2(self):
         """Test the creation of the diffusion tensor PDB representation, after deleting structural data."""
 
