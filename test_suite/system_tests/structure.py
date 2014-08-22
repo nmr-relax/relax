@@ -23,7 +23,7 @@
 from math import sqrt
 from numpy import float64, zeros
 from os import sep
-from tempfile import mktemp
+from tempfile import mkdtemp, mktemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -43,6 +43,9 @@ class Structure(SystemTestCase):
 
         # Create the data pipe.
         self.interpreter.pipe.create('mf', 'mf')
+
+        # Create a temporary directory for dumping files.
+        ds.tmpdir = mkdtemp()
 
 
     def strip_remarks(self, lines):
@@ -238,6 +241,19 @@ class Structure(SystemTestCase):
 
         # Superimpose.
         self.interpreter.structure.superimpose(method='fit to first', centre_type='CoM')
+
+
+    def test_create_diff_tensor_pdb(self):
+        """Test the deletion of non-existent structural data."""
+
+        # Delete all structural data.
+        self.interpreter.structure.delete()
+
+        # Set up a diffusion tensor.
+        self.interpreter.diffusion_tensor.init((8.5e-9, 1.1, 20.0, 20.0), param_types=2)
+
+        # Create the PDB representation.
+        self.interpreter.structure.create_diff_tensor_pdb(scale=1.8e-06, file='prolate.pdb', dir=ds.tmpdir, force=True)
 
 
     def test_delete_empty(self):
