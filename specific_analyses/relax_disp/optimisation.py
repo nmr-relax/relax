@@ -104,7 +104,7 @@ def back_calc_peak_intensities(spin=None, exp_type=None, frq=None, offset=None, 
     return results
 
 
-def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_offset=None, spin_lock_nu1=None, store_chi2=False):
+def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_offset=None, spin_lock_nu1=None, relax_times_new=None, store_chi2=False):
     """Back-calculation of R2eff/R1rho values for the given spin.
 
     @keyword spin:              The specific spin data container.
@@ -117,6 +117,8 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_offset=No
     @type spin_lock_offset:     list of lists of numpy rank-1 float arrays
     @keyword spin_lock_nu1:     The spin-lock field strengths to use instead of the user loaded values - to enable interpolation.
     @type spin_lock_nu1:        list of lists of numpy rank-1 float arrays
+    @keyword relax_times_new:   The interpolated experiment specific fixed time period for relaxation (in seconds).  The dimensions are {Ei, Mi, Oi, Di, Ti}.
+    @type relax_times_new:      rank-4 list of floats
     @keyword store_chi2:        A flag which if True will cause the spin specific chi-squared value to be stored in the spin container.
     @type store_chi2:           bool
     @return:                    The back-calculated R2eff/R1rho value for the given spin.
@@ -145,6 +147,10 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_offset=No
     offsets, spin_lock_fields_inter, chemical_shifts, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, spin_lock_offset=spin_lock_offset, fields=spin_lock_nu1)
     r1 = return_r1_data(spins=[spin], spin_ids=[spin_id], field_count=field_count)
     r1_fit = is_r1_optimised(spin.model)
+
+    # The relaxation times.
+    if relax_times_new != None:
+        relax_times = relax_times_new
 
     # The dispersion data.
     recalc_tau = True
