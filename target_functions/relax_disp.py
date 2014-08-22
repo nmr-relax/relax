@@ -325,6 +325,8 @@ class Dispersion:
                                 cpmg_frq = cpmg_frqs[ei][mi][oi][di]
 
                                 # Missing data for an entire field strength.
+                                relax_time = max(relax_times[ei][mi][oi][di])
+
                                 if isNaN(relax_time):
                                     power = 0
 
