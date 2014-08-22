@@ -4365,7 +4365,6 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
 
         # Loop over the R2eff data.
         for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
-
             # Alias the correct spin.
             current_spin = spin
             if exp_type in [EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]:
@@ -4406,6 +4405,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
             errors[ei][si][mi][oi].append(current_spin.r2eff_err[key])
 
             # The relaxation times.
+            relax_time = []
             for id in cdp.spectrum_ids:
                 # Non-matching data.
                 if cdp.spectrometer_frq[id] != frq:
@@ -4420,8 +4420,10 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
                         continue
 
                 # Found.
-                relax_time = cdp.relax_times[id]
-                break
+                relax_time.append(cdp.relax_times[id])
+
+            # Use the maximum time value found.
+            relax_time = max(relax_time)
 
             # Check the value if already set.
             if relax_times[ei][mi] != None:
