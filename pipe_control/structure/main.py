@@ -152,7 +152,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     pipes.test()
 
     # Calculate the centre of mass.
-    if hasattr(cdp, 'structure'):
+    if hasattr(cdp, 'structure') and not cdp.structure.empty():
         com = pipe_centre_of_mass()
     else:
         com = zeros(3, float64)
