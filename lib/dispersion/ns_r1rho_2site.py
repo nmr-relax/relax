@@ -28,7 +28,73 @@
 Description
 ===========
 
-This is the model of the numerical solution for the 2-site Bloch-McConnell equations.  It originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file U{https://gna.org/support/download.php?file_id=18404} attached to U{https://gna.org/task/?7712#comment5}).
+This is the model of the numerical solution for the 2-site Bloch-McConnell equations.  It originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file U{https://gna.org/support/download.php?file_id=18404} attached to U{https://gna.org/task/?7712#comment5}).  That code is::
+
+    function residual = funNumrho(optpar)
+
+
+    global nu_0 x y Rcalc rms nfields offset w1 Tc w1 R1_51 R1_81
+    %keyboard
+    Rcalc=zeros(nfields,size(w1,2));
+    tau_ex=optpar(1);
+    pb=optpar(2);
+    pa=1-pb;
+    kex=1/tau_ex; k_u=pb*kex; k_f=(1-pb)*kex;
+
+    for k=1:nfields
+        % we assume that A resonates at 0 [s^-1], without loss of generality
+        dw=nu_0(k)*optpar(3)*2*pi;   	% [s^-1]
+        Wa=0*2*pi;             		% Larmor frequ. [s^-1]
+        Wb=dw;         			% Larmor frequ. [s^-1]
+        Wsl=offset*2*pi;   			% Larmor frequ. of spin lock [s^-1]
+        da=Wa-Wsl;				% offset of sl from A
+        db=Wb-Wsl;				% offset of sl from B
+
+
+        Rinf=optpar(3+k);
+
+        for kk=1:length(w1)
+          w1x=w1(kk);
+          if k==1; R1=R1_51; end; if k==2; R1=R1_81; end
+
+          R=-[Rinf+k_u   -k_f       da       0       0       0     ;
+               -k_u    Rinf+k_f      0      db       0       0     ;
+               -da         0     Rinf+k_u  -k_f     w1x      0     ;
+               0          -db      -k_u  Rinf+k_f    0      w1x    ;
+               0           0       -w1x      0    R1+k_u   -k_f    ;
+               0           0         0     -w1x    -k_u   R1+k_f  ];
+        % keyboard
+         MAx0= pa; MBx0= pb; MAy0= 0; MBy0= 0; MAz0= 0; MBz0= 0;
+         Mof0=[MAx0 MBx0 MAy0 MBy0 MAz0 MBz0]';
+
+    % the following lines: rotate the magnetization previous to spin lock into the weff frame
+    % a new Mof0 is otained: Mof0=[sin(thetaa)*pa sin(thetab)*pb 0 0 cos(thetaa)*pa cos(thetab)*pb];
+    thetaa=atan(w1x/da);thetaa_degrees=thetaa*360/(2*pi);
+    thetab=atan(w1x/db);thetab_degrees=thetab*360/(2*pi);
+    MAxnew=sin(thetaa)*pa;
+    MBxnew=sin(thetab)*pb;
+    MAynew=MAy0;
+    MBynew=MBy0;
+    MAznew=cos(thetaa)*pa;
+    MBznew=cos(thetab)*pb;
+    Mof0=[MAxnew MBxnew MAynew MBynew MAznew MBznew]';
+
+         Moft(1:6)=(expm3(R*Tc)*Mof0)';
+         MAx=real(Moft(1))/pa;
+         MAy=real(Moft(3))/pa;
+         MAz=real(Moft(5))/pa;
+
+         MA=sqrt(MAx^2+MAy^2+MAz^2); % for spin A, is equal to 1 if nothing happens (no relaxation)
+         intrat(k,kk)=MA;
+         Rcalc(k,kk)=(-1.0/Tc)*log(intrat(k,kk));
+        end
+
+    end
+
+    if (size(Rcalc)==size(y))
+        residual=sum(sum((y-Rcalc).^2));
+        rms=sqrt(residual/(size(y,1)*size(y,2)));
+    end
 
 
 References
