@@ -23,7 +23,7 @@
 
 # Python module imports.
 from os import F_OK, access, getcwd, path, sep
-from numpy import array, median
+from numpy import array, exp, median, log, save, sum, zeros
 import re, math
 from tempfile import mkdtemp
 
@@ -35,7 +35,7 @@ from lib.errors import RelaxError
 from lib.io import get_file_path
 from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
 from specific_analyses.relax_disp.checks import check_missing_r1
-from specific_analyses.relax_disp.data import generate_r20_key, get_curve_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, return_grace_file_name_ini, return_param_key_from_data
+from specific_analyses.relax_disp.data import average_intensity, generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_grace_file_name_ini, return_param_key_from_data
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.model import models_info, nesting_param
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_FULL, MODEL_LIST_NUMERIC_CPMG, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02, MODEL_TAP03
@@ -158,8 +158,8 @@ class Relax_disp(SystemTestCase):
 
         # Now loop over the experiments, to set the variables in relax.
         exp_ids = []
-        for exp in exps:
-            sfrq, time_T2, ncycs, r2eff_errs = exp
+        for exp_i in exps:
+            sfrq, time_T2, ncycs, r2eff_errs = exp_i
             exp_id = 'CPMG_%3.1f' % (sfrq/1E6)
             exp_ids.append(exp_id)
 
@@ -193,8 +193,8 @@ class Relax_disp(SystemTestCase):
         # Now read data in.
         for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
             exp_id = exp_ids[mi]
-            exp = exps[mi]
-            sfrq, time_T2, ncycs, r2eff_errs = exp
+            exp_i = exps[mi]
+            sfrq, time_T2, ncycs, r2eff_errs = exp_i
 
             # Then loop over the spins.
             for res_name, res_num, spin_name, params in spins:
@@ -1352,6 +1352,236 @@ class Relax_disp(SystemTestCase):
 
         # Assert that the number of columns is equal, plus 1 for "#".
         self.assertEqual(nr_split_header, len(line_split_val) + 1)
+
+
+    def test_bug_9999_slow_r1rho_r2eff_error_with_mc(self):
+        """Catch U{bug #9999<https://gna.org/bugs/?9999>}, The slow optimisation of R1rho R2eff error estimation with Monte Carlo simulations."""
+
+        # Define path to data 
+        prev_data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013' +sep+ "check_graphs" +sep+ "mc_2000"  +sep+ "R2eff"
+
+        # Read data.
+        self.interpreter.results.read(prev_data_path + sep + 'results')        
+
+        # Now count number
+        graph_nr = 1
+        for exp_type, frq, offset, point in loop_exp_frq_offset_point(return_indices=False):
+            print("\nGraph nr %i" % graph_nr)
+            for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
+                print(exp_type, frq, offset, point, time)
+            graph_nr += 1
+
+        ## Possibly do an error analysis.
+
+        # Check if intensity errors have already been calculated by the user.
+        precalc = True
+        for spin in spin_loop(skip_desel=True):
+            # No structure.
+            if not hasattr(spin, 'peak_intensity_err'):
+                precalc = False
+                break
+
+            # Determine if a spectrum ID is missing from the list.
+            for id in cdp.spectrum_ids:
+                if id not in spin.peak_intensity_err:
+                    precalc = False
+                    break
+
+        # Skip.
+        if precalc:
+            print("Skipping the error analysis as it has already been performed.")
+
+        else:
+            # Loop over the spectrometer frequencies.
+            for frq in loop_frq():
+                # Generate a list of spectrum IDs matching the frequency.
+                ids = []
+                for id in cdp.spectrum_ids:
+                    # Check that the spectrometer frequency matches.
+                    match_frq = True
+                    if frq != None and cdp.spectrometer_frq[id] != frq:
+                        match_frq = False
+
+                    # Add the ID.
+                    if match_frq:
+                        ids.append(id)
+
+                # Run the error analysis on the subset.
+                self.interpreter.spectrum.error_analysis(subset=ids)
+
+        print("has_exponential_exp_type:", has_exponential_exp_type())
+
+        model = 'R2eff'
+        self.interpreter.relax_disp.select_model(model)
+
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            #delattr(spin, 'r2eff')
+            #delattr(spin, 'r2eff_err')
+            #delattr(spin, 'i0')
+            #delattr(spin, 'i0_err')
+            setattr(spin, 'r2eff', {})
+            setattr(spin, 'r2eff_err', {})
+            setattr(spin, 'i0', {})
+            setattr(spin, 'i0_err', {})
+
+        # Do Grid Search
+        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=21, constraints=True, verbosity=1)
+
+        # Start dic.
+        my_dic = {}
+
+        # Define counter for maximum elements in the numpy array list
+        NE = 0
+        NS = 1
+        NM = 0
+        NO = 0
+        ND = 0
+        NT = 0
+
+        for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+            # Save to counter.
+            if ei > NE:
+                NE = ei
+            if mi > NM:
+                NM = mi
+            if oi > NO:
+                NO = oi
+            if di > ND:
+               ND = di
+
+            for time, ti in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point, return_indices=True):
+                # Save to counter.
+                if ti > NT:
+                    NT = ti
+
+        # Add 1 to counter, since index start from 0.
+        NE = NE + 1
+        NM = NM + 1 
+        NO = NO + 1
+        ND = ND + 1
+        NT = NT + 1
+
+        # Make data array.
+        values_arr = zeros([NE, NS, NM, NO, ND, NT])
+        errors_arr = zeros([NE, NS, NM, NO, ND, NT])
+        times_arr = zeros([NE, NS, NM, NO, ND, NT])
+        struct_arr = zeros([NE, NS, NM, NO, ND, NT])
+        param_key_list = []
+
+
+        # Loop over each spectrometer frequency and dispersion point.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Add key to dic.
+            my_dic[spin_id] = {}
+
+            # Generate spin string.
+            spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+            # Loop over the parameters.
+            #print("Grid optimised parameters for spin: %s" % (spin_string))
+
+            for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                # Generate the param_key.
+                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                # Append key.
+                param_key_list.append(param_key)
+
+                # Add key to dic.
+                my_dic[spin_id][param_key] = {}
+
+                # Get the value.
+                R2eff_value = getattr(cur_spin, 'r2eff')[param_key]
+                i0_value = getattr(cur_spin, 'i0')[param_key]
+
+                # Save to dic.
+                my_dic[spin_id][param_key]['R2eff_value_grid'] = R2eff_value
+                my_dic[spin_id][param_key]['i0_value_grid'] = i0_value
+
+                ## Now try do a line of best fit by least squares.
+                # The peak intensities, errors and times.
+                values = []
+                errors = []
+                times = []
+                for time, ti in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point, return_indices=True):
+                    value = average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, sim_index=None)
+                    values.append(value)
+
+                    error = average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True)
+                    errors.append(error)
+                    times.append(time)
+
+                    # Save to numpy arrays.
+                    values_arr[ei, 0, mi, oi, di, ti] = value
+                    errors_arr[ei, 0, mi, oi, di, ti] = error
+                    times_arr[ei, 0, mi, oi, di, ti] = time
+                    struct_arr[ei, 0, mi, oi, di, ti] = 1.0
+
+                # y= A exp(x * k)
+                # w[i] = ln(y[i])
+                # int[i] = i0 * exp( - times[i] * r2eff);
+                w = log(array(values))
+                x = - array(times)
+                n = len(times)
+
+                b = (sum(x*w) - 1./n * sum(x) * sum(w) ) / ( sum(x**2) - 1./n * (sum(x))**2 )
+                a = 1./n * sum(w) - b * 1./n * sum(x)
+                R2eff_est = b
+                i0_est = exp(a)
+
+                my_dic[spin_id][param_key]['R2eff_est'] = R2eff_est
+                my_dic[spin_id][param_key]['i0_est'] = i0_est
+
+                # Print value.
+                #print("%-10s %-6s %-6s %3.1f : %3.1f" % ("Parameter:", 'R2eff', "Value : Estimated:", R2eff_value, R2eff_est))
+                #print("%-10s %-6s %-6s %3.1f : %3.1f" % ("Parameter:", 'i0', "Value: Estimated:", i0_value, i0_est))
+
+
+        # Do minimisation.
+        set_func_tol = 1e-25
+        set_max_iter = int(1e7)
+        self.interpreter.minimise.execute(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
+
+        # Loop over each spectrometer frequency and dispersion point.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Generate spin string.
+            spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+            # Loop over the parameters.
+            print("Optimised parameters for spin: %s" % (spin_string))
+
+            for exp_type, frq, offset, point in loop_exp_frq_offset_point():
+                # Generate the param_key.
+                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                # Get the value.
+                R2eff_value = getattr(cur_spin, 'r2eff')[param_key]
+                i0_value = getattr(cur_spin, 'i0')[param_key]
+
+                # Extract from dic.
+                R2eff_value_grid = my_dic[spin_id][param_key]['R2eff_value_grid']
+                i0_value_grid = my_dic[spin_id][param_key]['i0_value_grid']
+                R2eff_est = my_dic[spin_id][param_key]['R2eff_est']
+                i0_est = my_dic[spin_id][param_key]['i0_est']
+
+                # Print value.
+                #print("%-10s %-6s %-6s %3.1f : %3.1f" % ("Parameter:", 'R2eff', "Value : Estimated:", R2eff_value, R2eff_est))
+                #print("%-10s %-6s %-6s %3.1f : %3.1f" % ("Parameter:", 'i0', "Value: Estimated:", i0_value, i0_est))
+
+                print("%-10s %-6s %-6s %3.1f : %3.1f: %3.1f" % ("Parameter:", 'R2eff', "Grid : Min : Estimated:", R2eff_value_grid, R2eff_value, R2eff_est))
+                print("%-10s %-6s %-6s %3.1f : %3.1f: %3.1f" % ("Parameter:", 'i0', "Grid : Min : Estimated:", i0_value_grid, i0_value, i0_est))
+
+        print(NE, NS, NM, NO, ND, NT)
+        for param_key in param_key_list:
+            print("        '%s'," % param_key)
+        print(values_arr.shape)
+
+        # Save arrays to profiling.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting'+sep+'profiling'+sep
+        #save(data_path + "values_arr", values_arr)
+        #save(data_path + "errors_arr", errors_arr)
+        #save(data_path + "times_arr", times_arr)
+        #save(data_path + "struct_arr", struct_arr)
 
 
     def test_check_missing_r1(self):
