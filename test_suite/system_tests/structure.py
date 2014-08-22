@@ -143,6 +143,7 @@ class Structure(SystemTestCase):
         # Check the created PDB file.
         lines = file.readlines()
         self.strip_remarks(lines)
+        self.assertEqual(len(contents), len(lines))
         for i in range(len(lines)):
             self.assertEqual(contents[i], lines[i])
 
@@ -204,6 +205,7 @@ class Structure(SystemTestCase):
         # Check the created PDB file.
         lines = file.readlines()
         self.strip_remarks(lines)
+        self.assertEqual(len(contents), len(lines))
         for i in range(len(lines)):
             self.assertEqual(contents[i], lines[i])
 
@@ -3359,6 +3361,7 @@ class Structure(SystemTestCase):
 
         # Check the data.
         self.strip_remarks(lines)
+        self.assertEqual(len(real_data), len(lines))
         for i in range(len(real_data)):
             self.assertEqual(real_data[i], lines[i])
 
@@ -3637,6 +3640,7 @@ class Structure(SystemTestCase):
         # Check the created PDB file.
         lines = file.readlines()
         self.strip_remarks(lines)
+        self.assertEqual(len(result), len(lines))
         for i in range(len(lines)):
             self.assertEqual(result[i]+'\n', lines[i])
 
@@ -3694,6 +3698,7 @@ class Structure(SystemTestCase):
         # Check the created PDB file.
         lines = file.readlines()
         self.strip_remarks(lines)
+        self.assertEqual(len(result), len(lines))
         for i in range(len(lines)):
             self.assertEqual(result[i]+'\n', lines[i])
 
@@ -3767,5 +3772,6 @@ class Structure(SystemTestCase):
         # Check the created PDB file.
         lines = file.readlines()
         self.strip_remarks(lines)
+        self.assertEqual(len(result), len(lines))
         for i in range(len(lines)):
             self.assertEqual(result[i]+'\n', lines[i])
