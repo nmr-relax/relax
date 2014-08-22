@@ -1040,7 +1040,7 @@ def interpolate_offset(spin=None, spin_id=None, si=None, num_points=None, extend
             relax_times_new.append([])
 
             # Then loop over the spectrometer frequencies.
-            for mi in range(len(tilt_angles[ei])):
+            for mi in range(len(tilt_angles[ei][0])):
                 # Add a new dimension.
                 relax_times_new[ei].append([])
 
