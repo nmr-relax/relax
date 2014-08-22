@@ -152,7 +152,10 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     pipes.test()
 
     # Calculate the centre of mass.
-    com = pipe_centre_of_mass()
+    if hasattr(cdp, 'structure'):
+        com = pipe_centre_of_mass()
+    else:
+        com = zeros(3, float64)
 
     # Create the structural object.
     structure = Internal()
@@ -179,10 +182,6 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         # Test if the diffusion tensor data is loaded.
         if not hasattr(pipe, 'diff_tensor'):
             raise RelaxNoTensorError('diffusion')
-
-        # Test if a structure has been loaded.
-        if not hasattr(cdp, 'structure'):
-            raise RelaxNoPdbError
 
         # Add a new structure.
         structure.add_molecule(name=mol_names[pipe_index])
