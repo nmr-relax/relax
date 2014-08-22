@@ -41,6 +41,9 @@ data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'disper
 spin.create(res_name='Trp', res_num=1, spin_name='N')
 spin.create(res_name='Trp', res_num=1, spin_name='NE1')
 
+# Name the isotope for field strength scaling.
+spin.isotope(isotope='15N')
+
 # The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz.
 data = [
     ['500_reference',   'nu_500MHz_ref.list',             None,  500e6],
