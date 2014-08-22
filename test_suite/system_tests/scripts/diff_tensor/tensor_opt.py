@@ -12,12 +12,14 @@ from status import Status; status = Status()
 # Stand alone operation.
 if not hasattr(ds, 'diff_type'):
     ds.diff_type = 'spheroid'
+if not hasattr(ds, 'diff_dir'):
+    ds.diff_dir = ds.diff_type
 
 # A data pipe.
 pipe.create('diff_opt', 'mf')
 
 # Path of the files.
-path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+ds.diff_type
+path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+ds.diff_dir
 
 # Load the sequence.
 sequence.read('NOE.500.out', dir=path, res_num_col=1)
@@ -40,6 +42,10 @@ if ds.diff_type == 'sphere':
     diffusion_tensor.init(1.0/(6.0*2e7), fixed=False)
 elif ds.diff_type == 'spheroid':
     diffusion_tensor.init((1.0/(6.0*7e7/3.0), 1e7, 2.0, pi-0.5), angle_units='rad', fixed=False)
+elif ds.diff_type == 'prolate':
+    diffusion_tensor.init((1.0/(6.0*7e7/3.0), 1e7, 2.0, pi-0.5), angle_units='rad', fixed=False)
+elif ds.diff_type == 'oblate':
+    diffusion_tensor.init((1.0/(6.0*7e7/3.0), -1e7, 2.0, pi-0.5), angle_units='rad', fixed=False)
 elif ds.diff_type == 'ellipsoid':
     diffusion_tensor.init((8.3333333333333335e-09, 15000000.0, 0.33333333333333331, 1.0, 2.0, 0.5), angle_units='rad', fixed=False)
 else:
