@@ -1,0 +1,2715 @@
+
+
+
+                                  relax repository checkout r25200
+                            svn+ssh://bugman@svn.gna.org/svn/relax/trunk
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2014 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'tensor_opt.py'
+----------------------------------------------------------------------------------------------------
+"""Script for testing diffusion tensor optimisation."""
+
+# Python module imports.
+from numpy import array, float64
+from os import sep
+
+
+# Loop over all diffusion tensor types.
+for diff_type in ['sphere', 'oblate', 'prolate', 'ellipsoid']:
+    # A data pipe.
+    pipe.create(diff_type, 'mf')
+
+    # Load the sequence.
+    sequence.read('NOE.500.out', res_num_col=1)
+
+    # Load a PDB file.
+    structure.read_pdb('uniform.pdb')
+
+    # Set the spin names.
+    spin.name(name='N')
+
+    # Load the relaxation data.
+    frq = array([500, 600, 700, 800], float64)
+    for i in range(len(frq)):
+        relax_data.read(ri_id='R1_%i'%frq[i],  ri_type='R1',  frq=frq[i]*1e6, file='R1.%i.out'%frq[i],  res_num_col=1, data_col=2, error_col=3)
+        relax_data.read(ri_id='R2_%i'%frq[i],  ri_type='R2',  frq=frq[i]*1e6, file='R2.%i.out'%frq[i],  res_num_col=1, data_col=2, error_col=3)
+        relax_data.read(ri_id='NOE_%i'%frq[i], ri_type='NOE', frq=frq[i]*1e6, file='NOE.%i.out'%frq[i], res_num_col=1, data_col=2, error_col=3)
+
+    # Initialise the diffusion tensors.
+    if diff_type == 'sphere':
+        diffusion_tensor.init(1.0/(6.0*2e7), fixed=False)
+    elif diff_type == 'prolate':
+        diffusion_tensor.init((1.0/(6.0*7e7/3.0), 1e7, 2.0, pi-0.5), angle_units='rad', fixed=False)
+    elif diff_type == 'oblate':
+        diffusion_tensor.init((1.0/(6.0*7e7/3.0), -1e7, 2.0, pi-0.5), angle_units='rad', fixed=False)
+    elif diff_type == 'ellipsoid':
+        diffusion_tensor.init((8.3333333333333335e-09, 15000000.0, 0.33333333333333331, 1.0, 2.0, 0.5), angle_units='rad', fixed=False)
+
+    # Create the proton spins.
+    sequence.attach_protons()
+
+    # Define the magnetic dipole-dipole relaxation interaction.
+    spin.element('N', '@N')
+    structure.get_pos("@N")
+    structure.get_pos("@H")
+    interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+    interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+    interatom.unit_vectors()
+
+    # Define the chemical shift relaxation interaction.
+    value.set(-172 * 1e-6, 'csa', spin_id='@N')
+
+    # Set the nuclear isotope type.
+    spin.isotope('15N', spin_id='@N')
+
+    # Select the model-free model.
+    model_free.select_model(model='m0')
+
+    # Optimisation.
+    minimise.execute('newton')
+
+    # Save the PDB representation of the tensor.
+    structure.create_diff_tensor_pdb(file=diff_type+'.pdb', force=True)
+----------------------------------------------------------------------------------------------------
+
+relax> pipe.create(pipe_name='sphere', pipe_type='mf', bundle=None)
+
+relax> sequence.read(file='NOE.500.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None)
+Opening the file 'NOE.500.out' for reading.
+# mol_name    res_num    res_name    spin_num    spin_name    
+None          1          None        None        None         
+None          2          None        None        None         
+None          3          None        None        None         
+None          4          None        None        None         
+None          5          None        None        None         
+None          6          None        None        None         
+None          7          None        None        None         
+None          8          None        None        None         
+None          9          None        None        None         
+None          10         None        None        None         
+None          11         None        None        None         
+None          12         None        None        None         
+None          13         None        None        None         
+None          14         None        None        None         
+None          15         None        None        None         
+None          16         None        None        None         
+None          17         None        None        None         
+None          18         None        None        None         
+None          19         None        None        None         
+None          20         None        None        None         
+
+relax> structure.read_pdb(file='uniform.pdb', dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False)
+
+Internal relax PDB parser.
+Opening the file 'uniform.pdb' for reading.
+Adding molecule 'uniform_mol1' to model None (from the original molecule number 1 of model None)
+
+relax> spin.name(name='N', spin_id=None, force=False)
+
+relax> relax_data.read(ri_id='R1_500', ri_type='R1', frq=500000000.0, file='R1.500.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R1.500.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 500.0 MHz R1 relaxation data with the ID 'R1_500' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error              
+:1@N         2.07306584521    0.103653292261     
+:2@N         2.19654449699    0.10982722485      
+:3@N         1.75511110518    0.0877555552588    
+:4@N         2.07306584521    0.103653292261     
+:5@N         2.07306584521    0.103653292261     
+:6@N         2.33596554656    0.116798277328     
+:7@N         2.10929009809    0.105464504905     
+:8@N         2.07306584521    0.103653292261     
+:9@N         2.07306584521    0.103653292261     
+:10@N        1.65669417941    0.0828347089705    
+:11@N        1.96372478036    0.0981862390178    
+:12@N        2.07306584521    0.103653292261     
+:13@N        2.07306584521    0.103653292261     
+:14@N        2.03110780824    0.101555390412     
+:15@N        2.41045173028    0.120522586514     
+:16@N        2.07306584521    0.103653292261     
+:17@N        2.07306584521    0.103653292261     
+:18@N        1.98800792953    0.0994003964766    
+:19@N        1.96977931183    0.0984889655916    
+:20@N        2.07306584521    0.103653292261     
+
+relax> relax_data.read(ri_id='R2_500', ri_type='R2', frq=500000000.0, file='R2.500.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R2.500.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 500.0 MHz R2 relaxation data with the ID 'R2_500' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error             
+:1@N         12.4259860265    0.621299301324    
+:2@N         11.439485437     0.571974271851    
+:3@N         14.6726951781    0.733634758907    
+:4@N         12.4259860265    0.621299301324    
+:5@N         12.4259860265    0.621299301324    
+:6@N         10.5670541074    0.528352705371    
+:7@N         12.3105765976    0.615528829881    
+:8@N         12.4259860265    0.621299301324    
+:9@N         12.4259860265    0.621299301324    
+:10@N        15.5053239926    0.775266199629    
+:11@N        13.1658659835    0.658293299177    
+:12@N        12.4259860265    0.621299301324    
+:13@N        12.4259860265    0.621299301324    
+:14@N        12.6490672753    0.632453363765    
+:15@N        10.2097452151    0.510487260754    
+:16@N        12.4259860265    0.621299301324    
+:17@N        12.4259860265    0.621299301324    
+:18@N        13.1265302314    0.656326511571    
+:19@N        12.9279106186    0.646395530931    
+:20@N        12.4259860265    0.621299301324    
+
+relax> relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500000000.0, file='NOE.500.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'NOE.500.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 500.0 MHz NOE relaxation data with the ID 'NOE_500' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error    
+:1@N         0.798354347663    0.04     
+:2@N         0.796372370705    0.04     
+:3@N         0.808577825977    0.04     
+:4@N         0.798354347663    0.04     
+:5@N         0.798354347663    0.04     
+:6@N         0.791938068405    0.04     
+:7@N         0.796168373263    0.04     
+:8@N         0.798354347663    0.04     
+:9@N         0.798354347663    0.04     
+:10@N        0.811079800091    0.04     
+:11@N        0.80156995399     0.04     
+:12@N        0.798354347663    0.04     
+:13@N        0.798354347663    0.04     
+:14@N        0.800204913071    0.04     
+:15@N        0.788782904295    0.04     
+:16@N        0.798354347663    0.04     
+:17@N        0.798354347663    0.04     
+:18@N        0.799447765483    0.04     
+:19@N        0.803991975139    0.04     
+:20@N        0.798354347663    0.04     
+
+relax> relax_data.read(ri_id='R1_600', ri_type='R1', frq=600000000.0, file='R1.600.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R1.600.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 600.0 MHz R1 relaxation data with the ID 'R1_600' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error              
+:1@N         1.63462420768    0.0817312103838    
+:2@N         1.73709225817    0.0868546129084    
+:3@N         1.36410697884    0.0682053489422    
+:4@N         1.63462420768    0.0817312103838    
+:5@N         1.63462420768    0.0817312103838    
+:6@N         1.8583801954     0.0929190097698    
+:7@N         1.66800717713    0.0834003588566    
+:8@N         1.63462420768    0.0817312103838    
+:9@N         1.63462420768    0.0817312103838    
+:10@N        1.28280184328    0.0641400921642    
+:11@N        1.54140668214    0.0770703341071    
+:12@N        1.63462420768    0.0817312103838    
+:13@N        1.63462420768    0.0817312103838    
+:14@N        1.59753810177    0.0798769050887    
+:15@N        1.92555273018    0.096277636509     
+:16@N        1.63462420768    0.0817312103838    
+:17@N        1.63462420768    0.0817312103838    
+:18@N        1.56478874003    0.0782394370017    
+:19@N        1.54154970272    0.0770774851359    
+:20@N        1.63462420768    0.0817312103838    
+
+relax> relax_data.read(ri_id='R2_600', ri_type='R2', frq=600000000.0, file='R2.600.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R2.600.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 600.0 MHz R2 relaxation data with the ID 'R2_600' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error             
+:1@N         13.222349429     0.661117471449    
+:2@N         12.1306409034    0.606532045171    
+:3@N         15.710388824     0.7855194412      
+:4@N         13.222349429     0.661117471449    
+:5@N         13.222349429     0.661117471449    
+:6@N         11.1637994667    0.558189973337    
+:7@N         13.0933076385    0.654665381924    
+:8@N         13.222349429     0.661117471449    
+:9@N         13.222349429     0.661117471449    
+:10@N        16.6312130802    0.831560654009    
+:11@N        14.0421868344    0.702109341719    
+:12@N        13.222349429     0.661117471449    
+:13@N        13.222349429     0.661117471449    
+:14@N        13.4700143928    0.673500719641    
+:15@N        10.7669684986    0.53834842493     
+:16@N        13.222349429     0.661117471449    
+:17@N        13.222349429     0.661117471449    
+:18@N        13.997611759     0.699880587951    
+:19@N        13.7796912638    0.688984563189    
+:20@N        13.222349429     0.661117471449    
+
+relax> relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600000000.0, file='NOE.600.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'NOE.600.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 600.0 MHz NOE relaxation data with the ID 'NOE_600' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error    
+:1@N         0.82228598209     0.04     
+:2@N         0.821058993186    0.04     
+:3@N         0.82888991271     0.04     
+:4@N         0.82228598209     0.04     
+:5@N         0.82228598209     0.04     
+:6@N         0.818228211652    0.04     
+:7@N         0.820868712991    0.04     
+:8@N         0.82228598209     0.04     
+:9@N         0.82228598209     0.04     
+:10@N        0.830503217838    0.04     
+:11@N        0.824339063981    0.04     
+:12@N        0.82228598209     0.04     
+:13@N        0.82228598209     0.04     
+:14@N        0.823483988757    0.04     
+:15@N        0.816216502214    0.04     
+:16@N        0.82228598209     0.04     
+:17@N        0.82228598209     0.04     
+:18@N        0.822940689722    0.04     
+:19@N        0.825976537857    0.04     
+:20@N        0.82228598209     0.04     
+
+relax> relax_data.read(ri_id='R1_700', ri_type='R1', frq=700000000.0, file='R1.700.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R1.700.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 700.0 MHz R1 relaxation data with the ID 'R1_700' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error              
+:1@N         1.35167967076    0.0675839835378    
+:2@N         1.43901429681    0.0719507148403    
+:3@N         1.11748670008    0.055874335004     
+:4@N         1.35167967076    0.0675839835378    
+:5@N         1.35167967076    0.0675839835378    
+:6@N         1.54545551589    0.0772727757945    
+:7@N         1.38193185308    0.0690965926542    
+:8@N         1.35167967076    0.0675839835378    
+:9@N         1.35167967076    0.0675839835378    
+:10@N        1.04837419117    0.0524187095587    
+:11@N        1.27089518303    0.0635447591514    
+:12@N        1.35167967076    0.0675839835378    
+:13@N        1.35167967076    0.0675839835378    
+:14@N        1.31884084976    0.0659420424879    
+:15@N        1.60563866648    0.0802819333241    
+:16@N        1.35167967076    0.0675839835378    
+:17@N        1.35167967076    0.0675839835378    
+:18@N        1.2925884408     0.06462942204      
+:19@N        1.26833501856    0.063416750928     
+:20@N        1.35167967076    0.0675839835378    
+
+relax> relax_data.read(ri_id='R2_700', ri_type='R2', frq=700000000.0, file='R2.700.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R2.700.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 700.0 MHz R2 relaxation data with the ID 'R2_700' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error             
+:1@N         14.2845121412    0.714225607058    
+:2@N         13.0735531086    0.65367765543     
+:3@N         17.0472252614    0.852361263069    
+:4@N         14.2845121412    0.714225607058    
+:5@N         14.2845121412    0.714225607058    
+:6@N         11.9987418225    0.599937091126    
+:7@N         14.1395693649    0.706978468244    
+:8@N         14.2845121412    0.714225607058    
+:9@N         14.2845121412    0.714225607058    
+:10@N        18.0680786599    0.903403932994    
+:11@N        15.1953036252    0.75976518126     
+:12@N        14.2845121412    0.714225607058    
+:13@N        14.2845121412    0.714225607058    
+:14@N        14.5603763569    0.728018817847    
+:15@N        11.5562170295    0.577810851477    
+:16@N        14.2845121412    0.714225607058    
+:17@N        14.2845121412    0.714225607058    
+:18@N        15.1442977589    0.757214887943    
+:19@N        14.9059190498    0.745295952491    
+:20@N        14.2845121412    0.714225607058    
+
+relax> relax_data.read(ri_id='NOE_700', ri_type='NOE', frq=700000000.0, file='NOE.700.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'NOE.700.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 700.0 MHz NOE relaxation data with the ID 'NOE_700' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error    
+:1@N         0.842037734102    0.04     
+:2@N         0.841230794371    0.04     
+:3@N         0.846502068227    0.04     
+:4@N         0.842037734102    0.04     
+:5@N         0.842037734102    0.04     
+:6@N         0.839331444951    0.04     
+:7@N         0.841077772996    0.04     
+:8@N         0.842037734102    0.04     
+:9@N         0.842037734102    0.04     
+:10@N        0.847591450295    0.04     
+:11@N        0.843415006077    0.04     
+:12@N        0.842037734102    0.04     
+:13@N        0.842037734102    0.04     
+:14@N        0.842848573275    0.04     
+:15@N        0.837983204894    0.04     
+:16@N        0.842037734102    0.04     
+:17@N        0.842037734102    0.04     
+:18@N        0.842457967421    0.04     
+:19@N        0.844553700124    0.04     
+:20@N        0.842037734102    0.04     
+
+relax> relax_data.read(ri_id='R1_800', ri_type='R1', frq=800000000.0, file='R1.800.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R1.800.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 800.0 MHz R1 relaxation data with the ID 'R1_800' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error              
+:1@N         1.15976097158     0.0579880485791    
+:2@N         1.2361649084      0.0618082454198    
+:3@N         0.952735861563    0.0476367930781    
+:4@N         1.15976097158     0.0579880485791    
+:5@N         1.15976097158     0.0579880485791    
+:6@N         1.33110512525     0.0665552562627    
+:7@N         1.18728686143     0.0593643430715    
+:8@N         1.15976097158     0.0579880485791    
+:9@N         1.15976097158     0.0579880485791    
+:10@N        0.892377406001    0.0446188703001    
+:11@N        1.08830556271     0.0544152781353    
+:12@N        1.15976097158     0.0579880485791    
+:13@N        1.15976097158     0.0579880485791    
+:14@N        1.13030714196     0.0565153570979    
+:15@N        1.38549310827     0.0692746554136    
+:16@N        1.15976097158     0.0579880485791    
+:17@N        1.15976097158     0.0579880485791    
+:18@N        1.1083289214      0.05541644607      
+:19@N        1.08447165215     0.0542235826074    
+:20@N        1.15976097158     0.0579880485791    
+
+relax> relax_data.read(ri_id='R2_800', ri_type='R2', frq=800000000.0, file='R2.800.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R2.800.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 800.0 MHz R2 relaxation data with the ID 'R2_800' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error             
+:1@N         15.5791516745    0.778957583726    
+:2@N         14.2339865277    0.711699326385    
+:3@N         18.6510726943    0.932553634715    
+:4@N         15.5791516745    0.778957583726    
+:5@N         15.5791516745    0.778957583726    
+:6@N         13.0375752384    0.651878761919    
+:7@N         15.4163556069    0.770817780344    
+:8@N         15.5791516745    0.778957583726    
+:9@N         15.5791516745    0.778957583726    
+:10@N        19.7845888177    0.989229440887    
+:11@N        16.5922605028    0.829613025139    
+:12@N        15.5791516745    0.778957583726    
+:13@N        15.5791516745    0.778957583726    
+:14@N        15.8867433874    0.794337169371    
+:15@N        12.5435603053    0.627178015266    
+:16@N        15.5791516745    0.778957583726    
+:17@N        15.5791516745    0.778957583726    
+:18@N        16.5340124617    0.826700623085    
+:19@N        16.2727576208    0.813637881039    
+:20@N        15.5791516745    0.778957583726    
+
+relax> relax_data.read(ri_id='NOE_800', ri_type='NOE', frq=800000000.0, file='NOE.800.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'NOE.800.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 800.0 MHz NOE relaxation data with the ID 'NOE_800' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error    
+:1@N         0.859008689407    0.04     
+:2@N         0.858454563738    0.04     
+:3@N         0.862132222326    0.04     
+:4@N         0.859008689407    0.04     
+:5@N         0.859008689407    0.04     
+:6@N         0.857132333336    0.04     
+:7@N         0.858336277043    0.04     
+:8@N         0.859008689407    0.04     
+:9@N         0.859008689407    0.04     
+:10@N        0.86289384749     0.04     
+:11@N        0.859967228443    0.04     
+:12@N        0.859008689407    0.04     
+:13@N        0.859008689407    0.04     
+:14@N        0.859576412343    0.04     
+:15@N        0.856194627435    0.04     
+:16@N        0.859008689407    0.04     
+:17@N        0.859008689407    0.04     
+:18@N        0.859292154288    0.04     
+:19@N        0.86077896261     0.04     
+:20@N        0.859008689407    0.04     
+
+relax> diffusion_tensor.init(params=8.333333333333334e-09, time_scale=1.0, d_scale=1.0, angle_units='deg', param_types=0, spheroid_type=None, fixed=False)
+
+relax> sequence.attach_protons()
+
+relax> spin.element(element='N', spin_id='@N', force=False)
+
+relax> structure.get_pos(spin_id='@N', ave_pos=True)
+# Spin_ID    Position                  
+:1@N         array([ 0.,  0.,  0.])    
+:2@N         array([ 0.,  0.,  0.])    
+:3@N         array([ 0.,  0.,  0.])    
+:4@N         array([ 0.,  0.,  0.])    
+:5@N         array([ 0.,  0.,  0.])    
+:6@N         array([ 0.,  0.,  0.])    
+:7@N         array([ 0.,  0.,  0.])    
+:8@N         array([ 0.,  0.,  0.])    
+:9@N         array([ 0.,  0.,  0.])    
+:10@N        array([ 0.,  0.,  0.])    
+:11@N        array([ 0.,  0.,  0.])    
+:12@N        array([ 0.,  0.,  0.])    
+:13@N        array([ 0.,  0.,  0.])    
+:14@N        array([ 0.,  0.,  0.])    
+:15@N        array([ 0.,  0.,  0.])    
+:16@N        array([ 0.,  0.,  0.])    
+:17@N        array([ 0.,  0.,  0.])    
+:18@N        array([ 0.,  0.,  0.])    
+:19@N        array([ 0.,  0.,  0.])    
+:20@N        array([ 0.,  0.,  0.])    
+
+relax> structure.get_pos(spin_id='@H', ave_pos=True)
+# Spin_ID    Position                           
+:1@H         array([ 0.  ,  0.  , -1.02])       
+:2@H         array([ 0.883,  0.   , -0.51 ])    
+:3@H         array([ 0.883,  0.   ,  0.51 ])    
+:4@H         array([ 0.  ,  0.  ,  1.02])       
+:5@H         array([ 0.  ,  0.  , -1.02])       
+:6@H         array([ 0.273,  0.84 , -0.51 ])    
+:7@H         array([ 0.273,  0.84 ,  0.51 ])    
+:8@H         array([ 0.  ,  0.  ,  1.02])       
+:9@H         array([ 0.  ,  0.  , -1.02])       
+:10@H        array([-0.715,  0.519, -0.51 ])    
+:11@H        array([-0.715,  0.519,  0.51 ])    
+:12@H        array([ 0.  ,  0.  ,  1.02])       
+:13@H        array([ 0.  ,  0.  , -1.02])       
+:14@H        array([-0.715, -0.519, -0.51 ])    
+:15@H        array([-0.715, -0.519,  0.51 ])    
+:16@H        array([ 0.  ,  0.  ,  1.02])       
+:17@H        array([ 0.  ,  0.  , -1.02])       
+:18@H        array([ 0.273, -0.84 , -0.51 ])    
+:19@H        array([ 0.273, -0.84 ,  0.51 ])    
+:20@H        array([ 0.  ,  0.  ,  1.02])       
+
+relax> interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True, pipe=None)
+Interatomic interactions are now defined for the following spins:
+
+# Spin_ID_1    Spin_ID_2    
+':1@N'         ':1@H'       
+':2@N'         ':2@H'       
+':3@N'         ':3@H'       
+':4@N'         ':4@H'       
+':5@N'         ':5@H'       
+':6@N'         ':6@H'       
+':7@N'         ':7@H'       
+':8@N'         ':8@H'       
+':9@N'         ':9@H'       
+':10@N'        ':10@H'      
+':11@N'        ':11@H'      
+':12@N'        ':12@H'      
+':13@N'        ':13@H'      
+':14@N'        ':14@H'      
+':15@N'        ':15@H'      
+':16@N'        ':16@H'      
+':17@N'        ':17@H'      
+':18@N'        ':18@H'      
+':19@N'        ':19@H'      
+':20@N'        ':20@H'      
+
+relax> interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.0200000000000001e-10, unit='meter')
+The following averaged distances have been set:
+
+# Spin_ID_1    Spin_ID_2    Ave_distance(meters)      
+':1@N'         ':1@H'       1.0200000000000001e-10    
+':2@N'         ':2@H'       1.0200000000000001e-10    
+':3@N'         ':3@H'       1.0200000000000001e-10    
+':4@N'         ':4@H'       1.0200000000000001e-10    
+':5@N'         ':5@H'       1.0200000000000001e-10    
+':6@N'         ':6@H'       1.0200000000000001e-10    
+':7@N'         ':7@H'       1.0200000000000001e-10    
+':8@N'         ':8@H'       1.0200000000000001e-10    
+':9@N'         ':9@H'       1.0200000000000001e-10    
+':10@N'        ':10@H'      1.0200000000000001e-10    
+':11@N'        ':11@H'      1.0200000000000001e-10    
+':12@N'        ':12@H'      1.0200000000000001e-10    
+':13@N'        ':13@H'      1.0200000000000001e-10    
+':14@N'        ':14@H'      1.0200000000000001e-10    
+':15@N'        ':15@H'      1.0200000000000001e-10    
+':16@N'        ':16@H'      1.0200000000000001e-10    
+':17@N'        ':17@H'      1.0200000000000001e-10    
+':18@N'        ':18@H'      1.0200000000000001e-10    
+':19@N'        ':19@H'      1.0200000000000001e-10    
+':20@N'        ':20@H'      1.0200000000000001e-10    
+
+relax> interatom.unit_vectors(ave=True)
+Averaging all vectors.
+Calculated 1 N-H unit vector between the spins ':1@N' and ':1@H'.
+Calculated 1 N-H unit vector between the spins ':2@N' and ':2@H'.
+Calculated 1 N-H unit vector between the spins ':3@N' and ':3@H'.
+Calculated 1 N-H unit vector between the spins ':4@N' and ':4@H'.
+Calculated 1 N-H unit vector between the spins ':5@N' and ':5@H'.
+Calculated 1 N-H unit vector between the spins ':6@N' and ':6@H'.
+Calculated 1 N-H unit vector between the spins ':7@N' and ':7@H'.
+Calculated 1 N-H unit vector between the spins ':8@N' and ':8@H'.
+Calculated 1 N-H unit vector between the spins ':9@N' and ':9@H'.
+Calculated 1 N-H unit vector between the spins ':10@N' and ':10@H'.
+Calculated 1 N-H unit vector between the spins ':11@N' and ':11@H'.
+Calculated 1 N-H unit vector between the spins ':12@N' and ':12@H'.
+Calculated 1 N-H unit vector between the spins ':13@N' and ':13@H'.
+Calculated 1 N-H unit vector between the spins ':14@N' and ':14@H'.
+Calculated 1 N-H unit vector between the spins ':15@N' and ':15@H'.
+Calculated 1 N-H unit vector between the spins ':16@N' and ':16@H'.
+Calculated 1 N-H unit vector between the spins ':17@N' and ':17@H'.
+Calculated 1 N-H unit vector between the spins ':18@N' and ':18@H'.
+Calculated 1 N-H unit vector between the spins ':19@N' and ':19@H'.
+Calculated 1 N-H unit vector between the spins ':20@N' and ':20@H'.
+
+relax> value.set(val=-0.00017199999999999998, param='csa', index=0, spin_id='@N', error=False)
+
+relax> spin.isotope(isotope='15N', spin_id='@N', force=False)
+
+relax> model_free.select_model(model='m0', spin_id=None)
+
+relax> minimise.execute(min_algor='newton', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+
+Over-fit spin deselection:
+RelaxWarning: The spin ':1@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':2@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':3@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':4@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':5@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':6@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':7@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':8@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':9@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':10@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':11@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':12@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':13@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':14@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':15@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':16@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':17@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':18@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':19@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':20@H' has been deselected because of an absence of relaxation mechanisms.
+The diffusion tensor parameters together with the model-free parameters for all spins will be used.
+
+
+Method of Multipliers
+~~~~~~~~~~~~~~~~~~~~~
+k: 0        xk: [    8333.333333]    fk: 580.773697187       
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [    8333.333333]    fk: 580.773697187       
+
+	Parameter values: [8600.6628698034292]
+	Function value:   533.85267598081225
+	Iterations:       2
+	Function calls:   5
+	Gradient calls:   3
+	Hessian calls:    2
+	Warning:          None
+
+k: 1        xk: [     8600.66287]    fk: 533.852675981       
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [     8600.66287]    fk: 533.852675981       
+
+	Parameter values: [8600.6718137618882]
+	Function value:   533.85267592941852
+	Iterations:       1
+	Function calls:   3
+	Gradient calls:   2
+	Hessian calls:    1
+	Warning:          None
+
+k: 2        xk: [    8600.671814]    fk: 533.852675929       
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [    8600.671814]    fk: 533.852675929       
+
+	Parameter values: [8600.6718137713851]
+	Function value:   533.85267592941841
+	Iterations:       1
+	Function calls:   3
+	Gradient calls:   2
+	Hessian calls:    1
+	Warning:          None
+
+k: 3        xk: [    8600.671814]    fk: 533.852675929       
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [    8600.671814]    fk: 533.852675929       
+
+	Parameter values: [8600.6718137713851]
+	Function value:   533.85267592941841
+	Iterations:       1
+	Function calls:   3
+	Gradient calls:   2
+	Hessian calls:    1
+	Warning:          None
+
+
+Parameter values: [8600.6718137713851]
+Function value:   533.85267592941841
+Iterations:       5
+Function calls:   14
+Gradient calls:   9
+Hessian calls:    5
+Warning:          None
+
+Storing the optimisation results, the optimised chi-squared value is lower than the current value (533.852675929 < None).
+
+relax> structure.create_diff_tensor_pdb(scale=1.8e-06, file='sphere.pdb', dir=None, force=True)
+Calculating the centre of mass.
+    Total mass:      M = 300.2928
+    Centre of mass:  R = array([ -6.713048065086895e-06,   0.000000000000000e+00,
+         0.000000000000000e+00])
+
+Generating the geometric object.
+    Creating the uniform vector distribution.
+
+Generating the PDB file.
+Opening the file 'sphere.pdb' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+relax> pipe.create(pipe_name='oblate', pipe_type='mf', bundle=None)
+
+relax> sequence.read(file='NOE.500.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None)
+Opening the file 'NOE.500.out' for reading.
+# mol_name    res_num    res_name    spin_num    spin_name    
+None          1          None        None        None         
+None          2          None        None        None         
+None          3          None        None        None         
+None          4          None        None        None         
+None          5          None        None        None         
+None          6          None        None        None         
+None          7          None        None        None         
+None          8          None        None        None         
+None          9          None        None        None         
+None          10         None        None        None         
+None          11         None        None        None         
+None          12         None        None        None         
+None          13         None        None        None         
+None          14         None        None        None         
+None          15         None        None        None         
+None          16         None        None        None         
+None          17         None        None        None         
+None          18         None        None        None         
+None          19         None        None        None         
+None          20         None        None        None         
+
+relax> structure.read_pdb(file='uniform.pdb', dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False)
+
+Internal relax PDB parser.
+Opening the file 'uniform.pdb' for reading.
+Adding molecule 'uniform_mol1' to model None (from the original molecule number 1 of model None)
+
+relax> spin.name(name='N', spin_id=None, force=False)
+
+relax> relax_data.read(ri_id='R1_500', ri_type='R1', frq=500000000.0, file='R1.500.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R1.500.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 500.0 MHz R1 relaxation data with the ID 'R1_500' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error              
+:1@N         2.07306584521    0.103653292261     
+:2@N         2.19654449699    0.10982722485      
+:3@N         1.75511110518    0.0877555552588    
+:4@N         2.07306584521    0.103653292261     
+:5@N         2.07306584521    0.103653292261     
+:6@N         2.33596554656    0.116798277328     
+:7@N         2.10929009809    0.105464504905     
+:8@N         2.07306584521    0.103653292261     
+:9@N         2.07306584521    0.103653292261     
+:10@N        1.65669417941    0.0828347089705    
+:11@N        1.96372478036    0.0981862390178    
+:12@N        2.07306584521    0.103653292261     
+:13@N        2.07306584521    0.103653292261     
+:14@N        2.03110780824    0.101555390412     
+:15@N        2.41045173028    0.120522586514     
+:16@N        2.07306584521    0.103653292261     
+:17@N        2.07306584521    0.103653292261     
+:18@N        1.98800792953    0.0994003964766    
+:19@N        1.96977931183    0.0984889655916    
+:20@N        2.07306584521    0.103653292261     
+
+relax> relax_data.read(ri_id='R2_500', ri_type='R2', frq=500000000.0, file='R2.500.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R2.500.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 500.0 MHz R2 relaxation data with the ID 'R2_500' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error             
+:1@N         12.4259860265    0.621299301324    
+:2@N         11.439485437     0.571974271851    
+:3@N         14.6726951781    0.733634758907    
+:4@N         12.4259860265    0.621299301324    
+:5@N         12.4259860265    0.621299301324    
+:6@N         10.5670541074    0.528352705371    
+:7@N         12.3105765976    0.615528829881    
+:8@N         12.4259860265    0.621299301324    
+:9@N         12.4259860265    0.621299301324    
+:10@N        15.5053239926    0.775266199629    
+:11@N        13.1658659835    0.658293299177    
+:12@N        12.4259860265    0.621299301324    
+:13@N        12.4259860265    0.621299301324    
+:14@N        12.6490672753    0.632453363765    
+:15@N        10.2097452151    0.510487260754    
+:16@N        12.4259860265    0.621299301324    
+:17@N        12.4259860265    0.621299301324    
+:18@N        13.1265302314    0.656326511571    
+:19@N        12.9279106186    0.646395530931    
+:20@N        12.4259860265    0.621299301324    
+
+relax> relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500000000.0, file='NOE.500.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'NOE.500.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 500.0 MHz NOE relaxation data with the ID 'NOE_500' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error    
+:1@N         0.798354347663    0.04     
+:2@N         0.796372370705    0.04     
+:3@N         0.808577825977    0.04     
+:4@N         0.798354347663    0.04     
+:5@N         0.798354347663    0.04     
+:6@N         0.791938068405    0.04     
+:7@N         0.796168373263    0.04     
+:8@N         0.798354347663    0.04     
+:9@N         0.798354347663    0.04     
+:10@N        0.811079800091    0.04     
+:11@N        0.80156995399     0.04     
+:12@N        0.798354347663    0.04     
+:13@N        0.798354347663    0.04     
+:14@N        0.800204913071    0.04     
+:15@N        0.788782904295    0.04     
+:16@N        0.798354347663    0.04     
+:17@N        0.798354347663    0.04     
+:18@N        0.799447765483    0.04     
+:19@N        0.803991975139    0.04     
+:20@N        0.798354347663    0.04     
+
+relax> relax_data.read(ri_id='R1_600', ri_type='R1', frq=600000000.0, file='R1.600.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R1.600.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 600.0 MHz R1 relaxation data with the ID 'R1_600' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error              
+:1@N         1.63462420768    0.0817312103838    
+:2@N         1.73709225817    0.0868546129084    
+:3@N         1.36410697884    0.0682053489422    
+:4@N         1.63462420768    0.0817312103838    
+:5@N         1.63462420768    0.0817312103838    
+:6@N         1.8583801954     0.0929190097698    
+:7@N         1.66800717713    0.0834003588566    
+:8@N         1.63462420768    0.0817312103838    
+:9@N         1.63462420768    0.0817312103838    
+:10@N        1.28280184328    0.0641400921642    
+:11@N        1.54140668214    0.0770703341071    
+:12@N        1.63462420768    0.0817312103838    
+:13@N        1.63462420768    0.0817312103838    
+:14@N        1.59753810177    0.0798769050887    
+:15@N        1.92555273018    0.096277636509     
+:16@N        1.63462420768    0.0817312103838    
+:17@N        1.63462420768    0.0817312103838    
+:18@N        1.56478874003    0.0782394370017    
+:19@N        1.54154970272    0.0770774851359    
+:20@N        1.63462420768    0.0817312103838    
+
+relax> relax_data.read(ri_id='R2_600', ri_type='R2', frq=600000000.0, file='R2.600.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R2.600.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 600.0 MHz R2 relaxation data with the ID 'R2_600' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error             
+:1@N         13.222349429     0.661117471449    
+:2@N         12.1306409034    0.606532045171    
+:3@N         15.710388824     0.7855194412      
+:4@N         13.222349429     0.661117471449    
+:5@N         13.222349429     0.661117471449    
+:6@N         11.1637994667    0.558189973337    
+:7@N         13.0933076385    0.654665381924    
+:8@N         13.222349429     0.661117471449    
+:9@N         13.222349429     0.661117471449    
+:10@N        16.6312130802    0.831560654009    
+:11@N        14.0421868344    0.702109341719    
+:12@N        13.222349429     0.661117471449    
+:13@N        13.222349429     0.661117471449    
+:14@N        13.4700143928    0.673500719641    
+:15@N        10.7669684986    0.53834842493     
+:16@N        13.222349429     0.661117471449    
+:17@N        13.222349429     0.661117471449    
+:18@N        13.997611759     0.699880587951    
+:19@N        13.7796912638    0.688984563189    
+:20@N        13.222349429     0.661117471449    
+
+relax> relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600000000.0, file='NOE.600.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'NOE.600.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 600.0 MHz NOE relaxation data with the ID 'NOE_600' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error    
+:1@N         0.82228598209     0.04     
+:2@N         0.821058993186    0.04     
+:3@N         0.82888991271     0.04     
+:4@N         0.82228598209     0.04     
+:5@N         0.82228598209     0.04     
+:6@N         0.818228211652    0.04     
+:7@N         0.820868712991    0.04     
+:8@N         0.82228598209     0.04     
+:9@N         0.82228598209     0.04     
+:10@N        0.830503217838    0.04     
+:11@N        0.824339063981    0.04     
+:12@N        0.82228598209     0.04     
+:13@N        0.82228598209     0.04     
+:14@N        0.823483988757    0.04     
+:15@N        0.816216502214    0.04     
+:16@N        0.82228598209     0.04     
+:17@N        0.82228598209     0.04     
+:18@N        0.822940689722    0.04     
+:19@N        0.825976537857    0.04     
+:20@N        0.82228598209     0.04     
+
+relax> relax_data.read(ri_id='R1_700', ri_type='R1', frq=700000000.0, file='R1.700.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R1.700.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 700.0 MHz R1 relaxation data with the ID 'R1_700' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error              
+:1@N         1.35167967076    0.0675839835378    
+:2@N         1.43901429681    0.0719507148403    
+:3@N         1.11748670008    0.055874335004     
+:4@N         1.35167967076    0.0675839835378    
+:5@N         1.35167967076    0.0675839835378    
+:6@N         1.54545551589    0.0772727757945    
+:7@N         1.38193185308    0.0690965926542    
+:8@N         1.35167967076    0.0675839835378    
+:9@N         1.35167967076    0.0675839835378    
+:10@N        1.04837419117    0.0524187095587    
+:11@N        1.27089518303    0.0635447591514    
+:12@N        1.35167967076    0.0675839835378    
+:13@N        1.35167967076    0.0675839835378    
+:14@N        1.31884084976    0.0659420424879    
+:15@N        1.60563866648    0.0802819333241    
+:16@N        1.35167967076    0.0675839835378    
+:17@N        1.35167967076    0.0675839835378    
+:18@N        1.2925884408     0.06462942204      
+:19@N        1.26833501856    0.063416750928     
+:20@N        1.35167967076    0.0675839835378    
+
+relax> relax_data.read(ri_id='R2_700', ri_type='R2', frq=700000000.0, file='R2.700.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R2.700.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 700.0 MHz R2 relaxation data with the ID 'R2_700' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error             
+:1@N         14.2845121412    0.714225607058    
+:2@N         13.0735531086    0.65367765543     
+:3@N         17.0472252614    0.852361263069    
+:4@N         14.2845121412    0.714225607058    
+:5@N         14.2845121412    0.714225607058    
+:6@N         11.9987418225    0.599937091126    
+:7@N         14.1395693649    0.706978468244    
+:8@N         14.2845121412    0.714225607058    
+:9@N         14.2845121412    0.714225607058    
+:10@N        18.0680786599    0.903403932994    
+:11@N        15.1953036252    0.75976518126     
+:12@N        14.2845121412    0.714225607058    
+:13@N        14.2845121412    0.714225607058    
+:14@N        14.5603763569    0.728018817847    
+:15@N        11.5562170295    0.577810851477    
+:16@N        14.2845121412    0.714225607058    
+:17@N        14.2845121412    0.714225607058    
+:18@N        15.1442977589    0.757214887943    
+:19@N        14.9059190498    0.745295952491    
+:20@N        14.2845121412    0.714225607058    
+
+relax> relax_data.read(ri_id='NOE_700', ri_type='NOE', frq=700000000.0, file='NOE.700.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'NOE.700.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 700.0 MHz NOE relaxation data with the ID 'NOE_700' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error    
+:1@N         0.842037734102    0.04     
+:2@N         0.841230794371    0.04     
+:3@N         0.846502068227    0.04     
+:4@N         0.842037734102    0.04     
+:5@N         0.842037734102    0.04     
+:6@N         0.839331444951    0.04     
+:7@N         0.841077772996    0.04     
+:8@N         0.842037734102    0.04     
+:9@N         0.842037734102    0.04     
+:10@N        0.847591450295    0.04     
+:11@N        0.843415006077    0.04     
+:12@N        0.842037734102    0.04     
+:13@N        0.842037734102    0.04     
+:14@N        0.842848573275    0.04     
+:15@N        0.837983204894    0.04     
+:16@N        0.842037734102    0.04     
+:17@N        0.842037734102    0.04     
+:18@N        0.842457967421    0.04     
+:19@N        0.844553700124    0.04     
+:20@N        0.842037734102    0.04     
+
+relax> relax_data.read(ri_id='R1_800', ri_type='R1', frq=800000000.0, file='R1.800.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R1.800.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 800.0 MHz R1 relaxation data with the ID 'R1_800' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error              
+:1@N         1.15976097158     0.0579880485791    
+:2@N         1.2361649084      0.0618082454198    
+:3@N         0.952735861563    0.0476367930781    
+:4@N         1.15976097158     0.0579880485791    
+:5@N         1.15976097158     0.0579880485791    
+:6@N         1.33110512525     0.0665552562627    
+:7@N         1.18728686143     0.0593643430715    
+:8@N         1.15976097158     0.0579880485791    
+:9@N         1.15976097158     0.0579880485791    
+:10@N        0.892377406001    0.0446188703001    
+:11@N        1.08830556271     0.0544152781353    
+:12@N        1.15976097158     0.0579880485791    
+:13@N        1.15976097158     0.0579880485791    
+:14@N        1.13030714196     0.0565153570979    
+:15@N        1.38549310827     0.0692746554136    
+:16@N        1.15976097158     0.0579880485791    
+:17@N        1.15976097158     0.0579880485791    
+:18@N        1.1083289214      0.05541644607      
+:19@N        1.08447165215     0.0542235826074    
+:20@N        1.15976097158     0.0579880485791    
+
+relax> relax_data.read(ri_id='R2_800', ri_type='R2', frq=800000000.0, file='R2.800.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R2.800.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 800.0 MHz R2 relaxation data with the ID 'R2_800' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error             
+:1@N         15.5791516745    0.778957583726    
+:2@N         14.2339865277    0.711699326385    
+:3@N         18.6510726943    0.932553634715    
+:4@N         15.5791516745    0.778957583726    
+:5@N         15.5791516745    0.778957583726    
+:6@N         13.0375752384    0.651878761919    
+:7@N         15.4163556069    0.770817780344    
+:8@N         15.5791516745    0.778957583726    
+:9@N         15.5791516745    0.778957583726    
+:10@N        19.7845888177    0.989229440887    
+:11@N        16.5922605028    0.829613025139    
+:12@N        15.5791516745    0.778957583726    
+:13@N        15.5791516745    0.778957583726    
+:14@N        15.8867433874    0.794337169371    
+:15@N        12.5435603053    0.627178015266    
+:16@N        15.5791516745    0.778957583726    
+:17@N        15.5791516745    0.778957583726    
+:18@N        16.5340124617    0.826700623085    
+:19@N        16.2727576208    0.813637881039    
+:20@N        15.5791516745    0.778957583726    
+
+relax> relax_data.read(ri_id='NOE_800', ri_type='NOE', frq=800000000.0, file='NOE.800.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'NOE.800.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 800.0 MHz NOE relaxation data with the ID 'NOE_800' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error    
+:1@N         0.859008689407    0.04     
+:2@N         0.858454563738    0.04     
+:3@N         0.862132222326    0.04     
+:4@N         0.859008689407    0.04     
+:5@N         0.859008689407    0.04     
+:6@N         0.857132333336    0.04     
+:7@N         0.858336277043    0.04     
+:8@N         0.859008689407    0.04     
+:9@N         0.859008689407    0.04     
+:10@N        0.86289384749     0.04     
+:11@N        0.859967228443    0.04     
+:12@N        0.859008689407    0.04     
+:13@N        0.859008689407    0.04     
+:14@N        0.859576412343    0.04     
+:15@N        0.856194627435    0.04     
+:16@N        0.859008689407    0.04     
+:17@N        0.859008689407    0.04     
+:18@N        0.859292154288    0.04     
+:19@N        0.86077896261     0.04     
+:20@N        0.859008689407    0.04     
+
+relax> diffusion_tensor.init(params=(7.142857142857143e-09, -10000000.0, 2.0, 2.641592653589793), time_scale=1.0, d_scale=1.0, angle_units='rad', param_types=0, spheroid_type=None, fixed=False)
+
+relax> sequence.attach_protons()
+
+relax> spin.element(element='N', spin_id='@N', force=False)
+
+relax> structure.get_pos(spin_id='@N', ave_pos=True)
+# Spin_ID    Position                  
+:1@N         array([ 0.,  0.,  0.])    
+:2@N         array([ 0.,  0.,  0.])    
+:3@N         array([ 0.,  0.,  0.])    
+:4@N         array([ 0.,  0.,  0.])    
+:5@N         array([ 0.,  0.,  0.])    
+:6@N         array([ 0.,  0.,  0.])    
+:7@N         array([ 0.,  0.,  0.])    
+:8@N         array([ 0.,  0.,  0.])    
+:9@N         array([ 0.,  0.,  0.])    
+:10@N        array([ 0.,  0.,  0.])    
+:11@N        array([ 0.,  0.,  0.])    
+:12@N        array([ 0.,  0.,  0.])    
+:13@N        array([ 0.,  0.,  0.])    
+:14@N        array([ 0.,  0.,  0.])    
+:15@N        array([ 0.,  0.,  0.])    
+:16@N        array([ 0.,  0.,  0.])    
+:17@N        array([ 0.,  0.,  0.])    
+:18@N        array([ 0.,  0.,  0.])    
+:19@N        array([ 0.,  0.,  0.])    
+:20@N        array([ 0.,  0.,  0.])    
+
+relax> structure.get_pos(spin_id='@H', ave_pos=True)
+# Spin_ID    Position                           
+:1@H         array([ 0.  ,  0.  , -1.02])       
+:2@H         array([ 0.883,  0.   , -0.51 ])    
+:3@H         array([ 0.883,  0.   ,  0.51 ])    
+:4@H         array([ 0.  ,  0.  ,  1.02])       
+:5@H         array([ 0.  ,  0.  , -1.02])       
+:6@H         array([ 0.273,  0.84 , -0.51 ])    
+:7@H         array([ 0.273,  0.84 ,  0.51 ])    
+:8@H         array([ 0.  ,  0.  ,  1.02])       
+:9@H         array([ 0.  ,  0.  , -1.02])       
+:10@H        array([-0.715,  0.519, -0.51 ])    
+:11@H        array([-0.715,  0.519,  0.51 ])    
+:12@H        array([ 0.  ,  0.  ,  1.02])       
+:13@H        array([ 0.  ,  0.  , -1.02])       
+:14@H        array([-0.715, -0.519, -0.51 ])    
+:15@H        array([-0.715, -0.519,  0.51 ])    
+:16@H        array([ 0.  ,  0.  ,  1.02])       
+:17@H        array([ 0.  ,  0.  , -1.02])       
+:18@H        array([ 0.273, -0.84 , -0.51 ])    
+:19@H        array([ 0.273, -0.84 ,  0.51 ])    
+:20@H        array([ 0.  ,  0.  ,  1.02])       
+
+relax> interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True, pipe=None)
+Interatomic interactions are now defined for the following spins:
+
+# Spin_ID_1    Spin_ID_2    
+':1@N'         ':1@H'       
+':2@N'         ':2@H'       
+':3@N'         ':3@H'       
+':4@N'         ':4@H'       
+':5@N'         ':5@H'       
+':6@N'         ':6@H'       
+':7@N'         ':7@H'       
+':8@N'         ':8@H'       
+':9@N'         ':9@H'       
+':10@N'        ':10@H'      
+':11@N'        ':11@H'      
+':12@N'        ':12@H'      
+':13@N'        ':13@H'      
+':14@N'        ':14@H'      
+':15@N'        ':15@H'      
+':16@N'        ':16@H'      
+':17@N'        ':17@H'      
+':18@N'        ':18@H'      
+':19@N'        ':19@H'      
+':20@N'        ':20@H'      
+
+relax> interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.0200000000000001e-10, unit='meter')
+The following averaged distances have been set:
+
+# Spin_ID_1    Spin_ID_2    Ave_distance(meters)      
+':1@N'         ':1@H'       1.0200000000000001e-10    
+':2@N'         ':2@H'       1.0200000000000001e-10    
+':3@N'         ':3@H'       1.0200000000000001e-10    
+':4@N'         ':4@H'       1.0200000000000001e-10    
+':5@N'         ':5@H'       1.0200000000000001e-10    
+':6@N'         ':6@H'       1.0200000000000001e-10    
+':7@N'         ':7@H'       1.0200000000000001e-10    
+':8@N'         ':8@H'       1.0200000000000001e-10    
+':9@N'         ':9@H'       1.0200000000000001e-10    
+':10@N'        ':10@H'      1.0200000000000001e-10    
+':11@N'        ':11@H'      1.0200000000000001e-10    
+':12@N'        ':12@H'      1.0200000000000001e-10    
+':13@N'        ':13@H'      1.0200000000000001e-10    
+':14@N'        ':14@H'      1.0200000000000001e-10    
+':15@N'        ':15@H'      1.0200000000000001e-10    
+':16@N'        ':16@H'      1.0200000000000001e-10    
+':17@N'        ':17@H'      1.0200000000000001e-10    
+':18@N'        ':18@H'      1.0200000000000001e-10    
+':19@N'        ':19@H'      1.0200000000000001e-10    
+':20@N'        ':20@H'      1.0200000000000001e-10    
+
+relax> interatom.unit_vectors(ave=True)
+Averaging all vectors.
+Calculated 1 N-H unit vector between the spins ':1@N' and ':1@H'.
+Calculated 1 N-H unit vector between the spins ':2@N' and ':2@H'.
+Calculated 1 N-H unit vector between the spins ':3@N' and ':3@H'.
+Calculated 1 N-H unit vector between the spins ':4@N' and ':4@H'.
+Calculated 1 N-H unit vector between the spins ':5@N' and ':5@H'.
+Calculated 1 N-H unit vector between the spins ':6@N' and ':6@H'.
+Calculated 1 N-H unit vector between the spins ':7@N' and ':7@H'.
+Calculated 1 N-H unit vector between the spins ':8@N' and ':8@H'.
+Calculated 1 N-H unit vector between the spins ':9@N' and ':9@H'.
+Calculated 1 N-H unit vector between the spins ':10@N' and ':10@H'.
+Calculated 1 N-H unit vector between the spins ':11@N' and ':11@H'.
+Calculated 1 N-H unit vector between the spins ':12@N' and ':12@H'.
+Calculated 1 N-H unit vector between the spins ':13@N' and ':13@H'.
+Calculated 1 N-H unit vector between the spins ':14@N' and ':14@H'.
+Calculated 1 N-H unit vector between the spins ':15@N' and ':15@H'.
+Calculated 1 N-H unit vector between the spins ':16@N' and ':16@H'.
+Calculated 1 N-H unit vector between the spins ':17@N' and ':17@H'.
+Calculated 1 N-H unit vector between the spins ':18@N' and ':18@H'.
+Calculated 1 N-H unit vector between the spins ':19@N' and ':19@H'.
+Calculated 1 N-H unit vector between the spins ':20@N' and ':20@H'.
+
+relax> value.set(val=-0.00017199999999999998, param='csa', index=0, spin_id='@N', error=False)
+
+relax> spin.isotope(isotope='15N', spin_id='@N', force=False)
+
+relax> model_free.select_model(model='m0', spin_id=None)
+
+relax> minimise.execute(min_algor='newton', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+
+Over-fit spin deselection:
+RelaxWarning: The spin ':1@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':2@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':3@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':4@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':5@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':6@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':7@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':8@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':9@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':10@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':11@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':12@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':13@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':14@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':15@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':16@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':17@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':18@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':19@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':20@H' has been deselected because of an absence of relaxation mechanisms.
+The diffusion tensor parameters together with the model-free parameters for all spins will be used.
+
+
+Method of Multipliers
+~~~~~~~~~~~~~~~~~~~~~
+k: 0        xk: [    7142.857143,              -1,               2,     2.641592654]    fk: 2303.78419048       
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [    7142.857143,              -1,               2,     2.641592654]    fk: 2303.78419048       
+
+	Parameter values: [8351.6887426285193, -1.4682873912021754, 4.1218637626705776, 3.8897828701062678]
+	Function value:   133.06214263412548
+	Iterations:       11
+	Function calls:   38
+	Gradient calls:   12
+	Hessian calls:    11
+	Warning:          None
+
+k: 1        xk: [    8351.688743,    -1.468287391,     4.121863763,      3.88978287]    fk: 133.062142634       
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [    8351.688743,    -1.468287391,     4.121863763,      3.88978287]    fk: 133.062142634       
+
+	Parameter values: [8351.6892332647476, -1.4682862539673425, 4.1218634456622398, 3.8897828563563031]
+	Function value:   133.06214263362696
+	Iterations:       1
+	Function calls:   3
+	Gradient calls:   2
+	Hessian calls:    1
+	Warning:          None
+
+k: 2        xk: [    8351.689233,    -1.468286254,     4.121863446,     3.889782856]    fk: 133.062142634       
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [    8351.689233,    -1.468286254,     4.121863446,     3.889782856]    fk: 133.062142634       
+
+	Parameter values: [8351.6892332648222, -1.4682862539671604, 4.1218634456621794, 3.8897828563562946]
+	Function value:   133.06214263362693
+	Iterations:       1
+	Function calls:   6
+	Gradient calls:   2
+	Hessian calls:    1
+	Warning:          None
+
+k: 3        xk: [    8351.689233,    -1.468286254,     4.121863446,     3.889782856]    fk: 133.062142634       
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [    8351.689233,    -1.468286254,     4.121863446,     3.889782856]    fk: 133.062142634       
+
+	Parameter values: [8351.6892332649531, -1.468286253966842, 4.1218634456620729, 3.8897828563562795]
+	Function value:   133.06214263362691
+	Iterations:       1
+	Function calls:   5
+	Gradient calls:   2
+	Hessian calls:    1
+	Warning:          None
+
+k: 4        xk: [    8351.689233,    -1.468286254,     4.121863446,     3.889782856]    fk: 133.062142634       
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [    8351.689233,    -1.468286254,     4.121863446,     3.889782856]    fk: 133.062142634       
+
+	Parameter values: [8351.6892332649786, -1.4682862539667823, 4.1218634456620533, 3.8897828563562769]
+	Function value:   133.06214263362691
+	Iterations:       1
+	Function calls:   7
+	Gradient calls:   2
+	Hessian calls:    1
+	Warning:          None
+
+
+Parameter values: [8351.6892332649786, -1.4682862539667823, 4.1218634456620533, 3.8897828563562769]
+Function value:   133.06214263362691
+Iterations:       15
+Function calls:   59
+Gradient calls:   20
+Hessian calls:    15
+Warning:          None
+
+Storing the optimisation results, the optimised chi-squared value is lower than the current value (133.062142634 < None).
+
+relax> structure.create_diff_tensor_pdb(scale=1.8e-06, file='oblate.pdb', dir=None, force=True)
+Calculating the centre of mass.
+    Total mass:      M = 300.2928
+    Centre of mass:  R = array([ -6.713048065086895e-06,   0.000000000000000e+00,
+         0.000000000000000e+00])
+
+Generating the geometric object.
+    Creating the uniform vector distribution.
+
+Generating the unique axis of the diffusion tensor.
+    Scaling factor:                      1.8e-06
+    Dpar vector (scaled + shifted to origin): array([-11.141919695754662, -10.342165149709093,  10.190199469624336])
+    Creating the MC simulation vectors.
+
+Generating the PDB file.
+Opening the file 'oblate.pdb' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+relax> pipe.create(pipe_name='prolate', pipe_type='mf', bundle=None)
+
+relax> sequence.read(file='NOE.500.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None)
+Opening the file 'NOE.500.out' for reading.
+# mol_name    res_num    res_name    spin_num    spin_name    
+None          1          None        None        None         
+None          2          None        None        None         
+None          3          None        None        None         
+None          4          None        None        None         
+None          5          None        None        None         
+None          6          None        None        None         
+None          7          None        None        None         
+None          8          None        None        None         
+None          9          None        None        None         
+None          10         None        None        None         
+None          11         None        None        None         
+None          12         None        None        None         
+None          13         None        None        None         
+None          14         None        None        None         
+None          15         None        None        None         
+None          16         None        None        None         
+None          17         None        None        None         
+None          18         None        None        None         
+None          19         None        None        None         
+None          20         None        None        None         
+
+relax> structure.read_pdb(file='uniform.pdb', dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False)
+
+Internal relax PDB parser.
+Opening the file 'uniform.pdb' for reading.
+Adding molecule 'uniform_mol1' to model None (from the original molecule number 1 of model None)
+
+relax> spin.name(name='N', spin_id=None, force=False)
+
+relax> relax_data.read(ri_id='R1_500', ri_type='R1', frq=500000000.0, file='R1.500.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R1.500.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 500.0 MHz R1 relaxation data with the ID 'R1_500' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error              
+:1@N         2.07306584521    0.103653292261     
+:2@N         2.19654449699    0.10982722485      
+:3@N         1.75511110518    0.0877555552588    
+:4@N         2.07306584521    0.103653292261     
+:5@N         2.07306584521    0.103653292261     
+:6@N         2.33596554656    0.116798277328     
+:7@N         2.10929009809    0.105464504905     
+:8@N         2.07306584521    0.103653292261     
+:9@N         2.07306584521    0.103653292261     
+:10@N        1.65669417941    0.0828347089705    
+:11@N        1.96372478036    0.0981862390178    
+:12@N        2.07306584521    0.103653292261     
+:13@N        2.07306584521    0.103653292261     
+:14@N        2.03110780824    0.101555390412     
+:15@N        2.41045173028    0.120522586514     
+:16@N        2.07306584521    0.103653292261     
+:17@N        2.07306584521    0.103653292261     
+:18@N        1.98800792953    0.0994003964766    
+:19@N        1.96977931183    0.0984889655916    
+:20@N        2.07306584521    0.103653292261     
+
+relax> relax_data.read(ri_id='R2_500', ri_type='R2', frq=500000000.0, file='R2.500.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R2.500.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 500.0 MHz R2 relaxation data with the ID 'R2_500' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error             
+:1@N         12.4259860265    0.621299301324    
+:2@N         11.439485437     0.571974271851    
+:3@N         14.6726951781    0.733634758907    
+:4@N         12.4259860265    0.621299301324    
+:5@N         12.4259860265    0.621299301324    
+:6@N         10.5670541074    0.528352705371    
+:7@N         12.3105765976    0.615528829881    
+:8@N         12.4259860265    0.621299301324    
+:9@N         12.4259860265    0.621299301324    
+:10@N        15.5053239926    0.775266199629    
+:11@N        13.1658659835    0.658293299177    
+:12@N        12.4259860265    0.621299301324    
+:13@N        12.4259860265    0.621299301324    
+:14@N        12.6490672753    0.632453363765    
+:15@N        10.2097452151    0.510487260754    
+:16@N        12.4259860265    0.621299301324    
+:17@N        12.4259860265    0.621299301324    
+:18@N        13.1265302314    0.656326511571    
+:19@N        12.9279106186    0.646395530931    
+:20@N        12.4259860265    0.621299301324    
+
+relax> relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500000000.0, file='NOE.500.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'NOE.500.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 500.0 MHz NOE relaxation data with the ID 'NOE_500' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error    
+:1@N         0.798354347663    0.04     
+:2@N         0.796372370705    0.04     
+:3@N         0.808577825977    0.04     
+:4@N         0.798354347663    0.04     
+:5@N         0.798354347663    0.04     
+:6@N         0.791938068405    0.04     
+:7@N         0.796168373263    0.04     
+:8@N         0.798354347663    0.04     
+:9@N         0.798354347663    0.04     
+:10@N        0.811079800091    0.04     
+:11@N        0.80156995399     0.04     
+:12@N        0.798354347663    0.04     
+:13@N        0.798354347663    0.04     
+:14@N        0.800204913071    0.04     
+:15@N        0.788782904295    0.04     
+:16@N        0.798354347663    0.04     
+:17@N        0.798354347663    0.04     
+:18@N        0.799447765483    0.04     
+:19@N        0.803991975139    0.04     
+:20@N        0.798354347663    0.04     
+
+relax> relax_data.read(ri_id='R1_600', ri_type='R1', frq=600000000.0, file='R1.600.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R1.600.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 600.0 MHz R1 relaxation data with the ID 'R1_600' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error              
+:1@N         1.63462420768    0.0817312103838    
+:2@N         1.73709225817    0.0868546129084    
+:3@N         1.36410697884    0.0682053489422    
+:4@N         1.63462420768    0.0817312103838    
+:5@N         1.63462420768    0.0817312103838    
+:6@N         1.8583801954     0.0929190097698    
+:7@N         1.66800717713    0.0834003588566    
+:8@N         1.63462420768    0.0817312103838    
+:9@N         1.63462420768    0.0817312103838    
+:10@N        1.28280184328    0.0641400921642    
+:11@N        1.54140668214    0.0770703341071    
+:12@N        1.63462420768    0.0817312103838    
+:13@N        1.63462420768    0.0817312103838    
+:14@N        1.59753810177    0.0798769050887    
+:15@N        1.92555273018    0.096277636509     
+:16@N        1.63462420768    0.0817312103838    
+:17@N        1.63462420768    0.0817312103838    
+:18@N        1.56478874003    0.0782394370017    
+:19@N        1.54154970272    0.0770774851359    
+:20@N        1.63462420768    0.0817312103838    
+
+relax> relax_data.read(ri_id='R2_600', ri_type='R2', frq=600000000.0, file='R2.600.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R2.600.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 600.0 MHz R2 relaxation data with the ID 'R2_600' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error             
+:1@N         13.222349429     0.661117471449    
+:2@N         12.1306409034    0.606532045171    
+:3@N         15.710388824     0.7855194412      
+:4@N         13.222349429     0.661117471449    
+:5@N         13.222349429     0.661117471449    
+:6@N         11.1637994667    0.558189973337    
+:7@N         13.0933076385    0.654665381924    
+:8@N         13.222349429     0.661117471449    
+:9@N         13.222349429     0.661117471449    
+:10@N        16.6312130802    0.831560654009    
+:11@N        14.0421868344    0.702109341719    
+:12@N        13.222349429     0.661117471449    
+:13@N        13.222349429     0.661117471449    
+:14@N        13.4700143928    0.673500719641    
+:15@N        10.7669684986    0.53834842493     
+:16@N        13.222349429     0.661117471449    
+:17@N        13.222349429     0.661117471449    
+:18@N        13.997611759     0.699880587951    
+:19@N        13.7796912638    0.688984563189    
+:20@N        13.222349429     0.661117471449    
+
+relax> relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600000000.0, file='NOE.600.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'NOE.600.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 600.0 MHz NOE relaxation data with the ID 'NOE_600' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error    
+:1@N         0.82228598209     0.04     
+:2@N         0.821058993186    0.04     
+:3@N         0.82888991271     0.04     
+:4@N         0.82228598209     0.04     
+:5@N         0.82228598209     0.04     
+:6@N         0.818228211652    0.04     
+:7@N         0.820868712991    0.04     
+:8@N         0.82228598209     0.04     
+:9@N         0.82228598209     0.04     
+:10@N        0.830503217838    0.04     
+:11@N        0.824339063981    0.04     
+:12@N        0.82228598209     0.04     
+:13@N        0.82228598209     0.04     
+:14@N        0.823483988757    0.04     
+:15@N        0.816216502214    0.04     
+:16@N        0.82228598209     0.04     
+:17@N        0.82228598209     0.04     
+:18@N        0.822940689722    0.04     
+:19@N        0.825976537857    0.04     
+:20@N        0.82228598209     0.04     
+
+relax> relax_data.read(ri_id='R1_700', ri_type='R1', frq=700000000.0, file='R1.700.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R1.700.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 700.0 MHz R1 relaxation data with the ID 'R1_700' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error              
+:1@N         1.35167967076    0.0675839835378    
+:2@N         1.43901429681    0.0719507148403    
+:3@N         1.11748670008    0.055874335004     
+:4@N         1.35167967076    0.0675839835378    
+:5@N         1.35167967076    0.0675839835378    
+:6@N         1.54545551589    0.0772727757945    
+:7@N         1.38193185308    0.0690965926542    
+:8@N         1.35167967076    0.0675839835378    
+:9@N         1.35167967076    0.0675839835378    
+:10@N        1.04837419117    0.0524187095587    
+:11@N        1.27089518303    0.0635447591514    
+:12@N        1.35167967076    0.0675839835378    
+:13@N        1.35167967076    0.0675839835378    
+:14@N        1.31884084976    0.0659420424879    
+:15@N        1.60563866648    0.0802819333241    
+:16@N        1.35167967076    0.0675839835378    
+:17@N        1.35167967076    0.0675839835378    
+:18@N        1.2925884408     0.06462942204      
+:19@N        1.26833501856    0.063416750928     
+:20@N        1.35167967076    0.0675839835378    
+
+relax> relax_data.read(ri_id='R2_700', ri_type='R2', frq=700000000.0, file='R2.700.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R2.700.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 700.0 MHz R2 relaxation data with the ID 'R2_700' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error             
+:1@N         14.2845121412    0.714225607058    
+:2@N         13.0735531086    0.65367765543     
+:3@N         17.0472252614    0.852361263069    
+:4@N         14.2845121412    0.714225607058    
+:5@N         14.2845121412    0.714225607058    
+:6@N         11.9987418225    0.599937091126    
+:7@N         14.1395693649    0.706978468244    
+:8@N         14.2845121412    0.714225607058    
+:9@N         14.2845121412    0.714225607058    
+:10@N        18.0680786599    0.903403932994    
+:11@N        15.1953036252    0.75976518126     
+:12@N        14.2845121412    0.714225607058    
+:13@N        14.2845121412    0.714225607058    
+:14@N        14.5603763569    0.728018817847    
+:15@N        11.5562170295    0.577810851477    
+:16@N        14.2845121412    0.714225607058    
+:17@N        14.2845121412    0.714225607058    
+:18@N        15.1442977589    0.757214887943    
+:19@N        14.9059190498    0.745295952491    
+:20@N        14.2845121412    0.714225607058    
+
+relax> relax_data.read(ri_id='NOE_700', ri_type='NOE', frq=700000000.0, file='NOE.700.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'NOE.700.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 700.0 MHz NOE relaxation data with the ID 'NOE_700' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error    
+:1@N         0.842037734102    0.04     
+:2@N         0.841230794371    0.04     
+:3@N         0.846502068227    0.04     
+:4@N         0.842037734102    0.04     
+:5@N         0.842037734102    0.04     
+:6@N         0.839331444951    0.04     
+:7@N         0.841077772996    0.04     
+:8@N         0.842037734102    0.04     
+:9@N         0.842037734102    0.04     
+:10@N        0.847591450295    0.04     
+:11@N        0.843415006077    0.04     
+:12@N        0.842037734102    0.04     
+:13@N        0.842037734102    0.04     
+:14@N        0.842848573275    0.04     
+:15@N        0.837983204894    0.04     
+:16@N        0.842037734102    0.04     
+:17@N        0.842037734102    0.04     
+:18@N        0.842457967421    0.04     
+:19@N        0.844553700124    0.04     
+:20@N        0.842037734102    0.04     
+
+relax> relax_data.read(ri_id='R1_800', ri_type='R1', frq=800000000.0, file='R1.800.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R1.800.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 800.0 MHz R1 relaxation data with the ID 'R1_800' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error              
+:1@N         1.15976097158     0.0579880485791    
+:2@N         1.2361649084      0.0618082454198    
+:3@N         0.952735861563    0.0476367930781    
+:4@N         1.15976097158     0.0579880485791    
+:5@N         1.15976097158     0.0579880485791    
+:6@N         1.33110512525     0.0665552562627    
+:7@N         1.18728686143     0.0593643430715    
+:8@N         1.15976097158     0.0579880485791    
+:9@N         1.15976097158     0.0579880485791    
+:10@N        0.892377406001    0.0446188703001    
+:11@N        1.08830556271     0.0544152781353    
+:12@N        1.15976097158     0.0579880485791    
+:13@N        1.15976097158     0.0579880485791    
+:14@N        1.13030714196     0.0565153570979    
+:15@N        1.38549310827     0.0692746554136    
+:16@N        1.15976097158     0.0579880485791    
+:17@N        1.15976097158     0.0579880485791    
+:18@N        1.1083289214      0.05541644607      
+:19@N        1.08447165215     0.0542235826074    
+:20@N        1.15976097158     0.0579880485791    
+
+relax> relax_data.read(ri_id='R2_800', ri_type='R2', frq=800000000.0, file='R2.800.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R2.800.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 800.0 MHz R2 relaxation data with the ID 'R2_800' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error             
+:1@N         15.5791516745    0.778957583726    
+:2@N         14.2339865277    0.711699326385    
+:3@N         18.6510726943    0.932553634715    
+:4@N         15.5791516745    0.778957583726    
+:5@N         15.5791516745    0.778957583726    
+:6@N         13.0375752384    0.651878761919    
+:7@N         15.4163556069    0.770817780344    
+:8@N         15.5791516745    0.778957583726    
+:9@N         15.5791516745    0.778957583726    
+:10@N        19.7845888177    0.989229440887    
+:11@N        16.5922605028    0.829613025139    
+:12@N        15.5791516745    0.778957583726    
+:13@N        15.5791516745    0.778957583726    
+:14@N        15.8867433874    0.794337169371    
+:15@N        12.5435603053    0.627178015266    
+:16@N        15.5791516745    0.778957583726    
+:17@N        15.5791516745    0.778957583726    
+:18@N        16.5340124617    0.826700623085    
+:19@N        16.2727576208    0.813637881039    
+:20@N        15.5791516745    0.778957583726    
+
+relax> relax_data.read(ri_id='NOE_800', ri_type='NOE', frq=800000000.0, file='NOE.800.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'NOE.800.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 800.0 MHz NOE relaxation data with the ID 'NOE_800' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error    
+:1@N         0.859008689407    0.04     
+:2@N         0.858454563738    0.04     
+:3@N         0.862132222326    0.04     
+:4@N         0.859008689407    0.04     
+:5@N         0.859008689407    0.04     
+:6@N         0.857132333336    0.04     
+:7@N         0.858336277043    0.04     
+:8@N         0.859008689407    0.04     
+:9@N         0.859008689407    0.04     
+:10@N        0.86289384749     0.04     
+:11@N        0.859967228443    0.04     
+:12@N        0.859008689407    0.04     
+:13@N        0.859008689407    0.04     
+:14@N        0.859576412343    0.04     
+:15@N        0.856194627435    0.04     
+:16@N        0.859008689407    0.04     
+:17@N        0.859008689407    0.04     
+:18@N        0.859292154288    0.04     
+:19@N        0.86077896261     0.04     
+:20@N        0.859008689407    0.04     
+
+relax> diffusion_tensor.init(params=(7.142857142857143e-09, 10000000.0, 2.0, 2.641592653589793), time_scale=1.0, d_scale=1.0, angle_units='rad', param_types=0, spheroid_type=None, fixed=False)
+
+relax> sequence.attach_protons()
+
+relax> spin.element(element='N', spin_id='@N', force=False)
+
+relax> structure.get_pos(spin_id='@N', ave_pos=True)
+# Spin_ID    Position                  
+:1@N         array([ 0.,  0.,  0.])    
+:2@N         array([ 0.,  0.,  0.])    
+:3@N         array([ 0.,  0.,  0.])    
+:4@N         array([ 0.,  0.,  0.])    
+:5@N         array([ 0.,  0.,  0.])    
+:6@N         array([ 0.,  0.,  0.])    
+:7@N         array([ 0.,  0.,  0.])    
+:8@N         array([ 0.,  0.,  0.])    
+:9@N         array([ 0.,  0.,  0.])    
+:10@N        array([ 0.,  0.,  0.])    
+:11@N        array([ 0.,  0.,  0.])    
+:12@N        array([ 0.,  0.,  0.])    
+:13@N        array([ 0.,  0.,  0.])    
+:14@N        array([ 0.,  0.,  0.])    
+:15@N        array([ 0.,  0.,  0.])    
+:16@N        array([ 0.,  0.,  0.])    
+:17@N        array([ 0.,  0.,  0.])    
+:18@N        array([ 0.,  0.,  0.])    
+:19@N        array([ 0.,  0.,  0.])    
+:20@N        array([ 0.,  0.,  0.])    
+
+relax> structure.get_pos(spin_id='@H', ave_pos=True)
+# Spin_ID    Position                           
+:1@H         array([ 0.  ,  0.  , -1.02])       
+:2@H         array([ 0.883,  0.   , -0.51 ])    
+:3@H         array([ 0.883,  0.   ,  0.51 ])    
+:4@H         array([ 0.  ,  0.  ,  1.02])       
+:5@H         array([ 0.  ,  0.  , -1.02])       
+:6@H         array([ 0.273,  0.84 , -0.51 ])    
+:7@H         array([ 0.273,  0.84 ,  0.51 ])    
+:8@H         array([ 0.  ,  0.  ,  1.02])       
+:9@H         array([ 0.  ,  0.  , -1.02])       
+:10@H        array([-0.715,  0.519, -0.51 ])    
+:11@H        array([-0.715,  0.519,  0.51 ])    
+:12@H        array([ 0.  ,  0.  ,  1.02])       
+:13@H        array([ 0.  ,  0.  , -1.02])       
+:14@H        array([-0.715, -0.519, -0.51 ])    
+:15@H        array([-0.715, -0.519,  0.51 ])    
+:16@H        array([ 0.  ,  0.  ,  1.02])       
+:17@H        array([ 0.  ,  0.  , -1.02])       
+:18@H        array([ 0.273, -0.84 , -0.51 ])    
+:19@H        array([ 0.273, -0.84 ,  0.51 ])    
+:20@H        array([ 0.  ,  0.  ,  1.02])       
+
+relax> interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True, pipe=None)
+Interatomic interactions are now defined for the following spins:
+
+# Spin_ID_1    Spin_ID_2    
+':1@N'         ':1@H'       
+':2@N'         ':2@H'       
+':3@N'         ':3@H'       
+':4@N'         ':4@H'       
+':5@N'         ':5@H'       
+':6@N'         ':6@H'       
+':7@N'         ':7@H'       
+':8@N'         ':8@H'       
+':9@N'         ':9@H'       
+':10@N'        ':10@H'      
+':11@N'        ':11@H'      
+':12@N'        ':12@H'      
+':13@N'        ':13@H'      
+':14@N'        ':14@H'      
+':15@N'        ':15@H'      
+':16@N'        ':16@H'      
+':17@N'        ':17@H'      
+':18@N'        ':18@H'      
+':19@N'        ':19@H'      
+':20@N'        ':20@H'      
+
+relax> interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.0200000000000001e-10, unit='meter')
+The following averaged distances have been set:
+
+# Spin_ID_1    Spin_ID_2    Ave_distance(meters)      
+':1@N'         ':1@H'       1.0200000000000001e-10    
+':2@N'         ':2@H'       1.0200000000000001e-10    
+':3@N'         ':3@H'       1.0200000000000001e-10    
+':4@N'         ':4@H'       1.0200000000000001e-10    
+':5@N'         ':5@H'       1.0200000000000001e-10    
+':6@N'         ':6@H'       1.0200000000000001e-10    
+':7@N'         ':7@H'       1.0200000000000001e-10    
+':8@N'         ':8@H'       1.0200000000000001e-10    
+':9@N'         ':9@H'       1.0200000000000001e-10    
+':10@N'        ':10@H'      1.0200000000000001e-10    
+':11@N'        ':11@H'      1.0200000000000001e-10    
+':12@N'        ':12@H'      1.0200000000000001e-10    
+':13@N'        ':13@H'      1.0200000000000001e-10    
+':14@N'        ':14@H'      1.0200000000000001e-10    
+':15@N'        ':15@H'      1.0200000000000001e-10    
+':16@N'        ':16@H'      1.0200000000000001e-10    
+':17@N'        ':17@H'      1.0200000000000001e-10    
+':18@N'        ':18@H'      1.0200000000000001e-10    
+':19@N'        ':19@H'      1.0200000000000001e-10    
+':20@N'        ':20@H'      1.0200000000000001e-10    
+
+relax> interatom.unit_vectors(ave=True)
+Averaging all vectors.
+Calculated 1 N-H unit vector between the spins ':1@N' and ':1@H'.
+Calculated 1 N-H unit vector between the spins ':2@N' and ':2@H'.
+Calculated 1 N-H unit vector between the spins ':3@N' and ':3@H'.
+Calculated 1 N-H unit vector between the spins ':4@N' and ':4@H'.
+Calculated 1 N-H unit vector between the spins ':5@N' and ':5@H'.
+Calculated 1 N-H unit vector between the spins ':6@N' and ':6@H'.
+Calculated 1 N-H unit vector between the spins ':7@N' and ':7@H'.
+Calculated 1 N-H unit vector between the spins ':8@N' and ':8@H'.
+Calculated 1 N-H unit vector between the spins ':9@N' and ':9@H'.
+Calculated 1 N-H unit vector between the spins ':10@N' and ':10@H'.
+Calculated 1 N-H unit vector between the spins ':11@N' and ':11@H'.
+Calculated 1 N-H unit vector between the spins ':12@N' and ':12@H'.
+Calculated 1 N-H unit vector between the spins ':13@N' and ':13@H'.
+Calculated 1 N-H unit vector between the spins ':14@N' and ':14@H'.
+Calculated 1 N-H unit vector between the spins ':15@N' and ':15@H'.
+Calculated 1 N-H unit vector between the spins ':16@N' and ':16@H'.
+Calculated 1 N-H unit vector between the spins ':17@N' and ':17@H'.
+Calculated 1 N-H unit vector between the spins ':18@N' and ':18@H'.
+Calculated 1 N-H unit vector between the spins ':19@N' and ':19@H'.
+Calculated 1 N-H unit vector between the spins ':20@N' and ':20@H'.
+
+relax> value.set(val=-0.00017199999999999998, param='csa', index=0, spin_id='@N', error=False)
+
+relax> spin.isotope(isotope='15N', spin_id='@N', force=False)
+
+relax> model_free.select_model(model='m0', spin_id=None)
+
+relax> minimise.execute(min_algor='newton', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+
+Over-fit spin deselection:
+RelaxWarning: The spin ':1@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':2@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':3@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':4@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':5@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':6@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':7@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':8@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':9@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':10@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':11@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':12@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':13@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':14@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':15@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':16@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':17@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':18@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':19@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':20@H' has been deselected because of an absence of relaxation mechanisms.
+The diffusion tensor parameters together with the model-free parameters for all spins will be used.
+
+
+Method of Multipliers
+~~~~~~~~~~~~~~~~~~~~~
+k: 0        xk: [    7142.857143,               1,               2,     2.641592654]    fk: 1864.4476391        
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [    7142.857143,               1,               2,     2.641592654]    fk: 1864.4476391        
+
+	Parameter values: [8498.265475120932, 1.4018448684823288, 2.1013395879343904, 2.7275326637459578]
+	Function value:   166.44742650397561
+	Iterations:       8
+	Function calls:   31
+	Gradient calls:   9
+	Hessian calls:    8
+	Warning:          None
+
+k: 1        xk: [    8498.265475,     1.401844868,     2.101339588,     2.727532664]    fk: 166.447426504       
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [    8498.265475,     1.401844868,     2.101339588,     2.727532664]    fk: 166.447426504       
+
+	Parameter values: [8498.2620767483768, 1.4018506158987962, 2.1013425642965067, 2.7275340748112091]
+	Function value:   166.44742648942361
+	Iterations:       1
+	Function calls:   3
+	Gradient calls:   2
+	Hessian calls:    1
+	Warning:          None
+
+k: 2        xk: [    8498.262077,     1.401850616,     2.101342564,     2.727534075]    fk: 166.447426489       
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [    8498.262077,     1.401850616,     2.101342564,     2.727534075]    fk: 166.447426489       
+
+	Parameter values: [8498.2620767515546, 1.4018506158900188, 2.1013425642850567, 2.7275340748063091]
+	Function value:   166.44742648942349
+	Iterations:       1
+	Function calls:   4
+	Gradient calls:   2
+	Hessian calls:    1
+	Warning:          None
+
+k: 3        xk: [    8498.262077,     1.401850616,     2.101342564,     2.727534075]    fk: 166.447426489       
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [    8498.262077,     1.401850616,     2.101342564,     2.727534075]    fk: 166.447426489       
+
+	Parameter values: [8498.2620767516037, 1.4018506158898814, 2.1013425642848778, 2.7275340748062327]
+	Function value:   166.44742648942341
+	Iterations:       2
+	Function calls:   27
+	Gradient calls:   3
+	Hessian calls:    2
+	Warning:          None
+
+k: 4        xk: [    8498.262077,     1.401850616,     2.101342564,     2.727534075]    fk: 166.447426489       
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [    8498.262077,     1.401850616,     2.101342564,     2.727534075]    fk: 166.447426489       
+
+	Parameter values: [8498.2620767516037, 1.4018506158898802, 2.1013425642848764, 2.7275340748062322]
+	Function value:   166.44742648942341
+	Iterations:       1
+	Function calls:   16
+	Gradient calls:   2
+	Hessian calls:    1
+	Warning:          None
+
+
+Parameter values: [8498.2620767516037, 1.4018506158898802, 2.1013425642848764, 2.7275340748062322]
+Function value:   166.44742648942341
+Iterations:       13
+Function calls:   81
+Gradient calls:   18
+Hessian calls:    13
+Warning:          None
+
+Storing the optimisation results, the optimised chi-squared value is lower than the current value (166.447426489 < None).
+
+relax> structure.create_diff_tensor_pdb(scale=1.8e-06, file='prolate.pdb', dir=None, force=True)
+Calculating the centre of mass.
+    Total mass:      M = 300.2928
+    Centre of mass:  R = array([ -6.713048065086895e-06,   0.000000000000000e+00,
+         0.000000000000000e+00])
+
+Generating the geometric object.
+    Creating the uniform vector distribution.
+
+Generating the unique axis of the diffusion tensor.
+    Scaling factor:                      1.8e-06
+    Dpar vector (scaled + shifted to origin): array([-41.159000281798754,  18.087937916262625, -26.374750515679104])
+    Creating the MC simulation vectors.
+
+Generating the PDB file.
+Opening the file 'prolate.pdb' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+relax> pipe.create(pipe_name='ellipsoid', pipe_type='mf', bundle=None)
+
+relax> sequence.read(file='NOE.500.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None)
+Opening the file 'NOE.500.out' for reading.
+# mol_name    res_num    res_name    spin_num    spin_name    
+None          1          None        None        None         
+None          2          None        None        None         
+None          3          None        None        None         
+None          4          None        None        None         
+None          5          None        None        None         
+None          6          None        None        None         
+None          7          None        None        None         
+None          8          None        None        None         
+None          9          None        None        None         
+None          10         None        None        None         
+None          11         None        None        None         
+None          12         None        None        None         
+None          13         None        None        None         
+None          14         None        None        None         
+None          15         None        None        None         
+None          16         None        None        None         
+None          17         None        None        None         
+None          18         None        None        None         
+None          19         None        None        None         
+None          20         None        None        None         
+
+relax> structure.read_pdb(file='uniform.pdb', dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False)
+
+Internal relax PDB parser.
+Opening the file 'uniform.pdb' for reading.
+Adding molecule 'uniform_mol1' to model None (from the original molecule number 1 of model None)
+
+relax> spin.name(name='N', spin_id=None, force=False)
+
+relax> relax_data.read(ri_id='R1_500', ri_type='R1', frq=500000000.0, file='R1.500.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R1.500.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 500.0 MHz R1 relaxation data with the ID 'R1_500' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error              
+:1@N         2.07306584521    0.103653292261     
+:2@N         2.19654449699    0.10982722485      
+:3@N         1.75511110518    0.0877555552588    
+:4@N         2.07306584521    0.103653292261     
+:5@N         2.07306584521    0.103653292261     
+:6@N         2.33596554656    0.116798277328     
+:7@N         2.10929009809    0.105464504905     
+:8@N         2.07306584521    0.103653292261     
+:9@N         2.07306584521    0.103653292261     
+:10@N        1.65669417941    0.0828347089705    
+:11@N        1.96372478036    0.0981862390178    
+:12@N        2.07306584521    0.103653292261     
+:13@N        2.07306584521    0.103653292261     
+:14@N        2.03110780824    0.101555390412     
+:15@N        2.41045173028    0.120522586514     
+:16@N        2.07306584521    0.103653292261     
+:17@N        2.07306584521    0.103653292261     
+:18@N        1.98800792953    0.0994003964766    
+:19@N        1.96977931183    0.0984889655916    
+:20@N        2.07306584521    0.103653292261     
+
+relax> relax_data.read(ri_id='R2_500', ri_type='R2', frq=500000000.0, file='R2.500.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R2.500.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 500.0 MHz R2 relaxation data with the ID 'R2_500' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error             
+:1@N         12.4259860265    0.621299301324    
+:2@N         11.439485437     0.571974271851    
+:3@N         14.6726951781    0.733634758907    
+:4@N         12.4259860265    0.621299301324    
+:5@N         12.4259860265    0.621299301324    
+:6@N         10.5670541074    0.528352705371    
+:7@N         12.3105765976    0.615528829881    
+:8@N         12.4259860265    0.621299301324    
+:9@N         12.4259860265    0.621299301324    
+:10@N        15.5053239926    0.775266199629    
+:11@N        13.1658659835    0.658293299177    
+:12@N        12.4259860265    0.621299301324    
+:13@N        12.4259860265    0.621299301324    
+:14@N        12.6490672753    0.632453363765    
+:15@N        10.2097452151    0.510487260754    
+:16@N        12.4259860265    0.621299301324    
+:17@N        12.4259860265    0.621299301324    
+:18@N        13.1265302314    0.656326511571    
+:19@N        12.9279106186    0.646395530931    
+:20@N        12.4259860265    0.621299301324    
+
+relax> relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500000000.0, file='NOE.500.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'NOE.500.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 500.0 MHz NOE relaxation data with the ID 'NOE_500' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error    
+:1@N         0.798354347663    0.04     
+:2@N         0.796372370705    0.04     
+:3@N         0.808577825977    0.04     
+:4@N         0.798354347663    0.04     
+:5@N         0.798354347663    0.04     
+:6@N         0.791938068405    0.04     
+:7@N         0.796168373263    0.04     
+:8@N         0.798354347663    0.04     
+:9@N         0.798354347663    0.04     
+:10@N        0.811079800091    0.04     
+:11@N        0.80156995399     0.04     
+:12@N        0.798354347663    0.04     
+:13@N        0.798354347663    0.04     
+:14@N        0.800204913071    0.04     
+:15@N        0.788782904295    0.04     
+:16@N        0.798354347663    0.04     
+:17@N        0.798354347663    0.04     
+:18@N        0.799447765483    0.04     
+:19@N        0.803991975139    0.04     
+:20@N        0.798354347663    0.04     
+
+relax> relax_data.read(ri_id='R1_600', ri_type='R1', frq=600000000.0, file='R1.600.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R1.600.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 600.0 MHz R1 relaxation data with the ID 'R1_600' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error              
+:1@N         1.63462420768    0.0817312103838    
+:2@N         1.73709225817    0.0868546129084    
+:3@N         1.36410697884    0.0682053489422    
+:4@N         1.63462420768    0.0817312103838    
+:5@N         1.63462420768    0.0817312103838    
+:6@N         1.8583801954     0.0929190097698    
+:7@N         1.66800717713    0.0834003588566    
+:8@N         1.63462420768    0.0817312103838    
+:9@N         1.63462420768    0.0817312103838    
+:10@N        1.28280184328    0.0641400921642    
+:11@N        1.54140668214    0.0770703341071    
+:12@N        1.63462420768    0.0817312103838    
+:13@N        1.63462420768    0.0817312103838    
+:14@N        1.59753810177    0.0798769050887    
+:15@N        1.92555273018    0.096277636509     
+:16@N        1.63462420768    0.0817312103838    
+:17@N        1.63462420768    0.0817312103838    
+:18@N        1.56478874003    0.0782394370017    
+:19@N        1.54154970272    0.0770774851359    
+:20@N        1.63462420768    0.0817312103838    
+
+relax> relax_data.read(ri_id='R2_600', ri_type='R2', frq=600000000.0, file='R2.600.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R2.600.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 600.0 MHz R2 relaxation data with the ID 'R2_600' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error             
+:1@N         13.222349429     0.661117471449    
+:2@N         12.1306409034    0.606532045171    
+:3@N         15.710388824     0.7855194412      
+:4@N         13.222349429     0.661117471449    
+:5@N         13.222349429     0.661117471449    
+:6@N         11.1637994667    0.558189973337    
+:7@N         13.0933076385    0.654665381924    
+:8@N         13.222349429     0.661117471449    
+:9@N         13.222349429     0.661117471449    
+:10@N        16.6312130802    0.831560654009    
+:11@N        14.0421868344    0.702109341719    
+:12@N        13.222349429     0.661117471449    
+:13@N        13.222349429     0.661117471449    
+:14@N        13.4700143928    0.673500719641    
+:15@N        10.7669684986    0.53834842493     
+:16@N        13.222349429     0.661117471449    
+:17@N        13.222349429     0.661117471449    
+:18@N        13.997611759     0.699880587951    
+:19@N        13.7796912638    0.688984563189    
+:20@N        13.222349429     0.661117471449    
+
+relax> relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600000000.0, file='NOE.600.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'NOE.600.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 600.0 MHz NOE relaxation data with the ID 'NOE_600' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error    
+:1@N         0.82228598209     0.04     
+:2@N         0.821058993186    0.04     
+:3@N         0.82888991271     0.04     
+:4@N         0.82228598209     0.04     
+:5@N         0.82228598209     0.04     
+:6@N         0.818228211652    0.04     
+:7@N         0.820868712991    0.04     
+:8@N         0.82228598209     0.04     
+:9@N         0.82228598209     0.04     
+:10@N        0.830503217838    0.04     
+:11@N        0.824339063981    0.04     
+:12@N        0.82228598209     0.04     
+:13@N        0.82228598209     0.04     
+:14@N        0.823483988757    0.04     
+:15@N        0.816216502214    0.04     
+:16@N        0.82228598209     0.04     
+:17@N        0.82228598209     0.04     
+:18@N        0.822940689722    0.04     
+:19@N        0.825976537857    0.04     
+:20@N        0.82228598209     0.04     
+
+relax> relax_data.read(ri_id='R1_700', ri_type='R1', frq=700000000.0, file='R1.700.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R1.700.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 700.0 MHz R1 relaxation data with the ID 'R1_700' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error              
+:1@N         1.35167967076    0.0675839835378    
+:2@N         1.43901429681    0.0719507148403    
+:3@N         1.11748670008    0.055874335004     
+:4@N         1.35167967076    0.0675839835378    
+:5@N         1.35167967076    0.0675839835378    
+:6@N         1.54545551589    0.0772727757945    
+:7@N         1.38193185308    0.0690965926542    
+:8@N         1.35167967076    0.0675839835378    
+:9@N         1.35167967076    0.0675839835378    
+:10@N        1.04837419117    0.0524187095587    
+:11@N        1.27089518303    0.0635447591514    
+:12@N        1.35167967076    0.0675839835378    
+:13@N        1.35167967076    0.0675839835378    
+:14@N        1.31884084976    0.0659420424879    
+:15@N        1.60563866648    0.0802819333241    
+:16@N        1.35167967076    0.0675839835378    
+:17@N        1.35167967076    0.0675839835378    
+:18@N        1.2925884408     0.06462942204      
+:19@N        1.26833501856    0.063416750928     
+:20@N        1.35167967076    0.0675839835378    
+
+relax> relax_data.read(ri_id='R2_700', ri_type='R2', frq=700000000.0, file='R2.700.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R2.700.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 700.0 MHz R2 relaxation data with the ID 'R2_700' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error             
+:1@N         14.2845121412    0.714225607058    
+:2@N         13.0735531086    0.65367765543     
+:3@N         17.0472252614    0.852361263069    
+:4@N         14.2845121412    0.714225607058    
+:5@N         14.2845121412    0.714225607058    
+:6@N         11.9987418225    0.599937091126    
+:7@N         14.1395693649    0.706978468244    
+:8@N         14.2845121412    0.714225607058    
+:9@N         14.2845121412    0.714225607058    
+:10@N        18.0680786599    0.903403932994    
+:11@N        15.1953036252    0.75976518126     
+:12@N        14.2845121412    0.714225607058    
+:13@N        14.2845121412    0.714225607058    
+:14@N        14.5603763569    0.728018817847    
+:15@N        11.5562170295    0.577810851477    
+:16@N        14.2845121412    0.714225607058    
+:17@N        14.2845121412    0.714225607058    
+:18@N        15.1442977589    0.757214887943    
+:19@N        14.9059190498    0.745295952491    
+:20@N        14.2845121412    0.714225607058    
+
+relax> relax_data.read(ri_id='NOE_700', ri_type='NOE', frq=700000000.0, file='NOE.700.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'NOE.700.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 700.0 MHz NOE relaxation data with the ID 'NOE_700' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error    
+:1@N         0.842037734102    0.04     
+:2@N         0.841230794371    0.04     
+:3@N         0.846502068227    0.04     
+:4@N         0.842037734102    0.04     
+:5@N         0.842037734102    0.04     
+:6@N         0.839331444951    0.04     
+:7@N         0.841077772996    0.04     
+:8@N         0.842037734102    0.04     
+:9@N         0.842037734102    0.04     
+:10@N        0.847591450295    0.04     
+:11@N        0.843415006077    0.04     
+:12@N        0.842037734102    0.04     
+:13@N        0.842037734102    0.04     
+:14@N        0.842848573275    0.04     
+:15@N        0.837983204894    0.04     
+:16@N        0.842037734102    0.04     
+:17@N        0.842037734102    0.04     
+:18@N        0.842457967421    0.04     
+:19@N        0.844553700124    0.04     
+:20@N        0.842037734102    0.04     
+
+relax> relax_data.read(ri_id='R1_800', ri_type='R1', frq=800000000.0, file='R1.800.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R1.800.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 800.0 MHz R1 relaxation data with the ID 'R1_800' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error              
+:1@N         1.15976097158     0.0579880485791    
+:2@N         1.2361649084      0.0618082454198    
+:3@N         0.952735861563    0.0476367930781    
+:4@N         1.15976097158     0.0579880485791    
+:5@N         1.15976097158     0.0579880485791    
+:6@N         1.33110512525     0.0665552562627    
+:7@N         1.18728686143     0.0593643430715    
+:8@N         1.15976097158     0.0579880485791    
+:9@N         1.15976097158     0.0579880485791    
+:10@N        0.892377406001    0.0446188703001    
+:11@N        1.08830556271     0.0544152781353    
+:12@N        1.15976097158     0.0579880485791    
+:13@N        1.15976097158     0.0579880485791    
+:14@N        1.13030714196     0.0565153570979    
+:15@N        1.38549310827     0.0692746554136    
+:16@N        1.15976097158     0.0579880485791    
+:17@N        1.15976097158     0.0579880485791    
+:18@N        1.1083289214      0.05541644607      
+:19@N        1.08447165215     0.0542235826074    
+:20@N        1.15976097158     0.0579880485791    
+
+relax> relax_data.read(ri_id='R2_800', ri_type='R2', frq=800000000.0, file='R2.800.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'R2.800.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 800.0 MHz R2 relaxation data with the ID 'R2_800' has been loaded into the relax data store:
+
+# Spin_ID    Value            Error             
+:1@N         15.5791516745    0.778957583726    
+:2@N         14.2339865277    0.711699326385    
+:3@N         18.6510726943    0.932553634715    
+:4@N         15.5791516745    0.778957583726    
+:5@N         15.5791516745    0.778957583726    
+:6@N         13.0375752384    0.651878761919    
+:7@N         15.4163556069    0.770817780344    
+:8@N         15.5791516745    0.778957583726    
+:9@N         15.5791516745    0.778957583726    
+:10@N        19.7845888177    0.989229440887    
+:11@N        16.5922605028    0.829613025139    
+:12@N        15.5791516745    0.778957583726    
+:13@N        15.5791516745    0.778957583726    
+:14@N        15.8867433874    0.794337169371    
+:15@N        12.5435603053    0.627178015266    
+:16@N        15.5791516745    0.778957583726    
+:17@N        15.5791516745    0.778957583726    
+:18@N        16.5340124617    0.826700623085    
+:19@N        16.2727576208    0.813637881039    
+:20@N        15.5791516745    0.778957583726    
+
+relax> relax_data.read(ri_id='NOE_800', ri_type='NOE', frq=800000000.0, file='NOE.800.out', dir=None, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=2, error_col=3, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file 'NOE.800.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 800.0 MHz NOE relaxation data with the ID 'NOE_800' has been loaded into the relax data store:
+
+# Spin_ID    Value             Error    
+:1@N         0.859008689407    0.04     
+:2@N         0.858454563738    0.04     
+:3@N         0.862132222326    0.04     
+:4@N         0.859008689407    0.04     
+:5@N         0.859008689407    0.04     
+:6@N         0.857132333336    0.04     
+:7@N         0.858336277043    0.04     
+:8@N         0.859008689407    0.04     
+:9@N         0.859008689407    0.04     
+:10@N        0.86289384749     0.04     
+:11@N        0.859967228443    0.04     
+:12@N        0.859008689407    0.04     
+:13@N        0.859008689407    0.04     
+:14@N        0.859576412343    0.04     
+:15@N        0.856194627435    0.04     
+:16@N        0.859008689407    0.04     
+:17@N        0.859008689407    0.04     
+:18@N        0.859292154288    0.04     
+:19@N        0.86077896261     0.04     
+:20@N        0.859008689407    0.04     
+
+relax> diffusion_tensor.init(params=(8.333333333333334e-09, 15000000.0, 0.3333333333333333, 1.0, 2.0, 0.5), time_scale=1.0, d_scale=1.0, angle_units='rad', param_types=0, spheroid_type=None, fixed=False)
+
+relax> sequence.attach_protons()
+
+relax> spin.element(element='N', spin_id='@N', force=False)
+
+relax> structure.get_pos(spin_id='@N', ave_pos=True)
+# Spin_ID    Position                  
+:1@N         array([ 0.,  0.,  0.])    
+:2@N         array([ 0.,  0.,  0.])    
+:3@N         array([ 0.,  0.,  0.])    
+:4@N         array([ 0.,  0.,  0.])    
+:5@N         array([ 0.,  0.,  0.])    
+:6@N         array([ 0.,  0.,  0.])    
+:7@N         array([ 0.,  0.,  0.])    
+:8@N         array([ 0.,  0.,  0.])    
+:9@N         array([ 0.,  0.,  0.])    
+:10@N        array([ 0.,  0.,  0.])    
+:11@N        array([ 0.,  0.,  0.])    
+:12@N        array([ 0.,  0.,  0.])    
+:13@N        array([ 0.,  0.,  0.])    
+:14@N        array([ 0.,  0.,  0.])    
+:15@N        array([ 0.,  0.,  0.])    
+:16@N        array([ 0.,  0.,  0.])    
+:17@N        array([ 0.,  0.,  0.])    
+:18@N        array([ 0.,  0.,  0.])    
+:19@N        array([ 0.,  0.,  0.])    
+:20@N        array([ 0.,  0.,  0.])    
+
+relax> structure.get_pos(spin_id='@H', ave_pos=True)
+# Spin_ID    Position                           
+:1@H         array([ 0.  ,  0.  , -1.02])       
+:2@H         array([ 0.883,  0.   , -0.51 ])    
+:3@H         array([ 0.883,  0.   ,  0.51 ])    
+:4@H         array([ 0.  ,  0.  ,  1.02])       
+:5@H         array([ 0.  ,  0.  , -1.02])       
+:6@H         array([ 0.273,  0.84 , -0.51 ])    
+:7@H         array([ 0.273,  0.84 ,  0.51 ])    
+:8@H         array([ 0.  ,  0.  ,  1.02])       
+:9@H         array([ 0.  ,  0.  , -1.02])       
+:10@H        array([-0.715,  0.519, -0.51 ])    
+:11@H        array([-0.715,  0.519,  0.51 ])    
+:12@H        array([ 0.  ,  0.  ,  1.02])       
+:13@H        array([ 0.  ,  0.  , -1.02])       
+:14@H        array([-0.715, -0.519, -0.51 ])    
+:15@H        array([-0.715, -0.519,  0.51 ])    
+:16@H        array([ 0.  ,  0.  ,  1.02])       
+:17@H        array([ 0.  ,  0.  , -1.02])       
+:18@H        array([ 0.273, -0.84 , -0.51 ])    
+:19@H        array([ 0.273, -0.84 ,  0.51 ])    
+:20@H        array([ 0.  ,  0.  ,  1.02])       
+
+relax> interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True, pipe=None)
+Interatomic interactions are now defined for the following spins:
+
+# Spin_ID_1    Spin_ID_2    
+':1@N'         ':1@H'       
+':2@N'         ':2@H'       
+':3@N'         ':3@H'       
+':4@N'         ':4@H'       
+':5@N'         ':5@H'       
+':6@N'         ':6@H'       
+':7@N'         ':7@H'       
+':8@N'         ':8@H'       
+':9@N'         ':9@H'       
+':10@N'        ':10@H'      
+':11@N'        ':11@H'      
+':12@N'        ':12@H'      
+':13@N'        ':13@H'      
+':14@N'        ':14@H'      
+':15@N'        ':15@H'      
+':16@N'        ':16@H'      
+':17@N'        ':17@H'      
+':18@N'        ':18@H'      
+':19@N'        ':19@H'      
+':20@N'        ':20@H'      
+
+relax> interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.0200000000000001e-10, unit='meter')
+The following averaged distances have been set:
+
+# Spin_ID_1    Spin_ID_2    Ave_distance(meters)      
+':1@N'         ':1@H'       1.0200000000000001e-10    
+':2@N'         ':2@H'       1.0200000000000001e-10    
+':3@N'         ':3@H'       1.0200000000000001e-10    
+':4@N'         ':4@H'       1.0200000000000001e-10    
+':5@N'         ':5@H'       1.0200000000000001e-10    
+':6@N'         ':6@H'       1.0200000000000001e-10    
+':7@N'         ':7@H'       1.0200000000000001e-10    
+':8@N'         ':8@H'       1.0200000000000001e-10    
+':9@N'         ':9@H'       1.0200000000000001e-10    
+':10@N'        ':10@H'      1.0200000000000001e-10    
+':11@N'        ':11@H'      1.0200000000000001e-10    
+':12@N'        ':12@H'      1.0200000000000001e-10    
+':13@N'        ':13@H'      1.0200000000000001e-10    
+':14@N'        ':14@H'      1.0200000000000001e-10    
+':15@N'        ':15@H'      1.0200000000000001e-10    
+':16@N'        ':16@H'      1.0200000000000001e-10    
+':17@N'        ':17@H'      1.0200000000000001e-10    
+':18@N'        ':18@H'      1.0200000000000001e-10    
+':19@N'        ':19@H'      1.0200000000000001e-10    
+':20@N'        ':20@H'      1.0200000000000001e-10    
+
+relax> interatom.unit_vectors(ave=True)
+Averaging all vectors.
+Calculated 1 N-H unit vector between the spins ':1@N' and ':1@H'.
+Calculated 1 N-H unit vector between the spins ':2@N' and ':2@H'.
+Calculated 1 N-H unit vector between the spins ':3@N' and ':3@H'.
+Calculated 1 N-H unit vector between the spins ':4@N' and ':4@H'.
+Calculated 1 N-H unit vector between the spins ':5@N' and ':5@H'.
+Calculated 1 N-H unit vector between the spins ':6@N' and ':6@H'.
+Calculated 1 N-H unit vector between the spins ':7@N' and ':7@H'.
+Calculated 1 N-H unit vector between the spins ':8@N' and ':8@H'.
+Calculated 1 N-H unit vector between the spins ':9@N' and ':9@H'.
+Calculated 1 N-H unit vector between the spins ':10@N' and ':10@H'.
+Calculated 1 N-H unit vector between the spins ':11@N' and ':11@H'.
+Calculated 1 N-H unit vector between the spins ':12@N' and ':12@H'.
+Calculated 1 N-H unit vector between the spins ':13@N' and ':13@H'.
+Calculated 1 N-H unit vector between the spins ':14@N' and ':14@H'.
+Calculated 1 N-H unit vector between the spins ':15@N' and ':15@H'.
+Calculated 1 N-H unit vector between the spins ':16@N' and ':16@H'.
+Calculated 1 N-H unit vector between the spins ':17@N' and ':17@H'.
+Calculated 1 N-H unit vector between the spins ':18@N' and ':18@H'.
+Calculated 1 N-H unit vector between the spins ':19@N' and ':19@H'.
+Calculated 1 N-H unit vector between the spins ':20@N' and ':20@H'.
+
+relax> value.set(val=-0.00017199999999999998, param='csa', index=0, spin_id='@N', error=False)
+
+relax> spin.isotope(isotope='15N', spin_id='@N', force=False)
+
+relax> model_free.select_model(model='m0', spin_id=None)
+
+relax> minimise.execute(min_algor='newton', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+
+Over-fit spin deselection:
+RelaxWarning: The spin ':1@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':2@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':3@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':4@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':5@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':6@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':7@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':8@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':9@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':10@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':11@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':12@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':13@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':14@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':15@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':16@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':17@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':18@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':19@H' has been deselected because of an absence of relaxation mechanisms.
+RelaxWarning: The spin ':20@H' has been deselected because of an absence of relaxation mechanisms.
+The diffusion tensor parameters together with the model-free parameters for all spins will be used.
+
+
+Method of Multipliers
+~~~~~~~~~~~~~~~~~~~~~
+k: 0        xk: [    8333.333333,             1.5,    0.3333333333,               1,               2,             0.5]    fk: 2.5733266642e-19    
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [    8333.333333,             1.5,    0.3333333333,               1,               2,             0.5]    fk: 2.5733266642e-19    
+
+	Parameter values: [8333.3333333291976, 1.5000000000053471, 0.33333333333439608, 1.0000000000012974, 2.0000000000009535, 0.50000000000171108]
+	Function value:   2.3665537258887253e-19
+	Iterations:       1
+	Function calls:   3
+	Gradient calls:   2
+	Hessian calls:    1
+	Warning:          None
+
+k: 1        xk: [    8333.333333,             1.5,    0.3333333333,               1,               2,             0.5]    fk: 2.36655372589e-19   
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [    8333.333333,             1.5,    0.3333333333,               1,               2,             0.5]    fk: 2.36655372589e-19   
+
+	Parameter values: [8333.3333333291976, 1.5000000000053473, 0.33333333333439613, 1.0000000000012976, 2.0000000000009535, 0.50000000000171096]
+	Function value:   2.3664893043172126e-19
+	Iterations:       1
+	Function calls:   5
+	Gradient calls:   2
+	Hessian calls:    1
+	Warning:          None
+
+k: 2        xk: [    8333.333333,             1.5,    0.3333333333,               1,               2,             0.5]    fk: 2.36648930432e-19   
+Entering sub-algorithm.
+	
+	Newton minimisation
+	~~~~~~~~~~~~~~~~~~~
+	Line search:  Backtracking line search.
+	Hessian modification:  The Gill, Murray, and Wright modified Cholesky algorithm.
+
+	k: 0        xk: [    8333.333333,             1.5,    0.3333333333,               1,               2,             0.5]    fk: 2.36648930432e-19   
+
+	Parameter values: [8333.3333333291976, 1.5000000000053473, 0.33333333333439613, 1.0000000000012976, 2.0000000000009535, 0.50000000000171096]
+	Function value:   2.3664893043172126e-19
+	Iterations:       1
+	Function calls:   16
+	Gradient calls:   2
+	Hessian calls:    1
+	Warning:          None
+
+
+Parameter values: [8333.3333333291976, 1.5000000000053473, 0.33333333333439613, 1.0000000000012976, 2.0000000000009535, 0.50000000000171096]
+Function value:   2.3664893043172126e-19
+Iterations:       3
+Function calls:   24
+Gradient calls:   6
+Hessian calls:    3
+Warning:          None
+
+Storing the optimisation results, the optimised chi-squared value is lower than the current value (2.36648930432e-19 < None).
+
+relax> structure.create_diff_tensor_pdb(scale=1.8e-06, file='ellipsoid.pdb', dir=None, force=True)
+Calculating the centre of mass.
+    Total mass:      M = 300.2928
+    Centre of mass:  R = array([ -6.713048065086895e-06,   0.000000000000000e+00,
+         0.000000000000000e+00])
+
+Generating the geometric object.
+    Creating the uniform vector distribution.
+Generating the three axes of the ellipsoid.
+    Scaling factor:                      1.8e-06
+    Dx vector (scaled + shifted to origin): array([-10.813377381791183, -11.351948069747712,   8.843318935751299])
+    Creating the MC simulation vectors.
+    Dy vector (scaled + shifted to origin): array([ -1.737841128209841,  23.113546340370622,  27.545306444481092])
+    Creating the MC simulation vectors.
+    Dz vector (scaled + shifted to origin): array([-43.091119242170741,  23.540782064894405, -22.471929173626645])
+    Creating the MC simulation vectors.
+
+Generating the PDB file.
+Opening the file 'ellipsoid.pdb' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
