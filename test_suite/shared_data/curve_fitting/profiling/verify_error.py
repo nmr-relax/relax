@@ -30,6 +30,7 @@ from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_lo
 #from specific_analyses.relax_disp.data import average_intensity, generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_grace_file_name_ini, return_param_key_from_data
 from specific_analyses.relax_disp.data import average_intensity, find_intensity_keys, loop_exp_frq_offset_point, loop_time, return_param_key_from_data
 from status import Status; status = Status()
+from target_functions.chi2 import chi2_rankN
 
 # Initial try for Exponential class.
 from target_functions.relax_disp_curve_fit import Exponential
@@ -197,7 +198,7 @@ for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_
         back_calc = exp_class.calc_exp(times=times, r2eff=popt[0], i0=popt[1])
 
         # Calculate chi2.
-        chi2 = exp_class.chi2_rankN(data=values, back_calc_vals=back_calc, errors=errors)
+        chi2 = chi2_rankN(data=values, back_calc_vals=back_calc, errors=errors)
 
         # 'pcov': The estimated covariance of popt.
         # The diagonals provide the variance of the parameter estimate.

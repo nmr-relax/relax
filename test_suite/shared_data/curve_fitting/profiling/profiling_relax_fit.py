@@ -57,6 +57,7 @@ sys.path.reverse()
 # relax module imports.
 from status import Status; status = Status()
 from target_functions.relax_fit import setup, func, dfunc, d2func, back_calc_I
+from target_functions.chi2 import chi2_rankN
 from target_functions.relax_disp_curve_fit import Exponential
 
 
@@ -289,6 +290,8 @@ class Profile:
         #param_vector = array([ 0.,  0.])
         self.param_vector = array([  8.800000000000001e+00,   2.000000000800000e+05])
         self.scaling_list = [1.0, 1.0]
+        self.scaling_matrix = array( [ [self.scaling_list[0], 0], [0, self.scaling_list[1]] ])
+
         self.func_tol = 1e-25
         self.grad_tol = None
         #self.max_iterations = 10000000
@@ -372,7 +375,7 @@ def verify_pyt(constraints=None):
 
     for values, errors, times, struct, num_times in C.loop_data():
         # Initialise the function to minimise.
-        exp_class = Exponential(num_params=len(C.param_vector), num_times=num_times, values=values, sd=errors, relax_times=times, scaling_matrix=C.scaling_list)
+        exp_class = Exponential(num_params=len(C.param_vector), num_times=num_times, values=values, sd=errors, relax_times=times, scaling_matrix=C.scaling_matrix)
 
         results = generic_minimise(func=exp_class.func_exp, args=(), x0=C.param_vector, min_algor=C.min_algor, min_options=C.min_options, func_tol=C.func_tol, grad_tol=C.grad_tol, maxiter=C.max_iterations, A=C.A, b=C.b, full_output=True, print_flag=C.verbosity)
 
@@ -394,7 +397,7 @@ def verify_sci(print_info=False):
 
     for values, errors, times, struct, num_times in C.loop_data():
         # Initialise the function to minimise.
-        exp_class = Exponential(num_params=len(C.param_vector), num_times=num_times, values=values, sd=errors, relax_times=times, scaling_matrix=C.scaling_list)
+        exp_class = Exponential()
 
         # Do optimisation with scipy.optimize.curve_fit
         # sigma : None or M-length sequence, optional. If not None, these values are used as weights in the least-squares problem.
@@ -478,7 +481,7 @@ def verify_sci(print_info=False):
         back_calc = exp_class.calc_exp(times=times, r2eff=popt[0], i0=popt[1])
 
         # Calculate chi2.
-        chi2 = exp_class.chi2_rankN(data=values, back_calc_vals=back_calc, errors=errors)
+        chi2 = chi2_rankN(data=values, back_calc_vals=back_calc, errors=errors)
 
         chi2_list.append(chi2)
 
