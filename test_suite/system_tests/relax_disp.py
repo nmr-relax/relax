@@ -2728,6 +2728,94 @@ class Relax_disp(SystemTestCase):
         self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, do_assert=False)
 
 
+    def test_estimate_r2eff_error(self):
+        """Test the user function for estimating R2eff and associated errors for exponential curve fitting.
+        This is compared with a run where erros are estimated by 2000 Monte Carlo simulations.
+
+        This follows Task 7822.
+        U{task #7822<https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
+
+        This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
+        Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
+        """
+
+        # Define data path.
+        prev_data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013' +sep+ "check_graphs" +sep+ "mc_2000"  +sep+ "R2eff"
+
+        # Create pipe.
+        self.interpreter.pipe.create('MC_2000', 'relax_disp')
+
+        # Read results for 2000 MC simulations.
+        self.interpreter.results.read(prev_data_path + sep + 'results')
+
+        # Start dic.
+        my_dic = {}
+        param_key_list = []
+
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Add key to dic.
+            my_dic[spin_id] = {}
+
+            # Generate spin string.
+            spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+            for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                # Generate the param_key.
+                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                # Append key.
+                param_key_list.append(param_key)
+
+                # Add key to dic.
+                my_dic[spin_id][param_key] = {}
+
+                # Get the value.
+                r2eff = getattr(cur_spin, 'r2eff')[param_key]
+                r2eff_err = getattr(cur_spin, 'r2eff_err')[param_key]
+                i0 = getattr(cur_spin, 'i0')[param_key]
+                i0_err = getattr(cur_spin, 'i0_err')[param_key]
+
+                # Save to dic.
+                my_dic[spin_id][param_key]['r2eff'] = r2eff
+                my_dic[spin_id][param_key]['r2eff_err'] = r2eff_err
+                my_dic[spin_id][param_key]['i0'] = i0
+                my_dic[spin_id][param_key]['i0_err'] = i0_err
+
+        # A new data pipe.
+        self.interpreter.pipe.copy(pipe_from='MC_2000', pipe_to='r2eff_est')
+        self.interpreter.pipe.switch(pipe_name='r2eff_est')
+
+        # Set the model.
+        self.interpreter.relax_disp.select_model(MODEL_R2EFF)
+
+        # Estimate R2eff and errors.
+        self.interpreter.relax_disp.r2eff_estimate(verbosity=0)
+
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Generate spin string.
+            spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+            for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                # Generate the param_key.
+                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                # Get the value.
+                r2eff_est = getattr(cur_spin, 'r2eff')[param_key]
+                r2eff_err_est = getattr(cur_spin, 'r2eff_err')[param_key]
+                i0_est = getattr(cur_spin, 'i0')[param_key]
+                i0_err_est = getattr(cur_spin, 'i0_err')[param_key]
+
+                # Get from dic.
+                r2eff = my_dic[spin_id][param_key]['r2eff']
+                r2eff_err = my_dic[spin_id][param_key]['r2eff_err']
+                i0 = my_dic[spin_id][param_key]['i0']
+                i0_err = my_dic[spin_id][param_key]['i0_err']
+
+                print("%s at %3.1f MHz, for offset=%3.3f ppm and dispersion point %-5.1f." % (exp_type, frq/1E6, offset, point) )
+                print("r2eff=%3.3f/%3.3f r2eff_err=%3.4f/%3.4f" % (r2eff, r2eff_est, r2eff_err, r2eff_err_est) ),
+                print("i0=%3.3f/%3.3f i0_err=%3.4f/%3.4f\n" % (i0, i0_est, i0_err, i0_err_est) )
+
+
     def test_exp_fit(self):
         """Test the relaxation dispersion 'exp_fit' model curve fitting."""
 
