@@ -2679,7 +2679,7 @@ class Relax_disp(SystemTestCase):
         self.setup_r1rho_kjaergaard(cluster_ids=cluster_ids, read_R1=False)
 
         # The dispersion models.
-        MODELS = [MODEL_NOREX, MODEL_DPL94]
+        MODELS = [MODEL_NOREX, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
 
         # The grid search size (the number of increments per dimension).
         GRID_INC = None
@@ -2723,6 +2723,9 @@ class Relax_disp(SystemTestCase):
 
         # Run the analysis.
         relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+
+        # Verify the data.
+        self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, do_assert=False)
 
 
     def test_exp_fit(self):
@@ -7343,7 +7346,7 @@ class Relax_disp(SystemTestCase):
         w_eff_file.close()
 
 
-    def verify_r1rho_kjaergaard_missing_r1(self, models=None, result_dir_name=None):
+    def verify_r1rho_kjaergaard_missing_r1(self, models=None, result_dir_name=None, do_assert=True):
         """Verification of test_r1rho_kjaergaard_missing_r1."""
 
         # Check the kex value of residue 52
@@ -7382,35 +7385,36 @@ class Relax_disp(SystemTestCase):
                             # Print value.
                             print("%-10s %-6s %-6s %3.8f" % ("Parameter:", param, "Value:", value))
 
-                            # Compare values.
-                            if spin_id == ':52@N':
-                                if param == 'r1':
-                                    if model == MODEL_NOREX:
-                                        self.assertAlmostEqual(value, 1.46328102)
-                                    elif model == MODEL_DPL94:
-                                        self.assertAlmostEqual(value, 1.45019848)
-                                    elif model == MODEL_TP02:
-                                        self.assertAlmostEqual(value, 1.54352369)
-                                    elif model == MODEL_TAP03:
-                                        self.assertAlmostEqual(value, 1.54354367)
-                                    elif model == MODEL_MP05:
-                                        self.assertAlmostEqual(value, 1.54354372)
-                                    elif model == MODEL_NS_R1RHO_2SITE:
-                                        self.assertAlmostEqual(value, 1.41321968, 6)
+                            if do_assert:
+                                # Compare values.
+                                if spin_id == ':52@N':
+                                    if param == 'r1':
+                                        if model == MODEL_NOREX:
+                                            self.assertAlmostEqual(value, 1.46328102)
+                                        elif model == MODEL_DPL94:
+                                            self.assertAlmostEqual(value, 1.45019848)
+                                        elif model == MODEL_TP02:
+                                            self.assertAlmostEqual(value, 1.54352369)
+                                        elif model == MODEL_TAP03:
+                                            self.assertAlmostEqual(value, 1.54354367)
+                                        elif model == MODEL_MP05:
+                                            self.assertAlmostEqual(value, 1.54354372)
+                                        elif model == MODEL_NS_R1RHO_2SITE:
+                                            self.assertAlmostEqual(value, 1.41321968, 6)
 
-                                elif param == 'r2':
-                                    if model == MODEL_NOREX:
-                                        self.assertAlmostEqual(value, 11.48040934)
-                                    elif model == MODEL_DPL94:
-                                        self.assertAlmostEqual(value, 10.16304887, 6)
-                                    elif model == MODEL_TP02:
-                                        self.assertAlmostEqual(value, 9.72772726, 6)
-                                    elif model == MODEL_TAP03:
-                                        self.assertAlmostEqual(value, 9.72759374, 6)
-                                    elif model == MODEL_MP05:
-                                        self.assertAlmostEqual(value, 9.72759220, 6)
-                                    elif model == MODEL_NS_R1RHO_2SITE:
-                                        self.assertAlmostEqual(value, 9.34602793, 5)
+                                    elif param == 'r2':
+                                        if model == MODEL_NOREX:
+                                            self.assertAlmostEqual(value, 11.48040934)
+                                        elif model == MODEL_DPL94:
+                                            self.assertAlmostEqual(value, 10.16304887, 6)
+                                        elif model == MODEL_TP02:
+                                            self.assertAlmostEqual(value, 9.72772726, 6)
+                                        elif model == MODEL_TAP03:
+                                            self.assertAlmostEqual(value, 9.72759374, 6)
+                                        elif model == MODEL_MP05:
+                                            self.assertAlmostEqual(value, 9.72759220, 6)
+                                        elif model == MODEL_NS_R1RHO_2SITE:
+                                            self.assertAlmostEqual(value, 9.34602793, 5)
 
                     # For all other parameters.
                     else:
@@ -7420,57 +7424,58 @@ class Relax_disp(SystemTestCase):
                         # Print value.
                         print("%-10s %-6s %-6s %3.8f" % ("Parameter:", param, "Value:", value))
 
-                        # Compare values.
-                        if spin_id == ':52@N':
-                            if param == 'phi_ex':
-                                if model == MODEL_DPL94:
-                                    self.assertAlmostEqual(value, 0.07561937)
+                        if do_assert:
+                            # Compare values.
+                            if spin_id == ':52@N':
+                                if param == 'phi_ex':
+                                    if model == MODEL_DPL94:
+                                        self.assertAlmostEqual(value, 0.07561937)
 
-                            elif param == 'pA':
-                                if model == MODEL_TP02:
-                                    self.assertAlmostEqual(value, 0.88807487)
-                                elif model == MODEL_TAP03:
-                                    self.assertAlmostEqual(value, 0.88809318)
-                                elif model == MODEL_MP05:
-                                    self.assertAlmostEqual(value, 0.88809321)
-                                elif model == MODEL_NS_R1RHO_2SITE:
-                                    self.assertAlmostEqual(value, 0.94496541, 6)
+                                elif param == 'pA':
+                                    if model == MODEL_TP02:
+                                        self.assertAlmostEqual(value, 0.88807487)
+                                    elif model == MODEL_TAP03:
+                                        self.assertAlmostEqual(value, 0.88809318)
+                                    elif model == MODEL_MP05:
+                                        self.assertAlmostEqual(value, 0.88809321)
+                                    elif model == MODEL_NS_R1RHO_2SITE:
+                                        self.assertAlmostEqual(value, 0.94496541, 6)
 
-                            elif param == 'dw':
-                                if model == MODEL_TP02:
-                                    self.assertAlmostEqual(value, 1.08765638, 6)
-                                elif model == MODEL_TAP03:
-                                    self.assertAlmostEqual(value, 1.08726698, 6)
-                                elif model == MODEL_MP05:
-                                    self.assertAlmostEqual(value, 1.08726706, 6)
-                                elif model == MODEL_NS_R1RHO_2SITE:
-                                    self.assertAlmostEqual(value, 1.55833321, 5)
+                                elif param == 'dw':
+                                    if model == MODEL_TP02:
+                                        self.assertAlmostEqual(value, 1.08765638, 6)
+                                    elif model == MODEL_TAP03:
+                                        self.assertAlmostEqual(value, 1.08726698, 6)
+                                    elif model == MODEL_MP05:
+                                        self.assertAlmostEqual(value, 1.08726706, 6)
+                                    elif model == MODEL_NS_R1RHO_2SITE:
+                                        self.assertAlmostEqual(value, 1.55833321, 5)
 
-                            elif param == 'kex':
-                                if model == MODEL_DPL94:
-                                    self.assertAlmostEqual(value, 4419.03917195, 2)
-                                elif model == MODEL_TP02:
-                                    self.assertAlmostEqual(value, 4904.70144883, 3)
-                                elif model == MODEL_TAP03:
-                                    self.assertAlmostEqual(value, 4909.86877150, 3)
-                                elif model == MODEL_MP05:
-                                    self.assertAlmostEqual(value, 4909.88110195, 3)
-                                elif model == MODEL_NS_R1RHO_2SITE:
-                                    self.assertAlmostEqual(value, 5610.20221435, 2)
+                                elif param == 'kex':
+                                    if model == MODEL_DPL94:
+                                        self.assertAlmostEqual(value, 4419.03917195, 2)
+                                    elif model == MODEL_TP02:
+                                        self.assertAlmostEqual(value, 4904.70144883, 3)
+                                    elif model == MODEL_TAP03:
+                                        self.assertAlmostEqual(value, 4909.86877150, 3)
+                                    elif model == MODEL_MP05:
+                                        self.assertAlmostEqual(value, 4909.88110195, 3)
+                                    elif model == MODEL_NS_R1RHO_2SITE:
+                                        self.assertAlmostEqual(value, 5610.20221435, 2)
 
-                            elif param == 'chi2':
-                                if model == MODEL_NOREX:
-                                    self.assertAlmostEqual(value, 3363.95829122)
-                                elif model == MODEL_DPL94:
-                                    self.assertAlmostEqual(value, 710.24767560)
-                                elif model == MODEL_TP02:
-                                    self.assertAlmostEqual(value, 114.47142772)
-                                elif model == MODEL_TAP03:
-                                    self.assertAlmostEqual(value, 114.27987534)
-                                elif model == MODEL_MP05:
-                                    self.assertAlmostEqual(value, 114.28002272)
-                                elif model == MODEL_NS_R1RHO_2SITE:
-                                    self.assertAlmostEqual(value, 134.14368365)
+                                elif param == 'chi2':
+                                    if model == MODEL_NOREX:
+                                        self.assertAlmostEqual(value, 3363.95829122)
+                                    elif model == MODEL_DPL94:
+                                        self.assertAlmostEqual(value, 710.24767560)
+                                    elif model == MODEL_TP02:
+                                        self.assertAlmostEqual(value, 114.47142772)
+                                    elif model == MODEL_TAP03:
+                                        self.assertAlmostEqual(value, 114.27987534)
+                                    elif model == MODEL_MP05:
+                                        self.assertAlmostEqual(value, 114.28002272)
+                                    elif model == MODEL_NS_R1RHO_2SITE:
+                                        self.assertAlmostEqual(value, 134.14368365)
 
 
         # Print the final pipe.
@@ -7524,7 +7529,7 @@ class Relax_disp(SystemTestCase):
 
                 # Assign the split of the line.
                 mol_name, res_num, res_name, spin_num, spin_name, val, sd_error = line_split
-                print mol_name, res_num, res_name, spin_num, spin_name, val, sd_error
+                print(mol_name, res_num, res_name, spin_num, spin_name, val, sd_error)
 
                 if res_num == '52':
                     # Assert that the value is not None.
