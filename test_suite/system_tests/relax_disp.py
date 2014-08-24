@@ -2647,6 +2647,84 @@ class Relax_disp(SystemTestCase):
             spin_index += 1
 
 
+    def test_estimate_r2eff(self):
+        """Test the user function for estimating R2eff and associated errors for exponential curve fitting.
+
+        This follows Task 7822.
+        U{task #7822<https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
+
+        This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
+        Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
+        """
+
+        # Cluster residues
+        cluster_ids = [
+        ":13@N",
+        ":15@N",
+        ":16@N",
+        ":25@N",
+        ":26@N",
+        ":28@N",
+        ":39@N",
+        ":40@N",
+        ":41@N",
+        ":43@N",
+        ":44@N",
+        ":45@N",
+        ":49@N",
+        ":52@N",
+        ":53@N"]
+
+        # Load the data.
+        self.setup_r1rho_kjaergaard(cluster_ids=cluster_ids, read_R1=False)
+
+        # The dispersion models.
+        MODELS = [MODEL_NOREX, MODEL_DPL94]
+
+        # The grid search size (the number of increments per dimension).
+        GRID_INC = None
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        MC_NUM = 3
+
+        # Model selection technique.
+        MODSEL = 'AIC'
+
+        # Execute the auto-analysis (fast).
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
+        OPT_FUNC_TOL = 1e-25
+        relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
+        OPT_MAX_ITERATIONS = 10000000
+        relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
+
+        result_dir_name = ds.tmpdir
+
+        # Make all spins free
+        for curspin in cluster_ids:
+            self.interpreter.relax_disp.cluster('free spins', curspin)
+            # Shut them down
+            self.interpreter.deselect.spin(spin_id=curspin, change_all=False)
+
+        # Select only a subset of spins for global fitting
+        #self.interpreter.select.spin(spin_id=':41@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':41@N')
+
+        #self.interpreter.select.spin(spin_id=':40@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':40@N')
+
+        self.interpreter.select.spin(spin_id=':52@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':52@N')
+
+        # Set the model.
+        self.interpreter.relax_disp.select_model(MODEL_R2EFF)
+
+        # Estimate R2eff and errors.
+        self.interpreter.relax_disp.r2eff_estimate()
+
+        # Run the analysis.
+        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+
+
     def test_exp_fit(self):
         """Test the relaxation dispersion 'exp_fit' model curve fitting."""
 
