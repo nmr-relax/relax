@@ -32,7 +32,7 @@ from specific_analyses.relax_disp.data import average_intensity, find_intensity_
 from status import Status; status = Status()
 
 # Initial try for Exponential class.
-from relax_fit import Exponential
+from target_functions.relax_disp_curve_fit import Exponential
 
 # Define data path.
 prev_data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013' +sep+ "check_graphs" +sep+ "mc_2000"  +sep+ "R2eff"

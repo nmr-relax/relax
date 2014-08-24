@@ -57,7 +57,7 @@ sys.path.reverse()
 # relax module imports.
 from status import Status; status = Status()
 from target_functions.relax_fit import setup, func, dfunc, d2func, back_calc_I
-from relax_fit import Exponential
+from target_functions.relax_disp_curve_fit import Exponential
 
 
 # Alter setup.
