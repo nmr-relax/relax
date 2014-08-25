@@ -34,7 +34,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from dep_check import C_module_exp_fn, scipy_leastsq
+from dep_check import C_module_exp_fn, scipy_module
 from lib.dispersion.two_point import calc_two_point_r2eff, calc_two_point_r2eff_err
 from lib.errors import RelaxError
 from lib.text.sectioning import section
@@ -324,8 +324,8 @@ def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor
     """
 
     # Check that scipy.optimize.leastsq is available.
-    if not scipy_leastsq:
-        raise RelaxError("scipy.optimize.leastsq module is not available.")
+    if not scipy_module:
+        raise RelaxError("scipy module is not available.")
 
     # Perform checks.
     check_model_type(model=MODEL_R2EFF)

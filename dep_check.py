@@ -159,13 +159,6 @@ try:
 except:
     scipy_module = False
 
-# scipy.optimize.leastsq import.
-try:
-    from scipy.optimize import leastsq
-    scipy_leastsq = True
-except:
-    scipy_leastsq = False
-
 # VMD module imports.
 try:
     from Scientific.Visualization import VMD    # This requires Numeric to be installed (at least in Scientific 2.7.8).

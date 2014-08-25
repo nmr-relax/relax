@@ -74,7 +74,7 @@ class Relax_disp(SystemTestCase):
                 status.skipped_tests.append([methodName, 'Relax curve-fitting C module', self._skip_type])
 
         # If not scipy.optimize.leastsq.
-        if not dep_check.scipy_leastsq:
+        if not dep_check.scipy_module:
             # The list of tests to skip.
             to_skip = [
                 "test_estimate_r2eff",
