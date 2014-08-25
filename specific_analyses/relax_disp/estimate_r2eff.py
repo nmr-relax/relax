@@ -24,7 +24,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import asarray, diag, dot, exp, inf, log, sqrt, sum, zeros
+from numpy import asarray, array, diag, dot, exp, inf, log, sqrt, sum, transpose, zeros
 from minfx.generic import generic_minimise
 import sys
 from warnings import warn
@@ -112,7 +112,8 @@ class Exponential:
             self.b = array([   0., -200.,    0.])
 
         else:
-            self.min_algor = 'simplex'
+            #self.min_algor = 'simplex'
+            self.min_algor = 'newton'
             self.min_options = ()
             self.A = None
             self.b = None
@@ -122,6 +123,8 @@ class Exponential:
 
         # Define function to minimise for minfx.
         self.func = self.func_exp
+        self.dfunc = self.func_exp_grad
+        self.d2func = self.func_exp_hess
 
 
     def calc_exp(self, times=None, r2eff=None, i0=None):
@@ -208,6 +211,81 @@ class Exponential:
 
         # Calculate and return the chi-squared value.
         return self.calc_exp_chi2(r2eff=r2eff, i0=i0)
+
+
+    def func_exp_grad(self, params):
+        """Target function for the gradient (Jacobian matrix) for exponential fit in minfx.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The Jacobian matrix with 'm' rows of function derivatives per 'n' columns of parameters.
+        @rtype:         numpy array
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        r2eff = params[0]
+        i0 = params[1]
+
+        # Calculate gradient according to chi2.
+        # See: http://wiki.nmr-relax.com/Calculate_jacobian_hessian_matrix_in_sympy_exponential_decay
+
+        # Make partial derivative, with respect to r2eff.
+        # d_chi2_d_r2eff = 2.0*i0*times*(-i0*exp(-r2eff*times) + values)*exp(-r2eff*times)/errors**2
+        d_chi2_d_r2eff = 2.0 * i0 * self.relax_times * ( -i0 * exp( -r2eff * self.relax_times) + self.values) * exp( -r2eff * self.relax_times ) / self.errors**2
+
+        # Make partial derivative, with respect to i0.
+        # d_chi2_d_i0 = -2.0*(-i0*exp(-r2eff*times) + values)*exp(-r2eff*times)/errors**2
+        d_chi2_d_i0 = - 2.0 * ( -i0 * exp( -r2eff * self.relax_times) + self.values) * exp( -r2eff * self.relax_times) / self.errors**2
+
+        # Define Jacobian as m rows with function derivatives and n columns of parameters.
+        jacobian_matrix = transpose(array( [d_chi2_d_r2eff , d_chi2_d_i0] ) )
+
+        # Return Jacobian matrix.
+        return jacobian_matrix
+
+
+    def func_exp_hess(self, params):
+        """Target function for the gradient (Hessian matrix) for exponential fit in minfx.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The Hessian matrix with 'm' rows of function derivatives per '4' columns of second order derivatives.
+        @rtype:         numpy array
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        r2eff = params[0]
+        i0 = params[1]
+
+        # Calculate gradient according to chi2.
+        # See: http://wiki.nmr-relax.com/Calculate_jacobian_hessian_matrix_in_sympy_exponential_decay
+
+        # Calculate the Hessian. The second-order partial derivatives.
+        #d2_chi2_d_r2eff_d_r2eff = 2.0*i0*times**2*(2*i0*exp(-r2eff*times) - values)*exp(-r2eff*times)/errors**2
+        d2_chi2_d_r2eff_d_r2eff = 2.0 * i0 * self.relax_times**2 * ( 2 * i0 * exp( -r2eff * self.relax_times) - self.values) * exp( -r2eff * self.relax_times) / self.errors**2
+
+        #d2_chi2_d_r2eff_d_i0 = -2.0*times*(2*i0*exp(-r2eff*times) - values)*exp(-r2eff*times)/errors**2
+        d2_chi2_d_r2eff_d_i0 = -2.0 * self.relax_times * (2. * i0 * exp( -r2eff * self.relax_times) - self.values) * exp( -r2eff * self.relax_times) / self.errors**2
+
+        #d2_chi2_d_i0_d_r2eff = -2.0*times*(2*i0*exp(-r2eff*times) - values)*exp(-r2eff*times)/errors**2
+        d2_chi2_d_i0_d_r2eff = -2.0 * self.relax_times * (2. * i0 * exp( -r2eff * self.relax_times) - self.values) * exp( -r2eff * self.relax_times) / self.errors**2
+
+        #d2_chi2_d_i0_d_i0 = 2.0*exp(-2*r2eff*times)/errors**2
+        d2_chi2_d_i0_d_i0 = 2.0 * exp( -2. * r2eff * self.relax_times) / self.errors**2
+
+        # Form hessian.
+        hessian_matrix = transpose(array( [d2_chi2_d_r2eff_d_r2eff, d2_chi2_d_r2eff_d_i0, d2_chi2_d_i0_d_r2eff, d2_chi2_d_i0_d_i0] ) )
+
+        # Return Jacobian matrix.
+        return hessian_matrix
 
 
     def func_exp_general(self, params, times, intensities):
@@ -544,7 +622,7 @@ def minimise_minfx(exp_class=None, values=None, errors=None, times=None):
     x0 = asarray(exp_class.estimate_x0_exp(intensities=values, times=times))
 
     # Minimise with minfx.
-    results_minfx = generic_minimise(func=exp_class.func, args=(), x0=x0, min_algor=exp_class.min_algor, min_options=exp_class.min_options, func_tol=exp_class.func_tol, grad_tol=exp_class.grad_tol, maxiter=exp_class.max_iterations, A=exp_class.A, b=exp_class.b, full_output=True, print_flag=exp_class.verbosity)
+    results_minfx = generic_minimise(func=exp_class.func, dfunc=exp_class.dfunc, d2func=exp_class.d2func, args=(), x0=x0, min_algor=exp_class.min_algor, min_options=exp_class.min_options, func_tol=exp_class.func_tol, grad_tol=exp_class.grad_tol, maxiter=exp_class.max_iterations, A=exp_class.A, b=exp_class.b, full_output=True, print_flag=exp_class.verbosity)
 
     # Unpack
     param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results_minfx
