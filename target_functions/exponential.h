@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Gary S Thompson (see https://gna.org/users for contact
  *                                     details)
+ * Copyright (C) 2014 Edward d'Auvergne
  *
  * This file is part of the program relax (http://www.nmr-relax.com).
  *
@@ -20,6 +21,12 @@
 #ifndef RELAX_EXPONENTIAL 
 #define RELAX_EXPONENTIAL
 
+/* The maximum number of spectral time points */
+#define MAXTIMES 50
+
+
 void exponential(double *params, double *relax_times, double *back_calc, int num_times);
+void exponential_dI(double *params, double *relax_times, double back_calc_grad[][MAXTIMES], int num_times);
+void exponential_dR(double *params, double *relax_times, double back_calc_grad[][MAXTIMES], int num_times);
 
 #endif

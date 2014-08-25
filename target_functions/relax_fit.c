@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2013 Edward d'Auvergne
+ * Copyright (C) 2006-2014 Edward d'Auvergne
  *
  * This file is part of the program relax (http://www.nmr-relax.com).
  *
@@ -167,6 +167,54 @@ back_calc_I(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *
+jacobian(PyObject *self, PyObject *args) {
+    /* Return the Jacobian as a Python list. */
+
+    /* Declarations */
+    PyObject *params_arg;
+    PyObject *element;
+    int i, j;
+
+    /* The Python list of lists. */
+    PyObject *list = PyList_New(num_params);
+    Py_INCREF(list);
+
+    /* Parse the function arguments, the only argument should be the parameter array */
+    if (!PyArg_ParseTuple(args, "O", &params_arg))
+        return NULL;
+
+    /* Place the parameter array elements into the C array */
+    for (i = 0; i < num_params; i++) {
+        /* Get the element */
+        element = PySequence_GetItem(params_arg, i);
+
+        /* Convert to a C double, then free the memory. */
+        params[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
+
+        /* Scale the parameter */
+        params[i] = params[i] * scaling_matrix[i];
+    }
+
+    /* The partial derivates */
+    exponential_dR(params, relax_times, back_calc_grad, num_times);
+    exponential_dI(params, relax_times, back_calc_grad, num_times);
+
+    /* Convert to a Python list */
+    for (i = 0; i < num_params; i++) {
+        PyObject *list2 = PyList_New(num_times);
+        for (j = 0; j < num_times; j++) {
+            PyList_Append(list2, PyFloat_FromDouble(back_calc_grad[i][j]));
+        }
+        PyList_Append(list, list2);
+    }
+
+    /* Return the Jacobian */
+    return list;
+}
+
+
 /* The method table for the functions called by Python */
 static PyMethodDef relax_fit_methods[] = {
     {
@@ -194,6 +242,11 @@ static PyMethodDef relax_fit_methods[] = {
         back_calc_I,
         METH_VARARGS,
         "Return the back calculated peak intensities as a Python list."
+    }, {
+        "jacobian",
+        jacobian,
+        METH_VARARGS,
+        "Return the Jacobian matrix as a Python list."
     },
         {NULL, NULL, 0, NULL}        /* Sentinel */
 };

@@ -21,6 +21,9 @@
 /* The exponential function is needed. */
 #include <math.h>
 
+/* functions for the exponential */
+#include "exponential.h"
+
 
 void exponential(double *params, double *relax_times, double *back_calc, int num_times) {
     /* Function to back calculate the peak intensities.
@@ -41,5 +44,48 @@ void exponential(double *params, double *relax_times, double *back_calc, int num
         else
             back_calc[i] = params[1] * exp(-relax_times[i] * params[0]);
 
+    }
+}
+
+void exponential_dI(double *params, double *relax_times, double back_calc_grad[][MAXTIMES], int num_times) {
+    /* Calculate the dI partial derivate of the 2-parameter exponential curve.
+    */
+
+    /* Declarations */
+    int i;
+
+
+    /* Loop over the time points */
+    /* for (i = 0; i < num_times; i++) { */
+    for (i = 0; i < num_times; i++) {
+        /* Zero Rx value */
+        if (params[0] == 0.0)
+            back_calc_grad[1][i] = 0.0;
+
+        /* The partial derivate */
+        else
+            back_calc_grad[1][i] = exp(-relax_times[i] * params[0]);
+    }
+}
+
+
+void exponential_dR(double *params, double *relax_times, double back_calc_grad[][MAXTIMES], int num_times) {
+    /* Calculate the dR partial derivate of the 2-parameter exponential curve.
+    */
+
+    /* Declarations */
+    int i;
+
+
+    /* Loop over the time points */
+    /* for (i = 0; i < num_times; i++) { */
+    for (i = 0; i < num_times; i++) {
+        /* Zero Rx value */
+        if (params[0] == 0.0)
+            back_calc_grad[0][i] = 0.0;
+
+        /* The partial derivate */
+        else
+            back_calc_grad[0][i] = -params[1] * relax_times[i] * exp(-relax_times[i] * params[0]);
     }
 }
