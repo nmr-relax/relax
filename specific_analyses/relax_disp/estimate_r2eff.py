@@ -26,13 +26,16 @@
 from copy import deepcopy
 from numpy import asarray, diag, dot, exp, inf, log, sqrt, sum, zeros
 from minfx.generic import generic_minimise
+import sys
 from warnings import warn
 
 # relax module imports.
 from dep_check import scipy_module
+from lib.text.sectioning import section, subsection
 from pipe_control.mol_res_spin import generate_spin_string, spin_loop
+from pipe_control.spectrum import error_analysis
 from specific_analyses.relax_disp.checks import check_model_type
-from specific_analyses.relax_disp.data import average_intensity, loop_exp_frq_offset_point, loop_time, return_param_key_from_data
+from specific_analyses.relax_disp.data import average_intensity, loop_exp_frq_offset_point, loop_frq, loop_time, return_param_key_from_data
 from specific_analyses.relax_disp.parameters import disassemble_param_vector
 from specific_analyses.relax_disp.variables import MODEL_R2EFF
 from target_functions.chi2 import chi2_rankN
