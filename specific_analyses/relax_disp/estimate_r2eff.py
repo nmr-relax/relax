@@ -25,6 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from numpy import asarray, array, diag, dot, exp, inf, log, sqrt, sum, transpose, zeros
+import numpy
 from minfx.generic import generic_minimise
 from re import match, search
 import sys
@@ -44,7 +45,7 @@ from target_functions.chi2 import chi2_rankN
 # Scipy installed.
 if scipy_module:
     # Import leastsq.
-    from scipy.optimize import fmin_ncg, leastsq
+    from scipy.optimize import fmin_cg, fmin_ncg, leastsq
 
 
 class Exponential:
@@ -335,7 +336,7 @@ class Exponential:
 
 
     def func_exp_general(self, params):
-        """Target function for minimisation with scipy.optimize.leastsq.
+        """Target function for minimisation with scipy.optimize.
 
         @param params:          The vector of parameter values.
         @type params:           numpy rank-1 float array
@@ -348,7 +349,7 @@ class Exponential:
 
 
     def func_exp_weighted_general(self, params):
-        """Target function for weighted minimisation with scipy.optimize.leastsq.
+        """Target function for weighted minimisation with scipy.optimize.
 
         @param params:          The vector of parameter values.
         @type params:           numpy rank-1 float array
@@ -358,6 +359,55 @@ class Exponential:
 
         # Return
         return 1. / self.errors * (self.calc_exp(self.relax_times, *params) - self.values)
+
+
+    def func_exp_weighted_grad(self, params):
+        """Target function for the gradient (Jacobian matrix) for exponential fit in scipy.optimize.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The Jacobian matrix with 'm' rows of function derivatives per 'n' columns of parameters.
+        @rtype:         numpy array
+        """
+
+        # Unpack the parameter values.
+        r2eff = params[0]
+        i0 = params[1]
+
+        # The partial derivative.
+        d_func_d_r2eff = 1.0 * i0 * self.relax_times * exp( -r2eff * self.relax_times) / self.errors
+        d_func_d_i0 = - 1.0 * exp( -r2eff * self.relax_times) / self.errors
+
+        jacobian_matrix = transpose(array( [d_func_d_r2eff , d_func_d_i0] ) )
+        #jacobian_matrix = array( [d_func_d_r2eff , d_func_d_i0] ) 
+
+        return jacobian_matrix
+
+
+    def func_exp_weighted_hess(self, params):
+        """Target function for the gradient (Hessian matrix) for exponential fit in scipy.optimize.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The Hessian matrix with 'm' rows of function derivatives per '4' columns of second order derivatives.
+        @rtype:         numpy array
+        """
+
+        # Unpack the parameter values.
+        r2eff = params[0]
+        i0 = params[1]
+
+        # The partial derivative.
+        d2_func_d_r2eff_d_r2eff = -1.0 * i0 * self.relax_times**2 * exp( -r2eff * self.relax_times) / self.errors
+        d2_func_d_r2eff_d_i0 = 1.0 * self.relax_times * exp( -r2eff * self.relax_times)/ self.errors
+        d2_func_d_i0_d_r2eff = 1.0 * self.relax_times * exp( -r2eff * self.relax_times)/ self.errors
+        d2_func_d_i0_d_i0 = 0.0
+
+        hessian_matrix = transpose(array( [d2_func_d_r2eff_d_r2eff, d2_func_d_r2eff_d_i0, d2_func_d_i0_d_r2eff, d2_func_d_i0_d_i0] ) )
+        #hessian_matrix = array( [d2_func_d_r2eff_d_r2eff, d2_func_d_r2eff_d_i0, d2_func_d_i0_d_r2eff, d2_func_d_i0_d_i0] ) 
+
+        return hessian_matrix
+
 
 # 'minfx'
 # 'scipy.optimize.leastsq'
@@ -650,6 +700,8 @@ def minimise_leastsq(exp_class=None, scipy_settings=None, values=None, errors=No
 def minimise_fmin_cg(exp_class=None, scipy_settings=None, values=None, errors=None, times=None):
     """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.fmin_ncg.
 
+    Unconstrained minimization of a function using the Newton-CG method.
+
     @keyword exp_class:         The class instance object, which contains functions to calculate with.
     @type exp_class:            class
     @keyword scipy_settings:    The parsed setting to leastsq.  scipy_settings = [ftol, xtol, maxfev, factor]
@@ -674,11 +726,26 @@ def minimise_fmin_cg(exp_class=None, scipy_settings=None, values=None, errors=No
     # Initial guess for minimisation. Solved by linear least squares.
     x0 = exp_class.estimate_x0_exp(intensities=values, times=times)
 
-    func = 2
+    # Define function to minimise. Use errors as weights in the minimisation.
+    use_weights = True
 
-    # fmin_ncg(f, x0, fprime, fhess_p=None, fhess=None, args=(), avextol=1e-05, epsilon=1.4901161193847656e-08, maxiter=None, full_output=0, disp=1, retall=0, callback=None)
-    #fmin_ncg(f=func, x0=x0, args=args, full_output=True, ftol=ftol, xtol=xtol, maxfev=maxfev, factor=factor)
-    #print x0
+    if use_weights:
+        func = exp_class.func_exp_weighted_general
+        dfunc = exp_class.func_exp_weighted_grad
+        d2func = exp_class.func_exp_weighted_hess
+
+    # There are no args to the function, since values and times are stored in the class.
+    args=()
+
+    gfk = dfunc(x0)
+    deltak = numpy.dot(gfk, gfk)
+
+    # Cannot get this to work.
+
+    #xopt, fopt, fcalls, gcalls, hcalls, warnflag = fmin_ncg(f=func, x0=x0, fprime=dfunc, fhess=None, args=args, avextol=1e-05, epsilon=1.4901161193847656e-08, maxiter=maxfev, full_output=1, disp=1, retall=0, callback=None)
+    #test = fmin_ncg(f=func, x0=x0, fprime=dfunc, fhess=d2func, args=args, avextol=1e-05, epsilon=1.4901161193847656e-08, maxiter=maxfev)
+    #fmin_cg(f, x0, fprime=None, args=(), gtol=1e-5, norm=Inf, epsilon=_epsilon, maxiter=None, full_output=0, disp=1, retall=0, callback=None):
+    #fmin_cg(f=func, x0=x0, fprime=dfunc, args=args, gtol=1e-5)
 
 
 def minimise_minfx(exp_class=None, values=None, errors=None, times=None):
