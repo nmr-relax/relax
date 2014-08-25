@@ -23,33 +23,29 @@
 """Module for the optimisation of the relaxation dispersion models."""
 
 # Python module imports.
-from copy import deepcopy
 from minfx.generic import generic_minimise
 from minfx.grid import grid
-from numpy import asarray, diag, dot, float64, inf, int32, ones, sqrt, zeros
+from numpy import dot, float64, int32, ones, zeros
 from numpy.linalg import inv
 from operator import mul
 from re import match, search
 import sys
-from warnings import warn
 
 # relax module imports.
-from dep_check import C_module_exp_fn, scipy_module
+from dep_check import C_module_exp_fn
 from lib.dispersion.two_point import calc_two_point_r2eff, calc_two_point_r2eff_err
 from lib.errors import RelaxError
 from lib.text.sectioning import section
 from lib.text.sectioning import subsection
 from lib.warnings import RelaxWarning
 from multi import Memo, Result_command, Slave_command
-from pipe_control.mol_res_spin import generate_spin_string, spin_loop
+from pipe_control.mol_res_spin import spin_loop
 from pipe_control.spectrum import error_analysis
-from specific_analyses.relax_disp.checks import check_model_type, check_disp_points, check_exp_type, check_exp_type_fixed_time
+from specific_analyses.relax_disp.checks import check_disp_points, check_exp_type, check_exp_type_fixed_time
 from specific_analyses.relax_disp.data import average_intensity, count_spins, find_intensity_keys, has_exponential_exp_type, has_proton_mmq_cpmg, is_r1_optimised, loop_exp, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_frq, loop_offset, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1
 from specific_analyses.relax_disp.parameters import assemble_param_vector, disassemble_param_vector, linear_constraints, param_conversion, param_num, r1_setup
-from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_CPMG, MODEL_CR72, MODEL_CR72_FULL, MODEL_LIST_MMQ, MODEL_LM63, MODEL_M61, MODEL_MP05, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02
-from target_functions.chi2 import chi2_rankN
+from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_CPMG, MODEL_CR72, MODEL_CR72_FULL, MODEL_LIST_MMQ, MODEL_LM63, MODEL_M61, MODEL_MP05, MODEL_TAP03, MODEL_TP02
 from target_functions.relax_disp import Dispersion
-from target_functions.relax_disp_curve_fit import Exponential
 
 # C modules.
 if C_module_exp_fn:
@@ -291,233 +287,6 @@ def calculate_r2eff():
 
             # Calculate the R2eff error.
             spin.r2eff_err[param_key] = calc_two_point_r2eff_err(relax_time=time, I_ref=ref_intensity, I=intensity, I_ref_err=ref_intensity_err, I_err=intensity_err)
-
-
-def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, verbosity=1):
-    """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.leastsq.
-
-    scipy.optimize.leastsq is a wrapper around MINPACK's lmdif and lmder algorithms.
-
-    MINPACK is a FORTRAN90 library which solves systems of nonlinear equations, or carries out the least squares minimization of the residual of a set of linear or nonlinear equations.
-
-    Errors are calculated by taking the square root of the reported co-variance.
-
-    This can be an huge time saving step, when performing model fitting in R1rho.
-    Errors of R2eff values, are normally estimated by time-consuming Monte-Carlo simulations.
-
-    Initial guess for the starting parameter x0 = [r2eff_est, i0_est], is by converting the exponential curve to a linear problem.
-    Then solving initial guess by linear least squares of: ln(Intensity[j]) = ln(i0) - time[j]* r2eff.
-
-
-    @keyword spin_id:           The spin identification string.
-    @type spin_id:              str
-    @keyword ftol:              The function tolerance for the relative error desired in the sum of squares, parsed to leastsq.
-    @type ftol:                 float
-    @keyword xtol:              The error tolerance for the relative error desired in the approximate solution, parsed to leastsq.
-    @type xtol:                 float
-    @keyword maxfev:            The maximum number of function evaluations, parsed to leastsq.  If zero, then 100*(N+1) is the maximum function calls.  N is the number of elements in x0=[r2eff, i0].
-    @type maxfev:               int
-    @keyword factor:            The initial step bound, parsed to leastsq.  It determines the initial step bound (''factor * || diag * x||'').  Should be in the interval (0.1, 100).
-    @type factor:               float
-    @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
-    @type verbosity:            int
-    """
-
-    # Check that scipy.optimize.leastsq is available.
-    if not scipy_module:
-        raise RelaxError("scipy module is not available.")
-
-    # Perform checks.
-    check_model_type(model=MODEL_R2EFF)
-
-    # Import leastsq.
-    from scipy.optimize import leastsq
-
-    # Initialise target function class, to access functions.
-    exp_class = Exponential()
-
-    # Check if intensity errors have already been calculated by the user.
-    precalc = True
-    for cur_spin, mol_name, resi, resn, cur_spin_id in spin_loop(selection=spin_id, full_info=True, return_id=True, skip_desel=True):
-        # No structure.
-        if not hasattr(cur_spin, 'peak_intensity_err'):
-            precalc = False
-            break
-
-        # Determine if a spectrum ID is missing from the list.
-        for id in cdp.spectrum_ids:
-            if id not in cur_spin.peak_intensity_err:
-                precalc = False
-                break
-
-    # If no error analysis of peak heights exists.
-    if not precalc:
-        # Printout.
-        section(file=sys.stdout, text="Error analysis", prespace=2)
-
-        # Loop over the spectrometer frequencies.
-        for frq in loop_frq():
-            # Generate a list of spectrum IDs matching the frequency.
-            ids = []
-            for id in cdp.spectrum_ids:
-                # Check that the spectrometer frequency matches.
-                match_frq = True
-                if frq != None and cdp.spectrometer_frq[id] != frq:
-                    match_frq = False
-
-                # Add the ID.
-                if match_frq:
-                    ids.append(id)
-
-            # Run the error analysis on the subset.
-            error_analysis(subset=ids)
-
-    # Loop over the spins.
-    for cur_spin, mol_name, resi, resn, cur_spin_id in spin_loop(selection=spin_id, full_info=True, return_id=True, skip_desel=True):
-        # Generate spin string.
-        spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
-
-        # Print information.
-        if verbosity >= 1:
-            # Individual spin block section.
-            top = 2
-            if verbosity >= 2:
-                top += 2
-            subsection(file=sys.stdout, text="Fitting with scipy.optimize.leastsq to: %s"%spin_string, prespace=top)
-
-        # Loop over each spectrometer frequency and dispersion point.
-        for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
-            # The parameter key.
-            param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
-
-            # The peak intensities, errors and times.
-            values = []
-            errors = []
-            times = []
-            for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
-                values.append(average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time))
-                errors.append(average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
-                times.append(time)
-
-            # Convert to numpy array.
-            values = asarray(values)
-            errors = asarray(errors)
-            times = asarray(times)
-
-            # Initial guess for minimisation. Solved by linear least squares.
-            x0 = exp_class.estimate_x0_exp(intensities=values, times=times)
-
-            # Define function to minimise. Use errors as weights in the minimisation.
-            use_weights = True
-
-            # If 'sigma'/erros describes one standard deviation errors of the input data points. The estimated covariance in 'pcov' is based on these values.
-            absolute_sigma = True
-
-            if use_weights:
-                func = exp_class.func_exp_weighted_general
-                weights = 1.0 / asarray(errors)
-                args=(times, values, weights )
-            else:
-                func = exp_class.func_exp_general
-                args=(times, values)
-
-            # Call scipy.optimize.leastsq.
-            popt, pcov, infodict, errmsg, ier = leastsq(func=func, x0=x0, args=args, full_output=True, ftol=ftol, xtol=xtol, maxfev=maxfev, factor=factor)
-
-            # Catch errors:
-            if ier in [1, 2, 3]:
-                warning = None
-            elif ier in [4]:
-                warn(RelaxWarning("%s." % errmsg))
-                warning = errmsg
-            elif ier in [0, 5, 6, 7, 8]:
-                raise RelaxError("scipy.optimize.leastsq raises following error: '%s'." % errmsg)
-
-            # 'nfev' number of function calls.
-            f_count = infodict['nfev']
-
-            # 'fvec': function evaluated at the output.
-            fvec = infodict['fvec']
-            #fvec_test = func(popt, times, values)
-
-            # 'fjac': A permutation of the R matrix of a QR factorization of the final approximate Jacobian matrix, stored column wise. Together with ipvt, the covariance of the estimate can be approximated.
-            # fjac = infodict['fjac']
-
-            # 'qtf': The vector (transpose(q) * fvec).
-            # qtf = infodict['qtf']
-
-            # 'ipvt'  An integer array of length N which defines a permutation matrix, p, such that fjac*p = q*r, where r is upper triangular
-            # with diagonal elements of nonincreasing magnitude. Column j of p is column ipvt(j) of the identity matrix.
-
-            # Back calc fitted curve.
-            back_calc = exp_class.calc_exp(times=times, r2eff=popt[0], i0=popt[1])
-
-            # Calculate chi2.
-            chi2 = chi2_rankN(data=values, back_calc_vals=back_calc, errors=errors)
-
-            # 'pcov': The estimated covariance of popt.
-            # The diagonals provide the variance of the parameter estimate.
-
-            if pcov is None:
-                # indeterminate covariance
-                pcov = zeros((len(popt), len(popt)), dtype=float)
-                pcov.fill(inf)
-            elif not absolute_sigma:
-                if len(values) > len(x0):
-                    s_sq = sum( fvec**2 ) / (len(values) - len(x0))
-                    pcov = pcov * s_sq
-                else:
-                    pcov.fill(inf)
-
-            # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
-            perr = sqrt(diag(pcov))
-
-            # Extract values.
-            r2eff = popt[0]
-            i0 = popt[1]
-            r2eff_err = perr[0]
-            i0_err = perr[1]
-
-            # Disassemble the parameter vector.
-            disassemble_param_vector(param_vector=popt, spins=[cur_spin], key=param_key)
-
-            # Errors.
-            if not hasattr(cur_spin, 'r2eff_err'):
-                setattr(cur_spin, 'r2eff_err', deepcopy(getattr(cur_spin, 'r2eff')))
-            if not hasattr(cur_spin, 'i0_err'):
-                setattr(cur_spin, 'i0_err', deepcopy(getattr(cur_spin, 'i0')))
-
-            # Set error.
-            cur_spin.r2eff_err[param_key] = r2eff_err
-            cur_spin.i0_err[param_key] = i0_err
-
-            # Chi-squared statistic.
-            cur_spin.chi2 = chi2
-
-            # Iterations.
-            cur_spin.f_count = f_count
-
-            # Warning.
-            cur_spin.warning = warning
-
-            # Print information.
-            print_strings = []
-            if verbosity >= 1:
-                # Add print strings.
-                point_info = "%s at %3.1f MHz, for offset=%3.3f ppm and dispersion point %-5.1f, with %i time points." % (exp_type, frq/1E6, offset, point, len(times))
-                print_strings.append(point_info)
-
-                par_info = "r2eff=%3.3f r2eff_err=%3.3f, i0=%6.1f, i0_err=%3.3f, chi2=%3.3f.\n" % ( r2eff, r2eff_err, i0, i0_err, chi2)
-                print_strings.append(par_info)
-
-                if verbosity >= 2:
-                    time_info = ', '.join(map(str, times))
-                    print_strings.append('For time array: '+time_info+'.\n\n')
-
-            # Print info
-            if len(print_strings) > 0:
-                for print_string in print_strings:
-                    print(print_string),
 
 
 def minimise_r2eff(spins=None, spin_ids=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling_matrix=None, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):

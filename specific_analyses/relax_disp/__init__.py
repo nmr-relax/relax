@@ -30,6 +30,7 @@ __all__ = [
     'checks',
     'cpmgfit',
     'data',
+    'estimate_r2eff',
     'model',
     'nessy',
     'optimisation',
