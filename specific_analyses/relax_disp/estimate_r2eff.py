@@ -25,6 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from numpy import asarray, diag, dot, exp, inf, log, sqrt, sum, zeros
+from minfx.generic import generic_minimise
 from warnings import warn
 
 # relax module imports.
@@ -43,10 +44,14 @@ if scipy_module:
 
 
 class Exponential:
-    def __init__(self, num_params=2, num_times=None, values=None, sd=None, relax_times=None, scaling_matrix=None):
-        """Relaxation dispersion target functions for optimisation.
+    def __init__(self, num_params=2, num_times=None, values=None, sd=None, relax_times=None, scaling_matrix=None, constraints=None):
+        """Relaxation dispersion target functions for minimisation.
 
         This class contains minimisation functions for both minfx and scipy.optimize.leastsq.
+        """
+
+    def setup(self, num_params=2, num_times=None, values=None, sd=None, relax_times=None, scaling_matrix=None, constraints=False, func_tol=1e-25, grad_tol=None, max_iterations=10000000, verbosity=1):
+        """Setup for minimisation with minfx.
 
         @keyword num_param:         The number of parameters in the model.
         @type num_param:            int
@@ -60,6 +65,16 @@ class Exponential:
         @type relax_times:          numpy array
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 float array
+        @keyword constraints:       If constraints should be used.
+        @type constraints:          bool
+        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
+        @type func_tol:             None or float
+        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
+        @type grad_tol:             None or float
+        @keyword max_iterations:    The maximum number of iterations for the algorithm.
+        @type max_iterations:       int
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
         """
 
         # Store variables.
@@ -75,6 +90,29 @@ class Exponential:
         self.scaling_flag = False
         if self.scaling_matrix != None:
             self.scaling_flag = True
+
+        # Settings to minfx.
+        self.func_tol = func_tol
+        self.grad_tol = grad_tol
+        self.max_iterations = max_iterations
+        self.verbosity = verbosity
+
+        # Define which constraints should be used.
+        self.constraints = constraints
+
+        if self.constraints:
+            self.min_algor = 'Log barrier'
+            self.min_options = ('simplex',)
+            self.A = array([ [ 1.,  0.],
+                        [-1.,  0.],
+                        [ 0.,  1.]] )
+            self.b = array([   0., -200.,    0.])
+
+        else:
+            self.min_algor = 'simplex'
+            self.min_options = ()
+            self.A = None
+            self.b = None
 
         # Create the structure for holding the back-calculated R2eff values (matching the dimensions of the values structure).
         self.back_calc = deepcopy(self.values)
@@ -204,8 +242,8 @@ class Exponential:
         # Return
         return weights * (self.calc_exp(times, *params) - intensities)
 
-
-def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, method='scipy.optimize.leastsq', verbosity=1):
+#scipy.optimize.leastsq
+def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, method='minfx', verbosity=1):
     """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.leastsq.
 
     scipy.optimize.leastsq is a wrapper around MINPACK's lmdif and lmder algorithms.
@@ -231,7 +269,7 @@ def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor
     @type maxfev:               int
     @keyword factor:            The initial step bound, parsed to leastsq.  It determines the initial step bound (''factor * || diag * x||'').  Should be in the interval (0.1, 100).
     @type factor:               float
-    @keyword method:            The method to minimise and estimate errors.  Options are: 'scipy.optimize.leastsq'.
+    @keyword method:            The method to minimise and estimate errors.  Options are: 'scipy.optimize.leastsq' or 'minfx'.
     @type method:               string
     @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:            int
@@ -244,8 +282,7 @@ def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor
     scipy_settings = [ftol, xtol, maxfev, factor]
 
     # Initialise target function class, to access functions.
-    if method == 'scipy.optimize.leastsq':
-        exp_class = Exponential()
+    exp_class = Exponential()
 
     # Check if intensity errors have already been calculated by the user.
     precalc = True
@@ -318,6 +355,12 @@ def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor
             # Get the result based on method.
             if method == 'scipy.optimize.leastsq':
                 results = minimise_leastsq(exp_class=exp_class, scipy_settings=scipy_settings, values=values, errors=errors, times=times)
+            elif method == 'minfx':
+                # Initialise the function to minimise.
+                exp_class.setup(num_params=2, num_times=len(times), values=values, sd=errors, relax_times=times, func_tol=ftol, max_iterations=maxfev, verbosity=verbosity)
+
+                # Acquire results.
+                results = minimise_minfx(exp_class=exp_class, values=values, errors=errors, times=times)
             else:
                 raise RelaxError("Method for minimisation not known. Try setting: method='scipy.optimize.leastsq'.")
 
@@ -478,3 +521,36 @@ def minimise_leastsq(exp_class=None, scipy_settings=None, values=None, errors=No
     # Return, including errors.
     return results
 
+
+def minimise_minfx(exp_class=None, values=None, errors=None, times=None):
+    """Estimate r2eff and errors by minimising with minfx.
+
+    @keyword exp_class:         The class instance object, which contains functions to calculate with.
+    @type exp_class:            class
+    @keyword values:            The measured intensity values per time point.
+    @type values:               numpy array
+    @keyword errors:            The standard deviation of the measured intensity values per time point.
+    @type errors:               numpy array
+    @keyword times:             The time points.
+    @type times:                numpy array
+    @return:                    Packed list with optimised parameter, estimated parameter error, chi2, iter_count, f_count, g_count, h_count, warning
+    @rtype:                     list
+    """
+
+    # Initial guess for minimisation. Solved by linear least squares.
+    x0 = asarray(exp_class.estimate_x0_exp(intensities=values, times=times))
+
+    # Minimise with minfx.
+    results_minfx = generic_minimise(func=exp_class.func, args=(), x0=x0, min_algor=exp_class.min_algor, min_options=exp_class.min_options, func_tol=exp_class.func_tol, grad_tol=exp_class.grad_tol, maxiter=exp_class.max_iterations, A=exp_class.A, b=exp_class.b, full_output=True, print_flag=exp_class.verbosity)
+
+    # Unpack
+    param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results_minfx
+
+    # Set error to inf.
+    param_vector_error = [inf, inf]
+
+    # Pack to list.
+    results = [param_vector, param_vector_error, chi2, iter_count, f_count, g_count, h_count, warning]
+
+    # Return, including errors.
+    return results
