@@ -73,6 +73,18 @@ class Relax_disp(SystemTestCase):
             if methodName in to_skip:
                 status.skipped_tests.append([methodName, 'Relax curve-fitting C module', self._skip_type])
 
+        # If not scipy.optimize.leastsq.
+        if not dep_check.scipy_leastsq:
+            # The list of tests to skip.
+            to_skip = [
+                "test_estimate_r2eff",
+                "test_estimate_r2eff_error"
+            ]
+
+            # Store in the status object.
+            if methodName in to_skip:
+                status.skipped_tests.append([methodName, 'scipy.optimize.leastsq module', self._skip_type])
+
 
     def setUp(self):
         """Set up for all the functional tests."""
