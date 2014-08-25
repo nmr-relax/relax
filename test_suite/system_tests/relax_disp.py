@@ -7500,7 +7500,7 @@ class Relax_disp(SystemTestCase):
                                         elif model == MODEL_MP05:
                                             self.assertAlmostEqual(value, 1.54354372)
                                         elif model == MODEL_NS_R1RHO_2SITE:
-                                            self.assertAlmostEqual(value, 1.41321968, 6)
+                                            self.assertAlmostEqual(value, 1.41321968, 5)
 
                                     elif param == 'r2':
                                         if model == MODEL_NOREX:
