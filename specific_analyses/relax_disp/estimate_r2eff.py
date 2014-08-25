@@ -334,40 +334,30 @@ class Exponential:
         return hessian_matrix
 
 
-    def func_exp_general(self, params, times, intensities):
+    def func_exp_general(self, params):
         """Target function for minimisation with scipy.optimize.leastsq.
 
         @param params:          The vector of parameter values.
         @type params:           numpy rank-1 float array
-        @keyword times:         The time points.
-        @type times:            numpy array
-        @keyword intensities:   The measured intensity values per time point.
-        @type intensities:      numpy array
         @return:                The difference between function evaluation with fitted parameters and measured values.
         @rtype:                 numpy array
         """
 
         # Return
-        return self.calc_exp(times, *params) - intensities
+        return self.calc_exp(self.relax_times, *params) - self.values
 
 
-    def func_exp_weighted_general(self, params, times, intensities, weights):
+    def func_exp_weighted_general(self, params):
         """Target function for weighted minimisation with scipy.optimize.leastsq.
 
         @param params:          The vector of parameter values.
         @type params:           numpy rank-1 float array
-        @keyword times:         The time points.
-        @type times:            numpy array
-        @keyword intensities:   The measured intensity values per time point.
-        @type intensities:      numpy array
-        @keyword weights:       The weights to multiply the function evaluation.  Should be supplied as '1/sd', where sd is the standard deviation of the measured intensity values.
-        @type weights:          numpy array
         @return:                The weighted difference between function evaluation with fitted parameters and measured values.
         @rtype:                 numpy array
         """
 
         # Return
-        return weights * (self.calc_exp(times, *params) - intensities)
+        return 1. / self.errors * (self.calc_exp(self.relax_times, *params) - self.values)
 
 # 'minfx'
 # 'scipy.optimize.leastsq'
@@ -580,18 +570,16 @@ def minimise_leastsq(exp_class=None, scipy_settings=None, values=None, errors=No
     # Define function to minimise. Use errors as weights in the minimisation.
     use_weights = True
 
-    # If 'sigma'/erros describes one standard deviation errors of the input data points. The estimated covariance in 'pcov' is based on these values.
-    absolute_sigma = True
-
     if use_weights:
-        #func = exp_class.func_exp_weighted_general
-        #weights = 1.0 / asarray(errors)
-        #args=(times, values, weights)
         func = exp_class.func_exp_weighted_general
-        args=()
+         # If 'sigma'/erros describes one standard deviation errors of the input data points. The estimated covariance in 'pcov' is based on these values.
+        absolute_sigma = True
     else:
         func = exp_class.func_exp_general
-        args=(times, values)
+        absolute_sigma = False
+
+    # There are no args to the function, since values and times are stored in the class.
+    args=()
 
     # Call scipy.optimize.leastsq.
     popt, pcov, infodict, errmsg, ier = leastsq(func=func, x0=x0, args=args, full_output=True, ftol=ftol, xtol=xtol, maxfev=maxfev, factor=factor)
