@@ -44,7 +44,7 @@ from target_functions.chi2 import chi2_rankN
 # Scipy installed.
 if scipy_module:
     # Import leastsq.
-    from scipy.optimize import leastsq
+    from scipy.optimize import fmin_ncg, leastsq
 
 
 class Exponential:
@@ -113,13 +113,13 @@ class Exponential:
             self.b = array([   0., -200.,    0.])
 
         else:
-            #self.min_algor = 'simplex'
+            self.min_algor = 'simplex'
 
             # Newton does not work.
             #self.min_algor = 'newton'
 
             # Newton-CG does not work.
-            self.min_algor = 'Newton-CG'
+            #self.min_algor = 'Newton-CG'
 
             # Also not work.
             #self.min_algor = 'Steepest descent'
@@ -231,7 +231,7 @@ class Exponential:
 
 
     def func_exp_chi2(self, params):
-        """Target function for exponential fit in minfx.
+        """Target function for exponential fit in minfx, which return array instead.
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
@@ -247,9 +247,11 @@ class Exponential:
         r2eff = params[0]
         i0 = params[1]
 
-        chi2 = 1.0 * ( -i0 * exp( -r2eff * self.relax_times) + self.values)**2 / self.errors**2
+        #chi2 = 1.0 * ( -i0 * exp( -r2eff * self.relax_times) + self.values)**2 / self.errors**2
+        #(1.0 / errors * (values - back_calc))**2
+        chi2 = (1.0 / self.errors * (self.values - i0 * exp( -self.relax_times * r2eff) ))**2
 
-        # Calculate and return the chi-squared value.
+        # Calculate and return the chi-squared value as array.
         return chi2
 
 
@@ -367,8 +369,10 @@ class Exponential:
         # Return
         return weights * (self.calc_exp(times, *params) - intensities)
 
-#scipy.optimize.leastsq
-def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, method='minfx', verbosity=1):
+# 'minfx'
+# 'scipy.optimize.leastsq'
+# 'scipy.optimize.fmin_ncg'
+def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, method='scipy.optimize.leastsq', verbosity=1):
     """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.leastsq.
 
     scipy.optimize.leastsq is a wrapper around MINPACK's lmdif and lmder algorithms.
@@ -477,13 +481,19 @@ def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor
             errors = asarray(errors)
             times = asarray(times)
 
+            # Initialise the function to minimise.
+            exp_class.setup(num_params=2, num_times=len(times), values=values, sd=errors, relax_times=times, func_tol=ftol, max_iterations=maxfev, verbosity=verbosity)
+
             # Get the result based on method.
             if method == 'scipy.optimize.leastsq':
+                # Acquire results.
                 results = minimise_leastsq(exp_class=exp_class, scipy_settings=scipy_settings, values=values, errors=errors, times=times)
-            elif method == 'minfx':
-                # Initialise the function to minimise.
-                exp_class.setup(num_params=2, num_times=len(times), values=values, sd=errors, relax_times=times, func_tol=ftol, max_iterations=maxfev, verbosity=verbosity)
 
+            elif method == 'scipy.optimize.fmin_ncg':
+                # Acquire results.
+                results = minimise_fmin_cg(exp_class=exp_class, scipy_settings=scipy_settings, values=values, errors=errors, times=times)
+
+            elif method == 'minfx':
                 # Acquire results.
                 results = minimise_minfx(exp_class=exp_class, values=values, errors=errors, times=times)
             else:
@@ -574,9 +584,11 @@ def minimise_leastsq(exp_class=None, scipy_settings=None, values=None, errors=No
     absolute_sigma = True
 
     if use_weights:
+        #func = exp_class.func_exp_weighted_general
+        #weights = 1.0 / asarray(errors)
+        #args=(times, values, weights)
         func = exp_class.func_exp_weighted_general
-        weights = 1.0 / asarray(errors)
-        args=(times, values, weights)
+        args=()
     else:
         func = exp_class.func_exp_general
         args=(times, values)
@@ -645,6 +657,40 @@ def minimise_leastsq(exp_class=None, scipy_settings=None, values=None, errors=No
 
     # Return, including errors.
     return results
+
+
+def minimise_fmin_cg(exp_class=None, scipy_settings=None, values=None, errors=None, times=None):
+    """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.fmin_ncg.
+
+    @keyword exp_class:         The class instance object, which contains functions to calculate with.
+    @type exp_class:            class
+    @keyword scipy_settings:    The parsed setting to leastsq.  scipy_settings = [ftol, xtol, maxfev, factor]
+    @type scipy_settings:       list of float, float, int, float
+    @keyword values:            The measured intensity values per time point.
+    @type values:               numpy array
+    @keyword errors:            The standard deviation of the measured intensity values per time point.
+    @type errors:               numpy array
+    @keyword times:             The time points.
+    @type times:                numpy array
+    @return:                    Packed list with optimised parameter, estimated parameter error, chi2, iter_count, f_count, g_count, h_count, warning
+    @rtype:                     list
+    """
+
+    # Check that scipy.optimize.leastsq is available.
+    if not scipy_module:
+        raise RelaxError("scipy module is not available.")
+
+    # Unpack settings:
+    ftol, xtol, maxfev, factor = scipy_settings
+
+    # Initial guess for minimisation. Solved by linear least squares.
+    x0 = exp_class.estimate_x0_exp(intensities=values, times=times)
+
+    func = 2
+
+    # fmin_ncg(f, x0, fprime, fhess_p=None, fhess=None, args=(), avextol=1e-05, epsilon=1.4901161193847656e-08, maxiter=None, full_output=0, disp=1, retall=0, callback=None)
+    #fmin_ncg(f=func, x0=x0, args=args, full_output=True, ftol=ftol, xtol=xtol, maxfev=maxfev, factor=factor)
+    #print x0
 
 
 def minimise_minfx(exp_class=None, values=None, errors=None, times=None):
