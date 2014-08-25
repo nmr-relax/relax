@@ -35,12 +35,10 @@ import sys
 from dep_check import C_module_exp_fn
 from lib.dispersion.two_point import calc_two_point_r2eff, calc_two_point_r2eff_err
 from lib.errors import RelaxError
-from lib.text.sectioning import section
 from lib.text.sectioning import subsection
 from lib.warnings import RelaxWarning
 from multi import Memo, Result_command, Slave_command
 from pipe_control.mol_res_spin import spin_loop
-from pipe_control.spectrum import error_analysis
 from specific_analyses.relax_disp.checks import check_disp_points, check_exp_type, check_exp_type_fixed_time
 from specific_analyses.relax_disp.data import average_intensity, count_spins, find_intensity_keys, has_exponential_exp_type, has_proton_mmq_cpmg, is_r1_optimised, loop_exp, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_frq, loop_offset, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1
 from specific_analyses.relax_disp.parameters import assemble_param_vector, disassemble_param_vector, linear_constraints, param_conversion, param_num, r1_setup
