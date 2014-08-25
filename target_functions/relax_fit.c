@@ -169,16 +169,12 @@ back_calc_I(PyObject *self, PyObject *args) {
 
 static PyObject *
 jacobian(PyObject *self, PyObject *args) {
-    /* Return the Jacobian as a Python list. */
+    /* Return the Jacobian as a Python list of lists. */
 
     /* Declarations */
     PyObject *params_arg;
     PyObject *element;
     int i, j;
-
-    /* The Python list of lists. */
-    PyObject *list = PyList_New(num_params);
-    Py_INCREF(list);
 
     /* Parse the function arguments, the only argument should be the parameter array */
     if (!PyArg_ParseTuple(args, "O", &params_arg))
@@ -201,9 +197,12 @@ jacobian(PyObject *self, PyObject *args) {
     exponential_dR(params, relax_times, back_calc_grad, num_times);
     exponential_dI(params, relax_times, back_calc_grad, num_times);
 
-    /* Convert to a Python list */
+    /* Convert to a Python list of lists */
+    PyObject *list = PyList_New(0);
+    Py_INCREF(list);
     for (i = 0; i < num_params; i++) {
-        PyObject *list2 = PyList_New(num_times);
+        PyObject *list2 = PyList_New(0);
+        Py_INCREF(list2);
         for (j = 0; j < num_times; j++) {
             PyList_Append(list2, PyFloat_FromDouble(back_calc_grad[i][j]));
         }
