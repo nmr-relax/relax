@@ -26,6 +26,7 @@
 from copy import deepcopy
 from numpy import asarray, array, diag, dot, exp, inf, log, sqrt, sum, transpose, zeros
 from minfx.generic import generic_minimise
+from re import match, search
 import sys
 from warnings import warn
 
@@ -113,7 +114,19 @@ class Exponential:
 
         else:
             #self.min_algor = 'simplex'
-            self.min_algor = 'newton'
+
+            # Newton does not work.
+            #self.min_algor = 'newton'
+
+            # Newton-CG does not work.
+            self.min_algor = 'Newton-CG'
+
+            # Also not work.
+            #self.min_algor = 'Steepest descent'
+
+            # Also not work.#
+            #self.min_algor = 'Fletcher-Reeves'
+
             self.min_options = ()
             self.A = None
             self.b = None
@@ -122,7 +135,11 @@ class Exponential:
         self.back_calc = deepcopy(self.values)
 
         # Define function to minimise for minfx.
-        self.func = self.func_exp
+        if match('^[Ss]implex$', self.min_algor):
+            self.func = self.func_exp
+        else:
+            self.func = self.func_exp_chi2
+
         self.dfunc = self.func_exp_grad
         self.d2func = self.func_exp_hess
 
@@ -213,6 +230,29 @@ class Exponential:
         return self.calc_exp_chi2(r2eff=r2eff, i0=i0)
 
 
+    def func_exp_chi2(self, params):
+        """Target function for exponential fit in minfx.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        r2eff = params[0]
+        i0 = params[1]
+
+        chi2 = 1.0 * ( -i0 * exp( -r2eff * self.relax_times) + self.values)**2 / self.errors**2
+
+        # Calculate and return the chi-squared value.
+        return chi2
+
+
     def func_exp_grad(self, params):
         """Target function for the gradient (Jacobian matrix) for exponential fit in minfx.
 
@@ -243,6 +283,8 @@ class Exponential:
 
         # Define Jacobian as m rows with function derivatives and n columns of parameters.
         jacobian_matrix = transpose(array( [d_chi2_d_r2eff , d_chi2_d_i0] ) )
+
+        #print jacobian_matrix
 
         # Return Jacobian matrix.
         return jacobian_matrix
@@ -283,6 +325,8 @@ class Exponential:
 
         # Form hessian.
         hessian_matrix = transpose(array( [d2_chi2_d_r2eff_d_r2eff, d2_chi2_d_r2eff_d_i0, d2_chi2_d_i0_d_r2eff, d2_chi2_d_i0_d_i0] ) )
+
+        #print hessian_matrix
 
         # Return Jacobian matrix.
         return hessian_matrix
