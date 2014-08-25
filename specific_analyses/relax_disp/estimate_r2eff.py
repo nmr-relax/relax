@@ -205,7 +205,7 @@ class Exponential:
         return weights * (self.calc_exp(times, *params) - intensities)
 
 
-def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, verbosity=1):
+def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, method='scipy.optimize.leastsq', verbosity=1):
     """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.leastsq.
 
     scipy.optimize.leastsq is a wrapper around MINPACK's lmdif and lmder algorithms.
@@ -231,19 +231,21 @@ def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor
     @type maxfev:               int
     @keyword factor:            The initial step bound, parsed to leastsq.  It determines the initial step bound (''factor * || diag * x||'').  Should be in the interval (0.1, 100).
     @type factor:               float
+    @keyword method:            The method to minimise and estimate errors.  Options are: 'scipy.optimize.leastsq'.
+    @type method:               string
     @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:            int
     """
 
-    # Check that scipy.optimize.leastsq is available.
-    if not scipy_module:
-        raise RelaxError("scipy module is not available.")
-
     # Perform checks.
     check_model_type(model=MODEL_R2EFF)
 
+    # Set list with scipy setting.
+    scipy_settings = [ftol, xtol, maxfev, factor]
+
     # Initialise target function class, to access functions.
-    exp_class = Exponential()
+    if method == 'scipy.optimize.leastsq':
+        exp_class = Exponential()
 
     # Check if intensity errors have already been calculated by the user.
     precalc = True
@@ -313,82 +315,23 @@ def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor
             errors = asarray(errors)
             times = asarray(times)
 
-            # Initial guess for minimisation. Solved by linear least squares.
-            x0 = exp_class.estimate_x0_exp(intensities=values, times=times)
-
-            # Define function to minimise. Use errors as weights in the minimisation.
-            use_weights = True
-
-            # If 'sigma'/erros describes one standard deviation errors of the input data points. The estimated covariance in 'pcov' is based on these values.
-            absolute_sigma = True
-
-            if use_weights:
-                func = exp_class.func_exp_weighted_general
-                weights = 1.0 / asarray(errors)
-                args=(times, values, weights )
+            # Get the result based on method.
+            if method == 'scipy.optimize.leastsq':
+                results = minimise_leastsq(exp_class=exp_class, scipy_settings=scipy_settings, values=values, errors=errors, times=times)
             else:
-                func = exp_class.func_exp_general
-                args=(times, values)
+                raise RelaxError("Method for minimisation not known. Try setting: method='scipy.optimize.leastsq'.")
 
-            # Call scipy.optimize.leastsq.
-            popt, pcov, infodict, errmsg, ier = leastsq(func=func, x0=x0, args=args, full_output=True, ftol=ftol, xtol=xtol, maxfev=maxfev, factor=factor)
-
-            # Catch errors:
-            if ier in [1, 2, 3, 4]:
-                warning = None
-            elif ier in [9]:
-                warn(RelaxWarning("%s." % errmsg))
-                warning = errmsg
-            elif ier in [0, 5, 6, 7, 8]:
-                raise RelaxError("scipy.optimize.leastsq raises following error: '%s'." % errmsg)
-
-            # 'nfev' number of function calls.
-            f_count = infodict['nfev']
-
-            # 'fvec': function evaluated at the output.
-            fvec = infodict['fvec']
-            #fvec_test = func(popt, times, values)
-
-            # 'fjac': A permutation of the R matrix of a QR factorization of the final approximate Jacobian matrix, stored column wise. Together with ipvt, the covariance of the estimate can be approximated.
-            # fjac = infodict['fjac']
-
-            # 'qtf': The vector (transpose(q) * fvec).
-            # qtf = infodict['qtf']
-
-            # 'ipvt'  An integer array of length N which defines a permutation matrix, p, such that fjac*p = q*r, where r is upper triangular
-            # with diagonal elements of nonincreasing magnitude. Column j of p is column ipvt(j) of the identity matrix.
-
-            # Back calc fitted curve.
-            back_calc = exp_class.calc_exp(times=times, r2eff=popt[0], i0=popt[1])
-
-            # Calculate chi2.
-            chi2 = chi2_rankN(data=values, back_calc_vals=back_calc, errors=errors)
-
-            # 'pcov': The estimated covariance of popt.
-            # The diagonals provide the variance of the parameter estimate.
-
-            if pcov is None:
-                # indeterminate covariance
-                pcov = zeros((len(popt), len(popt)), dtype=float)
-                pcov.fill(inf)
-            elif not absolute_sigma:
-                if len(values) > len(x0):
-                    s_sq = sum( fvec**2 ) / (len(values) - len(x0))
-                    pcov = pcov * s_sq
-                else:
-                    pcov.fill(inf)
-
-            # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
-            perr = sqrt(diag(pcov))
+            # Unpack results
+            param_vector, param_vector_error, chi2, iter_count, f_count, g_count, h_count, warning = results
 
             # Extract values.
-            r2eff = popt[0]
-            i0 = popt[1]
-            r2eff_err = perr[0]
-            i0_err = perr[1]
+            r2eff = param_vector[0]
+            i0 = param_vector[1]
+            r2eff_err = param_vector_error[0]
+            i0_err = param_vector_error[1]
 
             # Disassemble the parameter vector.
-            disassemble_param_vector(param_vector=popt, spins=[cur_spin], key=param_key)
+            disassemble_param_vector(param_vector=param_vector, spins=[cur_spin], key=param_key)
 
             # Errors.
             if not hasattr(cur_spin, 'r2eff_err'):
@@ -427,3 +370,111 @@ def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor
             if len(print_strings) > 0:
                 for print_string in print_strings:
                     print(print_string),
+
+
+def minimise_leastsq(exp_class=None, scipy_settings=None, values=None, errors=None, times=None):
+    """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.leastsq.
+
+    @keyword exp_class:         The class instance object, which contains functions to calculate with.
+    @type exp_class:            class
+    @keyword scipy_settings:    The parsed setting to leastsq.  scipy_settings = [ftol, xtol, maxfev, factor]
+    @type scipy_settings:       list of float, float, int, float
+    @keyword values:            The measured intensity values per time point.
+    @type values:               numpy array
+    @keyword errors:            The standard deviation of the measured intensity values per time point.
+    @type errors:               numpy array
+    @keyword times:             The time points.
+    @type times:                numpy array
+    @return:                    Packed list with optimised parameter, estimated parameter error, chi2, iter_count, f_count, g_count, h_count, warning
+    @rtype:                     list
+    """
+
+    # Check that scipy.optimize.leastsq is available.
+    if not scipy_module:
+        raise RelaxError("scipy module is not available.")
+
+    # Unpack settings:
+    ftol, xtol, maxfev, factor = scipy_settings
+
+    # Initial guess for minimisation. Solved by linear least squares.
+    x0 = exp_class.estimate_x0_exp(intensities=values, times=times)
+
+    # Define function to minimise. Use errors as weights in the minimisation.
+    use_weights = True
+
+    # If 'sigma'/erros describes one standard deviation errors of the input data points. The estimated covariance in 'pcov' is based on these values.
+    absolute_sigma = True
+
+    if use_weights:
+        func = exp_class.func_exp_weighted_general
+        weights = 1.0 / asarray(errors)
+        args=(times, values, weights)
+    else:
+        func = exp_class.func_exp_general
+        args=(times, values)
+
+    # Call scipy.optimize.leastsq.
+    popt, pcov, infodict, errmsg, ier = leastsq(func=func, x0=x0, args=args, full_output=True, ftol=ftol, xtol=xtol, maxfev=maxfev, factor=factor)
+
+    # Catch errors:
+    if ier in [1, 2, 3, 4]:
+        warning = None
+    elif ier in [9]:
+        warn(RelaxWarning("%s." % errmsg))
+        warning = errmsg
+    elif ier in [0, 5, 6, 7, 8]:
+        raise RelaxError("scipy.optimize.leastsq raises following error: '%s'." % errmsg)
+
+    # 'nfev' number of function calls.
+    f_count = infodict['nfev']
+
+    # 'fvec': function evaluated at the output.
+    fvec = infodict['fvec']
+    #fvec_test = func(popt, times, values)
+
+    # 'fjac': A permutation of the R matrix of a QR factorization of the final approximate Jacobian matrix, stored column wise. Together with ipvt, the covariance of the estimate can be approximated.
+    # fjac = infodict['fjac']
+
+    # 'qtf': The vector (transpose(q) * fvec).
+    # qtf = infodict['qtf']
+
+    # 'ipvt'  An integer array of length N which defines a permutation matrix, p, such that fjac*p = q*r, where r is upper triangular
+    # with diagonal elements of nonincreasing magnitude. Column j of p is column ipvt(j) of the identity matrix.
+
+    # Back calc fitted curve.
+    back_calc = exp_class.calc_exp(times=times, r2eff=popt[0], i0=popt[1])
+
+    # Calculate chi2.
+    chi2 = chi2_rankN(data=values, back_calc_vals=back_calc, errors=errors)
+
+    # 'pcov': The estimated covariance of popt.
+    # The diagonals provide the variance of the parameter estimate.
+
+    if pcov is None:
+        # indeterminate covariance
+        pcov = zeros((len(popt), len(popt)), dtype=float)
+        pcov.fill(inf)
+    elif not absolute_sigma:
+        if len(values) > len(x0):
+            s_sq = sum( fvec**2 ) / (len(values) - len(x0))
+            pcov = pcov * s_sq
+        else:
+            pcov.fill(inf)
+
+    # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
+    perr = sqrt(diag(pcov))
+
+    # Return as standard from minfx.
+    param_vector = popt
+    param_vector_error = perr
+
+    iter_count = 0
+    g_count = 0
+    h_count = 0
+
+    # Pack to list.
+    results = [param_vector, param_vector_error, chi2, iter_count, f_count, g_count, h_count, warning]
+
+    # Return, including errors.
+    return results
+
