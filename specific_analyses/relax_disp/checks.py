@@ -155,15 +155,21 @@ def check_mixed_curve_types():
         raise RelaxError("Fixed time and exponential curves cannot be analysed simultaneously.")
 
 
-def check_model_type():
+def check_model_type(model=None):
     """Check that the dispersion model has been set.
 
+    @keyword model:     The model which to select.
+    @type model:        str
     @raises RelaxError: If the dispersion model has not been specified.
     """
 
     # Test if the model has been set.
     if not hasattr(cdp, 'model_type'):
-        raise RelaxError("The relaxation dispersion model has not been specified.")
+        if model != None:
+            text = "The relaxation dispersion model '%s' has not been specified.  Set by: relax_disp.select_model('%s')." % (model, model)
+        else:
+            text = "The relaxation dispersion model has not been specified."
+        raise RelaxError(text)
 
 
 def check_pipe_type():

@@ -73,6 +73,18 @@ class Relax_disp(SystemTestCase):
             if methodName in to_skip:
                 status.skipped_tests.append([methodName, 'Relax curve-fitting C module', self._skip_type])
 
+        # If not scipy.optimize.leastsq.
+        if not dep_check.scipy_module:
+            # The list of tests to skip.
+            to_skip = [
+                "test_estimate_r2eff",
+                "test_estimate_r2eff_error"
+            ]
+
+            # Store in the status object.
+            if methodName in to_skip:
+                status.skipped_tests.append([methodName, 'scipy.optimize.leastsq module', self._skip_type])
+
 
     def setUp(self):
         """Set up for all the functional tests."""
@@ -2645,6 +2657,175 @@ class Relax_disp(SystemTestCase):
 
             # Increment the spin index.
             spin_index += 1
+
+
+    def test_estimate_r2eff(self):
+        """Test the user function for estimating R2eff and associated errors for exponential curve fitting.
+
+        This follows Task 7822.
+        U{task #7822<https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
+
+        This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
+        Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
+        """
+
+        # Cluster residues
+        cluster_ids = [
+        ":13@N",
+        ":15@N",
+        ":16@N",
+        ":25@N",
+        ":26@N",
+        ":28@N",
+        ":39@N",
+        ":40@N",
+        ":41@N",
+        ":43@N",
+        ":44@N",
+        ":45@N",
+        ":49@N",
+        ":52@N",
+        ":53@N"]
+
+        # Load the data.
+        self.setup_r1rho_kjaergaard(cluster_ids=cluster_ids, read_R1=False)
+
+        # The dispersion models.
+        MODELS = [MODEL_NOREX, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
+
+        # The grid search size (the number of increments per dimension).
+        GRID_INC = None
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        MC_NUM = 3
+
+        # Model selection technique.
+        MODSEL = 'AIC'
+
+        # Execute the auto-analysis (fast).
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
+        OPT_FUNC_TOL = 1e-25
+        relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
+        OPT_MAX_ITERATIONS = 10000000
+        relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
+
+        result_dir_name = ds.tmpdir
+
+        # Make all spins free
+        for curspin in cluster_ids:
+            self.interpreter.relax_disp.cluster('free spins', curspin)
+            # Shut them down
+            self.interpreter.deselect.spin(spin_id=curspin, change_all=False)
+
+        # Select only a subset of spins for global fitting
+        #self.interpreter.select.spin(spin_id=':41@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':41@N')
+
+        #self.interpreter.select.spin(spin_id=':40@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':40@N')
+
+        self.interpreter.select.spin(spin_id=':52@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':52@N')
+
+        # Set the model.
+        self.interpreter.relax_disp.select_model(MODEL_R2EFF)
+
+        # Estimate R2eff and errors.
+        self.interpreter.relax_disp.r2eff_estimate()
+
+        # Run the analysis.
+        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+
+        # Verify the data.
+        self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, do_assert=False)
+
+
+    def test_estimate_r2eff_error(self):
+        """Test the user function for estimating R2eff and associated errors for exponential curve fitting.
+        This is compared with a run where erros are estimated by 2000 Monte Carlo simulations.
+
+        This follows Task 7822.
+        U{task #7822<https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
+
+        This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
+        Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
+        """
+
+        # Define data path.
+        prev_data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013' +sep+ "check_graphs" +sep+ "mc_2000"  +sep+ "R2eff"
+
+        # Create pipe.
+        self.interpreter.pipe.create('MC_2000', 'relax_disp')
+
+        # Read results for 2000 MC simulations.
+        self.interpreter.results.read(prev_data_path + sep + 'results')
+
+        # Start dic.
+        my_dic = {}
+        param_key_list = []
+
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Add key to dic.
+            my_dic[spin_id] = {}
+
+            # Generate spin string.
+            spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+            for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                # Generate the param_key.
+                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                # Append key.
+                param_key_list.append(param_key)
+
+                # Add key to dic.
+                my_dic[spin_id][param_key] = {}
+
+                # Get the value.
+                r2eff = getattr(cur_spin, 'r2eff')[param_key]
+                r2eff_err = getattr(cur_spin, 'r2eff_err')[param_key]
+                i0 = getattr(cur_spin, 'i0')[param_key]
+                i0_err = getattr(cur_spin, 'i0_err')[param_key]
+
+                # Save to dic.
+                my_dic[spin_id][param_key]['r2eff'] = r2eff
+                my_dic[spin_id][param_key]['r2eff_err'] = r2eff_err
+                my_dic[spin_id][param_key]['i0'] = i0
+                my_dic[spin_id][param_key]['i0_err'] = i0_err
+
+        # A new data pipe.
+        self.interpreter.pipe.copy(pipe_from='MC_2000', pipe_to='r2eff_est')
+        self.interpreter.pipe.switch(pipe_name='r2eff_est')
+
+        # Set the model.
+        self.interpreter.relax_disp.select_model(MODEL_R2EFF)
+
+        # Estimate R2eff and errors.
+        self.interpreter.relax_disp.r2eff_estimate(verbosity=0)
+
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Generate spin string.
+            spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+            for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                # Generate the param_key.
+                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                # Get the value.
+                r2eff_est = getattr(cur_spin, 'r2eff')[param_key]
+                r2eff_err_est = getattr(cur_spin, 'r2eff_err')[param_key]
+                i0_est = getattr(cur_spin, 'i0')[param_key]
+                i0_err_est = getattr(cur_spin, 'i0_err')[param_key]
+
+                # Get from dic.
+                r2eff = my_dic[spin_id][param_key]['r2eff']
+                r2eff_err = my_dic[spin_id][param_key]['r2eff_err']
+                i0 = my_dic[spin_id][param_key]['i0']
+                i0_err = my_dic[spin_id][param_key]['i0_err']
+
+                print("%s at %3.1f MHz, for offset=%3.3f ppm and dispersion point %-5.1f." % (exp_type, frq/1E6, offset, point) )
+                print("r2eff=%3.3f/%3.3f r2eff_err=%3.4f/%3.4f" % (r2eff, r2eff_est, r2eff_err, r2eff_err_est) ),
+                print("i0=%3.3f/%3.3f i0_err=%3.4f/%3.4f\n" % (i0, i0_est, i0_err, i0_err_est) )
 
 
     def test_exp_fit(self):
@@ -5595,189 +5776,8 @@ class Relax_disp(SystemTestCase):
         # Run the analysis.
         relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, pre_run_dir=prev_data_path)
 
-        # Check the kex value of residue 52
-        #self.assertAlmostEqual(cdp.mol[0].res[41].spin[0].kex, ds.ref[':52@N'][6])
-
-        # Print results for each model.
-        print("\n\n################")
-        print("Printing results")
-        print("################\n")
-        for model in MODELS:
-            # Skip R2eff model.
-            if model == MODEL_R2EFF:
-                continue
-
-            # Switch to pipe.
-            self.interpreter.pipe.switch(pipe_name='%s - relax_disp' % (model))
-            print("\nModel: %s" % (model))
-
-            # Loop over the spins.
-            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-                # Generate spin string.
-                spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
-
-                # Loop over the parameters.
-                print("Optimised parameters for spin: %s" % (spin_string))
-                for param in cur_spin.params + ['chi2']:
-                    # Get the value.
-                    if param in ['r1', 'r2']:
-                        for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
-                            # Generate the R20 key.
-                            r20_key = generate_r20_key(exp_type=exp_type, frq=frq)
-
-                            # Get the value.
-                            value = getattr(cur_spin, param)[r20_key]
-
-                            # Print value.
-                            print("%-10s %-6s %-6s %3.8f" % ("Parameter:", param, "Value:", value))
-
-                            # Compare values.
-                            if spin_id == ':52@N':
-                                if param == 'r1':
-                                    if model == MODEL_NOREX:
-                                        self.assertAlmostEqual(value, 1.46328102)
-                                    elif model == MODEL_DPL94:
-                                        self.assertAlmostEqual(value, 1.45019848)
-                                    elif model == MODEL_TP02:
-                                        self.assertAlmostEqual(value, 1.54352369)
-                                    elif model == MODEL_TAP03:
-                                        self.assertAlmostEqual(value, 1.54354367)
-                                    elif model == MODEL_MP05:
-                                        self.assertAlmostEqual(value, 1.54354372)
-                                    elif model == MODEL_NS_R1RHO_2SITE:
-                                        self.assertAlmostEqual(value, 1.41321968, 6)
-
-                                elif param == 'r2':
-                                    if model == MODEL_NOREX:
-                                        self.assertAlmostEqual(value, 11.48040934)
-                                    elif model == MODEL_DPL94:
-                                        self.assertAlmostEqual(value, 10.16304887, 6)
-                                    elif model == MODEL_TP02:
-                                        self.assertAlmostEqual(value, 9.72772726, 6)
-                                    elif model == MODEL_TAP03:
-                                        self.assertAlmostEqual(value, 9.72759374, 6)
-                                    elif model == MODEL_MP05:
-                                        self.assertAlmostEqual(value, 9.72759220, 6)
-                                    elif model == MODEL_NS_R1RHO_2SITE:
-                                        self.assertAlmostEqual(value, 9.34602793, 5)
-
-                    # For all other parameters.
-                    else:
-                        # Get the value.
-                        value = getattr(cur_spin, param)
-
-                        # Print value.
-                        print("%-10s %-6s %-6s %3.8f" % ("Parameter:", param, "Value:", value))
-
-                        # Compare values.
-                        if spin_id == ':52@N':
-                            if param == 'phi_ex':
-                                if model == MODEL_DPL94:
-                                    self.assertAlmostEqual(value, 0.07561937)
-
-                            elif param == 'pA':
-                                if model == MODEL_TP02:
-                                    self.assertAlmostEqual(value, 0.88807487)
-                                elif model == MODEL_TAP03:
-                                    self.assertAlmostEqual(value, 0.88809318)
-                                elif model == MODEL_MP05:
-                                    self.assertAlmostEqual(value, 0.88809321)
-                                elif model == MODEL_NS_R1RHO_2SITE:
-                                    self.assertAlmostEqual(value, 0.94496541, 6)
-
-                            elif param == 'dw':
-                                if model == MODEL_TP02:
-                                    self.assertAlmostEqual(value, 1.08765638, 6)
-                                elif model == MODEL_TAP03:
-                                    self.assertAlmostEqual(value, 1.08726698, 6)
-                                elif model == MODEL_MP05:
-                                    self.assertAlmostEqual(value, 1.08726706, 6)
-                                elif model == MODEL_NS_R1RHO_2SITE:
-                                    self.assertAlmostEqual(value, 1.55833321, 5)
-
-                            elif param == 'kex':
-                                if model == MODEL_DPL94:
-                                    self.assertAlmostEqual(value, 4419.03917195, 2)
-                                elif model == MODEL_TP02:
-                                    self.assertAlmostEqual(value, 4904.70144883, 3)
-                                elif model == MODEL_TAP03:
-                                    self.assertAlmostEqual(value, 4909.86877150, 3)
-                                elif model == MODEL_MP05:
-                                    self.assertAlmostEqual(value, 4909.88110195, 3)
-                                elif model == MODEL_NS_R1RHO_2SITE:
-                                    self.assertAlmostEqual(value, 5610.20221435, 2)
-
-                            elif param == 'chi2':
-                                if model == MODEL_NOREX:
-                                    self.assertAlmostEqual(value, 3363.95829122)
-                                elif model == MODEL_DPL94:
-                                    self.assertAlmostEqual(value, 710.24767560)
-                                elif model == MODEL_TP02:
-                                    self.assertAlmostEqual(value, 114.47142772)
-                                elif model == MODEL_TAP03:
-                                    self.assertAlmostEqual(value, 114.27987534)
-                                elif model == MODEL_MP05:
-                                    self.assertAlmostEqual(value, 114.28002272)
-                                elif model == MODEL_NS_R1RHO_2SITE:
-                                    self.assertAlmostEqual(value, 134.14368365)
-
-
-        # Print the final pipe.
-        model = 'final'
-        self.interpreter.pipe.switch(pipe_name='%s - relax_disp' % (model))
-        print("\nFinal pipe")
-
-        # Loop over the spins.
-        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-            # Generate spin string.
-            spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
-
-            # Loop over the parameters.
-            print("Optimised model for spin: %s" % (spin_string))
-            param = 'model'
-
-            # Get the value.
-            value = getattr(cur_spin, param)
-            print("%-10s %-6s %-6s %6s" % ("Parameter:", param, "Value:", value))
-
-
-        ### Now check some of the written out files.
-        file_names = ['r1rho_prime', 'r1']
-
-        for file_name_i in file_names:
-
-            # Make the file name.
-            file_name = "%s.out" % file_name_i
-
-            # Get the file path.
-            file_path = get_file_path(file_name, result_dir_name + sep + model)
-
-            # Test the file exists.
-            print("Testing file access to: %s"%file_path)
-            self.assert_(access(file_path, F_OK))
-
-            # Now open, and compare content, line by line.
-            file_prod = open(file_path)
-            lines_prod = file_prod.readlines()
-            file_prod.close()
-
-            # Loop over the lines.
-            for i, line in enumerate(lines_prod):
-                # Make the string test
-                line_split = line.split()
-
-                # Continue for comment lines.
-                if line_split[0] == "#":
-                    print(line),
-                    continue
-
-                # Assign the split of the line.
-                mol_name, res_num, res_name, spin_num, spin_name, val, sd_error = line_split
-                print mol_name, res_num, res_name, spin_num, spin_name, val, sd_error
-
-                if res_num == '52':
-                    # Assert that the value is not None.
-                    self.assertNotEqual(val, 'None')
+        # Verify the data.
+        self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name)
 
 
     def test_r2eff_read(self):
@@ -7445,3 +7445,192 @@ class Relax_disp(SystemTestCase):
         # Close file
         w_eff_file.close()
 
+
+    def verify_r1rho_kjaergaard_missing_r1(self, models=None, result_dir_name=None, do_assert=True):
+        """Verification of test_r1rho_kjaergaard_missing_r1."""
+
+        # Check the kex value of residue 52
+        #self.assertAlmostEqual(cdp.mol[0].res[41].spin[0].kex, ds.ref[':52@N'][6])
+
+        # Print results for each model.
+        print("\n\n################")
+        print("Printing results")
+        print("################\n")
+        for model in models:
+            # Skip R2eff model.
+            if model == MODEL_R2EFF:
+                continue
+
+            # Switch to pipe.
+            self.interpreter.pipe.switch(pipe_name='%s - relax_disp' % (model))
+            print("\nModel: %s" % (model))
+
+            # Loop over the spins.
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                # Generate spin string.
+                spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+                # Loop over the parameters.
+                print("Optimised parameters for spin: %s" % (spin_string))
+                for param in cur_spin.params + ['chi2']:
+                    # Get the value.
+                    if param in ['r1', 'r2']:
+                        for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+                            # Generate the R20 key.
+                            r20_key = generate_r20_key(exp_type=exp_type, frq=frq)
+
+                            # Get the value.
+                            value = getattr(cur_spin, param)[r20_key]
+
+                            # Print value.
+                            print("%-10s %-6s %-6s %3.8f" % ("Parameter:", param, "Value:", value))
+
+                            if do_assert:
+                                # Compare values.
+                                if spin_id == ':52@N':
+                                    if param == 'r1':
+                                        if model == MODEL_NOREX:
+                                            self.assertAlmostEqual(value, 1.46328102)
+                                        elif model == MODEL_DPL94:
+                                            self.assertAlmostEqual(value, 1.45019848)
+                                        elif model == MODEL_TP02:
+                                            self.assertAlmostEqual(value, 1.54352369)
+                                        elif model == MODEL_TAP03:
+                                            self.assertAlmostEqual(value, 1.54354367)
+                                        elif model == MODEL_MP05:
+                                            self.assertAlmostEqual(value, 1.54354372)
+                                        elif model == MODEL_NS_R1RHO_2SITE:
+                                            self.assertAlmostEqual(value, 1.41321968, 5)
+
+                                    elif param == 'r2':
+                                        if model == MODEL_NOREX:
+                                            self.assertAlmostEqual(value, 11.48040934)
+                                        elif model == MODEL_DPL94:
+                                            self.assertAlmostEqual(value, 10.16304887, 6)
+                                        elif model == MODEL_TP02:
+                                            self.assertAlmostEqual(value, 9.72772726, 6)
+                                        elif model == MODEL_TAP03:
+                                            self.assertAlmostEqual(value, 9.72759374, 6)
+                                        elif model == MODEL_MP05:
+                                            self.assertAlmostEqual(value, 9.72759220, 6)
+                                        elif model == MODEL_NS_R1RHO_2SITE:
+                                            self.assertAlmostEqual(value, 9.34602793, 5)
+
+                    # For all other parameters.
+                    else:
+                        # Get the value.
+                        value = getattr(cur_spin, param)
+
+                        # Print value.
+                        print("%-10s %-6s %-6s %3.8f" % ("Parameter:", param, "Value:", value))
+
+                        if do_assert:
+                            # Compare values.
+                            if spin_id == ':52@N':
+                                if param == 'phi_ex':
+                                    if model == MODEL_DPL94:
+                                        self.assertAlmostEqual(value, 0.07561937)
+
+                                elif param == 'pA':
+                                    if model == MODEL_TP02:
+                                        self.assertAlmostEqual(value, 0.88807487)
+                                    elif model == MODEL_TAP03:
+                                        self.assertAlmostEqual(value, 0.88809318)
+                                    elif model == MODEL_MP05:
+                                        self.assertAlmostEqual(value, 0.88809321)
+                                    elif model == MODEL_NS_R1RHO_2SITE:
+                                        self.assertAlmostEqual(value, 0.94496541, 6)
+
+                                elif param == 'dw':
+                                    if model == MODEL_TP02:
+                                        self.assertAlmostEqual(value, 1.08765638, 6)
+                                    elif model == MODEL_TAP03:
+                                        self.assertAlmostEqual(value, 1.08726698, 6)
+                                    elif model == MODEL_MP05:
+                                        self.assertAlmostEqual(value, 1.08726706, 6)
+                                    elif model == MODEL_NS_R1RHO_2SITE:
+                                        self.assertAlmostEqual(value, 1.55833321, 5)
+
+                                elif param == 'kex':
+                                    if model == MODEL_DPL94:
+                                        self.assertAlmostEqual(value, 4419.03917195, 2)
+                                    elif model == MODEL_TP02:
+                                        self.assertAlmostEqual(value, 4904.70144883, 3)
+                                    elif model == MODEL_TAP03:
+                                        self.assertAlmostEqual(value, 4909.86877150, 3)
+                                    elif model == MODEL_MP05:
+                                        self.assertAlmostEqual(value, 4909.88110195, 3)
+                                    elif model == MODEL_NS_R1RHO_2SITE:
+                                        self.assertAlmostEqual(value, 5610.20221435, 2)
+
+                                elif param == 'chi2':
+                                    if model == MODEL_NOREX:
+                                        self.assertAlmostEqual(value, 3363.95829122)
+                                    elif model == MODEL_DPL94:
+                                        self.assertAlmostEqual(value, 710.24767560)
+                                    elif model == MODEL_TP02:
+                                        self.assertAlmostEqual(value, 114.47142772)
+                                    elif model == MODEL_TAP03:
+                                        self.assertAlmostEqual(value, 114.27987534)
+                                    elif model == MODEL_MP05:
+                                        self.assertAlmostEqual(value, 114.28002272)
+                                    elif model == MODEL_NS_R1RHO_2SITE:
+                                        self.assertAlmostEqual(value, 134.14368365)
+
+
+        # Print the final pipe.
+        model = 'final'
+        self.interpreter.pipe.switch(pipe_name='%s - relax_disp' % (model))
+        print("\nFinal pipe")
+
+        # Loop over the spins.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Generate spin string.
+            spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+            # Loop over the parameters.
+            print("Optimised model for spin: %s" % (spin_string))
+            param = 'model'
+
+            # Get the value.
+            value = getattr(cur_spin, param)
+            print("%-10s %-6s %-6s %6s" % ("Parameter:", param, "Value:", value))
+
+
+        ### Now check some of the written out files.
+        file_names = ['r1rho_prime', 'r1']
+
+        for file_name_i in file_names:
+
+            # Make the file name.
+            file_name = "%s.out" % file_name_i
+
+            # Get the file path.
+            file_path = get_file_path(file_name, result_dir_name + sep + model)
+
+            # Test the file exists.
+            print("Testing file access to: %s"%file_path)
+            self.assert_(access(file_path, F_OK))
+
+            # Now open, and compare content, line by line.
+            file_prod = open(file_path)
+            lines_prod = file_prod.readlines()
+            file_prod.close()
+
+            # Loop over the lines.
+            for i, line in enumerate(lines_prod):
+                # Make the string test
+                line_split = line.split()
+
+                # Continue for comment lines.
+                if line_split[0] == "#":
+                    print(line),
+                    continue
+
+                # Assign the split of the line.
+                mol_name, res_num, res_name, spin_num, spin_name, val, sd_error = line_split
+                print(mol_name, res_num, res_name, spin_num, spin_name, val, sd_error)
+
+                if res_num == '52':
+                    # Assert that the value is not None.
+                    self.assertNotEqual(val, 'None')

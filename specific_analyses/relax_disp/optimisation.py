@@ -36,6 +36,7 @@ from dep_check import C_module_exp_fn
 from lib.dispersion.two_point import calc_two_point_r2eff, calc_two_point_r2eff_err
 from lib.errors import RelaxError
 from lib.text.sectioning import subsection
+from lib.warnings import RelaxWarning
 from multi import Memo, Result_command, Slave_command
 from pipe_control.mol_res_spin import spin_loop
 from specific_analyses.relax_disp.checks import check_disp_points, check_exp_type, check_exp_type_fixed_time

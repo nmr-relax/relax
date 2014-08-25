@@ -420,9 +420,12 @@ class Relax_disp:
                     if is_r1_optimised(model=model):
                         self.interpreter.value.set(param='r1', index=None)
 
-        # Minimise.
+        # 'R2eff' model minimisation flags.
         do_minimise = False
         if model == MODEL_R2EFF:
+            # The constraints flag.
+            constraints = False
+
             # Check if all spins contains 'r2eff and it associated error.
             has_r2eff = False
 
@@ -447,12 +450,14 @@ class Relax_disp:
             elif not has_r2eff:
                 do_minimise = True
 
+        # Dispersion model minimisation flags.
         else:
             do_minimise = True
+            constraints = True
 
         # Do the minimisation.
         if do_minimise:
-            self.interpreter.minimise.execute('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
+            self.interpreter.minimise.execute('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=constraints)
 
         # Model elimination.
         if self.eliminate:
