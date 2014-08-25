@@ -43,6 +43,9 @@ spin.create(res_name='Asp', res_num=1, spin_name='N')
 spin.create(res_name='Gly', res_num=2, spin_name='N')
 spin.create(res_name='Lys', res_num=3, spin_name='N')
 
+# Name the isotope for field strength scaling.
+spin.isotope(isotope='15N')
+
 # The spectral data - spectrum ID, peak lists, offset frequency (Hz), relaxation time period (s), baseplane RMSD estimate.
 data = [
     ["nu_1kHz_relaxT_0.01", "nu_1kHz_relaxT_0.01.list", 1000.0, 0.01,   1000],
