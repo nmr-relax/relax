@@ -22,7 +22,7 @@
 #include "c_chi2.h"
 
 /* Define the function for calculating the square of a number. */
-#define square(x) (x)*(x)
+#define square(x) ((x)*(x))
 
 
 double chi2(double *values, double *sd, double *back_calc, int num_times) {
