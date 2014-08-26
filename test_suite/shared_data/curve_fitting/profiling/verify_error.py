@@ -33,7 +33,7 @@ from status import Status; status = Status()
 from target_functions.chi2 import chi2_rankN
 
 # Initial try for Exponential class.
-from target_functions.relax_disp_curve_fit import Exponential
+from specific_analyses.relax_disp.estimate_r2eff import minimise_leastsq, Exp
 
 # Define data path.
 prev_data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013' +sep+ "check_graphs" +sep+ "mc_2000"  +sep+ "R2eff"
@@ -84,6 +84,9 @@ for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_
 # Copy all setup information from base pipe.
 pipe.copy(pipe_from='MC_2000', pipe_to='r2eff_est')
 
+# Instantiate class.
+E = Exp(verbosity=1)
+
 for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
     # Generate spin string.
     spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
@@ -118,111 +121,21 @@ for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_
         errors = asarray(errors)
         times = asarray(times)
 
-        # Estimate the starting parameters, by converting to a linear problem.
-        # y= A exp(x * k)
-        # w[i] = ln(y[i])
-        # int[i] = i0 * exp( - times[i] * r2eff);
-        w = log(values)
-        x = - 1. * times
-        n = len(times)
+        # Initialise the function to minimise.
+        E.setup_data(values=values, errors=errors, times=times)
 
-        b = (sum(x*w) - 1./n * sum(x) * sum(w) ) / ( sum(x**2) - 1./n * (sum(x))**2 )
-        a = 1./n * sum(w) - b * 1./n * sum(x)
+        # Initial guess for minimisation. Solved by linear least squares.
+        x0 = asarray( E.estimate_x0_exp() )
 
-        # Convert back from linear to exp function. Best estimate for parameter.
-        r2eff_est = b
-        i0_est = exp(a)
+        results = minimise_leastsq(E=E)
 
-        # Initialise class with different functions.
-        exp_class = Exponential()
+        # Unpack results
+        param_vector, param_vector_error, chi2, iter_count, f_count, g_count, h_count, warning = results
 
-        # Define initial guess.
-        p0 = [r2eff_est, i0_est]
-
-        # 'xtol': Relative error desired in the approximate solution.
-        # 'ftol': Relative error desired in the sum of squares.
-        #xtol = 1.49012e-08
-        xtol = 1e-15
-        ftol = xtol
-
-        # 'factor': float, optional. A parameter determining the initial step bound (``factor * || diag * x||``).  Should be in the interval ``(0.1, 100)``.
-        factor= 100
-
-        # maxfev : int, optional. The maximum number of calls to the function
-        maxfev = 10000000
-
-        # Define function to minimise.
-        use_weights = True
-        # If 'sigma'/erros describes one standard deviation errors of the input data points. The estimated covariance in 'pcov' is based on these values.
-        absolute_sigma = True
-
-        if use_weights:
-            func = exp_class.func_exp_weighted_general
-            weights = 1.0 / asarray(errors)
-            #weights = 1.0 / (2. *asarray(errors) )
-            #weights = 1.0 / asarray(errors)**2
-            args=(times, values, weights )
-        else:
-            func = exp_class.func_exp_general
-            args=(times, values)
-
-        # Call scipy.optimize.leastsq.
-        popt, pcov, infodict, errmsg, ier = leastsq(func=func, x0=p0, args=args, full_output=True, ftol=ftol, xtol=xtol, maxfev=maxfev, factor=factor)
-
-        # Catch errors:
-        if ier in [1, 2, 3, 4]:
-            warning = None
-        elif ier in [4]:
-            warnings.warn(errmsg, RuntimeWarning)
-            warning = errmsg
-        elif ier in [0, 5, 6, 7, 8]:
-            raise RuntimeWarning(errmsg)
-
-        # 'nfev' number of function calls.
-        f_count = infodict['nfev']
-
-        # 'fvec': function evaluated at the output.
-        fvec = infodict['fvec']
-        #fvec_test = func(popt, times, values)
-
-        # 'fjac': A permutation of the R matrix of a QR factorization of the final approximate Jacobian matrix, stored column wise. Together with ipvt, the covariance of the estimate can be approximated.
-        # fjac = infodict['fjac']
-
-        # 'qtf': The vector (transpose(q) * fvec).
-        # qtf = infodict['qtf']
-
-        # 'ipvt'  An integer array of length N which defines a permutation matrix, p, such that fjac*p = q*r, where r is upper triangular
-        # with diagonal elements of nonincreasing magnitude. Column j of p is column ipvt(j) of the identity matrix.
-
-        # Back calc fitted curve.
-        back_calc = exp_class.calc_exp(times=times, r2eff=popt[0], i0=popt[1])
-
-        # Calculate chi2.
-        chi2 = chi2_rankN(data=values, back_calc_vals=back_calc, errors=errors)
-
-        # 'pcov': The estimated covariance of popt.
-        # The diagonals provide the variance of the parameter estimate.
-
-        if pcov is None:
-            # indeterminate covariance
-            pcov = zeros((len(popt), len(popt)), dtype=float)
-            pcov.fill(inf)
-        elif not absolute_sigma:
-            if len(values) > len(p0):
-                s_sq = sum( fvec**2 ) / (len(values) - len(p0))
-                pcov = pcov * s_sq
-            else:
-                pcov.fill(inf)
-
-        # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
-        perr = sqrt(diag(pcov))
-
-        print_info = True
-
-        if print_info:
-            r2eff = popt[0]
-            i0 = popt[1]
-            r2eff_err = perr[0]
-            i0_err = perr[1]
+        if E.verbosity:
+            r2eff = param_vector[0]
+            i0 = param_vector[1]
+            r2eff_err = param_vector_error[0]
+            i0_err = param_vector_error[1]
             print("r2eff=%3.3f +/- %3.3f , i0=%3.3f +/- %3.3f" % (r2eff, r2eff_err, i0, i0_err) )
 
