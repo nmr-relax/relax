@@ -148,8 +148,8 @@ dfunc(PyObject *self, PyObject *args) {
     exponential(params[1], params[0], relax_times, back_calc, num_times);
 
     /* The partial derivates */
-    exponential_dR(params[1], params[0], relax_times, back_calc_grad, num_times);
-    exponential_dI0(params[1], params[0], relax_times, back_calc_grad, num_times);
+    exponential_dR(params[1], params[0], 0, relax_times, back_calc_grad, num_times);
+    exponential_dI0(params[1], params[0], 1, relax_times, back_calc_grad, num_times);
 
     /* The chi-squared gradient */
     dchi2(dchi2_vals, values, back_calc, back_calc_grad, sd, num_times, num_params);
@@ -220,8 +220,8 @@ jacobian(PyObject *self, PyObject *args) {
     }
 
     /* The partial derivates */
-    exponential_dR(params[1], params[0], relax_times, back_calc_grad, num_times);
-    exponential_dI0(params[1], params[0], relax_times, back_calc_grad, num_times);
+    exponential_dR(params[1], params[0], 0, relax_times, back_calc_grad, num_times);
+    exponential_dI0(params[1], params[0], 1, relax_times, back_calc_grad, num_times);
 
     /* Convert to a Python list of lists */
     PyObject *list = PyList_New(0);

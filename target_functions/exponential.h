@@ -26,7 +26,7 @@
 
 
 void exponential(double I0, double R, double *relax_times, double *back_calc, int num_times);
-void exponential_dI0(double I0, double R, double *relax_times, double back_calc_grad[][MAXTIMES], int num_times);
-void exponential_dR(double I0, double R, double *relax_times, double back_calc_grad[][MAXTIMES], int num_times);
+void exponential_dI0(double I0, double R, int param_index, double *relax_times, double back_calc_grad[][MAXTIMES], int num_times);
+void exponential_dR(double I0, double R, int param_index, double *relax_times, double back_calc_grad[][MAXTIMES], int num_times);
 
 #endif
