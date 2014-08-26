@@ -134,18 +134,6 @@ class Exp:
         # Set algorithm.
         self.min_algor = min_algor
 
-        # Newton does not work.
-        #self.min_algor = 'newton'
-
-        # Newton-CG does not work.
-        #self.min_algor = 'Newton-CG'
-
-        # Also not work.
-        #self.min_algor = 'Steepest descent'
-
-        # Also not work.#
-        #self.min_algor = 'Fletcher-Reeves'
-
         # Define if constraints should be used.
         self.constraints = constraints
 
@@ -164,7 +152,6 @@ class Exp:
             self.b = array([   0., -200.,    0.])
 
         else:
-            self.min_algor = 'simplex'
             self.min_options = ()
             self.A = None
             self.b = None
@@ -305,16 +292,15 @@ class Exp:
 
         # Make partial derivative, with respect to r2eff.
         # d_chi2_d_r2eff = 2.0*i0*times*(-i0*exp(-r2eff*times) + values)*exp(-r2eff*times)/errors**2
-        d_chi2_d_r2eff = 2.0 * i0 * self.times * ( -i0 * exp( -r2eff * self.times) + self.values) * exp( -r2eff * self.times ) / self.errors**2
+        d_chi2_d_r2eff = sum( 2.0 * i0 * self.times * ( -i0 * exp( -r2eff * self.times) + self.values) * exp( -r2eff * self.times ) / self.errors**2 )
 
         # Make partial derivative, with respect to i0.
         # d_chi2_d_i0 = -2.0*(-i0*exp(-r2eff*times) + values)*exp(-r2eff*times)/errors**2
-        d_chi2_d_i0 = - 2.0 * ( -i0 * exp( -r2eff * self.times) + self.values) * exp( -r2eff * self.times) / self.errors**2
+        d_chi2_d_i0 = sum ( - 2.0 * ( -i0 * exp( -r2eff * self.times) + self.values) * exp( -r2eff * self.times) / self.errors**2 )
 
         # Define Jacobian as m rows with function derivatives and n columns of parameters.
-        jacobian_matrix = transpose(array( [d_chi2_d_r2eff , d_chi2_d_i0] ) )
-
-        #print jacobian_matrix
+        #jacobian_matrix = transpose(array( [d_chi2_d_r2eff , d_chi2_d_i0] ) )
+        jacobian_matrix = array( [d_chi2_d_r2eff , d_chi2_d_i0] ) 
 
         # Return Jacobian matrix.
         return jacobian_matrix
@@ -439,7 +425,7 @@ class Exp:
 # 'minfx'
 # 'scipy.optimize.leastsq'
 # 'scipy.optimize.fmin_cg'
-def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, method='scipy.optimize.leastsq', verbosity=1):
+def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, method='minfx', verbosity=1):
     """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.leastsq.
 
     scipy.optimize.leastsq is a wrapper around MINPACK's lmdif and lmder algorithms.
@@ -782,7 +768,24 @@ def minimise_minfx(E=None):
     x0 = asarray( E.estimate_x0_exp() )
 
     # Set the min_algor.
-    E.set_settings_minfx(min_algor='simplex')
+    #min_algor='simplex'
+
+    # Steepest descent uses the gradient.
+    min_algor = 'Steepest descent'
+    max_iterations = 1000
+
+    # Newton does not work.
+    # min_algor = 'newton'
+
+    # Newton-CG does not work.
+    # min_algor = 'Newton-CG'
+
+
+
+    # Also not work.#
+    # min_algor = 'Fletcher-Reeves'
+
+    E.set_settings_minfx(min_algor=min_algor, max_iterations=max_iterations)
 
     # Define function to minimise for minfx.
     if match('^[Ss]implex$', E.min_algor):
@@ -791,7 +794,7 @@ def minimise_minfx(E=None):
         dfunc = None
         d2func = None
     else:
-        func = E.func_exp_chi2
+        func = E.func_exp
         dfunc = E.func_exp_grad
         d2func = E.func_exp_hess
 
