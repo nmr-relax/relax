@@ -9,10 +9,10 @@ from numdifftools import Hessian
 def func(params):
     """Calculate the chi-squared value."""
 
-    global times, I, I0, errors
+    global times, I, errors
 
     # Unpack the parameters.
-    R, IO = params
+    R, I0 = params
 
     # The intensities.
     back_calc = []
