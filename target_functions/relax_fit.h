@@ -18,6 +18,7 @@
  */
 
 
+/* Get the maximum dimensions. */
 #include "dimensions.h"
 
 /* Python 2.2 and earlier support for Python C modules */

@@ -19,11 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* Get the maximum dimensions. */
 #include "dimensions.h"
 
 #ifndef RELAX_EXPONENTIAL 
 #define RELAX_EXPONENTIAL
 
+/* Define all of the functions. */
 void exponential(double I0, double R, double relax_times[MAX_DATA], double back_calc[MAX_DATA], int num_times);
 void exponential_dI0(double I0, double R, int param_index, double relax_times[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], int num_times);
 void exponential_dR(double I0, double R, int param_index, double relax_times[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], int num_times);
