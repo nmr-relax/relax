@@ -45,7 +45,7 @@ from target_functions.chi2 import chi2_rankN
 # Scipy installed.
 if scipy_module:
     # Import leastsq.
-    from scipy.optimize import fmin_cg, fmin_ncg, leastsq
+    from scipy.optimize import leastsq
 
 
 class Exp:
@@ -424,7 +424,6 @@ class Exp:
 
 # 'minfx'
 # 'scipy.optimize.leastsq'
-# 'scipy.optimize.fmin_cg'
 def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, method='minfx', verbosity=1):
     """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.leastsq.
 
@@ -539,10 +538,6 @@ def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor
             if method == 'scipy.optimize.leastsq':
                 # Acquire results.
                 results = minimise_leastsq(E=E)
-
-            elif method == 'scipy.optimize.fmin_cg':
-                # Acquire results.
-                results = minimise_fmin_cg(E=E)
 
             elif method == 'minfx':
                 # Acquire results.
@@ -713,46 +708,6 @@ def minimise_leastsq(E=None):
 
     # Return, including errors.
     return results
-
-
-def minimise_fmin_cg(E=None):
-    """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.fmin_cg.
-
-    Unconstrained minimization of a function using the Newton-CG method.
-
-    @keyword E:     The Exponential function class, which contain data and functions.
-    @type E:        class
-    @return:        Packed list with optimised parameter, estimated parameter error, chi2, iter_count, f_count, g_count, h_count, warning
-    @rtype:         list
-    """
-
-    # Check that scipy.optimize.leastsq is available.
-    if not scipy_module:
-        raise RelaxError("scipy module is not available.")
-
-    # Initial guess for minimisation. Solved by linear least squares.
-    x0 = E.estimate_x0_exp()
-
-    # Define function to minimise. Use errors as weights in the minimisation.
-    use_weights = True
-
-    if use_weights:
-        func = E.func_exp_weighted_general
-        dfunc = E.func_exp_weighted_grad
-        d2func = E.func_exp_weighted_hess
-
-    # There are no args to the function, since values and times are stored in the class.
-    args=()
-
-    gfk = dfunc(x0)
-    deltak = numpy.dot(gfk, gfk)
-
-    # Cannot get this to work.
-
-    #xopt, fopt, fcalls, gcalls, hcalls, warnflag = fmin_ncg(f=func, x0=x0, fprime=dfunc, fhess=None, args=args, avextol=1e-05, epsilon=1.4901161193847656e-08, maxiter=maxfev, full_output=1, disp=1, retall=0, callback=None)
-    #test = fmin_ncg(f=func, x0=x0, fprime=dfunc, fhess=d2func, args=args, avextol=1e-05, epsilon=1.4901161193847656e-08, maxiter=maxfev)
-    #fmin_cg(f, x0, fprime=None, args=(), gtol=1e-5, norm=Inf, epsilon=_epsilon, maxiter=None, full_output=0, disp=1, retall=0, callback=None):
-    #fmin_cg(f=func, x0=x0, fprime=dfunc, args=args, gtol=1e-5)
 
 
 def minimise_minfx(E=None):
