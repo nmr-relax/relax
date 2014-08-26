@@ -119,6 +119,9 @@ class Frame_order_analysis:
 
         # Execute the full protocol.
         try:
+            # Output the starting time.
+            self.interpreter.time()
+
             # The nested model optimisation protocol.
             self.nested_models()
 
@@ -141,6 +144,9 @@ class Frame_order_analysis:
 
                 # Finish.
                 self.interpreter.results.write(file='results', dir=self.results_dir+'final', force=True)
+
+            # Output the finishing time.
+            self.interpreter.time()
 
             # Visualisation of the final results.
             self.visualisation(model='final')
@@ -466,6 +472,9 @@ class Frame_order_analysis:
             # Printout.
             section(file=sys.stdout, text="%s frame order model"%title, prespace=5)
 
+            # Output the model staring time.
+            self.interpreter.time()
+
             # The data pipe name.
             self.pipe_name_dict[model] = '%s - %s' % (title, self.pipe_bundle)
             self.pipe_name_list.append(self.pipe_name_dict[model])
@@ -563,6 +572,9 @@ class Frame_order_analysis:
 
         # Print out.
         section(file=sys.stdout, text="%s frame order model"%title, prespace=5)
+
+        # Output the model staring time.
+        self.interpreter.time()
 
         # The data pipe name.
         self.pipe_name_dict[model] = '%s - %s' % (title, self.pipe_bundle)
