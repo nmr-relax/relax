@@ -25,7 +25,7 @@
 #define square(x) ((x)*(x))
 
 
-double chi2(double values[], double sd[], double back_calc[], int num_times) {
+double chi2(double values[MAX_DATA], double sd[MAX_DATA], double back_calc[MAX_DATA], int num_times) {
     /* Function to calculate the chi-squared value.
 
     The chi-sqared equation
@@ -61,7 +61,7 @@ double chi2(double values[], double sd[], double back_calc[], int num_times) {
 }
 
 
-void dchi2(double dchi2[], double data[], double back_calc_vals[], double back_calc_grad[][MAX_DATA], double errors[], int num_points, int num_params) {
+void dchi2(double dchi2[MAX_PARAMS], double data[MAX_DATA], double back_calc_vals[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], double errors[MAX_DATA], int num_points, int num_params) {
     /* Calculate the full chi-squared gradient.
 
     The chi-squared gradient
