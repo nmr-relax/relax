@@ -160,9 +160,8 @@ dfunc(PyObject *self, PyObject *args) {
         PyList_Append(list, PyFloat_FromDouble(dchi2_vals[i] * scaling_matrix[i]));
     }
 
-    /* Return the Jacobian */
+    /* Return the gradient */
     return list;
-    return NULL;
 }
 
 static PyObject *
