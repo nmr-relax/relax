@@ -185,7 +185,7 @@ back_calc_I(PyObject *self, PyObject *args) {
     for (i = 0; i < num_times; i++)
         PyList_SetItem(back_calc_py, i, PyFloat_FromDouble(back_calc[i]));
 
-    /* Return the numpy array */
+    /* Return the Python list */
     return back_calc_py;
 }
 
