@@ -19,25 +19,32 @@
 
 #include <stdio.h>
 #include <math.h>
+#include "c_chi2.h"
 
-#define square(x) (x)*(x)
+/* Define the function for calculating the square of a number. */
+#define square(x) ((x)*(x))
 
 
 double chi2(double *values, double *sd, double *back_calc, int num_times) {
     /* Function to calculate the chi-squared value.
 
     The chi-sqared equation
-    ~~~~~~~~~~~~~~~~~~~~~~~
-              _n_
-              \    (yi - yi()) ** 2
-    Chi2()  =  >   ----------------
-              /__    sigma_i ** 2
-              i=1
+    =======================
+
+    The equation is::
+
+                    _n_
+                    \    (yi - yi(theta)) ** 2
+    chi^2(theta)  =  >   ---------------------
+                    /__      sigma_i ** 2
+                    i=1
 
     where:
-        yi are the values of the measured data set.
-        yi() are the values of the back calculated data set.
-        sigma_i are the values of the error set.
+        - i is the index over data sets.
+        - theta is the parameter vector.
+        - yi are the values of the measured data set.
+        - yi(theta) are the values of the back calculated data set.
+        - sigma_i are the values of the error set.
 
     The chi-squared value is returned.
     */
@@ -51,4 +58,58 @@ double chi2(double *values, double *sd, double *back_calc, int num_times) {
     }
 
     return chi2;
+}
+
+
+void dchi2(double dchi2[], double data[], double back_calc_vals[], double back_calc_grad[][MAX_DATA], double errors[], int num_points, int num_params) {
+    /* Calculate the full chi-squared gradient.
+
+    The chi-squared gradient
+    ========================
+
+    The equation is::
+
+                             _n_
+        dchi^2(theta)        \   / yi - yi(theta)     dyi(theta) \
+        -------------  =  -2  >  | --------------  .  ---------- |
+           dthetaj           /__ \   sigma_i**2        dthetaj   /
+                             i=1
+
+    where
+        - i is the index over data sets.
+        - j is the parameter index of the gradient.
+        - theta is the parameter vector.
+        - yi are the values of the measured data set.
+        - yi(theta) are the values of the back calculated data set.
+        - dyi(theta)/dthetaj are the values of the back calculated gradient for parameter j.
+        - sigma_i are the values of the error set.
+
+
+    @param dchi2:           The chi-squared gradient data structure to place the gradient elements
+                            into.
+    @type dchi2:            numpy rank-1 size M array
+    @param data:            The vector of yi values.
+    @type data:             numpy rank-1 size N array
+    @param back_calc_vals:  The vector of yi(theta) values.
+    @type back_calc_vals:   numpy rank-1 size N array
+    @param back_calc_grad:  The matrix of dyi(theta)/dtheta values.
+    @type back_calc_grad:   numpy rank-2 size MxN array
+    @param errors:          The vector of sigma_i values.
+    @type errors:           numpy rank-1 size N array
+    @param num_points:      The number of data points to sum over.
+    @type num_points:       int
+    @param num_params:      The dimensions of the gradient.
+    @type num_params:       int
+    */
+
+    /* Declarations. */
+    int data_index, param_index;
+
+    /* Calculate the chi-squared gradient. */
+    for (param_index = 0; param_index < num_params; ++param_index) {
+        dchi2[param_index] = 0.0;
+        for (data_index = 0; data_index < num_points; ++data_index) {
+            dchi2[param_index] += -2.0 / square(errors[data_index]) * (data[data_index] - back_calc_vals[data_index]) * back_calc_grad[param_index][data_index];
+        }
+    }
 }

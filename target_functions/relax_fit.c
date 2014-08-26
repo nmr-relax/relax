@@ -27,6 +27,7 @@
 #include "c_chi2.h"
 #include "exponential.h"
 
+
 static PyObject *
 setup(PyObject *self, PyObject *args, PyObject *keywords) {
     /* Set up the module in preparation for calls to the target function. */
@@ -107,7 +108,7 @@ func(PyObject *self, PyObject *args) {
     }
 
     /* Back calculated the peak intensities */
-    exponential(params, relax_times, back_calc, num_times);
+    exponential(params[index_I0], params[index_R], relax_times, back_calc, num_times);
 
     /* Calculate and return the chi-squared value */
     return PyFloat_FromDouble(chi2(values, sd, back_calc, num_times));
@@ -123,20 +124,45 @@ dfunc(PyObject *self, PyObject *args) {
 
     /* Declarations */
     PyObject *params_arg;
-
-    /* Temp Declarations */
-    double aaa[MAXPARAMS] = {1.0, 2.0};
+    PyObject *element;
     int i;
-    double *params;
 
     /* Parse the function arguments, the only argument should be the parameter array */
     if (!PyArg_ParseTuple(args, "O", &params_arg))
         return NULL;
 
-    /* Back calculated the peak intensities */
-    exponential(params, relax_times, back_calc, num_times);
+    /* Place the parameter array elements into the C array */
+    for (i = 0; i < num_params; i++) {
+        /* Get the element */
+        element = PySequence_GetItem(params_arg, i);
 
-    return NULL;
+        /* Convert to a C double, then free the memory. */
+        params[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
+
+        /* Scale the parameter */
+        params[i] = params[i] * scaling_matrix[i];
+    }
+
+    /* Back calculated the peak intensities */
+    exponential(params[index_I0], params[index_R], relax_times, back_calc, num_times);
+
+    /* The partial derivates */
+    exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, num_times);
+    exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
+
+    /* The chi-squared gradient */
+    dchi2(dchi2_vals, values, back_calc, back_calc_grad, sd, num_times, num_params);
+
+    /* Convert to a Python list, and scale the values. */
+    PyObject *list = PyList_New(0);
+    Py_INCREF(list);
+    for (i = 0; i < num_params; i++) {
+        PyList_Append(list, PyFloat_FromDouble(dchi2_vals[i] * scaling_matrix[i]));
+    }
+
+    /* Return the gradient */
+    return list;
 }
 
 static PyObject *
@@ -194,8 +220,8 @@ jacobian(PyObject *self, PyObject *args) {
     }
 
     /* The partial derivates */
-    exponential_dR(params, relax_times, back_calc_grad, num_times);
-    exponential_dI(params, relax_times, back_calc_grad, num_times);
+    exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, num_times);
+    exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
 
     /* Convert to a Python list of lists */
     PyObject *list = PyList_New(0);
