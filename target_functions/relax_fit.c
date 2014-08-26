@@ -166,10 +166,50 @@ static PyObject *
 d2func(PyObject *self, PyObject *args) {
     /* Target function for calculating and returning the chi-squared Hessian.
      * 
-     * This is currently unimplemented.
      */
 
-    return PyFloat_FromDouble(0.0);
+    /* Declarations. */
+    PyObject *params_arg;
+    int j, k;
+
+    /* Parse the function arguments, the only argument should be the parameter array. */
+    if (!PyArg_ParseTuple(args, "O", &params_arg))
+        return NULL;
+
+    /* Convert the parameters Python list to a C array. */
+    param_to_c(params_arg);
+
+    /* Back calculated the peak intensities. */
+    exponential(params[index_I0], params[index_R], relax_times, back_calc, num_times);
+
+    /* The partial derivatives. */
+    exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, num_times);
+    exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
+
+    /* The second partial derivatives. */
+    /*
+    exponential_dR2(params[index_I0], params[index_R], index_R, relax_times, back_calc_hess, num_times);
+    exponential_dI02(params[index_I0], params[index_R], index_I0, relax_times, back_calc_hess, num_times);
+    exponential_dR2_dI02(params[index_I0], params[index_R], index_R, index_I0, relax_times, back_calc_hess, num_times);
+    */
+
+    /* The chi-squared Hessian. */
+    d2chi2(d2chi2_vals, values, back_calc, back_calc_grad, back_calc_hess, sd, num_times, num_params);
+
+    /* Convert to a Python list, and scale the values. */
+    PyObject *list = PyList_New(0);
+    Py_INCREF(list);
+    for (j = 0; j < num_params; j++) {
+        PyObject *list2 = PyList_New(0);
+        Py_INCREF(list2);
+        for (k = 0; k < num_params; k++) {
+            PyList_Append(list2, PyFloat_FromDouble(d2chi2_vals[j][k] * scaling_matrix[j] * scaling_matrix[k]));
+        }
+        PyList_Append(list, list2);
+    }
+
+    /* Return the Hessian. */
+    return list;
 }
 
 
@@ -247,7 +287,7 @@ static PyMethodDef relax_fit_methods[] = {
         "d2func",
         d2func,
         METH_VARARGS,
-        "Target function for calculating and returning the chi-squared Hessian.\n\nThis is currently unimplemented."
+        "Target function for calculating and returning the chi-squared Hessian."
     }, {
         "back_calc_I",
         back_calc_I,

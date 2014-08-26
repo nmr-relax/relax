@@ -41,7 +41,9 @@ static int index_I0 = 1;
 /* Variables used for storage during the function calls of optimisation. */
 static double back_calc[MAX_DATA];
 static double back_calc_grad[MAX_PARAMS][MAX_DATA];
+static double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA];
 static double dchi2_vals[MAX_PARAMS];
+static double d2chi2_vals[MAX_PARAMS][MAX_PARAMS];
 static double params[MAX_PARAMS];
 static double values[MAX_DATA];
 static double sd[MAX_DATA];
