@@ -673,27 +673,27 @@ def minimise_leastsq(E=None):
     # 'ipvt'  An integer array of length N which defines a permutation matrix, p, such that fjac*p = q*r, where r is upper triangular
     # with diagonal elements of nonincreasing magnitude. Column j of p is column ipvt(j) of the identity matrix.
 
-    # Back calc fitted curve.
-    back_calc = E.calc_exp(times=E.times, r2eff=popt[0], i0=popt[1])
-
-    # Calculate chi2.
-    chi2 = chi2_rankN(data=E.values, back_calc_vals=back_calc, errors=E.errors)
-
-    # 'pcov': The estimated covariance of popt.
+    # 'pcov': The estimated covariance matrix of popt.
     # The diagonals provide the variance of the parameter estimate.
-
-    # The reduced chi square: Take each "difference element, which could have been weighted" (O - E) and put to order 2. Sum them, and divide by number of degrees of freedom.
+    # pcov is here, the reduced cov(x) or fractional cov(x). It is rescaling which is useful in numerical computations.
+    # It is not the true covariance matrix.
+    # An issue arises when errors in the y data points are given.  
+    # Only the relative errors are used as weights, so the fit parameter errors, determined from the covariance do not depended on the magnitude of the errors in the individual data points.
     # See: http://stackoverflow.com/questions/14581358/getting-standard-errors-on-fitted-parameters-using-the-optimize-leastsq-method-i
     # See: http://stackoverflow.com/questions/14854339/in-scipy-how-and-why-does-curve-fit-calculate-the-covariance-of-the-parameter-es/14857441#14857441
 
-    # Calculated the weighted chi2 value.
+    # The reduced chi square: Take each "difference element, which could have been weighted" (O - E) and put to order 2. Sum them, and divide by number of degrees of freedom.
+    # Calculated the (weighted) chi2 value.
     chi2 = sum( fvec**2 )
+
     # N is number of observations.
     N = len(E.values)
     # n is number of fitted parameters.
     n = len(x0)
     #  number of degrees of freedom
     v = N - n - 1
+
+    # The reduced chi square.
     chi2_red = chi2 / v
 
     # chi2_red >> 1 : indicates a poor model fit.
@@ -706,7 +706,7 @@ def minimise_leastsq(E=None):
         pcov = zeros((len(popt), len(popt)), dtype=float)
         pcov.fill(inf)
     elif not absolute_sigma:
-        if len(values) > len(x0):
+        if N > n:
             pcov = pcov * chi2_red
         else:
             pcov.fill(inf)
