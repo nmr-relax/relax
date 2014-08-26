@@ -38,7 +38,7 @@ void exponential(double *params, double *relax_times, double *back_calc, int num
     for (i = 0; i < num_times; i++) {
         /* Zero Rx value */
         if (params[0] == 0.0)
-            back_calc[i] = 0.0;
+            back_calc[i] = params[1];
 
         /* Back calculate */
         else
@@ -60,7 +60,7 @@ void exponential_dI(double *params, double *relax_times, double back_calc_grad[]
     for (i = 0; i < num_times; i++) {
         /* Zero Rx value */
         if (params[0] == 0.0)
-            back_calc_grad[1][i] = 0.0;
+            back_calc_grad[1][i] = 1.0;
 
         /* The partial derivate */
         else
@@ -82,7 +82,7 @@ void exponential_dR(double *params, double *relax_times, double back_calc_grad[]
     for (i = 0; i < num_times; i++) {
         /* Zero Rx value */
         if (params[0] == 0.0)
-            back_calc_grad[0][i] = 0.0;
+            back_calc_grad[0][i] = -params[1] * relax_times[i];
 
         /* The partial derivate */
         else
