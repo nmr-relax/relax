@@ -63,8 +63,8 @@ grad_I = derivative(func_I, I0, dx=1e-5, order=11)
 print("The gradient at %s is:\n    %s" % ([R, I0], [grad_R, grad_I]))
 
 # The numeric gradient off the minimum.
-R_off = 2.0
-I0_off = 500.0
-grad_R = derivative(func_R, R_off, dx=1e-5, order=11)
-grad_I = derivative(func_I, I0_off, dx=1e-5, order=11)
-print("The gradient at %s is:\n    %s" % ([R_off, I0_off], [grad_R, grad_I]))
+R = 2.0
+I0 = 500.0
+grad_R = derivative(func_R, R, dx=1e-5, order=11)
+grad_I = derivative(func_I, I0, dx=1e-5, order=11)
+print("The gradient at %s is:\n    %s" % ([R, I0], [grad_R, grad_I]))
