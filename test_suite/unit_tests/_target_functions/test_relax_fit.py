@@ -89,14 +89,12 @@ class Test_relax_fit(TestCase):
         R = 2.0
         params = [R/self.scaling_list[0], I0/self.scaling_list[1]]
 
-        # Get the chi-squared gradient, and scale it.
+        # Get the chi-squared gradient.
         grad = dfunc(params)
-        for i in range(2):
-            grad[i] *= self.scaling_list[i]
 
         # Printout.
-        print("The gradient at %s is:\n%s" % (params, grad))
+        print("The gradient at %s is:\n    %s" % (params, grad))
 
         # Check that the gradient matches the numerically derived values.
-        self.assertAlmostEqual(grad[0], 722.67864120737488)
-        self.assertAlmostEqual(grad[1], -11.564651301654292)
+        self.assertAlmostEqual(grad[0], 456.36655522098829*self.scaling_list[0], 3)
+        self.assertAlmostEqual(grad[1], -10.8613338920982*self.scaling_list[1], 3)
