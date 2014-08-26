@@ -25,7 +25,7 @@
 #define square(x) ((x)*(x))
 
 
-double chi2(double *values, double *sd, double *back_calc, int num_times) {
+double chi2(double values[], double sd[], double back_calc[], int num_times) {
     /* Function to calculate the chi-squared value.
 
     The chi-sqared equation
