@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006  Gary S Thompson (see https://gna.org/users for contact
  *                                      details)
+ * Copyright (C) 2014 Edward d'Auvergne
  *
  * This file is part of the program relax (http://www.nmr-relax.com).
  *
