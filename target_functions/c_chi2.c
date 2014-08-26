@@ -103,13 +103,13 @@ void dchi2(double dchi2[], double data[], double back_calc_vals[], double back_c
     */
 
     /* Declarations. */
-    int data_index, param_index;
+    int i, j;
 
     /* Calculate the chi-squared gradient. */
-    for (param_index = 0; param_index < num_params; ++param_index) {
-        dchi2[param_index] = 0.0;
-        for (data_index = 0; data_index < num_points; ++data_index) {
-            dchi2[param_index] += -2.0 / square(errors[data_index]) * (data[data_index] - back_calc_vals[data_index]) * back_calc_grad[param_index][data_index];
+    for (j = 0; j < num_params; ++j) {
+        dchi2[j] = 0.0;
+        for (i = 0; i < num_points; ++i) {
+            dchi2[j] += -2.0 / square(errors[i]) * (data[i] - back_calc_vals[i]) * back_calc_grad[j][i];
         }
     }
 }
