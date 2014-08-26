@@ -25,7 +25,7 @@
 #include "exponential.h"
 
 
-void exponential(double I0, double R, double *relax_times, double *back_calc, int num_times) {
+void exponential(double I0, double R, double relax_times[], double back_calc[], int num_times) {
     /* Function to back calculate the intensity values from an exponential.
      *
      * The function used is::
@@ -49,7 +49,7 @@ void exponential(double I0, double R, double *relax_times, double *back_calc, in
     }
 }
 
-void exponential_dI0(double I0, double R, int param_index, double *relax_times, double back_calc_grad[][MAXTIMES], int num_times) {
+void exponential_dI0(double I0, double R, int param_index, double relax_times[], double back_calc_grad[][MAXTIMES], int num_times) {
     /* Calculate the dI0 partial derivate of the 2-parameter exponential curve.
     */
 
@@ -69,7 +69,7 @@ void exponential_dI0(double I0, double R, int param_index, double *relax_times, 
 }
 
 
-void exponential_dR(double I0, double R, int param_index, double *relax_times, double back_calc_grad[][MAXTIMES], int num_times) {
+void exponential_dR(double I0, double R, int param_index, double relax_times[], double back_calc_grad[][MAXTIMES], int num_times) {
     /* Calculate the dR partial derivate of the 2-parameter exponential curve.
     */
 
