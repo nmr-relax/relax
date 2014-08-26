@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2013 Edward d'Auvergne
+ * Copyright (C) 2006-2014 Edward d'Auvergne
  *
  * This file is part of the program relax (http://www.nmr-relax.com).
  *
@@ -21,11 +21,11 @@
 /* The exponential function is needed. */
 #include <math.h>
 
-/* functions for the exponential */
+/* Include the exponential header file to access the square() function and the maximum dimensions. */
 #include "exponential.h"
 
 
-void exponential(double I0, double R, double *relax_times, double *back_calc, int num_times) {
+void exponential(double I0, double R, double relax_times[MAX_DATA], double back_calc[MAX_DATA], int num_times) {
     /* Function to back calculate the intensity values from an exponential.
      *
      * The function used is::
@@ -33,57 +33,116 @@ void exponential(double I0, double R, double *relax_times, double *back_calc, in
      *     I = I0 * exp(-R.t)
     */
 
-    /* Declarations */
+    /* Declarations. */
     int i;
 
-    /* Loop over the time points */
+    /* Loop over the time points. */
     for (i = 0; i < num_times; i++) {
-        /* Zero Rx value */
+        /* Zero Rx value. */
         if (R == 0.0)
             back_calc[i] = I0;
 
-        /* Back calculate */
+        /* Back calculate. */
         else
             back_calc[i] = I0 * exp(-relax_times[i] * R);
 
     }
 }
 
-void exponential_dI0(double I0, double R, int param_index, double *relax_times, double back_calc_grad[][MAXTIMES], int num_times) {
+
+void exponential_dI0(double I0, double R, int param_index, double relax_times[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], int num_times) {
     /* Calculate the dI0 partial derivate of the 2-parameter exponential curve.
     */
 
-    /* Declarations */
+    /* Declarations. */
     int i;
 
-    /* Loop over the time points */
+    /* Loop over the time points. */
     for (i = 0; i < num_times; i++) {
-        /* Zero Rx value */
+        /* Zero Rx value. */
         if (R == 0.0)
             back_calc_grad[param_index][i] = 1.0;
 
-        /* The partial derivate */
+        /* The partial derivate. */
         else
             back_calc_grad[param_index][i] = exp(-relax_times[i] * R);
     }
 }
 
 
-void exponential_dR(double I0, double R, int param_index, double *relax_times, double back_calc_grad[][MAXTIMES], int num_times) {
+void exponential_dR(double I0, double R, int param_index, double relax_times[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], int num_times) {
     /* Calculate the dR partial derivate of the 2-parameter exponential curve.
     */
 
-    /* Declarations */
+    /* Declarations. */
     int i;
 
-    /* Loop over the time points */
+    /* Loop over the time points. */
     for (i = 0; i < num_times; i++) {
-        /* Zero Rx value */
+        /* Zero Rx value. */
         if (R == 0.0)
             back_calc_grad[param_index][i] = -I0 * relax_times[i];
 
-        /* The partial derivate */
+        /* The partial derivate. */
         else
             back_calc_grad[param_index][i] = -I0 * relax_times[i] * exp(-relax_times[i] * R);
+    }
+}
+
+
+void exponential_dI02(double I0, double R, int I0_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times) {
+    /* Calculate the dI0 double partial derivate of the 2-parameter exponential curve.
+    */
+
+    /* Declarations. */
+    int i;
+
+    /* Loop over the time points. */
+    for (i = 0; i < num_times; i++) {
+        /* Everything is zero! */
+        back_calc_hess[I0_index][I0_index][i] = 0.0;
+    }
+}
+
+
+void exponential_dR_dI0(double I0, double R, int R_index, int IO_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times) {
+    /* Calculate the dR, dI0 second partial derivate of the 2-parameter exponential curve.
+    */
+
+    /* Declarations. */
+    int i;
+
+    /* Loop over the time points. */
+    for (i = 0; i < num_times; i++) {
+        /* Zero Rx value. */
+        if (R == 0.0)
+            back_calc_hess[IO_index][R_index][i] = -relax_times[i];
+
+        /* The second partial derivate. */
+        else
+            back_calc_hess[IO_index][R_index][i] = -relax_times[i] * exp(-relax_times[i] * R);
+
+        /* Hessian symmetry. */
+        back_calc_hess[R_index][IO_index][i] = back_calc_hess[IO_index][R_index][i];
+    }
+}
+
+
+void exponential_dR2(double I0, double R, int R_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times) {
+    /* Calculate the dR second partial derivate of the 2-parameter exponential curve.
+    */
+
+    /* Declarations. */
+    int i;
+
+    /* Loop over the time points. */
+    for (i = 0; i < num_times; i++) {
+        /* Zero Rx value. */
+        if (R == 0.0)
+            back_calc_hess[R_index][R_index][i] = I0 * square(relax_times[i]);
+
+        /* The partial derivate. */
+        else
+            back_calc_hess[R_index][R_index][i] = I0 * square(relax_times[i]) * exp(-relax_times[i] * R);
     }
 }

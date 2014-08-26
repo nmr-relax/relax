@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006  Gary S Thompson (see https://gna.org/users for contact
  *                                      details)
+ * Copyright (C) 2014 Edward d'Auvergne
  *
  * This file is part of the program relax (http://www.nmr-relax.com).
  *
@@ -18,13 +19,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* Get the maximum dimensions. */
+#include "dimensions.h"
+
 #ifndef RELAX_C_CHI2 
 #define RELAX_C_CHI2
 
-/* The maximum number of data points */
-#define MAX_DATA 50
+/* Define all of the functions. */
+double chi2(double values[MAX_DATA], double sd[MAX_DATA], double back_calc[MAX_DATA], int num_times);
+void dchi2(double dchi2[MAX_PARAMS], double data[MAX_DATA], double back_calc_vals[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], double errors[MAX_DATA], int num_times, int M);
+void d2chi2(double d2chi2[MAX_PARAMS][MAX_PARAMS], double data[MAX_DATA], double back_calc_vals[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], double errors[MAX_DATA], int num_times, int M);
 
-double chi2(double *values, double *sd, double *back_calc, int num_times);
-void dchi2(double dchi2[], double data[], double back_calc_vals[], double back_calc_grad[][MAX_DATA], double errors[], int num_times, int M);
+/* Define the function for calculating the square of a number. */
+#define square(x) ((x)*(x))
 
 #endif
