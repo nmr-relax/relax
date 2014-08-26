@@ -128,7 +128,6 @@ static PyObject *
 dfunc(PyObject *self, PyObject *args) {
     /* Target function for calculating and returning the chi-squared gradient.
      * 
-     * This is currently unimplemented.
      */
 
     /* Declarations */
@@ -243,7 +242,7 @@ static PyMethodDef relax_fit_methods[] = {
         "dfunc",
         dfunc,
         METH_VARARGS,
-        "Target function for calculating and returning the chi-squared gradient.\n\nThis is currently unimplemented."
+        "Target function for calculating and returning the chi-squared gradient."
     }, {
         "d2func",
         d2func,
