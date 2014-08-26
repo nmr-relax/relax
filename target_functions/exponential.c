@@ -21,8 +21,8 @@
 /* The exponential function is needed. */
 #include <math.h>
 
-/* functions for the exponential */
-#include "exponential.h"
+/* Get the maximum dimensions. */
+#include "dimensions.h"
 
 
 void exponential(double I0, double R, double relax_times[MAX_DATA], double back_calc[MAX_DATA], int num_times) {
