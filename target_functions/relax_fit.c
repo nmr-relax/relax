@@ -187,11 +187,9 @@ d2func(PyObject *self, PyObject *args) {
     exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
 
     /* The second partial derivatives. */
-    /*
     exponential_dR2(params[index_I0], params[index_R], index_R, relax_times, back_calc_hess, num_times);
     exponential_dI02(params[index_I0], params[index_R], index_I0, relax_times, back_calc_hess, num_times);
-    exponential_dR2_dI02(params[index_I0], params[index_R], index_R, index_I0, relax_times, back_calc_hess, num_times);
-    */
+    exponential_dR_dI0(params[index_I0], params[index_R], index_R, index_I0, relax_times, back_calc_hess, num_times);
 
     /* The chi-squared Hessian. */
     d2chi2(d2chi2_vals, values, back_calc, back_calc_grad, back_calc_hess, sd, num_times, num_params);

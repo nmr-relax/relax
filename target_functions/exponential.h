@@ -29,5 +29,8 @@
 void exponential(double I0, double R, double relax_times[MAX_DATA], double back_calc[MAX_DATA], int num_times);
 void exponential_dI0(double I0, double R, int param_index, double relax_times[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], int num_times);
 void exponential_dR(double I0, double R, int param_index, double relax_times[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], int num_times);
+void exponential_dI02(double I0, double R, int I0_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times);
+void exponential_dR_dI0(double I0, double R, int R_index, int IO_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times);
+void exponential_dR2(double I0, double R, int R_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times);
 
 #endif
