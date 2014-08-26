@@ -108,7 +108,7 @@ func(PyObject *self, PyObject *args) {
     }
 
     /* Back calculated the peak intensities */
-    exponential(params[1], params[0], relax_times, back_calc, num_times);
+    exponential(params[index_I0], params[index_R], relax_times, back_calc, num_times);
 
     /* Calculate and return the chi-squared value */
     return PyFloat_FromDouble(chi2(values, sd, back_calc, num_times));
@@ -145,11 +145,11 @@ dfunc(PyObject *self, PyObject *args) {
     }
 
     /* Back calculated the peak intensities */
-    exponential(params[1], params[0], relax_times, back_calc, num_times);
+    exponential(params[index_I0], params[index_R], relax_times, back_calc, num_times);
 
     /* The partial derivates */
-    exponential_dR(params[1], params[0], 0, relax_times, back_calc_grad, num_times);
-    exponential_dI0(params[1], params[0], 1, relax_times, back_calc_grad, num_times);
+    exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, num_times);
+    exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
 
     /* The chi-squared gradient */
     dchi2(dchi2_vals, values, back_calc, back_calc_grad, sd, num_times, num_params);
@@ -220,8 +220,8 @@ jacobian(PyObject *self, PyObject *args) {
     }
 
     /* The partial derivates */
-    exponential_dR(params[1], params[0], 0, relax_times, back_calc_grad, num_times);
-    exponential_dI0(params[1], params[0], 1, relax_times, back_calc_grad, num_times);
+    exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, num_times);
+    exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
 
     /* Convert to a Python list of lists */
     PyObject *list = PyList_New(0);
