@@ -153,11 +153,11 @@ dfunc(PyObject *self, PyObject *args) {
     /* The chi-squared gradient */
     dchi2(dchi2_vals, values, back_calc, back_calc_grad, sd, num_times, num_params);
 
-    /* Convert to a Python list */
+    /* Convert to a Python list, and scale the values. */
     PyObject *list = PyList_New(0);
     Py_INCREF(list);
     for (i = 0; i < num_params; i++) {
-        PyList_Append(list, PyFloat_FromDouble(dchi2_vals[i]));
+        PyList_Append(list, PyFloat_FromDouble(dchi2_vals[i] * scaling_matrix[i]));
     }
 
     /* Return the Jacobian */
