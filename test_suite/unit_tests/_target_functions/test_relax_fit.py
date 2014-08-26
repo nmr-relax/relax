@@ -34,12 +34,12 @@ class Test_relax_fit(TestCase):
         """Create a number of objects for the calculation and testing of the relaxation curve-fitting equations."""
 
         # The parameter scaling.
-        scaling_list = [1, 1000]
+        self.scaling_list = [1, 1000]
 
         # The parameter values at the minimum.
         self.I0 = 1000
         self.R = 1
-        self.params = [self.R/scaling_list[0], self.I0/scaling_list[1]]
+        self.params = [self.R/self.scaling_list[0], self.I0/self.scaling_list[1]]
 
         # The time points.
         relax_times = [0, 1, 2, 3, 4]
@@ -51,7 +51,7 @@ class Test_relax_fit(TestCase):
         errors = [10, 10, 10, 10, 10]
 
         # Setup the C module.
-        setup(num_params=2, num_times=len(relax_times), values=I, sd=errors, relax_times=relax_times, scaling_matrix=scaling_list)
+        setup(num_params=2, num_times=len(relax_times), values=I, sd=errors, relax_times=relax_times, scaling_matrix=self.scaling_list)
 
 
     def test_func(self):
@@ -76,3 +76,25 @@ class Test_relax_fit(TestCase):
         # Assert that the elements must be 0.0.
         self.assertAlmostEqual(grad[0], 0.0, 6)
         self.assertAlmostEqual(grad[1], 0.0, 6)
+
+
+    def test_dfunc_off_minimum(self):
+        """Unit test for the gradient returned by the dfunc() function at a position away from the minimum.
+
+        This uses the data from test_suite/shared_data/curve_fitting/numeric_gradient/integrate.log.
+        """
+
+        # The off-minimum parameter values.
+        I0 = 500
+        R = 2
+        params = [R/self.scaling_list[0], I0/self.scaling_list[1]]
+
+        # Get the chi-squared gradient.
+        grad = dfunc(params)
+
+        # Printout.
+        print("The gradient at %s is:\n%s" % (params, grad))
+
+        # Check that the gradient matches the numerically derived values.
+        self.assertAlmostEqual(grad[0], 722.67864120737488, 6)
+        self.assertAlmostEqual(grad[1], -11.564651301654292, 6)
