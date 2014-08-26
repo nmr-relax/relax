@@ -17,12 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <math.h>
+/* Include the c_chi2 header file to access the square() function. */
 #include "c_chi2.h"
-
-/* Define the function for calculating the square of a number. */
-#define square(x) ((x)*(x))
 
 
 double chi2(double values[MAX_DATA], double sd[MAX_DATA], double back_calc[MAX_DATA], int num_times) {
