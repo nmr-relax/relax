@@ -18,11 +18,7 @@
  */
 
 
-/* The maximum number of parameters for this function */
-#define MAXPARAMS 3
-
-/* The maximum number of spectral time points */
-#define MAXTIMES 50
+#include "dimensions.h"
 
 /* Python 2.2 and earlier support for Python C modules */
 #ifndef PyMODINIT_FUNC
@@ -42,11 +38,11 @@ static int index_R = 0;
 static int index_I0 = 1;
 
 /* Variables used for storage during the function calls of optimisation */
-static double back_calc[MAXTIMES];
-static double back_calc_grad[MAXPARAMS][MAXTIMES];
-static double dchi2_vals[MAXPARAMS];
-static double params[MAXPARAMS];
-static double values[MAXTIMES];
-static double sd[MAXTIMES];
-static double relax_times[MAXTIMES];
-static double scaling_matrix[MAXPARAMS];
+static double back_calc[MAX_DATA];
+static double back_calc_grad[MAX_PARAMS][MAX_DATA];
+static double dchi2_vals[MAX_PARAMS];
+static double params[MAX_PARAMS];
+static double values[MAX_DATA];
+static double sd[MAX_DATA];
+static double relax_times[MAX_DATA];
+static double scaling_matrix[MAX_PARAMS];
