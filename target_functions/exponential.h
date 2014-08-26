@@ -33,4 +33,7 @@ void exponential_dI02(double I0, double R, int I0_index, double relax_times[MAX_
 void exponential_dR_dI0(double I0, double R, int R_index, int IO_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times);
 void exponential_dR2(double I0, double R, int R_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times);
 
+/* Define the function for calculating the square of a number. */
+#define square(x) ((x)*(x))
+
 #endif
