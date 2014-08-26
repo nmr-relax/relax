@@ -90,13 +90,13 @@ relax_fit.select_model('exp')
 minimise.grid_search(inc=11)
 
 # Minimise.
-minimise.execute('simplex', constraints=False)
+minimise.execute('bfgs', constraints=False)
 
 # Monte Carlo simulations.
 monte_carlo.setup(number=3)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise.execute('simplex', constraints=False)
+minimise.execute('bfgs', constraints=False)
 monte_carlo.error_analysis()
 
 # Save the relaxation rates.
