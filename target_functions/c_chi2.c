@@ -48,7 +48,7 @@ double chi2(double values[MAX_DATA], double sd[MAX_DATA], double back_calc[MAX_D
     int i;
     double chi2 = 0.0;
 
-    /* Loop over the time points and sum the chi-squared components */
+    /* Loop over the time points and sum the chi-squared components. */
     for (i = 0; i < num_times; ++i) {
         chi2 = chi2 + square((values[i] - back_calc[i]) / sd[i]);
     }

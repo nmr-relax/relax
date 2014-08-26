@@ -33,16 +33,16 @@ void exponential(double I0, double R, double relax_times[MAX_DATA], double back_
      *     I = I0 * exp(-R.t)
     */
 
-    /* Declarations */
+    /* Declarations. */
     int i;
 
-    /* Loop over the time points */
+    /* Loop over the time points. */
     for (i = 0; i < num_times; i++) {
-        /* Zero Rx value */
+        /* Zero Rx value. */
         if (R == 0.0)
             back_calc[i] = I0;
 
-        /* Back calculate */
+        /* Back calculate. */
         else
             back_calc[i] = I0 * exp(-relax_times[i] * R);
 
@@ -53,16 +53,16 @@ void exponential_dI0(double I0, double R, int param_index, double relax_times[MA
     /* Calculate the dI0 partial derivate of the 2-parameter exponential curve.
     */
 
-    /* Declarations */
+    /* Declarations. */
     int i;
 
-    /* Loop over the time points */
+    /* Loop over the time points. */
     for (i = 0; i < num_times; i++) {
-        /* Zero Rx value */
+        /* Zero Rx value. */
         if (R == 0.0)
             back_calc_grad[param_index][i] = 1.0;
 
-        /* The partial derivate */
+        /* The partial derivate. */
         else
             back_calc_grad[param_index][i] = exp(-relax_times[i] * R);
     }
@@ -73,16 +73,16 @@ void exponential_dR(double I0, double R, int param_index, double relax_times[MAX
     /* Calculate the dR partial derivate of the 2-parameter exponential curve.
     */
 
-    /* Declarations */
+    /* Declarations. */
     int i;
 
-    /* Loop over the time points */
+    /* Loop over the time points. */
     for (i = 0; i < num_times; i++) {
-        /* Zero Rx value */
+        /* Zero Rx value. */
         if (R == 0.0)
             back_calc_grad[param_index][i] = -I0 * relax_times[i];
 
-        /* The partial derivate */
+        /* The partial derivate. */
         else
             back_calc_grad[param_index][i] = -I0 * relax_times[i] * exp(-relax_times[i] * R);
     }

@@ -17,13 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* This include must come first */
+/* This include must come first. */
 #include <Python.h>
 
-/* The header for all functions which will be called */
+/* Include all of the variable definitions. */
 #include "relax_fit.h"
 
-/* functions for chi2 and exponential */
+/* The chi2 and exponential functions. */
 #include "c_chi2.h"
 #include "exponential.h"
 
@@ -32,47 +32,47 @@ static PyObject *
 setup(PyObject *self, PyObject *args, PyObject *keywords) {
     /* Set up the module in preparation for calls to the target function. */
 
-    /* Python object declarations */
+    /* Python object declarations. */
     PyObject *values_arg, *sd_arg, *relax_times_arg, *scaling_matrix_arg;
     PyObject *element;
 
-    /* Normal declarations */
+    /* Normal declarations. */
     int i;
 
-    /* The keyword list */
+    /* The keyword list. */
     static char *keyword_list[] = {"num_params", "num_times", "values", "sd", "relax_times", "scaling_matrix", NULL};
 
-    /* Parse the function arguments */
+    /* Parse the function arguments. */
     if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOOOO", keyword_list, &num_params, &num_times, &values_arg, &sd_arg, &relax_times_arg, &scaling_matrix_arg))
         return NULL;
 
-    /* Place the parameter related arguments into C arrays */
+    /* Place the parameter related arguments into C arrays. */
     for (i = 0; i < num_params; i++) {
-        /* The diagonalised scaling matrix list argument element */
+        /* The diagonalised scaling matrix list argument element. */
         element = PySequence_GetItem(scaling_matrix_arg, i);
         scaling_matrix[i] = PyFloat_AsDouble(element);
         Py_CLEAR(element);
     }
 
-    /* Place the time related arguments into C arrays */
+    /* Place the time related arguments into C arrays. */
     for (i = 0; i < num_times; i++) {
-        /* The value argument element */
+        /* The value argument element. */
         element = PySequence_GetItem(values_arg, i);
         values[i] = PyFloat_AsDouble(element);
         Py_CLEAR(element);
 
-        /* The sd argument element */
+        /* The sd argument element. */
         element = PySequence_GetItem(sd_arg, i);
         sd[i] = PyFloat_AsDouble(element);
         Py_CLEAR(element);
 
-        /* The relax_times argument element */
+        /* The relax_times argument element. */
         element = PySequence_GetItem(relax_times_arg, i);
         relax_times[i] = PyFloat_AsDouble(element);
         Py_CLEAR(element);
     }
 
-    /* The macro for returning the Python None object */
+    /* The macro for returning the Python None object. */
     Py_RETURN_NONE;
 }
 
@@ -80,20 +80,20 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
 void param_to_c(PyObject *params_arg) {
     /* Convert the Python parameter list to a C array. */
 
-    /* Declarations */
+    /* Declarations. */
     PyObject *element;
     int i;
 
-    /* Place the parameter array elements into the C array */
+    /* Place the parameter array elements into the C array. */
     for (i = 0; i < num_params; i++) {
-        /* Get the element */
+        /* Get the element. */
         element = PySequence_GetItem(params_arg, i);
 
         /* Convert to a C double, then free the memory. */
         params[i] = PyFloat_AsDouble(element);
         Py_CLEAR(element);
 
-        /* Scale the parameter */
+        /* Scale the parameter. */
         params[i] = params[i] * scaling_matrix[i];
     }
 }
@@ -106,20 +106,20 @@ func(PyObject *self, PyObject *args) {
      * calculated.
      */
 
-    /* Declarations */
+    /* Declarations. */
     PyObject *params_arg;
 
-    /* Parse the function arguments, the only argument should be the parameter array */
+    /* Parse the function arguments, the only argument should be the parameter array. */
     if (!PyArg_ParseTuple(args, "O", &params_arg))
         return NULL;
 
-    /* Convert the parameters Python list to a C array */
+    /* Convert the parameters Python list to a C array. */
     param_to_c(params_arg);
 
-    /* Back calculated the peak intensities */
+    /* Back calculated the peak intensities. */
     exponential(params[index_I0], params[index_R], relax_times, back_calc, num_times);
 
-    /* Calculate and return the chi-squared value */
+    /* Calculate and return the chi-squared value. */
     return PyFloat_FromDouble(chi2(values, sd, back_calc, num_times));
 }
 
@@ -130,25 +130,25 @@ dfunc(PyObject *self, PyObject *args) {
      * 
      */
 
-    /* Declarations */
+    /* Declarations. */
     PyObject *params_arg;
     int i;
 
-    /* Parse the function arguments, the only argument should be the parameter array */
+    /* Parse the function arguments, the only argument should be the parameter array. */
     if (!PyArg_ParseTuple(args, "O", &params_arg))
         return NULL;
 
-    /* Convert the parameters Python list to a C array */
+    /* Convert the parameters Python list to a C array. */
     param_to_c(params_arg);
 
-    /* Back calculated the peak intensities */
+    /* Back calculated the peak intensities. */
     exponential(params[index_I0], params[index_R], relax_times, back_calc, num_times);
 
-    /* The partial derivates */
+    /* The partial derivates. */
     exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, num_times);
     exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
 
-    /* The chi-squared gradient */
+    /* The chi-squared gradient. */
     dchi2(dchi2_vals, values, back_calc, back_calc_grad, sd, num_times, num_params);
 
     /* Convert to a Python list, and scale the values. */
@@ -158,7 +158,7 @@ dfunc(PyObject *self, PyObject *args) {
         PyList_Append(list, PyFloat_FromDouble(dchi2_vals[i] * scaling_matrix[i]));
     }
 
-    /* Return the gradient */
+    /* Return the gradient. */
     return list;
 }
 
@@ -177,15 +177,15 @@ static PyObject *
 back_calc_I(PyObject *self, PyObject *args) {
     /* Return the back calculated peak intensities as a Python list. */
 
-    /* Declarations */
+    /* Declarations. */
     PyObject *back_calc_py = PyList_New(num_times);
     int i;
 
-    /* Copy the values out of the C array into the Python array */
+    /* Copy the values out of the C array into the Python array. */
     for (i = 0; i < num_times; i++)
         PyList_SetItem(back_calc_py, i, PyFloat_FromDouble(back_calc[i]));
 
-    /* Return the Python list */
+    /* Return the Python list. */
     return back_calc_py;
 }
 
@@ -194,22 +194,22 @@ static PyObject *
 jacobian(PyObject *self, PyObject *args) {
     /* Return the Jacobian as a Python list of lists. */
 
-    /* Declarations */
+    /* Declarations. */
     PyObject *params_arg;
     int i, j;
 
-    /* Parse the function arguments, the only argument should be the parameter array */
+    /* Parse the function arguments, the only argument should be the parameter array. */
     if (!PyArg_ParseTuple(args, "O", &params_arg))
         return NULL;
 
-    /* Convert the parameters Python list to a C array */
+    /* Convert the parameters Python list to a C array. */
     param_to_c(params_arg);
 
-    /* The partial derivates */
+    /* The partial derivatives. */
     exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, num_times);
     exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
 
-    /* Convert to a Python list of lists */
+    /* Convert to a Python list of lists. */
     PyObject *list = PyList_New(0);
     Py_INCREF(list);
     for (i = 0; i < num_params; i++) {
@@ -221,12 +221,12 @@ jacobian(PyObject *self, PyObject *args) {
         PyList_Append(list, list2);
     }
 
-    /* Return the Jacobian */
+    /* Return the Jacobian. */
     return list;
 }
 
 
-/* The method table for the functions called by Python */
+/* The method table for the functions called by Python. */
 static PyMethodDef relax_fit_methods[] = {
     {
         "setup",
@@ -259,11 +259,11 @@ static PyMethodDef relax_fit_methods[] = {
         METH_VARARGS,
         "Return the Jacobian matrix as a Python list."
     },
-        {NULL, NULL, 0, NULL}        /* Sentinel */
+        {NULL, NULL, 0, NULL}        /* Sentinel. */
 };
 
 
-/* Define the Python 3 module */
+/* Define the Python 3 module. */
 #if PY_MAJOR_VERSION >= 3
     static struct PyModuleDef moduledef = {
         PyModuleDef_HEAD_INIT,
@@ -278,7 +278,7 @@ static PyMethodDef relax_fit_methods[] = {
     };
 #endif
 
-/* Initialise as a Python module */
+/* Initialise as a Python module. */
 PyMODINIT_FUNC
 #if PY_MAJOR_VERSION >= 3
     PyInit_relax_fit(void)

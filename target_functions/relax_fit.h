@@ -21,24 +21,24 @@
 /* Get the maximum dimensions. */
 #include "dimensions.h"
 
-/* Python 2.2 and earlier support for Python C modules */
+/* Python 2.2 and earlier support for Python C modules. */
 #ifndef PyMODINIT_FUNC
 #define PyMODINIT_FUNC void
 #endif
 
 
 /****************************************/
-/* External, hence permanent, variables */
-/****************************************/
+/* External, hence permanent, variables. */
+/*****************************************/
 
-/* Variables sent to the setup function to be stored for later use */
+/* Variables sent to the setup function to be stored for later use. */
 static int num_params, num_times;
 
 /* Hardcoded parameter indices. */
 static int index_R = 0;
 static int index_I0 = 1;
 
-/* Variables used for storage during the function calls of optimisation */
+/* Variables used for storage during the function calls of optimisation. */
 static double back_calc[MAX_DATA];
 static double back_calc_grad[MAX_PARAMS][MAX_DATA];
 static double dchi2_vals[MAX_PARAMS];
