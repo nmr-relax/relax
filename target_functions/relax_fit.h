@@ -40,6 +40,7 @@ static int num_params, num_times;
 /* Variables used for storage during the function calls of optimisation */
 static double back_calc[MAXTIMES];
 static double back_calc_grad[MAXPARAMS][MAXTIMES];
+static double dchi2_vals[MAXPARAMS];
 static double params[MAXPARAMS];
 static double values[MAXTIMES];
 static double sd[MAXTIMES];

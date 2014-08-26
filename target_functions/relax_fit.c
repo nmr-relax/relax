@@ -123,19 +123,45 @@ dfunc(PyObject *self, PyObject *args) {
 
     /* Declarations */
     PyObject *params_arg;
-
-    /* Temp Declarations */
-    double aaa[MAXPARAMS] = {1.0, 2.0};
+    PyObject *element;
     int i;
-    double *params;
 
     /* Parse the function arguments, the only argument should be the parameter array */
     if (!PyArg_ParseTuple(args, "O", &params_arg))
         return NULL;
 
+    /* Place the parameter array elements into the C array */
+    for (i = 0; i < num_params; i++) {
+        /* Get the element */
+        element = PySequence_GetItem(params_arg, i);
+
+        /* Convert to a C double, then free the memory. */
+        params[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
+
+        /* Scale the parameter */
+        params[i] = params[i] * scaling_matrix[i];
+    }
+
     /* Back calculated the peak intensities */
     exponential(params, relax_times, back_calc, num_times);
 
+    /* The partial derivates */
+    exponential_dR(params, relax_times, back_calc_grad, num_times);
+    exponential_dI(params, relax_times, back_calc_grad, num_times);
+
+    /* The chi-squared gradient */
+    dchi2(dchi2_vals, values, back_calc, back_calc_grad, sd, num_times, num_params);
+
+    /* Convert to a Python list */
+    PyObject *list = PyList_New(0);
+    Py_INCREF(list);
+    for (i = 0; i < num_params; i++) {
+        PyList_Append(list, PyFloat_FromDouble(dchi2_vals[i]));
+    }
+
+    /* Return the Jacobian */
+    return list;
     return NULL;
 }
 
