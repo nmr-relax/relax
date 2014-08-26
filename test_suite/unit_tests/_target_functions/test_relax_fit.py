@@ -34,21 +34,21 @@ class Test_relax_fit(TestCase):
         """Create a number of objects for the calculation and testing of the relaxation curve-fitting equations."""
 
         # The parameter scaling.
-        self.scaling_list = [1, 1000]
+        self.scaling_list = [1.0, 1000.0]
 
         # The parameter values at the minimum.
-        self.I0 = 1000
-        self.R = 1
+        self.I0 = 1000.0
+        self.R = 1.0
         self.params = [self.R/self.scaling_list[0], self.I0/self.scaling_list[1]]
 
         # The time points.
-        relax_times = [0, 1, 2, 3, 4]
+        relax_times = [0.0, 1.0, 2.0, 3.0, 4.0]
 
         # The intensities for the above I0 and R.
         I = [1000.0, 367.879441171, 135.335283237, 49.7870683679, 18.3156388887]
 
         # The intensity errors.
-        errors = [10, 10, 10, 10, 10]
+        errors = [10.0, 10.0, 10.0, 10.0, 10.0]
 
         # Setup the C module.
         setup(num_params=2, num_times=len(relax_times), values=I, sd=errors, relax_times=relax_times, scaling_matrix=self.scaling_list)
@@ -85,8 +85,8 @@ class Test_relax_fit(TestCase):
         """
 
         # The off-minimum parameter values.
-        I0 = 500
-        R = 2
+        I0 = 500.0
+        R = 2.0
         params = [R/self.scaling_list[0], I0/self.scaling_list[1]]
 
         # Get the chi-squared gradient.
@@ -96,5 +96,5 @@ class Test_relax_fit(TestCase):
         print("The gradient at %s is:\n%s" % (params, grad))
 
         # Check that the gradient matches the numerically derived values.
-        self.assertAlmostEqual(grad[0], 722.67864120737488, 6)
-        self.assertAlmostEqual(grad[1], -11.564651301654292, 6)
+        self.assertAlmostEqual(grad[0], 722.67864120737488)
+        self.assertAlmostEqual(grad[1], -11.564651301654292)
