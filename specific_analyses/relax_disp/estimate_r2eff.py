@@ -768,19 +768,23 @@ def minimise_minfx(E=None):
     x0 = asarray( E.estimate_x0_exp() )
 
     # Set the min_algor.
+    # simplex is algorithms without gradient. It is quite slow, since it needs to take many steps.
     #min_algor='simplex'
 
-    # Steepest descent uses the gradient.
+    # Steepest descent uses only the gradient. This works, but it is not totally precise.
     min_algor = 'Steepest descent'
     max_iterations = 1000
+
+    # Quasi-Newton BFGS. Uses only the gradient.
+    # This gets the same results as 2000 Monte-Carlo with simplex.
+    # This is one of the best optimisation techniques when only the function and gradient are present, as it tries to numerically approximate the Hessian matrix, updating it as the algorithm moves along. 
+    min_algor = 'BFGS'
 
     # Newton does not work.
     # min_algor = 'newton'
 
     # Newton-CG does not work.
     # min_algor = 'Newton-CG'
-
-
 
     # Also not work.#
     # min_algor = 'Fletcher-Reeves'
