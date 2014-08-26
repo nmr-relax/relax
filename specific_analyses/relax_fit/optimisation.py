@@ -22,13 +22,16 @@
 # Module docstring.
 """The R1 and R2 exponential relaxation curve fitting optimisation functions."""
 
+# Python module imports.
+from numpy import array, float64
+
 # relax module imports.
 from dep_check import C_module_exp_fn
 from specific_analyses.relax_fit.parameters import assemble_param_vector
 
 # C modules.
 if C_module_exp_fn:
-    from target_functions.relax_fit import setup, func, back_calc_I
+    from target_functions.relax_fit import setup, func, dfunc, back_calc_I
 
 
 def back_calc(spin=None, relax_time_id=None):
@@ -96,6 +99,12 @@ def dfunc_wrapper(params):
 
     The currently does nothing.
     """
+
+    # Call the C code.
+    dchi2 = dfunc(params.tolist())
+
+    # Return the chi2 gradient as a numpy array.
+    return array(dchi2, float64)
 
 
 def d2func_wrapper(params):
