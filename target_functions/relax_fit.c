@@ -27,6 +27,7 @@
 #include "c_chi2.h"
 #include "exponential.h"
 
+
 static PyObject *
 setup(PyObject *self, PyObject *args, PyObject *keywords) {
     /* Set up the module in preparation for calls to the target function. */

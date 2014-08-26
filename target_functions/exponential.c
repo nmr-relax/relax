@@ -32,9 +32,7 @@ void exponential(double *params, double *relax_times, double *back_calc, int num
     /* Declarations */
     int i;
 
-
     /* Loop over the time points */
-    /* for (i = 0; i < num_times; i++) { */
     for (i = 0; i < num_times; i++) {
         /* Zero Rx value */
         if (params[0] == 0.0)
@@ -54,9 +52,7 @@ void exponential_dI(double *params, double *relax_times, double back_calc_grad[]
     /* Declarations */
     int i;
 
-
     /* Loop over the time points */
-    /* for (i = 0; i < num_times; i++) { */
     for (i = 0; i < num_times; i++) {
         /* Zero Rx value */
         if (params[0] == 0.0)
@@ -76,9 +72,7 @@ void exponential_dR(double *params, double *relax_times, double back_calc_grad[]
     /* Declarations */
     int i;
 
-
     /* Loop over the time points */
-    /* for (i = 0; i < num_times; i++) { */
     for (i = 0; i < num_times; i++) {
         /* Zero Rx value */
         if (params[0] == 0.0)
