@@ -61,7 +61,7 @@ double chi2(double *values, double *sd, double *back_calc, int num_times) {
 }
 
 
-void dchi2(double dchi2[], double data[], double back_calc_vals[], double back_calc_grad[][MAX_DATA], double errors[], int num_times, int M) {
+void dchi2(double dchi2[], double data[], double back_calc_vals[], double back_calc_grad[][MAX_DATA], double errors[], int num_points, int num_params) {
     /* Calculate the full chi-squared gradient.
 
     The chi-squared gradient
@@ -96,18 +96,20 @@ void dchi2(double dchi2[], double data[], double back_calc_vals[], double back_c
     @type back_calc_grad:   numpy rank-2 size MxN array
     @param errors:          The vector of sigma_i values.
     @type errors:           numpy rank-1 size N array
-    @param M:               The dimensions of the gradient.
-    @type M:                int
+    @param num_points:      The number of data points to sum over.
+    @type num_points:       int
+    @param num_params:      The dimensions of the gradient.
+    @type num_params:       int
     */
 
     /* Declarations. */
-    int i, j;
+    int data_index, param_index;
 
     /* Calculate the chi-squared gradient. */
-    for (j = 0; j < M; ++j) {
-        dchi2[j] = 0.0;
-        for (i = 0; i < num_times; ++i) {
-            dchi2[j] += -2.0 / square(errors[i]) * (data[i] - back_calc_vals[i]) * back_calc_grad[j][i];
+    for (param_index = 0; param_index < num_params; ++param_index) {
+        dchi2[param_index] = 0.0;
+        for (data_index = 0; data_index < num_points; ++data_index) {
+            dchi2[param_index] += -2.0 / square(errors[data_index]) * (data[data_index] - back_calc_vals[data_index]) * back_calc_grad[param_index][data_index];
         }
     }
 }
