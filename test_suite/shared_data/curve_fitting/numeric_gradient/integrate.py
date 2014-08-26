@@ -21,6 +21,9 @@ def func_R(R):
     for i in range(len(times)):
         chi2 += (I[i] - back_calc[i])**2 / errors[i]**2
 
+    # Printout.
+    print("dR:  R=%f, I=%s, chi2=%f" % (R, back_calc, chi2))
+
     # Return the value.
     return chi2
 
@@ -40,6 +43,9 @@ def func_I(I0):
     for i in range(len(times)):
         chi2 += (I[i] - back_calc[i])**2 / errors[i]**2
 
+    # Printout.
+    print("dI0: I0=%f, I=%s, chi2=%f" % (I0, back_calc, chi2))
+
     # Return the value.
     return chi2
 
@@ -58,13 +64,15 @@ I = [1000.0, 367.879441171, 135.335283237, 49.7870683679, 18.3156388887]
 errors = [10.0, 10.0, 10.0, 10.0, 10.0]
 
 # The numeric gradient at the minimum.
+print("\n\nOn-minimum:\n")
 grad_R = derivative(func_R, R, dx=1e-5, order=11)
 grad_I = derivative(func_I, I0, dx=1e-5, order=11)
-print("The gradient at %s is:\n    %s" % ([R, I0], [grad_R, grad_I]))
+print("\nThe gradient at %s is:\n    %s" % ([R, I0], [grad_R, grad_I]))
 
 # The numeric gradient off the minimum.
+print("\n\nOff-minimum:\n")
 R = 2.0
 I0 = 500.0
 grad_R = derivative(func_R, R, dx=1e-5, order=11)
 grad_I = derivative(func_I, I0, dx=1e-5, order=11)
-print("The gradient at %s is:\n    %s" % ([R, I0], [grad_R, grad_I]))
+print("\nThe gradient at %s is:\n    %s" % ([R, I0], [grad_R, grad_I]))
