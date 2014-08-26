@@ -77,22 +77,12 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
 }
 
 
-static PyObject *
-func(PyObject *self, PyObject *args) {
-    /* Target function for calculating and returning the chi-squared value.
-     *
-     * Firstly the back calculated intensities are generated, then the chi-squared statistic is
-     * calculated.
-     */
+void param_to_c(PyObject *params_arg) {
+    /* Convert the Python parameter list to a C array. */
 
     /* Declarations */
-    PyObject *params_arg;
     PyObject *element;
     int i;
-
-    /* Parse the function arguments, the only argument should be the parameter array */
-    if (!PyArg_ParseTuple(args, "O", &params_arg))
-        return NULL;
 
     /* Place the parameter array elements into the C array */
     for (i = 0; i < num_params; i++) {
@@ -106,6 +96,25 @@ func(PyObject *self, PyObject *args) {
         /* Scale the parameter */
         params[i] = params[i] * scaling_matrix[i];
     }
+}
+
+static PyObject *
+func(PyObject *self, PyObject *args) {
+    /* Target function for calculating and returning the chi-squared value.
+     *
+     * Firstly the back calculated intensities are generated, then the chi-squared statistic is
+     * calculated.
+     */
+
+    /* Declarations */
+    PyObject *params_arg;
+
+    /* Parse the function arguments, the only argument should be the parameter array */
+    if (!PyArg_ParseTuple(args, "O", &params_arg))
+        return NULL;
+
+    /* Convert the parameters Python list to a C array */
+    param_to_c(params_arg);
 
     /* Back calculated the peak intensities */
     exponential(params[index_I0], params[index_R], relax_times, back_calc, num_times);
@@ -124,25 +133,14 @@ dfunc(PyObject *self, PyObject *args) {
 
     /* Declarations */
     PyObject *params_arg;
-    PyObject *element;
     int i;
 
     /* Parse the function arguments, the only argument should be the parameter array */
     if (!PyArg_ParseTuple(args, "O", &params_arg))
         return NULL;
 
-    /* Place the parameter array elements into the C array */
-    for (i = 0; i < num_params; i++) {
-        /* Get the element */
-        element = PySequence_GetItem(params_arg, i);
-
-        /* Convert to a C double, then free the memory. */
-        params[i] = PyFloat_AsDouble(element);
-        Py_CLEAR(element);
-
-        /* Scale the parameter */
-        params[i] = params[i] * scaling_matrix[i];
-    }
+    /* Convert the parameters Python list to a C array */
+    param_to_c(params_arg);
 
     /* Back calculated the peak intensities */
     exponential(params[index_I0], params[index_R], relax_times, back_calc, num_times);
@@ -199,25 +197,14 @@ jacobian(PyObject *self, PyObject *args) {
 
     /* Declarations */
     PyObject *params_arg;
-    PyObject *element;
     int i, j;
 
     /* Parse the function arguments, the only argument should be the parameter array */
     if (!PyArg_ParseTuple(args, "O", &params_arg))
         return NULL;
 
-    /* Place the parameter array elements into the C array */
-    for (i = 0; i < num_params; i++) {
-        /* Get the element */
-        element = PySequence_GetItem(params_arg, i);
-
-        /* Convert to a C double, then free the memory. */
-        params[i] = PyFloat_AsDouble(element);
-        Py_CLEAR(element);
-
-        /* Scale the parameter */
-        params[i] = params[i] * scaling_matrix[i];
-    }
+    /* Convert the parameters Python list to a C array */
+    param_to_c(params_arg);
 
     /* The partial derivates */
     exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, num_times);
