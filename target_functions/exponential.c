@@ -25,8 +25,12 @@
 #include "exponential.h"
 
 
-void exponential(double *params, double *relax_times, double *back_calc, int num_times) {
-    /* Function to back calculate the peak intensities.
+void exponential(double I0, double R, double *relax_times, double *back_calc, int num_times) {
+    /* Function to back calculate the intensity values from an exponential.
+     *
+     * The function used is::
+     *
+     *     I = I0 * exp(-R.t)
     */
 
     /* Declarations */
@@ -35,18 +39,18 @@ void exponential(double *params, double *relax_times, double *back_calc, int num
     /* Loop over the time points */
     for (i = 0; i < num_times; i++) {
         /* Zero Rx value */
-        if (params[0] == 0.0)
-            back_calc[i] = params[1];
+        if (R == 0.0)
+            back_calc[i] = I0;
 
         /* Back calculate */
         else
-            back_calc[i] = params[1] * exp(-relax_times[i] * params[0]);
+            back_calc[i] = I0 * exp(-relax_times[i] * R);
 
     }
 }
 
-void exponential_dI(double *params, double *relax_times, double back_calc_grad[][MAXTIMES], int num_times) {
-    /* Calculate the dI partial derivate of the 2-parameter exponential curve.
+void exponential_dI0(double I0, double R, double *relax_times, double back_calc_grad[][MAXTIMES], int num_times) {
+    /* Calculate the dI0 partial derivate of the 2-parameter exponential curve.
     */
 
     /* Declarations */
@@ -55,17 +59,17 @@ void exponential_dI(double *params, double *relax_times, double back_calc_grad[]
     /* Loop over the time points */
     for (i = 0; i < num_times; i++) {
         /* Zero Rx value */
-        if (params[0] == 0.0)
+        if (R == 0.0)
             back_calc_grad[1][i] = 1.0;
 
         /* The partial derivate */
         else
-            back_calc_grad[1][i] = exp(-relax_times[i] * params[0]);
+            back_calc_grad[1][i] = exp(-relax_times[i] * R);
     }
 }
 
 
-void exponential_dR(double *params, double *relax_times, double back_calc_grad[][MAXTIMES], int num_times) {
+void exponential_dR(double I0, double R, double *relax_times, double back_calc_grad[][MAXTIMES], int num_times) {
     /* Calculate the dR partial derivate of the 2-parameter exponential curve.
     */
 
@@ -75,11 +79,11 @@ void exponential_dR(double *params, double *relax_times, double back_calc_grad[]
     /* Loop over the time points */
     for (i = 0; i < num_times; i++) {
         /* Zero Rx value */
-        if (params[0] == 0.0)
-            back_calc_grad[0][i] = -params[1] * relax_times[i];
+        if (R == 0.0)
+            back_calc_grad[0][i] = -I0 * relax_times[i];
 
         /* The partial derivate */
         else
-            back_calc_grad[0][i] = -params[1] * relax_times[i] * exp(-relax_times[i] * params[0]);
+            back_calc_grad[0][i] = -I0 * relax_times[i] * exp(-relax_times[i] * R);
     }
 }
