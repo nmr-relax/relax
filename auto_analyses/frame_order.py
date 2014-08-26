@@ -44,6 +44,7 @@ from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.io import open_write_file
 from lib.order.order_parameters import iso_cone_theta_to_S
 from lib.text.sectioning import section, subsection, title
+from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pipes import get_pipe
 from pipe_control.structure.mass import pipe_centre_of_mass
 from prompt.interpreter import Interpreter
@@ -535,6 +536,17 @@ class Frame_order_analysis:
 
             # Copy the PCS data.
             self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
+
+            # Reset the selection status.
+            for spin, spin_id in spin_loop(return_id=True, skip_desel=False):
+                # Get the spin from the original pipe.
+                spin_orig = return_spin(spin_id=spin_id, pipe=self.data_pipe_full)
+                print spin_id
+                print spin_orig
+                print spin
+
+                # Reset the spin selection.
+                spin.select = spin_orig.select
 
             # Minimise (for the full data set).
             opt = self.opt_full
