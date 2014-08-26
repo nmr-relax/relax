@@ -541,9 +541,6 @@ class Frame_order_analysis:
             for spin, spin_id in spin_loop(return_id=True, skip_desel=False):
                 # Get the spin from the original pipe.
                 spin_orig = return_spin(spin_id=spin_id, pipe=self.data_pipe_full)
-                print spin_id
-                print spin_orig
-                print spin
 
                 # Reset the spin selection.
                 spin.select = spin_orig.select
