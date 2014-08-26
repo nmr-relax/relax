@@ -24,7 +24,7 @@ from numpy import array, float64, zeros
 from unittest import TestCase
 
 # relax module imports.
-from target_functions.relax_fit import setup, func, dfunc
+from target_functions.relax_fit import setup, func, dfunc, d2func
 
 
 class Test_relax_fit(TestCase):
@@ -98,3 +98,46 @@ class Test_relax_fit(TestCase):
         # Check that the gradient matches the numerically derived values.
         self.assertAlmostEqual(grad[0], 456.36655522098829*self.scaling_list[0], 3)
         self.assertAlmostEqual(grad[1], -10.8613338920982*self.scaling_list[1], 3)
+
+
+    def test_d2func(self):
+        """Unit test for the Hessian returned by the d2func() function at the minimum.
+
+        This uses the data from test_suite/shared_data/curve_fitting/numeric_gradient/Hessian.log.
+        """
+
+        # Get the chi-squared Hessian.
+        hess = d2func(self.params)
+
+        # Printout.
+        print("The Hessian at the minimum is:\n%s" % hess)
+
+        # Check that the Hessian matches the numerically derived values.
+        self.assertAlmostEqual(hess[0][0],  4.72548021e+03*self.scaling_list[0]**2, 3)
+        self.assertAlmostEqual(hess[0][1], -3.61489336e+00*self.scaling_list[0]*self.scaling_list[1], 3)
+        self.assertAlmostEqual(hess[1][0], -3.61489336e+00*self.scaling_list[0]*self.scaling_list[1], 3)
+        self.assertAlmostEqual(hess[1][1],  2.31293027e-02*self.scaling_list[1]**2, 3)
+
+
+    def test_d2func_off_minimum(self):
+        """Unit test for the Hessian returned by the d2func() function at a position away from the minimum.
+
+        This uses the data from test_suite/shared_data/curve_fitting/numeric_gradient/Hessian.log.
+        """
+
+        # The off-minimum parameter values.
+        I0 = 500.0
+        R = 2.0
+        params = [R/self.scaling_list[0], I0/self.scaling_list[1]]
+
+        # Get the chi-squared Hessian.
+        hess = d2func(params)
+
+        # Printout.
+        print("The Hessian at %s is:\n%s" % (params, hess))
+
+        # Check that the Hessian matches the numerically derived values.
+        self.assertAlmostEqual(hess[0][0], -4.11964848e+02*self.scaling_list[0]**2, 3)
+        self.assertAlmostEqual(hess[0][1],  7.22678641e-01*self.scaling_list[0]*self.scaling_list[1], 3)
+        self.assertAlmostEqual(hess[1][0],  7.22678641e-01*self.scaling_list[0]*self.scaling_list[1], 3)
+        self.assertAlmostEqual(hess[1][1],  2.03731472e-02*self.scaling_list[1]**2, 3)
