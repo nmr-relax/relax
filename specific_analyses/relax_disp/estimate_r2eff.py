@@ -422,6 +422,51 @@ class Exp:
         return hessian_matrix
 
 
+    def multifit_cova(self, matrix_X_J=None, epsrel=None, matrix_X_covar=None):
+        """This is the implementation of 'gsl_multifit_covar' from GNU Scientific Library (GSL).
+
+        This function uses the Jacobian matrix J to compute the covariance matrix of the best-fit parameters, covar.
+        The parameter 'epsrel' is used to remove linear-dependent columns when J is rank deficient.
+
+        The covariance matrix is given by,
+
+        covar = (J^T J)^{-1}
+
+        and is computed by QR decomposition of J with column-pivoting. Any columns of R which satisfy
+
+        |R_{kk}| <= epsrel |R_{11}|
+
+        are considered linearly-dependent and are excluded from the covariance matrix (the corresponding rows and columns of the covariance matrix are set to zero).
+
+        If the minimisation uses the weighted least-squares function:
+            f_i = (Y(x, t_i) - y_i) / \sigma_i
+        then the covariance matrix above gives the statistical error on the best-fit parameters resulting from the Gaussian errors \sigma_i on the underlying data y_i.
+        This can be verified from the relation \delta f = J \delta c and the fact that the fluctuations in f from the data y_i are normalised by \sigma_i and so satisfy <\delta f \delta f^T> = I.
+
+        For an unweighted least-squares function f_i = (Y(x, t_i) - y_i) the covariance matrix above should be multiplied by the variance of the residuals about the best-fit 
+            \sigma^2 = \sum (y_i - Y(x,t_i))^2 / (n-p) 
+        to give the variance-covariance matrix \sigma^2 C.
+        This estimates the statistical error on the best-fit parameters from the scatter of the underlying data. 
+
+        See:
+        U{GSL - GNU Scientific Library<http://www.gnu.org/software/gsl/>}
+        U{Manual: Computing the covariance matrix of best fit parameters<http://www.gnu.org/software/gsl/manual/gsl-ref_38.html#SEC528>}
+        U{Manual: Computing the covariance matrix of best fit parameters<http://www.gnu.org/software/gsl/manual/gsl-ref_38.html#SEC528>}
+        U{Manual: Overview<http://www.gnu.org/software/gsl/manual/gsl-ref_37.html#SEC510>}
+
+        @param matrix_X_J:      The vector of parameter values.
+        @type matrix_X_J:       numpy rank-1 float array
+        @param epsrel:          The vector of parameter values.
+        @type epsrel:           numpy rank-1 float array
+        @param matrix_X_covar:  The vector of parameter values.
+        @type matrix_X_covar:   numpy rank-1 float array
+        @return:                ?
+        @rtype:                 ?
+        """
+
+        
+
+
 # 'minfx'
 # 'scipy.optimize.leastsq'
 def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, method='minfx', verbosity=1):
