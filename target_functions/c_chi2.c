@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Include the c_chi2 header file to access the square() function. */
+/* Include the c_chi2 header file to access the square() function and the maximum dimensions. */
 #include "c_chi2.h"
 
 
