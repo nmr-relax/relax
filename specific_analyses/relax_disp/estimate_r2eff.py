@@ -25,7 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from numpy import asarray, array, diag, dot, exp, inf, log, sqrt, sum, transpose, zeros
-import numpy
+from numpy.linalg import inv
 from minfx.generic import generic_minimise
 from re import match, search
 import sys
@@ -207,25 +207,6 @@ class Exp:
         return [r2eff_est, i0_est]
 
 
-    def calc_exp_chi2(self, r2eff=None, i0=None):
-        """Calculate the chi-squared value of exponential function.
-
-
-        @keyword r2eff: The effective transversal relaxation rate.
-        @type r2eff:    float
-        @keyword i0:    The initial intensity.
-        @type i0:       float
-        @return:        The chi-squared value.
-        @rtype:         float
-        """
-
-        # Calculate.
-        self.back_calc[:] = self.calc_exp(times=self.times, r2eff=r2eff, i0=i0)
-
-        # Return the total chi-squared value.
-        return chi2_rankN(data=self.values, back_calc_vals=self.back_calc, errors=self.errors)
-
-
     def func_exp(self, params):
         """Target function for exponential fit in minfx.
 
@@ -243,31 +224,14 @@ class Exp:
         r2eff = params[0]
         i0 = params[1]
 
+        # Calculate.
+        self.back_calc[:] = self.calc_exp(times=self.times, r2eff=r2eff, i0=i0)
+
+        # Return the total chi-squared value.
+        chi2 = chi2_rankN(data=self.values, back_calc_vals=self.back_calc, errors=self.errors)
+
         # Calculate and return the chi-squared value.
-        return self.calc_exp_chi2(r2eff=r2eff, i0=i0)
-
-
-    def func_exp_weight(self, params):
-        """Target function for exponential fit in minfx, which return array instead.
-
-        @param params:  The vector of parameter values.
-        @type params:   numpy rank-1 float array
-        @return:        The chi-squared value.
-        @rtype:         float
-        """
-
-        # Scaling.
-        if self.scaling_flag:
-            params = dot(params, self.scaling_matrix)
-
-        # Unpack the parameter values.
-        r2eff = params[0]
-        i0 = params[1]
-
-        # The weighted function to minimise.
-        weight_func = 1. / self.errors * (self.calc_exp(self.times, r2eff, i0) - self.values)
-
-        return weight_func
+        return chi2
 
 
     def func_exp_grad(self, params):
@@ -348,19 +312,6 @@ class Exp:
         return hessian_matrix
 
 
-    def func_exp_general(self, params):
-        """Target function for minimisation with scipy.optimize.
-
-        @param params:          The vector of parameter values.
-        @type params:           numpy rank-1 float array
-        @return:                The difference between function evaluation with fitted parameters and measured values.
-        @rtype:                 numpy array
-        """
-
-        # Return
-        return self.calc_exp(self.times, *params) - self.values
-
-
     def func_exp_weighted_general(self, params):
         """Target function for weighted minimisation with scipy.optimize.
 
@@ -374,55 +325,7 @@ class Exp:
         return 1. / self.errors * (self.calc_exp(self.times, *params) - self.values)
 
 
-    def func_exp_weighted_grad(self, params):
-        """Target function for the gradient (Jacobian matrix) for exponential fit in scipy.optimize.
-
-        @param params:  The vector of parameter values.
-        @type params:   numpy rank-1 float array
-        @return:        The Jacobian matrix with 'm' rows of function derivatives per 'n' columns of parameters.
-        @rtype:         numpy array
-        """
-
-        # Unpack the parameter values.
-        r2eff = params[0]
-        i0 = params[1]
-
-        # The partial derivative.
-        d_func_d_r2eff = 1.0 * i0 * self.times * exp( -r2eff * self.times) / self.errors
-        d_func_d_i0 = - 1.0 * exp( -r2eff * self.times) / self.errors
-
-        jacobian_matrix = transpose(array( [d_func_d_r2eff , d_func_d_i0] ) )
-        #jacobian_matrix = array( [d_func_d_r2eff , d_func_d_i0] ) 
-
-        return jacobian_matrix
-
-
-    def func_exp_weighted_hess(self, params):
-        """Target function for the gradient (Hessian matrix) for exponential fit in scipy.optimize.
-
-        @param params:  The vector of parameter values.
-        @type params:   numpy rank-1 float array
-        @return:        The Hessian matrix with 'm' rows of function derivatives per '4' columns of second order derivatives.
-        @rtype:         numpy array
-        """
-
-        # Unpack the parameter values.
-        r2eff = params[0]
-        i0 = params[1]
-
-        # The partial derivative.
-        d2_func_d_r2eff_d_r2eff = -1.0 * i0 * self.times**2 * exp( -r2eff * self.times) / self.errors
-        d2_func_d_r2eff_d_i0 = 1.0 * self.times * exp( -r2eff * self.times)/ self.errors
-        d2_func_d_i0_d_r2eff = 1.0 * self.times * exp( -r2eff * self.times)/ self.errors
-        d2_func_d_i0_d_i0 = 0.0
-
-        hessian_matrix = transpose(array( [d2_func_d_r2eff_d_r2eff, d2_func_d_r2eff_d_i0, d2_func_d_i0_d_r2eff, d2_func_d_i0_d_i0] ) )
-        #hessian_matrix = array( [d2_func_d_r2eff_d_r2eff, d2_func_d_r2eff_d_i0, d2_func_d_i0_d_r2eff, d2_func_d_i0_d_i0] ) 
-
-        return hessian_matrix
-
-
-    def multifit_cova(self, matrix_X_J=None, epsrel=None, matrix_X_covar=None):
+    def multifit_cova(self, J=None, matrix_X_J=None, epsrel=None, matrix_X_covar=None):
         """This is the implementation of 'gsl_multifit_covar' from GNU Scientific Library (GSL).
 
         This function uses the Jacobian matrix J to compute the covariance matrix of the best-fit parameters, covar.
@@ -464,8 +367,20 @@ class Exp:
         @rtype:                 ?
         """
 
-        
+        # http://www.orbitals.com/self/least/least.htm
+        # Weighting matrix. This is a square symmetric matrix. For independent measurements, this is a diagonal matrix. Larger values indicate greater significance
+        W = sum( self.errors**2 )
 
+        # The covariance matrix (sometimes referred to as the variance-covariance matrix), Qxx, is defined as
+        # Qxx = (J^t W J)^(-1) 
+
+        Jt = transpose(J)
+
+        # Calc
+        Jt_W = dot(Jt, W)
+        Jt_W_J = dot(Jt_W, J)
+        print Jt_W_J
+        Qxx = inv(Jt_W_J)
 
 # 'minfx'
 # 'scipy.optimize.leastsq'
@@ -772,8 +687,8 @@ def minimise_minfx(E=None):
     #min_algor='simplex'
 
     # Steepest descent uses only the gradient. This works, but it is not totally precise.
-    min_algor = 'Steepest descent'
-    max_iterations = 1000
+    #min_algor = 'Steepest descent'
+    #max_iterations = 1000
 
     # Quasi-Newton BFGS. Uses only the gradient.
     # This gets the same results as 2000 Monte-Carlo with simplex.
@@ -789,7 +704,7 @@ def minimise_minfx(E=None):
     # Also not work.#
     # min_algor = 'Fletcher-Reeves'
 
-    E.set_settings_minfx(min_algor=min_algor, max_iterations=max_iterations)
+    E.set_settings_minfx(min_algor=min_algor)
 
     # Define function to minimise for minfx.
     if match('^[Ss]implex$', E.min_algor):
@@ -807,6 +722,12 @@ def minimise_minfx(E=None):
 
     # Unpack
     param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results_minfx
+
+    # Get the Jacobian.
+    jacobian_matrix = E.func_exp_grad(param_vector)
+
+    # Get the covariance.
+    #a = E.multifit_cova(J=jacobian_matrix)
 
     # Set error to inf.
     param_vector_error = [inf, inf]
