@@ -45,17 +45,17 @@ def func_I(I0):
 
 
 # The real parameters.
-R = 1
-I0 = 1000
+R = 1.0
+I0 = 1000.0
 
 # The time points.
-times = [0, 1, 2, 3, 4]
+times = [0.0, 1.0, 2.0, 3.0, 4.0]
 
 # The intensities for the above I0 and R.
 I = [1000.0, 367.879441171, 135.335283237, 49.7870683679, 18.3156388887]
 
 # The intensity errors.
-errors = [10, 10, 10, 10, 10]
+errors = [10.0, 10.0, 10.0, 10.0, 10.0]
 
 # The numeric gradient at the minimum.
 grad_R = derivative(func_R, R, dx=1e-5, order=11)
@@ -63,8 +63,8 @@ grad_I = derivative(func_I, I0, dx=1e-5, order=11)
 print("The gradient at %s is:\n    %s" % ([R, I0], [grad_R, grad_I]))
 
 # The numeric gradient off the minimum.
-R_off = 2
-I0_off = 500
+R_off = 2.0
+I0_off = 500.0
 grad_R = derivative(func_R, R_off, dx=1e-5, order=11)
 grad_I = derivative(func_I, I0_off, dx=1e-5, order=11)
 print("The gradient at %s is:\n    %s" % ([R_off, I0_off], [grad_R, grad_I]))
