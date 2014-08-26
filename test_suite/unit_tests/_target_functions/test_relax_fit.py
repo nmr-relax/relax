@@ -33,10 +33,13 @@ class Test_relax_fit(TestCase):
     def setUp(self):
         """Create a number of objects for the calculation and testing of the relaxation curve-fitting equations."""
 
+        # The parameter scaling.
+        scaling_list = [1, 1000]
+
         # The parameter values at the minimum.
         self.I0 = 1000
         self.R = 1
-        self.params = [self.R, self.I0]
+        self.params = [self.R/scaling_list[0], self.I0/scaling_list[1]]
 
         # The time points.
         relax_times = [0, 1, 2, 3, 4]
@@ -46,9 +49,6 @@ class Test_relax_fit(TestCase):
 
         # The intensity errors.
         errors = [10, 10, 10, 10, 10]
-
-        # The parameter scaling.
-        scaling_list = [1, 1]
 
         # Setup the C module.
         setup(num_params=2, num_times=len(relax_times), values=I, sd=errors, relax_times=relax_times, scaling_matrix=scaling_list)
