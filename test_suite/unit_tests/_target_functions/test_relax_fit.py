@@ -89,8 +89,10 @@ class Test_relax_fit(TestCase):
         R = 2.0
         params = [R/self.scaling_list[0], I0/self.scaling_list[1]]
 
-        # Get the chi-squared gradient.
+        # Get the chi-squared gradient, and scale it.
         grad = dfunc(params)
+        for i in range(2):
+            grad[i] *= self.scaling_list[i]
 
         # Printout.
         print("The gradient at %s is:\n%s" % (params, grad))
