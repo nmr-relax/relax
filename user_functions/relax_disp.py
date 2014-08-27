@@ -43,7 +43,6 @@ from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
 from specific_analyses.relax_disp.data import cpmg_setup, insignificance, plot_disp_curves, plot_exp_curves, r2eff_read, r2eff_read_spin, relax_time, set_exp_type, r20_from_min_r2eff, spin_lock_field, spin_lock_offset, write_disp_curves
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.nessy import nessy_input
-from specific_analyses.relax_disp.estimate_r2eff import estimate_r2eff
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FIT_R1, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
@@ -628,80 +627,6 @@ uf.menu_text = "r&1_fit"
 uf.gui_icon = "oxygen.status.object-locked"
 uf.wizard_size = (800, 500)
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
-
-
-# The relax_disp.r2eff_estimate user function.
-uf = uf_info.add_uf('relax_disp.r2eff_estimate')
-uf.title = "Estimate r2eff and errors by exponential curve fitting with scipy.optimize.leastsq."
-uf.title_short = "Estimate R2eff by scipy.optimize.leastsq."
-uf.add_keyarg(
-    name = "spin_id",
-    py_type = "str",
-    arg_type = "spin ID",
-    desc_short = "spin ID to restrict value setting to",
-    desc = "The spin ID string to restrict value setting to.",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "ftol",
-    py_type = "float",
-    default = 1e-15,
-    desc_short = "relative error desired in the sum of squares.",
-    desc = "is parsed to leastsq 'ftol'.  It sets the relative error desired in the sum of squares.  1e-15 seems to be the minimum value, and '1.49012e-08' is the standard value.",
-    can_be_none = False
-)
-uf.add_keyarg(
-    name = "xtol",
-    py_type = "float",
-    default = 1e-15,
-    desc_short = "relative error desired in the approximate solution.",
-    desc = "is parsed to leastsq 'xtol'.  It sets the relative error desired in the approximate solution.  1e-15 seems to be the minimum value, and '1.49012e-08' is the standard value.",
-    can_be_none = False
-)
-uf.add_keyarg(
-    name = "maxfev",
-    default = 10000000,
-    py_type = "int",
-    min = 1,
-    desc_short = "maximum number of calls to the function.",
-    desc = "If zero, then 100*(N+1) is the maximum function calls.  N is the number of elements in x0=[r2eff, i0].",
-    can_be_none = False
-)
-uf.add_keyarg(
-    name = "factor",
-    py_type = "float",
-    default = 100.0,
-    desc_short = "initial step bound.",
-    desc = "is parsed to leastsq algorithm 'factor'.  It determines the initial step bound (''factor * || diag * x||'').  Should be in the interval (0.1, 100).",
-    can_be_none = False
-)
-uf.add_keyarg(
-    name = "verbosity",
-    default = 1,
-    py_type = "int",
-    desc_short = "amount of information to print.",
-    desc = "The higher the value, the greater the verbosity.",
-    can_be_none = False
-)
-# Description.
-uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This is a new experimental feature from version 3.3, and should only be tried out with big care.")
-uf.desc[-1].add_paragraph("This will estimate R2eff and the associated error by exponential curve fitting through scipy.optimize.leastsq, which is a wrapper around the MINPACK lmdif and lmder algorithms.  MINPACK is a FORTRAN90 library which solves systems of nonlinear equations, or carries out the least squares minimization of the residual of a set of linear or nonlinear equations.")
-uf.desc[-1].add_paragraph("Errors are calculated by taking the square root of the reported co-variance from leastsq.")
-uf.desc[-1].add_paragraph("This can be an huge time saving step, when performing model fitting in R1rho.  Errors of R2eff values, are normally estimated by time-consuming Monte-Carlo simulations.")
-uf.desc[-1].add_paragraph("Initial guess for the starting parameter")
-uf.desc[-1].add_verbatim("""
-x0 = [r2eff_est, i0_est],
-""")
-uf.desc[-1].add_paragraph("is by converting the exponential curve to a linear problem.  Then solving initial guess by linear least squares of")
-uf.desc[-1].add_verbatim("""
-ln(Intensity[j]) = ln(i0) - time[j] * r2eff.
-""")
-uf.backend = estimate_r2eff
-uf.menu_text = "&r2eff_estimate"
-uf.gui_icon = "relax.relax_fit"
-uf.wizard_size = (800, 800)
-uf.wizard_image = ANALYSIS_IMAGE_PATH + sep + 'dispersion' + sep + 'scipy_200x187.png'
 
 
 # The relax_disp.r2eff_read user function.
