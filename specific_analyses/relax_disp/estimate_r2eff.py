@@ -390,8 +390,7 @@ class Exp:
         eye_mat = eye(self.errors.shape[0])
 
         # Now form the error matrix, with errors down the diagonal.
-        #weights = self.errors**2
-        weights = self.errors
+        weights = 1. / self.errors**2
 
         W = multiply(weights, eye_mat)
 
@@ -411,7 +410,7 @@ class Exp:
 
 # 'minfx'
 # 'scipy.optimize.leastsq'
-def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, method='minfx', verbosity=1):
+def estimate_r2eff(method='scipy.optimize.leastsq', spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, verbosity=1):
     """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.leastsq.
 
     scipy.optimize.leastsq is a wrapper around MINPACK's lmdif and lmder algorithms.
@@ -427,6 +426,8 @@ def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor
     Then solving initial guess by linear least squares of: ln(Intensity[j]) = ln(i0) - time[j]* r2eff.
 
 
+    @keyword method:            The method to minimise and estimate errors.  Options are: 'minfx' or 'scipy.optimize.leastsq'.
+    @type method:               string
     @keyword spin_id:           The spin identification string.
     @type spin_id:              str
     @keyword ftol:              The function tolerance for the relative error desired in the sum of squares, parsed to leastsq.
@@ -437,8 +438,6 @@ def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor
     @type maxfev:               int
     @keyword factor:            The initial step bound, parsed to leastsq.  It determines the initial step bound (''factor * || diag * x||'').  Should be in the interval (0.1, 100).
     @type factor:               float
-    @keyword method:            The method to minimise and estimate errors.  Options are: 'scipy.optimize.leastsq' or 'minfx'.
-    @type method:               string
     @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:            int
     """
