@@ -42,7 +42,7 @@ from specific_analyses.relax_disp.parameters import disassemble_param_vector
 from specific_analyses.relax_disp.variables import MODEL_R2EFF
 from specific_analyses.relax_fit.optimisation import func_wrapper, dfunc_wrapper, d2func_wrapper
 from target_functions.chi2 import chi2_rankN
-from target_functions.relax_fit import setup
+from target_functions.relax_fit import jacobian, setup
 
 
 # Scipy installed.
@@ -734,7 +734,7 @@ def minimise_minfx(E=None):
     E.set_settings_minfx(min_algor=min_algor)
 
     # Do C code
-    do_C = False
+    do_C = True
 
     if do_C:
         # Initialise the function to minimise.
@@ -766,18 +766,26 @@ def minimise_minfx(E=None):
     param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results_minfx
 
     # Get the Jacobian.
-    # First make a call to the Jacobian function, which store it in the class.
-    E.func_exp_grad(params=param_vector)
-    jacobian_matrix = deepcopy(E.jacobian_matrix)
+    if do_C:
+        # First make a call to the Jacobian function, which store it in the class.
+        jacobian_matrix = transpose(asarray( jacobian(param_vector) ) )
 
-    # Set error to inf.
-    #param_vector_error = [inf, inf]
+        # Compare with python code.
+        #E.func_exp_grad(params=param_vector)
+        #jacobian_matrix2 = deepcopy(E.jacobian_matrix)
+        #print jacobian_matrix
+        #print " "
+        #print jacobian_matrix2
+    else:
+        jacobian_matrix = deepcopy(E.jacobian_matrix)
 
     # Get the co-variance
     pcov = E.multifit_covar(J=jacobian_matrix)
 
     # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
     param_vector_error = sqrt(diag(pcov))
+    # Set error to inf.
+    #param_vector_error = [inf, inf]
 
     # Pack to list.
     results = [param_vector, param_vector_error, chi2, iter_count, f_count, g_count, h_count, warning]
