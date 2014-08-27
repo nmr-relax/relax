@@ -40,6 +40,7 @@ from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from specific_analyses.relax_disp.catia import catia_execute, catia_input
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
+from specific_analyses.relax_disp.estimate_r2eff import estimate_r2eff_err
 from specific_analyses.relax_disp.data import cpmg_setup, insignificance, plot_disp_curves, plot_exp_curves, r2eff_read, r2eff_read_spin, relax_time, set_exp_type, r20_from_min_r2eff, spin_lock_field, spin_lock_offset, write_disp_curves
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.nessy import nessy_input
@@ -627,6 +628,50 @@ uf.menu_text = "r&1_fit"
 uf.gui_icon = "oxygen.status.object-locked"
 uf.wizard_size = (800, 500)
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
+
+
+# The relax_disp.r2eff_err_estimate user function.
+uf = uf_info.add_uf('relax_disp.r2eff_err_estimate')
+uf.title = "Estimate R2eff errors by the Jacobian matrix."
+uf.title_short = "Estimate R2eff errors."
+uf.add_keyarg(
+    name = "spin_id",
+    py_type = "str",
+    arg_type = "spin ID",
+    desc_short = "spin ID to restrict value setting to",
+    desc = "The spin ID string to restrict value setting to.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "epsrel",
+    py_type = "float",
+    default = 0.0,
+    desc_short = "parameter to remove linear-dependent columns.",
+    desc = "The parameter to remove linear-dependent columns when J is rank deficient.",
+    can_be_none = False
+)
+uf.add_keyarg(
+    name = "verbosity",
+    default = 1,
+    py_type = "int",
+    desc_short = "amount of information to print.",
+    desc = "The higher the value, the greater the verbosity.",
+    can_be_none = False
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is a new experimental feature from version 3.3, and should only be tried out with big care.")
+uf.desc[-1].add_paragraph("This will estimate R2eff errors by using the exponential decay Jacobian matrix 'J' to compute the covariance matrix of the best-fit parameters.")
+uf.desc[-1].add_paragraph("This can be an huge time saving step, when performing model fitting in R1rho.  Errors of R2eff values, are normally estimated by time-consuming Monte-Carlo simulations.")
+uf.desc[-1].add_paragraph("This method is inspired from the GNU Scientific Library (GSL).")
+uf.desc[-1].add_paragraph("The covariance matrix is given by: covar = Qxx = (J^T J)^{-1}.")
+uf.desc[-1].add_paragraph("Qxx is computed by QR decomposition, Qxx=QR, Qxx^-1=R^-1 Q^T.  The columns of R which satisfy: |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix (the corresponding rows and columns of the covariance matrix are set to zero).")
+uf.desc[-1].add_paragraph("The parameter 'epsrel' is used to remove linear-dependent columns when J is rank deficient.")
+uf.backend = estimate_r2eff_err
+uf.menu_text = "&r2eff_err_estimate"
+uf.gui_icon = "relax.relax_fit"
+uf.wizard_size = (800, 800)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + sep + 'blank_150x150.png'
 
 
 # The relax_disp.r2eff_read user function.
