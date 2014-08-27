@@ -2806,6 +2806,11 @@ class Relax_disp(SystemTestCase):
         self.interpreter.pipe.copy(pipe_from='MC_2000', pipe_to='r2eff_est')
         self.interpreter.pipe.switch(pipe_name='r2eff_est')
 
+        # Delete old errors.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            delattr(cur_spin, 'r2eff_err')
+            delattr(cur_spin, 'i0_err')
+
         # Set the model.
         self.interpreter.relax_disp.select_model(MODEL_R2EFF)
 
