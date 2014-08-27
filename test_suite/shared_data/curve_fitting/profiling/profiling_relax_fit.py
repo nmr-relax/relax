@@ -60,6 +60,18 @@ from specific_analyses.relax_disp.estimate_r2eff import minimise_leastsq, Exp
 from target_functions.relax_fit import setup, func, dfunc, d2func, back_calc_I
 from target_functions.chi2 import chi2_rankN
 
+## Set the min_algor.
+## simplex is algorithms without gradient. It is quite slow, since it needs to take many steps.
+#min_algor='simplex'
+
+## Steepest descent uses only the gradient. This works, but it is not totally precise.
+##min_algor = 'Steepest descent'
+##max_iterations = 1000
+
+## Quasi-Newton BFGS. Uses only the gradient.
+## This gets the same results as 2000 Monte-Carlo with simplex.
+## This is one of the best optimisation techniques when only the function and gradient are present, as it tries to numerically approximate the Hessian matrix, updating it as the algorithm moves along. 
+#min_algor = 'BFGS'
 
 # Alter setup.
 def main():
@@ -74,6 +86,9 @@ def main():
         # Verify C code with and without constraints.
         sum_root_squared = sum( sqrt( (v_cT_chi2_list - v_cF_chi2_list)**2 ) )
         print("The sum of the root squared differences between with and without constraints are: %.3e" % sum_root_squared)
+
+        # Calculate without contraints, BFGS.
+        #v_BFGS_cF_chi2_list = array(verify(min_algor='BFGS', constraints=False))
 
         # Now calculate with Python code.
         # Calculate with contraints.
@@ -99,7 +114,7 @@ def main():
             print("C_cT=%1.1e C_cF=%1.1e P_cT=%1.1e P_cF=%1.1e" % (chi_v_cT-chi_v_cT, chi_v_cF-chi_v_cT, chi_v_pyt_cT-chi_v_cT, chi_v_pyt_cF-chi_v_cT) )
 
     # Do verification for Python code, and difference between minfx and Scipy optimisation without constraints.
-    if False:
+    if True:
         # Calculate with Python code.
         # Calculate without contraints.
         v_pyt_cF_chi2_list = array(verify_pyt(constraints=False))
@@ -118,9 +133,7 @@ def main():
 
     # Do profiling.
 
-    lines_report = 15
-
-    if False:
+    if True:
         #################
         print("Verify, with constraints, C code")
         constraints = True
@@ -129,48 +142,11 @@ def main():
         verbose = True
 
         # Calc for verify with constraints.
-        v_cT_filename = tempfile.NamedTemporaryFile(delete=False).name
+        filename = tempfile.NamedTemporaryFile(delete=False).name
         # Profile for a single spin.
-        cProfile.run('verify(constraints=%s)'%constraints, v_cT_filename)
+        cProfile.run('verify(constraints=%s)'%constraints, filename)
 
-        # Read all stats files into a single object
-        v_cT_stats = pstats.Stats(v_cT_filename)
-
-        # Clean up filenames for the report
-        v_cT_stats.strip_dirs()
-
-        # Sort the statistics by the cumulative time spent in the function. cumulative, time, calls
-        v_cT_stats.sort_stats('cumulative')
-
-        # Print report for single.
-        if verbose:
-            v_cT_stats.print_stats(lines_report)
-
-    if False:
-        #################
-        print("Verify, with constraints, Python")
-        constraints = True
-
-        # Print statistics.
-        verbose = True
-
-        # Calc for verify with constraints.
-        v_pyt_cT_filename = tempfile.NamedTemporaryFile(delete=False).name
-        # Profile for a single spin.
-        cProfile.run('verify_pyt(constraints=%s)'%constraints, v_pyt_cT_filename)
-
-        # Read all stats files into a single object
-        v_pyt_cT_stats = pstats.Stats(v_pyt_cT_filename)
-
-        # Clean up filenames for the report
-        v_pyt_cT_stats.strip_dirs()
-
-        # Sort the statistics by the cumulative time spent in the function. cumulative, time, calls
-        v_pyt_cT_stats.sort_stats('cumulative')
-
-        # Print report for single.
-        if verbose:
-            v_pyt_cT_stats.print_stats(lines_report)
+        print_report(filename=filename, verbose=verbose)
 
     if True:
         #################
@@ -181,22 +157,41 @@ def main():
         verbose = True
 
         # Calc for verify with constraints.
-        v_cF_filename = tempfile.NamedTemporaryFile(delete=False).name
+        filename = tempfile.NamedTemporaryFile(delete=False).name
         # Profile for a single spin.
-        cProfile.run('verify(constraints=%s)'%constraints, v_cF_filename)
+        cProfile.run('verify(constraints=%s)'%constraints, filename)
 
-        # Read all stats files into a single object
-        v_cF_stats = pstats.Stats(v_cF_filename)
+        print_report(filename=filename, verbose=verbose)
 
-        # Clean up filenames for the report
-        v_cF_stats.strip_dirs()
+    if True:
+        #################
+        print("Verify, without constraints, C code BFGS")
+        constraints = False
 
-        # Sort the statistics by the cumulative time spent in the function. cumulative, time, calls
-        v_cF_stats.sort_stats('cumulative')
+        # Print statistics.
+        verbose = True
 
-        # Print report for single.
-        if verbose:
-            v_cF_stats.print_stats(lines_report)
+        # Calc for verify with constraints.
+        filename = tempfile.NamedTemporaryFile(delete=False).name
+        # Profile for a single spin.
+        cProfile.run('verify(min_algor="BFGS", constraints=%s)'%(constraints), filename)
+
+        print_report(filename=filename, verbose=verbose)
+
+    if False:
+        #################
+        print("Verify, with constraints, Python")
+        constraints = True
+
+        # Print statistics.
+        verbose = True
+
+        # Calc for verify with constraints.
+        filename = tempfile.NamedTemporaryFile(delete=False).name
+        # Profile for a single spin.
+        cProfile.run('verify_pyt(constraints=%s)'%constraints, filename)
+
+        print_report(filename=filename, verbose=verbose)
 
     if False:
         #################
@@ -207,25 +202,13 @@ def main():
         verbose = True
 
         # Calc for verify with constraints.
-        v_pyt_cF_filename = tempfile.NamedTemporaryFile(delete=False).name
+        filename = tempfile.NamedTemporaryFile(delete=False).name
         # Profile for a single spin.
-        cProfile.run('verify_pyt(constraints=%s)'%constraints, v_pyt_cF_filename)
+        cProfile.run('verify_pyt(constraints=%s)'%constraints, filename)
 
-        # Read all stats files into a single object
-        v_pyt_cF_stats = pstats.Stats(v_pyt_cF_filename)
+        print_report(filename=filename, verbose=verbose)
 
-        # Clean up filenames for the report
-        v_pyt_cF_stats.strip_dirs()
-
-        # Sort the statistics by the cumulative time spent in the function. cumulative, time, calls
-        v_pyt_cF_stats.sort_stats('cumulative')
-
-        # Print report for single.
-        if verbose:
-            v_pyt_cF_stats.print_stats(lines_report)
-
-
-    if False:
+    if True:
         #################
         print("Verify, without constraints, Python Scipy")
 
@@ -233,22 +216,28 @@ def main():
         verbose = True
 
         # Calc for verify with constraints.
-        v_sci_cF_filename = tempfile.NamedTemporaryFile(delete=False).name
+        filename = tempfile.NamedTemporaryFile(delete=False).name
         # Profile for a single spin.
-        cProfile.run('verify_sci()', v_sci_cF_filename)
+        cProfile.run('verify_sci()', filename)
 
-        # Read all stats files into a single object
-        v_sci_cF_stats = pstats.Stats(v_sci_cF_filename)
+        print_report(filename=filename, verbose=verbose)
 
-        # Clean up filenames for the report
-        v_sci_cF_stats.strip_dirs()
 
-        # Sort the statistics by the cumulative time spent in the function. cumulative, time, calls
-        v_sci_cF_stats.sort_stats('cumulative')
+def print_report(filename=None, verbose=True):
+    lines_report = 1
 
-        # Print report for single.
-        if verbose:
-            v_sci_cF_stats.print_stats(lines_report)
+    # Read all stats files into a single object
+    stats = pstats.Stats(filename)
+
+    # Clean up filenames for the report
+    stats.strip_dirs()
+
+    # Sort the statistics by the cumulative time spent in the function. cumulative, time, calls
+    stats.sort_stats('cumulative')
+
+    # Print report for single.
+    if verbose:
+        stats.print_stats(lines_report)
 
 
 class Profile:
@@ -308,7 +297,7 @@ class Profile:
 
                             yield values[:num_times], errors[:num_times], times[:num_times], struct[:num_times], num_times
 
-def verify(constraints=None):
+def verify(min_algor='simplex', constraints=None):
     # Instantiate class.
     C = Profile()
 
@@ -324,19 +313,6 @@ def verify(constraints=None):
 
         # Initial guess for minimisation. Solved by linear least squares.
         x0 = asarray( E.estimate_x0_exp() )
-
-        # Set the min_algor.
-        # simplex is algorithms without gradient. It is quite slow, since it needs to take many steps.
-        min_algor='simplex'
-
-        # Steepest descent uses only the gradient. This works, but it is not totally precise.
-        #min_algor = 'Steepest descent'
-        #max_iterations = 1000
-
-        # Quasi-Newton BFGS. Uses only the gradient.
-        # This gets the same results as 2000 Monte-Carlo with simplex.
-        # This is one of the best optimisation techniques when only the function and gradient are present, as it tries to numerically approximate the Hessian matrix, updating it as the algorithm moves along. 
-        min_algor = 'BFGS'
 
         E.set_settings_minfx(min_algor=min_algor, constraints=constraints)
 
@@ -355,7 +331,7 @@ def verify(constraints=None):
     return chi2_list
 
 
-def verify_pyt(constraints=None):
+def verify_pyt(min_algor='simplex', constraints=None):
     # Instantiate class.
     C = Profile()
 
@@ -371,19 +347,6 @@ def verify_pyt(constraints=None):
 
         # Initial guess for minimisation. Solved by linear least squares.
         x0 = asarray( E.estimate_x0_exp() )
-
-        # Set the min_algor.
-        # simplex is algorithms without gradient. It is quite slow, since it needs to take many steps.
-        min_algor='simplex'
-
-        # Steepest descent uses only the gradient. This works, but it is not totally precise.
-        #min_algor = 'Steepest descent'
-        #max_iterations = 1000
-
-        # Quasi-Newton BFGS. Uses only the gradient.
-        # This gets the same results as 2000 Monte-Carlo with simplex.
-        # This is one of the best optimisation techniques when only the function and gradient are present, as it tries to numerically approximate the Hessian matrix, updating it as the algorithm moves along. 
-        #min_algor = 'BFGS'
 
         E.set_settings_minfx(min_algor=min_algor, constraints=constraints)
 
@@ -421,7 +384,7 @@ def verify_sci(print_info=False):
         # Unpack results
         param_vector, param_vector_error, chi2, iter_count, f_count, g_count, h_count, warning = results
 
-        if E.verbosity:
+        if print_info:
             r2eff = param_vector[0]
             i0 = param_vector[1]
             r2eff_err = param_vector_error[0]
