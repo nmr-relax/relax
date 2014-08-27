@@ -70,6 +70,10 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
     @type verbosity:        int
     """
 
+    # Check that the C modules have been compiled.
+    if not C_module_exp_fn:
+        raise RelaxError("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
+
     # Perform checks.
     check_model_type(model=MODEL_R2EFF)
 
@@ -606,6 +610,10 @@ def estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints
     # Perform checks.
     check_model_type(model=MODEL_R2EFF)
 
+    # Check that the C modules have been compiled.
+    if not C_module_exp_fn and method == 'minfx':
+        raise RelaxError("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
+
     # Set class scipy setting.
     E = Exp(verbosity=verbosity)
     E.set_settings_leastsq(ftol=ftol, xtol=xtol, maxfev=maxfev, factor=factor)
@@ -870,6 +878,10 @@ def minimise_minfx(E=None):
     @return:        Packed list with optimised parameter, parameter error set to 'inf', chi2, iter_count, f_count, g_count, h_count, warning
     @rtype:         list
     """
+
+    # Check that the C modules have been compiled.
+    if not C_module_exp_fn:
+        raise RelaxError("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
 
     # Initial guess for minimisation. Solved by linear least squares.
     x0 = asarray( E.estimate_x0_exp() )
