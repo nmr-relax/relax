@@ -426,6 +426,10 @@ class Relax_disp:
             # The constraints flag.
             constraints = False
 
+            # The minimisation algorithm to use.
+            # Both the Jacobian and Hessian matrix has been specified for exponential curve-fitting, allowing for the much faster algorithms to be used.
+            min_algor = 'Newton'
+
             # Check if all spins contains 'r2eff and it associated error.
             has_r2eff = False
 
@@ -454,10 +458,12 @@ class Relax_disp:
         else:
             do_minimise = True
             constraints = True
+            # The minimisation algorithm to use. If the Jacobian and Hessian matrix have not been specified for fitting, 'simplex' should be used.
+            min_algor = 'simplex'
 
         # Do the minimisation.
         if do_minimise:
-            self.interpreter.minimise.execute('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=constraints)
+            self.interpreter.minimise.execute(min_algor=min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=constraints)
 
         # Model elimination.
         if self.eliminate:
@@ -468,6 +474,9 @@ class Relax_disp:
         if model == MODEL_R2EFF:
             # The constraints flag.
             constraints = False
+
+            # Both the Jacobian and Hessian matrix has been specified for exponential curve-fitting, allowing for the much faster algorithms to be used.
+            min_algor = 'Newton'
 
             # Skip optimisation, if 'r2eff' + 'r2eff_err' is present and flag for forcing optimisation is not raised.
             if has_r2eff and not self.optimise_r2eff:
@@ -482,9 +491,11 @@ class Relax_disp:
                 do_monte_carlo = True
 
         elif self.mc_sim_all_models or len(self.models) < 2:
+            do_monte_carlo = True
             # The constraints flag.
             constraints = True
-            do_monte_carlo = True
+            # The minimisation algorithm to use. If the Jacobian and Hessian matrix have not been specified for fitting, 'simplex' should be used.
+            min_algor = 'simplex'
 
         # Do Monte Carlo simulations.
         if do_monte_carlo:
@@ -494,7 +505,7 @@ class Relax_disp:
                 self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
             self.interpreter.monte_carlo.create_data()
             self.interpreter.monte_carlo.initial_values()
-            self.interpreter.minimise.execute('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=constraints)
+            self.interpreter.minimise.execute(min_algor=min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=constraints)
             if self.eliminate:
                 self.interpreter.eliminate()
             self.interpreter.monte_carlo.error_analysis()

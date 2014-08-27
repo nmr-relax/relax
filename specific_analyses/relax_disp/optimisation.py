@@ -47,7 +47,12 @@ from target_functions.relax_disp import Dispersion
 
 # C modules.
 if C_module_exp_fn:
-    from target_functions.relax_fit import setup, func, dfunc, d2func, back_calc_I
+    from specific_analyses.relax_fit.optimisation import func_wrapper, dfunc_wrapper, d2func_wrapper
+    from target_functions.relax_fit import setup, back_calc_I
+    # Call the python wrapper function to help with list to numpy array conversion.
+    func = func_wrapper
+    dfunc = dfunc_wrapper
+    d2func = d2func_wrapper
 
 
 def back_calc_peak_intensities(spin=None, exp_type=None, frq=None, offset=None, point=None):
