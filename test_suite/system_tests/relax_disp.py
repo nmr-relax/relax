@@ -35,6 +35,7 @@ from lib.errors import RelaxError
 from lib.io import get_file_path
 from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
 from specific_analyses.relax_disp.checks import check_missing_r1
+from specific_analyses.relax_disp.estimate_r2eff import estimate_r2eff
 from specific_analyses.relax_disp.data import average_intensity, check_intensity_errors, generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_grace_file_name_ini, return_param_key_from_data
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.model import models_info, nesting_param
@@ -2840,6 +2841,15 @@ class Relax_disp(SystemTestCase):
                 print("%s at %3.1f MHz, for offset=%3.3f ppm and dispersion point %-5.1f." % (exp_type, frq/1E6, offset, point) )
                 print("r2eff=%3.3f/%3.3f r2eff_err=%3.4f/%3.4f" % (r2eff, r2eff_est, r2eff_err, r2eff_err_est) ),
                 print("i0=%3.3f/%3.3f i0_err=%3.4f/%3.4f\n" % (i0, i0_est, i0_err, i0_err_est) )
+
+
+        # Now do it manually.
+        estimate_r2eff(method='scipy.optimize.leastsq')
+        estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints=False)
+        estimate_r2eff(method='minfx', min_algor='simplex', c_code=False, constraints=False)
+        estimate_r2eff(method='minfx', min_algor='BFGS', c_code=True, constraints=False)
+        estimate_r2eff(method='minfx', min_algor='BFGS', c_code=False, constraints=False)
+        estimate_r2eff(method='minfx', min_algor='Newton', c_code=True, constraints=False)
 
 
     def test_exp_fit(self):
