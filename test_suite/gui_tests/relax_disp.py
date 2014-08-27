@@ -576,7 +576,7 @@ class Relax_disp(GuiTestCase):
         self._execute_uf(uf_name='deselect.spin', spin_id=":1-100")
         self._execute_uf(uf_name='select.spin', spin_id=":52@N")
 
-        # Deselect all but the 'TP02' model.
+        # Deselect all but the few models.
         models = [MODEL_R2EFF, MODEL_NOREX]
         for i in range(len(analysis.model_field.models_stripped)):
             if analysis.model_field.models_stripped[i] in models:
@@ -589,6 +589,14 @@ class Relax_disp(GuiTestCase):
         analysis.grid_inc.SetValue(0)
         analysis.mc_sim_num.SetValue(3)
         analysis.exp_mc_sim_num.SetValue(-1)
+
+        # Do fitting of R1.
+        #print dir(analysis.r1_fit)
+        #print analysis.r1_fit.GetValue()
+        analysis.r1_fit.SetValue(bool(True))
+        #print analysis.r1_fit.GetValue()
+        analysis.r1_fit.toggle()
+        #analysis.r1_fit()
 
         # Execute relax.
         analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_relax.GetId()))
