@@ -41,6 +41,8 @@ from specific_analyses.relax_disp.data import average_intensity, loop_exp_frq_of
 from specific_analyses.relax_disp.parameters import disassemble_param_vector
 from specific_analyses.relax_disp.variables import MODEL_R2EFF
 from target_functions.chi2 import chi2_rankN
+from target_functions.relax_fit import setup, func, dfunc, d2func, back_calc_I
+
 
 # Scipy installed.
 if scipy_module:
@@ -381,7 +383,7 @@ class Exp:
 
 # 'minfx'
 # 'scipy.optimize.leastsq'
-def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, method='scipy.optimize.leastsq', verbosity=1):
+def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, method='minfx', verbosity=1):
     """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.leastsq.
 
     scipy.optimize.leastsq is a wrapper around MINPACK's lmdif and lmder algorithms.
@@ -703,19 +705,33 @@ def minimise_minfx(E=None):
 
     E.set_settings_minfx(min_algor=min_algor)
 
-    # Define function to minimise for minfx.
-    if match('^[Ss]implex$', E.min_algor):
-        func = E.func_exp
+    # Do C code
+    do_C = True
 
-        dfunc = None
-        d2func = None
+    if do_C:
+        # Initialise the function to minimise.
+        scaling_list = [1.0, 1.0]
+        setup(num_params=len(x0), num_times=len(E.times), values=E.values, sd=E.errors, relax_times=E.times, scaling_matrix=scaling_list)
+
+        t_func = func
+        t_dfunc = dfunc
+        t_d2func = d2func
+
     else:
-        func = E.func_exp
-        dfunc = E.func_exp_grad
-        d2func = E.func_exp_hess
+        # Minimise with minfx.
+        # Define function to minimise for minfx.
+        if match('^[Ss]implex$', E.min_algor):
+            t_func = E.func_exp
 
-    # Minimise with minfx.
-    results_minfx = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=x0, min_algor=E.min_algor, min_options=E.min_options, func_tol=E.func_tol, grad_tol=E.grad_tol, maxiter=E.max_iterations, A=E.A, b=E.b, full_output=True, print_flag=E.verbosity)
+            t_dfunc = None
+            t_d2func = None
+        else:
+            t_func = E.func_exp
+            t_dfunc = E.func_exp_grad
+            t_d2func = E.func_exp_hess
+
+    # Minimise.
+    results_minfx = generic_minimise(func=t_func, dfunc=t_dfunc, d2func=t_d2func, args=(), x0=x0, min_algor=E.min_algor, min_options=E.min_options, func_tol=E.func_tol, grad_tol=E.grad_tol, maxiter=E.max_iterations, A=E.A, b=E.b, full_output=True, print_flag=E.verbosity)
 
     # Unpack
     param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results_minfx

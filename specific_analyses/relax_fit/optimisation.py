@@ -23,7 +23,7 @@
 """The R1 and R2 exponential relaxation curve fitting optimisation functions."""
 
 # Python module imports.
-from numpy import array, float64
+from numpy import array, float64, ndarray
 
 # relax module imports.
 from dep_check import C_module_exp_fn
@@ -87,8 +87,12 @@ def func_wrapper(params):
     @rtype:         float
     """
 
+    # Convert if necessary.
+    if type(params) == ndarray:
+        params = params.tolist()
+
     # Call the C code.
-    chi2 = func(params.tolist())
+    chi2 = func(params)
 
     # Return the chi2 value.
     return chi2
@@ -103,8 +107,12 @@ def dfunc_wrapper(params):
     @rtype:         numpy float64 array
     """
 
+    # Convert if necessary.
+    if type(params) == ndarray:
+        params = params.tolist()
+
     # Call the C code.
-    dchi2 = dfunc(params.tolist())
+    dchi2 = dfunc(params)
 
     # Return the chi2 gradient as a numpy array.
     return array(dchi2, float64)
@@ -119,8 +127,12 @@ def d2func_wrapper(params):
     @rtype:         numpy float64 rank-2 array
     """
 
+    # Convert if necessary.
+    if type(params) == ndarray:
+        params = params.tolist()
+
     # Call the C code.
-    d2chi2 = d2func(params.tolist())
+    d2chi2 = d2func(params)
 
     # Return the chi2 Hessian as a numpy array.
     return array(d2chi2, float64)

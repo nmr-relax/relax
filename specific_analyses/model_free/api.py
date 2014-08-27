@@ -57,7 +57,7 @@ from specific_analyses.model_free.data import compare_objects
 from specific_analyses.model_free.molmol import Molmol
 from specific_analyses.model_free.model import determine_model_type
 from specific_analyses.model_free.parameters import are_mf_params_set, assemble_param_names, assemble_param_vector, linear_constraints
-from specific_analyses.model_free.optimisation import MF_grid_command, MF_memo, MF_minimise_command, minimise_data_setup, relax_data_opt_structs, reset_min_stats
+from specific_analyses.model_free.optimisation import MF_grid_command, MF_memo, MF_minimise_command, minimise_data_setup, relax_data_opt_structs
 from specific_analyses.model_free.parameter_object import Model_free_params
 from specific_analyses.model_free.pymol import Pymol
 from target_functions.mf import Mf
@@ -1122,10 +1122,6 @@ class Model_free(API_base, API_common):
             # Test if the nuclear isotope type has been set.
             if not hasattr(spin, 'isotope'):
                 raise RelaxSpinTypeError
-
-        # Reset the minimisation statistics.
-        if sim_index == None and min_algor != 'back_calc':
-            reset_min_stats()
 
         # Containers for the model-free data and optimisation parameters.
         data_store = Data_container()

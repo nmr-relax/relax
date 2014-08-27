@@ -485,32 +485,6 @@ def relax_data_opt_structs(spin, sim_index=None):
     return ri_data, ri_data_err, len(frq), num_ri, ri_labels, frq, remap_table, noe_r1_table
 
 
-def reset_min_stats():
-    """Reset all the minimisation statistics.
-
-    All global and spin specific values will be set to None.
-    """
-
-    # Global stats.
-    if hasattr(cdp, 'chi2'):
-        cdp.chi2 = None
-        cdp.iter = None
-        cdp.f_count = None
-        cdp.g_count = None
-        cdp.h_count = None
-        cdp.warning = None
-
-    # Spin specific stats.
-    for spin in spin_loop():
-        if hasattr(spin, 'chi2'):
-            spin.chi2 = None
-            spin.iter = None
-            spin.f_count = None
-            spin.g_count = None
-            spin.h_count = None
-            spin.warning = None
-
-
 def spin_print(spin_id, verbosity):
     """Print out some header text for the spin.
 
