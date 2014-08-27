@@ -24,8 +24,8 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import asarray, array, diag, dot, exp, eye, inf, log, multiply, sqrt, sum, transpose, zeros
-from numpy.linalg import inv
+from numpy import absolute, any, array, asarray, diag, dot, exp, eye, inf, log, multiply, spacing, sqrt, sum, transpose, zeros
+from numpy.linalg import cond, inv, qr
 from minfx.generic import generic_minimise
 from re import match, search
 import sys
@@ -34,6 +34,7 @@ from warnings import warn
 # relax module imports.
 from dep_check import scipy_module
 from lib.text.sectioning import section, subsection
+from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import generate_spin_string, spin_loop
 from pipe_control.spectrum import error_analysis
 from specific_analyses.relax_disp.checks import check_model_type
@@ -160,23 +161,6 @@ class Exp:
             self.b = None
 
 
-    def calc_exp(self, times=None, r2eff=None, i0=None):
-        """Calculate the function values of exponential function.
-
-        @keyword times: The time points.
-        @type times:    numpy array
-        @keyword r2eff: The effective transversal relaxation rate.
-        @type r2eff:    float
-        @keyword i0:    The initial intensity.
-        @type i0:       float
-        @return:        The function values.
-        @rtype:         float
-        """
-
-        # Calculate.
-        return i0 * exp( -times * r2eff)
-
-
     def estimate_x0_exp(self, intensities=None, times=None):
         """Estimate starting parameter x0 = [r2eff_est, i0_est], by converting the exponential curve to a linear problem.
          Then solving by linear least squares of: ln(Intensity[j]) = ln(i0) - time[j]* r2eff.
@@ -210,8 +194,58 @@ class Exp:
         return [r2eff_est, i0_est]
 
 
-    def func_exp(self, params):
-        """Target function for exponential fit in minfx.
+    def func_exp(self, times=None, r2eff=None, i0=None):
+        """Calculate the function values of exponential function.
+
+        @keyword times: The time points.
+        @type times:    numpy array
+        @keyword r2eff: The effective transversal relaxation rate.
+        @type r2eff:    float
+        @keyword i0:    The initial intensity.
+        @type i0:       float
+        @return:        The function values.
+        @rtype:         float
+        """
+
+        # Calculate.
+        return i0 * exp( -times * r2eff)
+
+
+    def func_exp_grad(self, params):
+        """Target function for the gradient (Jacobian matrix) of func_exp to minfx, for exponential fit .
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The Jacobian matrix with 'm' rows of function derivatives per 'n' columns of parameters.
+        @rtype:         numpy array
+        """
+
+        # Unpack the parameter values.
+        r2eff = params[0]
+        i0 = params[1]
+
+        # Make partial derivative, with respect to r2eff.
+        d_exp_d_r2eff = -i0 * self.times * exp(-r2eff * self.times)
+
+        # Make partial derivative, with respect to i0.
+        d_exp_d_i0 = exp(-r2eff * self.times)
+
+        # Define Jacobian as m rows with function derivatives and n columns of parameters.
+        self.jacobian_matrix_exp = transpose(array( [d_exp_d_r2eff , d_exp_d_i0] ) )
+
+        # Take the sum, to send to minfx.
+        sum_d_exp_d_r2eff = sum( d_exp_d_r2eff )
+        sum_d_exp_d_i0 = sum( d_exp_d_i0 )
+
+        # Define Jacobian as m rows with function derivatives and n columns of parameters.
+        sum_jacobian_matrix_exp = transpose(array( [sum_d_exp_d_r2eff , sum_d_exp_d_i0] ) )
+
+        # Return Jacobian matrix.
+        return sum_jacobian_matrix_exp
+
+
+    def func_exp_chi2(self, params):
+        """Target function for minimising chi2 in minfx, for exponential fit.
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
@@ -228,7 +262,7 @@ class Exp:
         i0 = params[1]
 
         # Calculate.
-        self.back_calc[:] = self.calc_exp(times=self.times, r2eff=r2eff, i0=i0)
+        self.back_calc[:] = self.func_exp(times=self.times, r2eff=r2eff, i0=i0)
 
         # Return the total chi-squared value.
         chi2 = chi2_rankN(data=self.values, back_calc_vals=self.back_calc, errors=self.errors)
@@ -237,8 +271,8 @@ class Exp:
         return chi2
 
 
-    def func_exp_grad(self, params):
-        """Target function for the gradient (Jacobian matrix) for exponential fit in minfx.
+    def func_exp_chi2_grad(self, params):
+        """Target function for the gradient (Jacobian matrix) of func_exp_chi2() to minfx, for exponential fit .
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
@@ -264,17 +298,17 @@ class Exp:
         d_chi2_d_i0 = - 2.0 * ( -i0 * exp( -r2eff * self.times) + self.values) * exp( -r2eff * self.times) / self.errors**2
 
         # Define Jacobian as m rows with function derivatives and n columns of parameters.
-        self.jacobian_matrix = transpose(array( [d_chi2_d_r2eff , d_chi2_d_i0] ) )
+        self.jacobian_matrix_exp_chi2 = transpose(array( [d_chi2_d_r2eff , d_chi2_d_i0] ) )
 
         # Take the sum, to send to minfx.
         sum_d_chi2_d_r2eff = sum( d_chi2_d_r2eff )
         sum_d_chi2_d_i0 = sum( d_chi2_d_i0 )
 
         # Define Jacobian as m rows with function derivatives and n columns of parameters.
-        sum_jacobian_matrix = transpose(array( [sum_d_chi2_d_r2eff , sum_d_chi2_d_i0] ) )
+        sum_jacobian_matrix_exp_chi2 = transpose(array( [sum_d_chi2_d_r2eff , sum_d_chi2_d_i0] ) )
 
         # Return Jacobian matrix.
-        return sum_jacobian_matrix
+        return sum_jacobian_matrix_exp_chi2
 
 
     def func_exp_hess(self, params):
@@ -329,10 +363,10 @@ class Exp:
         """
 
         # Return
-        return 1. / self.errors * (self.calc_exp(self.times, *params) - self.values)
+        return 1. / self.errors * (self.func_exp(self.times, *params) - self.values)
 
 
-    def multifit_covar(self, J=None, epsrel=None):
+    def multifit_covar(self, J=None, epsrel=0.0):
         """This is the implementation of the multifit covariance.
 
         This is inspired from GNU Scientific Library (GSL).
@@ -377,7 +411,7 @@ class Exp:
 
         @param J:               The Jacobian matrix.
         @type J:                numpy array
-        @param epsrel:          This is not implemented.  Any columns of R which satisfy |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix, where the corresponding rows and columns of the covariance matrix are set to zero.
+        @param epsrel:          Any columns of R which satisfy |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix, where the corresponding rows and columns of the covariance matrix are set to zero.
         @type epsrel:           float
         @return:                The co-variance matrix
         @rtype:                 square numpy array
@@ -390,8 +424,7 @@ class Exp:
         eye_mat = eye(self.errors.shape[0])
 
         # Now form the error matrix, with errors down the diagonal.
-        #weights = self.errors**2
-        weights = self.errors
+        weights = 1. / self.errors**2
 
         W = multiply(weights, eye_mat)
 
@@ -403,15 +436,46 @@ class Exp:
         Jt_W = dot(Jt, W)
         Jt_W_J = dot(Jt_W, J)
 
-        # Invert matrix.
-        Qxx = inv(Jt_W_J)
+        # Invert matrix by QR decomposition, to check columns of R which satisfy: |R_{kk}| <= epsrel |R_{11}|
+        Q, R = qr(Jt_W_J)
+
+        # Make the state ment matrix.
+        abs_epsrel_R11 = absolute( multiply(epsrel, R[0, 0]) )
+
+        # Make and array of True/False statements.
+        # These are considered linearly-dependent and are excluded from the covariance matrix.
+        # The corresponding rows and columns of the covariance matrix are set to zero
+        epsrel_check = absolute(R) <= abs_epsrel_R11
+
+        # Form the covariance matrix.
+        Qxx = dot(inv(R), transpose(Q) )
+        #Qxx2 = dot(inv(R), inv(Q) )
+        #print(Qxx - Qxx2)
+
+        # Test direct invert matrix of matrix.
+        #Qxx_test = inv(Jt_W_J)
+
+        # Replace values in Covariance matrix with inf.
+        Qxx[epsrel_check] = 0.0
+
+        # Throw a warning, that some colums are considered linearly-dependent and are excluded from the covariance matrix.
+        # Only check for the diagonal, since the that holds the variance.
+        diag_epsrel_check = diag(epsrel_check)
+
+        # If any of the diagonals does not meet the epsrel condition.
+        if any(diag_epsrel_check):
+            for i in range(diag_epsrel_check.shape[0]):
+                abs_Rkk = absolute(R[i, i])
+                if abs_Rkk <= abs_epsrel_R11:
+                    warn(RelaxWarning("Co-Variance element k,k=%i was found to meet |R_{kk}| <= epsrel |R_{11}|, meaning %1.1f <= %1.3f * %1.1f , and is therefore determined to be linearly-dependent and are excluded from the covariance matrix by setting the value to 0.0." % (i+1, abs_Rkk, epsrel, abs_epsrel_R11/epsrel) ))
+                    #print(cond(Jt_W_J) < 1./spacing(1.) )
 
         return Qxx
 
 
 # 'minfx'
 # 'scipy.optimize.leastsq'
-def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, method='minfx', verbosity=1):
+def estimate_r2eff(method='minfx', spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, verbosity=1):
     """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.leastsq.
 
     scipy.optimize.leastsq is a wrapper around MINPACK's lmdif and lmder algorithms.
@@ -427,6 +491,8 @@ def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor
     Then solving initial guess by linear least squares of: ln(Intensity[j]) = ln(i0) - time[j]* r2eff.
 
 
+    @keyword method:            The method to minimise and estimate errors.  Options are: 'minfx' or 'scipy.optimize.leastsq'.
+    @type method:               string
     @keyword spin_id:           The spin identification string.
     @type spin_id:              str
     @keyword ftol:              The function tolerance for the relative error desired in the sum of squares, parsed to leastsq.
@@ -437,8 +503,6 @@ def estimate_r2eff(spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor
     @type maxfev:               int
     @keyword factor:            The initial step bound, parsed to leastsq.  It determines the initial step bound (''factor * || diag * x||'').  Should be in the interval (0.1, 100).
     @type factor:               float
-    @keyword method:            The method to minimise and estimate errors.  Options are: 'scipy.optimize.leastsq' or 'minfx'.
-    @type method:               string
     @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:            int
     """
@@ -734,7 +798,7 @@ def minimise_minfx(E=None):
     E.set_settings_minfx(min_algor=min_algor)
 
     # Do C code
-    do_C = True
+    do_C = False
 
     if do_C:
         # Initialise the function to minimise.
@@ -750,13 +814,13 @@ def minimise_minfx(E=None):
         # Minimise with minfx.
         # Define function to minimise for minfx.
         if match('^[Ss]implex$', E.min_algor):
-            t_func = E.func_exp
+            t_func = E.func_exp_chi2
 
             t_dfunc = None
             t_d2func = None
         else:
-            t_func = E.func_exp
-            t_dfunc = E.func_exp_grad
+            t_func = E.func_exp_chi2
+            t_dfunc = E.func_exp_chi2_grad
             t_d2func = E.func_exp_hess
 
     # Minimise.
@@ -767,20 +831,23 @@ def minimise_minfx(E=None):
 
     # Get the Jacobian.
     if do_C:
-        # First make a call to the Jacobian function, which store it in the class.
-        jacobian_matrix = transpose(asarray( jacobian(param_vector) ) )
+        # Calculate the direct exponential Jacobian matrix from C code.
+        jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
 
         # Compare with python code.
-        #E.func_exp_grad(params=param_vector)
-        #jacobian_matrix2 = deepcopy(E.jacobian_matrix)
-        #print jacobian_matrix
-        #print " "
-        #print jacobian_matrix2
+        #E.func_exp_grad(param_vector)
+        #jacobian_matrix_exp2 = E.jacobian_matrix_exp
+        #print jacobian_matrix_exp - jacobian_matrix_exp2
     else:
-        jacobian_matrix = deepcopy(E.jacobian_matrix)
+        # Call class, to store value.
+        E.func_exp_grad(param_vector)
+        jacobian_matrix_exp = E.jacobian_matrix_exp
+        #E.func_exp_chi2_grad(param_vector)
+        #jacobian_matrix_exp = E.jacobian_matrix_exp_chi2
+
 
     # Get the co-variance
-    pcov = E.multifit_covar(J=jacobian_matrix)
+    pcov = E.multifit_covar(J=jacobian_matrix_exp)
 
     # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
     param_vector_error = sqrt(diag(pcov))
