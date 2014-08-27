@@ -509,13 +509,13 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     processor.run_queue()
 
 
-def reset_min_stats(data_pipe=None, spin=None):
-    """Function for resetting the minimisation statistics.
+def reset_min_stats(data_pipe=None, sim_index=None):
+    """Function for resetting all minimisation statistics.
 
-    @keyword data_pipe: The name of the data pipe to reset the minimisation statisics of.  This defaults to the current data pipe.
-    @type data_pipe:    str
-    @keyword spin:      The spin data container if spin specific data is to be reset.
-    @type spin:         SpinContainer
+    @keyword data_pipe:     The name of the data pipe to reset the minimisation statistics of.  This defaults to the current data pipe.
+    @type data_pipe:        str
+    @keyword sim_index:     The optional Monte Carlo simulation index.
+    @type sim_index:        int
     """
 
     # The data pipe.
@@ -525,63 +525,54 @@ def reset_min_stats(data_pipe=None, spin=None):
     # Get the data pipe.
     dp = pipes.get_pipe(data_pipe)
 
+    # The objects to reset to None.
+    names = [
+        'chi2',
+        'iter',
+        'f_count',
+        'g_count',
+        'h_count',
+        'warning'
+    ]
 
-    # Global minimisation statistics.
-    #################################
+    # Loop over the objects.
+    for name in names:
+        # The simulation name.
+        sim_name = name + '_sim'
 
-    # Chi-squared.
-    if hasattr(dp, 'chi2'):
-        dp.chi2 = None
+        # Global minimisation statistics.
+        if sim_index == None:
+            # Reset the object to None if it exists.
+            if hasattr(dp, name):
+                setattr(dp, name, None)
 
-    # Iteration count.
-    if hasattr(dp, 'iter'):
-        dp.iter = None
+        # Global MC minimisation statistics.
+        else:
+            if hasattr(dp, sim_name):
+                # The MC simulation object.
+                sim_obj = getattr(dp, sim_name)
 
-    # Function count.
-    if hasattr(dp, 'f_count'):
-        dp.f_count = None
+                # Reset the object to None if possible.
+                if sim_index < len(sim_obj):
+                    sim_obj[sim_index] = None
 
-    # Gradient count.
-    if hasattr(dp, 'g_count'):
-        dp.g_count = None
+        # Loop over all spins.
+        for spin in spin_loop(skip_desel=False):
+            # The minimisation statistics.
+            if sim_index == None:
+                # Reset the object to None if it exists.
+                if hasattr(spin, name):
+                    setattr(spin, name, None)
 
-    # Hessian count.
-    if hasattr(dp, 'h_count'):
-        dp.h_count = None
+            # The MC minimisation statistics.
+            else:
+                if hasattr(spin, sim_name):
+                    # The MC simulation object.
+                    sim_obj = getattr(spin, sim_name)
 
-    # Warning.
-    if hasattr(dp, 'warning'):
-        dp.warning = None
-
-
-    # Sequence specific minimisation statistics.
-    ############################################
-
-    # Loop over all spins.
-    for spin in spin_loop():
-        # Chi-squared.
-        if hasattr(spin, 'chi2'):
-            spin.chi2 = None
-
-        # Iteration count.
-        if hasattr(spin, 'iter'):
-            spin.iter = None
-
-        # Function count.
-        if hasattr(spin, 'f_count'):
-            spin.f_count = None
-
-        # Gradient count.
-        if hasattr(spin, 'g_count'):
-            spin.g_count = None
-
-        # Hessian count.
-        if hasattr(spin, 'h_count'):
-            spin.h_count = None
-
-        # Warning.
-        if hasattr(spin, 'warning'):
-            spin.warning = None
+                    # Reset the object to None if possible.
+                    if sim_index < len(sim_obj):
+                        sim_obj[sim_index] = None
 
 
 def set(val=None, error=None, param=None, scaling=None, spin_id=None):
