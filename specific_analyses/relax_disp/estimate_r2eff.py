@@ -117,13 +117,15 @@ class Exp:
         self.factor = factor
 
 
-    def set_settings_minfx(self, scaling_matrix=None, min_algor='simplex', constraints=False, func_tol=1e-25, grad_tol=None, max_iterations=10000000):
+    def set_settings_minfx(self, scaling_matrix=None, min_algor='simplex', c_code=True, constraints=False, func_tol=1e-25, grad_tol=None, max_iterations=10000000):
         """Setup options to minfx.
 
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 float array
         @keyword min_algor:         The minimisation algorithm
         @type min_algor:            string
+        @keyword c_code:            If optimise with C code.
+        @type c_code:               bool
         @keyword constraints:       If constraints should be used.
         @type constraints:          bool
         @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
@@ -136,6 +138,7 @@ class Exp:
 
         # Store variables.
         self.scaling_matrix = scaling_matrix
+        self.c_code = c_code
 
         # Scaling initialisation.
         self.scaling_flag = False
@@ -318,48 +321,6 @@ class Exp:
         return sum_jacobian_matrix_exp_chi2
 
 
-    def func_exp_hess(self, params):
-        """Target function for the gradient (Hessian matrix) for exponential fit in minfx.
-
-        @param params:  The vector of parameter values.
-        @type params:   numpy rank-1 float array
-        @return:        The Hessian matrix with 'm' rows of function derivatives per '4' columns of second order derivatives.
-        @rtype:         numpy array
-        """
-
-        # Scaling.
-        if self.scaling_flag:
-            params = dot(params, self.scaling_matrix)
-
-        # Unpack the parameter values.
-        r2eff = params[0]
-        i0 = params[1]
-
-        # Calculate gradient according to chi2.
-        # See: http://wiki.nmr-relax.com/Calculate_jacobian_hessian_matrix_in_sympy_exponential_decay
-
-        # Calculate the Hessian. The second-order partial derivatives.
-        #d2_chi2_d_r2eff_d_r2eff = 2.0*i0*times**2*(2*i0*exp(-r2eff*times) - values)*exp(-r2eff*times)/errors**2
-        d2_chi2_d_r2eff_d_r2eff = 2.0 * i0 * self.times**2 * ( 2 * i0 * exp( -r2eff * self.times) - self.values) * exp( -r2eff * self.times) / self.errors**2
-
-        #d2_chi2_d_r2eff_d_i0 = -2.0*times*(2*i0*exp(-r2eff*times) - values)*exp(-r2eff*times)/errors**2
-        d2_chi2_d_r2eff_d_i0 = -2.0 * self.times * (2. * i0 * exp( -r2eff * self.times) - self.values) * exp( -r2eff * self.times) / self.errors**2
-
-        #d2_chi2_d_i0_d_r2eff = -2.0*times*(2*i0*exp(-r2eff*times) - values)*exp(-r2eff*times)/errors**2
-        d2_chi2_d_i0_d_r2eff = -2.0 * self.times * (2. * i0 * exp( -r2eff * self.times) - self.values) * exp( -r2eff * self.times) / self.errors**2
-
-        #d2_chi2_d_i0_d_i0 = 2.0*exp(-2*r2eff*times)/errors**2
-        d2_chi2_d_i0_d_i0 = 2.0 * exp( -2. * r2eff * self.times) / self.errors**2
-
-        # Form hessian.
-        hessian_matrix = transpose(array( [d2_chi2_d_r2eff_d_r2eff, d2_chi2_d_r2eff_d_i0, d2_chi2_d_i0_d_r2eff, d2_chi2_d_i0_d_i0] ) )
-
-        #print hessian_matrix
-
-        # Return Jacobian matrix.
-        return hessian_matrix
-
-
     def func_exp_weighted_general(self, params):
         """Target function for weighted minimisation with scipy.optimize.
 
@@ -405,10 +366,10 @@ class Exp:
         For an unweighted least-squares function f_i = (Y(x, t_i) - y_i) the covariance matrix above should be multiplied by
         the variance of the residuals about the best-fit
 
-            \sigma^2 = \sum (y_i - Y(x,t_i))^2 / (n-p) 
+            \sigma^2 = \sum (y_i - Y(x, t_i))^2 / (n-p)
 
         to give the variance-covariance matrix \sigma^2 C.
-        This estimates the statistical error on the best-fit parameters from the scatter of the underlying data. 
+        This estimates the statistical error on the best-fit parameters from the scatter of the underlying data.
 
         See:
         U{GSL - GNU Scientific Library<http://www.gnu.org/software/gsl/>}
@@ -480,10 +441,10 @@ class Exp:
         return Qxx
 
 
-# 'minfx'
-# 'scipy.optimize.leastsq'
-def estimate_r2eff(method='minfx', spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, verbosity=1):
-    """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.leastsq.
+def estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints=False, spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, verbosity=1):
+    """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.leastsq or minfx.
+
+    THIS IS ONLY FOR TESTING.
 
     scipy.optimize.leastsq is a wrapper around MINPACK's lmdif and lmder algorithms.
 
@@ -500,6 +461,12 @@ def estimate_r2eff(method='minfx', spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=
 
     @keyword method:            The method to minimise and estimate errors.  Options are: 'minfx' or 'scipy.optimize.leastsq'.
     @type method:               string
+    @keyword min_algor:         The minimisation algorithm
+    @type min_algor:            string
+    @keyword constraints:       If constraints should be used.
+    @type constraints:          bool
+    @keyword c_code:            If optimise with C code.
+    @type c_code:               bool
     @keyword spin_id:           The spin identification string.
     @type spin_id:              str
     @keyword ftol:              The function tolerance for the relative error desired in the sum of squares, parsed to leastsq.
@@ -568,7 +535,9 @@ def estimate_r2eff(method='minfx', spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=
             top = 2
             if E.verbosity >= 2:
                 top += 2
-            subsection(file=sys.stdout, text="Fitting with scipy.optimize.leastsq to: %s"%spin_string, prespace=top)
+            subsection(file=sys.stdout, text="Fitting with %s to: %s"%(method, spin_string), prespace=top)
+            if method == 'minfx':
+                subsection(file=sys.stdout, text="min_algor='%s', c_code=%s, constraints=%s"%(min_algor, c_code, constraints), prespace=0)
 
         # Loop over each spectrometer frequency and dispersion point.
         for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
@@ -598,6 +567,9 @@ def estimate_r2eff(method='minfx', spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=
                 results = minimise_leastsq(E=E)
 
             elif method == 'minfx':
+                # Set settings.
+                E.set_settings_minfx(min_algor=min_algor, c_code=c_code, constraints=constraints)
+
                 # Acquire results.
                 results = minimise_minfx(E=E)
             else:
@@ -793,7 +765,7 @@ def minimise_leastsq(E=None):
 
     if use_weights:
         func = E.func_exp_weighted_general
-         # If 'sigma'/erros describes one standard deviation errors of the input data points. The estimated covariance in 'pcov' is based on these values.
+        # If 'sigma'/erros describes one standard deviation errors of the input data points. The estimated covariance in 'pcov' is based on these values.
         absolute_sigma = True
     else:
         func = E.func_exp_general
@@ -834,7 +806,7 @@ def minimise_leastsq(E=None):
     # The diagonals provide the variance of the parameter estimate.
     # pcov is here, the reduced cov(x) or fractional cov(x). It is rescaling which is useful in numerical computations.
     # It is not the true covariance matrix.
-    # An issue arises when errors in the y data points are given.  
+    # An issue arises when errors in the y data points are given.
     # Only the relative errors are used as weights, so the fit parameter errors, determined from the covariance do not depended on the magnitude of the errors in the individual data points.
     # See: http://stackoverflow.com/questions/14581358/getting-standard-errors-on-fitted-parameters-using-the-optimize-leastsq-method-i
     # See: http://stackoverflow.com/questions/14854339/in-scipy-how-and-why-does-curve-fit-calculate-the-covariance-of-the-parameter-es/14857441#14857441
@@ -898,38 +870,10 @@ def minimise_minfx(E=None):
     # Initial guess for minimisation. Solved by linear least squares.
     x0 = asarray( E.estimate_x0_exp() )
 
-    # Set the min_algor.
-    # simplex is algorithms without gradient. It is quite slow, since it needs to take many steps.
-    #min_algor='simplex'
-
-    # Steepest descent uses only the gradient. This works, but it is not totally precise.
-    #min_algor = 'Steepest descent'
-    #max_iterations = 1000
-
-    # Quasi-Newton BFGS. Uses only the gradient.
-    # This gets the same results as 2000 Monte-Carlo with simplex.
-    # This is one of the best optimisation techniques when only the function and gradient are present, as it tries to numerically approximate the Hessian matrix, updating it as the algorithm moves along. 
-    min_algor = 'BFGS'
-
-    # Newton does not work.
-    # min_algor = 'newton'
-
-    # Newton-CG does not work.
-    # min_algor = 'Newton-CG'
-
-    # Also not work.#
-    # min_algor = 'Fletcher-Reeves'
-
-    E.set_settings_minfx(min_algor=min_algor)
-
-    # Do C code
-    do_C = False
-
-    if do_C:
+    if E.c_code:
         # Initialise the function to minimise.
         scaling_list = [1.0, 1.0]
         setup(num_params=len(x0), num_times=len(E.times), values=E.values, sd=E.errors, relax_times=E.times, scaling_matrix=scaling_list)
-
 
         t_func = func_wrapper
         t_dfunc = dfunc_wrapper
@@ -938,24 +882,18 @@ def minimise_minfx(E=None):
     else:
         # Minimise with minfx.
         # Define function to minimise for minfx.
-        if match('^[Ss]implex$', E.min_algor):
-            t_func = E.func_exp_chi2
-
-            t_dfunc = None
-            t_d2func = None
-        else:
-            t_func = E.func_exp_chi2
-            t_dfunc = E.func_exp_chi2_grad
-            t_d2func = E.func_exp_hess
+        t_func = E.func_exp_chi2
+        t_dfunc = E.func_exp_chi2_grad
+        t_d2func = None
 
     # Minimise.
-    results_minfx = generic_minimise(func=t_func, dfunc=t_dfunc, d2func=t_d2func, args=(), x0=x0, min_algor=E.min_algor, min_options=E.min_options, func_tol=E.func_tol, grad_tol=E.grad_tol, maxiter=E.max_iterations, A=E.A, b=E.b, full_output=True, print_flag=E.verbosity)
+    results_minfx = generic_minimise(func=t_func, dfunc=t_dfunc, d2func=t_d2func, args=(), x0=x0, min_algor=E.min_algor, min_options=E.min_options, func_tol=E.func_tol, grad_tol=E.grad_tol, maxiter=E.max_iterations, A=E.A, b=E.b, full_output=True, print_flag=0)
 
     # Unpack
     param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results_minfx
 
     # Get the Jacobian.
-    if do_C:
+    if E.c_code:
         # Calculate the direct exponential Jacobian matrix from C code.
         jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
 
@@ -969,7 +907,6 @@ def minimise_minfx(E=None):
         jacobian_matrix_exp = E.jacobian_matrix_exp
         #E.func_exp_chi2_grad(param_vector)
         #jacobian_matrix_exp = E.jacobian_matrix_exp_chi2
-
 
     # Get the co-variance
     pcov = E.multifit_covar(J=jacobian_matrix_exp)
