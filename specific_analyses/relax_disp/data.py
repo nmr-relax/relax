@@ -68,13 +68,14 @@ from lib.nmr import frequency_to_ppm, frequency_to_ppm_from_rad, frequency_to_ra
 from lib.physical_constants import g1H, return_gyromagnetic_ratio
 from lib.sequence import read_spin_data, write_spin_data
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
+from lib.text.sectioning import section
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
 from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, generate_spin_id_unique, generate_spin_string, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
 from pipe_control.selection import desel_spin
 from pipe_control.sequence import return_attached_protons
-from pipe_control.spectrum import add_spectrum_id
+from pipe_control.spectrum import add_spectrum_id, error_analysis
 from pipe_control.spectrometer import check_frequency, get_frequency
 from pipe_control import value
 import specific_analyses
@@ -247,6 +248,50 @@ def calc_rotating_frame_params(spin=None, spin_id=None, fields=None, verbosity=0
 
     # Return the dic and list of keys
     return [theta_spin_dic, Domega_spin_dic, w_eff_spin_dic, dic_key_list]
+
+
+def check_intensity_errors(spin_id=None):
+    """Check if intensity errors have already been calculated by the user.
+
+    @keyword spin_id:           The spin identification string.
+    @type spin_id:              str
+    """
+
+    # Check if intensity errors have already been calculated by the user.
+    precalc = True
+    for cur_spin, mol_name, resi, resn, cur_spin_id in spin_loop(selection=spin_id, full_info=True, return_id=True, skip_desel=True):
+        # No structure.
+        if not hasattr(cur_spin, 'peak_intensity_err'):
+            precalc = False
+            break
+
+        # Determine if a spectrum ID is missing from the list.
+        for id in cdp.spectrum_ids:
+            if id not in cur_spin.peak_intensity_err:
+                precalc = False
+                break
+
+    # If no error analysis of peak heights exists.
+    if not precalc:
+        # Printout.
+        section(file=sys.stdout, text="Error analysis", prespace=2)
+
+        # Loop over the spectrometer frequencies.
+        for frq in loop_frq():
+            # Generate a list of spectrum IDs matching the frequency.
+            ids = []
+            for id in cdp.spectrum_ids:
+                # Check that the spectrometer frequency matches.
+                match_frq = True
+                if frq != None and cdp.spectrometer_frq[id] != frq:
+                    match_frq = False
+
+                # Add the ID.
+                if match_frq:
+                    ids.append(id)
+
+            # Run the error analysis on the subset.
+            error_analysis(subset=ids)
 
 
 def count_exp():
