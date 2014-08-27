@@ -32,7 +32,8 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from dep_check import scipy_module
+from dep_check import C_module_exp_fn, scipy_module
+from lib.errors import RelaxError
 from lib.text.sectioning import section, subsection
 from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import generate_spin_string, spin_loop
@@ -41,10 +42,16 @@ from specific_analyses.relax_disp.checks import check_model_type
 from specific_analyses.relax_disp.data import average_intensity, loop_exp_frq_offset_point, loop_frq, loop_time, return_param_key_from_data
 from specific_analyses.relax_disp.parameters import disassemble_param_vector
 from specific_analyses.relax_disp.variables import MODEL_R2EFF
-from specific_analyses.relax_fit.optimisation import func_wrapper, dfunc_wrapper, d2func_wrapper
 from target_functions.chi2 import chi2_rankN
-from target_functions.relax_fit import jacobian, setup
 
+# C modules.
+if C_module_exp_fn:
+    from specific_analyses.relax_fit.optimisation import func_wrapper, dfunc_wrapper, d2func_wrapper
+    from target_functions.relax_fit import jacobian, setup
+    # Call the python wrapper function to help with list to numpy array conversion.
+    func = func_wrapper
+    dfunc = dfunc_wrapper
+    d2func = d2func_wrapper
 
 # Scipy installed.
 if scipy_module:
@@ -638,6 +645,124 @@ def estimate_r2eff(method='minfx', spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=
                 print_strings.append(par_info)
 
                 if E.verbosity >= 2:
+                    time_info = ', '.join(map(str, times))
+                    print_strings.append('For time array: '+time_info+'.\n\n')
+
+            # Print info
+            if len(print_strings) > 0:
+                for print_string in print_strings:
+                    print(print_string),
+
+
+def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
+    """This will estimate the R2eff and i0 errors from the covariance matrix Qxx.  Qxx is calculated from the Jacobian matrix and the optimised parameters.
+
+    @keyword spin_id:       The spin identification string.
+    @type spin_id:          str
+    @param epsrel:          Any columns of R which satisfy |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix, where the corresponding rows and columns of the covariance matrix are set to zero.
+    @type epsrel:           float
+    @keyword verbosity:     The amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:        int
+    """
+
+    # Perform checks.
+    check_model_type(model=MODEL_R2EFF)
+
+    # Initialise class.
+    E = Exp(verbosity=verbosity)
+
+    # Loop over the spins.
+    for cur_spin, mol_name, resi, resn, cur_spin_id in spin_loop(selection=spin_id, full_info=True, return_id=True, skip_desel=True):
+        # Generate spin string.
+        spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+        # Raise Error, if not optimised.
+        if not (hasattr(cur_spin, 'r2eff') and hasattr(cur_spin, 'i0')):
+            raise RelaxError("Spin %s does not contain optimised 'r2eff' and 'i0' values.  Try execute: minimise.execute(min_algor='Newton', constraints=False)"%(spin_string))
+
+        # Raise warning, if gradient count is 0.  This could point to a lack of minimisation first.
+        if hasattr(cur_spin, 'g_count'):
+            if getattr(cur_spin, 'g_count') == 0.0:
+                text = "Spin %s contains a gradient count of 0.0.  Is the R2eff parameter optimised?  Try execute: minimise.execute(min_algor='Newton', constraints=False)" %(spin_string)
+                warn(RelaxWarning("%s." % text))
+
+        # Print information.
+        if verbosity >= 1:
+            # Individual spin block section.
+            top = 2
+            if verbosity >= 2:
+                top += 2
+            subsection(file=sys.stdout, text="Estimating R2eff error for spin: %s"%spin_string, prespace=top)
+
+        # Loop over each spectrometer frequency and dispersion point.
+        for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+            # The parameter key.
+            param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+            # Extract values.
+            r2eff = getattr(cur_spin, 'r2eff')[param_key]
+            i0 = getattr(cur_spin, 'i0')[param_key]
+
+            # Pack data
+            param_vector = [r2eff, i0]
+
+            # The peak intensities, errors and times.
+            values = []
+            errors = []
+            times = []
+            for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
+                values.append(average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time))
+                errors.append(average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
+                times.append(time)
+
+            # Convert to numpy array.
+            values = asarray(values)
+            errors = asarray(errors)
+            times = asarray(times)
+
+            # Initialise data in Class.
+            E.setup_data(values=values, errors=errors, times=times)
+
+            # Initialise data in C code.
+            scaling_list = [1.0, 1.0]
+            setup(num_params=len(param_vector), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
+
+            # Calculate the direct exponential Jacobian matrix from C code.
+            jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
+
+            # Get the co-variance
+            pcov = E.multifit_covar(J=jacobian_matrix_exp)
+
+            # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
+            param_vector_error = sqrt(diag(pcov))
+
+            # Extract values.
+            r2eff_err, i0_err = param_vector_error
+
+            # Errors.
+            if not hasattr(cur_spin, 'r2eff_err'):
+                setattr(cur_spin, 'r2eff_err', deepcopy(getattr(cur_spin, 'r2eff')))
+            if not hasattr(cur_spin, 'i0_err'):
+                setattr(cur_spin, 'i0_err', deepcopy(getattr(cur_spin, 'i0')))
+
+            # Set error.
+            cur_spin.r2eff_err[param_key] = r2eff_err
+            cur_spin.i0_err[param_key] = i0_err
+
+            # Get other relevant information.
+            chi2 = getattr(cur_spin, 'chi2')
+
+            # Print information.
+            print_strings = []
+            if verbosity >= 1:
+                # Add print strings.
+                point_info = "%s at %3.1f MHz, for offset=%3.3f ppm and dispersion point %-5.1f, with %i time points." % (exp_type, frq/1E6, offset, point, len(times))
+                print_strings.append(point_info)
+
+                par_info = "r2eff=%3.3f r2eff_err=%3.3f, i0=%6.1f, i0_err=%3.3f, chi2=%3.3f.\n" % ( r2eff, r2eff_err, i0, i0_err, chi2)
+                print_strings.append(par_info)
+
+                if verbosity >= 2:
                     time_info = ', '.join(map(str, times))
                     print_strings.append('For time array: '+time_info+'.\n\n')
 
