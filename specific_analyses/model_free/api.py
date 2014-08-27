@@ -50,6 +50,7 @@ from pipe_control.bmrb import list_sample_conditions
 from pipe_control.exp_info import bmrb_write_citations, bmrb_write_methods, bmrb_write_software
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import count_spins, exists_mol_res_spin_data, find_index, get_molecule_names, return_spin, return_spin_from_index, return_spin_indices, spin_loop
+from pipe_control.minimise import reset_min_stats
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.model_free.bmrb import sf_csa_read, sf_model_free_read, to_bmrb_model
@@ -57,7 +58,7 @@ from specific_analyses.model_free.data import compare_objects
 from specific_analyses.model_free.molmol import Molmol
 from specific_analyses.model_free.model import determine_model_type
 from specific_analyses.model_free.parameters import are_mf_params_set, assemble_param_names, assemble_param_vector, linear_constraints
-from specific_analyses.model_free.optimisation import MF_grid_command, MF_memo, MF_minimise_command, minimise_data_setup, relax_data_opt_structs, reset_min_stats
+from specific_analyses.model_free.optimisation import MF_grid_command, MF_memo, MF_minimise_command, minimise_data_setup, relax_data_opt_structs
 from specific_analyses.model_free.parameter_object import Model_free_params
 from specific_analyses.model_free.pymol import Pymol
 from target_functions.mf import Mf
@@ -1124,8 +1125,8 @@ class Model_free(API_base, API_common):
                 raise RelaxSpinTypeError
 
         # Reset the minimisation statistics.
-        if sim_index == None and min_algor != 'back_calc':
-            reset_min_stats()
+        if min_algor != 'back_calc':
+            reset_min_stats(sim_index=sim_index)
 
         # Containers for the model-free data and optimisation parameters.
         data_store = Data_container()
