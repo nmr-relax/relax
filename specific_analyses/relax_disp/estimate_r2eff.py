@@ -210,6 +210,39 @@ class Exp:
         return i0 * exp( -times * r2eff)
 
 
+    def func_exp_grad(self, params):
+        """Target function for the gradient (Jacobian matrix) of func_exp to minfx, for exponential fit .
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The Jacobian matrix with 'm' rows of function derivatives per 'n' columns of parameters.
+        @rtype:         numpy array
+        """
+
+        # Unpack the parameter values.
+        r2eff = params[0]
+        i0 = params[1]
+
+        # Make partial derivative, with respect to r2eff.
+        d_exp_d_r2eff = -i0 * self.times * exp(-r2eff * self.times)
+
+        # Make partial derivative, with respect to i0.
+        d_exp_d_i0 = exp(-r2eff * self.times)
+
+        # Define Jacobian as m rows with function derivatives and n columns of parameters.
+        self.jacobian_matrix_exp = transpose(array( [d_exp_d_r2eff , d_exp_d_i0] ) )
+
+        # Take the sum, to send to minfx.
+        sum_d_exp_d_r2eff = sum( d_exp_d_r2eff )
+        sum_d_exp_d_i0 = sum( d_exp_d_i0 )
+
+        # Define Jacobian as m rows with function derivatives and n columns of parameters.
+        sum_jacobian_matrix_exp = transpose(array( [sum_d_exp_d_r2eff , sum_d_exp_d_i0] ) )
+
+        # Return Jacobian matrix.
+        return sum_jacobian_matrix_exp
+
+
     def func_exp_chi2(self, params):
         """Target function for minimising chi2 in minfx, for exponential fit.
 
@@ -733,7 +766,7 @@ def minimise_minfx(E=None):
     E.set_settings_minfx(min_algor=min_algor)
 
     # Do C code
-    do_C = True
+    do_C = False
 
     if do_C:
         # Initialise the function to minimise.
@@ -770,13 +803,13 @@ def minimise_minfx(E=None):
         jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
 
         # Compare with python code.
-        #E.func_exp_chi2_grad(params=param_vector)
-        #jacobian_matrix2 = deepcopy(E.jacobian_matrix)
-        #print jacobian_matrix
-        #print " "
-        #print jacobian_matrix2
+        #E.func_exp_grad(param_vector)
+        #jacobian_matrix_exp2 = E.jacobian_matrix_exp
+        #print jacobian_matrix_exp - jacobian_matrix_exp2
     else:
-        jacobian_matrix_exp_chi2 = deepcopy(E.jacobian_matrix_exp_chi2)
+        # Call class, to store value.
+        E.func_exp_grad(param_vector)
+        jacobian_matrix_exp = E.jacobian_matrix_exp
 
     # Get the co-variance
     pcov = E.multifit_covar(J=jacobian_matrix_exp)
