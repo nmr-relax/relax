@@ -497,18 +497,31 @@ class Relax_disp:
             # The minimisation algorithm to use. If the Jacobian and Hessian matrix have not been specified for fitting, 'simplex' should be used.
             min_algor = 'simplex'
 
-        # Do Monte Carlo simulations.
+        # Error estimation by Monte Carlo simulations.
         if do_monte_carlo:
+            # Set the number of Monte-Carlo simulations.
+            monte_carlo_sim = self.mc_sim_num
+
+            # If the number for exponential curve fitting has been set.
             if model == MODEL_R2EFF and self.exp_mc_sim_num != None:
-                self.interpreter.monte_carlo.setup(number=self.exp_mc_sim_num)
+                monte_carlo_sim = self.exp_mc_sim_num
+
+            # When set to minus 1, estimation of the errors will be extracted from the covariance matrix.
+            # This is HIGHLY likely to be wrong, but can be used in an initial test fase.
+            if model == MODEL_R2EFF and self.exp_mc_sim_num == -1:
+                # Print
+                subsection(file=sys.stdout, text="Estimating errors from Covariance matrix", prespace=1)
+
+                # Estimate errors
+                self.interpreter.relax_disp.r2eff_err_estimate()
             else:
-                self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
-            self.interpreter.monte_carlo.create_data()
-            self.interpreter.monte_carlo.initial_values()
-            self.interpreter.minimise.execute(min_algor=min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=constraints)
-            if self.eliminate:
-                self.interpreter.eliminate()
-            self.interpreter.monte_carlo.error_analysis()
+                self.interpreter.monte_carlo.setup(number=monte_carlo_sim)
+                self.interpreter.monte_carlo.create_data()
+                self.interpreter.monte_carlo.initial_values()
+                self.interpreter.minimise.execute(min_algor=min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=constraints)
+                if self.eliminate:
+                    self.interpreter.eliminate()
+                self.interpreter.monte_carlo.error_analysis()
 
 
     def pre_run_parameters(self, model=None, model_path=None):
