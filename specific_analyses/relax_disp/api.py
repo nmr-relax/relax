@@ -26,7 +26,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from re import search
+from re import match, search
 import sys
 from types import MethodType
 
@@ -573,9 +573,44 @@ class Relax_disp(API_base, API_common):
         algor = min_algor
         if min_algor == 'Log barrier':
             algor = min_options[0]
-        allowed = ['grid', 'simplex']
-        if algor not in allowed:
-            raise RelaxError("Only the 'simplex' minimisation algorithm is supported for the relaxation dispersion analysis as function gradients are not implemented.")
+
+        allow = False
+        # Check the model type.
+        if hasattr(cdp, 'model_type'):
+            # Set the model type:
+            model_type = cdp.model_type
+
+            if model_type == MODEL_R2EFF:
+                if match('^[Gg]rid$', algor):
+                    allow = True
+
+                elif match('^[Ss]implex$', algor):
+                    allow = True
+
+                # Quasi-Newton BFGS minimisation.
+                elif match('^[Bb][Ff][Gg][Ss]$', algor):
+                    allow = True
+
+                # Newton minimisation.
+                elif match('^[Nn]ewton$', algor):
+                    allow = True
+
+            # If the Jacobian and Hessian matrix have not been specified for fitting, 'simplex' should be used.
+            else:
+                if match('^[Gg]rid$', algor):
+                    allow = True
+
+                elif match('^[Ss]implex$', algor):
+                    allow = True
+
+        # Do not allow, if no model has been specified.
+        else:
+            model_type = 'None'
+            # Do not allow.
+            allow = False
+
+        if not allow:
+            raise RelaxError("Minimisation algorithm '%s' is not allowed, since function gradients for model '%s' is not implemented.  Only the 'simplex' minimisation algorithm is supported for the relaxation dispersion analysis of this model."%(algor, model_type))
 
         # Initialise some empty data pipe structures so that the target function set up does not fail.
         if not hasattr(cdp, 'cpmg_frqs_list'):

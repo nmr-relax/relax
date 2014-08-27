@@ -57,7 +57,8 @@ sys.path.reverse()
 # relax module imports.
 from status import Status; status = Status()
 from specific_analyses.relax_disp.estimate_r2eff import minimise_leastsq, Exp
-from target_functions.relax_fit import setup, func, dfunc, d2func, back_calc_I
+from specific_analyses.relax_fit.optimisation import func_wrapper, dfunc_wrapper, d2func_wrapper
+from target_functions.relax_fit import setup
 from target_functions.chi2 import chi2_rankN
 
 ## Set the min_algor.
@@ -87,8 +88,10 @@ def main():
         sum_root_squared = sum( sqrt( (v_cT_chi2_list - v_cF_chi2_list)**2 ) )
         print("The sum of the root squared differences between with and without constraints are: %.3e" % sum_root_squared)
 
-        # Calculate without contraints, BFGS.
-        #v_BFGS_cF_chi2_list = array(verify(min_algor='BFGS', constraints=False))
+        # Calculate without contraints, Newton.
+        v_Newton_cF_chi2_list = array(verify(min_algor='Newton', constraints=False))
+        sum_root_squared = sum( sqrt( (v_cT_chi2_list - v_Newton_cF_chi2_list)**2 ) )
+        print("The sum of the root squared differences between Simplex with constraints and Newton without constraints are: %.3e" % sum_root_squared)
 
         # Now calculate with Python code.
         # Calculate with contraints.
@@ -96,7 +99,7 @@ def main():
 
         # Verify against C code with constraints.
         sum_root_squared = sum( sqrt( (v_cT_chi2_list - v_pyt_cT_chi2_list)**2 ) )
-        print("The sum of the root squared differences between C code and python are: %.3e" % sum_root_squared)
+        print("The sum of the root squared differences between C code and python, with constraints, are: %.3e" % sum_root_squared)
 
         # Calculate without contraints.
         v_pyt_cF_chi2_list = array(verify_pyt(constraints=False))
@@ -108,13 +111,14 @@ def main():
         # Print stuff.
         for i, chi_v_cT in enumerate(v_cT_chi2_list):
             chi_v_cF = v_cF_chi2_list[i]
+            chi_v_Newton_cF = v_Newton_cF_chi2_list[i]
             chi_v_pyt_cT = v_pyt_cT_chi2_list[i]
             chi_v_pyt_cF = v_pyt_cF_chi2_list[i]
             #print chi_v_cT, chi_v_cF, chi_v_pyt_cT, chi_v_pyt_cF,
-            print("C_cT=%1.1e C_cF=%1.1e P_cT=%1.1e P_cF=%1.1e" % (chi_v_cT-chi_v_cT, chi_v_cF-chi_v_cT, chi_v_pyt_cT-chi_v_cT, chi_v_pyt_cF-chi_v_cT) )
+            print("C_cT=%1.1e C_cF=%1.1e N_cF=%1.1e P_cT=%1.1e P_cF=%1.1e" % (chi_v_cT-chi_v_cT, chi_v_cF-chi_v_cT, chi_v_Newton_cF-chi_v_cT, chi_v_pyt_cT-chi_v_cT, chi_v_pyt_cF-chi_v_cT) )
 
     # Do verification for Python code, and difference between minfx and Scipy optimisation without constraints.
-    if True:
+    if False:
         # Calculate with Python code.
         # Calculate without contraints.
         v_pyt_cF_chi2_list = array(verify_pyt(constraints=False))
@@ -132,10 +136,12 @@ def main():
             print("P_cF=%1.1e Sci_cF=%1.1e" % (chi_v_pyt_cF-chi_v_pyt_cF, chi_v_pyt_cF-chi_v_sci_cF) )
 
     # Do profiling.
-
     if True:
+        print("\n################################# Profiling #################################")
+
+
         #################
-        print("Verify, with constraints, C code")
+        print("#####################\nProfile, with constraints, C code, Simplex \n#####################")
         constraints = True
 
         # Print statistics.
@@ -148,9 +154,8 @@ def main():
 
         print_report(filename=filename, verbose=verbose)
 
-    if True:
         #################
-        print("Verify, without constraints, C code")
+        print("#####################\n Verify, without constraints, C code, Simplex \n#####################")
         constraints = False
 
         # Print statistics.
@@ -163,9 +168,8 @@ def main():
 
         print_report(filename=filename, verbose=verbose)
 
-    if True:
         #################
-        print("Verify, without constraints, C code BFGS")
+        print("#####################\n Verify, without constraints, C code BFGS \n#####################")
         constraints = False
 
         # Print statistics.
@@ -178,9 +182,24 @@ def main():
 
         print_report(filename=filename, verbose=verbose)
 
-    if False:
+
         #################
-        print("Verify, with constraints, Python")
+        print("#####################\n Verify, without constraints, C code Newton \n#####################")
+        constraints = False
+
+        # Print statistics.
+        verbose = True
+
+        # Calc for verify with constraints.
+        filename = tempfile.NamedTemporaryFile(delete=False).name
+        # Profile for a single spin.
+        cProfile.run('verify(min_algor="Newton", constraints=%s)'%(constraints), filename)
+
+        print_report(filename=filename, verbose=verbose)
+
+
+        #################
+        print("#####################\n Verify, with constraints, Python, Simplex \n#####################")
         constraints = True
 
         # Print statistics.
@@ -193,9 +212,8 @@ def main():
 
         print_report(filename=filename, verbose=verbose)
 
-    if False:
         #################
-        print("Verify, without constraints, Python")
+        print("#####################\n Verify, without constraints, Python, Simplex \n#####################")
         constraints = False
 
         # Print statistics.
@@ -208,9 +226,8 @@ def main():
 
         print_report(filename=filename, verbose=verbose)
 
-    if True:
         #################
-        print("Verify, without constraints, Python Scipy")
+        print("#####################\n Verify, without constraints, Python Scipy \n#####################")
 
         # Print statistics.
         verbose = True
@@ -316,6 +333,11 @@ def verify(min_algor='simplex', constraints=None):
 
         E.set_settings_minfx(min_algor=min_algor, constraints=constraints)
 
+        # Define func.
+        func = func_wrapper
+        dfunc = dfunc_wrapper
+        d2func = d2func_wrapper
+
         # Initialise the function to minimise.
         scaling_list = [1.0, 1.0]
         setup(num_params=len(x0), num_times=len(E.times), values=E.values, sd=E.errors, relax_times=E.times, scaling_matrix=scaling_list)
@@ -353,6 +375,7 @@ def verify_pyt(min_algor='simplex', constraints=None):
         # Define func.
         func = E.func_exp
         dfunc = E.func_exp_grad
+        d2func = None
 
         results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=x0, min_algor=E.min_algor, min_options=E.min_options, func_tol=E.func_tol, grad_tol=E.grad_tol, maxiter=E.max_iterations, A=E.A, b=E.b, full_output=True, print_flag=E.verbosity)
 
