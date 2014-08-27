@@ -62,6 +62,8 @@ class Relax_disp(SystemTestCase):
             # The list of tests to skip.
             to_skip = [
                 "test_bug_21344_sparse_time_spinlock_acquired_r1rho_fail_relax_disp",
+                "test_estimate_r2eff_err",
+                "test_estimate_r2eff_err_methods"
                 "test_exp_fit",
                 "test_m61_exp_data_to_m61",
                 "test_r1rho_kjaergaard_auto",
@@ -78,8 +80,7 @@ class Relax_disp(SystemTestCase):
         if not dep_check.scipy_module:
             # The list of tests to skip.
             to_skip = [
-                "test_estimate_r2eff",
-                "test_estimate_r2eff_error"
+                "test_estimate_r2eff_err_methods"
             ]
 
             # Store in the status object.
@@ -2660,8 +2661,8 @@ class Relax_disp(SystemTestCase):
             spin_index += 1
 
 
-    def test_estimate_r2eff(self):
-        """Test the user function for estimating R2eff and associated errors for exponential curve fitting.
+    def test_estimate_r2eff_err(self):
+        """Test the user function for estimating R2eff errors from exponential curve fitting.
 
         This follows Task 7822.
         U{task #7822<https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
@@ -2750,8 +2751,8 @@ class Relax_disp(SystemTestCase):
         self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, do_assert=False)
 
 
-    def test_estimate_r2eff_error(self):
-        """Test the user function for estimating R2eff and associated errors for exponential curve fitting.
+    def test_estimate_r2eff_err_methods(self):
+        """Test the user function for estimating R2eff and associated errors for exponential curve fitting with different methods.
         This is compared with a run where erros are estimated by 2000 Monte Carlo simulations.
 
         This follows Task 7822.
