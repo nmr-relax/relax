@@ -118,6 +118,7 @@ class Auto_relax_disp(Base_analysis):
             ds.relax_gui.analyses[data_index].numeric_only = False
             ds.relax_gui.analyses[data_index].grid_inc = None
             ds.relax_gui.analyses[data_index].mc_sim_num = None
+            ds.relax_gui.analyses[data_index].exp_mc_sim_num = None
             ds.relax_gui.analyses[data_index].pre_run_dir = None
             ds.relax_gui.analyses[data_index].mc_sim_all_models = False
             ds.relax_gui.analyses[data_index].insignificance = 1.0
@@ -298,6 +299,7 @@ class Auto_relax_disp(Base_analysis):
 
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         data.mc_sim_num = gui_to_int(self.mc_sim_num.GetValue())
+        data.exp_mc_sim_num = gui_to_int(self.exp_mc_sim_num.GetValue())
         data.mc_sim_all_models = self.mc_sim_all_models.GetValue()
 
         # The insignificance level.
@@ -370,6 +372,7 @@ class Auto_relax_disp(Base_analysis):
 
         # The MC simulation settings.
         self.mc_sim_num = Spin_ctrl(box, self, text="Monte Carlo simulation number:", default=500, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.  For best results, at least 500 is recommended.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.exp_mc_sim_num = Spin_ctrl(box, self, text="Exponential Monte Carlo simulation:", default=500, min=-1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis, when estimating R2eff errors from exponential curve fitting.  Setting to '-1', estimates error from the Covariance matrix.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
         self.mc_sim_all_models = Boolean_ctrl(box, self, text="Per model error analysis:", default=False, tooltip="A flag which if True will cause Monte Carlo simulations to be performed for each individual model.  Otherwise Monte Carlo simulations will be reserved for the final model.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # The speed up of grid search.
@@ -629,6 +632,12 @@ class Auto_relax_disp(Base_analysis):
         elif hasattr(self.data, 'mc_sim_num'):
             self.mc_sim_num.SetValue(int(self.data.mc_sim_num))
 
+        # The EXP MC sim number.
+        if upload:
+            self.data.exp_mc_sim_num = gui_to_int(self.exp_mc_sim_num.GetValue())
+        elif hasattr(self.data, 'exp_mc_sim_num'):
+            self.exp_mc_sim_num.SetValue(int(self.data.exp_mc_sim_num))
+
         # The All model MC sim flag.
         if upload:
             self.data.mc_sim_all_models = self.mc_sim_all_models.GetValue()
@@ -713,7 +722,7 @@ class Execute_relax_disp(Execute):
         Relax_disp.opt_max_iterations = self.data.opt_max_iterations
 
         # Execute.
-        Relax_disp(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, results_dir=self.data.save_dir, models=self.data.models, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, pre_run_dir=self.data.pre_run_dir, mc_sim_all_models=self.data.mc_sim_all_models, insignificance=self.data.insignificance, numeric_only=self.data.numeric_only, r1_fit=self.data.r1_fit)
+        Relax_disp(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, results_dir=self.data.save_dir, models=self.data.models, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, exp_mc_sim_num=self.data.exp_mc_sim_num, pre_run_dir=self.data.pre_run_dir, mc_sim_all_models=self.data.mc_sim_all_models, insignificance=self.data.insignificance, numeric_only=self.data.numeric_only, r1_fit=self.data.r1_fit)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]

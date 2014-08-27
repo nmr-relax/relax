@@ -66,7 +66,7 @@ class Relax_disp:
         @type grid_inc:                     int or None
         @keyword mc_sim_num:                The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         @type mc_sim_num:                   int
-        @keyword exp_mc_sim_num:            The number of Monte Carlo simulations for the error analysis in the 'R2eff' model when exponential curves are fitted.  This defaults to the value of the mc_sim_num argument when not given.  For the 2-point fixed-time calculation for the 'R2eff' model, this argument is ignored.
+        @keyword exp_mc_sim_num:            The number of Monte Carlo simulations for the error analysis in the 'R2eff' model when exponential curves are fitted.  This defaults to the value of the mc_sim_num argument when not given.  When set to '-1', the R2eff errors are estimated from the Covariance matrix.  For the 2-point fixed-time calculation for the 'R2eff' model, this argument is ignored.
         @type exp_mc_sim_num:               int or None
         @keyword modsel:                    The model selection technique to use in the analysis to determine which model is the best for each spin cluster.  This can currently be one of 'AIC', 'AICc', and 'BIC'.
         @type modsel:                       str
