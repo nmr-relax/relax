@@ -686,12 +686,17 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This is a new experimental feature from version 3.3, and should only be tried out with big care.")
-uf.desc[-1].add_paragraph("This will estimate R2eff and the associated error by exponential curve fittting through scipy.optimize.leastsq.")
-uf.desc[-1].add_paragraph("scipy.optimize.leastsq is a wrapper around MINPACK's lmdif and lmder algorithms.")
-uf.desc[-1].add_paragraph("MINPACK is a FORTRAN90 library which solves systems of nonlinear equations, or carries out the least squares minimization of the residual of a set of linear or nonlinear equations.")
+uf.desc[-1].add_paragraph("This will estimate R2eff and the associated error by exponential curve fitting through scipy.optimize.leastsq, which is a wrapper around the MINPACK lmdif and lmder algorithms.  MINPACK is a FORTRAN90 library which solves systems of nonlinear equations, or carries out the least squares minimization of the residual of a set of linear or nonlinear equations.")
 uf.desc[-1].add_paragraph("Errors are calculated by taking the square root of the reported co-variance from leastsq.")
 uf.desc[-1].add_paragraph("This can be an huge time saving step, when performing model fitting in R1rho.  Errors of R2eff values, are normally estimated by time-consuming Monte-Carlo simulations.")
-uf.desc[-1].add_paragraph("Initial guess for the starting parameter x0 = [r2eff_est, i0_est], is by converting the exponential curve to a linear problem.  Then solving initial guess by linear least squares of: ln(Intensity[j]) = ln(i0) - time[j]* r2eff.")
+uf.desc[-1].add_paragraph("Initial guess for the starting parameter")
+uf.desc[-1].add_verbatim("""
+x0 = [r2eff_est, i0_est],
+""")
+uf.desc[-1].add_paragraph("is by converting the exponential curve to a linear problem.  Then solving initial guess by linear least squares of")
+uf.desc[-1].add_verbatim("""
+ln(Intensity[j]) = ln(i0) - time[j] * r2eff.
+""")
 uf.backend = estimate_r2eff
 uf.menu_text = "&r2eff_estimate"
 uf.gui_icon = "relax.relax_fit"
