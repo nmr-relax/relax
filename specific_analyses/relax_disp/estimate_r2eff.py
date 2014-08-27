@@ -160,23 +160,6 @@ class Exp:
             self.b = None
 
 
-    def calc_exp(self, times=None, r2eff=None, i0=None):
-        """Calculate the function values of exponential function.
-
-        @keyword times: The time points.
-        @type times:    numpy array
-        @keyword r2eff: The effective transversal relaxation rate.
-        @type r2eff:    float
-        @keyword i0:    The initial intensity.
-        @type i0:       float
-        @return:        The function values.
-        @rtype:         float
-        """
-
-        # Calculate.
-        return i0 * exp( -times * r2eff)
-
-
     def estimate_x0_exp(self, intensities=None, times=None):
         """Estimate starting parameter x0 = [r2eff_est, i0_est], by converting the exponential curve to a linear problem.
          Then solving by linear least squares of: ln(Intensity[j]) = ln(i0) - time[j]* r2eff.
@@ -210,8 +193,25 @@ class Exp:
         return [r2eff_est, i0_est]
 
 
-    def func_exp(self, params):
-        """Target function for exponential fit in minfx.
+    def func_exp(self, times=None, r2eff=None, i0=None):
+        """Calculate the function values of exponential function.
+
+        @keyword times: The time points.
+        @type times:    numpy array
+        @keyword r2eff: The effective transversal relaxation rate.
+        @type r2eff:    float
+        @keyword i0:    The initial intensity.
+        @type i0:       float
+        @return:        The function values.
+        @rtype:         float
+        """
+
+        # Calculate.
+        return i0 * exp( -times * r2eff)
+
+
+    def func_exp_chi2(self, params):
+        """Target function for minimising chi2 in minfx, for exponential fit.
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
@@ -228,7 +228,7 @@ class Exp:
         i0 = params[1]
 
         # Calculate.
-        self.back_calc[:] = self.calc_exp(times=self.times, r2eff=r2eff, i0=i0)
+        self.back_calc[:] = self.func_exp(times=self.times, r2eff=r2eff, i0=i0)
 
         # Return the total chi-squared value.
         chi2 = chi2_rankN(data=self.values, back_calc_vals=self.back_calc, errors=self.errors)
@@ -237,8 +237,8 @@ class Exp:
         return chi2
 
 
-    def func_exp_grad(self, params):
-        """Target function for the gradient (Jacobian matrix) for exponential fit in minfx.
+    def func_exp_chi2_grad(self, params):
+        """Target function for the gradient (Jacobian matrix) of func_exp_chi2() to minfx, for exponential fit .
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
@@ -264,17 +264,17 @@ class Exp:
         d_chi2_d_i0 = - 2.0 * ( -i0 * exp( -r2eff * self.times) + self.values) * exp( -r2eff * self.times) / self.errors**2
 
         # Define Jacobian as m rows with function derivatives and n columns of parameters.
-        self.jacobian_matrix = transpose(array( [d_chi2_d_r2eff , d_chi2_d_i0] ) )
+        self.jacobian_matrix_exp_chi2 = transpose(array( [d_chi2_d_r2eff , d_chi2_d_i0] ) )
 
         # Take the sum, to send to minfx.
         sum_d_chi2_d_r2eff = sum( d_chi2_d_r2eff )
         sum_d_chi2_d_i0 = sum( d_chi2_d_i0 )
 
         # Define Jacobian as m rows with function derivatives and n columns of parameters.
-        sum_jacobian_matrix = transpose(array( [sum_d_chi2_d_r2eff , sum_d_chi2_d_i0] ) )
+        sum_jacobian_matrix_exp_chi2 = transpose(array( [sum_d_chi2_d_r2eff , sum_d_chi2_d_i0] ) )
 
         # Return Jacobian matrix.
-        return sum_jacobian_matrix
+        return sum_jacobian_matrix_exp_chi2
 
 
     def func_exp_hess(self, params):
@@ -329,7 +329,7 @@ class Exp:
         """
 
         # Return
-        return 1. / self.errors * (self.calc_exp(self.times, *params) - self.values)
+        return 1. / self.errors * (self.func_exp(self.times, *params) - self.values)
 
 
     def multifit_covar(self, J=None, epsrel=None):
@@ -410,7 +410,7 @@ class Exp:
 
 # 'minfx'
 # 'scipy.optimize.leastsq'
-def estimate_r2eff(method='scipy.optimize.leastsq', spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, verbosity=1):
+def estimate_r2eff(method='minfx', spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, verbosity=1):
     """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.leastsq.
 
     scipy.optimize.leastsq is a wrapper around MINPACK's lmdif and lmder algorithms.
@@ -749,13 +749,13 @@ def minimise_minfx(E=None):
         # Minimise with minfx.
         # Define function to minimise for minfx.
         if match('^[Ss]implex$', E.min_algor):
-            t_func = E.func_exp
+            t_func = E.func_exp_chi2
 
             t_dfunc = None
             t_d2func = None
         else:
-            t_func = E.func_exp
-            t_dfunc = E.func_exp_grad
+            t_func = E.func_exp_chi2
+            t_dfunc = E.func_exp_chi2_grad
             t_d2func = E.func_exp_hess
 
     # Minimise.
@@ -766,20 +766,20 @@ def minimise_minfx(E=None):
 
     # Get the Jacobian.
     if do_C:
-        # First make a call to the Jacobian function, which store it in the class.
-        jacobian_matrix = transpose(asarray( jacobian(param_vector) ) )
+        # Calculate the direct exponential Jacobian matrix from C code.
+        jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
 
         # Compare with python code.
-        #E.func_exp_grad(params=param_vector)
+        #E.func_exp_chi2_grad(params=param_vector)
         #jacobian_matrix2 = deepcopy(E.jacobian_matrix)
         #print jacobian_matrix
         #print " "
         #print jacobian_matrix2
     else:
-        jacobian_matrix = deepcopy(E.jacobian_matrix)
+        jacobian_matrix_exp_chi2 = deepcopy(E.jacobian_matrix_exp_chi2)
 
     # Get the co-variance
-    pcov = E.multifit_covar(J=jacobian_matrix)
+    pcov = E.multifit_covar(J=jacobian_matrix_exp)
 
     # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
     param_vector_error = sqrt(diag(pcov))
