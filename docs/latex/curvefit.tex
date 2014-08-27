@@ -268,13 +268,13 @@ relax_fit.select_model('exp')
 minimise.grid_search(inc=11)
 
 # Minimise.
-minimise.execute('simplex', scaling=False, constraints=False)
+minimise.execute('newton', constraints=False)
 
 # Monte Carlo simulations.
 monte_carlo.setup(number=500)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise.execute('simplex', scaling=False, constraints=False)
+minimise.execute('newton', constraints=False)
 monte_carlo.error_analysis()
 
 # Save the relaxation rates.
@@ -505,17 +505,11 @@ The user function for executing the grid search is
 minimise.grid_search(inc=11)
 \end{lstlisting}
 
-The next step is to select one of the minimisation algorithms to optimise the model parameters.
-Currently for relaxation curve-fitting only simplex minimisation is supported.
-This is because the relaxation curve-fitting C module is incomplete only implementing the chi-squared function.
-The chi-squared gradient (the vector of first partial derivatives) and chi-squared Hessian (the matrix of second partial derivatives) are not yet implemented in the C modules and hence optimisation algorithms which only employ function calls are supported.
-Simplex minimisation is the only technique in relax which fits this criterion.
-In addition constraints cannot be used as the constraint algorithm is dependent on gradient calls.
-Therefore the minimisation command for relaxation curve-fitting is forced to be
+The next step is to select one of the minimisation algorithms to optimise the model parameters
 
 \begin{lstlisting}[firstnumber=65]
 # Minimise.
-minimise.execute('simplex', constraints=False)
+minimise.execute('newton', constraints=False)
 \end{lstlisting}
 
 
@@ -550,7 +544,7 @@ monte_carlo.initial_values()
 Then exactly the same optimisation as was used for the model can be performed
 
 \begin{lstlisting}[firstnumber=72]
-minimise.execute('simplex', constraints=False)
+minimise.execute('newton', constraints=False)
 \end{lstlisting}
 
 The parameter errors are then determined as the standard deviation of the optimised parameter values of the simulations
