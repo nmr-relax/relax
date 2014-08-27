@@ -77,9 +77,6 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
     # Perform checks.
     check_model_type(model=MODEL_R2EFF)
 
-    # Initialise class.
-    E = Exp(verbosity=verbosity)
-
     # Loop over the spins.
     for cur_spin, mol_name, resi, resn, cur_spin_id in spin_loop(selection=spin_id, full_info=True, return_id=True, skip_desel=True):
         # Generate spin string.
@@ -128,9 +125,6 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
             values = asarray(values)
             errors = asarray(errors)
             times = asarray(times)
-
-            # Initialise data in Class.
-            E.setup_data(values=values, errors=errors, times=times)
 
             # Initialise data in C code.
             scaling_list = [1.0, 1.0]
