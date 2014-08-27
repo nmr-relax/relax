@@ -132,6 +132,7 @@ dfunc(PyObject *self, PyObject *args) {
 
     /* Declarations. */
     PyObject *params_arg;
+    PyObject *list;
     int i;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
@@ -152,7 +153,7 @@ dfunc(PyObject *self, PyObject *args) {
     dchi2(dchi2_vals, values, back_calc, back_calc_grad, sd, num_times, num_params);
 
     /* Convert to a Python list, and scale the values. */
-    PyObject *list = PyList_New(0);
+    list = PyList_New(0);
     Py_INCREF(list);
     for (i = 0; i < num_params; i++) {
         PyList_Append(list, PyFloat_FromDouble(dchi2_vals[i] * scaling_matrix[i]));
@@ -170,6 +171,7 @@ d2func(PyObject *self, PyObject *args) {
 
     /* Declarations. */
     PyObject *params_arg;
+    PyObject *list, *list2;
     int j, k;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
@@ -195,10 +197,10 @@ d2func(PyObject *self, PyObject *args) {
     d2chi2(d2chi2_vals, values, back_calc, back_calc_grad, back_calc_hess, sd, num_times, num_params);
 
     /* Convert to a Python list, and scale the values. */
-    PyObject *list = PyList_New(0);
+    list = PyList_New(0);
     Py_INCREF(list);
     for (j = 0; j < num_params; j++) {
-        PyObject *list2 = PyList_New(0);
+        list2 = PyList_New(0);
         Py_INCREF(list2);
         for (k = 0; k < num_params; k++) {
             PyList_Append(list2, PyFloat_FromDouble(d2chi2_vals[j][k] * scaling_matrix[j] * scaling_matrix[k]));
@@ -234,6 +236,7 @@ jacobian(PyObject *self, PyObject *args) {
 
     /* Declarations. */
     PyObject *params_arg;
+    PyObject *list, *list2;
     int i, j;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
@@ -248,10 +251,10 @@ jacobian(PyObject *self, PyObject *args) {
     exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
 
     /* Convert to a Python list of lists. */
-    PyObject *list = PyList_New(0);
+    list = PyList_New(0);
     Py_INCREF(list);
     for (i = 0; i < num_params; i++) {
-        PyObject *list2 = PyList_New(0);
+        list2 = PyList_New(0);
         Py_INCREF(list2);
         for (j = 0; j < num_times; j++) {
             PyList_Append(list2, PyFloat_FromDouble(back_calc_grad[i][j]));
