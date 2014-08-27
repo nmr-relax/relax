@@ -88,8 +88,10 @@ def main():
         sum_root_squared = sum( sqrt( (v_cT_chi2_list - v_cF_chi2_list)**2 ) )
         print("The sum of the root squared differences between with and without constraints are: %.3e" % sum_root_squared)
 
-        # Calculate without contraints, BFGS.
-        #v_BFGS_cF_chi2_list = array(verify(min_algor='BFGS', constraints=False))
+        # Calculate without contraints, Newton.
+        v_Newton_cF_chi2_list = array(verify(min_algor='Newton', constraints=False))
+        sum_root_squared = sum( sqrt( (v_cT_chi2_list - v_Newton_cF_chi2_list)**2 ) )
+        print("The sum of the root squared differences between Simplex with constraints and Newton without constraints are: %.3e" % sum_root_squared)
 
         # Now calculate with Python code.
         # Calculate with contraints.
@@ -97,7 +99,7 @@ def main():
 
         # Verify against C code with constraints.
         sum_root_squared = sum( sqrt( (v_cT_chi2_list - v_pyt_cT_chi2_list)**2 ) )
-        print("The sum of the root squared differences between C code and python are: %.3e" % sum_root_squared)
+        print("The sum of the root squared differences between C code and python, with constraints, are: %.3e" % sum_root_squared)
 
         # Calculate without contraints.
         v_pyt_cF_chi2_list = array(verify_pyt(constraints=False))
@@ -109,10 +111,11 @@ def main():
         # Print stuff.
         for i, chi_v_cT in enumerate(v_cT_chi2_list):
             chi_v_cF = v_cF_chi2_list[i]
+            chi_v_Newton_cF = v_Newton_cF_chi2_list[i]
             chi_v_pyt_cT = v_pyt_cT_chi2_list[i]
             chi_v_pyt_cF = v_pyt_cF_chi2_list[i]
             #print chi_v_cT, chi_v_cF, chi_v_pyt_cT, chi_v_pyt_cF,
-            print("C_cT=%1.1e C_cF=%1.1e P_cT=%1.1e P_cF=%1.1e" % (chi_v_cT-chi_v_cT, chi_v_cF-chi_v_cT, chi_v_pyt_cT-chi_v_cT, chi_v_pyt_cF-chi_v_cT) )
+            print("C_cT=%1.1e C_cF=%1.1e N_cF=%1.1e P_cT=%1.1e P_cF=%1.1e" % (chi_v_cT-chi_v_cT, chi_v_cF-chi_v_cT, chi_v_Newton_cF-chi_v_cT, chi_v_pyt_cT-chi_v_cT, chi_v_pyt_cF-chi_v_cT) )
 
     # Do verification for Python code, and difference between minfx and Scipy optimisation without constraints.
     if False:
