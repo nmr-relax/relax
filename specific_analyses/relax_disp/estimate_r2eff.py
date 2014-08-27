@@ -24,7 +24,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import asarray, array, diag, dot, exp, inf, log, sqrt, sum, transpose, zeros
+from numpy import asarray, array, diag, dot, exp, eye, inf, log, multiply, sqrt, sum, transpose, zeros
 from numpy.linalg import inv
 from minfx.generic import generic_minimise
 from re import match, search
@@ -40,8 +40,9 @@ from specific_analyses.relax_disp.checks import check_model_type
 from specific_analyses.relax_disp.data import average_intensity, loop_exp_frq_offset_point, loop_frq, loop_time, return_param_key_from_data
 from specific_analyses.relax_disp.parameters import disassemble_param_vector
 from specific_analyses.relax_disp.variables import MODEL_R2EFF
+from specific_analyses.relax_fit.optimisation import func_wrapper, dfunc_wrapper, d2func_wrapper
 from target_functions.chi2 import chi2_rankN
-from target_functions.relax_fit import setup, func, dfunc, d2func, back_calc_I
+from target_functions.relax_fit import setup
 
 
 # Scipy installed.
@@ -257,16 +258,23 @@ class Exp:
         # See: http://wiki.nmr-relax.com/Calculate_jacobian_hessian_matrix_in_sympy_exponential_decay
 
         # Make partial derivative, with respect to r2eff.
-        d_chi2_d_r2eff = sum( 2.0 * i0 * self.times * ( -i0 * exp( -r2eff * self.times) + self.values) * exp( -r2eff * self.times ) / self.errors**2 )
+        d_chi2_d_r2eff = 2.0 * i0 * self.times * ( -i0 * exp( -r2eff * self.times) + self.values) * exp( -r2eff * self.times ) / self.errors**2
 
         # Make partial derivative, with respect to i0.
-        d_chi2_d_i0 = sum ( - 2.0 * ( -i0 * exp( -r2eff * self.times) + self.values) * exp( -r2eff * self.times) / self.errors**2 )
+        d_chi2_d_i0 = - 2.0 * ( -i0 * exp( -r2eff * self.times) + self.values) * exp( -r2eff * self.times) / self.errors**2
 
         # Define Jacobian as m rows with function derivatives and n columns of parameters.
-        jacobian_matrix = transpose(array( [d_chi2_d_r2eff , d_chi2_d_i0] ) )
+        self.jacobian_matrix = transpose(array( [d_chi2_d_r2eff , d_chi2_d_i0] ) )
+
+        # Take the sum, to send to minfx.
+        sum_d_chi2_d_r2eff = sum( d_chi2_d_r2eff )
+        sum_d_chi2_d_i0 = sum( d_chi2_d_i0 )
+
+        # Define Jacobian as m rows with function derivatives and n columns of parameters.
+        sum_jacobian_matrix = transpose(array( [sum_d_chi2_d_r2eff , sum_d_chi2_d_i0] ) )
 
         # Return Jacobian matrix.
-        return jacobian_matrix
+        return sum_jacobian_matrix
 
 
     def func_exp_hess(self, params):
@@ -324,62 +332,82 @@ class Exp:
         return 1. / self.errors * (self.calc_exp(self.times, *params) - self.values)
 
 
-    def multifit_cova(self, J=None, matrix_X_J=None, epsrel=None, matrix_X_covar=None):
-        """This is the implementation of 'gsl_multifit_covar' from GNU Scientific Library (GSL).
+    def multifit_covar(self, J=None, epsrel=None):
+        """This is the implementation of the multifit covariance.
+
+        This is inspired from GNU Scientific Library (GSL).
 
         This function uses the Jacobian matrix J to compute the covariance matrix of the best-fit parameters, covar.
+
         The parameter 'epsrel' is used to remove linear-dependent columns when J is rank deficient.
 
         The covariance matrix is given by,
 
-        covar = (J^T J)^{-1}
+            covar = (J^T J)^{-1}
 
         and is computed by QR decomposition of J with column-pivoting. Any columns of R which satisfy
 
-        |R_{kk}| <= epsrel |R_{11}|
+            |R_{kk}| <= epsrel |R_{11}|
 
-        are considered linearly-dependent and are excluded from the covariance matrix (the corresponding rows and columns of the covariance matrix are set to zero).
+        are considered linearly-dependent and are excluded from the covariance matrix
+        (the corresponding rows and columns of the covariance matrix are set to zero).
 
         If the minimisation uses the weighted least-squares function:
-            f_i = (Y(x, t_i) - y_i) / \sigma_i
-        then the covariance matrix above gives the statistical error on the best-fit parameters resulting from the Gaussian errors \sigma_i on the underlying data y_i.
-        This can be verified from the relation \delta f = J \delta c and the fact that the fluctuations in f from the data y_i are normalised by \sigma_i and so satisfy <\delta f \delta f^T> = I.
 
-        For an unweighted least-squares function f_i = (Y(x, t_i) - y_i) the covariance matrix above should be multiplied by the variance of the residuals about the best-fit 
+            f_i = (Y(x, t_i) - y_i) / \sigma_i
+
+        then the covariance matrix above gives the statistical error on the best-fit parameters resulting from the Gaussian errors \sigma_i on the underlying data y_i.
+
+        This can be verified from the relation \delta f = J \delta c and the fact that the fluctuations in f from the data y_i are normalised by \sigma_i
+        and so satisfy <\delta f \delta f^T> = I.
+
+        For an unweighted least-squares function f_i = (Y(x, t_i) - y_i) the covariance matrix above should be multiplied by
+        the variance of the residuals about the best-fit
+
             \sigma^2 = \sum (y_i - Y(x,t_i))^2 / (n-p) 
+
         to give the variance-covariance matrix \sigma^2 C.
         This estimates the statistical error on the best-fit parameters from the scatter of the underlying data. 
 
         See:
         U{GSL - GNU Scientific Library<http://www.gnu.org/software/gsl/>}
-        U{Manual: Computing the covariance matrix of best fit parameters<http://www.gnu.org/software/gsl/manual/gsl-ref_38.html#SEC528>}
-        U{Manual: Computing the covariance matrix of best fit parameters<http://www.gnu.org/software/gsl/manual/gsl-ref_38.html#SEC528>}
         U{Manual: Overview<http://www.gnu.org/software/gsl/manual/gsl-ref_37.html#SEC510>}
+        U{Manual: Computing the covariance matrix of best fit parameters<http://www.gnu.org/software/gsl/manual/gsl-ref_38.html#SEC528>}
+        U{Other reference<http://www.orbitals.com/self/least/least.htm>}
 
-        @param matrix_X_J:      The vector of parameter values.
-        @type matrix_X_J:       numpy rank-1 float array
-        @param epsrel:          The vector of parameter values.
-        @type epsrel:           numpy rank-1 float array
-        @param matrix_X_covar:  The vector of parameter values.
-        @type matrix_X_covar:   numpy rank-1 float array
-        @return:                ?
-        @rtype:                 ?
+        @param J:               The Jacobian matrix.
+        @type J:                numpy array
+        @param epsrel:          This is not implemented.  Any columns of R which satisfy |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix, where the corresponding rows and columns of the covariance matrix are set to zero.
+        @type epsrel:           float
+        @return:                The co-variance matrix
+        @rtype:                 square numpy array
         """
 
-        # http://www.orbitals.com/self/least/least.htm
-        # Weighting matrix. This is a square symmetric matrix. For independent measurements, this is a diagonal matrix. Larger values indicate greater significance
-        W = sum( self.errors**2 )
+        # Weighting matrix. This is a square symmetric matrix.
+        # For independent measurements, this is a diagonal matrix. Larger values indicate greater significance.
 
-        # The covariance matrix (sometimes referred to as the variance-covariance matrix), Qxx, is defined as
-        # Qxx = (J^t W J)^(-1) 
+        # Make a square diagonal matrix.
+        eye_mat = eye(self.errors.shape[0])
 
+        # Now form the error matrix, with errors down the diagonal.
+        #weights = self.errors**2
+        weights = self.errors
+
+        W = multiply(weights, eye_mat)
+
+        # The covariance matrix (sometimes referred to as the variance-covariance matrix), Qxx, is defined as:
+        # Qxx = (J^t W J)^(-1)
+
+        # Calculate step by step, by matrix multiplication.
         Jt = transpose(J)
-
-        # Calc
         Jt_W = dot(Jt, W)
         Jt_W_J = dot(Jt_W, J)
-        print Jt_W_J
+
+        # Invert matrix.
         Qxx = inv(Jt_W_J)
+
+        return Qxx
+
 
 # 'minfx'
 # 'scipy.optimize.leastsq'
@@ -706,16 +734,17 @@ def minimise_minfx(E=None):
     E.set_settings_minfx(min_algor=min_algor)
 
     # Do C code
-    do_C = True
+    do_C = False
 
     if do_C:
         # Initialise the function to minimise.
         scaling_list = [1.0, 1.0]
         setup(num_params=len(x0), num_times=len(E.times), values=E.values, sd=E.errors, relax_times=E.times, scaling_matrix=scaling_list)
 
-        t_func = func
-        t_dfunc = dfunc
-        t_d2func = d2func
+
+        t_func = func_wrapper
+        t_dfunc = dfunc_wrapper
+        t_d2func = d2func_wrapper
 
     else:
         # Minimise with minfx.
@@ -737,13 +766,18 @@ def minimise_minfx(E=None):
     param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results_minfx
 
     # Get the Jacobian.
-    jacobian_matrix = E.func_exp_grad(param_vector)
-
-    # Get the covariance.
-    #a = E.multifit_cova(J=jacobian_matrix)
+    # First make a call to the Jacobian function, which store it in the class.
+    E.func_exp_grad(params=param_vector)
+    jacobian_matrix = deepcopy(E.jacobian_matrix)
 
     # Set error to inf.
-    param_vector_error = [inf, inf]
+    #param_vector_error = [inf, inf]
+
+    # Get the co-variance
+    pcov = E.multifit_covar(J=jacobian_matrix)
+
+    # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
+    param_vector_error = sqrt(diag(pcov))
 
     # Pack to list.
     results = [param_vector, param_vector_error, chi2, iter_count, f_count, g_count, h_count, warning]
