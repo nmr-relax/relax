@@ -84,13 +84,13 @@ relax_fit.select_model('exp')
 minimise.grid_search(inc=11)
 
 # Minimise.
-minimise.execute('simplex', scaling=False, constraints=False)
+minimise.execute('newton', constraints=False)
 
 # Monte Carlo simulations.
 monte_carlo.setup(number=500)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise.execute('simplex', scaling=False, constraints=False)
+minimise.execute('newton', constraints=False)
 monte_carlo.error_analysis()
 
 # Save the relaxation rates.
