@@ -24,8 +24,8 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import asarray, array, diag, dot, exp, eye, inf, log, multiply, sqrt, sum, transpose, zeros
-from numpy.linalg import inv
+from numpy import absolute, any, array, asarray, diag, dot, exp, eye, inf, log, multiply, spacing, sqrt, sum, transpose, zeros
+from numpy.linalg import cond, inv, qr
 from minfx.generic import generic_minimise
 from re import match, search
 import sys
@@ -34,6 +34,7 @@ from warnings import warn
 # relax module imports.
 from dep_check import scipy_module
 from lib.text.sectioning import section, subsection
+from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import generate_spin_string, spin_loop
 from pipe_control.spectrum import error_analysis
 from specific_analyses.relax_disp.checks import check_model_type
@@ -365,7 +366,7 @@ class Exp:
         return 1. / self.errors * (self.func_exp(self.times, *params) - self.values)
 
 
-    def multifit_covar(self, J=None, epsrel=None):
+    def multifit_covar(self, J=None, epsrel=0.0):
         """This is the implementation of the multifit covariance.
 
         This is inspired from GNU Scientific Library (GSL).
@@ -410,7 +411,7 @@ class Exp:
 
         @param J:               The Jacobian matrix.
         @type J:                numpy array
-        @param epsrel:          This is not implemented.  Any columns of R which satisfy |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix, where the corresponding rows and columns of the covariance matrix are set to zero.
+        @param epsrel:          Any columns of R which satisfy |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix, where the corresponding rows and columns of the covariance matrix are set to zero.
         @type epsrel:           float
         @return:                The co-variance matrix
         @rtype:                 square numpy array
@@ -435,8 +436,39 @@ class Exp:
         Jt_W = dot(Jt, W)
         Jt_W_J = dot(Jt_W, J)
 
-        # Invert matrix.
-        Qxx = inv(Jt_W_J)
+        # Invert matrix by QR decomposition, to check columns of R which satisfy: |R_{kk}| <= epsrel |R_{11}|
+        Q, R = qr(Jt_W_J)
+
+        # Make the state ment matrix.
+        abs_epsrel_R11 = absolute( multiply(epsrel, R[0, 0]) )
+
+        # Make and array of True/False statements.
+        # These are considered linearly-dependent and are excluded from the covariance matrix.
+        # The corresponding rows and columns of the covariance matrix are set to zero
+        epsrel_check = absolute(R) <= abs_epsrel_R11
+
+        # Form the covariance matrix.
+        Qxx = dot(inv(R), transpose(Q) )
+        #Qxx2 = dot(inv(R), inv(Q) )
+        #print(Qxx - Qxx2)
+
+        # Test direct invert matrix of matrix.
+        #Qxx_test = inv(Jt_W_J)
+
+        # Replace values in Covariance matrix with inf.
+        Qxx[epsrel_check] = 0.0
+
+        # Throw a warning, that some colums are considered linearly-dependent and are excluded from the covariance matrix.
+        # Only check for the diagonal, since the that holds the variance.
+        diag_epsrel_check = diag(epsrel_check)
+
+        # If any of the diagonals does not meet the epsrel condition.
+        if any(diag_epsrel_check):
+            for i in range(diag_epsrel_check.shape[0]):
+                abs_Rkk = absolute(R[i, i])
+                if abs_Rkk <= abs_epsrel_R11:
+                    warn(RelaxWarning("Co-Variance element k,k=%i was found to meet |R_{kk}| <= epsrel |R_{11}|, meaning %1.1f <= %1.3f * %1.1f , and is therefore determined to be linearly-dependent and are excluded from the covariance matrix by setting the value to 0.0." % (i+1, abs_Rkk, epsrel, abs_epsrel_R11/epsrel) ))
+                    #print(cond(Jt_W_J) < 1./spacing(1.) )
 
         return Qxx
 
@@ -810,6 +842,9 @@ def minimise_minfx(E=None):
         # Call class, to store value.
         E.func_exp_grad(param_vector)
         jacobian_matrix_exp = E.jacobian_matrix_exp
+        #E.func_exp_chi2_grad(param_vector)
+        #jacobian_matrix_exp = E.jacobian_matrix_exp_chi2
+
 
     # Get the co-variance
     pcov = E.multifit_covar(J=jacobian_matrix_exp)
