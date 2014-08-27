@@ -543,6 +543,66 @@ class Relax_disp(GuiTestCase):
         self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
 
 
+    def test_r2eff_err_estimate(self):
+        """Test U{task #7822:<https://gna.org/task/?7822>}, Implement user function to estimate R2eff and associated errors for exponential curve fitting.."""
+
+        # The paths to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'+sep
+
+        # Simulate the new analysis wizard, selecting the fixed time CPMG experiment.
+        self.app.gui.analysis.menu_new(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
+        page.select_disp(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+
+        # Get the data.
+        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
+
+        # Set up the analysis.
+        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle, uf_exec=uf_exec)
+
+        # Alias the analysis.
+        analysis = self.app.gui.analysis.get_page_from_name("Relaxation dispersion")
+
+        # Change the results directory.
+        analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
+
+        # Load the sequence.
+        file = data_path + '1_setup_r1rho_GUI.py'
+        self._execute_uf(uf_name='script', file=file, dir=None)
+
+        # De select spins
+        self._execute_uf(uf_name='deselect.spin', spin_id=":1-100")
+        self._execute_uf(uf_name='select.spin', spin_id=":52@N")
+
+        # Deselect all but the 'TP02' model.
+        models = [MODEL_R2EFF, MODEL_NOREX]
+        for i in range(len(analysis.model_field.models_stripped)):
+            if analysis.model_field.models_stripped[i] in models:
+                analysis.model_field.select[i] = True
+            else:
+                analysis.model_field.select[i] = False
+        analysis.model_field.modify()
+
+        # Set the grid search size and number of MC sims.
+        analysis.grid_inc.SetValue(0)
+        analysis.mc_sim_num.SetValue(3)
+        analysis.exp_mc_sim_num.SetValue(-1)
+
+        # Execute relax.
+        analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_relax.GetId()))
+
+        # Wait for execution to complete.
+        analysis.thread.join()
+
+        # Flush all wx events.
+        wx.Yield()
+
+        # Exceptions in the thread.
+        self.check_exceptions()
+
+
     def test_tp02_data_to_tp02(self):
         """Test the GUI analysis with the relaxation dispersion 'TP02' model fitting to the 'TP02' synthetic data."""
 
