@@ -466,6 +466,9 @@ class Relax_disp:
         # Monte Carlo simulations.
         do_monte_carlo = False
         if model == MODEL_R2EFF:
+            # The constraints flag.
+            constraints = False
+
             # Skip optimisation, if 'r2eff' + 'r2eff_err' is present and flag for forcing optimisation is not raised.
             if has_r2eff and not self.optimise_r2eff:
                 pass
@@ -479,6 +482,8 @@ class Relax_disp:
                 do_monte_carlo = True
 
         elif self.mc_sim_all_models or len(self.models) < 2:
+            # The constraints flag.
+            constraints = True
             do_monte_carlo = True
 
         # Do Monte Carlo simulations.
@@ -489,7 +494,7 @@ class Relax_disp:
                 self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
             self.interpreter.monte_carlo.create_data()
             self.interpreter.monte_carlo.initial_values()
-            self.interpreter.minimise.execute('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
+            self.interpreter.minimise.execute('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=constraints)
             if self.eliminate:
                 self.interpreter.eliminate()
             self.interpreter.monte_carlo.error_analysis()
