@@ -38,7 +38,8 @@ from lib.geometry.coord_transform import cartesian_to_spherical
 from lib.geometry.rotations import axis_angle_to_R, R_to_euler_zyz
 from lib.io import open_write_file
 from lib.linear_algebra.kronecker_product import kron_prod
-from lib.physical_constants import dipolar_constant, g1H, pcs_constant, return_gyromagnetic_ratio
+from lib.periodic_table import periodic_table
+from lib.physical_constants import dipolar_constant, pcs_constant
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from prompt.interpreter import Interpreter
@@ -147,7 +148,7 @@ class Main:
 
             # Calculate the partial PCS constant (with no vector length).
             for tag in self._tensors:
-                d[tag].append(pcs_constant(cdp.temperature[tag], cdp.spectrometer_frq[tag] * 2.0 * pi / g1H, 1.0))
+                d[tag].append(pcs_constant(cdp.temperature[tag], cdp.spectrometer_frq[tag] * 2.0 * pi / periodic_table.gyromagnetic_ratio('1H'), 1.0))
 
         # Repackage the data for speed.
         spin_pos = array(spin_pos, float64)
@@ -249,8 +250,8 @@ class Main:
             spin2 = return_spin(interatom.spin_id2)
 
             # Gyromagnetic ratios.
-            g1 = return_gyromagnetic_ratio(spin1.isotope)
-            g2 = return_gyromagnetic_ratio(spin2.isotope)
+            g1 = periodic_table.gyromagnetic_ratio(spin1.isotope)
+            g2 = periodic_table.gyromagnetic_ratio(spin2.isotope)
 
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
             d.append(3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r))
