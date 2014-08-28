@@ -34,6 +34,7 @@ The currently used isotope atomic masses are taken from U{http://www.ciaaw.org/a
 # Python module imports.
 from numpy import array, average, float64
 from re import search, split
+from string import lower, upper
 
 # relax module imports.
 from lib.errors import RelaxError
@@ -63,6 +64,24 @@ def process_mass(mass):
 
         # Convert to a float and return the value.
         return float(val)
+
+
+def process_symbol(symbol):
+    """Make sure the symbol is in the correct format.
+
+    @param symbol:  The atomic symbol.
+    @type symbol:   str
+    @return:        The corrected atomic symbol.
+    @rtype:         str
+    """
+
+    # The format is uppercase first letter, lowercase second.
+    new_symbol = upper(symbol[0])
+    if len(symbol) == 2:
+        new_symbol += lower(symbol[1])
+
+    # Return the corrected atomic symbol.
+    return new_symbol
 
 
 
@@ -198,7 +217,7 @@ class Periodic_table(dict):
             A = int(split('[A-Z]', id)[0])
 
             # The atomic symbol.
-            symbol = split('[0-9]', id)[-1]
+            symbol = process_symbol(split('[0-9]', id)[-1])
 
             # Get the isotope container.
             isotope = self._get_isotope(symbol=symbol, A=A)
@@ -219,6 +238,9 @@ class Periodic_table(dict):
         @return:            The standard atomic weight.
         @rtype:             float
         """
+
+        # Process the symbol.
+        symbol = process_symbol(symbol)
 
         # Checks.
         if symbol not in self:
