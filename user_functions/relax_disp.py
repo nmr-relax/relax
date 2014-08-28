@@ -636,7 +636,7 @@ uf.title = "Estimate R2eff errors by the Jacobian matrix."
 uf.title_short = "Estimate R2eff errors."
 uf.add_keyarg(
     name = "chi2_jacobian",
-    default = False,
+    default = True,
     py_type = "bool",
     desc_short = "use of chi2 Jacobian",
     desc = "If the Jacobian derived from the chi2 function, should be used instead of the Jacobian from the exponential function."
