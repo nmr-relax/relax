@@ -43,8 +43,7 @@ class Periodic_table:
         self.atomic_weights = []
 
 
-    def _add(self, atomic_number=None, symbol=None, name=None, atomic_weight=None):,
-    atomic_weight=""
+    def _add(self, atomic_number=None, symbol=None, name=None, atomic_weight=None):
         """Add an element to the table.
 
         @keyword atomic_number:     The atomic number.
