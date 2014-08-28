@@ -276,7 +276,7 @@ class Periodic_table(dict):
         return process_mass(self[symbol].atomic_weight)
 
 
-    def gyromagnetic_ratio(isotope=None):
+    def gyromagnetic_ratio(self, isotope=None):
         """Return the gyromagnetic ratio for the isotope.
 
         @keyword isotope:   The isotope name, e.g. '15N'.
