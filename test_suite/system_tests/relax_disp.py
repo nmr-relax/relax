@@ -25,7 +25,8 @@
 from os import F_OK, access, getcwd, path, sep
 from numpy import array, exp, median, log, save, sum, zeros
 import re, math
-from tempfile import mkdtemp
+from tempfile import mkdtemp, NamedTemporaryFile
+
 
 # relax module imports.
 from auto_analyses import relax_disp
@@ -35,7 +36,8 @@ from lib.errors import RelaxError
 from lib.io import get_file_path
 from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
 from specific_analyses.relax_disp.checks import check_missing_r1
-from specific_analyses.relax_disp.data import average_intensity, generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_grace_file_name_ini, return_param_key_from_data
+from specific_analyses.relax_disp.estimate_r2eff import estimate_r2eff
+from specific_analyses.relax_disp.data import average_intensity, check_intensity_errors, generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_grace_file_name_ini, return_param_key_from_data
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.model import models_info, nesting_param
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_FULL, MODEL_LIST_NUMERIC_CPMG, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02, MODEL_TAP03
@@ -61,6 +63,9 @@ class Relax_disp(SystemTestCase):
             # The list of tests to skip.
             to_skip = [
                 "test_bug_21344_sparse_time_spinlock_acquired_r1rho_fail_relax_disp",
+                "test_estimate_r2eff_err",
+                "test_estimate_r2eff_err_auto",
+                "test_estimate_r2eff_err_methods"
                 "test_exp_fit",
                 "test_m61_exp_data_to_m61",
                 "test_r1rho_kjaergaard_auto",
@@ -77,8 +82,7 @@ class Relax_disp(SystemTestCase):
         if not dep_check.scipy_module:
             # The list of tests to skip.
             to_skip = [
-                "test_estimate_r2eff",
-                "test_estimate_r2eff_error"
+                "test_estimate_r2eff_err_methods"
             ]
 
             # Store in the status object.
@@ -2659,8 +2663,8 @@ class Relax_disp(SystemTestCase):
             spin_index += 1
 
 
-    def test_estimate_r2eff(self):
-        """Test the user function for estimating R2eff and associated errors for exponential curve fitting.
+    def test_estimate_r2eff_err(self):
+        """Test the user function for estimating R2eff errors from exponential curve fitting.
 
         This follows Task 7822.
         U{task #7822<https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
@@ -2730,8 +2734,17 @@ class Relax_disp(SystemTestCase):
         # Set the model.
         self.interpreter.relax_disp.select_model(MODEL_R2EFF)
 
-        # Estimate R2eff and errors.
-        self.interpreter.relax_disp.r2eff_estimate()
+        # Check if intensity errors have already been calculated.
+        check_intensity_errors()
+
+        # Do a grid search.
+        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=11, constraints=True, verbosity=1)
+
+        # Minimise.
+        self.interpreter.minimise.execute(min_algor='Newton', constraints=False, verbosity=1)
+
+        # Estimate R2eff errors.
+        self.interpreter.relax_disp.r2eff_err_estimate()
 
         # Run the analysis.
         relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
@@ -2740,8 +2753,107 @@ class Relax_disp(SystemTestCase):
         self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, do_assert=False)
 
 
-    def test_estimate_r2eff_error(self):
-        """Test the user function for estimating R2eff and associated errors for exponential curve fitting.
+    def test_estimate_r2eff_err_auto(self):
+        """Test the user function for estimating R2eff errors from exponential curve fitting, via the auto_analyses menu.
+
+        This follows Task 7822.
+        U{task #7822<https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
+
+        This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
+        Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
+        """
+
+        # Cluster residues
+        cluster_ids = [
+        ":13@N",
+        ":15@N",
+        ":16@N",
+        ":25@N",
+        ":26@N",
+        ":28@N",
+        ":39@N",
+        ":40@N",
+        ":41@N",
+        ":43@N",
+        ":44@N",
+        ":45@N",
+        ":49@N",
+        ":52@N",
+        ":53@N"]
+
+        # Load the data.
+        #self.setup_r1rho_kjaergaard(cluster_ids=cluster_ids, read_R1=False)
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'+sep
+
+        # Set pipe name, bundle and type.
+        pipe_name = 'base pipe'
+        pipe_bundle = 'relax_disp'
+        pipe_type = 'relax_disp'
+
+        # Create the data pipe.
+        self.interpreter.pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type=pipe_type)
+
+        file = data_path + '1_setup_r1rho_GUI.py'
+        self.interpreter.script(file=file, dir=None)
+
+        # The dispersion models.
+        MODELS = [MODEL_R2EFF, MODEL_NOREX]
+
+        # The grid search size (the number of increments per dimension).
+        GRID_INC = None
+
+        # The number of Monte Carlo simulations to be used for error analysis for exponential curve fitting of R2eff.
+        # When set to minus 1, estimation of the errors will be extracted from the covariance matrix.
+        # This is HIGHLY likely to be wrong, but can be used in an initial test fase.
+        EXP_MC_NUM = -1
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        MC_NUM = 3
+
+        # Model selection technique.
+        MODSEL = 'AIC'
+
+        # Execute the auto-analysis (fast).
+        # Standard parameters are: func_tol = 1e-25, grad_tol = None, max_iter = 10000000,
+        OPT_FUNC_TOL = 1e-25
+        relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
+        OPT_MAX_ITERATIONS = 10000000
+        relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
+
+        # Make all spins free
+        #for curspin in cluster_ids:
+        #    self.interpreter.relax_disp.cluster('free spins', curspin)
+        #    # Shut them down
+        #    self.interpreter.deselect.spin(spin_id=curspin, boolean='OR', change_all=False)
+
+        # Make all spins free
+        self.interpreter.deselect.spin(spin_id=':1-100', change_all=False)
+
+        # Select only a subset of spins for global fitting
+        #self.interpreter.select.spin(spin_id=':41@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':41@N')
+
+        #self.interpreter.select.spin(spin_id=':40@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':40@N')
+
+        self.interpreter.select.spin(spin_id=':52@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':52@N')
+
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            print(spin_id)
+
+        result_dir_name = self.tmpdir
+        r1_fit = False
+
+        # Run the analysis.
+        relax_disp.Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, exp_mc_sim_num=EXP_MC_NUM, modsel=MODSEL, r1_fit=r1_fit)
+
+        # Verify the data.
+        self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, do_assert=False)
+
+
+    def test_estimate_r2eff_err_methods(self):
+        """Test the user function for estimating R2eff and associated errors for exponential curve fitting with different methods.
         This is compared with a run where erros are estimated by 2000 Monte Carlo simulations.
 
         This follows Task 7822.
@@ -2797,11 +2909,16 @@ class Relax_disp(SystemTestCase):
         self.interpreter.pipe.copy(pipe_from='MC_2000', pipe_to='r2eff_est')
         self.interpreter.pipe.switch(pipe_name='r2eff_est')
 
+        # Delete old errors.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            delattr(cur_spin, 'r2eff_err')
+            delattr(cur_spin, 'i0_err')
+
         # Set the model.
         self.interpreter.relax_disp.select_model(MODEL_R2EFF)
 
         # Estimate R2eff and errors.
-        self.interpreter.relax_disp.r2eff_estimate(verbosity=0)
+        self.interpreter.relax_disp.r2eff_err_estimate(verbosity=0)
 
         for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
             # Generate spin string.
@@ -2826,6 +2943,16 @@ class Relax_disp(SystemTestCase):
                 print("%s at %3.1f MHz, for offset=%3.3f ppm and dispersion point %-5.1f." % (exp_type, frq/1E6, offset, point) )
                 print("r2eff=%3.3f/%3.3f r2eff_err=%3.4f/%3.4f" % (r2eff, r2eff_est, r2eff_err, r2eff_err_est) ),
                 print("i0=%3.3f/%3.3f i0_err=%3.4f/%3.4f\n" % (i0, i0_est, i0_err, i0_err_est) )
+
+
+        # Now do it manually.
+        #estimate_r2eff(method='scipy.optimize.leastsq')
+        #estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints=False)
+        #estimate_r2eff(method='minfx', min_algor='simplex', c_code=False, constraints=False)
+        #estimate_r2eff(method='minfx', min_algor='BFGS', c_code=True, constraints=False)
+        #estimate_r2eff(method='minfx', min_algor='BFGS', c_code=False, constraints=False)
+        estimate_r2eff(method='minfx', min_algor='Newton', c_code=True, constraints=False)
+        estimate_r2eff(method='minfx', min_algor='BFGS', c_code=False, constraints=False, chi2_jacobian=True)
 
 
     def test_exp_fit(self):
@@ -7444,6 +7571,212 @@ class Relax_disp(SystemTestCase):
 
         # Close file
         w_eff_file.close()
+
+
+    def verify_estimate_r2eff_err_compare_mc(self):
+        """Test the user function for estimating R2eff errors from exponential curve fitting, and compare it with Monte-Carlo simulations.
+
+        This follows Task 7822.
+        U{task #7822<https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
+
+        This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
+        Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
+        """
+
+        # Load the data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'+sep
+
+        # Set pipe name, bundle and type.
+        pipe_name = 'base pipe'
+        pipe_bundle = 'relax_disp'
+        pipe_type = 'relax_disp'
+
+        # Create the data pipe.
+        self.interpreter.pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type=pipe_type)
+
+        file = data_path + '1_setup_r1rho_GUI.py'
+        self.interpreter.script(file=file, dir=None)
+
+        # Deselect all spins.
+        self.interpreter.deselect.spin(spin_id=':1-100', change_all=False)
+
+        # Select one spin.
+        self.interpreter.select.spin(spin_id=':52@N', change_all=False)
+
+        # Set the model.
+        self.interpreter.relax_disp.select_model(MODEL_R2EFF)
+
+        # Check if intensity errors have already been calculated.
+        check_intensity_errors()
+
+        # Do a grid search.
+        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=11, constraints=True, verbosity=1)
+
+        # Set algorithm.
+        min_algor = 'Newton'
+        constraints = False
+
+        # Minimise.
+        self.interpreter.minimise.execute(min_algor=min_algor, constraints=constraints, verbosity=1)
+
+        # Loop over old err attributes.
+        err_attr_list = ['r2eff_err', 'i0_err']
+
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Loop over old err attributes.
+            for err_attr in err_attr_list:
+                if hasattr(cur_spin, err_attr):
+                    delattr(cur_spin, err_attr)
+
+        # Estimate R2eff errors.
+        self.interpreter.relax_disp.r2eff_err_estimate()
+
+        # Collect the estimation data.
+        my_dic = {}
+        param_key_list = []
+        est_keys = []
+        est_key = '-1'
+        est_keys.append(est_key)
+        spin_id_list = []
+
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Add key to dic.
+            my_dic[spin_id] = {}
+
+            # Add key for estimate.
+            my_dic[spin_id][est_key] = {}
+
+            # Add spin key to list.
+            spin_id_list.append(spin_id)
+
+            # Generate spin string.
+            spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+            for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                # Generate the param_key.
+                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                # Append key.
+                param_key_list.append(param_key)
+
+                # Add key to dic.
+                my_dic[spin_id][est_key][param_key] = {}
+
+                # Get the value.
+                # Loop over err attributes.
+                for err_attr in err_attr_list:
+                    if hasattr(cur_spin, err_attr):
+                        get_err_attr = getattr(cur_spin, err_attr)[param_key]
+                    else:
+                        get_err_attr = 0.0
+
+                    # Save to dic.
+                    my_dic[spin_id][est_key][param_key][err_attr] = get_err_attr
+
+
+        # Make Carlo Simulations number
+        mc_number_list = range(0, 500, 50)
+
+        sim_attr_list = ['chi2_sim', 'f_count_sim', 'g_count_sim', 'h_count_sim', 'i0_sim', 'iter_sim', 'peak_intensity_sim', 'r2eff_sim', 'select_sim', 'warning_sim']
+
+        # Loop over the Monte Carlo simulations:
+        for number in mc_number_list:
+            # First delete old simulations.
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                # Loop over old err attributes.
+                for err_attr in err_attr_list:
+                    if hasattr(cur_spin, err_attr):
+                        delattr(cur_spin, err_attr)
+
+                # Loop over the simulated attributes.
+                for sim_attr in sim_attr_list:
+                    if hasattr(cur_spin, sim_attr):
+                        delattr(cur_spin, sim_attr)
+
+            self.interpreter.monte_carlo.setup(number=number)
+            self.interpreter.monte_carlo.create_data()
+            self.interpreter.monte_carlo.initial_values()
+            self.interpreter.minimise.execute(min_algor=min_algor, constraints=constraints)
+            self.interpreter.eliminate()
+            self.interpreter.monte_carlo.error_analysis()
+
+            est_key = '%i'%number
+            est_keys.append(est_key)
+
+            # Collect data.
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                # Add key for estimate.
+                my_dic[spin_id][est_key] = {}
+
+                for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                    # Generate the param_key.
+                    param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                    # Add key to dic.
+                    my_dic[spin_id][est_key][param_key] = {}
+
+                    # Get the value.
+                    # Loop over err attributes.
+                    for err_attr in err_attr_list:
+                        if hasattr(cur_spin, err_attr):
+                            get_err_attr = getattr(cur_spin, err_attr)[param_key]
+                        else:
+                            get_err_attr = 0.0
+
+                        # Save to dic.
+                        my_dic[spin_id][est_key][param_key][err_attr] = get_err_attr
+
+        # Set what to extract.
+        err_attr = err_attr_list[0]
+
+        # Define list with text.
+        text_list = []
+
+        # Now loop through the data.
+        for spin_id in spin_id_list:
+            for est_key in est_keys:
+                # Define list to pickup data.
+                r2eff_err_list = []
+
+                for param_key in param_key_list:
+                    # Get the value.
+                    r2eff_err = my_dic[spin_id][est_key][param_key][err_attr]
+
+                    # Add to list.
+                    r2eff_err_list.append(r2eff_err)
+
+                # Sum the list
+                sum_array = sum(array(r2eff_err_list))
+
+                # Join floats to string.
+                r2eff_err_str = " ".join(format(x, "2.3f") for x in r2eff_err_list)
+
+                # Define print string.
+                text = "%8s %s sum= %2.3f" % (est_key, r2eff_err_str, sum_array)
+                text_list.append(text)
+
+
+        # Now print.
+        filepath = NamedTemporaryFile(delete=False).name
+        # Open the files for testing.
+        w_file = open(filepath, 'w')
+
+        print("Printing the estimated R2eff error as function of estimation from Co-variance and number of Monte-Carlo simulations.")
+
+        for text in text_list:
+            # Print.
+            print(text)
+
+            # Write to file.
+            w_file.write(text+"\n")
+
+        # Close files
+        w_file.close()
+
+        print("Filepath is: %s"%filepath)
+        print("Start 'gnuplot' and write:")
+        print("set term dumb")
+        print("plot '%s' using 1:17 title 'R2eff error as function of MC number' w linespoints "%filepath)
 
 
     def verify_r1rho_kjaergaard_missing_r1(self, models=None, result_dir_name=None, do_assert=True):
