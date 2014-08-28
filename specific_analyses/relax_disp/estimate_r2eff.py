@@ -59,9 +59,42 @@ if scipy_module:
     from scipy.optimize import leastsq
 
 
-def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
+def func_exp_chi2_grad(params=None, values=None, errors=None, times=None):
+    """Target function for the gradient (Jacobian matrix) of func_exp_chi2() to minfx, for exponential fit .
+
+    @param params:      The vector of parameter values.
+    @type params:       numpy rank-1 float array
+    @keyword values:    The measured intensity values per time point.
+    @type values:       numpy array
+    @keyword errors:    The standard deviation of the measured intensity values per time point.
+    @type errors:       numpy array
+    @keyword times:     The time points.
+    @type times:        numpy array
+    @return:            The Jacobian matrix with 'm' rows of function derivatives per 'n' columns of parameters.
+    @rtype:             numpy array
+    """
+
+    # Unpack the parameter values.
+    r2eff = params[0]
+    i0 = params[1]
+
+    # Make partial derivative, with respect to r2eff.
+    d_chi2_d_r2eff = 2.0 * i0 * times * ( -i0 * exp( -r2eff * times) + values) * exp( -r2eff * times ) / errors**2
+
+    # Make partial derivative, with respect to i0.
+    d_chi2_d_i0 = - 2.0 * ( -i0 * exp( -r2eff * times) + values) * exp( -r2eff * times) / errors**2
+
+    # Define Jacobian as m rows with function derivatives and n columns of parameters.
+    jacobian_matrix_exp_chi2 = transpose(array( [d_chi2_d_r2eff , d_chi2_d_i0] ) )
+
+    return jacobian_matrix_exp_chi2
+
+
+def estimate_r2eff_err(chi2_jacobian=False, spin_id=None, epsrel=0.0, verbosity=1):
     """This will estimate the R2eff and i0 errors from the covariance matrix Qxx.  Qxx is calculated from the Jacobian matrix and the optimised parameters.
 
+    @keyword chi2_jacobian: If the Jacobian derived from the chi2 function, should be used instead of the Jacobian from the exponential function.
+    @type chi2_jacobian:    bool
     @keyword spin_id:       The spin identification string.
     @type spin_id:          str
     @param epsrel:          Any columns of R which satisfy |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix, where the corresponding rows and columns of the covariance matrix are set to zero.
@@ -110,7 +143,7 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
             i0 = getattr(cur_spin, 'i0')[param_key]
 
             # Pack data
-            param_vector = [r2eff, i0]
+            params = [r2eff, i0]
 
             # The peak intensities, errors and times.
             values = []
@@ -128,13 +161,18 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
 
             # Initialise data in C code.
             scaling_list = [1.0, 1.0]
-            setup(num_params=len(param_vector), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
+            setup(num_params=len(params), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
-            # Calculate the direct exponential Jacobian matrix from C code.
-            jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
+            if chi2_jacobian:
+                jacobian_matrix_exp = func_exp_chi2_grad(params=params, values=values, errors=errors, times=times)
+                weights = ones(errors.shape)
+            else:
+                # Calculate the direct exponential Jacobian matrix from C code.
+                jacobian_matrix_exp = transpose(asarray( jacobian(params) ) )
+                weights = 1. / errors**2
 
             # Get the co-variance
-            pcov = multifit_covar(J=jacobian_matrix_exp, weights=1/errors**2)
+            pcov = multifit_covar(J=jacobian_matrix_exp, weights=weights)
 
             # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
             param_vector_error = sqrt(diag(pcov))

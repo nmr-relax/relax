@@ -39,7 +39,7 @@ import sys
 # relax module imports.
 from lib.errors import RelaxError, RelaxDirError, RelaxFileError, RelaxNoInteratomError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
 from lib.io import mkdir_nofail, open_write_file, test_binary
-from lib.physical_constants import return_gyromagnetic_ratio
+from lib.periodic_table import periodic_table
 from pipe_control import diffusion_tensor, pipes
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
@@ -490,7 +490,7 @@ def create_mfpar(file, spin=None, spin_id=None, res_num=None, atom1=None, atom2=
     file.write('%-14s' % "constants")
     file.write('%-6i' % res_num)
     file.write('%-7s' % spin.isotope)
-    file.write('%-8.4f' % (return_gyromagnetic_ratio(spin.isotope) / 1e7))
+    file.write('%-8.4f' % (periodic_table.gyromagnetic_ratio(spin.isotope) / 1e7))
     file.write('%-8.3f' % (interatoms[0].r * 1e10))
     file.write('%-8.3f\n' % (spin.csa * 1e6))
 

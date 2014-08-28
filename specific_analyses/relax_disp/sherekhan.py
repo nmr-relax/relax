@@ -34,7 +34,7 @@ if dep_check.subprocess_module:
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.io import mkdir_nofail, open_write_file
-from lib.physical_constants import g1H, g15N
+from lib.periodic_table import periodic_table
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_residue
 from specific_analyses.relax_disp.data import loop_cluster, loop_exp_frq, loop_offset_point, loop_time, return_param_key_from_data, spin_ids_to_containers
@@ -96,7 +96,7 @@ def sherekhan_input(spin_id=None, force=False, dir='ShereKhan'):
             file = open_write_file(file_name=file_name, dir=dir_name, force=force)
 
             # The B0 field for the nuclei of interest in MHz (must be positive to be accepted by the server).
-            file.write("%.10f\n" % abs(frq / g1H * g15N / 1e6))
+            file.write("%.10f\n" % abs(frq / periodic_table.gyromagnetic_ratio('1H') * periodic_table.gyromagnetic_ratio('15N') / 1e6))
 
             # The constant relaxation time for the CPMG experiment in seconds.
             file.write("%s\n" % (time))

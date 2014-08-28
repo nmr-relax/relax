@@ -59,7 +59,8 @@ import sys
 
 # relax module imports.
 from pipe_control.grace import write_xy_data, write_xy_header
-from lib.physical_constants import dipolar_constant, g1H, g13C
+from lib.periodic_table import periodic_table
+from lib.physical_constants import dipolar_constant
 from prompt.interpreter import Interpreter
 from lib.errors import RelaxError
 from lib.io import mkdir_nofail
@@ -606,7 +607,7 @@ class Stereochem_analysis:
         # The dipolar constant.
         d = 0.0
         if self.bond_length != None:
-            d = 3.0 / (2.0*pi) * dipolar_constant(g13C, g1H, self.bond_length)
+            d = 3.0 / (2.0*pi) * dipolar_constant(periodic_table.gyromagnetic_ratio('13C'), periodic_table.gyromagnetic_ratio('1H'), self.bond_length)
 
         # Create a directory for the save files.
         dir = self.results_dir + sep + "RDC_%s_results" % self.rdc_name

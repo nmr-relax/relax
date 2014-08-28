@@ -3,7 +3,8 @@ from os import sep
 
 # relax imports.
 from pipe_control.interatomic import interatomic_loop
-from lib.physical_constants import NH_BOND_LENGTH_RDC, dipolar_constant, g15N, g1H
+from lib.periodic_table import periodic_table
+from lib.physical_constants import NH_BOND_LENGTH_RDC, dipolar_constant
 from status import Status; status = Status()
 
 
@@ -30,7 +31,7 @@ self._execute_uf(uf_name='spin.isotope', isotope='15N', spin_id='@N')
 self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H')
 
 # The dipolar constant.
-const = 3.0 / (2.0*pi) * dipolar_constant(g15N, g1H, NH_BOND_LENGTH_RDC)
+const = 3.0 / (2.0*pi) * dipolar_constant(periodic_table.gyromagnetic_ratio('15N'), periodic_table.gyromagnetic_ratio('1H'), NH_BOND_LENGTH_RDC)
 
 # The tensor.
 tensor = 'A'

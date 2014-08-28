@@ -146,53 +146,6 @@ def pcs_constant(T, Bo, r):
 
 
 
-# Gyromagnetic ratios.
-######################
-
-g13C = 6.728 * 1e7
-"""The 13C gyromagnetic ratio."""
-
-g1H = 26.7522212 * 1e7
-"""The 1H gyromagnetic ratio."""
-# Pales:  2.675198e+8
-
-g15N = -2.7126 * 1e7
-"""The 15N gyromagnetic ratio."""
-# Pales:  -2.7116e+7
-
-g17O = -3.628 * 1e7
-"""The 17O gyromagnetic ratio."""
-
-g31P = 10.841 * 1e7
-"""The 31P gyromagnetic ratio."""
-
-# Function for returning the desired gyromagnetic ratio.
-def return_gyromagnetic_ratio(nucleus=None):
-    """Return the gyromagnetic ratio for the given nucleus type.
-
-    @keyword nucleus:   The nucleus type.
-    @type nucleus:      str
-    @raises RelaxError: If the nucleus type is unknown.
-    @returns:           The desired gyromagnetic ratio.
-    @rtype:             float
-    """
-
-    # Matching loop.
-    if nucleus == '13C':
-        return g13C
-    elif nucleus == '1H':
-        return g1H
-    elif nucleus == '15N':
-        return g15N
-    elif nucleus == '17O':
-        return g17O
-    elif nucleus == '31P':
-        return g31P
-    else:
-        raise RelaxError("The nucleus type " + repr(nucleus) + " is unknown.")
-
-
-
 # Element info.
 ###############
 

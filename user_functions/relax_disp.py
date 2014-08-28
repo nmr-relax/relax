@@ -635,6 +635,13 @@ uf = uf_info.add_uf('relax_disp.r2eff_err_estimate')
 uf.title = "Estimate R2eff errors by the Jacobian matrix."
 uf.title_short = "Estimate R2eff errors."
 uf.add_keyarg(
+    name = "chi2_jacobian",
+    default = False,
+    py_type = "bool",
+    desc_short = "use of chi2 Jacobian",
+    desc = "If the Jacobian derived from the chi2 function, should be used instead of the Jacobian from the exponential function."
+)
+uf.add_keyarg(
     name = "spin_id",
     py_type = "str",
     arg_type = "spin ID",

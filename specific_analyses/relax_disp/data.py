@@ -65,7 +65,7 @@ from lib.errors import RelaxError, RelaxNoSpectraError, RelaxNoSpinError, RelaxS
 from lib.float import isNaN
 from lib.io import extract_data, get_file_path, open_write_file, strip, write_data
 from lib.nmr import frequency_to_ppm, frequency_to_ppm_from_rad, frequency_to_rad_per_s, rotating_frame_params
-from lib.physical_constants import g1H, return_gyromagnetic_ratio
+from lib.periodic_table import periodic_table
 from lib.sequence import read_spin_data, write_spin_data
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
 from lib.text.sectioning import section
@@ -4518,7 +4518,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
             
             # The Larmor frequency for this spin (and that of an attached proton for the MMQ models) and field strength (in MHz*2pi to speed up the ppm to rad/s conversion).
             if frq != None:
-                frqs[ei][si][mi] = 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(spin.isotope) * 1e-6
+                frqs[ei][si][mi] = 2.0 * pi * frq / periodic_table.gyromagnetic_ratio('1H') * periodic_table.gyromagnetic_ratio(spin.isotope) * 1e-6
                 frqs_H[ei][si][mi] = 2.0 * pi * frq * 1e-6
 
             # The relaxation times.

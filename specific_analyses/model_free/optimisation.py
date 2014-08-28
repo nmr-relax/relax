@@ -32,7 +32,7 @@ from numpy import array, dot, float64
 import lib.arg_check
 from lib.errors import RelaxError, RelaxInfError, RelaxMultiVectorError, RelaxNaNError
 from lib.float import isNaN, isInf
-from lib.physical_constants import return_gyromagnetic_ratio
+from lib.periodic_table import periodic_table
 from multi import Memo, Result_command, Slave_command
 from pipe_control import pipes
 from pipe_control.interatomic import return_interatom_list
@@ -258,7 +258,7 @@ def minimise_data_setup(data_store, min_algor, num_data_sets, min_options, spin=
         data_store.remap_table = [[0]]
         data_store.noe_r1_table = [[None]]
         data_store.ri_types = [[min_options[2]]]
-        data_store.gx = [return_gyromagnetic_ratio(spin.isotope)]
+        data_store.gx = [periodic_table.gyromagnetic_ratio(spin.isotope)]
 
         # The interatomic data.
         interatoms = return_interatom_list(data_store.spin_id)
@@ -276,7 +276,7 @@ def minimise_data_setup(data_store, min_algor, num_data_sets, min_options, spin=
 
             # The data.
             data_store.r = [interatoms[i].r]
-            data_store.gh = [return_gyromagnetic_ratio(spin2.isotope)]
+            data_store.gh = [periodic_table.gyromagnetic_ratio(spin2.isotope)]
             if data_store.model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
                 data_store.xh_unit_vectors = [interatoms[i].vector]
             else:
@@ -335,7 +335,7 @@ def minimise_data_setup(data_store, min_algor, num_data_sets, min_options, spin=
         # Repackage the spin data.
         data_store.equations.append(spin.equation)
         data_store.param_types.append(spin.params)
-        data_store.gx.append(return_gyromagnetic_ratio(spin.isotope))
+        data_store.gx.append(periodic_table.gyromagnetic_ratio(spin.isotope))
 
         # Repackage the interatomic data.
         interatoms = return_interatom_list(data_store.spin_id)
@@ -352,7 +352,7 @@ def minimise_data_setup(data_store, min_algor, num_data_sets, min_options, spin=
             spin2 = return_spin(spin_id2)
 
             # The data.
-            data_store.gh.append(return_gyromagnetic_ratio(spin2.isotope))
+            data_store.gh.append(periodic_table.gyromagnetic_ratio(spin2.isotope))
             if sim_index == None or data_store.model_type == 'diff' or not hasattr(interatoms[i], 'r_sim'):
                 data_store.r.append(interatoms[i].r)
             else:

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,7 +27,8 @@ from math import pi
 from numpy.linalg import eigvals
 
 # relax module imports.
-from lib.physical_constants import g1H, h_bar, kB, mu0, return_gyromagnetic_ratio
+from lib.periodic_table import periodic_table
+from lib.physical_constants import h_bar, kB, mu0
 
 
 def calc_chi_tensor(A, B0, T):
@@ -47,7 +48,7 @@ def calc_chi_tensor(A, B0, T):
     """
 
     # B0 in Tesla.
-    B0 = 2.0 * pi * B0 / g1H
+    B0 = 2.0 * pi * B0 / periodic_table.gyromagnetic_ratio('1H')
 
     # The conversion factor.
     conv = 15.0 * mu0 * kB * T / B0**2
@@ -175,8 +176,8 @@ def kappa(nuc1='15N', nuc2='1H'):
     """
 
     # Gyromagnetic ratios.
-    gI = return_gyromagnetic_ratio(nuc1)
-    gS = return_gyromagnetic_ratio(nuc2)
+    gI = periodic_table.gyromagnetic_ratio(nuc1)
+    gS = periodic_table.gyromagnetic_ratio(nuc2)
 
     # Kappa.
     return -3.0/(8.0*pi**2) * gI * gS * mu0 * h_bar

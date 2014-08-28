@@ -7635,7 +7635,7 @@ class Relax_disp(SystemTestCase):
         my_dic = {}
         param_key_list = []
         est_keys = []
-        est_key = '-1'
+        est_key = '-2'
         est_keys.append(est_key)
         spin_id_list = []
 
@@ -7674,8 +7674,38 @@ class Relax_disp(SystemTestCase):
                     my_dic[spin_id][est_key][param_key][err_attr] = get_err_attr
 
 
+        # Estimate R2eff errors from Chi2 Jacobian.
+        self.interpreter.relax_disp.r2eff_err_estimate(chi2_jacobian=True)
+
+        est_key = '-1'
+        est_keys.append(est_key)
+
+        # Collect data.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Add key for estimate.
+            my_dic[spin_id][est_key] = {}
+
+            for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                # Generate the param_key.
+                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                # Add key to dic.
+                my_dic[spin_id][est_key][param_key] = {}
+
+                # Get the value.
+                # Loop over err attributes.
+                for err_attr in err_attr_list:
+                    if hasattr(cur_spin, err_attr):
+                        get_err_attr = getattr(cur_spin, err_attr)[param_key]
+                    else:
+                        get_err_attr = 0.0
+
+                    # Save to dic.
+                    my_dic[spin_id][est_key][param_key][err_attr] = get_err_attr
+
+
         # Make Carlo Simulations number
-        mc_number_list = range(0, 500, 50)
+        mc_number_list = range(0, 50, 10)
 
         sim_attr_list = ['chi2_sim', 'f_count_sim', 'g_count_sim', 'h_count_sim', 'i0_sim', 'iter_sim', 'peak_intensity_sim', 'r2eff_sim', 'select_sim', 'warning_sim']
 

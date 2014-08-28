@@ -29,7 +29,7 @@ from os import getcwd
 from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.float import isNaN
 from lib.io import mkdir_nofail, open_write_file
-from lib.physical_constants import g1H, g15N
+from lib.periodic_table import periodic_table
 from pipe_control import pipes
 from pipe_control.spectrometer import get_frequencies
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
@@ -321,6 +321,6 @@ class Nessy_data:
         # Loop over the experiments.
         for i in range(cdp.spectrometer_frq_count):
             # Spectrometer info.
-            self.spec_frq[i] = str(frq_Hz[i] / g1H * g15N)
+            self.spec_frq[i] = str(frq_Hz[i] / periodic_table.gyromagnetic_ratio('1H') * periodic_table.gyromagnetic_ratio('15N'))
             self.B0[i] = str(frq_T[i])
 

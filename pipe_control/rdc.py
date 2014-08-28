@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -36,7 +36,8 @@ from lib.float import nan
 from lib.alignment.rdc import ave_rdc_tensor
 from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoJError, RelaxNoRDCError, RelaxNoSequenceError, RelaxSpinTypeError
 from lib.io import extract_data, open_write_file, strip, write_data
-from lib.physical_constants import dipolar_constant, return_gyromagnetic_ratio
+from lib.periodic_table import periodic_table
+from lib.physical_constants import dipolar_constant
 from lib.warnings import RelaxWarning, RelaxSpinTypeWarning
 from pipe_control import grace, pipes
 from pipe_control.align_tensor import get_tensor_index, get_tensor_object, opt_uses_align_data, opt_uses_tensor
@@ -100,8 +101,8 @@ def back_calc(align_id=None):
             vectors = interatom.vector
 
         # Gyromagnetic ratios.
-        g1 = return_gyromagnetic_ratio(spin1.isotope)
-        g2 = return_gyromagnetic_ratio(spin2.isotope)
+        g1 = periodic_table.gyromagnetic_ratio(spin1.isotope)
+        g2 = periodic_table.gyromagnetic_ratio(spin2.isotope)
 
         # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
         dj = 3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r)
@@ -659,8 +660,8 @@ def q_factors(spin_id=None):
                 D2_sum = D2_sum + interatom.rdc[align_id]**2
 
             # Gyromagnetic ratios.
-            g1 = return_gyromagnetic_ratio(spin1.isotope)
-            g2 = return_gyromagnetic_ratio(spin2.isotope)
+            g1 = periodic_table.gyromagnetic_ratio(spin1.isotope)
+            g2 = periodic_table.gyromagnetic_ratio(spin2.isotope)
 
             # Skip the 2Da^2(4 + 3R)/5 normalised Q factor if pseudo-atoms are present.
             if  norm2_flag and (is_pseudoatom(spin1) or is_pseudoatom(spin2)):
@@ -967,8 +968,8 @@ def return_rdc_data(sim_index=None):
             continue
 
         # Gyromagnetic ratios.
-        g1 = return_gyromagnetic_ratio(spin1.isotope)
-        g2 = return_gyromagnetic_ratio(spin2.isotope)
+        g1 = periodic_table.gyromagnetic_ratio(spin1.isotope)
+        g2 = periodic_table.gyromagnetic_ratio(spin2.isotope)
 
         # Pseudo atoms.
         if is_pseudoatom(spin1) and is_pseudoatom(spin2):
