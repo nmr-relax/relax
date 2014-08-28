@@ -346,7 +346,7 @@ class MolContainer:
             atom_number, atomic_num, x, y, z = data
 
             # Translate the atomic number to the atom name.
-            atom_name = periodic_table.lookup_z_to_symbol(atomic_num)
+            atom_name = periodic_table.lookup_symbol(atomic_num)
 
             # Add.
             self.atom_add(atom_name=atom_name, atom_num=atom_number, pos=[x, y, z], element=atom_name)
