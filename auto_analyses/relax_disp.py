@@ -513,7 +513,7 @@ class Relax_disp:
                 subsection(file=sys.stdout, text="Estimating errors from Covariance matrix", prespace=1)
 
                 # Raise warning.
-                text = 'Estimating errors from the Covariance matrix is highly likely to "quite" wrong.  Use only with extreme care, and for initial rapid testing of your data.'
+                text = 'Estimating errors from the Covariance matrix is highly likely to be "quite" wrong.  Use only with extreme care, and for initial rapid testing of your data.'
                 warn(RelaxWarning(text))
 
                 # Estimate errors
