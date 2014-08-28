@@ -2781,7 +2781,19 @@ class Relax_disp(SystemTestCase):
         ":53@N"]
 
         # Load the data.
-        self.setup_r1rho_kjaergaard(cluster_ids=cluster_ids, read_R1=False)
+        #self.setup_r1rho_kjaergaard(cluster_ids=cluster_ids, read_R1=False)
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'+sep
+
+        # Set pipe name, bundle and type.
+        pipe_name = 'base pipe'
+        pipe_bundle = 'relax_disp'
+        pipe_type = 'relax_disp'
+
+        # Create the data pipe.
+        self.interpreter.pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type=pipe_type)
+
+        file = data_path + '1_setup_r1rho_GUI.py'
+        self.interpreter.script(file=file, dir=None)
 
         # The dispersion models.
         MODELS = [MODEL_R2EFF, MODEL_NOREX]
@@ -2807,13 +2819,14 @@ class Relax_disp(SystemTestCase):
         OPT_MAX_ITERATIONS = 10000000
         relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
 
-        result_dir_name = ds.tmpdir
+        # Make all spins free
+        #for curspin in cluster_ids:
+        #    self.interpreter.relax_disp.cluster('free spins', curspin)
+        #    # Shut them down
+        #    self.interpreter.deselect.spin(spin_id=curspin, boolean='OR', change_all=False)
 
         # Make all spins free
-        for curspin in cluster_ids:
-            self.interpreter.relax_disp.cluster('free spins', curspin)
-            # Shut them down
-            self.interpreter.deselect.spin(spin_id=curspin, change_all=False)
+        self.interpreter.deselect.spin(spin_id=':1-100', change_all=False)
 
         # Select only a subset of spins for global fitting
         #self.interpreter.select.spin(spin_id=':41@N', change_all=False)
@@ -2825,8 +2838,13 @@ class Relax_disp(SystemTestCase):
         self.interpreter.select.spin(spin_id=':52@N', change_all=False)
         #self.interpreter.relax_disp.cluster('model_cluster', ':52@N')
 
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            print(spin_id)
+
+        result_dir_name = self.tmpdir
+
         # Run the analysis.
-        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, exp_mc_sim_num=EXP_MC_NUM, modsel=MODSEL)
+        relax_disp.Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, exp_mc_sim_num=EXP_MC_NUM, modsel=MODSEL)
 
         # Verify the data.
         self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, do_assert=False)
