@@ -34,15 +34,15 @@ class Test_periodic_table(TestCase):
         """Test of the periodic_table.atomic_mass() method."""
 
         # Check the proton weight.
-        weight = periodic_table.atomic_mass(symbol='H')
+        weight = periodic_table.atomic_mass(id='H')
         self.assertEqual(weight, 1.007975)
 
         # Check the 1H weight.
-        weight = periodic_table.atomic_weight(symbol='1H')
+        weight = periodic_table.atomic_weight(id='1H')
         self.assertEqual(weight, 1.0078250322)
 
         # Check the 2H weight.
-        weight = periodic_table.atomic_weight(symbol='2H')
+        weight = periodic_table.atomic_weight(id='2H')
         self.assertEqual(weight, 2.0141017781)
 
 
