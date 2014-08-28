@@ -200,7 +200,7 @@ def estimate_r2eff_err(chi2_jacobian=True, spin_id=None, epsrel=0.0, verbosity=1
                 point_info = "%s at %3.1f MHz, for offset=%3.3f ppm and dispersion point %-5.1f, with %i time points." % (exp_type, frq/1E6, offset, point, len(times))
                 print_strings.append(point_info)
 
-                par_info = "r2eff=%3.3f r2eff_err=%3.3f, i0=%6.1f, i0_err=%3.3f, chi2=%3.3f.\n" % ( r2eff, r2eff_err, i0, i0_err, chi2)
+                par_info = "r2eff=%3.3f r2eff_err=%3.4f, i0=%6.1f, i0_err=%3.4f, chi2=%3.3f.\n" % ( r2eff, r2eff_err, i0, i0_err, chi2)
                 print_strings.append(par_info)
 
                 if verbosity >= 2:
