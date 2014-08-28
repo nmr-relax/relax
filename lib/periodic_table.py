@@ -33,9 +33,37 @@ The currently used isotope atomic masses are taken from U{http://www.ciaaw.org/a
 
 # Python module imports.
 from numpy import array, average, float64
+from re import search, split
 
 # relax module imports.
 from lib.errors import RelaxError
+
+
+def process_mass(mass):
+    """Process the given mass, handling ranges, unstable isotopes, and uncertainties.
+
+    @param mass:    The atomic mass of standard atomic weight.
+    @type mass:     str
+    @return:        The corresponding mass.
+    @rtype:         float
+    """
+
+    # A range, or an unstable isotope.
+    if mass[0] == '[':
+        # Convert to a list.
+        vals = eval(mass)
+
+        # Use numpy to average the list, assuming equal weighting.
+        return average(array(vals, float64))
+
+    # A mass with uncertainty.
+    else:
+        # Obtain the first part of the number.
+        val = mass.split('(')[0]
+
+        # Convert to a float and return the value.
+        return float(val)
+
 
 
 class Element:
@@ -123,6 +151,56 @@ class Periodic_table(dict):
         return self[symbol]
 
 
+    def _get_isotope(self, symbol=None, A=None):
+        """Return the matching isotope container.
+
+        @keyword symbol:    The atomic symbol.
+        @type symbol:       str
+        @keyword A:         The mass number of the isotope.
+        @type A:            int
+        """
+
+        # The element container.
+        element = self[symbol]
+
+        # Find the isotope.
+        for isotope in element.isotopes:
+            # A match.
+            if isotope.A == A:
+                return isotope
+
+        # No isotope found.
+        raise RelaxError("The isotope '%i%s' cannot be found." % (A, symbol))
+
+
+    def atomic_mass(self, id=None):
+        """Return the isotopic atomic mass or standard atomic weight as a float.
+
+        @keyword id:    The atom or isotope identifier.  To select isotopes, merge the mass number A with the symbol to form the ID.  To select atoms, just set the ID to the atomic symbol.  For example, '15N' selects the 15N nitrogen isotope, whereas 'N' selects the nitrogen atom.
+        @type id:       str
+        @return:        The isotopic atomic mass or the standard atomic weight.
+        @rtype:         float
+        """
+
+        # An isotope.
+        if search('[0-9]', id):
+            # The mass number.
+            A = int(split('[A-Z]', id)[0])
+
+            # The atomic symbol.
+            symbol = split('[0-9]', id)[-1]
+
+            # Get the isotope container.
+            isotope = self._get_isotope(symbol=symbol, A=A)
+
+            # Return the processed mass.
+            return process_mass(isotope.atomic_mass)
+
+        # A normal atom.
+        else:
+            return self.atomic_weight(symbol=id)
+
+
     def atomic_weight(self, symbol=None):
         """Return the standard atomic weight as a float for the given atom.
 
@@ -136,24 +214,8 @@ class Periodic_table(dict):
         if symbol not in self:
             raise RelaxError("The atomic symbol '%s' cannot be found in the periodic table." % symbol)
 
-        # The weight.
-        weight = self[symbol].atomic_weight
-
-        # A range, or an unstable isotope.
-        if weight[0] == '[':
-            # Convert to a list.
-            vals = eval(weight)
-
-            # Use numpy to average the list, assuming equal weighting.
-            return average(array(vals, float64))
-
-        # A weight with uncertainty.
-        else:
-            # Obtain the first part of the number.
-            val = weight.split('(')[0]
-
-            # Convert to a float and return the value.
-            return float(val)
+        # Return the processed weight.
+        return process_mass(self[symbol].atomic_weight)
 
 
     def lookup_symbol(self, atomic_number=None):
