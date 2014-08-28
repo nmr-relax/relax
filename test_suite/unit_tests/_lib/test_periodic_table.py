@@ -38,11 +38,11 @@ class Test_periodic_table(TestCase):
         self.assertEqual(weight, 1.007975)
 
         # Check the 1H weight.
-        weight = periodic_table.atomic_weight(id='1H')
+        weight = periodic_table.atomic_mass(id='1H')
         self.assertEqual(weight, 1.0078250322)
 
         # Check the 2H weight.
-        weight = periodic_table.atomic_weight(id='2H')
+        weight = periodic_table.atomic_mass(id='2H')
         self.assertEqual(weight, 2.0141017781)
 
 
