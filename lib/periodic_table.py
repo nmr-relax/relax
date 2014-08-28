@@ -34,17 +34,30 @@ from numpy import array, average, float64
 from lib.errors import RelaxError
 
 
-class Periodic_table:
+class Element:
+    """A special object representing each element."""
+
+    def __init__(self, atomic_number=None, symbol=None, name=None, atomic_weight=None):
+        """Set up the element object.
+
+        @keyword atomic_number:     The atomic number.
+        @type atomic_number:        int
+        @keyword symbol:            The atomic symbol.
+        @type symbol:               str
+        @keyword name:              The chemical element name.
+        @type name:                 str
+        @keyword atomic_weight:     The atomic weight number for the atom.  This is a string as it uses the IUPAC notation of, for example, "[1.00784, 1.00811]" and "4.002602(2)" to represent ranges and uncertainty.
+        @type atomic_weight:        str
+        """
+
+        # Store the values.
+        self.atomic_number = atomic_number
+        self.name = name
+        self.atomic_weight = atomic_weight
+
+
+class Periodic_table(dict):
     """The periodic table object."""
-
-    def __init__(self):
-        """Set up the object."""
-
-        # Initialise some data structures.
-        self.symbol = []
-        self.name = []
-        self.atomic_weights = {}
-
 
     def _add(self, atomic_number=None, symbol=None, name=None, atomic_weight=None):
         """Add an element to the table.
@@ -59,14 +72,8 @@ class Periodic_table:
         @type atomic_weight:        str
         """
 
-        # Check that atomic_number is correctly ordered.
-        if atomic_number != len(self.symbol)+1:
-            raise RelaxError("Incorrect setup.")
-
-        # Append the values.
-        self.symbol.append(symbol)
-        self.name.append(name)
-        self.atomic_weights[symbol] = atomic_weight
+        # Add the element container.
+        self[symbol] = Element(atomic_number=atomic_number, name=name, atomic_weight=atomic_weight)
 
 
     def atomic_weight(self, symbol=None):
@@ -79,11 +86,11 @@ class Periodic_table:
         """
 
         # Checks.
-        if symbol not in self.atomic_weights:
-            raise RelaxError("The atomic symbol '%s' is unknown." % symbol)
+        if symbol not in self:
+            raise RelaxError("The atomic symbol '%s' cannot be found in the periodic table." % symbol)
 
         # The weight.
-        weight = self.atomic_weights[symbol]
+        weight = self[symbol].atomic_weight
 
         # A range, or an unstable isotope.
         if weight[0] == '[':
