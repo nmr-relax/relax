@@ -175,7 +175,7 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
                     print(print_string),
 
 
-def multifit_covar(J=None, epsrel=0.0, errors=None):
+def multifit_covar(J=None, epsrel=0.0, errors=None, use_weights=True):
     """This is the implementation of the multifit covariance.
 
     This is inspired from GNU Scientific Library (GSL).
@@ -184,9 +184,15 @@ def multifit_covar(J=None, epsrel=0.0, errors=None):
 
     The parameter 'epsrel' is used to remove linear-dependent columns when J is rank deficient.
 
+    The weighting matrix 'W', is a square symmetric matrix. For independent measurements, this is a diagonal matrix. Larger values indicate greater significance.  It is formed by multiplying the supplied errors as 1./errors^2 with an Identity matrix::
+
+        W = I.(1/errors^2)
+
+    If 'use_weights' is set to 'False', the errors are set to 1.0.
+
     The covariance matrix is given by::
 
-        covar = (J^T J)^{-1} ,
+        covar = (J^T.W.J)^{-1} ,
 
     and is computed by QR decomposition of J with column-pivoting. Any columns of R which satisfy::
 
@@ -224,6 +230,8 @@ def multifit_covar(J=None, epsrel=0.0, errors=None):
     @type epsrel:           float
     @keyword errors:        The standard deviation of the measured intensity values per time point.
     @type errors:           numpy array
+    @keyword use_weights:   If the supplied weights should be used.
+    @type use_weights:      bool
     @return:                The co-variance matrix
     @rtype:                 square numpy array
     """
@@ -237,6 +245,10 @@ def multifit_covar(J=None, epsrel=0.0, errors=None):
     # Now form the error matrix, with errors down the diagonal.
     weights = 1. / errors**2
 
+    if use_weights == False:
+        weights[:] = 1.0
+
+    # Form weight matrix.
     W = multiply(weights, eye_mat)
 
     # The covariance matrix (sometimes referred to as the variance-covariance matrix), Qxx, is defined as:
@@ -344,7 +356,7 @@ class Exp:
         self.factor = factor
 
 
-    def set_settings_minfx(self, scaling_matrix=None, min_algor='simplex', c_code=True, constraints=False, func_tol=1e-25, grad_tol=None, max_iterations=10000000):
+    def set_settings_minfx(self, scaling_matrix=None, min_algor='simplex', c_code=True, constraints=False, chi2_jacobian=False, func_tol=1e-25, grad_tol=None, max_iterations=10000000):
         """Setup options to minfx.
 
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
@@ -355,6 +367,8 @@ class Exp:
         @type c_code:               bool
         @keyword constraints:       If constraints should be used.
         @type constraints:          bool
+        @keyword chi2_jacobian:     If the chi2 Jacobian should be used.
+        @type chi2_jacobian:        bool
         @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
         @type func_tol:             None or float
         @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
@@ -366,6 +380,7 @@ class Exp:
         # Store variables.
         self.scaling_matrix = scaling_matrix
         self.c_code = c_code
+        self.chi2_jacobian = chi2_jacobian
 
         # Scaling initialisation.
         self.scaling_flag = False
@@ -561,7 +576,7 @@ class Exp:
         return 1. / self.errors * (self.func_exp(self.times, *params) - self.values)
 
 
-def estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints=False, spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, verbosity=1):
+def estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints=False, chi2_jacobian=False, spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, verbosity=1):
     """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.leastsq or minfx.
 
     THIS IS ONLY FOR TESTING.
@@ -583,10 +598,12 @@ def estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints
     @type method:               string
     @keyword min_algor:         The minimisation algorithm
     @type min_algor:            string
-    @keyword constraints:       If constraints should be used.
-    @type constraints:          bool
     @keyword c_code:            If optimise with C code.
     @type c_code:               bool
+    @keyword constraints:       If constraints should be used.
+    @type constraints:          bool
+    @keyword chi2_jacobian:     If the chi2 Jacobian should be used.
+    @type chi2_jacobian:        bool
     @keyword spin_id:           The spin identification string.
     @type spin_id:              str
     @keyword ftol:              The function tolerance for the relative error desired in the sum of squares, parsed to leastsq.
@@ -661,7 +678,7 @@ def estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints
                 top += 2
             subsection(file=sys.stdout, text="Fitting with %s to: %s"%(method, spin_string), prespace=top)
             if method == 'minfx':
-                subsection(file=sys.stdout, text="min_algor='%s', c_code=%s, constraints=%s"%(min_algor, c_code, constraints), prespace=0)
+                subsection(file=sys.stdout, text="min_algor='%s', c_code=%s, constraints=%s, chi2_jacobian?=%s"%(min_algor, c_code, constraints, chi2_jacobian), prespace=0)
 
         # Loop over each spectrometer frequency and dispersion point.
         for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
@@ -692,7 +709,7 @@ def estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints
 
             elif method == 'minfx':
                 # Set settings.
-                E.set_settings_minfx(min_algor=min_algor, c_code=c_code, constraints=constraints)
+                E.set_settings_minfx(min_algor=min_algor, c_code=c_code, chi2_jacobian=chi2_jacobian, constraints=constraints)
 
                 # Acquire results.
                 results = minimise_minfx(E=E)
@@ -737,7 +754,7 @@ def estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints
                 point_info = "%s at %3.1f MHz, for offset=%3.3f ppm and dispersion point %-5.1f, with %i time points." % (exp_type, frq/1E6, offset, point, len(times))
                 print_strings.append(point_info)
 
-                par_info = "r2eff=%3.3f r2eff_err=%3.3f, i0=%6.1f, i0_err=%3.3f, chi2=%3.3f.\n" % ( r2eff, r2eff_err, i0, i0_err, chi2)
+                par_info = "r2eff=%3.3f r2eff_err=%3.4f, i0=%6.1f, i0_err=%3.4f, chi2=%3.3f.\n" % ( r2eff, r2eff_err, i0, i0_err, chi2)
                 print_strings.append(par_info)
 
                 if E.verbosity >= 2:
@@ -912,14 +929,24 @@ def minimise_minfx(E=None):
         #jacobian_matrix_exp2 = E.jacobian_matrix_exp
         #print jacobian_matrix_exp - jacobian_matrix_exp2
     else:
-        # Call class, to store value.
-        E.func_exp_grad(param_vector)
-        jacobian_matrix_exp = E.jacobian_matrix_exp
-        #E.func_exp_chi2_grad(param_vector)
-        #jacobian_matrix_exp = E.jacobian_matrix_exp_chi2
+        if E.chi2_jacobian:
+            # Call class, to store value.
+            E.func_exp_chi2_grad(param_vector)
+            jacobian_matrix_exp = E.jacobian_matrix_exp_chi2
+        else:
+            # Call class, to store value.
+            E.func_exp_grad(param_vector)
+            jacobian_matrix_exp = E.jacobian_matrix_exp
+            #E.func_exp_chi2_grad(param_vector)
+            #jacobian_matrix_exp = E.jacobian_matrix_exp_chi2
 
     # Get the co-variance
-    pcov = multifit_covar(J=jacobian_matrix_exp, errors=E.errors)
+    if E.chi2_jacobian:
+        use_weights = False
+    else:
+        use_weights = True
+    
+    pcov = multifit_covar(J=jacobian_matrix_exp, errors=E.errors, use_weights=use_weights)
 
     # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
     param_vector_error = sqrt(diag(pcov))
