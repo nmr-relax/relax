@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -190,83 +190,6 @@ def return_gyromagnetic_ratio(nucleus=None):
         return g31P
     else:
         raise RelaxError("The nucleus type " + repr(nucleus) + " is unknown.")
-
-
-# Relative atomic masses.
-#########################
-
-ArH = 1.00794
-"""Proton atomic mass."""
-
-ArC = 12.0107
-"""Carbon atomic mass."""
-
-ArN = 14.0067
-"""Nitrogen atomic mass."""
-
-ArO = 15.9994
-"""Oxygen atomic mass."""
-
-ArS = 32.065
-"""Sulphur atomic mass."""
-
-ArCa = 40.078
-"""Calcium atomic mass."""
-
-
-# Function for returning the desired atomic mass.
-def return_atomic_mass(element=None):
-    """Return the atomic mass for the given element type.
-
-    @keyword element:   The element type.
-    @type element:      str
-    @raises RelaxError: If the element type is unknown.
-    @returns:           The desired atomic mass.
-    @rtype:             float
-    """
-
-    # Protons, deuterons.
-    if element == 'H':
-        return ArH
-    if element == '1H':
-        return 1.0
-    if element == '2H':
-        return 2.0
-
-    # Carbons.
-    if element == 'C':
-        return ArC
-    if element == '12C':
-        return 12.0
-    if element == '13C':
-        return 13.0
-
-    # Nitrogens.
-    if element == 'N':
-        return ArN
-    if element == '14N':
-        return 14.0
-    if element == '15N':
-        return 15.0
-
-    # Oxygens.
-    if element == 'O':
-        return ArO
-    if element == '16O':
-        return 16.0
-    if element == '17O':
-        return 17.0
-
-    # Sulphurs.
-    if element == 'S':
-        return ArS
-
-    # Calcium.
-    if element.upper() == 'CA':
-        return ArCa
-
-    # Unknown mass.
-    raise RelaxError("The mass of the element " + repr(element) + " has not yet been programmed into relax.")
 
 
 
