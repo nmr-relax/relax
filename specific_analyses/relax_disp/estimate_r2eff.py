@@ -197,19 +197,19 @@ def multifit_covar(J=None, epsrel=0.0, errors=None):
 
     If the minimisation uses the weighted least-squares function:
 
-        f_i = (Y(x, t_i) - y_i) / \sigma_i
+        f_i = (Y(x, t_i) - y_i) / sigma_i
 
-    then the covariance matrix above gives the statistical error on the best-fit parameters resulting from the Gaussian errors \sigma_i on the underlying data y_i.
+    then the covariance matrix above gives the statistical error on the best-fit parameters resulting from the Gaussian errors 'sigma_i' on the underlying data 'y_i'.
 
-    This can be verified from the relation \delta f = J \delta c and the fact that the fluctuations in f from the data y_i are normalised by \sigma_i
-    and so satisfy <\delta f \delta f^T> = I.
+    This can be verified from the relation 'd_f = J d_c' and the fact that the fluctuations in 'f from the data 'y_i' are normalised by 'sigma_i'
+    and so satisfy <d_f d_f^T> = I.
 
     For an unweighted least-squares function f_i = (Y(x, t_i) - y_i) the covariance matrix above should be multiplied by
     the variance of the residuals about the best-fit
 
-        \sigma^2 = \sum (y_i - Y(x, t_i))^2 / (n-p)
+        sigma^2 = sum ( (y_i - Y(x, t_i))^2 / (n-p) )
 
-    to give the variance-covariance matrix \sigma^2 C.
+    to give the variance-covariance matrix sigma^2 C.
     This estimates the statistical error on the best-fit parameters from the scatter of the underlying data.
 
     See:
