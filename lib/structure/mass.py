@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@ from numpy import float64, zeros
 from warnings import warn
 
 # relax module imports.
-from lib.physical_constants import return_atomic_mass
+from lib.periodic_table import periodic_table
 from lib.errors import RelaxError
 from lib.warnings import RelaxWarning
 
@@ -57,7 +57,7 @@ def centre_of_mass(pos=None, elements=None, verbosity=1):
     for i in range(len(pos)):
         # Atomic mass.
         try:
-            mass = return_atomic_mass(elements[i])
+            mass = periodic_table.atomic_mass(elements[i])
         except RelaxError:
             warn(RelaxWarning("Skipping the atom index %s as the element '%s' is unknown." % (i, elements[i])))
 
