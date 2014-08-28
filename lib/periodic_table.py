@@ -27,6 +27,9 @@ The currently used atomic weights are from:
     - Atomic weights of the elements 2011 (IUPAC Technical Report) (U{DOI: 10.1351/PAC-REP-13-03-02<http://dx.doi.org/10.1351/PAC-REP-13-03-02>).
 """
 
+# Python module imports.
+from numpy import array, average, float64
+
 # relax module imports.
 from lib.errors import RelaxError
 
@@ -40,7 +43,7 @@ class Periodic_table:
         # Initialise some data structures.
         self.symbol = []
         self.name = []
-        self.atomic_weights = []
+        self.atomic_weights = {}
 
 
     def _add(self, atomic_number=None, symbol=None, name=None, atomic_weight=None):
@@ -63,7 +66,40 @@ class Periodic_table:
         # Append the values.
         self.symbol.append(symbol)
         self.name.append(name)
-        self.atomic_weights.append(atomic_weight)
+        self.atomic_weights[symbol] = atomic_weight
+
+
+    def atomic_weight(self, symbol=None):
+        """Return the standard atomic weight as a float for the given atom.
+
+        @keyword symbol:    The atomic symbol.
+        @type symbol:       str
+        @return:            The standard atomic weight.
+        @rtype:             float
+        """
+
+        # Checks.
+        if symbol not in self.atomic_weights:
+            raise RelaxError("The atomic symbol '%s' is unknown." % symbol)
+
+        # The weight.
+        weight = self.atomic_weights[symbol]
+
+        # A range, or an unstable isotope.
+        if weight[0] == '[':
+            # Convert to a list.
+            vals = eval(weight)
+
+            # Use numpy to average the list, assuming equal weighting.
+            return average(array(vals, float64))
+
+        # A weight with uncertainty.
+        else:
+            # Obtain the first part of the number.
+            val = weight.split('(')[0]
+
+            # Convert to a float and return the value.
+            return float(val)
 
 
     def lookup_symbol(self, atomic_number=None):
