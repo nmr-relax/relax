@@ -50,10 +50,10 @@ def isotope_to_mass_symbol(isotope):
     """
 
     # The mass number.
-    A = int(split('[A-Z]', id)[0])
+    A = int(split('[A-Z]', isotope)[0])
 
     # The atomic symbol.
-    symbol = process_symbol(split('[0-9]', id)[-1])
+    symbol = process_symbol(split('[0-9]', isotope)[-1])
 
     # Return the components.
     return A, symbol
