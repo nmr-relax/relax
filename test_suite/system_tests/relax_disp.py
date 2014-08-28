@@ -25,7 +25,8 @@
 from os import F_OK, access, getcwd, path, sep
 from numpy import array, exp, median, log, save, sum, zeros
 import re, math
-from tempfile import mkdtemp
+from tempfile import mkdtemp, NamedTemporaryFile
+
 
 # relax module imports.
 from auto_analyses import relax_disp
@@ -7569,6 +7570,212 @@ class Relax_disp(SystemTestCase):
 
         # Close file
         w_eff_file.close()
+
+
+    def verify_estimate_r2eff_err_compare_mc(self):
+        """Test the user function for estimating R2eff errors from exponential curve fitting, and compare it with Monte-Carlo simulations.
+
+        This follows Task 7822.
+        U{task #7822<https://gna.org/task/index.php?7822>}: Implement user function to estimate R2eff and associated errors for exponential curve fitting.
+
+        This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
+        Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
+        """
+
+        # Load the data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'+sep
+
+        # Set pipe name, bundle and type.
+        pipe_name = 'base pipe'
+        pipe_bundle = 'relax_disp'
+        pipe_type = 'relax_disp'
+
+        # Create the data pipe.
+        self.interpreter.pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type=pipe_type)
+
+        file = data_path + '1_setup_r1rho_GUI.py'
+        self.interpreter.script(file=file, dir=None)
+
+        # Deselect all spins.
+        self.interpreter.deselect.spin(spin_id=':1-100', change_all=False)
+
+        # Select one spin.
+        self.interpreter.select.spin(spin_id=':52@N', change_all=False)
+
+        # Set the model.
+        self.interpreter.relax_disp.select_model(MODEL_R2EFF)
+
+        # Check if intensity errors have already been calculated.
+        check_intensity_errors()
+
+        # Do a grid search.
+        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=11, constraints=True, verbosity=1)
+
+        # Set algorithm.
+        min_algor = 'Newton'
+        constraints = False
+
+        # Minimise.
+        self.interpreter.minimise.execute(min_algor=min_algor, constraints=constraints, verbosity=1)
+
+        # Loop over old err attributes.
+        err_attr_list = ['r2eff_err', 'i0_err']
+
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Loop over old err attributes.
+            for err_attr in err_attr_list:
+                if hasattr(cur_spin, err_attr):
+                    delattr(cur_spin, err_attr)
+
+        # Estimate R2eff errors.
+        self.interpreter.relax_disp.r2eff_err_estimate()
+
+        # Collect the estimation data.
+        my_dic = {}
+        param_key_list = []
+        est_keys = []
+        est_key = '-1'
+        est_keys.append(est_key)
+        spin_id_list = []
+
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Add key to dic.
+            my_dic[spin_id] = {}
+
+            # Add key for estimate.
+            my_dic[spin_id][est_key] = {}
+
+            # Add spin key to list.
+            spin_id_list.append(spin_id)
+
+            # Generate spin string.
+            spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+            for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                # Generate the param_key.
+                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                # Append key.
+                param_key_list.append(param_key)
+
+                # Add key to dic.
+                my_dic[spin_id][est_key][param_key] = {}
+
+                # Get the value.
+                # Loop over err attributes.
+                for err_attr in err_attr_list:
+                    if hasattr(cur_spin, err_attr):
+                        get_err_attr = getattr(cur_spin, err_attr)[param_key]
+                    else:
+                        get_err_attr = 0.0
+
+                    # Save to dic.
+                    my_dic[spin_id][est_key][param_key][err_attr] = get_err_attr
+
+
+        # Make Carlo Simulations number
+        mc_number_list = range(0, 500, 50)
+
+        sim_attr_list = ['chi2_sim', 'f_count_sim', 'g_count_sim', 'h_count_sim', 'i0_sim', 'iter_sim', 'peak_intensity_sim', 'r2eff_sim', 'select_sim', 'warning_sim']
+
+        # Loop over the Monte Carlo simulations:
+        for number in mc_number_list:
+            # First delete old simulations.
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                # Loop over old err attributes.
+                for err_attr in err_attr_list:
+                    if hasattr(cur_spin, err_attr):
+                        delattr(cur_spin, err_attr)
+
+                # Loop over the simulated attributes.
+                for sim_attr in sim_attr_list:
+                    if hasattr(cur_spin, sim_attr):
+                        delattr(cur_spin, sim_attr)
+
+            self.interpreter.monte_carlo.setup(number=number)
+            self.interpreter.monte_carlo.create_data()
+            self.interpreter.monte_carlo.initial_values()
+            self.interpreter.minimise.execute(min_algor=min_algor, constraints=constraints)
+            self.interpreter.eliminate()
+            self.interpreter.monte_carlo.error_analysis()
+
+            est_key = '%i'%number
+            est_keys.append(est_key)
+
+            # Collect data.
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                # Add key for estimate.
+                my_dic[spin_id][est_key] = {}
+
+                for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                    # Generate the param_key.
+                    param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                    # Add key to dic.
+                    my_dic[spin_id][est_key][param_key] = {}
+
+                    # Get the value.
+                    # Loop over err attributes.
+                    for err_attr in err_attr_list:
+                        if hasattr(cur_spin, err_attr):
+                            get_err_attr = getattr(cur_spin, err_attr)[param_key]
+                        else:
+                            get_err_attr = 0.0
+
+                        # Save to dic.
+                        my_dic[spin_id][est_key][param_key][err_attr] = get_err_attr
+
+        # Set what to extract.
+        err_attr = err_attr_list[0]
+
+        # Define list with text.
+        text_list = []
+
+        # Now loop through the data.
+        for spin_id in spin_id_list:
+            for est_key in est_keys:
+                # Define list to pickup data.
+                r2eff_err_list = []
+
+                for param_key in param_key_list:
+                    # Get the value.
+                    r2eff_err = my_dic[spin_id][est_key][param_key][err_attr]
+
+                    # Add to list.
+                    r2eff_err_list.append(r2eff_err)
+
+                # Sum the list
+                sum_array = sum(array(r2eff_err_list))
+
+                # Join floats to string.
+                r2eff_err_str = " ".join(format(x, "2.3f") for x in r2eff_err_list)
+
+                # Define print string.
+                text = "%8s %s sum= %2.3f" % (est_key, r2eff_err_str, sum_array)
+                text_list.append(text)
+
+
+        # Now print.
+        filepath = NamedTemporaryFile(delete=False).name
+        # Open the files for testing.
+        w_file = open(filepath, 'w')
+
+        print("Printing the estimated R2eff error as function of estimation from Co-variance and number of Monte-Carlo simulations.")
+
+        for text in text_list:
+            # Print.
+            print(text)
+
+            # Write to file.
+            w_file.write(text+"\n")
+
+        # Close files
+        w_file.close()
+
+        print("Filepath is: %s"%filepath)
+        print("Start 'gnuplot' and write:")
+        print("set term dumb")
+        print("plot '%s' using 1:17 title 'R2eff error as function of MC number' w linespoints "%filepath)
 
 
     def verify_r1rho_kjaergaard_missing_r1(self, models=None, result_dir_name=None, do_assert=True):
