@@ -34,7 +34,8 @@ from lib.float import isNaN, isInf
 from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoPCSError, RelaxNoRDCError
 from lib.geometry.angles import wrap_angles
 from lib.order import order_parameters
-from lib.physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
+from lib.periodic_table import periodic_table
+from lib.physical_constants import dipolar_constant
 from lib.warnings import RelaxWarning
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import return_spin, spin_loop
@@ -203,7 +204,7 @@ def minimise_setup_pcs(sim_index=None):
 
         # Get the spectrometer frequency in Tesla units for the PCS constant.
         if align_id in cdp.spectrometer_frq:
-            frq.append(cdp.spectrometer_frq[align_id] * 2.0 * pi / g1H)
+            frq.append(cdp.spectrometer_frq[align_id] * 2.0 * pi / periodic_table.gyromagnetic_ratio('1H'))
 
         # The frequency must be given!
         else:
@@ -312,8 +313,8 @@ def minimise_setup_rdcs(sim_index=None):
         unit_vect[-1] = unit_vect[-1] / norm(unit_vect[-1])
 
         # Gyromagnetic ratios.
-        g1 = return_gyromagnetic_ratio(spin1.isotope)
-        g2 = return_gyromagnetic_ratio(spin2.isotope)
+        g1 = periodic_table.gyromagnetic_ratio(spin1.isotope)
+        g2 = periodic_table.gyromagnetic_ratio(spin2.isotope)
 
         # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
         rdc_const.append(3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r))

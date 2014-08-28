@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,7 +26,7 @@
 from math import atan2, pi, sqrt
 
 # relax module imports.
-from lib.physical_constants import g1H, return_gyromagnetic_ratio
+from lib.periodic_table import periodic_table
 
 
 def frequency_to_Hz(frq=None, B0=None, isotope=None):
@@ -43,7 +43,7 @@ def frequency_to_Hz(frq=None, B0=None, isotope=None):
     """
 
     # Convert and return.
-    return frq * B0 / g1H * return_gyromagnetic_ratio(isotope) * 1e-6
+    return frq * B0 / periodic_table.gyromagnetic_ratio('1H') * periodic_table.gyromagnetic_ratio(isotope) * 1e-6
 
 
 def frequency_to_ppm(frq=None, B0=None, isotope=None):
@@ -60,7 +60,7 @@ def frequency_to_ppm(frq=None, B0=None, isotope=None):
     """
 
     # Convert and return.
-    return frq / B0 * g1H / return_gyromagnetic_ratio(isotope) / 1e-6
+    return frq / B0 * periodic_table.gyromagnetic_ratio('1H') / periodic_table.gyromagnetic_ratio(isotope) / 1e-6
 
 
 def frequency_to_ppm_from_rad(frq=None, B0=None, isotope=None):
@@ -77,7 +77,7 @@ def frequency_to_ppm_from_rad(frq=None, B0=None, isotope=None):
     """
 
     # Convert and return.
-    return frq / (2.0 * pi) / B0 * g1H / return_gyromagnetic_ratio(isotope) / 1e-6
+    return frq / (2.0 * pi) / B0 * periodic_table.gyromagnetic_ratio('1H') / periodic_table.gyromagnetic_ratio(isotope) / 1e-6
 
 
 def frequency_to_rad_per_s(frq=None, B0=None, isotope=None):
@@ -94,7 +94,7 @@ def frequency_to_rad_per_s(frq=None, B0=None, isotope=None):
     """
 
     # Convert and return.
-    return frq * 2.0 * pi * B0 / g1H * return_gyromagnetic_ratio(isotope) * 1e-6
+    return frq * 2.0 * pi * B0 / periodic_table.gyromagnetic_ratio('1H') * periodic_table.gyromagnetic_ratio(isotope) * 1e-6
 
 
 def rotating_frame_params(chemical_shift=None, spin_lock_offset=None, omega1=None):

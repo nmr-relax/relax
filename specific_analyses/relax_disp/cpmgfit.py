@@ -37,7 +37,7 @@ import sys
 # relax module imports.
 from lib.errors import RelaxError, RelaxDirError, RelaxFileError, RelaxNoSequenceError
 from lib.io import mkdir_nofail, open_write_file, test_binary
-from lib.physical_constants import g1H
+from lib.periodic_table import periodic_table
 from pipe_control import pipes
 from pipe_control.spectrometer import get_frequencies
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
@@ -268,7 +268,7 @@ def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
             continue
 
         # Tesla units.
-        B0 = frq * 2.0 * pi / g1H
+        B0 = frq * 2.0 * pi / periodic_table.gyromagnetic_ratio('1H')
 
         # The X value of 1/tcp (or 1/tau_CPMG) in ms.  This assumes Art's usage of the definition that nu_CPMG = 1 / (2 * tau_CPMG).
         x = 2.0 * point / 1000.0

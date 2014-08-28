@@ -36,7 +36,8 @@ from lib.alignment.pcs import ave_pcs_tensor, pcs_tensor
 from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoPdbError, RelaxNoPCSError, RelaxNoSequenceError
 from lib.geometry.vectors import random_unit_vector
 from lib.io import open_write_file
-from lib.physical_constants import g1H, pcs_constant
+from lib.periodic_table import periodic_table
+from lib.physical_constants import pcs_constant
 from lib.sequence import read_spin_data, write_spin_data
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import grace, pipes
@@ -106,7 +107,7 @@ def back_calc(align_id=None):
                     vect[c] = vect[c] / r[c]
 
                 # Calculate the PCS constant.
-                dj[c] = pcs_constant(cdp.temperature[id], cdp.spectrometer_frq[id] * 2.0 * pi / g1H, r[c]/1e10)
+                dj[c] = pcs_constant(cdp.temperature[id], cdp.spectrometer_frq[id] * 2.0 * pi / periodic_table.gyromagnetic_ratio('1H'), r[c]/1e10)
 
             # Initialise if necessary.
             if not hasattr(spin, 'pcs_bc'):
@@ -808,7 +809,7 @@ def return_pcs_data(sim_index=None):
 
         # Get the spectrometer frequency in Tesla units for the PCS constant.
         if align_id in cdp.spectrometer_frq:
-            frq.append(cdp.spectrometer_frq[align_id] * 2.0 * pi / g1H)
+            frq.append(cdp.spectrometer_frq[align_id] * 2.0 * pi / periodic_table.gyromagnetic_ratio('1H'))
 
         # The frequency must be given!
         else:
@@ -1034,7 +1035,7 @@ def structural_noise(align_id=None, rmsd=0.2, sim_num=1000, file=None, dir=None,
                     continue
 
                 # Calculate the PCS constant.
-                dj = pcs_constant(cdp.temperature[id], cdp.spectrometer_frq[id] * 2.0 * pi / g1H, r/1e10)
+                dj = pcs_constant(cdp.temperature[id], cdp.spectrometer_frq[id] * 2.0 * pi / periodic_table.gyromagnetic_ratio('1H'), r/1e10)
 
                 # Calculate the PCS value (in ppm).
                 pcs[id][i] = pcs_tensor(dj, vect, cdp.align_tensors[get_tensor_index(id)].A) * 1e6

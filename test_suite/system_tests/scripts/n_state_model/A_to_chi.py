@@ -1,4 +1,5 @@
-from lib.physical_constants import NH_BOND_LENGTH_RDC, dipolar_constant, g15N, g1H
+from lib.periodic_table import periodic_table
+from lib.physical_constants import NH_BOND_LENGTH_RDC, dipolar_constant
 from pipe_control.align_tensor import calc_chi_tensor
 
 
@@ -6,7 +7,7 @@ from pipe_control.align_tensor import calc_chi_tensor
 self._execute_uf('AtoX', 'N-state', uf_name='pipe.create')
 
 # The dipolar constant.
-const = 3.0 / (2.0*pi) * dipolar_constant(g15N, g1H, NH_BOND_LENGTH_RDC)
+const = 3.0 / (2.0*pi) * dipolar_constant(periodic_table.gyromagnetic_ratio('15N'), periodic_table.gyromagnetic_ratio('1H'), NH_BOND_LENGTH_RDC)
 
 # The tensor.
 tensor = 'A'

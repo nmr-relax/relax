@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,7 +28,7 @@ from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoFrqError
-from lib.physical_constants import g1H
+from lib.periodic_table import periodic_table
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
 
@@ -193,7 +193,7 @@ def get_frequencies(units='Hz'):
 
         # Tesla.
         elif units == 'T':
-            frq.append(value * 2.0 * pi / g1H)
+            frq.append(value * 2.0 * pi / periodic_table.gyromagnetic_ratio('1H'))
 
         # Unknown units.
         else:

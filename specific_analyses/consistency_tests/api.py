@@ -29,7 +29,8 @@ from warnings import warn
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError, RelaxSpinTypeError
 from lib.float import isInf
-from lib.physical_constants import h_bar, mu0, return_gyromagnetic_ratio
+from lib.periodic_table import periodic_table
+from lib.physical_constants import h_bar, mu0
 from lib.warnings import RelaxDeselectWarning
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
@@ -190,8 +191,8 @@ class Consistency_tests(API_base, API_common):
                 spin2 = return_spin(spin_id2)
 
                 # Gyromagnetic ratios.
-                gx = return_gyromagnetic_ratio(spin.isotope)
-                gh = return_gyromagnetic_ratio(spin2.isotope)
+                gx = periodic_table.gyromagnetic_ratio(spin.isotope)
+                gh = periodic_table.gyromagnetic_ratio(spin2.isotope)
 
                 # The interatomic distance.
                 r = interatoms[i].r

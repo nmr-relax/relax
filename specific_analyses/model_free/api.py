@@ -41,7 +41,8 @@ from warnings import warn
 from lib.arg_check import is_num_list, is_str_list
 from lib.errors import RelaxError, RelaxFault, RelaxNoModelError, RelaxNoSequenceError, RelaxNoTensorError
 from lib.float import isInf
-from lib.physical_constants import h_bar, mu0, return_gyromagnetic_ratio
+from lib.periodic_table import periodic_table
+from lib.physical_constants import h_bar, mu0
 from lib.text.sectioning import subsection
 from lib.warnings import RelaxDeselectWarning, RelaxWarning
 from multi import Processor_box
@@ -517,7 +518,7 @@ class Model_free(API_base, API_common):
             frq = [data[5]]
             remap_table = [data[6]]
             noe_r1_table = [data[7]]
-            gx = [return_gyromagnetic_ratio(spin.isotope)]
+            gx = [periodic_table.gyromagnetic_ratio(spin.isotope)]
             if sim_index == None:
                 csa = [spin.csa]
             else:
@@ -550,7 +551,7 @@ class Model_free(API_base, API_common):
                     xh_unit_vectors = [None]
 
                 # Gyromagnetic ratios.
-                gh = [return_gyromagnetic_ratio(spin2.isotope)]
+                gh = [periodic_table.gyromagnetic_ratio(spin2.isotope)]
 
             # Count the number of model-free parameters for the residue index.
             num_params = [len(spin.params)]
