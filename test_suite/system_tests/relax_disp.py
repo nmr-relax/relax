@@ -2744,13 +2744,13 @@ class Relax_disp(SystemTestCase):
         self.interpreter.minimise.execute(min_algor='Newton', constraints=False, verbosity=1)
 
         # Estimate R2eff errors.
-        self.interpreter.relax_disp.r2eff_err_estimate(chi2_jacobian=False)
+        self.interpreter.relax_disp.r2eff_err_estimate(chi2_jacobian=True)
 
         # Run the analysis.
         relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
 
         # Verify the data.
-        self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, r2eff_estimate='direct')
+        self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, r2eff_estimate='chi2')
 
 
     def test_estimate_r2eff_err_auto(self):
@@ -2849,7 +2849,7 @@ class Relax_disp(SystemTestCase):
         relax_disp.Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, exp_mc_sim_num=EXP_MC_NUM, modsel=MODSEL, r1_fit=r1_fit)
 
         # Verify the data.
-        self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, r2eff_estimate='chi2')
+        self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, r2eff_estimate='direct')
 
 
     def test_estimate_r2eff_err_methods(self):

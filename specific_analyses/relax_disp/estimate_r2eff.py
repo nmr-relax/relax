@@ -90,7 +90,7 @@ def func_exp_chi2_grad(params=None, times=None, values=None, errors=None):
     return jacobian_matrix_exp_chi2
 
 
-def estimate_r2eff_err(chi2_jacobian=True, spin_id=None, epsrel=0.0, verbosity=1):
+def estimate_r2eff_err(chi2_jacobian=False, spin_id=None, epsrel=0.0, verbosity=1):
     """This will estimate the R2eff and i0 errors from the covariance matrix Qxx.  Qxx is calculated from the Jacobian matrix and the optimised parameters.
 
     @keyword chi2_jacobian: If the Jacobian derived from the chi2 function, should be used instead of the Jacobian from the exponential function.
