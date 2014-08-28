@@ -512,6 +512,10 @@ class Relax_disp:
                 # Print
                 subsection(file=sys.stdout, text="Estimating errors from Covariance matrix", prespace=1)
 
+                # Raise warning.
+                text = 'Estimating errors from the Covariance matrix is highly likely to "quite" wrong.  Use only with extreme care, and for initial rapid testing of your data.'
+                warn(RelaxWarning(text))
+
                 # Estimate errors
                 self.interpreter.relax_disp.r2eff_err_estimate()
             else:
