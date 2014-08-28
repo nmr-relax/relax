@@ -40,6 +40,25 @@ from string import lower, upper
 from lib.errors import RelaxError
 
 
+def isotope_to_mass_symbol(isotope):
+    """Convert the given isotope to its mass number and atomic symbol.
+
+    @param isotope: The isotope name, e.g. '15N'.
+    @type isotope:  str
+    @return:        The mass number A and atomic symbol.
+    @rtype:         int, str
+    """
+
+    # The mass number.
+    A = int(split('[A-Z]', id)[0])
+
+    # The atomic symbol.
+    symbol = process_symbol(split('[0-9]', id)[-1])
+
+    # Return the components.
+    return A, symbol
+
+
 def process_mass(mass):
     """Process the given mass, handling ranges, unstable isotopes, and uncertainties.
 
@@ -110,17 +129,21 @@ class Element:
         self.isotopes = []
 
 
-    def _add_isotope(self, A=None, atomic_mass=None):
+    def _add_isotope(self, A=None, atomic_mass=None, spin=None, gyromagnetic_ratio=None):
         """Add the isotope information for the element.
 
-        @keyword A:             The mass number of the isotope.
-        @type A:                int
-        @keyword atomic_mass:   The atomic mass of the isotope.  This uses the string notation with the uncertainty specified in brackets at the end.
-        @type atomic_mass:      str
+        @keyword A:                     The mass number of the isotope.
+        @type A:                        int
+        @keyword atomic_mass:           The atomic mass of the isotope.  This uses the string notation with the uncertainty specified in brackets at the end.
+        @type atomic_mass:              str
+        @keyword spin:                  Nuclear spin or angular momentum of the isotope in units of h/2pi.
+        @type spin:                     int or float
+        @keyword gyromagnetic_ratio:    The nuclear gyromagnetic ratio.
+        @type gyromagnetic_ratio:       float
         """
 
         # Create a new isotope container.
-        isotope = Isotope(A=A, atomic_mass=atomic_mass)
+        isotope = Isotope(A=A, atomic_mass=atomic_mass, spin=spin, gyromagnetic_ratio=gyromagnetic_ratio)
 
         # Store it in the element container.
         self.isotopes.append(isotope)
@@ -130,18 +153,24 @@ class Element:
 class Isotope:
     """A special object for the element container for holding different isotope information."""
 
-    def __init__(self, A=None, atomic_mass=None):
+    def __init__(self, A=None, atomic_mass=None, spin=None, gyromagnetic_ratio=None):
         """Set up the isotope object.
 
-        @keyword A:             The mass number of the isotope.
-        @type A:                int
-        @keyword atomic_mass:   The atomic mass of the isotope.  This uses the string notation with the uncertainty specified in brackets at the end.
-        @type atomic_mass:      str
+        @keyword A:                     The mass number of the isotope.
+        @type A:                        int
+        @keyword atomic_mass:           The atomic mass of the isotope.  This uses the string notation with the uncertainty specified in brackets at the end.
+        @type atomic_mass:              str
+        @keyword spin:                  Nuclear spin or angular momentum of the isotope in units of h/2pi.
+        @type spin:                     int or float
+        @keyword gyromagnetic_ratio:    The nuclear gyromagnetic ratio.
+        @type gyromagnetic_ratio:       float
         """
 
         # Store the values.
         self.A = A
         self.atomic_mass = atomic_mass
+        self.spin = spin
+        self.gyromagnetic_ratio = gyromagnetic_ratio
 
 
 
@@ -213,11 +242,8 @@ class Periodic_table(dict):
 
         # An isotope.
         if search('[0-9]', id):
-            # The mass number.
-            A = int(split('[A-Z]', id)[0])
-
-            # The atomic symbol.
-            symbol = process_symbol(split('[0-9]', id)[-1])
+            # Convert to the mass number and atomic symbol.
+            A, symbol = isotope_to_mass_symbol(id)
 
             # Get the isotope container.
             isotope = self._get_isotope(symbol=symbol, A=A)
@@ -250,6 +276,26 @@ class Periodic_table(dict):
         return process_mass(self[symbol].atomic_weight)
 
 
+    def gyromagnetic_ratio(isotope=None):
+        """Return the gyromagnetic ratio for the isotope.
+
+        @keyword isotope:   The isotope name, e.g. '15N'.
+        @type isotope:      str
+        @raises RelaxError: If the nucleus type is unknown.
+        @returns:           The desired gyromagnetic ratio.
+        @rtype:             float
+        """
+
+        # Convert to the mass number and atomic symbol.
+        A, symbol = isotope_to_mass_symbol(isotope)
+
+        # Get the isotope container.
+        isotope = self._get_isotope(symbol=symbol, A=A)
+
+        # Return the gyromagnetic ratio.
+        return isotope.gyromagnetic_ratio
+
+
     def lookup_symbol(self, atomic_number=None):
         """Return the atomic symbol corresponding to the atomic number Z.
 
@@ -276,11 +322,14 @@ element = periodic_table._add(
 )
 element._add_isotope(
     A=1,
-    atomic_mass="1.0078250322(6)"
+    atomic_mass="1.0078250322(6)",
+    spin = 1/2.,
+    gyromagnetic_ratio = 26.7522212 * 1e7    # Pales = 2.675198e+8
 )
 element._add_isotope(
     A=2,
-    atomic_mass="2.0141017781(8)"
+    atomic_mass="2.0141017781(8)",
+    spin = 1
 )
 
 # Helium.
@@ -356,7 +405,9 @@ element._add_isotope(
 )
 element._add_isotope(
     A=13,
-    atomic_mass="13.003354835(2)"
+    atomic_mass="13.003354835(2)",
+    spin = 1/2.,
+    gyromagnetic_ratio = 6.728 * 1e7
 )
 
 # Nitrogen.
@@ -372,7 +423,9 @@ element._add_isotope(
 )
 element._add_isotope(
     A=15,
-    atomic_mass="15.000108899(4)"
+    atomic_mass="15.000108899(4)",
+    spin = -1/2.,
+    gyromagnetic_ratio = -2.7126 * 1e7    # Pales = -2.7116e+7
 )
 
 # Oxygen.
@@ -388,7 +441,9 @@ element._add_isotope(
 )
 element._add_isotope(
     A=17,
-    atomic_mass="16.999131757(5)"
+    atomic_mass="16.999131757(5)",
+    spin = 5/2.,
+    gyromagnetic_ratio = -3.628 * 1e7
 )
 element._add_isotope(
     A=18,
@@ -500,7 +555,9 @@ element = periodic_table._add(
 )
 element._add_isotope(
     A=31,
-    atomic_mass="30.973761998(5)"
+    atomic_mass="30.973761998(5)",
+    spin = 1/2.,
+    gyromagnetic_ratio = 10.841 * 1e7
 )
 
 # Sulfur.
