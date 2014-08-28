@@ -59,17 +59,17 @@ if scipy_module:
     from scipy.optimize import leastsq
 
 
-def func_exp_chi2_grad(params=None, values=None, errors=None, times=None):
+def func_exp_chi2_grad(params=None, times=None, values=None, errors=None):
     """Target function for the gradient (Jacobian matrix) of func_exp_chi2() to minfx, for exponential fit .
 
     @param params:      The vector of parameter values.
     @type params:       numpy rank-1 float array
+    @keyword times:     The time points.
+    @type times:        numpy array
     @keyword values:    The measured intensity values per time point.
     @type values:       numpy array
     @keyword errors:    The standard deviation of the measured intensity values per time point.
     @type errors:       numpy array
-    @keyword times:     The time points.
-    @type times:        numpy array
     @return:            The Jacobian matrix with 'm' rows of function derivatives per 'n' columns of parameters.
     @rtype:             numpy array
     """
@@ -164,7 +164,7 @@ def estimate_r2eff_err(chi2_jacobian=False, spin_id=None, epsrel=0.0, verbosity=
             setup(num_params=len(params), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
             if chi2_jacobian:
-                jacobian_matrix_exp = func_exp_chi2_grad(params=params, values=values, errors=errors, times=times)
+                jacobian_matrix_exp = func_exp_chi2_grad(params=params, times=times, values=values, errors=errors)
                 weights = ones(errors.shape)
             else:
                 # Calculate the direct exponential Jacobian matrix from C code.
@@ -346,21 +346,21 @@ class Exp:
         self.set_settings_minfx()
 
 
-    def setup_data(self, values=None, errors=None, times=None):
+    def setup_data(self, times=None, values=None, errors=None):
         """Setup for minimisation with minfx.
 
+        @keyword times:             The time points.
+        @type times:                numpy array
         @keyword values:            The measured intensity values per time point.
         @type values:               numpy array
         @keyword errors:            The standard deviation of the measured intensity values per time point.
         @type errors:               numpy array
-        @keyword times:             The time points.
-        @type times:                numpy array
         """
 
         # Store variables.
+        self.times = times
         self.values = values
         self.errors = errors
-        self.times = times
 
         # Create the structure for holding the back-calculated R2eff values (matching the dimensions of the values structure).
         self.back_calc = deepcopy(self.values)
@@ -443,24 +443,20 @@ class Exp:
             self.b = None
 
 
-    def estimate_x0_exp(self, intensities=None, times=None):
+    def estimate_x0_exp(self, times=None, values=None):
         """Estimate starting parameter x0 = [r2eff_est, i0_est], by converting the exponential curve to a linear problem.
          Then solving by linear least squares of: ln(Intensity[j]) = ln(i0) - time[j]* r2eff.
 
-        @keyword intensities:   The measured intensity values per time point.
-        @type intensities:      numpy array
         @keyword times:         The time points.
         @type times:            numpy array
+        @keyword values:        The measured intensity values per time point.
+        @type values:           numpy array
         @return:                The list with estimated r2eff and i0 parameter for optimisation, [r2eff_est, i0_est]
         @rtype:                 list
         """
 
-        # Get data.
-        intensities = self.values
-        times = self.times
-
         # Convert to linear problem.
-        w = log(intensities)
+        w = log(values)
         x = - 1. * times
         n = len(times)
 
@@ -476,43 +472,64 @@ class Exp:
         return [r2eff_est, i0_est]
 
 
-    def func_exp(self, times=None, r2eff=None, i0=None):
+    def func_exp(self, params=None, times=None):
         """Calculate the function values of exponential function.
 
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
         @keyword times: The time points.
         @type times:    numpy array
-        @keyword r2eff: The effective transversal relaxation rate.
-        @type r2eff:    float
-        @keyword i0:    The initial intensity.
-        @type i0:       float
         @return:        The function values.
         @rtype:         numpy array
         """
+
+        # Unpack
+        r2eff, i0 = params
 
         # Calculate.
         return i0 * exp( -times * r2eff)
 
 
-    def func_exp_residual(self, times=None, r2eff=None, i0=None, values=None):
+    def func_exp_residual(self, params=None, times=None, values=None):
         """Calculate the residual vector betwen measured values and the function values.
 
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
         @keyword times: The time points.
         @type times:    numpy array
-        @keyword r2eff: The effective transversal relaxation rate.
-        @type r2eff:    float
-        @keyword i0:    The initial intensity.
-        @type i0:       float
         @param values:  The measured values.
         @type values:   numpy array
-        @return:        The function values.
+        @return:        The residuals.
         @rtype:         numpy array
         """
 
         # Let the vector K be the vector of the residuals. A residual is the difference between the observation and the equation calculated using the initial values.
-        K = values - self.func_exp(times=times, r2eff=r2eff, i0=i0)
+        K = values - self.func_exp(params=params, times=times)
 
         # Return
         return K
+
+
+    def func_exp_weighted_residual(self, params=None, times=None, values=None, errors=None):
+        """Calculate the weighted residual vector betwen measured values and the function values.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @keyword times: The time points.
+        @type times:    numpy array
+        @param values:  The measured values.
+        @type values:   numpy array
+        @param errors:  The standard deviation of the measured intensity values per time point.
+        @type errors:   numpy array
+        @return:        The weighted residuals.
+        @rtype:         numpy array
+        """
+
+        # Let the vector Kw be the vector of the weighted residuals. A residual is the difference between the observation and the equation calculated using the initial values.
+        Kw = 1. / errors * self.func_exp_residual(params=params, times=times, values=values)
+
+        # Return
+        return Kw
 
 
     def func_exp_grad(self, params):
@@ -557,16 +574,8 @@ class Exp:
         @rtype:         float
         """
 
-        # Scaling.
-        if self.scaling_flag:
-            params = dot(params, self.scaling_matrix)
-
-        # Unpack the parameter values.
-        r2eff = params[0]
-        i0 = params[1]
-
         # Calculate.
-        self.back_calc[:] = self.func_exp(times=self.times, r2eff=r2eff, i0=i0)
+        self.back_calc[:] = self.func_exp(params=params, times=self.times, )
 
         # Return the total chi-squared value.
         chi2 = chi2_rankN(data=self.values, back_calc_vals=self.back_calc, errors=self.errors)
@@ -583,10 +592,6 @@ class Exp:
         @return:        The Jacobian matrix with 'm' rows of function derivatives per 'n' columns of parameters.
         @rtype:         numpy array
         """
-
-        # Scaling.
-        if self.scaling_flag:
-            params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
         r2eff = params[0]
@@ -613,19 +618,6 @@ class Exp:
 
         # Return Jacobian matrix.
         return sum_jacobian_matrix_exp_chi2
-
-
-    def func_exp_weighted_general(self, params):
-        """Target function for weighted minimisation with scipy.optimize.
-
-        @param params:          The vector of parameter values.
-        @type params:           numpy rank-1 float array
-        @return:                The weighted difference between function evaluation with fitted parameters and measured values.
-        @rtype:                 numpy array
-        """
-
-        # Return
-        return 1. / self.errors * (self.func_exp(self.times, *params) - self.values)
 
 
 def estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints=False, chi2_jacobian=False, spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, verbosity=1):
@@ -833,21 +825,21 @@ def minimise_leastsq(E=None):
         raise RelaxError("scipy module is not available.")
 
     # Initial guess for minimisation. Solved by linear least squares.
-    x0 = E.estimate_x0_exp()
+    x0 = E.estimate_x0_exp(times=E.times, values=E.values)
 
     # Define function to minimise. Use errors as weights in the minimisation.
     use_weights = True
 
     if use_weights:
-        func = E.func_exp_weighted_general
+        func = E.func_exp_weighted_residual
         # If 'sigma'/erros describes one standard deviation errors of the input data points. The estimated covariance in 'pcov' is based on these values.
         absolute_sigma = True
     else:
         func = E.func_exp_general
         absolute_sigma = False
 
-    # There are no args to the function, since values and times are stored in the class.
-    args=()
+    # All args to function. Params are packed out through function, then other parameters.
+    args=(E.times, E.values, E.errors)
 
     # Call scipy.optimize.leastsq.
     popt, pcov, infodict, errmsg, ier = leastsq(func=func, x0=x0, args=args, full_output=True, ftol=E.ftol, xtol=E.xtol, maxfev=E.maxfev, factor=E.factor)
@@ -947,7 +939,7 @@ def minimise_minfx(E=None):
         raise RelaxError("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
 
     # Initial guess for minimisation. Solved by linear least squares.
-    x0 = asarray( E.estimate_x0_exp() )
+    x0 = asarray( E.estimate_x0_exp(times=E.times, values=E.values) )
 
     if E.c_code:
         # Initialise the function to minimise.
@@ -1009,7 +1001,7 @@ def minimise_minfx(E=None):
         eye_mat = eye(E.errors.shape[0])
 
         # Get the residual vector K.
-        K = E.func_exp_residual(times=E.times, r2eff=r2eff, i0=i0, values=E.values)
+        K = E.func_exp_residual(params=param_vector, times=E.times, values=E.values)
 
         weights = 1. / E.errors**2
 
