@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2014 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,26 +19,24 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
+from unittest import TestCase
 
-__all__ = [
-    '_alignment',
-    '_auto_relaxation',
-    '_chemical_shift',
-    '_diffusion',
-    '_dispersion',
-    '_frame_order',
-    '_geometry',
-    '_linear_algebra',
-    '_order',
-    '_software',
-    '_spectral_densities',
-    '_structure',
-    '_text',
-    'test___init__',
-    'test_float',
-    'test_io',
-    'test_mathematics',
-    'test_periodic_table',
-    'test_regex',
-    'test_selection'
-]
+# relax module imports.
+from lib.periodic_table import periodic_table
+
+
+class Test_periodic_table(TestCase):
+    """Unit tests for the lib.periodic_table module."""
+
+
+    def test_get_atomic_weight(self):
+        """Test of the periodic_table.atomic_weight() method."""
+
+        # Check the proton weight.
+        weight = periodic_table.atomic_weight(symbol='H')
+        self.assertEqual(weight, 1.007975)
+
+        # Check the helium weight.
+        weight = periodic_table.atomic_weight(symbol='He')
+        self.assertEqual(weight, 4.002602)
