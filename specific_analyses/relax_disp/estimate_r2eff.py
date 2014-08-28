@@ -184,39 +184,39 @@ def multifit_covar(J=None, epsrel=0.0, errors=None):
 
     The parameter 'epsrel' is used to remove linear-dependent columns when J is rank deficient.
 
-    The covariance matrix is given by,
+    The covariance matrix is given by::
 
-        covar = (J^T J)^{-1}
+        covar = (J^T J)^{-1} ,
 
-    and is computed by QR decomposition of J with column-pivoting. Any columns of R which satisfy
+    and is computed by QR decomposition of J with column-pivoting. Any columns of R which satisfy::
 
-        |R_{kk}| <= epsrel |R_{11}|
+        |R_{kk}| <= epsrel |R_{11}| ,
 
-    are considered linearly-dependent and are excluded from the covariance matrix
-    (the corresponding rows and columns of the covariance matrix are set to zero).
+    are considered linearly-dependent and are excluded from the covariance matrix (the corresponding rows and columns of the covariance matrix are set to zero).  If the minimisation uses the weighted least-squares function::
 
-    If the minimisation uses the weighted least-squares function:
-
-        f_i = (Y(x, t_i) - y_i) / sigma_i
+        f_i = (Y(x, t_i) - y_i) / sigma_i ,
 
     then the covariance matrix above gives the statistical error on the best-fit parameters resulting from the Gaussian errors 'sigma_i' on the underlying data 'y_i'.
 
-    This can be verified from the relation 'd_f = J d_c' and the fact that the fluctuations in 'f from the data 'y_i' are normalised by 'sigma_i'
-    and so satisfy <d_f d_f^T> = I.
+    This can be verified from the relation 'd_f = J d_c' and the fact that the fluctuations in 'f' from the data 'y_i' are normalised by 'sigma_i' and so satisfy::
 
-    For an unweighted least-squares function f_i = (Y(x, t_i) - y_i) the covariance matrix above should be multiplied by
-    the variance of the residuals about the best-fit
+        <d_f d_f^T> = I. ,
 
-        sigma^2 = sum ( (y_i - Y(x, t_i))^2 / (n-p) )
+    For an unweighted least-squares function f_i = (Y(x, t_i) - y_i) the covariance matrix above should be multiplied by the variance of the residuals about the best-fit::
 
-    to give the variance-covariance matrix sigma^2 C.
-    This estimates the statistical error on the best-fit parameters from the scatter of the underlying data.
+        sigma^2 = sum ( (y_i - Y(x, t_i))^2 / (n-p) ) ,
 
-    See:
-    U{GSL - GNU Scientific Library<http://www.gnu.org/software/gsl/>}
-    U{Manual: Overview<http://www.gnu.org/software/gsl/manual/gsl-ref_37.html#SEC510>}
-    U{Manual: Computing the covariance matrix of best fit parameters<http://www.gnu.org/software/gsl/manual/gsl-ref_38.html#SEC528>}
-    U{Other reference<http://www.orbitals.com/self/least/least.htm>}
+    to give the variance-covariance matrix sigma^2 C.  This estimates the statistical error on the best-fit parameters from the scatter of the underlying data.
+
+    Links
+    =====
+
+    More information ca be found here:
+
+        - U{GSL - GNU Scientific Library<http://www.gnu.org/software/gsl/>}
+        - U{Manual: Overview<http://www.gnu.org/software/gsl/manual/gsl-ref_37.html#SEC510>}
+        - U{Manual: Computing the covariance matrix of best fit parameters<http://www.gnu.org/software/gsl/manual/gsl-ref_38.html#SEC528>}
+        - U{Other reference<http://www.orbitals.com/self/least/least.htm>}
 
     @param J:               The Jacobian matrix.
     @type J:                numpy array
