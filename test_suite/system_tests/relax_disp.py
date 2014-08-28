@@ -2842,9 +2842,10 @@ class Relax_disp(SystemTestCase):
             print(spin_id)
 
         result_dir_name = self.tmpdir
+        r1_fit = False
 
         # Run the analysis.
-        relax_disp.Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, exp_mc_sim_num=EXP_MC_NUM, modsel=MODSEL)
+        relax_disp.Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, exp_mc_sim_num=EXP_MC_NUM, modsel=MODSEL, r1_fit=r1_fit)
 
         # Verify the data.
         self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, do_assert=False)
