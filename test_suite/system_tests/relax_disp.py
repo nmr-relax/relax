@@ -7629,7 +7629,7 @@ class Relax_disp(SystemTestCase):
                     delattr(cur_spin, err_attr)
 
         # Estimate R2eff errors.
-        self.interpreter.relax_disp.r2eff_err_estimate()
+        self.interpreter.relax_disp.r2eff_err_estimate(chi2_jacobian=False)
 
         # Collect the estimation data.
         my_dic = {}
