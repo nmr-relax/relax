@@ -24,7 +24,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import absolute, any, array, asarray, diag, dot, exp, eye, inf, log, multiply, spacing, sqrt, sum, transpose, zeros
+from numpy import absolute, any, array, asarray, diag, dot, exp, eye, inf, log, multiply, ones, spacing, sqrt, sum, transpose, zeros
 from numpy.linalg import cond, inv, qr
 from minfx.generic import generic_minimise
 from re import match, search
@@ -134,7 +134,7 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
             jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
 
             # Get the co-variance
-            pcov = multifit_covar(J=jacobian_matrix_exp, errors=errors)
+            pcov = multifit_covar(J=jacobian_matrix_exp, weights=1/errors**2)
 
             # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
             param_vector_error = sqrt(diag(pcov))
@@ -175,7 +175,7 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
                     print(print_string),
 
 
-def multifit_covar(J=None, epsrel=0.0, errors=None, use_weights=True):
+def multifit_covar(J=None, epsrel=0.0, weights=None):
     """This is the implementation of the multifit covariance.
 
     This is inspired from GNU Scientific Library (GSL).
@@ -184,11 +184,11 @@ def multifit_covar(J=None, epsrel=0.0, errors=None, use_weights=True):
 
     The parameter 'epsrel' is used to remove linear-dependent columns when J is rank deficient.
 
-    The weighting matrix 'W', is a square symmetric matrix. For independent measurements, this is a diagonal matrix. Larger values indicate greater significance.  It is formed by multiplying the supplied errors as 1./errors^2 with an Identity matrix::
+    The weighting matrix 'W', is a square symmetric matrix. For independent measurements, this is a diagonal matrix. Larger values indicate greater significance.  It is formed by multiplying and Identity matrix with the supplied weights vector::
 
-        W = I.(1/errors^2)
+        W = I. w
 
-    If 'use_weights' is set to 'False', the errors are set to 1.0.
+    The weights should normally be supplied as a vector: 1 / errors^2. 
 
     The covariance matrix is given by::
 
@@ -228,10 +228,8 @@ def multifit_covar(J=None, epsrel=0.0, errors=None, use_weights=True):
     @type J:                numpy array
     @param epsrel:          Any columns of R which satisfy |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix, where the corresponding rows and columns of the covariance matrix are set to zero.
     @type epsrel:           float
-    @keyword errors:        The standard deviation of the measured intensity values per time point.
-    @type errors:           numpy array
-    @keyword use_weights:   If the supplied weights should be used.
-    @type use_weights:      bool
+    @keyword weigths:       The weigths which to scale with.  Normally submitted as the 1 over standard deviation of the measured intensity values per time point in power 2. weigths = 1 / sd_i^2.
+    @type weigths:          numpy array
     @return:                The co-variance matrix
     @rtype:                 square numpy array
     """
@@ -240,16 +238,10 @@ def multifit_covar(J=None, epsrel=0.0, errors=None, use_weights=True):
     # For independent measurements, this is a diagonal matrix. Larger values indicate greater significance.
 
     # Make a square diagonal matrix.
-    eye_mat = eye(errors.shape[0])
-
-    # Now form the error matrix, with errors down the diagonal.
-    weights = 1. / errors**2
-
-    if use_weights == False:
-        weights[:] = 1.0
+    eye_mat = eye(weights.shape[0])
 
     # Form weight matrix.
-    W = multiply(weights, eye_mat)
+    W = multiply(eye_mat, weights)
 
     # The covariance matrix (sometimes referred to as the variance-covariance matrix), Qxx, is defined as:
     # Qxx = (J^t W J)^(-1)
@@ -456,11 +448,33 @@ class Exp:
         @keyword i0:    The initial intensity.
         @type i0:       float
         @return:        The function values.
-        @rtype:         float
+        @rtype:         numpy array
         """
 
         # Calculate.
         return i0 * exp( -times * r2eff)
+
+
+    def func_exp_residual(self, times=None, r2eff=None, i0=None, values=None):
+        """Calculate the residual vector betwen measured values and the function values.
+
+        @keyword times: The time points.
+        @type times:    numpy array
+        @keyword r2eff: The effective transversal relaxation rate.
+        @type r2eff:    float
+        @keyword i0:    The initial intensity.
+        @type i0:       float
+        @param values:  The measured values.
+        @type values:   numpy array
+        @return:        The function values.
+        @rtype:         numpy array
+        """
+
+        # Let the vector K be the vector of the residuals. A residual is the difference between the observation and the equation calculated using the initial values.
+        K = values - self.func_exp(times=times, r2eff=r2eff, i0=i0)
+
+        # Return
+        return K
 
 
     def func_exp_grad(self, params):
@@ -919,6 +933,9 @@ def minimise_minfx(E=None):
     # Unpack
     param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results_minfx
 
+    # Extract.
+    r2eff, i0 = param_vector
+
     # Get the Jacobian.
     if E.c_code:
         # Calculate the direct exponential Jacobian matrix from C code.
@@ -942,11 +959,39 @@ def minimise_minfx(E=None):
 
     # Get the co-variance
     if E.chi2_jacobian:
-        use_weights = False
+        weights = ones(E.errors.shape)
     else:
-        use_weights = True
-    
-    pcov = multifit_covar(J=jacobian_matrix_exp, errors=E.errors, use_weights=use_weights)
+        weights = 1. / E.errors**2
+
+    pcov = multifit_covar(J=jacobian_matrix_exp, weights=weights)
+
+    # Scale the variance?
+    if False:
+        # Make a square diagonal matrix.
+        eye_mat = eye(E.errors.shape[0])
+
+        # Get the residual vector K.
+        K = E.func_exp_residual(times=E.times, r2eff=r2eff, i0=i0, values=E.values)
+
+        weights = 1. / E.errors**2
+
+        # Now form the weights matrix, with errors down the diagonal.
+        W = multiply(weights, eye_mat)
+
+        # N is number of observations.
+        N = len(E.values)
+        # n is number of fitted parameters.
+        n = len(x0)
+        # number of degrees of freedom
+        v = N - n
+
+        # The covariance matrix, Qxx, contains the variance of each unknown and the covariance of each pair of unknowns. 
+        # The quantities in Qxx need to be scaled by a reference variance. This reference variance, S_0**2, is related to the weighting matrix and the residuals.
+        S02 = dot( dot(transpose(K), W), K) / v
+
+        # Scale co-variance.
+        pcov = pcov * S02
+        
 
     # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
     param_vector_error = sqrt(diag(pcov))
