@@ -2797,7 +2797,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.script(file=file, dir=None)
 
         # The dispersion models.
-        MODELS = [MODEL_R2EFF, MODEL_NOREX]
+        MODELS = [MODEL_R2EFF, MODEL_NOREX, MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]
 
         # The grid search size (the number of increments per dimension).
         GRID_INC = None
@@ -5904,7 +5904,7 @@ class Relax_disp(SystemTestCase):
         relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, pre_run_dir=prev_data_path)
 
         # Verify the data.
-        self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name)
+        self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, r2eff_estimate='MC2000')
 
 
     def test_r2eff_read(self):
@@ -7854,65 +7854,89 @@ class Relax_disp(SystemTestCase):
                                     if model == MODEL_NOREX:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 1.46138805)
-                                        elif r2eff_estimate == None:
+                                        elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 1.46328102)
+                                        elif r2eff_estimate == 'chi2':
+                                            self.assertAlmostEqual(value, 1.43820629)
                                     elif model == MODEL_DPL94:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 1.44845742)
-                                        elif r2eff_estimate == None:
+                                        elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 1.45019848)
+                                        elif r2eff_estimate == 'chi2':
+                                            self.assertAlmostEqual(value, 1.44666512)
                                     elif model == MODEL_TP02:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 1.54354392)
-                                        elif r2eff_estimate == None:
+                                        elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 1.54352369)
+                                        elif r2eff_estimate == 'chi2':
+                                            self.assertAlmostEqual(value, 1.55964020)
                                     elif model == MODEL_TAP03:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 1.54356410)
-                                        elif r2eff_estimate == None:
+                                        elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 1.54354367)
+                                        elif r2eff_estimate == 'chi2':
+                                            self.assertAlmostEqual(value, 1.55967157)
                                     elif model == MODEL_MP05:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 1.54356416)
-                                        elif r2eff_estimate == None:
+                                        elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 1.54354372)
+                                        elif r2eff_estimate == 'chi2':
+                                            self.assertAlmostEqual(value, 1.55967163)
                                     elif model == MODEL_NS_R1RHO_2SITE:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 1.41359221)
-                                        elif r2eff_estimate == None:
+                                        elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 1.41321968, 5)
+                                        elif r2eff_estimate == 'chi2':
+                                            self.assertAlmostEqual(value, 1.36303129)
 
                                 elif param == 'r2':
                                     if model == MODEL_NOREX:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 11.48392439)
-                                        elif r2eff_estimate == None:
+                                        elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 11.48040934)
+                                        elif r2eff_estimate == 'chi2':
+                                            self.assertAlmostEqual(value, 11.47224488)
                                     elif model == MODEL_DPL94:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 10.15688372, 6)
-                                        elif r2eff_estimate == None:
+                                        elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 10.16304887, 6)
+                                        elif r2eff_estimate == 'chi2':
+                                            self.assertAlmostEqual(value, 9.20037797)
                                     elif model == MODEL_TP02:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 9.72654896, 6)
-                                        elif r2eff_estimate == None:
+                                        elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 9.72772726, 6)
+                                        elif r2eff_estimate == 'chi2':
+                                            self.assertAlmostEqual(value, 9.53948340, 6)
                                     elif model == MODEL_TAP03:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 9.72641887, 6)
-                                        elif r2eff_estimate == None:
+                                        elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 9.72759374, 6)
+                                        elif r2eff_estimate == 'chi2':
+                                            self.assertAlmostEqual(value, 9.53926913, 6)
                                     elif model == MODEL_MP05:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 9.72641723, 6)
-                                        elif r2eff_estimate == None:
+                                        elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 9.72759220, 6)
+                                        elif r2eff_estimate == 'chi2':
+                                            self.assertAlmostEqual(value, 9.53926778, 6)
                                     elif model == MODEL_NS_R1RHO_2SITE:
                                         if r2eff_estimate == 'direct':
-                                            self.assertAlmostEqual(value, 9.34531535, 6)
-                                        elif r2eff_estimate == None:
+                                            self.assertAlmostEqual(value, 9.34531535, 5)
+                                        elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 9.34602793, 5)
+                                        elif r2eff_estimate == 'chi2':
+                                            self.assertAlmostEqual(value, 9.17631409, 5)
 
                     # For all other parameters.
                     else:
@@ -7928,111 +7952,151 @@ class Relax_disp(SystemTestCase):
                                 if model == MODEL_DPL94:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 0.07599563)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 0.07561937)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 0.12946061)
 
                             elif param == 'pA':
                                 if model == MODEL_TP02:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 0.88827040)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 0.88807487)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 0.87746233)
                                 elif model == MODEL_TAP03:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 0.88828922)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 0.88809318)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 0.87747558)
                                 elif model == MODEL_MP05:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 0.88828924)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 0.88809321)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 0.87747562)
                                 elif model == MODEL_NS_R1RHO_2SITE:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 0.94504369, 6)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 0.94496541, 6)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 0.92084707, 6)
 
                             elif param == 'dw':
                                 if model == MODEL_TP02:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 1.08875840, 6)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 1.08765638, 6)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 1.09753230)
                                 elif model == MODEL_TAP03:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 1.08837238, 6)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 1.08726698, 6)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 1.09708821)
                                 elif model == MODEL_MP05:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 1.08837241, 6)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 1.08726706, 6)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 1.09708832, 6)
                                 elif model == MODEL_NS_R1RHO_2SITE:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 1.56001812, 5)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 1.55833321, 5)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 1.36406712, 5)
 
                             elif param == 'kex':
                                 if model == MODEL_DPL94:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 4460.43711569, 2)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 4419.03917195, 2)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 6790.22736344)
                                 elif model == MODEL_TP02:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 4921.28602757, 3)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 4904.70144883, 3)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 5146.20306591)
                                 elif model == MODEL_TAP03:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 4926.42963491, 3)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 4909.86877150, 3)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 5152.51105814)
                                 elif model == MODEL_MP05:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 4926.44236315, 3)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 4909.88110195, 3)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 5152.52097111)
                                 elif model == MODEL_NS_R1RHO_2SITE:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 5628.66061488, 2)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 5610.20221435, 2)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 5643.34067090)
 
                             elif param == 'chi2':
                                 if model == MODEL_NOREX:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 848.42016907)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 3363.95829122)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 5976.49946726)
                                 elif model == MODEL_DPL94:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 179.47041241)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 710.24767560)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 612.72616697)
                                 elif model == MODEL_TP02:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 29.33882530)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 114.47142772)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 250.50838162)
                                 elif model == MODEL_TAP03:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 29.29050673)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 114.27987534)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 250.04050719)
                                 elif model == MODEL_MP05:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 29.29054301)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 114.28002272)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 250.04077478)
                                 elif model == MODEL_NS_R1RHO_2SITE:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 34.44010543)
-                                    elif r2eff_estimate == None:
+                                    elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 134.14368365)
+                                    elif r2eff_estimate == 'chi2':
+                                        self.assertAlmostEqual(value, 278.55121388)
 
 
         # Print the final pipe.
