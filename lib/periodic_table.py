@@ -129,10 +129,17 @@ class Isotope:
 class Periodic_table(dict):
     """The periodic table object."""
 
+    def __init__(self):
+        """Set up the periodic table object."""
+
+        # Initialise a fast lookup table.
+        self._lookup_symbol = {}
+
+
     def _add(self, atomic_number=None, symbol=None, name=None, atomic_weight=None):
         """Add an element to the table.
 
-        @keyword atomic_number:     The atomic number.
+        @keyword atomic_number:     The atomic number Z.
         @type atomic_number:        int
         @keyword symbol:            The atomic symbol.
         @type symbol:               str
@@ -146,6 +153,9 @@ class Periodic_table(dict):
 
         # Add the element container.
         self[symbol] = Element(atomic_number=atomic_number, name=name, atomic_weight=atomic_weight)
+
+        # Update the fast lookup tables.
+        self._lookup_symbol[atomic_number] = symbol
 
         # Return the container.
         return self[symbol]
@@ -219,16 +229,16 @@ class Periodic_table(dict):
 
 
     def lookup_symbol(self, atomic_number=None):
-        """Return the atomic symbol corresponding to the atomic number.
+        """Return the atomic symbol corresponding to the atomic number Z.
 
-        @keyword atomic_number: The atomic number.
+        @keyword atomic_number: The atomic number Z.
         @type atomic_number:    int
         @return:                The atomic symbol.
         @rtype:                 str
         """
 
         # Direct lookup.
-        return self.symbol[atomic_number-1]
+        return self._lookup_symbol[atomic_number]
 
 
 
