@@ -1751,6 +1751,81 @@ class Relax_disp(SystemTestCase):
             relax_disp.Relax_disp(pipe_name='relax_disp', results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, insignificance=INSIGNIFICANCE, numeric_only=NUMERIC_ONLY)
 
 
+    def test_bug_negative_intensities_cpmg(self):
+        """Test data, where peak intensities are negative in CPMG
+
+        This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0509100103}.  This is CPMG data with a fixed relaxation time period.  Experiment in 0.48 M GuHCl (guanidine hydrochloride).
+        """
+
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'KTeilum_FMPoulsen_MAkke_2006'+sep+'bug_neg_int_acbp_cpmg_disp_048MGuHCl_40C_041223'
+
+        # Create the spins
+        self.interpreter.spectrum.read_spins(file="peaks_list_max_standard.ser", dir=data_path)
+
+        # Name the isotope for field strength scaling.
+        self.interpreter.spin.isotope(isotope='15N')
+
+        # Read the spectrum from NMRSeriesTab file. The "auto" will generate spectrum name of form: Z_A{i}
+        self.interpreter.spectrum.read_intensities(file="peaks_list_max_standard.ser", dir=data_path, spectrum_id='auto', int_method='height')
+
+        # Loop over the spectra settings.
+        ncycfile=open(data_path + sep + 'ncyc.txt', 'r')
+
+        # Make empty ncyclist
+        ncyclist = []
+
+        i = 0
+        for line in ncycfile:
+            ncyc = line.split()[0]
+            time_T2 = float(line.split()[1])
+            vcpmg = line.split()[2]
+            set_sfrq = float(line.split()[3])
+            rmsd_err = float(line.split()[4])
+
+            # Test if spectrum is a reference
+            if float(vcpmg) == 0.0:
+                vcpmg = None
+            else:
+                vcpmg = round(float(vcpmg), 3)
+
+            # Add ncyc to list
+            ncyclist.append(int(ncyc))
+
+            # Set the current spectrum id
+            current_id = "Z_A%s"%(i)
+
+            # Set the current experiment type.
+            self.interpreter.relax_disp.exp_type(spectrum_id=current_id, exp_type='SQ CPMG')
+
+            # Set the peak intensity errors, as defined as the baseplane RMSD.
+            self.interpreter.spectrum.baseplane_rmsd(error=rmsd_err, spectrum_id=current_id)
+
+            # Set the NMR field strength of the spectrum.
+            self.interpreter.spectrometer.frequency(id=current_id, frq=set_sfrq, units='MHz')
+
+            # Relaxation dispersion CPMG constant time delay T (in s).
+            self.interpreter.relax_disp.relax_time(spectrum_id=current_id, time=time_T2)
+
+            # Set the relaxation dispersion CPMG frequencies.
+            self.interpreter.relax_disp.cpmg_setup(spectrum_id=current_id, cpmg_frq=vcpmg)
+
+            i += 1
+
+        # Specify the duplicated spectra.
+        self.interpreter.spectrum.replicated(spectrum_ids=['Z_A1', 'Z_A15'])
+
+        # Delete replicate spectrum
+        #self.interpreter.spectrum.delete('Z_A15')
+
+        MODELS = ['R2eff']
+        GRID_INC = 5; MC_NUM = 3; MODSEL = 'AIC'
+
+        results_dir = ds.tmpdir
+
+        # Execute
+        relax_disp.Relax_disp(pipe_name='relax_disp', results_dir=results_dir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+
+
     def test_check_missing_r1(self):
         """Test of the check_missing_r1() function."""
 
