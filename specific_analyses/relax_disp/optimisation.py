@@ -30,6 +30,7 @@ from numpy.linalg import inv
 from operator import mul
 from re import match, search
 import sys
+from warnings import warn
 
 # relax module imports.
 from dep_check import C_module_exp_fn
@@ -38,7 +39,7 @@ from lib.errors import RelaxError
 from lib.text.sectioning import subsection
 from lib.warnings import RelaxWarning
 from multi import Memo, Result_command, Slave_command
-from pipe_control.mol_res_spin import spin_loop
+from pipe_control.mol_res_spin import generate_spin_string, spin_loop
 from specific_analyses.relax_disp.checks import check_disp_points, check_exp_type, check_exp_type_fixed_time
 from specific_analyses.relax_disp.data import average_intensity, count_spins, find_intensity_keys, has_exponential_exp_type, has_proton_mmq_cpmg, is_r1_optimised, loop_exp, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_frq, loop_offset, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1
 from specific_analyses.relax_disp.parameters import assemble_param_vector, disassemble_param_vector, linear_constraints, param_conversion, param_num, r1_setup
@@ -245,7 +246,7 @@ def calculate_r2eff():
     print("Calculating the R2eff/R1rho values for fixed relaxation time period data.")
 
     # Loop over the spins.
-    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+    for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
         # Spin ID printout.
         print("Spin '%s'." % spin_id)
 
@@ -285,11 +286,18 @@ def calculate_r2eff():
             intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
             intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True)
 
-            # Calculate the R2eff value.
-            spin.r2eff[param_key] = calc_two_point_r2eff(relax_time=time, I_ref=ref_intensity, I=intensity)
+            # Check for math domain errors or log for values less than 0.0.
+            log_val = float(intensity) / ref_intensity
+            if log_val < 0.0:
+                spin_string = generate_spin_string(spin=spin, mol_name=mol_name, res_num=resi, res_name=resn)
+                msg = "Math domain error for spin %s in R2eff value calculation for fixed relaxation time period data.  I=%3.3f, I_ref=%3.3f.  The point is skipped." % (spin_string, intensity, ref_intensity)
+                warn(RelaxWarning("%s" % msg))
+            else:
+                # Calculate the R2eff value.
+                spin.r2eff[param_key] = calc_two_point_r2eff(relax_time=time, I_ref=ref_intensity, I=intensity)
 
-            # Calculate the R2eff error.
-            spin.r2eff_err[param_key] = calc_two_point_r2eff_err(relax_time=time, I_ref=ref_intensity, I=intensity, I_ref_err=ref_intensity_err, I_err=intensity_err)
+                # Calculate the R2eff error.
+                spin.r2eff_err[param_key] = calc_two_point_r2eff_err(relax_time=time, I_ref=ref_intensity, I=intensity, I_ref_err=ref_intensity_err, I_err=intensity_err)
 
 
 def minimise_r2eff(spins=None, spin_ids=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling_matrix=None, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
