@@ -635,13 +635,6 @@ uf = uf_info.add_uf('relax_disp.r2eff_err_estimate')
 uf.title = "Estimate R2eff errors by the Jacobian matrix."
 uf.title_short = "Estimate R2eff errors."
 uf.add_keyarg(
-    name = "chi2_jacobian",
-    default = False,
-    py_type = "bool",
-    desc_short = "use of chi2 Jacobian",
-    desc = "If the Jacobian derived from the chi2 function, should be used instead of the Jacobian from the exponential function."
-)
-uf.add_keyarg(
     name = "spin_id",
     py_type = "str",
     arg_type = "spin ID",
@@ -671,9 +664,12 @@ uf.desc[-1].add_paragraph("This is a new experimental feature from version 3.3, 
 uf.desc[-1].add_paragraph("This will estimate R2eff errors by using the exponential decay Jacobian matrix 'J' to compute the covariance matrix of the best-fit parameters.")
 uf.desc[-1].add_paragraph("This can be an huge time saving step, when performing model fitting in R1rho.  Errors of R2eff values, are normally estimated by time-consuming Monte-Carlo simulations.")
 uf.desc[-1].add_paragraph("This method is inspired from the GNU Scientific Library (GSL).")
-uf.desc[-1].add_paragraph("The covariance matrix is given by: covar = Qxx = (J^T J)^{-1}.")
-uf.desc[-1].add_paragraph("Qxx is computed by QR decomposition, Qxx=QR, Qxx^-1=R^-1 Q^T.  The columns of R which satisfy: |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix (the corresponding rows and columns of the covariance matrix are set to zero).")
+uf.desc[-1].add_paragraph("The covariance matrix is given by: covar = Qxx = (J^T.W.J)^-1, where the weight matrix W is constructed by the multiplication of an Identity matrix I and a weight array w.  The weight array is 1/errors^2, which then gives W = I.w = I x 1/errors^2.")
+uf.desc[-1].add_paragraph("Qxx is computed by QR decomposition, J^T.W.J=QR, Qxx=R^-1. Q^T.  The columns of R which satisfy: |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix (the corresponding rows and columns of the covariance matrix are set to zero).")
 uf.desc[-1].add_paragraph("The parameter 'epsrel' is used to remove linear-dependent columns when J is rank deficient.")
+uf.desc[-1].add_paragraph("The errors estimated from the co-variance is exactly equal to the errors reported from the co-variance matrix from scipy.optimize.leastsq.")
+uf.desc[-1].add_paragraph("scipy.optimize.leastsq uses a numerical Jacobian to estimate the co-variance.")
+uf.desc[-1].add_paragraph("Initial tests shows that the errors are twice as high than compared to Monte-Carlo simulations.  Therefore expect 4 times lower chi2 values.")
 uf.backend = estimate_r2eff_err
 uf.menu_text = "&r2eff_err_estimate"
 uf.gui_icon = "relax.relax_fit"
