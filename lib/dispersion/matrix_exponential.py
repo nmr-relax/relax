@@ -172,7 +172,7 @@ def matrix_exponential(A, dtype=None):
     @param A:               The square matrix to calculate the matrix exponential of.
     @type A:                numpy float array of rank [NE][NS][NM][NO][ND][X][X]
     @param dtype:           If provided, forces the calculation to use the data type specified.
-    @type type:             data-type, optional
+    @type dtype:            data-type, optional
     @return:                The matrix exponential.  This will have the same dimensionality as the A matrix.
     @rtype:                 numpy float array of rank [NE][NS][NM][NO][ND][X][X]
     """
@@ -316,7 +316,7 @@ def matrix_exponential_rank_NS_NM_NO_ND_2_2(A, dtype=None):
     @param A:       The square matrix to calculate the matrix exponential of.
     @type A:        numpy float array of rank [NS][NM][NO][ND][2][2]
     @param dtype:   If provided, forces the calculation to use the data type specified.
-    @type type:     data-type, optional
+    @type dtype:    data-type, optional
     @return:        The matrix exponential.  This will have the same dimensionality as the A matrix.
     @rtype:         numpy float array of rank [NS][NM][NO][ND][2][2]
     """

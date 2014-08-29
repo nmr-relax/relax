@@ -446,8 +446,7 @@ class Exp:
 
 
     def estimate_x0_exp(self, times=None, values=None):
-        """Estimate starting parameter x0 = [r2eff_est, i0_est], by converting the exponential curve to a linear problem.
-         Then solving by linear least squares of: ln(Intensity[j]) = ln(i0) - time[j]* r2eff.
+        """Estimate starting parameter x0 = [r2eff_est, i0_est], by converting the exponential curve to a linear problem.  Then solving by linear least squares of: ln(Intensity[j]) = ln(i0) - time[j]* r2eff.
 
         @keyword times:         The time points.
         @type times:            numpy array
