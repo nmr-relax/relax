@@ -47,7 +47,7 @@ from target_functions.chi2 import chi2_rankN, dchi2
 # C modules.
 if C_module_exp_fn:
     from specific_analyses.relax_fit.optimisation import func_wrapper, dfunc_wrapper, d2func_wrapper
-    from target_functions.relax_fit import jacobian, setup
+    from target_functions.relax_fit import jacobian, jacobian_chi2, setup
     # Call the python wrapper function to help with list to numpy array conversion.
     func = func_wrapper
     dfunc = dfunc_wrapper
@@ -167,13 +167,13 @@ def estimate_r2eff_err(chi2_jacobian=False, spin_id=None, epsrel=0.0, verbosity=
             # Determine Jacobian and weights.
             if chi2_jacobian:
                 # Calculate the direct exponential Jacobian matrix from C code.
-                jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
+                jacobian_matrix_exp = transpose(asarray( jacobian_chi2(param_vector) ) )
 
                 # The Jacobian in the C-code is from chi2 function, and is already weighted.
                 weights = ones(errors.shape)
             else:
-                # Use the direct Jacobian from python Code
-                jacobian_matrix_exp = func_exp_grad(params=param_vector, times=times, values=values, errors=errors)
+                # Use the direct Jacobian from function.
+                jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
                 weights = 1. / errors**2
 
             # Get the co-variance
@@ -982,19 +982,23 @@ def minimise_minfx(E=None):
     # Get the Jacobian.
     if E.c_code == True:
         if E.chi2_jacobian:
-            # Calculate the direct exponential Jacobian matrix from C code.
-            jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
-
-            # The Jacobian in the C-code is from chi2 function, and is already weighted.
+            # Use the chi2 Jacobian from C.
+            jacobian_matrix_exp = transpose(asarray( jacobian_chi2(param_vector) ) )
             weights = ones(E.errors.shape)
+
+        else:
+            # Use the direct Jacobian from C.
+            jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
+            weights = 1. / E.errors**2
 
     elif E.c_code == False:
         if E.chi2_jacobian:
-            # Use the chi2 Jacobian.
+            # Use the chi2 Jacobian from python.
             jacobian_matrix_exp = E.func_exp_chi2_grad_array(params=param_vector, times=E.times, values=E.values, errors=E.errors)
             weights = ones(E.errors.shape)
+
         else:
-            # Use the direct Jacobian.
+            # Use the direct Jacobian from python.
             jacobian_matrix_exp = func_exp_grad(params=param_vector, times=E.times, values=E.values, errors=E.errors)
             weights = 1. / E.errors**2
 
