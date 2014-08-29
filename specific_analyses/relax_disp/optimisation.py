@@ -380,6 +380,13 @@ def minimise_r2eff(spins=None, spin_ids=None, min_algor=None, min_options=None, 
                 errors.append(average_intensity(spin=spins[si], exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
                 times.append(time)
 
+            # Raise errors if number of time points is less than 2.
+            if len(times) < 2:
+                subsection(file=sys.stdout, text="Exponential curve fitting error for point:", prespace=2)
+                point_info = "%s at %3.1f MHz, for offset=%3.3f ppm and dispersion point %-5.1f, with %i time points." % (exp_type, frq/1E6, offset, point, len(times))
+                print(point_info)
+                raise RelaxError("The data setup points to exponential curve fitting, but only %i time points was found.  If calculating R2eff values for fixed relaxation time period data, check that a reference intensity has been specified for each offset value."%(len(times)))
+
             # The scaling matrix in a diagonalised list form.
             scaling_list = []
             if scaling_matrix == None:
