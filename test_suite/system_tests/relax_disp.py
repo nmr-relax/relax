@@ -1825,14 +1825,13 @@ class Relax_disp(SystemTestCase):
         # Execute
         relax_disp.Relax_disp(pipe_name='relax_disp', results_dir=results_dir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
 
-        # Check spin has been de selected.
-        #for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=False):
-        #    print(spin_id, cur_spin.select)
-        #    if spin_id == ':3@N':
-        #        #self.assertEqual(cur_spin.select, True)
-        #        print cur_spin
-        #    else:
-        #        self.assertEqual(cur_spin.select, True)
+        # Check spin less R2eff points.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=False):
+            # Assert that spin 4, has one less R2eff point, since one of the intensities are negative.
+            if spin_id == ':4@N':
+                self.assertEqual(len(cur_spin.r2eff), 14)
+            else:
+                self.assertEqual(len(cur_spin.r2eff), 15)
 
 
     def test_check_missing_r1(self):
