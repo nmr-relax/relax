@@ -249,6 +249,21 @@ class Frame_order_analysis:
         return incs
 
 
+    def model_directory(self, model):
+        """Return the directory to be used for the model.
+
+        @param model:   The frame order model.
+        @type model:    str
+        """
+
+        # Convert the model name.
+        dir = model.replace(' ', '_')
+        dir = dir.replace(',', '')
+
+        # Return the full path.
+        return self.results_dir + dir
+
+
     def nested_params_ave_dom_pos(self, model):
         """Copy the average domain parameters from simpler nested models for faster optimisation.
 
@@ -563,7 +578,7 @@ class Frame_order_analysis:
             self.interpreter.eliminate()
 
             # Save the results.
-            self.interpreter.results.write(dir=self.results_dir+model, force=True)
+            self.interpreter.results.write(dir=self.model_directory(model), force=True)
 
             # The PDB representation of the model and visualisation script.
             self.visualisation(model=model)
@@ -592,7 +607,7 @@ class Frame_order_analysis:
         # The results file already exists, so read its contents instead.
         if self.read_results(model=model, pipe_name=self.pipe_name_dict[model]):
             # The PDB representation of the model (in case this was not completed correctly).
-            self.interpreter.frame_order.pdb_model(dir=self.results_dir+model, force=True)
+            self.interpreter.frame_order.pdb_model(dir=self.model_directory(model), force=True)
 
             # Nothing more to do.
             return
@@ -644,10 +659,10 @@ class Frame_order_analysis:
         self.print_results()
 
         # Save the results.
-        self.interpreter.results.write(dir=self.results_dir+model, force=True)
+        self.interpreter.results.write(dir=self.model_directory(model), force=True)
 
         # The PDB representation of the model.
-        self.interpreter.frame_order.pdb_model(dir=self.results_dir+model, force=True)
+        self.interpreter.frame_order.pdb_model(dir=self.model_directory(model), force=True)
 
 
     def print_results(self):
@@ -804,11 +819,11 @@ class Frame_order_analysis:
             raise RelaxError("The model '%s' does not match the model '%s' of the current data pipe." % (model, cdp.model))
 
         # The PDB representation of the model.
-        self.interpreter.frame_order.pdb_model(dir=self.results_dir+model, force=True)
+        self.interpreter.frame_order.pdb_model(dir=self.model_directory(model), force=True)
 
         # Create the visualisation script.
         subsection(file=sys.stdout, text="Creating a PyMOL visualisation script.")
-        script = open_write_file(file_name='pymol_display.py', dir=self.results_dir+model, force=True)
+        script = open_write_file(file_name='pymol_display.py', dir=self.model_directory(model), force=True)
 
         # Add a comment for the user.
         script.write("# relax script for displaying the frame order results of this '%s' model in PyMOL.\n\n" % model)
