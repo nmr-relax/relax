@@ -57,38 +57,6 @@ if scipy_module:
     from scipy.optimize import leastsq
 
 
-def func_exp_grad(params=None, times=None, values=None, errors=None):
-    """The gradient (Jacobian matrix) of func_exp for Co-variance calculation.
-
-    @param params:  The vector of parameter values.
-    @type params:   numpy rank-1 float array
-    @keyword times: The time points.
-    @type times:    numpy array
-    @param values:  The measured values.
-    @type values:   numpy array
-    @param errors:  The standard deviation of the measured intensity values per time point.
-    @type errors:   numpy array
-    @return:        The Jacobian matrix with 'm' rows of function derivatives per 'n' columns of parameters.
-    @rtype:         numpy array
-    """
-
-    # Unpack the parameter values.
-    r2eff = params[0]
-    i0 = params[1]
-
-    # Make partial derivative, with respect to r2eff.
-    d_exp_d_r2eff = -i0 * times * exp(-r2eff * times)
-
-    # Make partial derivative, with respect to i0.
-    d_exp_d_i0 = exp(-r2eff * times)
-
-    # Define Jacobian as m rows with function derivatives and n columns of parameters.
-    jacobian_matrix_exp = transpose(array( [d_exp_d_r2eff , d_exp_d_i0] ) )
-
-    # Return Jacobian matrix.
-    return jacobian_matrix_exp
-
-
 def estimate_r2eff_err(chi2_jacobian=False, spin_id=None, epsrel=0.0, verbosity=1):
     """This will estimate the R2eff and i0 errors from the covariance matrix Qxx.  Qxx is calculated from the Jacobian matrix and the optimised parameters.
 
@@ -418,6 +386,38 @@ class Exp:
         return Kw
 
 
+    def func_exp_grad(params=None, times=None, values=None, errors=None):
+        """The gradient (Jacobian matrix) of func_exp for Co-variance calculation.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @keyword times: The time points.
+        @type times:    numpy array
+        @param values:  The measured values.
+        @type values:   numpy array
+        @param errors:  The standard deviation of the measured intensity values per time point.
+        @type errors:   numpy array
+        @return:        The Jacobian matrix with 'm' rows of function derivatives per 'n' columns of parameters.
+        @rtype:         numpy array
+        """
+
+        # Unpack the parameter values.
+        r2eff = params[0]
+        i0 = params[1]
+
+        # Make partial derivative, with respect to r2eff.
+        d_exp_d_r2eff = -i0 * times * exp(-r2eff * times)
+
+        # Make partial derivative, with respect to i0.
+        d_exp_d_i0 = exp(-r2eff * times)
+
+        # Define Jacobian as m rows with function derivatives and n columns of parameters.
+        jacobian_matrix_exp = transpose(array( [d_exp_d_r2eff , d_exp_d_i0] ) )
+
+        # Return Jacobian matrix.
+        return jacobian_matrix_exp
+
+
     def func_exp_chi2(self, params=None, times=None, values=None, errors=None):
         """Target function for minimising chi2 in minfx, for exponential fit.
 
@@ -462,7 +462,7 @@ class Exp:
         back_calc = self.func_exp(params=params, times=times)
 
         # Get the Jacobian, with partial derivative, with respect to r2eff and i0.
-        exp_grad = func_exp_grad(params=params, times=times, values=values, errors=errors)
+        exp_grad = E.func_exp_grad(params=params, times=times, values=values, errors=errors)
 
         # Transpose back, to get rows.
         exp_grad_t = transpose(exp_grad)
@@ -861,7 +861,7 @@ def minimise_minfx(E=None):
 
         else:
             # Use the direct Jacobian from python.
-            jacobian_matrix_exp = func_exp_grad(params=param_vector, times=E.times, values=E.values, errors=E.errors)
+            jacobian_matrix_exp = E.func_exp_grad(params=param_vector, times=E.times, values=E.values, errors=E.errors)
             weights = 1. / E.errors**2
 
     pcov = multifit_covar(J=jacobian_matrix_exp, weights=weights)
