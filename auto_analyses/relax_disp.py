@@ -572,6 +572,9 @@ class Relax_disp:
         if self.r1_fit:
             subtitle(file=sys.stdout, text="R1 parameter optimisation activation", prespace=3)
             self.interpreter.relax_disp.r1_fit(fit=self.r1_fit)
+        else:
+            # No print out.
+            self.interpreter.relax_disp.r1_fit(fit=self.r1_fit)
 
         # Loop over the models.
         self.model_pipes = []
