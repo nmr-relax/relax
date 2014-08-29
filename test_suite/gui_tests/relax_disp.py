@@ -591,12 +591,7 @@ class Relax_disp(GuiTestCase):
         analysis.exp_mc_sim_num.SetValue(-1)
 
         # Do fitting of R1.
-        #print dir(analysis.r1_fit)
-        #print analysis.r1_fit.GetValue()
         analysis.r1_fit.SetValue(bool(True))
-        #print analysis.r1_fit.GetValue()
-        analysis.r1_fit.toggle()
-        #analysis.r1_fit()
 
         # Execute relax.
         analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_relax.GetId()))
