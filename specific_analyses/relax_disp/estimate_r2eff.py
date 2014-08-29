@@ -591,7 +591,7 @@ class Exp:
 
 
     def func_exp_chi2_grad(self, params=None, times=None, values=None, errors=None):
-        """Target function for the gradient (Jacobian matrix) of func_exp_chi2() to minfx, for exponential fit .
+        """Target function for the gradient (Jacobian matrix) to minfx, for exponential fit .
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
@@ -604,25 +604,6 @@ class Exp:
         @return:        The Jacobian matrix with 'm' rows of function derivatives per 'n' columns of parameters, which have been summed together.
         @rtype:         numpy array
         """
-
-        # Get the Jacobian.
-        exp_chi2_grad = func_exp_chi2_grad(params=params, times=times, values=values, errors=errors)
-
-        # Transpose back, to get rows.
-        exp_chi2_grad_t = transpose(exp_chi2_grad)
-
-        # Extract vectors:
-        d_chi2_d_r2eff = exp_chi2_grad_t[0]
-        d_chi2_d_i0 = exp_chi2_grad_t[1]
-
-        # Take the sum, to send to minfx.
-        sum_d_chi2_d_r2eff = sum( d_chi2_d_r2eff )
-        sum_d_chi2_d_i0 = sum( d_chi2_d_i0 )
-
-        # Define Jacobian as m rows with function derivatives and n columns of parameters.
-        sum_jacobian_matrix_exp_chi2 = transpose(array( [sum_d_chi2_d_r2eff , sum_d_chi2_d_i0] ) )
-
-        ######### Try with lib function.
 
         # Get the back calc.
         back_calc = self.func_exp(params=params, times=times)
@@ -637,21 +618,13 @@ class Exp:
         n = len(params)
 
         # Define array to update parameters in.
-        sum_jacobian_matrix_exp_chi2_minfx = zeros([2])
+        jacobian_chi2_minfx = zeros([n])
 
         # Update value elements.        
-        dchi2(dchi2=sum_jacobian_matrix_exp_chi2_minfx, M=n, data=values, back_calc_vals=back_calc, back_calc_grad=exp_grad_t, errors=errors)
-
-        # Make test of two methods.
-        test_eq = allclose(sum_jacobian_matrix_exp_chi2, sum_jacobian_matrix_exp_chi2_minfx, rtol=1e-15, atol=1e-15)
-
-        if not test_eq:
-            print("Chi2 gradient are not equal.")
-            print(asd)
-
+        dchi2(dchi2=jacobian_chi2_minfx, M=n, data=values, back_calc_vals=back_calc, back_calc_grad=exp_grad_t, errors=errors)
 
         # Return Jacobian matrix.
-        return sum_jacobian_matrix_exp_chi2_minfx
+        return jacobian_chi2_minfx
 
 
 def estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints=False, chi2_jacobian=False, spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, verbosity=1):
