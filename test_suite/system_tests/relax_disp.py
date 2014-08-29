@@ -3182,13 +3182,22 @@ class Relax_disp(SystemTestCase):
 
         # Now do it manually.
         estimate_r2eff(method='scipy.optimize.leastsq')
+
+        estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints=False, chi2_jacobian=False)
         estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints=False, chi2_jacobian=True)
-        estimate_r2eff(method='minfx', min_algor='simplex', c_code=False, constraints=False, chi2_jacobian=True)
+
         estimate_r2eff(method='minfx', min_algor='simplex', c_code=False, constraints=False, chi2_jacobian=False)
+        estimate_r2eff(method='minfx', min_algor='simplex', c_code=False, constraints=False, chi2_jacobian=True)
+
+        estimate_r2eff(method='minfx', min_algor='BFGS', c_code=True, constraints=False, chi2_jacobian=False)
         estimate_r2eff(method='minfx', min_algor='BFGS', c_code=True, constraints=False, chi2_jacobian=True)
-        estimate_r2eff(method='minfx', min_algor='BFGS', c_code=False, constraints=False, chi2_jacobian=True)
+
         estimate_r2eff(method='minfx', min_algor='BFGS', c_code=False, constraints=False, chi2_jacobian=False)
+        estimate_r2eff(method='minfx', min_algor='BFGS', c_code=False, constraints=False, chi2_jacobian=True)
+
+        estimate_r2eff(method='minfx', min_algor='Newton', c_code=True, constraints=False, chi2_jacobian=False)
         estimate_r2eff(method='minfx', min_algor='Newton', c_code=True, constraints=False, chi2_jacobian=True)
+
 
 
     def test_exp_fit(self):
