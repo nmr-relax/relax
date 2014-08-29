@@ -24,22 +24,20 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import absolute, allclose, any, array, asarray, diag, dot, exp, eye, inf, log, multiply, ones, spacing, sqrt, sum, transpose, zeros
-from numpy.linalg import cond, inv, qr
+from numpy import array, asarray, diag, dot, exp, eye, log, multiply, ones, sqrt, sum, transpose, zeros
 from minfx.generic import generic_minimise
-from re import match, search
 import sys
 from warnings import warn
 
 # relax module imports.
 from dep_check import C_module_exp_fn, scipy_module
 from lib.errors import RelaxError
+from lib.statistics import multifit_covar
 from lib.text.sectioning import section, subsection
 from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import generate_spin_string, spin_loop
-from pipe_control.spectrum import error_analysis
 from specific_analyses.relax_disp.checks import check_model_type
-from specific_analyses.relax_disp.data import average_intensity, loop_exp_frq_offset_point, loop_frq, loop_time, return_param_key_from_data
+from specific_analyses.relax_disp.data import average_intensity, loop_exp_frq_offset_point, loop_time, return_param_key_from_data
 from specific_analyses.relax_disp.parameters import disassemble_param_vector
 from specific_analyses.relax_disp.variables import MODEL_R2EFF
 from target_functions.chi2 import chi2_rankN, dchi2
@@ -216,119 +214,6 @@ def estimate_r2eff_err(chi2_jacobian=False, spin_id=None, epsrel=0.0, verbosity=
             if len(print_strings) > 0:
                 for print_string in print_strings:
                     print(print_string),
-
-
-def multifit_covar(J=None, epsrel=0.0, weights=None):
-    """This is the implementation of the multifit covariance.
-
-    This is inspired from GNU Scientific Library (GSL).
-
-    This function uses the Jacobian matrix J to compute the covariance matrix of the best-fit parameters, covar.
-
-    The parameter 'epsrel' is used to remove linear-dependent columns when J is rank deficient.
-
-    The weighting matrix 'W', is a square symmetric matrix. For independent measurements, this is a diagonal matrix. Larger values indicate greater significance.  It is formed by multiplying and Identity matrix with the supplied weights vector::
-
-        W = I. w
-
-    The weights should normally be supplied as a vector: 1 / errors^2. 
-
-    The covariance matrix is given by::
-
-        covar = (J^T.W.J)^{-1} ,
-
-    and is computed by QR decomposition of J with column-pivoting. Any columns of R which satisfy::
-
-        |R_{kk}| <= epsrel |R_{11}| ,
-
-    are considered linearly-dependent and are excluded from the covariance matrix (the corresponding rows and columns of the covariance matrix are set to zero).  If the minimisation uses the weighted least-squares function::
-
-        f_i = (Y(x, t_i) - y_i) / sigma_i ,
-
-    then the covariance matrix above gives the statistical error on the best-fit parameters resulting from the Gaussian errors 'sigma_i' on the underlying data 'y_i'.
-
-    This can be verified from the relation 'd_f = J d_c' and the fact that the fluctuations in 'f' from the data 'y_i' are normalised by 'sigma_i' and so satisfy::
-
-        <d_f d_f^T> = I. ,
-
-    For an unweighted least-squares function f_i = (Y(x, t_i) - y_i) the covariance matrix above should be multiplied by the variance of the residuals about the best-fit::
-
-        sigma^2 = sum ( (y_i - Y(x, t_i))^2 / (n-p) ) ,
-
-    to give the variance-covariance matrix sigma^2 C.  This estimates the statistical error on the best-fit parameters from the scatter of the underlying data.
-
-    Links
-    =====
-
-    More information ca be found here:
-
-        - U{GSL - GNU Scientific Library<http://www.gnu.org/software/gsl/>}
-        - U{Manual: Overview<http://www.gnu.org/software/gsl/manual/gsl-ref_37.html#SEC510>}
-        - U{Manual: Computing the covariance matrix of best fit parameters<http://www.gnu.org/software/gsl/manual/gsl-ref_38.html#SEC528>}
-        - U{Other reference<http://www.orbitals.com/self/least/least.htm>}
-
-    @param J:               The Jacobian matrix.
-    @type J:                numpy array
-    @param epsrel:          Any columns of R which satisfy |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix, where the corresponding rows and columns of the covariance matrix are set to zero.
-    @type epsrel:           float
-    @keyword weigths:       The weigths which to scale with.  Normally submitted as the 1 over standard deviation of the measured intensity values per time point in power 2. weigths = 1 / sd_i^2.
-    @type weigths:          numpy array
-    @return:                The co-variance matrix
-    @rtype:                 square numpy array
-    """
-
-    # Weighting matrix. This is a square symmetric matrix.
-    # For independent measurements, this is a diagonal matrix. Larger values indicate greater significance.
-
-    # Make a square diagonal matrix.
-    eye_mat = eye(weights.shape[0])
-
-    # Form weight matrix.
-    W = multiply(eye_mat, weights)
-
-    # The covariance matrix (sometimes referred to as the variance-covariance matrix), Qxx, is defined as:
-    # Qxx = (J^t W J)^(-1)
-
-    # Calculate step by step, by matrix multiplication.
-    Jt = transpose(J)
-    Jt_W = dot(Jt, W)
-    Jt_W_J = dot(Jt_W, J)
-
-    # Invert matrix by QR decomposition, to check columns of R which satisfy: |R_{kk}| <= epsrel |R_{11}|
-    Q, R = qr(Jt_W_J)
-
-    # Make the state ment matrix.
-    abs_epsrel_R11 = absolute( multiply(epsrel, R[0, 0]) )
-
-    # Make and array of True/False statements.
-    # These are considered linearly-dependent and are excluded from the covariance matrix.
-    # The corresponding rows and columns of the covariance matrix are set to zero
-    epsrel_check = absolute(R) <= abs_epsrel_R11
-
-    # Form the covariance matrix.
-    Qxx = dot(inv(R), transpose(Q) )
-    #Qxx2 = dot(inv(R), inv(Q) )
-    #print(Qxx - Qxx2)
-
-    # Test direct invert matrix of matrix.
-    #Qxx_test = inv(Jt_W_J)
-
-    # Replace values in Covariance matrix with inf.
-    Qxx[epsrel_check] = 0.0
-
-    # Throw a warning, that some colums are considered linearly-dependent and are excluded from the covariance matrix.
-    # Only check for the diagonal, since the that holds the variance.
-    diag_epsrel_check = diag(epsrel_check)
-
-    # If any of the diagonals does not meet the epsrel condition.
-    if any(diag_epsrel_check):
-        for i in range(diag_epsrel_check.shape[0]):
-            abs_Rkk = absolute(R[i, i])
-            if abs_Rkk <= abs_epsrel_R11:
-                warn(RelaxWarning("Co-Variance element k,k=%i was found to meet |R_{kk}| <= epsrel |R_{11}|, meaning %1.1f <= %1.3f * %1.1f , and is therefore determined to be linearly-dependent and are excluded from the covariance matrix by setting the value to 0.0." % (i+1, abs_Rkk, epsrel, abs_epsrel_R11/epsrel) ))
-                #print(cond(Jt_W_J) < 1./spacing(1.) )
-
-    return Qxx
 
 
 #### This class is only for testing.
@@ -693,28 +578,6 @@ def estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints
                 precalc = False
                 break
 
-    # If no error analysis of peak heights exists.
-    if not precalc:
-        # Printout.
-        section(file=sys.stdout, text="Error analysis", prespace=2)
-
-        # Loop over the spectrometer frequencies.
-        for frq in loop_frq():
-            # Generate a list of spectrum IDs matching the frequency.
-            ids = []
-            for id in cdp.spectrum_ids:
-                # Check that the spectrometer frequency matches.
-                match_frq = True
-                if frq != None and cdp.spectrometer_frq[id] != frq:
-                    match_frq = False
-
-                # Add the ID.
-                if match_frq:
-                    ids.append(id)
-
-            # Run the error analysis on the subset.
-            error_analysis(subset=ids)
-
     # Loop over the spins.
     for cur_spin, mol_name, resi, resn, cur_spin_id in spin_loop(selection=spin_id, full_info=True, return_id=True, skip_desel=True):
         # Generate spin string.
@@ -1034,8 +897,6 @@ def minimise_minfx(E=None):
 
     # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
     param_vector_error = sqrt(diag(pcov))
-    # Set error to inf.
-    #param_vector_error = [inf, inf]
 
     # Pack to list.
     results = [param_vector, param_vector_error, chi2, iter_count, f_count, g_count, h_count, warning]
