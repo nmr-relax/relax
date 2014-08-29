@@ -1600,6 +1600,157 @@ class Relax_disp(SystemTestCase):
         #save(data_path + "struct_arr", struct_arr)
 
 
+    def test_bug_atul_srivastava(self):
+        """Test data from Atul Srivastava.  This is a bug missing raising a Relax Error, since the setup points to a situation where the data
+        shows it is exponential fitting, but only one time point is added per file.
+
+        This follows: U{Thread <http://thread.gmane.org/gmane.science.nmr.relax.user/1718>}:
+        This follows: U{Thread <http://thread.gmane.org/gmane.science.nmr.relax.user/1735>}:
+        This follows: U{Thread <http://thread.gmane.org/gmane.science.nmr.relax.user/1735/focus=1736>}:
+
+        """
+
+        # Data path.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_Atul_Srivastava'
+        file = data_path + sep + 'bug_script.py'
+
+        # Run script.
+        self.interpreter.script(file=file, dir=None)
+
+        # The grid search size (the number of increments per dimension).
+        GRID_INC = 11
+
+        # Check-data.
+        #################
+
+        # Loop over spins, to see current setup.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            print(mol_name, resi, resn, spin_id)
+
+        # Loop over setup.
+        for id in cdp.exp_type.keys():
+            print(id, cdp.exp_type[id], cdp.spectrometer_frq[id], cdp.spin_lock_offset[id], cdp.spin_lock_nu1[id])
+
+
+        # Manual minimisation.
+        #################
+        if True:
+            # Set the model.
+            self.interpreter.relax_disp.select_model(MODEL_R2EFF)
+
+            # Check if intensity errors have already been calculated.
+            check_intensity_errors()
+
+            # Calculate the R2eff values for the fixed relaxation time period data types.
+            if cdp.model_type == MODEL_R2EFF and not has_exponential_exp_type():
+                self.interpreter.minimise.calculate()
+
+            # Optimise the model.
+            else:
+                constraints = False
+                min_algor = 'Newton'
+                with self.assertRaises(RelaxError):
+                    self.interpreter.minimise.grid_search(inc=GRID_INC)
+
+                with self.assertRaises(RelaxError):
+                    self.interpreter.minimise.execute(min_algor=min_algor, constraints=constraints)
+        # Inspect.
+        if False:
+            # Loop over attributes.
+            par_attr_list = ['r2eff', 'i0']
+
+            # Collect the estimation data.
+            my_dic = {}
+            param_key_list = []
+            est_keys = []
+            est_key = 'grid'
+            est_keys.append(est_key)
+            spin_id_list = []
+
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                # Add key to dic.
+                my_dic[spin_id] = {}
+
+                # Add key for estimate.
+                my_dic[spin_id][est_key] = {}
+
+                # Add spin key to list.
+                spin_id_list.append(spin_id)
+
+                # Generate spin string.
+                spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+                for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                    # Generate the param_key.
+                    param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+                    #param_key = generate_r20_key(exp_type=exp_type, frq=frq)
+
+                    # Append key.
+                    param_key_list.append(param_key)
+
+                    # Add key to dic.
+                    my_dic[spin_id][est_key][param_key] = {}
+
+                    # Get the value.
+                    # Loop over err attributes.
+                    for par_attr in par_attr_list:
+                        if hasattr(cur_spin, par_attr):
+                            get_par_attr = getattr(cur_spin, par_attr)[param_key]
+                        else:
+                            get_par_attr = 0.0
+
+                        # Save to dic.
+                        my_dic[spin_id][est_key][param_key][par_attr] = get_par_attr
+
+                    # Check number of values.
+                    values = []
+                    errors = []
+                    times = []
+                    for time, ti in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point, return_indices=True):
+                        value = average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, sim_index=None)
+                        values.append(value)
+
+                        error = average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True)
+                        errors.append(error)
+                        times.append(time)
+
+                    # Save to dic.
+                    my_dic[spin_id][est_key][param_key]['values'] = values
+                    my_dic[spin_id][est_key][param_key]['errors'] = errors
+                    my_dic[spin_id][est_key][param_key]['times'] = times
+
+        # Analysis variables.
+        #####################
+
+        # The dispersion models.
+        MODELS = ['R2eff', 'No Rex']
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        MC_NUM = 10
+
+        # A flag which if True will activate Monte Carlo simulations for all models.  Note this will hugely increase the computation time.
+        MC_SIM_ALL_MODELS = False
+
+        # The results directory.
+        RESULTS_DIR = ds.tmpdir
+
+        # The directory of results of an earlier analysis without clustering.
+        PRE_RUN_DIR = None
+
+        # The model selection technique to use.
+        MODSEL = 'AIC'
+
+        # The flag for only using numeric models in the final model selection.
+        NUMERIC_ONLY = False
+
+        # The R1rho value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.
+        INSIGNIFICANCE = 1.0
+
+        # Auto-analysis execution.
+        with self.assertRaises(RelaxError):
+            relax_disp.Relax_disp(pipe_name='relax_disp', results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, insignificance=INSIGNIFICANCE, numeric_only=NUMERIC_ONLY)
+
+
     def test_check_missing_r1(self):
         """Test of the check_missing_r1() function."""
 
