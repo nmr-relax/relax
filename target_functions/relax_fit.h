@@ -26,6 +26,9 @@
 #define PyMODINIT_FUNC void
 #endif
 
+/* Define the function for calculating the square of a number. */
+#define square(x) ((x)*(x))
+
 
 /****************************************/
 /* External, hence permanent, variables. */
@@ -44,8 +47,10 @@ static double back_calc_grad[MAX_PARAMS][MAX_DATA];
 static double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA];
 static double dchi2_vals[MAX_PARAMS];
 static double d2chi2_vals[MAX_PARAMS][MAX_PARAMS];
+static double jacobian_matrix[MAX_PARAMS][MAX_DATA];
 static double params[MAX_PARAMS];
-static double values[MAX_DATA];
-static double sd[MAX_DATA];
 static double relax_times[MAX_DATA];
 static double scaling_matrix[MAX_PARAMS];
+static double sd[MAX_DATA];
+static double values[MAX_DATA];
+static double variance[MAX_DATA];
