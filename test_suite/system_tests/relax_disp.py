@@ -3000,7 +3000,7 @@ class Relax_disp(SystemTestCase):
         relax_disp.Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, exp_mc_sim_num=EXP_MC_NUM, modsel=MODSEL, r1_fit=r1_fit)
 
         # Verify the data.
-        self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, r2eff_estimate='chi2_c')
+        self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, r2eff_estimate='direct')
 
 
     def test_estimate_r2eff_err_methods(self):
