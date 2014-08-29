@@ -369,6 +369,11 @@ static PyMethodDef relax_fit_methods[] = {
         jacobian,
         METH_VARARGS,
         "Return the Jacobian matrix as a Python list."
+    }, {
+        "jacobian_chi2",
+        jacobian_chi2,
+        METH_VARARGS,
+        "Return the Jacobian matrix of the chi-squared function as a Python list."
     },
         {NULL, NULL, 0, NULL}        /* Sentinel. */
 };
