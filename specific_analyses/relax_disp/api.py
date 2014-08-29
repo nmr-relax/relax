@@ -777,8 +777,9 @@ class Relax_disp(API_base, API_common):
         @type verbose:          bool
         """
 
-        # Test the sequence data exists.
+        # Test the sequence data exists and the model is setup.
         check_mol_res_spin_data()
+        check_model_type()
 
         # 1H MMQ flag.
         proton_mmq_flag = has_proton_mmq_cpmg()
