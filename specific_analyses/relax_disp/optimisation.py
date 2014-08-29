@@ -290,8 +290,10 @@ def calculate_r2eff():
             log_val = float(intensity) / ref_intensity
             if log_val < 0.0:
                 spin_string = generate_spin_string(spin=spin, mol_name=mol_name, res_num=resi, res_name=resn)
-                msg = "Math domain error for spin %s in R2eff value calculation for fixed relaxation time period data.  I=%3.3f, I_ref=%3.3f.  The point is skipped." % (spin_string, intensity, ref_intensity)
+                msg = "Math log(I / I_ref) domain error for spin '%s' in R2eff value calculation for fixed relaxation time period data.  I=%3.3f, I_ref=%3.3f.  The point is skipped." % (spin_string, intensity, ref_intensity)
                 warn(RelaxWarning("%s" % msg))
+                point_info = "This happened for '%s' at %3.1f MHz, for offset=%3.1f ppm and dispersion point %3.1f Hz and time %1.2f s.\n" % (exp_type, frq/1E6, offset, point, time)
+                print(point_info)
             else:
                 # Calculate the R2eff value.
                 spin.r2eff[param_key] = calc_two_point_r2eff(relax_time=time, I_ref=ref_intensity, I=intensity)
