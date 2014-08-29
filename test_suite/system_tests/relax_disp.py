@@ -1817,13 +1817,22 @@ class Relax_disp(SystemTestCase):
         # Delete replicate spectrum
         #self.interpreter.spectrum.delete('Z_A15')
 
-        MODELS = ['R2eff']
+        MODELS = [MODEL_R2EFF, MODEL_NOREX]
         GRID_INC = 5; MC_NUM = 3; MODSEL = 'AIC'
 
         results_dir = ds.tmpdir
 
         # Execute
         relax_disp.Relax_disp(pipe_name='relax_disp', results_dir=results_dir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+
+        # Check spin has been de selected.
+        #for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=False):
+        #    print(spin_id, cur_spin.select)
+        #    if spin_id == ':3@N':
+        #        #self.assertEqual(cur_spin.select, True)
+        #        print cur_spin
+        #    else:
+        #        self.assertEqual(cur_spin.select, True)
 
 
     def test_check_missing_r1(self):
