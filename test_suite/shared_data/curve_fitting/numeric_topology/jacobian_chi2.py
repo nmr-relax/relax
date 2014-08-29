@@ -19,13 +19,13 @@ def func(params):
     for i in range(len(times)):
         back_calc.append(I0 * exp(-R*times[i]))
 
-    # The chi2.
-    chi2 = 0.0
+    # The chi2 elements.
+    chi2 = []
     for i in range(len(times)):
-        chi2 += (I[i] - back_calc[i])**2 / errors[i]**2
+        chi2.append((I[i] - back_calc[i])**2 / errors[i]**2)
 
     # Return the value.
-    return chi2
+    return array(chi2)
 
 
 # The real parameters.
