@@ -232,7 +232,27 @@ back_calc_I(PyObject *self, PyObject *args) {
 
 static PyObject *
 jacobian(PyObject *self, PyObject *args) {
-    /* Return the Jacobian as a Python list of lists. */
+    /* Return the Jacobian as a Python list of lists.
+
+    The Jacobian
+    ============
+
+    The equation is::
+
+                     / yi - yi(theta)     dyi(theta) \
+        J_ji  =  -2  | --------------  .  ---------- |
+                     \   sigma_i**2        dthetaj   /
+
+    where
+        - i is the index over data sets.
+        - j is the parameter index.
+        - theta is the parameter vector.
+        - yi are the values of the measured data set.
+        - yi(theta) are the values of the back calculated data set.
+        - dyi(theta)/dthetaj are the values of the back calculated gradient for parameter j.
+        - sigma_i are the values of the error set.
+
+     */
 
     /* Declarations. */
     PyObject *params_arg;
@@ -246,9 +266,19 @@ jacobian(PyObject *self, PyObject *args) {
     /* Convert the parameters Python list to a C array. */
     param_to_c(params_arg);
 
+    /* Back calculated the peak intensities. */
+    exponential(params[index_I0], params[index_R], relax_times, back_calc, num_times);
+
     /* The partial derivatives. */
     exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, num_times);
     exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
+
+    /* Assemble the chi-squared Jacobian. */
+    for (j = 0; j < num_params; ++j) {
+        for (i = 0; i < num_times; ++i) {
+            jacobian_matrix[j][i] = -2.0 / square(sd[i]) * (values[i] - back_calc[i]) * back_calc_grad[j][i];
+        }
+    }
 
     /* Convert to a Python list of lists. */
     list = PyList_New(0);
@@ -257,7 +287,7 @@ jacobian(PyObject *self, PyObject *args) {
         list2 = PyList_New(0);
         Py_INCREF(list2);
         for (j = 0; j < num_times; j++) {
-            PyList_Append(list2, PyFloat_FromDouble(back_calc_grad[i][j]));
+            PyList_Append(list2, PyFloat_FromDouble(jacobian_matrix[i][j]));
         }
         PyList_Append(list, list2);
     }
