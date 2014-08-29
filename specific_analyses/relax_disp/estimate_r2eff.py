@@ -91,37 +91,6 @@ def func_exp_grad(params=None, times=None, values=None, errors=None):
     return jacobian_matrix_exp
 
 
-def func_exp_chi2_grad(params=None, times=None, values=None, errors=None):
-    """Return the gradient (Jacobian matrix) of func_exp_chi2() for exponential fit .
-
-    @param params:      The vector of parameter values.
-    @type params:       numpy rank-1 float array
-    @keyword times:     The time points.
-    @type times:        numpy array
-    @keyword values:    The measured intensity values per time point.
-    @type values:       numpy array
-    @keyword errors:    The standard deviation of the measured intensity values per time point.
-    @type errors:       numpy array
-    @return:            The Jacobian matrix with 'm' rows of function derivatives per 'n' columns of parameters.
-    @rtype:             numpy array
-    """
-
-    # Unpack the parameter values.
-    r2eff = params[0]
-    i0 = params[1]
-
-    # Make partial derivative, with respect to r2eff.
-    d_chi2_d_r2eff = 2.0 * i0 * times * ( -i0 * exp( -r2eff * times) + values) * exp( -r2eff * times ) / errors**2
-
-    # Make partial derivative, with respect to i0.
-    d_chi2_d_i0 = - 2.0 * ( -i0 * exp( -r2eff * times) + values) * exp( -r2eff * times) / errors**2
-
-    # Define Jacobian as m rows with function derivatives and n columns of parameters.
-    jacobian_matrix_exp_chi2 = transpose(array( [d_chi2_d_r2eff , d_chi2_d_i0] ) )
-
-    return jacobian_matrix_exp_chi2
-
-
 def estimate_r2eff_err(chi2_jacobian=False, spin_id=None, epsrel=0.0, verbosity=1):
     """This will estimate the R2eff and i0 errors from the covariance matrix Qxx.  Qxx is calculated from the Jacobian matrix and the optimised parameters.
 
@@ -627,6 +596,37 @@ class Exp:
         return jacobian_chi2_minfx
 
 
+    def func_exp_chi2_grad_array(self, params=None, times=None, values=None, errors=None):
+        """Return the gradient (Jacobian matrix) of func_exp_chi2() for parameter co-variance error estimation.  This needs return as array.
+
+        @param params:      The vector of parameter values.
+        @type params:       numpy rank-1 float array
+        @keyword times:     The time points.
+        @type times:        numpy array
+        @keyword values:    The measured intensity values per time point.
+        @type values:       numpy array
+        @keyword errors:    The standard deviation of the measured intensity values per time point.
+        @type errors:       numpy array
+        @return:            The Jacobian matrix with 'm' rows of function derivatives per 'n' columns of parameters.
+        @rtype:             numpy array
+        """
+
+        # Unpack the parameter values.
+        r2eff = params[0]
+        i0 = params[1]
+
+        # Make partial derivative, with respect to r2eff.
+        d_chi2_d_r2eff = 2.0 * i0 * times * ( -i0 * exp( -r2eff * times) + values) * exp( -r2eff * times ) / errors**2
+
+        # Make partial derivative, with respect to i0.
+        d_chi2_d_i0 = - 2.0 * ( -i0 * exp( -r2eff * times) + values) * exp( -r2eff * times) / errors**2
+
+        # Define Jacobian as m rows with function derivatives and n columns of parameters.
+        jacobian_matrix_exp_chi2 = transpose(array( [d_chi2_d_r2eff , d_chi2_d_i0] ) )
+
+        return jacobian_matrix_exp_chi2
+
+
 def estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints=False, chi2_jacobian=False, spin_id=None, ftol=1e-15, xtol=1e-15, maxfev=10000000, factor=100.0, verbosity=1):
     """Estimate r2eff and errors by exponential curve fitting with scipy.optimize.leastsq or minfx.
 
@@ -991,7 +991,7 @@ def minimise_minfx(E=None):
     elif E.c_code == False:
         if E.chi2_jacobian:
             # Use the chi2 Jacobian.
-            jacobian_matrix_exp = func_exp_chi2_grad(params=param_vector, times=E.times, values=E.values, errors=E.errors)
+            jacobian_matrix_exp = E.func_exp_chi2_grad_array(params=param_vector, times=E.times, values=E.values, errors=E.errors)
             weights = ones(E.errors.shape)
         else:
             # Use the direct Jacobian.
