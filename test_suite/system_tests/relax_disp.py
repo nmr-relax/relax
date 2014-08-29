@@ -8203,7 +8203,7 @@ class Relax_disp(SystemTestCase):
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 5610.20221435, 2)
                                     elif r2eff_estimate == 'chi2':
-                                        self.assertAlmostEqual(value, 5643.34067090, 2)
+                                        self.assertAlmostEqual(value, 5643.34067090, 1)
 
                             elif param == 'chi2':
                                 if model == MODEL_NOREX:
