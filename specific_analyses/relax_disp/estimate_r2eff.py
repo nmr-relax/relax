@@ -386,7 +386,7 @@ class Exp:
         return Kw
 
 
-    def func_exp_grad(params=None, times=None, values=None, errors=None):
+    def func_exp_grad(self, params=None, times=None, values=None, errors=None):
         """The gradient (Jacobian matrix) of func_exp for Co-variance calculation.
 
         @param params:  The vector of parameter values.
