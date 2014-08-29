@@ -976,23 +976,23 @@ def minimise_minfx(E=None):
     r2eff, i0 = param_vector
 
     # Get the Jacobian.
-    if E.c_code:
-        # Calculate the direct exponential Jacobian matrix from C code.
-        jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
+    if E.c_code == True:
+        if E.chi2_jacobian:
+            # Calculate the direct exponential Jacobian matrix from C code.
+            jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
 
-    else:
+            # The Jacobian in the C-code is from chi2 function, and is already weighted.
+            weights = ones(E.errors.shape)
+
+    elif E.c_code == False:
         if E.chi2_jacobian:
             # Use the chi2 Jacobian.
             jacobian_matrix_exp = func_exp_chi2_grad(params=param_vector, times=E.times, values=E.values, errors=E.errors)
+            weights = ones(E.errors.shape)
         else:
             # Use the direct Jacobian.
             jacobian_matrix_exp = func_exp_grad(params=param_vector, times=E.times, values=E.values, errors=E.errors)
-
-    # Get the co-variance
-    if E.chi2_jacobian:
-        weights = ones(E.errors.shape)
-    else:
-        weights = 1. / E.errors**2
+            weights = 1. / E.errors**2
 
     pcov = multifit_covar(J=jacobian_matrix_exp, weights=weights)
 
