@@ -23,16 +23,17 @@
 """Module for selecting and deselecting spins."""
 
 # Python module imports
+import sys
 from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoDomainError, RelaxNoSequenceError
 from lib.selection import Selection, spin_id_to_data_list
-from lib.sequence import read_spin_data
+from lib.sequence import read_spin_data, write_spin_data
 from lib.warnings import RelaxNoSpinWarning
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
+from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
@@ -304,6 +305,59 @@ def desel_spin(spin_id=None, boolean='AND', change_all=False):
         # Boolean selections.
         else:
             spin.select = boolean_deselect(current=spin.select, boolean=boolean)
+
+
+def display(sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True):
+    """Display the current spin selections.
+
+    @keyword sep:               The column seperator which, if None, defaults to whitespace.
+    @type sep:                  str or None
+    @keyword mol_name_flag:     A flag which if True will cause the molecule name column to be written.
+    @type mol_name_flag:        bool
+    @keyword res_num_flag:      A flag which if True will cause the residue number column to be written.
+    @type res_num_flag:         bool
+    @keyword res_name_flag:     A flag which if True will cause the residue name column to be written.
+    @type res_name_flag:        bool
+    @keyword spin_name_flag:    A flag which if True will cause the spin name column to be written.
+    @type spin_name_flag:       bool
+    @keyword spin_num_flag:     A flag which if True will cause the spin number column to be written.
+    @type spin_num_flag:        bool
+    """
+
+    # Test if the sequence data is loaded.
+    check_mol_res_spin_data()
+
+    # Init the data.
+    mol_names = []
+    res_nums = []
+    res_names = []
+    spin_nums = []
+    spin_names = []
+    selections = []
+
+    # Spin loop.
+    for spin, mol_name, res_num, res_name in spin_loop(full_info=True, skip_desel=False):
+        mol_names.append(mol_name)
+        res_nums.append(res_num)
+        res_names.append(res_name)
+        spin_nums.append(spin.num)
+        spin_names.append(spin.name)
+        selections.append(spin.select)
+
+    # Remove unwanted data.
+    if not mol_name_flag:
+        mol_names = None
+    if not res_num_flag:
+        res_nums = None
+    if not res_name_flag:
+        res_names = None
+    if not spin_num_flag:
+        spin_nums = None
+    if not spin_name_flag:
+        spin_names = None
+
+    # Write the data.
+    write_spin_data(file=sys.stdout, sep=sep, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, data=selections, data_name="selection")
 
 
 def is_mol_selected(selection=None):

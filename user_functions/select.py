@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -57,6 +57,26 @@ uf.desc[-1].add_paragraph("To select all spins, simply type:")
 uf.desc[-1].add_prompt("relax> select.all()")
 uf.backend = selection.sel_all
 uf.menu_text = "&all"
+uf.wizard_size = (600, 550)
+uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'select.png'
+
+
+# The select.display user function.
+uf = uf_info.add_uf('select.display')
+uf.title = "Display the current spin selection status."
+uf.title_short = "Display spin selection status."
+uf.display = True
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This simply prints out the current spin selections.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To show the current selections, type:")
+uf.desc[-1].add_prompt("relax> select.display()")
+uf.backend = selection.display
+uf.menu_text = "dis&play"
+uf.gui_icon = "oxygen.actions.document-preview"
 uf.wizard_size = (600, 550)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'select.png'
