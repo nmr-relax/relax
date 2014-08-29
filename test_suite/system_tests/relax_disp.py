@@ -2980,8 +2980,10 @@ class Relax_disp(SystemTestCase):
         # Estimate R2eff errors.
         self.interpreter.relax_disp.r2eff_err_estimate(chi2_jacobian=True)
 
+        r1_fit = True
+
         # Run the analysis.
-        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, r1_fit=r1_fit)
 
         # Verify the data.
         self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, r2eff_estimate='chi2_pyt')
@@ -3077,7 +3079,7 @@ class Relax_disp(SystemTestCase):
             print(spin_id)
 
         result_dir_name = self.tmpdir
-        r1_fit = False
+        r1_fit = True
 
         # Run the analysis.
         relax_disp.Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, exp_mc_sim_num=EXP_MC_NUM, modsel=MODSEL, r1_fit=r1_fit)
@@ -6144,8 +6146,10 @@ class Relax_disp(SystemTestCase):
         # Point to directory with R2eff values, with 2000 MC simulations.
         prev_data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013' +sep+ "check_graphs" +sep+ "mc_2000"
 
+        r1_fit = True
+
         # Run the analysis.
-        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, pre_run_dir=prev_data_path)
+        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, pre_run_dir=prev_data_path, r1_fit=r1_fit)
 
         # Verify the data.
         self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, r2eff_estimate='MC2000')
