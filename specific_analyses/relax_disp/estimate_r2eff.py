@@ -57,17 +57,17 @@ if scipy_module:
     from scipy.optimize import leastsq
 
 
-def estimate_r2eff_err(chi2_jacobian=False, spin_id=None, epsrel=0.0, verbosity=1):
+def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1, chi2_jacobian=False):
     """This will estimate the R2eff and i0 errors from the covariance matrix Qxx.  Qxx is calculated from the Jacobian matrix and the optimised parameters.
 
-    @keyword chi2_jacobian: If the Jacobian derived from the chi2 function, should be used instead of the Jacobian from the exponential function.
-    @type chi2_jacobian:    bool
     @keyword spin_id:       The spin identification string.
     @type spin_id:          str
     @param epsrel:          Any columns of R which satisfy |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix, where the corresponding rows and columns of the covariance matrix are set to zero.
     @type epsrel:           float
     @keyword verbosity:     The amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:        int
+    @keyword chi2_jacobian: If the Jacobian derived from the chi2 function, should be used instead of the Jacobian from the exponential function.
+    @type chi2_jacobian:    bool
     """
 
     # Check that the C modules have been compiled.
