@@ -175,7 +175,7 @@ def estimate_r2eff_err(chi2_jacobian=False, spin_id=None, epsrel=0.0, verbosity=
             i0 = getattr(cur_spin, 'i0')[param_key]
 
             # Pack data
-            params = [r2eff, i0]
+            param_vector = [r2eff, i0]
 
             # The peak intensities, errors and times.
             values = []
@@ -193,15 +193,18 @@ def estimate_r2eff_err(chi2_jacobian=False, spin_id=None, epsrel=0.0, verbosity=
 
             # Initialise data in C code.
             scaling_list = [1.0, 1.0]
-            setup(num_params=len(params), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
+            setup(num_params=len(param_vector), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
+            # Determine Jacobian and weights.
             if chi2_jacobian:
-                jacobian_matrix_exp = func_exp_chi2_grad(params=params, times=times, values=values, errors=errors)
+                # Calculate the direct exponential Jacobian matrix from C code.
+                jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
+
+                # The Jacobian in the C-code is from chi2 function, and is already weighted.
                 weights = ones(errors.shape)
             else:
-                # Calculate the direct exponential Jacobian matrix from C code.
-                #jacobian_matrix_exp = transpose(asarray( jacobian(params) ) )
-                jacobian_matrix_exp = func_exp_grad(params=params, times=times, values=values, errors=errors)
+                # Use the direct Jacobian from python Code
+                jacobian_matrix_exp = func_exp_grad(params=param_vector, times=times, values=values, errors=errors)
                 weights = 1. / errors**2
 
             # Get the co-variance
