@@ -8010,8 +8010,6 @@ class Relax_disp(SystemTestCase):
                                             self.assertAlmostEqual(value, 1.46328102)
                                         elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 1.43820629)
-                                        elif r2eff_estimate == 'chi2_c':
-                                            self.assertAlmostEqual(value, 1.44271092)
                                     elif model == MODEL_DPL94:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 1.44845742)
@@ -8019,8 +8017,6 @@ class Relax_disp(SystemTestCase):
                                             self.assertAlmostEqual(value, 1.45019848)
                                         elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 1.44666512)
-                                        elif r2eff_estimate == 'chi2_c':
-                                            self.assertAlmostEqual(value, 1.45323068)
                                     elif model == MODEL_TP02:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 1.54354392)
@@ -8028,8 +8024,6 @@ class Relax_disp(SystemTestCase):
                                             self.assertAlmostEqual(value, 1.54352369)
                                         elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 1.55964020)
-                                        elif r2eff_estimate == 'chi2_c':
-                                            self.assertAlmostEqual(value, 1.56207337)
                                     elif model == MODEL_TAP03:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 1.54356410)
@@ -8037,8 +8031,6 @@ class Relax_disp(SystemTestCase):
                                             self.assertAlmostEqual(value, 1.54354367)
                                         elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 1.55967157)
-                                        elif r2eff_estimate == 'chi2_c':
-                                            self.assertAlmostEqual(value, 1.56209978)
                                     elif model == MODEL_MP05:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 1.54356416)
@@ -8046,8 +8038,6 @@ class Relax_disp(SystemTestCase):
                                             self.assertAlmostEqual(value, 1.54354372)
                                         elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 1.55967163)
-                                        elif r2eff_estimate == 'chi2_c':
-                                            self.assertAlmostEqual(value, 1.56209982)
                                     elif model == MODEL_NS_R1RHO_2SITE:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 1.41359221, 5)
@@ -8055,8 +8045,6 @@ class Relax_disp(SystemTestCase):
                                             self.assertAlmostEqual(value, 1.41321968, 5)
                                         elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 1.36303129, 5)
-                                        elif r2eff_estimate == 'chi2_c':
-                                            self.assertAlmostEqual(value, 1.36661543, 5)
 
                                 elif param == 'r2':
                                     if model == MODEL_NOREX:
@@ -8066,8 +8054,6 @@ class Relax_disp(SystemTestCase):
                                             self.assertAlmostEqual(value, 11.48040934)
                                         elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 11.47224488)
-                                        elif r2eff_estimate == 'chi2_c':
-                                            self.assertAlmostEqual(value, 11.45807024)
                                     elif model == MODEL_DPL94:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 10.15688372, 6)
@@ -8075,8 +8061,6 @@ class Relax_disp(SystemTestCase):
                                             self.assertAlmostEqual(value, 10.16304887, 6)
                                         elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 9.20037797, 6)
-                                        elif r2eff_estimate == 'chi2_c':
-                                            self.assertAlmostEqual(value, 9.14230625, 6)
                                     elif model == MODEL_TP02:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 9.72654896, 6)
@@ -8084,8 +8068,6 @@ class Relax_disp(SystemTestCase):
                                             self.assertAlmostEqual(value, 9.72772726, 6)
                                         elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 9.53948340, 6)
-                                        elif r2eff_estimate == 'chi2_c':
-                                            self.assertAlmostEqual(value, 9.52299764, 6)
                                     elif model == MODEL_TAP03:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 9.72641887, 6)
@@ -8093,8 +8075,6 @@ class Relax_disp(SystemTestCase):
                                             self.assertAlmostEqual(value, 9.72759374, 6)
                                         elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 9.53926913, 6)
-                                        elif r2eff_estimate == 'chi2_c':
-                                            self.assertAlmostEqual(value, 9.52282532, 6)
                                     elif model == MODEL_MP05:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 9.72641723, 6)
@@ -8102,8 +8082,6 @@ class Relax_disp(SystemTestCase):
                                             self.assertAlmostEqual(value, 9.72759220, 6)
                                         elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 9.53926778, 6)
-                                        elif r2eff_estimate == 'chi2_c':
-                                            self.assertAlmostEqual(value, 9.52282395, 6)
                                     elif model == MODEL_NS_R1RHO_2SITE:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 9.34531535, 5)
@@ -8111,8 +8089,6 @@ class Relax_disp(SystemTestCase):
                                             self.assertAlmostEqual(value, 9.34602793, 5)
                                         elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 9.17631409, 5)
-                                        elif r2eff_estimate == 'chi2_c':
-                                            self.assertAlmostEqual(value, 9.17506150, 5)
 
                     # For all other parameters.
                     else:
@@ -8132,8 +8108,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 0.07561937)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 0.12946061)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 0.13210037)
 
                             elif param == 'pA':
                                 if model == MODEL_TP02:
@@ -8143,8 +8117,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 0.88807487)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 0.87746233)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 0.87641649)
                                 elif model == MODEL_TAP03:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 0.88828922)
@@ -8152,8 +8124,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 0.88809318)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 0.87747558)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 0.87643027)
                                 elif model == MODEL_MP05:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 0.88828924)
@@ -8161,8 +8131,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 0.88809321)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 0.87747562)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 0.87643030)
                                 elif model == MODEL_NS_R1RHO_2SITE:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 0.94504369, 6)
@@ -8170,8 +8138,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 0.94496541, 6)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 0.92084707, 6)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 0.92170295, 6)
 
                             elif param == 'dw':
                                 if model == MODEL_TP02:
@@ -8181,8 +8147,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 1.08765638, 6)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 1.09753230, 6)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 1.09546910, 6)
                                 elif model == MODEL_TAP03:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 1.08837238, 6)
@@ -8190,8 +8154,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 1.08726698, 6)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 1.09708821, 6)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 1.09501921, 6)
                                 elif model == MODEL_MP05:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 1.08837241, 6)
@@ -8199,8 +8161,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 1.08726706, 6)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 1.09708832, 6)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 1.09501928, 6)
                                 elif model == MODEL_NS_R1RHO_2SITE:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 1.56001812, 5)
@@ -8208,8 +8168,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 1.55833321, 5)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 1.36406712, 5)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 1.36988282, 5)
 
                             elif param == 'kex':
                                 if model == MODEL_DPL94:
@@ -8219,8 +8177,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 4419.03917195, 2)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 6790.22736344, 2)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 6874.46721624, 2)
                                 elif model == MODEL_TP02:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 4921.28602757, 3)
@@ -8228,8 +8184,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 4904.70144883, 3)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 5146.20306591, 3)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 5149.46980375, 3)
                                 elif model == MODEL_TAP03:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 4926.42963491, 3)
@@ -8237,8 +8191,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 4909.86877150, 3)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 5152.51105814, 3)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 5155.71675917, 3)
                                 elif model == MODEL_MP05:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 4926.44236315, 3)
@@ -8246,8 +8198,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 4909.88110195, 3)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 5152.52097111, 3)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 5155.72678912, 3)
                                 elif model == MODEL_NS_R1RHO_2SITE:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 5628.66061488, 2)
@@ -8255,8 +8205,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 5610.20221435, 2)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 5643.34067090, 1)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 5627.32562954, 2)
 
                             elif param == 'chi2':
                                 if model == MODEL_NOREX:
@@ -8266,8 +8214,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 3363.95829122, 5)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 5976.49946726, 5)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 0.01059904, 5)
                                 elif model == MODEL_DPL94:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 179.47041241)
@@ -8275,8 +8221,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 710.24767560)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 612.72616697, 5)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 0.00109033, 5)
                                 elif model == MODEL_TP02:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 29.33882530, 6)
@@ -8284,8 +8228,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 114.47142772, 6)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 250.50838162, 5)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 0.00042211, 5)
                                 elif model == MODEL_TAP03:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 29.29050673, 6)
@@ -8293,8 +8235,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 114.27987534)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 250.04050719, 5)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 0.00042131, 5)
                                 elif model == MODEL_MP05:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 29.29054301, 6)
@@ -8302,8 +8242,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 114.28002272)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 250.04077478, 5)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 0.00042131, 5)
                                 elif model == MODEL_NS_R1RHO_2SITE:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 34.44010543, 6)
@@ -8311,8 +8249,6 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 134.14368365)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 278.55121388, 5)
-                                    elif r2eff_estimate == 'chi2_c':
-                                        self.assertAlmostEqual(value, 0.00047513, 5)
 
 
         # Print the final pipe.
