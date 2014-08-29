@@ -1,0 +1,12 @@
+
+
+On-minimum:
+
+The Chi2 Jacobian at [1.0, 1000.0] is:
+[[ -1.10023306e-09   2.18294730e-12]]
+
+
+Off-minimum:
+
+The Chi2 Jacobian at [2.0, 500.0] is:
+[[ 456.36655522  -10.86133391]]
