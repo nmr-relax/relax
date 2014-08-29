@@ -462,7 +462,7 @@ class Exp:
         back_calc = self.func_exp(params=params, times=times)
 
         # Get the Jacobian, with partial derivative, with respect to r2eff and i0.
-        exp_grad = E.func_exp_grad(params=params, times=times, values=values, errors=errors)
+        exp_grad = self.func_exp_grad(params=params, times=times, values=values, errors=errors)
 
         # Transpose back, to get rows.
         exp_grad_t = transpose(exp_grad)
