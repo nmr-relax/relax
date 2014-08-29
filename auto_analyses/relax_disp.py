@@ -284,7 +284,6 @@ class Relax_disp:
 
         @keyword model: The model to be optimised.
         @type model:    str
-        @return:        True if the model is the more complex model in a nested pair and the parameters of the simpler model have been copied.  False otherwise.
         @return:        True if the model parameters is equivalent to the nested model, and all parameters are copied.  False if none or some of the parameters have been translated from the nested model.  Here the Grid search should still be performed.
         @rtype:         bool
         """
@@ -367,7 +366,7 @@ class Relax_disp:
         @keyword model:         The model to be optimised.
         @type model:            str
         @keyword model_path:    The folder name for the model, where possible spaces has been replaced with underscore.
-        @type model:            str
+        @type model_path:       str
         """
 
         # Printout. 
@@ -534,7 +533,7 @@ class Relax_disp:
         @keyword model:         The model to be optimised.
         @type model:            str
         @keyword model_path:    The folder name for the model, where possible spaces has been replaced with underscore.
-        @type model:            str
+        @type model_path:       str
         """
 
         # Printout.
@@ -790,7 +789,7 @@ class Relax_disp:
         @keyword path:              The directory to place the files into.
         @type path:                 str
         @keyword model:             The model tested.
-        @type path:                 None or str
+        @type model:                None or str
         @keyword model_tested:      List of models tested, if the pipe is final.
         @type model_tested:         None or list of str.
         @keyword param:             The param to write out.
