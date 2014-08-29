@@ -21,7 +21,7 @@
 #include "c_chi2.h"
 
 
-double chi2(double values[MAX_DATA], double sd[MAX_DATA], double back_calc[MAX_DATA], int num_times) {
+double chi2(double values[MAX_DATA], double variance[MAX_DATA], double back_calc[MAX_DATA], int num_times) {
     /* Function to calculate the chi-squared value.
 
     The chi-sqared equation
@@ -50,14 +50,14 @@ double chi2(double values[MAX_DATA], double sd[MAX_DATA], double back_calc[MAX_D
 
     /* Loop over the time points and sum the chi-squared components. */
     for (i = 0; i < num_times; ++i) {
-        chi2 = chi2 + square((values[i] - back_calc[i]) / sd[i]);
+        chi2 = chi2 + square(values[i] - back_calc[i]) / variance[i];
     }
 
     return chi2;
 }
 
 
-void dchi2(double dchi2[MAX_PARAMS], double data[MAX_DATA], double back_calc_vals[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], double errors[MAX_DATA], int num_points, int num_params) {
+void dchi2(double dchi2[MAX_PARAMS], double data[MAX_DATA], double back_calc_vals[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], double variance[MAX_DATA], int num_points, int num_params) {
     /* Calculate the full chi-squared gradient.
 
     The chi-squared gradient
@@ -90,8 +90,8 @@ void dchi2(double dchi2[MAX_PARAMS], double data[MAX_DATA], double back_calc_val
     @type back_calc_vals:   numpy rank-1 size N array
     @param back_calc_grad:  The matrix of dyi(theta)/dtheta values.
     @type back_calc_grad:   numpy rank-2 size MxN array
-    @param errors:          The vector of sigma_i values.
-    @type errors:           numpy rank-1 size N array
+    @param variance:        The vector of sigma_i values squared.
+    @type variance:         numpy rank-1 size N array
     @param num_points:      The number of data points to sum over.
     @type num_points:       int
     @param num_params:      The dimensions of the gradient.
@@ -105,13 +105,13 @@ void dchi2(double dchi2[MAX_PARAMS], double data[MAX_DATA], double back_calc_val
     for (j = 0; j < num_params; ++j) {
         dchi2[j] = 0.0;
         for (i = 0; i < num_points; ++i) {
-            dchi2[j] += -2.0 / square(errors[i]) * (data[i] - back_calc_vals[i]) * back_calc_grad[j][i];
+            dchi2[j] += -2.0 / variance[i] * (data[i] - back_calc_vals[i]) * back_calc_grad[j][i];
         }
     }
 }
 
 
-void d2chi2(double d2chi2[MAX_PARAMS][MAX_PARAMS], double data[MAX_DATA], double back_calc_vals[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], double errors[MAX_DATA], int num_points, int num_params) {
+void d2chi2(double d2chi2[MAX_PARAMS][MAX_PARAMS], double data[MAX_DATA], double back_calc_vals[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], double variance[MAX_DATA], int num_points, int num_params) {
     /* Calculate the full chi-squared Hessian.
 
     The chi-squared Hessian
@@ -148,8 +148,8 @@ void d2chi2(double d2chi2[MAX_PARAMS][MAX_PARAMS], double data[MAX_DATA], double
     @type back_calc_grad:       numpy rank-2 size MxN array
     @param back_calc_hess:      The matrix of d2yi(theta)/dtheta.dtheta values.
     @type back_calc_hess:       numpy rank-3 size MxMxN array
-    @param errors:              The vector of sigma_i values.
-    @type errors:               numpy rank-1 size N array
+    @param variance:            The vector of sigma_i values squared.
+    @type variance:             numpy rank-1 size N array
     @param num_points:          The number of data points to sum over.
     @type num_points:           int
     @param num_params:          The dimensions of the Hessian.
@@ -164,7 +164,7 @@ void d2chi2(double d2chi2[MAX_PARAMS][MAX_PARAMS], double data[MAX_DATA], double
         for (k = 0; k < num_params; ++k) {
             d2chi2[j][k] = 0.0;
             for (i = 0; i < num_points; ++i) {
-                d2chi2[j][k] += 2.0 / square(errors[i]) * (back_calc_grad[j][i] * back_calc_grad[k][i] - (data[i] - back_calc_vals[i]) * back_calc_hess[j][k][i]);
+                d2chi2[j][k] += 2.0 / variance[i] * (back_calc_grad[j][i] * back_calc_grad[k][i] - (data[i] - back_calc_vals[i]) * back_calc_hess[j][k][i]);
             }
         }
     }

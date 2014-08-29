@@ -66,6 +66,9 @@ setup(PyObject *self, PyObject *args, PyObject *keywords) {
         sd[i] = PyFloat_AsDouble(element);
         Py_CLEAR(element);
 
+        /* Convert the errors to variances to avoid duplicated maths operations for faster calculations. */
+        variance[i] = square(sd[i]);
+
         /* The relax_times argument element. */
         element = PySequence_GetItem(relax_times_arg, i);
         relax_times[i] = PyFloat_AsDouble(element);
@@ -120,7 +123,7 @@ func(PyObject *self, PyObject *args) {
     exponential(params[index_I0], params[index_R], relax_times, back_calc, num_times);
 
     /* Calculate and return the chi-squared value. */
-    return PyFloat_FromDouble(chi2(values, sd, back_calc, num_times));
+    return PyFloat_FromDouble(chi2(values, variance, back_calc, num_times));
 }
 
 
@@ -150,7 +153,7 @@ dfunc(PyObject *self, PyObject *args) {
     exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
 
     /* The chi-squared gradient. */
-    dchi2(dchi2_vals, values, back_calc, back_calc_grad, sd, num_times, num_params);
+    dchi2(dchi2_vals, values, back_calc, back_calc_grad, variance, num_times, num_params);
 
     /* Convert to a Python list, and scale the values. */
     list = PyList_New(0);
@@ -194,7 +197,7 @@ d2func(PyObject *self, PyObject *args) {
     exponential_dR_dI0(params[index_I0], params[index_R], index_R, index_I0, relax_times, back_calc_hess, num_times);
 
     /* The chi-squared Hessian. */
-    d2chi2(d2chi2_vals, values, back_calc, back_calc_grad, back_calc_hess, sd, num_times, num_params);
+    d2chi2(d2chi2_vals, values, back_calc, back_calc_grad, back_calc_hess, variance, num_times, num_params);
 
     /* Convert to a Python list, and scale the values. */
     list = PyList_New(0);
@@ -276,7 +279,7 @@ jacobian(PyObject *self, PyObject *args) {
     /* Assemble the chi-squared Jacobian. */
     for (j = 0; j < num_params; ++j) {
         for (i = 0; i < num_times; ++i) {
-            jacobian_matrix[j][i] = -2.0 / square(sd[i]) * (values[i] - back_calc[i]) * back_calc_grad[j][i];
+            jacobian_matrix[j][i] = -2.0 / variance[i] * (values[i] - back_calc[i]) * back_calc_grad[j][i];
         }
     }
 

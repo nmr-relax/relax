@@ -53,3 +53,4 @@ static double values[MAX_DATA];
 static double sd[MAX_DATA];
 static double relax_times[MAX_DATA];
 static double scaling_matrix[MAX_PARAMS];
+static double variance[MAX_DATA];
