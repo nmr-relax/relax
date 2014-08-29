@@ -37,7 +37,7 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from pipe_control.mol_res_spin import spin_loop
 from pipe_control.pipes import switch
 from specific_analyses.relax_disp.data import generate_r20_key
-from specific_analyses.relax_disp.variables import EXP_TYPE_R1RHO, MODEL_CR72, MODEL_IT99, MODEL_LM63, MODEL_NOREX, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_R2EFF, MODEL_TP02
+from specific_analyses.relax_disp.variables import EXP_TYPE_R1RHO, MODEL_CR72, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_NOREX, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_R2EFF, MODEL_TP02
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
@@ -577,7 +577,7 @@ class Relax_disp(GuiTestCase):
         self._execute_uf(uf_name='select.spin', spin_id=":52@N")
 
         # Deselect all but the few models.
-        models = [MODEL_R2EFF, MODEL_NOREX]
+        models = [MODEL_R2EFF, MODEL_NOREX, MODEL_DPL94]
         for i in range(len(analysis.model_field.models_stripped)):
             if analysis.model_field.models_stripped[i] in models:
                 analysis.model_field.select[i] = True
