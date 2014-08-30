@@ -57,7 +57,7 @@ if scipy_module:
     from scipy.optimize import leastsq
 
 
-def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1, chi2_jacobian=False):
+def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1, scale=False, chi2_jacobian=False):
     """This will estimate the R2eff and i0 errors from the covariance matrix Qxx.  Qxx is calculated from the Jacobian matrix and the optimised parameters.
 
     @keyword spin_id:       The spin identification string.
@@ -66,6 +66,8 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1, chi2_jacobian=Fals
     @type epsrel:           float
     @keyword verbosity:     The amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:        int
+    @keyword scale:         If the co-variance should be scaled according to the reduced chi squared.  This is simply the division of the co-variance with number of degrees of freedom n.  n = N - p, where N is number of observations and p is number of fitted parameters.
+    @type scale:            bool
     @keyword chi2_jacobian: If the Jacobian derived from the chi2 function, should be used instead of the Jacobian from the exponential function.
     @type chi2_jacobian:    bool
     """
@@ -144,6 +146,32 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1, chi2_jacobian=Fals
 
             # Get the co-variance
             pcov = multifit_covar(J=jacobian_matrix_exp, weights=weights)
+
+            # Scale.
+            if scale:
+                # The covariance matrix above gives the 'statistical error' on the best-fit parameters resulting from the Gaussian errors 'sigma_i' on the underlying data 'y_i'.
+                # Ref: http://www.gnu.org/software/gsl/manual/gsl-ref_38.html#SEC528
+                # We denote the 'statistical error' with the 'e_i'.  'X_i' is the observation i, and 'u' is the mean of the observations.
+                # i, is index observation out of N observation.
+                # e_i = X_i - u
+
+                # Translated to R2eff this gives:
+                # pcov = R2eff_i - R2eff_fit
+                # We know 'pcov' and the fitted 'R2eff_fit', but we have no 'R2eff_i'.
+
+                # Translated to i0 this gives:
+                # pcov = i0_i - i0_fit
+                # We know 'pcov' and the fitted 'i0_fit', but we have no 'i0_i'.
+
+                # But luckily, the sum of squares of the statistical errors, divided by sd^2, has a chi-squared distribution with n degrees of freedom.
+                # Ref: http://en.wikipedia.org/wiki/Errors_and_residuals_in_statistics
+                # number of degrees of freedom is: n = N - p, or with Bessels_correction: n = N - p -1, where N is number of observations and p is number of parameters.
+                # Sum_{1->N} (X_i - u)^2 / sd^2 = Sum_{1->N} e_i^2 / sd^2 \approx chi2_n.
+
+                # The question is here, what is the standard deviation sd?
+                # Let us set it to 1, for no better idea.
+                pass
+
 
             # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
             param_vector_error = sqrt(diag(pcov))
@@ -753,13 +781,14 @@ def minimise_leastsq(E=None):
 
     # N is number of observations.
     N = len(E.values)
-    # n is number of fitted parameters.
-    n = len(x0)
-    #  number of degrees of freedom
-    v = N - n - 1
+    # p is number of fitted parameters.
+    p = len(x0)
+    # n is number of degrees of freedom
+    #n = N - p - 1
+    n = N - p
 
     # The reduced chi square.
-    chi2_red = chi2 / v
+    chi2_red = chi2 / n
 
     # chi2_red >> 1 : indicates a poor model fit.
     # chi2_red >  1 : indicates that the fit has not fully captured the data (or that the error variance has been underestimated)
@@ -771,7 +800,7 @@ def minimise_leastsq(E=None):
         pcov = zeros((len(popt), len(popt)), dtype=float)
         pcov.fill(inf)
     elif not absolute_sigma:
-        if N > n:
+        if N > p:
             pcov = pcov * chi2_red
         else:
             pcov.fill(inf)
@@ -883,14 +912,14 @@ def minimise_minfx(E=None):
 
         # N is number of observations.
         N = len(E.values)
-        # n is number of fitted parameters.
-        n = len(x0)
+        # p is number of fitted parameters.
+        p = len(x0)
         # number of degrees of freedom
-        v = N - n
+        n = N - p
 
         # The covariance matrix, Qxx, contains the variance of each unknown and the covariance of each pair of unknowns. 
         # The quantities in Qxx need to be scaled by a reference variance. This reference variance, S_0**2, is related to the weighting matrix and the residuals.
-        S02 = dot( dot(transpose(K), W), K) / v
+        S02 = dot( dot(transpose(K), W), K) / n
 
         # Scale co-variance.
         pcov = pcov * S02
