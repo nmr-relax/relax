@@ -19,11 +19,12 @@ I0 = 1000.0
 params = array([R, I0], float64)
 
 # Number of simulations.
-sim = 2
+sim = 10000
 
 # Create number of timepoints. Between 3 and 10 for exponential curve fitting.
+# Used in random.randint, and includes both end points.
 nt_min = 3
-nt_max = 4
+nt_max = 10
 
 # Produce range with all possible time points.
 # Draw from this.
@@ -171,6 +172,7 @@ def multifit_covar(J=None, weights=None):
 for i in range(sim):
     # Create index in dic.
     dic[i] = OrderedDict()
+    print("Simulation number %s"%i)
 
     # Create random number of timepoints. Between 3 and 10 for exponential curve fitting.
     nt = randint(nt_min, nt_max)
