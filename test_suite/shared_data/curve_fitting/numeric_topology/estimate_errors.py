@@ -35,10 +35,9 @@ sim = 2000
 # Create number of timepoints. Between 3 and 10 for exponential curve fitting.
 # Used in random.randint, and includes both end points.
 nt_min = 3
-nt_max = 10
 
-# Should we do random number of timepoints?
-do_random_nr_time_points = True
+# Loop over nt_max_list.
+nt_max_list = [5, 10]
 
 # Produce range with all possible time points.
 # Draw from this.
@@ -65,12 +64,14 @@ dic['params'] = params
 dic['np'] = np
 dic['sim'] = sim
 dic['nt_min'] = nt_min
-dic['nt_max'] = nt_max
-dic['do_random_nr_time_points'] = do_random_nr_time_points
+dic['nt_max_list'] = nt_max_list
 dic['all_times'] = all_times
 dic['I_err_level'] = I_err_level
 dic['I_err_std'] = I_err_std
 dic['all_errors'] = all_errors
+
+# Write to pickle.
+pickle.dump( dic, open( "estimate_errors_data_settings.cp", "wb" ) )
 
 # Minfx settings
 #min_algor = 'simplex'
@@ -246,112 +247,123 @@ def prod_I_errors(I=None, errors=None):
 
 ########### Do simulations ##################################
 
-# Loop over number of R2eff points.
-for i in range(np):
-    # Create index in dic.
-    dic[i] = OrderedDict()
-    # Assign to global counter
-    np_i = i
+for nt_max in nt_max_list:
+    # Create and ordered dict, which can be looped over.
+    dic = OrderedDict()
 
-    # Create random number of timepoints. Between 3 and 10 for exponential curve fitting.
-    if do_random_nr_time_points:
-        nt = randint(nt_min, nt_max)
+    # Should we do random number of timepoints?
+    if nt_max == 5:
+        do_random_nr_time_points = False
     else:
-        nt = nt_max
-    dic[i]['nt'] = nt
+        do_random_nr_time_points = True
 
-    print("R2eff point %s with %i timepoints" % (i, nt))
+    dic['do_random_nr_time_points'] = do_random_nr_time_points
 
-    # Create time array, by drawing from the all time points array.
-    times = asarray( sample(population=all_times, k=nt) )
-    dic[i]['times'] = times
-
-    # Get the indexes which was drawn from.
-    indexes = []
-    for time in times:
-        indexes.append( int(where(time == all_times)[0]) )
-    dic[i]['indexes'] = indexes
-
-    # Draw errors from same indexes.
-    errors = all_errors[indexes]
-    dic[i]['errors'] = errors
-
-    # Calculate the real intensity.
-    I = func_exp(params=params, times=times)
-    dic[i]['I'] = I
-
-    # Now produce Intensity with errors.
-    I_err = prod_I_errors(I=I, errors=errors)
-    dic[i]['I_err'] = I_err
-
-    # Now estimate with no weighting.
-    R_e, I0_e = est_x0_exp(times=times, I=I_err)
-    dic[i]['R_e'] = R_e
-    dic[i]['I0_e'] = I0_e
-
-    # Now estimate with weighting.
-    R_ew, I0_ew = est_x0_exp_weight(times=times, I=I_err, errors=errors)
-    dic[i]['R_ew'] = R_ew
-    dic[i]['I0_ew'] = I0_ew
-
-    # Now estimate errors for parameters.
-    sigma_R = point_r2eff_err(times=times, I=I_err, errors=errors)
-    dic[i]['sigma_R'] = sigma_R
-
-    # Minimisation.
-    args = (times, I_err, errors)
-    x0 = array([R_e, I0_e])
-
-    params_minfx, chi2_minfx, iter_count, f_count, g_count, h_count, warning = generic_minimise(func=func_exp_chi2, dfunc=func_exp_chi2_grad, args=args, x0=x0, min_algor=min_algor, min_options=min_options, full_output=True, print_flag=0)
-    R_m, I0_m = params_minfx
-    dic[i]['R_m'] = R_m
-    dic[i]['I0_m'] = I0_m
-
-    # Estimate errors from Jacobian
-    jacobian = func_exp_grad(params=params_minfx, times=times)
-    dic[i]['jacobian'] = jacobian
-    weights = 1. / errors**2
-    dic[i]['weights'] = weights
-
-    # Covariance matrix.
-    pcov = multifit_covar(J=jacobian, weights=weights)
-    dic[i]['pcov'] = pcov
-    sigma_R_covar, sigma_I0_covar = sqrt(diag(pcov))
-    dic[i]['sigma_R_covar'] = sigma_R_covar
-    dic[i]['sigma_I0_covar'] = sigma_I0_covar
-
-    # Now do Monte Carlo simulations.
-    R_m_sim_l = []
-    I0_m_sim_l = []
-    for j in range(sim):
-        if j in range(0, 100000, 100):
-            print("Simulation %i"%j)
+    # Loop over number of R2eff points.
+    for i in range(np):
         # Create index in dic.
-        # We dont want to store simulations, as they eat to much disk space.
-        #dic[i][j] = OrderedDict()
-        # Assign to global counter.
-        sim_j = j
+        dic[i] = OrderedDict()
+        # Assign to global counter
+        np_i = i
 
-        # Now produce Simulated intensity with errors.
-        I_err_sim_j = prod_I_errors(I=I_err, errors=errors)
+        # Create random number of timepoints. Between 3 and 10 for exponential curve fitting.
+        if do_random_nr_time_points:
+            nt = randint(nt_min, nt_max)
+        else:
+            nt = nt_max
+        dic[i]['nt'] = nt
 
-        # Start minimisation.
-        args = (times, I_err_sim_j, errors)
-        x0 = params_minfx
+        print("R2eff point %s with %i timepoints. Random timepoints=%s" % (i, nt, do_random_nr_time_points))
 
-        params_minfx_sim_j, chi2_minfx_sim_j, iter_count, f_count, g_count, h_count, warning = generic_minimise(func=func_exp_chi2, dfunc=func_exp_chi2_grad, args=args, x0=x0, min_algor=min_algor, min_options=min_options, full_output=True, print_flag=0)
-        R_m_sim_j, I0_m_sim_j = params_minfx_sim_j
-        R_m_sim_l.append(R_m_sim_j)
-        I0_m_sim_l.append(I0_m_sim_j)
-        #dic[i][j]['R_m_sim'] = R_m_sim
-        #dic[i][j]['I0_m_sim'] = I0_m_sim
+        # Create time array, by drawing from the all time points array.
+        times = asarray( sample(population=all_times, k=nt) )
+        dic[i]['times'] = times
 
-    # Get stats on distribution.
-    sigma_R_sim = std(asarray(R_m_sim_l))
-    sigma_I0_sim = std(asarray(I0_m_sim_l))
-    dic[i]['sigma_R_sim'] = sigma_R_sim
-    dic[i]['sigma_I0_sim'] = sigma_I0_sim
+        # Get the indexes which was drawn from.
+        indexes = []
+        for time in times:
+            indexes.append( int(where(time == all_times)[0]) )
+        dic[i]['indexes'] = indexes
 
+        # Draw errors from same indexes.
+        errors = all_errors[indexes]
+        dic[i]['errors'] = errors
 
-# Write to pickle.
-pickle.dump( dic, open( "estimate_errors.cp", "wb" ) )
+        # Calculate the real intensity.
+        I = func_exp(params=params, times=times)
+        dic[i]['I'] = I
+
+        # Now produce Intensity with errors.
+        I_err = prod_I_errors(I=I, errors=errors)
+        dic[i]['I_err'] = I_err
+
+        # Now estimate with no weighting.
+        R_e, I0_e = est_x0_exp(times=times, I=I_err)
+        dic[i]['R_e'] = R_e
+        dic[i]['I0_e'] = I0_e
+
+        # Now estimate with weighting.
+        R_ew, I0_ew = est_x0_exp_weight(times=times, I=I_err, errors=errors)
+        dic[i]['R_ew'] = R_ew
+        dic[i]['I0_ew'] = I0_ew
+
+        # Now estimate errors for parameters.
+        sigma_R = point_r2eff_err(times=times, I=I_err, errors=errors)
+        dic[i]['sigma_R'] = sigma_R
+
+        # Minimisation.
+        args = (times, I_err, errors)
+        x0 = array([R_e, I0_e])
+
+        params_minfx, chi2_minfx, iter_count, f_count, g_count, h_count, warning = generic_minimise(func=func_exp_chi2, dfunc=func_exp_chi2_grad, args=args, x0=x0, min_algor=min_algor, min_options=min_options, full_output=True, print_flag=0)
+        R_m, I0_m = params_minfx
+        dic[i]['R_m'] = R_m
+        dic[i]['I0_m'] = I0_m
+
+        # Estimate errors from Jacobian
+        jacobian = func_exp_grad(params=params_minfx, times=times)
+        dic[i]['jacobian'] = jacobian
+        weights = 1. / errors**2
+        dic[i]['weights'] = weights
+
+        # Covariance matrix.
+        pcov = multifit_covar(J=jacobian, weights=weights)
+        dic[i]['pcov'] = pcov
+        sigma_R_covar, sigma_I0_covar = sqrt(diag(pcov))
+        dic[i]['sigma_R_covar'] = sigma_R_covar
+        dic[i]['sigma_I0_covar'] = sigma_I0_covar
+
+        # Now do Monte Carlo simulations.
+        R_m_sim_l = []
+        I0_m_sim_l = []
+        for j in range(sim):
+            if j in range(0, 100000, 100):
+                print("Simulation %i"%j)
+            # Create index in dic.
+            # We dont want to store simulations, as they eat to much disk space.
+            #dic[i][j] = OrderedDict()
+            # Assign to global counter.
+            sim_j = j
+
+            # Now produce Simulated intensity with errors.
+            I_err_sim_j = prod_I_errors(I=I_err, errors=errors)
+
+            # Start minimisation.
+            args = (times, I_err_sim_j, errors)
+            x0 = params_minfx
+
+            params_minfx_sim_j, chi2_minfx_sim_j, iter_count, f_count, g_count, h_count, warning = generic_minimise(func=func_exp_chi2, dfunc=func_exp_chi2_grad, args=args, x0=x0, min_algor=min_algor, min_options=min_options, full_output=True, print_flag=0)
+            R_m_sim_j, I0_m_sim_j = params_minfx_sim_j
+            R_m_sim_l.append(R_m_sim_j)
+            I0_m_sim_l.append(I0_m_sim_j)
+            #dic[i][j]['R_m_sim'] = R_m_sim
+            #dic[i][j]['I0_m_sim'] = I0_m_sim
+
+        # Get stats on distribution.
+        sigma_R_sim = std(asarray(R_m_sim_l))
+        sigma_I0_sim = std(asarray(I0_m_sim_l))
+        dic[i]['sigma_R_sim'] = sigma_R_sim
+        dic[i]['sigma_I0_sim'] = sigma_I0_sim
+
+    # Write to pickle.
+    pickle.dump( dic, open( "estimate_errors_data_nt%i.cp"%nt_max, "wb" ) )
