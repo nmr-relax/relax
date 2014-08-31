@@ -27,10 +27,10 @@ I0 = 1000.0
 params = array([R, I0], float64)
 
 # Number if R2eff points
-np = 10
+np = 40
 
 # Number of simulations.
-sim = 100
+sim = 2000
 
 # Create number of timepoints. Between 3 and 10 for exponential curve fitting.
 # Used in random.randint, and includes both end points.
@@ -38,7 +38,7 @@ nt_min = 3
 nt_max = 10
 
 # Should we do random number of timepoints?
-do_random_nr_time_points = False
+do_random_nr_time_points = True
 
 # Produce range with all possible time points.
 # Draw from this.
@@ -324,6 +324,8 @@ for i in range(np):
     R_m_sim_l = []
     I0_m_sim_l = []
     for j in range(sim):
+        if j in range(0, 100000, 100):
+            print("Simulation %i"%j)
         # Create index in dic.
         # We dont want to store simulations, as they eat to much disk space.
         #dic[i][j] = OrderedDict()
@@ -352,4 +354,4 @@ for i in range(np):
 
 
 # Write to pickle.
-pickle.dump( dic, open( "estimate_errors.p", "wb" ) )
+pickle.dump( dic, open( "estimate_errors.cp", "wb" ) )
