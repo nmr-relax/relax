@@ -414,17 +414,13 @@ class Exp:
         return Kw
 
 
-    def func_exp_grad(self, params=None, times=None, values=None, errors=None):
+    def func_exp_grad(self, params=None, times=None):
         """The gradient (Jacobian matrix) of func_exp for Co-variance calculation.
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
         @keyword times: The time points.
         @type times:    numpy array
-        @param values:  The measured values.
-        @type values:   numpy array
-        @param errors:  The standard deviation of the measured intensity values per time point.
-        @type errors:   numpy array
         @return:        The Jacobian matrix with 'm' rows of function derivatives per 'n' columns of parameters.
         @rtype:         numpy array
         """
@@ -490,7 +486,7 @@ class Exp:
         back_calc = self.func_exp(params=params, times=times)
 
         # Get the Jacobian, with partial derivative, with respect to r2eff and i0.
-        exp_grad = self.func_exp_grad(params=params, times=times, values=values, errors=errors)
+        exp_grad = self.func_exp_grad(params=params, times=times)
 
         # Transpose back, to get rows.
         exp_grad_t = transpose(exp_grad)
@@ -890,7 +886,7 @@ def minimise_minfx(E=None):
 
         else:
             # Use the direct Jacobian from python.
-            jacobian_matrix_exp = E.func_exp_grad(params=param_vector, times=E.times, values=E.values, errors=E.errors)
+            jacobian_matrix_exp = E.func_exp_grad(params=param_vector, times=E.times)
             weights = 1. / E.errors**2
 
     pcov = multifit_covar(J=jacobian_matrix_exp, weights=weights)
