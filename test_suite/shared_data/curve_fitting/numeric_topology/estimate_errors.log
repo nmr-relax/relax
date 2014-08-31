@@ -1,4 +1,4 @@
-R2eff point 0 with 7 timepoints
+R2eff point 0 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -19,7 +19,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 1 with 5 timepoints
+R2eff point 1 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -40,7 +40,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 2 with 8 timepoints
+R2eff point 2 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -61,7 +61,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 3 with 9 timepoints
+R2eff point 3 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -82,7 +82,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 4 with 8 timepoints
+R2eff point 4 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -103,7 +103,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 5 with 8 timepoints
+R2eff point 5 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -124,7 +124,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 6 with 10 timepoints
+R2eff point 6 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -145,7 +145,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 7 with 10 timepoints
+R2eff point 7 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -166,7 +166,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 8 with 9 timepoints
+R2eff point 8 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -187,7 +187,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 9 with 4 timepoints
+R2eff point 9 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -208,7 +208,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 10 with 7 timepoints
+R2eff point 10 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -229,7 +229,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 11 with 8 timepoints
+R2eff point 11 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -250,7 +250,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 12 with 3 timepoints
+R2eff point 12 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -271,7 +271,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 13 with 5 timepoints
+R2eff point 13 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -292,7 +292,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 14 with 3 timepoints
+R2eff point 14 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -313,7 +313,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 15 with 10 timepoints
+R2eff point 15 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -334,7 +334,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 16 with 7 timepoints
+R2eff point 16 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -355,7 +355,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 17 with 10 timepoints
+R2eff point 17 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -376,7 +376,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 18 with 4 timepoints
+R2eff point 18 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -397,7 +397,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 19 with 4 timepoints
+R2eff point 19 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -418,7 +418,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 20 with 7 timepoints
+R2eff point 20 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -439,7 +439,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 21 with 10 timepoints
+R2eff point 21 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -460,7 +460,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 22 with 8 timepoints
+R2eff point 22 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -481,7 +481,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 23 with 5 timepoints
+R2eff point 23 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -502,7 +502,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 24 with 9 timepoints
+R2eff point 24 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -523,7 +523,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 25 with 10 timepoints
+R2eff point 25 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -544,7 +544,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 26 with 3 timepoints
+R2eff point 26 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -565,7 +565,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 27 with 8 timepoints
+R2eff point 27 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -586,7 +586,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 28 with 10 timepoints
+R2eff point 28 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -607,7 +607,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 29 with 3 timepoints
+R2eff point 29 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -628,7 +628,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 30 with 4 timepoints
+R2eff point 30 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -649,7 +649,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 31 with 8 timepoints
+R2eff point 31 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -670,7 +670,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 32 with 10 timepoints
+R2eff point 32 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -691,7 +691,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 33 with 10 timepoints
+R2eff point 33 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -712,7 +712,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 34 with 3 timepoints
+R2eff point 34 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -733,7 +733,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 35 with 10 timepoints
+R2eff point 35 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -754,7 +754,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 36 with 7 timepoints
+R2eff point 36 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -775,7 +775,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 37 with 4 timepoints
+R2eff point 37 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -796,7 +796,7 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 38 with 3 timepoints
+R2eff point 38 with 5 timepoints. Random timepoints=False
 Simulation 0
 Simulation 100
 Simulation 200
@@ -817,7 +817,847 @@ Simulation 1600
 Simulation 1700
 Simulation 1800
 Simulation 1900
-R2eff point 39 with 3 timepoints
+R2eff point 39 with 5 timepoints. Random timepoints=False
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 0 with 5 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 1 with 5 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 2 with 5 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 3 with 8 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 4 with 4 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 5 with 10 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 6 with 4 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 7 with 3 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 8 with 6 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 9 with 3 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 10 with 6 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 11 with 5 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 12 with 7 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 13 with 5 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 14 with 5 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 15 with 7 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 16 with 4 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 17 with 10 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 18 with 6 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 19 with 10 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 20 with 9 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 21 with 3 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 22 with 9 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 23 with 4 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 24 with 4 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 25 with 4 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 26 with 4 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 27 with 7 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 28 with 8 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 29 with 5 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 30 with 3 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 31 with 8 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 32 with 9 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 33 with 8 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 34 with 10 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 35 with 4 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 36 with 8 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 37 with 8 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 38 with 7 timepoints. Random timepoints=True
+Simulation 0
+Simulation 100
+Simulation 200
+Simulation 300
+Simulation 400
+Simulation 500
+Simulation 600
+Simulation 700
+Simulation 800
+Simulation 900
+Simulation 1000
+Simulation 1100
+Simulation 1200
+Simulation 1300
+Simulation 1400
+Simulation 1500
+Simulation 1600
+Simulation 1700
+Simulation 1800
+Simulation 1900
+R2eff point 39 with 7 timepoints. Random timepoints=True
 Simulation 0
 Simulation 100
 Simulation 200
