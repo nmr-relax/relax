@@ -3122,6 +3122,16 @@ class Relax_disp(SystemTestCase):
         my_dic = {}
         param_key_list = []
 
+        # Do boot strapping ?
+        do_boot = True
+        if do_boot:
+            from minfx.generic import generic_minimise
+            from random import gauss
+            min_algor = 'BFGS'
+            min_options = ()
+            sim_boot = 2000
+            scaling_list = [1.0, 1.0]
+
         # First check sim values.
         for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
             # Add key to dic.
@@ -3190,6 +3200,50 @@ class Relax_disp(SystemTestCase):
                 self.assertAlmostEqual(r2eff_sim_err, r2eff_err)
                 self.assertAlmostEqual(i0_sim_err, i0_err)
 
+                if do_boot:
+                    values = []
+                    errors = []
+                    times = []
+                    for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
+                        values.append(average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time))
+                        errors.append(average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
+                        times.append(time)
+
+                    # Convert to numpy array.
+                    values = asarray(values)
+                    errors = asarray(errors)
+                    times = asarray(times)
+
+                    R_m_sim_l = []
+                    I0_m_sim_l = []
+                    for j in range(sim_boot):
+                        if j in range(0, 100000, 100):
+                            print("Simulation %i"%j)
+                        # Start minimisation.
+
+                        # Produce errors
+                        I_err = []
+                        for j, error in enumerate(errors):
+                            I_error = gauss(values[j], error)
+                            I_err.append(I_error)
+                        # Convert to numpy array.
+                        I_err = asarray(I_err)
+
+                        x0 = [r2eff, i0]
+                        setup(num_params=len(x0), num_times=len(times), values=I_err, sd=errors, relax_times=times, scaling_matrix=scaling_list)
+
+                        params_minfx_sim_j, chi2_minfx_sim_j, iter_count, f_count, g_count, h_count, warning = generic_minimise(func=func, dfunc=dfunc, args=(), x0=x0, min_algor=min_algor, min_options=min_options, full_output=True, print_flag=0)
+                        R_m_sim_j, I0_m_sim_j = params_minfx_sim_j
+                        R_m_sim_l.append(R_m_sim_j)
+                        I0_m_sim_l.append(I0_m_sim_j)
+
+                    # Get stats on distribution.
+                    sigma_R_sim = std(asarray(R_m_sim_l), ddof=1)
+                    sigma_I0_sim = std(asarray(I0_m_sim_l), ddof=1)
+                    my_dic[spin_id][param_key]['r2eff_err_boot'] = sigma_R_sim
+                    my_dic[spin_id][param_key]['i0_err_boot'] = sigma_I0_sim
+
+
         # A new data pipe.
         self.interpreter.pipe.copy(pipe_from='MC_2000', pipe_to='r2eff_est')
         self.interpreter.pipe.switch(pipe_name='r2eff_est')
@@ -3227,9 +3281,16 @@ class Relax_disp(SystemTestCase):
                 r2eff_sim_err = my_dic[spin_id][param_key]['r2eff_err_sim']
                 i0_sim_err = my_dic[spin_id][param_key]['i0_err_sim']
 
+                if do_boot:
+                    r2eff_boot_err = my_dic[spin_id][param_key]['r2eff_err_boot']
+                    i0_boot_err = my_dic[spin_id][param_key]['i0_err_boot']
+                else:
+                    r2eff_boot_err = 0.0
+                    i0_boot_err = 0.0
+
                 print("%s at %3.1f MHz, for offset=%3.3f ppm and dispersion point %-5.1f." % (exp_type, frq/1E6, offset, point) )
-                print("r2eff=%3.3f/%3.3f r2eff_err=%3.4f/%3.4f/%3.4f" % (r2eff, r2eff_est, r2eff_err, r2eff_err_est, r2eff_sim_err) ),
-                print("i0=%3.3f/%3.3f i0_err=%3.4f/%3.4f/%3.4f\n" % (i0, i0_est, i0_err, i0_err_est, i0_sim_err) )
+                print("r2eff=%3.3f/%3.3f r2eff_err=%3.4f/%3.4f/%3.4f/%3.4f" % (r2eff, r2eff_est, r2eff_err, r2eff_err_est, r2eff_sim_err, r2eff_boot_err) ),
+                print("i0=%3.3f/%3.3f i0_err=%3.4f/%3.4f/%3.4f/%3.4f\n" % (i0, i0_est, i0_err, i0_err_est, i0_sim_err, i0_boot_err) )
 
 
         # Now do it manually.
