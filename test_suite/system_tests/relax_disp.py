@@ -23,7 +23,7 @@
 
 # Python module imports.
 from os import F_OK, access, getcwd, path, sep
-from numpy import array, exp, median, log, save, sum, zeros
+from numpy import array, asarray, exp, median, inf, log, save, std, sum, zeros
 import re, math
 from tempfile import mkdtemp, NamedTemporaryFile
 
@@ -3112,16 +3112,49 @@ class Relax_disp(SystemTestCase):
         my_dic = {}
         param_key_list = []
 
+        # First check sim values.
         for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
             # Add key to dic.
             my_dic[spin_id] = {}
 
+            # Loop over sim.
+            for i, r2eff_sim in enumerate(cur_spin.r2eff_sim):
+                # Loop over all exp type.
+                for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                    # Generate the param_key.
+                    param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+                    r2eff_sim_point = r2eff_sim[param_key]
+                    i0_sim_point = cur_spin.r2eff_sim[i][param_key]
+
+                    # Assert point are higher than 0.0.
+                    #point_info = "r2eff=%3.2f i0=%3.2f, at %3.1f MHz, for offset=%3.3f ppm and dispersion point %-5.1f, at sim index %i." % (r2eff_sim_point, i0_sim_point, frq/1E6, offset, point, i)
+                    #print(point_info)
+                    self.assert_(r2eff_sim_point > 0.0)
+                    self.assert_(i0_sim_point > 0.0)
+
+        # Get the data.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
             # Generate spin string.
             spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
 
             for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
                 # Generate the param_key.
                 param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                # Loop over all sim, and collect data.
+                r2eff_sim_l = []
+                i0_sim_l = []
+                for i, r2eff_sim in enumerate(cur_spin.r2eff_sim):
+                    i0_sim = cur_spin.i0_sim[i]
+
+                    r2eff_sim_i = r2eff_sim[param_key]
+                    r2eff_sim_l.append(r2eff_sim_i)
+                    i0_sim_i = i0_sim[param_key]
+                    i0_sim_l.append(i0_sim_i)
+
+                # Take the standard deviation of all values.
+                r2eff_sim_err = std(asarray(r2eff_sim_l), ddof=1)
+                i0_sim_err = std(asarray(i0_sim_l), ddof=1)
 
                 # Append key.
                 param_key_list.append(param_key)
@@ -3140,6 +3173,12 @@ class Relax_disp(SystemTestCase):
                 my_dic[spin_id][param_key]['r2eff_err'] = r2eff_err
                 my_dic[spin_id][param_key]['i0'] = i0
                 my_dic[spin_id][param_key]['i0_err'] = i0_err
+                my_dic[spin_id][param_key]['r2eff_err_sim'] = r2eff_sim_err
+                my_dic[spin_id][param_key]['i0_err_sim'] = i0_sim_err
+
+                # Assert values are equal
+                self.assertAlmostEqual(r2eff_sim_err, r2eff_err)
+                self.assertAlmostEqual(i0_sim_err, i0_err)
 
         # A new data pipe.
         self.interpreter.pipe.copy(pipe_from='MC_2000', pipe_to='r2eff_est')
@@ -3175,10 +3214,12 @@ class Relax_disp(SystemTestCase):
                 r2eff_err = my_dic[spin_id][param_key]['r2eff_err']
                 i0 = my_dic[spin_id][param_key]['i0']
                 i0_err = my_dic[spin_id][param_key]['i0_err']
+                r2eff_sim_err = my_dic[spin_id][param_key]['r2eff_err_sim']
+                i0_sim_err = my_dic[spin_id][param_key]['i0_err_sim']
 
                 print("%s at %3.1f MHz, for offset=%3.3f ppm and dispersion point %-5.1f." % (exp_type, frq/1E6, offset, point) )
-                print("r2eff=%3.3f/%3.3f r2eff_err=%3.4f/%3.4f" % (r2eff, r2eff_est, r2eff_err, r2eff_err_est) ),
-                print("i0=%3.3f/%3.3f i0_err=%3.4f/%3.4f\n" % (i0, i0_est, i0_err, i0_err_est) )
+                print("r2eff=%3.3f/%3.3f r2eff_err=%3.4f/%3.4f/%3.4f" % (r2eff, r2eff_est, r2eff_err, r2eff_err_est, r2eff_sim_err) ),
+                print("i0=%3.3f/%3.3f i0_err=%3.4f/%3.4f/%3.4f\n" % (i0, i0_est, i0_err, i0_err_est, i0_sim_err) )
 
 
         # Now do it manually.
