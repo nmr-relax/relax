@@ -24,6 +24,8 @@
 # Python module imports.
 from os import F_OK, access, getcwd, path, sep
 from numpy import array, asarray, exp, median, inf, log, save, std, sum, zeros
+from minfx.generic import generic_minimise
+from random import gauss
 import re, math
 from tempfile import mkdtemp, NamedTemporaryFile
 
@@ -3125,9 +3127,7 @@ class Relax_disp(SystemTestCase):
         # Do boot strapping ?
         do_boot = True
         if do_boot:
-            from minfx.generic import generic_minimise
-            from random import gauss
-            min_algor = 'BFGS'
+            min_algor = 'Newton'
             min_options = ()
             sim_boot = 2000
             scaling_list = [1.0, 1.0]
@@ -3232,7 +3232,7 @@ class Relax_disp(SystemTestCase):
                         x0 = [r2eff, i0]
                         setup(num_params=len(x0), num_times=len(times), values=I_err, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
-                        params_minfx_sim_j, chi2_minfx_sim_j, iter_count, f_count, g_count, h_count, warning = generic_minimise(func=func, dfunc=dfunc, args=(), x0=x0, min_algor=min_algor, min_options=min_options, full_output=True, print_flag=0)
+                        params_minfx_sim_j, chi2_minfx_sim_j, iter_count, f_count, g_count, h_count, warning = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=x0, min_algor=min_algor, min_options=min_options, full_output=True, print_flag=0)
                         R_m_sim_j, I0_m_sim_j = params_minfx_sim_j
                         R_m_sim_l.append(R_m_sim_j)
                         I0_m_sim_l.append(I0_m_sim_j)
@@ -7995,6 +7995,9 @@ class Relax_disp(SystemTestCase):
         # Set algorithm.
         min_algor = 'Newton'
         constraints = False
+        min_options = ()
+        sim_boot = 2000
+        scaling_list = [1.0, 1.0]
 
         # Minimise.
         self.interpreter.minimise.execute(min_algor=min_algor, constraints=constraints, verbosity=1)
@@ -8008,10 +8011,7 @@ class Relax_disp(SystemTestCase):
                 if hasattr(cur_spin, err_attr):
                     delattr(cur_spin, err_attr)
 
-        # Estimate R2eff errors.
-        self.interpreter.relax_disp.r2eff_err_estimate(chi2_jacobian=False)
-
-        # Collect the estimation data.
+        # Collect the estimation data from boot.
         my_dic = {}
         param_key_list = []
         est_keys = []
@@ -8042,20 +8042,53 @@ class Relax_disp(SystemTestCase):
                 # Add key to dic.
                 my_dic[spin_id][est_key][param_key] = {}
 
-                # Get the value.
-                # Loop over err attributes.
-                for err_attr in err_attr_list:
-                    if hasattr(cur_spin, err_attr):
-                        get_err_attr = getattr(cur_spin, err_attr)[param_key]
-                    else:
-                        get_err_attr = 0.0
+                values = []
+                errors = []
+                times = []
+                for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
+                    values.append(average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time))
+                    errors.append(average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
+                    times.append(time)
 
-                    # Save to dic.
-                    my_dic[spin_id][est_key][param_key][err_attr] = get_err_attr
+                # Convert to numpy array.
+                values = asarray(values)
+                errors = asarray(errors)
+                times = asarray(times)
 
+                r2eff = getattr(cur_spin, 'r2eff')[param_key]
+                i0 = getattr(cur_spin, 'i0')[param_key]
 
-        # Estimate R2eff errors from Chi2 Jacobian.
-        self.interpreter.relax_disp.r2eff_err_estimate(chi2_jacobian=True)
+                R_m_sim_l = []
+                I0_m_sim_l = []
+                for j in range(sim_boot):
+                    if j in range(0, 100000, 100):
+                        print("Simulation %i"%j)
+                    # Start minimisation.
+
+                    # Produce errors
+                    I_err = []
+                    for j, error in enumerate(errors):
+                        I_error = gauss(values[j], error)
+                        I_err.append(I_error)
+                    # Convert to numpy array.
+                    I_err = asarray(I_err)
+
+                    x0 = [r2eff, i0]
+                    setup(num_params=len(x0), num_times=len(times), values=I_err, sd=errors, relax_times=times, scaling_matrix=scaling_list)
+
+                    params_minfx_sim_j, chi2_minfx_sim_j, iter_count, f_count, g_count, h_count, warning = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=x0, min_algor=min_algor, min_options=min_options, full_output=True, print_flag=0)
+                    R_m_sim_j, I0_m_sim_j = params_minfx_sim_j
+                    R_m_sim_l.append(R_m_sim_j)
+                    I0_m_sim_l.append(I0_m_sim_j)
+
+                # Get stats on distribution.
+                sigma_R_sim = std(asarray(R_m_sim_l), ddof=1)
+                sigma_I0_sim = std(asarray(I0_m_sim_l), ddof=1)
+                my_dic[spin_id][est_key][param_key]['r2eff_err'] = sigma_R_sim
+                my_dic[spin_id][est_key][param_key]['i0_err'] = sigma_I0_sim
+
+        # Estimate R2eff errors.
+        self.interpreter.relax_disp.r2eff_err_estimate()
 
         est_key = '-1'
         est_keys.append(est_key)
@@ -8085,7 +8118,7 @@ class Relax_disp(SystemTestCase):
 
 
         # Make Carlo Simulations number
-        mc_number_list = range(0, 50, 10)
+        mc_number_list = range(0, 2400, 400)
 
         sim_attr_list = ['chi2_sim', 'f_count_sim', 'g_count_sim', 'h_count_sim', 'i0_sim', 'iter_sim', 'peak_intensity_sim', 'r2eff_sim', 'select_sim', 'warning_sim']
 
