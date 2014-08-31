@@ -3109,6 +3109,11 @@ class Relax_disp(SystemTestCase):
 
         This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
         Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
+
+        NOTE: The difference in the methods was due to a bug in relax!
+        U{bug #22554<https://gna.org/bugs/index.php?22554>}. The distribution of intensity with errors in Monte-Carlo simulations are markedly more narrow than expected.
+
+        This dataset is old, and includes 2000 Monte-Carlo simulations, which is performed wrong.
         """
 
         # Define data path.
@@ -3129,7 +3134,7 @@ class Relax_disp(SystemTestCase):
         if do_boot:
             min_algor = 'Newton'
             min_options = ()
-            sim_boot = 2000
+            sim_boot = 200
             scaling_list = [1.0, 1.0]
 
         # First check sim values.
