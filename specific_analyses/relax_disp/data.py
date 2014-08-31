@@ -147,7 +147,7 @@ def average_intensity(spin=None, exp_type=None, frq=None, offset=None, point=Non
             intensity += spin.peak_intensity_sim[int_keys[i]][sim_index]
 
         # Error intensity data.
-        if error:
+        elif error:
             # Error checking.
             if not hasattr(spin, 'peak_intensity_err') or not int_keys[i] in spin.peak_intensity_err:
                 raise RelaxError("The peak intensity errors are missing the key '%s'." % int_keys[i])
