@@ -143,7 +143,7 @@ do_boot = True
 
 min_algor = 'Newton'
 min_options = ()
-sim_boot = 100000
+sim_boot = 6000
 scaling_list = [1.0, 1.0]
 
 # Start dic.
@@ -300,7 +300,43 @@ if make_plots:
             ax1.set_xlabel('R')
             ax1.legend(loc='upper left', shadow=True, prop = fontP)
 
-            fig_nr += 1
+############################
+            # Create figure
+            fig = figure(num=fig_nr+1, figsize=(20, 8))
+
+            # Original solution
+            i0 = my_dic[spin_id][param_key]['i0']
+
+            # Extraxt from boot
+            i0_array_boot = my_dic[spin_id][param_key]['i0_array_boot']
+            i0_err_boot = my_dic[spin_id][param_key]['i0_err_boot']
+            gauss_ref_boot = normal(loc=i0, scale=i0_err_boot, size=1000000)
+
+            # Extract from relax Monte-Carlo
+            i0_array_sim = my_dic[spin_id][param_key]['i0_array_sim']
+            i0_sim_err = my_dic[spin_id][param_key]['i0_err_sim']
+            gauss_ref_sim = normal(loc=i0, scale=i0_sim_err, size=1000000)
+
+            # Plot histogram
+            # For boot
+            ax1 = fig.add_subplot(121)
+            #ax1.hist(i0_array_boot, bins=100, histtype='stepfilled', normed=False, color='b', alpha=0.9, label='%i boot'%sim_boot)
+            ax1.hist(i0_array_boot, bins=100, histtype='stepfilled', normed=True, color='b', alpha=0.9, label='%i boot'%sim_boot)
+            ax1.hist(gauss_ref_boot, bins=100, histtype='step', normed=True, color='r', alpha=0.5, label='boot gauss')
+            ax1.set_xlim([900.0, 1100.])
+            ax1.set_xlabel('Intensity')
+            ax1.legend(loc='upper left', shadow=True, prop = fontP)
+
+            # For Monte-Carlo
+            ax1 = fig.add_subplot(122)
+            #ax1.hist(i0_array_sim, bins=100, histtype='stepfilled', normed=False, color='b', alpha=0.9, label='%i MC'%sim_boot)
+            ax1.hist(i0_array_sim, bins=100, histtype='stepfilled', normed=True, color='b', alpha=0.9, label='%i MC'%sim_boot)
+            ax1.hist(gauss_ref_sim, bins=100, histtype='step', normed=True, color='r', alpha=0.5, label='MC gauss')
+            ax1.set_xlim([900.0, 2100.])
+            ax1.set_xlabel('Intensity')
+            ax1.legend(loc='upper left', shadow=True, prop = fontP)
+
+            fig_nr += 2
 
 if make_plots:
     show()
