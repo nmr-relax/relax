@@ -57,7 +57,7 @@ if scipy_module:
     from scipy.optimize import leastsq
 
 
-def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1, scale=False, chi2_jacobian=False):
+def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
     """This will estimate the R2eff and i0 errors from the covariance matrix Qxx.  Qxx is calculated from the Jacobian matrix and the optimised parameters.
 
     @keyword spin_id:       The spin identification string.
@@ -66,10 +66,6 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1, scale=False, chi2_
     @type epsrel:           float
     @keyword verbosity:     The amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:        int
-    @keyword scale:         If the co-variance should be scaled according to the reduced chi squared.  This is simply the division of the co-variance with number of degrees of freedom n.  n = N - p, where N is number of observations and p is number of fitted parameters.
-    @type scale:            bool
-    @keyword chi2_jacobian: If the Jacobian derived from the chi2 function, should be used instead of the Jacobian from the exponential function.
-    @type chi2_jacobian:    bool
     """
 
     # Check that the C modules have been compiled.
@@ -132,46 +128,12 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1, scale=False, chi2_
             scaling_list = [1.0, 1.0]
             setup(num_params=len(param_vector), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
-            # Determine Jacobian and weights.
-            if chi2_jacobian:
-                # Calculate the direct exponential Jacobian matrix from C code.
-                jacobian_matrix_exp = transpose(asarray( jacobian_chi2(param_vector) ) )
-
-                # The Jacobian in the C-code is from chi2 function, and is already weighted.
-                weights = ones(errors.shape)
-            else:
-                # Use the direct Jacobian from function.
-                jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
-                weights = 1. / errors**2
+            # Use the direct Jacobian from function.
+            jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
+            weights = 1. / errors**2
 
             # Get the co-variance
             pcov = multifit_covar(J=jacobian_matrix_exp, weights=weights)
-
-            # Scale.
-            if scale:
-                # The covariance matrix above gives the 'statistical error' on the best-fit parameters resulting from the Gaussian errors 'sigma_i' on the underlying data 'y_i'.
-                # Ref: http://www.gnu.org/software/gsl/manual/gsl-ref_38.html#SEC528
-                # We denote the 'statistical error' with the 'e_i'.  'X_i' is the observation i, and 'u' is the mean of the observations.
-                # i, is index observation out of N observation.
-                # e_i = X_i - u
-
-                # Translated to R2eff this gives:
-                # pcov = R2eff_i - R2eff_fit
-                # We know 'pcov' and the fitted 'R2eff_fit', but we have no 'R2eff_i'.
-
-                # Translated to i0 this gives:
-                # pcov = i0_i - i0_fit
-                # We know 'pcov' and the fitted 'i0_fit', but we have no 'i0_i'.
-
-                # But luckily, the sum of squares of the statistical errors, divided by sd^2, has a chi-squared distribution with n degrees of freedom.
-                # Ref: http://en.wikipedia.org/wiki/Errors_and_residuals_in_statistics
-                # number of degrees of freedom is: n = N - p, or with Bessels_correction: n = N - p -1, where N is number of observations and p is number of parameters.
-                # Sum_{1->N} (X_i - u)^2 / sd^2 = Sum_{1->N} e_i^2 / sd^2 \approx chi2_n.
-
-                # The question is here, what is the standard deviation sd?
-                # Let us set it to 1, for no better idea.
-                pass
-
 
             # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
             param_vector_error = sqrt(diag(pcov))
@@ -179,7 +141,7 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1, scale=False, chi2_
             # Extract values.
             r2eff_err, i0_err = param_vector_error
 
-            # Errors.
+            # Copy r2eff dictionary, to r2eff_err dictionary. They have same keys to the dictionary,
             if not hasattr(cur_spin, 'r2eff_err'):
                 setattr(cur_spin, 'r2eff_err', deepcopy(getattr(cur_spin, 'r2eff')))
             if not hasattr(cur_spin, 'i0_err'):
@@ -764,12 +726,6 @@ def minimise_leastsq(E=None):
 
     # 'pcov': The estimated covariance matrix of popt.
     # The diagonals provide the variance of the parameter estimate.
-    # pcov is here, the reduced cov(x) or fractional cov(x). It is rescaling which is useful in numerical computations.
-    # It is not the true covariance matrix.
-    # An issue arises when errors in the y data points are given.
-    # Only the relative errors are used as weights, so the fit parameter errors, determined from the covariance do not depended on the magnitude of the errors in the individual data points.
-    # See: http://stackoverflow.com/questions/14581358/getting-standard-errors-on-fitted-parameters-using-the-optimize-leastsq-method-i
-    # See: http://stackoverflow.com/questions/14854339/in-scipy-how-and-why-does-curve-fit-calculate-the-covariance-of-the-parameter-es/14857441#14857441
 
     # The reduced chi square: Take each "difference element, which could have been weighted" (O - E) and put to order 2. Sum them, and divide by number of degrees of freedom.
     # Calculated the (weighted) chi2 value.
@@ -890,35 +846,6 @@ def minimise_minfx(E=None):
             weights = 1. / E.errors**2
 
     pcov = multifit_covar(J=jacobian_matrix_exp, weights=weights)
-
-    # Scale the variance?
-    if False:
-        # Make a square diagonal matrix.
-        eye_mat = eye(E.errors.shape[0])
-
-        # Get the residual vector K.
-        #K = E.func_exp_residual(params=param_vector, times=E.times, values=E.values)
-        #weights = 1. / E.errors**2
-
-        # Equal to:
-        K = E.func_exp_weighted_residual(params=param_vector, times=E.times, values=E.values, errors=E.errors)
-
-        # Now form the weights matrix, with errors down the diagonal.
-        W = multiply(weights, eye_mat)
-
-        # N is number of observations.
-        N = len(E.values)
-        # p is number of fitted parameters.
-        p = len(x0)
-        # number of degrees of freedom
-        n = N - p
-
-        # The covariance matrix, Qxx, contains the variance of each unknown and the covariance of each pair of unknowns. 
-        # The quantities in Qxx need to be scaled by a reference variance. This reference variance, S_0**2, is related to the weighting matrix and the residuals.
-        S02 = dot( dot(transpose(K), W), K) / n
-
-        # Scale co-variance.
-        pcov = pcov * S02
 
     # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
     param_vector_error = sqrt(diag(pcov))
