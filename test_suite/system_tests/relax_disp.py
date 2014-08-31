@@ -44,6 +44,15 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CP
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
+# C modules.
+if dep_check.C_module_exp_fn:
+    from specific_analyses.relax_fit.optimisation import func_wrapper, dfunc_wrapper, d2func_wrapper
+    from target_functions.relax_fit import jacobian, jacobian_chi2, setup
+    # Call the python wrapper function to help with list to numpy array conversion.
+    func = func_wrapper
+    dfunc = dfunc_wrapper
+    d2func = d2func_wrapper
+
 
 class Relax_disp(SystemTestCase):
     """Class for testing various aspects specific to relaxation dispersion curve-fitting."""
@@ -65,7 +74,8 @@ class Relax_disp(SystemTestCase):
                 "test_bug_21344_sparse_time_spinlock_acquired_r1rho_fail_relax_disp",
                 "test_estimate_r2eff_err",
                 "test_estimate_r2eff_err_auto",
-                "test_estimate_r2eff_err_methods"
+                "test_estimate_r2eff_err_methods",
+                "test_finite_value",
                 "test_exp_fit",
                 "test_m61_exp_data_to_m61",
                 "test_r1rho_kjaergaard_auto",
@@ -3288,6 +3298,26 @@ class Relax_disp(SystemTestCase):
         self.assert_('test' not in cdp.clustering)
         self.assertEqual(cdp.clustering['free spins'], [':2@N'])
         self.assertEqual(cdp.clustering['cluster'], [':1@N', ':3@N'])
+
+
+    def test_finite_value(self):
+        """Test return from C code, when parameters are wrong.  This can happen, if minfx takes a wrong step."""
+
+        times = array([ 0.7,  1. ,  0.8,  0.4,  0.9])
+        I = array([ 476.76174875,  372.43328777,  454.20339981,  656.87936253,  419.16726341])
+        errors = array([  9.48032653,  11.34093541,   9.35149017,  10.84867928,  12.17590736])
+
+        scaling_list = [1.0, 1.0]
+        setup(num_params=2, num_times=len(times), values=I, sd=errors, relax_times=times, scaling_matrix=scaling_list)
+
+        R = - 500.
+        I0 = 1000.
+        params = [R, I0]
+
+        chi2 = func(params)
+
+        print("The chi2 value returned from C-code for R=%3.2f and I0=%3.2f, then chi2=%3.2f"%(R, I0, chi2))
+        self.assertNotEqual(chi2, inf)
 
 
     def test_hansen_catia_input(self):
