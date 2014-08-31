@@ -6,6 +6,7 @@ from collections import OrderedDict
 #import pickle
 import cPickle as pickle
 from numpy import array, asarray, diag, ones, std, sqrt
+from os import getcwd, makedirs, path, sep
 
 # Open data.
 dic_s = pickle.load( open( "estimate_errors_data_settings.cp", "rb" ) )
@@ -24,7 +25,8 @@ I_err_std = dic_s['I_err_std']
 all_errors = dic_s['all_errors']
 
 # Make plots?
-make_plots = True
+make_plots = False
+make_peak_lists = True
 
 if make_plots:
     from pylab import show, plot, legend, figure, title, subplots
@@ -227,3 +229,74 @@ if make_plots:
 
 if make_plots:
     show()
+
+if make_peak_lists:
+    # Create dir for peak lists.
+    peak_dir = getcwd() + sep + 'estimate_errors_peak_lists'
+    if not path.exists(peak_dir):
+        makedirs(peak_dir)
+
+    # Set which data to write for.
+    nt_max = 10
+    # Open data.
+    dic = pickle.load( open( "estimate_errors_data_nt%i.cp"%nt_max, "rb" ) )
+
+    # Loop over original intensity, or noise true data.
+    for ref_int in ['I', 'I_err']:
+        #for i in range(np):
+        for i in range(1):
+            if ref_int == 'I':
+                file_path = peak_dir + sep + "ntmax_%i_disp_%i_ref.ser" % (nt_max, i)
+            else:
+                file_path = peak_dir + sep + "ntmax_%i_disp_%i.ser" % (nt_max, i)
+    
+            wfile = open(file_path, 'w')
+    
+            wfile.write("REMARK SeriesTab Input:" + "\n")
+            wfile.write("REMARK Mode: Maximum Dimensions: 2" + "\n")
+            wfile.write("REMARK Input Region:    X +/- 0 X-ZF: 1" + "\n")
+            wfile.write("REMARK Analysis Region: X +/- 0" + "\n")
+            wfile.write("REMARK Input Region:    Y +/- 0 Y-ZF: 1" + "\n")
+            wfile.write("REMARK Analysis Region: Y +/- 0" + "\n")
+            wfile.write("" + "\n")
+            # Get number of intensities.
+    
+            nt = dic[i]['nt']
+            times = dic[i]['times']
+            errors = dic[i]['errors']
+            I = dic[i]['I']
+            I_err = dic[i]['I_err']
+            if ref_int == 'I':
+                I_val = I
+            else:
+                I_val = I_err
+    
+            Z_A_list = 'Z_A' + ' Z_A'.join(str(x) for x in range(nt))
+            f_list = " ".join(nt*['%7.4f'])
+            wfile.write("VARS   INDEX X_AXIS Y_AXIS X_PPM Y_PPM VOL ASS X1 X3 Y1 Y3 " + Z_A_list + "\n")
+            wfile.write("FORMAT %5d %9.3f %9.3f %8.3f %8.3f %+e %s %4d %4d %4d %4d " + f_list + "\n")
+            wfile.write("" + "\n")
+            wfile.write("NULLVALUE -666" + "\n")
+            wfile.write("NULLSTRING *" + "\n")
+            wfile.write("" + "\n")
+    
+            # Write for all spins.
+            for spin in range(1, 2):
+                INDEX = spin
+                X_AXIS = 450.000 
+                Y_AXIS = 100.000
+                X_PPM = 8.000
+                Y_PPM = 120.000
+                VOL = I_err[0]
+                ASS = "A%iN-HN"%spin
+                X1 = 400
+                X3 = 403
+                Y1 = 75
+                Y3 = 77
+                I_val_mod = I_val / VOL
+                I_val_mod_str = " ".join(format(x, "1.4f") for x in I_val_mod)
+    
+                text = "%5s   %3.3f   %3.3f   %2.3f  %3.3f %1.6e %8s  %3i  %3i  %3i  %3i  %s" % (INDEX, X_AXIS, Y_AXIS, X_PPM, Y_PPM, VOL, ASS, X1, X3, Y1, Y3, I_val_mod_str)
+                wfile.write(text + "\n")
+
+            wfile.close()
