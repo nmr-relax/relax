@@ -39,7 +39,7 @@ from lib.io import get_file_path
 from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
 from pipe_control.minimise import assemble_scaling_matrix
 from specific_analyses.relax_disp.checks import check_missing_r1
-from specific_analyses.relax_disp.estimate_r2eff import estimate_r2eff
+from specific_analyses.relax_disp.estimate_r2eff import estimate_par_err, estimate_r2eff
 from specific_analyses.relax_disp.data import average_intensity, check_intensity_errors, generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_grace_file_name_ini, return_param_key_from_data, spin_ids_to_containers
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.model import models_info, nesting_param
@@ -7364,15 +7364,13 @@ class Relax_disp(SystemTestCase):
         statefile ='final_state'
         #self.interpreter.state.load(state=statefile, dir=data_path, force=True)
 
-        # After minimisation
+        # After initial minimisation.
         resultsfile = 'final_results'
         self.interpreter.pipe.create(pipe_name='base pipe', pipe_type='relax_disp')
         self.interpreter.results.read(file=resultsfile, dir=data_path)
 
-        # After Monte-Carlo.
-        resultsfile_mc = 'final_results_mc'
-        self.interpreter.pipe.create(pipe_name='mc pipe', pipe_type='relax_disp')
-        self.interpreter.results.read(file=resultsfile_mc, dir=data_path)
+        # Estimate model error.
+        estimate_par_err()
 
         # Get the data.
         for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
@@ -7382,10 +7380,13 @@ class Relax_disp(SystemTestCase):
             for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
                 # Generate the param_key.
                 param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+                param_key = generate_r20_key(exp_type=exp_type, frq=frq)
 
-                print cur_spin.k_AB
+        # After Monte-Carlo.
+        resultsfile_mc = 'final_results_mc'
+        #self.interpreter.pipe.create(pipe_name='mc pipe', pipe_type='relax_disp')
+        #self.interpreter.results.read(file=resultsfile_mc, dir=data_path)
 
-        print statefile
 
 
     def test_tp02_data_to_ns_r1rho_2site(self, model=None):
