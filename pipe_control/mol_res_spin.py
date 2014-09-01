@@ -1256,11 +1256,11 @@ def format_info_full(mol_name=None, res_num=None, res_name=None, spin_num=None, 
 
     This will be a verbose representation.  If:
 
-        mol_name = 'Ubi'
-        res_name = 'Ala'
-        res_num = '10'
-        spin_num = None
-        spin_name = 'N'
+        - mol_name = 'Ubi'
+        - res_name = 'Ala'
+        - res_num = '10'
+        - spin_num = None
+        - spin_name = 'N'
 
     Then the returned string will be "Molecule Ubi, residue Ala 10, spin N".  Any values of None will result in that part of the string being suppressed.
 

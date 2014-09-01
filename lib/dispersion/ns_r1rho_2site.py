@@ -202,8 +202,6 @@ def rr1rho_3d_2site_rankN(R1=None, r1rho_prime=None, dw=None, omega=None, offset
     @type k_AB:             float
     @keyword k_BA:          The reverse exchange rate from state B to state A.
     @type k_BA:             float
-    @keyword k_BA:          The reverse exchange rate from state B to state A.
-    @type k_BA:             float
     @keyword relax_time:    The total relaxation time period for each spin-lock field strength (in seconds).
     @type relax_time:       numpy float array of rank [NE][NS][NM][NO][ND]
     @return:                The relaxation matrix.

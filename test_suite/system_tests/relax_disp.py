@@ -23,7 +23,9 @@
 
 # Python module imports.
 from os import F_OK, access, getcwd, path, sep
-from numpy import array, exp, median, log, save, sum, zeros
+from numpy import array, asarray, exp, median, inf, log, save, std, sum, zeros
+from minfx.generic import generic_minimise
+from random import gauss
 import re, math
 from tempfile import mkdtemp, NamedTemporaryFile
 
@@ -43,6 +45,15 @@ from specific_analyses.relax_disp.model import models_info, nesting_param
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_FULL, MODEL_LIST_NUMERIC_CPMG, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02, MODEL_TAP03
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
+
+# C modules.
+if dep_check.C_module_exp_fn:
+    from specific_analyses.relax_fit.optimisation import func_wrapper, dfunc_wrapper, d2func_wrapper
+    from target_functions.relax_fit import jacobian, jacobian_chi2, setup
+    # Call the python wrapper function to help with list to numpy array conversion.
+    func = func_wrapper
+    dfunc = dfunc_wrapper
+    d2func = d2func_wrapper
 
 
 class Relax_disp(SystemTestCase):
@@ -65,7 +76,8 @@ class Relax_disp(SystemTestCase):
                 "test_bug_21344_sparse_time_spinlock_acquired_r1rho_fail_relax_disp",
                 "test_estimate_r2eff_err",
                 "test_estimate_r2eff_err_auto",
-                "test_estimate_r2eff_err_methods"
+                "test_estimate_r2eff_err_methods",
+                "test_finite_value",
                 "test_exp_fit",
                 "test_m61_exp_data_to_m61",
                 "test_r1rho_kjaergaard_auto",
@@ -1600,6 +1612,240 @@ class Relax_disp(SystemTestCase):
         #save(data_path + "struct_arr", struct_arr)
 
 
+    def test_bug_atul_srivastava(self):
+        """Test data from Atul Srivastava.  This is a bug missing raising a Relax Error, since the setup points to a situation where the data
+        shows it is exponential fitting, but only one time point is added per file.
+
+        This follows: U{Thread <http://thread.gmane.org/gmane.science.nmr.relax.user/1718>}:
+        This follows: U{Thread <http://thread.gmane.org/gmane.science.nmr.relax.user/1735>}:
+        This follows: U{Thread <http://thread.gmane.org/gmane.science.nmr.relax.user/1735/focus=1736>}:
+
+        """
+
+        # Data path.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_Atul_Srivastava'
+        file = data_path + sep + 'bug_script.py'
+
+        # Run script.
+        self.interpreter.script(file=file, dir=None)
+
+        # The grid search size (the number of increments per dimension).
+        GRID_INC = 11
+
+        # Check-data.
+        #################
+
+        # Loop over spins, to see current setup.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            print(mol_name, resi, resn, spin_id)
+
+        # Loop over setup.
+        for id in cdp.exp_type.keys():
+            print(id, cdp.exp_type[id], cdp.spectrometer_frq[id], cdp.spin_lock_offset[id], cdp.spin_lock_nu1[id])
+
+
+        # Manual minimisation.
+        #################
+        if True:
+            # Set the model.
+            self.interpreter.relax_disp.select_model(MODEL_R2EFF)
+
+            # Check if intensity errors have already been calculated.
+            check_intensity_errors()
+
+            # Calculate the R2eff values for the fixed relaxation time period data types.
+            if cdp.model_type == MODEL_R2EFF and not has_exponential_exp_type():
+                self.interpreter.minimise.calculate()
+
+            # Optimise the model.
+            else:
+                constraints = False
+                min_algor = 'Newton'
+                with self.assertRaises(RelaxError):
+                    self.interpreter.minimise.grid_search(inc=GRID_INC)
+
+                with self.assertRaises(RelaxError):
+                    self.interpreter.minimise.execute(min_algor=min_algor, constraints=constraints)
+        # Inspect.
+        if False:
+            # Loop over attributes.
+            par_attr_list = ['r2eff', 'i0']
+
+            # Collect the estimation data.
+            my_dic = {}
+            param_key_list = []
+            est_keys = []
+            est_key = 'grid'
+            est_keys.append(est_key)
+            spin_id_list = []
+
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                # Add key to dic.
+                my_dic[spin_id] = {}
+
+                # Add key for estimate.
+                my_dic[spin_id][est_key] = {}
+
+                # Add spin key to list.
+                spin_id_list.append(spin_id)
+
+                # Generate spin string.
+                spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+                for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                    # Generate the param_key.
+                    param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+                    #param_key = generate_r20_key(exp_type=exp_type, frq=frq)
+
+                    # Append key.
+                    param_key_list.append(param_key)
+
+                    # Add key to dic.
+                    my_dic[spin_id][est_key][param_key] = {}
+
+                    # Get the value.
+                    # Loop over err attributes.
+                    for par_attr in par_attr_list:
+                        if hasattr(cur_spin, par_attr):
+                            get_par_attr = getattr(cur_spin, par_attr)[param_key]
+                        else:
+                            get_par_attr = 0.0
+
+                        # Save to dic.
+                        my_dic[spin_id][est_key][param_key][par_attr] = get_par_attr
+
+                    # Check number of values.
+                    values = []
+                    errors = []
+                    times = []
+                    for time, ti in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point, return_indices=True):
+                        value = average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, sim_index=None)
+                        values.append(value)
+
+                        error = average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True)
+                        errors.append(error)
+                        times.append(time)
+
+                    # Save to dic.
+                    my_dic[spin_id][est_key][param_key]['values'] = values
+                    my_dic[spin_id][est_key][param_key]['errors'] = errors
+                    my_dic[spin_id][est_key][param_key]['times'] = times
+
+        # Analysis variables.
+        #####################
+
+        # The dispersion models.
+        MODELS = ['R2eff', 'No Rex']
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        MC_NUM = 10
+
+        # A flag which if True will activate Monte Carlo simulations for all models.  Note this will hugely increase the computation time.
+        MC_SIM_ALL_MODELS = False
+
+        # The results directory.
+        RESULTS_DIR = ds.tmpdir
+
+        # The directory of results of an earlier analysis without clustering.
+        PRE_RUN_DIR = None
+
+        # The model selection technique to use.
+        MODSEL = 'AIC'
+
+        # The flag for only using numeric models in the final model selection.
+        NUMERIC_ONLY = False
+
+        # The R1rho value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.
+        INSIGNIFICANCE = 1.0
+
+        # Auto-analysis execution.
+        with self.assertRaises(RelaxError):
+            relax_disp.Relax_disp(pipe_name='relax_disp', results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, insignificance=INSIGNIFICANCE, numeric_only=NUMERIC_ONLY)
+
+
+    def test_bug_negative_intensities_cpmg(self):
+        """Test data, where peak intensities are negative in CPMG
+
+        This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0509100103}.  This is CPMG data with a fixed relaxation time period.  Experiment in 0.48 M GuHCl (guanidine hydrochloride).
+        """
+
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'KTeilum_FMPoulsen_MAkke_2006'+sep+'bug_neg_int_acbp_cpmg_disp_048MGuHCl_40C_041223'
+
+        # Create the spins
+        self.interpreter.spectrum.read_spins(file="peaks_list_max_standard.ser", dir=data_path)
+
+        # Name the isotope for field strength scaling.
+        self.interpreter.spin.isotope(isotope='15N')
+
+        # Read the spectrum from NMRSeriesTab file. The "auto" will generate spectrum name of form: Z_A{i}
+        self.interpreter.spectrum.read_intensities(file="peaks_list_max_standard.ser", dir=data_path, spectrum_id='auto', int_method='height')
+
+        # Loop over the spectra settings.
+        ncycfile=open(data_path + sep + 'ncyc.txt', 'r')
+
+        # Make empty ncyclist
+        ncyclist = []
+
+        i = 0
+        for line in ncycfile:
+            ncyc = line.split()[0]
+            time_T2 = float(line.split()[1])
+            vcpmg = line.split()[2]
+            set_sfrq = float(line.split()[3])
+            rmsd_err = float(line.split()[4])
+
+            # Test if spectrum is a reference
+            if float(vcpmg) == 0.0:
+                vcpmg = None
+            else:
+                vcpmg = round(float(vcpmg), 3)
+
+            # Add ncyc to list
+            ncyclist.append(int(ncyc))
+
+            # Set the current spectrum id
+            current_id = "Z_A%s"%(i)
+
+            # Set the current experiment type.
+            self.interpreter.relax_disp.exp_type(spectrum_id=current_id, exp_type='SQ CPMG')
+
+            # Set the peak intensity errors, as defined as the baseplane RMSD.
+            self.interpreter.spectrum.baseplane_rmsd(error=rmsd_err, spectrum_id=current_id)
+
+            # Set the NMR field strength of the spectrum.
+            self.interpreter.spectrometer.frequency(id=current_id, frq=set_sfrq, units='MHz')
+
+            # Relaxation dispersion CPMG constant time delay T (in s).
+            self.interpreter.relax_disp.relax_time(spectrum_id=current_id, time=time_T2)
+
+            # Set the relaxation dispersion CPMG frequencies.
+            self.interpreter.relax_disp.cpmg_setup(spectrum_id=current_id, cpmg_frq=vcpmg)
+
+            i += 1
+
+        # Specify the duplicated spectra.
+        self.interpreter.spectrum.replicated(spectrum_ids=['Z_A1', 'Z_A15'])
+
+        # Delete replicate spectrum
+        #self.interpreter.spectrum.delete('Z_A15')
+
+        MODELS = [MODEL_R2EFF, MODEL_NOREX]
+        GRID_INC = 5; MC_NUM = 3; MODSEL = 'AIC'
+
+        results_dir = ds.tmpdir
+
+        # Execute
+        relax_disp.Relax_disp(pipe_name='relax_disp', results_dir=results_dir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+
+        # Check spin less R2eff points.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=False):
+            # Assert that spin 4, has one less R2eff point, since one of the intensities are negative.
+            if spin_id == ':4@N':
+                self.assertEqual(len(cur_spin.r2eff), 14)
+            else:
+                self.assertEqual(len(cur_spin.r2eff), 15)
+
+
     def test_check_missing_r1(self):
         """Test of the check_missing_r1() function."""
 
@@ -2744,13 +2990,15 @@ class Relax_disp(SystemTestCase):
         self.interpreter.minimise.execute(min_algor='Newton', constraints=False, verbosity=1)
 
         # Estimate R2eff errors.
-        self.interpreter.relax_disp.r2eff_err_estimate(chi2_jacobian=True)
+        self.interpreter.relax_disp.r2eff_err_estimate()
+
+        r1_fit = True
 
         # Run the analysis.
-        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, r1_fit=r1_fit)
 
         # Verify the data.
-        self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, r2eff_estimate='chi2')
+        self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, r2eff_estimate='direct')
 
 
     def test_estimate_r2eff_err_auto(self):
@@ -2843,7 +3091,7 @@ class Relax_disp(SystemTestCase):
             print(spin_id)
 
         result_dir_name = self.tmpdir
-        r1_fit = False
+        r1_fit = True
 
         # Run the analysis.
         relax_disp.Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, exp_mc_sim_num=EXP_MC_NUM, modsel=MODSEL, r1_fit=r1_fit)
@@ -2861,6 +3109,11 @@ class Relax_disp(SystemTestCase):
 
         This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
         Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
+
+        NOTE: The difference in the methods was due to a bug in relax!
+        U{bug #22554<https://gna.org/bugs/index.php?22554>}. The distribution of intensity with errors in Monte-Carlo simulations are markedly more narrow than expected.
+
+        This dataset is old, and includes 2000 Monte-Carlo simulations, which is performed wrong.
         """
 
         # Define data path.
@@ -2876,16 +3129,57 @@ class Relax_disp(SystemTestCase):
         my_dic = {}
         param_key_list = []
 
+        # Do boot strapping ?
+        do_boot = True
+        if do_boot:
+            min_algor = 'Newton'
+            min_options = ()
+            sim_boot = 200
+            scaling_list = [1.0, 1.0]
+
+        # First check sim values.
         for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
             # Add key to dic.
             my_dic[spin_id] = {}
 
+            # Loop over sim.
+            for i, r2eff_sim in enumerate(cur_spin.r2eff_sim):
+                # Loop over all exp type.
+                for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                    # Generate the param_key.
+                    param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+                    r2eff_sim_point = r2eff_sim[param_key]
+                    i0_sim_point = cur_spin.r2eff_sim[i][param_key]
+
+                    # Assert point are higher than 0.0.
+                    #point_info = "r2eff=%3.2f i0=%3.2f, at %3.1f MHz, for offset=%3.3f ppm and dispersion point %-5.1f, at sim index %i." % (r2eff_sim_point, i0_sim_point, frq/1E6, offset, point, i)
+                    #print(point_info)
+                    self.assert_(r2eff_sim_point > 0.0)
+                    self.assert_(i0_sim_point > 0.0)
+
+        # Get the data.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
             # Generate spin string.
             spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
 
             for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
                 # Generate the param_key.
                 param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                # Loop over all sim, and collect data.
+                r2eff_sim_l = []
+                i0_sim_l = []
+                for i, r2eff_sim in enumerate(cur_spin.r2eff_sim):
+                    i0_sim = cur_spin.i0_sim[i]
+
+                    r2eff_sim_i = r2eff_sim[param_key]
+                    r2eff_sim_l.append(r2eff_sim_i)
+                    i0_sim_i = i0_sim[param_key]
+                    i0_sim_l.append(i0_sim_i)
+
+                # Take the standard deviation of all values.
+                r2eff_sim_err = std(asarray(r2eff_sim_l), ddof=1)
+                i0_sim_err = std(asarray(i0_sim_l), ddof=1)
 
                 # Append key.
                 param_key_list.append(param_key)
@@ -2904,6 +3198,56 @@ class Relax_disp(SystemTestCase):
                 my_dic[spin_id][param_key]['r2eff_err'] = r2eff_err
                 my_dic[spin_id][param_key]['i0'] = i0
                 my_dic[spin_id][param_key]['i0_err'] = i0_err
+                my_dic[spin_id][param_key]['r2eff_err_sim'] = r2eff_sim_err
+                my_dic[spin_id][param_key]['i0_err_sim'] = i0_sim_err
+
+                # Assert values are equal
+                self.assertAlmostEqual(r2eff_sim_err, r2eff_err)
+                self.assertAlmostEqual(i0_sim_err, i0_err)
+
+                if do_boot:
+                    values = []
+                    errors = []
+                    times = []
+                    for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
+                        values.append(average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time))
+                        errors.append(average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
+                        times.append(time)
+
+                    # Convert to numpy array.
+                    values = asarray(values)
+                    errors = asarray(errors)
+                    times = asarray(times)
+
+                    R_m_sim_l = []
+                    I0_m_sim_l = []
+                    for j in range(sim_boot):
+                        if j in range(0, 100000, 100):
+                            print("Simulation %i"%j)
+                        # Start minimisation.
+
+                        # Produce errors
+                        I_err = []
+                        for j, error in enumerate(errors):
+                            I_error = gauss(values[j], error)
+                            I_err.append(I_error)
+                        # Convert to numpy array.
+                        I_err = asarray(I_err)
+
+                        x0 = [r2eff, i0]
+                        setup(num_params=len(x0), num_times=len(times), values=I_err, sd=errors, relax_times=times, scaling_matrix=scaling_list)
+
+                        params_minfx_sim_j, chi2_minfx_sim_j, iter_count, f_count, g_count, h_count, warning = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=x0, min_algor=min_algor, min_options=min_options, full_output=True, print_flag=0)
+                        R_m_sim_j, I0_m_sim_j = params_minfx_sim_j
+                        R_m_sim_l.append(R_m_sim_j)
+                        I0_m_sim_l.append(I0_m_sim_j)
+
+                    # Get stats on distribution.
+                    sigma_R_sim = std(asarray(R_m_sim_l), ddof=1)
+                    sigma_I0_sim = std(asarray(I0_m_sim_l), ddof=1)
+                    my_dic[spin_id][param_key]['r2eff_err_boot'] = sigma_R_sim
+                    my_dic[spin_id][param_key]['i0_err_boot'] = sigma_I0_sim
+
 
         # A new data pipe.
         self.interpreter.pipe.copy(pipe_from='MC_2000', pipe_to='r2eff_est')
@@ -2939,20 +3283,39 @@ class Relax_disp(SystemTestCase):
                 r2eff_err = my_dic[spin_id][param_key]['r2eff_err']
                 i0 = my_dic[spin_id][param_key]['i0']
                 i0_err = my_dic[spin_id][param_key]['i0_err']
+                r2eff_sim_err = my_dic[spin_id][param_key]['r2eff_err_sim']
+                i0_sim_err = my_dic[spin_id][param_key]['i0_err_sim']
+
+                if do_boot:
+                    r2eff_boot_err = my_dic[spin_id][param_key]['r2eff_err_boot']
+                    i0_boot_err = my_dic[spin_id][param_key]['i0_err_boot']
+                else:
+                    r2eff_boot_err = 0.0
+                    i0_boot_err = 0.0
 
                 print("%s at %3.1f MHz, for offset=%3.3f ppm and dispersion point %-5.1f." % (exp_type, frq/1E6, offset, point) )
-                print("r2eff=%3.3f/%3.3f r2eff_err=%3.4f/%3.4f" % (r2eff, r2eff_est, r2eff_err, r2eff_err_est) ),
-                print("i0=%3.3f/%3.3f i0_err=%3.4f/%3.4f\n" % (i0, i0_est, i0_err, i0_err_est) )
+                print("r2eff=%3.3f/%3.3f r2eff_err=%3.4f/%3.4f/%3.4f/%3.4f" % (r2eff, r2eff_est, r2eff_err, r2eff_err_est, r2eff_sim_err, r2eff_boot_err) ),
+                print("i0=%3.3f/%3.3f i0_err=%3.4f/%3.4f/%3.4f/%3.4f\n" % (i0, i0_est, i0_err, i0_err_est, i0_sim_err, i0_boot_err) )
 
 
         # Now do it manually.
-        #estimate_r2eff(method='scipy.optimize.leastsq')
-        #estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints=False)
-        #estimate_r2eff(method='minfx', min_algor='simplex', c_code=False, constraints=False)
-        #estimate_r2eff(method='minfx', min_algor='BFGS', c_code=True, constraints=False)
-        #estimate_r2eff(method='minfx', min_algor='BFGS', c_code=False, constraints=False)
-        estimate_r2eff(method='minfx', min_algor='Newton', c_code=True, constraints=False)
+        estimate_r2eff(method='scipy.optimize.leastsq')
+
+        estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints=False, chi2_jacobian=False)
+        estimate_r2eff(method='minfx', min_algor='simplex', c_code=True, constraints=False, chi2_jacobian=True)
+
+        estimate_r2eff(method='minfx', min_algor='simplex', c_code=False, constraints=False, chi2_jacobian=False)
+        estimate_r2eff(method='minfx', min_algor='simplex', c_code=False, constraints=False, chi2_jacobian=True)
+
+        estimate_r2eff(method='minfx', min_algor='BFGS', c_code=True, constraints=False, chi2_jacobian=False)
+        estimate_r2eff(method='minfx', min_algor='BFGS', c_code=True, constraints=False, chi2_jacobian=True)
+
+        estimate_r2eff(method='minfx', min_algor='BFGS', c_code=False, constraints=False, chi2_jacobian=False)
         estimate_r2eff(method='minfx', min_algor='BFGS', c_code=False, constraints=False, chi2_jacobian=True)
+
+        estimate_r2eff(method='minfx', min_algor='Newton', c_code=True, constraints=False, chi2_jacobian=False)
+        estimate_r2eff(method='minfx', min_algor='Newton', c_code=True, constraints=False, chi2_jacobian=True)
+
 
 
     def test_exp_fit(self):
@@ -3001,6 +3364,26 @@ class Relax_disp(SystemTestCase):
         self.assert_('test' not in cdp.clustering)
         self.assertEqual(cdp.clustering['free spins'], [':2@N'])
         self.assertEqual(cdp.clustering['cluster'], [':1@N', ':3@N'])
+
+
+    def test_finite_value(self):
+        """Test return from C code, when parameters are wrong.  This can happen, if minfx takes a wrong step."""
+
+        times = array([ 0.7,  1. ,  0.8,  0.4,  0.9])
+        I = array([ 476.76174875,  372.43328777,  454.20339981,  656.87936253,  419.16726341])
+        errors = array([  9.48032653,  11.34093541,   9.35149017,  10.84867928,  12.17590736])
+
+        scaling_list = [1.0, 1.0]
+        setup(num_params=2, num_times=len(times), values=I, sd=errors, relax_times=times, scaling_matrix=scaling_list)
+
+        R = - 500.
+        I0 = 1000.
+        params = [R, I0]
+
+        chi2 = func(params)
+
+        print("The chi2 value returned from C-code for R=%3.2f and I0=%3.2f, then chi2=%3.2f"%(R, I0, chi2))
+        self.assertNotEqual(chi2, inf)
 
 
     def test_hansen_catia_input(self):
@@ -5900,8 +6283,10 @@ class Relax_disp(SystemTestCase):
         # Point to directory with R2eff values, with 2000 MC simulations.
         prev_data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013' +sep+ "check_graphs" +sep+ "mc_2000"
 
+        r1_fit = True
+
         # Run the analysis.
-        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, pre_run_dir=prev_data_path)
+        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, pre_run_dir=prev_data_path, r1_fit=r1_fit)
 
         # Verify the data.
         self.verify_r1rho_kjaergaard_missing_r1(models=MODELS, result_dir_name=result_dir_name, r2eff_estimate='MC2000')
@@ -7614,7 +7999,16 @@ class Relax_disp(SystemTestCase):
 
         # Set algorithm.
         min_algor = 'Newton'
-        constraints = False
+        constraints = True
+        if constraints:
+            min_options = ('%s'%(min_algor),)
+            #min_algor = 'Log barrier'
+            min_algor = 'Method of Multipliers'
+        else:
+            min_options = ()
+        min_options = ()
+        sim_boot = 200
+        scaling_list = [1.0, 1.0]
 
         # Minimise.
         self.interpreter.minimise.execute(min_algor=min_algor, constraints=constraints, verbosity=1)
@@ -7628,10 +8022,7 @@ class Relax_disp(SystemTestCase):
                 if hasattr(cur_spin, err_attr):
                     delattr(cur_spin, err_attr)
 
-        # Estimate R2eff errors.
-        self.interpreter.relax_disp.r2eff_err_estimate(chi2_jacobian=False)
-
-        # Collect the estimation data.
+        # Collect the estimation data from boot.
         my_dic = {}
         param_key_list = []
         est_keys = []
@@ -7662,20 +8053,53 @@ class Relax_disp(SystemTestCase):
                 # Add key to dic.
                 my_dic[spin_id][est_key][param_key] = {}
 
-                # Get the value.
-                # Loop over err attributes.
-                for err_attr in err_attr_list:
-                    if hasattr(cur_spin, err_attr):
-                        get_err_attr = getattr(cur_spin, err_attr)[param_key]
-                    else:
-                        get_err_attr = 0.0
+                values = []
+                errors = []
+                times = []
+                for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
+                    values.append(average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time))
+                    errors.append(average_intensity(spin=cur_spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
+                    times.append(time)
 
-                    # Save to dic.
-                    my_dic[spin_id][est_key][param_key][err_attr] = get_err_attr
+                # Convert to numpy array.
+                values = asarray(values)
+                errors = asarray(errors)
+                times = asarray(times)
 
+                r2eff = getattr(cur_spin, 'r2eff')[param_key]
+                i0 = getattr(cur_spin, 'i0')[param_key]
 
-        # Estimate R2eff errors from Chi2 Jacobian.
-        self.interpreter.relax_disp.r2eff_err_estimate(chi2_jacobian=True)
+                R_m_sim_l = []
+                I0_m_sim_l = []
+                for j in range(sim_boot):
+                    if j in range(0, 100000, 100):
+                        print("Simulation %i"%j)
+                    # Start minimisation.
+
+                    # Produce errors
+                    I_err = []
+                    for j, error in enumerate(errors):
+                        I_error = gauss(values[j], error)
+                        I_err.append(I_error)
+                    # Convert to numpy array.
+                    I_err = asarray(I_err)
+
+                    x0 = [r2eff, i0]
+                    setup(num_params=len(x0), num_times=len(times), values=I_err, sd=errors, relax_times=times, scaling_matrix=scaling_list)
+
+                    params_minfx_sim_j, chi2_minfx_sim_j, iter_count, f_count, g_count, h_count, warning = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=x0, min_algor=min_algor, min_options=min_options, full_output=True, print_flag=0)
+                    R_m_sim_j, I0_m_sim_j = params_minfx_sim_j
+                    R_m_sim_l.append(R_m_sim_j)
+                    I0_m_sim_l.append(I0_m_sim_j)
+
+                # Get stats on distribution.
+                sigma_R_sim = std(asarray(R_m_sim_l), ddof=1)
+                sigma_I0_sim = std(asarray(I0_m_sim_l), ddof=1)
+                my_dic[spin_id][est_key][param_key]['r2eff_err'] = sigma_R_sim
+                my_dic[spin_id][est_key][param_key]['i0_err'] = sigma_I0_sim
+
+        # Estimate R2eff errors.
+        self.interpreter.relax_disp.r2eff_err_estimate()
 
         est_key = '-1'
         est_keys.append(est_key)
@@ -7705,7 +8129,7 @@ class Relax_disp(SystemTestCase):
 
 
         # Make Carlo Simulations number
-        mc_number_list = range(0, 50, 10)
+        mc_number_list = range(0, 1000, 250)
 
         sim_attr_list = ['chi2_sim', 'f_count_sim', 'g_count_sim', 'h_count_sim', 'i0_sim', 'iter_sim', 'peak_intensity_sim', 'r2eff_sim', 'select_sim', 'warning_sim']
 
@@ -7856,42 +8280,42 @@ class Relax_disp(SystemTestCase):
                                             self.assertAlmostEqual(value, 1.46138805)
                                         elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 1.46328102)
-                                        elif r2eff_estimate == 'chi2':
+                                        elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 1.43820629)
                                     elif model == MODEL_DPL94:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 1.44845742)
                                         elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 1.45019848)
-                                        elif r2eff_estimate == 'chi2':
+                                        elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 1.44666512)
                                     elif model == MODEL_TP02:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 1.54354392)
                                         elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 1.54352369)
-                                        elif r2eff_estimate == 'chi2':
+                                        elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 1.55964020)
                                     elif model == MODEL_TAP03:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 1.54356410)
                                         elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 1.54354367)
-                                        elif r2eff_estimate == 'chi2':
+                                        elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 1.55967157)
                                     elif model == MODEL_MP05:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 1.54356416)
                                         elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 1.54354372)
-                                        elif r2eff_estimate == 'chi2':
+                                        elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 1.55967163)
                                     elif model == MODEL_NS_R1RHO_2SITE:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 1.41359221, 5)
                                         elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 1.41321968, 5)
-                                        elif r2eff_estimate == 'chi2':
+                                        elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 1.36303129, 5)
 
                                 elif param == 'r2':
@@ -7900,42 +8324,42 @@ class Relax_disp(SystemTestCase):
                                             self.assertAlmostEqual(value, 11.48392439)
                                         elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 11.48040934)
-                                        elif r2eff_estimate == 'chi2':
+                                        elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 11.47224488)
                                     elif model == MODEL_DPL94:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 10.15688372, 6)
                                         elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 10.16304887, 6)
-                                        elif r2eff_estimate == 'chi2':
+                                        elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 9.20037797, 6)
                                     elif model == MODEL_TP02:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 9.72654896, 6)
                                         elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 9.72772726, 6)
-                                        elif r2eff_estimate == 'chi2':
+                                        elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 9.53948340, 6)
                                     elif model == MODEL_TAP03:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 9.72641887, 6)
                                         elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 9.72759374, 6)
-                                        elif r2eff_estimate == 'chi2':
+                                        elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 9.53926913, 6)
                                     elif model == MODEL_MP05:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 9.72641723, 6)
                                         elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 9.72759220, 6)
-                                        elif r2eff_estimate == 'chi2':
+                                        elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 9.53926778, 6)
                                     elif model == MODEL_NS_R1RHO_2SITE:
                                         if r2eff_estimate == 'direct':
                                             self.assertAlmostEqual(value, 9.34531535, 5)
                                         elif r2eff_estimate == 'MC2000':
                                             self.assertAlmostEqual(value, 9.34602793, 5)
-                                        elif r2eff_estimate == 'chi2':
+                                        elif r2eff_estimate == 'chi2_pyt':
                                             self.assertAlmostEqual(value, 9.17631409, 5)
 
                     # For all other parameters.
@@ -7954,7 +8378,7 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 0.07599563)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 0.07561937)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 0.12946061)
 
                             elif param == 'pA':
@@ -7963,28 +8387,28 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 0.88827040)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 0.88807487)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 0.87746233)
                                 elif model == MODEL_TAP03:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 0.88828922)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 0.88809318)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 0.87747558)
                                 elif model == MODEL_MP05:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 0.88828924)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 0.88809321)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 0.87747562)
                                 elif model == MODEL_NS_R1RHO_2SITE:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 0.94504369, 6)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 0.94496541, 6)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 0.92084707, 6)
 
                             elif param == 'dw':
@@ -7993,28 +8417,28 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 1.08875840, 6)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 1.08765638, 6)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 1.09753230, 6)
                                 elif model == MODEL_TAP03:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 1.08837238, 6)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 1.08726698, 6)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 1.09708821, 6)
                                 elif model == MODEL_MP05:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 1.08837241, 6)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 1.08726706, 6)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 1.09708832, 6)
                                 elif model == MODEL_NS_R1RHO_2SITE:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 1.56001812, 5)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 1.55833321, 5)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 1.36406712, 5)
 
                             elif param == 'kex':
@@ -8023,36 +8447,36 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 4460.43711569, 2)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 4419.03917195, 2)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 6790.22736344, 2)
                                 elif model == MODEL_TP02:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 4921.28602757, 3)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 4904.70144883, 3)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 5146.20306591, 3)
                                 elif model == MODEL_TAP03:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 4926.42963491, 3)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 4909.86877150, 3)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 5152.51105814, 3)
                                 elif model == MODEL_MP05:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 4926.44236315, 3)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 4909.88110195, 3)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 5152.52097111, 3)
                                 elif model == MODEL_NS_R1RHO_2SITE:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 5628.66061488, 2)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 5610.20221435, 2)
-                                    elif r2eff_estimate == 'chi2':
-                                        self.assertAlmostEqual(value, 5643.34067090, 2)
+                                    elif r2eff_estimate == 'chi2_pyt':
+                                        self.assertAlmostEqual(value, 5643.34067090, 1)
 
                             elif param == 'chi2':
                                 if model == MODEL_NOREX:
@@ -8060,42 +8484,42 @@ class Relax_disp(SystemTestCase):
                                         self.assertAlmostEqual(value, 848.42016907, 5)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 3363.95829122, 5)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 5976.49946726, 5)
                                 elif model == MODEL_DPL94:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 179.47041241)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 710.24767560)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 612.72616697, 5)
                                 elif model == MODEL_TP02:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 29.33882530, 6)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 114.47142772, 6)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 250.50838162, 5)
                                 elif model == MODEL_TAP03:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 29.29050673, 6)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 114.27987534)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 250.04050719, 5)
                                 elif model == MODEL_MP05:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 29.29054301, 6)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 114.28002272)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 250.04077478, 5)
                                 elif model == MODEL_NS_R1RHO_2SITE:
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value, 34.44010543, 6)
                                     elif r2eff_estimate == 'MC2000':
                                         self.assertAlmostEqual(value, 134.14368365)
-                                    elif r2eff_estimate == 'chi2':
+                                    elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value, 278.55121388, 5)
 
 

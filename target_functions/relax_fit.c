@@ -235,6 +235,43 @@ back_calc_I(PyObject *self, PyObject *args) {
 
 static PyObject *
 jacobian(PyObject *self, PyObject *args) {
+    /* Return the Jacobian as a Python list of lists. */
+
+    /* Declarations. */
+    PyObject *params_arg;
+    PyObject *list, *list2;
+    int i, j;
+
+    /* Parse the function arguments, the only argument should be the parameter array. */
+    if (!PyArg_ParseTuple(args, "O", &params_arg))
+        return NULL;
+
+    /* Convert the parameters Python list to a C array. */
+    param_to_c(params_arg);
+
+    /* The partial derivatives. */
+    exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, num_times);
+    exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
+
+    /* Convert to a Python list of lists. */
+    list = PyList_New(0);
+    Py_INCREF(list);
+    for (i = 0; i < num_params; i++) {
+        list2 = PyList_New(0);
+        Py_INCREF(list2);
+        for (j = 0; j < num_times; j++) {
+            PyList_Append(list2, PyFloat_FromDouble(back_calc_grad[i][j]));
+        }
+        PyList_Append(list, list2);
+    }
+
+    /* Return the Jacobian. */
+    return list;
+}
+
+
+static PyObject *
+jacobian_chi2(PyObject *self, PyObject *args) {
     /* Return the Jacobian as a Python list of lists.
 
     The Jacobian
@@ -332,6 +369,11 @@ static PyMethodDef relax_fit_methods[] = {
         jacobian,
         METH_VARARGS,
         "Return the Jacobian matrix as a Python list."
+    }, {
+        "jacobian_chi2",
+        jacobian_chi2,
+        METH_VARARGS,
+        "Return the Jacobian matrix of the chi-squared function as a Python list."
     },
         {NULL, NULL, 0, NULL}        /* Sentinel. */
 };

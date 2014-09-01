@@ -20,11 +20,11 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, zeros
+from numpy import array, float64, transpose, zeros
 from unittest import TestCase
 
 # relax module imports.
-from target_functions.relax_fit import setup, func, dfunc, d2func
+from target_functions.relax_fit import setup, func, dfunc, d2func, jacobian, jacobian_chi2
 
 
 class Test_relax_fit(TestCase):
@@ -141,3 +141,133 @@ class Test_relax_fit(TestCase):
         self.assertAlmostEqual(hess[0][1],  7.22678641e-01*self.scaling_list[0]*self.scaling_list[1], 3)
         self.assertAlmostEqual(hess[1][0],  7.22678641e-01*self.scaling_list[0]*self.scaling_list[1], 3)
         self.assertAlmostEqual(hess[1][1],  2.03731472e-02*self.scaling_list[1]**2, 3)
+
+
+    def test_jacobian(self):
+        """Unit test for the Jacobian returned by the jacobian() function at the minimum.
+
+        This uses the data from test_suite/shared_data/curve_fitting/numeric_gradient/Hessian.log.
+        """
+
+        # Get the exponential curve Jacobian.
+        matrix = jacobian(self.params)
+
+        # The real Jacobian.
+        real = [[  0.00000000e+00,   1.00000000e+00],
+                [ -3.67879441e+02,   3.67879441e-01],
+                [ -2.70670566e+02,   1.35335283e-01],
+                [ -1.49361205e+02,   4.97870684e-02],
+                [ -7.32625556e+01,   1.83156389e-02]]
+
+        # Numpy conversion.
+        matrix = array(matrix)
+        real = transpose(array(real))
+
+        # Printouts.
+        print("The Jacobian at the minimum is:\n%s" % matrix)
+        print("The real Jacobian at the minimum is:\n%s" % real)
+
+        # Check that the Jacobian matches the numerically derived values.
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                self.assertAlmostEqual(matrix[i, j], real[i, j], 3)
+
+
+    def test_jacobian_chi2(self):
+        """Unit test for the Jacobian returned by the jacobian_chi2() function at the minimum.
+
+        This uses the data from test_suite/shared_data/curve_fitting/numeric_gradient/jacobian_chi2.log.
+        """
+
+        # Get the exponential curve Jacobian.
+        matrix = jacobian_chi2(self.params)
+
+        # The real Jacobian.
+        real = [[  0.00000000e+00,   0.00000000e+00],
+                [ -3.25440806e-09,   3.25446070e-12],
+                [  2.09660266e-09,  -1.04831421e-12],
+                [  1.07707223e-10,  -3.58994022e-14],
+                [ -5.00778448e-11,   1.25201612e-14]]
+
+        # Numpy conversion.
+        matrix = array(matrix)
+        real = transpose(array(real))
+
+        # Printouts.
+        print("The chi-squared Jacobian at the minimum is:\n%s" % matrix)
+        print("The real chi-squared Jacobian at the minimum is:\n%s" % real)
+
+        # Check that the Jacobian matches the numerically derived values.
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                self.assertAlmostEqual(matrix[i, j], real[i, j], 3)
+
+
+    def test_jacobian_chi2_off_minimum(self):
+        """Unit test for the Jacobian returned by the jacobian_chi2() function at a position away from the minimum.
+
+        This uses the data from test_suite/shared_data/curve_fitting/numeric_gradient/jacobian_chi2.log.
+        """
+
+        # The off-minimum parameter values.
+        I0 = 500.0
+        R = 2.0
+        params = [R/self.scaling_list[0], I0/self.scaling_list[1]]
+
+        # Get the exponential curve Jacobian.
+        matrix = jacobian_chi2(params)
+
+        # The real Jacobian.
+        real = [[  0.00000000e+00,  -1.00000000e+01],
+                [  4.06292489e+02,  -8.12584978e-01],
+                [  4.62204173e+01,  -4.62204173e-02],
+                [  3.61013094e+00,  -2.40675396e-03],
+                [  2.43517791e-01,  -1.21758895e-04]]
+
+        # Numpy conversion.
+        matrix = array(matrix)
+        real = transpose(array(real))
+
+        # Printout.
+        print("The chi-squared Jacobian at %s is:\n%s" % (params, matrix))
+        print("The real chi-squared Jacobian at the minimum is:\n%s" % real)
+
+        # Check that the Jacobian matches the numerically derived values.
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                self.assertAlmostEqual(matrix[i, j], real[i, j], 3)
+
+
+    def test_jacobian_off_minimum(self):
+        """Unit test for the Jacobian returned by the jacobian() function at a position away from the minimum.
+
+        This uses the data from test_suite/shared_data/curve_fitting/numeric_gradient/Hessian.log.
+        """
+
+        # The off-minimum parameter values.
+        I0 = 500.0
+        R = 2.0
+        params = [R/self.scaling_list[0], I0/self.scaling_list[1]]
+
+        # Get the exponential curve Jacobian.
+        matrix = jacobian(params)
+
+        # The real Jacobian.
+        real = [[  0.00000000e+00,   1.00000000e+00],
+                [ -6.76676416e+01,   1.35335283e-01],
+                [ -1.83156389e+01,   1.83156389e-02],
+                [ -3.71812826e+00,   2.47875218e-03],
+                [ -6.70925256e-01,   3.35462628e-04]]
+
+        # Numpy conversion.
+        matrix = array(matrix)
+        real = transpose(array(real))
+
+        # Printout.
+        print("The Jacobian at %s is:\n%s" % (params, matrix))
+        print("The real Jacobian at the minimum is:\n%s" % real)
+
+        # Check that the Jacobian matches the numerically derived values.
+        for i in range(len(matrix)):
+            for j in range(len(matrix[i])):
+                self.assertAlmostEqual(matrix[i, j], real[i, j], 3)
