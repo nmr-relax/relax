@@ -7350,6 +7350,44 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin137F.chi2, 13.859423588071, 1)
 
 
+    def test_task_model_par_est_tsmfk01(self, model=None):
+        """ This is the test data for TSMFK01 data parameter estimation.
+
+        U{task #7824<https://gna.org/bugs/?21344>}.: Model parameter ERROR estimation from Jacobian and Co-variance matrix of dispersion models.
+        """
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state.
+        data_path = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'estimate_par_err'+sep+'tsmfk01'
+        statefile ='final_state'
+        #self.interpreter.state.load(state=statefile, dir=data_path, force=True)
+
+        # After minimisation
+        resultsfile = 'final_results'
+        self.interpreter.pipe.create(pipe_name='base pipe', pipe_type='relax_disp')
+        self.interpreter.results.read(file=resultsfile, dir=data_path)
+
+        # After Monte-Carlo.
+        resultsfile_mc = 'final_results_mc'
+        self.interpreter.pipe.create(pipe_name='mc pipe', pipe_type='relax_disp')
+        self.interpreter.results.read(file=resultsfile_mc, dir=data_path)
+
+        # Get the data.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Generate spin string.
+            spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+            for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                # Generate the param_key.
+                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                print cur_spin.k_AB
+
+        print statefile
+
+
     def test_tp02_data_to_ns_r1rho_2site(self, model=None):
         """Test the relaxation dispersion 'NS R1rho 2-site' model fitting against the 'TP02' test data."""
 
