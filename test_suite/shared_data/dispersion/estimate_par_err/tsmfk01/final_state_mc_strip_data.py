@@ -56,7 +56,9 @@ for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_
     # Generate spin string.
     spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
 
-    for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+    #for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+    for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+
         # Generate the param_key.
         #param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
         param_key = generate_r20_key(exp_type=exp_type, frq=frq)
@@ -101,6 +103,10 @@ for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_
         my_dic[spin_id][param_key]['r2a_err_sim'] = r2a_sim_err
         my_dic[spin_id][param_key]['dw_err_sim'] = dw_sim_err
         my_dic[spin_id][param_key]['k_AB_err_sim'] = k_AB_sim_err
+
+        # Check for correct size.
+        if len(r2a_sim_l) != 10000:
+            print asd
 
 
 ## Loop over spin attributes, to delete them.
