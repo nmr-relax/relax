@@ -24,7 +24,7 @@
 """Module for calculating simple statistics."""
 
 # Python module imports.
-from numpy import absolute, diag, dot, eye, multiply, transpose
+from numpy import absolute, diag, dot, eye, einsum, multiply, newaxis, transpose
 from numpy.linalg import inv, qr
 
 # Python module imports.
@@ -169,9 +169,9 @@ def multifit_covar(J=None, epsrel=0.0, weights=None):
 
     The parameter 'epsrel' is used to remove linear-dependent columns when J is rank deficient.
 
-    The weighting matrix 'W', is a square symmetric matrix. For independent measurements, this is a diagonal matrix. Larger values indicate greater significance.  It is formed by multiplying and Identity matrix with the supplied weights vector::
+    The weighting matrix 'W', is a square symmetric matrix. For independent measurements, this is a diagonal matrix. Larger values indicate greater significance.  It is formed by 'element-wise multiplication' of the supplied weights vector and Identity matrix::
 
-        W = I. w
+        W = numpy.multiply(w, I)
 
     The weights should normally be supplied as a vector: 1 / errors^2. 
 
@@ -222,19 +222,30 @@ def multifit_covar(J=None, epsrel=0.0, weights=None):
     # Weighting matrix. This is a square symmetric matrix.
     # For independent measurements, this is a diagonal matrix. Larger values indicate greater significance.
 
-    # Make a square diagonal matrix.
-    eye_mat = eye(weights.shape[0])
+    # If weights are vector, make it to one-dimensional matrix.
+    if len(weights.shape) == 1:
+        weights = weights[newaxis, ...]
+
+    # Get the expected shape of the higher dimensional column numpy array.
+    if len(weights.shape) == 2:
+        # Extract shapes from data.
+        NE, NS, NM, NO, ND = 1, 1, 1, 1, weights.shape[-1]
+
+    # Make a eye matrix, with Shape [ND][ND]
+    eye_mat = eye(ND)
 
     # Form weight matrix.
-    W = multiply(eye_mat, weights)
+    # Transform weights to a diagonal matrix, with elements from vector down the diagonal.
+    W = multiply(weights, eye_mat)
 
     # The covariance matrix (sometimes referred to as the variance-covariance matrix), Qxx, is defined as:
     # Qxx = (J^t W J)^(-1)
 
     # Calculate step by step, by matrix multiplication.
+    # Einsum is equivalent to higher order matrix dot operations.
     Jt = transpose(J)
-    Jt_W = dot(Jt, W)
-    Jt_W_J = dot(Jt_W, J)
+    Jt_W = einsum('...ij, ...jk', Jt, W)
+    Jt_W_J = einsum('...ij, ...jk', Jt_W, J)
 
     # Invert matrix by QR decomposition, to check columns of R which satisfy: |R_{kk}| <= epsrel |R_{11}|
     Q, R = qr(Jt_W_J)
@@ -248,7 +259,7 @@ def multifit_covar(J=None, epsrel=0.0, weights=None):
     epsrel_check = absolute(R) <= abs_epsrel_R11
 
     # Form the covariance matrix.
-    Qxx = dot(inv(R), transpose(Q) )
+    Qxx = einsum('...ij, ...jk', inv(R), transpose(Q))
     #Qxx2 = dot(inv(R), inv(Q) )
     #print(Qxx - Qxx2)
 
