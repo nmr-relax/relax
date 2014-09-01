@@ -8001,7 +8001,7 @@ class Relax_disp(SystemTestCase):
 
         # Set algorithm.
         min_algor = 'Newton'
-        constraints = False
+        constraints = True
         if constraints:
             min_options = ('%s'%(min_algor),)
             #min_algor = 'Log barrier'
@@ -8011,12 +8011,12 @@ class Relax_disp(SystemTestCase):
             # Collect spins
             all_spin_ids = []
             for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-                all_spin_ids.append([spin_id])
+                all_spin_ids.append(spin_id)
 
             spins = spin_ids_to_containers(all_spin_ids[:1])
 
             # Get constraints
-            A, b = linear_constraints(spins=spins, scaling_matrix=scaling_matrix)
+            A, b = linear_constraints(spins=spins, scaling_matrix=scaling_matrix[0])
         else:
             min_options = ()
             A, b = None, None
@@ -8103,8 +8103,13 @@ class Relax_disp(SystemTestCase):
 
                     # Ref input.
                     #def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, min_options=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, print_flag=0, print_prefix="", full_output=False):
-
+                    # l=l, u=u, c=c, dc=dc, d2c=d2c
+                    # l: Lower bound constraint vector (l <= x <= u).
+                    # u: Upper bound constraint vector (l <= x <= u).
+                    # c: User supplied constraint function.
+                    # dc: User supplied constraint gradient function.
                     params_minfx_sim_j, chi2_minfx_sim_j, iter_count, f_count, g_count, h_count, warning = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=x0, min_algor=min_algor, min_options=min_options, A=A, b=b, full_output=True, print_flag=0)
+
                     R_m_sim_j, I0_m_sim_j = params_minfx_sim_j
                     R_m_sim_l.append(R_m_sim_j)
                     I0_m_sim_l.append(I0_m_sim_j)
