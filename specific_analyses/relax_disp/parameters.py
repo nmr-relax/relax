@@ -940,9 +940,11 @@ def r1_setup():
         # Should R1 data be optimised?
         r1_fit = is_r1_optimised(spin.model)
 
-        # Prepend R1.
+        # Prepend R1 and add it to the spin container.
         if r1_fit and 'r1' not in spin.params:
             spin.params.insert(0, 'r1')
+        if r1_fit and not hasattr(spin, 'r1'):
+            spin.r1 = {}
 
         # Remove the R1 parameter.
         if not r1_fit and 'r1' in spin.params:
