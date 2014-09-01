@@ -39,7 +39,7 @@ from pipe_control.minimise import assemble_scaling_matrix
 from pipe_control.mol_res_spin import generate_spin_string, spin_loop
 from specific_analyses.relax_disp.checks import check_model_type
 from specific_analyses.relax_disp.data import average_intensity, is_r1_optimised, loop_exp_frq_offset_point, loop_time, return_cpmg_frqs, return_offset_data, return_param_key_from_data, return_r1_data, return_r1_err_data, return_r2eff_arrays, return_spin_lock_nu1
-from specific_analyses.relax_disp.parameters import disassemble_param_vector, param_num
+from specific_analyses.relax_disp.parameters import assemble_param_vector, disassemble_param_vector, param_num
 from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_R2EFF, MODEL_TSMFK01
 from target_functions.chi2 import chi2_rankN, dchi2
 from target_functions.relax_disp import Dispersion
@@ -234,8 +234,17 @@ def estimate_par_err(spin_id=None, epsrel=0.0, verbosity=1):
         scaling_matrix = assemble_scaling_matrix(scaling=True)
 
         # Init the Dispersion clas with data, so we can call functions in it.
-        tfunc = Dispersion(model=model, num_params=model_param_num, num_spins=num_spins, num_frq=field_count, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, scaling_matrix=scaling_matrix, r1_fit=r1_fit)
+        tfunc = Dispersion(model=model, num_params=model_param_num, num_spins=num_spins, num_frq=field_count, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, r1_fit=r1_fit)
 
+        # Create the parameter vector.
+        param_vector = assemble_param_vector(spins=[cur_spin])
+
+        ## Make a single function call.
+        jacobian = tfunc.jacobian(param_vector)
+        weights = 1. / tfunc.errors**2
+
+        # Get the co-variance
+        pcov = multifit_covar(J=jacobian, weights=weights)
 
 
 #### This class is only for testing.
