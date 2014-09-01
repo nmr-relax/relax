@@ -33,9 +33,9 @@ jacobian_matrix = transpose(array( [d_f_d_r20a , d_f_d_dw, d_f_d_k_AB] ) )
 # Try again.
 
 # The vectorial function.
-X = Matrix([r20a + k_AB - k_AB * sin(dw * tcp) / dw * tcp])
+X = Matrix([r20a + k_AB - k_AB * sin(dw * tcp) / (dw * tcp)])
 # What to derive for.
-Y = Matrix([r20a, dw, k_AB, tcp])
+Y = Matrix([r20a, dw, k_AB])
 
 # Make the Jacobian
 Jacobian = X.jacobian(Y)
