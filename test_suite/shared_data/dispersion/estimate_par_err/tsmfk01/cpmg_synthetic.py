@@ -602,7 +602,7 @@ results.write(file='final_results', dir=ds.resdir, force=True)
 
 min_algor = 'simplex'
 constraints = False
-number = 50
+number = 10000
 
 monte_carlo.setup(number=number)
 monte_carlo.create_data()
