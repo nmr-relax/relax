@@ -38,9 +38,9 @@ from lib.warnings import RelaxWarning
 from pipe_control.minimise import assemble_scaling_matrix
 from pipe_control.mol_res_spin import generate_spin_string, spin_loop
 from specific_analyses.relax_disp.checks import check_model_type
-from specific_analyses.relax_disp.data import average_intensity, is_r1_optimised, loop_exp_frq_offset_point, loop_time, return_cpmg_frqs, return_offset_data, return_param_key_from_data, return_r1_data, return_r1_err_data, return_r2eff_arrays, return_spin_lock_nu1
+from specific_analyses.relax_disp.data import average_intensity, generate_r20_key, is_r1_optimised, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_time, return_cpmg_frqs, return_offset_data, return_param_key_from_data, return_r1_data, return_r1_err_data, return_r2eff_arrays, return_spin_lock_nu1
 from specific_analyses.relax_disp.parameters import assemble_param_vector, disassemble_param_vector, param_num
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_R2EFF, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_R2EFF, MODEL_TSMFK01, PARAMS_R20
 from target_functions.chi2 import chi2_rankN, dchi2
 from target_functions.relax_disp import Dispersion
 
@@ -243,8 +243,53 @@ def estimate_par_err(spin_id=None, epsrel=0.0, verbosity=1):
         jacobian = tfunc.jacobian(param_vector)
         weights = 1. / tfunc.errors**2
 
-        # Get the co-variance
-        pcov = multifit_covar(J=jacobian, weights=weights)
+        # Get the shape of the data.
+        NJ, NE, NS, NM, NO, ND = jacobian.shape
+        if NS != 1:
+            raise RelaxError("The number of spins does not fit.")
+
+        # Get the parameters fitted in the model.
+        params = cur_spin.params
+
+        # Set the spin index to 0.
+        si = 0
+        # Loop over the data.
+        for exp_type, frq, offset, ei, mi, oi in loop_exp_frq_offset(return_indices=True):
+            param_key = generate_r20_key(exp_type=exp_type, frq=frq)
+
+            # Extract weights.
+            cur_weights = weights[ei, si, mi, oi]
+
+            # Extract every column/row from the first to last columns. Is this correct?
+            cur_jacobian = jacobian[0:NJ:1, ei, si, mi, oi]
+
+            # Get the co-variance
+            pcov = multifit_covar(J=cur_jacobian, weights=cur_weights)
+
+            # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
+            param_vector_error = sqrt(diag(pcov))
+
+            # Loop over params.
+            for i, param in enumerate(params):
+                # Set the param error name
+                param_err = param + '_err'
+
+                # If param in PARAMS_R20, values are stored in with parameter key.
+                if param in PARAMS_R20:
+                    # Copy parameter attribute to error attribute, if not in spin Class.
+                    if not hasattr(cur_spin, param_err):
+                        setattr(cur_spin, param_err, deepcopy(getattr(cur_spin, param)))
+
+                    # Set error.
+                    getattr(cur_spin, param_err)[param_key] = deepcopy(param_vector_error[i])
+
+                else:
+                    # Copy parameter attribute to error attribute, if not in spin Class.
+                    if not hasattr(cur_spin, param_err):
+                        setattr(cur_spin, param_err, deepcopy(getattr(cur_spin, param)))
+
+                    # Set error.
+                    setattr(cur_spin, param_err, param_vector_error[i])
 
 
 #### This class is only for testing.
