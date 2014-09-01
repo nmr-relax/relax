@@ -239,7 +239,7 @@ The $\Rtwoeff$/$\Ronerho$ values determined can be later copied to the data pipe
 \subsubsection{Fixed relaxation period experiments}
 
 For the fixed relaxation time period CPMG-type experiments, the $\Rtwoeff$/$\Ronerho$ values are determined by direct calculation using the formula
-\begin{equation}
+\begin{equation} \label{eq: R2eff two-point}
     \Rtwoeff(\nucpmg) = - \frac{1}{\Trelax} \cdot \ln \left( \frac{I_1(\nucpmg)}{I_0} \right) .
 \end{equation}
 
@@ -253,6 +253,44 @@ Errors are calculated using the formula
 \begin{equation} \label{eq: dispersion error}
     \sigma_{\Rtwo} = \frac{1}{\Trelax} \sqrt{ \left( \frac{\sigma_{I_1}}{I_1(\omega_1)} \right)^2  +  \left( \frac{\sigma_{I_0}}{I_0} \right)^2 } .
 \end{equation}
+
+The derivation of this is simple enough.
+Rearranging~\ref{eq: R2eff two-point},
+\begin{equation}
+    \Rtwo \cdot \Trelax = -\ln \left( \frac{I_1}{I_0} \right) .
+\end{equation}
+
+Using the rule
+\begin{equation}
+    \ln\left(\frac{X}{Y}\right) = \ln(X) - \ln(Y),
+\end{equation}
+
+where X and Y are normally distributed variables, then
+\begin{equation}
+    \Rtwo \cdot \Trelax = \ln(I_0) - \ln(I_1) ,
+\end{equation}
+
+and
+\begin{equation}
+    \Rtwo = - \frac{1}{\Trelax} \cdot \left( \ln(I_0) - \ln(I_1) \right) ,
+\end{equation}
+
+Using the estimate from \url{https://en.wikipedia.org/wiki/Propagation_of_uncertainty} that for
+\begin{equation}
+    f = a \ln(A),
+\end{equation}
+
+the variance of $f$ is
+\begin{equation}
+    \sigma_f^2 = \left( a * \frac{\sigma_A}{A} \right)^2 ,
+\end{equation}
+
+then the $\Rtwo$ variance is
+\begin{equation}
+    \sigma_{\Rtwo}^2 = \left( \frac{1}{\Trelax} \cdot \frac{\sigma_I0}{I0} \right)^2 + \left( \frac{1}{\Trelax} \cdot \frac{\sigma_I1}{I1} \right)^2.
+\end{equation}
+
+Rearranging gives~\ref{eq: dispersion error}.
 
 In a number of publications, the error formula from \citet{IshimaTorchia05} has been used.
 This is the collapse of Equation~\ref{eq: dispersion error} by setting $\sigma_{I_0}$ to zero:
