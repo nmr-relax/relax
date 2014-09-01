@@ -7999,9 +7999,15 @@ class Relax_disp(SystemTestCase):
 
         # Set algorithm.
         min_algor = 'Newton'
-        constraints = False
+        constraints = True
+        if constraints:
+            min_options = ('%s'%(min_algor),)
+            #min_algor = 'Log barrier'
+            min_algor = 'Method of Multipliers'
+        else:
+            min_options = ()
         min_options = ()
-        sim_boot = 2000
+        sim_boot = 200
         scaling_list = [1.0, 1.0]
 
         # Minimise.
@@ -8123,7 +8129,7 @@ class Relax_disp(SystemTestCase):
 
 
         # Make Carlo Simulations number
-        mc_number_list = range(0, 2400, 400)
+        mc_number_list = range(0, 1000, 250)
 
         sim_attr_list = ['chi2_sim', 'f_count_sim', 'g_count_sim', 'h_count_sim', 'i0_sim', 'iter_sim', 'peak_intensity_sim', 'r2eff_sim', 'select_sim', 'warning_sim']
 
