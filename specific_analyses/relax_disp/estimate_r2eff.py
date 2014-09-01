@@ -35,12 +35,14 @@ from lib.errors import RelaxError
 from lib.statistics import multifit_covar
 from lib.text.sectioning import section, subsection
 from lib.warnings import RelaxWarning
+from pipe_control.minimise import assemble_scaling_matrix
 from pipe_control.mol_res_spin import generate_spin_string, spin_loop
 from specific_analyses.relax_disp.checks import check_model_type
-from specific_analyses.relax_disp.data import average_intensity, loop_exp_frq_offset_point, loop_time, return_param_key_from_data
-from specific_analyses.relax_disp.parameters import disassemble_param_vector
-from specific_analyses.relax_disp.variables import MODEL_R2EFF
+from specific_analyses.relax_disp.data import average_intensity, is_r1_optimised, loop_exp_frq_offset_point, loop_time, return_cpmg_frqs, return_offset_data, return_param_key_from_data, return_r1_data, return_r1_err_data, return_r2eff_arrays, return_spin_lock_nu1
+from specific_analyses.relax_disp.parameters import disassemble_param_vector, param_num
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_R2EFF, MODEL_TSMFK01
 from target_functions.chi2 import chi2_rankN, dchi2
+from target_functions.relax_disp import Dispersion
 
 # C modules.
 if C_module_exp_fn:
@@ -172,6 +174,68 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
             if len(print_strings) > 0:
                 for print_string in print_strings:
                     print(print_string),
+
+
+def estimate_par_err(spin_id=None, epsrel=0.0, verbosity=1):
+    """This will estimate parameter errors from the covariance matrix Qxx.  Qxx is calculated from the Jacobian matrix and the optimised parameters.
+
+    @keyword spin_id:       The spin identification string.
+    @type spin_id:          str
+    @param epsrel:          Any columns of R which satisfy |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix, where the corresponding rows and columns of the covariance matrix are set to zero.
+    @type epsrel:           float
+    @keyword verbosity:     The amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:        int
+    """
+
+    # Perform checks.
+    check_model_type()
+
+    # Define models with Jacobian.
+    jac_models = [MODEL_TSMFK01]
+    #MODEL_CR72
+
+    # Number of spectrometer fields.
+    fields = [None]
+    field_count = 1
+    if hasattr(cdp, 'spectrometer_frq_count'):
+        fields = cdp.spectrometer_frq_list
+        field_count = cdp.spectrometer_frq_count
+
+    # Loop over the spins.
+    for cur_spin, mol_name, resi, resn, cur_spin_id in spin_loop(selection=spin_id, full_info=True, return_id=True, skip_desel=True):
+        # Generate spin string.
+        spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
+
+        # Assign model and check.
+        model = cur_spin.model
+        if model not in jac_models:
+            raise RelaxError("The Jacobian matrix has not been specified for '%s', and parameter errors cannot be estimated."%(model))
+
+        # Now collect all data, so we can call the target function.
+
+        # Get all the data.
+        values, errors, missing, frqs, frqs_H, exp_types, relax_times = return_r2eff_arrays(spins=[cur_spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
+
+        # The offset data.
+        offsets, spin_lock_fields_inter, chemical_shifts, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[cur_spin], spin_ids=[spin_id], field_count=field_count)
+
+        # r1 data.
+        r1 = return_r1_data(spins=[cur_spin], spin_ids=[spin_id], field_count=field_count)
+        r1_err = return_r1_err_data(spins=[cur_spin], spin_ids=[spin_id], field_count=field_count)
+        r1_fit = is_r1_optimised(model)
+        model_param_num = param_num(spins=[cur_spin])
+
+        dispersion_points = dispersion_points = cdp.dispersion_points
+        cpmg_frqs = return_cpmg_frqs(ref_flag=False)
+        spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
+        num_spins=1
+
+        # Scaling matrix.
+        scaling_matrix = assemble_scaling_matrix(scaling=True)
+
+        # Init the Dispersion clas with data, so we can call functions in it.
+        tfunc = Dispersion(model=model, num_params=model_param_num, num_spins=num_spins, num_frq=field_count, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, scaling_matrix=scaling_matrix, r1_fit=r1_fit)
+
 
 
 #### This class is only for testing.
