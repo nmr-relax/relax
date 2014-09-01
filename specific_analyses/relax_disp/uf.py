@@ -169,19 +169,8 @@ def select_model(model=MODEL_R2EFF):
 
     # All other models.
     else:
-        # Should r1 parameter be added to params?
-        add_r1 = False
+        params = MODEL_PARAMS[model]
 
-        # Check if r1_fit is stored in cdp.
-        if hasattr(cdp, 'r1_fit'):
-            if cdp.r1_fit:
-                if 'r1' not in MODEL_PARAMS[model]:
-                    add_r1 = True
-        if add_r1:
-            params = ['r1'] + MODEL_PARAMS[model]
-        else:
-            params = MODEL_PARAMS[model]
-    
     # Printout.
     print(MODEL_DESC[model])
 
