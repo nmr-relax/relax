@@ -32,6 +32,7 @@ from tempfile import mkdtemp, NamedTemporaryFile
 
 # relax module imports.
 from auto_analyses import relax_disp
+from copy import deepcopy
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from lib.errors import RelaxError
@@ -40,11 +41,11 @@ from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_lo
 from pipe_control.minimise import assemble_scaling_matrix
 from specific_analyses.relax_disp.checks import check_missing_r1
 from specific_analyses.relax_disp.estimate_r2eff import estimate_par_err, estimate_r2eff
-from specific_analyses.relax_disp.data import average_intensity, check_intensity_errors, generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_grace_file_name_ini, return_param_key_from_data, spin_ids_to_containers
+from specific_analyses.relax_disp.data import average_intensity, check_intensity_errors, generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_grace_file_name_ini, return_param_key_from_data, spin_ids_to_containers
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.model import models_info, nesting_param
 from specific_analyses.relax_disp.parameters import linear_constraints
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_FULL, MODEL_LIST_NUMERIC_CPMG, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02, MODEL_TAP03
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_FULL, MODEL_LIST_NUMERIC_CPMG, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02, MODEL_TAP03, PARAMS_R20
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
@@ -7372,21 +7373,94 @@ class Relax_disp(SystemTestCase):
         # Estimate model error.
         estimate_par_err()
 
+        # Start dic.
+        my_dic = {}
+        spin_id_list = []
+
         # Get the data.
         for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Add key to dic.
+            my_dic[spin_id] = {}
+            # Store id, for ordering.
+            spin_id_list.append(spin_id)
+
+            # Get the parameters fitted in the model.
+            params = cur_spin.params
+            my_dic[spin_id]['params'] = params
+            my_dic[spin_id]['params_err'] = []
+
             # Generate spin string.
             spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
 
-            for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
-                # Generate the param_key.
-                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+            param_key_list = []
+            for exp_type, frq, offset, ei, mi, oi, in loop_exp_frq_offset(return_indices=True):
+                # Get the parameter key.
                 param_key = generate_r20_key(exp_type=exp_type, frq=frq)
+
+                # Add key to dic.
+                my_dic[spin_id][param_key] = {}
+                param_key_list.append(param_key)
+
+                # Loop over params.
+                for i, param in enumerate(params):
+                    # Set the param error name
+                    param_err = param + '_err'
+                    my_dic[spin_id]['params_err'].append(param_err)
+
+                    # If param in PARAMS_R20, values are stored in with parameter key.
+                    if param in PARAMS_R20:
+                        # Get the error.
+                        param_err_val = deepcopy(getattr(cur_spin, param_err)[param_key])
+                        my_dic[spin_id][param_key][param_err] = param_err_val
+
+                    else:
+                        # Get the error.
+                        param_err_val = deepcopy(getattr(cur_spin, param_err))
+                        my_dic[spin_id][param_key][param_err] = param_err_val
+
+            my_dic[spin_id]['param_key_list'] = param_key_list
 
         # After Monte-Carlo.
         resultsfile_mc = 'final_results_mc'
-        #self.interpreter.pipe.create(pipe_name='mc pipe', pipe_type='relax_disp')
-        #self.interpreter.results.read(file=resultsfile_mc, dir=data_path)
+        self.interpreter.pipe.create(pipe_name='mc pipe', pipe_type='relax_disp')
+        self.interpreter.results.read(file=resultsfile_mc, dir=data_path)
 
+        # Get the data.
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Get the parameters fitted in the model.
+            params = cur_spin.params
+
+            for exp_type, frq, offset, ei, mi, oi, in loop_exp_frq_offset(return_indices=True):
+                # Get the parameter key.
+                param_key = generate_r20_key(exp_type=exp_type, frq=frq)
+
+                # Loop over params.
+                for i, param in enumerate(params):
+                    # Set the param error name
+                    param_err = param + '_err'
+
+                    # If param in PARAMS_R20, values are stored in with parameter key.
+                    if param in PARAMS_R20:
+                        # Get the error.
+                        param_err_val = deepcopy(getattr(cur_spin, param_err)[param_key])
+                        my_dic[spin_id][param_key][param_err+'MC'] = param_err_val
+
+                    else:
+                        # Get the error.
+                        param_err_val = deepcopy(getattr(cur_spin, param_err))
+                        my_dic[spin_id][param_key][param_err+'MC'] = param_err_val
+
+
+        # Loop over parameters to print.
+        for spin_id in spin_id_list:
+            param_key_list = my_dic[spin_id]['param_key_list']
+            for param_key in param_key_list:
+                params_err = my_dic[spin_id]['params_err']
+                # Loop over params.
+                for i, param_err in enumerate(params_err):
+                    param_err_val = my_dic[spin_id][param_key][param_err]
+                    param_err_val_mc = my_dic[spin_id][param_key][param_err+'MC']
+                    print("param: %s, with err: %3.8f, compared to MC: %3.8f" % (param_err, param_err_val, param_err_val_mc) )
 
 
     def test_tp02_data_to_ns_r1rho_2site(self, model=None):
