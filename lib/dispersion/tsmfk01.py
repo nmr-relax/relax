@@ -66,7 +66,7 @@ More information on the TSMFK01 model can be found in the:
 """
 
 # Python module imports.
-from numpy import fabs, min, sin, isfinite, sum
+from numpy import array, cos, fabs, min, sin, isfinite, ones, sum, transpose
 from numpy.ma import fix_invalid, masked_where
 
 
@@ -129,3 +129,72 @@ def r2eff_TSMFK01(r20a=None, dw=None, dw_orig=None, k_AB=None, tcp=None, back_ca
     if not isfinite(sum(back_calc)):
         # Replaces nan, inf, etc. with fill value.
         fix_invalid(back_calc, copy=False, fill_value=1e100)
+
+
+def r2eff_TSMFK01_jacobian(r20a=None, dw=None, k_AB=None, tcp=None):
+    """The Jacobian matrix of TSMFK01.
+
+    @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
+    @type r20a:             numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword dw:            The chemical exchange difference between states A and B in rad/s.
+    @type dw:               numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword k_AB:          The k_AB parameter value (the forward exchange rate in rad/s).
+    @type k_AB:             float
+    @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
+    @type tcp:              numpy float array of rank [NE][NS][NM][NO][ND]
+    """
+
+    # Get the partial derivatives.
+    get_d_f_d_r20a = d_f_d_r20a(r20a=r20a, dw=dw, k_AB=k_AB, tcp=tcp)
+    get_d_f_d_dw = d_f_d_dw(r20a=r20a, dw=dw, k_AB=k_AB, tcp=tcp)
+    get_d_f_d_k_AB = d_f_d_k_AB(r20a=r20a, dw=dw, k_AB=k_AB, tcp=tcp)
+
+    return transpose(array( [get_d_f_d_r20a , get_d_f_d_dw, get_d_f_d_k_AB] ) )
+
+
+def d_f_d_r20a(r20a=None, dw=None, k_AB=None, tcp=None):
+    """Partial derivative with respect to r20a.
+
+    @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
+    @type r20a:             numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword dw:            The chemical exchange difference between states A and B in rad/s.
+    @type dw:               numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword k_AB:          The k_AB parameter value (the forward exchange rate in rad/s).
+    @type k_AB:             float
+    @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
+    @type tcp:              numpy float array of rank [NE][NS][NM][NO][ND]
+    """
+
+    return ones(dw.shape)
+
+
+def d_f_d_dw(r20a=None, dw=None, k_AB=None, tcp=None):
+    """Partial derivative with respect to dw.
+
+    @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
+    @type r20a:             numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword dw:            The chemical exchange difference between states A and B in rad/s.
+    @type dw:               numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword k_AB:          The k_AB parameter value (the forward exchange rate in rad/s).
+    @type k_AB:             float
+    @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
+    @type tcp:              numpy float array of rank [NE][NS][NM][NO][ND]
+    """
+
+    return -k_AB * cos( dw * tcp) / dw + k_AB * sin(dw * tcp) / ( dw**2 * tcp)
+
+
+def d_f_d_k_AB(r20a=None, dw=None, k_AB=None, tcp=None):
+    """Partial derivative with respect to k_AB.
+
+    @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
+    @type r20a:             numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword dw:            The chemical exchange difference between states A and B in rad/s.
+    @type dw:               numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword k_AB:          The k_AB parameter value (the forward exchange rate in rad/s).
+    @type k_AB:             float
+    @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
+    @type tcp:              numpy float array of rank [NE][NS][NM][NO][ND]
+    """
+
+    return 1. - sin( dw * tcp) / (dw * tcp)
