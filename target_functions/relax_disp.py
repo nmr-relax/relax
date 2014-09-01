@@ -2199,10 +2199,37 @@ class Dispersion:
         self.r20a_struct[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Get the Jacobian.
-        jabobian = r2eff_TSMFK01_jacobian(r20a=self.r20a_struct, dw=self.dw_struct, k_AB=k_AB, tcp=self.tau_cpmg)
+        jacobian = r2eff_TSMFK01_jacobian(r20a=self.r20a_struct, dw=self.dw_struct, k_AB=k_AB, tcp=self.tau_cpmg)
+
+        # Insert checks.
+        if True:
+            from lib.dispersion.tsmfk01 import d_f_d_r20a, d_f_d_dw, d_f_d_k_AB
+            from numpy import transpose, array, all
+            NJ, NE, NS, NM, NO, ND = jacobian.shape
+            for ei in range(NE):
+                for si in range(NS):
+                    for mi in range(NM):
+                        for oi in range(NO):
+                            print ei, si, mi, oi
+                            cur_jacobian = jacobian[0:NJ:1, ei, si, mi, oi]
+
+                            r20a_t = self.r20a_struct[ei, si, mi, oi]
+                            dw_t = self.dw_struct[ei, si, mi, oi]
+                            k_AB_t = k_AB
+                            tcp_t = self.tau_cpmg[ei, si, mi, oi]
+
+                            get_d_f_d_r20a = d_f_d_r20a(r20a=r20a_t, dw=dw_t, k_AB=k_AB_t, tcp=tcp_t)
+                            get_d_f_d_dw = d_f_d_dw(r20a=r20a_t, dw=dw_t, k_AB=k_AB_t, tcp=tcp_t)
+                            get_d_f_d_k_AB = d_f_d_k_AB(r20a=r20a_t, dw=dw_t, k_AB=k_AB_t, tcp=tcp_t)
+
+                            jac_t = transpose(array( [get_d_f_d_r20a , get_d_f_d_dw , get_d_f_d_k_AB] ) )
+
+                            #print cur_jacobian
+                            #print jac_t
+                            print jac_t == cur_jacobian
 
         # Return the Jacobian.
-        return jabobian
+        return jacobian
 
 
     def get_back_calc(self):
