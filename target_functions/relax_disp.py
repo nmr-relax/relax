@@ -51,7 +51,7 @@ from lib.dispersion.ns_r1rho_3site import ns_r1rho_3site
 from lib.dispersion.ns_matrices import r180x_3d
 from lib.dispersion.tp02 import r1rho_TP02
 from lib.dispersion.tap03 import r1rho_TAP03
-from lib.dispersion.tsmfk01 import r2eff_TSMFK01
+from lib.dispersion.tsmfk01 import r2eff_TSMFK01, r2eff_TSMFK01_jacobian
 from lib.errors import RelaxError
 from lib.float import isNaN
 from target_functions.chi2 import chi2_rankN
@@ -498,6 +498,9 @@ class Dispersion:
             self.M0_T = rollaxis(self.M0, 6, 5)
 
         # Set up the model.
+        # Set Jacobian to None as standard.
+        self.jacobian = None
+
         if model == MODEL_NOREX:
             # FIXME: Handle mixed experiment types here - probably by merging target functions.
             if self.exp_types[0] in EXP_TYPE_LIST_CPMG:
@@ -519,6 +522,7 @@ class Dispersion:
             self.func = self.func_IT99
         if model == MODEL_TSMFK01:
             self.func = self.func_TSMFK01
+            self.jacobian = self.func_TSMFK01_jacobian
         if model == MODEL_B14:
             self.func = self.func_B14
         if model == MODEL_B14_FULL:
@@ -2168,6 +2172,37 @@ class Dispersion:
 
         # Return the total chi-squared value.
         return chi2_rankN(self.values, self.back_calc, self.errors)
+
+
+    def func_TSMFK01_jacobian(self, params):
+        """Jacobian function for the the Tollinger et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20A = params[:self.end_index[0]]
+        dw = params[self.end_index[0]:self.end_index[1]]
+        k_AB = params[self.end_index[1]]
+
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
+
+        # Reshape R20A and R20B to per experiment, spin and frequency.
+        self.r20a_struct[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Get the Jacobian.
+        jabobian = r2eff_TSMFK01_jacobian(r20a=self.r20a_struct, dw=self.dw_struct, k_AB=k_AB, tcp=self.tau_cpmg)
+
+        # Return the Jacobian.
+        return jabobian
 
 
     def get_back_calc(self):
