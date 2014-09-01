@@ -37,11 +37,13 @@ import dep_check
 from lib.errors import RelaxError
 from lib.io import get_file_path
 from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
+from pipe_control.minimise import assemble_scaling_matrix
 from specific_analyses.relax_disp.checks import check_missing_r1
 from specific_analyses.relax_disp.estimate_r2eff import estimate_r2eff
-from specific_analyses.relax_disp.data import average_intensity, check_intensity_errors, generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_grace_file_name_ini, return_param_key_from_data
+from specific_analyses.relax_disp.data import average_intensity, check_intensity_errors, generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_grace_file_name_ini, return_param_key_from_data, spin_ids_to_containers
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.model import models_info, nesting_param
+from specific_analyses.relax_disp.parameters import linear_constraints
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST, EXP_TYPE_R1RHO, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC_CPMG, MODEL_LIST_FULL, MODEL_LIST_NUMERIC_CPMG, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_R2EFF, MODEL_TP02, MODEL_TAP03
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
@@ -7999,13 +8001,25 @@ class Relax_disp(SystemTestCase):
 
         # Set algorithm.
         min_algor = 'Newton'
-        constraints = True
+        constraints = False
         if constraints:
             min_options = ('%s'%(min_algor),)
             #min_algor = 'Log barrier'
             min_algor = 'Method of Multipliers'
+            scaling_matrix = assemble_scaling_matrix(scaling=True)
+
+            # Collect spins
+            all_spin_ids = []
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                all_spin_ids.append([spin_id])
+
+            spins = spin_ids_to_containers(all_spin_ids[:1])
+
+            # Get constraints
+            A, b = linear_constraints(spins=spins, scaling_matrix=scaling_matrix)
         else:
             min_options = ()
+            A, b = None, None
         min_options = ()
         sim_boot = 200
         scaling_list = [1.0, 1.0]
@@ -8087,7 +8101,10 @@ class Relax_disp(SystemTestCase):
                     x0 = [r2eff, i0]
                     setup(num_params=len(x0), num_times=len(times), values=I_err, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
-                    params_minfx_sim_j, chi2_minfx_sim_j, iter_count, f_count, g_count, h_count, warning = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=x0, min_algor=min_algor, min_options=min_options, full_output=True, print_flag=0)
+                    # Ref input.
+                    #def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, min_options=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, print_flag=0, print_prefix="", full_output=False):
+
+                    params_minfx_sim_j, chi2_minfx_sim_j, iter_count, f_count, g_count, h_count, warning = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=x0, min_algor=min_algor, min_options=min_options, A=A, b=b, full_output=True, print_flag=0)
                     R_m_sim_j, I0_m_sim_j = params_minfx_sim_j
                     R_m_sim_l.append(R_m_sim_j)
                     I0_m_sim_l.append(I0_m_sim_j)
