@@ -595,6 +595,18 @@ class Relax_disp(API_base, API_common):
                 elif match('^[Nn]ewton$', algor):
                     allow = True
 
+                # Newton minimisation.
+                elif match('^[Nn]ewton$', algor):
+                    allow = True
+
+                # Constrained method, Method of Multipliers.
+                elif match('^[Mm][Oo][Mm]$', algor) or match('[Mm]ethod of [Mm]ultipliers$', algor):
+                    allow = True
+                    
+                # Constrained method, Logarithmic barrier function.
+                elif match('^[Ll]og [Bb]arrier$', algor):
+                    allow = True
+
             # If the Jacobian and Hessian matrix have not been specified for fitting, 'simplex' should be used.
             else:
                 if match('^[Gg]rid$', algor):
