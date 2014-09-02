@@ -22,7 +22,7 @@
 """Module containing functions for calculating the chi-squared value, gradient, and Hessian."""
 
 # Python module imports.
-from numpy import dot, sum, transpose
+from numpy import dot, einsum, sum, transpose
 
 
 # Chi-squared value.
@@ -149,12 +149,61 @@ def dchi2(dchi2, M, data, back_calc_vals, back_calc_grad, errors):
     """
 
     # Calculate the chi-squared gradient.
+
     grad = -2.0 * dot(1.0 / (errors**2) * (data - back_calc_vals), transpose(back_calc_grad))
 
     # Pack the elements.
     for i in range(M):
         dchi2[i] = grad[i]
 
+
+def dchi2_rankN(data, back_calc_vals, back_calc_grad, errors):
+    """Calculate the full chi-squared gradient for multiple numpy array axis.
+
+    The chi-squared gradient
+    ========================
+
+    The equation is::
+
+                             _n_
+        dchi^2(theta)        \   / yi - yi(theta)     dyi(theta) \ 
+        -------------  =  -2  >  | --------------  .  ---------- |
+           dthetaj           /__ \   sigma_i**2        dthetaj   /
+                             i=1
+
+    where
+        - i is the index over data sets.
+        - j is the parameter index of the gradient.
+        - theta is the parameter vector.
+        - yi are the values of the measured data set.
+        - yi(theta) are the values of the back calculated data set.
+        - dyi(theta)/dthetaj are the values of the back calculated gradient for parameter j.
+        - sigma_i are the values of the error set.
+
+
+    @param data:            The vector of yi values.
+    @type data:             numpy rank-1 size N array
+    @param back_calc_vals:  The vector of yi(theta) values.
+    @type back_calc_vals:   numpy rank-1 size N array
+    @param back_calc_grad:  The matrix of dyi(theta)/dtheta values.
+    @type back_calc_grad:   numpy rank-2 size MxN array
+    @param errors:          The vector of sigma_i values.
+    @type errors:           numpy rank-1 size N array
+    """
+
+    # Get the shape of the data.
+    # NJ: Number of partial derivatives in the Jacobian.
+    # NE: Number of experiments.
+    # NS: Number of spins.
+    # NM: Number of spectrometer frequencies.
+    # NO: Maximum number of offsets.
+    # ND: Number of dispersion(data) points.
+    NJ, NE, NS, NM, NO, ND = back_calc_grad.shape
+
+    # Calculate the chi-squared gradient.
+    grad = -2.0 * einsum('...ij, ...jk', 1.0 / (errors**2) * (data - back_calc_vals), back_calc_grad)
+
+    return grad
 
 def dchi2_element(data, back_calc_vals, back_calc_grad_j, errors):
     """Calculate the chi-squared gradient element j.
