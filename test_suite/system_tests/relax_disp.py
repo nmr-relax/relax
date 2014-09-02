@@ -7470,7 +7470,8 @@ class Relax_disp(SystemTestCase):
             sim_boot = 50
 
             # Set algorithm.
-            min_algor = 'simplex'
+            #min_algor = 'simplex'
+            min_algor = 'BFGS'
             constraints = True
             if constraints:
                 min_options = ('%s'%(min_algor),)
@@ -7532,7 +7533,7 @@ class Relax_disp(SystemTestCase):
 
                 # Init the Dispersion clas with data, so we can call functions in it.
                 tfunc = Dispersion(model=model, num_params=model_param_num, num_spins=num_spins, num_frq=field_count, exp_types=exp_types, values=values_err, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, r1_fit=r1_fit)
-                results = generic_minimise(func=tfunc.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, A=A, b=b, full_output=True, print_flag=0)
+                results = generic_minimise(func=tfunc.func, dfunc=tfunc.dfunc, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, A=A, b=b, full_output=True, print_flag=0)
                 param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
 
                 # Get the parameters fitted in the model.
