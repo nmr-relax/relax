@@ -31,7 +31,7 @@ from numpy.ma import masked_equal
 
 # relax module imports.
 from lib.dispersion.b14 import r2eff_B14
-from lib.dispersion.cr72 import r2eff_CR72
+from lib.dispersion.cr72 import r2eff_CR72, simple_r2eff_CR72_jacobian
 from lib.dispersion.dpl94 import r1rho_DPL94
 from lib.dispersion.it99 import r2eff_IT99
 from lib.dispersion.lm63 import r2eff_LM63
@@ -534,6 +534,7 @@ class Dispersion:
             self.func = self.func_CR72_full
         if model == MODEL_CR72:
             self.func = self.func_CR72
+            self.func_jacobian = self.func_CR72_jacobian
         if model == MODEL_IT99:
             self.func = self.func_IT99
         if model == MODEL_TSMFK01:
@@ -1221,6 +1222,61 @@ class Dispersion:
 
         # Calculate and return the chi-squared value.
         return self.calc_CR72_chi2(R20A=R20, R20B=R20, dw=dw, pA=pA, kex=kex)
+
+
+    def func_CR72_jacobian(self, params):
+        """Jacobian function for the the reduced Carver and Richards (1972) 2-site exchange model on all time scales.
+
+        This assumes that pA > pB, and hence this must be implemented as a constraint.  For this model, the simplification R20A = R20B is assumed.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20 = params[:self.end_index[0]]
+        dw = params[self.end_index[0]:self.end_index[1]]
+        pA = params[self.end_index[1]]
+        kex = params[self.end_index[1]+1]
+
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct_jac )
+
+        # Reshape R20A to per experiment, spin and frequency.
+        self.r20a_struct_jac[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Get the Jacobian as list of derivatives.
+        simple_d_f_d_r20a, simple_d_f_d_pA, simple_d_f_d_dw, simple_d_f_d_kex = simple_r2eff_CR72_jacobian(r20a=self.r20a_struct_jac, pA=pA, dw=self.dw_struct_jac, kex=kex, cpmg_frqs=self.cpmg_frqs)
+
+        # Convert it to normal representation, where each column is the derivative.
+        jacobian = transpose(array( [simple_d_f_d_r20a, simple_d_f_d_pA, simple_d_f_d_dw, simple_d_f_d_kex] ) )
+
+        # If get_jacobian is set to True, calculate a scale back matrix for the Jacobian from rad/s to corresponding units in relax, and then store in class.
+        # This adds a overhead for the function.
+        if self.get_jacobian:
+                # Store in class, which will be extracted from function.
+                self.jacobian =  jacobian
+
+                # Define scaling matrix, which will convert the units.
+                simple_d_f_d_r20a_scale = ones(simple_d_f_d_r20a.shape)
+                simple_d_f_d_pA_scale = ones(simple_d_f_d_pA.shape)
+
+                # Scale from rad/s to ppm.
+                simple_d_f_d_dw_scale = divide(ones(simple_d_f_d_dw.shape), self.frqs)
+
+                simple_d_f_d_kex_scale = ones(simple_d_f_d_kex.shape)
+
+                # Collect the scaling matrix.
+                self.jacobian_scale_mat =  transpose(array( [simple_d_f_d_r20a_scale, simple_d_f_d_pA_scale, simple_d_f_d_dw_scale, simple_d_f_d_kex_scale] ) )
+
+        # Return the Jacobian.
+        return jacobian
 
 
     def func_CR72_full(self, params):
