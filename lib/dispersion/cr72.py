@@ -93,7 +93,7 @@ More information on the CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, cos, cosh, isfinite, fabs, min, max, multiply, sqrt, subtract, sum
+from numpy import arccosh, cos, cosh, isfinite, fabs, min, max, multiply, ones, sin, sinh, sqrt, subtract, sum
 from numpy.ma import fix_invalid, masked_greater_equal, masked_where
 
 # Repetitive calculations (to speed up calculations).
@@ -206,3 +206,155 @@ def r2eff_CR72(r20a=None, r20a_orig=None, r20b=None, r20b_orig=None, pA=None, dw
     if not isfinite(sum(back_calc)):
         # Replaces nan, inf, etc. with fill value.
         fix_invalid(back_calc, copy=False, fill_value=1e100)
+
+
+def simple_r2eff_CR72_jacobian(r20a=None, pA=None, dw=None, kex=None, cpmg_frqs=None):
+    """The Jacobian matrix of CR72, for model R20A = R20B.
+
+    @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
+    @type r20a:             numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword pA:            The population of state A.
+    @type pA:               float
+    @keyword dw:            The chemical exchange difference between states A and B in rad/s.
+    @type dw:               numpy array of rank [NE][NS][NM][NO][ND]
+    @keyword kex:           The kex parameter value (the exchange rate in rad/s).
+    @type kex:              float
+    @keyword cpmg_frqs:     The CPMG nu1 frequencies.
+    @type cpmg_frqs:        numpy float array of rank [NE][NS][NM][NO][ND]
+    @return:                The Jacobian returned as list of derivatives.  This is for easier manipulation and possible back scaling from rad/s to normal units in relax.
+    @rtype:                 list of numpy arrays
+    """
+
+    # Get the partial derivatives.
+    get_simple_d_f_d_r20a = simple_d_f_d_r20a(r20a=r20a, pA=pA, dw=dw, kex=kex, cpmg_frqs=cpmg_frqs)
+    get_simple_d_f_d_pA = simple_d_f_d_pA(r20a=r20a, pA=pA, dw=dw, kex=kex, cpmg_frqs=cpmg_frqs)
+    get_simple_d_f_d_dw = simple_d_f_d_dw(r20a=r20a, pA=pA, dw=dw, kex=kex, cpmg_frqs=cpmg_frqs)
+    get_simple_d_f_d_kex = simple_d_f_d_kex(r20a=r20a, pA=pA, dw=dw, kex=kex, cpmg_frqs=cpmg_frqs)
+
+    return [get_simple_d_f_d_r20a , get_simple_d_f_d_pA, get_simple_d_f_d_dw, get_simple_d_f_d_kex]
+
+
+def simple_d_f_d_r20a(r20a=None, pA=None, dw=None, kex=None, cpmg_frqs=None):
+    """Partial derivative with respect to r20a, for model R20A = R20B.
+
+    @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
+    @type r20a:             numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword pA:            The population of state A.
+    @type pA:               float
+    @keyword dw:            The chemical exchange difference between states A and B in rad/s.
+    @type dw:               numpy array of rank [NE][NS][NM][NO][ND]
+    @keyword kex:           The kex parameter value (the exchange rate in rad/s).
+    @type kex:              float
+    @keyword cpmg_frqs:     The CPMG nu1 frequencies.
+    @type cpmg_frqs:        numpy float array of rank [NE][NS][NM][NO][ND]
+    """
+
+    return ones(dw.shape)
+
+
+def simple_d_f_d_pA(r20a=None, pA=None, dw=None, kex=None, cpmg_frqs=None):
+    """Partial derivative with respect to pA, for model R20A = R20B.
+
+    @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
+    @type r20a:             numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword pA:            The population of state A.
+    @type pA:               float
+    @keyword dw:            The chemical exchange difference between states A and B in rad/s.
+    @type dw:               numpy array of rank [NE][NS][NM][NO][ND]
+    @keyword kex:           The kex parameter value (the exchange rate in rad/s).
+    @type kex:              float
+    @keyword cpmg_frqs:     The CPMG nu1 frequencies.
+    @type cpmg_frqs:        numpy float array of rank [NE][NS][NM][NO][ND]
+    """
+
+    d_f_d_pA = -cpmg_frqs*(8.0*dw**2*kex*(0.5*dw**2 + 0.5*kex**2)*(kex*pA - kex*(-pA + 1.0))*cos(eta_scale*sqrt(dw**2 - kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2))/cpmg_frqs)/(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2)**(3/2) - 8.0*dw**2*kex*(0.5*dw**2 + 0.5*kex**2)*(kex*pA - kex*(-pA + 1.0))*cosh(eta_scale*sqrt(-dw**2 + kex**2 + 
+            sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2))/cpmg_frqs)/(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2)**(3/2) + 4.0*dw**2*eta_scale*kex*(kex*pA - kex*(-pA + 1.0))*((0.5*dw**2 + 0.5*kex**2)/sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2) - 0.5)*sin(eta_scale*sqrt(dw**2 - kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2))/cpmg_frqs)/(cpmg_frqs*sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2)*sqrt(dw**2 - kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2))) + 
+            4.0*dw**2*eta_scale*kex*(kex*pA - kex*(-pA + 1.0))*((0.5*dw**2 + 0.5*kex**2)/sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2) + 0.5)*sinh(eta_scale*sqrt(-dw**2 + kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2))/cpmg_frqs)/(cpmg_frqs*sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2)*sqrt(-dw**2 + kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2))))/sqrt((-((0.5*dw**2 + 0.5*kex**2)/sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2) - 0.5)*cos(eta_scale*sqrt(dw**2 - kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2))/cpmg_frqs) + ((0.5*dw**2 + 0.5*kex**2)/sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2) + 0.5)*cosh(eta_scale*sqrt(-dw**2 + kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2))/cpmg_frqs))**2 - 1)
+
+    return d_f_d_pA
+
+
+def simple_d_f_d_dw(r20a=None, pA=None, dw=None, kex=None, cpmg_frqs=None):
+    """Partial derivative with respect to dw, for model R20A = R20B.
+
+    @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
+    @type r20a:             numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword pA:            The population of state A.
+    @type pA:               float
+    @keyword dw:            The chemical exchange difference between states A and B in rad/s.
+    @type dw:               numpy array of rank [NE][NS][NM][NO][ND]
+    @keyword kex:           The kex parameter value (the exchange rate in rad/s).
+    @type kex:              float
+    @keyword cpmg_frqs:     The CPMG nu1 frequencies.
+    @type cpmg_frqs:        numpy float array of rank [NE][NS][NM][NO][ND]
+    """
+
+    d_f_d_dw = -cpmg_frqs*(-(1.0*dw/sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2) + (0.5*dw**2 + 0.5*kex**2)*(2*dw*(-dw**2 + kex**2) - 4.0*dw*(kex*pA - kex*(-pA + 1.0))**2)/(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2)**(3/2))*cos(eta_scale*sqrt(dw**2 - kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2))/cpmg_frqs) + (1.0*dw/sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2) + 
+            (0.5*dw**2 + 0.5*kex**2)*(2*dw*(-dw**2 + kex**2) - 4.0*dw*(kex*pA - kex*(-pA + 1.0))**2)/(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2)**(3/2))*cosh(eta_scale*sqrt(-dw**2 + kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2))/cpmg_frqs) + 
+            eta_scale*(-dw + (-2*dw*(-dw**2 + kex**2) + 4.0*dw*(kex*pA - kex*(-pA + 1.0))**2)/(2*sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2)))*((0.5*dw**2 + 0.5*kex**2)/sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2) + 0.5)*sinh(eta_scale*sqrt(-dw**2 + kex**2 + 
+            sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2))/cpmg_frqs)/(cpmg_frqs*sqrt(-dw**2 + kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2))) + eta_scale*(dw + (-2*dw*(-dw**2 + kex**2) + 4.0*dw*(kex*pA - kex*(-pA + 1.0))**2)/(2*sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2)))*((0.5*dw**2 + 0.5*kex**2)/sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2) - 0.5)*sin(eta_scale*sqrt(dw**2 - kex**2 + 
+            sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2))/cpmg_frqs)/(cpmg_frqs*sqrt(dw**2 - kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2))))/sqrt((-((0.5*dw**2 + 0.5*kex**2)/sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2) - 0.5)*cos(eta_scale*sqrt(dw**2 - kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2))/cpmg_frqs) + ((0.5*dw**2 + 0.5*kex**2)/sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2) + 0.5)*cosh(eta_scale*sqrt(-dw**2 + kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2))/cpmg_frqs))**2 - 1)
+
+    return d_f_d_dw
+
+
+def simple_d_f_d_kex(r20a=None, pA=None, dw=None, kex=None, cpmg_frqs=None):
+    """Partial derivative with respect to dw, for model R20A = R20B.
+
+    @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
+    @type r20a:             numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword pA:            The population of state A.
+    @type pA:               float
+    @keyword dw:            The chemical exchange difference between states A and B in rad/s.
+    @type dw:               numpy array of rank [NE][NS][NM][NO][ND]
+    @keyword kex:           The kex parameter value (the exchange rate in rad/s).
+    @type kex:              float
+    @keyword cpmg_frqs:     The CPMG nu1 frequencies.
+    @type cpmg_frqs:        numpy float array of rank [NE][NS][NM][NO][ND]
+    """
+
+    d_f_d_kex = -cpmg_frqs*(-(1.0*kex/sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2) + 
+            (0.5*dw**2 + 0.5*kex**2)*(-2.0*dw**2*(4*pA - 2.0)*(kex*pA - kex*(-pA + 1.0)) - 
+            2*kex*(-dw**2 + kex**2))/(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2)**(3/2))*cos(eta_scale*sqrt(dw**2 - 
+            kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2))/cpmg_frqs) + (1.0*kex/sqrt(4.0*dw**2*(kex*pA - 
+            kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2) + (0.5*dw**2 + 0.5*kex**2)*(-2.0*dw**2*(4*pA - 2.0)*(kex*pA - kex*(-pA + 1.0)) - 
+            2*kex*(-dw**2 + kex**2))/(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2)**(3/2))*cosh(eta_scale*sqrt(-dw**2 + 
+            kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2))/cpmg_frqs) + eta_scale*(-kex + (2.0*dw**2*(4*pA - 2.0)*(kex*pA - kex*(-pA + 1.0)) + 
+            2*kex*(-dw**2 + kex**2))/(2*sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2)))*((0.5*dw**2 + 
+            0.5*kex**2)/sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2) - 0.5)*sin(eta_scale*sqrt(dw**2 - kex**2 + 
+            sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2))/cpmg_frqs)/(cpmg_frqs*sqrt(dw**2 - kex**2 + 
+            sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2))) + eta_scale*(kex + (2.0*dw**2*(4*pA - 2.0)*(kex*pA - kex*(-pA + 1.0)) + 
+            2*kex*(-dw**2 + kex**2))/(2*sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2)))*((0.5*dw**2 + 0.5*kex**2)/sqrt(4.0*dw**2*(kex*pA - 
+            kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2) + 0.5)*sinh(eta_scale*sqrt(-dw**2 + kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2))/cpmg_frqs)/(cpmg_frqs*sqrt(-dw**2 + kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2))))/sqrt((-((0.5*dw**2 + 
+            0.5*kex**2)/sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2) - 0.5)*cos(eta_scale*sqrt(dw**2 - kex**2 + 
+            sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2))/cpmg_frqs) + ((0.5*dw**2 + 0.5*kex**2)/sqrt(4.0*dw**2*(kex*pA - 
+            kex*(-pA + 1.0))**2 + (-dw**2 + kex**2)**2) + 0.5)*cosh(eta_scale*sqrt(-dw**2 + kex**2 + sqrt(4.0*dw**2*(kex*pA - kex*(-pA + 1.0))**2 + 
+            (-dw**2 + kex**2)**2))/cpmg_frqs))**2 - 1) + 0.5
+
+    return d_f_d_kex
+
