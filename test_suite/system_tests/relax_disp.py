@@ -8499,7 +8499,7 @@ class Relax_disp(SystemTestCase):
                                     if r2eff_estimate == 'direct':
                                         self.assertAlmostEqual(value/1e5, 5628.66061488/1e5, 7)
                                     elif r2eff_estimate == 'MC2000':
-                                        self.assertAlmostEqual(value/1e5, 5610.20221435/1e5, 7)
+                                        self.assertAlmostEqual(value/1e5, 5610.20221435/1e5, 6)
                                     elif r2eff_estimate == 'chi2_pyt':
                                         self.assertAlmostEqual(value/1e5, 5643.34067090/1e5, 6)
 
