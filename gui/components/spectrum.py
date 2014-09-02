@@ -352,7 +352,11 @@ class Spectra_list(Base_list):
             item = self.element.GetNextSelected(item)
 
         # Launch the dialog.
-        uf_store['spectrum.error_analysis'](subset=ids)
+        uf_store['spectrum.error_analysis'](subset=ids, wx_wizard_modal=True)
+
+        # Display the relax controller, and go to the end of the log window.
+        self.gui.show_controller(None)
+        self.gui.controller.log_panel.on_goto_end(None)
 
 
     def action_spectrum_integration_points(self, event):
