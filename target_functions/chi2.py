@@ -22,8 +22,10 @@
 """Module containing functions for calculating the chi-squared value, gradient, and Hessian."""
 
 # Python module imports.
-from numpy import dot, einsum, sum, transpose
+from numpy import all, dot, einsum, sum, transpose, zeros
 
+# relax module imports.
+from lib.errors import RelaxError
 
 # Chi-squared value.
 ####################
@@ -198,12 +200,68 @@ def dchi2_rankN(data, back_calc_vals, back_calc_grad, errors):
     # NM: Number of spectrometer frequencies.
     # NO: Maximum number of offsets.
     # ND: Number of dispersion(data) points.
-    NJ, NE, NS, NM, NO, ND = back_calc_grad.shape
+    ND, NE, NS, NM, NO, NJ = back_calc_grad.shape
 
-    # Calculate the chi-squared gradient.
-    grad = -2.0 * einsum('...ij, ...jk', 1.0 / (errors**2) * (data - back_calc_vals), back_calc_grad)
+    # Calculate the weighted residual
+    weighted_residual = 1.0 / (errors**2) * (data - back_calc_vals)
+
+    # Calculate the change in weighted_residual
+    collect_grad = []
+
+    for ei in range(NE):
+        for si in range(NS):
+            for mi in range(NM):
+                for oi in range(NO):
+                    # Get current Jacobian.
+                    cur_back_calc_grad = back_calc_grad[0:ND:1, ei, si, mi, oi]
+
+                    # Transpose back, to get rows. Compare with above.
+                    test_back_calc_grad_t = transpose(cur_back_calc_grad)
+                    test_errors = errors[ei, si, mi, oi]
+                    test_data = data[ei, si, mi, oi]
+                    test_back_calc_vals = back_calc_vals[ei, si, mi, oi]
+                    test_weight_res = 1.0 / (test_errors**2) * (test_data - test_back_calc_vals)
+                    test_dot = dot(test_weight_res, transpose(test_back_calc_grad_t))
+                    test_grad = - 2.0 * test_dot
+
+                    # Define array to update parameters in.
+                    jacobian_chi2_minfx = zeros([NJ])
+
+                    # Update value elements.
+                    dchi2(dchi2=jacobian_chi2_minfx, M=NJ, data=test_data, back_calc_vals=test_back_calc_vals, back_calc_grad=test_back_calc_grad_t, errors=test_errors)
+
+                    # From current calc.
+                    cur_weighted_residual = weighted_residual[ei, si, mi, oi]
+                    weight_equal = test_weight_res == cur_weighted_residual
+                    if not all(weight_equal):
+                        raise RelaxError("There is something wrong with the weight to the Jacobian.")
+
+                    # Einsum not working?
+                    #cur_dot = einsum('...ij, ...jk', cur_weighted_residual , cur_back_calc_grad)
+                    cur_dot = dot(cur_weighted_residual, cur_back_calc_grad)
+                    cur_grad = - 2.0 * test_dot
+                    equal_grad = test_grad == cur_grad
+                    if not all(equal_grad):
+                        raise RelaxError("There is something wrong with the gradient to the Jacobian.")
+
+                    equal_grad_func = jacobian_chi2_minfx == cur_grad
+                    if not all(equal_grad):
+                        raise RelaxError("There is something wrong with the function gradient to the Jacobian.")
+
+                    # Collect all gradients to test them.
+                    collect_grad.append(cur_grad)
+
+    # Set the gradient to the first.
+    grad = collect_grad[0]
+
+    # Test they are all equal.
+    for grad_i in collect_grad:
+        equal_grad_i = grad == grad_i
+        if not all(equal_grad_i):
+            raise RelaxError("The returned gradient differ for the Jacobian.")
 
     return grad
+
 
 def dchi2_element(data, back_calc_vals, back_calc_grad_j, errors):
     """Calculate the chi-squared gradient element j.
