@@ -142,6 +142,8 @@ def r2eff_TSMFK01_jacobian(r20a=None, dw=None, k_AB=None, tcp=None):
     @type k_AB:             float
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
     @type tcp:              numpy float array of rank [NE][NS][NM][NO][ND]
+    @return:                The Jacobian returned as list of derivatives.  This is for easier manipulation and possible back scaling from rad/s to normal units in relax.
+    @rtype:                 list of numpy arrays
     """
 
     # Get the partial derivatives.
@@ -149,7 +151,7 @@ def r2eff_TSMFK01_jacobian(r20a=None, dw=None, k_AB=None, tcp=None):
     get_d_f_d_dw = d_f_d_dw(r20a=r20a, dw=dw, k_AB=k_AB, tcp=tcp)
     get_d_f_d_k_AB = d_f_d_k_AB(r20a=r20a, dw=dw, k_AB=k_AB, tcp=tcp)
 
-    return transpose(array( [get_d_f_d_r20a , get_d_f_d_dw, get_d_f_d_k_AB] ) )
+    return [get_d_f_d_r20a , get_d_f_d_dw, get_d_f_d_k_AB]
 
 
 def d_f_d_r20a(r20a=None, dw=None, k_AB=None, tcp=None):
