@@ -638,7 +638,7 @@ class Disp_minimise_command(Slave_command):
 
         # Minimisation.
         else:
-            results = generic_minimise(func=model.func, args=(), x0=self.param_vector, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.max_iterations, A=self.A, b=self.b, full_output=True, print_flag=self.verbosity)
+            results = generic_minimise(func=model.func, dfunc=model.dfunc, args=(), x0=self.param_vector, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.max_iterations, A=self.A, b=self.b, full_output=True, print_flag=self.verbosity)
 
             # Unpack the results.
             if results == None:

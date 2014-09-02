@@ -618,6 +618,14 @@ class Relax_disp(API_base, API_common):
                 elif match('^[Ss]implex$', algor):
                     allow = True
 
+                # Quasi-Newton BFGS minimisation.
+                elif match('^[Bb][Ff][Gg][Ss]$', algor):
+                    allow = True
+
+                # Constrained method, Logarithmic barrier function.
+                elif match('^[Ll]og [Bb]arrier$', algor):
+                    allow = True
+
         # Do not allow, if no model has been specified.
         else:
             model_type = 'None'
