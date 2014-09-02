@@ -335,8 +335,24 @@ class Spectra_list(Base_list):
         @type event:    wx event
         """
 
+        # The first item selected.
+        item = self.element.GetFirstSelected()
+
+        # Loop over the additional selections.
+        ids = []
+        while 1:
+            # No selection.
+            if item == -1:
+                break
+
+            # Add the ID string to the list.
+            ids.append(gui_to_str(self.element.GetItemText(item)))
+
+            # Get the next selected item.
+            item = self.element.GetNextSelected(item)
+
         # Launch the dialog.
-        uf_store['spectrum.error_analysis']()
+        uf_store['spectrum.error_analysis'](subset=ids)
 
 
     def action_spectrum_integration_points(self, event):
@@ -733,7 +749,7 @@ class Spectra_list(Base_list):
                 'label': ' Error analysis',
                 'icon': fetch_icon('oxygen.categories.applications-education', "22x22"),
                 'method': self.action_spectrum_error_analysis,
-                'tooltip': "Perform a peak intensity error analysis on the currently loaded data or data subsets."
+                'tooltip': "Perform a peak intensity error analysis on the currently loaded data or data subsets.  Select a subset of the spectra below to perform the error analysis only on this subset."
             }
         ]
 
