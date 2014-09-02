@@ -37,7 +37,7 @@ from specific_analyses.relax_disp import optimisation
 from status import Status; status = Status()
 
 # After Monte-Carlo.
-data_path = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'estimate_par_err'+sep+'tsmfk01'
+data_path = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'estimate_par_err'+sep+'tsmfk01'+sep+'BFGS'
 resultsfile_mc = 'final_results_mc'
 pipe.create(pipe_name='mc pipe', pipe_type='relax_disp')
 results.read(file=resultsfile_mc, dir=data_path)
