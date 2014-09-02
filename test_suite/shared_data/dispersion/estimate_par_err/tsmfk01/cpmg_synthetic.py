@@ -23,6 +23,7 @@
 
 # Python module imports.
 from math import sqrt
+from random import gauss
 
 # relax module imports.
 from lib.io import open_write_file
@@ -168,7 +169,7 @@ if not hasattr(ds, 'sherekhan_input'):
 # The set r2eff err, for defining the error on the graphs and in the fitting weight.
 # We set the error to be the same for all ncyc eksperiments.
 if not hasattr(ds, 'r2eff_err'):
-    ds.r2eff_err = 0.1
+    ds.r2eff_err = 1.
 
 # The print result info.
 if not hasattr(ds, 'print_res'):
@@ -438,7 +439,9 @@ for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
             set_r2eff_err = r2eff_errs[di]
 
             # Add the defined error to the calculated error.
-            r2eff_w_err = r2eff + set_r2eff_err
+            #r2eff_w_err = r2eff + set_r2eff_err
+            r2eff_w_err = gauss(r2eff, ds.r2eff_err)
+            print r2eff_w_err, r2eff
 
             string = "%.15f %.15f %.3f %.15f\n"%(point, r2eff_w_err, ds.r2eff_err, r2eff)
             file.write(string)
@@ -602,7 +605,7 @@ results.write(file='final_results', dir=ds.resdir, force=True)
 
 min_algor = 'simplex'
 constraints = False
-number = 10000
+number = 2000
 
 monte_carlo.setup(number=number)
 monte_carlo.create_data()
