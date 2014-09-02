@@ -105,7 +105,7 @@ for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_
         my_dic[spin_id][param_key]['k_AB_err_sim'] = k_AB_sim_err
 
         # Check for correct size.
-        if len(r2a_sim_l) != 10000:
+        if len(r2a_sim_l) != 2000:
             print asd
 
 
