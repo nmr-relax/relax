@@ -7378,38 +7378,6 @@ class Relax_disp(SystemTestCase):
         my_dic = {}
         spin_id_list = []
 
-        # Set algorithm.
-        min_algor = 'simplex'
-        constraints = True
-        if constraints:
-            min_options = ('%s'%(min_algor),)
-            min_algor = 'Log barrier'
-            #min_algor = 'Method of Multipliers'
-            scaling_matrix = assemble_scaling_matrix(scaling=True)
-
-            # Collect spins
-            all_spin_ids = []
-            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-                all_spin_ids.append(spin_id)
-
-            spins = spin_ids_to_containers(all_spin_ids[:1])
-
-            # Get constraints
-            A, b = linear_constraints(spins=spins, scaling_matrix=scaling_matrix[0])
-        else:
-            min_options = ()
-            A, b = None, None
-
-
-        sim_boot = 2
-
-        # Number of spectrometer fields.
-        fields = [None]
-        field_count = 1
-        if hasattr(cdp, 'spectrometer_frq_count'):
-            fields = cdp.spectrometer_frq_list
-            field_count = cdp.spectrometer_frq_count
-
         # Get the data.
         for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
             # Add key to dic.
@@ -7455,73 +7423,6 @@ class Relax_disp(SystemTestCase):
                         param_err_val = deepcopy(getattr(cur_spin, param_err))
                         my_dic[spin_id][param_key][param_err] = param_err_val
 
-                # Start boot strap.
-                values, errors, missing, frqs, frqs_H, exp_types, relax_times = return_r2eff_arrays(spins=[cur_spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
-                # The offset data.
-                offsets, spin_lock_fields_inter, chemical_shifts, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[cur_spin], spin_ids=[spin_id], field_count=field_count)
-
-                # r1 data.
-                r1 = return_r1_data(spins=[cur_spin], spin_ids=[spin_id], field_count=field_count)
-                r1_err = return_r1_err_data(spins=[cur_spin], spin_ids=[spin_id], field_count=field_count)
-                r1_fit = is_r1_optimised(model)
-                model_param_num = param_num(spins=[cur_spin])
-
-                dispersion_points = cdp.dispersion_points
-                cpmg_frqs = return_cpmg_frqs(ref_flag=False)
-                spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
-                num_spins=1
-
-                values_err = deepcopy(values)
-                si = 0
-                r2a_sim_l = []
-                dw_sim_l = []
-                k_AB_sim_l = []
-
-                for j in range(sim_boot):
-                    if j in range(0, 1000, 10):
-                        print("Simulation %i"%j)
-                    # Start minimisation.
-
-                    # Produce errors
-                    r2_err = []
-                    for j, error in enumerate(errors[ei][si][mi][oi]):
-                        r2_error = gauss(values[ei][si][mi][oi][j], error)
-                        #print values[ei][si][mi][oi][j], r2_error, error
-                        values_err[ei][si][mi][oi][j] = deepcopy(r2_error)
-
-                    # Init the Dispersion clas with data, so we can call functions in it.
-                    tfunc = Dispersion(model=model, num_params=model_param_num, num_spins=num_spins, num_frq=field_count, exp_types=exp_types, values=values_err, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, r1_fit=r1_fit)
-                    results = generic_minimise(func=tfunc.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, A=A, b=b, full_output=True, print_flag=0)
-                    param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
-                    print chi2, warning
-
-                    # Loop over params.
-                    for i, param in enumerate(params):
-                        # If param in PARAMS_R20, values are stored in with parameter key.
-                        if param in PARAMS_R20:
-                            # Get the error.
-                            param_val = deepcopy(getattr(cur_spin, param)[param_key])
-                            r2a_sim_l.append(param_val)
-
-                        else:
-                            # Get the error.
-                            param_val = deepcopy(getattr(cur_spin, param))
-                            if param == 'dw':
-                                dw_sim_l.append(param_val)
-                            elif param == 'k_AB':
-                                k_AB_sim_l.append(param_val)
-
-                # Get stats on distribution.
-                sigma_r2a_sim = std(asarray(r2a_sim_l), ddof=1)
-                sigma_dw_sim = std(asarray(dw_sim_l), ddof=1)
-                sigma_k_AB_sim = std(asarray(k_AB_sim_l), ddof=1)
-                my_dic[spin_id][param_key]['sigma_r2a_sim'] = sigma_r2a_sim
-                my_dic[spin_id][param_key]['sigma_dw_sim'] = sigma_dw_sim
-                my_dic[spin_id][param_key]['sigma_k_AB_sim'] = sigma_k_AB_sim
-                my_dic[spin_id][param_key]['sigma_r2a_arr'] = asarray(r2a_sim_l)
-                my_dic[spin_id][param_key]['sigma_dw_arr'] = asarray(dw_sim_l)
-                my_dic[spin_id][param_key]['sigma_k_AB_arr'] = asarray(k_AB_sim_l)
-
             my_dic[spin_id]['param_key_list'] = param_key_list
 
         # After Monte-Carlo.
@@ -7532,7 +7433,8 @@ class Relax_disp(SystemTestCase):
         # Get the data.
         for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
             # Get the parameters fitted in the model.
-            params = cur_spin.params
+            params_err = my_dic[spin_id]['params_err']
+            params = my_dic[spin_id]['params']
 
             for exp_type, frq, offset, ei, mi, oi, in loop_exp_frq_offset(return_indices=True):
                 # Get the parameter key.
@@ -7541,7 +7443,7 @@ class Relax_disp(SystemTestCase):
                 # Loop over params.
                 for i, param in enumerate(params):
                     # Set the param error name
-                    param_err = param + '_err'
+                    param_err = params_err[i]
 
                     # If param in PARAMS_R20, values are stored in with parameter key.
                     if param in PARAMS_R20:
@@ -7549,12 +7451,113 @@ class Relax_disp(SystemTestCase):
                         param_err_val = deepcopy(getattr(cur_spin, param_err)[param_key])
                         my_dic[spin_id][param_key][param_err+'MC'] = param_err_val
 
+                        # Initialise lists for sim.
+                        my_dic[spin_id][param_key][param+'sim_l'] = []
+
                     else:
                         # Get the error.
                         param_err_val = deepcopy(getattr(cur_spin, param_err))
                         my_dic[spin_id][param_key][param_err+'MC'] = param_err_val
 
+                        # Initialise lists for sim.
+                        my_dic[spin_id][param_key][param+'sim_l'] = []
 
+        ######## Do boot
+        do_boot = True
+
+        if do_boot:
+            # Number of simulations.
+            sim_boot = 50
+
+            # Set algorithm.
+            min_algor = 'simplex'
+            constraints = True
+            if constraints:
+                min_options = ('%s'%(min_algor),)
+                min_algor = 'Log barrier'
+                #min_algor = 'Method of Multipliers'
+                scaling_matrix = assemble_scaling_matrix(scaling=True)
+
+                # Collect spins
+                all_spin_ids = []
+                for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                    all_spin_ids.append(spin_id)
+
+                spins = spin_ids_to_containers(all_spin_ids[:1])
+
+                # Get constraints
+                A, b = linear_constraints(spins=spins, scaling_matrix=scaling_matrix[0])
+            else:
+                min_options = ()
+                A, b = None, None
+
+            # Number of spectrometer fields.
+            fields = [None]
+            field_count = 1
+            if hasattr(cdp, 'spectrometer_frq_count'):
+                fields = cdp.spectrometer_frq_list
+                field_count = cdp.spectrometer_frq_count
+
+            # Start boot strap.
+            values, errors, missing, frqs, frqs_H, exp_types, relax_times = return_r2eff_arrays(spins=[cur_spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
+            # The offset data.
+            offsets, spin_lock_fields_inter, chemical_shifts, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[cur_spin], spin_ids=[spin_id], field_count=field_count)
+
+            # r1 data.
+            r1 = return_r1_data(spins=[cur_spin], spin_ids=[spin_id], field_count=field_count)
+            r1_err = return_r1_err_data(spins=[cur_spin], spin_ids=[spin_id], field_count=field_count)
+            r1_fit = is_r1_optimised(model)
+            model_param_num = param_num(spins=[cur_spin])
+
+            dispersion_points = cdp.dispersion_points
+            cpmg_frqs = return_cpmg_frqs(ref_flag=False)
+            spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
+            num_spins=1
+
+            # Make array with errors.
+            values_err = deepcopy(values)
+            si = 0
+
+            for j in range(sim_boot):
+                if j in range(0, 1000, 10):
+                    print("Simulation %i"%j)
+                # Start minimisation.
+
+                # Produce errors.
+                # Loop over dimensionality of data.
+                for exp_type, frq, offset, ei, mi, oi, in loop_exp_frq_offset(return_indices=True):
+                    for j, error in enumerate(errors[ei][si][mi][oi]):
+                        r2_error = gauss(values[ei][si][mi][oi][j], error)
+                        values_err[ei][si][mi][oi][j] = deepcopy(r2_error)
+
+                # Init the Dispersion clas with data, so we can call functions in it.
+                tfunc = Dispersion(model=model, num_params=model_param_num, num_spins=num_spins, num_frq=field_count, exp_types=exp_types, values=values_err, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, r1_fit=r1_fit)
+                results = generic_minimise(func=tfunc.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, A=A, b=b, full_output=True, print_flag=0)
+                param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
+
+                # Get the parameters fitted in the model.
+                params_err = my_dic[spin_id]['params_err']
+                params = my_dic[spin_id]['params']
+
+                # Store under parameter key.
+                for exp_type, frq, offset, ei, mi, oi, in loop_exp_frq_offset(return_indices=True):
+                    # Get the parameter key.
+                    param_key = generate_r20_key(exp_type=exp_type, frq=frq)
+
+                    # Loop over params.
+                    for i, param in enumerate(params):
+                        # If param in PARAMS_R20, values are stored in with parameter key.
+                        if param in PARAMS_R20:
+                            # Get the error.
+                            param_val = param_vector[i]
+                            my_dic[spin_id][param_key][param+'sim_l'].append(param_val)
+
+                        else:
+                            # Get the error.
+                            param_val = param_vector[i]
+                            my_dic[spin_id][param_key][param+'sim_l'].append(param_val)
+
+        #### COMPARE
         # Loop over parameters to print.
         for spin_id in spin_id_list:
             param_key_list = my_dic[spin_id]['param_key_list']
@@ -7566,8 +7569,12 @@ class Relax_disp(SystemTestCase):
                     param = params[i]
                     param_err_val = my_dic[spin_id][param_key][param_err]
                     param_err_val_mc = my_dic[spin_id][param_key][param_err+'MC']
-                    param_err_val_sim = my_dic[spin_id][param_key]['sigma_%s_sim'%param]
-                    print("param: %s, with err: %3.8f, compared to MC: %3.8f, with %i boot %3.8f" % (param_err, param_err_val, param_err_val_mc, sim_boot, param_err_val_sim) )
+                    if do_boot:
+                        param_val_sim_l = my_dic[spin_id][param_key][param+'sim_l']
+                        std_sim = std(asarray(param_val_sim_l), ddof=1)
+                        print("param: %s, with err: %3.8f, compared to MC: %3.8f, with %i boot %3.8f" % (param_err, param_err_val, param_err_val_mc, sim_boot, std_sim) )
+                    else:
+                        print("param: %s, with err: %3.8f, compared to MC: %3.8f" % (param_err, param_err_val, param_err_val_mc) )
 
 
     def test_tp02_data_to_ns_r1rho_2site(self, model=None):
