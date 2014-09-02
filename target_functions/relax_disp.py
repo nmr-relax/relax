@@ -54,7 +54,7 @@ from lib.dispersion.tap03 import r1rho_TAP03
 from lib.dispersion.tsmfk01 import r2eff_TSMFK01, r2eff_TSMFK01_jacobian
 from lib.errors import RelaxError
 from lib.float import isNaN
-from target_functions.chi2 import chi2_rankN
+from target_functions.chi2 import chi2_rankN, dchi2_rankN
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_DW_MIX_DOUBLE, MODEL_LIST_DW_MIX_QUADRUPLE, MODEL_LIST_INV_RELAX_TIMES, MODEL_LIST_R20B, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_NUMERIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LIST_R1RHO_OFF_RES, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 
 
@@ -498,6 +498,13 @@ class Dispersion:
             self.M0_T = rollaxis(self.M0, 6, 5)
 
         # Set up parameters related to the Jacobian.
+        # A flag which if True will initialise the calculation to scale back the jacobian from rad/s to units in relax and store it.
+        # This creates an overhead in normal situations.
+        self.get_jacobian = True
+
+        # Set dfunc to None as standard.
+        self.dfunc = None
+
         # Set Jacobian function to None as standard.
         self.func_jacobian = None
 
@@ -507,6 +514,7 @@ class Dispersion:
         # the function and the Jacobian, and overwrite each other. Even though they should be the same.
         self.r20a_struct_jac =  deepcopy(self.r20a_struct)
         self.dw_struct_jac = deepcopy(self.dw_struct)
+        self.back_calc_jac = deepcopy(self.back_calc)
 
         # Set up the model.
         if model == MODEL_NOREX:
@@ -530,6 +538,7 @@ class Dispersion:
             self.func = self.func_IT99
         if model == MODEL_TSMFK01:
             self.func = self.func_TSMFK01
+            self.dfunc = self.dfunc_TSMFK01
             self.func_jacobian = self.func_TSMFK01_jacobian
         if model == MODEL_B14:
             self.func = self.func_B14
@@ -2182,8 +2191,8 @@ class Dispersion:
         return chi2_rankN(self.values, self.back_calc, self.errors)
 
 
-    def func_TSMFK01_jacobian(self, params):
-        """Jacobian function for the the Tollinger et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
+    def dfunc_TSMFK01(self, params):
+        """Target function for the Jacobian of Tollinger et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
@@ -2194,6 +2203,47 @@ class Dispersion:
         # Scaling.
         if self.scaling_flag:
             params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20A = params[:self.end_index[0]]
+        dw = params[self.end_index[0]:self.end_index[1]]
+        k_AB = params[self.end_index[1]]
+
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct_jac )
+
+        # Reshape R20A and R20B to per experiment, spin and frequency.
+        self.r20a_struct_jac[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Back calculate the R2eff values.
+        r2eff_TSMFK01(r20a=self.r20a_struct_jac, dw=self.dw_struct_jac, dw_orig=dw, k_AB=k_AB, tcp=self.tau_cpmg, back_calc=self.back_calc_jac)
+
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc_jac = self.back_calc_jac*self.disp_struct
+
+        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
+
+        # Get the Jacobian, with partial derivative, with respect to r2eff and i0.
+        jacobian = self.func_jacobian(params)
+
+        # Get the chi2 gradient.
+        dchi2_calc = dchi2_rankN(data=self.values, back_calc_vals=self.back_calc_jac, back_calc_grad=jacobian, errors=self.errors)
+
+        # Return Jacobian chi2 matrix for minfx.
+        return dchi2_calc
+
+
+    def func_TSMFK01_jacobian(self, params):
+        """Jacobian function for the the Tollinger et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
 
         # Unpack the parameter values.
         R20A = params[:self.end_index[0]]
