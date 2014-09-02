@@ -258,7 +258,7 @@ def estimate_par_err(spin_id=None, epsrel=0.0, verbosity=1):
             param_key = generate_r20_key(exp_type=exp_type, frq=frq)
 
             # Extract weights.
-            cur_weights = weights[ei, si, mi, oi]
+            cur_weights = 1/weights[ei, si, mi, oi]**2
 
             # Extract every column/row from the first to last columns. Is this correct?
             cur_jacobian = jacobian[0:NJ:1, ei, si, mi, oi]
