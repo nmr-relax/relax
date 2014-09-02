@@ -351,6 +351,10 @@ class Spectra_list(Base_list):
             # Get the next selected item.
             item = self.element.GetNextSelected(item)
 
+        # No selected items.
+        if not len(ids):
+            ids = None
+
         # Launch the dialog.
         uf_store['spectrum.error_analysis'](subset=ids, wx_wizard_modal=True)
 
