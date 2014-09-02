@@ -1,0 +1,30 @@
+Form the Jacobian matrix by:
+------------------------------------------------------------------------------
+
+d_f_d_r1rho_prime = sin(theta)**2
+
+d_f_d_phi_ex = kex*sin(theta)**2/(kex**2 + spin_lock_fields2)
+
+d_f_d_kex = -2*kex**2*phi_ex*sin(theta)**2/(kex**2 + spin_lock_fields2)**2 + phi_ex*sin(theta)**2/(kex**2 + spin_lock_fields2)
+
+d_f_d_theta = -2*R1*sin(theta)*cos(theta) + 2*kex*phi_ex*sin(theta)*cos(theta)/(kex**2 + spin_lock_fields2) + 2*r1rho_prime*sin(theta)*cos(theta)
+
+d_f_R1 = cos(theta)**2
+
+------------------------------------------------------------------------------
+
+Form the Jacobian matrix by:
+------------------------------------------------------------------------------
+
+d_f_d_r1rho_prime = sin(theta)**2
+
+d_f_d_phi_ex = kex*sin(theta)**2/(kex**2 + spin_lock_fields2)
+
+d_f_d_kex = phi_ex*(-kex**2 + spin_lock_fields2)*sin(theta)**2/(kex**2 + spin_lock_fields2)**2
+
+d_f_d_theta = (kex*phi_ex + (-R1 + r1rho_prime)*(kex**2 + spin_lock_fields2))*sin(2*theta)/(kex**2 + spin_lock_fields2)
+
+d_f_R1 = cos(theta)**2
+
+------------------------------------------------------------------------------
+
