@@ -225,7 +225,7 @@ def estimate_par_err(spin_id=None, epsrel=0.0, verbosity=1):
         r1_fit = is_r1_optimised(model)
         model_param_num = param_num(spins=[cur_spin])
 
-        dispersion_points = dispersion_points = cdp.dispersion_points
+        dispersion_points = cdp.dispersion_points
         cpmg_frqs = return_cpmg_frqs(ref_flag=False)
         spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
         num_spins=1
