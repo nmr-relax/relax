@@ -444,30 +444,15 @@ class Frame_order_analysis:
             return
 
         # The pivot from the rotor model.
-        if model in [MODEL_ISO_CONE, MODEL_FREE_ROTOR]:
-            # Printout.
-            print("Obtaining the pivot point from the rotor model.")
+        print("Obtaining the pivot point from the rotor model.")
 
-            # Get the iso cone data pipe.
-            pipe = get_pipe(self.pipe_name_dict[MODEL_ROTOR])
+        # Get the iso cone data pipe.
+        pipe = get_pipe(self.pipe_name_dict[MODEL_ROTOR])
 
-            # Copy the pivot parameters.
-            cdp.pivot_x = pipe.pivot_x
-            cdp.pivot_y = pipe.pivot_y
-            cdp.pivot_z = pipe.pivot_z
-
-        # The pivot from the isotropic cone model.
-        else:
-            # Printout.
-            print("Obtaining the pivot point from the isotropic cone model.")
-
-            # Get the iso cone data pipe.
-            pipe = get_pipe(self.pipe_name_dict[MODEL_ISO_CONE])
-
-            # Copy the cone axis parameters.
-            cdp.pivot_x = pipe.pivot_x
-            cdp.pivot_y = pipe.pivot_y
-            cdp.pivot_z = pipe.pivot_z
+        # Copy the pivot parameters.
+        cdp.pivot_x = pipe.pivot_x
+        cdp.pivot_y = pipe.pivot_y
+        cdp.pivot_z = pipe.pivot_z
 
 
     def nested_models(self):
