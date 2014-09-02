@@ -24,6 +24,7 @@
 # Python module imports.
 from os import F_OK, access, getcwd, path, sep
 from numpy import array, asarray, dot, exp, median, inf, log, save, std, sum, zeros
+from numpy.linalg import inv
 from minfx.generic import generic_minimise
 from random import gauss
 import re, math
@@ -7469,12 +7470,14 @@ class Relax_disp(SystemTestCase):
 
         if do_boot:
             # Number of simulations.
-            sim_boot = 50
+            sim_boot = 500
 
             # Set algorithm.
             min_algor = 'simplex'
             min_algor = 'BFGS'
-            constraints = True
+            constraints = False
+            opt_func_tol = 1e-25
+            opt_max_iterations = int(1e7)
             if constraints:
                 min_options = ('%s'%(min_algor),)
                 min_algor = 'Log barrier'
@@ -7482,6 +7485,9 @@ class Relax_disp(SystemTestCase):
                 # OBS! This is a list per spin, so extract.
                 scaling_matrix = assemble_scaling_matrix(scaling=True)
                 scaling_matrix = scaling_matrix[0]
+
+                if len(scaling_matrix):
+                    x0 = dot(inv(scaling_matrix), x0)
 
                 # Collect spins
                 all_spin_ids = []
@@ -7539,7 +7545,7 @@ class Relax_disp(SystemTestCase):
 
                 # Init the Dispersion clas with data, so we can call functions in it.
                 tfunc = Dispersion(model=model, num_params=model_param_num, num_spins=num_spins, num_frq=field_count, exp_types=exp_types, values=values_err, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, scaling_matrix=scaling_matrix, r1_fit=r1_fit)
-                results = generic_minimise(func=tfunc.func, dfunc=tfunc.dfunc, args=(), x0=x0, min_algor=min_algor, min_options=min_options, A=A, b=b, full_output=True, print_flag=1)
+                results = generic_minimise(func=tfunc.func, dfunc=tfunc.dfunc, args=(), x0=x0, min_algor=min_algor, min_options=min_options, func_tol=opt_func_tol, maxiter=opt_max_iterations, A=A, b=b, full_output=True, print_flag=0)
                 param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
 
                 # Scaling.
