@@ -229,6 +229,11 @@ def multifit_covar(J=None, epsrel=0.0, weights=None):
     # Get the expected shape of the higher dimensional column numpy array.
     if len(weights.shape) == 2:
         # Extract shapes from data.
+        # NE: Number of experiments.
+        # NS: Number of spins.
+        # NM: Number of spectrometer frequencies.
+        # NO: Maximum number of offsets.
+        # ND: Number of dispersion(data) points.
         NE, NS, NM, NO, ND = 1, 1, 1, 1, weights.shape[-1]
 
     # Make a eye matrix, with Shape [ND][ND]
