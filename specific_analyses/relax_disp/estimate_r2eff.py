@@ -24,7 +24,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import array, asarray, diag, dot, exp, eye, log, multiply, ones, sqrt, sum, transpose, zeros
+from numpy import array, absolute, asarray, diag, dot, exp, eye, log, newaxis, multiply, ones, sqrt, sum, transpose, zeros
 from minfx.generic import generic_minimise
 import sys
 from warnings import warn
@@ -230,7 +230,7 @@ def estimate_par_err(spin_id=None, epsrel=0.0, verbosity=1):
         spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
         num_spins=1
 
-        # Scaling matrix.
+        # Scaling matrix. Do not use it, since the scaling is not performed.
         scaling_matrix = assemble_scaling_matrix(scaling=True)
 
         # Init the Dispersion clas with data, so we can call functions in it.
@@ -239,12 +239,19 @@ def estimate_par_err(spin_id=None, epsrel=0.0, verbosity=1):
         # Create the parameter vector.
         param_vector = assemble_param_vector(spins=[cur_spin])
 
-        ## Make a single function call.
-        jacobian = tfunc.jacobian(param_vector)
+        ## Make a single function call, to get the Jacobian and the scaling matrix to convert back to relax_units.
+        func_jacobian, func_jacobian_scale_mat = tfunc.get_jacobian_scaled(param_vector)
         weights = 1. / tfunc.errors**2
 
         # Get the shape of the data.
-        NJ, NE, NS, NM, NO, ND = jacobian.shape
+        # NJ: Number of partial derivatives in the Jacobian.
+        # NE: Number of experiments.
+        # NS: Number of spins.
+        # NM: Number of spectrometer frequencies.
+        # NO: Maximum number of offsets.
+        # ND: Number of dispersion(data) points.
+        NJ, NE, NS, NM, NO, ND = func_jacobian.shape
+
         if NS != 1:
             raise RelaxError("The number of spins does not fit.")
 
@@ -258,16 +265,32 @@ def estimate_par_err(spin_id=None, epsrel=0.0, verbosity=1):
             param_key = generate_r20_key(exp_type=exp_type, frq=frq)
 
             # Extract weights.
-            cur_weights = 1/weights[ei, si, mi, oi]**2
+            cur_weights = weights[ei, si, mi, oi]
 
             # Extract every column/row from the first to last columns. Is this correct?
-            cur_jacobian = jacobian[0:NJ:1, ei, si, mi, oi]
+            cur_jacobian = func_jacobian[0:NJ:1, ei, si, mi, oi]
 
             # Get the co-variance
             pcov = multifit_covar(J=cur_jacobian, weights=cur_weights)
 
             # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
             param_vector_error = sqrt(diag(pcov))
+
+            # If param_vector_error are vector, make it to one-dimensional matrix.
+            if len(param_vector_error.shape) == 1:
+                param_vector_error = param_vector_error[newaxis, ...]
+
+            # Now scale back parameter from rad/s to the corresponding units.
+            # First get the scaling.
+            cur_func_jacobian_scale_mat = func_jacobian_scale_mat[ei, si, mi, oi]
+
+            # Now scale the vector.
+            # Take absolute values, since the frequency can be negative. Errors are always positive.
+            param_vector_error_scaled = absolute( multiply(param_vector_error, cur_func_jacobian_scale_mat) )
+
+            # Extract from one-dimensional matrix to vector.
+            if param_vector_error_scaled.shape[0] == 1:
+                param_vector_error_scaled = param_vector_error_scaled[0]
 
             # Loop over params.
             for i, param in enumerate(params):
@@ -281,7 +304,7 @@ def estimate_par_err(spin_id=None, epsrel=0.0, verbosity=1):
                         setattr(cur_spin, param_err, deepcopy(getattr(cur_spin, param)))
 
                     # Set error.
-                    getattr(cur_spin, param_err)[param_key] = deepcopy(param_vector_error[i])
+                    getattr(cur_spin, param_err)[param_key] = deepcopy(param_vector_error_scaled[i])
 
                 else:
                     # Copy parameter attribute to error attribute, if not in spin Class.
@@ -289,7 +312,7 @@ def estimate_par_err(spin_id=None, epsrel=0.0, verbosity=1):
                         setattr(cur_spin, param_err, deepcopy(getattr(cur_spin, param)))
 
                     # Set error.
-                    setattr(cur_spin, param_err, param_vector_error[i])
+                    setattr(cur_spin, param_err, param_vector_error_scaled[i])
 
 
 #### This class is only for testing.
