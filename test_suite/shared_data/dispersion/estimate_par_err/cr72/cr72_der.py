@@ -7,8 +7,8 @@ pA = Symbol('pA')
 dw = Symbol('dw')
 kex = Symbol('kex')
 cpmg_frqs = Symbol('cpmg_frqs')
+eta_scale = Symbol('eta_scale')
 
-eta_scale = 2.0**(-3.0/2.0)
 pB = 1.0 - pA
 dw2 = dw**2
 r20_kex = (r20a + r20b + kex) / 2.0
