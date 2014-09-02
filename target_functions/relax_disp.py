@@ -2245,6 +2245,10 @@ class Dispersion:
         @rtype:         float
         """
 
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
         # Unpack the parameter values.
         R20A = params[:self.end_index[0]]
         dw = params[self.end_index[0]:self.end_index[1]]
