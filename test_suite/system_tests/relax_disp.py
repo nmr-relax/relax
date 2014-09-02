@@ -7364,19 +7364,47 @@ class Relax_disp(SystemTestCase):
 
         # Load the state.
         data_path = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'estimate_par_err'+sep+'tsmfk01'
-        #data_path = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'estimate_par_err'+sep+'tsmfk01'+sep+'BFGS'
-        statefile ='final_state'
-        #self.interpreter.state.load(state=statefile, dir=data_path, force=True)
 
         # After initial minimisation.
         resultsfile = 'final_results'
         self.interpreter.pipe.create(pipe_name='base pipe', pipe_type='relax_disp')
         self.interpreter.results.read(file=resultsfile, dir=data_path)
 
+        # Set settings.
+        min_algor='simplex'
+        constraints=False
+        mc_number=200
+        sim_boot=200
+
         # Verify data.
-        self.interpreter.relax_disp.select_model(MODEL_TSMFK01)
-        self.verify_estimate_par_err_compare_mc()
-        #self.verify_estimate_par_err_compare_mc(data_path=data_path , resultsfile_mc='final_results_mc')
+        self.verify_estimate_par_err_compare_mc(min_algor=min_algor, constraints=constraints, sim_boot=sim_boot, data_path=data_path, resultsfile_mc='final_results_mc_strip')
+
+
+    def test_task_model_par_est_tsmfk01_bfgs(self, model=None):
+        """ This is the test data for TSMFK01 data parameter estimation, with minimisation of BFGS.
+
+        U{task #7824<https://gna.org/bugs/?21344>}.: Model parameter ERROR estimation from Jacobian and Co-variance matrix of dispersion models.
+        """
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state.
+        data_path = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'estimate_par_err'+sep+'tsmfk01'+sep+'BFGS'
+
+        # After initial minimisation.
+        resultsfile = 'final_results'
+        self.interpreter.pipe.create(pipe_name='base pipe', pipe_type='relax_disp')
+        self.interpreter.results.read(file=resultsfile, dir=data_path)
+
+        # Set settings.
+        min_algor='BFGS'
+        constraints=False
+        mc_number=200
+        sim_boot=200
+
+        # Verify data.
+        self.verify_estimate_par_err_compare_mc(min_algor=min_algor, constraints=constraints, sim_boot=sim_boot, data_path=data_path, resultsfile_mc='final_results_mc_strip')
 
 
     def test_tp02_data_to_ns_r1rho_2site(self, model=None):
