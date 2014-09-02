@@ -7364,6 +7364,7 @@ class Relax_disp(SystemTestCase):
 
         # Load the state.
         data_path = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'estimate_par_err'+sep+'tsmfk01'
+        #data_path = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'estimate_par_err'+sep+'tsmfk01'+sep+'BFGS'
         statefile ='final_state'
         #self.interpreter.state.load(state=statefile, dir=data_path, force=True)
 
