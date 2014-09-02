@@ -675,6 +675,15 @@ class Frame_order_analysis:
         format_float = "    %-20s %20.15f\n"
         format_vect = "    %-20s %20s\n"
 
+        # Pivot.
+        sys.stdout.write("\nPivot point:\n")
+        if hasattr(cdp, 'pivot_x'):
+            sys.stdout.write(format_float % ('x:', cdp.pivot_x))
+        if hasattr(cdp, 'pivot_y'):
+            sys.stdout.write(format_float % ('y:', cdp.pivot_y))
+        if hasattr(cdp, 'pivot_z'):
+            sys.stdout.write(format_float % ('z:', cdp.pivot_z))
+
         # Average position.
         if hasattr(cdp, 'ave_pos_x') or hasattr(cdp, 'ave_pos_alpha') or hasattr(cdp, 'ave_pos_beta') or hasattr(cdp, 'ave_pos_gamma'):
             sys.stdout.write("\nAverage moving domain position:\n")
