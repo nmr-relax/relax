@@ -28,7 +28,38 @@ If essential dependencies are missing, then an error message is printed and the 
 # Python modules.
 import platform
 from os import F_OK, access, sep
+from re import sub
 import sys
+
+
+def version_comparison(version1, version2):
+    """Compare software versions.
+
+    This will return:
+
+        - When version 1 is older, -1,
+        - When both versions are equal, 0,
+        - When version 1 is newer, 1.
+
+
+    @param version1:    The first version number.
+    @type version1:     str
+    @param version2:    The second version number.
+    @type version2:     str
+    @return:            The comparison result of the Python cmp() function applied to two lists of integers.  This will be one of [-1, 0, 1].
+    @type return:       int
+    """
+
+    # Strip out trailing zeros.
+    version1 = sub(r'(\.0+)*$','', version1)
+    version2 = sub(r'(\.0+)*$','', version2)
+
+    # Convert to a list of numbers.
+    version1 = [int(val) for val in version1.split('.')]
+    version2 = [int(val) for val in version2.split('.')]
+
+    # Return the comparison.
+    return cmp(version1, version2)
 
 
 # Essential packages.
@@ -54,8 +85,8 @@ except ImportError:
 # Minfx python package check.
 try:
     import minfx
-    ver = minfx.__version__.split('.')
-    if not (minfx.__version__ == 'trunk' or not (int(ver[0]) <= 1 and int(ver[1]) <= 0 and int(ver[2]) <= 9)):
+    min_version = '1.0.9'
+    if not minfx.__version__ == 'trunk' and version_comparison(minfx.__version__, min_version) == -1:
         sys.stderr.write("Version %s of the 'minfx' dependency is too old, minfx >= 1.0.9 is required.\n" % minfx.__version__)
         sys.exit()
 except ImportError:
