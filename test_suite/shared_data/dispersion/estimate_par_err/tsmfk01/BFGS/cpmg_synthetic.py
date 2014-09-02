@@ -490,7 +490,7 @@ else:
 ds.grid_results = save_res(cur_spins)
 
 ## Now do minimisation.
-minimise.execute(min_algor='BFGS', func_tol=ds.set_func_tol, max_iter=ds.set_max_iter, constraints=True, scaling=True, verbosity=ds.verbosity)
+minimise.execute(min_algor='simplex', func_tol=ds.set_func_tol, max_iter=ds.set_max_iter, constraints=True, scaling=True, verbosity=ds.verbosity)
 
 # Save results
 ds.min_results = save_res(cur_spins)
@@ -604,7 +604,7 @@ if ds.opendx:
 results.write(file='final_results', dir=ds.resdir, force=True)
 
 min_algor = 'BFGS'
-constraints = False
+constraints = True
 number = 2000
 
 monte_carlo.setup(number=number)
