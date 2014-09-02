@@ -250,7 +250,7 @@ def estimate_par_err(spin_id=None, epsrel=0.0, verbosity=1):
         # NM: Number of spectrometer frequencies.
         # NO: Maximum number of offsets.
         # ND: Number of dispersion(data) points.
-        NJ, NE, NS, NM, NO, ND = func_jacobian.shape
+        ND, NE, NS, NM, NO, NJ = func_jacobian.shape
 
         if NS != 1:
             raise RelaxError("The number of spins does not fit.")
@@ -268,7 +268,7 @@ def estimate_par_err(spin_id=None, epsrel=0.0, verbosity=1):
             cur_weights = weights[ei, si, mi, oi]
 
             # Extract every column/row from the first to last columns. Is this correct?
-            cur_jacobian = func_jacobian[0:NJ:1, ei, si, mi, oi]
+            cur_jacobian = func_jacobian[0:ND:1, ei, si, mi, oi]
 
             # Get the co-variance
             pcov = multifit_covar(J=cur_jacobian, weights=cur_weights)
