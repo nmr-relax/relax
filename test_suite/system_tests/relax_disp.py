@@ -75,7 +75,9 @@ class Relax_disp(SystemTestCase):
         if not dep_check.C_module_exp_fn:
             # The list of tests to skip.
             to_skip = [
+                "test_bug_atul_srivastava",
                 "test_bug_21344_sparse_time_spinlock_acquired_r1rho_fail_relax_disp",
+                "test_bug_9999_slow_r1rho_r2eff_error_with_mc",
                 "test_estimate_r2eff_err",
                 "test_estimate_r2eff_err_auto",
                 "test_estimate_r2eff_err_methods",
@@ -83,6 +85,7 @@ class Relax_disp(SystemTestCase):
                 "test_exp_fit",
                 "test_m61_exp_data_to_m61",
                 "test_r1rho_kjaergaard_auto",
+                "test_r1rho_kjaergaard_auto_check_graphs",
                 "test_r1rho_kjaergaard_man",
                 "test_r1rho_kjaergaard_missing_r1",
                 "test_value_write_calc_rotating_frame_params_auto_analysis"
