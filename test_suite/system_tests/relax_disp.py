@@ -7353,6 +7353,33 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin137F.chi2, 13.859423588071, 1)
 
 
+    def x_test_task_model_par_est_cr72_simple(self, model=None):
+        """ This is the test data for CR72 R20A=R20B data parameter estimation.
+
+        U{task #7824<https://gna.org/bugs/?21344>}.: Model parameter ERROR estimation from Jacobian and Co-variance matrix of dispersion models.
+        """
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state.
+        data_path = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'estimate_par_err'+sep+'cr72'
+
+        # After initial minimisation.
+        resultsfile = 'final_results'
+        self.interpreter.pipe.create(pipe_name='base pipe', pipe_type='relax_disp')
+        self.interpreter.results.read(file=resultsfile, dir=data_path)
+
+        # Set settings.
+        min_algor='simplex'
+        constraints=False
+        mc_number=200
+        sim_boot=200
+
+        # Verify data.
+        self.verify_estimate_par_err_compare_mc(min_algor=min_algor, constraints=constraints, sim_boot=sim_boot, data_path=data_path, resultsfile_mc='final_results_mc_strip')
+
+
     def test_task_model_par_est_tsmfk01(self, model=None):
         """ This is the test data for TSMFK01 data parameter estimation.
 
