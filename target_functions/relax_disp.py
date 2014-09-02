@@ -26,7 +26,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import all, arctan2, cos, dot, float64, int16, isfinite, max, multiply, ones, rollaxis, pi, sin, sum, version, zeros
+from numpy import all, arctan2, array, cos, divide, dot, float64, int16, isfinite, max, multiply, ones, rollaxis, pi, sin, sum, transpose, version, zeros
 from numpy.ma import masked_equal
 
 # relax module imports.
@@ -497,10 +497,18 @@ class Dispersion:
             # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
             self.M0_T = rollaxis(self.M0, 6, 5)
 
-        # Set up the model.
-        # Set Jacobian to None as standard.
-        self.jacobian = None
+        # Set up parameters related to the Jacobian.
+        # Set Jacobian function to None as standard.
+        self.func_jacobian = None
 
+        # Structure of data arrays for calculation in Jacobian function.
+        # This is for speed, since it minimises the creation of array structures for each function call.
+        # Creating new structures is a safety measure, where a minimisation could possible call both
+        # the function and the Jacobian, and overwrite each other. Even though they should be the same.
+        self.r20a_struct_jac =  deepcopy(self.r20a_struct)
+        self.dw_struct_jac = deepcopy(self.dw_struct)
+
+        # Set up the model.
         if model == MODEL_NOREX:
             # FIXME: Handle mixed experiment types here - probably by merging target functions.
             if self.exp_types[0] in EXP_TYPE_LIST_CPMG:
@@ -522,7 +530,7 @@ class Dispersion:
             self.func = self.func_IT99
         if model == MODEL_TSMFK01:
             self.func = self.func_TSMFK01
-            self.jacobian = self.func_TSMFK01_jacobian
+            self.func_jacobian = self.func_TSMFK01_jacobian
         if model == MODEL_B14:
             self.func = self.func_B14
         if model == MODEL_B14_FULL:
@@ -2193,40 +2201,33 @@ class Dispersion:
         k_AB = params[self.end_index[1]]
 
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
+        multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct_jac )
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
-        self.r20a_struct[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+        self.r20a_struct_jac[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
-        # Get the Jacobian.
-        jacobian = r2eff_TSMFK01_jacobian(r20a=self.r20a_struct, dw=self.dw_struct, k_AB=k_AB, tcp=self.tau_cpmg)
+        # Get the Jacobian as list of derivatives.
+        d_f_d_r20a , d_f_d_dw, d_f_d_k_AB = r2eff_TSMFK01_jacobian(r20a=self.r20a_struct_jac, dw=self.dw_struct_jac, k_AB=k_AB, tcp=self.tau_cpmg)
 
-        # Insert checks.
-        if True:
-            from lib.dispersion.tsmfk01 import d_f_d_r20a, d_f_d_dw, d_f_d_k_AB
-            from numpy import transpose, array, all
-            NJ, NE, NS, NM, NO, ND = jacobian.shape
-            for ei in range(NE):
-                for si in range(NS):
-                    for mi in range(NM):
-                        for oi in range(NO):
-                            print ei, si, mi, oi
-                            cur_jacobian = jacobian[0:NJ:1, ei, si, mi, oi]
+        # Convert it to normal representation, where each column is the derivative.
+        jacobian = transpose(array( [d_f_d_r20a, d_f_d_dw, d_f_d_k_AB] ) )
 
-                            r20a_t = self.r20a_struct[ei, si, mi, oi]
-                            dw_t = self.dw_struct[ei, si, mi, oi]
-                            k_AB_t = k_AB
-                            tcp_t = self.tau_cpmg[ei, si, mi, oi]
+        # If get_jacobian is set to True, calculate a scale back matrix for the Jacobian from rad/s to corresponding units in relax, and then store in class.
+        # This adds a overhead for the function.
+        if self.get_jacobian:
+                # Store in class, which will be extracted from function.
+                self.jacobian =  jacobian
 
-                            get_d_f_d_r20a = d_f_d_r20a(r20a=r20a_t, dw=dw_t, k_AB=k_AB_t, tcp=tcp_t)
-                            get_d_f_d_dw = d_f_d_dw(r20a=r20a_t, dw=dw_t, k_AB=k_AB_t, tcp=tcp_t)
-                            get_d_f_d_k_AB = d_f_d_k_AB(r20a=r20a_t, dw=dw_t, k_AB=k_AB_t, tcp=tcp_t)
+                # Define scaling matrix, which will convert the units.
+                d_f_d_r20a_scale = ones(d_f_d_r20a.shape)
 
-                            jac_t = transpose(array( [get_d_f_d_r20a , get_d_f_d_dw , get_d_f_d_k_AB] ) )
+                # Scale from rad/s to ppm.
+                d_f_d_dw_scale = divide(ones(d_f_d_dw.shape), self.frqs)
 
-                            #print cur_jacobian
-                            #print jac_t
-                            print jac_t == cur_jacobian
+                d_f_d_k_AB_scale = ones(d_f_d_k_AB.shape)
+
+                # Collect the scaling matrix.
+                self.jacobian_scale_mat =  transpose(array( [d_f_d_r20a_scale, d_f_d_dw_scale, d_f_d_k_AB_scale] ) )
 
         # Return the Jacobian.
         return jacobian
@@ -2255,3 +2256,23 @@ class Dispersion:
 
         return back_calc_return
 
+
+    def get_jacobian_scaled(self, params):
+        """Class function to return Jacobian in scaled units for relax.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The Jacobian matrix for the current model, scaled back to relax units.
+        @rtype:         list of numpy multidimensional array
+        """
+
+        # A flag which if True will initialise the calculation to scale back the jacobian from rad/s to units in relax and store it.
+        self.get_jacobian = True
+
+        # Make a single call, to store the scaled Jacobian.
+        self.func_jacobian(params)
+
+        # Now return list with first Jacobian, and scaling matrix to convert to units in relax.
+        # These have been stored in the Class.
+
+        return [self.jacobian, self.jacobian_scale_mat]
