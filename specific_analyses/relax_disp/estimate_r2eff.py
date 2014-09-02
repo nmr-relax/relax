@@ -191,7 +191,7 @@ def estimate_par_err(spin_id=None, epsrel=0.0, verbosity=1):
     check_model_type()
 
     # Define models with Jacobian.
-    jac_models = [MODEL_TSMFK01]
+    jac_models = [MODEL_CR72, MODEL_TSMFK01]
     #MODEL_CR72
 
     # Number of spectrometer fields.
