@@ -23,7 +23,7 @@
 
 # Python module imports.
 from os import F_OK, access, getcwd, path, sep
-from numpy import array, asarray, exp, median, inf, log, save, std, sum, zeros
+from numpy import array, asarray, dot, exp, median, inf, log, save, std, sum, zeros
 from minfx.generic import generic_minimise
 from random import gauss
 import re, math
@@ -7393,9 +7393,11 @@ class Relax_disp(SystemTestCase):
             # Generate spin string.
             spin_string = generate_spin_string(spin=cur_spin, mol_name=mol_name, res_num=resi, res_name=resn)
 
-            # Get the param_vector
-            param_vector = assemble_param_vector(spins=[cur_spin])
+            # Get the model.
             model = cur_spin.model
+
+            # Get the param_vector
+            x0 = assemble_param_vector(spins=[cur_spin])
 
             param_key_list = []
             for exp_type, frq, offset, ei, mi, oi, in loop_exp_frq_offset(return_indices=True):
@@ -7470,14 +7472,16 @@ class Relax_disp(SystemTestCase):
             sim_boot = 50
 
             # Set algorithm.
-            #min_algor = 'simplex'
+            min_algor = 'simplex'
             min_algor = 'BFGS'
             constraints = True
             if constraints:
                 min_options = ('%s'%(min_algor),)
                 min_algor = 'Log barrier'
                 #min_algor = 'Method of Multipliers'
+                # OBS! This is a list per spin, so extract.
                 scaling_matrix = assemble_scaling_matrix(scaling=True)
+                scaling_matrix = scaling_matrix[0]
 
                 # Collect spins
                 all_spin_ids = []
@@ -7487,10 +7491,12 @@ class Relax_disp(SystemTestCase):
                 spins = spin_ids_to_containers(all_spin_ids[:1])
 
                 # Get constraints
-                A, b = linear_constraints(spins=spins, scaling_matrix=scaling_matrix[0])
+                A, b = linear_constraints(spins=spins, scaling_matrix=scaling_matrix)
+
             else:
                 min_options = ()
                 A, b = None, None
+                scaling_matrix = None
 
             # Number of spectrometer fields.
             fields = [None]
@@ -7532,9 +7538,13 @@ class Relax_disp(SystemTestCase):
                         values_err[ei][si][mi][oi][j] = deepcopy(r2_error)
 
                 # Init the Dispersion clas with data, so we can call functions in it.
-                tfunc = Dispersion(model=model, num_params=model_param_num, num_spins=num_spins, num_frq=field_count, exp_types=exp_types, values=values_err, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, r1_fit=r1_fit)
-                results = generic_minimise(func=tfunc.func, dfunc=tfunc.dfunc, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, A=A, b=b, full_output=True, print_flag=0)
+                tfunc = Dispersion(model=model, num_params=model_param_num, num_spins=num_spins, num_frq=field_count, exp_types=exp_types, values=values_err, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, scaling_matrix=scaling_matrix, r1_fit=r1_fit)
+                results = generic_minimise(func=tfunc.func, dfunc=tfunc.dfunc, args=(), x0=x0, min_algor=min_algor, min_options=min_options, A=A, b=b, full_output=True, print_flag=1)
                 param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
+
+                # Scaling.
+                if scaling_matrix != None:
+                    param_vector = dot(scaling_matrix, param_vector)
 
                 # Get the parameters fitted in the model.
                 params_err = my_dic[spin_id]['params_err']
