@@ -36,7 +36,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from lib.errors import RelaxError
 from lib.io import extract_data, get_file_path
-from lib.spectrum.nmrpipe import show_apod_extract, show_apod_rmsd, show_apod_rmsd_to_file
+from lib.spectrum.nmrpipe import show_apod_extract, show_apod_rmsd, show_apod_rmsd_dir_to_files, show_apod_rmsd_to_file
 from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
 from pipe_control.minimise import assemble_scaling_matrix
 from specific_analyses.relax_disp.checks import check_missing_r1
@@ -6753,6 +6753,27 @@ class Relax_disp(SystemTestCase):
 
         # Assert.
         self.assertEqual(rmsd, 8583.41)
+
+
+    def test_show_apod_rmsd_dir_to_files(self):
+        """Test searching for all NMRPipe spectrum files in dir, call showApod, and write to files."""
+
+        # The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'+sep+'cpmg_disp_sod1d90a_060518'+sep+'cpmg_disp_sod1d90a_060518_normal.fid'+sep+'ft2_data'
+
+        # Call function, and get all file names.
+        wfile_paths = show_apod_rmsd_dir_to_files(file_ext='.ft2', dir=data_path, outdir=self.tmpdir)
+
+        # Loop over file_paths.
+        for wfile_path in wfile_paths:
+            # Open the file.
+            get_data = extract_data(file=wfile_path)
+
+            # Extract line 0, column 0.
+            test = float(get_data[0][0])
+
+            # Assert.
+            self.assertEqual(test, 8583.41)
 
 
     def test_show_apod_rmsd_to_file(self):
