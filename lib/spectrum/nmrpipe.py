@@ -223,3 +223,33 @@ def show_apod_extract(file_name=None, dir=None, path_to_command='showApod'):
 
     else:
         raise RelaxError("python module 'subprocess' not found.  Cannot call showApod.")
+
+
+def show_apod_rmsd(file_name=None, dir=None, path_to_command='showApod'):
+    """Extract showApod 'Noise Std Dev' for spectrum fourier transformed with NMRPipe.
+
+    @keyword file:              The filename of the NMRPipe fourier transformed file.
+    @type file:                 str
+    @keyword dir:               The directory where the file is located.
+    @type dir:                  str
+    @keyword path_to_command:   If showApod not in PATH, then specify absolute path as: /path/to/showApod
+    @type dir:                  str
+    @return:                    The Noise Std Dev from line: 'REMARK Automated Noise Std Dev in Processed Data'
+    @rtype:                     float
+    """
+
+    # Call extract function.
+    show_apod_lines = show_apod_extract(file_name=file_name, dir=dir, path_to_command=path_to_command)
+
+    # Loop over the lines
+    found = False
+    for line in show_apod_lines:
+        # Look for line with this remark.
+        if line[:49] == 'REMARK Automated Noise Std Dev in Processed Data:':
+            # The rest of the line is the rmsd.
+            rmsd = float(line[49:].split()[0])
+            return rmsd
+
+    if not found:
+        raise RelaxError("Could not find the line: 'REMARK Automated Noise Std Dev in Processed Data:', from the output of showApod.")
+
