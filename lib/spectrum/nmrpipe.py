@@ -25,12 +25,15 @@
 
 # Python module imports.
 import re
+from glob import glob
+from os import sep
+from os.path import abspath
 from warnings import warn
 
 # relax module imports.
 import dep_check
 from lib.errors import RelaxError
-from lib.io import file_root, get_file_path, open_write_file, write_data
+from lib.io import file_root, get_file_path, open_write_file, sort_filenames, write_data
 from lib.warnings import RelaxWarning
 
 # Check subprocess is available.
@@ -251,6 +254,7 @@ def show_apod_rmsd(file_name=None, dir=None, path_to_command='showApod'):
             return rmsd
 
     if not found:
+        print(show_apod_lines)
         raise RelaxError("Could not find the line: 'REMARK Automated Noise Std Dev in Processed Data:', from the output of showApod.")
 
 
@@ -304,3 +308,43 @@ def show_apod_rmsd_to_file(file_name=None, dir=None, path_to_command='showApod',
     # Return path to file.
     return wfile_path
 
+
+def show_apod_rmsd_dir_to_files(file_ext='.ft2', dir=None, path_to_command='showApod', outdir=None, force=False):
+    """Searches 'dir' for files with extension 'file_ext'.  Extract showApod 'Noise Std Dev' from showApod, and write to file with same filename and ending '.rmsd'.
+
+    @keyword file_ext:          The extension for files which is NMRPipe fourier transformed file.
+    @type file_ext:             str
+    @keyword dir:               The directory where the files is located.
+    @type dir:                  str
+    @keyword path_to_command:   If showApod not in PATH, then specify absolute path as: /path/to/showApod
+    @type dir:                  str
+    @keyword outdir:            The directory where to write the files.  If 'None', then write in same directory.
+    @type outdir:               str
+    @param force:               Boolean argument which if True causes the file to be overwritten if it already exists.
+    @type force:                bool
+    @return:                    Write the 'Noise Std Dev' from showApod to a file with same file filename, with ending '.rmsd'.
+    @rtype:                     list of filepaths
+    """
+
+    # First get correct dir, no matter if dir is specified with or without system folder separator.
+    dir_files = abspath(dir)
+
+    # Define glop pattern.
+    glob_pat = '*%s' % file_ext
+
+    # Get a list of files which math the file extension.
+    file_list = glob(dir_files + sep + glob_pat)
+
+    # Now sort into Alphanumeric order.
+    file_list_sorted = sort_filenames(filenames=file_list, rev=False)
+
+    # Loop over the files.
+    rmsd_files = []
+    for ft_file in file_list_sorted:
+        # Write rmsd to file, and get file path to file.
+        rmsd_file = show_apod_rmsd_to_file(file_name=ft_file, path_to_command=path_to_command, outdir=outdir, force=force)
+
+        # Collect file path.
+        rmsd_files.append(rmsd_file)
+
+    return rmsd_files
