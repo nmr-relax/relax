@@ -30,7 +30,7 @@ from warnings import warn
 # relax module imports.
 import dep_check
 from lib.errors import RelaxError
-from lib.io import get_file_path
+from lib.io import file_root, get_file_path, open_write_file, write_data
 from lib.warnings import RelaxWarning
 
 # Check subprocess is available.
@@ -201,7 +201,7 @@ def show_apod_extract(file_name=None, dir=None, path_to_command='showApod'):
     @keyword dir:               The directory where the file is located.
     @type dir:                  str
     @keyword path_to_command:   If showApod not in PATH, then specify absolute path as: /path/to/showApod
-    @type dir:                  str
+    @type path_to_command:      str
     @return:                    The output from showApod as list of lines.
     @rtype:                     list of lines
     """
@@ -233,7 +233,7 @@ def show_apod_rmsd(file_name=None, dir=None, path_to_command='showApod'):
     @keyword dir:               The directory where the file is located.
     @type dir:                  str
     @keyword path_to_command:   If showApod not in PATH, then specify absolute path as: /path/to/showApod
-    @type dir:                  str
+    @type path_to_command:      str
     @return:                    The Noise Std Dev from line: 'REMARK Automated Noise Std Dev in Processed Data'
     @rtype:                     float
     """
@@ -252,4 +252,55 @@ def show_apod_rmsd(file_name=None, dir=None, path_to_command='showApod'):
 
     if not found:
         raise RelaxError("Could not find the line: 'REMARK Automated Noise Std Dev in Processed Data:', from the output of showApod.")
+
+
+def show_apod_rmsd_to_file(file_name=None, dir=None, path_to_command='showApod', outdir=None, force=False):
+    """Extract showApod 'Noise Std Dev' from showApod, and write to file with same filename and ending '.rmsd'
+
+    @keyword file:              The filename of the NMRPipe fourier transformed file.
+    @type file:                 str
+    @keyword dir:               The directory where the file is located.
+    @type dir:                  str
+    @keyword path_to_command:   If showApod not in PATH, then specify absolute path as: /path/to/showApod
+    @type dir:                  str
+    @keyword outdir:            The directory where to write the file.  If 'None', then write in same directory.
+    @type outdir:               str
+    @param force:               Boolean argument which if True causes the file to be overwritten if it already exists.
+    @type force:                bool
+    @return:                    Write the 'Noise Std Dev' from showApod to a file with same file filename, with ending '.rmsd'.
+    @rtype:                     filepath
+    """
+
+    # Call extract function.
+    apod_rmsd = show_apod_rmsd(file_name=file_name, dir=dir, path_to_command=path_to_command)
+
+    # Get the filename striped of extension details.
+    file_name_root = file_root(file_name)
+
+    # Define extension.
+    extension = ".rmsd"
+
+    # Define file name for writing.
+    file_name_out = file_name_root + extension
+
+    # Define folder to write to.
+    if outdir == None:
+        write_outdir = dir
+    else:
+        write_outdir = outdir
+
+    # Open file for writing,
+    wfile, wfile_path = open_write_file(file_name=file_name_out, dir=write_outdir, force=force, verbosity=1, return_path=True)
+
+    # Write to file.
+    out_write_data = [['%s'%apod_rmsd]]
+
+    # Write data
+    write_data(out=wfile, headings=None, data=out_write_data, sep=None)
+
+    # Close file.
+    wfile.close()
+
+    # Return path to file.
+    return wfile_path
 
