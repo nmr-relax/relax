@@ -36,6 +36,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from lib.errors import RelaxError
 from lib.io import get_file_path
+from lib.spectrum.nmrpipe import show_apod_extract
 from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
 from pipe_control.minimise import assemble_scaling_matrix
 from specific_analyses.relax_disp.checks import check_missing_r1
@@ -105,6 +106,17 @@ class Relax_disp(SystemTestCase):
             # Store in the status object.
             if methodName in to_skip:
                 status.skipped_tests.append([methodName, 'scipy.optimize.leastsq module', self._skip_type])
+
+        # If not NMRPipe showApod program in PATH.
+        if not dep_check.showApod_module:
+            # The list of tests to skip.
+            to_skip = [
+                "test_show_apod_extract"
+            ]
+
+            # Store in the status object.
+            if methodName in to_skip:
+                status.skipped_tests.append([methodName, 'NMRPipe showApod program', self._skip_type])
 
 
     def setUp(self):
@@ -6691,6 +6703,38 @@ class Relax_disp(SystemTestCase):
 
         # Run the analysis.
         relax_disp.Relax_disp(pipe_name=pipe_name_r2eff, results_dir=ds.tmpdir, models=[MODEL], grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, set_grid_r20=True)
+
+
+    def test_show_apod_extract(self):
+        """Test getting the spectrum noise for spectrum fourier transformed with NMRPipe, and tool showApod."""
+
+        # The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'+sep+'cpmg_disp_sod1d90a_060518'+sep+'cpmg_disp_sod1d90a_060518_normal.fid'+sep+'ft2_data'
+
+        # Define file name.
+        file_name = '128_0_FT.ft2'
+
+        # Call function.
+        get_output = show_apod_extract(file_name=file_name, dir=data_path)
+
+        # Define how output should look like
+        show_apod_ver = [
+            'REMARK Effect of Processing on Peak Parameters and Noise for %s'%(data_path+sep+file_name),
+            'REMARK Automated Noise Std Dev in Processed Data: 8583.41',
+            'REMARK Noise Std Dev Before Processing H1 and N15: 60.6558',
+            '',
+            'VARS   AXIS LABEL  TSIZE FSIZE LW_ADJ LW_FINAL HI_FACTOR VOL_FACTOR SIGMA_FACTOR',
+            'FORMAT %s   %-8s   %4d   %4d   %7.4f  %7.4f    %.4e      %.4e       %.4e',
+            '',
+            '       X    H1       800  2048 0.8107 3.7310   4.9903e-03 9.8043e-04 5.2684e-02',
+            '       Y    N15      128   256 0.7303 3.0331   3.1260e-02 7.8434e-03 1.3413e-01']
+
+        for i, line in enumerate(get_output):
+            line_ver = show_apod_ver[i]
+
+            print(line)
+            # Make the string test
+            self.assertEqual(line, line_ver)
 
 
     def test_sod1wt_t25_bug_21954_order_error_analysis(self):
