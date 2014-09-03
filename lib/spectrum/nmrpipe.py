@@ -28,8 +28,14 @@ import re
 from warnings import warn
 
 # relax module imports.
+import dep_check
 from lib.errors import RelaxError
+from lib.io import get_file_path
 from lib.warnings import RelaxWarning
+
+# Check subprocess is available.
+if dep_check.subprocess_module:
+    import subprocess
 
 
 def read_seriestab(peak_list=None, file_data=None, int_col=None):
@@ -185,3 +191,35 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
 
         # Add the assignment to the peak list object.
         peak_list.add(res_nums=[res_num1, res_num2], res_names=[res_name1, res_name2], spin_names=[name1, name2], shifts=[w1, w2], intensity=intensities, intensity_name=spectra)
+
+
+def show_apod_extract(file_name=None, dir=None, path_to_command='showApod'):
+    """Extract showApod information for spectrum fourier transformed with NMRPipe.
+
+    @keyword file:              The filename of the NMRPipe fourier transformed file.
+    @type file:                 str
+    @keyword dir:               The directory where the file is located.
+    @type dir:                  str
+    @keyword path_to_command:   If showApod not in PATH, then specify absolute path as: /path/to/showApod
+    @type dir:                  str
+    @return:                    The output from showApod as list of lines.
+    @rtype:                     list of lines
+    """
+
+    # Get the file path.
+    file_path = get_file_path(file_name=file_name, dir=dir)
+
+    if dep_check.subprocess_module:
+        # Call function.
+        Temp=subprocess.Popen([path_to_command, file_path], stdout=subprocess.PIPE)
+
+        # Communicate with program, and get outout and exitcode.
+        (output, errput) = Temp.communicate()
+
+        # Wait for finish and get return code.
+        return_value = Temp.wait()
+
+        return output.splitlines()
+
+    else:
+        raise RelaxError("python module 'subprocess' not found.  Cannot call showApod.")
