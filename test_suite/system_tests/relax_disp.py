@@ -35,8 +35,8 @@ from auto_analyses import relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from lib.errors import RelaxError
-from lib.io import get_file_path
-from lib.spectrum.nmrpipe import show_apod_extract, show_apod_rmsd
+from lib.io import extract_data, get_file_path
+from lib.spectrum.nmrpipe import show_apod_extract, show_apod_rmsd, show_apod_rmsd_to_file
 from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
 from pipe_control.minimise import assemble_scaling_matrix
 from specific_analyses.relax_disp.checks import check_missing_r1
@@ -112,7 +112,8 @@ class Relax_disp(SystemTestCase):
             # The list of tests to skip.
             to_skip = [
                 "test_show_apod_extract",
-                "test_show_apod_rmsd"
+                "test_show_apod_rmsd",
+                "test_show_apod_rmsd_to_file"
             ]
 
             # Store in the status object.
@@ -6752,6 +6753,28 @@ class Relax_disp(SystemTestCase):
 
         # Assert.
         self.assertEqual(rmsd, 8583.41)
+
+
+    def test_show_apod_rmsd_to_file(self):
+        """Test getting the spectrum noise for spectrum fourier transformed with NMRPipe, and tool showApod, and write to file."""
+
+        # The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'+sep+'cpmg_disp_sod1d90a_060518'+sep+'cpmg_disp_sod1d90a_060518_normal.fid'+sep+'ft2_data'
+
+        # Define file name.
+        file_name = '128_0_FT.ft2'
+
+        # Call function, and get file name.
+        wfile_path = show_apod_rmsd_to_file(file_name=file_name, dir=data_path, outdir=self.tmpdir)
+
+        # Open the file.
+        get_data = extract_data(file=wfile_path)
+
+        # Extract line 0, column 0.
+        test = float(get_data[0][0])
+
+        # Assert.
+        self.assertEqual(test, 8583.41)
 
 
     def test_sod1wt_t25_bug_21954_order_error_analysis(self):
