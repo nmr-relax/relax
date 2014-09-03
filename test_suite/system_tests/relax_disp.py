@@ -32,6 +32,7 @@ from tempfile import mkdtemp, NamedTemporaryFile
 
 # relax module imports.
 from auto_analyses import relax_disp
+from auto_analyses.relax_disp_repeat_cpmg import DIC_KEY_FORMAT, Relax_disp_rep
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from lib.errors import RelaxError
@@ -5871,6 +5872,76 @@ class Relax_disp(SystemTestCase):
 
         # Check the chi-squared value.
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].chi2, 0.030959849811015544, 3)
+
+
+    def test_repeat_cpmg(self):
+        """Test the protocol for repeated dispersion analysis. The class: relax_disp_repeat_cpmg.
+
+        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
+        """
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Define base path to files.
+        base_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'
+
+        # Setup dictionary with settings.
+        sdic = {}
+        
+        # Define method to analyse for
+        method = 'FT'
+        sdic['method'] = method
+        
+        # Spectrometer frqs in list.
+        sfrq_1 = 499.86214
+        sfrq_2 = 599.8908587
+        sfrqs = [sfrq_1, sfrq_2]
+        
+        # Store in dictionary.
+        sdic['sfrqs'] = sfrqs
+        
+        # Store unit for frq.
+        sdic['sfrq_unit'] = 'MHz'
+        
+        # Store exp_type
+        sdic['exp_type'] = 'SQ CPMG'
+        
+        # Initialize frq dics.
+        for frq in sfrqs:
+            key = DIC_KEY_FORMAT % (frq)
+            sdic[key] = {}
+        
+        # Set keys.
+        e_1 = DIC_KEY_FORMAT % (sfrq_1)
+        e_2 = DIC_KEY_FORMAT % (sfrq_2)
+        
+        # Store time T2.
+        sdic[e_1]['time_T2'] = 0.04
+        sdic[e_2]['time_T2'] = 0.06
+        
+        # Set ncyc.
+        ncyc_1 = array([20, 0, 16, 10, 36, 2, 12, 4, 22, 18, 40, 14, 26, 8, 32, 24, 6, 28, 0])
+        ncyc_2 = array([28, 0, 4, 32, 60, 2, 10, 16, 8, 20, 52, 18, 40, 6, 12, 0, 24, 14, 22])
+
+        # Calculate the cpmg_frq and store.
+        sdic[e_1]['cpmg_frq'] = ncyc_1 / sdic[e_1]['time_T2'] 
+        sdic[e_2]['cpmg_frq'] = ncyc_2 / sdic[e_2]['time_T2']
+        
+        # Define peak lists.
+        peaks_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'analysis_FT' +sep+ 'ser_files' +sep+ sdic['method']
+        peaks_folder_2 = base_path +sep+ 'cpmg_disp_sod1d90a_060521' +sep+ 'cpmg_disp_sod1d90a_060521_normal.fid' +sep+ 'analysis_FT' +sep+ 'ser_files' +sep+ sdic['method'] 
+        sdic[e_1]['peaks_folder'] = peaks_folder_1
+        sdic[e_2]['peaks_folder'] = peaks_folder_2
+        
+        # Define folder to all rmsd files.
+        rmsd_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'ft2_data'
+        rmsd_folder_2 = base_path +sep+ 'cpmg_disp_sod1d90a_060521' +sep+ 'cpmg_disp_sod1d90a_060521_normal.fid' +sep+ 'ft2_data'
+        sdic[e_1]['rmsd_folder'] = rmsd_folder_1 
+        sdic[e_2]['rmsd_folder'] = rmsd_folder_2
+        
+        # Setup class with data.
+        RDR =  Relax_disp_rep(sdic)
 
 
     def test_r1rho_kjaergaard_auto(self):
