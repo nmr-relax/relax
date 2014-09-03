@@ -332,7 +332,7 @@ if make_plots:
             #ax1.hist(i0_array_sim, bins=100, histtype='stepfilled', normed=False, color='b', alpha=0.9, label='%i MC'%sim_boot)
             ax1.hist(i0_array_sim, bins=100, histtype='stepfilled', normed=True, color='b', alpha=0.9, label='%i MC'%sim_boot)
             ax1.hist(gauss_ref_sim, bins=100, histtype='step', normed=True, color='r', alpha=0.5, label='MC gauss')
-            ax1.set_xlim([900.0, 2100.])
+            ax1.set_xlim([900.0, 1100.])
             ax1.set_xlabel('Intensity')
             ax1.legend(loc='upper left', shadow=True, prop = fontP)
 

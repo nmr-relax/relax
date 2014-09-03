@@ -328,6 +328,41 @@ class Spectra_list(Base_list):
         uf_store['spectrum.delete'](spectrum_id=id)
 
 
+    def action_spectrum_error_analysis(self, event):
+        """Launch the spectrum.error_analysis user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The first item selected.
+        item = self.element.GetFirstSelected()
+
+        # Loop over the additional selections.
+        ids = []
+        while 1:
+            # No selection.
+            if item == -1:
+                break
+
+            # Add the ID string to the list.
+            ids.append(gui_to_str(self.element.GetItemText(item)))
+
+            # Get the next selected item.
+            item = self.element.GetNextSelected(item)
+
+        # No selected items.
+        if not len(ids):
+            ids = None
+
+        # Launch the dialog.
+        uf_store['spectrum.error_analysis'](subset=ids, wx_wizard_modal=True)
+
+        # Display the relax controller, and go to the end of the log window.
+        self.gui.show_controller(None)
+        self.gui.controller.log_panel.on_goto_end(None)
+
+
     def action_spectrum_integration_points(self, event):
         """Launch the spectrum.integration_points user function.
 
@@ -703,6 +738,7 @@ class Spectra_list(Base_list):
 
         # Button set up.
         self.button_placement = 'top'
+        self.button_size = (170, 40)
         self.button_info = [
             {
                 'object': 'button_add',
@@ -716,6 +752,12 @@ class Spectra_list(Base_list):
                 'icon': fetch_icon('oxygen.actions.list-remove', "22x22"),
                 'method': self.action_spectrum_delete,
                 'tooltip': "Delete loaded relaxation data from the relax data store."
+            }, {
+                'object': 'button_error_analysis',
+                'label': ' Error analysis',
+                'icon': fetch_icon('oxygen.categories.applications-education', "22x22"),
+                'method': self.action_spectrum_error_analysis,
+                'tooltip': "Perform a peak intensity error analysis on the currently loaded data or data subsets.  Select a subset of the spectra below to perform the error analysis only on this subset."
             }
         ]
 
