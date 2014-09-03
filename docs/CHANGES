@@ -8,6 +8,118 @@ http://svn.gna.org/svn/relax/tags/3.3.0
 
 
     Changes:
+        * MS Windows fixes to allow relax to run again.  The code for eliminating the GNU readline ^[[?1034h escape code emission on Linux systems fails on Windows as the 'TERM' environmental variable does not exist in os.environ.
+        * Better tab completion support in the prompt UI for Mac OS X users.  For some Python versions, the Mac supplied libedit library is used rather than GNU readline.  But this library uses a completely different language and hence tab completion was non-functional on these systems.  The library difference is now detected and the correct language sent into libedit to activate tab completion.
+        * Improved model handling for the internal structural object.  The set_model() method has been added to allow either a model number to be set to the first unnumbered model (in preparation for adding new models) or to allow models to be renumbered. The logic of the add_model() has also been changed.  Rather than looping over all atoms of the first model and copying them, which does not work due to the model validity checks, the entire MolList (molecule list) data structure is copied using copy.deepcopy() to make a perfect copy of the structural data.  The ModelList.add_item() method has also been modified to return the newly added or numbered model. This is used by the add_model() structural object method to obtain the model object.
+        * Updated the Mac OS X framework setting up instruction document.  New sections have been added for the nose and matplotlib Python packages, as nose is needed for the numpy and scipy testing frameworks and matplotlib might be a useful optional dependency in the future.  The mpy4py section has been updated to avoid the non-framework fink version of mpicc which cannot produce universal binaries.  A few other parts also have small edits.
+        * Removed the Freecode section from the release checklist as Freecode has been permanently shut down.  The old relax links are still there (http://freecode.com/projects/nmr-relax), but Freecode is dead (http://freecode.com/about).
+        * Fix for the internal structural object MolContainer.last_residue() method.  This can now operate when no structural information is present, returning 0 instead of resulting in an IndeError.
+        * Updated the script for finding unused imports in the relax source code.  Now the file name is only printed for Python files which have unused imports.
+        * Removal of many unused imports throughout the relax codebase.
+        * Completely removed all mentions of Freecode from the release document.  The old relax links are still there (http://freecode.com/projects/nmr-relax), but Freecode is dead (http://freecode.com/about).
+        * Fix for the relaxation dispersion analysis Monte Carlo simulation printouts on clusters.  The multi-processor code was calling the print() function from the Slave_command.run() method, however this runs on the slave processor.  This has been shifted to the Results_command.run() method which runs on the master once the results have been returned via the Results_command.  Now the printout of the simulation number and cluster ID will be visible when running via OpenMPI on a cluster.
+        * Updated the minfx version in the release checklist document to 1.0.8.  This version has not been released yet, but it will include important fixes and additions for constrained parallelised grid searches.
+        * Fix for a broken link in the development chapter of the relax manual.
+        * Fixes for dead hyperlinks in the relaxation dispersion chapter of the relax manual.  The B14 model links to http://www.nmr-relax.com/api/3.2/lib.dispersion.b14-module.html were broken as the B in B14 was capitalised.
+        * Sent in the verbosity argument value to the minfx.grid.grid_split() function.  The minfx function in the next release (1.0.8) will now be more verbose, so this will help with user feedback when running the model-free analysis on a cluster or multi-core system using MPI.
+        * Created the time user function.  This is just a shortcut for printing out the output of the time.asctime() function.
+        * The time user function now uses the chronometer Oxygen icon in the GUI.
+        * Added the missing timing module to the relax library package __all__ list.
+        * Removed the line wrapping in the epydoc parameter section of the optimisation function docstrings.  This is for the pipe_control.minimise module.
+        * More docstring line wrapping removal from pipe_control.minimise.
+        * Bug fix for the parameter units descriptions.  This only affects a few rare parameters.  The specific analysis API parameter object units() method was incorrectly checking if the units value is a function - it was checking the parameter conversion factor instead.
+        * Modified the align_tensor.init user function so that the parameters are now optional.  This allows alignment tensors to be initialised without specifying the parameter values for that tensor.
+        * Initialized merge tracking via "svnmerge" with revisions "1-23718" from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/disp_spin_speed
+        * Merged revisions 23722-23742 via svnmerge from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/disp_spin_speed
+        * Merged revisions 23745-23752,23754-23758 via svnmerge from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/disp_spin_speed
+        * Merged revisions 23760-23770,23787-23789,23791-23806,23813-23855 via svnmerge from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/disp_spin_speed
+        * Merged revisions 23864-23877,23880,23888-23934,23937-23942,23946 via svnmerge from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/disp_spin_speed
+        * Merged revisions 23949-23968,23986-24007,24010-24011,24013-24014 via svnmerge from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/disp_spin_speed
+        * Merged revisions 24018-24019,24022-24023,24026-24027,24032-24036 via svnmerge from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/disp_spin_speed
+        * Merged revisions 24038-24039,24041-24042,24053-24057 via svnmerge from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/disp_spin_speed
+        * Merged revisions 24059-24082,24084-24089 via svnmerge from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/disp_spin_speed
+        * Merged revisions 24091-24137,24140-24250,24252-24256,24258-24261 via svnmerge from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/disp_spin_speed
+        * Merged revisions 24265-24266,24270-24278,24280-24283,24285-24308,24315,24319-24320 via svnmerge from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/disp_spin_speed
+        * Merged revisions 24323-24326,24335-24343,24347-24351,24353,24357,24360 via svnmerge from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/disp_spin_speed
+        * Merged revisions 24362-24364,24510,24612-24615,24619-24637,24641-24648,24650 via svnmerge from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/disp_spin_speed
+        * Removed the svnmerge.py intergration properties for the disp_spin_speed branch from trunk.
+        * Updated the minfx version number to 1.0.9 in the release checklist document.  This as of yet unreleased version contains an important fix for parallelised grid searches when the number of increments is set to one (i.e. a preset parameter).
+        * Bug fix for the lib.arg_check.is_num_tuple() function.  There was a typo in two of the RelaxError objects so that non-existent errors were being raised.
+        * Fix for the _prompt.test_align_tensor.Test_align_tensor.test_init_argfail_params unit test.  As the alignment tensor can now be initialised as None, the None value can be accepted and a different RelaxError is raised when the params argument is incorrectly supplied.
+        * Initialized merge tracking via "svnmerge" with revisions "1-24540" from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/zooming_grid_search
+        * Merged revisions 24542,24545-24548,24552-24559,24564-24584,24587-24595,24597-24611,24616-24618,24640,24649,24671,24674-24678,24680-24683,24688-24701 via svnmerge from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/zooming_grid_search
+        * Removed merge tracking for "svnmerge" for  svn+ssh://bugman@svn.gna.org/svn/relax/branches/zooming_grid_search
+        * Fixes for some relaxation dispersion system tests not converted to the new optimisation user functions.  Minimisation is now via the minimise.execute user function, which used to be the minimise user function.
+        * Added a 128x128 pixel version of the zoom-in Oxygen icon.  This icon size is not available in the repository located at svn://anonsvn.kde.org/home/kde/trunk/kdesupport/oxygen-icons.  Therefore the scalable/actions/small/48x48/zoom-in.svgz file was copied and then exported into a 128x128 PNG, and finally converted to a Gzipped EPS file for the relax manual.
+        * The minimise.grid_search user function incs argument can no longer be a list with None elements.  This essentially reverts r11498.  The new skip_preset argument together with a grid increment value of 1 has the same effect of skipping the parameter in the grid search.
+        * Reverted r24718 as this was rubbish.  The command used was: svn merge -r24718:24717 .
+        * The frame order grid search bound functions can now handle increment values of None or 1.  These cases are now caught and the full lower or upper bound is now returned.
+        * Removed some debugging printouts.
+        * More even spacing for the frame order grid search.  This is for the parameters which exclude end points in the grid search, as these excluded points do not decrease the number of increments searched over.
+        * Even more even spacing for the frame order grid search.  This is for the parameters which exclude end points in the grid search, as these excluded points do not decrease the number of increments searched over.  This fixes the algorithm for all of the bounds.
+        * Improved the logic for skipping parameters in the grid search.  The logic is also fully explained in the user function documentation.
+        * Clean up of the dep_check module - all imported and unused modules are now deleted as well.  This cleans up the module namespace of the unused imports.
+        * Removal of all unused imports.  These were identified using the devel_scripts/find_unused_imports.py script.
+        * Reverted r24024, the deletion of the Relax_disp.test_hansen_cpmg_data_to_lm63_3site system test.  See the thread at http://thread.gmane.org/gmane.science.nmr.relax.scm/21774/focus=6300 for the request that this deletion be reverted.  This is the only system test for the 'LM63 3-site' dispersion model using real data.  Having this test allows for better coverage of the code.  The command used was: svn merge -r24024:r24023 .
+        * Updated the Relax_disp.test_hansen_cpmg_data_to_lm63_3site system test.  This is for the changes to the optimisation user functions.
+        * Updated the checks in the Relax_disp.test_hansen_cpmg_data_to_lm63_3site system test.  The values were incorrect due to a bug in relax and a non-optimal minfx setting (https://gna.org/bugs/?22210 and https://gna.org/bugs/?22211).
+        * Fix for a fatal bug for the prompt UI on MS Windows.  The improvements in the tab completion support for the prompt UI on Mac OS X systems (r24421) was fatal for certain Python readline modules on MS Windows, as readline.__doc__ can be None.  This is now correctly handled.
+        * Reverted r24736 as this was fatal for the relax information printout - the modules are required.  The command used was: svn merge -r24736:r24735 .
+        * Decreased the precision the Relax_disp.test_hansen_cpmg_data_to_lm63_3site system test.  This is to allow the test to pass on Mac OS X systems.
+        * Unit test fix for Mac OS X.  This is for the test_ns_mmq_2site_korzhnev_2005_15n_dq_data_complex128 test of test_suite.unit_tests._lib._dispersion.test_matrix_exponential.Test_matrix_exponential.  The tests no longer check for exact values, but use the assertAlmostEqual() calls instead.
+        * Deleted the ancient optimisation_testing.py script, as this no longer works and is of no use.
+        * Some changes as identified by the Python 2 to 3 upgrade script /usr/bin/2to3.
+        * Some Python 3 fixes as identified by the 2to3 script.
+        * Implemented the pipe_control.mol_res_spin.format_info_full() function.  This follows from http://thread.gmane.org/gmane.science.nmr.relax.scm/22522/focus=6534.  This is a verbose representation of the spin information which can be used for presenting to the user.  Functions for shorter string versions will also be of great use, for example as described by Troels at http://thread.gmane.org/gmane.science.nmr.relax.scm/22522/focus=6535.
+        * Fix for the pipe_control.mol_res_spin.format_info_full() function, it now actually returns the string.
+        * Created a unit test for the pipe_control.mol_res_spin.format_info_full() function.  This comprehensive test covers all input argument combinations.
+        * Changed the behaviour of the pipe_control.structure.mass.pipe_centre_of_mass() function.  This function returns the CoM and optionally the mass of the structural data loaded into the current data pipe.  However it was matching the structural data to the molecule-residue-spin data structure and skipping spins that were deselected.  This illogical deselection part has been eliminated, as spins can be deselected for various analysis purposes and this should not change the CoM.  The deletion also significantly speeds up the function.
+        * Grace string fixes for the alignment tensor parameters defined in the base parameter_object module.  This is essentially for allowing relax to run using Python 3.  All Grace '\' characters need to be escaped as '\\' in Python strings.
+        * Another Python 3 fix - the string.split function no longer exists, it is now only a string method.
+        * Fix for replacing reduce function.  This is a Python 3 fix, where this function has been removed.  This was reported as a necessity in thread: http://thread.gmane.org/gmane.science.nmr.relax.devel/6544
+        * Added a minfx minimum version check to the dep_check module.  This is to avoid problems such as that reported at bug #22408 (http://gna.org/bugs/?22408).
+        * Added Andy Baldwin's 2013 R1rho relaxation dispersion model to the manual.  The model has been added to the table of dispersion models and to the dispersion software comparison table of the dispersion chapter of the manual.  The citation has also been added to the bibliography.
+        * The B13 dispersion model is now properly added to the software comparison table.
+        * Added the 'B13' and 'B13 full' dispersion models to the to do section of the manual.
+        * Standardisation of the author names in the bibliography of the relax manual.
+        * Added links for the B13 model to https://gna.org/support/?3155 in the manual.
+        * Expansion of the 'to do' section of the dispersion chapter of the manual.
+        * Editing of the 'to do' section of the dispersion chapter of the manual.
+        * Initialized merge tracking via "svnmerge" with revisions "1-24672" from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/r1rho_plotting
+        * Merged revisions 24744-24750,24758-24777,24780-24782,24785-24786,24789-24795,24811-24813,24824-24831,24844-24849,24851-24856,24858-24865,24868-24872,24876-24879,24884-24887,24889,24891 via svnmerge from  svn+ssh://bugman@svn.gna.org/svn/relax/branches/r1rho_plotting
+        * Removed merge tracking for "svnmerge" for  svn+ssh://bugman@svn.gna.org/svn/relax/branches/r1rho_plotting
+        * Removed empty directories, which was not used.
+        * Created the Bruker.test_bug_22411_T1_read_fail system test.  This is to catch bug #22411 (https://gna.org/bugs/?22411) as reported by Olena Dobrovolska.
+        * Fix for bug #22411 (https://gna.org/bugs/?22411), the failure in loading a Bruker DC T1 data file.  The problem was that there was an empty line with spaces.  The logic for skipping empty lines could not handle lines with just whitespace.  This has now been fixed.
+        * Fix for systemtest Relax_disp.test_kteilum_fmpoulsen_makke_check_graphs where minimise has been extended with execute.
+        * Changed graphs after new minimisation algorithm has been implemented.  The values are now slightly different.
+        * Implemented first try to stride through data, when computing the eig() of higher dimensional data.  Systemtest test_cpmg_synthetic_b14_to_ns3d_cluster survived this transformation.  The systemtest will go from about 11 seconds to 22 seconds.
+        * Implemented second try to stride through data, when computing the eig() of higher dimensional data. This of data of form: NS, NM, NO, ND, Row, Col.  Systemtest test_sprangers_data_to_ns_mmq_2site survived this transformation.  The systemtest will go from about 2 seconds to 4 seconds.
+        * Created function to create the helper index numpy array, to help figuring out the indices to store in the exchange data matrix.  This is for striding through data and store the data correct in the data matrix.  This is for a special situation where numpy version is < 1.8, and where the numpy.linalg.eig() function can only be performed on square matrices, and not on higher dimensional data.  For this situation, it is necessary to stride through the data.
+        * Created the numpy array self.index target function which contains index to store the data.  This is for situations where numpy version is under 1.8.
+        * Added function to get the data view via striding through a higher dimensional column numpy array.
+        * Extracted the data view of the index indices numpy array in the target_function.
+        * A profiling showed, that it was not faster to preform the index view.
+        * Made new general stride helper function and matrix_exponential function.
+        * Changed to the matrix_exponential function for NS R1rho 2site.
+        * Removed all un-used helper functions, and matrix exponential functions.  They are now condensed to the fewest possible functions.
+        * Fix for eye matrix being wrong formed.
+        * Replaced all matrix_exponential functions in numerical models to use the new general matrix_exponential function.
+        * Added warning message to auto analysis in relax disp, if numpy is below 1.8 and using numerical model.  This will make the analysis 5-6 times slower.
+        * Fixes for numpy version under 1.8, when striding through data.
+        * Fix to unit tests, after changing the name of matrix_exponential function.
+        * Added graphs and results for run with MC=2000, for systemtest Relax_disp.test_r1rho_kjaergaard_auto().  This is to be able to extend graph testing for interpolated R1rho graphs, and to add figures to the latex manual.
+        * Initialized merge tracking via "svnmerge" with revisions "1-24916" from  svn+ssh://tlinnet@svn.gna.org/svn/relax/branches/R1_fitting
+        * Merged revisions 24917-25017 via svnmerge from  svn+ssh://tlinnet@svn.gna.org/svn/relax/branches/R1_fitting
+        * Removed merge tracking for "svnmerge" for  svn+ssh://tlinnet@svn.gna.org/svn/relax/branches/R1_fitting
+        * Removed triggering an error in test_r1rho_kjaergaard_missing_r1.  There is a bug fetching the standard value of parameter 'r1_fit'.
+        * Fix for systemtest Relax_disp.test_r1rho_kjaergaard_missing_r1, running on 64 bit system.
+        * Modified the Linear Constraints for the exchange rates.  For CPMG, the maximum kex should be 10^4, and for R1rho it should be 10^5. This is altered from the value of 10^6.  The suggested restraints for 'kex' follows from article, on page 224:  Nuclear Magnetic Resonance Methods for Quantifying Microsecond-to-Millisecond Motions in Biological Macromolecules. Palmer-III, Arthur G., Kroenke, Christopher D., Loria, J. Patrick Nucl. Magn. Reson. Biol. Macromol. B, 2001, Vol: 339, pages 204-238. U{DOI: 10.1016/S0076-6879(01)39315-1<http://dx.doi.org/10.1016/S0076-6879%2801%2939315-1>}
+        * Small fix for systemtest, where precision is lowered on digit after altering the linear constraints.
+        * Inserted Latex bibliography for reference to Linear Constraints of the exchange rate.
+        * Modification to the relax manual, regarding the Linear Constraints for the exchange rate.
+        * Equation fix for $kex$ in manual.
+        * Citation fix in relax manual.
         * Added system test Relax_disp.test_bug_22477_grace_write_k_AB_mixed_analysis and data.  This is for bug #22477 (https://gna.org/bugs/?22477): Not possible to perform grace.write() on k_AB parameter for mixed CPMG analysis.
         * Added more printout to system test: Relax_disp.test_bug_22477_grace_write_k_AB_mixed_analysis and data.
         * Fix for system test Relax_disp.test_bug_22477_grace_write_k_AB_mixed_analysis.  Bug #22477 (https://gna.org/bugs/?22477): Not possible to perform grace.write() on k_AB parameter for mixed CPMG analysis.
