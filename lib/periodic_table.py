@@ -34,7 +34,6 @@ The currently used isotope atomic masses are taken from U{http://www.ciaaw.org/a
 # Python module imports.
 from numpy import array, average, float64
 from re import search, split
-from string import lower, upper
 
 # relax module imports.
 from lib.errors import RelaxError
@@ -95,9 +94,9 @@ def process_symbol(symbol):
     """
 
     # The format is uppercase first letter, lowercase second.
-    new_symbol = upper(symbol[0])
+    new_symbol = symbol[0].upper()
     if len(symbol) == 2:
-        new_symbol += lower(symbol[1])
+        new_symbol += symbol[1].lower()
 
     # Return the corrected atomic symbol.
     return new_symbol
