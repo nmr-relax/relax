@@ -4,7 +4,7 @@
 # Python module imports.
 from collections import OrderedDict
 #import pickle
-import cPickle as pickle
+import pickle as pickle
 from numpy import array, asarray, diag, ones, std, sqrt
 from os import getcwd, makedirs, path, sep
 

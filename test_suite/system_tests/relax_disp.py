@@ -8330,7 +8330,7 @@ class Relax_disp(SystemTestCase):
 
 
         # Make Carlo Simulations number
-        mc_number_list = range(0, 1000, 250)
+        mc_number_list = list(range(0, 1000, 250))
 
         sim_attr_list = ['chi2_sim', 'f_count_sim', 'g_count_sim', 'h_count_sim', 'i0_sim', 'iter_sim', 'peak_intensity_sim', 'r2eff_sim', 'select_sim', 'warning_sim']
 

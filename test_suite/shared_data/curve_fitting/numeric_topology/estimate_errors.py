@@ -9,7 +9,7 @@ from numpy.ma import fix_invalid
 from random import gauss, sample, randint, randrange
 from collections import OrderedDict
 #import pickle
-import cPickle as pickle
+import pickle as pickle
 
 # Should warnings be raised to errors?
 raise_warnings = False
