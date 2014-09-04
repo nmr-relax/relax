@@ -57,6 +57,7 @@ sys.path.reverse()
 from compat_profiling import g1H, g15N
 from target_functions.relax_disp import Dispersion
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_SQ
+from version import version
 
 
 # Module variables.
@@ -244,8 +245,21 @@ class Profile(Dispersion):
         chemical_shifts, offsets, tilt_angles, Delta_omega, w_eff = self.return_offset_data()
         r1 = ones([self.num_spins, self.fields.shape[0]])
 
+        # relax version compatibility.
+        self.relax_times_compat = self.relax_times
+        if version == 'repository checkout' or version_comparison(version, '3.2.3') <= 0:
+            self.relax_times_compat = []
+            for ei in range(len(self.exp_type)):
+                self.relax_times_compat.append([])
+                for mi in range(len(self.fields)):
+                    self.relax_times_compat[ei].append([])
+                    for oi in range(len(self.offsets)):
+                        self.relax_times_compat[ei][mi].append([])
+                        for di in range(len(self.points[mi])):
+                            self.relax_times_compat[ei][mi][oi].append(self.relax_times.tolist())
+
         # Init the Dispersion class.
-        self.model = Dispersion(model=self.model, num_params=None, num_spins=self.num_spins, num_frq=len(self.fields), exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, scaling_matrix=None)
+        self.model = Dispersion(model=self.model, num_params=None, num_spins=self.num_spins, num_frq=len(self.fields), exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=self.relax_times_compat, scaling_matrix=None)
 
 
     def return_offset_data(self):
