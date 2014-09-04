@@ -246,7 +246,7 @@ class Profile(Dispersion):
         r1 = ones([self.num_spins, self.fields.shape[0]])
 
         # relax version compatibility.
-        self.relax_times_compat = self.relax_times
+        self.relax_times_compat = relax_times
         if version == 'repository checkout' or version_comparison(version, '3.2.3') == 1:
             self.relax_times_compat = []
             for ei in range(len(self.exp_type)):
