@@ -145,3 +145,11 @@ def initialise():
 
     # Check the validity of the data.
     uf_info.validate()
+
+
+# A table of user function renamings - for script compatibility.
+uf_translation_table = [
+    ['calc', 'minimise.calculate'],
+    ['grid_search', 'minimise.grid_search'],
+    ['minimise', 'minimise.execute']
+]
