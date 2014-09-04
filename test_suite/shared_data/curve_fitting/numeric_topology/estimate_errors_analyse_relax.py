@@ -1,7 +1,7 @@
 # Python module imports.
 from collections import OrderedDict
 #import pickle
-import cPickle as pickle
+import pickle as pickle
 from numpy import array, asarray, diag, ones, std, sqrt
 from numpy.random import normal
 from minfx.generic import generic_minimise
@@ -90,7 +90,7 @@ for i in range(1):
     for j in range(nt):
          spectrum_id_list.append('%iZ_A%i'%(i, j))
     file_name = "ntmax_%i_disp_%i.ser" % (nt_max, i)
-    spectrum.read_intensities(file=file_name, dir=data_path, spectrum_id=spectrum_id_list, int_method='height', int_col=range(nt))
+    spectrum.read_intensities(file=file_name, dir=data_path, spectrum_id=spectrum_id_list, int_method='height', int_col=list(range(nt)))
 
     for j in range(nt):
         spectrum_id = '%iZ_A%i'%(i, j)
