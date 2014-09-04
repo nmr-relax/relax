@@ -37,7 +37,7 @@ except ImportError:
 from os import devnull
 from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep
 from os.path import expanduser, basename, splitext, isfile
-from re import search
+from re import search, split
 from sys import stdin, stdout, stderr
 from warnings import warn
 
@@ -478,6 +478,31 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
         return file_obj, file_path
     else:
         return file_obj
+
+
+def sort_filenames(filenames=None, rev=False):
+    """Sort the given list in alphanumeric order.  Should be equivalent to unix 'ls -n' command.
+
+    @keyword filenames: The list of filenames
+    @type l:            list of strings
+    @keyword rev:       Flag, if the list should be reverted
+    @type rev:          boold
+    """
+
+    # Define function to convert to integers if text is digit.
+    convert = lambda text: int(text) if text.isdigit() else text
+
+    # Define function to create key for sorting.
+    alphanum_key = lambda key: [ convert(c) for c in split('([0-9]+)', key) ]
+
+    # Now sort according to key.
+    filenames.sort( key=alphanum_key )
+
+    # Reverse the list if needed.
+    if rev:
+        return reversed(filenames)
+    else:
+        return filenames
 
 
 def strip(data, comments=True):

@@ -5,7 +5,9 @@ Compile the C modules for the major line (trunk) by typing:
 
 $ scons
 
-and then run the test suite on all possible architectures to make sure the release is ready.
+and then run the test suite on all possible architectures to make sure the release is ready:
+
+$ relax --test-suite
 
 
 
@@ -16,9 +18,7 @@ Make a copy of the current head to the tags directory using a command such as:
 
 $ svn cp -F svn_msg svn+ssh://bugman@svn.gna.org/svn/relax/trunk svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
 
-In the commit message file 'svn_msg', have a header line which says 'relax version 2.0.1.', followed by a short description of the release.
-
-Checkout the tagged version with:
+In the commit message file 'svn_msg', have a header line which says 'relax version 2.0.1.', followed by a short description of the release.  Checkout the tagged version with:
 
 $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
 
@@ -34,16 +34,11 @@ Change the version number in file 'version.py' and commit the change.
 PDF manual
 ==========
 
-Build the PDF version of the relax user manual by typing:
+Build the PDF version of the relax user manual, add it to the repository, commit all changes, and clean up the temporary files by typing:
 
 $ scons user_manual_pdf
-
-then add the manual to the repository:
-
 $ svn add docs/relax.pdf
-
-and commit all the changes.  Clean up the temporary files with:
-
+$ svn ci
 $ scons clean
 
 Copy the PDF manual to the mirror directory for the relax download site for uploading in one of the steps below.

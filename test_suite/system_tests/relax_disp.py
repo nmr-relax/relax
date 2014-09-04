@@ -32,10 +32,12 @@ from tempfile import mkdtemp, NamedTemporaryFile
 
 # relax module imports.
 from auto_analyses import relax_disp
+from auto_analyses.relax_disp_repeat_cpmg import DIC_KEY_FORMAT, Relax_disp_rep
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from lib.errors import RelaxError
-from lib.io import get_file_path
+from lib.io import extract_data, get_file_path
+from lib.spectrum.nmrpipe import show_apod_extract, show_apod_rmsd, show_apod_rmsd_dir_to_files, show_apod_rmsd_to_file
 from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
 from pipe_control.minimise import assemble_scaling_matrix
 from specific_analyses.relax_disp.checks import check_missing_r1
@@ -105,6 +107,19 @@ class Relax_disp(SystemTestCase):
             # Store in the status object.
             if methodName in to_skip:
                 status.skipped_tests.append([methodName, 'scipy.optimize.leastsq module', self._skip_type])
+
+        # If not NMRPipe showApod program in PATH.
+        if not dep_check.showApod_module:
+            # The list of tests to skip.
+            to_skip = [
+                "test_show_apod_extract",
+                "test_show_apod_rmsd",
+                "test_show_apod_rmsd_to_file"
+            ]
+
+            # Store in the status object.
+            if methodName in to_skip:
+                status.skipped_tests.append([methodName, 'NMRPipe showApod program', self._skip_type])
 
 
     def setUp(self):
@@ -5859,6 +5874,76 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].chi2, 0.030959849811015544, 3)
 
 
+    def test_repeat_cpmg(self):
+        """Test the protocol for repeated dispersion analysis. The class: relax_disp_repeat_cpmg.
+
+        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
+        """
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Define base path to files.
+        base_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'
+
+        # Setup dictionary with settings.
+        sdic = {}
+        
+        # Define method to analyse for
+        method = 'FT'
+        sdic['method'] = method
+        
+        # Spectrometer frqs in list.
+        sfrq_1 = 499.86214
+        sfrq_2 = 599.8908587
+        sfrqs = [sfrq_1, sfrq_2]
+        
+        # Store in dictionary.
+        sdic['sfrqs'] = sfrqs
+        
+        # Store unit for frq.
+        sdic['sfrq_unit'] = 'MHz'
+        
+        # Store exp_type
+        sdic['exp_type'] = 'SQ CPMG'
+        
+        # Initialize frq dics.
+        for frq in sfrqs:
+            key = DIC_KEY_FORMAT % (frq)
+            sdic[key] = {}
+        
+        # Set keys.
+        e_1 = DIC_KEY_FORMAT % (sfrq_1)
+        e_2 = DIC_KEY_FORMAT % (sfrq_2)
+        
+        # Store time T2.
+        sdic[e_1]['time_T2'] = 0.04
+        sdic[e_2]['time_T2'] = 0.06
+        
+        # Set ncyc.
+        ncyc_1 = array([20, 0, 16, 10, 36, 2, 12, 4, 22, 18, 40, 14, 26, 8, 32, 24, 6, 28, 0])
+        ncyc_2 = array([28, 0, 4, 32, 60, 2, 10, 16, 8, 20, 52, 18, 40, 6, 12, 0, 24, 14, 22])
+
+        # Calculate the cpmg_frq and store.
+        sdic[e_1]['cpmg_frq'] = ncyc_1 / sdic[e_1]['time_T2'] 
+        sdic[e_2]['cpmg_frq'] = ncyc_2 / sdic[e_2]['time_T2']
+        
+        # Define peak lists.
+        peaks_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'analysis_FT' +sep+ 'ser_files' +sep+ sdic['method']
+        peaks_folder_2 = base_path +sep+ 'cpmg_disp_sod1d90a_060521' +sep+ 'cpmg_disp_sod1d90a_060521_normal.fid' +sep+ 'analysis_FT' +sep+ 'ser_files' +sep+ sdic['method'] 
+        sdic[e_1]['peaks_folder'] = peaks_folder_1
+        sdic[e_2]['peaks_folder'] = peaks_folder_2
+        
+        # Define folder to all rmsd files.
+        rmsd_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'ft2_data'
+        rmsd_folder_2 = base_path +sep+ 'cpmg_disp_sod1d90a_060521' +sep+ 'cpmg_disp_sod1d90a_060521_normal.fid' +sep+ 'ft2_data'
+        sdic[e_1]['rmsd_folder'] = rmsd_folder_1 
+        sdic[e_2]['rmsd_folder'] = rmsd_folder_2
+        
+        # Setup class with data.
+        RDR =  Relax_disp_rep(sdic)
+
+
     def test_r1rho_kjaergaard_auto(self):
         """Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
 
@@ -6691,6 +6776,97 @@ class Relax_disp(SystemTestCase):
 
         # Run the analysis.
         relax_disp.Relax_disp(pipe_name=pipe_name_r2eff, results_dir=ds.tmpdir, models=[MODEL], grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, set_grid_r20=True)
+
+
+    def test_show_apod_extract(self):
+        """Test getting the spectrum noise for spectrum fourier transformed with NMRPipe, and tool showApod."""
+
+        # The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'+sep+'cpmg_disp_sod1d90a_060518'+sep+'cpmg_disp_sod1d90a_060518_normal.fid'+sep+'ft2_data'
+
+        # Define file name.
+        file_name = '128_0_FT.ft2'
+
+        # Call function.
+        get_output = show_apod_extract(file_name=file_name, dir=data_path)
+
+        # Define how output should look like
+        show_apod_ver = [
+            'REMARK Effect of Processing on Peak Parameters and Noise for %s'%(data_path+sep+file_name),
+            'REMARK Automated Noise Std Dev in Processed Data: 8583.41',
+            'REMARK Noise Std Dev Before Processing H1 and N15: 60.6558',
+            '',
+            'VARS   AXIS LABEL  TSIZE FSIZE LW_ADJ LW_FINAL HI_FACTOR VOL_FACTOR SIGMA_FACTOR',
+            'FORMAT %s   %-8s   %4d   %4d   %7.4f  %7.4f    %.4e      %.4e       %.4e',
+            '',
+            '       X    H1       800  2048 0.8107 3.7310   4.9903e-03 9.8043e-04 5.2684e-02',
+            '       Y    N15      128   256 0.7303 3.0331   3.1260e-02 7.8434e-03 1.3413e-01']
+
+        for i, line in enumerate(get_output):
+            line_ver = show_apod_ver[i]
+
+            print(line)
+            # Make the string test
+            self.assertEqual(line, line_ver)
+
+
+    def test_show_apod_rmsd(self):
+        """Test getting the spectrum noise for spectrum fourier transformed with NMRPipe, and tool showApod."""
+
+        # The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'+sep+'cpmg_disp_sod1d90a_060518'+sep+'cpmg_disp_sod1d90a_060518_normal.fid'+sep+'ft2_data'
+
+        # Define file name.
+        file_name = '128_0_FT.ft2'
+
+        # Call function.
+        rmsd = show_apod_rmsd(file_name=file_name, dir=data_path)
+
+        # Assert.
+        self.assertEqual(rmsd, 8583.41)
+
+
+    def test_show_apod_rmsd_dir_to_files(self):
+        """Test searching for all NMRPipe spectrum files in dir, call showApod, and write to files."""
+
+        # The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'+sep+'cpmg_disp_sod1d90a_060518'+sep+'cpmg_disp_sod1d90a_060518_normal.fid'+sep+'ft2_data'
+
+        # Call function, and get all file names.
+        wfile_paths = show_apod_rmsd_dir_to_files(file_ext='.ft2', dir=data_path, outdir=self.tmpdir)
+
+        # Loop over file_paths.
+        for wfile_path in wfile_paths:
+            # Open the file.
+            get_data = extract_data(file=wfile_path)
+
+            # Extract line 0, column 0.
+            test = float(get_data[0][0])
+
+            # Assert.
+            self.assertEqual(test, 8583.41)
+
+
+    def test_show_apod_rmsd_to_file(self):
+        """Test getting the spectrum noise for spectrum fourier transformed with NMRPipe, and tool showApod, and write to file."""
+
+        # The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'+sep+'cpmg_disp_sod1d90a_060518'+sep+'cpmg_disp_sod1d90a_060518_normal.fid'+sep+'ft2_data'
+
+        # Define file name.
+        file_name = '128_0_FT.ft2'
+
+        # Call function, and get file name.
+        wfile_path = show_apod_rmsd_to_file(file_name=file_name, dir=data_path, outdir=self.tmpdir)
+
+        # Open the file.
+        get_data = extract_data(file=wfile_path)
+
+        # Extract line 0, column 0.
+        test = float(get_data[0][0])
+
+        # Assert.
+        self.assertEqual(test, 8583.41)
 
 
     def test_sod1wt_t25_bug_21954_order_error_analysis(self):

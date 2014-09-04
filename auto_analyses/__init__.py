@@ -27,6 +27,7 @@ __all__ = [
     'frame_order',
     'noe',
     'relax_disp',
+    'relax_disp_repeat_cpmg',
     'relax_fit',
     'stereochem_analysis'
 ]

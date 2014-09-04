@@ -52,7 +52,7 @@ sys.path.append(path_to_base)
 sys.path.reverse()
 
 # relax module imports.
-from lib.physical_constants import g1H, g15N
+from compat_profiling import g1H, g15N
 from target_functions.relax_disp import Dispersion
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_NS_CPMG_2SITE_STAR
 

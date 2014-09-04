@@ -252,6 +252,27 @@ except ImportError:
     subprocess_module = False
     subprocess_module_message = message.args[0]
 
+# NMRPipe showApod
+if subprocess_module:
+    try:
+        # Call function.
+        Temp=subprocess.Popen('showApod', stdout=subprocess.PIPE)
+        # Communicate with program, and get output and error output.
+        (output, errput) = Temp.communicate()
+        # Wait for finish and get return code.
+        return_value = Temp.wait()
+
+        # Split the output into lines.
+        line_split = output.splitlines()
+        if line_split[0] == 'showApod: Show Effect of Processing on Noise and Linewidth.':
+            showApod_module = True
+        else:
+            showApod_module = False
+    except OSError:
+        showApod_module = False
+else:
+    showApod_module = False
+
 # ctypes module.
 try:
     import ctypes
