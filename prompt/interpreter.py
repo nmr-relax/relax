@@ -341,6 +341,18 @@ def exec_script(name, globals):
     if ext != '.py':
         raise RelaxError("The script must have the extension *.py.")
 
+    # Read the contents of the script for finding old user function calls, prepending a newline character so that old user functions on the first line of a script can be handled.
+    file = open(name)
+    text = '\n'
+    text += file.read()
+    file.close()
+
+    # Parse the code in the module for old user function calls.
+    for old_uf in uf_translation_table:
+        # Find an old call.
+        if search('[ \\n]'+old_uf+'\(', text):
+            raise RelaxError("The user function '%s' has been renamed to '%s', please update your script." % (old_uf, uf_translation_table[old_uf]))
+
     # Execute the module.
     try:
         # Reverse the system path so that the script path is first.
