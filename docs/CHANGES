@@ -20,6 +20,7 @@ http://svn.gna.org/svn/relax/tags/3.3.0
         * Large expansion of the periodic table information in the relax library to include all elements, the IUPAC 2011 standard atomic weights for all elements, mass numbers and atomic masses for all stable isotopes, and gyromagnetic ratios.
         * Significant improvements to the structure centre of mass calculations by using the new periodic table information - all elements are now supported and exact masses are now used.
         * Added a button to the spectra list GUI element for the spectrum.error_analysis user function.  This is placed after the 'Add' and 'Delete' buttons and is used in the NOE, R1 and R2 curve-fitting and relaxation dispersion analyses.
+        * RelaxErrors are now raised in the prompt or script UI if an old user function is called, printing out the names of the old and new user functions.  This is for help in upgrading old scripts and is currently for the calc(), grid_search(), and minimise() user function calls.
 
 
     Changes:
@@ -1244,6 +1245,10 @@ http://svn.gna.org/svn/relax/tags/3.3.0
         * Python 2 vs. 3 compatibility fix for the pickle module.  This is for the estimate_errors*.py scripts in the directory test_suite/shared_data/curve_fitting/numeric_topology/.  The lib.compat.pickle module is now used to allow both Python versions to run relax.
         * Python 3 fix, the cmp(v1, v2) notation in the dep_check.version_comparison() function has been replaced with (v1 > v2) - (v1 < v2).  This allows relax to run on Python 3.
         * Python 3 fix for the lib.periodic_table module, the Python string module does not exist in Python 3.
+        * Created the user_functions.uf_translation_table list.  The elements of this list are the names of user functions before and after a renaming.  The list is provided for backwards compatibility for relax scripts, though it is not used yet.
+        * Converted the user_functions.uf_translation_table object to a dictionary.  This is for faster access which does not require looping.
+        * The prompt UI now uses the user_functions.uf_translation_table dictionary.  The modified runcode() function will now check if the command typed by the user is a function or method call and then will raise a RelaxError if the command name is in the user_functions.uf_translation_table dictionary, telling the user that the user function has been renamed to the new name in the translation table.  This appears to have no effect in the script UI however.
+        * Hack in the script UI for handling missing user functions due to it being renamed.  This script UI requires a different solution as the prompt UI.  The script is executed via the runpy Python module and there appears to be no clean way of catching each command before it is executed.  So instead, prior to executing the script, the contents of the script are read and old user functions are searched for using re.search().  The old user function name has "(" appended to it in the search so that it is sure that it is a user function call.  And the old function must have a space or newline character preceding it.
 
 
     Bugfixes:
