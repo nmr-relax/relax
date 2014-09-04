@@ -59,7 +59,7 @@ def version_comparison(version1, version2):
     version2 = [int(val) for val in version2.split('.')]
 
     # Return the comparison.
-    return cmp(version1, version2)
+    return (version1 > version2) - (version1 < version2)
 
 
 # Essential packages.
