@@ -51,8 +51,8 @@ def version_comparison(version1, version2):
     """
 
     # Strip out trailing zeros.
-    version1 = sub(r'(\.0+)*$','', version1)
-    version2 = sub(r'(\.0+)*$','', version2)
+    version1 = sub(r'(\.0+)*$', '', version1)
+    version2 = sub(r'(\.0+)*$', '', version2)
 
     # Convert to a list of numbers.
     version1 = [int(val) for val in version1.split('.')]

@@ -88,7 +88,7 @@ def func_wrapper(params):
     """
 
     # Convert if necessary.
-    if type(params) == ndarray:
+    if isinstance(params, ndarray):
         params = params.tolist()
 
     # Call the C code.
@@ -108,7 +108,7 @@ def dfunc_wrapper(params):
     """
 
     # Convert if necessary.
-    if type(params) == ndarray:
+    if isinstance(params, ndarray):
         params = params.tolist()
 
     # Call the C code.
@@ -128,7 +128,7 @@ def d2func_wrapper(params):
     """
 
     # Convert if necessary.
-    if type(params) == ndarray:
+    if isinstance(params, ndarray):
         params = params.tolist()
 
     # Call the C code.
