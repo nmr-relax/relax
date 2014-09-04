@@ -47,7 +47,7 @@ def version_comparison(version1, version2):
     @param version2:    The second version number.
     @type version2:     str
     @return:            The comparison result of the Python cmp() function applied to two lists of integers.  This will be one of [-1, 0, 1].
-    @type return:       int
+    @rtype:             int
     """
 
     # Strip out trailing zeros.
