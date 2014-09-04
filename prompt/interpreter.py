@@ -48,6 +48,7 @@ if dep_check.readline_module:
 from prompt.uf_objects import Class_container, Uf_object
 from lib.errors import AllRelaxErrors, RelaxError
 from status import Status; status = Status()
+from user_functions import uf_translation_table
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
@@ -579,13 +580,27 @@ def runcode(self, code):
     @type code:     str
     """
 
+    # Safely run the code.
     try:
+        # Catch old user function calls or class method calls.
+        if code.co_code in ['e\x00\x00\x83\x00\x00Fd\x00\x00S', 'e\x00\x00j\x01\x00\x83\x00\x00Fd\x00\x00S']:
+            # Is this an old user function?
+            if len(code.co_names) and code.co_names[0] in uf_translation_table:
+                raise RelaxError("The user function '%s' has been renamed to '%s'." % (code.co_names[0], uf_translation_table[code.co_names[0]]))
+
+        # Execute the code.
         exec(code, self.locals)
+
+    # Allow the system to exit.
     except SystemExit:
         raise
+
+    # Handle RelaxErrors nicely.
     except AllRelaxErrors:
         instance = sys.exc_info()[1]
         self.write(instance.__str__())
         self.write("\n")
+
+    # Everything else.
     except:
         self.showtraceback()
