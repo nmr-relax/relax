@@ -55,7 +55,7 @@ sys.path.reverse()
 # relax module imports.
 from compat_profiling import g1H, g15N
 from target_functions.relax_disp import Dispersion
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_CR72
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_SQ
 
 
 # Module variables.
@@ -114,7 +114,7 @@ def main():
 class Profile(Dispersion):
     """Class Profile inherits the Dispersion container class object."""
 
-    def __init__(self, exp_type=None, num_spins=1, model=None, r2=None, r2a=None, r2b=None, phi_ex=None, dw=None, pA=None, kex=None, spins_params=None):
+    def __init__(self, exp_type=None, num_spins=1, model=None, r2=None, r2a=None, r2b=None, phi_ex=None, phi_ex_B=None, phi_ex_C=None, dw=None, dw_AB=None, dw_BC=None, dwH=None, dwH_AB=None, dwH_BC=None, pA=None, pB=None, kex=None, kex_AB=None, kex_BC=None, kex_AC=None, kB=None, kC=None, k_AB=None, tex=None, spins_params=None):
         """Special method __init__() is called first (acts as Constructor).
 
         It brings in data from outside the class like the variable num_spins (in this case num_spins is also set to a default value of 1).  The first parameter of any method/function in the class is always self, the name self is used by convention.  Assigning num_spins to self.num_spins allows it to be passed to all methods within the class.  Think of self as a carrier, or if you want impress folks call it target instance object.
@@ -133,12 +133,24 @@ class Profile(Dispersion):
         @type r2b:              float
         @keyword phi_ex:        The phi_ex = pA.pB.dw**2 value (ppm^2)
         @type phi_ex:           float
+        @keyword phi_ex_B:      The fast exchange factor between sites A and B (ppm^2)
+        @type phi_ex_B:         float
+        @keyword phi_ex_C:      The fast exchange factor between sites A and C (ppm^2)
+        @type phi_ex_C:         float
         @keyword dw:            The chemical exchange difference between states A and B in ppm.
         @type dw:               float
         @keyword pA:            The population of state A.
         @type pA:               float
         @keyword kex:           The rate of exchange.
         @type kex:              float
+        @keyword kB :           The rate of exchange.
+        @type kB:               float
+        @keyword kC:            The rate of exchange.
+        @type kC:               float
+        @keyword k_AB:          The exchange rate from state A to state B
+        @type k_AB:             float
+        @keyword tex:           The exchange time.
+        @type tex:              float
         @keyword spins_params:  List of parameter strings used in dispersion model.
         @type spins_params:     array of strings
         """
@@ -167,7 +179,7 @@ class Profile(Dispersion):
             print("sfrq: ", self.fields[i], "number of cpmg frq", len(ncyc), ncyc)
 
             # CPMG data.
-            if EXP_TYPE_CPMG_SQ in self.exp_type:
+            if EXP_TYPE_CPMG_SQ in self.exp_type or EXP_TYPE_CPMG_MQ in self.exp_type:
                 cpmg_point = ncyc / self.relax_times[i]
 
                 self.points.append(list(cpmg_point))
@@ -183,7 +195,7 @@ class Profile(Dispersion):
                 self.error.append([1.0]*len(self.spin_lock_fields))
 
         # Spin lock offsets in ppm.
-        if EXP_TYPE_CPMG_SQ in self.exp_type:
+        if EXP_TYPE_CPMG_SQ in self.exp_type or EXP_TYPE_CPMG_MQ in self.exp_type:
             self.offsets = [0]
         else:
             self.offsets = range(10)
@@ -192,17 +204,17 @@ class Profile(Dispersion):
         self.chemical_shift = 1.0
 
         # Assemble param vector.
-        self.params = self.assemble_param_vector(r2=r2, r2a=r2a, r2b=r2b, phi_ex=phi_ex, dw=dw, pA=pA, kex=kex, spins_params=spins_params)
+        self.params = self.assemble_param_vector(r2=r2, r2a=r2a, r2b=r2b, phi_ex=phi_ex, phi_ex_B=phi_ex_B, phi_ex_C=phi_ex_C, dw=dw, dw_AB=dw_AB, dw_BC=dw_BC, dwH=dwH, dwH_AB=dwH_AB, dwH_BC=dwH_BC, pA=pA, pB=pB, kex=kex, kex_AB=kex_AB, kex_BC=kex_BC, kex_AC=kex_AC, kB=kB, kC=kC, k_AB=k_AB, tex=tex, spins_params=spins_params)
 
         # Make nested list arrays of data. And return them.
-        values, errors, cpmg_frqs, missing, frqs, exp_types, relax_times, offsets, spin_lock_nu1 = self.return_r2eff_arrays()
+        values, errors, cpmg_frqs, missing, frqs, frqs_H, exp_types, relax_times, offsets, spin_lock_nu1 = self.return_r2eff_arrays()
 
         # The offset and R1 data.
         chemical_shifts, offsets, tilt_angles, Delta_omega, w_eff = self.return_offset_data()
         r1 = ones([self.num_spins, self.fields.shape[0]])
 
         # Init the Dispersion class.
-        self.model = Dispersion(model=self.model, num_params=None, num_spins=self.num_spins, num_frq=len(self.fields), exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=None, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, scaling_matrix=None)
+        self.model = Dispersion(model=self.model, num_params=None, num_spins=self.num_spins, num_frq=len(self.fields), exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, scaling_matrix=None)
 
 
     def return_offset_data(self):
@@ -386,10 +398,11 @@ class Profile(Dispersion):
 
                     # The Larmor frequency for this spin (and that of an attached proton for the MMQ models) and field strength (in MHz*2pi to speed up the ppm to rad/s conversion).
                     frqs[ei][si][mi] = 2.0 * pi * frq / g1H * g15N * 1e-6
+                    frqs_H[ei][si][mi] = 2.0 * pi * frq * 1e-6
 
                     for oi in range(len(self.offsets)):
                         # CPMG data.
-                        if exp_type == EXP_TYPE_CPMG_SQ:
+                        if exp_type == EXP_TYPE_CPMG_SQ or EXP_TYPE_CPMG_MQ in self.exp_type:
                             # Get the cpmg frq.
                             cpmg_frqs[ei][mi][oi] = self.points[mi]
                             back_calc = array([0.0]*len(cpmg_frqs[ei][mi][oi]))
@@ -434,10 +447,10 @@ class Profile(Dispersion):
                         missing[ei][si][mi][oi] = array(missing[ei][si][mi][oi], int32)
 
         # Return the structures.
-        return values, errors, cpmg_frqs, missing, frqs, exp_types, relax_times, offsets, asarray(spin_lock_nu1)
+        return values, errors, cpmg_frqs, missing, frqs, frqs_H, exp_types, relax_times, offsets, asarray(spin_lock_nu1)
 
 
-    def assemble_param_vector(self, r2=None, r2a=None, r2b=None, phi_ex=None, dw=None, pA=None, kex=None, spins_params=None):
+    def assemble_param_vector(self, r2=None, r2a=None, r2b=None, phi_ex=None, phi_ex_B=None, phi_ex_C=None, dw=None, dw_AB=None, dw_BC=None, dwH=None, dwH_AB=None, dwH_BC=None, pA=None, pB=None, kex=None, kex_AB=None, kex_BC=None, kex_AC=None, kB=None, kC=None, k_AB=None, tex=None, spins_params=None):
         """Assemble the dispersion relaxation dispersion curve fitting parameter vector.
 
         @keyword r2:            The transversal relaxation rate.
@@ -448,12 +461,24 @@ class Profile(Dispersion):
         @type r2b:              float
         @keyword phi_ex:        The phi_ex = pA.pB.dw**2 value (ppm^2)
         @type phi_ex:           float
+        @keyword phi_ex_B:      The fast exchange factor between sites A and B (ppm^2)
+        @type phi_ex_B:         float
+        @keyword phi_ex_C:      The fast exchange factor between sites A and C (ppm^2)
+        @type phi_ex_C:         float
         @keyword dw:            The chemical exchange difference between states A and B in ppm.
         @type dw:               float
         @keyword pA:            The population of state A.
         @type pA:               float
         @keyword kex:           The rate of exchange.
         @type kex:              float
+        @keyword kB :           The rate of exchange.
+        @type kB:               float
+        @keyword kC:            The rate of exchange.
+        @type kC:               float
+        @keyword k_AB:          The exchange rate from state A to state B
+        @type k_AB:             float
+        @keyword tex:           The exchange time.
+        @type tex:              float
         @keyword spins_params:  List of parameter strings used in dispersion model.
         @type spins_params:     array of strings
         @return:                An array of the parameter values of the dispersion relaxation model.
@@ -476,12 +501,42 @@ class Profile(Dispersion):
                 value = value + mi + spin_index*0.1
             elif param_name == 'phi_ex':
                 value = phi_ex + spin_index
+            elif param_name == 'phi_ex_B':
+                value = phi_ex_B + spin_index
+            elif param_name == 'phi_ex_C':
+                value = phi_ex_C + spin_index
             elif param_name == 'dw':
                 value = dw + spin_index
+            elif param_name == 'dw_AB':
+                value = dw_AB + spin_index
+            elif param_name == 'dw_BC':
+                value = dw_BC + spin_index
+            elif param_name == 'dwH':
+                value = dwH + spin_index
+            elif param_name == 'dwH_AB':
+                value = dw_AB + spin_index
+            elif param_name == 'dwH_BC':
+                value = dw_BC + spin_index
             elif param_name == 'pA':
                 value = pA
+            elif param_name == 'pB':
+                value = pB
             elif param_name == 'kex':
                 value = kex
+            elif param_name == 'kex_AB':
+                value = kex_AB
+            elif param_name == 'kex_BC':
+                value = kex_BC
+            elif param_name == 'kex_AC':
+                value = kex_AC
+            elif param_name == 'kB':
+                value = kB
+            elif param_name == 'kC':
+                value = kC
+            elif param_name == 'k_AB':
+                value = k_AB
+            elif param_name == 'tex':
+                value = tex
 
             # Add to the vector.
             param_vector.append(value)
@@ -537,14 +592,43 @@ class Profile(Dispersion):
                 yield 'padw2', pspin_index, 0
             if 'dw' in spins_params:
                 yield 'dw', spin_index, 0
+            if 'dw_AB' in spins_params:
+                yield 'dw_AB', spin_index, 0
+            if 'dw_BC' in spins_params:
+                yield 'dw_BC', spin_index, 0
+
+        # Then a separate block for the proton chemical shift difference parameters for the MQ models (one per spin).
+        for spin_index in range(self.num_spins):
+            if 'dwH' in spins_params:
+                yield 'dwH', spin_index, 0
+            if 'dwH_AB' in spins_params:
+                yield 'dwH_AB', spin_index, 0
+            if 'dwH_BC' in spins_params:
+                yield 'dwH_BC', spin_index, 0
 
         # All other parameters (one per spin cluster).
         for param in spins_params:
             if not param in ['r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AB', 'dwH', 'dwH_AB', 'dwH_BC', 'dwH_AB']:
                 if param == 'pA':
                     yield 'pA', 0, 0
+                elif param == 'pB':
+                    yield 'pB', 0, 0
                 elif param == 'kex':
                     yield 'kex', 0, 0
+                elif param == 'kex_AB':
+                    yield 'kex_AB', 0, 0
+                elif param == 'kex_BC':
+                    yield 'kex_BC', 0, 0
+                elif param == 'kex_AC':
+                    yield 'kex_AC', 0, 0
+                elif param == 'kB':
+                    yield 'kB', 0, 0
+                elif param == 'kC':
+                    yield 'kC', 0, 0
+                elif param == 'k_AB':
+                    yield 'k_AB', 0, 0
+                elif param == 'tex':
+                    yield 'tex', 0, 0
 
 
     def calc(self, params):

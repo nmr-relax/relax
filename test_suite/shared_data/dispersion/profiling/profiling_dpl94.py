@@ -31,7 +31,6 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_R1RHO, MODEL_DPL94
 SINGLE = Profile(exp_type=[EXP_TYPE_R1RHO], num_spins=NUM_SPINS_SINGLE, model=MODEL_DPL94, r2=5.0, phi_ex=1.0, kex=5000.0, spins_params=['r2', 'phi_ex', 'kex'])
 CLUSTER = Profile(exp_type=[EXP_TYPE_R1RHO], num_spins=NUM_SPINS_CLUSTER, model=MODEL_DPL94, r2=5.0, phi_ex=1.0, kex=5000.0, spins_params=['r2', 'phi_ex', 'kex'])
 
-
 # Execute main function.
 if __name__ == "__main__":
     main()

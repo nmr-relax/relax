@@ -31,7 +31,6 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_CR72
 SINGLE = Profile(exp_type=[EXP_TYPE_CPMG_SQ], num_spins=NUM_SPINS_SINGLE, model=MODEL_CR72, r2=5.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
 CLUSTER = Profile(exp_type=[EXP_TYPE_CPMG_SQ], num_spins=NUM_SPINS_CLUSTER, model=MODEL_CR72, r2=5.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
 
-
 # Execute main function.
 if __name__ == "__main__":
     main()
