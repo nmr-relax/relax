@@ -1241,6 +1241,8 @@ http://svn.gna.org/svn/relax/tags/3.3.0
         * Improvements for the spectrum.error_analysis button in the spectrum list GUI element.  The subset argument is set to None if no spectra are selected.
         * Loosened a value check to allow the Relax_disp.test_r1rho_kjaergaard_missing_r1 system test to pass.  This test fails on MS Windows systems.
         * Fix for the Relax_disp.test_estimate_r2eff_err_auto system test on MS Windows systems.  One of the value checks has been loosened.
+        * Python 2 vs. 3 compatibility fix for the pickle module.  This is for the estimate_errors*.py scripts in the directory test_suite/shared_data/curve_fitting/numeric_topology/.  The lib.compat.pickle module is now used to allow both Python versions to run relax.
+        * Python 3 fix, the cmp(v1, v2) notation in the dep_check.version_comparison() function has been replaced with (v1 > v2) - (v1 < v2).  This allows relax to run on Python 3.
 
 
     Bugfixes:
