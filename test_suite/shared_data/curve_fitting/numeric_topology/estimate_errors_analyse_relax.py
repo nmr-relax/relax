@@ -1,13 +1,14 @@
 # Python module imports.
 from collections import OrderedDict
-#import pickle
-import pickle as pickle
 from numpy import array, asarray, diag, ones, std, sqrt
 from numpy.random import normal
 from minfx.generic import generic_minimise
 from os import getcwd, makedirs, path, sep
 from random import gauss
 from tempfile import mkdtemp, NamedTemporaryFile
+
+# relax module imports.
+from lib.compat import pickle
 
 # relax imports
 from status import Status; status = Status()

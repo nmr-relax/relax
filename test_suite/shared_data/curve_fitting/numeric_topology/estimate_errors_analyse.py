@@ -3,10 +3,11 @@
 
 # Python module imports.
 from collections import OrderedDict
-#import pickle
-import pickle as pickle
 from numpy import array, asarray, diag, ones, std, sqrt
 from os import getcwd, makedirs, path, sep
+
+# relax module imports.
+from lib.compat import pickle
 
 # Open data.
 dic_s = pickle.load( open( "estimate_errors_data_settings.cp", "rb" ) )
