@@ -23,16 +23,20 @@
 ###############################################################################
 
 # relax module imports.
-from base import cluster, main, NUM_SPINS_CLUSTER, NUM_SPINS_SINGLE, single, Profile
+from base import cluster, main, NUM_SPINS_CLUSTER, NUM_SPINS_SINGLE, single, Profile, version_comparison
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_IT99
+from version import version
 
 
 # Setup.
 SINGLE = Profile(exp_type=[EXP_TYPE_CPMG_SQ], num_spins=NUM_SPINS_SINGLE, model=MODEL_IT99, r2=5.0, dw=3.0, pA=0.9, tex=1/1000.0, spins_params=['r2', 'dw', 'pA', 'tex'])
-CLUSTER = Profile(exp_type=[EXP_TYPE_CPMG_SQ], num_spins=NUM_SPINS_CLUSTER, model=MODEL_IT99, r2=5.0, dw=3.0, pA=0.9, tex=1/1000.0, spins_params=['r2', 'dw', 'pA', 'tex'])
+num_spins = NUM_SPINS_CLUSTER
+if version_comparison(version, '3.2.2') != 1:
+    num_spins = NUM_SPINS_SINGLE
+    print("WARNING: Cluster of only 1 spin analysis, since v. 3.2.2 had a bug with clustering analysis.")
+CLUSTER = Profile(exp_type=[EXP_TYPE_CPMG_SQ], num_spins=num_spins, model=MODEL_IT99, r2=5.0, dw=3.0, pA=0.9, tex=1/1000.0, spins_params=['r2', 'dw', 'pA', 'tex'])
 
 
 # Execute main function.
 if __name__ == "__main__":
     main()
-
