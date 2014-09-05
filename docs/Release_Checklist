@@ -189,7 +189,7 @@ Wiki
 Create a new release page at the URL http://wiki.nmr-relax.com/Relax_x.y.z.  Use, for example, http://wiki.nmr-relax.com/Relax_3.3.0 as a guide.  The basic page structure is as follows:
 
     {{lowercase title}} - Start with this to allow the title to be in lowercase.  The URL on a wiki always starts with a capital, but the title can be changed to lowercase in this way.
-    = Description = - Create this section by writing a detailed and full description of the release.
+    = Description = - Create this section by writing a detailed and full description of the release.  Add internal wiki links and external links, for example to the relax manual web pages for the user functions.
     = Download = - Create this section with links for downloading the release (simply copy the text from an older release).
     = CHANGES file = - Create this section by cutting and pasting the part of the CHANGES file for this release.  Convert the Features, Changes, and Bugfixes titles to the subsection format == Features ==, == Changes ==, and == Bugfixes ==.  Strip all leading whitespace from the full list of changes so that the wiki can format the text.
     = See also = - Finally create this section which simply contains the text [[Category:Release_Notes]].
