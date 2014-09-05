@@ -200,7 +200,7 @@ Mailing list
 
 On the relax-announce mailing list (relax-announce att gna.org), write the release announcement by:
 
-    - Copying the 'Description' and 'Download' text from the wiki.  Do not include the section titles.
+    - Copy the 'Description' and 'Download' text from the wiki.  Do not include the section titles and remove any wiki markup.
     - At the end, add a section titled 'The full list of changes is:' and cut and paste the part of the CHANGES file for this release.  Do not use the wiki text for this.
     - Include links to the trackers in the full list of changes, if not already present.
 
@@ -211,7 +211,7 @@ Gna! news item
 The steps are:
 
     - Log into Gna! and go to https://gna.org/news/submit.php?group=relax.
-    - Cut and paste all of the wiki text.  Delete the initial lower case title formatting text and the final 'See also' section.
+    - Cut and paste all of the wiki text.  Delete the initial lower case title formatting text, the final 'See also' section, and any wiki markup.
     - Use the Savane markup to format the text (recipe #236, https://gna.org/cookbook/?func=detailitem&item_id=236).
     - As the Savane markup for sectioning is the same as the wiki, the section titles = Description =, = Download =, and = Full list of changes = do not need to be modified.  The same for the subtitles == Features ==, == Changes ==, and == Bugfixes ==.  The leading whitespace from the full list of changes must be stripped, but this should already be done in the wiki text.
     - Item references such as bug #7641, task #3122, etc. are automatically converted into links, therefore remove all links to the trackers.
