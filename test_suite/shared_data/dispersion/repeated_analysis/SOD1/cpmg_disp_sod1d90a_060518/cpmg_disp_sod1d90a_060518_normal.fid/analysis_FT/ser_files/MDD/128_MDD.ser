@@ -1,0 +1,16 @@
+REMARK SeriesTab Input: /home/tlinnet/kte/SOD1/cpmg_disp_sod1d90a_060518/cpmg_disp_sod1d90a_060518_normal.fid/analysis_FT/peaks.dat Output: 128_MDD.ser
+REMARK Mode: Maximum Dimensions: 2
+REMARK Input Region:    X +/- 0 X-ZF: 1
+REMARK Analysis Region: X +/- 0
+REMARK Input Region:    Y +/- 0 Y-ZF: 1
+REMARK Analysis Region: Y +/- 0
+
+VARS   INDEX X_AXIS Y_AXIS X_PPM Y_PPM VOL ASS X1 X3 Y1 Y3 Z_A0 Z_A1 Z_A2 Z_A3 Z_A4 Z_A5 Z_A6 Z_A7 Z_A8 Z_A9 Z_A10 Z_A11 Z_A12 Z_A13 Z_A14 Z_A15 Z_A16 Z_A17 Z_A18
+FORMAT %5d %9.3f %9.3f %8.3f %8.3f %+e %s %4d %4d %4d %4d %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f
+
+NULLVALUE -666
+NULLSTRING *
+
+    1   254.059   150.545    8.525  116.014 +1.942165e+05 T2N-H  253  255  150  152  1.0000  2.7009  0.9822  0.9196  0.9876  0.8867  0.9373  0.9819  0.8424  0.9607  0.9736  0.9372  0.8788  0.9522  0.9831  0.8933  0.9880  0.9156  2.7101
+    2   236.553    58.937    8.696  125.904 +9.672268e+05 K3N-H  236  238   58   60  1.0000  2.0080  0.9839  1.0038  1.0034  1.0594  0.9823  1.0135  0.9868  0.9942  1.0132  1.0185  0.9816  1.0068  0.9761  1.0019  1.0311  0.9793  2.0111
+    3   193.454    86.021    9.117  122.980 +5.774582e+05 A4N-H  192  194   85   87  1.0000  2.0758  1.0032  1.0040  1.0494  1.0477  1.0461  1.0579  1.0084  1.0102  1.0683  1.0270  1.0266  1.0527  1.0466  1.0194  1.0486  1.0283  2.0795
