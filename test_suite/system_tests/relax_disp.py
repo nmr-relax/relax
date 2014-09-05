@@ -5890,8 +5890,8 @@ class Relax_disp(SystemTestCase):
         sdic = {}
         
         # Define method to analyse for
-        method = 'FT'
-        sdic['method'] = method
+        sdic['method'] = 'FT'
+        sdic['grid_inc'] = None
         
         # Spectrometer frqs in list.
         sfrq_1 = 499.86214
@@ -5906,7 +5906,16 @@ class Relax_disp(SystemTestCase):
         
         # Store exp_type
         sdic['exp_type'] = 'SQ CPMG'
-        
+
+        # Store spin isotope
+        sdic['isotope'] = '15N'
+
+        # How intensity was measured.
+        sdic['int_method'] = 'height'
+
+        # Define the time for result directory.
+        sdic['time'] = '2014_09'
+
         # Initialize frq dics.
         for frq in sfrqs:
             key = DIC_KEY_FORMAT % (frq)
@@ -5925,8 +5934,8 @@ class Relax_disp(SystemTestCase):
         ncyc_2 = array([28, 0, 4, 32, 60, 2, 10, 16, 8, 20, 52, 18, 40, 6, 12, 0, 24, 14, 22])
 
         # Calculate the cpmg_frq and store.
-        sdic[e_1]['cpmg_frq'] = ncyc_1 / sdic[e_1]['time_T2'] 
-        sdic[e_2]['cpmg_frq'] = ncyc_2 / sdic[e_2]['time_T2']
+        sdic[e_1]['cpmg_frqs'] = ncyc_1 / sdic[e_1]['time_T2']
+        sdic[e_2]['cpmg_frqs'] = ncyc_2 / sdic[e_2]['time_T2']
         
         # Define peak lists.
         peaks_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'analysis_FT' +sep+ 'ser_files' +sep+ sdic['method']
@@ -5939,9 +5948,24 @@ class Relax_disp(SystemTestCase):
         rmsd_folder_2 = base_path +sep+ 'cpmg_disp_sod1d90a_060521' +sep+ 'cpmg_disp_sod1d90a_060521_normal.fid' +sep+ 'ft2_data'
         sdic[e_1]['rmsd_folder'] = rmsd_folder_1 
         sdic[e_2]['rmsd_folder'] = rmsd_folder_2
-        
+
+        # Define temporary folder.
+        sdic['results_dir'] = self.tmpdir
+
         # Setup class with data.
         RDR =  Relax_disp_rep(sdic)
+
+        # Setup base information.
+        RDR.set_base_cpmg(glob_ini=128)
+
+        # Set the intensity.
+        #RDR.set_int(list_glob_ini=[128, 126])
+
+        # Now calculate R2eff.
+        #RDR.calc_r2eff(list_glob_ini=[128, 126])
+
+        RDR.minimise_model(model=MODEL_CR72, list_glob_ini=[128])
+
 
 
     def test_r1rho_kjaergaard_auto(self):
