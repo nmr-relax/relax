@@ -212,20 +212,19 @@ def show_apod_extract(file_name=None, dir=None, path_to_command='showApod'):
     # Get the file path.
     file_path = get_file_path(file_name=file_name, dir=dir)
 
-    if dep_check.subprocess_module:
-        # Call function.
-        Temp=subprocess.Popen([path_to_command, file_path], stdout=subprocess.PIPE)
+    if not dep_check.subprocess_module:
+        raise RelaxError("Python module 'subprocess' not found, cannot call showApod.")
 
-        # Communicate with program, and get outout and exitcode.
-        (output, errput) = Temp.communicate()
+    # Call function.
+    Temp = subprocess.Popen([path_to_command, file_path], stdout=subprocess.PIPE)
 
-        # Wait for finish and get return code.
-        return_value = Temp.wait()
+    # Communicate with program, and get outout and exitcode.
+    (output, errput) = Temp.communicate()
 
-        return output.splitlines()
+    # Wait for finish and get return code.
+    return_value = Temp.wait()
 
-    else:
-        raise RelaxError("python module 'subprocess' not found.  Cannot call showApod.")
+    return output.splitlines()
 
 
 def show_apod_rmsd(file_name=None, dir=None, path_to_command='showApod'):
