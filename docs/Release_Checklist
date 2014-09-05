@@ -212,5 +212,6 @@ The steps are:
 
     - Log into Gna! and go to https://gna.org/news/submit.php?group=relax.
     - Cut and paste all of the wiki text.  Delete the initial lower case title formatting text and the final 'See also' section.
+    - Use the Savane markup to format the text (recipe #236, https://gna.org/cookbook/?func=detailitem&item_id=236).
+    - As the Savane markup for sectioning is the same as the wiki, the section titles = Description =, = Download =, and = Full list of changes = do not need to be modified.  The same for the subtitles == Features ==, == Changes ==, and == Bugfixes ==.  The leading whitespace from the full list of changes must be stripped, but this should already be done in the wiki text.
     - Item references such as bug #7641, task #3122, etc. are automatically converted into links, therefore remove all links to the trackers.
-    - As the Savane markup (recipe #236, https://gna.org/cookbook/?func=detailitem&item_id=236) for sectioning is the same as the wiki, the section titles = Description =, = Download =, and = Full list of changes = do not need to be modified.  The same for the subtitles == Features ==, == Changes ==, and == Bugfixes ==.  The leading whitespace from the full list of changes must be stripped, but this should already be done in the wiki text.
