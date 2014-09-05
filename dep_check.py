@@ -256,22 +256,30 @@ except ImportError:
 if subprocess_module:
     try:
         # Call function.
-        Temp=subprocess.Popen('showApod', stdout=subprocess.PIPE)
+        Temp = subprocess.Popen('showApod', stdout=subprocess.PIPE)
+
         # Communicate with program, and get output and error output.
         (output, errput) = Temp.communicate()
+
         # Wait for finish and get return code.
         return_value = Temp.wait()
 
         # Split the output into lines.
         line_split = output.splitlines()
+
+        # Now make test.
         if line_split[0] == 'showApod: Show Effect of Processing on Noise and Linewidth.':
-            showApod_module = True
+            showApod_software = True
         else:
-            showApod_module = False
+            showApod_software = False
+
+    # If software not available.
     except OSError:
-        showApod_module = False
+        showApod_software = False
+
+# If subprocess module not available, then do not allow showApod.
 else:
-    showApod_module = False
+    showApod_software = False
 
 # ctypes module.
 try:
