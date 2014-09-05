@@ -340,7 +340,7 @@ class Spectra_list(Base_list):
 
         # Loop over the additional selections.
         ids = []
-        while 1:
+        while True:
             # No selection.
             if item == -1:
                 break

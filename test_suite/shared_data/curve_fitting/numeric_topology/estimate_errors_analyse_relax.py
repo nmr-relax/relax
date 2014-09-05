@@ -1,13 +1,14 @@
 # Python module imports.
 from collections import OrderedDict
-#import pickle
-import cPickle as pickle
 from numpy import array, asarray, diag, ones, std, sqrt
 from numpy.random import normal
 from minfx.generic import generic_minimise
 from os import getcwd, makedirs, path, sep
 from random import gauss
 from tempfile import mkdtemp, NamedTemporaryFile
+
+# relax module imports.
+from lib.compat import pickle
 
 # relax imports
 from status import Status; status = Status()
@@ -90,7 +91,7 @@ for i in range(1):
     for j in range(nt):
          spectrum_id_list.append('%iZ_A%i'%(i, j))
     file_name = "ntmax_%i_disp_%i.ser" % (nt_max, i)
-    spectrum.read_intensities(file=file_name, dir=data_path, spectrum_id=spectrum_id_list, int_method='height', int_col=range(nt))
+    spectrum.read_intensities(file=file_name, dir=data_path, spectrum_id=spectrum_id_list, int_method='height', int_col=list(range(nt)))
 
     for j in range(nt):
         spectrum_id = '%iZ_A%i'%(i, j)
@@ -287,7 +288,7 @@ if make_plots:
             #ax1.hist(r2eff_array_boot, bins=100, histtype='stepfilled', normed=False, color='b', alpha=0.9, label='%i boot'%sim_boot)
             ax1.hist(r2eff_array_boot, bins=100, histtype='stepfilled', normed=True, color='b', alpha=0.9, label='%i boot'%sim_boot)
             ax1.hist(gauss_ref_boot, bins=100, histtype='step', normed=True, color='r', alpha=0.5, label='boot gauss')
-            ax1.set_xlim([0.9,1.1])
+            ax1.set_xlim([0.9, 1.1])
             ax1.set_xlabel('R')
             ax1.legend(loc='upper left', shadow=True, prop = fontP)
 
@@ -296,7 +297,7 @@ if make_plots:
             #ax1.hist(r2eff_array_sim, bins=100, histtype='stepfilled', normed=False, color='b', alpha=0.9, label='%i MC'%sim_boot)
             ax1.hist(r2eff_array_sim, bins=100, histtype='stepfilled', normed=True, color='b', alpha=0.9, label='%i MC'%sim_boot)
             ax1.hist(gauss_ref_sim, bins=100, histtype='step', normed=True, color='r', alpha=0.5, label='MC gauss')
-            ax1.set_xlim([0.9,1.1])
+            ax1.set_xlim([0.9, 1.1])
             ax1.set_xlabel('R')
             ax1.legend(loc='upper left', shadow=True, prop = fontP)
 

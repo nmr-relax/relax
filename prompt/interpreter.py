@@ -48,6 +48,7 @@ if dep_check.readline_module:
 from prompt.uf_objects import Class_container, Uf_object
 from lib.errors import AllRelaxErrors, RelaxError
 from status import Status; status = Status()
+from user_functions import uf_translation_table
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
@@ -340,6 +341,18 @@ def exec_script(name, globals):
     if ext != '.py':
         raise RelaxError("The script must have the extension *.py.")
 
+    # Read the contents of the script for finding old user function calls, prepending a newline character so that old user functions on the first line of a script can be handled.
+    file = open(name)
+    text = '\n'
+    text += file.read()
+    file.close()
+
+    # Parse the code in the module for old user function calls.
+    for old_uf in uf_translation_table:
+        # Find an old call.
+        if search('[ \\n]'+old_uf+'\(', text):
+            raise RelaxError("The user function '%s' has been renamed to '%s', please update your script." % (old_uf, uf_translation_table[old_uf]))
+
     # Execute the module.
     try:
         # Reverse the system path so that the script path is first.
@@ -579,13 +592,27 @@ def runcode(self, code):
     @type code:     str
     """
 
+    # Safely run the code.
     try:
+        # Catch old user function calls or class method calls.
+        if code.co_code in ['e\x00\x00\x83\x00\x00Fd\x00\x00S', 'e\x00\x00j\x01\x00\x83\x00\x00Fd\x00\x00S']:
+            # Is this an old user function?
+            if len(code.co_names) and code.co_names[0] in uf_translation_table:
+                raise RelaxError("The user function '%s' has been renamed to '%s'." % (code.co_names[0], uf_translation_table[code.co_names[0]]))
+
+        # Execute the code.
         exec(code, self.locals)
+
+    # Allow the system to exit.
     except SystemExit:
         raise
+
+    # Handle RelaxErrors nicely.
     except AllRelaxErrors:
         instance = sys.exc_info()[1]
         self.write(instance.__str__())
         self.write("\n")
+
+    # Everything else.
     except:
         self.showtraceback()

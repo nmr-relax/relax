@@ -3389,7 +3389,7 @@ class Relax_disp(SystemTestCase):
     def test_finite_value(self):
         """Test return from C code, when parameters are wrong.  This can happen, if minfx takes a wrong step."""
 
-        times = array([ 0.7,  1. ,  0.8,  0.4,  0.9])
+        times = array([ 0.7,  1.,  0.8,  0.4,  0.9])
         I = array([ 476.76174875,  372.43328777,  454.20339981,  656.87936253,  419.16726341])
         errors = array([  9.48032653,  11.34093541,   9.35149017,  10.84867928,  12.17590736])
 
@@ -8330,7 +8330,7 @@ class Relax_disp(SystemTestCase):
 
 
         # Make Carlo Simulations number
-        mc_number_list = range(0, 1000, 250)
+        mc_number_list = list(range(0, 1000, 250))
 
         sim_attr_list = ['chi2_sim', 'f_count_sim', 'g_count_sim', 'h_count_sim', 'i0_sim', 'iter_sim', 'peak_intensity_sim', 'r2eff_sim', 'select_sim', 'warning_sim']
 

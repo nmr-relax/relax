@@ -398,7 +398,7 @@ class Exp:
         d_exp_d_i0 = exp(-r2eff * times)
 
         # Define Jacobian as m rows with function derivatives and n columns of parameters.
-        jacobian_matrix_exp = transpose(array( [d_exp_d_r2eff , d_exp_d_i0] ) )
+        jacobian_matrix_exp = transpose(array( [d_exp_d_r2eff, d_exp_d_i0] ) )
 
         # Return Jacobian matrix.
         return jacobian_matrix_exp
@@ -492,7 +492,7 @@ class Exp:
         d_chi2_d_i0 = - 2.0 * ( -i0 * exp( -r2eff * times) + values) * exp( -r2eff * times) / errors**2
 
         # Define Jacobian as m rows with function derivatives and n columns of parameters.
-        jacobian_matrix_exp_chi2 = transpose(array( [d_chi2_d_r2eff , d_chi2_d_i0] ) )
+        jacobian_matrix_exp_chi2 = transpose(array( [d_chi2_d_r2eff, d_chi2_d_i0] ) )
 
         return jacobian_matrix_exp_chi2
 

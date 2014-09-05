@@ -180,6 +180,10 @@ for exec_iter in range(N):
                 if hasattr(line, 'decode'):
                     line = line.decode()
 
+                # Show all warnings for the record.
+                if search('WARNING', line):
+                    print(line[:-1])
+
                 # Find the profiling stats for the target function method.
                 if not search('func_', line):
                     continue
@@ -287,8 +291,4 @@ print("\nCluster of 100 spins analysis:")
 for i in range(len(models)):
     # Alias.
     model, script, iter, scaling_factor = models[i]
-    if model == 'IT99':
-        comment = "IT99: Cluster of only 1 spin analysis, since v. 3.2.2 had a bug with clustering analysis.:"
-    else:
-        comment = ""
-    print("%-25s  %7.3f+/-%.3f -> %7.3f+/-%.3f, %7.3fx faster. %s" % (model+':', ave_alt_cluster[model], sd_alt_cluster[model], ave_new_cluster[model], sd_new_cluster[model], speed_up_cluster[model], comment) )
+    print("%-25s  %7.3f+/-%.3f -> %7.3f+/-%.3f, %7.3fx faster." % (model+':', ave_alt_cluster[model], sd_alt_cluster[model], ave_new_cluster[model], sd_new_cluster[model], speed_up_cluster[model]) )
