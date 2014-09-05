@@ -109,7 +109,7 @@ class Relax_disp(SystemTestCase):
                 status.skipped_tests.append([methodName, 'scipy.optimize.leastsq module', self._skip_type])
 
         # If not NMRPipe showApod program in PATH.
-        if not dep_check.showApod_module:
+        if not dep_check.showApod_software:
             # The list of tests to skip.
             to_skip = [
                 "test_show_apod_extract",
