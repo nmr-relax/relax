@@ -150,6 +150,10 @@ def initialise():
 # A table of user function renamings - for script compatibility.
 uf_translation_table = {
     'calc': 'minimise.calculate',
+    'exp_info.software_select': 'bmrb.software_select',
     'grid_search': 'minimise.grid_search',
-    'minimise': 'minimise.execute'
+    'minimise': 'minimise.execute',
+    'pcs.centre': 'paramag_centre',
+    'pymol.cmd': 'pymol.command',
+    'pymol.macro_create': 'pymol.macro_write'
 }
