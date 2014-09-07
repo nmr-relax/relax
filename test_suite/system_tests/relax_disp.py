@@ -5950,7 +5950,7 @@ class Relax_disp(SystemTestCase):
         sdic[e_2]['rmsd_folder'] = rmsd_folder_2
 
         # Define temporary folder.
-        sdic['results_dir'] = self.tmpdir
+        #sdic['results_dir'] = self.tmpdir
 
         # Setup class with data.
         RDR =  Relax_disp_rep(sdic)
@@ -5962,10 +5962,37 @@ class Relax_disp(SystemTestCase):
         #RDR.set_int(list_glob_ini=[128, 126])
 
         # Now calculate R2eff.
-        #RDR.calc_r2eff(list_glob_ini=[128, 126])
+        RDR.calc_r2eff(list_glob_ini=[128, 126, 6])
 
-        RDR.minimise_model(model=MODEL_CR72, list_glob_ini=[128])
+        # Minimise.
+        #RDR.minimise_model(model=MODEL_CR72, list_glob_ini=[128, 126])
 
+        # Try for bad data.
+        #RDR.calc_r2eff(list_glob_ini=[6, 4])
+
+        # Change method.
+        RDR.set_self(key='method', value='MDD')
+
+        # Now calculate R2eff.
+        RDR.calc_r2eff(list_glob_ini=[128, 126])
+
+        # Minimise.
+        #RDR.minimise_model(model=MODEL_CR72, list_glob_ini=[128, 126])
+
+        # Collect r2eff values.
+        r2eff_ft = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126, 6])
+
+        # Collect r2eff values.
+        r2eff_mdd = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126])
+
+        # Get R2eff stats.
+        r2eff_stat_dic = RDR.get_r2eff_stat_dic(list_r2eff_dics=[r2eff_ft, r2eff_mdd], list_glob_ini=[128, 126, 6])
+
+        # Plot R2eff stats
+        RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT'], list_glob_ini=[128, 126, 6], show=True)
+
+        # Print the pipes.
+        self.interpreter.pipe.display()
 
 
     def test_r1rho_kjaergaard_auto(self):

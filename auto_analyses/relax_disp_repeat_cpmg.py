@@ -30,6 +30,7 @@ from collections import OrderedDict
 from datetime import datetime
 from glob import glob
 from os import F_OK, access, getcwd, sep
+from numpy import asarray, std
 import sys
 
 # relax module imports.
@@ -37,7 +38,7 @@ from lib.io import extract_data, get_file_path, sort_filenames
 from lib.text.sectioning import section, subsection, subtitle, title
 from pipe_control import pipes
 from prompt.interpreter import Interpreter
-from specific_analyses.relax_disp.data import has_exponential_exp_type, is_r1_optimised, return_param_key_from_data
+from specific_analyses.relax_disp.data import has_exponential_exp_type, is_r1_optimised, loop_exp_frq_offset_point, return_param_key_from_data, spin_loop
 from specific_analyses.relax_disp.variables import MODEL_NOREX, MODEL_PARAMS, MODEL_R2EFF
 from status import Status; status = Status()
 
@@ -211,7 +212,7 @@ class Relax_disp_rep:
         # Read the intensity per spectrum id and set the RMSD error.
 
         # Switch to the pipe.
-        if pipes.get_pipe() != pipe_name:
+        if pipes.cdp_name() != pipe_name:
             self.interpreter.pipe.switch(pipe_name)
 
         # Loop over spectrometer frequencies.
@@ -265,7 +266,7 @@ class Relax_disp_rep:
 
 
         # Switch to the pipe.
-        if pipes.get_pipe() != pipe_name:
+        if pipes.cdp_name() != pipe_name:
             self.interpreter.pipe.switch(pipe_name)
 
         # Loop over spectrometer frequencies.
@@ -295,7 +296,7 @@ class Relax_disp_rep:
             self.interpreter.spectrum.error_analysis(subset=spectrum_ids)
 
 
-    def set_int(self, list_glob_ini=[0]):
+    def set_int(self, list_glob_ini=[0], force=False):
         """Call both the setup of data and the error analysis"""
 
         # Define model
@@ -306,10 +307,12 @@ class Relax_disp_rep:
             # Check previous, and get the pipe name.
             found, pipe_name, resfile, path = self.check_previous_result(model=model, glob_ini=glob_ini, method=self.method, clusterid='', bundle=self.method)
 
-            # If found, then pass, else calculate it.
-            if found:
-                pass
-            else:
+            if not found:
+                calculate = True
+            elif found:
+                calculate = False
+
+            if calculate:
                 # Create the data pipe, by copying setup pipe.
                 self.interpreter.pipe.copy(pipe_from=self.base_setup_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
                 self.interpreter.pipe.switch(pipe_name)
@@ -319,6 +322,12 @@ class Relax_disp_rep:
 
                 # Call error analysis.
                 self.do_spectrum_error_analysis(pipe_name=pipe_name, glob_ini=glob_ini)
+
+                # Save results, and store the current settings dic to pipe.
+                cdp.settings = self.settings
+                self.interpreter.results.write(file=resfile, dir=path, force=force)
+
+
 
 
     def calc_r2eff(self, list_glob_ini=[0], force=False):
@@ -331,11 +340,12 @@ class Relax_disp_rep:
             # Check previous, and get the pipe name.
             found, pipe_name, resfile, path = self.check_previous_result(model=model, glob_ini=glob_ini, method=self.method, clusterid='', bundle=self.method)
 
-            # If found, then pass, else calculate it.
-            if found:
-                pass
+            if not found:
+                calculate = True
+            elif found:
+                calculate = False
 
-            else:
+            if calculate:
                 # Create the data pipe by copying the intensity pipe, then switching to it.
                 # If not intensity pipe name pipe exists, then calculate it.
                 intensity_pipe_name = self.name_pipe(model='int', glob_ini=glob_ini, method=self.method, clusterid='')
@@ -356,8 +366,10 @@ class Relax_disp_rep:
                 if model == MODEL_R2EFF and not has_exponential_exp_type():
                     self.interpreter.minimise.calculate()
 
-                # Finally save the R2eff results.
+                # Save results, and store the current settings dic to pipe.
+                cdp.settings = self.settings
                 self.interpreter.results.write(file=resfile, dir=path, force=force)
+
 
 
     def minimise_model(self, model=None, list_glob_ini=[0], force=False, redo=False):
@@ -368,12 +380,16 @@ class Relax_disp_rep:
             # Check previous, and get the pipe name.
             found, pipe_name, resfile, path = self.check_previous_result(model=model, glob_ini=glob_ini, method=self.method, clusterid='', bundle=self.method)
 
-            # If found, then pass, else calculate it.
-            if found:
-                pass
+            if not found:
+                calculate = True
 
-            else:
+            elif found and redo == False:
+                calculate = False
 
+            elif found and redo == True:
+                calculate = True
+
+            if calculate:
                 # Get the pipe name for R2eff values.
                 r2eff_pipe_name = self.name_pipe(model=MODEL_R2EFF, glob_ini=glob_ini, method=self.method, clusterid='')
 
@@ -383,6 +399,7 @@ class Relax_disp_rep:
 
                 # Copy pipe from base setup.
                 self.interpreter.pipe.copy(pipe_from=self.base_setup_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
+                self.interpreter.pipe.switch(pipe_name)
 
                 # Now copy the R2eff values.
                 self.interpreter.value.copy(pipe_from=r2eff_pipe_name, pipe_to=pipe_name, param='r2eff')
@@ -396,7 +413,8 @@ class Relax_disp_rep:
                 # Now optimise.
                 self.optimise(model=model)
 
-                # Finally save the model results.
+                # Save results, and store the current settings dic to pipe.
+                cdp.settings = self.settings
                 self.interpreter.results.write(file=resfile, dir=path, force=force)
 
 
@@ -535,6 +553,119 @@ class Relax_disp_rep:
 
         return list_dub_mapping
 
+
+    def col_r2eff(self, method=None, list_glob_ini=[0]):
+
+        # Loop over the glob ini:
+        res_dic = {}
+        res_dic['method'] = method
+        for glob_ini in list_glob_ini:
+            # Store under glob_ini
+            res_dic[str(glob_ini)] = {}
+
+            # Get the pipe name for R2eff values.
+            pipe_name = self.name_pipe(model=MODEL_R2EFF, glob_ini=glob_ini, method=method, clusterid='')
+
+            # Check if pipe exists, or else calculate.
+            if not pipes.has_pipe(pipe_name):
+                self.calc_r2eff(list_glob_ini=[glob_ini])
+
+            if pipes.get_pipe() != pipe_name:
+                self.interpreter.pipe.switch(pipe_name)
+
+            # Results dictionary.
+            res_dic[str(glob_ini)] = {}
+            res_dic[str(glob_ini)]['r2eff'] = {}
+            res_dic[str(glob_ini)]['r2eff_err'] = {}
+            spin_point_r2eff_list = []
+            spin_point_r2eff_err_list = []
+
+            # Loop over the spins.
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                # Make spin dic.
+                res_dic[str(glob_ini)]['r2eff'][spin_id] = {}
+                res_dic[str(glob_ini)]['r2eff_err'][spin_id] = {}
+
+                # Loop over the R2eff points
+                for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                    # Define the key.
+                    data_key = return_param_key_from_data(exp_type=self.exp_type, frq=frq, offset=offset, point=point)
+
+                    # Check for bad data has skipped r2eff points
+                    if data_key in cur_spin.r2eff:
+                        r2eff_point = cur_spin.r2eff[data_key]
+                        r2eff_err_point = cur_spin.r2eff_err[data_key]
+
+                        res_dic[str(glob_ini)]['r2eff'][spin_id][data_key] = r2eff_point
+                        res_dic[str(glob_ini)]['r2eff_err'][spin_id][data_key] = r2eff_err_point
+                        spin_point_r2eff_list.append(r2eff_point)
+                        spin_point_r2eff_err_list.append(r2eff_err_point)
+
+            res_dic[str(glob_ini)]['r2eff_arr'] = asarray(spin_point_r2eff_list)
+            res_dic[str(glob_ini)]['r2eff_err_arr'] = asarray(spin_point_r2eff_err_list)
+
+        return res_dic
+
+    def get_r2eff_stat_dic(self, list_r2eff_dics=None, list_glob_ini=[0]):
+
+        # Loop over the result dictionaries:
+        res_dic = {}
+        for i, r2eff_dic in enumerate(list_r2eff_dics):
+            # Let the reference dic be initial dic
+            r2eff_dic_ref = list_r2eff_dics[0]
+            method_ref = r2eff_dic_ref['method']
+            res_dic['method_ref'] = method_ref
+
+            # Let the reference R2eff array be the initial glob.
+            r2eff_arr_ref = r2eff_dic_ref[str(list_glob_ini[0])]['r2eff_arr']
+            res_dic['r2eff_arr_ref'] = r2eff_arr_ref
+
+            # Get the current method
+            method_cur = r2eff_dic['method']
+            res_dic[method_cur] = {}
+            res_dic[method_cur]['method'] = method_cur
+
+            # Now loop over glob_ini:
+            for glob_ini in list_glob_ini:
+                # Get the array, if it exists.
+                if str(glob_ini) not in r2eff_dic:
+                    continue
+
+                r2eff_arr = r2eff_dic[str(glob_ini)]['r2eff_arr']
+
+                # Make a normalised R2eff array according to reference.
+                # This require that all number of points are equal.
+                if len(r2eff_arr) != len(r2eff_arr_ref):
+                    continue
+
+                # Get the normalised array.
+                r2eff_norm_arr = r2eff_arr/r2eff_arr_ref
+
+                # Calculate the standard deviation
+                r2eff_norm_std = std(r2eff_norm_arr, ddof=1)
+
+                # Get the diff, then norm
+                r2eff_diff_norm_arr = (r2eff_arr - r2eff_arr_ref) / r2eff_arr_ref
+                r2eff_diff_norm_std = std(r2eff_diff_norm_arr, ddof=1)
+
+                # Store to result dic.
+                res_dic[method_cur]['r2eff_arr'] = r2eff_arr
+                res_dic[method_cur]['r2eff_norm_arr'] = r2eff_norm_arr
+                res_dic[method_cur]['r2eff_norm_std'] = r2eff_norm_std
+                res_dic[method_cur]['r2eff_diff_norm_arr'] = r2eff_diff_norm_arr
+                res_dic[method_cur]['r2eff_diff_norm_std'] = r2eff_diff_norm_std
+
+
+        return res_dic
+
+    def plot_r2eff_stat(self, r2eff_stat_dic=None, methods=[], list_glob_ini=[], show=False):
+
+        # Loop over the methods.
+        for method in methods:
+            if method not in r2eff_stat_dic:
+                continue
+
+            print method
 
     def interpreter_start(self):
         # Load the interpreter.
