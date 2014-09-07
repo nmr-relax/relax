@@ -140,8 +140,8 @@ class Relax_disp_rep:
             self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=self.pipe_type, bundle=None)
 
             # Loop over frequency, store spectrum ids.
-            spectrum_ids = {}
-            spectrum_ids_replicates = {}
+            dic_spectrum_ids = {}
+            dic_spectrum_ids_replicates = {}
             for i, sfrq in enumerate(self.sfrqs):
                 # Access the key in self.
                 key = DIC_KEY_FORMAT % (sfrq)
@@ -166,14 +166,14 @@ class Relax_disp_rep:
                     self.interpreter.spectrum.read_spins(file=peaks_file, dir=None)
 
                 # Collect data keys.
-                spectrum_ids[key] = []
+                dic_spectrum_ids[key] = []
                 for j, cpmg_frq in enumerate(cpmg_frqs):
                     # Define the key.
                     data_key = return_param_key_from_data(exp_type=self.exp_type, frq=sfrq, point=cpmg_frq)
                     spectrum_id = data_key + '_%i'%j
 
                     # Store data key
-                    spectrum_ids[key].append(spectrum_id)
+                    dic_spectrum_ids[key].append(spectrum_id)
 
                     # Set the current experiment type.
                     self.interpreter.relax_disp.exp_type(spectrum_id=spectrum_id, exp_type=self.exp_type)
@@ -191,14 +191,14 @@ class Relax_disp_rep:
                     self.interpreter.spectrometer.frequency(id=spectrum_id, frq=sfrq, units=self.sfrq_unit)
 
                 # Get the list of duplications
-                list_dub = self.get_dublicates(spectrum_ids[key], cpmg_frqs)
+                list_dub = self.get_dublicates(dic_spectrum_ids[key], cpmg_frqs)
 
                 # Store to dic
-                spectrum_ids_replicates[key] = list_dub
+                dic_spectrum_ids_replicates[key] = list_dub
 
-            # Store to self.
-            self.set_self(key='spectrum_ids', value=spectrum_ids)
-            self.set_self(key='spectrum_ids_replicates', value=spectrum_ids_replicates)
+            # Store to current data pipe.
+            cdp.dic_spectrum_ids = dic_spectrum_ids
+            cdp.dic_spectrum_ids_replicates = dic_spectrum_ids_replicates
 
             # Name the isotope for field strength scaling.
             self.interpreter.spin.isotope(isotope=self.isotope)
@@ -220,7 +220,7 @@ class Relax_disp_rep:
             key = DIC_KEY_FORMAT % (sfrq)
 
             # Get the spectrum ids.
-            spectrum_ids = getattr(self, 'spectrum_ids')[key]
+            spectrum_ids = cdp.dic_spectrum_ids[key]
 
             # Get the folder for peak files.
             peaks_folder = getattr(self, key)['peaks_folder']
@@ -277,10 +277,10 @@ class Relax_disp_rep:
             section(file=sys.stdout, text="Error analysis for pipe='%s' and sfr:%3.2f"%(pipe_name, sfrq), prespace=2)
 
             # Get the spectrum ids.
-            spectrum_ids = getattr(self, 'spectrum_ids')[key]
+            spectrum_ids = cdp.dic_spectrum_ids[key]
 
             # Get the spectrum ids replicates.
-            spectrum_ids_replicates = getattr(self, 'spectrum_ids_replicates')[key]
+            spectrum_ids_replicates = cdp.dic_spectrum_ids_replicates[key]
 
             # Check if there are any replicates.
             for replicate in spectrum_ids_replicates:
