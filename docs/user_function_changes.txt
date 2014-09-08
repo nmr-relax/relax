@@ -1,0 +1,225 @@
+Introduction
+============
+
+The following list of changes between relax version pairs documents how the user functions have
+evolved.  User functions starting with '-' have been removed and user functions starting with '+'
+are new.  So if a user function has been renamed, such as dipole_pair.define to interatom.define,
+you will see one entry with '-' and one with '+'.  This listing is useful for upgrading scripts to
+newer relax versions.
+
+
+
+Comparing relax 2.0.0 to 2.1.0
+==============================
+
+-structure.vectors
++deselect.interatom
++dipole_pair.define
++dipole_pair.read_dist
++dipole_pair.set_dist
++dipole_pair.unit_vectors
++select.interatom
++sequence.attach_protons
++spin.isotope
+
+
+Comparing relax 2.1.0 to 2.1.1
+==============================
+
+
+
+Comparing relax 2.1.1 to 2.1.2
+==============================
+
+
+
+Comparing relax 2.1.2 to 2.2.0
+==============================
+
++interatomic.copy
++interatomic.create
++pcs.copy
++pcs.set_errors
++pcs.structural_noise
++pipe.change_type
++rdc.copy
++rdc.set_errors
+
+
+Comparing relax 2.2.0 to 2.2.1
+==============================
+
+
+
+Comparing relax 2.2.1 to 2.2.2
+==============================
+
+
+
+Comparing relax 2.2.2 to 2.2.3
+==============================
+
++structure.add_model
++structure.rmsd
++structure.web_of_motion
+
+
+Comparing relax 2.2.3 to 2.2.4
+==============================
+
++structure.create_rotor_pdb
+
+
+Comparing relax 2.2.4 to 2.2.5
+==============================
+
+
+
+Comparing relax 2.2.5 to 3.0.0
+==============================
+
+-dipole_pair.define
+-dipole_pair.read_dist
+-dipole_pair.set_dist
+-dipole_pair.unit_vectors
+-frame_order.cone_pdb
+-frame_order.domain_to_pdb
+-frq.set
+-interatomic.copy
+-interatomic.create
+-relax_data.frq
+-temperature
++domain
++frame_order.average_position
++frame_order.num_int_pts
++frame_order.pdb_model
++frame_order.quad_int
++interatom.copy
++interatom.define
++interatom.read_dist
++interatom.set_dist
++interatom.unit_vectors
++j_coupling.copy
++j_coupling.delete
++j_coupling.display
++j_coupling.read
++j_coupling.write
++select.domain
++spectrometer.frequency
++spectrometer.temperature
+
+
+Comparing relax 3.0.0 to 3.0.1
+==============================
+
++chemical_shift.read
+
+
+Comparing relax 3.0.1 to 3.0.2
+==============================
+
+
+
+Comparing relax 3.0.2 to 3.1.0
+==============================
+
++relax_disp.catia_execute
++relax_disp.catia_input
++relax_disp.cluster
++relax_disp.cpmg_frq
++relax_disp.cpmgfit_execute
++relax_disp.cpmgfit_input
++relax_disp.exp_type
++relax_disp.insignificance
++relax_disp.nessy_input
++relax_disp.parameter_copy
++relax_disp.plot_disp_curves
++relax_disp.plot_exp_curves
++relax_disp.r2eff_read
++relax_disp.r2eff_read_spin
++relax_disp.relax_time
++relax_disp.select_model
++relax_disp.sherekhan_input
++relax_disp.spin_lock_field
++relax_disp.spin_lock_offset
++relax_disp.write_disp_curves
+
+
+Comparing relax 3.1.0 to 3.1.1
+==============================
+
++spectrum.read_spins
++structure.read_gaussian
+
+
+Comparing relax 3.1.1 to 3.1.2
+==============================
+
+
+
+Comparing relax 3.1.2 to 3.1.3
+==============================
+
+
+
+Comparing relax 3.1.3 to 3.1.4
+==============================
+
+
+
+Comparing relax 3.1.4 to 3.1.5
+==============================
+
+
+
+Comparing relax 3.1.5 to 3.1.6
+==============================
+
+
+
+Comparing relax 3.1.6 to 3.1.7
+==============================
+
+
+
+Comparing relax 3.1.7 to 3.2.0
+==============================
+
+-relax_disp.cpmg_frq
++pymol.frame_order
++relax_disp.cpmg_setup
++relax_disp.set_grid_r20_from_min_r2eff
+
+
+Comparing relax 3.2.0 to 3.2.1
+==============================
+
+
+
+Comparing relax 3.2.1 to 3.2.2
+==============================
+
+-relax_disp.set_grid_r20_from_min_r2eff
++relax_disp.r20_from_min_r2eff
+
+
+Comparing relax 3.2.2 to 3.2.3
+==============================
+
++structure.com
+
+
+Comparing relax 3.2.3 to 3.3.0
+==============================
+
+-calc
+-grid_search
+-minimise
++minimise.calculate
++minimise.execute
++minimise.grid_search
++minimise.grid_zoom
++relax_disp.r1_fit
++relax_disp.r2eff_err_estimate
++select.display
++time
