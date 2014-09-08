@@ -5959,8 +5959,8 @@ class Relax_disp(SystemTestCase):
         # Setup base information.
         RDR.set_base_cpmg(glob_ini=128)
 
-        #methods = ['FT', 'MDD']
-        methods = ['FT']
+        methods = ['FT', 'MDD']
+        #methods = ['FT']
 
         # Set the intensity.
         #RDR.set_int(methods=methods, list_glob_ini=[128, 126])
@@ -5972,7 +5972,7 @@ class Relax_disp(SystemTestCase):
             # Try for bad data.
             #RDR.calc_r2eff(methods=['FT'], list_glob_ini=[6, 4])
 
-            if False:
+            if True:
                 # Collect r2eff values.
                 r2eff_ft = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126, 6])
 
@@ -5983,10 +5983,10 @@ class Relax_disp(SystemTestCase):
                 r2eff_stat_dic = RDR.get_r2eff_stat_dic(list_r2eff_dics=[r2eff_ft, r2eff_mdd], list_glob_ini=[128, 126, 6])
 
                 # Plot R2eff stats
-                RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT'], list_glob_ini=[128, 126, 6], show=True)
+                RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT'], list_glob_ini=[128, 126, 6], show=False)
 
         # Do minimisation
-        if True:
+        if False:
             # Deselect all spins.
             #self.interpreter.spin.display()
             RDR.deselect_all(methods=methods, model='setup', model_from=MODEL_R2EFF, analysis='grid setup', analysis_from='int', list_glob_ini=[128, 126])

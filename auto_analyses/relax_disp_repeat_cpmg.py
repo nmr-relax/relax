@@ -36,6 +36,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
+import dep_check
 from lib.io import extract_data, get_file_path, sort_filenames, write_data
 from lib.text.sectioning import section, subsection, subtitle, title
 from lib.warnings import RelaxWarning
@@ -45,6 +46,9 @@ from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.data import generate_r20_key, has_exponential_exp_type, is_r1_optimised, loop_exp_frq_offset, loop_exp_frq_offset_point, return_param_key_from_data, spin_loop
 from specific_analyses.relax_disp.variables import MODEL_NOREX, MODEL_PARAMS, MODEL_R2EFF, PARAMS_R20
 from status import Status; status = Status()
+
+if dep_check.matplotlib_module:
+    import matplotlib.pyplot as plt
 
 
 # Define sfrq key to dic.
@@ -868,11 +872,11 @@ class Relax_disp_rep:
             res_dic[str(glob_ini)] = {}
 
             # Get the pipe name for R2eff values.
-            pipe_name = self.name_pipe(method=method, model=MODEL_R2EFF, analysis=analysis, glob_ini=glob_ini)
+            pipe_name = self.name_pipe(method=method, model=MODEL_R2EFF, analysis='int', glob_ini=glob_ini)
 
             # Check if pipe exists, or else calculate.
             if not pipes.has_pipe(pipe_name):
-                self.calc_r2eff(list_glob_ini=[glob_ini])
+                self.calc_r2eff(methods=[method], list_glob_ini=[glob_ini])
 
             if pipes.get_pipe() != pipe_name:
                 self.interpreter.pipe.switch(pipe_name)
@@ -929,6 +933,8 @@ class Relax_disp_rep:
             method_cur = r2eff_dic['method']
             res_dic[method_cur] = {}
             res_dic[method_cur]['method'] = method_cur
+            res_dic[method_cur]['glob_ini'] = []
+            res_dic[method_cur]['r2eff_norm_std'] = []
 
             # Now loop over glob_ini:
             for glob_ini in list_glob_ini:
@@ -953,12 +959,22 @@ class Relax_disp_rep:
                 r2eff_diff_norm_arr = (r2eff_arr - r2eff_arr_ref) / r2eff_arr_ref
                 r2eff_diff_norm_std = std(r2eff_diff_norm_arr, ddof=1)
 
+                # Store x
+                res_dic[method_cur]['glob_ini'].append(glob_ini)
+
                 # Store to result dic.
-                res_dic[method_cur]['r2eff_arr'] = r2eff_arr
-                res_dic[method_cur]['r2eff_norm_arr'] = r2eff_norm_arr
-                res_dic[method_cur]['r2eff_norm_std'] = r2eff_norm_std
-                res_dic[method_cur]['r2eff_diff_norm_arr'] = r2eff_diff_norm_arr
-                res_dic[method_cur]['r2eff_diff_norm_std'] = r2eff_diff_norm_std
+                res_dic[method_cur][str(glob_ini)] = {}
+                res_dic[method_cur][str(glob_ini)]['r2eff_arr'] = r2eff_arr
+                res_dic[method_cur][str(glob_ini)]['r2eff_norm_arr'] = r2eff_norm_arr
+                res_dic[method_cur][str(glob_ini)]['r2eff_norm_std'] = r2eff_norm_std
+                res_dic[method_cur]['r2eff_norm_std'].append(r2eff_norm_std)
+
+                res_dic[method_cur][str(glob_ini)]['r2eff_diff_norm_arr'] = r2eff_diff_norm_arr
+                res_dic[method_cur][str(glob_ini)]['r2eff_diff_norm_std'] = r2eff_diff_norm_std
+
+
+            res_dic[method_cur]['glob_ini'] = asarray(res_dic[method_cur]['glob_ini'])
+            res_dic[method_cur]['r2eff_norm_std'] = asarray(res_dic[method_cur]['r2eff_norm_std'])
 
 
         return res_dic
@@ -971,7 +987,16 @@ class Relax_disp_rep:
             if method not in r2eff_stat_dic:
                 continue
 
-            print method
+            if not dep_check.matplotlib_module:
+                continue
+
+            fig = plt.figure()
+            x = r2eff_stat_dic[method]['glob_ini']
+            y = r2eff_stat_dic[method]['r2eff_norm_std']
+            plt.plot(x, y)
+
+            if show:
+                plt.show()
 
 
     def interpreter_start(self):
