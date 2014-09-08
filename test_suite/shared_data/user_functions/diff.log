@@ -457,3 +457,157 @@ Comparing relax 1.3.1 to 1.3.0
 +structure.load_spins
 +structure.write_pdb
 +temperature
+
+
+Comparing relax 1.3.0 to 1.2.15
+===============================
+
+-consistency_tests.set_frq
+-init_data
+-pdb
++molmol.ribbon
++molmol.tensor_pdb
++pymol.cartoon
++pymol.clear_history
++pymol.command
++pymol.macro_exec
++pymol.tensor_pdb
++pymol.vector_dist
++pymol.view
++pymol.write
++reset
++structure.create_diff_tensor_pdb
++structure.create_vector_dist
++structure.read_pdb
++structure.vectors
+
+
+Comparing relax 1.2.15 to 1.2.14
+================================
+
+
+
+Comparing relax 1.2.14 to 1.2.13
+================================
+
+
+
+Comparing relax 1.2.13 to 1.2.12
+================================
+
++consistency_tests.set_frq
+
+
+Comparing relax 1.2.12 to 1.2.11
+================================
+
+
+
+Comparing relax 1.2.11 to 1.2.10
+================================
+
+
+
+Comparing relax 1.2.10 to 1.2.9
+===============================
+
+
+
+Comparing relax 1.2.9 to 1.2.8
+==============================
+
+
+
+Comparing relax 1.2.8 to 1.2.7
+==============================
+
+
+
+Comparing relax 1.2.7 to 1.2.6
+==============================
+
+
+
+Comparing relax 1.2.6 to 1.2.5
+==============================
+
+
+
+Comparing relax 1.2.5 to 1.2.4
+==============================
+
+
+
+Comparing relax 1.2.4 to 1.2.3
+==============================
+
++molmol.macro_exec
++molmol.write
++run.hybridise
+
+
+Comparing relax 1.2.3 to 1.2.2
+==============================
+
+
+
+Comparing relax 1.2.2 to 1.2.1
+==============================
+
+
+
+Comparing relax 1.2.1 to 1.2.0
+==============================
+
+
+
+Comparing relax 1.2.0 to 1.0.9
+==============================
+
++relax_fit.mean_and_error
++relax_fit.select_model
+
+
+Comparing relax 1.0.9 to 1.0.8
+==============================
+
+
+
+Comparing relax 1.0.8 to 1.0.7
+==============================
+
++dasha.create
++dasha.execute
++dasha.extract
+
+
+Comparing relax 1.0.7 to 1.0.6
+==============================
+
+
+
+Comparing relax 1.0.6 to 1.0.5
+==============================
+
+
+
+Comparing relax 1.0.5 to 1.0.4
+==============================
+
+
+
+Comparing relax 1.0.4 to 1.0.3
+==============================
+
+-diffusion_tensor.set
++diffusion_tensor.init
+
+
+Comparing relax 1.0.3 to 1.0.2
+==============================
+
+
+
+Comparing relax 1.0.2 to 1.0.1
+==============================
+
