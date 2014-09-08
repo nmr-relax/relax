@@ -5,6 +5,22 @@ from subprocess import PIPE, Popen
 
 # The versions to compare.
 versions = [
+    '1.3.0',
+    '1.3.1',
+    '1.3.2',
+    '1.3.3',
+    '1.3.4',
+    '1.3.5',
+    '1.3.6',
+    '1.3.7',
+    '1.3.8',
+    '1.3.9',
+    '1.3.10',
+    '1.3.11',
+    '1.3.12',
+    '1.3.13',
+    '1.3.14',
+    '1.3.15',
     '1.3.16',
     '2.0.0',
     '2.1.0',
@@ -33,6 +49,7 @@ versions = [
     '3.2.3',
     '3.3.0'
 ]
+versions.reverse()
 
 # Loop over all versions.
 for i in range(len(versions)-1):
@@ -41,7 +58,7 @@ for i in range(len(versions)-1):
     print("=" * len(text) + "\n")
 
     # The shell command.
-    cmd = 'diff -u uf_list_%s uf_list_%s' % (versions[i], versions[i+1])
+    cmd = 'diff -u uf_list_%s uf_list_%s' % (versions[i+1], versions[i])
 
     # Execute the command.
     pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
