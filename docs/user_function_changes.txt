@@ -9,73 +9,123 @@ newer relax versions.
 
 
 
-Comparing relax 2.0.0 to 2.1.0
+Comparing relax 3.3.0 to 3.2.3
 ==============================
 
--structure.vectors
-+deselect.interatom
-+dipole_pair.define
-+dipole_pair.read_dist
-+dipole_pair.set_dist
-+dipole_pair.unit_vectors
-+select.interatom
-+sequence.attach_protons
-+spin.isotope
+-calc
+-grid_search
+-minimise
++minimise.calculate
++minimise.execute
++minimise.grid_search
++minimise.grid_zoom
++relax_disp.r1_fit
++relax_disp.r2eff_err_estimate
++select.display
++time
 
 
-Comparing relax 2.1.0 to 2.1.1
+Comparing relax 3.2.3 to 3.2.2
 ==============================
 
++structure.com
 
 
-Comparing relax 2.1.1 to 2.1.2
+Comparing relax 3.2.2 to 3.2.1
 ==============================
 
+-relax_disp.set_grid_r20_from_min_r2eff
++relax_disp.r20_from_min_r2eff
 
 
-Comparing relax 2.1.2 to 2.2.0
-==============================
-
-+interatomic.copy
-+interatomic.create
-+pcs.copy
-+pcs.set_errors
-+pcs.structural_noise
-+pipe.change_type
-+rdc.copy
-+rdc.set_errors
-
-
-Comparing relax 2.2.0 to 2.2.1
+Comparing relax 3.2.1 to 3.2.0
 ==============================
 
 
 
-Comparing relax 2.2.1 to 2.2.2
+Comparing relax 3.2.0 to 3.1.7
+==============================
+
+-relax_disp.cpmg_frq
++pymol.frame_order
++relax_disp.cpmg_setup
++relax_disp.set_grid_r20_from_min_r2eff
+
+
+Comparing relax 3.1.7 to 3.1.6
 ==============================
 
 
 
-Comparing relax 2.2.2 to 2.2.3
-==============================
-
-+structure.add_model
-+structure.rmsd
-+structure.web_of_motion
-
-
-Comparing relax 2.2.3 to 2.2.4
-==============================
-
-+structure.create_rotor_pdb
-
-
-Comparing relax 2.2.4 to 2.2.5
+Comparing relax 3.1.6 to 3.1.5
 ==============================
 
 
 
-Comparing relax 2.2.5 to 3.0.0
+Comparing relax 3.1.5 to 3.1.4
+==============================
+
+
+
+Comparing relax 3.1.4 to 3.1.3
+==============================
+
+
+
+Comparing relax 3.1.3 to 3.1.2
+==============================
+
+
+
+Comparing relax 3.1.2 to 3.1.1
+==============================
+
+
+
+Comparing relax 3.1.1 to 3.1.0
+==============================
+
++spectrum.read_spins
++structure.read_gaussian
+
+
+Comparing relax 3.1.0 to 3.0.2
+==============================
+
++relax_disp.catia_execute
++relax_disp.catia_input
++relax_disp.cluster
++relax_disp.cpmg_frq
++relax_disp.cpmgfit_execute
++relax_disp.cpmgfit_input
++relax_disp.exp_type
++relax_disp.insignificance
++relax_disp.nessy_input
++relax_disp.parameter_copy
++relax_disp.plot_disp_curves
++relax_disp.plot_exp_curves
++relax_disp.r2eff_read
++relax_disp.r2eff_read_spin
++relax_disp.relax_time
++relax_disp.select_model
++relax_disp.sherekhan_input
++relax_disp.spin_lock_field
++relax_disp.spin_lock_offset
++relax_disp.write_disp_curves
+
+
+Comparing relax 3.0.2 to 3.0.1
+==============================
+
+
+
+Comparing relax 3.0.1 to 3.0.0
+==============================
+
++chemical_shift.read
+
+
+Comparing relax 3.0.0 to 2.2.5
 ==============================
 
 -dipole_pair.define
@@ -109,117 +159,464 @@ Comparing relax 2.2.5 to 3.0.0
 +spectrometer.temperature
 
 
-Comparing relax 3.0.0 to 3.0.1
-==============================
-
-+chemical_shift.read
-
-
-Comparing relax 3.0.1 to 3.0.2
+Comparing relax 2.2.5 to 2.2.4
 ==============================
 
 
 
-Comparing relax 3.0.2 to 3.1.0
+Comparing relax 2.2.4 to 2.2.3
 ==============================
 
-+relax_disp.catia_execute
-+relax_disp.catia_input
-+relax_disp.cluster
-+relax_disp.cpmg_frq
-+relax_disp.cpmgfit_execute
-+relax_disp.cpmgfit_input
-+relax_disp.exp_type
-+relax_disp.insignificance
-+relax_disp.nessy_input
-+relax_disp.parameter_copy
-+relax_disp.plot_disp_curves
-+relax_disp.plot_exp_curves
-+relax_disp.r2eff_read
-+relax_disp.r2eff_read_spin
-+relax_disp.relax_time
-+relax_disp.select_model
-+relax_disp.sherekhan_input
-+relax_disp.spin_lock_field
-+relax_disp.spin_lock_offset
-+relax_disp.write_disp_curves
++structure.create_rotor_pdb
 
 
-Comparing relax 3.1.0 to 3.1.1
+Comparing relax 2.2.3 to 2.2.2
 ==============================
 
-+spectrum.read_spins
-+structure.read_gaussian
++structure.add_model
++structure.rmsd
++structure.web_of_motion
 
 
-Comparing relax 3.1.1 to 3.1.2
+Comparing relax 2.2.2 to 2.2.1
 ==============================
 
 
 
-Comparing relax 3.1.2 to 3.1.3
+Comparing relax 2.2.1 to 2.2.0
 ==============================
 
 
 
-Comparing relax 3.1.3 to 3.1.4
+Comparing relax 2.2.0 to 2.1.2
+==============================
+
++interatomic.copy
++interatomic.create
++pcs.copy
++pcs.set_errors
++pcs.structural_noise
++pipe.change_type
++rdc.copy
++rdc.set_errors
+
+
+Comparing relax 2.1.2 to 2.1.1
 ==============================
 
 
 
-Comparing relax 3.1.4 to 3.1.5
+Comparing relax 2.1.1 to 2.1.0
 ==============================
 
 
 
-Comparing relax 3.1.5 to 3.1.6
+Comparing relax 2.1.0 to 2.0.0
+==============================
+
+-structure.vectors
++deselect.interatom
++dipole_pair.define
++dipole_pair.read_dist
++dipole_pair.set_dist
++dipole_pair.unit_vectors
++select.interatom
++sequence.attach_protons
++spin.isotope
+
+
+Comparing relax 2.0.0 to 1.3.16
+===============================
+
+-angle_diff_frame
+-pcs.copy
+-rdc.copy
+-system
++angles.diff_frame
++pipe.bundle
++relax_data.frq
++relax_data.type
++script
+
+
+Comparing relax 1.3.16 to 1.3.15
+================================
+
+-pdc.read
++bruker.read
+
+
+Comparing relax 1.3.15 to 1.3.14
+================================
+
+
+
+Comparing relax 1.3.14 to 1.3.13
+================================
+
++structure.find_pivot
+
+
+Comparing relax 1.3.13 to 1.3.12
+================================
+
+-molmol.macro_exec
+-molmol.write
+-pymol.macro_exec
+-pymol.write
++molmol.macro_apply
++molmol.macro_run
++molmol.macro_write
++pymol.macro_apply
++pymol.macro_run
++pymol.macro_write
++spectrum.delete
++structure.add_atom
++structure.connect_atom
++structure.displacement
++structure.rotate
++structure.superimpose
++structure.translate
++sys_info
+
+
+Comparing relax 1.3.12 to 1.3.11
+================================
+
+
+
+Comparing relax 1.3.11 to 1.3.10
+================================
+
++bmrb.citation
++bmrb.display
++bmrb.read
++bmrb.script
++bmrb.software
++bmrb.software_select
++bmrb.thiol_state
++bmrb.write
++molecule.type
++relax_data.peak_intensity_type
++relax_data.temp_calibration
++relax_data.temp_control
++spin.element
++structure.read_xyz
+
+
+Comparing relax 1.3.10 to 1.3.9
+===============================
+
++pdc.read
+
+
+Comparing relax 1.3.9 to 1.3.8
 ==============================
 
 
 
-Comparing relax 3.1.6 to 3.1.7
+Comparing relax 1.3.8 to 1.3.7
 ==============================
 
 
 
-Comparing relax 3.1.7 to 3.2.0
-==============================
-
--relax_disp.cpmg_frq
-+pymol.frame_order
-+relax_disp.cpmg_setup
-+relax_disp.set_grid_r20_from_min_r2eff
-
-
-Comparing relax 3.2.0 to 3.2.1
+Comparing relax 1.3.7 to 1.3.6
 ==============================
 
 
 
-Comparing relax 3.2.1 to 3.2.2
+Comparing relax 1.3.6 to 1.3.5
 ==============================
 
--relax_disp.set_grid_r20_from_min_r2eff
-+relax_disp.r20_from_min_r2eff
+-pcs.centre
++align_tensor.fix
++frame_order.domain_to_pdb
++n_state_model.elim_no_prob
++paramag.centre
++pcs.weight
++rdc.weight
 
 
-Comparing relax 3.2.2 to 3.2.3
+Comparing relax 1.3.5 to 1.3.4
 ==============================
 
-+structure.com
+-pipe.list
++pcs.calc_q_factors
++pcs.corr_plot
++pipe.display
++rdc.calc_q_factors
++rdc.corr_plot
++structure.delete
++structure.get_pos
 
 
-Comparing relax 3.2.3 to 3.3.0
+Comparing relax 1.3.4 to 1.3.3
 ==============================
 
--calc
--grid_search
--minimise
-+minimise.calculate
-+minimise.execute
-+minimise.grid_search
-+minimise.grid_zoom
-+relax_disp.r1_fit
-+relax_disp.r2eff_err_estimate
-+select.display
-+time
+-n_state_model.set_domain
+-n_state_model.set_type
+-noe.error
+-noe.read
+-relax_fit.mean_and_error
+-relax_fit.read
++align_tensor.reduction
++align_tensor.set_domain
++frame_order.cone_pdb
++frame_order.pivot
++frame_order.ref_domain
++frame_order.select_model
++noe.read_restraints
++noe.spectrum_type
++relax_fit.relax_time
++spectrum.baseplane_rmsd
++spectrum.error_analysis
++spectrum.integration_points
++spectrum.read_intensities
++spectrum.replicated
++spin.create_pseudo
+
+
+Comparing relax 1.3.3 to 1.3.2
+==============================
+
+
+
+Comparing relax 1.3.2 to 1.3.1
+==============================
+
+
+
+Comparing relax 1.3.1 to 1.3.0
+==============================
+
+-angles
+-model_free.copy
+-nuclei
+-run.create
+-run.delete
+-run.hybridise
+-select.res
+-sequence.add
+-sequence.delete
+-sequence.sort
+-thread.read
+-unselect.all
+-unselect.read
+-unselect.res
+-unselect.reverse
++align_tensor.copy
++align_tensor.delete
++align_tensor.display
++align_tensor.init
++align_tensor.matrix_angles
++align_tensor.svd
++angle_diff_frame
++consistency_tests.set_frq
++deselect.all
++deselect.read
++deselect.reverse
++deselect.spin
++frq.set
++molecule.copy
++molecule.create
++molecule.delete
++molecule.display
++molecule.name
++n_state_model.CoM
++n_state_model.cone_pdb
++n_state_model.number_of_states
++n_state_model.ref_domain
++n_state_model.select_model
++n_state_model.set_domain
++n_state_model.set_type
++pcs.back_calc
++pcs.centre
++pcs.copy
++pcs.delete
++pcs.display
++pcs.read
++pcs.write
++pipe.copy
++pipe.create
++pipe.current
++pipe.delete
++pipe.hybridise
++pipe.list
++pipe.switch
++pymol.cone_pdb
++rdc.back_calc
++rdc.copy
++rdc.delete
++rdc.display
++rdc.read
++rdc.write
++residue.copy
++residue.create
++residue.delete
++residue.display
++residue.name
++residue.number
++select.spin
++spin.copy
++spin.create
++spin.delete
++spin.display
++spin.name
++spin.number
++structure.load_spins
++structure.write_pdb
++temperature
+
+
+Comparing relax 1.3.0 to 1.2.15
+===============================
+
+-consistency_tests.set_frq
+-init_data
+-pdb
++molmol.ribbon
++molmol.tensor_pdb
++pymol.cartoon
++pymol.clear_history
++pymol.command
++pymol.macro_exec
++pymol.tensor_pdb
++pymol.vector_dist
++pymol.view
++pymol.write
++reset
++structure.create_diff_tensor_pdb
++structure.create_vector_dist
++structure.read_pdb
++structure.vectors
+
+
+Comparing relax 1.2.15 to 1.2.14
+================================
+
+
+
+Comparing relax 1.2.14 to 1.2.13
+================================
+
+
+
+Comparing relax 1.2.13 to 1.2.12
+================================
+
++consistency_tests.set_frq
+
+
+Comparing relax 1.2.12 to 1.2.11
+================================
+
+
+
+Comparing relax 1.2.11 to 1.2.10
+================================
+
+
+
+Comparing relax 1.2.10 to 1.2.9
+===============================
+
+
+
+Comparing relax 1.2.9 to 1.2.8
+==============================
+
+
+
+Comparing relax 1.2.8 to 1.2.7
+==============================
+
+
+
+Comparing relax 1.2.7 to 1.2.6
+==============================
+
+
+
+Comparing relax 1.2.6 to 1.2.5
+==============================
+
+
+
+Comparing relax 1.2.5 to 1.2.4
+==============================
+
+
+
+Comparing relax 1.2.4 to 1.2.3
+==============================
+
++molmol.macro_exec
++molmol.write
++run.hybridise
+
+
+Comparing relax 1.2.3 to 1.2.2
+==============================
+
+
+
+Comparing relax 1.2.2 to 1.2.1
+==============================
+
+
+
+Comparing relax 1.2.1 to 1.2.0
+==============================
+
+
+
+Comparing relax 1.2.0 to 1.0.9
+==============================
+
++relax_fit.mean_and_error
++relax_fit.select_model
+
+
+Comparing relax 1.0.9 to 1.0.8
+==============================
+
+
+
+Comparing relax 1.0.8 to 1.0.7
+==============================
+
++dasha.create
++dasha.execute
++dasha.extract
+
+
+Comparing relax 1.0.7 to 1.0.6
+==============================
+
+
+
+Comparing relax 1.0.6 to 1.0.5
+==============================
+
+
+
+Comparing relax 1.0.5 to 1.0.4
+==============================
+
+
+
+Comparing relax 1.0.4 to 1.0.3
+==============================
+
+-diffusion_tensor.set
++diffusion_tensor.init
+
+
+Comparing relax 1.0.3 to 1.0.2
+==============================
+
+
+
+Comparing relax 1.0.2 to 1.0.1
+==============================
+
