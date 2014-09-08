@@ -26,20 +26,24 @@ U{task #7826<https://gna.org/task/index.php?78266>}, Write an python class for t
 """
 
 # Python module imports.
+from copy import deepcopy
 from collections import OrderedDict
 from datetime import datetime
 from glob import glob
 from os import F_OK, access, getcwd, sep
 from numpy import asarray, std
 import sys
+from warnings import warn
 
 # relax module imports.
-from lib.io import extract_data, get_file_path, sort_filenames
+from lib.io import extract_data, get_file_path, sort_filenames, write_data
 from lib.text.sectioning import section, subsection, subtitle, title
+from lib.warnings import RelaxWarning
+from pipe_control.mol_res_spin import display_spin, generate_spin_string, return_spin, spin_loop
 from pipe_control import pipes
 from prompt.interpreter import Interpreter
-from specific_analyses.relax_disp.data import has_exponential_exp_type, is_r1_optimised, loop_exp_frq_offset_point, return_param_key_from_data, spin_loop
-from specific_analyses.relax_disp.variables import MODEL_NOREX, MODEL_PARAMS, MODEL_R2EFF
+from specific_analyses.relax_disp.data import generate_r20_key, has_exponential_exp_type, is_r1_optimised, loop_exp_frq_offset, loop_exp_frq_offset_point, return_param_key_from_data, spin_loop
+from specific_analyses.relax_disp.variables import MODEL_NOREX, MODEL_PARAMS, MODEL_R2EFF, PARAMS_R20
 from status import Status; status = Status()
 
 
@@ -55,6 +59,7 @@ class Relax_disp_rep:
     opt_func_tol = 1e-25
     opt_max_iterations = int(1e7)
 
+
     def __init__(self, settings):
         """Perform a repeated dispersion analysis for settings given."""
 
@@ -65,9 +70,6 @@ class Relax_disp_rep:
         for setting, value in self.settings.iteritems():
             setattr(self, setting, value)
 
-        if 'pipe_bundle' not in self.settings:
-            self.set_self(key='pipe_bundle', value=self.method)
-
         if 'pipe_type' not in self.settings:
             self.set_self(key='pipe_type', value='relax_disp')
 
@@ -77,9 +79,6 @@ class Relax_disp_rep:
         # No results directory, so default to the current directory.
         if 'results_dir' not in self.settings:
             self.set_self(key='results_dir', value=getcwd() + sep + 'results' + sep + self.time )
-
-        if 'grid_inc' not in self.settings:
-            self.set_self(key='grid_inc', value=11)
 
         # Standard Monte-Carlo simulations.
         if 'mc_sim_num' not in self.settings:
@@ -93,14 +92,9 @@ class Relax_disp_rep:
         if 'modsel' not in self.settings:
             self.set_self(key='modsel', value='AIC')
 
-        # The R2eff/R1rho value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.  
+        # The R2eff/R1rho value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.
         if 'insignificance' not in self.settings:
             self.set_self(key='insignificance', value=1.0)
-
-        # A flag which if True will set the grid R20 values from the minimum R2eff values through the r20_from_min_r2eff user function. 
-        # This will speed up the grid search with a factor GRID_INC^(Nr_spec_freq). For a CPMG experiment with two fields and standard GRID_INC=21, the speed-up is a factor 441.
-        if 'set_grid_r20' not in self.settings:
-            self.set_self(key='set_grid_r20', value=True)
 
         # A flag which if True will activate R1 parameter fitting via relax_disp.r1_fit for the models that support it.
         # If False, then the relax_disp.r1_fit user function will not be called.
@@ -117,21 +111,23 @@ class Relax_disp_rep:
 
         # The base setup.
         if 'base_setup_pipe_name' not in self.settings:
-            base_setup_pipe_name = self.name_pipe(model='setup', glob_ini='setup', method='setup', clusterid='')
+            base_setup_pipe_name = self.name_pipe(method='setup', model='setup', analysis='setup', glob_ini='setup')
             self.set_self(key='base_setup_pipe_name', value=base_setup_pipe_name)
 
         # Start interpreter.
         self.interpreter_start()
 
 
-    def set_base_cpmg(self, glob_ini='', force=False):
+    def set_base_cpmg(self, glob_ini=None, force=False):
         """ Setup base information, but do not load intensity. """
 
         # Define model
+        method = 'setup'
         model = 'setup'
+        analysis = 'setup'
 
         # Check previous, and get the pipe name.
-        found, pipe_name, resfile, path = self.check_previous_result(model=model, glob_ini='setup', method='setup', clusterid='', bundle='setup')
+        found, pipe_name, resfile, path = self.check_previous_result(method=method, model=model, analysis=analysis, glob_ini='setup', bundle='setup')
 
         # If found, then pass, else calculate it.
         if found:
@@ -261,7 +257,7 @@ class Relax_disp_rep:
                 self.interpreter.spectrum.baseplane_rmsd(error=rmsd, spectrum_id=spectrum_id)
 
 
-    def do_spectrum_error_analysis(self, pipe_name, glob_ini=None):
+    def do_spectrum_error_analysis(self, pipe_name):
         """Do spectrum error analysis, where both replicates per spectrometer frequency and subset is taken into consideration."""
 
 
@@ -296,174 +292,389 @@ class Relax_disp_rep:
             self.interpreter.spectrum.error_analysis(subset=spectrum_ids)
 
 
-    def set_int(self, list_glob_ini=[0], force=False):
+    def set_int(self, methods=None, list_glob_ini=None, force=False):
         """Call both the setup of data and the error analysis"""
 
         # Define model
-        model = 'int'
+        model = 'setup'
+        analysis = 'int'
 
-        # Loop over the glob ini:
-        for glob_ini in list_glob_ini:
-            # Check previous, and get the pipe name.
-            found, pipe_name, resfile, path = self.check_previous_result(model=model, glob_ini=glob_ini, method=self.method, clusterid='', bundle=self.method)
+        # Loop over the methods.
+        for method in methods:
+            # Change the self key.
+            self.set_self(key='method', value=method)
 
-            if not found:
-                calculate = True
-            elif found:
-                calculate = False
+            # Loop over the glob ini:
+            for glob_ini in list_glob_ini:
+                # Check previous, and get the pipe name.
+                found, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=self.method)
 
-            if calculate:
-                # Create the data pipe, by copying setup pipe.
-                self.interpreter.pipe.copy(pipe_from=self.base_setup_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
-                self.interpreter.pipe.switch(pipe_name)
+                if not found:
+                    calculate = True
+                elif found:
+                    calculate = False
 
-                # Call set intensity.
-                self.set_intensity_and_error(pipe_name=pipe_name, glob_ini=glob_ini)
+                if calculate:
+                    # Create the data pipe, by copying setup pipe.
+                    self.interpreter.pipe.copy(pipe_from=self.base_setup_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
+                    self.interpreter.pipe.switch(pipe_name)
 
-                # Call error analysis.
-                self.do_spectrum_error_analysis(pipe_name=pipe_name, glob_ini=glob_ini)
+                    # Call set intensity.
+                    self.set_intensity_and_error(pipe_name=pipe_name, glob_ini=glob_ini)
 
-                # Save results, and store the current settings dic to pipe.
-                cdp.settings = self.settings
-                self.interpreter.results.write(file=resfile, dir=path, force=force)
+                    # Call error analysis.
+                    self.do_spectrum_error_analysis(pipe_name=pipe_name)
+
+                    # Save results, and store the current settings dic to pipe.
+                    cdp.settings = self.settings
+                    self.interpreter.results.write(file=resfile, dir=path, force=force)
 
 
-
-
-    def calc_r2eff(self, list_glob_ini=[0], force=False):
+    def calc_r2eff(self, methods=None, list_glob_ini=None, force=False):
         """Method to calculate R2eff or read previous results."""
 
         model = MODEL_R2EFF
+        analysis = 'int'
 
-        # Loop over the glob ini:
-        for glob_ini in list_glob_ini:
-            # Check previous, and get the pipe name.
-            found, pipe_name, resfile, path = self.check_previous_result(model=model, glob_ini=glob_ini, method=self.method, clusterid='', bundle=self.method)
+        # Loop over the methods.
+        for method in methods:
+            # Change the self key.
+            self.set_self(key='method', value=method)
 
-            if not found:
-                calculate = True
-            elif found:
-                calculate = False
+            # Loop over the glob ini:
+            for glob_ini in list_glob_ini:
+                # Check previous, and get the pipe name.
+                found, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=self.method)
 
-            if calculate:
-                # Create the data pipe by copying the intensity pipe, then switching to it.
-                # If not intensity pipe name pipe exists, then calculate it.
-                intensity_pipe_name = self.name_pipe(model='int', glob_ini=glob_ini, method=self.method, clusterid='')
+                if not found:
+                    calculate = True
+                elif found:
+                    calculate = False
 
-                if not pipes.has_pipe(intensity_pipe_name):
-                    self.set_int(list_glob_ini=[glob_ini])
+                if calculate:
+                    # Create the data pipe by copying the intensity pipe, then switching to it.
+                    # If not intensity pipe name pipe exists, then calculate it.
+                    intensity_pipe_name = self.name_pipe(method=self.method, model='setup', analysis='int', glob_ini=glob_ini)
 
-                self.interpreter.pipe.copy(pipe_from=intensity_pipe_name, pipe_to=pipe_name, bundle_to=self.pipe_bundle)
-                self.interpreter.pipe.switch(pipe_name)
+                    if not pipes.has_pipe(intensity_pipe_name):
+                        self.set_int(methods=[method], list_glob_ini=[glob_ini])
+
+                    self.interpreter.pipe.copy(pipe_from=intensity_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
+                    self.interpreter.pipe.switch(pipe_name)
+
+                    # Select the model.
+                    self.interpreter.relax_disp.select_model(model)
+
+                    # Print
+                    subtitle(file=sys.stdout, text="The '%s' model for pipe='%s'" % (model, pipe_name), prespace=3)
+
+                    # Calculate the R2eff values for the fixed relaxation time period data types.
+                    if model == MODEL_R2EFF and not has_exponential_exp_type():
+                        self.interpreter.minimise.calculate()
+
+                    # Save results, and store the current settings dic to pipe.
+                    cdp.settings = self.settings
+                    self.interpreter.results.write(file=resfile, dir=path, force=force)
+
+
+    def deselect_all(self, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
+        """Method to deselect all spins for a pipe."""
+
+        # Set default
+        if model_from == None:
+            model_from = model
+        if analysis_from == None:
+            analysis_from = analysis
+
+        # Loop over the methods.
+        for method in methods:
+            # Change the self key.
+            self.set_self(key='method', value=method)
+
+            # Loop over the glob ini:
+            for glob_ini in list_glob_ini:
+                # Check previous, and get the pipe name.
+                found, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=self.method)
+
+                if not found:
+                    # If previous pipe not found, then create it.
+                    model_from_pipe_name = self.name_pipe(method=self.method, model=model_from, analysis=analysis_from, glob_ini=glob_ini)
+
+                    # Copy pipe and switch.
+                    self.interpreter.pipe.copy(pipe_from=model_from_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
+                    self.interpreter.pipe.switch(pipe_name)
+
+                # Print
+                subtitle(file=sys.stdout, text="Deselect all spins for pipe='%s'" % (pipe_name), prespace=3)
+
+                # Deselect spins.
+                self.interpreter.deselect.all()
+
+                # Save results, and store the current settings dic to pipe.
+                cdp.settings = self.settings
+
+                if found and not force:
+                    file_path = get_file_path(file_name=resfile, dir=path)
+                    text = "The file '%s' already exists.  Set the force flag to True to overwrite." % (file_path)
+                    warn(RelaxWarning(text))
+                else:
+                    self.interpreter.results.write(file=resfile, dir=path, force=force)
+
+
+    def select_spin(self, spin_id=None, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
+        """Method to select spins for a pipe."""
+
+        # Set default
+        if model_from == None:
+            model_from = model
+        if analysis_from == None:
+            analysis_from = analysis
+
+        # Loop over the methods.
+        for method in methods:
+            # Change the self key.
+            self.set_self(key='method', value=method)
+
+            # Loop over the glob ini:
+            for glob_ini in list_glob_ini:
+                # Check previous, and get the pipe name.
+                found, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=self.method)
+
+                if not found:
+                    # If previous pipe not found, then create it.
+                    model_from_pipe_name = self.name_pipe(method=self.method, model=model_from, analysis=analysis_from, glob_ini=glob_ini)
+
+                    # Copy pipe and switch.
+                    self.interpreter.pipe.copy(pipe_from=model_from_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
+                    self.interpreter.pipe.switch(pipe_name)
+
+                # Print
+                subtitle(file=sys.stdout, text="Select spins '%s' for pipe='%s'" % (spin_id, pipe_name), prespace=3)
+
+                # Select spins.
+                self.interpreter.select.spin(spin_id=spin_id)
+
+                # Save results, and store the current settings dic to pipe.
+                cdp.settings = self.settings
+
+                if found and not force:
+                    file_path = get_file_path(file_name=resfile, dir=path)
+                    text = "The file '%s' already exists.  Set the force flag to True to overwrite." % (file_path)
+                    warn(RelaxWarning(text))
+                else:
+                    self.interpreter.results.write(file=resfile, dir=path, force=force)
+
+
+    def r20_from_min_r2eff(self, spin_id=None, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
+        """Will set the grid R20 values from the minimum R2eff values through the r20_from_min_r2eff user function.
+        This will speed up the grid search with a factor GRID_INC^(Nr_spec_freq). For a CPMG experiment with two fields and standard GRID_INC=21, the speed-up is a factor 441."""
+
+        # Set default
+        if model_from == None:
+            model_from = model
+        if analysis_from == None:
+            analysis_from = analysis
+
+        # Loop over the methods.
+        for method in methods:
+            # Change the self key.
+            self.set_self(key='method', value=method)
+
+            # Loop over the glob ini:
+            for glob_ini in list_glob_ini:
+                # Check previous, and get the pipe name.
+                found, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=self.method)
+
+                if not found:
+                    # If previous pipe not found, then create it.
+                    model_from_pipe_name = self.name_pipe(method=self.method, model=model_from, analysis=analysis_from, glob_ini=glob_ini)
+
+                    # Copy pipe and switch.
+                    self.interpreter.pipe.copy(pipe_from=model_from_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
+                    self.interpreter.pipe.switch(pipe_name)
+
+                # Print
+                subtitle(file=sys.stdout, text="Set grid r20 for pipe='%s'" % (pipe_name), prespace=3)
+
+                # Select the model.
+                self.interpreter.relax_disp.select_model(model)
+
+                # Set r20 from min r2eff.
+                self.interpreter.relax_disp.r20_from_min_r2eff(force=True)
+
+                # Save results, and store the current settings dic to pipe.
+                cdp.settings = self.settings
+
+                if found and not force:
+                    file_path = get_file_path(file_name=resfile, dir=path)
+                    text = "The file '%s' already exists.  Set the force flag to True to overwrite." % (file_path)
+                    warn(RelaxWarning(text))
+                else:
+                    self.interpreter.results.write(file=resfile, dir=path, force=force)
+
+
+    def value_set(self, spin_id=None, val=None, param=None, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
+        """Use value.set on all pipes."""
+
+        # Set default
+        if model_from == None:
+            model_from = model
+        if analysis_from == None:
+            analysis_from = analysis
+
+        # Loop over the methods.
+        for method in methods:
+            # Change the self key.
+            self.set_self(key='method', value=method)
+
+            # Loop over the glob ini:
+            for glob_ini in list_glob_ini:
+                # Check previous, and get the pipe name.
+                found, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=self.method)
+
+                if not found:
+                    # If previous pipe not found, then create it.
+                    model_from_pipe_name = self.name_pipe(method=self.method, model=model_from, analysis=analysis_from, glob_ini=glob_ini)
+
+                    # Copy pipe and switch.
+                    self.interpreter.pipe.copy(pipe_from=model_from_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
+                    self.interpreter.pipe.switch(pipe_name)
+
+                # Print
+                subtitle(file=sys.stdout, text="For param '%s' set value '%3.2f' for pipe='%s'" % (param, val, pipe_name), prespace=3)
+
+                # Set value
+                self.interpreter.value.set(val=val, param=param, spin_id=spin_id)
+
+                # Save results, and store the current settings dic to pipe.
+                cdp.settings = self.settings
+
+                if found and not force:
+                    file_path = get_file_path(file_name=resfile, dir=path)
+                    text = "The file '%s' already exists.  Set the force flag to True to overwrite." % (file_path)
+                    warn(RelaxWarning(text))
+                else:
+                    self.interpreter.results.write(file=resfile, dir=path, force=force)
+
+
+    def minimise_grid_search(self, inc=11, verbosity=0, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
+        """Use value.set on all pipes."""
+
+        # Set default
+        if model_from == None:
+            model_from = model
+        if analysis_from == None:
+            analysis_from = analysis
+
+        # Loop over the methods.
+        for method in methods:
+            # Change the self key.
+            self.set_self(key='method', value=method)
+
+            # Loop over the glob ini:
+            for glob_ini in list_glob_ini:
+                # Check previous, and get the pipe name.
+                found, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=self.method)
+
+                if not found:
+                    # If previous pipe not found, then create it.
+                    model_from_pipe_name = self.name_pipe(method=self.method, model=model_from, analysis=analysis_from, glob_ini=glob_ini)
+
+                    # Check if pipe exists. If not, try the R2eff pipe.
+                    if not pipes.has_pipe(model_from_pipe_name):
+                        model_from_pipe_name = self.name_pipe(method=self.method, model=MODEL_R2EFF, analysis='int', glob_ini=glob_ini)
+
+                    # If not the R2eff pipe exist, then calculate it.
+                    if not pipes.has_pipe(model_from_pipe_name):
+                        self.calc_r2eff(methods=[self.method], list_glob_ini=[glob_ini])
+
+                    # Copy pipe and switch.
+                    self.interpreter.pipe.copy(pipe_from=model_from_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
+                    self.interpreter.pipe.switch(pipe_name)
+
+                # Select the model.
+                self.interpreter.relax_disp.select_model(model)
+
+                # Deselect insignificant spins.
+                if model not in [MODEL_R2EFF, MODEL_NOREX]:
+                    self.interpreter.relax_disp.insignificance(level=self.insignificance)
+
+                # Print
+                subtitle(file=sys.stdout, text="Grid search for pipe='%s'" % (pipe_name), prespace=3)
+
+                # Grid search.
+                if inc:
+                    self.interpreter.minimise.grid_search(inc=inc, verbosity=verbosity, constraints=self.constraints, skip_preset=True)
+
+                # Default values.
+                else:
+                    # The standard parameters.
+                    for param in MODEL_PARAMS[model]:
+                        self.interpreter.value.set(param=param, index=None, force=False)
+
+                    # The optional R1 parameter.
+                    if is_r1_optimised(model=model):
+                        self.interpreter.value.set(param='r1', index=None)
+
+
+                # Save results, and store the current settings dic to pipe.
+                cdp.settings = self.settings
+
+                if found and not force:
+                    file_path = get_file_path(file_name=resfile, dir=path)
+                    text = "The file '%s' already exists.  Set the force flag to True to overwrite." % (file_path)
+                    warn(RelaxWarning(text))
+                else:
+                    self.interpreter.results.write(file=resfile, dir=path, force=force)
+
+
+    def minimise_execute(self, verbosity=1, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
+        """Use value.set on all pipes."""
+
+        # Set default
+        if model_from == None:
+            model_from = model
+        if analysis_from == None:
+            analysis_from = analysis
+
+        # Loop over the methods.
+        for method in methods:
+            # Change the self key.
+            self.set_self(key='method', value=method)
+
+            # Loop over the glob ini:
+            for glob_ini in list_glob_ini:
+                # Check previous, and get the pipe name.
+                found, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=self.method)
+
+                if not found:
+                    # If previous pipe not found, then create it.
+                    model_from_pipe_name = self.name_pipe(method=self.method, model=model_from, analysis=analysis_from, glob_ini=glob_ini)
+
+                    # Check if pipe exists. If not, try grid pipe.
+                    if not pipes.has_pipe(model_from_pipe_name):
+                        model_from_pipe_name = self.name_pipe(method=self.method, model=model_from, analysis='grid', glob_ini=glob_ini)
+
+                    # Copy pipe and switch.
+                    self.interpreter.pipe.copy(pipe_from=model_from_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
+                    self.interpreter.pipe.switch(pipe_name)
 
                 # Select the model.
                 self.interpreter.relax_disp.select_model(model)
 
                 # Print
-                subtitle(file=sys.stdout, text="The '%s' model for pipe='%s'" % (model, pipe_name), prespace=3)
+                subtitle(file=sys.stdout, text="Minimise for pipe='%s'" % (pipe_name), prespace=3)
 
-                # Calculate the R2eff values for the fixed relaxation time period data types.
-                if model == MODEL_R2EFF and not has_exponential_exp_type():
-                    self.interpreter.minimise.calculate()
-
-                # Save results, and store the current settings dic to pipe.
-                cdp.settings = self.settings
-                self.interpreter.results.write(file=resfile, dir=path, force=force)
+                # Do the minimisation.
+                self.interpreter.minimise.execute(min_algor=self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=self.constraints, scaling=True, verbosity=verbosity)
 
 
-
-    def minimise_model(self, model=None, list_glob_ini=[0], force=False, redo=False):
-        """Minimise for model."""
-
-        # Loop over the glob ini:
-        for glob_ini in list_glob_ini:
-            # Check previous, and get the pipe name.
-            found, pipe_name, resfile, path = self.check_previous_result(model=model, glob_ini=glob_ini, method=self.method, clusterid='', bundle=self.method)
-
-            if not found:
-                calculate = True
-
-            elif found and redo == False:
-                calculate = False
-
-            elif found and redo == True:
-                calculate = True
-
-            if calculate:
-                # Get the pipe name for R2eff values.
-                r2eff_pipe_name = self.name_pipe(model=MODEL_R2EFF, glob_ini=glob_ini, method=self.method, clusterid='')
-
-                # Check if pipe exists, or else calculate.
-                if not pipes.has_pipe(r2eff_pipe_name):
-                    self.calc_r2eff(list_glob_ini=[glob_ini])
-
-                # Copy pipe from base setup.
-                self.interpreter.pipe.copy(pipe_from=self.base_setup_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
-                self.interpreter.pipe.switch(pipe_name)
-
-                # Now copy the R2eff values.
-                self.interpreter.value.copy(pipe_from=r2eff_pipe_name, pipe_to=pipe_name, param='r2eff')
-
-                # Select the model.
-                self.interpreter.relax_disp.select_model(model)
-
-                # Printout.
-                subtitle(file=sys.stdout, text="The '%s' model for pipe='%s'" % (model, pipe_name), prespace=3)
-
-                # Now optimise.
-                self.optimise(model=model)
-
-                # Save results, and store the current settings dic to pipe.
-                cdp.settings = self.settings
-                self.interpreter.results.write(file=resfile, dir=path, force=force)
-
-
-    def optimise(self, model=None):
-        """Optimise the model, taking model nesting into account.
-
-        @keyword model:         The model to be optimised.
-        @type model:            str
-        """
-
-        # Printout.
-        section(file=sys.stdout, text="Optimisation", prespace=2)
-
-        # Deselect insignificant spins.
-        if model not in [MODEL_R2EFF, MODEL_NOREX]:
-            self.interpreter.relax_disp.insignificance(level=self.insignificance)
-
-        # Speed-up grid-search by using minium R2eff value.
-        if self.set_grid_r20 and model != MODEL_R2EFF:
-            self.interpreter.relax_disp.r20_from_min_r2eff(force=True)
-
-        # Grid search.
-        if self.grid_inc:
-            self.interpreter.minimise.grid_search(inc=self.grid_inc)
-
-        # Default values.
-        else:
-            # The standard parameters.
-            for param in MODEL_PARAMS[model]:
-                self.interpreter.value.set(param=param, index=None)
-
-            # The optional R1 parameter.
-            if is_r1_optimised(model=model):
-                self.interpreter.value.set(param='r1', index=None)
-
-        # Do the minimisation.
-        self.interpreter.minimise.execute(min_algor=self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=self.constraints)
-
-
-    def name_pipe(self, model, glob_ini=None, method=None, clusterid=None):
+    def name_pipe(self, method, model, analysis, glob_ini, clusterid=None):
         """Generate a unique name for the data pipe.
 
         @param prefix:  The prefix of the data pipe name.
         @type prefix:   str
         """
-
-        # If method is none, set to bundle.
-        if method == None:
-            method = self.pipe_bundle
 
         # Cluster group is none, set to standard free spins.
         # cdp.clustering['free spins']
@@ -471,7 +682,7 @@ class Relax_disp_rep:
             clusterid = 'free spins'
 
         # The unique pipe name.
-        name = "%s - %s - %s - %s" % (model, glob_ini, method, clusterid)
+        name = "%s - %s - %s - %s - %s" % (method, model, analysis, glob_ini, clusterid)
 
         # Replace name with underscore.
         name = name.replace(" ", "_")
@@ -480,7 +691,7 @@ class Relax_disp_rep:
         return name
 
 
-    def check_previous_result(self, model, glob_ini=None, method=None, clusterid=None, bundle=None):
+    def check_previous_result(self, method=None, model=None, analysis=None, glob_ini=None, clusterid=None, bundle=None):
 
         # Define if found and loaded
         found = False
@@ -488,7 +699,7 @@ class Relax_disp_rep:
             bundle = self.pipe_bundle
 
         # Define the pipe name.
-        pipe_name = self.name_pipe(model=model, glob_ini=glob_ini, method=method, clusterid=clusterid)
+        pipe_name = self.name_pipe(method=method, model=model, analysis=analysis, glob_ini=glob_ini, clusterid=clusterid)
 
         # The results directory path.
         model_path = model.replace(" ", "_")
@@ -527,6 +738,99 @@ class Relax_disp_rep:
         return found, pipe_name, resfile, path
 
 
+    def spin_display_params(self, spin_id=None, pipe_name=None):
+        """Display parameters for model in pipe."""
+
+
+        # Switch to the pipe.
+        if pipes.cdp_name() != pipe_name:
+            self.interpreter.pipe.switch(pipe_name)
+
+        # Start dic.
+        my_dic = {}
+        spin_id_list = []
+
+        # Define data list.
+        data = []
+
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(selection=spin_id, full_info=True, return_id=True, skip_desel=True):
+            # Add key to dic.
+            my_dic[spin_id] = {}
+            # Store id, for ordering.
+            spin_id_list.append(spin_id)
+
+            # Add list to data.
+            cur_data_list = [repr(mol_name), repr(resi), repr(resn), repr(cur_spin.num), repr(cur_spin.name), spin_id]
+
+            # Get the parameters fitted in the model.
+            params = cur_spin.params
+            my_dic[spin_id]['params'] = params
+            my_dic[spin_id]['params_err'] = []
+
+            # Loop over params.
+            for i, param in enumerate(params):
+                # Set the param error name
+                param_err = param + '_err'
+                my_dic[spin_id]['params_err'].append(param_err)
+
+                # If param in PARAMS_R20, values are stored in with parameter key.
+                param_key_list = []
+                if param in PARAMS_R20:
+                    # Loop over frq key.
+                    for exp_type, frq, offset, ei, mi, oi, in loop_exp_frq_offset(return_indices=True):
+                        # Get the parameter key.
+                        param_key = generate_r20_key(exp_type=exp_type, frq=frq)
+                        param_key_list.append(param_key)
+                        my_dic[spin_id]['param_key_list'] = param_key_list
+                        my_dic[spin_id][param] = {}
+
+                        # Get the Value.
+                        param_val = deepcopy(getattr(cur_spin, param)[param_key])
+                        my_dic[spin_id][param][param_key] = param_val
+
+                        # Add information to data.
+                        if param_val == None:
+                            cur_data_list.append("%s"%param_val)
+                        else:
+                            cur_data_list.append("%3.3f"%param_val)
+
+                else:
+                    # Get the value.
+                    param_val = deepcopy(getattr(cur_spin, param))
+                    my_dic[spin_id][param] = param_val
+
+                    # Add information to data.
+                    if param_val == None:
+                        cur_data_list.append("%s"%param_val)
+                    else:
+                        cur_data_list.append("%.3f"%param_val)
+
+            # Add data.
+            data.append(cur_data_list)
+
+        # Collect header from spin 0.
+        cur_spin_id = spin_id_list[0]
+        cur_spin_params = my_dic[cur_spin_id]['params']
+        cur_param_keys = my_dic[cur_spin_id]['param_key_list']
+
+        # Define header.
+        param_header = ["Molecule", "Res number", "Res name", "Spin number", "Spin name", "Spin id"]
+
+        # Loop over params, add to header.
+        for param in cur_spin_params:
+            if param in PARAMS_R20:
+                for param_key in cur_param_keys:
+                    # Take the second last part of key.
+                    cur_key = "%3.1f" % float(param_key.split()[-2])
+                    hstring = "%s_%s" % (param, cur_key)
+                    param_header.append(hstring)
+            else:
+                hstring = "%s" % (param)
+                param_header.append(hstring)
+
+        write_data(out=sys.stdout, headings=param_header, data=data)
+
+
     def get_dublicates(self, spectrum_ids, cpmg_frqs):
         """Method which return a list of tubles, where each tuble is a spectrum id and a list of spectrum ids which are replicated"""
 
@@ -554,7 +858,7 @@ class Relax_disp_rep:
         return list_dub_mapping
 
 
-    def col_r2eff(self, method=None, list_glob_ini=[0]):
+    def col_r2eff(self, method=None, list_glob_ini=None):
 
         # Loop over the glob ini:
         res_dic = {}
@@ -564,7 +868,7 @@ class Relax_disp_rep:
             res_dic[str(glob_ini)] = {}
 
             # Get the pipe name for R2eff values.
-            pipe_name = self.name_pipe(model=MODEL_R2EFF, glob_ini=glob_ini, method=method, clusterid='')
+            pipe_name = self.name_pipe(method=method, model=MODEL_R2EFF, analysis=analysis, glob_ini=glob_ini)
 
             # Check if pipe exists, or else calculate.
             if not pipes.has_pipe(pipe_name):
@@ -606,7 +910,8 @@ class Relax_disp_rep:
 
         return res_dic
 
-    def get_r2eff_stat_dic(self, list_r2eff_dics=None, list_glob_ini=[0]):
+
+    def get_r2eff_stat_dic(self, list_r2eff_dics=None, list_glob_ini=None):
 
         # Loop over the result dictionaries:
         res_dic = {}
@@ -658,6 +963,7 @@ class Relax_disp_rep:
 
         return res_dic
 
+
     def plot_r2eff_stat(self, r2eff_stat_dic=None, methods=[], list_glob_ini=[], show=False):
 
         # Loop over the methods.
@@ -666,6 +972,7 @@ class Relax_disp_rep:
                 continue
 
             print method
+
 
     def interpreter_start(self):
         # Load the interpreter.
@@ -676,6 +983,7 @@ class Relax_disp_rep:
 
     def set_self(self, key, value):
         """Store to self and settings dictionary"""
+
         # Store to dic.
         self.settings[key] = value
 
