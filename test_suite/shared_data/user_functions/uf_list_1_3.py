@@ -42,6 +42,9 @@ for name in names:
             # Printout.
             print(name + '.' + name2)
 
+        # Done.
+        continue
+
     # Skip the object if there is no docstring.
     if not hasattr(object, '__doc__') or not object.__doc__:
         continue
