@@ -1,10 +1,10 @@
 Introduction
 ============
 
-The following list of changes between relax version pairs documents how the user functions have
+The following is a list of changes between relax versions documenting how the user functions have
 evolved.  User functions starting with '-' have been removed and user functions starting with '+'
-are new.  So if a user function has been renamed, such as dipole_pair.define to interatom.define,
-you will see one entry with '-' and one with '+'.  This listing is useful for upgrading scripts to
+are new.  If a user function has been renamed, such as dipole_pair.define to interatom.define, you
+will see one entry with '-' and one with '+'.  This listing is useful for upgrading scripts to
 newer relax versions.
 
 
