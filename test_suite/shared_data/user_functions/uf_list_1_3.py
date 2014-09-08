@@ -14,7 +14,7 @@ names = sorted(interpreter._locals.keys())
 # Alphabetically sort the names of the data structures.
 for name in names:
     # Skip the name if it is in the blacklist.
-    blacklist = ['pi', 'script']
+    blacklist = ['intro_off', 'intro_on', 'pi', 'script']
     if name in blacklist:
         continue
 
