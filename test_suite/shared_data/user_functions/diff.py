@@ -78,7 +78,7 @@ versions.reverse()
 
 # Loop over all versions.
 for i in range(len(versions)-1):
-    text = "Comparing relax %s to %s" % (versions[i], versions[i+1])
+    text = "Comparing relax %s to %s" % (versions[i+1], versions[i])
     print("\n\n%s" % text)
     print("=" * len(text) + "\n")
 
