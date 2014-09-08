@@ -38,8 +38,9 @@ import dep_check
 from lib.errors import RelaxError
 from lib.io import extract_data, get_file_path
 from lib.spectrum.nmrpipe import show_apod_extract, show_apod_rmsd, show_apod_rmsd_dir_to_files, show_apod_rmsd_to_file
-from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
+from pipe_control.mol_res_spin import display_spin, generate_spin_string, return_spin, spin_loop
 from pipe_control.minimise import assemble_scaling_matrix
+from pipe_control.pipes import display
 from specific_analyses.relax_disp.checks import check_missing_r1
 from specific_analyses.relax_disp.estimate_r2eff import estimate_r2eff
 from specific_analyses.relax_disp.data import average_intensity, check_intensity_errors, generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_grace_file_name_ini, return_param_key_from_data, spin_ids_to_containers
@@ -5950,7 +5951,7 @@ class Relax_disp(SystemTestCase):
         sdic[e_2]['rmsd_folder'] = rmsd_folder_2
 
         # Define temporary folder.
-        #sdic['results_dir'] = self.tmpdir
+        sdic['results_dir'] = self.tmpdir
 
         # Setup class with data.
         RDR =  Relax_disp_rep(sdic)
@@ -5958,41 +5959,66 @@ class Relax_disp(SystemTestCase):
         # Setup base information.
         RDR.set_base_cpmg(glob_ini=128)
 
+        #methods = ['FT', 'MDD']
+        methods = ['FT']
+
         # Set the intensity.
-        #RDR.set_int(list_glob_ini=[128, 126])
+        #RDR.set_int(methods=methods, list_glob_ini=[128, 126])
 
-        # Now calculate R2eff.
-        RDR.calc_r2eff(list_glob_ini=[128, 126, 6])
+        if True:
+            # Now calculate R2eff.
+            RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
 
-        # Minimise.
-        #RDR.minimise_model(model=MODEL_CR72, list_glob_ini=[128, 126])
+            # Try for bad data.
+            #RDR.calc_r2eff(methods=['FT'], list_glob_ini=[6, 4])
 
-        # Try for bad data.
-        #RDR.calc_r2eff(list_glob_ini=[6, 4])
+            if False:
+                # Collect r2eff values.
+                r2eff_ft = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126, 6])
 
-        # Change method.
-        RDR.set_self(key='method', value='MDD')
+                # Collect r2eff values.
+                r2eff_mdd = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126])
 
-        # Now calculate R2eff.
-        RDR.calc_r2eff(list_glob_ini=[128, 126])
+                # Get R2eff stats.
+                r2eff_stat_dic = RDR.get_r2eff_stat_dic(list_r2eff_dics=[r2eff_ft, r2eff_mdd], list_glob_ini=[128, 126, 6])
 
-        # Minimise.
-        #RDR.minimise_model(model=MODEL_CR72, list_glob_ini=[128, 126])
+                # Plot R2eff stats
+                RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT'], list_glob_ini=[128, 126, 6], show=True)
 
-        # Collect r2eff values.
-        r2eff_ft = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126, 6])
+        # Do minimisation
+        if True:
+            # Deselect all spins.
+            #self.interpreter.spin.display()
+            RDR.deselect_all(methods=methods, model='setup', model_from=MODEL_R2EFF, analysis='grid setup', analysis_from='int', list_glob_ini=[128, 126])
+            #self.interpreter.spin.display()
+    
+            # Select spins.
+            RDR.select_spin(spin_id=':2,3', methods=methods, model='setup', analysis='grid setup', list_glob_ini=[128, 126])
+            #self.interpreter.spin.display()
+    
+            # Set R20 from min R2eff in preparation for Grid search.
+            RDR.r20_from_min_r2eff(methods=methods, model=MODEL_CR72, model_from='setup', analysis='grid setup', list_glob_ini=[128, 126])
+    
+            # Set kex for Grid search.
+            RDR.value_set(methods=methods, val=1000., param='kex', model=MODEL_CR72, analysis='grid setup', list_glob_ini=[128, 126], force=True)
+            # Get pipe and print.
+            #test_pipe_name = RDR.name_pipe(method='FT', model=MODEL_CR72, analysis='grid setup', glob_ini='128')
+            #RDR.spin_display_params(pipe_name=test_pipe_name)
+    
+            # Do Grid search.
+            RDR.minimise_grid_search(inc=11, methods=methods, model=MODEL_CR72, analysis='grid', analysis_from='grid setup', list_glob_ini=[128, 126])
+            # Get pipe and print.
+            test_pipe_name = RDR.name_pipe(method='FT', model=MODEL_CR72, analysis='grid', glob_ini='128')
+            RDR.spin_display_params(pipe_name=test_pipe_name)
 
-        # Collect r2eff values.
-        r2eff_mdd = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126])
-
-        # Get R2eff stats.
-        r2eff_stat_dic = RDR.get_r2eff_stat_dic(list_r2eff_dics=[r2eff_ft, r2eff_mdd], list_glob_ini=[128, 126, 6])
-
-        # Plot R2eff stats
-        RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT'], list_glob_ini=[128, 126, 6], show=True)
+            # Minimise
+            RDR.minimise_execute(methods=methods, model=MODEL_CR72, analysis='min', analysis_from='grid', list_glob_ini=[128, 126])
+            # Get pipe and print.
+            test_pipe_name = RDR.name_pipe(method='FT', model=MODEL_CR72, analysis='min', glob_ini='128')
+            RDR.spin_display_params(pipe_name=test_pipe_name)
 
         # Print the pipes.
-        self.interpreter.pipe.display()
+        display(sort=True, rev=True)
 
 
     def test_r1rho_kjaergaard_auto(self):
