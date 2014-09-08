@@ -150,10 +150,22 @@ def initialise():
 # A table of user function renamings - for script compatibility.
 uf_translation_table = {
     'calc': 'minimise.calculate',
+    'dipole_pair.define': 'interatom.define',
+    'dipole_pair.read_dist': 'interatom.read_dist',
+    'dipole_pair.set_dist': 'interatom.set_dist',
+    'dipole_pair.unit_vectors': 'interatom.unit_vectors',
     'exp_info.software_select': 'bmrb.software_select',
+    'frq.set': 'spectrometer.frequency',
     'grid_search': 'minimise.grid_search',
+    'interatomic.copy': 'interatom.copy',
+    'interatomic.create': 'interatom.define',
     'minimise': 'minimise.execute',
     'pcs.centre': 'paramag_centre',
     'pymol.cmd': 'pymol.command',
-    'pymol.macro_create': 'pymol.macro_write'
+    'pymol.macro_create': 'pymol.macro_write',
+    'relax_data.frq': 'spectrometer.frequency',
+    'relax_disp.cpmg_frq': 'relax_disp.cpmg_setup',
+    'relax_disp.set_grid_r20_from_min_r2eff': 'relax_disp.r20_from_min_r2eff',
+    'structure.vectors': 'interatom.unit_vectors',
+    'temperature': 'spectrometer.temperature'
 }
