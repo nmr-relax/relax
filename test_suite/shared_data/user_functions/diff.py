@@ -5,6 +5,7 @@ from subprocess import PIPE, Popen
 
 # The versions to compare.
 versions = [
+    '1.3.16',
     '2.0.0',
     '2.1.0',
     '2.1.1',
@@ -57,20 +58,8 @@ for i in range(len(versions)-1):
         if not line[0] in ['-', '+']:
             continue
 
-        # Skip relax versions.
-        if search('     relax', line):
-            continue
-
-        # Skip the copyright
-        if search('     Copyright', line):
-            continue
-
         # Skip the file names.
         if search('uf_list_', line):
-            continue
-
-        # Skip ImportErrors
-        if search('ImportError', line):
             continue
 
         # Skip "user_functions.initialise".
@@ -79,10 +68,6 @@ for i in range(len(versions)-1):
 
         # Skip empty lines.
         if len(line) <= 2:
-            continue
-
-        # The funky \x1b[?1034h character.
-        if search('1034', line):
             continue
 
         # Store the line.
