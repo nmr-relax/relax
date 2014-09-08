@@ -1141,12 +1141,12 @@ def display_spin(spin_id=None):
     """
 
     # Print a header.
-    print("\n\n%-15s %-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Spin number", "Spin name"))
+    print("\n\n%-15s %-15s %-15s %-15s %-15s %-15s %-15s" % ("Molecule", "Res number", "Res name", "Spin number", "Spin name", "Spin id", "Selected"))
 
     # Spin loop.
-    for spin, mol_name, res_num, res_name in spin_loop(spin_id, full_info=True):
+    for spin, mol_name, res_num, res_name, spin_id in spin_loop(spin_id, full_info=True, return_id=True, skip_desel=False):
         # Print the residue data.
-        print("%-15s %-15s %-15s %-15s %-15s" % (mol_name, repr(res_num), res_name, repr(spin.num), spin.name))
+        print("%-15s %-15s %-15s %-15s %-15s %-15s %-15s" % (mol_name, repr(res_num), res_name, repr(spin.num), spin.name, spin_id, spin.select))
 
 
 def exists_mol_res_spin_data(pipe=None):

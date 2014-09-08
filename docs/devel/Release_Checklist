@@ -180,16 +180,59 @@ Update the version number in the FSF directory (http://directory.fsf.org/wiki/Re
 Announcement
 ============
 
-Post the release message to the relax-announce mailing list and as a news item on the relax Gna! website.
+Compose and edit the message on the relax wiki, then post the release message to the relax-announce mailing list and as a news item on the relax Gna! website.
+
+
+Wiki
+----
+
+Create a new release page at the URL http://wiki.nmr-relax.com/Relax_x.y.z.  Use, for example, http://wiki.nmr-relax.com/Relax_3.3.0 as a guide.  The basic page structure is as follows:
+
+    {{lowercase title}} - Start with this to allow the title to be in lowercase.  The URL on a wiki always starts with a capital, but the title can be changed to lowercase in this way.
+    = Description = - Create this section by writing a detailed and full description of the release.  Add internal wiki links and external links, for example to the relax manual web pages for the user functions.
+    = Download = - Create this section with links for downloading the release (simply copy the text from an older release).
+    = CHANGES file = - Create this section by cutting and pasting the part of the CHANGES file for this release.  Convert the Features, Changes, and Bugfixes titles to the subsection format == Features ==, == Changes ==, and == Bugfixes ==.  Strip all leading whitespace from the full list of changes so that the wiki can format the text.
+    = See also = - Finally create this section which simply contains the text [[Category:Release_Notes]].
 
 
 Mailing list
 ------------
 
-On the relax-announce mailing list, write a detailed and full description of the release.  Also add a paragraph with links for downloading the release.  At the end, add a section titled 'The full list of changes is:' and cut and paste the part of the CHANGES file for this release.  Include links to the trackers in the full list of changes.
+On the relax-announce mailing list (relax-announce att gna.org), write the release announcement by:
+
+    - Copy the 'Description' and 'Download' text from the wiki.  Do not include the section titles and remove any wiki markup.
+    - At the end, add a section titled 'The full list of changes is:' and cut and paste the part of the CHANGES file for this release.  Do not use the wiki text for this.
+    - Include links to the trackers in the full list of changes, if not already present.
 
 
 Gna! news item
 --------------
 
-For the news item, firstly cut and paste the mailing list message.  Item references such as bug #7641, task #3122, etc. are automatically converted into links.  Create three sections using the Savane markup (recipe #236).  Call these = Description =, = Download =, and = Full list of changes =.  For the last section, use the subtitles == Features == ,  == Changes == , and  == Bugfixes ==.  The items in this section start with '* ' to create an unnumbered list.  Strip all leading whitespace from the full list of changes and remove all the links to the trackers (as these will be automatically created).
+The steps are:
+
+    - Log into Gna! and go to https://gna.org/news/submit.php?group=relax.
+    - Cut and paste all of the wiki text.  Delete the initial lower case title formatting text, the final 'See also' section, and any wiki markup.
+    - Use the Savane markup to format the text (recipe #236, https://gna.org/cookbook/?func=detailitem&item_id=236).
+    - As the Savane markup for sectioning is the same as the wiki, the section titles = Description =, = Download =, and = Full list of changes = do not need to be modified (except changing the text 'CHANGES file' to 'Full list of changes').  The same for the subtitles == Features ==, == Changes ==, and == Bugfixes ==.  The leading whitespace from the full list of changes must be stripped, but this should already be done in the wiki text.
+    - Item references such as bug #7641, task #3122, etc. are automatically converted into links, therefore remove all links to the trackers.
+    - The Gna! news items are often truncated, so start a new thread for the rest of the message, responding to that thread for each block of release notes via the [ Reply ] link at the bottom of the page.
+
+
+Cross-linking
+-------------
+
+For better indexing by search engines, cross-link all the release announcements.  It may take a few days for all the links to be created.  For example for relax 3.1.7:
+
+    Official release notes:  http://wiki.nmr-relax.com/Relax_3.1.7
+    Gna! news item:  https://gna.org/forum/forum.php?forum_id=2448
+    Gmane:  http://article.gmane.org/gmane.science.nmr.relax.announce/53
+    Mail Archive:  http://www.mail-archive.com/relax-announce%40gna.org/msg00047.html
+    Local archives:  https://mail.gna.org/public/relax-announce/2014-03/msg00001.html
+    MARC:  http://marc.info/?l=relax-announce&m=139509874209089&w=2
+
+    Softpedia also has information about the newest relax releases:
+    Softpedia for GNU/Linux:  http://linux.softpedia.com/get/Science/relax-22351.shtml and http://linux.softpedia.com/progDownload/relax-Download-22351.html
+    Softpedia for MS Windows:  http://www.softpedia.com/get/Science-CAD/relax-project.shtml and http://www.softpedia.com/progDownload/relax-Download-210902.html
+    Softpedia for Mac OS X:  http://mac.softpedia.com/get/Math-Scientific/Edward-relax.shtml and http://mac.softpedia.com/progDownload/relax-Download-124418.html
+
+Not all of these links may work, and 

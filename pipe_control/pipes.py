@@ -30,7 +30,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 from dep_check import C_module_exp_fn, scipy_module
 from lib.compat import builtins
 from lib.errors import RelaxError, RelaxNoPipeError, RelaxPipeError
-from lib.io import write_data
+from lib.io import sort_filenames, write_data
 from status import Status; status = Status()
 
 
@@ -283,15 +283,22 @@ def delete(pipe_name=None):
     status.observers.pipe_alteration.notify()
 
 
-def display():
+def display(sort=False, rev=False):
     """Print the details of all the data pipes."""
 
     # Acquire the pipe lock, and make sure it is finally released.
     status.pipe_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Loop over the data pipes.
+        pipe_names = []
+        for pipe_name_i in ds:
+            pipe_names.append(pipe_name_i)
+
+        if sort:
+            pipe_names = sort_filenames(filenames=pipe_names, rev=rev)
+
         data = []
-        for pipe_name in ds:
+        for pipe_name in pipe_names:
             # The current data pipe.
             current = ''
             if pipe_name == cdp_name():
@@ -306,6 +313,9 @@ def display():
 
     # Print out.
     write_data(out=sys.stdout, headings=["Data pipe name", "Data pipe type", "Bundle", "Current"], data=data)
+
+    # Return data
+    return data
 
 
 def get_bundle(pipe=None):

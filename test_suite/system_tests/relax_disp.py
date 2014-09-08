@@ -38,8 +38,9 @@ import dep_check
 from lib.errors import RelaxError
 from lib.io import extract_data, get_file_path
 from lib.spectrum.nmrpipe import show_apod_extract, show_apod_rmsd, show_apod_rmsd_dir_to_files, show_apod_rmsd_to_file
-from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
+from pipe_control.mol_res_spin import display_spin, generate_spin_string, return_spin, spin_loop
 from pipe_control.minimise import assemble_scaling_matrix
+from pipe_control.pipes import display
 from specific_analyses.relax_disp.checks import check_missing_r1
 from specific_analyses.relax_disp.estimate_r2eff import estimate_r2eff
 from specific_analyses.relax_disp.data import average_intensity, check_intensity_errors, generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_grace_file_name_ini, return_param_key_from_data, spin_ids_to_containers
@@ -109,7 +110,7 @@ class Relax_disp(SystemTestCase):
                 status.skipped_tests.append([methodName, 'scipy.optimize.leastsq module', self._skip_type])
 
         # If not NMRPipe showApod program in PATH.
-        if not dep_check.showApod_module:
+        if not dep_check.showApod_software:
             # The list of tests to skip.
             to_skip = [
                 "test_show_apod_extract",
@@ -5890,8 +5891,8 @@ class Relax_disp(SystemTestCase):
         sdic = {}
         
         # Define method to analyse for
-        method = 'FT'
-        sdic['method'] = method
+        sdic['method'] = 'FT'
+        sdic['grid_inc'] = None
         
         # Spectrometer frqs in list.
         sfrq_1 = 499.86214
@@ -5906,7 +5907,16 @@ class Relax_disp(SystemTestCase):
         
         # Store exp_type
         sdic['exp_type'] = 'SQ CPMG'
-        
+
+        # Store spin isotope
+        sdic['isotope'] = '15N'
+
+        # How intensity was measured.
+        sdic['int_method'] = 'height'
+
+        # Define the time for result directory.
+        sdic['time'] = '2014_09'
+
         # Initialize frq dics.
         for frq in sfrqs:
             key = DIC_KEY_FORMAT % (frq)
@@ -5925,8 +5935,8 @@ class Relax_disp(SystemTestCase):
         ncyc_2 = array([28, 0, 4, 32, 60, 2, 10, 16, 8, 20, 52, 18, 40, 6, 12, 0, 24, 14, 22])
 
         # Calculate the cpmg_frq and store.
-        sdic[e_1]['cpmg_frq'] = ncyc_1 / sdic[e_1]['time_T2'] 
-        sdic[e_2]['cpmg_frq'] = ncyc_2 / sdic[e_2]['time_T2']
+        sdic[e_1]['cpmg_frqs'] = ncyc_1 / sdic[e_1]['time_T2']
+        sdic[e_2]['cpmg_frqs'] = ncyc_2 / sdic[e_2]['time_T2']
         
         # Define peak lists.
         peaks_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'analysis_FT' +sep+ 'ser_files' +sep+ sdic['method']
@@ -5939,9 +5949,76 @@ class Relax_disp(SystemTestCase):
         rmsd_folder_2 = base_path +sep+ 'cpmg_disp_sod1d90a_060521' +sep+ 'cpmg_disp_sod1d90a_060521_normal.fid' +sep+ 'ft2_data'
         sdic[e_1]['rmsd_folder'] = rmsd_folder_1 
         sdic[e_2]['rmsd_folder'] = rmsd_folder_2
-        
+
+        # Define temporary folder.
+        sdic['results_dir'] = self.tmpdir
+
         # Setup class with data.
         RDR =  Relax_disp_rep(sdic)
+
+        # Setup base information.
+        RDR.set_base_cpmg(glob_ini=128)
+
+        #methods = ['FT', 'MDD']
+        methods = ['FT']
+
+        # Set the intensity.
+        #RDR.set_int(methods=methods, list_glob_ini=[128, 126])
+
+        if True:
+            # Now calculate R2eff.
+            RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
+
+            # Try for bad data.
+            #RDR.calc_r2eff(methods=['FT'], list_glob_ini=[6, 4])
+
+            if False:
+                # Collect r2eff values.
+                r2eff_ft = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126, 6])
+
+                # Collect r2eff values.
+                r2eff_mdd = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126])
+
+                # Get R2eff stats.
+                r2eff_stat_dic = RDR.get_r2eff_stat_dic(list_r2eff_dics=[r2eff_ft, r2eff_mdd], list_glob_ini=[128, 126, 6])
+
+                # Plot R2eff stats
+                RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT'], list_glob_ini=[128, 126, 6], show=True)
+
+        # Do minimisation
+        if True:
+            # Deselect all spins.
+            #self.interpreter.spin.display()
+            RDR.deselect_all(methods=methods, model='setup', model_from=MODEL_R2EFF, analysis='grid setup', analysis_from='int', list_glob_ini=[128, 126])
+            #self.interpreter.spin.display()
+    
+            # Select spins.
+            RDR.select_spin(spin_id=':2,3', methods=methods, model='setup', analysis='grid setup', list_glob_ini=[128, 126])
+            #self.interpreter.spin.display()
+    
+            # Set R20 from min R2eff in preparation for Grid search.
+            RDR.r20_from_min_r2eff(methods=methods, model=MODEL_CR72, model_from='setup', analysis='grid setup', list_glob_ini=[128, 126])
+    
+            # Set kex for Grid search.
+            RDR.value_set(methods=methods, val=1000., param='kex', model=MODEL_CR72, analysis='grid setup', list_glob_ini=[128, 126], force=True)
+            # Get pipe and print.
+            #test_pipe_name = RDR.name_pipe(method='FT', model=MODEL_CR72, analysis='grid setup', glob_ini='128')
+            #RDR.spin_display_params(pipe_name=test_pipe_name)
+    
+            # Do Grid search.
+            RDR.minimise_grid_search(inc=11, methods=methods, model=MODEL_CR72, analysis='grid', analysis_from='grid setup', list_glob_ini=[128, 126])
+            # Get pipe and print.
+            test_pipe_name = RDR.name_pipe(method='FT', model=MODEL_CR72, analysis='grid', glob_ini='128')
+            RDR.spin_display_params(pipe_name=test_pipe_name)
+
+            # Minimise
+            RDR.minimise_execute(methods=methods, model=MODEL_CR72, analysis='min', analysis_from='grid', list_glob_ini=[128, 126])
+            # Get pipe and print.
+            test_pipe_name = RDR.name_pipe(method='FT', model=MODEL_CR72, analysis='min', glob_ini='128')
+            RDR.spin_display_params(pipe_name=test_pipe_name)
+
+        # Print the pipes.
+        display(sort=True, rev=True)
 
 
     def test_r1rho_kjaergaard_auto(self):
@@ -6790,22 +6867,26 @@ class Relax_disp(SystemTestCase):
         # Call function.
         get_output = show_apod_extract(file_name=file_name, dir=data_path)
 
-        # Define how output should look like
+        # Define how output should look like.
+        # The output from showApod differs slightly according to NMRPipe version. But 'Noise Std Dev' is the same.
+        # Dont test lines which can differ.
         show_apod_ver = [
             'REMARK Effect of Processing on Peak Parameters and Noise for %s'%(data_path+sep+file_name),
             'REMARK Automated Noise Std Dev in Processed Data: 8583.41',
             'REMARK Noise Std Dev Before Processing H1 and N15: 60.6558',
             '',
             'VARS   AXIS LABEL  TSIZE FSIZE LW_ADJ LW_FINAL HI_FACTOR VOL_FACTOR SIGMA_FACTOR',
-            'FORMAT %s   %-8s   %4d   %4d   %7.4f  %7.4f    %.4e      %.4e       %.4e',
-            '',
-            '       X    H1       800  2048 0.8107 3.7310   4.9903e-03 9.8043e-04 5.2684e-02',
-            '       Y    N15      128   256 0.7303 3.0331   3.1260e-02 7.8434e-03 1.3413e-01']
+            'FORMAT %s   %-8s   %4d   %4d   %7.4f  %7.4f    %.4e      %.4e       %.4e']
+            #'',
+            #'       X    H1       800  2048 0.8107 3.7310   4.9903e-03 9.8043e-04 5.2684e-02',
+            #'       Y    N15      128   256 0.7303 3.0331   3.1260e-02 7.8434e-03 1.3413e-01']
 
-        for i, line in enumerate(get_output):
-            line_ver = show_apod_ver[i]
+        for i, line in enumerate(show_apod_ver):
+            line_ver = get_output[i]
 
             print(line)
+            if line[:50] == 'REMARK Noise Std Dev Before Processing H1 and N15:':
+                continue
             # Make the string test
             self.assertEqual(line, line_ver)
 

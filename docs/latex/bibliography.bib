@@ -388,33 +388,71 @@
   Issn = {0925-2738},
 }
 
-@article{Baldwin2014,
-  Author = {Baldwin, Andrew J.},
-  Title = {An exact solution for {R}2,eff in {CPMG} experiments in the case of two site chemical exchange},
-  Journal = jmr,
-  issn = {10907807},
-  Year = {2014},
-  month = {Apr 14},
-  doi = {10.1016/j.jmr.2014.02.023},
-  Abstract = {The Carr-Purcell-Meiboom-Gill (CPMG) experiment is widely used to 
-     quantitatively analyse the effects of chemical exchange on NMR spectra.
-     In a CPMG experiment, the effective transverse relaxation rate, R2,eff, is typically 
-     measured as a function of the pulse frequency, $\nu$CPMG. Here, an exact expression for 
-     how R2,eff varies with $\nu$CPMG is derived for the commonly encountered scenario of 
-     2-site chemical exchange of in-phase magnetisation. 
-     This result, summarised in Appendix 1, generalises a frequently used equation derived 
-     by Carver and Richards, published in 1972. The expression enables more rapid analysis of 
-     CPMG data by both speeding up calculation of R2,eff over numerical methods by a factor 
-     of ca. 130, and yielding exact derivatives for use in parameter optimisation. 
-     Moreover, the derivation provides insight into the physical principles behind the experiment.},
-  keywords       = {Magnetic Resonance Imaging ; Molecular Dynamics
-                   Simulation ; *Nuclear Magnetic Resonance, Biomolecular ;
-                   Programming Languages ; Protein Conformation ;
-                   Proteins ; chemistry ; Software},
-
-  keywords = {CPMG ; CPMG experiments ; Carver Richards Equation ; Chemical Exchange ; 
-  			  Exact solution,Two-site exchange},
-  url = {http://www.sciencedirect.com/science/article/pii/S1090780714000743}
+@Article{Baldwin2014,
+  Author         = {Baldwin, A. J.},
+  Title          = {An exact solution for {R}2,eff in {CPMG} experiments
+                   in the case of two site chemical exchange.},
+  Journal        = jmr,
+  Volume         = {244},
+  Pages          = {114-124},
+  abstract       = {The Carr-Purcell-Meiboom-Gill (CPMG) experiment is
+                   widely used to quantitatively analyse the effects of
+                   chemical exchange on NMR spectra. In a CPMG experiment,
+                   the effective transverse relaxation rate, R2,eff, is
+                   typically measured as a function of the pulse
+                   frequency, nuCPMG. Here, an exact expression for how
+                   R2,eff varies with nuCPMG is derived for the commonly
+                   encountered scenario of two-site chemical exchange of
+                   in-phase magnetisation. This result, summarised in
+                   Appendix A, generalises a frequently used equation
+                   derived by Carver and Richards, published in 1972. The
+                   expression enables more rapid analysis of CPMG data by
+                   both speeding up calculation of R2,eff over numerical
+                   methods by a factor of ca. 130, and yields exact
+                   derivatives for use in data analysis. Moreover, the
+                   derivation provides insight into the physical
+                   principles behind the experiment.},
+  authoraddress  = {Physical and Theoretical Chemistry Laboratory,
+                   University of Oxford, Oxford OX1 3QZ, UK. Electronic
+                   address: andrew.baldwin@chem.ox.ac.uk.},
+  language       = {eng},
+  medline-aid    = {S1090-7807(14)00074-3 [pii] ;
+                   10.1016/j.jmr.2014.02.023 [doi]},
+  medline-ci     = {Copyright (c) 2014 The Author. Published by Elsevier
+                   Inc. All rights reserved.},
+  medline-crdt   = {2014/05/24 06:00},
+  medline-da     = {20140617},
+  medline-dep    = {20140413},
+  medline-edat   = {2014/05/24 06:00},
+  medline-fau    = {Baldwin, Andrew J},
+  medline-gr     = {Biotechnology and Biological Sciences Research
+                   Council/United Kingdom},
+  medline-is     = {1096-0856 (Electronic) ; 1090-7807 (Linking)},
+  medline-jid    = {9707935},
+  medline-jt     = {Journal of magnetic resonance (San Diego, Calif. :
+                   1997)},
+  medline-lid    = {10.1016/j.jmr.2014.02.023 [doi] ;
+                   S1090-7807(14)00074-3 [pii]},
+  medline-mhda   = {2014/05/24 06:00},
+  medline-oid    = {NLM: PMC4067747},
+  medline-ot     = {CPMG experiments ; Carver Richards equation ; Chemical
+                   exchange ; Two-site exchange},
+  medline-oto    = {NOTNLM},
+  medline-own    = {NLM},
+  medline-phst   = {2013/12/30 [received] ; 2014/02/26 [revised] ;
+                   2014/02/27 [accepted] ; 2014/04/13 [aheadofprint]},
+  medline-pl     = {United States},
+  medline-pmc    = {PMC4067747},
+  medline-pmid   = {24852115},
+  medline-pst    = {ppublish},
+  medline-pt     = {Journal Article ; Research Support, Non-U.S. Gov't},
+  medline-sb     = {IM},
+  medline-so     = {J Magn Reson. 2014 Jul;244:114-24. doi:
+                   10.1016/j.jmr.2014.02.023. Epub 2014 Apr 13.},
+  medline-stat   = {In-Process},
+  url            = {http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?cmd=prlinks&dbfrom=pubmed&retmode=ref&id=24852115},
+  doi            = {10.1016/j.jmr.2014.02.023},
+  year           = 2014
 }
 
 @Article{Barbato92,
@@ -5278,14 +5316,215 @@
 }
 
 @Article{Morin14,
-  author = {Morin, S. and Linnet, T. E. and Lescanne, M. and Schanda, P. and Thompson, G. S. and Tollinger, M. and Teilum, K. and Gagn\'e, S. and Marion, D. and Griesinger, C. and Blackledge, M. and d'Auvergne, E. J.},
-  title = {relax: the analysis of biomolecular kinetics and thermodynamics using {NMR} relaxation dispersion data},
-  journal = bioinformatics,
-  abstract = {Nuclear Magnetic Resonance (NMR) is a powerful tool for observing the motion of biomolecules at the atomic level. One technique, the analysis of relaxation dispersion phenomenon, is highly suited for studying the kinetics and thermodynamics of biological processes. Built on top of the relax computational environment for NMR dynamics is a new dispersion analysis designed to be comprehensive, accurate and easy to use. The software supports more models, both numeric and analytic, than current solutions. An automated protocol, available for scripting and driving the GUI, is designed to simplify the analysis of dispersion data for NMR spectroscopists. Decreases in optimisation time are granted by parallelisation for running on computer clusters and by skipping an initial grid search by using parameters from one solution as the starting point for another – using analytic model results for the numeric models, taking advantage of model nesting, and using averaged non-clustered results for the clustered analysis.Availability: The software relax is written in Python with C modules and is released under the GPLv3+ licence. Source code and precompiled binaries for all major operating systems are available from http://www.nmr-relax.com. Contact: edward@nmr-relax.com}, 
-  url = {http://bioinformatics.oxfordjournals.org/content/early/2014/04/09/bioinformatics.btu166.abstract}, 
-  eprint = {http://bioinformatics.oxfordjournals.org/content/early/2014/04/09/bioinformatics.btu166.full.pdf+html}, 
-  doi = {10.1093/bioinformatics/btu166},
-  year = {2014}
+  Author         = {Morin, S. and Linnet, T. E. and Lescanne, M. and
+                   Schanda, P. and Thompson, G. S. and Tollinger, M. and
+                   Teilum, K. and Gagne, S. and Marion, D. and Griesinger,
+                   C. and Blackledge, M. and d'Auvergne, E. J.},
+  Title          = {{r}elax: the analysis of biomolecular kinetics and
+                   thermodynamics using {NMR} relaxation dispersion data.},
+  Journal        = bioinformatics,
+  Volume         = {30},
+  Number         = {15},
+  Pages          = {2219-2220},
+  abstract       = {Nuclear magnetic resonance (NMR) is a powerful tool
+                   for observing the motion of biomolecules at the atomic
+                   level. One technique, the analysis of relaxation
+                   dispersion phenomenon, is highly suited for studying
+                   the kinetics and thermodynamics of biological
+                   processes. Built on top of the relax computational
+                   environment for NMR dynamics is a new dispersion
+                   analysis designed to be comprehensive, accurate and
+                   easy-to-use. The software supports more models, both
+                   numeric and analytic, than current solutions. An
+                   automated protocol, available for scripting and driving
+                   the graphical user interface (GUI), is designed to
+                   simplify the analysis of dispersion data for NMR
+                   spectroscopists. Decreases in optimization time are
+                   granted by parallelization for running on computer
+                   clusters and by skipping an initial grid search by
+                   using parameters from one solution as the starting
+                   point for another -using analytic model results for the
+                   numeric models, taking advantage of model nesting, and
+                   using averaged non-clustered results for the clustered
+                   analysis. AVAILABILITY AND IMPLEMENTATION: The software
+                   relax is written in Python with C modules and is
+                   released under the GPLv3+ license. Source code and
+                   precompiled binaries for all major operating systems
+                   are available from http://www.nmr-relax.com. CONTACT:
+                   edward@nmr-relax.com.},
+  authoraddress  = {PROTEO, Universite Laval, Quebec G1V 0A6, Canada,
+                   International AIDS Society HQ, CH-1202 Geneva,
+                   Switzerland, Department of Biology, University of
+                   Copenhagen, DK-2200 Denmark, Institut de Biologie
+                   Structurale, Grenoble F-38027, France, Astbury Centre
+                   for Structural Molecular Biology, University of Leeds,
+                   Leeds LS2 9JT, UK, Institute of Organic Chemistry \&
+                   CMBI, University of Innsbruck, A-6020, Austria and
+                   NMR-based Structural Biology, Max Planck Institute for
+                   Biophysical Chemistry, D-37077 Gottingen,
+                   GermanyPROTEO, Universite Laval, Quebec G1V 0A6,
+                   Canada, International AIDS Society HQ, CH-1202 Geneva,
+                   Switzerland, Department of Biology, University of
+                   Copenhagen, DK-2200 Denmark, Institut de Biologie
+                   Structurale, Grenoble F-38027, France, Astbury Centre
+                   for Structural Molecular Biology, University of Leeds,
+                   Leeds LS2 9JT, UK, Institute of Organic Chemistry \&
+                   CMBI, University of Innsbruck, A-6020, Austria and
+                   NMR-based Structural Biology, Max Planck Institute for
+                   Biophysical Chemistry, D-37077 Gottingen, Germany. ;
+                   PROTEO, Universite Laval, Quebec G1V 0A6, Canada,
+                   International AIDS Society HQ, CH-1202 Geneva,
+                   Switzerland, Department of Biology, University of
+                   Copenhagen, DK-2200 Denmark, Institut de Biologie
+                   Structurale, Grenoble F-38027, France, Astbury Centre
+                   for Structural Molecular Biology, University of Leeds,
+                   Leeds LS2 9JT, UK, Institute of Organic Chemistry \&
+                   CMBI, University of Innsbruck, A-6020, Austria and
+                   NMR-based Structural Biology, Max Planck Institute for
+                   Biophysical Chemistry, D-37077 Gottingen, Germany. ;
+                   PROTEO, Universite Laval, Quebec G1V 0A6, Canada,
+                   International AIDS Society HQ, CH-1202 Geneva,
+                   Switzerland, Department of Biology, University of
+                   Copenhagen, DK-2200 Denmark, Institut de Biologie
+                   Structurale, Grenoble F-38027, France, Astbury Centre
+                   for Structural Molecular Biology, University of Leeds,
+                   Leeds LS2 9JT, UK, Institute of Organic Chemistry \&
+                   CMBI, University of Innsbruck, A-6020, Austria and
+                   NMR-based Structural Biology, Max Planck Institute for
+                   Biophysical Chemistry, D-37077 Gottingen, Germany. ;
+                   PROTEO, Universite Laval, Quebec G1V 0A6, Canada,
+                   International AIDS Society HQ, CH-1202 Geneva,
+                   Switzerland, Department of Biology, University of
+                   Copenhagen, DK-2200 Denmark, Institut de Biologie
+                   Structurale, Grenoble F-38027, France, Astbury Centre
+                   for Structural Molecular Biology, University of Leeds,
+                   Leeds LS2 9JT, UK, Institute of Organic Chemistry \&
+                   CMBI, University of Innsbruck, A-6020, Austria and
+                   NMR-based Structural Biology, Max Planck Institute for
+                   Biophysical Chemistry, D-37077 Gottingen, Germany. ;
+                   PROTEO, Universite Laval, Quebec G1V 0A6, Canada,
+                   International AIDS Society HQ, CH-1202 Geneva,
+                   Switzerland, Department of Biology, University of
+                   Copenhagen, DK-2200 Denmark, Institut de Biologie
+                   Structurale, Grenoble F-38027, France, Astbury Centre
+                   for Structural Molecular Biology, University of Leeds,
+                   Leeds LS2 9JT, UK, Institute of Organic Chemistry \&
+                   CMBI, University of Innsbruck, A-6020, Austria and
+                   NMR-based Structural Biology, Max Planck Institute for
+                   Biophysical Chemistry, D-37077 Gottingen, Germany. ;
+                   PROTEO, Universite Laval, Quebec G1V 0A6, Canada,
+                   International AIDS Society HQ, CH-1202 Geneva,
+                   Switzerland, Department of Biology, University of
+                   Copenhagen, DK-2200 Denmark, Institut de Biologie
+                   Structurale, Grenoble F-38027, France, Astbury Centre
+                   for Structural Molecular Biology, University of Leeds,
+                   Leeds LS2 9JT, UK, Institute of Organic Chemistry \&
+                   CMBI, University of Innsbruck, A-6020, Austria and
+                   NMR-based Structural Biology, Max Planck Institute for
+                   Biophysical Chemistry, D-37077 Gottingen, Germany. ;
+                   PROTEO, Universite Laval, Quebec G1V 0A6, Canada,
+                   International AIDS Society HQ, CH-1202 Geneva,
+                   Switzerland, Department of Biology, University of
+                   Copenhagen, DK-2200 Denmark, Institut de Biologie
+                   Structurale, Grenoble F-38027, France, Astbury Centre
+                   for Structural Molecular Biology, University of Leeds,
+                   Leeds LS2 9JT, UK, Institute of Organic Chemistry \&
+                   CMBI, University of Innsbruck, A-6020, Austria and
+                   NMR-based Structural Biology, Max Planck Institute for
+                   Biophysical Chemistry, D-37077 Gottingen, Germany. ;
+                   PROTEO, Universite Laval, Quebec G1V 0A6, Canada,
+                   International AIDS Society HQ, CH-1202 Geneva,
+                   Switzerland, Department of Biology, University of
+                   Copenhagen, DK-2200 Denmark, Institut de Biologie
+                   Structurale, Grenoble F-38027, France, Astbury Centre
+                   for Structural Molecular Biology, University of Leeds,
+                   Leeds LS2 9JT, UK, Institute of Organic Chemistry \&
+                   CMBI, University of Innsbruck, A-6020, Austria and
+                   NMR-based Structural Biology, Max Planck Institute for
+                   Biophysical Chemistry, D-37077 Gottingen, Germany. ;
+                   PROTEO, Universite Laval, Quebec G1V 0A6, Canada,
+                   International AIDS Society HQ, CH-1202 Geneva,
+                   Switzerland, Department of Biology, University of
+                   Copenhagen, DK-2200 Denmark, Institut de Biologie
+                   Structurale, Grenoble F-38027, France, Astbury Centre
+                   for Structural Molecular Biology, University of Leeds,
+                   Leeds LS2 9JT, UK, Institute of Organic Chemistry \&
+                   CMBI, University of Innsbruck, A-6020, Austria and
+                   NMR-based Structural Biology, Max Planck Institute for
+                   Biophysical Chemistry, D-37077 Gottingen, Germany. ;
+                   PROTEO, Universite Laval, Quebec G1V 0A6, Canada,
+                   International AIDS Society HQ, CH-1202 Geneva,
+                   Switzerland, Department of Biology, University of
+                   Copenhagen, DK-2200 Denmark, Institut de Biologie
+                   Structurale, Grenoble F-38027, France, Astbury Centre
+                   for Structural Molecular Biology, University of Leeds,
+                   Leeds LS2 9JT, UK, Institute of Organic Chemistry \&
+                   CMBI, University of Innsbruck, A-6020, Austria and
+                   NMR-based Structural Biology, Max Planck Institute for
+                   Biophysical Chemistry, D-37077 Gottingen, Germany. ;
+                   PROTEO, Universite Laval, Quebec G1V 0A6, Canada,
+                   International AIDS Society HQ, CH-1202 Geneva,
+                   Switzerland, Department of Biology, University of
+                   Copenhagen, DK-2200 Denmark, Institut de Biologie
+                   Structurale, Grenoble F-38027, France, Astbury Centre
+                   for Structural Molecular Biology, University of Leeds,
+                   Leeds LS2 9JT, UK, Institute of Organic Chemistry \&
+                   CMBI, University of Innsbruck, A-6020, Austria and
+                   NMR-based Structural Biology, Max Planck Institute for
+                   Biophysical Chemistry, D-37077 Gottingen, Germany. ;
+                   PROTEO, Universite Laval, Quebec G1V 0A6, Canada,
+                   International AIDS Society HQ, CH-1202 Geneva,
+                   Switzerland, Department of Biology, University of
+                   Copenhagen, DK-2200 Denmark, Institut de Biologie
+                   Structurale, Grenoble F-38027, France, Astbury Centre
+                   for Structural Molecular Biology, University of Leeds,
+                   Leeds LS2 9JT, UK, Institute of Organic Chemistry \&
+                   CMBI, University of Innsbruck, A-6020, Austria and
+                   NMR-based Structural Biology, Max Planck Institute for
+                   Biophysical Chemistry, D-37077 Gottingen,
+                   GermanyPROTEO, Universite Laval, Quebec G1V 0A6,
+                   Canada, International AIDS Society HQ, CH-1202 Geneva,
+                   Switzerland, Department of Biology, University of
+                   Copenhagen, DK-2200 Denmark, Institut de Biologie
+                   Structurale, Grenoble F-38027, France, Astbury Centre
+                   for Structural Molecular Biology, University of Leeds,
+                   Leeds LS2 9JT, UK, Institute of Organic Chemistry \&
+                   CMBI, University of Innsbruck, A-6020, Austria and
+                   NMR-based Structural Biology, Max Planck Institute for
+                   Biophysical Chemistry, D-37077 Gottingen, Germany.},
+  language       = {eng},
+  medline-aid    = {btu166 [pii] ; 10.1093/bioinformatics/btu166 [doi]},
+  medline-ci     = {(c) The Author 2014. Published by Oxford University
+                   Press.},
+  medline-crdt   = {2014/04/26 06:00},
+  medline-da     = {20140719},
+  medline-dep    = {20140409},
+  medline-edat   = {2014/04/26 06:00},
+  medline-fau    = {Morin, Sebastien ; Linnet, Troels E ; Lescanne,
+                   Mathilde ; Schanda, Paul ; Thompson, Gary S ;
+                   Tollinger, Martin ; Teilum, Kaare ; Gagne, Stephane ;
+                   Marion, Dominique ; Griesinger, Christian ; Blackledge,
+                   Martin ; d'Auvergne, Edward J},
+  medline-is     = {1367-4811 (Electronic) ; 1367-4803 (Linking)},
+  medline-jid    = {9808944},
+  medline-jt     = {Bioinformatics (Oxford, England)},
+  medline-lid    = {10.1093/bioinformatics/btu166 [doi]},
+  medline-mhda   = {2014/04/26 06:00},
+  medline-oid    = {NLM: PMC4103588},
+  medline-own    = {NLM},
+  medline-phst   = {2014/04/09 [aheadofprint]},
+  medline-pl     = {England},
+  medline-pmc    = {PMC4103588},
+  medline-pmid   = {24764461},
+  medline-pst    = {ppublish},
+  medline-pt     = {Journal Article},
+  medline-sb     = {IM},
+  medline-so     = {Bioinformatics. 2014 Aug 1;30(15):2219-20. doi:
+                   10.1093/bioinformatics/btu166. Epub 2014 Apr 9.},
+  medline-stat   = {In-Process},
+  url            = {http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi?cmd=prlinks&dbfrom=pubmed&retmode=ref&id=24764461},
+  doi            = {10.1093/bioinformatics/btu166},
+  year           = 2014
 }
 
 @Article{MorinGagne09a,
