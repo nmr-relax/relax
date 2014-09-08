@@ -213,5 +213,26 @@ The steps are:
     - Log into Gna! and go to https://gna.org/news/submit.php?group=relax.
     - Cut and paste all of the wiki text.  Delete the initial lower case title formatting text, the final 'See also' section, and any wiki markup.
     - Use the Savane markup to format the text (recipe #236, https://gna.org/cookbook/?func=detailitem&item_id=236).
-    - As the Savane markup for sectioning is the same as the wiki, the section titles = Description =, = Download =, and = Full list of changes = do not need to be modified.  The same for the subtitles == Features ==, == Changes ==, and == Bugfixes ==.  The leading whitespace from the full list of changes must be stripped, but this should already be done in the wiki text.
+    - As the Savane markup for sectioning is the same as the wiki, the section titles = Description =, = Download =, and = Full list of changes = do not need to be modified (except changing the text 'CHANGES file' to 'Full list of changes').  The same for the subtitles == Features ==, == Changes ==, and == Bugfixes ==.  The leading whitespace from the full list of changes must be stripped, but this should already be done in the wiki text.
     - Item references such as bug #7641, task #3122, etc. are automatically converted into links, therefore remove all links to the trackers.
+    - The Gna! news items are often truncated, so start a new thread for the rest of the message, responding to that thread for each block of release notes via the [ Reply ] link at the bottom of the page.
+
+
+Cross-linking
+-------------
+
+For better indexing by search engines, cross-link all the release announcements.  It may take a few days for all the links to be created.  For example for relax 3.1.7:
+
+    Official release notes:  http://wiki.nmr-relax.com/Relax_3.1.7
+    Gna! news item:  https://gna.org/forum/forum.php?forum_id=2448
+    Gmane:  http://article.gmane.org/gmane.science.nmr.relax.announce/53
+    Mail Archive:  http://www.mail-archive.com/relax-announce%40gna.org/msg00047.html
+    Local archives:  https://mail.gna.org/public/relax-announce/2014-03/msg00001.html
+    MARC:  http://marc.info/?l=relax-announce&m=139509874209089&w=2
+
+    Softpedia also has information about the newest relax releases:
+    Softpedia for GNU/Linux:  http://linux.softpedia.com/get/Science/relax-22351.shtml and http://linux.softpedia.com/progDownload/relax-Download-22351.html
+    Softpedia for MS Windows:  http://www.softpedia.com/get/Science-CAD/relax-project.shtml and http://www.softpedia.com/progDownload/relax-Download-210902.html
+    Softpedia for Mac OS X:  http://mac.softpedia.com/get/Math-Scientific/Edward-relax.shtml and http://mac.softpedia.com/progDownload/relax-Download-124418.html
+
+Not all of these links may work, and 
