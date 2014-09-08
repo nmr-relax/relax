@@ -165,7 +165,7 @@ uf_translation_table = {
     'n_state_model.set_domain': 'align_tensor.set_domain',
     'n_state_model.set_type': 'align_tensor.reduction',
     'noe.error': 'spectrum.error_analysis',
-    'noe.read': 'noe.read_restraints',
+    'noe.read': 'spectrum.read_intensities',
     'pcs.centre': 'paramag_centre',
     'pdc.read': 'bruker.read',
     'pipe.list': 'pipe.display',
