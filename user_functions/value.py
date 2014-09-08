@@ -343,6 +343,13 @@ uf.add_keyarg(
     desc_short = "error flag",
     desc = "A flag which if True will cause the error rather than parameter to be set."
 )
+uf.add_keyarg(
+    name = "force",
+    default = True,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which, if set to True, will cause the destination parameter to be overwritten."
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("If this function is used to change values of previously minimised results, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset.")
