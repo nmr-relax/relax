@@ -257,6 +257,14 @@ class Frame_order(SystemTestCase):
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
         self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
 
+        # Store the original parameters.
+        orig_cone_theta_x = cdp.cone_theta_x
+        orig_cone_theta_y = cdp.cone_theta_y
+        orig_cone_sigma_max = cdp.cone_sigma_max
+        orig_eigen_alpha = cdp.eigen_alpha
+        orig_eigen_beta = cdp.eigen_beta
+        orig_eigen_gamma = cdp.eigen_gamma
+
         # Permute the axes.
         self.interpreter.frame_order.permute_axes()
 
@@ -278,6 +286,17 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.eigen_alpha, alpha)
         self.assertAlmostEqual(cdp.eigen_beta, beta)
         self.assertAlmostEqual(cdp.eigen_gamma, gamma)
+
+        # Permute the axes a second time - this should restore the original result.
+        self.interpreter.frame_order.permute_axes()
+
+        # Check the values.
+        self.assertAlmostEqual(cdp.cone_theta_x, orig_cone_theta_x)
+        self.assertAlmostEqual(cdp.cone_theta_y, orig_cone_theta_y)
+        self.assertAlmostEqual(cdp.cone_sigma_max, orig_cone_sigma_max)
+        self.assertAlmostEqual(cdp.eigen_alpha, orig_eigen_alpha)
+        self.assertAlmostEqual(cdp.eigen_beta, orig_eigen_beta)
+        self.assertAlmostEqual(cdp.eigen_gamma, orig_eigen_gamma)
 
 
     def test_cam_double_rotor(self):
