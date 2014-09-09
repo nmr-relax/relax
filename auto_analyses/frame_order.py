@@ -806,7 +806,7 @@ class Frame_order_analysis:
         """
 
         # The file name.
-        path = self.results_dir + model + sep + 'results.bz2'
+        path = self.model_directory(model) + sep + 'results.bz2'
 
         # The file does not exist.
         if not access(path, F_OK):
