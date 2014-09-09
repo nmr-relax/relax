@@ -24,7 +24,7 @@
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
-from specific_analyses.frame_order.uf import num_int_pts, pdb_model, pivot, ref_domain, select_model
+from specific_analyses.frame_order.uf import num_int_pts, pdb_model, permute_axes, pivot, ref_domain, select_model
 from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -128,6 +128,26 @@ uf.menu_text = "pdb_&model"
 uf.gui_icon = "oxygen.actions.document-save"
 uf.wizard_height_desc = 400
 uf.wizard_size = (1000, 750)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
+
+
+# The frame_order.permute_axes user function.
+uf = uf_info.add_uf('frame_order.permute_axes')
+uf.title = "Permute the axes of the motional eigenframe to switch between local minima."
+uf.title_short = "Eigenframe axis permutation."
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The pseudo-elliptic frame order models consist of multiple solutions as the optimisation space contains multiple local minima.  Because of the constraint cone_theta_x <= cone_theta_y, there are exactly two local minima.  These correspond to permutations of the motional system - the eigenframe x, y and z-axes as well as the cone opening angles cone_theta_x, cone_theta_y, and cone_sigma_max associated with these axes are simultaneously permuted.  But as the mechanics of the cone angles is not identical to that of the torsion angle, only one of the two local minima is the global minimum.")
+uf.desc[-1].add_paragraph("When optimising the pseudo-elliptic models, specifically the '%s' and '%s' model, either of the two local minima can be found.  Convergence to the global minimum is not guaranteed.  Therefore this user function can be used to permute the motional system to jump from one local minimum to the other.  Optimisation will be required as the permuted parameters will not be exactly at the minimum." % (MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS))
+uf.desc[-1].add_paragraph("The motional system consists of three permutations but, because of the cone_theta_x <= cone_theta_y condition, the permutation which causes a violation of this constraint will be skipped.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("Simply type:")
+uf.desc[-1].add_prompt("relax> frame_order.permute_axes()")
+uf.backend = permute_axes
+uf.menu_text = "per&mute_axes"
+uf.wizard_height_desc = 500
+uf.wizard_size = (900, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 

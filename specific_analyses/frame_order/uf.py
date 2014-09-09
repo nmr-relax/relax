@@ -23,17 +23,19 @@
 """Module for all of the frame order specific user functions."""
 
 # Python module imports.
-from numpy import array, float64
+from numpy import array, float64, transpose, zeros
 from warnings import warn
 
 # relax module imports.
 from lib.arg_check import is_float_array
+from lib.check_types import is_float
 from lib.errors import RelaxError
+from lib.geometry.rotations import euler_to_R_zyz, R_to_euler_zyz
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
 from specific_analyses.frame_order.geometric import create_ave_pos, create_distribution, create_geometric_rep
 from specific_analyses.frame_order.parameters import update_model
-from specific_analyses.frame_order.variables import MODEL_LIST, MODEL_RIGID
+from specific_analyses.frame_order.variables import MODEL_LIST, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID
 
 
 def num_int_pts(num=200000):
@@ -97,6 +99,42 @@ def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", 
     # Create the distribution.
     if dist:
         create_distribution(file=dist, dir=dir, compress_type=compress_type, force=force)
+
+
+def permute_axes():
+    """Permute the axes of the motional eigenframe to switch between local minima."""
+
+    # Check that the model is valid.
+    if cdp.model not in [MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS]:
+        raise RelaxError("The permutation of the motional eigenframe is only valid for the '%s' and '%s' frame order models." % (MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS))
+
+    # Check that the model parameters are setup.
+    if not hasattr(cdp, 'cone_theta_y') or not is_float(cdp.cone_theta_y):
+        raise RelaxError("The parameter values are not set up.")
+
+    # The angles.  Note that cone_theta_x corresponds to a rotation about the y-axis!
+    angles = array([cdp.cone_theta_y, cdp.cone_theta_x, cdp.cone_sigma_max], float64)
+
+    # Generate the eigenframe of the motion.
+    frame = zeros((3, 3), float64)
+    euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
+
+    # The permutation with the condition that cone_theta_x <= cone_theta_y.
+    if angles[1] <= angles[2]:
+        perm = [2, 0, 1]
+    else:
+        perm = [1, 2, 0]
+
+    # Permute the angles.
+    cdp.cone_theta_y = angles[perm[0]]
+    cdp.cone_theta_x = angles[perm[1]]
+    cdp.cone_sigma_max = angles[perm[2]]
+
+    # Permute the axes.
+    frame_new = transpose(array([frame[:, perm[0]], frame[:, perm[1]], frame[:, perm[2]]], float64))
+
+    # Convert the permuted frame to Euler angles and store them.
+    cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma = R_to_euler_zyz(frame_new)
 
 
 def pivot(pivot=None, order=1, fix=False):
