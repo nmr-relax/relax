@@ -113,6 +113,9 @@ def permute_axes():
         raise RelaxError("The parameter values are not set up.")
 
     # The angles.  Note that cone_theta_x corresponds to a rotation about the y-axis!
+    cone_sigma_max = 0.0
+    if cdp.model == MODEL_PSEUDO_ELLIPSE:
+        cone_sigma_max = cdp.cone_sigma_max
     angles = array([cdp.cone_theta_y, cdp.cone_theta_x, cdp.cone_sigma_max], float64)
 
     # Generate the eigenframe of the motion.
@@ -128,7 +131,8 @@ def permute_axes():
     # Permute the angles.
     cdp.cone_theta_y = angles[perm[0]]
     cdp.cone_theta_x = angles[perm[1]]
-    cdp.cone_sigma_max = angles[perm[2]]
+    if cdp.model == MODEL_PSEUDO_ELLIPSE:
+        cdp.cone_sigma_max = angles[perm[2]]
 
     # Permute the axes.
     frame_new = transpose(array([frame[:, perm[0]], frame[:, perm[1]], frame[:, perm[2]]], float64))
