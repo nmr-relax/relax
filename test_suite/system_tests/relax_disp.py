@@ -5890,10 +5890,6 @@ class Relax_disp(SystemTestCase):
         # Setup dictionary with settings.
         sdic = {}
         
-        # Define method to analyse for
-        sdic['method'] = 'FT'
-        sdic['grid_inc'] = None
-        
         # Spectrometer frqs in list.
         sfrq_1 = 499.86214
         sfrq_2 = 599.8908587
@@ -5939,8 +5935,8 @@ class Relax_disp(SystemTestCase):
         sdic[e_2]['cpmg_frqs'] = ncyc_2 / sdic[e_2]['time_T2']
         
         # Define peak lists.
-        peaks_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'analysis_FT' +sep+ 'ser_files' +sep+ sdic['method']
-        peaks_folder_2 = base_path +sep+ 'cpmg_disp_sod1d90a_060521' +sep+ 'cpmg_disp_sod1d90a_060521_normal.fid' +sep+ 'analysis_FT' +sep+ 'ser_files' +sep+ sdic['method'] 
+        peaks_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'analysis_FT' +sep+ 'ser_files'
+        peaks_folder_2 = base_path +sep+ 'cpmg_disp_sod1d90a_060521' +sep+ 'cpmg_disp_sod1d90a_060521_normal.fid' +sep+ 'analysis_FT' +sep+ 'ser_files' 
         sdic[e_1]['peaks_folder'] = peaks_folder_1
         sdic[e_2]['peaks_folder'] = peaks_folder_2
         
@@ -5957,7 +5953,7 @@ class Relax_disp(SystemTestCase):
         RDR =  Relax_disp_rep(sdic)
 
         # Setup base information.
-        RDR.set_base_cpmg(glob_ini=128)
+        RDR.set_base_cpmg(method='FT', glob_ini=128)
 
         methods = ['FT', 'MDD']
         #methods = ['FT']

@@ -125,16 +125,15 @@ class Relax_disp_rep:
         self.interpreter_start()
 
 
-    def set_base_cpmg(self, glob_ini=None, force=False):
+    def set_base_cpmg(self, method=None, glob_ini=None, force=False):
         """ Setup base information, but do not load intensity. """
 
         # Define model
-        method = 'setup'
         model = 'setup'
         analysis = 'setup'
 
         # Check previous, and get the pipe name.
-        found, pipe_name, resfile, path = self.check_previous_result(method=method, model=model, analysis=analysis, glob_ini='setup', bundle='setup')
+        found, pipe_name, resfile, path = self.check_previous_result(method='setup', model=model, analysis=analysis, glob_ini='setup', bundle='setup')
 
         # If found, then pass, else calculate it.
         if found:
@@ -154,10 +153,10 @@ class Relax_disp_rep:
                 cpmg_frqs = getattr(self, key)['cpmg_frqs']
 
                 # Get the folder for peak files.
-                peaks_folder = getattr(self, key)['peaks_folder']
+                peaks_folder = getattr(self, key)['peaks_folder'] + sep + method
 
                 # Define glop pattern for peak files.
-                peaks_glob_pat = '%s*%.ser' % (glob_ini, self.method)
+                peaks_glob_pat = '%s*%s.ser' % (glob_ini, method)
 
                 # Get the file list.
                 peaks_file_list = glob(peaks_folder + sep + peaks_glob_pat)
@@ -227,10 +226,10 @@ class Relax_disp_rep:
             spectrum_ids = cdp.dic_spectrum_ids[key]
 
             # Get the folder for peak files.
-            peaks_folder = getattr(self, key)['peaks_folder']
+            peaks_folder = getattr(self, key)['peaks_folder']  + sep + self.method
 
             # Define glop pattern for peak files.
-            peaks_glob_pat = '%s*%.ser' % (glob_ini, self.method)
+            peaks_glob_pat = '%s*%s.ser' % (glob_ini, self.method)
 
             # Get the file list.
             peaks_file_list = glob(peaks_folder + sep + peaks_glob_pat)
