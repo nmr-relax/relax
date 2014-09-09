@@ -122,6 +122,17 @@ class Relax_disp(SystemTestCase):
             if methodName in to_skip:
                 status.skipped_tests.append([methodName, 'NMRPipe showApod program', self._skip_type])
 
+        # If not matplotlib module
+        if not dep_check.matplotlib_module:
+            # The list of tests to skip.
+            to_skip = [
+                "test_repeat_cpmg"
+            ]
+
+            # Store in the status object.
+            if methodName in to_skip:
+                status.skipped_tests.append([methodName, 'matplotlib module', self._skip_type])
+
 
     def setUp(self):
         """Set up for all the functional tests."""
@@ -5890,10 +5901,6 @@ class Relax_disp(SystemTestCase):
         # Setup dictionary with settings.
         sdic = {}
         
-        # Define method to analyse for
-        sdic['method'] = 'FT'
-        sdic['grid_inc'] = None
-        
         # Spectrometer frqs in list.
         sfrq_1 = 499.86214
         sfrq_2 = 599.8908587
@@ -5939,8 +5946,8 @@ class Relax_disp(SystemTestCase):
         sdic[e_2]['cpmg_frqs'] = ncyc_2 / sdic[e_2]['time_T2']
         
         # Define peak lists.
-        peaks_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'analysis_FT' +sep+ 'ser_files' +sep+ sdic['method']
-        peaks_folder_2 = base_path +sep+ 'cpmg_disp_sod1d90a_060521' +sep+ 'cpmg_disp_sod1d90a_060521_normal.fid' +sep+ 'analysis_FT' +sep+ 'ser_files' +sep+ sdic['method'] 
+        peaks_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'analysis_FT' +sep+ 'ser_files'
+        peaks_folder_2 = base_path +sep+ 'cpmg_disp_sod1d90a_060521' +sep+ 'cpmg_disp_sod1d90a_060521_normal.fid' +sep+ 'analysis_FT' +sep+ 'ser_files' 
         sdic[e_1]['peaks_folder'] = peaks_folder_1
         sdic[e_2]['peaks_folder'] = peaks_folder_2
         
@@ -5957,24 +5964,48 @@ class Relax_disp(SystemTestCase):
         RDR =  Relax_disp_rep(sdic)
 
         # Setup base information.
-        RDR.set_base_cpmg(glob_ini=128)
+        RDR.set_base_cpmg(method='FT', glob_ini=128)
 
-        #methods = ['FT', 'MDD']
-        methods = ['FT']
+        methods = ['FT', 'MDD']
+        #methods = ['FT']
 
         # Set the intensity.
-        #RDR.set_int(methods=methods, list_glob_ini=[128, 126])
+        RDR.set_int(methods=methods, list_glob_ini=[128, 126])
 
+        # Try plot some intensity correlations.
         if True:
+            # Collect intensity values.
+            # For all spins, ft
+            int_ft_all = RDR.col_int(method='FT', list_glob_ini=[128, 126], selection=None)
+
+            # Now make a spin selection.
+            selection = ':2,3'
+            int_ft_sel = RDR.col_int(method='FT', list_glob_ini=[128, 126], selection=selection)
+            # Print the length of datasets, depending on selection.
+            print( "All spins", len(int_ft_all['128']['peak_intensity_arr']), "Selection spins", len(int_ft_sel['128']['peak_intensity_arr']) )
+
+            # For all spins, mdd
+            int_mdd_all = RDR.col_int(method='MDD', list_glob_ini=[128, 126], selection=None)
+            int_mdd_sel = RDR.col_int(method='MDD', list_glob_ini=[128, 126], selection=selection)
+
+            # Plot correlation of intensity
+            fig1 = [[int_ft_all, int_mdd_all], ['FT', 'MDD'], [128, 128]]
+            fig2 = [[int_ft_sel, int_mdd_sel], ['FT sel', 'MDD sel'], [128, 128]]
+            corr_data = [fig1, fig2]
+
+            RDR.plot_int_corr(corr_data=corr_data, show=False)
+
+
+        if False:
             # Now calculate R2eff.
             RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
 
             # Try for bad data.
             #RDR.calc_r2eff(methods=['FT'], list_glob_ini=[6, 4])
 
-            if False:
+            if True:
                 # Collect r2eff values.
-                r2eff_ft = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126, 6])
+                r2eff_ft = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126])
 
                 # Collect r2eff values.
                 r2eff_mdd = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126])
@@ -5983,10 +6014,10 @@ class Relax_disp(SystemTestCase):
                 r2eff_stat_dic = RDR.get_r2eff_stat_dic(list_r2eff_dics=[r2eff_ft, r2eff_mdd], list_glob_ini=[128, 126, 6])
 
                 # Plot R2eff stats
-                RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT'], list_glob_ini=[128, 126, 6], show=True)
+                RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126, 6], show=False)
 
         # Do minimisation
-        if True:
+        if False:
             # Deselect all spins.
             #self.interpreter.spin.display()
             RDR.deselect_all(methods=methods, model='setup', model_from=MODEL_R2EFF, analysis='grid setup', analysis_from='int', list_glob_ini=[128, 126])

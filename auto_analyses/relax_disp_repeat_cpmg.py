@@ -36,15 +36,22 @@ import sys
 from warnings import warn
 
 # relax module imports.
+import dep_check
 from lib.io import extract_data, get_file_path, sort_filenames, write_data
 from lib.text.sectioning import section, subsection, subtitle, title
 from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import display_spin, generate_spin_string, return_spin, spin_loop
 from pipe_control import pipes
 from prompt.interpreter import Interpreter
-from specific_analyses.relax_disp.data import generate_r20_key, has_exponential_exp_type, is_r1_optimised, loop_exp_frq_offset, loop_exp_frq_offset_point, return_param_key_from_data, spin_loop
+from specific_analyses.relax_disp.data import generate_r20_key, has_exponential_exp_type, is_r1_optimised, loop_exp_frq_offset, loop_exp_frq_offset_point, return_param_key_from_data
 from specific_analyses.relax_disp.variables import MODEL_NOREX, MODEL_PARAMS, MODEL_R2EFF, PARAMS_R20
 from status import Status; status = Status()
+
+if dep_check.matplotlib_module:
+    import pylab as plt
+    from matplotlib.font_manager import FontProperties
+    fontP = FontProperties()
+    fontP.set_size('small')
 
 
 # Define sfrq key to dic.
@@ -118,16 +125,15 @@ class Relax_disp_rep:
         self.interpreter_start()
 
 
-    def set_base_cpmg(self, glob_ini=None, force=False):
+    def set_base_cpmg(self, method=None, glob_ini=None, force=False):
         """ Setup base information, but do not load intensity. """
 
         # Define model
-        method = 'setup'
         model = 'setup'
         analysis = 'setup'
 
         # Check previous, and get the pipe name.
-        found, pipe_name, resfile, path = self.check_previous_result(method=method, model=model, analysis=analysis, glob_ini='setup', bundle='setup')
+        found, pipe_name, resfile, path = self.check_previous_result(method='setup', model=model, analysis=analysis, glob_ini='setup', bundle='setup')
 
         # If found, then pass, else calculate it.
         if found:
@@ -147,10 +153,10 @@ class Relax_disp_rep:
                 cpmg_frqs = getattr(self, key)['cpmg_frqs']
 
                 # Get the folder for peak files.
-                peaks_folder = getattr(self, key)['peaks_folder']
+                peaks_folder = getattr(self, key)['peaks_folder'] + sep + method
 
                 # Define glop pattern for peak files.
-                peaks_glob_pat = '%s*%.ser' % (glob_ini, self.method)
+                peaks_glob_pat = '%s*%s.ser' % (glob_ini, method)
 
                 # Get the file list.
                 peaks_file_list = glob(peaks_folder + sep + peaks_glob_pat)
@@ -220,10 +226,10 @@ class Relax_disp_rep:
             spectrum_ids = cdp.dic_spectrum_ids[key]
 
             # Get the folder for peak files.
-            peaks_folder = getattr(self, key)['peaks_folder']
+            peaks_folder = getattr(self, key)['peaks_folder']  + sep + self.method
 
             # Define glop pattern for peak files.
-            peaks_glob_pat = '%s*%.ser' % (glob_ini, self.method)
+            peaks_glob_pat = '%s*%s.ser' % (glob_ini, self.method)
 
             # Get the file list.
             peaks_file_list = glob(peaks_folder + sep + peaks_glob_pat)
@@ -858,6 +864,116 @@ class Relax_disp_rep:
         return list_dub_mapping
 
 
+    def col_int(self, method=None, list_glob_ini=None, selection=None):
+
+        # Loop over the glob ini:
+        res_dic = {}
+        res_dic['method'] = method
+        for glob_ini in list_glob_ini:
+            # Store under glob_ini
+            res_dic[str(glob_ini)] = {}
+
+            # Get the pipe name for peak_intensity values.
+            pipe_name = self.name_pipe(method=method, model='setup', analysis='int', glob_ini=glob_ini)
+
+            # Check if pipe exists, or else calculate.
+            if not pipes.has_pipe(pipe_name):
+                self.set_int(methods=[method], list_glob_ini=[glob_ini])
+
+            if pipes.get_pipe() != pipe_name:
+                self.interpreter.pipe.switch(pipe_name)
+
+            # Results dictionary.
+            res_dic[str(glob_ini)] = {}
+            res_dic[str(glob_ini)]['peak_intensity'] = {}
+            res_dic[str(glob_ini)]['peak_intensity_err'] = {}
+            spin_point_peak_intensity_list = []
+            spin_point_peak_intensity_err_list = []
+
+            # Loop over the spins.
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(selection=selection, full_info=True, return_id=True, skip_desel=True):
+                # Make spin dic.
+                res_dic[str(glob_ini)]['peak_intensity'][spin_id] = {}
+                res_dic[str(glob_ini)]['peak_intensity_err'][spin_id] = {}
+
+                # Loop over spectrum_ids.
+                for s_id in cdp.spectrum_ids:
+                    # Check for bad data has skipped peak_intensity points
+                    if s_id in cur_spin.peak_intensity:
+                        peak_intensity_point = cur_spin.peak_intensity[s_id]
+                        peak_intensity_err_point = cur_spin.peak_intensity_err[s_id]
+
+                        res_dic[str(glob_ini)]['peak_intensity'][spin_id][s_id] = peak_intensity_point
+                        res_dic[str(glob_ini)]['peak_intensity_err'][spin_id][s_id] = peak_intensity_err_point
+                        spin_point_peak_intensity_list.append(peak_intensity_point)
+                        spin_point_peak_intensity_err_list.append(peak_intensity_err_point)
+
+            res_dic[str(glob_ini)]['peak_intensity_arr'] = asarray(spin_point_peak_intensity_list)
+            res_dic[str(glob_ini)]['peak_intensity_err_arr'] = asarray(spin_point_peak_intensity_err_list)
+
+        return res_dic
+
+
+    def plot_int_corr(self, corr_data, show=False):
+
+        # Define figure.
+        # Nr of columns is number of datasets.
+        nr_cols = len(corr_data)
+        # Nr of rows, is 2. With and without scaling.
+        nr_rows = 2
+
+        # Define figure
+        fig, axises = plt.subplots(nrows=nr_rows, ncols=nr_cols)
+        fig.suptitle('Correlation plot')
+
+        # axises is a tuple with number of elements corresponding to number of rows.
+        # Each sub-tuple contains axis for each column.
+
+        # Loop over the rows.
+        for i, row_axises in enumerate(axises):
+            # Loop over the columns.
+            for j, ax in enumerate(row_axises) :
+                # Extract from lists.
+                data, methods, glob_inis = corr_data[j]
+                data_x, data_y = data
+                method_x, method_y = methods
+                glob_ini_x, glob_ini_y = glob_inis
+
+                x = data_x[str(glob_ini_x)]['peak_intensity_arr']
+                y = data_y[str(glob_ini_y)]['peak_intensity_arr']
+
+                # If row 1.
+                if i == 0:
+                    ax.plot(x, x, '-', label='%s vs. %s' % (method_x, method_x))
+                    ax.plot(x, y, '.', label='%s vs. %s' % (method_y, method_x) )
+
+                    np = len(y)
+                    ax.set_title('Intensity for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
+                    ax.legend(loc='upper left', shadow=True, prop = fontP)
+                    ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+                    ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+                    ax.set_xlabel('Intensity')
+                    ax.set_ylabel('Intensity')
+
+                # Scale intensity
+                if 1 == 1:
+                
+                    x_norm = x / x.max()
+                    y_norm = y / y.max()
+
+                    ax.plot(x_norm, x_norm, '-', label='%s vs. %s' % (method_x, method_x))
+                    ax.plot(x_norm, y_norm, '.', label='%s vs. %s' % (method_y, method_x) )
+
+                    np = len(y_norm)
+                    ax.set_title('Norm. int. for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
+                    ax.legend(loc='upper left', shadow=True, prop = fontP)
+                    ax.set_xlabel('Normalized Intensity')
+                    ax.set_ylabel('Normalized Intensity')
+
+        if show:
+            plt.show()
+
+
     def col_r2eff(self, method=None, list_glob_ini=None):
 
         # Loop over the glob ini:
@@ -868,11 +984,11 @@ class Relax_disp_rep:
             res_dic[str(glob_ini)] = {}
 
             # Get the pipe name for R2eff values.
-            pipe_name = self.name_pipe(method=method, model=MODEL_R2EFF, analysis=analysis, glob_ini=glob_ini)
+            pipe_name = self.name_pipe(method=method, model=MODEL_R2EFF, analysis='int', glob_ini=glob_ini)
 
             # Check if pipe exists, or else calculate.
             if not pipes.has_pipe(pipe_name):
-                self.calc_r2eff(list_glob_ini=[glob_ini])
+                self.calc_r2eff(methods=[method], list_glob_ini=[glob_ini])
 
             if pipes.get_pipe() != pipe_name:
                 self.interpreter.pipe.switch(pipe_name)
@@ -929,6 +1045,8 @@ class Relax_disp_rep:
             method_cur = r2eff_dic['method']
             res_dic[method_cur] = {}
             res_dic[method_cur]['method'] = method_cur
+            res_dic[method_cur]['glob_ini'] = []
+            res_dic[method_cur]['r2eff_norm_std'] = []
 
             # Now loop over glob_ini:
             for glob_ini in list_glob_ini:
@@ -953,12 +1071,22 @@ class Relax_disp_rep:
                 r2eff_diff_norm_arr = (r2eff_arr - r2eff_arr_ref) / r2eff_arr_ref
                 r2eff_diff_norm_std = std(r2eff_diff_norm_arr, ddof=1)
 
+                # Store x
+                res_dic[method_cur]['glob_ini'].append(glob_ini)
+
                 # Store to result dic.
-                res_dic[method_cur]['r2eff_arr'] = r2eff_arr
-                res_dic[method_cur]['r2eff_norm_arr'] = r2eff_norm_arr
-                res_dic[method_cur]['r2eff_norm_std'] = r2eff_norm_std
-                res_dic[method_cur]['r2eff_diff_norm_arr'] = r2eff_diff_norm_arr
-                res_dic[method_cur]['r2eff_diff_norm_std'] = r2eff_diff_norm_std
+                res_dic[method_cur][str(glob_ini)] = {}
+                res_dic[method_cur][str(glob_ini)]['r2eff_arr'] = r2eff_arr
+                res_dic[method_cur][str(glob_ini)]['r2eff_norm_arr'] = r2eff_norm_arr
+                res_dic[method_cur][str(glob_ini)]['r2eff_norm_std'] = r2eff_norm_std
+                res_dic[method_cur]['r2eff_norm_std'].append(r2eff_norm_std)
+
+                res_dic[method_cur][str(glob_ini)]['r2eff_diff_norm_arr'] = r2eff_diff_norm_arr
+                res_dic[method_cur][str(glob_ini)]['r2eff_diff_norm_std'] = r2eff_diff_norm_std
+
+
+            res_dic[method_cur]['glob_ini'] = asarray(res_dic[method_cur]['glob_ini'])
+            res_dic[method_cur]['r2eff_norm_std'] = asarray(res_dic[method_cur]['r2eff_norm_std'])
 
 
         return res_dic
@@ -967,11 +1095,30 @@ class Relax_disp_rep:
     def plot_r2eff_stat(self, r2eff_stat_dic=None, methods=[], list_glob_ini=[], show=False):
 
         # Loop over the methods.
+
+        # Define figure
+        #fig = plt.figure(figsize=(12, 12))
+        fig = plt.figure()
+        ax1 = fig.add_subplot(111)
+        #ax2 = ax1.twinx()
+
         for method in methods:
             if method not in r2eff_stat_dic:
                 continue
 
-            print method
+            x = r2eff_stat_dic[method]['glob_ini']
+            y = r2eff_stat_dic[method]['r2eff_norm_std']
+
+            ax1.plot(x, y, label='%s'%method)
+
+        #ax1.legend(loc='upper left', shadow=True)
+        ax1.legend(loc='upper left', shadow=True, prop = fontP)
+        ax1.set_xlabel('NI')
+        ax1.set_ylabel(r'$\sigma ( R_{2,\mathrm{eff}} )$')
+        fig.gca().set_xticks(x)
+        fig.gca().invert_xaxis()
+        if show:
+            plt.show()
 
 
     def interpreter_start(self):
