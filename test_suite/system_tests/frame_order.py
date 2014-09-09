@@ -23,12 +23,14 @@
 from math import pi
 import platform
 import numpy
+from numpy import array, float64, transpose
 from os import sep
 from tempfile import mkdtemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
+from lib.geometry.rotations import R_to_euler_zyz
 from status import Status; status = Status()
 from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from test_suite.system_tests.base_classes import SystemTestCase
@@ -243,6 +245,39 @@ class Frame_order(SystemTestCase):
 
         # Execute the script.
         self.interpreter.run(script_file=self.cam_path+'auto_analysis_to_rigid.py')
+
+
+    def test_axis_permutation(self):
+        """Test the operation of the frame_order.permute_axes user function."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
+        self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
+
+        # Permute the axes.
+        self.interpreter.frame_order.permute_axes()
+
+        # Checks of the cone opening angle permutations.
+        self.assertEqual(cdp.cone_theta_x, 0.53277077276728502)
+        self.assertEqual(cdp.cone_theta_y, 0.8097621930390525)
+        self.assertEqual(cdp.cone_sigma_max, 1.2119285953475074)
+
+        # The optimised Eigenframe.
+        frame = array([[ 0.520453290203146, -0.300768532050924, -0.799166229794936],
+                       [ 0.623378128365549, -0.505769134549026,  0.596319789721082],
+                       [-0.583547840191518, -0.808539345156104, -0.07573668557808 ]], float64)
+
+        # Manually permute the frame, and then obtain the Euler angles.
+        frame_new = transpose(array([frame[:, 1], frame[:, 2], frame[:, 0]], float64))
+        alpha, beta, gamma = R_to_euler_zyz(frame_new)
+
+        # Check the Eigenframe Euler angles.
+        self.assertAlmostEqual(cdp.eigen_alpha, alpha)
+        self.assertAlmostEqual(cdp.eigen_beta, beta)
+        self.assertAlmostEqual(cdp.eigen_gamma, gamma)
 
 
     def test_cam_double_rotor(self):
