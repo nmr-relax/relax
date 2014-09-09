@@ -122,6 +122,17 @@ class Relax_disp(SystemTestCase):
             if methodName in to_skip:
                 status.skipped_tests.append([methodName, 'NMRPipe showApod program', self._skip_type])
 
+        # If not matplotlib module
+        if not dep_check.matplotlib_module:
+            # The list of tests to skip.
+            to_skip = [
+                "test_repeat_cpmg"
+            ]
+
+            # Store in the status object.
+            if methodName in to_skip:
+                status.skipped_tests.append([methodName, 'matplotlib module', self._skip_type])
+
 
     def setUp(self):
         """Set up for all the functional tests."""
