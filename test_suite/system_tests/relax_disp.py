@@ -5959,9 +5959,33 @@ class Relax_disp(SystemTestCase):
         #methods = ['FT']
 
         # Set the intensity.
-        #RDR.set_int(methods=methods, list_glob_ini=[128, 126])
+        RDR.set_int(methods=methods, list_glob_ini=[128, 126])
 
+        # Try plot some intensity correlations.
         if True:
+            # Collect intensity values.
+            # For all spins, ft
+            int_ft_all = RDR.col_int(method='FT', list_glob_ini=[128, 126], selection=None)
+
+            # Now make a spin selection.
+            selection = ':2,3'
+            int_ft_sel = RDR.col_int(method='FT', list_glob_ini=[128, 126], selection=selection)
+            # Print the length of datasets, depending on selection.
+            print( "All spins", len(int_ft_all['128']['peak_intensity_arr']), "Selection spins", len(int_ft_sel['128']['peak_intensity_arr']) )
+
+            # For all spins, mdd
+            int_mdd_all = RDR.col_int(method='MDD', list_glob_ini=[128, 126], selection=None)
+            int_mdd_sel = RDR.col_int(method='MDD', list_glob_ini=[128, 126], selection=selection)
+
+            # Plot correlation of intensity
+            fig1 = [[int_ft_all, int_mdd_all], ['FT', 'MDD'], [128, 128]]
+            fig2 = [[int_ft_sel, int_mdd_sel], ['FT sel', 'MDD sel'], [128, 128]]
+            corr_data = [fig1, fig2]
+
+            RDR.plot_int_corr(corr_data=corr_data, show=False)
+
+
+        if False:
             # Now calculate R2eff.
             RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
 
