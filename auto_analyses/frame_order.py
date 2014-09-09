@@ -161,6 +161,66 @@ class Frame_order_analysis:
         self.interpreter.state.save('final_state', dir=self.results_dir, force=True)
 
 
+    def axis_permutation_analysis(self, model=None):
+        """Handle the two local minima in the pseudo-elliptic models.
+
+        This involves creating a new data pipe for the pseudo-elliptic models, permuting the motional parameters, and performing an optimisation.  This will explore the second minimum.
+
+
+        @keyword model:     The frame order model to visualise.  This should match the model of the current data pipe, unless the special value of 'final' is used to indicate the visualisation of the final results.
+        @type model:        str
+        """
+
+        # The title printout.
+        title = model[0].upper() + model[1:]
+        section(file=sys.stdout, text="Axis permutation of the %s frame order model"%title, prespace=5)
+
+        # A new model name.
+        perm_model = "%s permuted" % model
+
+        # Copy the data pipe, and add it to the list so it is included in the model selection.
+        self.pipe_name_dict[perm_model] = '%s permuted - %s' % (title, self.pipe_bundle)
+        self.pipe_name_list.append(self.pipe_name_dict[perm_model])
+        self.interpreter.pipe.copy(pipe_from=self.pipe_name_dict[model], pipe_to=self.pipe_name_dict[perm_model])
+
+        # The results file already exists, so read its contents instead.
+        if self.read_results(model=perm_model, pipe_name=self.pipe_name_dict[perm_model]):
+            # Re-perform model elimination just in case.
+            self.interpreter.eliminate()
+
+            # The PDB representation of the model and visualisation script (in case this was not completed correctly).
+            self.visualisation(model=perm_model)
+
+            # Exit the function.
+            return
+
+        # Permute the axes.
+        self.interpreter.frame_order.permute_axes()
+
+        # Minimise (for the full data set).
+        opt = self.opt_full
+        for i in opt.loop_min():
+            # The numerical optimisation settings.
+            num_int_pts = opt.get_min_num_int_pts(i)
+            if num_int_pts != None:
+                self.interpreter.frame_order.num_int_pts(num=num_int_pts)
+
+            # Perform the optimisation.
+            self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
+
+        # Results printout.
+        self.print_results()
+
+        # Model elimination.
+        self.interpreter.eliminate()
+
+        # Save the results.
+        self.interpreter.results.write(dir=self.model_directory(perm_model), force=True)
+
+        # The PDB representation of the model and visualisation script.
+        self.visualisation(model=perm_model)
+
+
     def check_vars(self):
         """Check that the user has set the variables correctly."""
 
@@ -568,6 +628,10 @@ class Frame_order_analysis:
             # The PDB representation of the model and visualisation script.
             self.visualisation(model=model)
 
+            # Perform the axis permutation analysis.
+            if model in [MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS]:
+                self.axis_permutation_analysis(model=model)
+
 
     def optimise_rigid(self):
         """Optimise the rigid frame order model.
@@ -809,8 +873,8 @@ class Frame_order_analysis:
         """
 
         # Sanity check.
-        if model != 'final' and model != cdp.model:
-            raise RelaxError("The model '%s' does not match the model '%s' of the current data pipe." % (model, cdp.model))
+        if model != 'final' and model.replace(' permuted', '') != cdp.model:
+            raise RelaxError("The model '%s' does not match the model '%s' of the current data pipe." % (model.replace(' permuted', ''), cdp.model))
 
         # The PDB representation of the model.
         self.interpreter.frame_order.pdb_model(dir=self.model_directory(model), force=True)
