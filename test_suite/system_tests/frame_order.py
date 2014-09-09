@@ -266,9 +266,9 @@ class Frame_order(SystemTestCase):
         self.assertEqual(cdp.cone_sigma_max, 1.2119285953475074)
 
         # The optimised Eigenframe.
-        frame = array([[ 0.520453290203146, -0.300768532050924, -0.799166229794936],
-                       [ 0.623378128365549, -0.505769134549026,  0.596319789721082],
-                       [-0.583547840191518, -0.808539345156104, -0.07573668557808 ]], float64)
+        frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
+                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.
         frame_new = transpose(array([frame[:, 1], frame[:, 2], frame[:, 0]], float64))
