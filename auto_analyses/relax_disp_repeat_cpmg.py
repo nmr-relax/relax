@@ -48,7 +48,10 @@ from specific_analyses.relax_disp.variables import MODEL_NOREX, MODEL_PARAMS, MO
 from status import Status; status = Status()
 
 if dep_check.matplotlib_module:
-    import matplotlib.pyplot as plt
+    import pylab as plt
+    from matplotlib.font_manager import FontProperties
+    fontP = FontProperties()
+    fontP.set_size('small')
 
 
 # Define sfrq key to dic.
@@ -983,6 +986,13 @@ class Relax_disp_rep:
     def plot_r2eff_stat(self, r2eff_stat_dic=None, methods=[], list_glob_ini=[], show=False):
 
         # Loop over the methods.
+
+        # Define figure
+        #fig = plt.figure(figsize=(12, 12))
+        fig = plt.figure()
+        ax1 = fig.add_subplot(111)
+        #ax2 = ax1.twinx()
+
         for method in methods:
             if method not in r2eff_stat_dic:
                 continue
@@ -990,13 +1000,20 @@ class Relax_disp_rep:
             if not dep_check.matplotlib_module:
                 continue
 
-            fig = plt.figure()
+
             x = r2eff_stat_dic[method]['glob_ini']
             y = r2eff_stat_dic[method]['r2eff_norm_std']
-            plt.plot(x, y)
 
-            if show:
-                plt.show()
+            ax1.plot(x, y, label='%s'%method)
+
+        #ax1.legend(loc='upper left', shadow=True)
+        ax1.legend(loc='upper left', shadow=True, prop = fontP)
+        ax1.set_xlabel('NI')
+        ax1.set_ylabel(r'$\sigma ( R_{2,\mathrm{eff}} )$')
+        fig.gca().set_xticks(x)
+        fig.gca().invert_xaxis()
+        if show:
+            plt.show()
 
 
     def interpreter_start(self):

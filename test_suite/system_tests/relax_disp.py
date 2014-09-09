@@ -5974,7 +5974,7 @@ class Relax_disp(SystemTestCase):
 
             if True:
                 # Collect r2eff values.
-                r2eff_ft = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126, 6])
+                r2eff_ft = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126])
 
                 # Collect r2eff values.
                 r2eff_mdd = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126])
@@ -5983,7 +5983,7 @@ class Relax_disp(SystemTestCase):
                 r2eff_stat_dic = RDR.get_r2eff_stat_dic(list_r2eff_dics=[r2eff_ft, r2eff_mdd], list_glob_ini=[128, 126, 6])
 
                 # Plot R2eff stats
-                RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT'], list_glob_ini=[128, 126, 6], show=False)
+                RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126, 6], show=False)
 
         # Do minimisation
         if False:
