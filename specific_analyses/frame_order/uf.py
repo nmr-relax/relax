@@ -116,7 +116,7 @@ def permute_axes():
     cone_sigma_max = 0.0
     if cdp.model == MODEL_PSEUDO_ELLIPSE:
         cone_sigma_max = cdp.cone_sigma_max
-    angles = array([cdp.cone_theta_y, cdp.cone_theta_x, cdp.cone_sigma_max], float64)
+    angles = array([cdp.cone_theta_y, cdp.cone_theta_x, cone_sigma_max], float64)
 
     # Generate the eigenframe of the motion.
     frame = zeros((3, 3), float64)
