@@ -367,7 +367,7 @@ class Frame_order(SystemTestCase):
                        [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.
-        frame_new = transpose(array([frame[:, 2], frame[:, 1], frame[:, 0]], float64))
+        frame_new = transpose(array([-frame[:, 2], frame[:, 1], frame[:, 0]], float64))
         alpha, beta, gamma = R_to_euler_zyz(frame_new)
 
         # Check the Eigenframe Euler angles.
