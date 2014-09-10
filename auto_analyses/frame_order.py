@@ -548,6 +548,10 @@ class Frame_order_analysis:
                 # The PDB representation of the model and visualisation script (in case this was not completed correctly).
                 self.visualisation(model=model)
 
+                # Perform the axis permutation analysis.
+                if model in [MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS]:
+                    self.axis_permutation_analysis(model=model)
+
                 # Skip to the next model.
                 continue
 
