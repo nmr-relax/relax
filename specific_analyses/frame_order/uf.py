@@ -201,7 +201,8 @@ def permute_axes(permutation='A'):
     print("\nPermuted parameters:")
     print("%-20s %20.10f" % ("cone_theta_x", cdp.cone_theta_x))
     print("%-20s %20.10f" % ("cone_theta_y", cdp.cone_theta_y))
-    print("%-20s %20.10f" % ("cone_sigma_max", cdp.cone_sigma_max))
+    if cdp.model == MODEL_PSEUDO_ELLIPSE:
+        print("%-20s %20.10f" % ("cone_sigma_max", cdp.cone_sigma_max))
     print("%-20s %20.10f" % ("eigen_alpha", cdp.eigen_alpha))
     print("%-20s %20.10f" % ("eigen_beta", cdp.eigen_beta))
     print("%-20s %20.10f" % ("eigen_gamma", cdp.eigen_gamma))
