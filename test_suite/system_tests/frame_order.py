@@ -289,17 +289,6 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.eigen_beta, beta)
         self.assertAlmostEqual(cdp.eigen_gamma, gamma)
 
-        # Permute the axes a second time - this should restore the original result.
-        self.interpreter.frame_order.permute_axes('A')
-
-        # Check the values.
-        self.assertAlmostEqual(cdp.cone_theta_x, orig_cone_theta_x)
-        self.assertAlmostEqual(cdp.cone_theta_y, orig_cone_theta_y)
-        self.assertAlmostEqual(cdp.cone_sigma_max, orig_cone_sigma_max)
-        self.assertAlmostEqual(cdp.eigen_alpha, orig_eigen_alpha)
-        self.assertAlmostEqual(cdp.eigen_beta, orig_eigen_beta)
-        self.assertAlmostEqual(cdp.eigen_gamma, orig_eigen_gamma)
-
 
     def test_axis_perm_x_le_y_le_z_permB(self):
         """Test the operation of the frame_order.permute_axes user function for permutation 'B' when x <= y <= z."""
@@ -342,17 +331,6 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.eigen_alpha, alpha)
         self.assertAlmostEqual(cdp.eigen_beta, beta)
         self.assertAlmostEqual(cdp.eigen_gamma, gamma)
-
-        # Permute the axes a second time - this should restore the original result.
-        self.interpreter.frame_order.permute_axes('B')
-
-        # Check the values.
-        self.assertAlmostEqual(cdp.cone_theta_x, orig_cone_theta_x)
-        self.assertAlmostEqual(cdp.cone_theta_y, orig_cone_theta_y)
-        self.assertAlmostEqual(cdp.cone_sigma_max, orig_cone_sigma_max)
-        self.assertAlmostEqual(cdp.eigen_alpha, orig_eigen_alpha)
-        self.assertAlmostEqual(cdp.eigen_beta, orig_eigen_beta)
-        self.assertAlmostEqual(cdp.eigen_gamma, orig_eigen_gamma)
 
 
     def test_axis_perm_x_le_z_le_y_permB(self):
@@ -397,17 +375,6 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.eigen_beta, beta)
         self.assertAlmostEqual(cdp.eigen_gamma, gamma)
 
-        # Permute the axes a second time - this should restore the original result.
-        self.interpreter.frame_order.permute_axes('B')
-
-        # Check the values.
-        self.assertAlmostEqual(cdp.cone_theta_x, orig_cone_theta_x)
-        self.assertAlmostEqual(cdp.cone_theta_y, orig_cone_theta_y)
-        self.assertAlmostEqual(cdp.cone_sigma_max, orig_cone_sigma_max)
-        self.assertAlmostEqual(cdp.eigen_alpha, orig_eigen_alpha)
-        self.assertAlmostEqual(cdp.eigen_beta, orig_eigen_beta)
-        self.assertAlmostEqual(cdp.eigen_gamma, orig_eigen_gamma)
-
 
     def test_axis_perm_x_le_z_le_y_permA(self):
         """Test the operation of the frame_order.permute_axes user function for permutation 'A' when x <= z <= y."""
@@ -451,17 +418,6 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.eigen_beta, beta)
         self.assertAlmostEqual(cdp.eigen_gamma, gamma)
 
-        # Permute the axes a second time - this should restore the original result.
-        self.interpreter.frame_order.permute_axes('A')
-
-        # Check the values.
-        self.assertAlmostEqual(cdp.cone_theta_x, orig_cone_theta_x)
-        self.assertAlmostEqual(cdp.cone_theta_y, orig_cone_theta_y)
-        self.assertAlmostEqual(cdp.cone_sigma_max, orig_cone_sigma_max)
-        self.assertAlmostEqual(cdp.eigen_alpha, orig_eigen_alpha)
-        self.assertAlmostEqual(cdp.eigen_beta, orig_eigen_beta)
-        self.assertAlmostEqual(cdp.eigen_gamma, orig_eigen_gamma)
-
 
     def test_axis_perm_z_le_x_le_y_permA(self):
         """Test the operation of the frame_order.permute_axes user function for permutation 'A' when z <= x <= y."""
@@ -503,17 +459,6 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.eigen_beta, beta)
         self.assertAlmostEqual(cdp.eigen_gamma, gamma)
 
-        # Permute the axes a second time - this should restore the original result.
-        self.interpreter.frame_order.permute_axes('A')
-
-        # Check the values.
-        self.assertAlmostEqual(cdp.cone_theta_x, orig_cone_theta_x)
-        self.assertAlmostEqual(cdp.cone_theta_y, orig_cone_theta_y)
-        self.assertAlmostEqual(cdp.cone_sigma_max, orig_cone_sigma_max)
-        self.assertAlmostEqual(cdp.eigen_alpha, orig_eigen_alpha)
-        self.assertAlmostEqual(cdp.eigen_beta, orig_eigen_beta)
-        self.assertAlmostEqual(cdp.eigen_gamma, orig_eigen_gamma)
-
 
     def test_axis_perm_z_le_x_le_y_permB(self):
         """Test the operation of the frame_order.permute_axes user function for permutation 'B' when z <= x <= y."""
@@ -554,17 +499,6 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.eigen_alpha, alpha)
         self.assertAlmostEqual(cdp.eigen_beta, beta)
         self.assertAlmostEqual(cdp.eigen_gamma, gamma)
-
-        # Permute the axes a second time - this should restore the original result.
-        self.interpreter.frame_order.permute_axes('B')
-
-        # Check the values.
-        self.assertAlmostEqual(cdp.cone_theta_x, orig_cone_theta_x)
-        self.assertAlmostEqual(cdp.cone_theta_y, orig_cone_theta_y)
-        self.assertAlmostEqual(cdp.cone_sigma_max, orig_cone_sigma_max)
-        self.assertAlmostEqual(cdp.eigen_alpha, orig_eigen_alpha)
-        self.assertAlmostEqual(cdp.eigen_beta, orig_eigen_beta)
-        self.assertAlmostEqual(cdp.eigen_gamma, orig_eigen_gamma)
 
 
     def test_cam_double_rotor(self):
