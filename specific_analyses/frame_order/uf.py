@@ -101,8 +101,12 @@ def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", 
         create_distribution(file=dist, dir=dir, compress_type=compress_type, force=force)
 
 
-def permute_axes():
-    """Permute the axes of the motional eigenframe to switch between local minima."""
+def permute_axes(permutation='A'):
+    """Permute the axes of the motional eigenframe to switch between local minima.
+
+    @keyword permutation:   The permutation to use.  This can be either 'A' or 'B' to select between the 3 permutations, excluding the current combination.
+    @type permutation:      str
+    """
 
     # Check that the model is valid.
     if cdp.model not in [MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS]:
