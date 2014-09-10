@@ -186,6 +186,9 @@ class Frame_order_analysis:
             self.pipe_name_list.append(self.pipe_name_dict[perm_model])
             self.interpreter.pipe.copy(pipe_from=self.pipe_name_dict[model], pipe_to=self.pipe_name_dict[perm_model])
 
+            # Switch to the new pipe.
+            self.interpreter.pipe.switch(pipe_name=self.pipe_name_dict[perm_model])
+
             # The results file already exists, so read its contents instead.
             if self.read_results(model=perm_model, pipe_name=self.pipe_name_dict[perm_model]):
                 # Re-perform model elimination just in case.
