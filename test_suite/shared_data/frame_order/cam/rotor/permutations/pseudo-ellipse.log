@@ -1,0 +1,1195 @@
+
+
+
+                                  relax repository checkout r25725
+                svn+ssh://bugman@svn.gna.org/svn/relax/branches/frame_order_cleanup
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2014 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'pseudo-ellipse.py'
+----------------------------------------------------------------------------------------------------
+# Optimise all 3 pseudo-ellipse permutations for the CaM rotor synthetic frame order data.
+# These 3 solutions should mimic the rotor solution.
+
+# Python module imports.
+from numpy import array, cross, float64, transpose, zeros
+from numpy.linalg import norm
+
+# relax module imports.
+from lib.geometry.coord_transform import spherical_to_cartesian
+from lib.geometry.rotations import R_to_euler_zyz
+
+
+# The real rotor parameter values.
+AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -21.269217407269576,   -3.122610661328414,   -2.400652421655998]
+AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [5.623469076122531, 0.435439405668396, 5.081265529106499]
+AXIS_THETA = 0.9600799785953431
+AXIS_PHI = 4.0322755062196229
+CONE_SIGMA_MAX = 30.0 / 360.0 * 2.0 * pi
+
+# Reconstruct the rotation axis.
+AXIS = zeros(3, float64)
+spherical_to_cartesian([1, AXIS_THETA, AXIS_PHI], AXIS)
+
+# Create a full normalised axis system.
+x = array([1, 0, 0], float64)
+y = cross(AXIS, x)
+y /= norm(y)
+x = cross(y, AXIS)
+x /= norm(x)
+AXES = transpose(array([x, y, AXIS], float64))
+
+# The Euler angles.
+eigen_alpha, eigen_beta, eigen_gamma = R_to_euler_zyz(AXES)
+
+# Printout.
+print("Torsion angle: %s" % CONE_SIGMA_MAX)
+print("Rotation axis: %s" % AXIS)
+print("Full axis system:\n%s" % AXES)
+print("cross(x, y) = z:\n    %s = %s" % (cross(AXES[:, 0], AXES[:, 1]), AXES[:, 2]))
+print("cross(x, z) = -y:\n    %s = %s" % (cross(AXES[:, 0], AXES[:, 2]), -AXES[:, 1]))
+print("cross(y, z) = x:\n    %s = %s" % (cross(AXES[:, 1], AXES[:, 2]), AXES[:, 0]))
+print("Euler angles (alpha, beta, gamma): (%.15f, %.15f, %.15f)" % (eigen_alpha, eigen_beta, eigen_gamma))
+
+# Load the optimised rotor state for creating the pseudo-ellipse data pipes.
+state.load(state='frame_order_true', dir='..')
+
+# Create a new data base data pipe for the pseudo-ellipse.
+pipe.copy(pipe_from='frame order', pipe_to='pseudo-ellipse')
+pipe.switch(pipe_name='pseudo-ellipse')
+
+# Set up the dynamic system.
+value.set(param='ave_pos_x', val=AVE_POS_X)
+value.set(param='ave_pos_y', val=AVE_POS_Y)
+value.set(param='ave_pos_z', val=AVE_POS_Z)
+value.set(param='ave_pos_alpha', val=AVE_POS_ALPHA)
+value.set(param='ave_pos_beta', val=AVE_POS_BETA)
+value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
+value.set(param='eigen_alpha', val=eigen_alpha)
+value.set(param='eigen_beta', val=eigen_beta)
+value.set(param='eigen_gamma', val=eigen_gamma)
+
+# Set the torsion angle to the rotor opening half-angle.
+value.set(param='cone_sigma_max', val=CONE_SIGMA_MAX)
+
+# Set the cone opening angles to very small values close to zero.
+value.set(param='cone_theta_x', val=0.001)
+value.set(param='cone_theta_y', val=0.002)
+
+# Fix the true pivot point.
+frame_order.pivot([ 37.254, 0.5, 16.7465], fix=True)
+
+# Change the model.
+frame_order.select_model('pseudo-ellipse')
+
+# Loop over the 3 permutations.
+pipe_name = 'pseudo-ellipse'
+tag = ''
+for perm in [None, 'A', 'B']:
+    # Operations for the 'A' and 'B' permutations.
+    if perm in ['A', 'B']:
+        # The pipe name and tag.
+        pipe_name = 'pseudo-ellipse perm %s' % perm
+        tag = '_perm_%s' % perm
+
+        # Create a new data pipe.
+        pipe.copy(pipe_from='pseudo-ellipse', pipe_to=pipe_name)
+        pipe.switch(pipe_name=pipe_name)
+
+        # Permute the axes.
+        frame_order.permute_axes(permutation=perm)
+
+    # Create a pre-optimisation PDB representation.
+    frame_order.pdb_model(ave_pos=None, rep='fo_orig'+tag, dist=None, compress_type=2, force=True)
+
+    # High precision optimisation.
+    frame_order.num_int_pts(num=10000)
+    minimise.execute('simplex', func_tol=1e-4)
+
+    # Create the PDB representation.
+    frame_order.pdb_model(ave_pos=None, rep='fo'+tag, dist=None, compress_type=2, force=True)
+
+# Sanity check.
+pipe.display()
+----------------------------------------------------------------------------------------------------
+Torsion angle: 0.523598775598
+Rotation axis: [-0.515203065764379 -0.63695822150172   0.573454466447295]
+Full axis system:
+[[ 0.857068142580848 -0.                -0.515203065764379]
+ [-0.382890008597602  0.669088533288005 -0.63695822150172 ]
+ [ 0.344716463617772  0.743182706084113  0.573454466447295]]
+cross(x, y) = z:
+    [-0.515203065764378 -0.63695822150172   0.573454466447295] = [-0.515203065764379 -0.63695822150172   0.573454466447295]
+cross(x, z) = -y:
+    [ -2.775557561562891e-17  -6.690885332880054e-01  -7.431827060841134e-01] = [ 0.                -0.669088533288005 -0.743182706084113]
+cross(y, z) = x:
+    [ 0.857068142580848 -0.382890008597602  0.344716463617772] = [ 0.857068142580848 -0.382890008597602  0.344716463617772]
+Euler angles (alpha, beta, gamma): (2.005098252537858, 0.960079978595343, 4.032275506219623)
+
+relax> state.load(state='frame_order_true', dir='..', force=False)
+Opening the file '../frame_order_true.bz2' for reading.
+
+relax> pipe.copy(pipe_from='frame order', pipe_to='pseudo-ellipse', bundle_to=None)
+
+relax> pipe.switch(pipe_name='pseudo-ellipse')
+
+relax> value.set(val=-21.269217407269576, param='ave_pos_x', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=-3.122610661328414, param='ave_pos_y', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=-2.400652421655998, param='ave_pos_z', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=5.623469076122531, param='ave_pos_alpha', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=0.435439405668396, param='ave_pos_beta', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=5.081265529106499, param='ave_pos_gamma', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=2.0050982525378576, param='eigen_alpha', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=0.9600799785953431, param='eigen_beta', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=4.032275506219623, param='eigen_gamma', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=0.5235987755982988, param='cone_sigma_max', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=0.001, param='cone_theta_x', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=0.002, param='cone_theta_y', index=0, spin_id=None, error=False, force=True)
+
+relax> frame_order.pivot(pivot=[37.254, 0.5, 16.7465], order=1, fix=True)
+
+relax> frame_order.select_model(model='pseudo-ellipse')
+
+relax> frame_order.pdb_model(ave_pos=None, rep='fo_orig', dist=None, dir=None, compress_type=2, size=30.0, inc=36, force=True)
+
+Creating a PDB file containing a geometric object representing the frame order dynamics.
+----------------------------------------------------------------------------------------
+
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the full axis system.
+Axis system:
+[[  8.570681425808484e-01  -1.665334536937735e-16  -5.152030657643786e-01]
+ [ -3.828900085976022e-01   6.690885332880054e-01  -6.369582215017197e-01]
+ [  3.447164636177720e-01   7.431827060841133e-01   5.734544664472949e-01]]
+
+Generating the axis vectors.
+    x-ax vector (scaled + shifted to origin): array([ 62.966044277425453, -10.986700257928065,  27.087993908533161])
+    Creating the MC simulation vectors.
+    y-ax vector (scaled + shifted to origin): array([ 37.253999999999991,  20.572655998640162,  39.041981182523401])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[  8.570681425808484e-01  -1.665334536937735e-16  -5.152030657643786e-01]
+ [ -3.828900085976022e-01   6.690885332880054e-01  -6.369582215017197e-01]
+ [  3.447164636177720e-01   7.431827060841133e-01   5.734544664472949e-01]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_orig_A.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the full axis system.
+Axis system:
+[[  8.570681425808484e-01  -1.665334536937735e-16  -5.152030657643786e-01]
+ [ -3.828900085976022e-01   6.690885332880054e-01  -6.369582215017197e-01]
+ [  3.447164636177720e-01   7.431827060841133e-01   5.734544664472949e-01]]
+
+Generating the axis vectors.
+    x-ax vector (scaled + shifted to origin): array([ 11.541955722574546,  11.986700257928065,   6.405006091466841])
+    Creating the MC simulation vectors.
+    y-ax vector (scaled + shifted to origin): array([ 37.254000000000005, -19.572655998640162,  -5.548981182523399])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[  8.570681425808484e-01  -1.665334536937735e-16  -5.152030657643786e-01]
+ [ -3.828900085976022e-01   6.690885332880054e-01  -6.369582215017197e-01]
+ [  3.447164636177720e-01   7.431827060841133e-01   5.734544664472949e-01]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_orig_B.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+relax> frame_order.num_int_pts(num=10000)
+
+relax> minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=0.0001, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+No PCS data is present, deselecting the spin '#N-dom:1@N'.
+No PCS data is present, deselecting the spin '#N-dom:1@H'.
+No PCS data is present, deselecting the spin '#N-dom:2@N'.
+No PCS data is present, deselecting the spin '#N-dom:2@H'.
+No PCS data is present, deselecting the spin '#N-dom:3@N'.
+No PCS data is present, deselecting the spin '#N-dom:3@H'.
+No PCS data is present, deselecting the spin '#N-dom:4@N'.
+No PCS data is present, deselecting the spin '#N-dom:4@H'.
+No PCS data is present, deselecting the spin '#N-dom:5@N'.
+No PCS data is present, deselecting the spin '#N-dom:5@H'.
+No PCS data is present, deselecting the spin '#N-dom:6@N'.
+No PCS data is present, deselecting the spin '#N-dom:6@H'.
+No PCS data is present, deselecting the spin '#N-dom:7@N'.
+No PCS data is present, deselecting the spin '#N-dom:7@H'.
+No PCS data is present, deselecting the spin '#N-dom:8@N'.
+No PCS data is present, deselecting the spin '#N-dom:8@H'.
+No PCS data is present, deselecting the spin '#N-dom:9@N'.
+No PCS data is present, deselecting the spin '#N-dom:9@H'.
+No PCS data is present, deselecting the spin '#N-dom:10@N'.
+No PCS data is present, deselecting the spin '#N-dom:10@H'.
+No PCS data is present, deselecting the spin '#N-dom:11@N'.
+No PCS data is present, deselecting the spin '#N-dom:11@H'.
+No PCS data is present, deselecting the spin '#N-dom:12@N'.
+No PCS data is present, deselecting the spin '#N-dom:12@H'.
+No PCS data is present, deselecting the spin '#N-dom:13@N'.
+No PCS data is present, deselecting the spin '#N-dom:13@H'.
+No PCS data is present, deselecting the spin '#N-dom:14@N'.
+No PCS data is present, deselecting the spin '#N-dom:14@H'.
+No PCS data is present, deselecting the spin '#N-dom:15@N'.
+No PCS data is present, deselecting the spin '#N-dom:15@H'.
+No PCS data is present, deselecting the spin '#N-dom:16@N'.
+No PCS data is present, deselecting the spin '#N-dom:16@H'.
+No PCS data is present, deselecting the spin '#N-dom:17@N'.
+No PCS data is present, deselecting the spin '#N-dom:17@H'.
+No PCS data is present, deselecting the spin '#N-dom:18@N'.
+No PCS data is present, deselecting the spin '#N-dom:18@H'.
+No PCS data is present, deselecting the spin '#N-dom:19@N'.
+No PCS data is present, deselecting the spin '#N-dom:19@H'.
+No PCS data is present, deselecting the spin '#N-dom:20@N'.
+No PCS data is present, deselecting the spin '#N-dom:20@H'.
+No PCS data is present, deselecting the spin '#N-dom:21@N'.
+No PCS data is present, deselecting the spin '#N-dom:21@H'.
+No PCS data is present, deselecting the spin '#N-dom:22@N'.
+No PCS data is present, deselecting the spin '#N-dom:22@H'.
+No PCS data is present, deselecting the spin '#N-dom:23@N'.
+No PCS data is present, deselecting the spin '#N-dom:23@H'.
+No PCS data is present, deselecting the spin '#N-dom:24@N'.
+No PCS data is present, deselecting the spin '#N-dom:24@H'.
+No PCS data is present, deselecting the spin '#N-dom:25@N'.
+No PCS data is present, deselecting the spin '#N-dom:25@H'.
+No PCS data is present, deselecting the spin '#N-dom:26@N'.
+No PCS data is present, deselecting the spin '#N-dom:26@H'.
+No PCS data is present, deselecting the spin '#N-dom:27@N'.
+No PCS data is present, deselecting the spin '#N-dom:27@H'.
+No PCS data is present, deselecting the spin '#N-dom:28@N'.
+No PCS data is present, deselecting the spin '#N-dom:28@H'.
+No PCS data is present, deselecting the spin '#N-dom:29@N'.
+No PCS data is present, deselecting the spin '#N-dom:29@H'.
+No PCS data is present, deselecting the spin '#N-dom:30@N'.
+No PCS data is present, deselecting the spin '#N-dom:30@H'.
+No PCS data is present, deselecting the spin '#N-dom:31@N'.
+No PCS data is present, deselecting the spin '#N-dom:31@H'.
+No PCS data is present, deselecting the spin '#N-dom:32@N'.
+No PCS data is present, deselecting the spin '#N-dom:32@H'.
+No PCS data is present, deselecting the spin '#N-dom:33@N'.
+No PCS data is present, deselecting the spin '#N-dom:33@H'.
+No PCS data is present, deselecting the spin '#N-dom:34@N'.
+No PCS data is present, deselecting the spin '#N-dom:34@H'.
+No PCS data is present, deselecting the spin '#N-dom:35@N'.
+No PCS data is present, deselecting the spin '#N-dom:35@H'.
+No PCS data is present, deselecting the spin '#N-dom:36@N'.
+No PCS data is present, deselecting the spin '#N-dom:36@H'.
+No PCS data is present, deselecting the spin '#N-dom:37@N'.
+No PCS data is present, deselecting the spin '#N-dom:37@H'.
+No PCS data is present, deselecting the spin '#N-dom:38@N'.
+No PCS data is present, deselecting the spin '#N-dom:38@H'.
+No PCS data is present, deselecting the spin '#N-dom:39@N'.
+No PCS data is present, deselecting the spin '#N-dom:39@H'.
+No PCS data is present, deselecting the spin '#N-dom:40@N'.
+No PCS data is present, deselecting the spin '#N-dom:40@H'.
+No PCS data is present, deselecting the spin '#N-dom:41@N'.
+No PCS data is present, deselecting the spin '#N-dom:41@H'.
+No PCS data is present, deselecting the spin '#N-dom:42@N'.
+No PCS data is present, deselecting the spin '#N-dom:42@H'.
+No PCS data is present, deselecting the spin '#N-dom:43@N'.
+No PCS data is present, deselecting the spin '#N-dom:44@N'.
+No PCS data is present, deselecting the spin '#N-dom:44@H'.
+No PCS data is present, deselecting the spin '#N-dom:45@N'.
+No PCS data is present, deselecting the spin '#N-dom:45@H'.
+No PCS data is present, deselecting the spin '#N-dom:46@N'.
+No PCS data is present, deselecting the spin '#N-dom:46@H'.
+No PCS data is present, deselecting the spin '#N-dom:47@N'.
+No PCS data is present, deselecting the spin '#N-dom:47@H'.
+No PCS data is present, deselecting the spin '#N-dom:48@N'.
+No PCS data is present, deselecting the spin '#N-dom:48@H'.
+No PCS data is present, deselecting the spin '#N-dom:49@N'.
+No PCS data is present, deselecting the spin '#N-dom:49@H'.
+No PCS data is present, deselecting the spin '#N-dom:50@N'.
+No PCS data is present, deselecting the spin '#N-dom:50@H'.
+No PCS data is present, deselecting the spin '#N-dom:51@N'.
+No PCS data is present, deselecting the spin '#N-dom:51@H'.
+No PCS data is present, deselecting the spin '#N-dom:52@N'.
+No PCS data is present, deselecting the spin '#N-dom:52@H'.
+No PCS data is present, deselecting the spin '#N-dom:53@N'.
+No PCS data is present, deselecting the spin '#N-dom:53@H'.
+No PCS data is present, deselecting the spin '#N-dom:54@N'.
+No PCS data is present, deselecting the spin '#N-dom:54@H'.
+No PCS data is present, deselecting the spin '#N-dom:55@N'.
+No PCS data is present, deselecting the spin '#N-dom:55@H'.
+No PCS data is present, deselecting the spin '#N-dom:56@N'.
+No PCS data is present, deselecting the spin '#N-dom:56@H'.
+No PCS data is present, deselecting the spin '#N-dom:57@N'.
+No PCS data is present, deselecting the spin '#N-dom:57@H'.
+No PCS data is present, deselecting the spin '#N-dom:58@N'.
+No PCS data is present, deselecting the spin '#N-dom:58@H'.
+No PCS data is present, deselecting the spin '#N-dom:59@N'.
+No PCS data is present, deselecting the spin '#N-dom:59@H'.
+No PCS data is present, deselecting the spin '#N-dom:60@N'.
+No PCS data is present, deselecting the spin '#N-dom:60@H'.
+No PCS data is present, deselecting the spin '#N-dom:61@N'.
+No PCS data is present, deselecting the spin '#N-dom:61@H'.
+No PCS data is present, deselecting the spin '#N-dom:62@N'.
+No PCS data is present, deselecting the spin '#N-dom:62@H'.
+No PCS data is present, deselecting the spin '#N-dom:63@N'.
+No PCS data is present, deselecting the spin '#N-dom:63@H'.
+No PCS data is present, deselecting the spin '#N-dom:64@N'.
+No PCS data is present, deselecting the spin '#N-dom:64@H'.
+No PCS data is present, deselecting the spin '#N-dom:65@N'.
+No PCS data is present, deselecting the spin '#N-dom:65@H'.
+No PCS data is present, deselecting the spin '#N-dom:66@N'.
+No PCS data is present, deselecting the spin '#N-dom:67@N'.
+No PCS data is present, deselecting the spin '#N-dom:67@H'.
+No PCS data is present, deselecting the spin '#N-dom:68@N'.
+No PCS data is present, deselecting the spin '#N-dom:68@H'.
+No PCS data is present, deselecting the spin '#N-dom:69@N'.
+No PCS data is present, deselecting the spin '#N-dom:69@H'.
+No PCS data is present, deselecting the spin '#N-dom:70@N'.
+No PCS data is present, deselecting the spin '#N-dom:70@H'.
+No PCS data is present, deselecting the spin '#N-dom:71@N'.
+No PCS data is present, deselecting the spin '#N-dom:71@H'.
+No PCS data is present, deselecting the spin '#N-dom:72@N'.
+No PCS data is present, deselecting the spin '#N-dom:72@H'.
+No PCS data is present, deselecting the spin '#N-dom:73@N'.
+No PCS data is present, deselecting the spin '#N-dom:73@H'.
+No PCS data is present, deselecting the spin '#N-dom:74@N'.
+No PCS data is present, deselecting the spin '#N-dom:74@H'.
+No PCS data is present, deselecting the spin '#N-dom:75@N'.
+No PCS data is present, deselecting the spin '#N-dom:75@H'.
+No PCS data is present, deselecting the spin '#N-dom:76@N'.
+No PCS data is present, deselecting the spin '#N-dom:76@H'.
+
+The average domain rotation centroid, taken as the CoM of the atoms defined as the moving domain, is:
+    [48.105993133919419, -9.2564563045173553, 30.742194898701001]
+Numerical integration:  Quasi-random Sobol' sequence.
+Number of integration points:  10000
+Base data: ['RDCs', 'PCSs']
+
+
+
+Logarithmic barrier function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+k: 0        xk: [   -21.26921741,    -3.122610661,    -2.400652422,     5.623469076,    0.4354394057,     5.081265529,     2.005098253,    0.9600799786,     4.032275506,           0.001,           0.002,    0.5235987756]    fk: 0.418570133456      
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.26921741,    -3.278741194,    -2.400652422,     5.623469076,    0.4354394057,     5.081265529,     2.005098253,    0.9600799786,     4.032275506,           0.001,           0.002,    0.5235987756]    fk: 0.407868285881      
+	k: 100      xk: [   -21.54341689,    -3.167096742,    -2.367696502,     5.623768359,    0.4355726471,     5.081272803,     1.998687464,    0.9606268776,     4.036024331,  0.001040861794,  0.002023716932,    0.5234484455]    fk: 0.167710232657      
+	k: 200      xk: [   -21.54190361,    -3.165454953,    -2.365692546,     5.623673894,    0.4352511969,     5.081309083,     2.019059216,    0.9588743184,     4.032948456,  0.001044515878,  0.002011947271,    0.5233464801]    fk: 0.164507605912      
+
+	Parameter values: [-21.545896757034797, -3.1663102510453394, -2.3656568044266888, 5.6236853489649938, 0.43526914169071734, 5.0813093157846545, 2.0195186855106257, 0.9591198935025298, 4.0331728343389273, 0.001042849503186425, 0.0020125031470485631, 0.52335918833166828]
+	Function value:   0.16450334429587934
+	Iterations:       202
+	Function calls:   326
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 1        xk: [   -21.54589676,    -3.166310251,    -2.365656804,     5.623685349,    0.4352691417,     5.081309316,     2.019518686,    0.9591198935,     4.033172834,  0.001042849503,  0.002012503147,    0.5233591883]    fk: 0.164731271304      
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.54589676,    -3.166310251,    -2.365656804,     5.623685349,    0.4352691417,     5.081309316,      2.12049462,    0.9591198935,     4.033172834,  0.001042849503,  0.002012503147,    0.5233591883]    fk: 0.164689100331      
+
+	Parameter values: [-21.546241672076874, -3.1655325012633884, -2.3658638959679452, 5.6236027714616945, 0.43526689788339701, 5.0813515857987124, 2.0483697719207985, 0.95871671112638246, 4.0327697177513731, 0.0010577477763963252, 0.0020281018071718337, 0.52339304231831729]
+	Function value:   0.1646524732633256
+	Iterations:       97
+	Function calls:   186
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 2        xk: [   -21.54624167,    -3.165532501,    -2.365863896,     5.623602771,    0.4352668979,     5.081351586,     2.048369772,    0.9587167111,     4.032769718,  0.001057747776,  0.002028101807,    0.5233930423]    fk: 0.16467169576       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.54624167,    -3.165532501,    -2.365863896,     5.623602771,    0.4352668979,     5.081351586,     2.048369772,    0.9587167111,     4.032769718,  0.001110635165,  0.002028101807,    0.5233930423]    fk: 0.16462017564       
+
+	Parameter values: [-21.546241672076874, -3.1655325012633884, -2.3658638959679452, 5.6236027714616945, 0.43526689788339701, 5.0813515857987124, 2.0483697719207985, 0.95871671112638246, 4.0327697177513731, 0.0011106351652161416, 0.0020281018071718337, 0.52339304231831729]
+	Function value:   0.16462017564002795
+	Iterations:       96
+	Function calls:   187
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+
+Parameter values: [-21.546241672076874, -3.1655325012633884, -2.3658638959679452, 5.6236027714616945, 0.43526689788339701, 5.0813515857987124, 2.0483697719207985, 0.95871671112638246, 4.0327697177513731, 0.0011106351652161416, 0.0020281018071718337, 0.52339304231831729]
+Function value:   0.1646201955319076
+Iterations:       395
+Function calls:   699
+Gradient calls:   0
+Hessian calls:    0
+Warning:          None
+
+Storing the optimisation results, no optimised values currently exist.
+
+relax> frame_order.pdb_model(ave_pos=None, rep='fo', dist=None, dir=None, compress_type=2, size=30.0, inc=36, force=True)
+
+Creating a PDB file containing a geometric object representing the frame order dynamics.
+----------------------------------------------------------------------------------------
+
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the full axis system.
+Axis system:
+[[ 0.856762983931072 -0.036790515304707 -0.51439639126761 ]
+ [-0.352765853456608  0.68577800571941  -0.636604099504975]
+ [ 0.37618272421864   0.726880309855153  0.574570772963888]]
+
+Generating the axis vectors.
+    x-ax vector (scaled + shifted to origin): array([ 62.95688951793214 , -10.082975603698234,  28.031981726559209])
+    Creating the MC simulation vectors.
+    y-ax vector (scaled + shifted to origin): array([ 36.150284540858777,  21.073340171582295,  38.552909295654587])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[ 0.856762983931072 -0.036790515304707 -0.51439639126761 ]
+ [-0.352765853456608  0.68577800571941  -0.636604099504975]
+ [ 0.37618272421864   0.726880309855153  0.574570772963888]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_A.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the full axis system.
+Axis system:
+[[ 0.856762983931072 -0.036790515304707 -0.51439639126761 ]
+ [-0.352765853456608  0.68577800571941  -0.636604099504975]
+ [ 0.37618272421864   0.726880309855153  0.574570772963888]]
+
+Generating the axis vectors.
+    x-ax vector (scaled + shifted to origin): array([ 11.551110482067852,  11.082975603698234,   5.461018273440793])
+    Creating the MC simulation vectors.
+    y-ax vector (scaled + shifted to origin): array([ 38.357715459141218, -20.073340171582295,  -5.059909295654588])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[ 0.856762983931072 -0.036790515304707 -0.51439639126761 ]
+ [-0.352765853456608  0.68577800571941  -0.636604099504975]
+ [ 0.37618272421864   0.726880309855153  0.574570772963888]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_B.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+relax> pipe.copy(pipe_from='pseudo-ellipse', pipe_to='pseudo-ellipse perm A', bundle_to=None)
+
+relax> pipe.switch(pipe_name='pseudo-ellipse perm A')
+
+relax> frame_order.permute_axes(permutation='A')
+
+Original parameters:
+cone_theta_x                 0.0011106352
+cone_theta_y                 0.0020281018
+cone_sigma_max               0.5233930423
+eigen_alpha                  2.0483697719
+eigen_beta                   0.9587167111
+eigen_gamma                  4.0327697178
+eigenframe          
+[[ 0.856762983931072 -0.036790515304707 -0.51439639126761 ]
+ [-0.352765853456608  0.68577800571941  -0.636604099504975]
+ [ 0.37618272421864   0.726880309855153  0.574570772963888]]
+
+Permutation 'A':
+Starting condition   x <= y <= z         
+permutation          [0, 2, 1]           
+z-axis inversion     [ 1. -1.  1.]       
+
+Permuted parameters:
+cone_theta_x                 0.0011106352
+cone_theta_y                 0.5233930423
+cone_sigma_max               0.0020281018
+eigen_alpha                  4.1327031182
+eigen_beta                   0.7570279581
+eigen_gamma                  1.6243927973
+eigenframe          
+[[ 0.856762983931072  0.51439639126761  -0.036790515304707]
+ [-0.352765853456608  0.636604099504975  0.68577800571941 ]
+ [ 0.37618272421864  -0.574570772963888  0.726880309855153]]
+
+relax> frame_order.pdb_model(ave_pos=None, rep='fo_orig_perm_A', dist=None, dir=None, compress_type=2, size=30.0, inc=36, force=True)
+
+Creating a PDB file containing a geometric object representing the frame order dynamics.
+----------------------------------------------------------------------------------------
+
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the full axis system.
+Axis system:
+[[ 0.856762983931071  0.514396391267611 -0.036790515304707]
+ [-0.352765853456608  0.636604099504975  0.68577800571941 ]
+ [ 0.37618272421864  -0.574570772963887  0.726880309855153]]
+
+Generating the axis vectors.
+    x-ax vector (scaled + shifted to origin): array([ 62.95688951793214 , -10.082975603698239,  28.031981726559216])
+    Creating the MC simulation vectors.
+    y-ax vector (scaled + shifted to origin): array([ 52.685891738028317,  19.598122985149249,  -0.490623188916619])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[ 0.856762983931071  0.514396391267611 -0.036790515304707]
+ [-0.352765853456608  0.636604099504975  0.68577800571941 ]
+ [ 0.37618272421864  -0.574570772963887  0.726880309855153]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_orig_perm_A_A.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the full axis system.
+Axis system:
+[[ 0.856762983931071  0.514396391267611 -0.036790515304707]
+ [-0.352765853456608  0.636604099504975  0.68577800571941 ]
+ [ 0.37618272421864  -0.574570772963887  0.726880309855153]]
+
+Generating the axis vectors.
+    x-ax vector (scaled + shifted to origin): array([ 11.551110482067859,  11.082975603698239,   5.461018273440787])
+    Creating the MC simulation vectors.
+    y-ax vector (scaled + shifted to origin): array([ 21.822108261971678, -18.598122985149249,  33.983623188916624])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[ 0.856762983931071  0.514396391267611 -0.036790515304707]
+ [-0.352765853456608  0.636604099504975  0.68577800571941 ]
+ [ 0.37618272421864  -0.574570772963887  0.726880309855153]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_orig_perm_A_B.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+relax> frame_order.num_int_pts(num=10000)
+
+relax> minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=0.0001, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+
+The average domain rotation centroid, taken as the CoM of the atoms defined as the moving domain, is:
+    [48.105993133919419, -9.2564563045173553, 30.742194898701001]
+Numerical integration:  Quasi-random Sobol' sequence.
+Number of integration points:  10000
+Base data: ['RDCs', 'PCSs']
+
+
+
+Logarithmic barrier function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+k: 0        xk: [   -21.54624167,    -3.165532501,    -2.365863896,     5.623602771,    0.4352668979,     5.081351586,     4.132703118,    0.7570279581,     1.624392797,  0.001110635165,    0.5233930423,  0.002028101807]    fk: 491.576760779       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.54624167,    -3.165532501,    -2.365863896,     5.623602771,    0.4352668979,     5.081351586,     4.132703118,    0.7570279581,     1.624392797,  0.001110635165,    0.5233930423,  0.002028101807]    fk: 491.576498416       
+	k: 100      xk: [   -22.98348999,    -3.429266923,    -2.379058582,     5.665534252,    0.4343085768,     5.035553289,     2.824113148,    0.7408763839,       1.6864104,  0.001240116919,    0.4602966591,  0.002162082388]    fk: 206.374764601       
+	k: 200      xk: [    -22.0359732,    -3.261085355,    -2.184377042,     5.692048064,    0.4418038737,     5.023580963,     2.715589107,    0.8284884777,     1.575561403,  0.001222490249,    0.5825338313,  0.002092241061]    fk: 169.291454063       
+	k: 300      xk: [   -21.83707299,    -3.139483292,    -2.246044505,      5.69598885,    0.4386793669,     5.018347549,     2.756563285,    0.8835539455,     1.468949948,  0.001253626989,    0.5935755163,  0.002016219516]    fk: 167.111604017       
+	k: 400      xk: [   -22.07676251,    -3.055940839,    -2.351915792,     5.695234306,    0.4376975173,     5.020105201,     2.782983992,    0.8878703101,     1.440681245,  0.001258209095,    0.5910140556,  0.001980513229]    fk: 166.450605055       
+
+	Parameter values: [-22.029339970200532, -3.0538775925865793, -2.3818706130401579, 5.6955535962781729, 0.43801340918793374, 5.0197243090576187, 2.7923997028866259, 0.88481239108872811, 1.4282721619584087, 0.0012612240896766747, 0.5923126009479579, 0.0019701565188285758]
+	Function value:   166.42141026030441
+	Iterations:       500
+	Function calls:   711
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 1        xk: [   -22.02933997,    -3.053877593,    -2.381870613,     5.695553596,    0.4380134092,     5.019724309,     2.792399703,    0.8848123911,     1.428272162,   0.00126122409,    0.5923126009,  0.001970156519]    fk: 166.421829657       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.02933997,    -3.053877593,    -2.381870613,     5.695553596,    0.4380134092,     5.019724309,     2.792399703,    0.8848123911,     1.428272162,  0.001324285294,    0.5923126009,  0.001970156519]    fk: 166.4216344         
+	k: 100      xk: [   -21.99809643,    -3.294472046,    -2.520358414,     5.695864444,    0.4378150675,     5.019700295,     2.799829274,    0.8788241754,      1.41807031,  0.001206903048,    0.5923363039,  0.001756293659]    fk: 166.322346271       
+	k: 200      xk: [   -21.96225912,    -3.357217277,    -2.558938855,     5.695731486,    0.4380314731,     5.019527026,      2.79813926,    0.8819638432,     1.418607221,  0.001218837424,     0.592659415,  0.001634342447]    fk: 166.30833125        
+
+	Parameter values: [-21.960147288514797, -3.3547180667788963, -2.556121902518568, 5.6956087131262194, 0.43800812390098209, 5.0195920525339144, 2.7990713372439551, 0.88250478741542326, 1.4165876400041189, 0.0012532253204746038, 0.59250266584891809, 0.0015255138756392625]
+	Function value:   166.30757460927217
+	Iterations:       267
+	Function calls:   406
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 2        xk: [   -21.96014729,    -3.354718067,    -2.556121903,     5.695608713,    0.4380081239,     5.019592053,     2.799071337,    0.8825047874,      1.41658764,   0.00125322532,    0.5925026658,  0.001525513876]    fk: 166.30764404        
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.96014729,    -3.354718067,    -2.556121903,     5.695608713,    0.4380081239,     5.019592053,     2.799071337,    0.8825047874,      1.41658764,   0.00125322532,    0.5925026658,  0.001525513876]    fk: 166.307577212       
+	k: 100      xk: [   -21.96014729,    -3.354718067,    -2.556121903,     5.695608713,    0.4380081239,     5.019592053,     2.799071337,    0.8825047874,      1.41658764,   0.00125322532,    0.5925026658,  0.001525513876]    fk: 166.307577212       
+
+	Parameter values: [-21.961994341272696, -3.3533203318687983, -2.5576155501203823, 5.6956971517779058, 0.43799631616089996, 5.0195355342613448, 2.7977162101734017, 0.88329095978025851, 1.4191108702233466, 0.0012875584748964176, 0.59267788688958201, 0.0013338322084334071]
+	Function value:   166.30720432676017
+	Iterations:       166
+	Function calls:   285
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 3        xk: [   -21.96199434,    -3.353320332,     -2.55761555,     5.695697152,    0.4379963162,     5.019535534,      2.79771621,    0.8832909598,      1.41911087,  0.001287558475,    0.5926778869,  0.001333832208]    fk: 166.307267262       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.96199434,    -3.353320332,     -2.55761555,     5.695697152,    0.4379963162,     5.019535534,      2.79771621,    0.8832909598,      1.41911087,  0.001351936399,    0.5926778869,  0.001333832208]    fk: 166.307130003       
+	k: 100      xk: [   -21.96199434,    -3.353320332,     -2.55761555,     5.695697152,    0.4379963162,     5.019535534,      2.79771621,    0.8832909598,      1.41911087,  0.001351936399,    0.5926778869,  0.001333832208]    fk: 166.307130003       
+
+	Parameter values: [-21.961994341272696, -3.3533203318687983, -2.5576155501203823, 5.6956971517779058, 0.43799631616089996, 5.0195355342613448, 2.7977162101734017, 0.88329095978025851, 1.4191108702233466, 0.0013519363986412385, 0.59267788688958201, 0.0013338322084334071]
+	Function value:   166.30713000328004
+	Iterations:       136
+	Function calls:   241
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+
+Parameter values: [-21.961994341272696, -3.3533203318687983, -2.5576155501203823, 5.6956971517779058, 0.43799631616089996, 5.0195355342613448, 2.7977162101734017, 0.88329095978025851, 1.4191108702233466, 0.0013519363986412385, 0.59267788688958201, 0.0013338322084334071]
+Function value:   166.30713000354243
+Iterations:       1069
+Function calls:   1643
+Gradient calls:   0
+Hessian calls:    0
+Warning:          None
+
+Storing the optimisation results, no optimised values currently exist.
+
+relax> frame_order.pdb_model(ave_pos=None, rep='fo_perm_A', dist=None, dir=None, compress_type=2, size=30.0, inc=36, force=True)
+
+Creating a PDB file containing a geometric object representing the frame order dynamics.
+----------------------------------------------------------------------------------------
+
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the full axis system.
+Axis system:
+[[-0.423546548799201  0.898315731337948  0.116778284929405]
+ [-0.539654463955431 -0.353753640041393  0.763957735539369]
+ [ 0.727585995283899  0.26055173956094   0.634611227822598]]
+
+Generating the axis vectors.
+    x-ax vector (scaled + shifted to origin): array([ 24.54760353602396 , -15.689633918662931,  38.574079858516981])
+    Creating the MC simulation vectors.
+    y-ax vector (scaled + shifted to origin): array([ 64.203471940138442, -10.112609201241789,  24.563052186828209])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[-0.423546548799201  0.898315731337948  0.116778284929405]
+ [-0.539654463955431 -0.353753640041393  0.763957735539369]
+ [ 0.727585995283899  0.26055173956094   0.634611227822598]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_perm_A_A.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the full axis system.
+Axis system:
+[[-0.423546548799201  0.898315731337948  0.116778284929405]
+ [-0.539654463955431 -0.353753640041393  0.763957735539369]
+ [ 0.727585995283899  0.26055173956094   0.634611227822598]]
+
+Generating the axis vectors.
+    x-ax vector (scaled + shifted to origin): array([ 49.960396463976039,  16.689633918662931,  -5.081079858516976])
+    Creating the MC simulation vectors.
+    y-ax vector (scaled + shifted to origin): array([ 10.304528059861553,  11.112609201241789,   8.929947813171793])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[-0.423546548799201  0.898315731337948  0.116778284929405]
+ [-0.539654463955431 -0.353753640041393  0.763957735539369]
+ [ 0.727585995283899  0.26055173956094   0.634611227822598]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_perm_A_B.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+relax> pipe.copy(pipe_from='pseudo-ellipse', pipe_to='pseudo-ellipse perm B', bundle_to=None)
+
+relax> pipe.switch(pipe_name='pseudo-ellipse perm B')
+
+relax> frame_order.permute_axes(permutation='B')
+
+Original parameters:
+cone_theta_x                 0.0011106352
+cone_theta_y                 0.0020281018
+cone_sigma_max               0.5233930423
+eigen_alpha                  2.0483697719
+eigen_beta                   0.9587167111
+eigen_gamma                  4.0327697178
+eigenframe          
+[[ 0.856762983931072 -0.036790515304707 -0.51439639126761 ]
+ [-0.352765853456608  0.68577800571941  -0.636604099504975]
+ [ 0.37618272421864   0.726880309855153  0.574570772963888]]
+
+Permutation 'B':
+Starting condition   x <= y <= z         
+permutation          [2, 0, 1]           
+z-axis inversion     [ 1.  1.  1.]       
+
+Permuted parameters:
+cone_theta_x                 0.0020281018
+cone_theta_y                 0.5233930423
+cone_sigma_max               0.0011106352
+eigen_alpha                  2.5619067914
+eigen_beta                   0.7570279581
+eigen_gamma                  1.6243927973
+eigenframe          
+[[-0.51439639126761   0.856762983931072 -0.036790515304707]
+ [-0.636604099504975 -0.352765853456608  0.68577800571941 ]
+ [ 0.574570772963888  0.37618272421864   0.726880309855153]]
+
+relax> frame_order.pdb_model(ave_pos=None, rep='fo_orig_perm_B', dist=None, dir=None, compress_type=2, size=30.0, inc=36, force=True)
+
+Creating a PDB file containing a geometric object representing the frame order dynamics.
+----------------------------------------------------------------------------------------
+
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the full axis system.
+Axis system:
+[[-0.514396391267611  0.856762983931071 -0.036790515304707]
+ [-0.636604099504975 -0.352765853456608  0.68577800571941 ]
+ [ 0.574570772963887  0.37618272421864   0.726880309855153]]
+
+Generating the axis vectors.
+    x-ax vector (scaled + shifted to origin): array([ 21.822108261971678, -18.598122985149253,  33.983623188916624])
+    Creating the MC simulation vectors.
+    y-ax vector (scaled + shifted to origin): array([ 62.95688951793214 , -10.082975603698237,  28.031981726559216])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[-0.514396391267611  0.856762983931071 -0.036790515304707]
+ [-0.636604099504975 -0.352765853456608  0.68577800571941 ]
+ [ 0.574570772963887  0.37618272421864   0.726880309855153]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_orig_perm_B_A.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the full axis system.
+Axis system:
+[[-0.514396391267611  0.856762983931071 -0.036790515304707]
+ [-0.636604099504975 -0.352765853456608  0.68577800571941 ]
+ [ 0.574570772963887  0.37618272421864   0.726880309855153]]
+
+Generating the axis vectors.
+    x-ax vector (scaled + shifted to origin): array([ 52.685891738028317,  19.598122985149253,  -0.490623188916622])
+    Creating the MC simulation vectors.
+    y-ax vector (scaled + shifted to origin): array([ 11.551110482067855,  11.082975603698237,   5.461018273440787])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[-0.514396391267611  0.856762983931071 -0.036790515304707]
+ [-0.636604099504975 -0.352765853456608  0.68577800571941 ]
+ [ 0.574570772963887  0.37618272421864   0.726880309855153]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_orig_perm_B_B.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+relax> frame_order.num_int_pts(num=10000)
+
+relax> minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=0.0001, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+
+The average domain rotation centroid, taken as the CoM of the atoms defined as the moving domain, is:
+    [48.105993133919419, -9.2564563045173553, 30.742194898701001]
+Numerical integration:  Quasi-random Sobol' sequence.
+Number of integration points:  10000
+Base data: ['RDCs', 'PCSs']
+
+
+
+Logarithmic barrier function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+k: 0        xk: [   -21.54624167,    -3.165532501,    -2.365863896,     5.623602771,    0.4352668979,     5.081351586,     2.561906791,    0.7570279581,     1.624392797,  0.002028101807,    0.5233930423,  0.001110635165]    fk: 274.278310451       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.54624167,    -3.165532501,    -2.365863896,     5.623602771,    0.4352668979,     5.081351586,     2.561906791,     0.794879356,     1.624392797,  0.002028101807,    0.5233930423,  0.001110635165]    fk: 272.62378705        
+	k: 100      xk: [   -22.10978055,    -3.136283101,    -1.978121433,     5.687408459,    0.4384999306,     5.023394648,     2.806516805,    0.9007870834,     1.338182845,  0.002077504243,    0.5608104143,  0.001091187964]    fk: 170.316988292       
+	k: 200      xk: [   -22.29459575,    -3.075233458,    -2.201501337,      5.69099682,    0.4361381563,      5.02331365,     2.969224937,    0.8650066816,     1.160114056,  0.002073763009,    0.5809121509,  0.001098818568]    fk: 167.46141714        
+	k: 300      xk: [   -22.06033514,    -3.034612119,    -2.388881127,     5.695361216,    0.4377639579,       5.0196335,     2.991790051,    0.8298234083,     1.122635077,  0.002121628753,    0.5919747773,  0.001128390624]    fk: 166.440732013       
+	k: 400      xk: [   -22.02633633,    -3.038589748,    -2.385046598,     5.695599788,     0.437833519,     5.019595972,     2.990063217,     0.827417342,     1.124811666,  0.002125003062,    0.5922065814,  0.001130949096]    fk: 166.434115619       
+
+	Parameter values: [-21.996423845681747, -3.1651552290488585, -2.465475425827103, 5.6958152554544412, 0.43798174384919686, 5.0191039002482967, 3.0758529312445582, 0.81956773247383419, 0.99870226893946334, 0.0021503338623315663, 0.59331252637023901, 0.0011601284286396965]
+	Function value:   166.36931293686794
+	Iterations:       500
+	Function calls:   713
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 1        xk: [   -21.99642385,    -3.165155229,    -2.465475426,     5.695815255,    0.4379817438,       5.0191039,     3.075852931,    0.8195677325,    0.9987022689,  0.002150333862,    0.5933125264,  0.001160128429]    fk: 166.370328922       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.99642385,    -3.165155229,    -2.465475426,     5.695815255,    0.4379817438,       5.0191039,     3.075852931,    0.8195677325,    0.9987022689,  0.002150333862,    0.5933125264,   0.00121813485]    fk: 166.36141987        
+	k: 100      xk: [   -21.98024996,    -3.331732786,     -2.53811659,     5.695656238,    0.4380139674,     5.019593829,     3.071963087,     0.813950125,     1.006773079,  0.002139629557,    0.5926283145,  0.001125940621]    fk: 166.319554159       
+	k: 200      xk: [   -21.97104643,    -3.349099119,    -2.556933811,     5.695553892,    0.4379982331,     5.019631027,     3.069523324,    0.8177934693,     1.009744674,  0.002282287696,     0.592278186,  0.001070628274]    fk: 166.313401459       
+	k: 300      xk: [   -21.96116703,    -3.354565161,    -2.555782691,     5.695574322,    0.4379773081,      5.01960949,     3.070743556,    0.8170375744,     1.007195489,  0.002377063088,    0.5924299868,   0.00103453905]    fk: 166.308030203       
+
+	Parameter values: [-21.961269615885428, -3.3544581685924832, -2.5558096980271481, 5.6955749548970012, 0.43797717871135633, 5.0196091365087092, 3.0707321042182674, 0.81705273626836217, 1.0072129999705779, 0.0023778792757323426, 0.59243226659277193, 0.0010344327213302317]
+	Function value:   166.30466762692913
+	Iterations:       355
+	Function calls:   681
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 2        xk: [   -21.96126962,    -3.354458169,    -2.555809698,     5.695574955,    0.4379771787,     5.019609137,     3.070732104,    0.8170527363,        1.007213,  0.002377879276,    0.5924322666,  0.001034432721]    fk: 166.304670458       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.96126962,    -3.354458169,    -2.555809698,     5.695574955,    0.4379771787,     5.019609137,     3.070732104,    0.8170527363,        1.007213,  0.002377879276,    0.5924322666,  0.001034432721]    fk: 166.304670255       
+	k: 100      xk: [   -21.96126962,    -3.354458169,    -2.555809698,     5.695574955,    0.4379771787,     5.019609137,     3.070732104,    0.8170527363,        1.007213,  0.002377879276,    0.5924322666,  0.001034432721]    fk: 166.304670255       
+
+	Parameter values: [-21.961269793293361, -3.3544589742320499, -2.5558113714287343, 5.6955750029271206, 0.4379771827551987, 5.0196091122622342, 3.0707320818479165, 0.81705297379892572, 1.007213708469616, 0.0023778728325575165, 0.59243233927968764, 0.001034445702590206]
+	Function value:   166.30467010521747
+	Iterations:       119
+	Function calls:   391
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+
+Parameter values: [-21.961269793293361, -3.3544589742320499, -2.5558113714287343, 5.6955750029271206, 0.4379771827551987, 5.0196091122622342, 3.0707320818479165, 0.81705297379892572, 1.007213708469616, 0.0023778728325575165, 0.59243233927968764, 0.001034445702590206]
+Function value:   166.30467013176073
+Iterations:       974
+Function calls:   1785
+Gradient calls:   0
+Hessian calls:    0
+Warning:          None
+
+Storing the optimisation results, no optimised values currently exist.
+
+relax> frame_order.pdb_model(ave_pos=None, rep='fo_perm_B', dist=None, dir=None, compress_type=2, size=30.0, inc=36, force=True)
+
+Creating a PDB file containing a geometric object representing the frame order dynamics.
+----------------------------------------------------------------------------------------
+
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the full axis system.
+Axis system:
+[[-0.424538589035816  0.817339926049793  0.389515637304071]
+ [-0.539257176801665 -0.573838357307213  0.616369399752175]
+ [ 0.727302333068839  0.051623492402947  0.684372947554729]]
+
+Generating the axis vectors.
+    x-ax vector (scaled + shifted to origin): array([ 24.517842328925511, -15.677715304049961,  38.565569992065157])
+    Creating the MC simulation vectors.
+    y-ax vector (scaled + shifted to origin): array([ 61.774197781493797, -16.715150719216403,  18.295204772088397])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[-0.424538589035816  0.817339926049793  0.389515637304071]
+ [-0.539257176801665 -0.573838357307213  0.616369399752175]
+ [ 0.727302333068839  0.051623492402947  0.684372947554729]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_perm_B_A.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the full axis system.
+Axis system:
+[[-0.424538589035816  0.817339926049793  0.389515637304071]
+ [-0.539257176801665 -0.573838357307213  0.616369399752175]
+ [ 0.727302333068839  0.051623492402947  0.684372947554729]]
+
+Generating the axis vectors.
+    x-ax vector (scaled + shifted to origin): array([ 49.990157671074485,  16.677715304049961,  -5.072569992065155])
+    Creating the MC simulation vectors.
+    y-ax vector (scaled + shifted to origin): array([ 12.733802218506195,  17.715150719216403,  15.197795227911605])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[-0.424538589035816  0.817339926049793  0.389515637304071]
+ [-0.539257176801665 -0.573838357307213  0.616369399752175]
+ [ 0.727302333068839  0.051623492402947  0.684372947554729]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_perm_B_B.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+relax> pipe.display()
+# Data pipe name           Data pipe type    Bundle    Current    
+'frame order'              frame order       None                 
+'pseudo-ellipse'           frame order       None                 
+'pseudo-ellipse perm B'    frame order       None      *          
+'pseudo-ellipse perm A'    frame order       None                 
+
