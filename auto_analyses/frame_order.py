@@ -171,54 +171,57 @@ class Frame_order_analysis:
         @type model:        str
         """
 
-        # The title printout.
-        title = model[0].upper() + model[1:]
-        section(file=sys.stdout, text="Axis permutation of the %s frame order model"%title, prespace=5)
+        # Loop over both permutations 'A' and 'B'.
+        for perm in ['A', 'B']:
+            # The title printout.
+            title = model[0].upper() + model[1:]
+            text = "Axis permutation '%s' of the %s frame order model" % (perm, title)
+            section(file=sys.stdout, text=text, prespace=5)
 
-        # A new model name.
-        perm_model = "%s permuted" % model
+            # A new model name.
+            perm_model = "%s permutation %s" % (model, perm)
 
-        # Copy the data pipe, and add it to the list so it is included in the model selection.
-        self.pipe_name_dict[perm_model] = '%s permuted - %s' % (title, self.pipe_bundle)
-        self.pipe_name_list.append(self.pipe_name_dict[perm_model])
-        self.interpreter.pipe.copy(pipe_from=self.pipe_name_dict[model], pipe_to=self.pipe_name_dict[perm_model])
+            # Copy the data pipe, and add it to the list so it is included in the model selection.
+            self.pipe_name_dict[perm_model] = '%s permutation %s - %s' % (title, perm, self.pipe_bundle)
+            self.pipe_name_list.append(self.pipe_name_dict[perm_model])
+            self.interpreter.pipe.copy(pipe_from=self.pipe_name_dict[model], pipe_to=self.pipe_name_dict[perm_model])
 
-        # The results file already exists, so read its contents instead.
-        if self.read_results(model=perm_model, pipe_name=self.pipe_name_dict[perm_model]):
-            # Re-perform model elimination just in case.
+            # The results file already exists, so read its contents instead.
+            if self.read_results(model=perm_model, pipe_name=self.pipe_name_dict[perm_model]):
+                # Re-perform model elimination just in case.
+                self.interpreter.eliminate()
+
+                # The PDB representation of the model and visualisation script (in case this was not completed correctly).
+                self.visualisation(model=perm_model)
+
+                # Exit the function.
+                return
+
+            # Permute the axes.
+            self.interpreter.frame_order.permute_axes(permutation=perm)
+
+            # Minimise (for the full data set).
+            opt = self.opt_full
+            for i in opt.loop_min():
+                # The numerical optimisation settings.
+                num_int_pts = opt.get_min_num_int_pts(i)
+                if num_int_pts != None:
+                    self.interpreter.frame_order.num_int_pts(num=num_int_pts)
+
+                # Perform the optimisation.
+                self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
+
+            # Results printout.
+            self.print_results()
+
+            # Model elimination.
             self.interpreter.eliminate()
 
-            # The PDB representation of the model and visualisation script (in case this was not completed correctly).
+            # Save the results.
+            self.interpreter.results.write(dir=self.model_directory(perm_model), force=True)
+
+            # The PDB representation of the model and visualisation script.
             self.visualisation(model=perm_model)
-
-            # Exit the function.
-            return
-
-        # Permute the axes.
-        self.interpreter.frame_order.permute_axes()
-
-        # Minimise (for the full data set).
-        opt = self.opt_full
-        for i in opt.loop_min():
-            # The numerical optimisation settings.
-            num_int_pts = opt.get_min_num_int_pts(i)
-            if num_int_pts != None:
-                self.interpreter.frame_order.num_int_pts(num=num_int_pts)
-
-            # Perform the optimisation.
-            self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
-
-        # Results printout.
-        self.print_results()
-
-        # Model elimination.
-        self.interpreter.eliminate()
-
-        # Save the results.
-        self.interpreter.results.write(dir=self.model_directory(perm_model), force=True)
-
-        # The PDB representation of the model and visualisation script.
-        self.visualisation(model=perm_model)
 
 
     def check_vars(self):
@@ -877,7 +880,7 @@ class Frame_order_analysis:
         """
 
         # Sanity check.
-        if model != 'final' and model.replace(' permuted', '') != cdp.model:
+        if model != 'final' and model.replace(' permutation A', '').replace(' permutation B', '') != cdp.model:
             raise RelaxError("The model '%s' does not match the model '%s' of the current data pipe." % (model.replace(' permuted', ''), cdp.model))
 
         # The PDB representation of the model.
