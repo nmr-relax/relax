@@ -23,7 +23,7 @@
 """Module for all of the frame order specific user functions."""
 
 # Python module imports.
-from numpy import array, float64, transpose, zeros
+from numpy import array, float64, ones, transpose, zeros
 from warnings import warn
 
 # relax module imports.
@@ -116,12 +116,12 @@ def permute_axes(permutation='A'):
     if not hasattr(cdp, 'cone_theta_y') or not is_float(cdp.cone_theta_y):
         raise RelaxError("The parameter values are not set up.")
 
-    # The angles.  Note that cone_theta_x corresponds to a rotation about the y-axis!
+    # The angles.
     cone_sigma_max = 0.0
     if cdp.model == MODEL_PSEUDO_ELLIPSE:
         cone_sigma_max = cdp.cone_sigma_max
-    angles = array([cdp.cone_theta_y, cdp.cone_theta_x, cone_sigma_max], float64)
-    y, x, z = angles
+    angles = array([cdp.cone_theta_x, cdp.cone_theta_y, cone_sigma_max], float64)
+    x, y, z = angles
 
     # Generate the eigenframe of the motion.
     frame = zeros((3, 3), float64)
@@ -138,6 +138,9 @@ def permute_axes(permutation='A'):
     print("%-20s\n%s" % ("eigenframe", frame))
     print("\nPermutation '%s':" % permutation)
 
+    # The axis inversion structure.
+    inv = ones(3, float64)
+
     # The starting condition x <= y <= z.
     if x <= y and y <= z:
         # Printout.
@@ -146,10 +149,10 @@ def permute_axes(permutation='A'):
         # The permutation and axis inversion.
         if permutation == 'A':
             perm = [0, 2, 1]
-            z_factor = -1.0
+            inv[1] = -1.0
         else:
             perm = [2, 0, 1]
-            z_factor = 1.0
+            inv[0] = 1.0
 
     # The starting condition x <= z <= y.
     elif x <= z and z <= y:
@@ -159,10 +162,10 @@ def permute_axes(permutation='A'):
         # The permutation and axis inversion.
         if permutation == 'A':
             perm = [0, 2, 1]
-            z_factor = -1.0
+            inv[1] = -1.0
         else:
-            perm = [1, 2, 0]
-            z_factor = -1.0
+            perm = [2, 1, 0]
+            inv[0] = -1.0
 
     # The starting condition z <= x <= y.
     elif z <= x  and x <= y:
@@ -172,10 +175,10 @@ def permute_axes(permutation='A'):
         # The permutation and axis inversion.
         if permutation == 'A':
             perm = [1, 2, 0]
-            z_factor = 1.0
+            inv[1] = 1.0
         else:
             perm = [2, 1, 0]
-            z_factor = -1.0
+            inv[0] = -1.0
 
     # Cannot be here.
     else:
@@ -183,16 +186,16 @@ def permute_axes(permutation='A'):
 
     # Printout.
     print("%-20s %-20s" % ("permutation", perm))
-    print("%-20s %-20s" % ("z-axis inversion", z_factor))
+    print("%-20s %-20s" % ("z-axis inversion", inv))
 
     # Permute the angles.
-    cdp.cone_theta_y = angles[perm[0]]
-    cdp.cone_theta_x = angles[perm[1]]
+    cdp.cone_theta_x = angles[perm.index(0)]
+    cdp.cone_theta_y = angles[perm.index(1)]
     if cdp.model == MODEL_PSEUDO_ELLIPSE:
-        cdp.cone_sigma_max = angles[perm[2]]
+        cdp.cone_sigma_max = angles[perm.index(2)]
 
     # Permute the axes and invert the z-axis as necessary.
-    frame_new = transpose(array([frame[:, perm[0]], frame[:, perm[1]], z_factor*frame[:, perm[2]]], float64))
+    frame_new = transpose(array([inv[0]*frame[:, perm[0]], inv[1]*frame[:, perm[1]], inv[2]*frame[:, perm[2]]], float64))
 
     # Convert the permuted frame to Euler angles and store them.
     cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma = R_to_euler_zyz(frame_new)
