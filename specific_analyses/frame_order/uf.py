@@ -122,6 +122,16 @@ def permute_axes():
     frame = zeros((3, 3), float64)
     euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
 
+    # Start printout.
+    print("\nOriginal parameters:")
+    print("%-20s %20.10f" % ("eigen_alpha", cdp.eigen_alpha))
+    print("%-20s %20.10f" % ("eigen_beta", cdp.eigen_beta))
+    print("%-20s %20.10f" % ("eigen_gamma", cdp.eigen_gamma))
+    print("%-20s\n%s" % ("eigenframe", frame))
+    print("%-20s %20.10f" % ("cone_theta_x", cdp.cone_theta_x))
+    print("%-20s %20.10f" % ("cone_theta_y", cdp.cone_theta_y))
+    print("%-20s %20.10f" % ("cone_sigma_max", cone_sigma_max))
+
     # The permutation with the condition that cone_theta_x <= cone_theta_y.
     if angles[1] <= angles[2]:
         perm = [2, 0, 1]
@@ -139,6 +149,17 @@ def permute_axes():
 
     # Convert the permuted frame to Euler angles and store them.
     cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma = R_to_euler_zyz(frame_new)
+
+    # End printout.
+    print("\nPermuted parameters:")
+    print("%-20s %20s" % ("permutation", perm))
+    print("%-20s %20.10f" % ("eigen_alpha", cdp.eigen_alpha))
+    print("%-20s %20.10f" % ("eigen_beta", cdp.eigen_beta))
+    print("%-20s %20.10f" % ("eigen_gamma", cdp.eigen_gamma))
+    print("%-20s\n%s" % ("eigenframe", frame_new))
+    print("%-20s %20.10f" % ("cone_theta_x", cdp.cone_theta_x))
+    print("%-20s %20.10f" % ("cone_theta_y", cdp.cone_theta_y))
+    print("%-20s %20.10f" % ("cone_sigma_max", cdp.cone_sigma_max))
 
 
 def pivot(pivot=None, order=1, fix=False):
