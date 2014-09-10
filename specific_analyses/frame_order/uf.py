@@ -29,7 +29,7 @@ from warnings import warn
 # relax module imports.
 from lib.arg_check import is_float_array
 from lib.check_types import is_float
-from lib.errors import RelaxError
+from lib.errors import RelaxError, RelaxFault
 from lib.geometry.rotations import euler_to_R_zyz, R_to_euler_zyz
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
@@ -121,6 +121,7 @@ def permute_axes(permutation='A'):
     if cdp.model == MODEL_PSEUDO_ELLIPSE:
         cone_sigma_max = cdp.cone_sigma_max
     angles = array([cdp.cone_theta_y, cdp.cone_theta_x, cone_sigma_max], float64)
+    y, x, z = angles
 
     # Generate the eigenframe of the motion.
     frame = zeros((3, 3), float64)
@@ -128,19 +129,61 @@ def permute_axes(permutation='A'):
 
     # Start printout.
     print("\nOriginal parameters:")
+    print("%-20s %20.10f" % ("cone_theta_x", cdp.cone_theta_x))
+    print("%-20s %20.10f" % ("cone_theta_y", cdp.cone_theta_y))
+    print("%-20s %20.10f" % ("cone_sigma_max", cone_sigma_max))
     print("%-20s %20.10f" % ("eigen_alpha", cdp.eigen_alpha))
     print("%-20s %20.10f" % ("eigen_beta", cdp.eigen_beta))
     print("%-20s %20.10f" % ("eigen_gamma", cdp.eigen_gamma))
     print("%-20s\n%s" % ("eigenframe", frame))
-    print("%-20s %20.10f" % ("cone_theta_x", cdp.cone_theta_x))
-    print("%-20s %20.10f" % ("cone_theta_y", cdp.cone_theta_y))
-    print("%-20s %20.10f" % ("cone_sigma_max", cone_sigma_max))
+    print("\nPermutation '%s':" % permutation)
 
-    # The permutation with the condition that cone_theta_x <= cone_theta_y.
-    if angles[1] <= angles[2]:
-        perm = [2, 0, 1]
+    # The starting condition x <= y <= z.
+    if x <= y and y <= z:
+        # Printout.
+        print("%-20s %-20s" % ("Starting condition", "x <= y <= z"))
+
+        # The permutation and axis inversion.
+        if permutation == 'A':
+            perm = [0, 2, 1]
+            z_factor = -1.0
+        else:
+            perm = [2, 0, 1]
+            z_factor = 1.0
+
+    # The starting condition x <= z <= y.
+    elif x <= z and z <= y:
+        # Printout.
+        print("%-20s %-20s" % ("Starting condition", "x <= z <= y"))
+
+        # The permutation and axis inversion.
+        if permutation == 'A':
+            perm = [0, 2, 1]
+            z_factor = -1.0
+        else:
+            perm = [1, 2, 0]
+            z_factor = -1.0
+
+    # The starting condition z <= x <= y.
+    elif z <= x  and x <= y:
+        # Printout.
+        print("%-20s %-20s" % ("Starting condition", "z <= x <= y"))
+
+        # The permutation and axis inversion.
+        if permutation == 'A':
+            perm = [1, 2, 0]
+            z_factor = 1.0
+        else:
+            perm = [2, 1, 0]
+            z_factor = -1.0
+
+    # Cannot be here.
     else:
-        perm = [1, 2, 0]
+        raise RelaxFault
+
+    # Printout.
+    print("%-20s %-20s" % ("permutation", perm))
+    print("%-20s %-20s" % ("z-axis inversion", z_factor))
 
     # Permute the angles.
     cdp.cone_theta_y = angles[perm[0]]
@@ -148,22 +191,21 @@ def permute_axes(permutation='A'):
     if cdp.model == MODEL_PSEUDO_ELLIPSE:
         cdp.cone_sigma_max = angles[perm[2]]
 
-    # Permute the axes.
-    frame_new = transpose(array([frame[:, perm[0]], frame[:, perm[1]], frame[:, perm[2]]], float64))
+    # Permute the axes and invert the z-axis as necessary.
+    frame_new = transpose(array([frame[:, perm[0]], frame[:, perm[1]], z_factor*frame[:, perm[2]]], float64))
 
     # Convert the permuted frame to Euler angles and store them.
     cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma = R_to_euler_zyz(frame_new)
 
     # End printout.
     print("\nPermuted parameters:")
-    print("%-20s %20s" % ("permutation", perm))
+    print("%-20s %20.10f" % ("cone_theta_x", cdp.cone_theta_x))
+    print("%-20s %20.10f" % ("cone_theta_y", cdp.cone_theta_y))
+    print("%-20s %20.10f" % ("cone_sigma_max", cdp.cone_sigma_max))
     print("%-20s %20.10f" % ("eigen_alpha", cdp.eigen_alpha))
     print("%-20s %20.10f" % ("eigen_beta", cdp.eigen_beta))
     print("%-20s %20.10f" % ("eigen_gamma", cdp.eigen_gamma))
     print("%-20s\n%s" % ("eigenframe", frame_new))
-    print("%-20s %20.10f" % ("cone_theta_x", cdp.cone_theta_x))
-    print("%-20s %20.10f" % ("cone_theta_y", cdp.cone_theta_y))
-    print("%-20s %20.10f" % ("cone_sigma_max", cdp.cone_sigma_max))
 
 
 def pivot(pivot=None, order=1, fix=False):
