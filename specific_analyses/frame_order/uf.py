@@ -146,56 +146,59 @@ def permute_axes(permutation='A'):
         # Printout.
         print("%-20s %-20s" % ("Starting condition", "x <= y <= z"))
 
-        # The permutation and axis inversion.
+        # The cone angle and axes permutations.
         if permutation == 'A':
-            perm = [0, 2, 1]
-            inv[1] = -1.0
+            perm_angles = [0, 2, 1]
+            perm_axes   = [2, 1, 0]
+            inv[perm_axes[2]] = -1.0
         else:
-            perm = [2, 0, 1]
-            inv[0] = 1.0
+            perm_angles = [1, 2, 0]
+            perm_axes   = [2, 0, 1]
 
     # The starting condition x <= z <= y.
     elif x <= z and z <= y:
         # Printout.
         print("%-20s %-20s" % ("Starting condition", "x <= z <= y"))
 
-        # The permutation and axis inversion.
+        # The cone angle and axes permutations.
         if permutation == 'A':
-            perm = [0, 2, 1]
-            inv[1] = -1.0
+            perm_angles = [0, 2, 1]
+            perm_axes   = [1, 2, 0]
         else:
-            perm = [2, 1, 0]
-            inv[0] = -1.0
+            perm_angles = [2, 1, 0]
+            perm_axes   = [0, 2, 1]
+            inv[perm_axes[2]] = -1.0
 
     # The starting condition z <= x <= y.
     elif z <= x  and x <= y:
         # Printout.
         print("%-20s %-20s" % ("Starting condition", "z <= x <= y"))
 
-        # The permutation and axis inversion.
+        # The cone angle and axes permutations.
         if permutation == 'A':
-            perm = [1, 2, 0]
-            inv[1] = 1.0
+            perm_angles = [2, 0, 1]
+            perm_axes   = [1, 2, 0]
         else:
-            perm = [2, 1, 0]
-            inv[0] = -1.0
+            perm_angles = [2, 1, 0]
+            perm_axes   = [0, 2, 1]
+            inv[perm_axes[2]] = -1.0
 
     # Cannot be here.
     else:
         raise RelaxFault
 
     # Printout.
-    print("%-20s %-20s" % ("permutation", perm))
-    print("%-20s %-20s" % ("z-axis inversion", inv))
+    print("%-20s %-20s" % ("Cone angle permutation", perm_angles))
+    print("%-20s %-20s" % ("Axes permutation", perm_axes))
 
-    # Permute the angles (note that cone_theta_x is a rotation about the y-axis and cone_theta_y about the x-axis).
-    cdp.cone_theta_x = angles[perm[1]]
-    cdp.cone_theta_y = angles[perm[0]]
+    # Permute the angles.
+    cdp.cone_theta_x = angles[perm_angles[0]]
+    cdp.cone_theta_y = angles[perm_angles[1]]
     if cdp.model == MODEL_PSEUDO_ELLIPSE:
-        cdp.cone_sigma_max = angles[perm[2]]
+        cdp.cone_sigma_max = angles[perm_angles[2]]
 
-    # Permute the axes and invert the z-axis as necessary.
-    frame_new = transpose(array([inv[0]*frame[:, perm[0]], inv[1]*frame[:, perm[1]], inv[2]*frame[:, perm[2]]], float64))
+    # Permute the axes.
+    frame_new = transpose(array([inv[0]*frame[:, perm_axes[0]], inv[1]*frame[:, perm_axes[1]], inv[2]*frame[:, perm_axes[2]]], float64))
 
     # Convert the permuted frame to Euler angles and store them.
     cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma = R_to_euler_zyz(frame_new)
