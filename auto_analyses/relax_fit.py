@@ -113,13 +113,13 @@ class Relax_fit:
         self.interpreter.minimise.grid_search(inc=self.grid_inc)
 
         # Minimise.
-        self.interpreter.minimise.execute('simplex', scaling=False, constraints=False)
+        self.interpreter.minimise.execute('newton', scaling=False, constraints=False)
 
         # Monte Carlo simulations.
         self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
         self.interpreter.monte_carlo.create_data()
         self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise.execute('simplex', scaling=False, constraints=False)
+        self.interpreter.minimise.execute('newton', scaling=False, constraints=False)
         self.interpreter.monte_carlo.error_analysis()
 
         # Save the relaxation rates.
