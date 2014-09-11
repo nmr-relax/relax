@@ -24,8 +24,11 @@
 
 # Python module imports.
 from os import sep
+import sys
 
 # relax module imports.
+from lib.text.sectioning import section
+from pipe_control.mol_res_spin import spin_loop
 from pipe_control.pipes import cdp_name, has_pipe, switch
 from prompt.interpreter import Interpreter
 from status import Status; status = Status()
@@ -104,7 +107,7 @@ class Relax_fit:
         """Set up and run the curve-fitting."""
 
         # Peak intensity error analysis.
-        self.interpreter.spectrum.error_analysis()
+        self.error_analysis()
 
         # Set the relaxation curve type.
         self.interpreter.relax_fit.select_model('exp')
@@ -145,6 +148,78 @@ class Relax_fit:
 
         # Save the program state.
         self.interpreter.state.save(state=self.file_root+'.save', dir=self.results_dir, force=True)
+
+
+    def error_analysis(self):
+        """Perform an error analysis of the peak intensities."""
+
+        # Printout.
+        section(file=sys.stdout, text="Error analysis", prespace=2)
+
+        # Check if intensity errors have already been calculated by the user.
+        precalc = True
+        for spin in spin_loop(skip_desel=True):
+            # No structure.
+            if not hasattr(spin, 'peak_intensity_err'):
+                precalc = False
+                break
+
+            # Determine if a spectrum ID is missing from the list.
+            for id in cdp.spectrum_ids:
+                if id not in spin.peak_intensity_err:
+                    precalc = False
+                    break
+
+        # Skip.
+        if precalc:
+            print("Skipping the error analysis as it has already been performed.")
+            return
+
+        # Check if there is replicates, and the user has not specified them.
+        if not hasattr(cdp, 'replicates'):
+            # Has dublicates
+            has_dub = False
+
+            # Collect all times, and matching spectrum id.
+            all_times = []
+            all_id = []
+            for s_id, time in cdp.relax_times.iteritems():
+                all_times.append(time)
+                all_id.append(s_id)
+
+            # Get the dublicates.
+            dublicates = map(lambda val: (val, [i for i in xrange(len(all_times)) if all_times[i] == val]), all_times)
+
+            # Loop over the list of the mapping of times and duplications.
+            list_dub_mapping = []
+            for i, dub in enumerate(dublicates):
+                # Get current spectum id.
+                cur_spectrum_id = all_id[i]
+
+                # Get the tuple of time and indexes of duplications.
+                time, list_index_occur = dub
+
+                # Collect mapping of index to id.
+                id_list = []
+                if len(list_index_occur) > 1:
+                    # There exist dublications.
+                    has_dub = True
+
+                    for list_index in list_index_occur:
+                        id_list.append(all_id[list_index])
+
+                # Store to list
+                list_dub_mapping.append((cur_spectrum_id, id_list))
+
+        # If there is dublication, then assign them.
+        if has_dub:
+            # Assign dublicates.
+            for spectrum_id, dub_pair in list_dub_mapping:
+                if len(dub_pair) > 0:
+                    self.interpreter.spectrum.replicated(spectrum_ids=dub_pair)
+
+        # Run the error analysis.
+        self.interpreter.spectrum.error_analysis()
 
 
     def check_vars(self):
