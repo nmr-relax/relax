@@ -190,13 +190,9 @@ class Frame_order_analysis:
             # A new model name.
             perm_model = "%s permutation %s" % (model, perm)
 
-            # Copy the data pipe, and add it to the list so it is included in the model selection.
+            # The data pipe name.
             self.pipe_name_dict[perm_model] = '%s permutation %s - %s' % (title, perm, self.pipe_bundle)
             self.pipe_name_list.append(self.pipe_name_dict[perm_model])
-            self.interpreter.pipe.copy(pipe_from=self.pipe_name_dict[model], pipe_to=self.pipe_name_dict[perm_model])
-
-            # Switch to the new pipe.
-            self.interpreter.pipe.switch(pipe_name=self.pipe_name_dict[perm_model])
 
             # The results file already exists, so read its contents instead.
             if self.read_results(model=perm_model, pipe_name=self.pipe_name_dict[perm_model]):
@@ -208,6 +204,12 @@ class Frame_order_analysis:
 
                 # Exit the function.
                 return
+
+            # Copy the data pipe, and add it to the list so it is included in the model selection.
+            self.interpreter.pipe.copy(pipe_from=self.pipe_name_dict[model], pipe_to=self.pipe_name_dict[perm_model])
+
+            # Switch to the new pipe.
+            self.interpreter.pipe.switch(pipe_name=self.pipe_name_dict[perm_model])
 
             # Permute the axes.
             self.interpreter.frame_order.permute_axes(permutation=perm)
