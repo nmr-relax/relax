@@ -4,10 +4,12 @@
 # Python module imports.
 from numpy import array, cross, float64, transpose, zeros
 from numpy.linalg import norm
+import sys
 
 # relax module imports.
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import R_to_euler_zyz
+from lib.text.sectioning import section
 
 
 # The real rotor parameter values.
@@ -44,10 +46,6 @@ print("Euler angles (alpha, beta, gamma): (%.15f, %.15f, %.15f)" % (eigen_alpha,
 # Load the optimised rotor state for creating the pseudo-ellipse data pipes.
 state.load(state='frame_order_true', dir='..')
 
-# Create a new data base data pipe for the pseudo-ellipse.
-pipe.copy(pipe_from='frame order', pipe_to='pseudo-ellipse')
-pipe.switch(pipe_name='pseudo-ellipse')
-
 # Set up the dynamic system.
 value.set(param='ave_pos_x', val=AVE_POS_X)
 value.set(param='ave_pos_y', val=AVE_POS_Y)
@@ -63,8 +61,8 @@ value.set(param='eigen_gamma', val=eigen_gamma)
 value.set(param='cone_sigma_max', val=CONE_SIGMA_MAX)
 
 # Set the cone opening angles to very small values close to zero.
-value.set(param='cone_theta_x', val=0.001)
-value.set(param='cone_theta_y', val=0.002)
+value.set(param='cone_theta_x', val=0.1)
+value.set(param='cone_theta_y', val=0.2)
 
 # Fix the true pivot point.
 frame_order.pivot([ 37.254, 0.5, 16.7465], fix=True)
@@ -76,14 +74,26 @@ frame_order.select_model('pseudo-ellipse')
 pipe_name = 'pseudo-ellipse'
 tag = ''
 for perm in [None, 'A', 'B']:
+    # The original permutation.
+    if perm == None:
+        # Title printout.
+        section(file=sys.stdout, text="Pseudo-ellipse original permutation")
+
+        # Create a new data base data pipe for the pseudo-ellipse.
+        pipe.copy(pipe_from='frame order', pipe_to='pseudo-ellipse')
+        pipe.switch(pipe_name='pseudo-ellipse')
+
     # Operations for the 'A' and 'B' permutations.
-    if perm in ['A', 'B']:
+    else:
+        # Title printout.
+        section(file=sys.stdout, text="Pseudo-ellipse permutation %s" % perm)
+
         # The pipe name and tag.
         pipe_name = 'pseudo-ellipse perm %s' % perm
         tag = '_perm_%s' % perm
 
         # Create a new data pipe.
-        pipe.copy(pipe_from='pseudo-ellipse', pipe_to=pipe_name)
+        pipe.copy(pipe_from='frame order', pipe_to=pipe_name)
         pipe.switch(pipe_name=pipe_name)
 
         # Permute the axes.
