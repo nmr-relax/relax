@@ -163,7 +163,7 @@ def permute_axes(permutation='A'):
         # The cone angle and axes permutations.
         if permutation == 'A':
             perm_angles = [0, 2, 1]
-            perm_axes   = [1, 2, 0]
+            perm_axes   = [2, 1, 0]
         else:
             perm_angles = [2, 1, 0]
             perm_axes   = [0, 2, 1]
