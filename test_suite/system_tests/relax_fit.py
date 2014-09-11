@@ -25,9 +25,10 @@ from re import search
 from tempfile import mkdtemp
 
 # relax module imports.
+from auto_analyses import relax_fit
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
-from pipe_control.mol_res_spin import return_spin, spin_index_loop, spin_loop
+from pipe_control.mol_res_spin import count_spins, return_spin, spin_index_loop, spin_loop
 from pipe_control import pipes
 from lib.errors import RelaxError
 from status import Status; status = Status()
@@ -102,6 +103,39 @@ class Relax_fit(SystemTestCase):
             i = i + 1
             if i >= 12:
                 break
+
+
+    def check_curve_fitting_manual(self):
+        """Check the results of the curve-fitting."""
+
+        # Data.
+        relax_times = [0.0176, 0.0176, 0.0352, 0.0704, 0.0704, 0.1056, 0.1584, 0.1584, 0.1936, 0.1936]
+        chi2 = [2.916952651567855, 5.4916923952919632, 16.21182245065274, 4.3591263759462926, 9.8925377583244316, 6.0238341559877782]
+        rx = [8.0814894819820662, 8.6478971039559642, 9.5710638183013845, 10.716551838066295, 11.143793935455122, 12.82875370075309]
+        i0 = [1996050.9679875025, 2068490.9458927638, 1611556.5194095275, 1362887.2331948928, 1877670.5623875158, 897044.17382064369]
+
+        # Some checks.
+        self.assertEqual(cdp.curve_type, 'exp')
+        self.assertEqual(cdp.int_method, ds.int_type)
+        self.assertEqual(len(cdp.relax_times), 10)
+        cdp_relax_times = sorted(cdp.relax_times.values())
+        for i in range(10):
+            self.assertEqual(cdp_relax_times[i], relax_times[i])
+
+        # Check the errors.
+        for key in cdp.sigma_I:
+            self.assertAlmostEqual(cdp.sigma_I[key], 10578.039482421433, 6)
+            self.assertAlmostEqual(cdp.var_I[key], 111894919.29166669)
+
+        # Spin data check.
+        i = 0
+        for spin in spin_loop(skip_desel=True):
+            self.assertAlmostEqual(spin.chi2, chi2[i])
+            self.assertAlmostEqual(spin.rx, rx[i])
+            self.assertAlmostEqual(spin.i0/1e6, i0[i]/1e6)
+
+            # Increment the spin index.
+            i = i + 1
 
 
     def test_bug_12670_12679(self):
@@ -180,6 +214,175 @@ class Relax_fit(SystemTestCase):
 
         # Check the curve-fitting results.
         self.check_curve_fitting()
+
+
+    def test_curve_fitting_height_estimate_error(self):
+        """Test the relaxation curve fitting C modules and estimate error."""
+
+        # Reset
+        self.interpreter.reset()
+
+        # Create pipe.
+        pipe_name = 'base pipe'
+        pipe_bundle = 'relax_fit'
+        self.interpreter.pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_fit')
+
+        # The intensity type.
+        ds.int_type = 'height'
+
+        # Create the data pipe and load the base data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting'
+
+        # Create the spins
+        self.interpreter.spectrum.read_spins(file="T2_ncyc1_ave.list", dir=data_path)
+
+        # Relaxation times (in seconds).
+        times = [
+            0.0176,
+            0.0176,
+            0.0352,
+            0.0704,
+            0.0704,
+            0.1056,
+            0.1584,
+            0.1584,
+            0.1936,
+            0.1936
+            ]
+
+        # Spectrum names.
+        names = [
+            'T2_ncyc1_ave',
+            'T2_ncyc1b_ave',
+            'T2_ncyc2_ave',
+            'T2_ncyc4_ave',
+            'T2_ncyc4b_ave',
+            'T2_ncyc6_ave',
+            'T2_ncyc9_ave',
+            'T2_ncyc9b_ave',
+            'T2_ncyc11_ave',
+            'T2_ncyc11b_ave'
+        ]
+
+
+        # Loop over Spectrum names.
+        for i, sname in enumerate(names):
+            # Get the time.
+            time = times[i]
+
+            # Load the peak intensities.
+            self.interpreter.spectrum.read_intensities(file=sname+'.list', dir=data_path, spectrum_id=sname, int_method=ds.int_type)
+
+            # Set the relaxation times.
+            self.interpreter.relax_fit.relax_time(time=time, spectrum_id=sname)
+
+        # Collect all times, and matching spectrum id.
+        all_times = []
+        all_id = []
+        for s_id, time in cdp.relax_times.iteritems():
+            all_times.append(time)
+            all_id.append(s_id)
+
+        # Get the dublicates.
+        dublicates = map(lambda val: (val, [i for i in xrange(len(all_times)) if all_times[i] == val]), all_times)
+
+        # Loop over the list of the mapping of times and duplications.
+        list_dub_mapping = []
+        for i, dub in enumerate(dublicates):
+            # Get current spectum id.
+            cur_spectrum_id = all_id[i]
+
+            # Get the tuple of time and indexes of duplications.
+            time, list_index_occur = dub
+
+            # Collect mapping of index to id.
+            id_list = []
+            if len(list_index_occur) > 1:
+                for list_index in list_index_occur:
+                    id_list.append(all_id[list_index])
+
+            # Store to list
+            list_dub_mapping.append((cur_spectrum_id, id_list))
+
+        # Assign dublicates.
+        for spectrum_id, dub_pair in list_dub_mapping:
+            print spectrum_id, dub_pair
+            if len(dub_pair) > 0:
+                self.interpreter.spectrum.replicated(spectrum_ids=dub_pair)
+
+        # Test the number of replicates stored in cdp, is 4.
+        self.assertEqual(len(cdp.replicates), 4)
+
+        # Cannot test, since dictionary have no order.
+        #test_rep = [['T2_ncyc1_ave', 'T2_ncyc1b_ave'],
+        #            ['T2_ncyc4_ave', 'T2_ncyc4b_ave'],
+        #            ['T2_ncyc9b_ave', 'T2_ncyc9_ave'],
+        #            ['T2_ncyc11_ave', 'T2_ncyc11b_ave']]
+
+        #for i, rep in enumerate(cdp.replicates):
+        #    test_rep_i = test_rep[i]
+        #    print(rep, test_rep_i)
+        #    self.assertEqual(rep, test_rep_i)
+
+        self.interpreter.deselect.spin(':3,11,18,19,23,31,42,44,54,66,82,92,94,99,101,113,124,126,136,141,145,147,332,345,346,358,361')
+
+        GRID_INC = 11
+        MC_SIM = 3
+        results_dir = mkdtemp()
+        #min_method = 'simplex'
+        #min_method = 'BFGS'
+        min_method = 'newton'
+
+        # De select one more.
+        self.interpreter.deselect.spin(':512@ND2')
+
+        # Do automatic
+        if False:
+            relax_fit.Relax_fit(pipe_name=pipe_name, pipe_bundle=pipe_bundle, file_root='R2', results_dir=results_dir, grid_inc=GRID_INC, mc_sim_num=MC_SIM, view_plots=False)
+
+        else:
+            # Peak intensity error analysis.
+            self.interpreter.spectrum.error_analysis()
+
+            # Set the relaxation curve type.
+            self.interpreter.relax_fit.select_model('exp')
+
+            # Grid search.
+            self.interpreter.minimise.grid_search(inc=GRID_INC)
+
+            # Minimise.
+            self.interpreter.minimise.execute(min_method, scaling=False, constraints=False)
+
+            # Monte Carlo simulations.
+            self.interpreter.monte_carlo.setup(number=MC_SIM)
+            self.interpreter.monte_carlo.create_data()
+            self.interpreter.monte_carlo.initial_values()
+            self.interpreter.minimise.execute(min_method, scaling=False, constraints=False)
+            self.interpreter.monte_carlo.error_analysis()
+
+        # Test seq
+        tseq = [ [4, 'GLY', ':4@N'],
+                 [5, 'SER', ':5@N'],
+                 [6, 'MET', ':6@N'],
+                 [7, 'ASP', ':7@N'],
+                 [8, 'SER', ':8@N'],
+                 [12, 'GLY', ':12@N']]
+
+        # Print spins
+        i = 0
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            print(resi, resn, spin_id)
+            self.assertEqual(resi, tseq[i][0])
+            self.assertEqual(resn, tseq[i][1])
+            self.assertEqual(spin_id, tseq[i][2])
+
+            i += 1
+
+        # Test the number of spins.
+        self.assertEqual(count_spins(), 6)
+
+        # Check the curve-fitting results.
+        self.check_curve_fitting_manual()
 
 
     def test_curve_fitting_volume(self):
