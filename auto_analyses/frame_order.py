@@ -49,7 +49,7 @@ from pipe_control.pipes import get_pipe
 from pipe_control.structure.mass import pipe_centre_of_mass
 from prompt.interpreter import Interpreter
 from specific_analyses.frame_order.data import generate_pivot
-from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_NONREDUNDANT, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
+from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_NONREDUNDANT, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from status import Status; status = Status()
 
 
@@ -171,8 +171,17 @@ class Frame_order_analysis:
         @type model:        str
         """
 
-        # Loop over both permutations 'A' and 'B'.
-        for perm in ['A', 'B']:
+        # Nothing to do.
+        if model not in MODEL_LIST_ISO_CONE + MODEL_LIST_PSEUDO_ELLIPSE:
+            return
+
+        # The permutations.
+        perms = ['A']
+        if model in MODEL_LIST_PSEUDO_ELLIPSE:
+            perms.append('B')
+
+        # Loop over all permutations.
+        for perm in perms:
             # The title printout.
             title = model[0].upper() + model[1:]
             text = "Axis permutation '%s' of the %s frame order model" % (perm, title)
@@ -555,8 +564,7 @@ class Frame_order_analysis:
                 self.visualisation(model=model)
 
                 # Perform the axis permutation analysis.
-                if model in [MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS]:
-                    self.axis_permutation_analysis(model=model)
+                self.axis_permutation_analysis(model=model)
 
                 # Skip to the next model.
                 continue
@@ -639,8 +647,7 @@ class Frame_order_analysis:
             self.visualisation(model=model)
 
             # Perform the axis permutation analysis.
-            if model in [MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS]:
-                self.axis_permutation_analysis(model=model)
+            self.axis_permutation_analysis(model=model)
 
 
     def optimise_rigid(self):
