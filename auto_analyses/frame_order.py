@@ -212,16 +212,18 @@ class Frame_order_analysis:
             # Permute the axes.
             self.interpreter.frame_order.permute_axes(permutation=perm)
 
-            # Minimise (for the full data set).
+            # Minimise with only the last optimisation settings (for the full data set).
             opt = self.opt_full
             for i in opt.loop_min():
-                # The numerical optimisation settings.
-                num_int_pts = opt.get_min_num_int_pts(i)
-                if num_int_pts != None:
-                    self.interpreter.frame_order.num_int_pts(num=num_int_pts)
+                pass
 
-                # Perform the optimisation.
-                self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
+            # The numerical optimisation settings.
+            num_int_pts = opt.get_min_num_int_pts(i)
+            if num_int_pts != None:
+                self.interpreter.frame_order.num_int_pts(num=num_int_pts)
+
+            # Perform the optimisation.
+            self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
 
             # Results printout.
             self.print_results()
