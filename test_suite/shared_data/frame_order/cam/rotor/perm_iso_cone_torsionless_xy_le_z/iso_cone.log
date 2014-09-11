@@ -1,0 +1,1458 @@
+
+
+
+                                  relax repository checkout r25739
+                svn+ssh://bugman@svn.gna.org/svn/relax/branches/frame_order_cleanup
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2014 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'iso_cone.py'
+----------------------------------------------------------------------------------------------------
+# Optimise the 2 torsionless iso cone permutations for the CaM rotor synthetic frame order data.
+# These 2 solutions should mimic the rotor solution.
+
+# Python module imports.
+from numpy import array, cross, float64, transpose, zeros
+from numpy.linalg import norm
+import sys
+
+# relax module imports.
+from lib.geometry.coord_transform import spherical_to_cartesian
+from lib.text.sectioning import section
+
+
+# The real rotor parameter values.
+AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -21.269217407269576,   -3.122610661328414,   -2.400652421655998]
+AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [5.623469076122531, 0.435439405668396, 5.081265529106499]
+AXIS_THETA = 0.9600799785953431
+AXIS_PHI = 4.0322755062196229
+CONE_SIGMA_MAX = 30.0 / 360.0 * 2.0 * pi
+
+# Reconstruct the rotation axis.
+AXIS = zeros(3, float64)
+spherical_to_cartesian([1, AXIS_THETA, AXIS_PHI], AXIS)
+
+# Printout.
+print("Torsion angle: %s" % CONE_SIGMA_MAX)
+print("Rotation axis: %s" % AXIS)
+
+# Load the optimised rotor state for creating the iso cone data pipes.
+state.load(state='frame_order_true', dir='..')
+
+# Set up the dynamic system.
+value.set(param='ave_pos_x', val=AVE_POS_X)
+value.set(param='ave_pos_y', val=AVE_POS_Y)
+value.set(param='ave_pos_z', val=AVE_POS_Z)
+value.set(param='ave_pos_alpha', val=AVE_POS_ALPHA)
+value.set(param='ave_pos_beta', val=AVE_POS_BETA)
+value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
+value.set(param='axis_theta', val=AXIS_THETA)
+value.set(param='axis_phi', val=AXIS_PHI)
+
+# Set the torsion angle to the rotor opening half-angle.
+value.set(param='cone_sigma_max', val=CONE_SIGMA_MAX)
+
+# Set the cone opening angle to a very small value close to zero.
+value.set(param='cone_theta', val=0.1)
+
+# Fix the true pivot point.
+frame_order.pivot([ 37.254, 0.5, 16.7465], fix=True)
+
+# Change the model.
+frame_order.select_model('iso cone, torsionless')
+
+# Loop over the 2 permutations.
+pipe_name = 'iso cone, torsionless'
+tag = ''
+for perm in [None, 'A']:
+    # The original permutation.
+    if perm == None:
+        # Title printout.
+        section(file=sys.stdout, text="Isotropic cone original permutation")
+
+        # Create a new data base data pipe for the iso cone.
+        pipe.copy(pipe_from='frame order', pipe_to='iso cones')
+        pipe.switch(pipe_name='iso cones')
+
+    # Operations for the 'A' and 'B' permutations.
+    else:
+        # Title printout.
+        section(file=sys.stdout, text="Isotropic cone permutation %s" % perm)
+
+        # The pipe name and tag.
+        pipe_name = 'iso cone, torsionless perm %s' % perm
+        tag = '_perm_%s' % perm
+
+        # Create a new data pipe.
+        pipe.copy(pipe_from='frame order', pipe_to=pipe_name)
+        pipe.switch(pipe_name=pipe_name)
+
+        # Permute the axes.
+        frame_order.permute_axes(permutation=perm)
+
+    # Create a pre-optimisation PDB representation.
+    frame_order.pdb_model(ave_pos=None, rep='fo_orig'+tag, dist=None, compress_type=2, force=True)
+
+    # High precision optimisation.
+    frame_order.num_int_pts(num=10000)
+    minimise.execute('simplex', func_tol=1e-4)
+
+    # Create the PDB representation.
+    frame_order.pdb_model(ave_pos=None, rep='fo'+tag, dist=None, compress_type=2, force=True)
+
+# Sanity check.
+pipe.display()
+----------------------------------------------------------------------------------------------------
+Torsion angle: 0.523598775598
+Rotation axis: [-0.515203065764379 -0.63695822150172   0.573454466447295]
+
+relax> state.load(state='frame_order_true', dir='..', force=False)
+Opening the file '../frame_order_true.bz2' for reading.
+
+relax> value.set(val=-21.269217407269576, param='ave_pos_x', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=-3.122610661328414, param='ave_pos_y', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=-2.400652421655998, param='ave_pos_z', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=5.623469076122531, param='ave_pos_alpha', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=0.435439405668396, param='ave_pos_beta', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=5.081265529106499, param='ave_pos_gamma', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=0.9600799785953431, param='axis_theta', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=4.032275506219623, param='axis_phi', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=0.5235987755982988, param='cone_sigma_max', index=0, spin_id=None, error=False, force=True)
+
+relax> value.set(val=0.1, param='cone_theta', index=0, spin_id=None, error=False, force=True)
+
+relax> frame_order.pivot(pivot=[37.254, 0.5, 16.7465], order=1, fix=True)
+
+relax> frame_order.select_model(model='iso cone, torsionless')
+
+
+Isotropic cone original permutation
+===================================
+
+
+relax> pipe.copy(pipe_from='frame order', pipe_to='iso cones', bundle_to=None)
+
+relax> pipe.switch(pipe_name='iso cones')
+
+relax> frame_order.pdb_model(ave_pos=None, rep='fo_orig', dist=None, dir=None, compress_type=2, size=30.0, inc=36, force=True)
+
+Creating a PDB file containing a geometric object representing the frame order dynamics.
+----------------------------------------------------------------------------------------
+
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the z-axis system.
+Central axis: [-0.515203065764379 -0.63695822150172   0.573454466447295].
+
+Generating the axis vectors.
+    z-ax vector (scaled + shifted to origin): array([ 21.79790802706864 , -18.608746645051589,  33.950133993418845])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[ 0.831304810763073 -0.208562011471785 -0.515203065764379]
+ [-0.208562011471785  0.742149655684222 -0.63695822150172 ]
+ [ 0.515203065764379  0.63695822150172   0.573454466447295]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_orig_A.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the z-axis system.
+Central axis: [-0.515203065764379 -0.63695822150172   0.573454466447295].
+
+Generating the axis vectors.
+    z-ax vector (scaled + shifted to origin): array([ 52.710091972931352,  19.608746645051589,  -0.457133993418847])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[ 0.831304810763073 -0.208562011471785 -0.515203065764379]
+ [-0.208562011471785  0.742149655684222 -0.63695822150172 ]
+ [ 0.515203065764379  0.63695822150172   0.573454466447295]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_orig_B.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+relax> frame_order.num_int_pts(num=10000)
+
+relax> minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=0.0001, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+No PCS data is present, deselecting the spin '#N-dom:1@N'.
+No PCS data is present, deselecting the spin '#N-dom:1@H'.
+No PCS data is present, deselecting the spin '#N-dom:2@N'.
+No PCS data is present, deselecting the spin '#N-dom:2@H'.
+No PCS data is present, deselecting the spin '#N-dom:3@N'.
+No PCS data is present, deselecting the spin '#N-dom:3@H'.
+No PCS data is present, deselecting the spin '#N-dom:4@N'.
+No PCS data is present, deselecting the spin '#N-dom:4@H'.
+No PCS data is present, deselecting the spin '#N-dom:5@N'.
+No PCS data is present, deselecting the spin '#N-dom:5@H'.
+No PCS data is present, deselecting the spin '#N-dom:6@N'.
+No PCS data is present, deselecting the spin '#N-dom:6@H'.
+No PCS data is present, deselecting the spin '#N-dom:7@N'.
+No PCS data is present, deselecting the spin '#N-dom:7@H'.
+No PCS data is present, deselecting the spin '#N-dom:8@N'.
+No PCS data is present, deselecting the spin '#N-dom:8@H'.
+No PCS data is present, deselecting the spin '#N-dom:9@N'.
+No PCS data is present, deselecting the spin '#N-dom:9@H'.
+No PCS data is present, deselecting the spin '#N-dom:10@N'.
+No PCS data is present, deselecting the spin '#N-dom:10@H'.
+No PCS data is present, deselecting the spin '#N-dom:11@N'.
+No PCS data is present, deselecting the spin '#N-dom:11@H'.
+No PCS data is present, deselecting the spin '#N-dom:12@N'.
+No PCS data is present, deselecting the spin '#N-dom:12@H'.
+No PCS data is present, deselecting the spin '#N-dom:13@N'.
+No PCS data is present, deselecting the spin '#N-dom:13@H'.
+No PCS data is present, deselecting the spin '#N-dom:14@N'.
+No PCS data is present, deselecting the spin '#N-dom:14@H'.
+No PCS data is present, deselecting the spin '#N-dom:15@N'.
+No PCS data is present, deselecting the spin '#N-dom:15@H'.
+No PCS data is present, deselecting the spin '#N-dom:16@N'.
+No PCS data is present, deselecting the spin '#N-dom:16@H'.
+No PCS data is present, deselecting the spin '#N-dom:17@N'.
+No PCS data is present, deselecting the spin '#N-dom:17@H'.
+No PCS data is present, deselecting the spin '#N-dom:18@N'.
+No PCS data is present, deselecting the spin '#N-dom:18@H'.
+No PCS data is present, deselecting the spin '#N-dom:19@N'.
+No PCS data is present, deselecting the spin '#N-dom:19@H'.
+No PCS data is present, deselecting the spin '#N-dom:20@N'.
+No PCS data is present, deselecting the spin '#N-dom:20@H'.
+No PCS data is present, deselecting the spin '#N-dom:21@N'.
+No PCS data is present, deselecting the spin '#N-dom:21@H'.
+No PCS data is present, deselecting the spin '#N-dom:22@N'.
+No PCS data is present, deselecting the spin '#N-dom:22@H'.
+No PCS data is present, deselecting the spin '#N-dom:23@N'.
+No PCS data is present, deselecting the spin '#N-dom:23@H'.
+No PCS data is present, deselecting the spin '#N-dom:24@N'.
+No PCS data is present, deselecting the spin '#N-dom:24@H'.
+No PCS data is present, deselecting the spin '#N-dom:25@N'.
+No PCS data is present, deselecting the spin '#N-dom:25@H'.
+No PCS data is present, deselecting the spin '#N-dom:26@N'.
+No PCS data is present, deselecting the spin '#N-dom:26@H'.
+No PCS data is present, deselecting the spin '#N-dom:27@N'.
+No PCS data is present, deselecting the spin '#N-dom:27@H'.
+No PCS data is present, deselecting the spin '#N-dom:28@N'.
+No PCS data is present, deselecting the spin '#N-dom:28@H'.
+No PCS data is present, deselecting the spin '#N-dom:29@N'.
+No PCS data is present, deselecting the spin '#N-dom:29@H'.
+No PCS data is present, deselecting the spin '#N-dom:30@N'.
+No PCS data is present, deselecting the spin '#N-dom:30@H'.
+No PCS data is present, deselecting the spin '#N-dom:31@N'.
+No PCS data is present, deselecting the spin '#N-dom:31@H'.
+No PCS data is present, deselecting the spin '#N-dom:32@N'.
+No PCS data is present, deselecting the spin '#N-dom:32@H'.
+No PCS data is present, deselecting the spin '#N-dom:33@N'.
+No PCS data is present, deselecting the spin '#N-dom:33@H'.
+No PCS data is present, deselecting the spin '#N-dom:34@N'.
+No PCS data is present, deselecting the spin '#N-dom:34@H'.
+No PCS data is present, deselecting the spin '#N-dom:35@N'.
+No PCS data is present, deselecting the spin '#N-dom:35@H'.
+No PCS data is present, deselecting the spin '#N-dom:36@N'.
+No PCS data is present, deselecting the spin '#N-dom:36@H'.
+No PCS data is present, deselecting the spin '#N-dom:37@N'.
+No PCS data is present, deselecting the spin '#N-dom:37@H'.
+No PCS data is present, deselecting the spin '#N-dom:38@N'.
+No PCS data is present, deselecting the spin '#N-dom:38@H'.
+No PCS data is present, deselecting the spin '#N-dom:39@N'.
+No PCS data is present, deselecting the spin '#N-dom:39@H'.
+No PCS data is present, deselecting the spin '#N-dom:40@N'.
+No PCS data is present, deselecting the spin '#N-dom:40@H'.
+No PCS data is present, deselecting the spin '#N-dom:41@N'.
+No PCS data is present, deselecting the spin '#N-dom:41@H'.
+No PCS data is present, deselecting the spin '#N-dom:42@N'.
+No PCS data is present, deselecting the spin '#N-dom:42@H'.
+No PCS data is present, deselecting the spin '#N-dom:43@N'.
+No PCS data is present, deselecting the spin '#N-dom:44@N'.
+No PCS data is present, deselecting the spin '#N-dom:44@H'.
+No PCS data is present, deselecting the spin '#N-dom:45@N'.
+No PCS data is present, deselecting the spin '#N-dom:45@H'.
+No PCS data is present, deselecting the spin '#N-dom:46@N'.
+No PCS data is present, deselecting the spin '#N-dom:46@H'.
+No PCS data is present, deselecting the spin '#N-dom:47@N'.
+No PCS data is present, deselecting the spin '#N-dom:47@H'.
+No PCS data is present, deselecting the spin '#N-dom:48@N'.
+No PCS data is present, deselecting the spin '#N-dom:48@H'.
+No PCS data is present, deselecting the spin '#N-dom:49@N'.
+No PCS data is present, deselecting the spin '#N-dom:49@H'.
+No PCS data is present, deselecting the spin '#N-dom:50@N'.
+No PCS data is present, deselecting the spin '#N-dom:50@H'.
+No PCS data is present, deselecting the spin '#N-dom:51@N'.
+No PCS data is present, deselecting the spin '#N-dom:51@H'.
+No PCS data is present, deselecting the spin '#N-dom:52@N'.
+No PCS data is present, deselecting the spin '#N-dom:52@H'.
+No PCS data is present, deselecting the spin '#N-dom:53@N'.
+No PCS data is present, deselecting the spin '#N-dom:53@H'.
+No PCS data is present, deselecting the spin '#N-dom:54@N'.
+No PCS data is present, deselecting the spin '#N-dom:54@H'.
+No PCS data is present, deselecting the spin '#N-dom:55@N'.
+No PCS data is present, deselecting the spin '#N-dom:55@H'.
+No PCS data is present, deselecting the spin '#N-dom:56@N'.
+No PCS data is present, deselecting the spin '#N-dom:56@H'.
+No PCS data is present, deselecting the spin '#N-dom:57@N'.
+No PCS data is present, deselecting the spin '#N-dom:57@H'.
+No PCS data is present, deselecting the spin '#N-dom:58@N'.
+No PCS data is present, deselecting the spin '#N-dom:58@H'.
+No PCS data is present, deselecting the spin '#N-dom:59@N'.
+No PCS data is present, deselecting the spin '#N-dom:59@H'.
+No PCS data is present, deselecting the spin '#N-dom:60@N'.
+No PCS data is present, deselecting the spin '#N-dom:60@H'.
+No PCS data is present, deselecting the spin '#N-dom:61@N'.
+No PCS data is present, deselecting the spin '#N-dom:61@H'.
+No PCS data is present, deselecting the spin '#N-dom:62@N'.
+No PCS data is present, deselecting the spin '#N-dom:62@H'.
+No PCS data is present, deselecting the spin '#N-dom:63@N'.
+No PCS data is present, deselecting the spin '#N-dom:63@H'.
+No PCS data is present, deselecting the spin '#N-dom:64@N'.
+No PCS data is present, deselecting the spin '#N-dom:64@H'.
+No PCS data is present, deselecting the spin '#N-dom:65@N'.
+No PCS data is present, deselecting the spin '#N-dom:65@H'.
+No PCS data is present, deselecting the spin '#N-dom:66@N'.
+No PCS data is present, deselecting the spin '#N-dom:67@N'.
+No PCS data is present, deselecting the spin '#N-dom:67@H'.
+No PCS data is present, deselecting the spin '#N-dom:68@N'.
+No PCS data is present, deselecting the spin '#N-dom:68@H'.
+No PCS data is present, deselecting the spin '#N-dom:69@N'.
+No PCS data is present, deselecting the spin '#N-dom:69@H'.
+No PCS data is present, deselecting the spin '#N-dom:70@N'.
+No PCS data is present, deselecting the spin '#N-dom:70@H'.
+No PCS data is present, deselecting the spin '#N-dom:71@N'.
+No PCS data is present, deselecting the spin '#N-dom:71@H'.
+No PCS data is present, deselecting the spin '#N-dom:72@N'.
+No PCS data is present, deselecting the spin '#N-dom:72@H'.
+No PCS data is present, deselecting the spin '#N-dom:73@N'.
+No PCS data is present, deselecting the spin '#N-dom:73@H'.
+No PCS data is present, deselecting the spin '#N-dom:74@N'.
+No PCS data is present, deselecting the spin '#N-dom:74@H'.
+No PCS data is present, deselecting the spin '#N-dom:75@N'.
+No PCS data is present, deselecting the spin '#N-dom:75@H'.
+No PCS data is present, deselecting the spin '#N-dom:76@N'.
+No PCS data is present, deselecting the spin '#N-dom:76@H'.
+
+The average domain rotation centroid, taken as the CoM of the atoms defined as the moving domain, is:
+    [48.105993133919419, -9.2564563045173553, 30.742194898701001]
+Numerical integration:  Quasi-random Sobol' sequence.
+Number of integration points:  10000
+Base data: ['RDCs', 'PCSs']
+
+
+
+Logarithmic barrier function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+k: 0        xk: [   -21.26921741,    -3.122610661,    -2.400652422,     5.623469076,    0.4354394057,     5.081265529,    0.9600799786,     4.032275506,             0.1]    fk: 308.876230265       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.26921741,    -3.122610661,    -2.400652422,     5.623469076,    0.4354394057,     5.081265529,     1.008083978,     4.032275506,             0.1]    fk: 308.514556411       
+	k: 100      xk: [   -21.65381467,    -3.173147917,    -2.470100879,     5.620573593,    0.4391360662,     5.073521045,     1.082079551,     2.775121122,    0.1206900127]    fk: 286.922281764       
+	k: 200      xk: [   -21.46073628,   -0.2422038001,   -0.6281257255,     5.654551434,    0.4246732419,     5.060940903,     1.784948717,     2.818565518,    0.3313953822]    fk: 181.709631093       
+	k: 300      xk: [   -22.44249401,   -0.3486697181,   -0.3974825591,     5.641210059,     0.423136116,     5.059534813,     1.822198057,     2.894066374,      0.32564502]    fk: 165.504052325       
+	k: 400      xk: [   -22.56892118,   -0.3686765466,   -0.2105788368,     5.637959337,    0.4260029398,      5.05931546,     1.886079045,     2.913847744,     0.325232771]    fk: 164.002918733       
+
+	Parameter values: [-22.893353560845533, -0.3141739340618579, -0.2241179632218343, 5.6392552212495239, 0.42618292333298824, 5.0583527480132258, 1.8967119317064145, 2.9502132542800723, 0.32549482423919462]
+	Function value:   163.2732470692907
+	Iterations:       500
+	Function calls:   734
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 1        xk: [   -22.89335356,   -0.3141739341,   -0.2241179632,     5.639255221,    0.4261829233,     5.058352748,     1.896711932,     2.950213254,    0.3254948242]    fk: 163.296488951       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.89335356,   -0.3141739341,   -0.2241179632,     5.639255221,    0.4261829233,     5.058352748,     1.991547528,     2.950213254,    0.3254948242]    fk: 161.06438803        
+	k: 100      xk: [   -22.64743279,   -0.3064344213,   -0.2310777957,      5.63011835,    0.4297773965,     5.062059723,     2.036611386,     3.030120698,    0.3165139088]    fk: 158.888077046       
+	k: 200      xk: [   -22.60580435,   -0.2868501415,   -0.2407451312,      5.62700496,    0.4306551135,     5.062946315,     2.054565569,     3.066335321,    0.3162716572]    fk: 158.685392905       
+	k: 300      xk: [    -22.8629507,   -0.1637935412,   -0.2748667084,     5.628145244,    0.4297273571,     5.062645501,     2.065476917,     3.069018312,    0.3168187941]    fk: 158.374790336       
+	k: 400      xk: [   -22.79064267,    -0.109226731,   -0.3064978352,     5.628167365,    0.4306064688,     5.062243311,     2.056331421,      3.08524103,    0.3161554741]    fk: 158.117078047       
+
+	Parameter values: [-22.829817940894639, 0.0020640559048570603, -0.35072626550760794, 5.6271871124376087, 0.43101418511179401, 5.0631631034768247, 2.0619986972795576, 3.0905453307064121, 0.31615007188926703]
+	Function value:   157.98899318590068
+	Iterations:       500
+	Function calls:   766
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 2        xk: [   -22.82981794,  0.002064055905,   -0.3507262655,     5.627187112,    0.4310141851,     5.063163103,     2.061998697,     3.090545331,    0.3161500719]    fk: 157.991172045       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.82981794,  0.002064055905,   -0.3682625788,     5.627187112,    0.4310141851,     5.063163103,     2.061998697,     3.090545331,    0.3161500719]    fk: 157.813152472       
+	k: 100      xk: [   -22.67574305,  0.001911320042,   -0.3972011022,     5.627780302,     0.430841361,     5.062597869,     2.071306835,     3.055446638,    0.3102606724]    fk: 157.307214421       
+	k: 200      xk: [   -22.56853522,  0.001158090029,   -0.5660028972,     5.625627669,    0.4301391067,     5.064828987,     2.091364458,     3.056218863,    0.3102447914]    fk: 156.403882826       
+	k: 300      xk: [   -22.46718352, -0.0001414674894,    -0.764723307,     5.627227376,    0.4306079349,     5.063902354,     2.051072115,     3.050155598,     0.309872755]    fk: 155.561983764       
+	k: 400      xk: [   -22.54097783, -0.0003862391499,   -0.7858144642,     5.628609026,    0.4307196031,     5.062391688,     2.058157648,     3.048714408,    0.3098111942]    fk: 155.423874293       
+
+	Parameter values: [-22.621952533650436, -0.00045455938186610362, -0.80139596264008139, 5.6280623023393543, 0.4304452141728119, 5.0624050924900743, 2.0638717071561126, 3.064805773269494, 0.30988888192612818]
+	Function value:   155.35693298302033
+	Iterations:       500
+	Function calls:   767
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 3        xk: [   -22.62195253, -0.0004545593819,   -0.8013959626,     5.628062302,    0.4304452142,     5.062405092,     2.063871707,     3.064805773,    0.3098888819]    fk: 155.35741271        
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62195253, -0.000477287351,   -0.8013959626,     5.628062302,    0.4304452142,     5.062405092,     2.063871707,     3.064805773,    0.3098888819]    fk: 155.356768514       
+	k: 100      xk: [   -22.67242724, -0.0004583264639,   -0.8080510152,      5.62738216,    0.4309266821,     5.062607923,     2.071302655,     3.074423508,    0.3145758392]    fk: 155.268155664       
+
+	Parameter values: [-22.672427242897594, -0.00045832646394339239, -0.80805101516223077, 5.6273821596473006, 0.43092668205365159, 5.0626079231910639, 2.0713026553224765, 3.0744235083609026, 0.31457583917698972]
+	Function value:   155.26815566398056
+	Iterations:       102
+	Function calls:   249
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 4        xk: [   -22.67242724, -0.0004583264639,   -0.8080510152,      5.62738216,    0.4309266821,     5.062607923,     2.071302655,     3.074423508,    0.3145758392]    fk: 155.268229817       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.67242724, -0.0004812427871,   -0.8080510152,      5.62738216,    0.4309266821,     5.062607923,     2.071302655,     3.074423508,    0.3145758392]    fk: 155.267995323       
+	k: 100      xk: [   -22.64380593, -0.0004705201195,   -0.8197118193,     5.627838813,     0.430757934,     5.062234701,     2.066611977,     3.069449145,    0.3145787365]    fk: 155.246363233       
+
+	Parameter values: [-22.625554729103541, -0.00045275762745220481, -0.82714560409137428, 5.6278910327592158, 0.43069392690775843, 5.0622295512174142, 2.0664881116542801, 3.0662461767670934, 0.31458070899832324]
+	Function value:   155.24360903067691
+	Iterations:       177
+	Function calls:   309
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 5        xk: [   -22.62555473, -0.0004527576275,   -0.8271456041,     5.627891033,    0.4306939269,     5.062229551,     2.066488112,     3.066246177,     0.314580709]    fk: 155.243641722       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62555473, -0.0004753955088,   -0.8271456041,     5.627891033,    0.4306939269,     5.062229551,     2.066488112,     3.066246177,     0.314580709]    fk: 155.243445622       
+	k: 100      xk: [   -22.62555473, -0.0004753955088,   -0.8271456041,     5.627891033,    0.4306939269,     5.062229551,     2.066488112,     3.066246177,     0.314580709]    fk: 155.243445622       
+
+	Parameter values: [-22.623043874382027, -0.00047523635637327223, -0.82887353641695816, 5.6279375942950924, 0.43069110283069501, 5.0622170789512833, 2.0662135912244359, 3.0660276774296262, 0.31457728874326429]
+	Function value:   155.24314764528916
+	Iterations:       128
+	Function calls:   242
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 6        xk: [   -22.62304387, -0.0004752363564,   -0.8288735364,     5.627937594,    0.4306911028,     5.062217079,     2.066213591,     3.066027677,    0.3145772887]    fk: 155.243201242       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62304387, -0.0004989981742,   -0.8288735364,     5.627937594,    0.4306911028,     5.062217079,     2.066213591,     3.066027677,    0.3145772887]    fk: 155.242975687       
+	k: 100      xk: [    -22.6199133, -0.0004952127086,   -0.8326321152,     5.627997439,    0.4306832434,     5.062207111,     2.065150614,     3.064674988,    0.3145772635]    fk: 155.242861501       
+
+	Parameter values: [-22.620560126188877, -0.00049672194363555272, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.24274466057233
+	Iterations:       138
+	Function calls:   274
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 7        xk: [   -22.62056013, -0.0004967219436,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.242821026       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013, -0.0005215580408,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.242564383       
+	k: 100      xk: [   -22.62056013, -0.0005215580408,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.242564383       
+
+	Parameter values: [-22.620560126188877, -0.0005215580408173304, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.24256438303217
+	Iterations:       138
+	Function calls:   258
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 8        xk: [   -22.62056013, -0.0005215580408,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.2426459         
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013, -0.0005476359429,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.242375096       
+	k: 100      xk: [   -22.62056013, -0.0005476359429,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.242375096       
+
+	Parameter values: [-22.620560126188877, -0.00054763594285819699, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.2423750957627
+	Iterations:       139
+	Function calls:   260
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 9        xk: [   -22.62056013, -0.0005476359429,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.242454595       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013,  -0.00057501774,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.242176349       
+	k: 100      xk: [   -22.62056013,  -0.00057501774,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.242176349       
+
+	Parameter values: [-22.620560126188877, -0.00057501774000110687, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.24217634870266
+	Iterations:       140
+	Function calls:   262
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 10       xk: [   -22.62056013,  -0.00057501774,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.242256276       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013, -0.000603768627,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.241967669       
+	k: 100      xk: [   -22.62056013, -0.000603768627,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.241967669       
+
+	Parameter values: [-22.620560126188877, -0.00060376862700116222, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.2419676693313
+	Iterations:       141
+	Function calls:   263
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 11       xk: [   -22.62056013, -0.000603768627,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.242024877       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013, -0.0006339570584,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.241748562       
+	k: 100      xk: [   -22.62056013, -0.0006339570584,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.241748562       
+
+	Parameter values: [-22.620560126188877, -0.00063395705835122033, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.24174856154974
+	Iterations:       141
+	Function calls:   262
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 12       xk: [   -22.62056013, -0.0006339570584,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.241821667       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013, -0.0006656549113,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.241518505       
+	k: 100      xk: [   -22.62056013, -0.0006656549113,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.241518505       
+
+	Parameter values: [-22.620560126188877, -0.00066565491126878136, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.24151850450721
+	Iterations:       142
+	Function calls:   263
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 13       xk: [   -22.62056013, -0.0006656549113,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.241543522       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013, -0.0006989376568,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.241276951       
+	k: 100      xk: [   -22.62056013, -0.0006989376568,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.241276951       
+
+	Parameter values: [-22.620560126188877, -0.00069893765683222051, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.24127695136883
+	Iterations:       142
+	Function calls:   263
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 14       xk: [   -22.62056013, -0.0006989376568,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.24130324        
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013, -0.0007338845397,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.241023328       
+	k: 100      xk: [   -22.62056013, -0.0007338845397,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.241023328       
+
+	Parameter values: [-22.620560126188877, -0.00073388453967383153, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.24102332802235
+	Iterations:       142
+	Function calls:   263
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 15       xk: [   -22.62056013, -0.0007338845397,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.241052224       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013, -0.0007705787667,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.240757032       
+	k: 100      xk: [   -22.62056013, -0.0007705787667,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.240757032       
+
+	Parameter values: [-22.620560126188877, -0.00077057876665752312, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.24075703172076
+	Iterations:       142
+	Function calls:   263
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 16       xk: [   -22.62056013, -0.0007705787667,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.240785353       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013, -0.000809107705,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.24047743        
+	k: 100      xk: [   -22.62056013, -0.000809107705,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.24047743        
+
+	Parameter values: [-22.620560126188877, -0.00080910770499039927, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.24047742965828
+	Iterations:       142
+	Function calls:   263
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 17       xk: [   -22.62056013, -0.000809107705,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.240506994       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013, -0.0008495630902,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.240183857       
+	k: 100      xk: [   -22.62056013, -0.0008495630902,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.240183857       
+
+	Parameter values: [-22.620560126188877, -0.00084956309023991928, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.24018385747473
+	Iterations:       142
+	Function calls:   263
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 18       xk: [   -22.62056013, -0.0008495630902,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.240214728       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013, -0.0008920412448,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.239875618       
+	k: 100      xk: [   -22.62056013, -0.0008920412448,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.239875618       
+
+	Parameter values: [-22.620560126188877, -0.00089204124475191523, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.23987561768726
+	Iterations:       142
+	Function calls:   263
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 19       xk: [   -22.62056013, -0.0008920412448,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.23990786        
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013, -0.000936643307,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.239551978       
+	k: 100      xk: [   -22.62056013, -0.000936643307,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.239551978       
+
+	Parameter values: [-22.620560126188877, -0.00093664330698951098, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.23955197804378
+	Iterations:       144
+	Function calls:   265
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 20       xk: [   -22.62056013, -0.000936643307,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.239573149       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013, -0.0009834754723,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.23921217        
+	k: 100      xk: [   -22.62056013, -0.0009834754723,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.23921217        
+
+	Parameter values: [-22.620560126188877, -0.00098347547233898665, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.23921216979519
+	Iterations:       145
+	Function calls:   267
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 21       xk: [   -22.62056013, -0.0009834754723,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.239279711       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013, -0.001032649246,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.238855386       
+	k: 100      xk: [   -22.62056013, -0.001032649246,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.238855386       
+
+	Parameter values: [-22.620560126188877, -0.001032649245955936, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.23885538588229
+	Iterations:       144
+	Function calls:   265
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 22       xk: [   -22.62056013, -0.001032649246,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.238921557       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013, -0.001084281708,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.238480779       
+	k: 100      xk: [   -22.62056013, -0.001084281708,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.238480779       
+
+	Parameter values: [-22.620560126188877, -0.0010842817082537329, -0.83099310842090945, 5.6279873953660307, 0.43068044857025811, 5.0622077978425652, 2.0653841708373628, 3.064890720368866, 0.31457595959263135]
+	Function value:   155.23848077903372
+	Iterations:       144
+	Function calls:   265
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 23       xk: [   -22.62056013, -0.001084281708,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.238549828       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.62056013, -0.001138495794,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.23808746        
+	k: 100      xk: [   -22.62056013, -0.001138495794,   -0.8309931084,     5.627987395,    0.4306804486,     5.062207798,     2.065384171,      3.06489072,    0.3145759596]    fk: 155.23808746        
+	k: 200      xk: [   -22.62056665, -0.002663355188,   -0.8381128885,     5.627816529,    0.4307275806,      5.06233113,     2.066095793,     3.067904812,    0.3146054126]    fk: 155.229252456       
+	k: 300      xk: [   -22.54097436,  -0.06258311676,   -0.8485123018,     5.626937076,    0.4307850752,     5.063915162,      2.05907581,      3.07569444,    0.3152744112]    fk: 154.959659879       
+	k: 400      xk: [    -22.4593071,  -0.09117392937,   -0.8606144161,     5.628584177,    0.4300159604,     5.063575797,     2.043747326,     3.047393834,    0.3153635972]    fk: 154.847032241       
+
+	Parameter values: [-22.463521311277404, -0.090668995374858591, -0.85923657786164398, 5.6284135772099084, 0.43008324692218702, 5.0636599630584627, 2.0449798776856314, 3.0502474614110859, 0.31536382004673613]
+	Function value:   154.8455263290235
+	Iterations:       500
+	Function calls:   790
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 24       xk: [   -22.46352131,  -0.09066899537,   -0.8592365779,     5.628413577,    0.4300832469,     5.063659963,     2.044979878,     3.050247461,      0.31536382]    fk: 154.845838517       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -22.46352131,  -0.09520244514,   -0.8592365779,     5.628413577,    0.4300832469,     5.063659963,     2.044979878,     3.050247461,      0.31536382]    fk: 154.813370658       
+	k: 100      xk: [   -22.61358633,  -0.09386441053,   -0.8507811737,     5.628281707,    0.4305171472,     5.062085582,     2.061193583,     3.064657844,    0.3145910447]    fk: 154.583400626       
+	k: 200      xk: [   -22.54676893,   -0.1097066697,   -0.8427173643,     5.628735339,    0.4299608116,     5.062435893,     2.061308758,      3.05066186,    0.3145847394]    fk: 154.522619239       
+	k: 300      xk: [   -22.65961728,   -0.1652733075,   -0.8947526856,     5.631230394,    0.4287838768,     5.060668912,     2.042405038,      3.03327316,    0.3148454769]    fk: 154.33126955        
+	k: 400      xk: [   -22.19236029,   -0.6959699104,    -1.317347092,     5.630603538,    0.4281415555,     5.061857575,     2.077047438,     3.041988516,    0.3146237884]    fk: 151.917222289       
+
+	Parameter values: [-21.760140962840417, -2.9921855504453756, -2.1435678251867509, 5.6275789811824275, 0.43144778147883378, 5.0622186461179002, 2.0594422927937979, 3.0692106114049227, 0.30747117089217607]
+	Function value:   144.3682910091876
+	Iterations:       500
+	Function calls:   728
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 25       xk: [   -21.76014096,     -2.99218555,    -2.143567825,     5.627578981,    0.4314477815,     5.062218646,     2.059442293,     3.069210611,    0.3074711709]    fk: 144.472759763       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.76014096,     -2.99218555,    -2.143567825,     5.627578981,    0.4314477815,     5.062218646,     2.059442293,     3.069210611,    0.3074711709]    fk: 144.368291009       
+	k: 100      xk: [    -21.8587204,    -3.009655123,    -2.184518365,      5.62744163,    0.4317998556,      5.06240804,     2.069604583,     3.072259024,    0.3121902252]    fk: 144.076757734       
+
+	Parameter values: [-21.858589601350602, -3.0066120795272253, -2.1872116363752081, 5.6274323116812655, 0.43179898728212684, 5.0624176252180204, 2.0695104915009779, 3.072777063927786, 0.31219684553182053]
+	Function value:   144.07641962893049
+	Iterations:       139
+	Function calls:   264
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 26       xk: [    -21.8585896,     -3.00661208,    -2.187211636,     5.627432312,    0.4317989873,     5.062417625,     2.069510492,     3.072777064,    0.3121968455]    fk: 144.076458831       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [    -21.8585896,     -3.00661208,    -2.187211636,     5.627432312,    0.4317989873,     5.062417625,     2.069510492,     3.072777064,    0.3121968455]    fk: 144.076419629       
+	k: 100      xk: [   -21.84453403,    -3.072893054,    -2.220575784,      5.62752312,    0.4318291906,     5.062303877,     2.069854818,     3.074541375,    0.3129506241]    fk: 144.070865176       
+
+	Parameter values: [-21.843738504236434, -3.0757040964956102, -2.2261630914101538, 5.6275298851161271, 0.43175754497879892, 5.0623589153513713, 2.069382888085828, 3.072666065204257, 0.31284929497045977]
+	Function value:   144.0699530690122
+	Iterations:       144
+	Function calls:   250
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 27       xk: [    -21.8437385,    -3.075704096,    -2.226163091,     5.627529885,     0.431757545,     5.062358915,     2.069382888,     3.072666065,     0.312849295]    fk: 144.070037277       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [    -21.8437385,    -3.075704096,    -2.226163091,     5.627529885,     0.431757545,     5.062358915,     2.069382888,     3.072666065,     0.312849295]    fk: 144.069953069       
+
+	Parameter values: [-21.843395860652969, -3.0865337882241026, -2.2327332162528108, 5.6274849006902787, 0.43179084915459087, 5.0623448288446014, 2.0699968607840562, 3.0734946680262212, 0.31275176961133017]
+	Function value:   144.06975156507178
+	Iterations:       99
+	Function calls:   186
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 28       xk: [   -21.84339586,    -3.086533788,    -2.232733216,     5.627484901,    0.4317908492,     5.062344829,     2.069996861,     3.073494668,    0.3127517696]    fk: 144.069751565       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.84339586,    -3.086533788,    -2.232733216,     5.627484901,    0.4317908492,     5.062344829,     2.069996861,     3.073494668,    0.3127517696]    fk: 144.069751565       
+	k: 100      xk: [   -21.84339586,    -3.086533788,    -2.232733216,     5.627484901,    0.4317908492,     5.062344829,     2.069996861,     3.073494668,    0.3127517696]    fk: 144.069751565       
+
+	Parameter values: [-21.843395860652969, -3.0865337882241026, -2.2327332162528108, 5.6274849006902787, 0.43179084915459087, 5.0623448288446014, 2.0699968607840562, 3.0734946680262212, 0.31275176961133017]
+	Function value:   144.06975156507178
+	Iterations:       136
+	Function calls:   223
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+
+Parameter values: [-21.843395860652969, -3.0865337882241026, -2.2327332162528108, 5.6274849006902787, 0.43179084915459087, 5.0623448288446014, 2.0699968607840562, 3.0734946680262212, 0.31275176961133017]
+Function value:   144.06975156507178
+Iterations:       5833
+Function calls:   9990
+Gradient calls:   0
+Hessian calls:    0
+Warning:          None
+
+Storing the optimisation results, no optimised values currently exist.
+
+relax> frame_order.pdb_model(ave_pos=None, rep='fo', dist=None, dir=None, compress_type=2, size=30.0, inc=36, force=True)
+
+Creating a PDB file containing a geometric object representing the frame order dynamics.
+----------------------------------------------------------------------------------------
+
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the z-axis system.
+Central axis: [-0.875930641884985  0.05974148787829  -0.478723788037576].
+
+Generating the axis vectors.
+    z-ax vector (scaled + shifted to origin): array([ 10.976080743450449,   2.292244636348701,   2.384786358872706])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[-0.471877042891705  0.100387085816544 -0.875930641884985]
+ [ 0.100387085816544  0.993153254854129  0.05974148787829 ]
+ [ 0.875930641884985 -0.05974148787829  -0.478723788037577]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_A.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the z-axis system.
+Central axis: [-0.875930641884985  0.05974148787829  -0.478723788037576].
+
+Generating the axis vectors.
+    z-ax vector (scaled + shifted to origin): array([ 63.531919256549543,  -1.292244636348701,  31.108213641127296])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[-0.471877042891705  0.100387085816544 -0.875930641884985]
+ [ 0.100387085816544  0.993153254854129  0.05974148787829 ]
+ [ 0.875930641884985 -0.05974148787829  -0.478723788037577]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_B.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+
+Isotropic cone permutation A
+============================
+
+
+relax> pipe.copy(pipe_from='frame order', pipe_to='iso cone, torsionless perm A', bundle_to=None)
+
+relax> pipe.switch(pipe_name='iso cone, torsionless perm A')
+
+relax> frame_order.permute_axes(permutation='A')
+
+Original parameters:
+cone_theta                   0.1000000000
+cone_sigma_max               0.0000000000
+axis_theta                   0.9600799786
+axis_phi                     4.0322755062
+cone axis           
+[-0.515203065764379 -0.63695822150172   0.573454466447295]
+full axis system    
+[[ 0.857068142580848 -0.                -0.515203065764379]
+ [-0.382890008597602  0.669088533288005 -0.63695822150172 ]
+ [ 0.344716463617772  0.743182706084113  0.573454466447295]]
+
+Permutation 'A':
+Starting condition   z <= x <= y         
+Cone angle permutation [2, 0, 1]           
+Axes permutation     [1, 2, 0]           
+
+Permuted parameters:
+cone_theta                   0.0500000000
+axis_theta                   0.7329816724
+axis_phi                     1.5707963268
+cone axis           
+[-0.                 0.669088533288005  0.743182706084113]
+
+relax> frame_order.pdb_model(ave_pos=None, rep='fo_orig_perm_A', dist=None, dir=None, compress_type=2, size=30.0, inc=36, force=True)
+
+Creating a PDB file containing a geometric object representing the frame order dynamics.
+----------------------------------------------------------------------------------------
+
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the z-axis system.
+Central axis: [  4.096985653186766e-17   6.690885332880054e-01   7.431827060841134e-01].
+
+Generating the axis vectors.
+    z-ax vector (scaled + shifted to origin): array([ 37.253999999999998,  20.572655998640162,  39.041981182523401])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[  1.000000000000000e+00  -1.572552384798878e-17   4.096985653186766e-17]
+ [ -1.572552384798878e-17   7.431827060841134e-01   6.690885332880054e-01]
+ [ -4.096985653186766e-17  -6.690885332880054e-01   7.431827060841134e-01]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_orig_perm_A_A.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the z-axis system.
+Central axis: [  4.096985653186766e-17   6.690885332880054e-01   7.431827060841134e-01].
+
+Generating the axis vectors.
+    z-ax vector (scaled + shifted to origin): array([ 37.253999999999998, -19.572655998640162,  -5.548981182523402])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[  1.000000000000000e+00  -1.572552384798878e-17   4.096985653186766e-17]
+ [ -1.572552384798878e-17   7.431827060841134e-01   6.690885332880054e-01]
+ [ -4.096985653186766e-17  -6.690885332880054e-01   7.431827060841134e-01]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_orig_perm_A_B.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+relax> frame_order.num_int_pts(num=10000)
+
+relax> minimise.execute(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=0.0001, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+No PCS data is present, deselecting the spin '#N-dom:1@N'.
+No PCS data is present, deselecting the spin '#N-dom:1@H'.
+No PCS data is present, deselecting the spin '#N-dom:2@N'.
+No PCS data is present, deselecting the spin '#N-dom:2@H'.
+No PCS data is present, deselecting the spin '#N-dom:3@N'.
+No PCS data is present, deselecting the spin '#N-dom:3@H'.
+No PCS data is present, deselecting the spin '#N-dom:4@N'.
+No PCS data is present, deselecting the spin '#N-dom:4@H'.
+No PCS data is present, deselecting the spin '#N-dom:5@N'.
+No PCS data is present, deselecting the spin '#N-dom:5@H'.
+No PCS data is present, deselecting the spin '#N-dom:6@N'.
+No PCS data is present, deselecting the spin '#N-dom:6@H'.
+No PCS data is present, deselecting the spin '#N-dom:7@N'.
+No PCS data is present, deselecting the spin '#N-dom:7@H'.
+No PCS data is present, deselecting the spin '#N-dom:8@N'.
+No PCS data is present, deselecting the spin '#N-dom:8@H'.
+No PCS data is present, deselecting the spin '#N-dom:9@N'.
+No PCS data is present, deselecting the spin '#N-dom:9@H'.
+No PCS data is present, deselecting the spin '#N-dom:10@N'.
+No PCS data is present, deselecting the spin '#N-dom:10@H'.
+No PCS data is present, deselecting the spin '#N-dom:11@N'.
+No PCS data is present, deselecting the spin '#N-dom:11@H'.
+No PCS data is present, deselecting the spin '#N-dom:12@N'.
+No PCS data is present, deselecting the spin '#N-dom:12@H'.
+No PCS data is present, deselecting the spin '#N-dom:13@N'.
+No PCS data is present, deselecting the spin '#N-dom:13@H'.
+No PCS data is present, deselecting the spin '#N-dom:14@N'.
+No PCS data is present, deselecting the spin '#N-dom:14@H'.
+No PCS data is present, deselecting the spin '#N-dom:15@N'.
+No PCS data is present, deselecting the spin '#N-dom:15@H'.
+No PCS data is present, deselecting the spin '#N-dom:16@N'.
+No PCS data is present, deselecting the spin '#N-dom:16@H'.
+No PCS data is present, deselecting the spin '#N-dom:17@N'.
+No PCS data is present, deselecting the spin '#N-dom:17@H'.
+No PCS data is present, deselecting the spin '#N-dom:18@N'.
+No PCS data is present, deselecting the spin '#N-dom:18@H'.
+No PCS data is present, deselecting the spin '#N-dom:19@N'.
+No PCS data is present, deselecting the spin '#N-dom:19@H'.
+No PCS data is present, deselecting the spin '#N-dom:20@N'.
+No PCS data is present, deselecting the spin '#N-dom:20@H'.
+No PCS data is present, deselecting the spin '#N-dom:21@N'.
+No PCS data is present, deselecting the spin '#N-dom:21@H'.
+No PCS data is present, deselecting the spin '#N-dom:22@N'.
+No PCS data is present, deselecting the spin '#N-dom:22@H'.
+No PCS data is present, deselecting the spin '#N-dom:23@N'.
+No PCS data is present, deselecting the spin '#N-dom:23@H'.
+No PCS data is present, deselecting the spin '#N-dom:24@N'.
+No PCS data is present, deselecting the spin '#N-dom:24@H'.
+No PCS data is present, deselecting the spin '#N-dom:25@N'.
+No PCS data is present, deselecting the spin '#N-dom:25@H'.
+No PCS data is present, deselecting the spin '#N-dom:26@N'.
+No PCS data is present, deselecting the spin '#N-dom:26@H'.
+No PCS data is present, deselecting the spin '#N-dom:27@N'.
+No PCS data is present, deselecting the spin '#N-dom:27@H'.
+No PCS data is present, deselecting the spin '#N-dom:28@N'.
+No PCS data is present, deselecting the spin '#N-dom:28@H'.
+No PCS data is present, deselecting the spin '#N-dom:29@N'.
+No PCS data is present, deselecting the spin '#N-dom:29@H'.
+No PCS data is present, deselecting the spin '#N-dom:30@N'.
+No PCS data is present, deselecting the spin '#N-dom:30@H'.
+No PCS data is present, deselecting the spin '#N-dom:31@N'.
+No PCS data is present, deselecting the spin '#N-dom:31@H'.
+No PCS data is present, deselecting the spin '#N-dom:32@N'.
+No PCS data is present, deselecting the spin '#N-dom:32@H'.
+No PCS data is present, deselecting the spin '#N-dom:33@N'.
+No PCS data is present, deselecting the spin '#N-dom:33@H'.
+No PCS data is present, deselecting the spin '#N-dom:34@N'.
+No PCS data is present, deselecting the spin '#N-dom:34@H'.
+No PCS data is present, deselecting the spin '#N-dom:35@N'.
+No PCS data is present, deselecting the spin '#N-dom:35@H'.
+No PCS data is present, deselecting the spin '#N-dom:36@N'.
+No PCS data is present, deselecting the spin '#N-dom:36@H'.
+No PCS data is present, deselecting the spin '#N-dom:37@N'.
+No PCS data is present, deselecting the spin '#N-dom:37@H'.
+No PCS data is present, deselecting the spin '#N-dom:38@N'.
+No PCS data is present, deselecting the spin '#N-dom:38@H'.
+No PCS data is present, deselecting the spin '#N-dom:39@N'.
+No PCS data is present, deselecting the spin '#N-dom:39@H'.
+No PCS data is present, deselecting the spin '#N-dom:40@N'.
+No PCS data is present, deselecting the spin '#N-dom:40@H'.
+No PCS data is present, deselecting the spin '#N-dom:41@N'.
+No PCS data is present, deselecting the spin '#N-dom:41@H'.
+No PCS data is present, deselecting the spin '#N-dom:42@N'.
+No PCS data is present, deselecting the spin '#N-dom:42@H'.
+No PCS data is present, deselecting the spin '#N-dom:43@N'.
+No PCS data is present, deselecting the spin '#N-dom:44@N'.
+No PCS data is present, deselecting the spin '#N-dom:44@H'.
+No PCS data is present, deselecting the spin '#N-dom:45@N'.
+No PCS data is present, deselecting the spin '#N-dom:45@H'.
+No PCS data is present, deselecting the spin '#N-dom:46@N'.
+No PCS data is present, deselecting the spin '#N-dom:46@H'.
+No PCS data is present, deselecting the spin '#N-dom:47@N'.
+No PCS data is present, deselecting the spin '#N-dom:47@H'.
+No PCS data is present, deselecting the spin '#N-dom:48@N'.
+No PCS data is present, deselecting the spin '#N-dom:48@H'.
+No PCS data is present, deselecting the spin '#N-dom:49@N'.
+No PCS data is present, deselecting the spin '#N-dom:49@H'.
+No PCS data is present, deselecting the spin '#N-dom:50@N'.
+No PCS data is present, deselecting the spin '#N-dom:50@H'.
+No PCS data is present, deselecting the spin '#N-dom:51@N'.
+No PCS data is present, deselecting the spin '#N-dom:51@H'.
+No PCS data is present, deselecting the spin '#N-dom:52@N'.
+No PCS data is present, deselecting the spin '#N-dom:52@H'.
+No PCS data is present, deselecting the spin '#N-dom:53@N'.
+No PCS data is present, deselecting the spin '#N-dom:53@H'.
+No PCS data is present, deselecting the spin '#N-dom:54@N'.
+No PCS data is present, deselecting the spin '#N-dom:54@H'.
+No PCS data is present, deselecting the spin '#N-dom:55@N'.
+No PCS data is present, deselecting the spin '#N-dom:55@H'.
+No PCS data is present, deselecting the spin '#N-dom:56@N'.
+No PCS data is present, deselecting the spin '#N-dom:56@H'.
+No PCS data is present, deselecting the spin '#N-dom:57@N'.
+No PCS data is present, deselecting the spin '#N-dom:57@H'.
+No PCS data is present, deselecting the spin '#N-dom:58@N'.
+No PCS data is present, deselecting the spin '#N-dom:58@H'.
+No PCS data is present, deselecting the spin '#N-dom:59@N'.
+No PCS data is present, deselecting the spin '#N-dom:59@H'.
+No PCS data is present, deselecting the spin '#N-dom:60@N'.
+No PCS data is present, deselecting the spin '#N-dom:60@H'.
+No PCS data is present, deselecting the spin '#N-dom:61@N'.
+No PCS data is present, deselecting the spin '#N-dom:61@H'.
+No PCS data is present, deselecting the spin '#N-dom:62@N'.
+No PCS data is present, deselecting the spin '#N-dom:62@H'.
+No PCS data is present, deselecting the spin '#N-dom:63@N'.
+No PCS data is present, deselecting the spin '#N-dom:63@H'.
+No PCS data is present, deselecting the spin '#N-dom:64@N'.
+No PCS data is present, deselecting the spin '#N-dom:64@H'.
+No PCS data is present, deselecting the spin '#N-dom:65@N'.
+No PCS data is present, deselecting the spin '#N-dom:65@H'.
+No PCS data is present, deselecting the spin '#N-dom:66@N'.
+No PCS data is present, deselecting the spin '#N-dom:67@N'.
+No PCS data is present, deselecting the spin '#N-dom:67@H'.
+No PCS data is present, deselecting the spin '#N-dom:68@N'.
+No PCS data is present, deselecting the spin '#N-dom:68@H'.
+No PCS data is present, deselecting the spin '#N-dom:69@N'.
+No PCS data is present, deselecting the spin '#N-dom:69@H'.
+No PCS data is present, deselecting the spin '#N-dom:70@N'.
+No PCS data is present, deselecting the spin '#N-dom:70@H'.
+No PCS data is present, deselecting the spin '#N-dom:71@N'.
+No PCS data is present, deselecting the spin '#N-dom:71@H'.
+No PCS data is present, deselecting the spin '#N-dom:72@N'.
+No PCS data is present, deselecting the spin '#N-dom:72@H'.
+No PCS data is present, deselecting the spin '#N-dom:73@N'.
+No PCS data is present, deselecting the spin '#N-dom:73@H'.
+No PCS data is present, deselecting the spin '#N-dom:74@N'.
+No PCS data is present, deselecting the spin '#N-dom:74@H'.
+No PCS data is present, deselecting the spin '#N-dom:75@N'.
+No PCS data is present, deselecting the spin '#N-dom:75@H'.
+No PCS data is present, deselecting the spin '#N-dom:76@N'.
+No PCS data is present, deselecting the spin '#N-dom:76@H'.
+
+The average domain rotation centroid, taken as the CoM of the atoms defined as the moving domain, is:
+    [48.105993133919419, -9.2564563045173553, 30.742194898701001]
+Numerical integration:  Quasi-random Sobol' sequence.
+Number of integration points:  10000
+Base data: ['RDCs', 'PCSs']
+
+
+
+Logarithmic barrier function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+k: 0        xk: [   -21.26921741,    -3.122610661,    -2.400652422,     5.623469076,    0.4354394057,     5.081265529,    0.7329816724,     1.570796327,            0.05]    fk: 304.568559287       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.26921741,    -3.122610661,    -2.400652422,     5.623469076,    0.4354394057,     5.081265529,    0.7329816724,     1.570796327,          0.0525]    fk: 304.372252647       
+	k: 100      xk: [   -21.28990945,    -3.404454096,    -2.903037897,      5.62526195,    0.4373855243,     5.070517173,    0.7720211057,    0.7042002875,   0.05607479473]    fk: 295.104303468       
+	k: 200      xk: [   -21.38951801,    -3.370355972,    -2.932167984,     5.622122846,    0.4379912906,     5.072880294,    0.7773639342,     0.648166283,   0.05634135635]    fk: 294.7058109         
+	k: 300      xk: [   -21.23704353,    -3.398194193,    -2.904790564,     5.621807347,    0.4385030687,     5.072765156,    0.7746632295,    0.6458533972,   0.05632496894]    fk: 294.564271288       
+	k: 400      xk: [   -21.07194459,    -3.447369419,    -2.968591397,     5.623129016,    0.4364672362,     5.073048203,     0.810700291,    0.3609284352,   0.05577972877]    fk: 293.844043091       
+
+	Parameter values: [-21.204152584695223, -3.4763464197192206, -3.0067686080105194, 5.6221239577652131, 0.43806232232971798, 5.0726154115787381, 0.82189319187955157, 0.13532267284808586, 0.055452497118623684]
+	Function value:   293.36487134195158
+	Iterations:       500
+	Function calls:   761
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 1        xk: [   -21.20415258,     -3.47634642,    -3.006768608,     5.622123958,    0.4380623223,     5.072615412,    0.8218931919,    0.1353226728,   0.05545249712]    fk: 293.365226547       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.20415258,    -3.650163741,    -3.006768608,     5.622123958,    0.4380623223,     5.072615412,    0.8218931919,    0.1353226728,   0.05545249712]    fk: 292.824002412       
+	k: 100      xk: [   -20.86259505,   -0.1835622258,   -0.2041272133,     5.620165851,    0.4382677388,     5.067062872,      0.58437248,   -0.0123550479,     0.241398811]    fk: 223.325252296       
+	k: 200      xk: [    -23.7363321,     1.208195428,   -0.4526671827,      5.62714164,    0.4373441433,     5.058126693,    0.9639251393,  -0.02748891684,    0.3143116024]    fk: 171.272398972       
+	k: 300      xk: [   -21.87140813,    -0.843029238,    -1.222937914,     5.631602011,    0.4257437159,      5.06318485,     1.140561678,   -0.0994708719,    0.3110671984]    fk: 152.51106069        
+	k: 400      xk: [   -22.17603161,    -1.506370158,    -1.661528171,     5.632347121,    0.4253291085,     5.063777811,     1.124398114,   -0.1302648701,    0.3140209576]    fk: 149.385656753       
+
+	Parameter values: [-21.936446325497521, -2.7827902706729839, -2.0987770081686521, 5.63207002413679, 0.42919336768304361, 5.0609440664533984, 1.1090022578579508, -0.18831386291783561, 0.31366544664431134]
+	Function value:   145.45476291743415
+	Iterations:       500
+	Function calls:   711
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 2        xk: [   -21.93644633,    -2.782790271,    -2.098777008,     5.632070024,    0.4291933677,     5.060944066,     1.109002258,   -0.1883138629,    0.3136654466]    fk: 145.467778262       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.93644633,    -2.921929784,    -2.098777008,     5.632070024,    0.4291933677,     5.060944066,     1.109002258,   -0.1883138629,    0.3136654466]    fk: 145.418306206       
+	k: 100      xk: [   -21.77434271,    -3.242123798,    -2.355817582,     5.628012415,    0.4313744462,     5.062013344,     1.084095487,   -0.1009638481,     0.314629095]    fk: 144.244204666       
+	k: 200      xk: [   -21.84022685,    -3.083806076,    -2.237802768,     5.627606737,    0.4318209894,     5.062232966,     1.071855679,   -0.0686204158,    0.3129528915]    fk: 144.067159201       
+
+	Parameter values: [-21.839467846251686, -3.0739419044671266, -2.2328764557609286, 5.6275691863460686, 0.43177925330321587, 5.0622997037527586, 1.0716433577704743, -0.068957065114775257, 0.31299827218204701]
+	Function value:   144.06641649817072
+	Iterations:       233
+	Function calls:   388
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 3        xk: [   -21.83946785,    -3.073941904,    -2.232876456,     5.627569186,    0.4317792533,     5.062299704,     1.071643358,  -0.06895706511,    0.3129982722]    fk: 144.066454654       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.83946785,    -3.073941904,    -2.232876456,     5.627569186,    0.4317792533,     5.062299704,     1.071643358,  -0.06895706511,    0.3129982722]    fk: 144.066416535       
+	k: 100      xk: [   -21.83684444,    -3.076728747,    -2.240423094,     5.627570616,    0.4317551182,     5.062321519,     1.071667992,  -0.06930312776,    0.3129947232]    fk: 144.065885351       
+
+	Parameter values: [-21.835968020208437, -3.0730692415790317, -2.2393287156649575, 5.6275667084629912, 0.4317645122300553, 5.0623196767728809, 1.071730788943386, -0.069106952648456565, 0.31300338989748955]
+	Function value:   144.06584503608173
+	Iterations:       114
+	Function calls:   207
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 4        xk: [   -21.83596802,    -3.073069242,    -2.239328716,     5.627566708,    0.4317645122,     5.062319677,     1.071730789,  -0.06910695265,    0.3130033899]    fk: 144.065906035       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   -21.83596802,    -3.073069242,    -2.239328716,     5.627566708,    0.4317645122,     5.062319677,     1.071730789,  -0.06910695265,    0.3130033899]    fk: 144.065845036       
+	k: 100      xk: [   -21.83721979,    -3.074511905,    -2.241027889,     5.627574524,     0.431769522,     5.062307135,     1.072187013,  -0.06940163167,    0.3129940433]    fk: 144.06580412        
+
+	Parameter values: [-21.836305605354564, -3.0713769600196352, -2.2396448129478643, 5.6275696574976841, 0.43175960622770759, 5.0623084595133312, 1.0719849878842043, -0.068919806442666431, 0.31300413825279688]
+	Function value:   144.06579035005154
+	Iterations:       103
+	Function calls:   192
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+
+Parameter values: [-21.836305605354564, -3.0713769600196352, -2.2396448129478643, 5.6275696574976841, 0.43175960622770759, 5.0623084595133312, 1.0719849878842043, -0.068919806442666431, 0.31300413825279688]
+Function value:   144.06579035005529
+Iterations:       1450
+Function calls:   2259
+Gradient calls:   0
+Hessian calls:    0
+Warning:          None
+
+Storing the optimisation results, no optimised values currently exist.
+
+relax> frame_order.pdb_model(ave_pos=None, rep='fo_perm_A', dist=None, dir=None, compress_type=2, size=30.0, inc=36, force=True)
+
+Creating a PDB file containing a geometric object representing the frame order dynamics.
+----------------------------------------------------------------------------------------
+
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the z-axis system.
+Central axis: [ 0.876067057570701 -0.06047415189797   0.478382051912104].
+
+Generating the axis vectors.
+    z-ax vector (scaled + shifted to origin): array([ 63.536011727121036,  -1.314224556939102,  31.097961557363114])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[ 0.480855785303989  0.035836076502563  0.876067057570701]
+ [ 0.035836076502563  0.997526266608115 -0.06047415189797 ]
+ [-0.876067057570701  0.06047415189797   0.478382051912104]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_perm_A_A.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+Creating the Representation A.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Generating the z-axis system.
+Central axis: [ 0.876067057570701 -0.06047415189797   0.478382051912104].
+
+Generating the axis vectors.
+    z-ax vector (scaled + shifted to origin): array([ 10.971988272878956,   2.314224556939102,   2.39503844263689 ])
+    Creating the MC simulation vectors.
+Rotation matrix:
+[[ 0.480855785303989  0.035836076502563  0.876067057570701]
+ [ 0.035836076502563  0.997526266608115 -0.06047415189797 ]
+ [-0.876067057570701  0.06047415189797   0.478382051912104]]
+
+Generating the cone outer edge.
+
+Generating the cone cap.
+    Creating the uniform vector distribution.
+Opening the file 'fo_perm_A_B.pdb.gz' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+relax> pipe.display()
+# Data pipe name                  Data pipe type    Bundle    Current    
+'frame order'                     frame order       None                 
+'iso cones'                       frame order       None                 
+'iso cone, torsionless perm A'    frame order       None      *          
+
