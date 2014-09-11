@@ -276,54 +276,6 @@ class Relax_fit(SystemTestCase):
             # Set the relaxation times.
             self.interpreter.relax_fit.relax_time(time=time, spectrum_id=sname)
 
-        # Collect all times, and matching spectrum id.
-        all_times = []
-        all_id = []
-        for s_id, time in cdp.relax_times.iteritems():
-            all_times.append(time)
-            all_id.append(s_id)
-
-        # Get the dublicates.
-        dublicates = map(lambda val: (val, [i for i in xrange(len(all_times)) if all_times[i] == val]), all_times)
-
-        # Loop over the list of the mapping of times and duplications.
-        list_dub_mapping = []
-        for i, dub in enumerate(dublicates):
-            # Get current spectum id.
-            cur_spectrum_id = all_id[i]
-
-            # Get the tuple of time and indexes of duplications.
-            time, list_index_occur = dub
-
-            # Collect mapping of index to id.
-            id_list = []
-            if len(list_index_occur) > 1:
-                for list_index in list_index_occur:
-                    id_list.append(all_id[list_index])
-
-            # Store to list
-            list_dub_mapping.append((cur_spectrum_id, id_list))
-
-        # Assign dublicates.
-        for spectrum_id, dub_pair in list_dub_mapping:
-            print spectrum_id, dub_pair
-            if len(dub_pair) > 0:
-                self.interpreter.spectrum.replicated(spectrum_ids=dub_pair)
-
-        # Test the number of replicates stored in cdp, is 4.
-        self.assertEqual(len(cdp.replicates), 4)
-
-        # Cannot test, since dictionary have no order.
-        #test_rep = [['T2_ncyc1_ave', 'T2_ncyc1b_ave'],
-        #            ['T2_ncyc4_ave', 'T2_ncyc4b_ave'],
-        #            ['T2_ncyc9b_ave', 'T2_ncyc9_ave'],
-        #            ['T2_ncyc11_ave', 'T2_ncyc11b_ave']]
-
-        #for i, rep in enumerate(cdp.replicates):
-        #    test_rep_i = test_rep[i]
-        #    print(rep, test_rep_i)
-        #    self.assertEqual(rep, test_rep_i)
-
         self.interpreter.deselect.spin(':3,11,18,19,23,31,42,44,54,66,82,92,94,99,101,113,124,126,136,141,145,147,332,345,346,358,361')
 
         GRID_INC = 11
@@ -337,10 +289,50 @@ class Relax_fit(SystemTestCase):
         self.interpreter.deselect.spin(':512@ND2')
 
         # Do automatic
-        if False:
+        if True:
             relax_fit.Relax_fit(pipe_name=pipe_name, pipe_bundle=pipe_bundle, file_root='R2', results_dir=results_dir, grid_inc=GRID_INC, mc_sim_num=MC_SIM, view_plots=False)
 
         else:
+            # Prepare for finding dublictes.
+
+            # Collect all times, and matching spectrum id.
+            all_times = []
+            all_id = []
+            for s_id, time in cdp.relax_times.iteritems():
+                all_times.append(time)
+                all_id.append(s_id)
+    
+            # Get the dublicates.
+            dublicates = map(lambda val: (val, [i for i in xrange(len(all_times)) if all_times[i] == val]), all_times)
+    
+            # Loop over the list of the mapping of times and duplications.
+            list_dub_mapping = []
+            for i, dub in enumerate(dublicates):
+                # Get current spectum id.
+                cur_spectrum_id = all_id[i]
+    
+                # Get the tuple of time and indexes of duplications.
+                time, list_index_occur = dub
+    
+                # Collect mapping of index to id.
+                id_list = []
+                if len(list_index_occur) > 1:
+                    for list_index in list_index_occur:
+                        id_list.append(all_id[list_index])
+    
+                # Store to list
+                list_dub_mapping.append((cur_spectrum_id, id_list))
+    
+            # Assign dublicates.
+            for spectrum_id, dub_pair in list_dub_mapping:
+                print spectrum_id, dub_pair
+                if len(dub_pair) > 0:
+                    self.interpreter.spectrum.replicated(spectrum_ids=dub_pair)
+    
+            # Test the number of replicates stored in cdp, is 4.
+            self.assertEqual(len(cdp.replicates), 4)
+
+
             # Peak intensity error analysis.
             self.interpreter.spectrum.error_analysis()
 
