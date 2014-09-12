@@ -80,8 +80,8 @@ def add_axes(structure=None, representation=None, size=None, sims=False):
         mol = structure.get_molecule(mol_name, model=model_nums[i])
 
         # The pivot points.
-        pivot1 = generate_pivot(order=1, sim_index=sim_indices[i])
-        pivot2 = generate_pivot(order=2, sim_index=sim_indices[i])
+        pivot1 = generate_pivot(order=1, sim_index=sim_indices[i], pdb_limit=True)
+        pivot2 = generate_pivot(order=2, sim_index=sim_indices[i], pdb_limit=True)
 
         # A single z-axis, when no rotor object is present.
         if cdp.model in [MODEL_ISO_CONE_TORSIONLESS]:
@@ -182,7 +182,7 @@ def add_cones(structure=None, representation=None, size=None, inc=None, sims=Fal
         mol = structure.get_molecule('cones', model=model_nums[i])
 
         # The 1st pivot point.
-        pivot = generate_pivot(order=1, sim_index=sim_indices[i])
+        pivot = generate_pivot(order=1, sim_index=sim_indices[i], pdb_limit=True)
 
         # The rotation matrix (rotation from the z-axis to the cone axis).
         R = zeros((3, 3), float64)
@@ -344,8 +344,8 @@ def add_titles(structure=None, representation=None, displacement=40.0, sims=Fals
         T = eye(3)
 
     # The pivot points.
-    pivot1 = generate_pivot(order=1)
-    pivot2 = generate_pivot(order=2)
+    pivot1 = generate_pivot(order=1, pdb_limit=True)
+    pivot2 = generate_pivot(order=2, pdb_limit=True)
 
     # The models to loop over.
     model_nums = [None]
@@ -430,8 +430,8 @@ def add_rotors(structure=None, representation=None, sims=False):
     # Loop over the models.
     for i in range(len(model_nums)):
         # The pivot points.
-        pivot1 = generate_pivot(order=1, sim_index=sim_indices[i])
-        pivot2 = generate_pivot(order=2, sim_index=sim_indices[i])
+        pivot1 = generate_pivot(order=1, sim_index=sim_indices[i], pdb_limit=True)
+        pivot2 = generate_pivot(order=2, sim_index=sim_indices[i], pdb_limit=True)
 
         # The single rotor models.
         if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR]:
