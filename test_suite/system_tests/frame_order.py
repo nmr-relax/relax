@@ -949,6 +949,43 @@ class Frame_order(SystemTestCase):
         self.interpreter.run(script_file=self.cam_path+'generate_rotor2_distribution.py')
 
 
+    def test_frame_order_pdb_model_failed_pivot(self):
+        """Test the operation of the frame_order.pdb_model user function when the pivot is outside of the PDB limits."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('frame_order.pdb_model ensemble failure', 'frame order')
+
+        # Load one lactose structure.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+        self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=data_path, set_mol_name='lactose')
+
+        # Set the pivot point.
+        self.interpreter.frame_order.pivot([-1000, 0, 0], fix=True)
+
+        # Select a frame order model.
+        self.interpreter.frame_order.select_model('rotor')
+
+        # Define the moving part.
+        self.interpreter.domain(id='lactose', spin_id=':UNK')
+
+        # Set up the system.
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='axis_alpha', val=0.5)
+        self.interpreter.value.set(param='cone_sigma_max', val=0.1)
+
+        # Set up Monte Carlo data structures.
+        self.interpreter.monte_carlo.setup(10)
+        self.interpreter.monte_carlo.initial_values()
+
+        # Create the PDB model.
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir)
+
+
     def test_frame_order_pdb_model_ensemble(self):
         """Test the operation of the frame_order.pdb_model user function when an ensemble of structures are loaded."""
 
