@@ -29,7 +29,6 @@ from os import sep
 from graphics import ANALYSIS_IMAGE_PATH
 from pipe_control import spectrum
 from specific_analyses.relax_fit.uf import relax_time, select_model
-from specific_analyses.relax_fit.estimate_rx_err import estimate_rx_err
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
