@@ -920,7 +920,7 @@ class Relax_disp_rep:
         # Nr of columns is number of datasets.
         nr_cols = len(corr_data)
         # Nr of rows, is 2. With and without scaling.
-        nr_rows = 2
+        nr_rows = 3
 
         # Define figure
         fig, axises = plt.subplots(nrows=nr_rows, ncols=nr_cols)
@@ -940,7 +940,10 @@ class Relax_disp_rep:
                 glob_ini_x, glob_ini_y = glob_inis
 
                 x = data_x[str(glob_ini_x)]['peak_intensity_arr']
+                x_err = data_x[str(glob_ini_x)]['peak_intensity_err_arr']
+
                 y = data_y[str(glob_ini_y)]['peak_intensity_arr']
+                y_err = data_y[str(glob_ini_y)]['peak_intensity_err_arr']
 
                 # If row 1.
                 if i == 0:
@@ -948,15 +951,15 @@ class Relax_disp_rep:
                     ax.plot(x, y, '.', label='%s vs. %s' % (method_y, method_x) )
 
                     np = len(y)
-                    ax.set_title('Intensity for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
+                    ax.set_title(r'$I$' + ' for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
                     ax.legend(loc='upper left', shadow=True, prop = fontP)
                     ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
                     ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-                    ax.set_xlabel('Intensity')
-                    ax.set_ylabel('Intensity')
+                    ax.set_xlabel(r'$I$')
+                    ax.set_ylabel(r'$I$')
 
                 # Scale intensity
-                if 1 == 1:
+                if i == 1:
                 
                     x_norm = x / x.max()
                     y_norm = y / y.max()
@@ -965,10 +968,28 @@ class Relax_disp_rep:
                     ax.plot(x_norm, y_norm, '.', label='%s vs. %s' % (method_y, method_x) )
 
                     np = len(y_norm)
-                    ax.set_title('Norm. int. for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
+                    ax.set_title('Normalised intensity for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
                     ax.legend(loc='upper left', shadow=True, prop = fontP)
-                    ax.set_xlabel('Normalized Intensity')
-                    ax.set_ylabel('Normalized Intensity')
+                    ax.set_xlabel(r'$\mathrm{Norm.} I$')
+                    ax.set_ylabel(r'$\mathrm{Norm.} I$')
+
+
+                # Intensity to error.
+                if i == 2:
+                
+                    x_to_x_err = x / x_err
+                    y_to_y_err = y / y_err
+
+                    ax.plot(x_to_x_err, x_to_x_err, '-', label='%s vs. %s' % (method_x, method_x))
+                    ax.plot(x_to_x_err, y_to_y_err, '.', label='%s vs. %s' % (method_y, method_x) )
+
+                    np = len(y_norm)
+                    ax.set_title(r'$I/\sigma(I)$' + ' for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
+                    ax.legend(loc='upper left', shadow=True, prop = fontP)
+                    ax.set_xlabel(r'$I/\sigma(I)$')
+                    ax.set_ylabel(r'$I/\sigma(I)$')
+
+            plt.tight_layout()
 
         if show:
             plt.show()
