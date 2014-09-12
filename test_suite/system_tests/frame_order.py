@@ -982,6 +982,7 @@ class Frame_order(SystemTestCase):
 
         # Set up Monte Carlo data structures.
         self.interpreter.monte_carlo.setup(10)
+        self.interpreter.monte_carlo.initial_values()
 
         # Create the PDB model.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir)
