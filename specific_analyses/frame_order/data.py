@@ -181,11 +181,9 @@ def pivot_fixed():
     if cdp.model in [MODEL_RIGID]:
         return True
 
-    # The PCS is loaded.
-    if 'pcs' in base_data_types():
-        # The fixed flag is not set.
-        if hasattr(cdp, 'pivot_fixed') and not cdp.pivot_fixed:
-            return False
+    # The fixed flag is not set.
+    if hasattr(cdp, 'pivot_fixed') and not cdp.pivot_fixed:
+        return False
 
     # The point is fixed.
     return True
