@@ -376,6 +376,70 @@ class Relax_fit(SystemTestCase):
         # Check the curve-fitting results.
         self.check_curve_fitting_manual()
 
+        # Compare rx errors.
+        if True:
+            # Estimate rx and i0 errors.
+            self.interpreter.relax_fit.rx_err_estimate()
+
+            # Collect:
+            i0_est = []
+            i0_err_est = []
+            rx_est = []
+            rx_err_est = []
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                i0_est.append(cur_spin.i0)
+                i0_err_est.append(cur_spin.i0_err)
+                rx_est.append(cur_spin.rx)
+                rx_err_est.append(cur_spin.rx_err)
+
+            # Set number of MC simulati0ns
+            MC_SIM = 200
+
+            # Monte Carlo simulations.
+            self.interpreter.monte_carlo.setup(number=MC_SIM)
+            self.interpreter.monte_carlo.create_data()
+            self.interpreter.monte_carlo.initial_values()
+            self.interpreter.minimise.execute(min_method, scaling=False, constraints=False)
+            self.interpreter.monte_carlo.error_analysis()
+
+            # Collect:
+            i0_mc = []
+            i0_err_mc = []
+            rx_mc = []
+            rx_err_mc = []
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                i0_mc.append(cur_spin.i0)
+                i0_err_mc.append(cur_spin.i0_err)
+                rx_mc.append(cur_spin.rx)
+                rx_err_mc.append(cur_spin.rx_err)
+
+            # Now print and compare
+            i = 0
+            print("Comparison between error estimation from Jacobian co-variance matrix and Monte-Carlo simulations.")
+            print("Spin ID: rx_err_diff=est-MC, i0_err_diff=est-MC, rx_err=est/MC, i0_err=est/MC, i0=est/MC, rx=est/MC.")
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                # Extract for estimation.
+                i0_est_i = i0_est[i]
+                i0_err_est_i = i0_err_est[i]
+                rx_est_i = rx_est[i]
+                rx_err_est_i = rx_err_est[i]
+
+                # Extract from monte carlo.
+                i0_mc_i = i0_mc[i]
+                i0_err_mc_i = i0_err_mc[i]
+                rx_mc_i = rx_mc[i]
+                rx_err_mc_i = rx_err_mc[i]
+
+                # Add to counter.
+                i += 1
+
+                # Prepare text.
+                rx_err_diff = rx_err_est_i - rx_err_mc_i
+                i0_err_diff = i0_err_est_i - i0_err_mc_i
+
+                text = "Spin '%s': rx_err_diff=%3.4f, i0_err_diff=%3.3f, rx_err=%3.4f/%3.4f, i0_err=%3.3f/%3.3f, rx=%3.3f/%3.3f, i0=%3.3f/%3.3f" % (spin_id, rx_err_diff, i0_err_diff, rx_err_est_i, rx_err_mc_i, i0_err_est_i, i0_err_mc_i, rx_est_i, rx_mc_i, i0_est_i, i0_mc_i)
+                print(text)
+
 
     def test_curve_fitting_volume(self):
         """Test the relaxation curve fitting C modules."""
