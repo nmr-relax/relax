@@ -25,7 +25,6 @@
 # The available modules.
 __all__ = [
     'api',
-    'estimate_rx_err',
     'optimisation',
     'parameter_object',
     'parameters',
