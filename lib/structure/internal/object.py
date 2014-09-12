@@ -1521,7 +1521,7 @@ class Internal:
         """
 
         # All data.
-        if atom_id == None:
+        if model == None and atom_id == None:
             # Printout.
             if verbosity:
                 print("Deleting the following structural data:\n")
@@ -1532,6 +1532,10 @@ class Internal:
 
             # Initialise the empty model list.
             self.structural_data = ModelList()
+
+        # Delete a whole model.
+        elif atom_id == None:
+            self.structural_data.delete_model(model_num=model)
 
         # Atom subset deletion.
         else:
@@ -1548,10 +1552,14 @@ class Internal:
 
             # Loop over the models.
             del_res_nums = []
-            for model in self.model_loop():
+            for model_cont in self.model_loop():
+                # Skip models.
+                if model != None and model_cont.num == model:
+                    continue
+
                 # Loop over the molecules.
-                for mol_index in range(len(model.mol)):
-                    mol = model.mol[mol_index]
+                for mol_index in range(len(model_cont.mol)):
+                    mol = model_cont.mol[mol_index]
 
                     # Skip non-matching molecules.
                     if sel_obj and not sel_obj.contains_mol(mol.mol_name):
@@ -1581,6 +1589,8 @@ class Internal:
 
             # Nothing more to do.
             if not len(del_res_nums):
+                return
+            if model != None and len(self.structural_data) > 1:
                 return
 
             # Fix the deleted residue number order.
