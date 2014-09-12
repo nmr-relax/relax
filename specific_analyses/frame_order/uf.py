@@ -36,6 +36,7 @@ from lib.geometry.coord_transform import cartesian_to_spherical, spherical_to_ca
 from lib.geometry.rotations import euler_to_R_zyz, R_to_euler_zyz
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
+from specific_analyses.frame_order.checks import check_pivot
 from specific_analyses.frame_order.geometric import create_ave_pos, create_distribution, create_geometric_rep
 from specific_analyses.frame_order.parameters import update_model
 from specific_analyses.frame_order.variables import MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_LIST_RESTRICTED_TORSION, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID
@@ -367,8 +368,9 @@ def select_model(model=None):
     @type model:    str
     """
 
-    # Test if the current data pipe exists.
+    # Checks.
     pipes.test()
+    check_pivot()
 
     # Test if the model name exists.
     if not model in MODEL_LIST:
