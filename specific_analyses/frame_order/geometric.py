@@ -545,7 +545,7 @@ def add_rotors(structure=None, representation=None, sims=False):
         rotor(structure=structure, rotor_angle=rotor_angle[i], axis=dot(T, axis[i]), axis_pt=pivot[i], label=label[i], centre=com[i], span=span[i], blade_length=5e-10, model_num=models[i], staggered=staggered[i], half_rotor=half_rotor)
 
 
-def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, force=False):
+def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, model=1, force=False):
     """Create a PDB file of the molecule with the moving domains shifted to the average position.
 
     @keyword format:        The format for outputting the geometric representation.  Currently only the 'PDB' format is supported.
@@ -556,6 +556,8 @@ def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, force=Fal
     @type dir:              str
     @keyword compress_type: The compression type.  The integer values correspond to the compression type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
     @type compress_type:    int
+    @keyword model:         Only one model from an analysed ensemble can be used for the PDB representation of the Monte Carlo simulations, as these consists of one model per simulation.
+    @type model:            int
     @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
     @type force:            bool
     """
@@ -568,6 +570,7 @@ def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, force=Fal
     sims = []
     file_root = []
     models = []
+    structures = []
 
     # The real average position.
     titles.append("real average position")
@@ -582,21 +585,36 @@ def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, force=Fal
         file_root.append("%s_sim" % file)
         models.append([i+1 for i in range(cdp.sim_number)])
 
+    # Make a copy of the structural object (so as to preserve the original structure).
+    structures.append(deepcopy(cdp.structure))
+    if hasattr(cdp, 'sim_number'):
+        structures.append(deepcopy(cdp.structure))
+
+    # Delete all but the chosen model for the simulations.
+    if hasattr(cdp, 'sim_number'):
+        # Determine the models to delete.
+        to_delete = []
+        for model_cont in structures[-1].model_loop():
+            if model_cont.num != model:
+                to_delete.append(model_cont.num)
+        to_delete.reverse()
+
+        # Delete them.
+        for num in to_delete:
+            structures[-1].structural_data.delete_model(model_num=num)
+
     # Loop over each representation and add the contents.
     for i in range(len(titles)):
         # Printout.
         subsubsection(file=sys.stdout, text="Creating the %s." % titles[i])
 
-        # Make a copy of the structural object (so as to preserve the original structure).
-        structure = deepcopy(cdp.structure)
-
         # Loop over each model.
         for j in range(len(models[i])):
             # Create or set the models, if needed.
             if models[i][j] == 1:
-                structure.set_model(model_new=1)
+                structures[i].set_model(model_new=1)
             elif models[i][j] != None:
-                structure.add_model(model=models[i][j])
+                structures[i].add_model(model=models[i][j])
 
         # Loop over each model.
         for j in range(len(models[i])):
@@ -613,23 +631,23 @@ def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, force=Fal
                 else:
                     euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
             origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
-            structure.rotate(R=R, origin=origin, model=models[i][j], atom_id=domain_moving())
+            structures[i].rotate(R=R, origin=origin, model=models[i][j], atom_id=domain_moving())
 
             # Then translate the moving domain.
             if sims[i]:
                 T = [cdp.ave_pos_x_sim[j], cdp.ave_pos_y_sim[j], cdp.ave_pos_z_sim[j]]
             else:
                 T = [cdp.ave_pos_x, cdp.ave_pos_y, cdp.ave_pos_z]
-            structure.translate(T=T, model=models[i][j], atom_id=domain_moving())
+            structures[i].translate(T=T, model=models[i][j], atom_id=domain_moving())
 
         # Output to PDB format.
         if format == 'PDB':
             pdb_file = open_write_file(file_name=file_root[i]+'.pdb', dir=dir, compress_type=compress_type, force=force)
-            structure.write_pdb(file=pdb_file)
+            structures[i].write_pdb(file=pdb_file)
             pdb_file.close()
 
 
-def create_distribution(format='PDB', file=None, dir=None, compress_type=0, force=False):
+def create_distribution(format='PDB', file=None, dir=None, compress_type=0, model=1, force=False):
     """Create a PDB file of a distribution of positions coving the full dynamics of the moving domain.
 
     @keyword format:        The format for outputting the geometric representation.  Currently only the 'PDB' format is supported.
@@ -640,6 +658,8 @@ def create_distribution(format='PDB', file=None, dir=None, compress_type=0, forc
     @type dir:              str
     @keyword compress_type: The compression type.  The integer values correspond to the compression type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
     @type compress_type:    int
+    @keyword model:         Only one model from an analysed ensemble can be used for the PDB representation of the Monte Carlo simulations, as these consists of one model per simulation.
+    @type model:            int
     @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
     @type force:            bool
     """

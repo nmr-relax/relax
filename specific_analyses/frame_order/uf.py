@@ -60,7 +60,7 @@ def num_int_pts(num=200000):
     cdp.num_int_pts = num
 
 
-def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", dir=None, compress_type=0, size=30.0, inc=36, force=False):
+def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", dir=None, compress_type=0, size=30.0, inc=36, model=1, force=False):
     """Create 3 different PDB files for representing the frame order dynamics of the system.
 
     @keyword ave_pos:       The file root for the average molecule structure.
@@ -77,6 +77,8 @@ def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", 
     @type size:             float
     @keyword inc:           The number of increments for the filling of the cone objects.
     @type inc:              int
+    @keyword model:      Only one model from an analysed ensemble can be used for the PDB representation of the Monte Carlo simulations, as these consists of one model per simulation.
+    @type model:         int
     @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
     @type force:            bool
     """
@@ -90,7 +92,7 @@ def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", 
 
     # Create the average position structure.
     if ave_pos:
-        create_ave_pos(file=ave_pos, dir=dir, compress_type=compress_type, force=force)
+        create_ave_pos(file=ave_pos, dir=dir, compress_type=compress_type, model=model, force=force)
 
     # Nothing more to do for the rigid model.
     if cdp.model == MODEL_RIGID:
@@ -102,7 +104,7 @@ def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", 
 
     # Create the distribution.
     if dist:
-        create_distribution(file=dist, dir=dir, compress_type=compress_type, force=force)
+        create_distribution(file=dist, dir=dir, compress_type=compress_type, model=model, force=force)
 
 
 def permute_axes(permutation='A'):

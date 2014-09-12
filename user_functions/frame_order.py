@@ -112,6 +112,15 @@ uf.add_keyarg(
     wiz_element_type = "spin"
 )
 uf.add_keyarg(
+    name = "model",
+    default = 1,
+    min = 1,
+    py_type = "int",
+    desc_short = "structural model",
+    desc = "Only one model from an analysed ensemble can be used for the PDB representation of the Monte Carlo simulations of the average domain position, as these consists of one model per simulation, and also for the distribution of structures.",
+    wiz_element_type = "spin"
+)
+uf.add_keyarg(
     name = "force",
     default = False,
     py_type = "bool",
@@ -124,10 +133,11 @@ uf.desc[-1].add_paragraph("This function creates a set of PDB files for represen
 uf.desc[-1].add_paragraph("The three files are specified via the file root whereby the extensions '.pdb', '.pdb.gz', etc. should not be provided.  This is important for the geometric representation whereby different files are created for the positive and negative representations (due to symmetry in the NMR data, these cannot be differentiated), and for the Monte Carlo simulations.  For example if the file root is 'frame_order', the positive and negative representations will be placed in the 'frame_order_pos.pdb.gz' and 'frame_order_neg.pdb.gz' files and the Monte Carlo simulations in the 'frame_order_sim_pos.pdb.gz' and 'frame_order_sim_neg.pdb.gz' files.  For models where there is no difference in representation between the positive and negative directions, the files 'frame_order.pdb.gz' and 'frame_order_sim.pdb.gz' will be produced.")
 uf.desc[-1].add_paragraph("There are four different types of residue within the PDB.  The pivot point is represented as as a single carbon atom of the residue 'PIV'.  The cone consists of numerous H atoms of the residue 'CON'.  The cone axis vector is presented as the residue 'AXE' with one carbon atom positioned at the pivot and the other x Angstroms away on the cone axis (set by the geometric object size).  Finally, if Monte Carlo have been performed, there will be multiple 'MCC' residues representing the cone for each simulation, and multiple 'MCA' residues representing the multiple cone axes.")
 uf.desc[-1].add_paragraph("To create the diffusion in a cone PDB representation, a uniform distribution of vectors on a sphere is generated using spherical coordinates with the polar angle defined by the cone axis.  By incrementing the polar angle using an arccos distribution, a radial array of vectors representing latitude are created while incrementing the azimuthal angle evenly creates the longitudinal vectors.  These are all placed into the PDB file as H atoms and are all connected using PDB CONECT records.  Each H atom is connected to its two neighbours on the both the longitude and latitude.  This creates a geometric PDB object with longitudinal and latitudinal lines representing the filled cone.")
+uf.desc[-1].add_paragraph("The PDB representation of the Monte Carlo simulations consists of one model per simulation.  And the distribution of structures consists of one model per motional simulation step.  Therefore if an ensemble of structures has been analysed ,only one model from the ensemble can be used for either representation.  This defaults to model number 1, but this can be changed.")
 uf.backend = pdb_model
 uf.menu_text = "pdb_&model"
 uf.gui_icon = "oxygen.actions.document-save"
-uf.wizard_height_desc = 400
+uf.wizard_height_desc = 370
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
