@@ -199,10 +199,11 @@ class Relax_fit:
             return
 
         # Check if there is replicates, and the user has not specified them.
-        if not hasattr(cdp, 'replicates'):
-            # Has dublicates
-            has_dub = False
 
+        # Set flag for dublicates.
+        has_dub = False
+
+        if not hasattr(cdp, 'replicates'):
             # Collect all times, and matching spectrum id.
             all_times = []
             all_id = []
