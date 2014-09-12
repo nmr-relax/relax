@@ -62,8 +62,14 @@ def covariance_matrix(epsrel=0.0, verbosity=2):
         # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
         sd = sqrt(diag(pcov))
 
-        # Set the parameter error.
-        api.set_error(0, sd, model_info=model_info)
+        # Loop over the parameters.
+        index = 0
+        for name in api.get_param_names():
+            # Set the parameter error.
+            api.set_error(index, sd[index], model_info=model_info)
+
+            # Increment the parameter index.
+            index = index + 1
 
 
 def monte_carlo_create_data(method=None):
