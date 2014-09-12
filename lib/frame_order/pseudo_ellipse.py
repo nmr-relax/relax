@@ -721,15 +721,15 @@ def tmax_pseudo_ellipse_array(phi, theta_x, theta_y):
     @type theta_x:  float
     @param theta_y: The cone opening angle along y.
     @type theta_y:  float
-    @return:        The theta max angle for the given phi angle.
-    @rtype:         float
+    @return:        The array theta max angles for the given phi angle array.
+    @rtype:         numpy rank-1 float64 array
     """
 
     # Zero points.
     if theta_x == 0.0:
-        return 0.0
+        return 0.0 * phi
     elif theta_y == 0.0:
-        return 0.0
+        return 0.0 * phi
 
     # Return the maximum angle.
     return theta_x * theta_y / np_sqrt((np_cos(phi)*theta_y)**2 + (np_sin(phi)*theta_x)**2)
