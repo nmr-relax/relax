@@ -960,7 +960,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=data_path, set_mol_name='lactose')
 
         # Set the pivot point.
-        self.interpreter.frame_order.pivot([-1000, 0, 0], fix=True)
+        self.interpreter.frame_order.pivot([-995, 0, 0], fix=True)
 
         # Select a frame order model.
         self.interpreter.frame_order.select_model('rotor')
