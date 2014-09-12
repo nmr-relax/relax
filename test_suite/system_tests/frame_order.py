@@ -980,6 +980,9 @@ class Frame_order(SystemTestCase):
         self.interpreter.value.set(param='axis_alpha', val=0.5)
         self.interpreter.value.set(param='cone_sigma_max', val=0.1)
 
+        # Set up Monte Carlo data structures.
+        self.interpreter.monte_carlo.setup(10)
+
         # Create the PDB model.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir)
 
