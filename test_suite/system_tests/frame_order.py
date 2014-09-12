@@ -1562,7 +1562,7 @@ class Frame_order(SystemTestCase):
         cdp.cone_theta_y = 2.0
 
         # Optimisation.
-        self.interpreter.minimise.execute('simplex')
+        self.interpreter.minimise.execute('simplex', max_iter=2)
 
 
     def test_rigid_data_to_double_rotor_model(self):
