@@ -2456,6 +2456,26 @@ class Structure(SystemTestCase):
         self.assertEqual(len(cdp.structure.structural_data), 1)
         self.assertEqual(cdp.structure.structural_data[0].num, 2)
 
+        # Load another model, then delete it.
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=3)
+        self.interpreter.structure.delete(model=3)
+
+        # Test the structure metadata.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(cdp.structure.structural_data[0].num, 2)
+
+        # Load another model, then delete number 2.
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=10)
+        self.interpreter.structure.delete(model=2)
+
+        # Test the structure metadata.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(cdp.structure.structural_data[0].num, 10)
+
 
     def test_delete_multi_pipe(self):
         """Test the deletion of structural data in only one pipe."""
