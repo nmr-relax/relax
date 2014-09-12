@@ -194,6 +194,15 @@ Create a new release page at the URL http://wiki.nmr-relax.com/Relax_x.y.z.  Use
     = CHANGES file = - Create this section by cutting and pasting the part of the CHANGES file for this release.  Convert the Features, Changes, and Bugfixes titles to the subsection format == Features ==, == Changes ==, and == Bugfixes ==.  Strip all leading whitespace from the full list of changes so that the wiki can format the text.
     = See also = - Finally create this section which simply contains the text [[Category:Release_Notes]].
 
+For the changes file text, make the following conversions:
+
+    - For all bugs, support requests, and tasks, make links to the trackers including the full description in the link.  (for vim, go to the start of the text and use the register: "3dwr[/_<80>kb)^Mi ^[pxr]").
+    - Make links to the relax manual for all user functions (Vim register:  "v/[ ,\r\n]^M<80>kl<80>kDi[http://www.nmr-relax.com/manual/^[pa.html ^[pa]^[/user function^M", then search for "www.nmr-relax.com\/manual\/[a-z0-9_]*\.\|html" and replace all '.'.)
+    - Make internal links for all relax versions.
+    - Convert all symbols/parameters to use wiki formatting.
+    - Convert all model names to internal wiki links (vi search "\<m[0-9]\>\|\<tm[0-9]\>\|No Rex\|R2eff\|LM63\|LM63 3-site\|CR72\|CR72 full\|IT99\|TSMFK01\|B14\|B14 full\|NS CPMG\|MMQ CR72\|NS MMQ\|M61\|DPL94\|TP02\|TAP03\|MP05\|NS R1rho\|BK13").
+
+
 
 Mailing list
 ------------
