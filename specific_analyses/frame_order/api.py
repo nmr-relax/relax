@@ -814,13 +814,16 @@ class Frame_order(API_base, API_common):
             # Create the simulation object.
             setattr(cdp, sim_object_name, [])
 
-            # Get the simulation object.
+            # Get the normal and simulation object.
+            object = None
+            if hasattr(cdp, object_name):
+                object = getattr(cdp, object_name)
             sim_object = getattr(cdp, sim_object_name)
 
             # Loop over the simulations.
             for j in range(cdp.sim_number):
                 # Copy and append the data.
-                sim_object.append(deepcopy(getattr(cdp, object_name)))
+                sim_object.append(deepcopy(object))
 
 
     def sim_pack_data(self, data_id, sim_data):
