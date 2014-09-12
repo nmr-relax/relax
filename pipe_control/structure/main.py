@@ -247,11 +247,13 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     status.observers.result_file.notify()
 
 
-def delete(atom_id=None, verbosity=1, spin_info=True):
+def delete(atom_id=None, model=None, verbosity=1, spin_info=True):
     """Delete structural data.
     
     @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.  If not given, then all structural data will be deleted.
     @type atom_id:      str or None
+    @keyword model:     Individual structural models from a loaded ensemble can be deleted by specifying the model number.
+    @type model:        None or int
     @keyword verbosity: The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
     @type verbosity:    int
     @keyword spin_info: A flag which if True will cause all structural information in the spin containers and interatomic data containers to be deleted as well.  If False, then only the 3D structural data will be deleted.
@@ -265,7 +267,7 @@ def delete(atom_id=None, verbosity=1, spin_info=True):
     if hasattr(cdp, 'structure'):
         if verbosity:
             print("Deleting structural data from the current pipe.")
-        cdp.structure.delete(atom_id=atom_id, verbosity=verbosity)
+        cdp.structure.delete(model=model, atom_id=atom_id, verbosity=verbosity)
     elif verbosity:
         print("No structures are present.")
 

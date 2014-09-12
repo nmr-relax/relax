@@ -23,13 +23,19 @@
 """The automatic relaxation curve fitting protocol."""
 
 # Python module imports.
-from os import sep
+from os import chmod, sep
+from os.path import expanduser
+from stat import S_IRWXU, S_IRGRP, S_IROTH
+import sys
 
 # relax module imports.
+from lib.io import get_file_path, open_write_file
+from lib.software.grace import script_grace2images
+from lib.text.sectioning import section
+from pipe_control.mol_res_spin import spin_loop
 from pipe_control.pipes import cdp_name, has_pipe, switch
 from prompt.interpreter import Interpreter
 from status import Status; status = Status()
-
 
 
 class Relax_fit:
@@ -104,7 +110,7 @@ class Relax_fit:
         """Set up and run the curve-fitting."""
 
         # Peak intensity error analysis.
-        self.interpreter.spectrum.error_analysis()
+        self.error_analysis()
 
         # Set the relaxation curve type.
         self.interpreter.relax_fit.select_model('exp')
@@ -113,13 +119,13 @@ class Relax_fit:
         self.interpreter.minimise.grid_search(inc=self.grid_inc)
 
         # Minimise.
-        self.interpreter.minimise.execute('simplex', scaling=False, constraints=False)
+        self.interpreter.minimise.execute('newton', scaling=False, constraints=False)
 
         # Monte Carlo simulations.
         self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
         self.interpreter.monte_carlo.create_data()
         self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise.execute('simplex', scaling=False, constraints=False)
+        self.interpreter.minimise.execute('newton', scaling=False, constraints=False)
         self.interpreter.monte_carlo.error_analysis()
 
         # Save the relaxation rates.
@@ -135,6 +141,26 @@ class Relax_fit:
         self.interpreter.grace.write(x_data_type='relax_times', y_data_type='peak_intensity', file='intensities.agr', dir=self.grace_dir, force=True)    # Average peak intensities.
         self.interpreter.grace.write(x_data_type='relax_times', y_data_type='peak_intensity', norm=True, file='intensities_norm.agr', dir=self.grace_dir, force=True)    # Average peak intensities (normalised).
 
+        # Write a python "grace to PNG/EPS/SVG..." conversion script.
+        # Open the file for writing.
+        file_name = "grace2images.py"
+        file_path = get_file_path(file_name=file_name, dir=self.grace_dir)
+        file = open_write_file(file_name=file_name, dir=self.grace_dir, force=True)
+
+        # Write the file.
+        script_grace2images(file=file)
+
+        # Close the batch script, then make it executable (expanding any ~ characters).
+        file.close()
+
+        if self.grace_dir:
+            dir = expanduser(self.grace_dir)
+            chmod(dir + sep + file_name, S_IRWXU|S_IRGRP|S_IROTH)
+        else:
+            file_name = expanduser(file_name)
+            chmod(file_name, S_IRWXU|S_IRGRP|S_IROTH)
+
+
         # Display the Grace plots if selected.
         if self.view_plots:
             self.interpreter.grace.view(file='chi2.agr', dir=self.grace_dir)
@@ -145,6 +171,78 @@ class Relax_fit:
 
         # Save the program state.
         self.interpreter.state.save(state=self.file_root+'.save', dir=self.results_dir, force=True)
+
+
+    def error_analysis(self):
+        """Perform an error analysis of the peak intensities."""
+
+        # Printout.
+        section(file=sys.stdout, text="Error analysis", prespace=2)
+
+        # Check if intensity errors have already been calculated by the user.
+        precalc = True
+        for spin in spin_loop(skip_desel=True):
+            # No structure.
+            if not hasattr(spin, 'peak_intensity_err'):
+                precalc = False
+                break
+
+            # Determine if a spectrum ID is missing from the list.
+            for id in cdp.spectrum_ids:
+                if id not in spin.peak_intensity_err:
+                    precalc = False
+                    break
+
+        # Skip.
+        if precalc:
+            print("Skipping the error analysis as it has already been performed.")
+            return
+
+        # Check if there is replicates, and the user has not specified them.
+        if not hasattr(cdp, 'replicates'):
+            # Has dublicates
+            has_dub = False
+
+            # Collect all times, and matching spectrum id.
+            all_times = []
+            all_id = []
+            for s_id, time in cdp.relax_times.iteritems():
+                all_times.append(time)
+                all_id.append(s_id)
+
+            # Get the dublicates.
+            dublicates = map(lambda val: (val, [i for i in xrange(len(all_times)) if all_times[i] == val]), all_times)
+
+            # Loop over the list of the mapping of times and duplications.
+            list_dub_mapping = []
+            for i, dub in enumerate(dublicates):
+                # Get current spectum id.
+                cur_spectrum_id = all_id[i]
+
+                # Get the tuple of time and indexes of duplications.
+                time, list_index_occur = dub
+
+                # Collect mapping of index to id.
+                id_list = []
+                if len(list_index_occur) > 1:
+                    # There exist dublications.
+                    has_dub = True
+
+                    for list_index in list_index_occur:
+                        id_list.append(all_id[list_index])
+
+                # Store to list
+                list_dub_mapping.append((cur_spectrum_id, id_list))
+
+        # If there is dublication, then assign them.
+        if has_dub:
+            # Assign dublicates.
+            for spectrum_id, dub_pair in list_dub_mapping:
+                if len(dub_pair) > 0:
+                    self.interpreter.spectrum.replicated(spectrum_ids=dub_pair)
+
+        # Run the error analysis.
+        self.interpreter.spectrum.error_analysis()
 
 
     def check_vars(self):

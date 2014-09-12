@@ -90,6 +90,23 @@ class ModelList(list):
         return self[-1]
 
 
+    def delete_model(self, model_num=None):
+        """Delete the given model from the list.
+
+        @keyword model_num: The model to delete.
+        @type model_num:    int
+        """
+
+        # Sanity check.
+        if model_num not in self.current_models:
+            raise RelaxError("The model %s does not exist." % model_num)
+
+        # Remove the model from the lists (self and the current models).
+        index = self.current_models.index(model_num)
+        self.pop(index)
+        self.current_models.pop(index)
+
+
     def is_empty(self):
         """Method for testing if this ModelList object is empty.
 
