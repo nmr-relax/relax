@@ -374,7 +374,7 @@ def select_model(model=None):
 
     # Test if the model name exists.
     if not model in MODEL_LIST:
-        raise RelaxError("The model name '%s' is invalid, it must be one of %s." % MODEL_LIST)
+        raise RelaxError("The model name '%s' is invalid, it must be one of %s." % (model, MODEL_LIST))
 
     # Set the model
     cdp.model = model
