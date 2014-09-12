@@ -949,6 +949,36 @@ class Frame_order(SystemTestCase):
         self.interpreter.run(script_file=self.cam_path+'generate_rotor2_distribution.py')
 
 
+    def test_frame_order_pdb_model_ensemble(self):
+        """Test the operation of the frame_order.pdb_model user function when an ensemble of structures are loaded."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('frame_order.pdb_model ensemble failure', 'frame order')
+
+        # Load some lactose structures to create an ensemble.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+        self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=data_path, set_model_num=1, set_mol_name='lactose')
+        self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_2.pdb', dir=data_path, set_model_num=2, set_mol_name='lactose')
+        self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_3.pdb', dir=data_path, set_model_num=3, set_mol_name='lactose')
+
+        # Select a frame order model.
+        self.interpreter.frame_order.select_model('rotor')
+
+        # Set up the system.
+        self.interpreter.value.set
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='axis_alpha', val=0.5)
+        self.interpreter.value.set(param='cone_sigma_max', val=0.1)
+
+        # Create the PDB model.
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir)
+
+
     def fixme_test_model_free_rotor(self):
         """Test the free rotor frame order model."""
 
