@@ -983,7 +983,7 @@ class Relax_disp_rep:
                     ax.plot(x_to_x_err, x_to_x_err, '-', label='%s vs. %s' % (method_x, method_x))
                     ax.plot(x_to_x_err, y_to_y_err, '.', label='%s vs. %s' % (method_y, method_x) )
 
-                    np = len(y_norm)
+                    np = len(y_to_y_err)
                     ax.set_title(r'$I/\sigma(I)$' + ' for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
                     ax.legend(loc='upper left', shadow=True, prop = fontP)
                     ax.set_xlabel(r'$I/\sigma(I)$')
@@ -995,7 +995,7 @@ class Relax_disp_rep:
             plt.show()
 
 
-    def col_r2eff(self, method=None, list_glob_ini=None):
+    def col_r2eff(self, method=None, list_glob_ini=None, selection=None):
 
         # Loop over the glob ini:
         res_dic = {}
@@ -1022,7 +1022,7 @@ class Relax_disp_rep:
             spin_point_r2eff_err_list = []
 
             # Loop over the spins.
-            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(selection=selection, full_info=True, return_id=True, skip_desel=True):
                 # Make spin dic.
                 res_dic[str(glob_ini)]['r2eff'][spin_id] = {}
                 res_dic[str(glob_ini)]['r2eff_err'][spin_id] = {}
@@ -1046,6 +1046,71 @@ class Relax_disp_rep:
             res_dic[str(glob_ini)]['r2eff_err_arr'] = asarray(spin_point_r2eff_err_list)
 
         return res_dic
+
+
+    def plot_r2eff_corr(self, corr_data, show=False):
+
+        # Define figure.
+        # Nr of columns is number of datasets.
+        nr_cols = len(corr_data)
+        # Nr of rows, is 2. With and without scaling.
+        nr_rows = 2
+
+        # Define figure
+        fig, axises = plt.subplots(nrows=nr_rows, ncols=nr_cols)
+        fig.suptitle('Correlation plot')
+
+        # axises is a tuple with number of elements corresponding to number of rows.
+        # Each sub-tuple contains axis for each column.
+
+        # Loop over the rows.
+        for i, row_axises in enumerate(axises):
+            # Loop over the columns.
+            for j, ax in enumerate(row_axises) :
+                # Extract from lists.
+                data, methods, glob_inis = corr_data[j]
+                data_x, data_y = data
+                method_x, method_y = methods
+                glob_ini_x, glob_ini_y = glob_inis
+
+                x = data_x[str(glob_ini_x)]['r2eff_arr']
+                x_err = data_x[str(glob_ini_x)]['r2eff_err_arr']
+
+                y = data_y[str(glob_ini_y)]['r2eff_arr']
+                y_err = data_y[str(glob_ini_y)]['r2eff_err_arr']
+
+                # If row 1.
+                if i == 0:
+                    ax.plot(x, x, '-', label='%s vs. %s' % (method_x, method_x))
+                    ax.plot(x, y, '.', label='%s vs. %s' % (method_y, method_x) )
+
+                    np = len(y)
+                    ax.set_title(r'$R_{2,\mathrm{eff}}$' + ' for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
+                    ax.legend(loc='upper left', shadow=True, prop = fontP)
+                    ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+                    ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+                    ax.set_xlabel(r'$R_{2,\mathrm{eff}}$')
+                    ax.set_ylabel(r'$R_{2,\mathrm{eff}}$')
+
+                # R2eff to error.
+                if i == 1:
+                
+                    x_to_x_err = x / x_err
+                    y_to_y_err = y / y_err
+
+                    ax.plot(x_to_x_err, x_to_x_err, '-', label='%s vs. %s' % (method_x, method_x))
+                    ax.plot(x_to_x_err, y_to_y_err, '.', label='%s vs. %s' % (method_y, method_x) )
+
+                    np = len(y_to_y_err)
+                    ax.set_title(r'$R_{2,\mathrm{eff}}/\sigma(R_{2,\mathrm{eff}})$' + ' for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
+                    ax.legend(loc='upper left', shadow=True, prop = fontP)
+                    ax.set_xlabel(r'$R_{2,\mathrm{eff}}/\sigma(R_{2,\mathrm{eff}})$')
+                    ax.set_ylabel(r'$R_{2,\mathrm{eff}}/\sigma(R_{2,\mathrm{eff}})$')
+
+            plt.tight_layout()
+
+        if show:
+            plt.show()
 
 
     def get_r2eff_stat_dic(self, list_r2eff_dics=None, list_glob_ini=None):
