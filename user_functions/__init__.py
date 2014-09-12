@@ -45,6 +45,7 @@ __all__ += [
     'domain',
     'dx',
     'eliminate',
+    'error_analysis',
     'fix',
     'frame_order',
     'grace',
@@ -102,6 +103,7 @@ def initialise():
     import user_functions.domain
     import user_functions.dx
     import user_functions.eliminate
+    import user_functions.error_analysis
     import user_functions.fix
     import user_functions.frame_order
     import user_functions.grace

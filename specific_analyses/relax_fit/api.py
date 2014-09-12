@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,14 +26,16 @@
 # Python module imports.
 from minfx.generic import generic_minimise
 from minfx.grid import grid
-from numpy import dot, float64, zeros
+from numpy import asarray, dot, float64, transpose, zeros
 from numpy.linalg import inv
 from re import match, search
+import sys
 from warnings import warn
 
 # relax module imports.
 from dep_check import C_module_exp_fn
 from lib.errors import RelaxError, RelaxNoModelError, RelaxNoSequenceError
+from lib.text.sectioning import subsection
 from lib.warnings import RelaxDeselectWarning
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from specific_analyses.api_base import API_base
@@ -43,7 +46,7 @@ from specific_analyses.relax_fit.parameters import assemble_param_vector, disass
 
 # C modules.
 if C_module_exp_fn:
-    from target_functions.relax_fit import setup
+    from target_functions.relax_fit import jacobian, setup
 
 
 class Relax_fit(API_base, API_common):
@@ -70,6 +73,82 @@ class Relax_fit(API_base, API_common):
 
         # Place a copy of the parameter list object in the instance namespace.
         self._PARAMS = Relax_fit_params()
+
+
+    def covariance_matrix(self, model_info=None, verbosity=1):
+        """Return the Jacobian and weights required for parameter errors via the covariance matrix.
+
+        @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() method.
+        @type model_info:       SpinContainer instance, str
+        @keyword verbosity:     The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:        int
+        @return:                The Jacobian and weight matrices for the given model.
+        @rtype:                 numpy rank-2 array, numpy rank-2 array
+        """
+
+        # Unpack the data.
+        spin, spin_id = model_info
+
+        # Check that the C modules have been compiled.
+        if not C_module_exp_fn:
+            raise RelaxError("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
+
+        # Perform checks.
+        if not cdp.curve_type == 'exp':
+            raise RelaxError("Only curve type of 'exp' is allowed for error estimation.  Set by: relax_fit.select_model('exp').")
+
+        # Raise Error, if not optimised.
+        if not (hasattr(spin, 'rx') and hasattr(spin, 'i0')):
+            raise RelaxError("Spin '%s' does not contain optimised 'rx' and 'i0' values.  Try execute: minimise.execute(min_algor='Newton', constraints=False)"%(spin_id))
+
+        # Raise warning, if gradient count is 0.  This could point to a lack of minimisation first.
+        if hasattr(spin, 'g_count'):
+            if getattr(spin, 'g_count') == 0.0:
+                text = "Spin %s contains a gradient count of 0.0.  Is the rx parameter optimised?  Try execute: minimise.execute(min_algor='Newton', constraints=False)" %(spin_id)
+                warn(RelaxWarning("%s." % text))
+
+        # Print information.
+        if verbosity >= 1:
+            # Individual spin block section.
+            top = 2
+            if verbosity >= 2:
+                top += 2
+            subsection(file=sys.stdout, text="Estimating rx error for spin: %s"%spin_id, prespace=top)
+
+        # The keys.
+        keys = list(spin.peak_intensity.keys())
+
+        # The peak intensities and times.
+        values = []
+        errors = []
+        times = []
+        for key in keys:
+            values.append(spin.peak_intensity[key])
+            errors.append(spin.peak_intensity_err[key])
+            times.append(cdp.relax_times[key])
+
+        # Convert to numpy array.
+        values = asarray(values)
+        errors = asarray(errors)
+        times = asarray(times)
+
+        # Extract values.
+        rx = getattr(spin, 'rx')
+        i0 = getattr(spin, 'i0')
+
+        # Pack data
+        param_vector = [rx, i0]
+
+        # Initialise data in C code.
+        scaling_list = [1.0, 1.0]
+        setup(num_params=len(param_vector), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
+
+        # Use the direct Jacobian from function.
+        jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
+        weights = 1. / errors**2
+
+        # Return the matrices.
+        return jacobian_matrix_exp, weights
 
 
     def create_mc_data(self, data_id=None):

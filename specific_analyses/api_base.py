@@ -138,6 +138,21 @@ class API_base(object):
         return 'Method of Multipliers'
 
 
+    def covariance_matrix(self, model_info=None, verbosity=1):
+        """Return the Jacobian and weights required for parameter errors via the covariance matrix.
+
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
+        @keyword verbosity:     The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:        int
+        @return:                The Jacobian and weight matrices for the given model.
+        @rtype:                 numpy rank-2 array, numpy rank-2 array
+        """
+
+        # Not implemented.
+        raise RelaxImplementError('covariance_matrix')
+
+
     def create_mc_data(self, data_id=None):
         """Create the Monte Carlo data.
 

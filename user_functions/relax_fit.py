@@ -22,7 +22,11 @@
 # Module docstring.
 """The relax_fit user function definitions."""
 
+# Python module imports.
+from os import sep
+
 # relax module imports.
+from graphics import ANALYSIS_IMAGE_PATH
 from pipe_control import spectrum
 from specific_analyses.relax_fit.uf import relax_time, select_model
 from user_functions.data import Uf_info; uf_info = Uf_info()

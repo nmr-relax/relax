@@ -23,7 +23,7 @@
 """Module for performing Monte Carlo simulations for error analysis."""
 
 # Python module imports.
-from numpy import ndarray
+from numpy import diag, ndarray, sqrt
 from random import gauss
 
 # relax module imports.
@@ -33,7 +33,46 @@ from pipe_control import pipes
 from specific_analyses.api import return_api
 
 
-def create_data(method=None):
+def covariance_matrix(epsrel=0.0, verbosity=2):
+    """Estimate model parameter errors via the covariance matrix technique.
+
+    Note that the covariance matrix error estimate is always of lower quality than Monte Carlo simulations.
+
+
+    @param epsrel:          Any columns of R which satisfy |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix, where the corresponding rows and columns of the covariance matrix are set to zero.
+    @type epsrel:           float
+    @keyword verbosity:     The amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:        int
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # The specific analysis API object.
+    api = return_api()
+
+    # Loop over the models.
+    for model_info in api.model_loop():
+        # Get the Jacobian and weighting matrix.
+        jacobian, weights = api.covariance_matrix(model_info=model_info, verbosity=verbosity)
+
+        # Calculate the covariance matrix.
+        pcov = statistics.multifit_covar(J=jacobian, weights=weights)
+
+        # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
+        sd = sqrt(diag(pcov))
+
+        # Loop over the parameters.
+        index = 0
+        for name in api.get_param_names():
+            # Set the parameter error.
+            api.set_error(index, sd[index], model_info=model_info)
+
+            # Increment the parameter index.
+            index = index + 1
+
+
+def monte_carlo_create_data(method=None):
     """Function for creating simulation data.
 
     @keyword method:    The type of Monte Carlo simulation to perform.
@@ -108,7 +147,7 @@ def create_data(method=None):
         api.sim_pack_data(data_index, random)
 
 
-def error_analysis():
+def monte_carlo_error_analysis():
     """Function for calculating errors from the Monte Carlo simulations.
 
     The standard deviation formula used to calculate the errors is the square root of the
@@ -198,7 +237,7 @@ def error_analysis():
     cdp.sim_state = False
 
 
-def initial_values():
+def monte_carlo_initial_values():
     """Set the initial simulation parameter values."""
 
     # Test if the current data pipe exists.
@@ -215,7 +254,7 @@ def initial_values():
     api.sim_init_values()
 
 
-def off():
+def monte_carlo_off():
     """Turn simulations off."""
 
     # Test if the current data pipe exists.
@@ -229,7 +268,7 @@ def off():
     cdp.sim_state = False
 
 
-def on():
+def monte_carlo_on():
     """Turn simulations on."""
 
     # Test if the current data pipe exists.
@@ -243,7 +282,7 @@ def on():
     cdp.sim_state = True
 
 
-def select_all_sims(number=None, all_select_sim=None):
+def monte_carlo_select_all_sims(number=None, all_select_sim=None):
     """Set the select flag of all simulations of all models to one.
 
     @keyword number:            The number of Monte Carlo simulations to set up.
@@ -279,7 +318,7 @@ def select_all_sims(number=None, all_select_sim=None):
         i += 1
 
 
-def setup(number=None, all_select_sim=None):
+def monte_carlo_setup(number=None, all_select_sim=None):
     """Function for setting up Monte Carlo simulations.
 
     @keyword number:            The number of Monte Carlo simulations to set up.
@@ -298,4 +337,4 @@ def setup(number=None, all_select_sim=None):
     cdp.sim_state = True
 
     # Select all simulations.
-    select_all_sims(number=number, all_select_sim=all_select_sim)
+    monte_carlo_select_all_sims(number=number, all_select_sim=all_select_sim)
