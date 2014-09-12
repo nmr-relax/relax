@@ -202,8 +202,8 @@ class Frame_order_analysis:
                 # The PDB representation of the model and visualisation script (in case this was not completed correctly).
                 self.visualisation(model=perm_model)
 
-                # Exit the function.
-                return
+                # Jump to the next permutation.
+                continue
 
             # Copy the data pipe, and add it to the list so it is included in the model selection.
             self.interpreter.pipe.copy(pipe_from=self.pipe_name_dict[model], pipe_to=self.pipe_name_dict[perm_model])
