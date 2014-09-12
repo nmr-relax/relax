@@ -33,7 +33,7 @@ from pipe_control import pipes
 from specific_analyses.api import return_api
 
 
-def create_data(method=None):
+def monte_carlo_create_data(method=None):
     """Function for creating simulation data.
 
     @keyword method:    The type of Monte Carlo simulation to perform.
@@ -108,7 +108,7 @@ def create_data(method=None):
         api.sim_pack_data(data_index, random)
 
 
-def error_analysis():
+def monte_carlo_error_analysis():
     """Function for calculating errors from the Monte Carlo simulations.
 
     The standard deviation formula used to calculate the errors is the square root of the
@@ -198,7 +198,7 @@ def error_analysis():
     cdp.sim_state = False
 
 
-def initial_values():
+def monte_carlo_initial_values():
     """Set the initial simulation parameter values."""
 
     # Test if the current data pipe exists.
@@ -215,7 +215,7 @@ def initial_values():
     api.sim_init_values()
 
 
-def off():
+def monte_carlo_off():
     """Turn simulations off."""
 
     # Test if the current data pipe exists.
@@ -229,7 +229,7 @@ def off():
     cdp.sim_state = False
 
 
-def on():
+def monte_carlo_on():
     """Turn simulations on."""
 
     # Test if the current data pipe exists.
@@ -243,7 +243,7 @@ def on():
     cdp.sim_state = True
 
 
-def select_all_sims(number=None, all_select_sim=None):
+def monte_carlo_select_all_sims(number=None, all_select_sim=None):
     """Set the select flag of all simulations of all models to one.
 
     @keyword number:            The number of Monte Carlo simulations to set up.
@@ -279,7 +279,7 @@ def select_all_sims(number=None, all_select_sim=None):
         i += 1
 
 
-def setup(number=None, all_select_sim=None):
+def monte_carlo_setup(number=None, all_select_sim=None):
     """Function for setting up Monte Carlo simulations.
 
     @keyword number:            The number of Monte Carlo simulations to set up.
@@ -298,4 +298,4 @@ def setup(number=None, all_select_sim=None):
     cdp.sim_state = True
 
     # Select all simulations.
-    select_all_sims(number=number, all_select_sim=all_select_sim)
+    monte_carlo_select_all_sims(number=number, all_select_sim=all_select_sim)

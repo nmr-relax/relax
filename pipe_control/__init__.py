@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -32,6 +32,7 @@ __all__ = [ 'align_tensor',
             'diffusion_tensor',
             'domain',
             'eliminate',
+            'error_analysis',
             'exp_info',
             'fix',
             'grace',
@@ -41,7 +42,6 @@ __all__ = [ 'align_tensor',
             'model_selection',
             'mol_res_spin',
             'molmol',
-            'monte_carlo',
             'noesy',
             'opendx',
             'palmer',
