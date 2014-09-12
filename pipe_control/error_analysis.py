@@ -54,7 +54,7 @@ def covariance_matrix(epsrel=0.0, verbosity=2):
     # Loop over the models.
     for model_info in api.model_loop():
         # Get the Jacobian and weighting matrix.
-        jacobian, weights = api.covariance_matrix(verbosity=verbosity)
+        jacobian, weights = api.covariance_matrix(model_info=model_info, verbosity=verbosity)
 
         # Calculate the covariance matrix.
         pcov = statistics.multifit_covar(J=jacobian, weights=weights)
