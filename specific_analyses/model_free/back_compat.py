@@ -924,7 +924,7 @@ def read_1_2_results(file_data, verbosity=1):
         all_select_sim = all_select_sim.tolist()
 
         # Set up the Monte Carlo simulations.
-        pipe_control.monte_carlo.setup(number=len(sims), all_select_sim=all_select_sim)
+        pipe_control.error_analysis.monte_carlo_setup(number=len(sims), all_select_sim=all_select_sim)
 
         # Turn the simulation state to off!
         cdp.sim_state = False
