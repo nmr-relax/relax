@@ -33,6 +33,39 @@ from pipe_control import pipes
 from specific_analyses.api import return_api
 
 
+def covariance_matrix(epsrel=0.0, verbosity=2):
+    """Estimate model parameter errors via the covariance matrix technique.
+
+    Note that the covariance matrix error estimate is always of lower quality than Monte Carlo simulations.
+
+
+    @param epsrel:          Any columns of R which satisfy |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix, where the corresponding rows and columns of the covariance matrix are set to zero.
+    @type epsrel:           float
+    @keyword verbosity:     The amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:        int
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # The specific analysis API object.
+    api = return_api()
+
+    # Loop over the models.
+    for model_info in api.model_loop():
+        # Get the Jacobian and weighting matrix.
+        jacobian, weights = api.covariance_matrix(verbosity=verbosity)
+
+        # Calculate the covariance matrix.
+        pcov = statistics.multifit_covar(J=jacobian, weights=weights)
+
+        # To compute one standard deviation errors on the parameters, take the square root of the diagonal covariance.
+        sd = sqrt(diag(pcov))
+
+        # Set the parameter error.
+        api.set_error(0, sd, model_info=model_info)
+
+
 def monte_carlo_create_data(method=None):
     """Function for creating simulation data.
 
