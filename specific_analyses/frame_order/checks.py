@@ -24,6 +24,7 @@
 
 # relax module imports.
 from lib.errors import RelaxError
+from pipe_control.pipes import cdp_name, get_pipe
 
 
 def check_pivot(pipe_name=None):
@@ -36,10 +37,10 @@ def check_pivot(pipe_name=None):
 
     # The data pipe.
     if pipe_name == None:
-        pipe_name = pipes.cdp_name()
+        pipe_name = cdp_name()
 
     # Get the data pipe.
-    dp = pipes.get_pipe(pipe_name)
+    dp = get_pipe(pipe_name)
 
     # Check for the pivot_x parameter.
     if not hasattr(dp, 'pivot_x'):
