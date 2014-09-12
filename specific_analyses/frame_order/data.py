@@ -199,6 +199,10 @@ def pivot_fixed():
     if cdp.model in [MODEL_RIGID]:
         return True
 
+    # No PCS data, so the pivot cannot be optimised.
+    if not hasattr(cdp, 'pcs_ids') or len(cdp.pcs_ids) == 0:
+        return True
+
     # The fixed flag is not set.
     if hasattr(cdp, 'pivot_fixed') and not cdp.pivot_fixed:
         return False
