@@ -455,6 +455,13 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "model",
+    py_type = "int",
+    desc_short = "structural model",
+    desc = "Individual structural models from a loaded ensemble can be deleted by specifying the model number.",
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "verbosity",
     default = 1,
     py_type = "int",
@@ -470,7 +477,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will delete structural information from the current data pipe.  All spin and sequence information loaded from these structures will be preserved - this only affects the structural data.  The atom ID argument can be used to restrict deletion to parts of the loaded molecules.")
+uf.desc[-1].add_paragraph("This will delete structural information from the current data pipe.  All spin and sequence information loaded from these structures will be preserved - this only affects the structural data.  The atom ID argument can be used to restrict deletion to parts of the loaded molecules, or the model argument can be used to delete individual structural models from an ensemble.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To delete everything, simply type:")
@@ -481,7 +488,7 @@ uf.desc[-1].add_prompt("relax> structure.delete(atom_id=':50-100')")
 uf.backend = pipe_control.structure.main.delete
 uf.menu_text = "&delete"
 uf.gui_icon = "oxygen.actions.list-remove"
-uf.wizard_size = (700, 500)
+uf.wizard_size = (800, 550)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
