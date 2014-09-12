@@ -961,11 +961,16 @@ class Frame_order(SystemTestCase):
         self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_2.pdb', dir=data_path, set_model_num=2, set_mol_name='lactose')
         self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_3.pdb', dir=data_path, set_model_num=3, set_mol_name='lactose')
 
+        # Set the pivot point.
+        self.interpreter.frame_order.pivot([0, 0, 0], fix=True)
+
         # Select a frame order model.
         self.interpreter.frame_order.select_model('rotor')
 
+        # Define the moving part.
+        self.interpreter.domain(id='lactose', spin_id=':UNK')
+
         # Set up the system.
-        self.interpreter.value.set
         self.interpreter.value.set(param='ave_pos_x', val=0.0)
         self.interpreter.value.set(param='ave_pos_y', val=0.0)
         self.interpreter.value.set(param='ave_pos_z', val=0.0)
