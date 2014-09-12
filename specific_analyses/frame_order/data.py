@@ -172,17 +172,17 @@ def generate_pivot(order=1, sim_index=None, pipe_name=None, pdb_limit=False):
         # Check each coordinate.
         out = False
         for i in range(3):
-            if pivot[i] <= -1000.0:
-                pivot[i] = -950.0
+            if pivot[i] <= -900.0:
+                pivot[i] = -900.0
                 out = True
-            elif pivot[i] > 10000.0:
-                pivot[i] = 9500.0
+            elif pivot[i] > 9900.0:
+                pivot[i] = 9900.0
                 out = True
 
         # Failure.
         if out:
             new_pivot = "[%.3f, %.3f, %.3f]" % (pivot[0], pivot[1], pivot[2])
-            warn(RelaxWarning("The pivot point %s is outside of the PDB coordinate limits of [-999.999, 9999.999], shifting to %s." % (orig_pivot, new_pivot)))
+            warn(RelaxWarning("The pivot point %s is outside of the PDB coordinate limits of [-999.999, 9999.999], less a 100 Angstrom buffer, shifting to %s." % (orig_pivot, new_pivot)))
 
     # Return the pivot.
     return pivot
