@@ -22,9 +22,14 @@
 # Module docstring.
 """The relax_fit user function definitions."""
 
+# Python module imports.
+from os import sep
+
 # relax module imports.
+from graphics import ANALYSIS_IMAGE_PATH
 from pipe_control import spectrum
 from specific_analyses.relax_fit.uf import relax_time, select_model
+from specific_analyses.relax_fit.estimate_rx_err import estimate_rx_err
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -63,6 +68,50 @@ uf.backend = relax_time
 uf.menu_text = "&relax_time"
 uf.gui_icon = "oxygen.actions.chronometer"
 uf.wizard_size = (700, 500)
+
+
+# The relax_fit.rx_err_estimate user function.
+uf = uf_info.add_uf('relax_fit.rx_err_estimate')
+uf.title = "Estimate Rx errors by the Jacobian matrix."
+uf.title_short = "Estimate Rx errors."
+uf.add_keyarg(
+    name = "spin_id",
+    py_type = "str",
+    arg_type = "spin ID",
+    desc_short = "spin ID to restrict value setting to",
+    desc = "The spin ID string to restrict value setting to.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "epsrel",
+    py_type = "float",
+    default = 0.0,
+    desc_short = "parameter to remove linear-dependent columns.",
+    desc = "The parameter to remove linear-dependent columns when J is rank deficient.",
+    can_be_none = False
+)
+uf.add_keyarg(
+    name = "verbosity",
+    default = 1,
+    py_type = "int",
+    desc_short = "amount of information to print.",
+    desc = "The higher the value, the greater the verbosity.",
+    can_be_none = False
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is a new experimental feature from version 3.3.")
+uf.desc[-1].add_paragraph("This will estimate Rx errors by using the exponential decay Jacobian matrix 'J' to compute the covariance matrix of the best-fit parameters.")
+uf.desc[-1].add_paragraph("This can be used to for comparison to Monte-Carlo simulations.")
+uf.desc[-1].add_paragraph("This method is inspired from the GNU Scientific Library (GSL).")
+uf.desc[-1].add_paragraph("The covariance matrix is given by: covar = Qxx = (J^T.W.J)^-1, where the weight matrix W is constructed by the multiplication of an Identity matrix I and a weight array w.  The weight array is 1/errors^2, which then gives W = I.w = I x 1/errors^2.")
+uf.desc[-1].add_paragraph("Qxx is computed by QR decomposition, J^T.W.J=QR, Qxx=R^-1. Q^T.  The columns of R which satisfy: |R_{kk}| <= epsrel |R_{11}| are considered linearly-dependent and are excluded from the covariance matrix (the corresponding rows and columns of the covariance matrix are set to zero).")
+uf.desc[-1].add_paragraph("The parameter 'epsrel' is used to remove linear-dependent columns when J is rank deficient.")
+uf.backend = estimate_rx_err
+uf.menu_text = "&rx_err_estimate"
+uf.gui_icon = "relax.relax_fit"
+uf.wizard_size = (800, 800)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + sep + 'blank_150x150.png'
 
 
 # The relax_fit.select_model user function.
