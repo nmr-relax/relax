@@ -31,6 +31,7 @@ from lib.geometry.rotations import euler_to_R_zyz
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import spin_loop
+from specific_analyses.frame_order.checks import check_pivot
 from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_RIGID
 
 
@@ -111,6 +112,9 @@ def generate_pivot(order=1, sim_index=None, pipe_name=None, pdb_limit=False):
     @return:            The give pivot point.
     @rtype:             numpy 3D rank-1 float64 array
     """
+
+    # Checks.
+    check_pivot(pipe_name=pipe_name)
 
     # The data pipe.
     if pipe_name == None:
