@@ -591,7 +591,7 @@ def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, model=1, 
         structures.append(deepcopy(cdp.structure))
 
     # Delete all but the chosen model for the simulations.
-    if hasattr(cdp, 'sim_number'):
+    if hasattr(cdp, 'sim_number') and len(structures[-1].structural_data) > 1:
         # Determine the models to delete.
         to_delete = []
         for model_cont in structures[-1].model_loop():
