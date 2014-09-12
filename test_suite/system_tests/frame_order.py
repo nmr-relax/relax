@@ -1547,6 +1547,24 @@ class Frame_order(SystemTestCase):
         self.space_probe(ref_chi2=chi2, params=['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'cone_theta_x', 'cone_theta_y'])
 
 
+    def test_pseudo_ellipse_zero_cone_angle(self):
+        """Catch for a bug in optimisation when the cone_theta_x is set to zero in the pseudo-ellipse models."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
+        self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
+
+        # Change the original parameters.
+        cdp.cone_theta_x = 0.0
+        cdp.cone_theta_y = 2.0
+
+        # Optimisation.
+        self.interpreter.minimise.execute('simplex')
+
+
     def test_rigid_data_to_double_rotor_model(self):
         """Test the double rotor target function for the data from a rigid test molecule."""
 
