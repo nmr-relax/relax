@@ -5970,10 +5970,11 @@ class Relax_disp(SystemTestCase):
         #methods = ['FT']
 
         # Set the intensity.
-        RDR.set_int(methods=methods, list_glob_ini=[128, 126])
+        #RDR.set_int(methods=methods, list_glob_ini=[128, 126], set_rmsd=False, set_rep=True)
+        RDR.set_int(methods=methods, list_glob_ini=[128, 126], set_rmsd=True, set_rep=False)
 
         # Try plot some intensity correlations.
-        if True:
+        if False:
             # Collect intensity values.
             # For all spins, ft
             int_ft_all = RDR.col_int(method='FT', list_glob_ini=[128, 126], selection=None)
@@ -5993,9 +5994,20 @@ class Relax_disp(SystemTestCase):
             fig2 = [[int_ft_sel, int_mdd_sel], ['FT sel', 'MDD sel'], [128, 128]]
             corr_data = [fig1, fig2]
 
-            RDR.plot_int_corr(corr_data=corr_data, show=False)
+            fig3 = [[int_ft_all, int_mdd_all], ['FT', 'FT'], [128, 126]]
+            fig4 = [[int_ft_all, int_mdd_all], ['FT', 'MDD'], [128, 126]]
+            corr_data = [fig3, fig4]
+
+            #fig5 = [[int_ft_all, int_mdd_all], ['FT', 'MDD'], [128, 128]]
+            fig5 = [[int_ft_all, int_mdd_all], ['FT', 'MDD'], [128, 126]]
+            fig6 = [[int_ft_all, int_ft_all], ['FT', 'FT'], [128, 126]]
+            #fig6 = [[int_mdd_all, int_mdd_all], ['MDD', 'MDD'], [128, 126]]
+            corr_data = [fig5, fig6]
+
+            RDR.plot_int_corr(corr_data=corr_data, show=True)
 
 
+        # Try plot some R2eff correlations.
         if False:
             # Now calculate R2eff.
             RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
@@ -6003,18 +6015,50 @@ class Relax_disp(SystemTestCase):
             # Try for bad data.
             #RDR.calc_r2eff(methods=['FT'], list_glob_ini=[6, 4])
 
-            if True:
-                # Collect r2eff values.
-                r2eff_ft = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126])
+            # Collect r2eff values.
+            r2eff_ft_all = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126], selection=None)
 
-                # Collect r2eff values.
-                r2eff_mdd = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126])
+            # Now make a spin selection.
+            selection = ':2,3'
+            r2eff_ft_sel = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126], selection=selection)
+            # Print the length of datasets, depending on selection.
+            print( "All spins", len(r2eff_ft_all['128']['r2eff_arr']), "Selection spins", len(r2eff_ft_sel['128']['r2eff_arr']) )
 
-                # Get R2eff stats.
-                r2eff_stat_dic = RDR.get_r2eff_stat_dic(list_r2eff_dics=[r2eff_ft, r2eff_mdd], list_glob_ini=[128, 126, 6])
+            # For all spins, mdd
+            r2eff_mdd_all = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126], selection=None)
+            r2eff_mdd_sel = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126], selection=selection)
 
-                # Plot R2eff stats
-                RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126, 6], show=False)
+            # Plot correlation of intensity
+            fig1 = [[r2eff_ft_all, r2eff_mdd_all], ['FT', 'MDD'], [128, 128]]
+            fig2 = [[r2eff_ft_sel, r2eff_mdd_sel], ['FT sel', 'MDD sel'], [128, 128]]
+            corr_data = [fig1, fig2]
+
+            fig3 = [[r2eff_ft_all, r2eff_ft_all], ['FT', 'FT'], [128, 126]]
+            fig4 = [[r2eff_ft_all, r2eff_mdd_all], ['FT', 'MDD'], [128, 126]]
+            corr_data = [fig3, fig4]
+
+            #fig5 = [[r2eff_ft_all, r2eff_mdd_all], ['FT', 'MDD'], [128, 128]]
+            fig5 = [[r2eff_ft_all, r2eff_mdd_all], ['FT', 'MDD'], [128, 126]]
+            fig6 = [[r2eff_ft_all, r2eff_ft_all], ['FT', 'FT'], [128, 126]]
+            #fig6 = [[r2eff_mdd_all, r2eff_mdd_all], ['MDD', 'MDD'], [128, 126]]
+            corr_data = [fig5, fig6]
+
+            RDR.plot_r2eff_corr(corr_data=corr_data, show=True)
+
+
+        # Try plot some R2eff statistics.
+        if False:
+            # Collect r2eff values.
+            selection = ':2,3'
+            r2eff_ft_sel = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126], selection=selection)
+            r2eff_mdd_sel = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126], selection=selection)
+
+            # Get R2eff stats.
+            r2eff_stat_dic = RDR.get_r2eff_stat_dic(list_r2eff_dics=[r2eff_ft_sel, r2eff_mdd_sel], list_glob_ini=[128, 126])
+
+            ## Plot R2eff stats
+            #RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126], show=False)
+
 
         # Do minimisation
         if False:
@@ -6049,7 +6093,7 @@ class Relax_disp(SystemTestCase):
             RDR.spin_display_params(pipe_name=test_pipe_name)
 
         # Print the pipes.
-        display(sort=True, rev=True)
+        #display(sort=True, rev=True)
 
 
     def test_r1rho_kjaergaard_auto(self):

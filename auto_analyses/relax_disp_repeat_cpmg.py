@@ -31,7 +31,8 @@ from collections import OrderedDict
 from datetime import datetime
 from glob import glob
 from os import F_OK, access, getcwd, sep
-from numpy import asarray, std
+from numpy import asarray, mean, sqrt, std, sum
+from scipy.stats import pearsonr
 import sys
 from warnings import warn
 
@@ -210,7 +211,7 @@ class Relax_disp_rep:
             self.interpreter.results.write(file=resfile, dir=path, force=force)
 
 
-    def set_intensity_and_error(self, pipe_name, glob_ini=None):
+    def set_intensity_and_error(self, pipe_name, glob_ini=None, set_rmsd=None):
         # Read the intensity per spectrum id and set the RMSD error.
 
         # Switch to the pipe.
@@ -241,29 +242,30 @@ class Relax_disp_rep:
             for peaks_file in peaks_file_list:
                 self.interpreter.spectrum.read_intensities(file=peaks_file, spectrum_id=spectrum_ids, int_method=self.int_method, int_col=range(len(spectrum_ids)))
 
-            # Get the folder for rmsd files.
-            rmsd_folder = getattr(self, key)['rmsd_folder']
+            if set_rmsd:
+                # Get the folder for rmsd files.
+                rmsd_folder = getattr(self, key)['rmsd_folder']
 
-            # Define glop pattern for rmsd files.
-            rmsd_glob_pat = '%s*%.rmsd' % (glob_ini, self.method)
+                # Define glop pattern for rmsd files.
+                rmsd_glob_pat = '%s*%s.rmsd' % (glob_ini, self.method)
 
-            # Get the file list.
-            rmsd_file_list = glob(rmsd_folder + sep + rmsd_glob_pat)
+                # Get the file list.
+                rmsd_file_list = glob(rmsd_folder + sep + rmsd_glob_pat)
 
-            # Sort the file list Alphanumeric.
-            rmsd_file_list = sort_filenames(filenames=rmsd_file_list)
+                # Sort the file list Alphanumeric.
+                rmsd_file_list = sort_filenames(filenames=rmsd_file_list)
 
-            # Loop over spectrum ids
-            for j, spectrum_id in enumerate(spectrum_ids):
-                # Set the peak intensity errors, as defined as the baseplane RMSD.
-                rmsd_file = rmsd_file_list[j]
+                # Loop over spectrum ids
+                for j, spectrum_id in enumerate(spectrum_ids):
+                    # Set the peak intensity errors, as defined as the baseplane RMSD.
+                    rmsd_file = rmsd_file_list[j]
 
-                # Extract rmsd from line 0, and column 0.
-                rmsd = float(extract_data(file=rmsd_file)[0][0])
-                self.interpreter.spectrum.baseplane_rmsd(error=rmsd, spectrum_id=spectrum_id)
+                    # Extract rmsd from line 0, and column 0.
+                    rmsd = float(extract_data(file=rmsd_file)[0][0])
+                    self.interpreter.spectrum.baseplane_rmsd(error=rmsd, spectrum_id=spectrum_id)
 
 
-    def do_spectrum_error_analysis(self, pipe_name):
+    def do_spectrum_error_analysis(self, pipe_name, set_rep=None):
         """Do spectrum error analysis, where both replicates per spectrometer frequency and subset is taken into consideration."""
 
 
@@ -282,23 +284,24 @@ class Relax_disp_rep:
             # Get the spectrum ids.
             spectrum_ids = cdp.dic_spectrum_ids[key]
 
-            # Get the spectrum ids replicates.
-            spectrum_ids_replicates = cdp.dic_spectrum_ids_replicates[key]
+            if set_rep:
+                # Get the spectrum ids replicates.
+                spectrum_ids_replicates = cdp.dic_spectrum_ids_replicates[key]
 
-            # Check if there are any replicates.
-            for replicate in spectrum_ids_replicates:
-                spectrum_id, rep_list = replicate
+                # Check if there are any replicates.
+                for replicate in spectrum_ids_replicates:
+                    spectrum_id, rep_list = replicate
 
-                # If there is a replicated list, specify it.
-                if len(rep_list) > 0:
-                    # Define the replicates.
-                    self.interpreter.spectrum.replicated(spectrum_ids=rep_list)
+                    # If there is a replicated list, specify it.
+                    if len(rep_list) > 0:
+                        # Define the replicates.
+                        self.interpreter.spectrum.replicated(spectrum_ids=rep_list)
 
             # Run the error analysis on the subset.
             self.interpreter.spectrum.error_analysis(subset=spectrum_ids)
 
 
-    def set_int(self, methods=None, list_glob_ini=None, force=False):
+    def set_int(self, methods=None, list_glob_ini=None, set_rmsd=True, set_rep=False, force=False):
         """Call both the setup of data and the error analysis"""
 
         # Define model
@@ -326,10 +329,10 @@ class Relax_disp_rep:
                     self.interpreter.pipe.switch(pipe_name)
 
                     # Call set intensity.
-                    self.set_intensity_and_error(pipe_name=pipe_name, glob_ini=glob_ini)
+                    self.set_intensity_and_error(pipe_name=pipe_name, glob_ini=glob_ini, set_rmsd=set_rmsd)
 
                     # Call error analysis.
-                    self.do_spectrum_error_analysis(pipe_name=pipe_name)
+                    self.do_spectrum_error_analysis(pipe_name=pipe_name, set_rep=set_rep)
 
                     # Save results, and store the current settings dic to pipe.
                     cdp.settings = self.settings
@@ -920,7 +923,7 @@ class Relax_disp_rep:
         # Nr of columns is number of datasets.
         nr_cols = len(corr_data)
         # Nr of rows, is 2. With and without scaling.
-        nr_rows = 3
+        nr_rows = 4
 
         # Define figure
         fig, axises = plt.subplots(nrows=nr_rows, ncols=nr_cols)
@@ -947,12 +950,12 @@ class Relax_disp_rep:
 
                 # If row 1.
                 if i == 0:
-                    ax.plot(x, x, '-', label='%s vs. %s' % (method_x, method_x))
+                    ax.plot(x, x, 'o', label='%s vs. %s' % (method_x, method_x))
                     ax.plot(x, y, '.', label='%s vs. %s' % (method_y, method_x) )
 
                     np = len(y)
                     ax.set_title(r'$I$' + ' for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
-                    ax.legend(loc='upper left', shadow=True, prop = fontP)
+                    ax.legend(loc='upper center', shadow=True, prop = fontP)
                     ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
                     ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
                     ax.set_xlabel(r'$I$')
@@ -964,28 +967,41 @@ class Relax_disp_rep:
                     x_norm = x / x.max()
                     y_norm = y / y.max()
 
-                    ax.plot(x_norm, x_norm, '-', label='%s vs. %s' % (method_x, method_x))
-                    ax.plot(x_norm, y_norm, '.', label='%s vs. %s' % (method_y, method_x) )
+                    ax.plot(x_norm, x_norm, 'o', label='%s vs. %s' % (method_x, method_x))
+                    ax.plot(x_norm, y_norm, '.', label='%s vs. %s' % (method_y, method_x))
 
                     np = len(y_norm)
                     ax.set_title('Normalised intensity for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
-                    ax.legend(loc='upper left', shadow=True, prop = fontP)
+                    ax.legend(loc='upper center', shadow=True, prop = fontP)
                     ax.set_xlabel(r'$\mathrm{Norm.} I$')
                     ax.set_ylabel(r'$\mathrm{Norm.} I$')
 
 
-                # Intensity to error.
+                # Error.
                 if i == 2:
+
+                    ax.plot(x_err, x_err, 'o', label='%s vs. %s' % (method_x, method_x))
+                    ax.plot(x_err, y_err, '.', label='%s vs. %s' % (method_y, method_x))
+
+                    np = len(y_err)
+                    ax.set_title(r'$\sigma(I)$' + ' for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
+                    ax.legend(loc='upper center', shadow=True, prop = fontP)
+                    ax.set_xlabel(r'$\sigma(I)$')
+                    ax.set_ylabel(r'$\sigma(I)$')
+
+
+                # Intensity to error.
+                if i == 3:
                 
                     x_to_x_err = x / x_err
                     y_to_y_err = y / y_err
 
-                    ax.plot(x_to_x_err, x_to_x_err, '-', label='%s vs. %s' % (method_x, method_x))
-                    ax.plot(x_to_x_err, y_to_y_err, '.', label='%s vs. %s' % (method_y, method_x) )
+                    ax.plot(x_to_x_err, x_to_x_err, 'o', label='%s vs. %s' % (method_x, method_x))
+                    ax.plot(x_to_x_err, y_to_y_err, '.', label='%s vs. %s' % (method_y, method_x))
 
                     np = len(y_to_y_err)
                     ax.set_title(r'$I/\sigma(I)$' + ' for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
-                    ax.legend(loc='upper left', shadow=True, prop = fontP)
+                    ax.legend(loc='upper center', shadow=True, prop = fontP)
                     ax.set_xlabel(r'$I/\sigma(I)$')
                     ax.set_ylabel(r'$I/\sigma(I)$')
 
@@ -1081,7 +1097,7 @@ class Relax_disp_rep:
 
                 # If row 1.
                 if i == 0:
-                    ax.plot(x, x, '-', label='%s vs. %s' % (method_x, method_x))
+                    ax.plot(x, x, 'o', label='%s vs. %s' % (method_x, method_x))
                     ax.plot(x, y, '.', label='%s vs. %s' % (method_y, method_x) )
 
                     np = len(y)
@@ -1098,7 +1114,7 @@ class Relax_disp_rep:
                     x_to_x_err = x / x_err
                     y_to_y_err = y / y_err
 
-                    ax.plot(x_to_x_err, x_to_x_err, '-', label='%s vs. %s' % (method_x, method_x))
+                    ax.plot(x_to_x_err, x_to_x_err, 'o', label='%s vs. %s' % (method_x, method_x))
                     ax.plot(x_to_x_err, y_to_y_err, '.', label='%s vs. %s' % (method_y, method_x) )
 
                     np = len(y_to_y_err)
@@ -1126,6 +1142,8 @@ class Relax_disp_rep:
             # Let the reference R2eff array be the initial glob.
             r2eff_arr_ref = r2eff_dic_ref[str(list_glob_ini[0])]['r2eff_arr']
             res_dic['r2eff_arr_ref'] = r2eff_arr_ref
+            r2eff_err_arr_ref = r2eff_dic_ref[str(list_glob_ini[0])]['r2eff_err_arr']
+            res_dic['r2eff_err_arr_ref'] = r2eff_err_arr_ref
 
             # Get the current method
             method_cur = r2eff_dic['method']
@@ -1140,12 +1158,32 @@ class Relax_disp_rep:
                 if str(glob_ini) not in r2eff_dic:
                     continue
 
+                # Get the data.
                 r2eff_arr = r2eff_dic[str(glob_ini)]['r2eff_arr']
+                r2eff_err_arr = r2eff_dic[str(glob_ini)]['r2eff_err_arr']
 
                 # Make a normalised R2eff array according to reference.
                 # This require that all number of points are equal.
+                # If they are not of same length, then dont even bother to continue.
                 if len(r2eff_arr) != len(r2eff_arr_ref):
                     continue
+
+                # Calculate the R2eff versus R2eff error.
+                r2eff_vs_err_ref = r2eff_arr_ref / r2eff_err_arr_ref
+                r2eff_vs_err = r2eff_arr / r2eff_err_arr
+
+                # Get the statistics from scipy.
+                pearsons_correlation_coefficient, two_tailed_p_value = pearsonr(r2eff_vs_err_ref, r2eff_vs_err)
+
+                # Calculate manual.
+                x = r2eff_vs_err_ref
+                x_m = mean(x)
+                y = r2eff_vs_err
+                y_m = mean(r2eff_vs_err)
+
+                r = sum( (x - x_m)*(y - y_m)  ) / sqrt( sum((x - x_m)**2) * sum((y - y_m)**2) )
+
+                #print method_ref, method_cur, glob_ini, pearsons_correlation_coefficient, r
 
                 # Get the normalised array.
                 r2eff_norm_arr = r2eff_arr/r2eff_arr_ref
