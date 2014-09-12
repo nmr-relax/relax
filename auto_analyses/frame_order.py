@@ -84,42 +84,42 @@ class Frame_order_analysis:
         # Execution lock.
         status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
 
-        # Initial printout.
-        title(file=sys.stdout, text="Frame order auto-analysis", prespace=7)
-
-        # Store the args.
-        self.data_pipe_full = data_pipe_full
-        self.data_pipe_subset = data_pipe_subset
-        self.pipe_bundle = pipe_bundle
-        self.opt_rigid = opt_rigid
-        self.opt_subset = opt_subset
-        self.opt_full = opt_full
-        self.opt_mc = opt_mc
-        self.mc_sim_num = mc_sim_num
-
-        # Re-order the models to enable the parameter nesting protocol.
-        self.models = self.reorder_models(models)
-
-        # A dictionary and list of the data pipe names.
-        self.pipe_name_dict = {}
-        self.pipe_name_list = []
-
-        # Project directory (i.e. directory containing the model-free model results and the newly generated files)
-        if results_dir:
-            self.results_dir = results_dir + sep
-        else:
-            self.results_dir = getcwd() + sep
-
-        # Data checks.
-        self.check_vars()
-
-        # Load the interpreter.
-        self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
-        self.interpreter.populate_self()
-        self.interpreter.on(verbose=False)
-
         # Execute the full protocol.
         try:
+            # Initial printout.
+            title(file=sys.stdout, text="Frame order auto-analysis", prespace=7)
+
+            # Store the args.
+            self.data_pipe_full = data_pipe_full
+            self.data_pipe_subset = data_pipe_subset
+            self.pipe_bundle = pipe_bundle
+            self.opt_rigid = opt_rigid
+            self.opt_subset = opt_subset
+            self.opt_full = opt_full
+            self.opt_mc = opt_mc
+            self.mc_sim_num = mc_sim_num
+
+            # Re-order the models to enable the parameter nesting protocol.
+            self.models = self.reorder_models(models)
+
+            # A dictionary and list of the data pipe names.
+            self.pipe_name_dict = {}
+            self.pipe_name_list = []
+
+            # Project directory (i.e. directory containing the model-free model results and the newly generated files)
+            if results_dir:
+                self.results_dir = results_dir + sep
+            else:
+                self.results_dir = getcwd() + sep
+
+            # Data checks.
+            self.check_vars()
+
+            # Load the interpreter.
+            self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
+            self.interpreter.populate_self()
+            self.interpreter.on(verbose=False)
+
             # Output the starting time.
             self.interpreter.time()
 
