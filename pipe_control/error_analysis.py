@@ -23,7 +23,7 @@
 """Module for performing Monte Carlo simulations for error analysis."""
 
 # Python module imports.
-from numpy import ndarray
+from numpy import diag, ndarray, sqrt
 from random import gauss
 
 # relax module imports.
