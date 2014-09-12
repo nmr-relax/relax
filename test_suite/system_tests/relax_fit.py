@@ -379,7 +379,7 @@ class Relax_fit(SystemTestCase):
         # Compare rx errors.
         if True:
             # Estimate rx and i0 errors.
-            self.interpreter.relax_fit.rx_err_estimate()
+            self.interpreter.error_analysis.covariance_matrix()
 
             # Collect:
             i0_est = []
