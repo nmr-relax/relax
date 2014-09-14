@@ -26,7 +26,7 @@
 from math import cos, pi
 from minfx.generic import generic_minimise
 from minfx.grid import grid_point_array
-from numpy import arccos, array, dot, float64, ones, zeros
+from numpy import arccos, array, dot, float64, ones, swapaxes, zeros
 from numpy.linalg import inv, norm
 from re import search
 import sys
@@ -35,6 +35,7 @@ from warnings import warn
 # relax module imports.
 from lib.float import isNaN, isInf
 from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoPCSError, RelaxNoRDCError
+from lib.frame_order.pseudo_ellipse import tmax_pseudo_ellipse_array
 from lib.geometry.angles import wrap_angles
 from lib.order import order_parameters
 from lib.periodic_table import periodic_table
@@ -44,10 +45,95 @@ from multi import Memo, Result_command, Slave_command
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.structure.mass import pipe_centre_of_mass
+from specific_analyses.frame_order.checks import check_domain, check_model, check_parameters
 from specific_analyses.frame_order.data import base_data_types, domain_moving, pivot_fixed, tensor_loop
 from specific_analyses.frame_order.parameters import assemble_param_vector, linear_constraints
-from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_RIGID, MODEL_ROTOR
+from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from target_functions.frame_order import Frame_order
+
+
+def count_sobol_points():
+    """Count the number of Sobol' points for the current parameter values of the model.
+
+    The count will be stored in the current data pipe and printed out.
+    """
+
+    # Printout.
+    print("Sobol' integration point counting for the current parameter values.")
+
+    # Checks.
+    if not check_model(escalate=1):
+        return
+    if not check_parameters(escalate=1):
+        return
+    if not check_domain(escalate=1):
+        return
+
+    # Set up the data structures for the target function.
+    param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(verbosity=0, unset_fail=True)
+
+    # Set up the optimisation target function class.
+    target_fn = Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=None, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts)
+
+    # The Sobol' sequence dimensions.
+    if cdp.model in [MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR]:
+        dims = ['theta', 'phi', 'sigma']
+    elif cdp.model in [MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE_TORSIONLESS]:
+        dims = ['theta', 'phi']
+    elif cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
+        dims = ['sigma']
+    elif cdp.model in [MODEL_DOUBLE_ROTOR]:
+        dims = ['sigma', 'sigma2']
+
+    # Unpack the points.
+    theta, phi, sigma, sigma2 = None, None, None, None
+    if dims == ['theta', 'phi', 'sigma']:
+        theta, phi, sigma = swapaxes(target_fn.sobol_angles, 0, 1)
+    elif dims == ['theta', 'phi']:
+        theta, phi = swapaxes(target_fn.sobol_angles, 0, 1)
+    elif dims == ['sigma']:
+        sigma = swapaxes(target_fn.sobol_angles, 0, 1)
+    elif dims == ['sigma', 'sigma2']:
+        sigma, sigma2 = swapaxes(target_fn.sobol_angles, 0, 1)
+
+    # Pseudo-ellipse.
+    pe = False
+    if cdp.model in MODEL_LIST_PSEUDO_ELLIPSE:
+        pe = True
+
+        # Calculate theta_max.
+        theta_max = tmax_pseudo_ellipse_array(phi, cdp.cone_theta_x, cdp.cone_theta_y)
+
+    # Loop over the Sobol' points to count them.
+    count = 0
+    for i in range(len(target_fn.sobol_angles)):
+        # Pseudo-elliptic cone opening angle.
+        if pe and theta[i] > theta_max[i]:
+            continue
+
+        # Isotropic cones.
+        if not pe and 'theta' in dims and theta[i] > cdp.cone_theta:
+            continue
+
+        # 1st torsion angle.
+        if 'sigma' in dims and sigma[i] > cdp.cone_sigma_max:
+            continue
+
+        # 2nd torsion angle.
+        if 'sigma2' in dims and sigma2[i] > cdp.cone_sigma_max_2:
+            continue
+
+        # Increment the point count.
+        count += 1
+
+    # Store the count.
+    cdp.used_sobol_points = count
+
+    # Printout.
+    print("\n%-20s %20s" % ("Total points:", cdp.num_int_pts))
+    print("%-20s %20s" % ("Used points:", count))
+    percent = "%s" % (float(count)/float(cdp.num_int_pts)*100) + '%'
+    print("%-20s %20s" % ("Percentage:", percent))
 
 
 def grid_row(incs, lower, upper, dist_type=None, end_point=True):
