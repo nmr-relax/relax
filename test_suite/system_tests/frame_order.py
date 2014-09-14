@@ -1321,6 +1321,16 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
 
 
+    def test_num_int_points(self):
+        """Check the basic operation of the frame_order.num_int_pts user function."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('test', 'frame order')
+
+        # Set a number of points.
+        self.interpreter.frame_order.num_int_pts(200)
+
+
     def fixme_test_opendx_map(self):
         """Test the mapping of the Euler angle parameters for OpenDx viewing."""
 
