@@ -333,49 +333,6 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.eigen_gamma, gamma)
 
 
-    def test_axis_perm_x_le_z_le_y_permB(self):
-        """Test the operation of the frame_order.permute_axes user function for permutation 'B' when x <= z <= y."""
-
-        # Reset.
-        self.interpreter.reset()
-
-        # Load the state file.
-        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
-        self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
-
-        # Change the original parameters.
-        cdp.cone_theta_x = orig_cone_theta_x = 1.0
-        cdp.cone_theta_y = orig_cone_theta_y = 3.0
-        cdp.cone_sigma_max = orig_cone_sigma_max = 2.0
-
-        # Store the original parameters.
-        orig_eigen_alpha = cdp.eigen_alpha
-        orig_eigen_beta = cdp.eigen_beta
-        orig_eigen_gamma = cdp.eigen_gamma
-
-        # Permute the axes.
-        self.interpreter.frame_order.permute_axes('B')
-
-        # Checks of the cone opening angle permutations.
-        self.assertEqual(cdp.cone_theta_x, 2.0)
-        self.assertEqual(cdp.cone_theta_y, 3.0)
-        self.assertEqual(cdp.cone_sigma_max, 1.0)
-
-        # The optimised Eigenframe.
-        frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
-                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
-                       [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
-
-        # Manually permute the frame, and then obtain the Euler angles.
-        frame_new = transpose(array([frame[:, 0], -frame[:, 2], frame[:, 1]], float64))
-        alpha, beta, gamma = R_to_euler_zyz(frame_new)
-
-        # Check the Eigenframe Euler angles.
-        self.assertAlmostEqual(cdp.eigen_alpha, alpha)
-        self.assertAlmostEqual(cdp.eigen_beta, beta)
-        self.assertAlmostEqual(cdp.eigen_gamma, gamma)
-
-
     def test_axis_perm_x_le_z_le_y_permA(self):
         """Test the operation of the frame_order.permute_axes user function for permutation 'A' when x <= z <= y."""
 
@@ -411,6 +368,49 @@ class Frame_order(SystemTestCase):
 
         # Manually permute the frame, and then obtain the Euler angles.
         frame_new = transpose(array([-frame[:, 2], frame[:, 1], frame[:, 0]], float64))
+        alpha, beta, gamma = R_to_euler_zyz(frame_new)
+
+        # Check the Eigenframe Euler angles.
+        self.assertAlmostEqual(cdp.eigen_alpha, alpha)
+        self.assertAlmostEqual(cdp.eigen_beta, beta)
+        self.assertAlmostEqual(cdp.eigen_gamma, gamma)
+
+
+    def test_axis_perm_x_le_z_le_y_permB(self):
+        """Test the operation of the frame_order.permute_axes user function for permutation 'B' when x <= z <= y."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
+        self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
+
+        # Change the original parameters.
+        cdp.cone_theta_x = orig_cone_theta_x = 1.0
+        cdp.cone_theta_y = orig_cone_theta_y = 3.0
+        cdp.cone_sigma_max = orig_cone_sigma_max = 2.0
+
+        # Store the original parameters.
+        orig_eigen_alpha = cdp.eigen_alpha
+        orig_eigen_beta = cdp.eigen_beta
+        orig_eigen_gamma = cdp.eigen_gamma
+
+        # Permute the axes.
+        self.interpreter.frame_order.permute_axes('B')
+
+        # Checks of the cone opening angle permutations.
+        self.assertEqual(cdp.cone_theta_x, 2.0)
+        self.assertEqual(cdp.cone_theta_y, 3.0)
+        self.assertEqual(cdp.cone_sigma_max, 1.0)
+
+        # The optimised Eigenframe.
+        frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
+                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
+
+        # Manually permute the frame, and then obtain the Euler angles.
+        frame_new = transpose(array([frame[:, 0], -frame[:, 2], frame[:, 1]], float64))
         alpha, beta, gamma = R_to_euler_zyz(frame_new)
 
         # Check the Eigenframe Euler angles.
@@ -942,13 +942,6 @@ class Frame_order(SystemTestCase):
         self.check_chi2(0.075038911707627859)
 
 
-    def test_generate_rotor2_distribution(self):
-        """Generate the rotor2 distribution of CaM."""
-
-        # Execute the script.
-        self.interpreter.run(script_file=self.cam_path+'generate_rotor2_distribution.py')
-
-
     def test_frame_order_pdb_model_failed_pivot(self):
         """Test the operation of the frame_order.pdb_model user function when the pivot is outside of the PDB limits."""
 
@@ -1023,6 +1016,13 @@ class Frame_order(SystemTestCase):
 
         # Create the PDB model.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir)
+
+
+    def test_generate_rotor2_distribution(self):
+        """Generate the rotor2 distribution of CaM."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=self.cam_path+'generate_rotor2_distribution.py')
 
 
     def fixme_test_model_free_rotor(self):
@@ -1591,19 +1591,6 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.chi2, 204026.70481594582)
 
 
-    def test_rigid_data_to_iso_cone_model(self):
-        """Test the iso cone target function for the data from a rigid test molecule."""
-
-        # Set the model.
-        ds.model = MODEL_ISO_CONE
-
-        # Execute the script.
-        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
-
-        # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 0.01137748706675365, 5)
-
-
     def test_rigid_data_to_iso_cone_free_rotor_model(self):
         """Test the iso cone, free rotor target function for the data from a rigid test molecule."""
 
@@ -1615,6 +1602,19 @@ class Frame_order(SystemTestCase):
 
         # Check the chi2 value.
         self.assertAlmostEqual(cdp.chi2, 22295.503345237757)
+
+
+    def test_rigid_data_to_iso_cone_model(self):
+        """Test the iso cone target function for the data from a rigid test molecule."""
+
+        # Set the model.
+        ds.model = MODEL_ISO_CONE
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 0.01137748706675365, 5)
 
 
     def test_rigid_data_to_iso_cone_torsionless_model(self):
