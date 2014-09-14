@@ -65,6 +65,14 @@ def count_sobol_points(target_fn=None):
     # Printout.
     print("Sobol' quasi-random integration point counting for the current parameter values.")
 
+    # Checks.
+    if not check_model(escalate=1):
+        return
+    if not check_parameters(escalate=1):
+        return
+    if not check_domain(escalate=1):
+        return
+
     # Handle the rigid model.
     if cdp.model == MODEL_RIGID:
         print("\nSobol' quasi-random integration points are not used for the rigid frame order model.")
@@ -72,14 +80,6 @@ def count_sobol_points(target_fn=None):
 
     # Set up the target function, if required.
     if target_fn == None:
-        # Checks.
-        if not check_model(escalate=1):
-            return
-        if not check_parameters(escalate=1):
-            return
-        if not check_domain(escalate=1):
-            return
-
         # Set up the data structures for the target function.
         param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(verbosity=0, unset_fail=True)
 
