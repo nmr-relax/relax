@@ -973,7 +973,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.frame_order.count_sobol_points()
 
         # Check the count.
-        self.assertEqual(cdp.used_sobol_points, 258)
+        self.assertEqual(cdp.used_sobol_points, 12)
 
 
     def test_frame_order_pdb_model_failed_pivot(self):
