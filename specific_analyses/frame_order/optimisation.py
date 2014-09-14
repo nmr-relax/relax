@@ -48,7 +48,7 @@ from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.checks import check_domain, check_model, check_parameters
 from specific_analyses.frame_order.data import base_data_types, domain_moving, pivot_fixed, tensor_loop
 from specific_analyses.frame_order.parameters import assemble_param_vector, linear_constraints
-from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
+from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from target_functions.frame_order import Frame_order
 
 
@@ -115,6 +115,12 @@ def count_sobol_points(target_fn=None):
         # Calculate theta_max.
         theta_max = tmax_pseudo_ellipse_array(phi, cdp.cone_theta_x, cdp.cone_theta_y)
 
+    # The torsion angle.
+    if cdp.model in MODEL_LIST_FREE_ROTORS:
+        cone_sigma_max = pi
+    else:
+        cone_sigma_max = cdp.cone_sigma_max
+
     # Loop over the Sobol' points to count them.
     count = 0
     for i in range(len(target_fn.sobol_angles)):
@@ -127,7 +133,7 @@ def count_sobol_points(target_fn=None):
             continue
 
         # 1st torsion angle.
-        if 'sigma' in dims and sigma[i] > cdp.cone_sigma_max:
+        if 'sigma' in dims and sigma[i] > cone_sigma_max:
             continue
 
         # 2nd torsion angle.
