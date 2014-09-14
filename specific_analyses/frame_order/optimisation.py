@@ -139,11 +139,11 @@ def count_sobol_points(target_fn=None):
             continue
 
         # 1st torsion angle.
-        if 'sigma' in dims and sigma[i] > cone_sigma_max:
+        if 'sigma' in dims and abs(sigma[i]) > cone_sigma_max:
             continue
 
         # 2nd torsion angle.
-        if 'sigma2' in dims and sigma2[i] > cdp.cone_sigma_max_2:
+        if 'sigma2' in dims and abs(sigma2[i]) > cdp.cone_sigma_max_2:
             continue
 
         # Increment the point count.
