@@ -993,6 +993,23 @@ class Frame_order(SystemTestCase):
         self.assertEqual(cdp.used_sobol_points, 10000)
 
 
+    def test_count_sobol_points_iso_cone_free_rotor(self):
+        """Test the frame_order.count_sobol_points user function for the free-rotor isotropic cone model."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_free_rotor'
+        self.interpreter.state.load(data_path+sep+'frame_order')
+
+        # Call the user function.
+        self.interpreter.frame_order.count_sobol_points()
+
+        # Check the count.
+        self.assertEqual(cdp.used_sobol_points, 2297)
+
+
     def test_count_sobol_points_rigid(self):
         """Test the frame_order.count_sobol_points user function for the rigid model."""
 
