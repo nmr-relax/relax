@@ -35,8 +35,9 @@ def check_domain(domain=None, escalate=0):
     """Check if the domain has been defined.
 
     @keyword domain:        The domain to check for.  If None, then the check will be for any domain being defined.
+    @type domain:           None or str
     @keyword escalate:      The feedback to give if the domain is not defined.  This can be 0 for no printouts, 1 to throw a RelaxWarning, or 2 to raise a RelaxError.
-    @type escalate:         None or str
+    @type escalate:         int
     @raises RelaxError:     If escalate is set to 2 and the domain is not defined.
     @return:                True if the domain is defined, False otherwise.
     @rtype:                 bool
@@ -61,6 +62,34 @@ def check_domain(domain=None, escalate=0):
 
     # Return the answer.
     return defined
+
+
+def check_model(escalate=0):
+    """Check if the frame order model has been set up.
+
+    @keyword escalate:      The feedback to give if the model is not set up.  This can be 0 for no printouts, 1 to throw a RelaxWarning, or 2 to raise a RelaxError.
+    @type escalate:         int
+    @raises RelaxError:     If escalate is set to 2 and the model is not set up.
+    @return:                True if the model is set up, False otherwise.
+    @rtype:                 bool
+    """
+
+    # Init.
+    flag = True
+
+    # Check that the model is set up.
+    if not hasattr(cdp, 'model'):
+        flag = False
+        msg = "The frame order model has not been set up, please use the frame_order.select_model user function."
+
+    # Warnings and errors.
+    if escalate == 1:
+        warn(RelaxWarning(msg))
+    elif escalate == 2:
+        raise RelaxError(msg)
+
+    # Return the answer.
+    return flag
 
 
 def check_pivot(pipe_name=None):
