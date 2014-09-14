@@ -959,6 +959,23 @@ class Frame_order(SystemTestCase):
         self.assertEqual(cdp.used_sobol_points, 258)
 
 
+    def test_count_sobol_points2(self):
+        """Test the frame_order.count_sobol_points user function."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
+        self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
+
+        # Call the user function.
+        self.interpreter.frame_order.count_sobol_points()
+
+        # Check the count.
+        self.assertEqual(cdp.used_sobol_points, 258)
+
+
     def test_frame_order_pdb_model_failed_pivot(self):
         """Test the operation of the frame_order.pdb_model user function when the pivot is outside of the PDB limits."""
 
