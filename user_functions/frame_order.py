@@ -24,6 +24,7 @@
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
+from specific_analyses.frame_order.optimisation import count_sobol_points
 from specific_analyses.frame_order.uf import num_int_pts, pdb_model, permute_axes, pivot, ref_domain, select_model
 from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from user_functions.data import Uf_info; uf_info = Uf_info()
@@ -36,6 +37,20 @@ uf_class = uf_info.add_class('frame_order')
 uf_class.title = "Class containing the user functions of the Frame Order theories."
 uf_class.menu_text = "&frame_order"
 uf_class.gui_icon = "relax.frame_order"
+
+
+# The frame_order.count_sobol_points user function.
+uf = uf_info.add_uf('frame_order.count_sobol_points')
+uf.title = "Count the number of Sobol' points used for the current parameter values."
+uf.title_short = "Used Sobol' point count."
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the number of Sobol' integration points used during the Frame Order target function optimisation to be counted.  This uses the current parameter values to determine how many are used for the PCS calculation compared to the total number.")
+uf.backend = count_sobol_points
+uf.menu_text = "&count_sobol_points"
+uf.gui_icon = "oxygen.categories.applications-education"
+uf.wizard_size = (800, 400)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 
 # The frame_order.pdb_model user function.
