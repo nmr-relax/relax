@@ -1331,6 +1331,19 @@ class Frame_order(SystemTestCase):
         self.interpreter.frame_order.num_int_pts(200)
 
 
+    def test_num_int_pts2(self):
+        """Check the operation of the frame_order.num_int_pts user function with just the model specified."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('test', 'frame order')
+
+        # Set the model.
+        self.interpreter.frame_order.select_model('iso cone')
+
+        # Set a number of points.
+        self.interpreter.frame_order.num_int_pts(200)
+
+
     def fixme_test_opendx_map(self):
         """Test the mapping of the Euler angle parameters for OpenDx viewing."""
 
