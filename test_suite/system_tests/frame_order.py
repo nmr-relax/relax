@@ -942,6 +942,23 @@ class Frame_order(SystemTestCase):
         self.check_chi2(0.075038911707627859)
 
 
+    def test_count_sobol_points(self):
+        """Test the ability of the frame_order.num_int_pts user function to be able to count the number of Sobol' points used for the current parameter values."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
+        self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
+
+        # Set the number of integration points, and see if they can be counted.
+        self.interpreter.frame_order.num_int_pts(200000)
+
+        # Check the count.
+        self.assertEqual(cdp.used_sobol_points, 200)
+
+
     def test_frame_order_pdb_model_failed_pivot(self):
         """Test the operation of the frame_order.pdb_model user function when the pivot is outside of the PDB limits."""
 
