@@ -121,6 +121,12 @@ def count_sobol_points(target_fn=None):
     else:
         cone_sigma_max = cdp.cone_sigma_max
 
+    # The isotropic cone angle.
+    if cdp.model == MODEL_ISO_CONE_FREE_ROTOR:
+        cone_theta = order_parameters.iso_cone_S_to_theta(cdp.cone_s1)
+    else:
+        cone_theta = cdp.cone_theta
+
     # Loop over the Sobol' points to count them.
     count = 0
     for i in range(len(target_fn.sobol_angles)):
@@ -129,7 +135,7 @@ def count_sobol_points(target_fn=None):
             continue
 
         # Isotropic cones.
-        if not pe and 'theta' in dims and theta[i] > cdp.cone_theta:
+        if not pe and 'theta' in dims and theta[i] > cone_theta:
             continue
 
         # 1st torsion angle.
