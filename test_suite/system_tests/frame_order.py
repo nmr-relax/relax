@@ -1321,7 +1321,7 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
 
 
-    def test_num_int_points(self):
+    def test_num_int_pts(self):
         """Check the basic operation of the frame_order.num_int_pts user function."""
 
         # Create a data pipe.
