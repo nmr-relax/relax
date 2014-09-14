@@ -45,6 +45,7 @@ def check_domain(domain=None, escalate=0):
 
     # Init.
     defined = True
+    msg = ''
 
     # Check that the domain is defined.
     if not hasattr(cdp, 'domain'):
@@ -55,9 +56,9 @@ def check_domain(domain=None, escalate=0):
         msg = "The domain '%s' has not been defined.  Please use the domain user function." % domain
 
     # Warnings and errors.
-    if escalate == 1:
+    if not defined and escalate == 1:
         warn(RelaxWarning(msg))
-    elif escalate == 2:
+    elif not defined and escalate == 2:
         raise RelaxError(msg)
 
     # Return the answer.
@@ -76,6 +77,7 @@ def check_model(escalate=0):
 
     # Init.
     flag = True
+    msg = ''
 
     # Check that the model is set up.
     if not hasattr(cdp, 'model'):
@@ -83,9 +85,9 @@ def check_model(escalate=0):
         msg = "The frame order model has not been set up, please use the frame_order.select_model user function."
 
     # Warnings and errors.
-    if escalate == 1:
+    if not flag and escalate == 1:
         warn(RelaxWarning(msg))
-    elif escalate == 2:
+    elif not flag and escalate == 2:
         raise RelaxError(msg)
 
     # Return the answer.
