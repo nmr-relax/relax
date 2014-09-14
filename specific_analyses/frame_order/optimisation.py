@@ -97,7 +97,7 @@ def count_sobol_points():
     elif dims == ['theta', 'phi']:
         theta, phi = swapaxes(target_fn.sobol_angles, 0, 1)
     elif dims == ['sigma']:
-        sigma = swapaxes(target_fn.sobol_angles, 0, 1)
+        sigma = swapaxes(target_fn.sobol_angles, 0, 1)[0]
     elif dims == ['sigma', 'sigma2']:
         sigma, sigma2 = swapaxes(target_fn.sobol_angles, 0, 1)
 
