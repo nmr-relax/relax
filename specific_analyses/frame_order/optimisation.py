@@ -52,33 +52,39 @@ from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FR
 from target_functions.frame_order import Frame_order
 
 
-def count_sobol_points():
+def count_sobol_points(target_fn=None):
     """Count the number of Sobol' points for the current parameter values of the model.
 
     The count will be stored in the current data pipe and printed out.
+
+
+    @keyword target_fn:     The pre-initialised frame order target function class.
+    @type target_fn:        target_functions.frame_order.Frame_order instance
     """
 
     # Printout.
     print("Sobol' quasi-random integration point counting for the current parameter values.")
-
-    # Checks.
-    if not check_model(escalate=1):
-        return
-    if not check_parameters(escalate=1):
-        return
-    if not check_domain(escalate=1):
-        return
 
     # Handle the rigid model.
     if cdp.model == MODEL_RIGID:
         print("\nSobol' quasi-random integration points are not used for the rigid frame order model.")
         return
 
-    # Set up the data structures for the target function.
-    param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(verbosity=0, unset_fail=True)
+    # Set up the target function, if required.
+    if target_fn == None:
+        # Checks.
+        if not check_model(escalate=1):
+            return
+        if not check_parameters(escalate=1):
+            return
+        if not check_domain(escalate=1):
+            return
 
-    # Set up the optimisation target function class.
-    target_fn = Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=None, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts)
+        # Set up the data structures for the target function.
+        param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(verbosity=0, unset_fail=True)
+
+        # Set up the optimisation target function class.
+        target_fn = Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=None, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts)
 
     # The Sobol' sequence dimensions.
     if cdp.model in [MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR]:
@@ -1149,6 +1155,9 @@ class Frame_order_minimise_command(Slave_command):
 
         # Minimisation.
         results = generic_minimise(func=target_fn.func, args=(), x0=self.param_vector, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.max_iterations, A=self.A, b=self.b, full_output=True, print_flag=self.verbosity)
+
+        # Feedback on the number of integration points used.
+        count_sobol_points(target_fn=target_fn)
 
         # Create the result command object on the slave to send back to the master.
         processor.return_object(Frame_order_result_command(processor=processor, memo_id=self.memo_id, results=results, A_5D_bc=target_fn.A_5D_bc, pcs_theta=target_fn.pcs_theta, rdc_theta=target_fn.rdc_theta, completed=completed))
