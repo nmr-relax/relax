@@ -22,9 +22,45 @@
 # Module docstring.
 """Module for checks for the frame order analysis."""
 
+# Python module imports.
+from warnings import warn
+
 # relax module imports.
 from lib.errors import RelaxError
+from lib.warnings import RelaxWarning
 from pipe_control.pipes import cdp_name, get_pipe
+
+
+def check_domain(domain=None, escalate=0):
+    """Check if the domain has been defined.
+
+    @keyword domain:        The domain to check for.  If None, then the check will be for any domain being defined.
+    @keyword escalate:      The feedback to give if the domain is not defined.  This can be 0 for no printouts, 1 to throw a RelaxWarning, or 2 to raise a RelaxError.
+    @type escalate:         None or str
+    @raises RelaxError:     If escalate is set to 2 and the domain is not defined.
+    @return:                True if the domain is defined, False otherwise.
+    @rtype:                 bool
+    """
+
+    # Init.
+    defined = True
+
+    # Check that the domain is defined.
+    if not hasattr(cdp, 'domain'):
+        defined = False
+        msg = "No domains have been defined.  Please use the domain user function."
+    if domain != None and domain not in list(cdp.domain.keys()):
+        defined = False
+        msg = "The domain '%s' has not been defined.  Please use the domain user function." % domain
+
+    # Warnings and errors.
+    if escalate == 1:
+        warn(RelaxWarning(msg))
+    elif escalate == 2:
+        raise RelaxError(msg)
+
+    # Return the answer.
+    return defined
 
 
 def check_pivot(pipe_name=None):
