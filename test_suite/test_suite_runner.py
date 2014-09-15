@@ -373,7 +373,7 @@ class Test_suite_runner:
             return
 
         # Header.
-        print("Tests skipped due to missing packages/modules:\n")
+        print("Tests skipped due to missing optional packages/modules/software:\n")
         header = "%-30s" % "Module" 
         if len(system_count):
             header = "%s %20s" % (header, "System test count")
