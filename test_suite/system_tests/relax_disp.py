@@ -115,7 +115,8 @@ class Relax_disp(SystemTestCase):
             to_skip = [
                 "test_show_apod_extract",
                 "test_show_apod_rmsd",
-                "test_show_apod_rmsd_to_file"
+                "test_show_apod_rmsd_to_file",
+                "test_show_apod_rmsd_dir_to_files"
             ]
 
             # Store in the status object.
