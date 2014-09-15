@@ -1304,8 +1304,8 @@ class Relax_disp_rep:
         ax2.set_ylabel('Sample correlation ' + r'$r_{xy}^2$')
         ax1.set_xticks(x)
         ax2.set_xticks(x)
-        ax1.set_ylim(0, 1.1)
-        ax2.set_ylim(0, 1.1)
+        #ax1.set_ylim(0, 1.1)
+        ax2.set_ylim(0, 1.0)
         ax1.invert_xaxis()
         #ax2.invert_xaxis()
         if show:
