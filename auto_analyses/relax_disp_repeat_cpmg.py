@@ -1183,7 +1183,13 @@ class Relax_disp_rep:
 
                 r = sum( (x - x_m)*(y - y_m)  ) / sqrt( sum((x - x_m)**2) * sum((y - y_m)**2) )
 
-                #print method_ref, method_cur, glob_ini, pearsons_correlation_coefficient, r
+
+                # Solve by linear least squares.
+                n = len(y)
+                b = (sum(x*y) - 1./n * sum(x) * sum(y) ) / ( sum(x**2) - 1./n * (sum(x))**2 )
+                a = 1./n * sum(y) - b * 1./n * sum(x)
+
+                print(method_ref, method_cur, glob_ini, pearsons_correlation_coefficient, r, b, a)
 
                 # Get the normalised array.
                 r2eff_norm_arr = r2eff_arr/r2eff_arr_ref

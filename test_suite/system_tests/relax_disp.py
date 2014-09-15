@@ -6048,7 +6048,7 @@ class Relax_disp(SystemTestCase):
 
 
         # Try plot some R2eff statistics.
-        if False:
+        if True:
             # Collect r2eff values.
             selection = ':2,3'
             r2eff_ft_sel = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126], selection=selection)
