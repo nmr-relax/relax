@@ -5972,7 +5972,7 @@ class Relax_disp(SystemTestCase):
 
         # Set the intensity.
         #RDR.set_int(methods=methods, list_glob_ini=[128, 126], set_rmsd=False, set_rep=True)
-        RDR.set_int(methods=methods, list_glob_ini=[128, 126], set_rmsd=True, set_rep=False)
+        #RDR.set_int(methods=methods, list_glob_ini=[128, 126], set_rmsd=True, set_rep=False)
 
         # Try plot some intensity correlations.
         if False:
@@ -6011,7 +6011,7 @@ class Relax_disp(SystemTestCase):
         # Try plot some R2eff correlations.
         if False:
             # Now calculate R2eff.
-            RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
+            #RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
 
             # Try for bad data.
             #RDR.calc_r2eff(methods=['FT'], list_glob_ini=[6, 4])
@@ -6048,7 +6048,7 @@ class Relax_disp(SystemTestCase):
 
 
         # Try plot some R2eff statistics.
-        if True:
+        if False:
             # Collect r2eff values.
             selection = ':2,3'
             r2eff_ft_sel = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126], selection=selection)
@@ -6058,7 +6058,7 @@ class Relax_disp(SystemTestCase):
             r2eff_stat_dic = RDR.get_r2eff_stat_dic(list_r2eff_dics=[r2eff_ft_sel, r2eff_mdd_sel], list_glob_ini=[128, 126])
 
             ## Plot R2eff stats
-            #RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126], show=False)
+            RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126, 6], show=True)
 
 
         # Do minimisation

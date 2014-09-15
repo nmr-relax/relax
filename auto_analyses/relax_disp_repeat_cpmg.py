@@ -31,7 +31,7 @@ from collections import OrderedDict
 from datetime import datetime
 from glob import glob
 from os import F_OK, access, getcwd, sep
-from numpy import asarray, mean, sqrt, std, sum
+from numpy import asarray, arange, max, mean, min, sqrt, std, sum
 from scipy.stats import pearsonr
 import sys
 from warnings import warn
@@ -1114,8 +1114,16 @@ class Relax_disp_rep:
                     x_to_x_err = x / x_err
                     y_to_y_err = y / y_err
 
+                    # Calculate straight line.
+                    # Linear a, with no intercept.
+                    a = sum(x_to_x_err * y_to_y_err) / sum(x_to_x_err**2)
+                    x_to_x_err_arange = arange(min(x_to_x_err), max(x_to_x_err), (max(x_to_x_err) - min(x_to_x_err)) / 10)
+                    y_to_x_err_arange = a * x_to_x_err_arange
+
                     ax.plot(x_to_x_err, x_to_x_err, 'o', label='%s vs. %s' % (method_x, method_x))
+                    ax.plot(x_to_x_err_arange, x_to_x_err_arange, 'b--')
                     ax.plot(x_to_x_err, y_to_y_err, '.', label='%s vs. %s' % (method_y, method_x) )
+                    ax.plot(x_to_x_err_arange, y_to_x_err_arange, 'g--')
 
                     np = len(y_to_y_err)
                     ax.set_title(r'$R_{2,\mathrm{eff}}/\sigma(R_{2,\mathrm{eff}})$' + ' for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
@@ -1152,6 +1160,15 @@ class Relax_disp_rep:
             res_dic[method_cur]['glob_ini'] = []
             res_dic[method_cur]['r2eff_norm_std'] = []
 
+            # Other stats.
+            res_dic[method_cur]['pearsons_correlation_coefficient'] = []
+            res_dic[method_cur]['two_tailed_p_value'] = []
+            res_dic[method_cur]['r_xy'] = []
+            res_dic[method_cur]['a'] = []
+            res_dic[method_cur]['r_xy_int'] = []
+            res_dic[method_cur]['a_int'] = []
+            res_dic[method_cur]['b_int'] = []
+
             # Now loop over glob_ini:
             for glob_ini in list_glob_ini:
                 # Get the array, if it exists.
@@ -1167,29 +1184,6 @@ class Relax_disp_rep:
                 # If they are not of same length, then dont even bother to continue.
                 if len(r2eff_arr) != len(r2eff_arr_ref):
                     continue
-
-                # Calculate the R2eff versus R2eff error.
-                r2eff_vs_err_ref = r2eff_arr_ref / r2eff_err_arr_ref
-                r2eff_vs_err = r2eff_arr / r2eff_err_arr
-
-                # Get the statistics from scipy.
-                pearsons_correlation_coefficient, two_tailed_p_value = pearsonr(r2eff_vs_err_ref, r2eff_vs_err)
-
-                # Calculate manual.
-                x = r2eff_vs_err_ref
-                x_m = mean(x)
-                y = r2eff_vs_err
-                y_m = mean(r2eff_vs_err)
-
-                r = sum( (x - x_m)*(y - y_m)  ) / sqrt( sum((x - x_m)**2) * sum((y - y_m)**2) )
-
-
-                # Solve by linear least squares.
-                n = len(y)
-                b = (sum(x*y) - 1./n * sum(x) * sum(y) ) / ( sum(x**2) - 1./n * (sum(x))**2 )
-                a = 1./n * sum(y) - b * 1./n * sum(x)
-
-                print(method_ref, method_cur, glob_ini, pearsons_correlation_coefficient, r, b, a)
 
                 # Get the normalised array.
                 r2eff_norm_arr = r2eff_arr/r2eff_arr_ref
@@ -1214,10 +1208,61 @@ class Relax_disp_rep:
                 res_dic[method_cur][str(glob_ini)]['r2eff_diff_norm_arr'] = r2eff_diff_norm_arr
                 res_dic[method_cur][str(glob_ini)]['r2eff_diff_norm_std'] = r2eff_diff_norm_std
 
+                ### Calculate for value over error.
+
+                # Calculate the R2eff versus R2eff error.
+                r2eff_vs_err_ref = r2eff_arr_ref / r2eff_err_arr_ref
+                r2eff_vs_err = r2eff_arr / r2eff_err_arr
+
+                # Get the statistics from scipy.
+                pearsons_correlation_coefficient, two_tailed_p_value = pearsonr(r2eff_vs_err_ref, r2eff_vs_err)
+
+                # With intercept at axis.
+                # Calculate sample correlation coefficient, measure of goodness-of-fit of linear regression
+                x = r2eff_vs_err_ref
+                x_m = mean(x)
+                y = r2eff_vs_err
+                y_m = mean(r2eff_vs_err)
+
+                # Solve by linear least squares. f(x) = a*x + b.
+                n = len(y)
+                a_int = (sum(x*y) - 1./n * sum(x) * sum(y) ) / ( sum(x**2) - 1./n * (sum(x))**2 )
+                b_int = 1./n * sum(y) - a_int * 1./n * sum(x)
+
+                r_xy_int = sum( (x - x_m)*(y - y_m)  ) / sqrt( sum((x - x_m)**2) * sum((y - y_m)**2) )
+
+                # Without intercept.
+                a = sum(x*y) / sum(x**2)
+                r_xy = sum(x*y) / sqrt(sum(x**2) * sum(y**2))
+
+                print(method_ref, method_cur, glob_ini, pearsons_correlation_coefficient, r_xy**2, a, r_xy_int**2, a_int, b_int)
+
+                # Store to result dic.
+                res_dic[method_cur][str(glob_ini)]['pearsons_correlation_coefficient'] = pearsons_correlation_coefficient
+                res_dic[method_cur]['pearsons_correlation_coefficient'].append(pearsons_correlation_coefficient)
+                res_dic[method_cur][str(glob_ini)]['two_tailed_p_value'] = two_tailed_p_value
+                res_dic[method_cur]['two_tailed_p_value'].append(two_tailed_p_value)
+                res_dic[method_cur][str(glob_ini)]['r_xy'] = r_xy
+                res_dic[method_cur]['r_xy'].append(r_xy)
+                res_dic[method_cur][str(glob_ini)]['a'] = a
+                res_dic[method_cur]['a'].append(a)
+                res_dic[method_cur][str(glob_ini)]['r_xy_int'] = r_xy_int
+                res_dic[method_cur]['r_xy_int'].append(r_xy_int)
+                res_dic[method_cur][str(glob_ini)]['a_int'] = a_int
+                res_dic[method_cur]['a_int'].append(a_int)
+                res_dic[method_cur][str(glob_ini)]['b_int'] = b_int
+                res_dic[method_cur]['b_int'].append(b_int)
 
             res_dic[method_cur]['glob_ini'] = asarray(res_dic[method_cur]['glob_ini'])
             res_dic[method_cur]['r2eff_norm_std'] = asarray(res_dic[method_cur]['r2eff_norm_std'])
 
+            res_dic[method_cur]['pearsons_correlation_coefficient'] = asarray(res_dic[method_cur]['pearsons_correlation_coefficient'])
+            res_dic[method_cur]['two_tailed_p_value'] = asarray(res_dic[method_cur]['two_tailed_p_value'])
+            res_dic[method_cur]['r_xy'] = asarray(res_dic[method_cur]['r_xy'])
+            res_dic[method_cur]['a'] = asarray(res_dic[method_cur]['a'])
+            res_dic[method_cur]['r_xy_int'] = asarray(res_dic[method_cur]['r_xy_int'])
+            res_dic[method_cur]['a_int'] = asarray(res_dic[method_cur]['a_int'])
+            res_dic[method_cur]['b_int'] = asarray(res_dic[method_cur]['b_int'])
 
         return res_dic
 
@@ -1229,24 +1274,40 @@ class Relax_disp_rep:
         # Define figure
         #fig = plt.figure(figsize=(12, 12))
         fig = plt.figure()
+        fig.suptitle('Stats per NI')
         ax1 = fig.add_subplot(111)
-        #ax2 = ax1.twinx()
+        ax2 = ax1.twinx()
 
         for method in methods:
             if method not in r2eff_stat_dic:
                 continue
 
             x = r2eff_stat_dic[method]['glob_ini']
-            y = r2eff_stat_dic[method]['r2eff_norm_std']
 
-            ax1.plot(x, y, label='%s'%method)
+            # Get stats.
+            # Linear regression slope, without intercept
+            a = r2eff_stat_dic[method]['a']
+
+            # sample correlation coefficient, without intercept
+            r_xy = r2eff_stat_dic[method]['r_xy']
+            r_xy2 = r_xy**2
+
+            ax1.plot(x, a, ".-", label='%s LR'%method)
+            ax2.plot(x, r_xy2, "o--", label='%s SC'%method)
 
         #ax1.legend(loc='upper left', shadow=True)
-        ax1.legend(loc='upper left', shadow=True, prop = fontP)
+        ax1.legend(loc='lower left', shadow=True, prop = fontP)
+        ax2.legend(loc='lower right', shadow=True, prop = fontP)
         ax1.set_xlabel('NI')
-        ax1.set_ylabel(r'$\sigma ( R_{2,\mathrm{eff}} )$')
-        fig.gca().set_xticks(x)
-        fig.gca().invert_xaxis()
+        #ax1.set_ylabel(r'$\sigma ( R_{2,\mathrm{eff}} )$')
+        ax1.set_ylabel('Linear regression slope, without intercept')
+        ax2.set_ylabel('Sample correlation ' + r'$r_{xy}^2$')
+        ax1.set_xticks(x)
+        ax2.set_xticks(x)
+        ax1.set_ylim(0, 1.1)
+        ax2.set_ylim(0, 1.1)
+        ax1.invert_xaxis()
+        #ax2.invert_xaxis()
         if show:
             plt.show()
 
