@@ -53,6 +53,12 @@ class Dasha(SystemTestCase):
             # Store in the status object. 
             status.skipped_tests.append([methodName, 'subprocess', self._skip_type])
 
+        # Test for the presence of the Dasha binary (skip the test if not present).
+        try:
+            test_binary('dasha')
+        except:
+            status.skipped_tests.append([methodName, 'Dasha model-free software', self._skip_type])
+
 
     def setUp(self):
         """Set up for all the functional tests."""
@@ -66,12 +72,6 @@ class Dasha(SystemTestCase):
 
     def test_dasha(self):
         """Test a complete model-free analysis using the program 'Dasha'."""
-
-        # Test for the presence of the Dasha binary (skip the test if not present).
-        try:
-            test_binary('dasha')
-        except:
-            return
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'dasha.py')
