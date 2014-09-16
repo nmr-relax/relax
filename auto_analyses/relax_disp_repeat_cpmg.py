@@ -1362,12 +1362,20 @@ class Relax_disp_rep:
         ax2.set_ylim(min_r_xy2*0.95, max_r_xy2*1.05)
         ax2.invert_xaxis()
 
+        # Determine filename.
+        if selection == None:
+            file_name_ini = 'r2eff_stat_all'
+        else:
+            file_name_ini = 'r2eff_stat_sel'
+
+        # Write png.
+        png_file_name = file_name_ini + '.png'
+        png_file_path = get_file_path(file_name=png_file_name, dir=self.results_dir)
+        plt.savefig(png_file_path, bbox_inches='tight')
+
         # Write to file.
         if write_stats:
-            if selection == None:
-                file_name = 'r2eff_stat_all.txt'
-            else:
-                file_name = 'r2eff_stat_sel.txt'
+            file_name = file_name_ini + '.txt'
             path = self.results_dir
             file_obj, file_path = open_write_file(file_name=file_name, dir=path, force=True, compress_type=0, verbosity=1, return_path=True)
 

@@ -6048,32 +6048,32 @@ class Relax_disp(SystemTestCase):
 
 
         # Try plot some R2eff statistics.
-        if False:
+        if True:
             # Collect r2eff values.
-            selection = ':2,3'
-            r2eff_ft_sel = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126], selection=selection)
-            r2eff_mdd_sel = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126], selection=selection)
+            selections = [None, ':2,3']
+            for selection in selections:
+                r2eff_ft_sel = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126], selection=selection)
+                r2eff_mdd_sel = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126], selection=selection)
 
-            # Get R2eff stats.
-            r2eff_stat_dic = RDR.get_r2eff_stat_dic(list_r2eff_dics=[r2eff_ft_sel, r2eff_mdd_sel], list_glob_ini=[128, 126])
+                # Get R2eff stats.
+                r2eff_stat_dic = RDR.get_r2eff_stat_dic(list_r2eff_dics=[r2eff_ft_sel, r2eff_mdd_sel], list_glob_ini=[128, 126])
 
-            ## Plot R2eff stats
-            write_stats = True
-            RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126, 6], show=False, write_stats=write_stats)
+                ## Plot R2eff stats
+                write_stats = True
+                RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126, 6], show=False, write_stats=write_stats)
 
-            # Open stat file.
-            if write_stats:
-                if selection == None:
-                    file_name = 'r2eff_stat_all.txt'
-                else:
-                    file_name = 'r2eff_stat_sel.txt'
-                path = RDR.results_dir
-                data = extract_data(file=file_name, dir=path)
+                # Open stat file.
+                if write_stats:
+                    if selection == None:
+                        file_name = 'r2eff_stat_all.txt'
+                    else:
+                        file_name = 'r2eff_stat_sel.txt'
+                    path = RDR.results_dir
+                    data = extract_data(file=file_name, dir=path)
 
-                # Loop over the lines.
-                for i, data_i in enumerate(data):
-                    print(i, data_i)
-
+                    # Loop over the lines.
+                    for i, data_i in enumerate(data):
+                        print(i, data_i)
 
         # Do minimisation
         if False:
