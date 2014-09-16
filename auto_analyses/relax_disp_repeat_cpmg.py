@@ -38,7 +38,7 @@ from warnings import warn
 
 # relax module imports.
 import dep_check
-from lib.io import extract_data, get_file_path, sort_filenames, write_data
+from lib.io import extract_data, get_file_path, open_write_file, sort_filenames, write_data
 from lib.text.sectioning import section, subsection, subtitle, title
 from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import display_spin, generate_spin_string, return_spin, spin_loop
@@ -1016,6 +1016,7 @@ class Relax_disp_rep:
         # Loop over the glob ini:
         res_dic = {}
         res_dic['method'] = method
+        res_dic['selection'] = selection
         for glob_ini in list_glob_ini:
             # Store under glob_ini
             res_dic[str(glob_ini)] = {}
@@ -1146,11 +1147,15 @@ class Relax_disp_rep:
             r2eff_dic_ref = list_r2eff_dics[0]
             method_ref = r2eff_dic_ref['method']
             res_dic['method_ref'] = method_ref
+            glob_ini_ref = str(list_glob_ini[0])
+            res_dic['glob_ini_ref'] = glob_ini_ref
+            selection = r2eff_dic_ref['selection']
+            res_dic['selection'] = selection
 
             # Let the reference R2eff array be the initial glob.
-            r2eff_arr_ref = r2eff_dic_ref[str(list_glob_ini[0])]['r2eff_arr']
+            r2eff_arr_ref = r2eff_dic_ref[glob_ini_ref]['r2eff_arr']
             res_dic['r2eff_arr_ref'] = r2eff_arr_ref
-            r2eff_err_arr_ref = r2eff_dic_ref[str(list_glob_ini[0])]['r2eff_err_arr']
+            r2eff_err_arr_ref = r2eff_dic_ref[glob_ini_ref]['r2eff_err_arr']
             res_dic['r2eff_err_arr_ref'] = r2eff_err_arr_ref
 
             # Get the current method
@@ -1267,26 +1272,37 @@ class Relax_disp_rep:
         return res_dic
 
 
-    def plot_r2eff_stat(self, r2eff_stat_dic=None, methods=[], list_glob_ini=[], show=False):
-
-        # Loop over the methods.
+    def plot_r2eff_stat(self, r2eff_stat_dic=None, methods=[], list_glob_ini=[], show=False, write_stats=False):
 
         # Define figure
         fig, axises = plt.subplots(nrows=2, ncols=1)
         fig.suptitle('Stats per NI')
         ax1, ax2 = axises
 
+        # Catch min and max values for all methods.
         min_a = 1.0
         max_a = 0.0
 
         min_r_xy2 = 1.0
         max_r_xy2 = 0.0
 
+        # Prepare header for writing.
+        selection = r2eff_stat_dic['selection']
+
+        # For writing out stats.        
+        headings = []
+        data_dic = OrderedDict()
+        i_max = 0
+
         for method in methods:
             if method not in r2eff_stat_dic:
                 continue
 
+            # Use NI as x.
             x = r2eff_stat_dic[method]['glob_ini']
+
+            # Add to headings.
+            headings = headings + ['method', 'NI', 'slope', 'rxy2']
 
             # Get stats.
             # Linear regression slope, without intercept
@@ -1306,9 +1322,32 @@ class Relax_disp_rep:
             if min(r_xy2) < min_r_xy2:
                 min_r_xy2 = min(r_xy2)
 
+            # Add to data.
+            data_dic[method] = OrderedDict()
+            for i, x_i in enumerate(x):
+                a_i = a[i]
+                r_xy2_i = r_xy2[i]
+                data_dic[method][str(i)] = ["%i"%x_i, "%3.5f"%a_i, "%3.5f"%r_xy2_i]
+                if i > i_max:
+                    i_max = i
+
             ax1.plot(x, a, ".-", label='%s LR'%method)
             ax2.plot(x, r_xy2, "o--", label='%s SC'%method)
 
+        # Loop over methods for writing data.
+        data = []
+        for i in range(0, i_max):
+            data_i = []
+            for method, data_dic_m in data_dic.iteritems():
+                # Loop over all possible data points.
+                if str(i) in data_dic_m:
+                    data_i = data_i + [method] + data_dic_m[str(i)]
+                else:
+                    data_i = data_i + [method] + ["0", "0", "0"]
+
+            data.append(data_i)
+
+        # Set legends.
         ax1.legend(loc='lower left', shadow=True, prop = fontP)
         ax1.set_xlabel('NI')
         #ax1.set_ylabel(r'$\sigma ( R_{2,\mathrm{eff}} )$')
@@ -1322,6 +1361,23 @@ class Relax_disp_rep:
         ax2.set_xticks(x)
         ax2.set_ylim(min_r_xy2*0.95, max_r_xy2*1.05)
         ax2.invert_xaxis()
+
+        # Write to file.
+        if write_stats:
+            if selection == None:
+                file_name = 'r2eff_stat_all.txt'
+            else:
+                file_name = 'r2eff_stat_sel.txt'
+            path = self.results_dir
+            file_obj, file_path = open_write_file(file_name=file_name, dir=path, force=True, compress_type=0, verbosity=1, return_path=True)
+
+            # Write data.
+            write_data(out=file_obj, headings=headings, data=data)
+
+            # Close file.
+            file_obj.close()
+
+        # Plot data.
         if show:
             plt.show()
 

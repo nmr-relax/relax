@@ -36,7 +36,7 @@ from auto_analyses.relax_disp_repeat_cpmg import DIC_KEY_FORMAT, Relax_disp_rep
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from lib.errors import RelaxError
-from lib.io import extract_data, get_file_path
+from lib.io import extract_data, get_file_path, open_read_file
 from lib.spectrum.nmrpipe import show_apod_extract, show_apod_rmsd, show_apod_rmsd_dir_to_files, show_apod_rmsd_to_file
 from pipe_control.mol_res_spin import display_spin, generate_spin_string, return_spin, spin_loop
 from pipe_control.minimise import assemble_scaling_matrix
@@ -6058,7 +6058,21 @@ class Relax_disp(SystemTestCase):
             r2eff_stat_dic = RDR.get_r2eff_stat_dic(list_r2eff_dics=[r2eff_ft_sel, r2eff_mdd_sel], list_glob_ini=[128, 126])
 
             ## Plot R2eff stats
-            RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126, 6], show=True)
+            write_stats = True
+            RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126, 6], show=False, write_stats=write_stats)
+
+            # Open stat file.
+            if write_stats:
+                if selection == None:
+                    file_name = 'r2eff_stat_all.txt'
+                else:
+                    file_name = 'r2eff_stat_sel.txt'
+                path = RDR.results_dir
+                data = extract_data(file=file_name, dir=path)
+
+                # Loop over the lines.
+                for i, data_i in enumerate(data):
+                    print(i, data_i)
 
 
         # Do minimisation
