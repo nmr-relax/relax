@@ -1294,7 +1294,7 @@ class Relax_disp_rep:
 
             if max(a) > max_a:
                 max_a = max(a)
-            if min(a) > min_a:
+            if min(a) < min_a:
                 min_a = min(a)
 
             # sample correlation coefficient, without intercept
@@ -1303,7 +1303,7 @@ class Relax_disp_rep:
 
             if max(r_xy2) > max_r_xy2:
                 max_r_xy2 = max(r_xy2)
-            if min(r_xy2) > min_r_xy2:
+            if min(r_xy2) < min_r_xy2:
                 min_r_xy2 = min(r_xy2)
 
             ax1.plot(x, a, ".-", label='%s LR'%method)
