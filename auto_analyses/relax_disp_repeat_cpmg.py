@@ -1314,13 +1314,13 @@ class Relax_disp_rep:
         #ax1.set_ylabel(r'$\sigma ( R_{2,\mathrm{eff}} )$')
         ax1.set_ylabel('Linear regression slope, without intercept')
         ax1.set_xticks(x)
-        ax1.set_ylim(0.8, max_a*1.05)
+        ax1.set_ylim(min_a*0.95, max_a*1.05)
         ax1.invert_xaxis()
 
         ax2.legend(loc='lower right', shadow=True, prop = fontP)
         ax2.set_ylabel('Sample correlation ' + r'$r_{xy}^2$')
         ax2.set_xticks(x)
-        ax2.set_ylim(0.8, max_r_xy2*1.05)
+        ax2.set_ylim(min_r_xy2*0.95, max_r_xy2*1.05)
         ax2.invert_xaxis()
         if show:
             plt.show()
