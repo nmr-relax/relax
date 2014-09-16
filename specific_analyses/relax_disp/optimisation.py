@@ -287,8 +287,14 @@ def calculate_r2eff():
             intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True)
 
             # Check for math domain errors or log for values less than 0.0.
-            log_val = float(intensity) / ref_intensity
-            if log_val <= 0.0 or ref_intensity == 0.0:
+            if ref_intensity == 0.0:
+                skip_data = True
+            elif float(intensity) / ref_intensity <= 0.0:
+                skip_data = True
+            else:
+                skip_data = False
+
+            if skip_data:
                 spin_string = generate_spin_string(spin=spin, mol_name=mol_name, res_num=resi, res_name=resn)
                 msg = "Math log(I / I_ref) domain error for spin '%s' in R2eff value calculation for fixed relaxation time period data.  I=%3.3f, I_ref=%3.3f.  The point is skipped." % (spin_string, intensity, ref_intensity)
                 warn(RelaxWarning("%s" % msg))
