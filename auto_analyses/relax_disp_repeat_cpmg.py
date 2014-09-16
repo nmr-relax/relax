@@ -157,7 +157,7 @@ class Relax_disp_rep:
                 peaks_folder = getattr(self, key)['peaks_folder'] + sep + method
 
                 # Define glop pattern for peak files.
-                peaks_glob_pat = '%s*%s.ser' % (glob_ini, method)
+                peaks_glob_pat = '%s_%s.ser' % (glob_ini, method)
 
                 # Get the file list.
                 peaks_file_list = glob(peaks_folder + sep + peaks_glob_pat)
@@ -230,7 +230,7 @@ class Relax_disp_rep:
             peaks_folder = getattr(self, key)['peaks_folder']  + sep + self.method
 
             # Define glop pattern for peak files.
-            peaks_glob_pat = '%s*%s.ser' % (glob_ini, self.method)
+            peaks_glob_pat = '%s_%s.ser' % (glob_ini, self.method)
 
             # Get the file list.
             peaks_file_list = glob(peaks_folder + sep + peaks_glob_pat)
@@ -247,7 +247,7 @@ class Relax_disp_rep:
                 rmsd_folder = getattr(self, key)['rmsd_folder']
 
                 # Define glop pattern for rmsd files.
-                rmsd_glob_pat = '%s*%s.rmsd' % (glob_ini, self.method)
+                rmsd_glob_pat = '%s_*_%s.rmsd' % (glob_ini, self.method)
 
                 # Get the file list.
                 rmsd_file_list = glob(rmsd_folder + sep + rmsd_glob_pat)
