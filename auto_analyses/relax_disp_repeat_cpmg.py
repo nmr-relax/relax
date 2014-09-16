@@ -238,6 +238,11 @@ class Relax_disp_rep:
             # Sort the file list Alphanumeric.
             peaks_file_list = sort_filenames(filenames=peaks_file_list)
 
+            # If there is no peak list, then continue.
+            if len(peaks_file_list) == 0:
+                finished = False
+                continue
+
             # There should only be one peak file.
             for peaks_file in peaks_file_list:
                 self.interpreter.spectrum.read_intensities(file=peaks_file, spectrum_id=spectrum_ids, int_method=self.int_method, int_col=range(len(spectrum_ids)))
@@ -263,6 +268,10 @@ class Relax_disp_rep:
                     # Extract rmsd from line 0, and column 0.
                     rmsd = float(extract_data(file=rmsd_file)[0][0])
                     self.interpreter.spectrum.baseplane_rmsd(error=rmsd, spectrum_id=spectrum_id)
+
+                finished = True
+
+            return finished
 
 
     def do_spectrum_error_analysis(self, pipe_name, set_rep=None):
@@ -320,8 +329,10 @@ class Relax_disp_rep:
 
                 if not found:
                     calculate = True
+                    finished = False
                 elif found:
                     calculate = False
+                    finished = True
 
                 if calculate:
                     # Create the data pipe, by copying setup pipe.
@@ -329,14 +340,21 @@ class Relax_disp_rep:
                     self.interpreter.pipe.switch(pipe_name)
 
                     # Call set intensity.
-                    self.set_intensity_and_error(pipe_name=pipe_name, glob_ini=glob_ini, set_rmsd=set_rmsd)
+                    finished = self.set_intensity_and_error(pipe_name=pipe_name, glob_ini=glob_ini, set_rmsd=set_rmsd)
 
-                    # Call error analysis.
-                    self.do_spectrum_error_analysis(pipe_name=pipe_name, set_rep=set_rep)
+                    if finished:
+                        # Call error analysis.
+                        self.do_spectrum_error_analysis(pipe_name=pipe_name, set_rep=set_rep)
 
-                    # Save results, and store the current settings dic to pipe.
-                    cdp.settings = self.settings
-                    self.interpreter.results.write(file=resfile, dir=path, force=force)
+                        # Save results, and store the current settings dic to pipe.
+                        cdp.settings = self.settings
+                        self.interpreter.results.write(file=resfile, dir=path, force=force)
+
+                    else:
+                        pipe_name = pipes.cdp_name()
+                        self.interpreter.pipe.delete(pipe_name=pipe_name)
+
+                return finished
 
 
     def calc_r2eff(self, methods=None, list_glob_ini=None, force=False):
@@ -366,7 +384,9 @@ class Relax_disp_rep:
                     intensity_pipe_name = self.name_pipe(method=self.method, model='setup', analysis='int', glob_ini=glob_ini)
 
                     if not pipes.has_pipe(intensity_pipe_name):
-                        self.set_int(methods=[method], list_glob_ini=[glob_ini])
+                        finished = self.set_int(methods=[method], list_glob_ini=[glob_ini])
+                        if not finished:
+                            continue
 
                     self.interpreter.pipe.copy(pipe_from=intensity_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
                     self.interpreter.pipe.switch(pipe_name)
@@ -883,7 +903,7 @@ class Relax_disp_rep:
             if not pipes.has_pipe(pipe_name):
                 self.set_int(methods=[method], list_glob_ini=[glob_ini])
 
-            if pipes.get_pipe() != pipe_name:
+            if pipes.cdp_name() != pipe_name:
                 self.interpreter.pipe.switch(pipe_name)
 
             # Results dictionary.
@@ -1028,8 +1048,11 @@ class Relax_disp_rep:
             if not pipes.has_pipe(pipe_name):
                 self.calc_r2eff(methods=[method], list_glob_ini=[glob_ini])
 
-            if pipes.get_pipe() != pipe_name:
+            if pipes.cdp_name() != pipe_name and pipes.has_pipe(pipe_name):
                 self.interpreter.pipe.switch(pipe_name)
+
+            else:
+                continue
 
             # Results dictionary.
             res_dic[str(glob_ini)] = {}
@@ -1371,10 +1394,12 @@ class Relax_disp_rep:
         # Write png.
         png_file_name = file_name_ini + '.png'
         png_file_path = get_file_path(file_name=png_file_name, dir=self.results_dir)
-        plt.savefig(png_file_path, bbox_inches='tight')
 
         # Write to file.
         if write_stats:
+            # save figure
+            plt.savefig(png_file_path, bbox_inches='tight')
+
             file_name = file_name_ini + '.txt'
             path = self.results_dir
             file_obj, file_path = open_write_file(file_name=file_name, dir=path, force=True, compress_type=0, verbosity=1, return_path=True)
