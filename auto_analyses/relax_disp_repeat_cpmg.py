@@ -893,9 +893,6 @@ class Relax_disp_rep:
         res_dic = {}
         res_dic['method'] = method
         for glob_ini in list_glob_ini:
-            # Store under glob_ini
-            res_dic[str(glob_ini)] = {}
-
             # Get the pipe name for peak_intensity values.
             pipe_name = self.name_pipe(method=method, model='setup', analysis='int', glob_ini=glob_ini)
 
@@ -1038,9 +1035,6 @@ class Relax_disp_rep:
         res_dic['method'] = method
         res_dic['selection'] = selection
         for glob_ini in list_glob_ini:
-            # Store under glob_ini
-            res_dic[str(glob_ini)] = {}
-
             # Get the pipe name for R2eff values.
             pipe_name = self.name_pipe(method=method, model=MODEL_R2EFF, analysis='int', glob_ini=glob_ini)
 
