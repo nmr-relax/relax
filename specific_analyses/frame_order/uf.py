@@ -380,7 +380,7 @@ def sobol_setup(max_num=200, oversample=100):
     pipes.test()
 
     # Throw a warning to the user if not enough points are being used.
-    if num < 200:
+    if max_num < 200:
         warn(RelaxWarning("To obtain reliable results in a frame order analysis, the maximum number of integration points should be greater than 200."))
  
     # Store the values.
