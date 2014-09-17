@@ -1432,54 +1432,6 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(ds.chi2[i], chi2_ref[i])
 
 
-    def test_num_int_pts(self):
-        """Check the basic operation of the frame_order.num_int_pts user function."""
-
-        # Create a data pipe.
-        self.interpreter.pipe.create('test', 'frame order')
-
-        # Set a number of points.
-        self.interpreter.frame_order.num_int_pts(200)
-
-
-    def test_num_int_pts2(self):
-        """Check the operation of the frame_order.num_int_pts user function with just the model specified."""
-
-        # Create a data pipe.
-        self.interpreter.pipe.create('test', 'frame order')
-
-        # Set the model.
-        self.interpreter.frame_order.select_model('iso cone')
-
-        # Set a number of points.
-        self.interpreter.frame_order.num_int_pts(200)
-
-
-    def test_num_int_pts3(self):
-        """Check the operation of the frame_order.num_int_pts user function with the model and parameters set up."""
-
-        # Create a data pipe.
-        self.interpreter.pipe.create('test', 'frame order')
-
-        # Set the model.
-        self.interpreter.frame_order.select_model('iso cone')
-
-        # Set up the system.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='axis_theta', val=0.5)
-        self.interpreter.value.set(param='axis_phi', val=0.1)
-        self.interpreter.value.set(param='cone_theta', val=0.1)
-        self.interpreter.value.set(param='cone_sigma_max', val=0.1)
-
-        # Set a number of points.
-        self.interpreter.frame_order.num_int_pts(200)
-
-
     def fixme_test_opendx_map(self):
         """Test the mapping of the Euler angle parameters for OpenDx viewing."""
 
@@ -1839,3 +1791,51 @@ class Frame_order(SystemTestCase):
 
         # Check the chi2 value.
         self.assertAlmostEqual(cdp.chi2, 0.011378666767745968)
+
+
+    def test_sobol_setup(self):
+        """Check the basic operation of the frame_order.sobol_setup user function."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('test', 'frame order')
+
+        # Set a number of points.
+        self.interpreter.frame_order.sobol_setup(200)
+
+
+    def test_sobol_setup2(self):
+        """Check the operation of the frame_order.sobol_setup user function with just the model specified."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('test', 'frame order')
+
+        # Set the model.
+        self.interpreter.frame_order.select_model('iso cone')
+
+        # Set a number of points.
+        self.interpreter.frame_order.sobol_setup(200)
+
+
+    def test_sobol_setup3(self):
+        """Check the operation of the frame_order.sobol_setup user function with the model and parameters set up."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('test', 'frame order')
+
+        # Set the model.
+        self.interpreter.frame_order.select_model('iso cone')
+
+        # Set up the system.
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='axis_theta', val=0.5)
+        self.interpreter.value.set(param='axis_phi', val=0.1)
+        self.interpreter.value.set(param='cone_theta', val=0.1)
+        self.interpreter.value.set(param='cone_sigma_max', val=0.1)
+
+        # Set a number of points.
+        self.interpreter.frame_order.sobol_setup(200)
