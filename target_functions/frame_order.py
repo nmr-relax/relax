@@ -58,7 +58,7 @@ from target_functions.chi2 import chi2
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, com=None, ave_pos_pivot=zeros(3), pivot=None, pivot_opt=False):
+    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, sobol_max_points=200, sobol_oversample=100, com=None, ave_pos_pivot=zeros(3), pivot=None, pivot_opt=False):
         """Set up the target functions for the Frame Order theories.
 
         @keyword model:             The name of the Frame Order model.
@@ -95,8 +95,10 @@ class Frame_order:
         @type paramag_centre:       numpy rank-1, 3D array or rank-2, Nx3 array
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 array
-        @keyword num_int_pts:       The number of points to use for the numerical integration technique.
-        @type num_int_pts:          int
+        @keyword sobol_max_points:  The maximum number of Sobol' points to use for the numerical PCS integration technique.
+        @type sobol_max_points:     int
+        @keyword sobol_oversample:  The oversampling factor Ov used for the total number of points N * Ov * 10**M, where N is the maximum number of Sobol' points and M is the number of dimensions or torsion-tilt angles for the system.
+        @type sobol_oversample:     int
         @keyword com:               The centre of mass of the system.  This is used for defining the rotor model systems.
         @type com:                  numpy 3D rank-1 array
         @keyword ave_pos_pivot:     The pivot point to rotate all atoms about to the average domain position.  In most cases this will be the centre of mass of the moving domain.  This pivot is shifted by the translation vector.
@@ -128,7 +130,8 @@ class Frame_order:
         self.temp = temp
         self.frq = frq
         self.total_num_params = len(init_params)
-        self.num_int_pts = num_int_pts
+        self.sobol_max_points = sobol_max_points
+        self.sobol_oversample = sobol_oversample
         self.com = com
         self.pivot_opt = pivot_opt
 
@@ -300,33 +303,33 @@ class Frame_order:
 
         # The Sobol' sequence data and target function aliases (quasi-random integration).
         if model == MODEL_PSEUDO_ELLIPSE:
-            self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
+            self.create_sobol_data(dims=['theta', 'phi', 'sigma'])
             self.func = self.func_pseudo_ellipse
         elif model == MODEL_PSEUDO_ELLIPSE_TORSIONLESS:
-            self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi'])
+            self.create_sobol_data(dims=['theta', 'phi'])
             self.func = self.func_pseudo_ellipse_torsionless
         elif model == MODEL_PSEUDO_ELLIPSE_FREE_ROTOR:
-            self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
+            self.create_sobol_data(dims=['theta', 'phi', 'sigma'])
             self.func = self.func_pseudo_ellipse_free_rotor
         elif model == MODEL_ISO_CONE:
-            self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
+            self.create_sobol_data(dims=['theta', 'phi', 'sigma'])
             self.func = self.func_iso_cone
         elif model == MODEL_ISO_CONE_TORSIONLESS:
-            self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi'])
+            self.create_sobol_data(dims=['theta', 'phi'])
             self.func = self.func_iso_cone_torsionless
         elif model == MODEL_ISO_CONE_FREE_ROTOR:
-            self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
+            self.create_sobol_data(dims=['theta', 'phi', 'sigma'])
             self.func = self.func_iso_cone_free_rotor
         elif model == MODEL_ROTOR:
-            self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
+            self.create_sobol_data(dims=['sigma'])
             self.func = self.func_rotor
         elif model == MODEL_RIGID:
             self.func = self.func_rigid
         elif model == MODEL_FREE_ROTOR:
-            self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
+            self.create_sobol_data(dims=['sigma'])
             self.func = self.func_free_rotor
         elif model == MODEL_DOUBLE_ROTOR:
-            self.create_sobol_data(n=self.num_int_pts, dims=['sigma', 'sigma2'])
+            self.create_sobol_data(dims=['sigma', 'sigma2'])
             self.func = self.func_double_rotor
 
 
@@ -1185,31 +1188,35 @@ class Frame_order:
             self.r_inter_pivot = pivot - pivot2
 
 
-    def create_sobol_data(self, n=10000, dims=None):
+    def create_sobol_data(self, dims=None):
         """Create the Sobol' quasi-random data for numerical integration.
 
         This uses the external sobol_lib module to create the data.  The algorithm is that modified by Antonov and Saleev.
 
 
-        @keyword n:         The number of points to generate.
-        @type n:            int
         @keyword dims:      The list of parameters.
         @type dims:         list of str
         """
 
+        # Printout (useful to see how long this takes!).
+        print("Generating the torsion-tilt angle sampling via the Sobol' sequence for numerical PCS integration.")
+
         # The number of dimensions.
         m = len(dims)
 
+        # The total number of points.
+        total_num = int(self.sobol_max_points * self.sobol_oversample * 10**m)
+
         # Initialise.
-        self.sobol_angles = zeros((n, m), float64)
-        self.Ri_prime = zeros((n, 3, 3), float64)
-        self.Ri2_prime = zeros((n, 3, 3), float64)
+        self.sobol_angles = zeros((total_num, m), float64)
+        self.Ri_prime = zeros((total_num, 3, 3), float64)
+        self.Ri2_prime = zeros((total_num, 3, 3), float64)
 
         # The Sobol' points.
-        points = i4_sobol_generate(m, n, 0)
+        points = i4_sobol_generate(m, total_num, 0)
 
         # Loop over the points.
-        for i in range(n):
+        for i in range(total_num):
             # Loop over the dimensions, converting the points to angles.
             theta = None
             phi = None
@@ -1286,6 +1293,9 @@ class Frame_order:
                 self.Ri_prime[i, 1, 0] =  s_sigma
                 self.Ri_prime[i, 1, 1] =  c_sigma
                 self.Ri_prime[i, 2, 2] = 1.0
+
+        # Printout (useful to see how long this takes!).
+        print("   Oversampled to %s points." % total_num)
 
 
     def reduce_and_rot(self, ave_pos_alpha=None, ave_pos_beta=None, ave_pos_gamma=None, daeg=None):
