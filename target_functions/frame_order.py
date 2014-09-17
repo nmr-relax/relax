@@ -25,7 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import acos, cos, pi, sin, sqrt
-from numpy import add, array, dot, float64, ones, outer, subtract, transpose, uint8, zeros
+from numpy import add, array, dot, float64, ones, outer, subtract, swapaxes, transpose, uint8, zeros
 
 # relax module imports.
 from extern.sobol.sobol_lib import i4_sobol_generate
@@ -1208,12 +1208,12 @@ class Frame_order:
         total_num = int(self.sobol_max_points * self.sobol_oversample * 10**m)
 
         # Initialise.
-        self.sobol_angles = zeros((total_num, m), float64)
+        self.sobol_angles = zeros((m, total_num), float64)
         self.Ri_prime = zeros((total_num, 3, 3), float64)
         self.Ri2_prime = zeros((total_num, 3, 3), float64)
 
         # The Sobol' points.
-        points = i4_sobol_generate(m, total_num, 0)
+        points = i4_sobol_generate(m, total_num, 1000)
 
         # Loop over the points.
         for i in range(total_num):
@@ -1225,22 +1225,22 @@ class Frame_order:
                 # The tilt angle - the angle of rotation about the x-y plane rotation axis.
                 if dims[j] in ['theta']:
                     theta = acos(2.0*points[j, i] - 1.0)
-                    self.sobol_angles[i, j] = theta
+                    self.sobol_angles[j, i] = theta
 
                 # The angle defining the x-y plane rotation axis.
                 if dims[j] in ['phi']:
                     phi = 2.0 * pi * points[j, i]
-                    self.sobol_angles[i, j] = phi
+                    self.sobol_angles[j, i] = phi
 
                 # The 1st torsion angle - the angle of rotation about the z' axis (or y' for the double motion models).
                 if dims[j] in ['sigma']:
                     sigma = 2.0 * pi * (points[j, i] - 0.5)
-                    self.sobol_angles[i, j] = sigma
+                    self.sobol_angles[j, i] = sigma
 
                 # The 2nd torsion angle - the angle of rotation about the x' axis.
                 if dims[j] in ['sigma2']:
                     sigma2 = 2.0 * pi * (points[j, i] - 0.5)
-                    self.sobol_angles[i, j] = sigma2
+                    self.sobol_angles[j, i] = sigma2
 
             # Pre-calculate the rotation matrices for the double motion models.
             if 'sigma2' in dims:
