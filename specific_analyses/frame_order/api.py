@@ -327,7 +327,7 @@ class Frame_order(API_base, API_common):
         """
 
         # First update the model, if needed.
-        update_model()
+        update_model(verbosity=0)
 
         # Return the parameter list object.
         return cdp.params
