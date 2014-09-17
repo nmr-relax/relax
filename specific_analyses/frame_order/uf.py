@@ -385,7 +385,7 @@ def sobol_setup(max_num=200, oversample=100):
  
     # Store the values.
     cdp.sobol_max_points = max_num
-    cdp.sobol_oversample_factor = oversample
+    cdp.sobol_oversample = oversample
 
     # Count the number of Sobol' points for the current model.
     count_sobol_points()
