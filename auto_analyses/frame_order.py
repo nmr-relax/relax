@@ -133,8 +133,7 @@ class Frame_order_analysis:
 
                 # The numerical optimisation settings.
                 opt = self.opt_mc
-                max_num, oversample = opt.get_min_sobol_info(0)
-                self.interpreter.frame_order.sobol_setup(max_num=max_num, oversample=oversample)
+                self.sobol_setup(opt.get_min_sobol_info(0))
 
                 # Monte Carlo simulations.
                 self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
@@ -221,9 +220,7 @@ class Frame_order_analysis:
                 pass
 
             # The numerical optimisation settings.
-            max_num, oversample = opt.get_min_sobol_info(i)
-            if max_num != None:
-                self.interpreter.frame_order.sobol_setup(max_num=max_num, oversample=oversample)
+            self.sobol_setup(opt.get_min_sobol_info(i))
 
             # Perform the optimisation.
             self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
@@ -597,9 +594,7 @@ class Frame_order_analysis:
                     self.interpreter.minimise.grid_zoom(level=zoom)
 
                 # The numerical optimisation settings.
-                max_num, oversample = opt.get_grid_sobol_info(i)
-                if max_num != None:
-                    self.interpreter.frame_order.sobol_setup(max_num=max_num, oversample=oversample)
+                self.sobol_setup(opt.get_grid_sobol_info(i))
 
                 # Set up the custom grid increments.
                 incs = self.custom_grid_incs(model, inc=opt.get_grid_inc(i))
@@ -610,9 +605,7 @@ class Frame_order_analysis:
             # Minimise (for the PCS data subset and full RDC set).
             for i in opt.loop_min():
                 # The numerical optimisation settings.
-                max_num, oversample = opt.get_min_sobol_info(i)
-                if max_num != None:
-                    self.interpreter.frame_order.sobol_setup(max_num=max_num, oversample=oversample)
+                self.sobol_setup(opt.get_min_sobol_info(i))
 
                 # Perform the optimisation.
                 self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
@@ -632,9 +625,7 @@ class Frame_order_analysis:
             opt = self.opt_full
             for i in opt.loop_min():
                 # The numerical optimisation settings.
-                max_num, oversample = opt.get_min_sobol_info(i)
-                if max_num != None:
-                    self.interpreter.frame_order.sobol_setup(max_num=max_num, oversample=oversample)
+                self.sobol_setup(opt.get_min_sobol_info(i))
 
                 # Perform the optimisation.
                 self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
@@ -703,9 +694,7 @@ class Frame_order_analysis:
                 self.interpreter.minimise.grid_zoom(level=zoom)
 
             # The numerical optimisation settings.
-            max_num, oversample = opt.get_grid_sobol_info(i)
-            if max_num != None:
-                self.interpreter.frame_order.sobol_setup(max_num=max_num, oversample=oversample)
+            self.sobol_setup(opt.get_grid_sobol_info(i))
 
             # The number of increments.
             inc = opt.get_grid_inc(i)
@@ -719,9 +708,7 @@ class Frame_order_analysis:
         # Minimise.
         for i in opt.loop_min():
             # The numerical optimisation settings.
-            max_num, oversample = opt.get_min_sobol_info(i)
-            if max_num != None:
-                self.interpreter.frame_order.sobol_setup(max_num=max_num, oversample=oversample)
+            self.sobol_setup(opt.get_min_sobol_info(i))
 
             # Perform the optimisation.
             self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
@@ -883,6 +870,29 @@ class Frame_order_analysis:
 
         # Return the reordered list.
         return new
+
+
+    def sobol_setup(self, info=None):
+        """Correctly handle the frame_order.sobol_setup user function.
+
+        @keyword info:  The information from the Optimisation_settings.get_*_sobol_info() function.
+        @type info:     tuple of int or None
+        """
+
+        # Unpack the info.
+        max_num, oversample = info
+
+        # Nothing to do.
+        if max_num == None:
+            return
+
+        # No oversampling specified.
+        if oversample == None:
+            self.interpreter.frame_order.sobol_setup(max_num=max_num)
+
+        # Full setup.
+        else:
+            self.interpreter.frame_order.sobol_setup(max_num=max_num, oversample=oversample)
 
 
     def visualisation(self, model=None):
