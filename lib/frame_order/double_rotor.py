@@ -145,7 +145,7 @@ def pcs_numeric_int_double_rotor(points=None, max_points=None, sigma_max=None, s
 
     # Loop over the samples.
     num = 0
-    for i in range(len(points)):
+    for i in range(len(points[0])):
         # The maximum number of points has been reached (well, surpassed by one so exit the loop before it is used).
         if num == max_points:
             break
