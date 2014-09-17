@@ -52,7 +52,7 @@ from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FR
 from target_functions.frame_order import Frame_order, sobol_data
 
 
-def count_sobol_points(target_fn=None):
+def count_sobol_points(target_fn=None, verbosity=1):
     """Count the number of Sobol' points for the current parameter values of the model.
 
     The count will be stored in the current data pipe and printed out.
@@ -60,10 +60,13 @@ def count_sobol_points(target_fn=None):
 
     @keyword target_fn:     The pre-initialised frame order target function class.
     @type target_fn:        target_functions.frame_order.Frame_order instance
+    @keyword verbosity:     If greater than 0, lots of information will be printed out.
+    @type verbosity:        int
     """
 
     # Printout.
-    print("\nSobol' quasi-random integration point counting for the current parameter values.")
+    if verbosity:
+        print("\nSobol' quasi-random integration point counting for the current parameter values.")
 
     # Checks.
     if not check_model(escalate=1):
@@ -75,7 +78,8 @@ def count_sobol_points(target_fn=None):
 
     # Handle the rigid model.
     if cdp.model == MODEL_RIGID:
-        print("\nSobol' quasi-random integration points are not used for the rigid frame order model.")
+        if verbosity:
+            print("Sobol' quasi-random integration points are not used for the rigid frame order model.\n")
         return
 
     # Set up the target function, if required.
@@ -164,14 +168,15 @@ def count_sobol_points(target_fn=None):
     cdp.sobol_points_used = count
 
     # Printout.
-    format = "    %-30s %20s\n"
-    percent = "%s" % (float(count)/float(cdp.sobol_max_points)*100) + '%'
-    sys.stdout.write(format % ("Maximum number of points:", cdp.sobol_max_points))
-    sys.stdout.write(format % ("Oversampling factor:", cdp.sobol_oversample))
-    sys.stdout.write(format % ("Total points:", total_num))
-    sys.stdout.write(format % ("Used points:", count))
-    sys.stdout.write(format % ("Percentage:", percent))
-    sys.stdout.write('\n')
+    if verbosity:
+        format = "    %-30s %20s\n"
+        percent = "%s" % (float(count)/float(cdp.sobol_max_points)*100) + '%'
+        sys.stdout.write(format % ("Maximum number of points:", cdp.sobol_max_points))
+        sys.stdout.write(format % ("Oversampling factor:", cdp.sobol_oversample))
+        sys.stdout.write(format % ("Total points:", total_num))
+        sys.stdout.write(format % ("Used points:", count))
+        sys.stdout.write(format % ("Percentage:", percent))
+        sys.stdout.write('\n')
 
 
 def grid_row(incs, lower, upper, dist_type=None, end_point=True):
@@ -1185,7 +1190,7 @@ class Frame_order_minimise_command(Slave_command):
         results = generic_minimise(func=target_fn.func, args=(), x0=self.param_vector, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.max_iterations, A=self.A, b=self.b, full_output=True, print_flag=self.verbosity)
 
         # Feedback on the number of integration points used.
-        count_sobol_points(target_fn=target_fn)
+        count_sobol_points(target_fn=target_fn, verbosity=self.verbosity)
 
         # Create the result command object on the slave to send back to the master.
         processor.return_object(Frame_order_result_command(processor=processor, memo_id=self.memo_id, results=results, A_5D_bc=target_fn.A_5D_bc, pcs_theta=target_fn.pcs_theta, rdc_theta=target_fn.rdc_theta, completed=completed))
