@@ -26,7 +26,7 @@
 from math import cos, pi
 from minfx.generic import generic_minimise
 from minfx.grid import grid_point_array
-from numpy import arccos, array, dot, float64, ones, swapaxes, zeros
+from numpy import arccos, array, dot, float64, ones, zeros
 from numpy.linalg import inv, norm
 from re import search
 import sys
@@ -99,13 +99,13 @@ def count_sobol_points(target_fn=None):
     # Unpack the points.
     theta, phi, sigma, sigma2 = None, None, None, None
     if dims == ['theta', 'phi', 'sigma']:
-        theta, phi, sigma = swapaxes(target_fn.sobol_angles, 0, 1)
+        theta, phi, sigma = target_fn.sobol_angles
     elif dims == ['theta', 'phi']:
-        theta, phi = swapaxes(target_fn.sobol_angles, 0, 1)
+        theta, phi = target_fn.sobol_angles
     elif dims == ['sigma']:
-        sigma = swapaxes(target_fn.sobol_angles, 0, 1)[0]
+        sigma = target_fn.sobol_angles[0]
     elif dims == ['sigma', 'sigma2']:
-        sigma, sigma2 = swapaxes(target_fn.sobol_angles, 0, 1)
+        sigma, sigma2 = target_fn.sobol_angles
 
     # Pseudo-ellipse.
     pe = False
@@ -128,7 +128,7 @@ def count_sobol_points(target_fn=None):
         cone_theta = cdp.cone_theta
 
     # Loop over the Sobol' points to count them.
-    total_num = len(target_fn.sobol_angles)
+    total_num = len(target_fn.sobol_angles[0])
     count = 0
     for i in range(total_num):
         # Pseudo-elliptic cone opening angle.
