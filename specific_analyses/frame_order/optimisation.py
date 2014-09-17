@@ -158,7 +158,9 @@ def count_sobol_points(target_fn=None):
     cdp.used_sobol_points = count
 
     # Printout.
-    print("\n%-20s %20s" % ("Total points:", total_num))
+    print("\n%-20s %20s" % ("Maximum number of points:", cdp.sobol_max_points))
+    print("%-20s %20s" % ("Oversampling factor:", cdp.sobol_oversample))
+    print("%-20s %20s" % ("Total points:", total_num))
     print("%-20s %20s" % ("Used points:", count))
     percent = "%s" % (float(count)/float(total_num)*100) + '%'
     print("%-20s %20s" % ("Percentage:", percent))
