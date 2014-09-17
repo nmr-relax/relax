@@ -359,16 +359,19 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows the maximum number of integration points N used during the Frame Order target function optimisation to be specified.  This is used in the quasi-random Sobol' sequence for the numerical integration of the PCS.  The symbols used to describe the algorithm are:")
-uf.desc[-1].add_list_element("N, the maximum number of Sobol' integration points.")
-uf.desc[-1].add_list_element("Ov, the oversampling factor.")
-uf.desc[-1].add_list_element("M, the number of dimensions or torsion-tilt angles used in the system.")
-uf.desc[-1].add_paragraph("The algorithm used for uniformly sampling the motional space is:")
-uf.desc[-1].add_list_element("Generate the Sobol' sequence.  The number of points is oversampled as N * Ov * 10**M.")
+uf.desc[-1].add_paragraph("This allows the maximum number of integration points N used during the frame order target function optimisation to be specified.  This is used in the quasi-random Sobol' sequence for the numerical integration of the PCS.  The formula used to find the total number of Sobol' points is:")
+uf.desc[-1].add_verbatim("""
+    total_num = N * Ov * 10**M,
+""")
+uf.desc[-1].add_paragraph("where:")
+uf.desc[-1].add_list_element("N is the maximum number of Sobol' integration points,")
+uf.desc[-1].add_list_element("Ov is the oversampling factor.")
+uf.desc[-1].add_list_element("M is the number of dimensions or torsion-tilt angles used in the system.")
+uf.desc[-1].add_paragraph("The aim of the oversampling is to try to reach the maximum number of points.  However if the system is not very dynamic, the maximum number of points may not be reached.  In this case, simply increase the oversampling factor.  The algorithm used for uniformly sampling the motional space is:")
+uf.desc[-1].add_list_element("Generate the Sobol' sequence for the total number of points.")
 uf.desc[-1].add_list_element("Convert all points to the torsion-tilt angle system.")
 uf.desc[-1].add_list_element("Skip all Sobol' points with angles greater than the current parameter values.")
-uf.desc[-1].add_list_element("Terminate the loop over the Sobol' points for calculating the PCS once the maximum number of points has been reached.")
-uf.desc[-1].add_paragraph("The aim of the oversampling is to try to reach the maximum number of points.  However if the system is not very dynamic, the maximum number of points may not be reached.  In this case, simply increase the oversampling factor.")
+uf.desc[-1].add_list_element("Terminate the loop over the Sobol' points once the maximum number of points has been reached.")
 uf.backend = sobol_setup
 uf.menu_text = "&sobol_setup"
 uf.gui_icon = "oxygen.actions.edit-rename"
