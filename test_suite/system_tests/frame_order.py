@@ -973,7 +973,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.frame_order.count_sobol_points()
 
         # Check the count.
-        self.assertEqual(cdp.used_sobol_points, 3)
+        self.assertEqual(cdp.used_sobol_points, 20)
 
 
     def test_count_sobol_points_free_rotor(self):
