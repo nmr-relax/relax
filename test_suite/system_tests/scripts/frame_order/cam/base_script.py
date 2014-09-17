@@ -52,7 +52,7 @@ class Base_script:
     MODEL = None
 
     # The number of integration points.
-    NUM_INT_PTS = 2000
+    NUM_INT_PTS = 100
 
     # The model parameters.
     PIVOT_DISP = None
@@ -152,9 +152,9 @@ class Base_script:
     def optimisation(self):
         """Optimise the frame order model."""
 
-        # Set the number of numerical integration points.
+        # Set up the Sobol' sequence.
         if self.NUM_INT_PTS != None:
-            self._execute_uf(uf_name='frame_order.num_int_pts', num=self.NUM_INT_PTS)
+            self._execute_uf(uf_name='frame_order.sobol_setup', max_num=self.NUM_INT_PTS, oversample=1)
 
         # Set the parameter values.
         params = [

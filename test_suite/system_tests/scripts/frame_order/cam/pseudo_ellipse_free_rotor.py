@@ -40,6 +40,7 @@ class Analysis(Base_script):
     EIGEN_GAMMA = 4.0322755062196229
     CONE_THETA_X = 0.3
     CONE_THETA_Y = 0.5
+    NUM_INT_PTS = 20
 
 
 # Execute the analysis.
