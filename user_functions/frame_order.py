@@ -25,7 +25,7 @@
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from specific_analyses.frame_order.optimisation import count_sobol_points
-from specific_analyses.frame_order.uf import num_int_pts, pdb_model, permute_axes, pivot, ref_domain, select_model
+from specific_analyses.frame_order.uf import sobol_setup, pdb_model, permute_axes, pivot, ref_domain, select_model
 from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -244,50 +244,6 @@ uf.wizard_size = (900, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 
-# The frame_order.num_int_pts user function.
-uf = uf_info.add_uf('frame_order.num_int_pts')
-uf.title = "Set the maximum number of integration points used in the quasi-random Sobol' sequence during optimisation."
-uf.title_short = "Maximum number of integration points."
-uf.add_keyarg(
-    name = "num",
-    default = 200,
-    min = 3,
-    max = 10000000,
-    py_type = "int",
-    desc_short = "number of points",
-    desc = "The maximum number of integration points to use in the Sobol' sequence during optimisation.",
-    wiz_element_type = "spin"
-)
-uf.add_keyarg(
-    name = "oversample",
-    default = 100,
-    min = 1,
-    max = 10000000,
-    py_type = "int",
-    desc_short = "oversampling factor",
-    desc = "The generation of the Sobol' sequence oversamples as N * Ov * 10**M, where N is the maximum number of points, Ov is the oversamling value, and M is the number of dimensions or torsion-tilt angles used in the system.",
-    wiz_element_type = "spin"
-)
-# Description.
-uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows the maximum number of integration points N used during the Frame Order target function optimisation to be specified.  This is used in the quasi-random Sobol' sequence for the numerical integration of the PCS.  The symbols used to describe the algorithm are:")
-uf.desc[-1].add_list_element("N, the maximum number of Sobol' integration points.")
-uf.desc[-1].add_list_element("Ov, the oversampling factor.")
-uf.desc[-1].add_list_element("M, the number of dimensions or torsion-tilt angles used in the system.")
-uf.desc[-1].add_paragraph("The algorithm used for uniformly sampling the motional space is:")
-uf.desc[-1].add_list_element("Generate the Sobol' sequence.  The number of points is oversampled as N * Ov * 10**M.")
-uf.desc[-1].add_list_element("Convert all points to the torsion-tilt angle system.")
-uf.desc[-1].add_list_element("Skip all Sobol' points with angles greater than the current parameter values.")
-uf.desc[-1].add_list_element("Terminate the loop over the Sobol' points for calculating the PCS once the maximum number of points has been reached.")
-uf.desc[-1].add_paragraph("The aim of the oversampling is to try to reach the maximum number of points.  However if the system is not very dynamic, the maximum number of points may not be reached.  In this case, simply increase the oversampling factor.")
-uf.backend = num_int_pts
-uf.menu_text = "&num_int_pts"
-uf.gui_icon = "oxygen.actions.edit-rename"
-uf.wizard_height_desc = 500
-uf.wizard_size = (1000, 700)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
-
-
 # The frame_order.ref_domain user function.
 uf = uf_info.add_uf('frame_order.ref_domain')
 uf.title = "Set the reference domain for the '2-domain' Frame Order theories."
@@ -374,4 +330,48 @@ uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_height_desc = 560
 uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
+
+
+# The frame_order.sobol_setup user function.
+uf = uf_info.add_uf('frame_order.sobol_setup')
+uf.title = "Set up the quasi-random Sobol' sequence points for numerical PCS integration."
+uf.title_short = "Set up the quasi-random Sobol' sequence."
+uf.add_keyarg(
+    name = "max_num",
+    default = 200,
+    min = 3,
+    max = 10000000,
+    py_type = "int",
+    desc_short = "maximum number of Sobol' points",
+    desc = "The maximum number of integration points to use in the Sobol' sequence during optimisation.  This can be considered as the number of molecular structures in an ensemble used form a uniform distribution of the dynamics.",
+    wiz_element_type = "spin"
+)
+uf.add_keyarg(
+    name = "oversample",
+    default = 100,
+    min = 1,
+    max = 10000000,
+    py_type = "int",
+    desc_short = "oversampling factor",
+    desc = "The generation of the Sobol' sequence oversamples as N * Ov * 10**M, where N is the maximum number of points, Ov is the oversamling value, and M is the number of dimensions or torsion-tilt angles used in the system.",
+    wiz_element_type = "spin"
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This allows the maximum number of integration points N used during the Frame Order target function optimisation to be specified.  This is used in the quasi-random Sobol' sequence for the numerical integration of the PCS.  The symbols used to describe the algorithm are:")
+uf.desc[-1].add_list_element("N, the maximum number of Sobol' integration points.")
+uf.desc[-1].add_list_element("Ov, the oversampling factor.")
+uf.desc[-1].add_list_element("M, the number of dimensions or torsion-tilt angles used in the system.")
+uf.desc[-1].add_paragraph("The algorithm used for uniformly sampling the motional space is:")
+uf.desc[-1].add_list_element("Generate the Sobol' sequence.  The number of points is oversampled as N * Ov * 10**M.")
+uf.desc[-1].add_list_element("Convert all points to the torsion-tilt angle system.")
+uf.desc[-1].add_list_element("Skip all Sobol' points with angles greater than the current parameter values.")
+uf.desc[-1].add_list_element("Terminate the loop over the Sobol' points for calculating the PCS once the maximum number of points has been reached.")
+uf.desc[-1].add_paragraph("The aim of the oversampling is to try to reach the maximum number of points.  However if the system is not very dynamic, the maximum number of points may not be reached.  In this case, simply increase the oversampling factor.")
+uf.backend = sobol_setup
+uf.menu_text = "&sobol_setup"
+uf.gui_icon = "oxygen.actions.edit-rename"
+uf.wizard_height_desc = 500
+uf.wizard_size = (1000, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
