@@ -159,11 +159,11 @@ def count_sobol_points(target_fn=None):
 
     # Printout.
     format = "    %-30s %20s\n"
+    percent = "%s" % (float(count)/float(cdp.sobol_max_points)*100) + '%'
     sys.stdout.write(format % ("Maximum number of points:", cdp.sobol_max_points))
     sys.stdout.write(format % ("Oversampling factor:", cdp.sobol_oversample))
     sys.stdout.write(format % ("Total points:", total_num))
     sys.stdout.write(format % ("Used points:", count))
-    percent = "%s" % (float(count)/float(total_num)*100) + '%'
     sys.stdout.write(format % ("Percentage:", percent))
     sys.stdout.write('\n')
 
