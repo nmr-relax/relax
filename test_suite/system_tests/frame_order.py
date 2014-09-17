@@ -986,11 +986,14 @@ class Frame_order(SystemTestCase):
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'+sep+'free_rotor'
         self.interpreter.state.load(data_path+sep+'frame_order')
 
+        # Reset the number of points.
+        self.interpreter.frame_order.sobol_setup(20)
+
         # Call the user function.
         self.interpreter.frame_order.count_sobol_points()
 
         # Check the count.
-        self.assertEqual(cdp.used_sobol_points, 10000)
+        self.assertEqual(cdp.used_sobol_points, 20)
 
 
     def test_count_sobol_points_iso_cone_free_rotor(self):
@@ -1003,11 +1006,14 @@ class Frame_order(SystemTestCase):
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_free_rotor'
         self.interpreter.state.load(data_path+sep+'frame_order')
 
+        # Reset the number of points.
+        self.interpreter.frame_order.sobol_setup(20)
+
         # Call the user function.
         self.interpreter.frame_order.count_sobol_points()
 
         # Check the count.
-        self.assertEqual(cdp.used_sobol_points, 2297)
+        self.assertEqual(cdp.used_sobol_points, 20)
 
 
     def test_count_sobol_points_rigid(self):
@@ -1037,11 +1043,14 @@ class Frame_order(SystemTestCase):
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'+sep+'rotor'
         self.interpreter.state.load(data_path+sep+'frame_order')
 
+        # Reset the number of points.
+        self.interpreter.frame_order.sobol_setup(20)
+
         # Call the user function.
         self.interpreter.frame_order.count_sobol_points()
 
         # Check the count.
-        self.assertEqual(cdp.used_sobol_points, 1666)
+        self.assertEqual(cdp.used_sobol_points, 20)
 
 
     def test_frame_order_pdb_model_failed_pivot(self):
