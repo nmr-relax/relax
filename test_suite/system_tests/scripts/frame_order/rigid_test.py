@@ -129,7 +129,7 @@ self._execute_uf(uf_name='frame_order.pivot', pivot=pivot, fix=True)
 self._execute_uf(uf_name='paramag.centre', pos=[-5, -7, -9])
 
 # Set the number of integration points.
-self._execute_uf(uf_name='frame_order.num_int_pts', num=10000)
+self._execute_uf(uf_name='frame_order.sobol_setup', max_num=100)
 
 # Set the real parameter values (the inverted displacement values).
 cdp.ave_pos_x = -1
