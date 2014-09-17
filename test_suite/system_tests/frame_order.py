@@ -956,7 +956,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.frame_order.num_int_pts(2000)
 
         # Check the count.
-        self.assertEqual(cdp.used_sobol_points, 258)
+        self.assertEqual(cdp.used_sobol_points, 72)
 
 
     def test_count_sobol_points2(self):
@@ -973,7 +973,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.frame_order.count_sobol_points()
 
         # Check the count.
-        self.assertEqual(cdp.used_sobol_points, 12)
+        self.assertEqual(cdp.used_sobol_points, 3)
 
 
     def test_count_sobol_points_free_rotor(self):
@@ -1041,7 +1041,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.frame_order.count_sobol_points()
 
         # Check the count.
-        self.assertEqual(cdp.used_sobol_points, 5834)
+        self.assertEqual(cdp.used_sobol_points, 1666)
 
 
     def test_frame_order_pdb_model_failed_pivot(self):
