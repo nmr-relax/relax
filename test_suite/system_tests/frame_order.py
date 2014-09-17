@@ -956,7 +956,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.frame_order.sobol_setup(20)
 
         # Check the count.
-        self.assertEqual(cdp.used_sobol_points, 20)
+        self.assertEqual(cdp.sobol_points_used, 20)
 
 
     def test_count_sobol_points2(self):
@@ -973,7 +973,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.frame_order.count_sobol_points()
 
         # Check the count.
-        self.assertEqual(cdp.used_sobol_points, 20)
+        self.assertEqual(cdp.sobol_points_used, 20)
 
 
     def test_count_sobol_points_free_rotor(self):
@@ -993,7 +993,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.frame_order.count_sobol_points()
 
         # Check the count.
-        self.assertEqual(cdp.used_sobol_points, 20)
+        self.assertEqual(cdp.sobol_points_used, 20)
 
 
     def test_count_sobol_points_iso_cone_free_rotor(self):
@@ -1013,7 +1013,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.frame_order.count_sobol_points()
 
         # Check the count.
-        self.assertEqual(cdp.used_sobol_points, 20)
+        self.assertEqual(cdp.sobol_points_used, 20)
 
 
     def test_count_sobol_points_rigid(self):
@@ -1030,7 +1030,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.frame_order.count_sobol_points()
 
         # Check the count.
-        self.assert_(not hasattr(cdp, 'used_sobol_points'))
+        self.assert_(not hasattr(cdp, 'sobol_points_used'))
 
 
     def test_count_sobol_points_rotor(self):
@@ -1050,7 +1050,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.frame_order.count_sobol_points()
 
         # Check the count.
-        self.assertEqual(cdp.used_sobol_points, 20)
+        self.assertEqual(cdp.sobol_points_used, 20)
 
 
     def test_frame_order_pdb_model_failed_pivot(self):

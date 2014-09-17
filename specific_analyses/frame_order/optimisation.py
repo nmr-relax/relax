@@ -161,7 +161,7 @@ def count_sobol_points(target_fn=None):
             break
 
     # Store the count.
-    cdp.used_sobol_points = count
+    cdp.sobol_points_used = count
 
     # Printout.
     format = "    %-30s %20s\n"
