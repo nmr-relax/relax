@@ -63,7 +63,7 @@ def count_sobol_points(target_fn=None):
     """
 
     # Printout.
-    print("Sobol' quasi-random integration point counting for the current parameter values.")
+    print("\nSobol' quasi-random integration point counting for the current parameter values.")
 
     # Checks.
     if not check_model(escalate=1):
@@ -158,12 +158,14 @@ def count_sobol_points(target_fn=None):
     cdp.used_sobol_points = count
 
     # Printout.
-    print("\n%-20s %20s" % ("Maximum number of points:", cdp.sobol_max_points))
-    print("%-20s %20s" % ("Oversampling factor:", cdp.sobol_oversample))
-    print("%-20s %20s" % ("Total points:", total_num))
-    print("%-20s %20s" % ("Used points:", count))
+    format = "    %-30s %20s\n"
+    sys.stdout.write(format % ("Maximum number of points:", cdp.sobol_max_points))
+    sys.stdout.write(format % ("Oversampling factor:", cdp.sobol_oversample))
+    sys.stdout.write(format % ("Total points:", total_num))
+    sys.stdout.write(format % ("Used points:", count))
     percent = "%s" % (float(count)/float(total_num)*100) + '%'
-    print("%-20s %20s" % ("Percentage:", percent))
+    sys.stdout.write(format % ("Percentage:", percent))
+    sys.stdout.write('\n')
 
 
 def grid_row(incs, lower, upper, dist_type=None, end_point=True):
