@@ -59,17 +59,17 @@ OPT_RIGID.add_min(min_algor='simplex', func_tol=1e-2, max_iter=20)
 
 # PCS subset optimisation setup.
 OPT_SUBSET = Optimisation_settings()
-OPT_SUBSET.add_grid(inc=2, num_int_pts=1)
-OPT_SUBSET.add_min(min_algor='simplex', func_tol=1e-2, max_iter=5, num_int_pts=1)
+OPT_SUBSET.add_grid(inc=2, sobol_max_points=1)
+OPT_SUBSET.add_min(min_algor='simplex', func_tol=1e-2, max_iter=5, sobol_max_points=1)
 
 # Full data set optimisation setup.
 OPT_FULL = Optimisation_settings()
-OPT_FULL.add_grid(inc=2, num_int_pts=1)
-OPT_FULL.add_min(min_algor='simplex', func_tol=1e-2, max_iter=5, num_int_pts=1)
+OPT_FULL.add_grid(inc=2, sobol_max_points=1)
+OPT_FULL.add_min(min_algor='simplex', func_tol=1e-2, max_iter=5, sobol_max_points=1)
 
 # Monte Carlo simulation optimisation setup.
 OPT_MC = Optimisation_settings()
-OPT_MC.add_min(min_algor='simplex', func_tol=1e-2, max_iter=5, num_int_pts=1)
+OPT_MC.add_min(min_algor='simplex', func_tol=1e-2, max_iter=5, sobol_max_points=1)
 
 
 # Set up the base data pipes.
