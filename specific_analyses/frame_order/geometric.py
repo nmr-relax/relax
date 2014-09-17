@@ -129,7 +129,6 @@ def add_axes(structure=None, representation=None, size=None, sims=False):
                 euler_to_R_zyz(cdp.eigen_alpha_sim[sim_indices[i]], cdp.eigen_beta_sim[sim_indices[i]], cdp.eigen_gamma_sim[sim_indices[i]], axes)
             else:
                 euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, axes)
-            print(("Axis system:\n%s" % axes))
 
             # Rotations and inversions.
             axes = dot(T, axes)
