@@ -341,6 +341,15 @@ class Relax_data_store(dict):
                 dp.spectrometer_frq_count = len(dp.spectrometer_frq_list)
                 dp.spectrometer_frq_list.sort()
 
+            # Convert the Sobol' integration information.
+            if hasattr(dp, 'num_int_pts'):
+                # Convert to the new structure.
+                dp.sobol_max_points = dp.num_int_pts
+                del dp.num_int_pts
+
+                # Add the oversampling variable.
+                cdp.sobol_oversample = 1
+
 
     def add(self, pipe_name, pipe_type, bundle=None, switch=True):
         """Method for adding a new data pipe container to the dictionary.
