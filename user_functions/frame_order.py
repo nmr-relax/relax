@@ -349,9 +349,9 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "oversample",
-    default = 100,
+    default = 1,
     min = 1,
-    max = 10000000,
+    max = 100000,
     py_type = "int",
     desc_short = "oversampling factor",
     desc = "The generation of the Sobol' sequence oversamples as N * Ov * 10**M, where N is the maximum number of points, Ov is the oversamling value, and M is the number of dimensions or torsion-tilt angles used in the system.",
