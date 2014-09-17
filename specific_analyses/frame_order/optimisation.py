@@ -49,7 +49,7 @@ from specific_analyses.frame_order.checks import check_domain, check_model, chec
 from specific_analyses.frame_order.data import base_data_types, domain_moving, pivot_fixed, tensor_loop
 from specific_analyses.frame_order.parameters import assemble_param_vector, linear_constraints
 from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
-from target_functions.frame_order import Frame_order
+from target_functions.frame_order import Frame_order, sobol_data
 
 
 def count_sobol_points(target_fn=None):
@@ -99,13 +99,13 @@ def count_sobol_points(target_fn=None):
     # Unpack the points.
     theta, phi, sigma, sigma2 = None, None, None, None
     if dims == ['theta', 'phi', 'sigma']:
-        theta, phi, sigma = target_fn.sobol_angles
+        theta, phi, sigma = sobol_data.sobol_angles
     elif dims == ['theta', 'phi']:
-        theta, phi = target_fn.sobol_angles
+        theta, phi = sobol_data.sobol_angles
     elif dims == ['sigma']:
-        sigma = target_fn.sobol_angles[0]
+        sigma = sobol_data.sobol_angles[0]
     elif dims == ['sigma', 'sigma2']:
-        sigma, sigma2 = target_fn.sobol_angles
+        sigma, sigma2 = sobol_data.sobol_angles
 
     # Pseudo-ellipse.
     pe = False
@@ -128,7 +128,7 @@ def count_sobol_points(target_fn=None):
         cone_theta = cdp.cone_theta
 
     # Loop over the Sobol' points to count them.
-    total_num = len(target_fn.sobol_angles[0])
+    total_num = len(sobol_data.sobol_angles[0])
     count = 0
     for i in range(total_num):
         # Pseudo-elliptic cone opening angle.
