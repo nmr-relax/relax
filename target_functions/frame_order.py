@@ -440,7 +440,7 @@ class Frame_order:
         # PCS via numerical integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_double_rotor(points=self.sobol_angles, max_points=self.sobol_max_points, sigma_max=sigma_max, sigma_max_2=sigma_max_2, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, r_inter_pivot=self.r_inter_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, Ri2_prime=self.Ri2_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+            pcs_numeric_int_double_rotor(points=sobol_data.sobol_angles, max_points=self.sobol_max_points, sigma_max=sigma_max, sigma_max_2=sigma_max_2, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, r_inter_pivot=self.r_inter_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=sobol_data.Ri_prime, Ri2_prime=sobol_data.Ri2_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for align_index in range(self.num_align):
@@ -518,7 +518,7 @@ class Frame_order:
         # PCS via numerical integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_rotor_qrint(points=self.sobol_angles, max_points=self.sobol_max_points, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+            pcs_numeric_int_rotor_qrint(points=sobol_data.sobol_angles, max_points=self.sobol_max_points, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=sobol_data.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for align_index in range(self.num_align):
@@ -597,7 +597,7 @@ class Frame_order:
         # PCS via numerical integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_iso_cone_qrint(points=self.sobol_angles, max_points=self.sobol_max_points, theta_max=cone_theta, sigma_max=sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+            pcs_numeric_int_iso_cone_qrint(points=sobol_data.sobol_angles, max_points=self.sobol_max_points, theta_max=cone_theta, sigma_max=sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=sobol_data.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for align_index in range(self.num_align):
@@ -678,7 +678,7 @@ class Frame_order:
         # PCS via numerical integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_iso_cone_qrint(points=self.sobol_angles, max_points=self.sobol_max_points, theta_max=theta_max, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+            pcs_numeric_int_iso_cone_qrint(points=sobol_data.sobol_angles, max_points=self.sobol_max_points, theta_max=theta_max, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=sobol_data.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for align_index in range(self.num_align):
@@ -756,7 +756,7 @@ class Frame_order:
         # PCS via numerical integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_iso_cone_torsionless_qrint(points=self.sobol_angles, max_points=self.sobol_max_points, theta_max=cone_theta, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+            pcs_numeric_int_iso_cone_torsionless_qrint(points=sobol_data.sobol_angles, max_points=self.sobol_max_points, theta_max=cone_theta, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=sobol_data.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for align_index in range(self.num_align):
@@ -831,7 +831,7 @@ class Frame_order:
         # PCS via numerical integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_pseudo_ellipse_qrint(points=self.sobol_angles, max_points=self.sobol_max_points, theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=cone_sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+            pcs_numeric_int_pseudo_ellipse_qrint(points=sobol_data.sobol_angles, max_points=self.sobol_max_points, theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=cone_sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=sobol_data.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for align_index in range(self.num_align):
@@ -906,7 +906,7 @@ class Frame_order:
         # PCS via numerical integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_pseudo_ellipse_qrint(points=self.sobol_angles, max_points=self.sobol_max_points, theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+            pcs_numeric_int_pseudo_ellipse_qrint(points=sobol_data.sobol_angles, max_points=self.sobol_max_points, theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=pi, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=sobol_data.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for align_index in range(self.num_align):
@@ -981,7 +981,7 @@ class Frame_order:
         # PCS via numerical integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=self.sobol_angles, max_points=self.sobol_max_points, theta_x=cone_theta_x, theta_y=cone_theta_y, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+            pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=sobol_data.sobol_angles, max_points=self.sobol_max_points, theta_x=cone_theta_x, theta_y=cone_theta_y, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=sobol_data.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for align_index in range(self.num_align):
@@ -1138,7 +1138,7 @@ class Frame_order:
         # PCS via numerical integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_rotor_qrint(points=self.sobol_angles, max_points=self.sobol_max_points, sigma_max=sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+            pcs_numeric_int_rotor_qrint(points=sobol_data.sobol_angles, max_points=self.sobol_max_points, sigma_max=sigma_max, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=sobol_data.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for align_index in range(self.num_align):
@@ -1198,19 +1198,25 @@ class Frame_order:
         @type dims:         list of str
         """
 
-        # Printout (useful to see how long this takes!).
-        print("Generating the torsion-tilt angle sampling via the Sobol' sequence for numerical PCS integration.")
-
         # The number of dimensions.
         m = len(dims)
 
         # The total number of points.
         total_num = int(self.sobol_max_points * self.sobol_oversample * 10**m)
 
+        # Reuse pre-created data if available.
+        if total_num == sobol_data.total_num and self.model == sobol_data.model:
+            return
+
+        # Printout (useful to see how long this takes!).
+        print("Generating the torsion-tilt angle sampling via the Sobol' sequence for numerical PCS integration.")
+
         # Initialise.
-        self.sobol_angles = zeros((m, total_num), float64)
-        self.Ri_prime = zeros((total_num, 3, 3), float64)
-        self.Ri2_prime = zeros((total_num, 3, 3), float64)
+        sobol_data.model = self.model
+        sobol_data.total_num = total_num
+        sobol_data.sobol_angles = zeros((m, total_num), float64)
+        sobol_data.Ri_prime = zeros((total_num, 3, 3), float64)
+        sobol_data.Ri2_prime = zeros((total_num, 3, 3), float64)
 
         # The Sobol' points.
         points = i4_sobol_generate(m, total_num, 1000)
@@ -1225,46 +1231,46 @@ class Frame_order:
                 # The tilt angle - the angle of rotation about the x-y plane rotation axis.
                 if dims[j] in ['theta']:
                     theta = acos(2.0*points[j, i] - 1.0)
-                    self.sobol_angles[j, i] = theta
+                    sobol_data.sobol_angles[j, i] = theta
 
                 # The angle defining the x-y plane rotation axis.
                 if dims[j] in ['phi']:
                     phi = 2.0 * pi * points[j, i]
-                    self.sobol_angles[j, i] = phi
+                    sobol_data.sobol_angles[j, i] = phi
 
                 # The 1st torsion angle - the angle of rotation about the z' axis (or y' for the double motion models).
                 if dims[j] in ['sigma']:
                     sigma = 2.0 * pi * (points[j, i] - 0.5)
-                    self.sobol_angles[j, i] = sigma
+                    sobol_data.sobol_angles[j, i] = sigma
 
                 # The 2nd torsion angle - the angle of rotation about the x' axis.
                 if dims[j] in ['sigma2']:
                     sigma2 = 2.0 * pi * (points[j, i] - 0.5)
-                    self.sobol_angles[j, i] = sigma2
+                    sobol_data.sobol_angles[j, i] = sigma2
 
             # Pre-calculate the rotation matrices for the double motion models.
             if 'sigma2' in dims:
                 # The 1st rotation about the y-axis.
                 c_sigma = cos(sigma)
                 s_sigma = sin(sigma)
-                self.Ri_prime[i, 0, 0] =  c_sigma
-                self.Ri_prime[i, 0, 2] =  s_sigma
-                self.Ri_prime[i, 1, 1] = 1.0
-                self.Ri_prime[i, 2, 0] = -s_sigma
-                self.Ri_prime[i, 2, 2] =  c_sigma
+                sobol_data.Ri_prime[i, 0, 0] =  c_sigma
+                sobol_data.Ri_prime[i, 0, 2] =  s_sigma
+                sobol_data.Ri_prime[i, 1, 1] = 1.0
+                sobol_data.Ri_prime[i, 2, 0] = -s_sigma
+                sobol_data.Ri_prime[i, 2, 2] =  c_sigma
 
                 # The 2nd rotation about the x-axis.
                 c_sigma2 = cos(sigma2)
                 s_sigma2 = sin(sigma2)
-                self.Ri2_prime[i, 0, 0] = 1.0
-                self.Ri2_prime[i, 1, 1] =  c_sigma2
-                self.Ri2_prime[i, 1, 2] = -s_sigma2
-                self.Ri2_prime[i, 2, 1] =  s_sigma2
-                self.Ri2_prime[i, 2, 2] =  c_sigma2
+                sobol_data.Ri2_prime[i, 0, 0] = 1.0
+                sobol_data.Ri2_prime[i, 1, 1] =  c_sigma2
+                sobol_data.Ri2_prime[i, 1, 2] = -s_sigma2
+                sobol_data.Ri2_prime[i, 2, 1] =  s_sigma2
+                sobol_data.Ri2_prime[i, 2, 2] =  c_sigma2
 
             # Pre-calculate the rotation matrix for the full tilt-torsion.
             elif theta != None and phi != None and sigma != None:
-                tilt_torsion_to_R(phi, theta, sigma, self.Ri_prime[i])
+                tilt_torsion_to_R(phi, theta, sigma, sobol_data.Ri_prime[i])
 
             # Pre-calculate the rotation matrix for the torsionless models.
             elif sigma == None:
@@ -1274,25 +1280,25 @@ class Frame_order:
                 s_phi = sin(phi)
                 c_phi_c_theta = c_phi * c_theta
                 s_phi_c_theta = s_phi * c_theta
-                self.Ri_prime[i, 0, 0] =  c_phi_c_theta*c_phi + s_phi**2
-                self.Ri_prime[i, 0, 1] =  c_phi_c_theta*s_phi - c_phi*s_phi
-                self.Ri_prime[i, 0, 2] =  c_phi*s_theta
-                self.Ri_prime[i, 1, 0] =  s_phi_c_theta*c_phi - c_phi*s_phi
-                self.Ri_prime[i, 1, 1] =  s_phi_c_theta*s_phi + c_phi**2
-                self.Ri_prime[i, 1, 2] =  s_phi*s_theta
-                self.Ri_prime[i, 2, 0] = -s_theta*c_phi
-                self.Ri_prime[i, 2, 1] = -s_theta*s_phi
-                self.Ri_prime[i, 2, 2] =  c_theta
+                sobol_data.Ri_prime[i, 0, 0] =  c_phi_c_theta*c_phi + s_phi**2
+                sobol_data.Ri_prime[i, 0, 1] =  c_phi_c_theta*s_phi - c_phi*s_phi
+                sobol_data.Ri_prime[i, 0, 2] =  c_phi*s_theta
+                sobol_data.Ri_prime[i, 1, 0] =  s_phi_c_theta*c_phi - c_phi*s_phi
+                sobol_data.Ri_prime[i, 1, 1] =  s_phi_c_theta*s_phi + c_phi**2
+                sobol_data.Ri_prime[i, 1, 2] =  s_phi*s_theta
+                sobol_data.Ri_prime[i, 2, 0] = -s_theta*c_phi
+                sobol_data.Ri_prime[i, 2, 1] = -s_theta*s_phi
+                sobol_data.Ri_prime[i, 2, 2] =  c_theta
 
             # Pre-calculate the rotation matrix for the rotor models.
             else:
                 c_sigma = cos(sigma)
                 s_sigma = sin(sigma)
-                self.Ri_prime[i, 0, 0] =  c_sigma
-                self.Ri_prime[i, 0, 1] = -s_sigma
-                self.Ri_prime[i, 1, 0] =  s_sigma
-                self.Ri_prime[i, 1, 1] =  c_sigma
-                self.Ri_prime[i, 2, 2] = 1.0
+                sobol_data.Ri_prime[i, 0, 0] =  c_sigma
+                sobol_data.Ri_prime[i, 0, 1] = -s_sigma
+                sobol_data.Ri_prime[i, 1, 0] =  s_sigma
+                sobol_data.Ri_prime[i, 1, 1] =  c_sigma
+                sobol_data.Ri_prime[i, 2, 2] = 1.0
 
         # Printout (useful to see how long this takes!).
         print("   Oversampled to %s points." % total_num)
@@ -1343,3 +1349,22 @@ class Frame_order:
 
             # Convert the tensor back to 5D, rank-1 form, as the back-calculated reduced tensor.
             to_5D(self.A_5D_bc[index1:index2], self.A_3D_bc[align_index])
+
+
+
+class Sobol_data:
+    """Temporary storage of the Sobol' data for speed."""
+
+    def __init__(self):
+        """Set up the object."""
+
+        # Initialise some variables.
+        self.model = None
+        self.Ri_prime = None
+        self.Ri2_prime = None
+        self.sobol_angles = None
+        self.total_num = None
+
+
+# Instantiate the Sobol' data container.
+sobol_data = Sobol_data()
