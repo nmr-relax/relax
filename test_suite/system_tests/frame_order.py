@@ -943,7 +943,7 @@ class Frame_order(SystemTestCase):
 
 
     def test_count_sobol_points(self):
-        """Test the ability of the frame_order.num_int_pts user function to be able to count the number of Sobol' points used for the current parameter values."""
+        """Test the ability of the frame_order.sobol_setup user function to be able to count the number of Sobol' points used for the current parameter values."""
 
         # Reset.
         self.interpreter.reset()
@@ -953,10 +953,10 @@ class Frame_order(SystemTestCase):
         self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
 
         # Set the number of integration points, and see if they can be counted.
-        self.interpreter.frame_order.num_int_pts(2000)
+        self.interpreter.frame_order.sobol_setup(20)
 
         # Check the count.
-        self.assertEqual(cdp.used_sobol_points, 72)
+        self.assertEqual(cdp.used_sobol_points, 20)
 
 
     def test_count_sobol_points2(self):
