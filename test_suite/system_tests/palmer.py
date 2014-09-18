@@ -54,6 +54,12 @@ class Palmer(SystemTestCase):
             # Store in the status object. 
             status.skipped_tests.append([methodName, 'subprocess', self._skip_type])
 
+        # Test for the presence of the Modelfree4 binary (skip the test if not present).
+        try:
+            test_binary('modelfree4')
+        except:
+            status.skipped_tests.append([methodName, "Art Palmer's Modelfree4 software", self._skip_type])
+
 
     def setUp(self):
         """Set up for all the functional tests."""
@@ -64,12 +70,6 @@ class Palmer(SystemTestCase):
 
     def test_palmer(self):
         """Test a complete model-free analysis using the program 'Modelfree4'."""
-
-        # Test for the presence of the Modelfree4 binary (skip the test if not present).
-        try:
-            test_binary('modelfree4')
-        except:
-            return
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer.py')
@@ -179,12 +179,6 @@ class Palmer(SystemTestCase):
 
     def test_palmer_omp(self):
         """Test a complete model-free analysis using 'Modelfree4' with the OMP relaxation data, a PDB file, and a spheroid tensor."""
-
-        # Test for the presence of the Modelfree4 binary (skip the test if not present).
-        try:
-            test_binary('modelfree4')
-        except:
-            return
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'palmer_omp.py')

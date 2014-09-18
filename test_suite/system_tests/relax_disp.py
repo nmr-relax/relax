@@ -36,7 +36,7 @@ from auto_analyses.relax_disp_repeat_cpmg import DIC_KEY_FORMAT, Relax_disp_rep
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from lib.errors import RelaxError
-from lib.io import extract_data, get_file_path
+from lib.io import extract_data, get_file_path, open_read_file
 from lib.spectrum.nmrpipe import show_apod_extract, show_apod_rmsd, show_apod_rmsd_dir_to_files, show_apod_rmsd_to_file
 from pipe_control.mol_res_spin import display_spin, generate_spin_string, return_spin, spin_loop
 from pipe_control.minimise import assemble_scaling_matrix
@@ -115,7 +115,8 @@ class Relax_disp(SystemTestCase):
             to_skip = [
                 "test_show_apod_extract",
                 "test_show_apod_rmsd",
-                "test_show_apod_rmsd_to_file"
+                "test_show_apod_rmsd_to_file",
+                "test_show_apod_rmsd_dir_to_files"
             ]
 
             # Store in the status object.
@@ -5971,7 +5972,7 @@ class Relax_disp(SystemTestCase):
 
         # Set the intensity.
         #RDR.set_int(methods=methods, list_glob_ini=[128, 126], set_rmsd=False, set_rep=True)
-        RDR.set_int(methods=methods, list_glob_ini=[128, 126], set_rmsd=True, set_rep=False)
+        #RDR.set_int(methods=methods, list_glob_ini=[128, 126], set_rmsd=True, set_rep=False)
 
         # Try plot some intensity correlations.
         if False:
@@ -6010,7 +6011,7 @@ class Relax_disp(SystemTestCase):
         # Try plot some R2eff correlations.
         if False:
             # Now calculate R2eff.
-            RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
+            #RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
 
             # Try for bad data.
             #RDR.calc_r2eff(methods=['FT'], list_glob_ini=[6, 4])
@@ -6047,18 +6048,32 @@ class Relax_disp(SystemTestCase):
 
 
         # Try plot some R2eff statistics.
-        if False:
+        if True:
             # Collect r2eff values.
-            selection = ':2,3'
-            r2eff_ft_sel = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126], selection=selection)
-            r2eff_mdd_sel = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126], selection=selection)
+            selections = [None, ':2,3']
+            for selection in selections:
+                r2eff_ft_sel = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126], selection=selection)
+                r2eff_mdd_sel = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126], selection=selection)
 
-            # Get R2eff stats.
-            r2eff_stat_dic = RDR.get_r2eff_stat_dic(list_r2eff_dics=[r2eff_ft_sel, r2eff_mdd_sel], list_glob_ini=[128, 126])
+                # Get R2eff stats.
+                r2eff_stat_dic = RDR.get_r2eff_stat_dic(list_r2eff_dics=[r2eff_ft_sel, r2eff_mdd_sel], list_glob_ini=[128, 126])
 
-            ## Plot R2eff stats
-            #RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126], show=False)
+                ## Plot R2eff stats
+                write_stats = True
+                RDR.plot_r2eff_stat(r2eff_stat_dic=r2eff_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126, 6], show=False, write_stats=write_stats)
 
+                # Open stat file.
+                if write_stats:
+                    if selection == None:
+                        file_name = 'r2eff_stat_all.txt'
+                    else:
+                        file_name = 'r2eff_stat_sel.txt'
+                    path = RDR.results_dir
+                    data = extract_data(file=file_name, dir=path)
+
+                    # Loop over the lines.
+                    for i, data_i in enumerate(data):
+                        print(i, data_i)
 
         # Do minimisation
         if False:

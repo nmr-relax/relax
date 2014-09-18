@@ -31,14 +31,14 @@ from collections import OrderedDict
 from datetime import datetime
 from glob import glob
 from os import F_OK, access, getcwd, sep
-from numpy import asarray, mean, sqrt, std, sum
+from numpy import asarray, arange, max, mean, min, sqrt, std, sum
 from scipy.stats import pearsonr
 import sys
 from warnings import warn
 
 # relax module imports.
 import dep_check
-from lib.io import extract_data, get_file_path, sort_filenames, write_data
+from lib.io import extract_data, get_file_path, open_write_file, sort_filenames, write_data
 from lib.text.sectioning import section, subsection, subtitle, title
 from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import display_spin, generate_spin_string, return_spin, spin_loop
@@ -157,7 +157,7 @@ class Relax_disp_rep:
                 peaks_folder = getattr(self, key)['peaks_folder'] + sep + method
 
                 # Define glop pattern for peak files.
-                peaks_glob_pat = '%s*%s.ser' % (glob_ini, method)
+                peaks_glob_pat = '%s_%s.ser' % (glob_ini, method)
 
                 # Get the file list.
                 peaks_file_list = glob(peaks_folder + sep + peaks_glob_pat)
@@ -230,13 +230,18 @@ class Relax_disp_rep:
             peaks_folder = getattr(self, key)['peaks_folder']  + sep + self.method
 
             # Define glop pattern for peak files.
-            peaks_glob_pat = '%s*%s.ser' % (glob_ini, self.method)
+            peaks_glob_pat = '%s_%s.ser' % (glob_ini, self.method)
 
             # Get the file list.
             peaks_file_list = glob(peaks_folder + sep + peaks_glob_pat)
 
             # Sort the file list Alphanumeric.
             peaks_file_list = sort_filenames(filenames=peaks_file_list)
+
+            # If there is no peak list, then continue.
+            if len(peaks_file_list) == 0:
+                finished = False
+                continue
 
             # There should only be one peak file.
             for peaks_file in peaks_file_list:
@@ -247,7 +252,7 @@ class Relax_disp_rep:
                 rmsd_folder = getattr(self, key)['rmsd_folder']
 
                 # Define glop pattern for rmsd files.
-                rmsd_glob_pat = '%s*%s.rmsd' % (glob_ini, self.method)
+                rmsd_glob_pat = '%s_*_%s.rmsd' % (glob_ini, self.method)
 
                 # Get the file list.
                 rmsd_file_list = glob(rmsd_folder + sep + rmsd_glob_pat)
@@ -263,6 +268,10 @@ class Relax_disp_rep:
                     # Extract rmsd from line 0, and column 0.
                     rmsd = float(extract_data(file=rmsd_file)[0][0])
                     self.interpreter.spectrum.baseplane_rmsd(error=rmsd, spectrum_id=spectrum_id)
+
+                finished = True
+
+            return finished
 
 
     def do_spectrum_error_analysis(self, pipe_name, set_rep=None):
@@ -320,8 +329,10 @@ class Relax_disp_rep:
 
                 if not found:
                     calculate = True
+                    finished = False
                 elif found:
                     calculate = False
+                    finished = True
 
                 if calculate:
                     # Create the data pipe, by copying setup pipe.
@@ -329,14 +340,21 @@ class Relax_disp_rep:
                     self.interpreter.pipe.switch(pipe_name)
 
                     # Call set intensity.
-                    self.set_intensity_and_error(pipe_name=pipe_name, glob_ini=glob_ini, set_rmsd=set_rmsd)
+                    finished = self.set_intensity_and_error(pipe_name=pipe_name, glob_ini=glob_ini, set_rmsd=set_rmsd)
 
-                    # Call error analysis.
-                    self.do_spectrum_error_analysis(pipe_name=pipe_name, set_rep=set_rep)
+                    if finished:
+                        # Call error analysis.
+                        self.do_spectrum_error_analysis(pipe_name=pipe_name, set_rep=set_rep)
 
-                    # Save results, and store the current settings dic to pipe.
-                    cdp.settings = self.settings
-                    self.interpreter.results.write(file=resfile, dir=path, force=force)
+                        # Save results, and store the current settings dic to pipe.
+                        cdp.settings = self.settings
+                        self.interpreter.results.write(file=resfile, dir=path, force=force)
+
+                    else:
+                        pipe_name = pipes.cdp_name()
+                        self.interpreter.pipe.delete(pipe_name=pipe_name)
+
+                return finished
 
 
     def calc_r2eff(self, methods=None, list_glob_ini=None, force=False):
@@ -366,7 +384,9 @@ class Relax_disp_rep:
                     intensity_pipe_name = self.name_pipe(method=self.method, model='setup', analysis='int', glob_ini=glob_ini)
 
                     if not pipes.has_pipe(intensity_pipe_name):
-                        self.set_int(methods=[method], list_glob_ini=[glob_ini])
+                        finished = self.set_int(methods=[method], list_glob_ini=[glob_ini])
+                        if not finished:
+                            continue
 
                     self.interpreter.pipe.copy(pipe_from=intensity_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
                     self.interpreter.pipe.switch(pipe_name)
@@ -873,9 +893,6 @@ class Relax_disp_rep:
         res_dic = {}
         res_dic['method'] = method
         for glob_ini in list_glob_ini:
-            # Store under glob_ini
-            res_dic[str(glob_ini)] = {}
-
             # Get the pipe name for peak_intensity values.
             pipe_name = self.name_pipe(method=method, model='setup', analysis='int', glob_ini=glob_ini)
 
@@ -883,7 +900,7 @@ class Relax_disp_rep:
             if not pipes.has_pipe(pipe_name):
                 self.set_int(methods=[method], list_glob_ini=[glob_ini])
 
-            if pipes.get_pipe() != pipe_name:
+            if pipes.cdp_name() != pipe_name:
                 self.interpreter.pipe.switch(pipe_name)
 
             # Results dictionary.
@@ -1016,10 +1033,8 @@ class Relax_disp_rep:
         # Loop over the glob ini:
         res_dic = {}
         res_dic['method'] = method
+        res_dic['selection'] = selection
         for glob_ini in list_glob_ini:
-            # Store under glob_ini
-            res_dic[str(glob_ini)] = {}
-
             # Get the pipe name for R2eff values.
             pipe_name = self.name_pipe(method=method, model=MODEL_R2EFF, analysis='int', glob_ini=glob_ini)
 
@@ -1027,8 +1042,11 @@ class Relax_disp_rep:
             if not pipes.has_pipe(pipe_name):
                 self.calc_r2eff(methods=[method], list_glob_ini=[glob_ini])
 
-            if pipes.get_pipe() != pipe_name:
+            if pipes.cdp_name() != pipe_name and pipes.has_pipe(pipe_name):
                 self.interpreter.pipe.switch(pipe_name)
+
+            elif pipes.has_pipe(pipe_name) == False:
+                continue
 
             # Results dictionary.
             res_dic[str(glob_ini)] = {}
@@ -1114,8 +1132,16 @@ class Relax_disp_rep:
                     x_to_x_err = x / x_err
                     y_to_y_err = y / y_err
 
+                    # Calculate straight line.
+                    # Linear a, with no intercept.
+                    a = sum(x_to_x_err * y_to_y_err) / sum(x_to_x_err**2)
+                    x_to_x_err_arange = arange(min(x_to_x_err), max(x_to_x_err), (max(x_to_x_err) - min(x_to_x_err)) / 10)
+                    y_to_x_err_arange = a * x_to_x_err_arange
+
                     ax.plot(x_to_x_err, x_to_x_err, 'o', label='%s vs. %s' % (method_x, method_x))
+                    ax.plot(x_to_x_err_arange, x_to_x_err_arange, 'b--')
                     ax.plot(x_to_x_err, y_to_y_err, '.', label='%s vs. %s' % (method_y, method_x) )
+                    ax.plot(x_to_x_err_arange, y_to_x_err_arange, 'g--')
 
                     np = len(y_to_y_err)
                     ax.set_title(r'$R_{2,\mathrm{eff}}/\sigma(R_{2,\mathrm{eff}})$' + ' for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
@@ -1138,11 +1164,15 @@ class Relax_disp_rep:
             r2eff_dic_ref = list_r2eff_dics[0]
             method_ref = r2eff_dic_ref['method']
             res_dic['method_ref'] = method_ref
+            glob_ini_ref = str(list_glob_ini[0])
+            res_dic['glob_ini_ref'] = glob_ini_ref
+            selection = r2eff_dic_ref['selection']
+            res_dic['selection'] = selection
 
             # Let the reference R2eff array be the initial glob.
-            r2eff_arr_ref = r2eff_dic_ref[str(list_glob_ini[0])]['r2eff_arr']
+            r2eff_arr_ref = r2eff_dic_ref[glob_ini_ref]['r2eff_arr']
             res_dic['r2eff_arr_ref'] = r2eff_arr_ref
-            r2eff_err_arr_ref = r2eff_dic_ref[str(list_glob_ini[0])]['r2eff_err_arr']
+            r2eff_err_arr_ref = r2eff_dic_ref[glob_ini_ref]['r2eff_err_arr']
             res_dic['r2eff_err_arr_ref'] = r2eff_err_arr_ref
 
             # Get the current method
@@ -1151,6 +1181,15 @@ class Relax_disp_rep:
             res_dic[method_cur]['method'] = method_cur
             res_dic[method_cur]['glob_ini'] = []
             res_dic[method_cur]['r2eff_norm_std'] = []
+
+            # Other stats.
+            res_dic[method_cur]['pearsons_correlation_coefficient'] = []
+            res_dic[method_cur]['two_tailed_p_value'] = []
+            res_dic[method_cur]['r_xy'] = []
+            res_dic[method_cur]['a'] = []
+            res_dic[method_cur]['r_xy_int'] = []
+            res_dic[method_cur]['a_int'] = []
+            res_dic[method_cur]['b_int'] = []
 
             # Now loop over glob_ini:
             for glob_ini in list_glob_ini:
@@ -1167,23 +1206,6 @@ class Relax_disp_rep:
                 # If they are not of same length, then dont even bother to continue.
                 if len(r2eff_arr) != len(r2eff_arr_ref):
                     continue
-
-                # Calculate the R2eff versus R2eff error.
-                r2eff_vs_err_ref = r2eff_arr_ref / r2eff_err_arr_ref
-                r2eff_vs_err = r2eff_arr / r2eff_err_arr
-
-                # Get the statistics from scipy.
-                pearsons_correlation_coefficient, two_tailed_p_value = pearsonr(r2eff_vs_err_ref, r2eff_vs_err)
-
-                # Calculate manual.
-                x = r2eff_vs_err_ref
-                x_m = mean(x)
-                y = r2eff_vs_err
-                y_m = mean(r2eff_vs_err)
-
-                r = sum( (x - x_m)*(y - y_m)  ) / sqrt( sum((x - x_m)**2) * sum((y - y_m)**2) )
-
-                #print method_ref, method_cur, glob_ini, pearsons_correlation_coefficient, r
 
                 # Get the normalised array.
                 r2eff_norm_arr = r2eff_arr/r2eff_arr_ref
@@ -1208,39 +1230,181 @@ class Relax_disp_rep:
                 res_dic[method_cur][str(glob_ini)]['r2eff_diff_norm_arr'] = r2eff_diff_norm_arr
                 res_dic[method_cur][str(glob_ini)]['r2eff_diff_norm_std'] = r2eff_diff_norm_std
 
+                ### Calculate for value over error.
+
+                # Calculate the R2eff versus R2eff error.
+                r2eff_vs_err_ref = r2eff_arr_ref / r2eff_err_arr_ref
+                r2eff_vs_err = r2eff_arr / r2eff_err_arr
+
+                # Get the statistics from scipy.
+                pearsons_correlation_coefficient, two_tailed_p_value = pearsonr(r2eff_vs_err_ref, r2eff_vs_err)
+
+                # With intercept at axis.
+                # Calculate sample correlation coefficient, measure of goodness-of-fit of linear regression
+                x = r2eff_vs_err_ref
+                x_m = mean(x)
+                y = r2eff_vs_err
+                y_m = mean(r2eff_vs_err)
+
+                # Solve by linear least squares. f(x) = a*x + b.
+                n = len(y)
+                a_int = (sum(x*y) - 1./n * sum(x) * sum(y) ) / ( sum(x**2) - 1./n * (sum(x))**2 )
+                b_int = 1./n * sum(y) - a_int * 1./n * sum(x)
+
+                r_xy_int = sum( (x - x_m)*(y - y_m)  ) / sqrt( sum((x - x_m)**2) * sum((y - y_m)**2) )
+
+                # Without intercept.
+                a = sum(x*y) / sum(x**2)
+                r_xy = sum(x*y) / sqrt(sum(x**2) * sum(y**2))
+
+                print(method_ref, method_cur, glob_ini, pearsons_correlation_coefficient, r_xy**2, a, r_xy_int**2, a_int, b_int)
+
+                # Store to result dic.
+                res_dic[method_cur][str(glob_ini)]['pearsons_correlation_coefficient'] = pearsons_correlation_coefficient
+                res_dic[method_cur]['pearsons_correlation_coefficient'].append(pearsons_correlation_coefficient)
+                res_dic[method_cur][str(glob_ini)]['two_tailed_p_value'] = two_tailed_p_value
+                res_dic[method_cur]['two_tailed_p_value'].append(two_tailed_p_value)
+                res_dic[method_cur][str(glob_ini)]['r_xy'] = r_xy
+                res_dic[method_cur]['r_xy'].append(r_xy)
+                res_dic[method_cur][str(glob_ini)]['a'] = a
+                res_dic[method_cur]['a'].append(a)
+                res_dic[method_cur][str(glob_ini)]['r_xy_int'] = r_xy_int
+                res_dic[method_cur]['r_xy_int'].append(r_xy_int)
+                res_dic[method_cur][str(glob_ini)]['a_int'] = a_int
+                res_dic[method_cur]['a_int'].append(a_int)
+                res_dic[method_cur][str(glob_ini)]['b_int'] = b_int
+                res_dic[method_cur]['b_int'].append(b_int)
 
             res_dic[method_cur]['glob_ini'] = asarray(res_dic[method_cur]['glob_ini'])
             res_dic[method_cur]['r2eff_norm_std'] = asarray(res_dic[method_cur]['r2eff_norm_std'])
 
+            res_dic[method_cur]['pearsons_correlation_coefficient'] = asarray(res_dic[method_cur]['pearsons_correlation_coefficient'])
+            res_dic[method_cur]['two_tailed_p_value'] = asarray(res_dic[method_cur]['two_tailed_p_value'])
+            res_dic[method_cur]['r_xy'] = asarray(res_dic[method_cur]['r_xy'])
+            res_dic[method_cur]['a'] = asarray(res_dic[method_cur]['a'])
+            res_dic[method_cur]['r_xy_int'] = asarray(res_dic[method_cur]['r_xy_int'])
+            res_dic[method_cur]['a_int'] = asarray(res_dic[method_cur]['a_int'])
+            res_dic[method_cur]['b_int'] = asarray(res_dic[method_cur]['b_int'])
 
         return res_dic
 
 
-    def plot_r2eff_stat(self, r2eff_stat_dic=None, methods=[], list_glob_ini=[], show=False):
-
-        # Loop over the methods.
+    def plot_r2eff_stat(self, r2eff_stat_dic=None, methods=[], list_glob_ini=[], show=False, write_stats=False):
 
         # Define figure
-        #fig = plt.figure(figsize=(12, 12))
-        fig = plt.figure()
-        ax1 = fig.add_subplot(111)
-        #ax2 = ax1.twinx()
+        fig, axises = plt.subplots(nrows=2, ncols=1)
+        fig.suptitle('Stats per NI')
+        ax1, ax2 = axises
+
+        # Catch min and max values for all methods.
+        min_a = 1.0
+        max_a = 0.0
+
+        min_r_xy2 = 1.0
+        max_r_xy2 = 0.0
+
+        # Prepare header for writing.
+        selection = r2eff_stat_dic['selection']
+
+        # For writing out stats.        
+        headings = []
+        data_dic = OrderedDict()
+        i_max = 0
 
         for method in methods:
             if method not in r2eff_stat_dic:
                 continue
 
+            # Use NI as x.
             x = r2eff_stat_dic[method]['glob_ini']
-            y = r2eff_stat_dic[method]['r2eff_norm_std']
 
-            ax1.plot(x, y, label='%s'%method)
+            # Add to headings.
+            headings = headings + ['method', 'NI', 'slope', 'rxy2']
 
-        #ax1.legend(loc='upper left', shadow=True)
-        ax1.legend(loc='upper left', shadow=True, prop = fontP)
+            # Get stats.
+            # Linear regression slope, without intercept
+            a = r2eff_stat_dic[method]['a']
+
+            if max(a) > max_a:
+                max_a = max(a)
+            if min(a) < min_a:
+                min_a = min(a)
+
+            # sample correlation coefficient, without intercept
+            r_xy = r2eff_stat_dic[method]['r_xy']
+            r_xy2 = r_xy**2
+
+            if max(r_xy2) > max_r_xy2:
+                max_r_xy2 = max(r_xy2)
+            if min(r_xy2) < min_r_xy2:
+                min_r_xy2 = min(r_xy2)
+
+            # Add to data.
+            data_dic[method] = OrderedDict()
+            for i, x_i in enumerate(x):
+                a_i = a[i]
+                r_xy2_i = r_xy2[i]
+                data_dic[method][str(i)] = ["%i"%x_i, "%3.5f"%a_i, "%3.5f"%r_xy2_i]
+                if i > i_max:
+                    i_max = i
+
+            ax1.plot(x, a, ".-", label='%s LR'%method)
+            ax2.plot(x, r_xy2, "o--", label='%s SC'%method)
+
+        # Loop over methods for writing data.
+        data = []
+        for i in range(0, i_max):
+            data_i = []
+            for method, data_dic_m in data_dic.iteritems():
+                # Loop over all possible data points.
+                if str(i) in data_dic_m:
+                    data_i = data_i + [method] + data_dic_m[str(i)]
+                else:
+                    data_i = data_i + [method] + ["0", "0", "0"]
+
+            data.append(data_i)
+
+        # Set legends.
+        ax1.legend(loc='lower left', shadow=True, prop = fontP)
         ax1.set_xlabel('NI')
-        ax1.set_ylabel(r'$\sigma ( R_{2,\mathrm{eff}} )$')
-        fig.gca().set_xticks(x)
-        fig.gca().invert_xaxis()
+        #ax1.set_ylabel(r'$\sigma ( R_{2,\mathrm{eff}} )$')
+        ax1.set_ylabel('Linear regression slope, without intercept')
+        ax1.set_xticks(x)
+        ax1.set_ylim(min_a*0.95, max_a*1.05)
+        ax1.invert_xaxis()
+
+        ax2.legend(loc='lower right', shadow=True, prop = fontP)
+        ax2.set_ylabel('Sample correlation ' + r'$r_{xy}^2$')
+        ax2.set_xticks(x)
+        ax2.set_ylim(min_r_xy2*0.95, max_r_xy2*1.05)
+        ax2.invert_xaxis()
+
+        # Determine filename.
+        if selection == None:
+            file_name_ini = 'r2eff_stat_all'
+        else:
+            file_name_ini = 'r2eff_stat_sel'
+
+        # Write png.
+        png_file_name = file_name_ini + '.png'
+        png_file_path = get_file_path(file_name=png_file_name, dir=self.results_dir)
+
+        # Write to file.
+        if write_stats:
+            # save figure
+            plt.savefig(png_file_path, bbox_inches='tight')
+
+            file_name = file_name_ini + '.txt'
+            path = self.results_dir
+            file_obj, file_path = open_write_file(file_name=file_name, dir=path, force=True, compress_type=0, verbosity=1, return_path=True)
+
+            # Write data.
+            write_data(out=file_obj, headings=headings, data=data)
+
+            # Close file.
+            file_obj.close()
+
+        # Plot data.
         if show:
             plt.show()
 
