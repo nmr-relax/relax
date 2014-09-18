@@ -6124,26 +6124,26 @@ class Relax_disp(SystemTestCase):
                         RDR.r20_from_min_r2eff(methods=methods, model=MODEL_CR72, analysis='grid_setup', list_glob_ini=list_glob_ini, force=True)
                 
                     # Check and print parameters.
-                    if False:
+                    if True:
                         # Print for pipe name
                         test_pipe_name = RDR.name_pipe(method=method, model=MODEL_CR72, analysis='grid_setup', glob_ini=glob_ini)
                         RDR.spin_display_params(pipe_name=test_pipe_name)
                     
                     # Then Grid search.
-                    if False:
+                    if True:
                         # Do Grid search.
                         #RDR.minimise_grid_search(inc=200, verbosity=1, methods=methods, model=MODEL_CR72, analysis='grid', analysis_from='grid_setup', list_glob_ini=list_glob_ini)
                         RDR.minimise_grid_search(inc=200, verbosity=1, methods=methods, model=MODEL_CR72, analysis='grid', analysis_from='grid_setup', list_glob_ini=list_glob_ini, force=True)
                 
                     # Then cluster spins.
-                    if False:
+                    if True:
                         #RDR.cluster_spins(spin_id=selection, methods=methods, model=MODEL_CR72, analysis='grid', list_glob_ini=list_glob_ini)
                         RDR.cluster_spins(spin_id=selection, methods=methods, model=MODEL_CR72, analysis='grid', list_glob_ini=list_glob_ini, force=True)
             
                 # Then Minimise.
-                if False:
+                if True:
                     # Minimise
-                    #RDR.opt_max_iterations = int(1e2)
+                    RDR.opt_max_iterations = int(1e2)
                     RDR.minimise_execute(methods=methods, model=MODEL_CR72, analysis='min', analysis_from='grid', list_glob_ini=list_glob_ini, force=True)
                     #RDR.minimise_execute(methods=methods, model=MODEL_CR72, analysis='min', analysis_from='grid', list_glob_ini=list_glob_ini, force=False)
 
