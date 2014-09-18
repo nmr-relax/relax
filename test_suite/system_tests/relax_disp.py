@@ -6048,7 +6048,7 @@ class Relax_disp(SystemTestCase):
 
 
         # Try plot some R2eff statistics.
-        if True:
+        if False:
             # Collect r2eff values.
             selections = [None, ':2,3']
             for selection in selections:
@@ -6075,37 +6075,77 @@ class Relax_disp(SystemTestCase):
                     for i, data_i in enumerate(data):
                         print(i, data_i)
 
-        # Do minimisation
-        if False:
-            # Deselect all spins.
-            #self.interpreter.spin.display()
-            RDR.deselect_all(methods=methods, model='setup', model_from=MODEL_R2EFF, analysis='grid setup', analysis_from='int', list_glob_ini=[128, 126])
-            #self.interpreter.spin.display()
+        # Do minimisation.
+        if True:
+            methods = ['FT', 'MDD']
+            # Now calculate R2eff.
+            RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
+            
     
-            # Select spins.
-            RDR.select_spin(spin_id=':2,3', methods=methods, model='setup', analysis='grid setup', list_glob_ini=[128, 126])
-            #self.interpreter.spin.display()
-    
-            # Set R20 from min R2eff in preparation for Grid search.
-            RDR.r20_from_min_r2eff(methods=methods, model=MODEL_CR72, model_from='setup', analysis='grid setup', list_glob_ini=[128, 126])
-    
-            # Set kex for Grid search.
-            RDR.value_set(methods=methods, val=1000., param='kex', model=MODEL_CR72, analysis='grid setup', list_glob_ini=[128, 126], force=True)
-            # Get pipe and print.
-            #test_pipe_name = RDR.name_pipe(method='FT', model=MODEL_CR72, analysis='grid setup', glob_ini='128')
-            #RDR.spin_display_params(pipe_name=test_pipe_name)
-    
-            # Do Grid search.
-            RDR.minimise_grid_search(inc=11, methods=methods, model=MODEL_CR72, analysis='grid', analysis_from='grid setup', list_glob_ini=[128, 126])
-            # Get pipe and print.
-            test_pipe_name = RDR.name_pipe(method='FT', model=MODEL_CR72, analysis='grid', glob_ini='128')
-            RDR.spin_display_params(pipe_name=test_pipe_name)
-
-            # Minimise
-            RDR.minimise_execute(methods=methods, model=MODEL_CR72, analysis='min', analysis_from='grid', list_glob_ini=[128, 126])
-            # Get pipe and print.
-            test_pipe_name = RDR.name_pipe(method='FT', model=MODEL_CR72, analysis='min', glob_ini='128')
-            RDR.spin_display_params(pipe_name=test_pipe_name)
+            min_methods = [['FT'], ['MDD']]
+            min_list_glob_ini = [[128], range(126, 130, 2)[::-1]]
+            
+            #min_methods = [['FT']]
+            #min_list_glob_ini = [[128]]
+            selection = ':2,3'
+            
+            for i, methods in enumerate(min_methods):
+                list_glob_ini = min_list_glob_ini[i]
+            
+                method = methods[0]
+                glob_ini = list_glob_ini[0]
+            
+                if True:
+                    # First get data.
+                    if True:
+                        # First load all data.
+                        RDR.calc_r2eff(methods=methods, list_glob_ini=list_glob_ini)
+                    
+                    # Then select spins.
+                    if True:
+                        # Deselect all spins.
+                        #RDR.deselect_all(methods=methods, model='setup', model_from=MODEL_R2EFF, analysis='grid_setup', analysis_from='int', list_glob_ini=list_glob_ini)
+                        RDR.deselect_all(methods=methods, model='setup', model_from=MODEL_R2EFF, analysis='grid_setup', analysis_from='int', list_glob_ini=list_glob_ini, force=True)
+                
+                        #RDR.select_spin(spin_id=selection, methods=methods, model='setup', analysis='grid_setup', list_glob_ini=list_glob_ini)
+                        RDR.select_spin(spin_id=selection, methods=methods, model='setup', analysis='grid_setup', list_glob_ini=list_glob_ini, force=True)
+                
+                    # Then preset values.
+                    if True:
+                        # Set k_AB for Grid search.
+                        #RDR.value_set(methods=methods, val=1000., param='kex', model=MODEL_CR72, model_from='setup', analysis='grid_setup', list_glob_ini=list_glob_ini)
+                        RDR.value_set(methods=methods, val=1000., param='kex', model=MODEL_CR72, model_from='setup', analysis='grid_setup', list_glob_ini=list_glob_ini, force=True)
+                        RDR.value_set(methods=methods, val=0.95, param='pA', model=MODEL_CR72, model_from='setup', analysis='grid_setup', list_glob_ini=list_glob_ini, force=True)
+                
+                    # Then set R20
+                    if True:
+                        # Set R20 from min R2eff in preparation for Grid search.
+                        #RDR.r20_from_min_r2eff(methods=methods, model=MODEL_CR72, analysis='grid_setup', list_glob_ini=list_glob_ini)
+                        RDR.r20_from_min_r2eff(methods=methods, model=MODEL_CR72, analysis='grid_setup', list_glob_ini=list_glob_ini, force=True)
+                
+                    # Check and print parameters.
+                    if False:
+                        # Print for pipe name
+                        test_pipe_name = RDR.name_pipe(method=method, model=MODEL_CR72, analysis='grid_setup', glob_ini=glob_ini)
+                        RDR.spin_display_params(pipe_name=test_pipe_name)
+                    
+                    # Then Grid search.
+                    if False:
+                        # Do Grid search.
+                        #RDR.minimise_grid_search(inc=200, verbosity=1, methods=methods, model=MODEL_CR72, analysis='grid', analysis_from='grid_setup', list_glob_ini=list_glob_ini)
+                        RDR.minimise_grid_search(inc=200, verbosity=1, methods=methods, model=MODEL_CR72, analysis='grid', analysis_from='grid_setup', list_glob_ini=list_glob_ini, force=True)
+                
+                    # Then cluster spins.
+                    if False:
+                        #RDR.cluster_spins(spin_id=selection, methods=methods, model=MODEL_CR72, analysis='grid', list_glob_ini=list_glob_ini)
+                        RDR.cluster_spins(spin_id=selection, methods=methods, model=MODEL_CR72, analysis='grid', list_glob_ini=list_glob_ini, force=True)
+            
+                # Then Minimise.
+                if False:
+                    # Minimise
+                    #RDR.opt_max_iterations = int(1e2)
+                    RDR.minimise_execute(methods=methods, model=MODEL_CR72, analysis='min', analysis_from='grid', list_glob_ini=list_glob_ini, force=True)
+                    #RDR.minimise_execute(methods=methods, model=MODEL_CR72, analysis='min', analysis_from='grid', list_glob_ini=list_glob_ini, force=False)
 
         # Print the pipes.
         #display(sort=True, rev=True)
