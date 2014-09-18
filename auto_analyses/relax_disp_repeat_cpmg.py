@@ -219,6 +219,7 @@ class Relax_disp_rep:
             self.interpreter.pipe.switch(pipe_name)
 
         # Loop over spectrometer frequencies.
+        finished = len(self.sfrqs) * [False]
         for i, sfrq in enumerate(self.sfrqs):
             # Access the key in self.
             key = DIC_KEY_FORMAT % (sfrq)
@@ -240,7 +241,7 @@ class Relax_disp_rep:
 
             # If there is no peak list, then continue.
             if len(peaks_file_list) == 0:
-                finished = False
+                finished[i] = False
                 continue
 
             # There should only be one peak file.
@@ -269,9 +270,9 @@ class Relax_disp_rep:
                     rmsd = float(extract_data(file=rmsd_file)[0][0])
                     self.interpreter.spectrum.baseplane_rmsd(error=rmsd, spectrum_id=spectrum_id)
 
-                finished = True
+            finished[i] = True
 
-            return finished
+        return all(finished)
 
 
     def do_spectrum_error_analysis(self, pipe_name, set_rep=None):
@@ -318,7 +319,8 @@ class Relax_disp_rep:
         analysis = 'int'
 
         # Loop over the methods.
-        for method in methods:
+        finished = len(methods) * [False]
+        for i, method in enumerate(methods):
             # Change the self key.
             self.set_self(key='method', value=method)
 
@@ -329,10 +331,10 @@ class Relax_disp_rep:
 
                 if not found:
                     calculate = True
-                    finished = False
+                    finished[i] = False
                 elif found:
                     calculate = False
-                    finished = True
+                    finished[i] = True
 
                 if calculate:
                     # Create the data pipe, by copying setup pipe.
@@ -340,9 +342,9 @@ class Relax_disp_rep:
                     self.interpreter.pipe.switch(pipe_name)
 
                     # Call set intensity.
-                    finished = self.set_intensity_and_error(pipe_name=pipe_name, glob_ini=glob_ini, set_rmsd=set_rmsd)
+                    finished_int = self.set_intensity_and_error(pipe_name=pipe_name, glob_ini=glob_ini, set_rmsd=set_rmsd)
 
-                    if finished:
+                    if finished_int:
                         # Call error analysis.
                         self.do_spectrum_error_analysis(pipe_name=pipe_name, set_rep=set_rep)
 
@@ -350,11 +352,13 @@ class Relax_disp_rep:
                         cdp.settings = self.settings
                         self.interpreter.results.write(file=resfile, dir=path, force=force)
 
+                        finished[i] = True
+
                     else:
                         pipe_name = pipes.cdp_name()
                         self.interpreter.pipe.delete(pipe_name=pipe_name)
 
-                return finished
+        return all(finished)
 
 
     def calc_r2eff(self, methods=None, list_glob_ini=None, force=False):
