@@ -1045,7 +1045,7 @@ class Relax_disp_rep:
             if pipes.cdp_name() != pipe_name and pipes.has_pipe(pipe_name):
                 self.interpreter.pipe.switch(pipe_name)
 
-            else:
+            elif pipes.has_pipe(pipe_name) == False:
                 continue
 
             # Results dictionary.
