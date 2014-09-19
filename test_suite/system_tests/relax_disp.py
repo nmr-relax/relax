@@ -6080,21 +6080,17 @@ class Relax_disp(SystemTestCase):
             methods = ['FT', 'MDD']
             # Now calculate R2eff.
             RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
-            
-    
+
             min_methods = [['FT'], ['MDD']]
             min_list_glob_ini = [[128], range(126, 130, 2)[::-1]]
-            
+
             #min_methods = [['FT']]
             #min_list_glob_ini = [[128]]
             selection = ':2,3'
-            
+
             for i, methods in enumerate(min_methods):
                 list_glob_ini = min_list_glob_ini[i]
-            
-                method = methods[0]
-                glob_ini = list_glob_ini[0]
-            
+
                 if True:
                     # First get data.
                     if True:
@@ -6126,6 +6122,9 @@ class Relax_disp(SystemTestCase):
                     # Check and print parameters.
                     if True:
                         # Print for pipe name
+                        method = methods[0]
+                        glob_ini = list_glob_ini[0]
+
                         test_pipe_name = RDR.name_pipe(method=method, model=MODEL_CR72, analysis='grid_setup', glob_ini=glob_ini)
                         RDR.spin_display_params(pipe_name=test_pipe_name)
                     
@@ -6144,8 +6143,23 @@ class Relax_disp(SystemTestCase):
                 if True:
                     # Minimise
                     RDR.opt_max_iterations = int(1e2)
-                    RDR.minimise_execute(methods=methods, model=MODEL_CR72, analysis='min', analysis_from='grid', list_glob_ini=list_glob_ini, force=True)
-                    #RDR.minimise_execute(methods=methods, model=MODEL_CR72, analysis='min', analysis_from='grid', list_glob_ini=list_glob_ini, force=False)
+                    #RDR.minimise_execute(methods=methods, model=MODEL_CR72, analysis='min', analysis_from='grid', list_glob_ini=list_glob_ini, force=True)
+                    RDR.minimise_execute(methods=methods, model=MODEL_CR72, analysis='min', analysis_from='grid', list_glob_ini=list_glob_ini, force=False)
+
+                #print asd
+
+        # Plot statistics.
+        # Try plot some minimisation correlations.
+        if True:
+            # Collect r2eff values.
+            min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis='min', list_glob_ini=[128], selection=None)
+            min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis='min', list_glob_ini=range(126, 130, 2)[::-1], selection=None)
+
+            fig1 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 126]]
+            fig2 = [[min_mdd_sel, min_mdd_sel], ['MDD', 'MDD'], [128, 126]]
+            corr_data = [fig1, fig2]
+
+            RDR.plot_min_corr(corr_data=corr_data, show=False)
 
         # Print the pipes.
         #display(sort=True, rev=True)
