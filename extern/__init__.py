@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,6 +24,7 @@
 """External Python modules bundled with relax."""
 
 __all__ = [
+    'numdifftools',
     'numpy_future',
     'sobol'
 ]
