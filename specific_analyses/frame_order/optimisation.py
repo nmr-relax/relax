@@ -289,7 +289,7 @@ def minimise_setup_atomic_pos(sim_index=None, verbosity=1):
 
     # Give a warning about the atomic position averaging.
     if verbosity and len(ave_warning_spin_ids):
-        warn(RelaxWarning("Averaging the %s atomic positions for the PCS for the spins '%s'." % (ave_warning_num, ave_warning_spin_ids)))
+        warn(RelaxWarning("Averaging the %s atomic positions for the PCS for the spins %s." % (ave_warning_num, ave_warning_spin_ids)))
 
     # Convert to numpy objects.
     atomic_pos = array(atomic_pos, float64)
