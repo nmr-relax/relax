@@ -671,8 +671,9 @@ class Frame_order_analysis:
 
         # The results file already exists, so read its contents instead.
         if self.read_results(model=model, pipe_name=self.pipe_name_dict[model]):
-            # The PDB representation of the model (in case this was not completed correctly).
+            # The PDB representation of the model and the pseudo-Brownian dynamics simulation (in case this was not completed correctly).
             self.interpreter.frame_order.pdb_model(dir=self.model_directory(model), force=True)
+            self.interpreter.frame_order.simulate(dir=self.model_directory(model), force=True)
 
             # Nothing more to do.
             return
@@ -722,8 +723,9 @@ class Frame_order_analysis:
         # Save the results.
         self.interpreter.results.write(dir=self.model_directory(model), force=True)
 
-        # The PDB representation of the model.
+        # The PDB representation of the model and the pseudo-Brownian dynamics simulation.
         self.interpreter.frame_order.pdb_model(dir=self.model_directory(model), force=True)
+        self.interpreter.frame_order.simulate(dir=self.model_directory(model), force=True)
 
 
     def print_results(self):
@@ -911,8 +913,9 @@ class Frame_order_analysis:
         if model != 'final' and model.replace(' permutation A', '').replace(' permutation B', '') != cdp.model:
             raise RelaxError("The model '%s' does not match the model '%s' of the current data pipe." % (model.replace(' permuted', ''), cdp.model))
 
-        # The PDB representation of the model.
+        # The PDB representation of the model and the pseudo-Brownian dynamics simulation.
         self.interpreter.frame_order.pdb_model(dir=self.model_directory(model), force=True)
+        self.interpreter.frame_order.simulate(dir=self.model_directory(model), force=True)
 
         # Create the visualisation script.
         subsection(file=sys.stdout, text="Creating a PyMOL visualisation script.")
