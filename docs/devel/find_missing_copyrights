@@ -1,4 +1,4 @@
-The following is a command which can be used to view all edits by a certain user (here 'tlinnet') for the entire year.  This svn log is then parsed and all the added and modified files extracted.  Each file is then grepped from the copyright statement, and all copyright statements from the year removed.  The remaining printout lists the files which require a copyright notice update.
+The following is a command which can be used to view all edits by a certain user for the entire year.  This svn log is then parsed and all the added and modified files extracted.  Each file is then grepped from the copyright statement, and all copyright statements from the year removed.  The remaining printout lists the files which require a copyright notice update.
 
 svn log -v -r{"2014-01-01 00:00:00"}:{"2014-12-31 00:00:00"} \
 | sed -n '/ | tlinnet | /,/-----$/ p' \
@@ -7,6 +7,11 @@ svn log -v -r{"2014-01-01 00:00:00"}:{"2014-12-31 00:00:00"} \
 | sed 's/   M //g' \
 | sed 's/   A //g' \
 | sed 's/\/trunk\///g' \
-| xargs grep Copyright \
-| grep -v 2014
+| sed 's/ .*//g' \
+| xargs -I {} bash -c 'if [ -f {} ] ; then echo {} ; fi' \
+| xargs grep Copyright
 
+
+To change to a different developer, for example replace 'tlinnet' with 'bugman' and 'Troels' with 'Edward'.  To check the history of one of these files, say 'lib/xyz.py', to be sure that the developer edited the file, type:
+
+svn log -v lib/xyz.py | less
