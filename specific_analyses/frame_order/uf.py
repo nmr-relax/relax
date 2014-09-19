@@ -43,7 +43,7 @@ from specific_analyses.frame_order.parameters import update_model
 from specific_analyses.frame_order.variables import MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_LIST_RESTRICTED_TORSION, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID
 
 
-def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", dir=None, compress_type=0, size=30.0, inc=36, model=1, force=False):
+def pdb_model(ave_pos="ave_pos", rep="frame_order", dir=None, compress_type=0, size=30.0, inc=36, model=1, force=False):
     """Create 3 different PDB files for representing the frame order dynamics of the system.
 
     @keyword ave_pos:       The file root for the average molecule structure.
@@ -84,10 +84,6 @@ def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", 
     # Create the geometric representation.
     if rep:
         create_geometric_rep(file=rep, dir=dir, compress_type=compress_type, size=size, inc=inc, force=force)
-
-    # Create the distribution.
-    if dist:
-        create_distribution(file=dist, dir=dir, compress_type=compress_type, model=model, force=force)
 
 
 def permute_axes(permutation='A'):
@@ -365,6 +361,29 @@ def select_model(model=None):
 
     # Update the model.
     update_model()
+
+
+def simulate(file="simulation.pdb.bz2", dir=None, step_size=2.0, snapshot=10, total=1000, model=1, force=True):
+    """Pseudo-Brownian dynamics simulation of the frame order motions.
+
+    @keyword file:      The PDB file for storing the frame order pseudo-Brownian dynamics simulation.  The compression is determined automatically by the file extensions '*.pdb', '*.pdb.gz', and '*.pdb.bz2'.
+    @type file:         str
+    @keyword dir:       The directory name to place the file into.
+    @type dir:          str or None
+    @keyword step_size: The rotation will be of a random direction but with this fixed angle.  The value is in degrees.
+    @type step_size:    float
+    @keyword snapshot:  The number of steps in the simulation when snapshots will be taken.
+    @type snapshot:     int
+    @keyword total:     The total number of snapshots to take before stopping the simulation.
+    @type total:        int
+    @keyword model:     Only one model from an analysed ensemble of structures can be used for the pseudo-Brownian simulation, as the simulation and corresponding PDB file consists of one model per simulation.
+    @type model:        int
+    @keyword force:     A flag which, if set to True, will overwrite the any pre-existing file.
+    @type force:        bool
+    """
+
+    # Create the distribution.
+    create_distribution(file=dist, dir=dir, model=model, force=force)
 
 
 def sobol_setup(max_num=200, oversample=100):
