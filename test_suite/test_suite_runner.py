@@ -374,7 +374,7 @@ class Test_suite_runner:
 
         # Header.
         print("Tests skipped due to missing optional packages/modules/software:\n")
-        header = "%-30s" % "Module" 
+        header = "%-33s" % "Module/package/software" 
         if len(system_count):
             header = "%s %20s" % (header, "System test count")
         if len(unit_count):
@@ -389,7 +389,7 @@ class Test_suite_runner:
 
         # The table.
         for module in missing_modules:
-            text = "%-30s" % module
+            text = "%-33s" % module
             if len(system_count):
                 text = "%s %20s" % (text, system_count[module])
             if len(unit_count):
