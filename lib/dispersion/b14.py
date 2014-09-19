@@ -2,6 +2,7 @@
 #                                                                             #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 # Copyright (C) 2014 Andrew Baldwin                                           #
+# Copyright (C) 2014 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #

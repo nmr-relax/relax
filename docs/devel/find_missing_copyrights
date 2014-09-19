@@ -15,4 +15,7 @@ svn log -v -r{"2014-01-01 00:00:00"}:{"2014-12-31 00:00:00"} \
 
 To change to a different developer, for example replace 'tlinnet' with 'bugman' and 'Troels' with 'Edward'.  To check the history of one of these files, say 'lib/xyz.py', to be sure that the developer edited the file, type:
 
-svn log -v lib/xyz.py | less
+svn log -v lib/xyz.py \
+| sed -n '/ | bugman | /,/-----$/ p' \
+| less
+
