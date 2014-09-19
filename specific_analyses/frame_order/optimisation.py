@@ -247,6 +247,8 @@ def minimise_setup_atomic_pos(sim_index=None):
     atomic_pos = []
 
     # Store the atomic positions.
+    ave_warning_spin_ids = []
+    ave_warning_num = None
     for spin, spin_id in spin_loop(selection=domain_moving(), return_id=True):
         # Skip deselected spins.
         if not spin.select:
@@ -268,7 +270,11 @@ def minimise_setup_atomic_pos(sim_index=None):
         else:
             # First throw a warning to tell the user what is happening.
             if sim_index == None:
-                warn(RelaxWarning("Averaging the %s atomic positions for the PCS for the spin '%s'." % (len(spin.pos), spin_id)))
+                ave_warning_spin_ids.append(spin_id)
+                if ave_warning_num == None:
+                    ave_warning_num = len(spin.pos)
+                elif ave_warning_num != len(spin.pos):
+                    ave_warning_num = 'multiple'
 
             # The average position.
             ave_pos = zeros(3, float64)
@@ -278,6 +284,10 @@ def minimise_setup_atomic_pos(sim_index=None):
 
             # Store.
             atomic_pos.append(ave_pos)
+
+    # Give a warning about the atomic position averaging.
+    if len(ave_warning_spin_ids):
+        warn(RelaxWarning("Averaging the %s atomic positions for the PCS for the spins '%s'." % (ave_warning_num, ave_warning_spin_ids)))
 
     # Convert to numpy objects.
     atomic_pos = array(atomic_pos, float64)
