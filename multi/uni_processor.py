@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
