@@ -383,7 +383,7 @@ def simulate(file="simulation.pdb.bz2", dir=None, step_size=2.0, snapshot=10, to
     """
 
     # Create the distribution.
-    create_distribution(file=dist, dir=dir, model=model, force=force)
+    create_distribution(file=file, dir=dir, model=model, force=force)
 
 
 def sobol_setup(max_num=200, oversample=100):
