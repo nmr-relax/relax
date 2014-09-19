@@ -671,7 +671,7 @@ class Frame_order(API_base, API_common):
                 interatom.select = False
                 ids.append("%s - %s" % (interatom.spin_id1, interatom.spin_id2))
         if verbose and len(ids):
-            warn(RelaxWarning("No RDC data is present, deselecting the interatomic data containers between spin pairs %s." % ids)
+            warn(RelaxWarning("No RDC data is present, deselecting the interatomic data containers between spin pairs %s." % ids))
 
 
     def return_error(self, data_id):
