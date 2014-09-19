@@ -219,6 +219,7 @@ class Relax_disp_rep:
             self.interpreter.pipe.switch(pipe_name)
 
         # Loop over spectrometer frequencies.
+        finished = len(self.sfrqs) * [False]
         for i, sfrq in enumerate(self.sfrqs):
             # Access the key in self.
             key = DIC_KEY_FORMAT % (sfrq)
@@ -240,7 +241,7 @@ class Relax_disp_rep:
 
             # If there is no peak list, then continue.
             if len(peaks_file_list) == 0:
-                finished = False
+                finished[i] = False
                 continue
 
             # There should only be one peak file.
@@ -269,9 +270,9 @@ class Relax_disp_rep:
                     rmsd = float(extract_data(file=rmsd_file)[0][0])
                     self.interpreter.spectrum.baseplane_rmsd(error=rmsd, spectrum_id=spectrum_id)
 
-                finished = True
+            finished[i] = True
 
-            return finished
+        return all(finished)
 
 
     def do_spectrum_error_analysis(self, pipe_name, set_rep=None):
@@ -318,7 +319,8 @@ class Relax_disp_rep:
         analysis = 'int'
 
         # Loop over the methods.
-        for method in methods:
+        finished = len(methods) * [False]
+        for i, method in enumerate(methods):
             # Change the self key.
             self.set_self(key='method', value=method)
 
@@ -329,10 +331,10 @@ class Relax_disp_rep:
 
                 if not found:
                     calculate = True
-                    finished = False
+                    finished[i] = False
                 elif found:
                     calculate = False
-                    finished = True
+                    finished[i] = True
 
                 if calculate:
                     # Create the data pipe, by copying setup pipe.
@@ -340,9 +342,9 @@ class Relax_disp_rep:
                     self.interpreter.pipe.switch(pipe_name)
 
                     # Call set intensity.
-                    finished = self.set_intensity_and_error(pipe_name=pipe_name, glob_ini=glob_ini, set_rmsd=set_rmsd)
+                    finished_int = self.set_intensity_and_error(pipe_name=pipe_name, glob_ini=glob_ini, set_rmsd=set_rmsd)
 
-                    if finished:
+                    if finished_int:
                         # Call error analysis.
                         self.do_spectrum_error_analysis(pipe_name=pipe_name, set_rep=set_rep)
 
@@ -350,11 +352,13 @@ class Relax_disp_rep:
                         cdp.settings = self.settings
                         self.interpreter.results.write(file=resfile, dir=path, force=force)
 
+                        finished[i] = True
+
                     else:
                         pipe_name = pipes.cdp_name()
                         self.interpreter.pipe.delete(pipe_name=pipe_name)
 
-                return finished
+        return all(finished)
 
 
     def calc_r2eff(self, methods=None, list_glob_ini=None, force=False):
@@ -449,6 +453,9 @@ class Relax_disp_rep:
                 else:
                     self.interpreter.results.write(file=resfile, dir=path, force=force)
 
+                # Show selected spins
+                self.interpreter.spin.display()
+
 
     def select_spin(self, spin_id=None, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
         """Method to select spins for a pipe."""
@@ -492,6 +499,59 @@ class Relax_disp_rep:
                     warn(RelaxWarning(text))
                 else:
                     self.interpreter.results.write(file=resfile, dir=path, force=force)
+
+                # Show selected spins
+                self.interpreter.spin.display()
+
+
+    def value_set(self, spin_id=None, val=None, param=None, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
+        """Use value.set on all pipes."""
+
+        # Set default
+        if model_from == None:
+            model_from = model
+        if analysis_from == None:
+            analysis_from = analysis
+
+        # Loop over the methods.
+        for method in methods:
+            # Change the self key.
+            self.set_self(key='method', value=method)
+
+            # Loop over the glob ini:
+            for glob_ini in list_glob_ini:
+                # Check previous, and get the pipe name.
+                found, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=self.method)
+
+                if not found:
+                    # If previous pipe not found, then create it.
+                    model_from_pipe_name = self.name_pipe(method=self.method, model=model_from, analysis=analysis_from, glob_ini=glob_ini)
+
+                    # Copy pipe and switch.
+                    self.interpreter.pipe.copy(pipe_from=model_from_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
+                    self.interpreter.pipe.switch(pipe_name)
+
+                # Print
+                subtitle(file=sys.stdout, text="For param '%s' set value '%3.2f' for pipe='%s'" % (param, val, pipe_name), prespace=3)
+
+                # Select the model.
+                self.interpreter.relax_disp.select_model(model)
+
+                # Set value
+                self.interpreter.value.set(val=val, param=param, spin_id=spin_id)
+
+                # Save results, and store the current settings dic to pipe.
+                cdp.settings = self.settings
+
+                if found and not force:
+                    file_path = get_file_path(file_name=resfile, dir=path)
+                    text = "The file '%s' already exists.  Set the force flag to True to overwrite." % (file_path)
+                    warn(RelaxWarning(text))
+                else:
+                    self.interpreter.results.write(file=resfile, dir=path, force=force)
+
+                # Print for pipe name
+                self.spin_display_params(pipe_name=pipe_name)
 
 
     def r20_from_min_r2eff(self, spin_id=None, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
@@ -541,49 +601,8 @@ class Relax_disp_rep:
                 else:
                     self.interpreter.results.write(file=resfile, dir=path, force=force)
 
-
-    def value_set(self, spin_id=None, val=None, param=None, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
-        """Use value.set on all pipes."""
-
-        # Set default
-        if model_from == None:
-            model_from = model
-        if analysis_from == None:
-            analysis_from = analysis
-
-        # Loop over the methods.
-        for method in methods:
-            # Change the self key.
-            self.set_self(key='method', value=method)
-
-            # Loop over the glob ini:
-            for glob_ini in list_glob_ini:
-                # Check previous, and get the pipe name.
-                found, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=self.method)
-
-                if not found:
-                    # If previous pipe not found, then create it.
-                    model_from_pipe_name = self.name_pipe(method=self.method, model=model_from, analysis=analysis_from, glob_ini=glob_ini)
-
-                    # Copy pipe and switch.
-                    self.interpreter.pipe.copy(pipe_from=model_from_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
-                    self.interpreter.pipe.switch(pipe_name)
-
-                # Print
-                subtitle(file=sys.stdout, text="For param '%s' set value '%3.2f' for pipe='%s'" % (param, val, pipe_name), prespace=3)
-
-                # Set value
-                self.interpreter.value.set(val=val, param=param, spin_id=spin_id)
-
-                # Save results, and store the current settings dic to pipe.
-                cdp.settings = self.settings
-
-                if found and not force:
-                    file_path = get_file_path(file_name=resfile, dir=path)
-                    text = "The file '%s' already exists.  Set the force flag to True to overwrite." % (file_path)
-                    warn(RelaxWarning(text))
-                else:
-                    self.interpreter.results.write(file=resfile, dir=path, force=force)
+                # Print for pipe name
+                self.spin_display_params(pipe_name=pipe_name)
 
 
     def minimise_grid_search(self, inc=11, verbosity=0, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
@@ -604,6 +623,11 @@ class Relax_disp_rep:
             for glob_ini in list_glob_ini:
                 # Check previous, and get the pipe name.
                 found, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=self.method)
+
+                # Try from analysis
+                if not found:
+                    # Check previous, and get the pipe name.
+                    found, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis_from, glob_ini=glob_ini, bundle=self.method)
 
                 if not found:
                     # If previous pipe not found, then create it.
@@ -649,6 +673,12 @@ class Relax_disp_rep:
                 # Save results, and store the current settings dic to pipe.
                 cdp.settings = self.settings
 
+                # Define new pipe names.
+                pipe_name = self.name_pipe(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini)
+                resfile = pipe_name.replace(" ", "_")
+                model_path = model.replace(" ", "_")
+                path = self.results_dir+sep+model_path
+
                 if found and not force:
                     file_path = get_file_path(file_name=resfile, dir=path)
                     text = "The file '%s' already exists.  Set the force flag to True to overwrite." % (file_path)
@@ -656,9 +686,12 @@ class Relax_disp_rep:
                 else:
                     self.interpreter.results.write(file=resfile, dir=path, force=force)
 
+                # Print for pipe name
+                self.spin_display_params(pipe_name=pipe_name)
 
-    def minimise_execute(self, verbosity=1, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
-        """Use value.set on all pipes."""
+
+    def cluster_spins(self, spin_id=None, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
+        """Method to select spins for a pipe."""
 
         # Set default
         if model_from == None:
@@ -680,6 +713,58 @@ class Relax_disp_rep:
                     # If previous pipe not found, then create it.
                     model_from_pipe_name = self.name_pipe(method=self.method, model=model_from, analysis=analysis_from, glob_ini=glob_ini)
 
+                    # Copy pipe and switch.
+                    self.interpreter.pipe.copy(pipe_from=model_from_pipe_name, pipe_to=pipe_name, bundle_to=self.method)
+                    self.interpreter.pipe.switch(pipe_name)
+
+                # Print
+                subtitle(file=sys.stdout, text="Cluster spins '%s' for pipe='%s'" % (spin_id, pipe_name), prespace=3)
+
+                # Select spins.
+                self.interpreter.relax_disp.cluster(cluster_id='sel', spin_id=spin_id)
+
+                # Save results, and store the current settings dic to pipe.
+                cdp.settings = self.settings
+
+                if found and not force:
+                    file_path = get_file_path(file_name=resfile, dir=path)
+                    text = "The file '%s' already exists.  Set the force flag to True to overwrite." % (file_path)
+                    warn(RelaxWarning(text))
+                else:
+                    self.interpreter.results.write(file=resfile, dir=path, force=force)
+
+            # print clustered spins
+            print("Clustered spins are:", cdp.clustering)
+
+
+    def minimise_execute(self, verbosity=1, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
+        """Use value.set on all pipes."""
+
+        # Set default
+        if model_from == None:
+            model_from = model
+        if analysis_from == None:
+            analysis_from = analysis
+
+        # Loop over the methods.
+        for method in methods:
+            # Change the self key.
+            self.set_self(key='method', value=method)
+
+            # Loop over the glob ini:
+            for glob_ini in list_glob_ini:
+                # Check previous, and get the pipe name.
+                found, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=self.method)
+
+                # Try from analysis
+                if not found:
+                    # Check previous, and get the pipe name.
+                    found, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis_from, glob_ini=glob_ini, bundle=self.method)
+
+                if not found:
+                    # If previous pipe not found, then create it.
+                    model_from_pipe_name = self.name_pipe(method=self.method, model=model_from, analysis=analysis_from, glob_ini=glob_ini)
+
                     # Check if pipe exists. If not, try grid pipe.
                     if not pipes.has_pipe(model_from_pipe_name):
                         model_from_pipe_name = self.name_pipe(method=self.method, model=model_from, analysis='grid', glob_ini=glob_ini)
@@ -696,6 +781,25 @@ class Relax_disp_rep:
 
                 # Do the minimisation.
                 self.interpreter.minimise.execute(min_algor=self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=self.constraints, scaling=True, verbosity=verbosity)
+
+                # Save results, and store the current settings dic to pipe.
+                cdp.settings = self.settings
+
+                # Define new pipe names.
+                pipe_name = self.name_pipe(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini)
+                resfile = pipe_name.replace(" ", "_")
+                model_path = model.replace(" ", "_")
+                path = self.results_dir+sep+model_path
+
+                if found and not force:
+                    file_path = get_file_path(file_name=resfile, dir=path)
+                    text = "The file '%s' already exists.  Set the force flag to True to overwrite." % (file_path)
+                    warn(RelaxWarning(text))
+                else:
+                    self.interpreter.results.write(file=resfile, dir=path, force=force)
+
+                # Print for pipe name
+                self.spin_display_params(pipe_name=pipe_name)
 
 
     def name_pipe(self, method, model, analysis, glob_ini, clusterid=None):
@@ -771,9 +875,46 @@ class Relax_disp_rep:
         """Display parameters for model in pipe."""
 
 
-        # Switch to the pipe.
-        if pipes.cdp_name() != pipe_name:
-            self.interpreter.pipe.switch(pipe_name)
+        # First check if the pipe already exists. Then switch to it.
+        if pipes.has_pipe(pipe_name):
+            # Switch to the pipe.
+            if pipes.cdp_name() != pipe_name:
+                print("Detected the presence of previous '%s' pipe - switching to it." % pipe_name)
+                self.interpreter.pipe.switch(pipe_name)
+
+        else:
+            # The result file.
+            pipe_name_split = pipe_name.split("_-_")
+            method = pipe_name_split[0]
+            model = pipe_name_split[1]
+            analysis = pipe_name_split[2]
+            bundle = method
+
+            model_path = model.replace(" ", "_")
+            path = self.results_dir+sep+model_path
+            # The result file.
+            resfile = pipe_name.replace(" ", "_")
+
+            # Check that results do not already exist - i.e. a previous run was interrupted.
+            path1 = get_file_path(file_name=resfile, dir=path)
+            path2 = path1 + '.bz2'
+            path3 = path1 + '.gz'
+
+            #print("Path to R2eff file is: %s"%path1)
+            if access(path1, F_OK) or access(path2, F_OK) or access(path2, F_OK):
+                # Printout.
+                print("Detected the presence of results files for the '%s' pipe - loading these instead of performing optimisation for a second time." % pipe_name)
+
+                # Create a data new pipe and switch to it.
+                self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=self.pipe_type, bundle=bundle)
+                self.interpreter.pipe.switch(pipe_name)
+
+                # Load the results.
+                self.interpreter.results.read(file=resfile, dir=path)
+
+                # Set found to True
+                found = True
+
 
         # Start dic.
         my_dic = {}
@@ -814,7 +955,10 @@ class Relax_disp_rep:
                         my_dic[spin_id][param] = {}
 
                         # Get the Value.
-                        param_val = deepcopy(getattr(cur_spin, param)[param_key])
+                        if len(getattr(cur_spin, param)) == 0:
+                            param_val = None
+                        else:
+                            param_val = deepcopy(getattr(cur_spin, param)[param_key])
                         my_dic[spin_id][param][param_key] = param_val
 
                         # Add information to data.

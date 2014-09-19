@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2013 Troels E. Linnet                                         #
+# Copyright (C) 2014 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,17 +29,18 @@ import re
 from glob import glob
 from os import sep
 from os.path import abspath
+subprocess_module = False
+try:
+    import subprocess
+    subprocess_module = True
+except ImportError:
+    pass
 from warnings import warn
 
 # relax module imports.
-import dep_check
 from lib.errors import RelaxError
 from lib.io import file_root, get_file_path, open_write_file, sort_filenames, write_data
 from lib.warnings import RelaxWarning
-
-# Check subprocess is available.
-if dep_check.subprocess_module:
-    import subprocess
 
 
 def read_seriestab(peak_list=None, file_data=None, int_col=None):
@@ -212,7 +214,7 @@ def show_apod_extract(file_name=None, dir=None, path_to_command='showApod'):
     # Get the file path.
     file_path = get_file_path(file_name=file_name, dir=dir)
 
-    if not dep_check.subprocess_module:
+    if not subprocess_module:
         raise RelaxError("Python module 'subprocess' not found, cannot call showApod.")
 
     # Call function.
