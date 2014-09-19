@@ -187,6 +187,9 @@ class Frame_order_analysis:
             text = "Axis permutation '%s' of the %s frame order model" % (perm, title)
             section(file=sys.stdout, text=text, prespace=5)
 
+            # Output the model staring time.
+            self.interpreter.time()
+
             # A new model name.
             perm_model = "%s permutation %s" % (model, perm)
 
