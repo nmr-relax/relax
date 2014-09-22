@@ -76,9 +76,8 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "pos",
     py_type = "float_object",
-    dim = 3,
     desc_short = "atomic position",
-    desc = "The atomic coordinates.",
+    desc = "The atomic coordinates.  For specifying different coordinates for each model of the ensemble, a list of lists can be supplied.",
     list_titles = ['X coordinate', 'Y coordinate', 'Z coordinate']
 )
 uf.add_keyarg(
