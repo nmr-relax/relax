@@ -245,6 +245,33 @@ class Structure(SystemTestCase):
         self.interpreter.structure.superimpose(method='fit to first', centre_type='CoM')
 
 
+    def test_collapse_ensemble(self):
+        """Test the collapse_ensemble() method of the internal structural object."""
+
+        # Create 2 models.
+        self.interpreter.structure.add_model(model_num=1)
+        self.interpreter.structure.add_model(model_num=2)
+
+        # Add an atom.
+        self.interpreter.structure.add_atom(atom_name='H', res_name='Gly', res_num=1, pos=[[0.0, 1.0, 2.0], [1.0, 2.0, 3.0]], element='H')
+
+        # Collapse the ensemble to the 2nd model.
+        cdp.structure.collapse_ensemble(model_num=2, model_to=1)
+
+        # Check the collapsed ensemble.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(cdp.structure.structural_data[0].num, 1)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 1)
+
+        # Check the atomic data.
+        mol = cdp.structure.structural_data[0].mol[0]
+        self.assertEqual(len(mol.atom_name), 1)
+        self.assertEqual(mol.x[0], 1.0)
+        self.assertEqual(mol.y[0], 2.0)
+        self.assertEqual(mol.z[0], 3.0)
+
+
     def test_create_diff_tensor_pdb(self):
         """Test the deletion of non-existent structural data."""
 
