@@ -544,6 +544,42 @@ def add_rotors(structure=None, representation=None, sims=False):
         rotor(structure=structure, rotor_angle=rotor_angle[i], axis=dot(T, axis[i]), axis_pt=pivot[i], label=label[i], centre=com[i], span=span[i], blade_length=5e-10, model_num=models[i], staggered=staggered[i], half_rotor=half_rotor)
 
 
+def average_position(structure=None, models=None, sim=None):
+    """Shift the given structural object to the average position.
+
+    @keyword structure: The structural object to operate on.
+    @type structure:    lib.structure.internal.object.Internal instance
+    @keyword models:    The list of models to shift.
+    @type models:       list of int
+    @keyword sim:       A flag which if True will use the Monte Carlo simulation results.  In this case, the model list should be set to the simulation indices plus 1 and the structural object should have one model per simulation already set up.
+    @type sim:          bool
+    """
+
+    # Loop over each model.
+    for i in range(len(models)):
+        # First rotate the moving domain to the average position.
+        R = zeros((3, 3), float64)
+        if hasattr(cdp, 'ave_pos_alpha'):
+            if sim:
+                euler_to_R_zyz(cdp.ave_pos_alpha_sim[i], cdp.ave_pos_beta_sim[i], cdp.ave_pos_gamma_sim[i], R)
+            else:
+                euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
+        else:
+            if sim:
+                euler_to_R_zyz(0.0, cdp.ave_pos_beta_sim[i], cdp.ave_pos_gamma_sim[i], R)
+            else:
+                euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
+        origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
+        structure.rotate(R=R, origin=origin, model=models[i], atom_id=domain_moving())
+
+        # Then translate the moving domain.
+        if sim:
+            T = [cdp.ave_pos_x_sim[i], cdp.ave_pos_y_sim[i], cdp.ave_pos_z_sim[i]]
+        else:
+            T = [cdp.ave_pos_x, cdp.ave_pos_y, cdp.ave_pos_z]
+        structure.translate(T=T, model=models[i], atom_id=domain_moving())
+
+
 def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, model=1, force=False):
     """Create a PDB file of the molecule with the moving domains shifted to the average position.
 
@@ -615,29 +651,8 @@ def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, model=1, 
             elif models[i][j] != None:
                 structures[i].add_model(model=models[i][j])
 
-        # Loop over each model.
-        for j in range(len(models[i])):
-            # First rotate the moving domain to the average position.
-            R = zeros((3, 3), float64)
-            if hasattr(cdp, 'ave_pos_alpha'):
-                if sims[i]:
-                    euler_to_R_zyz(cdp.ave_pos_alpha_sim[j], cdp.ave_pos_beta_sim[j], cdp.ave_pos_gamma_sim[j], R)
-                else:
-                    euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
-            else:
-                if sims[i]:
-                    euler_to_R_zyz(0.0, cdp.ave_pos_beta_sim[j], cdp.ave_pos_gamma_sim[j], R)
-                else:
-                    euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
-            origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
-            structures[i].rotate(R=R, origin=origin, model=models[i][j], atom_id=domain_moving())
-
-            # Then translate the moving domain.
-            if sims[i]:
-                T = [cdp.ave_pos_x_sim[j], cdp.ave_pos_y_sim[j], cdp.ave_pos_z_sim[j]]
-            else:
-                T = [cdp.ave_pos_x, cdp.ave_pos_y, cdp.ave_pos_z]
-            structures[i].translate(T=T, model=models[i][j], atom_id=domain_moving())
+        # Shift to the average position.
+        average_position(structure=structures[i], models=models[i], sim=sims[i])
 
         # Output to PDB format.
         if format == 'PDB':
