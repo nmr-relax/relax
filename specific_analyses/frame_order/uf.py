@@ -40,7 +40,7 @@ from lib.io import open_write_file
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
 from specific_analyses.frame_order.checks import check_domain, check_model, check_parameters, check_pivot
-from specific_analyses.frame_order.geometric import create_ave_pos, create_geometric_rep
+from specific_analyses.frame_order.geometric import average_position, create_ave_pos, create_geometric_rep
 from specific_analyses.frame_order.optimisation import count_sobol_points
 from specific_analyses.frame_order.parameters import assemble_param_vector, update_model
 from specific_analyses.frame_order.variables import MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_LIST_RESTRICTED_TORSION, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID
@@ -410,6 +410,9 @@ def simulate(file="simulation.pdb.bz2", dir=None, step_size=2.0, snapshot=10, to
 
     # The pivot point.
     pivot = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z], float64)
+
+    # Shift to the average position.
+    average_position(structure=structure, models=[1])
 
     # Create the distribution.
     brownian(file=file, model=cdp.model, structure=structure, parameters=params, pivot=pivot, step_size=step_size, snapshot=snapshot, total=total)
