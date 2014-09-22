@@ -2588,6 +2588,20 @@ class Structure(SystemTestCase):
                         self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[models[i]][models[j]][k], rot_axis[i][j][k])
 
 
+    def test_get_model(self):
+        """Test the get_model() method of the internal structural object."""
+
+        # Create 2 models.
+        self.interpreter.structure.add_model(model_num=1)
+        self.interpreter.structure.add_model(model_num=2)
+
+        # Get the first model.
+        model = cdp.structure.get_model(1)
+
+        # Check it.
+        self.assertNotEqual(model, None)
+
+
     def test_load_spins_mol_cat(self):
         """Test the loading of spins from different molecules into one molecule container."""
 
