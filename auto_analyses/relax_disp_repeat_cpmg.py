@@ -31,7 +31,7 @@ from collections import OrderedDict
 from datetime import datetime
 from glob import glob
 from os import F_OK, access, getcwd, sep
-from numpy import asarray, arange, max, mean, min, sqrt, std, sum
+from numpy import asarray, arange, concatenate, max, mean, min, sqrt, std, sum
 from scipy.stats import pearsonr
 import sys
 from warnings import warn
@@ -228,7 +228,7 @@ class Relax_disp_rep:
             spectrum_ids = cdp.dic_spectrum_ids[key]
 
             # Get the folder for peak files.
-            peaks_folder = getattr(self, key)['peaks_folder']  + sep + self.method
+            peaks_folder = getattr(self, key)['peaks_folder'] + sep + self.method
 
             # Define glop pattern for peak files.
             peaks_glob_pat = '%s_%s.ser' % (glob_ini, self.method)
@@ -556,7 +556,8 @@ class Relax_disp_rep:
 
     def r20_from_min_r2eff(self, spin_id=None, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
         """Will set the grid R20 values from the minimum R2eff values through the r20_from_min_r2eff user function.
-        This will speed up the grid search with a factor GRID_INC^(Nr_spec_freq). For a CPMG experiment with two fields and standard GRID_INC=21, the speed-up is a factor 441."""
+        This will speed up the grid search with a factor GRID_INC^(Nr_spec_freq). For a CPMG experiment with two fields and standard GRID_INC = 21, the speed-up is a factor 441.
+        """
 
         # Set default
         if model_from == None:
@@ -754,14 +755,14 @@ class Relax_disp_rep:
             # Loop over the glob ini:
             for glob_ini in list_glob_ini:
                 # Check previous, and get the pipe name.
-                found, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=self.method)
+                found_pipe, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=self.method)
 
                 # Try from analysis
-                if not found:
+                if not found_pipe:
                     # Check previous, and get the pipe name.
-                    found, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis_from, glob_ini=glob_ini, bundle=self.method)
+                    found_analysis, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis_from, glob_ini=glob_ini, bundle=self.method)
 
-                if not found:
+                if not (found_pipe or found_analysis):
                     # If previous pipe not found, then create it.
                     model_from_pipe_name = self.name_pipe(method=self.method, model=model_from, analysis=analysis_from, glob_ini=glob_ini)
 
@@ -791,7 +792,7 @@ class Relax_disp_rep:
                 model_path = model.replace(" ", "_")
                 path = self.results_dir+sep+model_path
 
-                if found and not force:
+                if found_pipe and not force:
                     file_path = get_file_path(file_name=resfile, dir=path)
                     text = "The file '%s' already exists.  Set the force flag to True to overwrite." % (file_path)
                     warn(RelaxWarning(text))
@@ -1116,15 +1117,15 @@ class Relax_disp_rep:
 
                     np = len(y)
                     ax.set_title(r'$I$' + ' for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
-                    ax.legend(loc='upper center', shadow=True, prop = fontP)
-                    ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-                    ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+                    ax.legend(loc='upper center', shadow=True, prop=fontP)
+                    ax.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
+                    ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
                     ax.set_xlabel(r'$I$')
                     ax.set_ylabel(r'$I$')
 
                 # Scale intensity
                 if i == 1:
-                
+
                     x_norm = x / x.max()
                     y_norm = y / y.max()
 
@@ -1153,7 +1154,7 @@ class Relax_disp_rep:
 
                 # Intensity to error.
                 if i == 3:
-                
+
                     x_to_x_err = x / x_err
                     y_to_y_err = y / y_err
 
@@ -1244,7 +1245,7 @@ class Relax_disp_rep:
         # Loop over the rows.
         for i, row_axises in enumerate(axises):
             # Loop over the columns.
-            for j, ax in enumerate(row_axises) :
+            for j, ax in enumerate(row_axises):
                 # Extract from lists.
                 data, methods, glob_inis = corr_data[j]
                 data_x, data_y = data
@@ -1265,14 +1266,14 @@ class Relax_disp_rep:
                     np = len(y)
                     ax.set_title(r'$R_{2,\mathrm{eff}}$' + ' for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
                     ax.legend(loc='upper left', shadow=True, prop = fontP)
-                    ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-                    ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+                    ax.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
+                    ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
                     ax.set_xlabel(r'$R_{2,\mathrm{eff}}$')
                     ax.set_ylabel(r'$R_{2,\mathrm{eff}}$')
 
                 # R2eff to error.
                 if i == 1:
-                
+
                     x_to_x_err = x / x_err
                     y_to_y_err = y / y_err
 
@@ -1395,7 +1396,7 @@ class Relax_disp_rep:
                 a_int = (sum(x*y) - 1./n * sum(x) * sum(y) ) / ( sum(x**2) - 1./n * (sum(x))**2 )
                 b_int = 1./n * sum(y) - a_int * 1./n * sum(x)
 
-                r_xy_int = sum( (x - x_m)*(y - y_m)  ) / sqrt( sum((x - x_m)**2) * sum((y - y_m)**2) )
+                r_xy_int = sum( (x - x_m)*(y - y_m) ) / sqrt( sum((x - x_m)**2) * sum((y - y_m)**2) )
 
                 # Without intercept.
                 a = sum(x*y) / sum(x**2)
@@ -1450,7 +1451,7 @@ class Relax_disp_rep:
         # Prepare header for writing.
         selection = r2eff_stat_dic['selection']
 
-        # For writing out stats.        
+        # For writing out stats.
         headings = []
         data_dic = OrderedDict()
         i_max = 0
@@ -1549,6 +1550,154 @@ class Relax_disp_rep:
             file_obj.close()
 
         # Plot data.
+        if show:
+            plt.show()
+
+
+    def col_min(self, method=None, model=None, analysis=None, list_glob_ini=None, selection=None):
+
+        # Loop over the glob ini:
+        res_dic = {}
+        res_dic['method'] = method
+        res_dic['selection'] = selection
+
+        for glob_ini in list_glob_ini:
+            # Check previous, and get the pipe name.
+            found, pipe_name, resfile, path = self.check_previous_result(method=method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=method)
+
+            if pipes.cdp_name() != pipe_name:
+                self.interpreter.pipe.switch(pipe_name)
+
+            # Results dictionary.
+            res_dic[str(glob_ini)] = {}
+            res_dic[str(glob_ini)]['params'] = {}
+
+            # Detect which params are in use.
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(selection=selection, full_info=True, return_id=True, skip_desel=True):
+                params_list = cur_spin.params
+
+                # Store to dic.
+                res_dic[str(glob_ini)]['params']['params_list'] = params_list
+
+                # Store individual.
+                for param in params_list:
+                    # Store in list.
+                    res_dic[str(glob_ini)]['params'][param] = []
+
+                    # Prepare to store individual per spin.
+                    res_dic[str(glob_ini)][param] = {}
+
+                # Break after first round.
+                break
+
+            # Loop over the spins.
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(selection=selection, full_info=True, return_id=True, skip_desel=True):
+                # Loop over params
+                for param in params_list:
+
+                    # Make spin dic.
+                    res_dic[str(glob_ini)][param][spin_id] = {}
+
+                    # If param in PARAMS_R20, values are stored in with parameter key.
+                    param_key_list = []
+                    if param in PARAMS_R20:
+                        # Loop over frq key.
+                        for exp_type, frq, offset, ei, mi, oi, in loop_exp_frq_offset(return_indices=True):
+                            # Get the parameter key.
+                            param_key = generate_r20_key(exp_type=exp_type, frq=frq)
+                            param_key_list.append(param_key)
+                            res_dic[str(glob_ini)][param][spin_id]['param_key_list'] = param_key_list
+
+                            # Get the Value.
+                            param_val = deepcopy(getattr(cur_spin, param)[param_key])
+                            # Store in list and per spin.
+                            res_dic[str(glob_ini)]['params'][param].append(param_val)
+                            res_dic[str(glob_ini)][param][spin_id][param_key] = param_val
+
+                    else:
+                        # Get the value.
+                        param_val = deepcopy(getattr(cur_spin, param))
+                        # Store in list and per spin.
+                        res_dic[str(glob_ini)]['params'][param].append(param_val)
+                        res_dic[str(glob_ini)][param][spin_id][param_key] = param_val
+
+            # Print
+            subtitle(file=sys.stdout, text="The minimised valus for '%s' model for pipe='%s at %s'" % (model, pipe_name, glob_ini), prespace=3)
+
+            # Convert to numpy array.
+            for param in params_list:
+                res_dic[str(glob_ini)]['params'][param] = asarray(res_dic[str(glob_ini)]['params'][param])
+                param_vals_str = " ".join(format(x, "2.3f") for x in res_dic[str(glob_ini)]['params'][param])
+                print(param, param_vals_str)
+
+        return res_dic
+
+
+    def plot_min_corr(self, corr_data, show=False):
+        # Define figure.
+        # Nr of columns is number of datasets.
+        nr_cols = len(corr_data)
+        # Nr of rows, is the number of parameters.
+        data_xy_0, methods_0, glob_inis_0 = corr_data[0]
+        glob_ini_0 = glob_inis_0[0]
+        params_list = data_xy_0[0][str(glob_ini_0)]['params']['params_list']
+        nr_rows = len(params_list)
+
+        # Define figure
+        fig, axises = plt.subplots(nrows=nr_rows, ncols=nr_cols)
+        fig.suptitle('Correlation plot')
+
+        # axises is a tuple with number of elements corresponding to number of rows.
+        # Each sub-tuple contains axis for each column.
+
+        # Loop over the rows.
+        for i, row_axises in enumerate(axises):
+            param = params_list[i]
+
+            # Loop over the columns.
+            for j, ax in enumerate(row_axises):
+                # Extract from lists.
+                data, methods, glob_inis = corr_data[j]
+                data_x, data_y = data
+                method_x, method_y = methods
+                glob_ini_x, glob_ini_y = glob_inis
+
+                x = data_x[str(glob_ini_x)]['params'][param]
+                y = data_y[str(glob_ini_y)]['params'][param]
+                np = len(y)
+
+                ax.plot(x, x, 'o', label='%s vs. %s' % (method_x, method_x))
+                ax.plot(x, y, '.', label='%s vs. %s' % (method_y, method_x) )
+
+                #x_label = '%s'%param
+                y_label = '%s'%param
+
+                #ax.set_xlabel(x_label)
+                ax.set_ylabel(y_label)
+
+                ax.set_title('For %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
+                ax.legend(loc='upper left', shadow=True, prop=fontP)
+
+                # kex has values in 1000 area.
+                if param == 'kex':
+                    ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
+                    ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+
+                # If r2 or dw parameter, do a straight line:
+                if param in PARAMS_R20 + ['dw']:
+                    # Linear a, with no intercept.
+                    a = sum(x * y) / sum(x**2)
+                    min_xy = min(concatenate((x,y)))
+                    max_xy = max(concatenate((x,y)))
+
+                    dx = (max_xy - min_xy) / 10
+                    x_arange = arange(min_xy, max_xy + dx, dx)
+                    y_arange = a * x_arange
+                    ax.plot(x_arange, x_arange, 'b--')
+                    ax.plot(x_arange, y_arange, 'g--')
+
+        plt.tight_layout()
+
         if show:
             plt.show()
 
