@@ -255,6 +255,14 @@ class Structure(SystemTestCase):
         # Add an atom.
         self.interpreter.structure.add_atom(atom_name='H', res_name='Gly', res_num=1, pos=[[0.0, 1.0, 2.0], [1.0, 2.0, 3.0]], element='H')
 
+        # Check the atomic data.
+        for i in range(2):
+            mol = cdp.structure.structural_data[i].mol[0]
+            self.assertEqual(len(mol.atom_name), 1)
+            self.assertEqual(mol.x[0], 0.0+i)
+            self.assertEqual(mol.y[0], 1.0+i)
+            self.assertEqual(mol.z[0], 2.0+i)
+
         # Collapse the ensemble to the 2nd model.
         cdp.structure.collapse_ensemble(model_num=2, model_to=1)
 
