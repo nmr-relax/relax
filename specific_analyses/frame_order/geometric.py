@@ -741,6 +741,9 @@ def generate_axis_system(sim_index=None):
         else:
             axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha_sim[sim_index], pivot=pivot, point=com)
 
+        # Create a full normalised axis system.
+        two_vect_to_R(array([1, 0, 0], float64), axis, frame)
+
     # The system for the isotropic cones.
     elif cdp.model in MODEL_LIST_ISO_CONE:
         # Generate the axis.
