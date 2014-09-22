@@ -23,6 +23,7 @@
 """Module for all of the frame order specific user functions."""
 
 # Python module imports.
+from copy import deepcopy
 from math import pi
 from numpy import array, cross, float64, ones, transpose, zeros
 from numpy.linalg import norm
@@ -32,14 +33,16 @@ from warnings import warn
 from lib.arg_check import is_float_array
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxFault
+from lib.frame_order.simulation import brownian
 from lib.geometry.coord_transform import cartesian_to_spherical, spherical_to_cartesian
 from lib.geometry.rotations import euler_to_R_zyz, R_to_euler_zyz
+from lib.io import open_write_file
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
-from specific_analyses.frame_order.checks import check_domain
-from specific_analyses.frame_order.geometric import create_ave_pos, create_distribution, create_geometric_rep
+from specific_analyses.frame_order.checks import check_domain, check_model, check_parameters, check_pivot
+from specific_analyses.frame_order.geometric import create_ave_pos, create_geometric_rep
 from specific_analyses.frame_order.optimisation import count_sobol_points
-from specific_analyses.frame_order.parameters import update_model
+from specific_analyses.frame_order.parameters import assemble_param_vector, update_model
 from specific_analyses.frame_order.variables import MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_LIST_RESTRICTED_TORSION, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID
 
 
@@ -382,8 +385,34 @@ def simulate(file="simulation.pdb.bz2", dir=None, step_size=2.0, snapshot=10, to
     @type force:        bool
     """
 
+    # Checks.
+    pipes.test()
+    check_model()
+    check_domain()
+    check_parameters()
+    check_pivot()
+
+    # Open the output file.
+    file = open_write_file(file_name=file, dir=dir, force=force)
+
+    # The parameter values.
+    values = assemble_param_vector()
+    params = {}
+    i = 0
+    for name in cdp.params:
+        params[name] = values[i]
+        i += 1
+
+    # The structure.
+    structure = deepcopy(cdp.structure)
+    if structure.num_models() > 1:
+        structure.collapse_ensemble(model_num=model)
+
+    # The pivot point.
+    pivot = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z], float64)
+
     # Create the distribution.
-    create_distribution(file=file, dir=dir, model=model, force=force)
+    brownian(file=file, model=cdp.model, structure=structure, parameters=params, pivot=pivot, step_size=step_size, snapshot=snapshot, total=total)
 
 
 def sobol_setup(max_num=200, oversample=100):

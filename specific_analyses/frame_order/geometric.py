@@ -646,27 +646,6 @@ def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, model=1, 
             pdb_file.close()
 
 
-def create_distribution(format='PDB', file=None, dir=None, compress_type=0, model=1, force=False):
-    """Create a PDB file of a distribution of positions coving the full dynamics of the moving domain.
-
-    @keyword format:        The format for outputting the geometric representation.  Currently only the 'PDB' format is supported.
-    @type format:           str
-    @keyword file:          The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.
-    @type file:             str
-    @keyword dir:           The name of the directory to place the PDB file into.
-    @type dir:              str
-    @keyword compress_type: The compression type.  The integer values correspond to the compression type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
-    @type compress_type:    int
-    @keyword model:         Only one model from an analysed ensemble can be used for the PDB representation of the Monte Carlo simulations, as these consists of one model per simulation.
-    @type model:            int
-    @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
-    @type force:            bool
-    """
-
-    # Printout.
-    subsection(file=sys.stdout, text="Creating a PDB file of a distribution of positions coving the full dynamics of the moving domain.")
-
-
 def create_geometric_rep(format='PDB', file=None, dir=None, compress_type=0, size=30.0, inc=36, force=False):
     """Create a PDB file containing a geometric object representing the frame order dynamics.
 
