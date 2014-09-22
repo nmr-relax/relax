@@ -2600,6 +2600,8 @@ class Structure(SystemTestCase):
 
         # Check it.
         self.assertNotEqual(model, None)
+        self.assertEqual(model.num, 1)
+        self.assertEqual(len(model.mol), 0)
 
 
     def test_load_spins_mol_cat(self):
