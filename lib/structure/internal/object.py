@@ -1485,6 +1485,29 @@ class Internal:
         return data
 
 
+    def collapse_ensemble(self, model_num=None, model_to=1):
+        """Collapse the ensemble into a single model.
+
+        @keyword model_num: The number of the model to keep.  All other models will be removed.
+        @type model_num:    int
+        @keyword model_to:  The model number for the sole remaining model.
+        @type model_to:     int
+        """
+
+        # Store all the model numbers.
+        models = []
+        for model_cont in self.model_loop():
+            if model_cont.num != model_num:
+                models.append(model_cont.num)
+
+        # Delete all models.
+        for model in models:
+            self.delete(model)
+
+        # Renumber the remaining model.
+        self.set_model(model_orig=model_num, model_new=model_to)
+
+
     def connect_atom(self, mol_name=None, index1=None, index2=None):
         """Connect two atoms in the structural data object.
 
