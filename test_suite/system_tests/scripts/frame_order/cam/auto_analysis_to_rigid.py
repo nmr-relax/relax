@@ -71,6 +71,11 @@ OPT_FULL.add_min(min_algor='simplex', func_tol=1e-2, max_iter=5, sobol_max_point
 OPT_MC = Optimisation_settings()
 OPT_MC.add_min(min_algor='simplex', func_tol=1e-2, max_iter=5, sobol_max_points=1)
 
+# Pseudo-Brownian simulation (for the frame_order.simulate user function).
+STEP_SIZE = 2.0
+SNAPSHOT = 2
+TOTAL = 5
+
 
 # Set up the base data pipes.
 #############################
@@ -195,4 +200,4 @@ for i in range(len(ln)):
 ############
 
 # Do not change!
-Frame_order_analysis(data_pipe_full=DATA, data_pipe_subset=SUBSET, pipe_bundle=PIPE_BUNDLE, results_dir=ds.tmpdir, opt_rigid=OPT_RIGID, opt_subset=OPT_SUBSET, opt_full=OPT_FULL, opt_mc=OPT_MC, mc_sim_num=MC_NUM, models=MODELS)
+Frame_order_analysis(data_pipe_full=DATA, data_pipe_subset=SUBSET, pipe_bundle=PIPE_BUNDLE, results_dir=ds.tmpdir, opt_rigid=OPT_RIGID, opt_subset=OPT_SUBSET, opt_full=OPT_FULL, opt_mc=OPT_MC, mc_sim_num=MC_NUM, models=MODELS, brownian_step_size=STEP_SIZE, brownian_snapshot=SNAPSHOT, brownian_total=TOTAL)
