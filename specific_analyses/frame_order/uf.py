@@ -385,12 +385,20 @@ def simulate(file="simulation.pdb.bz2", dir=None, step_size=2.0, snapshot=10, to
     @type force:        bool
     """
 
+    # Printout.
+    print("Pseudo-Brownian dynamics simulation of the frame order motions.")
+
     # Checks.
     pipes.test()
     check_model()
     check_domain()
     check_parameters()
     check_pivot()
+
+    # Skip the rigid model.
+    if cdp.model == MODEL_RIGID:
+        print("Skipping the rigid model.")
+        return
 
     # Open the output file.
     file = open_write_file(file_name=file, dir=dir, force=force)
@@ -416,6 +424,9 @@ def simulate(file="simulation.pdb.bz2", dir=None, step_size=2.0, snapshot=10, to
 
     # Create the distribution.
     brownian(file=file, model=cdp.model, structure=structure, parameters=params, pivot=pivot, step_size=step_size, snapshot=snapshot, total=total)
+
+    # Close the file.
+    file.close()
 
 
 def sobol_setup(max_num=200, oversample=100):
