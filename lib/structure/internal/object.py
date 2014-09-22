@@ -1715,6 +1715,9 @@ class Internal:
                 self.structural_data.add_item(model)
                 model_cont = self.structural_data[-1]
 
+        # Return the container.
+        return model_cont
+
 
     def get_molecule(self, molecule, model=None):
         """Return the molecule.
