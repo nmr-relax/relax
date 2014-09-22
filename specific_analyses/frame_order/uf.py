@@ -40,7 +40,7 @@ from lib.io import open_write_file
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
 from specific_analyses.frame_order.checks import check_domain, check_model, check_parameters, check_pivot
-from specific_analyses.frame_order.geometric import average_position, create_ave_pos, create_geometric_rep
+from specific_analyses.frame_order.geometric import average_position, create_ave_pos, create_geometric_rep, generate_axis_system
 from specific_analyses.frame_order.optimisation import count_sobol_points
 from specific_analyses.frame_order.parameters import assemble_param_vector, update_model
 from specific_analyses.frame_order.variables import MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_LIST_RESTRICTED_TORSION, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID
@@ -125,37 +125,22 @@ def permute_axes(permutation='A'):
         angles = array([cdp.cone_theta_x, cdp.cone_theta_y, cone_sigma_max], float64)
     x, y, z = angles
 
-    # The system for the isotropic cones.
+    # The axis system.
+    axes = generate_axis_system()
+
+    # Start printout for the isotropic cones.
     if cdp.model in MODEL_LIST_ISO_CONE:
-        # Reconstruct the rotation axis.
-        axis = zeros(3, float64)
-        spherical_to_cartesian([1, cdp.axis_theta, cdp.axis_phi], axis)
-
-        # Create a full normalised axis system.
-        x_ax = array([1, 0, 0], float64)
-        y_ax = cross(axis, x_ax)
-        y_ax /= norm(y_ax)
-        x_ax = cross(y_ax, axis)
-        x_ax /= norm(x_ax)
-        axes = transpose(array([x_ax, y_ax, axis], float64))
-
-        # Start printout.
         print("\nOriginal parameters:")
         print("%-20s %20.10f" % ("cone_theta", cdp.cone_theta))
         print("%-20s %20.10f" % ("cone_sigma_max", cone_sigma_max))
         print("%-20s %20.10f" % ("axis_theta", cdp.axis_theta))
         print("%-20s %20.10f" % ("axis_phi", cdp.axis_phi))
-        print("%-20s\n%s" % ("cone axis", axis))
+        print("%-20s\n%s" % ("cone axis", axes[:, 2]))
         print("%-20s\n%s" % ("full axis system", axes))
         print("\nPermutation '%s':" % permutation)
 
-    # The system for the pseudo-ellipses.
+    # Start printout for the pseudo-ellipses.
     else:
-        # Generate the eigenframe of the motion.
-        frame = zeros((3, 3), float64)
-        euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
-
-        # Start printout.
         print("\nOriginal parameters:")
         print("%-20s %20.10f" % ("cone_theta_x", cdp.cone_theta_x))
         print("%-20s %20.10f" % ("cone_theta_y", cdp.cone_theta_y))
@@ -163,7 +148,7 @@ def permute_axes(permutation='A'):
         print("%-20s %20.10f" % ("eigen_alpha", cdp.eigen_alpha))
         print("%-20s %20.10f" % ("eigen_beta", cdp.eigen_beta))
         print("%-20s %20.10f" % ("eigen_gamma", cdp.eigen_gamma))
-        print("%-20s\n%s" % ("eigenframe", frame))
+        print("%-20s\n%s" % ("eigenframe", axes))
         print("\nPermutation '%s':" % permutation)
 
     # The axis inversion structure.
@@ -239,10 +224,10 @@ def permute_axes(permutation='A'):
 
     # Permute the axes (pseudo-ellipses).
     else:
-        frame_new = transpose(array([inv[0]*frame[:, perm_axes[0]], inv[1]*frame[:, perm_axes[1]], inv[2]*frame[:, perm_axes[2]]], float64))
+        axes_new = transpose(array([inv[0]*axes[:, perm_axes[0]], inv[1]*axes[:, perm_axes[1]], inv[2]*axes[:, perm_axes[2]]], float64))
 
         # Convert the permuted frame to Euler angles and store them.
-        cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma = R_to_euler_zyz(frame_new)
+        cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma = R_to_euler_zyz(axes_new)
 
     # End printout.
     if cdp.model in MODEL_LIST_ISO_CONE:
@@ -262,7 +247,7 @@ def permute_axes(permutation='A'):
         print("%-20s %20.10f" % ("eigen_alpha", cdp.eigen_alpha))
         print("%-20s %20.10f" % ("eigen_beta", cdp.eigen_beta))
         print("%-20s %20.10f" % ("eigen_gamma", cdp.eigen_gamma))
-        print("%-20s\n%s" % ("eigenframe", frame_new))
+        print("%-20s\n%s" % ("eigenframe", axes_new))
 
 
 def pivot(pivot=None, order=1, fix=False):
