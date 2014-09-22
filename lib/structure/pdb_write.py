@@ -84,6 +84,10 @@ def _record_validate(record):
         else:
             raise RelaxError("The PDB record '%s' is too long." % record)
 
+    # Check for nan.
+    if 'nan' in record:
+        raise RelaxError("The PDB record '%s' contains NaN values." % record)
+
 
 def atom(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq='', icode='', x='', y='', z='', occupancy='', temp_factor='', element='', charge=''):
     """Generate the ATOM record.
