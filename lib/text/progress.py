@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2014 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,13 +19,37 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relax-lib text package - a library of functions for text manipulation."""
+# Module docstring.
+"""Text based progress meters."""
 
-__all__ = [
-    'gui',
-    'sectioning',
-    'progress',
-    'string',
-    'table'
-]
+# Python module imports.
+import locale
+import sys
+
+
+def progress_meter(i, a=250, b=10000, file=sys.stderr):
+    """A simple progress write out (which defaults to the terminal STDERR).
+
+    @param i:       The current iteration.
+    @type i:        int
+    @keyword a:     The step size for spinning the spinner.
+    @type a:        int
+    @keyword b:     The step size for printing out the progress.
+    @type b:        int
+    @keyword file:  The file object to write the output to.
+    @type file:     file object
+    """
+
+    # The spinner characters.
+    chars = ['-', '\\', '|', '/']
+
+    # A spinner.
+    if i % a == 0:
+        file.write('\b%s' % chars[i%4])
+        if hasattr(file, 'flush'):
+            file.flush()
+
+    # Dump the progress.
+    if i % b == 0:
+        num = locale.format("%d", i, grouping=True)
+        file.write('\b%12s\n' % num)
