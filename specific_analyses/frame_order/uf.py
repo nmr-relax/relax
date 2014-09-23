@@ -40,6 +40,7 @@ from lib.io import open_write_file
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
 from specific_analyses.frame_order.checks import check_domain, check_model, check_parameters, check_pivot
+from specific_analyses.frame_order.data import domain_moving
 from specific_analyses.frame_order.geometric import average_position, create_ave_pos, create_geometric_rep, generate_axis_system
 from specific_analyses.frame_order.optimisation import count_sobol_points
 from specific_analyses.frame_order.parameters import assemble_param_vector, update_model
@@ -407,8 +408,11 @@ def simulate(file="simulation.pdb.bz2", dir=None, step_size=2.0, snapshot=10, to
     # Shift to the average position.
     average_position(structure=structure, models=[1])
 
+    # The motional eigenframe.
+    frame = generate_axis_system()
+
     # Create the distribution.
-    brownian(file=file, model=cdp.model, structure=structure, parameters=params, pivot=pivot, step_size=step_size, snapshot=snapshot, total=total)
+    brownian(file=file, model=cdp.model, structure=structure, parameters=params, eigenframe=frame, pivot=pivot, atom_id=domain_moving(), step_size=step_size, snapshot=snapshot, total=total)
 
     # Close the file.
     file.close()
