@@ -1231,7 +1231,7 @@ class Relax_disp_rep:
         return res_dic
 
 
-    def plot_r2eff_corr(self, corr_data, show=False):
+    def plot_r2eff_corr(self, corr_data, show=False, write_stats=False):
 
         # Define figure.
         # Nr of columns is number of datasets.
@@ -1246,6 +1246,9 @@ class Relax_disp_rep:
         # axises is a tuple with number of elements corresponding to number of rows.
         # Each sub-tuple contains axis for each column.
 
+        # For writing out stats.
+        data_dic = OrderedDict()
+
         # Loop over the rows.
         for i, row_axises in enumerate(axises):
             # Loop over the columns.
@@ -1258,16 +1261,20 @@ class Relax_disp_rep:
 
                 x = data_x[str(glob_ini_x)]['r2eff_arr']
                 x_err = data_x[str(glob_ini_x)]['r2eff_err_arr']
+                np = len(x)
 
                 y = data_y[str(glob_ini_y)]['r2eff_arr']
                 y_err = data_y[str(glob_ini_y)]['r2eff_err_arr']
 
                 # If row 1.
                 if i == 0:
+                    # Add to data dic.
+                    method_xy_NI = "r2eff_%s%s_%s%s" % (method_x, glob_ini_x, method_y, glob_ini_y)
+                    data_dic[method_xy_NI] = []
+
                     ax.plot(x, x, 'o', label='%s vs. %s' % (method_x, method_x))
                     ax.plot(x, y, '.', label='%s vs. %s' % (method_y, method_x) )
 
-                    np = len(y)
                     ax.set_title(r'$R_{2,\mathrm{eff}}$' + ' for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
                     ax.legend(loc='upper left', shadow=True, prop = fontP)
                     ax.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
@@ -1275,8 +1282,16 @@ class Relax_disp_rep:
                     ax.set_xlabel(r'$R_{2,\mathrm{eff}}$')
                     ax.set_ylabel(r'$R_{2,\mathrm{eff}}$')
 
+                    # Add to data.
+                    for k, x_k in enumerate(x):
+                        y_k = y[k]
+                        data_dic[method_xy_NI].append(["%3.5f"%x_k, "%3.5f"%y_k])
+
                 # R2eff to error.
                 if i == 1:
+                    # Add to data dic.
+                    method_xy_NI = "r2eff_to_err_%s%s_%s%s" % (method_x, glob_ini_x, method_y, glob_ini_y)
+                    data_dic[method_xy_NI] = []
 
                     x_to_x_err = x / x_err
                     y_to_y_err = y / y_err
@@ -1284,7 +1299,10 @@ class Relax_disp_rep:
                     # Calculate straight line.
                     # Linear a, with no intercept.
                     a = sum(x_to_x_err * y_to_y_err) / sum(x_to_x_err**2)
-                    x_to_x_err_arange = arange(min(x_to_x_err), max(x_to_x_err), (max(x_to_x_err) - min(x_to_x_err)) / 10)
+                    min_x = min(x_to_x_err)
+                    max_x =  max(x_to_x_err)
+                    step_x = (max_x - min_x) / np
+                    x_to_x_err_arange = arange(min_x, max_x, step_x)
                     y_to_x_err_arange = a * x_to_x_err_arange
 
                     ax.plot(x_to_x_err, x_to_x_err, 'o', label='%s vs. %s' % (method_x, method_x))
@@ -1292,13 +1310,108 @@ class Relax_disp_rep:
                     ax.plot(x_to_x_err, y_to_y_err, '.', label='%s vs. %s' % (method_y, method_x) )
                     ax.plot(x_to_x_err_arange, y_to_x_err_arange, 'g--')
 
-                    np = len(y_to_y_err)
                     ax.set_title(r'$R_{2,\mathrm{eff}}/\sigma(R_{2,\mathrm{eff}})$' + ' for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
                     ax.legend(loc='upper left', shadow=True, prop = fontP)
                     ax.set_xlabel(r'$R_{2,\mathrm{eff}}/\sigma(R_{2,\mathrm{eff}})$')
                     ax.set_ylabel(r'$R_{2,\mathrm{eff}}/\sigma(R_{2,\mathrm{eff}})$')
 
-            plt.tight_layout()
+                    # Add to data.
+                    for k, x_to_x_err_k in enumerate(x_to_x_err):
+                        y_to_y_err_k = y_to_y_err[k]
+                        x_to_x_err_arange_k = x_to_x_err_arange[k]
+                        y_to_x_err_arange_k = y_to_x_err_arange[k]
+                        data_dic[method_xy_NI].append(["%3.5f"%x_to_x_err_k, "%3.5f"%y_to_y_err_k, "%3.5f"%x_to_x_err_arange_k, "%3.5f"%y_to_x_err_arange_k])
+
+
+        plt.tight_layout()
+
+        # Loop over columns for writing data.
+        # Write to file.
+        if write_stats:
+            # Re-order the data.
+            headings_all = []
+            method_xy_NI_all = []
+            # Loop over the columns.
+            for j in range(nr_cols):
+                headings_j = []
+                method_xy_NI_j = []
+                # Loop over rows
+                for i in range(nr_rows):
+                    # Extract from lists.
+                    data, methods, glob_inis = corr_data[j]
+                    method_x, method_y = methods
+                    glob_ini_x, glob_ini_y = glob_inis
+
+                    # If row 1.
+                    if i == 0:
+                        # Add to headings.
+                        method_x_NI = "r2eff_%s%s" % (method_x, glob_ini_x)
+                        method_y_NI = "r2eff_%s%s" % (method_y, glob_ini_y)
+                        headings_j = headings_j + [method_x_NI, method_y_NI]
+
+                        method_xy_NI = "r2eff_%s%s_%s%s" % (method_x, glob_ini_x, method_y, glob_ini_y)
+                        method_xy_NI_j.append(method_xy_NI)
+
+                    # R2eff to error.
+                    if i == 1:
+                        # Add to headings
+                        method_x_NI = "r2eff_to_err_%s%s" % (method_x, glob_ini_x)
+                        method_y_NI = "r2eff_to_err_%s%s" % (method_y, glob_ini_y)
+                        method_x_NI_lin = "r2eff_to_err_lin_%s%s" % (method_x, glob_ini_x)
+                        method_y_NI_lin = "r2eff_to_err_lin_%s%s" % (method_y, glob_ini_y)
+                        headings_j = headings_j + [method_x_NI, method_y_NI, method_x_NI_lin, method_y_NI_lin]
+
+                        method_xy_NI = "r2eff_to_err_%s%s_%s%s" % (method_x, glob_ini_x, method_y, glob_ini_y)
+                        method_xy_NI_j.append(method_xy_NI)
+
+                headings_all.append(headings_j)
+                method_xy_NI_all.append(method_xy_NI_j)
+
+            # Loop over the columns.
+            for j, headings_j in enumerate(headings_all):
+                method_xy_NI_j = method_xy_NI_all[j]
+
+                data_w = []
+                data_r2eff = data_dic[method_xy_NI_j[0]]
+                data_r2eff_to_err = data_dic[method_xy_NI_j[1]]
+
+                for k, data_r2eff_k in enumerate(data_r2eff):
+                    data_r2eff_to_err_k = data_r2eff_to_err[k]
+                    data_w.append(data_r2eff_k + data_r2eff_to_err_k)
+
+                # Define file name.
+                data, methods, glob_inis = corr_data[j]
+                data_x, data_y = data
+                method_x, method_y = methods
+                glob_ini_x, glob_ini_y = glob_inis
+                np = len(data_r2eff)
+
+                # Get the spin selection for correlation.
+                selection = data_x['selection']
+
+                file_name_ini = 'r2eff_corr_%s_%s_%s_%s_NP_%i' % (method_x, glob_ini_x, method_y, glob_ini_y, np)
+                if selection == None:
+                    file_name_ini = file_name_ini + '_all'
+                else:
+                    file_name_ini = file_name_ini + '_sel'
+
+                file_name = file_name_ini + '.txt'
+                path = self.results_dir
+
+                # save figure
+                # Write png.
+                png_file_name = file_name_ini + '.png'
+                png_file_path = get_file_path(file_name=png_file_name, dir=path)
+                plt.savefig(png_file_path, bbox_inches='tight')
+
+                # Write file
+                file_obj, file_path = open_write_file(file_name=file_name, dir=path, force=True, compress_type=0, verbosity=1, return_path=True)
+
+                # Write data.
+                write_data(out=file_obj, headings=headings_j, data=data_w)
+
+                # Close file.
+                file_obj.close()
 
         if show:
             plt.show()
