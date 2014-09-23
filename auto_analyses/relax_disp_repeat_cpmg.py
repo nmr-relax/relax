@@ -25,6 +25,9 @@
 U{task #7826<https://gna.org/task/index.php?78266>}, Write an python class for the repeated analysis of dispersion data.
 """
 
+# Dependencies.
+import dep_check
+
 # Python module imports.
 from copy import deepcopy
 from collections import OrderedDict
@@ -32,7 +35,8 @@ from datetime import datetime
 from glob import glob
 from os import F_OK, access, getcwd, sep
 from numpy import asarray, arange, concatenate, max, mean, min, sqrt, std, sum
-from scipy.stats import pearsonr
+if dep_check.scipy_module:
+    from scipy.stats import pearsonr
 import sys
 from warnings import warn
 
