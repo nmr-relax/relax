@@ -1426,21 +1426,22 @@ class Relax_disp_rep:
             r2eff_dic_ref = list_r2eff_dics[0]
             method_ref = r2eff_dic_ref['method']
             res_dic['method_ref'] = method_ref
-            glob_ini_ref = str(list_glob_ini[0])
-            res_dic['glob_ini_ref'] = glob_ini_ref
+            glob_ini_ref = list_glob_ini[0]
+            res_dic['glob_ini_ref'] = str(glob_ini_ref)
             selection = r2eff_dic_ref['selection']
             res_dic['selection'] = selection
 
             # Let the reference R2eff array be the initial glob.
-            r2eff_arr_ref = r2eff_dic_ref[glob_ini_ref]['r2eff_arr']
+            r2eff_arr_ref = r2eff_dic_ref[str(glob_ini_ref)]['r2eff_arr']
             res_dic['r2eff_arr_ref'] = r2eff_arr_ref
-            r2eff_err_arr_ref = r2eff_dic_ref[glob_ini_ref]['r2eff_err_arr']
+            r2eff_err_arr_ref = r2eff_dic_ref[str(glob_ini_ref)]['r2eff_err_arr']
             res_dic['r2eff_err_arr_ref'] = r2eff_err_arr_ref
 
             # Get the current method
             method_cur = r2eff_dic['method']
             res_dic[method_cur] = {}
             res_dic[method_cur]['method'] = method_cur
+            res_dic[method_cur]['sampling_sparseness'] = []
             res_dic[method_cur]['glob_ini'] = []
             res_dic[method_cur]['r2eff_norm_std'] = []
 
@@ -1480,10 +1481,13 @@ class Relax_disp_rep:
                 r2eff_diff_norm_std = std(r2eff_diff_norm_arr, ddof=1)
 
                 # Store x
+                sampling_sparseness = float(glob_ini) / float(glob_ini_ref) * 100.
+                res_dic[method_cur]['sampling_sparseness'].append(sampling_sparseness)
                 res_dic[method_cur]['glob_ini'].append(glob_ini)
 
                 # Store to result dic.
                 res_dic[method_cur][str(glob_ini)] = {}
+                res_dic[method_cur][str(glob_ini)]['sampling_sparseness'] = sampling_sparseness
                 res_dic[method_cur][str(glob_ini)]['r2eff_arr'] = r2eff_arr
                 res_dic[method_cur][str(glob_ini)]['r2eff_norm_arr'] = r2eff_norm_arr
                 res_dic[method_cur][str(glob_ini)]['r2eff_norm_std'] = r2eff_norm_std
@@ -1519,7 +1523,7 @@ class Relax_disp_rep:
                 a = sum(x*y) / sum(x**2)
                 r_xy = sum(x*y) / sqrt(sum(x**2) * sum(y**2))
 
-                print(method_ref, method_cur, glob_ini, pearsons_correlation_coefficient, r_xy**2, a, r_xy_int**2, a_int, b_int)
+                print(method_ref, method_cur, sampling_sparseness, glob_ini, pearsons_correlation_coefficient, r_xy**2, a, r_xy_int**2, a_int, b_int)
 
                 # Store to result dic.
                 res_dic[method_cur][str(glob_ini)]['pearsons_correlation_coefficient'] = pearsons_correlation_coefficient
@@ -1537,6 +1541,7 @@ class Relax_disp_rep:
                 res_dic[method_cur][str(glob_ini)]['b_int'] = b_int
                 res_dic[method_cur]['b_int'].append(b_int)
 
+            res_dic[method_cur]['sampling_sparseness'] = asarray(res_dic[method_cur]['sampling_sparseness'])
             res_dic[method_cur]['glob_ini'] = asarray(res_dic[method_cur]['glob_ini'])
             res_dic[method_cur]['r2eff_norm_std'] = asarray(res_dic[method_cur]['r2eff_norm_std'])
 
@@ -1578,10 +1583,12 @@ class Relax_disp_rep:
                 continue
 
             # Use NI as x.
-            x = r2eff_stat_dic[method]['glob_ini']
+            NI = r2eff_stat_dic[method]['glob_ini']
+            # Use sampling_sparseness as x.
+            SS = r2eff_stat_dic[method]['sampling_sparseness']
 
             # Add to headings.
-            headings = headings + ['method', 'NI', 'slope', 'rxy2']
+            headings = headings + ['method', 'SS', 'NI', 'slope', 'rxy2']
 
             # Get stats.
             # Linear regression slope, without intercept
@@ -1603,41 +1610,48 @@ class Relax_disp_rep:
 
             # Add to data.
             data_dic[method] = OrderedDict()
-            for i, x_i in enumerate(x):
+            for i, NI_i in enumerate(NI):
+                SS_i = SS[i]
                 a_i = a[i]
                 r_xy2_i = r_xy2[i]
-                data_dic[method][str(i)] = ["%i"%x_i, "%3.5f"%a_i, "%3.5f"%r_xy2_i]
+                data_dic[method][str(i)] = ["%3.5f"%SS_i, "%i"%NI_i, "%3.5f"%a_i, "%3.5f"%r_xy2_i]
                 if i > i_max:
                     i_max = i
 
-            ax1.plot(x, a, ".-", label='%s LR'%method)
-            ax2.plot(x, r_xy2, "o--", label='%s SC'%method)
+            #ax1.plot(NI, a, ".-", label='%s LR'%method)
+            #ax2.plot(NI, r_xy2, "o--", label='%s SC'%method)
+            ax1.plot(SS, a, ".-", label='%s LR'%method)
+            ax2.plot(SS, r_xy2, "o--", label='%s SC'%method)
 
         # Loop over methods for writing data.
         data = []
-        for i in range(0, i_max):
+
+        for i in range(0, i_max+1):
             data_i = []
             for method, data_dic_m in data_dic.iteritems():
                 # Loop over all possible data points.
                 if str(i) in data_dic_m:
                     data_i = data_i + [method] + data_dic_m[str(i)]
                 else:
-                    data_i = data_i + [method] + ["0", "0", "0"]
+                    data_i = data_i + [method] + ["0", "0", "0", "0"]
 
             data.append(data_i)
 
         # Set legends.
         ax1.legend(loc='lower left', shadow=True, prop = fontP)
-        ax1.set_xlabel('NI')
+        #ax1.set_xlabel('NI')
+        ax1.set_xlabel('SS')
         #ax1.set_ylabel(r'$\sigma ( R_{2,\mathrm{eff}} )$')
         ax1.set_ylabel('Linear regression slope, without intercept')
-        ax1.set_xticks(x)
+        #ax1.set_xticks(NI)
+        #ax1.set_xticks(SS)
         ax1.set_ylim(min_a*0.95, max_a*1.05)
         ax1.invert_xaxis()
 
         ax2.legend(loc='lower right', shadow=True, prop = fontP)
         ax2.set_ylabel('Sample correlation ' + r'$r_{xy}^2$')
-        ax2.set_xticks(x)
+        #ax2.set_xticks(NI)
+        #ax2.set_xticks(SS)
         ax2.set_ylim(min_r_xy2*0.95, max_r_xy2*1.05)
         ax2.invert_xaxis()
 

@@ -6051,7 +6051,7 @@ class Relax_disp(SystemTestCase):
         if True:
             selection = None
             # Collect r2eff values.
-            r2eff_ft_all = RDR.col_r2eff(method='FT', list_glob_ini=[128], selection=selection)
+            r2eff_ft_all = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126, 6], selection=selection)
 
             # For all spins, mdd
             r2eff_mdd_all = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126], selection=selection)
@@ -6062,7 +6062,7 @@ class Relax_disp(SystemTestCase):
             corr_data = [fig1, fig2]
 
             write_stats = True
-            RDR.plot_r2eff_corr(corr_data=corr_data, show=True, write_stats=write_stats)
+            RDR.plot_r2eff_corr(corr_data=corr_data, show=False, write_stats=write_stats)
 
             # Open stat file.
             if write_stats:
@@ -6089,11 +6089,11 @@ class Relax_disp(SystemTestCase):
 
 
         # Try plot some R2eff statistics.
-        if False:
+        if True:
             # Collect r2eff values.
             selections = [None, ':2,3']
             for selection in selections:
-                r2eff_ft_sel = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126], selection=selection)
+                r2eff_ft_sel = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126, 6], selection=selection)
                 r2eff_mdd_sel = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126], selection=selection)
 
                 # Get R2eff stats.
@@ -6117,7 +6117,7 @@ class Relax_disp(SystemTestCase):
                         print(i, data_i)
 
         # Do minimisation.
-        if True:
+        if False:
             methods = ['FT', 'MDD']
             # Now calculate R2eff.
             RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
@@ -6191,7 +6191,7 @@ class Relax_disp(SystemTestCase):
 
         # Plot statistics.
         # Try plot some minimisation correlations.
-        if True:
+        if False:
             # Collect r2eff values.
             min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis='min', list_glob_ini=[128], selection=None)
             min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis='min', list_glob_ini=range(126, 130, 2)[::-1], selection=None)
