@@ -6047,6 +6047,47 @@ class Relax_disp(SystemTestCase):
             RDR.plot_r2eff_corr(corr_data=corr_data, show=True)
 
 
+        # Try write some R2eff correlations.
+        if True:
+            selection = None
+            # Collect r2eff values.
+            r2eff_ft_all = RDR.col_r2eff(method='FT', list_glob_ini=[128], selection=selection)
+
+            # For all spins, mdd
+            r2eff_mdd_all = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126], selection=selection)
+
+            # Plot correlation of intensity
+            fig1 = [[r2eff_ft_all, r2eff_mdd_all], ['FT', 'MDD'], [128, 128]]
+            fig2 = [[r2eff_ft_all, r2eff_mdd_all], ['FT', 'MDD'], [128, 126]]
+            corr_data = [fig1, fig2]
+
+            write_stats = True
+            RDR.plot_r2eff_corr(corr_data=corr_data, show=True, write_stats=write_stats)
+
+            # Open stat file.
+            if write_stats:
+                for i, corr_data_i in enumerate(corr_data):
+                    data, methods, glob_inis = corr_data[i]
+                    data_x, data_y = data
+                    method_x, method_y = methods
+                    glob_ini_x, glob_ini_y = glob_inis
+                    x = data_x[str(glob_ini_x)]['r2eff_arr']
+                    np = len(x)
+
+                    file_name_ini = 'r2eff_corr_%s_%s_%s_%s_NP_%i' % (method_x, glob_ini_x, method_y, glob_ini_y, np)
+
+                    if selection == None:
+                        file_name = file_name_ini + '_all.txt'
+                    else:
+                        file_name = file_name_ini + '_sel.txt'
+                    path = RDR.results_dir
+                    data = extract_data(file=file_name, dir=path)
+
+                    # Loop over the lines.
+                    for i, data_i in enumerate(data):
+                        print(i, data_i)
+
+
         # Try plot some R2eff statistics.
         if False:
             # Collect r2eff values.
