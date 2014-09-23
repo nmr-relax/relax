@@ -2552,7 +2552,7 @@ class Internal:
 
         # Final printout.
         if verbosity:
-        print("\tAll models are consistent")
+            print("\tAll models are consistent")
 
 
     def write_pdb(self, file, model_num=None):
