@@ -2507,14 +2507,19 @@ class Internal:
             self.displacements.to_xml(doc, disp_element)
 
 
-    def validate_models(self):
+    def validate_models(self, verbosity=1):
         """Check that the models are consistent with each other.
 
         This checks that the primary structure is identical between the models.
+
+
+        @keyword verbosity: If 0, then all printouts will be silenced.
+        @type verbosity:    int
         """
 
         # Print out.
-        print("Validating models:")
+        if verbosity:
+            print("Validating models:")
 
         # Loop over the models.
         for i in range(len(self.structural_data)):
@@ -2545,6 +2550,7 @@ class Internal:
                         raise RelaxError("The atoms of model %i do not match the first model." % self.structural_data[i].num)
 
         # Final printout.
+        if verbosity:
         print("\tAll models are consistent")
 
 
