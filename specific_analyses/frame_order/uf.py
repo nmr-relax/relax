@@ -99,6 +99,9 @@ def pdb_ave_pos(file=None, dir=None, force=False):
     # Make a copy of the structural object (so as to preserve the original structure).
     structure = deepcopy(cdp.structure)
 
+    # The internal structural selection object.
+    selection = structure.selection(atom_id=domain_moving())
+
     # First rotate the moving domain to the average position.
     R = zeros((3, 3), float64)
     if hasattr(cdp, 'ave_pos_alpha'):
@@ -109,11 +112,11 @@ def pdb_ave_pos(file=None, dir=None, force=False):
         origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
     else:
         origin = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z])
-    structure.rotate(R=R, origin=origin, atom_id=domain_moving())
+    structure.rotate(R=R, origin=origin, selection=selection)
 
     # Then translate the moving domain.
     if not translation_fixed():
-        structure.translate(T=[cdp.ave_pos_x, cdp.ave_pos_y, cdp.ave_pos_z], atom_id=domain_moving())
+        structure.translate(T=[cdp.ave_pos_x, cdp.ave_pos_y, cdp.ave_pos_z], selection=selection)
 
     # Write out the PDB file.
     file = open_write_file(file_name=file, dir=dir, force=force)

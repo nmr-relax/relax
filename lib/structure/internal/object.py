@@ -2278,7 +2278,7 @@ class Internal:
                 mol.file_model = orig_model_num[i]
 
 
-    def rotate(self, R=None, origin=None, model=None, atom_id=None):
+    def rotate(self, R=None, origin=None, model=None, selection=None):
         """Rotate the structural information about the given origin.
 
         @keyword R:         The forwards rotation matrix.
@@ -2287,40 +2287,27 @@ class Internal:
         @type origin:       numpy 3D, rank-1 array
         @keyword model:     The model to rotate.  If None, all models will be rotated.
         @type model:        int
-        @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
-        @type atom_id:      str or None
+        @keyword selection: The internal structural selection object.  This is obtained by calling the selection() method with the atom ID string.
+        @type selection:    lib.structure.internal.Internal_selection instance
         """
-
-        # Generate the selection object.
-        sel_obj = None
-        if atom_id:
-            sel_obj = Selection(atom_id)
 
         # Loop over the models.
         for model_cont in self.model_loop(model):
-            # Loop over the molecules.
-            for mol in model_cont.mol:
-                # Skip non-matching molecules.
-                if sel_obj and not sel_obj.contains_mol(mol.mol_name):
-                    continue
+            # Loop over all molecules and atoms in the selection.
+            for mol_index, i in selection.loop():
+                mol = model_cont.mol[mol_index]
 
-                # Loop over the atoms.
-                for i in range(len(mol.atom_num)):
-                    # Skip non-matching atoms.
-                    if sel_obj and not sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
-                        continue
+                # The origin to atom vector.
+                vect = array([mol.x[i], mol.y[i], mol.z[i]], float64) - origin
 
-                    # The origin to atom vector.
-                    vect = array([mol.x[i], mol.y[i], mol.z[i]], float64) - origin
+                # Rotation.
+                rot_vect = dot(R, vect)
 
-                    # Rotation.
-                    rot_vect = dot(R, vect)
-
-                    # The new position.
-                    pos = rot_vect + origin
-                    mol.x[i] = pos[0]
-                    mol.y[i] = pos[1]
-                    mol.z[i] = pos[2]
+                # The new position.
+                pos = rot_vect + origin
+                mol.x[i] = pos[0]
+                mol.y[i] = pos[1]
+                mol.z[i] = pos[2]
 
 
     def selection(self, atom_id=None):
@@ -2353,7 +2340,7 @@ class Internal:
             # Skip non-matching molecules.
             if sel_obj and not sel_obj.contains_mol(mol.mol_name):
                 continue
-            
+
             # Add the molecule index.
             selection.add_mol(mol_index=mol_index)
 
@@ -2422,40 +2409,27 @@ class Internal:
             target.append(file_root(file) + '_mol' + repr(mol_num))
 
 
-    def translate(self, T=None, model=None, atom_id=None):
+    def translate(self, T=None, model=None, selection=None):
         """Displace the structural information by the given translation vector.
 
         @keyword T:         The translation vector.
         @type T:            numpy 3D, rank-1 array
         @keyword model:     The model to rotate.  If None, all models will be rotated.
         @type model:        int
-        @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
-        @type atom_id:      str or None
+        @keyword selection: The internal structural selection object.  This is obtained by calling the selection() method with the atom ID string.
+        @type selection:    lib.structure.internal.Internal_selection instance
         """
-
-        # Generate the selection object.
-        sel_obj = None
-        if atom_id:
-            sel_obj = Selection(atom_id)
 
         # Loop over the models.
         for model_cont in self.model_loop(model):
-            # Loop over the molecules.
-            for mol in model_cont.mol:
-                # Skip non-matching molecules.
-                if sel_obj and not sel_obj.contains_mol(mol.mol_name):
-                    continue
+            # Loop over all molecules and atoms in the selection.
+            for mol_index, i in selection.loop():
+                mol = model_cont.mol[mol_index]
 
-                # Loop over the atoms.
-                for i in range(len(mol.atom_num)):
-                    # Skip non-matching atoms.
-                    if sel_obj and not sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
-                        continue
-
-                    # Translate.
-                    mol.x[i] = mol.x[i] + T[0]
-                    mol.y[i] = mol.y[i] + T[1]
-                    mol.z[i] = mol.z[i] + T[2]
+                # Translate.
+                mol.x[i] = mol.x[i] + T[0]
+                mol.y[i] = mol.y[i] + T[1]
+                mol.z[i] = mol.z[i] + T[2]
 
 
     def to_xml(self, doc, element):

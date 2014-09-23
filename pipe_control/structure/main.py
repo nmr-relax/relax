@@ -818,7 +818,8 @@ def rotate(R=None, origin=None, model=None, atom_id=None):
     origin = array(origin, float64)
 
     # Call the specific code.
-    cdp.structure.rotate(R=R, origin=origin, model=model, atom_id=atom_id)
+    selection = cdp.structure.selection(atom_id=atom_id)
+    cdp.structure.rotate(R=R, origin=origin, model=model, selection=selection)
 
 
 def set_vector(spin=None, xh_vect=None):
@@ -922,7 +923,8 @@ def translate(T=None, model=None, atom_id=None):
     T = array(T, float64)
 
     # Call the specific code.
-    cdp.structure.translate(T=T, model=model, atom_id=atom_id)
+    selection = cdp.structure.selection(atom_id=atom_id)
+    cdp.structure.translate(T=T, model=model, selection=selection)
 
 
 def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, unit=True):
