@@ -1138,7 +1138,26 @@ class Internal:
                     break
 
         # Duplicate all data from the MolList object down.
-        model.mol = deepcopy(model_from.mol)
+        for mol_index in range(len(model_from.mol)):
+            # Create a new molecule container.
+            model.mol.add_item(mol_name=model_from.mol[mol_index].mol_name, mol_cont=MolContainer())
+            mol = model.mol[mol_index]
+            mol_from = model_from.mol[mol_index]
+
+            # Loop over the atomic data.
+            for i in range(len(mol_from.atom_num)):
+                mol.atom_num.append(mol_from.atom_num[i])
+                mol.atom_name.append(mol_from.atom_name[i])
+                mol.bonded.append(mol_from.bonded[i])
+                mol.chain_id.append(mol_from.chain_id[i])
+                mol.element.append(mol_from.element[i])
+                mol.pdb_record.append(mol_from.pdb_record[i])
+                mol.res_name.append(mol_from.res_name[i])
+                mol.res_num.append(mol_from.res_num[i])
+                mol.seg_id.append(mol_from.seg_id[i])
+                mol.x.append(mol_from.x[i])
+                mol.y.append(mol_from.y[i])
+                mol.z.append(mol_from.z[i])
 
         # Return the model.
         return self.structural_data[-1]
