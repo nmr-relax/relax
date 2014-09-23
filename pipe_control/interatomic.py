@@ -221,8 +221,12 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=T
 
     # Use the structural data to find connected atoms.
     if hasattr(dp, 'structure'):
+        # The selection objects.
+        selection1 = cdp.structure.selection(atom_id=spin_id1)
+        selection2 = cdp.structure.selection(atom_id=spin_id2)
+
         # Loop over the atoms of the first spin selection.
-        for mol_name1, res_num1, res_name1, atom_num1, atom_name1, mol_index1, atom_index1 in dp.structure.atom_loop(atom_id=spin_id1, model_num=1, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, mol_index_flag=True, index_flag=True):
+        for mol_name1, res_num1, res_name1, atom_num1, atom_name1, mol_index1, atom_index1 in dp.structure.atom_loop(selection=selection1, model_num=1, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, mol_index_flag=True, index_flag=True):
             # Generate the first spin ID.
             id1 = generate_spin_id_unique(pipe_cont=dp, mol_name=mol_name1, res_num=res_num1, res_name=res_name1, spin_num=atom_num1, spin_name=atom_name1)
 
@@ -231,7 +235,7 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=T
                 continue
 
             # Loop over the atoms of the second spin selection.
-            for mol_name2, res_num2, res_name2, atom_num2, atom_name2, mol_index2, atom_index2 in dp.structure.atom_loop(atom_id=spin_id2, model_num=1, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, mol_index_flag=True, index_flag=True):
+            for mol_name2, res_num2, res_name2, atom_num2, atom_name2, mol_index2, atom_index2 in dp.structure.atom_loop(selection=selection2, model_num=1, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, mol_index_flag=True, index_flag=True):
                 # Directly bonded atoms.
                 if direct_bond:
                     # Different molecules.

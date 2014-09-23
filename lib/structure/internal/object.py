@@ -1248,7 +1248,7 @@ class Internal:
         return False
 
 
-    def atom_loop(self, atom_id=None, str_id=None, model_num=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, mol_index_flag=False, index_flag=False, ave=False):
+    def atom_loop(self, selection=None, str_id=None, model_num=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, mol_index_flag=False, index_flag=False, ave=False):
         """Generator function for looping over all atoms in the internal relax structural object.
 
         This method should be designed as a U{generator<http://www.python.org/dev/peps/pep-0255/>}.  It should loop over all atoms of the system yielding the following atomic information, if the corresponding flag is True, in tuple form:
@@ -1263,8 +1263,8 @@ class Internal:
             8.  The position of the atom in Euclidean space.
 
 
-        @keyword atom_id:           The molecule, residue, and atom identifier string.  Only atoms matching this selection will be yielded.
-        @type atom_id:              str
+        @keyword selection:         The internal structural selection object.  This is obtained by calling the selection() method with the atom ID string.
+        @type selection:            lib.structure.internal.Internal_selection instance
         @keyword str_id:            The structure identifier.  This can be the file name, model number, or structure number.  If None, then all structures will be looped over.
         @type str_id:               str, int, or None
         @keyword model_num:         Only loop over a specific model.
@@ -1297,101 +1297,86 @@ class Internal:
         if not len(self.structural_data):
             raise RelaxNoPdbError
 
-        # Generate the selection object.
-        sel_obj = None
-        if atom_id:
-            sel_obj = Selection(atom_id)
-
         # Obtain all data from the first model (except the position data).
         model = self.structural_data[0]
 
-        # Loop over the molecules.
-        for mol_index in range(len(model.mol)):
+        # Loop over all molecules and atoms in the selection.
+        for mol_index, i in selection.loop():
             mol = model.mol[mol_index]
 
-            # Skip non-matching molecules.
-            if sel_obj and not sel_obj.contains_mol(mol.mol_name):
-                continue
+            # Initialise.
+            res_num = mol.res_num[i]
+            res_name = mol.res_name[i]
+            atom_num = mol.atom_num[i]
+            atom_name = mol.atom_name[i]
+            element = mol.element[i]
 
-            # Loop over all atoms.
-            for i in range(len(mol.atom_name)):
-                # Skip non-matching atoms.
-                if sel_obj and not sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
-                    continue
+            # The atom position.
+            if pos_flag:
+                # Average the position.
+                if ave:
+                    # Initialise.
+                    pos = zeros(3, float64)
 
-                # Initialise.
-                res_num = mol.res_num[i]
-                res_name = mol.res_name[i]
-                atom_num = mol.atom_num[i]
-                atom_name = mol.atom_name[i]
-                element = mol.element[i]
+                    # Loop over the models.
+                    for model in self.model_loop(model=model_num):
+                        # Alias.
+                        mol2 = model.mol[mol_index]
 
-                # The atom position.
-                if pos_flag:
-                    # Average the position.
-                    if ave:
-                        # Initialise.
-                        pos = zeros(3, float64)
+                        # Some sanity checks.
+                        if mol2.atom_num[i] != atom_num:
+                            raise RelaxError("The loaded structures do not contain the same atoms.  The average structural properties can not be calculated.")
 
-                        # Loop over the models.
-                        for model in self.model_loop(model=model_num):
-                            # Alias.
-                            mol2 = model.mol[mol_index]
+                        # Sum the atom positions.
+                        pos = pos + array([mol2.x[i], mol2.y[i], mol2.z[i]], float64)
 
-                            # Some sanity checks.
-                            if mol2.atom_num[i] != atom_num:
-                                raise RelaxError("The loaded structures do not contain the same atoms.  The average structural properties can not be calculated.")
+                    # Average the position array (divide by the number of models).
+                    pos = pos / len(self.structural_data)
 
-                            # Sum the atom positions.
-                            pos = pos + array([mol2.x[i], mol2.y[i], mol2.z[i]], float64)
+                # All positions.
+                else:
+                    # Initialise.
+                    pos = []
 
-                        # Average the position array (divide by the number of models).
-                        pos = pos / len(self.structural_data)
+                    # Loop over the models.
+                    for model in self.model_loop(model=model_num):
+                        # Alias.
+                        mol2 = model.mol[mol_index]
 
-                    # All positions.
-                    else:
-                        # Initialise.
-                        pos = []
+                        # Append the position.
+                        pos.append([mol2.x[i], mol2.y[i], mol2.z[i]])
 
-                        # Loop over the models.
-                        for model in self.model_loop(model=model_num):
-                            # Alias.
-                            mol2 = model.mol[mol_index]
+                    # Convert.
+                    pos = array(pos, float64)
 
-                            # Append the position.
-                            pos.append([mol2.x[i], mol2.y[i], mol2.z[i]])
+            # The molecule name.
+            mol_name = mol.mol_name
 
-                        # Convert.
-                        pos = array(pos, float64)
+            # Build the tuple to be yielded.
+            atomic_tuple = ()
+            if mol_name_flag:
+                atomic_tuple = atomic_tuple + (mol_name,)
+            if res_num_flag:
+                atomic_tuple = atomic_tuple + (res_num,)
+            if res_name_flag:
+                atomic_tuple = atomic_tuple + (res_name,)
+            if atom_num_flag:
+                atomic_tuple = atomic_tuple + (atom_num,)
+            if atom_name_flag:
+                atomic_tuple = atomic_tuple + (atom_name,)
+            if element_flag:
+                atomic_tuple = atomic_tuple + (element,)
+            if pos_flag:
+                atomic_tuple = atomic_tuple + (pos,)
+            if mol_index_flag:
+                atomic_tuple += (mol_index,)
+            if index_flag:
+                atomic_tuple += (i,)
 
-                # The molecule name.
-                mol_name = mol.mol_name
-
-                # Build the tuple to be yielded.
-                atomic_tuple = ()
-                if mol_name_flag:
-                    atomic_tuple = atomic_tuple + (mol_name,)
-                if res_num_flag:
-                    atomic_tuple = atomic_tuple + (res_num,)
-                if res_name_flag:
-                    atomic_tuple = atomic_tuple + (res_name,)
-                if atom_num_flag:
-                    atomic_tuple = atomic_tuple + (atom_num,)
-                if atom_name_flag:
-                    atomic_tuple = atomic_tuple + (atom_name,)
-                if element_flag:
-                    atomic_tuple = atomic_tuple + (element,)
-                if pos_flag:
-                    atomic_tuple = atomic_tuple + (pos,)
-                if mol_index_flag:
-                    atomic_tuple += (mol_index,)
-                if index_flag:
-                    atomic_tuple += (i,)
-
-                # Yield the information.
-                if len(atomic_tuple) == 1:
-                    atomic_tuple = atomic_tuple[0]
-                yield atomic_tuple
+            # Yield the information.
+            if len(atomic_tuple) == 1:
+                atomic_tuple = atomic_tuple[0]
+            yield atomic_tuple
 
 
     def bond_vectors(self, attached_atom=None, model_num=None, mol_name=None, res_num=None, res_name=None, spin_num=None, spin_name=None, return_name=False, return_warnings=False):
@@ -1533,19 +1518,19 @@ class Internal:
             mol.atom_connect(index1=index1, index2=index2)
 
 
-    def delete(self, model=None, atom_id=None, verbosity=1):
+    def delete(self, model=None, selection=None, verbosity=1):
         """Deletion of structural information.
 
         @keyword model:     Individual structural models from a loaded ensemble can be deleted by specifying the model number.
         @type model:        None or int
-        @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.  If not given, then all structural data will be deleted.
-        @type atom_id:      str or None
+        @keyword selection: The internal structural selection object.  This is obtained by calling the selection() method with the atom ID string.
+        @type selection:    lib.structure.internal.Internal_selection instance
         @keyword verbosity: The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
         @type verbosity:    int
         """
 
         # All data.
-        if model == None and atom_id == None:
+        if model == None and selection == None:
             # Printout.
             if verbosity:
                 print("Deleting the following structural data:\n")
@@ -1558,21 +1543,19 @@ class Internal:
             self.structural_data = ModelList()
 
         # Delete a whole model.
-        elif atom_id == None:
+        elif selection == None:
             self.structural_data.delete_model(model_num=model)
 
         # Atom subset deletion.
         else:
-            # Generate the selection object.
-            sel_obj = None
-            if atom_id:
-                sel_obj = Selection(atom_id)
-
             # Loop over the atoms and find the indices of the atoms to delete.
-            indices = []
-            for i in self.atom_loop(atom_id=atom_id, index_flag=True):
-                indices.append(i)
-            indices.reverse()
+            indices = {}
+            for mol_index, i in selection.loop():
+                if mol_index not in indices:
+                    indices[mol_index] = []
+                indices[mol_index].append(i)
+            for mol_index in indices:
+                indices[mol_index].reverse()
 
             # Loop over the models.
             del_res_nums = []
@@ -1582,18 +1565,14 @@ class Internal:
                     continue
 
                 # Loop over the molecules.
-                for mol_index in range(len(model_cont.mol)):
+                for mol_index in indices:
                     mol = model_cont.mol[mol_index]
-
-                    # Skip non-matching molecules.
-                    if sel_obj and not sel_obj.contains_mol(mol.mol_name):
-                        continue
 
                     # Generate a residue data dictionary for the metadata trimming (prior to atom deletion).
                     res_data = self._residue_data(res_nums=mol.res_num, res_names=mol.res_name)
 
                     # Loop over the reverse indices and pop out the data.
-                    for i in indices:
+                    for i in indices[mol_index]:
                         mol.atom_num.pop(i)
                         mol.atom_name.pop(i)
                         mol.bonded.pop(i)

@@ -47,10 +47,13 @@ def pipe_centre_of_mass(atom_id=None, model=None, return_mass=False, verbosity=1
     if not hasattr(cdp, 'structure'):
         raise RelaxNoPdbError
 
+    # The selection object.
+    selection = cdp.structure.selection(atom_id=atom_id)
+
     # Loop over all atoms.
     coord = []
     element_list = []
-    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=True):
+    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(selection=selection, model_num=model, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=True):
         # Initialise the spin 
         id = ''
 

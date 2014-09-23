@@ -452,7 +452,8 @@ class Test_internal(UnitTestCase):
 
         # Loop over the atoms.
         atom_count = 0
-        for atom in self.data.atom_loop():
+        selection = self.data.selection(atom_id=None)
+        for atom in self.data.atom_loop(selection=selection):
             atom_count = atom_count + 1
 
         # Test the number of atoms looped over.
@@ -467,7 +468,8 @@ class Test_internal(UnitTestCase):
 
         # Loop over the atoms.
         atom_count = 0
-        for atom in self.data.atom_loop(atom_id='#XXX'):
+        selection = self.data.selection(atom_id='#XXX')
+        for atom in self.data.atom_loop(selection=selection):
             atom_count = atom_count + 1
 
         # Test the number of atoms looped over.
@@ -482,7 +484,8 @@ class Test_internal(UnitTestCase):
 
         # Loop over the atoms.
         atom_count = 0
-        for res_num, res_name in self.data.atom_loop(atom_id=':8', res_num_flag=True, res_name_flag=True):
+        selection = self.data.selection(atom_id=':8')
+        for res_num, res_name in self.data.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True):
             # Test the residue name and number.
             self.assertEqual(res_num, 8)
             self.assertEqual(res_name, 'SER')
@@ -502,7 +505,8 @@ class Test_internal(UnitTestCase):
 
         # Loop over the atoms.
         atom_count = 0
-        for atom in self.data.atom_loop(atom_id=':PRO', res_name_flag=True):
+        selection = self.data.selection(atom_id=':PRO')
+        for atom in self.data.atom_loop(selection=selection, res_name_flag=True):
             # Test the residue name.
             self.assertEqual(atom, 'PRO')
 
@@ -521,7 +525,8 @@ class Test_internal(UnitTestCase):
 
         # Loop over the atoms.
         atom_count = 0
-        for spin_name in self.data.atom_loop(atom_id='@CA', atom_name_flag=True):
+        selection = self.data.selection(atom_id='@CA')
+        for spin_name in self.data.atom_loop(selection=selection, atom_name_flag=True):
             # Test the spin name.
             self.assertEqual(spin_name, 'CA')
 
@@ -540,7 +545,8 @@ class Test_internal(UnitTestCase):
 
         # Loop over the atoms.
         atom_count = 0
-        for mol_name, res_num, res_name, spin_num, spin_name, element, pos in self.data.atom_loop(atom_id='@140', mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
+        selection = self.data.selection(atom_id='@140')
+        for mol_name, res_num, res_name, spin_num, spin_name, element, pos in self.data.atom_loop(selection=selection, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
             # Test the spin info.
             self.assertEqual(mol_name, self.test_pdb_root+'_mol1')
             self.assertEqual(res_num, 11)

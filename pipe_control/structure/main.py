@@ -267,7 +267,10 @@ def delete(atom_id=None, model=None, verbosity=1, spin_info=True):
     if hasattr(cdp, 'structure'):
         if verbosity:
             print("Deleting structural data from the current pipe.")
-        cdp.structure.delete(model=model, atom_id=atom_id, verbosity=verbosity)
+        selection = None
+        if atom_id != None:
+            selection = cdp.structure.selection(atom_id=atom_id)
+        cdp.structure.delete(model=model, selection=selection, verbosity=verbosity)
     elif verbosity:
         print("No structures are present.")
 
@@ -329,18 +332,21 @@ def displacement(model_from=None, model_to=None, atom_id=None, centroid=None):
     if not hasattr(cdp.structure, 'displacements'):
         cdp.structure.displacements = Displacements()
 
+    # The selection object.
+    selection = cdp.structure.selection(atom_id=atom_id)
+
     # Loop over the starting models.
     for i in range(len(model_from)):
         # Assemble the atomic coordinates.
         coord_from = []
-        for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model_from[i], pos_flag=True):
+        for pos in cdp.structure.atom_loop(selection=selection, model_num=model_from[i], pos_flag=True):
             coord_from.append(pos[0])
 
         # Loop over the ending models.
         for j in range(len(model_to)):
             # Assemble the atomic coordinates.
             coord_to = []
-            for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model_to[j], pos_flag=True):
+            for pos in cdp.structure.atom_loop(selection=selection, model_num=model_to[j], pos_flag=True):
                 coord_to.append(pos[0])
 
             # Send to the base container for the calculations.
@@ -379,11 +385,14 @@ def find_pivot(models=None, atom_id=None, init_pos=None, func_tol=1e-5, box_limi
         for model in cdp.structure.model_loop():
             models.append(model.num)
 
+    # The selection object.
+    selection = cdp.structure.selection(atom_id=atom_id)
+
     # Assemble the atomic coordinates of all models.
     coord = []
     for model in models:
         coord.append([])
-        for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
+        for pos in cdp.structure.atom_loop(selection=selection, model_num=model, pos_flag=True):
             coord[-1].append(pos[0])
         coord[-1] = array(coord[-1])
     coord = array(coord)
@@ -430,9 +439,12 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
     if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
         raise RelaxNoPdbError
 
+    # The selection object.
+    selection = cdp.structure.selection(atom_id=spin_id)
+
     # Loop over all atoms of the spin_id selection.
     data = []
-    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
+    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(selection=selection, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
         # Remove the '+' regular expression character from the mol, res, and spin names!
         if mol_name and search('\+', mol_name):
             mol_name = mol_name.replace('+', '')
@@ -538,7 +550,8 @@ def load_spins(spin_id=None, str_id=None, mol_name_target=None, ave_pos=False):
     spin_names = []
 
     # Loop over all atoms of the spin_id selection.
-    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(atom_id=spin_id, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
+    selection = cdp.structure.selection(atom_id=spin_id)
+    for mol_name, res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(selection=selection, str_id=str_id, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
         # Override the molecule name.
         if mol_name_target:
             mol_name = mol_name_target
@@ -774,11 +787,14 @@ def rmsd(atom_id=None, models=None):
         for model in cdp.structure.model_loop():
             models.append(model.num)
 
+    # The selection object.
+    selection = cdp.structure.selection(atom_id=atom_id)
+
     # Assemble the atomic coordinates of all models.
     coord = []
     for model in models:
         coord.append([])
-        for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
+        for pos in cdp.structure.atom_loop(selection=selection, model_num=model, pos_flag=True):
             coord[-1].append(pos[0])
         coord[-1] = array(coord[-1])
 
@@ -872,17 +888,20 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centre_type="ce
         for model in cdp.structure.model_loop():
             models.append(model.num)
 
+    # The selection object.
+    selection = cdp.structure.selection(atom_id=atom_id)
+
     # Assemble the atomic coordinates of all models.
     coord = []
     for model in models:
         coord.append([])
-        for pos in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, pos_flag=True):
+        for pos in cdp.structure.atom_loop(selection=selection, model_num=model, pos_flag=True):
             coord[-1].append(pos[0])
         coord[-1] = array(coord[-1])
 
     # Assemble the element types.
     elements = []
-    for elem in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, element_flag=True):
+    for elem in cdp.structure.atom_loop(selection=selection, model_num=model, element_flag=True):
         elements.append(elem)
 
     # The different algorithms.
