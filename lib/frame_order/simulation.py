@@ -67,6 +67,9 @@ def brownian(file=None, model=None, structure=None, parameters={}, eigenframe=No
     # Set the model number.
     structure.set_model(model_orig=None, model_new=1)
 
+    # Generate the internal structural selection object.
+    selection = structure.selection(atom_id)
+
     # The initial states and motional limits.
     num_states = len(pivot)
     states = zeros((num_states, 3, 3), float64)
@@ -196,7 +199,7 @@ def brownian(file=None, model=None, structure=None, parameters={}, eigenframe=No
 
             # Rotate the model.
             for i in range(num_states):
-                structure.rotate(R=states[i], origin=pivot[i], model=current_snapshot, atom_id=atom_id)
+                structure.rotate(R=states[i], origin=pivot[i], model=current_snapshot, selection=selection)
 
             # Reset the step counter.
             step = 0
