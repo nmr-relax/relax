@@ -38,6 +38,5 @@ __all__ = [
     'parameter_object',
     'parameters',
     'sherekhan',
-    'uf',
-    'variables'
+    'uf'
 ]

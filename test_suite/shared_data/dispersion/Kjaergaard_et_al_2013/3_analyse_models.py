@@ -26,7 +26,7 @@ import re
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
-from specific_analyses.relax_disp.variables import MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1
+from lib.dispersion.variables import MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1
 
 #########################################
 #### Setup

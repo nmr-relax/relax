@@ -6,8 +6,8 @@ $ rm -f relax_state_sq.log; ../../../../../relax --tee relax_state_sq.log relax_
 """
 
 # relax module imports.
+from lib.dispersion.variables import EXP_TYPE_CPMG_SQ
 from specific_analyses.relax_disp.data import return_param_key_from_data
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ
 
 
 # Create a data pipe.

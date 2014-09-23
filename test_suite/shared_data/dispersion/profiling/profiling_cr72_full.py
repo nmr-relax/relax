@@ -24,7 +24,7 @@
 
 # relax module imports.
 from base import cluster, main, NUM_SPINS_CLUSTER, NUM_SPINS_SINGLE, single, Profile
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_CR72_FULL
+from lib.dispersion.variables import EXP_TYPE_CPMG_SQ, MODEL_CR72_FULL
 
 
 # Setup.

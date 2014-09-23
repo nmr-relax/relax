@@ -6,9 +6,9 @@ $ rm -f solution.log; ../../../../../relax --tee solution.log solution.py
 """
 
 # relax module imports.
+from lib.dispersion.variables import EXP_TYPE_R1RHO
 from lib.nmr import frequency_to_ppm
 from specific_analyses.relax_disp.data import generate_r20_key
-from specific_analyses.relax_disp.variables import EXP_TYPE_R1RHO
 
 
 # Create a data pipe.

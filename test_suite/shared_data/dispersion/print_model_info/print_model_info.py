@@ -23,7 +23,7 @@
 """Short python script, to produce model information.  This script file could be extended to produce up-to-date Latex tables."""
 
 # relax module imports.
-from specific_analyses.relax_disp.variables import MODEL_LIST_FULL
+from lib.dispersion.variables import MODEL_LIST_FULL
 from specific_analyses.relax_disp.model import models_info
 
 # Get info for all models.

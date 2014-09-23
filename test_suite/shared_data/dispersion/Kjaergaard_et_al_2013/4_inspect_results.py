@@ -24,9 +24,9 @@ from os import getcwd, sep
 import re
 
 # relax module imports.
+from lib.dispersion.variables import MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1
 from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
 from specific_analyses.relax_disp.data import generate_r20_key, loop_exp_frq
-from specific_analyses.relax_disp.variables import MODEL_R2EFF, MODEL_NOREX_R1RHO_FIT_R1, MODEL_DPL94_FIT_R1, MODEL_TP02_FIT_R1, MODEL_TAP03_FIT_R1, MODEL_MP05_FIT_R1
 
 #########################################
 #### Setup

@@ -26,7 +26,7 @@ import re
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
-from specific_analyses.relax_disp.variables import MODEL_R2EFF
+from lib.dispersion.variables import MODEL_R2EFF
 
 
 #########################################

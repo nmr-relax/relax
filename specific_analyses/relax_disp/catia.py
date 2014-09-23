@@ -33,13 +33,13 @@ if dep_check.subprocess_module:
 import sys
 
 # relax module imports.
+from lib.dispersion.variables import EXP_TYPE_CPMG_SQ
 from lib.errors import RelaxError, RelaxDirError
 from lib.io import mkdir_nofail, open_write_file, test_binary
 from pipe_control import pipes
 from pipe_control.mol_res_spin import check_mol_res_spin_data, spin_loop
 from specific_analyses.relax_disp.checks import check_model_type, check_spectra_id_setup
 from specific_analyses.relax_disp.data import loop_frq, loop_offset_point, return_param_key_from_data
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ
 
 
 def catia_execute(file='Fit.catia', dir=None, binary=None):

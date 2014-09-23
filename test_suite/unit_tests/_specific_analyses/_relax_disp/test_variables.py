@@ -21,13 +21,13 @@
 ###############################################################################
 
 # relax module imports.
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_3SITE
-from specific_analyses.relax_disp.variables import MODEL_EXP_TYPE, MODEL_EQ, MODEL_PARAMS, MODEL_SITES, MODEL_YEAR
+from lib.dispersion.variables import MODEL_CR72, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_3SITE
+from lib.dispersion.variables import MODEL_EXP_TYPE, MODEL_EQ, MODEL_PARAMS, MODEL_SITES, MODEL_YEAR
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
 class Test_variables(UnitTestCase):
-    """Unit tests for the functions of the specific_analyses.relax_disp.variables module."""
+    """Unit tests for the functions of the lib.dispersion.variables module."""
 
 
     def test_MODEL_PARAMS(self):

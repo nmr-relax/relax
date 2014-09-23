@@ -25,10 +25,10 @@
 """The module for the relaxation dispersion parameter list object."""
 
 # relax module imports.
+from lib.dispersion.variables import MODEL_LIST_MMQ, MODEL_M61B
 from lib.mathematics import round_to_next_order
 from pipe_control.mol_res_spin import return_spin
 from specific_analyses.parameter_object import Param_list
-from specific_analyses.relax_disp.variables import MODEL_LIST_MMQ, MODEL_M61B
 
 
 def dw_lower(incs=None, model_info=None):

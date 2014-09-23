@@ -32,6 +32,7 @@ from warnings import warn
 
 # relax module imports.
 from dep_check import C_module_exp_fn, scipy_module
+from lib.dispersion.variables import MODEL_R2EFF
 from lib.errors import RelaxError
 from lib.statistics import multifit_covar
 from lib.text.sectioning import section, subsection
@@ -40,7 +41,6 @@ from pipe_control.mol_res_spin import generate_spin_string, spin_loop
 from specific_analyses.relax_disp.checks import check_model_type
 from specific_analyses.relax_disp.data import average_intensity, loop_exp_frq_offset_point, loop_time, return_param_key_from_data
 from specific_analyses.relax_disp.parameters import disassemble_param_vector
-from specific_analyses.relax_disp.variables import MODEL_R2EFF
 from target_functions.chi2 import chi2_rankN, dchi2
 
 # C modules.

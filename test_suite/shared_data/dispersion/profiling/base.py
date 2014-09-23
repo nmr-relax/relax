@@ -55,8 +55,8 @@ sys.path.reverse()
 
 # relax module imports.
 from compat_profiling import g1H, g15N
+from lib.dispersion.variables import EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_SQ
 from target_functions.relax_disp import Dispersion
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_SQ
 from version import version
 
 

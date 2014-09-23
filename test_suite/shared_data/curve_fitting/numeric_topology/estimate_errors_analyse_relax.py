@@ -13,10 +13,10 @@ from lib.compat import pickle
 # relax imports
 from status import Status; status = Status()
 import dep_check
+from lib.dispersion.variables import MODEL_R2EFF
 from pipe_control.mol_res_spin import generate_spin_string, return_spin, spin_loop
 from specific_analyses.relax_disp.data import average_intensity, check_intensity_errors, generate_r20_key, get_curve_type, has_exponential_exp_type, has_r1rho_exp_type, loop_exp_frq, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_grace_file_name_ini, return_param_key_from_data
 from specific_analyses.relax_disp.data import check_intensity_errors
-from specific_analyses.relax_disp.variables import MODEL_R2EFF
 
 # C modules.
 if dep_check.C_module_exp_fn:

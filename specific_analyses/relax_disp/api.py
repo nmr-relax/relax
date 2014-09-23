@@ -32,6 +32,7 @@ from types import MethodType
 
 # relax module imports.
 from lib.arg_check import is_list, is_str_list
+from lib.dispersion.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_MMQ, MODEL_R2EFF, PARAMS_R20
 from lib.errors import RelaxError, RelaxImplementError
 from lib.text.sectioning import subsection
 from multi import Processor_box
@@ -45,7 +46,6 @@ from specific_analyses.relax_disp.data import average_intensity, calc_rotating_f
 from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, back_calc_peak_intensities, back_calc_r2eff, calculate_r2eff, minimise_r2eff
 from specific_analyses.relax_disp.parameter_object import Relax_disp_params
 from specific_analyses.relax_disp.parameters import get_param_names, get_value, loop_parameters, param_index_to_param_info, param_num, r1_setup
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_MMQ, MODEL_R2EFF, PARAMS_R20
 
 
 class Relax_disp(API_base, API_common):
