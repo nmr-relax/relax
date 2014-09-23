@@ -31,6 +31,7 @@ import sys
 # relax module imports.
 from lib.errors import RelaxFault
 from lib.frame_order.conversions import create_rotor_axis_alpha, create_rotor_axis_euler, create_rotor_axis_spherical
+from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_DOUBLE, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_ROTOR
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from lib.io import open_write_file
 from lib.order import order_parameters
@@ -42,7 +43,6 @@ from lib.structure.represent.rotor import rotor
 from lib.text.sectioning import subsection, subsubsection
 from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.data import domain_moving, generate_pivot
-from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_DOUBLE, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_ROTOR
 
 
 def add_axes(structure=None, representation=None, size=None, sims=False):

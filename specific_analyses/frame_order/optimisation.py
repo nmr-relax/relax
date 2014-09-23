@@ -36,6 +36,7 @@ from warnings import warn
 from lib.float import isNaN, isInf
 from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoPCSError, RelaxNoRDCError
 from lib.frame_order.pseudo_ellipse import tmax_pseudo_ellipse_array
+from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from lib.geometry.angles import wrap_angles
 from lib.order import order_parameters
 from lib.periodic_table import periodic_table
@@ -48,7 +49,6 @@ from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.checks import check_domain, check_model, check_parameters
 from specific_analyses.frame_order.data import base_data_types, domain_moving, pivot_fixed, tensor_loop
 from specific_analyses.frame_order.parameters import assemble_param_vector, linear_constraints
-from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from target_functions.frame_order import Frame_order, sobol_data
 
 

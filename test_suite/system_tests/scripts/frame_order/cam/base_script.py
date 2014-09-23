@@ -29,10 +29,10 @@ from os import F_OK, access, sep
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
+from lib.frame_order.variables import MODEL_FREE_ROTOR, MODEL_ROTOR
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.lines import closest_point_ax
 from lib.geometry.vectors import vector_angle
-from specific_analyses.frame_order.variables import MODEL_FREE_ROTOR, MODEL_ROTOR
 from status import Status; status = Status()
 
 

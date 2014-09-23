@@ -28,13 +28,13 @@ from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError
+from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_RIGID
 from lib.warnings import RelaxWarning
 from lib.geometry.rotations import euler_to_R_zyz
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import spin_loop
 from specific_analyses.frame_order.checks import check_pivot
-from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_RIGID
 
 
 def base_data_types():

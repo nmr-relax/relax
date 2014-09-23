@@ -32,6 +32,7 @@ from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoModelError
+from lib.frame_order.variables import MODEL_ISO_CONE_FREE_ROTOR
 from lib.warnings import RelaxWarning
 from multi import Processor_box
 from pipe_control import pipes
@@ -44,7 +45,6 @@ from specific_analyses.frame_order.data import domain_moving
 from specific_analyses.frame_order.optimisation import Frame_order_grid_command, Frame_order_memo, Frame_order_minimise_command, count_sobol_points, grid_row, store_bc_data, target_fn_data_setup
 from specific_analyses.frame_order.parameter_object import Frame_order_params
 from specific_analyses.frame_order.parameters import assemble_param_vector, linear_constraints, param_num, update_model
-from specific_analyses.frame_order.variables import MODEL_ISO_CONE_FREE_ROTOR
 from target_functions import frame_order
 
 

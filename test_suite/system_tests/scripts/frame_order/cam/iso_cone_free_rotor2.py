@@ -24,8 +24,8 @@
 
 # relax module imports.
 from base_script import Base_script
+from lib.frame_order.variables import MODEL_ISO_CONE_FREE_ROTOR
 from lib.order.order_parameters import iso_cone_theta_to_S
-from specific_analyses.frame_order.variables import MODEL_ISO_CONE_FREE_ROTOR
 
 
 class Analysis(Base_script):

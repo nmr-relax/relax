@@ -46,12 +46,12 @@ from lib.frame_order.pseudo_ellipse import compile_2nd_matrix_pseudo_ellipse, pc
 from lib.frame_order.pseudo_ellipse_free_rotor import compile_2nd_matrix_pseudo_ellipse_free_rotor
 from lib.frame_order.pseudo_ellipse_torsionless import compile_2nd_matrix_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_qrint
 from lib.frame_order.rotor import compile_2nd_matrix_rotor, pcs_numeric_int_rotor_qrint
+from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import euler_to_R_zyz, tilt_torsion_to_R, two_vect_to_R
 from lib.linear_algebra.kronecker_product import kron_prod
 from lib.order import order_parameters
 from lib.physical_constants import pcs_constant
-from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from target_functions.chi2 import chi2
 
 

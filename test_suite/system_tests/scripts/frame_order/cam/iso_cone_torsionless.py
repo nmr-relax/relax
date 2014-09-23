@@ -24,7 +24,7 @@
 
 # relax module imports.
 from base_script import Base_script
-from specific_analyses.frame_order.variables import MODEL_ISO_CONE_TORSIONLESS
+from lib.frame_order.variables import MODEL_ISO_CONE_TORSIONLESS
 
 
 class Analysis(Base_script):

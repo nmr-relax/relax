@@ -24,7 +24,7 @@
 
 # relax module imports.
 from base_script import Base_script
-from specific_analyses.frame_order.variables import MODEL_PSEUDO_ELLIPSE_FREE_ROTOR
+from lib.frame_order.variables import MODEL_PSEUDO_ELLIPSE_FREE_ROTOR
 
 
 class Analysis(Base_script):
