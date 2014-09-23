@@ -81,3 +81,15 @@ class Internal_selection:
             # Atom loop.
             for atom_index in self._atom_indices[index]:
                 yield mol_index, atom_index
+
+
+    def mol_loop(self):
+        """Fast loop over all molecule indices.
+
+        @return:    The molecule index.
+        @rtype:     int
+        """
+
+        # Molecule loop.
+        for mol_index in self._mol_indices:
+            yield mol_index
