@@ -28,9 +28,9 @@ These functions raise various RelaxErrors to help the user understand what went 
 
 # relax module imports.
 from dep_check import C_module_exp_fn
+from lib.dispersion.variables import EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, MODEL_LIST_R1RHO_OFF_RES, MODEL_NOREX
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxNoPeakIntensityError
 import specific_analyses
-from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, MODEL_LIST_R1RHO_OFF_RES, MODEL_NOREX
 
 
 def check_c_modules():

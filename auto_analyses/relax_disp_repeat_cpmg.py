@@ -38,6 +38,7 @@ from warnings import warn
 
 # relax module imports.
 import dep_check
+from lib.dispersion.variables import MODEL_NOREX, MODEL_PARAMS, MODEL_R2EFF, PARAMS_R20
 from lib.io import extract_data, get_file_path, open_write_file, sort_filenames, write_data
 from lib.text.sectioning import section, subsection, subtitle, title
 from lib.warnings import RelaxWarning
@@ -45,7 +46,6 @@ from pipe_control.mol_res_spin import display_spin, generate_spin_string, return
 from pipe_control import pipes
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.data import generate_r20_key, has_exponential_exp_type, is_r1_optimised, loop_exp_frq_offset, loop_exp_frq_offset_point, return_param_key_from_data
-from specific_analyses.relax_disp.variables import MODEL_NOREX, MODEL_PARAMS, MODEL_R2EFF, PARAMS_R20
 from status import Status; status = Status()
 
 if dep_check.matplotlib_module:

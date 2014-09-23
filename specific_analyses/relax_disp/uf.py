@@ -25,13 +25,13 @@
 """The relaxation dispersion API object."""
 
 # relax module imports.
+from lib.dispersion.variables import MODEL_DESC, MODEL_LIST_FULL, MODEL_PARAMS, MODEL_R2EFF
 from lib.errors import RelaxError
 from pipe_control import pipes
 from pipe_control.mol_res_spin import check_mol_res_spin_data, spin_loop
 from specific_analyses.relax_disp.api import Relax_disp
 from specific_analyses.relax_disp.checks import check_c_modules, check_exp_type, check_pipe_type
 from specific_analyses.relax_disp.data import get_curve_type
-from specific_analyses.relax_disp.variables import MODEL_DESC, MODEL_LIST_FULL, MODEL_PARAMS, MODEL_R2EFF
 
 
 # The API object.

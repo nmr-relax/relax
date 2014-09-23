@@ -47,5 +47,6 @@ __all__ = [
     'tap03',
     'tp02',
     'tsmfk01',
-    'two_point'
+    'two_point',
+    'variables'
 ]

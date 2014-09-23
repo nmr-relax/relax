@@ -32,15 +32,15 @@ from specific_analyses.relax_disp.data import generate_r20_key, loop_exp_frq, lo
 from specific_analyses.relax_disp import optimisation
 from status import Status; status = Status()
 # The variables already defined in relax.
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_PARAMS
+from lib.dispersion.variables import EXP_TYPE_CPMG_SQ, MODEL_PARAMS
 # Analytical
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_IT99, MODEL_TSMFK01, MODEL_B14
+from lib.dispersion.variables import MODEL_CR72, MODEL_IT99, MODEL_TSMFK01, MODEL_B14
 # Analytical full
-from specific_analyses.relax_disp.variables import MODEL_CR72_FULL, MODEL_B14_FULL
+from lib.dispersion.variables import MODEL_CR72_FULL, MODEL_B14_FULL
 # NS : Numerical Solution
-from specific_analyses.relax_disp.variables import MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_EXPANDED
+from lib.dispersion.variables import MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_EXPANDED
 # NS full
-from specific_analyses.relax_disp.variables import MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL
+from lib.dispersion.variables import MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL
 
 # Analysis variables.
 ##################################################################################

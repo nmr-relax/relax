@@ -24,7 +24,7 @@
 
 # relax module imports.
 from base import cluster, main, NUM_SPINS_CLUSTER, NUM_SPINS_SINGLE, single, Profile
-from specific_analyses.relax_disp.variables import EXP_TYPE_R1RHO, MODEL_TP02
+from lib.dispersion.variables import EXP_TYPE_R1RHO, MODEL_TP02
 
 
 # Setup.

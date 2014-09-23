@@ -30,12 +30,12 @@ from numpy import array, float64, median, zeros
 import sys
 
 # relax module imports.
+from lib.dispersion.variables import MODEL_LIST_MMQ, MODEL_M61B, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, PARAMS_R20
 from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from specific_analyses.relax_disp.data import count_spins, generate_r20_key, has_exponential_exp_type, is_r1_optimised, loop_cluster, loop_exp_frq
-from specific_analyses.relax_disp.variables import MODEL_LIST_MMQ, MODEL_M61B, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, PARAMS_R20
 
 
 def assemble_param_vector(spins=None, key=None, sim_index=None):
