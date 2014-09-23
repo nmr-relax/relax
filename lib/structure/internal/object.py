@@ -42,6 +42,7 @@ from lib.structure import pdb_read, pdb_write
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.models import ModelList
 from lib.structure.internal.molecules import MolContainer
+from lib.structure.internal.selection import Internal_selection
 from lib.warnings import RelaxWarning
 from lib.xml import object_to_xml, xml_to_object
 
