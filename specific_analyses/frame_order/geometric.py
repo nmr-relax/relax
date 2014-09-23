@@ -502,6 +502,9 @@ def average_position(structure=None, models=None, sim=None):
     @type sim:          bool
     """
 
+    # The selection object.
+    selection = structure.selection(atom_id=domain_moving())
+
     # Loop over each model.
     for i in range(len(models)):
         # First rotate the moving domain to the average position.
@@ -517,14 +520,14 @@ def average_position(structure=None, models=None, sim=None):
             else:
                 euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
         origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
-        structure.rotate(R=R, origin=origin, model=models[i], atom_id=domain_moving())
+        structure.rotate(R=R, origin=origin, model=models[i], selection=selection)
 
         # Then translate the moving domain.
         if sim:
             T = [cdp.ave_pos_x_sim[i], cdp.ave_pos_y_sim[i], cdp.ave_pos_z_sim[i]]
         else:
             T = [cdp.ave_pos_x, cdp.ave_pos_y, cdp.ave_pos_z]
-        structure.translate(T=T, model=models[i], atom_id=domain_moving())
+        structure.translate(T=T, model=models[i], selection=selection)
 
 
 def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, model=1, force=False):
