@@ -2322,6 +2322,53 @@ class Internal:
                     mol.z[i] = pos[2]
 
 
+    def selection(self, atom_id=None):
+        """Convert the atom ID string into a special internal selection object for speed.
+
+        @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
+        @type atom_id:      str or None
+        @return:            The internal structural selection object.
+        @rtype:             Internal_selection instance
+        """
+
+        # Initialise the internal structural selection object.
+        selection = Internal_selection()
+
+        # Generate the atom ID selection object.
+        sel_obj = None
+        if atom_id:
+            sel_obj = Selection(atom_id)
+
+        # Validate the models.
+        self.validate_models(verbosity=0)
+
+        # Obtain all data from the first model (except the position data).
+        model = self.structural_data[0]
+
+        # Loop over the molecules.
+        for mol_index in range(len(model.mol)):
+            mol = model.mol[mol_index]
+
+            # Skip non-matching molecules.
+            if sel_obj and not sel_obj.contains_mol(mol.mol_name):
+                continue
+            
+            # Add the molecule index.
+            selection.add_mol(mol_index=mol_index)
+
+            # Loop over the atoms.
+            for i in range(len(mol.atom_num)):
+                # Skip non-matching atoms.
+                if sel_obj and not sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
+                    continue
+
+                # Add the atom index.
+                selection.add_atom(mol_index=mol_index, atom_index=i)
+
+        # Return the object.
+        return selection
+
+
     def set_model(self, model_orig=None, model_new=None):
         """Set or reset the model number.
         @keyword model_orig:    The original model number.  Leave as None if no models are currently present.
