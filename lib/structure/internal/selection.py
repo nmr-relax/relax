@@ -24,7 +24,7 @@
 
 
 class Internal_selection:
-    """The fast structural selection object.""" 
+    """The fast structural selection object."""
 
     def __init__(self):
         """Set up the object."""
@@ -45,8 +45,11 @@ class Internal_selection:
         @type atom_index:       int
         """
 
+        # Find the molecule index.
+        index = self._mol_indices.index(mol_index)
+
         # Store the index.
-        self._atom_indices[mol_index].append(atom_index)
+        self._atom_indices[index].append(atom_index)
 
 
     def add_mol(self, mol_index=None):
@@ -72,6 +75,9 @@ class Internal_selection:
 
         # Molecule loop.
         for mol_index in self._mol_indices:
+            # Find the molecule index.
+            index = self._mol_indices.index(mol_index)
+
             # Atom loop.
-            for atom_index in self._atom_indices[mol_index]:
+            for atom_index in self._atom_indices[index]:
                 yield mol_index, atom_index
