@@ -89,7 +89,61 @@ def daeg_to_rotational_superoperator(daeg, Rsuper):
     transpose_23(daeg)
 
 
-def pcs_pivot_motion_full(theta_i, phi_i, sigma_i, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime):
+def pcs_pivot_motion_full_qr_int(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, Ri=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+    """Calculate the PCS value after a pivoted motion for the isotropic cone model.
+
+    @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
+    @type full_in_ref_frame:    numpy rank-1 array
+    @keyword r_pivot_atom:      The pivot point to atom vector.
+    @type r_pivot_atom:         numpy rank-2, 3D array
+    @keyword r_pivot_atom_rev:  The reversed pivot point to atom vector.
+    @type r_pivot_atom_rev:     numpy rank-2, 3D array
+    @keyword r_ln_pivot:        The lanthanide position to pivot point vector.
+    @type r_ln_pivot:           numpy rank-2, 3D array
+    @keyword A:                 The full alignment tensor of the non-moving domain.
+    @type A:                    numpy rank-2, 3D array
+    @keyword Ri:                The frame-shifted, pre-calculated rotation matrix for state i.
+    @type Ri:                   numpy rank-2, 3D array
+    @keyword pcs_theta:         The storage structure for the back-calculated PCS values.
+    @type pcs_theta:            numpy rank-2 array
+    @keyword pcs_theta_err:     The storage structure for the back-calculated PCS errors.
+    @type pcs_theta_err:        numpy rank-2 array
+    @keyword missing_pcs:       A structure used to indicate which PCS values are missing.
+    @type missing_pcs:          numpy rank-2 array
+    """
+
+    # Pre-calculate all the new vectors.
+    rot_vect = dot(r_pivot_atom, Ri) + r_ln_pivot
+
+    # The vector length (to the 5th power).
+    length = 1.0 / norm(rot_vect, axis=1)**5
+
+    # The reverse vectors and lengths.
+    if min(full_in_ref_frame) == 0:
+        rot_vect_rev = dot(r_pivot_atom_rev, Ri) + r_ln_pivot
+        length_rev = 1.0 / norm(rot_vect_rev, axis=1)**5
+
+    # Loop over the atoms.
+    for j in range(len(r_pivot_atom[:, 0])):
+        # Loop over the alignments.
+        for i in range(len(pcs_theta)):
+            # Skip missing data.
+            if missing_pcs[i, j]:
+                continue
+
+            # The projection.
+            if full_in_ref_frame[i]:
+                proj = dot(rot_vect[j], dot(A[i], rot_vect[j]))
+                length_i = length[j]
+            else:
+                proj = dot(rot_vect_rev[j], dot(A[i], rot_vect_rev[j]))
+                length_i = length_rev[j]
+
+            # The PCS.
+            pcs_theta[i, j] += proj * length_i
+
+
+def pcs_pivot_motion_full_quad_int(theta_i, phi_i, sigma_i, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime):
     """Calculate the PCS value after a pivoted motion for the isotropic cone model.
 
     @param theta_i:             The half cone opening angle (polar angle).
@@ -152,7 +206,7 @@ def pcs_pivot_motion_full(theta_i, phi_i, sigma_i, r_pivot_atom, r_ln_pivot, A, 
     return pcs
 
 
-def pcs_pivot_motion_full_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, Ri=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_pivot_motion_torsionless_qr_int(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, Ri=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Calculate the PCS value after a pivoted motion for the isotropic cone model.
 
     @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
@@ -206,7 +260,7 @@ def pcs_pivot_motion_full_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_piv
             pcs_theta[i, j] += proj * length_i
 
 
-def pcs_pivot_motion_torsionless(theta_i, phi_i, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime):
+def pcs_pivot_motion_torsionless_quad_int(theta_i, phi_i, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime):
     """Calculate the PCS value after a pivoted motion for the isotropic cone model.
 
     @param theta_i:             The half cone opening angle (polar angle).
@@ -263,60 +317,6 @@ def pcs_pivot_motion_torsionless(theta_i, phi_i, r_pivot_atom, r_ln_pivot, A, R_
 
     # Return the PCS value (without the PCS constant).
     return pcs
-
-
-def pcs_pivot_motion_torsionless_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, Ri=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
-    """Calculate the PCS value after a pivoted motion for the isotropic cone model.
-
-    @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
-    @type full_in_ref_frame:    numpy rank-1 array
-    @keyword r_pivot_atom:      The pivot point to atom vector.
-    @type r_pivot_atom:         numpy rank-2, 3D array
-    @keyword r_pivot_atom_rev:  The reversed pivot point to atom vector.
-    @type r_pivot_atom_rev:     numpy rank-2, 3D array
-    @keyword r_ln_pivot:        The lanthanide position to pivot point vector.
-    @type r_ln_pivot:           numpy rank-2, 3D array
-    @keyword A:                 The full alignment tensor of the non-moving domain.
-    @type A:                    numpy rank-2, 3D array
-    @keyword Ri:                The frame-shifted, pre-calculated rotation matrix for state i.
-    @type Ri:                   numpy rank-2, 3D array
-    @keyword pcs_theta:         The storage structure for the back-calculated PCS values.
-    @type pcs_theta:            numpy rank-2 array
-    @keyword pcs_theta_err:     The storage structure for the back-calculated PCS errors.
-    @type pcs_theta_err:        numpy rank-2 array
-    @keyword missing_pcs:       A structure used to indicate which PCS values are missing.
-    @type missing_pcs:          numpy rank-2 array
-    """
-
-    # Pre-calculate all the new vectors.
-    rot_vect = dot(r_pivot_atom, Ri) + r_ln_pivot
-
-    # The vector length (to the 5th power).
-    length = 1.0 / norm(rot_vect, axis=1)**5
-
-    # The reverse vectors and lengths.
-    if min(full_in_ref_frame) == 0:
-        rot_vect_rev = dot(r_pivot_atom_rev, Ri) + r_ln_pivot
-        length_rev = 1.0 / norm(rot_vect_rev, axis=1)**5
-
-    # Loop over the atoms.
-    for j in range(len(r_pivot_atom[:, 0])):
-        # Loop over the alignments.
-        for i in range(len(pcs_theta)):
-            # Skip missing data.
-            if missing_pcs[i, j]:
-                continue
-
-            # The projection.
-            if full_in_ref_frame[i]:
-                proj = dot(rot_vect[j], dot(A[i], rot_vect[j]))
-                length_i = length[j]
-            else:
-                proj = dot(rot_vect_rev[j], dot(A[i], rot_vect_rev[j]))
-                length_i = length_rev[j]
-
-            # The PCS.
-            pcs_theta[i, j] += proj * length_i
 
 
 def reduce_alignment_tensor(D, A, red_tensor):

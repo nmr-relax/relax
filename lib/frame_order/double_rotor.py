@@ -89,7 +89,7 @@ def compile_2nd_matrix_double_rotor(matrix, Rx2_eigen, smax1, smax2):
     return rotate_daeg(matrix, Rx2_eigen)
 
 
-def pcs_numeric_int_double_rotor(points=None, max_points=None, sigma_max=None, sigma_max_2=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, r_inter_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, Ri2_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_numeric_qr_int_double_rotor(points=None, max_points=None, sigma_max=None, sigma_max_2=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, r_inter_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, Ri2_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """The averaged PCS value via numerical integration for the double rotor frame order model.
 
     @keyword points:            The Sobol points in the torsion-tilt angle space.
@@ -157,7 +157,7 @@ def pcs_numeric_int_double_rotor(points=None, max_points=None, sigma_max=None, s
             continue
 
         # Calculate the PCSs for this state.
-        pcs_pivot_motion_double_rotor(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, r_inter_pivot=r_inter_pivot, A=A, Ri=Ri[i], Ri2=Ri2[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        pcs_pivot_motion_double_rotor_qr_int(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, r_inter_pivot=r_inter_pivot, A=A, Ri=Ri[i], Ri2=Ri2[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
 
         # Increment the number of points.
         num += 1
@@ -170,7 +170,7 @@ def pcs_numeric_int_double_rotor(points=None, max_points=None, sigma_max=None, s
         Ri = swapaxes(Ri, 0, 1)
 
         # Calculate the PCSs for this state.
-        pcs_pivot_motion_double_rotor(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, r_inter_pivot=r_inter_pivot, A=A, Ri=Ri, Ri2=Ri, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        pcs_pivot_motion_double_rotor_qr_int(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, r_inter_pivot=r_inter_pivot, A=A, Ri=Ri, Ri2=Ri, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
 
         # Multiply the constant.
         multiply(c, pcs_theta, pcs_theta)
@@ -181,7 +181,7 @@ def pcs_numeric_int_double_rotor(points=None, max_points=None, sigma_max=None, s
         divide(pcs_theta, float(num), pcs_theta)
 
 
-def pcs_pivot_motion_double_rotor(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, r_inter_pivot=None, A=None, Ri=None, Ri2=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_pivot_motion_double_rotor_qr_int(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, r_inter_pivot=None, A=None, Ri=None, Ri2=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Calculate the PCS value after a pivoted motion for the double rotor model.
 
     @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
