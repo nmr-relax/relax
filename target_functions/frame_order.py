@@ -364,6 +364,7 @@ class Frame_order:
         self.R_eigen = zeros((3, 3), float64)
         self.R_eigen_2 = zeros((3, 3), float64)
         self.R_ave = zeros((3, 3), float64)
+        self.Ri_prime = zeros((3, 3), float64)
         self.tensor_3D = zeros((3, 3), float64)
 
         # The cone axis storage and molecular frame z-axis.
@@ -593,10 +594,10 @@ class Frame_order:
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
 
-        # Loop over each alignment.
-        for align_index in range(self.num_align):
-            # RDCs.
-            if self.rdc_flag[align_index]:
+        # RDCs.
+        if self.rdc_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
                 # Loop over the RDCs.
                 for j in range(self.num_interatom):
                     # The back calculated RDC.
@@ -606,20 +607,22 @@ class Frame_order:
                 # Calculate and sum the single alignment chi-squared value (for the RDC).
                 chi2_sum = chi2_sum + chi2(self.rdc[align_index], self.rdc_theta[align_index], self.rdc_error[align_index])
 
-            # PCS.
-            if self.pcs_flag[align_index]:
+        # PCS via numerical integration.
+        if self.pcs_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
                 # Loop over the PCSs.
                 for j in range(self.num_spins):
                     # The back calculated PCS.
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom[:, j]
+                            r_pivot_atom = self.r_pivot_atom[j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
 
                         # The numerical integration.
-                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_rotor(sigma_max=pi, c=self.pcs_const[align_index], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_rotor(sigma_max=pi, c=self.pcs_const[align_index, j], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[align_index], self.pcs_theta[align_index], self.pcs_error[align_index])
@@ -758,10 +761,10 @@ class Frame_order:
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
 
-        # Loop over each alignment.
-        for align_index in range(self.num_align):
-            # RDCs.
-            if self.rdc_flag[align_index]:
+        # RDCs.
+        if self.rdc_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
                 # Loop over the RDCs.
                 for j in range(self.num_interatom):
                     # The back calculated RDC.
@@ -771,20 +774,22 @@ class Frame_order:
                 # Calculate and sum the single alignment chi-squared value (for the RDC).
                 chi2_sum = chi2_sum + chi2(self.rdc[align_index], self.rdc_theta[align_index], self.rdc_error[align_index])
 
-            # PCS.
-            if self.pcs_flag[align_index]:
+        # PCS via numerical integration.
+        if self.pcs_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
                 # Loop over the PCSs.
                 for j in range(self.num_spins):
                     # The back calculated PCS.
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom[:, j]
+                            r_pivot_atom = self.r_pivot_atom[j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
 
                         # The numerical integration.
-                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_iso_cone(theta_max=cone_theta, sigma_max=sigma_max, c=self.pcs_const[align_index], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_iso_cone(theta_max=cone_theta, sigma_max=sigma_max, c=self.pcs_const[align_index, j], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[align_index], self.pcs_theta[align_index], self.pcs_error[align_index])
@@ -929,10 +934,10 @@ class Frame_order:
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
 
-        # Loop over each alignment.
-        for align_index in range(self.num_align):
-            # RDCs.
-            if self.rdc_flag[align_index]:
+        # RDCs.
+        if self.rdc_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
                 # Loop over the RDCs.
                 for j in range(self.num_interatom):
                     # The back calculated RDC.
@@ -942,20 +947,22 @@ class Frame_order:
                 # Calculate and sum the single alignment chi-squared value (for the RDC).
                 chi2_sum = chi2_sum + chi2(self.rdc[align_index], self.rdc_theta[align_index], self.rdc_error[align_index])
 
-            # PCS.
-            if self.pcs_flag[align_index]:
+        # PCS via numerical integration.
+        if self.pcs_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
                 # Loop over the PCSs.
                 for j in range(self.num_spins):
                     # The back calculated PCS.
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom[:, j]
+                            r_pivot_atom = self.r_pivot_atom[j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
 
                         # The numerical integration.
-                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_iso_cone(theta_max=theta_max, sigma_max=pi, c=self.pcs_const[align_index], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_iso_cone(theta_max=theta_max, sigma_max=pi, c=self.pcs_const[align_index, j], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[align_index], self.pcs_theta[align_index], self.pcs_error[align_index])
@@ -1094,10 +1101,10 @@ class Frame_order:
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
 
-        # Loop over each alignment.
-        for align_index in range(self.num_align):
-            # RDCs.
-            if self.rdc_flag[align_index]:
+        # RDCs.
+        if self.rdc_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
                 # Loop over the RDCs.
                 for j in range(self.num_interatom):
                     # The back calculated RDC.
@@ -1107,20 +1114,22 @@ class Frame_order:
                 # Calculate and sum the single alignment chi-squared value (for the RDC).
                 chi2_sum = chi2_sum + chi2(self.rdc[align_index], self.rdc_theta[align_index], self.rdc_error[align_index])
 
-            # PCS.
-            if self.pcs_flag[align_index]:
+        # PCS via numerical integration.
+        if self.pcs_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
                 # Loop over the PCSs.
                 for j in range(self.num_spins):
                     # The back calculated PCS.
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom[:, j]
+                            r_pivot_atom = self.r_pivot_atom[j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
 
                         # The numerical integration.
-                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_iso_cone_torsionless(theta_max=cone_theta, c=self.pcs_const[align_index], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_iso_cone_torsionless(theta_max=cone_theta, c=self.pcs_const[align_index, j], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[align_index], self.pcs_theta[align_index], self.pcs_error[align_index])
@@ -1253,10 +1262,10 @@ class Frame_order:
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
 
-        # Loop over each alignment.
-        for align_index in range(self.num_align):
-            # RDCs.
-            if self.rdc_flag[align_index]:
+        # RDCs.
+        if self.rdc_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
                 # Loop over the RDCs.
                 for j in range(self.num_interatom):
                     # The back calculated RDC.
@@ -1266,20 +1275,22 @@ class Frame_order:
                 # Calculate and sum the single alignment chi-squared value (for the RDC).
                 chi2_sum = chi2_sum + chi2(self.rdc[align_index], self.rdc_theta[align_index], self.rdc_error[align_index])
 
-            # PCS.
-            if self.pcs_flag[align_index]:
+        # PCS via numerical integration.
+        if self.pcs_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
                 # Loop over the PCSs.
                 for j in range(self.num_spins):
                     # The back calculated PCS.
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom[:, j]
+                            r_pivot_atom = self.r_pivot_atom[j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
 
                         # The numerical integration.
-                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_pseudo_ellipse(theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=cone_sigma_max, c=self.pcs_const[align_index], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_pseudo_ellipse(theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=cone_sigma_max, c=self.pcs_const[align_index, j], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[align_index], self.pcs_theta[align_index], self.pcs_error[align_index])
@@ -1412,10 +1423,10 @@ class Frame_order:
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
 
-        # Loop over each alignment.
-        for align_index in range(self.num_align):
-            # RDCs.
-            if self.rdc_flag[align_index]:
+        # RDCs.
+        if self.rdc_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
                 # Loop over the RDCs.
                 for j in range(self.num_interatom):
                     # The back calculated RDC.
@@ -1425,20 +1436,22 @@ class Frame_order:
                 # Calculate and sum the single alignment chi-squared value (for the RDC).
                 chi2_sum = chi2_sum + chi2(self.rdc[align_index], self.rdc_theta[align_index], self.rdc_error[align_index])
 
-            # PCS.
-            if self.pcs_flag[align_index]:
+        # PCS via numerical integration.
+        if self.pcs_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
                 # Loop over the PCSs.
                 for j in range(self.num_spins):
                     # The back calculated PCS.
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom[:, j]
+                            r_pivot_atom = self.r_pivot_atom[j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
 
                         # The numerical integration.
-                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_pseudo_ellipse(theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=pi, c=self.pcs_const[align_index], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_pseudo_ellipse(theta_x=cone_theta_x, theta_y=cone_theta_y, sigma_max=pi, c=self.pcs_const[align_index, j], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[align_index], self.pcs_theta[align_index], self.pcs_error[align_index])
@@ -1571,10 +1584,10 @@ class Frame_order:
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
 
-        # Loop over each alignment.
-        for align_index in range(self.num_align):
-            # RDCs.
-            if self.rdc_flag[align_index]:
+        # RDCs.
+        if self.rdc_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
                 # Loop over the RDCs.
                 for j in range(self.num_interatom):
                     # The back calculated RDC.
@@ -1584,20 +1597,22 @@ class Frame_order:
                 # Calculate and sum the single alignment chi-squared value (for the RDC).
                 chi2_sum = chi2_sum + chi2(self.rdc[align_index], self.rdc_theta[align_index], self.rdc_error[align_index])
 
-            # PCS.
-            if self.pcs_flag[align_index]:
+        # PCS via numerical integration.
+        if self.pcs_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
                 # Loop over the PCSs.
                 for j in range(self.num_spins):
                     # The back calculated PCS.
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom[:, j]
+                            r_pivot_atom = self.r_pivot_atom[j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
 
                         # The numerical integration.
-                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_pseudo_ellipse_torsionless(theta_x=cone_theta_x, theta_y=cone_theta_y, c=self.pcs_const[align_index], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_pseudo_ellipse_torsionless(theta_x=cone_theta_x, theta_y=cone_theta_y, c=self.pcs_const[align_index, j], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[align_index], self.pcs_theta[align_index], self.pcs_error[align_index])
@@ -1815,10 +1830,10 @@ class Frame_order:
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
 
-        # Loop over each alignment.
-        for align_index in range(self.num_align):
-            # RDCs.
-            if self.rdc_flag[align_index]:
+        # RDCs.
+        if self.rdc_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
                 # Loop over the RDCs.
                 for j in range(self.num_interatom):
                     # The back calculated RDC.
@@ -1828,20 +1843,22 @@ class Frame_order:
                 # Calculate and sum the single alignment chi-squared value (for the RDC).
                 chi2_sum = chi2_sum + chi2(self.rdc[align_index], self.rdc_theta[align_index], self.rdc_error[align_index])
 
-            # PCS.
-            if self.pcs_flag[align_index]:
+        # PCS via numerical integration.
+        if self.pcs_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
                 # Loop over the PCSs.
                 for j in range(self.num_spins):
                     # The back calculated PCS.
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom[:, j]
+                            r_pivot_atom = self.r_pivot_atom[j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
 
                         # The numerical integration.
-                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_rotor(sigma_max=sigma_max, c=self.pcs_const[align_index], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[:, 0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
+                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_rotor(sigma_max=sigma_max, c=self.pcs_const[align_index, j], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[0], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime)
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[align_index], self.pcs_theta[align_index], self.pcs_error[align_index])
