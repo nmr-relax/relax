@@ -150,7 +150,8 @@ class Frame_order(API_base, API_common):
         store_bc_data(A_5D_bc=target_fn.A_5D_bc, pcs_theta=target_fn.pcs_theta, rdc_theta=target_fn.rdc_theta)
 
         # Feedback on the number of integration points used.
-        count_sobol_points(target_fn=target_fn)
+        if not cdp.quad_int:
+            count_sobol_points(target_fn=target_fn)
 
         # Printout.
         print("Chi2:  %s" % chi2)

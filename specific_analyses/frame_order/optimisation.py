@@ -1210,7 +1210,8 @@ class Frame_order_minimise_command(Slave_command):
         results = generic_minimise(func=target_fn.func, args=(), x0=self.param_vector, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.max_iterations, A=self.A, b=self.b, full_output=True, print_flag=self.verbosity)
 
         # Feedback on the number of integration points used.
-        count_sobol_points(target_fn=target_fn, verbosity=self.verbosity)
+        if not self.quad_int:
+            count_sobol_points(target_fn=target_fn, verbosity=self.verbosity)
 
         # Create the result command object on the slave to send back to the master.
         processor.return_object(Frame_order_result_command(processor=processor, memo_id=self.memo_id, results=results, A_5D_bc=target_fn.A_5D_bc, pcs_theta=target_fn.pcs_theta, rdc_theta=target_fn.rdc_theta, completed=completed))
