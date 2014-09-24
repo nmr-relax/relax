@@ -74,6 +74,13 @@ class Relax_disp(SystemTestCase):
         # Execute the base class method.
         super(Relax_disp, self).__init__(methodName)
 
+        # Tests to skip.
+        blacklist = [
+            'test_m61b_data_to_m61b'
+        ]
+        if methodName in blacklist:
+            status.skipped_tests.append([methodName, None, self._skip_type])
+
         # Missing module.
         if not dep_check.C_module_exp_fn:
             # The list of tests to skip.
@@ -5769,7 +5776,7 @@ class Relax_disp(SystemTestCase):
             spin_index += 1
 
 
-    def xxx_test_m61b_data_to_m61b(self):
+    def test_m61b_data_to_m61b(self):
         """Test the relaxation dispersion 'M61 skew' model curve fitting to fixed time synthetic data."""
 
         # Execute the script.
