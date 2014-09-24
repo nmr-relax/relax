@@ -317,6 +317,7 @@ class Relax:
         group.add_option('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the GUI tests')
         group.add_option('--verification-tests', action='store_true', dest='verification_tests', default=0, help='execute the software verification tests')
         group.add_option('--time', action='store_true', dest='tt', default=0, help='enable the timing of individual tests in the test suite')
+        group.add_option('--no-skip', action='store_true', dest='no_skip', default=0, help='a debugging option for relax developers to turn on all blacklisted tests, even those that will fail')
         parser.add_option_group(group)
 
         # Recognised command line options for debugging.
@@ -387,6 +388,11 @@ class Relax:
             self.test_timings = False
             if options.tt:
                 self.test_timings = True
+
+            # Run blacklisted tests.
+            status.skip_blacklisted_tests = True
+            if options.no_skip:
+                status.skip_blacklisted_tests = False
 
         # The argument is a script.
         else:
