@@ -308,10 +308,10 @@ class Test_suite_runner:
         # Synopsis.
         if hasattr(self, 'system_result') and hasattr(self, 'unit_result') and hasattr(self, 'gui_result') and hasattr(self, 'verification_result'):
             if self.gui_result == "skip":
-                status = self.system_result and self.unit_result and self.verification_result
+                test_status = self.system_result and self.unit_result and self.verification_result
             else:
-                status = self.system_result and self.unit_result and self.gui_result and self.verification_result
-            summary_line("Synopsis", status)
+                test_status = self.system_result and self.unit_result and self.gui_result and self.verification_result
+            summary_line("Synopsis", test_status)
 
         # End.
         print('\n\n')
