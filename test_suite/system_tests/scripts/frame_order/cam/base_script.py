@@ -156,6 +156,10 @@ class Base_script:
         if self.NUM_INT_PTS != None:
             self._execute_uf(uf_name='frame_order.sobol_setup', max_num=self.NUM_INT_PTS, oversample=1)
 
+        # Set up the SciPy quadratic integration.
+        if hasattr(status, 'flag_quad_int') and status.flag_quad_int:
+            self._execute_uf(uf_name='frame_order.quad_int', flag=True)
+
         # Set the parameter values.
         params = [
             'pivot_disp',
