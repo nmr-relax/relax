@@ -23,8 +23,12 @@
 """Module for the handling of Frame Order."""
 
 # Python module imports.
-from math import pi
+from math import cos, pi, sin
 from numpy import divide, dot, eye, float64, multiply, sinc, swapaxes, tensordot
+try:
+    from scipy.integrate import quad
+except ImportError:
+    pass
 
 # relax module imports.
 from lib.compat import norm
