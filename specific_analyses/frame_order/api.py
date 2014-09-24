@@ -493,7 +493,7 @@ class Frame_order(API_base, API_common):
             memo = Frame_order_memo(sim_index=sim_index, scaling_matrix=scaling_matrix[0])
 
             # Set up the command object to send to the slave and execute.
-            command = Frame_order_grid_command(points=subdivision, scaling_matrix=scaling_matrix[0], sim_index=sim_index, model=cdp.model, param_vector=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_err=rdc_err, rdc_weight=rdc_weight, rdc_vect=rdc_vect, rdc_const=rdc_const, pcs=pcs, pcs_err=pcs_err, pcs_weight=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, sobol_max_points=sobol_max_points, sobol_oversample=sobol_oversample, verbosity=verbosity)
+            command = Frame_order_grid_command(points=subdivision, scaling_matrix=scaling_matrix[0], sim_index=sim_index, model=cdp.model, param_vector=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_err=rdc_err, rdc_weight=rdc_weight, rdc_vect=rdc_vect, rdc_const=rdc_const, pcs=pcs, pcs_err=pcs_err, pcs_weight=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, sobol_max_points=sobol_max_points, sobol_oversample=sobol_oversample, verbosity=verbosity, quad_int=cdp.quad_int)
 
             # Add the slave command and memo to the processor queue.
             processor.add_to_queue(command, memo)
@@ -590,7 +590,7 @@ class Frame_order(API_base, API_common):
         memo = Frame_order_memo(sim_index=sim_index, scaling_matrix=scaling_matrix[0])
 
         # Set up the command object to send to the slave and execute.
-        command = Frame_order_minimise_command(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, scaling_matrix=scaling_matrix[0], constraints=constraints, sim_index=sim_index, model=cdp.model, param_vector=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_err=rdc_err, rdc_weight=rdc_weight, rdc_vect=rdc_vect, rdc_const=rdc_const, pcs=pcs, pcs_err=pcs_err, pcs_weight=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, sobol_max_points=sobol_max_points, sobol_oversample=sobol_oversample, verbosity=verbosity)
+        command = Frame_order_minimise_command(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, scaling_matrix=scaling_matrix[0], constraints=constraints, sim_index=sim_index, model=cdp.model, param_vector=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_err=rdc_err, rdc_weight=rdc_weight, rdc_vect=rdc_vect, rdc_const=rdc_const, pcs=pcs, pcs_err=pcs_err, pcs_weight=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, sobol_max_points=sobol_max_points, sobol_oversample=sobol_oversample, verbosity=verbosity, quad_int=cdp.quad_int)
 
         # Add the slave command and memo to the processor queue.
         processor.add_to_queue(command, memo)

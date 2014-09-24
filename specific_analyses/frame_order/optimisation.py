@@ -941,7 +941,7 @@ def unpack_opt_results(param_vector=None, func=None, iter_count=None, f_count=No
 class Frame_order_grid_command(Slave_command):
     """Command class for relaxation dispersion optimisation on the slave processor."""
 
-    def __init__(self, points=None, scaling_matrix=None, sim_index=None, model=None, param_vector=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_err=None, rdc_weight=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_err=None, pcs_weight=None, atomic_pos=None, temp=None, frq=None, paramag_centre=None, com=None, ave_pos_pivot=None, pivot=None, pivot_opt=None, sobol_max_points=None, sobol_oversample=None, verbosity=None):
+    def __init__(self, points=None, scaling_matrix=None, sim_index=None, model=None, param_vector=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_err=None, rdc_weight=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_err=None, pcs_weight=None, atomic_pos=None, temp=None, frq=None, paramag_centre=None, com=None, ave_pos_pivot=None, pivot=None, pivot_opt=None, sobol_max_points=None, sobol_oversample=None, verbosity=None, quad_int=False):
         """Initialise the base class, storing all the master data to be sent to the slave processor.
 
         This method is run on the master processor whereas the run() method is run on the slave processor.
@@ -998,6 +998,8 @@ class Frame_order_grid_command(Slave_command):
         @type sobol_oversample:     int
         @keyword verbosity:         The verbosity level.  This is used by the result command returned to the master for printouts.
         @type verbosity:            int
+        @keyword quad_int:          A flag which if True will perform high precision numerical integration via the scipy.integrate quad(), dblquad() and tplquad() integration methods rather than the rough quasi-random numerical integration.
+        @type quad_int:             bool
         """
 
         # Store the arguments.
@@ -1026,6 +1028,7 @@ class Frame_order_grid_command(Slave_command):
         self.sobol_max_points = sobol_max_points
         self.sobol_oversample = sobol_oversample
         self.verbosity = verbosity
+        self.quad_int = quad_int
 
 
     def run(self, processor, completed):
@@ -1077,7 +1080,7 @@ class Frame_order_memo(Memo):
 class Frame_order_minimise_command(Slave_command):
     """Command class for relaxation dispersion optimisation on the slave processor."""
 
-    def __init__(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, scaling_matrix=None, constraints=False, sim_index=None, model=None, param_vector=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_err=None, rdc_weight=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_err=None, pcs_weight=None, atomic_pos=None, temp=None, frq=None, paramag_centre=None, com=None, ave_pos_pivot=None, pivot=None, pivot_opt=None, sobol_max_points=None, sobol_oversample=None, verbosity=None):
+    def __init__(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, scaling_matrix=None, constraints=False, sim_index=None, model=None, param_vector=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_err=None, rdc_weight=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_err=None, pcs_weight=None, atomic_pos=None, temp=None, frq=None, paramag_centre=None, com=None, ave_pos_pivot=None, pivot=None, pivot_opt=None, sobol_max_points=None, sobol_oversample=None, verbosity=None, quad_int=False):
         """Initialise the base class, storing all the master data to be sent to the slave processor.
 
         This method is run on the master processor whereas the run() method is run on the slave processor.
@@ -1142,6 +1145,8 @@ class Frame_order_minimise_command(Slave_command):
         @type sobol_oversample:     int
         @keyword scaling_matrix:    The diagonal, square scaling matrix.
         @type scaling_matrix:       numpy diagonal matrix
+        @keyword quad_int:          A flag which if True will perform high precision numerical integration via the scipy.integrate quad(), dblquad() and tplquad() integration methods rather than the rough quasi-random numerical integration.
+        @type quad_int:             bool
         """
 
         # Store some arguments.
@@ -1174,6 +1179,7 @@ class Frame_order_minimise_command(Slave_command):
         self.sobol_max_points = sobol_max_points
         self.sobol_oversample = sobol_oversample
         self.verbosity = verbosity
+        self.quad_int = quad_int
 
         # Linear constraints.
         self.A, self.b = None, None
