@@ -23,8 +23,12 @@
 """Module for the double rotor frame order model."""
 
 # Python module imports.
-from math import pi
+from math import cos, pi, sin
 from numpy import add, divide, dot, eye, float64, multiply, sinc, swapaxes, tensordot
+try:
+    from scipy.integrate import dblquad
+except ImportError:
+    pass
 
 # relax module imports.
 from lib.compat import norm
@@ -181,6 +185,57 @@ def pcs_numeric_qr_int_double_rotor(points=None, max_points=None, sigma_max=None
         divide(pcs_theta, float(num), pcs_theta)
 
 
+def pcs_numeric_quad_int_double_rotor(sigma_max=None, sigma_max_2=None, c=None, r_pivot_atom=None, r_ln_pivot=None, r_inter_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, Ri2_prime=None):
+    """Determine the averaged PCS value via SciPy quadratic numerical integration.
+
+    @keyword sigma_max:         The maximum opening angle for the first rotor.
+    @type sigma_max:            float
+    @keyword sigma_max_2:       The maximum opening angle for the second rotor.
+    @type sigma_max_2:          float
+    @keyword c:                 The PCS constant (without the interatomic distance and in Angstrom units).
+    @type c:                    numpy rank-1 array
+    @keyword r_pivot_atom:      The pivot point to atom vector.
+    @type r_pivot_atom:         numpy rank-1, 3D array
+    @keyword r_ln_pivot:        The lanthanide position to pivot point vector.
+    @type r_ln_pivot:           numpy rank-1, 3D array
+    @keyword r_inter_pivot:     The vector between the two pivots.
+    @type r_inter_pivot:        numpy rank-1, 3D array
+    @keyword A:                 The full alignment tensor of the non-moving domain.
+    @type A:                    numpy rank-2, 3D array
+    @keyword R_eigen:           The eigenframe rotation matrix.
+    @type R_eigen:              numpy rank-2, 3D array
+    @keyword RT_eigen:          The transpose of the eigenframe rotation matrix (for faster calculations).
+    @type RT_eigen:             numpy rank-2, 3D array
+    @keyword Ri_prime:          The array of pre-calculated rotation matrices for the in-frame double rotor motion for the 1st mode of motion, used to calculate the PCS for each state i in the numerical integration.
+    @type Ri_prime:             numpy rank-2, 3D array
+    @keyword Ri2_prime:         The array of pre-calculated rotation matrices for the in-frame double rotor motion for the 2nd mode of motion, used to calculate the PCS for each state i in the numerical integration.
+    @type Ri2_prime:            numpy rank-2, 3D array
+    """
+
+    # Preset the 1st rotation matrix elements for state i.
+    Ri_prime[0, 1] = 0.0
+    Ri_prime[1, 0] = 0.0
+    Ri_prime[1, 1] = 1.0
+    Ri_prime[1, 2] = 0.0
+    Ri_prime[2, 1] = 0.0
+
+    # Preset the 2nd rotation matrix elements for state i.
+    Ri2_prime[0, 0] = 1.0
+    Ri2_prime[0, 1] = 0.0
+    Ri2_prime[0, 2] = 0.0
+    Ri2_prime[1, 0] = 0.0
+    Ri2_prime[2, 0] = 0.0
+
+    # Perform numerical integration.
+    result = dblquad(pcs_pivot_motion_double_rotor_quad_int, -sigma_max, sigma_max, lambda sigma2: -sigma_max_2, lambda sigma2: sigma_max_2, args=(r_pivot_atom, r_ln_pivot, r_inter_pivot, A, R_eigen, RT_eigen, Ri_prime, Ri2_prime))
+
+    # The surface area normalisation factor.
+    SA = 4.0 * sigma_max * sigma_max_2
+
+    # Return the value.
+    return c * result[0] / SA
+
+
 def pcs_pivot_motion_double_rotor_qr_int(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, r_inter_pivot=None, A=None, Ri=None, Ri2=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Calculate the PCS value after a pivoted motion for the double rotor model.
 
@@ -249,3 +304,75 @@ def pcs_pivot_motion_double_rotor_qr_int(full_in_ref_frame=None, r_pivot_atom=No
 
             # The PCS.
             pcs_theta[i, j] += proj * length_i
+
+
+def pcs_pivot_motion_double_rotor_quad_int(sigma_i, sigma2_i, r_pivot_atom, r_ln_pivot, r_inter_pivot, A, R_eigen, RT_eigen, Ri_prime, Ri2_prime):
+    """Calculate the PCS value after a pivoted motion for the double rotor model.
+
+    @param sigma_i:             The 1st torsion angle for state i.
+    @type sigma_i:              float
+    @param sigma2_i:            The 1st torsion angle for state i.
+    @type sigma2_i:             float
+    @param r_pivot_atom:        The pivot point to atom vector.
+    @type r_pivot_atom:         numpy rank-2, 3D array
+    @param r_ln_pivot:          The lanthanide position to pivot point vector.
+    @type r_ln_pivot:           numpy rank-2, 3D array
+    @param r_inter_pivot:       The vector between the two pivots.
+    @type r_inter_pivot:        numpy rank-1, 3D array
+    @param A:                   The full alignment tensor of the non-moving domain.
+    @type A:                    numpy rank-2, 3D array
+    @param R_eigen:             The eigenframe rotation matrix.
+    @type R_eigen:              numpy rank-2, 3D array
+    @param RT_eigen:            The transpose of the eigenframe rotation matrix (for faster calculations).
+    @type RT_eigen:             numpy rank-2, 3D array
+    @param Ri_prime:            The empty rotation matrix for state i.
+    @type Ri_prime:             numpy rank-2, 3D array
+    @param Ri2_prime:           The 2nd empty rotation matrix for state i.
+    @type Ri2_prime:            numpy rank-2, 3D array
+    @return:                    The PCS value for the changed position.
+    @rtype:                     float
+    """
+
+    # The 1st rotation matrix.
+    c_sigma = cos(sigma_i)
+    s_sigma = sin(sigma_i)
+    Ri_prime[0, 0] =  c_sigma
+    Ri_prime[0, 2] =  s_sigma
+    Ri_prime[2, 0] = -s_sigma
+    Ri_prime[2, 2] =  c_sigma
+
+    # The 2nd rotation matrix.
+    c_sigma = cos(sigma2_i)
+    s_sigma = sin(sigma2_i)
+    Ri2_prime[1, 1] =  c_sigma
+    Ri2_prime[1, 2] = -s_sigma
+    Ri2_prime[2, 1] =  s_sigma
+    Ri2_prime[2, 2] =  c_sigma
+
+    # The rotations.
+    Ri = dot(R_eigen, dot(Ri_prime, RT_eigen))
+    Ri2 = dot(R_eigen, dot(Ri2_prime, RT_eigen))
+
+    # Rotate the first pivot to atomic position vectors.
+    rot_vect = dot(r_pivot_atom, Ri)
+
+    # Add the inter-pivot vector to obtain the 2nd pivot to atomic position vectors.
+    add(r_inter_pivot, rot_vect, rot_vect)
+
+    # Rotate the 2nd pivot to atomic position vectors.
+    rot_vect = dot(rot_vect, Ri2)
+
+    # Add the lanthanide to pivot vector.
+    add(rot_vect, r_ln_pivot, rot_vect)
+
+    # The vector length.
+    length = norm(rot_vect)
+
+    # The projection.
+    proj = dot(rot_vect, dot(A, rot_vect))
+
+    # The PCS.
+    pcs = proj / length**5
+
+    # Return the PCS value (without the PCS constant).
+    return pcs
