@@ -559,15 +559,16 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[6:]
+            ave_pos_beta, ave_pos_gamma, axis_alpha = params[6:]
         else:
+            pivot = self.pivot
             self._translation_vector = params[:3]
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[3:]
+            ave_pos_beta, ave_pos_gamma, axis_alpha = params[3:]
 
-        # Generate the cone axis from the spherical angles.
-        spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
+        # Generate the rotor axis.
+        self.cone_axis = create_rotor_axis_alpha(alpha=axis_alpha, pivot=pivot[0], point=self.com)
 
         # Pre-calculate the eigenframe rotation matrix.
         two_vect_to_R(self.z_axis, self.cone_axis, self.R_eigen)
@@ -587,7 +588,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -723,10 +724,11 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[6:]
         else:
+            pivot = self.pivot
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[3:]
 
@@ -751,7 +753,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -890,10 +892,11 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[6:]
         else:
+            pivot = self.pivot
             self._translation_vector = params[:3]
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[3:]
 
@@ -921,7 +924,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -1057,10 +1060,11 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[6:]
         else:
+            pivot = self.pivot
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[3:]
 
@@ -1085,7 +1089,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -1218,10 +1222,11 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[6:]
         else:
+            pivot = self.pivot
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[3:]
 
@@ -1243,7 +1248,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -1376,12 +1381,13 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[6:]
+            ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[6:]
         else:
+            pivot = self.pivot
             self._translation_vector = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
+            ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
 
         # Average position rotation.
         euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
@@ -1393,7 +1399,7 @@ class Frame_order:
         frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.frame_order_2nd, Rx2_eigen, cone_theta_x, cone_theta_y)
 
         # Reduce and rotate the tensors.
-        self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
+        self.reduce_and_rot(0.0, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
         # Pre-transpose matrices for faster calculations.
         RT_eigen = transpose(self.R_eigen)
@@ -1401,7 +1407,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -1534,10 +1540,11 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[6:]
         else:
+            pivot = self.pivot
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
 
@@ -1559,7 +1566,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -1774,15 +1781,16 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params[6:]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_alpha, sigma_max = params[6:]
         else:
+            pivot = self.pivot
             self._translation_vector = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params[3:]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_alpha, sigma_max = params[3:]
 
-        # Generate the cone axis from the spherical angles.
-        spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
+        # Generate the rotor axis.
+        self.cone_axis = create_rotor_axis_alpha(alpha=axis_alpha, pivot=pivot[0], point=self.com)
 
         # Pre-calculate the eigenframe rotation matrix.
         two_vect_to_R(self.z_axis, self.cone_axis, self.R_eigen)
@@ -1802,7 +1810,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
