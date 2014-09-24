@@ -129,7 +129,9 @@ class Frame_order(API_base, API_common):
         # Set up the data structures for the target function.
         param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(sim_index=sim_index, verbosity=verbosity, unset_fail=True)
 
-        # The Sobol' integration information.
+        # The numeric integration information.
+        if not hasattr(cdp, 'quad_int'):
+            cdp.quad_int = False
         sobol_max_points, sobol_oversample = None, None
         if hasattr(cdp, 'sobol_max_points'):
             sobol_max_points = cdp.sobol_max_points
@@ -465,7 +467,9 @@ class Frame_order(API_base, API_common):
                     warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
                 constraints = False
 
-        # The Sobol' integration information.
+        # The numeric integration information.
+        if not hasattr(cdp, 'quad_int'):
+            cdp.quad_int = False
         sobol_max_points, sobol_oversample = None, None
         if hasattr(cdp, 'sobol_max_points'):
             sobol_max_points = cdp.sobol_max_points
@@ -576,7 +580,9 @@ class Frame_order(API_base, API_common):
         # Set up the data structures for the target function.
         param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(sim_index=sim_index, verbosity=verbosity, unset_fail=True)
 
-        # The Sobol' integration information.
+        # The numeric integration information.
+        if not hasattr(cdp, 'quad_int'):
+            cdp.quad_int = False
         sobol_max_points, sobol_oversample = None, None
         if hasattr(cdp, 'sobol_max_points'):
             sobol_max_points = cdp.sobol_max_points

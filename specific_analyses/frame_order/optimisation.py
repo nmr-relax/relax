@@ -87,7 +87,9 @@ def count_sobol_points(target_fn=None, verbosity=1):
         # Set up the data structures for the target function.
         param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(verbosity=0, unset_fail=True)
 
-        # The Sobol' integration information.
+        # The numeric integration information.
+        if not hasattr(cdp, 'quad_int'):
+            cdp.quad_int = False
         sobol_max_points, sobol_oversample = None, None
         if hasattr(cdp, 'sobol_max_points'):
             sobol_max_points = cdp.sobol_max_points
