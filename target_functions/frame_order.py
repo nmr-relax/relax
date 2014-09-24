@@ -304,7 +304,7 @@ class Frame_order:
             self.d2rdc_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_interatom), float64)
 
         # The quasi-random integration.
-        if not quad_int and self.pcs_flag and model not in ['rigid']:
+        if not quad_int and model not in ['rigid']:
             # The Sobol' sequence data and target function aliases (quasi-random integration).
             if model == MODEL_PSEUDO_ELLIPSE:
                 self.create_sobol_data(dims=['theta', 'phi', 'sigma'])
