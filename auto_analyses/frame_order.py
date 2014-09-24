@@ -56,7 +56,7 @@ from status import Status; status = Status()
 class Frame_order_analysis:
     """The frame order auto-analysis protocol."""
 
-    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000):
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, pre_run_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000):
         """Perform the full frame order analysis.
 
         @param data_pipe_full:          The name of the data pipe containing all of the RDC and PCS data.
@@ -67,7 +67,9 @@ class Frame_order_analysis:
         @type pipe_bundle:              str
         @keyword results_dir:           The directory where files are saved in.
         @type results_dir:              str
+        @keyword pre_run_dir:           The optional directory containing the frame order auto-analysis results from a previous run.  If supplied, then the 'data_pipe_full', 'data_pipe_subset', and 'opt_subset' arguments will be ignored.  The results will be loaded from the results files in this directory, and then optimisation starts from there.  The model nesting algorithm will also be deactivated.
         @keyword opt_rigid:             The grid search, zooming grid search and minimisation settings object for the rigid frame order model.
+        @type pre_run_dir:              None or str
         @type opt_rigid:                Optimisation_settings instance
         @keyword opt_subset:            The grid search, zooming grid search and minimisation settings object for optimisation of all models, excluding the rigid model, for the PCS data subset.
         @type opt_subset:               Optimisation_settings instance
@@ -120,6 +122,13 @@ class Frame_order_analysis:
                 self.results_dir = results_dir + sep
             else:
                 self.results_dir = getcwd() + sep
+
+            # The pre-run directory.
+            self.pre_run_dir = pre_run_dir
+            self.pre_run_flag = False
+            if self.pre_run_dir:
+                self.pre_run_dir += sep
+                self.pre_run_flag = True
 
             # Data checks.
             self.check_vars()
@@ -338,11 +347,13 @@ class Frame_order_analysis:
         return incs
 
 
-    def model_directory(self, model):
+    def model_directory(self, model, pre_run=False):
         """Return the directory to be used for the model.
 
-        @param model:   The frame order model.
-        @type model:    str
+        @param model:       The frame order model.
+        @type model:        str
+        @keyword pre_run:   A flag which if True will prepend the pre-run results directory instead of the current results directory.
+        @type pre_run:      bool
         """
 
         # Convert the model name.
@@ -350,7 +361,10 @@ class Frame_order_analysis:
         dir = dir.replace(',', '')
 
         # Return the full path.
-        return self.results_dir + dir
+        if pre_run:
+            return self.pre_run_dir + dir
+        else:
+            return self.results_dir + dir
 
 
     def nested_params_ave_dom_pos(self, model):
@@ -583,64 +597,73 @@ class Frame_order_analysis:
                 # Skip to the next model.
                 continue
 
-            # Create the data pipe using the full data set, and switch to it.
-            self.interpreter.pipe.copy(self.data_pipe_subset, self.pipe_name_dict[model], bundle_to=self.pipe_bundle)
-            self.interpreter.pipe.switch(self.pipe_name_dict[model])
+            # Load a pre-run results file.
+            if self.pre_run_dir != None:
+                self.read_results(model=model, pipe_name=self.pipe_name_dict[model], pre_run=True)
 
-            # Select the Frame Order model.
-            self.interpreter.frame_order.select_model(model=model)
+            # Otherwise use the base data pipes.
+            else:
+                # Create the data pipe using the full data set, and switch to it.
+                self.interpreter.pipe.copy(self.data_pipe_subset, self.pipe_name_dict[model], bundle_to=self.pipe_bundle)
+                self.interpreter.pipe.switch(self.pipe_name_dict[model])
 
-            # Copy nested parameters.
-            subsection(file=sys.stdout, text="Parameter nesting.")
-            self.nested_params_ave_dom_pos(model)
-            self.nested_params_eigenframe(model)
-            self.nested_params_pivot(model)
-            self.nested_params_order(model)
+                # Select the Frame Order model.
+                self.interpreter.frame_order.select_model(model=model)
 
-            # Zooming grid search.
+                # Copy nested parameters.
+                subsection(file=sys.stdout, text="Parameter nesting.")
+                self.nested_params_ave_dom_pos(model)
+                self.nested_params_eigenframe(model)
+                self.nested_params_pivot(model)
+                self.nested_params_order(model)
+
+            # Optimisation using the PCS subset (skipped if a pre-run directory is supplied).
             opt = self.opt_subset
-            for i in opt.loop_grid():
-                # Set the zooming grid search level.
-                zoom = opt.get_grid_zoom_level(i)
-                if zoom != None:
-                    self.interpreter.minimise.grid_zoom(level=zoom)
+            if opt != None and not self.pre_run_flag:
+                # Zooming grid search.
+                for i in opt.loop_grid():
+                    # Set the zooming grid search level.
+                    zoom = opt.get_grid_zoom_level(i)
+                    if zoom != None:
+                        self.interpreter.minimise.grid_zoom(level=zoom)
 
-                # The numerical optimisation settings.
-                self.sobol_setup(opt.get_grid_sobol_info(i))
+                    # The numerical optimisation settings.
+                    self.sobol_setup(opt.get_grid_sobol_info(i))
 
-                # Set up the custom grid increments.
-                incs = self.custom_grid_incs(model, inc=opt.get_grid_inc(i))
+                    # Set up the custom grid increments.
+                    incs = self.custom_grid_incs(model, inc=opt.get_grid_inc(i))
 
-                # Perform the grid search.
-                self.interpreter.minimise.grid_search(inc=incs)
+                    # Perform the grid search.
+                    self.interpreter.minimise.grid_search(inc=incs)
 
-            # Minimise (for the PCS data subset and full RDC set).
-            for i in opt.loop_min():
-                # The numerical optimisation settings.
-                self.sobol_setup(opt.get_min_sobol_info(i))
+                # Minimise (for the PCS data subset and full RDC set).
+                for i in opt.loop_min():
+                    # The numerical optimisation settings.
+                    self.sobol_setup(opt.get_min_sobol_info(i))
 
-                # Perform the optimisation.
-                self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
+                    # Perform the optimisation.
+                    self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
 
-            # Copy the PCS data.
-            self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
+                # Copy the PCS data.
+                self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
 
-            # Reset the selection status.
-            for spin, spin_id in spin_loop(return_id=True, skip_desel=False):
-                # Get the spin from the original pipe.
-                spin_orig = return_spin(spin_id=spin_id, pipe=self.data_pipe_full)
+                # Reset the selection status.
+                for spin, spin_id in spin_loop(return_id=True, skip_desel=False):
+                    # Get the spin from the original pipe.
+                    spin_orig = return_spin(spin_id=spin_id, pipe=self.data_pipe_full)
 
-                # Reset the spin selection.
-                spin.select = spin_orig.select
+                    # Reset the spin selection.
+                    spin.select = spin_orig.select
 
-            # Minimise (for the full data set).
+            # Optimisation using the full data set.
             opt = self.opt_full
-            for i in opt.loop_min():
-                # The numerical optimisation settings.
-                self.sobol_setup(opt.get_min_sobol_info(i))
+            if opt != None:
+                for i in opt.loop_min():
+                    # The numerical optimisation settings.
+                    self.sobol_setup(opt.get_min_sobol_info(i))
 
-                # Perform the optimisation.
-                self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
+                    # Perform the optimisation.
+                    self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
 
             # Results printout.
             self.print_results()
@@ -687,44 +710,52 @@ class Frame_order_analysis:
             # Nothing more to do.
             return
 
-        # Create the data pipe using the full data set, and switch to it.
-        self.interpreter.pipe.copy(self.data_pipe_full, self.pipe_name_dict[model], bundle_to=self.pipe_bundle)
-        self.interpreter.pipe.switch(self.pipe_name_dict[model])
+        # Load a pre-run results file.
+        if self.pre_run_flag:
+            self.read_results(model=model, pipe_name=self.pipe_name_dict[model], pre_run=True)
 
-        # Select the Frame Order model.
-        self.interpreter.frame_order.select_model(model=model)
+        # Otherwise use the base data pipes.
+        else:
+            # Create the data pipe using the full data set, and switch to it.
+            self.interpreter.pipe.copy(self.data_pipe_full, self.pipe_name_dict[model], bundle_to=self.pipe_bundle)
+            self.interpreter.pipe.switch(self.pipe_name_dict[model])
 
-        # Split zooming grid search for the translation.
-        print("\n\nTranslation active - splitting the grid search and iterating.")
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+            # Select the Frame Order model.
+            self.interpreter.frame_order.select_model(model=model)
+
+        # Optimisation. 
         opt = self.opt_rigid
-        for i in opt.loop_grid():
-            # Set the zooming grid search level.
-            zoom = opt.get_grid_zoom_level(i)
-            if zoom != None:
-                self.interpreter.minimise.grid_zoom(level=zoom)
+        if opt != None:
+            # Split zooming grid search for the translation.
+            print("\n\nTranslation active - splitting the grid search and iterating.")
+            self.interpreter.value.set(param='ave_pos_x', val=0.0)
+            self.interpreter.value.set(param='ave_pos_y', val=0.0)
+            self.interpreter.value.set(param='ave_pos_z', val=0.0)
+            for i in opt.loop_grid():
+                # Set the zooming grid search level.
+                zoom = opt.get_grid_zoom_level(i)
+                if zoom != None:
+                    self.interpreter.minimise.grid_zoom(level=zoom)
 
-            # The numerical optimisation settings.
-            self.sobol_setup(opt.get_grid_sobol_info(i))
+                # The numerical optimisation settings.
+                self.sobol_setup(opt.get_grid_sobol_info(i))
 
-            # The number of increments.
-            inc = opt.get_grid_inc(i)
+                # The number of increments.
+                inc = opt.get_grid_inc(i)
 
-            # First optimise the rotation.
-            self.interpreter.minimise.grid_search(inc=[None, None, None, inc, inc, inc], skip_preset=False)
+                # First optimise the rotation.
+                self.interpreter.minimise.grid_search(inc=[None, None, None, inc, inc, inc], skip_preset=False)
 
-            # Then the translation.
-            self.interpreter.minimise.grid_search(inc=[inc, inc, inc, None, None, None], skip_preset=False)
+                # Then the translation.
+                self.interpreter.minimise.grid_search(inc=[inc, inc, inc, None, None, None], skip_preset=False)
 
-        # Minimise.
-        for i in opt.loop_min():
-            # The numerical optimisation settings.
-            self.sobol_setup(opt.get_min_sobol_info(i))
+            # Minimise.
+            for i in opt.loop_min():
+                # The numerical optimisation settings.
+                self.sobol_setup(opt.get_min_sobol_info(i))
 
-            # Perform the optimisation.
-            self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
+                # Perform the optimisation.
+                self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
 
         # Results printout.
         self.print_results()
@@ -817,19 +848,21 @@ class Frame_order_analysis:
         sys.stdout.write("\n")
 
 
-    def read_results(self, model=None, pipe_name=None):
+    def read_results(self, model=None, pipe_name=None, pre_run=False):
         """Attempt to read old results files.
 
         @keyword model:     The frame order model.
         @type model:        str
         @keyword pipe_name: The name of the data pipe to use for this model.
         @type pipe_name:    str
+        @keyword pre_run:   A flag which if True will read the results file from the pre-run directory.
+        @type pre_run:      bool
         @return:            True if the file exists and has been read, False otherwise.
         @rtype:             bool
         """
 
         # The file name.
-        path = self.model_directory(model) + sep + 'results.bz2'
+        path = self.model_directory(model, pre_run=pre_run) + sep + 'results.bz2'
 
         # The file does not exist.
         if not access(path, F_OK):
