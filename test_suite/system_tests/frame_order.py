@@ -59,13 +59,11 @@ if SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
 class Frame_order(SystemTestCase):
     """TestCase class for the functional tests of the frame order theories."""
 
-    def __init__(self, methodName='runTest', skip_tests=True):
+    def __init__(self, methodName='runTest'):
         """Skip the tests if scipy is not installed.
 
         @keyword methodName:    The name of the test.
         @type methodName:       str
-        @keyword skip_tests:    A flag which if True will cause a large number of redundant tests to be skipped.
-        @type skip_tests:       bool
         """
 
         # Execute the base class method.
@@ -128,7 +126,7 @@ class Frame_order(SystemTestCase):
         ]
 
         # Skip the blacklisted tests.
-        if skip_tests and methodName in blacklist:
+        if methodName in blacklist:
             status.skipped_tests.append([methodName, None, self._skip_type])
 
         # Missing module.
