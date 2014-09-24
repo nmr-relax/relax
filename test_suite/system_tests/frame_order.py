@@ -1027,7 +1027,7 @@ class Frame_order(SystemTestCase):
         """Test the free rotor frame order model of CaM."""
 
         # The flags, execute the script, and then check the chi2 value.
-        self.flags(opt=True)
+        self.flags(opt=True, quad_int=True)
         self.interpreter.run(script_file=self.cam_path+'free_rotor.py')
         self.check_chi2(0.049488502147038226)
 
@@ -1090,7 +1090,7 @@ class Frame_order(SystemTestCase):
         """Test the isotropic cone, free rotor frame order model of CaM."""
 
         # The flags, execute the script, and then check the chi2 value.
-        self.flags(opt=True)
+        self.flags(opt=True, quad_int=True)
         self.interpreter.run(script_file=self.cam_path+'iso_cone.py')
         self.check_chi2(0.046263256206108584)
 
@@ -1198,7 +1198,7 @@ class Frame_order(SystemTestCase):
         """Test the second isotropic cone, free rotor frame order model of CaM."""
 
         # The flags, execute the script, and then check the chi2 value.
-        self.flags(opt=True)
+        self.flags(opt=True, quad_int=True)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse.py')
         self.check_chi2(0.052923535071890106)
 
@@ -1306,7 +1306,7 @@ class Frame_order(SystemTestCase):
         """Test the rigid frame order model of CaM."""
 
         # The flags, execute the script, and then check the chi2 value.
-        self.flags(opt=True)
+        self.flags(opt=True, quad_int=True)
         self.interpreter.run(script_file=self.cam_path+'rigid.py')
         self.check_chi2(0.081171019382935666)
 
@@ -1387,7 +1387,7 @@ class Frame_order(SystemTestCase):
         """Test the second rotor frame order model of CaM."""
 
         # The flags, execute the script, and then check the chi2 value.
-        self.flags(opt=True)
+        self.flags(opt=True, quad_int=True)
         self.interpreter.run(script_file=self.cam_path+'rotor2.py')
         self.check_chi2(0.075040490418167072)
 
