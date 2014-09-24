@@ -604,7 +604,6 @@ class Frame_order_analysis:
                 zoom = opt.get_grid_zoom_level(i)
                 if zoom != None:
                     self.interpreter.minimise.grid_zoom(level=zoom)
-            self.interpreter.frame_order.quad_int(flag=False)
 
                 # The numerical optimisation settings.
                 self.sobol_setup(opt.get_grid_sobol_info(i))
