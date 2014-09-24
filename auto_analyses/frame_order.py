@@ -37,7 +37,7 @@ import sys
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from lib.arg_check import is_float, is_int, is_str
+from lib.arg_check import is_bool, is_float, is_int, is_str
 from lib.errors import RelaxError
 from lib.frame_order.conversions import convert_axis_alpha_to_spherical
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_NONREDUNDANT, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
@@ -957,6 +957,7 @@ class Optimisation_settings:
         self._grid_zoom = []
         self._grid_sobol_max_points = []
         self._grid_sobol_oversample = []
+        self._grid_quad_int = []
 
         # Initialise some private structures for the minimisation.
         self._min_count = 0
@@ -965,6 +966,7 @@ class Optimisation_settings:
         self._min_max_iter = []
         self._min_sobol_max_points = []
         self._min_sobol_oversample = []
+        self._min_quad_int = []
 
 
     def _check_index(self, i, iter_type=None):
@@ -987,7 +989,7 @@ class Optimisation_settings:
             raise RelaxError("The iteration index %i is too high, only %i minimisations are set up." % (i, self._min_count))
 
 
-    def add_grid(self, inc=None, zoom=None, sobol_max_points=None, sobol_oversample=None):
+    def add_grid(self, inc=None, zoom=None, sobol_max_points=None, sobol_oversample=None, quad_int=False):
         """Add a grid search step.
 
         @keyword inc:               The grid search size (the number of increments per dimension).
@@ -998,6 +1000,8 @@ class Optimisation_settings:
         @type sobol_max_points:     None or int
         @keyword sobol_oversample:  The Sobol' oversampling factor.  See the frame_order.sobol_setup user function for details.
         @type sobol_oversample:     None or int
+        @keyword quad_int:          The SciPy quadratic integration flag.  See the frame_order.quad_int user function for details.
+        @type quad_int:             bool
         """
 
         # Value checking, as this will be set up by a user.
@@ -1005,18 +1009,20 @@ class Optimisation_settings:
         is_int(zoom, name='zoom', can_be_none=True)
         is_int(sobol_max_points, name='sobol_max_points', can_be_none=True)
         is_int(sobol_oversample, name='sobol_oversample', can_be_none=True)
+        is_bool(quad_int, name='quad_int')
 
         # Store the values.
         self._grid_incs.append(inc)
         self._grid_zoom.append(zoom)
         self._grid_sobol_max_points.append(sobol_max_points)
         self._grid_sobol_oversample.append(sobol_oversample)
+        self._grid_quad_int.append(quad_int)
 
         # Increment the count.
         self._grid_count += 1
 
 
-    def add_min(self, min_algor='simplex', func_tol=1e-25, max_iter=1000000, sobol_max_points=None, sobol_oversample=None):
+    def add_min(self, min_algor='simplex', func_tol=1e-25, max_iter=1000000, sobol_max_points=None, sobol_oversample=None, quad_int=False):
         """Add an optimisation step.
 
         @keyword min_algor:         The optimisation technique.
@@ -1029,6 +1035,8 @@ class Optimisation_settings:
         @type sobol_max_points:     None or int
         @keyword sobol_oversample:  The Sobol' oversampling factor.  See the frame_order.sobol_setup user function for details.
         @type sobol_oversample:     None or int
+        @keyword quad_int:          The SciPy quadratic integration flag.  See the frame_order.quad_int user function for details.
+        @type quad_int:             bool
         """
 
         # Value checking, as this will be set up by a user.
@@ -1037,6 +1045,7 @@ class Optimisation_settings:
         is_int(max_iter, name='max_iter', can_be_none=True)
         is_int(sobol_max_points, name='sobol_max_points', can_be_none=True)
         is_int(sobol_oversample, name='sobol_oversample', can_be_none=True)
+        is_bool(quad_int, name='quad_int')
 
         # Store the values.
         self._min_algor.append(min_algor)
@@ -1044,6 +1053,7 @@ class Optimisation_settings:
         self._min_max_iter.append(max_iter)
         self._min_sobol_max_points.append(sobol_max_points)
         self._min_sobol_oversample.append(sobol_oversample)
+        self._min_quad_int.append(quad_int)
 
         # Increment the count.
         self._min_count += 1
@@ -1063,6 +1073,22 @@ class Optimisation_settings:
 
         # Return the value.
         return self._grid_incs[i]
+
+
+    def get_grid_quad_int(self, i):
+        """Return the SciPy quadratic integration flag for the given iteration.
+
+        @param i:   The grid search iteration from the loop_grid() method.
+        @type i:    int
+        @return:    The SciPy quadratic integration flag for the iteration.
+        @rtype:     bool
+        """
+
+        # Check the index.
+        self._check_index(i, iter_type='grid')
+
+        # Return the value.
+        return self._grid_quad_int[i]
 
 
     def get_grid_sobol_info(self, i):
@@ -1143,6 +1169,22 @@ class Optimisation_settings:
 
         # Return the value.
         return self._min_max_iter[i]
+
+
+    def get_min_quad_int(self, i):
+        """Return the SciPy quadratic integration flag for the given iteration.
+
+        @param i:   The minimisation iteration from the loop_min() method.
+        @type i:    int
+        @return:    The SciPy quadratic integration flag for the iterationor.
+        @rtype:     bool
+        """
+
+        # Check the index.
+        self._check_index(i, iter_type='min')
+
+        # Return the value.
+        return self._min_quad_int[i]
 
 
     def get_min_sobol_info(self, i):
