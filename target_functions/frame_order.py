@@ -136,6 +136,7 @@ class Frame_order:
         self.sobol_oversample = sobol_oversample
         self.com = com
         self.pivot_opt = pivot_opt
+        self.quad_int = quad_int
 
         # Tensor setup.
         self._init_tensors()
@@ -303,67 +304,45 @@ class Frame_order:
             self.drdc_theta = zeros((self.total_num_params, self.num_align, self.num_interatom), float64)
             self.d2rdc_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_interatom), float64)
 
-        # The quasi-random integration.
-        if not quad_int and model not in ['rigid']:
-            # The Sobol' sequence data and target function aliases (quasi-random integration).
+        # The target function extension.
+        ext = '_qrint'
+        if self.quad_int:
+            ext = ''
+
+        # Non-numerical models.
+        if model in [MODEL_RIGID]:
+            if model == MODEL_RIGID:
+                self.func = self.func_rigid
+
+        # The Sobol' sequence data and target function aliases.
+        else:
             if model == MODEL_PSEUDO_ELLIPSE:
                 self.create_sobol_data(dims=['theta', 'phi', 'sigma'])
-                self.func = self.func_pseudo_ellipse_qrint
+                self.func = getattr(self, 'func_pseudo_ellipse'+ext)
             elif model == MODEL_PSEUDO_ELLIPSE_TORSIONLESS:
                 self.create_sobol_data(dims=['theta', 'phi'])
-                self.func = self.func_pseudo_ellipse_torsionless_qrint
+                self.func = getattr(self, 'func_pseudo_ellipse_torsionless'+ext)
             elif model == MODEL_PSEUDO_ELLIPSE_FREE_ROTOR:
                 self.create_sobol_data(dims=['theta', 'phi', 'sigma'])
-                self.func = self.func_pseudo_ellipse_free_rotor_qrint
+                self.func = getattr(self, 'func_pseudo_ellipse_free_rotor'+ext)
             elif model == MODEL_ISO_CONE:
                 self.create_sobol_data(dims=['theta', 'phi', 'sigma'])
-                self.func = self.func_iso_cone_qrint
+                self.func = getattr(self, 'func_iso_cone'+ext)
             elif model == MODEL_ISO_CONE_TORSIONLESS:
                 self.create_sobol_data(dims=['theta', 'phi'])
-                self.func = self.func_iso_cone_torsionless_qrint
+                self.func = getattr(self, 'func_iso_cone_torsionless'+ext)
             elif model == MODEL_ISO_CONE_FREE_ROTOR:
                 self.create_sobol_data(dims=['theta', 'phi', 'sigma'])
-                self.func = self.func_iso_cone_free_rotor_qrint
+                self.func = getattr(self, 'func_iso_cone_free_rotor'+ext)
             elif model == MODEL_ROTOR:
                 self.create_sobol_data(dims=['sigma'])
-                self.func = self.func_rotor_qrint
-            elif model == MODEL_RIGID:
-                self.func = self.func_rigid
+                self.func = getattr(self, 'func_rotor'+ext)
             elif model == MODEL_FREE_ROTOR:
                 self.create_sobol_data(dims=['sigma'])
-                self.func = self.func_free_rotor_qrint
+                self.func = getattr(self, 'func_free_rotor'+ext)
             elif model == MODEL_DOUBLE_ROTOR:
                 self.create_sobol_data(dims=['sigma', 'sigma2'])
-                self.func = self.func_double_rotor
-
-        # The target function aliases (Scipy numerical integration).
-        else:
-            if model == 'pseudo-ellipse':
-                self.func = self.func_pseudo_ellipse
-            elif model == 'pseudo-ellipse, torsionless':
-                self.func = self.func_pseudo_ellipse_torsionless
-            elif model == 'pseudo-ellipse, free rotor':
-                self.func = self.func_pseudo_ellipse_free_rotor
-            elif model == 'iso cone':
-                self.func = self.func_iso_cone
-            elif model == 'iso cone, torsionless':
-                self.func = self.func_iso_cone_torsionless
-            elif model == 'iso cone, free rotor':
-                self.func = self.func_iso_cone_free_rotor
-            elif model == 'line':
-                self.func = self.func_line
-            elif model == 'line, torsionless':
-                self.func = self.func_line_torsionless
-            elif model == 'line, free rotor':
-                self.func = self.func_line_free_rotor
-            elif model == 'rotor':
-                self.func = self.func_rotor
-            elif model == 'rigid':
-                self.func = self.func_rigid
-            elif model == 'free rotor':
-                self.func = self.func_free_rotor
-            elif model == 'double rotor':
-                self.func = self.func_double_rotor
+                self.func = getattr(self, 'func_double_rotor'+ext)
 
 
     def _init_tensors(self):
@@ -402,7 +381,7 @@ class Frame_order:
         self.R = zeros((3, 3), float64)
 
 
-    def func_double_rotor(self, params):
+    def func_double_rotor_qrint(self, params):
         """Target function for the optimisation of the double rotor frame order model.
 
         This function optimises the model parameters using the RDC and PCS base data.  Quasi-random, Sobol' sequence based, numerical integration is used for the PCS.
@@ -1912,6 +1891,10 @@ class Frame_order:
         @keyword dims:      The list of parameters.
         @type dims:         list of str
         """
+
+        # Quadratic integration active, so nothing to do here!
+        if self.quad_int:
+            return
 
         # The number of dimensions.
         m = len(dims)
