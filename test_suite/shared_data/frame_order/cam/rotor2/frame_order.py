@@ -122,6 +122,7 @@ paramag.centre(pos=[35.934, 12.194, -4.206])
 
 # Check the minimum (at a very high quality to check that the chi-squared value is zero).
 frame_order.num_int_pts(num=100000)
+frame_order.quad_int(flag=False)
 value.set(param='ave_pos_x', val=AVE_POS_X)
 value.set(param='ave_pos_y', val=AVE_POS_Y)
 value.set(param='ave_pos_z', val=AVE_POS_Z)

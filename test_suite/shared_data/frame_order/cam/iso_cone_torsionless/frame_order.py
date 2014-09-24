@@ -89,6 +89,7 @@ value.set(param='axis_theta', val=AXIS_THETA)
 value.set(param='axis_phi', val=AXIS_PHI)
 value.set(param='cone_theta', val=CONE_THETA)
 minimise.calculate()
+frame_order.quad_int(flag=False)
 
 # Create the PDB representation of the true state.
 frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', dist=None, compress_type=2, force=True)

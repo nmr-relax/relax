@@ -94,7 +94,7 @@ def count_sobol_points(target_fn=None, verbosity=1):
             sobol_oversample = cdp.sobol_oversample
 
         # Set up the optimisation target function class.
-        target_fn = Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=None, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, sobol_max_points=sobol_max_points, sobol_oversample=sobol_oversample)
+        target_fn = Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=None, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, sobol_max_points=sobol_max_points, sobol_oversample=sobol_oversample, quad_int=cdp.quad_int)
 
     # The Sobol' sequence dimensions.
     if cdp.model in [MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR]:
@@ -1032,7 +1032,7 @@ class Frame_order_grid_command(Slave_command):
         """Set up and perform the optimisation."""
 
         # Set up the optimisation target function class.
-        target_fn = Frame_order(model=self.model, init_params=self.param_vector, full_tensors=self.full_tensors, full_in_ref_frame=self.full_in_ref_frame, rdcs=self.rdcs, rdc_errors=self.rdc_err, rdc_weights=self.rdc_weight, rdc_vect=self.rdc_vect, dip_const=self.rdc_const, pcs=self.pcs, pcs_errors=self.pcs_err, pcs_weights=self.pcs_weight, atomic_pos=self.atomic_pos, temp=self.temp, frq=self.frq, paramag_centre=self.paramag_centre, scaling_matrix=self.scaling_matrix, com=self.com, ave_pos_pivot=self.ave_pos_pivot, pivot=self.pivot, pivot_opt=self.pivot_opt, sobol_max_points=self.sobol_max_points, sobol_oversample=self.sobol_oversample)
+        target_fn = Frame_order(model=self.model, init_params=self.param_vector, full_tensors=self.full_tensors, full_in_ref_frame=self.full_in_ref_frame, rdcs=self.rdcs, rdc_errors=self.rdc_err, rdc_weights=self.rdc_weight, rdc_vect=self.rdc_vect, dip_const=self.rdc_const, pcs=self.pcs, pcs_errors=self.pcs_err, pcs_weights=self.pcs_weight, atomic_pos=self.atomic_pos, temp=self.temp, frq=self.frq, paramag_centre=self.paramag_centre, scaling_matrix=self.scaling_matrix, com=self.com, ave_pos_pivot=self.ave_pos_pivot, pivot=self.pivot, pivot_opt=self.pivot_opt, sobol_max_points=self.sobol_max_points, sobol_oversample=self.sobol_oversample, quad_int=self.quad_int)
 
         # Grid search.
         results = grid_point_array(func=target_fn.func, args=(), points=self.points, verbosity=self.verbosity)
@@ -1196,7 +1196,7 @@ class Frame_order_minimise_command(Slave_command):
         """Set up and perform the optimisation."""
 
         # Set up the optimisation target function class.
-        target_fn = Frame_order(model=self.model, init_params=self.param_vector, full_tensors=self.full_tensors, full_in_ref_frame=self.full_in_ref_frame, rdcs=self.rdcs, rdc_errors=self.rdc_err, rdc_weights=self.rdc_weight, rdc_vect=self.rdc_vect, dip_const=self.rdc_const, pcs=self.pcs, pcs_errors=self.pcs_err, pcs_weights=self.pcs_weight, atomic_pos=self.atomic_pos, temp=self.temp, frq=self.frq, paramag_centre=self.paramag_centre, scaling_matrix=self.scaling_matrix, com=self.com, ave_pos_pivot=self.ave_pos_pivot, pivot=self.pivot, pivot_opt=self.pivot_opt, sobol_max_points=self.sobol_max_points, sobol_oversample=self.sobol_oversample)
+        target_fn = Frame_order(model=self.model, init_params=self.param_vector, full_tensors=self.full_tensors, full_in_ref_frame=self.full_in_ref_frame, rdcs=self.rdcs, rdc_errors=self.rdc_err, rdc_weights=self.rdc_weight, rdc_vect=self.rdc_vect, dip_const=self.rdc_const, pcs=self.pcs, pcs_errors=self.pcs_err, pcs_weights=self.pcs_weight, atomic_pos=self.atomic_pos, temp=self.temp, frq=self.frq, paramag_centre=self.paramag_centre, scaling_matrix=self.scaling_matrix, com=self.com, ave_pos_pivot=self.ave_pos_pivot, pivot=self.pivot, pivot_opt=self.pivot_opt, sobol_max_points=self.sobol_max_points, sobol_oversample=self.sobol_oversample, quad_int=self.quad_int)
 
         # Minimisation.
         results = generic_minimise(func=target_fn.func, args=(), x0=self.param_vector, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.max_iterations, A=self.A, b=self.b, full_output=True, print_flag=self.verbosity)
