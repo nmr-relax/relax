@@ -283,7 +283,8 @@ class Test_suite_runner:
         title(file=sys.stdout, text="Summary of the relax test suite")
 
         # The skipped tests.
-        self.summary_skipped()
+        if status.skip_blacklisted_tests:
+            self.summary_skipped()
 
         # Subtitle.
         section(file=sys.stdout, text="Synopsis")

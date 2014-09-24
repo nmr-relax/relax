@@ -56,7 +56,7 @@ class RelaxTestLoader(TestLoader):
             test_case = testCaseClass(testCaseNames[i])
 
             # Skip.
-            if status.skipped_tests and testCaseNames[i] in list(zip(*status.skipped_tests))[0]:
+            if status.skip_blacklisted_tests and status.skipped_tests and testCaseNames[i] in list(zip(*status.skipped_tests))[0]:
                 continue
 
             # Append the test case.
