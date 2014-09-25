@@ -53,7 +53,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.arg_check import is_bool, is_float, is_int, is_str
 from lib.errors import RelaxError
 from lib.frame_order.conversions import convert_axis_alpha_to_spherical
-from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_NONREDUNDANT, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
+from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_NONREDUNDANT, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.io import open_write_file
 from lib.order.order_parameters import iso_cone_theta_to_S
@@ -68,6 +68,29 @@ from status import Status; status = Status()
 
 
 
+def model_directory(model, base_dir=None):
+    """Return the directory to be used for the model.
+
+    @param model:       The frame order model name.
+    @type model:        str
+    @keyword base_dir:  The optional base directory to prepend to the file name.
+    @type base_dir:     None or str
+    """
+
+    # Convert the model name.
+    dir = model.replace(' ', '_')
+    dir = dir.replace(',', '')
+
+    # Process the base directory.
+    if base_dir == None:
+        base_dir = ''
+    elif base_dir[-1] != sep:
+        base_dir += sep
+
+    # Return the full path.
+    return base_dir + dir
+
+
 def summarise(file_name='summary', dir=None, force=True):
     """Summarise the frame order auto-analysis results.
 
@@ -76,48 +99,36 @@ def summarise(file_name='summary', dir=None, force=True):
 
     @keyword file_name:     The file to save the table into.
     @type file_name:        str
-    @keyword dir:           The optional directory to place the file into.
+    @keyword dir:           The optional directory to place the file into.  If specified, the results files will also be searched for in this directory.
     @type dir:              None or str
     @keyword force:         A flag which if True will cause any preexisting file to be overwritten.
     @type force:            bool
     """
 
-    # The model names and directories.
-    model_names = [
-        'Rigid',
-        'Free rotor',
-        'Rotor',
-        'Iso cone, free rotor',
-        'Iso cone, torsionless',
-        'Iso cone, torsionless (perm A)',
-        'Iso cone',
-        'Iso cone (perm A)',
-        'Pseudo ellipse, torsionless',
-        'Pseudo ellipse, torsionless (perm A)',
-        'Pseudo ellipse, torsionless (perm B)',
-        'Pseudo ellipse',
-        'Pseudo ellipse (perm A)',
-        'Pseudo ellipse (perm B)',
-        'Double rotor'
-    ]
-    model_dirs = {
-        'Rigid': 'rigid',
-        'Free rotor': 'free_rotor',
-        'Rotor': 'rotor',
-        'Iso cone, free rotor': 'iso_cone, free_rotor',
-        'Iso cone, torsionless': 'iso_cone_torsionless',
-        'Iso cone, torsionless (perm A)': 'iso_cone_torsionless_permutation_A',
-        'Iso cone': 'iso_cone',
-        'Iso cone (perm A)': 'iso_cone_permutation_A',
-        'Pseudo ellipse, torsionless': 'pseudo-ellipse_torsionless',
-        'Pseudo ellipse, torsionless (perm A)': 'pseudo-ellipse_torsionless_permutation_A',
-        'Pseudo ellipse, torsionless (perm B)': 'pseudo-ellipse_torsionless_permutation_B',
-        'Pseudo ellipse': 'pseudo-ellipse',
-        'Pseudo ellipse (perm A)': 'pseudo-ellipse_permutation_A',
-        'Pseudo ellipse (perm B)': 'pseudo-ellipse_permutation_B',
-        'Double rotor': 'double_rotor'
-    }
+    # The model names, titles and directories, including axis permutations.
+    models = []
+    model_titles = []
+    dirs = []
+    for model in MODEL_LIST:
+        # Add the base model.
+        models.append(model)
+        title = model[0].upper() + model[1:]
+        model_titles.append(title)
+        dirs.append(model_directory(model, base_dir=dir))
 
+        # Axis permutations.
+        if model in MODEL_LIST_ISO_CONE + MODEL_LIST_PSEUDO_ELLIPSE:
+            # The A permutation.
+            models.append("%s permutation A" % model)
+            model_titles.append(title + ' (perm A)')
+            dirs.append(model_directory(models[-1], base_dir=dir))
+
+            # The B permutation.
+            if model in MODEL_LIST_PSEUDO_ELLIPSE:
+                models.append("%s permutation B" % model)
+                model_titles.append(title + ' (perm B)')
+                dirs.append(model_directory(models[-1], base_dir=dir))
+        
     # The analysis directory and structures.
     contents = []
     contents.append(["Analysis directory", getcwd()])
@@ -136,23 +147,23 @@ def summarise(file_name='summary', dir=None, force=True):
     # Loop over the models.
     contents1 = []
     contents2 = []
-    for i in range(len(model_names)):
+    for i in range(len(models)):
         # No file.
-        if not access(model_dirs[model_names[i]]+'/results.bz2', F_OK):
+        if not access(dirs[i]+sep+'results.bz2', F_OK):
             continue
 
         # Create a data pipe.
-        pipes.create(model_names[i], 'frame order')
+        pipes.create(models[i], 'frame order')
 
         # Load the data.
-        results.read(file='results', dir=model_dirs[model_names[i]])
+        results.read(file='results', dir=dirs[i])
 
         # Number of params.
         k = len(cdp.params)
 
         # Format the model information.
-        contents1.append([model_names[i], k, cdp.chi2, cdp.chi2 + 2*k, None, None, None, None, None, None, None])
-        contents2.append([model_names[i], 0.0, 0.0, 0.0, None, None, None, None, None, None])
+        contents1.append([model_titles[i], k, cdp.chi2, cdp.chi2 + 2*k, None, None, None, None, None, None, None])
+        contents2.append([model_titles[i], 0.0, 0.0, 0.0, None, None, None, None, None, None])
 
         # Eigen alpha.
         if hasattr(cdp, 'eigen_alpha') and cdp.eigen_alpha != None:
@@ -211,9 +222,11 @@ def summarise(file_name='summary', dir=None, force=True):
     string += format_table(headings=headings1, contents=contents1, custom_format=[None, None, "%.2f", "%.2f", "%.3f", "%.3f", "%.3f", "%.2f", "%.2f", "%.2f", "%.2f"])
     string += format_table(headings=headings2, contents=contents2, custom_format=[None, "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f"])
 
-    # Write out.
+    # Stdout output.
     sys.stdout.write("\n\n\n")
     sys.stdout.write(string)
+
+    # Save to file.
     file = open_write_file(file_name=file_name, dir=dir, force=force)
     file.write(string)
     file.close()
@@ -422,7 +435,7 @@ class Frame_order_analysis:
             self.interpreter.eliminate()
 
             # Save the results.
-            self.interpreter.results.write(dir=self.model_directory(perm_model), force=True)
+            self.interpreter.results.write(dir=model_directory(perm_model, base_dir=self.results_dir), force=True)
 
             # The PDB representation of the model and visualisation script.
             self.visualisation(model=perm_model)
@@ -514,26 +527,6 @@ class Frame_order_analysis:
 
         # Return the increment list.
         return incs
-
-
-    def model_directory(self, model, pre_run=False):
-        """Return the directory to be used for the model.
-
-        @param model:       The frame order model.
-        @type model:        str
-        @keyword pre_run:   A flag which if True will prepend the pre-run results directory instead of the current results directory.
-        @type pre_run:      bool
-        """
-
-        # Convert the model name.
-        dir = model.replace(' ', '_')
-        dir = dir.replace(',', '')
-
-        # Return the full path.
-        if pre_run:
-            return self.pre_run_dir + dir
-        else:
-            return self.results_dir + dir
 
 
     def nested_params_ave_dom_pos(self, model):
@@ -844,7 +837,7 @@ class Frame_order_analysis:
             self.interpreter.eliminate()
 
             # Save the results.
-            self.interpreter.results.write(dir=self.model_directory(model), force=True)
+            self.interpreter.results.write(dir=model_directory(model, base_dir=self.results_dir), force=True)
 
             # The PDB representation of the model and visualisation script.
             self.visualisation(model=model)
@@ -876,8 +869,8 @@ class Frame_order_analysis:
         # The results file already exists, so read its contents instead.
         if self.read_results(model=model, pipe_name=self.pipe_name_dict[model]):
             # The PDB representation of the model and the pseudo-Brownian dynamics simulation (in case this was not completed correctly).
-            self.interpreter.frame_order.pdb_model(dir=self.model_directory(model), force=True)
-            self.interpreter.frame_order.simulate(dir=self.model_directory(model), step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
+            self.interpreter.frame_order.pdb_model(dir=model_directory(model, base_dir=self.results_dir), force=True)
+            self.interpreter.frame_order.simulate(dir=model_directory(model, base_dir=self.results_dir), step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
 
             # Nothing more to do.
             return
@@ -935,11 +928,11 @@ class Frame_order_analysis:
         self.print_results()
 
         # Save the results.
-        self.interpreter.results.write(dir=self.model_directory(model), force=True)
+        self.interpreter.results.write(dir=model_directory(model, base_dir=self.results_dir), force=True)
 
         # The PDB representation of the model and the pseudo-Brownian dynamics simulation.
-        self.interpreter.frame_order.pdb_model(dir=self.model_directory(model), force=True)
-        self.interpreter.frame_order.simulate(dir=self.model_directory(model), step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
+        self.interpreter.frame_order.pdb_model(dir=model_directory(model, base_dir=self.results_dir), force=True)
+        self.interpreter.frame_order.simulate(dir=model_directory(model, base_dir=self.results_dir), step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
 
 
     def print_results(self):
@@ -1036,7 +1029,10 @@ class Frame_order_analysis:
         """
 
         # The file name.
-        path = self.model_directory(model, pre_run=pre_run) + sep + 'results.bz2'
+        base_dir = self.results_dir
+        if pre_run:
+            base_dir = self.pre_run_dir
+        path = model_directory(model, base_dir=base_dir) + sep + 'results.bz2'
 
         # The file does not exist.
         if not access(path, F_OK):
@@ -1130,12 +1126,12 @@ class Frame_order_analysis:
             raise RelaxError("The model '%s' does not match the model '%s' of the current data pipe." % (model.replace(' permuted', ''), cdp.model))
 
         # The PDB representation of the model and the pseudo-Brownian dynamics simulation.
-        self.interpreter.frame_order.pdb_model(dir=self.model_directory(model), force=True)
-        self.interpreter.frame_order.simulate(dir=self.model_directory(model), step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
+        self.interpreter.frame_order.pdb_model(dir=model_directory(model, base_dir=self.results_dir), force=True)
+        self.interpreter.frame_order.simulate(dir=model_directory(model, base_dir=self.results_dir), step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
 
         # Create the visualisation script.
         subsection(file=sys.stdout, text="Creating a PyMOL visualisation script.")
-        script = open_write_file(file_name='pymol_display.py', dir=self.model_directory(model), force=True)
+        script = open_write_file(file_name='pymol_display.py', dir=model_directory(model, base_dir=self.results_dir), force=True)
 
         # Add a comment for the user.
         script.write("# relax script for displaying the frame order results of this '%s' model in PyMOL.\n\n" % model)
