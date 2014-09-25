@@ -354,12 +354,12 @@ class Frame_order_analysis:
             # Visualisation of the final results.
             self.visualisation(model='final')
 
-            # Create a summary file.
-            summarise(dir=self.results_dir, force=True)
-
             # Save the final program state.
             if self._final_state:
                 self.interpreter.state.save('final_state', dir=self.results_dir, force=True)
+
+            # Create a summary file.
+            summarise(dir=self.results_dir, force=True)
 
         # Clean up.
         finally:
