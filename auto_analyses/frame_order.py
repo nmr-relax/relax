@@ -64,8 +64,110 @@ from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.structure.mass import pipe_centre_of_mass
 from prompt.interpreter import Interpreter
 from specific_analyses.frame_order.data import generate_pivot
+from specific_analyses.frame_order import optimisation
 from status import Status; status = Status()
 
+
+
+def count_sobol_points(file_name='sobol_point_count', dir=None, force=True):
+    """Count the number of Sobol' points used for the PCS numerical integration.
+
+    This function can be used while a frame order analysis is running to summarise the results.  It will create a table of the number of Sobol' points used, which can then be used to judge the quality of the integration.
+
+
+    @keyword file_name:     The file to save the table into.
+    @type file_name:        str
+    @keyword dir:           The optional directory to place the file into.  If specified, the results files will also be searched for in this directory.
+    @type dir:              None or str
+    @keyword force:         A flag which if True will cause any preexisting file to be overwritten.
+    @type force:            bool
+    """
+
+    # The model names, titles and directories, including axis permutations.
+    models = []
+    model_titles = []
+    dirs = []
+    for model in MODEL_LIST:
+        # Add the base model.
+        models.append(model)
+        title = model[0].upper() + model[1:]
+        model_titles.append(title)
+        dirs.append(model_directory(model, base_dir=dir))
+
+        # Axis permutations.
+        if model in MODEL_LIST_ISO_CONE + MODEL_LIST_PSEUDO_ELLIPSE:
+            # The A permutation.
+            models.append("%s permutation A" % model)
+            model_titles.append(title + ' (perm A)')
+            dirs.append(model_directory(models[-1], base_dir=dir))
+
+            # The B permutation.
+            if model in MODEL_LIST_PSEUDO_ELLIPSE:
+                models.append("%s permutation B" % model)
+                model_titles.append(title + ' (perm B)')
+                dirs.append(model_directory(models[-1], base_dir=dir))
+
+    # Loop over the models.
+    count = {}
+    count_total = {}
+    percentage = {}
+    for i in range(len(models)):
+        # Skip the rigid model.
+        if models[i] == MODEL_RIGID:
+            continue
+
+        # No file.
+        if not access(dirs[i]+sep+'results.bz2', F_OK):
+            continue
+
+        # Switch to the data pipe if it already exists.
+        if pipes.has_pipe(models[i]):
+            pipes.switch(models[i])
+
+        # Otherwise load the data.
+        else:
+            # Create a data pipe.
+            pipes.create(models[i], 'frame order')
+
+            # Load the data.
+            results.read(file='results', dir=dirs[i])
+
+        # SciPy quadratic integration has been used.
+        if hasattr(cdp, 'quad_int') and cdp.quad_int:
+            count[models[i]] = 'Quad int'
+            count_total[models[i]] = ''
+            percentage[models[i]] = ''
+            continue
+
+        # Count the Sobol' points used.
+        if not hasattr(cdp, 'sobol_points_used'):
+            optimisation.count_sobol_points()
+        count[models[i]] = cdp.sobol_points_used
+        count_total[models[i]] = cdp.sobol_max_points
+        percentage[models[i]] = "%10.3f" % (float(cdp.sobol_points_used) / float(cdp.sobol_max_points) * 100.0) + '%'
+
+    # Initialise the output string.
+    string = "Quasi-random Sobol' numerical PCS integration point counting:\n\n"
+
+    # Assemble the table contents.
+    headings = [["Model", "Total points", "Used points", "Percentage"]]
+    contents = []
+    for model in models:
+        if model not in count:
+            continue
+        contents.append([model, count_total[model], count[model], percentage[model]])
+
+    # Add the table to the output string.
+    string += format_table(headings=headings, contents=contents)
+
+    # Stdout output.
+    sys.stdout.write("\n\n\n")
+    sys.stdout.write(string)
+
+    # Save to file.
+    file = open_write_file(file_name=file_name, dir=dir, force=force)
+    file.write(string)
+    file.close()
 
 
 def model_directory(model, base_dir=None):
