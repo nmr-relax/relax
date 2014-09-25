@@ -128,7 +128,7 @@ def summarise(file_name='summary', dir=None, force=True):
                 models.append("%s permutation B" % model)
                 model_titles.append(title + ' (perm B)')
                 dirs.append(model_directory(models[-1], base_dir=dir))
-        
+
     # The analysis directory and structures.
     contents = []
     contents.append(["Analysis directory", getcwd()])
@@ -895,7 +895,7 @@ class Frame_order_analysis:
             # Select the Frame Order model.
             self.interpreter.frame_order.select_model(model=model)
 
-        # Optimisation. 
+        # Optimisation.
         opt = self.opt_rigid
         if opt != None:
             # Split zooming grid search for the translation.
