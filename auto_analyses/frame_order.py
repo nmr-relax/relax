@@ -236,6 +236,9 @@ def summarise(file_name='summary', dir=None, force=True):
 class Frame_order_analysis:
     """The frame order auto-analysis protocol."""
 
+    # Debugging and test suite variables.
+    _final_state = True
+
     def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, pre_run_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000):
         """Perform the full frame order analysis.
 
@@ -355,7 +358,8 @@ class Frame_order_analysis:
             summarise(dir=self.results_dir, force=True)
 
             # Save the final program state.
-            self.interpreter.state.save('final_state', dir=self.results_dir, force=True)
+            if self._final_state:
+                self.interpreter.state.save('final_state', dir=self.results_dir, force=True)
 
         # Clean up.
         finally:
