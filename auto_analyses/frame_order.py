@@ -151,10 +151,8 @@ class Frame_order_analysis:
 
                 # The numerical optimisation settings.
                 opt = self.opt_mc
-                if opt.get_min_quad_int(0):
-                    self.interpreter.frame_order.quad_int(True)
-                else:
-                    self.sobol_setup(opt.get_min_sobol_info(0))
+                self.interpreter.frame_order.quad_int(opt.get_min_quad_int(0))
+                self.sobol_setup(opt.get_min_sobol_info(0))
 
                 # Monte Carlo simulations.
                 self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
@@ -244,10 +242,8 @@ class Frame_order_analysis:
                 pass
 
             # The numerical optimisation settings.
-            if opt.get_min_quad_int(i):
-                self.interpreter.frame_order.quad_int(True)
-            else:
-                self.sobol_setup(opt.get_min_sobol_info(i))
+            self.interpreter.frame_order.quad_int(opt.get_min_quad_int(i))
+            self.sobol_setup(opt.get_min_sobol_info(i))
 
             # Perform the optimisation.
             self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
@@ -634,10 +630,8 @@ class Frame_order_analysis:
                         self.interpreter.minimise.grid_zoom(level=zoom)
 
                     # The numerical optimisation settings.
-                    if opt.get_grid_quad_int(i):
-                        self.interpreter.frame_order.quad_int(True)
-                    else:
-                        self.sobol_setup(opt.get_grid_sobol_info(i))
+                    self.interpreter.frame_order.quad_int(opt.get_grid_quad_int(i))
+                    self.sobol_setup(opt.get_grid_sobol_info(i))
 
                     # Set up the custom grid increments.
                     incs = self.custom_grid_incs(model, inc=opt.get_grid_inc(i))
@@ -648,10 +642,8 @@ class Frame_order_analysis:
                 # Minimise (for the PCS data subset and full RDC set).
                 for i in opt.loop_min():
                     # The numerical optimisation settings.
-                    if opt.get_min_quad_int(i):
-                        self.interpreter.frame_order.quad_int(True)
-                    else:
-                        self.sobol_setup(opt.get_min_sobol_info(i))
+                    self.interpreter.frame_order.quad_int(opt.get_min_quad_int(i))
+                    self.sobol_setup(opt.get_min_sobol_info(i))
 
                     # Perform the optimisation.
                     self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
@@ -672,10 +664,8 @@ class Frame_order_analysis:
             if opt != None:
                 for i in opt.loop_min():
                     # The numerical optimisation settings.
-                    if opt.get_min_quad_int(i):
-                        self.interpreter.frame_order.quad_int(True)
-                    else:
-                        self.sobol_setup(opt.get_min_sobol_info(i))
+                    self.interpreter.frame_order.quad_int(opt.get_min_quad_int(i))
+                    self.sobol_setup(opt.get_min_sobol_info(i))
 
                     # Perform the optimisation.
                     self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
@@ -753,6 +743,7 @@ class Frame_order_analysis:
                     self.interpreter.minimise.grid_zoom(level=zoom)
 
                 # The numerical optimisation settings.
+                self.interpreter.frame_order.quad_int(opt.get_grid_quad_int(i))
                 self.sobol_setup(opt.get_grid_sobol_info(i))
 
                 # The number of increments.
@@ -767,6 +758,7 @@ class Frame_order_analysis:
             # Minimise.
             for i in opt.loop_min():
                 # The numerical optimisation settings.
+                self.interpreter.frame_order.quad_int(opt.get_min_quad_int(i))
                 self.sobol_setup(opt.get_min_sobol_info(i))
 
                 # Perform the optimisation.
