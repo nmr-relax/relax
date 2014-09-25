@@ -31,7 +31,12 @@ To use this analysis, you should import the following into your script:
     - Frame_order_analysis:  This is a Python class which contains the automated protocol.  Initialising the class will execute the full analysis.  See its documentation for all the options it accepts.
     - Optimisation_settings:  This is a Python class which is used to set up and store the optimisation settings used in the automated protocol.  This allows for grid searches, zooming grid searches, minimisation settings, quasi-random Sobol' numerical integration of the PCS, and SciPy quadratic numerical integration of the PCS to be specified.
 
-See the sample scripts for examples of how these are used.
+See the sample scripts for examples of how these are used.  In addition, the following two functions provide summaries of the analysis:
+
+    - count_sobol_points:  This function will summarize the number of quasi-random Sobol' points used in the PCS numeric integration.  The table it creates is very useful for judging the quality of the current optimisation settings.
+    - summarise:  This function will summarise all of the current frame order results.
+
+Both these functions will be called at the end of the auto-analysis.  However they can also be used in simple scripts to summarise the results as an analysis is progressing.
 
 
 
