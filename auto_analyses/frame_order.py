@@ -20,7 +20,19 @@
 ###############################################################################
 
 # Module docstring.
-"""The full frame order analysis.
+"""The automated frame order analysis protocol.
+
+
+Usage
+=====
+
+To use this analysis, you should import the following into your script:
+
+    - Frame_order_analysis:  This is a Python class which contains the automated protocol.  Initialising the class will execute the full analysis.  See its documentation for all the options it accepts.
+    - Optimisation_settings:  This is a Python class which is used to set up and store the optimisation settings used in the automated protocol.  This allows for grid searches, zooming grid searches, minimisation settings, quasi-random Sobol' numerical integration of the PCS, and SciPy quadratic numerical integration of the PCS to be specified.
+
+See the sample scripts for examples of how these are used.
+
 
 
 The nested model parameter copying protocol
