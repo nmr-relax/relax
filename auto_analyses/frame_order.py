@@ -254,11 +254,17 @@ def summarise(file_name='summary', dir=None, force=True):
         if not access(dirs[i]+sep+'results.bz2', F_OK):
             continue
 
-        # Create a data pipe.
-        pipes.create(models[i], 'frame order')
+        # Switch to the data pipe if it already exists.
+        if pipes.has_pipe(models[i]):
+            pipes.switch(models[i])
 
-        # Load the data.
-        results.read(file='results', dir=dirs[i])
+        # Otherwise load the data.
+        else:
+            # Create a data pipe.
+            pipes.create(models[i], 'frame order')
+
+            # Load the data.
+            results.read(file='results', dir=dirs[i])
 
         # Number of params.
         k = len(cdp.params)
