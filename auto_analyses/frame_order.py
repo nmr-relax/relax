@@ -354,13 +354,13 @@ class Frame_order_analysis:
             # Create a summary file.
             summarise(dir=self.results_dir, force=True)
 
+            # Save the final program state.
+            self.interpreter.state.save('final_state', dir=self.results_dir, force=True)
+
         # Clean up.
         finally:
             # Finish and unlock execution.
             status.exec_lock.release()
-
-        # Save the final program state.
-        self.interpreter.state.save('final_state', dir=self.results_dir, force=True)
 
 
     def axis_permutation_analysis(self, model=None):
