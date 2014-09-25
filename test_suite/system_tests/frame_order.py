@@ -1602,7 +1602,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.run(script_file=self.cam_path+'generate_rotor2_distribution.py')
 
 
-    def fixme_test_opendx_map(self):
+    def test_opendx_map(self):
         """Test the mapping of the Euler angle parameters for OpenDx viewing."""
 
         # Execute the script.
