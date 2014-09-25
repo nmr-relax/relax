@@ -151,10 +151,11 @@ class Frame_order(API_base, API_common):
 
         # Feedback on the number of integration points used.
         if not cdp.quad_int:
-            count_sobol_points(target_fn=target_fn)
+            count_sobol_points(target_fn=target_fn, verbosity=verbosity)
 
         # Printout.
-        print("Chi2:  %s" % chi2)
+        if verbosity:
+            print("Chi2:  %s" % chi2)
 
 
     def constraint_algorithm(self):
