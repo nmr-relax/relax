@@ -43,6 +43,7 @@ To allow the analysis to complete in under 1,000,000 years, the trick of copying
 
 
 # Python module imports.
+from math import pi
 from numpy import float64, zeros
 from os import F_OK, access, getcwd, sep
 import sys
@@ -57,12 +58,166 @@ from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.io import open_write_file
 from lib.order.order_parameters import iso_cone_theta_to_S
 from lib.text.sectioning import section, subsection, title
+from lib.text.table import MULTI_COL, format_table
+from pipe_control import pipes, results
 from pipe_control.mol_res_spin import return_spin, spin_loop
-from pipe_control.pipes import get_pipe
 from pipe_control.structure.mass import pipe_centre_of_mass
 from prompt.interpreter import Interpreter
 from specific_analyses.frame_order.data import generate_pivot
 from status import Status; status = Status()
+
+
+
+def summarise(file_name='summary', dir=None, force=True):
+    """Summarise the frame order auto-analysis results.
+
+    This function can be used while a frame order analysis is running to summarise the results.  It will create a table of the statistics and model parameters for all of the optimised frame order models for which results files currently exist.
+
+
+    @keyword file_name:     The file to save the table into.
+    @type file_name:        str
+    @keyword dir:           The optional directory to place the file into.
+    @type dir:              None or str
+    @keyword force:         A flag which if True will cause any preexisting file to be overwritten.
+    @type force:            bool
+    """
+
+    # The model names and directories.
+    model_names = [
+        'Rigid',
+        'Free rotor',
+        'Rotor',
+        'Iso cone, free rotor',
+        'Iso cone, torsionless',
+        'Iso cone, torsionless (perm A)',
+        'Iso cone',
+        'Iso cone (perm A)',
+        'Pseudo ellipse, torsionless',
+        'Pseudo ellipse, torsionless (perm A)',
+        'Pseudo ellipse, torsionless (perm B)',
+        'Pseudo ellipse',
+        'Pseudo ellipse (perm A)',
+        'Pseudo ellipse (perm B)',
+        'Double rotor'
+    ]
+    model_dirs = {
+        'Rigid': 'rigid',
+        'Free rotor': 'free_rotor',
+        'Rotor': 'rotor',
+        'Iso cone, free rotor': 'iso_cone, free_rotor',
+        'Iso cone, torsionless': 'iso_cone_torsionless',
+        'Iso cone, torsionless (perm A)': 'iso_cone_torsionless_permutation_A',
+        'Iso cone': 'iso_cone',
+        'Iso cone (perm A)': 'iso_cone_permutation_A',
+        'Pseudo ellipse, torsionless': 'pseudo-ellipse_torsionless',
+        'Pseudo ellipse, torsionless (perm A)': 'pseudo-ellipse_torsionless_permutation_A',
+        'Pseudo ellipse, torsionless (perm B)': 'pseudo-ellipse_torsionless_permutation_B',
+        'Pseudo ellipse': 'pseudo-ellipse',
+        'Pseudo ellipse (perm A)': 'pseudo-ellipse_permutation_A',
+        'Pseudo ellipse (perm B)': 'pseudo-ellipse_permutation_B',
+        'Double rotor': 'double_rotor'
+    }
+
+    # The analysis directory and structures.
+    contents = []
+    contents.append(["Analysis directory", getcwd()])
+    string = format_table(contents=contents)
+
+    # Table header.
+    headings1 = []
+    headings1.append(["Model", "k", "chi2", "AIC", "Motional eigenframe", MULTI_COL, MULTI_COL, "Order parameters (deg)", MULTI_COL, MULTI_COL, MULTI_COL])
+    headings1.append([None, None, None, None, "a", "b/th", "g/ph", "thx", "thy", "smax", "smax2"])
+
+    # 2nd table header.
+    headings2 = []
+    headings2.append(["Model", "Average position", MULTI_COL, MULTI_COL, MULTI_COL, MULTI_COL, MULTI_COL, "Pivot point", MULTI_COL, MULTI_COL])
+    headings2.append([None, "x", "y", "z", "a", "b", "g", "x", "y", "z"])
+
+    # Loop over the models.
+    contents1 = []
+    contents2 = []
+    for i in range(len(model_names)):
+        # No file.
+        if not access(model_dirs[model_names[i]]+'/results.bz2', F_OK):
+            continue
+
+        # Create a data pipe.
+        pipes.create(model_names[i], 'frame order')
+
+        # Load the data.
+        results.read(file='results', dir=model_dirs[model_names[i]])
+
+        # Number of params.
+        k = len(cdp.params)
+
+        # Format the model information.
+        contents1.append([model_names[i], k, cdp.chi2, cdp.chi2 + 2*k, None, None, None, None, None, None, None])
+        contents2.append([model_names[i], 0.0, 0.0, 0.0, None, None, None, None, None, None])
+
+        # Eigen alpha.
+        if hasattr(cdp, 'eigen_alpha') and cdp.eigen_alpha != None:
+            contents1[-1][4] = cdp.eigen_alpha
+
+        # Eigen beta.
+        if hasattr(cdp, 'eigen_beta') and cdp.eigen_beta != None:
+            contents1[-1][5] = cdp.eigen_beta
+        elif hasattr(cdp, 'axis_theta') and cdp.axis_theta != None:
+            contents1[-1][5] = cdp.axis_theta
+
+        # Eigen gamma.
+        if hasattr(cdp, 'eigen_gamma') and cdp.eigen_gamma != None:
+            contents1[-1][6] = cdp.eigen_gamma
+        elif hasattr(cdp, 'axis_phi') and cdp.axis_phi != None:
+            contents1[-1][6] = cdp.axis_phi
+
+        # Order x.
+        if hasattr(cdp, 'cone_theta_x') and cdp.cone_theta_x != None:
+            contents1[-1][7] = cdp.cone_theta_x / 2.0 / pi * 360.0
+        elif hasattr(cdp, 'cone_theta') and cdp.cone_theta != None:
+            contents1[-1][7] = cdp.cone_theta / 2.0 / pi * 360.0
+
+        # Order y.
+        if hasattr(cdp, 'cone_theta_y') and cdp.cone_theta_y != None:
+            contents1[-1][8] = cdp.cone_theta_y / 2.0 / pi * 360.0
+
+        # Order torsion.
+        if hasattr(cdp, 'cone_sigma_max') and cdp.cone_sigma_max != None:
+            contents1[-1][9] = cdp.cone_sigma_max / 2.0 / pi * 360.0
+
+        # Order torsion 2.
+        if hasattr(cdp, 'cone_sigma_max_2') and cdp.cone_sigma_max_2 != None:
+            contents1[-1][10] = cdp.cone_sigma_max_2 / 2.0 / pi * 360.0
+
+        # The average position parameters.
+        if hasattr(cdp, 'ave_pos_x') and cdp.ave_pos_x != None:
+            contents2[-1][1] = cdp.ave_pos_x
+        if hasattr(cdp, 'ave_pos_y') and cdp.ave_pos_y != None:
+            contents2[-1][2] = cdp.ave_pos_y
+        if hasattr(cdp, 'ave_pos_z') and cdp.ave_pos_z != None:
+            contents2[-1][3] = cdp.ave_pos_z
+        if hasattr(cdp, 'ave_pos_alpha') and cdp.ave_pos_alpha != None:
+            contents2[-1][4] = cdp.ave_pos_alpha
+        if hasattr(cdp, 'ave_pos_beta') and cdp.ave_pos_beta != None:
+            contents2[-1][5] = cdp.ave_pos_beta
+        if hasattr(cdp, 'ave_pos_gamma') and cdp.ave_pos_gamma != None:
+            contents2[-1][6] = cdp.ave_pos_gamma
+
+        # The pivot point.
+        contents2[-1][7] = cdp.pivot_x
+        contents2[-1][8] = cdp.pivot_y
+        contents2[-1][9] = cdp.pivot_z
+
+    # Add the tables.
+    string += format_table(headings=headings1, contents=contents1, custom_format=[None, None, "%.2f", "%.2f", "%.3f", "%.3f", "%.3f", "%.2f", "%.2f", "%.2f", "%.2f"])
+    string += format_table(headings=headings2, contents=contents2, custom_format=[None, "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f"])
+
+    # Write out.
+    sys.stdout.write("\n\n\n")
+    sys.stdout.write(string)
+    file = open_write_file(file_name=file_name, dir=dir, force=force)
+    file.write(string)
+    file.close()
+
 
 
 class Frame_order_analysis:
@@ -402,7 +557,7 @@ class Frame_order_analysis:
             print("Obtaining the average position from the rigid model.")
 
             # Get the rigid data pipe.
-            pipe = get_pipe(self.pipe_name_dict[MODEL_RIGID])
+            pipe = pipes.get_pipe(self.pipe_name_dict[MODEL_RIGID])
 
             # Copy the average position parameters from the rigid model.
             cdp.ave_pos_x = pipe.ave_pos_x
@@ -418,7 +573,7 @@ class Frame_order_analysis:
             print("Obtaining the average position from the free rotor model.")
 
             # Get the free rotor data pipe.
-            pipe = get_pipe(self.pipe_name_dict[MODEL_FREE_ROTOR])
+            pipe = pipes.get_pipe(self.pipe_name_dict[MODEL_FREE_ROTOR])
 
             # Copy the average position parameters from the free rotor model.
             cdp.ave_pos_x = pipe.ave_pos_x
@@ -449,7 +604,7 @@ class Frame_order_analysis:
             print("Obtaining the cone axis from the rotor model.")
 
             # Get the rotor data pipe.
-            pipe = get_pipe(self.pipe_name_dict[MODEL_ROTOR])
+            pipe = pipes.get_pipe(self.pipe_name_dict[MODEL_ROTOR])
 
             # The cone axis as the axis alpha angle.
             if model == MODEL_FREE_ROTOR:
@@ -465,7 +620,7 @@ class Frame_order_analysis:
             print("Obtaining the cone axis from the isotropic cone model.")
 
             # Get the iso cone data pipe.
-            pipe = get_pipe(self.pipe_name_dict[MODEL_ISO_CONE])
+            pipe = pipes.get_pipe(self.pipe_name_dict[MODEL_ISO_CONE])
 
             # Copy the cone axis parameters.
             cdp.axis_theta = pipe.axis_theta
@@ -477,7 +632,7 @@ class Frame_order_analysis:
             print("Obtaining the full eigenframe from the pseudo-ellipse model.")
 
             # Get the pseudo-ellipse data pipe.
-            pipe = get_pipe(self.pipe_name_dict[MODEL_PSEUDO_ELLIPSE])
+            pipe = pipes.get_pipe(self.pipe_name_dict[MODEL_PSEUDO_ELLIPSE])
 
             # Copy the three Euler angles.
             cdp.eigen_alpha = pipe.eigen_alpha
@@ -503,7 +658,7 @@ class Frame_order_analysis:
         # The cone angle from the isotropic cone model.
         if model in [MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_ISO_CONE_FREE_ROTOR]:
             # Get the iso cone data pipe.
-            pipe = get_pipe(self.pipe_name_dict[MODEL_ISO_CONE])
+            pipe = pipes.get_pipe(self.pipe_name_dict[MODEL_ISO_CONE])
 
             # Copy the cone angle directly.
             if model == MODEL_ISO_CONE_TORSIONLESS:
@@ -526,7 +681,7 @@ class Frame_order_analysis:
             print("Obtaining the cone X and Y angles from the pseudo-ellipse model.")
 
             # Get the pseudo-ellipse data pipe.
-            pipe = get_pipe(self.pipe_name_dict[MODEL_PSEUDO_ELLIPSE])
+            pipe = pipes.get_pipe(self.pipe_name_dict[MODEL_PSEUDO_ELLIPSE])
 
             # Copy the cone axis.
             cdp.cone_theta_x = pipe.cone_theta_x
@@ -539,7 +694,7 @@ class Frame_order_analysis:
             print("Obtaining the torsion angle from the rotor model.")
 
             # Get the rotor data pipe.
-            pipe = get_pipe(self.pipe_name_dict[MODEL_ROTOR])
+            pipe = pipes.get_pipe(self.pipe_name_dict[MODEL_ROTOR])
 
             # Copy the cone axis.
             cdp.cone_sigma_max = pipe.cone_sigma_max
@@ -564,7 +719,7 @@ class Frame_order_analysis:
         print("Obtaining the pivot point from the rotor model.")
 
         # Get the iso cone data pipe.
-        pipe = get_pipe(self.pipe_name_dict[MODEL_ROTOR])
+        pipe = pipes.get_pipe(self.pipe_name_dict[MODEL_ROTOR])
 
         # Copy the pivot parameters.
         cdp.pivot_x = pipe.pivot_x
