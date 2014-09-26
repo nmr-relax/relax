@@ -45,7 +45,7 @@ def check_frequency(id=None):
         raise RelaxNoFrqError(id=id)
 
 
-def check_setup(escalate=0):
+def check_spectrometer_setup(escalate=0):
     """Check that spectrometer frequencies have been set up.
 
     This function is designed as described on the wiki page for the U{relax source design<http://wiki.nmr-relax.com/Relax_source_design>}
