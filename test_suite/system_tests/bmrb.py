@@ -253,6 +253,23 @@ class Bmrb(SystemTestCase):
         self.assertRaises(RelaxError, self.interpreter.bmrb.read, file='17226.txt', dir=path, version=None, sample_conditions=None)
 
 
+    def test_bug_22703_display_empty(self):
+        """Catch U{bug #22703<https://gna.org/bugs/?22703>}, the failure of the bmrb.display user function with an AttributeError when no data is present."""
+
+        # Create the data pipe.
+        self.interpreter.pipe.create('test', 'mf')
+
+        # Display.
+        self.interpreter.bmrb.display(version='3.1')
+
+        # Reset and create a new data pipe.
+        self.interpreter.reset()
+        self.interpreter.pipe.create('test2', 'mf')
+
+        # Display again to show a GUI breakage.
+        self.interpreter.bmrb.display(version='3.1')
+
+
     def test_rw_bmrb_3_0_model_free(self):
         """Write and then read a BRMB STAR formatted file containing model-free results."""
 
