@@ -26,6 +26,7 @@
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data
+from pipe_control.pipes import check_pipe
 from pipe_control.sequence import compare_sequence
 
 
@@ -52,7 +53,7 @@ class Hybrid:
             pipes.switch(pipe)
 
             # Test if the pipe exists.
-            pipes.test()
+            check_pipe()
 
             # Check that the pipe types match.
             if pipes.get_type() != pipe_type:

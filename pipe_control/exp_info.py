@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,7 +27,7 @@ from data_store.exp_info import ExpInfo
 from info import Info_box
 from lib.errors import RelaxError
 from lib.io import open_read_file
-from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 from version import version_full
 
 
@@ -84,7 +84,7 @@ def bmrb_write_citations(star):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Loop over the citations.
     if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'citations'):
@@ -116,7 +116,7 @@ def bmrb_write_methods(star):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # The scripts.
     if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'scripts'):
@@ -144,7 +144,7 @@ def bmrb_write_software(star):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Loop over the software.
     software_ids = []
@@ -207,7 +207,7 @@ def citation(cite_id=None, authors=None, doi=None, pubmed_id=None, full_citation
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Set up the experimental info data container, if needed.
     if not hasattr(cdp, 'exp_info'):
@@ -237,7 +237,7 @@ def script(file=None, dir=None, analysis_type=None, model_selection=None, engine
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Check.
     allowed = ['frame order',
@@ -311,7 +311,7 @@ def software(name=None, version=None, url=None, vendor_name=None, cite_ids=None,
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Set up the experimental info data container, if needed.
     if not hasattr(cdp, 'exp_info'):
@@ -331,7 +331,7 @@ def software_select(name, version=None):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Unknown program.
     if name not in ['relax', 'NMRPipe', 'Sparky', 'Bruker DC']:
@@ -405,7 +405,7 @@ def thiol_state(state=None):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Set up the experimental info data container, if needed.
     if not hasattr(cdp, 'exp_info'):

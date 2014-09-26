@@ -43,6 +43,7 @@ from lib.periodic_table import periodic_table
 from pipe_control import diffusion_tensor, pipes
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from pipe_control.pipes import check_pipe
 from specific_analyses.model_free.model import determine_model_type
 
 
@@ -112,7 +113,7 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():

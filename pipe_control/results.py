@@ -32,6 +32,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.errors import RelaxError, RelaxFileEmptyError
 from lib.io import extract_data, get_file_path, open_read_file, open_write_file, strip
 from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 from specific_analyses.model_free.back_compat import read_columnar_results
 
 
@@ -66,7 +67,7 @@ def display():
     """Displaying the results/contents of the current data pipe."""
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Write the results.
     ds.to_xml(sys.stdout)
@@ -76,7 +77,7 @@ def read(file='results', dir=None):
     """Function for reading the data out of a file."""
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Make sure that the data pipe is empty.
     if not cdp.is_empty():
@@ -119,7 +120,7 @@ def write(file="results", dir=None, force=False, compress_type=1, verbosity=1):
     """Create the results file."""
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # The special data pipe name directory.
     if dir == 'pipe_name':

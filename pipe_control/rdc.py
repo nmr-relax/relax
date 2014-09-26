@@ -43,6 +43,7 @@ from pipe_control import grace, pipes
 from pipe_control.align_tensor import get_tensor_index, get_tensor_object, opt_uses_align_data, opt_uses_tensor
 from pipe_control.interatomic import consistent_interatomic_data, create_interatom, interatomic_loop, return_interatom
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, is_pseudoatom, pseudoatom_loop, return_spin
+from pipe_control.pipes import check_pipe
 
 
 def back_calc(align_id=None):
@@ -164,7 +165,7 @@ def check_pipe_setup(pipe=None, rdc_id=None, sequence=False, N=False, tensors=Fa
     dp = pipes.get_pipe(pipe)
 
     # Test if the current data pipe exists.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Test if sequence data exists.
     if sequence and not exists_mol_res_spin_data(pipe):

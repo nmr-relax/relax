@@ -33,6 +33,7 @@ from lib.sequence import read_spin_data, write_spin_data
 from pipe_control import pipes
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import count_molecules, count_residues, count_spins, create_molecule, create_residue, create_spin, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, set_spin_element, set_spin_isotope, spin_loop
+from pipe_control.pipes import check_pipe
 
 
 
@@ -105,8 +106,8 @@ def copy(pipe_from=None, pipe_to=None, preserve_select=False, empty=True, verbos
         pipe_to = pipes.cdp_name()
 
     # Test if the pipe_from and pipe_to data pipes exist.
-    pipes.test(pipe_from)
-    pipes.test(pipe_to)
+    check_pipe(pipe_from)
+    check_pipe(pipe_to)
 
     # Test if pipe_from contains sequence data.
     if not exists_mol_res_spin_data(pipe_from):
@@ -321,7 +322,7 @@ def read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=Non
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data already exists.
     if exists_mol_res_spin_data():

@@ -33,6 +33,7 @@ from lib.software.grace import write_xy_data, write_xy_header
 from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data
 from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 from pipe_control.result_files import add_result_file
 from pipe_control.plotting import assemble_data
 from specific_analyses.api import return_api
@@ -226,7 +227,7 @@ def write(x_data_type='res_num', y_data_type=None, spin_id=None, plot_data='valu
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():

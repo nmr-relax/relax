@@ -24,7 +24,7 @@
 
 # relax module imports.
 from lib.errors import RelaxError
-from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 
 
 def spectrum_type(spectrum_type=None, spectrum_id=None):
@@ -37,7 +37,7 @@ def spectrum_type(spectrum_type=None, spectrum_id=None):
     """
 
     # Test if the current pipe exists
-    pipes.test()
+    check_pipe()
 
     # Test the spectrum id string.
     if spectrum_id not in cdp.spectrum_ids:

@@ -28,9 +28,9 @@ from lib.errors import RelaxNoPdbError, RelaxNoSequenceError, RelaxNoVectorsErro
 from lib.io import get_file_path, open_write_file
 from lib.structure.internal.object import Internal
 from lib.structure.represent.rotor import rotor_pdb
-from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
+from pipe_control.pipes import check_pipe
 from pipe_control.structure.mass import pipe_centre_of_mass
 from status import Status; status = Status()
 
@@ -61,7 +61,7 @@ def create_rotor_pdb(file=None, dir=None, rotor_angle=None, axis=None, axis_pt=T
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Convert the angle to radians.
     rotor_angle = rotor_angle / 360.0 * 2.0 * pi
@@ -109,7 +109,7 @@ def create_vector_dist(length=None, symmetry=True, file=None, dir=None, force=Fa
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if a structure has been loaded.
     if not hasattr(cdp, 'structure') or not cdp.structure.num_models() > 0:

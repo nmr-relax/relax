@@ -29,8 +29,8 @@ from warnings import warn
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.warnings import RelaxDeselectWarning
-from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from pipe_control.pipes import check_pipe
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.noe.parameter_object import Noe_params
@@ -74,7 +74,7 @@ class Noe(API_base, API_common):
         """
 
         # Test if the current pipe exists.
-        pipes.test()
+        check_pipe()
 
         # The spectrum types have not been set.
         if not hasattr(cdp, 'spectrum_type'):

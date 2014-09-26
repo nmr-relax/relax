@@ -41,6 +41,7 @@ from lib.warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWar
 from pipe_control import molmol, pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id_unique, linear_ave, return_spin, spin_loop
+from pipe_control.pipes import check_pipe
 from pipe_control.structure.mass import pipe_centre_of_mass
 from status import Status; status = Status()
 from target_functions.ens_pivot_finder import Pivot_finder
@@ -72,7 +73,7 @@ def add_atom(mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[No
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Place the structural object into the relax data store if needed.
     if not hasattr(cdp, 'structure'):
@@ -86,7 +87,7 @@ def add_model(model_num=None):
     """Add a new model to the empty structural data object."""
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Place the structural object into the relax data store if needed.
     if not hasattr(cdp, 'structure'):
@@ -111,7 +112,7 @@ def connect_atom(index1=None, index2=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Place the structural object into the relax data store if needed.
     if not hasattr(cdp, 'structure'):
@@ -129,7 +130,7 @@ def com(model=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Calculate and store the centre of mass.
     cdp.com = pipe_centre_of_mass(model=model)
@@ -149,7 +150,7 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Calculate the centre of mass.
     if hasattr(cdp, 'structure') and not cdp.structure.empty():
@@ -261,7 +262,7 @@ def delete(atom_id=None, model=None, verbosity=1, spin_info=True):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Run the object method.
     if hasattr(cdp, 'structure'):
@@ -309,7 +310,7 @@ def displacement(model_from=None, model_to=None, atom_id=None, centroid=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Convert the model_from and model_to args to lists, is supplied.
     if model_from != None:
@@ -369,7 +370,7 @@ def find_pivot(models=None, atom_id=None, init_pos=None, func_tol=1e-5, box_limi
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Initialised the starting position if needed.
     if init_pos == None:
@@ -433,7 +434,7 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the structure exists.
     if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
@@ -533,7 +534,7 @@ def load_spins(spin_id=None, str_id=None, mol_name_target=None, ave_pos=False):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the structure exists.
     if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
@@ -620,7 +621,7 @@ def read_gaussian(file=None, dir=None, set_mol_name=None, set_model_num=None, ve
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # The file path.
     file_path = get_file_path(file, dir)
@@ -673,7 +674,7 @@ def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # The file path.
     file_path = get_file_path(file, dir)
@@ -741,7 +742,7 @@ def read_xyz(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # The file path.
     file_path = get_file_path(file, dir)
@@ -779,7 +780,7 @@ def rmsd(atom_id=None, models=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Create a list of all models.
     if models == None:
@@ -819,7 +820,7 @@ def rotate(R=None, origin=None, model=None, atom_id=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the structure exists.
     if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
@@ -877,7 +878,7 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centre_type="ce
         raise RelaxError("The superimposition centre type '%s' is unknown.  It must be one of %s." % (centre_type, allowed))
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Validate the models.
     cdp.structure.validate_models()
@@ -932,7 +933,7 @@ def translate(T=None, model=None, atom_id=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the structure exists.
     if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
@@ -964,7 +965,7 @@ def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, uni
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the PDB file has been loaded.
     if not hasattr(cdp, 'structure'):
@@ -1110,7 +1111,7 @@ def web_of_motion(file=None, dir=None, models=None, force=False):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the structure exists.
     if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
@@ -1193,7 +1194,7 @@ def write_pdb(file=None, dir=None, model_num=None, compress_type=0, force=False)
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Check if the structural object exists.
     if not hasattr(cdp, 'structure'):

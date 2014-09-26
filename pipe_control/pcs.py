@@ -43,6 +43,7 @@ from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import grace, pipes
 from pipe_control.align_tensor import get_tensor_index, get_tensor_object, opt_uses_align_data, opt_uses_tensor
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, is_pseudoatom, return_spin, spin_index_loop, spin_loop
+from pipe_control.pipes import check_pipe
 
 
 def back_calc(align_id=None):
@@ -240,7 +241,7 @@ def check_pipe_setup(pipe=None, pcs_id=None, sequence=False, N=False, tensors=Fa
     dp = pipes.get_pipe(pipe)
 
     # Test if the current data pipe exists.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Test if sequence data exists.
     if sequence and not exists_mol_res_spin_data(pipe):

@@ -37,6 +37,7 @@ from lib.io import extract_data, strip, write_data
 from lib.warnings import RelaxWarning, RelaxZeroVectorWarning
 from pipe_control import pipes
 from pipe_control.mol_res_spin import Selection, count_spins, exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
+from pipe_control.pipes import check_pipe
 
 
 def copy(pipe_from=None, pipe_to=None, spin_id1=None, spin_id2=None, verbose=True):
@@ -63,8 +64,8 @@ def copy(pipe_from=None, pipe_to=None, spin_id1=None, spin_id2=None, verbose=Tru
         pipe_to = pipes.cdp_name()
 
     # Test if the pipe_from and pipe_to data pipes exist.
-    pipes.test(pipe_from)
-    pipes.test(pipe_to)
+    check_pipe(pipe_from)
+    check_pipe(pipe_to)
 
     # Check that the spin IDs exist.
     if spin_id1:
@@ -350,7 +351,7 @@ def exists_data(pipe=None):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
@@ -491,7 +492,7 @@ def read_dist(file=None, dir=None, unit='meter', spin_id1_col=None, spin_id2_col
         raise RelaxError("The measurement unit of '%s' must be one of 'meter' or 'Angstrom'." % unit)
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
@@ -684,7 +685,7 @@ def unit_vectors(ave=True):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if interatomic data exists.
     if not exists_data():

@@ -31,9 +31,9 @@ from lib.errors import RelaxError, RelaxNoDomainError, RelaxNoSequenceError
 from lib.selection import Selection, spin_id_to_data_list
 from lib.sequence import read_spin_data, write_spin_data
 from lib.warnings import RelaxNoSpinWarning
-from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
+from pipe_control.pipes import check_pipe
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
@@ -122,7 +122,7 @@ def desel_all():
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -149,7 +149,7 @@ def desel_interatom(spin_id1=None, spin_id2=None, boolean='AND', change_all=Fals
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -222,7 +222,7 @@ def desel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_c
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -285,7 +285,7 @@ def desel_spin(spin_id=None, boolean='AND', change_all=False):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -419,7 +419,7 @@ def reverse(spin_id=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -441,7 +441,7 @@ def sel_all():
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -464,7 +464,7 @@ def sel_domain(domain_id=None, boolean='OR', change_all=False):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the domain is defined.
     if not hasattr(cdp, 'domain') or domain_id not in cdp.domain:
@@ -514,7 +514,7 @@ def sel_interatom(spin_id1=None, spin_id2=None, boolean='OR', change_all=False):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -587,7 +587,7 @@ def sel_read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -650,7 +650,7 @@ def sel_spin(spin_id=None, boolean='OR', change_all=False):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():

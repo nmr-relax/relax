@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,8 +31,8 @@ from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.io import open_read_file
 from lib.software import xplor
 from lib.warnings import RelaxWarning
-from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, tokenise
+from pipe_control.pipes import check_pipe
 
 
 def __file_format(lines):
@@ -135,7 +135,7 @@ def read_restraints(file=None, dir=None, proton1_col=None, proton2_col=None, low
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():

@@ -44,6 +44,7 @@ from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoSpinError, Relax
 from lib.selection import Selection, parse_token, tokenise
 from lib.warnings import RelaxWarning
 from pipe_control import exp_info, pipes
+from pipe_control.pipes import check_pipe
 from status import Status; status = Status()
 from user_functions.objects import Desc_container
 
@@ -220,7 +221,7 @@ def copy_molecule(pipe_from=None, mol_from=None, pipe_to=None, mol_to=None):
             pipe_to = pipes.cdp_name()
 
         # The second pipe does not exist.
-        pipes.test(pipe_to)
+        check_pipe(pipe_to)
 
         # Split up the selection string.
         mol_from_token, res_from_token, spin_from_token = tokenise(mol_from)
@@ -295,7 +296,7 @@ def copy_residue(pipe_from=None, res_from=None, pipe_to=None, res_to=None):
             pipe_to = pipes.cdp_name()
 
         # The second pipe does not exist.
-        pipes.test(pipe_to)
+        check_pipe(pipe_to)
 
         # Get the target pipe.
         pipe = pipes.get_pipe(pipe_to)
@@ -374,7 +375,7 @@ def copy_spin(pipe_from=None, spin_from=None, pipe_to=None, spin_to=None):
             pipe_to = pipes.cdp_name()
 
         # The second pipe does not exist.
-        pipes.test(pipe_to)
+        check_pipe(pipe_to)
 
         # Get the target pipe.
         pipe = pipes.get_pipe(pipe_to)
@@ -446,7 +447,7 @@ def count_max_spins_per_residue(pipe=None, spin_id=None, skip_desel=True):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # No data, hence no spins.
     if not exists_mol_res_spin_data(pipe=pipe):
@@ -504,7 +505,7 @@ def count_molecules(selection=None, pipe=None):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # No data, hence no molecules.
     if not exists_mol_res_spin_data(pipe=pipe):
@@ -537,7 +538,7 @@ def count_residues(selection=None, pipe=None):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # No data, hence no residues.
     if not exists_mol_res_spin_data(pipe=pipe):
@@ -572,7 +573,7 @@ def count_spins(selection=None, pipe=None, skip_desel=True):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # No data, hence no spins.
     if not exists_mol_res_spin_data(pipe=pipe):
@@ -611,7 +612,7 @@ def create_molecule(mol_name=None, mol_type=None, pipe=None):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
@@ -669,7 +670,7 @@ def create_residue(res_num=None, res_name=None, mol_name=None, pipe=None):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
     status.spin_lock.acquire(sys._getframe().f_code.co_name)
@@ -718,7 +719,7 @@ def create_pseudo_spin(spin_name=None, spin_num=None, res_id=None, members=None,
         pipe = pipes.cdp_name()
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
@@ -838,7 +839,7 @@ def create_spin(spin_num=None, spin_name=None, res_num=None, res_name=None, mol_
         pipe = pipes.cdp_name()
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
@@ -907,7 +908,7 @@ def convert_from_global_index(global_index=None, pipe=None):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Loop over the spins.
     spin_num = 0
@@ -1164,7 +1165,7 @@ def exists_mol_res_spin_data(pipe=None):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
@@ -1195,7 +1196,7 @@ def find_index(selection=None, pipe=None, global_index=True):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
@@ -1796,7 +1797,7 @@ def index_molecule(mol_name=None, pipe=None):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
@@ -1839,7 +1840,7 @@ def index_residue(res_num=None, res_name=None, mol_index=None, pipe=None):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
@@ -1928,7 +1929,7 @@ def metadata_cleanup(mol_index=None, res_index=None, spin_index=None, pipe=None)
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
@@ -2107,7 +2108,7 @@ def metadata_prune(mol_index=None, res_index=None, spin_index=None, pipe=None):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
@@ -2179,7 +2180,7 @@ def metadata_update(mol_index=None, res_index=None, spin_index=None, pipe=None):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
@@ -2265,7 +2266,7 @@ def molecule_loop(selection=None, pipe=None, return_id=False):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
@@ -2388,7 +2389,7 @@ def name_spin(spin_id=None, name=None, pipe=None, force=False):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Acquire the spin lock (data modifying function), and make sure it is finally released.
     status.spin_lock.acquire(sys._getframe().f_code.co_name)
@@ -2597,7 +2598,7 @@ def residue_loop(selection=None, pipe=None, full_info=False, return_id=False):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
@@ -2648,7 +2649,7 @@ def return_molecule(selection=None, pipe=None):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
@@ -2731,7 +2732,7 @@ def return_residue(selection=None, pipe=None, indices=False):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
@@ -2991,7 +2992,7 @@ def return_spin_from_index(global_index=None, pipe=None, return_spin_id=False):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Loop over the spins.
     spin_num = 0
@@ -3184,8 +3185,8 @@ def same_sequence(pipe1, pipe2):
     """
 
     # Test the data pipes.
-    pipes.test(pipe1)
-    pipes.test(pipe2)
+    check_pipe(pipe1)
+    check_pipe(pipe2)
 
     # Get the data pipes.
     pipe1 = pipes.get_pipe(pipe1)
@@ -3254,7 +3255,7 @@ def set_spin_element(spin_id=None, element=None, pipe=None, force=False):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Set the element name for the matching spins.
     for spin, id in spin_loop(spin_id, pipe=pipe, return_id=True):
@@ -3300,7 +3301,7 @@ def set_spin_isotope(spin_id=None, isotope=None, pipe=None, force=False):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Set the isotope type for the matching spins.
     for spin, id in spin_loop(spin_id, pipe=pipe, return_id=True):
@@ -3719,7 +3720,7 @@ def spin_index_loop(selection=None, pipe=None):
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
@@ -3776,7 +3777,7 @@ def spin_loop(selection=None, pipe=None, full_info=False, return_id=False, skip_
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)

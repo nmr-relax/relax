@@ -39,7 +39,7 @@ import sys
 from lib.errors import RelaxError, RelaxDirError, RelaxFileError, RelaxNoSequenceError
 from lib.io import mkdir_nofail, open_write_file, test_binary
 from lib.periodic_table import periodic_table
-from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 from pipe_control.spectrometer import get_frequencies
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from specific_analyses.relax_disp.data import loop_exp_frq_offset_point, return_param_key_from_data
@@ -57,7 +57,7 @@ def cpmgfit_execute(dir=None, binary='cpmgfit', force=False):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -129,7 +129,7 @@ def cpmgfit_input(dir=None, binary='cpmgfit', spin_id=None, force=False):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():

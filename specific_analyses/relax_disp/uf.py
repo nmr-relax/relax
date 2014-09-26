@@ -27,8 +27,8 @@
 # relax module imports.
 from lib.dispersion.variables import MODEL_DESC, MODEL_LIST_FULL, MODEL_PARAMS, MODEL_R2EFF
 from lib.errors import RelaxError
-from pipe_control import pipes
 from pipe_control.mol_res_spin import check_mol_res_spin_data, spin_loop
+from pipe_control.pipes import check_pipe
 from specific_analyses.relax_disp.api import Relax_disp
 from specific_analyses.relax_disp.checks import check_c_modules, check_exp_type, check_pipe_type
 from specific_analyses.relax_disp.data import get_curve_type
@@ -146,7 +146,7 @@ def select_model(model=MODEL_R2EFF):
     """
 
     # Data checks.
-    pipes.test()
+    check_pipe()
     check_pipe_type()
     check_mol_res_spin_data()
     check_exp_type()

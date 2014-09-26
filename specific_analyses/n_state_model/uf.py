@@ -35,7 +35,7 @@ from lib.structure.cones import Iso_cone
 from lib.structure.internal.object import Internal
 from lib.structure.geometric import generate_vector_dist, generate_vector_residues
 from lib.structure.represent.cone import cone_edge, stitch_cone_to_edge
-from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 from pipe_control.structure.mass import centre_of_mass
 
 
@@ -55,7 +55,7 @@ def CoM(pivot_point=None, centre=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Set the pivot point.
     cdp.pivot_point = pivot_point

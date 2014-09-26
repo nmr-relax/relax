@@ -41,7 +41,7 @@ from lib.structure.internal.object import Internal
 from lib.structure.represent.cone import cone
 from lib.structure.represent.rotor import rotor_pdb
 from lib.text.sectioning import subsection
-from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.data import domain_moving, translation_fixed
 from specific_analyses.frame_order.parameters import update_model
@@ -57,7 +57,7 @@ def average_position(pivot='com', translation=True):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Check the pivot value.
     if pivot not in ['com', 'motional']:
@@ -76,7 +76,7 @@ def num_int_pts(num=200000):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Store the value.
     cdp.num_int_pts = num
@@ -400,7 +400,7 @@ def pdb_model(ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_file=
         raise RelaxError("Minimally one PDB file name must be supplied.")
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Create the average position structure.
     if ave_pos_file:
@@ -431,7 +431,7 @@ def pivot(pivot=None, order=1, fix=False):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Store the fixed flag.
     cdp.pivot_fixed = fix
@@ -477,7 +477,7 @@ def quad_int(flag=False):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Store the flag.
     cdp.quad_int = flag
@@ -491,7 +491,7 @@ def ref_domain(ref=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Check that the domain is defined.
     if not hasattr(cdp, 'domain') or ref not in list(cdp.domain.keys()):
@@ -521,7 +521,7 @@ def select_model(model=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the model name exists.
     if not model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor', 'iso cone', 'iso cone, torsionless', 'iso cone, free rotor', 'line', 'line, torsionless', 'line, free rotor', 'rotor', 'rigid', 'free rotor', 'double rotor']:

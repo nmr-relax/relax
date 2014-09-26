@@ -36,7 +36,7 @@ from time import sleep
 from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.io import get_file_path, open_read_file, open_write_file, test_binary
 from pipe_control.mol_res_spin import exists_mol_res_spin_data
-from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 from pipe_control.result_files import add_result_file
 from specific_analyses.api import return_api
 from status import Status; status = Status()
@@ -252,7 +252,7 @@ def macro_apply(data_type=None, style="classic", colour_start_name=None, colour_
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
@@ -326,7 +326,7 @@ def macro_write(data_type=None, style="classic", colour_start_name=None, colour_
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
@@ -392,7 +392,7 @@ def tensor_pdb(file=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # To overlay the structure with the diffusion tensor, select all and reorient to the PDB frame.
     molmol_obj.exec_cmd("SelectAtom ''")

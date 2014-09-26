@@ -34,6 +34,7 @@ from lib.io import get_file_path, open_write_file
 from lib.sequence import read_spin_data, write_spin_data
 from pipe_control import minimise, pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, spin_loop
+from pipe_control.pipes import check_pipe
 from pipe_control.result_files import add_result_file
 from specific_analyses.api import return_api
 from status import Status; status = Status()
@@ -61,7 +62,7 @@ def copy(pipe_from=None, pipe_to=None, param=None, force=False):
     pipe_orig = pipes.cdp_name()
 
     # The second pipe does not exist.
-    pipes.test(pipe_to)
+    check_pipe(pipe_to)
 
     # Test if the sequence data for pipe_from is loaded.
     if not exists_mol_res_spin_data(pipe_from):
@@ -115,7 +116,7 @@ def display(param=None, scaling=1.0):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -281,7 +282,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_c
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -377,7 +378,7 @@ def set(val=None, param=None, index=None, pipe=None, spin_id=None, error=False, 
         pipes.switch(pipe)
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # The specific analysis API object.
     api = return_api()
@@ -455,7 +456,7 @@ def write(param=None, file=None, dir=None, scaling=1.0, return_value=None, retur
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():

@@ -30,16 +30,16 @@ from warnings import warn
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
 from lib.warnings import RelaxWarning
-from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, spin_loop
+from pipe_control.pipes import check_pipe
 
 
 def angle_diff_frame():
     """Function for calculating the angle defining the XH vector in the diffusion frame."""
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the PDB file has been loaded.
     if not hasattr(cdp, 'structure'):

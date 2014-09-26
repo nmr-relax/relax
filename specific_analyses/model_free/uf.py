@@ -29,6 +29,7 @@ from re import match
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError, RelaxTensorError
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from pipe_control.pipes import check_pipe
 import specific_analyses
 from specific_analyses.model_free.api import Model_free
 from specific_analyses.model_free.model import model_map
@@ -88,7 +89,7 @@ def create_model(model=None, equation=None, params=None, spin_id=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the pipe type is 'mf'.
     function_type = pipes.get_type()
@@ -218,7 +219,7 @@ def delete():
     """Delete all the model-free data."""
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the pipe type is set to 'mf'.
     function_type = pipes.get_type()
@@ -282,7 +283,7 @@ def remove_tm(spin_id=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the pipe type is 'mf'.
     function_type = pipes.get_type()
@@ -340,7 +341,7 @@ def select_model(model=None, spin_id=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the pipe type is 'mf'.
     function_type = pipes.get_type()

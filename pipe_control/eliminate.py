@@ -24,7 +24,7 @@
 
 # relax module imports.
 from lib.errors import RelaxError
-from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 from specific_analyses.api import return_api
 
 
@@ -43,7 +43,7 @@ def eliminate(function=None, args=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # The specific analysis API object.
     api = return_api()

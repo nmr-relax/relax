@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -32,8 +32,8 @@ from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.io import write_data
 from lib.spectrum.peak_list import read_peak_list
 from lib.warnings import RelaxNoSpinWarning
-from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin
+from pipe_control.pipes import check_pipe
 
 
 def read(file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, verbose=True):
@@ -64,7 +64,7 @@ def read(file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=N
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
