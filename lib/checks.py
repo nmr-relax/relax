@@ -46,7 +46,7 @@ class Check:
         self.checks = MethodType(function, self, Check)
 
 
-    def __call__(self, escalate=0, *args, **kargs):
+    def __call__(self, *args, **kargs):
         """Make the object callable, and perform the checks.
 
         This will call the function used to initialise the class and then
@@ -58,6 +58,13 @@ class Check:
         @return:                True if the check passes, False otherwise.
         @rtype:                 bool
         """
+
+        # Remove the escalate keyword argument.
+        if 'escalate' not in kargs:
+            escalate = 0
+        else:
+            escalate = kargs['escalate']
+            del kargs['escalate']
 
         # Perform the check.
         error = self.checks(*args, **kargs)
