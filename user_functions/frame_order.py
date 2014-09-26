@@ -360,7 +360,7 @@ uf.title = "Pseudo-Brownian dynamics simulation of the frame order motions."
 uf.title_short = "Frame order pseudo-Brownian dynamics simulation."
 uf.add_keyarg(
     name = "file",
-    default = "simulation.pdb",
+    default = "simulation.pdb.gz",
     py_type = "str",
     arg_type = "file sel",
     desc_short = "simulation file",
