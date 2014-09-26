@@ -25,7 +25,7 @@ import inspect
 from numpy import ndarray
 from os import sep
 from re import search
-from tempfile import mktemp
+from tempfile import mkdtemp, mktemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -59,6 +59,9 @@ class Bmrb(SystemTestCase):
 
         # Create a temporary file name.
         ds.tmpfile = mktemp()
+
+        # Create a temporary directory for dumping files.
+        self.tmpdir = mkdtemp()
 
 
     def data_check(self, old_pipe_name='results', new_pipe_name='new', version=None):
@@ -268,6 +271,21 @@ class Bmrb(SystemTestCase):
 
         # Display again to show a GUI breakage.
         self.assertRaises(RelaxNoFrqError, self.interpreter.bmrb.display, version='3.1')
+
+
+    def test_bug_22704_corrupted_state_file(self):
+        """Catch U{bug #22704<https://gna.org/bugs/?22704>}, the corrupted relax state files."""
+
+        # Create the data pipe.
+        self.interpreter.pipe.create('test', 'mf')
+
+        # Set the relax references.
+        self.interpreter.bmrb.software('relax')
+
+        # Save the relax state, reset, and try loading it again.
+        self.interpreter.state.save('corrupted_state', dir=self.tmpdir)
+        self.interpreter.reset()
+        self.interpreter.state.load('corrupted_state', dir=self.tmpdir)
 
 
     def test_rw_bmrb_3_0_model_free(self):
