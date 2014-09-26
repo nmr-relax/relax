@@ -30,7 +30,7 @@ from tempfile import mktemp
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
-from lib.errors import RelaxError
+from lib.errors import RelaxError, RelaxNoFrqError
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
@@ -260,14 +260,14 @@ class Bmrb(SystemTestCase):
         self.interpreter.pipe.create('test', 'mf')
 
         # Display.
-        self.interpreter.bmrb.display(version='3.1')
+        self.assertRaises(RelaxNoFrqError, self.interpreter.bmrb.display, version='3.1')
 
         # Reset and create a new data pipe.
         self.interpreter.reset()
         self.interpreter.pipe.create('test2', 'mf')
 
         # Display again to show a GUI breakage.
-        self.interpreter.bmrb.display(version='3.1')
+        self.assertRaises(RelaxNoFrqError, self.interpreter.bmrb.display, version='3.1')
 
 
     def test_rw_bmrb_3_0_model_free(self):
