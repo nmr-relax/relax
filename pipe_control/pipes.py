@@ -91,6 +91,16 @@ def bundle_names():
     return list(ds.pipe_bundles.keys())
 
 
+def cdp_name():
+    """Return the name of the current data pipe.
+    
+    @return:        The name of the current data pipe.
+    @rtype:         str
+    """
+
+    return ds.current_pipe
+
+
 def change_type(pipe_type=None):
     """Change the type of the current data pipe.
 
@@ -112,6 +122,27 @@ def change_type(pipe_type=None):
 
     # Change the type.
     cdp.pipe_type = pipe_type
+
+
+def check_type(pipe_type):
+    """Check the validity of the given data pipe type.
+
+    @keyword pipe_type: The data pipe type to check.
+    @type pipe_type:    str
+    @raises RelaxError: If the data pipe type is invalid or the required Python modules are missing.
+    """
+
+    # Test if pipe_type is valid.
+    if not pipe_type in VALID_TYPES:
+        raise RelaxError("The data pipe type " + repr(pipe_type) + " is invalid and must be one of the strings in the list " + repr(VALID_TYPES) + ".")
+
+    # Test that the C modules have been loaded.
+    if pipe_type == 'relax_fit' and not C_module_exp_fn:
+        raise RelaxError("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
+
+    # Test that the scipy is installed for the frame order analysis.
+    if pipe_type == 'frame order' and not scipy_module:
+        raise RelaxError("The frame order analysis is not available.  Please install the scipy Python package.")
 
 
 def copy(pipe_from=None, pipe_to=None, bundle_to=None):
@@ -195,37 +226,6 @@ def create(pipe_name=None, pipe_type=None, bundle=None, switch=True):
     # Release the lock.
     finally:
         status.pipe_lock.release(sys._getframe().f_code.co_name)
-
-
-def check_type(pipe_type):
-    """Check the validity of the given data pipe type.
-
-    @keyword pipe_type: The data pipe type to check.
-    @type pipe_type:    str
-    @raises RelaxError: If the data pipe type is invalid or the required Python modules are missing.
-    """
-
-    # Test if pipe_type is valid.
-    if not pipe_type in VALID_TYPES:
-        raise RelaxError("The data pipe type " + repr(pipe_type) + " is invalid and must be one of the strings in the list " + repr(VALID_TYPES) + ".")
-
-    # Test that the C modules have been loaded.
-    if pipe_type == 'relax_fit' and not C_module_exp_fn:
-        raise RelaxError("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
-
-    # Test that the scipy is installed for the frame order analysis.
-    if pipe_type == 'frame order' and not scipy_module:
-        raise RelaxError("The frame order analysis is not available.  Please install the scipy Python package.")
-
-
-def cdp_name():
-    """Return the name of the current data pipe.
-    
-    @return:        The name of the current data pipe.
-    @rtype:         str
-    """
-
-    return ds.current_pipe
 
 
 def current():

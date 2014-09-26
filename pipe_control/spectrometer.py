@@ -27,22 +27,47 @@ from math import modf, pi
 from warnings import warn
 
 # relax module imports.
+from lib.checks import Check
 from lib.errors import RelaxError, RelaxNoFrqError
 from lib.periodic_table import periodic_table
-from lib.warnings import RelaxWarning
+from lib.warnings import RelaxWarning, RelaxNoFrqWarning
 from pipe_control import pipes
 
 
-def check_frequency(id=None):
+def check_frequency_func(self, id=None):
     """Check that the frequency for the given ID has been set.
 
-    @param id:          The experiment ID string.
-    @type id:           str
+    @keyword id:    The experiment ID string.
+    @type id:       str
+    @return:        The initialised RelaxError object or nothing.
+    @rtype:         None or RelaxError instance
     """
 
     # Check for the ID.
-    if not hasattr(cdp, 'spectrometer_frq') or id not in cdp.spectrometer_frq.keys():
-        raise RelaxNoFrqError(id=id)
+    if not hasattr(cdp, 'spectrometer_frq') and id not in cdp.spectrometer_frq.keys():
+        return RelaxNoFrqError(id=id)
+
+# Create the checking object.
+check_frequency = Check(check_frequency_func)
+
+
+def check_spectrometer_setup_func(self):
+    """Check that spectrometer frequencies have been set up.
+
+    @return:    The initialised RelaxError object or nothing.
+    @rtype:     None or RelaxError instance
+    """
+
+    # No data structure.
+    if not hasattr(cdp, 'spectrometer_frq'):
+        return RelaxNoFrqError()
+
+    # An empty list.
+    if not len(cdp.spectrometer_frq):
+        return RelaxNoFrqError()
+
+# Create the checking object.
+check_spectrometer_setup = Check(check_spectrometer_setup_func)
 
 
 def copy_frequencies(pipe_from=None, pipe_to=None, id=None):

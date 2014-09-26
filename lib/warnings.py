@@ -188,3 +188,18 @@ class RelaxFileEmptyWarning(BaseWarning):
 class RelaxDeselectWarning(BaseWarning):
     def __init__(self, spin_id, reason):
         self.text = "The spin '%s' has been deselected because of %s." % (spin_id, reason)
+
+
+# Spectrometer information warnings.
+####################################
+
+# No frequency information.
+class RelaxNoFrqWarning(BaseWarning):
+    def __init__(self, pipe_name=None, id=None):
+        self.text = "No spectrometer frequency information"
+        if id != None:
+            self.text += " for the '%s' experiment ID" % id
+        self.text += " is present"
+        if pipe_name != None:
+            self.text += " in the '%s' data pipe" % pipe_name
+        self.text += "."

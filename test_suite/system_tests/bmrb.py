@@ -260,14 +260,14 @@ class Bmrb(SystemTestCase):
         self.interpreter.pipe.create('test', 'mf')
 
         # Display.
-        self.interpreter.bmrb.display(version='3.1')
+        self.assertRaises(RelaxError, self.interpreter.bmrb.display, version='3.1')
 
         # Reset and create a new data pipe.
         self.interpreter.reset()
         self.interpreter.pipe.create('test2', 'mf')
 
         # Display again to show a GUI breakage.
-        self.interpreter.bmrb.display(version='3.1')
+        self.assertRaises(RelaxError, self.interpreter.bmrb.display, version='3.1')
 
 
     def test_rw_bmrb_3_0_model_free(self):

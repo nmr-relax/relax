@@ -29,6 +29,7 @@ __all__ = [
     'arg_check',
     'auto_relaxation',
     'check_types',
+    'checks',
     'chemical_shift',
     'compat',
     'curve_fit',
