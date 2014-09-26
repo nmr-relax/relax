@@ -29,7 +29,7 @@ from warnings import warn
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoFrqError
 from lib.periodic_table import periodic_table
-from lib.warnings import RelaxWarning
+from lib.warnings import RelaxWarning, RelaxNoFrqWarning
 from pipe_control import pipes
 
 
@@ -43,6 +43,41 @@ def check_frequency(id=None):
     # Check for the ID.
     if not hasattr(cdp, 'spectrometer_frq') or id not in cdp.spectrometer_frq.keys():
         raise RelaxNoFrqError(id=id)
+
+
+def check_setup(escalate=0):
+    """Check that spectrometer frequencies have been set up.
+
+    This function is designed as described on the wiki page for the U{relax source design<http://wiki.nmr-relax.com/Relax_source_design>}
+
+
+    @keyword escalate:      The feedback to give if the check fails.  This can be 0 for no printouts, 1 to throw a RelaxWarning, or 2 to raise a RelaxError.
+    @type escalate:         int
+    @raises RelaxError:     If escalate is set to 2 and the check fails.
+    @return:                True if the check passes, False otherwise.
+    @rtype:                 bool
+    """
+
+    # Init.
+    check_ok = True
+    msg = ''
+ 
+    # No data structure.
+    if not hasattr(cdp, 'spectrometer_frq'):
+        check_ok = False
+
+    # An empty list.
+    if not len(cdp.spectrometer_frq):
+        check_ok = False
+
+    # Warnings and errors.
+    if not check_ok and escalate == 1:
+        warn(RelaxNoFrqWarning())
+    elif not check_ok and escalate == 2:
+        raise RelaxNoFrqError()
+ 
+    # Return the status.
+    return check_ok
 
 
 def copy_frequencies(pipe_from=None, pipe_to=None, id=None):
