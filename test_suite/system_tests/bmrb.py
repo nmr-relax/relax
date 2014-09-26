@@ -287,6 +287,19 @@ class Bmrb(SystemTestCase):
         self.interpreter.reset()
         self.interpreter.state.load('corrupted_state', dir=self.tmpdir)
 
+        # Checks.
+        self.assert_(hasattr(cdp, 'exp_info'))
+        self.assert_(hasattr(cdp.exp_info, 'software'))
+        self.assertEqual(len(cdp.exp_info.software), 1)
+        #self.assertEqual(cdp.exp_info.software[0].name, 'software')
+        #self.assertEqual(cdp.exp_info.software[0].desc, 'Software program used in the analysis')
+        self.assertEqual(cdp.exp_info.software[0].software_name, 'relax')
+        self.assertEqual(cdp.exp_info.software[0].version, None)
+        self.assertEqual(cdp.exp_info.software[0].url, None)
+        self.assertEqual(cdp.exp_info.software[0].vendor_name, None)
+        self.assertEqual(cdp.exp_info.software[0].cite_ids, None)
+        self.assertEqual(cdp.exp_info.software[0].tasks, None)
+
 
     def test_rw_bmrb_3_0_model_free(self):
         """Write and then read a BRMB STAR formatted file containing model-free results."""
