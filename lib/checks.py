@@ -24,7 +24,6 @@ from __future__ import absolute_import
 """Module for the Check class based on the strategy design pattern."""
 
 # Python module imports.
-from types import MethodType
 from warnings import warn
 
 # relax module imports.
@@ -36,14 +35,14 @@ class Check:
     """Data checking class based on the U{strategy design pattern<https://en.wikipedia.org/wiki/Strategy_pattern>}."""
 
     def __init__(self, function):
-        """Convert the function argument into a class instance method.
+        """Store the function argument for use in the __call__() method.
 
-        @param function:    The function to convert into the self.checks class instance method which is called from the __call__ method.
+        @param function:    The function to store as self.checks which is called from the __call__() method.
         @type function:     function
         """
 
-        # Convert the function into a method of this class instance.
-        self.checks = MethodType(function, self, Check)
+        # Store the function.
+        self.checks = function
 
 
     def __call__(self, *args, **kargs):

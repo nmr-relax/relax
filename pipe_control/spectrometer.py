@@ -34,7 +34,7 @@ from lib.warnings import RelaxWarning, RelaxNoFrqWarning
 from pipe_control import pipes
 
 
-def check_frequency_func(self, id=None):
+def check_frequency_func(id=None):
     """Check that the frequency for the given ID has been set.
 
     @keyword id:    The experiment ID string.
@@ -51,7 +51,7 @@ def check_frequency_func(self, id=None):
 check_frequency = Check(check_frequency_func)
 
 
-def check_spectrometer_setup_func(self):
+def check_spectrometer_setup_func():
     """Check that spectrometer frequencies have been set up.
 
     @return:    The initialised RelaxError object or nothing.
