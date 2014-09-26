@@ -61,7 +61,7 @@ class Check:
 
         # Remove the escalate keyword argument.
         if 'escalate' not in kargs:
-            escalate = 0
+            escalate = 2
         else:
             escalate = kargs['escalate']
             del kargs['escalate']
