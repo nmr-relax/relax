@@ -60,13 +60,17 @@ class Check:
         """
 
         # Perform the check.
-        check_ok, msg = self.checks(*args, **kargs)
+        error = self.checks(*args, **kargs)
 
-        # Warnings and errors.
-        if not check_ok and escalate == 1:
-            warn(RelaxWarning(msg))
-        elif not check_ok and escalate == 2:
-            raise RelaxError(msg)
- 
-        # Return the status.
-        return check_ok
+        # No errors.
+        if error == None:
+            return True
+
+        # Send the text of the RelaxError object into the RelaxWarning system.
+        if escalate == 1:
+            warn(RelaxWarning(error.text))
+            return False
+
+        # The error system.
+        if escalate == 2:
+            raise error
