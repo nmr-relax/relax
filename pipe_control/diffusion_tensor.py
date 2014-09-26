@@ -37,6 +37,7 @@ from lib.physical_constants import element_from_isotope, number_from_isotope
 from pipe_control import pipes
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import get_molecule_names, return_spin, spin_loop
+from pipe_control.pipes import check_pipe
 
 
 def bmrb_read(star):
@@ -285,8 +286,8 @@ def copy(pipe_from=None, pipe_to=None):
         pipe_to = pipes.cdp_name()
 
     # Test if the pipe_from and pipe_to data pipes exist.
-    pipes.test(pipe_from)
-    pipes.test(pipe_to)
+    check_pipe(pipe_from)
+    check_pipe(pipe_to)
 
     # Get the data pipes.
     dp_from = pipes.get_pipe(pipe_from)
@@ -317,7 +318,7 @@ def delete():
     """Function for deleting diffusion tensor data."""
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if diffusion tensor data exists.
     if not diff_data_exists():
@@ -354,7 +355,7 @@ def display():
     """Function for displaying the diffusion tensor."""
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if diffusion tensor data exists.
     if not diff_data_exists():
@@ -648,7 +649,7 @@ def init(params=None, time_scale=1.0, d_scale=1.0, angle_units='deg', param_type
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if diffusion tensor data already exists.
     if diff_data_exists():

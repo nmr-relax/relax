@@ -38,6 +38,7 @@ from lib.text.sectioning import subsection
 from multi import Processor_box
 from pipe_control import pipes, sequence
 from pipe_control.mol_res_spin import check_mol_res_spin_data, return_spin, spin_loop
+from pipe_control.pipes import check_pipe
 from pipe_control.sequence import return_attached_protons
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
@@ -135,7 +136,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # Data checks.
-        pipes.test()
+        check_pipe()
         check_mol_res_spin_data()
         check_model_type()
 

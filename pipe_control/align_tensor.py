@@ -39,6 +39,7 @@ from lib.io import write_data
 from lib.warnings import RelaxWarning
 import pipe_control
 from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 
 
 def align_data_exists(tensor, pipe=None):
@@ -111,8 +112,8 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
         tensor_to = tensor_from
 
     # Test if the pipe_from and pipe_to data pipes exist.
-    pipes.test(pipe_from)
-    pipes.test(pipe_to)
+    check_pipe(pipe_from)
+    check_pipe(pipe_to)
 
     # Get the data pipes.
     dp_from = pipes.get_pipe(pipe_from)
@@ -164,7 +165,7 @@ def delete(tensor=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if alignment tensor data exists.
     if tensor and not align_data_exists(tensor):
@@ -202,7 +203,7 @@ def display(tensor=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Construct the tensor list.
     tensor_list = []
@@ -416,7 +417,7 @@ def fix(id=None, fixed=True):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Loop over the tensors.
     for i in range(len(cdp.align_tensors)):
@@ -690,7 +691,7 @@ def init(tensor=None, align_id=None, params=None, scale=1.0, angle_units='deg', 
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Parameter checks.
     if align_id == None:

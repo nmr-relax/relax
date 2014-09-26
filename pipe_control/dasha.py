@@ -39,6 +39,7 @@ from lib.io import extract_data, mkdir_nofail, open_write_file, strip, test_bina
 from pipe_control import angles, diffusion_tensor, pipes, value
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, first_residue_num, last_residue_num, residue_loop, return_spin, spin_loop
+from pipe_control.pipes import check_pipe
 from pipe_control.spectrometer import loop_frequencies
 from specific_analyses.model_free.model import determine_model_type
 
@@ -82,7 +83,7 @@ def create(algor='LM', dir=None, force=False):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():

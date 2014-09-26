@@ -31,7 +31,7 @@ from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.float import isNaN
 from lib.io import mkdir_nofail, open_write_file
 from lib.periodic_table import periodic_table
-from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 from pipe_control.spectrometer import get_frequencies
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from specific_analyses.relax_disp.data import find_intensity_keys, loop_exp_frq_offset, loop_exp_frq_point_time, loop_point
@@ -51,7 +51,7 @@ def nessy_input(file='save.NESSY', dir=None, spin_id=None, force=False):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():

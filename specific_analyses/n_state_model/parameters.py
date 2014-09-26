@@ -30,7 +30,8 @@ from warnings import warn
 # relax module imports.
 from lib.errors import RelaxNoModelError
 from lib.warnings import RelaxWarning
-from pipe_control import align_tensor, pipes
+from pipe_control import align_tensor
+from pipe_control.pipes import check_pipe
 from pipe_control.align_tensor import opt_uses_align_data, opt_uses_tensor
 from specific_analyses.n_state_model.data import base_data_types
 
@@ -236,7 +237,7 @@ def elim_no_prob():
     """Remove all structures or states which have no probability."""
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the model is setup.
     if not hasattr(cdp, 'model'):
@@ -384,7 +385,7 @@ def number_of_states(N=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Set the value of N.
     cdp.N = N
@@ -471,7 +472,7 @@ def ref_domain(ref=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the model is setup.
     if not hasattr(cdp, 'model'):
@@ -504,7 +505,7 @@ def select_model(model=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the model name exists.
     if not model in ['2-domain', 'population', 'fixed']:

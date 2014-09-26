@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -34,6 +34,7 @@ from lib.warnings import RelaxWarning
 from pipe_control import pipes
 from pipe_control.interatomic import consistent_interatomic_data, create_interatom, interatomic_loop, return_interatom
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
+from pipe_control.pipes import check_pipe
 
 
 def check_pipe_setup(pipe=None, sequence=False, j=False):
@@ -55,7 +56,7 @@ def check_pipe_setup(pipe=None, sequence=False, j=False):
     dp = pipes.get_pipe(pipe)
 
     # Test if the current data pipe exists.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Test if sequence data exists.
     if sequence and not exists_mol_res_spin_data(pipe):

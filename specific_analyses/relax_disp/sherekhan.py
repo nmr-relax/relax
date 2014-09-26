@@ -36,8 +36,8 @@ if dep_check.subprocess_module:
 from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.io import mkdir_nofail, open_write_file
 from lib.periodic_table import periodic_table
-from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_residue
+from pipe_control.pipes import check_pipe
 from specific_analyses.relax_disp.data import loop_cluster, loop_exp_frq, loop_offset_point, loop_time, return_param_key_from_data, spin_ids_to_containers
 
 
@@ -53,7 +53,7 @@ def sherekhan_input(spin_id=None, force=False, dir='ShereKhan'):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():

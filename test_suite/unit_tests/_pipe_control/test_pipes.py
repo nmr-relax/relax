@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -220,21 +220,21 @@ class Test_pipes(UnitTestCase):
     def test_test(self):
         """The throwing of RelaxNoPipeError when the pipe does not exist.
 
-        The function tested is pipe_control.pipes.test().
+        The function tested is pipe_control.pipes.check_pipe().
         """
 
         # The following should do nothing as the pipes exist.
-        pipes.test()
-        pipes.test('orig')
-        pipes.test('empty')
+        pipes.check_pipe()
+        pipes.check_pipe('orig')
+        pipes.check_pipe('empty')
 
         # Assert that a RelaxNoPipeError occurs when the pipe doesn't exist.
-        self.assertRaises(RelaxNoPipeError, pipes.test, 'x')
+        self.assertRaises(RelaxNoPipeError, pipes.check_pipe, 'x')
 
         # Reset relax.
         reset()
 
         # Now none of the following pipes exist, hence errors should be thrown.
-        self.assertRaises(RelaxNoPipeError, pipes.test)
-        self.assertRaises(RelaxNoPipeError, pipes.test, 'orig')
-        self.assertRaises(RelaxNoPipeError, pipes.test, 'empty')
+        self.assertRaises(RelaxNoPipeError, pipes.check_pipe)
+        self.assertRaises(RelaxNoPipeError, pipes.check_pipe, 'orig')
+        self.assertRaises(RelaxNoPipeError, pipes.check_pipe, 'empty')

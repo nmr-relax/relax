@@ -24,7 +24,7 @@
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxNoSequenceError
-from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from specific_analyses.relax_fit.api import Relax_fit
 
@@ -87,7 +87,7 @@ def select_model(model='exp'):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the pipe type is set to 'relax_fit'.
     function_type = cdp.pipe_type

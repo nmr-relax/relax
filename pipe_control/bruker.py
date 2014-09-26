@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,9 +26,9 @@
 from lib.errors import RelaxNoSequenceError
 from lib.physical_constants import element_from_isotope
 from lib.software.bruker_dc import parse_file
-from pipe_control import pipes
 from pipe_control.exp_info import software_select
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, name_spin
+from pipe_control.pipes import check_pipe
 from pipe_control.relax_data import pack_data, peak_intensity_type
 
 
@@ -44,7 +44,7 @@ def read(ri_id=None, file=None, dir=None):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():

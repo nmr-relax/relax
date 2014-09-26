@@ -32,9 +32,10 @@ from lib.errors import RelaxError, RelaxNoFrqError
 from lib.periodic_table import periodic_table
 from lib.warnings import RelaxWarning, RelaxNoFrqWarning
 from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 
 
-def check_frequency_func(self, id=None):
+def check_frequency_func(id=None):
     """Check that the frequency for the given ID has been set.
 
     @keyword id:    The experiment ID string.
@@ -51,7 +52,7 @@ def check_frequency_func(self, id=None):
 check_frequency = Check(check_frequency_func)
 
 
-def check_spectrometer_setup_func(self):
+def check_spectrometer_setup_func():
     """Check that spectrometer frequencies have been set up.
 
     @return:    The initialised RelaxError object or nothing.
@@ -90,8 +91,8 @@ def copy_frequencies(pipe_from=None, pipe_to=None, id=None):
         pipe_to = pipes.cdp_name()
 
     # Test if the pipe_from and pipe_to data pipes exist.
-    pipes.test(pipe_from)
-    pipes.test(pipe_to)
+    check_pipe(pipe_from)
+    check_pipe(pipe_to)
 
     # Get the data pipes.
     dp_from = pipes.get_pipe(pipe_from)
@@ -126,7 +127,7 @@ def delete_frequencies(id=None):
     """
 
     # Checks.
-    pipes.test()
+    check_pipe()
     check_frequency(id=id)
 
     # Delete the frequency.
@@ -178,7 +179,7 @@ def get_frequency(id=None):
     """
 
     # Checks.
-    pipes.test()
+    check_pipe()
     check_frequency(id=id)
 
     # Return the frequency in Hz.
@@ -252,7 +253,7 @@ def set_frequency(id=None, frq=None, units='Hz'):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Set up the data structures if missing.
     if not hasattr(cdp, 'spectrometer_frq'):
@@ -294,7 +295,7 @@ def set_temperature(id=None, temp=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Set up the dictionary data structure if it doesn't exist yet.
     if not hasattr(cdp, 'temperature'):

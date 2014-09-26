@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,6 +28,7 @@ from numpy import array, float64, zeros
 # relax module imports.
 from lib.errors import RelaxError
 from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 from pipe_control.mol_res_spin import spin_loop
 
 
@@ -55,7 +56,7 @@ def centre(pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=Fal
         pipe = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe)
+    check_pipe(pipe)
 
     # Get the data pipes.
     source_dp = pipes.get_pipe(pipe)

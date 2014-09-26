@@ -25,7 +25,7 @@
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxFuncSetupError
-from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 import specific_analyses
 
 
@@ -33,7 +33,7 @@ def set_frq(frq=None):
     """Function for selecting which relaxation data to use in the consistency tests."""
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the pipe type is set to 'ct'.
     function_type = cdp.pipe_type

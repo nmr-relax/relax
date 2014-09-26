@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,8 +24,8 @@
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoTensorError
-from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from pipe_control.pipes import check_pipe
 
 
 def fix(element, fixed):
@@ -38,7 +38,7 @@ def fix(element, fixed):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Diffusion tensor.
     if element == 'diff' or element == 'all':

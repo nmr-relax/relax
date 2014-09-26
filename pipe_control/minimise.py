@@ -33,6 +33,7 @@ from lib.io import write_data
 from multi import Processor_box
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 from specific_analyses.api import return_api, return_parameter_object
 from status import Status; status = Status()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -92,7 +93,7 @@ def calc(verbosity=1):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Reset the minimisation statistics.
     reset_min_stats()
@@ -159,7 +160,7 @@ def grid_search(lower=None, upper=None, inc=None, verbosity=1, constraints=True,
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # The specific analysis API object.
     api = return_api()
@@ -420,7 +421,7 @@ def grid_zoom(level=0):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Store the values.
     cdp.grid_zoom_level = level
@@ -454,7 +455,7 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # The specific analysis API object.
     api = return_api()

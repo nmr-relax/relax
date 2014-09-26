@@ -36,8 +36,8 @@ from lib.io import write_data
 from lib.spectrum.peak_list import read_peak_list
 from lib.statistics import std
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
-from pipe_control import pipes
 from pipe_control.mol_res_spin import check_mol_res_spin_data, create_spin, generate_spin_id_unique, return_spin, spin_loop
+from pipe_control.pipes import check_pipe
 
 
 def __errors_height_no_repl():
@@ -278,7 +278,7 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
     """
 
     # Data checks.
-    pipes.test()
+    check_pipe()
     check_mol_res_spin_data()
     check_spectrum_id(spectrum_id)
 
@@ -327,7 +327,7 @@ def delete(spectrum_id=None):
     """
 
     # Data checks.
-    pipes.test()
+    check_pipe()
     check_mol_res_spin_data()
     check_spectrum_id(spectrum_id)
 
@@ -376,7 +376,7 @@ def error_analysis(subset=None):
     """
 
     # Tests.
-    pipes.test()
+    check_pipe()
     check_mol_res_spin_data()
 
     # Test if spectra have been loaded.
@@ -504,7 +504,7 @@ def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=
     """
 
     # Data checks.
-    pipes.test()
+    check_pipe()
     check_mol_res_spin_data()
 
     # Check the file name.
@@ -685,7 +685,7 @@ def read_spins(file=None, dir=None, dim=1, spin_id_col=None, mol_name_col=None, 
     """
 
     # Data checks.
-    pipes.test()
+    check_pipe()
 
     # Check the file name.
     if file == None:
@@ -722,7 +722,7 @@ def replicated(spectrum_ids=None):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test for None.
     if spectrum_ids == None:

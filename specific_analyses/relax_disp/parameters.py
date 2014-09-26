@@ -35,6 +35,7 @@ from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
+from pipe_control.pipes import check_pipe
 from specific_analyses.relax_disp.data import count_spins, generate_r20_key, has_exponential_exp_type, is_r1_optimised, loop_cluster, loop_exp_frq
 
 
@@ -89,8 +90,8 @@ def copy(pipe_from=None, pipe_to=None):
         pipe_to = pipe_orig
 
     # Test that the pipes exist.
-    pipes.test(pipe_from)
-    pipes.test(pipe_to)
+    check_pipe(pipe_from)
+    check_pipe(pipe_to)
 
     # Test that the pipes are not the same.
     if pipe_from == pipe_to:

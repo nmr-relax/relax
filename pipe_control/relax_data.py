@@ -39,6 +39,7 @@ from lib.warnings import RelaxWarning
 from pipe_control import bmrb, pipes, value
 from pipe_control.interatomic import define, return_interatom, return_interatom_list
 from pipe_control.mol_res_spin import Selection, exists_mol_res_spin_data, find_index, generate_spin_id_unique, get_molecule_names, return_spin, return_spin_from_selection, spin_index_loop, spin_loop
+from pipe_control.pipes import check_pipe
 from pipe_control.spectrometer import copy_frequencies, delete_frequencies, frequency_checks, loop_frequencies, set_frequency
 from specific_analyses.api import return_api
 
@@ -63,7 +64,7 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -420,8 +421,8 @@ def copy(pipe_from=None, pipe_to=None, ri_id=None):
         pipe_to = pipes.cdp_name()
 
     # Test if the pipe_from and pipe_to data pipes exist.
-    pipes.test(pipe_from)
-    pipes.test(pipe_to)
+    check_pipe(pipe_from)
+    check_pipe(pipe_to)
 
     # Get the data pipes.
     dp_from = pipes.get_pipe(pipe_from)
@@ -512,7 +513,7 @@ def delete(ri_id=None):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -576,7 +577,7 @@ def display(ri_id=None):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -826,7 +827,7 @@ def peak_intensity_type(ri_id=None, type=None):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -887,7 +888,7 @@ def read(ri_id=None, ri_type=None, frq=None, file=None, dir=None, file_data=None
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
@@ -992,7 +993,7 @@ def temp_calibration(ri_id=None, method=None):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -1025,7 +1026,7 @@ def temp_control(ri_id=None, method=None):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -1058,7 +1059,7 @@ def type(ri_id=None, ri_type=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if sequence data exists.
     if not exists_mol_res_spin_data():
@@ -1096,7 +1097,7 @@ def write(ri_id=None, file=None, dir=None, bc=False, force=False):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():

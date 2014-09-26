@@ -29,6 +29,7 @@ import sys
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from dep_check import C_module_exp_fn, scipy_module
+from lib.checks import Check
 from lib.compat import builtins
 from lib.errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 from lib.io import sort_filenames, write_data
@@ -63,7 +64,7 @@ def bundle(bundle=None, pipe=None):
     """
 
     # Check that the data pipe exists.
-    test(pipe)
+    check_pipe(pipe)
 
     # Check that the pipe is not in another bundle.
     for key in ds.pipe_bundles.keys():
@@ -122,6 +123,38 @@ def change_type(pipe_type=None):
 
     # Change the type.
     cdp.pipe_type = pipe_type
+
+
+def check_pipe_func(pipe_name=None):
+    """Testing for the existence of the current or supplied data pipe.
+
+    @param pipe_name:   The name of the data pipe to switch to.
+    @type pipe_name:    str
+    @return:            The answer to the question of whether the pipe exists.
+    @rtype:             Boolean
+    """
+
+    # Init.
+    error = None
+
+    # No supplied data pipe and no current data pipe.
+    if pipe_name == None:
+        # Get the current pipe.
+        pipe_name = cdp_name()
+
+        # Still no luck.
+        if pipe_name == None:
+            error = RelaxNoPipeError
+
+    # Test if the data pipe exists.
+    if pipe_name not in ds:
+        error = RelaxNoPipeError(pipe_name)
+
+    # Return the error.
+    return error
+
+# Create the checking object.
+check_pipe = Check(check_pipe_func)
 
 
 def check_type(pipe_type):
@@ -247,7 +280,7 @@ def delete(pipe_name=None):
         # Pipe name is supplied.
         if pipe_name != None:
             # Test if the data pipe exists.
-            test(pipe_name)
+            check_pipe(pipe_name)
 
             # Convert to a list.
             pipes = [pipe_name]
@@ -329,7 +362,7 @@ def get_bundle(pipe=None):
     """
 
     # Check that the data pipe exists.
-    test(pipe)
+    check_pipe(pipe)
 
     # Find and return the bundle.
     for key in ds.pipe_bundles.keys():
@@ -352,7 +385,7 @@ def get_pipe(name=None):
         name = cdp_name()
 
     # Test if the data pipe exists.
-    test(name)
+    check_pipe(name)
 
     return ds[name]
 
@@ -474,7 +507,7 @@ def switch(pipe_name=None):
     status.pipe_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Test if the data pipe exists.
-        test(pipe_name)
+        check_pipe(pipe_name)
 
         # Switch the current data pipe.
         ds.current_pipe = pipe_name
@@ -486,26 +519,3 @@ def switch(pipe_name=None):
 
     # Notify observers that the switch has occurred.
     status.observers.pipe_alteration.notify()
-
-
-def test(pipe_name=None):
-    """Function for testing the existence of the current or supplied data pipe.
-
-    @param pipe_name:   The name of the data pipe to switch to.
-    @type pipe_name:    str
-    @return:            The answer to the question of whether the pipe exists.
-    @rtype:             Boolean
-    """
-
-    # No supplied data pipe and no current data pipe.
-    if pipe_name == None:
-        # Get the current pipe.
-        pipe_name = cdp_name()
-
-        # Still no luck.
-        if pipe_name == None:
-            raise RelaxNoPipeError
-
-    # Test if the data pipe exists.
-    if pipe_name not in ds:
-        raise RelaxNoPipeError(pipe_name)

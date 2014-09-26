@@ -73,6 +73,7 @@ from lib.text.sectioning import section
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
 from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, generate_spin_id_unique, generate_spin_string, return_spin, spin_loop
+from pipe_control.pipes import check_pipe
 from pipe_control.result_files import add_result_file
 from pipe_control.selection import desel_spin
 from pipe_control.sequence import return_attached_protons
@@ -1947,7 +1948,7 @@ def plot_disp_curves(dir=None, y_axis=Y_AXIS_R2_EFF, x_axis=X_AXIS_DISP, num_poi
     """%(Y_AXIS_R2_EFF, Y_AXIS_R2_R1RHO, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, INTERPOLATE_DISP, INTERPOLATE_OFFSET)
 
     # Checks.
-    pipes.test()
+    check_pipe()
     check_mol_res_spin_data()
 
     # Check if interpolating against offset for CPMG models.
@@ -2152,7 +2153,7 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
     """
 
     # Test if the current pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if the sequence data is loaded.
     if not exists_mol_res_spin_data():
@@ -2336,7 +2337,7 @@ def r2eff_read(id=None, file=None, dir=None, disp_frq=None, offset=None, spin_id
     """
 
     # Data checks.
-    pipes.test()
+    check_pipe()
     check_mol_res_spin_data()
     check_frequency(id=id)
     check_exp_type(id=id)
@@ -2448,7 +2449,7 @@ def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=N
     """
 
     # Data checks.
-    pipes.test()
+    check_pipe()
     check_mol_res_spin_data()
 
     # Get the spin.
@@ -4827,7 +4828,7 @@ def set_exp_type(spectrum_id=None, exp_type=None):
     """
 
     # Data checks.
-    pipes.test()
+    check_pipe()
 
     # Add the spectrum ID to the data store if needed.
     add_spectrum_id(spectrum_id)
@@ -5007,7 +5008,7 @@ def write_disp_curves(dir=None, force=None):
     """
 
     # Checks.
-    pipes.test()
+    check_pipe()
     check_mol_res_spin_data()
 
     # The formatting strings.

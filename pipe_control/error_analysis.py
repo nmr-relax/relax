@@ -29,7 +29,7 @@ from random import gauss
 # relax module imports.
 from lib import statistics
 from lib.errors import RelaxError
-from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 from specific_analyses.api import return_api
 
 
@@ -46,7 +46,7 @@ def covariance_matrix(epsrel=0.0, verbosity=2):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # The specific analysis API object.
     api = return_api()
@@ -80,7 +80,7 @@ def monte_carlo_create_data(method=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
@@ -165,7 +165,7 @@ def monte_carlo_error_analysis():
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
@@ -241,7 +241,7 @@ def monte_carlo_initial_values():
     """Set the initial simulation parameter values."""
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
@@ -258,7 +258,7 @@ def monte_carlo_off():
     """Turn simulations off."""
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
@@ -272,7 +272,7 @@ def monte_carlo_on():
     """Turn simulations on."""
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Test if simulations have been set up.
     if not hasattr(cdp, 'sim_state'):
@@ -330,7 +330,7 @@ def monte_carlo_setup(number=None, all_select_sim=None):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Create a number of MC sim data structures.
     cdp.sim_number = number
