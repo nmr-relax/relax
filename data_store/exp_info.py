@@ -83,10 +83,10 @@ class ExpInfo(Element):
             self.citations = RelaxListType()
 
             # The name of the container.
-            self.citations.container_name = "citation_list"
+            self.citations.list_name = "citation_list"
 
             # The description of the container.
-            self.citations.container_desc = "List of citations"
+            self.citations.list_desc = "List of citations"
 
         # Init the container.
         cite = Element()
@@ -191,10 +191,10 @@ class ExpInfo(Element):
             self.scripts = RelaxListType()
 
             # The name of the container.
-            self.scripts.container_name = "script_list"
+            self.scripts.list_name = "script_list"
 
             # The description of the container.
-            self.scripts.container_desc = "List of scripts used for the analysis"
+            self.scripts.list_desc = "List of scripts used for the analysis"
 
         # Init the container.
         script = Element()
@@ -243,10 +243,10 @@ class ExpInfo(Element):
             self.software = RelaxListType()
 
             # The name of the container.
-            self.software.container_name = "software_list"
+            self.software.list_name = "software_list"
 
             # The description of the container.
-            self.software.container_desc = "List of software programs used in the analysis"
+            self.software.list_desc = "List of software programs used in the analysis"
 
         # Init the container.
         software = Element()
