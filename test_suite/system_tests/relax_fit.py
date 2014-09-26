@@ -326,7 +326,6 @@ class Relax_fit(SystemTestCase):
     
             # Assign dublicates.
             for spectrum_id, dub_pair in list_dub_mapping:
-                print spectrum_id, dub_pair
                 if len(dub_pair) > 0:
                     self.interpreter.spectrum.replicated(spectrum_ids=dub_pair)
     
