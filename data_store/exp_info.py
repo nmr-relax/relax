@@ -258,7 +258,7 @@ class ExpInfo(Element):
         software.desc = "Software program used in the analysis"
 
         # Set the attributes.
-        software.name = name
+        software.software_name = name
         software.url = url
         software.version = version
         software.vendor_name = vendor_name
