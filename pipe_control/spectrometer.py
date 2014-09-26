@@ -39,19 +39,13 @@ def check_frequency_func(self, id=None):
 
     @keyword id:    The experiment ID string.
     @type id:       str
-    @return:        The status of the check and the message to send to the user.
-    @rtype:         bool, str
+    @return:        The initialised RelaxError object or nothing.
+    @rtype:         None or RelaxError instance
     """
 
-    # Init.
-    check_ok = True
- 
     # Check for the ID.
     if not hasattr(cdp, 'spectrometer_frq') and id not in cdp.spectrometer_frq.keys():
-        check_ok = False
-
-    # Return the status and message.
-    return check_ok, "No spectrometer frequency information is present for the experiment ID %s." % id
+        return RelaxNoFrqError(id=id)
 
 # Create the checking object.
 check_frequency = Check(check_frequency_func)
@@ -60,23 +54,17 @@ check_frequency = Check(check_frequency_func)
 def check_spectrometer_setup_func(self):
     """Check that spectrometer frequencies have been set up.
 
-    @return:    The status of the check and the message to send to the user.
-    @rtype:     bool, str
+    @return:    The initialised RelaxError object or nothing.
+    @rtype:     None or RelaxError instance
     """
 
-    # Init.
-    check_ok = True
- 
     # No data structure.
     if not hasattr(cdp, 'spectrometer_frq'):
-        check_ok = False
+        return RelaxNoFrqError()
 
     # An empty list.
-    elif not len(cdp.spectrometer_frq):
-        check_ok = False
-
-    # Return the status and message.
-    return check_ok, "No spectrometer frequency information is present."
+    if not len(cdp.spectrometer_frq):
+        return RelaxNoFrqError()
 
 # Create the checking object.
 check_spectrometer_setup = Check(check_spectrometer_setup_func)
