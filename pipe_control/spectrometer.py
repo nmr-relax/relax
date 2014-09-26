@@ -67,7 +67,7 @@ def check_spectrometer_setup(escalate=0):
         check_ok = False
 
     # An empty list.
-    if not len(cdp.spectrometer_frq):
+    elif not len(cdp.spectrometer_frq):
         check_ok = False
 
     # Warnings and errors.
