@@ -243,7 +243,7 @@ def summarise(file_name='summary', dir=None, force=True):
 
     # Table header.
     headings1 = []
-    headings1.append(["Model", "k", "chi2", "AIC", "Motional eigenframe", MULTI_COL, MULTI_COL, "Order parameters (deg)", MULTI_COL, MULTI_COL, MULTI_COL])
+    headings1.append(["Model", "k", "chi2", "AIC", "Motional eigenframe", MULTI_COL, MULTI_COL, "Cone half angles (deg)", MULTI_COL, MULTI_COL, MULTI_COL])
     headings1.append([None, None, None, None, "a", "b/th", "g/ph", "thx", "thy", "smax", "smax2"])
 
     # 2nd table header.
