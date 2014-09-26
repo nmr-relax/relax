@@ -1943,6 +1943,94 @@ class Relax_disp_rep:
             plt.show()
 
 
+    def get_min_stat_dic(self, list_r2eff_dics=None, list_glob_ini=None):
+
+        # Loop over the result dictionaries:
+        res_dic = {}
+        for i, min_dic in enumerate(list_r2eff_dics):
+            # Let the reference dic be initial dic
+            min_dic_ref = list_r2eff_dics[0]
+            method_ref = min_dic_ref['method']
+            res_dic['method_ref'] = method_ref
+            glob_ini_ref = list_glob_ini[0]
+            res_dic['glob_ini_ref'] = str(glob_ini_ref)
+            selection = min_dic_ref['selection']
+            res_dic['selection'] = selection
+            params_list = min_dic_ref[str(glob_ini_ref)]['params']['params_list']
+            res_dic['params_list'] = params_list
+
+            # Loop over params
+            for j, param in enumerate(params_list):
+                res_dic[param] = {}
+
+                # Let the reference param array be the initial glob.
+                param_arr_ref = min_dic_ref[str(glob_ini_ref)]['params'][param]
+                res_dic[param]['param_arr_ref'] = param_arr_ref
+
+                # Get the current method
+                method_cur = min_dic['method']
+
+                res_dic[param][method_cur] = {}
+                res_dic[param][method_cur]['method'] = method_cur
+                res_dic[param][method_cur]['sampling_sparseness'] = []
+                res_dic[param][method_cur]['glob_ini'] = []
+
+                # Other stats.
+                res_dic[param][method_cur]['r_xy'] = []
+                res_dic[param][method_cur]['a'] = []
+
+                # Now loop over glob_ini:
+                for glob_ini in list_glob_ini:
+                    # Get the array, if it exists.
+                    if str(glob_ini) not in min_dic:
+                        continue
+
+                    # Get the data.
+                    param_arr = min_dic[str(glob_ini)]['params'][param]
+
+                    # This require that all number of points are equal.
+                    # If they are not of same length, then dont even bother to continue.
+                    if len(param_arr) != len(param_arr_ref):
+                        continue
+
+                    # Store x
+                    sampling_sparseness = float(glob_ini) / float(glob_ini_ref) * 100.
+                    res_dic[param][method_cur]['sampling_sparseness'].append(sampling_sparseness)
+                    res_dic[param][method_cur]['glob_ini'].append(glob_ini)
+
+                    # Store to result dic.
+                    res_dic[param][method_cur][str(glob_ini)] = {}
+                    res_dic[param][method_cur][str(glob_ini)]['sampling_sparseness'] = sampling_sparseness
+                    res_dic[param][method_cur][str(glob_ini)]['param_arr'] = param_arr
+
+                    # With intercept at axis.
+                    # Calculate sample correlation coefficient, measure of goodness-of-fit of linear regression
+                    x = param_arr_ref
+                    x_m = mean(x)
+                    y = param_arr
+                    y_m = mean(y)
+
+                    # Without intercept.
+                    a = sum(x*y) / sum(x**2)
+                    r_xy = sum(x*y) / sqrt(sum(x**2) * sum(y**2))
+
+                    print(param, method_ref, method_cur, sampling_sparseness, glob_ini, r_xy**2, a)
+
+                    # Store to result dic.
+                    res_dic[param][method_cur][str(glob_ini)]['r_xy'] = r_xy
+                    res_dic[param][method_cur]['r_xy'].append(r_xy)
+                    res_dic[param][method_cur][str(glob_ini)]['a'] = a
+                    res_dic[param][method_cur]['a'].append(a)
+
+                res_dic[param][method_cur]['sampling_sparseness'] = asarray(res_dic[param][method_cur]['sampling_sparseness'])
+                res_dic[param][method_cur]['glob_ini'] = asarray(res_dic[param][method_cur]['glob_ini'])
+
+                res_dic[param][method_cur]['r_xy'] = asarray(res_dic[param][method_cur]['r_xy'])
+                res_dic[param][method_cur]['a'] = asarray(res_dic[param][method_cur]['a'])
+
+        return res_dic
+
+
     def interpreter_start(self):
         # Load the interpreter.
         self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
