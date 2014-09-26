@@ -1943,6 +1943,222 @@ class Relax_disp_rep:
             plt.show()
 
 
+    def get_min_stat_dic(self, list_r2eff_dics=None, list_glob_ini=None):
+
+        # Loop over the result dictionaries:
+        res_dic = {}
+        for i, min_dic in enumerate(list_r2eff_dics):
+            # Let the reference dic be initial dic
+            min_dic_ref = list_r2eff_dics[0]
+            method_ref = min_dic_ref['method']
+            res_dic['method_ref'] = method_ref
+            glob_ini_ref = list_glob_ini[0]
+            res_dic['glob_ini_ref'] = str(glob_ini_ref)
+            selection = min_dic_ref['selection']
+            res_dic['selection'] = selection
+            params_list = min_dic_ref[str(glob_ini_ref)]['params']['params_list']
+            res_dic['params_list'] = params_list
+            analysis = min_dic_ref['analysis']
+            res_dic['analysis'] = analysis
+
+            # Get the current method
+            method_cur = min_dic['method']
+            res_dic[method_cur] = {}
+
+            # Loop over params
+            for j, param in enumerate(params_list):
+                res_dic[param] = {}
+
+                # Let the reference param array be the initial glob.
+                param_arr_ref = min_dic_ref[str(glob_ini_ref)]['params'][param]
+                res_dic[param]['param_arr_ref'] = param_arr_ref
+
+                res_dic[method_cur][param] = {}
+                res_dic[method_cur][param]['method'] = method_cur
+                res_dic[method_cur][param]['sampling_sparseness'] = []
+                res_dic[method_cur][param]['glob_ini'] = []
+
+                # Other stats.
+                res_dic[method_cur][param]['r_xy'] = []
+                res_dic[method_cur][param]['a'] = []
+
+                # Now loop over glob_ini:
+                for glob_ini in list_glob_ini:
+                    # Get the array, if it exists.
+                    if str(glob_ini) not in min_dic:
+                        continue
+
+                    # Get the data.
+                    param_arr = min_dic[str(glob_ini)]['params'][param]
+
+                    # This require that all number of points are equal.
+                    # If they are not of same length, then dont even bother to continue.
+                    if len(param_arr) != len(param_arr_ref):
+                        continue
+
+                    # Store x
+                    sampling_sparseness = float(glob_ini) / float(glob_ini_ref) * 100.
+                    res_dic[method_cur][param]['sampling_sparseness'].append(sampling_sparseness)
+                    res_dic[method_cur][param]['glob_ini'].append(glob_ini)
+
+                    # Store to result dic.
+                    res_dic[method_cur][param][str(glob_ini)] = {}
+                    res_dic[method_cur][param][str(glob_ini)]['sampling_sparseness'] = sampling_sparseness
+                    res_dic[method_cur][param][str(glob_ini)]['param_arr'] = param_arr
+
+                    # With intercept at axis.
+                    # Calculate sample correlation coefficient, measure of goodness-of-fit of linear regression
+                    x = param_arr_ref
+                    x_m = mean(x)
+                    y = param_arr
+                    y_m = mean(y)
+
+                    # Without intercept.
+                    a = sum(x*y) / sum(x**2)
+                    r_xy = sum(x*y) / sqrt(sum(x**2) * sum(y**2))
+
+                    print(param, method_ref, method_cur, sampling_sparseness, glob_ini, r_xy**2, a)
+
+                    # Store to result dic.
+                    res_dic[method_cur][param][str(glob_ini)]['r_xy'] = r_xy
+                    res_dic[method_cur][param]['r_xy'].append(r_xy)
+                    res_dic[method_cur][param][str(glob_ini)]['a'] = a
+                    res_dic[method_cur][param]['a'].append(a)
+
+                res_dic[method_cur][param]['sampling_sparseness'] = asarray(res_dic[method_cur][param]['sampling_sparseness'])
+                res_dic[method_cur][param]['glob_ini'] = asarray(res_dic[method_cur][param]['glob_ini'])
+
+                res_dic[method_cur][param]['r_xy'] = asarray(res_dic[method_cur][param]['r_xy'])
+                res_dic[method_cur][param]['a'] = asarray(res_dic[method_cur][param]['a'])
+
+        return res_dic
+
+
+    def plot_min_stat(self, min_stat_dic=None, methods=[], list_glob_ini=[], show=False, write_stats=False):
+
+        # Catch min and max values for all methods.
+        min_a = 1.0
+        max_a = 0.0
+
+        min_r_xy2 = 1.0
+        max_r_xy2 = 0.0
+
+        # Prepare header for writing.
+        selection = min_stat_dic['selection']
+        params_list = min_stat_dic['params_list']
+        analysis = min_stat_dic['analysis']
+
+        # For writing out stats.
+        headings = []
+        data_dic = OrderedDict()
+        i_max = 0
+
+        for method in methods:
+            if method not in min_stat_dic:
+                continue
+
+            # Define figure
+            fig, axises = plt.subplots(nrows=len(params_list), ncols=1)
+            fig.suptitle('Stats per NI %s' % method)
+
+            # Loop over params
+            data_dic[method] = OrderedDict()
+
+            for j, param in enumerate(params_list):
+                data_dic[method][param] = OrderedDict()
+
+                # Use NI as x.
+                NI = min_stat_dic[method][param]['glob_ini']
+
+                # Use sampling_sparseness as x.
+                SS = min_stat_dic[method][param]['sampling_sparseness']
+
+                # Add to headings.
+                headings = headings + ['method_%s'%param, 'SS', 'NI', 'slope', 'rxy2']
+
+                # Get stats.
+                # Linear regression slope, without intercept
+                a = min_stat_dic[method][param]['a']
+
+                if max(a) > max_a:
+                    max_a = max(a)
+                if min(a) < min_a:
+                    min_a = min(a)
+
+                # sample correlation coefficient, without intercept
+                r_xy = min_stat_dic[method][param]['r_xy']
+                r_xy2 = r_xy**2
+
+                if max(r_xy2) > max_r_xy2:
+                    max_r_xy2 = max(r_xy2)
+                if min(r_xy2) < min_r_xy2:
+                    min_r_xy2 = min(r_xy2)
+
+                # Add to data.
+                for i, NI_i in enumerate(NI):
+                    SS_i = SS[i]
+                    a_i = a[i]
+                    r_xy2_i = r_xy2[i]
+                    data_dic[method][param][str(i)] = ["%3.5f"%SS_i, "%i"%NI_i, "%3.5f"%a_i, "%3.5f"%r_xy2_i]
+                    if i > i_max:
+                        i_max = i
+
+                ax = axises[j]
+                ax.plot(SS, a, ".-", label='%s_%s_a' % (method, param) )
+                ax.plot(SS, r_xy2, "o--", label='%s_%s_r_xy2' % (method, param) )
+                ax.legend(loc='lower left', shadow=True, prop = fontP)
+                ax.set_xlabel('SS')
+                ax.invert_xaxis()
+                #ax.set_ylim(min_a*0.95, max_a*1.05)
+
+
+        # Loop over methods for writing data.
+        data = []
+
+        # Loop over all lines.
+        for i in range(0, i_max+1):
+            data_i = []
+            for method, data_dic_m in data_dic.iteritems():
+                # Loop over all params
+                for j, param in enumerate(params_list):
+                    # Loop over all possible data points.
+                    if str(i) in data_dic_m[param]:
+                        data_i = data_i + ["%s_%s" % (method, param)] + data_dic_m[param][str(i)]
+                    else:
+                        data_i = data_i + ["%s_%s" % (method, param)] + ["0", "0", "0", "0"]
+
+            data.append(data_i)
+
+        # Determine filename.
+        if selection == None:
+            file_name_ini = '%s_stat_all' % analysis
+        else:
+            file_name_ini = '%s_stat_sel' % analysis
+
+        # Write png.
+        png_file_name = file_name_ini + '.png'
+        png_file_path = get_file_path(file_name=png_file_name, dir=self.results_dir)
+
+        # Write to file.
+        if write_stats:
+            # save figure
+            plt.savefig(png_file_path, bbox_inches='tight')
+
+            file_name = file_name_ini + '.txt'
+            path = self.results_dir
+            file_obj, file_path = open_write_file(file_name=file_name, dir=path, force=True, compress_type=0, verbosity=1, return_path=True)
+
+            # Write data.
+            write_data(out=file_obj, headings=headings, data=data)
+
+            # Close file.
+            file_obj.close()
+
+        # Plot data.
+        if show:
+            plt.show()
+
+
     def interpreter_start(self):
         # Load the interpreter.
         self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
