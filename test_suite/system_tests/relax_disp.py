@@ -6123,8 +6123,97 @@ class Relax_disp(SystemTestCase):
                     for i, data_i in enumerate(data):
                         print(i, data_i)
 
-        # Do minimisation.
-        if False:
+
+        # Do minimisation individual.
+        if True:
+            methods = ['FT', 'MDD']
+            # Now calculate R2eff.
+            RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
+
+            min_methods = [['FT'], ['MDD']]
+            min_list_glob_ini = [[128], range(126, 130, 2)[::-1]]
+
+            #min_methods = [['FT']]
+            #min_list_glob_ini = [[128]]
+            #selection = ':2,3'
+            selection = None
+
+            for i, methods in enumerate(min_methods):
+                list_glob_ini = min_list_glob_ini[i]
+
+                if True:
+                    # First get data.
+                    if True:
+                        # First load all data.
+                        RDR.calc_r2eff(methods=methods, list_glob_ini=list_glob_ini)
+
+                    # Then set R20
+                    if True:
+                        # Set R20 from min R2eff in preparation for Grid search.
+                        RDR.r20_from_min_r2eff(methods=methods, model=MODEL_CR72, model_from=MODEL_R2EFF, analysis='grid_setup_ind', analysis_from='int', list_glob_ini=list_glob_ini, force=True)
+
+                    # Check and print parameters.
+                    if True:
+                        # Print for pipe name
+                        method = methods[0]
+                        glob_ini = list_glob_ini[0]
+
+                        test_pipe_name = RDR.name_pipe(method=method, model=MODEL_CR72, analysis='grid_setup_ind', glob_ini=glob_ini)
+                        RDR.spin_display_params(pipe_name=test_pipe_name)
+
+                    # Then Grid search.
+                    if True:
+                        # Do Grid search.
+                        RDR.minimise_grid_search(inc=4, verbosity=1, methods=methods, model=MODEL_CR72, analysis='grid_setup_ind', list_glob_ini=list_glob_ini, force=True)
+
+                # Then Minimise.
+                if True:
+                    # Minimise
+                    RDR.opt_max_iterations = int(1e2)
+                    RDR.minimise_execute(methods=methods, model=MODEL_CR72, analysis='min_ind', analysis_from='grid_setup_ind', list_glob_ini=list_glob_ini, force=True)
+
+                #print asd
+
+        # Plot statistics.
+        # Try plot some minimisation correlations.
+        if True:
+            selection = None
+            # Collect param values.
+            analysis = 'min_ind'
+            min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis=analysis, list_glob_ini=[128], selection=selection)
+            min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=range(126, 130, 2)[::-1], selection=selection)
+
+            fig1 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 128]]
+            fig2 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 126]]
+            corr_data = [fig1, fig2]
+
+            write_stats = True
+            RDR.plot_min_corr(corr_data=corr_data, show=False, write_stats=write_stats)
+
+            # Open stat file.
+            if write_stats:
+                for i, corr_data_i in enumerate(corr_data):
+                    data, methods, glob_inis = corr_data[i]
+                    data_x, data_y = data
+                    method_x, method_y = methods
+                    glob_ini_x, glob_ini_y = glob_inis
+
+                    file_name_ini = '%s_%s_%s_%s_%s' % (analysis, method_x, glob_ini_x, method_y, glob_ini_y)
+
+                    if selection == None:
+                        file_name = file_name_ini + '_all.txt'
+                    else:
+                        file_name = file_name_ini + '_sel.txt'
+                    path = RDR.results_dir
+                    data = extract_data(file=file_name, dir=path)
+
+                    # Loop over the lines.
+                    for i, data_i in enumerate(data):
+                        print(i, data_i)
+
+
+        # Do minimisation clustered.
+        if True:
             methods = ['FT', 'MDD']
             # Now calculate R2eff.
             RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
@@ -6148,23 +6237,19 @@ class Relax_disp(SystemTestCase):
                     # Then select spins.
                     if True:
                         # Deselect all spins.
-                        #RDR.deselect_all(methods=methods, model='setup', model_from=MODEL_R2EFF, analysis='grid_setup', analysis_from='int', list_glob_ini=list_glob_ini)
                         RDR.deselect_all(methods=methods, model='setup', model_from=MODEL_R2EFF, analysis='grid_setup', analysis_from='int', list_glob_ini=list_glob_ini, force=True)
                 
-                        #RDR.select_spin(spin_id=selection, methods=methods, model='setup', analysis='grid_setup', list_glob_ini=list_glob_ini)
                         RDR.select_spin(spin_id=selection, methods=methods, model='setup', analysis='grid_setup', list_glob_ini=list_glob_ini, force=True)
                 
                     # Then preset values.
                     if True:
                         # Set k_AB for Grid search.
-                        #RDR.value_set(methods=methods, val=1000., param='kex', model=MODEL_CR72, model_from='setup', analysis='grid_setup', list_glob_ini=list_glob_ini)
                         RDR.value_set(methods=methods, val=1000., param='kex', model=MODEL_CR72, model_from='setup', analysis='grid_setup', list_glob_ini=list_glob_ini, force=True)
                         RDR.value_set(methods=methods, val=0.95, param='pA', model=MODEL_CR72, model_from='setup', analysis='grid_setup', list_glob_ini=list_glob_ini, force=True)
                 
                     # Then set R20
                     if True:
                         # Set R20 from min R2eff in preparation for Grid search.
-                        #RDR.r20_from_min_r2eff(methods=methods, model=MODEL_CR72, analysis='grid_setup', list_glob_ini=list_glob_ini)
                         RDR.r20_from_min_r2eff(methods=methods, model=MODEL_CR72, analysis='grid_setup', list_glob_ini=list_glob_ini, force=True)
                 
                     # Check and print parameters.
@@ -6179,38 +6264,54 @@ class Relax_disp(SystemTestCase):
                     # Then Grid search.
                     if True:
                         # Do Grid search.
-                        #RDR.minimise_grid_search(inc=200, verbosity=1, methods=methods, model=MODEL_CR72, analysis='grid', analysis_from='grid_setup', list_glob_ini=list_glob_ini)
                         RDR.minimise_grid_search(inc=200, verbosity=1, methods=methods, model=MODEL_CR72, analysis='grid', analysis_from='grid_setup', list_glob_ini=list_glob_ini, force=True)
                 
                     # Then cluster spins.
                     if True:
-                        #RDR.cluster_spins(spin_id=selection, methods=methods, model=MODEL_CR72, analysis='grid', list_glob_ini=list_glob_ini)
                         RDR.cluster_spins(spin_id=selection, methods=methods, model=MODEL_CR72, analysis='grid', list_glob_ini=list_glob_ini, force=True)
             
                 # Then Minimise.
                 if True:
                     # Minimise
                     RDR.opt_max_iterations = int(1e2)
-                    #RDR.minimise_execute(methods=methods, model=MODEL_CR72, analysis='min', analysis_from='grid', list_glob_ini=list_glob_ini, force=True)
                     RDR.minimise_execute(methods=methods, model=MODEL_CR72, analysis='min', analysis_from='grid', list_glob_ini=list_glob_ini, force=False)
-
-                #print asd
 
         # Plot statistics.
         # Try plot some minimisation correlations.
-        if False:
-            # Collect r2eff values.
-            min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis='min', list_glob_ini=[128], selection=None)
-            min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis='min', list_glob_ini=range(126, 130, 2)[::-1], selection=None)
+        if True:
+            selection = ':2,3'
+            # Collect param values.
+            analysis = 'min'
+            min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis=analysis, list_glob_ini=[128], selection=selection)
+            min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=range(126, 130, 2)[::-1], selection=selection)
 
-            fig1 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 126]]
-            fig2 = [[min_mdd_sel, min_mdd_sel], ['MDD', 'MDD'], [128, 126]]
+            fig1 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 128]]
+            fig2 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 126]]
             corr_data = [fig1, fig2]
 
-            RDR.plot_min_corr(corr_data=corr_data, show=False)
+            write_stats = True
+            RDR.plot_min_corr(corr_data=corr_data, show=False, write_stats=write_stats)
 
-        # Print the pipes.
-        #display(sort=True, rev=True)
+            # Open stat file.
+            if write_stats:
+                for i, corr_data_i in enumerate(corr_data):
+                    data, methods, glob_inis = corr_data[i]
+                    data_x, data_y = data
+                    method_x, method_y = methods
+                    glob_ini_x, glob_ini_y = glob_inis
+
+                    file_name_ini = '%s_%s_%s_%s_%s' % (analysis, method_x, glob_ini_x, method_y, glob_ini_y)
+
+                    if selection == None:
+                        file_name = file_name_ini + '_all.txt'
+                    else:
+                        file_name = file_name_ini + '_sel.txt'
+                    path = RDR.results_dir
+                    data = extract_data(file=file_name, dir=path)
+
+                    # Loop over the lines.
+                    for i, data_i in enumerate(data):
+                        print(i, data_i)
 
 
     def test_r1rho_kjaergaard_auto(self):
