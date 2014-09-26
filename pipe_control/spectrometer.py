@@ -27,40 +27,45 @@ from math import modf, pi
 from warnings import warn
 
 # relax module imports.
+from lib.checks import Check
 from lib.errors import RelaxError, RelaxNoFrqError
 from lib.periodic_table import periodic_table
 from lib.warnings import RelaxWarning, RelaxNoFrqWarning
 from pipe_control import pipes
 
 
-def check_frequency(id=None):
+def check_frequency_func(self, id=None):
     """Check that the frequency for the given ID has been set.
 
-    @param id:          The experiment ID string.
-    @type id:           str
-    """
-
-    # Check for the ID.
-    if not hasattr(cdp, 'spectrometer_frq') or id not in cdp.spectrometer_frq.keys():
-        raise RelaxNoFrqError(id=id)
-
-
-def check_spectrometer_setup(escalate=0):
-    """Check that spectrometer frequencies have been set up.
-
-    This function is designed as described on the wiki page for the U{relax source design<http://wiki.nmr-relax.com/Relax_source_design>}
-
-
-    @keyword escalate:      The feedback to give if the check fails.  This can be 0 for no printouts, 1 to throw a RelaxWarning, or 2 to raise a RelaxError.
-    @type escalate:         int
-    @raises RelaxError:     If escalate is set to 2 and the check fails.
-    @return:                True if the check passes, False otherwise.
-    @rtype:                 bool
+    @keyword id:    The experiment ID string.
+    @type id:       str
+    @return:        The status of the check and the message to send to the user.
+    @rtype:         bool, str
     """
 
     # Init.
     check_ok = True
-    msg = ''
+ 
+    # Check for the ID.
+    if not hasattr(cdp, 'spectrometer_frq') and id not in cdp.spectrometer_frq.keys():
+        check_ok = False
+
+    # Return the status and message.
+    return check_ok, "No spectrometer frequency information is present for the experiment ID %s." % id
+
+# Create the checking object.
+check_frequency = Check(check_frequency_func)
+
+
+def check_spectrometer_setup_func(self):
+    """Check that spectrometer frequencies have been set up.
+
+    @return:    The status of the check and the message to send to the user.
+    @rtype:     bool, str
+    """
+
+    # Init.
+    check_ok = True
  
     # No data structure.
     if not hasattr(cdp, 'spectrometer_frq'):
@@ -70,14 +75,11 @@ def check_spectrometer_setup(escalate=0):
     elif not len(cdp.spectrometer_frq):
         check_ok = False
 
-    # Warnings and errors.
-    if not check_ok and escalate == 1:
-        warn(RelaxNoFrqWarning())
-    elif not check_ok and escalate == 2:
-        raise RelaxNoFrqError()
- 
-    # Return the status.
-    return check_ok
+    # Return the status and message.
+    return check_ok, "No spectrometer frequency information is present."
+
+# Create the checking object.
+check_spectrometer_setup = Check(check_spectrometer_setup_func)
 
 
 def copy_frequencies(pipe_from=None, pipe_to=None, id=None):
