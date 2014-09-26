@@ -1691,6 +1691,7 @@ class Relax_disp_rep:
         res_dic = {}
         res_dic['method'] = method
         res_dic['selection'] = selection
+        res_dic['analysis'] = analysis
 
         for glob_ini in list_glob_ini:
             # Check previous, and get the pipe name.
@@ -1764,7 +1765,7 @@ class Relax_disp_rep:
         return res_dic
 
 
-    def plot_min_corr(self, corr_data, show=False):
+    def plot_min_corr(self, corr_data, show=False, write_stats=False):
         # Define figure.
         # Nr of columns is number of datasets.
         nr_cols = len(corr_data)
@@ -1773,6 +1774,7 @@ class Relax_disp_rep:
         glob_ini_0 = glob_inis_0[0]
         params_list = data_xy_0[0][str(glob_ini_0)]['params']['params_list']
         nr_rows = len(params_list)
+        analysis = data_xy_0[0]['analysis']
 
         # Define figure
         fig, axises = plt.subplots(nrows=nr_rows, ncols=nr_cols)
@@ -1780,6 +1782,9 @@ class Relax_disp_rep:
 
         # axises is a tuple with number of elements corresponding to number of rows.
         # Each sub-tuple contains axis for each column.
+
+        # For writing out stats.
+        data_dic = OrderedDict()
 
         # Loop over the rows.
         for i, row_axises in enumerate(axises):
@@ -1796,6 +1801,15 @@ class Relax_disp_rep:
                 x = data_x[str(glob_ini_x)]['params'][param]
                 y = data_y[str(glob_ini_y)]['params'][param]
                 np = len(y)
+
+                # Linear a, with no intercept.
+                a = sum(x * y) / sum(x**2)
+                min_xy = min(concatenate((x,y)))
+                max_xy = max(concatenate((x,y)))
+
+                dx = (max_xy - min_xy) / np
+                x_arange = arange(min_xy, max_xy + dx, dx)
+                y_arange = a * x_arange
 
                 ax.plot(x, x, 'o', label='%s vs. %s' % (method_x, method_x))
                 ax.plot(x, y, '.', label='%s vs. %s' % (method_y, method_x) )
@@ -1814,20 +1828,116 @@ class Relax_disp_rep:
                     ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
                     ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
 
-                # If r2 or dw parameter, do a straight line:
-                if param in PARAMS_R20 + ['dw']:
-                    # Linear a, with no intercept.
-                    a = sum(x * y) / sum(x**2)
-                    min_xy = min(concatenate((x,y)))
-                    max_xy = max(concatenate((x,y)))
+                ## If r2 or dw parameter, do a straight line:
+                #if param in PARAMS_R20 + ['dw']:
 
-                    dx = (max_xy - min_xy) / 10
-                    x_arange = arange(min_xy, max_xy + dx, dx)
-                    y_arange = a * x_arange
-                    ax.plot(x_arange, x_arange, 'b--')
-                    ax.plot(x_arange, y_arange, 'g--')
+                #    ax.plot(x_arange, x_arange, 'b--')
+                #    ax.plot(x_arange, y_arange, 'g--')
+
+                # Do a straight line for all.
+                ax.plot(x_arange, x_arange, 'b--')
+                ax.plot(x_arange, y_arange, 'g--')
+
+                # Store to data dic
+                method_xy_NI = "%s_%s_%s%s_%s%s" % (analysis, param, method_x, glob_ini_x, method_y, glob_ini_y)
+                data_dic[method_xy_NI] = []
+
+                # Add to data.
+                for k, x_k in enumerate(x):
+                    y_k = y[k]
+                    x_arange_k = x_arange[k]
+                    y_arange_k = y_arange[k]
+                    data_dic[method_xy_NI].append(["%3.5f"%x_k, "%3.5f"%y_k, "%3.5f"%x_arange_k, "%3.5f"%y_arange_k])
 
         plt.tight_layout()
+
+        # Loop over columns for writing data.
+        # Write to file.
+        if write_stats:
+            # Re-order the data.
+            headings_all = []
+            method_xy_NI_all = []
+            # Loop over the columns.
+            for j in range(nr_cols):
+                headings_j = []
+                method_xy_NI_j = []
+                # Loop over rows
+                for i in range(nr_rows):
+                    # Extract from lists.
+                    data, methods, glob_inis = corr_data[j]
+                    method_x, method_y = methods
+                    glob_ini_x, glob_ini_y = glob_inis
+                    param = params_list[i]
+
+                    # Add to headings
+                    method_x_NI = "%s_%s_%s%s" % (analysis, param, method_x, glob_ini_x)
+                    method_y_NI = "%s_%s_%s%s" % (analysis, param, method_y, glob_ini_y)
+                    method_x_NI_lin = "%s_%s_lin_%s%s" % (analysis, param, method_x, glob_ini_x)
+                    method_y_NI_lin = "%s_%s_lin_%s%s" % (analysis, param, method_y, glob_ini_y)
+                    headings_j = headings_j + [method_x_NI, method_y_NI, method_x_NI_lin, method_y_NI_lin]
+
+                    method_xy_NI = "%s_%s_%s%s_%s%s" % (analysis, param, method_x, glob_ini_x, method_y, glob_ini_y)
+                    method_xy_NI_j.append(method_xy_NI)
+
+                headings_all.append(headings_j)
+                method_xy_NI_all.append(method_xy_NI_j)
+
+            # Loop over the columns.
+            for j, headings_j in enumerate(headings_all):
+                method_xy_NI_j = method_xy_NI_all[j]
+
+                data_w = []
+                method_xy_NI_r2 = method_xy_NI_j[0]
+                data_r2 = data_dic[method_xy_NI_r2]
+
+                # Loop over the rows of data.
+                for k, data_r2_k in enumerate(data_r2):
+                    data_row = data_r2_k
+                    # Loop over the columns.
+                    for method_xy_NI in method_xy_NI_j[1:]:
+                        data_param = data_dic[method_xy_NI]
+
+                        try:
+                            data_param_row = data_param[k]
+                        except IndexError:
+                            data_param_row = len(data_param[0]) * ['0.0']
+
+                        data_row = data_row + data_param_row
+
+                    data_w.append(data_row)
+
+                # Define file name.
+                data, methods, glob_inis = corr_data[j]
+                data_x, data_y = data
+                method_x, method_y = methods
+                glob_ini_x, glob_ini_y = glob_inis
+
+                # Get the spin selection for correlation.
+                selection = data_x['selection']
+
+                file_name_ini = '%s_%s_%s_%s_%s' % (analysis, method_x, glob_ini_x, method_y, glob_ini_y)
+                if selection == None:
+                    file_name_ini = file_name_ini + '_all'
+                else:
+                    file_name_ini = file_name_ini + '_sel'
+
+                file_name = file_name_ini + '.txt'
+                path = self.results_dir
+
+                # save figure
+                # Write png.
+                png_file_name = file_name_ini + '.png'
+                png_file_path = get_file_path(file_name=png_file_name, dir=path)
+                plt.savefig(png_file_path, bbox_inches='tight')
+
+                # Write file
+                file_obj, file_path = open_write_file(file_name=file_name, dir=path, force=True, compress_type=0, verbosity=1, return_path=True)
+
+                # Write data.
+                write_data(out=file_obj, headings=headings_j, data=data_w)
+
+                # Close file.
+                file_obj.close()
 
         if show:
             plt.show()
