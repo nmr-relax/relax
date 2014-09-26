@@ -6015,45 +6015,6 @@ class Relax_disp(SystemTestCase):
             RDR.plot_int_corr(corr_data=corr_data, show=True)
 
 
-        # Try plot some R2eff correlations.
-        if False:
-            # Now calculate R2eff.
-            #RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
-
-            # Try for bad data.
-            #RDR.calc_r2eff(methods=['FT'], list_glob_ini=[6, 4])
-
-            # Collect r2eff values.
-            r2eff_ft_all = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126], selection=None)
-
-            # Now make a spin selection.
-            selection = ':2,3'
-            r2eff_ft_sel = RDR.col_r2eff(method='FT', list_glob_ini=[128, 126], selection=selection)
-            # Print the length of datasets, depending on selection.
-            print( "All spins", len(r2eff_ft_all['128']['r2eff_arr']), "Selection spins", len(r2eff_ft_sel['128']['r2eff_arr']) )
-
-            # For all spins, mdd
-            r2eff_mdd_all = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126], selection=None)
-            r2eff_mdd_sel = RDR.col_r2eff(method='MDD', list_glob_ini=[128, 126], selection=selection)
-
-            # Plot correlation of intensity
-            fig1 = [[r2eff_ft_all, r2eff_mdd_all], ['FT', 'MDD'], [128, 128]]
-            fig2 = [[r2eff_ft_sel, r2eff_mdd_sel], ['FT sel', 'MDD sel'], [128, 128]]
-            corr_data = [fig1, fig2]
-
-            fig3 = [[r2eff_ft_all, r2eff_ft_all], ['FT', 'FT'], [128, 126]]
-            fig4 = [[r2eff_ft_all, r2eff_mdd_all], ['FT', 'MDD'], [128, 126]]
-            corr_data = [fig3, fig4]
-
-            #fig5 = [[r2eff_ft_all, r2eff_mdd_all], ['FT', 'MDD'], [128, 128]]
-            fig5 = [[r2eff_ft_all, r2eff_mdd_all], ['FT', 'MDD'], [128, 126]]
-            fig6 = [[r2eff_ft_all, r2eff_ft_all], ['FT', 'FT'], [128, 126]]
-            #fig6 = [[r2eff_mdd_all, r2eff_mdd_all], ['MDD', 'MDD'], [128, 126]]
-            corr_data = [fig5, fig6]
-
-            RDR.plot_r2eff_corr(corr_data=corr_data, show=True)
-
-
         # Try write some R2eff correlations.
         if True:
             selection = None
@@ -6177,33 +6138,64 @@ class Relax_disp(SystemTestCase):
         # Plot statistics.
         # Try plot some minimisation correlations.
         if True:
-            selection = None
+            selections = [None, ':2,3']
+            for selection in selections:
+                # Collect param values.
+                analysis = 'min_ind'
+                min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis=analysis, list_glob_ini=[128], selection=selection)
+                min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=range(126, 130, 2)[::-1], selection=selection)
+
+                fig1 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 128]]
+                fig2 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 126]]
+                corr_data = [fig1, fig2]
+
+                write_stats = True
+                RDR.plot_min_corr(corr_data=corr_data, show=False, write_stats=write_stats)
+
+                # Open stat file.
+                if write_stats:
+                    for i, corr_data_i in enumerate(corr_data):
+                        data, methods, glob_inis = corr_data[i]
+                        data_x, data_y = data
+                        method_x, method_y = methods
+                        glob_ini_x, glob_ini_y = glob_inis
+
+                        file_name_ini = '%s_%s_%s_%s_%s' % (analysis, method_x, glob_ini_x, method_y, glob_ini_y)
+
+                        if selection == None:
+                            file_name = file_name_ini + '_all.txt'
+                        else:
+                            file_name = file_name_ini + '_sel.txt'
+                        path = RDR.results_dir
+                        data = extract_data(file=file_name, dir=path)
+
+                        # Loop over the lines.
+                        for i, data_i in enumerate(data):
+                            print(i, data_i)
+
+        # Try plot some minimisation statistics.
+        if True:
             # Collect param values.
-            analysis = 'min_ind'
-            min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis=analysis, list_glob_ini=[128], selection=selection)
-            min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=range(126, 130, 2)[::-1], selection=selection)
+            #selections = [None, ':2,3']
+            selections = [None, ':2,3']
+            for selection in selections:
+                analysis = 'min_ind'
+                min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis=analysis, list_glob_ini=[128], selection=selection)
+                min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=range(126, 130, 2)[::-1], selection=selection)
 
-            fig1 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 128]]
-            fig2 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 126]]
-            corr_data = [fig1, fig2]
+                # Get param stats.
+                min_stat_dic = RDR.get_min_stat_dic(list_r2eff_dics=[min_ft_sel, min_mdd_sel], list_glob_ini=[128, 126])
 
-            write_stats = True
-            RDR.plot_min_corr(corr_data=corr_data, show=False, write_stats=write_stats)
+                ## Plot R2eff stats
+                write_stats = True
+                RDR.plot_min_stat(min_stat_dic=min_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126, 6], show=False, write_stats=write_stats)
 
-            # Open stat file.
-            if write_stats:
-                for i, corr_data_i in enumerate(corr_data):
-                    data, methods, glob_inis = corr_data[i]
-                    data_x, data_y = data
-                    method_x, method_y = methods
-                    glob_ini_x, glob_ini_y = glob_inis
-
-                    file_name_ini = '%s_%s_%s_%s_%s' % (analysis, method_x, glob_ini_x, method_y, glob_ini_y)
-
+                # Open stat file.
+                if write_stats:
                     if selection == None:
-                        file_name = file_name_ini + '_all.txt'
+                        file_name = '%s_stat_all.txt' % (analysis)
                     else:
-                        file_name = file_name_ini + '_sel.txt'
+                        file_name = '%s_stat_sel.txt' % (analysis)
                     path = RDR.results_dir
                     data = extract_data(file=file_name, dir=path)
 
@@ -6312,6 +6304,36 @@ class Relax_disp(SystemTestCase):
                     # Loop over the lines.
                     for i, data_i in enumerate(data):
                         print(i, data_i)
+
+        # Try plot some minimisation statistics.
+        if True:
+            # Collect param values.
+            selections = [':2,3']
+            for selection in selections:
+                analysis = 'min'
+                min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis=analysis, list_glob_ini=[128], selection=selection)
+                min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=range(126, 130, 2)[::-1], selection=selection)
+
+                # Get param stats.
+                min_stat_dic = RDR.get_min_stat_dic(list_r2eff_dics=[min_ft_sel, min_mdd_sel], list_glob_ini=[128, 126])
+
+                ## Plot R2eff stats
+                write_stats = True
+                RDR.plot_min_stat(min_stat_dic=min_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126, 6], show=False, write_stats=write_stats)
+
+                # Open stat file.
+                if write_stats:
+                    if selection == None:
+                        file_name = '%s_stat_all.txt' % (analysis)
+                    else:
+                        file_name = '%s_stat_sel.txt' % (analysis)
+                    path = RDR.results_dir
+                    data = extract_data(file=file_name, dir=path)
+
+                    # Loop over the lines.
+                    for i, data_i in enumerate(data):
+                        print(i, data_i)
+
 
 
     def test_r1rho_kjaergaard_auto(self):
