@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,6 +24,7 @@
 
 # relax module imports.
 from data_store.data_classes import RelaxListType, Element
+from lib.xml import xml_to_object
 
 
 class ExpInfo(Element):
@@ -116,6 +117,44 @@ class ExpInfo(Element):
 
         # Append the container.
         self.citations.append(cite)
+
+
+    def from_xml(self, exp_info_node, file_version=1):
+        """Recreate the element data structure from the XML element node.
+
+        @param super_node:      The element XML node.
+        @type super_node:       xml.dom.minicompat.Element instance
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
+        """
+
+        # Recreate the list structures.
+        list_node_names = ['citation_list', 'script_list', 'software_list']
+        list_subnode_names = ['citation', 'script', 'software']
+        list_str_names = ['citations', 'scripts', 'software']
+        for i in range(len(list_node_names)):
+            # Get the list node.
+            list_node = exp_info_node.getElementsByTagName(list_node_names[i])
+
+            # Necreate the structure, if the node exists.
+            if list_node:
+                # Initialise the data structure.
+                setattr(self, list_str_names[i], RelaxListType())
+                list_obj = getattr(self, list_str_names[i])
+
+                # Get all the subnodes.
+                list_nodes = list_node[0].getElementsByTagName(list_subnode_names[i])
+
+                # Loop over the nodes.
+                for node in list_nodes:
+                    # Add a blank container.
+                    list_obj.append(Element(name=node.tagName, desc=node.getAttribute('desc')))
+
+                    # Recreate the element.
+                    list_obj[-1].from_xml(node, file_version=file_version)
+
+        # Recreate all the other data structures.
+        xml_to_object(exp_info_node, self, file_version=file_version, blacklist=list_node_names)
 
 
     def get_cite_id_num(self, cite_id):
