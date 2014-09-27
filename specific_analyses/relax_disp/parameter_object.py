@@ -568,13 +568,13 @@ class Relax_disp_params(Param_list):
         self._add(
             'k_AB',
             scope = 'spin',
-            default = 1000.0,
+            default = 2.0,
             desc = 'The exchange rate from state A to state B',
             py_type = float,
             set = 'params',
-            scaling = 10000,
-            grid_lower = 1.0,
-            grid_upper = 10000.0,
+            scaling = 100,
+            grid_lower = 0.1,
+            grid_upper = 100.0,
             grace_string = '\\qk\\sAB\\N\\Q (rad.s\\S-1\\N)',
             err = True,
             sim = True
