@@ -572,9 +572,9 @@ class Relax_disp_params(Param_list):
             desc = 'The exchange rate from state A to state B',
             py_type = float,
             set = 'params',
-            scaling = 100,
+            scaling = 20,
             grid_lower = 0.1,
-            grid_upper = 100.0,
+            grid_upper = 20.0,
             grace_string = '\\qk\\sAB\\N\\Q (rad.s\\S-1\\N)',
             err = True,
             sim = True
