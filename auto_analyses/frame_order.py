@@ -942,23 +942,23 @@ class Frame_order_analysis:
                     # Perform the optimisation.
                     self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
 
-                # Copy the PCS data.
-                self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
+            # Printout.
+            subsubtitle(file=sys.stdout, text="Optimisation using the full data set")
 
-                # Reset the selection status.
-                for spin, spin_id in spin_loop(return_id=True, skip_desel=False):
-                    # Get the spin from the original pipe.
-                    spin_orig = return_spin(spin_id=spin_id, pipe=self.data_pipe_full)
+            # Copy the PCS data.
+            self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
 
-                    # Reset the spin selection.
-                    spin.select = spin_orig.select
+            # Reset the selection status.
+            for spin, spin_id in spin_loop(return_id=True, skip_desel=False):
+                # Get the spin from the original pipe.
+                spin_orig = return_spin(spin_id=spin_id, pipe=self.data_pipe_full)
+
+                # Reset the spin selection.
+                spin.select = spin_orig.select
 
             # Optimisation using the full data set.
             opt = self.opt_full
             if opt != None:
-                # Printout.
-                subsubtitle(file=sys.stdout, text="Optimisation using the full data set")
-
                 for i in opt.loop_min():
                     # The numerical optimisation settings.
                     self.interpreter.frame_order.quad_int(opt.get_min_quad_int(i))
