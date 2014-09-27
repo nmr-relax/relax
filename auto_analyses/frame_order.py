@@ -458,14 +458,15 @@ class Frame_order_analysis:
                 self.interpreter.eliminate()
                 self.interpreter.monte_carlo.error_analysis()
 
-                # Finish.
-                self.interpreter.results.write(file='results', dir=self.results_dir+'final', force=True)
+                # Create the output and visualisation files.
+                self.results_output(model='final', dir=self.results_dir+'final', results_file=True)
+
+            # Regenerate the output and visualisation files for the final results.
+            else:
+                self.results_output(model='final', dir=self.results_dir+'final', results_file=False)
 
             # Output the finishing time.
             self.interpreter.time()
-
-            # Visualisation of the final results.
-            self.visualisation(model='final')
 
             # Save the final program state.
             if self._final_state:
@@ -518,13 +519,16 @@ class Frame_order_analysis:
             self.pipe_name_dict[perm_model] = '%s permutation %s - %s' % (title, perm, self.pipe_bundle)
             self.pipe_name_list.append(self.pipe_name_dict[perm_model])
 
+            # The output directory.
+            dir = model_directory(perm_model, base_dir=self.results_dir)
+
             # The results file already exists, so read its contents instead.
             if self.read_results(model=perm_model, pipe_name=self.pipe_name_dict[perm_model]):
                 # Re-perform model elimination just in case.
                 self.interpreter.eliminate()
 
-                # The PDB representation of the model and visualisation script (in case this was not completed correctly).
-                self.visualisation(model=perm_model)
+                # Recreate the output and visualisation files (in case this was not completed correctly).
+                self.results_output(model=perm_model, dir=dir, results_file=False)
 
                 # Jump to the next permutation.
                 continue
@@ -556,11 +560,8 @@ class Frame_order_analysis:
             # Model elimination.
             self.interpreter.eliminate()
 
-            # Save the results.
-            self.interpreter.results.write(dir=model_directory(perm_model, base_dir=self.results_dir), force=True)
-
-            # The PDB representation of the model and visualisation script.
-            self.visualisation(model=perm_model)
+            # Create the output and visualisation files.
+            self.results_output(model=perm_model, dir=dir, results_file=True)
 
 
     def check_vars(self):
@@ -867,13 +868,16 @@ class Frame_order_analysis:
             self.pipe_name_dict[model] = '%s - %s' % (title, self.pipe_bundle)
             self.pipe_name_list.append(self.pipe_name_dict[model])
 
+            # The output directory.
+            dir = model_directory(model, base_dir=self.results_dir)
+
             # The results file already exists, so read its contents instead.
             if self.read_results(model=model, pipe_name=self.pipe_name_dict[model]):
                 # Re-perform model elimination just in case.
                 self.interpreter.eliminate()
 
-                # The PDB representation of the model and visualisation script (in case this was not completed correctly).
-                self.visualisation(model=model)
+                # Recreate the output files (in case this was not completed correctly).
+                self.results_output(model=model, dir=dir, results_file=False)
 
                 # Perform the axis permutation analysis.
                 self.axis_permutation_analysis(model=model)
@@ -958,11 +962,8 @@ class Frame_order_analysis:
             # Model elimination.
             self.interpreter.eliminate()
 
-            # Save the results.
-            self.interpreter.results.write(dir=model_directory(model, base_dir=self.results_dir), force=True)
-
-            # The PDB representation of the model and visualisation script.
-            self.visualisation(model=model)
+            # Create the output and visualisation files.
+            self.results_output(model=model, dir=dir, results_file=True)
 
             # Perform the axis permutation analysis.
             self.axis_permutation_analysis(model=model)
@@ -988,11 +989,13 @@ class Frame_order_analysis:
         self.pipe_name_dict[model] = '%s - %s' % (title, self.pipe_bundle)
         self.pipe_name_list.append(self.pipe_name_dict[model])
 
+        # The output directory.
+        dir = model_directory(model, base_dir=self.results_dir) 
+
         # The results file already exists, so read its contents instead.
         if self.read_results(model=model, pipe_name=self.pipe_name_dict[model]):
-            # The PDB representation of the model and the pseudo-Brownian dynamics simulation (in case this was not completed correctly).
-            self.interpreter.frame_order.pdb_model(dir=model_directory(model, base_dir=self.results_dir), force=True)
-            self.interpreter.frame_order.simulate(dir=model_directory(model, base_dir=self.results_dir), step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
+            # Recreate the output and visualisation files (in case this was not completed correctly).
+            self.results_output(model=model, dir=dir, results_file=False)
 
             # Nothing more to do.
             return
@@ -1049,11 +1052,8 @@ class Frame_order_analysis:
         # Results printout.
         self.print_results()
 
-        # Save the results.
-        self.interpreter.results.write(dir=model_directory(model, base_dir=self.results_dir), force=True)
-
-        # The PDB representation of the model and the pseudo-Brownian dynamics simulation.
-        self.interpreter.frame_order.pdb_model(dir=model_directory(model, base_dir=self.results_dir), force=True)
+        # Create the output and visualisation files.
+        self.results_output(model=model, dir=dir, results_file=True)
 
 
     def print_results(self):
@@ -1210,6 +1210,58 @@ class Frame_order_analysis:
         return new
 
 
+    def results_output(self, dir=None, model=None, results_file=True):
+        """Create visual representations of the frame order results for the given model.
+
+        This will call the following user functions:
+
+            - results.write to output a results file (turned off if the results_file argument is False).
+            - rdc.corr_plot and pcs.corr_plot to visualise the quality of the data and fit as 2D Grace correlation plots.
+            - frame_order.pdb_model to generate a PDB representation of the frame order motions.
+            - frame_order.simulate to perform a pseudo-Brownian frame order dynamics simulation.
+
+        A relax script called 'pymol_display.py' will be created for easily visualising the PDB representation from the frame_order.pdb_model user function.
+
+
+        This includes a PDB representation of the motions (the 'cone.pdb' file located in each model directory) together with a relax script for displaying the average domain positions together with the cone/motion representation in PyMOL (the 'pymol_display.py' file, also created in the model directory).
+
+        @keyword dir:           The output directory.
+        @type dir:              str
+        @keyword model:         The frame order model.  This should match the model of the current data pipe, unless the special value of 'final' is used to indicate the visualisation of the final results.
+        @type model:            str
+        @keyword results_file:  A flag which if True will cause a results file to be created via the results.write user function.
+        @type results_file:     bool
+        """
+
+        # Printout.
+        subsection(file=sys.stdout, text="Generating the results and data visualisation files")
+
+        # Sanity check.
+        if model != 'final' and model.replace(' permutation A', '').replace(' permutation B', '') != cdp.model:
+            raise RelaxError("The model '%s' does not match the model '%s' of the current data pipe." % (model.replace(' permuted', ''), cdp.model))
+
+        # The results file.
+        if results_file:
+            self.interpreter.results.write(dir=dir, force=True)
+
+        # The RDC and PCS correlation plots.
+        self.interpreter.rdc.corr_plot(dir=dir, force=True)
+        self.interpreter.pcs.corr_plot(dir=dir, force=True)
+
+        # The PDB representation of the model.
+        self.interpreter.frame_order.pdb_model(dir=dir, force=True)
+
+        # Create the visualisation script for the PDB representation.
+        script = open_write_file(file_name='pymol_display.py', dir=dir, force=True)
+        script.write("# relax script for displaying the frame order results of this '%s' model in PyMOL.\n\n" % model)
+        script.write("# PyMOL visualisation.\n")
+        script.write("pymol.frame_order()\n")
+        script.close()
+
+        # The pseudo-Brownian dynamics simulation.
+        self.interpreter.frame_order.simulate(dir=dir, step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
+
+
     def sobol_setup(self, info=None):
         """Correctly handle the frame_order.sobol_setup user function.
 
@@ -1231,38 +1283,6 @@ class Frame_order_analysis:
         # Full setup.
         else:
             self.interpreter.frame_order.sobol_setup(max_num=max_num, oversample=oversample)
-
-
-    def visualisation(self, model=None):
-        """Create visual representations of the frame order results for the given model.
-
-        This includes a PDB representation of the motions (the 'cone.pdb' file located in each model directory) together with a relax script for displaying the average domain positions together with the cone/motion representation in PyMOL (the 'pymol_display.py' file, also created in the model directory).
-
-        @keyword model:     The frame order model to visualise.  This should match the model of the current data pipe, unless the special value of 'final' is used to indicate the visualisation of the final results.
-        @type model:        str
-        """
-
-        # Sanity check.
-        if model != 'final' and model.replace(' permutation A', '').replace(' permutation B', '') != cdp.model:
-            raise RelaxError("The model '%s' does not match the model '%s' of the current data pipe." % (model.replace(' permuted', ''), cdp.model))
-
-        # The PDB representation of the model and the pseudo-Brownian dynamics simulation.
-        self.interpreter.frame_order.pdb_model(dir=model_directory(model, base_dir=self.results_dir), force=True)
-        self.interpreter.frame_order.simulate(dir=model_directory(model, base_dir=self.results_dir), step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
-
-        # Create the visualisation script.
-        subsection(file=sys.stdout, text="Creating a PyMOL visualisation script.")
-        script = open_write_file(file_name='pymol_display.py', dir=model_directory(model, base_dir=self.results_dir), force=True)
-
-        # Add a comment for the user.
-        script.write("# relax script for displaying the frame order results of this '%s' model in PyMOL.\n\n" % model)
-
-        # The script contents.
-        script.write("# PyMOL visualisation.\n")
-        script.write("pymol.frame_order()\n")
-
-        # Close the file.
-        script.close()
 
 
 
