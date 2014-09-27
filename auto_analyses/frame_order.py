@@ -1054,7 +1054,6 @@ class Frame_order_analysis:
 
         # The PDB representation of the model and the pseudo-Brownian dynamics simulation.
         self.interpreter.frame_order.pdb_model(dir=model_directory(model, base_dir=self.results_dir), force=True)
-        self.interpreter.frame_order.simulate(dir=model_directory(model, base_dir=self.results_dir), step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
 
 
     def print_results(self):
