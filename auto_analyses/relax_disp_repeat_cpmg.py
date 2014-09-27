@@ -106,7 +106,7 @@ class Relax_disp_rep:
 
         # The R2eff/R1rho value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.
         if 'insignificance' not in self.settings:
-            self.set_self(key='insignificance', value=1.0)
+            self.set_self(key='insignificance', value=0.0)
 
         # A flag which if True will activate R1 parameter fitting via relax_disp.r1_fit for the models that support it.
         # If False, then the relax_disp.r1_fit user function will not be called.

@@ -446,11 +446,10 @@ def linear_constraints(spins=None, scaling_matrix=None):
         padw2 >= 0
         dw >= 0
         0 <= kex <= 2e6
-        0 <= k_AB <= 2e6
         0 <= kB <= 2e6
         0 <= kC <= 2e6
+        0 <= k_AB <= 100
         tex >= 0
-        k_AB >= 0
 
 
     Matrix notation
@@ -504,9 +503,11 @@ def linear_constraints(spins=None, scaling_matrix=None):
         |         |     |          |      |         |
         |-1  0  0 |     |    kC    |      |  -2e6   |
         |         |     |          |      |         |
-        | 1  0  0 |     |   tex    |      |    0    |
-        |         |     |          |      |         |
         | 1  0  0 |     |   k_AB   |      |    0    |
+        |         |     |          |      |         |
+        |-1  0  0 |     |   k_AB   |      |   100   |
+        |         |     |          |      |         |
+        | 1  0  0 |     |   tex    |      |    0    |
 
 
     @keyword spins:             The list of spin data containers for the block.
@@ -621,13 +622,23 @@ def linear_constraints(spins=None, scaling_matrix=None):
                     break
 
         # Exchange rates and times (0 <= k <= 2e6).
-        elif param_name in ['kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC']:
+        elif param_name in ['kex', 'kex_AB', 'kex_AC', 'kex_BC', 'kB', 'kC']:
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
             A[j+1][param_index] = -1.0
             b.append(0.0)
             b.append(-2e6 / scaling_matrix[param_index, param_index])
+            j += 2
+
+        # Exchange rates and times (0 <= k_AB <= 100).
+        elif param_name in ['k_AB']:
+            A.append(zero_array * 0.0)
+            A.append(zero_array * 0.0)
+            A[j][param_index] = 1.0
+            A[j+1][param_index] = -1.0
+            b.append(0.0)
+            b.append(-100. / scaling_matrix[param_index, param_index])
             j += 2
 
         # Exchange times (tex >= 0).
