@@ -62,7 +62,7 @@ from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODE
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.io import open_write_file
 from lib.order.order_parameters import iso_cone_theta_to_S
-from lib.text.sectioning import section, subsection, title
+from lib.text.sectioning import subtitle, subsubtitle, title
 from lib.text.table import MULTI_COL, format_table
 from pipe_control import pipes, results
 from pipe_control.mol_res_spin import return_spin, spin_loop
@@ -440,6 +440,9 @@ class Frame_order_analysis:
             # The nested model optimisation protocol.
             self.nested_models()
 
+            # Printout for the final run.
+            subtitle(file=sys.stdout, text="Final results")
+
             # The final results does not already exist.
             if not self.read_results(model='final', pipe_name='final'):
                 # Model selection.
@@ -468,12 +471,14 @@ class Frame_order_analysis:
             # Output the finishing time.
             self.interpreter.time()
 
+            # Final title printout.
+            subtitle(file=sys.stdout, text="Summaries")
+
             # Save the final program state.
             if self._final_state:
                 self.interpreter.state.save('final_state', dir=self.results_dir, force=True)
 
             # Count the number of Sobol' points and create a summary file.
-            section(file=sys.stdout, text="Summaries")
             count_sobol_points(dir=self.results_dir, force=True)
             summarise(dir=self.results_dir, force=True)
 
@@ -507,7 +512,7 @@ class Frame_order_analysis:
             # The title printout.
             title = model[0].upper() + model[1:]
             text = "Axis permutation '%s' of the %s frame order model" % (perm, title)
-            section(file=sys.stdout, text=text, prespace=5)
+            subtitle(file=sys.stdout, text=text, prespace=5)
 
             # Output the model staring time.
             self.interpreter.time()
@@ -859,7 +864,7 @@ class Frame_order_analysis:
             title = model[0].upper() + model[1:]
 
             # Printout.
-            section(file=sys.stdout, text="%s frame order model"%title, prespace=5)
+            subtitle(file=sys.stdout, text="%s frame order model"%title, prespace=5)
 
             # Output the model staring time.
             self.interpreter.time()
@@ -899,7 +904,7 @@ class Frame_order_analysis:
                 self.interpreter.frame_order.select_model(model=model)
 
                 # Copy nested parameters.
-                subsection(file=sys.stdout, text="Parameter nesting.")
+                subsubtitle(file=sys.stdout, text="Parameter nesting")
                 self.nested_params_ave_dom_pos(model)
                 self.nested_params_eigenframe(model)
                 self.nested_params_pivot(model)
@@ -908,6 +913,9 @@ class Frame_order_analysis:
             # Optimisation using the PCS subset (skipped if a pre-run directory is supplied).
             opt = self.opt_subset
             if opt != None and not self.pre_run_flag:
+                # Printout.
+                subsubtitle(file=sys.stdout, text="Optimisation using the PCS subset")
+
                 # Zooming grid search.
                 for i in opt.loop_grid():
                     # Set the zooming grid search level.
@@ -948,6 +956,9 @@ class Frame_order_analysis:
             # Optimisation using the full data set.
             opt = self.opt_full
             if opt != None:
+                # Printout.
+                subsubtitle(file=sys.stdout, text="Optimisation using the full data set")
+
                 for i in opt.loop_min():
                     # The numerical optimisation settings.
                     self.interpreter.frame_order.quad_int(opt.get_min_quad_int(i))
@@ -980,7 +991,7 @@ class Frame_order_analysis:
         title = model[0].upper() + model[1:]
 
         # Print out.
-        section(file=sys.stdout, text="%s frame order model"%title, prespace=5)
+        subtitle(file=sys.stdout, text="%s frame order model"%title, prespace=5)
 
         # Output the model staring time.
         self.interpreter.time()
@@ -1234,7 +1245,7 @@ class Frame_order_analysis:
         """
 
         # Printout.
-        subsection(file=sys.stdout, text="Generating the results and data visualisation files")
+        subsubtitle(file=sys.stdout, text="Generating the results and data visualisation files")
 
         # Sanity check.
         if model != 'final' and model.replace(' permutation A', '').replace(' permutation B', '') != cdp.model:
