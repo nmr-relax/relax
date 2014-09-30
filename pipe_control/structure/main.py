@@ -102,6 +102,29 @@ def add_model(model_num=None):
     print("Created the empty model number %s." % model_num)
 
 
+def check_structure_func():
+    """Test if structural data is present.
+
+    @return:        The initialised RelaxError object or nothing.
+    @rtype:         None or RelaxError instance
+    """
+
+    # Test if the structure exists.
+    if not hasattr(cdp, 'structure'):
+        return RelaxError("No structural data is present in the current data pipe.")
+
+    # Check for models:
+    if not cdp.structure.num_models():
+        return RelaxError("The structural object in the current data pipe contains no models.")
+
+    # Check for molecules.
+    if not cdp.structure.num_molecules():
+        return RelaxError("The structural object in the current data pipe contains no molecules.")
+
+# Create the checking object.
+check_structure = Check(check_structure_func)
+
+
 def connect_atom(index1=None, index2=None):
     """Connect two atoms.
 
