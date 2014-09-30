@@ -59,6 +59,7 @@ from lib.arg_check import is_bool, is_float, is_int, is_str
 from lib.errors import RelaxError
 from lib.frame_order.conversions import convert_axis_alpha_to_spherical
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_NONREDUNDANT, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
+from lib.geometry.angles import wrap_angles
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.io import open_write_file
 from lib.order.order_parameters import iso_cone_theta_to_S
@@ -293,6 +294,12 @@ def summarise(file_name='summary', dir=None, force=True):
             contents1[-1][6] = cdp.eigen_gamma
         elif hasattr(cdp, 'axis_phi') and cdp.axis_phi != None:
             contents1[-1][6] = cdp.axis_phi
+
+        # Convert the axis alpha angle to spherical angles for comparison.
+        if hasattr(cdp, 'axis_alpha') and cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
+            axis_theta, axis_phi = convert_axis_alpha_to_spherical(alpha=cdp.axis_alpha, pivot=generate_pivot(order=1, pipe_name=models[i]), point=pipe_centre_of_mass(verbosity=0))
+            contents1[-1][5] = wrap_angles(axis_theta, 0.0, 2.0*pi)
+            contents1[-1][6] = wrap_angles(axis_phi, 0.0, 2.0*pi)
 
         # Order x.
         if hasattr(cdp, 'cone_theta_x') and cdp.cone_theta_x != None:
