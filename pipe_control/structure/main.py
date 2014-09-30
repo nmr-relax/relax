@@ -29,7 +29,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from lib.errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError
+from lib.errors import RelaxError, RelaxFileError
 from lib.io import get_file_path, open_write_file, write_data
 from lib.sequence import write_spin_data
 from lib.structure.internal.displacements import Displacements
@@ -40,7 +40,7 @@ from lib.structure.superimpose import fit_to_first, fit_to_mean
 from lib.warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWarning
 from pipe_control import molmol, pipes
 from pipe_control.interatomic import interatomic_loop
-from pipe_control.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id_unique, linear_ave, return_spin, spin_loop
+from pipe_control.mol_res_spin import check_mol_res_spin_data, create_spin, generate_spin_id_unique, linear_ave, return_spin, spin_loop
 from pipe_control.pipes import check_pipe
 from pipe_control.structure.mass import pipe_centre_of_mass
 from status import Status; status = Status()
@@ -456,12 +456,9 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
     @type ave_pos:              bool
     """
 
-    # Test if the current data pipe exists.
+    # Checks.
     check_pipe()
-
-    # Test if the structure exists.
-    if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
-        raise RelaxNoPdbError
+    check_structure()
 
     # The selection object.
     selection = cdp.structure.selection(atom_id=spin_id)
@@ -556,12 +553,9 @@ def load_spins(spin_id=None, str_id=None, mol_name_target=None, ave_pos=False):
     @type ave_pos:              bool
     """
 
-    # Test if the current data pipe exists.
+    # Checks.
     check_pipe()
-
-    # Test if the structure exists.
-    if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
-        raise RelaxNoPdbError
+    check_structure()
 
     # Print out.
     print("Adding the following spins to the relax data store.\n")
@@ -849,12 +843,9 @@ def rotate(R=None, origin=None, model=None, atom_id=None):
     @type atom_id:      str or None
     """
 
-    # Test if the current data pipe exists.
+    # Checks.
     check_pipe()
-
-    # Test if the structure exists.
-    if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
-        raise RelaxNoPdbError
+    check_structure()
 
     # Set the origin if not supplied.
     if origin == None:
@@ -962,12 +953,9 @@ def translate(T=None, model=None, atom_id=None):
     @type atom_id:      str or None
     """
 
-    # Test if the current data pipe exists.
+    # Checks.
     check_pipe()
-
-    # Test if the structure exists.
-    if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
-        raise RelaxNoPdbError
+    check_structure()
 
     # Convert the args to numpy float data structures.
     T = array(T, float64)
@@ -994,16 +982,10 @@ def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, uni
     @type unit:             bool
     """
 
-    # Test if the current data pipe exists.
+    # Checks.
     check_pipe()
-
-    # Test if the PDB file has been loaded.
-    if not hasattr(cdp, 'structure'):
-        raise RelaxNoPdbError
-
-    # Test if sequence data is loaded.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
+    check_structure()
+    check_mol_res_spin_data()
 
     # Print out.
     if verbosity:
@@ -1140,12 +1122,9 @@ def web_of_motion(file=None, dir=None, models=None, force=False):
     @type force:            bool
     """
 
-    # Test if the current data pipe exists.
+    # Checks.
     check_pipe()
-
-    # Test if the structure exists.
-    if not hasattr(cdp, 'structure') or not cdp.structure.num_models() or not cdp.structure.num_molecules():
-        raise RelaxNoPdbError
+    check_structure()
 
     # Validate the models.
     cdp.structure.validate_models()
