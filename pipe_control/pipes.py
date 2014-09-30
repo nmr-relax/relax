@@ -126,16 +126,13 @@ def change_type(pipe_type=None):
 
 
 def check_pipe_func(pipe_name=None):
-    """Testing for the existence of the current or supplied data pipe.
+    """Test for the existence of the current or supplied data pipe.
 
     @param pipe_name:   The name of the data pipe to switch to.
     @type pipe_name:    str
-    @return:            The answer to the question of whether the pipe exists.
-    @rtype:             Boolean
+    @return:            The initialised RelaxError object or nothing.
+    @rtype:             None or RelaxError instance
     """
-
-    # Init.
-    error = None
 
     # No supplied data pipe and no current data pipe.
     if pipe_name == None:
@@ -144,14 +141,11 @@ def check_pipe_func(pipe_name=None):
 
         # Still no luck.
         if pipe_name == None:
-            error = RelaxNoPipeError
+            return RelaxNoPipeError()
 
     # Test if the data pipe exists.
     if pipe_name not in ds:
-        error = RelaxNoPipeError(pipe_name)
-
-    # Return the error.
-    return error
+        return RelaxNoPipeError(pipe_name)
 
 # Create the checking object.
 check_pipe = Check(check_pipe_func)
