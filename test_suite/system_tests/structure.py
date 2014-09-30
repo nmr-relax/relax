@@ -2726,6 +2726,33 @@ class Structure(SystemTestCase):
         self.interpreter.results.read(file=path+sep+'str_internal')
 
 
+    def test_mean(self):
+        """Test the U{structure.mean user function<http://www.nmr-relax.com/manual/structure_mean.html>}."""
+
+        # Create 2 models.
+        self.interpreter.structure.add_model(model_num=1)
+        self.interpreter.structure.add_model(model_num=2)
+
+        # Add a single atom.
+        self.interpreter.structure.add_atom(atom_name='N', res_name='Tyr', res_num=2, pos=[[0., 0., 0.], [1., 2., -2.]], element='N')
+        self.interpreter.structure.add_atom(atom_name='N', res_name='Phe', res_num=3, pos=[[-1., -2., 2.], [1., 2., -2.]], element='N')
+
+        # Calculate the mean.
+        self.interpreter.structure.mean()
+
+        # Test the molecule data.
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 1)
+        mol = cdp.structure.structural_data[0].mol[0]
+        self.assertEqual(len(mol.atom_names), 2)
+        self.assertEqual(mol.x[0], 0.5)
+        self.assertEqual(mol.y[0], 1.0)
+        self.assertEqual(mol.z[0], -1.0)
+        self.assertEqual(mol.x[1], 0.0)
+        self.assertEqual(mol.y[1], 0.0)
+        self.assertEqual(mol.z[1], 0.0)
+
+
     def test_metadata_xml(self):
         """Test the storage and loading of metadata into an XML state file."""
 
