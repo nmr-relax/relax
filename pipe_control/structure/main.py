@@ -622,8 +622,12 @@ def load_spins(spin_id=None, str_id=None, mol_name_target=None, ave_pos=False):
 def mean():
     """Calculate the mean structure from all models in the structural data object."""
 
-    # Test if the current data pipe exists.
+    # Checks.
     check_pipe()
+    check_structure()
+
+    # Call the specific code.
+    cdp.structure.mean()
 
 
 def read_gaussian(file=None, dir=None, set_mol_name=None, set_model_num=None, verbosity=1, fail=True):

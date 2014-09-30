@@ -2100,6 +2100,41 @@ class Internal:
         return True
 
 
+    def mean(self):
+        """Calculate the mean structure from all models in the structural data object."""
+
+        # Create a new model for the mean structure.
+        num = self.num_models()
+        self.add_model()
+        mean_model = self.structural_data[-1]
+
+        # The selection object.
+        selection = self.selection()
+
+        # Loop over the molecules and atoms.
+        for mol_index, i in selection.loop():
+            # Set the mean structure coordinate to zero.
+            mean_model.mol[mol_index].x[i] = 0.0
+            mean_model.mol[mol_index].y[i] = 0.0
+            mean_model.mol[mol_index].z[i] = 0.0
+
+            # Loop over the models and sum the coordinates.
+            for model_index in range(num):
+                model_cont = self.structural_data[model_index]
+                mean_model.mol[mol_index].x[i] += model_cont.mol[mol_index].x[i]
+                mean_model.mol[mol_index].y[i] += model_cont.mol[mol_index].y[i]
+                mean_model.mol[mol_index].z[i] += model_cont.mol[mol_index].z[i]
+
+            # Averages.
+            mean_model.mol[mol_index].x[i] /= num
+            mean_model.mol[mol_index].y[i] /= num
+            mean_model.mol[mol_index].z[i] /= num
+
+        # Delete all models but the mean.
+        for model_index in reversed(range(num)):
+            self.delete(model=self.structural_data[model_index].num)
+
+
     def model_loop(self, model=None):
         """Generator method for looping over the models in numerical order.
 
