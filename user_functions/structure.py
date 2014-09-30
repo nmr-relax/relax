@@ -656,6 +656,20 @@ uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + 'load_spins.png'
 
 
+# The structure.mean user function.
+uf = uf_info.add_uf('structure.mean')
+uf.title = "Calculate the mean structure from all loaded models."
+uf.title_short = "Mean structure."
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will calculate the mean structure from all loaded models.  The mean structure will replace all the models in the internal structural object.  This is provided as a structural aid, specifically for superimposition purposes.")
+uf.backend = pipe_control.structure.main.mean
+uf.menu_text = "&mean"
+uf.gui_icon = "oxygen.categories.applications-education"
+uf.wizard_size = (700, 400)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
+
+
 # The structure.read_gaussian user function.
 uf = uf_info.add_uf('structure.read_gaussian')
 uf.title = "Reading structures from Gaussian log files."

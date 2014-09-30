@@ -601,6 +601,13 @@ def load_spins(spin_id=None, str_id=None, mol_name_target=None, ave_pos=False):
     write_spin_data(file=sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
 
 
+def mean():
+    """Calculate the mean structure from all models in the structural data object."""
+
+    # Test if the current data pipe exists.
+    check_pipe()
+
+
 def read_gaussian(file=None, dir=None, set_mol_name=None, set_model_num=None, verbosity=1, fail=True):
     """Read structures from a Gaussian log file.
 
