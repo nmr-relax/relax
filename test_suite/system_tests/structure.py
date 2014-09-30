@@ -2743,8 +2743,9 @@ class Structure(SystemTestCase):
         # Test the molecule data.
         self.assertEqual(len(cdp.structure.structural_data), 1)
         self.assertEqual(len(cdp.structure.structural_data[0].mol), 1)
+        self.assertEqual(cdp.structure.structural_data[0].num, None)
         mol = cdp.structure.structural_data[0].mol[0]
-        self.assertEqual(len(mol.atom_names), 2)
+        self.assertEqual(len(mol.atom_name), 2)
         self.assertEqual(mol.x[0], 0.5)
         self.assertEqual(mol.y[0], 1.0)
         self.assertEqual(mol.z[0], -1.0)
