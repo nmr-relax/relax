@@ -29,6 +29,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
+from lib.checks import Check
 from lib.errors import RelaxError, RelaxFileError
 from lib.io import get_file_path, open_write_file, write_data
 from lib.sequence import write_spin_data
