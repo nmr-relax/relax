@@ -23,6 +23,7 @@
 from math import sqrt
 from numpy import array, float64, zeros
 from os import sep
+from re import search
 import sys
 from tempfile import mkdtemp, mktemp
 
@@ -2643,6 +2644,73 @@ class Structure(SystemTestCase):
             self.assertEqual(mol.y[i], data[i][4])
             self.assertEqual(mol.z[i], data[i][5])
             self.assertEqual(mol.bonded[i], data[i][7])
+
+        # Output PDB to stdout to help in debugging.
+        self.interpreter.structure.write_pdb(file=sys.stdout)
+
+        # Write out the file.
+        self.tmpfile = mktemp() + '.pdb'
+        self.interpreter.structure.write_pdb(self.tmpfile)
+
+        # Read the contents of the file.
+        file = open(self.tmpfile)
+        lines = file.readlines()
+        file.close()
+
+        # Check the CONECT records.
+        print("\nChecking CONECT records from the structure.write user function:")
+        connected = [
+            [ 0,  1],
+            [ 1,  0],
+            [ 2,  3],
+            [ 3,  2],
+            [ 4,  5],
+            [ 5,  4],
+            [ 7,  8],
+            [ 8,  7],
+            [ 9, 10],
+            [10,  9],
+            [11, 12],
+            [12, 11],
+            [13, 14],
+            [14, 13],
+            [15, 16],
+            [16, 15],
+            [17, 18],
+            [18, 17],
+            [19, 20],
+            [20, 19],
+            [21, 22],
+            [22, 21],
+            [23, 24],
+            [24, 23],
+            [25, 26],
+            [26, 25],
+            [27, 28],
+            [28, 27],
+            [30, 31],
+            [31, 30],
+            [32, 33],
+            [33, 32],
+            [34, 35],
+            [35, 34]
+        ]
+        i = 0
+        for line in lines:
+            # Not a CONECT record.
+            if not search('^CONECT', line):
+                continue
+
+            # Debugging printout.
+            sys.stdout.write(line)
+
+            # Split up the line.
+            row = line.split()
+
+            # Check and increment.
+            self.assertEqual(int(row[1]), connected[i][0]+1)
+            self.assertEqual(int(row[2]), connected[i][1]+1)
+            i += 1
 
 
     def test_delete_empty(self):
