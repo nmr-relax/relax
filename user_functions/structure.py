@@ -157,9 +157,8 @@ uf.add_keyarg(
     py_type = "str_list",
     desc_short = "data pipes",
     desc = "The data pipes to include in the alignment and superimposition.",
-    wiz_element_type = 'combo',
     wiz_combo_iter = pipe_names,
-    wiz_read_only = True,
+    wiz_read_only = False,
     can_be_none = True
 )
 uf.add_keyarg(
