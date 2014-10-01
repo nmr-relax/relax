@@ -1609,6 +1609,11 @@ class Internal:
                         if res_num not in mol.res_num and res_num not in del_res_nums:
                             del_res_nums.append(res_num)
 
+                        # Second atom of the bonded pair.
+                        for j in range(len(mol.bonded)):
+                            if i in mol.bonded[j]:
+                                mol.bonded[j].pop(mol.bonded[j].index(i))
+
             # Nothing more to do.
             if not len(del_res_nums):
                 return
