@@ -928,8 +928,7 @@ def is_str_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False
     @type can_be_none:              bool
     @keyword can_be_empty:          A flag which if True allows the list to be empty.
     @type can_be_empty:             bool
-    @keyword list_of_lists:         A flag which if True allows the argument to be a list of lists
-                                    of strings.
+    @keyword list_of_lists:         A flag which if True allows the argument to be a list of lists of strings.
     @type list_of_lists:            bool
     @keyword raise_error:           A flag which if True will cause RelaxErrors to be raised.
     @type raise_error:              bool
@@ -967,7 +966,6 @@ def is_str_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False
                 for j in range(len(arg[i])):
                     if not isinstance(arg[i][j], str):
                         fail = True
-
 
             # Simple list.
             else:
