@@ -21,14 +21,14 @@
 
 # Python module imports.
 from math import sqrt
-from numpy import float64, zeros
+from numpy import array, float64, zeros
 from os import sep
 from tempfile import mkdtemp, mktemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.mol_res_spin import count_spins, return_spin, spin_loop
-from lib.geometry.rotations import euler_to_R_zyz
+from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz
 from lib.errors import RelaxError
 from lib.io import DummyFileObject
 from status import Status; status = Status()
@@ -57,6 +57,47 @@ class Structure(SystemTestCase):
 
         # Rebuild the list.
         lines[:] = [x for x in lines if x[:6] != 'REMARK']
+
+
+    def test_align(self):
+        """Test the U{structure.align user function<http://www.nmr-relax.com/manual/structure_align.html>}."""
+
+        # Reset relax.
+        self.interpreter.reset()
+
+        # Path of the PDB file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+
+        # Create a data pipe for the reference structure, then load it.
+        self.interpreter.pipe.create('ref', 'N-state')
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path)
+
+        # Delete a residue and atom.
+        self.interpreter.structure.delete(":8")
+        self.interpreter.structure.delete(":2@N")
+
+        # Create a second data pipe for the structures to align and superimpose.
+        self.interpreter.pipe.create('align', 'N-state')
+
+        # Load the PDB twice as different models.
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_model_num=1)
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_model_num=2)
+
+        # Delete a residue and atom.
+        self.interpreter.structure.delete(":12")
+        self.interpreter.structure.delete(":20@H")
+
+        # Translate and rotate the models.
+        R = zeros((3, 3), float64)
+        self.interpreter.structure.translate(T=[1., 1., 1.], model=1)
+        self.interpreter.structure.translate(T=[0., 0., 1.], model=2)
+        axis_angle_to_R(array([1, 0, 0], float64), 1.0, R)
+        self.interpreter.structure.rotate(R=R, model=1)
+        axis_angle_to_R(array([0, 0, 1], float64), 2.0, R)
+        self.interpreter.structure.rotate(R=R, model=2)
+
+        # The alignment.
+        self.interpreter.structure.align(pipes=['ref', 'align'], method='fit to mean', atom_id='@N,H')
 
 
     def test_alt_loc_missing(self):
