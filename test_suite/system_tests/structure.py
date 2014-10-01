@@ -2577,6 +2577,74 @@ class Structure(SystemTestCase):
             self.assertEqual(real_data[i], lines[i])
 
 
+    def test_delete_atom(self):
+        """Test the deletion of a single atom using the U{structure.delete user function<http://www.nmr-relax.com/manual/structure_delete.html>}"""
+
+        # Load the test structure.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+        self.interpreter.structure.read_pdb(file='uniform.pdb', dir=path)
+
+        # Delete some atoms, testing different combinations.
+        self.interpreter.structure.delete(atom_id=':4@N', verbosity=1)
+        self.interpreter.structure.delete(atom_id=':19', verbosity=1)
+        self.interpreter.structure.delete(atom_id=':16@H', verbosity=1)
+
+        # The expected atomic data after deletion.
+        data = [
+            ["N", "NH",  1,   0.000,  0.000,  0.000,  0, [1]],
+            ["H", "NH",  1,   0.000,  0.000, -1.020,  1, [0]],
+            ["N", "NH",  2,   0.000,  0.000,  0.000,  2, [3]],
+            ["H", "NH",  2,   0.883,  0.000, -0.510,  3, [2]],
+            ["N", "NH",  3,   0.000,  0.000,  0.000,  4, [5]],
+            ["H", "NH",  3,   0.883,  0.000,  0.510,  5, [4]],
+            ["H", "NH",  4,   0.000,  0.000,  1.020,  6, []],
+            ["N", "NH",  5,   0.000,  0.000,  0.000,  7, [8]],
+            ["H", "NH",  5,   0.000,  0.000, -1.020,  8, [7]],
+            ["N", "NH",  6,   0.000,  0.000,  0.000,  9, [10]],
+            ["H", "NH",  6,   0.273,  0.840, -0.510, 10, [9]],
+            ["N", "NH",  7,   0.000,  0.000,  0.000, 11, [12]],
+            ["H", "NH",  7,   0.273,  0.840,  0.510, 12, [11]],
+            ["N", "NH",  8,   0.000,  0.000,  0.000, 13, [14]],
+            ["H", "NH",  8,   0.000,  0.000,  1.020, 14, [13]],
+            ["N", "NH",  9,   0.000,  0.000,  0.000, 15, [16]],
+            ["H", "NH",  9,  -0.000,  0.000, -1.020, 16, [15]],
+            ["N", "NH", 10,   0.000,  0.000,  0.000, 17, [18]],
+            ["H", "NH", 10,  -0.715,  0.519, -0.510, 18, [17]],
+            ["N", "NH", 11,   0.000,  0.000,  0.000, 19, [20]],
+            ["H", "NH", 11,  -0.715,  0.519,  0.510, 20, [19]],
+            ["N", "NH", 12,   0.000,  0.000,  0.000, 21, [22]],
+            ["H", "NH", 12,  -0.000,  0.000,  1.020, 22, [21]],
+            ["N", "NH", 13,   0.000,  0.000,  0.000, 23, [24]],
+            ["H", "NH", 13,  -0.000, -0.000, -1.020, 24, [23]],
+            ["N", "NH", 14,   0.000,  0.000,  0.000, 25, [26]],
+            ["H", "NH", 14,  -0.715, -0.519, -0.510, 26, [25]],
+            ["N", "NH", 15,   0.000,  0.000,  0.000, 27, [28]],
+            ["H", "NH", 15,  -0.715, -0.519,  0.510, 28, [27]],
+            ["N", "NH", 16,   0.000,  0.000,  0.000, 29, []],
+            ["N", "NH", 17,   0.000,  0.000,  0.000, 30, [31]],
+            ["H", "NH", 17,   0.000, -0.000, -1.020, 31, [30]],
+            ["N", "NH", 18,   0.000,  0.000,  0.000, 32, [33]],
+            ["H", "NH", 18,   0.273, -0.840, -0.510, 33, [32]],
+            ["N", "NH", 20,   0.000,  0.000,  0.000, 34, [35]],
+            ["H", "NH", 20,   0.000, -0.000,  1.020, 35, [34]]
+        ]
+
+        # The selection object.
+        selection = cdp.structure.selection()
+
+        # Check the structural object.
+        mol = cdp.structure.structural_data[0].mol[0]
+        self.assertEqual(len(data), len(mol.atom_name))
+        for i in range(len(mol.atom_name)):
+            self.assertEqual(mol.atom_name[i], data[i][0])
+            self.assertEqual(mol.res_name[i], data[i][1])
+            self.assertEqual(mol.res_num[i], data[i][2])
+            self.assertEqual(mol.x[i], data[i][3])
+            self.assertEqual(mol.y[i], data[i][4])
+            self.assertEqual(mol.z[i], data[i][5])
+            self.assertEqual(mol.bonded[i], data[i][7])
+
+
     def test_delete_empty(self):
         """Test the deletion of non-existent structural data."""
 
