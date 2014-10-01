@@ -42,7 +42,7 @@ from lib.warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWar
 from pipe_control import molmol, pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import check_mol_res_spin_data, create_spin, generate_spin_id_unique, linear_ave, return_spin, spin_loop
-from pipe_control.pipes import check_pipe, get_pipe
+from pipe_control.pipes import cdp_name, check_pipe, get_pipe
 from pipe_control.structure.mass import pipe_centre_of_mass
 from status import Status; status = Status()
 from target_functions.ens_pivot_finder import Pivot_finder
@@ -962,7 +962,7 @@ def rmsd(atom_id=None, models=None):
     return cdp.structure.rmsd
 
 
-def rotate(R=None, origin=None, model=None, atom_id=None):
+def rotate(R=None, origin=None, model=None, atom_id=None, pipe_name=None):
     """Rotate the structural data about the origin by the specified forwards rotation.
 
     @keyword R:         The forwards rotation matrix.
@@ -973,11 +973,20 @@ def rotate(R=None, origin=None, model=None, atom_id=None):
     @type model:        int
     @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
     @type atom_id:      str or None
+    @keyword pipe_name: The name of the data pipe containing the structures to translate.  This defaults to the current data pipe.
+    @type pipe_name:    None or str
     """
 
+    # Defaults.
+    if pipe_name == None:
+        pipe_name = cdp_name()
+
     # Checks.
-    check_pipe()
-    check_structure()
+    check_pipe(pipe_name)
+    check_structure(pipe_name)
+
+    # Get the data pipe.
+    dp = get_pipe(pipe_name)
 
     # Set the origin if not supplied.
     if origin == None:
@@ -988,8 +997,8 @@ def rotate(R=None, origin=None, model=None, atom_id=None):
     origin = array(origin, float64)
 
     # Call the specific code.
-    selection = cdp.structure.selection(atom_id=atom_id)
-    cdp.structure.rotate(R=R, origin=origin, model=model, selection=selection)
+    selection = dp.structure.selection(atom_id=atom_id)
+    dp.structure.rotate(R=R, origin=origin, model=model, selection=selection)
 
 
 def set_vector(spin=None, xh_vect=None):
@@ -1074,7 +1083,7 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centre_type="ce
         rotate(R=R[i], origin=pivot[i], model=models[i])
 
 
-def translate(T=None, model=None, atom_id=None):
+def translate(T=None, model=None, atom_id=None, pipe_name=None):
     """Shift the structural data by the specified translation vector.
 
     @keyword T:         The translation vector.
@@ -1083,18 +1092,27 @@ def translate(T=None, model=None, atom_id=None):
     @type model:        int or None
     @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
     @type atom_id:      str or None
+    @keyword pipe_name: The name of the data pipe containing the structures to translate.  This defaults to the current data pipe.
+    @type pipe_name:    None or str
     """
 
+    # Defaults.
+    if pipe_name == None:
+        pipe_name = cdp_name()
+
     # Checks.
-    check_pipe()
-    check_structure()
+    check_pipe(pipe_name)
+    check_structure(pipe_name)
+
+    # Get the data pipe.
+    dp = get_pipe(pipe_name)
 
     # Convert the args to numpy float data structures.
     T = array(T, float64)
 
     # Call the specific code.
-    selection = cdp.structure.selection(atom_id=atom_id)
-    cdp.structure.translate(T=T, model=model, selection=selection)
+    selection = dp.structure.selection(atom_id=atom_id)
+    dp.structure.translate(T=T, model=model, selection=selection)
 
 
 def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, unit=True):
