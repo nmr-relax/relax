@@ -42,7 +42,7 @@ from lib.warnings import RelaxWarning, RelaxNoPDBFileWarning, RelaxZeroVectorWar
 from pipe_control import molmol, pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import check_mol_res_spin_data, create_spin, generate_spin_id_unique, linear_ave, return_spin, spin_loop
-from pipe_control.pipes import check_pipe
+from pipe_control.pipes import check_pipe, get_pipe
 from pipe_control.structure.mass import pipe_centre_of_mass
 from status import Status; status = Status()
 from target_functions.ens_pivot_finder import Pivot_finder
@@ -101,6 +101,133 @@ def add_model(model_num=None):
     # Add a model.
     cdp.structure.structural_data.add_item(model_num=model_num)
     print("Created the empty model number %s." % model_num)
+
+
+def align(pipes=None, models=None, method='fit to mean', atom_id=None, centre_type="centroid", centroid=None):
+    """Superimpose a set of related, but not identical structures.
+
+    @keyword pipes:         The data pipes to include in the alignment and superimposition.
+    @type pipes:            list of str
+    @keyword models:        The list of models to for each data pipe superimpose.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:           list of lists of int or None
+    @keyword method:        The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
+    @type method:           str
+    @keyword atom_id:       The molecule, residue, and atom identifier string.  This matches the spin ID string format.
+    @type atom_id:          str or None
+    @keyword centre_type:   The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
+    @type centre_type:      str
+    @keyword centroid:      An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
+    @type centroid:         list of float or numpy rank-1, 3D array
+    """
+
+    # Check the method.
+    allowed = ['fit to mean', 'fit to first']
+    if method not in allowed:
+        raise RelaxError("The superimposition method '%s' is unknown.  It must be one of %s." % (method, allowed))
+
+    # Check the type.
+    allowed = ['centroid', 'CoM']
+    if centre_type not in allowed:
+        raise RelaxError("The superimposition centre type '%s' is unknown.  It must be one of %s." % (centre_type, allowed))
+
+    # The data pipes to use.
+    if pipes == None:
+        pipes = [pipes.cdp_name()]
+
+    # Checks.
+    for pipe in pipes:
+        check_pipe(pipe)
+
+    # Initialise the models data structure.
+    if models == None:
+        models = []
+        for i in range(len(pipes)):
+            models.append(None)
+
+    # Assemble the atomic coordinates of all structures.
+    atom_ids = []
+    atom_pos = []
+    atom_elem = []
+    for pipe_index in range(len(pipes)):
+        # The data pipe object.
+        dp = get_pipe(pipes[pipe_index])
+
+        # Validate the models.
+        dp.structure.validate_models(verbosity=0)
+
+        # The selection object.
+        selection = dp.structure.selection(atom_id=atom_id)
+
+        # Create a list of all models for this pipe.
+        if models[pipe_index] == None:
+            models[pipe_index] = []
+            for model in dp.structure.model_loop():
+                models[pipe_index].append(model.num)
+
+        # Loop over the models.
+        for model in models[pipe_index]:
+            # Extend the lists.
+            atom_ids.append([])
+            atom_pos.append({})
+            atom_elem.append({})
+
+            # Add all coordinates and elements.
+            for mol_name, res_num, res_name, atom_name, elem, pos in dp.structure.atom_loop(selection=selection, model_num=model, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_name_flag=True, pos_flag=True, element_flag=True):
+                # A unique identifier.
+                id = "#%s:%s&%s@%s" % (mol_name, res_num, res_name, atom_name)
+                if id == "#uniform_mol1:1&NH@N":
+                    print id, pos[0]
+
+                atom_ids[-1].append(id)
+                atom_pos[-1][id] = pos[0]
+                atom_elem[-1][id] = elem
+
+    # Set up the structures for the superimposition algorithm.
+    num = len(atom_ids)
+    coord = []
+    elements = []
+    for i in range(num):
+        coord.append([])
+        elements.append([])
+
+    # Find the common atoms and create the coordinate data structure.
+    for id in atom_ids[0]:
+        # Is the atom ID present in all other structures?
+        present = True
+        for i in range(num):
+            if id not in atom_ids[i]:
+                present = False
+                break
+
+        # Not present, so skip the atom.
+        if not present:
+            continue
+
+        # Add the atomic position to the coordinate list and the element to the element list.
+        for i in range(num):
+            coord[i].append(atom_pos[i][id])
+            elements[i].append(atom_elem[i][id])
+
+    # Convert to a numpy array.
+    coord = array(coord, float64)
+    for i in range(num):
+        print coord[i][0]
+
+
+    # The different algorithms.
+    if method == 'fit to mean':
+        T, R, pivot = fit_to_mean(models=range(num), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+    elif method == 'fit to first':
+        T, R, pivot = fit_to_first(models=range(num), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+
+    # Update to the new coordinates.
+    for pipe_index in range(len(pipes)):
+        for model in models[pipe_index]:
+            # Translate the molecule first (the rotational pivot is defined in the first model).
+            translate(T=T[i], model=model, pipe_name=pipes[pipe_index])
+
+            # Rotate the molecule.
+            rotate(R=R[i], origin=pivot[i], model=model, pipe_name=pipes[pipe_index])
 
 
 def check_structure_func():
