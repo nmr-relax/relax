@@ -1273,6 +1273,8 @@ class Relax_disp_rep:
                     data_dic[method_xy_NI] = []
 
                     ax.plot(x, x, 'o', label='%s vs. %s' % (method_x, method_x))
+                    if len(x) != len(y):
+                        print(len(x), len(y))
                     ax.plot(x, y, '.', label='%s vs. %s' % (method_y, method_x) )
 
                     ax.set_title(r'$R_{2,\mathrm{eff}}$' + ' for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
