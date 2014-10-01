@@ -221,6 +221,7 @@ def align(pipes=None, models=None, method='fit to mean', atom_id=None, centre_ty
         T, R, pivot = fit_to_first(models=range(num), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
 
     # Update to the new coordinates.
+    i = 0
     for pipe_index in range(len(pipes)):
         for model in models[pipe_index]:
             # Translate the molecule first (the rotational pivot is defined in the first model).
@@ -228,6 +229,9 @@ def align(pipes=None, models=None, method='fit to mean', atom_id=None, centre_ty
 
             # Rotate the molecule.
             rotate(R=R[i], origin=pivot[i], model=model, pipe_name=pipes[pipe_index])
+
+            # Increment the index.
+            i += 1
 
 
 def check_structure_func(pipe_name=None):
