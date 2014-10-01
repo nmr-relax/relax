@@ -1614,6 +1614,11 @@ class Internal:
                             if i in mol.bonded[j]:
                                 mol.bonded[j].pop(mol.bonded[j].index(i))
 
+                        # Update the bonded lists, as the indices need to be shifted.
+                        for j in range(i, len(mol.bonded)):
+                            for k in range(len(mol.bonded[j])):
+                                mol.bonded[j][k] -= 1
+
             # Nothing more to do.
             if not len(del_res_nums):
                 return
