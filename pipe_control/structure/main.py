@@ -210,9 +210,6 @@ def align(pipes=None, models=None, method='fit to mean', atom_id=None, centre_ty
 
     # Convert to a numpy array.
     coord = array(coord, float64)
-    for i in range(num):
-        print coord[i][0]
-
 
     # The different algorithms.
     if method == 'fit to mean':
