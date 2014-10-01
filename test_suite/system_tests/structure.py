@@ -89,12 +89,12 @@ class Structure(SystemTestCase):
 
         # Translate and rotate the models.
         R = zeros((3, 3), float64)
-        self.interpreter.structure.translate(T=[1., 1., 1.], model=1)
-        self.interpreter.structure.translate(T=[0., 0., 1.], model=2)
         axis_angle_to_R(array([1, 0, 0], float64), 1.0, R)
         self.interpreter.structure.rotate(R=R, model=1)
         axis_angle_to_R(array([0, 0, 1], float64), 2.0, R)
         self.interpreter.structure.rotate(R=R, model=2)
+        self.interpreter.structure.translate(T=[1., 1., 1.], model=1)
+        self.interpreter.structure.translate(T=[0., 0., 1.], model=2)
 
         # The alignment.
         self.interpreter.structure.align(pipes=['ref', 'align'], method='fit to first', atom_id='@N,H')
