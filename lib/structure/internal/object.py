@@ -2937,11 +2937,7 @@ class Internal:
                         # Convert the atom indices to atom numbers.
                         for k in range(4):
                             if bonded[k] != '':
-                                if mol.atom_num[bonded[k]] != None:
-                                    bonded[k] = mol.atom_num[bonded[k]]
-                                else:
-                                    bonded[k] = bonded[k] + 1
-                                bonded_shifted[k] = bonded[k] + atom_counts[index]
+                                bonded_shifted[k] = bonded[k] + 1 + atom_counts[index]
 
                         # Write the CONECT record.
                         pdb_write.conect(file, serial=i+1+atom_counts[index], bonded1=bonded_shifted[0], bonded2=bonded_shifted[1], bonded3=bonded_shifted[2], bonded4=bonded_shifted[3])
