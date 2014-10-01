@@ -161,9 +161,9 @@ class Structure(SystemTestCase):
             self.assertEqual(atom_name, data[i][0])
             self.assertEqual(res_name, data[i][1])
             self.assertEqual(res_num, data[i][2])
-            self.assertEqual(pos[0][0], data[i][3])
-            self.assertEqual(pos[0][1], data[i][4])
-            self.assertEqual(pos[0][2], data[i][5])
+            self.assertAlmostEqual(pos[0][0], data[i][3])
+            self.assertAlmostEqual(pos[0][1], data[i][4])
+            self.assertAlmostEqual(pos[0][2], data[i][5])
             i += 1
 
         # Check the second model.
@@ -173,9 +173,9 @@ class Structure(SystemTestCase):
             self.assertEqual(atom_name, data[i][0])
             self.assertEqual(res_name, data[i][1])
             self.assertEqual(res_num, data[i][2])
-            self.assertEqual(pos[0][0], data[i][3])
-            self.assertEqual(pos[0][1], data[i][4])
-            self.assertEqual(pos[0][2], data[i][5])
+            self.assertAlmostEqual(pos[0][0], data[i][3])
+            self.assertAlmostEqual(pos[0][1], data[i][4])
+            self.assertAlmostEqual(pos[0][2], data[i][5])
             i += 1
 
 
