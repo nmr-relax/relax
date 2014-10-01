@@ -1080,7 +1080,6 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centre_type="ce
     elif method == 'fit to first':
         T, R, pivot = fit_to_first(models=models, coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
 
-
     # Update to the new coordinates.
     for i in range(len(models)):
         # Translate the molecule first (the rotational pivot is defined in the first model).
