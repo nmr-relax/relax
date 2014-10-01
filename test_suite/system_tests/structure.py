@@ -23,6 +23,7 @@
 from math import sqrt
 from numpy import array, float64, zeros
 from os import sep
+import sys
 from tempfile import mkdtemp, mktemp
 
 # relax module imports.
@@ -76,6 +77,9 @@ class Structure(SystemTestCase):
         self.interpreter.structure.delete(":8")
         self.interpreter.structure.delete(":2@N")
 
+        # Output PDB to stdout to help in debugging.
+        self.interpreter.structure.write_pdb(file=sys.stdout)
+
         # Create a second data pipe for the structures to align and superimpose.
         self.interpreter.pipe.create('align', 'N-state')
 
@@ -98,6 +102,9 @@ class Structure(SystemTestCase):
 
         # The alignment.
         self.interpreter.structure.align(pipes=['ref', 'align'], method='fit to first', atom_id='@N,H')
+
+        # Output PDB to stdout to help in debugging.
+        self.interpreter.structure.write_pdb(file=sys.stdout)
 
         # The atomic data.
         data = [
