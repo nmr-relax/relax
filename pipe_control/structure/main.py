@@ -175,8 +175,6 @@ def align(pipes=None, models=None, method='fit to mean', atom_id=None, centre_ty
             for mol_name, res_num, res_name, atom_name, elem, pos in dp.structure.atom_loop(selection=selection, model_num=model, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_name_flag=True, pos_flag=True, element_flag=True):
                 # A unique identifier.
                 id = "#%s:%s&%s@%s" % (mol_name, res_num, res_name, atom_name)
-                if id == "#uniform_mol1:1&NH@N":
-                    print id, pos[0]
 
                 atom_ids[-1].append(id)
                 atom_pos[-1][id] = pos[0]
