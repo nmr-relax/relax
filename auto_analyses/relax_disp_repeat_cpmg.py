@@ -1272,10 +1272,21 @@ class Relax_disp_rep:
                     method_xy_NI = "r2eff_%s%s_%s%s" % (method_x, glob_ini_x, method_y, glob_ini_y)
                     data_dic[method_xy_NI] = []
 
+                    # Calculate straight line.
+                    # Linear a, with no intercept.
+                    a = sum(x * y) / sum(x**2)
+                    min_x = min(x)
+                    max_x =  max(x)
+                    step_x = (max_x - min_x) / np
+                    x_arange = arange(min_x, max_x, step_x)
+                    y_arange = a * x_arange
+
                     ax.plot(x, x, 'o', label='%s vs. %s' % (method_x, method_x))
+                    ax.plot(x_arange, x_arange, 'b--')
                     if len(x) != len(y):
                         print(len(x), len(y))
                     ax.plot(x, y, '.', label='%s vs. %s' % (method_y, method_x) )
+                    ax.plot(x_arange, y_arange, 'g--')
 
                     ax.set_title(r'$R_{2,\mathrm{eff}}$' + ' for %s %i vs. %s %i. np=%i' % (method_y, glob_ini_y, method_x, glob_ini_x, np), fontsize=10)
                     ax.legend(loc='upper left', shadow=True, prop = fontP)
@@ -1287,7 +1298,9 @@ class Relax_disp_rep:
                     # Add to data.
                     for k, x_k in enumerate(x):
                         y_k = y[k]
-                        data_dic[method_xy_NI].append(["%3.5f"%x_k, "%3.5f"%y_k])
+                        x_arange_k = x_arange[k]
+                        y_arange_k = y_arange[k]
+                        data_dic[method_xy_NI].append(["%3.5f"%x_k, "%3.5f"%y_k, "%3.5f"%x_arange_k, "%3.5f"%y_arange_k])
 
                 # R2eff to error.
                 if i == 1:
@@ -1349,7 +1362,9 @@ class Relax_disp_rep:
                         # Add to headings.
                         method_x_NI = "r2eff_%s%s" % (method_x, glob_ini_x)
                         method_y_NI = "r2eff_%s%s" % (method_y, glob_ini_y)
-                        headings_j = headings_j + [method_x_NI, method_y_NI]
+                        method_x_NI_lin = "r2eff_lin_%s%s" % (method_x, glob_ini_x)
+                        method_y_NI_lin = "r2eff_lin_%s%s" % (method_y, glob_ini_y)
+                        headings_j = headings_j + [method_x_NI, method_y_NI, method_x_NI_lin, method_y_NI_lin]
 
                         method_xy_NI = "r2eff_%s%s_%s%s" % (method_x, glob_ini_x, method_y, glob_ini_y)
                         method_xy_NI_j.append(method_xy_NI)
@@ -1452,6 +1467,8 @@ class Relax_disp_rep:
             res_dic[method_cur]['two_tailed_p_value'] = []
             res_dic[method_cur]['r_xy'] = []
             res_dic[method_cur]['a'] = []
+            res_dic[method_cur]['r_xy_2'] = []
+            res_dic[method_cur]['a_2'] = []
             res_dic[method_cur]['r_xy_int'] = []
             res_dic[method_cur]['a_int'] = []
             res_dic[method_cur]['b_int'] = []
@@ -1525,7 +1542,14 @@ class Relax_disp_rep:
                 a = sum(x*y) / sum(x**2)
                 r_xy = sum(x*y) / sqrt(sum(x**2) * sum(y**2))
 
-                print(method_ref, method_cur, sampling_sparseness, glob_ini, pearsons_correlation_coefficient, r_xy**2, a, r_xy_int**2, a_int, b_int)
+                # Without intercept for just R2eff.
+                x_2 = r2eff_arr_ref
+                y_2 = r2eff_arr
+                a_2 = sum(x_2*y_2) / sum(x_2**2)
+                r_xy_2 = sum(x_2*y_2) / sqrt(sum(x_2**2) * sum(y_2**2))
+
+                #print(method_ref, method_cur, sampling_sparseness, glob_ini, pearsons_correlation_coefficient, r_xy**2, a, r_xy_int**2, a_int, b_int)
+                print(method_ref, method_cur, sampling_sparseness, glob_ini, pearsons_correlation_coefficient, r_xy**2, a, r_xy_2**2, a_2)
 
                 # Store to result dic.
                 res_dic[method_cur][str(glob_ini)]['pearsons_correlation_coefficient'] = pearsons_correlation_coefficient
@@ -1536,6 +1560,12 @@ class Relax_disp_rep:
                 res_dic[method_cur]['r_xy'].append(r_xy)
                 res_dic[method_cur][str(glob_ini)]['a'] = a
                 res_dic[method_cur]['a'].append(a)
+
+                res_dic[method_cur][str(glob_ini)]['r_xy_2'] = r_xy_2
+                res_dic[method_cur]['r_xy_2'].append(r_xy_2)
+                res_dic[method_cur][str(glob_ini)]['a_2'] = a_2
+                res_dic[method_cur]['a_2'].append(a_2)
+
                 res_dic[method_cur][str(glob_ini)]['r_xy_int'] = r_xy_int
                 res_dic[method_cur]['r_xy_int'].append(r_xy_int)
                 res_dic[method_cur][str(glob_ini)]['a_int'] = a_int
@@ -1551,6 +1581,8 @@ class Relax_disp_rep:
             res_dic[method_cur]['two_tailed_p_value'] = asarray(res_dic[method_cur]['two_tailed_p_value'])
             res_dic[method_cur]['r_xy'] = asarray(res_dic[method_cur]['r_xy'])
             res_dic[method_cur]['a'] = asarray(res_dic[method_cur]['a'])
+            res_dic[method_cur]['r_xy_2'] = asarray(res_dic[method_cur]['r_xy_2'])
+            res_dic[method_cur]['a_2'] = asarray(res_dic[method_cur]['a_2'])
             res_dic[method_cur]['r_xy_int'] = asarray(res_dic[method_cur]['r_xy_int'])
             res_dic[method_cur]['a_int'] = asarray(res_dic[method_cur]['a_int'])
             res_dic[method_cur]['b_int'] = asarray(res_dic[method_cur]['b_int'])
@@ -1590,7 +1622,7 @@ class Relax_disp_rep:
             SS = r2eff_stat_dic[method]['sampling_sparseness']
 
             # Add to headings.
-            headings = headings + ['method', 'SS', 'NI', 'slope', 'rxy2']
+            headings = headings + ['method', 'SS', 'NI', 'slope_r2eff', 'rxy2_r2eff', 'slope_r2eff_vs_err', 'rxy2_r2eff_vs_err']
 
             # Get stats.
             # Linear regression slope, without intercept
@@ -1610,20 +1642,32 @@ class Relax_disp_rep:
             if min(r_xy2) < min_r_xy2:
                 min_r_xy2 = min(r_xy2)
 
+            # For just the R2eff values
+            a_r2eff = r2eff_stat_dic[method]['a_2']
+            r_xy_r2eff = r2eff_stat_dic[method]['r_xy_2']
+            r_xy_r2eff2 = r_xy_r2eff**2
+
             # Add to data.
             data_dic[method] = OrderedDict()
             for i, NI_i in enumerate(NI):
                 SS_i = SS[i]
                 a_i = a[i]
                 r_xy2_i = r_xy2[i]
-                data_dic[method][str(i)] = ["%3.5f"%SS_i, "%i"%NI_i, "%3.5f"%a_i, "%3.5f"%r_xy2_i]
+                a_r2eff_i = a_r2eff[i]
+                r_xy_r2eff2_i = r_xy_r2eff2[i]
+                data_dic[method][str(i)] = ["%3.5f"%SS_i, "%i"%NI_i, "%3.5f"%a_r2eff_i, "%3.5f"%r_xy_r2eff2_i, "%3.5f"%a_i, "%3.5f"%r_xy2_i]
                 if i > i_max:
                     i_max = i
 
             #ax1.plot(NI, a, ".-", label='%s LR'%method)
             #ax2.plot(NI, r_xy2, "o--", label='%s SC'%method)
-            ax1.plot(SS, a, ".-", label='%s LR'%method)
-            ax2.plot(SS, r_xy2, "o--", label='%s SC'%method)
+            t = ax1.plot(SS, a_r2eff, ".--", label='%s slope R2eff'%method)
+            color = t[0].get_color()
+            ax1.plot(SS, a, ".-", label='%s slope'%method, color=color)
+
+            t = ax2.plot(SS, r_xy_r2eff2, "o--", label='%s r2 R2eff'%method)
+            color = t[0].get_color()
+            ax2.plot(SS, r_xy2, "o-", label='%s r2'%method, color=color)
 
         # Loop over methods for writing data.
         data = []
@@ -1635,7 +1679,7 @@ class Relax_disp_rep:
                 if str(i) in data_dic_m:
                     data_i = data_i + [method] + data_dic_m[str(i)]
                 else:
-                    data_i = data_i + [method] + ["0", "0", "0", "0"]
+                    data_i = data_i + [method] + ["0", "0", "0", "0", "0", "0"]
 
             data.append(data_i)
 
