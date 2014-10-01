@@ -375,7 +375,7 @@ def is_int(arg, name=None, can_be_none=False, raise_error=True):
         raise RelaxNoneIntError(name, arg)
 
 
-def is_int_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, none_elements=False, raise_error=True):
+def is_int_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, none_elements=False, list_of_lists=False, raise_error=True):
     """Test if the argument is a list of integers.
 
     @param arg:                         The argument.
@@ -390,6 +390,8 @@ def is_int_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False
     @type can_be_empty:                 bool
     @keyword none_elements:             A flag which if True allows the list to contain None.
     @type none_elements:                bool
+    @keyword list_of_lists:             A flag which if True allows the argument to be a list of lists.
+    @type list_of_lists:                bool
     @keyword raise_error:               A flag which if True will cause RelaxErrors to be raised.
     @type raise_error:                  bool
     @raise RelaxIntListIntError:        If not an integer or a list of integers (and the raise_error flag is set).
@@ -419,11 +421,17 @@ def is_int_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False
         if not can_be_empty and arg == []:
             fail = True
 
-        # Check the arguments.
+        # Fail if not ints.
         for i in range(len(arg)):
             # None.
             if arg[i] == None and none_elements:
                 continue
+
+            # List of lists.
+            if list_of_lists and isinstance(arg[i], list):
+                for j in range(len(arg[i])):
+                    if not isinstance(arg[i][j], int):
+                        fail = True
 
             # Check if it is an integer.
             if not isinstance(arg[i], int):
