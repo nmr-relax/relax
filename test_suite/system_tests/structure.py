@@ -97,7 +97,78 @@ class Structure(SystemTestCase):
         self.interpreter.structure.rotate(R=R, model=2)
 
         # The alignment.
-        self.interpreter.structure.align(pipes=['ref', 'align'], method='fit to mean', atom_id='@N,H')
+        self.interpreter.structure.align(pipes=['ref', 'align'], method='fit to first', atom_id='@N,H')
+
+        # The atomic data.
+        data = [
+            ["N", "NH",  1,   0.000,  0.000,  0.000],
+            ["H", "NH",  1,   0.000,  0.000, -1.020],
+            ["N", "NH",  2,   0.000,  0.000,  0.000],
+            ["H", "NH",  2,   0.883,  0.000, -0.510],
+            ["N", "NH",  3,   0.000,  0.000,  0.000],
+            ["H", "NH",  3,   0.883,  0.000,  0.510],
+            ["N", "NH",  4,   0.000,  0.000,  0.000],
+            ["H", "NH",  4,   0.000,  0.000,  1.020],
+            ["N", "NH",  5,   0.000,  0.000,  0.000],
+            ["H", "NH",  5,   0.000,  0.000, -1.020],
+            ["N", "NH",  6,   0.000,  0.000,  0.000],
+            ["H", "NH",  6,   0.273,  0.840, -0.510],
+            ["N", "NH",  7,   0.000,  0.000,  0.000],
+            ["H", "NH",  7,   0.273,  0.840,  0.510],
+            ["N", "NH",  8,   0.000,  0.000,  0.000],
+            ["H", "NH",  8,   0.000,  0.000,  1.020],
+            ["N", "NH",  9,   0.000,  0.000,  0.000],
+            ["H", "NH",  9,  -0.000,  0.000, -1.020],
+            ["N", "NH", 10,   0.000,  0.000,  0.000],
+            ["H", "NH", 10,  -0.715,  0.519, -0.510],
+            ["N", "NH", 11,   0.000,  0.000,  0.000],
+            ["H", "NH", 11,  -0.715,  0.519,  0.510],
+            #["N", "NH", 12,   0.000,  0.000,  0.000],
+            #["H", "NH", 12,  -0.000,  0.000,  1.020],
+            ["N", "NH", 13,   0.000,  0.000,  0.000],
+            ["H", "NH", 13,  -0.000, -0.000, -1.020],
+            ["N", "NH", 14,   0.000,  0.000,  0.000],
+            ["H", "NH", 14,  -0.715, -0.519, -0.510],
+            ["N", "NH", 15,   0.000,  0.000,  0.000],
+            ["H", "NH", 15,  -0.715, -0.519,  0.510],
+            ["N", "NH", 16,   0.000,  0.000,  0.000],
+            ["H", "NH", 16,  -0.000, -0.000,  1.020],
+            ["N", "NH", 17,   0.000,  0.000,  0.000],
+            ["H", "NH", 17,   0.000, -0.000, -1.020],
+            ["N", "NH", 18,   0.000,  0.000,  0.000],
+            ["H", "NH", 18,   0.273, -0.840, -0.510],
+            ["N", "NH", 19,   0.000,  0.000,  0.000],
+            ["H", "NH", 19,   0.273, -0.840,  0.510],
+            ["N", "NH", 20,   0.000,  0.000,  0.000],
+            #["H", "NH", 20,   0.000, -0.000,  1.020]
+        ]
+
+        # The selection object.
+        selection = cdp.structure.selection()
+
+        # Check the first model.
+        self.assertEqual(len(data), len(cdp.structure.structural_data[0].mol[0].atom_name))
+        i = 0
+        for res_num, res_name, atom_name, pos in cdp.structure.atom_loop(selection=selection, model_num=1, res_num_flag=True, res_name_flag=True, atom_name_flag=True, pos_flag=True):
+            self.assertEqual(atom_name, data[i][0])
+            self.assertEqual(res_name, data[i][1])
+            self.assertEqual(res_num, data[i][2])
+            self.assertEqual(pos[0][0], data[i][3])
+            self.assertEqual(pos[0][1], data[i][4])
+            self.assertEqual(pos[0][2], data[i][5])
+            i += 1
+
+        # Check the second model.
+        self.assertEqual(len(data), len(cdp.structure.structural_data[1].mol[0].atom_name))
+        i = 0
+        for res_num, res_name, atom_name, pos in cdp.structure.atom_loop(selection=selection, model_num=2, res_num_flag=True, res_name_flag=True, atom_name_flag=True, pos_flag=True):
+            self.assertEqual(atom_name, data[i][0])
+            self.assertEqual(res_name, data[i][1])
+            self.assertEqual(res_num, data[i][2])
+            self.assertEqual(pos[0][0], data[i][3])
+            self.assertEqual(pos[0][1], data[i][4])
+            self.assertEqual(pos[0][2], data[i][5])
+            i += 1
 
 
     def test_alt_loc_missing(self):
