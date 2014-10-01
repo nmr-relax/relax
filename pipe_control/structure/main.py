@@ -230,23 +230,30 @@ def align(pipes=None, models=None, method='fit to mean', atom_id=None, centre_ty
             rotate(R=R[i], origin=pivot[i], model=model, pipe_name=pipes[pipe_index])
 
 
-def check_structure_func():
+def check_structure_func(pipe_name=None):
     """Test if structural data is present.
 
     @return:        The initialised RelaxError object or nothing.
     @rtype:         None or RelaxError instance
     """
 
+    # Defaults.
+    if pipe_name == None:
+        pipe_name = cdp_name()
+
+    # Get the data pipe.
+    dp = get_pipe(pipe_name)
+
     # Test if the structure exists.
-    if not hasattr(cdp, 'structure'):
+    if not hasattr(dp, 'structure'):
         return RelaxError("No structural data is present in the current data pipe.")
 
     # Check for models:
-    if not cdp.structure.num_models():
+    if not dp.structure.num_models():
         return RelaxError("The structural object in the current data pipe contains no models.")
 
     # Check for molecules.
-    if not cdp.structure.num_molecules():
+    if not dp.structure.num_molecules():
         return RelaxError("The structural object in the current data pipe contains no molecules.")
 
 # Create the checking object.
