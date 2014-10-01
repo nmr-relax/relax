@@ -24,7 +24,6 @@
 """Argument checking functions for the relax user functions."""
 
 # Python module imports.
-from cStringIO import OutputType
 from numpy import ndarray
 
 # relax module imports.
@@ -1012,7 +1011,7 @@ def is_str_or_inst(arg, name=None, can_be_none=False, raise_error=True):
         return True
 
     # Check for a string.
-    if isinstance(arg, str) or lib.check_types.is_filetype(arg) or isinstance(arg, DummyFileObject) or isinstance(arg, OutputType):
+    if isinstance(arg, str) or lib.check_types.is_filetype(arg) or isinstance(arg, DummyFileObject) or hasattr(arg, 'write'):
         return True
 
     # Fail.
