@@ -1050,8 +1050,11 @@ class Relax_disp_rep:
             if not pipes.has_pipe(pipe_name):
                 self.set_int(methods=[method], list_glob_ini=[glob_ini])
 
-            if pipes.cdp_name() != pipe_name:
+            if pipes.cdp_name() != pipe_name and pipes.has_pipe(pipe_name):
                 self.interpreter.pipe.switch(pipe_name)
+
+            elif pipes.has_pipe(pipe_name) == False:
+                continue
 
             # Results dictionary.
             res_dic[str(glob_ini)] = {}
