@@ -145,10 +145,15 @@ def align(pipes=None, models=None, method='fit to mean', atom_id=None, centre_ty
             models.append(None)
 
     # Assemble the atomic coordinates of all structures.
+    print("Assembling all atomic coordinates:")
     atom_ids = []
     atom_pos = []
     atom_elem = []
+    mol_ids = []
     for pipe_index in range(len(pipes)):
+        # Printout.
+        print("    Data pipe: %s" % pipes[pipe_index])
+
         # The data pipe object.
         dp = get_pipe(pipes[pipe_index])
 
@@ -166,10 +171,14 @@ def align(pipes=None, models=None, method='fit to mean', atom_id=None, centre_ty
 
         # Loop over the models.
         for model in models[pipe_index]:
+            # Printout.
+            print("        Model: %s" % model)
+
             # Extend the lists.
             atom_ids.append([])
             atom_pos.append({})
             atom_elem.append({})
+            mol_ids.append([])
 
             # Add all coordinates and elements.
             for mol_name, res_num, res_name, atom_name, elem, pos in dp.structure.atom_loop(selection=selection, model_num=model, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_name_flag=True, pos_flag=True, element_flag=True):
@@ -179,6 +188,17 @@ def align(pipes=None, models=None, method='fit to mean', atom_id=None, centre_ty
                 atom_ids[-1].append(id)
                 atom_pos[-1][id] = pos[0]
                 atom_elem[-1][id] = elem
+
+                # Store the molecule name for later checks.
+                if mol_name not in mol_ids[-1]:
+                    print("            Molecule: %s" % mol_name)
+                    mol_ids[-1].append(mol_name)
+
+    # Check for the molecule names.
+    for mol_name in mol_ids[0]:
+        for i in range(len(mol_ids)):
+            if mol_name not in mol_ids[i]:
+                raise RelaxError("The molecule name '%s' cannot be found in all data pipes." % mol_name)
 
     # Set up the structures for the superimposition algorithm.
     num = len(atom_ids)
