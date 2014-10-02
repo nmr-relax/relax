@@ -233,13 +233,20 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 # The structure.com user function.
 uf = uf_info.add_uf('structure.com')
-uf.title = "Calculate the centre of mass for all structures."
+uf.title = "Calculate the centre of mass (CoM) for all structures."
 uf.title_short = "Centre of mass calculation."
 uf.add_keyarg(
     name = "model",
     py_type = "int",
     desc_short = "model",
     desc = "The optional structural model number to restrict the calculation of the centre of mass to.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "atom_id",
+    py_type = "str",
+    desc_short = "atom ID string",
+    desc = "The atom identification string to restrict the CoM calculation to.",
     can_be_none = True
 )
 # Description.

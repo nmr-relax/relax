@@ -299,18 +299,23 @@ def connect_atom(index1=None, index2=None):
     cdp.structure.connect_atom(index1=index1, index2=index2)
 
 
-def com(model=None):
-    """Calculate the centre of mass of all structures.
+def com(model=None, atom_id=None):
+    """Calculate the centre of mass (CoM) of all structures.
 
-    @keyword model: Only use a specific model.
-    @type model:    int or None
+    The value will be stored in the current data pipe 'com' variable.
+
+
+    @keyword model:     Only use a specific model.
+    @type model:        int or None
+    @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.  If not given, then all structural data will be used for calculating the CoM.
+    @type atom_id:      str or None
     """
 
     # Test if the current data pipe exists.
     check_pipe()
 
     # Calculate and store the centre of mass.
-    cdp.com = pipe_centre_of_mass(model=model)
+    cdp.com = pipe_centre_of_mass(model=model, atom_id=atom_id)
 
 
 def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
