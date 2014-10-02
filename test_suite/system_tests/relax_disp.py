@@ -5982,37 +5982,74 @@ class Relax_disp(SystemTestCase):
         #RDR.set_int(methods=methods, list_glob_ini=[128, 126], set_rmsd=True, set_rep=False)
 
         # Try plot some intensity correlations.
-        if False:
-            # Collect intensity values.
-            # For all spins, ft
-            int_ft_all = RDR.col_int(method='FT', list_glob_ini=[128, 126], selection=None)
+        if True:
+            selection = None
 
             # Now make a spin selection.
-            selection = ':2,3'
             int_ft_sel = RDR.col_int(method='FT', list_glob_ini=[128, 126], selection=selection)
-            # Print the length of datasets, depending on selection.
-            print( "All spins", len(int_ft_all['128']['peak_intensity_arr']), "Selection spins", len(int_ft_sel['128']['peak_intensity_arr']) )
 
-            # For all spins, mdd
-            int_mdd_all = RDR.col_int(method='MDD', list_glob_ini=[128, 126], selection=None)
+            # For mdd
             int_mdd_sel = RDR.col_int(method='MDD', list_glob_ini=[128, 126], selection=selection)
 
             # Plot correlation of intensity
-            fig1 = [[int_ft_all, int_mdd_all], ['FT', 'MDD'], [128, 128]]
-            fig2 = [[int_ft_sel, int_mdd_sel], ['FT sel', 'MDD sel'], [128, 128]]
+            fig1 = [[int_ft_sel, int_mdd_sel], ['FT', 'MDD'], [128, 128]]
+            fig2 = [[int_ft_sel, int_mdd_sel], ['FT', 'MDD'], [128, 126]]
             corr_data = [fig1, fig2]
 
-            fig3 = [[int_ft_all, int_mdd_all], ['FT', 'FT'], [128, 126]]
-            fig4 = [[int_ft_all, int_mdd_all], ['FT', 'MDD'], [128, 126]]
-            corr_data = [fig3, fig4]
+            write_stats = True
+            RDR.plot_int_corr(corr_data=corr_data, show=False, write_stats=write_stats)
 
-            #fig5 = [[int_ft_all, int_mdd_all], ['FT', 'MDD'], [128, 128]]
-            fig5 = [[int_ft_all, int_mdd_all], ['FT', 'MDD'], [128, 126]]
-            fig6 = [[int_ft_all, int_ft_all], ['FT', 'FT'], [128, 126]]
-            #fig6 = [[int_mdd_all, int_mdd_all], ['MDD', 'MDD'], [128, 126]]
-            corr_data = [fig5, fig6]
+            # Open stat file.
+            if write_stats:
+                for i, corr_data_i in enumerate(corr_data):
+                    data, methods, glob_inis = corr_data[i]
+                    data_x, data_y = data
+                    method_x, method_y = methods
+                    glob_ini_x, glob_ini_y = glob_inis
+                    x = data_x[str(glob_ini_x)]['peak_intensity_arr']
+                    np = len(x)
 
-            RDR.plot_int_corr(corr_data=corr_data, show=True)
+                    file_name_ini = 'int_corr_%s_%s_%s_%s_NP_%i' % (method_x, glob_ini_x, method_y, glob_ini_y, np)
+
+                    if selection == None:
+                        file_name = file_name_ini + '_all.txt'
+                    else:
+                        file_name = file_name_ini + '_sel.txt'
+                    path = RDR.results_dir
+                    data = extract_data(file=file_name, dir=path)
+
+                    # Loop over the lines.
+                    for i, data_i in enumerate(data):
+                        print(i, data_i)
+
+
+        # Try plot some intensity statistics.
+        if True:
+            # Collect r2eff values.
+            selections = [None, ':2,3']
+            for selection in selections:
+                int_ft_sel = RDR.col_int(method='FT', list_glob_ini=[128], selection=selection)
+                int_mdd_sel = RDR.col_int(method='MDD', list_glob_ini=[128, 126], selection=selection)
+
+                # Get R2eff stats.
+                int_stat_dic = RDR.get_int_stat_dic(list_int_dics=[int_ft_sel, int_mdd_sel], list_glob_ini=[128, 126])
+
+                ## Plot R2eff stats
+                write_stats = True
+                RDR.plot_int_stat(int_stat_dic=int_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126], show=True, write_stats=write_stats)
+
+                # Open stat file.
+                if write_stats:
+                    if selection == None:
+                        file_name = 'int_stat_all.txt'
+                    else:
+                        file_name = 'int_stat_sel.txt'
+                    path = RDR.results_dir
+                    data = extract_data(file=file_name, dir=path)
+
+                    # Loop over the lines.
+                    for i, data_i in enumerate(data):
+                        print(i, data_i)
 
 
         # Try write some R2eff correlations.
