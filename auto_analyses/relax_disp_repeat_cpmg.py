@@ -34,7 +34,7 @@ from collections import OrderedDict
 from datetime import datetime
 from glob import glob
 from os import F_OK, access, getcwd, sep
-from numpy import asarray, arange, concatenate, max, mean, min, sqrt, std, sum
+from numpy import any, asarray, arange, concatenate, max, mean, min, sqrt, std, sum
 if dep_check.scipy_module:
     from scipy.stats import pearsonr
 import sys
@@ -1715,6 +1715,7 @@ class Relax_disp_rep:
                 for param in params_list:
                     # Store in list.
                     res_dic[str(glob_ini)]['params'][param] = []
+                    res_dic[str(glob_ini)]['params'][param+'_resi'] = []
 
                     # Prepare to store individual per spin.
                     res_dic[str(glob_ini)][param] = {}
@@ -1746,12 +1747,16 @@ class Relax_disp_rep:
                             res_dic[str(glob_ini)]['params'][param].append(param_val)
                             res_dic[str(glob_ini)][param][spin_id][param_key] = param_val
 
+                            res_dic[str(glob_ini)]['params'][param+'_resi'].append("%i_%3.0f"%(resi, frq/1E6))
+
                     else:
                         # Get the value.
                         param_val = deepcopy(getattr(cur_spin, param))
                         # Store in list and per spin.
                         res_dic[str(glob_ini)]['params'][param].append(param_val)
                         res_dic[str(glob_ini)][param][spin_id][param_key] = param_val
+
+                        res_dic[str(glob_ini)]['params'][param+'_resi'].append("%i"%(resi))
 
             # Print
             subtitle(file=sys.stdout, text="The minimised valus for '%s' model for pipe='%s at %s'" % (model, pipe_name, glob_ini), prespace=3)
@@ -1800,6 +1805,16 @@ class Relax_disp_rep:
 
                 x = data_x[str(glob_ini_x)]['params'][param]
                 y = data_y[str(glob_ini_y)]['params'][param]
+                # Relative uncertainty / fractional uncertainty / precision
+                precision = abs(y-x) / ((x+y)/2)
+                # Count outliers. Value differ more than than the value itself. 
+                precision_outlier = precision > 1.00
+                #precision_outlier = precision > 0.020
+                precision_outlier_nr = sum(precision_outlier)
+                resis = data_x[str(glob_ini_x)]['params'][param+'_resi']
+                resi_outlier_arr = asarray(resis)[precision_outlier]
+                resi_outlier_arr_str = ":"+','.join(str(e) for e in resi_outlier_arr)
+
                 np = len(y)
 
                 # Linear a, with no intercept.
@@ -1847,7 +1862,10 @@ class Relax_disp_rep:
                     y_k = y[k]
                     x_arange_k = x_arange[k]
                     y_arange_k = y_arange[k]
-                    data_dic[method_xy_NI].append(["%3.5f"%x_k, "%3.5f"%y_k, "%3.5f"%x_arange_k, "%3.5f"%y_arange_k])
+                    precision_k = precision[k]
+                    resi_k = resis[k]
+
+                    data_dic[method_xy_NI].append(["%3.5f"%x_k, "%3.5f"%y_k, "%3.5f"%x_arange_k, "%3.5f"%y_arange_k, "%3.5f"%precision_k, "%s"%resi_k, "%i"%precision_outlier_nr, "%s"%resi_outlier_arr_str])
 
         plt.tight_layout()
 
@@ -1874,7 +1892,7 @@ class Relax_disp_rep:
                     method_y_NI = "%s_%s_%s%s" % (analysis, param, method_y, glob_ini_y)
                     method_x_NI_lin = "%s_%s_lin_%s%s" % (analysis, param, method_x, glob_ini_x)
                     method_y_NI_lin = "%s_%s_lin_%s%s" % (analysis, param, method_y, glob_ini_y)
-                    headings_j = headings_j + [method_x_NI, method_y_NI, method_x_NI_lin, method_y_NI_lin]
+                    headings_j = headings_j + [method_x_NI, method_y_NI, method_x_NI_lin, method_y_NI_lin, "abs_diff_frac", "resi", "outlier_nr", "outlier_resi"]
 
                     method_xy_NI = "%s_%s_%s%s_%s%s" % (analysis, param, method_x, glob_ini_x, method_y, glob_ini_y)
                     method_xy_NI_j.append(method_xy_NI)
@@ -1901,6 +1919,7 @@ class Relax_disp_rep:
                             data_param_row = data_param[k]
                         except IndexError:
                             data_param_row = len(data_param[0]) * ['0.0']
+                            data_param_row[-1] = ':'
 
                         data_row = data_row + data_param_row
 
@@ -1981,6 +2000,8 @@ class Relax_disp_rep:
                 # Other stats.
                 res_dic[method_cur][param]['r_xy'] = []
                 res_dic[method_cur][param]['a'] = []
+                res_dic[method_cur][param]['precision_outlier_nr'] = []
+                res_dic[method_cur][param]['resi_outlier'] = []
 
                 # Now loop over glob_ini:
                 for glob_ini in list_glob_ini:
@@ -1990,6 +2011,7 @@ class Relax_disp_rep:
 
                     # Get the data.
                     param_arr = min_dic[str(glob_ini)]['params'][param]
+                    resis = min_dic[str(glob_ini)]['params'][param+'_resi']
 
                     # This require that all number of points are equal.
                     # If they are not of same length, then dont even bother to continue.
@@ -2017,19 +2039,34 @@ class Relax_disp_rep:
                     a = sum(x*y) / sum(x**2)
                     r_xy = sum(x*y) / sqrt(sum(x**2) * sum(y**2))
 
-                    print(param, method_ref, method_cur, sampling_sparseness, glob_ini, r_xy**2, a)
+                    # Relative uncertainty / fractional uncertainty / precision
+                    precision = abs(y-x) / ((x+y)/2)
+                    # Count outliers. Value differ more than than the value itself. 
+                    precision_outlier = precision > 1.00
+                    #precision_outlier = precision > 0.02
+                    precision_outlier_nr = sum(precision_outlier)
+
+                    resi_outlier_arr = asarray(resis)[precision_outlier]
+                    resi_outlier_arr_str = ":"+','.join(str(e) for e in resi_outlier_arr)
+
+                    print(param, method_ref, method_cur, sampling_sparseness, glob_ini, r_xy**2, a, precision_outlier_nr, resi_outlier_arr_str)
 
                     # Store to result dic.
                     res_dic[method_cur][param][str(glob_ini)]['r_xy'] = r_xy
                     res_dic[method_cur][param]['r_xy'].append(r_xy)
                     res_dic[method_cur][param][str(glob_ini)]['a'] = a
                     res_dic[method_cur][param]['a'].append(a)
+                    res_dic[method_cur][param][str(glob_ini)]['precision_outlier_nr'] = precision_outlier_nr
+                    res_dic[method_cur][param]['precision_outlier_nr'].append(precision_outlier_nr)
+                    res_dic[method_cur][param]['resi_outlier'].append(resi_outlier_arr_str)
 
                 res_dic[method_cur][param]['sampling_sparseness'] = asarray(res_dic[method_cur][param]['sampling_sparseness'])
                 res_dic[method_cur][param]['glob_ini'] = asarray(res_dic[method_cur][param]['glob_ini'])
 
                 res_dic[method_cur][param]['r_xy'] = asarray(res_dic[method_cur][param]['r_xy'])
                 res_dic[method_cur][param]['a'] = asarray(res_dic[method_cur][param]['a'])
+                res_dic[method_cur][param]['precision_outlier_nr'] = asarray(res_dic[method_cur][param]['precision_outlier_nr'])
+                res_dic[method_cur][param]['resi_outlier'] = asarray(res_dic[method_cur][param]['resi_outlier'])
 
         return res_dic
 
@@ -2074,7 +2111,7 @@ class Relax_disp_rep:
                 SS = min_stat_dic[method][param]['sampling_sparseness']
 
                 # Add to headings.
-                headings = headings + ['method_%s'%param, 'SS', 'NI', 'slope', 'rxy2']
+                headings = headings + ['method_%s'%param, 'SS', 'NI', 'slope', 'rxy2', 'outlier_nr', 'resi_outlier']
 
                 # Get stats.
                 # Linear regression slope, without intercept
@@ -2094,12 +2131,18 @@ class Relax_disp_rep:
                 if min(r_xy2) < min_r_xy2:
                     min_r_xy2 = min(r_xy2)
 
+                # Get the precision_outlier_nr, where values change more than the value itself.
+                precision_outlier_nr = min_stat_dic[method][param]['precision_outlier_nr']
+                resi_outlier = min_stat_dic[method][param]['resi_outlier']
+
                 # Add to data.
                 for i, NI_i in enumerate(NI):
                     SS_i = SS[i]
                     a_i = a[i]
                     r_xy2_i = r_xy2[i]
-                    data_dic[method][param][str(i)] = ["%3.5f"%SS_i, "%i"%NI_i, "%3.5f"%a_i, "%3.5f"%r_xy2_i]
+                    precision_outlier_nr_i = precision_outlier_nr[i]
+                    resi_outlier_i = resi_outlier[i]
+                    data_dic[method][param][str(i)] = ["%3.5f"%SS_i, "%i"%NI_i, "%3.5f"%a_i, "%3.5f"%r_xy2_i, "%i"%precision_outlier_nr_i, "%s"%resi_outlier_i]
                     if i > i_max:
                         i_max = i
 
@@ -2125,7 +2168,7 @@ class Relax_disp_rep:
                     if str(i) in data_dic_m[param]:
                         data_i = data_i + ["%s_%s" % (method, param)] + data_dic_m[param][str(i)]
                     else:
-                        data_i = data_i + ["%s_%s" % (method, param)] + ["0", "0", "0", "0"]
+                        data_i = data_i + ["%s_%s" % (method, param)] + ["0", "0", "0", "0", "0", ":"]
 
             data.append(data_i)
 
