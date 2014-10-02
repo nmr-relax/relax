@@ -21,14 +21,16 @@
 
 # Python module imports.
 from math import sqrt
-from numpy import float64, zeros
+from numpy import array, float64, zeros
 from os import sep
+from re import search
+import sys
 from tempfile import mkdtemp, mktemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.mol_res_spin import count_spins, return_spin, spin_loop
-from lib.geometry.rotations import euler_to_R_zyz
+from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz
 from lib.errors import RelaxError
 from lib.io import DummyFileObject
 from status import Status; status = Status()
@@ -57,6 +59,124 @@ class Structure(SystemTestCase):
 
         # Rebuild the list.
         lines[:] = [x for x in lines if x[:6] != 'REMARK']
+
+
+    def test_align(self):
+        """Test the U{structure.align user function<http://www.nmr-relax.com/manual/structure_align.html>}."""
+
+        # Reset relax.
+        self.interpreter.reset()
+
+        # Path of the PDB file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+
+        # Create a data pipe for the reference structure, then load it.
+        self.interpreter.pipe.create('ref', 'N-state')
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path)
+
+        # Delete a residue and atom.
+        self.interpreter.structure.delete(":8")
+        self.interpreter.structure.delete(":2@N")
+
+        # Output PDB to stdout to help in debugging.
+        self.interpreter.structure.write_pdb(file=sys.stdout)
+
+        # Create a second data pipe for the structures to align and superimpose.
+        self.interpreter.pipe.create('align', 'N-state')
+
+        # Load the PDB twice as different models.
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_model_num=1)
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_model_num=2)
+
+        # Delete a residue and atom.
+        self.interpreter.structure.delete(":12")
+        self.interpreter.structure.delete(":20@H")
+
+        # Translate and rotate the models.
+        R = zeros((3, 3), float64)
+        axis_angle_to_R(array([1, 0, 0], float64), 1.0, R)
+        self.interpreter.structure.rotate(R=R, model=1)
+        axis_angle_to_R(array([0, 0, 1], float64), 2.0, R)
+        self.interpreter.structure.rotate(R=R, model=2)
+        self.interpreter.structure.translate(T=[1., 1., 1.], model=1)
+        self.interpreter.structure.translate(T=[0., 0., 1.], model=2)
+
+        # The alignment.
+        self.interpreter.structure.align(pipes=['ref', 'align'], method='fit to first', atom_id='@N,H')
+
+        # Output PDB to stdout to help in debugging.
+        self.interpreter.structure.write_pdb(file=sys.stdout)
+
+        # The atomic data.
+        data = [
+            ["N", "NH",  1,   0.000,  0.000,  0.000],
+            ["H", "NH",  1,   0.000,  0.000, -1.020],
+            ["N", "NH",  2,   0.000,  0.000,  0.000],
+            ["H", "NH",  2,   0.883,  0.000, -0.510],
+            ["N", "NH",  3,   0.000,  0.000,  0.000],
+            ["H", "NH",  3,   0.883,  0.000,  0.510],
+            ["N", "NH",  4,   0.000,  0.000,  0.000],
+            ["H", "NH",  4,   0.000,  0.000,  1.020],
+            ["N", "NH",  5,   0.000,  0.000,  0.000],
+            ["H", "NH",  5,   0.000,  0.000, -1.020],
+            ["N", "NH",  6,   0.000,  0.000,  0.000],
+            ["H", "NH",  6,   0.273,  0.840, -0.510],
+            ["N", "NH",  7,   0.000,  0.000,  0.000],
+            ["H", "NH",  7,   0.273,  0.840,  0.510],
+            ["N", "NH",  8,   0.000,  0.000,  0.000],
+            ["H", "NH",  8,   0.000,  0.000,  1.020],
+            ["N", "NH",  9,   0.000,  0.000,  0.000],
+            ["H", "NH",  9,  -0.000,  0.000, -1.020],
+            ["N", "NH", 10,   0.000,  0.000,  0.000],
+            ["H", "NH", 10,  -0.715,  0.519, -0.510],
+            ["N", "NH", 11,   0.000,  0.000,  0.000],
+            ["H", "NH", 11,  -0.715,  0.519,  0.510],
+            #["N", "NH", 12,   0.000,  0.000,  0.000],
+            #["H", "NH", 12,  -0.000,  0.000,  1.020],
+            ["N", "NH", 13,   0.000,  0.000,  0.000],
+            ["H", "NH", 13,  -0.000, -0.000, -1.020],
+            ["N", "NH", 14,   0.000,  0.000,  0.000],
+            ["H", "NH", 14,  -0.715, -0.519, -0.510],
+            ["N", "NH", 15,   0.000,  0.000,  0.000],
+            ["H", "NH", 15,  -0.715, -0.519,  0.510],
+            ["N", "NH", 16,   0.000,  0.000,  0.000],
+            ["H", "NH", 16,  -0.000, -0.000,  1.020],
+            ["N", "NH", 17,   0.000,  0.000,  0.000],
+            ["H", "NH", 17,   0.000, -0.000, -1.020],
+            ["N", "NH", 18,   0.000,  0.000,  0.000],
+            ["H", "NH", 18,   0.273, -0.840, -0.510],
+            ["N", "NH", 19,   0.000,  0.000,  0.000],
+            ["H", "NH", 19,   0.273, -0.840,  0.510],
+            ["N", "NH", 20,   0.000,  0.000,  0.000],
+            #["H", "NH", 20,   0.000, -0.000,  1.020]
+        ]
+
+        # The selection object.
+        selection = cdp.structure.selection()
+
+        # Check the first model.
+        self.assertEqual(len(data), len(cdp.structure.structural_data[0].mol[0].atom_name))
+        i = 0
+        for res_num, res_name, atom_name, pos in cdp.structure.atom_loop(selection=selection, model_num=1, res_num_flag=True, res_name_flag=True, atom_name_flag=True, pos_flag=True):
+            self.assertEqual(atom_name, data[i][0])
+            self.assertEqual(res_name, data[i][1])
+            self.assertEqual(res_num, data[i][2])
+            self.assertAlmostEqual(pos[0][0], data[i][3])
+            self.assertAlmostEqual(pos[0][1], data[i][4])
+            self.assertAlmostEqual(pos[0][2], data[i][5])
+            i += 1
+
+        # Check the second model.
+        self.assertEqual(len(data), len(cdp.structure.structural_data[1].mol[0].atom_name))
+        i = 0
+        for res_num, res_name, atom_name, pos in cdp.structure.atom_loop(selection=selection, model_num=2, res_num_flag=True, res_name_flag=True, atom_name_flag=True, pos_flag=True):
+            self.assertEqual(atom_name, data[i][0])
+            self.assertEqual(res_name, data[i][1])
+            self.assertEqual(res_num, data[i][2])
+            self.assertAlmostEqual(pos[0][0], data[i][3])
+            self.assertAlmostEqual(pos[0][1], data[i][4])
+            self.assertAlmostEqual(pos[0][2], data[i][5])
+            i += 1
 
 
     def test_alt_loc_missing(self):
@@ -2458,6 +2578,141 @@ class Structure(SystemTestCase):
             self.assertEqual(real_data[i], lines[i])
 
 
+    def test_delete_atom(self):
+        """Test the deletion of a single atom using the U{structure.delete user function<http://www.nmr-relax.com/manual/structure_delete.html>}"""
+
+        # Load the test structure.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+        self.interpreter.structure.read_pdb(file='uniform.pdb', dir=path)
+
+        # Delete some atoms, testing different combinations.
+        self.interpreter.structure.delete(atom_id=':4@N', verbosity=1)
+        self.interpreter.structure.delete(atom_id=':19', verbosity=1)
+        self.interpreter.structure.delete(atom_id=':16@H', verbosity=1)
+
+        # The expected atomic data after deletion.
+        data = [
+            ["N", "NH",  1,   0.000,  0.000,  0.000,  0, [1]],
+            ["H", "NH",  1,   0.000,  0.000, -1.020,  1, [0]],
+            ["N", "NH",  2,   0.000,  0.000,  0.000,  2, [3]],
+            ["H", "NH",  2,   0.883,  0.000, -0.510,  3, [2]],
+            ["N", "NH",  3,   0.000,  0.000,  0.000,  4, [5]],
+            ["H", "NH",  3,   0.883,  0.000,  0.510,  5, [4]],
+            ["H", "NH",  4,   0.000,  0.000,  1.020,  6, []],
+            ["N", "NH",  5,   0.000,  0.000,  0.000,  7, [8]],
+            ["H", "NH",  5,   0.000,  0.000, -1.020,  8, [7]],
+            ["N", "NH",  6,   0.000,  0.000,  0.000,  9, [10]],
+            ["H", "NH",  6,   0.273,  0.840, -0.510, 10, [9]],
+            ["N", "NH",  7,   0.000,  0.000,  0.000, 11, [12]],
+            ["H", "NH",  7,   0.273,  0.840,  0.510, 12, [11]],
+            ["N", "NH",  8,   0.000,  0.000,  0.000, 13, [14]],
+            ["H", "NH",  8,   0.000,  0.000,  1.020, 14, [13]],
+            ["N", "NH",  9,   0.000,  0.000,  0.000, 15, [16]],
+            ["H", "NH",  9,  -0.000,  0.000, -1.020, 16, [15]],
+            ["N", "NH", 10,   0.000,  0.000,  0.000, 17, [18]],
+            ["H", "NH", 10,  -0.715,  0.519, -0.510, 18, [17]],
+            ["N", "NH", 11,   0.000,  0.000,  0.000, 19, [20]],
+            ["H", "NH", 11,  -0.715,  0.519,  0.510, 20, [19]],
+            ["N", "NH", 12,   0.000,  0.000,  0.000, 21, [22]],
+            ["H", "NH", 12,  -0.000,  0.000,  1.020, 22, [21]],
+            ["N", "NH", 13,   0.000,  0.000,  0.000, 23, [24]],
+            ["H", "NH", 13,  -0.000, -0.000, -1.020, 24, [23]],
+            ["N", "NH", 14,   0.000,  0.000,  0.000, 25, [26]],
+            ["H", "NH", 14,  -0.715, -0.519, -0.510, 26, [25]],
+            ["N", "NH", 15,   0.000,  0.000,  0.000, 27, [28]],
+            ["H", "NH", 15,  -0.715, -0.519,  0.510, 28, [27]],
+            ["N", "NH", 16,   0.000,  0.000,  0.000, 29, []],
+            ["N", "NH", 17,   0.000,  0.000,  0.000, 30, [31]],
+            ["H", "NH", 17,   0.000, -0.000, -1.020, 31, [30]],
+            ["N", "NH", 18,   0.000,  0.000,  0.000, 32, [33]],
+            ["H", "NH", 18,   0.273, -0.840, -0.510, 33, [32]],
+            ["N", "NH", 20,   0.000,  0.000,  0.000, 34, [35]],
+            ["H", "NH", 20,   0.000, -0.000,  1.020, 35, [34]]
+        ]
+
+        # The selection object.
+        selection = cdp.structure.selection()
+
+        # Check the structural object.
+        mol = cdp.structure.structural_data[0].mol[0]
+        self.assertEqual(len(data), len(mol.atom_name))
+        for i in range(len(mol.atom_name)):
+            self.assertEqual(mol.atom_name[i], data[i][0])
+            self.assertEqual(mol.res_name[i], data[i][1])
+            self.assertEqual(mol.res_num[i], data[i][2])
+            self.assertEqual(mol.x[i], data[i][3])
+            self.assertEqual(mol.y[i], data[i][4])
+            self.assertEqual(mol.z[i], data[i][5])
+            self.assertEqual(mol.bonded[i], data[i][7])
+
+        # Output PDB to stdout to help in debugging.
+        self.interpreter.structure.write_pdb(file=sys.stdout)
+
+        # Write out the file.
+        self.tmpfile = mktemp() + '.pdb'
+        self.interpreter.structure.write_pdb(self.tmpfile)
+
+        # Read the contents of the file.
+        file = open(self.tmpfile)
+        lines = file.readlines()
+        file.close()
+
+        # Check the CONECT records.
+        print("\nChecking CONECT records from the structure.write user function:")
+        connected = [
+            [ 0,  1],
+            [ 1,  0],
+            [ 2,  3],
+            [ 3,  2],
+            [ 4,  5],
+            [ 5,  4],
+            [ 7,  8],
+            [ 8,  7],
+            [ 9, 10],
+            [10,  9],
+            [11, 12],
+            [12, 11],
+            [13, 14],
+            [14, 13],
+            [15, 16],
+            [16, 15],
+            [17, 18],
+            [18, 17],
+            [19, 20],
+            [20, 19],
+            [21, 22],
+            [22, 21],
+            [23, 24],
+            [24, 23],
+            [25, 26],
+            [26, 25],
+            [27, 28],
+            [28, 27],
+            [30, 31],
+            [31, 30],
+            [32, 33],
+            [33, 32],
+            [34, 35],
+            [35, 34]
+        ]
+        i = 0
+        for line in lines:
+            # Not a CONECT record.
+            if not search('^CONECT', line):
+                continue
+
+            # Debugging printout.
+            sys.stdout.write(line)
+
+            # Split up the line.
+            row = line.split()
+
+            # Check and increment.
+            self.assertEqual(int(row[1]), connected[i][0]+1)
+            self.assertEqual(int(row[2]), connected[i][1]+1)
+            i += 1
+
+
     def test_delete_empty(self):
         """Test the deletion of non-existent structural data."""
 
@@ -2724,6 +2979,34 @@ class Structure(SystemTestCase):
 
         # Read the results file.
         self.interpreter.results.read(file=path+sep+'str_internal')
+
+
+    def test_mean(self):
+        """Test the U{structure.mean user function<http://www.nmr-relax.com/manual/structure_mean.html>}."""
+
+        # Create 2 models.
+        self.interpreter.structure.add_model(model_num=1)
+        self.interpreter.structure.add_model(model_num=2)
+
+        # Add a single atom.
+        self.interpreter.structure.add_atom(atom_name='N', res_name='Tyr', res_num=2, pos=[[0., 0., 0.], [1., 2., -2.]], element='N')
+        self.interpreter.structure.add_atom(atom_name='N', res_name='Phe', res_num=3, pos=[[-1., -2., 2.], [1., 2., -2.]], element='N')
+
+        # Calculate the mean.
+        self.interpreter.structure.mean()
+
+        # Test the molecule data.
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 1)
+        self.assertEqual(cdp.structure.structural_data[0].num, None)
+        mol = cdp.structure.structural_data[0].mol[0]
+        self.assertEqual(len(mol.atom_name), 2)
+        self.assertEqual(mol.x[0], 0.5)
+        self.assertEqual(mol.y[0], 1.0)
+        self.assertEqual(mol.z[0], -1.0)
+        self.assertEqual(mol.x[1], 0.0)
+        self.assertEqual(mol.y[1], 0.0)
+        self.assertEqual(mol.z[1], 0.0)
 
 
     def test_metadata_xml(self):

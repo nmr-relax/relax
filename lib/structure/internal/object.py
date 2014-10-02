@@ -1612,6 +1612,16 @@ class Internal:
                         if res_num not in mol.res_num and res_num not in del_res_nums:
                             del_res_nums.append(res_num)
 
+                        # Second atom of the bonded pair.
+                        for j in range(len(mol.bonded)):
+                            if i in mol.bonded[j]:
+                                mol.bonded[j].pop(mol.bonded[j].index(i))
+
+                        # Update the bonded lists, as the indices need to be shifted.
+                        for j in range(i, len(mol.bonded)):
+                            for k in range(len(mol.bonded[j])):
+                                mol.bonded[j][k] -= 1
+
             # Nothing more to do.
             if not len(del_res_nums):
                 return
@@ -2101,6 +2111,41 @@ class Internal:
 
         # Loading worked.
         return True
+
+
+    def mean(self):
+        """Calculate the mean structure from all models in the structural data object."""
+
+        # Create a new model for the mean structure.
+        num = self.num_models()
+        self.add_model()
+        mean_model = self.structural_data[-1]
+
+        # The selection object.
+        selection = self.selection()
+
+        # Loop over the molecules and atoms.
+        for mol_index, i in selection.loop():
+            # Set the mean structure coordinate to zero.
+            mean_model.mol[mol_index].x[i] = 0.0
+            mean_model.mol[mol_index].y[i] = 0.0
+            mean_model.mol[mol_index].z[i] = 0.0
+
+            # Loop over the models and sum the coordinates.
+            for model_index in range(num):
+                model_cont = self.structural_data[model_index]
+                mean_model.mol[mol_index].x[i] += model_cont.mol[mol_index].x[i]
+                mean_model.mol[mol_index].y[i] += model_cont.mol[mol_index].y[i]
+                mean_model.mol[mol_index].z[i] += model_cont.mol[mol_index].z[i]
+
+            # Averages.
+            mean_model.mol[mol_index].x[i] /= num
+            mean_model.mol[mol_index].y[i] /= num
+            mean_model.mol[mol_index].z[i] /= num
+
+        # Delete all models but the mean.
+        for model_index in reversed(range(num)):
+            self.delete(model=self.structural_data[model_index].num)
 
 
     def model_loop(self, model=None):
@@ -2895,11 +2940,7 @@ class Internal:
                         # Convert the atom indices to atom numbers.
                         for k in range(4):
                             if bonded[k] != '':
-                                if mol.atom_num[bonded[k]] != None:
-                                    bonded[k] = mol.atom_num[bonded[k]]
-                                else:
-                                    bonded[k] = bonded[k] + 1
-                                bonded_shifted[k] = bonded[k] + atom_counts[index]
+                                bonded_shifted[k] = bonded[k] + 1 + atom_counts[index]
 
                         # Write the CONECT record.
                         pdb_write.conect(file, serial=i+1+atom_counts[index], bonded1=bonded_shifted[0], bonded2=bonded_shifted[1], bonded3=bonded_shifted[2], bonded4=bonded_shifted[3])

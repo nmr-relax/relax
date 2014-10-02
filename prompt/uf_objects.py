@@ -185,6 +185,8 @@ class Uf_object(object):
                 lib.arg_check.is_int_list(value, desc_short, size=dim, can_be_none=can_be_none)
             elif py_type == 'int_or_int_list':
                 lib.arg_check.is_int_or_int_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty, none_elements=none_elements)
+            elif py_type == 'int_list_of_lists':
+                lib.arg_check.is_int_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty, none_elements=none_elements, list_of_lists=True)
             elif py_type == 'list':
                 lib.arg_check.is_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
             elif py_type == 'list_val_or_list_of_list_val':
