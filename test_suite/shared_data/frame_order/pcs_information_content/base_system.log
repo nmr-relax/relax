@@ -1,0 +1,192 @@
+
+
+
+                                  relax repository checkout r26130
+                            svn+ssh://bugman@svn.gna.org/svn/relax/trunk
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2014 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'base_system.py'
+----------------------------------------------------------------------------------------------------
+# Python module imports.
+from numpy import array, cross, float64, transpose
+from numpy.linalg import inv, norm
+import sys
+
+# relax module imports.
+from lib.text.sectioning import title
+
+
+# Calculate and store the N-domain centre of mass.
+pipe.create('N-dom', 'N-state')
+structure.read_pdb('1J7O_1st_NH.pdb', dir='../cam')
+structure.com()
+n_dom_com = cdp.com
+
+# Calculate and store the N-domain centre of mass.
+pipe.create('C-dom', 'N-state')
+structure.read_pdb('1J7P_1st_NH.pdb', dir='../cam')
+structure.com()
+c_dom_com = cdp.com
+
+# Create a new data pipe for building the base system.
+pipe.create('base system', 'N-state')
+
+# Load both domains.
+structure.read_pdb('1J7O_1st_NH.pdb', dir='../cam', set_mol_name='N-dom')
+structure.read_pdb('1J7P_1st_NH.pdb', dir='../cam', set_mol_name='C-dom')
+
+# The inter-CoM distance.
+dist = norm(c_dom_com - n_dom_com)
+
+# The frame of the CoM system.
+z_ax = (c_dom_com - n_dom_com) / dist
+x_ax = array([1, 0, 0], float64)
+y_ax = cross(z_ax, x_ax)
+y_ax /= norm(y_ax)
+R = transpose(array([x_ax, y_ax, z_ax], float64))
+
+# Translate the N-domain CoM to the origin.
+structure.translate(T=-n_dom_com)
+
+# Inverted frame rotation.
+structure.rotate(R=inv(R))
+
+# Add atoms for the CoMs.
+structure.add_atom(atom_name='N', res_name='COM', res_num=1, chain_id='A', pos=[0., 0., 0.], element='Ti', pdb_record='HETATM')
+structure.add_atom(atom_name='C', res_name='COM', res_num=1, chain_id='B', pos=[0., 0., dist], element='Ti', pdb_record='HETATM')
+
+# Write out the final structure.
+structure.write_pdb('base_system.pdb', force=True)
+
+# The new CoMs.
+structure.com(atom_id="#N-dom")
+n_dom_com_new = cdp.com
+structure.com(atom_id="#C-dom")
+c_dom_com_new = cdp.com
+
+# Printout.
+title(file=sys.stdout, text="The base system")
+print("The original system:\n")
+print("%-25s %-70s" % ("N-domain CoM:", n_dom_com))
+print("%-25s %-70s" % ("C-domain CoM:", c_dom_com))
+print("%-25s %-70s" % ("Inter-CoM distance:", dist))
+print("%s\n%s" % ("R:", R))
+print("\nThe new system:\n")
+print("%-25s %-70s" % ("N-domain CoM:", n_dom_com_new))
+print("%-25s %-70s" % ("C-domain CoM:", c_dom_com_new))
+print("%-25s %-70s" % ("Inter-CoM distance:", norm(c_dom_com_new - n_dom_com_new)))
+----------------------------------------------------------------------------------------------------
+
+relax> pipe.create(pipe_name='N-dom', pipe_type='N-state', bundle=None)
+
+relax> structure.read_pdb(file='1J7O_1st_NH.pdb', dir='../cam', read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False)
+
+Internal relax PDB parser.
+Opening the file '../cam/1J7O_1st_NH.pdb' for reading.
+Adding molecule '1J7O_1st_NH_mol1' to model None (from the original molecule number 1 of model None)
+
+relax> structure.com(model=None, atom_id=None)
+Calculating the centre of mass.
+    Total mass:      M = 1219.2671299999984
+    Centre of mass:  R = array([ 41.739087994810525,   6.029772585659724,  -0.763559806352691])
+
+relax> pipe.create(pipe_name='C-dom', pipe_type='N-state', bundle=None)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='../cam', read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False)
+
+Internal relax PDB parser.
+Opening the file '../cam/1J7P_1st_NH.pdb' for reading.
+Adding molecule '1J7P_1st_NH_mol1' to model None (from the original molecule number 1 of model None)
+
+relax> structure.com(model=None, atom_id=None)
+Calculating the centre of mass.
+    Total mass:      M = 1085.1416349999979
+    Centre of mass:  R = array([ 26.836780092125995, -12.379059385266354,  28.341544813714616])
+
+relax> pipe.create(pipe_name='base system', pipe_type='N-state', bundle=None)
+
+relax> structure.read_pdb(file='1J7O_1st_NH.pdb', dir='../cam', read_mol=None, set_mol_name='N-dom', read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False)
+
+Internal relax PDB parser.
+Opening the file '../cam/1J7O_1st_NH.pdb' for reading.
+Adding molecule 'N-dom' to model None (from the original molecule number 1 of model None)
+
+relax> structure.read_pdb(file='1J7P_1st_NH.pdb', dir='../cam', read_mol=None, set_mol_name='C-dom', read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False)
+
+Internal relax PDB parser.
+Opening the file '../cam/1J7P_1st_NH.pdb' for reading.
+Adding molecule 'C-dom' to model None (from the original molecule number 1 of model None)
+
+relax> structure.translate(T=array([-41.739087994810525,  -6.029772585659724,   0.763559806352691]), model=None, atom_id=None)
+
+relax> structure.rotate(R=array([[ 1.               , -0.231311875379072,  0.365713389279917],
+       [ 0.               ,  0.845139201145376,  0.534546284887807],
+       [ 0.               , -0.582447349018553,  0.920872712382796]]), origin=None, model=None, atom_id=None)
+
+relax> structure.add_atom(atom_name='N', res_name='COM', res_num=1, pos=[0.0, 0.0, 0.0], element='Ti', atom_num=None, chain_id='A', segment_id=None, pdb_record='HETATM')
+
+relax> structure.add_atom(atom_name='C', res_name='COM', res_num=1, pos=[0.0, 0.0, 37.524272015660301], element='Ti', atom_num=None, chain_id='B', segment_id=None, pdb_record='HETATM')
+
+relax> structure.write_pdb(file='base_system.pdb', dir=None, model_num=None, compress_type=0, force=True)
+Opening the file 'base_system.pdb' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+relax> structure.com(model=None, atom_id='#N-dom')
+Calculating the centre of mass.
+    Total mass:      M = 1219.2671299999984
+    Centre of mass:  R = array([ -6.643488525492484e-14,  -5.827621513589898e-15,
+         6.014105402024775e-15])
+
+relax> structure.com(model=None, atom_id='#C-dom')
+Calculating the centre of mass.
+    Total mass:      M = 1085.1416349999979
+    Centre of mass:  R = array([ -6.867465013128858e-14,  -8.381345553780452e-15,
+         3.752427201566034e+01])
+
+
+===================
+= The base system =
+===================
+
+The original system:
+
+N-domain CoM:             [ 41.739087994810525   6.029772585659724  -0.763559806352691]         
+C-domain CoM:             [ 26.836780092125995 -12.379059385266354  28.341544813714616]         
+Inter-CoM distance:       37.5242720157                                                         
+R:
+[[ 1.                -0.                -0.397137828455812]
+ [ 0.                 0.845139201145376 -0.490584653134466]
+ [ 0.                 0.534546284887807  0.775634091126955]]
+
+The new system:
+
+N-domain CoM:             [ -6.643488525492484e-14  -5.827621513589898e-15   6.014105402024775e-15]
+C-domain CoM:             [ -6.867465013128858e-14  -8.381345553780452e-15   3.752427201566034e+01]
+Inter-CoM distance:       37.5242720157                                                         
+
