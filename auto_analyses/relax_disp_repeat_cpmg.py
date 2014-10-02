@@ -1190,7 +1190,7 @@ class Relax_disp_rep:
                     max_x =  max(x_err)
                     step_x = (max_x - min_x) / np
                     x_err_arange = arange(min_x, max_x, step_x)
-                    y_err_arange = a * x_arange
+                    y_err_arange = a * x_err_arange
 
                     # Add to data.
                     for k, x_err_k in enumerate(x_err):
@@ -1307,6 +1307,242 @@ class Relax_disp_rep:
                 # Close file.
                 file_obj.close()
 
+        if show:
+            plt.show()
+
+
+    def get_int_stat_dic(self, list_int_dics=None, list_glob_ini=None):
+
+        # Loop over the result dictionaries:
+        res_dic = {}
+        for i, int_dic in enumerate(list_int_dics):
+            # Let the reference dic be initial dic
+            int_dic_ref = list_int_dics[0]
+            method_ref = int_dic_ref['method']
+            res_dic['method_ref'] = method_ref
+            glob_ini_ref = list_glob_ini[0]
+            res_dic['glob_ini_ref'] = str(glob_ini_ref)
+            selection = int_dic_ref['selection']
+            res_dic['selection'] = selection
+
+            # Let the reference int array be the initial glob.
+            int_arr_ref = int_dic_ref[str(glob_ini_ref)]['peak_intensity_arr']
+            res_dic['int_arr_ref'] = int_arr_ref
+            int_err_arr_ref = int_dic_ref[str(glob_ini_ref)]['peak_intensity_err_arr']
+            res_dic['int_err_arr_ref'] = int_err_arr_ref
+
+            # Get the current method
+            method_cur = int_dic['method']
+            res_dic[method_cur] = {}
+            res_dic[method_cur]['method'] = method_cur
+            res_dic[method_cur]['sampling_sparseness'] = []
+            res_dic[method_cur]['glob_ini'] = []
+            res_dic[method_cur]['int_norm_std'] = []
+
+            # Other stats.
+            res_dic[method_cur]['r_xy_int'] = []
+            res_dic[method_cur]['a_int'] = []
+            res_dic[method_cur]['r_xy_int_err'] = []
+            res_dic[method_cur]['a_int_err'] = []
+
+            # Now loop over glob_ini:
+            for glob_ini in list_glob_ini:
+                # Get the array, if it exists.
+                if str(glob_ini) not in int_dic:
+                    continue
+
+                # Get the data.
+                int_arr = int_dic[str(glob_ini)]['peak_intensity_arr']
+                int_err_arr = int_dic[str(glob_ini)]['peak_intensity_err_arr']
+
+                # This require that all number of points are equal.
+                # If they are not of same length, then dont even bother to continue.
+                if len(int_arr) != len(int_arr_ref):
+                    continue
+
+                # Store x
+                sampling_sparseness = float(glob_ini) / float(glob_ini_ref) * 100.
+                res_dic[method_cur]['sampling_sparseness'].append(sampling_sparseness)
+                res_dic[method_cur]['glob_ini'].append(glob_ini)
+
+                # Store to result dic.
+                res_dic[method_cur][str(glob_ini)] = {}
+                res_dic[method_cur][str(glob_ini)]['sampling_sparseness'] = sampling_sparseness
+                res_dic[method_cur][str(glob_ini)]['int_arr'] = int_arr
+                res_dic[method_cur][str(glob_ini)]['int_err_arr'] = int_err_arr
+
+                # Calculate sample correlation coefficient, measure of goodness-of-fit of linear regression
+                # Without intercept.
+                x = int_arr_ref
+                y = int_arr
+
+                a_int = sum(x*y) / sum(x**2)
+                r_xy_int = sum(x*y) / sqrt(sum(x**2) * sum(y**2))
+
+                x = int_err_arr_ref
+                y = int_err_arr
+                a_int_err = sum(x*y) / sum(x**2)
+                r_xy_int_err = sum(x*y) / sqrt(sum(x**2) * sum(y**2))
+
+                print(method_ref, method_cur, sampling_sparseness, glob_ini, r_xy_int**2, a_int, r_xy_int_err**2, a_int_err)
+
+                # Store to result dic.
+                res_dic[method_cur][str(glob_ini)]['r_xy_int'] = r_xy_int
+                res_dic[method_cur]['r_xy_int'].append(r_xy_int)
+                res_dic[method_cur][str(glob_ini)]['a_int'] = a_int
+                res_dic[method_cur]['a_int'].append(a_int)
+
+                res_dic[method_cur][str(glob_ini)]['r_xy_int_err'] = r_xy_int_err
+                res_dic[method_cur]['r_xy_int_err'].append(r_xy_int_err)
+                res_dic[method_cur][str(glob_ini)]['a_int_err'] = a_int_err
+                res_dic[method_cur]['a_int_err'].append(a_int_err)
+
+            res_dic[method_cur]['sampling_sparseness'] = asarray(res_dic[method_cur]['sampling_sparseness'])
+            res_dic[method_cur]['glob_ini'] = asarray(res_dic[method_cur]['glob_ini'])
+
+            res_dic[method_cur]['r_xy_int'] = asarray(res_dic[method_cur]['r_xy_int'])
+            res_dic[method_cur]['a_int'] = asarray(res_dic[method_cur]['a_int'])
+            res_dic[method_cur]['r_xy_int_err'] = asarray(res_dic[method_cur]['r_xy_int_err'])
+            res_dic[method_cur]['a_int_err'] = asarray(res_dic[method_cur]['a_int_err'])
+
+        return res_dic
+
+
+    def plot_int_stat(self, int_stat_dic=None, methods=[], list_glob_ini=[], show=False, write_stats=False):
+
+        # Define figure
+        fig, axises = plt.subplots(nrows=2, ncols=1)
+        fig.suptitle('Stats per NI')
+        ax1, ax2 = axises
+
+        # Catch min and max values for all methods.
+        min_a = 1.0
+        max_a = 0.0
+
+        min_r_xy2 = 1.0
+        max_r_xy2 = 0.0
+
+        # Prepare header for writing.
+        selection = int_stat_dic['selection']
+
+        # For writing out stats.
+        headings = []
+        data_dic = OrderedDict()
+        i_max = 0
+
+        for method in methods:
+            if method not in int_stat_dic:
+                continue
+
+            # Use NI as x.
+            NI = int_stat_dic[method]['glob_ini']
+            # Use sampling_sparseness as x.
+            SS = int_stat_dic[method]['sampling_sparseness']
+
+            # Add to headings.
+            headings = headings + ['method', 'SS', 'NI', 'slope_int', 'rxy2_int', 'slope_int_err', 'rxy2_int_err']
+
+            # Get stats.
+            # Linear regression slope, without intercept
+            a_int = int_stat_dic[method]['a_int']
+
+            if max(a_int) > max_a:
+                max_a = max(a_int)
+            if min(a_int) < min_a:
+                min_a = min(a_int)
+
+            # sample correlation coefficient, without intercept
+            r_xy_int = int_stat_dic[method]['r_xy_int']
+            r_xy_int2 = r_xy_int**2
+
+            if max(r_xy_int2) > max_r_xy2:
+                max_r_xy2 = max(r_xy_int2)
+            if min(r_xy_int2) < min_r_xy2:
+                min_r_xy2 = min(r_xy_int2)
+
+            # For just the int values
+            a_int_err = int_stat_dic[method]['a_int_err']
+            r_xy_int_err = int_stat_dic[method]['r_xy_int_err']
+            r_xy_int_err2 = r_xy_int_err**2
+
+            # Add to data.
+            data_dic[method] = OrderedDict()
+            for i, NI_i in enumerate(NI):
+                SS_i = SS[i]
+                a_int_i = a_int[i]
+                r_xy_int2_i = r_xy_int2[i]
+                a_int_err_i = a_int_err[i]
+                r_xy_int_err2_i = r_xy_int_err2[i]
+                data_dic[method][str(i)] = ["%3.5f"%SS_i, "%i"%NI_i, "%3.5f"%a_int_i, "%3.5f"%r_xy_int2_i, "%3.5f"%a_int_err_i, "%3.5f"%r_xy_int_err2_i]
+                if i > i_max:
+                    i_max = i
+
+            t = ax1.plot(SS, a_int, ".--", label='%s slope int'%method)
+            color = t[0].get_color()
+            ax1.plot(SS, a_int_err, ".-", label='%s slope  int_err'%method, color=color)
+
+            t = ax2.plot(SS, r_xy_int2, "o--", label='%s r2 int'%method)
+            color = t[0].get_color()
+            ax2.plot(SS, r_xy_int_err2, "o-", label='%s r2 int_err'%method, color=color)
+
+        # Loop over methods for writing data.
+        data = []
+
+        for i in range(0, i_max+1):
+            data_i = []
+            for method, data_dic_m in data_dic.iteritems():
+                # Loop over all possible data points.
+                if str(i) in data_dic_m:
+                    data_i = data_i + [method] + data_dic_m[str(i)]
+                else:
+                    data_i = data_i + [method] + ["0", "0", "0", "0", "0", "0"]
+
+            data.append(data_i)
+
+        # Set legends.
+        ax1.legend(loc='lower left', shadow=True, prop = fontP)
+        #ax1.set_xlabel('NI')
+        ax1.set_xlabel('SS')
+        #ax1.set_ylabel(r'$\sigma ( R_{2,\mathrm{eff}} )$')
+        ax1.set_ylabel('Linear regression slope, without intercept')
+        #ax1.set_xticks(NI)
+        #ax1.set_xticks(SS)
+        ax1.set_ylim(min_a*0.95, max_a*1.05)
+        ax1.invert_xaxis()
+
+        ax2.legend(loc='lower right', shadow=True, prop = fontP)
+        ax2.set_ylabel('Sample correlation ' + r'$r_{xy}^2$')
+        #ax2.set_xticks(NI)
+        #ax2.set_xticks(SS)
+        ax2.set_ylim(min_r_xy2*0.95, max_r_xy2*1.05)
+        ax2.invert_xaxis()
+
+        # Determine filename.
+        if selection == None:
+            file_name_ini = 'int_stat_all'
+        else:
+            file_name_ini = 'int_stat_sel'
+
+        # Write png.
+        png_file_name = file_name_ini + '.png'
+        png_file_path = get_file_path(file_name=png_file_name, dir=self.results_dir)
+
+        # Write to file.
+        if write_stats:
+            # save figure
+            plt.savefig(png_file_path, bbox_inches='tight')
+
+            file_name = file_name_ini + '.txt'
+            path = self.results_dir
+            file_obj, file_path = open_write_file(file_name=file_name, dir=path, force=True, compress_type=0, verbosity=1, return_path=True)
+
+            # Write data.
+            write_data(out=file_obj, headings=headings, data=data)
+
+            # Close file.
+            file_obj.close()
+
+        # Plot data.
         if show:
             plt.show()
 
