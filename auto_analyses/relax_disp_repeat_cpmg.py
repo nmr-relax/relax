@@ -1041,6 +1041,7 @@ class Relax_disp_rep:
         # Loop over the glob ini:
         res_dic = {}
         res_dic['method'] = method
+        res_dic['selection'] = selection
         for glob_ini in list_glob_ini:
             # Get the pipe name for peak_intensity values.
             pipe_name = self.name_pipe(method=method, model='setup', analysis='int', glob_ini=glob_ini)
@@ -1083,7 +1084,7 @@ class Relax_disp_rep:
         return res_dic
 
 
-    def plot_int_corr(self, corr_data, show=False):
+    def plot_int_corr(self, corr_data, show=False, write_stats=False):
 
         # Define figure.
         # Nr of columns is number of datasets.
@@ -1098,6 +1099,9 @@ class Relax_disp_rep:
         # axises is a tuple with number of elements corresponding to number of rows.
         # Each sub-tuple contains axis for each column.
 
+        # For writing out stats.
+        data_dic = OrderedDict()
+
         # Loop over the rows.
         for i, row_axises in enumerate(axises):
             # Loop over the columns.
@@ -1110,12 +1114,17 @@ class Relax_disp_rep:
 
                 x = data_x[str(glob_ini_x)]['peak_intensity_arr']
                 x_err = data_x[str(glob_ini_x)]['peak_intensity_err_arr']
+                np = len(x)
 
                 y = data_y[str(glob_ini_y)]['peak_intensity_arr']
                 y_err = data_y[str(glob_ini_y)]['peak_intensity_err_arr']
 
                 # If row 1.
                 if i == 0:
+                    # Add to data dic.
+                    method_xy_NI = "int_%s%s_%s%s" % (method_x, glob_ini_x, method_y, glob_ini_y)
+                    data_dic[method_xy_NI] = []
+
                     ax.plot(x, x, 'o', label='%s vs. %s' % (method_x, method_x))
                     ax.plot(x, y, '.', label='%s vs. %s' % (method_y, method_x) )
 
@@ -1126,6 +1135,22 @@ class Relax_disp_rep:
                     ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
                     ax.set_xlabel(r'$I$')
                     ax.set_ylabel(r'$I$')
+
+                    # Calculate straight line.
+                    # Linear a, with no intercept.
+                    a = sum(x * y) / sum(x**2)
+                    min_x = min(x)
+                    max_x =  max(x)
+                    step_x = (max_x - min_x) / np
+                    x_arange = arange(min_x, max_x, step_x)
+                    y_arange = a * x_arange
+
+                    # Add to data.
+                    for k, x_k in enumerate(x):
+                        y_k = y[k]
+                        x_arange_k = x_arange[k]
+                        y_arange_k = y_arange[k]
+                        data_dic[method_xy_NI].append(["%3.5f"%x_k, "%3.5f"%y_k, "%3.5f"%x_arange_k, "%3.5f"%y_arange_k])
 
                 # Scale intensity
                 if i == 1:
@@ -1145,6 +1170,9 @@ class Relax_disp_rep:
 
                 # Error.
                 if i == 2:
+                    # Add to data dic.
+                    method_xy_NI = "int_err_%s%s_%s%s" % (method_x, glob_ini_x, method_y, glob_ini_y)
+                    data_dic[method_xy_NI] = []
 
                     ax.plot(x_err, x_err, 'o', label='%s vs. %s' % (method_x, method_x))
                     ax.plot(x_err, y_err, '.', label='%s vs. %s' % (method_y, method_x))
@@ -1154,6 +1182,22 @@ class Relax_disp_rep:
                     ax.legend(loc='upper center', shadow=True, prop = fontP)
                     ax.set_xlabel(r'$\sigma(I)$')
                     ax.set_ylabel(r'$\sigma(I)$')
+
+                    # Calculate straight line.
+                    # Linear a, with no intercept.
+                    a = sum(x_err * y_err) / sum(x_err**2)
+                    min_x = min(x_err)
+                    max_x =  max(x_err)
+                    step_x = (max_x - min_x) / np
+                    x_err_arange = arange(min_x, max_x, step_x)
+                    y_err_arange = a * x_arange
+
+                    # Add to data.
+                    for k, x_err_k in enumerate(x_err):
+                        y_err_k = y_err[k]
+                        x_err_arange_k = x_err_arange[k]
+                        y_err_arange_k = y_err_arange[k]
+                        data_dic[method_xy_NI].append(["%3.5f"%x_err_k, "%3.5f"%y_err_k, "%3.5f"%x_err_arange_k, "%3.5f"%y_err_arange_k])
 
 
                 # Intensity to error.
@@ -1172,6 +1216,96 @@ class Relax_disp_rep:
                     ax.set_ylabel(r'$I/\sigma(I)$')
 
             plt.tight_layout()
+
+        # Loop over columns for writing data.
+        # Write to file.
+        if write_stats:
+            # Re-order the data.
+            headings_all = []
+            method_xy_NI_all = []
+            # Loop over the columns.
+            for j in range(nr_cols):
+                headings_j = []
+                method_xy_NI_j = []
+                # Loop over rows
+                for i in range(nr_rows):
+                    # Extract from lists.
+                    data, methods, glob_inis = corr_data[j]
+                    method_x, method_y = methods
+                    glob_ini_x, glob_ini_y = glob_inis
+
+                    # If row 1.
+                    if i == 0:
+                        # Add to headings.
+                        method_x_NI = "int_%s%s" % (method_x, glob_ini_x)
+                        method_y_NI = "int_%s%s" % (method_y, glob_ini_y)
+                        method_x_NI_lin = "int_lin_%s%s" % (method_x, glob_ini_x)
+                        method_y_NI_lin = "int_lin_%s%s" % (method_y, glob_ini_y)
+                        headings_j = headings_j + [method_x_NI, method_y_NI, method_x_NI_lin, method_y_NI_lin]
+
+                        method_xy_NI = "int_%s%s_%s%s" % (method_x, glob_ini_x, method_y, glob_ini_y)
+                        method_xy_NI_j.append(method_xy_NI)
+
+                    # Error.
+                    if i == 2:
+                        # Add to headings
+                        method_x_NI = "int_err_%s%s" % (method_x, glob_ini_x)
+                        method_y_NI = "int_err_%s%s" % (method_y, glob_ini_y)
+                        method_x_NI_lin = "int_err_lin_%s%s" % (method_x, glob_ini_x)
+                        method_y_NI_lin = "int_err_lin_%s%s" % (method_y, glob_ini_y)
+                        headings_j = headings_j + [method_x_NI, method_y_NI, method_x_NI_lin, method_y_NI_lin]
+
+                        method_xy_NI = "int_err_%s%s_%s%s" % (method_x, glob_ini_x, method_y, glob_ini_y)
+                        method_xy_NI_j.append(method_xy_NI)
+
+                headings_all.append(headings_j)
+                method_xy_NI_all.append(method_xy_NI_j)
+
+            # Loop over the columns.
+            for j, headings_j in enumerate(headings_all):
+                method_xy_NI_j = method_xy_NI_all[j]
+
+                data_w = []
+                data_int = data_dic[method_xy_NI_j[0]]
+                data_int_err = data_dic[method_xy_NI_j[1]]
+
+                for k, data_int_k in enumerate(data_int):
+                    data_int_err_k = data_int_err[k]
+                    data_w.append(data_int_k + data_int_err_k)
+
+                # Define file name.
+                data, methods, glob_inis = corr_data[j]
+                data_x, data_y = data
+                method_x, method_y = methods
+                glob_ini_x, glob_ini_y = glob_inis
+                np = len(data_int)
+
+                # Get the spin selection for correlation.
+                selection = data_x['selection']
+
+                file_name_ini = 'int_corr_%s_%s_%s_%s_NP_%i' % (method_x, glob_ini_x, method_y, glob_ini_y, np)
+                if selection == None:
+                    file_name_ini = file_name_ini + '_all'
+                else:
+                    file_name_ini = file_name_ini + '_sel'
+
+                file_name = file_name_ini + '.txt'
+                path = self.results_dir
+
+                # save figure
+                # Write png.
+                png_file_name = file_name_ini + '.png'
+                png_file_path = get_file_path(file_name=png_file_name, dir=path)
+                plt.savefig(png_file_path, bbox_inches='tight')
+
+                # Write file
+                file_obj, file_path = open_write_file(file_name=file_name, dir=path, force=True, compress_type=0, verbosity=1, return_path=True)
+
+                # Write data.
+                write_data(out=file_obj, headings=headings_j, data=data_w)
+
+                # Close file.
+                file_obj.close()
 
         if show:
             plt.show()
