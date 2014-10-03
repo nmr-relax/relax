@@ -6073,7 +6073,7 @@ class Relax_disp(SystemTestCase):
 
                 ## Plot R2eff stats
                 write_stats = True
-                RDR.plot_int_stat(int_stat_dic=int_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126], show=True, write_stats=write_stats)
+                RDR.plot_int_stat(int_stat_dic=int_stat_dic, methods=['FT', 'MDD'], list_glob_ini=[128, 126], show=False, write_stats=write_stats)
 
                 # Open stat file.
                 if write_stats:
