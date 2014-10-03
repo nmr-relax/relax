@@ -1225,7 +1225,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].kex, kex, 2)
 
 
-    def test_bmrb_sub_cpmg(self):
+    def x_test_bmrb_sub_cpmg(self):
         """U{Task #7858: <https://gna.org/task/?7858>} Make it possible to submit CPMG experiments for BMRB.
         This uses CPMG data from:
 
