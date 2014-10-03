@@ -25,8 +25,11 @@
 """The relaxation dispersion API object."""
 
 # Python module imports.
+import bmrblib
 from copy import deepcopy
+from numpy import int32, zeros
 from re import match, search
+import string
 import sys
 from types import MethodType
 
@@ -36,9 +39,11 @@ from lib.dispersion.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROT
 from lib.errors import RelaxError, RelaxImplementError
 from lib.text.sectioning import subsection
 from multi import Processor_box
-from pipe_control import pipes, sequence
-from pipe_control.mol_res_spin import check_mol_res_spin_data, return_spin, spin_loop
+from pipe_control import pipes, relax_data, sequence
+from pipe_control.exp_info import bmrb_write_citations, bmrb_write_methods, bmrb_write_software
+from pipe_control.mol_res_spin import bmrb_write_entity, check_mol_res_spin_data, get_molecule_names, return_spin, spin_loop
 from pipe_control.pipes import check_pipe
+from pipe_control.spectrometer import check_spectrometer_setup
 from pipe_control.sequence import return_attached_protons
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
@@ -120,6 +125,115 @@ class Relax_disp(API_base, API_common):
 
                 # Yield the spin container and ID.
                 yield spin, spin_id
+
+
+    def bmrb_write(self, file_path, version=None):
+        """Write the model-free results to a BMRB NMR-STAR v3.1 formatted file.
+
+        @param file_path:   The full file path.
+        @type file_path:    str
+        @keyword version:   The BMRB NMR-STAR dictionary format to output to.
+        @type version:      str
+        """
+
+        # Checks.
+        check_spectrometer_setup(escalate=2)
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Initialise the NMR-STAR data object.
+        star = bmrblib.create_nmr_star('relax_relaxation_dispersion_results', file_path, version)
+
+        # Initialise the spin specific data lists.
+        mol_name_list = []
+        res_num_list = []
+        res_name_list = []
+        atom_name_list = []
+
+        isotope_list = []
+        element_list = []
+
+        chi2_list = []
+        model_list = []
+
+        # Store the spin specific data in lists for later use.
+        for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
+            # Skip the protons.
+            if spin.name == 'H' or (hasattr(spin, 'element') and spin.element == 'H'):
+                warn(RelaxWarning("Skipping the proton spin '%s'." % spin_id))
+                continue
+
+            # Check the data for None (not allowed in BMRB!).
+            if res_num == None:
+                raise RelaxError("For the BMRB, the residue of spin '%s' must be numbered." % spin_id)
+            if res_name == None:
+                raise RelaxError("For the BMRB, the residue of spin '%s' must be named." % spin_id)
+            if spin.name == None:
+                raise RelaxError("For the BMRB, the spin '%s' must be named." % spin_id)
+            if not hasattr(spin, 'isotope') or spin.isotope == None:
+                raise RelaxError("For the BMRB, the spin isotope type of '%s' must be specified." % spin_id)
+            if not hasattr(spin, 'element') or spin.element == None:
+                raise RelaxError("For the BMRB, the spin element type of '%s' must be specified.  Please use the spin user function for setting the element type." % spin_id)
+
+            # The molecule/residue/spin info.
+            mol_name_list.append(mol_name)
+            res_num_list.append(res_num)
+            res_name_list.append(res_name)
+            atom_name_list.append(spin.name)
+
+            # The nuclear isotope.
+            if hasattr(spin, 'isotope'):
+                isotope_list.append(int(spin.isotope.strip(string.ascii_letters)))
+            else:
+                isotope_list.append(None)
+
+            # The element.
+            if hasattr(spin, 'element'):
+                element_list.append(spin.element)
+            else:
+                element_list.append(None)
+
+            # Opt stats.
+            if hasattr(spin, 'chi2'):
+                chi2_list.append(spin.chi2)
+            else:
+                chi2_list.append(None)
+
+            # Model-free model.
+            model_list.append(spin.model)
+
+        # Convert the molecule names into the entity IDs.
+        entity_ids = zeros(len(mol_name_list), int32)
+        mol_names = get_molecule_names()
+        for i in range(len(mol_name_list)):
+            for j in range(len(mol_names)):
+                if mol_name_list[i] == mol_names[j]:
+                    entity_ids[i] = j+1
+
+
+        # Create Supergroup 2 : The citations.
+        ######################################
+
+        # Generate the citations saveframe.
+        bmrb_write_citations(star)
+
+
+        # Create Supergroup 3 : The molecular assembly saveframes.
+        ##########################################################
+
+        # Generate the entity saveframe.
+        bmrb_write_entity(star)
+
+
+        # Create Supergroup 4:  The experimental descriptions saveframes.
+        #################################################################
+
+        # Generate the method saveframes.
+        bmrb_write_methods(star)
+
+        # Generate the software saveframe.
+        software_ids, software_labels = bmrb_write_software(star)
 
 
     def calculate(self, spin_id=None, scaling_matrix=None, verbosity=1, sim_index=None):
