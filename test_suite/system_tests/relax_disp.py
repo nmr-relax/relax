@@ -1225,6 +1225,43 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].kex, kex, 2)
 
 
+    def test_bmrb_sub_cpmg(self):
+        """U{Task #7858: <https://gna.org/task/?7858>} Make it possible to submit CPMG experiments for BMRB.
+        This uses CPMG data from:
+
+            Webb H, Tynan-Connolly BM, Lee GM, Farrell D, O'Meara F, Soendergaard CR, Teilum K, Hewage C, McIntosh LP, Nielsen JE
+            Remeasuring HEWL pK(a) values by NMR spectroscopy: methods, analysis, accuracy, and implications for theoretical pK(a) calculations.
+            (2011), Proteins: Struct, Funct, Bioinf 79(3):685-702, DOI 10.1002/prot.22886
+        """
+
+        # Define path to data 
+        prev_data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'HWebb_KTeilum_Proteins_Struct_Funct_Bioinf_2011'
+
+        # Read data.
+        self.interpreter.results.read(prev_data_path + sep + 'FT_-_CR72_-_min_-_128_-_free_spins')
+
+        # Set element
+        self.interpreter.spin.element(element='N', spin_id=':*@N', force=False)
+        #self.interpreter.spin.isotope(isotope='15N', spin_id=':*@N', force=False)
+        # Rename molecule from None to 'HEWL'
+        self.interpreter.molecule.name(mol_id=None, name='HEWL', force=True)
+        self.interpreter.molecule.type(mol_id='#HEWL', type='protein', force=False)
+
+        for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            print(spin_id)
+            if resn == 'C':
+                print(resi, resn)
+
+        # Select the thiol state of the system.
+        # 'all disulfide bound', 'all free', 'all other bound', 'disulfide and other bound', 'free and disulfide bound', 'free and other bound', 'free disulfide and other bound', 'not available', 'not present', 'not reported', 'unknown'
+        self.interpreter.bmrb.thiol_state(state='not reported')
+
+        # relax_data.temp_calibration(ri_id=None, method=None)
+
+        # Call display of bmrb.
+        self.interpreter.bmrb.display()
+
+
     def test_bug_21081_disp_cluster_fail(self):
         """U{Bug #21081<https://gna.org/bugs/?21081>} catch, the failure of a cluster analysis when spins are deselected."""
 
