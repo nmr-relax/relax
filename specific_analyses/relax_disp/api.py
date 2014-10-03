@@ -136,6 +136,12 @@ class Relax_disp(API_base, API_common):
         @type version:      str
         """
 
+        # This function is not yet implemented, as it would require a re-write of the relax_data bmrb_write(star) function, and proper handling of cdp.ri_ids.
+        # It was also not readily possible to find examples of submitted CPMG data in the BMRB database.
+
+        # Not implemented.
+        raise RelaxImplementError('bmrb_write')
+
         # Checks.
         check_spectrometer_setup(escalate=2)
 
