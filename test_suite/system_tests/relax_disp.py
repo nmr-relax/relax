@@ -2986,6 +2986,122 @@ class Relax_disp(SystemTestCase):
             spin_index += 1
 
 
+    def test_dx_map_clustered(self):
+        """Test making dx_map for residues under clustered calculation.
+
+        This uses CPMG data from:
+
+            Webb H, Tynan-Connolly BM, Lee GM, Farrell D, O'Meara F, Soendergaard CR, Teilum K, Hewage C, McIntosh LP, Nielsen JE
+            Remeasuring HEWL pK(a) values by NMR spectroscopy: methods, analysis, accuracy, and implications for theoretical pK(a) calculations.
+            (2011), Proteins: Struct, Funct, Bioinf 79(3):685-702, DOI 10.1002/prot.22886
+        """
+
+        # Define path to data 
+        prev_data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'HWebb_KTeilum_Proteins_Struct_Funct_Bioinf_2011'
+
+        # Read data.
+        self.interpreter.results.read(prev_data_path + sep + 'FT_-_CR72_-_min_-_128_-_free_spins')
+
+        # Define temporary folder.
+        result_dir = self.tmpdir
+        #result_dir = None
+
+        # Get residue of interest.
+        cur_spin_id = ":%i@%s"%(52, 'N')
+        cur_spin_id_str = cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_')
+
+        # Get the spin container.
+        cur_spin = return_spin(cur_spin_id)
+
+        # Get the chi2 value
+        pre_chi2 = cur_spin.chi2
+
+        # Then do a local minimisation.
+        self.interpreter.minimise.calculate()
+
+        # Get the chi2 value after calculation.
+        calc_chi2 = cur_spin.chi2
+
+        # Assert calculation is equal.
+        #self.assertAlmostEqual(pre_chi2, calc_chi2)
+
+        # Define dx.map settings.
+        dx_inc = 2
+        dx_inc_sides = dx_inc / 2
+
+        dx_params = ['dw', 'pA', 'kex']
+        dx_point_clustered_min = [cur_spin.dw, cur_spin.pA, cur_spin.kex]
+
+        print("Params for dx map is")
+        print(dx_params)
+        print("Point param for dx map is, with chi2=%3.3f"%pre_chi2)
+        print(dx_point_clustered_min)
+
+        # Define file_names.
+        cur_model = 'CR72'
+        file_name_map = "%s_map%s" % (cur_model, cur_spin_id_str)
+        file_name_point = "%s_point%s" % (cur_model, cur_spin_id_str)
+
+        # Step-size of parameter is 10 %
+        param_delta = 0.1
+
+        # Determine bounds for lower and upper
+        lower = []
+        upper = []
+        for i, param_val in enumerate(dx_point_clustered_min):
+            param = dx_params[0]
+            step_val = param_delta * param_val
+            step_length = step_val * dx_inc_sides
+
+            # Calculate value
+            low_val = param_val - step_length
+            lower.append(low_val)
+
+            upp_val = param_val + step_length
+            upper.append(upp_val)
+
+            print("For param %s, lower=%3.3f, upper=%3.3f, step_value=%3.3f, steps=%i, centered at=%3.3f"% (param, low_val, upp_val, step_val, dx_inc, param_val))
+
+        # If the number of increments are 2, there will be 3 point calculations per parameter.
+        # Since we have ordered the lower and upper limits on sides of the parameter, the middle index should give us the expected global value.
+        dx_param_indexes = dx_inc + 1
+        dx_point_index = dx_inc_sides + 1
+
+        # Find the line number.
+        line = 1
+        for i in range(1, dx_param_indexes + 1):
+            for j in range(1, dx_param_indexes + 1):
+                for k in range(1, dx_param_indexes + 1):
+                    if i == dx_point_index and j == dx_point_index and k == dx_point_index:
+                        line_chi2 = line
+                    # Add to line counter.
+                    line += 1
+
+        # Then do the map.
+        self.interpreter.dx.map(params=dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=dx_inc, lower=lower, upper=upper, axis_incs=10, file_prefix=file_name_map, dir=result_dir, point=dx_point_clustered_min, point_file=file_name_point)
+
+        # Print where to locate values.
+        nr_chi2_val = dx_param_indexes**3
+        print("Nr of chi2 calculations are=%i"%nr_chi2_val)
+        print("Global chi2=%3.3f, Calc_chi=%3.3f, map_line_chi2=%i" % (pre_chi2, calc_chi2, line_chi2) )
+
+        ## Check for file creation
+        # Set filepaths.
+        map_cfg = get_file_path(file_name=file_name_map+".cfg", dir=result_dir)
+        map_net = get_file_path(file_name=file_name_map+".net", dir=result_dir)
+        map_general = get_file_path(file_name=file_name_map+".general", dir=result_dir)
+
+        point_general = get_file_path(file_name=file_name_point+".general", dir=result_dir)
+        point_point = get_file_path(file_name=file_name_point, dir=result_dir)
+
+        # Test the files exists.
+        self.assert_(access(map_cfg, F_OK))
+        self.assert_(access(map_net, F_OK))
+        self.assert_(access(map_general, F_OK))
+        self.assert_(access(point_general, F_OK))
+        self.assert_(access(point_point, F_OK))
+
+
     def test_estimate_r2eff_err(self):
         """Test the user function for estimating R2eff errors from exponential curve fitting.
 
