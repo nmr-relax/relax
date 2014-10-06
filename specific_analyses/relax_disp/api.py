@@ -287,11 +287,6 @@ class Relax_disp(API_base, API_common):
                 if skip:
                     continue
 
-                # Get the attached proton.
-                proton = None
-                if proton_mmq_flag:
-                    proton = return_attached_protons(spin_ids)[0]
-
                 # The back calculated values.
                 back_calc = back_calc_r2eff(spins=spins, spin_ids=spin_ids, store_chi2=True)
 
