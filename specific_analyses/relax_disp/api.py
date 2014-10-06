@@ -261,82 +261,8 @@ class Relax_disp(API_base, API_common):
         check_mol_res_spin_data()
         check_model_type()
 
-        # Initialise cluster ids.
-        cluster_ids = ['free spins']
-
-        # Add the defined cluster IDs.
-        if hasattr(cdp, 'clustering'):
-            for key in list(cdp.clustering.keys()):
-                if key not in cluster_ids:
-                    cluster_ids.append(key)
-
-        # Now collect spins and spin_id per cluster ids.
-        cluster_spin_list = []
-        cluster_spin_id_list = []
-        clust_contain_spin_id_list = []
-
-        # Loop over the cluster ids
-        if hasattr(cdp, 'clustering'):
-            # Now loop over the cluster_ids in the list, and collect per id.
-            for cluster_id in cluster_ids:
-                cluster_id_spin_list = []
-                cluster_id_spin_id_list = []
-                # Now loop through spins in the clustered id, and collect
-                col_sel_str = ''
-                mol_token = None
-                for clust_spin_id in cdp.clustering[cluster_id]:
-                    clust_spin = return_spin(clust_spin_id)
-
-                    # Skip de-selected
-                    if not clust_spin.select:
-                        continue
-
-                    # Skip protons for MMQ data.
-                    if clust_spin.model in MODEL_LIST_MMQ and clust_spin.isotope == '1H':
-                        continue
-
-                    # Add to list.
-                    cluster_id_spin_list.append(clust_spin)
-                    cluster_id_spin_id_list.append(clust_spin_id)
-
-                    # Add id to string
-                    mol_token, res_token, spin_token = tokenise(clust_spin_id)
-                    col_sel_str += '%s,' % (res_token)
-
-                # Make selection for molecule.
-                if mol_token == None:
-                    col_sel_str = ':' + col_sel_str
-                else:
-                    col_sel_str = '#%s:' % mol_token + col_sel_str
-
-                # Make a selection object, based on the cluster id.
-                select_obj = Selection(col_sel_str)
-                # Does the current cluster id contain the spin of interest.
-                clust_contain_spin_id = select_obj.contains_spin_id(spin_id)
-                # If the spin_id is set to None, then we calculate for all:
-                if spin_id == None:
-                    clust_contain_spin_id = True
-
-                cluster_spin_list.append(cluster_id_spin_list)
-                cluster_spin_id_list.append(cluster_id_spin_id_list)
-                clust_contain_spin_id_list.append(clust_contain_spin_id)
-
-        # If clustering has not been specified, then collect for free spins, according to selection.
-        else:
-            # Now loop over selected spins.
-            free_spin_list = []
-            free_spin_id_list = []
-            for cur_spin, cur_spin_id in spin_loop(selection=spin_id, return_id=True, skip_desel=True):
-                # Skip protons for MMQ data.
-                if cur_spin.model in MODEL_LIST_MMQ and cur_spin.isotope == '1H':
-                    continue
-
-                free_spin_list.append(cur_spin)
-                free_spin_id_list.append(cur_spin_id)
-
-            cluster_spin_list.append(free_spin_list)
-            cluster_spin_id_list.append(free_spin_id_list)
-            clust_contain_spin_id_list.append(True)
+        # Get the looping list over cluster ids.
+        cluster_ids, cluster_spin_list, cluster_spin_id_list, clust_contain_spin_id_list = self.loop_cluster_ids(spin_id=spin_id)
 
         # Special exponential curve-fitting for the R2eff model.
         if cdp.model_type == MODEL_R2EFF:
@@ -706,6 +632,96 @@ class Relax_disp(API_base, API_common):
 
         # Minimisation.
         self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+
+
+    def loop_cluster_ids(self, spin_id=None):
+        """Create list of cluster ids, and its associated list of spin containers and spin_ids.
+
+        @param spin_id:     The spin identification string.
+        @type spin_id:      None
+        @return:            The list of cluster ids, the nested list of spin container instances, the nested list of spin ids and list of boolean if spin_id is contained in cluster_id.
+        @rtype:             list of str, list of list of spin container, list of list of spin ids, list of bool
+        """
+
+        # Initialise cluster ids.
+        cluster_ids = ['free spins']
+
+        # Add the defined cluster IDs.
+        if hasattr(cdp, 'clustering'):
+            for key in list(cdp.clustering.keys()):
+                if key not in cluster_ids:
+                    cluster_ids.append(key)
+
+        # Now collect spins and spin_id per cluster ids.
+        cluster_spin_list = []
+        cluster_spin_id_list = []
+        clust_contain_spin_id_list = []
+
+        # Loop over the cluster ids
+        if hasattr(cdp, 'clustering'):
+            # Now loop over the cluster_ids in the list, and collect per id.
+            for cluster_id in cluster_ids:
+                cluster_id_spin_list = []
+                cluster_id_spin_id_list = []
+                # Now loop through spins in the clustered id, and collect
+                col_sel_str = ''
+                mol_token = None
+                for clust_spin_id in cdp.clustering[cluster_id]:
+                    clust_spin = return_spin(clust_spin_id)
+
+                    # Skip de-selected
+                    if not clust_spin.select:
+                        continue
+
+                    # Skip protons for MMQ data.
+                    if clust_spin.model in MODEL_LIST_MMQ and clust_spin.isotope == '1H':
+                        continue
+
+                    # Add to list.
+                    cluster_id_spin_list.append(clust_spin)
+                    cluster_id_spin_id_list.append(clust_spin_id)
+
+                    # Add id to string
+                    mol_token, res_token, spin_token = tokenise(clust_spin_id)
+                    col_sel_str += '%s,' % (res_token)
+
+                # Make selection for molecule.
+                if mol_token == None:
+                    col_sel_str = ':' + col_sel_str
+                else:
+                    col_sel_str = '#%s:' % mol_token + col_sel_str
+
+                # Make a selection object, based on the cluster id.
+                select_obj = Selection(col_sel_str)
+                # Does the current cluster id contain the spin of interest.
+                clust_contain_spin_id = select_obj.contains_spin_id(spin_id)
+                # If the spin_id is set to None, then we calculate for all:
+                if spin_id == None:
+                    clust_contain_spin_id = True
+
+                cluster_spin_list.append(cluster_id_spin_list)
+                cluster_spin_id_list.append(cluster_id_spin_id_list)
+                clust_contain_spin_id_list.append(clust_contain_spin_id)
+
+        # If clustering has not been specified, then collect for free spins, according to selection.
+        else:
+            # Now loop over selected spins.
+            free_spin_list = []
+            free_spin_id_list = []
+            for cur_spin, cur_spin_id in spin_loop(selection=spin_id, return_id=True, skip_desel=True):
+                # Skip protons for MMQ data.
+                if cur_spin.model in MODEL_LIST_MMQ and cur_spin.isotope == '1H':
+                    continue
+
+                free_spin_list.append(cur_spin)
+                free_spin_id_list.append(cur_spin_id)
+
+            cluster_spin_list.append(free_spin_list)
+            cluster_spin_id_list.append(free_spin_id_list)
+            clust_contain_spin_id_list.append(True)
+
+
+        return cluster_ids, cluster_spin_list, cluster_spin_id_list, clust_contain_spin_id_list
 
 
     def map_bounds(self, param, spin_id=None):
