@@ -720,6 +720,7 @@ class Relax_disp(API_base, API_common):
 
             cluster_spin_list.append(free_spin_list)
             cluster_spin_id_list.append(free_spin_id_list)
+            cluster_spin_sel_list.append(None)
             clust_contain_spin_id_list.append(True)
 
         return cluster_ids, cluster_spin_list, cluster_spin_id_list, cluster_spin_sel_list, clust_contain_spin_id_list
@@ -1268,83 +1269,111 @@ class Relax_disp(API_base, API_common):
         is_str_list(param, 'parameter name')
         is_list(value, 'parameter value')
 
-        # Loop over the parameters.
-        for i in range(len(param)):
-            # Is the parameter is valid?
-            if not self._PARAMS.contains(param[i]):
-                raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param[i])
+        # Get the looping list over cluster ids.
+        cluster_ids, cluster_spin_list, cluster_spin_id_list, cluster_spin_sel_list, clust_contain_spin_id_list = self.loop_cluster_ids(spin_id=spin_id)
 
-            # Spin loop.
-            for spin in spin_loop(spin_id):
-                # Skip deselected spins.
-                if not spin.select:
-                    continue
+        # Loop over the cluster ids.
+        for j, cluster_id in enumerate(cluster_ids):
+            # Get the spins, ids and if the cluster contains the spin of interest.
+            cluster_spins = cluster_spin_list[j]
+            cluster_spin_ids = cluster_spin_id_list[j]
+            spin_of_interest = clust_contain_spin_id_list[j]
+            cluster_spin_sel = cluster_spin_sel_list[j]
 
-                # The object name.
-                obj_name = param[i]
-                if error:
-                    obj_name += '_err'
-
-                # Handle the R10 parameters.
-                if param[i] in ['r1']:
-                    # Loop over the current keys.
-                    for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
-                        # The parameter key.
-                        key = generate_r20_key(exp_type=exp_type, frq=frq)
-
-                        # Initialise the structure if needed.
-                        if not hasattr(spin, obj_name):
-                            setattr(spin, obj_name, {})
-
-                        # Set the value.
-                        if index == None:
-                            obj = getattr(spin, obj_name)
-                            obj[key] = value[i]
-
-                        # If the index is specified, let it match the frequency index
-                        elif mi == index:
-                            obj = getattr(spin, obj_name)
-                            obj[key] = value[i]
-
-                # Handle the R20 parameters.
-                elif param[i] in PARAMS_R20:
-                    # Loop over the current keys.
-                    for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
-                        # The parameter key.
-                        key = generate_r20_key(exp_type=exp_type, frq=frq)
-
-                        # Initialise the structure if needed.
-                        if not hasattr(spin, obj_name):
-                            setattr(spin, obj_name, {})
-
-                        # Set the value.
-                        if index == None:
-                            obj = getattr(spin, obj_name)
-                            obj[key] = value[i]
-
-                        # If the index is specified, let it match the frequency index
-                        elif mi == index:
-                            obj = getattr(spin, obj_name)
-                            obj[key] = value[i]
-
-                # Handle the R2eff and I0 parameters.
-                elif param[i] in ['r2eff', 'i0'] and not isinstance(value[i], dict):
-                    # Loop over all the data.
-                    for exp_type, frq, offset, point in loop_exp_frq_offset_point():
-                        # The parameter key.
-                        key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
-
-                        # Initialise the structure if needed.
-                        if not hasattr(spin, obj_name):
-                            setattr(spin, obj_name, {})
-
-                        # Set the value.
-                        obj = getattr(spin, obj_name)
-                        obj[key] = value[i]
-
-                # Set the other parameters.
+            # If spin of interest is present:
+            if spin_of_interest:
+                # If it is a free free spin, then calculate per spin.
+                if cluster_id == 'free spins':
+                    select_string = spin_id
                 else:
-                    setattr(spin, obj_name, value[i])
+                    select_string = cluster_spin_sel
+
+                # Loop over the parameters.
+                for i in range(len(param)):
+                    param_i = param[i]
+                    value_i = value[i]
+
+                    # Is the parameter is valid?
+                    if not self._PARAMS.contains(param_i):
+                        raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param_i)
+
+                    # If the parameter is a global parameter, then change for all spins part of the cluster.
+                    if param_i in ['pA', 'kex', 'tex', 'kB', 'kC', 'kex_AB', 'kex_BC', 'kex_AC']:
+                        loop_select_string = select_string
+                    else:
+                        loop_select_string = spin_id
+
+                    # Spin loop.
+                    for spin in spin_loop(selection=loop_select_string):
+                        # Skip deselected spins.
+                        if not spin.select:
+                            continue
+        
+                        # The object name.
+                        obj_name = param_i
+                        if error:
+                            obj_name += '_err'
+        
+                        # Handle the R10 parameters.
+                        if param_i in ['r1']:
+                            # Loop over the current keys.
+                            for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+                                # The parameter key.
+                                key = generate_r20_key(exp_type=exp_type, frq=frq)
+        
+                                # Initialise the structure if needed.
+                                if not hasattr(spin, obj_name):
+                                    setattr(spin, obj_name, {})
+        
+                                # Set the value.
+                                if index == None:
+                                    obj = getattr(spin, obj_name)
+                                    obj[key] = value_i
+        
+                                # If the index is specified, let it match the frequency index
+                                elif mi == index:
+                                    obj = getattr(spin, obj_name)
+                                    obj[key] = value_i
+        
+                        # Handle the R20 parameters.
+                        elif param_i in PARAMS_R20:
+                            # Loop over the current keys.
+                            for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+                                # The parameter key.
+                                key = generate_r20_key(exp_type=exp_type, frq=frq)
+        
+                                # Initialise the structure if needed.
+                                if not hasattr(spin, obj_name):
+                                    setattr(spin, obj_name, {})
+        
+                                # Set the value.
+                                if index == None:
+                                    obj = getattr(spin, obj_name)
+                                    obj[key] = value_i
+        
+                                # If the index is specified, let it match the frequency index
+                                elif mi == index:
+                                    obj = getattr(spin, obj_name)
+                                    obj[key] = value_i
+        
+                        # Handle the R2eff and I0 parameters.
+                        elif param_i in ['r2eff', 'i0'] and not isinstance(value_i, dict):
+                            # Loop over all the data.
+                            for exp_type, frq, offset, point in loop_exp_frq_offset_point():
+                                # The parameter key.
+                                key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+        
+                                # Initialise the structure if needed.
+                                if not hasattr(spin, obj_name):
+                                    setattr(spin, obj_name, {})
+        
+                                # Set the value.
+                                obj = getattr(spin, obj_name)
+                                obj[key] = value_i
+        
+                        # Set the other parameters.
+                        else:
+                            setattr(spin, obj_name, value_i)
 
 
     def set_selected_sim(self, select_sim, model_info=None):
