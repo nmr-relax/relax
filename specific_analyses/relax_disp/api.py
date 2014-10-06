@@ -287,6 +287,10 @@ class Relax_disp(API_base, API_common):
                         for si, spin in enumerate(cluster_spins):
                             cur_spin_id = cluster_spin_ids[si]
 
+                            # Skip protons for MMQ data.
+                            if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
+                                continue
+
                             # Get the attached proton.
                             proton = None
                             if proton_mmq_flag:
@@ -305,6 +309,11 @@ class Relax_disp(API_base, API_common):
                         # Pack the data.
                         for si, spin in enumerate(cluster_spins):
                             cur_spin_id = cluster_spin_ids[si]
+
+                            # Skip protons for MMQ data.
+                            if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
+                                continue
+
                             pack_back_calc_r2eff(spin=spin, spin_id=cur_spin_id, si=si, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
 
 
@@ -674,10 +683,6 @@ class Relax_disp(API_base, API_common):
                     if not clust_spin.select:
                         continue
 
-                    # Skip protons for MMQ data.
-                    if clust_spin.model in MODEL_LIST_MMQ and clust_spin.isotope == '1H':
-                        continue
-
                     # Add to list.
                     cluster_id_spin_list.append(clust_spin)
                     cluster_id_spin_id_list.append(clust_spin_id)
@@ -711,10 +716,6 @@ class Relax_disp(API_base, API_common):
             free_spin_list = []
             free_spin_id_list = []
             for cur_spin, cur_spin_id in spin_loop(selection=spin_id, return_id=True, skip_desel=True):
-                # Skip protons for MMQ data.
-                if cur_spin.model in MODEL_LIST_MMQ and cur_spin.isotope == '1H':
-                    continue
-
                 free_spin_list.append(cur_spin)
                 free_spin_id_list.append(cur_spin_id)
 
