@@ -262,7 +262,7 @@ class Relax_disp(API_base, API_common):
         check_model_type()
 
         # Get the looping list over cluster ids.
-        cluster_ids, cluster_spin_list, cluster_spin_id_list, clust_contain_spin_id_list = self.loop_cluster_ids(spin_id=spin_id)
+        cluster_ids, cluster_spin_list, cluster_spin_id_list, cluster_spin_sel_list, clust_contain_spin_id_list = self.loop_cluster_ids(spin_id=spin_id)
 
         # Special exponential curve-fitting for the R2eff model.
         if cdp.model_type == MODEL_R2EFF:
@@ -635,12 +635,12 @@ class Relax_disp(API_base, API_common):
 
 
     def loop_cluster_ids(self, spin_id=None):
-        """Create list of cluster ids, and its associated list of spin containers and spin_ids.
+        """Create list of cluster ids, its associated list of spin containers,  its associated list of spin_ids, the selection string for the cluster id and bool to determine if spin of interest is in the cluster.
 
         @param spin_id:     The spin identification string.
         @type spin_id:      None
-        @return:            The list of cluster ids, the nested list of spin container instances, the nested list of spin ids and list of boolean if spin_id is contained in cluster_id.
-        @rtype:             list of str, list of list of spin container, list of list of spin ids, list of bool
+        @return:            The list of cluster ids, the nested list of spin container instances, the nested list of spin ids, the selection string for the cluster and list of boolean if spin_id is contained in cluster_id.
+        @rtype:             list of str, list of list of spin container, list of list of spin ids, list of str, list of bool
         """
 
         # Initialise cluster ids.
@@ -655,6 +655,7 @@ class Relax_disp(API_base, API_common):
         # Now collect spins and spin_id per cluster ids.
         cluster_spin_list = []
         cluster_spin_id_list = []
+        cluster_spin_sel_list = []
         clust_contain_spin_id_list = []
 
         # Loop over the cluster ids
@@ -701,6 +702,7 @@ class Relax_disp(API_base, API_common):
 
                 cluster_spin_list.append(cluster_id_spin_list)
                 cluster_spin_id_list.append(cluster_id_spin_id_list)
+                cluster_spin_sel_list.append(col_sel_str)
                 clust_contain_spin_id_list.append(clust_contain_spin_id)
 
         # If clustering has not been specified, then collect for free spins, according to selection.
@@ -720,8 +722,7 @@ class Relax_disp(API_base, API_common):
             cluster_spin_id_list.append(free_spin_id_list)
             clust_contain_spin_id_list.append(True)
 
-
-        return cluster_ids, cluster_spin_list, cluster_spin_id_list, clust_contain_spin_id_list
+        return cluster_ids, cluster_spin_list, cluster_spin_id_list, cluster_spin_sel_list, clust_contain_spin_id_list
 
 
     def map_bounds(self, param, spin_id=None):
