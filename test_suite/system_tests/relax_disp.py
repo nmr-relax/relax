@@ -3087,6 +3087,7 @@ class Relax_disp(SystemTestCase):
 
         ## Check for file creation
         # Set filepaths.
+        map_name = get_file_path(file_name=file_name_map, dir=result_dir)
         map_cfg = get_file_path(file_name=file_name_map+".cfg", dir=result_dir)
         map_net = get_file_path(file_name=file_name_map+".net", dir=result_dir)
         map_general = get_file_path(file_name=file_name_map+".general", dir=result_dir)
@@ -3100,6 +3101,15 @@ class Relax_disp(SystemTestCase):
         self.assert_(access(map_general, F_OK))
         self.assert_(access(point_general, F_OK))
         self.assert_(access(point_point, F_OK))
+
+        # Open the file, and assert the chi2 value is as expected.
+        get_data = extract_data(file=map_name)
+
+        # Extract line 0, column 0.
+        test = float(get_data[line_chi2-1][0])
+
+        # Assert.
+        self.assertAlmostEqual(test, pre_chi2,  6)
 
 
     def test_estimate_r2eff_err(self):
