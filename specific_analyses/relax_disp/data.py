@@ -1004,7 +1004,7 @@ def interpolate_disp(spin=None, spin_id=None, si=None, num_points=None, extend_h
         back_calc = None
     else:
         # Back calculate R2eff data for the second sets of plots.
-        back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, cpmg_frqs=cpmg_frqs_new, spin_lock_nu1=spin_lock_nu1_new, relax_times_new=relax_times_new)
+        back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spins=[spin], spin_ids=[spin_id], cpmg_frqs=cpmg_frqs_new, spin_lock_nu1=spin_lock_nu1_new, relax_times_new=relax_times_new)
 
     return interpolated_flag, back_calc, cpmg_frqs_new, offsets, spin_lock_fields_inter, chemical_shifts, tilt_angles, Delta_omega, w_eff
 
@@ -1113,7 +1113,7 @@ def interpolate_offset(spin=None, spin_id=None, si=None, num_points=None, extend
         back_calc = None
     else:
         # Back calculate R2eff data for the second sets of plots.
-        back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, spin_lock_offset=spin_lock_offset_new, spin_lock_nu1=spin_lock_fields_inter, relax_times_new=relax_times_new)
+        back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spins=[spin], spin_ids=[spin_id], spin_lock_offset=spin_lock_offset_new, spin_lock_nu1=spin_lock_fields_inter, relax_times_new=relax_times_new)
 
     # cpmg_frqs are not interpolated.
     cpmg_frqs_new = None
