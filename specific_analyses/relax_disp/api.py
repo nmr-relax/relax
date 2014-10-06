@@ -296,8 +296,8 @@ class Relax_disp(API_base, API_common):
                 back_calc = back_calc_r2eff(spins=spins, spin_ids=spin_ids, store_chi2=True)
 
                 # Pack the data.
-                for i, spin in enumerate(spins):
-                    spin_id = spin_ids[i]
+                for i, spin_id in enumerate(spin_ids):
+                    spin = spins[i]
                     pack_back_calc_r2eff(spin=spin, spin_id=spin_id, si=i, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
 
 
@@ -868,14 +868,15 @@ class Relax_disp(API_base, API_common):
                     yield spin_ids
 
         # If no model is present, then set the values.
-        # The spin loop.
-        for spin, spin_id in spin_loop(return_id=True):
-            # Skip deselected spins
-            if not spin.select:
-                continue
+        else:
+            # The spin loop.
+            for spin, spin_id in spin_loop(return_id=True):
+                # Skip deselected spins
+                if not spin.select:
+                    continue
 
-            # Yield the spin ID as a list.
-            yield [spin_id]
+                # Yield the spin ID as a list.
+                yield [spin_id]
 
 
     def model_statistics(self, model_info=None, spin_id=None, global_stats=None):
