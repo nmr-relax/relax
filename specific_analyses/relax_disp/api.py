@@ -1170,46 +1170,42 @@ class Relax_disp(API_base, API_common):
         is_str_list(param, 'parameter name')
         is_list(value, 'parameter value')
 
-        # Get the looping list over cluster ids.
-        cluster_ids, cluster_spin_list, cluster_spin_id_list, cluster_spin_sel_list, clust_contain_spin_id_list = self.loop_cluster_ids(spin_id=spin_id)
+        # Loop over the spin blocks.
+        model_index = -1
+        for spin_ids in self.model_loop():
+            # Increment the model index.
+            model_index += 1
 
-        # Loop over the cluster ids.
-        for j, cluster_id in enumerate(cluster_ids):
-            # Get the spins, ids and if the cluster contains the spin of interest.
-            cluster_spins = cluster_spin_list[j]
-            cluster_spin_ids = cluster_spin_id_list[j]
-            spin_of_interest = clust_contain_spin_id_list[j]
-            cluster_spin_sel = cluster_spin_sel_list[j]
+            # The spin containers.
+            spins = spin_ids_to_containers(spin_ids)
 
-            # If spin of interest is present:
-            if spin_of_interest:
-                # If it is a free free spin, then calculate per spin.
-                if cluster_id == 'free spins':
-                    select_string = spin_id
+            # Skip deselected clusters.
+            skip = True
+            for spin in spins:
+                if spin.select:
+                    skip = False
+            if skip:
+                continue
+
+            # Loop over the parameters.
+            for i in range(len(param)):
+                param_i = param[i]
+                value_i = value[i]
+
+                # Is the parameter is valid?
+                if not self._PARAMS.contains(param_i):
+                    raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param_i)
+
+                # If the parameter is a global parameter, then change for all spins part of the cluster.
+                if param_i in ['pA', 'kex', 'tex', 'kB', 'kC', 'kex_AB', 'kex_BC', 'kex_AC']:
+                    selection_list = spin_ids
                 else:
-                    select_string = cluster_spin_sel
+                    selection_list = [spin_id]
 
-                # Loop over the parameters.
-                for i in range(len(param)):
-                    param_i = param[i]
-                    value_i = value[i]
-
-                    # Is the parameter is valid?
-                    if not self._PARAMS.contains(param_i):
-                        raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param_i)
-
-                    # If the parameter is a global parameter, then change for all spins part of the cluster.
-                    if param_i in ['pA', 'kex', 'tex', 'kB', 'kC', 'kex_AB', 'kex_BC', 'kex_AC']:
-                        loop_select_string = select_string
-                    else:
-                        loop_select_string = spin_id
-
+                # Now loop over selections in the list.
+                for selection in selection_list:
                     # Spin loop.
-                    for spin in spin_loop(selection=loop_select_string):
-                        # Skip deselected spins.
-                        if not spin.select:
-                            continue
-        
+                    for spin in spin_loop(selection=selection):
                         # The object name.
                         obj_name = param_i
                         if error:
