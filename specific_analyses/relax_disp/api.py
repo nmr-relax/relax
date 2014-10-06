@@ -851,20 +851,31 @@ class Relax_disp(API_base, API_common):
         """
 
         # Loop over individual spins for the R2eff model.
-        if cdp.model_type == MODEL_R2EFF:
-            # The spin loop.
-            for spin, spin_id in spin_loop(return_id=True):
-                # Skip deselected spins
-                if not spin.select:
-                    continue
+        if hasattr(cdp, 'model_type'):
+            if cdp.model_type == MODEL_R2EFF:
+                # The spin loop.
+                for spin, spin_id in spin_loop(return_id=True):
+                    # Skip deselected spins
+                    if not spin.select:
+                        continue
 
-                # Yield the spin ID as a list.
-                yield [spin_id]
+                    # Yield the spin ID as a list.
+                    yield [spin_id]
 
-         # The cluster loop.
-        else:
-            for spin_ids in loop_cluster(skip_desel=False):
-                yield spin_ids
+             # The cluster loop.
+            else:
+                for spin_ids in loop_cluster(skip_desel=False):
+                    yield spin_ids
+
+        # If no model is present, then set the values.
+        # The spin loop.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins
+            if not spin.select:
+                continue
+
+            # Yield the spin ID as a list.
+            yield [spin_id]
 
 
     def model_statistics(self, model_info=None, spin_id=None, global_stats=None):
