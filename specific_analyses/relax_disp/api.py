@@ -287,6 +287,14 @@ class Relax_disp(API_base, API_common):
                 for clust_spin_id in cdp.clustering[cluster_id]:
                     clust_spin = return_spin(clust_spin_id)
 
+                    # Skip de-selected
+                    if not clust_spin.select:
+                        continue
+
+                    # Skip protons for MMQ data.
+                    if clust_spin.model in MODEL_LIST_MMQ and clust_spin.isotope == '1H':
+                        continue
+
                     # Add to list.
                     cluster_id_spin_list.append(clust_spin)
                     cluster_id_spin_id_list.append(clust_spin_id)
@@ -319,6 +327,10 @@ class Relax_disp(API_base, API_common):
             free_spin_list = []
             free_spin_id_list = []
             for cur_spin, cur_spin_id in spin_loop(selection=spin_id, return_id=True, skip_desel=True):
+                # Skip protons for MMQ data.
+                if cur_spin.model in MODEL_LIST_MMQ and cur_spin.isotope == '1H':
+                    continue
+
                 free_spin_list.append(cur_spin)
                 free_spin_id_list.append(cur_spin_id)
 
@@ -335,22 +347,39 @@ class Relax_disp(API_base, API_common):
             # 1H MMQ flag.
             proton_mmq_flag = has_proton_mmq_cpmg()
 
-            # Loop over all spins.
-            for spin, cur_spin_id in spin_loop(selection=spin_id, return_id=True, skip_desel=True):
-                # Skip protons for MMQ data.
-                if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
-                    continue
+            # Loop over the cluster ids.
+            for i, cluster_id in enumerate(cluster_ids):
+                # Get the spins, ids and if the cluster contains the spin of interest.
+                cluster_spins = cluster_spin_list[i]
+                cluster_spin_ids = cluster_spin_id_list[i]
+                spin_of_interest = clust_contain_spin_id_list[i]
 
-                # Get the attached proton.
-                proton = None
-                if proton_mmq_flag:
-                    proton = return_attached_protons(cur_spin_id)[0]
+                # If spin of interest is present:
+                if spin_of_interest:
+                    # If it is a free free spin, then calculate per spin.
+                    if cluster_id == 'free spins':
+                        for si, spin in enumerate(cluster_spins):
+                            cur_spin_id = cluster_spin_ids[si]
 
-                # The back calculated values.
-                back_calc = back_calc_r2eff(spin=spin, spin_id=cur_spin_id, store_chi2=True)
+                            # Get the attached proton.
+                            proton = None
+                            if proton_mmq_flag:
+                                proton = return_attached_protons(cur_spin_id)[0]
 
-                # Pack the data.
-                pack_back_calc_r2eff(spin=spin, spin_id=cur_spin_id, si=0, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
+                            # The back calculated values.
+                            back_calc = back_calc_r2eff(spins=[spin], spin_ids=[cur_spin_id], store_chi2=True)
+
+                            # Pack the data.
+                            pack_back_calc_r2eff(spin=spin, spin_id=cur_spin_id, si=0, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
+
+                    else:
+                        # The back calculated values.
+                        back_calc = back_calc_r2eff(spins=cluster_spins, spin_ids=cluster_spin_ids, store_chi2=True)
+
+                        # Pack the data.
+                        for si, spin in enumerate(cluster_spins):
+                            cur_spin_id = cluster_spin_ids[si]
+                            pack_back_calc_r2eff(spin=spin, spin_id=cur_spin_id, si=si, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
 
 
     def constraint_algorithm(self):
