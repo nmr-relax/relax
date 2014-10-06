@@ -112,13 +112,13 @@ def back_calc_peak_intensities(spin=None, exp_type=None, frq=None, offset=None, 
     return results
 
 
-def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_offset=None, spin_lock_nu1=None, relax_times_new=None, store_chi2=False):
+def back_calc_r2eff(spins=None, spin_ids=None, cpmg_frqs=None, spin_lock_offset=None, spin_lock_nu1=None, relax_times_new=None, store_chi2=False):
     """Back-calculation of R2eff/R1rho values for the given spin.
 
-    @keyword spin:              The specific spin data container.
-    @type spin:                 SpinContainer instance
-    @keyword spin_id:           The spin ID string for the spin container.
-    @type spin_id:              str
+    @keyword spins:             The list of specific spin data container for cluster.
+    @type spins:                List of SpinContainer instances
+    @keyword spin_ids:          The list of spin ID strings for the spin containers in cluster.
+    @type spin_ids:             list of str
     @keyword cpmg_frqs:         The CPMG frequencies to use instead of the user loaded values - to enable interpolation.
     @type cpmg_frqs:            list of lists of numpy rank-1 float arrays
     @keyword spin_lock_offset:  The spin-lock offsets to use instead of the user loaded values - to enable interpolation.
@@ -134,11 +134,12 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_offset=No
     """
 
     # Skip protons for MMQ data.
-    if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
-        return
+    for spin in spins:
+        if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
+            return
 
     # Create the initial parameter vector.
-    param_vector = assemble_param_vector(spins=[spin])
+    param_vector = assemble_param_vector(spins=spins)
 
     # Number of spectrometer fields.
     fields = [None]
@@ -148,12 +149,12 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_offset=No
         field_count = cdp.spectrometer_frq_count
 
     # Initialise the data structures for the target function.
-    values, errors, missing, frqs, frqs_H, exp_types, relax_times = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
+    values, errors, missing, frqs, frqs_H, exp_types, relax_times = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=fields, field_count=field_count)
 
     # The offset and R1 data.
     r1_setup()
-    offsets, spin_lock_fields_inter, chemical_shifts, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, spin_lock_offset=spin_lock_offset, fields=spin_lock_nu1)
-    r1 = return_r1_data(spins=[spin], spin_ids=[spin_id], field_count=field_count)
+    offsets, spin_lock_fields_inter, chemical_shifts, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=spins, spin_ids=spin_ids, field_count=field_count, spin_lock_offset=spin_lock_offset, fields=spin_lock_nu1)
+    r1 = return_r1_data(spins=spins, spin_ids=spin_ids, field_count=field_count)
     r1_fit = is_r1_optimised(spin.model)
 
     # The relaxation times.
@@ -179,7 +180,7 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_offset=No
             values.append([])
             errors.append([])
             missing.append([])
-            for si in range(1):
+            for si in range(len(spins)):
                 values[ei].append([])
                 errors[ei].append([])
                 missing[ei].append([])
@@ -204,7 +205,7 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_offset=No
             values.append([])
             errors.append([])
             missing.append([])
-            for si in range(1):
+            for si in range(len(spins)):
                 values[ei].append([])
                 errors[ei].append([])
                 missing[ei].append([])
@@ -222,14 +223,15 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_offset=No
                         missing[ei][si][mi].append(zeros(num, int32))
 
     # Initialise the relaxation dispersion fit functions.
-    model = Dispersion(model=spin.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, recalc_tau=recalc_tau, r1_fit=r1_fit)
+    model = Dispersion(model=spin.model, num_params=param_num(spins=spins), num_spins=len(spins), num_frq=field_count, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, recalc_tau=recalc_tau, r1_fit=r1_fit)
 
     # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
     chi2 = model.func(param_vector)
 
     # Store the chi-squared value.
     if store_chi2:
-        spin.chi2 = chi2
+        for spin in spins:
+            spin.chi2 = chi2
 
     # Return the structure.
     return model.get_back_calc()
