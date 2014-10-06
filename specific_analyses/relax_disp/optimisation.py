@@ -133,11 +133,6 @@ def back_calc_r2eff(spins=None, spin_ids=None, cpmg_frqs=None, spin_lock_offset=
     @rtype:                     numpy rank-1 float array
     """
 
-    # Skip protons for MMQ data.
-    for spin in spins:
-        if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
-            return
-
     # Create the initial parameter vector.
     param_vector = assemble_param_vector(spins=spins)
 
