@@ -419,12 +419,12 @@ class Relax_disp(API_base, API_common):
             spin, spin_id = data_id
 
             # Back calculate the R2eff/R1rho data.
-            back_calc = back_calc_r2eff(spin=spin, spin_id=spin_id)
+            back_calc = back_calc_r2eff(spins=[spin], spin_ids=[spin_id])
 
             # Get the attached proton data.
             if proton_mmq_flag:
                 proton = return_attached_protons(spin_id)[0]
-                proton_back_calc = back_calc_r2eff(spin=proton, spin_id=spin_id)
+                proton_back_calc = back_calc_r2eff(spins=[proton], spin_ids=[spin_id])
 
             # Convert to a dictionary matching the R2eff data structure.
             values = {}
