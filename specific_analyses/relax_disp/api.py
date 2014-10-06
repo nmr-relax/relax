@@ -261,9 +261,6 @@ class Relax_disp(API_base, API_common):
         check_mol_res_spin_data()
         check_model_type()
 
-        # Get the looping list over cluster ids.
-        cluster_ids, cluster_spin_list, cluster_spin_id_list, cluster_spin_sel_list, clust_contain_spin_id_list = self.loop_cluster_ids(spin_id=spin_id)
-
         # Special exponential curve-fitting for the R2eff model.
         if cdp.model_type == MODEL_R2EFF:
             calculate_r2eff()
@@ -273,48 +270,35 @@ class Relax_disp(API_base, API_common):
             # 1H MMQ flag.
             proton_mmq_flag = has_proton_mmq_cpmg()
 
-            # Loop over the cluster ids.
-            for i, cluster_id in enumerate(cluster_ids):
-                # Get the spins, ids and if the cluster contains the spin of interest.
-                cluster_spins = cluster_spin_list[i]
-                cluster_spin_ids = cluster_spin_id_list[i]
-                spin_of_interest = clust_contain_spin_id_list[i]
+            # Loop over the spin blocks.
+            model_index = -1
+            for spin_ids in self.model_loop():
+                # Increment the model index.
+                model_index += 1
 
-                # If spin of interest is present:
-                if spin_of_interest:
-                    # If it is a free free spin, then calculate per spin.
-                    if cluster_id == 'free spins':
-                        for si, spin in enumerate(cluster_spins):
-                            cur_spin_id = cluster_spin_ids[si]
+                # The spin containers.
+                spins = spin_ids_to_containers(spin_ids)
 
-                            # Skip protons for MMQ data.
-                            if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
-                                continue
+                # Skip deselected clusters.
+                skip = True
+                for spin in spins:
+                    if spin.select:
+                        skip = False
+                if skip:
+                    continue
 
-                            # Get the attached proton.
-                            proton = None
-                            if proton_mmq_flag:
-                                proton = return_attached_protons(cur_spin_id)[0]
+                # Get the attached proton.
+                proton = None
+                if proton_mmq_flag:
+                    proton = return_attached_protons(spin_ids)[0]
 
-                            # The back calculated values.
-                            back_calc = back_calc_r2eff(spins=[spin], spin_ids=[cur_spin_id], store_chi2=True)
+                # The back calculated values.
+                back_calc = back_calc_r2eff(spins=spins, spin_ids=spin_ids, store_chi2=True)
 
-                            # Pack the data.
-                            pack_back_calc_r2eff(spin=spin, spin_id=cur_spin_id, si=0, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
-
-                    else:
-                        # The back calculated values.
-                        back_calc = back_calc_r2eff(spins=cluster_spins, spin_ids=cluster_spin_ids, store_chi2=True)
-
-                        # Pack the data.
-                        for si, spin in enumerate(cluster_spins):
-                            cur_spin_id = cluster_spin_ids[si]
-
-                            # Skip protons for MMQ data.
-                            if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
-                                continue
-
-                            pack_back_calc_r2eff(spin=spin, spin_id=cur_spin_id, si=si, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
+                # Pack the data.
+                for i, spin in enumerate(spins):
+                    spin_id = spin_ids[i]
+                    pack_back_calc_r2eff(spin=spin, spin_id=spin_id, si=i, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
 
 
     def constraint_algorithm(self):
