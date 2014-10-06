@@ -1,0 +1,2467 @@
+data_relax_model_free_results
+
+save_citation_1
+   _Citation.Sf_category citations
+   _Citation.citation_label ?
+   _Citation.ID 1
+   _Citation.CAS_abstract_code ?
+   _Citation.MEDLINE_UI_code ?
+   _Citation.DOI 10.1007/BF00197809
+   _Citation.PubMed_ID 8520220
+   _Citation.Full_citation "Delaglio, F., Grzesiek, S., Vuister, G.W., Zhu, G., Pfeifer, J. and Bax, A. (1995). NMRPipe: a multidimensional spectral processing system based on UNIX pipes. J. Biomol. NMR, 6(3), 277-293."
+   _Citation.Title "NMRPipe: a multidimensional spectral processing system based on UNIX pipes."
+   _Citation.Status published
+   _Citation.Type journal
+   _Citation.Journal_abbrev "J. Biomol. NMR"
+   _Citation.Journal_name_full "Journal of Biomolecular NMR"
+   _Citation.Journal_volume 6
+   _Citation.Journal_issue 3
+   _Citation.Page_first 277
+   _Citation.Page_last 293
+   _Citation.Year 1995
+   loop_
+      _Citation_author.Ordinal
+      _Citation_author.Given_name
+      _Citation_author.Family_name
+      _Citation_author.First_initial
+      _Citation_author.Middle_initials
+      _Citation_author.Family_title
+      _Citation_author.Citation_ID
+
+1 Frank Delaglio F. ? ? 1
+2 Stephan Grzesiek S. ? ? 1
+3 Geerten Vuister G. W. ? 1
+4 Guang Zhu G. ? ? 1
+5 John Pfeifer J. ? ? 1
+6 Ad Bax A. ? ? 1
+
+   stop_
+
+save_
+
+save_citation_2
+   _Citation.Sf_category citations
+   _Citation.citation_label ?
+   _Citation.ID 2
+   _Citation.CAS_abstract_code ?
+   _Citation.MEDLINE_UI_code ?
+   _Citation.DOI ?
+   _Citation.PubMed_ID ?
+   _Citation.Full_citation "Goddard, T.D. and Kneller, D.G. Sparky 3. University of California, San Francisco., (unpublished)."
+   _Citation.Title "Sparky 3."
+   _Citation.Status unpublished
+   _Citation.Type internet
+   _Citation.Journal_abbrev "University of California, San Francisco."
+   _Citation.Journal_name_full ?
+   _Citation.Journal_volume ?
+   _Citation.Journal_issue ?
+   _Citation.Page_first ?
+   _Citation.Page_last ?
+   _Citation.Year ?
+   loop_
+      _Citation_author.Ordinal
+      _Citation_author.Given_name
+      _Citation_author.Family_name
+      _Citation_author.First_initial
+      _Citation_author.Middle_initials
+      _Citation_author.Family_title
+      _Citation_author.Citation_ID
+
+1 Tom Goddard T. D. ? 2
+2 Donald Kneller D. G. ? 2
+
+   stop_
+
+save_
+
+save_citation_3
+   _Citation.Sf_category citations
+   _Citation.citation_label ?
+   _Citation.ID 3
+   _Citation.CAS_abstract_code ?
+   _Citation.MEDLINE_UI_code ?
+   _Citation.DOI 10.1039/b702202f
+   _Citation.PubMed_ID 17579774
+   _Citation.Full_citation "d'Auvergne E. J., Gooley P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. Mol. Biosyst., 3(7), 483-494."
+   _Citation.Title "Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm."
+   _Citation.Status published
+   _Citation.Type journal
+   _Citation.Journal_abbrev "Mol. Biosyst."
+   _Citation.Journal_name_full "Molecular Biosystems"
+   _Citation.Journal_volume 3
+   _Citation.Journal_issue 7
+   _Citation.Page_first 483
+   _Citation.Page_last 498
+   _Citation.Year 2007
+   loop_
+      _Citation_author.Ordinal
+      _Citation_author.Given_name
+      _Citation_author.Family_name
+      _Citation_author.First_initial
+      _Citation_author.Middle_initials
+      _Citation_author.Family_title
+      _Citation_author.Citation_ID
+
+1 Edward "d'Auvergne" E. J. ? 3 
+2 Paul Gooley P. R. ? 3
+
+   stop_
+
+save_
+
+save_citation_4
+   _Citation.Sf_category citations
+   _Citation.citation_label ?
+   _Citation.ID 4
+   _Citation.CAS_abstract_code ?
+   _Citation.MEDLINE_UI_code ?
+   _Citation.DOI 10.1007/s10858-007-9214-2
+   _Citation.PubMed_ID 18085410
+   _Citation.Full_citation "d'Auvergne, E. J. and Gooley, P. R. (2008). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-119."
+   _Citation.Title "Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces."
+   _Citation.Status published
+   _Citation.Type journal
+   _Citation.Journal_abbrev "J. Biomol. NMR"
+   _Citation.Journal_name_full "Journal of Biomolecular NMR"
+   _Citation.Journal_volume 40
+   _Citation.Journal_issue 2
+   _Citation.Page_first 107
+   _Citation.Page_last 119
+   _Citation.Year 2008
+   loop_
+      _Citation_author.Ordinal
+      _Citation_author.Given_name
+      _Citation_author.Family_name
+      _Citation_author.First_initial
+      _Citation_author.Middle_initials
+      _Citation_author.Family_title
+      _Citation_author.Citation_ID
+
+1 Edward "d'Auvergne" E. J. ? 4 
+2 Paul Gooley P. R. ? 4
+
+   stop_
+
+save_
+
+save_citation_5
+   _Citation.Sf_category citations
+   _Citation.citation_label ?
+   _Citation.ID 5
+   _Citation.CAS_abstract_code ?
+   _Citation.MEDLINE_UI_code ?
+   _Citation.DOI 10.1007/s10858-007-9213-3
+   _Citation.PubMed_ID 18085411
+   _Citation.Full_citation "d'Auvergne, E. J. and Gooley, P. R. (2008). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133."
+   _Citation.Title "Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor."
+   _Citation.Status published
+   _Citation.Type journal
+   _Citation.Journal_abbrev "J. Biomol. NMR"
+   _Citation.Journal_name_full "Journal of Biomolecular NMR"
+   _Citation.Journal_volume 40
+   _Citation.Journal_issue 2
+   _Citation.Page_first 121
+   _Citation.Page_last 133
+   _Citation.Year 2008
+   loop_
+      _Citation_author.Ordinal
+      _Citation_author.Given_name
+      _Citation_author.Family_name
+      _Citation_author.First_initial
+      _Citation_author.Middle_initials
+      _Citation_author.Family_title
+      _Citation_author.Citation_ID
+
+1 Edward "d'Auvergne" E. J. ? 5 
+2 Paul Gooley P. R. ? 5
+
+   stop_
+
+save_
+
+save_entity_1
+   _Entity.Sf_category entity
+   _Entity.Sf_framecode ?
+   _Entity.ID 1
+   _Entity.BMRB_code ?
+   _Entity.Name OMP
+   _Entity.Type polymer
+   _Entity.Polymer_common_type ?
+   _Entity.Polymer_type polypeptide(L)
+   _Entity.Polymer_type_details ?
+   _Entity.Polymer_strand_ID ?
+   _Entity.Polymer_seq_one_letter_code_can ?
+   _Entity.Polymer_seq_one_letter_code ?
+   _Entity.Target_identifier ?
+   _Entity.Polymer_author_defined_seq ?
+   _Entity.Polymer_author_seq_details ?
+   _Entity.Ambiguous_conformational_states ?
+   _Entity.Ambiguous_chem_comp_sites ?
+   _Entity.Nstd_monomer ?
+   _Entity.Nstd_chirality ?
+   _Entity.Nstd_linkage ?
+   _Entity.Nonpolymer_comp_ID ?
+   _Entity.Nonpolymer_comp_label ?
+   _Entity.Number_of_monomers ?
+   _Entity.Number_of_nonpolymer_components ?
+   _Entity.Paramagnetic ?
+   _Entity.Thiol_state reduced
+   _Entity.Src_method ?
+   _Entity.Parent_entity_ID ?
+   _Entity.Fragment ?
+   _Entity.Mutation ?
+   _Entity.EC_number ?
+   _Entity.Calc_isoelectric_point ?
+   _Entity.Formula_weight ?
+   _Entity.Formula_weight_exptl ?
+   _Entity.Formula_weight_exptl_meth ?
+   _Entity.Details ?
+   _Entity.DB_query_date ?
+   _Entity.DB_query_revised_last_date ?
+   loop_
+      _Entity_comp_index.ID
+      _Entity_comp_index.Auth_seq_ID
+      _Entity_comp_index.Comp_ID
+      _Entity_comp_index.Comp_label
+      _Entity_comp_index.Entity_ID
+
+9 ? Gln ? 1
+10 ? Gln ? 1
+11 ? Leu ? 1
+12 ? Asp ? 1
+13 ? Met ? 1
+15 ? Leu ? 1
+16 ? Val ? 1
+17 ? Leu ? 1
+18 ? Asp ? 1
+19 ? Gln ? 1
+20 ? Asp ? 1
+21 ? Leu ? 1
+22 ? Thr ? 1
+23 ? Lys ? 1
+24 ? Gln ? 1
+25 ? Met ? 1
+26 ? Arg ? 1
+27 ? Leu ? 1
+28 ? Arg ? 1
+29 ? Val ? 1
+30 ? Glu ? 1
+31 ? Ser ? 1
+32 ? Leu ? 1
+33 ? Lys ? 1
+35 ? Arg ? 1
+36 ? Gly ? 1
+37 ? Glu ? 1
+38 ? Lys ? 1
+39 ? Lys ? 1
+40 ? Gln ? 1
+41 ? Asp ? 1
+43 ? Glu ? 1
+44 ? Lys ? 1
+45 ? Leu ? 1
+46 ? Leu ? 1
+47 ? Arg ? 1
+49 ? Ala ? 1
+50 ? Glu ? 1
+51 ? Ser ? 1
+53 ? Tyr ? 1
+54 ? Arg ? 1
+55 ? Leu ? 1
+56 ? Asp ? 1
+57 ? Glu ? 1
+58 ? Ile ? 1
+59 ? Gln ? 1
+60 ? Gln ? 1
+62 ? Lys ? 1
+63 ? Leu ? 1
+64 ? Gln ? 1
+65 ? Phe ? 1
+66 ? Asp ? 1
+67 ? His ? 1
+68 ? Trp ? 1
+69 ? Asp ? 1
+70 ? Val ? 1
+71 ? Val ? 1
+72 ? Leu ? 1
+73 ? Asp ? 1
+74 ? Lys ? 1
+76 ? Gly ? 1
+77 ? Lys ? 1
+78 ? Val ? 1
+79 ? Thr ? 1
+80 ? Ile ? 1
+81 ? Thr ? 1
+82 ? Gly ? 1
+83 ? Thr ? 1
+84 ? Ser ? 1
+86 ? Asn ? 1
+87 ? Trp ? 1
+90 ? Asp ? 1
+91 ? Leu ? 1
+92 ? Thr ? 1
+94 ? Leu ? 1
+95 ? Met ? 1
+96 ? Thr ? 1
+97 ? Arg ? 1
+98 ? Gln ? 1
+99 ? Leu ? 1
+100 ? Leu ? 1
+101 ? Asp ? 1
+103 ? Ala ? 1
+104 ? Ala ? 1
+105 ? Ile ? 1
+106 ? Phe ? 1
+107 ? Trp ? 1
+108 ? Arg ? 1
+109 ? Lys ? 1
+110 ? Glu ? 1
+111 ? Asp ? 1
+113 ? Asp ? 1
+114 ? Ala ? 1
+115 ? Met ? 1
+116 ? Asp ? 1
+119 ? Glu ? 1
+121 ? Asp ? 1
+123 ? Leu ? 1
+124 ? Glu ? 1
+125 ? Phe ? 1
+126 ? Gly ? 1
+127 ? Glu ? 1
+129 ? Leu ? 1
+130 ? Ser ? 1
+131 ? Asp ? 1
+132 ? Leu ? 1
+133 ? Ala ? 1
+134 ? Lys ? 1
+135 ? Ile ? 1
+136 ? Arg ? 1
+137 ? Lys ? 1
+138 ? Val ? 1
+139 ? Met ? 1
+140 ? Tyr ? 1
+141 ? Phe ? 1
+142 ? Leu ? 1
+143 ? Ile ? 1
+144 ? Thr ? 1
+145 ? Phe ? 1
+146 ? Gly ? 1
+147 ? Glu ? 1
+148 ? Gly ? 1
+149 ? Val ? 1
+150 ? Glu ? 1
+152 ? Ala ? 1
+153 ? Asn ? 1
+154 ? Leu ? 1
+155 ? Lys ? 1
+156 ? Ala ? 1
+157 ? Ser ? 1
+158 ? Val ? 1
+159 ? Val ? 1
+160 ? Phe ? 1
+161 ? Asn ? 1
+162 ? Gln ? 1
+
+   stop_
+
+save_
+
+save_nmrpipe_software_1
+   _Software.Sf_category software
+   _Software.Sf_framecode ?
+   _Software.ID 1
+   _Software.Name NMRPipe
+   _Software.Version ?
+   loop_
+      _Software_citation.Citation_ID
+      _Software_citation.Software_ID
+
+? 1
+
+   stop_
+   loop_
+      _Task.Task
+      _Task.Software_ID
+
+processing 1
+
+   stop_
+   loop_
+      _Vendor.Name
+      _Vendor.Address
+      _Vendor.Electronic_address
+      _Vendor.SoftwareID
+
+"Delaglio, F., Grzesiek, S., Vuister, G. W., Zhu, G., Pfeifer, J., and Bax, A" ? http://spin.niddk.nih.gov/NMRPipe/ 1 
+
+   stop_
+
+save_
+
+save_sparky_software_2
+   _Software.Sf_category software
+   _Software.Sf_framecode ?
+   _Software.ID 2
+   _Software.Name Sparky
+   _Software.Version 3.106
+   loop_
+      _Software_citation.Citation_ID
+      _Software_citation.Software_ID
+
+? 2
+
+   stop_
+   loop_
+      _Task.Task
+      _Task.Software_ID
+
+"spectral analysis" 2 
+
+   stop_
+   loop_
+      _Vendor.Name
+      _Vendor.Address
+      _Vendor.Electronic_address
+      _Vendor.SoftwareID
+
+"Goddard, T. D. and Kneller, D. G." ? http://www.cgl.ucsf.edu/home/sparky/ 2 
+
+   stop_
+
+save_
+
+save_relax_software_3
+   _Software.Sf_category software
+   _Software.Sf_framecode ?
+   _Software.ID 3
+   _Software.Name relax
+   _Software.Version "repository checkout r26164 svn+ssh://bugman@svn.gna.org/svn/relax/trunk"
+   loop_
+      _Software_citation.Citation_ID
+      _Software_citation.Software_ID
+
+4 3
+5 3
+
+   stop_
+   loop_
+      _Task.Task
+      _Task.Software_ID
+
+"data processing" 3 
+
+   stop_
+   loop_
+      _Vendor.Name
+      _Vendor.Address
+      _Vendor.Electronic_address
+      _Vendor.SoftwareID
+
+"The relax development team" ? http://www.nmr-relax.com 3 
+
+   stop_
+
+save_
+
+save_chem_shift_anisotropy_1
+   _Chem_shift_anisotropy.Sf_category chem_shift_anisotropy
+   _Chem_shift_anisotropy.Sf_framecode ?
+   _Chem_shift_anisotropy.ID 1
+   _Chem_shift_anisotropy.Data_file_name ?
+   _Chem_shift_anisotropy.Sample_condition_list_label $conditions_1
+   _Chem_shift_anisotropy.Val_units ppm
+   loop_
+      _CS_anisotropy_experiment.Sample_label
+
+$sample_1
+
+   stop_
+   loop_
+      _CS_anisotropy.ID
+      _CS_anisotropy.Assembly_atom_ID
+      _CS_anisotropy.Entity_assembly_ID
+      _CS_anisotropy.Entity_ID
+      _CS_anisotropy.Comp_index_ID
+      _CS_anisotropy.Seq_ID
+      _CS_anisotropy.Comp_ID
+      _CS_anisotropy.Atom_ID
+      _CS_anisotropy.Atom_type
+      _CS_anisotropy.Atom_isotope_number
+      _CS_anisotropy.Val
+      _CS_anisotropy.Val_err
+      _CS_anisotropy.Chem_shift_anisotropy_ID
+
+1 ? ? 1 9 ? Gln N N 15 -160.0 ? 1
+2 ? ? 1 10 ? Gln N N 15 -160.0 ? 1
+3 ? ? 1 11 ? Leu N N 15 -160.0 ? 1
+4 ? ? 1 12 ? Asp N N 15 -160.0 ? 1
+5 ? ? 1 13 ? Met N N 15 -160.0 ? 1
+6 ? ? 1 15 ? Leu N N 15 -160.0 ? 1
+7 ? ? 1 16 ? Val N N 15 -160.0 ? 1
+8 ? ? 1 17 ? Leu N N 15 -160.0 ? 1
+9 ? ? 1 18 ? Asp N N 15 -160.0 ? 1
+10 ? ? 1 19 ? Gln N N 15 -160.0 ? 1
+11 ? ? 1 20 ? Asp N N 15 -160.0 ? 1
+12 ? ? 1 21 ? Leu N N 15 -160.0 ? 1
+13 ? ? 1 22 ? Thr N N 15 -160.0 ? 1
+14 ? ? 1 23 ? Lys N N 15 -160.0 ? 1
+15 ? ? 1 24 ? Gln N N 15 -160.0 ? 1
+16 ? ? 1 25 ? Met N N 15 -160.0 ? 1
+17 ? ? 1 26 ? Arg N N 15 -160.0 ? 1
+18 ? ? 1 27 ? Leu N N 15 -160.0 ? 1
+19 ? ? 1 28 ? Arg N N 15 -160.0 ? 1
+20 ? ? 1 29 ? Val N N 15 -160.0 ? 1
+21 ? ? 1 30 ? Glu N N 15 -160.0 ? 1
+22 ? ? 1 31 ? Ser N N 15 -160.0 ? 1
+23 ? ? 1 32 ? Leu N N 15 -160.0 ? 1
+24 ? ? 1 33 ? Lys N N 15 -160.0 ? 1
+25 ? ? 1 35 ? Arg N N 15 -160.0 ? 1
+26 ? ? 1 36 ? Gly N N 15 -160.0 ? 1
+27 ? ? 1 37 ? Glu N N 15 -160.0 ? 1
+28 ? ? 1 38 ? Lys N N 15 -160.0 ? 1
+29 ? ? 1 39 ? Lys N N 15 -160.0 ? 1
+30 ? ? 1 40 ? Gln N N 15 -160.0 ? 1
+31 ? ? 1 41 ? Asp N N 15 -160.0 ? 1
+32 ? ? 1 43 ? Glu N N 15 -160.0 ? 1
+33 ? ? 1 44 ? Lys N N 15 -160.0 ? 1
+34 ? ? 1 45 ? Leu N N 15 -160.0 ? 1
+35 ? ? 1 46 ? Leu N N 15 -160.0 ? 1
+36 ? ? 1 47 ? Arg N N 15 -160.0 ? 1
+37 ? ? 1 49 ? Ala N N 15 -160.0 ? 1
+38 ? ? 1 50 ? Glu N N 15 -160.0 ? 1
+39 ? ? 1 51 ? Ser N N 15 -160.0 ? 1
+40 ? ? 1 53 ? Tyr N N 15 -160.0 ? 1
+41 ? ? 1 54 ? Arg N N 15 -160.0 ? 1
+42 ? ? 1 55 ? Leu N N 15 -160.0 ? 1
+43 ? ? 1 56 ? Asp N N 15 -160.0 ? 1
+44 ? ? 1 57 ? Glu N N 15 -160.0 ? 1
+45 ? ? 1 58 ? Ile N N 15 -160.0 ? 1
+46 ? ? 1 59 ? Gln N N 15 -160.0 ? 1
+47 ? ? 1 60 ? Gln N N 15 -160.0 ? 1
+48 ? ? 1 62 ? Lys N N 15 -160.0 ? 1
+49 ? ? 1 63 ? Leu N N 15 -160.0 ? 1
+50 ? ? 1 64 ? Gln N N 15 -160.0 ? 1
+51 ? ? 1 65 ? Phe N N 15 -160.0 ? 1
+52 ? ? 1 66 ? Asp N N 15 -160.0 ? 1
+53 ? ? 1 67 ? His N N 15 -160.0 ? 1
+54 ? ? 1 68 ? Trp N N 15 -160.0 ? 1
+55 ? ? 1 69 ? Asp N N 15 -160.0 ? 1
+56 ? ? 1 70 ? Val N N 15 -160.0 ? 1
+57 ? ? 1 71 ? Val N N 15 -160.0 ? 1
+58 ? ? 1 72 ? Leu N N 15 -160.0 ? 1
+59 ? ? 1 73 ? Asp N N 15 -160.0 ? 1
+60 ? ? 1 74 ? Lys N N 15 -160.0 ? 1
+61 ? ? 1 76 ? Gly N N 15 -160.0 ? 1
+62 ? ? 1 77 ? Lys N N 15 -160.0 ? 1
+63 ? ? 1 78 ? Val N N 15 -160.0 ? 1
+64 ? ? 1 79 ? Thr N N 15 -160.0 ? 1
+65 ? ? 1 80 ? Ile N N 15 -160.0 ? 1
+66 ? ? 1 81 ? Thr N N 15 -160.0 ? 1
+67 ? ? 1 82 ? Gly N N 15 -160.0 ? 1
+68 ? ? 1 83 ? Thr N N 15 -160.0 ? 1
+69 ? ? 1 84 ? Ser N N 15 -160.0 ? 1
+70 ? ? 1 86 ? Asn N N 15 -160.0 ? 1
+71 ? ? 1 87 ? Trp N N 15 -160.0 ? 1
+72 ? ? 1 90 ? Asp N N 15 -160.0 ? 1
+73 ? ? 1 91 ? Leu N N 15 -160.0 ? 1
+74 ? ? 1 92 ? Thr N N 15 -160.0 ? 1
+75 ? ? 1 94 ? Leu N N 15 -160.0 ? 1
+76 ? ? 1 95 ? Met N N 15 -160.0 ? 1
+77 ? ? 1 96 ? Thr N N 15 -160.0 ? 1
+78 ? ? 1 97 ? Arg N N 15 -160.0 ? 1
+79 ? ? 1 98 ? Gln N N 15 -160.0 ? 1
+80 ? ? 1 99 ? Leu N N 15 -160.0 ? 1
+81 ? ? 1 100 ? Leu N N 15 -160.0 ? 1
+82 ? ? 1 101 ? Asp N N 15 -160.0 ? 1
+83 ? ? 1 103 ? Ala N N 15 -160.0 ? 1
+84 ? ? 1 104 ? Ala N N 15 -160.0 ? 1
+85 ? ? 1 105 ? Ile N N 15 -160.0 ? 1
+86 ? ? 1 106 ? Phe N N 15 -160.0 ? 1
+87 ? ? 1 107 ? Trp N N 15 -160.0 ? 1
+88 ? ? 1 108 ? Arg N N 15 -160.0 ? 1
+89 ? ? 1 109 ? Lys N N 15 -160.0 ? 1
+90 ? ? 1 110 ? Glu N N 15 -160.0 ? 1
+91 ? ? 1 111 ? Asp N N 15 -160.0 ? 1
+92 ? ? 1 113 ? Asp N N 15 -160.0 ? 1
+93 ? ? 1 114 ? Ala N N 15 -160.0 ? 1
+94 ? ? 1 115 ? Met N N 15 -160.0 ? 1
+95 ? ? 1 116 ? Asp N N 15 -160.0 ? 1
+96 ? ? 1 119 ? Glu N N 15 -160.0 ? 1
+97 ? ? 1 121 ? Asp N N 15 -160.0 ? 1
+98 ? ? 1 123 ? Leu N N 15 -160.0 ? 1
+99 ? ? 1 124 ? Glu N N 15 -160.0 ? 1
+100 ? ? 1 125 ? Phe N N 15 -160.0 ? 1
+101 ? ? 1 126 ? Gly N N 15 -160.0 ? 1
+102 ? ? 1 127 ? Glu N N 15 -160.0 ? 1
+103 ? ? 1 129 ? Leu N N 15 -160.0 ? 1
+104 ? ? 1 130 ? Ser N N 15 -160.0 ? 1
+105 ? ? 1 131 ? Asp N N 15 -160.0 ? 1
+106 ? ? 1 132 ? Leu N N 15 -160.0 ? 1
+107 ? ? 1 133 ? Ala N N 15 -160.0 ? 1
+108 ? ? 1 134 ? Lys N N 15 -160.0 ? 1
+109 ? ? 1 135 ? Ile N N 15 -160.0 ? 1
+110 ? ? 1 136 ? Arg N N 15 -160.0 ? 1
+111 ? ? 1 137 ? Lys N N 15 -160.0 ? 1
+112 ? ? 1 138 ? Val N N 15 -160.0 ? 1
+113 ? ? 1 139 ? Met N N 15 -160.0 ? 1
+114 ? ? 1 140 ? Tyr N N 15 -160.0 ? 1
+115 ? ? 1 141 ? Phe N N 15 -160.0 ? 1
+116 ? ? 1 142 ? Leu N N 15 -160.0 ? 1
+117 ? ? 1 143 ? Ile N N 15 -160.0 ? 1
+118 ? ? 1 144 ? Thr N N 15 -160.0 ? 1
+119 ? ? 1 145 ? Phe N N 15 -160.0 ? 1
+120 ? ? 1 146 ? Gly N N 15 -160.0 ? 1
+121 ? ? 1 147 ? Glu N N 15 -160.0 ? 1
+122 ? ? 1 148 ? Gly N N 15 -160.0 ? 1
+123 ? ? 1 149 ? Val N N 15 -160.0 ? 1
+124 ? ? 1 150 ? Glu N N 15 -160.0 ? 1
+125 ? ? 1 152 ? Ala N N 15 -160.0 ? 1
+126 ? ? 1 153 ? Asn N N 15 -160.0 ? 1
+127 ? ? 1 154 ? Leu N N 15 -160.0 ? 1
+128 ? ? 1 155 ? Lys N N 15 -160.0 ? 1
+129 ? ? 1 156 ? Ala N N 15 -160.0 ? 1
+130 ? ? 1 157 ? Ser N N 15 -160.0 ? 1
+131 ? ? 1 158 ? Val N N 15 -160.0 ? 1
+132 ? ? 1 159 ? Val N N 15 -160.0 ? 1
+133 ? ? 1 160 ? Phe N N 15 -160.0 ? 1
+134 ? ? 1 161 ? Asn N N 15 -160.0 ? 1
+135 ? ? 1 162 ? Gln N N 15 -160.0 ? 1
+
+   stop_
+
+save_
+
+save_auto_relaxation_1
+   _Auto_relaxation_list.Sf_category auto_relaxation
+   _Auto_relaxation_list.Sf_framecode "600.0 MHz R1 relaxation 1"
+   _Auto_relaxation_list.Entry_ID ?
+   _Auto_relaxation_list.ID 1
+   _Auto_relaxation_list.Data_file_name ?
+   _Auto_relaxation_list.Sample_condition_list_ID ?
+   _Auto_relaxation_list.Sample_condition_list_label $conditions_1
+   _Auto_relaxation_list.Temp_calibration_method methanol
+   _Auto_relaxation_list.Temp_control_method "single fid interleaving"
+   _Auto_relaxation_list.Spectrometer_frequency_1H 600.0
+   _Auto_relaxation_list.Common_relaxation_type_name R1
+   _Auto_relaxation_list.Relaxation_coherence_type Iz
+   _Auto_relaxation_list.Relaxation_val_units s-1
+   _Auto_relaxation_list.Relaxation_val_type height
+   _Auto_relaxation_list.Rex_units ?
+   _Auto_relaxation_list.Details ?
+   _Auto_relaxation_list.Text_data_format ?
+   _Auto_relaxation_list.Text_data ?
+   loop_
+      _Auto_relaxation_experiment.Experiment_ID
+      _Auto_relaxation_experiment.Experiment_name
+      _Auto_relaxation_experiment.Sample_ID
+      _Auto_relaxation_experiment.Sample_label
+      _Auto_relaxation_experiment.Sample_state
+      _Auto_relaxation_experiment.Entry_ID
+      _Auto_relaxation_experiment.Auto_relaxation_list_ID
+
+? ? ? $sample_1 ? ? ?
+
+   stop_
+   loop_
+      _Auto_relaxation_software.Software_ID
+      _Auto_relaxation_software.Software_label
+      _Auto_relaxation_software.Method_ID
+      _Auto_relaxation_software.Method_label
+      _Auto_relaxation_software.Entry_ID
+      _Auto_relaxation_software.Auto_relaxation_list_ID
+
+? ? ? ? ? ?
+
+   stop_
+   loop_
+      _Auto_relaxation.ID
+      _Auto_relaxation.Assembly_ID
+      _Auto_relaxation.Assembly_atom_ID
+      _Auto_relaxation.Entity_assembly_ID
+      _Auto_relaxation.Entity_ID
+      _Auto_relaxation.Comp_index_ID
+      _Auto_relaxation.Seq_ID
+      _Auto_relaxation.Comp_ID
+      _Auto_relaxation.Atom_ID
+      _Auto_relaxation.Atom_type
+      _Auto_relaxation.Atom_isotope_number
+      _Auto_relaxation.Auto_relaxation_val
+      _Auto_relaxation.Auto_relaxation_val_err
+      _Auto_relaxation.Rex_val
+      _Auto_relaxation.Rex_err
+      _Auto_relaxation.Resonance_ID
+      _Auto_relaxation.Auth_entity_assembly_ID
+      _Auto_relaxation.Auth_seq_ID
+      _Auto_relaxation.Auth_comp_ID
+      _Auto_relaxation.Auth_atom_ID
+      _Auto_relaxation.Entry_ID
+      _Auto_relaxation.Auto_relaxation_list_ID
+
+1 ? ? ? 1 9 ? Gln N N 15 1.35 0.049 ? ? ? ? ? ? ? ? 1
+2 ? ? ? 1 10 ? Gln N N 15 1.32 0.039 ? ? ? ? ? ? ? ? 1
+3 ? ? ? 1 11 ? Leu N N 15 1.268 0.039 ? ? ? ? ? ? ? ? 1
+4 ? ? ? 1 12 ? Asp N N 15 1.248 0.037 ? ? ? ? ? ? ? ? 1
+5 ? ? ? 1 13 ? Met N N 15 1.26 0.037 ? ? ? ? ? ? ? ? 1
+6 ? ? ? 1 15 ? Leu N N 15 1.28 0.037 ? ? ? ? ? ? ? ? 1
+7 ? ? ? 1 16 ? Val N N 15 1.35 0.042 ? ? ? ? ? ? ? ? 1
+8 ? ? ? 1 17 ? Leu N N 15 1.331 0.036 ? ? ? ? ? ? ? ? 1
+9 ? ? ? 1 18 ? Asp N N 15 1.356 0.042 ? ? ? ? ? ? ? ? 1
+10 ? ? ? 1 19 ? Gln N N 15 1.305 0.039 ? ? ? ? ? ? ? ? 1
+11 ? ? ? 1 20 ? Asp N N 15 1.305 0.039 ? ? ? ? ? ? ? ? 1
+12 ? ? ? 1 21 ? Leu N N 15 1.295 0.034 ? ? ? ? ? ? ? ? 1
+13 ? ? ? 1 22 ? Thr N N 15 1.268 0.038 ? ? ? ? ? ? ? ? 1
+14 ? ? ? 1 23 ? Lys N N 15 1.249 0.037 ? ? ? ? ? ? ? ? 1
+15 ? ? ? 1 24 ? Gln N N 15 1.223 0.045 ? ? ? ? ? ? ? ? 1
+16 ? ? ? 1 25 ? Met N N 15 1.228 0.036 ? ? ? ? ? ? ? ? 1
+17 ? ? ? 1 26 ? Arg N N 15 1.25 0.039 ? ? ? ? ? ? ? ? 1
+18 ? ? ? 1 27 ? Leu N N 15 1.213 0.035 ? ? ? ? ? ? ? ? 1
+19 ? ? ? 1 28 ? Arg N N 15 1.205 0.034 ? ? ? ? ? ? ? ? 1
+20 ? ? ? 1 29 ? Val N N 15 1.243 0.037 ? ? ? ? ? ? ? ? 1
+21 ? ? ? 1 30 ? Glu N N 15 1.252 0.034 ? ? ? ? ? ? ? ? 1
+22 ? ? ? 1 31 ? Ser N N 15 1.215 0.036 ? ? ? ? ? ? ? ? 1
+23 ? ? ? 1 32 ? Leu N N 15 1.205 0.035 ? ? ? ? ? ? ? ? 1
+24 ? ? ? 1 33 ? Lys N N 15 1.229 0.036 ? ? ? ? ? ? ? ? 1
+25 ? ? ? 1 35 ? Arg N N 15 1.278 0.038 ? ? ? ? ? ? ? ? 1
+26 ? ? ? 1 36 ? Gly N N 15 1.372 0.043 ? ? ? ? ? ? ? ? 1
+27 ? ? ? 1 37 ? Glu N N 15 1.358 0.04 ? ? ? ? ? ? ? ? 1
+28 ? ? ? 1 38 ? Lys N N 15 1.41 0.072 ? ? ? ? ? ? ? ? 1
+29 ? ? ? 1 39 ? Lys N N 15 1.463 0.092 ? ? ? ? ? ? ? ? 1
+30 ? ? ? 1 40 ? Gln N N 15 1.532 0.068 ? ? ? ? ? ? ? ? 1
+31 ? ? ? 1 41 ? Asp N N 15 1.274 0.038 ? ? ? ? ? ? ? ? 1
+32 ? ? ? 1 43 ? Glu N N 15 1.253 0.037 ? ? ? ? ? ? ? ? 1
+33 ? ? ? 1 44 ? Lys N N 15 1.301 0.041 ? ? ? ? ? ? ? ? 1
+34 ? ? ? 1 45 ? Leu N N 15 1.405 0.042 ? ? ? ? ? ? ? ? 1
+35 ? ? ? 1 46 ? Leu N N 15 1.303 0.064 ? ? ? ? ? ? ? ? 1
+36 ? ? ? 1 47 ? Arg N N 15 1.257 0.037 ? ? ? ? ? ? ? ? 1
+37 ? ? ? 1 49 ? Ala N N 15 1.273 0.038 ? ? ? ? ? ? ? ? 1
+38 ? ? ? 1 50 ? Glu N N 15 1.215 0.034 ? ? ? ? ? ? ? ? 1
+39 ? ? ? 1 51 ? Ser N N 15 1.301 0.037 ? ? ? ? ? ? ? ? 1
+40 ? ? ? 1 53 ? Tyr N N 15 1.363 0.042 ? ? ? ? ? ? ? ? 1
+41 ? ? ? 1 54 ? Arg N N 15 1.34 0.04 ? ? ? ? ? ? ? ? 1
+42 ? ? ? 1 55 ? Leu N N 15 1.305 0.039 ? ? ? ? ? ? ? ? 1
+43 ? ? ? 1 56 ? Asp N N 15 1.251 0.037 ? ? ? ? ? ? ? ? 1
+44 ? ? ? 1 57 ? Glu N N 15 1.247 0.034 ? ? ? ? ? ? ? ? 1
+45 ? ? ? 1 58 ? Ile N N 15 1.275 0.038 ? ? ? ? ? ? ? ? 1
+46 ? ? ? 1 59 ? Gln N N 15 1.411 0.042 ? ? ? ? ? ? ? ? 1
+47 ? ? ? 1 60 ? Gln N N 15 1.398 0.041 ? ? ? ? ? ? ? ? 1
+48 ? ? ? 1 62 ? Lys N N 15 1.32 0.039 ? ? ? ? ? ? ? ? 1
+49 ? ? ? 1 63 ? Leu N N 15 1.273 0.038 ? ? ? ? ? ? ? ? 1
+50 ? ? ? 1 64 ? Gln N N 15 1.246 0.037 ? ? ? ? ? ? ? ? 1
+51 ? ? ? 1 65 ? Phe N N 15 1.427 0.044 ? ? ? ? ? ? ? ? 1
+52 ? ? ? 1 66 ? Asp N N 15 1.419 0.043 ? ? ? ? ? ? ? ? 1
+53 ? ? ? 1 67 ? His N N 15 1.396 0.06 ? ? ? ? ? ? ? ? 1
+54 ? ? ? 1 68 ? Trp N N 15 1.29 0.038 ? ? ? ? ? ? ? ? 1
+55 ? ? ? 1 69 ? Asp N N 15 1.295 0.038 ? ? ? ? ? ? ? ? 1
+56 ? ? ? 1 70 ? Val N N 15 1.301 0.036 ? ? ? ? ? ? ? ? 1
+57 ? ? ? 1 71 ? Val N N 15 1.33 0.039 ? ? ? ? ? ? ? ? 1
+58 ? ? ? 1 72 ? Leu N N 15 1.285 0.035 ? ? ? ? ? ? ? ? 1
+59 ? ? ? 1 73 ? Asp N N 15 1.266 0.038 ? ? ? ? ? ? ? ? 1
+60 ? ? ? 1 74 ? Lys N N 15 1.311 0.042 ? ? ? ? ? ? ? ? 1
+61 ? ? ? 1 76 ? Gly N N 15 1.265 0.046 ? ? ? ? ? ? ? ? 1
+62 ? ? ? 1 77 ? Lys N N 15 1.251 0.044 ? ? ? ? ? ? ? ? 1
+63 ? ? ? 1 78 ? Val N N 15 1.242 0.057 ? ? ? ? ? ? ? ? 1
+64 ? ? ? 1 79 ? Thr N N 15 1.343 0.04 ? ? ? ? ? ? ? ? 1
+65 ? ? ? 1 80 ? Ile N N 15 1.311 0.038 ? ? ? ? ? ? ? ? 1
+66 ? ? ? 1 81 ? Thr N N 15 1.384 0.041 ? ? ? ? ? ? ? ? 1
+67 ? ? ? 1 82 ? Gly N N 15 1.395 0.041 ? ? ? ? ? ? ? ? 1
+68 ? ? ? 1 83 ? Thr N N 15 1.295 0.041 ? ? ? ? ? ? ? ? 1
+69 ? ? ? 1 84 ? Ser N N 15 1.196 0.055 ? ? ? ? ? ? ? ? 1
+70 ? ? ? 1 86 ? Asn N N 15 1.294 0.043 ? ? ? ? ? ? ? ? 1
+71 ? ? ? 1 87 ? Trp N N 15 1.253 0.058 ? ? ? ? ? ? ? ? 1
+72 ? ? ? 1 90 ? Asp N N 15 1.212 0.056 ? ? ? ? ? ? ? ? 1
+73 ? ? ? 1 91 ? Leu N N 15 1.209 0.056 ? ? ? ? ? ? ? ? 1
+74 ? ? ? 1 92 ? Thr N N 15 1.195 0.043 ? ? ? ? ? ? ? ? 1
+75 ? ? ? 1 94 ? Leu N N 15 1.287 0.041 ? ? ? ? ? ? ? ? 1
+76 ? ? ? 1 95 ? Met N N 15 1.235 0.037 ? ? ? ? ? ? ? ? 1
+77 ? ? ? 1 96 ? Thr N N 15 1.2 0.036 ? ? ? ? ? ? ? ? 1
+78 ? ? ? 1 97 ? Arg N N 15 1.346 0.04 ? ? ? ? ? ? ? ? 1
+79 ? ? ? 1 98 ? Gln N N 15 1.248 0.037 ? ? ? ? ? ? ? ? 1
+80 ? ? ? 1 99 ? Leu N N 15 1.231 0.037 ? ? ? ? ? ? ? ? 1
+81 ? ? ? 1 100 ? Leu N N 15 1.308 0.038 ? ? ? ? ? ? ? ? 1
+82 ? ? ? 1 101 ? Asp N N 15 1.348 0.04 ? ? ? ? ? ? ? ? 1
+83 ? ? ? 1 103 ? Ala N N 15 1.249 0.037 ? ? ? ? ? ? ? ? 1
+84 ? ? ? 1 104 ? Ala N N 15 1.295 0.038 ? ? ? ? ? ? ? ? 1
+85 ? ? ? 1 105 ? Ile N N 15 1.281 0.047 ? ? ? ? ? ? ? ? 1
+86 ? ? ? 1 106 ? Phe N N 15 1.298 0.044 ? ? ? ? ? ? ? ? 1
+87 ? ? ? 1 107 ? Trp N N 15 1.276 0.036 ? ? ? ? ? ? ? ? 1
+88 ? ? ? 1 108 ? Arg N N 15 1.266 0.034 ? ? ? ? ? ? ? ? 1
+89 ? ? ? 1 109 ? Lys N N 15 1.289 0.056 ? ? ? ? ? ? ? ? 1
+90 ? ? ? 1 110 ? Glu N N 15 1.294 0.058 ? ? ? ? ? ? ? ? 1
+91 ? ? ? 1 111 ? Asp N N 15 1.359 0.04 ? ? ? ? ? ? ? ? 1
+92 ? ? ? 1 113 ? Asp N N 15 1.285 0.038 ? ? ? ? ? ? ? ? 1
+93 ? ? ? 1 114 ? Ala N N 15 1.297 0.038 ? ? ? ? ? ? ? ? 1
+94 ? ? ? 1 115 ? Met N N 15 1.216 0.032 ? ? ? ? ? ? ? ? 1
+95 ? ? ? 1 116 ? Asp N N 15 1.225 0.036 ? ? ? ? ? ? ? ? 1
+96 ? ? ? 1 119 ? Glu N N 15 1.286 0.036 ? ? ? ? ? ? ? ? 1
+97 ? ? ? 1 121 ? Asp N N 15 1.367 0.038 ? ? ? ? ? ? ? ? 1
+98 ? ? ? 1 123 ? Leu N N 15 1.4 0.042 ? ? ? ? ? ? ? ? 1
+99 ? ? ? 1 124 ? Glu N N 15 1.364 0.04 ? ? ? ? ? ? ? ? 1
+100 ? ? ? 1 125 ? Phe N N 15 1.37 0.041 ? ? ? ? ? ? ? ? 1
+101 ? ? ? 1 126 ? Gly N N 15 1.39 0.041 ? ? ? ? ? ? ? ? 1
+102 ? ? ? 1 127 ? Glu N N 15 1.392 0.041 ? ? ? ? ? ? ? ? 1
+103 ? ? ? 1 129 ? Leu N N 15 1.372 0.041 ? ? ? ? ? ? ? ? 1
+104 ? ? ? 1 130 ? Ser N N 15 1.371 0.041 ? ? ? ? ? ? ? ? 1
+105 ? ? ? 1 131 ? Asp N N 15 1.386 0.041 ? ? ? ? ? ? ? ? 1
+106 ? ? ? 1 132 ? Leu N N 15 1.315 0.039 ? ? ? ? ? ? ? ? 1
+107 ? ? ? 1 133 ? Ala N N 15 1.42 0.042 ? ? ? ? ? ? ? ? 1
+108 ? ? ? 1 134 ? Lys N N 15 1.435 0.043 ? ? ? ? ? ? ? ? 1
+109 ? ? ? 1 135 ? Ile N N 15 1.374 0.041 ? ? ? ? ? ? ? ? 1
+110 ? ? ? 1 136 ? Arg N N 15 1.401 0.042 ? ? ? ? ? ? ? ? 1
+111 ? ? ? 1 137 ? Lys N N 15 1.351 0.04 ? ? ? ? ? ? ? ? 1
+112 ? ? ? 1 138 ? Val N N 15 1.399 0.041 ? ? ? ? ? ? ? ? 1
+113 ? ? ? 1 139 ? Met N N 15 1.31 0.039 ? ? ? ? ? ? ? ? 1
+114 ? ? ? 1 140 ? Tyr N N 15 1.291 0.038 ? ? ? ? ? ? ? ? 1
+115 ? ? ? 1 141 ? Phe N N 15 1.351 0.04 ? ? ? ? ? ? ? ? 1
+116 ? ? ? 1 142 ? Leu N N 15 1.327 0.039 ? ? ? ? ? ? ? ? 1
+117 ? ? ? 1 143 ? Ile N N 15 1.304 0.04 ? ? ? ? ? ? ? ? 1
+118 ? ? ? 1 144 ? Thr N N 15 1.273 0.038 ? ? ? ? ? ? ? ? 1
+119 ? ? ? 1 145 ? Phe N N 15 1.199 0.065 ? ? ? ? ? ? ? ? 1
+120 ? ? ? 1 146 ? Gly N N 15 1.134 0.034 ? ? ? ? ? ? ? ? 1
+121 ? ? ? 1 147 ? Glu N N 15 1.284 0.041 ? ? ? ? ? ? ? ? 1
+122 ? ? ? 1 148 ? Gly N N 15 1.199 0.035 ? ? ? ? ? ? ? ? 1
+123 ? ? ? 1 149 ? Val N N 15 1.303 0.04 ? ? ? ? ? ? ? ? 1
+124 ? ? ? 1 150 ? Glu N N 15 1.168 0.035 ? ? ? ? ? ? ? ? 1
+125 ? ? ? 1 152 ? Ala N N 15 1.231 0.045 ? ? ? ? ? ? ? ? 1
+126 ? ? ? 1 153 ? Asn N N 15 1.327 0.075 ? ? ? ? ? ? ? ? 1
+127 ? ? ? 1 154 ? Leu N N 15 1.33 0.039 ? ? ? ? ? ? ? ? 1
+128 ? ? ? 1 155 ? Lys N N 15 1.323 0.039 ? ? ? ? ? ? ? ? 1
+129 ? ? ? 1 156 ? Ala N N 15 1.282 0.038 ? ? ? ? ? ? ? ? 1
+130 ? ? ? 1 157 ? Ser N N 15 1.368 0.041 ? ? ? ? ? ? ? ? 1
+131 ? ? ? 1 158 ? Val N N 15 1.412 0.043 ? ? ? ? ? ? ? ? 1
+132 ? ? ? 1 159 ? Val N N 15 1.402 0.042 ? ? ? ? ? ? ? ? 1
+133 ? ? ? 1 160 ? Phe N N 15 1.396 0.043 ? ? ? ? ? ? ? ? 1
+134 ? ? ? 1 161 ? Asn N N 15 1.361 0.057 ? ? ? ? ? ? ? ? 1
+135 ? ? ? 1 162 ? Gln N N 15 1.24 0.067 ? ? ? ? ? ? ? ? 1
+
+   stop_
+
+save_
+
+save_auto_relaxation_2
+   _Auto_relaxation_list.Sf_category auto_relaxation
+   _Auto_relaxation_list.Sf_framecode "600.0 MHz R2 relaxation 2"
+   _Auto_relaxation_list.Entry_ID ?
+   _Auto_relaxation_list.ID 2
+   _Auto_relaxation_list.Data_file_name ?
+   _Auto_relaxation_list.Sample_condition_list_ID ?
+   _Auto_relaxation_list.Sample_condition_list_label $conditions_1
+   _Auto_relaxation_list.Temp_calibration_method methanol
+   _Auto_relaxation_list.Temp_control_method "single fid interleaving"
+   _Auto_relaxation_list.Spectrometer_frequency_1H 600.0
+   _Auto_relaxation_list.Common_relaxation_type_name R2
+   _Auto_relaxation_list.Relaxation_coherence_type I+
+   _Auto_relaxation_list.Relaxation_val_units s-1
+   _Auto_relaxation_list.Relaxation_val_type height
+   _Auto_relaxation_list.Rex_units ?
+   _Auto_relaxation_list.Details ?
+   _Auto_relaxation_list.Text_data_format ?
+   _Auto_relaxation_list.Text_data ?
+   loop_
+      _Auto_relaxation_experiment.Experiment_ID
+      _Auto_relaxation_experiment.Experiment_name
+      _Auto_relaxation_experiment.Sample_ID
+      _Auto_relaxation_experiment.Sample_label
+      _Auto_relaxation_experiment.Sample_state
+      _Auto_relaxation_experiment.Entry_ID
+      _Auto_relaxation_experiment.Auto_relaxation_list_ID
+
+? ? ? $sample_1 ? ? ?
+
+   stop_
+   loop_
+      _Auto_relaxation_software.Software_ID
+      _Auto_relaxation_software.Software_label
+      _Auto_relaxation_software.Method_ID
+      _Auto_relaxation_software.Method_label
+      _Auto_relaxation_software.Entry_ID
+      _Auto_relaxation_software.Auto_relaxation_list_ID
+
+? ? ? ? ? ?
+
+   stop_
+   loop_
+      _Auto_relaxation.ID
+      _Auto_relaxation.Assembly_ID
+      _Auto_relaxation.Assembly_atom_ID
+      _Auto_relaxation.Entity_assembly_ID
+      _Auto_relaxation.Entity_ID
+      _Auto_relaxation.Comp_index_ID
+      _Auto_relaxation.Seq_ID
+      _Auto_relaxation.Comp_ID
+      _Auto_relaxation.Atom_ID
+      _Auto_relaxation.Atom_type
+      _Auto_relaxation.Atom_isotope_number
+      _Auto_relaxation.Auto_relaxation_val
+      _Auto_relaxation.Auto_relaxation_val_err
+      _Auto_relaxation.Rex_val
+      _Auto_relaxation.Rex_err
+      _Auto_relaxation.Resonance_ID
+      _Auto_relaxation.Auth_entity_assembly_ID
+      _Auto_relaxation.Auth_seq_ID
+      _Auto_relaxation.Auth_comp_ID
+      _Auto_relaxation.Auth_atom_ID
+      _Auto_relaxation.Entry_ID
+      _Auto_relaxation.Auto_relaxation_list_ID
+
+1 ? ? ? 1 9 ? Gln N N 15 9.85 0.648 ? ? ? ? ? ? ? ? 2
+2 ? ? ? 1 10 ? Gln N N 15 10.09 0.535 ? ? ? ? ? ? ? ? 2
+3 ? ? ? 1 11 ? Leu N N 15 10.49 0.519 ? ? ? ? ? ? ? ? 2
+4 ? ? ? 1 12 ? Asp N N 15 10.6 0.53 ? ? ? ? ? ? ? ? 2
+5 ? ? ? 1 13 ? Met N N 15 10.5 0.5 ? ? ? ? ? ? ? ? 2
+6 ? ? ? 1 15 ? Leu N N 15 10.7 0.5 ? ? ? ? ? ? ? ? 2
+7 ? ? ? 1 16 ? Val N N 15 11.23 0.561 ? ? ? ? ? ? ? ? 2
+8 ? ? ? 1 17 ? Leu N N 15 11.95 0.597 ? ? ? ? ? ? ? ? 2
+9 ? ? ? 1 18 ? Asp N N 15 11.75 0.587 ? ? ? ? ? ? ? ? 2
+10 ? ? ? 1 19 ? Gln N N 15 12.39 0.634 ? ? ? ? ? ? ? ? 2
+11 ? ? ? 1 20 ? Asp N N 15 12.76 0.638 ? ? ? ? ? ? ? ? 2
+12 ? ? ? 1 21 ? Leu N N 15 13.59 0.679 ? ? ? ? ? ? ? ? 2
+13 ? ? ? 1 22 ? Thr N N 15 13.43 0.671 ? ? ? ? ? ? ? ? 2
+14 ? ? ? 1 23 ? Lys N N 15 13.91 0.695 ? ? ? ? ? ? ? ? 2
+15 ? ? ? 1 24 ? Gln N N 15 14.08 0.724 ? ? ? ? ? ? ? ? 2
+16 ? ? ? 1 25 ? Met N N 15 14.02 0.701 ? ? ? ? ? ? ? ? 2
+17 ? ? ? 1 26 ? Arg N N 15 13.11 0.655 ? ? ? ? ? ? ? ? 2
+18 ? ? ? 1 27 ? Leu N N 15 13.43 0.671 ? ? ? ? ? ? ? ? 2
+19 ? ? ? 1 28 ? Arg N N 15 14.13 0.706 ? ? ? ? ? ? ? ? 2
+20 ? ? ? 1 29 ? Val N N 15 13.81 0.69 ? ? ? ? ? ? ? ? 2
+21 ? ? ? 1 30 ? Glu N N 15 14.14 0.707 ? ? ? ? ? ? ? ? 2
+22 ? ? ? 1 31 ? Ser N N 15 13.89 0.694 ? ? ? ? ? ? ? ? 2
+23 ? ? ? 1 32 ? Leu N N 15 13.46 0.673 ? ? ? ? ? ? ? ? 2
+24 ? ? ? 1 33 ? Lys N N 15 13.15 0.654 ? ? ? ? ? ? ? ? 2
+25 ? ? ? 1 35 ? Arg N N 15 12.873 0.667 ? ? ? ? ? ? ? ? 2
+26 ? ? ? 1 36 ? Gly N N 15 10.93 0.539 ? ? ? ? ? ? ? ? 2
+27 ? ? ? 1 37 ? Glu N N 15 10.5 0.525 ? ? ? ? ? ? ? ? 2
+28 ? ? ? 1 38 ? Lys N N 15 10.12 1.054 ? ? ? ? ? ? ? ? 2
+29 ? ? ? 1 39 ? Lys N N 15 7.5 1.237 ? ? ? ? ? ? ? ? 2
+30 ? ? ? 1 40 ? Gln N N 15 8.8 1.262 ? ? ? ? ? ? ? ? 2
+31 ? ? ? 1 41 ? Asp N N 15 10.51 0.431 ? ? ? ? ? ? ? ? 2
+32 ? ? ? 1 43 ? Glu N N 15 14.21 0.714 ? ? ? ? ? ? ? ? 2
+33 ? ? ? 1 44 ? Lys N N 15 13.95 0.646 ? ? ? ? ? ? ? ? 2
+34 ? ? ? 1 45 ? Leu N N 15 14.094 0.631 ? ? ? ? ? ? ? ? 2
+35 ? ? ? 1 46 ? Leu N N 15 14.03 0.782 ? ? ? ? ? ? ? ? 2
+36 ? ? ? 1 47 ? Arg N N 15 14.54 0.693 ? ? ? ? ? ? ? ? 2
+37 ? ? ? 1 49 ? Ala N N 15 14.05 0.761 ? ? ? ? ? ? ? ? 2
+38 ? ? ? 1 50 ? Glu N N 15 11.71 0.749 ? ? ? ? ? ? ? ? 2
+39 ? ? ? 1 51 ? Ser N N 15 11.43 0.598 ? ? ? ? ? ? ? ? 2
+40 ? ? ? 1 53 ? Tyr N N 15 11.3 0.565 ? ? ? ? ? ? ? ? 2
+41 ? ? ? 1 54 ? Arg N N 15 11.47 0.583 ? ? ? ? ? ? ? ? 2
+42 ? ? ? 1 55 ? Leu N N 15 11.2 0.575 ? ? ? ? ? ? ? ? 2
+43 ? ? ? 1 56 ? Asp N N 15 10.39 0.519 ? ? ? ? ? ? ? ? 2
+44 ? ? ? 1 57 ? Glu N N 15 11.18 0.593 ? ? ? ? ? ? ? ? 2
+45 ? ? ? 1 58 ? Ile N N 15 11.28 0.564 ? ? ? ? ? ? ? ? 2
+46 ? ? ? 1 59 ? Gln N N 15 13.65 0.798 ? ? ? ? ? ? ? ? 2
+47 ? ? ? 1 60 ? Gln N N 15 12.5 0.835 ? ? ? ? ? ? ? ? 2
+48 ? ? ? 1 62 ? Lys N N 15 13.21 0.649 ? ? ? ? ? ? ? ? 2
+49 ? ? ? 1 63 ? Leu N N 15 11.11 0.555 ? ? ? ? ? ? ? ? 2
+50 ? ? ? 1 64 ? Gln N N 15 10.69 0.534 ? ? ? ? ? ? ? ? 2
+51 ? ? ? 1 65 ? Phe N N 15 11.65 0.582 ? ? ? ? ? ? ? ? 2
+52 ? ? ? 1 66 ? Asp N N 15 12.28 0.614 ? ? ? ? ? ? ? ? 2
+53 ? ? ? 1 67 ? His N N 15 12.26 0.613 ? ? ? ? ? ? ? ? 2
+54 ? ? ? 1 68 ? Trp N N 15 10.69 0.934 ? ? ? ? ? ? ? ? 2
+55 ? ? ? 1 69 ? Asp N N 15 11.74 0.587 ? ? ? ? ? ? ? ? 2
+56 ? ? ? 1 70 ? Val N N 15 10.93 0.541 ? ? ? ? ? ? ? ? 2
+57 ? ? ? 1 71 ? Val N N 15 10.86 0.543 ? ? ? ? ? ? ? ? 2
+58 ? ? ? 1 72 ? Leu N N 15 11.03 0.551 ? ? ? ? ? ? ? ? 2
+59 ? ? ? 1 73 ? Asp N N 15 11.79 0.589 ? ? ? ? ? ? ? ? 2
+60 ? ? ? 1 74 ? Lys N N 15 11.31 0.565 ? ? ? ? ? ? ? ? 2
+61 ? ? ? 1 76 ? Gly N N 15 12.06 0.603 ? ? ? ? ? ? ? ? 2
+62 ? ? ? 1 77 ? Lys N N 15 12.19 0.739 ? ? ? ? ? ? ? ? 2
+63 ? ? ? 1 78 ? Val N N 15 12.46 0.679 ? ? ? ? ? ? ? ? 2
+64 ? ? ? 1 79 ? Thr N N 15 12.03 0.601 ? ? ? ? ? ? ? ? 2
+65 ? ? ? 1 80 ? Ile N N 15 11.91 0.595 ? ? ? ? ? ? ? ? 2
+66 ? ? ? 1 81 ? Thr N N 15 11.12 0.561 ? ? ? ? ? ? ? ? 2
+67 ? ? ? 1 82 ? Gly N N 15 11.213 0.543 ? ? ? ? ? ? ? ? 2
+68 ? ? ? 1 83 ? Thr N N 15 11.91 0.595 ? ? ? ? ? ? ? ? 2
+69 ? ? ? 1 84 ? Ser N N 15 15.432 0.929 ? ? ? ? ? ? ? ? 2
+70 ? ? ? 1 86 ? Asn N N 15 14.98 0.719 ? ? ? ? ? ? ? ? 2
+71 ? ? ? 1 87 ? Trp N N 15 14.65 0.74 ? ? ? ? ? ? ? ? 2
+72 ? ? ? 1 90 ? Asp N N 15 15 0.75 ? ? ? ? ? ? ? ? 2
+73 ? ? ? 1 91 ? Leu N N 15 14.21 0.744 ? ? ? ? ? ? ? ? 2
+74 ? ? ? 1 92 ? Thr N N 15 15.18 0.937 ? ? ? ? ? ? ? ? 2
+75 ? ? ? 1 94 ? Leu N N 15 14.04 0.655 ? ? ? ? ? ? ? ? 2
+76 ? ? ? 1 95 ? Met N N 15 14.23 0.664 ? ? ? ? ? ? ? ? 2
+77 ? ? ? 1 96 ? Thr N N 15 14.98 0.827 ? ? ? ? ? ? ? ? 2
+78 ? ? ? 1 97 ? Arg N N 15 10.31 1.351 ? ? ? ? ? ? ? ? 2
+79 ? ? ? 1 98 ? Gln N N 15 13.81 0.69 ? ? ? ? ? ? ? ? 2
+80 ? ? ? 1 99 ? Leu N N 15 12.73 0.636 ? ? ? ? ? ? ? ? 2
+81 ? ? ? 1 100 ? Leu N N 15 11.14 0.597 ? ? ? ? ? ? ? ? 2
+82 ? ? ? 1 101 ? Asp N N 15 10.8 0.54 ? ? ? ? ? ? ? ? 2
+83 ? ? ? 1 103 ? Ala N N 15 10.14 0.507 ? ? ? ? ? ? ? ? 2
+84 ? ? ? 1 104 ? Ala N N 15 10.98 0.549 ? ? ? ? ? ? ? ? 2
+85 ? ? ? 1 105 ? Ile N N 15 11.32 0.561 ? ? ? ? ? ? ? ? 2
+86 ? ? ? 1 106 ? Phe N N 15 12.08 0.615 ? ? ? ? ? ? ? ? 2
+87 ? ? ? 1 107 ? Trp N N 15 12.41 0.67 ? ? ? ? ? ? ? ? 2
+88 ? ? ? 1 108 ? Arg N N 15 12.531 0.775 ? ? ? ? ? ? ? ? 2
+89 ? ? ? 1 109 ? Lys N N 15 12.15 0.607 ? ? ? ? ? ? ? ? 2
+90 ? ? ? 1 110 ? Glu N N 15 11.38 0.669 ? ? ? ? ? ? ? ? 2
+91 ? ? ? 1 111 ? Asp N N 15 10.51 0.825 ? ? ? ? ? ? ? ? 2
+92 ? ? ? 1 113 ? Asp N N 15 10.21 0.549 ? ? ? ? ? ? ? ? 2
+93 ? ? ? 1 114 ? Ala N N 15 10.45 0.693 ? ? ? ? ? ? ? ? 2
+94 ? ? ? 1 115 ? Met N N 15 11.09 0.554 ? ? ? ? ? ? ? ? 2
+95 ? ? ? 1 116 ? Asp N N 15 11.83 0.618 ? ? ? ? ? ? ? ? 2
+96 ? ? ? 1 119 ? Glu N N 15 11.47 0.566 ? ? ? ? ? ? ? ? 2
+97 ? ? ? 1 121 ? Asp N N 15 11.85 0.58 ? ? ? ? ? ? ? ? 2
+98 ? ? ? 1 123 ? Leu N N 15 12.04 0.602 ? ? ? ? ? ? ? ? 2
+99 ? ? ? 1 124 ? Glu N N 15 11.8 0.59 ? ? ? ? ? ? ? ? 2
+100 ? ? ? 1 125 ? Phe N N 15 12.09 0.614 ? ? ? ? ? ? ? ? 2
+101 ? ? ? 1 126 ? Gly N N 15 11.7 0.585 ? ? ? ? ? ? ? ? 2
+102 ? ? ? 1 127 ? Glu N N 15 11.96 0.607 ? ? ? ? ? ? ? ? 2
+103 ? ? ? 1 129 ? Leu N N 15 11.77 0.588 ? ? ? ? ? ? ? ? 2
+104 ? ? ? 1 130 ? Ser N N 15 11.48 0.574 ? ? ? ? ? ? ? ? 2
+105 ? ? ? 1 131 ? Asp N N 15 10.97 0.535 ? ? ? ? ? ? ? ? 2
+106 ? ? ? 1 132 ? Leu N N 15 10.82 0.526 ? ? ? ? ? ? ? ? 2
+107 ? ? ? 1 133 ? Ala N N 15 11.94 0.638 ? ? ? ? ? ? ? ? 2
+108 ? ? ? 1 134 ? Lys N N 15 11.6 0.58 ? ? ? ? ? ? ? ? 2
+109 ? ? ? 1 135 ? Ile N N 15 11.8 0.891 ? ? ? ? ? ? ? ? 2
+110 ? ? ? 1 136 ? Arg N N 15 12.06 1.2 ? ? ? ? ? ? ? ? 2
+111 ? ? ? 1 137 ? Lys N N 15 11.77 0.588 ? ? ? ? ? ? ? ? 2
+112 ? ? ? 1 138 ? Val N N 15 11.48 0.574 ? ? ? ? ? ? ? ? 2
+113 ? ? ? 1 139 ? Met N N 15 10.86 0.543 ? ? ? ? ? ? ? ? 2
+114 ? ? ? 1 140 ? Tyr N N 15 11.05 0.552 ? ? ? ? ? ? ? ? 2
+115 ? ? ? 1 141 ? Phe N N 15 11.51 0.575 ? ? ? ? ? ? ? ? 2
+116 ? ? ? 1 142 ? Leu N N 15 11.46 0.573 ? ? ? ? ? ? ? ? 2
+117 ? ? ? 1 143 ? Ile N N 15 11.67 0.536 ? ? ? ? ? ? ? ? 2
+118 ? ? ? 1 144 ? Thr N N 15 12.31 0.634 ? ? ? ? ? ? ? ? 2
+119 ? ? ? 1 145 ? Phe N N 15 13.21 0.86 ? ? ? ? ? ? ? ? 2
+120 ? ? ? 1 146 ? Gly N N 15 13.41 0.67 ? ? ? ? ? ? ? ? 2
+121 ? ? ? 1 147 ? Glu N N 15 10.5 0.487 ? ? ? ? ? ? ? ? 2
+122 ? ? ? 1 148 ? Gly N N 15 11.21 0.56 ? ? ? ? ? ? ? ? 2
+123 ? ? ? 1 149 ? Val N N 15 12.01 0.6 ? ? ? ? ? ? ? ? 2
+124 ? ? ? 1 150 ? Glu N N 15 11.67 0.583 ? ? ? ? ? ? ? ? 2
+125 ? ? ? 1 152 ? Ala N N 15 12.21 0.64 ? ? ? ? ? ? ? ? 2
+126 ? ? ? 1 153 ? Asn N N 15 12.16 0.653 ? ? ? ? ? ? ? ? 2
+127 ? ? ? 1 154 ? Leu N N 15 12.31 0.615 ? ? ? ? ? ? ? ? 2
+128 ? ? ? 1 155 ? Lys N N 15 11.07 0.553 ? ? ? ? ? ? ? ? 2
+129 ? ? ? 1 156 ? Ala N N 15 11.12 0.524 ? ? ? ? ? ? ? ? 2
+130 ? ? ? 1 157 ? Ser N N 15 11.66 0.593 ? ? ? ? ? ? ? ? 2
+131 ? ? ? 1 158 ? Val N N 15 11.59 0.577 ? ? ? ? ? ? ? ? 2
+132 ? ? ? 1 159 ? Val N N 15 11.75 0.587 ? ? ? ? ? ? ? ? 2
+133 ? ? ? 1 160 ? Phe N N 15 11.021 0.511 ? ? ? ? ? ? ? ? 2
+134 ? ? ? 1 161 ? Asn N N 15 11.57 0.593 ? ? ? ? ? ? ? ? 2
+135 ? ? ? 1 162 ? Gln N N 15 10.6 0.93 ? ? ? ? ? ? ? ? 2
+
+   stop_
+
+save_
+
+save_heteronucl_NOEs_1
+   _Heteronucl_NOE_list.Sf_category heteronucl_NOEs
+   _Heteronucl_NOE_list.Sf_framecode "600.0 MHz heteronuclear NOE 1"
+   _Heteronucl_NOE_list.ID 1
+   _Heteronucl_NOE_list.Data_file_name ?
+   _Heteronucl_NOE_list.Sample_condition_list_ID ?
+   _Heteronucl_NOE_list.Sample_condition_list_label $conditions_1
+   _Heteronucl_NOE_list.Spectrometer_frequency_1H 600.0
+   _Heteronucl_NOE_list.Temp_calibration_method methanol
+   _Heteronucl_NOE_list.Temp_control_method "single fid interleaving"
+   _Heteronucl_NOE_list.Heteronuclear_NOE_val_type height
+   _Heteronucl_NOE_list.NOE_ref_val ?
+   _Heteronucl_NOE_list.NOE_ref_description ?
+   _Heteronucl_NOE_list.Details ?
+   _Heteronucl_NOE_list.Text_data_format ?
+   _Heteronucl_NOE_list.Text_data ?
+   loop_
+      _Heteronucl_NOE_experiment.Experiment_ID
+      _Heteronucl_NOE_experiment.Experiment_name
+      _Heteronucl_NOE_experiment.Sample_ID
+      _Heteronucl_NOE_experiment.Sample_label
+      _Heteronucl_NOE_experiment.Sample_state
+      _Heteronucl_NOE_experiment.Entry_ID
+      _Heteronucl_NOE_experiment.Heteronucl_NOE_list_ID
+
+? ? ? $sample_1 ? ? ?
+
+   stop_
+   loop_
+      _Heteronucl_NOE_software.Software_ID
+      _Heteronucl_NOE_software.Software_label
+      _Heteronucl_NOE_software.Method_ID
+      _Heteronucl_NOE_software.Method_label
+      _Heteronucl_NOE_software.Entry_ID
+      _Heteronucl_NOE_software.Heteronucl_NOE_list_ID
+
+? ? ? ? ? ?
+
+   stop_
+   loop_
+      _Heteronucl_NOE.ID
+      _Heteronucl_NOE.Assembly_atom_ID_1
+      _Heteronucl_NOE.Entity_assembly_ID_1
+      _Heteronucl_NOE.Entity_ID_1
+      _Heteronucl_NOE.Comp_index_ID_1
+      _Heteronucl_NOE.Seq_ID_1
+      _Heteronucl_NOE.Comp_ID_1
+      _Heteronucl_NOE.Atom_ID_1
+      _Heteronucl_NOE.Atom_type_1
+      _Heteronucl_NOE.Atom_isotope_number_1
+      _Heteronucl_NOE.Assembly_atom_ID_2
+      _Heteronucl_NOE.Entity_assembly_ID_2
+      _Heteronucl_NOE.Entity_ID_2
+      _Heteronucl_NOE.Comp_index_ID_2
+      _Heteronucl_NOE.Seq_ID_2
+      _Heteronucl_NOE.Comp_ID_2
+      _Heteronucl_NOE.Atom_ID_2
+      _Heteronucl_NOE.Atom_type_2
+      _Heteronucl_NOE.Atom_isotope_number_2
+      _Heteronucl_NOE.Val
+      _Heteronucl_NOE.Val_err
+      _Heteronucl_NOE.Resonance_ID_1
+      _Heteronucl_NOE.Resonance_ID_2
+      _Heteronucl_NOE.Auth_entity_assembly_ID_1
+      _Heteronucl_NOE.Auth_seq_ID_1
+      _Heteronucl_NOE.Auth_comp_ID_1
+      _Heteronucl_NOE.Auth_atom_ID_1
+      _Heteronucl_NOE.Auth_entity_assembly_ID_2
+      _Heteronucl_NOE.Auth_seq_ID_2
+      _Heteronucl_NOE.Auth_comp_ID_2
+      _Heteronucl_NOE.Auth_atom_ID_2
+      _Heteronucl_NOE.Entry_ID
+      _Heteronucl_NOE.Heteronucl_NOE_list_ID
+
+1 ? ? 1 9 ? Gln N N 15 ? ? 1 9 ? Gln H H 1 0.523 0.041 ? ? ? ? ? ? ? ? ? ? ? 1
+2 ? ? 1 10 ? Gln N N 15 ? ? 1 10 ? Gln H H 1 0.631 0.045 ? ? ? ? ? ? ? ? ? ? ? 1
+3 ? ? 1 11 ? Leu N N 15 ? ? 1 11 ? Leu H H 1 0.762 0.035 ? ? ? ? ? ? ? ? ? ? ? 1
+4 ? ? 1 12 ? Asp N N 15 ? ? 1 12 ? Asp H H 1 0.817 0.04 ? ? ? ? ? ? ? ? ? ? ? 1
+5 ? ? 1 13 ? Met N N 15 ? ? 1 13 ? Met H H 1 0.76 0.039 ? ? ? ? ? ? ? ? ? ? ? 1
+6 ? ? 1 15 ? Leu N N 15 ? ? 1 15 ? Leu H H 1 0.8 0.04 ? ? ? ? ? ? ? ? ? ? ? 1
+7 ? ? 1 16 ? Val N N 15 ? ? 1 16 ? Val H H 1 0.755 0.036 ? ? ? ? ? ? ? ? ? ? ? 1
+8 ? ? 1 17 ? Leu N N 15 ? ? 1 17 ? Leu H H 1 0.782 0.041 ? ? ? ? ? ? ? ? ? ? ? 1
+9 ? ? 1 18 ? Asp N N 15 ? ? 1 18 ? Asp H H 1 0.787 0.039 ? ? ? ? ? ? ? ? ? ? ? 1
+10 ? ? 1 19 ? Gln N N 15 ? ? 1 19 ? Gln H H 1 0.792 0.04 ? ? ? ? ? ? ? ? ? ? ? 1
+11 ? ? 1 20 ? Asp N N 15 ? ? 1 20 ? Asp H H 1 0.759 0.045 ? ? ? ? ? ? ? ? ? ? ? 1
+12 ? ? 1 21 ? Leu N N 15 ? ? 1 21 ? Leu H H 1 0.763 0.046 ? ? ? ? ? ? ? ? ? ? ? 1
+13 ? ? 1 22 ? Thr N N 15 ? ? 1 22 ? Thr H H 1 0.766 0.038 ? ? ? ? ? ? ? ? ? ? ? 1
+14 ? ? 1 23 ? Lys N N 15 ? ? 1 23 ? Lys H H 1 0.805 0.042 ? ? ? ? ? ? ? ? ? ? ? 1
+15 ? ? 1 24 ? Gln N N 15 ? ? 1 24 ? Gln H H 1 0.802 0.034 ? ? ? ? ? ? ? ? ? ? ? 1
+16 ? ? 1 25 ? Met N N 15 ? ? 1 25 ? Met H H 1 0.782 0.038 ? ? ? ? ? ? ? ? ? ? ? 1
+17 ? ? 1 26 ? Arg N N 15 ? ? 1 26 ? Arg H H 1 0.812 0.042 ? ? ? ? ? ? ? ? ? ? ? 1
+18 ? ? 1 27 ? Leu N N 15 ? ? 1 27 ? Leu H H 1 0.772 0.034 ? ? ? ? ? ? ? ? ? ? ? 1
+19 ? ? 1 28 ? Arg N N 15 ? ? 1 28 ? Arg H H 1 0.789 0.039 ? ? ? ? ? ? ? ? ? ? ? 1
+20 ? ? 1 29 ? Val N N 15 ? ? 1 29 ? Val H H 1 0.764 0.042 ? ? ? ? ? ? ? ? ? ? ? 1
+21 ? ? 1 30 ? Glu N N 15 ? ? 1 30 ? Glu H H 1 0.768 0.035 ? ? ? ? ? ? ? ? ? ? ? 1
+22 ? ? 1 31 ? Ser N N 15 ? ? 1 31 ? Ser H H 1 0.779 0.038 ? ? ? ? ? ? ? ? ? ? ? 1
+23 ? ? 1 32 ? Leu N N 15 ? ? 1 32 ? Leu H H 1 0.798 0.041 ? ? ? ? ? ? ? ? ? ? ? 1
+24 ? ? 1 33 ? Lys N N 15 ? ? 1 33 ? Lys H H 1 0.782 0.029 ? ? ? ? ? ? ? ? ? ? ? 1
+25 ? ? 1 35 ? Arg N N 15 ? ? 1 35 ? Arg H H 1 0.676 0.034 ? ? ? ? ? ? ? ? ? ? ? 1
+26 ? ? 1 36 ? Gly N N 15 ? ? 1 36 ? Gly H H 1 0.63 0.033 ? ? ? ? ? ? ? ? ? ? ? 1
+27 ? ? 1 37 ? Glu N N 15 ? ? 1 37 ? Glu H H 1 0.59 0.029 ? ? ? ? ? ? ? ? ? ? ? 1
+28 ? ? 1 38 ? Lys N N 15 ? ? 1 38 ? Lys H H 1 0.501 0.031 ? ? ? ? ? ? ? ? ? ? ? 1
+29 ? ? 1 39 ? Lys N N 15 ? ? 1 39 ? Lys H H 1 0.397 0.063 ? ? ? ? ? ? ? ? ? ? ? 1
+30 ? ? 1 40 ? Gln N N 15 ? ? 1 40 ? Gln H H 1 0.43 0.065 ? ? ? ? ? ? ? ? ? ? ? 1
+31 ? ? 1 41 ? Asp N N 15 ? ? 1 41 ? Asp H H 1 0.552 0.037 ? ? ? ? ? ? ? ? ? ? ? 1
+32 ? ? 1 43 ? Glu N N 15 ? ? 1 43 ? Glu H H 1 0.711 0.04 ? ? ? ? ? ? ? ? ? ? ? 1
+33 ? ? 1 44 ? Lys N N 15 ? ? 1 44 ? Lys H H 1 0.725 0.041 ? ? ? ? ? ? ? ? ? ? ? 1
+34 ? ? 1 45 ? Leu N N 15 ? ? 1 45 ? Leu H H 1 0.611 0.03 ? ? ? ? ? ? ? ? ? ? ? 1
+35 ? ? 1 46 ? Leu N N 15 ? ? 1 46 ? Leu H H 1 0.72 0.049 ? ? ? ? ? ? ? ? ? ? ? 1
+36 ? ? 1 47 ? Arg N N 15 ? ? 1 47 ? Arg H H 1 0.694 0.033 ? ? ? ? ? ? ? ? ? ? ? 1
+37 ? ? 1 49 ? Ala N N 15 ? ? 1 49 ? Ala H H 1 0.76 0.038 ? ? ? ? ? ? ? ? ? ? ? 1
+38 ? ? 1 50 ? Glu N N 15 ? ? 1 50 ? Glu H H 1 0.794 0.041 ? ? ? ? ? ? ? ? ? ? ? 1
+39 ? ? 1 51 ? Ser N N 15 ? ? 1 51 ? Ser H H 1 0.786 0.047 ? ? ? ? ? ? ? ? ? ? ? 1
+40 ? ? 1 53 ? Tyr N N 15 ? ? 1 53 ? Tyr H H 1 0.779 0.038 ? ? ? ? ? ? ? ? ? ? ? 1
+41 ? ? 1 54 ? Arg N N 15 ? ? 1 54 ? Arg H H 1 0.763 0.055 ? ? ? ? ? ? ? ? ? ? ? 1
+42 ? ? 1 55 ? Leu N N 15 ? ? 1 55 ? Leu H H 1 0.815 0.042 ? ? ? ? ? ? ? ? ? ? ? 1
+43 ? ? 1 56 ? Asp N N 15 ? ? 1 56 ? Asp H H 1 0.783 0.039 ? ? ? ? ? ? ? ? ? ? ? 1
+44 ? ? 1 57 ? Glu N N 15 ? ? 1 57 ? Glu H H 1 0.668 0.036 ? ? ? ? ? ? ? ? ? ? ? 1
+45 ? ? 1 58 ? Ile N N 15 ? ? 1 58 ? Ile H H 1 0.642 0.031 ? ? ? ? ? ? ? ? ? ? ? 1
+46 ? ? 1 59 ? Gln N N 15 ? ? 1 59 ? Gln H H 1 0.638 0.055 ? ? ? ? ? ? ? ? ? ? ? 1
+47 ? ? 1 60 ? Gln N N 15 ? ? 1 60 ? Gln H H 1 0.628 0.035 ? ? ? ? ? ? ? ? ? ? ? 1
+48 ? ? 1 62 ? Lys N N 15 ? ? 1 62 ? Lys H H 1 0.62 0.035 ? ? ? ? ? ? ? ? ? ? ? 1
+49 ? ? 1 63 ? Leu N N 15 ? ? 1 63 ? Leu H H 1 0.679 0.033 ? ? ? ? ? ? ? ? ? ? ? 1
+50 ? ? 1 64 ? Gln N N 15 ? ? 1 64 ? Gln H H 1 0.723 0.036 ? ? ? ? ? ? ? ? ? ? ? 1
+51 ? ? 1 65 ? Phe N N 15 ? ? 1 65 ? Phe H H 1 0.674 0.042 ? ? ? ? ? ? ? ? ? ? ? 1
+52 ? ? 1 66 ? Asp N N 15 ? ? 1 66 ? Asp H H 1 0.681 0.051 ? ? ? ? ? ? ? ? ? ? ? 1
+53 ? ? 1 67 ? His N N 15 ? ? 1 67 ? His H H 1 0.709 0.058 ? ? ? ? ? ? ? ? ? ? ? 1
+54 ? ? 1 68 ? Trp N N 15 ? ? 1 68 ? Trp H H 1 0.753 0.039 ? ? ? ? ? ? ? ? ? ? ? 1
+55 ? ? 1 69 ? Asp N N 15 ? ? 1 69 ? Asp H H 1 0.765 0.047 ? ? ? ? ? ? ? ? ? ? ? 1
+56 ? ? 1 70 ? Val N N 15 ? ? 1 70 ? Val H H 1 0.789 0.034 ? ? ? ? ? ? ? ? ? ? ? 1
+57 ? ? 1 71 ? Val N N 15 ? ? 1 71 ? Val H H 1 0.781 0.035 ? ? ? ? ? ? ? ? ? ? ? 1
+58 ? ? 1 72 ? Leu N N 15 ? ? 1 72 ? Leu H H 1 0.773 0.036 ? ? ? ? ? ? ? ? ? ? ? 1
+59 ? ? 1 73 ? Asp N N 15 ? ? 1 73 ? Asp H H 1 0.768 0.036 ? ? ? ? ? ? ? ? ? ? ? 1
+60 ? ? 1 74 ? Lys N N 15 ? ? 1 74 ? Lys H H 1 0.791 0.036 ? ? ? ? ? ? ? ? ? ? ? 1
+61 ? ? 1 76 ? Gly N N 15 ? ? 1 76 ? Gly H H 1 0.787 0.039 ? ? ? ? ? ? ? ? ? ? ? 1
+62 ? ? 1 77 ? Lys N N 15 ? ? 1 77 ? Lys H H 1 0.773 0.034 ? ? ? ? ? ? ? ? ? ? ? 1
+63 ? ? 1 78 ? Val N N 15 ? ? 1 78 ? Val H H 1 0.806 0.042 ? ? ? ? ? ? ? ? ? ? ? 1
+64 ? ? 1 79 ? Thr N N 15 ? ? 1 79 ? Thr H H 1 0.781 0.036 ? ? ? ? ? ? ? ? ? ? ? 1
+65 ? ? 1 80 ? Ile N N 15 ? ? 1 80 ? Ile H H 1 0.778 0.035 ? ? ? ? ? ? ? ? ? ? ? 1
+66 ? ? 1 81 ? Thr N N 15 ? ? 1 81 ? Thr H H 1 0.801 0.042 ? ? ? ? ? ? ? ? ? ? ? 1
+67 ? ? 1 82 ? Gly N N 15 ? ? 1 82 ? Gly H H 1 0.786 0.033 ? ? ? ? ? ? ? ? ? ? ? 1
+68 ? ? 1 83 ? Thr N N 15 ? ? 1 83 ? Thr H H 1 0.805 0.04 ? ? ? ? ? ? ? ? ? ? ? 1
+69 ? ? 1 84 ? Ser N N 15 ? ? 1 84 ? Ser H H 1 0.75 0.033 ? ? ? ? ? ? ? ? ? ? ? 1
+70 ? ? 1 86 ? Asn N N 15 ? ? 1 86 ? Asn H H 1 0.742 0.046 ? ? ? ? ? ? ? ? ? ? ? 1
+71 ? ? 1 87 ? Trp N N 15 ? ? 1 87 ? Trp H H 1 0.73 0.053 ? ? ? ? ? ? ? ? ? ? ? 1
+72 ? ? 1 90 ? Asp N N 15 ? ? 1 90 ? Asp H H 1 0.689 0.044 ? ? ? ? ? ? ? ? ? ? ? 1
+73 ? ? 1 91 ? Leu N N 15 ? ? 1 91 ? Leu H H 1 0.674 0.051 ? ? ? ? ? ? ? ? ? ? ? 1
+74 ? ? 1 92 ? Thr N N 15 ? ? 1 92 ? Thr H H 1 0.657 0.035 ? ? ? ? ? ? ? ? ? ? ? 1
+75 ? ? 1 94 ? Leu N N 15 ? ? 1 94 ? Leu H H 1 0.708 0.041 ? ? ? ? ? ? ? ? ? ? ? 1
+76 ? ? 1 95 ? Met N N 15 ? ? 1 95 ? Met H H 1 0.72 0.041 ? ? ? ? ? ? ? ? ? ? ? 1
+77 ? ? 1 96 ? Thr N N 15 ? ? 1 96 ? Thr H H 1 0.703 0.053 ? ? ? ? ? ? ? ? ? ? ? 1
+78 ? ? 1 97 ? Arg N N 15 ? ? 1 97 ? Arg H H 1 0.56 0.045 ? ? ? ? ? ? ? ? ? ? ? 1
+79 ? ? 1 98 ? Gln N N 15 ? ? 1 98 ? Gln H H 1 0.734 0.036 ? ? ? ? ? ? ? ? ? ? ? 1
+80 ? ? 1 99 ? Leu N N 15 ? ? 1 99 ? Leu H H 1 0.778 0.038 ? ? ? ? ? ? ? ? ? ? ? 1
+81 ? ? 1 100 ? Leu N N 15 ? ? 1 100 ? Leu H H 1 0.798 0.042 ? ? ? ? ? ? ? ? ? ? ? 1
+82 ? ? 1 101 ? Asp N N 15 ? ? 1 101 ? Asp H H 1 0.785 0.035 ? ? ? ? ? ? ? ? ? ? ? 1
+83 ? ? 1 103 ? Ala N N 15 ? ? 1 103 ? Ala H H 1 0.768 0.036 ? ? ? ? ? ? ? ? ? ? ? 1
+84 ? ? 1 104 ? Ala N N 15 ? ? 1 104 ? Ala H H 1 0.801 0.047 ? ? ? ? ? ? ? ? ? ? ? 1
+85 ? ? 1 105 ? Ile N N 15 ? ? 1 105 ? Ile H H 1 0.778 0.053 ? ? ? ? ? ? ? ? ? ? ? 1
+86 ? ? 1 106 ? Phe N N 15 ? ? 1 106 ? Phe H H 1 0.789 0.059 ? ? ? ? ? ? ? ? ? ? ? 1
+87 ? ? 1 107 ? Trp N N 15 ? ? 1 107 ? Trp H H 1 0.794 0.039 ? ? ? ? ? ? ? ? ? ? ? 1
+88 ? ? 1 108 ? Arg N N 15 ? ? 1 108 ? Arg H H 1 0.769 0.053 ? ? ? ? ? ? ? ? ? ? ? 1
+89 ? ? 1 109 ? Lys N N 15 ? ? 1 109 ? Lys H H 1 0.775 0.032 ? ? ? ? ? ? ? ? ? ? ? 1
+90 ? ? 1 110 ? Glu N N 15 ? ? 1 110 ? Glu H H 1 0.762 0.058 ? ? ? ? ? ? ? ? ? ? ? 1
+91 ? ? 1 111 ? Asp N N 15 ? ? 1 111 ? Asp H H 1 0.603 0.029 ? ? ? ? ? ? ? ? ? ? ? 1
+92 ? ? 1 113 ? Asp N N 15 ? ? 1 113 ? Asp H H 1 0.658 0.032 ? ? ? ? ? ? ? ? ? ? ? 1
+93 ? ? 1 114 ? Ala N N 15 ? ? 1 114 ? Ala H H 1 0.585 0.022 ? ? ? ? ? ? ? ? ? ? ? 1
+94 ? ? 1 115 ? Met N N 15 ? ? 1 115 ? Met H H 1 0.771 0.061 ? ? ? ? ? ? ? ? ? ? ? 1
+95 ? ? 1 116 ? Asp N N 15 ? ? 1 116 ? Asp H H 1 0.774 0.055 ? ? ? ? ? ? ? ? ? ? ? 1
+96 ? ? 1 119 ? Glu N N 15 ? ? 1 119 ? Glu H H 1 0.783 0.033 ? ? ? ? ? ? ? ? ? ? ? 1
+97 ? ? 1 121 ? Asp N N 15 ? ? 1 121 ? Asp H H 1 0.775 0.035 ? ? ? ? ? ? ? ? ? ? ? 1
+98 ? ? 1 123 ? Leu N N 15 ? ? 1 123 ? Leu H H 1 0.774 0.038 ? ? ? ? ? ? ? ? ? ? ? 1
+99 ? ? 1 124 ? Glu N N 15 ? ? 1 124 ? Glu H H 1 0.801 0.037 ? ? ? ? ? ? ? ? ? ? ? 1
+100 ? ? 1 125 ? Phe N N 15 ? ? 1 125 ? Phe H H 1 0.768 0.037 ? ? ? ? ? ? ? ? ? ? ? 1
+101 ? ? 1 126 ? Gly N N 15 ? ? 1 126 ? Gly H H 1 0.771 0.035 ? ? ? ? ? ? ? ? ? ? ? 1
+102 ? ? 1 127 ? Glu N N 15 ? ? 1 127 ? Glu H H 1 0.789 0.038 ? ? ? ? ? ? ? ? ? ? ? 1
+103 ? ? 1 129 ? Leu N N 15 ? ? 1 129 ? Leu H H 1 0.783 0.034 ? ? ? ? ? ? ? ? ? ? ? 1
+104 ? ? 1 130 ? Ser N N 15 ? ? 1 130 ? Ser H H 1 0.794 0.033 ? ? ? ? ? ? ? ? ? ? ? 1
+105 ? ? 1 131 ? Asp N N 15 ? ? 1 131 ? Asp H H 1 0.771 0.033 ? ? ? ? ? ? ? ? ? ? ? 1
+106 ? ? 1 132 ? Leu N N 15 ? ? 1 132 ? Leu H H 1 0.798 0.033 ? ? ? ? ? ? ? ? ? ? ? 1
+107 ? ? 1 133 ? Ala N N 15 ? ? 1 133 ? Ala H H 1 0.804 0.041 ? ? ? ? ? ? ? ? ? ? ? 1
+108 ? ? 1 134 ? Lys N N 15 ? ? 1 134 ? Lys H H 1 0.797 0.036 ? ? ? ? ? ? ? ? ? ? ? 1
+109 ? ? 1 135 ? Ile N N 15 ? ? 1 135 ? Ile H H 1 0.785 0.039 ? ? ? ? ? ? ? ? ? ? ? 1
+110 ? ? 1 136 ? Arg N N 15 ? ? 1 136 ? Arg H H 1 0.767 0.037 ? ? ? ? ? ? ? ? ? ? ? 1
+111 ? ? 1 137 ? Lys N N 15 ? ? 1 137 ? Lys H H 1 0.761 0.036 ? ? ? ? ? ? ? ? ? ? ? 1
+112 ? ? 1 138 ? Val N N 15 ? ? 1 138 ? Val H H 1 0.787 0.039 ? ? ? ? ? ? ? ? ? ? ? 1
+113 ? ? 1 139 ? Met N N 15 ? ? 1 139 ? Met H H 1 0.776 0.038 ? ? ? ? ? ? ? ? ? ? ? 1
+114 ? ? 1 140 ? Tyr N N 15 ? ? 1 140 ? Tyr H H 1 0.8 0.041 ? ? ? ? ? ? ? ? ? ? ? 1
+115 ? ? 1 141 ? Phe N N 15 ? ? 1 141 ? Phe H H 1 0.791 0.038 ? ? ? ? ? ? ? ? ? ? ? 1
+116 ? ? 1 142 ? Leu N N 15 ? ? 1 142 ? Leu H H 1 0.769 0.047 ? ? ? ? ? ? ? ? ? ? ? 1
+117 ? ? 1 143 ? Ile N N 15 ? ? 1 143 ? Ile H H 1 0.792 0.039 ? ? ? ? ? ? ? ? ? ? ? 1
+118 ? ? 1 144 ? Thr N N 15 ? ? 1 144 ? Thr H H 1 0.803 0.042 ? ? ? ? ? ? ? ? ? ? ? 1
+119 ? ? 1 145 ? Phe N N 15 ? ? 1 145 ? Phe H H 1 0.735 0.033 ? ? ? ? ? ? ? ? ? ? ? 1
+120 ? ? 1 146 ? Gly N N 15 ? ? 1 146 ? Gly H H 1 0.709 0.039 ? ? ? ? ? ? ? ? ? ? ? 1
+121 ? ? 1 147 ? Glu N N 15 ? ? 1 147 ? Glu H H 1 0.723 0.035 ? ? ? ? ? ? ? ? ? ? ? 1
+122 ? ? 1 148 ? Gly N N 15 ? ? 1 148 ? Gly H H 1 0.715 0.035 ? ? ? ? ? ? ? ? ? ? ? 1
+123 ? ? 1 149 ? Val N N 15 ? ? 1 149 ? Val H H 1 0.721 0.035 ? ? ? ? ? ? ? ? ? ? ? 1
+124 ? ? 1 150 ? Glu N N 15 ? ? 1 150 ? Glu H H 1 0.738 0.035 ? ? ? ? ? ? ? ? ? ? ? 1
+125 ? ? 1 152 ? Ala N N 15 ? ? 1 152 ? Ala H H 1 0.832 0.045 ? ? ? ? ? ? ? ? ? ? ? 1
+126 ? ? 1 153 ? Asn N N 15 ? ? 1 153 ? Asn H H 1 0.796 0.049 ? ? ? ? ? ? ? ? ? ? ? 1
+127 ? ? 1 154 ? Leu N N 15 ? ? 1 154 ? Leu H H 1 0.782 0.039 ? ? ? ? ? ? ? ? ? ? ? 1
+128 ? ? 1 155 ? Lys N N 15 ? ? 1 155 ? Lys H H 1 0.777 0.033 ? ? ? ? ? ? ? ? ? ? ? 1
+129 ? ? 1 156 ? Ala N N 15 ? ? 1 156 ? Ala H H 1 0.793 0.036 ? ? ? ? ? ? ? ? ? ? ? 1
+130 ? ? 1 157 ? Ser N N 15 ? ? 1 157 ? Ser H H 1 0.803 0.042 ? ? ? ? ? ? ? ? ? ? ? 1
+131 ? ? 1 158 ? Val N N 15 ? ? 1 158 ? Val H H 1 0.796 0.037 ? ? ? ? ? ? ? ? ? ? ? 1
+132 ? ? 1 159 ? Val N N 15 ? ? 1 159 ? Val H H 1 0.752 0.036 ? ? ? ? ? ? ? ? ? ? ? 1
+133 ? ? 1 160 ? Phe N N 15 ? ? 1 160 ? Phe H H 1 0.787 0.035 ? ? ? ? ? ? ? ? ? ? ? 1
+134 ? ? 1 161 ? Asn N N 15 ? ? 1 161 ? Asn H H 1 0.773 0.034 ? ? ? ? ? ? ? ? ? ? ? 1
+135 ? ? 1 162 ? Gln N N 15 ? ? 1 162 ? Gln H H 1 0.56 0.045 ? ? ? ? ? ? ? ? ? ? ? 1
+
+   stop_
+
+save_
+
+save_auto_relaxation_3
+   _Auto_relaxation_list.Sf_category auto_relaxation
+   _Auto_relaxation_list.Sf_framecode "800.0 MHz R1 relaxation 3"
+   _Auto_relaxation_list.Entry_ID ?
+   _Auto_relaxation_list.ID 3
+   _Auto_relaxation_list.Data_file_name ?
+   _Auto_relaxation_list.Sample_condition_list_ID ?
+   _Auto_relaxation_list.Sample_condition_list_label $conditions_1
+   _Auto_relaxation_list.Temp_calibration_method methanol
+   _Auto_relaxation_list.Temp_control_method "single fid interleaving"
+   _Auto_relaxation_list.Spectrometer_frequency_1H 800.0
+   _Auto_relaxation_list.Common_relaxation_type_name R1
+   _Auto_relaxation_list.Relaxation_coherence_type Iz
+   _Auto_relaxation_list.Relaxation_val_units s-1
+   _Auto_relaxation_list.Relaxation_val_type height
+   _Auto_relaxation_list.Rex_units ?
+   _Auto_relaxation_list.Details ?
+   _Auto_relaxation_list.Text_data_format ?
+   _Auto_relaxation_list.Text_data ?
+   loop_
+      _Auto_relaxation_experiment.Experiment_ID
+      _Auto_relaxation_experiment.Experiment_name
+      _Auto_relaxation_experiment.Sample_ID
+      _Auto_relaxation_experiment.Sample_label
+      _Auto_relaxation_experiment.Sample_state
+      _Auto_relaxation_experiment.Entry_ID
+      _Auto_relaxation_experiment.Auto_relaxation_list_ID
+
+? ? ? $sample_1 ? ? ?
+
+   stop_
+   loop_
+      _Auto_relaxation_software.Software_ID
+      _Auto_relaxation_software.Software_label
+      _Auto_relaxation_software.Method_ID
+      _Auto_relaxation_software.Method_label
+      _Auto_relaxation_software.Entry_ID
+      _Auto_relaxation_software.Auto_relaxation_list_ID
+
+? ? ? ? ? ?
+
+   stop_
+   loop_
+      _Auto_relaxation.ID
+      _Auto_relaxation.Assembly_ID
+      _Auto_relaxation.Assembly_atom_ID
+      _Auto_relaxation.Entity_assembly_ID
+      _Auto_relaxation.Entity_ID
+      _Auto_relaxation.Comp_index_ID
+      _Auto_relaxation.Seq_ID
+      _Auto_relaxation.Comp_ID
+      _Auto_relaxation.Atom_ID
+      _Auto_relaxation.Atom_type
+      _Auto_relaxation.Atom_isotope_number
+      _Auto_relaxation.Auto_relaxation_val
+      _Auto_relaxation.Auto_relaxation_val_err
+      _Auto_relaxation.Rex_val
+      _Auto_relaxation.Rex_err
+      _Auto_relaxation.Resonance_ID
+      _Auto_relaxation.Auth_entity_assembly_ID
+      _Auto_relaxation.Auth_seq_ID
+      _Auto_relaxation.Auth_comp_ID
+      _Auto_relaxation.Auth_atom_ID
+      _Auto_relaxation.Entry_ID
+      _Auto_relaxation.Auto_relaxation_list_ID
+
+1 ? ? ? 1 9 ? Gln N N 15 0.89 0.038 ? ? ? ? ? ? ? ? 3
+2 ? ? ? 1 10 ? Gln N N 15 0.85 0.028 ? ? ? ? ? ? ? ? 3
+3 ? ? ? 1 11 ? Leu N N 15 0.9 0.027 ? ? ? ? ? ? ? ? 3
+4 ? ? ? 1 12 ? Asp N N 15 0.88 0.026 ? ? ? ? ? ? ? ? 3
+5 ? ? ? 1 13 ? Met N N 15 0.9 0.027 ? ? ? ? ? ? ? ? 3
+6 ? ? ? 1 15 ? Leu N N 15 0.91 0.031 ? ? ? ? ? ? ? ? 3
+7 ? ? ? 1 16 ? Val N N 15 0.92 0.027 ? ? ? ? ? ? ? ? 3
+8 ? ? ? 1 17 ? Leu N N 15 0.947 0.032 ? ? ? ? ? ? ? ? 3
+9 ? ? ? 1 18 ? Asp N N 15 0.96 0.03 ? ? ? ? ? ? ? ? 3
+10 ? ? ? 1 19 ? Gln N N 15 0.88 0.03 ? ? ? ? ? ? ? ? 3
+11 ? ? ? 1 20 ? Asp N N 15 0.83 0.034 ? ? ? ? ? ? ? ? 3
+12 ? ? ? 1 21 ? Leu N N 15 0.85 0.025 ? ? ? ? ? ? ? ? 3
+13 ? ? ? 1 22 ? Thr N N 15 0.86 0.031 ? ? ? ? ? ? ? ? 3
+14 ? ? ? 1 23 ? Lys N N 15 0.83 0.024 ? ? ? ? ? ? ? ? 3
+15 ? ? ? 1 24 ? Gln N N 15 0.82 0.024 ? ? ? ? ? ? ? ? 3
+16 ? ? ? 1 25 ? Met N N 15 0.861 0.025 ? ? ? ? ? ? ? ? 3
+17 ? ? ? 1 26 ? Arg N N 15 0.868 0.026 ? ? ? ? ? ? ? ? 3
+18 ? ? ? 1 27 ? Leu N N 15 0.821 0.024 ? ? ? ? ? ? ? ? 3
+19 ? ? ? 1 28 ? Arg N N 15 0.832 0.024 ? ? ? ? ? ? ? ? 3
+20 ? ? ? 1 29 ? Val N N 15 0.825 0.024 ? ? ? ? ? ? ? ? 3
+21 ? ? ? 1 30 ? Glu N N 15 0.83 0.024 ? ? ? ? ? ? ? ? 3
+22 ? ? ? 1 31 ? Ser N N 15 0.84 0.025 ? ? ? ? ? ? ? ? 3
+23 ? ? ? 1 32 ? Leu N N 15 0.83 0.025 ? ? ? ? ? ? ? ? 3
+24 ? ? ? 1 33 ? Lys N N 15 0.837 0.026 ? ? ? ? ? ? ? ? 3
+25 ? ? ? 1 35 ? Arg N N 15 0.863 0.029 ? ? ? ? ? ? ? ? 3
+26 ? ? ? 1 36 ? Gly N N 15 0.963 0.031 ? ? ? ? ? ? ? ? 3
+27 ? ? ? 1 37 ? Glu N N 15 0.992 0.049 ? ? ? ? ? ? ? ? 3
+28 ? ? ? 1 38 ? Lys N N 15 1.215 0.07 ? ? ? ? ? ? ? ? 3
+29 ? ? ? 1 39 ? Lys N N 15 1.248 0.085 ? ? ? ? ? ? ? ? 3
+30 ? ? ? 1 40 ? Gln N N 15 1.276 0.038 ? ? ? ? ? ? ? ? 3
+31 ? ? ? 1 41 ? Asp N N 15 0.96 0.026 ? ? ? ? ? ? ? ? 3
+32 ? ? ? 1 43 ? Glu N N 15 0.89 0.026 ? ? ? ? ? ? ? ? 3
+33 ? ? ? 1 44 ? Lys N N 15 0.93 0.027 ? ? ? ? ? ? ? ? 3
+34 ? ? ? 1 45 ? Leu N N 15 0.97 0.029 ? ? ? ? ? ? ? ? 3
+35 ? ? ? 1 46 ? Leu N N 15 0.93 0.06 ? ? ? ? ? ? ? ? 3
+36 ? ? ? 1 47 ? Arg N N 15 0.92 0.03 ? ? ? ? ? ? ? ? 3
+37 ? ? ? 1 49 ? Ala N N 15 0.85 0.025 ? ? ? ? ? ? ? ? 3
+38 ? ? ? 1 50 ? Glu N N 15 0.871 0.032 ? ? ? ? ? ? ? ? 3
+39 ? ? ? 1 51 ? Ser N N 15 0.893 0.027 ? ? ? ? ? ? ? ? 3
+40 ? ? ? 1 53 ? Tyr N N 15 0.942 0.031 ? ? ? ? ? ? ? ? 3
+41 ? ? ? 1 54 ? Arg N N 15 0.873 0.029 ? ? ? ? ? ? ? ? 3
+42 ? ? ? 1 55 ? Leu N N 15 0.94 0.039 ? ? ? ? ? ? ? ? 3
+43 ? ? ? 1 56 ? Asp N N 15 0.9 0.027 ? ? ? ? ? ? ? ? 3
+44 ? ? ? 1 57 ? Glu N N 15 0.85 0.059 ? ? ? ? ? ? ? ? 3
+45 ? ? ? 1 58 ? Ile N N 15 0.87 0.026 ? ? ? ? ? ? ? ? 3
+46 ? ? ? 1 59 ? Gln N N 15 0.91 0.047 ? ? ? ? ? ? ? ? 3
+47 ? ? ? 1 60 ? Gln N N 15 0.93 0.035 ? ? ? ? ? ? ? ? 3
+48 ? ? ? 1 62 ? Lys N N 15 0.96 0.028 ? ? ? ? ? ? ? ? 3
+49 ? ? ? 1 63 ? Leu N N 15 0.93 0.027 ? ? ? ? ? ? ? ? 3
+50 ? ? ? 1 64 ? Gln N N 15 0.88 0.026 ? ? ? ? ? ? ? ? 3
+51 ? ? ? 1 65 ? Phe N N 15 1.0 0.03 ? ? ? ? ? ? ? ? 3
+52 ? ? ? 1 66 ? Asp N N 15 0.99 0.029 ? ? ? ? ? ? ? ? 3
+53 ? ? ? 1 67 ? His N N 15 0.97 0.029 ? ? ? ? ? ? ? ? 3
+54 ? ? ? 1 68 ? Trp N N 15 0.95 0.028 ? ? ? ? ? ? ? ? 3
+55 ? ? ? 1 69 ? Asp N N 15 0.91 0.029 ? ? ? ? ? ? ? ? 3
+56 ? ? ? 1 70 ? Val N N 15 0.92 0.025 ? ? ? ? ? ? ? ? 3
+57 ? ? ? 1 71 ? Val N N 15 0.93 0.027 ? ? ? ? ? ? ? ? 3
+58 ? ? ? 1 72 ? Leu N N 15 0.83 0.024 ? ? ? ? ? ? ? ? 3
+59 ? ? ? 1 73 ? Asp N N 15 0.89 0.026 ? ? ? ? ? ? ? ? 3
+60 ? ? ? 1 74 ? Lys N N 15 0.91 0.031 ? ? ? ? ? ? ? ? 3
+61 ? ? ? 1 76 ? Gly N N 15 0.85 0.025 ? ? ? ? ? ? ? ? 3
+62 ? ? ? 1 77 ? Lys N N 15 0.85 0.031 ? ? ? ? ? ? ? ? 3
+63 ? ? ? 1 78 ? Val N N 15 0.87 0.036 ? ? ? ? ? ? ? ? 3
+64 ? ? ? 1 79 ? Thr N N 15 0.87 0.026 ? ? ? ? ? ? ? ? 3
+65 ? ? ? 1 80 ? Ile N N 15 0.9 0.031 ? ? ? ? ? ? ? ? 3
+66 ? ? ? 1 81 ? Thr N N 15 0.93 0.027 ? ? ? ? ? ? ? ? 3
+67 ? ? ? 1 82 ? Gly N N 15 0.96 0.03 ? ? ? ? ? ? ? ? 3
+68 ? ? ? 1 83 ? Thr N N 15 0.87 0.032 ? ? ? ? ? ? ? ? 3
+69 ? ? ? 1 84 ? Ser N N 15 0.82 0.029 ? ? ? ? ? ? ? ? 3
+70 ? ? ? 1 86 ? Asn N N 15 0.91 0.031 ? ? ? ? ? ? ? ? 3
+71 ? ? ? 1 87 ? Trp N N 15 0.84 0.045 ? ? ? ? ? ? ? ? 3
+72 ? ? ? 1 90 ? Asp N N 15 0.92 0.047 ? ? ? ? ? ? ? ? 3
+73 ? ? ? 1 91 ? Leu N N 15 0.91 0.04 ? ? ? ? ? ? ? ? 3
+74 ? ? ? 1 92 ? Thr N N 15 0.925 0.033 ? ? ? ? ? ? ? ? 3
+75 ? ? ? 1 94 ? Leu N N 15 0.932 0.033 ? ? ? ? ? ? ? ? 3
+76 ? ? ? 1 95 ? Met N N 15 0.87 0.026 ? ? ? ? ? ? ? ? 3
+77 ? ? ? 1 96 ? Thr N N 15 0.88 0.026 ? ? ? ? ? ? ? ? 3
+78 ? ? ? 1 97 ? Arg N N 15 0.96 0.028 ? ? ? ? ? ? ? ? 3
+79 ? ? ? 1 98 ? Gln N N 15 0.84 0.035 ? ? ? ? ? ? ? ? 3
+80 ? ? ? 1 99 ? Leu N N 15 0.85 0.025 ? ? ? ? ? ? ? ? 3
+81 ? ? ? 1 100 ? Leu N N 15 0.961 0.032 ? ? ? ? ? ? ? ? 3
+82 ? ? ? 1 101 ? Asp N N 15 0.932 0.03 ? ? ? ? ? ? ? ? 3
+83 ? ? ? 1 103 ? Ala N N 15 0.89 0.036 ? ? ? ? ? ? ? ? 3
+84 ? ? ? 1 104 ? Ala N N 15 0.91 0.027 ? ? ? ? ? ? ? ? 3
+85 ? ? ? 1 105 ? Ile N N 15 0.84 0.025 ? ? ? ? ? ? ? ? 3
+86 ? ? ? 1 106 ? Phe N N 15 0.91 0.025 ? ? ? ? ? ? ? ? 3
+87 ? ? ? 1 107 ? Trp N N 15 0.89 0.026 ? ? ? ? ? ? ? ? 3
+88 ? ? ? 1 108 ? Arg N N 15 0.883 0.029 ? ? ? ? ? ? ? ? 3
+89 ? ? ? 1 109 ? Lys N N 15 0.871 0.031 ? ? ? ? ? ? ? ? 3
+90 ? ? ? 1 110 ? Glu N N 15 0.9 0.038 ? ? ? ? ? ? ? ? 3
+91 ? ? ? 1 111 ? Asp N N 15 0.98 0.029 ? ? ? ? ? ? ? ? 3
+92 ? ? ? 1 113 ? Asp N N 15 0.92 0.027 ? ? ? ? ? ? ? ? 3
+93 ? ? ? 1 114 ? Ala N N 15 0.92 0.039 ? ? ? ? ? ? ? ? 3
+94 ? ? ? 1 115 ? Met N N 15 0.87 0.022 ? ? ? ? ? ? ? ? 3
+95 ? ? ? 1 116 ? Asp N N 15 0.89 0.024 ? ? ? ? ? ? ? ? 3
+96 ? ? ? 1 119 ? Glu N N 15 0.9 0.035 ? ? ? ? ? ? ? ? 3
+97 ? ? ? 1 121 ? Asp N N 15 0.98 0.029 ? ? ? ? ? ? ? ? 3
+98 ? ? ? 1 123 ? Leu N N 15 1.0 0.03 ? ? ? ? ? ? ? ? 3
+99 ? ? ? 1 124 ? Glu N N 15 0.993 0.029 ? ? ? ? ? ? ? ? 3
+100 ? ? ? 1 125 ? Phe N N 15 0.951 0.028 ? ? ? ? ? ? ? ? 3
+101 ? ? ? 1 126 ? Gly N N 15 0.952 0.031 ? ? ? ? ? ? ? ? 3
+102 ? ? ? 1 127 ? Glu N N 15 0.961 0.031 ? ? ? ? ? ? ? ? 3
+103 ? ? ? 1 129 ? Leu N N 15 0.973 0.03 ? ? ? ? ? ? ? ? 3
+104 ? ? ? 1 130 ? Ser N N 15 0.962 0.032 ? ? ? ? ? ? ? ? 3
+105 ? ? ? 1 131 ? Asp N N 15 0.959 0.031 ? ? ? ? ? ? ? ? 3
+106 ? ? ? 1 132 ? Leu N N 15 0.962 0.031 ? ? ? ? ? ? ? ? 3
+107 ? ? ? 1 133 ? Ala N N 15 1.0 0.03 ? ? ? ? ? ? ? ? 3
+108 ? ? ? 1 134 ? Lys N N 15 0.97 0.031 ? ? ? ? ? ? ? ? 3
+109 ? ? ? 1 135 ? Ile N N 15 0.95 0.028 ? ? ? ? ? ? ? ? 3
+110 ? ? ? 1 136 ? Arg N N 15 0.96 0.028 ? ? ? ? ? ? ? ? 3
+111 ? ? ? 1 137 ? Lys N N 15 0.93 0.02 ? ? ? ? ? ? ? ? 3
+112 ? ? ? 1 138 ? Val N N 15 0.972 0.031 ? ? ? ? ? ? ? ? 3
+113 ? ? ? 1 139 ? Met N N 15 0.95 0.028 ? ? ? ? ? ? ? ? 3
+114 ? ? ? 1 140 ? Tyr N N 15 0.974 0.03 ? ? ? ? ? ? ? ? 3
+115 ? ? ? 1 141 ? Phe N N 15 0.98 0.029 ? ? ? ? ? ? ? ? 3
+116 ? ? ? 1 142 ? Leu N N 15 0.97 0.029 ? ? ? ? ? ? ? ? 3
+117 ? ? ? 1 143 ? Ile N N 15 0.951 0.029 ? ? ? ? ? ? ? ? 3
+118 ? ? ? 1 144 ? Thr N N 15 0.881 0.035 ? ? ? ? ? ? ? ? 3
+119 ? ? ? 1 145 ? Phe N N 15 0.81 0.064 ? ? ? ? ? ? ? ? 3
+120 ? ? ? 1 146 ? Gly N N 15 0.79 0.044 ? ? ? ? ? ? ? ? 3
+121 ? ? ? 1 147 ? Glu N N 15 0.87 0.029 ? ? ? ? ? ? ? ? 3
+122 ? ? ? 1 148 ? Gly N N 15 0.84 0.045 ? ? ? ? ? ? ? ? 3
+123 ? ? ? 1 149 ? Val N N 15 0.96 0.029 ? ? ? ? ? ? ? ? 3
+124 ? ? ? 1 150 ? Glu N N 15 0.83 0.024 ? ? ? ? ? ? ? ? 3
+125 ? ? ? 1 152 ? Ala N N 15 0.86 0.025 ? ? ? ? ? ? ? ? 3
+126 ? ? ? 1 153 ? Asn N N 15 0.98 0.035 ? ? ? ? ? ? ? ? 3
+127 ? ? ? 1 154 ? Leu N N 15 0.96 0.037 ? ? ? ? ? ? ? ? 3
+128 ? ? ? 1 155 ? Lys N N 15 0.99 0.029 ? ? ? ? ? ? ? ? 3
+129 ? ? ? 1 156 ? Ala N N 15 0.92 0.026 ? ? ? ? ? ? ? ? 3
+130 ? ? ? 1 157 ? Ser N N 15 0.93 0.027 ? ? ? ? ? ? ? ? 3
+131 ? ? ? 1 158 ? Val N N 15 0.97 0.03 ? ? ? ? ? ? ? ? 3
+132 ? ? ? 1 159 ? Val N N 15 0.93 0.027 ? ? ? ? ? ? ? ? 3
+133 ? ? ? 1 160 ? Phe N N 15 0.94 0.028 ? ? ? ? ? ? ? ? 3
+134 ? ? ? 1 161 ? Asn N N 15 0.92 0.027 ? ? ? ? ? ? ? ? 3
+135 ? ? ? 1 162 ? Gln N N 15 0.86 0.059 ? ? ? ? ? ? ? ? 3
+
+   stop_
+
+save_
+
+save_auto_relaxation_4
+   _Auto_relaxation_list.Sf_category auto_relaxation
+   _Auto_relaxation_list.Sf_framecode "800.0 MHz R2 relaxation 4"
+   _Auto_relaxation_list.Entry_ID ?
+   _Auto_relaxation_list.ID 4
+   _Auto_relaxation_list.Data_file_name ?
+   _Auto_relaxation_list.Sample_condition_list_ID ?
+   _Auto_relaxation_list.Sample_condition_list_label $conditions_1
+   _Auto_relaxation_list.Temp_calibration_method methanol
+   _Auto_relaxation_list.Temp_control_method "single fid interleaving"
+   _Auto_relaxation_list.Spectrometer_frequency_1H 800.0
+   _Auto_relaxation_list.Common_relaxation_type_name R2
+   _Auto_relaxation_list.Relaxation_coherence_type I+
+   _Auto_relaxation_list.Relaxation_val_units s-1
+   _Auto_relaxation_list.Relaxation_val_type height
+   _Auto_relaxation_list.Rex_units ?
+   _Auto_relaxation_list.Details ?
+   _Auto_relaxation_list.Text_data_format ?
+   _Auto_relaxation_list.Text_data ?
+   loop_
+      _Auto_relaxation_experiment.Experiment_ID
+      _Auto_relaxation_experiment.Experiment_name
+      _Auto_relaxation_experiment.Sample_ID
+      _Auto_relaxation_experiment.Sample_label
+      _Auto_relaxation_experiment.Sample_state
+      _Auto_relaxation_experiment.Entry_ID
+      _Auto_relaxation_experiment.Auto_relaxation_list_ID
+
+? ? ? $sample_1 ? ? ?
+
+   stop_
+   loop_
+      _Auto_relaxation_software.Software_ID
+      _Auto_relaxation_software.Software_label
+      _Auto_relaxation_software.Method_ID
+      _Auto_relaxation_software.Method_label
+      _Auto_relaxation_software.Entry_ID
+      _Auto_relaxation_software.Auto_relaxation_list_ID
+
+? ? ? ? ? ?
+
+   stop_
+   loop_
+      _Auto_relaxation.ID
+      _Auto_relaxation.Assembly_ID
+      _Auto_relaxation.Assembly_atom_ID
+      _Auto_relaxation.Entity_assembly_ID
+      _Auto_relaxation.Entity_ID
+      _Auto_relaxation.Comp_index_ID
+      _Auto_relaxation.Seq_ID
+      _Auto_relaxation.Comp_ID
+      _Auto_relaxation.Atom_ID
+      _Auto_relaxation.Atom_type
+      _Auto_relaxation.Atom_isotope_number
+      _Auto_relaxation.Auto_relaxation_val
+      _Auto_relaxation.Auto_relaxation_val_err
+      _Auto_relaxation.Rex_val
+      _Auto_relaxation.Rex_err
+      _Auto_relaxation.Resonance_ID
+      _Auto_relaxation.Auth_entity_assembly_ID
+      _Auto_relaxation.Auth_seq_ID
+      _Auto_relaxation.Auth_comp_ID
+      _Auto_relaxation.Auth_atom_ID
+      _Auto_relaxation.Entry_ID
+      _Auto_relaxation.Auto_relaxation_list_ID
+
+1 ? ? ? 1 9 ? Gln N N 15 11.273 0.804 ? ? ? ? ? ? ? ? 4
+2 ? ? ? 1 10 ? Gln N N 15 11.615 0.505 ? ? ? ? ? ? ? ? 4
+3 ? ? ? 1 11 ? Leu N N 15 11.86 0.593 ? ? ? ? ? ? ? ? 4
+4 ? ? ? 1 12 ? Asp N N 15 12.14 0.607 ? ? ? ? ? ? ? ? 4
+5 ? ? ? 1 13 ? Met N N 15 12.17 0.61 ? ? ? ? ? ? ? ? 4
+6 ? ? ? 1 15 ? Leu N N 15 13.41 0.78 ? ? ? ? ? ? ? ? 4
+7 ? ? ? 1 16 ? Val N N 15 13.32 0.666 ? ? ? ? ? ? ? ? 4
+8 ? ? ? 1 17 ? Leu N N 15 13.79 0.699 ? ? ? ? ? ? ? ? 4
+9 ? ? ? 1 18 ? Asp N N 15 13.53 0.676 ? ? ? ? ? ? ? ? 4
+10 ? ? ? 1 19 ? Gln N N 15 14.81 0.84 ? ? ? ? ? ? ? ? 4
+11 ? ? ? 1 20 ? Asp N N 15 15.84 0.876 ? ? ? ? ? ? ? ? 4
+12 ? ? ? 1 21 ? Leu N N 15 16.21 0.82 ? ? ? ? ? ? ? ? 4
+13 ? ? ? 1 22 ? Thr N N 15 15.97 0.798 ? ? ? ? ? ? ? ? 4
+14 ? ? ? 1 23 ? Lys N N 15 16.03 0.774 ? ? ? ? ? ? ? ? 4
+15 ? ? ? 1 24 ? Gln N N 15 16.76 0.888 ? ? ? ? ? ? ? ? 4
+16 ? ? ? 1 25 ? Met N N 15 15.59 0.779 ? ? ? ? ? ? ? ? 4
+17 ? ? ? 1 26 ? Arg N N 15 16.83 0.841 ? ? ? ? ? ? ? ? 4
+18 ? ? ? 1 27 ? Leu N N 15 16.89 0.852 ? ? ? ? ? ? ? ? 4
+19 ? ? ? 1 28 ? Arg N N 15 16.723 0.851 ? ? ? ? ? ? ? ? 4
+20 ? ? ? 1 29 ? Val N N 15 16.05 0.789 ? ? ? ? ? ? ? ? 4
+21 ? ? ? 1 30 ? Glu N N 15 16.23 0.811 ? ? ? ? ? ? ? ? 4
+22 ? ? ? 1 31 ? Ser N N 15 16.05 0.802 ? ? ? ? ? ? ? ? 4
+23 ? ? ? 1 32 ? Leu N N 15 16.42 0.821 ? ? ? ? ? ? ? ? 4
+24 ? ? ? 1 33 ? Lys N N 15 16.03 0.792 ? ? ? ? ? ? ? ? 4
+25 ? ? ? 1 35 ? Arg N N 15 15.47 0.823 ? ? ? ? ? ? ? ? 4
+26 ? ? ? 1 36 ? Gly N N 15 12.305 0.795 ? ? ? ? ? ? ? ? 4
+27 ? ? ? 1 37 ? Glu N N 15 12.63 0.604 ? ? ? ? ? ? ? ? 4
+28 ? ? ? 1 38 ? Lys N N 15 13.61 1.25 ? ? ? ? ? ? ? ? 4
+29 ? ? ? 1 39 ? Lys N N 15 8.45 1.42 ? ? ? ? ? ? ? ? 4
+30 ? ? ? 1 40 ? Gln N N 15 9.542 1.35 ? ? ? ? ? ? ? ? 4
+31 ? ? ? 1 41 ? Asp N N 15 12.74 0.537 ? ? ? ? ? ? ? ? 4
+32 ? ? ? 1 43 ? Glu N N 15 18.0 0.902 ? ? ? ? ? ? ? ? 4
+33 ? ? ? 1 44 ? Lys N N 15 18.5 0.975 ? ? ? ? ? ? ? ? 4
+34 ? ? ? 1 45 ? Leu N N 15 17.685 0.808 ? ? ? ? ? ? ? ? 4
+35 ? ? ? 1 46 ? Leu N N 15 18.294 0.802 ? ? ? ? ? ? ? ? 4
+36 ? ? ? 1 47 ? Arg N N 15 17.197 0.953 ? ? ? ? ? ? ? ? 4
+37 ? ? ? 1 49 ? Ala N N 15 16.985 0.949 ? ? ? ? ? ? ? ? 4
+38 ? ? ? 1 50 ? Glu N N 15 13.323 0.88 ? ? ? ? ? ? ? ? 4
+39 ? ? ? 1 51 ? Ser N N 15 12.873 0.643 ? ? ? ? ? ? ? ? 4
+40 ? ? ? 1 53 ? Tyr N N 15 12.974 0.657 ? ? ? ? ? ? ? ? 4
+41 ? ? ? 1 54 ? Arg N N 15 13.237 0.741 ? ? ? ? ? ? ? ? 4
+42 ? ? ? 1 55 ? Leu N N 15 13.94 0.754 ? ? ? ? ? ? ? ? 4
+43 ? ? ? 1 56 ? Asp N N 15 12.72 0.618 ? ? ? ? ? ? ? ? 4
+44 ? ? ? 1 57 ? Glu N N 15 12.34 0.859 ? ? ? ? ? ? ? ? 4
+45 ? ? ? 1 58 ? Ile N N 15 12.16 0.608 ? ? ? ? ? ? ? ? 4
+46 ? ? ? 1 59 ? Gln N N 15 14.34 0.85 ? ? ? ? ? ? ? ? 4
+47 ? ? ? 1 60 ? Gln N N 15 12.65 0.73 ? ? ? ? ? ? ? ? 4
+48 ? ? ? 1 62 ? Lys N N 15 15.24 0.762 ? ? ? ? ? ? ? ? 4
+49 ? ? ? 1 63 ? Leu N N 15 13.12 0.656 ? ? ? ? ? ? ? ? 4
+50 ? ? ? 1 64 ? Gln N N 15 12.91 0.645 ? ? ? ? ? ? ? ? 4
+51 ? ? ? 1 65 ? Phe N N 15 14 0.7 ? ? ? ? ? ? ? ? 4
+52 ? ? ? 1 66 ? Asp N N 15 13.07 0.653 ? ? ? ? ? ? ? ? 4
+53 ? ? ? 1 67 ? His N N 15 12.85 0.621 ? ? ? ? ? ? ? ? 4
+54 ? ? ? 1 68 ? Trp N N 15 13.14 0.657 ? ? ? ? ? ? ? ? 4
+55 ? ? ? 1 69 ? Asp N N 15 13.15 0.687 ? ? ? ? ? ? ? ? 4
+56 ? ? ? 1 70 ? Val N N 15 12.4 0.704 ? ? ? ? ? ? ? ? 4
+57 ? ? ? 1 71 ? Val N N 15 12.61 0.627 ? ? ? ? ? ? ? ? 4
+58 ? ? ? 1 72 ? Leu N N 15 12.64 0.632 ? ? ? ? ? ? ? ? 4
+59 ? ? ? 1 73 ? Asp N N 15 13.85 0.692 ? ? ? ? ? ? ? ? 4
+60 ? ? ? 1 74 ? Lys N N 15 13.41 0.66 ? ? ? ? ? ? ? ? 4
+61 ? ? ? 1 76 ? Gly N N 15 14.09 0.804 ? ? ? ? ? ? ? ? 4
+62 ? ? ? 1 77 ? Lys N N 15 14.39 0.829 ? ? ? ? ? ? ? ? 4
+63 ? ? ? 1 78 ? Val N N 15 14.513 0.836 ? ? ? ? ? ? ? ? 4
+64 ? ? ? 1 79 ? Thr N N 15 14.07 0.763 ? ? ? ? ? ? ? ? 4
+65 ? ? ? 1 80 ? Ile N N 15 13.131 0.685 ? ? ? ? ? ? ? ? 4
+66 ? ? ? 1 81 ? Thr N N 15 13.24 0.66 ? ? ? ? ? ? ? ? 4
+67 ? ? ? 1 82 ? Gly N N 15 13.13 0.656 ? ? ? ? ? ? ? ? 4
+68 ? ? ? 1 83 ? Thr N N 15 14.27 0.828 ? ? ? ? ? ? ? ? 4
+69 ? ? ? 1 84 ? Ser N N 15 18.23 1.239 ? ? ? ? ? ? ? ? 4
+70 ? ? ? 1 86 ? Asn N N 15 17.89 0.927 ? ? ? ? ? ? ? ? 4
+71 ? ? ? 1 87 ? Trp N N 15 17.54 0.904 ? ? ? ? ? ? ? ? 4
+72 ? ? ? 1 90 ? Asp N N 15 17.989 0.95 ? ? ? ? ? ? ? ? 4
+73 ? ? ? 1 91 ? Leu N N 15 17.31 0.984 ? ? ? ? ? ? ? ? 4
+74 ? ? ? 1 92 ? Thr N N 15 18.05 1.141 ? ? ? ? ? ? ? ? 4
+75 ? ? ? 1 94 ? Leu N N 15 17.29 0.813 ? ? ? ? ? ? ? ? 4
+76 ? ? ? 1 95 ? Met N N 15 17.432 0.824 ? ? ? ? ? ? ? ? 4
+77 ? ? ? 1 96 ? Thr N N 15 18.23 0.966 ? ? ? ? ? ? ? ? 4
+78 ? ? ? 1 97 ? Arg N N 15 10.53 1.526 ? ? ? ? ? ? ? ? 4
+79 ? ? ? 1 98 ? Gln N N 15 17.08 0.854 ? ? ? ? ? ? ? ? 4
+80 ? ? ? 1 99 ? Leu N N 15 15.06 0.741 ? ? ? ? ? ? ? ? 4
+81 ? ? ? 1 100 ? Leu N N 15 13.2 0.76 ? ? ? ? ? ? ? ? 4
+82 ? ? ? 1 101 ? Asp N N 15 12.851 0.622 ? ? ? ? ? ? ? ? 4
+83 ? ? ? 1 103 ? Ala N N 15 12.29 0.664 ? ? ? ? ? ? ? ? 4
+84 ? ? ? 1 104 ? Ala N N 15 12.967 0.662 ? ? ? ? ? ? ? ? 4
+85 ? ? ? 1 105 ? Ile N N 15 11.97 0.762 ? ? ? ? ? ? ? ? 4
+86 ? ? ? 1 106 ? Phe N N 15 14.025 0.939 ? ? ? ? ? ? ? ? 4
+87 ? ? ? 1 107 ? Trp N N 15 13.904 0.817 ? ? ? ? ? ? ? ? 4
+88 ? ? ? 1 108 ? Arg N N 15 13.68 0.8 ? ? ? ? ? ? ? ? 4
+89 ? ? ? 1 109 ? Lys N N 15 13.251 0.807 ? ? ? ? ? ? ? ? 4
+90 ? ? ? 1 110 ? Glu N N 15 13.44 0.822 ? ? ? ? ? ? ? ? 4
+91 ? ? ? 1 111 ? Asp N N 15 12.8 0.64 ? ? ? ? ? ? ? ? 4
+92 ? ? ? 1 113 ? Asp N N 15 12.38 0.619 ? ? ? ? ? ? ? ? 4
+93 ? ? ? 1 114 ? Ala N N 15 11.89 1.879 ? ? ? ? ? ? ? ? 4
+94 ? ? ? 1 115 ? Met N N 15 13.43 0.671 ? ? ? ? ? ? ? ? 4
+95 ? ? ? 1 116 ? Asp N N 15 14.09 0.704 ? ? ? ? ? ? ? ? 4
+96 ? ? ? 1 119 ? Glu N N 15 13.97 0.878 ? ? ? ? ? ? ? ? 4
+97 ? ? ? 1 121 ? Asp N N 15 14.05 0.727 ? ? ? ? ? ? ? ? 4
+98 ? ? ? 1 123 ? Leu N N 15 14.14 0.707 ? ? ? ? ? ? ? ? 4
+99 ? ? ? 1 124 ? Glu N N 15 13.44 0.672 ? ? ? ? ? ? ? ? 4
+100 ? ? ? 1 125 ? Phe N N 15 13.57 0.678 ? ? ? ? ? ? ? ? 4
+101 ? ? ? 1 126 ? Gly N N 15 13.78 0.726 ? ? ? ? ? ? ? ? 4
+102 ? ? ? 1 127 ? Glu N N 15 13.46 0.693 ? ? ? ? ? ? ? ? 4
+103 ? ? ? 1 129 ? Leu N N 15 13.23 0.661 ? ? ? ? ? ? ? ? 4
+104 ? ? ? 1 130 ? Ser N N 15 12.882 0.721 ? ? ? ? ? ? ? ? 4
+105 ? ? ? 1 131 ? Asp N N 15 12.78 0.721 ? ? ? ? ? ? ? ? 4
+106 ? ? ? 1 132 ? Leu N N 15 12.811 0.64 ? ? ? ? ? ? ? ? 4
+107 ? ? ? 1 133 ? Ala N N 15 13.5 0.765 ? ? ? ? ? ? ? ? 4
+108 ? ? ? 1 134 ? Lys N N 15 13.121 0.876 ? ? ? ? ? ? ? ? 4
+109 ? ? ? 1 135 ? Ile N N 15 13.876 1.308 ? ? ? ? ? ? ? ? 4
+110 ? ? ? 1 136 ? Arg N N 15 14.082 1.735 ? ? ? ? ? ? ? ? 4
+111 ? ? ? 1 137 ? Lys N N 15 13.36 0.668 ? ? ? ? ? ? ? ? 4
+112 ? ? ? 1 138 ? Val N N 15 13.23 0.686 ? ? ? ? ? ? ? ? 4
+113 ? ? ? 1 139 ? Met N N 15 12.79 0.639 ? ? ? ? ? ? ? ? 4
+114 ? ? ? 1 140 ? Tyr N N 15 14.06 0.703 ? ? ? ? ? ? ? ? 4
+115 ? ? ? 1 141 ? Phe N N 15 14.15 0.707 ? ? ? ? ? ? ? ? 4
+116 ? ? ? 1 142 ? Leu N N 15 13.62 0.681 ? ? ? ? ? ? ? ? 4
+117 ? ? ? 1 143 ? Ile N N 15 13.73 0.743 ? ? ? ? ? ? ? ? 4
+118 ? ? ? 1 144 ? Thr N N 15 13.912 0.74 ? ? ? ? ? ? ? ? 4
+119 ? ? ? 1 145 ? Phe N N 15 14.67 0.933 ? ? ? ? ? ? ? ? 4
+120 ? ? ? 1 146 ? Gly N N 15 15.34 0.767 ? ? ? ? ? ? ? ? 4
+121 ? ? ? 1 147 ? Glu N N 15 11.81 0.59 ? ? ? ? ? ? ? ? 4
+122 ? ? ? 1 148 ? Gly N N 15 12.16 0.768 ? ? ? ? ? ? ? ? 4
+123 ? ? ? 1 149 ? Val N N 15 13.11 0.655 ? ? ? ? ? ? ? ? 4
+124 ? ? ? 1 150 ? Glu N N 15 14.45 0.722 ? ? ? ? ? ? ? ? 4
+125 ? ? ? 1 152 ? Ala N N 15 15.33 0.766 ? ? ? ? ? ? ? ? 4
+126 ? ? ? 1 153 ? Asn N N 15 14.322 0.793 ? ? ? ? ? ? ? ? 4
+127 ? ? ? 1 154 ? Leu N N 15 15.04 0.887 ? ? ? ? ? ? ? ? 4
+128 ? ? ? 1 155 ? Lys N N 15 14.1 0.705 ? ? ? ? ? ? ? ? 4
+129 ? ? ? 1 156 ? Ala N N 15 12.82 0.616 ? ? ? ? ? ? ? ? 4
+130 ? ? ? 1 157 ? Ser N N 15 13.03 0.651 ? ? ? ? ? ? ? ? 4
+131 ? ? ? 1 158 ? Val N N 15 12.99 0.649 ? ? ? ? ? ? ? ? 4
+132 ? ? ? 1 159 ? Val N N 15 13.12 0.656 ? ? ? ? ? ? ? ? 4
+133 ? ? ? 1 160 ? Phe N N 15 12.7 0.615 ? ? ? ? ? ? ? ? 4
+134 ? ? ? 1 161 ? Asn N N 15 13.08 0.669 ? ? ? ? ? ? ? ? 4
+135 ? ? ? 1 162 ? Gln N N 15 11.59 0.95 ? ? ? ? ? ? ? ? 4
+
+   stop_
+
+save_
+
+save_heteronucl_NOEs_2
+   _Heteronucl_NOE_list.Sf_category heteronucl_NOEs
+   _Heteronucl_NOE_list.Sf_framecode "800.0 MHz heteronuclear NOE 2"
+   _Heteronucl_NOE_list.ID 2
+   _Heteronucl_NOE_list.Data_file_name ?
+   _Heteronucl_NOE_list.Sample_condition_list_ID ?
+   _Heteronucl_NOE_list.Sample_condition_list_label $conditions_1
+   _Heteronucl_NOE_list.Spectrometer_frequency_1H 800.0
+   _Heteronucl_NOE_list.Temp_calibration_method methanol
+   _Heteronucl_NOE_list.Temp_control_method "single fid interleaving"
+   _Heteronucl_NOE_list.Heteronuclear_NOE_val_type height
+   _Heteronucl_NOE_list.NOE_ref_val ?
+   _Heteronucl_NOE_list.NOE_ref_description ?
+   _Heteronucl_NOE_list.Details ?
+   _Heteronucl_NOE_list.Text_data_format ?
+   _Heteronucl_NOE_list.Text_data ?
+   loop_
+      _Heteronucl_NOE_experiment.Experiment_ID
+      _Heteronucl_NOE_experiment.Experiment_name
+      _Heteronucl_NOE_experiment.Sample_ID
+      _Heteronucl_NOE_experiment.Sample_label
+      _Heteronucl_NOE_experiment.Sample_state
+      _Heteronucl_NOE_experiment.Entry_ID
+      _Heteronucl_NOE_experiment.Heteronucl_NOE_list_ID
+
+? ? ? $sample_1 ? ? ?
+
+   stop_
+   loop_
+      _Heteronucl_NOE_software.Software_ID
+      _Heteronucl_NOE_software.Software_label
+      _Heteronucl_NOE_software.Method_ID
+      _Heteronucl_NOE_software.Method_label
+      _Heteronucl_NOE_software.Entry_ID
+      _Heteronucl_NOE_software.Heteronucl_NOE_list_ID
+
+? ? ? ? ? ?
+
+   stop_
+   loop_
+      _Heteronucl_NOE.ID
+      _Heteronucl_NOE.Assembly_atom_ID_1
+      _Heteronucl_NOE.Entity_assembly_ID_1
+      _Heteronucl_NOE.Entity_ID_1
+      _Heteronucl_NOE.Comp_index_ID_1
+      _Heteronucl_NOE.Seq_ID_1
+      _Heteronucl_NOE.Comp_ID_1
+      _Heteronucl_NOE.Atom_ID_1
+      _Heteronucl_NOE.Atom_type_1
+      _Heteronucl_NOE.Atom_isotope_number_1
+      _Heteronucl_NOE.Assembly_atom_ID_2
+      _Heteronucl_NOE.Entity_assembly_ID_2
+      _Heteronucl_NOE.Entity_ID_2
+      _Heteronucl_NOE.Comp_index_ID_2
+      _Heteronucl_NOE.Seq_ID_2
+      _Heteronucl_NOE.Comp_ID_2
+      _Heteronucl_NOE.Atom_ID_2
+      _Heteronucl_NOE.Atom_type_2
+      _Heteronucl_NOE.Atom_isotope_number_2
+      _Heteronucl_NOE.Val
+      _Heteronucl_NOE.Val_err
+      _Heteronucl_NOE.Resonance_ID_1
+      _Heteronucl_NOE.Resonance_ID_2
+      _Heteronucl_NOE.Auth_entity_assembly_ID_1
+      _Heteronucl_NOE.Auth_seq_ID_1
+      _Heteronucl_NOE.Auth_comp_ID_1
+      _Heteronucl_NOE.Auth_atom_ID_1
+      _Heteronucl_NOE.Auth_entity_assembly_ID_2
+      _Heteronucl_NOE.Auth_seq_ID_2
+      _Heteronucl_NOE.Auth_comp_ID_2
+      _Heteronucl_NOE.Auth_atom_ID_2
+      _Heteronucl_NOE.Entry_ID
+      _Heteronucl_NOE.Heteronucl_NOE_list_ID
+
+1 ? ? 1 9 ? Gln N N 15 ? ? 1 9 ? Gln H H 1 0.598 0.045 ? ? ? ? ? ? ? ? ? ? ? 2
+2 ? ? 1 10 ? Gln N N 15 ? ? 1 10 ? Gln H H 1 0.701 0.042 ? ? ? ? ? ? ? ? ? ? ? 2
+3 ? ? 1 11 ? Leu N N 15 ? ? 1 11 ? Leu H H 1 0.798 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+4 ? ? 1 12 ? Asp N N 15 ? ? 1 12 ? Asp H H 1 0.841 0.042 ? ? ? ? ? ? ? ? ? ? ? 2
+5 ? ? 1 13 ? Met N N 15 ? ? 1 13 ? Met H H 1 0.778 0.038 ? ? ? ? ? ? ? ? ? ? ? 2
+6 ? ? 1 15 ? Leu N N 15 ? ? 1 15 ? Leu H H 1 0.812 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+7 ? ? 1 16 ? Val N N 15 ? ? 1 16 ? Val H H 1 0.793 0.039 ? ? ? ? ? ? ? ? ? ? ? 2
+8 ? ? 1 17 ? Leu N N 15 ? ? 1 17 ? Leu H H 1 0.795 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+9 ? ? 1 18 ? Asp N N 15 ? ? 1 18 ? Asp H H 1 0.809 0.04 ? ? ? ? ? ? ? ? ? ? ? 2
+10 ? ? 1 19 ? Gln N N 15 ? ? 1 19 ? Gln H H 1 0.821 0.047 ? ? ? ? ? ? ? ? ? ? ? 2
+11 ? ? 1 20 ? Asp N N 15 ? ? 1 20 ? Asp H H 1 0.798 0.058 ? ? ? ? ? ? ? ? ? ? ? 2
+12 ? ? 1 21 ? Leu N N 15 ? ? 1 21 ? Leu H H 1 0.809 0.04 ? ? ? ? ? ? ? ? ? ? ? 2
+13 ? ? 1 22 ? Thr N N 15 ? ? 1 22 ? Thr H H 1 0.797 0.037 ? ? ? ? ? ? ? ? ? ? ? 2
+14 ? ? 1 23 ? Lys N N 15 ? ? 1 23 ? Lys H H 1 0.83 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+15 ? ? 1 24 ? Gln N N 15 ? ? 1 24 ? Gln H H 1 0.832 0.043 ? ? ? ? ? ? ? ? ? ? ? 2
+16 ? ? 1 25 ? Met N N 15 ? ? 1 25 ? Met H H 1 0.809 0.04 ? ? ? ? ? ? ? ? ? ? ? 2
+17 ? ? 1 26 ? Arg N N 15 ? ? 1 26 ? Arg H H 1 0.82 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+18 ? ? 1 27 ? Leu N N 15 ? ? 1 27 ? Leu H H 1 0.83 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+19 ? ? 1 28 ? Arg N N 15 ? ? 1 28 ? Arg H H 1 0.804 0.038 ? ? ? ? ? ? ? ? ? ? ? 2
+20 ? ? 1 29 ? Val N N 15 ? ? 1 29 ? Val H H 1 0.84 0.046 ? ? ? ? ? ? ? ? ? ? ? 2
+21 ? ? 1 30 ? Glu N N 15 ? ? 1 30 ? Glu H H 1 0.809 0.04 ? ? ? ? ? ? ? ? ? ? ? 2
+22 ? ? 1 31 ? Ser N N 15 ? ? 1 31 ? Ser H H 1 0.798 0.049 ? ? ? ? ? ? ? ? ? ? ? 2
+23 ? ? 1 32 ? Leu N N 15 ? ? 1 32 ? Leu H H 1 0.809 0.04 ? ? ? ? ? ? ? ? ? ? ? 2
+24 ? ? 1 33 ? Lys N N 15 ? ? 1 33 ? Lys H H 1 0.797 0.037 ? ? ? ? ? ? ? ? ? ? ? 2
+25 ? ? 1 35 ? Arg N N 15 ? ? 1 35 ? Arg H H 1 0.708 0.034 ? ? ? ? ? ? ? ? ? ? ? 2
+26 ? ? 1 36 ? Gly N N 15 ? ? 1 36 ? Gly H H 1 0.689 0.053 ? ? ? ? ? ? ? ? ? ? ? 2
+27 ? ? 1 37 ? Glu N N 15 ? ? 1 37 ? Glu H H 1 0.63 0.033 ? ? ? ? ? ? ? ? ? ? ? 2
+28 ? ? 1 38 ? Lys N N 15 ? ? 1 38 ? Lys H H 1 0.573 0.032 ? ? ? ? ? ? ? ? ? ? ? 2
+29 ? ? 1 39 ? Lys N N 15 ? ? 1 39 ? Lys H H 1 0.41 0.059 ? ? ? ? ? ? ? ? ? ? ? 2
+30 ? ? 1 40 ? Gln N N 15 ? ? 1 40 ? Gln H H 1 0.48 0.035 ? ? ? ? ? ? ? ? ? ? ? 2
+31 ? ? 1 41 ? Asp N N 15 ? ? 1 41 ? Asp H H 1 0.61 0.03 ? ? ? ? ? ? ? ? ? ? ? 2
+32 ? ? 1 43 ? Glu N N 15 ? ? 1 43 ? Glu H H 1 0.728 0.038 ? ? ? ? ? ? ? ? ? ? ? 2
+33 ? ? 1 44 ? Lys N N 15 ? ? 1 44 ? Lys H H 1 0.753 0.042 ? ? ? ? ? ? ? ? ? ? ? 2
+34 ? ? 1 45 ? Leu N N 15 ? ? 1 45 ? Leu H H 1 0.689 0.049 ? ? ? ? ? ? ? ? ? ? ? 2
+35 ? ? 1 46 ? Leu N N 15 ? ? 1 46 ? Leu H H 1 0.761 0.048 ? ? ? ? ? ? ? ? ? ? ? 2
+36 ? ? 1 47 ? Arg N N 15 ? ? 1 47 ? Arg H H 1 0.778 0.038 ? ? ? ? ? ? ? ? ? ? ? 2
+37 ? ? 1 49 ? Ala N N 15 ? ? 1 49 ? Ala H H 1 0.773 0.04 ? ? ? ? ? ? ? ? ? ? ? 2
+38 ? ? 1 50 ? Glu N N 15 ? ? 1 50 ? Glu H H 1 0.81 0.071 ? ? ? ? ? ? ? ? ? ? ? 2
+39 ? ? 1 51 ? Ser N N 15 ? ? 1 51 ? Ser H H 1 0.808 0.043 ? ? ? ? ? ? ? ? ? ? ? 2
+40 ? ? 1 53 ? Tyr N N 15 ? ? 1 53 ? Tyr H H 1 0.8 0.048 ? ? ? ? ? ? ? ? ? ? ? 2
+41 ? ? 1 54 ? Arg N N 15 ? ? 1 54 ? Arg H H 1 0.798 0.043 ? ? ? ? ? ? ? ? ? ? ? 2
+42 ? ? 1 55 ? Leu N N 15 ? ? 1 55 ? Leu H H 1 0.831 0.053 ? ? ? ? ? ? ? ? ? ? ? 2
+43 ? ? 1 56 ? Asp N N 15 ? ? 1 56 ? Asp H H 1 0.799 0.039 ? ? ? ? ? ? ? ? ? ? ? 2
+44 ? ? 1 57 ? Glu N N 15 ? ? 1 57 ? Glu H H 1 0.69 0.052 ? ? ? ? ? ? ? ? ? ? ? 2
+45 ? ? 1 58 ? Ile N N 15 ? ? 1 58 ? Ile H H 1 0.673 0.036 ? ? ? ? ? ? ? ? ? ? ? 2
+46 ? ? 1 59 ? Gln N N 15 ? ? 1 59 ? Gln H H 1 0.67 0.059 ? ? ? ? ? ? ? ? ? ? ? 2
+47 ? ? 1 60 ? Gln N N 15 ? ? 1 60 ? Gln H H 1 0.662 0.052 ? ? ? ? ? ? ? ? ? ? ? 2
+48 ? ? 1 62 ? Lys N N 15 ? ? 1 62 ? Lys H H 1 0.651 0.042 ? ? ? ? ? ? ? ? ? ? ? 2
+49 ? ? 1 63 ? Leu N N 15 ? ? 1 63 ? Leu H H 1 0.7 0.037 ? ? ? ? ? ? ? ? ? ? ? 2
+50 ? ? 1 64 ? Gln N N 15 ? ? 1 64 ? Gln H H 1 0.741 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+51 ? ? 1 65 ? Phe N N 15 ? ? 1 65 ? Phe H H 1 0.72 0.039 ? ? ? ? ? ? ? ? ? ? ? 2
+52 ? ? 1 66 ? Asp N N 15 ? ? 1 66 ? Asp H H 1 0.736 0.045 ? ? ? ? ? ? ? ? ? ? ? 2
+53 ? ? 1 67 ? His N N 15 ? ? 1 67 ? His H H 1 0.71 0.046 ? ? ? ? ? ? ? ? ? ? ? 2
+54 ? ? 1 68 ? Trp N N 15 ? ? 1 68 ? Trp H H 1 0.775 0.042 ? ? ? ? ? ? ? ? ? ? ? 2
+55 ? ? 1 69 ? Asp N N 15 ? ? 1 69 ? Asp H H 1 0.78 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+56 ? ? 1 70 ? Val N N 15 ? ? 1 70 ? Val H H 1 0.809 0.04 ? ? ? ? ? ? ? ? ? ? ? 2
+57 ? ? 1 71 ? Val N N 15 ? ? 1 71 ? Val H H 1 0.799 0.039 ? ? ? ? ? ? ? ? ? ? ? 2
+58 ? ? 1 72 ? Leu N N 15 ? ? 1 72 ? Leu H H 1 0.82 0.044 ? ? ? ? ? ? ? ? ? ? ? 2
+59 ? ? 1 73 ? Asp N N 15 ? ? 1 73 ? Asp H H 1 0.812 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+60 ? ? 1 74 ? Lys N N 15 ? ? 1 74 ? Lys H H 1 0.813 0.046 ? ? ? ? ? ? ? ? ? ? ? 2
+61 ? ? 1 76 ? Gly N N 15 ? ? 1 76 ? Gly H H 1 0.83 0.051 ? ? ? ? ? ? ? ? ? ? ? 2
+62 ? ? 1 77 ? Lys N N 15 ? ? 1 77 ? Lys H H 1 0.835 0.052 ? ? ? ? ? ? ? ? ? ? ? 2
+63 ? ? 1 78 ? Val N N 15 ? ? 1 78 ? Val H H 1 0.81 0.042 ? ? ? ? ? ? ? ? ? ? ? 2
+64 ? ? 1 79 ? Thr N N 15 ? ? 1 79 ? Thr H H 1 0.807 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+65 ? ? 1 80 ? Ile N N 15 ? ? 1 80 ? Ile H H 1 0.815 0.042 ? ? ? ? ? ? ? ? ? ? ? 2
+66 ? ? 1 81 ? Thr N N 15 ? ? 1 81 ? Thr H H 1 0.81 0.043 ? ? ? ? ? ? ? ? ? ? ? 2
+67 ? ? 1 82 ? Gly N N 15 ? ? 1 82 ? Gly H H 1 0.8 0.04 ? ? ? ? ? ? ? ? ? ? ? 2
+68 ? ? 1 83 ? Thr N N 15 ? ? 1 83 ? Thr H H 1 0.812 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+69 ? ? 1 84 ? Ser N N 15 ? ? 1 84 ? Ser H H 1 0.771 0.043 ? ? ? ? ? ? ? ? ? ? ? 2
+70 ? ? 1 86 ? Asn N N 15 ? ? 1 86 ? Asn H H 1 0.755 0.039 ? ? ? ? ? ? ? ? ? ? ? 2
+71 ? ? 1 87 ? Trp N N 15 ? ? 1 87 ? Trp H H 1 0.749 0.051 ? ? ? ? ? ? ? ? ? ? ? 2
+72 ? ? 1 90 ? Asp N N 15 ? ? 1 90 ? Asp H H 1 0.725 0.047 ? ? ? ? ? ? ? ? ? ? ? 2
+73 ? ? 1 91 ? Leu N N 15 ? ? 1 91 ? Leu H H 1 0.709 0.051 ? ? ? ? ? ? ? ? ? ? ? 2
+74 ? ? 1 92 ? Thr N N 15 ? ? 1 92 ? Thr H H 1 0.694 0.043 ? ? ? ? ? ? ? ? ? ? ? 2
+75 ? ? 1 94 ? Leu N N 15 ? ? 1 94 ? Leu H H 1 0.721 0.042 ? ? ? ? ? ? ? ? ? ? ? 2
+76 ? ? 1 95 ? Met N N 15 ? ? 1 95 ? Met H H 1 0.74 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+77 ? ? 1 96 ? Thr N N 15 ? ? 1 96 ? Thr H H 1 0.73 0.047 ? ? ? ? ? ? ? ? ? ? ? 2
+78 ? ? 1 97 ? Arg N N 15 ? ? 1 97 ? Arg H H 1 0.597 0.048 ? ? ? ? ? ? ? ? ? ? ? 2
+79 ? ? 1 98 ? Gln N N 15 ? ? 1 98 ? Gln H H 1 0.75 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+80 ? ? 1 99 ? Leu N N 15 ? ? 1 99 ? Leu H H 1 0.783 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+81 ? ? 1 100 ? Leu N N 15 ? ? 1 100 ? Leu H H 1 0.815 0.044 ? ? ? ? ? ? ? ? ? ? ? 2
+82 ? ? 1 101 ? Asp N N 15 ? ? 1 101 ? Asp H H 1 0.81 0.047 ? ? ? ? ? ? ? ? ? ? ? 2
+83 ? ? 1 103 ? Ala N N 15 ? ? 1 103 ? Ala H H 1 0.799 0.059 ? ? ? ? ? ? ? ? ? ? ? 2
+84 ? ? 1 104 ? Ala N N 15 ? ? 1 104 ? Ala H H 1 0.804 0.043 ? ? ? ? ? ? ? ? ? ? ? 2
+85 ? ? 1 105 ? Ile N N 15 ? ? 1 105 ? Ile H H 1 0.802 0.042 ? ? ? ? ? ? ? ? ? ? ? 2
+86 ? ? 1 106 ? Phe N N 15 ? ? 1 106 ? Phe H H 1 0.798 0.038 ? ? ? ? ? ? ? ? ? ? ? 2
+87 ? ? 1 107 ? Trp N N 15 ? ? 1 107 ? Trp H H 1 0.816 0.043 ? ? ? ? ? ? ? ? ? ? ? 2
+88 ? ? 1 108 ? Arg N N 15 ? ? 1 108 ? Arg H H 1 0.812 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+89 ? ? 1 109 ? Lys N N 15 ? ? 1 109 ? Lys H H 1 0.803 0.034 ? ? ? ? ? ? ? ? ? ? ? 2
+90 ? ? 1 110 ? Glu N N 15 ? ? 1 110 ? Glu H H 1 0.805 0.053 ? ? ? ? ? ? ? ? ? ? ? 2
+91 ? ? 1 111 ? Asp N N 15 ? ? 1 111 ? Asp H H 1 0.634 0.031 ? ? ? ? ? ? ? ? ? ? ? 2
+92 ? ? 1 113 ? Asp N N 15 ? ? 1 113 ? Asp H H 1 0.687 0.03 ? ? ? ? ? ? ? ? ? ? ? 2
+93 ? ? 1 114 ? Ala N N 15 ? ? 1 114 ? Ala H H 1 0.6 0.045 ? ? ? ? ? ? ? ? ? ? ? 2
+94 ? ? 1 115 ? Met N N 15 ? ? 1 115 ? Met H H 1 0.798 0.036 ? ? ? ? ? ? ? ? ? ? ? 2
+95 ? ? 1 116 ? Asp N N 15 ? ? 1 116 ? Asp H H 1 0.831 0.042 ? ? ? ? ? ? ? ? ? ? ? 2
+96 ? ? 1 119 ? Glu N N 15 ? ? 1 119 ? Glu H H 1 0.795 0.034 ? ? ? ? ? ? ? ? ? ? ? 2
+97 ? ? 1 121 ? Asp N N 15 ? ? 1 121 ? Asp H H 1 0.805 0.039 ? ? ? ? ? ? ? ? ? ? ? 2
+98 ? ? 1 123 ? Leu N N 15 ? ? 1 123 ? Leu H H 1 0.82 0.042 ? ? ? ? ? ? ? ? ? ? ? 2
+99 ? ? 1 124 ? Glu N N 15 ? ? 1 124 ? Glu H H 1 0.835 0.045 ? ? ? ? ? ? ? ? ? ? ? 2
+100 ? ? 1 125 ? Phe N N 15 ? ? 1 125 ? Phe H H 1 0.812 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+101 ? ? 1 126 ? Gly N N 15 ? ? 1 126 ? Gly H H 1 0.809 0.04 ? ? ? ? ? ? ? ? ? ? ? 2
+102 ? ? 1 127 ? Glu N N 15 ? ? 1 127 ? Glu H H 1 0.815 0.042 ? ? ? ? ? ? ? ? ? ? ? 2
+103 ? ? 1 129 ? Leu N N 15 ? ? 1 129 ? Leu H H 1 0.809 0.04 ? ? ? ? ? ? ? ? ? ? ? 2
+104 ? ? 1 130 ? Ser N N 15 ? ? 1 130 ? Ser H H 1 0.809 0.04 ? ? ? ? ? ? ? ? ? ? ? 2
+105 ? ? 1 131 ? Asp N N 15 ? ? 1 131 ? Asp H H 1 0.798 0.036 ? ? ? ? ? ? ? ? ? ? ? 2
+106 ? ? 1 132 ? Leu N N 15 ? ? 1 132 ? Leu H H 1 0.798 0.048 ? ? ? ? ? ? ? ? ? ? ? 2
+107 ? ? 1 133 ? Ala N N 15 ? ? 1 133 ? Ala H H 1 0.821 0.043 ? ? ? ? ? ? ? ? ? ? ? 2
+108 ? ? 1 134 ? Lys N N 15 ? ? 1 134 ? Lys H H 1 0.825 0.043 ? ? ? ? ? ? ? ? ? ? ? 2
+109 ? ? 1 135 ? Ile N N 15 ? ? 1 135 ? Ile H H 1 0.789 0.042 ? ? ? ? ? ? ? ? ? ? ? 2
+110 ? ? 1 136 ? Arg N N 15 ? ? 1 136 ? Arg H H 1 0.792 0.042 ? ? ? ? ? ? ? ? ? ? ? 2
+111 ? ? 1 137 ? Lys N N 15 ? ? 1 137 ? Lys H H 1 0.803 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+112 ? ? 1 138 ? Val N N 15 ? ? 1 138 ? Val H H 1 0.799 0.047 ? ? ? ? ? ? ? ? ? ? ? 2
+113 ? ? 1 139 ? Met N N 15 ? ? 1 139 ? Met H H 1 0.799 0.039 ? ? ? ? ? ? ? ? ? ? ? 2
+114 ? ? 1 140 ? Tyr N N 15 ? ? 1 140 ? Tyr H H 1 0.803 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+115 ? ? 1 141 ? Phe N N 15 ? ? 1 141 ? Phe H H 1 0.813 0.044 ? ? ? ? ? ? ? ? ? ? ? 2
+116 ? ? 1 142 ? Leu N N 15 ? ? 1 142 ? Leu H H 1 0.788 0.039 ? ? ? ? ? ? ? ? ? ? ? 2
+117 ? ? 1 143 ? Ile N N 15 ? ? 1 143 ? Ile H H 1 0.803 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+118 ? ? 1 144 ? Thr N N 15 ? ? 1 144 ? Thr H H 1 0.813 0.046 ? ? ? ? ? ? ? ? ? ? ? 2
+119 ? ? 1 145 ? Phe N N 15 ? ? 1 145 ? Phe H H 1 0.756 0.043 ? ? ? ? ? ? ? ? ? ? ? 2
+120 ? ? 1 146 ? Gly N N 15 ? ? 1 146 ? Gly H H 1 0.732 0.045 ? ? ? ? ? ? ? ? ? ? ? 2
+121 ? ? 1 147 ? Glu N N 15 ? ? 1 147 ? Glu H H 1 0.741 0.041 ? ? ? ? ? ? ? ? ? ? ? 2
+122 ? ? 1 148 ? Gly N N 15 ? ? 1 148 ? Gly H H 1 0.749 0.049 ? ? ? ? ? ? ? ? ? ? ? 2
+123 ? ? 1 149 ? Val N N 15 ? ? 1 149 ? Val H H 1 0.759 0.042 ? ? ? ? ? ? ? ? ? ? ? 2
+124 ? ? 1 150 ? Glu N N 15 ? ? 1 150 ? Glu H H 1 0.773 0.043 ? ? ? ? ? ? ? ? ? ? ? 2
+125 ? ? 1 152 ? Ala N N 15 ? ? 1 152 ? Ala H H 1 0.853 0.048 ? ? ? ? ? ? ? ? ? ? ? 2
+126 ? ? 1 153 ? Asn N N 15 ? ? 1 153 ? Asn H H 1 0.812 0.043 ? ? ? ? ? ? ? ? ? ? ? 2
+127 ? ? 1 154 ? Leu N N 15 ? ? 1 154 ? Leu H H 1 0.809 0.04 ? ? ? ? ? ? ? ? ? ? ? 2
+128 ? ? 1 155 ? Lys N N 15 ? ? 1 155 ? Lys H H 1 0.813 0.046 ? ? ? ? ? ? ? ? ? ? ? 2
+129 ? ? 1 156 ? Ala N N 15 ? ? 1 156 ? Ala H H 1 0.807 0.037 ? ? ? ? ? ? ? ? ? ? ? 2
+130 ? ? 1 157 ? Ser N N 15 ? ? 1 157 ? Ser H H 1 0.812 0.043 ? ? ? ? ? ? ? ? ? ? ? 2
+131 ? ? 1 158 ? Val N N 15 ? ? 1 158 ? Val H H 1 0.813 0.043 ? ? ? ? ? ? ? ? ? ? ? 2
+132 ? ? 1 159 ? Val N N 15 ? ? 1 159 ? Val H H 1 0.799 0.039 ? ? ? ? ? ? ? ? ? ? ? 2
+133 ? ? 1 160 ? Phe N N 15 ? ? 1 160 ? Phe H H 1 0.801 0.047 ? ? ? ? ? ? ? ? ? ? ? 2
+134 ? ? 1 161 ? Asn N N 15 ? ? 1 161 ? Asn H H 1 0.803 0.042 ? ? ? ? ? ? ? ? ? ? ? 2
+135 ? ? 1 162 ? Gln N N 15 ? ? 1 162 ? Gln H H 1 0.685 0.044 ? ? ? ? ? ? ? ? ? ? ? 2
+
+   stop_
+
+save_
+
+save_spectrometer_1
+   _NMR_spectrometer.Sf_category spectrometer
+   _NMR_spectrometer.Sf_framecode $spectrometer_1
+   _NMR_spectrometer.ID 1
+   _NMR_spectrometer.Details ?
+   _NMR_spectrometer.Manufacturer ?
+   _NMR_spectrometer.Model ?
+   _NMR_spectrometer.Serial_number ?
+   _NMR_spectrometer.Field_strength 600
+
+save_
+
+save_spectrometer_2
+   _NMR_spectrometer.Sf_category spectrometer
+   _NMR_spectrometer.Sf_framecode $spectrometer_2
+   _NMR_spectrometer.ID 2
+   _NMR_spectrometer.Details ?
+   _NMR_spectrometer.Manufacturer ?
+   _NMR_spectrometer.Model ?
+   _NMR_spectrometer.Serial_number ?
+   _NMR_spectrometer.Field_strength 800
+
+save_
+
+save_experiment_list_1
+   _Experiment_list.Sf_category experiment_list
+   _Experiment_list.Sf_framecode ?
+   _Experiment_list.ID 1
+   _Experiment_list.Details ?
+   loop_
+      _Experiment.ID
+      _Experiment.Name
+      _Experiment.Raw_data_flag
+      _Experiment.NMR_spec_expt_ID
+      _Experiment.NMR_spec_expt_label
+      _Experiment.Sample_ID
+      _Experiment.Sample_label
+      _Experiment.Sample_state
+      _Experiment.Sample_volume
+      _Experiment.Sample_volume_units
+      _Experiment.Sample_condition_list_ID
+      _Experiment.Sample_condition_list_label
+      _Experiment.SampleSpinningRate
+      _Experiment.Sample_angle
+      _Experiment.NMR_tube_type
+      _Experiment.NMR_spectrometer_ID
+      _Experiment.NMR_spectrometer_label
+      _Experiment.NMR_spectrometer_probe_ID
+      _Experiment.NMR_spectrometer_probe_label
+      _Experiment.NMR_spectral_processing_ID
+      _Experiment.NMR_spectral_processing_label
+      _Experiment.Experiment_list_ID
+
+1 "600.0 MHz R1" yes ? ? 1 $sample_1 ? ? ? 1 $conditions_1 ? ? ? 1 $spectrometer_1 ? ? ? ? 1 
+2 "600.0 MHz R2" yes ? ? 1 $sample_1 ? ? ? 1 $conditions_1 ? ? ? 1 $spectrometer_1 ? ? ? ? 1 
+3 "600.0 MHz steady-state NOE" yes ? ? 1 $sample_1 ? ? ? 1 $conditions_1 ? ? ? 1 $spectrometer_1 ? ? ? ? 1 
+4 "800.0 MHz R1" yes ? ? 1 $sample_1 ? ? ? 1 $conditions_1 ? ? ? 2 $spectrometer_2 ? ? ? ? 1 
+5 "800.0 MHz R2" yes ? ? 1 $sample_1 ? ? ? 1 $conditions_1 ? ? ? 2 $spectrometer_2 ? ? ? ? 1 
+6 "800.0 MHz steady-state NOE" yes ? ? 1 $sample_1 ? ? ? 1 $conditions_1 ? ? ? 2 $spectrometer_2 ? ? ? ? 1 
+
+   stop_
+
+save_
+
+save_order_parameters_1
+   _Order_parameter_list.Sf_category order_parameters
+   _Order_parameter_list.Sf_framecode ?
+   _Order_parameter_list.ID 1
+   _Order_parameter_list.Sample_condition_list_ID ?
+   _Order_parameter_list.Sample_condition_list_label $conditions_1
+   _Order_parameter_list.Tau_e_val_units s
+   _Order_parameter_list.Tau_f_val_units s
+   _Order_parameter_list.Tau_s_val_units s
+   _Order_parameter_list.Global_chi_squared_fit_val ?
+   _Order_parameter_list.Details ?
+   loop_
+      _Order_parameter_experiment.Sample_label
+
+$sample_1
+
+   stop_
+   loop_
+      _Order_parameter_software.Software_ID
+      _Order_parameter_software.Software_label
+      _Order_parameter_software.Model_free_list_ID
+
+3 relax 1
+
+   stop_
+   loop_
+      _Order_param.ID
+      _Order_param.Assembly_atom_ID
+      _Order_param.Entity_assembly_ID
+      _Order_param.Entity_ID
+      _Order_param.Comp_index_ID
+      _Order_param.Comp_ID
+      _Order_param.Atom_ID
+      _Order_param.Atom_type
+      _Order_param.Atom_isotope_number
+      _Order_param.Bond_length_val
+      _Order_param.Order_param_val
+      _Order_param.Order_param_val_fit_err
+      _Order_param.Sf2_val
+      _Order_param.Sf2_val_fit_err
+      _Order_param.Ss2_val
+      _Order_param.Ss2_val_fit_err
+      _Order_param.Local_tau_c_val
+      _Order_param.Local_tau_c_val_fit_err
+      _Order_param.Tau_e_val
+      _Order_param.Tau_e_val_fit_err
+      _Order_param.Tau_f_val
+      _Order_param.Tau_f_val_fit_err
+      _Order_param.Tau_s_val
+      _Order_param.Tau_s_val_fit_err
+      _Order_param.Rex_val
+      _Order_param.Rex_val_fit_err
+      _Order_param.Chi_squared_val
+      _Order_param.Model_fit
+
+1 ? ? 1 9 Gln N N 15 1.02e-10 0.758761015226 0.041005279924 0.868140234204 0.0327614933428 0.874007430287 0.02080507947 ? ? ? ? ? ? 4.61634992724e-10 1.75278282922e-10 ? ? ? "S2f, S2, ts" 
+2 ? ? 1 10 Gln N N 15 1.02e-10 0.780122351202 0.0222332867409 0.842684771886 0.0383732755949 0.925758216155 0.0294034494626 ? ? ? ? ? ? 4.29602371181e-10 2.18315717148e-10 ? ? ? "S2f, S2, ts" 
+3 ? ? 1 11 Leu N N 15 1.02e-10 0.82793333662 0.018356220194 ? ? ? ? ? ? 1.50510547854e-11 7.85782511395e-12 ? ? ? ? ? ? ? "S2, te" 
+4 ? ? 1 12 Asp N N 15 1.02e-10 0.778852398264 0.040160093318 0.8173518051 0.0195642657922 0.952897385684 0.0320593819961 ? ? ? ? ? ? 3.86934718021e-09 2.79964531312e-09 ? ? ? "S2f, S2, ts" 
+5 ? ? 1 13 Met N N 15 1.02e-10 0.821733119066 0.0142431407335 ? ? ? ? ? ? 1.59244535051e-11 4.93851452907e-12 ? ? ? ? ? ? ? "S2, te" 
+6 ? ? 1 15 Leu N N 15 1.02e-10 0.849133118881 0.0161189977275 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+7 ? ? 1 16 Val N N 15 1.02e-10 0.868603186511 0.0130463708437 ? ? ? ? ? ? 1.93667474823e-11 7.7211458358e-12 ? ? ? ? ? ? ? "S2, te" 
+8 ? ? 1 17 Leu N N 15 1.02e-10 0.897298180156 0.0167627254826 ? ? ? ? ? ? 2.08301654944e-11 9.11284747206e-12 ? ? ? ? ? ? ? "S2, te" 
+9 ? ? 1 18 Asp N N 15 1.02e-10 0.906637075332 0.0158689152833 ? ? ? ? ? ? 1.99576972716e-11 1.58820423893e-11 ? ? ? ? ? ? ? "S2, te" 
+10 ? ? 1 19 Gln N N 15 1.02e-10 0.928440012553 0.0159001891031 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+11 ? ? 1 20 Asp N N 15 1.02e-10 0.929122206924 0.0225042898791 ? ? ? ? ? ? 4.15375590277e-11 3.41915268065e-11 ? ? ? ? ? ? ? "S2, te" 
+12 ? ? 1 21 Leu N N 15 1.02e-10 0.94261622834 0.014243477953 ? ? ? ? ? ? 3.45416485002e-11 2.97169530144e-11 ? ? ? ? ? ? ? "S2, te" 
+13 ? ? 1 22 Thr N N 15 1.02e-10 0.924351264996 0.0213682429306 ? ? ? ? ? ? 2.92979678069e-11 1.84639624951e-11 ? ? ? ? ? ? ? "S2, te" 
+14 ? ? 1 23 Lys N N 15 1.02e-10 0.924992758061 0.0148840207936 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+15 ? ? 1 24 Gln N N 15 1.02e-10 0.934965330657 0.0198925074755 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+16 ? ? 1 25 Met N N 15 1.02e-10 0.92834153375 0.0214225959753 ? ? ? ? ? ? 2.52762660102e-11 2.05751431171e-11 ? ? ? ? ? ? ? "S2, te" 
+17 ? ? 1 26 Arg N N 15 1.02e-10 0.818599774865 0.0174567824885 ? ? ? ? ? ? ? ? ? ? ? ? 8.33632266268e-38 1.24909993268e-38 ? "S2, Rex" 
+18 ? ? 1 27 Leu N N 15 1.02e-10 0.919362736131 0.0155959306032 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+19 ? ? 1 28 Arg N N 15 1.02e-10 0.928980069681 0.0156620465507 ? ? ? ? ? ? 2.33600378843e-11 1.55774165243e-11 ? ? ? ? ? ? ? "S2, te" 
+20 ? ? 1 29 Val N N 15 1.02e-10 0.919786573092 0.0181198450457 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+21 ? ? 1 30 Glu N N 15 1.02e-10 0.929535744217 0.0201707121801 ? ? ? ? ? ? 2.69348345034e-11 2.27623592699e-11 ? ? ? ? ? ? ? "S2, te" 
+22 ? ? 1 31 Ser N N 15 1.02e-10 0.92617534187 0.0197608844219 ? ? ? ? ? ? 2.89636313887e-11 2.16352607267e-11 ? ? ? ? ? ? ? "S2, te" 
+23 ? ? 1 32 Leu N N 15 1.02e-10 0.923196469024 0.0163345368849 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+24 ? ? 1 33 Lys N N 15 1.02e-10 0.904878934922 0.0186056258164 ? ? ? ? ? ? 1.99780883798e-11 1.31038818153e-11 ? ? ? ? ? ? ? "S2, te" 
+25 ? ? 1 35 Arg N N 15 1.02e-10 0.907268558764 0.0195306338412 ? ? ? ? ? ? 7.00400442159e-11 4.7594725071e-11 ? ? ? ? ? ? ? "S2, te" 
+26 ? ? 1 36 Gly N N 15 1.02e-10 0.801555959088 0.0347595515672 0.903457806525 0.0266470743307 0.887209068646 0.0187581331937 ? ? ? ? ? ? 7.57454088955e-10 1.83780516997e-10 ? ? ? "S2f, S2, ts" 
+27 ? ? 1 37 Glu N N 15 1.02e-10 0.802528421179 0.031337804188 0.913105068615 0.0222498919422 0.878900412191 0.0206490622808 ? ? ? ? ? ? 6.03205549587e-10 1.80393372472e-10 ? ? ? "S2f, S2, ts" 
+28 ? ? 1 38 Lys N N 15 1.02e-10 0.826863831763 0.0346103394497 ? ? ? ? ? ? 6.34708788817e-10 1.32743338621e-10 ? ? ? ? ? ? ? "S2, te" 
+29 ? ? 1 39 Lys N N 15 1.02e-10 0.498285485098 0.0843183641329 0.732848431369 0.0554266117693 0.679929796898 0.0909432508623 ? ? ? ? 7.36967692407e-11 2.4177602356e-11 2.22830396378e-09 1.80096391451e-09 ? ? ? "S2f, tf, S2, ts" 
+30 ? ? 1 40 Gln N N 15 1.02e-10 0.553127225539 0.0828115735837 0.810319699117 0.064238687608 0.682603700912 0.0713984050124 ? ? ? ? 8.5509849055e-11 6.0816628829e-11 1.91808646997e-09 1.35208009605e-09 ? ? ? "S2f, tf, S2, ts" 
+31 ? ? 1 41 Asp N N 15 1.02e-10 0.716530136279 0.0555593595267 0.839460130477 0.0355598781976 0.853560651977 0.0345836884138 ? ? ? ? ? ? 6.15954967131e-10 2.11287515602e-10 3.53987152369e-38 1.61065772002e-38 ? "S2f, S2, ts, Rex" 
+32 ? ? 1 43 Glu N N 15 1.02e-10 0.931957414372 0.0191470734741 ? ? ? ? ? ? 8.18757425367e-11 5.41254655205e-11 ? ? ? ? 2.89736556447e-38 1.30119500894e-38 ? "S2, te, Rex" 
+33 ? ? 1 44 Lys N N 15 1.02e-10 0.878608466324 0.0174046875907 ? ? ? ? ? ? 3.61420628821e-11 1.07680133907e-11 ? ? ? ? 8.05767559647e-38 1.09579551073e-38 ? "S2, te, Rex" 
+34 ? ? 1 45 Leu N N 15 1.02e-10 0.858508994026 0.0614192420423 0.935123593589 0.0473514814962 0.918070081764 0.0323004206437 ? ? ? ? ? ? 4.05276213093e-10 3.18746936411e-10 8.37490490296e-38 2.01916403435e-38 ? "S2f, S2, ts, Rex" 
+35 ? ? 1 46 Leu N N 15 1.02e-10 0.839727889941 0.0363431469764 ? ? ? ? ? ? 2.54477930843e-11 1.30683217339e-11 ? ? ? ? 1.04058574848e-37 1.74066832948e-38 ? "S2, te, Rex" 
+36 ? ? 1 47 Arg N N 15 1.02e-10 0.80345392071 0.0863553605296 0.869920580263 0.0588287410845 0.923594565917 0.0512840969933 ? ? ? ? ? ? 8.91370164518e-10 5.52963330253e-10 8.68156269897e-38 2.53852958235e-38 ? "S2f, S2, ts, Rex" 
+37 ? ? 1 49 Ala N N 15 1.02e-10 0.854858672103 0.0185265276221 ? ? ? ? ? ? 1.97611276079e-11 7.62168028867e-12 ? ? ? ? 6.73811541719e-38 1.26713515129e-38 ? "S2, te, Rex" 
+38 ? ? 1 50 Glu N N 15 1.02e-10 0.770112859276 0.0413736283754 0.839098706682 0.0263238595363 0.917785777935 0.0239863124859 ? ? ? ? ? ? 2.6696729192e-09 1.98376526117e-09 ? ? ? "S2f, S2, ts" 
+39 ? ? 1 51 Ser N N 15 1.02e-10 0.872381615247 0.014367470556 ? ? ? ? ? ? 1.54967236689e-11 8.78947521188e-12 ? ? ? ? ? ? ? "S2, te" 
+40 ? ? 1 53 Tyr N N 15 1.02e-10 0.880300781753 0.0160255135108 ? ? ? ? ? ? 1.73050353128e-11 1.1575035763e-11 ? ? ? ? ? ? ? "S2, te" 
+41 ? ? 1 54 Arg N N 15 1.02e-10 0.865674182304 0.016914559672 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+42 ? ? 1 55 Leu N N 15 1.02e-10 0.889069672463 0.0195764972262 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+43 ? ? 1 56 Asp N N 15 1.02e-10 0.82748853544 0.0155286373034 ? ? ? ? ? ? 1.10880123042e-11 6.37759633643e-12 ? ? ? ? ? ? ? "S2, te" 
+44 ? ? 1 57 Glu N N 15 1.02e-10 0.787987907221 0.0302753079067 0.864999353528 0.0401216118367 0.910969359696 0.0311777190124 ? ? ? ? ? ? 7.12750343822e-10 2.96988315753e-10 ? ? ? "S2f, S2, ts" 
+45 ? ? 1 58 Ile N N 15 1.02e-10 0.791214211048 0.0130768311645 ? ? ? ? ? ? 3.64540905824e-11 4.97559819282e-12 ? ? ? ? 1.64578658617e-38 9.69790667108e-39 ? "S2, te, Rex" 
+46 ? ? 1 59 Gln N N 15 1.02e-10 0.927159418355 0.0160573985871 ? ? ? ? ? ? 1.48085636665e-10 1.28729559132e-10 ? ? ? ? ? ? ? "S2, te" 
+47 ? ? 1 60 Gln N N 15 1.02e-10 0.893578544096 0.0173084218544 ? ? ? ? ? ? 1.01877228655e-10 4.37793442889e-11 ? ? ? ? ? ? ? "S2, te" 
+48 ? ? 1 62 Lys N N 15 1.02e-10 0.847072472872 0.0176231230969 ? ? ? ? ? ? 6.38017502512e-11 1.53166848479e-11 ? ? ? ? 5.40239721507e-38 1.19284170589e-38 ? "S2, te, Rex" 
+49 ? ? 1 63 Leu N N 15 1.02e-10 0.856969922643 0.0189795247338 ? ? ? ? ? ? 4.72360350494e-11 9.81871286881e-12 ? ? ? ? ? ? ? "S2, te" 
+50 ? ? 1 64 Gln N N 15 1.02e-10 0.820512205135 0.0141750550108 ? ? ? ? ? ? 2.39013475479e-11 7.18910594608e-12 ? ? ? ? ? ? ? "S2, te" 
+51 ? ? 1 65 Phe N N 15 1.02e-10 0.921762336097 0.0166699734166 ? ? ? ? ? ? 9.53458447185e-11 5.5526189813e-11 ? ? ? ? ? ? ? "S2, te" 
+52 ? ? 1 66 Asp N N 15 1.02e-10 0.913278648033 0.0167998998778 ? ? ? ? ? ? 7.16094541817e-11 7.42376225937e-11 ? ? ? ? ? ? ? "S2, te" 
+53 ? ? 1 67 His N N 15 1.02e-10 0.892270585577 0.0187865623874 ? ? ? ? ? ? 5.45368790908e-11 1.37020644047e-11 ? ? ? ? ? ? ? "S2, te" 
+54 ? ? 1 68 Trp N N 15 1.02e-10 0.855230142267 0.0174498790933 ? ? ? ? ? ? 2.20479151796e-11 8.34373580619e-12 ? ? ? ? ? ? ? "S2, te" 
+55 ? ? 1 69 Asp N N 15 1.02e-10 0.873447913817 0.0149570691188 ? ? ? ? ? ? 2.23913289371e-11 8.80358899591e-12 ? ? ? ? ? ? ? "S2, te" 
+56 ? ? 1 70 Val N N 15 1.02e-10 0.851997117444 0.0156992967769 ? ? ? ? ? ? 1.13172902907e-11 6.47532776988e-12 ? ? ? ? ? ? ? "S2, te" 
+57 ? ? 1 71 Val N N 15 1.02e-10 0.859827264787 0.0151533273947 ? ? ? ? ? ? 1.4823314425e-11 8.73296306289e-12 ? ? ? ? ? ? ? "S2, te" 
+58 ? ? 1 72 Leu N N 15 1.02e-10 0.828397715648 0.0175883624533 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+59 ? ? 1 73 Asp N N 15 1.02e-10 0.846970449254 0.0167774667113 ? ? ? ? ? ? 1.28846904928e-11 6.34984784372e-12 ? ? ? ? 1.9338397973e-38 8.16679450764e-39 ? "S2, te, Rex" 
+60 ? ? 1 74 Lys N N 15 1.02e-10 0.867443117512 0.0130299252443 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+61 ? ? 1 76 Gly N N 15 1.02e-10 0.881576393829 0.0143851535364 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+62 ? ? 1 77 Lys N N 15 1.02e-10 0.88364443345 0.0189965380763 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+63 ? ? 1 78 Val N N 15 1.02e-10 0.895457878868 0.0172115346976 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+64 ? ? 1 79 Thr N N 15 1.02e-10 0.899156730482 0.0171377022165 ? ? ? ? ? ? 1.86255266463e-11 1.12628042107e-11 ? ? ? ? ? ? ? "S2, te" 
+65 ? ? 1 80 Ile N N 15 1.02e-10 0.876471745222 0.0159089013007 ? ? ? ? ? ? 1.37691063347e-11 8.22090703891e-12 ? ? ? ? ? ? ? "S2, te" 
+66 ? ? 1 81 Thr N N 15 1.02e-10 0.901892159362 0.0168854933984 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+67 ? ? 1 82 Gly N N 15 1.02e-10 0.897579581371 0.0223451725265 ? ? ? ? ? ? 2.04425082252e-11 1.15106370131e-11 ? ? ? ? ? ? ? "S2, te" 
+68 ? ? 1 83 Thr N N 15 1.02e-10 0.900238382566 0.0180241660021 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+69 ? ? 1 84 Ser N N 15 1.02e-10 0.898155849095 0.0239688936937 ? ? ? ? ? ? 3.13669531692e-11 1.64558268308e-11 ? ? ? ? 5.2473446949e-38 2.20599264516e-38 ? "S2, te, Rex" 
+70 ? ? 1 86 Asn N N 15 1.02e-10 0.840437278338 0.019953324409 ? ? ? ? ? ? 2.34483921272e-11 6.54018269189e-12 ? ? ? ? 1.07596930713e-37 1.54193350056e-38 ? "S2, te, Rex" 
+71 ? ? 1 87 Trp N N 15 1.02e-10 0.828252330514 0.0284216936279 ? ? ? ? ? ? 2.25853049926e-11 9.0469445661e-12 ? ? ? ? 9.32800680602e-38 1.48465054031e-38 ? "S2, te, Rex" 
+72 ? ? 1 90 Asp N N 15 1.02e-10 0.930288615204 0.0295307556221 ? ? ? ? ? ? 9.05908652832e-11 7.37544840711e-11 ? ? ? ? 3.61654896491e-38 1.71723356544e-38 ? "S2, te, Rex" 
+73 ? ? 1 91 Leu N N 15 1.02e-10 0.858092941446 0.0295616678779 ? ? ? ? ? ? 4.40000840552e-11 1.49584679234e-11 ? ? ? ? 6.82269954633e-38 1.59743183903e-38 ? "S2, te, Rex" 
+74 ? ? 1 92 Thr N N 15 1.02e-10 0.746434179689 0.1086802076 0.854550592156 0.07682135491 0.873481554563 0.0585597164815 ? ? ? ? ? ? 9.80630920332e-10 4.73923020337e-10 1.04526976601e-37 3.37827571578e-38 ? "S2f, S2, ts, Rex" 
+75 ? ? 1 94 Leu N N 15 1.02e-10 0.829591685936 0.0231045205839 ? ? ? ? ? ? 3.1440917885e-11 8.58918107668e-12 ? ? ? ? 9.59461997066e-38 1.34794767379e-38 ? "S2, te, Rex" 
+76 ? ? 1 95 Met N N 15 1.02e-10 0.914241472646 0.0182069486395 ? ? ? ? ? ? 5.47907967451e-11 2.26170632128e-11 ? ? ? ? 3.03845606301e-38 1.19978586019e-38 ? "S2, te, Rex" 
+77 ? ? 1 96 Thr N N 15 1.02e-10 0.809524986636 0.0231692914296 ? ? ? ? ? ? 2.56588621502e-11 9.37388687613e-12 ? ? ? ? 1.12894366276e-37 1.5609915493e-38 ? "S2, te, Rex" 
+78 ? ? 1 97 Arg N N 15 1.02e-10 0.76314553281 0.0393726615865 0.900703344091 0.0256735806756 0.847277339222 0.022532125126 ? ? ? ? ? ? 6.9215662109e-10 1.32045847018e-10 ? ? ? "S2f, S2, ts" 
+79 ? ? 1 98 Gln N N 15 1.02e-10 0.883928870324 0.0217759742271 ? ? ? ? ? ? 3.44533234283e-11 1.39359515684e-11 ? ? ? ? 4.13966744667e-38 1.40976039539e-38 ? "S2, te, Rex" 
+80 ? ? 1 99 Leu N N 15 1.02e-10 0.900077902529 0.0139858337065 ? ? ? ? ? ? 2.5231261642e-11 1.13709352342e-11 ? ? ? ? ? ? ? "S2, te" 
+81 ? ? 1 100 Leu N N 15 1.02e-10 0.882200371373 0.0141385195083 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+82 ? ? 1 101 Asp N N 15 1.02e-10 0.873574963338 0.0162765700284 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+83 ? ? 1 103 Ala N N 15 1.02e-10 0.745715381113 0.0303097857245 0.812885665381 0.0202213766766 0.917368103377 0.0216295078244 ? ? ? ? ? ? 1.85069167853e-09 1.1736589688e-09 ? ? ? "S2f, S2, ts" 
+84 ? ? 1 104 Ala N N 15 1.02e-10 0.855062449491 0.0128128193909 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+85 ? ? 1 105 Ile N N 15 1.02e-10 0.83350882646 0.013346108281 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+86 ? ? 1 106 Phe N N 15 1.02e-10 0.900359709105 0.0197451559214 ? ? ? ? ? ? 2.11077864078e-11 1.05083720835e-11 ? ? ? ? ? ? ? "S2, te" 
+87 ? ? 1 107 Trp N N 15 1.02e-10 0.845946711673 0.0334911829661 0.889222007365 0.0304829488041 0.951333530508 0.021285230785 ? ? ? ? ? ? 1.88534141293e-09 1.76406912957e-09 ? ? ? "S2f, S2, ts" 
+88 ? ? 1 108 Arg N N 15 1.02e-10 0.825607811608 0.0401170629256 0.883114561235 0.0273783525029 0.934881891714 0.0219999335045 ? ? ? ? ? ? 1.6807329111e-09 1.87794573487e-09 ? ? ? "S2f, S2, ts" 
+89 ? ? 1 109 Lys N N 15 1.02e-10 0.82198336309 0.0336364851159 0.873012196007 0.0290829367718 0.941548545197 0.0210594783512 ? ? ? ? ? ? 1.48780482597e-09 1.02730229165e-09 ? ? ? "S2f, S2, ts" 
+90 ? ? 1 110 Glu N N 15 1.02e-10 0.813328123744 0.0474901959229 0.870355478955 0.0433251474208 0.934478087874 0.0283484476127 ? ? ? ? ? ? 1.44765365242e-09 1.20687625147e-09 ? ? ? "S2f, S2, ts" 
+91 ? ? 1 111 Asp N N 15 1.02e-10 0.839564803379 0.0223761935292 0.921424288576 0.0260040277377 0.911159835689 0.0167520474612 ? ? ? ? ? ? 3.54894841346e-10 1.45860221498e-10 ? ? ? "S2f, S2, ts" 
+92 ? ? 1 113 Asp N N 15 1.02e-10 0.747282544957 0.0271442362006 0.85624748377 0.01983208346 0.872741303328 0.0176625972137 ? ? ? ? ? ? 9.19885213769e-10 1.24536848029e-10 ? ? ? "S2f, S2, ts" 
+93 ? ? 1 114 Ala N N 15 1.02e-10 0.802137034515 0.0192262261029 ? ? ? ? ? ? 6.11245120836e-11 1.00860710646e-11 ? ? ? ? ? ? ? "S2, te" 
+94 ? ? 1 115 Met N N 15 1.02e-10 0.763445019697 0.0314830733053 0.836404233746 0.0191339719781 0.912770391271 0.0233097574514 ? ? ? ? ? ? 1.72219842182e-09 1.7140338555e-09 ? ? ? "S2f, S2, ts" 
+95 ? ? 1 116 Asp N N 15 1.02e-10 0.845765091197 0.0174875389505 ? ? ? ? ? ? ? ? ? ? ? ? 2.24600131077e-38 1.23244173122e-38 ? "S2, Rex" 
+96 ? ? 1 119 Glu N N 15 1.02e-10 0.829272303606 0.0190333715484 ? ? ? ? ? ? 1.19332292759e-11 5.20767228606e-12 ? ? ? ? 3.09043681723e-38 1.44749428935e-38 ? "S2, te, Rex" 
+97 ? ? 1 121 Asp N N 15 1.02e-10 0.917720492038 0.0150418358483 ? ? ? ? ? ? 2.67140576002e-11 1.45925999122e-11 ? ? ? ? ? ? ? "S2, te" 
+98 ? ? 1 123 Leu N N 15 1.02e-10 0.939044989897 0.0183614705134 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+99 ? ? 1 124 Glu N N 15 1.02e-10 0.925818866346 0.0183391958737 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+100 ? ? 1 125 Phe N N 15 1.02e-10 0.903333686339 0.020904644508 ? ? ? ? ? ? 2.02226044867e-11 1.30106356982e-11 ? ? ? ? ? ? ? "S2, te" 
+101 ? ? 1 126 Gly N N 15 1.02e-10 0.900805651529 0.0168951536709 ? ? ? ? ? ? 1.95258114765e-11 1.15489680178e-11 ? ? ? ? ? ? ? "S2, te" 
+102 ? ? 1 127 Glu N N 15 1.02e-10 0.923360744566 0.0165308165657 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+103 ? ? 1 129 Leu N N 15 1.02e-10 0.898929536815 0.0155474852743 ? ? ? ? ? ? 1.77617376662e-11 1.30519804288e-11 ? ? ? ? ? ? ? "S2, te" 
+104 ? ? 1 130 Ser N N 15 1.02e-10 0.895261830415 0.0171405866886 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+105 ? ? 1 131 Asp N N 15 1.02e-10 0.888139408823 0.0164486050634 ? ? ? ? ? ? 2.2341136087e-11 9.96869329858e-12 ? ? ? ? ? ? ? "S2, te" 
+106 ? ? 1 132 Leu N N 15 1.02e-10 0.87255666188 0.0172450775902 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+107 ? ? 1 133 Ala N N 15 1.02e-10 0.945878887105 0.0201661846638 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+108 ? ? 1 134 Lys N N 15 1.02e-10 0.918224085361 0.0165387384837 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+109 ? ? 1 135 Ile N N 15 1.02e-10 0.888364442293 0.0150551580784 ? ? ? ? ? ? 1.93351803468e-11 1.14782130348e-11 ? ? ? ? ? ? ? "S2, te" 
+110 ? ? 1 136 Arg N N 15 1.02e-10 0.907681392985 0.022102888407 ? ? ? ? ? ? 2.7884810121e-11 1.45684724857e-11 ? ? ? ? ? ? ? "S2, te" 
+111 ? ? 1 137 Lys N N 15 1.02e-10 0.863585977226 0.0167887327866 ? ? ? ? ? ? 1.7131198754e-11 8.95637079786e-12 ? ? ? ? 1.60399019537e-38 1.10425860475e-38 ? "S2, te, Rex" 
+112 ? ? 1 138 Val N N 15 1.02e-10 0.910340566244 0.0202217470405 ? ? ? ? ? ? 2.49870291574e-11 1.58988710982e-11 ? ? ? ? ? ? ? "S2, te" 
+113 ? ? 1 139 Met N N 15 1.02e-10 0.87000297051 0.0153569375957 ? ? ? ? ? ? 1.84243689746e-11 8.72062682785e-12 ? ? ? ? ? ? ? "S2, te" 
+114 ? ? 1 140 Tyr N N 15 1.02e-10 0.890423651894 0.0178302768223 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+115 ? ? 1 141 Phe N N 15 1.02e-10 0.906678087158 0.0159337763373 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+116 ? ? 1 142 Leu N N 15 1.02e-10 0.888825944059 0.0149446673698 ? ? ? ? ? ? 2.33372992393e-11 1.08258293653e-11 ? ? ? ? ? ? ? "S2, te" 
+117 ? ? 1 143 Ile N N 15 1.02e-10 0.886430746229 0.0177651920876 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+118 ? ? 1 144 Thr N N 15 1.02e-10 0.880236451304 0.0174668250085 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+119 ? ? 1 145 Phe N N 15 1.02e-10 0.819581358854 0.0346499475105 ? ? ? ? ? ? 2.05260808203e-11 8.21929649798e-12 ? ? ? ? 3.96197807375e-38 1.65642679207e-38 ? "S2, te, Rex" 
+120 ? ? 1 146 Gly N N 15 1.02e-10 0.863918794677 0.0179440217181 ? ? ? ? ? ? 3.28982706748e-11 7.92665908407e-12 ? ? ? ? ? ? ? "S2, te" 
+121 ? ? 1 147 Glu N N 15 1.02e-10 0.812086073214 0.0160345599178 ? ? ? ? ? ? 2.34832072586e-11 5.61935538496e-12 ? ? ? ? ? ? ? "S2, te" 
+122 ? ? 1 148 Gly N N 15 1.02e-10 0.815711745055 0.019818935506 ? ? ? ? ? ? 2.43480486615e-11 6.32411749724e-12 ? ? ? ? ? ? ? "S2, te" 
+123 ? ? 1 149 Val N N 15 1.02e-10 0.849954314816 0.0331069816081 0.905940406083 0.0294411147256 0.938201132336 0.0198380072135 ? ? ? ? ? ? 7.78498136402e-10 3.34308514538e-10 ? ? ? "S2f, S2, ts" 
+124 ? ? 1 150 Glu N N 15 1.02e-10 0.842130871694 0.0164542277699 ? ? ? ? ? ? 2.06800047351e-11 6.77967714852e-12 ? ? ? ? ? ? ? "S2, te" 
+125 ? ? 1 152 Ala N N 15 1.02e-10 0.824334572982 0.0471808184862 0.887119544562 0.0277420466447 0.929226030511 0.0289007469792 ? ? ? ? ? ? 7.15675185168e-09 2.32502938784e-09 ? ? ? "S2f, S2, ts" 
+126 ? ? 1 153 Asn N N 15 1.02e-10 0.82213926621 0.0350672215097 0.908798604977 0.0245619945338 0.904644067131 0.020823054328 ? ? ? ? ? ? 2.41358861502e-09 8.69969557582e-10 ? ? ? "S2f, S2, ts" 
+127 ? ? 1 154 Leu N N 15 1.02e-10 0.927677208077 0.0219589057917 ? ? ? ? ? ? 2.64745544978e-11 2.01982313508e-11 ? ? ? ? ? ? ? "S2, te" 
+128 ? ? 1 155 Lys N N 15 1.02e-10 0.642615300012 0.187183338637 0.764675631107 0.0961569790936 0.840376329349 0.167811826272 ? ? ? ? ? ? 3.00992810496e-09 2.58884049797e-09 7.25309478786e-38 4.6255634368e-38 ? "S2f, S2, ts, Rex" 
+129 ? ? 1 156 Ala N N 15 1.02e-10 0.859643841468 0.0144874503519 ? ? ? ? ? ? 1.20329811177e-11 6.65186351516e-12 ? ? ? ? ? ? ? "S2, te" 
+130 ? ? 1 157 Ser N N 15 1.02e-10 0.886209267247 0.0158529293946 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+131 ? ? 1 158 Val N N 15 1.02e-10 0.910741663975 0.0156766762981 ? ? ? ? ? ? ? ? ? ? ? ? ? ? ? S2
+132 ? ? 1 159 Val N N 15 1.02e-10 0.895863226219 0.0154918744287 ? ? ? ? ? ? 2.56715523536e-11 1.38639742558e-11 ? ? ? ? ? ? ? "S2, te" 
+133 ? ? 1 160 Phe N N 15 1.02e-10 0.880788982088 0.013898223259 ? ? ? ? ? ? 1.65994880138e-11 9.74078305696e-12 ? ? ? ? ? ? ? "S2, te" 
+134 ? ? 1 161 Asn N N 15 1.02e-10 0.885944509896 0.0196344680365 ? ? ? ? ? ? 1.99946762271e-11 9.8251200563e-12 ? ? ? ? ? ? ? "S2, te" 
+135 ? ? 1 162 Gln N N 15 1.02e-10 0.751669830777 0.0386198818846 0.838453810408 0.036699108814 0.896495217084 0.0281583196677 ? ? ? ? ? ? 5.27145299747e-10 2.15499417419e-10 ? ? ? "S2f, S2, ts" 
+
+   stop_
+
+save_
+
+save_tensor_1
+   _Tensor_list.Sf_category tensor
+   _Tensor_list.Sf_framecode ?
+   _Tensor_list.ID 1
+   _Tensor_list.Tensor_type diffusion
+   _Tensor_list.Geometric_shape "prolate spheroid"
+   _Tensor_list.Tensor_symmetry "axial symmetry"
+   _Tensor_list.Matrix_val_units s-1
+   _Tensor_list.Angle_units rad
+   _Tensor_list.Isotropic_val_formula "Diso = 1/(6.tm)"
+   _Tensor_list.Anisotropic_val_formula "Da = Dpar - Dper"
+   _Tensor_list.Rhombic_val_formula "Dr = (Dy - Dx)/2Da"
+   _Tensor_list.Euler_angle_type zyz
+   _Tensor_list.Data_file_name ?
+   _Tensor_list.Details ?
+   loop_
+      _Tensor.ID
+      _Tensor.Assembly_atom_ID
+      _Tensor.Entity_assembly_ID
+      _Tensor.Entity_ID
+      _Tensor.Comp_index_ID
+      _Tensor.Residue_label
+      _Tensor.Atom_name
+      _Tensor.Atom_type
+      _Tensor.Atom_isotope_number
+      _Tensor.Axial_sym_axis_polar_angle
+      _Tensor.Axial_sym_axis_azimuthal_angle
+      _Tensor.Isotropic_val
+      _Tensor.Anisotropic_val
+      _Tensor.Rhombic_val
+      _Tensor.Euler_angle_alpha
+      _Tensor.Euler_angle_beta
+      _Tensor.Euler_angle_gamma
+      _Tensor.Isotropic_comp_1_1_val
+      _Tensor.Isotropic_comp_2_2_val
+      _Tensor.Isotropic_comp_3_3_val
+      _Tensor.Anti_sym_comp_1_2_val
+      _Tensor.Anti_sym_comp_1_3_val
+      _Tensor.Anti_sym_comp_2_3_val
+      _Tensor.Reduceable_matrix_1_1_val
+      _Tensor.Reduceable_matrix_1_2_val
+      _Tensor.Reduceable_matrix_1_3_val
+      _Tensor.Reduceable_matrix_2_1_val
+      _Tensor.Reduceable_matrix_2_2_val
+      _Tensor.Reduceable_matrix_2_3_val
+      _Tensor.Reduceable_matrix_3_1_val
+      _Tensor.Reduceable_matrix_3_2_val
+      _Tensor.Reduceable_matrix_3_3_val
+      _Tensor.Tensor_list_ID
+
+1 ? ? 1 9 Gln N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+2 ? ? 1 9 Gln H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+3 ? ? 1 10 Gln N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+4 ? ? 1 10 Gln H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+5 ? ? 1 11 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+6 ? ? 1 11 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+7 ? ? 1 12 Asp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+8 ? ? 1 12 Asp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+9 ? ? 1 13 Met N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+10 ? ? 1 13 Met H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+11 ? ? 1 15 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+12 ? ? 1 15 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+13 ? ? 1 16 Val N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+14 ? ? 1 16 Val H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+15 ? ? 1 17 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+16 ? ? 1 17 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+17 ? ? 1 18 Asp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+18 ? ? 1 18 Asp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+19 ? ? 1 19 Gln N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+20 ? ? 1 19 Gln H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+21 ? ? 1 20 Asp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+22 ? ? 1 20 Asp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+23 ? ? 1 21 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+24 ? ? 1 21 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+25 ? ? 1 22 Thr N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+26 ? ? 1 22 Thr H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+27 ? ? 1 23 Lys N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+28 ? ? 1 23 Lys H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+29 ? ? 1 24 Gln N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+30 ? ? 1 24 Gln H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+31 ? ? 1 25 Met N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+32 ? ? 1 25 Met H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+33 ? ? 1 26 Arg N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+34 ? ? 1 26 Arg H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+35 ? ? 1 27 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+36 ? ? 1 27 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+37 ? ? 1 28 Arg N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+38 ? ? 1 28 Arg H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+39 ? ? 1 29 Val N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+40 ? ? 1 29 Val H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+41 ? ? 1 30 Glu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+42 ? ? 1 30 Glu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+43 ? ? 1 31 Ser N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+44 ? ? 1 31 Ser H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+45 ? ? 1 32 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+46 ? ? 1 32 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+47 ? ? 1 33 Lys N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+48 ? ? 1 33 Lys H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+49 ? ? 1 35 Arg N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+50 ? ? 1 35 Arg H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+51 ? ? 1 36 Gly N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+52 ? ? 1 36 Gly H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+53 ? ? 1 37 Glu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+54 ? ? 1 37 Glu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+55 ? ? 1 38 Lys N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+56 ? ? 1 38 Lys H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+57 ? ? 1 39 Lys N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+58 ? ? 1 39 Lys H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+59 ? ? 1 40 Gln N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+60 ? ? 1 40 Gln H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+61 ? ? 1 41 Asp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+62 ? ? 1 41 Asp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+63 ? ? 1 43 Glu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+64 ? ? 1 43 Glu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+65 ? ? 1 44 Lys N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+66 ? ? 1 44 Lys H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+67 ? ? 1 45 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+68 ? ? 1 45 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+69 ? ? 1 46 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+70 ? ? 1 46 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+71 ? ? 1 47 Arg N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+72 ? ? 1 47 Arg H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+73 ? ? 1 49 Ala N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+74 ? ? 1 49 Ala H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+75 ? ? 1 50 Glu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+76 ? ? 1 50 Glu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+77 ? ? 1 51 Ser N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+78 ? ? 1 51 Ser H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+79 ? ? 1 53 Tyr N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+80 ? ? 1 53 Tyr H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+81 ? ? 1 54 Arg N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+82 ? ? 1 54 Arg H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+83 ? ? 1 55 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+84 ? ? 1 55 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+85 ? ? 1 56 Asp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+86 ? ? 1 56 Asp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+87 ? ? 1 57 Glu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+88 ? ? 1 57 Glu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+89 ? ? 1 58 Ile N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+90 ? ? 1 58 Ile H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+91 ? ? 1 59 Gln N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+92 ? ? 1 59 Gln H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+93 ? ? 1 60 Gln N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+94 ? ? 1 60 Gln H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+95 ? ? 1 62 Lys N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+96 ? ? 1 62 Lys H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+97 ? ? 1 63 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+98 ? ? 1 63 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+99 ? ? 1 64 Gln N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+100 ? ? 1 64 Gln H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+101 ? ? 1 65 Phe N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+102 ? ? 1 65 Phe H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+103 ? ? 1 66 Asp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+104 ? ? 1 66 Asp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+105 ? ? 1 67 His N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+106 ? ? 1 67 His H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+107 ? ? 1 68 Trp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+108 ? ? 1 68 Trp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+109 ? ? 1 69 Asp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+110 ? ? 1 69 Asp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+111 ? ? 1 70 Val N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+112 ? ? 1 70 Val H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+113 ? ? 1 71 Val N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+114 ? ? 1 71 Val H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+115 ? ? 1 72 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+116 ? ? 1 72 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+117 ? ? 1 73 Asp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+118 ? ? 1 73 Asp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+119 ? ? 1 74 Lys N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+120 ? ? 1 74 Lys H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+121 ? ? 1 76 Gly N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+122 ? ? 1 76 Gly H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+123 ? ? 1 77 Lys N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+124 ? ? 1 77 Lys H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+125 ? ? 1 78 Val N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+126 ? ? 1 78 Val H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+127 ? ? 1 79 Thr N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+128 ? ? 1 79 Thr H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+129 ? ? 1 80 Ile N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+130 ? ? 1 80 Ile H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+131 ? ? 1 81 Thr N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+132 ? ? 1 81 Thr H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+133 ? ? 1 82 Gly N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+134 ? ? 1 82 Gly H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+135 ? ? 1 83 Thr N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+136 ? ? 1 83 Thr H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+137 ? ? 1 84 Ser N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+138 ? ? 1 84 Ser H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+139 ? ? 1 86 Asn N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+140 ? ? 1 86 Asn H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+141 ? ? 1 87 Trp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+142 ? ? 1 87 Trp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+143 ? ? 1 90 Asp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+144 ? ? 1 90 Asp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+145 ? ? 1 91 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+146 ? ? 1 91 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+147 ? ? 1 92 Thr N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+148 ? ? 1 92 Thr H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+149 ? ? 1 94 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+150 ? ? 1 94 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+151 ? ? 1 95 Met N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+152 ? ? 1 95 Met H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+153 ? ? 1 96 Thr N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+154 ? ? 1 96 Thr H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+155 ? ? 1 97 Arg N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+156 ? ? 1 97 Arg H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+157 ? ? 1 98 Gln N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+158 ? ? 1 98 Gln H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+159 ? ? 1 99 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+160 ? ? 1 99 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+161 ? ? 1 100 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+162 ? ? 1 100 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+163 ? ? 1 101 Asp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+164 ? ? 1 101 Asp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+165 ? ? 1 103 Ala N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+166 ? ? 1 103 Ala H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+167 ? ? 1 104 Ala N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+168 ? ? 1 104 Ala H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+169 ? ? 1 105 Ile N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+170 ? ? 1 105 Ile H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+171 ? ? 1 106 Phe N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+172 ? ? 1 106 Phe H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+173 ? ? 1 107 Trp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+174 ? ? 1 107 Trp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+175 ? ? 1 108 Arg N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+176 ? ? 1 108 Arg H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+177 ? ? 1 109 Lys N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+178 ? ? 1 109 Lys H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+179 ? ? 1 110 Glu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+180 ? ? 1 110 Glu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+181 ? ? 1 111 Asp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+182 ? ? 1 111 Asp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+183 ? ? 1 113 Asp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+184 ? ? 1 113 Asp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+185 ? ? 1 114 Ala N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+186 ? ? 1 114 Ala H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+187 ? ? 1 115 Met N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+188 ? ? 1 115 Met H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+189 ? ? 1 116 Asp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+190 ? ? 1 116 Asp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+191 ? ? 1 119 Glu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+192 ? ? 1 119 Glu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+193 ? ? 1 121 Asp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+194 ? ? 1 121 Asp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+195 ? ? 1 123 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+196 ? ? 1 123 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+197 ? ? 1 124 Glu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+198 ? ? 1 124 Glu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+199 ? ? 1 125 Phe N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+200 ? ? 1 125 Phe H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+201 ? ? 1 126 Gly N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+202 ? ? 1 126 Gly H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+203 ? ? 1 127 Glu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+204 ? ? 1 127 Glu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+205 ? ? 1 129 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+206 ? ? 1 129 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+207 ? ? 1 130 Ser N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+208 ? ? 1 130 Ser H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+209 ? ? 1 131 Asp N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+210 ? ? 1 131 Asp H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+211 ? ? 1 132 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+212 ? ? 1 132 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+213 ? ? 1 133 Ala N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+214 ? ? 1 133 Ala H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+215 ? ? 1 134 Lys N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+216 ? ? 1 134 Lys H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+217 ? ? 1 135 Ile N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+218 ? ? 1 135 Ile H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+219 ? ? 1 136 Arg N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+220 ? ? 1 136 Arg H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+221 ? ? 1 137 Lys N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+222 ? ? 1 137 Lys H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+223 ? ? 1 138 Val N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+224 ? ? 1 138 Val H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+225 ? ? 1 139 Met N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+226 ? ? 1 139 Met H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+227 ? ? 1 140 Tyr N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+228 ? ? 1 140 Tyr H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+229 ? ? 1 141 Phe N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+230 ? ? 1 141 Phe H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+231 ? ? 1 142 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+232 ? ? 1 142 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+233 ? ? 1 143 Ile N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+234 ? ? 1 143 Ile H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+235 ? ? 1 144 Thr N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+236 ? ? 1 144 Thr H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+237 ? ? 1 145 Phe N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+238 ? ? 1 145 Phe H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+239 ? ? 1 146 Gly N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+240 ? ? 1 146 Gly H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+241 ? ? 1 147 Glu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+242 ? ? 1 147 Glu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+243 ? ? 1 148 Gly N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+244 ? ? 1 148 Gly H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+245 ? ? 1 149 Val N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+246 ? ? 1 149 Val H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+247 ? ? 1 150 Glu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+248 ? ? 1 150 Glu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+249 ? ? 1 152 Ala N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+250 ? ? 1 152 Ala H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+251 ? ? 1 153 Asn N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+252 ? ? 1 153 Asn H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+253 ? ? 1 154 Leu N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+254 ? ? 1 154 Leu H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+255 ? ? 1 155 Lys N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+256 ? ? 1 155 Lys H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+257 ? ? 1 156 Ala N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+258 ? ? 1 156 Ala H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+259 ? ? 1 157 Ser N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+260 ? ? 1 157 Ser H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+261 ? ? 1 158 Val N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+262 ? ? 1 158 Val H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+263 ? ? 1 159 Val N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+264 ? ? 1 159 Val H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+265 ? ? 1 160 Phe N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+266 ? ? 1 160 Phe H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+267 ? ? 1 161 Asn N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+268 ? ? 1 161 Asn H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+269 ? ? 1 162 Gln N N 15 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+270 ? ? 1 162 Gln H H 1 0.968170072462 2.47883157563 18337414.9706 7132323.85792 ? ? ? ? ? ? ? ? ? ? 18968170.5692 -2348013.80727 2625455.59356 -2348013.80727 17792689.112 -2049269.45293 2625455.59356 -2049269.45293 18251385.2305 1
+
+   stop_
+
+save_
