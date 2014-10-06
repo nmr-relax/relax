@@ -3023,7 +3023,7 @@ class Relax_disp(SystemTestCase):
         calc_chi2 = cur_spin.chi2
 
         # Assert calculation is equal.
-        #self.assertAlmostEqual(pre_chi2, calc_chi2)
+        self.assertAlmostEqual(pre_chi2, calc_chi2)
 
         # Define dx.map settings.
         dx_inc = 2
