@@ -2990,10 +2990,9 @@ class Relax_disp(SystemTestCase):
         """Test making dx_map for residues under clustered calculation.
 
         This uses CPMG data from:
-
-            Webb H, Tynan-Connolly BM, Lee GM, Farrell D, O'Meara F, Soendergaard CR, Teilum K, Hewage C, McIntosh LP, Nielsen JE
-            Remeasuring HEWL pK(a) values by NMR spectroscopy: methods, analysis, accuracy, and implications for theoretical pK(a) calculations.
-            (2011), Proteins: Struct, Funct, Bioinf 79(3):685-702, DOI 10.1002/prot.22886
+            - Webb H, Tynan-Connolly BM, Lee GM, Farrell D, O'Meara F, Soendergaard CR, Teilum K, Hewage C, McIntosh LP, Nielsen JE
+            - Remeasuring HEWL pK(a) values by NMR spectroscopy: methods, analysis, accuracy, and implications for theoretical pK(a) calculations.
+            - (2011), Proteins: Struct, Funct, Bioinf 79(3):685-702, U{DOI 10.1002/prot.22886<http://dx.doi.org/10.1002/prot.22886>}
         """
 
         # Define path to data 
