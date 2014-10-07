@@ -25,7 +25,7 @@ from math import pi
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from pipe_control import diffusion_tensor, pipes
+from pipe_control import diffusion_tensor, pipes, mol_res_spin
 from lib.errors import RelaxError, RelaxParamSetError, RelaxUnknownParamCombError
 from test_suite.unit_tests.base_classes import UnitTestCase
 
@@ -97,6 +97,9 @@ class Value_base_class(UnitTestCase):
         pipe.mol[0].res.add_item('Trp', 2)
         pipe.mol[0].res[1].spin[0].num = 112
         pipe.mol[0].res[1].spin[0].name = 'NH'
+
+        # Update the metadata so that the other pipe_control.mol_res_spin module functions can operate correctly.
+        mol_res_spin.metadata_update(pipe=pipe_name)
 
 
 
