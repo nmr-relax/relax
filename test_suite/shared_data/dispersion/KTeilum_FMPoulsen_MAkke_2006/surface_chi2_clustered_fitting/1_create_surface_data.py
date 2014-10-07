@@ -36,7 +36,7 @@ dx_inc = 50
 # Lower bounds
 params = ['dw', 'k_AB']
 lower = [0.0, 0.0]
-upper = [15.0, 10.0]
+upper = [20.0, 6.0]
 
 # Get the current point for clustered mininimisation.
 pcm = [cur_spin.dw, cur_spin.k_AB]

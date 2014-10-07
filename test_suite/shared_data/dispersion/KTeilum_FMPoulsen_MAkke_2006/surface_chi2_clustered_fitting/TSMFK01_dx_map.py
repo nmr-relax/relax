@@ -45,7 +45,7 @@ file_name_point = "%s_point%s" % (cur_model, cur_spin_id_str)
 
 # Set bounds
 lower = [0.0, 0.0, 5.0]
-upper = [15.0, 10.0, 15.0]
+upper = [20.0, 6.0, 15.0]
 dx.map(params=dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=dx_inc, lower=lower, upper=upper, axis_incs=10, file_prefix=file_name_map, dir=result_dir, point=dx_point_clustered_min, point_file=file_name_point)
 
 print("Params for dx map is")
