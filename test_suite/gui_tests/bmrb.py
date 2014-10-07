@@ -22,7 +22,11 @@
 # Module docstring.
 """GUI tests for the BMRB related activities."""
 
+# Python module imports.
+from tempfile import mkdtemp, mktemp
+
 # relax module imports.
+from data_store import Relax_data_store; ds = Relax_data_store()
 from test_suite.gui_tests.base_classes import GuiTestCase
 from test_suite import system_tests
 
@@ -35,3 +39,13 @@ class Bmrb(GuiTestCase, system_tests.bmrb.Bmrb):
 
         # Force execution of the GuiTestCase __init__ method.
         GuiTestCase.__init__(self, methodName)
+
+
+    def setUp(self):
+        """Common set up for these GUI tests."""
+
+        # Create a temporary file name.
+        ds.tmpfile = mktemp()
+
+        # Create a temporary directory for dumping files.
+        self.tmpdir = mkdtemp()
