@@ -182,7 +182,7 @@ class Map:
         write_general(file_prefix=self.file_prefix, dir=self.dir, inc=self.inc)
 
         # Create the OpenDX .general and data files for the given point.
-        if self.num_points > 1:
+        if self.num_points >= 1:
             write_point(file_prefix=self.point_file, dir=self.dir, inc=self.inc, point=self.point, num_points=self.num_points, bounds=self.bounds, N=self.n)
 
 
