@@ -5,7 +5,7 @@
 #                         (see https://gna.org/users/varioustoxins             #
 #                                      for contact details)                    #
 #                                                                              #
-# Copyright (C) 2007-2013 Edward d'Auvergne                                    #
+# Copyright (C) 2007-2014 Edward d'Auvergne                                    #
 #                                                                              #
 #                                                                              #
 # This file is part of the program relax.                                      #
@@ -577,9 +577,11 @@ class Unit_test_runner(object):
         return result
 
 
-    def run(self, runner=None):
+    def run(self, tests=None, runner=None):
         """Run a unit test or set of unit tests.
 
+        @keyword tests:     The list of system tests to perform.
+        @type tests:        list of str
         @keyword runner:    A unit test runner such as TextTestRunner.  None indicates use of the default unit test runner.  For an example of how to write a test runner see the python documentation for TextTestRunner in the python source.
         @type runner:       Unit test runner instance (TextTestRunner, BaseGUITestRunner subclass, etc.)
         @return:            A string indicating success or failure of the unit tests run.
@@ -598,7 +600,27 @@ class Unit_test_runner(object):
             print('----------------')
             print('')
 
-        module_paths = self.paths_from_test_module(self.test_module)
+        # The test module path for individual tests.
+        if tests:
+            # Initialise the list of paths.
+            module_paths = []
+
+            # Loop over each test.
+            for test in tests:
+                # Strip out the leading 'test_suite.unit_tests.' if present.
+                test = test.replace('test_suite.unit_tests.', '')
+                test = test.replace('test_suite%sunit_tests%s' % (os.sep, os.sep), '')
+
+                # Replace the Python '.' separator with the system's path separator.
+                test = test.replace('.', os.sep)
+
+                # Append to the module path list.
+                module_paths += self.paths_from_test_module(self.test_module+os.sep+test)
+
+        # The test module path for all tests.
+        else:
+            module_paths = self.paths_from_test_module(self.test_module)
+
         if self.verbose:
             print("%-22s %s" % ('Test module:', self.test_module))
             print("%-22s %s" % ('Root path', self.root_path))

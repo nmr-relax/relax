@@ -231,7 +231,7 @@ class Test_suite_runner:
             # Run the tests.
             unit_runner = Unit_test_runner(root_path=status.install_path+os.sep+'test_suite'+os.sep+'unit_tests')
             self.runner.category = 'unit'
-            self.unit_result = unit_runner.run(runner=self.runner)
+            self.unit_result = unit_runner.run(self.tests, runner=self.runner)
 
             # Print out a summary of the test suite.
             if summary:
