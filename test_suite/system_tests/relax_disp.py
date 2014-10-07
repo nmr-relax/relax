@@ -1228,10 +1228,9 @@ class Relax_disp(SystemTestCase):
     def x_test_bmrb_sub_cpmg(self):
         """U{Task #7858: <https://gna.org/task/?7858>} Make it possible to submit CPMG experiments for BMRB.
         This uses CPMG data from:
-
-            Webb H, Tynan-Connolly BM, Lee GM, Farrell D, O'Meara F, Soendergaard CR, Teilum K, Hewage C, McIntosh LP, Nielsen JE
-            Remeasuring HEWL pK(a) values by NMR spectroscopy: methods, analysis, accuracy, and implications for theoretical pK(a) calculations.
-            (2011), Proteins: Struct, Funct, Bioinf 79(3):685-702, DOI 10.1002/prot.22886
+            - Webb H, Tynan-Connolly BM, Lee GM, Farrell D, O'Meara F, Soendergaard CR, Teilum K, Hewage C, McIntosh LP, Nielsen JE.
+              Remeasuring HEWL pK(a) values by NMR spectroscopy: methods, analysis, accuracy, and implications for theoretical pK(a) calculations.
+              (2011), Proteins: Struct, Funct, Bioinf 79(3):685-702, DOI 10.1002/prot.22886
         """
 
         # Define path to data 
@@ -2991,8 +2990,8 @@ class Relax_disp(SystemTestCase):
 
         This uses CPMG data from:
             - Webb H, Tynan-Connolly BM, Lee GM, Farrell D, O'Meara F, Soendergaard CR, Teilum K, Hewage C, McIntosh LP, Nielsen JE
-            - Remeasuring HEWL pK(a) values by NMR spectroscopy: methods, analysis, accuracy, and implications for theoretical pK(a) calculations.
-            - (2011), Proteins: Struct, Funct, Bioinf 79(3):685-702, U{DOI 10.1002/prot.22886<http://dx.doi.org/10.1002/prot.22886>}
+              Remeasuring HEWL pK(a) values by NMR spectroscopy: methods, analysis, accuracy, and implications for theoretical pK(a) calculations.
+              (2011), Proteins: Struct, Funct, Bioinf 79(3):685-702, U{DOI 10.1002/prot.22886<http://dx.doi.org/10.1002/prot.22886>}
         """
 
         # Define path to data 
