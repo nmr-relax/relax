@@ -51,7 +51,7 @@ More information on the NS MMQ 2-site model can be found in the:
 
 # Python module imports.
 from math import floor
-from numpy import array, conj, complex64, dot, einsum, float64, log, multiply
+from numpy import array, conj, complex128, dot, einsum, float64, log, multiply
 from numpy.linalg import matrix_power
 
 # relax module imports.
@@ -192,9 +192,9 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), R20A=None, R
 
     # The M1 and M2 matrices.
     # Equivalent to D+.
-    M1_mat = matrix_exponential(m1_mat, dtype=complex64)
+    M1_mat = matrix_exponential(m1_mat, dtype=complex128)
     # Equivalent to Z-.
-    M2_mat = matrix_exponential(m2_mat, dtype=complex64)
+    M2_mat = matrix_exponential(m2_mat, dtype=complex128)
 
     # The complex conjugates M1* and M2*
     # Equivalent to D+*.
@@ -351,8 +351,8 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), R20A=N
     m2_mat = rmmq_2site_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
 
     # The A+/- matrices.
-    A_pos_mat = matrix_exponential(m1_mat, dtype=complex64)
-    A_neg_mat = matrix_exponential(m2_mat, dtype=complex64)
+    A_pos_mat = matrix_exponential(m1_mat, dtype=complex128)
+    A_neg_mat = matrix_exponential(m2_mat, dtype=complex128)
 
     # The evolution for one n.
     evol_block_mat = einsum('...ij, ...jk', A_neg_mat, A_pos_mat)

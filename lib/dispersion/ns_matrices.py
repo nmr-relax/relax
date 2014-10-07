@@ -165,7 +165,7 @@ def rmmq_2site(matrix=None, R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None)
     """The Bloch-McConnell matrix for 2-site exchange.
 
     @keyword matrix:        The matrix to populate.
-    @type matrix:           numpy rank-2, 2D complex64 array
+    @type matrix:           numpy rank-2, 2D complex128 array
     @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
     @type R20A:             float
     @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
@@ -189,7 +189,7 @@ def rmmq_3site(matrix=None, R20A=None, R20B=None, R20C=None, dw_AB=None, dw_AC=N
     """The Bloch-McConnell matrix for 3-site exchange.
 
     @keyword matrix:        The matrix to populate.
-    @type matrix:           numpy rank-2, 3D complex64 array
+    @type matrix:           numpy rank-2, 3D complex128 array
     @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
     @type R20A:             float
     @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
