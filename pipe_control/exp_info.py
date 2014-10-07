@@ -157,11 +157,11 @@ def bmrb_write_software(star):
                 cite_id_nums.append(cdp.exp_info.get_cite_id_num(cite))
 
             # The program info.
-            id = star.software.add(name=software.name, version=software.version, vendor_name=software.vendor_name, vendor_eaddress=software.url, task=software.tasks, cite_ids=cite_id_nums)
+            id = star.software.add(name=software.software_name, version=software.version, vendor_name=software.vendor_name, vendor_eaddress=software.url, task=software.tasks, cite_ids=cite_id_nums)
 
             # Append the software info.
             software_ids.append(id)
-            software_labels.append(software.name)
+            software_labels.append(software.software_name)
 
     # relax cannot be the only program used!
     else:
