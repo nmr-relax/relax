@@ -420,7 +420,7 @@ for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
 
         ### Now back calculate values from parameters, and stuff R2eff it back.
         print("Generating data with MODEL:%s, for spin id:%s"%(model_create, cur_spin_id))
-        r2effs = optimisation.back_calc_r2eff(spin=cur_spin, spin_id=cur_spin_id)
+        r2effs = optimisation.back_calc_r2eff(spins=[cur_spin], spin_ids=[cur_spin_id])
 
         # Define file name
         file_name = "%s%s.txt" % (exp_id, cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))

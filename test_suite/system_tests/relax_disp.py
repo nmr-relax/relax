@@ -3002,10 +3002,6 @@ class Relax_disp(SystemTestCase):
         # Read data.
         self.interpreter.results.read(prev_data_path + sep + 'FT_-_CR72_-_min_-_128_-_free_spins')
 
-        # Define temporary folder.
-        result_dir = self.tmpdir
-        #result_dir = None
-
         # Get residue of interest.
         cur_spin_id = ":%i@%s"%(52, 'N')
         cur_spin_id_str = cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_')
@@ -3017,13 +3013,14 @@ class Relax_disp(SystemTestCase):
         pre_chi2 = cur_spin.chi2
 
         # Then do a local minimisation.
+        #self.interpreter.select.spin(":%i@%s"%(2, 'N'))
         self.interpreter.minimise.calculate()
 
         # Get the chi2 value after calculation.
         calc_chi2 = cur_spin.chi2
 
         # Assert calculation is equal.
-        #self.assertAlmostEqual(pre_chi2, calc_chi2)
+        self.assertAlmostEqual(pre_chi2, calc_chi2)
 
         # Define dx.map settings.
         dx_inc = 2
@@ -3077,6 +3074,16 @@ class Relax_disp(SystemTestCase):
                     # Add to line counter.
                     line += 1
 
+        # Define temporary folder.
+        result_dir = self.tmpdir
+
+        # For testing.
+        #result_dir = None
+        #lower = None
+        #upper = None
+        #self.interpreter.relax_disp.cluster(cluster_id='free spins', spin_id=cur_spin_id)
+
+
         # Then do the map.
         self.interpreter.dx.map(params=dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=dx_inc, lower=lower, upper=upper, axis_incs=10, file_prefix=file_name_map, dir=result_dir, point=dx_point_clustered_min, point_file=file_name_point)
 
@@ -3087,6 +3094,7 @@ class Relax_disp(SystemTestCase):
 
         ## Check for file creation
         # Set filepaths.
+        map_name = get_file_path(file_name=file_name_map, dir=result_dir)
         map_cfg = get_file_path(file_name=file_name_map+".cfg", dir=result_dir)
         map_net = get_file_path(file_name=file_name_map+".net", dir=result_dir)
         map_general = get_file_path(file_name=file_name_map+".general", dir=result_dir)
@@ -3100,6 +3108,15 @@ class Relax_disp(SystemTestCase):
         self.assert_(access(map_general, F_OK))
         self.assert_(access(point_general, F_OK))
         self.assert_(access(point_point, F_OK))
+
+        # Open the file, and assert the chi2 value is as expected.
+        get_data = extract_data(file=map_name)
+
+        # Extract line 0, column 0.
+        test = float(get_data[line_chi2-1][0])
+
+        # Assert.
+        self.assertAlmostEqual(test, pre_chi2,  6)
 
 
     def test_estimate_r2eff_err(self):

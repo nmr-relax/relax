@@ -37,6 +37,7 @@ from types import MethodType
 from lib.arg_check import is_list, is_str_list
 from lib.dispersion.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_MMQ, MODEL_R2EFF, PARAMS_R20
 from lib.errors import RelaxError, RelaxImplementError
+from lib.selection import Selection, tokenise
 from lib.text.sectioning import subsection
 from multi import Processor_box
 from pipe_control import pipes, relax_data, sequence
@@ -260,6 +261,9 @@ class Relax_disp(API_base, API_common):
         check_mol_res_spin_data()
         check_model_type()
 
+        # Get the looping list over cluster ids.
+        cluster_ids, cluster_spin_list, cluster_spin_id_list, cluster_spin_sel_list, clust_contain_spin_id_list = self.loop_cluster_ids(spin_id=spin_id)
+
         # Special exponential curve-fitting for the R2eff model.
         if cdp.model_type == MODEL_R2EFF:
             calculate_r2eff()
@@ -269,22 +273,48 @@ class Relax_disp(API_base, API_common):
             # 1H MMQ flag.
             proton_mmq_flag = has_proton_mmq_cpmg()
 
-            # Loop over all spins.
-            for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-                # Skip protons for MMQ data.
-                if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
-                    continue
+            # Loop over the cluster ids.
+            for i, cluster_id in enumerate(cluster_ids):
+                # Get the spins, ids and if the cluster contains the spin of interest.
+                cluster_spins = cluster_spin_list[i]
+                cluster_spin_ids = cluster_spin_id_list[i]
+                spin_of_interest = clust_contain_spin_id_list[i]
 
-                # Get the attached proton.
-                proton = None
-                if proton_mmq_flag:
-                    proton = return_attached_protons(spin_id)[0]
+                # If spin of interest is present:
+                if spin_of_interest:
+                    # If it is a free free spin, then calculate per spin.
+                    if cluster_id == 'free spins':
+                        for si, spin in enumerate(cluster_spins):
+                            cur_spin_id = cluster_spin_ids[si]
 
-                # The back calculated values.
-                back_calc = back_calc_r2eff(spin=spin, spin_id=spin_id, store_chi2=True)
+                            # Skip protons for MMQ data.
+                            if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
+                                continue
 
-                # Pack the data.
-                pack_back_calc_r2eff(spin=spin, spin_id=spin_id, si=0, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
+                            # Get the attached proton.
+                            proton = None
+                            if proton_mmq_flag:
+                                proton = return_attached_protons(cur_spin_id)[0]
+
+                            # The back calculated values.
+                            back_calc = back_calc_r2eff(spins=[spin], spin_ids=[cur_spin_id], store_chi2=True)
+
+                            # Pack the data.
+                            pack_back_calc_r2eff(spin=spin, spin_id=cur_spin_id, si=0, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
+
+                    else:
+                        # The back calculated values.
+                        back_calc = back_calc_r2eff(spins=cluster_spins, spin_ids=cluster_spin_ids, store_chi2=True)
+
+                        # Pack the data.
+                        for si, spin in enumerate(cluster_spins):
+                            cur_spin_id = cluster_spin_ids[si]
+
+                            # Skip protons for MMQ data.
+                            if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
+                                continue
+
+                            pack_back_calc_r2eff(spin=spin, spin_id=cur_spin_id, si=si, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
 
 
     def constraint_algorithm(self):
@@ -324,12 +354,12 @@ class Relax_disp(API_base, API_common):
             spin, spin_id = data_id
 
             # Back calculate the R2eff/R1rho data.
-            back_calc = back_calc_r2eff(spin=spin, spin_id=spin_id)
+            back_calc = back_calc_r2eff(spins=[spin], spin_ids=[spin_id])
 
             # Get the attached proton data.
             if proton_mmq_flag:
                 proton = return_attached_protons(spin_id)[0]
-                proton_back_calc = back_calc_r2eff(spin=proton, spin_id=spin_id)
+                proton_back_calc = back_calc_r2eff(spins=[proton], spin_ids=[spin_id])
 
             # Convert to a dictionary matching the R2eff data structure.
             values = {}
@@ -611,6 +641,90 @@ class Relax_disp(API_base, API_common):
 
         # Minimisation.
         self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+
+
+    def loop_cluster_ids(self, spin_id=None):
+        """Create list of cluster ids, its associated list of spin containers,  its associated list of spin_ids, the selection string for the cluster id and bool to determine if spin of interest is in the cluster.
+
+        @param spin_id:     The spin identification string.
+        @type spin_id:      None
+        @return:            The list of cluster ids, the nested list of spin container instances, the nested list of spin ids, the selection string for the cluster and list of boolean if spin_id is contained in cluster_id.
+        @rtype:             list of str, list of list of spin container, list of list of spin ids, list of str, list of bool
+        """
+
+        # Initialise cluster ids.
+        cluster_ids = ['free spins']
+
+        # Add the defined cluster IDs.
+        if hasattr(cdp, 'clustering'):
+            for key in list(cdp.clustering.keys()):
+                if key not in cluster_ids:
+                    cluster_ids.append(key)
+
+        # Now collect spins and spin_id per cluster ids.
+        cluster_spin_list = []
+        cluster_spin_id_list = []
+        cluster_spin_sel_list = []
+        clust_contain_spin_id_list = []
+
+        # Loop over the cluster ids
+        if hasattr(cdp, 'clustering'):
+            # Now loop over the cluster_ids in the list, and collect per id.
+            for cluster_id in cluster_ids:
+                cluster_id_spin_list = []
+                cluster_id_spin_id_list = []
+                # Now loop through spins in the clustered id, and collect
+                col_sel_str = ''
+                mol_token = None
+                for clust_spin_id in cdp.clustering[cluster_id]:
+                    clust_spin = return_spin(clust_spin_id)
+
+                    # Skip de-selected
+                    if not clust_spin.select:
+                        continue
+
+                    # Add to list.
+                    cluster_id_spin_list.append(clust_spin)
+                    cluster_id_spin_id_list.append(clust_spin_id)
+
+                    # Add id to string
+                    mol_token, res_token, spin_token = tokenise(clust_spin_id)
+                    col_sel_str += '%s,' % (res_token)
+
+                # Make selection for molecule.
+                if mol_token == None:
+                    col_sel_str = ':' + col_sel_str
+                else:
+                    col_sel_str = '#%s:' % mol_token + col_sel_str
+
+                # Make a selection object, based on the cluster id.
+                select_obj = Selection(col_sel_str)
+                # Does the current cluster id contain the spin of interest.
+                clust_contain_spin_id = select_obj.contains_spin_id(spin_id)
+                # If the spin_id is set to None, then we calculate for all:
+                if spin_id == None:
+                    clust_contain_spin_id = True
+
+                cluster_spin_list.append(cluster_id_spin_list)
+                cluster_spin_id_list.append(cluster_id_spin_id_list)
+                cluster_spin_sel_list.append(col_sel_str)
+                clust_contain_spin_id_list.append(clust_contain_spin_id)
+
+        # If clustering has not been specified, then collect for free spins, according to selection.
+        else:
+            # Now loop over selected spins.
+            free_spin_list = []
+            free_spin_id_list = []
+            for cur_spin, cur_spin_id in spin_loop(selection=spin_id, return_id=True, skip_desel=True):
+                free_spin_list.append(cur_spin)
+                free_spin_id_list.append(cur_spin_id)
+
+            cluster_spin_list.append(free_spin_list)
+            cluster_spin_id_list.append(free_spin_id_list)
+            cluster_spin_sel_list.append(None)
+            clust_contain_spin_id_list.append(True)
+
+        return cluster_ids, cluster_spin_list, cluster_spin_id_list, cluster_spin_sel_list, clust_contain_spin_id_list
 
 
     def map_bounds(self, param, spin_id=None):
@@ -1156,83 +1270,111 @@ class Relax_disp(API_base, API_common):
         is_str_list(param, 'parameter name')
         is_list(value, 'parameter value')
 
-        # Loop over the parameters.
-        for i in range(len(param)):
-            # Is the parameter is valid?
-            if not self._PARAMS.contains(param[i]):
-                raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param[i])
+        # Get the looping list over cluster ids.
+        cluster_ids, cluster_spin_list, cluster_spin_id_list, cluster_spin_sel_list, clust_contain_spin_id_list = self.loop_cluster_ids(spin_id=spin_id)
 
-            # Spin loop.
-            for spin in spin_loop(spin_id):
-                # Skip deselected spins.
-                if not spin.select:
-                    continue
+        # Loop over the cluster ids.
+        for j, cluster_id in enumerate(cluster_ids):
+            # Get the spins, ids and if the cluster contains the spin of interest.
+            cluster_spins = cluster_spin_list[j]
+            cluster_spin_ids = cluster_spin_id_list[j]
+            spin_of_interest = clust_contain_spin_id_list[j]
+            cluster_spin_sel = cluster_spin_sel_list[j]
 
-                # The object name.
-                obj_name = param[i]
-                if error:
-                    obj_name += '_err'
-
-                # Handle the R10 parameters.
-                if param[i] in ['r1']:
-                    # Loop over the current keys.
-                    for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
-                        # The parameter key.
-                        key = generate_r20_key(exp_type=exp_type, frq=frq)
-
-                        # Initialise the structure if needed.
-                        if not hasattr(spin, obj_name):
-                            setattr(spin, obj_name, {})
-
-                        # Set the value.
-                        if index == None:
-                            obj = getattr(spin, obj_name)
-                            obj[key] = value[i]
-
-                        # If the index is specified, let it match the frequency index
-                        elif mi == index:
-                            obj = getattr(spin, obj_name)
-                            obj[key] = value[i]
-
-                # Handle the R20 parameters.
-                elif param[i] in PARAMS_R20:
-                    # Loop over the current keys.
-                    for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
-                        # The parameter key.
-                        key = generate_r20_key(exp_type=exp_type, frq=frq)
-
-                        # Initialise the structure if needed.
-                        if not hasattr(spin, obj_name):
-                            setattr(spin, obj_name, {})
-
-                        # Set the value.
-                        if index == None:
-                            obj = getattr(spin, obj_name)
-                            obj[key] = value[i]
-
-                        # If the index is specified, let it match the frequency index
-                        elif mi == index:
-                            obj = getattr(spin, obj_name)
-                            obj[key] = value[i]
-
-                # Handle the R2eff and I0 parameters.
-                elif param[i] in ['r2eff', 'i0'] and not isinstance(value[i], dict):
-                    # Loop over all the data.
-                    for exp_type, frq, offset, point in loop_exp_frq_offset_point():
-                        # The parameter key.
-                        key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
-
-                        # Initialise the structure if needed.
-                        if not hasattr(spin, obj_name):
-                            setattr(spin, obj_name, {})
-
-                        # Set the value.
-                        obj = getattr(spin, obj_name)
-                        obj[key] = value[i]
-
-                # Set the other parameters.
+            # If spin of interest is present:
+            if spin_of_interest:
+                # If it is a free free spin, then calculate per spin.
+                if cluster_id == 'free spins':
+                    select_string = spin_id
                 else:
-                    setattr(spin, obj_name, value[i])
+                    select_string = cluster_spin_sel
+
+                # Loop over the parameters.
+                for i in range(len(param)):
+                    param_i = param[i]
+                    value_i = value[i]
+
+                    # Is the parameter is valid?
+                    if not self._PARAMS.contains(param_i):
+                        raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param_i)
+
+                    # If the parameter is a global parameter, then change for all spins part of the cluster.
+                    if param_i in ['pA', 'kex', 'tex', 'kB', 'kC', 'kex_AB', 'kex_BC', 'kex_AC']:
+                        loop_select_string = select_string
+                    else:
+                        loop_select_string = spin_id
+
+                    # Spin loop.
+                    for spin in spin_loop(selection=loop_select_string):
+                        # Skip deselected spins.
+                        if not spin.select:
+                            continue
+        
+                        # The object name.
+                        obj_name = param_i
+                        if error:
+                            obj_name += '_err'
+        
+                        # Handle the R10 parameters.
+                        if param_i in ['r1']:
+                            # Loop over the current keys.
+                            for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+                                # The parameter key.
+                                key = generate_r20_key(exp_type=exp_type, frq=frq)
+        
+                                # Initialise the structure if needed.
+                                if not hasattr(spin, obj_name):
+                                    setattr(spin, obj_name, {})
+        
+                                # Set the value.
+                                if index == None:
+                                    obj = getattr(spin, obj_name)
+                                    obj[key] = value_i
+        
+                                # If the index is specified, let it match the frequency index
+                                elif mi == index:
+                                    obj = getattr(spin, obj_name)
+                                    obj[key] = value_i
+        
+                        # Handle the R20 parameters.
+                        elif param_i in PARAMS_R20:
+                            # Loop over the current keys.
+                            for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+                                # The parameter key.
+                                key = generate_r20_key(exp_type=exp_type, frq=frq)
+        
+                                # Initialise the structure if needed.
+                                if not hasattr(spin, obj_name):
+                                    setattr(spin, obj_name, {})
+        
+                                # Set the value.
+                                if index == None:
+                                    obj = getattr(spin, obj_name)
+                                    obj[key] = value_i
+        
+                                # If the index is specified, let it match the frequency index
+                                elif mi == index:
+                                    obj = getattr(spin, obj_name)
+                                    obj[key] = value_i
+        
+                        # Handle the R2eff and I0 parameters.
+                        elif param_i in ['r2eff', 'i0'] and not isinstance(value_i, dict):
+                            # Loop over all the data.
+                            for exp_type, frq, offset, point in loop_exp_frq_offset_point():
+                                # The parameter key.
+                                key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+        
+                                # Initialise the structure if needed.
+                                if not hasattr(spin, obj_name):
+                                    setattr(spin, obj_name, {})
+        
+                                # Set the value.
+                                obj = getattr(spin, obj_name)
+                                obj[key] = value_i
+        
+                        # Set the other parameters.
+                        else:
+                            setattr(spin, obj_name, value_i)
 
 
     def set_selected_sim(self, select_sim, model_info=None):
