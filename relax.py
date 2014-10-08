@@ -312,11 +312,11 @@ class Relax:
         # Recognised command line options for the test suite.
         group = OptionGroup(parser, 'Test suite options')
         group.add_option('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the full relax test suite')
-        group.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the system/functional tests')
-        group.add_option('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the unit tests')
-        group.add_option('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the GUI tests')
-        group.add_option('--verification-tests', action='store_true', dest='verification_tests', default=0, help='execute the software verification tests')
-        group.add_option('--time', action='store_true', dest='tt', default=0, help='enable the timing of individual tests in the test suite')
+        group.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the system/functional tests.  Test names, revealed with the --time option, can be supplied to perform a subset of all tests.')
+        group.add_option('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the unit tests.  Module names, revealed with the --time option, can be supplied to perform a subset of all tests.')
+        group.add_option('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the GUI tests.  Test names, revealed with the --time option, can be supplied to perform a subset of all tests.')
+        group.add_option('--verification-tests', action='store_true', dest='verification_tests', default=0, help='execute the software verification tests.  Test names, revealed with the --time option, can be supplied to perform a subset of all tests.')
+        group.add_option('--time', action='store_true', dest='tt', default=0, help='print out the timings of individual tests in the test suite')
         group.add_option('--no-skip', action='store_true', dest='no_skip', default=0, help='a debugging option for relax developers to turn on all blacklisted tests, even those that will fail')
         parser.add_option_group(group)
 

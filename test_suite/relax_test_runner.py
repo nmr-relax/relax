@@ -21,6 +21,7 @@
 
 # Python module imports.
 import dep_check
+from re import split
 import sys
 from time import time
 from unittest import TextTestRunner
@@ -166,10 +167,21 @@ class RelaxTestResult(TextTestResult):
         # Subtract the end time from the start time.
         self.time -= time()
 
-        # Change the test name.
+        # Change the test name for all but unit tests.
         if self.category != 'unit':
             test_name = test_name.split('.')
             test_name = "%s.%s" % (test_name[-2], test_name[-1])
+
+        # Modify the unit test name printout.
+        else:
+            # Strip out the leading 'test_suite.unit_tests.' text.
+            test_name = test_name.replace('test_suite.unit_tests.', '')
+
+            # Split out the module name from the test name.
+            module_name, test_name = split('.Test_', test_name)
+
+            # Rebuild the test name.
+            test_name = "module %s, test Test_%s" % (module_name, test_name)
 
         # The printout.
         self.stream.write('  %7.2f s for %s\n' % (-self.time, test_name))
