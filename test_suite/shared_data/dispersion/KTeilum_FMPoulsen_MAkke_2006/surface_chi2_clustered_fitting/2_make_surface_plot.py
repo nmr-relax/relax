@@ -80,14 +80,17 @@ z_p = zi
 
 # Replace out-lier value.
 # First get index os largest values
-out_val = 10000.
-out_val_mask = masked_where(z_p >= out_val, z_p)
+out_val = 5*z_min
+z_p_mask = masked_where(z_p >= out_val, z_p)
+z_mask = masked_where(z >= out_val, z)
 
 # Replace with 0.0
-z_p[out_val_mask.mask] = 0.0
+z_p[z_p_mask.mask] = 0.0
+z[z_mask.mask] = 0.0
 # Find new max
 new_max = np.max(z_p)
-z_p[out_val_mask.mask] = new_max
+z_p[z_p_mask.mask] = new_max
+z[z_mask.mask] = new_max
 
 ax.plot_surface(x_p, y_p, z_p, rstride=8, cstride=8, alpha=0.3)
 
@@ -105,7 +108,7 @@ ax.set_ylabel('%s'%params[1])
 ax.set_ylim(y_min, y_max)
 
 ax.set_zlabel('%s'%params[2])
-ax.set_zlim(0, 2*z_min)
+ax.set_zlim(0, out_val)
 
 plt.show()
 

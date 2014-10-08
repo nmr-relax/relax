@@ -29,16 +29,21 @@ mol_name, cur_resi, cur_resn, cur_spin = return_spin(spin_id=cur_spin_id, full_i
 cur_spin_num = cur_spin.num
 cur_spin_name = cur_spin.name
 
+# Now copy the spin
+residue.create(res_num=1002, res_name=cur_resn, mol_name=mol_name)
+new_spin_id =  ":%i@%s"%(1002, 'N')
+spin.copy(pipe_from=None, spin_from=cur_spin_id, pipe_to=None, spin_to=new_spin_id)
+
 # Get the chi2 value
 pre_chi2 = cur_spin.chi2
 
 # Define surface map settings.
-dx_inc = 3
+dx_inc = 6
 
 # Lower bounds
 params = ['dw', 'k_AB']
-lower = [9.9, 1.0]
-upper = [11.1, 5.0]
+lower = [0.0, 0.0]
+upper = [20.0, 6.0]
 
 # Get the current point for clustered mininimisation.
 pcm = [cur_spin.dw, cur_spin.k_AB]
@@ -146,4 +151,8 @@ surface_file.close()
 # Check spins.
 display_spin()
 
-relax_disp.plot_disp_curves(dir='grace', y_axis='r2_eff', x_axis='disp', num_points=1000, extend_hz=500.0, extend_ppm=500.0, interpolate='disp', force=False)
+# Now de-select spins from cluster.
+for spin_id in cur_spin_ids:
+    deselect.spin(spin_id=spin_id)
+
+relax_disp.plot_disp_curves(dir='grace', y_axis='r2_eff', x_axis='disp', num_points=1000, extend_hz=500.0, extend_ppm=500.0, interpolate='disp', force=True)
