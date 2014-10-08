@@ -89,6 +89,9 @@ def count_sobol_points(file_name='sobol_point_count', dir=None, force=True):
     @type force:            bool
     """
 
+    # Store the current data pipe name.
+    original_pipe = pipes.cdp_name()
+
     # The model names, titles and directories, including axis permutations.
     models = []
     model_titles = []
@@ -126,17 +129,12 @@ def count_sobol_points(file_name='sobol_point_count', dir=None, force=True):
         if not access(dirs[i]+sep+'results.bz2', F_OK):
             continue
 
-        # Switch to the data pipe if it already exists.
-        if pipes.has_pipe(models[i]):
-            pipes.switch(models[i])
+        # Create a data pipe.
+        pipe_name = 'temp %s' % models[i]
+        pipes.create(pipe_name, 'frame order')
 
-        # Otherwise load the data.
-        else:
-            # Create a data pipe.
-            pipes.create(models[i], 'frame order')
-
-            # Load the data.
-            results.read(file='results', dir=dirs[i])
+        # Load the data.
+        results.read(file='results', dir=dirs[i])
 
         # SciPy quadratic integration has been used.
         if hasattr(cdp, 'quad_int') and cdp.quad_int:
@@ -151,6 +149,9 @@ def count_sobol_points(file_name='sobol_point_count', dir=None, force=True):
         count[models[i]] = cdp.sobol_points_used
         count_total[models[i]] = cdp.sobol_max_points
         percentage[models[i]] = "%10.3f" % (float(cdp.sobol_points_used) / float(cdp.sobol_max_points) * 100.0) + '%'
+
+        # Delete the temporary data pipe.
+        pipes.delete(pipe_name)
 
     # Initialise the output string.
     string = "Quasi-random Sobol' numerical PCS integration point counting:\n\n"
@@ -174,6 +175,10 @@ def count_sobol_points(file_name='sobol_point_count', dir=None, force=True):
     file = open_write_file(file_name=file_name, dir=dir, force=force)
     file.write(string)
     file.close()
+
+    # Switch back to the original data pipe, if it exists.
+    if original_pipe:
+        pipes.switch(original_pipe)
 
 
 def model_directory(model, base_dir=None):
@@ -212,6 +217,9 @@ def summarise(file_name='summary', dir=None, force=True):
     @keyword force:         A flag which if True will cause any preexisting file to be overwritten.
     @type force:            bool
     """
+
+    # Store the current data pipe name.
+    original_pipe = pipes.cdp_name()
 
     # The model names, titles and directories, including axis permutations.
     models = []
@@ -260,17 +268,12 @@ def summarise(file_name='summary', dir=None, force=True):
         if not access(dirs[i]+sep+'results.bz2', F_OK):
             continue
 
-        # Switch to the data pipe if it already exists.
-        if pipes.has_pipe(models[i]):
-            pipes.switch(models[i])
+        # Create a data pipe.
+        pipe_name = 'temp %s' % models[i]
+        pipes.create(pipe_name, 'frame order')
 
-        # Otherwise load the data.
-        else:
-            # Create a data pipe.
-            pipes.create(models[i], 'frame order')
-
-            # Load the data.
-            results.read(file='results', dir=dirs[i])
+        # Load the data.
+        results.read(file='results', dir=dirs[i])
 
         # Number of params.
         k = len(cdp.params)
@@ -297,7 +300,7 @@ def summarise(file_name='summary', dir=None, force=True):
 
         # Convert the axis alpha angle to spherical angles for comparison.
         if hasattr(cdp, 'axis_alpha') and cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
-            axis_theta, axis_phi = convert_axis_alpha_to_spherical(alpha=cdp.axis_alpha, pivot=generate_pivot(order=1, pipe_name=models[i]), point=pipe_centre_of_mass(verbosity=0))
+            axis_theta, axis_phi = convert_axis_alpha_to_spherical(alpha=cdp.axis_alpha, pivot=generate_pivot(order=1, pipe_name=pipe_name), point=pipe_centre_of_mass(verbosity=0))
             contents1[-1][5] = wrap_angles(axis_theta, 0.0, 2.0*pi)
             contents1[-1][6] = wrap_angles(axis_phi, 0.0, 2.0*pi)
 
@@ -338,6 +341,9 @@ def summarise(file_name='summary', dir=None, force=True):
         contents2[-1][8] = cdp.pivot_y
         contents2[-1][9] = cdp.pivot_z
 
+        # Delete the temporary data pipe.
+        pipes.delete(pipe_name)
+
     # Add the tables.
     string += format_table(headings=headings1, contents=contents1, custom_format=[None, None, "%.2f", "%.2f", "%.3f", "%.3f", "%.3f", "%.2f", "%.2f", "%.2f", "%.2f"])
     string += format_table(headings=headings2, contents=contents2, custom_format=[None, "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f", "%.3f"])
@@ -350,6 +356,10 @@ def summarise(file_name='summary', dir=None, force=True):
     file = open_write_file(file_name=file_name, dir=dir, force=force)
     file.write(string)
     file.close()
+
+    # Switch back to the original data pipe, if it exists.
+    if original_pipe:
+        pipes.switch(original_pipe)
 
 
 
@@ -923,34 +933,72 @@ class Frame_order_analysis:
                 # Printout.
                 subsubtitle(file=sys.stdout, text="Optimisation using the PCS subset")
 
+                # Results directory stub for intermediate results.
+                intermediate_stub = self.results_dir + sep + 'intermediate_results' + sep + 'pcs_subset'
+
                 # Zooming grid search.
                 for i in opt.loop_grid():
+                    # The intermediate results directory.
+                    intermediate_dir = intermediate_stub + '_grid%i' % i
+
                     # Set the zooming grid search level.
                     zoom = opt.get_grid_zoom_level(i)
                     if zoom != None:
                         self.interpreter.minimise.grid_zoom(level=zoom)
-
-                    # The numerical optimisation settings.
-                    self.interpreter.frame_order.quad_int(opt.get_grid_quad_int(i))
-                    self.sobol_setup(opt.get_grid_sobol_info(i))
+                        intermediate_dir += '_zoom%i' % zoom
 
                     # Set up the custom grid increments.
                     incs = self.custom_grid_incs(model, inc=opt.get_grid_inc(i))
+                    intermediate_dir += '_inc%i' % opt.get_grid_inc(i)
+
+                    # The numerical optimisation settings.
+                    quad_int = opt.get_grid_quad_int(i)
+                    if quad_int:
+                        self.interpreter.frame_order.quad_int()
+                        intermediate_dir += '_quad_int'
+                    else:
+                        sobol_num = opt.get_grid_sobol_info(i)
+                        self.sobol_setup(sobol_num)
+                        intermediate_dir += '_sobol%i' % sobol_num[0]
 
                     # Perform the grid search.
                     self.interpreter.minimise.grid_search(inc=incs)
 
+                    # Store the intermediate results and statistics.
+                    self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True)
+                    count_sobol_points(dir=intermediate_dir, force=True)
+                    summarise(dir=intermediate_dir, force=True)
+
                 # Minimise (for the PCS data subset and full RDC set).
                 for i in opt.loop_min():
+                    # The intermediate results directory.
+                    func_tol = opt.get_min_func_tol(i)
+                    max_iter = opt.get_min_max_iter(i)
+                    intermediate_dir = intermediate_stub + '_min%i_ftol%g_max_iter%i' % (i, func_tol, max_iter)
+
                     # The numerical optimisation settings.
-                    self.interpreter.frame_order.quad_int(opt.get_min_quad_int(i))
-                    self.sobol_setup(opt.get_min_sobol_info(i))
+                    quad_int = opt.get_min_quad_int(i)
+                    if quad_int:
+                        self.interpreter.frame_order.quad_int()
+                        intermediate_dir += '_quad_int'
+                    else:
+                        sobol_num = opt.get_min_sobol_info(i)
+                        self.sobol_setup(sobol_num)
+                        intermediate_dir += '_sobol%i' % sobol_num[0]
 
                     # Perform the optimisation.
-                    self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
+                    self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=func_tol, max_iter=max_iter)
+
+                    # Store the intermediate results.
+                    self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True)
+                    count_sobol_points(dir=intermediate_dir, force=True)
+                    summarise(dir=intermediate_dir, force=True)
 
             # Printout.
             subsubtitle(file=sys.stdout, text="Optimisation using the full data set")
+
+            # Results directory stub for intermediate results.
+            intermediate_stub = self.results_dir + sep + 'intermediate_results' + sep + 'all_data'
 
             # Copy the PCS data.
             self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
@@ -967,12 +1015,28 @@ class Frame_order_analysis:
             opt = self.opt_full
             if opt != None:
                 for i in opt.loop_min():
+                    # The intermediate results directory.
+                    func_tol = opt.get_min_func_tol(i)
+                    max_iter = opt.get_min_max_iter(i)
+                    intermediate_dir = intermediate_stub + '_min%i_ftol%g_max_iter%i' % (i, func_tol, max_iter)
+
                     # The numerical optimisation settings.
-                    self.interpreter.frame_order.quad_int(opt.get_min_quad_int(i))
-                    self.sobol_setup(opt.get_min_sobol_info(i))
+                    quad_int = opt.get_min_quad_int(i)
+                    if quad_int:
+                        self.interpreter.frame_order.quad_int()
+                        intermediate_dir += '_quad_int'
+                    else:
+                        sobol_num = opt.get_min_sobol_info(i)
+                        self.sobol_setup(sobol_num)
+                        intermediate_dir += '_sobol%i' % sobol_num[0]
 
                     # Perform the optimisation.
-                    self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
+                    self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=func_tol, max_iter=max_iter)
+
+                    # Store the intermediate results.
+                    self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True)
+                    count_sobol_points(dir=intermediate_dir, force=True)
+                    summarise(dir=intermediate_dir, force=True)
 
             # Results printout.
             self.print_results()
