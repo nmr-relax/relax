@@ -269,6 +269,16 @@ def atom(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq
     @type charge:           int
     """
 
+    # Coordinate bounds.
+    pdb_min = -999.999
+    pdb_max = 9999.999
+    coord = [x, y, z]
+    for i in range(3):
+        if coord[i] != '' and coord[i] < pdb_min:
+            coord[i] = pdb_min
+        if coord[i] != '' and coord[i] > pdb_max:
+            coord[i] = pdb_max
+
     # The formatted record.
     text = "%-6s%5s %-4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s" % (
         'ATOM',
@@ -279,9 +289,9 @@ def atom(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq
         _handle_none(chain_id),
         _handle_none(res_seq),
         _handle_none(icode),
-        _handle_none(x),
-        _handle_none(y),
-        _handle_none(z),
+        _handle_none(coord[0]),
+        _handle_none(coord[1]),
+        _handle_none(coord[2]),
         _handle_none(occupancy),
         _handle_none(temp_factor),
         _handle_none(element),
@@ -1082,6 +1092,16 @@ def hetatm(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_s
     @type charge:           int
     """
 
+    # Coordinate bounds.
+    pdb_min = -999.999
+    pdb_max = 9999.999
+    coord = [x, y, z]
+    for i in range(3):
+        if coord[i] != '' and coord[i] < pdb_min:
+            coord[i] = pdb_min
+        if coord[i] != '' and coord[i] > pdb_max:
+            coord[i] = pdb_max
+
     # The formatted record.
     text = "%-6s%5s %4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s" % (
         'HETATM',
@@ -1092,9 +1112,9 @@ def hetatm(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_s
         _handle_none(chain_id),
         _handle_none(res_seq),
         _handle_none(icode),
-        _handle_none(x),
-        _handle_none(y),
-        _handle_none(z),
+        _handle_none(coord[0]),
+        _handle_none(coord[1]),
+        _handle_none(coord[2]),
         _handle_none(occupancy),
         _handle_none(temp_factor),
         _handle_none(element),
