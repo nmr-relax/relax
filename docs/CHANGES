@@ -19,6 +19,22 @@ http://svn.gna.org/svn/relax/tags/3.3.1
 
 
     Changes:
+        * Epydoc docstring fix for the dep_check.version_comparison() function.
+        * Removed ZZ and HD exchange from the dispersion chapter of the relax manual.  These would probably require completely new analysis types added to relax to analyse such data.
+        * Updated the 'Announcement' section of the release checklist document.  This now includes details about initially composing the message using the relax wiki (http://wiki.nmr-relax.com), and then how that text and the CHANGES file are used for the email announcement (http://news.gmane.org/gmane.science.nmr.relax.announce) and the Gna! news item (https://gna.org/news/?group=relax).
+        * Small changes for the Gna! news item in the release checklist document.
+        * Modified the announcement section of the release checklist document.  Text about removing wiki markup has been added.
+        * More expansion of the release checklist document.  Added text about creating internal and external links for the wiki release notes.
+        * Modified systemtest Relax_disp.test_show_apod_extract that test output from showApod.  The output can be different according to NMRPipe version.  The 'Noise Std Dev' is though the same.
+        * Fix for comments to dependency check of showApod.
+        * Fix for raising error when calling showApod, and subprocess module not available.
+        * Fix for the dependency check for showApod in systemtests.
+        * Further extended the protocol for repeated dispersion analysis.  Task #7826 (https://gna.org/task/index.php?7826): Write an python class for the repeated analysis of dispersion data.
+        * Extended the system test for the protocol for repeated dispersion analysis.  Task #7826 (https://gna.org/task/index.php?7826): Write an python class for the repeated analysis of dispersion data.
+        * Added a relaxation dispersion model profiling log file for relax version 3.3.0 vs. 3.2.3.  This is the output from the dispersion model profiling master script.  These numbers will be used for the relax 3.3.0 release notes (http://wiki.nmr-relax.com/Relax_3.3.0).
+        * Fixes for the relax 3.3.0 vs. 3.2.3 dispersion model profiling log file.  The numeric model numbers were incorrectly scaled and a factor of 10 too high.
+        * Fixes for the scaling factors in the dispersion model super profiling script.
+        * Editing of the relax 3.3.0 features section of the CHANGES file.  This will be used for the release notes.
         * Added more test data for the repeated analysis.  Task #7826 (https://gna.org/task/index.php?7826): Write a Python class for the repeated analysis of dispersion data.
         * Updated the Baldwin 2014 reference in the relax manual.  The pybliographic software was used to format this BibTeX entry (http://pybliographer.org/).  This was updated as volume and page number information is now available.
         * Updated the Morin et al, 2014 paper (the relax relaxation dispersion paper) reference in the manual.  The paper now has volume and page information.
