@@ -192,6 +192,8 @@ Create a new release page at the URL http://wiki.nmr-relax.com/Relax_x.y.z.  Use
     = Description = - Create this section by writing a detailed and full description of the release.  Add internal wiki links and external links, for example to the relax manual web pages for the user functions.
     = Download = - Create this section with links for downloading the release (simply copy the text from an older release).
     = CHANGES file = - Create this section by cutting and pasting the part of the CHANGES file for this release.  Convert the Features, Changes, and Bugfixes titles to the subsection format == Features ==, == Changes ==, and == Bugfixes ==.  Strip all leading whitespace from the full list of changes so that the wiki can format the text.
+    = Links = - Links to the other release announcements.
+    = Announcements = - A transcluded section using {{:relax release announcements}}.
     = See also = - Finally create this section which simply contains the text [[Category:Release_Notes]].
 
 For the changes file text, make the following conversions:
@@ -201,6 +203,7 @@ For the changes file text, make the following conversions:
     - Make internal links for all relax versions.
     - Convert all symbols/parameters to use wiki formatting.
     - Convert all model names to internal wiki links (vi search "\<m[0-9]\>\|\<tm[0-9]\>\|No Rex\|R2eff\|LM63\|LM63 3-site\|CR72\|CR72 full\|IT99\|TSMFK01\|B14\|B14 full\|NS CPMG\|MMQ CR72\|NS MMQ\|M61\|DPL94\|TP02\|TAP03\|MP05\|NS R1rho\|BK13").
+    - Add as many links as possible to the API documentation (to help users dive into the relax code and to help with search engine indexing).
 
 
 
@@ -223,8 +226,10 @@ The steps are:
     - Cut and paste all of the wiki text.  Delete the initial lower case title formatting text, the final 'See also' section, and any wiki markup.
     - Use the Savane markup to format the text (recipe #236, https://gna.org/cookbook/?func=detailitem&item_id=236).
     - As the Savane markup for sectioning is the same as the wiki, the section titles = Description =, = Download =, and = Full list of changes = do not need to be modified (except changing the text 'CHANGES file' to 'Full list of changes').  The same for the subtitles == Features ==, == Changes ==, and == Bugfixes ==.  The leading whitespace from the full list of changes must be stripped, but this should already be done in the wiki text.
-    - Item references such as bug #7641, task #3122, etc. are automatically converted into links, therefore remove all links to the trackers.
+    - Convert internal [[xyz]] wiki links into proper [http://wiki.nmr-relax.com/xyz] links.
+    - Item references such as bug #7641, task #3122, etc. are automatically converted into links.  Savane will replace the links as formatted for the wiki to these links, so nothing needs to be done.
     - The Gna! news items are often truncated, so start a new thread for the rest of the message, responding to that thread for each block of release notes via the [ Reply ] link at the bottom of the page.
+    - Remove all symbol formatting ('&', ';', '<sub>', '<sup>', etc.).
 
 
 Cross-linking
@@ -244,4 +249,4 @@ For better indexing by search engines, cross-link all the release announcements.
     Softpedia for MS Windows:  http://www.softpedia.com/get/Science-CAD/relax-project.shtml and http://www.softpedia.com/progDownload/relax-Download-210902.html
     Softpedia for Mac OS X:  http://mac.softpedia.com/get/Math-Scientific/Edward-relax.shtml and http://mac.softpedia.com/progDownload/relax-Download-124418.html
 
-Not all of these links may work, and 
+Not all of these links may work, as the email archives are not 100% perfect. 
