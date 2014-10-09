@@ -16,11 +16,11 @@ Tagging
 
 Make a copy of the current head to the tags directory using a command such as:
 
-$ svn cp -F svn_msg svn+ssh://bugman@svn.gna.org/svn/relax/trunk svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
+$ svn cp -F svn_msg svn+ssh://bugman@svn.gna.org/svn/relax/trunk svn+ssh://bugman@svn.gna.org/svn/relax/tags/3.3.2
 
-In the commit message file 'svn_msg', have a header line which says 'relax version 2.0.1.', followed by a short description of the release.  Checkout the tagged version with:
+In the commit message file 'svn_msg', have a header line which says 'relax version 3.3.2.', followed by a short description of the release.  Checkout the tagged version with:
 
-$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
+$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/3.3.2
 
 
 
@@ -92,7 +92,7 @@ Signing
 
 If the key is not supplied, or incorrectly supplied, the distribution file will be created but not signed.  To sign the file later, type:
 
-$ gpg --detach-sign --default-key xxxxx relax-2.0.1.GNU-Linux.x86_64.tar.bz2
+$ gpg --detach-sign --default-key xxxxx relax-3.3.2.GNU-Linux.x86_64.tar.bz2
 
 
 Other files
@@ -100,16 +100,16 @@ Other files
 
 Build other distribution packages by checking out the tag and bundling minfx and bmrblib:
 
-$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
-$ cd 2.0.1
+$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/3.3.2
+$ cd 3.3.2
 $ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.11/minfx
 $ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.3/bmrblib
 $ scons binary_dist key=xxxxx
 
 Or:
 
-$ svn co http://svn.gna.org/svn/relax/tags/2.0.1
-$ cd 2.0.1
+$ svn co http://svn.gna.org/svn/relax/tags/3.3.2
+$ cd 3.3.2
 $ svn co http://svn.gna.org/svn/minfx/tags/1.0.11/minfx
 $ svn co http://svn.gna.org/svn/bmrblib/tags/1.0.3/bmrblib
 $ scons binary_dist
