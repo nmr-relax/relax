@@ -25,7 +25,7 @@ $ALTERNATIVE_ICONS = 'icons';
 $LOCAL_ICONS = 1;
 
 # Set the HTML version.
-$HTML_VERSION = "4.1,math";
+$HTML_VERSION = "4.1,math,unicode,utf8";
 
 # Additions to the head tag (Google analytics JS).
 $LATEX2HTML_META = "
