@@ -206,13 +206,13 @@ For the changes file text, make the following conversions:
     - Add as many links as possible to the API documentation (to help users dive into the relax code and to help with search engine indexing).
 
 
-
 Mailing list
 ------------
 
 On the relax-announce mailing list (relax-announce att gna.org), write the release announcement by:
 
     - Copy the 'Description' and 'Download' text from the wiki.  Do not include the section titles and remove any wiki markup.
+    - Add a paragraph before the 'Download' paragraph with the text 'For the official, easy to navigate release notes, please see http://wiki.nmr-relax.com/Relax_3.3.1.'.  This is to direct both users and search engines to the wiki page (the users via the release email and the search engines via the multiple archives).
     - At the end, add a section titled 'The full list of changes is:' and cut and paste the part of the CHANGES file for this release.  Do not use the wiki text for this.
     - Include links to the trackers in the full list of changes, if not already present.
 
@@ -235,18 +235,29 @@ The steps are:
 Cross-linking
 -------------
 
-For better indexing by search engines, cross-link all the release announcements.  It may take a few days for all the links to be created.  For example for relax 3.1.7:
+For better indexing by search engines, cross-link all the release announcements both on the Wiki and the Gna! news item.  It may take a few days for all the links to be created.  For example for relax 3.1.7:
 
-    Official release notes:  http://wiki.nmr-relax.com/Relax_3.1.7
-    Gna! news item:  https://gna.org/forum/forum.php?forum_id=2448
-    Gmane:  http://article.gmane.org/gmane.science.nmr.relax.announce/53
-    Mail Archive:  http://www.mail-archive.com/relax-announce%40gna.org/msg00047.html
-    Local archives:  https://mail.gna.org/public/relax-announce/2014-03/msg00001.html
-    MARC:  http://marc.info/?l=relax-announce&m=139509874209089&w=2
+"""
+For reference, the announcement for this release can also be found at following links:
 
-    Softpedia also has information about the newest relax releases:
-    Softpedia for GNU/Linux:  http://linux.softpedia.com/get/Science/relax-22351.shtml and http://linux.softpedia.com/progDownload/relax-Download-22351.html
-    Softpedia for MS Windows:  http://www.softpedia.com/get/Science-CAD/relax-project.shtml and http://www.softpedia.com/progDownload/relax-Download-210902.html
-    Softpedia for Mac OS X:  http://mac.softpedia.com/get/Math-Scientific/Edward-relax.shtml and http://mac.softpedia.com/progDownload/relax-Download-124418.html
+* [http://wiki.nmr-relax.com/Relax_3.1.7 Official release notes on the relax wiki].
+* [https://gna.org/forum/forum.php?forum_id=2448 Gna! news item].
+* [http://article.gmane.org/gmane.science.nmr.relax.announce/53 Gmane mailing list archive].
+* [http://www.mail-archive.com/relax-announce%40gna.org/msg00047.html The Mail Archive].
+* [https://mail.gna.org/public/relax-announce/2014-03/msg00001.html Local archives].
+* [http://marc.info/?l=relax-announce&m=139509874209089&w=2 Mailing list ARChives (MARC)].
 
-Not all of these links may work, as the email archives are not 100% perfect. 
+Softpedia also has information about the newest relax releases:
+
+* [http://linux.softpedia.com/get/Science/relax-22351.shtml Softpedia page for relax on GNU/Linux].
+* [http://www.softpedia.com/get/Science-CAD/relax-project.shtml Softpedia page for relax on MS Windows].
+* [http://mac.softpedia.com/get/Math-Scientific/Edward-relax.shtml Softpedia page for relax on Mac OS X].
+"""
+
+Not all of these links may work, as the email archives are not 100% perfect.  For the wiki, transclude the softpedia page http://wiki.nmr-relax.com/Softpedia using {{:Softpedia}}, and add a section to the table at http://wiki.nmr-relax.com/Category:Release_Notes for the release.  For the news item, reply to the item with the subject "Links to the other release announcements.".
+
+
+Softpedia
+---------
+
+Inform Softpedia of the new release.  Use text such at "I would like to inform you of a new relax version announced at http://wiki.nmr-relax.com/Relax_3.3.1.".
