@@ -1,0 +1,11 @@
+--- build_lstlisting/latex2html.pin	2013-08-07 17:07:56.042890097 +0200
++++ build_max_char/latex2html.pin	2013-08-07 17:41:03.421857395 +0200
+@@ -9393,8 +9393,6 @@
+ 	$_ = $saved;
+     }
+     if ($title) {
+-	#ensure no more than 32 characters, including .html extension
+-	$title =~ s/^(.{1,27}).*$/$1/;
+     	++$OUT_NODE;
+ 	join("", ${PREFIX}, $title, $EXTN);
+     } else {
