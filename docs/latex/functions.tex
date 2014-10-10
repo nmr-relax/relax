@@ -51,10 +51,15 @@ Therefore you can't provide `self' as the first argument even if you do try.
 All other sections are created from the sectioning of the user function docstring.
 
 
-\newpage
-\raggedbottom
-\twocolumn
-{\scriptsize
-\input{docstring}
-}
-\onecolumn
+\begin{latexonly}
+   \newpage
+   \raggedbottom
+   \twocolumn
+   {\scriptsize
+   \input{docstring}
+   }
+   \onecolumn
+\end{latexonly}
+\begin{htmlonly}
+   \input{docstring}
+\end{htmlonly}
