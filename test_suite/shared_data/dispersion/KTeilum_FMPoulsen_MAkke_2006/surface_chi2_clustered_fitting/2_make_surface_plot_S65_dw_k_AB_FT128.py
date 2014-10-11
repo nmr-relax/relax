@@ -6,7 +6,7 @@ from mpl_toolkits.mplot3d import axes3d
 import matplotlib.pyplot as plt
 from matplotlib import cm
 
-resfile = open('1_create_surface_data_dw_k_AB_FT128.txt', 'r')
+resfile = open('1_create_surface_data_S65_dw_k_AB_FT128.txt', 'r')
 
 lines = resfile.readlines()
 resfile.close()
