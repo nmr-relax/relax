@@ -113,7 +113,7 @@ for i in range((dx_inc + 1)):
 print("\nMin cluster point %s=%3.3f, %s=%3.3f, with chi2=%3.3f" % (params[0], pcm[0], params[1], pcm[1], pre_chi2))
 
 # Open file
-file_name = '1_surface_chi2.txt'
+file_name = '1_create_surface_data_dw_k_AB_FT128.txt'
 surface_file = open_write_file(file_name=file_name, dir=None, force=True)
 write_data(out=surface_file, headings=headings, data=data)
 
