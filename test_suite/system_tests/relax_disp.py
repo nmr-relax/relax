@@ -3201,7 +3201,7 @@ class Relax_disp(SystemTestCase):
         #self.interpreter.relax_disp.cluster(cluster_id='free spins', spin_id=cur_spin_id)
 
         # Then do the map.
-        self.interpreter.dx.map(params=dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=dx_inc, lower=lower, upper=upper, axis_incs=10, file_prefix=file_name_map, dir=result_dir, point=dx_point_clustered_min, point_file=file_name_point)
+        self.interpreter.dx.map(params=dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=dx_inc, lower=lower, upper=upper, axis_incs=10, file_prefix=file_name_map, dir=result_dir, point=dx_point_clustered_min, point_file=file_name_point, create_par_file=True)
 
         # Print where to locate values.
         nr_chi2_val = (dx_inc + 1)**3

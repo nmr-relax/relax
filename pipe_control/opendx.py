@@ -37,38 +37,40 @@ from lib.software.opendx.files import write_config, write_general, write_point, 
 from pipe_control import value
 from specific_analyses.api import return_api
 
-def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=None, axis_incs=10, file_prefix="map", dir="dx", point=None, point_file="point", chi_surface=None):
+def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=None, axis_incs=10, file_prefix="map", dir="dx", point=None, point_file="point", chi_surface=None, create_par_file=False):
     """Map the space corresponding to the spin identifier and create the OpenDX files.
 
     @keyword params:        
     @type params:           
-    @keyword map_type:      The type of map to create.  The available options are:
-                                - 'Iso3D', a 3D isosurface visualisation of the space.
-    @type map_type:         str
-    @keyword spin_id:       The spin identification string.
-    @type spin_id:          str
-    @keyword inc:           The resolution of the plot.  This is the number of increments per
-                            dimension.
-    @type inc:              int
-    @keyword lower:         The lower bounds of the space to map.  If supplied, this should be a
-                            list of floats, its length equal to the number of parameters in the
-                            model.
-    @type lower:            None or list of float
-    @keyword upper:         The upper bounds of the space to map.  If supplied, this should be a
-                            list of floats, its length equal to the number of parameters in the
-                            model.
-    @type upper:            None or list of float
-    @keyword axis_incs:     The number of tick marks to display in the OpenDX plot in each
-                            dimension.
-    @type axis_incs:        int
-    @keyword file_prefix:   The file prefix for all the created files.
-    @type file_prefix:      str
-    @keyword dir:           The directory to place the files into.
-    @type dir:              str or None
-    @keyword point:         If supplied, a red sphere will be placed at these coordinates.
-    @type point:            None or list of float
-    @keyword point_file:    The file prefix for the point output files.
-    @type point_file:       str or None
+    @keyword map_type:          The type of map to create.  The available options are:
+                                    - 'Iso3D', a 3D isosurface visualisation of the space.
+    @type map_type:             str
+    @keyword spin_id:           The spin identification string.
+    @type spin_id:              str
+    @keyword inc:               The resolution of the plot.  This is the number of increments per
+                                dimension.
+    @type inc:                  int
+    @keyword lower:             The lower bounds of the space to map.  If supplied, this should be a
+                                list of floats, its length equal to the number of parameters in the
+                                model.
+    @type lower:                None or list of float
+    @keyword upper:             The upper bounds of the space to map.  If supplied, this should be a
+                                list of floats, its length equal to the number of parameters in the
+                                model.
+    @type upper:                None or list of float
+    @keyword axis_incs:         The number of tick marks to display in the OpenDX plot in each
+                                dimension.
+    @type axis_incs:            int
+    @keyword file_prefix:       The file prefix for all the created files.
+    @type file_prefix:          str
+    @keyword dir:               The directory to place the files into.
+    @type dir:                  str or None
+    @keyword point:             If supplied, a red sphere will be placed at these coordinates.
+    @type point:                None or list of float
+    @keyword point_file:        The file prefix for the point output files.
+    @type point_file:           str or None
+    @keyword create_par_file:   Whether to create a file with parameters and associated chi2 value.
+    @type point_file:           bool
     """
 
     # Check the args.
@@ -83,7 +85,7 @@ def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=N
             raise RelaxError("The 3D isosurface map requires a 3 parameter model.")
 
         # Create the map.
-        Map(params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, chi_surface)
+        Map(params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, chi_surface, create_par_file)
     else:
         raise RelaxError("The map type '" + map_type + "' is not supported.")
 
@@ -92,7 +94,7 @@ def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=N
 class Map:
     """The space mapping base class."""
 
-    def __init__(self, params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, chi_surface):
+    def __init__(self, params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, chi_surface, create_par_file):
         """Map the space upon class instantiation."""
 
         # Initialise.
@@ -168,7 +170,8 @@ class Map:
         self.create_map()
 
         ## Generate the file with parameters and associated chi2 value.
-        self.create_par_chi2()
+        if create_par_file:
+            self.create_par_chi2()
 
         # Default the chi2 surface values, for Innermost, Inner, Middle and Outer Isosurface.
         if chi_surface == None:
