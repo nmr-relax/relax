@@ -119,11 +119,12 @@ class Map:
         # Points.
         if point != None:
             # Check if list is a nested list of lists.
+            point_list = []
             if isinstance(point[0], float):
-                self.point = array(point, float64)
+                point_list.append(array(point, float64))
+                self.point = point_list
                 self.num_points = 1
             else:
-                point_list = []
                 for i in range(len(point)):
                     point_list.append(array(point[i], float64))
                 self.point = point_list
