@@ -2789,23 +2789,27 @@ class Relax_disp(SystemTestCase):
         cur_model = model_analyse.replace(' ', '_')
         file_name_map = "%s_map%s" % (cur_model, cur_spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
         file_name_point = "%s_point%s" % (cur_model, cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
-        self.interpreter.dx.map(params=ds.dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=ds.dx_inc, lower=None, upper=None, axis_incs=10, file_prefix=file_name_map, dir=ds.resdir, point=[ds.dx_set_val, ds.dx_clust_val], point_file=file_name_point)
+        self.interpreter.dx.map(params=ds.dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=ds.dx_inc, lower=None, upper=None, axis_incs=10, file_prefix=file_name_map, dir=ds.resdir, point=[ds.dx_set_val, ds.dx_clust_val], point_file=file_name_point, create_par_file=True)
 
         ## Check for file creation
         # Set filepaths.
         map_cfg = ds.tmpdir+sep+file_name_map+".cfg"
         map_net = ds.tmpdir+sep+file_name_map+".net"
         map_general = ds.tmpdir+sep+file_name_map+".general"
+        map_par = get_file_path(file_name=file_name_map+".par", dir=ds.tmpdir)
 
         point_general = ds.tmpdir+sep+file_name_point+".general"
         point_point = ds.tmpdir+sep+file_name_point
+        point_par = get_file_path(file_name=file_name_point+".par", dir=ds.tmpdir)
 
         # Test the files exists.
         self.assert_(access(map_cfg, F_OK))
         self.assert_(access(map_net, F_OK))
         self.assert_(access(map_general, F_OK))
+        self.assert_(access(map_par, F_OK))
         self.assert_(access(point_general, F_OK))
         self.assert_(access(point_point, F_OK))
+        self.assert_(access(point_par, F_OK))
 
         # Open the files for testing.
         # Check the cfg file.
@@ -2902,6 +2906,18 @@ class Relax_disp(SystemTestCase):
             # Skip time point
             #if i == 2:
             #    continue
+            self.assertEqual(res_file[i], lines[i])
+
+        print("\nChecking the dx point point par file.")
+        res_file = [
+            '# i    dw         pA         kex           chi2          i_sort    dw_sort    pA_sort    kex_sort      chi2_sort     '+"\n",
+            '0      2.00000    0.99000    1000.00000    6185.84926    0         2.00000    0.99000    1000.00000    6185.84926    '+"\n",
+            '1      1.92453    0.98961    1034.72206    6396.02770    1         1.92453    0.98961    1034.72206    6396.02770    '+"\n",
+        ]
+        file = open(point_par, 'r')
+        lines = file.readlines()
+        file.close()
+        for i in range(len(res_file)):
             self.assertEqual(res_file[i], lines[i])
 
 

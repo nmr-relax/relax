@@ -172,7 +172,15 @@ class Map:
 
         ## Generate the file with parameters and associated chi2 value.
         if create_par_file:
-            self.create_par_chi2()
+            self.create_par_chi2(file_prefix=self.file_prefix, par_chi2_vals=self.par_chi2_vals)
+
+        ## Generate the file with parameters and associated chi2 value for the points send to dx.
+        if self.num_points >= 1 and create_par_file:
+            # Calculate the parameter and associated chi2 values for the points.
+            par_chi2_vals = self.calc_point_par_chi2()
+
+            ## Generate the file with parameters and associated chi2 value.
+            self.create_par_chi2(file_prefix=self.point_file, par_chi2_vals=par_chi2_vals)
 
         # Default the chi2 surface values, for Innermost, Inner, Middle and Outer Isosurface.
         if chi_surface == None:
@@ -197,6 +205,44 @@ class Map:
             write_point(file_prefix=self.point_file, dir=self.dir, inc=self.inc, point=self.point, num_points=self.num_points, bounds=self.bounds, N=self.n)
 
 
+    def calc_point_par_chi2(self):
+        """Function for chi2 value for the points."""
+
+        # Print out.
+        print("\nCalculate chi2 value for the point parameters.")
+
+        # Define nested listed, which holds parameter values and chi2 value.
+        par_chi2_vals = []
+
+        # Loop over the points.
+        for i in range(self.num_points):
+            i_point = self.point[i]
+
+            # Set the parameter values.
+            if self.spin_id:
+                value.set(val=i_point, param=self.params, spin_id=self.spin_id, force=True)
+            else:
+                value.set(val=i_point, param=self.params, force=True)
+
+            # Calculate the function values.
+            if self.spin_id:
+                self.api.calculate(spin_id=self.spin_id, verbosity=0)
+            else:
+                self.api.calculate(verbosity=0)
+
+            # Get the minimisation statistics for the model.
+            if self.spin_id:
+                k, n, chi2 = self.api.model_statistics(spin_id=self.spin_id)
+            else:
+                k, n, chi2 = self.api.model_statistics(model_info=0)
+
+            # Assign value to nested list.
+            par_chi2_vals.append([i, i_point[0], i_point[1], i_point[2], chi2])
+
+        # Return list
+        return par_chi2_vals
+
+
     def create_map(self):
         """Function for creating the map."""
 
@@ -213,24 +259,24 @@ class Map:
         map_file.close()
 
 
-    def create_par_chi2(self):
+    def create_par_chi2(self, file_prefix, par_chi2_vals):
         """Function for creating file with parameters and the chi2 value."""
 
         # Print out.
         print("\nCreating the file with parameters and the chi2 value.")
 
         # Open the file.
-        par_file = open_write_file(file_name=self.file_prefix+'.par', dir=self.dir, force=True)
+        par_file = open_write_file(file_name=file_prefix+'.par', dir=self.dir, force=True)
 
         # Copy the nested list to sort it.
-        par_chi2_vals_sort = deepcopy(self.par_chi2_vals)
+        par_chi2_vals_sort = deepcopy(par_chi2_vals)
 
         # Then sort the value.
         par_chi2_vals_sort.sort(key=lambda values: values[4])
 
         # Collect the data structure, which is a list of list of strings.
         data = []
-        for i, line in enumerate(self.par_chi2_vals):
+        for i, line in enumerate(par_chi2_vals):
             line_sort = par_chi2_vals_sort[i]
 
             # Convert values to strings.
