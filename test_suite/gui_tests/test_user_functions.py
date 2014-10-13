@@ -23,6 +23,7 @@
 
 # Python module imports.
 from os import sep
+import sys
 
 # relax module imports.
 from status import Status; status = Status()
@@ -211,21 +212,25 @@ class User_functions(GuiTestCase):
         #self.assertEqual(pos[2], None)
 
         # Set the pos to nothing in the wizard, open the Sequence window, close the window, and check that None comes back.
-        uf.page.uf_args['pos'].SetValue(str_to_gui(''))
+        val = ''
+        sys.stdout.write("Value: %40s;  " % repr(val))
+        uf.page.uf_args['pos'].SetValue(str_to_gui(val))
         uf.page.uf_args['pos'].selection_win_show()
         uf.page.uf_args['pos'].selection_win_data()
         pos = uf.page.uf_args['pos'].GetValue()
-        print("Pos:  %s" % pos)
+        sys.stdout.write("Return: %40s\n" % repr(pos))
         self.assertEqual(pos, None)
 
         # Set a valid pos in the wizard, open and close the Sequence window (twice), and check that the pos comes back.
-        uf.page.uf_args['pos'].SetValue(str_to_gui('[1, 2, -3.]'))
+        val = '[1, 2, -3.]'
+        sys.stdout.write("Value: %40s;  " % repr(val))
+        uf.page.uf_args['pos'].SetValue(str_to_gui(val))
         uf.page.uf_args['pos'].selection_win_show()
         uf.page.uf_args['pos'].selection_win_data()
         uf.page.uf_args['pos'].selection_win_show()
         uf.page.uf_args['pos'].selection_win_data()
         pos = uf.page.uf_args['pos'].GetValue()
-        print("Pos:  %s" % pos)
+        sys.stdout.write("Return: %40s\n" % repr(pos))
         self.assertEqual(len(pos), 3)
         self.assertEqual(pos[0], 1.0)
         self.assertEqual(pos[1], 2.0)
@@ -233,22 +238,24 @@ class User_functions(GuiTestCase):
 
         # Set the pos to a number of invalid values, checking that they are ignored.
         for val in ['die', '[1, 2, 3', '[[1, 2, 3], 1, 2, 3], [1, 2, 3]]']:
+            sys.stdout.write("Value: %40s;  " % repr(val))
             uf.page.uf_args['pos'].SetValue(str_to_gui(val))
             uf.page.uf_args['pos'].selection_win_show()
             uf.page.uf_args['pos'].selection_win_data()
             pos = uf.page.uf_args['pos'].GetValue()
-            print("Invalid pos: %s\nPos:  %s" % (val, pos))
+            sys.stdout.write("Return: %40s\n" % repr(pos))
             self.assertEqual(pos, None)
 
         # Set the Sequence elements to invalid values.
         for val in ['x']:
+            sys.stdout.write("Value: %40s;  " % repr(val))
             uf.page.uf_args['pos'].SetValue(str_to_gui(''))
             uf.page.uf_args['pos'].selection_win_show()
             uf.page.uf_args['pos'].sel_win.sequence.SetStringItem(index=1, col=1, label=str_to_gui(val))
             uf.page.uf_args['pos'].sel_win.sequence.SetStringItem(index=0, col=1, label=int_to_gui(1))
             uf.page.uf_args['pos'].selection_win_data()
             pos = uf.page.uf_args['pos'].GetValue()
-            print("Pos:  %s" % pos)
+            sys.stdout.write("Return: %40s\n" % repr(pos))
             #self.assertEqual(len(pos), 3)
             self.assertEqual(pos[0], 1.0)
             #self.assertEqual(pos[1], None)
