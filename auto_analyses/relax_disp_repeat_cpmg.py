@@ -30,7 +30,6 @@ import dep_check
 
 # Python module imports.
 from copy import deepcopy
-from collections import OrderedDict
 from datetime import datetime
 from glob import glob
 from os import F_OK, access, getcwd, sep
@@ -1103,7 +1102,7 @@ class Relax_disp_rep:
         # Each sub-tuple contains axis for each column.
 
         # For writing out stats.
-        data_dic = OrderedDict()
+        data_dic = {}
 
         # Loop over the rows.
         for i, row_axises in enumerate(axises):
@@ -1430,7 +1429,8 @@ class Relax_disp_rep:
 
         # For writing out stats.
         headings = []
-        data_dic = OrderedDict()
+        data_dic = {}
+        data_dic_methods = []
         i_max = 0
 
         for method in methods:
@@ -1469,7 +1469,8 @@ class Relax_disp_rep:
             r_xy_int_err2 = r_xy_int_err**2
 
             # Add to data.
-            data_dic[method] = OrderedDict()
+            data_dic[method] = {}
+            data_dic_methods.append(method)
             for i, NI_i in enumerate(NI):
                 SS_i = SS[i]
                 a_int_i = a_int[i]
@@ -1493,7 +1494,8 @@ class Relax_disp_rep:
 
         for i in range(0, i_max+1):
             data_i = []
-            for method, data_dic_m in data_dic.iteritems():
+            for method in data_dic_methods:
+                data_dic_m = data_dic[method]
                 # Loop over all possible data points.
                 if str(i) in data_dic_m:
                     data_i = data_i + [method] + data_dic_m[str(i)]
@@ -1620,7 +1622,7 @@ class Relax_disp_rep:
         # Each sub-tuple contains axis for each column.
 
         # For writing out stats.
-        data_dic = OrderedDict()
+        data_dic = {}
 
         # Loop over the rows.
         for i, row_axises in enumerate(axises):
@@ -1982,7 +1984,8 @@ class Relax_disp_rep:
 
         # For writing out stats.
         headings = []
-        data_dic = OrderedDict()
+        data_dic = {}
+        data_dic_methods = []
         i_max = 0
 
         for method in methods:
@@ -2021,7 +2024,8 @@ class Relax_disp_rep:
             r_xy_r2eff2 = r_xy_r2eff**2
 
             # Add to data.
-            data_dic[method] = OrderedDict()
+            data_dic[method] = {}
+            data_dic_methods.append(method)
             for i, NI_i in enumerate(NI):
                 SS_i = SS[i]
                 a_i = a[i]
@@ -2047,7 +2051,8 @@ class Relax_disp_rep:
 
         for i in range(0, i_max+1):
             data_i = []
-            for method, data_dic_m in data_dic.iteritems():
+            for method in data_dic_methods:
+                data_dic_m = data_dic[method]
                 # Loop over all possible data points.
                 if str(i) in data_dic_m:
                     data_i = data_i + [method] + data_dic_m[str(i)]
@@ -2208,7 +2213,7 @@ class Relax_disp_rep:
         # Each sub-tuple contains axis for each column.
 
         # For writing out stats.
-        data_dic = OrderedDict()
+        data_dic = {}
 
         # Loop over the rows.
         for i, row_axises in enumerate(axises):
@@ -2506,7 +2511,9 @@ class Relax_disp_rep:
 
         # For writing out stats.
         headings = []
-        data_dic = OrderedDict()
+        data_dic = {}
+        data_dic_methods = []
+
         i_max = 0
 
         for method in methods:
@@ -2518,10 +2525,11 @@ class Relax_disp_rep:
             fig.suptitle('Stats per NI %s' % method)
 
             # Loop over params
-            data_dic[method] = OrderedDict()
+            data_dic[method] = {}
+            data_dic_methods.append(method)
 
             for j, param in enumerate(params_list):
-                data_dic[method][param] = OrderedDict()
+                data_dic[method][param] = {}
 
                 # Use NI as x.
                 NI = min_stat_dic[method][param]['glob_ini']
@@ -2580,7 +2588,8 @@ class Relax_disp_rep:
         # Loop over all lines.
         for i in range(0, i_max+1):
             data_i = []
-            for method, data_dic_m in data_dic.iteritems():
+            for method in data_dic_methods:
+                data_dic_m = data_dic[method]
                 # Loop over all params
                 for j, param in enumerate(params_list):
                     # Loop over all possible data points.
