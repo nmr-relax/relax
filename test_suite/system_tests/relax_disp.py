@@ -27,6 +27,7 @@ from numpy import array, asarray, exp, median, inf, log, save, std, sum, zeros
 from minfx.generic import generic_minimise
 from random import gauss
 import re, math
+from sys import version_info
 from tempfile import mkdtemp, NamedTemporaryFile
 
 
@@ -140,6 +141,18 @@ class Relax_disp(SystemTestCase):
             # Store in the status object.
             if methodName in to_skip:
                 status.skipped_tests.append([methodName, 'matplotlib module', self._skip_type])
+
+        # If not python 2.7, bug #22801 (https://gna.org/bugs/?22801): Failure of the relax test suite on Python 2.5.
+        # It is not possible to call: with self.assertRaises() before version 2.7
+        if not version_info >= (2,7):
+            # The list of tests to skip.
+            to_skip = [
+                "test_bug_atul_srivastava"
+            ]
+
+            # Store in the status object.
+            if methodName in to_skip:
+                status.skipped_tests.append([methodName, 'python 2.7', self._skip_type])
 
 
     def setUp(self):
