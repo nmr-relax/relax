@@ -356,9 +356,9 @@ class Map:
                 for k in range((self.inc + 1)):
                     # Set the parameter values.
                     if self.spin_id:
-                        value.set(val=values, param=self.params, spin_id=self.spin_id, force=True)
+                        value.set(val=values, param=self.params, spin_id=self.spin_id, verbosity=0, force=True)
                     else:
-                        value.set(val=values, param=self.params, force=True)
+                        value.set(val=values, param=self.params, verbosity=0, force=True)
 
                     # Calculate the function values.
                     if self.spin_id:
