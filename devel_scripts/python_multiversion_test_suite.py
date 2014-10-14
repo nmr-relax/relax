@@ -85,4 +85,4 @@ for version in PY_VER:
     execute_sh('~/bin/python%s relax -i' % (version), log=LOG, err=LOG)
 
     # Run the test suite.
-    execute_sh('~/bin/python%s relax -x' % (version), log=LOG, err=LOG)
+    execute_sh('~/bin/python%s relax -x --time' % (version), log=LOG, err=LOG)

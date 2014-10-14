@@ -2797,6 +2797,7 @@ class Relax_disp(SystemTestCase):
         map_net = ds.tmpdir+sep+file_name_map+".net"
         map_general = ds.tmpdir+sep+file_name_map+".general"
         map_par = get_file_path(file_name=file_name_map+".par", dir=ds.tmpdir)
+        map_plot = get_file_path(file_name=file_name_map+".py", dir=ds.tmpdir)
 
         point_general = ds.tmpdir+sep+file_name_point+".general"
         point_point = ds.tmpdir+sep+file_name_point
@@ -2807,6 +2808,7 @@ class Relax_disp(SystemTestCase):
         self.assert_(access(map_net, F_OK))
         self.assert_(access(map_general, F_OK))
         self.assert_(access(map_par, F_OK))
+        self.assert_(access(map_plot, F_OK))
         self.assert_(access(point_general, F_OK))
         self.assert_(access(point_point, F_OK))
         self.assert_(access(point_par, F_OK))
@@ -2908,13 +2910,34 @@ class Relax_disp(SystemTestCase):
             #    continue
             self.assertEqual(res_file[i], lines[i])
 
-        print("\nChecking the dx point point par file.")
+        print("\nChecking the dx point par file.")
         res_file = [
             '# i    dw         pA         kex           chi2          i_sort    dw_sort    pA_sort    kex_sort      chi2_sort     '+"\n",
             '0      2.00000    0.99000    1000.00000    6185.84926    0         2.00000    0.99000    1000.00000    6185.84926    '+"\n",
             '1      1.92453    0.98961    1034.72206    6396.02770    1         1.92453    0.98961    1034.72206    6396.02770    '+"\n",
         ]
         file = open(point_par, 'r')
+        lines = file.readlines()
+        file.close()
+        for i in range(len(res_file)):
+            self.assertEqual(res_file[i], lines[i])
+
+        print("\nChecking the matplotlib surface plot file.")
+        res_file = [
+            'import numpy as np'+"\n",
+            'import scipy.interpolate'+"\n",
+            'from numpy.ma import masked_where'+"\n",
+            ''+"\n",
+            'from mpl_toolkits.mplot3d import axes3d'+"\n",
+            'import matplotlib.pyplot as plt'+"\n",
+            'from matplotlib import cm'+"\n",
+            ''+"\n",
+            '# Open file and get header.'+"\n",
+            'mapfile_name = "%s.par"'%file_name_map+"\n",
+            'pointfile_name = "%s.par"'%file_name_point+"\n",
+            ''+"\n",
+        ]
+        file = open(map_plot, 'r')
         lines = file.readlines()
         file.close()
         for i in range(len(res_file)):
