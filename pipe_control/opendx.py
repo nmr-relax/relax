@@ -37,38 +37,40 @@ from lib.software.opendx.files import write_config, write_general, write_point, 
 from pipe_control import value
 from specific_analyses.api import return_api
 
-def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=None, axis_incs=10, file_prefix="map", dir="dx", point=None, point_file="point", chi_surface=None):
+def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=None, axis_incs=10, file_prefix="map", dir="dx", point=None, point_file="point", chi_surface=None, create_par_file=False):
     """Map the space corresponding to the spin identifier and create the OpenDX files.
 
     @keyword params:        
     @type params:           
-    @keyword map_type:      The type of map to create.  The available options are:
-                                - 'Iso3D', a 3D isosurface visualisation of the space.
-    @type map_type:         str
-    @keyword spin_id:       The spin identification string.
-    @type spin_id:          str
-    @keyword inc:           The resolution of the plot.  This is the number of increments per
-                            dimension.
-    @type inc:              int
-    @keyword lower:         The lower bounds of the space to map.  If supplied, this should be a
-                            list of floats, its length equal to the number of parameters in the
-                            model.
-    @type lower:            None or list of float
-    @keyword upper:         The upper bounds of the space to map.  If supplied, this should be a
-                            list of floats, its length equal to the number of parameters in the
-                            model.
-    @type upper:            None or list of float
-    @keyword axis_incs:     The number of tick marks to display in the OpenDX plot in each
-                            dimension.
-    @type axis_incs:        int
-    @keyword file_prefix:   The file prefix for all the created files.
-    @type file_prefix:      str
-    @keyword dir:           The directory to place the files into.
-    @type dir:              str or None
-    @keyword point:         If supplied, a red sphere will be placed at these coordinates.
-    @type point:            None or list of float
-    @keyword point_file:    The file prefix for the point output files.
-    @type point_file:       str or None
+    @keyword map_type:          The type of map to create.  The available options are:
+                                    - 'Iso3D', a 3D isosurface visualisation of the space.
+    @type map_type:             str
+    @keyword spin_id:           The spin identification string.
+    @type spin_id:              str
+    @keyword inc:               The resolution of the plot.  This is the number of increments per
+                                dimension.
+    @type inc:                  int
+    @keyword lower:             The lower bounds of the space to map.  If supplied, this should be a
+                                list of floats, its length equal to the number of parameters in the
+                                model.
+    @type lower:                None or list of float
+    @keyword upper:             The upper bounds of the space to map.  If supplied, this should be a
+                                list of floats, its length equal to the number of parameters in the
+                                model.
+    @type upper:                None or list of float
+    @keyword axis_incs:         The number of tick marks to display in the OpenDX plot in each
+                                dimension.
+    @type axis_incs:            int
+    @keyword file_prefix:       The file prefix for all the created files.
+    @type file_prefix:          str
+    @keyword dir:               The directory to place the files into.
+    @type dir:                  str or None
+    @keyword point:             If supplied, a red sphere will be placed at these coordinates.
+    @type point:                None or list of float
+    @keyword point_file:        The file prefix for the point output files.
+    @type point_file:           str or None
+    @keyword create_par_file:   Whether to create a file with parameters and associated chi2 value.
+    @type point_file:           bool
     """
 
     # Check the args.
@@ -83,7 +85,7 @@ def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=N
             raise RelaxError("The 3D isosurface map requires a 3 parameter model.")
 
         # Create the map.
-        Map(params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, chi_surface)
+        Map(params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, chi_surface, create_par_file)
     else:
         raise RelaxError("The map type '" + map_type + "' is not supported.")
 
@@ -92,7 +94,7 @@ def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=N
 class Map:
     """The space mapping base class."""
 
-    def __init__(self, params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, chi_surface):
+    def __init__(self, params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, chi_surface, create_par_file):
         """Map the space upon class instantiation."""
 
         # Initialise.
@@ -117,11 +119,12 @@ class Map:
         # Points.
         if point != None:
             # Check if list is a nested list of lists.
+            point_list = []
             if isinstance(point[0], float):
-                self.point = array(point, float64)
+                point_list.append(array(point, float64))
+                self.point = point_list
                 self.num_points = 1
             else:
-                point_list = []
                 for i in range(len(point)):
                     point_list.append(array(point[i], float64))
                 self.point = point_list
@@ -168,7 +171,16 @@ class Map:
         self.create_map()
 
         ## Generate the file with parameters and associated chi2 value.
-        self.create_par_chi2()
+        if create_par_file:
+            self.create_par_chi2(file_prefix=self.file_prefix, par_chi2_vals=self.par_chi2_vals)
+
+        ## Generate the file with parameters and associated chi2 value for the points send to dx.
+        if self.num_points >= 1 and create_par_file:
+            # Calculate the parameter and associated chi2 values for the points.
+            par_chi2_vals = self.calc_point_par_chi2()
+
+            ## Generate the file with parameters and associated chi2 value.
+            self.create_par_chi2(file_prefix=self.point_file, par_chi2_vals=par_chi2_vals)
 
         # Default the chi2 surface values, for Innermost, Inner, Middle and Outer Isosurface.
         if chi_surface == None:
@@ -193,6 +205,44 @@ class Map:
             write_point(file_prefix=self.point_file, dir=self.dir, inc=self.inc, point=self.point, num_points=self.num_points, bounds=self.bounds, N=self.n)
 
 
+    def calc_point_par_chi2(self):
+        """Function for chi2 value for the points."""
+
+        # Print out.
+        print("\nCalculate chi2 value for the point parameters.")
+
+        # Define nested listed, which holds parameter values and chi2 value.
+        par_chi2_vals = []
+
+        # Loop over the points.
+        for i in range(self.num_points):
+            i_point = self.point[i]
+
+            # Set the parameter values.
+            if self.spin_id:
+                value.set(val=i_point, param=self.params, spin_id=self.spin_id, force=True)
+            else:
+                value.set(val=i_point, param=self.params, force=True)
+
+            # Calculate the function values.
+            if self.spin_id:
+                self.api.calculate(spin_id=self.spin_id, verbosity=0)
+            else:
+                self.api.calculate(verbosity=0)
+
+            # Get the minimisation statistics for the model.
+            if self.spin_id:
+                k, n, chi2 = self.api.model_statistics(spin_id=self.spin_id)
+            else:
+                k, n, chi2 = self.api.model_statistics(model_info=0)
+
+            # Assign value to nested list.
+            par_chi2_vals.append([i, i_point[0], i_point[1], i_point[2], chi2])
+
+        # Return list
+        return par_chi2_vals
+
+
     def create_map(self):
         """Function for creating the map."""
 
@@ -209,24 +259,24 @@ class Map:
         map_file.close()
 
 
-    def create_par_chi2(self):
+    def create_par_chi2(self, file_prefix, par_chi2_vals):
         """Function for creating file with parameters and the chi2 value."""
 
         # Print out.
         print("\nCreating the file with parameters and the chi2 value.")
 
         # Open the file.
-        par_file = open_write_file(file_name=self.file_prefix+'.par', dir=self.dir, force=True)
+        par_file = open_write_file(file_name=file_prefix+'.par', dir=self.dir, force=True)
 
         # Copy the nested list to sort it.
-        par_chi2_vals_sort = deepcopy(self.par_chi2_vals)
+        par_chi2_vals_sort = deepcopy(par_chi2_vals)
 
         # Then sort the value.
         par_chi2_vals_sort.sort(key=lambda values: values[4])
 
         # Collect the data structure, which is a list of list of strings.
         data = []
-        for i, line in enumerate(self.par_chi2_vals):
+        for i, line in enumerate(par_chi2_vals):
             line_sort = par_chi2_vals_sort[i]
 
             # Convert values to strings.

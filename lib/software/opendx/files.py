@@ -151,16 +151,8 @@ def write_point(file_prefix=None, dir=None, inc=None, point=None, num_points=Non
     point_file_general = open_write_file(file_name=file_prefix+".general", dir=dir, force=True)
 
     # Calculate the coordinate values.
-    if num_points > 1:
-        for i in range(num_points):
-            i_point = point[i]
-
-            coords = inc * (i_point - bounds[:, 0]) / (bounds[:, 1] - bounds[:, 0])
-            for i in range(N):
-                point_file.write("%-15.5g" % coords[i])
-            point_file.write("1\n")
-    else:
-        i_point = point
+    for i in range(num_points):
+        i_point = point[i]
 
         coords = inc * (i_point - bounds[:, 0]) / (bounds[:, 1] - bounds[:, 0])
         for i in range(N):

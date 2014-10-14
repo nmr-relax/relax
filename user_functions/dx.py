@@ -198,6 +198,13 @@ uf.add_keyarg(
     can_be_none = True,
     dim = 4
 )
+uf.add_keyarg(
+    name = "create_par_file",
+    default = False,
+    py_type = "bool",
+    desc_short = "creation of file with parameter and calculated chi2",
+    desc = "A flag specifying whether to create a file with parameters and associated chi2 value.  The default of False causes the file not to be created."
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will map the space corresponding to the spin identifier and create the OpenDX files.  The map type can be changed to one of the following supported map types:")
