@@ -1,0 +1,29 @@
+--- build/latex2html.pin	2013-08-07 17:33:54.112432310 +0200
++++ build_lstlisting/latex2html.pin	2013-08-07 17:07:56.042890097 +0200
+@@ -8621,7 +8621,7 @@
+     s/$mathend_verbatim_rx/&make_comment('MATHEND', '')/eg;
+ #    s/$verbatim_mark(verbatim\*?)(\d+)#/<PRE>\n$verbatim{$2}\n<\/PRE>/go;
+ ##    s/$verbatim_mark(\w*[vV]erbatim\*?)(\d+)#/\n$verbatim{$2}\n/go;
+-    s!$verbatim_mark(\w*[vV]erbatim\*?|tex2html_code)(\d+)#\n?!$tmp=$verbatim{$2};
++    s!$verbatim_mark(\w*[vV]erbatim\*?|tex2html_code|lstlisting)(\d+)#\n?!$tmp=$verbatim{$2};
+ 	$tmp.(($tmp =~/\n\s*$/s)? '':"\n")!eg;
+ #	"\n".$tmp.(($tmp =~/\n\s*$/s)? '':"\n")!eg;
+ #    s/$verbatim_mark(rawhtml)(\d+)#/$verbatim{$2}/eg; # Raw HTML
+@@ -8682,7 +8682,7 @@
+ #    s/$verbatim_mark(verbatim)(\d+)#/\\begin{verbatim}$verbatim{$2}\\end{verbatim}\n/go;
+     s/$verbatim_mark(\w*[Vv]erbatim)(\d+)#/\\begin{$1}\n$verbatim{$2}\\end{$1}\n/go;
+     s/$verbatim_mark(rawhtml)(\d+)#/\\begin{rawhtml}\n$verbatim{$2}\\end{rawhtml}\n/go;
+-    s/$verbatim_mark(imagesonly|tex2html_code)(\d+)#\n?/$verbatim{$2}/go;
++    s/$verbatim_mark(imagesonly|tex2html_code|lstlisting)(\d+)#\n?/$verbatim{$2}/go;
+     s/$verbatim_mark$image_env_rx(\d+)#/\\begin{$1}\n$verbatim{$2}\\end{$1}\n/go;
+     s/($math_verbatim_rx|$mathend_verbatim_rx)//go;
+ }
+@@ -16606,7 +16606,7 @@
+ 
+     # Matches environments that should not be touched during the translation
+ #   $verbatim_env_rx = "\\s*{(verbatim|rawhtml|LVerbatim)[*]?}";
+-    $verbatim_env_rx = "\\s*(\\w*[Vv]erbatim|rawhtml|imagesonly|tex2html_code)[*]?";
++    $verbatim_env_rx = "\\s*(\\w*[Vv]erbatim|rawhtml|imagesonly|tex2html_code|lstlisting)[*]?";
+     $image_env_rx = "\\s*(picture|xy|diagram)[*]?";
+     $keepcomments_rx = "\\s*(picture|makeimage|xy|diagram)[*]?";
+ 

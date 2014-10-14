@@ -1,0 +1,34 @@
+Common subdirectories: build/config and build_no_generic_words/config
+Common subdirectories: build/docs and build_no_generic_words/docs
+Common subdirectories: build/example and build_no_generic_words/example
+Common subdirectories: build/foilhtml and build_no_generic_words/foilhtml
+Common subdirectories: build/icons and build_no_generic_words/icons
+Common subdirectories: build/IndicTeX-HTML and build_no_generic_words/IndicTeX-HTML
+diff -u build/l2hconf.pin build_no_generic_words/l2hconf.pin
+--- build/l2hconf.pin	2014-10-10 16:37:43.293399937 +0200
++++ build_no_generic_words/l2hconf.pin	2014-10-10 16:39:29.474988939 +0200
+@@ -935,14 +935,14 @@
+ 	      'November', 'December');
+ # These words will be omitted from filenames derived
+ # from section-titles, when using  -long_titles
+-    $GENERIC_WORDS = "and|the|of|for|by|a|an|to";
++    $GENERIC_WORDS = "";
+ }
+ 
+ # These words will be omitted from filenames derived
+ # from section-titles, when using  -long_titles
+ # Override this value within a  <language>_titles  subroutine.
+ #
+-$GENERIC_WORDS = "and|the|of|for|by|a|an|to";
++$GENERIC_WORDS = "";
+ 
+ 
+ # Replace "english" with another language provided
+Common subdirectories: build/L2hos and build_no_generic_words/L2hos
+Common subdirectories: build/makeseg and build_no_generic_words/makeseg
+Common subdirectories: build/styles and build_no_generic_words/styles
+Common subdirectories: build/tests and build_no_generic_words/tests
+Common subdirectories: build/texinputs and build_no_generic_words/texinputs
+Common subdirectories: build/versions and build_no_generic_words/versions
+Common subdirectories: build/wrapper and build_no_generic_words/wrapper
+Common subdirectories: build/XyMTeX-HTML and build_no_generic_words/XyMTeX-HTML

@@ -16,11 +16,11 @@ Tagging
 
 Make a copy of the current head to the tags directory using a command such as:
 
-$ svn cp -F svn_msg svn+ssh://bugman@svn.gna.org/svn/relax/trunk svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
+$ svn cp -F svn_msg svn+ssh://bugman@svn.gna.org/svn/relax/trunk svn+ssh://bugman@svn.gna.org/svn/relax/tags/3.3.2
 
-In the commit message file 'svn_msg', have a header line which says 'relax version 2.0.1.', followed by a short description of the release.  Checkout the tagged version with:
+In the commit message file 'svn_msg', have a header line which says 'relax version 3.3.2.', followed by a short description of the release.  Checkout the tagged version with:
 
-$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
+$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/3.3.2
 
 
 
@@ -65,7 +65,7 @@ Package bundling
 
 Bundle minfx and bmrblib by checking out the latest stable release tags, for example:
 
-$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.10/minfx
+$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.11/minfx
 $ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.3/bmrblib
 
 
@@ -92,7 +92,7 @@ Signing
 
 If the key is not supplied, or incorrectly supplied, the distribution file will be created but not signed.  To sign the file later, type:
 
-$ gpg --detach-sign --default-key xxxxx relax-2.0.1.GNU-Linux.x86_64.tar.bz2
+$ gpg --detach-sign --default-key xxxxx relax-3.3.2.GNU-Linux.x86_64.tar.bz2
 
 
 Other files
@@ -100,17 +100,17 @@ Other files
 
 Build other distribution packages by checking out the tag and bundling minfx and bmrblib:
 
-$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
-$ cd 2.0.1
-$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.10/minfx
+$ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/3.3.2
+$ cd 3.3.2
+$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.11/minfx
 $ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.3/bmrblib
 $ scons binary_dist key=xxxxx
 
 Or:
 
-$ svn co http://svn.gna.org/svn/relax/tags/2.0.1
-$ cd 2.0.1
-$ svn co http://svn.gna.org/svn/minfx/tags/1.0.10/minfx
+$ svn co http://svn.gna.org/svn/relax/tags/3.3.2
+$ cd 3.3.2
+$ svn co http://svn.gna.org/svn/minfx/tags/1.0.11/minfx
 $ svn co http://svn.gna.org/svn/bmrblib/tags/1.0.3/bmrblib
 $ scons binary_dist
 
@@ -192,6 +192,8 @@ Create a new release page at the URL http://wiki.nmr-relax.com/Relax_x.y.z.  Use
     = Description = - Create this section by writing a detailed and full description of the release.  Add internal wiki links and external links, for example to the relax manual web pages for the user functions.
     = Download = - Create this section with links for downloading the release (simply copy the text from an older release).
     = CHANGES file = - Create this section by cutting and pasting the part of the CHANGES file for this release.  Convert the Features, Changes, and Bugfixes titles to the subsection format == Features ==, == Changes ==, and == Bugfixes ==.  Strip all leading whitespace from the full list of changes so that the wiki can format the text.
+    = Links = - Links to the other release announcements.
+    = Announcements = - A transcluded section using {{:relax release announcements}}.
     = See also = - Finally create this section which simply contains the text [[Category:Release_Notes]].
 
 For the changes file text, make the following conversions:
@@ -201,7 +203,7 @@ For the changes file text, make the following conversions:
     - Make internal links for all relax versions.
     - Convert all symbols/parameters to use wiki formatting.
     - Convert all model names to internal wiki links (vi search "\<m[0-9]\>\|\<tm[0-9]\>\|No Rex\|R2eff\|LM63\|LM63 3-site\|CR72\|CR72 full\|IT99\|TSMFK01\|B14\|B14 full\|NS CPMG\|MMQ CR72\|NS MMQ\|M61\|DPL94\|TP02\|TAP03\|MP05\|NS R1rho\|BK13").
-
+    - Add as many links as possible to the API documentation (to help users dive into the relax code and to help with search engine indexing).
 
 
 Mailing list
@@ -210,6 +212,7 @@ Mailing list
 On the relax-announce mailing list (relax-announce att gna.org), write the release announcement by:
 
     - Copy the 'Description' and 'Download' text from the wiki.  Do not include the section titles and remove any wiki markup.
+    - Add a paragraph before the 'Download' paragraph with the text 'For the official, easy to navigate release notes, please see http://wiki.nmr-relax.com/Relax_3.3.1.'.  This is to direct both users and search engines to the wiki page (the users via the release email and the search engines via the multiple archives).
     - At the end, add a section titled 'The full list of changes is:' and cut and paste the part of the CHANGES file for this release.  Do not use the wiki text for this.
     - Include links to the trackers in the full list of changes, if not already present.
 
@@ -223,25 +226,38 @@ The steps are:
     - Cut and paste all of the wiki text.  Delete the initial lower case title formatting text, the final 'See also' section, and any wiki markup.
     - Use the Savane markup to format the text (recipe #236, https://gna.org/cookbook/?func=detailitem&item_id=236).
     - As the Savane markup for sectioning is the same as the wiki, the section titles = Description =, = Download =, and = Full list of changes = do not need to be modified (except changing the text 'CHANGES file' to 'Full list of changes').  The same for the subtitles == Features ==, == Changes ==, and == Bugfixes ==.  The leading whitespace from the full list of changes must be stripped, but this should already be done in the wiki text.
-    - Item references such as bug #7641, task #3122, etc. are automatically converted into links, therefore remove all links to the trackers.
+    - Convert internal [[xyz]] wiki links into proper [http://wiki.nmr-relax.com/xyz] links.
+    - Item references such as bug #7641, task #3122, etc. are automatically converted into links.  Savane will replace the links as formatted for the wiki to these links, so nothing needs to be done.
     - The Gna! news items are often truncated, so start a new thread for the rest of the message, responding to that thread for each block of release notes via the [ Reply ] link at the bottom of the page.
+    - Remove all symbol formatting ('&', ';', '<sub>', '<sup>', etc.).
 
 
 Cross-linking
 -------------
 
-For better indexing by search engines, cross-link all the release announcements.  It may take a few days for all the links to be created.  For example for relax 3.1.7:
+For better indexing by search engines, cross-link all the release announcements both on the Wiki and the Gna! news item.  It may take a few days for all the links to be created.  For example for relax 3.1.7:
 
-    Official release notes:  http://wiki.nmr-relax.com/Relax_3.1.7
-    Gna! news item:  https://gna.org/forum/forum.php?forum_id=2448
-    Gmane:  http://article.gmane.org/gmane.science.nmr.relax.announce/53
-    Mail Archive:  http://www.mail-archive.com/relax-announce%40gna.org/msg00047.html
-    Local archives:  https://mail.gna.org/public/relax-announce/2014-03/msg00001.html
-    MARC:  http://marc.info/?l=relax-announce&m=139509874209089&w=2
+"""
+For reference, the announcement for this release can also be found at following links:
 
-    Softpedia also has information about the newest relax releases:
-    Softpedia for GNU/Linux:  http://linux.softpedia.com/get/Science/relax-22351.shtml and http://linux.softpedia.com/progDownload/relax-Download-22351.html
-    Softpedia for MS Windows:  http://www.softpedia.com/get/Science-CAD/relax-project.shtml and http://www.softpedia.com/progDownload/relax-Download-210902.html
-    Softpedia for Mac OS X:  http://mac.softpedia.com/get/Math-Scientific/Edward-relax.shtml and http://mac.softpedia.com/progDownload/relax-Download-124418.html
+* [http://wiki.nmr-relax.com/Relax_3.1.7 Official release notes on the relax wiki].
+* [https://gna.org/forum/forum.php?forum_id=2448 Gna! news item].
+* [http://article.gmane.org/gmane.science.nmr.relax.announce/53 Gmane mailing list archive].
+* [http://www.mail-archive.com/relax-announce%40gna.org/msg00047.html The Mail Archive].
+* [https://mail.gna.org/public/relax-announce/2014-03/msg00001.html Local archives].
+* [http://marc.info/?l=relax-announce&m=139509874209089&w=2 Mailing list ARChives (MARC)].
 
-Not all of these links may work, and 
+Softpedia also has information about the newest relax releases:
+
+* [http://linux.softpedia.com/get/Science/relax-22351.shtml Softpedia page for relax on GNU/Linux].
+* [http://www.softpedia.com/get/Science-CAD/relax-project.shtml Softpedia page for relax on MS Windows].
+* [http://mac.softpedia.com/get/Math-Scientific/Edward-relax.shtml Softpedia page for relax on Mac OS X].
+"""
+
+Not all of these links may work, as the email archives are not 100% perfect.  For the wiki, transclude the softpedia page http://wiki.nmr-relax.com/Softpedia using {{:Softpedia}}, and add a section to the table at http://wiki.nmr-relax.com/Category:Release_Notes for the release.  For the news item, reply to the item with the subject "Links to the other release announcements.".
+
+
+Softpedia
+---------
+
+Inform Softpedia of the new release.  Use text such at "I would like to inform you of a new relax version announced at http://wiki.nmr-relax.com/Relax_3.3.1.".

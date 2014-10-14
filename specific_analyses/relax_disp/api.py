@@ -1192,7 +1192,7 @@ class Relax_disp(API_base, API_common):
                     raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param_i)
 
                 # If the parameter is a global parameter, then change for all spins part of the cluster.
-                if param_i in ['pA', 'kex', 'k_AB', 'tex', 'kB', 'kC', 'kex_AB', 'kex_BC', 'kex_AC']:
+                if param_i in ['pA', 'pB', 'pC', 'kex', 'k_AB', 'k_BC', 'k_AC', 'tex', 'kB', 'kC', 'kex_AB', 'kex_BC', 'kex_AC']:
                     selection_list = spin_ids
                 else:
                     selection_list = [spin_id]

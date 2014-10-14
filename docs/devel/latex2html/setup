@@ -1,0 +1,56 @@
+#! /bin/sh
+
+# Fetch the files.
+curl -O http://ftp.de.debian.org/debian/pool/main/l/latex2html/latex2html_2008-debian1-10.debian.tar.gz
+curl -O http://ftp.de.debian.org/debian/pool/main/l/latex2html/latex2html_2008-debian1.orig.tar.gz
+
+# Cleanup.
+rm -rf build debian latex2html-2008-debian1
+
+# Unpack the files.
+tar xvf latex2html_2008-debian1-10.debian.tar.gz
+tar xvf latex2html_2008-debian1.orig.tar.gz
+
+# The build directory.
+mv latex2html-2008-debian1 build
+
+# Go there.
+cd build
+
+# Patching.
+#patch -p1 < ../debian/patches/add-url.patch    # Useless patch as this new URL is dead!
+patch -p1 < ../debian/patches/pstoimg-dont-use-rgb-txt.patch
+patch -p1 < ../debian/patches/pstoimg-fix-borders.patch
+patch -p1 < ../debian/patches/pstoimg-fix-file-pattern.patch
+patch -p1 < ../debian/patches/fix-typos.patch
+patch -p1 < ../debian/patches/html-version-4.patch
+patch -p1 < ../debian/patches/l2hconf-fix-shebang.patch
+patch -p1 < ../debian/patches/latex2html-fix-authoraddress.patch
+patch -p1 < ../debian/patches/override-dvips-dot-in-filename-problem.patch
+patch -p1 < ../debian/patches/manual-fix-address.patch
+patch -p1 < ../debian/patches/makefiles-fixes.patch
+patch -p1 < ../debian/patches/fix-image-types.patch
+patch -p1 < ../debian/patches/add-abnt.patch
+patch -p1 < ../debian/patches/fix-romanian.patch
+patch -p1 < ../debian/patches/fix-mathend-mark.patch
+patch -p1 < ../debian/patches/add-floatflt-ins.patch
+patch -p1 < ../debian/patches/fix-pdfoutput.patch
+patch -p1 < ../debian/patches/fix-gs-stderr.patch
+patch -p1 < ../debian/patches/debian-install.patch
+patch -p1 < ../debian/patches/pstoimg-match-gray.patch
+patch -p1 < ../debian/patches/fix-spaces-in-filenames.patch
+patch -p1 < ../debian/patches/manpages.patch
+patch -p1 < ../debian/patches/eurosym.patch
+patch -p1 < ../debian/patches/match-multiline.patch
+patch -p1 < ../debian/patches/latex2html-fix-defined.patch
+patch -p1 < ../relax_lstlisting.patch
+patch -p1 < ../relax_max_char.patch
+patch -p1 < ../relax_no_generic_words.patch
+
+# Configure.
+./configure --prefix=/usr/local
+#GS_LIB=/usr/share/ghostscript/9.14/:. ./configure --prefix=/usr/local
+
+# Make.
+make
+#GS_LIB=/usr/share/ghostscript/9.14/Resource/Init/:/usr/share/ghostscript/9.14/Resource/Font:. make

@@ -1,0 +1,12 @@
+The following instructions are required to build the version of latex2html for building the HTML version of the manual located at http://www.nmr-relax.com/manual/.  It includes both the Debian patches, downloaded by the setup script, and some patches specific for improving the relax documentation.
+
+To install a fixed working copy of latex2html into /usr/local, type:
+
+$ ./setup
+$ cd build
+$ su
+# make install
+
+Look at the 'setup' file to see all the patches which have been applied.
+
+Note that perl-doc needs to be installed.
