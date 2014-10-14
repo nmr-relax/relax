@@ -195,8 +195,10 @@ class Palmer(SystemTestCase):
             binary = 'linux-i386-gcc'   # Linux Gnu gcc modelfree4 version.
         elif spin.te * 1e12 == 52.197:
             binary = 'linux-i386-pgf'   # Linux Portland C compiler modelfree4 version.
+        elif spin.te * 1e12 == 52.194:
+            binary = 'linux-x86_64-gcc'   # 64-bit Linux Gnu gcc modelfree4 version.
         spin = return_spin(':9@N', pipe='m1')
-        if spin.chi2 == 143.7:
+        if binary == None and spin.chi2 == 143.7:
             binary = 'mac-i386'         # Mac OS X intel binary.
         if not binary:
             raise RelaxError("The Modelfree4 binary cannot be identified, therefore the parameters cannot be meaningfully checked.")
@@ -208,11 +210,11 @@ class Palmer(SystemTestCase):
         spin_names = [':9@N', ':10@N', ':11@N']
         s2 = [[0.822, 0.799, 0.823], [0.788, 0.777, 0.812], [0.822, 0.799, 0.823]]
         te = [[None, None, None], [61.506, 36.087, 20.039], [None, None, None]]
-        if binary == 'mac-i386':
+        if binary in ['mac-i386', 'linux-x86_64-gcc']:
             te = [[None, None, None], [61.504, 36.087, 20.039], [None, None, None]]
         rex = [[None, None, None], [None, None, None], [0.0, 0.0, 0.0]]
         chi2 = [[143.6773, 105.1767, 61.6684], [40.9055, 57.1562, 48.4927], [143.6773, 105.1767, 61.6684]]
-        if binary == 'mac-i386':
+        if binary in ['mac-i386', 'linux-x86_64-gcc']:
             chi2 = [[143.7, 105.2, 61.67], [40.91, 57.16, 48.49], [143.7, 105.2, 61.67]]
 
         # Checks for model m1, m2, and m3 mfout file reading.
@@ -223,6 +225,7 @@ class Palmer(SystemTestCase):
 
                 # Get the spin.
                 spin = return_spin(spin_names[spin_index], pipe=models[model_index])
+                print spin
 
                 # Conversions.
                 if rex[model_index][spin_index]:
@@ -251,8 +254,10 @@ class Palmer(SystemTestCase):
             te = [52.197, 29.361, 12.677]
         elif binary == 'mac-i386':
             te = [52.197, 29.357, 12.676]
+        elif binary == 'linux-x86_64-gcc':
+            te = [52.194, 29.359, 12.677]
         chi2 = [7.254, 8.0437, 0.5327]
-        if binary == 'mac-i386':
+        if binary in ['mac-i386', 'linux-x86_64-gcc']:
             chi2 = [7.254, 8.044, 0.5327]
 
         # Checks for the final mfout file reading.
@@ -291,3 +296,8 @@ class Palmer(SystemTestCase):
             self.assertAlmostEqual(final_pipe.diff_tensor.Dratio, 1.049)
             self.assertAlmostEqual(final_pipe.diff_tensor.theta * 360 / 2.0 / pi, 64.611)
             self.assertAlmostEqual(final_pipe.diff_tensor.phi * 360 / 2.0 / pi, 79.281)
+        elif binary == 'linux-x86_64-gcc':
+            self.assertAlmostEqual(final_pipe.diff_tensor.tm, 8.445)
+            self.assertAlmostEqual(final_pipe.diff_tensor.Dratio, 1.052)
+            self.assertAlmostEqual(final_pipe.diff_tensor.theta * 360 / 2.0 / pi, 68.245)
+            self.assertAlmostEqual(final_pipe.diff_tensor.phi * 360 / 2.0 / pi, 74.290)
