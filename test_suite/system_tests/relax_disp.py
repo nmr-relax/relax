@@ -3044,7 +3044,7 @@ class Relax_disp(SystemTestCase):
         lower = []
         upper = []
         for i, param_val in enumerate(dx_point_clustered_min):
-            param = dx_params[0]
+            param = dx_params[i]
             step_val = param_delta * param_val
             step_length = step_val * dx_inc_sides
 
@@ -3115,6 +3115,137 @@ class Relax_disp(SystemTestCase):
 
         # Assert.
         self.assertAlmostEqual(test, pre_chi2,  6)
+
+
+    def test_dx_map_clustered_create_par_file(self):
+        """Test making dx_map for residues under clustered calculation, and the creation of the parameter file.
+
+        U{Task #7860<https://gna.org/task/index.php?7860>} : When dx_map is issued, create a parameter file which maps parameters to chi2 value.
+
+        This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0509100103}.  This is CPMG data with a fixed relaxation time period.  Experiment in 0.48 M GuHCl (guanidine hydrochloride).
+        """
+
+        # Define path to data 
+        prev_data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'KTeilum_FMPoulsen_MAkke_2006'+sep+'surface_chi2_clustered_fitting'
+
+        # Read data.
+        self.interpreter.results.read(prev_data_path + sep + 'coMDD_-_TSMFK01_-_min_-_32_-_free_spins.bz2')
+
+        # Get residue of interest.
+        cur_spin_id = ":%i@%s"%(65, 'N')
+        cur_spin_id_str = cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_')
+
+        # Get the spin container.
+        cur_spin = return_spin(cur_spin_id)
+
+        # Get the chi2 value
+        pre_chi2 = cur_spin.chi2
+
+        # Then do a local minimisation.
+        #self.interpreter.select.spin(":%i@%s"%(2, 'N'))
+        self.interpreter.minimise.calculate()
+
+        # Get the chi2 value after calculation.
+        calc_chi2 = cur_spin.chi2
+
+        # Assert calculation is equal.
+        self.assertAlmostEqual(pre_chi2, calc_chi2)
+
+        # Define dx.map settings.
+        dx_inc = 2
+        dx_inc_sides = dx_inc / 2
+
+        dx_params = ['dw', 'k_AB', 'r2a']
+        dx_point_clustered_min = [cur_spin.dw, cur_spin.k_AB, cur_spin.r2a['SQ CPMG - 499.86214000 MHz']]
+
+        print("Params for dx map is")
+        print(dx_params)
+        print("Point param for dx map is, with chi2=%3.3f"%pre_chi2)
+        print(dx_point_clustered_min)
+
+        # Define file_names.
+        cur_model = 'TSMFK01'
+        file_name_map = "%s_map%s" % (cur_model, cur_spin_id_str)
+        file_name_point = "%s_point%s" % (cur_model, cur_spin_id_str)
+
+        # Step-size of parameter is 10 %
+        param_delta = 0.1
+
+        # Determine bounds for lower and upper
+        #lower = [0.0, 0.0, 5.0]
+        #upper = [20.0, 6.0, 15.0]
+
+        lower = []
+        upper = []
+        for i, param_val in enumerate(dx_point_clustered_min):
+            param = dx_params[i]
+            step_val = param_delta * param_val
+            step_length = step_val * dx_inc_sides
+
+            # Calculate value
+            low_val = param_val - step_length
+            lower.append(low_val)
+
+            upp_val = param_val + step_length
+            upper.append(upp_val)
+
+            print("For param %s, lower=%3.3f, upper=%3.3f, step_value=%3.3f, steps=%i, centered at=%3.3f"% (param, low_val, upp_val, step_val, dx_inc, param_val))
+
+        # Define temporary folder.
+        result_dir = self.tmpdir
+
+        # For testing.
+        #result_dir = None
+        #lower = None
+        #upper = None
+        #self.interpreter.relax_disp.cluster(cluster_id='free spins', spin_id=cur_spin_id)
+
+        # Then do the map.
+        self.interpreter.dx.map(params=dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=dx_inc, lower=lower, upper=upper, axis_incs=10, file_prefix=file_name_map, dir=result_dir, point=dx_point_clustered_min, point_file=file_name_point)
+
+        # Print where to locate values.
+        nr_chi2_val = (dx_inc + 1)**3
+        print("Nr of chi2 calculations are=%i"%nr_chi2_val)
+        print("Global chi2=%3.3f, Calc_chi=%3.3f" % (pre_chi2, calc_chi2) )
+
+        ## Check for file creation
+        # Set filepaths.
+        map_name = get_file_path(file_name=file_name_map, dir=result_dir)
+        map_cfg = get_file_path(file_name=file_name_map+".cfg", dir=result_dir)
+        map_net = get_file_path(file_name=file_name_map+".net", dir=result_dir)
+        map_general = get_file_path(file_name=file_name_map+".general", dir=result_dir)
+        map_par = get_file_path(file_name=file_name_map+".par", dir=result_dir)
+
+        point_general = get_file_path(file_name=file_name_point+".general", dir=result_dir)
+        point_point = get_file_path(file_name=file_name_point, dir=result_dir)
+
+        # Test the files exists.
+        self.assert_(access(map_cfg, F_OK))
+        self.assert_(access(map_net, F_OK))
+        self.assert_(access(map_general, F_OK))
+        self.assert_(access(map_par, F_OK))
+        self.assert_(access(point_general, F_OK))
+        self.assert_(access(point_point, F_OK))
+
+        print("\nParams for dx map is")
+        print(dx_params)
+        print("Point param for dx map is, with chi2=%3.3f"%pre_chi2)
+        print(dx_point_clustered_min, "\n")
+
+        # Open the parameter chi2 file, and assert the chi2 value in the sorted parameter file is not lower that than the global minimisation.
+        get_data = extract_data(file=map_par)
+
+        # Extract line 1, column 9.
+        test = float(get_data[1][9])
+
+        # Print data if map contain a lower value than the global minimised value.
+        if test < pre_chi2:
+            print("\nInitial clustered minimised chi2 value is=%3.3f, whereby the minimum map value is=%3.3f\n" % (pre_chi2, test))
+            for line in get_data:
+                print(line)
+
+        # Assert that the initial global chi2 is lower than the map value.
+        self.assert_(pre_chi2 < test)
 
 
     def test_estimate_r2eff_err(self):
