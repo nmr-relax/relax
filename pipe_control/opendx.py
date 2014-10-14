@@ -25,12 +25,13 @@
 
 
 # Python module imports.
+from copy import deepcopy
 from numpy import float64, array, zeros
 from time import asctime, localtime
 
 # relax module imports.
 from lib.errors import RelaxError
-from lib.io import open_write_file
+from lib.io import open_write_file, write_data
 from extern.numpy_future import percentile
 from lib.software.opendx.files import write_config, write_general, write_point, write_program
 from pipe_control import value
@@ -107,6 +108,9 @@ class Map:
         self.dir = dir
         self.point_file = point_file
 
+        # Define nested listed, which holds parameter values and chi2 value.
+        self.par_chi2_vals = []
+
         # The specific analysis API object.
         self.api = return_api()
 
@@ -163,6 +167,9 @@ class Map:
         # Generate the map.
         self.create_map()
 
+        ## Generate the file with parameters and associated chi2 value.
+        self.create_par_chi2()
+
         # Default the chi2 surface values, for Innermost, Inner, Middle and Outer Isosurface.
         if chi_surface == None:
             all_chi2 = array(self.all_chi, float64)
@@ -202,6 +209,56 @@ class Map:
         map_file.close()
 
 
+    def create_par_chi2(self):
+        """Function for creating file with parameters and the chi2 value."""
+
+        # Print out.
+        print("\nCreating the file with parameters and the chi2 value.")
+
+        # Open the file.
+        par_file = open_write_file(file_name=self.file_prefix+'.par', dir=self.dir, force=True)
+
+        # Copy the nested list to sort it.
+        par_chi2_vals_sort = deepcopy(self.par_chi2_vals)
+
+        # Then sort the value.
+        par_chi2_vals_sort.sort(key=lambda values: values[4])
+
+        # Collect the data structure, which is a list of list of strings.
+        data = []
+        for i, line in enumerate(self.par_chi2_vals):
+            line_sort = par_chi2_vals_sort[i]
+
+            # Convert values to strings.
+            line_str = ["%3.5f"%j for j in line]
+            line_sort_str = ["%3.5f"%j for j in line_sort]
+
+            # Convert the index from float to index.
+            line_str[0] = "%i" % line[0]
+            line_sort_str[0] = "%i" % line_sort[0]
+
+            # Merge the two lists and append to data.
+            data_list = line_str + line_sort_str
+            data.append(data_list)
+
+        # Make the headings.
+        headings = ['i'] + self.params + ['chi2']
+        headings += headings
+
+        # Add "_sort" to headings.
+        headings[5] = headings[5] + "_sort"
+        headings[6] = headings[6] + "_sort"
+        headings[7] = headings[7] + "_sort"
+        headings[8] = headings[8] + "_sort"
+        headings[9] = headings[9] + "_sort"
+
+        # Write the parameters and chi2 values to file.
+        write_data(out=par_file, headings=headings, data=data)
+
+        # Close the file.
+        par_file.close()
+
+
     def get_date(self):
         """Function for creating a date string."""
 
@@ -228,6 +285,9 @@ class Map:
 
         # Initial value of the first parameter.
         values[0] = self.bounds[0, 0]
+
+        # Define counter
+        counter = 0
 
         # Loop over the first parameter.
         for i in range((self.inc + 1)):
@@ -267,6 +327,12 @@ class Map:
 
                         # Save all values of chi2. To help find reasonale level for the Innermost, Inner, Middle and Outer Isosurface.
                         all_chi.append(chi2)
+
+                    # Assign value to nested list.
+                    self.par_chi2_vals.append([counter, values[0], values[1], values[2], chi2])
+
+                    # Add to counter.
+                    counter += 1
 
                     # Increment the value of the third parameter.
                     values[2] = values[2] + self.step_size[2]
