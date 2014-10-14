@@ -251,6 +251,7 @@ class User_functions(GuiTestCase):
             sys.stdout.write("Value: %40s;  " % repr(val))
             uf.page.uf_args['pos'].SetValue(str_to_gui(''))
             uf.page.uf_args['pos'].selection_win_show()
+            uf.page.uf_args['pos'].sel_win.add_element()
             uf.page.uf_args['pos'].sel_win.sequence.SetStringItem(index=1, col=1, label=str_to_gui(val))
             uf.page.uf_args['pos'].sel_win.sequence.SetStringItem(index=0, col=1, label=int_to_gui(1))
             uf.page.uf_args['pos'].selection_win_data()
