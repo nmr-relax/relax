@@ -39,9 +39,9 @@ print("Point param for dx map is, with chi2=%3.3f"%pre_chi2)
 print(dx_point_clustered_min)
 
 # Define file_names.
-cur_model = 'TSMFK01'
-file_name_map = "%s_map%s" % (cur_model, cur_spin_id_str)
-file_name_point = "%s_point%s" % (cur_model, cur_spin_id_str)
+text = "4_dx_map_S65_FT128"
+file_name_map = "%s_map" % (text)
+file_name_point = "%s_point" % (text)
 
 # Set bounds
 lower = [0.0, 0.0, 5.0]

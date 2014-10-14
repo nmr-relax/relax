@@ -21,8 +21,8 @@ result_filename = 'FT_-_TSMFK01_-_min_-_128_-_free_spins.bz2'
 # Read data in
 results.read(prev_data_path + sep + result_filename)
 
-# Get residue of interest. L61 is 
-cur_spin_id = ":%i@%s"%(61, 'N')
+# Get residue of interest. S65 is
+cur_spin_id = ":%i@%s"%(65, 'N')
 
 # Get the spin container.
 mol_name, cur_resi, cur_resn, cur_spin = return_spin(spin_id=cur_spin_id, full_info=True)
@@ -41,12 +41,13 @@ pre_chi2 = cur_spin.chi2
 dx_inc = 6
 
 # Lower bounds
-params = ['dw', 'k_AB']
-lower = [0.0, 0.0]
-upper = [20.0, 6.0]
+params = ['dw', 'r2a']
+lower = [0.0, 6.0]
+upper = [20.0, 12.0]
+
 
 # Get the current point for clustered mininimisation.
-pcm = [cur_spin.dw, cur_spin.k_AB]
+pcm = [cur_spin.dw, cur_spin.r2a['SQ CPMG - 499.86214000 MHz']]
 print("Min cluster point %s=%3.3f, %s=%3.3f, with chi2=%3.3f" % (params[0], pcm[0], params[1], pcm[1], pre_chi2))
 headings = [params[0], params[1], "chi2"]
 
@@ -141,7 +142,7 @@ for i in range((dx_inc + 1)):
 print("\nMin cluster point %s=%3.3f, %s=%3.3f, with chi2=%3.3f" % (params[0], pcm[0], params[1], pcm[1], pre_chi2))
 
 # Open file
-file_name = '3_surface_chi2.txt'
+file_name = '3_simulate_graphs_S65_dw_r2a_FT128.txt'
 surface_file = open_write_file(file_name=file_name, dir=None, force=True)
 write_data(out=surface_file, headings=headings, data=data)
 
