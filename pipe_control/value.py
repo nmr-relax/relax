@@ -351,7 +351,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_c
         minimise.reset_min_stats()
 
 
-def set(val=None, param=None, index=None, pipe=None, spin_id=None, error=False, force=True, reset=True):
+def set(val=None, param=None, index=None, pipe=None, spin_id=None, verbosity=1, error=False, force=True, reset=True):
     """Set global or spin specific data values.
 
     @keyword val:       The parameter values.
@@ -364,6 +364,8 @@ def set(val=None, param=None, index=None, pipe=None, spin_id=None, error=False, 
     @type pipe:         None or str
     @keyword spin_id:   The spin identification string.
     @type spin_id:      str
+    @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:    int
     @keyword error:     A flag which if True will allow the parameter errors to be set instead of the values.
     @type error:        bool
     @keyword force:     A flag forcing the overwriting of current values.
@@ -425,7 +427,7 @@ def set(val=None, param=None, index=None, pipe=None, spin_id=None, error=False, 
 
     # Reset all minimisation statistics.
     if reset:
-        minimise.reset_min_stats()
+        minimise.reset_min_stats(verbosity=verbosity)
 
     # Switch back.
     if pipe:

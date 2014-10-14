@@ -3204,9 +3204,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(pre_chi2, calc_chi2)
 
         # Define dx.map settings.
-        dx_inc = 2
-        dx_inc_sides = dx_inc / 2
-
+        dx_inc = 5
         dx_params = ['dw', 'k_AB', 'r2a']
         dx_point_clustered_min = [cur_spin.dw, cur_spin.k_AB, cur_spin.r2a['SQ CPMG - 499.86214000 MHz']]
 
@@ -3220,36 +3218,15 @@ class Relax_disp(SystemTestCase):
         file_name_map = "%s_map%s" % (cur_model, cur_spin_id_str)
         file_name_point = "%s_point%s" % (cur_model, cur_spin_id_str)
 
-        # Step-size of parameter is 10 %
-        param_delta = 0.1
-
         # Determine bounds for lower and upper
-        #lower = [0.0, 0.0, 5.0]
-        #upper = [20.0, 6.0, 15.0]
-
-        lower = []
-        upper = []
-        for i, param_val in enumerate(dx_point_clustered_min):
-            param = dx_params[i]
-            step_val = param_delta * param_val
-            step_length = step_val * dx_inc_sides
-
-            # Calculate value
-            low_val = param_val - step_length
-            lower.append(low_val)
-
-            upp_val = param_val + step_length
-            upper.append(upp_val)
-
-            print("For param %s, lower=%3.3f, upper=%3.3f, step_value=%3.3f, steps=%i, centered at=%3.3f"% (param, low_val, upp_val, step_val, dx_inc, param_val))
+        lower = [dx_point_clustered_min[0], dx_point_clustered_min[1], dx_point_clustered_min[2]]
+        upper = [19.0, 2.4, 9.5]
 
         # Define temporary folder.
         result_dir = self.tmpdir
 
         # For testing.
         #result_dir = None
-        #lower = None
-        #upper = None
         #self.interpreter.relax_disp.cluster(cluster_id='free spins', spin_id=cur_spin_id)
 
         # Then do the map.

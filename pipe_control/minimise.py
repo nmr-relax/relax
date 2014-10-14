@@ -96,7 +96,7 @@ def calc(verbosity=1):
     check_pipe()
 
     # Reset the minimisation statistics.
-    reset_min_stats()
+    reset_min_stats(verbosity=verbosity)
 
     # The specific analysis API object.
     api = return_api()
@@ -183,7 +183,7 @@ def grid_search(lower=None, upper=None, inc=None, verbosity=1, constraints=True,
         # Loop over the simulations.
         for i in range(cdp.sim_number):
             # Reset the minimisation statistics.
-            reset_min_stats(sim_index=i)
+            reset_min_stats(sim_index=i, verbosity=verbosity)
 
             # Status.
             if status.current_analysis:
@@ -207,7 +207,7 @@ def grid_search(lower=None, upper=None, inc=None, verbosity=1, constraints=True,
     # Grid search.
     else:
         # Reset the minimisation statistics.
-        reset_min_stats()
+        reset_min_stats(verbosity=verbosity)
 
         # Optimise.
         api.grid_search(lower=model_lower, upper=model_upper, inc=model_inc, scaling_matrix=scaling_matrix, constraints=constraints, verbosity=verbosity)
@@ -489,7 +489,7 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     # Single Monte Carlo simulation.
     if sim_index != None:
         # Reset the minimisation statistics.
-        reset_min_stats(sim_index=sim_index)
+        reset_min_stats(sim_index=sim_index, verbosity=verbosity)
 
         # Optimise.
         api.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling_matrix=scaling_matrix, verbosity=verbosity, sim_index=sim_index)
@@ -498,7 +498,7 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     elif hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         for i in range(cdp.sim_number):
             # Reset the minimisation statistics.
-            reset_min_stats(sim_index=i)
+            reset_min_stats(sim_index=i, verbosity=verbosity)
 
             # Status.
             if status.current_analysis:
@@ -522,7 +522,7 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     # Standard minimisation.
     else:
         # Reset the minimisation statistics.
-        reset_min_stats()
+        reset_min_stats(verbosity=verbosity)
 
         # Optimise.
         api.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling_matrix=scaling_matrix, verbosity=verbosity)
@@ -531,13 +531,15 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     processor.run_queue()
 
 
-def reset_min_stats(data_pipe=None, sim_index=None):
+def reset_min_stats(data_pipe=None, sim_index=None, verbosity=1):
     """Function for resetting all minimisation statistics.
 
     @keyword data_pipe:     The name of the data pipe to reset the minimisation statistics of.  This defaults to the current data pipe.
     @type data_pipe:        str
     @keyword sim_index:     The optional Monte Carlo simulation index.
     @type sim_index:        int
+    @keyword verbosity:     The amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:        int
     """
 
     # The data pipe.
@@ -600,7 +602,7 @@ def reset_min_stats(data_pipe=None, sim_index=None):
                         sim_obj[sim_index] = None
 
     # Printout.
-    if flag and sim_index == None:
+    if verbosity and flag and sim_index == None:
         print("Resetting the minimisation statistics.")
 
 
