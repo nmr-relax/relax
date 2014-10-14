@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The dx user function definitions for controlling the OpenDX visualisation software."""
+"""The mapping user function definitions for mapping the chi-squared parameter space."""
 
 # Python module imports.
 import dep_check
@@ -44,14 +44,14 @@ from user_functions.objects import Desc_container
 
 
 # The user function class.
-uf_class = uf_info.add_class("dx")
+uf_class = uf_info.add_class("mapping")
 uf_class.title = "Class for interfacing with OpenDX."
-uf_class.menu_text = "&dx"
+uf_class.menu_text = "&mapping"
 uf_class.gui_icon = "relax.opendx"
 
 
-# The dx.execute user function.
-uf = uf_info.add_uf("dx.execute")
+# The mapping.dx_execute user function.
+uf = uf_info.add_uf("mapping.dx_execute")
 uf.title = "Execute an OpenDX program."
 uf.title_short = "OpenDX execution."
 uf.add_keyarg(
@@ -89,7 +89,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will execute OpenDX to display the space maps created previously by the dx.map user function.  This will work for any type of OpenDX map.")
+uf.desc[-1].add_paragraph("This will execute OpenDX to display the space maps created previously by the mapping.setup user function.  This will work for any type of OpenDX map.")
 uf.backend = run
 uf.menu_text = "&execute"
 uf.gui_icon = "oxygen.categories.applications-education"
@@ -98,8 +98,8 @@ uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'opendx.png'
 
 
-# The dx.map user function.
-uf = uf_info.add_uf("dx.map")
+# The mapping.setup user function.
+uf = uf_info.add_uf("mapping.setup")
 uf.title = "Create a map of the given space in OpenDX format."
 uf.title_short = "OpenDX map creation."
 uf.display = True
@@ -220,13 +220,13 @@ uf.desc.append(frame_order_params.uf_doc(label="table: frame order parameters"))
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("The following commands will generate a map of the extended model-free space for model 'm5' consisting of the parameters {S2, S2f, ts}.  Files will be output into the directory 'dx' and will be prefixed by 'map'.  In this case, the system is a protein and residue number 6 will be mapped.")
-uf.desc[-1].add_prompt("relax> dx.map(['s2', 's2f', 'ts'], spin_id=':6')")
-uf.desc[-1].add_prompt("relax> dx.map(['s2', 's2f', 'ts'], spin_id=':6', file_prefix='map', dir='dx')")
-uf.desc[-1].add_prompt("relax> dx.map(params=['s2', 's2f', 'ts'], spin_id=':6', inc=20, file_prefix='map', dir='dx')")
-uf.desc[-1].add_prompt("relax> dx.map(params=['s2', 's2f', 'ts'], spin_id=':6', map_type='Iso3D', inc=20, file_prefix='map', dir='dx')")
+uf.desc[-1].add_prompt("relax> mapping.setup(['s2', 's2f', 'ts'], spin_id=':6')")
+uf.desc[-1].add_prompt("relax> mapping.setup(['s2', 's2f', 'ts'], spin_id=':6', file_prefix='map', dir='dx')")
+uf.desc[-1].add_prompt("relax> mapping.setup(params=['s2', 's2f', 'ts'], spin_id=':6', inc=20, file_prefix='map', dir='dx')")
+uf.desc[-1].add_prompt("relax> mapping.setup(params=['s2', 's2f', 'ts'], spin_id=':6', map_type='Iso3D', inc=20, file_prefix='map', dir='dx')")
 uf.desc[-1].add_paragraph("To map the model-free space 'm4' for residue 2, spin N6 defined by the parameters {S2, te, Rex}, name the results 'test', and to place the files in the current directory, use one of the following commands:")
-uf.desc[-1].add_prompt("relax> dx.map(['s2', 'te', 'rex'], spin_id=':2@N6', file_prefix='test', dir=None)")
-uf.desc[-1].add_prompt("relax> dx.map(params=['s2', 'te', 'rex'], spin_id=':2@N6', inc=100, file_prefix='test', dir=None)")
+uf.desc[-1].add_prompt("relax> mapping.setup(['s2', 'te', 'rex'], spin_id=':2@N6', file_prefix='test', dir=None)")
+uf.desc[-1].add_prompt("relax> mapping.setup(params=['s2', 'te', 'rex'], spin_id=':2@N6', inc=100, file_prefix='test', dir=None)")
 uf.backend = map
 uf.menu_text = "&map"
 uf.gui_icon = "relax.grid_search"

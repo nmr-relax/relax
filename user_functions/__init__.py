@@ -43,7 +43,6 @@ __all__ += [
     'deselect',
     'diffusion_tensor',
     'domain',
-    'dx',
     'eliminate',
     'error_analysis',
     'fix',
@@ -52,6 +51,7 @@ __all__ += [
     'interatom',
     'j_coupling',
     'jw_mapping',
+    'mapping',
     'minimisation',
     'model_free',
     'model_selection',
@@ -101,7 +101,6 @@ def initialise():
     import user_functions.deselect
     import user_functions.diffusion_tensor
     import user_functions.domain
-    import user_functions.dx
     import user_functions.eliminate
     import user_functions.error_analysis
     import user_functions.fix
@@ -110,6 +109,7 @@ def initialise():
     import user_functions.interatom
     import user_functions.j_coupling
     import user_functions.jw_mapping
+    import user_functions.mapping
     import user_functions.minimisation
     import user_functions.model_free
     import user_functions.model_selection
