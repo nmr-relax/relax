@@ -599,6 +599,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Initialise the base class.
         super(LogCtrl, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
 
+        # Flag for scrolling to the bottom.
+        self.at_end = True
+
         # Turn on line wrapping.
         self.SetWrapMode(wx.stc.STC_WRAP_WORD)
 
@@ -652,7 +655,10 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.Bind(wx.EVT_FIND_NEXT, self.find)
         self.Bind(wx.EVT_FIND_CLOSE, self.find_close)
         self.Bind(wx.EVT_KEY_DOWN, self.capture_keys)
+        self.Bind(wx.EVT_MOUSE_EVENTS, self.capture_mouse)
+        self.Bind(wx.EVT_MOUSEWHEEL, self.capture_mouse_wheel)
         self.Bind(wx.EVT_RIGHT_DOWN, self.pop_up_menu)
+        self.Bind(wx.EVT_SCROLLWIN_THUMBTRACK, self.capture_scroll)
         self.Bind(wx.EVT_MENU, self.find_open, id=self.menu_id_find)
         self.Bind(wx.EVT_MENU, self.on_copy, id=self.menu_id_copy)
         self.Bind(wx.EVT_MENU, self.on_select_all, id=self.menu_id_select_all)
@@ -690,10 +696,12 @@ class LogCtrl(wx.stc.StyledTextCtrl):
 
         # Allow caret movements (arrow keys, home, end).
         if event.GetKeyCode() in [312, 313, 314, 315, 316, 317]:
+            self.at_end = False
             event.Skip()
 
         # Allow scrolling (pg up, pg dn):
         if event.GetKeyCode() in [366, 367]:
+            self.at_end = False
             event.Skip()
 
         # Zooming.
@@ -705,10 +713,62 @@ class LogCtrl(wx.stc.StyledTextCtrl):
             self.on_zoom_in(event)
 
         # Jump to start or end (Ctrl-Home and Ctrl-End).
-        if event.ControlDown() and event.GetKeyCode() == 316:
+        if event.ControlDown() and event.GetKeyCode() == 313:
             self.on_goto_start(event)
-        elif event.ControlDown() and event.GetKeyCode() == 317:
+        elif event.ControlDown() and event.GetKeyCode() == 312:
             self.on_goto_end(event)
+
+
+    def capture_mouse(self, event):
+        """Control the mouse events.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Stop following the end if a mouse button is clicked.
+        if event.ButtonDown():
+            self.at_end = False
+
+        # Continue with the event.
+        event.Skip()
+
+
+    def capture_mouse_wheel(self, event):
+        """Control the mouse wheel events.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Stop following the end on all events.
+        self.at_end = False
+
+        # Move the caret with the scroll, to prevent following the end.
+        scroll = event.GetLinesPerAction()
+        if event.GetWheelRotation() > 0.0:
+            scroll *= -1
+        self.GotoLine(self.GetCurrentLine() + scroll)
+
+        # Continue with the event.
+        event.Skip()
+
+
+    def capture_scroll(self, event):
+        """Control the window scrolling events.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Stop following the end on all events.
+        self.at_end = False
+
+        # Move the caret with the scroll (at the bottom), to prevent following the end.
+        self.GotoLine(event.GetPosition() + self.LinesOnScreen() - 1)
+
+        # Continue with the event.
+        event.Skip()
 
 
     def clear(self):
@@ -772,8 +832,11 @@ class LogCtrl(wx.stc.StyledTextCtrl):
 
         # Found text.
         else:
-            # Move to the line.
+            # Make the text visible.
             self.EnsureCaretVisible()
+
+            # Stop following the end on all events.
+            self.at_end = False
 
 
     def find_close(self, event):
@@ -797,6 +860,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         @type event:    wx event
         """
 
+        # Turn off the end flag.
+        self.at_end = False
+
         # Initialise the dialog if it doesn't exist.
         if self.find_dlg == None:
             self.find_dlg = wx.FindReplaceDialog(self, self.find_data, "Find")
@@ -814,6 +880,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Turn off the end flag.
+        self.at_end = False
 
         # Text has already been set.
         if self.find_data.GetFindString():
@@ -936,6 +1005,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         @type event:    wx event
         """
 
+        # Turn on the end flag.
+        self.at_end = True
+
         # Go to the end.
         self.GotoPos(self.GetLength())
 
@@ -947,6 +1019,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         @type event:    wx event
         """
 
+        # Turn off the end flag.
+        self.at_end = False
+
         # Go to the start.
         self.GotoPos(-1)
 
@@ -957,6 +1032,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Turn off the end flag.
+        self.at_end = False
 
         # Select all text in the control.
         self.SelectAll()
@@ -1027,17 +1105,16 @@ class LogCtrl(wx.stc.StyledTextCtrl):
     def write(self):
         """Write the text in the log queue to the log control."""
 
+        # At the end?
+        if self.GetScrollRange(wx.VERTICAL) - self.GetCurrentLine() <= 1:
+            self.at_end = True
+
         # Get the text.
         string_list, stream_list = self.get_text()
 
         # Nothing to do.
         if len(string_list) == 1 and string_list[0] == '':
             return
-
-        # At the end?
-        at_end = False
-        if self.GetScrollPos(wx.VERTICAL) == self.GetScrollRange(wx.VERTICAL) - self.LinesOnScreen():
-            at_end = True
 
         # Turn of the read only state.
         self.SetReadOnly(False)
@@ -1073,8 +1150,8 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.limit_scrollback()
 
         # Stay at the end.
-        if at_end:
-            self.ScrollToLine(self.GetLineCount())
+        if self.at_end:
+            self.DocumentEnd()
 
         # Make the control read only again.
         self.SetReadOnly(True)
