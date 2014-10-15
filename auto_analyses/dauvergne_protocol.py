@@ -21,7 +21,7 @@
 
 # Python module imports.
 from math import pi
-from os import F_OK, R_OK, W_OK, access, getcwd, listdir, sep
+from os import F_OK, R_OK, W_OK, X_OK, access, getcwd, listdir, sep
 from os.path import isdir
 from re import search
 from time import sleep
@@ -506,11 +506,13 @@ class dAuvergne_protocol:
         if not isdir(base_dir):
             return 0
 
-        # Is the directory readable and writable.
+        # Is the directory readable, writable, and executable.
         if not access(base_dir, R_OK):
             raise RelaxError("The base model directory '%s' is not readable." % base_dir)
         if not access(base_dir, W_OK):
             raise RelaxError("The base model directory '%s' is not writable." % base_dir)
+        if not access(base_dir, X_OK):
+            raise RelaxError("The base model directory '%s' is not executable." % base_dir)
 
         # Get a list of all files in the directory model.
         dir_list = listdir(base_dir)
