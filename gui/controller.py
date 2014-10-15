@@ -795,7 +795,7 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         sel = self.find_data.GetFindString()
 
         # The search flags.
-        flags = event.GetFlags()
+        flags = self.find_data.GetFlags()
 
         # Shift the search anchor 1 character forwards (if not at the end) to ensure the next instance is found.
         pos = self.GetCurrentPos()
