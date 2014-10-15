@@ -328,7 +328,7 @@ class Controller(wx.Frame):
         """
 
         # Use ESC to close the window.
-        if event.GetKeyCode() == 27:
+        if event.GetKeyCode() == wx.WXK_ESCAPE:
             self.handler_close(event)
 
 
@@ -706,16 +706,16 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Find next (Ctrl-G on Mac OS X, F3 on all others).
         if 'darwin' in sys.platform and event.ControlDown() and event.GetKeyCode() == 71:
             self.find_next(event)
-        elif 'darwin' not in sys.platform and event.GetKeyCode() == 342:
+        elif 'darwin' not in sys.platform and event.GetKeyCode() == wx.WXK_F3:
             self.find_next(event)
 
         # Allow caret movements (arrow keys, home, end).
-        if event.GetKeyCode() in [312, 313, 314, 315, 316, 317]:
+        if event.GetKeyCode() in [wx.WXK_END, wx.WXK_HOME, wx.WXK_LEFT, wx.WXK_UP, wx.WXK_RIGHT, wx.WXK_DOWN]:
             self.at_end = False
             event.Skip()
 
         # Allow scrolling (pg up, pg dn):
-        if event.GetKeyCode() in [366, 367]:
+        if event.GetKeyCode() in [wx.WXK_PAGEUP, wx.WXK_PAGEDOWN]:
             self.at_end = False
             event.Skip()
 
@@ -728,13 +728,13 @@ class LogCtrl(wx.stc.StyledTextCtrl):
             self.on_zoom_in(event)
 
         # Jump to start or end (Ctrl-Home and Ctrl-End).
-        if event.ControlDown() and event.GetKeyCode() == 313:
+        if event.ControlDown() and event.GetKeyCode() == wx.WXK_HOME:
             self.on_goto_start(event)
-        elif event.ControlDown() and event.GetKeyCode() == 312:
+        elif event.ControlDown() and event.GetKeyCode() == wx.WXK_END:
             self.on_goto_end(event)
 
         # Use ESC to close the window.
-        if event.GetKeyCode() == 27:
+        if event.GetKeyCode() == wx.WXK_ESCAPE:
             self.controller.handler_close(event)
 
 
