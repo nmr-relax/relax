@@ -686,7 +686,7 @@ class LogCtrl(wx.stc.StyledTextCtrl):
 
         # Select all (Ctrl-A). 
         if event.ControlDown() and event.GetKeyCode() == 65:
-            event.Skip()
+            self.on_select_all(event)
 
         # Find next (Ctrl-G on Mac OS X, F3 on all others).
         if 'darwin' in sys.platform and event.ControlDown() and event.GetKeyCode() == 71:
@@ -1035,6 +1035,9 @@ class LogCtrl(wx.stc.StyledTextCtrl):
 
         # Turn off the end flag.
         self.at_end = False
+
+        # Go to the first line.
+        self.GotoPos(1)
 
         # Select all text in the control.
         self.SelectAll()
