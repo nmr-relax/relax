@@ -31,6 +31,7 @@ from time import sleep
 from info import Info_box; info = Info_box()
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError
 from lib.float import floatAsByteArray
+from lib.text.sectioning import title, subtitle
 from lib.text.string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE, to_docstring
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
@@ -154,6 +155,9 @@ class dAuvergne_protocol:
         @type conv_loop:                bool
         """
 
+        # Printout.
+        title(file=sys.stdout, text="The dauvergne_protocol model-free auto-analysis")
+
         # Execution lock.
         status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
 
@@ -252,6 +256,9 @@ class dAuvergne_protocol:
     def check_vars(self):
         """Check that the user has set the variables correctly."""
 
+        # Printout.
+        subtitle(file=sys.stdout, text="Auto-analysis variable checking")
+
         # The pipe bundle.
         if not isinstance(self.pipe_bundle, str):
             raise RelaxError("The pipe bundle name '%s' is invalid." % self.pipe_bundle)
@@ -343,11 +350,8 @@ class dAuvergne_protocol:
     def convergence(self):
         """Test for the convergence of the global model."""
 
-        # Print out.
-        print("\n\n\n")
-        print("#####################")
-        print("# Convergence tests #")
-        print("#####################\n")
+        # Printout.
+        title(file=sys.stdout, text="Convergence testing")
 
         # Maximum number of iterations reached.
         if self.max_iter and self.round > self.max_iter:
@@ -500,7 +504,8 @@ class dAuvergne_protocol:
         base_dir = self.results_dir+sep+model
 
         # Printout.
-        sys.stdout.write("\n\nDetermining the next round of optimisation for '%s':  " % base_dir)
+        subtitle(file=sys.stdout, text="Determining the next round of optimisation")
+        print("%-30s %s" % ("Base model directory:", base_dir))
 
         # Catch if a file exists with the name of the directory.
         if not isdir(base_dir) and access(base_dir, F_OK):
@@ -508,7 +513,8 @@ class dAuvergne_protocol:
 
         # If no directory exists, set the round to 'init' or 0.
         if not isdir(base_dir):
-            sys.stdout.write(" 0.\n\n")
+            print("%-30s %i" % ("Round:", 0))
+            print("The base directory does not exist.")
             return 0
 
         # Is the directory readable, writable, and executable.
@@ -524,7 +530,8 @@ class dAuvergne_protocol:
 
         # Set the round to 'init' or 0 if there is no directory called 'init'.
         if 'init' not in dir_list:
-            sys.stdout.write(" 0.\n\n")
+            print("%-30s %i" % ("Round:", 0))
+            print("No 'init' directory present in the base directory.")
             return 0
 
         # Create a list of all files which begin with 'round_'.
@@ -544,7 +551,8 @@ class dAuvergne_protocol:
 
         # No directories beginning with 'round_' exist, set the round to 1.
         if not len(numbers):
-            sys.stdout.write(" 1.\n\n")
+            print("%-30s %i" % ("Round:", 1))
+            print("No directories beginning with 'round_' exist.")
             return 1
 
         # The highest number.
@@ -568,11 +576,12 @@ class dAuvergne_protocol:
 
         # No round, so assume the initial state.
         if complete_round == 0:
-            sys.stdout.write(" 0.\n\n")
+            print("%-30s %i" % ("Round:", 0))
+            print("No opt/results files can be found.")
             return 0
 
         # Determine the number for the next round (add 1 to the highest completed round).
-        sys.stdout.write(" %i.\n\n" % complete_round + 1)
+        print("%-30s %i" % ("Round:", complete_round + 1))
         return complete_round + 1
 
 
@@ -583,6 +592,9 @@ class dAuvergne_protocol:
         ################
 
         if self.diff_model == 'local_tm':
+            # Printout.
+            title(file=sys.stdout, text="Model MI - Local tm")
+
             # Base directory to place files into.
             self.base_dir = self.results_dir+'local_tm'+sep
 
@@ -597,6 +609,16 @@ class dAuvergne_protocol:
         #############################
 
         elif self.diff_model == 'sphere' or self.diff_model == 'prolate' or self.diff_model == 'oblate' or self.diff_model == 'ellipsoid':
+            # Printout.
+            if self.diff_model == 'sphere':
+                title(file=sys.stdout, text="Model MII - Spherical diffusion")
+            elif self.diff_model == 'prolate':
+                title(file=sys.stdout, text="Model MIII - Prolate spheroidal diffusion")
+            elif self.diff_model == 'oblate':
+                title(file=sys.stdout, text="Model MIV - Oblate spheroidal diffusion")
+            elif self.diff_model == 'ellipsoid':
+                title(file=sys.stdout, text="Model MV - Ellipsoidal diffusion")
+
             # No local_tm directory!
             dir_list = listdir(self.results_dir)
             if 'local_tm' not in dir_list:
@@ -614,6 +636,9 @@ class dAuvergne_protocol:
 
                 # Inital round of optimisation for diffusion models MII to MV.
                 if self.round == 0:
+                    # Printout.
+                    subtitle(file=sys.stdout, text="Initial round of optimisation")
+
                     # Base directory to place files into.
                     self.base_dir = self.results_dir+self.diff_model+sep+'init'+sep
 
@@ -656,6 +681,9 @@ class dAuvergne_protocol:
 
                 # Normal round of optimisation for diffusion models MII to MV.
                 else:
+                    # Printout.
+                    subtitle(file=sys.stdout, text="Round %i of optimisation" % self.round)
+
                     # Base directory to place files into.
                     self.base_dir = self.results_dir+self.diff_model + sep+'round_'+repr(self.round)+sep
 
@@ -693,8 +721,14 @@ class dAuvergne_protocol:
         ############
 
         elif self.diff_model == 'final':
+            # Printout.
+            title(file=sys.stdout, text="Final run")
+
             # Diffusion model selection.
             ############################
+
+            # Printout.
+            subtitle(file=sys.stdout, text="Diffusion model selection")
 
             # The contents of the results directory.
             dir_list = listdir(self.results_dir)
@@ -757,6 +791,9 @@ class dAuvergne_protocol:
             # Monte Carlo simulations.
             ##########################
 
+            # Printout.
+            subtitle(file=sys.stdout, text="Monte Carlo simulations")
+
             # Fix the diffusion tensor, if it exists.
             if hasattr(get_pipe(self.name_pipe('final')), 'diff_tensor'):
                 self.interpreter.fix('diff')
@@ -772,6 +809,9 @@ class dAuvergne_protocol:
 
             # Write the final results.
             ##########################
+
+            # Printout.
+            subtitle(file=sys.stdout, text="Writing the final results")
 
             # Create results files and plots of the data.
             self.write_results()
