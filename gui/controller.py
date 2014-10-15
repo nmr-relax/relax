@@ -125,6 +125,9 @@ class Controller(wx.Frame):
             info = Info_box()
             print(info.intro_text())
 
+        # Set the focus on the log control.
+        self.log_panel.SetFocus()
+
         # Register functions with the observer objects.
         status.observers.pipe_alteration.register('controller', self.update_controller, method_name='update_controller')
         status.observers.auto_analyses.register('controller', self.update_controller, method_name='update_controller')
@@ -234,6 +237,9 @@ class Controller(wx.Frame):
             text.SetToolTipString(tooltip)
             field.SetToolTipString(tooltip)
 
+        # Handle key events.
+        field.Bind(wx.EVT_KEY_DOWN, self.handler_key_down)
+
         # Return the control.
         return field
 
@@ -312,6 +318,18 @@ class Controller(wx.Frame):
 
         # Close the window.
         self.Hide()
+
+
+    def handler_key_down(self, event=None):
+        """Event handler for key strokes.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Use ESC to close the window.
+        if event.GetKeyCode() == 27:
+            self.handler_close(event)
 
 
     def handler_timer(self, event):
@@ -714,6 +732,10 @@ class LogCtrl(wx.stc.StyledTextCtrl):
             self.on_goto_start(event)
         elif event.ControlDown() and event.GetKeyCode() == 312:
             self.on_goto_end(event)
+
+        # Use ESC to close the window.
+        if event.GetKeyCode() == 27:
+            self.controller.handler_close(event)
 
 
     def capture_mouse(self, event):
