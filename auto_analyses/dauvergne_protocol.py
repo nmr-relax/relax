@@ -24,19 +24,19 @@ from math import pi
 from os import F_OK, R_OK, W_OK, X_OK, access, getcwd, listdir, sep
 from os.path import isdir
 from re import search
-from time import sleep
 import sys
+from time import sleep
 
 # relax module imports.
-from lib.float import floatAsByteArray
 from info import Info_box; info = Info_box()
+from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError
+from lib.float import floatAsByteArray
+from lib.text.string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE, to_docstring
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control.pipes import cdp_name, get_pipe, has_pipe, pipe_names, switch
-from pipe_control import spectrometer
+from pipe_control.spectrometer import get_frequencies
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError
-from lib.text.string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE, to_docstring
 from status import Status; status = Status()
 
 
@@ -934,7 +934,7 @@ class dAuvergne_protocol:
         self.interpreter.value.write(param='ts',       file='ts.txt',       dir=dir, force=True)
         self.interpreter.value.write(param='rex',      file='rex.txt',      dir=dir, force=True)
         self.interpreter.value.write(param='local_tm', file='local_tm.txt', dir=dir, force=True)
-        frqs = spectrometer.get_frequencies()
+        frqs = get_frequencies()
         for i in range(len(frqs)):
             comment = "This is the Rex value with units rad.s^-1 scaled to a magnetic field strength of %s MHz." % (frqs[i]/1e6)
             self.interpreter.value.write(param='rex', file='rex_%s.txt'%int(frqs[i]/1e6), dir=dir, scaling=(2.0*pi*frqs[i])**2, comment=comment, force=True)
