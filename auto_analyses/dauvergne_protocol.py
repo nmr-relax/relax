@@ -21,7 +21,8 @@
 
 # Python module imports.
 from math import pi
-from os import F_OK, access, getcwd, listdir, sep
+from os import F_OK, R_OK, W_OK, access, getcwd, listdir, sep
+from os.path import isdir
 from re import search
 from time import sleep
 
@@ -494,11 +495,25 @@ class dAuvergne_protocol:
     def determine_rnd(self, model=None):
         """Function for returning the name of next round of optimisation."""
 
-        # Get a list of all files in the directory model.  If no directory exists, set the round to 'init' or 0.
-        try:
-            dir_list = listdir(self.results_dir+sep+model)
-        except:
+        # The base model directory.
+        base_dir = self.results_dir+sep+model
+
+        # Catch if a file exists with the name of the directory.
+        if not isdir(base_dir) and access(base_dir, F_OK):
+            raise RelaxError("The base model directory '%s' is not usable as a file with the same name already exists." % base_dir)
+
+        # If no directory exists, set the round to 'init' or 0.
+        if not isdir(base_dir):
             return 0
+
+        # Is the directory readable and writable.
+        if not access(base_dir, R_OK):
+            raise RelaxError("The base model directory '%s' is not readable." % base_dir)
+        if not access(base_dir, W_OK):
+            raise RelaxError("The base model directory '%s' is not writable." % base_dir)
+
+        # Get a list of all files in the directory model.
+        dir_list = listdir(base_dir)
 
         # Set the round to 'init' or 0 if there is no directory called 'init'.
         if 'init' not in dir_list:
@@ -532,7 +547,7 @@ class dAuvergne_protocol:
             complete_round = i
 
             # The file root.
-            file_root = self.results_dir + sep + model + sep + "round_%i" % i + sep + 'opt' + sep + 'results'
+            file_root = base_dir + sep + "round_%i" % i + sep + 'opt' + sep + 'results'
 
             # Stop looping when the opt/results file is found.
             if access(file_root + '.bz2', F_OK):
