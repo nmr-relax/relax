@@ -25,6 +25,7 @@ from os import F_OK, R_OK, W_OK, X_OK, access, getcwd, listdir, sep
 from os.path import isdir
 from re import search
 from time import sleep
+import sys
 
 # relax module imports.
 from lib.float import floatAsByteArray
@@ -498,12 +499,16 @@ class dAuvergne_protocol:
         # The base model directory.
         base_dir = self.results_dir+sep+model
 
+        # Printout.
+        sys.stdout.write("\n\nDetermining the next round of optimisation for '%s':  " % base_dir)
+
         # Catch if a file exists with the name of the directory.
         if not isdir(base_dir) and access(base_dir, F_OK):
             raise RelaxError("The base model directory '%s' is not usable as a file with the same name already exists." % base_dir)
 
         # If no directory exists, set the round to 'init' or 0.
         if not isdir(base_dir):
+            sys.stdout.write(" 0.\n\n")
             return 0
 
         # Is the directory readable, writable, and executable.
@@ -519,6 +524,7 @@ class dAuvergne_protocol:
 
         # Set the round to 'init' or 0 if there is no directory called 'init'.
         if 'init' not in dir_list:
+            sys.stdout.write(" 0.\n\n")
             return 0
 
         # Create a list of all files which begin with 'round_'.
@@ -538,6 +544,7 @@ class dAuvergne_protocol:
 
         # No directories beginning with 'round_' exist, set the round to 1.
         if not len(numbers):
+            sys.stdout.write(" 1.\n\n")
             return 1
 
         # The highest number.
@@ -561,9 +568,11 @@ class dAuvergne_protocol:
 
         # No round, so assume the initial state.
         if complete_round == 0:
+            sys.stdout.write(" 0.\n\n")
             return 0
 
         # Determine the number for the next round (add 1 to the highest completed round).
+        sys.stdout.write(" %i.\n\n" % complete_round + 1)
         return complete_round + 1
 
 
