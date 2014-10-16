@@ -481,6 +481,13 @@ class Wiz_window(wx.Dialog):
         # Bind some events.
         self.Bind(wx.EVT_CLOSE, self._handler_close)
 
+        # ESC to exit, via an accelerator table which creates menu events.
+        id = wx.NewId()
+        self.acc_list = [(wx.ACCEL_NORMAL, wx.WXK_ESCAPE, id)]
+        self.acc_table = wx.AcceleratorTable(self.acc_list)
+        self.SetAcceleratorTable(self.acc_table)
+        self.Bind(wx.EVT_MENU, self._handler_escape, id=self.acc_list[0][2])
+
 
     def _apply(self, event=None):
         """Execute the current page's 'Apply' method.
@@ -716,6 +723,17 @@ class Wiz_window(wx.Dialog):
 
         # Continue with the window closing.
         event.Skip()
+
+
+    def _handler_escape(self, event=None):
+        """Event handler for key strokes.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Close the window.
+        self.Close()
 
 
     def _next_fn(self):
