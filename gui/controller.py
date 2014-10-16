@@ -651,9 +651,6 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.orig_zoom = self.GetZoom()
 
         # Bind events.
-        self.Bind(wx.EVT_FIND, self.find)
-        self.Bind(wx.EVT_FIND_NEXT, self.find)
-        self.Bind(wx.EVT_FIND_CLOSE, self.find_close)
         self.Bind(wx.EVT_KEY_DOWN, self.capture_keys)
         self.Bind(wx.EVT_MOUSE_EVENTS, self.capture_mouse)
         self.Bind(wx.EVT_MOUSEWHEEL, self.capture_mouse_wheel)
@@ -795,7 +792,7 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         sel = self.find_data.GetFindString()
 
         # The search flags.
-        flags = event.GetFlags()
+        flags = self.find_data.GetFlags()
 
         # Shift the search anchor 1 character forwards (if not at the end) to ensure the next instance is found.
         pos = self.GetCurrentPos()
@@ -865,7 +862,15 @@ class LogCtrl(wx.stc.StyledTextCtrl):
 
         # Initialise the dialog if it doesn't exist.
         if self.find_dlg == None:
+            # Initalise.
             self.find_dlg = wx.FindReplaceDialog(self, self.find_data, "Find")
+
+            # Bind the find events to this dialog.
+            self.find_dlg.Bind(wx.EVT_FIND, self.find)
+            self.find_dlg.Bind(wx.EVT_FIND_NEXT, self.find)
+            self.find_dlg.Bind(wx.EVT_FIND_CLOSE, self.find_close)
+
+            # Show the dialog.
             if status.show_gui:
                 self.find_dlg.Show(True)
 
