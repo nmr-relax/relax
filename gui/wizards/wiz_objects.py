@@ -635,6 +635,9 @@ class Wiz_window(wx.Dialog):
         # Execute the page's on_init() method.
         self._pages[i].on_init()
 
+        # Set the focus to this page to allow the keyboard to be functional without a mouse click.
+        self._pages[i].SetFocus()
+
 
     def _go_back(self, event=None):
         """Return to the previous page.
