@@ -41,6 +41,14 @@ from lib.text.gui import r1, r2
 class Analysis_wizard:
     """The analysis selection wizard."""
 
+    def Destroy(self):
+        """Properly delete the wizard and all its elements."""
+
+        self.new_page.Destroy()
+        self.pipe_page.Destroy()
+        self.wizard.Destroy()
+
+
     def run(self):
         """Run through the analysis selection wizard, returning the results.
 
