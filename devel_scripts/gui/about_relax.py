@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,11 +23,17 @@
 import wx
 
 # GUI module imports.
-from gui_bieri.about import About_relax
+from gui.about import About_relax
+from gui.fonts import font
 
 
-# Build the app and show the window.
+# Initialise the app.
 app = wx.App(0)
+
+# Set up the required fonts.
+font.setup()
+
+# Show the window.
 win = About_relax(None)
 win.Show()
 app.MainLoop()
