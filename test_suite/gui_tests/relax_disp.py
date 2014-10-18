@@ -36,7 +36,7 @@ from gui.string_conv import float_to_gui, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from lib.dispersion.variables import EXP_TYPE_R1RHO, MODEL_CR72, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_NOREX, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_R2EFF, MODEL_TP02
 from pipe_control.mol_res_spin import spin_loop
-from pipe_control.pipes import switch
+from pipe_control.pipes import get_bundle, switch
 from specific_analyses.relax_disp.data import generate_r20_key
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
@@ -704,7 +704,7 @@ class Relax_disp(GuiTestCase):
         r20_key2 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=800e6)
 
         # Switch to the 'TP02' model data pipe, then check for each spin.
-        switch("%s - %s" % ('TP02', pipe_bundle))
+        switch("%s - %s" % ('TP02', get_bundle()))
         spin_index = 0
         for spin, spin_id in spin_loop(return_id=True):
             # Printout.
