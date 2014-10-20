@@ -1101,8 +1101,19 @@ class Frame_order_analysis:
         # Optimisation.
         opt = self.opt_rigid
         if opt != None:
+            # No grid search.
+            if not opt.has_grid():
+                # Set up the initial parameters.
+                print("\n\nNo grid search, so setting the translational and rotational parameters to zero.")
+                self.interpreter.value.set(param='ave_pos_x', val=0.0)
+                self.interpreter.value.set(param='ave_pos_y', val=0.0)
+                self.interpreter.value.set(param='ave_pos_z', val=0.0)
+                self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+                self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+                self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+
             # Grid search alternation.
-            if self.rigid_grid_split:
+            elif self.rigid_grid_split:
                 # Split zooming grid search for the translation.
                 print("\n\nTranslation active - splitting the grid search and iterating.")
                 self.interpreter.value.set(param='ave_pos_x', val=0.0)
