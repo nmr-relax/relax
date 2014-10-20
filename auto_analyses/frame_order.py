@@ -369,7 +369,7 @@ class Frame_order_analysis:
     # Debugging and test suite variables.
     _final_state = True
 
-    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, pre_run_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000):
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, pre_run_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000, rigid_grid_split=False):
         """Perform the full frame order analysis.
 
         @param data_pipe_full:          The name of the data pipe containing all of the RDC and PCS data.
@@ -400,6 +400,8 @@ class Frame_order_analysis:
         @type brownian_snapshot:        int
         @keyword brownian_total:        The total argument for the pseudo-Brownian dynamics simulation frame_order.simulate user function.
         @type brownian_total:           int
+        @keyword rigid_grid_split:      A flag which if True will cause the grid search for the rigid model to be split so that the rotation is optimised first followed by the translation.  When combined with grid zooming, this can save optimisation time.  However it may result in the global minimum being missed.
+        @type rigid_grid_split:         bool
         """
 
         # Execution lock.
@@ -422,6 +424,7 @@ class Frame_order_analysis:
             self.brownian_step_size = brownian_step_size
             self.brownian_snapshot = brownian_snapshot
             self.brownian_total = brownian_total
+            self.rigid_grid_split = rigid_grid_split
 
             # Re-order the models to enable the parameter nesting protocol.
             self.models = self.reorder_models(models)
@@ -1098,29 +1101,49 @@ class Frame_order_analysis:
         # Optimisation.
         opt = self.opt_rigid
         if opt != None:
-            # Split zooming grid search for the translation.
-            print("\n\nTranslation active - splitting the grid search and iterating.")
-            self.interpreter.value.set(param='ave_pos_x', val=0.0)
-            self.interpreter.value.set(param='ave_pos_y', val=0.0)
-            self.interpreter.value.set(param='ave_pos_z', val=0.0)
-            for i in opt.loop_grid():
-                # Set the zooming grid search level.
-                zoom = opt.get_grid_zoom_level(i)
-                if zoom != None:
-                    self.interpreter.minimise.grid_zoom(level=zoom)
+            # Grid search alternation.
+            if self.rigid_grid_split:
+                # Split zooming grid search for the translation.
+                print("\n\nTranslation active - splitting the grid search and iterating.")
+                self.interpreter.value.set(param='ave_pos_x', val=0.0)
+                self.interpreter.value.set(param='ave_pos_y', val=0.0)
+                self.interpreter.value.set(param='ave_pos_z', val=0.0)
+                for i in opt.loop_grid():
+                    # Set the zooming grid search level.
+                    zoom = opt.get_grid_zoom_level(i)
+                    if zoom != None:
+                        self.interpreter.minimise.grid_zoom(level=zoom)
 
-                # The numerical optimisation settings.
-                self.interpreter.frame_order.quad_int(opt.get_grid_quad_int(i))
-                self.sobol_setup(opt.get_grid_sobol_info(i))
+                    # The numerical optimisation settings.
+                    self.interpreter.frame_order.quad_int(opt.get_grid_quad_int(i))
+                    self.sobol_setup(opt.get_grid_sobol_info(i))
 
-                # The number of increments.
-                inc = opt.get_grid_inc(i)
+                    # The number of increments.
+                    inc = opt.get_grid_inc(i)
 
-                # First optimise the rotation.
-                self.interpreter.minimise.grid_search(inc=[None, None, None, inc, inc, inc], skip_preset=False)
+                    # First optimise the rotation.
+                    self.interpreter.minimise.grid_search(inc=[None, None, None, inc, inc, inc], skip_preset=False)
 
-                # Then the translation.
-                self.interpreter.minimise.grid_search(inc=[inc, inc, inc, None, None, None], skip_preset=False)
+                    # Then the translation.
+                    self.interpreter.minimise.grid_search(inc=[inc, inc, inc, None, None, None], skip_preset=False)
+
+            # Normal grid search.
+            else:
+                for i in opt.loop_grid():
+                    # Set the zooming grid search level.
+                    zoom = opt.get_grid_zoom_level(i)
+                    if zoom != None:
+                        self.interpreter.minimise.grid_zoom(level=zoom)
+
+                    # The numerical optimisation settings.
+                    self.interpreter.frame_order.quad_int(opt.get_grid_quad_int(i))
+                    self.sobol_setup(opt.get_grid_sobol_info(i))
+
+                    # The number of increments.
+                    inc = opt.get_grid_inc(i)
+
+                    # Grid search
+                    self.interpreter.minimise.grid_search(inc=inc, skip_preset=False)
 
             # Minimise.
             for i in opt.loop_min():
