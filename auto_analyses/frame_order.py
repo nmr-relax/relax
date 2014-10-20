@@ -965,7 +965,7 @@ class Frame_order_analysis:
                     self.interpreter.minimise.grid_search(inc=incs)
 
                     # Store the intermediate results and statistics.
-                    self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True)
+                    self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True, simulation=False)
                     count_sobol_points(dir=intermediate_dir, force=True)
                     summarise(dir=intermediate_dir, force=True)
 
@@ -990,7 +990,7 @@ class Frame_order_analysis:
                     self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=func_tol, max_iter=max_iter)
 
                     # Store the intermediate results.
-                    self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True)
+                    self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True, simulation=False)
                     count_sobol_points(dir=intermediate_dir, force=True)
                     summarise(dir=intermediate_dir, force=True)
 
@@ -1034,7 +1034,7 @@ class Frame_order_analysis:
                     self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=func_tol, max_iter=max_iter)
 
                     # Store the intermediate results.
-                    self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True)
+                    self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True, simulation=False)
                     count_sobol_points(dir=intermediate_dir, force=True)
                     summarise(dir=intermediate_dir, force=True)
 
@@ -1292,7 +1292,7 @@ class Frame_order_analysis:
         return new
 
 
-    def results_output(self, dir=None, model=None, results_file=True):
+    def results_output(self, dir=None, model=None, results_file=True, simulation=True):
         """Create visual representations of the frame order results for the given model.
 
         This will call the following user functions:
@@ -1313,6 +1313,8 @@ class Frame_order_analysis:
         @type model:            str
         @keyword results_file:  A flag which if True will cause a results file to be created via the results.write user function.
         @type results_file:     bool
+        @keyword simulation:    A flag which if True will allow the pseudo-Brownian frame order dynamics simulation to be run.
+        @type simulation:       bool
         """
 
         # Printout.
@@ -1341,7 +1343,8 @@ class Frame_order_analysis:
         script.close()
 
         # The pseudo-Brownian dynamics simulation.
-        self.interpreter.frame_order.simulate(dir=dir, step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
+        if simulation:
+            self.interpreter.frame_order.simulate(dir=dir, step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
 
 
     def sobol_setup(self, info=None):
