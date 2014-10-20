@@ -126,7 +126,13 @@ def count_sobol_points(file_name='sobol_point_count', dir=None, force=True):
             continue
 
         # No file.
-        if not access(dirs[i]+sep+'results.bz2', F_OK):
+        found = False
+        for ext in ['.bz2', '', 'gz']:
+            file = dirs[i]+sep+'results'+ext
+            if access(file, F_OK):
+                found = True
+                break
+        if not found:
             continue
 
         # Create a data pipe.
@@ -265,7 +271,13 @@ def summarise(file_name='summary', dir=None, force=True):
     contents2 = []
     for i in range(len(models)):
         # No file.
-        if not access(dirs[i]+sep+'results.bz2', F_OK):
+        found = False
+        for ext in ['.bz2', '', 'gz']:
+            file = dirs[i]+sep+'results'+ext
+            if access(file, F_OK):
+                found = True
+                break
+        if not found:
             continue
 
         # Create a data pipe.
@@ -369,7 +381,7 @@ class Frame_order_analysis:
     # Debugging and test suite variables.
     _final_state = True
 
-    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, pre_run_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000, rigid_grid_split=False, store_intermediate=True):
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, pre_run_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000, results_compress_type=0, rigid_grid_split=False, store_intermediate=True):
         """Perform the full frame order analysis.
 
         @param data_pipe_full:          The name of the data pipe containing all of the RDC and PCS data.
@@ -400,6 +412,8 @@ class Frame_order_analysis:
         @type brownian_snapshot:        int
         @keyword brownian_total:        The total argument for the pseudo-Brownian dynamics simulation frame_order.simulate user function.
         @type brownian_total:           int
+        @keyword results_compress_type: The type of compression to use when creating the results files.  See the results.write user function for details.
+        @type results_compress_type:    int
         @keyword rigid_grid_split:      A flag which if True will cause the grid search for the rigid model to be split so that the rotation is optimised first followed by the translation.  When combined with grid zooming, this can save optimisation time.  However it may result in the global minimum being missed.
         @type rigid_grid_split:         bool
         @keyword store_intermediate:    A flag which if True will cause all intermediate optimisation results to be stored in the 'intermediate_results' directory.  These can then be used for studying the optimisation settings or loaded for subsequent analyses.
@@ -426,6 +440,7 @@ class Frame_order_analysis:
             self.brownian_step_size = brownian_step_size
             self.brownian_snapshot = brownian_snapshot
             self.brownian_total = brownian_total
+            self.results_compress_type = results_compress_type
             self.rigid_grid_split = rigid_grid_split
             self.store_intermediate = store_intermediate
 
@@ -1275,23 +1290,33 @@ class Frame_order_analysis:
         base_dir = self.results_dir
         if pre_run:
             base_dir = self.pre_run_dir
-        path = model_directory(model, base_dir=base_dir) + sep + 'results.bz2'
+        path = model_directory(model, base_dir=base_dir) + sep + 'results'
 
-        # The file does not exist.
-        if not access(path, F_OK):
-            return False
+        # Loop over the compression types.
+        found = False
+        for ext in ['.bz2', '', 'gz']:
+            # The full file name.
+            full_path = path + ext
 
-        # Create an empty data pipe.
-        self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type='frame order')
+            # The file does not exist.
+            if not access(full_path, F_OK):
+                continue
 
-        # Read the results file.
-        self.interpreter.results.read(path)
+            # Create an empty data pipe.
+            self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type='frame order')
 
-        # Results printout.
-        self.print_results()
+            # Read the results file.
+            self.interpreter.results.read(full_path)
+
+            # Results printout.
+            self.print_results()
+
+            # The flag.
+            found = True
+            break
 
         # Success.
-        return True
+        return found
 
 
     def reorder_models(self, models=None):
@@ -1366,7 +1391,7 @@ class Frame_order_analysis:
 
         # The results file.
         if results_file:
-            self.interpreter.results.write(dir=dir, force=True)
+            self.interpreter.results.write(dir=dir, compress_type=self.results_compress_type, force=True)
 
         # The RDC and PCS correlation plots.
         self.interpreter.rdc.corr_plot(dir=dir, force=True)
