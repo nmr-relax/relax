@@ -1655,6 +1655,21 @@ class Optimisation_settings:
         return self._min_sobol_max_points[i], self._min_sobol_oversample[i]
 
 
+    def has_grid(self):
+        """Is a grid search set up?
+
+        @return:    True if a grid search has been set up.
+        @rtype:     bool
+        """
+
+        # Grid information is present. 
+        if self._grid_count > 0:
+            return True
+
+        # No grid.
+        return False
+
+
     def loop_grid(self):
         """Generator method for looping over all grid search iterations.
 
