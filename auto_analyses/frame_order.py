@@ -369,7 +369,7 @@ class Frame_order_analysis:
     # Debugging and test suite variables.
     _final_state = True
 
-    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, pre_run_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000, rigid_grid_split=False):
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, pre_run_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000, rigid_grid_split=False, store_intermediate=True):
         """Perform the full frame order analysis.
 
         @param data_pipe_full:          The name of the data pipe containing all of the RDC and PCS data.
@@ -402,6 +402,8 @@ class Frame_order_analysis:
         @type brownian_total:           int
         @keyword rigid_grid_split:      A flag which if True will cause the grid search for the rigid model to be split so that the rotation is optimised first followed by the translation.  When combined with grid zooming, this can save optimisation time.  However it may result in the global minimum being missed.
         @type rigid_grid_split:         bool
+        @keyword store_intermediate:    A flag which if True will cause all intermediate optimisation results to be stored in the 'intermediate_results' directory.  These can then be used for studying the optimisation settings or loaded for subsequent analyses.
+        @type store_intermediate:       bool
         """
 
         # Execution lock.
@@ -425,6 +427,7 @@ class Frame_order_analysis:
             self.brownian_snapshot = brownian_snapshot
             self.brownian_total = brownian_total
             self.rigid_grid_split = rigid_grid_split
+            self.store_intermediate = store_intermediate
 
             # Re-order the models to enable the parameter nesting protocol.
             self.models = self.reorder_models(models)
@@ -968,9 +971,10 @@ class Frame_order_analysis:
                     self.interpreter.minimise.grid_search(inc=incs)
 
                     # Store the intermediate results and statistics.
-                    self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True, simulation=False)
-                    count_sobol_points(dir=intermediate_dir, force=True)
-                    summarise(dir=intermediate_dir, force=True)
+                    if self.store_intermediate:
+                        self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True, simulation=False)
+                        count_sobol_points(dir=intermediate_dir, force=True)
+                        summarise(dir=intermediate_dir, force=True)
 
                 # Minimise (for the PCS data subset and full RDC set).
                 for i in opt.loop_min():
@@ -993,9 +997,10 @@ class Frame_order_analysis:
                     self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=func_tol, max_iter=max_iter)
 
                     # Store the intermediate results.
-                    self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True, simulation=False)
-                    count_sobol_points(dir=intermediate_dir, force=True)
-                    summarise(dir=intermediate_dir, force=True)
+                    if self.store_intermediate:
+                        self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True, simulation=False)
+                        count_sobol_points(dir=intermediate_dir, force=True)
+                        summarise(dir=intermediate_dir, force=True)
 
             # Printout.
             subsubtitle(file=sys.stdout, text="Optimisation using the full data set")
@@ -1037,9 +1042,10 @@ class Frame_order_analysis:
                     self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=func_tol, max_iter=max_iter)
 
                     # Store the intermediate results.
-                    self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True, simulation=False)
-                    count_sobol_points(dir=intermediate_dir, force=True)
-                    summarise(dir=intermediate_dir, force=True)
+                    if self.store_intermediate:
+                        self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True, simulation=False)
+                        count_sobol_points(dir=intermediate_dir, force=True)
+                        summarise(dir=intermediate_dir, force=True)
 
             # Results printout.
             self.print_results()
