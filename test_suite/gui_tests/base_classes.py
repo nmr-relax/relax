@@ -177,7 +177,7 @@ class GuiTestCase(TestCase):
             page.select_r2(None)
         elif analysis_type == 'mf':
             page.select_mf(None)
-        elif analysis_type == 'relax_disp':
+        elif analysis_type == 'disp':
             page.select_disp(None)
         else:
             raise RelaxError("Unknown analysis type '%s'." % analysis_type)

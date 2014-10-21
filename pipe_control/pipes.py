@@ -349,14 +349,19 @@ def display(sort=False, rev=False):
 def get_bundle(pipe=None):
     """Return the name of the bundle that the given pipe belongs to.
 
-    @keyword pipe:      The name of the data pipe to find the bundle of.
-    @type pipe:         str
+    @keyword pipe:      The name of the data pipe to find the bundle of, defaulting to the current pipe.
+    @type pipe:         str or None
     @return:            The name of the bundle that the pipe is located in.
     @rtype:             str or None
     """
 
+    # The name of the data pipe.
+    if pipe == None:
+        pipe = cdp_name()
+
     # Check that the data pipe exists.
-    check_pipe(pipe)
+    else:
+        check_pipe(pipe)
 
     # Find and return the bundle.
     for key in ds.pipe_bundles.keys():

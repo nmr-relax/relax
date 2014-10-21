@@ -704,6 +704,15 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "from_mols",
+    py_type = "str_list",
+    desc_short = "molecules to load spins from",
+    desc = "The list of similar, but not necessarily identical molecules to load spin information from.",
+    wiz_combo_iter = pipe_names,
+    wiz_read_only = False,
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "mol_name_target",
     py_type = "str",
     desc_short = "target molecule name",
@@ -720,7 +729,8 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows a sequence to be generated within the relax data store using the atomic information from the structure already associated with this data pipe.  The spin ID string is used to select which molecules, which residues, and which atoms will be recognised as spin systems within relax.  If the spin ID is left unspecified, then all molecules, residues, and atoms will be placed within the data store (and all atoms will be treated as spins).")
-uf.desc[-1].add_paragraph("If averaging the atomic positions, then average position of all models will be loaded into the spin container.  Otherwise the positions from all models will be loaded separately.")
+uf.desc[-1].add_paragraph("As an alternative to using structural models, by specifying the list of molecules to load spins from similar though not necessarily identical molecules will be combined.  In this case, the target molecule name must be supplied to create a single combined molecule.  And only a single model can be loaded in the current data pipe.  The spin numbering will be dropped to allow for sequential atom numbering in the PDB and other formats.  Therefore only the residue number and name and atom name will be preserved for creating the spin containers.  If the spin is only present in a subset of the structures, then the positional information will only be taken from that subset and hence the number of positions might be different for different spins.")
+uf.desc[-1].add_paragraph("If averaging the atomic positions, then average position of all models or molecules will be loaded into the spin container.  Otherwise the positions from all models or molecules will be loaded separately.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("For a model-free backbone amide nitrogen analysis, to load just the backbone N sequence from the file '1F3Y.pdb' (which is a single protein), type the following two user functions:")
@@ -742,8 +752,8 @@ uf.desc[-1].add_prompt("relax>     structure.load_spins(spin_id=id)")
 uf.backend = pipe_control.structure.main.load_spins
 uf.menu_text = "&load_spins"
 uf.gui_icon = "relax.spin"
-uf.wizard_height_desc = 300
-uf.wizard_size = (800, 600)
+uf.wizard_height_desc = 500
+uf.wizard_size = (900, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + 'load_spins.png'
 
 

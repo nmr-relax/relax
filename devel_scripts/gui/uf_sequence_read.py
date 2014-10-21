@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,11 +23,22 @@
 import wx
 
 # GUI module imports.
-from gui_bieri.user_functions import User_functions
+from gui.uf_objects import build_uf_menus, Uf_storage; uf_store = Uf_storage()
+from gui.fonts import font
 
 
-# Build the app and show the window.
+# Initialise the app.
 app = wx.App(0)
-user_functions = User_functions(app)
-user_functions.sequence.read(None)
+app.gui = wx.Dialog(parent=None)
+
+# Set up the required fonts.
+font.setup()
+
+# The user function.
+uf = uf_store['sequence.read']
+uf._sync = True
+uf.create_wizard(parent=app.gui)
+
+# Show the window.
+uf.wizard.Show()
 app.MainLoop()

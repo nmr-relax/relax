@@ -321,11 +321,11 @@ class N_state_model(API_base, API_common):
         """The grid search function.
 
         @param lower:           The lower bounds of the grid search which must be equal to the number of parameters in the model.
-        @type lower:            array of numbers
+        @type lower:            list of lists of floats
         @param upper:           The upper bounds of the grid search which must be equal to the number of parameters in the model.
-        @type upper:            array of numbers
+        @type upper:            list of lists of floats
         @param inc:             The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
-        @type inc:              array of int
+        @type inc:              list of lists of int
         @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
         @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
         @param constraints:     If True, constraints are applied during the grid search (elinating parts of the grid).  If False, no constraints are used.
@@ -377,12 +377,12 @@ class N_state_model(API_base, API_common):
                 tensor.set('fixed', False)
 
                 # Grid search parameter subsets.
-                lower_sub = lower[i*5:i*5+5]
-                upper_sub = upper[i*5:i*5+5]
-                inc_sub = inc[i*5:i*5+5]
+                lower_sub = lower[0][i*5:i*5+5]
+                upper_sub = upper[0][i*5:i*5+5]
+                inc_sub = inc[0][i*5:i*5+5]
 
                 # Minimisation of the sub-grid.
-                self.minimise(min_algor='grid', lower=lower_sub, upper=upper_sub, inc=inc_sub, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+                self.minimise(min_algor='grid', lower=[lower_sub], upper=[upper_sub], inc=[inc_sub], scaling_matrix=[None], constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
                 # Fix the tensor again.
                 tensor.set('fixed', True)
