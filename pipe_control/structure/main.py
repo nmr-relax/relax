@@ -132,7 +132,7 @@ def align(pipes=None, models=None, method='fit to mean', atom_id=None, centre_ty
 
     # The data pipes to use.
     if pipes == None:
-        pipes = [pipes.cdp_name()]
+        pipes = [cdp_name()]
 
     # Checks.
     for pipe in pipes:
