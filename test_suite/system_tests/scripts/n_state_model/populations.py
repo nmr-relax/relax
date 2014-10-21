@@ -114,5 +114,10 @@ self._execute_uf(uf_name='value.set', val=0.6005, param='probs', index=1)
 # Minimisation.
 self._execute_uf(uf_name='minimise.execute', min_algor='bfgs', max_iter=500)
 
+# Execute the grid search code path(s) for good measure.
+self._execute_uf(uf_name='minimise.grid_search', inc=1)
+self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
+self._execute_uf(uf_name='minimise.grid_search', inc=1)
+
 # Write out a results file.
 self._execute_uf(uf_name='results.write', file='devnull', force=True)
