@@ -56,3 +56,31 @@ class Test_periodic_table(TestCase):
         # Check the helium weight.
         weight = periodic_table.atomic_weight(symbol='He')
         self.assertEqual(weight, 4.002602)
+
+
+    def test_has_element_C(self):
+        """Test of the Periodic_table.has_element() method with the symbol 'C'."""
+
+        # Check.
+        self.assertTrue(periodic_table.has_element('C'))
+
+
+    def test_has_element_NI(self):
+        """Test of the Periodic_table.has_element() method with the symbol 'NI'."""
+
+        # Check.
+        self.assertTrue(periodic_table.has_element('NI'))
+
+
+    def test_has_element_Ni(self):
+        """Test of the Periodic_table.has_element() method with the symbol 'Ni'."""
+
+        # Check.
+        self.assertTrue(periodic_table.has_element('Ni'))
+
+
+    def test_has_element_XYZ(self):
+        """Test of the Periodic_table.has_element() method with the symbol 'XYZ'."""
+
+        # Check.
+        self.assertTrue(not periodic_table.has_element('XYZ'))
