@@ -47,22 +47,7 @@ class Mf(GuiTestCase):
         """
 
         # Simulate the new analysis wizard.
-        self.app.gui.analysis.menu_new(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
-        page.select_mf(None)
-        page.analysis_name.SetValue(str_to_gui("Model-free test"))
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-
-        # Get the data.
-        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
-
-        # Set up the analysis.
-        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle)
-
-        # Alias the analysis.
-        analysis = self.app.gui.analysis.get_page_from_name("Model-free test")
+        analysis = self.new_analysis_wizard(analysis_type='mf', analysis_name='Model-free test')
 
         # Change the results directory.
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
@@ -194,22 +179,7 @@ class Mf(GuiTestCase):
         """
 
         # Simulate the new analysis wizard.
-        self.app.gui.analysis.menu_new(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
-        page.select_mf(None)
-        page.analysis_name.SetValue(str_to_gui("Model-free incomplete setup failure"))
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-
-        # Get the data.
-        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
-
-        # Set up the analysis.
-        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle)
-
-        # Alias the analysis.
-        analysis = self.app.gui.analysis.get_page_from_name("Model-free incomplete setup failure")
+        analysis = self.new_analysis_wizard(analysis_type='mf', analysis_name='Model-free incomplete setup failure')
 
         # Change the results directory.
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
@@ -279,22 +249,7 @@ class Mf(GuiTestCase):
         """
 
         # Simulate the new analysis wizard.
-        self.app.gui.analysis.menu_new(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
-        page.select_mf(None)
-        page.analysis_name.SetValue(str_to_gui("Model-free test"))
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-
-        # Get the data.
-        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
-
-        # Set up the analysis.
-        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle)
-
-        # Alias the analysis.
-        analysis = self.app.gui.analysis.get_page_from_name("Model-free test")
+        analysis = self.new_analysis_wizard(analysis_type='mf', analysis_name='Model-free test')
 
         # Change the results directory.
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))

@@ -31,6 +31,7 @@ import wx
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
+from gui.string_conv import str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from lib.compat import queue
 from lib.errors import RelaxError
@@ -148,6 +149,63 @@ class GuiTestCase(TestCase):
         # No exception.
         except queue.Empty:
             pass
+
+
+    def new_analysis_wizard(self, analysis_type=None, analysis_name=None, pipe_name=None, pipe_bundle=None):
+        """Simulate the new analysis wizard, and return the analysis page.
+
+        @keyword analysis_type: The type of the analysis to use in the first wizard page.
+        @type analysis_type:    str
+        @keyword analysis_name: The name of the analysis to use in the first wizard page.
+        @type analysis_name:    str
+        @keyword pipe_name:     The name of the data pipe to create, if different from the default.
+        @type pipe_name:        None or str
+        @keyword pipe_bundle:   The name of the data pipe bundle to create, if different from the default.
+        @type pipe_bundle:      None or str
+        """
+
+        # Simulate the menu selection, but don't destroy the GUI element.
+        self.app.gui.analysis.menu_new(None, destroy=False)
+
+        # The first page.
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
+        if analysis_type == 'noe':
+            page.select_noe(None)
+        elif analysis_type == 'r1':
+            page.select_r1(None)
+        elif analysis_type == 'r2':
+            page.select_r2(None)
+        elif analysis_type == 'mf':
+            page.select_mf(None)
+        elif analysis_type == 'relax_disp':
+            page.select_disp(None)
+        else:
+            raise RelaxError("Unknown analysis type '%s'." % analysis_type)
+        if analysis_name:
+            page.analysis_name.SetValue(str_to_gui(analysis_name))
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+
+        # The second page.
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
+        if pipe_name:
+            page.pipe_name.SetValue(str_to_gui(pipe_name))
+        if pipe_bundle:
+            page.pipe_bundle.SetValue(str_to_gui(pipe_bundle))
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+
+        # Get the data, then clean up.
+        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
+
+        # Wizard cleanup.
+        wx.Yield()
+        self.app.gui.analysis.new_wizard.Destroy()
+        del self.app.gui.analysis.new_wizard
+
+        # Set up the analysis.
+        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle)
+
+        # Return the analysis page.
+        return self.app.gui.analysis.get_page_from_name(analysis_name)
 
 
     def script_exec(self, script):

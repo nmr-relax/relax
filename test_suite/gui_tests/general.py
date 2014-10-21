@@ -38,38 +38,10 @@ class General(GuiTestCase):
         """Catch U{bug #20479<https://gna.org/bugs/?20479>}, the failure to switch pipes when closing non-last tabs."""
 
         # NOE tab:  Simulate the new analysis wizard.
-        self.app.gui.analysis.menu_new(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
-        page.select_noe(None)
-        page.analysis_name.SetValue(str_to_gui("NOE test"))
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
-        page.pipe_name.SetValue(str_to_gui('noe'))
-        page.pipe_bundle.SetValue(str_to_gui('noe bundle'))
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-
-        # NOE tab:  Get the data.
-        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
-
-        # NOE tab:  Set up the analysis.
-        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle)
+        analysis = self.new_analysis_wizard(analysis_type='noe', analysis_name='NOE test', pipe_name='noe', pipe_bundle='noe bundle')
 
         # Mf tab:  Simulate the new analysis wizard.
-        self.app.gui.analysis.menu_new(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
-        page.select_mf(None)
-        page.analysis_name.SetValue(str_to_gui("Mf test"))
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
-        page.pipe_name.SetValue(str_to_gui('mf'))
-        page.pipe_bundle.SetValue(str_to_gui('mf bundle'))
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-
-        # Mf tab:  Get the data.
-        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
-
-        # Mf tab:  Set up the analysis.
-        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle)
+        analysis = self.new_analysis_wizard(analysis_type='mf', analysis_name='Mf test', pipe_name='mf', pipe_bundle='mf bundle')
 
         # NOE tab:  Switch back.
         self.app.gui.analysis.switch_page(index=0)
