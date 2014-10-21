@@ -32,6 +32,7 @@ from warnings import warn
 from lib.checks import Check
 from lib.errors import RelaxError, RelaxFileError
 from lib.io import get_file_path, open_write_file, write_data
+from lib.selection import tokenise
 from lib.sequence import write_spin_data
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.object import Internal
@@ -699,18 +700,25 @@ def get_pos(spin_id=None, str_id=None, ave_pos=False):
     write_data(out=sys.stdout, headings=["Spin_ID", "Position"], data=data)
 
 
-def load_spins(spin_id=None, str_id=None, mol_name_target=None, ave_pos=False):
+def load_spins(spin_id=None, str_id=None, from_mols=None, mol_name_target=None, ave_pos=False):
     """Load the spins from the structural object into the relax data store.
 
     @keyword spin_id:           The molecule, residue, and spin identifier string.
     @type spin_id:              str
     @keyword str_id:            The structure identifier.  This can be the file name, model number, or structure number.
     @type str_id:               int or str
+    @keyword from_mols:         The list of similar, but not necessarily identical molecules to load spin information from.
+    @type from_mols:            list of str or None
     @keyword mol_name_target:   The name of target molecule container, overriding the name of the loaded structures
     @type mol_name_target:      str or None
     @keyword ave_pos:           A flag specifying if the average atom position or the atom position from all loaded structures is loaded into the SpinContainer.
     @type ave_pos:              bool
     """
+
+    # The multi-molecule case.
+    if from_mols != None:
+        load_spins_multi_mol(spin_id=spin_id, str_id=str_id, from_mols=from_mols, mol_name_target=mol_name_target, ave_pos=ave_pos)
+        return
 
     # Checks.
     check_pipe()
@@ -775,6 +783,117 @@ def load_spins(spin_id=None, str_id=None, mol_name_target=None, ave_pos=False):
 
     # Print out.
     write_spin_data(file=sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
+
+
+def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_target=None, ave_pos=False):
+    """Load the spins from the structural object into the relax data store.
+
+    @keyword spin_id:           The molecule, residue, and spin identifier string.
+    @type spin_id:              str
+    @keyword str_id:            The structure identifier.  This can be the file name, model number, or structure number.
+    @type str_id:               int or str
+    @keyword from_mols:         The list of similar, but not necessarily identical molecules to load spin information from.
+    @type from_mols:            list of str or None
+    @keyword mol_name_target:   The name of target molecule container, overriding the name of the loaded structures
+    @type mol_name_target:      str or None
+    @keyword ave_pos:           A flag specifying if the average atom position or the atom position from all loaded structures is loaded into the SpinContainer.
+    @type ave_pos:              bool
+    """
+
+    # Checks.
+    check_pipe()
+    check_structure()
+
+    # The target molecule name must be supplied.
+    if mol_name_target == None:
+        raise RelaxError("The target molecule name must be supplied when specifying multiple molecules to load spins from.")
+
+    # Disallow multiple structural models.
+    if cdp.structure.num_models() != 1:
+        raise RelaxError("Only a single structural model is allowed when specifying multiple molecules to load spins from.")
+
+    # Split up the selection string.
+    if spin_id:
+        mol_token, res_token, spin_token = tokenise(spin_id)
+        if mol_token != None:
+            raise RelaxError("The spin ID string cannot contain molecular information when specifying multiple molecules to load spins from.")
+
+    # Print out.
+    print("Adding the following spins to the relax data store.\n")
+
+    # Initialise the data structures.
+    ids = []
+    res_nums = {}
+    res_names = {}
+    spin_names = {}
+    positions = {}
+    elements = {}
+
+    # Loop over all target molecules.
+    for mol_name in from_mols:
+        # Create a new spin ID with the molecule name.
+        new_id = '#' + mol_name
+        if spin_id != None:
+            new_id += spin_id
+
+        # Loop over all atoms of the new spin ID selection.
+        selection = cdp.structure.selection(atom_id=new_id)
+        for res_num, res_name, atom_num, atom_name, element, pos in cdp.structure.atom_loop(selection=selection, str_id=str_id, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True, ave=ave_pos):
+            # Remove the '+' regular expression character from the res and atom names.
+            if res_name and search('\+', res_name):
+                res_name = res_name.replace('+', '')
+            if atom_name and search('\+', atom_name):
+                atom_name = atom_name.replace('+', '')
+
+            # Generate a spin ID for the current atom.
+            id = generate_spin_id_unique(mol_name=mol_name_target, res_num=res_num, res_name=res_name, spin_name=atom_name)
+
+            # Not a new ID.
+            if id in ids:
+                # Store the position info.
+                positions[id].append(pos)
+                continue
+
+            # Store the ID, residue, spin, element and position info.
+            ids.append(id)
+            res_nums[id] = res_num
+            res_names[id] = res_name
+            spin_names[id] = atom_name
+            positions[id] = [pos]
+            elements[id] = element
+
+    # Catch no data.
+    if len(ids) == 0:
+        warn(RelaxWarning("No spins matching the '%s' ID string could be found." % spin_id))
+        return
+
+    # Create the spin containers.
+    mol_names2 = []
+    res_nums2 = []
+    res_names2 = []
+    spin_names2 = []
+    for id in ids:
+        # Fetch the spin.
+        spin_cont = return_spin(id)
+
+        # Create the spin if it does not exist.
+        if spin_cont == None:
+            spin_cont = create_spin(mol_name=mol_name_target, res_num=res_nums[id], res_name=res_names[id], spin_name=spin_names[id])
+
+        # Position vector.
+        spin_cont.pos = positions[id]
+
+        # Add the element.
+        spin_cont.element = elements[id]
+
+        # Update the structures for the printout.
+        mol_names2.append(mol_name_target)
+        res_nums2.append(res_nums[id])
+        res_names2.append(res_names[id])
+        spin_names2.append(spin_names[id])
+
+    # Print out.
+    write_spin_data(file=sys.stdout, mol_names=mol_names2, res_nums=res_nums2, res_names=res_names2, spin_names=spin_names2)
 
 
 def mean():
