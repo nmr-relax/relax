@@ -2940,9 +2940,7 @@ class Structure(SystemTestCase):
             cdp.structure.structural_data[0].mol[1].atom_num[i] = i + 104
 
         # Load a few carbons.
-        self.interpreter.structure.load_spins(':900@C1', from_mols=['L1', 'L2'], mol_name_target='Lactose')
-        self.interpreter.structure.load_spins(':900@C2', from_mols=['L1', 'L2'], mol_name_target='Lactose')
-        self.interpreter.structure.load_spins(':900@C3', from_mols=['L1', 'L2'], mol_name_target='Lactose')
+        self.interpreter.structure.load_spins(':900@C1,C2,C3', from_mols=['L1', 'L2'], mol_name_target='Lactose')
 
         # Check the sequence data.
         self.assertEqual(len(cdp.mol), 1)
@@ -2963,7 +2961,7 @@ class Structure(SystemTestCase):
         # Check the @C2 spin data.
         self.assertEqual(cdp.mol[0].res[0].spin[1].name, 'C2')
         self.assertEqual(cdp.mol[0].res[0].spin[1].num, None)
-        self.assertEqual(len(cdp.mol[0].res[0].spin[0].pos), 2)
+        self.assertEqual(len(cdp.mol[0].res[0].spin[1].pos), 2)
         self.assertEqual(cdp.mol[0].res[0].spin[1].pos[0][0], 6.250)
         self.assertEqual(cdp.mol[0].res[0].spin[1].pos[0][1], 2.488)
         self.assertEqual(cdp.mol[0].res[0].spin[1].pos[0][2], 2.102)
@@ -2972,12 +2970,12 @@ class Structure(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[0].spin[1].pos[1][2], 2.283)
 
         # Check the @C3 spin data.
-        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'C3')
-        self.assertEqual(cdp.mol[0].res[0].spin[0].num, None)
-        self.assertEqual(len(cdp.mol[0].res[0].spin[0].pos), 1)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].pos[0][0], 8.062)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].pos[0][1], 0.431)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].pos[0][2], 3.048)
+        self.assertEqual(cdp.mol[0].res[0].spin[2].name, 'C3')
+        self.assertEqual(cdp.mol[0].res[0].spin[2].num, None)
+        self.assertEqual(len(cdp.mol[0].res[0].spin[2].pos), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[2].pos[0][0], 8.062)
+        self.assertEqual(cdp.mol[0].res[0].spin[2].pos[0][1], 0.431)
+        self.assertEqual(cdp.mol[0].res[0].spin[2].pos[0][2], 3.048)
 
 
     def test_load_internal_results(self):
