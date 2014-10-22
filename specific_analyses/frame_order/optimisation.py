@@ -768,6 +768,10 @@ def target_fn_data_setup(sim_index=None, verbosity=1, scaling_matrix=None, unset
     @type unset_fail:           bool
     """
 
+    # Model printout.
+    if verbosity:
+        print("Frame order model:  %s" % cdp.model)
+
     # Assemble the parameter vector.
     param_vector = assemble_param_vector(sim_index=sim_index, unset_fail=unset_fail)
 
