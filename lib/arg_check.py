@@ -196,7 +196,7 @@ def is_float_matrix(arg, name=None, dim=(3, 3), can_be_none=False, raise_error=T
     else:
         for i in range(len(arg)):
             # Fail if not a list.
-            if not isinstance(arg[i], list) and not isinstance(arg, ndarray):
+            if not (isinstance(arg[i], list) or isinstance(arg[i], ndarray)):
                 fail = True
 
             # Fail if not the right dimension.
