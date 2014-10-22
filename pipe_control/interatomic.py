@@ -195,7 +195,7 @@ def create_interatom(spin_id1=None, spin_id2=None, pipe=None, verbose=False):
     return dp.interatomic.add_item(spin_id1=spin_id1, spin_id2=spin_id2)
 
 
-def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, spin_selection=True, verbose=True):
+def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, spin_selection=False, verbose=True):
     """Set up the magnetic dipole-dipole interaction.
 
     @keyword spin_id1:          The spin identifier string of the first spin of the pair.

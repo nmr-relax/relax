@@ -596,12 +596,18 @@ def opt_uses_rdc(align_id):
     return True
 
 
-def q_factors(spin_id=None):
+def q_factors(spin_id=None, verbosity=1):
     """Calculate the Q factors for the RDC data.
 
     @keyword spin_id:   The spin ID string used to restrict the Q factor calculation to a subset of all spins.
     @type spin_id:      None or str
+    @keyword verbosity: A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:    int
     """
+
+    # Initial printout.
+    if verbosity:
+        print("\nRDC Q factors (norm1, norm2):")
 
     # Check the pipe setup.
     check_pipe_setup(sequence=True)
@@ -713,6 +719,10 @@ def q_factors(spin_id=None):
 
         # The second Q factor definition.
         cdp.q_factors_rdc_norm2[align_id] = sqrt(sse / D2_sum)
+
+        # ID and RDC Q factor printout.
+        if verbosity:
+            print("    Alignment ID '%s':  %.3f, %.3f" % (align_id, cdp.q_factors_rdc[align_id], cdp.q_factors_rdc_norm2[align_id]))
 
     # The total Q factor.
     cdp.q_rdc = 0.0
