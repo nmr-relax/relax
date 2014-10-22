@@ -418,11 +418,13 @@ class Analysis_controller:
         reset()
 
 
-    def menu_new(self, event):
+    def menu_new(self, event, destroy=True):
         """Launch a wizard to select the new analysis.
 
-        @param event:   The wx event.
-        @type event:    wx event
+        @param event:       The wx event.
+        @type event:        wx event
+        @keyword destroy:   A flag which if True will cause the analysis wizard to be destroyed.  This is used for the test suite.
+        @type destroy:      bool
         """
 
         # Execution lock.
@@ -433,6 +435,10 @@ class Analysis_controller:
         self.new_wizard = Analysis_wizard()
         data = self.new_wizard.run()
 
+        # Delete the wizard GUI element.
+        if destroy:
+            self.new_wizard.Destroy()
+
         # Failure, so do nothing.
         if data == None:
             return
@@ -442,9 +448,6 @@ class Analysis_controller:
 
         # Initialise the new analysis.
         self.new_analysis(analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec)
-
-        # Delete the wizard data.
-        del self.new_wizard
 
 
     def new_analysis(self, analysis_type=None, analysis_name=None, pipe_name=None, pipe_bundle=None, uf_exec=[], index=None):

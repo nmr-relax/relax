@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -101,21 +101,7 @@ class Rx(GuiTestCase):
         data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'curve_fitting' + sep
 
         # Simulate the new analysis wizard.
-        self.app.gui.analysis.menu_new(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
-        page.select_r1(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-
-        # Get the data.
-        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
-
-        # Set up the analysis.
-        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle)
-
-        # Alias the analysis.
-        analysis = self.app.gui.analysis.get_page_from_name("R1 relaxation")
+        analysis = self.new_analysis_wizard(analysis_type='r1')
 
         # The frequency label.
         analysis.field_nmr_frq.SetValue(str_to_gui('600'))

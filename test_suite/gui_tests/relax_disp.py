@@ -68,20 +68,7 @@ class Relax_disp(GuiTestCase):
         path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep
 
         # Simulate the new analysis wizard, selecting the fixed time CPMG experiment.
-        self.app.gui.analysis.menu_new(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
-        page.select_disp(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-
-        # Get the data.
-        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
-
-        # Set up the analysis.
-        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle, uf_exec=uf_exec)
-
-        # Alias the analysis.
-        analysis = self.app.gui.analysis.get_page_from_name("Relaxation dispersion")
+        analysis = self.new_analysis_wizard(analysis_type='disp')
 
         # Change the results directory.
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
@@ -145,20 +132,7 @@ class Relax_disp(GuiTestCase):
         data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'dispersion' + sep + 'KTeilum_FMPoulsen_MAkke_2006' + sep + 'acbp_cpmg_disp_101MGuHCl_40C_041223' + sep
 
         # Simulate the new analysis wizard, selecting the fixed time CPMG experiment.
-        self.app.gui.analysis.menu_new(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
-        page.select_disp(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-
-        # Get the data.
-        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
-
-        # Set up the analysis.
-        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle, uf_exec=uf_exec)
-
-        # Alias the analysis.
-        analysis = self.app.gui.analysis.get_page_from_name("Relaxation dispersion")
+        analysis = self.new_analysis_wizard(analysis_type='disp')
 
         # Change the results directory.
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
@@ -211,20 +185,7 @@ class Relax_disp(GuiTestCase):
         """Test catching U{bug #22501<https://gna.org/bugs/index.php?22501>}, 'Close all analyses' raises error."""
 
         # Simulate the new analysis wizard, selecting the fixed time CPMG experiment.
-        self.app.gui.analysis.menu_new(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
-        page.select_disp(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-
-        # Get the data.
-        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
-
-        # Set up the analysis.
-        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle, uf_exec=uf_exec)
-
-        # Alias the analysis.
-        analysis = self.app.gui.analysis.get_page_from_name("Relaxation dispersion")
+        analysis = self.new_analysis_wizard(analysis_type='disp')
 
         # Closure.
         self.app.gui.analysis.delete_analysis(0)
@@ -239,20 +200,7 @@ class Relax_disp(GuiTestCase):
         data_path_800 = data_path + sep + '800_MHz' + sep
 
         # Simulate the new analysis wizard, selecting the fixed time CPMG experiment.
-        self.app.gui.analysis.menu_new(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
-        page.select_disp(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-
-        # Get the data.
-        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
-
-        # Set up the analysis.
-        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle, uf_exec=uf_exec)
-
-        # Alias the analysis.
-        analysis = self.app.gui.analysis.get_page_from_name("Relaxation dispersion")
+        analysis = self.new_analysis_wizard(analysis_type='disp')
 
         # Change the results directory.
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
@@ -473,20 +421,7 @@ class Relax_disp(GuiTestCase):
         path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep
 
         # Simulate the dispersion analysis wizard.
-        self.app.gui.analysis.menu_new(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
-        page.select_disp(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-
-        # Get the data.
-        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
-
-        # Set up the analysis.
-        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle, uf_exec=uf_exec)
-
-        # Alias the analysis.
-        analysis = self.app.gui.analysis.get_page_from_name("Relaxation dispersion")
+        analysis = self.new_analysis_wizard(analysis_type='disp')
 
         # Change the results directory.
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
@@ -550,20 +485,7 @@ class Relax_disp(GuiTestCase):
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'+sep
 
         # Simulate the new analysis wizard, selecting the fixed time CPMG experiment.
-        self.app.gui.analysis.menu_new(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
-        page.select_disp(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-
-        # Get the data.
-        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
-
-        # Set up the analysis.
-        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle, uf_exec=uf_exec)
-
-        # Alias the analysis.
-        analysis = self.app.gui.analysis.get_page_from_name("Relaxation dispersion")
+        analysis = self.new_analysis_wizard(analysis_type='disp')
 
         # Change the results directory.
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
@@ -613,20 +535,7 @@ class Relax_disp(GuiTestCase):
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'r1rho_off_res_tp02'+sep
 
         # Simulate the new analysis wizard, selecting the fixed time CPMG experiment.
-        self.app.gui.analysis.menu_new(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
-        page.select_disp(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-
-        # Get the data.
-        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
-
-        # Set up the analysis.
-        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle, uf_exec=uf_exec)
-
-        # Alias the analysis.
-        analysis = self.app.gui.analysis.get_page_from_name("Relaxation dispersion")
+        analysis = self.new_analysis_wizard(analysis_type='disp')
 
         # Change the results directory.
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
