@@ -784,6 +784,9 @@ def load_spins(spin_id=None, str_id=None, from_mols=None, mol_name_target=None, 
     # Print out.
     write_spin_data(file=sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
 
+    # Set the number of states for use in the specific analyses.
+    cdp.N = cdp.structure.num_models()
+
 
 def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_target=None, ave_pos=False):
     """Load the spins from the structural object into the relax data store.
@@ -902,6 +905,9 @@ def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_tar
 
     # Print out.
     write_spin_data(file=sys.stdout, mol_names=mol_names2, res_nums=res_nums2, res_names=res_names2, spin_names=spin_names2)
+
+    # Set the number of states for use in the specific analyses.
+    cdp.N = len(from_mols)
 
 
 def mean():
