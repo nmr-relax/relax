@@ -742,10 +742,20 @@ def unit_vectors(ave=True):
             # Calculate all vectors.
             vector_list = []
             for i in range(len(spin1.pos)):
-                vector_list.append(spin2.pos[i] - spin1.pos[i])
+                # No structural information.
+                if spin1.pos[i] == None or spin2.pos[i] == None:
+                    vector_list.append(None)
+
+                # All data is present.
+                else:
+                    vector_list.append(spin2.pos[i] - spin1.pos[i])
 
         # Unit vectors.
         for i in range(len(vector_list)):
+            # No vector.
+            if vector_list[i] == None:
+                continue
+
             # Normalisation factor.
             norm_factor = norm(vector_list[i])
 
@@ -760,9 +770,12 @@ def unit_vectors(ave=True):
         # Average.
         if ave:
             ave_vector = zeros(3, float64)
+            count = 0
             for i in range(len(vector_list)):
-                ave_vector = ave_vector + vector_list[i]
-            vector_list = [ave_vector / len(vector_list)]
+                if vector_list[i] != None:
+                    ave_vector = ave_vector + vector_list[i]
+                    count += 1
+            vector_list = [ave_vector / count]
 
         # Convert to a single vector if needed.
         if len(vector_list) == 1:
@@ -774,7 +787,7 @@ def unit_vectors(ave=True):
         # We have a vector!
         no_vectors = False
 
-        # Print out.
+        # Printout.
         num = 1
         if not is_float(vector_list[0], raise_error=False):
             num = len(vector_list)
