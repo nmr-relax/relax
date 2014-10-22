@@ -195,19 +195,21 @@ def create_interatom(spin_id1=None, spin_id2=None, pipe=None, verbose=False):
     return dp.interatomic.add_item(spin_id1=spin_id1, spin_id2=spin_id2)
 
 
-def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=True):
+def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, spin_selection=True, verbose=True):
     """Set up the magnetic dipole-dipole interaction.
 
-    @keyword spin_id1:      The spin identifier string of the first spin of the pair.
-    @type spin_id1:         str
-    @keyword spin_id2:      The spin identifier string of the second spin of the pair.
-    @type spin_id2:         str
-    @param pipe:        The data pipe to operate on.  Defaults to the current data pipe.
-    @type pipe:         str
-    @keyword direct_bond:   A flag specifying if the two spins are directly bonded.
-    @type direct_bond:      bool
-    @keyword verbose:       A flag which if True will result in printouts of the created interatomoic data containers.
-    @type verbose:          bool
+    @keyword spin_id1:          The spin identifier string of the first spin of the pair.
+    @type spin_id1:             str
+    @keyword spin_id2:          The spin identifier string of the second spin of the pair.
+    @type spin_id2:             str
+    @param pipe:                The data pipe to operate on.  Defaults to the current data pipe.
+    @type pipe:                 str
+    @keyword direct_bond:       A flag specifying if the two spins are directly bonded.
+    @type direct_bond:          bool
+    @keyword spin_selection:    Define the interatomic data container selection based on the spin selection.  If either spin is deselected, the interatomic container will also be deselected.  Otherwise the container will be selected.
+    @type spin_selection:       bool
+    @keyword verbose:           A flag which if True will result in printouts of the created interatomoic data containers.
+    @type verbose:              bool
     """
 
     # The data pipe.
@@ -219,6 +221,7 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=T
 
     # Initialise the spin ID pairs list.
     ids = []
+    spin_selections = []
 
     # Use the structural data to find connected atoms.
     if hasattr(dp, 'structure'):
@@ -232,7 +235,8 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=T
             id1 = generate_spin_id_unique(pipe_cont=dp, mol_name=mol_name1, res_num=res_num1, res_name=res_name1, spin_num=atom_num1, spin_name=atom_name1)
 
             # Do the spin exist?
-            if not return_spin(id1):
+            spin1 = return_spin(id1)
+            if not spin1:
                 continue
 
             # Loop over the atoms of the second spin selection.
@@ -251,11 +255,13 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=T
                 id2 = generate_spin_id_unique(pipe_cont=dp, mol_name=mol_name2, res_num=res_num2, res_name=res_name2, spin_num=atom_num2, spin_name=atom_name2)
 
                 # Do the spin exist?
-                if not return_spin(id2):
+                spin2 = return_spin(id2)
+                if not spin2:
                     continue
 
                 # Store the IDs for the printout.
                 ids.append([id1, id2])
+                spin_selections.append([spin1.select, spin2.select])
 
     # No structural data present or the spin IDs are not in the structural data, so use spin loops and some basic rules.
     if ids == []:
@@ -288,6 +294,7 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=T
 
                 # Store the IDs for the printout.
                 ids.append([id1, id2])
+                spin_selections.append([spin1.select, spin2.select])
 
     # No matches, so fail!
     if not len(ids):
@@ -310,7 +317,9 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=T
             raise RelaxError("Unknown error.")
 
     # Define the interaction.
-    for id1, id2 in ids:
+    for i in range(len(ids)):
+        # Unpack.
+        id1, id2 = ids[i]
         # Get the interatomic data object, if it exists.
         interatom = return_interatom(id1, id2, pipe=pipe)
 
@@ -324,6 +333,12 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=T
 
         # Set a flag indicating that a dipole-dipole interaction is present.
         interatom.dipole_pair = True
+
+        # Set the selection.
+        if spin_selection:
+            interatom.select = False
+            if spin_selections[i][0] and spin_selections[i][1]:
+                interatom.select = True
 
     # Printout.
     if verbose:
