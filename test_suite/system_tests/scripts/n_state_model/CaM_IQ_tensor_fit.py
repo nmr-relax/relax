@@ -77,20 +77,20 @@ n_state_model.select_model('fixed')
 
 # Tensor optimisation.
 print("\n\n# Tensor optimisation.\n\n")
-minimise.grid_search(inc=5)
+minimise.grid_search(inc=3)
 minimise.execute('newton', constraints=False)
-state.save('tensor_only_fit', force=True)
+state.save('devnull', force=True)
 
 # PCS structural noise.
 print("\n\n# Tensor optimisation with PCS structural noise.\n\n")
-pcs.structural_noise(rmsd=0.3, sim_num=10000, file='structural_noise.agr', force=True)
+pcs.structural_noise(rmsd=0.3, sim_num=100, file='devnull', force=True)
 
 # Optimisation of everything.
 paramag.centre(fix=False)
 minimise.execute('bfgs', constraints=False)
 
 # Monte Carlo simulations.
-monte_carlo.setup(number=500)
+monte_carlo.setup(number=3)
 monte_carlo.create_data()
 monte_carlo.initial_values()
 minimise.execute('bfgs', constraints=False)
@@ -104,8 +104,8 @@ rdc.calc_q_factors()
 pcs.calc_q_factors()
 
 # Correlation plots.
-rdc.corr_plot(file="rdc_corr.agr", force=True)
-pcs.corr_plot(file="pcs_corr.agr", force=True)
+rdc.corr_plot(file="devnull", force=True)
+pcs.corr_plot(file="devnull", force=True)
 
 # Save the program state.
-state.save('tensor_fit', force=True)
+state.save('devnull', force=True)
