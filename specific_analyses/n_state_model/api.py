@@ -151,7 +151,7 @@ class N_state_model(API_base, API_common):
         # Set up the target function for direct calculation.
         if scaling_matrix != None:
             scaling_matrix = scaling_matrix[0]
-        model, param_vector, data_types = target_fn_setup(scaling_matrix=scaling_matrix)
+        model, param_vector, data_types = target_fn_setup(scaling_matrix=scaling_matrix, verbosity=verbosity)
 
         # Calculate the chi-squared value.
         if model:
@@ -463,7 +463,7 @@ class N_state_model(API_base, API_common):
         """
 
         # Set up the target function for direct calculation.
-        model, param_vector, data_types = target_fn_setup(sim_index=sim_index, scaling_matrix=scaling_matrix[0])
+        model, param_vector, data_types = target_fn_setup(sim_index=sim_index, scaling_matrix=scaling_matrix[0], verbosity=verbosity)
 
         # Nothing to do!
         if not len(param_vector):

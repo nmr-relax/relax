@@ -269,13 +269,15 @@ def minimise_setup_fixed_tensors():
     return tensors
 
 
-def target_fn_setup(sim_index=None, scaling_matrix=None):
+def target_fn_setup(sim_index=None, scaling_matrix=None, verbosity=0):
     """Initialise the target function for optimisation or direct calculation.
 
     @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
     @type sim_index:            None or int
     @keyword scaling_matrix:    The diagonal and square scaling matrix.
     @type scaling_matrix:       numpy rank-2, float64 array or None
+    @keyword verbosity:         A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:            int
     """
 
     # Test if the N-state model has been set up.
@@ -321,12 +323,13 @@ def target_fn_setup(sim_index=None, scaling_matrix=None):
     # Get the data structures for optimisation using PCSs as base data sets.
     pcs, pcs_err, pcs_weight, temp, frq, pcs_pseudo_flags = None, None, None, None, None, None
     if 'pcs' in data_types:
-        pcs, pcs_err, pcs_weight, temp, frq, pcs_pseudo_flags = return_pcs_data(sim_index=sim_index)
+        pcs, pcs_err, pcs_weight, temp, frq, pcs_pseudo_flags = return_pcs_data(sim_index=sim_index, verbosity=verbosity)
 
     # Get the data structures for optimisation using RDCs as base data sets.
     rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc, T_flags, j_couplings, rdc_pseudo_flags = None, None, None, None, None, None, None, None, None
     if 'rdc' in data_types:
-        rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc, T_flags, j_couplings, rdc_pseudo_flags = return_rdc_data(sim_index=sim_index)
+        # The data.
+        rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc, T_flags, j_couplings, rdc_pseudo_flags = return_rdc_data(sim_index=sim_index, verbosity=verbosity)
 
     # Get the fixed tensors.
     fixed_tensors = None
