@@ -93,7 +93,7 @@ minimise.execute('bfgs', constraints=False)
 monte_carlo.setup(number=3)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise.execute('bfgs', constraints=False)
+minimise.execute('bfgs', constraints=False, max_iter=5)
 monte_carlo.error_analysis()
 
 # Show the tensors.
