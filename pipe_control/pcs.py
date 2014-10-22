@@ -545,12 +545,18 @@ def opt_uses_pcs(align_id):
     return True
 
 
-def q_factors(spin_id=None):
+def q_factors(spin_id=None, verbosity=0):
     """Calculate the Q factors for the PCS data.
 
     @keyword spin_id:   The spin ID string used to restrict the Q factor calculation to a subset of all spins.
     @type spin_id:      None or str
+    @keyword verbosity: A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:    int
     """
+
+    # Initial printout.
+    if verbosity:
+        print("\nPCS Q factors:")
 
     # Check the pipe setup.
     check_pipe_setup(sequence=True)
@@ -612,6 +618,10 @@ def q_factors(spin_id=None):
         if not pcs_bc_data:
             warn(RelaxWarning("No back-calculated PCS data can be found for the alignment ID '%s', skipping the PCS Q factor calculation for this alignment." % align_id))
             continue
+
+        # ID and PCS Q factor printout.
+        if verbosity:
+            print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_pcs[align_id]))
 
     # The total Q factor.
     cdp.q_pcs = 0.0
