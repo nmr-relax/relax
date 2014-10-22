@@ -852,7 +852,7 @@ def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_tar
             id = generate_spin_id_unique(mol_name=mol_name_target, res_num=res_num, res_name=res_name, spin_name=atom_name)
 
             # Store the position info in all cases.
-            positions[mol_name][id] = pos
+            positions[mol_name][id] = pos[0]
 
             # Not a new ID.
             if id in ids:
