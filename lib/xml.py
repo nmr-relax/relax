@@ -178,10 +178,16 @@ def object_to_xml(doc, elem, value=None):
             val_elem.appendChild(doc.createTextNode(repr(ieee_obj)))
 
     # Store matrices of floats as IEEE-754 byte arrays.
-    elif lib.arg_check.is_float_matrix(value, raise_error=False):
+    elif lib.arg_check.is_float_matrix(value, none_elements=True, raise_error=False):
         # The converted list.
         ieee_obj = []
         for i in range(len(value)):
+            # Handle None elements.
+            if value[i] == None:
+                ieee_obj.append(None)
+                continue
+
+            # A normal float list or numpy array.
             ieee_obj.append([])
             for j in range(len(value[i])):
                 ieee_obj[-1].append(floatAsByteArray(value[i][j]))
@@ -271,6 +277,10 @@ def xml_to_object(elem, base_object=None, set_fn=None, file_version=1, blacklist
                         if isinstance(value[i], list) or isinstance(value[i], ndarray):
                             for j in range(len(value[i])):
                                 value[i][j] = packBytesAsPyFloat(ieee_value[i][j])
+
+                        # None values.
+                        elif ieee_value[i] == None:
+                            value[i] = None
 
                         # Normal list.
                         else:

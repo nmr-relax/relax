@@ -926,11 +926,13 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
         cdp.rdc_ids.append(align_id)
 
 
-def return_rdc_data(sim_index=None):
+def return_rdc_data(sim_index=None, verbosity=0):
     """Set up the data structures for optimisation using RDCs as base data sets.
 
     @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
     @type sim_index:    None or int
+    @keyword verbosity: A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:    int
     @return:            The assembled data structures for using RDCs as the base data for optimisation.  These include:
                             - rdc, the RDC values.
                             - rdc_err, the RDC errors.
@@ -943,6 +945,10 @@ def return_rdc_data(sim_index=None):
                             - pseudo_flags, the list of flags indicating if the interatomic data contains a pseudo-atom (as 1's and 0's).
     @rtype:             tuple of (numpy rank-2 float64 array, numpy rank-2 float64 array, numpy rank-2 float64 array, list of numpy rank-3 float64 arrays, list of lists of floats, numpy rank-2 int32 array, numpy rank-2 int32 array, numpy rank-2 float64 array, numpy rank-1 int32 array)
     """
+
+    # Initial printout.
+    if verbosity:
+        print("\nRDC data counts:")
 
     # Sort out pseudo-atoms first.  This only needs to be called once.
     setup_pseudoatom_rdc()
@@ -1078,6 +1084,7 @@ def return_rdc_data(sim_index=None):
         T_flags.append([])
 
         # Interatom loop.
+        j = 0
         for interatom in interatomic_loop():
             # Get the spins.
             spin1 = return_spin(interatom.spin_id1)
@@ -1136,6 +1143,13 @@ def return_rdc_data(sim_index=None):
                 absolute[-1].append(interatom.absolute_rdc[align_id])
             else:
                 absolute[-1].append(False)
+
+            # Interatom index.
+            j = j + 1
+
+        # ID and RDC count printout.
+        if verbosity:
+            print("    Alignment ID '%s':  %i" % (align_id, j))
 
     # Convert to numpy objects.
     rdc = array(rdc, float64)
