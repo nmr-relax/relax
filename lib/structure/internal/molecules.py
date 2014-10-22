@@ -147,11 +147,8 @@ class MolContainer:
                 element = key
                 break
 
-        # Allowed element list.
-        elements = ['H', 'C', 'N', 'O', 'F', 'P', 'S']
-
-        # Return the element, if in the list.
-        if element in elements:
+        # Return the element if it is in the periodic table.
+        if periodic_table.has_element(symbol=element):
             return element
 
         # Else, throw a warning.

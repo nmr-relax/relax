@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -37,7 +37,7 @@ class Font:
 
         # Operating system dependent font scaling.
         scale = 0
-        if status.wx_info["os"] == 'darwin':
+        if hasattr(status, 'wx_info') and status.wx_info["os"] == 'darwin':
             scale = 2
 
         # The fonts.

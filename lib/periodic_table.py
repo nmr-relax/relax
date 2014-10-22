@@ -295,6 +295,25 @@ class Periodic_table(dict):
         return isotope.gyromagnetic_ratio
 
 
+    def has_element(self, symbol=None):
+        """Check if the periodic table contains an atom for the give symbol.
+
+        @keyword symbol:    The atomic symbol.
+        @type symbol:       str
+        @return:            True if the symbol is in the periodic table, False otherwise.
+        @rtype:             bool
+        """
+
+        # Process the symbol.
+        symbol = process_symbol(symbol)
+
+        # Check.
+        if symbol in self:
+            return True
+        else:
+            return False
+
+
     def lookup_symbol(self, atomic_number=None):
         """Return the atomic symbol corresponding to the atomic number Z.
 
