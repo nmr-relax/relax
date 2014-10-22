@@ -83,7 +83,7 @@ self._execute_uf(uf_name='state.save', state='devnull', force=True)
 
 # PCS structural noise.
 print("\n\n# Tensor optimisation with PCS structural noise.\n\n")
-self._execute_uf(uf_name='pcs.structural_noise', rmsd=0.3, sim_num=100, file='devnull', force=True)
+self._execute_uf(uf_name='pcs.structural_noise', rmsd=0.0, sim_num=10, file='devnull', force=True)
 
 # Optimisation of everything.
 self._execute_uf(uf_name='paramag.centre', fix=False)
@@ -93,7 +93,7 @@ self._execute_uf(uf_name='minimise.execute', min_algor='bfgs', constraints=False
 self._execute_uf(uf_name='monte_carlo.setup', number=3)
 self._execute_uf(uf_name='monte_carlo.create_data')
 self._execute_uf(uf_name='monte_carlo.initial_values')
-self._execute_uf(uf_name='minimise.execute', min_algor='bfgs', constraints=False, max_iter=5)
+self._execute_uf(uf_name='minimise.execute', min_algor='bfgs', constraints=False, max_iter=2, func_tol=1e-1)
 self._execute_uf(uf_name='monte_carlo.error_analysis')
 
 # Show the tensors.
