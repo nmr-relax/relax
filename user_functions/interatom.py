@@ -134,6 +134,13 @@ uf.add_keyarg(
     desc = "This is a flag which if True means that the two spins are directly bonded.  This flag is useful to simplify the set up of the main heteronuclear relaxation mechanism or one-bond residual dipolar couplings."
 )
 uf.add_keyarg(
+    name = "spin_selection",
+    default = True,
+    py_type = "bool",
+    desc_short = "selection from the spins",
+    desc = "Define the interatomic data container selection based on the spin selection.  If either spin is deselected, the interatomic container will also be deselected.  Otherwise the container will be selected."
+)
+uf.add_keyarg(
     name = "pipe",
     py_type = "str",
     desc_short = "alternative data pipe",
@@ -147,6 +154,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("To analyse relaxation or residual dipolar coupling (RDC) data, for example, pairs of spins which are coupled need to be defined.  This can be via the magnetic dipole-dipole interaction or scalar coupling interaction.  This function will create an interatomic data object connecting two existing spins.  This data container will be used to store all information about the interactomic interaction including interatomic vectors and distances.")
 uf.desc[-1].add_paragraph("For analyses which use relaxation data, simply defining the interatomic interaction will indicate that there is a dipolar relaxation mechanism operating between the two spins.  Note that for model-free analyses or reduced spectral density mapping, only a single relaxation mechanism can be handled.  For RDC dependent analyses, the presence of the interatomic interaction indicates that dipolar coupling is expected between the two spins.")
+uf.desc[-1].add_paragraph("If the spin selection flag is set, then the newly created interatomic data container will be selected based on the current selection status of the two spins defining the interaction.  If either of the spins are deselected, then the new interatomic data container will also be deselected.  If both spins are selected, then the interatomic data container will also be selected.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To connect the spins ':1@N' to ':1@H', type one of:")
@@ -158,8 +166,8 @@ uf.desc[-1].add_prompt("relax> interatom.define(spin_id1='@N', spin_id2='@H', di
 uf.backend = interatomic.define
 uf.menu_text = "&define"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
-uf.wizard_height_desc = 350
-uf.wizard_size = (900, 700)
+uf.wizard_height_desc = 380
+uf.wizard_size = (950, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'dipole_pair' + sep + 'NH_dipole_pair.png'
 
 
