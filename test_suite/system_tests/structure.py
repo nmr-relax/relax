@@ -2953,10 +2953,11 @@ class Structure(SystemTestCase):
         # Check the @C1 spin data.
         self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'C1')
         self.assertEqual(cdp.mol[0].res[0].spin[0].num, None)
-        self.assertEqual(len(cdp.mol[0].res[0].spin[0].pos), 1)
+        self.assertEqual(len(cdp.mol[0].res[0].spin[0].pos), 2)
         self.assertEqual(cdp.mol[0].res[0].spin[0].pos[0][0], 6.250)
         self.assertEqual(cdp.mol[0].res[0].spin[0].pos[0][1], 0.948)
         self.assertEqual(cdp.mol[0].res[0].spin[0].pos[0][2], 1.968)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].pos[1], None)
 
         # Check the @C2 spin data.
         self.assertEqual(cdp.mol[0].res[0].spin[1].name, 'C2')
@@ -2972,10 +2973,11 @@ class Structure(SystemTestCase):
         # Check the @C3 spin data.
         self.assertEqual(cdp.mol[0].res[0].spin[2].name, 'C3')
         self.assertEqual(cdp.mol[0].res[0].spin[2].num, None)
-        self.assertEqual(len(cdp.mol[0].res[0].spin[2].pos), 1)
-        self.assertEqual(cdp.mol[0].res[0].spin[2].pos[0][0], 8.062)
-        self.assertEqual(cdp.mol[0].res[0].spin[2].pos[0][1], 0.431)
-        self.assertEqual(cdp.mol[0].res[0].spin[2].pos[0][2], 3.048)
+        self.assertEqual(len(cdp.mol[0].res[0].spin[2].pos), 2)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].pos[0], None)
+        self.assertEqual(cdp.mol[0].res[0].spin[2].pos[1][0], 8.062)
+        self.assertEqual(cdp.mol[0].res[0].spin[2].pos[1][1], 0.431)
+        self.assertEqual(cdp.mol[0].res[0].spin[2].pos[1][2], 3.048)
 
 
     def test_load_internal_results(self):

@@ -166,6 +166,36 @@ class N_state_model(SystemTestCase):
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'CaM_IQ_tensor_fit.py')
+        self.interpreter.state.save('x', force=True)
+
+        # Check the optimised alignment tensor.
+        ids = ['dy', 'tb', 'tm', 'er', 'yb', 'ho']
+        A = [
+            [      -5.961228899750e-04,        4.522953035367e-06,        6.168887153854e-04,        7.863257718395e-04,       -2.695142351742e-04],
+            [      -1.383036217378e-04,       -4.939409871651e-04,        4.130289107370e-04,        7.687580236309e-04,       -3.692016717764e-04],
+            [      -9.960927192978e-05,        4.477678617640e-04,       -4.062486453226e-04,       -4.332178003608e-04,        3.806525171855e-04],
+            [      -1.703610649220e-05,        2.102104571469e-04,       -2.836097445400e-04,       -2.989888174606e-04,        1.326155627753e-04],
+            [       6.087542827320e-05,        1.644473726436e-05,       -1.804561551839e-04,       -1.544765971220e-04,        1.354612889609e-04],
+            [      -1.902819219985e-04,       -1.267359074456e-04,        2.303672688393e-04,        3.019676781386e-04,       -2.255708108877e-04]
+        ]
+        for i in range(len(A)):
+            print("Checking tensor '%s'." % ids[i])
+            self.assertAlmostEqual(cdp.align_tensors[i].Axx * 1e4, A[i][0] * 1e4)
+            self.assertAlmostEqual(cdp.align_tensors[i].Ayy * 1e4, A[i][1] * 1e4)
+            self.assertAlmostEqual(cdp.align_tensors[i].Axy * 1e4, A[i][2] * 1e4)
+            self.assertAlmostEqual(cdp.align_tensors[i].Axz * 1e4, A[i][3] * 1e4)
+            self.assertAlmostEqual(cdp.align_tensors[i].Ayz * 1e4, A[i][4] * 1e4)
+
+        # Check the optimised paramagnetic position.
+        centre = [  6.328315298868965,   8.951353997015001,  12.311128147383837]
+        self.assertAlmostEqual(cdp.paramagnetic_centre[0], centre[0])
+        self.assertAlmostEqual(cdp.paramagnetic_centre[1], centre[1])
+        self.assertAlmostEqual(cdp.paramagnetic_centre[2], centre[2])
+
+        # Check the minimisation stats.
+        self.assertAlmostEqual(cdp.chi2, 496.36267335850528)
+        self.assertAlmostEqual(cdp.q_rdc, 0.142825408910208)
+        self.assertAlmostEqual(cdp.q_pcs, 0.07265356890310298)
 
 
     def test_absolute_rdc(self):
