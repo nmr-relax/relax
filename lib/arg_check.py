@@ -150,7 +150,7 @@ def is_float_array(arg, name=None, size=None, can_be_none=False, raise_error=Tru
     return True
 
 
-def is_float_matrix(arg, name=None, dim=(3, 3), can_be_none=False, raise_error=True):
+def is_float_matrix(arg, name=None, dim=(3, 3), can_be_none=False, none_elements=False, raise_error=True):
     """Test if the argument is a matrix of floats.
 
     @param arg:                         The argument.
@@ -161,6 +161,8 @@ def is_float_matrix(arg, name=None, dim=(3, 3), can_be_none=False, raise_error=T
     @type dim:                          tuple of int
     @keyword can_be_none:               A flag specifying if the argument can be none.
     @type can_be_none:                  bool
+    @keyword none_elements:             A flag which if True allows the list to contain None.
+    @type none_elements:                bool
     @keyword raise_error:               A flag which if True will cause RelaxErrors to be raised.
     @type raise_error:                  bool
     @raise RelaxMatrixFloatError:       If not a matrix of floats (and the raise_error flag is set).
@@ -195,6 +197,12 @@ def is_float_matrix(arg, name=None, dim=(3, 3), can_be_none=False, raise_error=T
     # Loop over the first dimension.
     else:
         for i in range(len(arg)):
+            # Catch None elements.
+            if arg[i] == None:
+                if not none_elements:
+                    fail = True
+                continue
+
             # Fail if not a list.
             if not (isinstance(arg[i], list) or isinstance(arg[i], ndarray)):
                 fail = True
