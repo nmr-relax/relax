@@ -36,6 +36,7 @@ from lib.alignment.alignment_tensor import calc_chi_tensor, kappa
 from lib.errors import RelaxError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 from lib.geometry.angles import wrap_angles
 from lib.io import write_data
+from lib.text.sectioning import section, subsection
 from lib.warnings import RelaxWarning
 import pipe_control
 from pipe_control import pipes
@@ -223,15 +224,13 @@ def display(tensor=None):
         data = get_tensor_object(tensor)
 
         # Header.
-        head = "# Tensor: %s #" % tensor
-        print("\n\n\n" + '#' * len(head) + "\n" + head + "\n" + '#' * len(head))
+        section(file=sys.stdout, text="Tensor  '%s'" % tensor, prespace=3, postspace=1)
 
 
         # The Saupe matrix.
         ###################
 
-        title = "# Saupe order matrix."
-        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
+        subsection(file=sys.stdout, text="Saupe order matrix", prespace=0)
 
         # The parameter set {Sxx, Syy, Sxy, Sxz, Syz}.
         print("# 5D, rank-1 notation {Sxx, Syy, Sxy, Sxz, Syz}:")
@@ -249,8 +248,7 @@ def display(tensor=None):
         # The alignment tensor.
         #######################
 
-        title = "# Alignment tensor."
-        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
+        subsection(file=sys.stdout, text="Alignment tensor", prespace=2)
 
         # The parameter set {Axx, Ayy, Axy, Axz, Ayz}.
         print("# 5D, rank-1 notation {Axx, Ayy, Axy, Axz, Ayz}:")
@@ -268,8 +266,7 @@ def display(tensor=None):
         # The probability tensor.
         #########################
 
-        title = "# Probability tensor."
-        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
+        subsection(file=sys.stdout, text="Probability tensor", prespace=2)
 
         # The parameter set {Pxx, Pyy, Pxy, Pxz, Pyz}.
         print("# 5D, rank-1 notation {Pxx, Pyy, Pxy, Pxz, Pyz}:")
@@ -287,8 +284,7 @@ def display(tensor=None):
         # The magnetic susceptibility tensor.
         #####################################
 
-        title = "# Magnetic susceptibility tensor."
-        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
+        subsection(file=sys.stdout, text="Magnetic susceptibility tensor", prespace=2)
         chi_tensor = True
 
         # The field strength.
@@ -339,8 +335,7 @@ def display(tensor=None):
         # The Eigensystem.
         ##################
 
-        title = "# Eigensystem."
-        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
+        subsection(file=sys.stdout, text="Eigensystem", prespace=2)
 
         # Eigenvalues.
         print("# Saupe order matrix eigenvalues {Sxx, Syy, Szz}.")
@@ -374,8 +369,7 @@ def display(tensor=None):
         # Geometric description.
         ########################
 
-        title = "# Geometric description."
-        print("\n\n" + title + '\n' + '#'*len(title) + '\n')
+        subsection(file=sys.stdout, text="Geometric description", prespace=2)
 
         # The GDO.
         print("# Generalized degree of order (GDO).")
@@ -402,9 +396,6 @@ def display(tensor=None):
             # Chi tensor rhombicity.
             print("# Magnetic susceptibility rhombicity parameter (chi_rh = chi_xx - chi_yy, where chi_ii are the eigenvalues).")
             print("chi_rh = %-25.12e\n" % (chi_diag[0, 0] - chi_diag[1, 1]))
-
-        # Some white space.
-        print("\n\n\n")
 
 
 def fix(id=None, fixed=True):
