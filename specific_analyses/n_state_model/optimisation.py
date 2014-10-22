@@ -251,6 +251,10 @@ def minimise_setup_fixed_tensors():
         if not opt_uses_align_data(cdp.align_tensors[i].name):
             continue
 
+        # No parameters have been set.
+        if not hasattr(cdp.align_tensors[i], 'Axx'):
+            continue
+
         # The real tensors.
         tensors[5*index + 0] = cdp.align_tensors[i].Axx
         tensors[5*index + 1] = cdp.align_tensors[i].Ayy

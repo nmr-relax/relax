@@ -161,6 +161,13 @@ class N_state_model(SystemTestCase):
             self.assertAlmostEqual(cdp.chi[i, i] * 1e32, cdp.chi_ref[i] * 1e32, 2)
 
 
+    def test_CaM_IQ_tensor_fit(self):
+        """Test the fitting of 5 alignment tensors for the published CaM-IQ RDC and PCS data."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'CaM_IQ_tensor_fit.py')
+
+
     def test_absolute_rdc(self):
         """Test the fitting of signless RDCs."""
 
