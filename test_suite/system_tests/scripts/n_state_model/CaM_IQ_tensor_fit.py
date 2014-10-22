@@ -28,7 +28,7 @@ self._execute_uf(uf_name='select.spin', spin_id=':5-31,53-55,58-75', change_all=
 self._execute_uf(uf_name='select.display')
 
 # Define the magnetic dipole-dipole relaxation interaction.
-self._execute_uf(uf_name='interatom.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
+self._execute_uf(uf_name='interatom.define', spin_id1='@N', spin_id2='@H', spin_selection=True, direct_bond=True)
 self._execute_uf(uf_name='interatom.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=NH_BOND_LENGTH_RDC)
 self._execute_uf(uf_name='interatom.unit_vectors', ave=False)
 
