@@ -831,6 +831,9 @@ def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_tar
 
     # Loop over all target molecules.
     for mol_name in from_mols:
+        # Add the molecule name as a key for the positions structure, and initialise as a dictionary for the spin IDs.
+        positions[mol_name] = {}
+
         # Create a new spin ID with the molecule name.
         new_id = '#' + mol_name
         if spin_id != None:
@@ -848,10 +851,11 @@ def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_tar
             # Generate a spin ID for the current atom.
             id = generate_spin_id_unique(mol_name=mol_name_target, res_num=res_num, res_name=res_name, spin_name=atom_name)
 
+            # Store the position info in all cases.
+            positions[mol_name][id] = pos
+
             # Not a new ID.
             if id in ids:
-                # Store the position info.
-                positions[id].append(pos)
                 continue
 
             # Store the ID, residue, spin, element and position info.
@@ -859,7 +863,6 @@ def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_tar
             res_nums[id] = res_num
             res_names[id] = res_name
             spin_names[id] = atom_name
-            positions[id] = [pos]
             elements[id] = element
 
     # Catch no data.
@@ -881,7 +884,12 @@ def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_tar
             spin_cont = create_spin(mol_name=mol_name_target, res_num=res_nums[id], res_name=res_names[id], spin_name=spin_names[id])
 
         # Position vector.
-        spin_cont.pos = positions[id]
+        spin_cont.pos = []
+        for mol_name in from_mols:
+            if id in positions[mol_name]:
+                spin_cont.pos.append(positions[mol_name][id])
+            else:
+                spin_cont.pos.append(None)
 
         # Add the element.
         spin_cont.element = elements[id]
