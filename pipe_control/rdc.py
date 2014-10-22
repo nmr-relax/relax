@@ -596,7 +596,7 @@ def opt_uses_rdc(align_id):
     return True
 
 
-def q_factors(spin_id=None, verbosity=0):
+def q_factors(spin_id=None, verbosity=1):
     """Calculate the Q factors for the RDC data.
 
     @keyword spin_id:   The spin ID string used to restrict the Q factor calculation to a subset of all spins.
