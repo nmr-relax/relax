@@ -2988,7 +2988,7 @@ class Structure(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[0].spin[2].name, 'C3')
         self.assertEqual(cdp.mol[0].res[0].spin[2].num, None)
         self.assertEqual(len(cdp.mol[0].res[0].spin[2].pos), 2)
-        self.assertEqual(cdp.mol[0].res[0].spin[0].pos[0], None)
+        self.assertEqual(cdp.mol[0].res[0].spin[2].pos[0], None)
         self.assertEqual(cdp.mol[0].res[0].spin[2].pos[1][0], 8.062)
         self.assertEqual(cdp.mol[0].res[0].spin[2].pos[1][1], 0.431)
         self.assertEqual(cdp.mol[0].res[0].spin[2].pos[1][2], 3.048)
