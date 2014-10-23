@@ -1622,6 +1622,17 @@ class Internal:
                             for k in range(len(mol.bonded[j])):
                                 mol.bonded[j][k] -= 1
 
+                    # Reset the metadata if nothing remains.
+                    if mol.atom_num == []:
+                        if hasattr(mol, 'file_name'):
+                            del mol.file_name
+                        if hasattr(mol, 'file_path'):
+                            del mol.file_path
+                        if hasattr(mol, 'file_mol_num'):
+                            del mol.file_mol_num
+                        if hasattr(mol, 'file_model'):
+                            del mol.file_model
+
             # Nothing more to do.
             if not len(del_res_nums):
                 return
@@ -2628,7 +2639,7 @@ class Internal:
 
         # Loop over the molecules of the first model.
         index = 0
-        for mol in self.structural_data[0].mol:
+        for mol in self.structural_data[0].mol_loop():
             # Check the validity of the data.
             self._validate_data_arrays(mol)
 
@@ -2816,7 +2827,7 @@ class Internal:
             # Loop over the molecules.
             index = 0
             atom_serial = 0
-            for mol in model.mol:
+            for mol in model.mol_loop():
                 # Print out.
                 print("ATOM, HETATM, TER")
 
@@ -2897,7 +2908,7 @@ class Internal:
         # The per molecule incremented atom counts.
         atom_counts = [0]
         index = 0
-        for mol in self.structural_data[0].mol:
+        for mol in self.structural_data[0].mol_loop():
             if index == 0:
                 atom_counts.append(len(mol.atom_name))
             else:
@@ -2906,7 +2917,7 @@ class Internal:
 
         # Loop over the molecules of the first model.
         index = 0
-        for mol in self.structural_data[0].mol:
+        for mol in self.structural_data[0].mol_loop():
             # Loop over the atoms.
             for i in range(len(mol.atom_name)):
                 # No bonded atoms, hence no CONECT record is required.
