@@ -379,6 +379,36 @@ class Structure(SystemTestCase):
         self.assertRaises(RelaxNoPdbError, self.interpreter.structure.com)
 
 
+    def test_bug_22861_PDB_writing_chainID_fail(self):
+        """Catch U{bug #22861<https://gna.org/bugs/?22861>}, the chain IDs in the structure.write_pdb user function PDB files are incorrect after calling structure.delete."""
+
+        # Add one atom to two different molecules.
+        self.interpreter.structure.add_atom(mol_name='A', atom_name='N', res_name='Phe', res_num=1, pos=[1.0, 1.0, 1.0], element='N')
+        self.interpreter.structure.add_atom(mol_name='B', atom_name='N', res_name='Phe', res_num=1, pos=[1.0, 1.0, 1.0], element='N')
+
+        # Delete the first molecule.
+        self.interpreter.structure.delete('#A')
+
+        # Create a PDB file.
+        file = DummyFileObject()
+        self.interpreter.structure.write_pdb(file=file, force=True)
+
+        # The file contents, without remarks, as they should be.
+        contents = [
+            "ATOM      1  N   Phe A   1       1.000   1.000   1.000  1.00  0.00           N  \n",
+            "TER       2      Phe A   1                                                      \n",
+            "MASTER        0    0    0    0    0    0    0    0    1    1    0    0          \n",
+            "END                                                                             \n"
+        ]
+
+        # Check the created PDB file.
+        lines = file.readlines()
+        self.strip_remarks(lines)
+        self.assertEqual(len(contents), len(lines))
+        for i in range(len(lines)):
+            self.assertEqual(contents[i], lines[i])
+
+
     def test_collapse_ensemble(self):
         """Test the collapse_ensemble() method of the internal structural object."""
 
