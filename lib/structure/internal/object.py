@@ -2625,7 +2625,7 @@ class Internal:
 
         # Loop over the molecules of the first model.
         index = 0
-        for mol in self.structural_data[0].mol:
+        for mol in self.structural_data[0].mol_loop():
             # Check the validity of the data.
             self._validate_data_arrays(mol)
 
@@ -2813,7 +2813,7 @@ class Internal:
             # Loop over the molecules.
             index = 0
             atom_serial = 0
-            for mol in model.mol:
+            for mol in model.mol_loop():
                 # Print out.
                 print("ATOM, HETATM, TER")
 
@@ -2894,7 +2894,7 @@ class Internal:
         # The per molecule incremented atom counts.
         atom_counts = [0]
         index = 0
-        for mol in self.structural_data[0].mol:
+        for mol in self.structural_data[0].mol_loop():
             if index == 0:
                 atom_counts.append(len(mol.atom_name))
             else:
@@ -2903,7 +2903,7 @@ class Internal:
 
         # Loop over the molecules of the first model.
         index = 0
-        for mol in self.structural_data[0].mol:
+        for mol in self.structural_data[0].mol_loop():
             # Loop over the atoms.
             for i in range(len(mol.atom_name)):
                 # No bonded atoms, hence no CONECT record is required.
