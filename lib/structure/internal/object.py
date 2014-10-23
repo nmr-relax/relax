@@ -1619,6 +1619,17 @@ class Internal:
                             for k in range(len(mol.bonded[j])):
                                 mol.bonded[j][k] -= 1
 
+                    # Reset the metadata if nothing remains.
+                    if mol.atom_num == []:
+                        if hasattr(mol, 'file_name'):
+                            del mol.file_name
+                        if hasattr(mol, 'file_path'):
+                            del mol.file_path
+                        if hasattr(mol, 'file_mol_num'):
+                            del mol.file_mol_num
+                        if hasattr(mol, 'file_model'):
+                            del mol.file_model
+
             # Nothing more to do.
             if not len(del_res_nums):
                 return
