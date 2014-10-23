@@ -31,7 +31,7 @@ from tempfile import mkdtemp, mktemp
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.mol_res_spin import count_spins, return_spin, spin_loop
 from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz
-from lib.errors import RelaxError
+from lib.errors import RelaxError, RelaxNoPdbError
 from lib.io import DummyFileObject
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
@@ -376,7 +376,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.delete()
 
         # CoM.
-        self.interpreter.structure.com()
+        self.assertRaises(RelaxNoPdbError, self.interpreter.structure.com)
 
 
     def test_collapse_ensemble(self):
