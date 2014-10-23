@@ -44,7 +44,7 @@ def pipe_centre_of_mass(atom_id=None, model=None, return_mass=False, verbosity=1
     """
 
     # Test if a structure has been loaded.
-    if not hasattr(cdp, 'structure'):
+    if not hasattr(cdp, 'structure') or cdp.structure.num_models() == 0:
         raise RelaxNoPdbError
 
     # The selection object.
