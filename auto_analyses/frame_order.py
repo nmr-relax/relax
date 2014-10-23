@@ -952,82 +952,11 @@ class Frame_order_analysis:
                 self.nested_params_order(model)
 
             # Optimisation using the PCS subset (skipped if a pre-run directory is supplied).
-            opt = self.opt_subset
-            if opt != None and not self.pre_run_flag:
-                # Printout.
-                subsubtitle(file=sys.stdout, text="Optimisation using the PCS subset")
-
-                # Results directory stub for intermediate results.
-                intermediate_stub = self.results_dir + sep + 'intermediate_results' + sep + 'pcs_subset'
-
-                # Zooming grid search.
-                for i in opt.loop_grid():
-                    # The intermediate results directory.
-                    intermediate_dir = intermediate_stub + '_grid%i' % i
-
-                    # Set the zooming grid search level.
-                    zoom = opt.get_grid_zoom_level(i)
-                    if zoom != None:
-                        self.interpreter.minimise.grid_zoom(level=zoom)
-                        intermediate_dir += '_zoom%i' % zoom
-
-                    # Set up the custom grid increments.
-                    incs = self.custom_grid_incs(model, inc=opt.get_grid_inc(i))
-                    intermediate_dir += '_inc%i' % opt.get_grid_inc(i)
-
-                    # The numerical optimisation settings.
-                    quad_int = opt.get_grid_quad_int(i)
-                    if quad_int:
-                        self.interpreter.frame_order.quad_int()
-                        intermediate_dir += '_quad_int'
-                    else:
-                        sobol_num = opt.get_grid_sobol_info(i)
-                        self.sobol_setup(sobol_num)
-                        intermediate_dir += '_sobol%i' % sobol_num[0]
-
-                    # Perform the grid search.
-                    self.interpreter.minimise.grid_search(inc=incs)
-
-                    # Store the intermediate results and statistics.
-                    if self.store_intermediate:
-                        self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True, simulation=False)
-                        count_sobol_points(dir=intermediate_dir, force=True)
-                        summarise(dir=intermediate_dir, force=True)
-
-                # Minimise (for the PCS data subset and full RDC set).
-                for i in opt.loop_min():
-                    # The intermediate results directory.
-                    func_tol = opt.get_min_func_tol(i)
-                    max_iter = opt.get_min_max_iter(i)
-                    intermediate_dir = intermediate_stub + '_min%i_ftol%g_max_iter%i' % (i, func_tol, max_iter)
-
-                    # The numerical optimisation settings.
-                    quad_int = opt.get_min_quad_int(i)
-                    if quad_int:
-                        self.interpreter.frame_order.quad_int()
-                        intermediate_dir += '_quad_int'
-                    else:
-                        sobol_num = opt.get_min_sobol_info(i)
-                        self.sobol_setup(sobol_num)
-                        intermediate_dir += '_sobol%i' % sobol_num[0]
-
-                    # Perform the optimisation.
-                    self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=func_tol, max_iter=max_iter)
-
-                    # Store the intermediate results.
-                    if self.store_intermediate:
-                        self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True, simulation=False)
-                        count_sobol_points(dir=intermediate_dir, force=True)
-                        summarise(dir=intermediate_dir, force=True)
-
-            # Printout.
-            subsubtitle(file=sys.stdout, text="Optimisation using the full data set")
-
-            # Results directory stub for intermediate results.
-            intermediate_stub = self.results_dir + sep + 'intermediate_results' + sep + 'all_data'
+            if self.data_pipe_subset != None and self.opt_subset != None and not self.pre_run_flag:
+                self.optimisation(model=model, opt=self.opt_subset, pcs_text="PCS subset", intermediate_dir='pcs_subset')
 
             # Operations if a subset was used, otherwise these are not needed.
-            if self.data_pipe_subset != None:
+            if self.data_pipe_subset != None and self.data_pipe_full != None:
                 # Copy the PCS data.
                 self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
 
@@ -1040,32 +969,8 @@ class Frame_order_analysis:
                     spin.select = spin_orig.select
 
             # Optimisation using the full data set.
-            opt = self.opt_full
-            if opt != None:
-                for i in opt.loop_min():
-                    # The intermediate results directory.
-                    func_tol = opt.get_min_func_tol(i)
-                    max_iter = opt.get_min_max_iter(i)
-                    intermediate_dir = intermediate_stub + '_min%i_ftol%g_max_iter%i' % (i, func_tol, max_iter)
-
-                    # The numerical optimisation settings.
-                    quad_int = opt.get_min_quad_int(i)
-                    if quad_int:
-                        self.interpreter.frame_order.quad_int()
-                        intermediate_dir += '_quad_int'
-                    else:
-                        sobol_num = opt.get_min_sobol_info(i)
-                        self.sobol_setup(sobol_num)
-                        intermediate_dir += '_sobol%i' % sobol_num[0]
-
-                    # Perform the optimisation.
-                    self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=func_tol, max_iter=max_iter)
-
-                    # Store the intermediate results.
-                    if self.store_intermediate:
-                        self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True, simulation=False)
-                        count_sobol_points(dir=intermediate_dir, force=True)
-                        summarise(dir=intermediate_dir, force=True)
+            if self.opt_full != None:
+                self.optimisation(model=model, opt=self.opt_full, pcs_text="full data set", intermediate_dir='all_data')
 
             # Results printout.
             self.print_results()
@@ -1078,6 +983,86 @@ class Frame_order_analysis:
 
             # Perform the axis permutation analysis.
             self.axis_permutation_analysis(model=model)
+
+
+    def optimisation(self, model=None, opt=None, pcs_text=None, intermediate_dir=None):
+        """Perform the grid search and minimisation.
+
+        @keyword model:             The frame order model to optimise.
+        @type model:                str
+        @keyword opt:               The grid search, zooming grid search and minimisation settings object for optimisation of all models.
+        @type opt:                  Optimisation_settings instance
+        @keyword pcs_text:          The text to use in the title.  This is either about the PCS subset or full data set.
+        @type pcs_text:             str
+        @keyword intermediate_dir:  The directory for this PCS data set for storing the intermediate results.
+        @type intermediate_dir:     str
+        """
+
+        # Printout.
+        subsubtitle(file=sys.stdout, text="Optimisation using the %s" % pcs_text)
+
+        # Results directory stub for intermediate results.
+        intermediate_stub = self.results_dir + sep + 'intermediate_results' + sep + intermediate_dir
+
+        # Zooming grid search.
+        for i in opt.loop_grid():
+            # The intermediate results directory.
+            intermediate_dir = intermediate_stub + '_grid%i' % i
+
+            # Set the zooming grid search level.
+            zoom = opt.get_grid_zoom_level(i)
+            if zoom != None:
+                self.interpreter.minimise.grid_zoom(level=zoom)
+                intermediate_dir += '_zoom%i' % zoom
+
+            # Set up the custom grid increments.
+            incs = self.custom_grid_incs(model, inc=opt.get_grid_inc(i))
+            intermediate_dir += '_inc%i' % opt.get_grid_inc(i)
+
+            # The numerical optimisation settings.
+            quad_int = opt.get_grid_quad_int(i)
+            if quad_int:
+                self.interpreter.frame_order.quad_int()
+                intermediate_dir += '_quad_int'
+            else:
+                sobol_num = opt.get_grid_sobol_info(i)
+                self.sobol_setup(sobol_num)
+                intermediate_dir += '_sobol%i' % sobol_num[0]
+
+            # Perform the grid search.
+            self.interpreter.minimise.grid_search(inc=incs)
+
+            # Store the intermediate results and statistics.
+            if self.store_intermediate:
+                self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True, simulation=False)
+                count_sobol_points(dir=intermediate_dir, force=True)
+                summarise(dir=intermediate_dir, force=True)
+
+        # Minimisation.
+        for i in opt.loop_min():
+            # The intermediate results directory.
+            func_tol = opt.get_min_func_tol(i)
+            max_iter = opt.get_min_max_iter(i)
+            intermediate_dir = intermediate_stub + '_min%i_ftol%g_max_iter%i' % (i, func_tol, max_iter)
+
+            # The numerical optimisation settings.
+            quad_int = opt.get_min_quad_int(i)
+            if quad_int:
+                self.interpreter.frame_order.quad_int()
+                intermediate_dir += '_quad_int'
+            else:
+                sobol_num = opt.get_min_sobol_info(i)
+                self.sobol_setup(sobol_num)
+                intermediate_dir += '_sobol%i' % sobol_num[0]
+
+            # Perform the optimisation.
+            self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=func_tol, max_iter=max_iter)
+
+            # Store the intermediate results.
+            if self.store_intermediate:
+                self.results_output(model=model, dir=model_directory(model, base_dir=intermediate_dir), results_file=True, simulation=False)
+                count_sobol_points(dir=intermediate_dir, force=True)
+                summarise(dir=intermediate_dir, force=True)
 
 
     def optimise_rigid(self):
