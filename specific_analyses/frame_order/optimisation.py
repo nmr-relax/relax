@@ -33,6 +33,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
+from lib.check_types import is_float
 from lib.float import isNaN, isInf
 from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoPCSError, RelaxNoRDCError
 from lib.frame_order.pseudo_ellipse import tmax_pseudo_ellipse_array
@@ -263,12 +264,8 @@ def minimise_setup_atomic_pos(sim_index=None, verbosity=1):
             continue
 
         # A single atomic position.
-        if spin.pos.shape == (3,):
+        if (isinstance(spin.pos, list) or isinstance(spin.pos, ndarray)) and len(spin.pos) == 3 and is_float(spin.pos[0]):
             atomic_pos.append(spin.pos)
-
-        # A single model (rank-2 array of a single position).
-        elif spin.pos.shape == (1, 3):
-            atomic_pos.append(spin.pos[0])
 
         # Average multiple atomic positions.
         else:
@@ -282,15 +279,19 @@ def minimise_setup_atomic_pos(sim_index=None, verbosity=1):
 
             # The average position.
             ave_pos = zeros(3, float64)
+            count = 0
             for i in range(len(spin.pos)):
+                if spin.pos[i] == None:
+                    continue
                 ave_pos += spin.pos[i]
-            ave_pos = ave_pos / len(spin.pos)
+                count += 1
+            ave_pos = ave_pos / float(count)
 
             # Store.
             atomic_pos.append(ave_pos)
 
     # Give a warning about the atomic position averaging.
-    if verbosity and len(ave_warning_spin_ids):
+    if verbosity and ave_warning_num != 1 and len(ave_warning_spin_ids):
         warn(RelaxWarning("Averaging the %s atomic positions for the PCS for the spins %s." % (ave_warning_num, ave_warning_spin_ids)))
 
     # Convert to numpy objects.
