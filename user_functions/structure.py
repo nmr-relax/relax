@@ -55,6 +55,13 @@ uf = uf_info.add_uf('structure.add_atom')
 uf.title = "Add an atom."
 uf.title_short = "Atom creation."
 uf.add_keyarg(
+    name = "mol_name",
+    py_type = "str",
+    desc_short = "molecule name",
+    desc = "The name of molecule container to create or add the atom to.",
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "atom_name",
     py_type = "str",
     desc_short = "atom name",
