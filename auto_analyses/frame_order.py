@@ -1030,7 +1030,7 @@ class Frame_order_analysis:
                 intermediate_dir += '_sobol%i' % sobol_num[0]
 
             # Perform the grid search.
-            self.interpreter.minimise.grid_search(inc=incs)
+            self.interpreter.minimise.grid_search(inc=incs, skip_preset=False)
 
             # Store the intermediate results and statistics.
             if self.store_intermediate:
