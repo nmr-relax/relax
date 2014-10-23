@@ -386,8 +386,8 @@ class Frame_order_analysis:
 
         @param data_pipe_full:          The name of the data pipe containing all of the RDC and PCS data.
         @type data_pipe_full:           str
-        @param data_pipe_subset:        The name of the data pipe containing all of the RDC data but only a small subset of ~5 PCS points.
-        @type data_pipe_subset:         str
+        @param data_pipe_subset:        The name of the data pipe containing all of the RDC data but only a small subset of ~5 PCS points.  This optional argument is used to massively speed up the analysis.
+        @type data_pipe_subset:         str or None
         @keyword pipe_bundle:           The data pipe bundle to associate all spawned data pipes with.
         @type pipe_bundle:              str
         @keyword results_dir:           The directory where files are saved in.
@@ -935,7 +935,10 @@ class Frame_order_analysis:
             # Otherwise use the base data pipes.
             else:
                 # Create the data pipe using the full data set, and switch to it.
-                self.interpreter.pipe.copy(self.data_pipe_subset, self.pipe_name_dict[model], bundle_to=self.pipe_bundle)
+                if self.data_pipe_subset != None:
+                    self.interpreter.pipe.copy(self.data_pipe_subset, self.pipe_name_dict[model], bundle_to=self.pipe_bundle)
+                else:
+                    self.interpreter.pipe.copy(self.data_pipe_full, self.pipe_name_dict[model], bundle_to=self.pipe_bundle)
                 self.interpreter.pipe.switch(self.pipe_name_dict[model])
 
                 # Select the Frame Order model.
@@ -1023,16 +1026,18 @@ class Frame_order_analysis:
             # Results directory stub for intermediate results.
             intermediate_stub = self.results_dir + sep + 'intermediate_results' + sep + 'all_data'
 
-            # Copy the PCS data.
-            self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
+            # Operations if a subset was used, otherwise these are not needed.
+            if self.data_pipe_subset != None:
+                # Copy the PCS data.
+                self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
 
-            # Reset the selection status.
-            for spin, spin_id in spin_loop(return_id=True, skip_desel=False):
-                # Get the spin from the original pipe.
-                spin_orig = return_spin(spin_id=spin_id, pipe=self.data_pipe_full)
+                # Reset the selection status.
+                for spin, spin_id in spin_loop(return_id=True, skip_desel=False):
+                    # Get the spin from the original pipe.
+                    spin_orig = return_spin(spin_id=spin_id, pipe=self.data_pipe_full)
 
-                # Reset the spin selection.
-                spin.select = spin_orig.select
+                    # Reset the spin selection.
+                    spin.select = spin_orig.select
 
             # Optimisation using the full data set.
             opt = self.opt_full
