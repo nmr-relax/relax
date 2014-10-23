@@ -29,6 +29,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
+from lib.check_types import is_float
 from lib.checks import Check
 from lib.errors import RelaxError, RelaxFileError
 from lib.io import get_file_path, open_write_file, write_data
@@ -854,8 +855,11 @@ def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_tar
             # Generate a spin ID for the current atom.
             id = generate_spin_id_unique(mol_name=mol_name_target, res_num=res_num, res_name=res_name, spin_name=atom_name)
 
-            # Store the position info in all cases.
-            positions[mol_name][id] = pos[0]
+            # Store the position info in all cases, collapsing list of lists into single lists when needed.
+            if is_float(pos[0]):
+                positions[mol_name][id] = pos
+            else:
+                positions[mol_name][id] = pos[0]
 
             # Not a new ID.
             if id in ids:
