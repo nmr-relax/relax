@@ -26,7 +26,7 @@
 from math import cos, pi
 from minfx.generic import generic_minimise
 from minfx.grid import grid_point_array
-from numpy import arccos, array, dot, float64, ones, zeros
+from numpy import arccos, array, dot, float64, ndarray, ones, zeros
 from numpy.linalg import inv, norm
 from re import search
 import sys
