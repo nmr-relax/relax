@@ -453,7 +453,6 @@ class MolContainer:
         """Check if the container is empty."""
 
         # Set attributes.
-        if hasattr(self, 'mol_name'): return False
         if hasattr(self, 'file_name'): return False
         if hasattr(self, 'file_path'): return False
         if hasattr(self, 'file_mol_num'): return False

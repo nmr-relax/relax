@@ -263,3 +263,20 @@ class ModelContainer(object):
 
         # The ModelContainer is unmodified.
         return True
+
+
+    def mol_loop(self):
+        """Generator method to loop over the molecules of this model.
+
+        @return:    The molecules of this model.
+        @rtype:     MolContainer instance
+        """
+
+        # Loop over all molecules.
+        for mol in self.mol:
+            # No data, so do not yield the molecule.
+            if mol.is_empty():
+                continue
+
+            # Yield the molecule.
+            yield mol
