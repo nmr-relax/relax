@@ -386,6 +386,10 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_atom(mol_name='A', atom_name='N', res_name='Phe', res_num=1, pos=[1.0, 1.0, 1.0], element='N')
         self.interpreter.structure.add_atom(mol_name='B', atom_name='N', res_name='Phe', res_num=1, pos=[1.0, 1.0, 1.0], element='N')
 
+        # Add some metadata to demonstrate a problem with the structure.delete user function.
+        cdp.structure.structural_data[0].mol[0].file_name = 'test.pdb'
+        cdp.structure.structural_data[0].mol[1].file_name = 'test2.pdb'
+
         # Delete the first molecule.
         self.interpreter.structure.delete('#A')
 
