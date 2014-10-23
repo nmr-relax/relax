@@ -619,15 +619,17 @@ class Frame_order_analysis:
             raise RelaxError("The mc_sim_num user variable '%s' is incorrectly set.  It should be an integer." % self.mc_sim_num)
 
 
-    def custom_grid_incs(self, model, inc=None):
+    def custom_grid_incs(self, model, inc=None, pivot_search=True):
         """Set up a customised grid search increment number for each model.
 
-        @param model:   The frame order model.
-        @type model:    str
-        @keyword inc:   The number of grid search increments to use for each dimension.
-        @type inc:      int
-        @return:        The list of increment values.
-        @rtype:         list of int and None
+        @param model:           The frame order model.
+        @type model:            str
+        @keyword inc:           The number of grid search increments to use for each dimension.
+        @type inc:              int
+        @keyword pivot_search:  A flag which if False will prevent the pivot point from being included in the grid search.
+        @type pivot_search:     bool
+        @return:                The list of increment values.
+        @rtype:                 list of int and None
         """
 
         # Initialise the structure.
@@ -636,7 +638,7 @@ class Frame_order_analysis:
         # The pivot parameters.
         if hasattr(cdp, 'pivot_fixed') and not cdp.pivot_fixed:
             # Optimise the pivot for the rotor model.
-            if model == MODEL_ROTOR:
+            if pivot_search and model == MODEL_ROTOR:
                 incs += [inc, inc, inc]
 
             # Otherwise use preset values (copied from other models).
@@ -1016,7 +1018,7 @@ class Frame_order_analysis:
                 intermediate_dir += '_zoom%i' % zoom
 
             # Set up the custom grid increments.
-            incs = self.custom_grid_incs(model, inc=opt.get_grid_inc(i))
+            incs = self.custom_grid_incs(model, inc=opt.get_grid_inc(i), pivot_search=opt.get_grid_pivot_search(i))
             intermediate_dir += '_inc%i' % opt.get_grid_inc(i)
 
             # The numerical optimisation settings.
@@ -1442,6 +1444,7 @@ class Optimisation_settings:
         self._grid_sobol_max_points = []
         self._grid_sobol_oversample = []
         self._grid_quad_int = []
+        self._grid_pivot_search = []
 
         # Initialise some private structures for the minimisation.
         self._min_count = 0
@@ -1473,7 +1476,7 @@ class Optimisation_settings:
             raise RelaxError("The iteration index %i is too high, only %i minimisations are set up." % (i, self._min_count))
 
 
-    def add_grid(self, inc=None, zoom=None, sobol_max_points=None, sobol_oversample=None, quad_int=False):
+    def add_grid(self, inc=None, zoom=None, sobol_max_points=None, sobol_oversample=None, quad_int=False, pivot_search=True):
         """Add a grid search step.
 
         @keyword inc:               The grid search size (the number of increments per dimension).
@@ -1486,6 +1489,8 @@ class Optimisation_settings:
         @type sobol_oversample:     None or int
         @keyword quad_int:          The SciPy quadratic integration flag.  See the frame_order.quad_int user function for details.
         @type quad_int:             bool
+        @keyword pivot_search:      A flag which if False will prevent the pivot point from being included in the grid search.
+        @type pivot_search:         bool
         """
 
         # Value checking, as this will be set up by a user.
@@ -1501,6 +1506,7 @@ class Optimisation_settings:
         self._grid_sobol_max_points.append(sobol_max_points)
         self._grid_sobol_oversample.append(sobol_oversample)
         self._grid_quad_int.append(quad_int)
+        self._grid_pivot_search.append(pivot_search)
 
         # Increment the count.
         self._grid_count += 1
@@ -1557,6 +1563,22 @@ class Optimisation_settings:
 
         # Return the value.
         return self._grid_incs[i]
+
+
+    def get_grid_pivot_search(self, i):
+        """Return the pivot grid search flag.
+
+        @param i:   The grid search iteration from the loop_grid() method.
+        @type i:    int
+        @return:    The pivot grid search flag.
+        @rtype:     bool
+        """
+
+        # Check the index.
+        self._check_index(i, iter_type='grid')
+
+        # Return the value.
+        return self._grid_pivot_search[i]
 
 
     def get_grid_quad_int(self, i):
