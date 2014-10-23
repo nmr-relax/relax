@@ -365,6 +365,20 @@ class Structure(SystemTestCase):
         self.interpreter.structure.superimpose(method='fit to first', centre_type='CoM')
 
 
+    def test_bug_22860_CoM_after_deletion(self):
+        """Catch U{bug #22860<https://gna.org/bugs/?22860>}, the failure of the structure.com user function after calling structure.delete."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
+
+        # Load a random structure, then delete it.
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_mol_name='C-dom', set_model_num=1)
+        self.interpreter.structure.delete()
+
+        # CoM.
+        self.interpreter.structure.com()
+
+
     def test_collapse_ensemble(self):
         """Test the collapse_ensemble() method of the internal structural object."""
 
