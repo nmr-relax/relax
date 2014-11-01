@@ -14,6 +14,7 @@ from lib.geometry.rotations import R_random_hypersphere, R_to_euler_zyz
 
 # Variables.
 MODEL = 'pseudo-ellipse'
+MODEL_TEXT = 'Pseudo-ellipse frame order model'
 SAMPLE_SIZE = 100
 TAG = 'in_frame'
 
@@ -232,9 +233,9 @@ class Frame_order:
                 file.write("@    world 0, -0.5, 180, 1\n")
             file.write("@    title \"Simulated frame order matrix elements\"\n")
             if i == 0:
-                file.write("@    subtitle \"1\\Sst\\N degree matrix, %i simulations\"\n" % SAMPLE_SIZE)
+                file.write("@    subtitle \"%s, 1\\Sst\\N degree matrix, %i simulations\"\n" % (MODEL_TEXT, SAMPLE_SIZE))
             else:
-                file.write("@    subtitle \"2\\Snd\\N degree matrix, %i simulations\"\n" % SAMPLE_SIZE)
+                file.write("@    subtitle \"%s, 2\\Snd\\N degree matrix, %i simulations\"\n" % (MODEL_TEXT, SAMPLE_SIZE))
 
             # Legend.
             if i == 0:
@@ -260,8 +261,6 @@ class Frame_order:
             file.write("@    yaxis  tick major linewidth 0.5\n")
             file.write("@    yaxis  tick minor ticks 1\n")
             file.write("@    yaxis  tick minor linewidth 0.5\n")
-
-            file.write("\n")
 
         # Header for first order matrix.
         graph_num = 0
