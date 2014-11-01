@@ -52,7 +52,13 @@ def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
     """
 
     # The surface area normalisation factor.
-    fact = 1.0 / (2.0 * sigma_max * pec(theta_x, theta_y))
+    fact = 2.0 * sigma_max * pec(theta_x, theta_y)
+
+    # Invert.
+    if fact == 0.0:
+        fact = 1e100
+    else:
+        fact = 1.0 / fact
 
     # Numerical integration of phi of each element.
     matrix[0, 0] = fact * quad(part_int_daeg1_pseudo_ellipse_xx, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
