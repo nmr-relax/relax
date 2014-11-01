@@ -1,4 +1,4 @@
-# relax script!
+# relax script.
 
 # Python module imports.
 from math import cos, pi, sin, sqrt
@@ -8,13 +8,14 @@ from string import lower
 import sys
 
 # relax module imports.
-from generic_fns.angles import wrap_angles
-from maths_fns.rotation_matrix import R_random_hypersphere, R_to_euler_zyz
+from lib.geometry.angles import wrap_angles
+from lib.geometry.rotations import R_random_hypersphere, R_to_euler_zyz
 
 
 # Variables.
-SAMPLE_SIZE = 1000000
-TAG = 'out_of_frame'
+MODEL = 'pseudo-ellipse'
+SAMPLE_SIZE = 100
+TAG = 'in_frame'
 
 # Angular restrictions.
 THETA_X = pi / 4
@@ -61,7 +62,7 @@ class Frame_order:
         """
 
         # The tag.
-        self.tag = '_%s_theta_%s_ens%s.agr' % (TAG, lower(VAR), SAMPLE_SIZE)
+        self.tag = '_%s_%s_theta_%s_ens%s.agr' % (MODEL, TAG, lower(VAR), SAMPLE_SIZE)
 
         # Set the initial storage structures.
         self.init_storage()
@@ -120,7 +121,7 @@ class Frame_order:
         self.second_frame_order = self.second_frame_order / float(SAMPLE_SIZE)
 
         # Write the data.
-        self.write_data(legends=True)
+        self.write_data()
 
 
     def get_angle(self, index, deg=False):
@@ -210,36 +211,81 @@ class Frame_order:
             return theta, theta, pi
 
 
-    def write_data(self, legends=False):
+    def write_data(self):
         """Dump the data to files."""
 
         # Open the files.
-        file_1st = open('Sij' + self.tag, 'w')
-        file_2nd = open('S2ijkl' + self.tag, 'w')
+        file_1st = open("Sij" + self.tag, 'w')
+        file_2nd = open("Sijkl" + self.tag, 'w')
+        files = [file_1st, file_2nd]
 
-        # Legends.
-        if legends:
-            # Header for first order matrix.
-            graph_num = 0
-            for i in range(3):
-                for j in range(3):
-                    # Legend.
-                    file_1st.write('@    s%i legend \"<\qc\s%s%s\N>\"\n' % (graph_num, i+1, j+1))
+        # The headers.
+        for i in range(2):
+            # Alias the file.
+            file = files[i]
 
-                    # Inc.
-                    graph_num = graph_num + 1
+            # The titles.
+            file.write("@with g0\n")
+            if i == 0:
+                file.write("@    world 0, 0, 180, 1\n")
+            else:
+                file.write("@    world 0, -0.5, 180, 1\n")
+            file.write("@    title \"Simulated frame order matrix elements\"\n")
+            if i == 0:
+                file.write("@    subtitle \"1\\Sst\\N degree matrix, %i simulations\"\n" % SAMPLE_SIZE)
+            else:
+                file.write("@    subtitle \"2\\Snd\\N degree matrix, %i simulations\"\n" % SAMPLE_SIZE)
 
-            # Header for second order matrix.
-            graph_num = 0
-            for i in range(3):
-                for j in range(3):
-                    for k in range(3):
-                        for l in range(3):
-                            # Legend.
-                            file_2nd.write('@    s%i legend \"<c%s%s.c%s%s>\"\n' % (graph_num, i+1, j+1, k+1, l+1))
+            # Legend.
+            if i == 0:
+                file.write("@    legend 0.23, 0.55\n")
+            else:
+                file.write("@    legend off\n")
 
-                            # Inc.
-                            graph_num = graph_num + 1
+            # Plot data.
+            file.write("@    xaxis  bar linewidth 0.5\n")
+            file.write("@    xaxis  label \"Cone half-angle \\xq\\f{}\\s%s\\N (deg.)\"\n" % VAR)
+            file.write("@    xaxis  label char size 1.000000\n")
+            file.write("@    xaxis  tick major 45\n")
+            file.write("@    xaxis  tick major linewidth 0.5\n")
+            file.write("@    xaxis  tick minor ticks 3\n")
+            file.write("@    xaxis  tick minor linewidth 0.5\n")
+            file.write("@    yaxis  bar linewidth 0.5\n")
+            if i == 0:
+                file.write("@    yaxis  label \"Order parameter \qS\sij\"\n")
+            else:
+                file.write("@    yaxis  label \"Order parameter \qS\sijkl\"\n")
+            file.write("@    yaxis  label char size 1.000000\n")
+            file.write("@    yaxis  tick major 0.2\n")
+            file.write("@    yaxis  tick major linewidth 0.5\n")
+            file.write("@    yaxis  tick minor ticks 1\n")
+            file.write("@    yaxis  tick minor linewidth 0.5\n")
+
+            file.write("\n")
+
+        # Header for first order matrix.
+        graph_num = 0
+        for i in range(3):
+            for j in range(3):
+                # Legend.
+                file_1st.write("@    s%i legend \"\\q<c\\s%s%s\\N>\"\n" % (graph_num, i+1, j+1))
+                file_1st.write("@    s%i linewidth 0.5\n" % graph_num)
+
+                # Inc.
+                graph_num = graph_num + 1
+
+        # Header for second order matrix.
+        graph_num = 0
+        for i in range(3):
+            for j in range(3):
+                for k in range(3):
+                    for l in range(3):
+                        # Legend.
+                        file_2nd.write("@    s%i legend \"<\\qc\\s%s%s\\N.c\\s%s%s\\N>\"\n" % (graph_num, i+1, j+1, k+1, l+1))
+                        file_2nd.write("@    s%i linewidth 0.5\n" % graph_num)
+
+                        # Inc.
+                        graph_num = graph_num + 1
 
         # Loop over the first rotation matrix index.
         graph_num = 0
@@ -247,8 +293,8 @@ class Frame_order:
             # Loop over the second rotation matrix index.
             for j in range(3):
                 # Header.
-                file_1st.write('@target G0.S%i\n' % graph_num)
-                file_1st.write('@type xy\n')
+                file_1st.write("@target G0.S%i\n" % graph_num)
+                file_1st.write("@type xy\n")
 
                 # Loop over each time point.
                 for k in range(INC):
@@ -256,10 +302,10 @@ class Frame_order:
                     angle = self.get_angle(k, deg=True)
 
                     # Write.
-                    file_1st.write('%s %s\n' % (angle, self.first_frame_order[k, i, j]))
+                    file_1st.write("%s %s\n" % (angle, self.first_frame_order[k, i, j]))
 
                 # Footer.
-                file_1st.write('&\n')
+                file_1st.write("&\n")
 
                 # Inc.
                 graph_num = graph_num + 1
@@ -286,6 +332,11 @@ class Frame_order:
 
                 # Inc.
                 graph_num = graph_num + 1
+
+        # No autoscaling.
+        file_1st.write("@autoscale onread none\n")
+        file_2nd.write("@autoscale onread none\n")
+
 
 
 # Calculate the frame order.
