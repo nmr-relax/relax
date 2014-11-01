@@ -100,12 +100,6 @@ def compile_2nd_matrix_pseudo_ellipse(matrix, Rx2_eigen, theta_x, theta_y, sigma
     else:
         fact = 1.0 / fact
 
-    # Sigma_max part.
-    if sigma_max == 0.0:
-        fact2 = 1e100
-    else:
-        fact2 = fact / (2.0 * sigma_max)
-
     # Diagonal.
     matrix[0, 0] = fact * (4.0*pi*(sinc(2.0*sigma_max/pi) + 2.0) + quad(part_int_daeg2_pseudo_ellipse_00, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
     matrix[1, 1] = fact * (4.0*pi*sinc(2.0*sigma_max/pi) + quad(part_int_daeg2_pseudo_ellipse_11, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
