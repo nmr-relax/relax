@@ -8,50 +8,46 @@ from string import lower
 import sys
 
 # relax module imports.
-from lib.frame_order.pseudo_ellipse import compile_1st_matrix_pseudo_ellipse, compile_2nd_matrix_pseudo_ellipse
+from lib.errors import RelaxError
+from lib.frame_order import double_rotor, free_rotor, iso_cone, iso_cone_free_rotor, iso_cone_torsionless, pseudo_ellipse, pseudo_ellipse_free_rotor, pseudo_ellipse_torsionless, rotor
 from lib.geometry.angles import wrap_angles
 from lib.linear_algebra.kronecker_product import kron_prod
+from lib.order.order_parameters import iso_cone_theta_to_S
 
 # Variables.
-MODEL = 'pseudo-ellipse'
-MODEL_TEXT = 'Pseudo-ellipse frame order model'
-TAG = 'in_frame'
+MODELS = [
+    'rotor',
+    'free_rotor',
+    'iso_cone',
+    'iso_cone_torsionless',
+    'iso_cone_free_rotor',
+    'pseudo-ellipse',
+    'pseudo-ellipse_torsionless',
+    'pseudo-ellipse_free_rotor',
+    'double_rotor'
+]
+MODEL_TEXT = [
+    'Rotor frame order model',
+    'Free-rotor frame order model',
+    'Isotropic cone frame order model',
+    'Isotropic cone, torsionless frame order model',
+    'Isotropic cone, free rotor frame order model',
+    'Pseudo-ellipse frame order model',
+    'Pseudo-ellipse, torsionless frame order model',
+    'Pseudo-ellipse, free rotor frame order model',
+    'Double rotor frame order model'
+]
+TAGS = [
+    'in_frame',
+    'out_of_frame',
+    'axis2_1_3'
+]
 
 # Angular restrictions.
 THETA_X = pi / 4
 THETA_Y = 3 * pi / 8
 THETA_Z = pi / 6
 INC = 18
-VAR = 'Z'
-
-# The frame order eigenframe - I.
-if TAG == 'in_frame':
-    EIG_FRAME = eye(3)
-
-# The frame order eigenframe - rotated.
-if TAG == 'out_of_frame':
-    EIG_FRAME = array([[ 2, -1,  2],
-                       [ 2,  2, -1],
-                       [-1,  2,  2]], float64) / 3.0
-
-# The frame order eigenframe (and tag) - original isotropic cone axis [2, 1, 3].
-elif TAG == 'axis2_1_3':
-    # Generate 3 orthogonal vectors.
-    vect_z = array([2, 1, 3], float64)
-    vect_x = cross(vect_z, array([1, 1, 1], float64))
-    vect_y = cross(vect_z, vect_x)
-
-    # Normalise.
-    vect_x = vect_x / norm(vect_x)
-    vect_y = vect_y / norm(vect_y)
-    vect_z = vect_z / norm(vect_z)
-
-    # Build the frame.
-    EIG_FRAME = zeros((3, 3), float64)
-    EIG_FRAME[:,0] = vect_x
-    EIG_FRAME[:,1] = vect_y
-    EIG_FRAME[:,2] = vect_z
-
 
 
 class Frame_order:
@@ -61,45 +57,99 @@ class Frame_order:
         This is when the starting positions are random.
         """
 
-        # The tag.
-        self.tag = '_%s_%s_theta_%s_calc.agr' % (MODEL, TAG, lower(VAR))
+        # Loop over the models.
+        for model_index in range(len(MODELS)):
+            # Aliases.
+            model = MODELS[model_index]
+            model_text = MODEL_TEXT[model_index]
 
-        # The Kronecker product of the eigenframe rotation.
-        Rx2_eigen = kron_prod(EIG_FRAME, EIG_FRAME)
+            # Loop over the tags.
+            for tag in TAGS:
+                # Set up the variables to loop over.
+                if model in ['rotor', 'free_rotor']:
+                    vars = ['Z']
+                elif model in ['iso_cone_free_rotor', 'iso_cone_torsionless']:
+                    vars = ['X']
+                elif model in ['iso_cone']:
+                    vars = ['X', 'Z']
+                elif model in ['double_rotor', 'pseudo-ellipse_free_rotor', 'pseudo-ellipse_torsionless']:
+                    vars = ['X', 'Y']
+                elif model in ['pseudo-ellipse']:
+                    vars = ['X', 'Y', 'Z']
+                else:
+                    raise RelaxError("Unknown model '%s'." % model)
 
-        # Set the initial storage structures.
-        self.init_storage()
+                # Loop over the variables.
+                for var in vars:
+                    # The file name.
+                    file_name = '_%s_%s_theta_%s_calc.agr' % (model, tag, lower(var))
+                    print("Creating the '*%s' files." % file_name)
 
-        # Loop over the angle incs.
-        for i in range(INC):
-            # Get the angle for the increment.
-            theta = self.get_angle(i)
+                    # Set up the eigenframe.
+                    self.setup_eigenframe(tag=tag)
 
-            # Vary X.
-            if VAR == 'X':
-                theta_x = theta
-                theta_y = THETA_Y
-                theta_z = THETA_Z
+                    # The Kronecker product of the eigenframe rotation.
+                    Rx2_eigen = kron_prod(self.eigenframe, self.eigenframe)
 
-            # Vary Y.
-            elif VAR == 'Y':
-                theta_x = THETA_X
-                theta_y = theta
-                theta_z = THETA_Z
+                    # Set the initial storage structures.
+                    self.init_storage()
 
-            # Vary Z.
-            elif VAR == 'Z':
-                theta_x = THETA_X
-                theta_y = THETA_Y
-                theta_z = theta
+                    # Loop over the angle incs.
+                    for i in range(INC+1):
+                        # Get the angle for the increment.
+                        theta = self.get_angle(i-1)
 
-            # Calculate the frame order matrices.
-            if MODEL == 'pseudo-ellipse':
-                compile_1st_matrix_pseudo_ellipse(self.first_frame_order[i], theta_x, theta_y, theta_z)
-                compile_2nd_matrix_pseudo_ellipse(self.second_frame_order[i], Rx2_eigen, theta_x, theta_y, theta_z)
+                        # Vary X.
+                        if var == 'X':
+                            theta_x = theta
+                            theta_y = THETA_Y
+                            theta_z = THETA_Z
 
-        # Write the data.
-        self.write_data()
+                        # Vary Y.
+                        elif var == 'Y':
+                            theta_x = THETA_X
+                            theta_y = theta
+                            theta_z = THETA_Z
+
+                        # Vary Z.
+                        elif var == 'Z':
+                            theta_x = THETA_X
+                            theta_y = THETA_Y
+                            theta_z = theta
+
+                        # Calculate the frame order matrices.
+                        if model == 'rotor':
+                            #self.first_frame_order[i] = rotor.compile_1st_matrix_rotor(self.first_frame_order[i], self.eigenframe, theta_z)
+                            self.second_frame_order[i] = rotor.compile_2nd_matrix_rotor(self.second_frame_order[i], Rx2_eigen, theta_z)
+                        elif model == 'free_rotor':
+                            #self.first_frame_order[i] = free_rotor.compile_1st_matrix_free_rotor(self.first_frame_order[i], self.eigenframe)
+                            self.second_frame_order[i] = free_rotor.compile_2nd_matrix_free_rotor(self.second_frame_order[i], Rx2_eigen)
+                        elif model == 'iso_cone':
+                            #self.first_frame_order[i] = iso_cone.compile_1st_matrix_iso_cone(self.first_frame_order[i], self.eigenframe, theta_x, theta_z)
+                            self.second_frame_order[i] = iso_cone.compile_2nd_matrix_iso_cone(self.second_frame_order[i], Rx2_eigen, theta_x, theta_z)
+                        elif model == 'iso_cone_free_rotor':
+                            #self.first_frame_order[i] = iso_cone_free_rotor.compile_1st_matrix_iso_cone_free_rotor(self.first_frame_order[i], self.eigenframe, iso_cone_theta_to_S(theta_x))
+                            self.second_frame_order[i] = iso_cone_free_rotor.compile_2nd_matrix_iso_cone_free_rotor(self.second_frame_order[i], Rx2_eigen, iso_cone_theta_to_S(theta_x))
+                        elif model == 'iso_cone_torsionless':
+                            #self.first_frame_order[i] = iso_cone_torsionless.compile_1st_matrix_iso_cone_torsionless(self.first_frame_order[i], self.eigenframe, theta_x)
+                            self.second_frame_order[i] = iso_cone_torsionless.compile_2nd_matrix_iso_cone_torsionless(self.second_frame_order[i], Rx2_eigen, theta_x)
+                        elif model == 'pseudo-ellipse':
+                            self.first_frame_order[i] = pseudo_ellipse.compile_1st_matrix_pseudo_ellipse(self.first_frame_order[i], self.eigenframe, theta_x, theta_y, theta_z)
+                            self.second_frame_order[i] = pseudo_ellipse.compile_2nd_matrix_pseudo_ellipse(self.second_frame_order[i], Rx2_eigen, theta_x, theta_y, theta_z)
+                        elif model == 'pseudo-ellipse_free_rotor':
+                            #self.first_frame_order[i] = pseudo_ellipse_free_rotor.compile_1st_matrix_pseudo_ellipse_free_rotor(self.first_frame_order[i], self.eigenframe, theta_x, theta_y)
+                            self.second_frame_order[i] = pseudo_ellipse_free_rotor.compile_2nd_matrix_pseudo_ellipse_free_rotor(self.second_frame_order[i], Rx2_eigen, theta_x, theta_y)
+                        elif model == 'pseudo-ellipse_torsionless':
+                            #self.first_frame_order[i] = pseudo_ellipse_torsionless.compile_1st_matrix_pseudo_ellipse_torsionless(self.first_frame_order[i], self.eigenframe, theta_x, theta_y)
+                            self.second_frame_order[i] = pseudo_ellipse_torsionless.compile_2nd_matrix_pseudo_ellipse_torsionless(self.second_frame_order[i], Rx2_eigen, theta_x, theta_y)
+                        elif model == 'double_rotor':
+                            #self.first_frame_order[i] = double_rotor.compile_1st_matrix_double_rotor(self.first_frame_order[i], self.eigenframe, theta_x, theta_y)
+                            self.second_frame_order[i] = double_rotor.compile_2nd_matrix_double_rotor(self.second_frame_order[i], Rx2_eigen, theta_x, theta_y)
+                        else:
+                            raise RelaxError("Unknown model '%s'." % model)
+
+                    # Write the data.
+                    self.write_data(file_name=file_name, model_text=model_text, var=var)
 
 
     def get_angle(self, index, deg=False):
@@ -110,6 +160,10 @@ class Frame_order:
 
         # The angle of the increment.
         angle = inc_angle * (index+1)
+
+        # Slightly offset from zero for the first increment, to avoid artifacts in the pseudo-ellipse equations.
+        if angle == 0.0:
+            angle = 0.01
 
         # Return.
         if deg:
@@ -122,25 +176,69 @@ class Frame_order:
         """Initialise the storage structures."""
 
         # Create the average rotation matrix (first order).
-        self.first_frame_order = zeros((INC, 3, 3), float64)
+        self.first_frame_order = zeros((INC+1, 3, 3), float64)
 
         # Create the frame order matrix (each element is ensemble averaged and corresponds to a different time step).
-        self.second_frame_order = zeros((INC, 9, 9), float64)
+        self.second_frame_order = zeros((INC+1, 9, 9), float64)
 
         # Init the rotation matrix.
         self.rot = zeros((3, 3), float64)
 
         # Some data arrays.
-        self.full = zeros(INC)
-        self.count = zeros(INC)
+        self.full = zeros(INC+1)
+        self.count = zeros(INC+1)
 
 
-    def write_data(self):
-        """Dump the data to files."""
+    def setup_eigenframe(self, tag=None):
+        """Construct the eigenframe for the given tag.
+
+        @keyword tag:   The frame to use.  It should be one of 'in_frame', 'out_of_frame', or 'axis2_1_3'.
+        @type tag:      str
+        """
+
+        # The frame order eigenframe - I.
+        if tag == 'in_frame':
+            self.eigenframe = eye(3)
+        
+        # The frame order eigenframe - rotated.
+        elif tag == 'out_of_frame':
+            self.eigenframe = array([[ 2, -1,  2],
+                               [ 2,  2, -1],
+                               [-1,  2,  2]], float64) / 3.0
+
+        # The frame order eigenframe (and tag) - original isotropic cone axis [2, 1, 3].
+        elif tag == 'axis2_1_3':
+            # Generate 3 orthogonal vectors.
+            vect_z = array([2, 1, 3], float64)
+            vect_x = cross(vect_z, array([1, 1, 1], float64))
+            vect_y = cross(vect_z, vect_x)
+
+            # Normalise.
+            vect_x = vect_x / norm(vect_x)
+            vect_y = vect_y / norm(vect_y)
+            vect_z = vect_z / norm(vect_z)
+
+            # Build the frame.
+            self.eigenframe = zeros((3, 3), float64)
+            self.eigenframe[:,0] = vect_x
+            self.eigenframe[:,1] = vect_y
+            self.eigenframe[:,2] = vect_z
+
+
+    def write_data(self, file_name=None, model_text=None, var=None):
+        """Dump the data to files.
+
+        @keyword file_name:     The end part of the files to create.  This will be prepended by either 'Sij' or 'Sijkl'.
+        @type file_name:        str
+        @keyword model_text:    The text describing the model to use in the subheading.
+        @type model_text:       str
+        @keyword var:           The name of the half-angle being varied for labelling the X-axis.
+        @type var:              str
+        """
 
         # Open the files.
-        file_1st = open("Sij" + self.tag, 'w')
-        file_2nd = open("Sijkl" + self.tag, 'w')
+        file_1st = open("Sij" + file_name, 'w')
+        file_2nd = open("Sijkl" + file_name, 'w')
         files = [file_1st, file_2nd]
 
         # The headers.
@@ -151,14 +249,14 @@ class Frame_order:
             # The titles.
             file.write("@with g0\n")
             if i == 0:
-                file.write("@    world 0, 0, 180, 1\n")
+                file.write("@    world 0, -0.2, 180, 1\n")
             else:
-                file.write("@    world 0, -0.5, 180, 1\n")
+                file.write("@    world 0, -0.7, 180, 1\n")
             file.write("@    title \"Calculated frame order matrix elements\"\n")
             if i == 0:
-                file.write("@    subtitle \"%s, 1\\Sst\\N degree matrix\"\n" % MODEL_TEXT)
+                file.write("@    subtitle \"%s, 1\\Sst\\N degree matrix\"\n" % model_text)
             else:
-                file.write("@    subtitle \"%s, 2\\Snd\\N degree matrix\"\n" % MODEL_TEXT)
+                file.write("@    subtitle \"%s, 2\\Snd\\N degree matrix\"\n" % model_text)
 
             # Legend.
             if i == 0:
@@ -168,7 +266,7 @@ class Frame_order:
 
             # Plot data.
             file.write("@    xaxis  bar linewidth 0.5\n")
-            file.write("@    xaxis  label \"Cone half-angle \\xq\\f{}\\s%s\\N (deg.)\"\n" % VAR)
+            file.write("@    xaxis  label \"Cone half-angle \\xq\\f{}\\s%s\\N (deg.)\"\n" % var)
             file.write("@    xaxis  label char size 1.000000\n")
             file.write("@    xaxis  tick major 45\n")
             file.write("@    xaxis  tick major linewidth 0.5\n")
@@ -219,9 +317,9 @@ class Frame_order:
                 file_1st.write("@type xy\n")
 
                 # Loop over each time point.
-                for k in range(INC):
+                for k in range(INC+1):
                     # Get the angle.
-                    angle = self.get_angle(k, deg=True)
+                    angle = self.get_angle(k-1, deg=True)
 
                     # Write.
                     file_1st.write("%s %s\n" % (angle, self.first_frame_order[k, i, j]))
@@ -242,9 +340,9 @@ class Frame_order:
                 file_2nd.write('@type xy\n')
 
                 # Loop over each time point.
-                for k in range(INC):
+                for k in range(INC+1):
                     # Get the angle.
-                    angle = self.get_angle(k, deg=True)
+                    angle = self.get_angle(k-1, deg=True)
 
                     # Write.
                     file_2nd.write('%s %s\n' % (angle, self.second_frame_order[k, i, j]))
@@ -259,6 +357,9 @@ class Frame_order:
         file_1st.write("@autoscale onread none\n")
         file_2nd.write("@autoscale onread none\n")
 
+        # Close the files.
+        file_1st.close()
+        file_2nd.close()
 
 
 # Calculate the frame order.
