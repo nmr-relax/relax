@@ -38,11 +38,13 @@ from lib.geometry.pec import pec
 from lib.frame_order.matrix_ops import pcs_pivot_motion_full_qr_int, pcs_pivot_motion_full_quad_int, rotate_daeg
 
 
-def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
+def compile_1st_matrix_pseudo_ellipse(matrix, R_eigen, theta_x, theta_y, sigma_max):
     """Generate the 1st degree Frame Order matrix for the pseudo-ellipse.
 
     @param matrix:      The Frame Order matrix, 1st degree to be populated.
     @type matrix:       numpy 3D, rank-2 array
+    @param R_eigen:     The eigenframe rotation matrix.
+    @type R_eigen:      numpy 3D, rank-2 array
     @param theta_x:     The cone opening angle along x.
     @type theta_x:      float
     @param theta_y:     The cone opening angle along y.
@@ -64,6 +66,9 @@ def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
     matrix[0, 0] = fact * quad(part_int_daeg1_pseudo_ellipse_xx, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
     matrix[1, 1] = fact * quad(part_int_daeg1_pseudo_ellipse_yy, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
     matrix[2, 2] = fact * quad(part_int_daeg1_pseudo_ellipse_zz, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+
+    # Rotate and return the frame order matrix.
+    return rotate_daeg(matrix, R_eigen)
 
 
 def compile_2nd_matrix_pseudo_ellipse(matrix, Rx2_eigen, theta_x, theta_y, sigma_max):
