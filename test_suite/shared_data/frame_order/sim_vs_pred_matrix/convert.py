@@ -17,5 +17,5 @@ for file_name in listdir('.'):
     file_root = basename(file_root)
 
     # Convert to EPS then PDF.
-    system("xmgrace -hdevice EPS -hardcopy -printfile %s.eps %s" % (file_root, file_name))
-    system("xmgrace -hdevice PNG -hardcopy -printfile %s.png %s" % (file_root, file_name))
+    system("grace -hdevice EPS -hardcopy -printfile %s.eps %s" % (file_root, file_name))
+    system("grace -hdevice PNG -hardcopy -printfile %s.png %s" % (file_root, file_name))
