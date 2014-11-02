@@ -76,6 +76,19 @@ class Frame_order:
         # Pre-transpose the eigenframe for speed.
         eig_frame_T = transpose(EIG_FRAME)
 
+        # Generate the angle data structures.
+        self.angles = []
+        self.angles_deg = []
+        for i in range(INC):
+            # The angle of one increment.
+            inc_angle = pi / INC
+
+            # The angle of the increment.
+            self.angles.append(inc_angle * (i+1))
+
+            # In degrees for the graphs.
+            self.angles_deg.append(self.angles[-1] / (2.0*pi) * 360.0)
+
         # Alias the bound checking methods.
         if MODEL == 'pseudo-ellipse':
             self.inside = self.inside_pseudo_ellipse
@@ -125,7 +138,7 @@ class Frame_order:
 
                     # Full.
                     if self.count[i] == SAMPLE_SIZE:
-                        sys.stdout.write("\b"*100 + "The angle restriction of %s deg is complete.\n" % self.get_angle(i, deg=True))
+                        sys.stdout.write("\b"*100 + "The angle restriction of %s deg is complete.\n" % self.angles_deg[i])
                         self.full[i] = 1
 
             # Increment the global index.
@@ -144,22 +157,6 @@ class Frame_order:
 
         # Final printout.
         sys.stdout.write("Random rotations required: %i\n\n" % index)
-
-
-    def get_angle(self, index, deg=False):
-        """Return the angle corresponding to the incrementation index."""
-
-        # The angle of one increment.
-        inc_angle = pi / INC
-
-        # The angle of the increment.
-        angle = inc_angle * (index+1)
-
-        # Return.
-        if deg:
-            return angle / (2*pi) * 360
-        else:
-            return angle
 
 
     def init_storage(self):
@@ -201,18 +198,14 @@ class Frame_order:
     def limits(self, i):
         """Determine the angular restrictions for the increment i."""
 
-        # Get the angle for the increment.
-        theta = self.get_angle(i)
+        # Alias the angle for the increment.
+        theta = self.angles[i]
 
-        # Vary X.
+        # The different angles to vary.
         if VAR == 'X':
             return theta, THETA_Y, THETA_Z
-
-        # Vary Y.
         elif VAR == 'Y':
             return THETA_X, theta, THETA_Z
-
-        # Vary Z.
         elif VAR == 'Z':
             return THETA_X, THETA_Y, theta
 
@@ -306,11 +299,7 @@ class Frame_order:
 
                 # Loop over each time point.
                 for k in range(INC):
-                    # Get the angle.
-                    angle = self.get_angle(k, deg=True)
-
-                    # Write.
-                    file_1st.write("%s %s\n" % (angle, self.first_frame_order[k, i, j]))
+                    file_1st.write("%s %s\n" % (self.angles_deg[k], self.first_frame_order[k, i, j]))
 
                 # Footer.
                 file_1st.write("&\n")
@@ -329,11 +318,7 @@ class Frame_order:
 
                 # Loop over each time point.
                 for k in range(INC):
-                    # Get the angle.
-                    angle = self.get_angle(k, deg=True)
-
-                    # Write.
-                    file_2nd.write('%s %s\n' % (angle, self.second_frame_order[k, i, j]))
+                    file_2nd.write('%s %s\n' % (self.angles_deg[k], self.second_frame_order[k, i, j]))
 
                 # Footer.
                 file_2nd.write('&\n')
