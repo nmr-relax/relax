@@ -125,7 +125,7 @@ class Frame_order:
                             self.first_frame_order[i] = free_rotor.compile_1st_matrix_free_rotor(self.first_frame_order[i], self.eigenframe)
                             self.second_frame_order[i] = free_rotor.compile_2nd_matrix_free_rotor(self.second_frame_order[i], Rx2_eigen)
                         elif model == 'iso_cone':
-                            #self.first_frame_order[i] = iso_cone.compile_1st_matrix_iso_cone(self.first_frame_order[i], self.eigenframe, theta_x, theta_z)
+                            self.first_frame_order[i] = iso_cone.compile_1st_matrix_iso_cone(self.first_frame_order[i], self.eigenframe, theta_x, theta_z)
                             self.second_frame_order[i] = iso_cone.compile_2nd_matrix_iso_cone(self.second_frame_order[i], Rx2_eigen, theta_x, theta_z)
                         elif model == 'iso_cone_free_rotor':
                             #self.first_frame_order[i] = iso_cone_free_rotor.compile_1st_matrix_iso_cone_free_rotor(self.first_frame_order[i], self.eigenframe, iso_cone_theta_to_S(theta_x))
