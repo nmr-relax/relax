@@ -8,6 +8,7 @@ from string import lower
 import sys
 
 # relax module imports.
+from lib.errors import RelaxError
 from lib.geometry.angles import wrap_angles
 from lib.geometry.rotations import R_random_hypersphere, R_to_euler_zyz
 
@@ -15,7 +16,7 @@ from lib.geometry.rotations import R_random_hypersphere, R_to_euler_zyz
 # Variables.
 MODEL = 'pseudo-ellipse'
 MODEL_TEXT = 'Pseudo-ellipse frame order model'
-SAMPLE_SIZE = 100
+SAMPLE_SIZE = 1000000
 TAG = 'in_frame'
 
 # Angular restrictions.
@@ -62,8 +63,8 @@ class Frame_order:
         This is when the starting positions are random.
         """
 
-        # The tag.
-        self.tag = '_%s_%s_theta_%s_ens%s.agr' % (MODEL, TAG, lower(VAR), SAMPLE_SIZE)
+        # The file name.
+        file_name = '_%s_%s_theta_%s_ens%s.agr' % (MODEL, TAG, lower(VAR), SAMPLE_SIZE)
 
         # Set the initial storage structures.
         self.init_storage()
@@ -71,6 +72,15 @@ class Frame_order:
         # Init.
         index, type, round = 0, 0, 0
         char = ['/', '-', '\\', '|']
+
+        # Pre-transpose the eigenframe for speed.
+        eig_frame_T = transpose(EIG_FRAME)
+
+        # Alias the bound checking methods.
+        if MODEL == 'pseudo-ellipse':
+            self.inside = self.inside_pseudo_ellipse
+        else:
+            raise RelaxError("Unknown model '%s'." % MODEL)
 
         # Loop over random starting positions.
         while 1:
@@ -85,25 +95,33 @@ class Frame_order:
                 round += 1
                 if type == 4: type = 0
 
-            # Get the random rotation.
+            # Generate a random rotation.
             R_random_hypersphere(self.rot)
 
             # Rotate the frame.
-            frame = dot(self.rot, EIG_FRAME)
+            frame = dot(eig_frame_T, dot(self.rot, EIG_FRAME))
 
-            # The rotation in the eigenframe.
-            rot_eig = dot(transpose(EIG_FRAME), frame)
+            # Decompose the frame into the zyz Euler angles.
+            alpha, beta, gamma = R_to_euler_zyz(frame)
+
+            # Convert to tilt and torsion angles (properly wrapped).
+            theta = beta
+            phi = wrap_angles(gamma, -pi, pi)
+            sigma = wrap_angles(alpha + gamma, -pi, pi)
+
+            # Pre-calculate the R outer product for speed.
+            Rx2 = outer(self.rot, self.rot)
 
             # Loop over the angle incs.
             for i in range(INC):
                 # Inside the cone.
-                if not self.full[i] and self.inside(i, rot_eig):
+                if not self.full[i] and self.inside(i, theta, phi, sigma):
                     # Sum of rotations and cross products.
-                    self.first_frame_order[i] = self.first_frame_order[i] + self.rot
-                    self.second_frame_order[i] = self.second_frame_order[i] + outer(self.rot, self.rot)
+                    self.first_frame_order[i] += self.rot
+                    self.second_frame_order[i] += Rx2
 
                     # Increment the counter.
-                    self.count[i] = self.count[i] + 1
+                    self.count[i] += 1
 
                     # Full.
                     if self.count[i] == SAMPLE_SIZE:
@@ -122,7 +140,10 @@ class Frame_order:
         self.second_frame_order = self.second_frame_order / float(SAMPLE_SIZE)
 
         # Write the data.
-        self.write_data()
+        self.write_data(file_name=file_name)
+
+        # Final printout.
+        sys.stdout.write("Random rotations required: %i\n\n" % index)
 
 
     def get_angle(self, index, deg=False):
@@ -158,23 +179,11 @@ class Frame_order:
         self.count = zeros(INC)
 
 
-    def inside(self, i, frame):
+    def inside_pseudo_ellipse(self, i, theta, phi, sigma):
         """Determine if the frame is inside the limits."""
 
         # The new limits.
         theta_x, theta_y, theta_z = self.limits(i)
-
-        # Decompose the frame into the zyz Euler angles.
-        alpha, beta, gamma = R_to_euler_zyz(frame)
-
-        # Sanity check!
-        if beta > pi or beta < 0:
-            raise NameError, "A beta value of %s is not possible!" % beta
-
-        # Convert to tilt and torsion angles (properly wrapped).
-        theta = beta
-        phi = wrap_angles(gamma, -pi, pi)
-        sigma = wrap_angles(alpha + gamma, -pi, pi)
 
         # Check for a torsion angle violation.
         if sigma < -theta_z or sigma > theta_z:
@@ -207,17 +216,17 @@ class Frame_order:
         elif VAR == 'Z':
             return THETA_X, THETA_Y, theta
 
-        # Simulate the isotropic cone.
-        elif VAR == 'ISO':
-            return theta, theta, pi
 
+    def write_data(self, file_name=None):
+        """Dump the data to files.
 
-    def write_data(self):
-        """Dump the data to files."""
+        @keyword file_name:     The end part of the files to create.  This will be prepended by either 'Sij' or 'Sijkl'.
+        @type file_name:        str
+        """
 
         # Open the files.
-        file_1st = open("Sij" + self.tag, 'w')
-        file_2nd = open("Sijkl" + self.tag, 'w')
+        file_1st = open("Sij" + file_name, 'w')
+        file_2nd = open("Sijkl" + file_name, 'w')
         files = [file_1st, file_2nd]
 
         # The headers.
@@ -228,9 +237,9 @@ class Frame_order:
             # The titles.
             file.write("@with g0\n")
             if i == 0:
-                file.write("@    world 0, 0, 180, 1\n")
+                file.write("@    world 0, -0.2, 180, 1\n")
             else:
-                file.write("@    world 0, -0.5, 180, 1\n")
+                file.write("@    world 0, -0.7, 180, 1\n")
             file.write("@    title \"Simulated frame order matrix elements\"\n")
             if i == 0:
                 file.write("@    subtitle \"%s, 1\\Sst\\N degree matrix, %i simulations\"\n" % (MODEL_TEXT, SAMPLE_SIZE))
@@ -336,6 +345,9 @@ class Frame_order:
         file_1st.write("@autoscale onread none\n")
         file_2nd.write("@autoscale onread none\n")
 
+        # Close the files.
+        file_1st.close()
+        file_2nd.close()
 
 
 # Calculate the frame order.
