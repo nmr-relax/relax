@@ -119,7 +119,7 @@ class Frame_order:
 
                         # Calculate the frame order matrices.
                         if model == 'rotor':
-                            #self.first_frame_order[i] = rotor.compile_1st_matrix_rotor(self.first_frame_order[i], self.eigenframe, theta_z)
+                            self.first_frame_order[i] = rotor.compile_1st_matrix_rotor(self.first_frame_order[i], self.eigenframe, theta_z)
                             self.second_frame_order[i] = rotor.compile_2nd_matrix_rotor(self.second_frame_order[i], Rx2_eigen, theta_z)
                         elif model == 'free_rotor':
                             #self.first_frame_order[i] = free_rotor.compile_1st_matrix_free_rotor(self.first_frame_order[i], self.eigenframe)
