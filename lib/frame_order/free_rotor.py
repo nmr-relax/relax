@@ -26,6 +26,25 @@
 from lib.frame_order.matrix_ops import rotate_daeg
 
 
+def compile_1st_matrix_free_rotor(matrix, R_eigen):
+    """Generate the 1st degree Frame Order matrix for the free rotor model.
+
+    @param matrix:      The Frame Order matrix, 1st degree to be populated.
+    @type matrix:       numpy 3D, rank-2 array
+    @param R_eigen:     The eigenframe rotation matrix.
+    @type R_eigen:      numpy 3D, rank-2 array
+    """
+
+    # Zeros.
+    matrix[:] = 0.0
+
+    # The single value.
+    matrix[2, 2] = 1.0
+
+    # Rotate and return the frame order matrix.
+    return rotate_daeg(matrix, R_eigen)
+
+
 def compile_2nd_matrix_free_rotor(matrix, Rx2_eigen):
     """Generate the rotated 2nd degree Frame Order matrix for the free rotor model.
 
