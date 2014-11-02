@@ -11,6 +11,7 @@ import sys
 from lib.errors import RelaxError
 from lib.geometry.angles import wrap_angles
 from lib.geometry.rotations import R_random_hypersphere, R_to_euler_zyz
+from lib.text.progress import progress_meter
 
 
 # Variables.
@@ -70,8 +71,7 @@ class Frame_order:
         self.init_storage()
 
         # Init.
-        index, type, round = 0, 0, 0
-        char = ['/', '-', '\\', '|']
+        index = 0
 
         # Pre-transpose the eigenframe for speed.
         eig_frame_T = transpose(EIG_FRAME)
@@ -97,16 +97,8 @@ class Frame_order:
 
         # Loop over random starting positions.
         while 1:
-            # Print out.
-            if not index % 200:
-                # Sim number.
-                sys.stdout.write("\b"*100 + "Sim: %-9i %s" % (index, char[type]))
-                sys.stdout.flush()
-
-                # Twirly thing index.
-                type += 1
-                round += 1
-                if type == 4: type = 0
+            # Printout.
+            progress_meter(index, a=1000, b=100000)
 
             # Generate a random rotation.
             R_random_hypersphere(self.rot)
