@@ -34,6 +34,33 @@ except ImportError:
 from lib.frame_order.matrix_ops import pcs_pivot_motion_full_qr_int, pcs_pivot_motion_full_quad_int, rotate_daeg
 
 
+def compile_1st_matrix_iso_cone(matrix, R_eigen, cone_theta, sigma_max):
+    """Generate the 1st degree Frame Order matrix for the rotor model.
+
+    @param matrix:      The Frame Order matrix, 1st degree to be populated.
+    @type matrix:       numpy 3D, rank-2 array
+    @param R_eigen:     The eigenframe rotation matrix.
+    @type R_eigen:      numpy 3D, rank-2 array
+    @param sigma_max:   The maximum torsion angle.
+    @type sigma_max:    float
+    """
+
+    # Zeros.
+    matrix[:] = 0.0
+
+    # Pre-calculate trig values.
+    sinc_sigma_max = sinc(sigma_max/pi)
+    cos_theta = cos(cone_theta)
+
+    # Diagonal values.
+    matrix[0, 0] = sinc_sigma_max * (cos_theta + 3.0)
+    matrix[1, 1] = matrix[0, 0]
+    matrix[2, 2] = 2.0*cos_theta + 2.0
+
+    # Rotate and return the frame order matrix.
+    return 0.25 * rotate_daeg(matrix, R_eigen)
+
+
 def compile_2nd_matrix_iso_cone(matrix, Rx2_eigen, cone_theta, sigma_max):
     """Generate the rotated 2nd degree Frame Order matrix for the isotropic cone.
 
