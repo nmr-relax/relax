@@ -35,12 +35,14 @@ from lib.frame_order.matrix_ops import pcs_pivot_motion_full_qr_int, pcs_pivot_m
 
 
 def compile_1st_matrix_iso_cone(matrix, R_eigen, cone_theta, sigma_max):
-    """Generate the 1st degree Frame Order matrix for the rotor model.
+    """Generate the 1st degree Frame Order matrix for the isotropic cone.
 
     @param matrix:      The Frame Order matrix, 1st degree to be populated.
     @type matrix:       numpy 3D, rank-2 array
     @param R_eigen:     The eigenframe rotation matrix.
     @type R_eigen:      numpy 3D, rank-2 array
+    @param cone_theta:  The cone opening angle.
+    @type cone_theta:   float
     @param sigma_max:   The maximum torsion angle.
     @type sigma_max:    float
     """
