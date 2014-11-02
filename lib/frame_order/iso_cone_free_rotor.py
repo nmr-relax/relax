@@ -30,6 +30,27 @@ from lib.order import order_parameters
 from lib.frame_order.matrix_ops import rotate_daeg
 
 
+def compile_1st_matrix_iso_cone_free_rotor(matrix, R_eigen, cone_theta):
+    """Generate the 1st degree Frame Order matrix for the free rotor isotropic cone.
+
+    @param matrix:      The Frame Order matrix, 1st degree to be populated.
+    @type matrix:       numpy 3D, rank-2 array
+    @param R_eigen:     The eigenframe rotation matrix.
+    @type R_eigen:      numpy 3D, rank-2 array
+    @param cone_theta:  The cone opening angle.
+    @type cone_theta:   float
+    """
+
+    # Zeros.
+    matrix[:] = 0.0
+
+    # Diagonal values.
+    matrix[2, 2] = cos(cone_theta) + 1.0
+
+    # Rotate and return the frame order matrix.
+    return 0.5 * rotate_daeg(matrix, R_eigen)
+
+
 def compile_2nd_matrix_iso_cone_free_rotor(matrix, Rx2_eigen, s1):
     """Generate the rotated 2nd degree Frame Order matrix for the free rotor isotropic cone.
 
