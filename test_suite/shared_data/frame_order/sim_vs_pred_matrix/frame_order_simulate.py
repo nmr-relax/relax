@@ -11,6 +11,7 @@ import sys
 from lib.errors import RelaxError
 from lib.geometry.angles import wrap_angles
 from lib.geometry.rotations import R_random_hypersphere, R_to_euler_zyz
+from lib.linear_algebra.kronecker_product import kron_prod
 from lib.text.progress import progress_meter
 
 
@@ -114,8 +115,8 @@ class Frame_order:
             phi = wrap_angles(gamma, -pi, pi)
             sigma = wrap_angles(alpha + gamma, -pi, pi)
 
-            # Pre-calculate the R outer product for speed.
-            Rx2 = outer(self.rot, self.rot)
+            # Pre-calculate the R Kronecker outer product for speed.
+            Rx2 = kron_prod(self.rot, self.rot)
 
             # Loop over the angle incs.
             for i in range(INC):
