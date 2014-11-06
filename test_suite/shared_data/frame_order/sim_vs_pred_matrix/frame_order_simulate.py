@@ -17,9 +17,11 @@ from lib.text.progress import progress_meter
 
 
 # Variables.
-MODEL = 'rotor'
+#MODEL = 'rotor'
+MODEL = 'free rotor'
 #MODEL = 'pseudo-ellipse'
-MODEL_TEXT = 'Rotor frame order model'
+#MODEL_TEXT = 'Rotor frame order model'
+MODEL_TEXT = 'Free-rotor frame order model'
 #MODEL_TEXT = 'Pseudo-ellipse frame order model'
 SAMPLE_SIZE = 1000000
 #TAG = 'in_frame'
@@ -98,6 +100,9 @@ class Frame_order:
         # Alias the bound checking methods.
         if MODEL == 'rotor':
             self.inside = self.inside_rotor
+            self.rotation = self.rotation_z_axis
+        elif MODEL == 'free rotor':
+            self.inside = self.inside_free_rotor
             self.rotation = self.rotation_z_axis
         elif MODEL == 'pseudo-ellipse':
             self.inside = self.inside_pseudo_ellipse
@@ -184,6 +189,13 @@ class Frame_order:
         theta_max = 1.0 / sqrt(cos(phi)**2 / theta_x**2 + sin(phi)**2 / theta_y**2)
         if theta > theta_max:
             return False
+
+        # Inside.
+        return True
+
+
+    def inside_free_rotor(self, i, theta, phi, sigma):
+        """Determine if the frame is inside the limits, which for the free rotor is always true."""
 
         # Inside.
         return True
