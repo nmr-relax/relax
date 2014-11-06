@@ -4,29 +4,34 @@
 from math import cos, pi, sin, sqrt
 from numpy import array, cross, dot, eye, float64, outer, transpose, zeros
 from numpy.linalg import det, inv, norm
+from random import uniform
 from string import lower
 import sys
 
 # relax module imports.
 from lib.errors import RelaxError
 from lib.geometry.angles import wrap_angles
-from lib.geometry.rotations import R_random_hypersphere, R_to_euler_zyz
+from lib.geometry.rotations import axis_angle_to_R, R_random_hypersphere, R_to_euler_zyz
 from lib.linear_algebra.kronecker_product import kron_prod
 from lib.text.progress import progress_meter
 
 
 # Variables.
-MODEL = 'pseudo-ellipse'
-MODEL_TEXT = 'Pseudo-ellipse frame order model'
+MODEL = 'rotor'
+#MODEL = 'pseudo-ellipse'
+MODEL_TEXT = 'Rotor frame order model'
+#MODEL_TEXT = 'Pseudo-ellipse frame order model'
 SAMPLE_SIZE = 1000000
-TAG = 'in_frame'
+#TAG = 'in_frame'
+TAG = 'out_of_frame'
+#TAG = 'axis2_1_3'
 
 # Angular restrictions.
 THETA_X = pi / 4
 THETA_Y = 3 * pi / 8
 THETA_Z = pi / 6
 INC = 18
-VAR = 'Y'
+VAR = 'Z'
 
 # The frame order eigenframe - I.
 if TAG == 'in_frame':
@@ -75,7 +80,7 @@ class Frame_order:
         index = 0
 
         # Pre-transpose the eigenframe for speed.
-        eig_frame_T = transpose(EIG_FRAME)
+        self.eig_frame_T = transpose(EIG_FRAME)
 
         # Generate the angle data structures.
         self.angles = []
@@ -91,8 +96,12 @@ class Frame_order:
             self.angles_deg.append(self.angles[-1] / (2.0*pi) * 360.0)
 
         # Alias the bound checking methods.
-        if MODEL == 'pseudo-ellipse':
+        if MODEL == 'rotor':
+            self.inside = self.inside_rotor
+            self.rotation = self.rotation_z_axis
+        elif MODEL == 'pseudo-ellipse':
             self.inside = self.inside_pseudo_ellipse
+            self.rotation = self.rotation_hypersphere
         else:
             raise RelaxError("Unknown model '%s'." % MODEL)
 
@@ -101,19 +110,8 @@ class Frame_order:
             # Printout.
             progress_meter(index, a=1000, b=100000)
 
-            # Generate a random rotation.
-            R_random_hypersphere(self.rot)
-
-            # Rotate the frame.
-            frame = dot(eig_frame_T, dot(self.rot, EIG_FRAME))
-
-            # Decompose the frame into the zyz Euler angles.
-            alpha, beta, gamma = R_to_euler_zyz(frame)
-
-            # Convert to tilt and torsion angles (properly wrapped).
-            theta = beta
-            phi = wrap_angles(gamma, -pi, pi)
-            sigma = wrap_angles(alpha + gamma, -pi, pi)
+            # Generate the random rotation.
+            theta, phi, sigma = self.rotation()
 
             # Pre-calculate the R Kronecker outer product for speed.
             Rx2 = kron_prod(self.rot, self.rot)
@@ -168,6 +166,9 @@ class Frame_order:
         self.full = zeros(INC)
         self.count = zeros(INC)
 
+        # Axes.
+        self.z_axis = array([0, 0, 1], float64)
+
 
     def inside_pseudo_ellipse(self, i, theta, phi, sigma):
         """Determine if the frame is inside the limits."""
@@ -188,6 +189,20 @@ class Frame_order:
         return True
 
 
+    def inside_rotor(self, i, theta, phi, sigma):
+        """Determine if the frame is inside the limits."""
+
+        # The new limits.
+        theta_x, theta_y, theta_z = self.limits(i)
+
+        # Check for a torsion angle violation.
+        if sigma < -theta_z or sigma > theta_z:
+            return False
+
+        # Inside.
+        return True
+
+
     def limits(self, i):
         """Determine the angular restrictions for the increment i."""
 
@@ -201,6 +216,47 @@ class Frame_order:
             return THETA_X, theta, THETA_Z
         elif VAR == 'Z':
             return THETA_X, THETA_Y, theta
+
+
+    def rotation_hypersphere(self):
+        """Random rotation using 4D hypersphere point picking and return of torsion-tilt angles."""
+
+        # Generate a random rotation.
+        R_random_hypersphere(self.rot)
+
+        # Rotate the frame.
+        frame = dot(self.eig_frame_T, dot(self.rot, EIG_FRAME))
+
+        # Decompose the frame into the zyz Euler angles.
+        alpha, beta, gamma = R_to_euler_zyz(frame)
+
+        # Convert to tilt and torsion angles (properly wrapped) and return them.
+        theta = beta
+        phi = wrap_angles(gamma, -pi, pi)
+        sigma = wrap_angles(alpha + gamma, -pi, pi)
+        return theta, phi, sigma
+
+
+    def rotation_z_axis(self):
+        """Random rotation around the z-axis and return of torsion-tilt angles"""
+
+        # Random angle between -pi and pi.
+        angle = uniform(-pi, pi)
+
+        # Generate the rotation matrix.
+        axis_angle_to_R(self.z_axis, angle, self.rot)
+
+        # Decompose the rotation into the zyz Euler angles.
+        alpha, beta, gamma = R_to_euler_zyz(self.rot)
+
+        # Rotate the frame.
+        self.rot = dot(EIG_FRAME, dot(self.rot, self.eig_frame_T))
+
+        # Convert to tilt and torsion angles (properly wrapped) and return them.
+        theta = beta
+        phi = wrap_angles(gamma, -pi, pi)
+        sigma = wrap_angles(alpha + gamma, -pi, pi)
+        return theta, phi, sigma
 
 
     def write_data(self, file_name=None):
