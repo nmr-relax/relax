@@ -54,7 +54,7 @@ def compile_1st_matrix_pseudo_ellipse(matrix, R_eigen, theta_x, theta_y, sigma_m
     """
 
     # The surface area normalisation factor.
-    fact = 2.0 * sigma_max * pec(theta_x, theta_y)
+    fact = 2.0 * pec(theta_x, theta_y)
 
     # Invert.
     if fact == 0.0:
@@ -62,10 +62,13 @@ def compile_1st_matrix_pseudo_ellipse(matrix, R_eigen, theta_x, theta_y, sigma_m
     else:
         fact = 1.0 / fact
 
+    # Sinc value.
+    sinc_smax = sinc(sigma_max/pi)
+
     # Numerical integration of phi of each element.
-    matrix[0, 0] = fact * quad(part_int_daeg1_pseudo_ellipse_xx, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[1, 1] = fact * quad(part_int_daeg1_pseudo_ellipse_yy, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
-    matrix[2, 2] = fact * quad(part_int_daeg1_pseudo_ellipse_zz, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    matrix[0, 0] = fact * sinc_smax * (2.0*pi + quad(part_int_daeg1_pseudo_ellipse_xx, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
+    matrix[1, 1] = fact * sinc_smax * (2.0*pi + quad(part_int_daeg1_pseudo_ellipse_yy, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
+    matrix[2, 2] = 0.5 * fact * quad(part_int_daeg1_pseudo_ellipse_zz, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
 
     # Rotate and return the frame order matrix.
     return rotate_daeg(matrix, R_eigen)
@@ -152,7 +155,7 @@ def part_int_daeg1_pseudo_ellipse_xx(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return sin(smax) * (2 * (1 - cos(tmax)) * sin(phi)**2 + cos(phi)**2 * sin(tmax)**2)
+    return cos(phi)**2 * sin(tmax)**2  -  2.0 * sin(phi)**2 * cos(tmax)
 
 
 def part_int_daeg1_pseudo_ellipse_yy(phi, x, y, smax):
@@ -174,7 +177,7 @@ def part_int_daeg1_pseudo_ellipse_yy(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return sin(smax) * (2.0 * cos(phi)**2 * (1.0 - cos(tmax)) + sin(phi)**2 * sin(tmax)**2)
+    return sin(phi)**2 * sin(tmax)**2  -  2.0 * cos(phi)**2 * cos(tmax)
 
 
 def part_int_daeg1_pseudo_ellipse_zz(phi, x, y, smax):
@@ -196,7 +199,7 @@ def part_int_daeg1_pseudo_ellipse_zz(phi, x, y, smax):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta-sigma integral.
-    return smax * sin(tmax)**2
+    return sin(tmax)**2
 
 
 def part_int_daeg2_pseudo_ellipse_00(phi, x, y, smax):
