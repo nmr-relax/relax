@@ -61,22 +61,23 @@ def compile_2nd_matrix_pseudo_ellipse_torsionless(matrix, Rx2_eigen, theta_x, th
 
     # The surface area normalisation factor.
     fact = 1.0 / (6.0 * pec(theta_x, theta_y))
+    fact2 = 2.0 * fact
 
     # Diagonal.
-    matrix[0, 0] = fact * (6.0*pi + quad(part_int_daeg2_pseudo_ellipse_torsionless_00, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[0, 0] = fact2 * (3.0*pi + quad(part_int_daeg2_pseudo_ellipse_torsionless_00, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
     matrix[1, 1] = fact * (2.0*pi + quad(part_int_daeg2_pseudo_ellipse_torsionless_11, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
-    matrix[2, 2] = fact * (5.0*pi + quad(part_int_daeg2_pseudo_ellipse_torsionless_22, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[2, 2] = fact * (5.0*pi - quad(part_int_daeg2_pseudo_ellipse_torsionless_22, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
     matrix[3, 3] = matrix[1, 1]
-    matrix[4, 4] = fact * (6.0*pi + quad(part_int_daeg2_pseudo_ellipse_torsionless_44, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
-    matrix[5, 5] = fact * (5.0*pi + quad(part_int_daeg2_pseudo_ellipse_torsionless_55, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[4, 4] = fact2 * (3.0*pi + quad(part_int_daeg2_pseudo_ellipse_torsionless_44, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[5, 5] = fact * (5.0*pi - quad(part_int_daeg2_pseudo_ellipse_torsionless_55, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
     matrix[6, 6] = matrix[2, 2]
     matrix[7, 7] = matrix[5, 5]
-    matrix[8, 8] = fact * quad(part_int_daeg2_pseudo_ellipse_torsionless_88, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
+    matrix[8, 8] = fact2 * (2.0*pi - quad(part_int_daeg2_pseudo_ellipse_torsionless_88, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
 
     # Off diagonal set 1.
-    matrix[0, 4] = matrix[4, 0] = fact * (2.0*pi + quad(part_int_daeg2_pseudo_ellipse_torsionless_04, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
-    matrix[0, 8] = matrix[8, 0] = fact * (4.0*pi + quad(part_int_daeg2_pseudo_ellipse_torsionless_08, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
-    matrix[4, 8] = matrix[8, 4] = fact * (4.0*pi + quad(part_int_daeg2_pseudo_ellipse_torsionless_48, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[0, 4] = matrix[4, 0] = fact2 * (pi + quad(part_int_daeg2_pseudo_ellipse_torsionless_04, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[0, 8] = matrix[8, 0] = fact2 * (2.0*pi + quad(part_int_daeg2_pseudo_ellipse_torsionless_08, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[4, 8] = matrix[8, 4] = fact2 * (2.0*pi + quad(part_int_daeg2_pseudo_ellipse_torsionless_48, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
 
     # Off diagonal set 2.
     matrix[1, 3] = matrix[3, 1] = matrix[0, 4]
@@ -104,7 +105,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_00(phi, x, y):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta integral.
-    return (2*cos(phi)**4*cos(tmax) + 6*cos(phi)**2*sin(phi)**2)*sin(tmax)**2 - (6*sin(phi)**4 + 2*cos(phi)**4)*cos(tmax)
+    return (cos(phi)**4*cos(tmax) + 3.0*cos(phi)**2.0*sin(phi)**2)*sin(tmax)**2 - (3.0*sin(phi)**4 + cos(phi)**4)*cos(tmax)
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_04(phi, x, y):
@@ -124,7 +125,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_04(phi, x, y):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta integral.
-    return (2*cos(phi)**2*sin(phi)**2*cos(tmax) - 6*cos(phi)**2*sin(phi)**2)*sin(tmax)**2 - 8*cos(phi)**2*sin(phi)**2*cos(tmax)
+    return (cos(phi)**2*sin(phi)**2*cos(tmax) - 3.0*cos(phi)**2*sin(phi)**2)*sin(tmax)**2 - 4.0*cos(phi)**2*sin(phi)**2*cos(tmax)
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_08(phi, x, y):
@@ -144,7 +145,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_08(phi, x, y):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta integral.
-    return 2*cos(phi)**2*cos(tmax)**3 - 6*cos(phi)**2*cos(tmax)
+    return cos(phi)**2*cos(tmax)**3 - 3.0*cos(phi)**2*cos(tmax)
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_11(phi, x, y):
@@ -164,7 +165,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_11(phi, x, y):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta integral.
-    return (2*cos(phi)**2*sin(phi)**2*cos(tmax) + 3*sin(phi)**4 + 3*cos(phi)**4)*sin(tmax)**2 - 8*cos(phi)**2*sin(phi)**2*cos(tmax)
+    return (2.0*cos(phi)**2*sin(phi)**2*cos(tmax) + 3.0*sin(phi)**4 + 3.0*cos(phi)**4)*sin(tmax)**2 - 8.0*cos(phi)**2*sin(phi)**2*cos(tmax)
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_22(phi, x, y):
@@ -184,7 +185,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_22(phi, x, y):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta integral.
-    return (2*sin(phi)**2 - 2)*cos(tmax)**3 - 3*sin(phi)**2*cos(tmax)**2
+    return 2.0*cos(phi)**2*cos(tmax)**3 + 3.0*sin(phi)**2*cos(tmax)**2
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_44(phi, x, y):
@@ -204,7 +205,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_44(phi, x, y):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta integral.
-    return (2*sin(phi)**4*cos(tmax) + 6*cos(phi)**2*sin(phi)**2)*sin(tmax)**2 - (2*sin(phi)**4 + 6*cos(phi)**4)*cos(tmax)
+    return (sin(phi)**4*cos(tmax) + 3.0*cos(phi)**2*sin(phi)**2)*sin(tmax)**2 - (sin(phi)**4 + 3.0*cos(phi)**4)*cos(tmax)
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_48(phi, x, y):
@@ -224,7 +225,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_48(phi, x, y):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta integral.
-    return 2*sin(phi)**2*cos(tmax)**3 - 6*sin(phi)**2*cos(tmax)
+    return sin(phi)**2*cos(tmax)**3 - 3.0*sin(phi)**2*cos(tmax)
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_55(phi, x, y):
@@ -244,7 +245,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_55(phi, x, y):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta integral.
-    return (2*cos(phi)**2 - 2)*cos(tmax)**3 - 3*cos(phi)**2*cos(tmax)**2
+    return 2.0*sin(phi)**2*cos(tmax)**3 + 3.0*cos(phi)**2*cos(tmax)**2
 
 
 def part_int_daeg2_pseudo_ellipse_torsionless_88(phi, x, y):
@@ -264,7 +265,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_88(phi, x, y):
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
     # The theta integral.
-    return 2 - 2*cos(tmax)**3
+    return cos(tmax)**3
 
 
 def pcs_numeric_qr_int_pseudo_ellipse_torsionless(points=None, max_points=None, theta_x=None, theta_y=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
