@@ -184,22 +184,6 @@ class Frame_order:
         self.z_axis = array([0, 0, 1], float64)
 
 
-    def inside_pseudo_ellipse(self, i=None, theta=None, phi=None, sigma=None, max_theta_x=None, max_theta_y=None, max_theta_z=None):
-        """Determine if the frame is inside the limits."""
-
-        # Check for a torsion angle violation.
-        if sigma < -max_theta_z or sigma > max_theta_z:
-            return False
-
-        # Check for a tilt angle violation.
-        max_theta = 1.0 / sqrt(cos(phi)**2 / max_theta_x**2 + sin(phi)**2 / max_theta_y**2)
-        if theta > max_theta:
-            return False
-
-        # Inside.
-        return True
-
-
     def inside_free_rotor(self, i=None, theta=None, phi=None, sigma=None, max_theta_x=None, max_theta_y=None, max_theta_z=None):
         """Determine if the frame is inside the limits, which for the free rotor is always true."""
 
@@ -216,6 +200,22 @@ class Frame_order:
 
         # Check for a tilt angle violation.
         if theta > max_theta_x:
+            return False
+
+        # Inside.
+        return True
+
+
+    def inside_pseudo_ellipse(self, i=None, theta=None, phi=None, sigma=None, max_theta_x=None, max_theta_y=None, max_theta_z=None):
+        """Determine if the frame is inside the limits."""
+
+        # Check for a torsion angle violation.
+        if sigma < -max_theta_z or sigma > max_theta_z:
+            return False
+
+        # Check for a tilt angle violation.
+        max_theta = 1.0 / sqrt(cos(phi)**2 / max_theta_x**2 + sin(phi)**2 / max_theta_y**2)
+        if theta > max_theta:
             return False
 
         # Inside.
