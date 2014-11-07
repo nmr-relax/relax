@@ -35,6 +35,35 @@ from lib.frame_order.matrix_ops import rotate_daeg
 from lib.frame_order.pseudo_ellipse import tmax_pseudo_ellipse
 
 
+def compile_1st_matrix_pseudo_ellipse_free_rotor(matrix, R_eigen, theta_x, theta_y):
+    """Generate the 1st degree Frame Order matrix for the free rotor pseudo-ellipse.
+
+    @param matrix:      The Frame Order matrix, 1st degree to be populated.
+    @type matrix:       numpy 3D, rank-2 array
+    @param R_eigen:     The eigenframe rotation matrix.
+    @type R_eigen:      numpy 3D, rank-2 array
+    @param theta_x:     The cone opening angle along x.
+    @type theta_x:      float
+    @param theta_y:     The cone opening angle along y.
+    @type theta_y:      float
+    """
+
+    # The surface area normalisation factor.
+    fact = 2.0 * pec(theta_x, theta_y)
+
+    # Invert.
+    if fact == 0.0:
+        fact = 1e100
+    else:
+        fact = 1.0 / fact
+
+    # Numerical integration of phi of each element.
+    matrix[2, 2] = fact * quad(part_int_daeg1_pseudo_ellipse_free_rotor_22, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
+
+    # Rotate and return the frame order matrix.
+    return rotate_daeg(matrix, R_eigen)
+
+
 def compile_2nd_matrix_pseudo_ellipse_free_rotor(matrix, Rx2_eigen, theta_x, theta_y):
     """Generate the 2nd degree Frame Order matrix for the free rotor pseudo-ellipse.
 
@@ -70,6 +99,26 @@ def compile_2nd_matrix_pseudo_ellipse_free_rotor(matrix, Rx2_eigen, theta_x, the
 
     # Rotate and return the frame order matrix.
     return rotate_daeg(matrix, Rx2_eigen)
+
+
+def part_int_daeg1_pseudo_ellipse_free_rotor_22(phi, x, y):
+    """The theta-sigma partial integral of the 1st degree Frame Order matrix element zz for the free rotor pseudo-ellipse.
+
+    @param phi:     The azimuthal tilt-torsion angle.
+    @type phi:      float
+    @param x:       The cone opening angle along x.
+    @type x:        float
+    @param y:       The cone opening angle along y.
+    @type y:        float
+    @return:        The theta-sigma partial integral.
+    @rtype:         float
+    """
+
+    # Theta max.
+    tmax = tmax_pseudo_ellipse(phi, x, y)
+
+    # The theta-sigma integral.
+    return sin(tmax)**2
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_00(phi, x, y):
