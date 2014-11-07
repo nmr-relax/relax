@@ -254,7 +254,7 @@ uf.title = "Turn the high precision quadratic integration on or off."
 uf.title_short = "Quadratic integration."
 uf.add_keyarg(
     name = "flag",
-    default = False,
+    default = True,
     py_type = "bool",
     desc_short = "flag",
     desc = "The flag with if True  will perform high precision numerical integration via the scipy.integrate quad(), dblquad() and tplquad() integration methods rather than the rough quasi-random numerical integration."
