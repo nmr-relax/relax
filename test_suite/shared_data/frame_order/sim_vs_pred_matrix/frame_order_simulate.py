@@ -18,10 +18,12 @@ from lib.text.progress import progress_meter
 
 # Variables.
 #MODEL = 'rotor'
-MODEL = 'free rotor'
+#MODEL = 'free_rotor'
+MODEL = 'iso_cone'
 #MODEL = 'pseudo-ellipse'
 #MODEL_TEXT = 'Rotor frame order model'
-MODEL_TEXT = 'Free-rotor frame order model'
+#MODEL_TEXT = 'Free-rotor frame order model'
+MODEL_TEXT = 'Isotropic cone frame order model'
 #MODEL_TEXT = 'Pseudo-ellipse frame order model'
 SAMPLE_SIZE = 1000000
 #TAG = 'in_frame'
@@ -33,7 +35,7 @@ THETA_X = pi / 4
 THETA_Y = 3 * pi / 8
 THETA_Z = pi / 6
 INC = 18
-VAR = 'Z'
+VAR = 'X'
 
 # The frame order eigenframe - I.
 if TAG == 'in_frame':
@@ -101,9 +103,12 @@ class Frame_order:
         if MODEL == 'rotor':
             self.inside = self.inside_rotor
             self.rotation = self.rotation_z_axis
-        elif MODEL == 'free rotor':
+        elif MODEL == 'free_rotor':
             self.inside = self.inside_free_rotor
             self.rotation = self.rotation_z_axis
+        elif MODEL == 'iso_cone':
+            self.inside = self.inside_iso_cone
+            self.rotation = self.rotation_hypersphere
         elif MODEL == 'pseudo-ellipse':
             self.inside = self.inside_pseudo_ellipse
             self.rotation = self.rotation_hypersphere
@@ -196,6 +201,24 @@ class Frame_order:
 
     def inside_free_rotor(self, i, theta, phi, sigma):
         """Determine if the frame is inside the limits, which for the free rotor is always true."""
+
+        # Inside.
+        return True
+
+
+    def inside_iso_cone(self, i, theta, phi, sigma):
+        """Determine if the frame is inside the limits."""
+
+        # The new limits.
+        theta_x, theta_y, theta_z = self.limits(i)
+
+        # Check for a torsion angle violation.
+        if sigma < -theta_z or sigma > theta_z:
+            return False
+
+        # Check for a tilt angle violation.
+        if theta > theta_x:
+            return False
 
         # Inside.
         return True
