@@ -1024,7 +1024,7 @@ class Frame_order_analysis:
             # The numerical optimisation settings.
             quad_int = opt.get_grid_quad_int(i)
             if quad_int:
-                self.interpreter.frame_order.quad_int()
+                self.interpreter.frame_order.quad_int(True)
                 intermediate_dir += '_quad_int'
             else:
                 sobol_num = opt.get_grid_sobol_info(i)
@@ -1050,7 +1050,7 @@ class Frame_order_analysis:
             # The numerical optimisation settings.
             quad_int = opt.get_min_quad_int(i)
             if quad_int:
-                self.interpreter.frame_order.quad_int()
+                self.interpreter.frame_order.quad_int(True)
                 intermediate_dir += '_quad_int'
             else:
                 sobol_num = opt.get_min_sobol_info(i)
