@@ -128,8 +128,12 @@ class Frame_order:
 
             # Loop over the angle incs.
             for i in range(INC):
+                # The new limits.
+                max_theta_x, max_theta_y, max_theta_z = self.limits(i)
+
                 # Inside the cone.
-                if not self.full[i] and self.inside(i, theta, phi, sigma):
+                if not self.full[i] and self.inside(i=i, theta=theta, phi=phi, sigma=sigma, max_theta_x=max_theta_x, max_theta_y=max_theta_y, max_theta_z=max_theta_z):
+
                     # Sum of rotations and cross products.
                     self.first_frame_order[i] += self.rot
                     self.second_frame_order[i] += Rx2
@@ -180,58 +184,49 @@ class Frame_order:
         self.z_axis = array([0, 0, 1], float64)
 
 
-    def inside_pseudo_ellipse(self, i, theta, phi, sigma):
+    def inside_pseudo_ellipse(self, i=None, theta=None, phi=None, sigma=None, max_theta_x=None, max_theta_y=None, max_theta_z=None):
         """Determine if the frame is inside the limits."""
 
-        # The new limits.
-        theta_x, theta_y, theta_z = self.limits(i)
-
         # Check for a torsion angle violation.
-        if sigma < -theta_z or sigma > theta_z:
+        if sigma < -max_theta_z or sigma > max_theta_z:
             return False
 
         # Check for a tilt angle violation.
-        theta_max = 1.0 / sqrt(cos(phi)**2 / theta_x**2 + sin(phi)**2 / theta_y**2)
-        if theta > theta_max:
+        max_theta = 1.0 / sqrt(cos(phi)**2 / max_theta_x**2 + sin(phi)**2 / max_theta_y**2)
+        if theta > max_theta:
             return False
 
         # Inside.
         return True
 
 
-    def inside_free_rotor(self, i, theta, phi, sigma):
+    def inside_free_rotor(self, i=None, theta=None, phi=None, sigma=None, max_theta_x=None, max_theta_y=None, max_theta_z=None):
         """Determine if the frame is inside the limits, which for the free rotor is always true."""
 
         # Inside.
         return True
 
 
-    def inside_iso_cone(self, i, theta, phi, sigma):
+    def inside_iso_cone(self, i=None, theta=None, phi=None, sigma=None, max_theta_x=None, max_theta_y=None, max_theta_z=None):
         """Determine if the frame is inside the limits."""
 
-        # The new limits.
-        theta_x, theta_y, theta_z = self.limits(i)
-
         # Check for a torsion angle violation.
-        if sigma < -theta_z or sigma > theta_z:
+        if sigma < -max_theta_z or sigma > max_theta_z:
             return False
 
         # Check for a tilt angle violation.
-        if theta > theta_x:
+        if theta > max_theta_x:
             return False
 
         # Inside.
         return True
 
 
-    def inside_rotor(self, i, theta, phi, sigma):
+    def inside_rotor(self, i=None, theta=None, phi=None, sigma=None, max_theta_x=None, max_theta_y=None, max_theta_z=None):
         """Determine if the frame is inside the limits."""
 
-        # The new limits.
-        theta_x, theta_y, theta_z = self.limits(i)
-
         # Check for a torsion angle violation.
-        if sigma < -theta_z or sigma > theta_z:
+        if sigma < -max_theta_z or sigma > max_theta_z:
             return False
 
         # Inside.
