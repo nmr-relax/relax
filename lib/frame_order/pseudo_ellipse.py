@@ -66,9 +66,9 @@ def compile_1st_matrix_pseudo_ellipse(matrix, R_eigen, theta_x, theta_y, sigma_m
     sinc_smax = sinc(sigma_max/pi)
 
     # Numerical integration of phi of each element.
-    matrix[0, 0] = fact * sinc_smax * (2.0*pi + quad(part_int_daeg1_pseudo_ellipse_xx, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
-    matrix[1, 1] = fact * sinc_smax * (2.0*pi + quad(part_int_daeg1_pseudo_ellipse_yy, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0])
-    matrix[2, 2] = 0.5 * fact * quad(part_int_daeg1_pseudo_ellipse_zz, -pi, pi, args=(theta_x, theta_y, sigma_max), full_output=1)[0]
+    matrix[0, 0] = fact * sinc_smax * (2.0*pi + quad(part_int_daeg1_pseudo_ellipse_00, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[1, 1] = fact * sinc_smax * (2.0*pi + quad(part_int_daeg1_pseudo_ellipse_11, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[2, 2] = 0.5 * fact * quad(part_int_daeg1_pseudo_ellipse_22, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
 
     # Rotate and return the frame order matrix.
     return rotate_daeg(matrix, R_eigen)
@@ -140,7 +140,7 @@ def compile_2nd_matrix_pseudo_ellipse(matrix, Rx2_eigen, theta_x, theta_y, sigma
     return rotate_daeg(matrix, Rx2_eigen)
 
 
-def part_int_daeg1_pseudo_ellipse_xx(phi, x, y, smax):
+def part_int_daeg1_pseudo_ellipse_00(phi, x, y):
     """The theta-sigma partial integral of the 1st degree Frame Order matrix element xx for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
@@ -149,8 +149,6 @@ def part_int_daeg1_pseudo_ellipse_xx(phi, x, y, smax):
     @type x:        float
     @param y:       The cone opening angle along y.
     @type y:        float
-    @param smax:    The maximum torsion angle.
-    @type smax:     float
     @return:        The theta-sigma partial integral.
     @rtype:         float
     """
@@ -162,7 +160,7 @@ def part_int_daeg1_pseudo_ellipse_xx(phi, x, y, smax):
     return cos(phi)**2 * sin(tmax)**2  -  2.0 * sin(phi)**2 * cos(tmax)
 
 
-def part_int_daeg1_pseudo_ellipse_yy(phi, x, y, smax):
+def part_int_daeg1_pseudo_ellipse_11(phi, x, y):
     """The theta-sigma partial integral of the 1st degree Frame Order matrix element yy for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
@@ -171,8 +169,6 @@ def part_int_daeg1_pseudo_ellipse_yy(phi, x, y, smax):
     @type x:        float
     @param y:       The cone opening angle along y.
     @type y:        float
-    @param smax:    The maximum torsion angle.
-    @type smax:     float
     @return:        The theta-sigma partial integral.
     @rtype:         float
     """
@@ -184,7 +180,7 @@ def part_int_daeg1_pseudo_ellipse_yy(phi, x, y, smax):
     return sin(phi)**2 * sin(tmax)**2  -  2.0 * cos(phi)**2 * cos(tmax)
 
 
-def part_int_daeg1_pseudo_ellipse_zz(phi, x, y, smax):
+def part_int_daeg1_pseudo_ellipse_22(phi, x, y):
     """The theta-sigma partial integral of the 1st degree Frame Order matrix element zz for the pseudo-ellipse.
 
     @param phi:     The azimuthal tilt-torsion angle.
@@ -193,8 +189,6 @@ def part_int_daeg1_pseudo_ellipse_zz(phi, x, y, smax):
     @type x:        float
     @param y:       The cone opening angle along y.
     @type y:        float
-    @param smax:    The maximum torsion angle.
-    @type smax:     float
     @return:        The theta-sigma partial integral.
     @rtype:         float
     """
