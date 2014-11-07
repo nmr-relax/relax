@@ -1650,7 +1650,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 212124.83278674766)
+        self.assertAlmostEqual(cdp.chi2, 212124.83317383687)
 
 
     def test_rigid_data_to_iso_cone_free_rotor_model(self):
@@ -1663,7 +1663,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 22295.503345237757)
+        self.assertAlmostEqual(cdp.chi2, 22295.500553417492)
 
 
     def test_rigid_data_to_iso_cone_model(self):
@@ -1741,7 +1741,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 0.011378666767745968)
+        self.assertAlmostEqual(cdp.chi2, 0.011377491600681364)
 
 
     def test_sobol_setup(self):
