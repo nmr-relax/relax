@@ -342,7 +342,7 @@ def part_int_daeg2_pseudo_ellipse_13(phi, x, y, smax):
     cos_sin_phi2 = cos(phi)**2*sin(phi)**2
 
     # The theta-sigma integral.
-    return sinc_2smax * (sin_tmax2 * (4*cos_sin_phi2*cos_tmax - 12*cos_sin_phi2 + 3) - 16*cos_sin_phi2*cos_tmax) - 3.0*sin_tmax2
+    return sinc_2smax * (sin_tmax2 * (4.0*cos_sin_phi2*cos_tmax - 12.0*cos_sin_phi2 + 3) - 16.0*cos_sin_phi2*cos_tmax) - 3.0*sin_tmax2
 
 
 def part_int_daeg2_pseudo_ellipse_22(phi, x, y, smax):
