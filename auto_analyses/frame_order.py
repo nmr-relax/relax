@@ -137,6 +137,8 @@ def count_sobol_points(file_name='sobol_point_count', dir=None, force=True):
 
         # Create a data pipe.
         pipe_name = 'temp %s' % models[i]
+        if pipes.has_pipe(pipe_name):
+            pipes.delete(pipe_name)
         pipes.create(pipe_name, 'frame order')
 
         # Load the data.
@@ -282,6 +284,8 @@ def summarise(file_name='summary', dir=None, force=True):
 
         # Create a data pipe.
         pipe_name = 'temp %s' % models[i]
+        if pipes.has_pipe(pipe_name):
+            pipes.delete(pipe_name)
         pipes.create(pipe_name, 'frame order')
 
         # Load the data.
