@@ -311,7 +311,7 @@ def part_int_daeg2_pseudo_ellipse_11(phi, x, y, smax):
     sin_phi2 = sin(phi)**2
 
     # The integral.
-    a = sinc(2.0*smax/pi) * ((4.0*cos_phi2*((1.0 - cos_phi2)*cos_tmax + 3.0*(cos_phi2-1)) + 3.0)*sin(tmax)**2 - 16.0*cos_phi2*sin_phi2*cos_tmax) + 3.0*sin(tmax)**2
+    a = sinc(2.0*smax/pi) * ((4.0*cos_phi2*sin_phi2*(cos_tmax - 3.0) + 3.0)*sin(tmax)**2 - 16.0*cos_phi2*sin_phi2*cos_tmax) + 3.0*sin(tmax)**2
 
     # The theta-sigma integral.
     return a
@@ -366,9 +366,10 @@ def part_int_daeg2_pseudo_ellipse_22(phi, x, y, smax):
     # Repetitive trig.
     cos_tmax = cos(tmax)
     cos_phi2 = cos(phi)**2
+    sin_phi2 = sin(phi)**2
 
     # Components.
-    a = 2.0*cos_phi2*cos_tmax**3 + 3.0*(1.0 - cos_phi2)*cos_tmax**2
+    a = 2.0*cos_phi2*cos_tmax**3 + 3.0*sin_phi2*cos_tmax**2
 
     # Return the theta-sigma integral.
     return a
