@@ -137,7 +137,7 @@ class Frame_order:
                             self.first_frame_order[i] = pseudo_ellipse.compile_1st_matrix_pseudo_ellipse(self.first_frame_order[i], self.eigenframe, theta_x, theta_y, theta_z)
                             self.second_frame_order[i] = pseudo_ellipse.compile_2nd_matrix_pseudo_ellipse(self.second_frame_order[i], Rx2_eigen, theta_x, theta_y, theta_z)
                         elif model == 'pseudo-ellipse_free_rotor':
-                            #self.first_frame_order[i] = pseudo_ellipse_free_rotor.compile_1st_matrix_pseudo_ellipse_free_rotor(self.first_frame_order[i], self.eigenframe, theta_x, theta_y)
+                            self.first_frame_order[i] = pseudo_ellipse_free_rotor.compile_1st_matrix_pseudo_ellipse_free_rotor(self.first_frame_order[i], self.eigenframe, theta_x, theta_y)
                             self.second_frame_order[i] = pseudo_ellipse_free_rotor.compile_2nd_matrix_pseudo_ellipse_free_rotor(self.second_frame_order[i], Rx2_eigen, theta_x, theta_y)
                         elif model == 'pseudo-ellipse_torsionless':
                             self.first_frame_order[i] = pseudo_ellipse_torsionless.compile_1st_matrix_pseudo_ellipse_torsionless(self.first_frame_order[i], self.eigenframe, theta_x, theta_y)
