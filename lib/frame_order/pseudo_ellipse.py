@@ -68,7 +68,7 @@ def compile_1st_matrix_pseudo_ellipse(matrix, R_eigen, theta_x, theta_y, sigma_m
     # Numerical integration of phi of each element.
     matrix[0, 0] = fact * sinc_smax * (2.0*pi + quad(part_int_daeg1_pseudo_ellipse_00, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
     matrix[1, 1] = fact * sinc_smax * (2.0*pi + quad(part_int_daeg1_pseudo_ellipse_11, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
-    matrix[2, 2] = 0.5 * fact * quad(part_int_daeg1_pseudo_ellipse_22, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
+    matrix[2, 2] = fact * quad(part_int_daeg1_pseudo_ellipse_22, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
 
     # Rotate and return the frame order matrix.
     return rotate_daeg(matrix, R_eigen)
