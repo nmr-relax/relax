@@ -25,7 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import acos, cos, pi, sin, sqrt
-from numpy import add, array, dot, float64, ones, outer, subtract, swapaxes, transpose, uint8, zeros
+from numpy import add, array, dot, float32, float64, ones, outer, subtract, transpose, uint8, zeros
 
 # relax module imports.
 from extern.sobol.sobol_lib import i4_sobol_generate
@@ -281,8 +281,8 @@ class Frame_order:
             self.paramag_unit_vect = zeros(atomic_pos.shape, float64)
             self.paramag_dist = zeros(self.num_spins, float64)
             self.pcs_const = zeros((self.num_align, self.num_spins), float64)
-            self.r_pivot_atom = zeros((self.num_spins, 3), float64)
-            self.r_pivot_atom_rev = zeros((self.num_spins, 3), float64)
+            self.r_pivot_atom = zeros((self.num_spins, 3), float32)
+            self.r_pivot_atom_rev = zeros((self.num_spins, 3), float32)
             self.r_ln_pivot = self.pivot - self.paramag_centre
 
             # Set up the paramagnetic constant (without the interatomic distance and in Angstrom units).
@@ -2030,7 +2030,7 @@ class Frame_order:
         # Initialise.
         sobol_data.model = self.model
         sobol_data.total_num = total_num
-        sobol_data.sobol_angles = zeros((m, total_num), float64)
+        sobol_data.sobol_angles = zeros((m, total_num), float32)
         sobol_data.Ri_prime = zeros((total_num, 3, 3), float64)
         sobol_data.Ri2_prime = zeros((total_num, 3, 3), float64)
 
