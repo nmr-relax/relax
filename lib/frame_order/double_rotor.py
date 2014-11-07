@@ -35,6 +35,32 @@ from lib.compat import norm
 from lib.frame_order.matrix_ops import rotate_daeg
 
 
+def compile_1st_matrix_double_rotor(matrix, R_eigen, smax1, smax2):
+    """Generate the 1st degree Frame Order matrix for the double rotor model.
+
+    @param matrix:      The Frame Order matrix, 1st degree to be populated.
+    @type matrix:       numpy 3D, rank-2 array
+    @param R_eigen:     The eigenframe rotation matrix.
+    @type R_eigen:      numpy 3D, rank-2 array
+    @param smax1:       The maximum torsion angle for the first rotor.
+    @type smax1:        float
+    @param smax2:       The maximum torsion angle for the second rotor.
+    @type smax2:        float
+    """
+
+    # Repetitive trig calculations.
+    sinc_smax1 = sinc(smax1/pi)
+    sinc_smax2 = sinc(smax2/pi)
+
+    # Numerical integration of phi of each element.
+    matrix[0, 0] = sinc_smax1
+    matrix[1, 1] = sinc_smax2
+    matrix[2, 2] = sinc_smax1 * sinc_smax2
+
+    # Rotate and return the frame order matrix.
+    return rotate_daeg(matrix, R_eigen)
+
+
 def compile_2nd_matrix_double_rotor(matrix, Rx2_eigen, smax1, smax2):
     """Generate the rotated 2nd degree Frame Order matrix for the double rotor model.
 
