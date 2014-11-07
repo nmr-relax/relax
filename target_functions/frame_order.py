@@ -2031,8 +2031,8 @@ class Frame_order:
         sobol_data.model = self.model
         sobol_data.total_num = total_num
         sobol_data.sobol_angles = zeros((m, total_num), float32)
-        sobol_data.Ri_prime = zeros((total_num, 3, 3), float64)
-        sobol_data.Ri2_prime = zeros((total_num, 3, 3), float64)
+        sobol_data.Ri_prime = zeros((total_num, 3, 3), float32)
+        sobol_data.Ri2_prime = zeros((total_num, 3, 3), float32)
 
         # The Sobol' points.
         points = i4_sobol_generate(m, total_num, 1000)
