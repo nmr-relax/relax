@@ -78,20 +78,22 @@ def compile_2nd_matrix_pseudo_ellipse_free_rotor(matrix, Rx2_eigen, theta_x, the
     """
 
     # The surface area normalisation factor.
-    fact = 1.0 / (6.0 * pec(theta_x, theta_y))
+    fact3 = 1.0 / (3.0 * pec(theta_x, theta_y))
+    fact4 = 1.0 / (4.0 * pec(theta_x, theta_y))
+    fact6 = 1.0 / (6.0 * pec(theta_x, theta_y))
 
     # Diagonal.
-    matrix[0, 0] = fact * (4.0*pi - quad(part_int_daeg2_pseudo_ellipse_free_rotor_00, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
-    matrix[1, 1] = matrix[3, 3] = fact * 3.0/2.0 * quad(part_int_daeg2_pseudo_ellipse_free_rotor_11, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
-    matrix[4, 4] = fact * (4.0*pi - quad(part_int_daeg2_pseudo_ellipse_free_rotor_44, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
-    matrix[8, 8] = fact * (4.0*pi - 2.0*quad(part_int_daeg2_pseudo_ellipse_free_rotor_88, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[0, 0] = fact6 * (4.0*pi - quad(part_int_daeg2_pseudo_ellipse_free_rotor_00, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[1, 1] = matrix[3, 3] = fact4 * quad(part_int_daeg2_pseudo_ellipse_free_rotor_11, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
+    matrix[4, 4] = fact6 * (4.0*pi - quad(part_int_daeg2_pseudo_ellipse_free_rotor_44, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[8, 8] = fact3 * (2.0*pi - quad(part_int_daeg2_pseudo_ellipse_free_rotor_88, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
 
     # Off diagonal set 1.
     matrix[0, 4] = matrix[0, 0]
     matrix[4, 0] = matrix[4, 4]
-    matrix[0, 8] = fact * (4.0*pi + quad(part_int_daeg2_pseudo_ellipse_free_rotor_08, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
-    matrix[8, 0] = fact * (4.0*pi + quad(part_int_daeg2_pseudo_ellipse_free_rotor_80, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
-    matrix[4, 8] = fact * (4.0*pi + quad(part_int_daeg2_pseudo_ellipse_free_rotor_48, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[0, 8] = fact3 * (2.0*pi + quad(part_int_daeg2_pseudo_ellipse_free_rotor_08, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[8, 0] = fact6 * (4.0*pi + quad(part_int_daeg2_pseudo_ellipse_free_rotor_80, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[4, 8] = fact3 * (2.0*pi + quad(part_int_daeg2_pseudo_ellipse_free_rotor_48, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
     matrix[8, 4] = matrix[8, 0]
 
     # Off diagonal set 2.
@@ -137,8 +139,11 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_00(phi, x, y):
     # Theta max.
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
+    # Repetitive trig.
+    cos_tmax = cos(tmax)
+
     # The theta-sigma integral.
-    return cos(phi)**2*cos(tmax)**3 + 3.0*sin(phi)**2*cos(tmax)
+    return cos(phi)**2 * cos_tmax**3  +  3.0*sin(phi)**2 * cos_tmax
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_08(phi, x, y):
@@ -157,8 +162,11 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_08(phi, x, y):
     # Theta max.
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
+    # Repetitive trig.
+    cos_tmax = cos(tmax)
+
     # The theta-sigma integral.
-    return cos(phi)**2*(2.0*cos(tmax)**3 - 6.0*cos(tmax))
+    return cos(phi)**2 * (cos_tmax**3 - 3.0*cos_tmax)
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_11(phi, x, y):
@@ -197,8 +205,11 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_44(phi, x, y):
     # Theta max.
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
+    # Repetitive trig.
+    cos_tmax = cos(tmax)
+
     # The theta-sigma integral.
-    return sin(phi)**2*cos(tmax)**3 + 3*cos(phi)**2*cos(tmax)
+    return sin(phi)**2 * cos_tmax**3  +  3.0*cos(phi)**2 * cos_tmax
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_48(phi, x, y):
@@ -217,8 +228,11 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_48(phi, x, y):
     # Theta max.
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
+    # Repetitive trig.
+    cos_tmax = cos(tmax)
+
     # The theta-sigma integral.
-    return sin(phi)**2*(2.0*cos(tmax)**3 - 6.0*cos(tmax))
+    return sin(phi)**2 * (cos_tmax**3 - 3.0*cos_tmax)
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_80(phi, x, y):
@@ -237,8 +251,11 @@ def part_int_daeg2_pseudo_ellipse_free_rotor_80(phi, x, y):
     # Theta max.
     tmax = tmax_pseudo_ellipse(phi, x, y)
 
+    # Repetitive trig.
+    cos_tmax = cos(tmax)
+
     # The theta-sigma integral.
-    return cos(tmax)**3 - 3.0*cos(tmax)
+    return cos_tmax**3 - 3.0*cos_tmax
 
 
 def part_int_daeg2_pseudo_ellipse_free_rotor_88(phi, x, y):
