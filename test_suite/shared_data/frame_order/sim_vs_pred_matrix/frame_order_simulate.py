@@ -11,7 +11,7 @@ import sys
 # relax module imports.
 from lib.errors import RelaxError
 from lib.geometry.angles import wrap_angles
-from lib.geometry.rotations import axis_angle_to_R, R_random_hypersphere, R_to_euler_zyz
+from lib.geometry.rotations import axis_angle_to_R, R_random_hypersphere, R_to_euler_zyz, tilt_torsion_to_R
 from lib.linear_algebra.kronecker_product import kron_prod
 from lib.text.progress import progress_meter
 
@@ -19,15 +19,17 @@ from lib.text.progress import progress_meter
 # Variables.
 #MODEL = 'rotor'
 #MODEL = 'free_rotor'
-MODEL = 'iso_cone'
+#MODEL = 'iso_cone'
+MODEL = 'iso_cone_torsionless'
 #MODEL = 'pseudo-ellipse'
 #MODEL_TEXT = 'Rotor frame order model'
 #MODEL_TEXT = 'Free-rotor frame order model'
-MODEL_TEXT = 'Isotropic cone frame order model'
+#MODEL_TEXT = 'Isotropic cone frame order model'
+MODEL_TEXT = 'Torsionless isotropic cone frame order model'
 #MODEL_TEXT = 'Pseudo-ellipse frame order model'
 SAMPLE_SIZE = 1000000
-#TAG = 'in_frame'
-TAG = 'out_of_frame'
+TAG = 'in_frame'
+#TAG = 'out_of_frame'
 #TAG = 'axis2_1_3'
 
 # Angular restrictions.
@@ -109,6 +111,9 @@ class Frame_order:
         elif MODEL == 'iso_cone':
             self.inside = self.inside_iso_cone
             self.rotation = self.rotation_hypersphere
+        elif MODEL == 'iso_cone_torsionless':
+            self.inside = self.inside_iso_cone
+            self.rotation = self.rotation_hypersphere_torsionless
         elif MODEL == 'pseudo-ellipse':
             self.inside = self.inside_pseudo_ellipse
             self.rotation = self.rotation_hypersphere
@@ -265,6 +270,22 @@ class Frame_order:
         phi = wrap_angles(gamma, -pi, pi)
         sigma = wrap_angles(alpha + gamma, -pi, pi)
         return theta, phi, sigma
+
+
+    def rotation_hypersphere_torsionless(self):
+        """Random rotation using 4D hypersphere point picking and return of torsion-tilt angles."""
+
+        # Obtain the random torsion-tilt angles from the random hypersphere method.
+        theta, phi, sigma = self.rotation_hypersphere()
+
+        # Reconstruct a rotation matrix, setting the torsion angle to zero.
+        tilt_torsion_to_R(phi, theta, 0.0, self.rot)
+
+        # Rotate the frame.
+        self.rot = dot(EIG_FRAME, dot(self.rot, self.eig_frame_T))
+
+        # Return the angles.
+        return theta, phi, 0.0
 
 
     def rotation_z_axis(self):
