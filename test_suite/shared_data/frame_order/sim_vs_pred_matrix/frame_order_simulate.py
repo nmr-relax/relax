@@ -20,16 +20,18 @@ from lib.text.progress import progress_meter
 #MODEL = 'rotor'
 #MODEL = 'free_rotor'
 #MODEL = 'iso_cone'
-MODEL = 'iso_cone_torsionless'
+#MODEL = 'iso_cone_torsionless'
+MODEL = 'iso_cone_free_rotor'
 #MODEL = 'pseudo-ellipse'
 #MODEL_TEXT = 'Rotor frame order model'
-#MODEL_TEXT = 'Free-rotor frame order model'
+#MODEL_TEXT = 'Free rotor frame order model'
 #MODEL_TEXT = 'Isotropic cone frame order model'
-MODEL_TEXT = 'Torsionless isotropic cone frame order model'
+#MODEL_TEXT = 'Torsionless isotropic cone frame order model'
+MODEL_TEXT = 'Free rotor isotropic cone frame order model'
 #MODEL_TEXT = 'Pseudo-ellipse frame order model'
 SAMPLE_SIZE = 1000000
-TAG = 'in_frame'
-#TAG = 'out_of_frame'
+#TAG = 'in_frame'
+TAG = 'out_of_frame'
 #TAG = 'axis2_1_3'
 
 # Angular restrictions.
@@ -84,6 +86,7 @@ class Frame_order:
 
         # Init.
         index = 0
+        self.torsion_check = True
 
         # Pre-transpose the eigenframe for speed.
         self.eig_frame_T = transpose(EIG_FRAME)
@@ -114,6 +117,10 @@ class Frame_order:
         elif MODEL == 'iso_cone_torsionless':
             self.inside = self.inside_iso_cone
             self.rotation = self.rotation_hypersphere_torsionless
+        elif MODEL == 'iso_cone_free_rotor':
+            self.inside = self.inside_iso_cone
+            self.rotation = self.rotation_hypersphere
+            self.torsion_check = False
         elif MODEL == 'pseudo-ellipse':
             self.inside = self.inside_pseudo_ellipse
             self.rotation = self.rotation_hypersphere
@@ -200,7 +207,7 @@ class Frame_order:
         """Determine if the frame is inside the limits."""
 
         # Check for a torsion angle violation.
-        if sigma < -max_theta_z or sigma > max_theta_z:
+        if self.torsion_check and (sigma < -max_theta_z or sigma > max_theta_z):
             return False
 
         # Check for a tilt angle violation.
