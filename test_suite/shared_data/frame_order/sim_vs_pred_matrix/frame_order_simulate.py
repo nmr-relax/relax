@@ -21,14 +21,16 @@ from lib.text.progress import progress_meter
 #MODEL = 'free_rotor'
 #MODEL = 'iso_cone'
 #MODEL = 'iso_cone_torsionless'
-MODEL = 'iso_cone_free_rotor'
+#MODEL = 'iso_cone_free_rotor'
 #MODEL = 'pseudo-ellipse'
+MODEL = 'pseudo-ellipse_torsionless'
 #MODEL_TEXT = 'Rotor frame order model'
 #MODEL_TEXT = 'Free rotor frame order model'
 #MODEL_TEXT = 'Isotropic cone frame order model'
 #MODEL_TEXT = 'Torsionless isotropic cone frame order model'
-MODEL_TEXT = 'Free rotor isotropic cone frame order model'
+#MODEL_TEXT = 'Free rotor isotropic cone frame order model'
 #MODEL_TEXT = 'Pseudo-ellipse frame order model'
+MODEL_TEXT = 'Torsionless pseudo-ellipse frame order model'
 SAMPLE_SIZE = 1000000
 #TAG = 'in_frame'
 TAG = 'out_of_frame'
@@ -39,7 +41,7 @@ THETA_X = pi / 4
 THETA_Y = 3 * pi / 8
 THETA_Z = pi / 6
 INC = 18
-VAR = 'X'
+VAR = 'Y'
 
 # The frame order eigenframe - I.
 if TAG == 'in_frame':
@@ -124,6 +126,9 @@ class Frame_order:
         elif MODEL == 'pseudo-ellipse':
             self.inside = self.inside_pseudo_ellipse
             self.rotation = self.rotation_hypersphere
+        elif MODEL == 'pseudo-ellipse_torsionless':
+            self.inside = self.inside_pseudo_ellipse
+            self.rotation = self.rotation_hypersphere_torsionless
         else:
             raise RelaxError("Unknown model '%s'." % MODEL)
 
