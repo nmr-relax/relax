@@ -97,7 +97,7 @@ class Frame_order:
                     # Loop over the angle incs.
                     for i in range(INC+1):
                         # Get the angle for the increment.
-                        theta = self.get_angle(i-1, model=model)
+                        theta = self.get_angle(i-1, model=model, var=var)
 
                         # Vary X.
                         if var == 'X':
@@ -152,7 +152,7 @@ class Frame_order:
                     self.write_data(file_name=file_name, model=model, model_text=model_text, var=var)
 
 
-    def get_angle(self, index, model=None, deg=False):
+    def get_angle(self, index, model=None, var=None, deg=False):
         """Return the angle corresponding to the incrementation index."""
 
         # The angle of one increment.
@@ -162,7 +162,7 @@ class Frame_order:
         angle = inc_angle * (index+1)
 
         # Slightly offset from zero for the first increment, to avoid artifacts in the pseudo-ellipse equations.
-        if model in ['pseudo-ellipse', 'pseudo-ellipse_free_rotor', 'pseudo-ellipse_torsionless'] and angle == 0.0:
+        if model in ['pseudo-ellipse', 'pseudo-ellipse_free_rotor', 'pseudo-ellipse_torsionless'] and var in ['X', 'Y'] and angle == 0.0:
             angle = 0.01
 
         # Return.
@@ -319,7 +319,7 @@ class Frame_order:
                 # Loop over each time point.
                 for k in range(INC+1):
                     # Get the angle.
-                    angle = self.get_angle(k-1, model=model, deg=True)
+                    angle = self.get_angle(k-1, model=model, var=var, deg=True)
 
                     # Write.
                     file_1st.write("%s %s\n" % (angle, self.first_frame_order[k, i, j]))
@@ -342,7 +342,7 @@ class Frame_order:
                 # Loop over each time point.
                 for k in range(INC+1):
                     # Get the angle.
-                    angle = self.get_angle(k-1, model=model, deg=True)
+                    angle = self.get_angle(k-1, model=model, var=var, deg=True)
 
                     # Write.
                     file_2nd.write('%s %s\n' % (angle, self.second_frame_order[k, i, j]))
