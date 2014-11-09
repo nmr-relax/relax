@@ -97,8 +97,10 @@ def compile_2nd_matrix_pseudo_ellipse_torsionless(matrix, Rx2_eigen, theta_x, th
     # Invert.
     if fact == 0.0:
         fact = 1e100
+        fact2 = 1e100
     else:
         fact = 1.0 / fact
+        fact2 = 1.0 / fact2
 
     # Diagonal.
     matrix[0, 0] = fact2 * (3.0*pi + quad(part_int_daeg2_pseudo_ellipse_torsionless_00, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
