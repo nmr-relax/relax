@@ -24,7 +24,8 @@ from lib.text.progress import progress_meter
 #MODEL = 'iso_cone_free_rotor'
 #MODEL = 'pseudo-ellipse'
 #MODEL = 'pseudo-ellipse_torsionless'
-MODEL = 'pseudo-ellipse_free_rotor'
+#MODEL = 'pseudo-ellipse_free_rotor'
+MODEL = 'double_rotor'
 #MODEL_TEXT = 'Rotor frame order model'
 #MODEL_TEXT = 'Free rotor frame order model'
 #MODEL_TEXT = 'Isotropic cone frame order model'
@@ -32,10 +33,11 @@ MODEL = 'pseudo-ellipse_free_rotor'
 #MODEL_TEXT = 'Free rotor isotropic cone frame order model'
 #MODEL_TEXT = 'Pseudo-ellipse frame order model'
 #MODEL_TEXT = 'Torsionless pseudo-ellipse frame order model'
-MODEL_TEXT = 'Free rotor pseudo-ellipse frame order model'
+#MODEL_TEXT = 'Free rotor pseudo-ellipse frame order model'
+MODEL_TEXT = 'Double rotor frame order model'
 SAMPLE_SIZE = 10000
-#TAG = 'in_frame'
-TAG = 'out_of_frame'
+TAG = 'in_frame'
+#TAG = 'out_of_frame'
 #TAG = 'axis2_1_3'
 
 # Angular restrictions.
@@ -43,7 +45,7 @@ THETA_X = pi / 4
 THETA_Y = 3 * pi / 8
 THETA_Z = pi / 6
 INC = 18
-VAR = 'Y'
+VAR = 'X'
 
 # The frame order eigenframe - I.
 if TAG == 'in_frame':
@@ -135,6 +137,9 @@ class Frame_order:
             self.inside = self.inside_pseudo_ellipse
             self.rotation = self.rotation_hypersphere
             self.torsion_check = False
+        elif MODEL == 'double_rotor':
+            self.inside = self.inside_double_rotor
+            self.rotation = self.rotation_double_xy_axes
         else:
             raise RelaxError("Unknown model '%s'." % MODEL)
 
@@ -198,13 +203,32 @@ class Frame_order:
 
         # Init the rotation matrix.
         self.rot = zeros((3, 3), float64)
+        self.rot2 = zeros((3, 3), float64)
 
         # Some data arrays.
         self.full = zeros(INC)
         self.count = zeros(INC)
 
         # Axes.
+        self.x_axis = array([1, 0, 0], float64)
+        self.y_axis = array([0, 1, 0], float64)
         self.z_axis = array([0, 0, 1], float64)
+
+
+    def inside_double_rotor(self, i=None, theta=None, phi=None, sigma=None, max_theta_x=None, max_theta_y=None, max_theta_z=None):
+        """Determine if the frame is inside the limits."""
+
+        # Alias the angles.
+        sigma1, sigma2 = theta, phi
+
+        # Check for torsion angle violations.
+        if sigma1 < -max_theta_y or sigma1 > max_theta_y:
+            return False
+        if sigma2 < -max_theta_x or sigma2 > max_theta_x:
+            return False
+
+        # Inside.
+        return True
 
 
     def inside_free_rotor(self, i=None, theta=None, phi=None, sigma=None, max_theta_x=None, max_theta_y=None, max_theta_z=None):
@@ -269,6 +293,27 @@ class Frame_order:
             return THETA_X, theta, THETA_Z
         elif VAR == 'Z':
             return THETA_X, THETA_Y, theta
+
+
+    def rotation_double_xy_axes(self):
+        """Random double rotation around the x- and y-axes and return of torsion-tilt angles"""
+
+        # First a random angle between -pi and pi for the y-axis.
+        sigma1 = uniform(-pi, pi)
+        axis_angle_to_R(self.y_axis, sigma1, self.rot)
+
+        # Second a random angle between -pi and pi for the x-axis.
+        sigma2 = uniform(-pi, pi)
+        axis_angle_to_R(self.x_axis, sigma2, self.rot2)
+
+        # Construct the frame.
+        frame = dot(self.rot2, self.rot)
+
+        # Rotate the frame.
+        self.rot = dot(EIG_FRAME, dot(frame, self.eig_frame_T))
+
+        # Return the two torsion angles, and zero.
+        return sigma1, sigma2, 0.0
 
 
     def rotation_hypersphere(self):

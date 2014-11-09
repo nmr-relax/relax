@@ -143,8 +143,8 @@ class Frame_order:
                             self.first_frame_order[i] = pseudo_ellipse_torsionless.compile_1st_matrix_pseudo_ellipse_torsionless(self.first_frame_order[i], self.eigenframe, theta_x, theta_y)
                             self.second_frame_order[i] = pseudo_ellipse_torsionless.compile_2nd_matrix_pseudo_ellipse_torsionless(self.second_frame_order[i], Rx2_eigen, theta_x, theta_y)
                         elif model == 'double_rotor':
-                            self.first_frame_order[i] = double_rotor.compile_1st_matrix_double_rotor(self.first_frame_order[i], self.eigenframe, theta_x, theta_y)
-                            self.second_frame_order[i] = double_rotor.compile_2nd_matrix_double_rotor(self.second_frame_order[i], Rx2_eigen, theta_x, theta_y)
+                            self.first_frame_order[i] = double_rotor.compile_1st_matrix_double_rotor(self.first_frame_order[i], self.eigenframe, theta_y, theta_x)
+                            self.second_frame_order[i] = double_rotor.compile_2nd_matrix_double_rotor(self.second_frame_order[i], Rx2_eigen, theta_y, theta_x)
                         else:
                             raise RelaxError("Unknown model '%s'." % model)
 
