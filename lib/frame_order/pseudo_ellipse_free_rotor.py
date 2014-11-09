@@ -78,9 +78,19 @@ def compile_2nd_matrix_pseudo_ellipse_free_rotor(matrix, Rx2_eigen, theta_x, the
     """
 
     # The surface area normalisation factor.
-    fact3 = 1.0 / (3.0 * pec(theta_x, theta_y))
-    fact4 = 1.0 / (4.0 * pec(theta_x, theta_y))
-    fact6 = 1.0 / (6.0 * pec(theta_x, theta_y))
+    fact3 = 3.0 * pec(theta_x, theta_y)
+    fact4 = 4.0 * pec(theta_x, theta_y)
+    fact6 = 6.0 * pec(theta_x, theta_y)
+
+    # Invert.
+    if fact3 == 0.0:
+        fact3 = 1e100
+        fact4 = 1e100
+        fact6 = 1e100
+    else:
+        fact3 = 1.0 / fact3
+        fact4 = 1.0 / fact4
+        fact6 = 1.0 / fact6
 
     # Diagonal.
     matrix[0, 0] = fact6 * (4.0*pi - quad(part_int_daeg2_pseudo_ellipse_free_rotor_00, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
