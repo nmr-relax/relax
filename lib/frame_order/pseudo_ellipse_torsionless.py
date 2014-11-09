@@ -60,7 +60,7 @@ def compile_1st_matrix_pseudo_ellipse_torsionless(matrix, R_eigen, theta_x, thet
 
     # Numerical integration of phi of each element.
     matrix[0, 0] = fact * (2.0*pi + quad(part_int_daeg1_pseudo_ellipse_00, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
-    matrix[1, 1] = -fact * (2.0*pi + quad(part_int_daeg1_pseudo_ellipse_11, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
+    matrix[1, 1] = fact * (2.0*pi + quad(part_int_daeg1_pseudo_ellipse_11, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])
     matrix[2, 2] = fact * quad(part_int_daeg1_pseudo_ellipse_22, -pi, pi, args=(theta_x, theta_y), full_output=1)[0]
 
     # Rotate and return the frame order matrix.
