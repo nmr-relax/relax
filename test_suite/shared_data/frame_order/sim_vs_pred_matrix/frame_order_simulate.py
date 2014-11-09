@@ -23,15 +23,17 @@ from lib.text.progress import progress_meter
 #MODEL = 'iso_cone_torsionless'
 #MODEL = 'iso_cone_free_rotor'
 #MODEL = 'pseudo-ellipse'
-MODEL = 'pseudo-ellipse_torsionless'
+#MODEL = 'pseudo-ellipse_torsionless'
+MODEL = 'pseudo-ellipse_free_rotor'
 #MODEL_TEXT = 'Rotor frame order model'
 #MODEL_TEXT = 'Free rotor frame order model'
 #MODEL_TEXT = 'Isotropic cone frame order model'
 #MODEL_TEXT = 'Torsionless isotropic cone frame order model'
 #MODEL_TEXT = 'Free rotor isotropic cone frame order model'
 #MODEL_TEXT = 'Pseudo-ellipse frame order model'
-MODEL_TEXT = 'Torsionless pseudo-ellipse frame order model'
-SAMPLE_SIZE = 1000000
+#MODEL_TEXT = 'Torsionless pseudo-ellipse frame order model'
+MODEL_TEXT = 'Free rotor pseudo-ellipse frame order model'
+SAMPLE_SIZE = 10000
 #TAG = 'in_frame'
 TAG = 'out_of_frame'
 #TAG = 'axis2_1_3'
@@ -129,6 +131,10 @@ class Frame_order:
         elif MODEL == 'pseudo-ellipse_torsionless':
             self.inside = self.inside_pseudo_ellipse
             self.rotation = self.rotation_hypersphere_torsionless
+        elif MODEL == 'pseudo-ellipse_free_rotor':
+            self.inside = self.inside_pseudo_ellipse
+            self.rotation = self.rotation_hypersphere
+            self.torsion_check = False
         else:
             raise RelaxError("Unknown model '%s'." % MODEL)
 
@@ -227,7 +233,7 @@ class Frame_order:
         """Determine if the frame is inside the limits."""
 
         # Check for a torsion angle violation.
-        if sigma < -max_theta_z or sigma > max_theta_z:
+        if self.torsion_check and (sigma < -max_theta_z or sigma > max_theta_z):
             return False
 
         # Check for a tilt angle violation.
