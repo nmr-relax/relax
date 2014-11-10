@@ -59,6 +59,7 @@ class Status(object):
             self._instance.show_gui = False
             self._instance.gui_uf_force_sync = False
             self._instance.install_path = self._instance._det_install_path()
+            self._instance.skip_blacklisted_tests = True
 
             # Set up the singleton.
             self._instance._setup()
