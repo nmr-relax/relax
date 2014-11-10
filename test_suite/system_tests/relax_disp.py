@@ -1218,12 +1218,12 @@ class Relax_disp(SystemTestCase):
 
         # Test the parameters which created the data.
         # This is for the 1H spin.
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2a[r20_key], R2g, 4)
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2b[r20_key], R2e, 2)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2a[r20_key], R2g, 3)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2b[r20_key]/100, R2e/100, 3)
 
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].dw, dw_ppm, 6)
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].pA, 1-pb, 6)
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].kex, kex, 2)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].kex/1000, kex/1000, 2)
 
 
     def x_test_bmrb_sub_cpmg(self):
