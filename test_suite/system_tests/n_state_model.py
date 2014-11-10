@@ -166,7 +166,6 @@ class N_state_model(SystemTestCase):
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'CaM_IQ_tensor_fit.py')
-        self.interpreter.state.save('x', force=True)
 
         # Check the optimised alignment tensor.
         ids = ['dy', 'tb', 'tm', 'er', 'yb', 'ho']
