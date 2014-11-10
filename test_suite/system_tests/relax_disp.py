@@ -142,18 +142,6 @@ class Relax_disp(SystemTestCase):
             if methodName in to_skip:
                 status.skipped_tests.append([methodName, 'matplotlib module', self._skip_type])
 
-        # If not python 2.7, bug #22801 (https://gna.org/bugs/?22801): Failure of the relax test suite on Python 2.5.
-        # It is not possible to call: with self.assertRaises() before version 2.7
-        if not version_info >= (2,7):
-            # The list of tests to skip.
-            to_skip = [
-                "test_bug_atul_srivastava"
-            ]
-
-            # Store in the status object.
-            if methodName in to_skip:
-                status.skipped_tests.append([methodName, 'python 2.7', self._skip_type])
-
 
     def setUp(self):
         """Set up for all the functional tests."""
@@ -1750,11 +1738,9 @@ class Relax_disp(SystemTestCase):
             else:
                 constraints = False
                 min_algor = 'Newton'
-                with self.assertRaises(RelaxError):
-                    self.interpreter.minimise.grid_search(inc=GRID_INC)
+                self.assertRaises(RelaxError, self.interpreter.minimise.grid_search, inc=GRID_INC)
+                self.assertRaises(RelaxError, self.interpreter.minimise.execute, min_algor=min_algor, constraints=constraints)
 
-                with self.assertRaises(RelaxError):
-                    self.interpreter.minimise.execute(min_algor=min_algor, constraints=constraints)
         # Inspect.
         if False:
             # Loop over attributes.
@@ -1848,8 +1834,7 @@ class Relax_disp(SystemTestCase):
         INSIGNIFICANCE = 1.0
 
         # Auto-analysis execution.
-        with self.assertRaises(RelaxError):
-            relax_disp.Relax_disp(pipe_name='relax_disp', results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, insignificance=INSIGNIFICANCE, numeric_only=NUMERIC_ONLY)
+        self.assertRaises(RelaxError, relax_disp.Relax_disp, pipe_name='relax_disp', results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, insignificance=INSIGNIFICANCE, numeric_only=NUMERIC_ONLY)
 
 
     def test_bug_negative_intensities_cpmg(self):
