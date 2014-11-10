@@ -12,7 +12,6 @@ from lib.errors import RelaxError
 from lib.frame_order import double_rotor, free_rotor, iso_cone, iso_cone_free_rotor, iso_cone_torsionless, pseudo_ellipse, pseudo_ellipse_free_rotor, pseudo_ellipse_torsionless, rotor
 from lib.geometry.angles import wrap_angles
 from lib.linear_algebra.kronecker_product import kron_prod
-from lib.order.order_parameters import iso_cone_theta_to_S
 
 # Variables.
 MODELS = [
@@ -129,7 +128,7 @@ class Frame_order:
                             self.second_frame_order[i] = iso_cone.compile_2nd_matrix_iso_cone(self.second_frame_order[i], Rx2_eigen, theta_x, theta_z)
                         elif model == 'iso_cone_free_rotor':
                             self.first_frame_order[i] = iso_cone_free_rotor.compile_1st_matrix_iso_cone_free_rotor(self.first_frame_order[i], self.eigenframe, theta_x)
-                            self.second_frame_order[i] = iso_cone_free_rotor.compile_2nd_matrix_iso_cone_free_rotor(self.second_frame_order[i], Rx2_eigen, iso_cone_theta_to_S(theta_x))
+                            self.second_frame_order[i] = iso_cone_free_rotor.compile_2nd_matrix_iso_cone_free_rotor(self.second_frame_order[i], Rx2_eigen, theta_x)
                         elif model == 'iso_cone_torsionless':
                             self.first_frame_order[i] = iso_cone_torsionless.compile_1st_matrix_iso_cone_torsionless(self.first_frame_order[i], self.eigenframe, theta_x)
                             self.second_frame_order[i] = iso_cone_torsionless.compile_2nd_matrix_iso_cone_torsionless(self.second_frame_order[i], Rx2_eigen, theta_x)
