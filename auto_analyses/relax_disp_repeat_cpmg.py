@@ -2243,8 +2243,8 @@ class Relax_disp_rep:
 
                 # Linear a, with no intercept.
                 a = sum(x * y) / sum(x**2)
-                min_xy = min(concatenate((x,y)))
-                max_xy = max(concatenate((x,y)))
+                min_xy = min(concatenate((x, y)))
+                max_xy = max(concatenate((x, y)))
 
                 dx = (max_xy - min_xy) / np
                 x_arange = arange(min_xy, max_xy + dx, dx)
@@ -2264,8 +2264,8 @@ class Relax_disp_rep:
 
                 # kex has values in 1000 area.
                 if param == 'kex':
-                    ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-                    ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+                    ax.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
+                    ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 
                 ## If r2 or dw parameter, do a straight line:
                 #if param in PARAMS_R20 + ['dw']:
