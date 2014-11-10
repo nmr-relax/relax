@@ -2937,6 +2937,7 @@ class Relax_disp(SystemTestCase):
 
         print("\nChecking the matplotlib surface plot file.")
         res_file = [
+            'from copy import deepcopy'+"\n",
             'import numpy as np'+"\n",
             'import scipy.interpolate'+"\n",
             'from numpy.ma import masked_where'+"\n",
