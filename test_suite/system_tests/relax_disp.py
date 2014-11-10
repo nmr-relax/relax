@@ -2914,11 +2914,17 @@ class Relax_disp(SystemTestCase):
             '0      2.00000    0.99000    1000.00000    6185.84926    0         2.00000    0.99000    1000.00000    6185.84926    '+"\n",
             '1      1.92453    0.98961    1034.72206    6396.02770    1         1.92453    0.98961    1034.72206    6396.02770    '+"\n",
         ]
+        res_file2 = [
+            '# i    dw         pA         kex           chi2          i_sort    dw_sort    pA_sort    kex_sort      chi2_sort     '+"\n",
+            '0      2.00000    0.99000    1000.00000    6185.84926    0         2.00000    0.99000    1000.00000    6185.84926    '+"\n",
+            '1      1.92452    0.98961    1034.72424    6396.02439    1         1.92452    0.98961    1034.72424    6396.02439    '+"\n",
+        ]  # Python 2.5 and 3.1.
         file = open(point_par, 'r')
         lines = file.readlines()
         file.close()
         for i in range(len(res_file)):
-            self.assertEqual(res_file[i], lines[i])
+            if lines[i] != res_file[i] and lines[i] != res_file2[i]:
+                self.assertEqual(res_file[i], lines[i])
 
         print("\nChecking the matplotlib surface plot file.")
         res_file = [
