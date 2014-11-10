@@ -2593,7 +2593,7 @@ GRID_INC = 21
 The number of grid search increments may be decreased, but only after careful checking with a higher number of increments.
 Setting this value too low may place the initial optimisation too far away from the minimum.
 Although as-of-yet undetected and unpublished, if multiple local minima do exist then optimisation may not reach the global minimum.
-Too little grid search increments can also cause the total optimisation time to increase as the Nelder-Mead simplex\index{optimisation!simplex algorithm}\index{optimisation!Nelder-Mead algorithm} optimisation together with the Logarithmic-barrier penalty function\index{optimisation!logarithmic-barrier penalty function} as used in the auto-analysis may require more time to reach the minimum.
+Too little grid search increments can also cause the total optimisation time to increase as the Nelder-Mead simplex\index{optimisation!algorithm!Nelder-Mead simplex} optimisation together with the Logarithmic-barrier penalty function\index{optimisation!constraint algorithm!Logarithmic barrier} as used in the auto-analysis may require more time to reach the minimum.
 
 The Monte Carlo simulation\index{Monte Carlo simulation} number \pycode{MC\_NUM} variable affects the error estimate precision:
 
