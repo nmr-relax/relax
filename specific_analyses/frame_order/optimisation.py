@@ -135,9 +135,7 @@ def count_sobol_points(target_fn=None, verbosity=1):
         cone_sigma_max = cdp.cone_sigma_max
 
     # The isotropic cone angle.
-    if cdp.model == MODEL_ISO_CONE_FREE_ROTOR:
-        cone_theta = order_parameters.iso_cone_S_to_theta(cdp.cone_s1)
-    elif not pe and 'theta' in dims:
+    if not pe and 'theta' in dims:
         cone_theta = cdp.cone_theta
 
     # Loop over the Sobol' points to count them.
@@ -909,10 +907,6 @@ def unpack_opt_results(param_vector=None, func=None, iter_count=None, f_count=No
             obj = getattr(cdp, cdp.params[i]+'_sim')
             obj[sim_index] = param_vector[i]
 
-            # Order parameter to angle conversion.
-            if cdp.params[i] == 'cone_s1':
-                cdp.cone_theta_sim[sim_index] = order_parameters.iso_cone_S_to_theta(param_vector[i])
-
         # Optimisation stats.
         cdp.chi2_sim[sim_index] = func
         cdp.iter_sim[sim_index] = iter_count
@@ -933,10 +927,6 @@ def unpack_opt_results(param_vector=None, func=None, iter_count=None, f_count=No
 
             # Store the value.
             setattr(cdp, cdp.params[i], param_vector[i])
-
-            # Order parameter to angle conversion.
-            if cdp.params[i] == 'cone_s1':
-                cdp.cone_theta = order_parameters.iso_cone_S_to_theta(param_vector[i])
 
         # Optimisation stats.
         cdp.chi2 = func

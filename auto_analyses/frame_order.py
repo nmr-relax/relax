@@ -826,7 +826,7 @@ class Frame_order_analysis:
             pipe = pipes.get_pipe(self.pipe_name_dict[MODEL_ISO_CONE])
 
             # Copy the cone angle directly.
-            if model == MODEL_ISO_CONE_TORSIONLESS:
+            if model in [MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS]:
                 print("Obtaining the cone angle from the isotropic cone model.")
                 cdp.cone_theta = pipe.cone_theta
 
@@ -834,11 +834,6 @@ class Frame_order_analysis:
             elif model == MODEL_PSEUDO_ELLIPSE:
                 print("Obtaining the cone X angle from the isotropic cone model.")
                 cdp.cone_theta_x = pipe.cone_theta
-
-            # Convert to the order parameter S.
-            elif model == MODEL_ISO_CONE_FREE_ROTOR:
-                print("Obtaining the cone order parameter from the isotropic cone model.")
-                cdp.cone_s1 = iso_cone_theta_to_S(pipe.cone_theta)
 
         # The X and Y cone angles from the pseudo-ellipse model.
         elif model in [MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR]:
@@ -1246,7 +1241,7 @@ class Frame_order_analysis:
             sys.stdout.write(format_vect % ('axis:', axis))
 
         # Frame ordering.
-        if hasattr(cdp, 'cone_theta_x') or hasattr(cdp, 'cone_theta_y') or hasattr(cdp, 'cone_theta') or hasattr(cdp, 'cone_s1') or hasattr(cdp, 'cone_sigma_max'):
+        if hasattr(cdp, 'cone_theta_x') or hasattr(cdp, 'cone_theta_y') or hasattr(cdp, 'cone_theta') or hasattr(cdp, 'cone_sigma_max'):
             sys.stdout.write("\nFrame ordering:\n")
         if hasattr(cdp, 'cone_theta_x'):
             sys.stdout.write(format_float % ('cone theta_x:', cdp.cone_theta_x))
@@ -1254,8 +1249,6 @@ class Frame_order_analysis:
             sys.stdout.write(format_float % ('cone theta_y:', cdp.cone_theta_y))
         if hasattr(cdp, 'cone_theta'):
             sys.stdout.write(format_float % ('cone theta:', cdp.cone_theta))
-        if hasattr(cdp, 'cone_s1'):
-            sys.stdout.write(format_float % ('cone s1:', cdp.cone_s1))
         if hasattr(cdp, 'cone_sigma_max'):
             sys.stdout.write(format_float % ('sigma_max:', cdp.cone_sigma_max))
 

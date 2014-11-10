@@ -911,11 +911,11 @@ class Frame_order:
         if self.pivot_opt:
             pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[6:]
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, theta_max = params[6:]
         else:
             pivot = self.pivot
             self._translation_vector = params[:3]
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[3:]
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, theta_max = params[3:]
 
         # Generate the cone axis from the spherical angles.
         spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
@@ -926,11 +926,8 @@ class Frame_order:
         # The Kronecker product of the eigenframe rotation.
         Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
-        # Calculate the cone angle.
-        theta_max = order_parameters.iso_cone_S_to_theta(cone_s1)
-
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_iso_cone_free_rotor(self.frame_order_2nd, Rx2_eigen, cone_s1)
+        frame_order_2nd = compile_2nd_matrix_iso_cone_free_rotor(self.frame_order_2nd, Rx2_eigen, theta_max)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(0.0, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
@@ -992,11 +989,11 @@ class Frame_order:
         if self.pivot_opt:
             pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[6:]
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, theta_max = params[6:]
         else:
             pivot = self.pivot
             self._translation_vector = params[:3]
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[3:]
+            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, theta_max = params[3:]
 
         # Generate the cone axis from the spherical angles.
         spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
@@ -1007,11 +1004,8 @@ class Frame_order:
         # The Kronecker product of the eigenframe rotation.
         Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
-        # Calculate the cone angle.
-        theta_max = order_parameters.iso_cone_S_to_theta(cone_s1)
-
         # Generate the 2nd degree Frame Order super matrix.
-        frame_order_2nd = compile_2nd_matrix_iso_cone_free_rotor(self.frame_order_2nd, Rx2_eigen, cone_s1)
+        frame_order_2nd = compile_2nd_matrix_iso_cone_free_rotor(self.frame_order_2nd, Rx2_eigen, theta_max)
 
         # Reduce and rotate the tensors.
         self.reduce_and_rot(0.0, ave_pos_beta, ave_pos_gamma, frame_order_2nd)

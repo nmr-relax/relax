@@ -202,11 +202,6 @@ def add_cones(structure=None, representation=None, size=None, inc=None, sims=Fal
                     cone_theta = cdp.cone_theta_sim[sim_indices[i]]
                 else:
                     cone_theta = cdp.cone_theta
-            elif hasattr(cdp, 'cone_s1'):
-                if sims:
-                    cone_theta = order_parameters.iso_cone_S_to_theta(cdp.cone_s1_sim[sim_indices[i]])
-                else:
-                    cone_theta = order_parameters.iso_cone_S_to_theta(cdp.cone_s1)
 
             # The object.
             cone_obj = Iso_cone(cone_theta)

@@ -151,7 +151,6 @@ cdp.eigen_beta = 1.0
 cdp.eigen_gamma = 1.0
 
 # Set the order parameters to insignificant values.
-cdp.cone_s1 = 1.0
 cdp.cone_theta = 0.0
 cdp.cone_theta_x = 0.0
 cdp.cone_theta_y = 0.0

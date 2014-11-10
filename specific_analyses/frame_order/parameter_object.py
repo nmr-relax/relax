@@ -482,18 +482,6 @@ class Frame_order_params(Param_list):
             sim = True
         )
         self._add(
-            'cone_s1',
-            scope = 'global',
-            units = '',
-            desc = 'The isotropic cone order parameter',
-            py_type = float,
-            set = 'params',
-            grid_lower = -0.125,
-            grid_upper = 1.0,
-            err = True,
-            sim = True
-        )
-        self._add(
             'cone_sigma_max',
             scope = 'global',
             units = 'rad',

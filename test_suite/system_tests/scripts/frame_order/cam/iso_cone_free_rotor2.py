@@ -41,7 +41,7 @@ class Analysis(Base_script):
     AVE_POS_GAMMA = 0.09243393677259322
     AXIS_THETA = 0.69828059079619353433
     AXIS_PHI = 4.03227550621962294031
-    CONE_S1 = iso_cone_theta_to_S(1.2)
+    CONE_THETA = 1.2
 
 
 # Execute the analysis.
