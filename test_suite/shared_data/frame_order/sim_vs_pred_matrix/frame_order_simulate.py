@@ -2,8 +2,8 @@
 
 # Python module imports.
 from math import cos, pi, sin, sqrt
-from numpy import array, cross, dot, eye, float64, outer, transpose, zeros
-from numpy.linalg import det, inv, norm
+from numpy import array, cross, dot, eye, float64, transpose, zeros
+from numpy.linalg import norm
 from random import uniform
 from string import lower
 import sys
@@ -175,7 +175,7 @@ class Frame_order:
                         self.full[i] = 1
 
             # Increment the global index.
-            index = index + 1
+            index += 1
 
             # Break out.
             if sum(self.full) == INC:
@@ -431,12 +431,9 @@ class Frame_order:
         graph_num = 0
         for i in range(3):
             for j in range(3):
-                # Legend.
                 file_1st.write("@    s%i legend \"\\q<c\\s%s%s\\N>\"\n" % (graph_num, i+1, j+1))
                 file_1st.write("@    s%i linewidth 0.5\n" % graph_num)
-
-                # Inc.
-                graph_num = graph_num + 1
+                graph_num += 1
 
         # Header for second order matrix.
         graph_num = 0
@@ -444,12 +441,9 @@ class Frame_order:
             for j in range(3):
                 for k in range(3):
                     for l in range(3):
-                        # Legend.
                         file_2nd.write("@    s%i legend \"<\\qc\\s%s%s\\N.c\\s%s%s\\N>\"\n" % (graph_num, i+1, j+1, k+1, l+1))
                         file_2nd.write("@    s%i linewidth 0.5\n" % graph_num)
-
-                        # Inc.
-                        graph_num = graph_num + 1
+                        graph_num += 1
 
         # Loop over the first rotation matrix index.
         graph_num = 0
@@ -468,7 +462,7 @@ class Frame_order:
                 file_1st.write("&\n")
 
                 # Inc.
-                graph_num = graph_num + 1
+                graph_num += 1
 
         # Loop over the first frame order index.
         graph_num = 0
@@ -487,7 +481,7 @@ class Frame_order:
                 file_2nd.write('&\n')
 
                 # Inc.
-                graph_num = graph_num + 1
+                graph_num += 1
 
         # No autoscaling.
         file_1st.write("@autoscale onread none\n")
