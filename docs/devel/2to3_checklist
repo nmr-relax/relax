@@ -2,7 +2,7 @@ The following is a checklist for the migration from Python 2 to Python 3.  Only 
 
 2to3 -w . -f xxx
 
-where xxx is the transformation being applied.
+where xxx is the transformation being applied.  Before committing any changes, check all the changes carefully and make sure they work on both Python 2 and 3.  Certain modules, for example lib.compat, should not be changed using 2to3.  For more information about porting to Python 3, see http://www.diveintopython3.net/porting-code-to-python-3-with-2to3.html.
 
 
 Non-dangerous Python 3 update command
