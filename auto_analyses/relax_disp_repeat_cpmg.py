@@ -78,8 +78,8 @@ class Relax_disp_rep:
         self.settings = settings
 
         # Unpack settings from dictionary to self.
-        for setting, value in self.settings.iteritems():
-            setattr(self, setting, value)
+        for setting in self.settings:
+            setattr(self, setting, self.settings[setting])
 
         if 'pipe_type' not in self.settings:
             self.set_self(key='pipe_type', value='relax_disp')
@@ -249,7 +249,7 @@ class Relax_disp_rep:
 
             # There should only be one peak file.
             for peaks_file in peaks_file_list:
-                self.interpreter.spectrum.read_intensities(file=peaks_file, spectrum_id=spectrum_ids, int_method=self.int_method, int_col=range(len(spectrum_ids)))
+                self.interpreter.spectrum.read_intensities(file=peaks_file, spectrum_id=spectrum_ids, int_method=self.int_method, int_col=list(range(len(spectrum_ids))))
 
             if set_rmsd:
                 # Get the folder for rmsd files.
@@ -1012,7 +1012,7 @@ class Relax_disp_rep:
         """Method which return a list of tubles, where each tuble is a spectrum id and a list of spectrum ids which are replicated"""
 
         # Get the dublicates.
-        dublicates = map(lambda val: (val, [i for i in xrange(len(cpmg_frqs)) if cpmg_frqs[i] == val]), cpmg_frqs)
+        dublicates = [(val, [i for i in range(len(cpmg_frqs)) if cpmg_frqs[i] == val]) for val in cpmg_frqs]
 
         # Loop over the list of the mapping of cpmg frequency and duplications.
         list_dub_mapping = []
@@ -2243,8 +2243,8 @@ class Relax_disp_rep:
 
                 # Linear a, with no intercept.
                 a = sum(x * y) / sum(x**2)
-                min_xy = min(concatenate((x,y)))
-                max_xy = max(concatenate((x,y)))
+                min_xy = min(concatenate((x, y)))
+                max_xy = max(concatenate((x, y)))
 
                 dx = (max_xy - min_xy) / np
                 x_arange = arange(min_xy, max_xy + dx, dx)
@@ -2264,8 +2264,8 @@ class Relax_disp_rep:
 
                 # kex has values in 1000 area.
                 if param == 'kex':
-                    ax.ticklabel_format(style='sci', axis='x', scilimits=(0,0))
-                    ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+                    ax.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
+                    ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 
                 ## If r2 or dw parameter, do a straight line:
                 #if param in PARAMS_R20 + ['dw']:

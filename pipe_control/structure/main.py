@@ -233,9 +233,9 @@ def align(pipes=None, models=None, method='fit to mean', atom_id=None, centre_ty
 
     # The different algorithms.
     if method == 'fit to mean':
-        T, R, pivot = fit_to_mean(models=range(num), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+        T, R, pivot = fit_to_mean(models=list(range(num)), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
     elif method == 'fit to first':
-        T, R, pivot = fit_to_first(models=range(num), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+        T, R, pivot = fit_to_first(models=list(range(num)), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
 
     # Update to the new coordinates.
     i = 0

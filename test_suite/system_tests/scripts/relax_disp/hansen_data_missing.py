@@ -51,7 +51,7 @@ spin.isotope('15N')
 ##########################
 
 # Run fast.
-Relax_disp.opt_func_tol = 1e-5
+Relax_disp.opt_func_tol = 1e-6
 Relax_disp.opt_max_iterations = 10000
 
 # Do not change!

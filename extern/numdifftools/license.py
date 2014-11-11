@@ -2,6 +2,7 @@
 New BSD
 
 Copyright (c) 2008, John D'Errico, Per A. Brodtkorb
+Copyright (c) 2014, Edward d'Auvergne
 
 All rights reserved.
 

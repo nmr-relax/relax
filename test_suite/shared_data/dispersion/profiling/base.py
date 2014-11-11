@@ -131,8 +131,8 @@ def version_comparison(version1, version2):
     """
 
     # Strip out trailing zeros.
-    version1 = sub(r'(\.0+)*$','', version1)
-    version2 = sub(r'(\.0+)*$','', version2)
+    version1 = sub(r'(\.0+)*$', '', version1)
+    version2 = sub(r'(\.0+)*$', '', version2)
 
     # Convert to a list of numbers.
     version1 = [int(val) for val in version1.split('.')]
@@ -230,7 +230,7 @@ class Profile(Dispersion):
         if EXP_TYPE_CPMG_SQ in self.exp_type or EXP_TYPE_CPMG_MQ in self.exp_type:
             self.offsets = [0]
         else:
-            self.offsets = range(10)
+            self.offsets = list(range(10))
 
         # Chemical shift in ppm.
         self.chemical_shift = 1.0
