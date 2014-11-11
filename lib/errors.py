@@ -33,13 +33,10 @@ except ImportError:
 from re import match
 import sys
 import time
-try:
-    import cPickle as pickle
-except:
-    import pickle
 
 # relax module imports.
 from lib import ansi
+from lib.compat import pickle
 
 
 # Module variables for changing the behaviour of the warning system.
