@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -115,8 +115,7 @@ class Uf_object(object):
         """Make the user function executable."""
 
         # Check the keyword args.
-        keys = uf_kargs.keys()
-        for name in keys:
+        for name in uf_kargs:
             # Unknown keyword.
             if name not in self._karg_names:
                 raise RelaxError("User function %s - the keyword argument '%s' is unknown." % (self._name, name))
@@ -127,7 +126,7 @@ class Uf_object(object):
         if num_args:
             for i in range(num_args):
                 # Check if the keyword is already assigned.
-                if self._kargs[i]['name'] in keys:
+                if self._kargs[i]['name'] in uf_kargs:
                     raise RelaxError("User function %s - the argument '%s' and the keyword argument '%s' cannot both be supplied." % (self._name, uf_args[i], self._kargs[i]['name']))
 
                 # Add the arg as a keyword arg.
@@ -139,7 +138,7 @@ class Uf_object(object):
             name = self._kargs[i]['name']
 
             # Set the default if the user has not supplied a value.
-            if name not in uf_kargs.keys():
+            if name not in uf_kargs:
                 uf_kargs[name] = self._kargs[i]['default']
 
         # Function intro text.

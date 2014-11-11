@@ -408,10 +408,10 @@ class Relax_disp(SystemTestCase):
 
 
         print("Testing the number of settings")
-        print("Number of settings iterations is: %s. Number of cdp.exp_type.keys() is: %s"%(i, len(cdp.exp_type.keys() ) ) )
+        print("Number of settings iterations is: %s. Number of cdp.exp_type is: %s"%(i, len(cdp.exp_type)))
         self.assertEqual(70, len(expfileslines))
         self.assertEqual(69, j)
-        self.assertEqual(69, len(cdp.exp_type.keys()) )
+        self.assertEqual(69, len(cdp.exp_type))
 
         # Cluster spins
         for curspin in cluster_ids:
@@ -1717,7 +1717,7 @@ class Relax_disp(SystemTestCase):
             print(mol_name, resi, resn, spin_id)
 
         # Loop over setup.
-        for id in cdp.exp_type.keys():
+        for id in cdp.exp_type:
             print(id, cdp.exp_type[id], cdp.spectrometer_frq[id], cdp.spin_lock_offset[id], cdp.spin_lock_nu1[id])
 
 

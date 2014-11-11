@@ -91,7 +91,7 @@ class Relax_data_store(dict):
         # The data pipes.
         text = text + "\n"
         text = text + "Data pipes:\n"
-        pipes = list(self.instance.keys())
+        pipes = sorted(self.instance.keys())
         if pipes:
             for pipe in pipes:
                 text = text + "  %s\n" % repr(pipe)
@@ -121,7 +121,7 @@ class Relax_data_store(dict):
                 continue
 
             # Skip overwritten methods.
-            if name in list(self.__class__.__dict__.keys()):
+            if name in self.__class__.__dict__:
                 continue
 
             # The object.
@@ -139,7 +139,7 @@ class Relax_data_store(dict):
                 continue
 
             # Skip overwritten methods.
-            if name in list(self.__class__.__dict__.keys()):
+            if name in self.__class__.__dict__:
                 continue
 
             # Skip dictionary methods.
@@ -164,7 +164,8 @@ class Relax_data_store(dict):
         """
 
         # Loop over the keys of self.__dict__ and delete the corresponding object.
-        for key in list(self.__dict__.keys()):
+        keys = list(self.__dict__.keys())
+        for key in keys:
             # Delete the object.
             del self.__dict__[key]
 
@@ -358,7 +359,7 @@ class Relax_data_store(dict):
         """
 
         # Test if the pipe already exists.
-        if pipe_name in list(self.instance.keys()):
+        if pipe_name in self.instance:
             raise RelaxPipeError(pipe_name)
 
         # Create a new container.
@@ -370,7 +371,7 @@ class Relax_data_store(dict):
         # The pipe bundle.
         if bundle:
             # A new bundle.
-            if bundle not in list(self.pipe_bundles.keys()):
+            if bundle not in self.pipe_bundles:
                 self.pipe_bundles[bundle] = []
 
             # Add the pipe to the bundle.
@@ -396,9 +397,9 @@ class Relax_data_store(dict):
         """
 
         # No pipes should exist.
-        if not list(self.keys()) == []:
+        if len(self):
             if verbosity:
-                stderr.write("The relax data store contains the data pipes %s.\n" % list(self.keys()))
+                stderr.write("The relax data store contains the data pipes %s.\n" % sorted(self.keys()))
             return False
 
         # Objects which should be in here.
@@ -410,11 +411,11 @@ class Relax_data_store(dict):
         # An object has been added to the data store.
         for name in dir(self):
             # Skip the data store methods.
-            if name in list(self.__class__.__dict__.keys()):
+            if name in self.__class__.__dict__:
                 continue
 
             # Skip the dict methods.
-            if name in list(dict.__dict__.keys()):
+            if name in dict.__dict__:
                 continue
 
             # Skip special objects.
@@ -548,7 +549,7 @@ class Relax_data_store(dict):
                 pipes.append(pipe_name)
 
             # Set the current pipe.
-            if self.current_pipe in list(self.keys()):
+            if self.current_pipe in self:
                 builtins.cdp = self[self.current_pipe]
 
         # Finally update the molecule, residue, and spin metadata for each data pipe.
@@ -604,7 +605,7 @@ class Relax_data_store(dict):
 
         # Add all objects in the data store base object to the XML element.
         if all:
-            blacklist = list(list(self.__class__.__dict__.keys()) + list(dict.__dict__.keys()))
+            blacklist = list(self.__class__.__dict__.keys()) + list(dict.__dict__.keys())
             for name in dir(self):
                 # Skip blacklisted objects.
                 if name in blacklist:

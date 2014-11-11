@@ -141,7 +141,7 @@ def copy(pipe_from=None, pipe_to=None, preserve_select=False, empty=True, verbos
                 #    continue
 
                 # Skip class methods.
-                if name in list(spin.__class__.__dict__.keys()):
+                if name in spin.__class__.__dict__:
                     continue
 
                 # Duplicate all other objects.

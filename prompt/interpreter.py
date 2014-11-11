@@ -225,7 +225,7 @@ class Interpreter:
         """Place all special objects into self."""
 
         # Add the interpreter objects to the class namespace.
-        for name in self._locals.keys():
+        for name in self._locals:
             setattr(self, name, self._locals[name])
 
 
@@ -258,7 +258,7 @@ class Interpreter:
         """
 
         # Add the interpreter objects to the local run namespace.
-        for name in self._locals.keys():
+        for name in self._locals:
             locals()[name] = self._locals[name]
 
         # Setup tab completion.

@@ -133,15 +133,12 @@ def sf_model_free_read(star, sample_conditions=None):
 
     # Get the entities.
     for data in star.model_free.loop():
-        # Store the keys.
-        keys = data.keys()
-
         # Sample conditions do not match (remove the $ sign).
-        if 'sample_cond_list_label' in keys and sample_conditions and data['sample_cond_list_label'].replace('$', '') != sample_conditions:
+        if 'sample_cond_list_label' in data and sample_conditions and data['sample_cond_list_label'].replace('$', '') != sample_conditions:
             continue
 
         # Global data.
-        if 'global_chi2' in keys:
+        if 'global_chi2' in data:
             setattr(cdp, 'chi2', data['global_chi2'])
 
         # The number of spins.
@@ -155,7 +152,7 @@ def sf_model_free_read(star, sample_conditions=None):
         mol_names = bmrb.molecule_names(data, N)
 
         # Missing atom names.
-        if 'atom_names' not in keys or data['atom_names'] == None:
+        if 'atom_names' not in data or data['atom_names'] == None:
             data['atom_names'] = [None] * N
 
         # Generate the sequence if needed.
@@ -204,7 +201,7 @@ def sf_model_free_read(star, sample_conditions=None):
                 param = mf_params[j]
 
                 # No parameter.
-                if not mf_bmrb_key[j] in keys:
+                if not mf_bmrb_key[j] in data:
                     continue
 
                 # The parameter and its value.
@@ -233,7 +230,7 @@ def sf_model_free_read(star, sample_conditions=None):
                 # The error.
                 mf_bmrb_key_err = mf_bmrb_key[j] + '_err'
                 error = None
-                if mf_bmrb_key_err in keys and data[mf_bmrb_key_err] != None:
+                if mf_bmrb_key_err in data and data[mf_bmrb_key_err] != None:
                     error = data[mf_bmrb_key_err][i]
 
                 # Error scaling.
@@ -249,7 +246,7 @@ def sf_model_free_read(star, sample_conditions=None):
 
                 # Set the error.
                 mf_param_err = param + '_err'
-                if mf_bmrb_key_err in keys and data[mf_bmrb_key_err] != None:
+                if mf_bmrb_key_err in data and data[mf_bmrb_key_err] != None:
                     setattr(spin, mf_param_err, error)
 
             # The model.
@@ -274,11 +271,11 @@ def sf_model_free_read(star, sample_conditions=None):
                 spin.te_err = None
 
             # The element.
-            if'atom_types' in keys and data['atom_types'] != None:
+            if'atom_types' in data and data['atom_types'] != None:
                 setattr(spin, 'element', data['atom_types'][i])
 
             # Heteronucleus type.
-            if'atom_types' in keys and data['atom_types'] != None and data['atom_types'][i] != None and 'isotope' in keys and data['isotope'] != None:
+            if'atom_types' in data and data['atom_types'] != None and data['atom_types'][i] != None and 'isotope' in data and data['isotope'] != None:
                 # The isotope number.
                 iso_num = data['isotope'][i]
 
@@ -324,7 +321,7 @@ def to_bmrb_model(name=None):
     }
 
     # No match.
-    if name not in map.keys():
+    if name not in map:
         raise RelaxError("The model-free model '%s' is unknown." % name)
 
     # Return the BMRB model name.

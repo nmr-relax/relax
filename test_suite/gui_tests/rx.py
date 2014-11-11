@@ -182,7 +182,7 @@ class Rx(GuiTestCase):
             wizard._go_next(None)
 
             # Replicated spectra:
-            if names[i] in replicated.keys():
+            if names[i] in replicated:
                 page = wizard.get_page(wizard.page_indices['repl'])
                 page.uf_args['spectrum_ids'].SetValue(value=replicated[names[i]], index=1)
 

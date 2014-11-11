@@ -153,7 +153,7 @@ def assemble_data_seq_series(spin_id=None, x_data_name=None, y_data_name=None, p
 
         # The keys.
         if series_type == dict:
-            keys = list(val.keys())
+            keys = sorted(val.keys())
 
         # Loop over the series data.
         for j in range(len(val)):
@@ -204,7 +204,7 @@ def assemble_data_seq_series(spin_id=None, x_data_name=None, y_data_name=None, p
 
             # The keys.
             if series_type == dict:
-                keys = list(series_val.keys())
+                keys = sorted(series_val.keys())
 
             # Loop over the series data.
             for j in range(len(series_val)):
@@ -363,8 +363,8 @@ def assemble_data_series_series(spin_id=None, x_data_name=None, y_data_name=None
                 continue
 
             # The keys.
-            x_keys = list(x_val.keys())
-            y_keys = list(y_val.keys())
+            x_keys = sorted(x_val.keys())
+            y_keys = sorted(y_val.keys())
 
             # The keys do not match.
             if x_keys[0] in y_keys:
@@ -423,7 +423,7 @@ def assemble_data_series_series(spin_id=None, x_data_name=None, y_data_name=None
 
             # The keys.
             if x_type == dict:
-                keys = list(x_val.keys())
+                keys = sorted(x_val.keys())
 
             # Loop over the list data.
             for j in range(len(base_values)):
@@ -575,7 +575,7 @@ def fetch_1D_data(plot_data=None, data_name=None, spin=None, res_num=None, sim_n
                 if err != None:
                     err[i] = err[i] / return_conversion_factor(data_name)
         elif isinstance(val, dict):
-            for key in val.keys():
+            for key in val:
                 val[key] = val[key] / return_conversion_factor(data_name)
                 if err != None:
                     err[key] = err[key] / return_conversion_factor(data_name)

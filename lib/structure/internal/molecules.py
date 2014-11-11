@@ -142,7 +142,7 @@ class MolContainer:
         }
 
         # Translate amino acids.
-        for key in list(table.keys()):
+        for key in table:
             if element in table[key]:
                 element = key
                 break

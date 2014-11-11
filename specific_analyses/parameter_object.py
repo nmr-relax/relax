@@ -763,7 +763,7 @@ class Param_list(object):
 
         # No tables supplied.
         if tables == None:
-            tables = self._uf_docs.keys()
+            tables = sorted(self._uf_docs.keys())
 
         # Loop over the tables, yielding the documentation objects.
         for table in tables:

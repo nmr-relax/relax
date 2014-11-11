@@ -216,7 +216,7 @@ class Mf(SystemTestCase):
                 continue
 
             # Skip original class methods.
-            if name in list(obj1.__class__.__dict__.keys()):
+            if name in obj1.__class__.__dict__:
                 continue
 
             # Print out.
@@ -2780,7 +2780,7 @@ class Mf(SystemTestCase):
             self.assertEqual(spin.warning, None)
 
             # Relaxation data tests.
-            if not ri_data[i].keys():
+            if not len(ri_data[i]):
                 self.assertEqual(spin.ri_data, {})
                 self.assertEqual(spin.ri_data_err, {})
             else:

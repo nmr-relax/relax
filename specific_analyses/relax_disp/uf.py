@@ -64,7 +64,7 @@ def cluster(cluster_id=None, spin_id=None):
     # Loop over the spins to add to the cluster.
     for spin, id in spin_loop(selection=spin_id, return_id=True):
         # First remove the ID from all clusters.
-        for key in cdp.clustering.keys():
+        for key in cdp.clustering:
             if id in cdp.clustering[key]:
                 cdp.clustering[key].pop(cdp.clustering[key].index(id))
 
@@ -73,7 +73,7 @@ def cluster(cluster_id=None, spin_id=None):
 
     # Clean up - delete any empty clusters (except the free spins).
     clean = []
-    for key in cdp.clustering.keys():
+    for key in cdp.clustering:
         if key == 'free spins':
             continue
         if cdp.clustering[key] == []:
@@ -94,7 +94,7 @@ def cluster_ids():
 
     # Add the defined IDs.
     if hasattr(cdp, 'clustering'):
-        for key in list(cdp.clustering.keys()):
+        for key in cdp.clustering:
             if key not in ids:
                 ids.append(key)
 

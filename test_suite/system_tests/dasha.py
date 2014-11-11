@@ -140,7 +140,7 @@ class Dasha(SystemTestCase):
                 self.assert_(not hasattr(spin, 'ri_data'))
             else:
                 for ri_id in cdp.ri_ids:
-                    if ri_id in ri_data[i].keys():
+                    if ri_id in ri_data[i]:
                         self.assertEqual(spin.ri_data[ri_id], ri_data[i][ri_id])
 
             # Increment the spin index.

@@ -595,7 +595,7 @@ class Observer_container:
         """Print out info about all the status objects."""
 
         # Blacklisted objects.
-        blacklist = list(self.__class__.__dict__.keys() + dict.__dict__.keys())
+        blacklist = list(self.__class__.__dict__.keys()) + list(dict.__dict__.keys())
 
         # Loop over all objects in this container.
         for name in dir(self):

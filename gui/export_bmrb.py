@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -338,15 +338,15 @@ class Export_bmrb_window(wx.Frame):
             # Loop over the data.
             for i in range(len(cdp.ri_ids)):
                 # Check the peak intensity types.
-                if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'peak_intensity_type') or not cdp.ri_ids[i] in cdp.exp_info.peak_intensity_type.keys():
+                if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'peak_intensity_type') or not cdp.ri_ids[i] in cdp.exp_info.peak_intensity_type:
                     missing.append("The peak intensity type for the relaxation data ID '%s'." % cdp.ri_ids[i])
 
                 # Check the temperature calibration methods.
-                if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'temp_calibration') or not cdp.ri_ids[i] in cdp.exp_info.temp_calibration.keys():
+                if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'temp_calibration') or not cdp.ri_ids[i] in cdp.exp_info.temp_calibration:
                     missing.append("The temperature calibration method for the relaxation data ID '%s'." % cdp.ri_ids[i])
 
                 # Check the temperature control methods.
-                if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'temp_control') or not cdp.ri_ids[i] in cdp.exp_info.temp_control.keys():
+                if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'temp_control') or not cdp.ri_ids[i] in cdp.exp_info.temp_control:
                     missing.append("The temperature control method for the relaxation data ID '%s'." % cdp.ri_ids[i])
 
 

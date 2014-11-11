@@ -698,7 +698,7 @@ def init(tensor=None, align_id=None, params=None, scale=1.0, angle_units='deg', 
         raise RelaxNoTensorError('alignment')
 
     # Check that the domain is defined.
-    if domain and (not hasattr(cdp, 'domain') or domain not in cdp.domain.keys()):
+    if domain and (not hasattr(cdp, 'domain') or domain not in cdp.domain):
         raise RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % domain)
 
     # Add the align ID to the current data pipe if needed.
@@ -1576,7 +1576,7 @@ def set_domain(tensor=None, domain=None):
     """
 
     # Check that the domain is defined.
-    if not hasattr(cdp, 'domain') or domain not in cdp.domain.keys():
+    if not hasattr(cdp, 'domain') or domain not in cdp.domain:
         raise RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % domain)
 
     # Loop over the tensors.

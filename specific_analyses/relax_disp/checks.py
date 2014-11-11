@@ -59,7 +59,7 @@ def check_disp_points():
         raise RelaxError("The CPMG frequencies or spin-lock field strengths have not been set for any spectra.")
 
     # Check each spectrum ID.
-    for id in cdp.exp_type.keys():
+    for id in cdp.exp_type:
         # CPMG data.
         if cdp.exp_type[id] in EXP_TYPE_LIST_CPMG:
             if id not in cdp.cpmg_frqs:
@@ -85,7 +85,7 @@ def check_exp_type(id=None):
 
     # Individual ID.
     if id != None:
-        if id not in cdp.exp_type.keys():
+        if id not in cdp.exp_type:
             raise RelaxError("The dispersion experiment type for the experiment ID '%s' has not been set." % id)
 
     # Check that at least one spectrum ID is set.
@@ -105,7 +105,7 @@ def check_exp_type_fixed_time():
     """
 
     # Loop over the id's.
-    for id in cdp.exp_type.keys():
+    for id in cdp.exp_type:
         # Get the exp_type and frq.
         exp_type = cdp.exp_type[id]
         frq = cdp.spectrometer_frq[id]
@@ -219,7 +219,7 @@ def check_relax_times():
         raise RelaxError("The relaxation times have not been set for any spectra.")
 
     # Check each spectrum ID.
-    for id in cdp.exp_type.keys():
+    for id in cdp.exp_type:
         if id not in cdp.relax_times:
             raise RelaxError("The relaxation time has not been set for the '%s' spectrum." % id)
 
@@ -258,7 +258,7 @@ def check_spectrometer_frq():
         raise RelaxError("The spectrometer frequencies have not been set for any spectra.")
 
     # Check each spectrum ID.
-    for id in cdp.exp_type.keys():
+    for id in cdp.exp_type:
         if id not in cdp.spectrometer_frq:
             raise RelaxError("The spectrometer frequency has not been set for the '%s' spectrum." % id)
 
@@ -291,7 +291,7 @@ def get_times():
         return times
 
     # Loop over all spectra IDs.
-    for id in cdp.exp_type.keys():
+    for id in cdp.exp_type:
         # No time set.
         if id not in cdp.relax_times:
             continue

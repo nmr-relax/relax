@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2003 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -44,7 +44,7 @@ class Prototype(object):
                 continue
 
             # Skip the class methods.
-            if name in list(self.__class__.__dict__.keys()):
+            if name in self.__class__.__dict__:
                 continue
 
             # Get the object.

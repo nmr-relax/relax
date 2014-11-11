@@ -45,7 +45,7 @@ def check_frequency_func(id=None):
     """
 
     # Check for the ID.
-    if not hasattr(cdp, 'spectrometer_frq') and id not in cdp.spectrometer_frq.keys():
+    if not hasattr(cdp, 'spectrometer_frq') and id not in cdp.spectrometer_frq:
         return RelaxNoFrqError(id=id)
 
 # Create the checking object.

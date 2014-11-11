@@ -146,7 +146,7 @@ for exp_type, frq, point in loop_exp_frq_point():
             continue
 
         # Write out the data.
-        if key in spin.r2eff.keys():
+        if key in spin.r2eff:
             file.write("%-20i %20.15f %20.15f\n" % (res_num, spin.r2eff[key], spin.r2eff_err[key]))
 
     # Close the file.

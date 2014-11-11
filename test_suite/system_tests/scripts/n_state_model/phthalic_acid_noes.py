@@ -9,7 +9,7 @@ from status import Status; status = Status()
 
 
 # Add a date pipe if one doesn't already exist.
-if not ds.keys():
+if not len(ds):
     self._execute_uf(uf_name='pipe.create', pipe_name='test', pipe_type='N-state')
 
 # NOE restraint file.

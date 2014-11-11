@@ -182,7 +182,7 @@ def __errors_repl(subset=None, verbosity=0):
         num_dups = 0
 
         # Loop over all time points.
-        for id in cdp.var_I.keys():
+        for id in cdp.var_I:
             # Only use id's defined in subset
             if id not in subset:
                 continue
@@ -206,7 +206,7 @@ def __errors_repl(subset=None, verbosity=0):
         print("Standard deviation for all spins:  " + repr(sqrt(var_I)))
 
     # Loop over the spectra.
-    for id in cdp.var_I.keys():
+    for id in cdp.var_I:
         # Create the standard deviation data structure.
         cdp.sigma_I[id] = sqrt(cdp.var_I[id])
 
@@ -242,7 +242,7 @@ def __errors_volume_no_repl(subset=None):
             raise RelaxError("The total number of points used in the volume integration has not been specified for spin '%s'." % spin_id)
 
         # Set the error to the RMSD multiplied by the square root of the total number of points.
-        for key in spin.peak_intensity.keys():
+        for key in spin.peak_intensity:
             spin.peak_intensity_err[key] = spin.baseplane_rmsd[key] * sqrt(spin.N)
 
 

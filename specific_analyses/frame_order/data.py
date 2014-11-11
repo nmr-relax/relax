@@ -74,7 +74,7 @@ def domain_moving():
         raise RelaxError("No domains have been defined.  Please use the domain user function.")
 
     # Only support for 2 domains.
-    if len(list(cdp.domain.keys())) > 2:
+    if len(cdp.domain) > 2:
         raise RelaxError("Only two domains are supported in the frame order analysis.")
 
     # Reference domain not set yet, so return nothing.
@@ -82,7 +82,7 @@ def domain_moving():
         return None
 
     # Loop over the domains.
-    for id in list(cdp.domain.keys()):
+    for id in cdp.domain:
         # Reference domain.
         if id == cdp.ref_domain:
             continue

@@ -233,7 +233,7 @@ def i4_sobol ( dim_num, seed ):
 	global seed_save
 	global v
 
-	if ( not 'initialized' in list(globals().keys()) ):
+	if ( not 'initialized' in globals() ):
 		initialized = 0
 		dim_num_save = -1
 

@@ -494,7 +494,7 @@ def ref_domain(ref=None):
     check_pipe()
 
     # Check that the domain is defined.
-    if not hasattr(cdp, 'domain') or ref not in list(cdp.domain.keys()):
+    if not hasattr(cdp, 'domain') or ref not in cdp.domain:
         raise RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % ref)
 
     # Test if the reference domain exists.
