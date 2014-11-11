@@ -230,7 +230,7 @@ class Profile(Dispersion):
         if EXP_TYPE_CPMG_SQ in self.exp_type or EXP_TYPE_CPMG_MQ in self.exp_type:
             self.offsets = [0]
         else:
-            self.offsets = range(10)
+            self.offsets = list(range(10))
 
         # Chemical shift in ppm.
         self.chemical_shift = 1.0

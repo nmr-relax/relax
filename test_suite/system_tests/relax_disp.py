@@ -6453,7 +6453,7 @@ class Relax_disp(SystemTestCase):
             RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
 
             min_methods = [['FT'], ['MDD']]
-            min_list_glob_ini = [[128], range(126, 130, 2)[::-1]]
+            min_list_glob_ini = [[128], list(range(126, 130, 2))[::-1]]
 
             #min_methods = [['FT']]
             #min_list_glob_ini = [[128]]
@@ -6504,7 +6504,7 @@ class Relax_disp(SystemTestCase):
                 # Collect param values.
                 analysis = 'min_ind'
                 min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis=analysis, list_glob_ini=[128], selection=selection)
-                min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=range(126, 130, 2)[::-1], selection=selection)
+                min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=list(range(126, 130, 2))[::-1], selection=selection)
 
                 fig1 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 128]]
                 fig2 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 126]]
@@ -6542,7 +6542,7 @@ class Relax_disp(SystemTestCase):
             for selection in selections:
                 analysis = 'min_ind'
                 min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis=analysis, list_glob_ini=[128], selection=selection)
-                min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=range(126, 130, 2)[::-1], selection=selection)
+                min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=list(range(126, 130, 2))[::-1], selection=selection)
 
                 # Get param stats.
                 min_stat_dic = RDR.get_min_stat_dic(list_r2eff_dics=[min_ft_sel, min_mdd_sel], list_glob_ini=[128, 126])
@@ -6572,7 +6572,7 @@ class Relax_disp(SystemTestCase):
             RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
 
             min_methods = [['FT'], ['MDD']]
-            min_list_glob_ini = [[128], range(126, 130, 2)[::-1]]
+            min_list_glob_ini = [[128], list(range(126, 130, 2))[::-1]]
 
             #min_methods = [['FT']]
             #min_list_glob_ini = [[128]]
@@ -6636,7 +6636,7 @@ class Relax_disp(SystemTestCase):
             # Collect param values.
             analysis = 'min'
             min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis=analysis, list_glob_ini=[128], selection=selection)
-            min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=range(126, 130, 2)[::-1], selection=selection)
+            min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=list(range(126, 130, 2))[::-1], selection=selection)
 
             fig1 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 128]]
             fig2 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 126]]
@@ -6673,7 +6673,7 @@ class Relax_disp(SystemTestCase):
             for selection in selections:
                 analysis = 'min'
                 min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis=analysis, list_glob_ini=[128], selection=selection)
-                min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=range(126, 130, 2)[::-1], selection=selection)
+                min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=list(range(126, 130, 2))[::-1], selection=selection)
 
                 # Get param stats.
                 min_stat_dic = RDR.get_min_stat_dic(list_r2eff_dics=[min_ft_sel, min_mdd_sel], list_glob_ini=[128, 126])

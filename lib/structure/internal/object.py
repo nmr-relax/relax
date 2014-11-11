@@ -2152,7 +2152,7 @@ class Internal:
             mean_model.mol[mol_index].z[i] /= num
 
         # Delete all models but the mean.
-        for model_index in reversed(range(num)):
+        for model_index in reversed(list(range(num))):
             self.delete(model=self.structural_data[model_index].num)
 
 

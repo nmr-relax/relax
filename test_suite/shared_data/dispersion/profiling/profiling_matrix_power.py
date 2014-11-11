@@ -458,9 +458,9 @@ def single_normal(NS=1, iter=None):
     power = MC.power
 
     # Loop 100 times for each spin in the clustered analysis (to make the timing numbers equivalent).
-    for spin_index in xrange(100):
+    for spin_index in range(100):
         # Repeat the function call, to simulate minimisation.
-        for i in xrange(iter):
+        for i in range(iter):
             calc = MC.calc_normal(data, power)
 
 
@@ -474,9 +474,9 @@ def single_strided(NS=1, iter=None):
     power = MC.power
 
     # Loop 100 times for each spin in the clustered analysis (to make the timing numbers equivalent).
-    for spin_index in xrange(100):
+    for spin_index in range(100):
         # Repeat the function call, to simulate minimisation.
-        for i in xrange(iter):
+        for i in range(iter):
             calc = MC.calc_strided(data, power)
 
 
@@ -490,7 +490,7 @@ def cluster_normal(NS=100, iter=None):
     power = MC.power
 
     # Repeat the function call, to simulate minimisation.
-    for i in xrange(iter):
+    for i in range(iter):
         calc = MC.calc_normal(data, power)
 
 
@@ -504,7 +504,7 @@ def cluster_strided(NS=100, iter=None):
     power = MC.power
 
     # Repeat the function call, to simulate minimisation.
-    for i in xrange(iter):
+    for i in range(iter):
         calc = MC.calc_strided(data, power)
 
 

@@ -249,7 +249,7 @@ class Relax_disp_rep:
 
             # There should only be one peak file.
             for peaks_file in peaks_file_list:
-                self.interpreter.spectrum.read_intensities(file=peaks_file, spectrum_id=spectrum_ids, int_method=self.int_method, int_col=range(len(spectrum_ids)))
+                self.interpreter.spectrum.read_intensities(file=peaks_file, spectrum_id=spectrum_ids, int_method=self.int_method, int_col=list(range(len(spectrum_ids))))
 
             if set_rmsd:
                 # Get the folder for rmsd files.
@@ -1012,7 +1012,7 @@ class Relax_disp_rep:
         """Method which return a list of tubles, where each tuble is a spectrum id and a list of spectrum ids which are replicated"""
 
         # Get the dublicates.
-        dublicates = map(lambda val: (val, [i for i in xrange(len(cpmg_frqs)) if cpmg_frqs[i] == val]), cpmg_frqs)
+        dublicates = map(lambda val: (val, [i for i in range(len(cpmg_frqs)) if cpmg_frqs[i] == val]), cpmg_frqs)
 
         # Loop over the list of the mapping of cpmg frequency and duplications.
         list_dub_mapping = []
