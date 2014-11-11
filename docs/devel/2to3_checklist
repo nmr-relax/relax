@@ -5,8 +5,8 @@ The following is a checklist for the migration from Python 2 to Python 3.  Only 
 where xxx is the transformation being applied.
 
 
-Non-dangerous 3.0 update command
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Non-dangerous Python 3 update command
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This needs to be carefully checked before committing.
 
