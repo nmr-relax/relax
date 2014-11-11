@@ -4186,7 +4186,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin4.r2[r20_key1], 1.60463650370664, 2)
         self.assertAlmostEqual(spin4.r2[r20_key2], 1.63221675941434, 3)
         #self.assertAlmostEqual(spin4.pA, 0.818979078699935, 3)    # As dw (and kex) is zero, this parameter is not stable.
-        self.assertAlmostEqual(spin4.dw, 0.0, 5)
+        self.assertAlmostEqual(spin4.dw, 0.0, 2)
         self.assertAlmostEqual(spin4.kex/10000, 0.0, 3)
         self.assertAlmostEqual(spin4.chi2/100, 26.7356711142038/100, 3)
         self.assertAlmostEqual(spin70.r2[r20_key1], 6.97268077496405, 3)
@@ -4197,7 +4197,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin70.chi2, 53.8382196964083, 3)
         self.assertAlmostEqual(spin71.r2[r20_key1], 4.98123328466942, 3)
         self.assertAlmostEqual(spin71.pA, 0.996607425484157, 3)
-        self.assertAlmostEqual(spin71.dw, 4.34346257383825, 3)
+        self.assertAlmostEqual(spin71.dw, 4.34346257383825, 2)
         self.assertAlmostEqual(spin71.kex/10000, 1936.73197158804/10000, 3)
         self.assertAlmostEqual(spin71.chi2, 5.51703791653689, 3)
 
