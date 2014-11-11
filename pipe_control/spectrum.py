@@ -74,7 +74,7 @@ def __errors_repl(subset=None, verbosity=0):
     repl = replicated_flags()
 
     # Are all spectra replicated?
-    if False in repl.values():
+    if False in list(repl.values()):
         all_repl = False
         print("All spectra replicated:  No.")
     else:

@@ -371,14 +371,14 @@ def assemble_data_series_series(spin_id=None, x_data_name=None, y_data_name=None
                 continue
 
             # Are the X keys in the Y values?
-            if x_keys[0] in y_val.values():
+            if x_keys[0] in list(y_val.values()):
                 keys_for_values = 'x'
                 for key in x_keys:
                     if key not in base_values:
                         base_values.append(key)
 
             # Are the Y keys in the X values?
-            elif y_keys[0] in x_val.values():
+            elif y_keys[0] in list(x_val.values()):
                 keys_for_values = 'y'
                 for key in y_keys:
                     if key not in base_values:

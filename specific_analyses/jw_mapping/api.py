@@ -122,7 +122,7 @@ class Jw_mapping(API_base, API_common):
                     raise RelaxNoValueError("interatomic distance", spin_id=spin_id, spin_id2=spin_id2)
 
         # Frequency index.
-        if cdp.jw_frq not in cdp.spectrometer_frq.values():
+        if cdp.jw_frq not in list(cdp.spectrometer_frq.values()):
             raise RelaxError("No relaxation data corresponding to the frequency " + repr(cdp.jw_frq) + " has been loaded.")
 
         # Reduced spectral density mapping.

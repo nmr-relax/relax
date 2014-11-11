@@ -135,7 +135,7 @@ def delete_frequencies(id=None):
     del cdp.spectrometer_frq[id]
 
     # Update the structures as needed.
-    if frq in cdp.spectrometer_frq_list and frq not in cdp.spectrometer_frq.values():
+    if frq in cdp.spectrometer_frq_list and frq not in list(cdp.spectrometer_frq.values()):
         cdp.spectrometer_frq_list.pop(cdp.spectrometer_frq_list.index(frq))
     cdp.spectrometer_frq_count = len(cdp.spectrometer_frq_list)
 

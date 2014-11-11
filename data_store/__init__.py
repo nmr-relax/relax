@@ -334,7 +334,7 @@ class Relax_data_store(dict):
 
                 # Build the new frequency list structure.
                 dp.spectrometer_frq_list = []
-                for frq in dp.spectrometer_frq.values():
+                for frq in list(dp.spectrometer_frq.values()):
                     if frq not in dp.spectrometer_frq_list:
                         dp.spectrometer_frq_list.append(frq)
 

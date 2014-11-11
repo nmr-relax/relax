@@ -81,7 +81,7 @@ class Noe(API_base, API_common):
             raise RelaxError("The spectrum types have not been set.")
 
         # Test if the 2 spectra types 'ref' and 'sat' exist.
-        if not 'ref' in cdp.spectrum_type.values() or not 'sat' in cdp.spectrum_type.values():
+        if not 'ref' in list(cdp.spectrum_type.values()) or not 'sat' in list(cdp.spectrum_type.values()):
             raise RelaxError("The reference and saturated NOE spectra have not been loaded.")
 
         # Loop over the spins.

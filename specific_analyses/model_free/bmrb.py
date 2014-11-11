@@ -73,7 +73,7 @@ def from_bmrb_model(name=None):
     }
 
     # Loop over the dictionary.
-    for item in map.items():
+    for item in list(map.items()):
         # Normal match.
         if item[0] == name:
             return item[1]
