@@ -50,8 +50,10 @@ except ImportError:
 try:
     import io
     io_module = True
+    from io import IOBase
 except ImportError:
     io_module = False
+    IOBase = None
 import os
 import platform
 import sys
