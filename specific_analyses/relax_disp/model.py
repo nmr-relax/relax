@@ -78,7 +78,7 @@ class Model_class:
         if nest_list == None:
             self.nest_list = nest_list
         else:
-            nest_list = filter(partial(ne, self.model), nest_list)
+            nest_list = list(filter(partial(ne, self.model), nest_list))
             self.nest_list = nest_list
 
         # Define the order of how exp type ranks.
