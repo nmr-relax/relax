@@ -105,7 +105,7 @@ class TestDerivative(unittest.TestCase):
 
     def test_derivative_poly1d(self):
         # Specify the step size (default stepsize = 0.1)
-        p0 = np.poly1d(range(1, 6))
+        p0 = np.poly1d(list(range(1, 6)))
         fd = nd.Derivative(p0, n=4, romberg_terms=0) #, step_max=3, step_num=10)
         p4 = p0.deriv(4)
         self.assertAlmostEqual(fd(1), p4(1), places=5)
