@@ -1,70 +1,8 @@
-The following is a checklist for the migration from Python 2.x to Python 3.x.  Only changes which allow relax to run on both versions will currently be applied.  This is performed by the 2to3 program that comes with Python 3.x and the syntax used is:
+The following is a checklist for the migration from Python 2 to Python 3.  Only changes which allow relax to run on both versions will currently be applied.  This is performed by the 2to3 program that comes with Python 3.x and the syntax used is:
 
 2to3 -w . -f xxx
 
 where xxx is the transformation being applied.
-
-
-Key
-~~~
-
-+ committed.
-! deadly for python 2.x.
-~ nothing to do.
-
-
-The transformations
-~~~~~~~~~~~~~~~~~~~
-
-~apply
-~basestring
-~buffer
-~callable
-+dict
-!except
-+exec
-+execfile
-~filter
-~funcattrs
-~future
-~getcwdu
-+has_key
-+idioms
-!import
-!imports
-~imports2
-~input
-~intern
-~isinstance
-~itertools
-~itertools_imports
-!long    # This kills the method used for sanely stopping a ridiculous grid search.
-~map
-~metaclass
-~methodattrs
-~ne
-~next
-~nonzero
-!numliterals
-~paren
-+print
-+raise
-~raw_input
-~reduce
-~renames
-+repr
-~set_literal
-~standarderror
-~sys_exc
-~throw
-~tuple_params
-~types
-~unicode
-~urllib
-+ws_comma
-!xrange    # This will cause memory problems in certain parts of relax.
-~xreadlines
-~zip
 
 
 Non-dangerous 3.0 update command
@@ -72,28 +10,17 @@ Non-dangerous 3.0 update command
 
 This needs to be carefully checked before committing.
 
-2to3 -j 4 -w \
--f buffer \
--f idioms \
--f set_literal \
--f ws_comma \
--x except \
--x import \
--x imports \
--x long \
--x numliterals \
--x xrange \
-.
+2to3 -j 4 -w -f buffer -f idioms -f set_literal -f ws_comma -x except -x import -x imports -x long -x numliterals -x xrange .
 
 
-Deadly 3.0 update command
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Deadly Python 3 update command
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-2to3 -j 4 -w \
--f except \
--f import \
--f imports \
--f long \
--f numliterals \
--f xrange \
-.
+2to3 -j 4 -w -f except -f import -f imports -f long -f numliterals -f xrange .
+
+
+All (except print)
+~~~~~~~~~~~~~~~~~~
+
+2to3 -j 4 -w -f apply -f basestring -f buffer -f callable -f dict -f except -f exec -f execfile -f exitfunc -f filter -f funcattrs -f future -f getcwdu -f has_key -f idioms -f import -f imports -f imports2 -f input -f intern -f isinstance -f itertools -f itertools_imports -f long -f map -f metaclass -f methodattrs -f ne -f next -f nonzero -f numliterals -f operator -f paren -f raise -f raw_input -f reduce -f renames -f repr -f set_literal -f standarderror -f sys_exc -f throw -f tuple_params -f types -f unicode -f urllib -f ws_comma -f xrange -f xreadlines -f zip .
+
