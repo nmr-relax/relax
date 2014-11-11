@@ -20,7 +20,7 @@ class TestDerivative(unittest.TestCase):
         dx = dcube(x)
         self.assertListEqual(list(dx.shape), list(shape), 'Shape mismatch')
         for i, (val, tval) in enumerate(zip(dx.ravel(), (3*x**2).ravel())):
-            self.assertAlmostEqual(val, tval,places=12,
+            self.assertAlmostEqual(val, tval, places=12,
                                    msg='First differing element %d\n value = %g, \n true value = %g' % (i, val, tval))
 
     def test_derivative_exp(self):
@@ -38,9 +38,9 @@ class TestDerivative(unittest.TestCase):
         x = np.linspace(0, 2. * np.pi, 13)
         y = dsin(x)
         small = np.abs(y - np.cos(x)) < dsin.error_estimate * 10
-        # print np.abs(y - np.cos(x))
-        # print dsin.error_estimate
-        # print small
+        # print(np.abs(y - np.cos(x)))
+        # print(dsin.error_estimate)
+        # print(small)
         self.assertTrue(np.all(small))
 
     def test_high_order_derivative_sin(self):
@@ -105,7 +105,7 @@ class TestDerivative(unittest.TestCase):
 
     def test_derivative_poly1d(self):
         # Specify the step size (default stepsize = 0.1)
-        p0 = np.poly1d(range(1, 6))
+        p0 = np.poly1d(list(range(1, 6)))
         fd = nd.Derivative(p0, n=4, romberg_terms=0) #, step_max=3, step_num=10)
         p4 = p0.deriv(4)
         self.assertAlmostEqual(fd(1), p4(1), places=5)

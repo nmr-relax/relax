@@ -273,7 +273,7 @@ class _Derivative(object):
         
         import matplotlib.pyplot as plt
         plt.ioff()
-        plt.subplot(2,1,1)
+        plt.subplot(2, 1, 1)
         try:
             #plt.loglog(h2,der_romb, h2, der_romb+errors,'r--',h2, der_romb-errors,'r--')
             plt.loglog(h2, der_romb-der_romb.min() + _EPS,
@@ -281,7 +281,7 @@ class _Derivative(object):
             small = 2 * np.sqrt(_EPS) ** (1. / np.sqrt(self.n))
             plt.vlines(small, 1e-15, 1)
             plt.title('Absolute error as function of stepsize nom=%g' % stepNom_i)
-            plt.subplot(2,1,2)
+            plt.subplot(2, 1, 2)
             plt.loglog(h2, errors, 'r--', h2, errors, 'r.')
             plt.vlines(small, 1e-15, 1)
             
@@ -586,7 +586,7 @@ class _Derivative(object):
             rhs = vec2mat(der_romb, nexpon + 2, max(1, ne - (nexpon + 2)))
     
             rombcoefs = linalg.lstsq(self._rromb, (self._qromb.T * rhs))
-            der_romb = rombcoefs[0][0, :]
+            der_romb = rombcoefs[0][0,:]
             hout = hout[:der_romb.size]
             
             errest = self._predict_uncertainty(rombcoefs, rhs)
@@ -826,10 +826,10 @@ class Jacobian(_Derivative):
                 xm[i] = x0_i - h[j]
                 fdif = fun(xp) - fun(xm)
                 fdel[:, j] = fdif.ravel()
-            derest = fdel * 0.5 / h[newaxis, :]
+            derest = fdel * 0.5 / h[newaxis,:]
 
             for j in range(n):
-                der_romb, errest, h1 = self._romb_extrap(derest[j, :], h)
+                der_romb, errest, h1 = self._romb_extrap(derest[j,:], h)
                 der_romb, errest, h1 = self._trim_estimates(der_romb, errest, h)
                 ind = errest.argmin()
                 err[j, i] = errest[ind]
@@ -1126,12 +1126,12 @@ if __name__ == '__main__':
     #dfun = lambda x : -1./x**2
     
     h = 1e-4
-    fd = Derivative(fun, method='central',step_max=2,
+    fd = Derivative(fun, method='central', step_max=2,
                     step_ratio=2, verbose=True, vectorized=True, romberg_terms=3) #2)#, step_nom=9)
 #     fd = Derivative(fun, method='central', step_ratio=1.62, verbose=True,
 #                     step_fix=2, step_num=None, romberg_terms=2, vectorized=True)
                     #step_nom=0.0005) #2)#, step_nom=9)
     x=1.
     t = fd(x)
-    print(((fun(x+h)-fun(x))/(h), dfun(x),t,dfun(x)-t, fd.error_estimate, fd.error_estimate/t, fd.finaldelta))
+    print(((fun(x+h)-fun(x))/(h), dfun(x), t, dfun(x)-t, fd.error_estimate, fd.error_estimate/t, fd.finaldelta))
     

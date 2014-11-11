@@ -112,7 +112,7 @@ pipe.create('tag', 'N-state')
 # Load all the tag structures.
 NUM_TAG = 1000
 for i in range(NUM_TAG):
-    structure.read_pdb(file='LactoseMCMM4_'+`i+1`, dir=pardir+sep+pardir+sep+pardir+sep+'structures'+sep+'tag_1000'+sep+'080704_MCMM4_aligned-forEd1000', set_model_num=i+1, set_mol_name='tag')
+    structure.read_pdb(file='LactoseMCMM4_'+repr(i+1), dir=pardir+sep+pardir+sep+pardir+sep+'structures'+sep+'tag_1000'+sep+'080704_MCMM4_aligned-forEd1000', set_model_num=i+1, set_mol_name='tag')
 
 # Load the lanthanide atoms.
 structure.load_spins(spin_id=':4@C1', ave_pos=False)

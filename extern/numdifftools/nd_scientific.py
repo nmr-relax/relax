@@ -25,7 +25,7 @@ class _Common(object):
         x = np.atleast_1d(x0)
         DerivVar = SFD.DerivVar if self.derOrder > 1 else SFF.DerivVar
         der = self.fun(DerivVar(x, 0, self.derOrder))[self.derOrder][0]
-        for _i in xrange(self.derOrder - 1):
+        for _i in range(self.derOrder - 1):
             der = der[0]
         return der
 

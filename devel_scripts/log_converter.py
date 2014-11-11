@@ -18,7 +18,7 @@ elif len(sys.argv) != 2:
 
 # Test that the argument is a file.
 if not access(sys.argv[1], F_OK):
-    sys.stderr.write(`sys.argv[1]` + " is not accessible as a file.\n")
+    sys.stderr.write(repr(sys.argv[1]) + " is not accessible as a file.\n")
     sys.exit()
 
 # Open the file, read the lines, then close it.

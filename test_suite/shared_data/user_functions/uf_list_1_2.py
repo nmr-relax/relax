@@ -22,10 +22,9 @@ class Dummy_class:
         self.interpreter.run()
 
         # Get the names of the data structures.
-        names = self.local.keys()
+        names = sorted(self.local.keys())
 
         # Alphabetically sort the names of the data structures.
-        names.sort()
 
         # Alphabetically sort the names of the data structures.
         for name in names:

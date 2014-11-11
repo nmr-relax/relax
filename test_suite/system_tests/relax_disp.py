@@ -1218,12 +1218,12 @@ class Relax_disp(SystemTestCase):
 
         # Test the parameters which created the data.
         # This is for the 1H spin.
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2a[r20_key], R2g, 4)
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2b[r20_key], R2e, 2)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2a[r20_key], R2g, 3)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2b[r20_key]/100, R2e/100, 3)
 
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].dw, dw_ppm, 6)
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].pA, 1-pb, 6)
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].kex, kex, 2)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].kex/1000, kex/1000, 2)
 
 
     def x_test_bmrb_sub_cpmg(self):
@@ -2914,11 +2914,17 @@ class Relax_disp(SystemTestCase):
             '0      2.00000    0.99000    1000.00000    6185.84926    0         2.00000    0.99000    1000.00000    6185.84926    '+"\n",
             '1      1.92453    0.98961    1034.72206    6396.02770    1         1.92453    0.98961    1034.72206    6396.02770    '+"\n",
         ]
+        res_file2 = [
+            '# i    dw         pA         kex           chi2          i_sort    dw_sort    pA_sort    kex_sort      chi2_sort     '+"\n",
+            '0      2.00000    0.99000    1000.00000    6185.84926    0         2.00000    0.99000    1000.00000    6185.84926    '+"\n",
+            '1      1.92452    0.98961    1034.72424    6396.02439    1         1.92452    0.98961    1034.72424    6396.02439    '+"\n",
+        ]  # Python 2.5 and 3.1.
         file = open(point_par, 'r')
         lines = file.readlines()
         file.close()
         for i in range(len(res_file)):
-            self.assertEqual(res_file[i], lines[i])
+            if lines[i] != res_file[i] and lines[i] != res_file2[i]:
+                self.assertEqual(res_file[i], lines[i])
 
         print("\nChecking the matplotlib surface plot file.")
         res_file = [
@@ -4180,7 +4186,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin4.r2[r20_key1], 1.60463650370664, 2)
         self.assertAlmostEqual(spin4.r2[r20_key2], 1.63221675941434, 3)
         #self.assertAlmostEqual(spin4.pA, 0.818979078699935, 3)    # As dw (and kex) is zero, this parameter is not stable.
-        self.assertAlmostEqual(spin4.dw, 0.0, 5)
+        self.assertAlmostEqual(spin4.dw, 0.0, 2)
         self.assertAlmostEqual(spin4.kex/10000, 0.0, 3)
         self.assertAlmostEqual(spin4.chi2/100, 26.7356711142038/100, 3)
         self.assertAlmostEqual(spin70.r2[r20_key1], 6.97268077496405, 3)
@@ -4191,7 +4197,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin70.chi2, 53.8382196964083, 3)
         self.assertAlmostEqual(spin71.r2[r20_key1], 4.98123328466942, 3)
         self.assertAlmostEqual(spin71.pA, 0.996607425484157, 3)
-        self.assertAlmostEqual(spin71.dw, 4.34346257383825, 3)
+        self.assertAlmostEqual(spin71.dw, 4.34346257383825, 2)
         self.assertAlmostEqual(spin71.kex/10000, 1936.73197158804/10000, 3)
         self.assertAlmostEqual(spin71.chi2, 5.51703791653689, 3)
 
@@ -6166,10 +6172,10 @@ class Relax_disp(SystemTestCase):
                 self.assertEqual(len(par_dic), len(model_params))
 
                 # Loop over dictionary.
-                for param, param_conv in par_dic.iteritems():
-                        if param != param_conv:
-                            print("Model:'%s', Nested model:'%s', Copying '%s' to '%s'." % (model_info.model, nested_model, param_conv, param))
-                        self.assertNotEqual(param_conv, None)
+                for param in par_dic:
+                        if param != par_dic[param]:
+                            print("Model:'%s', Nested model:'%s', Copying '%s' to '%s'." % (model_info.model, nested_model, par_dic[param], param))
+                        self.assertNotEqual(par_dic[param], None)
 
 
     def test_ns_mmq_3site(self):
@@ -6447,7 +6453,7 @@ class Relax_disp(SystemTestCase):
             RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
 
             min_methods = [['FT'], ['MDD']]
-            min_list_glob_ini = [[128], range(126, 130, 2)[::-1]]
+            min_list_glob_ini = [[128], list(range(126, 130, 2))[::-1]]
 
             #min_methods = [['FT']]
             #min_list_glob_ini = [[128]]
@@ -6498,7 +6504,7 @@ class Relax_disp(SystemTestCase):
                 # Collect param values.
                 analysis = 'min_ind'
                 min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis=analysis, list_glob_ini=[128], selection=selection)
-                min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=range(126, 130, 2)[::-1], selection=selection)
+                min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=list(range(126, 130, 2))[::-1], selection=selection)
 
                 fig1 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 128]]
                 fig2 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 126]]
@@ -6536,7 +6542,7 @@ class Relax_disp(SystemTestCase):
             for selection in selections:
                 analysis = 'min_ind'
                 min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis=analysis, list_glob_ini=[128], selection=selection)
-                min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=range(126, 130, 2)[::-1], selection=selection)
+                min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=list(range(126, 130, 2))[::-1], selection=selection)
 
                 # Get param stats.
                 min_stat_dic = RDR.get_min_stat_dic(list_r2eff_dics=[min_ft_sel, min_mdd_sel], list_glob_ini=[128, 126])
@@ -6566,7 +6572,7 @@ class Relax_disp(SystemTestCase):
             RDR.calc_r2eff(methods=methods, list_glob_ini=[128, 126])
 
             min_methods = [['FT'], ['MDD']]
-            min_list_glob_ini = [[128], range(126, 130, 2)[::-1]]
+            min_list_glob_ini = [[128], list(range(126, 130, 2))[::-1]]
 
             #min_methods = [['FT']]
             #min_list_glob_ini = [[128]]
@@ -6630,7 +6636,7 @@ class Relax_disp(SystemTestCase):
             # Collect param values.
             analysis = 'min'
             min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis=analysis, list_glob_ini=[128], selection=selection)
-            min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=range(126, 130, 2)[::-1], selection=selection)
+            min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=list(range(126, 130, 2))[::-1], selection=selection)
 
             fig1 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 128]]
             fig2 = [[min_ft_sel, min_mdd_sel], ['FT', 'MDD'], [128, 126]]
@@ -6667,7 +6673,7 @@ class Relax_disp(SystemTestCase):
             for selection in selections:
                 analysis = 'min'
                 min_ft_sel = RDR.col_min(method='FT', model=MODEL_CR72, analysis=analysis, list_glob_ini=[128], selection=selection)
-                min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=range(126, 130, 2)[::-1], selection=selection)
+                min_mdd_sel = RDR.col_min(method='MDD', model=MODEL_CR72, analysis=analysis, list_glob_ini=list(range(126, 130, 2))[::-1], selection=selection)
 
                 # Get param stats.
                 min_stat_dic = RDR.get_min_stat_dic(list_r2eff_dics=[min_ft_sel, min_mdd_sel], list_glob_ini=[128, 126])
