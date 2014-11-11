@@ -28,7 +28,7 @@ from math import pow
 from numpy import ndarray
 
 # relax module imports.
-from lib.compat import u
+from lib.compat import u, unicode
 from status import Status; status = Status()
 
 
