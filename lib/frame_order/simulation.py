@@ -118,7 +118,7 @@ def brownian(file=None, model=None, structure=None, parameters={}, eigenframe=No
     # Simulate.
     current_snapshot = 1
     step = 1
-    while 1:
+    while True:
         # End the simulation.
         if current_snapshot == total:
             print("\nEnd of simulation.")

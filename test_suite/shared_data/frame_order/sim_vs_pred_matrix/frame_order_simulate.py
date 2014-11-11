@@ -144,7 +144,7 @@ class Frame_order:
             raise RelaxError("Unknown model '%s'." % MODEL)
 
         # Loop over random starting positions.
-        while 1:
+        while True:
             # Printout.
             progress_meter(index, a=1000, b=100000)
 
