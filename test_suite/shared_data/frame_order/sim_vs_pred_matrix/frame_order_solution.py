@@ -219,9 +219,9 @@ class Frame_order:
 
             # Build the frame.
             self.eigenframe = zeros((3, 3), float64)
-            self.eigenframe[:,0] = vect_x
-            self.eigenframe[:,1] = vect_y
-            self.eigenframe[:,2] = vect_z
+            self.eigenframe[:, 0] = vect_x
+            self.eigenframe[:, 1] = vect_y
+            self.eigenframe[:, 2] = vect_z
 
 
     def write_data(self, file_name=None, model=None, model_text=None, var=None):

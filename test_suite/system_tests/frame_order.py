@@ -302,7 +302,7 @@ class Frame_order(SystemTestCase):
 
         # The optimised Eigenframe.
         frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
-                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [ 0.62357991685585, -0.505348769456744,  0.596465177946379],
                        [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.
@@ -345,7 +345,7 @@ class Frame_order(SystemTestCase):
 
         # The optimised Eigenframe.
         frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
-                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [ 0.62357991685585, -0.505348769456744,  0.596465177946379],
                        [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.
@@ -388,7 +388,7 @@ class Frame_order(SystemTestCase):
 
         # The optimised Eigenframe.
         frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
-                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [ 0.62357991685585, -0.505348769456744,  0.596465177946379],
                        [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.
@@ -431,7 +431,7 @@ class Frame_order(SystemTestCase):
 
         # The optimised Eigenframe.
         frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
-                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [ 0.62357991685585, -0.505348769456744,  0.596465177946379],
                        [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.
@@ -472,7 +472,7 @@ class Frame_order(SystemTestCase):
 
         # The optimised Eigenframe.
         frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
-                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [ 0.62357991685585, -0.505348769456744,  0.596465177946379],
                        [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.
@@ -513,7 +513,7 @@ class Frame_order(SystemTestCase):
 
         # The optimised Eigenframe.
         frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
-                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [ 0.62357991685585, -0.505348769456744,  0.596465177946379],
                        [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.

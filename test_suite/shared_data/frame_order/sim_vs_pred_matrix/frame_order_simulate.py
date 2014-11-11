@@ -71,9 +71,9 @@ elif TAG == 'axis2_1_3':
 
     # Build the frame.
     EIG_FRAME = zeros((3, 3), float64)
-    EIG_FRAME[:,0] = vect_x
-    EIG_FRAME[:,1] = vect_y
-    EIG_FRAME[:,2] = vect_z
+    EIG_FRAME[:, 0] = vect_x
+    EIG_FRAME[:, 1] = vect_y
+    EIG_FRAME[:, 2] = vect_z
 
 
 

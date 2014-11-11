@@ -76,7 +76,7 @@ value.set(param='ave_pos_beta', val=AVE_POS_BETA)
 value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
 
 # Free the pivot, and set it to the CoM of both domains which is far enough away from the real pivot.
-frame_order.pivot([ 34.721619683345111,  -2.63891199102997 ,  12.941974078087899], fix=False)
+frame_order.pivot([ 34.721619683345111,  -2.63891199102997,  12.941974078087899], fix=False)
 
 # Zooming grid search (low quality for speed).
 time()
