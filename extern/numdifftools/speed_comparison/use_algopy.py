@@ -9,7 +9,7 @@ class EVAL:
         cg = algopy.CGraph()
         x = np.array([algopy.Function(x[i]) for i in range(len(x))])
         y = f(x)
-        # print 'y=',y
+        # print('y=',y)
         cg.trace_off()
         cg.independentFunctionList = x
         cg.dependentFunctionList = [y]

@@ -10,7 +10,7 @@ class EVAL:
         sx = FuncDesigner.oovar('x', size = len(x))
         sy = 0.5*FuncDesigner.dot(sx*sx, FuncDesigner.dot(f.A, sx))
 
-        print 'sy=', sy
+        print('sy=', sy)
         
         # self.sA = sA
         self.sx = sx
@@ -22,8 +22,8 @@ class EVAL:
         
     def gradient(self, x):
         point = {self.sx:x}
-        # print point
-        # print self.sy
+        # print(point)
+        # print(self.sy)
         retval = self.sy.D(point)[self.sx]
         return retval
         
