@@ -8,9 +8,9 @@ class EVAL:
 
         # sA = FuncDesigner.oovar('A',shape=(len(x),len(x)))
         sx = FuncDesigner.oovar('x', size = len(x))
-        sy = 0.5*FuncDesigner.dot(sx*sx,FuncDesigner.dot(f.A,sx))
+        sy = 0.5*FuncDesigner.dot(sx*sx, FuncDesigner.dot(f.A, sx))
 
-        print 'sy=',sy
+        print 'sy=', sy
         
         # self.sA = sA
         self.sx = sx

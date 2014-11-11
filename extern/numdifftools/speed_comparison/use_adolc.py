@@ -44,13 +44,13 @@ class EVAL0:
         adolc.trace_off()
         
     def function(self, x):
-        return adolc.function(0,x)
+        return adolc.function(0, x)
         
     def gradient(self, x):
-        return adolc.gradient(0,x)
+        return adolc.gradient(0, x)
 
     def hessian(self, x):
-        return adolc.hessian(0,x)
+        return adolc.hessian(0, x)
 
 
 

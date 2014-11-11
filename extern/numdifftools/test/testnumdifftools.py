@@ -20,7 +20,7 @@ class TestDerivative(unittest.TestCase):
         dx = dcube(x)
         self.assertListEqual(list(dx.shape), list(shape), 'Shape mismatch')
         for i, (val, tval) in enumerate(zip(dx.ravel(), (3*x**2).ravel())):
-            self.assertAlmostEqual(val, tval,places=12,
+            self.assertAlmostEqual(val, tval, places=12,
                                    msg='First differing element %d\n value = %g, \n true value = %g' % (i, val, tval))
 
     def test_derivative_exp(self):
