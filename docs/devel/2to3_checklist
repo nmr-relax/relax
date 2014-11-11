@@ -61,6 +61,7 @@ All individually
 2to3 -j 4 -w -f numliterals .
 2to3 -j 4 -w -f operator .
 2to3 -j 4 -w -f paren .
+2to3 -j 4 -w -f print .
 2to3 -j 4 -w -f raise .
 2to3 -j 4 -w -f raw_input .
 2to3 -j 4 -w -f reduce .
