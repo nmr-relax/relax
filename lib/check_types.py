@@ -47,7 +47,7 @@ except ImportError:
 
 
 # relax module imports.
-from lib.compat import IOBase
+from lib.compat import IOBase, unicode
 
 
 def is_complex(num):
