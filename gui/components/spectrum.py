@@ -98,14 +98,14 @@ class Spectra_list(Base_list):
         # The current frequency.
         frq = None
         frq_flag = False
-        if hasattr(cdp, 'cpmg_frqs') and id in cdp.cpmg_frqs.keys():
+        if hasattr(cdp, 'cpmg_frqs') and id in cdp.cpmg_frqs:
             frq = cdp.cpmg_frqs[id]
             frq_flag = True
 
         # The current ncyc_even flag.
         even = True
         even_flag = False
-        if hasattr(cdp, 'ncyc_even') and id in cdp.ncyc_even.keys():
+        if hasattr(cdp, 'ncyc_even') and id in cdp.ncyc_even:
             even = cdp.ncyc_even[id]
             even_flag = True
 
@@ -134,7 +134,7 @@ class Spectra_list(Base_list):
 
         # The current type.
         exp_type = None
-        if hasattr(cdp, 'exp_type') and id in cdp.exp_type.keys():
+        if hasattr(cdp, 'exp_type') and id in cdp.exp_type:
             exp_type = cdp.exp_type[id]
 
         # Launch the dialog.
@@ -162,7 +162,7 @@ class Spectra_list(Base_list):
 
         # The current time.
         time = None
-        if hasattr(cdp, 'relax_times') and id in cdp.relax_times.keys():
+        if hasattr(cdp, 'relax_times') and id in cdp.relax_times:
             time = cdp.relax_times[id]
 
         # Launch the dialog.
@@ -191,7 +191,7 @@ class Spectra_list(Base_list):
         # The spin-lock.
         nu1 = None
         nu1_flag = False
-        if hasattr(cdp, 'spin_lock_nu1') and id in cdp.spin_lock_nu1.keys():
+        if hasattr(cdp, 'spin_lock_nu1') and id in cdp.spin_lock_nu1:
             nu1 = cdp.spin_lock_nu1[id]
             nu1_flag = True
 
@@ -221,7 +221,7 @@ class Spectra_list(Base_list):
         # The offset.
         offset = None
         offset_flag = False
-        if hasattr(cdp, 'spin_lock_offset') and id in cdp.spin_lock_offset.keys():
+        if hasattr(cdp, 'spin_lock_offset') and id in cdp.spin_lock_offset:
             offset = cdp.spin_lock_offset[id]
             offset_flag = True
 
@@ -250,7 +250,7 @@ class Spectra_list(Base_list):
 
         # The current time.
         time = None
-        if hasattr(cdp, 'relax_times') and id in cdp.relax_times.keys():
+        if hasattr(cdp, 'relax_times') and id in cdp.relax_times:
             time = cdp.relax_times[id]
 
         # Launch the dialog.
@@ -424,11 +424,11 @@ class Spectra_list(Base_list):
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
             # Set the CPMG frequency.
-            if hasattr(cdp, 'cpmg_frqs') and cdp.spectrum_ids[i] in cdp.cpmg_frqs.keys():
+            if hasattr(cdp, 'cpmg_frqs') and cdp.spectrum_ids[i] in cdp.cpmg_frqs:
                 self.element.SetStringItem(i, index, float_to_gui(cdp.cpmg_frqs[cdp.spectrum_ids[i]]))
 
             # Set the spin-lock field strength.
-            if hasattr(cdp, 'spin_lock_nu1') and cdp.spectrum_ids[i] in cdp.spin_lock_nu1.keys():
+            if hasattr(cdp, 'spin_lock_nu1') and cdp.spectrum_ids[i] in cdp.spin_lock_nu1:
                 self.element.SetStringItem(i, index, float_to_gui(cdp.spin_lock_nu1[cdp.spectrum_ids[i]]))
 
         # Successful.
@@ -454,7 +454,7 @@ class Spectra_list(Base_list):
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
             # No value.
-            if cdp.spectrum_ids[i] not in cdp.exp_type.keys():
+            if cdp.spectrum_ids[i] not in cdp.exp_type:
                 continue
 
             # Set the value.
@@ -513,7 +513,7 @@ class Spectra_list(Base_list):
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
-            if hasattr(cdp, 'spin_lock_offset') and cdp.spectrum_ids[i] in cdp.spin_lock_offset.keys():
+            if hasattr(cdp, 'spin_lock_offset') and cdp.spectrum_ids[i] in cdp.spin_lock_offset:
                 self.element.SetStringItem(i, index, float_to_gui(cdp.spin_lock_offset[cdp.spectrum_ids[i]]))
 
         # Successful.
@@ -634,7 +634,7 @@ class Spectra_list(Base_list):
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
             # No value.
-            if cdp.spectrum_ids[i] not in cdp.spectrum_type.keys():
+            if cdp.spectrum_ids[i] not in cdp.spectrum_type:
                 continue
 
             # Set the value.
@@ -667,7 +667,7 @@ class Spectra_list(Base_list):
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
             # No value.
-            if cdp.spectrum_ids[i] not in cdp.relax_times.keys():
+            if cdp.spectrum_ids[i] not in cdp.relax_times:
                 continue
 
             # Set the value.

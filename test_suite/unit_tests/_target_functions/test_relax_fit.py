@@ -24,11 +24,30 @@ from numpy import array, float64, transpose, zeros
 from unittest import TestCase
 
 # relax module imports.
-from target_functions.relax_fit import setup, func, dfunc, d2func, jacobian, jacobian_chi2
+from dep_check import C_module_exp_fn
+from status import Status; status = Status()
+if C_module_exp_fn:
+    from target_functions.relax_fit import setup, func, dfunc, d2func, jacobian, jacobian_chi2
 
 
 class Test_relax_fit(TestCase):
     """Unit tests for the target_functions.relax_fit relax C module."""
+
+    def __init__(self, methodName='runTest'):
+        """Skip the tests if the C modules are non-functional.
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Execute the base class method.
+        super(Test_relax_fit, self).__init__(methodName)
+
+        # Missing module.
+        if not C_module_exp_fn:
+            # Store in the status object. 
+            status.skipped_tests.append([methodName, 'Relax curve-fitting C module', 'unit'])
+
 
     def setUp(self):
         """Create a number of objects for the calculation and testing of the relaxation curve-fitting equations."""

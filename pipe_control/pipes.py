@@ -67,12 +67,12 @@ def bundle(bundle=None, pipe=None):
     check_pipe(pipe)
 
     # Check that the pipe is not in another bundle.
-    for key in ds.pipe_bundles.keys():
+    for key in ds.pipe_bundles:
         if pipe in ds.pipe_bundles[key]:
             raise RelaxError("The data pipe is already within the '%s' bundle." % key)
 
     # Create a new bundle if needed.
-    if bundle not in ds.pipe_bundles.keys():
+    if bundle not in ds.pipe_bundles:
         ds.pipe_bundles[bundle] = []
 
     # Add the pipe to the bundle.
@@ -89,7 +89,7 @@ def bundle_names():
     @rtype:         list of str
     """
 
-    return list(ds.pipe_bundles.keys())
+    return sorted(ds.pipe_bundles.keys())
 
 
 def cdp_name():
@@ -187,7 +187,7 @@ def copy(pipe_from=None, pipe_to=None, bundle_to=None):
     """
 
     # Test if the pipe already exists.
-    if pipe_to in list(ds.keys()):
+    if pipe_to in ds:
         raise RelaxPipeError(pipe_to)
 
     # Both pipe arguments cannot be None.
@@ -281,7 +281,7 @@ def delete(pipe_name=None):
 
         # All pipes.
         else:
-            pipes = ds.keys()
+            pipes = sorted(ds.keys())
 
         # Loop over the pipes.
         for pipe in pipes:
@@ -364,7 +364,7 @@ def get_bundle(pipe=None):
         check_pipe(pipe)
 
     # Find and return the bundle.
-    for key in ds.pipe_bundles.keys():
+    for key in ds.pipe_bundles:
         if pipe in ds.pipe_bundles[key]:
             return key
 
@@ -418,7 +418,7 @@ def has_bundle(bundle=None):
     """
 
     # Is the bundle in the keys.
-    if bundle in ds.pipe_bundles.keys():
+    if bundle in ds.pipe_bundles:
         return True
     else:
         return False
@@ -453,7 +453,7 @@ def pipe_loop(name=False):
     status.pipe_lock.acquire(sys._getframe().f_code.co_name)
     try:
         # Loop over the keys.
-        for key in list(ds.keys()):
+        for key in ds:
             # Return the pipe and name.
             if name:
                 yield ds[key], key

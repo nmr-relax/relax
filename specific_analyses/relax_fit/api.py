@@ -115,14 +115,11 @@ class Relax_fit(API_base, API_common):
                 top += 2
             subsection(file=sys.stdout, text="Estimating rx error for spin: %s"%spin_id, prespace=top)
 
-        # The keys.
-        keys = list(spin.peak_intensity.keys())
-
         # The peak intensities and times.
         values = []
         errors = []
         times = []
-        for key in keys:
+        for key in spin.peak_intensity:
             values.append(spin.peak_intensity[key])
             errors.append(spin.peak_intensity_err[key])
             times.append(cdp.relax_times[key])
@@ -179,7 +176,7 @@ class Relax_fit(API_base, API_common):
             raise RelaxNoModelError
 
         # Loop over the spectral time points.
-        for id in list(cdp.relax_times.keys()):
+        for id in cdp.relax_times:
             # Back calculate the value.
             value = back_calc(spin=spin, relax_time_id=id)
 
@@ -343,14 +340,11 @@ class Relax_fit(API_base, API_common):
             # Initialise the function to minimise.
             ######################################
 
-            # The keys.
-            keys = list(spin.peak_intensity.keys())
-
             # The peak intensities and times.
             values = []
             errors = []
             times = []
-            for key in keys:
+            for key in spin.peak_intensity:
                 # The values.
                 if sim_index == None:
                     values.append(spin.peak_intensity[key])
@@ -512,7 +506,7 @@ class Relax_fit(API_base, API_common):
 
             # Check that the number of relaxation times is complete.
             if len(spin.peak_intensity) != len(cdp.relax_times):
-                raise RelaxError("The %s peak intensity points of the spin '%s' does not match the expected number of %s (the IDs %s do not match %s)." % (len(spin.peak_intensity), spin_id, len(cdp.relax_times), list(spin.peak_intensity.keys()), list(cdp.relax_times.keys())))
+                raise RelaxError("The %s peak intensity points of the spin '%s' does not match the expected number of %s (the IDs %s do not match %s)." % (len(spin.peak_intensity), spin_id, len(cdp.relax_times), sorted(spin.peak_intensity.keys()), sorted(cdp.relax_times.keys())))
 
         # Final printout.
         if verbose and not deselect_flag:

@@ -50,8 +50,10 @@ except ImportError:
 try:
     import io
     io_module = True
+    from io import IOBase
 except ImportError:
     io_module = False
+    IOBase = None
 import os
 import platform
 import sys
@@ -371,6 +373,9 @@ if PY_VERSION == 2:
         else:
             os.devnull = None
 
+    # The unicode conversion function - essential for the GUI in Python 2.
+    unicode = builtins.unicode
+
     # Unicode string handling.
     from codecs import unicode_escape_decode
     def u(text):
@@ -388,7 +393,7 @@ if PY_VERSION == 2:
 # Python 3 work-arounds.
 if PY_VERSION == 3:
     # The unicode conversion function - essential for the GUI in Python 2.
-    builtins.unicode = builtins.str
+    unicode = builtins.str
 
     # Unicode string handling.
     def u(text):

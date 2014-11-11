@@ -31,6 +31,7 @@ import wx
 from graphics import WIZARD_IMAGE_PATH
 from gui.misc import bitmap_setup
 from gui.string_conv import str_to_gui
+from lib.compat import unicode
 from pipe_control.mol_res_spin import return_spin
 
 

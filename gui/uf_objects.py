@@ -447,7 +447,7 @@ class Uf_page(Wiz_page):
         """
 
         # The key is not set, so assume this is a hidden argument.
-        if key not in self.uf_args.keys():
+        if key not in self.uf_args:
             return None
 
         # Call the argument element's method.
@@ -996,6 +996,6 @@ class Uf_storage(dict):
         """
 
         # Loop over the elements, returning the name when a match occurs.
-        for name in self.keys():
+        for name in self:
             if self[name]._uf_id == id:
                 return name

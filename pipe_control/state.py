@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -59,7 +59,7 @@ def load_pickle(file):
         setattr(ds, name, obj)
  
     # Loop over the keys of the dictionary.
-    for key in list(state.keys()):
+    for key in state:
         # Shift the PipeContainer.
         ds[key] = state[key]
 

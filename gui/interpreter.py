@@ -106,7 +106,7 @@ class Interpreter(object):
 
         # Execute the user function.
         try:
-            apply(fn, args, kwds)
+            fn(*args, **kwds)
 
         # Catch all RelaxErrors.
         except AllRelaxErrors:
@@ -300,7 +300,7 @@ class Interpreter_thread(Thread):
             # Execute the user function, catching errors (the nested try-except statements within the try-finally statements are for Python 2.4 and earlier support).
             try:
                 try:
-                    apply(fn, args, kwds)
+                    fn(*args, **kwds)
 
                 # Catch all RelaxErrors.
                 except AllRelaxErrors:

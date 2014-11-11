@@ -9,7 +9,7 @@ from lib.frame_order.format import print_frame_order_2nd_degree
 
 
 # Load the matrices.
-execfile('rotation_matrices.py')
+exec(compile(open('rotation_matrices.py').read(), 'rotation_matrices.py', 'exec'))
 
 # Init the matrix.
 matrix = zeros((9, 9), float64)

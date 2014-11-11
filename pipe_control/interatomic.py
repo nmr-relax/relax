@@ -106,7 +106,7 @@ def copy(pipe_from=None, pipe_to=None, spin_id1=None, spin_id2=None, verbose=Tru
                 continue
 
             # Skip class methods.
-            if name in list(interatom.__class__.__dict__.keys()):
+            if name in interatom.__class__.__dict__:
                 continue
 
             # Duplicate all other objects.

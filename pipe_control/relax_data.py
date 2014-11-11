@@ -143,11 +143,8 @@ def bmrb_read(star, sample_conditions=None):
 
     # Get the relaxation data.
     for data in star.relaxation.loop():
-        # Store the keys.
-        keys = list(data.keys())
-
         # Sample conditions do not match (remove the $ sign).
-        if 'sample_cond_list_label' in keys and sample_conditions and data['sample_cond_list_label'].replace('$', '') != sample_conditions:
+        if 'sample_cond_list_label' in data and sample_conditions and data['sample_cond_list_label'].replace('$', '') != sample_conditions:
             continue
 
         # Create the labels.
@@ -200,7 +197,7 @@ def bmrb_read(star, sample_conditions=None):
             errors = [None] * N
 
         # Data transformation.
-        if vals != None and 'units' in keys:
+        if vals != None and 'units' in data:
             # Scaling.
             if data['units'] == 'ms':
                 # Loop over the data.
@@ -321,7 +318,7 @@ def bmrb_write(star):
         used_index = -ones(len(cdp.ri_ids))
         for i in range(len(cdp.ri_ids)):
             # Data exists.
-            if cdp.ri_ids[i] in list(spin.ri_data.keys()):
+            if cdp.ri_ids[i] in spin.ri_data:
                 ri_data_list[i].append(str(spin.ri_data[cdp.ri_ids[i]]))
                 ri_data_err_list[i].append(str(spin.ri_data_err[cdp.ri_ids[i]]))
             else:
@@ -967,16 +964,16 @@ def return_value(spin, data_type, bc=False):
 
     # Relaxation data.
     data = None
-    if not bc and hasattr(spin, 'ri_data') and spin.ri_data != None and data_type in list(spin.ri_data.keys()):
+    if not bc and hasattr(spin, 'ri_data') and spin.ri_data != None and data_type in spin.ri_data:
         data = spin.ri_data[data_type]
 
     # Back calculated relaxation data
-    if bc and hasattr(spin, 'ri_data_bc') and spin.ri_data_bc != None and data_type in list(spin.ri_data_bc.keys()):
+    if bc and hasattr(spin, 'ri_data_bc') and spin.ri_data_bc != None and data_type in spin.ri_data_bc:
         data = spin.ri_data_bc[data_type]
 
     # Relaxation errors.
     error = None
-    if hasattr(spin, 'ri_data_err') and spin.ri_data_err != None and data_type in list(spin.ri_data_err.keys()):
+    if hasattr(spin, 'ri_data_err') and spin.ri_data_err != None and data_type in spin.ri_data_err:
         error = spin.ri_data_err[data_type]
 
     # Return the data.

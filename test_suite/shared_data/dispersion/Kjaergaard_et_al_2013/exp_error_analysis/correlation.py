@@ -22,7 +22,7 @@ for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
     spin2 = return_spin(spin_id=spin_id, pipe='covar')
 
     # Loop over the keys.
-    for key in spin.r2eff.keys():
+    for key in spin.r2eff:
         file_i0.write("%s %s\n" % (spin.i0_err[key], spin2.i0_err[key]))
         file_r2eff.write("%s %s\n" % (spin.r2eff_err[key], spin2.r2eff_err[key]))
 

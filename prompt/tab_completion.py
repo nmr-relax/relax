@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -35,7 +35,7 @@ class Tab_completion:
     def create_list(self):
         """Function to create the dictionary of options for tab completion."""
 
-        self.list = list(self.name_space.keys())
+        self.list = sorted(self.name_space.keys())
 
         self.options = []
         for name in self.list:

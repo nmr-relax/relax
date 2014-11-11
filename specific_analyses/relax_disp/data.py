@@ -343,7 +343,7 @@ def count_relax_times(exp_type=None, frq=None, offset=None, point=None, ei=None)
     for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
         # Find a matching experiment ID.
         found = False
-        for id in cdp.exp_type.keys():
+        for id in cdp.exp_type:
             # Skip non-matching experiments.
             if cdp.exp_type[id] != cdp.exp_type_list[ei]:
                 continue
@@ -481,7 +481,7 @@ def find_intensity_keys(exp_type=None, frq=None, offset=None, point=None, time=N
 
     # Loop over all spectrum IDs, returning the matching ID.
     ids = []
-    for id in cdp.exp_type.keys():
+    for id in cdp.exp_type:
         # Skip non-matching experiments.
         if cdp.exp_type[id] != exp_type:
             continue
@@ -636,7 +636,7 @@ def has_disp_data(spins=None, spin_ids=None, exp_type=None, frq=None, offset=Non
             current_spin = return_attached_protons(spin_ids[si])[0]
 
         # The data is present.
-        if key in current_spin.r2eff.keys():
+        if key in current_spin.r2eff:
             return True
 
     # No data.
@@ -655,7 +655,7 @@ def has_exponential_exp_type():
         return False
 
     # Loop over all spectra IDs.
-    for id in cdp.exp_type.keys():
+    for id in cdp.exp_type:
         if get_curve_type(id) == 'exponential':
             return True
 
@@ -675,7 +675,7 @@ def has_fixed_time_exp_type():
         return False
 
     # Loop over all experiment types.
-    for id in cdp.exp_type.keys():
+    for id in cdp.exp_type:
         if get_curve_type(id) == 'fixed time':
             return True
 
@@ -1212,7 +1212,7 @@ def loop_cluster(skip_desel=True):
     # Loop over the clustering.
     else:
         # The clusters.
-        for key in cdp.clustering.keys():
+        for key in cdp.clustering:
             # Skip the free spins.
             if key == 'free spins':
                 continue
@@ -1584,7 +1584,7 @@ def loop_offset(exp_type=None, frq=None, return_indices=False):
             for offset in cdp.spin_lock_offset_list:
                 # Find a matching experiment ID.
                 found = False
-                for id in cdp.exp_type.keys():
+                for id in cdp.exp_type:
                     # Skip non-matching experiments.
                     if cdp.exp_type[id] != exp_type:
                         continue
@@ -1805,7 +1805,7 @@ def loop_time(exp_type=None, frq=None, offset=None, point=None, return_indices=F
         for time in cdp.relax_time_list:
             # Find a matching experiment ID.
             found = False
-            for id in cdp.exp_type.keys():
+            for id in cdp.exp_type:
                 # Skip non-matching experiments.
                 if exp_type != None and cdp.exp_type[id] != exp_type:
                     continue
@@ -1911,7 +1911,7 @@ def pack_back_calc_r2eff(spin=None, spin_id=None, si=None, back_calc=None, proto
             current_spin = proton
 
         # Missing data.
-        if not hasattr(current_spin, 'r2eff') or key not in current_spin.r2eff.keys():
+        if not hasattr(current_spin, 'r2eff') or key not in current_spin.r2eff:
             continue
 
         # Initialise.
@@ -2722,7 +2722,7 @@ def return_cpmg_frqs(ref_flag=True):
 
                     # Find a matching experiment ID.
                     found = False
-                    for id in cdp.exp_type.keys():
+                    for id in cdp.exp_type:
                         # Skip non-matching experiments.
                         if cdp.exp_type[id] != exp_type:
                             continue
@@ -2785,7 +2785,7 @@ def return_cpmg_frqs_single(exp_type=None, frq=None, offset=None, time=None, ref
 
         # Find a matching experiment ID.
         found = False
-        for id in cdp.exp_type.keys():
+        for id in cdp.exp_type:
             # Skip non-matching experiments.
             if cdp.exp_type[id] != exp_type:
                 continue
@@ -3868,8 +3868,7 @@ def return_key_from_di(mi=None, di=None):
 
     # Find the keys matching the dispersion point.
     key_list = []
-    all_keys = points.keys()
-    for key in all_keys:
+    for key in points:
         if points[key] == point:
             key_list.append(key)
 
@@ -4009,7 +4008,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, spin_lock_of
 
                     # Find a matching experiment ID.
                     found = False
-                    for id in cdp.exp_type.keys():
+                    for id in cdp.exp_type:
                         # Skip non-matching experiments.
                         if cdp.exp_type[id] != exp_type:
                             continue
@@ -4071,7 +4070,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, spin_lock_of
 
                     # Find a matching experiment ID.
                     found = False
-                    for id in cdp.exp_type.keys():
+                    for id in cdp.exp_type:
                         # Skip non-matching experiments.
                         if cdp.exp_type[id] != exp_type:
                             continue
@@ -4527,7 +4526,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
                 relax_times[ei][mi][oi][di].append(time)
 
             # Missing data.
-            if key not in current_spin.r2eff.keys():
+            if key not in current_spin.r2eff:
                 values[ei][si][mi][oi].append(0.0)
                 errors[ei][si][mi][oi].append(1.0)
                 missing[ei][si][mi][oi].append(1)
@@ -4635,7 +4634,7 @@ def return_spin_lock_nu1(ref_flag=True):
 
                     # Find a matching experiment ID.
                     found = False
-                    for id in cdp.exp_type.keys():
+                    for id in cdp.exp_type:
                         # Skip non-matching experiments.
                         if cdp.exp_type[id] != exp_type:
                             continue
@@ -4700,7 +4699,7 @@ def return_spin_lock_nu1_single(exp_type=None, frq=None, offset=None, ref_flag=T
 
         # Find a matching experiment ID.
         found = False
-        for id in cdp.exp_type.keys():
+        for id in cdp.exp_type:
             # Skip non-matching experiments.
             if cdp.exp_type[id] != exp_type:
                 continue
@@ -4793,7 +4792,7 @@ def return_value_from_offset_index(ei=None, mi=None, oi=None):
 
             # Find a matching experiment ID.
             found = False
-            for id in cdp.exp_type.keys():
+            for id in cdp.exp_type:
                 # Skip non-matching experiments.
                 if cdp.exp_type[id] != exp_type:
                     continue
@@ -4881,7 +4880,7 @@ def spin_has_frq_data(spin=None, frq=None):
     """
 
     # Loop over the intensity data.
-    for key in spin.peak_intensity.keys():
+    for key in spin.peak_intensity:
         if key in cdp.spectrometer_frq and cdp.spectrometer_frq[key] == frq:
             return True
 

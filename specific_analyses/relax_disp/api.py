@@ -354,7 +354,7 @@ class Relax_disp(API_base, API_common):
                 param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
 
                 # Skip missing data.
-                if not hasattr(current_spin, 'r2eff') or param_key not in current_spin.r2eff.keys():
+                if not hasattr(current_spin, 'r2eff') or param_key not in current_spin.r2eff:
                     continue
 
                 # Store the result.
@@ -421,7 +421,7 @@ class Relax_disp(API_base, API_common):
                 continue
 
             # Skip special objects.
-            if search('^_', data_name) or data_name in list(dp_from.__class__.__dict__.keys()):
+            if search('^_', data_name) or data_name in dp_from.__class__.__dict__:
                 continue
 
             # Get the original object.

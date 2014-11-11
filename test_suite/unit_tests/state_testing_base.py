@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -84,7 +84,8 @@ class State_base_class(UnitTestCase):
         dp_new = pipes.get_pipe('new')
 
         # Test the contents of the restored singleton (with subsequent data added).
-        self.assertEqual(list(ds.keys()).sort(), ['orig', 'new'].sort())
+        self.assert_('orig' in ds)
+        self.assert_('new' in ds)
         self.assertEqual(pipes.cdp_name(), 'new')
         self.assertEqual(dp_orig.x, 1)
         self.assertEqual(ds.y, 'Hello')

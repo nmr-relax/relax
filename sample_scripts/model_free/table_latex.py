@@ -25,8 +25,8 @@ The longtable LaTeX package is necessary to allow the table to span multiple pag
 uses the more elegant booktable format.  The packages can be included using the LaTeX preamble
 commands:
 
-\usepackage{longtable}
-\usepackage{booktabs}
+\\usepackage{longtable}
+\\usepackage{booktabs}
 
 Assuming the file name 'results.tex', the resultant table can be placed into a LaTeX manuscript
 with the command:

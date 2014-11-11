@@ -295,7 +295,7 @@ class Relax_disp(SystemTestCase):
                 print(mo_param)
                 # The R2 is a dictionary, depending on spectrometer frequency.
                 if isinstance(getattr(cur_spin, mo_param), dict):
-                    for key, val in getattr(cur_spin, mo_param).items():
+                    for key, val in list(getattr(cur_spin, mo_param).items()):
                         should_be = params[mo_param][key]
                         print(cur_spin.model, res_name, cur_spin_id, mo_param, key, float(val), should_be)
                         self.assertAlmostEqual(val, should_be)
@@ -408,10 +408,10 @@ class Relax_disp(SystemTestCase):
 
 
         print("Testing the number of settings")
-        print("Number of settings iterations is: %s. Number of cdp.exp_type.keys() is: %s"%(i, len(cdp.exp_type.keys() ) ) )
+        print("Number of settings iterations is: %s. Number of cdp.exp_type is: %s"%(i, len(cdp.exp_type)))
         self.assertEqual(70, len(expfileslines))
         self.assertEqual(69, j)
-        self.assertEqual(69, len(cdp.exp_type.keys()) )
+        self.assertEqual(69, len(cdp.exp_type))
 
         # Cluster spins
         for curspin in cluster_ids:
@@ -1717,7 +1717,7 @@ class Relax_disp(SystemTestCase):
             print(mol_name, resi, resn, spin_id)
 
         # Loop over setup.
-        for id in cdp.exp_type.keys():
+        for id in cdp.exp_type:
             print(id, cdp.exp_type[id], cdp.spectrometer_frq[id], cdp.spin_lock_offset[id], cdp.spin_lock_nu1[id])
 
 
@@ -2071,7 +2071,7 @@ class Relax_disp(SystemTestCase):
                     grid_r2 = grid_params[mo_param]
                     min_r2 = min_params[mo_param]
                     set_r2 = params[mo_param]
-                    for key, val in set_r2.items():
+                    for key, val in list(set_r2.items()):
                         grid_r2_frq = grid_r2[key]
                         min_r2_frq = min_r2[key]
                         set_r2_frq = set_r2[key]
@@ -2217,7 +2217,7 @@ class Relax_disp(SystemTestCase):
                     grid_r2 = grid_params[mo_param]
                     min_r2 = min_params[mo_param]
                     set_r2 = params[mo_param]
-                    for key, val in set_r2.items():
+                    for key, val in list(set_r2.items()):
                         grid_r2_frq = grid_r2[key]
                         min_r2_frq = min_r2[key]
                         set_r2_frq = set_r2[key]
@@ -2355,7 +2355,7 @@ class Relax_disp(SystemTestCase):
                     grid_r2 = grid_params[mo_param]
                     min_r2 = min_params[mo_param]
                     set_r2 = params[mo_param]
-                    for key, val in set_r2.items():
+                    for key, val in list(set_r2.items()):
                         grid_r2_frq = grid_r2[key]
                         min_r2_frq = min_r2[key]
                         set_r2_frq = set_r2[key]
@@ -2494,7 +2494,7 @@ class Relax_disp(SystemTestCase):
                     grid_r2 = grid_params[mo_param]
                     min_r2 = min_params[mo_param]
                     set_r2 = params[mo_param]
-                    for key, val in set_r2.items():
+                    for key, val in list(set_r2.items()):
                         grid_r2_frq = grid_r2[key]
                         min_r2_frq = min_r2[key]
                         set_r2_frq = set_r2[key]
@@ -2638,7 +2638,7 @@ class Relax_disp(SystemTestCase):
                     grid_r2 = grid_params[mo_param]
                     min_r2 = min_params[mo_param]
                     set_r2 = params[mo_param]
-                    for key, val in set_r2.items():
+                    for key, val in list(set_r2.items()):
                         grid_r2_frq = grid_r2[key]
                         min_r2_frq = min_r2[key]
                         set_r2_frq = set_r2[key]

@@ -512,7 +512,7 @@ class Analysis_controller:
         }
 
         # Bad analysis type.
-        if analysis_type not in classes.keys():
+        if analysis_type not in classes:
             raise RelaxError("The analysis '%s' is unknown." % analysis_type)
 
         # Initialise the class.

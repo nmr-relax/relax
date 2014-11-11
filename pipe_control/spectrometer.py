@@ -45,7 +45,7 @@ def check_frequency_func(id=None):
     """
 
     # Check for the ID.
-    if not hasattr(cdp, 'spectrometer_frq') and id not in cdp.spectrometer_frq.keys():
+    if not hasattr(cdp, 'spectrometer_frq') and id not in cdp.spectrometer_frq:
         return RelaxNoFrqError(id=id)
 
 # Create the checking object.
@@ -135,7 +135,7 @@ def delete_frequencies(id=None):
     del cdp.spectrometer_frq[id]
 
     # Update the structures as needed.
-    if frq in cdp.spectrometer_frq_list and frq not in cdp.spectrometer_frq.values():
+    if frq in cdp.spectrometer_frq_list and frq not in list(cdp.spectrometer_frq.values()):
         cdp.spectrometer_frq_list.pop(cdp.spectrometer_frq_list.index(frq))
     cdp.spectrometer_frq_count = len(cdp.spectrometer_frq_list)
 

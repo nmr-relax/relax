@@ -3,6 +3,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2014 Troels E. Linnet                                         #
+# Copyright (C) 2014 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -35,11 +36,10 @@ import warnings
 
 # Python 3 support.
 try:
-    import __builtin__
-    del __builtin__
-except ImportError:
     import builtins
     builtins.xrange = builtins.range
+except ImportError:
+    pass
 
 # Add to system path, according to 
 if len(sys.argv) == 1:

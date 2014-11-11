@@ -47,7 +47,7 @@ def compare_objects(object_from, object_to, pipe_from, pipe_to):
     # Loop over the modifiable objects.
     for data_name in dir(object_from):
         # Skip special objects (starting with _, or in the original class and base class namespaces).
-        if search('^_', data_name) or data_name in list(object_from.__class__.__dict__.keys()) or (hasattr(object_from.__class__, '__bases__') and len(object_from.__class__.__bases__) and data_name in list(object_from.__class__.__bases__[0].__dict__.keys())):
+        if search('^_', data_name) or data_name in object_from.__class__.__dict__ or (hasattr(object_from.__class__, '__bases__') and len(object_from.__class__.__bases__) and data_name in object_from.__class__.__bases__[0].__dict__):
             continue
 
         # Skip some more special objects.
