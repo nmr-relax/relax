@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -70,7 +70,7 @@ class Relax_data_meta_list(Base_list):
 
         # The current type.
         type = None
-        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'peak_intensity_type') and id in cdp.exp_info.peak_intensity_type.keys():
+        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'peak_intensity_type') and id in cdp.exp_info.peak_intensity_type:
             type = cdp.exp_info.peak_intensity_type[id]
 
         # Launch the dialog.
@@ -95,7 +95,7 @@ class Relax_data_meta_list(Base_list):
 
         # The current method.
         method = None
-        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_calibration') and id in cdp.exp_info.temp_calibration.keys():
+        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_calibration') and id in cdp.exp_info.temp_calibrations():
             method = cdp.exp_info.temp_calibration[id]
 
         # Launch the dialog.
@@ -120,7 +120,7 @@ class Relax_data_meta_list(Base_list):
 
         # The current method.
         method = None
-        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_control') and id in cdp.exp_info.temp_control.keys():
+        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_control') and id in cdp.exp_info.temp_control:
             method = cdp.exp_info.temp_control[id]
 
         # Launch the dialog.
@@ -150,15 +150,15 @@ class Relax_data_meta_list(Base_list):
             id = cdp.ri_ids[i]
 
             # Check the peak intensity types.
-            if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'peak_intensity_type') or not id in cdp.exp_info.peak_intensity_type.keys():
+            if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'peak_intensity_type') or not id in cdp.exp_info.peak_intensity_type:
                 return False
 
             # Check the temperature calibration methods.
-            if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'temp_calibration') or not id in cdp.exp_info.temp_calibration.keys():
+            if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'temp_calibration') or not id in cdp.exp_info.temp_calibration:
                 return False
 
             # Check the temperature control methods.
-            if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'temp_control') or not id in cdp.exp_info.temp_control.keys():
+            if not hasattr(cdp, 'exp_info') or not hasattr(cdp.exp_info, 'temp_control') or not id in cdp.exp_info.temp_control:
                 return False
 
         # Data input is complete!
@@ -237,13 +237,13 @@ class Relax_data_meta_list(Base_list):
                 self.element.InsertStringItem(i, str_to_gui(id))
 
                 # Set the peak intensity types.
-                if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'peak_intensity_type') and id in cdp.exp_info.peak_intensity_type.keys():
+                if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'peak_intensity_type') and id in cdp.exp_info.peak_intensity_type:
                     self.element.SetStringItem(i, 1, str_to_gui(cdp.exp_info.peak_intensity_type[id]))
 
                 # Set the temperature calibration methods.
-                if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_calibration') and id in cdp.exp_info.temp_calibration.keys():
+                if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_calibration') and id in cdp.exp_info.temp_calibration:
                     self.element.SetStringItem(i, 2, str_to_gui(cdp.exp_info.temp_calibration[id]))
 
                 # Set the temperature control methods.
-                if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_control') and id in cdp.exp_info.temp_control.keys():
+                if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_control') and id in cdp.exp_info.temp_control:
                     self.element.SetStringItem(i, 3, str_to_gui(cdp.exp_info.temp_control[id]))

@@ -94,7 +94,7 @@ class PipeContainer(Prototype):
                 text = text + "  exp_info: The data container for experimental information\n"
 
             # Skip the PipeContainer methods.
-            if name in list(self.__class__.__dict__.keys()):
+            if name in self.__class__.__dict__:
                 continue
 
             # Skip certain objects.
@@ -274,7 +274,7 @@ class PipeContainer(Prototype):
                 continue
 
             # Skip the PipeContainer methods.
-            if name in list(self.__class__.__dict__.keys()):
+            if name in self.__class__.__dict__:
                 continue
 
             # Skip special objects.

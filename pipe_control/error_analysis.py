@@ -134,7 +134,7 @@ def monte_carlo_create_data(method=None):
             for j in range(cdp.sim_number):
                 # Randomise the data.
                 random.append({})
-                for id in data.keys():
+                for id in data:
                     # No data or errors.
                     if data[id] == None or error[id] == None:
                         random[j][id] = None
@@ -195,7 +195,7 @@ def monte_carlo_error_analysis():
                 sd = {}
 
                 # Loop over each key.
-                for key in param_array[0].keys():
+                for key in param_array[0]:
                     # Create a list of the values for the current key.
                     data = []
                     for i in range(len(param_array)):

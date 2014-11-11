@@ -303,7 +303,7 @@ def protected_exec(fn, *args, **kargs):
 
     # Apply the function.
     try:
-        apply(fn, args, kargs)
+        fn(*args, **kargs)
 
     # Catch RelaxErrors.
     except AllRelaxErrors:

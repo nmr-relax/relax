@@ -87,7 +87,7 @@ class Test_data(UnitTestCase):
 
         # Check the number of time counts.
         print("Checking the number of time counts.")
-        for id in cdp.exp_type.keys():
+        for id in cdp.exp_type:
             exp_type = cdp.exp_type[id]
             frq = cdp.spectrometer_frq[id]
             point = cdp.cpmg_frqs[id]
@@ -205,7 +205,7 @@ class Test_data(UnitTestCase):
 
         # Check the number of time counts.
         print("Checking the number of time counts.")
-        for id in cdp.exp_type.keys():
+        for id in cdp.exp_type:
             exp_type = cdp.exp_type[id]
             frq = cdp.spectrometer_frq[id]
             offset = cdp.spin_lock_offset[id]
@@ -302,7 +302,7 @@ class Test_data(UnitTestCase):
 
         # Check the number of time counts.
         print("Checking the id return experiment.")
-        for id in cdp.exp_type.keys():
+        for id in cdp.exp_type:
             exp_type = cdp.exp_type[id]
             frq = cdp.spectrometer_frq[id]
             offset = cdp.spin_lock_offset[id]

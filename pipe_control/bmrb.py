@@ -147,7 +147,7 @@ def molecule_names(data, N=0):
     # The molecule index and name.
     mol_index = []
     for i in range(N):
-        if 'entity_ids' in data.keys() and data['entity_ids'] != None and data['entity_ids'][i] != None:
+        if 'entity_ids' in data and data['entity_ids'] != None and data['entity_ids'][i] != None:
             mol_index.append(int(data['entity_ids'][i]) -1 )
         else:
             mol_index = [0]*N
@@ -176,7 +176,7 @@ def num_spins(data):
 
     # Loop over the keys until a list is found.
     for key in keys:
-        if key in data.keys() and data[key]:
+        if key in data and data[key]:
             N = len(data[key])
             break
 

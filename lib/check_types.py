@@ -23,12 +23,6 @@
 """Special module for checking types."""
 
 # Python module imports.
-io_module = True
-try:
-    from io import IOBase    # Python 2.5+ import.
-    file = None
-except ImportError:
-    io_module = False
 from numpy import complex64, complex128, float32, float64, int16, int32
 try:
     from numpy import complex256
@@ -50,6 +44,11 @@ try:
     from numpy import int64
 except ImportError:
     int64 = int32    # Support for 32-bit numpy versions.
+
+
+# relax module imports.
+from lib.compat import IOBase
+
 
 def is_complex(num):
     """Check if the given number is a Python or numpy complex.
@@ -86,7 +85,7 @@ def is_filetype(obj):
     """
 
     # New style check.
-    if io_module:
+    if IOBase != None:
         return isinstance(obj, IOBase)
 
     # Old style check.
@@ -216,5 +215,5 @@ def is_unicode(obj):
     @rtype:         bool
     """
 
-    # Check using the unicode type (set in the compat module for Python 3).
+    # Check using the unicode type (set in the lib.compat module for Python 3).
     return isinstance(obj, unicode)

@@ -60,7 +60,7 @@ class Element(object):
         # Data structures.
         for name in dir(self):
             # Skip Element and derived class methods.
-            if name in list(Element.__dict__.keys()) or name in list(self.__class__.__dict__.keys()):
+            if name in Element.__dict__ or name in self.__class__.__dict__:
                 continue
 
             # Skip special objects.
@@ -106,7 +106,7 @@ class Element(object):
         # An object has been added to the container.
         for name in dir(self):
             # Skip Element and derived class methods.
-            if name in list(Element.__dict__.keys()) or name in list(self.__class__.__dict__.keys()):
+            if name in Element.__dict__ or name in self.__class__.__dict__:
                 continue
 
             # Skip special objects.
@@ -137,7 +137,7 @@ class Element(object):
         cont_element.setAttribute('desc', self.desc)
 
         # Blacklisted objects.
-        blacklist = ['name', 'desc', 'blacklist'] + list(list(Element.__dict__.keys()) + list(self.__class__.__dict__.keys()) + list(object.__dict__.keys()))
+        blacklist = ['name', 'desc', 'blacklist'] + list(Element.__dict__.keys()) + list(self.__class__.__dict__.keys()) + list(object.__dict__.keys())
 
         # Store and blacklist the objects which have to_xml() methods.
         to_xml_list = []
@@ -225,7 +225,7 @@ class RelaxListType(list):
         list_element.setAttribute('desc', self.list_desc)
 
         # Blacklisted objects.
-        blacklist = ['list_name', 'list_desc', 'element_name', 'element_desc', 'blacklist'] + list(list(self.__dict__.keys()) + list(RelaxListType.__dict__.keys()) + list(self.__class__.__dict__.keys()) + list(list.__dict__.keys()) + list(list.__dict__.keys()))
+        blacklist = ['list_name', 'list_desc', 'element_name', 'element_desc', 'blacklist'] + list(self.__dict__.keys()) + list(RelaxListType.__dict__.keys()) + list(self.__class__.__dict__.keys()) + list(list.__dict__.keys()) + list(list.__dict__.keys())
 
         # Add all simple python objects within the list to the list element.
         fill_object_contents(doc, list_element, object=self, blacklist=blacklist)

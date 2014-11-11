@@ -541,7 +541,7 @@ class N_state_model(SystemTestCase):
                 # RDC checks.
                 if hasattr(spin_orig, 'rdc'):
                     # Check the keys.
-                    self.assertEqual(spin_orig.rdc.keys(), spin_new.rdc.keys())
+                    self.assertEqual(sorted(spin_orig.rdc.keys()), sorted(spin_new.rdc.keys()))
 
                     # Check the values.
                     if id in spin_orig.rdc:
@@ -550,7 +550,7 @@ class N_state_model(SystemTestCase):
                 # PCS checks.
                 if hasattr(spin_orig, 'pcs'):
                     # Check the keys.
-                    self.assertEqual(spin_orig.pcs.keys(), spin_new.pcs.keys())
+                    self.assertEqual(sorted(spin_orig.pcs.keys()), sorted(spin_new.pcs.keys()))
 
                     # Check the values.
                     if id in spin_orig.pcs:

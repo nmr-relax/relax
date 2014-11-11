@@ -256,7 +256,7 @@ def print_res(cur_spins=None, grid_params=None, min_params=None, clust_params=No
                 min_r2 = min_params[mo_param]
                 clust_r2 = clust_params[mo_param]
                 set_r2 = params[mo_param]
-                for key, val in min_r2.items():
+                for key, val in list(min_r2.items()):
                     grid_r2_frq = grid_r2[key]
                     min_r2_frq = min_r2[key]
                     clust_r2_frq = min_r2[key]
@@ -365,7 +365,7 @@ for i in range(len(cur_spins)):
         if isinstance(getattr(cur_spin, mo_param), dict):
             set_r2 = params[mo_param]
 
-            for key, val in set_r2.items():
+            for key, val in list(set_r2.items()):
                 # Update value to float
                 set_r2.update({ key : float(val) })
                 print(cur_spin.model, res_name, cur_spin_id, mo_param, key, float(val))
@@ -559,7 +559,7 @@ if ds.opendx:
             if isinstance(getattr(cur_spin, mo_param), dict):
                 set_r2 = params[mo_param]
                 if mo_param not in ds.dx_params:
-                    for key, val in set_r2.items():
+                    for key, val in list(set_r2.items()):
                         # Update value to float
                         set_r2.update({ key : float(val) })
                         print("Setting param:%s to :%f"%(key, float(val)))

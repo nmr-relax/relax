@@ -393,7 +393,7 @@ def corr_plot(format=None, file=None, dir=None, force=False):
                     continue
 
                 # Error present.
-                if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+                if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err:
                     err_flag = True
                     break
 
@@ -408,7 +408,7 @@ def corr_plot(format=None, file=None, dir=None, force=False):
                     continue
 
                 # Skip if data is missing.
-                if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or not align_id in spin.pcs.keys() or not align_id in spin.pcs_bc.keys():
+                if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or not align_id in spin.pcs or not align_id in spin.pcs_bc:
                     continue
 
                 # Append the data.
@@ -416,7 +416,7 @@ def corr_plot(format=None, file=None, dir=None, force=False):
 
                 # Errors.
                 if err_flag:
-                    if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+                    if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err:
                         data[-1][-1].append(spin.pcs_err[align_id])
                     else:
                         data[-1][-1].append(None)
@@ -844,7 +844,7 @@ def return_pcs_data(sim_index=None, verbosity=0):
                 continue
 
             # Append the PCSs to the list.
-            if align_id in spin.pcs.keys():
+            if align_id in spin.pcs:
                 if sim_index != None:
                     pcs[-1].append(spin.pcs_sim[align_id][sim_index])
                 else:
@@ -853,13 +853,13 @@ def return_pcs_data(sim_index=None, verbosity=0):
                 pcs[-1].append(None)
 
             # Append the PCS errors.
-            if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+            if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err:
                 pcs_err[-1].append(spin.pcs_err[align_id])
             else:
                 pcs_err[-1].append(None)
 
             # Append the weight.
-            if hasattr(spin, 'pcs_weight') and align_id in spin.pcs_weight.keys():
+            if hasattr(spin, 'pcs_weight') and align_id in spin.pcs_weight:
                 pcs_weight[-1].append(spin.pcs_weight[align_id])
             else:
                 pcs_weight[-1].append(1.0)
@@ -1164,9 +1164,9 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
             continue
 
         # Skip spins with no PCSs.
-        if not bc and (not hasattr(spin, 'pcs') or not align_id in spin.pcs.keys()):
+        if not bc and (not hasattr(spin, 'pcs') or not align_id in spin.pcs):
             continue
-        elif bc and (not hasattr(spin, 'pcs_bc') or align_id not in spin.pcs_bc.keys()):
+        elif bc and (not hasattr(spin, 'pcs_bc') or align_id not in spin.pcs_bc):
             continue
 
         # Append the spin data.
@@ -1183,7 +1183,7 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
             values.append(spin.pcs[align_id])
 
         # The error.
-        if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+        if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err:
             errors.append(spin.pcs_err[align_id])
         else:
             errors.append(None)

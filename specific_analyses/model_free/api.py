@@ -741,7 +741,7 @@ class Model_free(API_base, API_common):
                 continue
 
             # Skip special objects.
-            if search('^_', data_name) or data_name in list(dp_from.__class__.__dict__.keys()):
+            if search('^_', data_name) or data_name in dp_from.__class__.__dict__:
                 continue
 
             # Get the original object.

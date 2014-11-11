@@ -89,7 +89,7 @@ def iinf_upper(incs=None, model_info=None):
 
     # Find the ID of the last time point.
     max_time = max(cdp.relax_times.values())
-    for key in list(cdp.relax_times.keys()):
+    for key in cdp.relax_times:
         if cdp.relax_times[key] == max_time:
             id = key
             break

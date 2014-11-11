@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -735,7 +735,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Find if the molecule has been removed.
         prune_list = []
-        for key in self.tree_ids.keys():
+        for key in self.tree_ids:
             # Get the python data.
             info = self.tree.GetItemPyData(key)
 
@@ -756,7 +756,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Find if the molecule has been removed.
         prune_list = []
-        for key in self.tree_ids[mol_branch_id].keys():
+        for key in self.tree_ids[mol_branch_id]:
             # Get the python data.
             info = self.tree.GetItemPyData(key)
 
@@ -782,7 +782,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Find if the molecule has been removed.
         prune_list = []
-        for key in self.tree_ids[mol_branch_id][res_branch_id].keys():
+        for key in self.tree_ids[mol_branch_id][res_branch_id]:
             # Get the python data.
             info = self.tree.GetItemPyData(key)
 
@@ -903,7 +903,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Find the molecule, if it already exists.
         new_mol = True
-        for key in self.tree_ids.keys():
+        for key in self.tree_ids:
             # Get the python data.
             data = self.tree.GetItemPyData(key)
 
@@ -976,7 +976,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Find the residue, if it already exists.
         new_res = True
-        for key in self.tree_ids[mol_branch_id].keys():
+        for key in self.tree_ids[mol_branch_id]:
             # Get the python data.
             data = self.tree.GetItemPyData(key)
 
@@ -1052,7 +1052,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Find the spin, if it already exists.
         new_spin = True
-        for key in self.tree_ids[mol_branch_id][res_branch_id].keys():
+        for key in self.tree_ids[mol_branch_id][res_branch_id]:
             # Get the python data.
             data = self.tree.GetItemPyData(key)
 

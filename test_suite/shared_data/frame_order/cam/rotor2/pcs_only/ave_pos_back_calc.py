@@ -23,7 +23,7 @@ value.set('15N', 'heteronucleus', spin_id="@N")
 value.set('1H', 'proton', spin_id="@N")
 
 # Load the tensors.
-execfile('../../tensors.py')
+exec(compile(open('../../tensors.py').read(), '../../tensors.py', 'exec'))
 
 # Set up the model.
 n_state_model.select_model(model='fixed')

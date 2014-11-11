@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -247,7 +247,7 @@ class Uf_tables(object):
         """
 
         # Check the label.
-        if label not in self._tables.keys():
+        if label not in self._tables:
             raise RelaxError("The table with label '%s' does not exist." % label)
 
         # Return the table.

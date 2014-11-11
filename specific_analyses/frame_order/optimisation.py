@@ -222,7 +222,7 @@ def minimise_setup_pcs(sim_index=None):
                 continue
 
             # Append the PCSs to the list.
-            if align_id in spin.pcs.keys():
+            if align_id in spin.pcs:
                 if sim_index != None:
                     pcs[-1].append(spin.pcs_sim[align_id][sim_index])
                 else:
@@ -231,13 +231,13 @@ def minimise_setup_pcs(sim_index=None):
                 pcs[-1].append(None)
 
             # Append the PCS errors.
-            if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+            if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err:
                 pcs_err[-1].append(spin.pcs_err[align_id])
             else:
                 pcs_err[-1].append(None)
 
             # Append the weight.
-            if hasattr(spin, 'pcs_weight') and align_id in spin.pcs_weight.keys():
+            if hasattr(spin, 'pcs_weight') and align_id in spin.pcs_weight:
                 pcs_weight[-1].append(spin.pcs_weight[align_id])
             else:
                 pcs_weight[-1].append(1.0)
@@ -375,11 +375,11 @@ def minimise_setup_rdcs(sim_index=None):
             error = None
 
             # Pseudo-atom set up.
-            if (hasattr(spin1, 'members') or hasattr(spin2, 'members')) and align_id in interatom.rdc.keys():
+            if (hasattr(spin1, 'members') or hasattr(spin2, 'members')) and align_id in interatom.rdc:
                 raise RelaxError("Psuedo-atoms are currently not supported for the frame order analysis.")
 
             # Normal set up.
-            elif align_id in interatom.rdc.keys():
+            elif align_id in interatom.rdc:
                 # The RDC.
                 if sim_index != None:
                     value = interatom.rdc_sim[align_id][sim_index]
@@ -387,7 +387,7 @@ def minimise_setup_rdcs(sim_index=None):
                     value = interatom.rdc[align_id]
 
                 # The error.
-                if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
+                if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err:
                     error = interatom.rdc_err[align_id]
 
             # Append the RDCs to the list.
@@ -397,13 +397,13 @@ def minimise_setup_rdcs(sim_index=None):
             rdc_err[-1].append(error)
 
             # Append the weight.
-            if hasattr(interatom, 'rdc_weight') and align_id in interatom.rdc_weight.keys():
+            if hasattr(interatom, 'rdc_weight') and align_id in interatom.rdc_weight:
                 rdc_weight[-1].append(interatom.rdc_weight[align_id])
             else:
                 rdc_weight[-1].append(1.0)
 
             # Append the absolute value flag.
-            if hasattr(interatom, 'absolute_rdc') and align_id in interatom.absolute_rdc.keys():
+            if hasattr(interatom, 'absolute_rdc') and align_id in interatom.absolute_rdc:
                 absolute[-1].append(interatom.absolute_rdc[align_id])
             else:
                 absolute[-1].append(False)

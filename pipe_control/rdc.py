@@ -129,7 +129,7 @@ def back_calc(align_id=None):
                 interatom.rdc_bc[id] += interatom.j_coupling
 
             # The absolute value.
-            if hasattr(interatom, 'absolute_rdc') and id in interatom.absolute_rdc.keys() and interatom.absolute_rdc[id]:
+            if hasattr(interatom, 'absolute_rdc') and id in interatom.absolute_rdc and interatom.absolute_rdc[id]:
                 interatom.rdc_bc[id] = abs(interatom.rdc_bc[id])
 
         # Increment the counter.
@@ -424,14 +424,14 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
         err_flag = False
         for interatom in interatomic_loop():
             # Error present.
-            if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
+            if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err:
                 err_flag = True
                 break
 
         # Loop over the interatomic data.
         for interatom in interatomic_loop():
             # Skip if data is missing.
-            if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'rdc_bc') or not align_id in interatom.rdc.keys() or not align_id in interatom.rdc_bc.keys():
+            if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'rdc_bc') or not align_id in interatom.rdc or not align_id in interatom.rdc_bc:
                 continue
 
             # Convert between the 2D and D notation.
@@ -456,7 +456,7 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
 
             # Errors.
             if err_flag:
-                if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
+                if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err:
                     data[-1][-1].append(convert(interatom.rdc_err[align_id], interatom.rdc_data_types[align_id], align_id))
                 else:
                     data[-1][-1].append(None)
@@ -1119,7 +1119,7 @@ def return_rdc_data(sim_index=None, verbosity=0):
             error = None
 
             # Normal set up.
-            if align_id in interatom.rdc.keys():
+            if align_id in interatom.rdc:
                 # The RDC.
                 if sim_index != None:
                     value = interatom.rdc_sim[align_id][sim_index]
@@ -1127,7 +1127,7 @@ def return_rdc_data(sim_index=None, verbosity=0):
                     value = interatom.rdc[align_id]
 
                 # The error.
-                if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
+                if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err:
                     # T values.
                     if T_flags[-1][-1]:
                         error = sqrt(interatom.rdc_err[align_id]**2 + interatom.j_coupling_err**2)
@@ -1143,13 +1143,13 @@ def return_rdc_data(sim_index=None, verbosity=0):
             rdc_err[-1].append(error)
 
             # Append the weight.
-            if hasattr(interatom, 'rdc_weight') and align_id in interatom.rdc_weight.keys():
+            if hasattr(interatom, 'rdc_weight') and align_id in interatom.rdc_weight:
                 rdc_weight[-1].append(interatom.rdc_weight[align_id])
             else:
                 rdc_weight[-1].append(1.0)
 
             # Append the absolute value flag.
-            if hasattr(interatom, 'absolute_rdc') and align_id in interatom.absolute_rdc.keys():
+            if hasattr(interatom, 'absolute_rdc') and align_id in interatom.absolute_rdc:
                 absolute[-1].append(interatom.absolute_rdc[align_id])
             else:
                 absolute[-1].append(False)
@@ -1306,9 +1306,9 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
             continue
 
         # Skip containers with no RDCs.
-        if not bc and (not hasattr(interatom, 'rdc') or align_id not in interatom.rdc.keys()):
+        if not bc and (not hasattr(interatom, 'rdc') or align_id not in interatom.rdc):
             continue
-        elif bc and (not hasattr(interatom, 'rdc_bc') or align_id not in interatom.rdc_bc.keys()):
+        elif bc and (not hasattr(interatom, 'rdc_bc') or align_id not in interatom.rdc_bc):
             continue
 
         # Append the spin data.
@@ -1328,7 +1328,7 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
             data[-1].append(repr(convert(interatom.rdc[align_id], data_type, align_id)))
 
         # The error.
-        if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
+        if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err:
             data[-1].append(repr(convert(interatom.rdc_err[align_id], data_type, align_id)))
         else:
             data[-1].append(repr(None))

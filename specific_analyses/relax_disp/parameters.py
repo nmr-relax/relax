@@ -382,7 +382,7 @@ def get_value(key=None, spins=None, sim_index=None, param_name=None, spin_index=
 
             # R20 parameter.
             if r20_key != None:
-                if r20_key in sim_obj[sim_index].keys():
+                if r20_key in sim_obj[sim_index]:
                     value = sim_obj[sim_index][r20_key]
 
             # All other parameters.
@@ -396,7 +396,7 @@ def get_value(key=None, spins=None, sim_index=None, param_name=None, spin_index=
 
             # R20 parameter.
             if r20_key != None:
-                if r20_key in obj.keys():
+                if r20_key in obj:
                     value = obj[r20_key]
 
             # All other parameters.
@@ -415,7 +415,7 @@ def get_value(key=None, spins=None, sim_index=None, param_name=None, spin_index=
 
     # The R2eff model parameters.
     if key != None:
-        if not key in value.keys():
+        if not key in value:
             value = 0.0
         else:
             value = value[key]

@@ -1057,7 +1057,7 @@ class AlignTensorList(list):
         tensor_list_element.setAttribute('desc', 'Alignment tensor list')
 
         # Add all simple python objects within the PipeContainer to the pipe element.
-        fill_object_contents(doc, tensor_list_element, object=self, blacklist=list(list(self.__class__.__dict__.keys()) + list(list.__dict__.keys())))
+        fill_object_contents(doc, tensor_list_element, object=self, blacklist=list(self.__class__.__dict__.keys())+list(list.__dict__.keys()))
 
         # Loop over the tensors.
         for i in range(len(self)):

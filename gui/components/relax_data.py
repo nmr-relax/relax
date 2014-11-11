@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -99,7 +99,7 @@ class Relax_data_list(Base_list):
 
         # The current type.
         type = None
-        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'peak_intensity_type') and id in cdp.exp_info.peak_intensity_type.keys():
+        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'peak_intensity_type') and id in cdp.exp_info.peak_intensity_type:
             type = cdp.exp_info.peak_intensity_type[id]
 
         # Launch the dialog.
@@ -124,7 +124,7 @@ class Relax_data_list(Base_list):
 
         # The current method.
         method = None
-        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_calibration') and id in cdp.exp_info.temp_calibration.keys():
+        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_calibration') and id in cdp.exp_info.temp_calibration:
             method = cdp.exp_info.temp_calibration[id]
 
         # Launch the dialog.
@@ -149,7 +149,7 @@ class Relax_data_list(Base_list):
 
         # The current method.
         method = None
-        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_control') and id in cdp.exp_info.temp_control.keys():
+        if hasattr(cdp, 'exp_info') and hasattr(cdp.exp_info, 'temp_control') and id in cdp.exp_info.temp_control:
             method = cdp.exp_info.temp_control[id]
 
         # Launch the dialog.
@@ -174,7 +174,7 @@ class Relax_data_list(Base_list):
 
         # The current type.
         type = None
-        if hasattr(cdp, 'ri_type') and id in cdp.ri_type.keys():
+        if hasattr(cdp, 'ri_type') and id in cdp.ri_type:
             type = cdp.ri_type[id]
 
         # Launch the dialog.
@@ -199,7 +199,7 @@ class Relax_data_list(Base_list):
 
         # The current frequency.
         frq = None
-        if hasattr(cdp, 'spectrometer_frq') and id in cdp.spectrometer_frq.keys():
+        if hasattr(cdp, 'spectrometer_frq') and id in cdp.spectrometer_frq:
             frq = cdp.spectrometer_frq[id]
 
         # Launch the dialog.

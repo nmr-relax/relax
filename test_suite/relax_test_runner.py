@@ -21,7 +21,7 @@
 
 # Python module imports.
 import dep_check
-from re import split
+from re import search, split
 import sys
 from time import time
 from unittest import TextTestRunner
@@ -171,6 +171,10 @@ class RelaxTestResult(TextTestResult):
         if self.category != 'unit':
             test_name = test_name.split('.')
             test_name = "%s.%s" % (test_name[-2], test_name[-1])
+
+        # Handle errors.
+        elif search('Error', test_name):
+            pass
 
         # Modify the unit test name printout.
         else:

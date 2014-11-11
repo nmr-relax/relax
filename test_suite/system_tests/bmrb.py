@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -140,7 +140,7 @@ class Bmrb(SystemTestCase):
                 continue
 
             # Skip the data store methods.
-            if name in list(cont_old.__class__.__dict__.keys()):
+            if name in cont_old.__class__.__dict__:
                 continue
 
             # Simulation data.
@@ -223,8 +223,8 @@ class Bmrb(SystemTestCase):
             self.assert_(hasattr(cont_new, name))
 
         # Check the IDs.
-        old_ids = cont_old.ri_data.keys()
-        new_ids = cont_new.ri_data.keys()
+        old_ids = sorted(cont_old.ri_data.keys())
+        new_ids = sorted(cont_new.ri_data.keys())
         old_ids.sort()
         new_ids.sort()
         self.assertEqual(old_ids, new_ids)

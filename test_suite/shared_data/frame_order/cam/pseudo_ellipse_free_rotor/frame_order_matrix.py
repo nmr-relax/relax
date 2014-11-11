@@ -6,7 +6,7 @@ from lib.linear_algebra.kronecker_product import kron_prod
 
 # Store the rotation matrices.
 R = []
-execfile('rotation_matrices.py')
+exec(compile(open('rotation_matrices.py').read(), 'rotation_matrices.py', 'exec'))
 R = array(R)
 
 # Init the frame order matrix.

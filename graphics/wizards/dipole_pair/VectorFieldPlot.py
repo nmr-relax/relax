@@ -205,7 +205,7 @@ about: http://commons.wikimedia.org/wiki/File:{0}.svg
     def __get_arrowname(self, fillcolor='#000000'):
         if 'arrows' not in dir(self):
             self.arrows = {}
-        if fillcolor not in iter(self.arrows.keys()):
+        if fillcolor not in iter(list(self.arrows.keys())):
             arrow = etree.SubElement(self.__get_defs(), 'path')
             self.arrows[fillcolor] = arrow
             arrow.set('id', 'arrow' + str(len(self.arrows)))
@@ -544,7 +544,7 @@ L {3},-{2} L {1},-{0} Z'.format(11.1, 8.5, 2.6, 0))
             obj = etree.SubElement(self.symbols, name)
         else:
             obj = etree.SubElement(group, name)
-        for i, j in params.items():
+        for i, j in list(params.items()):
             obj.set(str(i), str(j))
         return obj
  
@@ -606,7 +606,7 @@ class FieldLine:
         if v != None: d_near *= 1.3 - cosv(v, self.first_point - p)
         type_near = 'start'
         mon = []
-        for ptype, poles in self.field.elements.items():
+        for ptype, poles in list(self.field.elements.items()):
             if ptype not in ['monopoles', 'dipoles'] or len(poles) == 0:
                 continue
             for pole in poles:
@@ -1114,7 +1114,7 @@ class Field:
     '''
     def __init__ (self, elements={}):
         self.elements = {}
-        for name, params in elements.items():
+        for name, params in list(elements.items()):
             self.add_element(name, params)
  
     '''

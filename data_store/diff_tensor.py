@@ -981,7 +981,7 @@ class DiffTensorSimList(list):
                 continue
 
             # Skip the class methods.
-            if name in list(self.__class__.__dict__.keys()) or name in dir(list):
+            if name in self.__class__.__dict__ or name in dir(list):
                 continue
 
             # Get the object.
