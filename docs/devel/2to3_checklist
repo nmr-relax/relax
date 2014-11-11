@@ -24,3 +24,58 @@ All (except print)
 
 2to3 -j 4 -w -f apply -f basestring -f buffer -f callable -f dict -f except -f exec -f execfile -f exitfunc -f filter -f funcattrs -f future -f getcwdu -f has_key -f idioms -f import -f imports -f imports2 -f input -f intern -f isinstance -f itertools -f itertools_imports -f long -f map -f metaclass -f methodattrs -f ne -f next -f nonzero -f numliterals -f operator -f paren -f raise -f raw_input -f reduce -f renames -f repr -f set_literal -f standarderror -f sys_exc -f throw -f tuple_params -f types -f unicode -f urllib -f ws_comma -f xrange -f xreadlines -f zip .
 
+
+All individually
+~~~~~~~~~~~~~~~~
+
+2to3 -j 4 -w -f apply .
+2to3 -j 4 -w -f basestring .
+2to3 -j 4 -w -f buffer .
+2to3 -j 4 -w -f callable .
+2to3 -j 4 -w -f dict .
+2to3 -j 4 -w -f except .
+2to3 -j 4 -w -f exec .
+2to3 -j 4 -w -f execfile .
+2to3 -j 4 -w -f exitfunc .
+2to3 -j 4 -w -f filter .
+2to3 -j 4 -w -f funcattrs .
+2to3 -j 4 -w -f future .
+2to3 -j 4 -w -f getcwdu .
+2to3 -j 4 -w -f has_key .
+2to3 -j 4 -w -f idioms .
+2to3 -j 4 -w -f import .
+2to3 -j 4 -w -f imports .
+2to3 -j 4 -w -f imports2 .
+2to3 -j 4 -w -f input .
+2to3 -j 4 -w -f intern .
+2to3 -j 4 -w -f isinstance .
+2to3 -j 4 -w -f itertools .
+2to3 -j 4 -w -f itertools_imports .
+2to3 -j 4 -w -f long .
+2to3 -j 4 -w -f map .
+2to3 -j 4 -w -f metaclass .
+2to3 -j 4 -w -f methodattrs .
+2to3 -j 4 -w -f ne .
+2to3 -j 4 -w -f next .
+2to3 -j 4 -w -f nonzero .
+2to3 -j 4 -w -f numliterals .
+2to3 -j 4 -w -f operator .
+2to3 -j 4 -w -f paren .
+2to3 -j 4 -w -f raise .
+2to3 -j 4 -w -f raw_input .
+2to3 -j 4 -w -f reduce .
+2to3 -j 4 -w -f renames .
+2to3 -j 4 -w -f repr .
+2to3 -j 4 -w -f set_literal .
+2to3 -j 4 -w -f standarderror .
+2to3 -j 4 -w -f sys_exc .
+2to3 -j 4 -w -f throw .
+2to3 -j 4 -w -f tuple_params .
+2to3 -j 4 -w -f types .
+2to3 -j 4 -w -f unicode .
+2to3 -j 4 -w -f urllib .
+2to3 -j 4 -w -f ws_comma .
+2to3 -j 4 -w -f xrange .
+2to3 -j 4 -w -f xreadlines .
+2to3 -j 4 -w -f zip .
+
