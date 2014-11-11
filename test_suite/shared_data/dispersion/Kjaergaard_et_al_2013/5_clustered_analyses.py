@@ -102,8 +102,8 @@ for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_
     relax_disp.cluster('model_cluster', spin_id)
 
 # See the clustering in the current data pipe "cdp".
-for key, value in cdp.clustering.iteritems():
-    print key, value
+for key in cdp.clustering:
+    print(key, cdp.clustering[key])
 
 # Print parameter kex before copying.
 for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):

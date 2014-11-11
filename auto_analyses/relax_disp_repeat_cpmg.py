@@ -78,8 +78,8 @@ class Relax_disp_rep:
         self.settings = settings
 
         # Unpack settings from dictionary to self.
-        for setting, value in self.settings.iteritems():
-            setattr(self, setting, value)
+        for setting in self.settings:
+            setattr(self, setting, self.settings[setting])
 
         if 'pipe_type' not in self.settings:
             self.set_self(key='pipe_type', value='relax_disp')

@@ -6172,10 +6172,10 @@ class Relax_disp(SystemTestCase):
                 self.assertEqual(len(par_dic), len(model_params))
 
                 # Loop over dictionary.
-                for param, param_conv in par_dic.iteritems():
-                        if param != param_conv:
-                            print("Model:'%s', Nested model:'%s', Copying '%s' to '%s'." % (model_info.model, nested_model, param_conv, param))
-                        self.assertNotEqual(param_conv, None)
+                for param in par_dic:
+                        if param != par_dic[param]:
+                            print("Model:'%s', Nested model:'%s', Copying '%s' to '%s'." % (model_info.model, nested_model, par_dic[param], param))
+                        self.assertNotEqual(par_dic[param], None)
 
 
     def test_ns_mmq_3site(self):

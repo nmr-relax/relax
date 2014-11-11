@@ -205,12 +205,12 @@ class Relax_fit:
         has_dub = False
 
         if not hasattr(cdp, 'replicates'):
-            # Collect all times, and matching spectrum id.
+            # Collect all times, and matching spectrum ID.
             all_times = []
             all_id = []
-            for s_id, time in cdp.relax_times.iteritems():
-                all_times.append(time)
-                all_id.append(s_id)
+            for spectrum_id in cdp.relax_times:
+                all_times.append(cdp.relax_times[spectrum_id])
+                all_id.append(spectrum_id)
 
             # Get the dublicates.
             dublicates = map(lambda val: (val, [i for i in range(len(all_times)) if all_times[i] == val]), all_times)
