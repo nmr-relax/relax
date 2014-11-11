@@ -14,7 +14,7 @@ from lib.geometry.rotations import euler_to_R_zyz
 def rot1(Ri, R, RT, N=1, verb=True):
     d = zeros((len(Ri), 3, 3), float64)
     for i in range(N):
-        for j in xrange(len(Ri)):
+        for j in range(len(Ri)):
             d[j] = dot(R, dot(Ri[j], RT))
     if verb:
         print("\n1st rotation - element by element R.Ri[i].RT.")
