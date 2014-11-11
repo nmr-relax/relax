@@ -1012,7 +1012,7 @@ class Relax_disp_rep:
         """Method which return a list of tubles, where each tuble is a spectrum id and a list of spectrum ids which are replicated"""
 
         # Get the dublicates.
-        dublicates = map(lambda val: (val, [i for i in range(len(cpmg_frqs)) if cpmg_frqs[i] == val]), cpmg_frqs)
+        dublicates = [(val, [i for i in range(len(cpmg_frqs)) if cpmg_frqs[i] == val]) for val in cpmg_frqs]
 
         # Loop over the list of the mapping of cpmg frequency and duplications.
         list_dub_mapping = []

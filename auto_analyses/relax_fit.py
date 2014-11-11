@@ -213,7 +213,7 @@ class Relax_fit:
                 all_id.append(spectrum_id)
 
             # Get the dublicates.
-            dublicates = map(lambda val: (val, [i for i in range(len(all_times)) if all_times[i] == val]), all_times)
+            dublicates = [(val, [i for i in range(len(all_times)) if all_times[i] == val]) for val in all_times]
 
             # Loop over the list of the mapping of times and duplications.
             list_dub_mapping = []
