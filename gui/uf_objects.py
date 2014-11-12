@@ -96,11 +96,8 @@ def build_uf_menus(parent=None, menubar=None):
                 # Get the user function class data object.
                 class_data = uf_info.get_class(class_name)
 
-                # Create a unique ID.
-                class_id = wx.NewId()
-
                 # Create the menu entry.
-                class_item = build_menu_item(menu, id=class_id, text=class_data.menu_text, icon=fetch_icon(class_data.gui_icon, size='16x16'))
+                class_item = build_menu_item(menu, id=-1, text=class_data.menu_text, icon=fetch_icon(class_data.gui_icon, size='16x16'))
 
                 # Initialise the sub menu.
                 sub_menu = wx.Menu()
