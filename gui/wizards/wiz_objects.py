@@ -448,12 +448,12 @@ class Wiz_window(wx.Dialog):
                                   'cancel': None})
 
             # Initialise a set of unique button IDs.
-            self._button_ids.append({'back': wx.NewId(),
-                                     'apply': wx.NewId(),
-                                     'next': wx.NewId(),
-                                     'ok': wx.NewId(),
-                                     'finish': wx.NewId(),
-                                     'cancel': wx.NewId()})
+            self._button_ids.append({'back': -1,
+                                     'apply': -1,
+                                     'next': -1,
+                                     'ok': -1,
+                                     'finish': -1,
+                                     'cancel': -1})
 
             # Execute on next by default.
             self._exec_on_next.append(True)
