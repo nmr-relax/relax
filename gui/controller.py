@@ -42,6 +42,18 @@ from pipe_control.pipes import cdp_name
 from status import Status; status = Status()
 
 
+# IDs for the menu entries.
+MENU_ID_FIND = wx.NewId()
+MENU_ID_COPY = wx.NewId()
+MENU_ID_SELECT_ALL = wx.NewId()
+MENU_ID_ZOOM_IN = wx.NewId()
+MENU_ID_ZOOM_OUT = wx.NewId()
+MENU_ID_ZOOM_ORIG = wx.NewId()
+MENU_ID_GOTO_START = wx.NewId()
+MENU_ID_GOTO_END = wx.NewId()
+
+
+
 class Controller(wx.Frame):
     """The relax controller window."""
 
@@ -652,16 +664,6 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         # Turn off the pop up menu.
         self.UsePopUp(0)
 
-        # IDs for the menu entries.
-        self.menu_id_find = wx.NewId()
-        self.menu_id_copy = wx.NewId()
-        self.menu_id_select_all = wx.NewId()
-        self.menu_id_zoom_in = wx.NewId()
-        self.menu_id_zoom_out = wx.NewId()
-        self.menu_id_zoom_orig = wx.NewId()
-        self.menu_id_goto_start = wx.NewId()
-        self.menu_id_goto_end = wx.NewId()
-
         # Make the control read only.
         self.SetReadOnly(True)
 
@@ -674,14 +676,14 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         self.Bind(wx.EVT_MOUSEWHEEL, self.capture_mouse_wheel)
         self.Bind(wx.EVT_RIGHT_DOWN, self.pop_up_menu)
         self.Bind(wx.EVT_SCROLLWIN_THUMBTRACK, self.capture_scroll)
-        self.Bind(wx.EVT_MENU, self.find_open, id=self.menu_id_find)
-        self.Bind(wx.EVT_MENU, self.on_copy, id=self.menu_id_copy)
-        self.Bind(wx.EVT_MENU, self.on_select_all, id=self.menu_id_select_all)
-        self.Bind(wx.EVT_MENU, self.on_zoom_in, id=self.menu_id_zoom_in)
-        self.Bind(wx.EVT_MENU, self.on_zoom_out, id=self.menu_id_zoom_out)
-        self.Bind(wx.EVT_MENU, self.on_zoom_orig, id=self.menu_id_zoom_orig)
-        self.Bind(wx.EVT_MENU, self.on_goto_start, id=self.menu_id_goto_start)
-        self.Bind(wx.EVT_MENU, self.on_goto_end, id=self.menu_id_goto_end)
+        self.Bind(wx.EVT_MENU, self.find_open, id=MENU_ID_FIND)
+        self.Bind(wx.EVT_MENU, self.on_copy, id=MENU_ID_COPY)
+        self.Bind(wx.EVT_MENU, self.on_select_all, id=MENU_ID_SELECT_ALL)
+        self.Bind(wx.EVT_MENU, self.on_zoom_in, id=MENU_ID_ZOOM_IN)
+        self.Bind(wx.EVT_MENU, self.on_zoom_out, id=MENU_ID_ZOOM_OUT)
+        self.Bind(wx.EVT_MENU, self.on_zoom_orig, id=MENU_ID_ZOOM_ORIG)
+        self.Bind(wx.EVT_MENU, self.on_goto_start, id=MENU_ID_GOTO_START)
+        self.Bind(wx.EVT_MENU, self.on_goto_end, id=MENU_ID_GOTO_END)
 
 
     def capture_keys(self, event):
@@ -1114,17 +1116,17 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         menu = wx.Menu()
 
         # Add the entries.
-        menu.AppendItem(build_menu_item(menu, id=self.menu_id_find, text="&Find", icon=fetch_icon('oxygen.actions.edit-find', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=MENU_ID_FIND, text="&Find", icon=fetch_icon('oxygen.actions.edit-find', "16x16")))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=self.menu_id_copy, text="&Copy", icon=fetch_icon('oxygen.actions.edit-copy', "16x16")))
-        menu.AppendItem(build_menu_item(menu, id=self.menu_id_select_all, text="&Select all", icon=fetch_icon('oxygen.actions.edit-select-all', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=MENU_ID_COPY, text="&Copy", icon=fetch_icon('oxygen.actions.edit-copy', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=MENU_ID_SELECT_ALL, text="&Select all", icon=fetch_icon('oxygen.actions.edit-select-all', "16x16")))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_in, text="Zoom &in", icon=fetch_icon('oxygen.actions.zoom-in', "16x16")))
-        menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_out, text="Zoom &out", icon=fetch_icon('oxygen.actions.zoom-out', "16x16")))
-        menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_orig, text="Original &zoom", icon=fetch_icon('oxygen.actions.zoom-original', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=MENU_ID_ZOOM_IN, text="Zoom &in", icon=fetch_icon('oxygen.actions.zoom-in', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=MENU_ID_ZOOM_OUT, text="Zoom &out", icon=fetch_icon('oxygen.actions.zoom-out', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=MENU_ID_ZOOM_ORIG, text="Original &zoom", icon=fetch_icon('oxygen.actions.zoom-original', "16x16")))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=self.menu_id_goto_start, text="&Go to start", icon=fetch_icon('oxygen.actions.go-top', "16x16")))
-        menu.AppendItem(build_menu_item(menu, id=self.menu_id_goto_end, text="&Go to end", icon=fetch_icon('oxygen.actions.go-bottom', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=MENU_ID_GOTO_START, text="&Go to start", icon=fetch_icon('oxygen.actions.go-top', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=MENU_ID_GOTO_END, text="&Go to end", icon=fetch_icon('oxygen.actions.go-bottom', "16x16")))
 
         # Pop up the menu.
         if status.show_gui:
