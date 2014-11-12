@@ -520,8 +520,6 @@ class dAuvergne_protocol:
         # Is the directory readable, writable, and executable.
         if not access(base_dir, R_OK):
             raise RelaxError("The base model directory '%s' is not readable." % base_dir)
-        if not access(base_dir, W_OK):
-            raise RelaxError("The base model directory '%s' is not writable." % base_dir)
         if not access(base_dir, X_OK):
             raise RelaxError("The base model directory '%s' is not executable." % base_dir)
 
