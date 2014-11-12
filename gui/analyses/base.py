@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -143,11 +143,8 @@ class Base_analysis(scrolledpanel.ScrolledPanel):
         # A horizontal sizer for the contents.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
 
-        # A unique ID.
-        id = wx.NewId()
-
         # The button.
-        button = buttons.ThemedGenBitmapTextButton(self, id, None, " Execute")
+        button = buttons.ThemedGenBitmapTextButton(self, -1, None, " Execute")
         button.SetBitmapLabel(wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
         self.gui.Bind(wx.EVT_BUTTON, method, button)
