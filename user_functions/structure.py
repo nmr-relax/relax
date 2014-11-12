@@ -715,7 +715,6 @@ uf.add_keyarg(
     py_type = "str_list",
     desc_short = "molecules to load spins from",
     desc = "The list of similar, but not necessarily identical molecules to load spin information from.",
-    wiz_combo_iter = pipe_names,
     wiz_read_only = False,
     can_be_none = True
 )
