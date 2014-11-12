@@ -65,6 +65,21 @@ from status import Status; status = Status()
 from version import version
 
 
+# wx IDs for the toolbar.
+TB_FILE_NEW = wx.NewId()
+TB_FILE_CLOSE = wx.NewId()
+TB_FILE_CLOSE_ALL = wx.NewId()
+TB_FILE_OPEN = wx.NewId()
+TB_FILE_SAVE = wx.NewId()
+TB_FILE_SAVE_AS = wx.NewId()
+TB_VIEW_CONTROLLER = wx.NewId()
+TB_VIEW_SPIN_VIEW = wx.NewId()
+TB_VIEW_RESULTS = wx.NewId()
+TB_VIEW_PIPE_EDIT = wx.NewId()
+TB_VIEW_PROMPT = wx.NewId()
+
+
+
 class Main(wx.Frame):
     """The main GUI class."""
 
@@ -269,65 +284,54 @@ class Main(wx.Frame):
         self.toolbar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.TB_FLAT)
 
         # The new analysis button.
-        self.TB_FILE_NEW = wx.NewId()
-        self.toolbar.AddLabelTool(self.TB_FILE_NEW, "New analysis", wx.Bitmap(fetch_icon('oxygen.actions.document-new', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="New analysis")
-        self.Bind(wx.EVT_TOOL, self.analysis.menu_new, id=self.TB_FILE_NEW)
+        self.toolbar.AddLabelTool(TB_FILE_NEW, "New analysis", wx.Bitmap(fetch_icon('oxygen.actions.document-new', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="New analysis")
+        self.Bind(wx.EVT_TOOL, self.analysis.menu_new, id=TB_FILE_NEW)
 
         # The close analysis button.
-        self.TB_FILE_CLOSE = wx.NewId()
-        self.toolbar.AddLabelTool(self.TB_FILE_CLOSE, "Close analysis", wx.Bitmap(fetch_icon('oxygen.actions.document-close', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Close analysis")
-        self.Bind(wx.EVT_TOOL, self.analysis.menu_close, id=self.TB_FILE_CLOSE)
+        self.toolbar.AddLabelTool(TB_FILE_CLOSE, "Close analysis", wx.Bitmap(fetch_icon('oxygen.actions.document-close', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Close analysis")
+        self.Bind(wx.EVT_TOOL, self.analysis.menu_close, id=TB_FILE_CLOSE)
 
         # The close all analyses button.
-        self.TB_FILE_CLOSE_ALL = wx.NewId()
-        self.toolbar.AddLabelTool(self.TB_FILE_CLOSE_ALL, "Close all analyses", wx.Bitmap(fetch_icon('oxygen.actions.dialog-close', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Close all analyses")
-        self.Bind(wx.EVT_TOOL, self.analysis.menu_close_all, id=self.TB_FILE_CLOSE_ALL)
+        self.toolbar.AddLabelTool(TB_FILE_CLOSE_ALL, "Close all analyses", wx.Bitmap(fetch_icon('oxygen.actions.dialog-close', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Close all analyses")
+        self.Bind(wx.EVT_TOOL, self.analysis.menu_close_all, id=TB_FILE_CLOSE_ALL)
 
         # A separator.
         self.toolbar.AddSeparator()
 
         # The open state button.
-        self.TB_FILE_OPEN = wx.NewId()
-        self.toolbar.AddLabelTool(self.TB_FILE_OPEN, "Open relax state", wx.Bitmap(fetch_icon('oxygen.actions.document-open', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Open relax state")
-        self.Bind(wx.EVT_TOOL, self.state_load, id=self.TB_FILE_OPEN)
+        self.toolbar.AddLabelTool(TB_FILE_OPEN, "Open relax state", wx.Bitmap(fetch_icon('oxygen.actions.document-open', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Open relax state")
+        self.Bind(wx.EVT_TOOL, self.state_load, id=TB_FILE_OPEN)
 
         # The save state button.
-        self.TB_FILE_SAVE = wx.NewId()
-        self.toolbar.AddLabelTool(self.TB_FILE_SAVE, "Save relax state", wx.Bitmap(fetch_icon('oxygen.actions.document-save', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Save relax state")
-        self.Bind(wx.EVT_TOOL, self.action_state_save, id=self.TB_FILE_SAVE)
+        self.toolbar.AddLabelTool(TB_FILE_SAVE, "Save relax state", wx.Bitmap(fetch_icon('oxygen.actions.document-save', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Save relax state")
+        self.Bind(wx.EVT_TOOL, self.action_state_save, id=TB_FILE_SAVE)
 
         # The save as button.
-        self.TB_FILE_SAVE_AS = wx.NewId()
-        self.toolbar.AddLabelTool(self.TB_FILE_SAVE_AS, "Save as", wx.Bitmap(fetch_icon('oxygen.actions.document-save-as', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Save as")
-        self.Bind(wx.EVT_TOOL, self.action_state_save_as, id=self.TB_FILE_SAVE_AS)
+        self.toolbar.AddLabelTool(TB_FILE_SAVE_AS, "Save as", wx.Bitmap(fetch_icon('oxygen.actions.document-save-as', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Save as")
+        self.Bind(wx.EVT_TOOL, self.action_state_save_as, id=TB_FILE_SAVE_AS)
 
         # A separator.
         self.toolbar.AddSeparator()
 
         # The relax controller button.
-        self.TB_VIEW_CONTROLLER = wx.NewId()
-        self.toolbar.AddLabelTool(self.TB_VIEW_CONTROLLER, "Controller", wx.Bitmap(fetch_icon('oxygen.apps.preferences-system-performance', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="relax controller")
-        self.Bind(wx.EVT_TOOL, self.show_controller, id=self.TB_VIEW_CONTROLLER)
+        self.toolbar.AddLabelTool(TB_VIEW_CONTROLLER, "Controller", wx.Bitmap(fetch_icon('oxygen.apps.preferences-system-performance', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="relax controller")
+        self.Bind(wx.EVT_TOOL, self.show_controller, id=TB_VIEW_CONTROLLER)
 
         # The spin viewer button.
-        self.TB_VIEW_SPIN_VIEW = wx.NewId()
-        self.toolbar.AddLabelTool(self.TB_VIEW_SPIN_VIEW, "Spin viewer", wx.Bitmap(fetch_icon('relax.spin', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Spin viewer window")
-        self.Bind(wx.EVT_TOOL, self.show_tree, id=self.TB_VIEW_SPIN_VIEW)
+        self.toolbar.AddLabelTool(TB_VIEW_SPIN_VIEW, "Spin viewer", wx.Bitmap(fetch_icon('relax.spin', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Spin viewer window")
+        self.Bind(wx.EVT_TOOL, self.show_tree, id=TB_VIEW_SPIN_VIEW)
 
         # The results viewer button.
-        self.TB_VIEW_RESULTS = wx.NewId()
-        self.toolbar.AddLabelTool(self.TB_VIEW_RESULTS, "Results viewer", wx.Bitmap(fetch_icon('oxygen.actions.view-statistics', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Results viewer window")
-        self.Bind(wx.EVT_TOOL, self.show_results_viewer, id=self.TB_VIEW_RESULTS)
+        self.toolbar.AddLabelTool(TB_VIEW_RESULTS, "Results viewer", wx.Bitmap(fetch_icon('oxygen.actions.view-statistics', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Results viewer window")
+        self.Bind(wx.EVT_TOOL, self.show_results_viewer, id=TB_VIEW_RESULTS)
 
         # The data pipe editor button.
-        self.TB_VIEW_PIPE_EDIT = wx.NewId()
-        self.toolbar.AddLabelTool(self.TB_VIEW_PIPE_EDIT, "Data pipe editor", wx.Bitmap(fetch_icon('relax.pipe', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Data pipe editor")
-        self.Bind(wx.EVT_TOOL, self.show_pipe_editor, id=self.TB_VIEW_PIPE_EDIT)
+        self.toolbar.AddLabelTool(TB_VIEW_PIPE_EDIT, "Data pipe editor", wx.Bitmap(fetch_icon('relax.pipe', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="Data pipe editor")
+        self.Bind(wx.EVT_TOOL, self.show_pipe_editor, id=TB_VIEW_PIPE_EDIT)
 
         # The relax prompt button.
-        self.TB_VIEW_PROMPT = wx.NewId()
-        self.toolbar.AddLabelTool(self.TB_VIEW_PROMPT, "relax prompt", wx.Bitmap(fetch_icon('oxygen.mimetypes.application-x-executable-script', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="The relax prompt GUI window")
-        self.Bind(wx.EVT_TOOL, self.show_prompt, id=self.TB_VIEW_PROMPT)
+        self.toolbar.AddLabelTool(TB_VIEW_PROMPT, "relax prompt", wx.Bitmap(fetch_icon('oxygen.mimetypes.application-x-executable-script', "22x22"), wx.BITMAP_TYPE_ANY), shortHelp="The relax prompt GUI window")
+        self.Bind(wx.EVT_TOOL, self.show_prompt, id=TB_VIEW_PROMPT)
 
         # Build the toolbar.
         self.toolbar.Realize()
@@ -393,12 +397,12 @@ class Main(wx.Frame):
             enable = True
 
         # The toolbar.
-        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_NEW, enable)
-        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_CLOSE, enable)
-        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_CLOSE_ALL, enable)
-        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_OPEN, enable)
-        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_SAVE, enable)
-        wx.CallAfter(self.toolbar.EnableTool, self.TB_FILE_SAVE_AS, enable)
+        wx.CallAfter(self.toolbar.EnableTool, TB_FILE_NEW, enable)
+        wx.CallAfter(self.toolbar.EnableTool, TB_FILE_CLOSE, enable)
+        wx.CallAfter(self.toolbar.EnableTool, TB_FILE_CLOSE_ALL, enable)
+        wx.CallAfter(self.toolbar.EnableTool, TB_FILE_OPEN, enable)
+        wx.CallAfter(self.toolbar.EnableTool, TB_FILE_SAVE, enable)
+        wx.CallAfter(self.toolbar.EnableTool, TB_FILE_SAVE_AS, enable)
 
 
     def exit_gui(self, event=None):
