@@ -39,6 +39,11 @@ from lib.errors import RelaxImplementError
 from status import Status; status = Status()
 
 
+# The wx ID for the special accelerator table that allows the ESC button to close relax wizards.
+ESC_ID = wx.NewId()
+
+
+
 class Wiz_page(wx.Panel):
     """The wizard pages to be placed inside the wizard.
 
@@ -482,11 +487,10 @@ class Wiz_window(wx.Dialog):
         self.Bind(wx.EVT_CLOSE, self._handler_close)
 
         # ESC to exit, via an accelerator table which creates menu events.
-        id = wx.NewId()
-        self.acc_list = [(wx.ACCEL_NORMAL, wx.WXK_ESCAPE, id)]
+        self.acc_list = [(wx.ACCEL_NORMAL, wx.WXK_ESCAPE, ESC_ID)]
         self.acc_table = wx.AcceleratorTable(self.acc_list)
         self.SetAcceleratorTable(self.acc_table)
-        self.Bind(wx.EVT_MENU, self._handler_escape, id=self.acc_list[0][2])
+        self.Bind(wx.EVT_MENU, self._handler_escape, id=ESC_ID)
 
 
     def _apply(self, event=None):
