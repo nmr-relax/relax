@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2013-2014 Troels E. Linnet                                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -37,6 +37,12 @@ from gui.uf_objects import build_uf_menus, Uf_storage; uf_store = Uf_storage()
 from lib.errors import RelaxNoPipeError
 from pipe_control.pipes import cdp_name, pipe_names
 from status import Status; status = Status()
+
+
+# wx IDs for the toolbar.
+TB_SPIN_LOADER_ID = wx.NewId()
+TB_REFRESH = wx.NewId()
+
 
 
 class Spin_view_window(wx.Frame):
@@ -97,7 +103,7 @@ class Spin_view_window(wx.Frame):
                 wx.CallAfter(item.Enable, enable)
 
         # The spin loader.
-        wx.CallAfter(self.bar.EnableTool, self.spin_loader_id, enable)
+        wx.CallAfter(self.bar.EnableTool, TB_SPIN_LOADER_ID, enable)
 
         # The pipe selector.
         wx.CallAfter(self.pipe_name.Enable, enable)
@@ -276,19 +282,17 @@ class Spin_view_window(wx.Frame):
         self.bar = self.CreateToolBar(wx.TB_HORIZONTAL|wx.TB_FLAT|wx.TB_TEXT)
 
         # The spin loading button.
-        self.spin_loader_id = wx.NewId()
         tooltip = "Load spins from either a sequence file or from a 3D structure file."
-        self.bar.AddLabelTool(self.spin_loader_id, "Load spins", wx.Bitmap(fetch_icon('relax.spin', '32x32'), wx.BITMAP_TYPE_ANY), bmpDisabled=wx.Bitmap(fetch_icon('relax.spin_grey', '32x32'), wx.BITMAP_TYPE_ANY), shortHelp=tooltip, longHelp=tooltip)
-        self.Bind(wx.EVT_TOOL, self.load_spins_wizard, id=self.spin_loader_id)
+        self.bar.AddLabelTool(TB_SPIN_LOADER_ID, "Load spins", wx.Bitmap(fetch_icon('relax.spin', '32x32'), wx.BITMAP_TYPE_ANY), bmpDisabled=wx.Bitmap(fetch_icon('relax.spin_grey', '32x32'), wx.BITMAP_TYPE_ANY), shortHelp=tooltip, longHelp=tooltip)
+        self.Bind(wx.EVT_TOOL, self.load_spins_wizard, id=TB_SPIN_LOADER_ID)
 
         # A separator.
         self.bar.AddSeparator()
 
         # The refresh button.
-        id = wx.NewId()
         tooltip = "Refresh the spin view."
-        self.bar.AddLabelTool(id, "Refresh", wx.Bitmap(fetch_icon('oxygen.actions.view-refresh', '32x32'), wx.BITMAP_TYPE_ANY), shortHelp=tooltip, longHelp=tooltip)
-        self.Bind(wx.EVT_TOOL, self.refresh, id=id)
+        self.bar.AddLabelTool(TB_REFRESH, "Refresh", wx.Bitmap(fetch_icon('oxygen.actions.view-refresh', '32x32'), wx.BITMAP_TYPE_ANY), shortHelp=tooltip, longHelp=tooltip)
+        self.Bind(wx.EVT_TOOL, self.refresh, id=TB_REFRESH)
 
         # A separator.
         self.bar.AddSeparator()
