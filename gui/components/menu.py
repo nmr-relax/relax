@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,7 +27,7 @@
 import wx
 
 
-def build_menu_item(menu, parent=None, id=None, text='', tooltip='', icon=None, fn=None):
+def build_menu_item(menu, parent=None, id=-1, text='', tooltip='', icon=None, fn=None):
     """Construct and return the menu sub-item.
 
     @param menu:        The menu object to place this entry in.
@@ -45,10 +45,6 @@ def build_menu_item(menu, parent=None, id=None, text='', tooltip='', icon=None, 
     @return:            The initialised wx.MenuItem() instance.
     @rtype:             wx.MenuItem() instance
     """
-
-    # A new ID if necessary.
-    if id == None:
-        id = wx.NewId()
 
     # Initialise the GUI element.
     element = wx.MenuItem(menu, id, text, tooltip)
