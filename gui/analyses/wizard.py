@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -36,6 +36,18 @@ from gui.string_conv import gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.wiz_objects import Wiz_page, Wiz_window
 from lib.text.gui import r1, r2
+
+
+# Unique IDs for the wizard buttons.
+BUTTON_ID_NOE = wx.NewId()
+BUTTON_ID_R1 = wx.NewId()
+BUTTON_ID_R2 = wx.NewId()
+BUTTON_ID_MF = wx.NewId()
+BUTTON_ID_RELAX_DISP = wx.NewId()
+BUTTON_ID_CONSIST_TEST = wx.NewId()
+BUTTON_ID_CUSTOM = wx.NewId()
+BUTTON_ID_RESERVED = wx.NewId()
+
 
 
 class Analysis_wizard:
@@ -245,39 +257,29 @@ class New_analysis_page(Wiz_page):
         sizer1 = wx.BoxSizer(wx.HORIZONTAL)
         sizer2 = wx.BoxSizer(wx.HORIZONTAL)
 
-        # A set of unique IDs for the buttons.
-        self.button_ids = {'noe': wx.NewId(),
-                           'r1': wx.NewId(),
-                           'r2': wx.NewId(),
-                           'mf': wx.NewId(),
-                           'relax_disp': wx.NewId(),
-                           'consist_test': wx.NewId(),
-                           'custom': wx.NewId(),
-                           'reserved': wx.NewId()}
-
         # The NOE button.
-        self.button_noe = self.create_button(id=self.button_ids['noe'], box=sizer1, size=size, bmp=ANALYSIS_IMAGE_PATH+"noe_150x150.png", tooltip="Steady-state NOE analysis", fn=self.select_noe)
+        self.button_noe = self.create_button(id=BUTTON_ID_NOE, box=sizer1, size=size, bmp=ANALYSIS_IMAGE_PATH+"noe_150x150.png", tooltip="Steady-state NOE analysis", fn=self.select_noe)
 
         # The R1 button.
-        self.button_r1 = self.create_button(id=self.button_ids['r1'], box=sizer1, size=size, bmp=ANALYSIS_IMAGE_PATH+"r1_150x150.png", tooltip="%s relaxation curve-fitting analysis" % r1, fn=self.select_r1)
+        self.button_r1 = self.create_button(id=BUTTON_ID_R1, box=sizer1, size=size, bmp=ANALYSIS_IMAGE_PATH+"r1_150x150.png", tooltip="%s relaxation curve-fitting analysis" % r1, fn=self.select_r1)
 
         # The R2 button.
-        self.button_r2 = self.create_button(id=self.button_ids['r2'], box=sizer1, size=size, bmp=ANALYSIS_IMAGE_PATH+"r2_150x150.png", tooltip="%s relaxation curve-fitting analysis" % r2, fn=self.select_r2)
+        self.button_r2 = self.create_button(id=BUTTON_ID_R2, box=sizer1, size=size, bmp=ANALYSIS_IMAGE_PATH+"r2_150x150.png", tooltip="%s relaxation curve-fitting analysis" % r2, fn=self.select_r2)
 
         # The model-free button.
-        self.button_mf = self.create_button(id=self.button_ids['mf'], box=sizer1, size=size, bmp=ANALYSIS_IMAGE_PATH+"model_free"+sep+"model_free_150x150.png", tooltip="Model-free analysis", fn=self.select_mf)
+        self.button_mf = self.create_button(id=BUTTON_ID_MF, box=sizer1, size=size, bmp=ANALYSIS_IMAGE_PATH+"model_free"+sep+"model_free_150x150.png", tooltip="Model-free analysis", fn=self.select_mf)
 
         # The relaxation dispersion button.
-        self.button_disp = self.create_button(id=self.button_ids['relax_disp'], box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"relax_disp_150x150.png", tooltip="Relaxation dispersion analysis", fn=self.select_disp)
+        self.button_disp = self.create_button(id=BUTTON_ID_RELAX_DISP, box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"relax_disp_150x150.png", tooltip="Relaxation dispersion analysis", fn=self.select_disp)
 
         # Consistency testing.
-        self.button_consist_test = self.create_button(id=self.button_ids['consist_test'], box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"consistency_testing_150x70.png", tooltip="Relaxation data consistency testing (disabled)", fn=self.select_consist_test, disabled=True)
+        self.button_consist_test = self.create_button(id=BUTTON_ID_CONSIST_TEST, box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"consistency_testing_150x70.png", tooltip="Relaxation data consistency testing (disabled)", fn=self.select_consist_test, disabled=True)
 
         # The custom analysis button.
-        self.button_custom = self.create_button(id=self.button_ids['custom'], box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"custom_150x150.png", tooltip="Custom analysis (disabled)", fn=self.select_custom, disabled=True)
+        self.button_custom = self.create_button(id=BUTTON_ID_CUSTOM, box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"custom_150x150.png", tooltip="Custom analysis (disabled)", fn=self.select_custom, disabled=True)
 
         # The blank reserved button.
-        self.button_reserved = self.create_button(id=self.button_ids['reserved'], box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"blank_150x150.png", tooltip=None, fn=None, disabled=True)
+        self.button_reserved = self.create_button(id=BUTTON_ID_RESERVED, box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"blank_150x150.png", tooltip=None, fn=None, disabled=True)
 
         # Add the sizers.
         box.Add(sizer1, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
