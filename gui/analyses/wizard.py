@@ -56,8 +56,6 @@ class Analysis_wizard:
     def Destroy(self):
         """Properly delete the wizard and all its elements."""
 
-        self.new_page.Destroy()
-        self.pipe_page.Destroy()
         self.wizard.Destroy()
 
 
