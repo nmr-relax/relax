@@ -237,6 +237,7 @@ class Analysis_controller:
             if status.debug:
                 print("debug> %s:  Executing the analysis specific delete() method." % full_name)
             self._analyses[index].delete()
+        wx.Yield()
 
         # Delete the tab.
         if status.debug:
