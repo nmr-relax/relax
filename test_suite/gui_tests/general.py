@@ -22,6 +22,9 @@
 # Module docstring.
 """Generic GUI tests."""
 
+# Python module imports.
+import wx
+
 # relax module imports.
 from pipe_control.pipes import cdp_name
 from status import Status; status = Status()
@@ -33,6 +36,22 @@ from gui.string_conv import str_to_gui
 
 class General(GuiTestCase):
     """Class for testing general GUI operations."""
+
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(General, self).__init__(methodName)
+
+        # Tests to skip.
+        blacklist = [
+            'test_new_analysis_wizard_memory_leak'
+        ]
+
+        # Skip the blacklisted tests.
+        if methodName in blacklist:
+            status.skipped_tests.append([methodName, None, self._skip_type])
+
 
     def test_bug_21720_pipe_switching_with_tab_closure(self):
         """Catch U{bug #20479<https://gna.org/bugs/?20479>}, the failure to switch pipes when closing non-last tabs."""
@@ -51,3 +70,20 @@ class General(GuiTestCase):
 
         # Check that the Mf data pipe is now the current pipe.
         self.assertEqual(cdp_name(), 'mf')
+
+
+    def test_new_analysis_wizard_memory_leak(self):
+        """Test for memory leaks in the new analysis wizard."""
+
+        # A large loop (to try to reach the USER Object limit in MS Windows).
+        for i in range(100):
+            # Printout for debugging.
+            print("Analysis wizard number %i." % (i+1))
+
+            # Simulate the menu selection, but don't destroy the GUI element.
+            self.app.gui.analysis.menu_new(None, destroy=False)
+
+            # Wizard cleanup.
+            wx.Yield()
+            self.app.gui.analysis.new_wizard.Destroy()
+            del self.app.gui.analysis.new_wizard
