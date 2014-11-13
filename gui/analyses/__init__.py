@@ -438,6 +438,7 @@ class Analysis_controller:
 
         # Delete the wizard GUI element.
         if destroy:
+            wx.Yield()
             self.new_wizard.Destroy()
 
         # Failure, so do nothing.
