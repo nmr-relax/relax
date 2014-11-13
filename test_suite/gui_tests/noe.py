@@ -179,10 +179,14 @@ class Noe(GuiTestCase):
         # A large loop (to try to reach the USER Object limit in MS Windows).
         for i in range(1000):
             # Printout for debugging.
-            print("Creating and closing the analysis tab %i" % (i+1))
+            print("\n\n\nCreating the analysis number %i." % (i+1))
 
             # Simulate the new analysis wizard.
             analysis = self.new_analysis_wizard(analysis_type='noe')
 
             # Close the analysis.
             self.app.gui.analysis.delete_analysis(0)
+
+            # Printout for debugging.
+            print("\n\nClosing the analysis number %i.\n\n\n" % (i+1))
+
