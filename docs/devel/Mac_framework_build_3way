@@ -153,6 +153,34 @@ $ ~/bin/python2.7 setup.py install
 
 # Matplotlib.
 
-This might be used more in relax in the future.  Download the latest version and then:
+Note that there are currently fatal bugs in matplotlib (currently 1.4.2) causing the relax universal binaries to fail.  The following dependencies (pkg-config, libpng, freetype) will be compiled as 3-way binaries and installed into /usr/local/.
+
+1)  pkg-config.  Download this from http://pkgconfig.freedesktop.org/releases/, unpack, then:
+
+$ ./configure
+$ make
+$ sudo make install
+$ export PKG_CONFIG=/usr/local/bin/pkg-config
+$ export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+
+2)  libpng.  Download it from http://sourceforge.net/projects/libpng/ and then unpack it.  To compile (from http://cairographics.org/end_to_end_build_for_mac_os_x/):
+
+$ export MACOSX_DEPLOYMENT_TARGET=10.5
+$ export LDFLAGS="-arch ppc -arch i386 -arch x86_64 -isysroot /Developer/SDKs/MacOSX10.5.sdk"
+$ export CFLAGS="-Os -arch ppc -arch i386 -arch x86_64 -isysroot /Developer/SDKs/MacOSX10.5.sdk"
+$ ./configure --disable-dependency-tracking
+$ make
+$ sudo make install
+
+3)  Freetype.  Download it from http://sourceforge.net/projects/freetype/files/ and unpack it.  To compile:
+
+$ export MACOSX_DEPLOYMENT_TARGET=10.5
+$ export LDFLAGS="-arch ppc -arch i386 -arch x86_64 -isysroot /Developer/SDKs/MacOSX10.5.sdk"
+$ export CFLAGS="-Os -arch ppc -arch i386 -arch x86_64 -isysroot /Developer/SDKs/MacOSX10.5.sdk"
+$ ./configure
+$ make
+$ sudo make install
+
+4) Matplotlib.  Download the latest version, unpack, and then:
 
 $ ~/bin/python2.7 setup.py install

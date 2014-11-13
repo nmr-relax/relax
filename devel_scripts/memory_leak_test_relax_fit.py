@@ -17,6 +17,11 @@ gcc -o target_functions/relax_fit.so -shared target_functions/c_chi2.os target_f
 from os import sep
 import sys
 
+# Check.
+if not hasattr(sys, 'gettotalrefcount'):
+    print("This is not a debugging compiled version of Python, quitting!")
+    sys.exit()
+
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()

@@ -206,6 +206,7 @@ class Mf(GuiTestCase):
         page = self.app.gui.spin_viewer.wizard.get_page(self.app.gui.spin_viewer.wizard._current_page)
         page.uf_args['spin_id'].SetValue(str_to_gui('@N'))
         self.app.gui.spin_viewer.wizard._apply()
+        interpreter.flush()    # Required because of the asynchronous uf call.
         page.uf_args['spin_id'].SetValue(str_to_gui('@H'))
         self.app.gui.spin_viewer.wizard._go_next()
         interpreter.flush()    # Required because of the asynchronous uf call.

@@ -167,6 +167,9 @@ class Interpreter(object):
             while status.exec_lock.locked():
                 sleep(0.1)
 
+        # Force the GUI to yield (to prevent racing, especially in the GUI tests).
+        wx.Yield()
+
         # Debugging.
         if status.debug:
             sys.stdout.write("debug> GUI interpreter:  Flushed.\n")

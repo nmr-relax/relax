@@ -39,6 +39,20 @@ from specific_analyses.relax_disp.data import is_cpmg_exp_type, is_r1rho_exp_typ
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
+# Some IDs for the menu entries.
+MENU_SPECTRUM_BASEPLANE_RMSD = wx.NewId()
+MENU_SPECTRUM_DELETE = wx.NewId()
+MENU_SPECTRUM_INTEGRATION_POINTS = wx.NewId()
+MENU_SPECTRUM_REPLICATED = wx.NewId()
+MENU_RELAX_DISP_EXP_TYPE = wx.NewId()
+MENU_RELAX_FIT_RELAX_TIME = wx.NewId()
+MENU_RELAX_DISP_RELAX_TIME = wx.NewId()
+MENU_SPECTROMETER_FRQ = wx.NewId()
+MENU_RELAX_DISP_SPIN_LOCK_FIELD = wx.NewId()
+MENU_RELAX_DISP_SPIN_LOCK_OFFSET = wx.NewId()
+MENU_RELAX_DISP_CPMG_SETUP = wx.NewId()
+
+
 class Spectra_list(Base_list):
     """The GUI element for listing loaded spectral data."""
 
@@ -532,22 +546,22 @@ class Spectra_list(Base_list):
         # The right click popup menu.
         popup_menus = [
             {
-                'id': wx.NewId(),
+                'id': MENU_SPECTRUM_BASEPLANE_RMSD,
                 'text': "Set the &baseplane RMSD",
                 'icon': fetch_icon(uf_info.get_uf('spectrum.baseplane_rmsd').gui_icon),
                 'method': self.action_spectrum_baseplane_rmsd
             }, {
-                'id': wx.NewId(),
+                'id': MENU_SPECTRUM_DELETE,
                 'text': "&Delete the peak intensities",
                 'icon': fetch_icon(uf_info.get_uf('spectrum.delete').gui_icon),
                 'method': self.action_spectrum_delete
             }, {
-                'id': wx.NewId(),
+                'id': MENU_SPECTRUM_INTEGRATION_POINTS,
                 'text': "Set the number of integration &points",
                 'icon': fetch_icon(uf_info.get_uf('spectrum.integration_points').gui_icon),
                 'method': self.action_spectrum_integration_points
             }, {
-                'id': wx.NewId(),
+                'id': MENU_SPECTRUM_REPLICATED,
                 'text': "Specify which spectra are &replicated",
                 'icon': fetch_icon(uf_info.get_uf('spectrum.replicated').gui_icon),
                 'method': self.action_spectrum_replicated
@@ -555,47 +569,47 @@ class Spectra_list(Base_list):
         ]
         if self.relax_disp_flag:
             popup_menus.append({
-                'id': wx.NewId(),
+                'id': MENU_RELAX_DISP_EXP_TYPE,
                 'text': "Set the &experiment type",
                 'icon': None,
                 'method': self.action_relax_disp_exp_type
             })
         if self.relax_fit_flag:
             popup_menus.append({
-                'id': wx.NewId(),
+                'id': MENU_RELAX_FIT_RELAX_TIME,
                 'text': "Set the relaxation &time",
                 'icon': fetch_icon(uf_info.get_uf('relax_fit.relax_time').gui_icon),
                 'method': self.action_relax_fit_relax_time
             })
         if self.relax_disp_flag:
             popup_menus.append({
-                'id': wx.NewId(),
+                'id': MENU_RELAX_DISP_RELAX_TIME,
                 'text': "Set the relaxation &time",
                 'icon': fetch_icon(uf_info.get_uf('relax_disp.relax_time').gui_icon),
                 'method': self.action_relax_disp_relax_time
             })
             popup_menus.append({
-                'id': wx.NewId(),
+                'id': MENU_SPECTROMETER_FRQ,
                 'text': "Set the spectrometer &frequency",
                 'icon': fetch_icon("relax.spectrometer"),
                 'method': self.action_spectrometer_frq
             })
         if self.relax_disp_flag and is_r1rho_exp_type(id):
             popup_menus.append({
-                'id': wx.NewId(),
+                'id': MENU_RELAX_DISP_SPIN_LOCK_FIELD,
                 'text': u("Set the spin-&lock field strength \u03BD1"),
                 'icon': fetch_icon("relax.relax_disp"),
                 'method': self.action_relax_disp_spin_lock_field
             })
             popup_menus.append({
-                'id': wx.NewId(),
+                'id': MENU_RELAX_DISP_SPIN_LOCK_OFFSET,
                 'text': u("Set the spin-&lock offset \u03C9_rf"),
                 'icon': fetch_icon("relax.relax_disp"),
                 'method': self.action_relax_disp_spin_lock_offset
             })
         if self.relax_disp_flag and is_cpmg_exp_type(id):
             popup_menus.append({
-                'id': wx.NewId(),
+                'id': MENU_RELAX_DISP_CPMG_SETUP,
                 'text': u("Set the &CPMG pulse sequence information"),
                 'icon': fetch_icon("relax.relax_disp"),
                 'method': self.action_relax_disp_cpmg_setup
