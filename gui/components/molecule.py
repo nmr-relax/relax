@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -35,6 +35,13 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from pipe_control.mol_res_spin import molecule_loop, return_molecule
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
+
+
+# Some IDs for the menu entries.
+MENU_MOLECULE_NAME = wx.NewId()
+MENU_MOLECULE_TYPE = wx.NewId()
+MENU_BMRB_THIOL_STATE = wx.NewId()
+
 
 
 class Molecule(Base_list):
@@ -163,17 +170,17 @@ class Molecule(Base_list):
         # The right click popup menu.
         self.popup_menus = [
             {
-                'id': wx.NewId(),
+                'id': MENU_MOLECULE_NAME,
                 'text': "&Name the molecule",
                 'icon': fetch_icon(uf_info.get_uf('molecule.name').gui_icon),
                 'method': self.action_molecule_name
             }, {
-                'id': wx.NewId(),
+                'id': MENU_MOLECULE_TYPE,
                 'text': "Set the molecule &type",
                 'icon': fetch_icon(uf_info.get_uf('molecule.type').gui_icon),
                 'method': self.action_molecule_type
             }, {
-                'id': wx.NewId(),
+                'id': MENU_BMRB_THIOL_STATE,
                 'text': "Set the thiol &state",
                 'icon': fetch_icon(uf_info.get_uf('bmrb.thiol_state').gui_icon),
                 'method': self.action_bmrb_thiol_state

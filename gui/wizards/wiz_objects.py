@@ -39,6 +39,11 @@ from lib.errors import RelaxImplementError
 from status import Status; status = Status()
 
 
+# The wx ID for the special accelerator table that allows the ESC button to close relax wizards.
+ESC_ID = wx.NewId()
+
+
+
 class Wiz_page(wx.Panel):
     """The wizard pages to be placed inside the wizard.
 
@@ -91,9 +96,6 @@ class Wiz_page(wx.Panel):
 
         # Initilise some variables.
         self.exec_status = False
-
-        # The wizard GUI element storage.
-        self._elements = {}
 
         # Pack a sizer into the panel.
         box_main = wx.BoxSizer(wx.HORIZONTAL)
@@ -448,12 +450,12 @@ class Wiz_window(wx.Dialog):
                                   'cancel': None})
 
             # Initialise a set of unique button IDs.
-            self._button_ids.append({'back': wx.NewId(),
-                                     'apply': wx.NewId(),
-                                     'next': wx.NewId(),
-                                     'ok': wx.NewId(),
-                                     'finish': wx.NewId(),
-                                     'cancel': wx.NewId()})
+            self._button_ids.append({'back': -1,
+                                     'apply': -1,
+                                     'next': -1,
+                                     'ok': -1,
+                                     'finish': -1,
+                                     'cancel': -1})
 
             # Execute on next by default.
             self._exec_on_next.append(True)
@@ -482,11 +484,10 @@ class Wiz_window(wx.Dialog):
         self.Bind(wx.EVT_CLOSE, self._handler_close)
 
         # ESC to exit, via an accelerator table which creates menu events.
-        id = wx.NewId()
-        self.acc_list = [(wx.ACCEL_NORMAL, wx.WXK_ESCAPE, id)]
+        self.acc_list = [(wx.ACCEL_NORMAL, wx.WXK_ESCAPE, ESC_ID)]
         self.acc_table = wx.AcceleratorTable(self.acc_list)
         self.SetAcceleratorTable(self.acc_table)
-        self.Bind(wx.EVT_MENU, self._handler_escape, id=self.acc_list[0][2])
+        self.Bind(wx.EVT_MENU, self._handler_escape, id=ESC_ID)
 
 
     def _apply(self, event=None):
@@ -818,6 +819,26 @@ class Wiz_window(wx.Dialog):
 
         # Go to the next page.
         self._go_next(None)
+
+
+    def Destroy(self):
+        """Override the default wx.Dialog.Destroy() method."""
+
+        # Loop over each page, destroying it and all its elements to avoid memory leaks.
+        for i in range(self._num_pages):
+            # Destroy the buttons.
+            for name in self._buttons[i]:
+                if hasattr(self._buttons[i][name], 'Destroy'):
+                    self._buttons[i][name].Destroy()
+                    self._buttons[i][name] = None
+
+            # Destroy each page.
+            if hasattr(self._pages[i], 'Destroy'):
+                self._pages[i].Destroy()
+                self._pages[i] = None
+
+        # Call the parent method to destroy the dialog.
+        wx.Dialog.Destroy(self)
 
 
     def add_page(self, panel, apply_button=True, skip_button=False, exec_on_next=True, proceed_on_error=True, uf_flush=False):

@@ -35,6 +35,14 @@ from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
+# Some IDs for the menu entries.
+MENU_RELAX_DATA_DISPLAY = wx.NewId()
+MENU_RELAX_DATA_PEAK_INTENSITY_TYPE = wx.NewId()
+MENU_RELAX_DATA_TEMP_CALIBRATION = wx.NewId()
+MENU_RELAX_DATA_TEMP_CONTROL = wx.NewId()
+
+
+
 class Relax_data_meta_list(Base_list):
     """The GUI element for listing loaded relaxation data."""
 
@@ -198,22 +206,22 @@ class Relax_data_meta_list(Base_list):
         # The right click popup menu.
         self.popup_menus = [
             {
-                'id': wx.NewId(),
+                'id': MENU_RELAX_DATA_DISPLAY,
                 'text': "Dis&play the relaxation data",
                 'icon': fetch_icon(uf_info.get_uf('relax_data.display').gui_icon),
                 'method': self.action_relax_data_display
             }, {
-                'id': wx.NewId(),
+                'id': MENU_RELAX_DATA_PEAK_INTENSITY_TYPE,
                 'text': "Set the peak &intensity type",
                 'icon': fetch_icon(uf_info.get_uf('relax_data.peak_intensity_type').gui_icon),
                 'method': self.action_relax_data_peak_intensity_type
             }, {
-                'id': wx.NewId(),
+                'id': MENU_RELAX_DATA_TEMP_CALIBRATION,
                 'text': "Set the temperature &calibration",
                 'icon': fetch_icon(uf_info.get_uf('relax_data.temp_calibration').gui_icon),
                 'method': self.action_relax_data_temp_calibration
             }, {
-                'id': wx.NewId(),
+                'id': MENU_RELAX_DATA_TEMP_CONTROL,
                 'text': "Set the temperature c&ontrol",
                 'icon': fetch_icon(uf_info.get_uf('relax_data.temp_control').gui_icon),
                 'method': self.action_relax_data_temp_control
