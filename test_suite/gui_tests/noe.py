@@ -36,6 +36,22 @@ from test_suite.gui_tests.base_classes import GuiTestCase
 class Noe(GuiTestCase):
     """Class for testing various aspects specific to the NOE analysis."""
 
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(Noe, self).__init__(methodName)
+
+        # Tests to skip.
+        blacklist = [
+            'test_noe_analysis_memory_leaks'
+        ]
+
+        # Skip the blacklisted tests.
+        if methodName in blacklist:
+            status.skipped_tests.append([methodName, None, self._skip_type])
+
+
     def test_noe_analysis(self):
         """Test the NOE analysis."""
 
@@ -152,3 +168,18 @@ class Noe(GuiTestCase):
 
         # Check the created files.
         self.assert_(access(ds.tmpdir+sep+'grace'+sep+'noe.agr', F_OK))
+
+
+    def test_noe_analysis_memory_leaks(self):
+        """Test for memory leaks in the NOE analysis.
+
+        This can be monitored using the MS Windows task manager, once the 'USER Objects' column is shown.
+        """
+
+        # A large loop (to try to reach the USER Object limit in MS Windows).
+        for i in range(1000):
+            # Simulate the new analysis wizard.
+            analysis = self.new_analysis_wizard(analysis_type='noe')
+
+            # Close the analysis.
+            self.app.gui.analysis.delete_analysis(0)
