@@ -97,9 +97,6 @@ class Wiz_page(wx.Panel):
         # Initilise some variables.
         self.exec_status = False
 
-        # The wizard GUI element storage.
-        self._elements = {}
-
         # Pack a sizer into the panel.
         box_main = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(box_main)
