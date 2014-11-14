@@ -205,6 +205,8 @@ For the changes file text, make the following conversions:
     - Convert all model names to internal wiki links (vi search "\<m[0-9]\>\|\<tm[0-9]\>\|No Rex\|R2eff\|LM63\|LM63 3-site\|CR72\|CR72 full\|IT99\|TSMFK01\|B14\|B14 full\|NS CPMG\|MMQ CR72\|NS MMQ\|M61\|DPL94\|TP02\|TAP03\|MP05\|NS R1rho\|BK13").
     - Add as many links as possible to the API documentation (to help users dive into the relax code and to help with search engine indexing).
 
+Update all of the release note links for the new version (http://wiki.nmr-relax.com/Category:Release_Notes).
+
 
 Mailing list
 ------------
