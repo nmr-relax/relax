@@ -226,12 +226,13 @@ The steps are:
 
     - Log into Gna! and go to https://gna.org/news/submit.php?group=relax.
     - Cut and paste all of the wiki text.  Delete the initial lower case title formatting text, the final 'See also' section, and any wiki markup.
+    - Add a paragraph before the 'Download' paragraph with the text 'For the official, easy to navigate release notes, please see http://wiki.nmr-relax.com/Relax_3.3.1.'.
     - Use the Savane markup to format the text (recipe #236, https://gna.org/cookbook/?func=detailitem&item_id=236).
-    - As the Savane markup for sectioning is the same as the wiki, the section titles = Description =, = Download =, and = Full list of changes = do not need to be modified (except changing the text 'CHANGES file' to 'Full list of changes').  The same for the subtitles == Features ==, == Changes ==, and == Bugfixes ==.  The leading whitespace from the full list of changes must be stripped, but this should already be done in the wiki text.
+    - As the Savane markup for sectioning is the same as the wiki, the section titles = Description =, = Download =, and = Full list of changes = do not need to be modified (except changing the text 'CHANGES file' to 'Full list of changes' and deleting the metadata).  The same for the subtitles == Features ==, == Changes ==, and == Bugfixes ==.
     - Convert internal [[xyz]] wiki links into proper [http://wiki.nmr-relax.com/xyz] links.
     - Item references such as bug #7641, task #3122, etc. are automatically converted into links.  Savane will replace the links as formatted for the wiki to these links, so nothing needs to be done.
-    - The Gna! news items are often truncated, so start a new thread for the rest of the message, responding to that thread for each block of release notes via the [ Reply ] link at the bottom of the page.
     - Remove all symbol formatting ('&', ';', '<sub>', '<sup>', etc.).
+    - The Gna! news items are often truncated, so start a new thread for the rest of the message, responding to that thread for each block of release notes via the [ Reply ] link at the bottom of the page.
 
 
 Cross-linking
