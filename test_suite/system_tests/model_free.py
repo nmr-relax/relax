@@ -490,6 +490,19 @@ class Mf(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[1].spin[0].params, ['s2', 'te', 'rex'])
 
 
+    def test_data_loading_failures(self):
+        """Catch a failure when loading relaxation data."""
+
+        # The data directory.
+        dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'sphere'
+
+        # Set up the spin systems.
+        self.interpreter.sequence.read(file='noe.500.out', dir=dir, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, sep=None, spin_id=None)
+
+        # Load the data.
+        self.interpreter.relax_data.read(ri_id='noe500', ri_type='NOE', frq=500000000.0, file='noe.500.out', dir=dir, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id='@N')
+
+
     def test_dauvergne_protocol(self):
         """Check the execution of auto_analyses.dauvergne_protocol."""
 
