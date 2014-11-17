@@ -1,0 +1,102 @@
+
+
+
+                                  relax repository checkout r26606
+                            svn+ssh://bugman@svn.gna.org/svn/relax/trunk
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2014 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'compare_basis_sets.py'
+----------------------------------------------------------------------------------------------------
+# Random tensors of {Axx, Ayy, Axy, Axz, Ayz} generated using random.uniform(0, 1e-4).
+tensor1 = (5.4839183673166663e-05, 3.692459844061351e-05, 1.994164790083226e-05, 4.5945264935308495e-05, 1.0090119622465559e-05)
+tensor2 = (1.5832157768761617e-05, -4.9797877146095514e-05, -3.6007226809999e-05, -3.8175058915299295e-05, 5.3131759988544946e-05)
+tensor3 = (3.892445496049645e-05, -1.7165585393754253e-05, 7.803231512226243e-05, -3.057296854986567e-05, 9.31348723610886e-05)
+tensor4 = (4.6720247808382186e-05, -9.140580842599e-05, -3.415945182796103e-05, -1.7753928806205142e-05, 5.20457038882803e-05)
+
+# Create a N-state analysis data pipe.
+pipe.create('basis set comparison', 'N-state')
+
+# Load the tensors.
+align_tensor.init(tensor='t1', align_id='t1', params=tensor1)
+align_tensor.init(tensor='t2', align_id='t2', params=tensor2)
+align_tensor.init(tensor='t3', align_id='t3', params=tensor3)
+align_tensor.init(tensor='t4', align_id='t4', params=tensor4)
+
+# Inter-tensor angles.
+align_tensor.matrix_angles(basis_set=0)
+align_tensor.matrix_angles(basis_set=1)
+
+# SVD.
+align_tensor.svd(basis_set=0)
+align_tensor.svd(basis_set=1)
+----------------------------------------------------------------------------------------------------
+
+relax> pipe.create(pipe_name='basis set comparison', pipe_type='N-state', bundle=None)
+
+relax> align_tensor.init(tensor='t1', align_id='t1', domain=None, params=(5.4839183673166663e-05, 3.692459844061351e-05, 1.994164790083226e-05, 4.5945264935308495e-05, 1.0090119622465559e-05), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='t2', align_id='t2', domain=None, params=(1.5832157768761617e-05, -4.9797877146095514e-05, -3.6007226809999e-05, -3.8175058915299295e-05, 5.3131759988544946e-05), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='t3', align_id='t3', domain=None, params=(3.892445496049645e-05, -1.7165585393754253e-05, 7.803231512226243e-05, -3.057296854986567e-05, 9.31348723610886e-05), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='t4', align_id='t4', domain=None, params=(4.6720247808382186e-05, -9.140580842599e-05, -3.415945182796103e-05, -1.7753928806205142e-05, 5.20457038882803e-05), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.matrix_angles(basis_set=0, tensors=None)
+
+Data pipe: 'basis set comparison'
+
+5D angles in deg between the vectors {Sxx, Syy, Sxy, Sxz, Syz}:
+      t1          t2          t3          t4          
+t1         0.0       112.4        76.4       100.1    
+t2       112.4         0.0        66.7        25.7    
+t3        76.4        66.7         0.0        67.6    
+t4       100.1        25.7        67.6         0.0    
+
+relax> align_tensor.matrix_angles(basis_set=1, tensors=None)
+
+Data pipe: 'basis set comparison'
+
+5D angles in deg between the vectors {Szz, Sxx-yy, Sxy, Sxz, Syz}:
+      t1          t2          t3          t4          
+t1         0.0       110.3        74.0        98.8    
+t2       110.3         0.0        64.7        24.0    
+t3        74.0        64.7         0.0        64.5    
+t4        98.8        24.0        64.5         0.0    
+
+relax> align_tensor.svd(basis_set=0, tensors=None)
+
+Data pipe: 'basis set comparison'
+
+Singular values:
+    2.5039e-04
+    1.7709e-04
+    1.0672e-04
+    3.8501e-05
+
+Condition number: 6.50
+
+relax> align_tensor.svd(basis_set=1, tensors=None)
+
+Data pipe: 'basis set comparison'
+
+Singular values:
+    3.0403e-04
+    2.0155e-04
+    1.2545e-04
+    4.3542e-05
+
+Condition number: 6.98
+
