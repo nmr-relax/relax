@@ -1,35 +1,11 @@
-#!/usr/bin/python
+# relax script for creating the spherical PDB file.
+# Copyright 2004-2014, Edward d'Auvergne
 
-# Copyright 2004-2011, Edward d'Auvergne
-
+# Python module imports.
 from math import acos, cos, pi, sin, sqrt
 
-
-def pdb_line(file=None, atom_num=0, atom=None, res_num=0, res_name=None, vector=None):
-    """Function for adding a line to the PDB file."""
-
-    # ATOM.
-    file.write('%-4s' % 'ATOM')
-
-    # Atom number and type.
-    file.write('%7i' % atom_num)
-    file.write('  %-4s' % atom)
-
-    # Residue number and name.
-    file.write('%-4s' % res_name)
-    file.write('%5i    ' % res_num)
-
-    # Vector.
-    file.write('%8.3f' % vector[0])
-    file.write('%8.3f' % vector[1])
-    file.write('%8.3f' % vector[2])
-
-    # I don't know what.
-    file.write('%6.2f' % 1.0)
-    file.write('%6.2f' % 0.0)
-
-    # End of line.
-    file.write('\n')
+# relax module imports.
+from lib.structure.pdb_write import atom, conect, ter
 
 
 # Number of increments.
@@ -102,10 +78,10 @@ for i in range(len(vectors)):
         continue
 
     # Nitrogen line.
-    pdb_line(file=file, atom_num=atom_num, atom='N', res_num=res_num, res_name='GLY', vector=[0.0, 0.0, 0.0])
+    atom(file=file, serial=atom_num, name='N', res_seq=res_num, res_name='GLY', x=0.0, y=0.0, z=0.0)
 
     # Hydrogen line.
-    pdb_line(file=file, atom_num=atom_num+1, atom='H', res_num=res_num, res_name='GLY', vector=vectors[i])
+    atom(file=file, serial=atom_num+1, name='H', res_seq=res_num, res_name='GLY', x=vectors[i][0], y=vectors[i][1], z=vectors[i][2])
 
     # Increment the atom number and residue number.
     atom_num = atom_num + 2
@@ -115,8 +91,20 @@ for i in range(len(vectors)):
     used.append(vectors[i])
 
 # Add a Trp indole NH for luck ;)
-pdb_line(file=file, atom_num=atom_num, atom='NE1', res_num=res_num-1, res_name='GLY', vector=[0.0, 0.0, 0.0])
-pdb_line(file=file, atom_num=atom_num+1, atom='HE1', res_num=res_num-1, res_name='GLY', vector=[1/sqrt(3), 1/sqrt(3), 1/sqrt(3)])
+atom(file=file, serial=atom_num, name='NE1', res_seq=res_num-1, res_name='GLY', x=0.0, y=0.0, z=0.0)
+atom(file=file, serial=atom_num+1, name='HE1', res_seq=res_num-1, res_name='GLY', x=1/sqrt(3), y=1/sqrt(3), z=1/sqrt(3))
+
+# Add a TER record.
+ter(file=file, serial=atom_num+2, res_name='GLY')
+
+# Connect everything.
+atom_num = 1
+for i in range(len(vectors)):
+    conect(file=file, serial=atom_num, bonded1=atom_num+1)
+    conect(file=file, serial=atom_num+1, bonded1=atom_num)
+    atom_num = atom_num + 2
+conect(file=file, serial=atom_num, bonded1=atom_num+1)
+conect(file=file, serial=atom_num+1, bonded1=atom_num)
 
 # End of PDB.
 file.write('END\n')
