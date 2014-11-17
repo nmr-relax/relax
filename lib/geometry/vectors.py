@@ -74,35 +74,6 @@ def unit_vector_from_2point(point1, point2):
     return vect / norm(vect)
 
 
-def vector_angle(vector1, vector2, normal):
-    """Calculate the directional angle between two N-dimensional vectors.
-
-    @param vector1:     The first vector.
-    @type vector1:      numpy rank-1 array
-    @param vector2:     The second vector.
-    @type vector2:      numpy rank-1 array
-    @param normal:      The vector defining the plane, to determine the sign.
-    @type normal:       numpy rank-1 array
-    @return:            The angle between -pi and pi.
-    @rtype:             float
-    """
-
-    # Normalise the vectors (without changing the original vectors).
-    vector1 = vector1 / norm(vector1)
-    vector2 = vector2 / norm(vector2)
-
-    # The cross product.
-    cp = cross(vector1, vector2)
-
-    # The angle.
-    angle = acos(dot(vector1, vector2))
-    if dot(cp, normal) < 0.0:
-        angle = -angle
-
-    # Return the signed angle.
-    return angle
-
-
 def vector_angle_acos(vector1, vector2):
     """Calculate the angle between two N-dimensional vectors using the acos formula.
 
@@ -143,3 +114,32 @@ def vector_angle_atan2(vector1, vector2):
 
     # Calculate and return the angle.
     return atan2(norm(cross(vector1, vector2)), dot(vector1, vector2))
+
+
+def vector_angle_normal(vector1, vector2, normal):
+    """Calculate the directional angle between two N-dimensional vectors.
+
+    @param vector1:     The first vector.
+    @type vector1:      numpy rank-1 array
+    @param vector2:     The second vector.
+    @type vector2:      numpy rank-1 array
+    @param normal:      The vector defining the plane, to determine the sign.
+    @type normal:       numpy rank-1 array
+    @return:            The angle between -pi and pi.
+    @rtype:             float
+    """
+
+    # Normalise the vectors (without changing the original vectors).
+    vector1 = vector1 / norm(vector1)
+    vector2 = vector2 / norm(vector2)
+
+    # The cross product.
+    cp = cross(vector1, vector2)
+
+    # The angle.
+    angle = acos(dot(vector1, vector2))
+    if dot(cp, normal) < 0.0:
+        angle = -angle
+
+    # Return the signed angle.
+    return angle

@@ -25,85 +25,85 @@ from numpy import array, float64
 from unittest import TestCase
 
 # relax module imports.
-from lib.geometry.vectors import vector_angle
+from lib.geometry.vectors import vector_angle_normal
 
 
 class Test_vectors(TestCase):
     """Unit tests for the lib.geometry.vectors relax module."""
 
-    def test_vector_angle1(self):
-        """Test the vector_angle() function with the vectors [1, 0, 0] and [0, 1, 0]."""
+    def test_vector_angle_normal1(self):
+        """Test the vector_angle_normal() function with the vectors [1, 0, 0] and [0, 1, 0]."""
 
         # Calculate the angle.
         v1 = array([1, 0, 0], float64)
         v2 = array([0, 1, 0], float64)
         normal = array([0, 0, 1], float64)
-        angle = vector_angle(v1, v2, normal)
+        angle = vector_angle_normal(v1, v2, normal)
 
         # Check the angle.
         self.assertAlmostEqual(angle, pi/2.0)
 
 
-    def test_vector_angle2(self):
-        """Test the vector_angle() function with the vectors [1, 0, 0] and [0, 2, 0]."""
+    def test_vector_angle_normal2(self):
+        """Test the vector_angle_normal() function with the vectors [1, 0, 0] and [0, 2, 0]."""
 
         # Calculate the angle.
         v1 = array([1, 0, 0], float64)
         v2 = array([0, 2, 0], float64)
         normal = array([0, 0, 1], float64)
-        angle = vector_angle(v1, v2, normal)
+        angle = vector_angle_normal(v1, v2, normal)
 
         # Check the angle.
         self.assertAlmostEqual(angle, pi/2.0)
 
 
-    def test_vector_angle3(self):
-        """Test the vector_angle() function with the vectors [2, 0, 0] and [0, -2, 0]."""
+    def test_vector_angle_normal3(self):
+        """Test the vector_angle_normal() function with the vectors [2, 0, 0] and [0, -2, 0]."""
 
         # Calculate the angle.
         v1 = array([2, 0, 0], float64)
         v2 = array([0, -2, 0], float64)
         normal = array([0, 0, 1], float64)
-        angle = vector_angle(v1, v2, normal)
+        angle = vector_angle_normal(v1, v2, normal)
 
         # Check the angle.
         self.assertAlmostEqual(angle, -pi/2.0)
 
 
-    def test_vector_angle4(self):
-        """Test the vector_angle() function with the vectors [2, 0, 0] and [2, 2, 0]."""
+    def test_vector_angle_normal4(self):
+        """Test the vector_angle_normal() function with the vectors [2, 0, 0] and [2, 2, 0]."""
 
         # Calculate the angle.
         v1 = array([2, 0, 0], float64)
         v2 = array([2, 2, 0], float64)
         normal = array([0, 0, 2], float64)
-        angle = vector_angle(v1, v2, normal)
+        angle = vector_angle_normal(v1, v2, normal)
 
         # Check the angle.
         self.assertAlmostEqual(angle, pi/4.0)
 
 
-    def test_vector_angle5(self):
-        """Test the vector_angle() function with the vectors [2, 0, 0] and [2, 2, 0]."""
+    def test_vector_angle_normal5(self):
+        """Test the vector_angle_normal() function with the vectors [2, 0, 0] and [2, 2, 0]."""
 
         # Calculate the angle.
         v1 = array([2, 0, 0], float64)
         v2 = array([2, 2, 0], float64)
         normal = array([0, 0, -2], float64)
-        angle = vector_angle(v1, v2, normal)
+        angle = vector_angle_normal(v1, v2, normal)
 
         # Check the angle.
         self.assertAlmostEqual(angle, -pi/4.0)
 
 
-    def test_vector_angle6(self):
-        """Test the vector_angle() function with the vectors [2, 2, 0] and [2, -2, 0]."""
+    def test_vector_angle_normal6(self):
+        """Test the vector_angle_normal() function with the vectors [2, 2, 0] and [2, -2, 0]."""
 
         # Calculate the angle.
         v1 = array([2, 2, 0], float64)
         v2 = array([2, -2, 0], float64)
         normal = array([0, 0, 2], float64)
-        angle = vector_angle(v1, v2, normal)
+        angle = vector_angle_normal(v1, v2, normal)
 
         # Check the angle.
         self.assertAlmostEqual(angle, -pi/2.0)
