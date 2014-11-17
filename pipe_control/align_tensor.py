@@ -1681,8 +1681,13 @@ def svd(basis_set=0, tensors=None):
     cdp.align_tensors.cond_num = s[0] / s[-1]
 
     # Print out.
-    print("\nData pipe: " + repr(pipes.cdp_name()))
-    print("\nSingular values:")
+    sys.stdout.write("Basis set ")
+    if basis_set == 0:
+        sys.stdout.write("{Sxx, Syy, Sxy, Sxz, Syz}.\n")
+    elif basis_set == 1:
+        sys.stdout.write("{Szz, Sxx-yy, Sxy, Sxz, Syz}.\n")
+    sys.stdout.write("Data pipe: %s\n" % pipes.cdp_name())
+    sys.stdout.write("\nSingular values:\n")
     for val in s:
-        print("    %.4e" % val)
-    print("\nCondition number: %.2f" % cdp.align_tensors.cond_num)
+        sys.stdout.write("    %.4e\n" % val)
+    sys.stdout.write("\nCondition number: %.2f\n" % cdp.align_tensors.cond_num)
