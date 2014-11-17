@@ -5,7 +5,7 @@
 from math import acos, cos, pi, sin, sqrt
 
 # relax module imports.
-from lib.structure.pdb_write import atom, conect, ter
+from lib.structure.pdb_write import conect, hetatm
 
 
 # Number of increments.
@@ -78,10 +78,10 @@ for i in range(len(vectors)):
         continue
 
     # Nitrogen line.
-    atom(file=file, serial=atom_num, name='N', res_seq=res_num, res_name='GLY', x=0.0, y=0.0, z=0.0)
+    hetatm(file=file, serial=atom_num, name='N', res_seq=res_num, res_name='GLY', x=0.0, y=0.0, z=0.0)
 
     # Hydrogen line.
-    atom(file=file, serial=atom_num+1, name='H', res_seq=res_num, res_name='GLY', x=vectors[i][0], y=vectors[i][1], z=vectors[i][2])
+    hetatm(file=file, serial=atom_num+1, name='H', res_seq=res_num, res_name='GLY', x=vectors[i][0], y=vectors[i][1], z=vectors[i][2])
 
     # Increment the atom number and residue number.
     atom_num = atom_num + 2
@@ -91,11 +91,8 @@ for i in range(len(vectors)):
     used.append(vectors[i])
 
 # Add a Trp indole NH for luck ;)
-atom(file=file, serial=atom_num, name='NE1', res_seq=res_num-1, res_name='GLY', x=0.0, y=0.0, z=0.0)
-atom(file=file, serial=atom_num+1, name='HE1', res_seq=res_num-1, res_name='GLY', x=1/sqrt(3), y=1/sqrt(3), z=1/sqrt(3))
-
-# Add a TER record.
-ter(file=file, serial=atom_num+2, res_name='GLY')
+hetatm(file=file, serial=atom_num, name='NE1', res_seq=res_num-1, res_name='GLY', x=0.0, y=0.0, z=0.0)
+hetatm(file=file, serial=atom_num+1, name='HE1', res_seq=res_num-1, res_name='GLY', x=1/sqrt(3), y=1/sqrt(3), z=1/sqrt(3))
 
 # Connect everything.
 atom_num = 1
