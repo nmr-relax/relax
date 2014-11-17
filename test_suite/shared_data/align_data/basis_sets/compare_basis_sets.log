@@ -77,8 +77,8 @@ t3        74.0        64.7         0.0        64.5
 t4        98.8        24.0        64.5         0.0    
 
 relax> align_tensor.svd(basis_set=0, tensors=None)
-
-Data pipe: 'basis set comparison'
+Basis set {Sxx, Syy, Sxy, Sxz, Syz}.
+Data pipe: basis set comparison
 
 Singular values:
     2.5039e-04
@@ -89,8 +89,8 @@ Singular values:
 Condition number: 6.50
 
 relax> align_tensor.svd(basis_set=1, tensors=None)
-
-Data pipe: 'basis set comparison'
+Basis set {Szz, Sxx-yy, Sxy, Sxz, Syz}.
+Data pipe: basis set comparison
 
 Singular values:
     3.0403e-04
