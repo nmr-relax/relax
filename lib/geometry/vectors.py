@@ -103,13 +103,32 @@ def vector_angle(vector1, vector2, normal):
     return angle
 
 
+def vector_angle_acos(vector1, vector2):
+    """Calculate the angle between two N-dimensional vectors using the acos formula.
+
+    The formula is::
+
+        angle = acos(dot(a / norm(a), b / norm(b))).
+
+
+    @param vector1:     The first vector.
+    @type vector1:      numpy rank-1 array
+    @param vector2:     The second vector.
+    @type vector2:      numpy rank-1 array
+    @return:            The angle between 0 and pi.
+    @rtype:             float
+    """
+
+    # Calculate and return the angle.
+    return acos(dot(vector1 / norm(vector1), vector2 / norm(vector2)))
+
+
 def vector_angle_atan2(vector1, vector2):
     """Calculate the angle between two N-dimensional vectors using the atan2 formula.
 
     The formula is::
 
         angle = atan2(norm(cross(a, b)), dot(a, b)).
-
 
     This is more numerically stable for angles close to 0 or pi than the acos() formula.
 
