@@ -25,7 +25,7 @@ from numpy import array, float64
 from unittest import TestCase
 
 # relax module imports.
-from lib.geometry.vectors import vector_angle_acos, vector_angle_normal
+from lib.geometry.vectors import vector_angle_acos, vector_angle_atan2, vector_angle_normal
 
 
 class Test_vectors(TestCase):
@@ -98,6 +98,78 @@ class Test_vectors(TestCase):
         v1 = array([2, 2, 0], float64)
         v2 = array([2, -2, 0], float64)
         angle = vector_angle_acos(v1, v2)
+
+        # Check the angle.
+        self.assertAlmostEqual(angle, pi/2.0)
+
+
+    def test_vector_angle_atan2_1(self):
+        """Test the vector_angle_atan2() function with the vectors [1, 0, 0] and [0, 1, 0]."""
+
+        # Calculate the angle.
+        v1 = array([1, 0, 0], float64)
+        v2 = array([0, 1, 0], float64)
+        angle = vector_angle_atan2(v1, v2)
+
+        # Check the angle.
+        self.assertAlmostEqual(angle, pi/2.0)
+
+
+    def test_vector_angle_atan2_2(self):
+        """Test the vector_angle_atan2() function with the vectors [1, 0, 0] and [0, 2, 0]."""
+
+        # Calculate the angle.
+        v1 = array([1, 0, 0], float64)
+        v2 = array([0, 2, 0], float64)
+        angle = vector_angle_atan2(v1, v2)
+
+        # Check the angle.
+        self.assertAlmostEqual(angle, pi/2.0)
+
+
+    def test_vector_angle_atan2_3(self):
+        """Test the vector_angle_atan2() function with the vectors [2, 0, 0] and [0, -2, 0]."""
+
+        # Calculate the angle.
+        v1 = array([2, 0, 0], float64)
+        v2 = array([0, -2, 0], float64)
+        angle = vector_angle_atan2(v1, v2)
+
+        # Check the angle.
+        self.assertAlmostEqual(angle, pi/2.0)
+
+
+    def test_vector_angle_atan2_4(self):
+        """Test the vector_angle_atan2() function with the vectors [2, 0, 0] and [2, 2, 0]."""
+
+        # Calculate the angle.
+        v1 = array([2, 0, 0], float64)
+        v2 = array([2, 2, 0], float64)
+        angle = vector_angle_atan2(v1, v2)
+
+        # Check the angle.
+        self.assertAlmostEqual(angle, pi/4.0)
+
+
+    def test_vector_angle_atan2_5(self):
+        """Test the vector_angle_atan2() function with the vectors [2, 0, 0] and [2, 2, 0]."""
+
+        # Calculate the angle.
+        v1 = array([2, 0, 0], float64)
+        v2 = array([2, 2, 0], float64)
+        angle = vector_angle_atan2(v1, v2)
+
+        # Check the angle.
+        self.assertAlmostEqual(angle, pi/4.0)
+
+
+    def test_vector_angle_atan2_6(self):
+        """Test the vector_angle_atan2() function with the vectors [2, 2, 0] and [2, -2, 0]."""
+
+        # Calculate the angle.
+        v1 = array([2, 2, 0], float64)
+        v2 = array([2, -2, 0], float64)
+        angle = vector_angle_atan2(v1, v2)
 
         # Check the angle.
         self.assertAlmostEqual(angle, pi/2.0)
