@@ -29,6 +29,7 @@ import sys
 from tempfile import mkdtemp
 
 # relax module imports.
+from auto_analyses.dauvergne_protocol import dAuvergne_protocol
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from pipe_control import pipes
@@ -756,6 +757,57 @@ class Mf(SystemTestCase):
                 file_path = "%s%s%s" % (root, sep, file)
                 print("Checking for the file '%s'." % file_path)
                 self.assert_(path.isfile(file_path))
+
+
+    def test_dauvergne_protocol_sphere(self):
+        """Catch a failure when loading relaxation data."""
+
+        # The data directory.
+        dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'model_free'+sep+'sphere'
+
+        # Reset relax.
+        self.interpreter.reset()
+
+        # Set up a data pipe and bundle.
+        self.interpreter.pipe.create('sphere test', 'mf', bundle='sphere test')
+
+        # Load the sequence.
+        self.interpreter.sequence.read(file='noe.500.out', dir=dir, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, sep=None, spin_id=None)
+
+        # Load the relaxation data.
+        self.interpreter.relax_data.read(ri_id='r1.500', ri_type='R1', frq=500000000.0, file='r1.500.out', dir=dir, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+        self.interpreter.relax_data.read(ri_id='r2.500', ri_type='R2', frq=500000000.0, file='r2.500.out', dir=dir, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+        self.interpreter.relax_data.read(ri_id='noe.500', ri_type='NOE', frq=500000000.0, file='noe.500.out', dir=dir, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+        self.interpreter.relax_data.read(ri_id='r1.900', ri_type='R1', frq=900000000.0, file='r1.900.out', dir=dir, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+        self.interpreter.relax_data.read(ri_id='r2.900', ri_type='R2', frq=900000000.0, file='r2.900.out', dir=dir, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+        self.interpreter.relax_data.read(ri_id='noe.900', ri_type='NOE', frq=900000000.0, file='noe.900.out', dir=dir, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+        self.interpreter.relax_data.peak_intensity_type(ri_id='noe.900', type='height')
+        self.interpreter.relax_data.peak_intensity_type(ri_id='r2.900', type='height')
+        self.interpreter.relax_data.peak_intensity_type(ri_id='r1.900', type='height')
+        self.interpreter.relax_data.peak_intensity_type(ri_id='noe.500', type='height')
+        self.interpreter.relax_data.peak_intensity_type(ri_id='r2.500', type='height')
+        self.interpreter.relax_data.peak_intensity_type(ri_id='r1.500', type='height')
+        self.interpreter.relax_data.peak_intensity_type(ri_id='r1.500', type='height')
+
+        # Set up the interatomic interactions.
+        self.interpreter.structure.read_pdb(file='sphere.pdb', dir=dir, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False)
+        self.interpreter.structure.get_pos(spin_id=None, ave_pos=True)
+        self.interpreter.interatom.define(spin_id1='@N*', spin_id2='@H*', direct_bond=True, spin_selection=True, pipe=None)
+        self.interpreter.interatom.set_dist(spin_id1='@N*', spin_id2='@H*', ave_dist=1.02e-10, unit='meter')
+        self.interpreter.interatom.unit_vectors(ave=True)
+
+        # Set the CSA value.
+        self.interpreter.value.set(val=-0.000172, param='csa', index=0, spin_id='@N*', error=False, force=True)
+
+        # Set up the isotope information.
+        self.interpreter.spin.isotope(isotope='15N', spin_id='@N*', force=True)
+        self.interpreter.spin.isotope(isotope='1H', spin_id='@H*', force=True)
+
+        # Create a temporary directory for dumping files.
+        ds.tmpdir = mkdtemp()
+
+        # The dauvergne_protocol model-free auto-analysis.
+        dAuvergne_protocol(pipe_name='sphere test', pipe_bundle='sphere test', results_dir=ds.tmpdir, diff_model=['local_tm', 'sphere'], mf_models=['m1', 'm2'], local_tm_models=['tm0', 'tm1'], grid_inc=3, diff_tensor_grid_inc={'sphere': 5, 'prolate': 5, 'oblate': 5, 'ellipsoid': 3}, min_algor='newton', mc_sim_num=2, max_iter=1, conv_loop=True)
 
 
     def test_generate_ri(self):
