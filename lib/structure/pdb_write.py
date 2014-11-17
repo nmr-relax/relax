@@ -89,7 +89,7 @@ def _record_validate(record):
         raise RelaxError("The PDB record '%s' contains NaN values." % record)
 
 
-def atom(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq='', icode='', x='', y='', z='', occupancy='', temp_factor='', element='', charge=''):
+def atom(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq='', icode='', x='', y='', z='', occupancy=1.0, temp_factor=0.0, element='', charge=''):
     """Generate the ATOM record.
 
     The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect9.html#ATOM}.
@@ -297,6 +297,7 @@ def atom(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq
         _handle_none(element),
         _handle_none(charge)
     )
+    print text
 
     # Validate.
     _record_validate(text)
@@ -972,7 +973,7 @@ def het(file, het_id='', chain_id='', seq_num='', icode='', num_het_atoms='', te
     file.write('\n')
 
 
-def hetatm(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq='', icode='', x='', y='', z='', occupancy='', temp_factor='', element='', charge=''):
+def hetatm(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq='', icode='', x='', y='', z='', occupancy=1.0, temp_factor=0.0, element='', charge=''):
     """Generate the HETATM record.
 
     The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect9.html#HETATM}.
