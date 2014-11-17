@@ -122,8 +122,8 @@ class ExpInfo(Element):
     def from_xml(self, exp_info_node, file_version=1):
         """Recreate the element data structure from the XML element node.
 
-        @param super_node:      The element XML node.
-        @type super_node:       xml.dom.minicompat.Element instance
+        @param exp_info_node:   The element XML node.
+        @type exp_info_node:    xml.dom.minicompat.Element instance
         @keyword file_version:  The relax XML version of the XML file.
         @type file_version:     int
         """

@@ -807,11 +807,7 @@ class Relax_disp_rep:
 
 
     def name_pipe(self, method, model, analysis, glob_ini, clusterid=None):
-        """Generate a unique name for the data pipe.
-
-        @param prefix:  The prefix of the data pipe name.
-        @type prefix:   str
-        """
+        """Generate a unique name for the data pipe."""
 
         # Cluster group is none, set to standard free spins.
         # cdp.clustering['free spins']
