@@ -297,7 +297,6 @@ def atom(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq
         _handle_none(element),
         _handle_none(charge)
     )
-    print text
 
     # Validate.
     _record_validate(text)
