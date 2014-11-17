@@ -750,63 +750,45 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
     # Loop over the spin data.
     data = []
     for i in range(N):
+        # A selection union.
+        select_id = spin_ids[i]
+        if spin_id != None:
+            select_id = "%s&%s" % (select_id, spin_id)
+
         # Get the corresponding spin container.
-        match_mol_names, match_res_nums, match_res_names, spins = return_spin_from_selection(spin_ids[i], full_info=True, multi=True)
-        if spins in [None, []]:
-            raise RelaxNoSpinError(spin_ids[i])
+        match_mol_names, match_res_nums, match_res_names, spins = return_spin_from_selection(select_id, full_info=True, multi=True)
 
-        # Remove non-matching spins.
-        if select_obj:
-            new_spins = []
-            new_mol_names = []
-            new_res_nums = []
-            new_res_names = []
-            new_ids = []
-            for j in range(len(spins)):
-                if select_obj.contains_spin(spin_num=spins[j].num, spin_name=spins[j].name, res_num=match_res_nums[j], res_name=match_res_names[j], mol=match_mol_names[j]):
-                    new_spins.append(spins[j])
-                    new_mol_names.append(match_mol_names[j])
-                    new_res_nums.append(match_res_nums[j])
-                    new_res_names.append(match_res_names[j])
-                    new_ids.append(generate_spin_id_unique(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i], spin_num=spins[j].num, spin_name=spins[j].name))
-            new_id = new_ids[0]
-
-        # Aliases for normal operation.
-        else:
-            new_spins = spins
-            new_mol_names = match_mol_names
-            new_res_nums = match_res_nums
-            new_res_names = match_res_names
-            new_id = spin_ids[i]
-            new_ids = None
+        # No spin.
+        if len(spins) == 0:
+            continue
 
         # Check that only a singe spin is present.
-        if len(new_spins) > 1:
-            if new_ids:
-                raise RelaxMultiSpinIDError(spin_ids[i], new_ids)
+        if len(spins) > 1:
+            if ids:
+                raise RelaxMultiSpinIDError(spin_ids[i], ids)
             else:
-                raise RelaxMultiSpinIDError(spin_ids[i], new_ids)
-        if len(new_spins) == 0:
+                raise RelaxMultiSpinIDError(spin_ids[i], ids)
+        if len(spins) == 0:
             raise RelaxNoSpinError(spin_ids[i])
 
         # Loop over the spins.
-        for j in range(len(new_spins)):
+        for j in range(len(spins)):
             # No match to the selection.
-            if select_obj and not select_obj.contains_spin(spin_num=new_spins[j].num, spin_name=new_spins[j].name, res_num=new_res_nums[j], res_name=new_res_names[j], mol=new_mol_names[j]):
+            if select_obj and not select_obj.contains_spin(spin_num=spins[j].num, spin_name=spins[j].name, res_num=res_nums[j], res_name=res_names[j], mol=mol_names[j]):
                 continue
 
             # Initialise the spin data if necessary.
-            if not hasattr(new_spins[j], 'ri_data') or new_spins[j].ri_data == None:
-                new_spins[j].ri_data = {}
-            if not hasattr(new_spins[j], 'ri_data_err') or new_spins[j].ri_data_err == None:
-                new_spins[j].ri_data_err = {}
+            if not hasattr(spins[j], 'ri_data') or spins[j].ri_data == None:
+                spins[j].ri_data = {}
+            if not hasattr(spins[j], 'ri_data_err') or spins[j].ri_data_err == None:
+                spins[j].ri_data_err = {}
 
             # Update all data structures.
-            new_spins[j].ri_data[ri_id] = values[i]
-            new_spins[j].ri_data_err[ri_id] = errors[i]
+            spins[j].ri_data[ri_id] = values[i]
+            spins[j].ri_data_err[ri_id] = errors[i]
 
             # Append the data for printing out.
-            data.append([new_id, repr(values[i]), repr(errors[i])])
+            data.append([spin_ids[j], repr(values[i]), repr(errors[i])])
 
     # Print out.
     if verbose:
