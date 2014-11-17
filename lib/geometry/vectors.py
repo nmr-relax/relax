@@ -23,7 +23,7 @@
 """Collection of functions for vector operations."""
 
 # Python module imports.
-from math import acos, cos, pi, sin
+from math import acos, atan2, cos, pi, sin
 from numpy import array, cross, dot, float64
 from numpy.linalg import norm
 from random import uniform
