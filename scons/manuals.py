@@ -389,7 +389,7 @@ def compile_user_manual_html(target, source, env):
     system(cmd)
 
     # Create the proper index.html file.
-    cmd = "cp -vp %s%srelax_user_manual.html %s%sindex.html" % (dir, path.sep, dir, path.sep)
+    cmd = "cp -vp %s%sThe_relax_user_manual.html %s%sindex.html" % (dir, path.sep, dir, path.sep)
     print("Running the command:\n$ %s\n\n\n" % cmd)
     system(cmd)
 
