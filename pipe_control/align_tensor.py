@@ -898,6 +898,11 @@ def matrix_angles(basis_set='matrix', tensors=None):
     @type tensors:      None or list of str
     """
 
+    # Argument check.
+    allowed = ['matrix', 'unitary 5D', 'geometric 5D']
+    if basis_set not in allowed:
+        raise RelaxError("The basis set of '%s' is not one of %s." % (basis_set, allowed))
+
     # Test that alignment tensor data exists.
     if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:
         raise RelaxNoTensorError('alignment')
