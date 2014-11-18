@@ -24,8 +24,8 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import pi, sqrt
-from numpy import arccos, dot, float64, linalg, zeros
+from math import acos, pi, sqrt
+from numpy import arccos, dot, float64, inner, linalg, zeros
 from numpy.linalg import norm
 import sys
 from warnings import warn
@@ -907,7 +907,8 @@ def matrix_angles(basis_set=0, tensors=None):
         tensor_num = tensor_num + 1
 
     # Create the matrix which contains the 5D vectors.
-    matrix = zeros((tensor_num, 5), float64)
+    matrix_3D = zeros((tensor_num, 3, 3), float64)
+    matrix_5D = zeros((tensor_num, 5), float64)
 
     # Loop over the tensors.
     i = 0
@@ -919,24 +920,29 @@ def matrix_angles(basis_set=0, tensors=None):
         # Unitary basis set.
         if basis_set == 0:
             # Pack the elements.
-            matrix[i, 0] = tensor.Sxx
-            matrix[i, 1] = tensor.Syy
-            matrix[i, 2] = tensor.Sxy
-            matrix[i, 3] = tensor.Sxz
-            matrix[i, 4] = tensor.Syz
+            matrix_5D[i, 0] = tensor.Sxx
+            matrix_5D[i, 1] = tensor.Syy
+            matrix_5D[i, 2] = tensor.Sxy
+            matrix_5D[i, 3] = tensor.Sxz
+            matrix_5D[i, 4] = tensor.Syz
 
         # Geometric basis set.
         elif basis_set == 1:
             # Pack the elements.
-            matrix[i, 0] = tensor.Szz
-            matrix[i, 1] = tensor.Sxxyy
-            matrix[i, 2] = tensor.Sxy
-            matrix[i, 3] = tensor.Sxz
-            matrix[i, 4] = tensor.Syz
+            matrix_5D[i, 0] = tensor.Szz
+            matrix_5D[i, 1] = tensor.Sxxyy
+            matrix_5D[i, 2] = tensor.Sxy
+            matrix_5D[i, 3] = tensor.Sxz
+            matrix_5D[i, 4] = tensor.Syz
+
+        # Full matrix.
+        elif basis_set == 2:
+            matrix_3D[i] = tensor.A
 
         # Normalisation.
-        norm = linalg.norm(matrix[i])
-        matrix[i] = matrix[i] / norm
+        if basis_set in [0, 1]:
+            norm_5D = linalg.norm(matrix_5D[i])
+            matrix_5D[i] = matrix_5D[i] / norm_5D
 
         # Increment the index.
         i = i + 1
@@ -945,12 +951,15 @@ def matrix_angles(basis_set=0, tensors=None):
     cdp.align_tensors.angles = zeros((tensor_num, tensor_num), float64)
 
     # Header printout.
-    sys.stdout.write("\nData pipe: " + repr(pipes.cdp_name()) + "\n")
-    sys.stdout.write("\n5D angles in deg between the vectors ")
     if basis_set == 0:
+        sys.stdout.write("5d angles in deg between the vectors ")
         sys.stdout.write("{Sxx, Syy, Sxy, Sxz, Syz}")
     elif basis_set == 1:
+        sys.stdout.write("5d angles in deg between the vectors ")
         sys.stdout.write("{Szz, Sxx-yy, Sxy, Sxz, Syz}")
+    elif basis_set == 2:
+        sys.stdout.write("Angles in deg between the matrices ")
+        sys.stdout.write("(using the Euclidean inner product and Frobenius norm)")
     sys.stdout.write(":\n")
 
     # Initialise the table of data.
@@ -974,15 +983,35 @@ def matrix_angles(basis_set=0, tensors=None):
 
         # Second loop over the columns.
         for j in range(tensor_num):
-            # Dot product.
-            delta = dot(matrix[i], matrix[j])
+            # The 5D angles.
+            if basis_set in [0, 1]:
+                # Dot product.
+                delta = dot(matrix_5D[i], matrix_5D[j])
 
-            # Check.
-            if delta > 1:
-                delta = 1
+                # Check.
+                if delta > 1:
+                    delta = 1
 
-            # The angle (in rad).
-            cdp.align_tensors.angles[i, j] = arccos(delta)
+                # The angle.
+                theta = arccos(delta)
+
+            # The full matrix angle.
+            elif basis_set in [2]:
+                # The Euclidean inner product.
+                nom = inner(matrix_3D[i].flatten(), matrix_3D[j].flatten())
+
+                # The Frobenius norms.
+                denom = norm(matrix_3D[i]) * norm(matrix_3D[j])
+
+                # The angle.
+                ratio = nom / denom
+                if ratio <= 1.0:
+                    theta = arccos(nom / denom)
+                else:
+                    theta = 0.0
+
+            # Store the angle (in rad).
+            cdp.align_tensors.angles[i, j] = theta
 
             # Add to the table as degrees.
             table[i+1].append("%8.1f" % (cdp.align_tensors.angles[i, j]*180.0/pi))

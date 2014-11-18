@@ -297,18 +297,18 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 # The align_tensor.matrix_angles user function.
 uf = uf_info.add_uf('align_tensor.matrix_angles')
-uf.title = "Calculate the 5D angles between all alignment tensors."
+uf.title = "Calculate the angles between all alignment tensors."
 uf.title_short = "Alignment tensor angle calculation."
 uf.display = True
 uf.add_keyarg(
     name = "basis_set",
-    default = 0,
+    default = 2,
     py_type = "int",
     desc_short = "basis set",
     desc = "The basis set to operate with.",
     wiz_element_type = "combo",
-    wiz_combo_choices = ["{Sxx, Syy, Sxy, Sxz, Syz}", "{Szz, Sxxyy, Sxy, Sxz, Syz}"],
-    wiz_combo_data = [0, 1]
+    wiz_combo_choices = ["{Sxx, Syy, Sxy, Sxz, Syz}", "{Szz, Sxxyy, Sxy, Sxz, Syz}", "Full matrix angles using the Euclidean inner product"],
+    wiz_combo_data = [0, 1, 2]
 )
 uf.add_keyarg(
     name = "tensors",
@@ -322,11 +322,23 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will calculate the angles between all loaded alignment tensors for the current data pipe.  The matrices are first converted to a 5D vector form and then then angles are calculated.  The angles are dependent on the basis set.  If the basis set is set to the default of 0, the vectors {Sxx, Syy, Sxy, Sxz, Syz} are used.  If the basis set is set to 1, the vectors {Szz, Sxxyy, Sxy, Sxz, Syz} are used instead.")
+uf.desc[-1].add_paragraph("This will calculate the angles between all loaded alignment tensors for the current data pipe.  Depending upon the basis set, the matrices are first converted to a 5D vector form and then then angles are calculated.  The angles are dependent upon the basis set:")
+uf.desc[-1].add_item_list_element("0", "The basis set {Sxx, Syy, Sxy, Sxz, Syz},")
+uf.desc[-1].add_item_list_element("1", "The basis set {Szz, Sxxyy, Sxy, Sxz, Syz} of the Pales standard notation,")
+uf.desc[-1].add_item_list_element("2", "The full matrix angle via the Euclidean inner product of the alignment matrices together with the Frobenius norm ||A||_F.")
+uf.desc[-1].add_paragraph("The full matrix angle via the Euclidean inner product is defined as:")
+uf.desc[-1].add_verbatim("""
+                   /   <A1 , A2>   \ 
+    theta = arccos | ------------- | ,
+                   \ ||A1|| ||A2|| /
+""")
+uf.desc[-1].add_paragraph("where <a,b> is the Euclidean inner product and ||a|| is the Frobenius norm of the matrix.")
+uf.desc[-1].add_paragraph("Note that the inner product solution is a linear map which hence preserves angles, whereas the {Sxx, Syy, Sxy, Sxz, Syz} and {Szz, Sxxyy, Sxy, Sxz, Syz} basis sets are non-linear maps which do not preserve angles.  Therefore the angles from all three basis sets will be different.")
 uf.backend = align_tensor.matrix_angles
 uf.menu_text = "&matrix_angles"
 uf.gui_icon = "oxygen.categories.applications-education"
-uf.wizard_size = (800, 600)
+uf.wizard_height_desc = 500
+uf.wizard_size = (1000, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
