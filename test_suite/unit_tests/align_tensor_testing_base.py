@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -248,38 +248,38 @@ class Align_tensor_base_class(UnitTestCase):
         self.align_tensor_fns.init(align_id='5', params=(0, 0, 0, 0, 1))
 
         # Matrix angles.
-        self.align_tensor_fns.matrix_angles()
+        self.align_tensor_fns.matrix_angles(basis_set=0)
 
         # Test the angles.
-        self.assertEqual(dp.align_tensors.angles[0, 0], 0.0)
-        self.assertEqual(dp.align_tensors.angles[0, 1], pi/2)
-        self.assertEqual(dp.align_tensors.angles[0, 2], pi/2)
-        self.assertEqual(dp.align_tensors.angles[0, 3], pi/2)
-        self.assertEqual(dp.align_tensors.angles[0, 4], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[0, 0], 0.0)
+        self.assertAlmostEqual(dp.align_tensors.angles[0, 1], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[0, 2], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[0, 3], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[0, 4], pi/2)
 
-        self.assertEqual(dp.align_tensors.angles[1, 0], pi/2)
-        self.assertEqual(dp.align_tensors.angles[1, 1], 0.0)
-        self.assertEqual(dp.align_tensors.angles[1, 2], pi/2)
-        self.assertEqual(dp.align_tensors.angles[1, 3], pi/2)
-        self.assertEqual(dp.align_tensors.angles[1, 4], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[1, 0], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[1, 1], 0.0)
+        self.assertAlmostEqual(dp.align_tensors.angles[1, 2], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[1, 3], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[1, 4], pi/2)
 
-        self.assertEqual(dp.align_tensors.angles[2, 0], pi/2)
-        self.assertEqual(dp.align_tensors.angles[2, 1], pi/2)
-        self.assertEqual(dp.align_tensors.angles[2, 2], 0.0)
-        self.assertEqual(dp.align_tensors.angles[2, 3], pi/2)
-        self.assertEqual(dp.align_tensors.angles[2, 4], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[2, 0], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[2, 1], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[2, 2], 0.0)
+        self.assertAlmostEqual(dp.align_tensors.angles[2, 3], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[2, 4], pi/2)
 
-        self.assertEqual(dp.align_tensors.angles[3, 0], pi/2)
-        self.assertEqual(dp.align_tensors.angles[3, 1], pi/2)
-        self.assertEqual(dp.align_tensors.angles[3, 2], pi/2)
-        self.assertEqual(dp.align_tensors.angles[3, 3], 0.0)
-        self.assertEqual(dp.align_tensors.angles[3, 4], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[3, 0], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[3, 1], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[3, 2], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[3, 3], 0.0)
+        self.assertAlmostEqual(dp.align_tensors.angles[3, 4], pi/2)
 
-        self.assertEqual(dp.align_tensors.angles[4, 0], pi/2)
-        self.assertEqual(dp.align_tensors.angles[4, 1], pi/2)
-        self.assertEqual(dp.align_tensors.angles[4, 2], pi/2)
-        self.assertEqual(dp.align_tensors.angles[4, 3], pi/2)
-        self.assertEqual(dp.align_tensors.angles[4, 4], 0.0)
+        self.assertAlmostEqual(dp.align_tensors.angles[4, 0], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[4, 1], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[4, 2], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[4, 3], pi/2)
+        self.assertAlmostEqual(dp.align_tensors.angles[4, 4], 0.0)
 
 
     def test_svd_identity(self):
