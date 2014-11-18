@@ -322,10 +322,10 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will calculate the angles between all loaded alignment tensors for the current data pipe.  Depending upon the basis set, the matrices are first converted to a 5D vector form and then then angles are calculated.  The angles are dependent upon the basis set:")
-uf.desc[-1].add_item_list_element("0", "The basis set {Sxx, Syy, Sxy, Sxz, Syz},")
-uf.desc[-1].add_item_list_element("1", "The basis set {Szz, Sxxyy, Sxy, Sxz, Syz} of the Pales standard notation,")
-uf.desc[-1].add_item_list_element("2", "The full matrix angle via the Euclidean inner product of the alignment matrices together with the Frobenius norm ||A||_F.")
+uf.desc[-1].add_paragraph("This will calculate the inter-matrix angles between all loaded alignment tensors for the current data pipe.  For the 5D basis sets, the matrices are first converted to a 5D vector form and then then the inter-vector angles, rather than inter-matrix angles, are calculated.  The angles are dependent upon the basis set:")
+uf.desc[-1].add_item_list_element("0", "The unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.")
+uf.desc[-1].add_item_list_element("1", "The geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is also the Pales standard notation.")
+uf.desc[-1].add_item_list_element("2", "The standard inter-matrix angle.  This is the default option.  The angle is calculated via the Euclidean inner product of the alignment matrices in rank-2, 3D form divided by the Frobenius norm ||A||_F of the matrices.")
 uf.desc[-1].add_paragraph("The full matrix angle via the Euclidean inner product is defined as:")
 uf.desc[-1].add_verbatim("""
                    /   <A1 , A2>   \ 
@@ -333,7 +333,7 @@ uf.desc[-1].add_verbatim("""
                    \ ||A1|| ||A2|| /
 """)
 uf.desc[-1].add_paragraph("where <a,b> is the Euclidean inner product and ||a|| is the Frobenius norm of the matrix.")
-uf.desc[-1].add_paragraph("Note that the inner product solution is a linear map which hence preserves angles, whereas the {Sxx, Syy, Sxy, Sxz, Syz} and {Szz, Sxxyy, Sxy, Sxz, Syz} basis sets are non-linear maps which do not preserve angles.  Therefore the angles from all three basis sets will be different.")
+uf.desc[-1].add_paragraph("The inner product solution is a linear map and thereby preserves angles, whereas the {Sxx, Syy, Sxy, Sxz, Syz} and {Szz, Sxxyy, Sxy, Sxz, Syz} basis sets are non-linear maps which do not preserve angles.  Therefore the angles from all three basis sets will be different.")
 uf.backend = align_tensor.matrix_angles
 uf.menu_text = "&matrix_angles"
 uf.gui_icon = "oxygen.categories.applications-education"
