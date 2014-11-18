@@ -959,16 +959,13 @@ def matrix_angles(basis_set='matrix', tensors=None):
     cdp.align_tensors.angles = zeros((tensor_num, tensor_num), float64)
 
     # Header printout.
-    if basis_set == 'unitary 5D':
-        sys.stdout.write("5d angles in deg between the vectors ")
-        sys.stdout.write("{Sxx, Syy, Sxy, Sxz, Syz}")
+    if basis_set == 'matrix':
+        sys.stdout.write("Standard inter-matrix angles in degress using the Euclidean inner product divided by the Frobenius norm")
+    elif basis_set == 'unitary 5D':
+        sys.stdout.write("Inter-matrix angles in degrees for the unitary 5D vectors {Sxx, Syy, Sxy, Sxz, Syz}")
     elif basis_set == 'geometric 5D':
-        sys.stdout.write("5d angles in deg between the vectors ")
-        sys.stdout.write("{Szz, Sxx-yy, Sxy, Sxz, Syz}")
-    elif basis_set == 'matrix':
-        sys.stdout.write("Angles in deg between the matrices ")
-        sys.stdout.write("(using the Euclidean inner product and Frobenius norm)")
-    sys.stdout.write(":\n")
+        sys.stdout.write("Inter-matrix angles in degrees for the geometric 5D vectors {Szz, Sxx-yy, Sxy, Sxz, Syz}")
+    sys.stdout.write(":\n\n")
 
     # Initialise the table of data.
     table = []
