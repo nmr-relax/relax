@@ -302,13 +302,13 @@ uf.title_short = "Alignment tensor angle calculation."
 uf.display = True
 uf.add_keyarg(
     name = "basis_set",
-    default = 2,
-    py_type = "int",
+    default = "matrix",
+    py_type = "str",
     desc_short = "basis set",
     desc = "The basis set to operate with.",
     wiz_element_type = "combo",
-    wiz_combo_choices = ["{Sxx, Syy, Sxy, Sxz, Syz}", "{Szz, Sxxyy, Sxy, Sxz, Syz}", "Full matrix angles using the Euclidean inner product"],
-    wiz_combo_data = [0, 1, 2]
+    wiz_combo_choices = ["Standard matrix angles via the Euclidean inner product", "Unitary 5D {Sxx, Syy, Sxy, Sxz, Syz}", "Geometric 5D {Szz, Sxxyy, Sxy, Sxz, Syz}"],
+    wiz_combo_data = ["matrix", "unitary 5D", "geometric 5D"]
 )
 uf.add_keyarg(
     name = "tensors",
@@ -323,9 +323,9 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will calculate the inter-matrix angles between all loaded alignment tensors for the current data pipe.  For the 5D basis sets, the matrices are first converted to a 5D vector form and then then the inter-vector angles, rather than inter-matrix angles, are calculated.  The angles are dependent upon the basis set:")
-uf.desc[-1].add_item_list_element("0", "The unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.")
-uf.desc[-1].add_item_list_element("1", "The geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is also the Pales standard notation.")
-uf.desc[-1].add_item_list_element("2", "The standard inter-matrix angle.  This is the default option.  The angle is calculated via the Euclidean inner product of the alignment matrices in rank-2, 3D form divided by the Frobenius norm ||A||_F of the matrices.")
+uf.desc[-1].add_item_list_element("matrix", "The standard inter-matrix angle.  This is the default option.  The angle is calculated via the Euclidean inner product of the alignment matrices in rank-2, 3D form divided by the Frobenius norm ||A||_F of the matrices.")
+uf.desc[-1].add_item_list_element("unitary 5D", "The unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.")
+uf.desc[-1].add_item_list_element("geometric 5D", "The geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is also the Pales standard notation.")
 uf.desc[-1].add_paragraph("The full matrix angle via the Euclidean inner product is defined as:")
 uf.desc[-1].add_verbatim("""
                    /   <A1 , A2>   \ 

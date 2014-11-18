@@ -246,12 +246,12 @@ class Test_align_tensor(Align_tensor_base_class):
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the int and bin arguments, and skip them.
-            if data[0] == 'int' or data[0] == 'bin':
+            # Catch the str argument, and skip it.
+            if data[0] == 'str':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.align_tensor_fns.matrix_angles, basis_set=data[1])
+            self.assertRaises(RelaxStrError, self.align_tensor_fns.matrix_angles, basis_set=data[1])
 
 
     def test_matrix_angles_argfail_basis_tensors(self):

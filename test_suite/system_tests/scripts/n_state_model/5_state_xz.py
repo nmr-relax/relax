@@ -32,8 +32,8 @@ self._execute_uf(uf_name='align_tensor.svd', basis_set=0, tensors=['chi1 C-dom',
 self._execute_uf(uf_name='align_tensor.svd', basis_set=1, tensors=['chi1 C-dom', 'chi2 C-dom', 'chi3 C-dom', 'chi4 C-dom', 'chi5 C-dom'])
 
 # Calculate the angles between the matrices.
-self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set=0, tensors=['chi1 C-dom', 'chi2 C-dom', 'chi3 C-dom', 'chi4 C-dom', 'chi5 C-dom'])
-self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set=1, tensors=['chi1 C-dom', 'chi2 C-dom', 'chi3 C-dom', 'chi4 C-dom', 'chi5 C-dom'])
+self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set='unitary 5D', tensors=['chi1 C-dom', 'chi2 C-dom', 'chi3 C-dom', 'chi4 C-dom', 'chi5 C-dom'])
+self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set='geometric 5D', tensors=['chi1 C-dom', 'chi2 C-dom', 'chi3 C-dom', 'chi4 C-dom', 'chi5 C-dom'])
 
 
 # Load the N-terminal alignment tensors.
@@ -55,8 +55,8 @@ self._execute_uf(uf_name='align_tensor.svd', basis_set=0, tensors=['chi1 N-dom',
 self._execute_uf(uf_name='align_tensor.svd', basis_set=1, tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
 
 # Calculate the angles between the matrices.
-self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set=0, tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
-self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set=1, tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
+self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set='unitary 5D', tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
+self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set='geometric 5D', tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
 
 # Set up the 5-state model.
 self._execute_uf(uf_name='n_state_model.select_model', model='2-domain')

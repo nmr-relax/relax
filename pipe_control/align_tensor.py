@@ -882,17 +882,20 @@ def init(tensor=None, align_id=None, params=None, scale=1.0, angle_units='deg', 
         tensor_obj.set(param='align_id', value=align_id)
 
 
-def matrix_angles(basis_set=0, tensors=None):
-    """Function for calculating the 5D angles between the alignment tensors.
+def matrix_angles(basis_set='matrix', tensors=None):
+    """Function for calculating the inter-matrix angles between the alignment tensors.
 
-    The basis set used for the 5D vector construction changes the angles calculated.
+    The basis set defines how the angles are calculated:
 
-    @param basis_set:   The basis set to use for constructing the 5D vectors.  If set to 0, the
-                        basis set is {Sxx, Syy, Sxy, Sxz, Syz}.  If 1, then the basis set is {Szz,
-                        Sxxyy, Sxy, Sxz, Syz}.
-    @type basis_set:    int
-    @param tensors:     An array of tensors to apply SVD to.  If None, all tensors will be used.
-    @type tensors:      None or array of str
+        - "matrix", the standard inter-matrix angle.  The angle is calculated via the Euclidean inner product of the alignment matrices in rank-2, 3D form divided by the Frobenius norm ||A||_F of the matrices.
+        - "unitary 5D", the unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.
+        - "geometric 5D", the geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is also the Pales standard notation.
+
+
+    @param basis_set:   The basis set to use for calculating the inter-matrix angles.  It can be one of "matrix", "unitary 5D", or "geometric 5D".
+    @type basis_set:    str
+    @param tensors:     The list of alignment tensor IDs to calculate inter-matrix angles between.  If None, all tensors will be used.
+    @type tensors:      None or list of str
     """
 
     # Test that alignment tensor data exists.
@@ -918,7 +921,7 @@ def matrix_angles(basis_set=0, tensors=None):
             continue
 
         # Unitary basis set.
-        if basis_set == 0:
+        if basis_set == 'unitary 5D':
             # Pack the elements.
             matrix_5D[i, 0] = tensor.Sxx
             matrix_5D[i, 1] = tensor.Syy
@@ -927,7 +930,7 @@ def matrix_angles(basis_set=0, tensors=None):
             matrix_5D[i, 4] = tensor.Syz
 
         # Geometric basis set.
-        elif basis_set == 1:
+        elif basis_set == 'geometric 5D':
             # Pack the elements.
             matrix_5D[i, 0] = tensor.Szz
             matrix_5D[i, 1] = tensor.Sxxyy
@@ -936,11 +939,11 @@ def matrix_angles(basis_set=0, tensors=None):
             matrix_5D[i, 4] = tensor.Syz
 
         # Full matrix.
-        elif basis_set == 2:
+        elif basis_set == 'matrix':
             matrix_3D[i] = tensor.A
 
         # Normalisation.
-        if basis_set in [0, 1]:
+        if basis_set in ['unitary 5D', 'geometric 5D']:
             norm_5D = linalg.norm(matrix_5D[i])
             matrix_5D[i] = matrix_5D[i] / norm_5D
 
@@ -951,13 +954,13 @@ def matrix_angles(basis_set=0, tensors=None):
     cdp.align_tensors.angles = zeros((tensor_num, tensor_num), float64)
 
     # Header printout.
-    if basis_set == 0:
+    if basis_set == 'unitary 5D':
         sys.stdout.write("5d angles in deg between the vectors ")
         sys.stdout.write("{Sxx, Syy, Sxy, Sxz, Syz}")
-    elif basis_set == 1:
+    elif basis_set == 'geometric 5D':
         sys.stdout.write("5d angles in deg between the vectors ")
         sys.stdout.write("{Szz, Sxx-yy, Sxy, Sxz, Syz}")
-    elif basis_set == 2:
+    elif basis_set == 'matrix':
         sys.stdout.write("Angles in deg between the matrices ")
         sys.stdout.write("(using the Euclidean inner product and Frobenius norm)")
     sys.stdout.write(":\n")
@@ -984,7 +987,7 @@ def matrix_angles(basis_set=0, tensors=None):
         # Second loop over the columns.
         for j in range(tensor_num):
             # The 5D angles.
-            if basis_set in [0, 1]:
+            if basis_set in ['unitary 5D', 'geometric 5D']:
                 # Dot product.
                 delta = dot(matrix_5D[i], matrix_5D[j])
 
@@ -996,7 +999,7 @@ def matrix_angles(basis_set=0, tensors=None):
                 theta = arccos(delta)
 
             # The full matrix angle.
-            elif basis_set in [2]:
+            elif basis_set in ['matrix']:
                 # The Euclidean inner product.
                 nom = inner(matrix_3D[i].flatten(), matrix_3D[j].flatten())
 

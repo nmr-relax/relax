@@ -248,7 +248,7 @@ class Align_tensor_base_class(UnitTestCase):
         self.align_tensor_fns.init(align_id='5', params=(0, 0, 0, 0, 1))
 
         # Matrix angles.
-        self.align_tensor_fns.matrix_angles(basis_set=0)
+        self.align_tensor_fns.matrix_angles(basis_set='unitary 5D')
 
         # Test the angles.
         self.assertAlmostEqual(dp.align_tensors.angles[0, 0], 0.0)
