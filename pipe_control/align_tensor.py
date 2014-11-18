@@ -899,7 +899,7 @@ def matrix_angles(basis_set='matrix', tensors=None):
     """
 
     # Argument check.
-    allowed = ['matrix', 'unitary 5D', 'geometric 5D']
+    allowed = ['matrix', 'unitary 9D', 'unitary 5D', 'geometric 5D']
     if basis_set not in allowed:
         raise RelaxError("The basis set of '%s' is not one of %s." % (basis_set, allowed))
 
@@ -915,8 +915,12 @@ def matrix_angles(basis_set='matrix', tensors=None):
         tensor_num = tensor_num + 1
 
     # Create the matrix which contains the 5D vectors.
-    matrix_3D = zeros((tensor_num, 3, 3), float64)
-    matrix_5D = zeros((tensor_num, 5), float64)
+    if basis_set == 'matrix':
+        matrix = zeros((tensor_num, 3, 3), float64)
+    elif basis_set == 'unitary 9D':
+        matrix = zeros((tensor_num, 9), float64)
+    elif basis_set in ['unitary 5D', 'geometric 5D']:
+        matrix = zeros((tensor_num, 5), float64)
 
     # Loop over the tensors.
     i = 0
@@ -925,32 +929,41 @@ def matrix_angles(basis_set='matrix', tensors=None):
         if tensors and tensor.name not in tensors:
             continue
 
-        # Unitary basis set.
-        if basis_set == 'unitary 5D':
-            # Pack the elements.
-            matrix_5D[i, 0] = tensor.Sxx
-            matrix_5D[i, 1] = tensor.Syy
-            matrix_5D[i, 2] = tensor.Sxy
-            matrix_5D[i, 3] = tensor.Sxz
-            matrix_5D[i, 4] = tensor.Syz
-
-        # Geometric basis set.
-        elif basis_set == 'geometric 5D':
-            # Pack the elements.
-            matrix_5D[i, 0] = tensor.Szz
-            matrix_5D[i, 1] = tensor.Sxxyy
-            matrix_5D[i, 2] = tensor.Sxy
-            matrix_5D[i, 3] = tensor.Sxz
-            matrix_5D[i, 4] = tensor.Syz
-
         # Full matrix.
-        elif basis_set == 'matrix':
-            matrix_3D[i] = tensor.A
+        if basis_set == 'matrix':
+            matrix[i] = tensor.A
+
+        # 9D unitary basis set.
+        elif basis_set == 'unitary 9D':
+            matrix[i, 0] = tensor.Sxx
+            matrix[i, 1] = tensor.Sxy
+            matrix[i, 2] = tensor.Sxz
+            matrix[i, 3] = tensor.Sxy
+            matrix[i, 4] = tensor.Syy
+            matrix[i, 5] = tensor.Syz
+            matrix[i, 6] = tensor.Sxz
+            matrix[i, 7] = tensor.Syz
+            matrix[i, 8] = tensor.Szz
+
+        # 5D unitary basis set.
+        if basis_set == 'unitary 5D':
+            matrix[i, 0] = tensor.Sxx
+            matrix[i, 1] = tensor.Syy
+            matrix[i, 2] = tensor.Sxy
+            matrix[i, 3] = tensor.Sxz
+            matrix[i, 4] = tensor.Syz
+
+        # 5D geometric basis set.
+        elif basis_set == 'geometric 5D':
+            matrix[i, 0] = tensor.Szz
+            matrix[i, 1] = tensor.Sxxyy
+            matrix[i, 2] = tensor.Sxy
+            matrix[i, 3] = tensor.Sxz
+            matrix[i, 4] = tensor.Syz
 
         # Normalisation.
-        if basis_set in ['unitary 5D', 'geometric 5D']:
-            norm_5D = linalg.norm(matrix_5D[i])
-            matrix_5D[i] = matrix_5D[i] / norm_5D
+        if basis_set in ['unitary 9D', 'unitary 5D', 'geometric 5D']:
+            matrix[i] = matrix[i] / norm(matrix[i])
 
         # Increment the index.
         i = i + 1
@@ -960,11 +973,13 @@ def matrix_angles(basis_set='matrix', tensors=None):
 
     # Header printout.
     if basis_set == 'matrix':
-        sys.stdout.write("Standard inter-matrix angles in degress using the Euclidean inner product divided by the Frobenius norm")
+        sys.stdout.write("Standard inter-tensor matrix angles in degress using the Euclidean inner product divided by the Frobenius norms (theta = arccos(<A1,A2>/(||A1||.||A2||)))")
+    elif basis_set == 'unitary 9D':
+        sys.stdout.write("Inter-tensor vector angles in degrees for the unitary 9D vectors {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}")
     elif basis_set == 'unitary 5D':
-        sys.stdout.write("Inter-matrix angles in degrees for the unitary 5D vectors {Sxx, Syy, Sxy, Sxz, Syz}")
+        sys.stdout.write("Inter-tensor vector angles in degrees for the unitary 5D vectors {Sxx, Syy, Sxy, Sxz, Syz}")
     elif basis_set == 'geometric 5D':
-        sys.stdout.write("Inter-matrix angles in degrees for the geometric 5D vectors {Szz, Sxx-yy, Sxy, Sxz, Syz}")
+        sys.stdout.write("Inter-tensor vector angles in degrees for the geometric 5D vectors {Szz, Sxx-yy, Sxy, Sxz, Syz}")
     sys.stdout.write(":\n\n")
 
     # Initialise the table of data.
@@ -988,10 +1003,10 @@ def matrix_angles(basis_set='matrix', tensors=None):
 
         # Second loop over the columns.
         for j in range(tensor_num):
-            # The 5D angles.
-            if basis_set in ['unitary 5D', 'geometric 5D']:
+            # The vector angles.
+            if basis_set in ['unitary 9D', 'unitary 5D', 'geometric 5D']:
                 # Dot product.
-                delta = dot(matrix_5D[i], matrix_5D[j])
+                delta = dot(matrix[i], matrix[j])
 
                 # Check.
                 if delta > 1:
@@ -1003,10 +1018,10 @@ def matrix_angles(basis_set='matrix', tensors=None):
             # The full matrix angle.
             elif basis_set in ['matrix']:
                 # The Euclidean inner product.
-                nom = inner(matrix_3D[i].flatten(), matrix_3D[j].flatten())
+                nom = inner(matrix[i].flatten(), matrix[j].flatten())
 
                 # The Frobenius norms.
-                denom = norm(matrix_3D[i]) * norm(matrix_3D[j])
+                denom = norm(matrix[i]) * norm(matrix[j])
 
                 # The angle.
                 ratio = nom / denom
