@@ -415,13 +415,13 @@ uf.title_short = "Alignment tensor SVD calculation."
 uf.display = True
 uf.add_keyarg(
     name = "basis_set",
-    default = 0,
-    py_type = "int",
+    default = "unitary 9D",
+    py_type = "str",
     desc_short = "basis set",
     desc = "The basis set to operate with.",
     wiz_element_type = "combo",
-    wiz_combo_choices = ["{Sxx, Syy, Sxy, Sxz, Syz}", "{Szz, Sxxyy, Sxy, Sxz, Syz}"],
-    wiz_combo_data = [0, 1]
+    wiz_combo_choices = ["Unitary 9D {Sxx, Sxy, Sxz, ..., Szz}", "Unitary 5D {Sxx, Syy, Sxy, Sxz, Syz}", "Geometric 5D {Szz, Sxxyy, Sxy, Sxz, Syz}"],
+    wiz_combo_data = ["unitary 9D", "unitary 5D", "geometric 5D"]
 )
 uf.add_keyarg(
     name = "tensors",
@@ -435,32 +435,45 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will perform a singular value decomposition of all tensors loaded for the current data pipe.  If the basis set is set to the default of 0, the matrix on which SVD will be performed is composed of the unitary basis set {Sxx, Syy, Sxy, Sxz, Syz} layed out as:")
-uf.desc[-1].add_verbatim("""
+uf.desc[-1].add_paragraph("This will perform a singular value decomposition of all tensors loaded for the current data pipe.  The values are highly dependent on the chosen basis set.  This can be one of:")
+uf.desc[-1].add_item_list_element("'unitary 9D'", "The unitary 9D basis set {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.  The is the only basis set which is a linear map, hence angles are preserved.")
+uf.desc[-1].add_item_list_element("'unitary 5D'", "The unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.")
+uf.desc[-1].add_item_list_element("'geometric 5D'", "The geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is also the Pales standard notation.")
+uf.desc[-1].add_paragraph("If the selected basis set is the default of 'unitary 9D', the matrix on which SVD will be performed will be:")
+uf.desc[-1].add_verbatim("""\
+    | Sxx1 Sxy1 Sxz1 Syx1 Syy1 Syz1 Szx1 Szy1 Szz1 |
+    | Sxx2 Sxy2 Sxz2 Syx2 Syy2 Syz2 Szx2 Szy2 Szz2 |
+    | Sxx3 Sxy3 Sxz3 Syx3 Syy3 Syz3 Szx3 Szy3 Szz3 |
+    |  .    .    .    .    .    .    .    .    .   |
+    |  .    .    .    .    .    .    .    .    .   |
+    |  .    .    .    .    .    .    .    .    .   |
+    | SxxN SxyN SxzN SyxN SyyN SyzN SzxN SzyN SzzN |\
+""")
+uf.desc[-1].add_paragraph("Otherwise if the selected basis set is 'unitary 5D', the matrix for SVD is:")
+uf.desc[-1].add_verbatim("""\
     | Sxx1 Syy1 Sxy1 Sxz1 Syz1 |
     | Sxx2 Syy2 Sxy2 Sxz2 Syz2 |
     | Sxx3 Syy3 Sxy3 Sxz3 Syz3 |
     |  .    .    .    .    .   |
     |  .    .    .    .    .   |
     |  .    .    .    .    .   |
-    | SxxN SyyN SxyN SxzN SyzN |
+    | SxxN SyyN SxyN SxzN SyzN |\
 """)
-uf.desc[-1].add_paragraph("If basis_set is set to 1, the geometric basis set consisting of the stretching and skewing parameters Szz and Sxx-yy respectively {Szz, Sxxyy, Sxy, Sxz, Syz} will be used instead.  The matrix is:")
-uf.desc[-1].add_verbatim("""
+uf.desc[-1].add_paragraph("Or if the selected basis set is 'geometric 5D', the stretching and skewing parameters Szz and Sxx-yy will be used instead and the matrix is:")
+uf.desc[-1].add_verbatim("""\
     | Szz1 Sxxyy1 Sxy1 Sxz1 Syz1 |
     | Szz2 Sxxyy2 Sxy2 Sxz2 Syz2 |
     | Szz3 Sxxyy3 Sxy3 Sxz3 Syz3 |
     |  .     .     .    .    .   |
     |  .     .     .    .    .   |
     |  .     .     .    .    .   |
-    | SzzN SxxyyN SxyN SxzN SyzN |
+    | SzzN SxxyyN SxyN SxzN SyzN |\
 """)
 uf.desc[-1].add_paragraph("The relationships between the geometric and unitary basis sets are:")
-uf.desc[-1].add_verbatim("""
+uf.desc[-1].add_verbatim("""\
     Szz = - Sxx - Syy,
-    Sxxyy = Sxx - Syy,
+    Sxxyy = Sxx - Syy.\
 """)
-uf.desc[-1].add_paragraph("The SVD values and condition number are dependent upon the basis set chosen.")
 uf.backend = align_tensor.svd
 uf.menu_text = "s&vd"
 uf.gui_icon = "oxygen.categories.applications-education"

@@ -1626,10 +1626,26 @@ def set_domain(tensor=None, domain=None):
         raise RelaxNoTensorError('alignment', tensor)
 
 
-def svd(basis_set=0, tensors=None):
-    """Function for calculating the singular values of all the loaded tensors.
+def svd(basis_set='unitary 9D', tensors=None):
+    """Calculate the singular values of all the loaded tensors.
 
-    The matrix on which SVD will be performed is::
+    The basis set can be set to one of:
+
+        'unitary 9D', the unitary 9D basis set {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.  The is the only basis set which is a linear map, hence angles are preserved.
+        'unitary 5D', the unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.
+        'geometric 5D', the geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is also the Pales standard notation.
+
+    If the selected basis set is the default of 'unitary 9D', the matrix on which SVD will be performed will be::
+
+    | Sxx1 Sxy1 Sxz1 Syx1 Syy1 Syz1 Szx1 Szy1 Szz1 |
+    | Sxx2 Sxy2 Sxz2 Syx2 Syy2 Syz2 Szx2 Szy2 Szz2 |
+    | Sxx3 Sxy3 Sxz3 Syx3 Syy3 Syz3 Szx3 Szy3 Szz3 |
+    |  .    .    .    .    .    .    .    .    .   |
+    |  .    .    .    .    .    .    .    .    .   |
+    |  .    .    .    .    .    .    .    .    .   |
+    | SxxN SxyN SxzN SyxN SyyN SyzN SzxN SzyN SzzN |
+
+    Otherwise if the selected basis set is 'unitary 5D', the matrix for SVD is::
 
         | Sxx1 Syy1 Sxy1 Sxz1 Syz1 |
         | Sxx2 Syy2 Sxy2 Sxz2 Syz2 |
@@ -1639,9 +1655,7 @@ def svd(basis_set=0, tensors=None):
         |  .    .    .    .    .   |
         | SxxN SyyN SxyN SxzN SyzN |
 
-    This is the default unitary basis set (selected when basis_set is 0).  Alternatively a geometric
-    basis set consisting of the stretching and skewing parameters Szz and Sxx-yy respectively
-    replacing Sxx and Syy can be chosen by setting basis_set to 1.  The matrix in this case is::
+    Or if the selected basis set is 'geometric 5D', the stretching and skewing parameters Szz and Sxx-yy will be used instead and the matrix is::
 
         | Szz1 Sxxyy1 Sxy1 Sxz1 Syz1 |
         | Szz2 Sxxyy2 Sxy2 Sxz2 Syz2 |
@@ -1656,14 +1670,19 @@ def svd(basis_set=0, tensors=None):
         Szz = - Sxx - Syy,
         Sxxyy = Sxx - Syy,
 
-    The SVD values and condition number are dependendent upon the basis set chosen.
+    The SVD values and condition number are dependant upon the basis set chosen.
 
 
-    @param basis_set:   The basis set to create the 5 by n matrix on which to perform SVD.
-    @type basis_set:    int
-    @param tensors:     An array of tensors to apply SVD to.  If None, all tensors will be used.
-    @type tensors:      None or array of str
+    @param basis_set:   The basis set to use for the SVD.  This can be one of 'unitary 9D', 'unitary 5D' or 'geometric 5D'.
+    @type basis_set:    str
+    @param tensors:     The list of alignment tensor IDs to calculate inter-matrix angles between.  If None, all tensors will be used.
+    @type tensors:      None or list of str
     """
+
+    # Argument check.
+    allowed = ['unitary 9D', 'unitary 5D', 'geometric 5D']
+    if basis_set not in allowed:
+        raise RelaxError("The basis set of '%s' is not one of %s." % (basis_set, allowed))
 
     # Test that alignment tensor data exists.
     if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:
@@ -1677,7 +1696,10 @@ def svd(basis_set=0, tensors=None):
         tensor_num = tensor_num + 1
 
     # Create the matrix to apply SVD on.
-    matrix = zeros((tensor_num, 5), float64)
+    if basis_set in ['unitary 9D']:
+        matrix = zeros((tensor_num, 9), float64)
+    else:
+        matrix = zeros((tensor_num, 5), float64)
 
     # Pack the elements.
     i = 0
@@ -1686,16 +1708,28 @@ def svd(basis_set=0, tensors=None):
         if tensors and tensor.name not in tensors:
             continue
 
-        # Unitary basis set.
-        if basis_set == 0:
+        # 5D unitary basis set.
+        if basis_set == 'unitary 9D':
+            matrix[i, 0] = tensor.Sxx
+            matrix[i, 1] = tensor.Sxy
+            matrix[i, 2] = tensor.Sxz
+            matrix[i, 3] = tensor.Sxy
+            matrix[i, 4] = tensor.Syy
+            matrix[i, 5] = tensor.Syz
+            matrix[i, 6] = tensor.Sxz
+            matrix[i, 7] = tensor.Syz
+            matrix[i, 8] = tensor.Szz
+
+        # 5D unitary basis set.
+        elif basis_set == 'unitary 5D':
             matrix[i, 0] = tensor.Sxx
             matrix[i, 1] = tensor.Syy
             matrix[i, 2] = tensor.Sxy
             matrix[i, 3] = tensor.Sxz
             matrix[i, 4] = tensor.Syz
 
-        # Geometric basis set.
-        elif basis_set == 1:
+        # 5D geometric basis set.
+        elif basis_set == 'geometric 5D':
             matrix[i, 0] = tensor.Szz
             matrix[i, 1] = tensor.Sxxyy
             matrix[i, 2] = tensor.Sxy
@@ -1715,12 +1749,12 @@ def svd(basis_set=0, tensors=None):
     cdp.align_tensors.cond_num = s[0] / s[-1]
 
     # Print out.
-    sys.stdout.write("Basis set ")
-    if basis_set == 0:
-        sys.stdout.write("{Sxx, Syy, Sxy, Sxz, Syz}.\n")
-    elif basis_set == 1:
-        sys.stdout.write("{Szz, Sxx-yy, Sxy, Sxz, Syz}.\n")
-    sys.stdout.write("Data pipe: %s\n" % pipes.cdp_name())
+    if basis_set == 'unitary 9D':
+        sys.stdout.write("SVD for the unitary 9D vectors {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.\n")
+    elif basis_set == 'unitary 5D':
+        sys.stdout.write("SVD for the unitary 5D vectors {Sxx, Syy, Sxy, Sxz, Syz}.\n")
+    elif basis_set == 'geometric 5D':
+        sys.stdout.write("SVD for the geometric 5D vectors {Szz, Sxx-yy, Sxy, Sxz, Syz}.\n")
     sys.stdout.write("\nSingular values:\n")
     for val in s:
         sys.stdout.write("    %.4e\n" % val)

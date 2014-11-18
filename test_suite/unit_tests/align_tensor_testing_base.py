@@ -300,7 +300,7 @@ class Align_tensor_base_class(UnitTestCase):
         self.align_tensor_fns.init(align_id='5', params=(0, 0, 0, 0, 1), param_types=0)
 
         # SVD.
-        self.align_tensor_fns.svd()
+        self.align_tensor_fns.svd(basis_set='unitary 5D')
 
         # Test the values
         self.assertEqual(dp.align_tensors.singular_vals[0], 1.0)
