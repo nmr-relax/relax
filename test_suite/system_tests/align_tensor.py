@@ -210,6 +210,63 @@ class Align_tensor(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors.angles[3, 3], 0.000000014901161)
 
 
+    def test_align_tensor_svd(self):
+        """Test the operation of the align_tensor.svd user function for different basis sets.
+
+        This originates from the script in test_suite/shared_data/align_data/basis_sets/.
+        """
+
+        # Random tensors of {Axx, Ayy, Axy, Axz, Ayz} generated using random.uniform(0, 1e-4).
+        tensor1 = [5.4839183673166663e-05, 3.692459844061351e-05, 1.994164790083226e-05, 4.5945264935308495e-05, 1.0090119622465559e-05]
+        tensor2 = [1.5832157768761617e-05, -4.9797877146095514e-05, -3.6007226809999e-05, -3.8175058915299295e-05, 5.3131759988544946e-05]
+        tensor3 = [3.892445496049645e-05, -1.7165585393754253e-05, 7.803231512226243e-05, -3.057296854986567e-05, 9.31348723610886e-05]
+        tensor4 = [4.6720247808382186e-05, -9.140580842599e-05, -3.415945182796103e-05, -1.7753928806205142e-05, 5.20457038882803e-05]
+
+        # Create a N-state analysis data pipe.
+        self.interpreter.pipe.create('basis set comparison', 'N-state')
+
+        # Load the tensors.
+        self.interpreter.align_tensor.init(tensor='t1', align_id='t1', params=tuple(tensor1))
+        self.interpreter.align_tensor.init(tensor='t2', align_id='t2', params=tuple(tensor2))
+        self.interpreter.align_tensor.init(tensor='t3', align_id='t3', params=tuple(tensor3))
+        self.interpreter.align_tensor.init(tensor='t4', align_id='t4', params=tuple(tensor4))
+
+        # Display.
+        self.interpreter.align_tensor.display()
+
+        # SVD for the irreducible 5D basis set {A-2, A-1, A0, A1, A2}.
+        self.interpreter.align_tensor.svd(basis_set='irreducible 5D')
+        self.assertAlmostEqual(cdp.align_tensors.cond_num, 6.131054731740254)
+        self.assertAlmostEqual(cdp.align_tensors.singular_vals[0], 0.000413550754079)
+        self.assertAlmostEqual(cdp.align_tensors.singular_vals[1], 0.000346772331066)
+        self.assertAlmostEqual(cdp.align_tensors.singular_vals[2], 0.000185983409775)
+        self.assertAlmostEqual(cdp.align_tensors.singular_vals[3], 0.000067451812481)
+
+        # SVD for the unitary 9D basis set {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.
+        self.interpreter.align_tensor.svd(basis_set='unitary 9D')
+        self.assertAlmostEqual(cdp.align_tensors.cond_num, 6.131054731740256)
+        self.assertAlmostEqual(cdp.align_tensors.singular_vals[0], 0.000319487975056)
+        self.assertAlmostEqual(cdp.align_tensors.singular_vals[1], 0.000267898410932)
+        self.assertAlmostEqual(cdp.align_tensors.singular_vals[2], 0.000143681186401)
+        self.assertAlmostEqual(cdp.align_tensors.singular_vals[3], 0.000052109790083)
+
+        # SVD for the unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.
+        self.interpreter.align_tensor.svd(basis_set='unitary 5D')
+        self.assertAlmostEqual(cdp.align_tensors.cond_num, 6.503663323975970)
+        self.assertAlmostEqual(cdp.align_tensors.singular_vals[0], 0.000250394766677)
+        self.assertAlmostEqual(cdp.align_tensors.singular_vals[1], 0.000177094839440)
+        self.assertAlmostEqual(cdp.align_tensors.singular_vals[2], 0.000106716235329)
+        self.assertAlmostEqual(cdp.align_tensors.singular_vals[3], 0.000038500573324)
+
+        # SVD for the geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.
+        self.interpreter.align_tensor.svd(basis_set='geometric 5D')
+        self.assertAlmostEqual(cdp.align_tensors.cond_num, 6.982475764795178)
+        self.assertAlmostEqual(cdp.align_tensors.singular_vals[0], 0.000304033216708)
+        self.assertAlmostEqual(cdp.align_tensors.singular_vals[1], 0.000201547771250)
+        self.assertAlmostEqual(cdp.align_tensors.singular_vals[2], 0.000125447137629)
+        self.assertAlmostEqual(cdp.align_tensors.singular_vals[3], 0.000043542323232)
+
+
     def test_copy(self):
         """Test the copying of alignment tensors (to catch U{bug #20338<https://gna.org/bugs/?20338>}."""
 
