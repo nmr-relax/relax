@@ -993,7 +993,7 @@ def matrix_angles(basis_set='matrix', tensors=None):
 
     # Header printout.
     if basis_set == 'matrix':
-        sys.stdout.write("Standard inter-tensor matrix angles in degress using the Euclidean inner product divided by the Frobenius norms (theta = arccos(<A1,A2>/(||A1||.||A2||)))")
+        sys.stdout.write("Standard inter-tensor matrix angles in degrees using the Euclidean inner product divided by the Frobenius norms (theta = arccos(<A1,A2>/(||A1||.||A2||)))")
     elif basis_set == 'irreducible 5D':
         sys.stdout.write("Inter-tensor vector angles in degrees for the irreducible 5D vectors {A-2, A-1, A0, A1, A2}")
     elif basis_set == 'unitary 9D':
