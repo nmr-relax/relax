@@ -28,12 +28,15 @@ self._execute_uf(uf_name='align_tensor.init', tensor='chi4 C-dom', align_id='4',
 self._execute_uf(uf_name='align_tensor.init', tensor='chi5 C-dom', align_id='5', domain='C', params=(-1/2., -1/2.,  3/8., 0.,     0.))
 
 # Calculate the singular values.
+self._execute_uf(uf_name='align_tensor.svd', basis_set='irreducible 5D', tensors=['chi1 C-dom', 'chi2 C-dom', 'chi3 C-dom', 'chi4 C-dom', 'chi5 C-dom'])
 self._execute_uf(uf_name='align_tensor.svd', basis_set='unitary 9D', tensors=['chi1 C-dom', 'chi2 C-dom', 'chi3 C-dom', 'chi4 C-dom', 'chi5 C-dom'])
 self._execute_uf(uf_name='align_tensor.svd', basis_set='unitary 5D', tensors=['chi1 C-dom', 'chi2 C-dom', 'chi3 C-dom', 'chi4 C-dom', 'chi5 C-dom'])
 self._execute_uf(uf_name='align_tensor.svd', basis_set='geometric 5D', tensors=['chi1 C-dom', 'chi2 C-dom', 'chi3 C-dom', 'chi4 C-dom', 'chi5 C-dom'])
 
 # Calculate the angles between the matrices.
 self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set='matrix', tensors=['chi1 C-dom', 'chi2 C-dom', 'chi3 C-dom', 'chi4 C-dom', 'chi5 C-dom'])
+self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set='irreducible 5D', tensors=['chi1 C-dom', 'chi2 C-dom', 'chi3 C-dom', 'chi4 C-dom', 'chi5 C-dom'])
+self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set='unitary 9D', tensors=['chi1 C-dom', 'chi2 C-dom', 'chi3 C-dom', 'chi4 C-dom', 'chi5 C-dom'])
 self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set='unitary 5D', tensors=['chi1 C-dom', 'chi2 C-dom', 'chi3 C-dom', 'chi4 C-dom', 'chi5 C-dom'])
 self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set='geometric 5D', tensors=['chi1 C-dom', 'chi2 C-dom', 'chi3 C-dom', 'chi4 C-dom', 'chi5 C-dom'])
 
@@ -53,12 +56,15 @@ self._execute_uf(uf_name='align_tensor.reduction', full_tensor='chi4 C-dom', red
 self._execute_uf(uf_name='align_tensor.reduction', full_tensor='chi5 C-dom', red_tensor='chi5 N-dom')
 
 # Calculate the singular values.
+self._execute_uf(uf_name='align_tensor.svd', basis_set='irreducible 5D', tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
 self._execute_uf(uf_name='align_tensor.svd', basis_set='unitary 9D', tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
 self._execute_uf(uf_name='align_tensor.svd', basis_set='unitary 5D', tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
 self._execute_uf(uf_name='align_tensor.svd', basis_set='geometric 5D', tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
 
 # Calculate the angles between the matrices.
 self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set='matrix', tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
+self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set='irreducible 5D', tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
+self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set='unitary 9D', tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
 self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set='unitary 5D', tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
 self._execute_uf(uf_name='align_tensor.matrix_angles', basis_set='geometric 5D', tensors=['chi1 N-dom', 'chi2 N-dom', 'chi3 N-dom', 'chi4 N-dom', 'chi5 N-dom'])
 
