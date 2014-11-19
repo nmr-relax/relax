@@ -889,7 +889,7 @@ def matrix_angles(basis_set='matrix', tensors=None):
     The basis set defines how the angles are calculated:
 
         - "matrix", the standard inter-matrix angle.  The angle is calculated via the Euclidean inner product of the alignment matrices in rank-2, 3D form divided by the Frobenius norm ||A||_F of the matrices.
-        - "irreducible 5D", the irreducible 5D basis set {S-2, S-1, S0, S1, S2}.
+        - "irreducible 5D", the irreducible 5D basis set {A-2, A-1, A0, A1, A2}.
         - "unitary 5D", the unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.
         - "geometric 5D", the geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is also the Pales standard notation.
 
@@ -994,10 +994,10 @@ def matrix_angles(basis_set='matrix', tensors=None):
     # Header printout.
     if basis_set == 'matrix':
         sys.stdout.write("Standard inter-tensor matrix angles in degress using the Euclidean inner product divided by the Frobenius norms (theta = arccos(<A1,A2>/(||A1||.||A2||)))")
+    elif basis_set == 'irreducible 5D':
+        sys.stdout.write("Inter-tensor vector angles in degrees for the irreducible 5D vectors {A-2, A-1, A0, A1, A2}")
     elif basis_set == 'unitary 9D':
         sys.stdout.write("Inter-tensor vector angles in degrees for the unitary 9D vectors {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}")
-    elif basis_set == 'irreducible 5D':
-        sys.stdout.write("Inter-tensor vector angles in degrees for the irreducible 5D vectors {S-2, S-1, S0, S1, S2}")
     elif basis_set == 'unitary 5D':
         sys.stdout.write("Inter-tensor vector angles in degrees for the unitary 5D vectors {Sxx, Syy, Sxy, Sxz, Syz}")
     elif basis_set == 'geometric 5D':
@@ -1679,13 +1679,13 @@ def svd(basis_set='irreducible 5D', tensors=None):
 
     If the selected basis set is the default of 'irreducible 5D', the matrix on which SVD will be performed will be::
 
-        | S-2(1) S-1(1) S0(1)  S1(1)  S2(1) |
-        | S-2(2) S-1(2) S0(2)  S1(2)  S2(2) |
-        | S-2(3) S-1(3) S0(3)  S1(3)  S2(3) |
+        | A-2(1) A-1(1) A0(1)  A1(1)  A2(1) |
+        | A-2(2) A-1(2) A0(2)  A1(2)  A2(2) |
+        | A-2(3) A-1(3) A0(3)  A1(3)  A2(3) |
         |   .      .     .      .      .    |
         |   .      .     .      .      .    |
         |   .      .     .      .      .    |
-        | S-2(N) S-1(N) S0(N)  S1(N)  S2(N) |
+        | A-2(N) A-1(N) A0(N)  A1(N)  A2(N) |
 
     If the selected basis set is 'unitary 9D', the matrix on which SVD will be performed will be::
 
@@ -1717,18 +1717,18 @@ def svd(basis_set='irreducible 5D', tensors=None):
         |  .     .     .    .    .   |
         | SzzN SxxyyN SxyN SxzN SyzN |
 
-    For the irreducible basis set, the Sm components are defined as::
+    For the irreducible basis set, the Am components are defined as::
 
                 / 4pi \ 1/2
-           S0 = | --- |     Szz ,
+           A0 = | --- |     Szz ,
                 \  5  /
 
                     / 8pi \ 1/2
-        S+/-1 = +/- | --- |     (Sxz +/- iSyz) ,
+        A+/-1 = +/- | --- |     (Sxz +/- iSyz) ,
                     \ 15  /
 
                 / 2pi \ 1/2
-        S+/-2 = | --- |     (Sxx - Syy +/- 2iSxy) .
+        A+/-2 = | --- |     (Sxx - Syy +/- 2iSxy) .
                 \ 15  /
 
     The relationships between the geometric and unitary basis sets are::
