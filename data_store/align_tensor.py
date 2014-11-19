@@ -23,9 +23,10 @@
 """The alignment tensor objects of the relax data store."""
 
 # Python module imports.
-from re import search
+from math import pi, sqrt
 from numpy import eye, float64, zeros
 from numpy.linalg import det, eig, eigvals
+from re import search
 
 # relax module imports.
 from data_store.data_classes import Element
@@ -33,6 +34,12 @@ from lib.float import nan
 from lib.geometry.rotations import R_to_euler_zyz
 from lib.errors import RelaxError
 from lib.xml import fill_object_contents, xml_to_object
+
+
+# Constants (once off calculations for speed).
+fact_A2 = sqrt(2.0*pi / 15.0)
+fact_A1 = sqrt(8.0*pi / 15.0)
+fact_A0 = sqrt(4.0*pi / 5.0)
 
 
 def calc_A(Axx, Ayy, Azz, Axy, Axz, Ayz):
@@ -394,6 +401,114 @@ def calc_S_diag(tensor):
 
     # Return the tensor.
     return tensor_diag
+
+
+def calc_A0(Szz):
+    """Function for calculating the A0 irreducible component of the Saupe order matrix.
+
+    The equation for calculating the parameter is::
+
+             / 4pi \ 1/2 
+        A0 = | --- |     Szz .
+             \  5  /
+
+
+    @param Szz:     The Szz component of the Saupe order matrix.
+    @type Szz:      float
+    @return:        The A0 irreducible component of the Saupe order matrix.
+    @rtype:         float
+    """
+
+    # Calculate and return the A0 value.
+    return fact_A0 * Szz
+
+
+def calc_A1(Sxz, Syz):
+    """Function for calculating the A1 irreducible component of the Saupe order matrix.
+
+    The equation for calculating the parameter is::
+
+             / 8pi \ 1/2 
+        A1 = | --- |     (Sxz + iSyz) .
+             \ 15  /
+
+
+    @param Sxz:     The Sxz component of the Saupe order matrix.
+    @type Sxz:      float
+    @param Syz:     The Syz component of the Saupe order matrix.
+    @type Syz:      float
+    @return:        The A1 irreducible component of the Saupe order matrix.
+    @rtype:         float
+    """
+
+    # Calculate and return the A1 value.
+    return fact_A1 * (Sxz + 1.j*Syz)
+
+
+def calc_A2(Sxx, Syy, Sxy):
+    """Function for calculating the A2 irreducible component of the Saupe order matrix.
+
+    The equation for calculating the parameter is::
+
+             / 2pi \ 1/2 
+        A2 = | --- |     (Sxx - Syy + 2iSxy) .
+             \ 15  /
+
+
+    @param Sxx:     The Sxx component of the Saupe order matrix.
+    @type Sxx:      float
+    @param Syy:     The Syy component of the Saupe order matrix.
+    @type Syy:      float
+    @return:        The A2 irreducible component of the Saupe order matrix.
+    @rtype:         float
+    """
+
+    # Calculate and return the A2 value.
+    return fact_A2 * (Sxx - Syy + 2.j*Sxy)
+
+
+def calc_Am1(Sxz, Syz):
+    """Function for calculating the A-1 irreducible component of the Saupe order matrix.
+
+    The equation for calculating the parameter is::
+
+                / 8pi \ 1/2 
+        A-1 = - | --- |     (Sxz - iSyz) .
+                \ 15  /
+
+
+    @param Sxz:     The Sxz component of the Saupe order matrix.
+    @type Sxz:      float
+    @param Syz:     The Syz component of the Saupe order matrix.
+    @type Syz:      float
+    @return:        The A-1 irreducible component of the Saupe order matrix.
+    @rtype:         float
+    """
+
+    # Calculate and return the A-1 value.
+    return -fact_A1 * (Sxz - 1.j*Syz)
+
+
+def calc_Am2(Sxx, Syy, Sxy):
+    """Function for calculating the A-2 irreducible component of the Saupe order matrix.
+
+    The equation for calculating the parameter is::
+
+              / 2pi \ 1/2 
+        A-2 = | --- |     (Sxx - Syy - 2iSxy) ,
+              \ 15  /
+
+
+    @param Sxx:     The Sxx component of the Saupe order matrix.
+    @type Sxx:      float
+    @param Syy:     The Syy component of the Saupe order matrix.
+    @type Syy:      float
+    @return:        The A-2 irreducible component of the Saupe order matrix.
+    @rtype:         float
+    """
+
+    # Calculate and return the A-2 value.
+    return fact_A2 * (Sxx - Syy - 2.j*Sxy)
 
 
 def calc_Sxx(Axx):
@@ -904,6 +1019,12 @@ def dependency_generator():
     yield ('S_diag',        ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['S'])
     yield ('Sxxyy',         ['Axx', 'Ayy'],                                 ['Sxx', 'Syy'])
     yield ('Szz',           ['Axx', 'Ayy'],                                 ['Sxx', 'Syy'])
+
+    yield ('Am2',           ['Axx', 'Ayy', 'Axy'],                          ['Sxx', 'Syy', 'Sxy'])
+    yield ('Am1',           ['Axy', 'Ayz'],                                 ['Sxz', 'Syz'])
+    yield ('A0',            ['Axx', 'Ayy'],                                 ['Szz'])
+    yield ('A1',            ['Axy', 'Ayz'],                                 ['Sxz', 'Syz'])
+    yield ('A2',            ['Axx', 'Ayy', 'Axy'],                          ['Sxx', 'Syy', 'Sxy'])
 
     # Tertiary objects (dependant on the secondary objects).
     yield ('Aa',            ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz'],            ['A_diag'])
