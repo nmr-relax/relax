@@ -383,8 +383,8 @@ uf.desc[-1].add_paragraph("and where Am* = (-1)^m A-m, and the norm is defined a
 uf.backend = align_tensor.matrix_angles
 uf.menu_text = "&matrix_angles"
 uf.gui_icon = "oxygen.categories.applications-education"
-uf.wizard_height_desc = 500
-uf.wizard_size = (1000, 700)
+uf.wizard_height_desc = 450
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 
 
