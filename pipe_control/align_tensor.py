@@ -25,7 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import acos, pi, sqrt
-from numpy import arccos, dot, float64, inner, linalg, zeros
+from numpy import arccos, complex128, dot, float64, inner, linalg, zeros
 from numpy.linalg import norm
 import sys
 from warnings import warn
@@ -35,6 +35,7 @@ from data_store.align_tensor import AlignTensorList
 from lib.alignment.alignment_tensor import calc_chi_tensor, kappa
 from lib.errors import RelaxError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 from lib.geometry.angles import wrap_angles
+from lib.geometry.vectors import vector_angle_complex_conjugate
 from lib.io import write_data
 from lib.text.sectioning import section, subsection
 from lib.warnings import RelaxWarning
@@ -888,18 +889,19 @@ def matrix_angles(basis_set='matrix', tensors=None):
     The basis set defines how the angles are calculated:
 
         - "matrix", the standard inter-matrix angle.  The angle is calculated via the Euclidean inner product of the alignment matrices in rank-2, 3D form divided by the Frobenius norm ||A||_F of the matrices.
+        - "irreducible 5D", the irreducible 5D basis set {S-2, S-1, S0, S1, S2}.
         - "unitary 5D", the unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.
         - "geometric 5D", the geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is also the Pales standard notation.
 
 
-    @param basis_set:   The basis set to use for calculating the inter-matrix angles.  It can be one of "matrix", "unitary 5D", or "geometric 5D".
+    @param basis_set:   The basis set to use for calculating the inter-matrix angles.  It can be one of "matrix", "irreducible 5D", "unitary 5D", or "geometric 5D".
     @type basis_set:    str
     @param tensors:     The list of alignment tensor IDs to calculate inter-matrix angles between.  If None, all tensors will be used.
     @type tensors:      None or list of str
     """
 
     # Argument check.
-    allowed = ['matrix', 'unitary 9D', 'unitary 5D', 'geometric 5D']
+    allowed = ['matrix', 'unitary 9D', 'irreducible 5D', 'unitary 5D', 'geometric 5D']
     if basis_set not in allowed:
         raise RelaxError("The basis set of '%s' is not one of %s." % (basis_set, allowed))
 
@@ -921,6 +923,9 @@ def matrix_angles(basis_set='matrix', tensors=None):
         matrix = zeros((tensor_num, 9), float64)
     elif basis_set in ['unitary 5D', 'geometric 5D']:
         matrix = zeros((tensor_num, 5), float64)
+    elif basis_set in ['irreducible 5D']:
+        matrix = zeros((tensor_num, 5), complex128)
+        matrix_conj = zeros((tensor_num, 5), complex128)
 
     # Loop over the tensors.
     i = 0
@@ -953,6 +958,21 @@ def matrix_angles(basis_set='matrix', tensors=None):
             matrix[i, 3] = tensor.Sxz
             matrix[i, 4] = tensor.Syz
 
+        # 5D irreducible basis set.
+        if basis_set == 'irreducible 5D':
+            matrix[i, 0] = tensor.Am2
+            matrix[i, 1] = tensor.Am1
+            matrix[i, 2] = tensor.A0
+            matrix[i, 3] = tensor.A1
+            matrix[i, 4] = tensor.A2
+
+            # The (-1)^mS-m conjugate.
+            matrix_conj[i, 0] = tensor.A2
+            matrix_conj[i, 1] = -tensor.A1
+            matrix_conj[i, 2] = tensor.A0
+            matrix_conj[i, 3] = -tensor.Am1
+            matrix_conj[i, 4] = tensor.Am2
+
         # 5D geometric basis set.
         elif basis_set == 'geometric 5D':
             matrix[i, 0] = tensor.Szz
@@ -976,6 +996,8 @@ def matrix_angles(basis_set='matrix', tensors=None):
         sys.stdout.write("Standard inter-tensor matrix angles in degress using the Euclidean inner product divided by the Frobenius norms (theta = arccos(<A1,A2>/(||A1||.||A2||)))")
     elif basis_set == 'unitary 9D':
         sys.stdout.write("Inter-tensor vector angles in degrees for the unitary 9D vectors {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}")
+    elif basis_set == 'irreducible 5D':
+        sys.stdout.write("Inter-tensor vector angles in degrees for the irreducible 5D vectors {S-2, S-1, S0, S1, S2}")
     elif basis_set == 'unitary 5D':
         sys.stdout.write("Inter-tensor vector angles in degrees for the unitary 5D vectors {Sxx, Syy, Sxy, Sxz, Syz}")
     elif basis_set == 'geometric 5D':
@@ -1014,6 +1036,10 @@ def matrix_angles(basis_set='matrix', tensors=None):
 
                 # The angle.
                 theta = arccos(delta)
+
+            # The irreducible complex conjugate angles.
+            if basis_set in ['irreducible 5D']:
+                theta = vector_angle_complex_conjugate(v1=matrix[i], v2=matrix[j], v1_conj=matrix_conj[i], v2_conj=matrix_conj[j])
 
             # The full matrix angle.
             elif basis_set in ['matrix']:
