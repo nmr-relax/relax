@@ -336,15 +336,15 @@ uf.desc[-1].add_verbatim("""\
 """)
 uf.desc[-1].add_paragraph("where <a,b> is the Euclidean inner product and ||a|| is the Frobenius norm of the matrix.  For the irreducible 5D basis set, the Am components are defined as")
 uf.desc[-1].add_verbatim("""\
-            / 4pi \ 1/2 
+            / 4pi \ 1/2
        A0 = | --- |     Szz ,
             \  5  /
 
-                / 8pi \ 1/2 
+                / 8pi \ 1/2
     A+/-1 = +/- | --- |     (Sxz +/- iSyz) ,
                 \ 15  /
 
-            / 2pi \ 1/2 
+            / 2pi \ 1/2
     A+/-2 = | --- |     (Sxx - Syy +/- 2iSxy) ,
             \ 15  / \
 """)

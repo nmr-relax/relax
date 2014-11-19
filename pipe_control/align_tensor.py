@@ -596,7 +596,7 @@ def get_tensor_index(tensor=None, align_id=None, pipe=None):
         return None
 
     # More than one match.
-    if count > 1: 
+    if count > 1:
         warn(RelaxWarning("More than one alignment tensors matches the tensor name '%s' or alignment ID '%s' in the data pipe '%s'." % (tensor, align_id, pipe)))
         return None
 
