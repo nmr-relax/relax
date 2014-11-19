@@ -443,13 +443,13 @@ uf.title_short = "Alignment tensor SVD calculation."
 uf.display = True
 uf.add_keyarg(
     name = "basis_set",
-    default = "unitary 9D",
+    default = "irreducible 5D",
     py_type = "str",
     desc_short = "basis set",
     desc = "The basis set to operate with.",
     wiz_element_type = "combo",
-    wiz_combo_choices = ["Unitary 9D {Sxx, Sxy, Sxz, ..., Szz}", "Unitary 5D {Sxx, Syy, Sxy, Sxz, Syz}", "Geometric 5D {Szz, Sxxyy, Sxy, Sxz, Syz}"],
-    wiz_combo_data = ["unitary 9D", "unitary 5D", "geometric 5D"]
+    wiz_combo_choices = ["Irreducible 5D {A-2, A-1, A0, A1, A2}", "Unitary 9D {Sxx, Sxy, Sxz, ..., Szz}", "Unitary 5D {Sxx, Syy, Sxy, Sxz, Syz}", "Geometric 5D {Szz, Sxxyy, Sxy, Sxz, Syz}"],
+    wiz_combo_data = ["irreducible 5D", "unitary 9D", "unitary 5D", "geometric 5D"]
 )
 uf.add_keyarg(
     name = "tensors",
@@ -464,10 +464,21 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will perform a singular value decomposition of all tensors loaded for the current data pipe.  The values are highly dependent on the chosen basis set.  This can be one of:")
-uf.desc[-1].add_item_list_element("'unitary 9D'", "The unitary 9D basis set {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.  The is the only basis set which is a linear map, hence angles are preserved.")
-uf.desc[-1].add_item_list_element("'unitary 5D'", "The unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.")
-uf.desc[-1].add_item_list_element("'geometric 5D'", "The geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is also the Pales standard notation.")
-uf.desc[-1].add_paragraph("If the selected basis set is the default of 'unitary 9D', the matrix on which SVD will be performed will be:")
+uf.desc[-1].add_item_list_element("'irreducible 5D'", "The irreducible 5D basis set {A-2, A-1, A0, A1, A2}.  This is a linear map, hence angles, singular values, and condition numbers are preserved.")
+uf.desc[-1].add_item_list_element("'unitary 9D'", "The unitary 9D basis set {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.  This is a linear map, hence angles, singular values, and condition numbers are preserved.")
+uf.desc[-1].add_item_list_element("'unitary 5D'", "The unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.  This is a non-linear map, hence angles, singular values, and condition numbers are not preserved.")
+uf.desc[-1].add_item_list_element("'geometric 5D'", "The geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is a non-linear map, hence angles, singular values, and condition numbers are not preserved.  This is also the Pales standard notation.")
+uf.desc[-1].add_paragraph("If the selected basis set is the default of 'irreducible 5D', the matrix on which SVD will be performed will be:")
+uf.desc[-1].add_verbatim("""\
+    | A-2(1) A-1(1) A0(1)  A1(1)  A2(1) |
+    | A-2(2) A-1(2) A0(2)  A1(2)  A2(2) |
+    | A-2(3) A-1(3) A0(3)  A1(3)  A2(3) |
+    |   .      .     .      .      .    |
+    |   .      .     .      .      .    |
+    |   .      .     .      .      .    |
+    | A-2(N) A-1(N) A0(N)  A1(N)  A2(N) |\
+""")
+uf.desc[-1].add_paragraph("If the selected basis set is 'unitary 9D', the matrix on which SVD will be performed will be:")
 uf.desc[-1].add_verbatim("""\
     | Sxx1 Sxy1 Sxz1 Syx1 Syy1 Syz1 Szx1 Szy1 Szz1 |
     | Sxx2 Sxy2 Sxz2 Syx2 Syy2 Syz2 Szx2 Szy2 Szz2 |
@@ -497,7 +508,21 @@ uf.desc[-1].add_verbatim("""\
     |  .     .     .    .    .   |
     | SzzN SxxyyN SxyN SxzN SyzN |\
 """)
-uf.desc[-1].add_paragraph("The relationships between the geometric and unitary basis sets are:")
+uf.desc[-1].add_paragraph("For the irreducible basis set, the Sm components are defined as")
+uf.desc[-1].add_verbatim("""\
+            / 4pi \ 1/2
+       S0 = | --- |     Szz ,
+            \  5  /
+
+                / 8pi \ 1/2
+    S+/-1 = +/- | --- |     (Sxz +/- iSyz) ,
+                \ 15  /
+
+            / 2pi \ 1/2
+    S+/-2 = | --- |     (Sxx - Syy +/- 2iSxy) .
+            \ 15  / \
+""")
+uf.desc[-1].add_paragraph("The relationships between the geometric and unitary basis sets are")
 uf.desc[-1].add_verbatim("""\
     Szz = - Sxx - Syy,
     Sxxyy = Sxx - Syy.\

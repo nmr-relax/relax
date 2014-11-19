@@ -1667,24 +1667,35 @@ def set_domain(tensor=None, domain=None):
         raise RelaxNoTensorError('alignment', tensor)
 
 
-def svd(basis_set='unitary 9D', tensors=None):
+def svd(basis_set='irreducible 5D', tensors=None):
     """Calculate the singular values of all the loaded tensors.
 
     The basis set can be set to one of:
 
-        'unitary 9D', the unitary 9D basis set {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.  The is the only basis set which is a linear map, hence angles are preserved.
-        'unitary 5D', the unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.
-        'geometric 5D', the geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is also the Pales standard notation.
+        - 'irreducible 5D', the irreducible 5D basis set {A-2, A-1, A0, A1, A2}.  This is a linear map, hence angles are preserved.
+        - 'unitary 9D', the unitary 9D basis set {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.  This is a linear map, hence angles are preserved.
+        - 'unitary 5D', the unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.  This is a non-linear map, hence angles are not preserved.
+        - 'geometric 5D', the geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is a non-linear map, hence angles are not preserved.  This is also the Pales standard notation.
 
-    If the selected basis set is the default of 'unitary 9D', the matrix on which SVD will be performed will be::
+    If the selected basis set is the default of 'irreducible 5D', the matrix on which SVD will be performed will be::
 
-    | Sxx1 Sxy1 Sxz1 Syx1 Syy1 Syz1 Szx1 Szy1 Szz1 |
-    | Sxx2 Sxy2 Sxz2 Syx2 Syy2 Syz2 Szx2 Szy2 Szz2 |
-    | Sxx3 Sxy3 Sxz3 Syx3 Syy3 Syz3 Szx3 Szy3 Szz3 |
-    |  .    .    .    .    .    .    .    .    .   |
-    |  .    .    .    .    .    .    .    .    .   |
-    |  .    .    .    .    .    .    .    .    .   |
-    | SxxN SxyN SxzN SyxN SyyN SyzN SzxN SzyN SzzN |
+        | S-2(1) S-1(1) S0(1)  S1(1)  S2(1) |
+        | S-2(2) S-1(2) S0(2)  S1(2)  S2(2) |
+        | S-2(3) S-1(3) S0(3)  S1(3)  S2(3) |
+        |   .      .     .      .      .    |
+        |   .      .     .      .      .    |
+        |   .      .     .      .      .    |
+        | S-2(N) S-1(N) S0(N)  S1(N)  S2(N) |
+
+    If the selected basis set is 'unitary 9D', the matrix on which SVD will be performed will be::
+
+        | Sxx1 Sxy1 Sxz1 Syx1 Syy1 Syz1 Szx1 Szy1 Szz1 |
+        | Sxx2 Sxy2 Sxz2 Syx2 Syy2 Syz2 Szx2 Szy2 Szz2 |
+        | Sxx3 Sxy3 Sxz3 Syx3 Syy3 Syz3 Szx3 Szy3 Szz3 |
+        |  .    .    .    .    .    .    .    .    .   |
+        |  .    .    .    .    .    .    .    .    .   |
+        |  .    .    .    .    .    .    .    .    .   |
+        | SxxN SxyN SxzN SyxN SyyN SyzN SzxN SzyN SzzN |
 
     Otherwise if the selected basis set is 'unitary 5D', the matrix for SVD is::
 
@@ -1706,6 +1717,20 @@ def svd(basis_set='unitary 9D', tensors=None):
         |  .     .     .    .    .   |
         | SzzN SxxyyN SxyN SxzN SyzN |
 
+    For the irreducible basis set, the Sm components are defined as::
+
+                / 4pi \ 1/2
+           S0 = | --- |     Szz ,
+                \  5  /
+
+                    / 8pi \ 1/2
+        S+/-1 = +/- | --- |     (Sxz +/- iSyz) ,
+                    \ 15  /
+
+                / 2pi \ 1/2
+        S+/-2 = | --- |     (Sxx - Syy +/- 2iSxy) .
+                \ 15  /
+
     The relationships between the geometric and unitary basis sets are::
 
         Szz = - Sxx - Syy,
@@ -1714,14 +1739,14 @@ def svd(basis_set='unitary 9D', tensors=None):
     The SVD values and condition number are dependant upon the basis set chosen.
 
 
-    @param basis_set:   The basis set to use for the SVD.  This can be one of 'unitary 9D', 'unitary 5D' or 'geometric 5D'.
+    @param basis_set:   The basis set to use for the SVD.  This can be one of "irreducible 5D", "unitary 9D", "unitary 5D" or "geometric 5D".
     @type basis_set:    str
     @param tensors:     The list of alignment tensor IDs to calculate inter-matrix angles between.  If None, all tensors will be used.
     @type tensors:      None or list of str
     """
 
     # Argument check.
-    allowed = ['unitary 9D', 'unitary 5D', 'geometric 5D']
+    allowed = ['irreducible 5D', 'unitary 9D', 'unitary 5D', 'geometric 5D']
     if basis_set not in allowed:
         raise RelaxError("The basis set of '%s' is not one of %s." % (basis_set, allowed))
 
@@ -1739,6 +1764,8 @@ def svd(basis_set='unitary 9D', tensors=None):
     # Create the matrix to apply SVD on.
     if basis_set in ['unitary 9D']:
         matrix = zeros((tensor_num, 9), float64)
+    elif basis_set in ['irreducible 5D']:
+        matrix = zeros((tensor_num, 5), complex128)
     else:
         matrix = zeros((tensor_num, 5), float64)
 
@@ -1749,8 +1776,16 @@ def svd(basis_set='unitary 9D', tensors=None):
         if tensors and tensor.name not in tensors:
             continue
 
+        # 5D irreducible basis set.
+        if basis_set == 'irreducible 5D':
+            matrix[i, 0] = tensor.Am2
+            matrix[i, 1] = tensor.Am1
+            matrix[i, 2] = tensor.A0
+            matrix[i, 3] = tensor.A1
+            matrix[i, 4] = tensor.A2
+
         # 5D unitary basis set.
-        if basis_set == 'unitary 9D':
+        elif basis_set == 'unitary 9D':
             matrix[i, 0] = tensor.Sxx
             matrix[i, 1] = tensor.Sxy
             matrix[i, 2] = tensor.Sxz
@@ -1790,7 +1825,9 @@ def svd(basis_set='unitary 9D', tensors=None):
     cdp.align_tensors.cond_num = s[0] / s[-1]
 
     # Print out.
-    if basis_set == 'unitary 9D':
+    if basis_set == 'irreducible 5D':
+        sys.stdout.write("SVD for the irreducible 5D vectors {A-2, A-1, A0, A1, A2}.\n")
+    elif basis_set == 'unitary 9D':
         sys.stdout.write("SVD for the unitary 9D vectors {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.\n")
     elif basis_set == 'unitary 5D':
         sys.stdout.write("SVD for the unitary 5D vectors {Sxx, Syy, Sxy, Sxz, Syz}.\n")
