@@ -307,7 +307,7 @@ uf.add_keyarg(
     desc_short = "basis set",
     desc = "The basis set to operate with.",
     wiz_element_type = "combo",
-    wiz_combo_choices = ["Standard matrix angles via the Euclidean inner product", "Irreducible 5D {A-2, A-1, A0, A1, A2}", "Unitary 9D {Sxx, Sxy, Sxz, ..., Szz}", "Unitary 5D {Sxx, Syy, Sxy, Sxz, Syz}", "Geometric 5D {Szz, Sxxyy, Sxy, Sxz, Syz}"],
+    wiz_combo_choices = ["Standard inter-matrix angles", "Irreducible 5D {A-2, A-1, A0, A1, A2}", "Unitary 9D {Sxx, Sxy, Sxz, ..., Szz}", "Unitary 5D {Sxx, Syy, Sxy, Sxz, Syz}", "Geometric 5D {Szz, Sxxyy, Sxy, Sxz, Syz}"],
     wiz_combo_data = ["matrix", "irreducible 5D", "unitary 9D", "unitary 5D", "geometric 5D"]
 )
 uf.add_keyarg(
@@ -322,19 +322,19 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will calculate the inter-matrix angles between all loaded alignment tensors for the current data pipe.  For the 5D basis sets, the matrices are first converted to a 5D vector form and then then the inter-vector angles, rather than inter-matrix angles, are calculated.  The angles are dependent upon the basis set:")
-uf.desc[-1].add_item_list_element("'matrix'", "The standard inter-tensor matrix angle.  This is the default option.  The angle is calculated via the Euclidean inner product of the alignment matrices in rank-2, 3D form divided by the Frobenius norm ||A||_F of the matrices.")
-uf.desc[-1].add_item_list_element("'irreducible 5D'", "The inter-tensor vector angle for the irreducible 5D basis set {A-2, A-1, A0, A1, A2}.")
-uf.desc[-1].add_item_list_element("'unitary 9D'", "The inter-tensor vector angle for the unitary 9D basis set {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.")
-uf.desc[-1].add_item_list_element("'unitary 5D'", "The inter-tensor vector angle for the unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.")
-uf.desc[-1].add_item_list_element("'geometric 5D'", "The inter-tensor vector angle for the geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is also the Pales standard notation.")
+uf.desc[-1].add_paragraph("This will calculate the inter-matrix angles between all loaded alignment tensors for the current data pipe.  For the vector basis sets, the matrices are first converted to vector form and then then the inter-vector angles rather than inter-matrix angles are calculated.  The angles are dependent upon the basis set - linear maps produce identical results whereas non-linear map produce result in different angle.  The basis set can be one of:")
+uf.desc[-1].add_item_list_element("'matrix'", "The standard inter-matrix angles.  This default option is a linear map, hence angles are preserved.  The angle is calculated via the arccos of the Euclidean inner product of the alignment matrices in rank-2, 3D form divided by the Frobenius norm ||A||_F of the matrices.")
+uf.desc[-1].add_item_list_element("'irreducible 5D'", "The inter-tensor vector angles for the irreducible 5D basis set {A-2, A-1, A0, A1, A2}.  This is a linear map, hence angles are preserved.")
+uf.desc[-1].add_item_list_element("'unitary 9D'", "The inter-tensor vector angles for the unitary 9D basis set {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.  This is a linear map, hence angles are preserved.")
+uf.desc[-1].add_item_list_element("'unitary 5D'", "The inter-tensor vector angles for the unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.  This is a non-linear map, hence angles are not preserved.")
+uf.desc[-1].add_item_list_element("'geometric 5D'", "The inter-tensor vector angles for the geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is a non-linear map, hence angles are not preserved.  This is also the Pales standard notation.")
 uf.desc[-1].add_paragraph("The full matrix angle via the Euclidean inner product is defined as")
 uf.desc[-1].add_verbatim("""\
                    /   <A1 , A2>   \ 
     theta = arccos | ------------- | ,
                    \ ||A1|| ||A2|| / \
 """)
-uf.desc[-1].add_paragraph("where <a,b> is the Euclidean inner product and ||a|| is the Frobenius norm of the matrix.  For the irreducible basis set, the Am components are defined as")
+uf.desc[-1].add_paragraph("where <a,b> is the Euclidean inner product and ||a|| is the Frobenius norm of the matrix.  For the irreducible 5D basis set, the Am components are defined as")
 uf.desc[-1].add_verbatim("""\
             / 4pi \ 1/2 
        A0 = | --- |     Szz ,
@@ -361,7 +361,6 @@ uf.desc[-1].add_verbatim("""\
               m=-2,2 \
 """)
 uf.desc[-1].add_paragraph("and where Am* = (-1)^m A-m, and the norm is defined as |A1| = Re(sqrt(<A1|A1>)).")
-uf.desc[-1].add_paragraph("The inner product solution is a linear map and thereby preserves angles, whereas the {Sxx, Syy, Sxy, Sxz, Syz} and {Szz, Sxxyy, Sxy, Sxz, Syz} basis sets are non-linear maps which do not preserve angles.  Therefore the angles from all three basis sets will be different.")
 uf.backend = align_tensor.matrix_angles
 uf.menu_text = "&matrix_angles"
 uf.gui_icon = "oxygen.categories.applications-education"
