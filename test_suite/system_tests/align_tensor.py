@@ -90,6 +90,126 @@ class Align_tensor(SystemTestCase):
         cdp.align_tensors[2].set(param='Axx', value=1)
 
 
+    def test_align_tensor_matrix_angles(self):
+        """Test the operation of the align_tensor.matrix_angles user function for different basis sets.
+
+        This originates from the script in test_suite/shared_data/align_data/basis_sets/.
+        """
+
+        # Random tensors of {Axx, Ayy, Axy, Axz, Ayz} generated using random.uniform(0, 1e-4).
+        tensor1 = [5.4839183673166663e-05, 3.692459844061351e-05, 1.994164790083226e-05, 4.5945264935308495e-05, 1.0090119622465559e-05]
+        tensor2 = [1.5832157768761617e-05, -4.9797877146095514e-05, -3.6007226809999e-05, -3.8175058915299295e-05, 5.3131759988544946e-05]
+        tensor3 = [3.892445496049645e-05, -1.7165585393754253e-05, 7.803231512226243e-05, -3.057296854986567e-05, 9.31348723610886e-05]
+        tensor4 = [4.6720247808382186e-05, -9.140580842599e-05, -3.415945182796103e-05, -1.7753928806205142e-05, 5.20457038882803e-05]
+
+        # Create a N-state analysis data pipe.
+        self.interpreter.pipe.create('basis set comparison', 'N-state')
+
+        # Load the tensors.
+        self.interpreter.align_tensor.init(tensor='t1', align_id='t1', params=tuple(tensor1))
+        self.interpreter.align_tensor.init(tensor='t2', align_id='t2', params=tuple(tensor2))
+        self.interpreter.align_tensor.init(tensor='t3', align_id='t3', params=tuple(tensor3))
+        self.interpreter.align_tensor.init(tensor='t4', align_id='t4', params=tuple(tensor4))
+
+        # Display.
+        self.interpreter.align_tensor.display()
+
+        # The standard inter-matrix angles.
+        self.interpreter.align_tensor.matrix_angles(basis_set='matrix')
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 0], 0.000000000000000)
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 1], 2.075565413247085)
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 2], 1.338099052806276)
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 3], 1.931864731843497)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 0], 2.075565413247085)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 1], 0.000000000000000)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 2], 1.238391416802885)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 3], 0.425283739619488)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 0], 1.338099052806276)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 1], 1.238391416802885)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 2], 0.000000000000000)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 3], 1.269973710252322)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 0], 1.931864731843497)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 1], 0.425283739619488)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 2], 1.269973710252322)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 3], 0.000000014901161)
+
+        # The inter-tensor vector angles for the irreducible 5D basis set {A-2, A-1, A0, A1, A2}.
+        self.interpreter.align_tensor.matrix_angles(basis_set='irreducible 5D')
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 0], 0.000000000000000)
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 1], 2.075565413247085)
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 2], 1.338099052806276)
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 3], 1.931864731843497)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 0], 2.075565413247085)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 1], 0.000000000000000)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 2], 1.238391416802885)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 3], 0.425283739619488)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 0], 1.338099052806276)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 1], 1.238391416802885)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 2], 0.000000021073424)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 3], 1.269973710252322)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 0], 1.931864731843497)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 1], 0.425283739619488)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 2], 1.269973710252322)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 3], 0.000000021073424)
+
+        # The inter-tensor vector angles for the unitary 9D basis set {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.
+        self.interpreter.align_tensor.matrix_angles(basis_set='unitary 9D')
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 0], 0.000000000000000)
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 1], 2.075565413247085)
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 2], 1.338099052806276)
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 3], 1.931864731843497)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 0], 2.075565413247085)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 1], 0.000000014901161)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 2], 1.238391416802885)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 3], 0.425283739619488)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 0], 1.338099052806276)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 1], 1.238391416802885)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 2], 0.000000000000000)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 3], 1.269973710252322)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 0], 1.931864731843497)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 1], 0.425283739619488)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 2], 1.269973710252322)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 3], 0.000000014901161)
+
+        # The inter-tensor vector angles for the unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.
+        self.interpreter.align_tensor.matrix_angles(basis_set='unitary 5D')
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 0], 0.000000000000000)
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 1], 1.962377927826435)
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 2], 1.334149185082829)
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 3], 1.747728360218234)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 0], 1.962377927826435)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 1], 0.000000000000000)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 2], 1.163535022090889)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 3], 0.449110033170688)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 0], 1.334149185082829)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 1], 1.163535022090889)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 2], 0.000000000000000)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 3], 1.180324869602255)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 0], 1.747728360218234)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 1], 0.449110033170688)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 2], 1.180324869602255)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 3], 0.000000000000000)
+
+        # The inter-tensor vector angles for the geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.
+        self.interpreter.align_tensor.matrix_angles(basis_set='geometric 5D')
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 0], 0.000000000000000)
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 1], 1.924475705542377)
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 2], 1.290778333130633)
+        self.assertAlmostEqual(cdp.align_tensors.angles[0, 3], 1.724794814547786)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 0], 1.924475705542377)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 1], 0.000000021073424)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 2], 1.128650397698967)
+        self.assertAlmostEqual(cdp.align_tensors.angles[1, 3], 0.418891267835127)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 0], 1.290778333130633)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 1], 1.128650397698967)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 2], 0.000000000000000)
+        self.assertAlmostEqual(cdp.align_tensors.angles[2, 3], 1.126308408980378)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 0], 1.724794814547786)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 1], 0.418891267835127)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 2], 1.126308408980378)
+        self.assertAlmostEqual(cdp.align_tensors.angles[3, 3], 0.000000014901161)
+
+
     def test_copy(self):
         """Test the copying of alignment tensors (to catch U{bug #20338<https://gna.org/bugs/?20338>}."""
 
