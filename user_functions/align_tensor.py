@@ -322,7 +322,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will calculate the inter-matrix angles between all loaded alignment tensors for the current data pipe.  For the vector basis sets, the matrices are first converted to vector form and then then the inter-vector angles rather than inter-matrix angles are calculated.  The angles are dependent upon the basis set - linear maps produce identical results whereas non-linear map produce result in different angle.  The basis set can be one of:")
+uf.desc[-1].add_paragraph("This will calculate the inter-matrix angles between all loaded alignment tensors for the current data pipe.  For the vector basis sets, the matrices are first converted to vector form and then then the inter-vector angles rather than inter-matrix angles are calculated.  The angles are dependent upon the basis set - linear maps produce identical results whereas non-linear maps result in different angles.  The basis set can be one of:")
 uf.desc[-1].add_item_list_element("'matrix'", "The standard inter-matrix angles.  This default option is a linear map, hence angles are preserved.  The angle is calculated via the arccos of the Euclidean inner product of the alignment matrices in rank-2, 3D form divided by the Frobenius norm ||A||_F of the matrices.")
 uf.desc[-1].add_item_list_element("'irreducible 5D'", "The inter-tensor vector angles for the irreducible 5D basis set {A-2, A-1, A0, A1, A2}.  This is a linear map, hence angles are preserved.")
 uf.desc[-1].add_item_list_element("'unitary 9D'", "The inter-tensor vector angles for the unitary 9D basis set {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.  This is a linear map, hence angles are preserved.")
