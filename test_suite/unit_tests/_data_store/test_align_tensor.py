@@ -148,8 +148,12 @@ class Test_align_tensor(TestCase):
 
         # Check that the values match Pales (guessing that Pales is using the negative indices).
         self.assertAlmostEqual(self.align_data.A0, -2.0380e-04)
+        self.assertAlmostEqual(self.align_data.A1.real, 4.5433e-04)
+        self.assertAlmostEqual(self.align_data.A1.imag, -2.3218e-04)
         self.assertAlmostEqual(self.align_data.Am1.real, -4.5433e-04)
         self.assertAlmostEqual(self.align_data.Am1.imag, -2.3218e-04)
+        self.assertAlmostEqual(self.align_data.A2.real, -3.6807e-04)
+        self.assertAlmostEqual(self.align_data.A2.imag, -4.1038e-04)
         self.assertAlmostEqual(self.align_data.Am2.real, -3.6807e-04)
         self.assertAlmostEqual(self.align_data.Am2.imag, 4.1038e-04)
 
