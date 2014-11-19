@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r26617
+                                  relax repository checkout r26625
                             svn+ssh://bugman@svn.gna.org/svn/relax/trunk
 
                               Molecular dynamics by NMR data analysis
@@ -40,11 +40,13 @@ align_tensor.display()
 
 # Inter-tensor angles.
 align_tensor.matrix_angles(basis_set='matrix')
+align_tensor.matrix_angles(basis_set='irreducible 5D')
 align_tensor.matrix_angles(basis_set='unitary 9D')
 align_tensor.matrix_angles(basis_set='unitary 5D')
 align_tensor.matrix_angles(basis_set='geometric 5D')
 
 # SVD.
+align_tensor.svd(basis_set='irreducible 5D')
 align_tensor.svd(basis_set='unitary 9D')
 align_tensor.svd(basis_set='unitary 5D')
 align_tensor.svd(basis_set='geometric 5D')
@@ -527,6 +529,15 @@ t2       118.9         0.0        71.0        24.4
 t3        76.7        71.0         0.0        72.8    
 t4       110.7        24.4        72.8         0.0    
 
+relax> align_tensor.matrix_angles(basis_set='irreducible 5D', tensors=None)
+Inter-tensor vector angles in degrees for the irreducible 5D vectors {A-2, A-1, A0, A1, A2}:
+
+      t1          t2          t3          t4          
+t1         0.0       118.9        76.7       110.7    
+t2       118.9         0.0        71.0        24.4    
+t3        76.7        71.0         0.0        72.8    
+t4       110.7        24.4        72.8         0.0    
+
 relax> align_tensor.matrix_angles(basis_set='unitary 9D', tensors=None)
 Inter-tensor vector angles in degrees for the unitary 9D vectors {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}:
 
@@ -553,6 +564,17 @@ t1         0.0       110.3        74.0        98.8
 t2       110.3         0.0        64.7        24.0    
 t3        74.0        64.7         0.0        64.5    
 t4        98.8        24.0        64.5         0.0    
+
+relax> align_tensor.svd(basis_set='irreducible 5D', tensors=None)
+SVD for the irreducible 5D vectors {A-2, A-1, A0, A1, A2}.
+
+Singular values:
+    4.1355e-04
+    3.4677e-04
+    1.8598e-04
+    6.7452e-05
+
+Condition number: 6.13
 
 relax> align_tensor.svd(basis_set='unitary 9D', tensors=None)
 SVD for the unitary 9D vectors {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.

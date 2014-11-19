@@ -18,11 +18,13 @@ align_tensor.display()
 
 # Inter-tensor angles.
 align_tensor.matrix_angles(basis_set='matrix')
+align_tensor.matrix_angles(basis_set='irreducible 5D')
 align_tensor.matrix_angles(basis_set='unitary 9D')
 align_tensor.matrix_angles(basis_set='unitary 5D')
 align_tensor.matrix_angles(basis_set='geometric 5D')
 
 # SVD.
+align_tensor.svd(basis_set='irreducible 5D')
 align_tensor.svd(basis_set='unitary 9D')
 align_tensor.svd(basis_set='unitary 5D')
 align_tensor.svd(basis_set='geometric 5D')
