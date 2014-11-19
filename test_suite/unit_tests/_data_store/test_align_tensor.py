@@ -100,6 +100,60 @@ class Test_align_tensor(TestCase):
         self.assertEqual(self.align_data.A_sim[0].tostring(), tensor.tostring())
 
 
+    def test_irreducible_params(self):
+        """Test the irreducible parameters {A-2, A-1, A0, A1, A2}.
+
+        This is to test if the Pales results can be matched.  The example is::
+
+            DATA SAUPE_MATRIX     S(zz)       S(xx-yy)      S(xy)      S(xz)      S(yz)
+            DATA SAUPE        -1.2856e-04 -5.6870e-04 -3.1704e-04  3.5099e-04 -1.7937e-04
+            DATA IRREDUCIBLE_REP    A0          A1R          A1I         A2R         A2I  
+            DATA IRREDUCIBLE    -2.0380e-04 -4.5433e-04 -2.3218e-04 -3.6807e-04  4.1038e-04
+            DATA IRREDUCIBLE GENERAL_MAGNITUDE   1.0816e-03
+        """
+
+        # From Pales (S(zz)       S(xx-yy)      S(xy)      S(xz)      S(yz))
+        Azz = 2.0 / 3.0 * -1.2856e-04
+        Axxyy = 2.0 / 3.0 * -5.6870e-04
+        Axy = 2.0 / 3.0 * -3.1704e-04
+        Axz = 2.0 / 3.0 * 3.5099e-04
+        Ayz = 2.0 / 3.0 * -1.7937e-04
+
+        # Parameter conversion.
+        Axx = (Axxyy - Azz) / 2.0
+        Ayy = (-Axxyy - Azz) / 2.0
+
+        # Set the values.
+        self.align_data.set(param='Axx', value=Axx)
+        self.align_data.set(param='Ayy', value=Ayy)
+        self.align_data.set(param='Axy', value=Axy)
+        self.align_data.set(param='Axz', value=Axz)
+        self.align_data.set(param='Ayz', value=Ayz)
+
+        # Pales equivalent printout.
+        print("Pales output:\n")
+        print("DATA SAUPE_MATRIX     S(zz)       S(xx-yy)      S(xy)      S(xz)      S(yz)")
+        print("DATA SAUPE        -1.2856e-04 -5.6870e-04 -3.1704e-04  3.5099e-04 -1.7937e-04")
+        print("")
+        print("DATA IRREDUCIBLE_REP    A0          A1R          A1I         A2R         A2I  ")
+        print("DATA IRREDUCIBLE    -2.0380e-04 -4.5433e-04 -2.3218e-04 -3.6807e-04  4.1038e-04")
+        print("DATA IRREDUCIBLE GENERAL_MAGNITUDE   1.0816e-03")
+        print("")
+        print("Calculated values:\n")
+        print("A0:    %15.4e" % self.align_data.A0.real)
+        print("A1:    %15.4e %11.4ei" % (self.align_data.A1.real, self.align_data.A1.imag))
+        print("Am1:   %15.4e %11.4ei" % (self.align_data.Am1.real, self.align_data.Am1.imag))
+        print("A2:    %15.4e %11.4ei" % (self.align_data.A2.real, self.align_data.A2.imag))
+        print("Am2:   %15.4e %11.4ei" % (self.align_data.Am2.real, self.align_data.Am2.imag))
+
+        # Check that the values match Pales (guessing that Pales is using the negative indices).
+        self.assertAlmostEqual(self.align_data.A0, -2.0380e-04)
+        self.assertAlmostEqual(self.align_data.Am1.real, -4.5433e-04)
+        self.assertAlmostEqual(self.align_data.Am1.imag, -2.3218e-04)
+        self.assertAlmostEqual(self.align_data.Am2.real, -3.6807e-04)
+        self.assertAlmostEqual(self.align_data.Am2.imag, 4.1038e-04)
+
+
     def test_set_Szz(self):
         """Test that the Szz parameter cannot be set."""
 
