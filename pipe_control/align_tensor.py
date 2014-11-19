@@ -883,7 +883,7 @@ def init(tensor=None, align_id=None, params=None, scale=1.0, angle_units='deg', 
         tensor_obj.set(param='align_id', value=align_id)
 
 
-def matrix_angles(basis_set='matrix', tensors=None):
+def matrix_angles(basis_set='matrix', tensors=None, angle_units='deg', precision=1):
     """Function for calculating the inter-matrix angles between the alignment tensors.
 
     The basis set defines how the angles are calculated:
@@ -894,10 +894,14 @@ def matrix_angles(basis_set='matrix', tensors=None):
         - "geometric 5D", the geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is also the Pales standard notation.
 
 
-    @param basis_set:   The basis set to use for calculating the inter-matrix angles.  It can be one of "matrix", "irreducible 5D", "unitary 5D", or "geometric 5D".
-    @type basis_set:    str
-    @param tensors:     The list of alignment tensor IDs to calculate inter-matrix angles between.  If None, all tensors will be used.
-    @type tensors:      None or list of str
+    @keyword basis_set:     The basis set to use for calculating the inter-matrix angles.  It can be one of "matrix", "irreducible 5D", "unitary 5D", or "geometric 5D".
+    @type basis_set:        str
+    @keyword tensors:       The list of alignment tensor IDs to calculate inter-matrix angles between.  If None, all tensors will be used.
+    @type tensors:          None or list of str
+    @keyword angle_units:   The units for the angle parameters, either 'deg' or 'rad'.
+    @type angle_units:      str
+    @keyword precision:     The precision of the printed out angles.  The number corresponds to the number of figures to print after the decimal point.
+    @type precision:        int
     """
 
     # Argument check.
@@ -1060,7 +1064,11 @@ def matrix_angles(basis_set='matrix', tensors=None):
             cdp.align_tensors.angles[i, j] = theta
 
             # Add to the table as degrees.
-            table[i+1].append("%8.1f" % (cdp.align_tensors.angles[i, j]*180.0/pi))
+            angle = cdp.align_tensors.angles[i, j]
+            if angle_units == 'deg':
+                angle = angle * 180.0 / pi
+            format = "%" + repr(7+precision) + "." + repr(precision) + "f"
+            table[i+1].append(format % angle)
 
     # Write out the table.
     write_data(out=sys.stdout, data=table)

@@ -320,6 +320,25 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
+uf.add_keyarg(
+    name = "angle_units",
+    default = "deg",
+    py_type = "str",
+    desc_short = "angle units",
+    desc = "The units for the angle parameters, either 'deg' or 'rad'.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["Degrees", "Radian"],
+    wiz_combo_data = ["deg", "rad"]
+)
+uf.add_keyarg(
+    name = "precision",
+    default = 1,
+    py_type = "int",
+    min = 1,
+    max = 100,
+    desc_short = "printout precision",
+    desc = "The precision of the printed out angles.  The number corresponds to the number of figures to print after the decimal point."
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will calculate the inter-matrix angles between all loaded alignment tensors for the current data pipe.  For the vector basis sets, the matrices are first converted to vector form and then then the inter-vector angles rather than inter-matrix angles are calculated.  The angles are dependent upon the basis set - linear maps produce identical results whereas non-linear maps result in different angles.  The basis set can be one of:")
