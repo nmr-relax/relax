@@ -1675,7 +1675,7 @@ def set_domain(tensor=None, domain=None):
         raise RelaxNoTensorError('alignment', tensor)
 
 
-def svd(basis_set='irreducible 5D', tensors=None):
+def svd(basis_set='irreducible 5D', tensors=None, precision=1):
     """Calculate the singular values of all the loaded tensors.
 
     The basis set can be set to one of:
@@ -1747,10 +1747,12 @@ def svd(basis_set='irreducible 5D', tensors=None):
     The SVD values and condition number are dependant upon the basis set chosen.
 
 
-    @param basis_set:   The basis set to use for the SVD.  This can be one of "irreducible 5D", "unitary 9D", "unitary 5D" or "geometric 5D".
+    @keyword basis_set: The basis set to use for the SVD.  This can be one of "irreducible 5D", "unitary 9D", "unitary 5D" or "geometric 5D".
     @type basis_set:    str
-    @param tensors:     The list of alignment tensor IDs to calculate inter-matrix angles between.  If None, all tensors will be used.
+    @keyword tensors:   The list of alignment tensor IDs to calculate inter-matrix angles between.  If None, all tensors will be used.
     @type tensors:      None or list of str
+    @keyword precision: The precision of the printed out angles.  The number corresponds to the number of figures to print after the decimal point.
+    @type precision:    int
     """
 
     # Argument check.
@@ -1843,5 +1845,7 @@ def svd(basis_set='irreducible 5D', tensors=None):
         sys.stdout.write("SVD for the geometric 5D vectors {Szz, Sxx-yy, Sxy, Sxz, Syz}.\n")
     sys.stdout.write("\nSingular values:\n")
     for val in s:
-        sys.stdout.write("    %.4e\n" % val)
-    sys.stdout.write("\nCondition number: %.2f\n" % cdp.align_tensors.cond_num)
+        format = "    %." + repr(precision) + "e\n"
+        sys.stdout.write(format % val)
+    format = "\nCondition number: %." + repr(precision) + "f\n"
+    sys.stdout.write(format % cdp.align_tensors.cond_num)

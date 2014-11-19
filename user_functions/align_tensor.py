@@ -479,6 +479,15 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
+uf.add_keyarg(
+    name = "precision",
+    default = 4,
+    py_type = "int",
+    min = 1,
+    max = 100,
+    desc_short = "printout precision",
+    desc = "The precision of the printed out singular values and condition numbers.  The number corresponds to the number of figures to print after the decimal point."
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will perform a singular value decomposition for all alignment tensors and calculate the condition number.  The singular values and condition number are dependent on the basis set - linear maps produce identical results whereas non-linear maps result in different values.  The basis set can be one of:")
