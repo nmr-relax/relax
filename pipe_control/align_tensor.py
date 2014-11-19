@@ -24,8 +24,8 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import pi, sqrt
-from numpy import arccos, dot, float64, linalg, zeros
+from math import acos, pi, sqrt
+from numpy import arccos, complex128, dot, float64, inner, linalg, zeros
 from numpy.linalg import norm
 import sys
 from warnings import warn
@@ -35,6 +35,7 @@ from data_store.align_tensor import AlignTensorList
 from lib.alignment.alignment_tensor import calc_chi_tensor, kappa
 from lib.errors import RelaxError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 from lib.geometry.angles import wrap_angles
+from lib.geometry.vectors import vector_angle_complex_conjugate
 from lib.io import write_data
 from lib.text.sectioning import section, subsection
 from lib.warnings import RelaxWarning
@@ -595,7 +596,7 @@ def get_tensor_index(tensor=None, align_id=None, pipe=None):
         return None
 
     # More than one match.
-    if count > 1: 
+    if count > 1:
         warn(RelaxWarning("More than one alignment tensors matches the tensor name '%s' or alignment ID '%s' in the data pipe '%s'." % (tensor, align_id, pipe)))
         return None
 
@@ -882,18 +883,31 @@ def init(tensor=None, align_id=None, params=None, scale=1.0, angle_units='deg', 
         tensor_obj.set(param='align_id', value=align_id)
 
 
-def matrix_angles(basis_set=0, tensors=None):
-    """Function for calculating the 5D angles between the alignment tensors.
+def matrix_angles(basis_set='matrix', tensors=None, angle_units='deg', precision=1):
+    """Function for calculating the inter-matrix angles between the alignment tensors.
 
-    The basis set used for the 5D vector construction changes the angles calculated.
+    The basis set defines how the angles are calculated:
 
-    @param basis_set:   The basis set to use for constructing the 5D vectors.  If set to 0, the
-                        basis set is {Sxx, Syy, Sxy, Sxz, Syz}.  If 1, then the basis set is {Szz,
-                        Sxxyy, Sxy, Sxz, Syz}.
-    @type basis_set:    int
-    @param tensors:     An array of tensors to apply SVD to.  If None, all tensors will be used.
-    @type tensors:      None or array of str
+        - "matrix", the standard inter-matrix angle.  The angle is calculated via the Euclidean inner product of the alignment matrices in rank-2, 3D form divided by the Frobenius norm ||A||_F of the matrices.
+        - "irreducible 5D", the irreducible 5D basis set {A-2, A-1, A0, A1, A2}.
+        - "unitary 5D", the unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.
+        - "geometric 5D", the geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is also the Pales standard notation.
+
+
+    @keyword basis_set:     The basis set to use for calculating the inter-matrix angles.  It can be one of "matrix", "irreducible 5D", "unitary 5D", or "geometric 5D".
+    @type basis_set:        str
+    @keyword tensors:       The list of alignment tensor IDs to calculate inter-matrix angles between.  If None, all tensors will be used.
+    @type tensors:          None or list of str
+    @keyword angle_units:   The units for the angle parameters, either 'deg' or 'rad'.
+    @type angle_units:      str
+    @keyword precision:     The precision of the printed out angles.  The number corresponds to the number of figures to print after the decimal point.
+    @type precision:        int
     """
+
+    # Argument check.
+    allowed = ['matrix', 'unitary 9D', 'irreducible 5D', 'unitary 5D', 'geometric 5D']
+    if basis_set not in allowed:
+        raise RelaxError("The basis set of '%s' is not one of %s." % (basis_set, allowed))
 
     # Test that alignment tensor data exists.
     if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:
@@ -907,7 +921,15 @@ def matrix_angles(basis_set=0, tensors=None):
         tensor_num = tensor_num + 1
 
     # Create the matrix which contains the 5D vectors.
-    matrix = zeros((tensor_num, 5), float64)
+    if basis_set == 'matrix':
+        matrix = zeros((tensor_num, 3, 3), float64)
+    elif basis_set == 'unitary 9D':
+        matrix = zeros((tensor_num, 9), float64)
+    elif basis_set in ['unitary 5D', 'geometric 5D']:
+        matrix = zeros((tensor_num, 5), float64)
+    elif basis_set in ['irreducible 5D']:
+        matrix = zeros((tensor_num, 5), complex128)
+        matrix_conj = zeros((tensor_num, 5), complex128)
 
     # Loop over the tensors.
     i = 0
@@ -916,18 +938,47 @@ def matrix_angles(basis_set=0, tensors=None):
         if tensors and tensor.name not in tensors:
             continue
 
-        # Unitary basis set.
-        if basis_set == 0:
-            # Pack the elements.
+        # Full matrix.
+        if basis_set == 'matrix':
+            matrix[i] = tensor.A
+
+        # 9D unitary basis set.
+        elif basis_set == 'unitary 9D':
+            matrix[i, 0] = tensor.Sxx
+            matrix[i, 1] = tensor.Sxy
+            matrix[i, 2] = tensor.Sxz
+            matrix[i, 3] = tensor.Sxy
+            matrix[i, 4] = tensor.Syy
+            matrix[i, 5] = tensor.Syz
+            matrix[i, 6] = tensor.Sxz
+            matrix[i, 7] = tensor.Syz
+            matrix[i, 8] = tensor.Szz
+
+        # 5D unitary basis set.
+        if basis_set == 'unitary 5D':
             matrix[i, 0] = tensor.Sxx
             matrix[i, 1] = tensor.Syy
             matrix[i, 2] = tensor.Sxy
             matrix[i, 3] = tensor.Sxz
             matrix[i, 4] = tensor.Syz
 
-        # Geometric basis set.
-        elif basis_set == 1:
-            # Pack the elements.
+        # 5D irreducible basis set.
+        if basis_set == 'irreducible 5D':
+            matrix[i, 0] = tensor.Am2
+            matrix[i, 1] = tensor.Am1
+            matrix[i, 2] = tensor.A0
+            matrix[i, 3] = tensor.A1
+            matrix[i, 4] = tensor.A2
+
+            # The (-1)^mS-m conjugate.
+            matrix_conj[i, 0] = tensor.A2
+            matrix_conj[i, 1] = -tensor.A1
+            matrix_conj[i, 2] = tensor.A0
+            matrix_conj[i, 3] = -tensor.Am1
+            matrix_conj[i, 4] = tensor.Am2
+
+        # 5D geometric basis set.
+        elif basis_set == 'geometric 5D':
             matrix[i, 0] = tensor.Szz
             matrix[i, 1] = tensor.Sxxyy
             matrix[i, 2] = tensor.Sxy
@@ -935,8 +986,8 @@ def matrix_angles(basis_set=0, tensors=None):
             matrix[i, 4] = tensor.Syz
 
         # Normalisation.
-        norm = linalg.norm(matrix[i])
-        matrix[i] = matrix[i] / norm
+        if basis_set in ['unitary 9D', 'unitary 5D', 'geometric 5D']:
+            matrix[i] = matrix[i] / norm(matrix[i])
 
         # Increment the index.
         i = i + 1
@@ -945,13 +996,17 @@ def matrix_angles(basis_set=0, tensors=None):
     cdp.align_tensors.angles = zeros((tensor_num, tensor_num), float64)
 
     # Header printout.
-    sys.stdout.write("\nData pipe: " + repr(pipes.cdp_name()) + "\n")
-    sys.stdout.write("\n5D angles in deg between the vectors ")
-    if basis_set == 0:
-        sys.stdout.write("{Sxx, Syy, Sxy, Sxz, Syz}")
-    elif basis_set == 1:
-        sys.stdout.write("{Szz, Sxx-yy, Sxy, Sxz, Syz}")
-    sys.stdout.write(":\n")
+    if basis_set == 'matrix':
+        sys.stdout.write("Standard inter-tensor matrix angles in degrees using the Euclidean inner product divided by the Frobenius norms (theta = arccos(<A1,A2>/(||A1||.||A2||)))")
+    elif basis_set == 'irreducible 5D':
+        sys.stdout.write("Inter-tensor vector angles in degrees for the irreducible 5D vectors {A-2, A-1, A0, A1, A2}")
+    elif basis_set == 'unitary 9D':
+        sys.stdout.write("Inter-tensor vector angles in degrees for the unitary 9D vectors {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}")
+    elif basis_set == 'unitary 5D':
+        sys.stdout.write("Inter-tensor vector angles in degrees for the unitary 5D vectors {Sxx, Syy, Sxy, Sxz, Syz}")
+    elif basis_set == 'geometric 5D':
+        sys.stdout.write("Inter-tensor vector angles in degrees for the geometric 5D vectors {Szz, Sxx-yy, Sxy, Sxz, Syz}")
+    sys.stdout.write(":\n\n")
 
     # Initialise the table of data.
     table = []
@@ -974,18 +1029,46 @@ def matrix_angles(basis_set=0, tensors=None):
 
         # Second loop over the columns.
         for j in range(tensor_num):
-            # Dot product.
-            delta = dot(matrix[i], matrix[j])
+            # The vector angles.
+            if basis_set in ['unitary 9D', 'unitary 5D', 'geometric 5D']:
+                # Dot product.
+                delta = dot(matrix[i], matrix[j])
 
-            # Check.
-            if delta > 1:
-                delta = 1
+                # Check.
+                if delta > 1:
+                    delta = 1
 
-            # The angle (in rad).
-            cdp.align_tensors.angles[i, j] = arccos(delta)
+                # The angle.
+                theta = arccos(delta)
+
+            # The irreducible complex conjugate angles.
+            if basis_set in ['irreducible 5D']:
+                theta = vector_angle_complex_conjugate(v1=matrix[i], v2=matrix[j], v1_conj=matrix_conj[i], v2_conj=matrix_conj[j])
+
+            # The full matrix angle.
+            elif basis_set in ['matrix']:
+                # The Euclidean inner product.
+                nom = inner(matrix[i].flatten(), matrix[j].flatten())
+
+                # The Frobenius norms.
+                denom = norm(matrix[i]) * norm(matrix[j])
+
+                # The angle.
+                ratio = nom / denom
+                if ratio <= 1.0:
+                    theta = arccos(nom / denom)
+                else:
+                    theta = 0.0
+
+            # Store the angle (in rad).
+            cdp.align_tensors.angles[i, j] = theta
 
             # Add to the table as degrees.
-            table[i+1].append("%8.1f" % (cdp.align_tensors.angles[i, j]*180.0/pi))
+            angle = cdp.align_tensors.angles[i, j]
+            if angle_units == 'deg':
+                angle = angle * 180.0 / pi
+            format = "%" + repr(7+precision) + "." + repr(precision) + "f"
+            table[i+1].append(format % angle)
 
     # Write out the table.
     write_data(out=sys.stdout, data=table)
@@ -1592,10 +1675,37 @@ def set_domain(tensor=None, domain=None):
         raise RelaxNoTensorError('alignment', tensor)
 
 
-def svd(basis_set=0, tensors=None):
-    """Function for calculating the singular values of all the loaded tensors.
+def svd(basis_set='irreducible 5D', tensors=None, precision=1):
+    """Calculate the singular values of all the loaded tensors.
 
-    The matrix on which SVD will be performed is::
+    The basis set can be set to one of:
+
+        - 'irreducible 5D', the irreducible 5D basis set {A-2, A-1, A0, A1, A2}.  This is a linear map, hence angles are preserved.
+        - 'unitary 9D', the unitary 9D basis set {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.  This is a linear map, hence angles are preserved.
+        - 'unitary 5D', the unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.  This is a non-linear map, hence angles are not preserved.
+        - 'geometric 5D', the geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is a non-linear map, hence angles are not preserved.  This is also the Pales standard notation.
+
+    If the selected basis set is the default of 'irreducible 5D', the matrix on which SVD will be performed will be::
+
+        | A-2(1) A-1(1) A0(1)  A1(1)  A2(1) |
+        | A-2(2) A-1(2) A0(2)  A1(2)  A2(2) |
+        | A-2(3) A-1(3) A0(3)  A1(3)  A2(3) |
+        |   .      .     .      .      .    |
+        |   .      .     .      .      .    |
+        |   .      .     .      .      .    |
+        | A-2(N) A-1(N) A0(N)  A1(N)  A2(N) |
+
+    If the selected basis set is 'unitary 9D', the matrix on which SVD will be performed will be::
+
+        | Sxx1 Sxy1 Sxz1 Syx1 Syy1 Syz1 Szx1 Szy1 Szz1 |
+        | Sxx2 Sxy2 Sxz2 Syx2 Syy2 Syz2 Szx2 Szy2 Szz2 |
+        | Sxx3 Sxy3 Sxz3 Syx3 Syy3 Syz3 Szx3 Szy3 Szz3 |
+        |  .    .    .    .    .    .    .    .    .   |
+        |  .    .    .    .    .    .    .    .    .   |
+        |  .    .    .    .    .    .    .    .    .   |
+        | SxxN SxyN SxzN SyxN SyyN SyzN SzxN SzyN SzzN |
+
+    Otherwise if the selected basis set is 'unitary 5D', the matrix for SVD is::
 
         | Sxx1 Syy1 Sxy1 Sxz1 Syz1 |
         | Sxx2 Syy2 Sxy2 Sxz2 Syz2 |
@@ -1605,9 +1715,7 @@ def svd(basis_set=0, tensors=None):
         |  .    .    .    .    .   |
         | SxxN SyyN SxyN SxzN SyzN |
 
-    This is the default unitary basis set (selected when basis_set is 0).  Alternatively a geometric
-    basis set consisting of the stretching and skewing parameters Szz and Sxx-yy respectively
-    replacing Sxx and Syy can be chosen by setting basis_set to 1.  The matrix in this case is::
+    Or if the selected basis set is 'geometric 5D', the stretching and skewing parameters Szz and Sxx-yy will be used instead and the matrix is::
 
         | Szz1 Sxxyy1 Sxy1 Sxz1 Syz1 |
         | Szz2 Sxxyy2 Sxy2 Sxz2 Syz2 |
@@ -1617,19 +1725,40 @@ def svd(basis_set=0, tensors=None):
         |  .     .     .    .    .   |
         | SzzN SxxyyN SxyN SxzN SyzN |
 
+    For the irreducible basis set, the Am components are defined as::
+
+                / 4pi \ 1/2
+           A0 = | --- |     Szz ,
+                \  5  /
+
+                    / 8pi \ 1/2
+        A+/-1 = +/- | --- |     (Sxz +/- iSyz) ,
+                    \ 15  /
+
+                / 2pi \ 1/2
+        A+/-2 = | --- |     (Sxx - Syy +/- 2iSxy) .
+                \ 15  /
+
     The relationships between the geometric and unitary basis sets are::
 
         Szz = - Sxx - Syy,
         Sxxyy = Sxx - Syy,
 
-    The SVD values and condition number are dependendent upon the basis set chosen.
+    The SVD values and condition number are dependant upon the basis set chosen.
 
 
-    @param basis_set:   The basis set to create the 5 by n matrix on which to perform SVD.
-    @type basis_set:    int
-    @param tensors:     An array of tensors to apply SVD to.  If None, all tensors will be used.
-    @type tensors:      None or array of str
+    @keyword basis_set: The basis set to use for the SVD.  This can be one of "irreducible 5D", "unitary 9D", "unitary 5D" or "geometric 5D".
+    @type basis_set:    str
+    @keyword tensors:   The list of alignment tensor IDs to calculate inter-matrix angles between.  If None, all tensors will be used.
+    @type tensors:      None or list of str
+    @keyword precision: The precision of the printed out angles.  The number corresponds to the number of figures to print after the decimal point.
+    @type precision:    int
     """
+
+    # Argument check.
+    allowed = ['irreducible 5D', 'unitary 9D', 'unitary 5D', 'geometric 5D']
+    if basis_set not in allowed:
+        raise RelaxError("The basis set of '%s' is not one of %s." % (basis_set, allowed))
 
     # Test that alignment tensor data exists.
     if not hasattr(cdp, 'align_tensors') or len(cdp.align_tensors) == 0:
@@ -1643,7 +1772,12 @@ def svd(basis_set=0, tensors=None):
         tensor_num = tensor_num + 1
 
     # Create the matrix to apply SVD on.
-    matrix = zeros((tensor_num, 5), float64)
+    if basis_set in ['unitary 9D']:
+        matrix = zeros((tensor_num, 9), float64)
+    elif basis_set in ['irreducible 5D']:
+        matrix = zeros((tensor_num, 5), complex128)
+    else:
+        matrix = zeros((tensor_num, 5), float64)
 
     # Pack the elements.
     i = 0
@@ -1652,16 +1786,36 @@ def svd(basis_set=0, tensors=None):
         if tensors and tensor.name not in tensors:
             continue
 
-        # Unitary basis set.
-        if basis_set == 0:
+        # 5D irreducible basis set.
+        if basis_set == 'irreducible 5D':
+            matrix[i, 0] = tensor.Am2
+            matrix[i, 1] = tensor.Am1
+            matrix[i, 2] = tensor.A0
+            matrix[i, 3] = tensor.A1
+            matrix[i, 4] = tensor.A2
+
+        # 5D unitary basis set.
+        elif basis_set == 'unitary 9D':
+            matrix[i, 0] = tensor.Sxx
+            matrix[i, 1] = tensor.Sxy
+            matrix[i, 2] = tensor.Sxz
+            matrix[i, 3] = tensor.Sxy
+            matrix[i, 4] = tensor.Syy
+            matrix[i, 5] = tensor.Syz
+            matrix[i, 6] = tensor.Sxz
+            matrix[i, 7] = tensor.Syz
+            matrix[i, 8] = tensor.Szz
+
+        # 5D unitary basis set.
+        elif basis_set == 'unitary 5D':
             matrix[i, 0] = tensor.Sxx
             matrix[i, 1] = tensor.Syy
             matrix[i, 2] = tensor.Sxy
             matrix[i, 3] = tensor.Sxz
             matrix[i, 4] = tensor.Syz
 
-        # Geometric basis set.
-        elif basis_set == 1:
+        # 5D geometric basis set.
+        elif basis_set == 'geometric 5D':
             matrix[i, 0] = tensor.Szz
             matrix[i, 1] = tensor.Sxxyy
             matrix[i, 2] = tensor.Sxy
@@ -1681,8 +1835,17 @@ def svd(basis_set=0, tensors=None):
     cdp.align_tensors.cond_num = s[0] / s[-1]
 
     # Print out.
-    print("\nData pipe: " + repr(pipes.cdp_name()))
-    print("\nSingular values:")
+    if basis_set == 'irreducible 5D':
+        sys.stdout.write("SVD for the irreducible 5D vectors {A-2, A-1, A0, A1, A2}.\n")
+    elif basis_set == 'unitary 9D':
+        sys.stdout.write("SVD for the unitary 9D vectors {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.\n")
+    elif basis_set == 'unitary 5D':
+        sys.stdout.write("SVD for the unitary 5D vectors {Sxx, Syy, Sxy, Sxz, Syz}.\n")
+    elif basis_set == 'geometric 5D':
+        sys.stdout.write("SVD for the geometric 5D vectors {Szz, Sxx-yy, Sxy, Sxz, Syz}.\n")
+    sys.stdout.write("\nSingular values:\n")
     for val in s:
-        print("    %.4e" % val)
-    print("\nCondition number: %.2f" % cdp.align_tensors.cond_num)
+        format = "    %." + repr(precision) + "e\n"
+        sys.stdout.write(format % val)
+    format = "\nCondition number: %." + repr(precision) + "f\n"
+    sys.stdout.write(format % cdp.align_tensors.cond_num)

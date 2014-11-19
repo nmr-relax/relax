@@ -32,7 +32,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.lines import closest_point_ax
 from lib.geometry.rotations import euler_to_R_zyz, reverse_euler_zyz
-from lib.geometry.vectors import vector_angle
+from lib.geometry.vectors import vector_angle_normal
 from status import Status; status = Status()
 
 
@@ -149,7 +149,7 @@ class Base_script:
         perp_vect = perp_vect / norm(perp_vect)
 
         # Set the alpha angle (the angle between the perpendicular vector and the axis).
-        self.AXIS_ALPHA = vector_angle(perp_vect, axis, piv_com)
+        self.AXIS_ALPHA = vector_angle_normal(perp_vect, axis, piv_com)
 
 
     def optimisation(self):
