@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,25 +19,37 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""This package consists of modules used reading, writing, creating, structural information.
+# relax module imports.
+from lib.checks import Check
+from lib.errors import RelaxError
+from pipe_control.pipes import cdp_name, get_pipe
 
-In the future, numerous structure related operations will be present including:
 
-    - Numerous PDB parsers.
-    - A PDB writer.
-    - CIF parsers.
-    - Other structural data file parsers.
-    - Functions for creating geometric objects in structural format.
-    - Mass and inertia related functions.
+def check_structure_func(pipe_name=None):
+    """Test if structural data is present.
 
-This package has well defined API implemented as class methods for accessing structural data
-independent of parser, writer, etc.
-"""
+    @return:        The initialised RelaxError object or nothing.
+    @rtype:         None or RelaxError instance
+    """
 
-__all__ = [
-    'checks',
-    'geometric',
-    'main',
-    'mass'
-]
+    # Defaults.
+    if pipe_name == None:
+        pipe_name = cdp_name()
+
+    # Get the data pipe.
+    dp = get_pipe(pipe_name)
+
+    # Test if the structure exists.
+    if not hasattr(dp, 'structure'):
+        return RelaxError("No structural data is present in the current data pipe.")
+
+    # Check for models:
+    if not dp.structure.num_models():
+        return RelaxError("The structural object in the current data pipe contains no models.")
+
+    # Check for molecules.
+    if not dp.structure.num_molecules():
+        return RelaxError("The structural object in the current data pipe contains no molecules.")
+
+# Create the checking object.
+check_structure = Check(check_structure_func)
