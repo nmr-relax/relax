@@ -1609,6 +1609,39 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opendx_euler_angle_map.py')
 
 
+    def test_pdb_model_rotor(self):
+        """Check the PDB file created by the frame_order.pdb_model user function for the rotor model."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
+
+        # Select the model.
+        self.interpreter.frame_order.select_model('rotor')
+
+        # Set the average domain position translation parameters.
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='axis_theta', val=0.5)
+        self.interpreter.value.set(param='axis_phi', val=0.1)
+        self.interpreter.value.set(param='cone_theta', val=0.1)
+        self.interpreter.value.set(param='cone_sigma_max', val=0.1)
+
+        # Set the pivot.
+        self.interpreter.frame_order.pivot(pivot=[1, 0, 0], fix=True)
+
+        # Create the PDB.
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir)
+
+        # Read the contents of the file.
+        file = open(ds.tmpfile)
+        lines = file.readlines()
+        file.close()
+
+
     def test_pseudo_ellipse_zero_cone_angle(self):
         """Catch for a bug in optimisation when the cone_theta_x is set to zero in the pseudo-ellipse models."""
 
