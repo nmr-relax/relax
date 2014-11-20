@@ -30,6 +30,7 @@ from tempfile import mkdtemp
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
+from lib.frame_order.conversions import create_rotor_axis_alpha
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from lib.geometry.rotations import R_to_euler_zyz
 from status import Status; status = Status()
@@ -1618,6 +1619,10 @@ class Frame_order(SystemTestCase):
         # Select the model.
         self.interpreter.frame_order.select_model('rotor')
 
+        # The axis alpha parameter, and printout.
+        axis_alpha = pi / 2.0
+        print("Rotor axis:  %s" % create_rotor_axis_alpha(pi/2, array([1, 0, 0], float64), array([0, 0, 0], float64)))
+
         # Set the average domain position translation parameters.
         self.interpreter.value.set(param='ave_pos_x', val=0.0)
         self.interpreter.value.set(param='ave_pos_y', val=0.0)
@@ -1625,21 +1630,60 @@ class Frame_order(SystemTestCase):
         self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
         self.interpreter.value.set(param='ave_pos_beta', val=0.0)
         self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='axis_theta', val=0.5)
-        self.interpreter.value.set(param='axis_phi', val=0.1)
-        self.interpreter.value.set(param='cone_theta', val=0.1)
-        self.interpreter.value.set(param='cone_sigma_max', val=0.1)
+        self.interpreter.value.set(param='axis_alpha', val=axis_alpha)
+        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
 
         # Set the pivot.
         self.interpreter.frame_order.pivot(pivot=[1, 0, 0], fix=True)
 
         # Create the PDB.
-        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir)
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1)
+
+        # Create a data pipe for the new structure.
+        self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
+        self.interpreter.pipe.display()
 
         # Read the contents of the file.
-        file = open(ds.tmpfile)
-        lines = file.readlines()
-        file.close()
+        self.interpreter.structure.read_pdb(file='frame_order.pdb', dir=ds.tmpdir)
+
+        # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
+        data = [
+            [ 1, 'PIV',    1, 'Piv',  [1.0, 0.0,   0.0]],
+            [ 1, 'RTX',    2, 'CTR',  [1.0, 0.0,   0.0]],
+            [ 2, 'RTX',    3, 'PRP',  [1.0, 0.0, -30.0]],
+            [ 3, 'RTX',    4, 'PRP',  [1.0, 0.0,  30.0]],
+            [ 4, 'RTB',    5, 'BLO',  [1.0, 0.0, -30.0]],
+            [ 5, 'RTB',  187, 'BLO',  [1.0, 0.0, -28.0]],
+            [ 6, 'RTB',  369, 'BLO',  [1.0, 0.0, -30.0]],
+            [ 7, 'RTB',  551, 'BLO',  [1.0, 0.0, -28.0]],
+            [ 8, 'RTB',  733, 'BLO',  [1.0, 0.0,  30.0]],
+            [ 9, 'RTB',  915, 'BLO',  [1.0, 0.0,  28.0]],
+            [10, 'RTB', 1097, 'BLO',  [1.0, 0.0,  30.0]],
+            [11, 'RTB', 1279, 'BLO',  [1.0, 0.0,  28.0]],
+            [12, 'RTL', 1461, 'z-ax', [1.0, 0.0, -32.0]],
+            [12, 'RTL', 1462, 'z-ax', [1.0, 0.0,  32.0]]
+        ]
+
+        # Check the atomic coordinates.
+        selection = cdp.structure.selection()
+        index = 0
+        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+            # Skip the propeller blades.
+            if atom_name == 'BLD':
+                continue
+
+            # Checks.
+            print("Checking residue %s %s, atom %s %s, at position %s." % (data[index][0], data[index][1], data[index][2], data[index][3], data[index][4]))
+            self.assertEqual(data[index][0], res_num)
+            self.assertEqual(data[index][1], res_name)
+            self.assertEqual(data[index][2], atom_num)
+            self.assertEqual(data[index][3], atom_name)
+            self.assertEqual(data[index][4][0], pos[0][0])
+            self.assertEqual(data[index][4][1], pos[0][1])
+            self.assertEqual(data[index][4][2], pos[0][2])
+
+            # Increment the index.
+            index += 1
 
 
     def test_pseudo_ellipse_zero_cone_angle(self):
