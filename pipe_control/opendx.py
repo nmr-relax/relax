@@ -37,29 +37,24 @@ from lib.software.opendx.files import write_config, write_general, write_point, 
 from pipe_control import value
 from specific_analyses.api import return_api
 
+
 def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=None, axis_incs=10, file_prefix="map", dir="dx", point=None, point_file="point", chi_surface=None, create_par_file=False):
     """Map the space corresponding to the spin identifier and create the OpenDX files.
 
-    @keyword params:        
-    @type params:           
+    @keyword params:            The list of model parameters to map.
+    @type params:               list of str
     @keyword map_type:          The type of map to create.  The available options are:
                                     - 'Iso3D', a 3D isosurface visualisation of the space.
     @type map_type:             str
     @keyword spin_id:           The spin identification string.
     @type spin_id:              str
-    @keyword inc:               The resolution of the plot.  This is the number of increments per
-                                dimension.
+    @keyword inc:               The resolution of the plot.  This is the number of increments per dimension.
     @type inc:                  int
-    @keyword lower:             The lower bounds of the space to map.  If supplied, this should be a
-                                list of floats, its length equal to the number of parameters in the
-                                model.
+    @keyword lower:             The lower bounds of the space to map.  If supplied, this should be a list of floats, its length equal to the number of parameters in the model.
     @type lower:                None or list of float
-    @keyword upper:             The upper bounds of the space to map.  If supplied, this should be a
-                                list of floats, its length equal to the number of parameters in the
-                                model.
+    @keyword upper:             The upper bounds of the space to map.  If supplied, this should be a list of floats, its length equal to the number of parameters in the model.
     @type upper:                None or list of float
-    @keyword axis_incs:         The number of tick marks to display in the OpenDX plot in each
-                                dimension.
+    @keyword axis_incs:         The number of tick marks to display in the OpenDX plot in each dimension.
     @type axis_incs:            int
     @keyword file_prefix:       The file prefix for all the created files.
     @type file_prefix:          str
@@ -70,7 +65,7 @@ def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=N
     @keyword point_file:        The file prefix for the point output files.
     @type point_file:           str or None
     @keyword create_par_file:   Whether to create a file with parameters and associated chi2 value.
-    @type point_file:           bool
+    @type create_par_file:      bool
     """
 
     # Check the args.

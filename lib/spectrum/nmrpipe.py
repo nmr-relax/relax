@@ -267,13 +267,13 @@ def show_apod_rmsd_to_file(file_name=None, dir=None, path_to_command='showApod',
     @keyword dir:               The directory where the file is located.
     @type dir:                  str
     @keyword path_to_command:   If showApod not in PATH, then specify absolute path as: /path/to/showApod
-    @type dir:                  str
+    @type path_to_command:      str
     @keyword outdir:            The directory where to write the file.  If 'None', then write in same directory.
     @type outdir:               str
     @param force:               Boolean argument which if True causes the file to be overwritten if it already exists.
     @type force:                bool
-    @return:                    Write the 'Noise Std Dev' from showApod to a file with same file filename, with ending '.rmsd'.
-    @rtype:                     filepath
+    @return:                    Write the 'Noise Std Dev' from showApod to a file with same file filename, with ending '.rmsd'.  This will be a file path.
+    @rtype:                     str
     """
 
     # Call extract function.
@@ -318,13 +318,13 @@ def show_apod_rmsd_dir_to_files(file_ext='.ft2', dir=None, path_to_command='show
     @keyword dir:               The directory where the files is located.
     @type dir:                  str
     @keyword path_to_command:   If showApod not in PATH, then specify absolute path as: /path/to/showApod
-    @type dir:                  str
+    @type path_to_command:      str
     @keyword outdir:            The directory where to write the files.  If 'None', then write in same directory.
     @type outdir:               str
     @param force:               Boolean argument which if True causes the file to be overwritten if it already exists.
     @type force:                bool
-    @return:                    Write the 'Noise Std Dev' from showApod to a file with same file filename, with ending '.rmsd'.
-    @rtype:                     list of filepaths
+    @return:                    Write the 'Noise Std Dev' from showApod to a file with same file filename, with ending '.rmsd'.  This will be a list of file paths.
+    @rtype:                     list of str
     """
 
     # First get correct dir, no matter if dir is specified with or without system folder separator.
