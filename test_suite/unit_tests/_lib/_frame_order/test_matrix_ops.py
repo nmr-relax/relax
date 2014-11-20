@@ -39,7 +39,6 @@ from lib.frame_order.matrix_ops import reduce_alignment_tensor
 from lib.geometry.coord_transform import cartesian_to_spherical, spherical_to_cartesian
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from lib.linear_algebra.kronecker_product import kron_prod, transpose_23
-from lib.order.order_parameters import iso_cone_theta_to_S
 from status import Status; status = Status()
 
 
@@ -378,7 +377,7 @@ class Test_matrix_ops(TestCase):
 
         # Calculate the frame order matrix.
         f2a = compile_2nd_matrix_iso_cone(self.f2_temp, Rx2_eigen_a, pi/4.6, pi)
-        f2b = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, Rx2_eigen_b, iso_cone_theta_to_S(pi/4.6))
+        f2b = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, Rx2_eigen_b, pi/4.6)
 
         # Print outs.
         print_frame_order_2nd_degree(f2a, "Isotropic cone frame order")
@@ -422,31 +421,30 @@ class Test_matrix_ops(TestCase):
         Rx2_eigen = self.calc_Rx2_eigen_axis(0.0, 1.0)
 
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, Rx2_eigen, 0.0)
+        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, Rx2_eigen, pi)
 
         # Cannot differentiate full disorder from the half cone in this model!
         f2_ref = self.f2_half_cone
 
         # Print outs.
         print_frame_order_2nd_degree(self.I_disorder, "Identity for disorder")
-        print_frame_order_2nd_degree(f2_ref, "The half cone frame order matrix")
         print_frame_order_2nd_degree(f2, "Compiled frame order")
 
         # Check the values.
         for i in range(9):
             for j in range(9):
                 print("Element %s, %s." % (i, j))
-                self.assertAlmostEqual(f2[i, j], f2_ref[i, j])
+                self.assertAlmostEqual(f2[i, j], self.I_disorder[i, j])
 
 
     def test_compile_2nd_matrix_iso_cone_free_rotor_half_cone(self):
-        """Check if compile_2nd_matrix_iso_cone() can return the matrix for a half cone."""
+        """Check if compile_2nd_matrix_iso_cone_free_rotor() can return the matrix for a half cone."""
 
         # The Kronecker product of the eigenframe rotation.
         Rx2_eigen = self.calc_Rx2_eigen_axis(0.0, 1.0)
 
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, Rx2_eigen, 0.0)
+        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, Rx2_eigen, pi/2.0)
 
         # Print outs.
         print_frame_order_2nd_degree(self.f2_half_cone, "The half cone frame order matrix")
@@ -460,7 +458,7 @@ class Test_matrix_ops(TestCase):
 
 
     def test_compile_2nd_matrix_iso_cone_free_rotor_half_cone_90_y(self):
-        """Check if compile_2nd_matrix_iso_cone() can return the matrix for a half cone rotated 90 degrees about y."""
+        """Check if compile_2nd_matrix_iso_cone_free_rotor() can return the matrix for a half cone rotated 90 degrees about y."""
 
         # Init.
         self.z_axis = array([1, 0, 0], float64)
@@ -469,7 +467,7 @@ class Test_matrix_ops(TestCase):
         Rx2_eigen = self.calc_Rx2_eigen_axis(0.0, 1.0)
 
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, Rx2_eigen, 0.0)
+        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, Rx2_eigen, pi/2.0)
 
         # Print outs.
         print_frame_order_2nd_degree(self.f2_half_cone_90_y, "The half cone frame order matrix")
@@ -489,7 +487,7 @@ class Test_matrix_ops(TestCase):
         Rx2_eigen = self.calc_Rx2_eigen_axis(0.0, 1.0)
 
         # Calculate the frame order matrix.
-        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, Rx2_eigen, 1.0)
+        f2 = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, Rx2_eigen, 0.0)
 
         # Print outs.
         print_frame_order_2nd_degree(self.I_order_free_rotor, "Free rotor identity for order")
@@ -799,7 +797,7 @@ class Test_matrix_ops(TestCase):
 
         # Calculate the frame order matrix.
         f2a = compile_2nd_matrix_pseudo_ellipse(self.f2_temp, Rx2_eigen_a, pi/4.6, pi/4.6, pi)
-        f2b = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, Rx2_eigen_b, iso_cone_theta_to_S(pi/4.6))
+        f2b = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, Rx2_eigen_b, pi/4.6)
 
         # Print outs.
         print_frame_order_2nd_degree(f2a, "Pseudo-ellipse frame order")
@@ -999,7 +997,7 @@ class Test_matrix_ops(TestCase):
 
         # Calculate the frame order matrix.
         f2a = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.f2_temp, Rx2_eigen_a, pi/4.6, pi/4.6)
-        f2b = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, Rx2_eigen_b, iso_cone_theta_to_S(pi/4.6))
+        f2b = compile_2nd_matrix_iso_cone_free_rotor(self.f2_temp, Rx2_eigen_b, pi/4.6)
 
         # Print outs.
         print_frame_order_2nd_degree(f2a, "Free rotor pseudo-ellipse frame order")
