@@ -343,7 +343,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will calculate the inter-matrix angles between all loaded alignment tensors for the current data pipe.  For the vector basis sets, the matrices are first converted to vector form and then then the inter-vector angles rather than inter-matrix angles are calculated.  The angles are dependent upon the basis set - linear maps produce identical results whereas non-linear maps result in different angles.  The basis set can be one of:")
 uf.desc[-1].add_item_list_element("'matrix'", "The standard inter-matrix angles.  This default option is a linear map, hence angles are preserved.  The angle is calculated via the arccos of the Euclidean inner product of the alignment matrices in rank-2, 3D form divided by the Frobenius norm ||A||_F of the matrices.")
-uf.desc[-1].add_item_list_element("'irreducible 5D'", "The inter-tensor vector angles for the irreducible 5D basis set {A-2, A-1, A0, A1, A2}.  This is a linear map, hence angles are preserved.")
+uf.desc[-1].add_item_list_element("'irreducible 5D'", "The inter-tensor vector angles for the irreducible spherical tensor 5D basis set {A-2, A-1, A0, A1, A2}.  This is a linear map, hence angles are preserved.  These are the spherical harmonic decomposition coefficients.")
 uf.desc[-1].add_item_list_element("'unitary 9D'", "The inter-tensor vector angles for the unitary 9D basis set {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.  This is a linear map, hence angles are preserved.")
 uf.desc[-1].add_item_list_element("'unitary 5D'", "The inter-tensor vector angles for the unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.  This is a non-linear map, hence angles are not preserved.")
 uf.desc[-1].add_item_list_element("'geometric 5D'", "The inter-tensor vector angles for the geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is a non-linear map, hence angles are not preserved.  This is also the Pales standard notation.")
@@ -353,7 +353,7 @@ uf.desc[-1].add_verbatim("""\
     theta = arccos | ------------- | ,
                    \ ||A1|| ||A2|| / \
 """)
-uf.desc[-1].add_paragraph("where <a,b> is the Euclidean inner product and ||a|| is the Frobenius norm of the matrix.  For the irreducible 5D basis set, the Am components are defined as")
+uf.desc[-1].add_paragraph("where <a,b> is the Euclidean inner product and ||a|| is the Frobenius norm of the matrix.  For the irreducible spherical tensor 5D basis set, the Am components are defined as")
 uf.desc[-1].add_verbatim("""\
             / 4pi \ 1/2
        A0 = | --- |     Szz ,
@@ -491,7 +491,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will perform a singular value decomposition for all alignment tensors and calculate the condition number.  The singular values and condition number are dependent on the basis set - linear maps produce identical results whereas non-linear maps result in different values.  The basis set can be one of:")
-uf.desc[-1].add_item_list_element("'irreducible 5D'", "The irreducible 5D basis set {A-2, A-1, A0, A1, A2}.  This is a linear map, hence angles, singular values, and condition number are preserved.")
+uf.desc[-1].add_item_list_element("'irreducible 5D'", "The irreducible spherical tensor 5D basis set {A-2, A-1, A0, A1, A2}.  This is a linear map, hence angles, singular values, and condition number are preserved.  These are the spherical harmonic decomposition coefficients.")
 uf.desc[-1].add_item_list_element("'unitary 9D'", "The unitary 9D basis set {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz}.  This is a linear map, hence angles, singular values, and condition number are preserved.")
 uf.desc[-1].add_item_list_element("'unitary 5D'", "The unitary 5D basis set {Sxx, Syy, Sxy, Sxz, Syz}.  This is a non-linear map, hence angles, singular values, and condition number are not preserved.")
 uf.desc[-1].add_item_list_element("'geometric 5D'", "The geometric 5D basis set {Szz, Sxxyy, Sxy, Sxz, Syz}.  This is a non-linear map, hence angles, singular values, and condition number are not preserved.  This is also the Pales standard notation.")
@@ -535,7 +535,7 @@ uf.desc[-1].add_verbatim("""\
     |  .     .     .    .    .   |
     | SzzN SxxyyN SxyN SxzN SyzN |\
 """)
-uf.desc[-1].add_paragraph("For the irreducible basis set, the Am components are defined as")
+uf.desc[-1].add_paragraph("For the irreducible spherical tensor basis set, the Am components are defined as")
 uf.desc[-1].add_verbatim("""\
             / 4pi \ 1/2
        A0 = | --- |     Szz ,
