@@ -376,7 +376,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.delete()
 
         # CoM.
-        self.assertRaises(RelaxNoPdbError, self.interpreter.structure.com)
+        self.assertRaises(RelaxError, self.interpreter.structure.com)
 
 
     def test_bug_22861_PDB_writing_chainID_fail(self):
