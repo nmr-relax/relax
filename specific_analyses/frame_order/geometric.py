@@ -27,6 +27,7 @@ from copy import deepcopy
 from math import pi
 from numpy import array, dot, eye, float64, zeros
 import sys
+from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxFault
@@ -41,6 +42,7 @@ from lib.structure.internal.object import Internal
 from lib.structure.represent.cone import cone
 from lib.structure.represent.rotor import rotor
 from lib.text.sectioning import subsection, subsubsection
+from lib.warnings import RelaxWarning
 from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.data import domain_moving, generate_pivot
 
@@ -544,6 +546,11 @@ def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, model=1, 
 
     # Printout.
     subsection(file=sys.stdout, text="Creating a PDB file with the moving domains shifted to the average position.")
+
+    # Checks.
+    if not hasattr(cdp, 'structure'):
+        warn(RelaxWarning("No structural data is present, cannot create the average position representation."))
+        return
 
     # Initialise.
     titles = []
