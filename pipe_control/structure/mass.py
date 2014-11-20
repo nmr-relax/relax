@@ -26,9 +26,10 @@ from warnings import warn
 from lib.errors import RelaxNoPdbError
 from lib.structure.mass import centre_of_mass
 from lib.warnings import RelaxWarning
+from pipe_control.structure.checks import check_structure
 
 
-def pipe_centre_of_mass(atom_id=None, model=None, return_mass=False, verbosity=1):
+def pipe_centre_of_mass(atom_id=None, model=None, return_mass=False, verbosity=1, missing_error=True):
     """Calculate and return the centre of mass of the structures in the current data pipe.
 
     @keyword atom_id:       The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
@@ -39,13 +40,18 @@ def pipe_centre_of_mass(atom_id=None, model=None, return_mass=False, verbosity=1
     @type return_mass:      bool
     @keyword verbosity:     The amount of text to print out.  0 results in no printouts, 1 the full amount.
     @type verbosity:        int
+    @keyword missing_error: A flag which if True will cause an error to be raised if structural data is absent.  Otherwise if False, a warning will be given and the CoM of [0, 0, 0] will be returned.
+    @type missing_error:    bool
     @return:                The centre of mass vector, and additionally the mass.
     @rtype:                 list of 3 floats (or tuple of a list of 3 floats and one float)
     """
 
     # Test if a structure has been loaded.
-    if not hasattr(cdp, 'structure') or cdp.structure.num_models() == 0:
-        raise RelaxNoPdbError
+    if missing_error:
+        check_structure()
+    else:
+        if not check_structure(escalate=1):
+            return [0.0, 0.0, 0.0]
 
     # The selection object.
     selection = cdp.structure.selection(atom_id=atom_id)
