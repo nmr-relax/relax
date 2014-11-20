@@ -336,10 +336,10 @@ def display(tensor=None):
         # The irreducible weights.
         ##########################
 
-        subsection(file=sys.stdout, text="Irreducible spherical harmonic weights", prespace=2)
+        subsection(file=sys.stdout, text="Irreducible spherical tensor coefficients", prespace=2)
 
         # The equations.
-        print("# The equations:")
+        print("# The spherical harmonic decomposition weights are:")
         print("#     A0 = (4pi/5)^(1/2) Szz,")
         print("#     A+/-1 = +/- (8pi/15)^(1/2)(Sxz +/- iSyz),")
         print("#     A+/-2 = (2pi/15)^(1/2)(Sxx - Syy +/- 2iSxy).")
