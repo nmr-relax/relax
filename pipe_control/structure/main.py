@@ -30,7 +30,6 @@ from warnings import warn
 
 # relax module imports.
 from lib.check_types import is_float
-from lib.checks import Check
 from lib.errors import RelaxError, RelaxFileError
 from lib.io import get_file_path, open_write_file, write_data
 from lib.selection import tokenise
@@ -45,6 +44,7 @@ from pipe_control import molmol, pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import check_mol_res_spin_data, create_spin, generate_spin_id_unique, linear_ave, return_spin, spin_loop
 from pipe_control.pipes import cdp_name, check_pipe, get_pipe
+from pipe_control.structure.checks import check_structure
 from pipe_control.structure.mass import pipe_centre_of_mass
 from status import Status; status = Status()
 from target_functions.ens_pivot_finder import Pivot_finder
@@ -249,36 +249,6 @@ def align(pipes=None, models=None, method='fit to mean', atom_id=None, centre_ty
 
             # Increment the index.
             i += 1
-
-
-def check_structure_func(pipe_name=None):
-    """Test if structural data is present.
-
-    @return:        The initialised RelaxError object or nothing.
-    @rtype:         None or RelaxError instance
-    """
-
-    # Defaults.
-    if pipe_name == None:
-        pipe_name = cdp_name()
-
-    # Get the data pipe.
-    dp = get_pipe(pipe_name)
-
-    # Test if the structure exists.
-    if not hasattr(dp, 'structure'):
-        return RelaxError("No structural data is present in the current data pipe.")
-
-    # Check for models:
-    if not dp.structure.num_models():
-        return RelaxError("The structural object in the current data pipe contains no models.")
-
-    # Check for molecules.
-    if not dp.structure.num_molecules():
-        return RelaxError("The structural object in the current data pipe contains no molecules.")
-
-# Create the checking object.
-check_structure = Check(check_structure_func)
 
 
 def connect_atom(index1=None, index2=None):
