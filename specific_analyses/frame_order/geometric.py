@@ -406,7 +406,7 @@ def add_rotors(structure=None, representation=None, sims=False):
 
             # Get the CoM of the entire molecule to use as the centre of the rotor.
             if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
-                com.append(pipe_centre_of_mass(verbosity=0))
+                com.append(pipe_centre_of_mass(verbosity=0, missing_error=False))
             else:
                 com.append(pivot1)
 
@@ -516,7 +516,7 @@ def average_position(structure=None, models=None, sim=None):
                 euler_to_R_zyz(0.0, cdp.ave_pos_beta_sim[i], cdp.ave_pos_gamma_sim[i], R)
             else:
                 euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
-        origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
+        origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0, missing_error=False)
         structure.rotate(R=R, origin=origin, model=models[i], selection=selection)
 
         # Then translate the moving domain.
@@ -736,7 +736,7 @@ def generate_axis_system(sim_index=None):
     pivot = generate_pivot(order=1, sim_index=sim_index, pdb_limit=True)
 
     # The CoM of the system.
-    com = pipe_centre_of_mass(verbosity=0)
+    com = pipe_centre_of_mass(verbosity=0, missing_error=False)
 
     # The system for the rotor models.
     if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
