@@ -347,7 +347,7 @@ def display(tensor=None):
         # The parameters.
         print("A-2 =  %25.12e %25.12ei" % (data.Am2.real, data.Am2.imag))
         print("A-1 =  %25.12e %25.12ei" % (data.Am1.real, data.Am1.imag))
-        print("A0  =  %25.12e" % data.A0.real)
+        print("A0  =  %25.12e" % data.A0)
         print("A1  =  %25.12e %25.12ei" % (data.A1.real, data.A1.imag))
         print("A2  =  %25.12e %25.12ei" % (data.A2.real, data.A2.imag))
 
