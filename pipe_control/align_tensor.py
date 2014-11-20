@@ -306,7 +306,7 @@ def display(tensor=None):
 
         # No chi tensor.
         if not chi_tensor:
-            print("# The chi tensor:\nN/A.\n")
+            print("# The chi tensor:\nN/A.")
 
         # Calculate the chi tensor.
         else:
