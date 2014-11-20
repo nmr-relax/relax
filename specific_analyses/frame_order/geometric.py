@@ -44,6 +44,7 @@ from lib.structure.represent.rotor import rotor
 from lib.text.sectioning import subsection, subsubsection
 from lib.warnings import RelaxWarning
 from pipe_control.structure.mass import pipe_centre_of_mass
+from specific_analyses.frame_order.checks import check_parameters
 from specific_analyses.frame_order.data import domain_moving, generate_pivot
 
 
@@ -634,6 +635,9 @@ def create_geometric_rep(format='PDB', file=None, dir=None, compress_type=0, siz
 
     # Printout.
     subsection(file=sys.stdout, text="Creating a PDB file containing a geometric object representing the frame order dynamics.")
+
+    # Checks.
+    check_parameters(escalate=2)
 
     # Initialise.
     titles = []
