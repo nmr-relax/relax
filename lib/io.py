@@ -484,10 +484,12 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
 def sort_filenames(filenames=None, rev=False):
     """Sort the given list in alphanumeric order.  Should be equivalent to unix 'ls -n' command.
 
-    @keyword filenames: The list of filenames
-    @type l:            list of strings
-    @keyword rev:       Flag, if the list should be reverted
-    @type rev:          boold
+    @keyword filenames: The list of file names to sort.
+    @type filenames:    list of str
+    @keyword rev:       Flag which if True will cause the list to be reversed.
+    @type rev:          bool
+    @return:            The sorted list of file names.
+    @rtype:             list of str
     """
 
     # Define function to convert to integers if text is digit.
