@@ -333,6 +333,25 @@ def display(tensor=None):
             print("%s" % chi)
 
 
+        # The irreducible weights.
+        ##########################
+
+        subsection(file=sys.stdout, text="Irreducible spherical harmonic weights", prespace=2)
+
+        # The equations.
+        print("# The equations:")
+        print("#     A0 = (4pi/5)^(1/2) Szz,")
+        print("#     A+/-1 = +/- (8pi/15)^(1/2)(Sxz +/- iSyz),")
+        print("#     A+/-2 = (2pi/15)^(1/2)(Sxx - Syy +/- 2iSxy).")
+
+        # The parameters.
+        print("A-2 =  %25.12e %25.12ei" % (data.Am2.real, data.Am2.imag))
+        print("A-1 =  %25.12e %25.12ei" % (data.Am1.real, data.Am1.imag))
+        print("A0  =  %25.12e" % data.A0.real)
+        print("A1  =  %25.12e %25.12ei" % (data.A1.real, data.A1.imag))
+        print("A2  =  %25.12e %25.12ei" % (data.A2.real, data.A2.imag))
+
+
         # The Eigensystem.
         ##################
 
