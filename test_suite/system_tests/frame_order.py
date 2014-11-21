@@ -1610,8 +1610,8 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opendx_euler_angle_map.py')
 
 
-    def test_pdb_model_iso_cone(self):
-        """Check the PDB file from frame_order.pdb_model for the isotropic cone model."""
+    def test_pdb_model_iso_cone_z_axis(self):
+        """Check the frame_order.pdb_model user function PDB file for the isotropic cone model along the z-axis."""
 
         # Lengths.
         l = 25.0
@@ -1712,7 +1712,7 @@ class Frame_order(SystemTestCase):
 
 
     def test_pdb_model_iso_cone_xz_plane_tilt(self):
-        """Check the PDB file from frame_order.pdb_model for the isotropic cone model with a xz-plane tilt."""
+        """Check the frame_order.pdb_model user function PDB file for the isotropic cone model with a xz-plane tilt."""
 
         # Lengths.
         l = 45.0
@@ -1813,8 +1813,8 @@ class Frame_order(SystemTestCase):
                 index += 1
 
 
-    def test_pdb_model_rotor(self):
-        """Check the PDB file created by the frame_order.pdb_model user function for the rotor model."""
+    def test_pdb_model_rotor_z_axis(self):
+        """Check the frame_order.pdb_model user function PDB file for the rotor model along the z-axis."""
 
         # Lengths.
         l = 30.0
@@ -1894,8 +1894,8 @@ class Frame_order(SystemTestCase):
             index += 1
 
 
-    def test_pdb_model_rotor2(self):
-        """Check the PDB file created by the frame_order.pdb_model user function for the rotor model with an offset pivot."""
+    def test_pdb_model_rotor_xz_plane_tilt(self):
+        """Check the frame_order.pdb_model user function PDB file for the rotor model with a xz-plane tilt."""
 
         # Create a data pipe.
         self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
