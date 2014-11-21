@@ -20,10 +20,10 @@
 ###############################################################################
 
 # Python module imports.
-from math import pi, sqrt
+from math import cos, pi, sin, sqrt
 import platform
 import numpy
-from numpy import array, float64, transpose
+from numpy import array, float64, transpose, zeros
 from os import sep
 from tempfile import mkdtemp
 
@@ -55,6 +55,12 @@ if SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
     # Set the system to 'Windows' no matter what.
     SYSTEM = 'Windows'
 
+
+# Some vectors.
+x_axis = array([1, 0, 0], float64)
+y_axis = array([0, 1, 0], float64)
+z_axis = array([0, 0, 1], float64)
+origin = array([0, 0, 0], float64)
 
 
 class Frame_order(SystemTestCase):
@@ -134,6 +140,46 @@ class Frame_order(SystemTestCase):
         if not dep_check.scipy_module:
             # Store in the status object. 
             status.skipped_tests.append([methodName, 'Scipy', self._skip_type])
+
+
+    def rotate_from_Z(self, origin=origin, length=0.0, angle=0.0, axis=x_axis, neg=False):
+        """Rotate a vector along Z-axis around the origin.
+
+        @keyword origin:    The origin of the final vector.
+        @type origin:       numpy 3D, rank-1 array
+        @keyword length:    The length of the Z-vector to rotate.
+        @type length:       float
+        @keyword angle:     The angle in rad to rotate by.
+        @type angle:        float
+        @keyword axis:      The direction in the xy-plane to rotate the vector along.
+        @type axis:         numpy 3D, rank-1 array
+        @keyword neg:       A flag which if True causes the negative Z-axis to be used.
+        @type neg:          bool
+        @return:            The final rotated vector shifted by the origin.
+        @rtype:             numpy 3D, rank-1 array
+        """
+
+        # The final point.
+        point = zeros(3, float64)
+
+        # Z-axis reduction.
+        point[2] = cos(angle)
+
+        # The X and Y-axis increases.
+        point[0] = axis[0]*sin(angle)
+        point[1] = axis[1]*sin(angle)
+
+        # Inversion.
+        if neg:
+            for i in range(3):
+                point[i] = -point[i]
+
+        # Extend the length and add the origin.
+        for i in range(3):
+            point[i] = point[i]*length + origin[i]
+
+        # Return the point.
+        return point
 
 
     def setUp(self):
@@ -1613,12 +1659,10 @@ class Frame_order(SystemTestCase):
     def test_pdb_model_iso_cone_z_axis(self):
         """Check the frame_order.pdb_model user function PDB file for the isotropic cone model along the z-axis."""
 
-        # Lengths.
+        # Init.
+        pivot = array([1, 0, -2], float64)
         l = 25.0
         l_rotor = l + 5.0
-        l_in = l_rotor - 2.0
-        l_out = l_rotor + 2.0
-        label = l + 10.0
 
         # Create a data pipe.
         self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
@@ -1644,7 +1688,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.value.set(param='cone_sigma_max', val=0.0)
 
         # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=[1, 0, 0], fix=True)
+        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=l)
@@ -1653,33 +1697,24 @@ class Frame_order(SystemTestCase):
         files = ['frame_order_A.pdb', 'frame_order_B.pdb']
 
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
-        data = [[
-            [ 1, 'PIV',   1, 'Piv',  [1.0, 0.0,  0.0]],
-            [ 1, 'RTX',   2, 'CTR',  [1.0, 0.0,  0.0]],
-            [ 2, 'RTX',   3, 'PRP',  [1.0, 0.0,  l_rotor]],
-            [ 3, 'RTB',   4, 'BLO',  [1.0, 0.0,  l_rotor]],
-            [ 4, 'RTB', 186, 'BLO',  [1.0, 0.0,  l_in]],
-            [ 5, 'RTB', 368, 'BLO',  [1.0, 0.0,  l_rotor]],
-            [ 6, 'RTB', 550, 'BLO',  [1.0, 0.0,  l_in]],
-            [ 7, 'RTL', 732, 'z-ax', [1.0, 0.0,  l_out]],
-            [ 3, 'CNE', 733, 'APX',  [1.0, 0.0,  0.0]],
-            [ 3, 'CNE', 734, 'H2',   [1.0, 0.0,  l]],
-            [ 4, 'CON', 735, 'H3',   [1.0, 0.0,  l]],
-            [ 1, 'TLE', 736, 'a',    [1.0, 0.0,  label]],
-        ], [
-            [ 1, 'PIV',   1, 'Piv',  [1.0, 0.0,  0.0]],
-            [ 1, 'RTX',   2, 'CTR',  [1.0, 0.0,  0.0]],
-            [ 2, 'RTX',   3, 'PRP',  [1.0, 0.0, -l_rotor]],
-            [ 3, 'RTB',   4, 'BLO',  [1.0, 0.0, -l_rotor]],
-            [ 4, 'RTB', 186, 'BLO',  [1.0, 0.0, -l_in]],
-            [ 5, 'RTB', 368, 'BLO',  [1.0, 0.0, -l_rotor]],
-            [ 6, 'RTB', 550, 'BLO',  [1.0, 0.0, -l_in]],
-            [ 7, 'RTL', 732, 'z-ax', [1.0, 0.0, -l_out]],
-            [ 3, 'CNE', 733, 'APX',  [1.0, 0.0,  0.0]],
-            [ 3, 'CNE', 734, 'H2',   [1.0, 0.0, -l]],
-            [ 4, 'CON', 735, 'H3',   [1.0, 0.0, -l]],
-            [ 1, 'TLE', 736, 'b',    [1.0, 0.0, -label]],
-        ]]
+        neg = [False, True]
+        tle = ['a', 'b']
+        data = []
+        for i in range(2):
+            data.append([
+                [ 1, 'PIV',   1, 'Piv',  pivot],
+                [ 1, 'RTX',   2, 'CTR',  pivot],
+                [ 2, 'RTX',   3, 'PRP',  self.rotate_from_Z(origin=pivot, length=l_rotor, angle=axis_theta, neg=neg[i])],
+                [ 3, 'RTB',   4, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor, angle=axis_theta, neg=neg[i])],
+                [ 4, 'RTB', 186, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor-2.0, angle=axis_theta, neg=neg[i])],
+                [ 5, 'RTB', 368, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor, angle=axis_theta, neg=neg[i])],
+                [ 6, 'RTB', 550, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor-2.0, angle=axis_theta, neg=neg[i])],
+                [ 7, 'RTL', 732, 'z-ax', self.rotate_from_Z(origin=pivot, length=l_rotor+2.0, angle=axis_theta, neg=neg[i])],
+                [ 3, 'CNE', 733, 'APX',  pivot],
+                [ 3, 'CNE', 734, 'H2',   self.rotate_from_Z(origin=pivot, length=l, angle=axis_theta, neg=neg[i])],
+                [ 4, 'CON', 735, 'H3',   self.rotate_from_Z(origin=pivot, length=l, angle=axis_theta, neg=neg[i])],
+                [ 1, 'TLE', 736, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=axis_theta, neg=neg[i])]
+            ])
 
         # Loop over the representations.
         for i in range(2):
@@ -1714,13 +1749,10 @@ class Frame_order(SystemTestCase):
     def test_pdb_model_iso_cone_xz_plane_tilt(self):
         """Check the frame_order.pdb_model user function PDB file for the isotropic cone model with a xz-plane tilt."""
 
-        # Lengths.
+        # Init.
+        pivot = array([1, 1, 1], float64)
         l = 45.0
-        proj = sqrt(0.5*l**2)
-        l_rotor = sqrt(0.5*(l + 5.0)**2)
-        l_in = sqrt(0.5*(l + 5.0 - 2.0)**2)
-        l_out = sqrt(0.5*(l + 5.0 + 2.0)**2)
-        label = sqrt(0.5*(l + 10.0)**2)
+        l_rotor = l + 5.0
 
         # Create a data pipe.
         self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
@@ -1746,7 +1778,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.value.set(param='cone_sigma_max', val=0.0)
 
         # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=[1, 1, 1], fix=True)
+        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=l)
@@ -1755,33 +1787,24 @@ class Frame_order(SystemTestCase):
         files = ['frame_order_A.pdb', 'frame_order_B.pdb']
 
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
-        data = [[
-            [ 1, 'PIV',   1, 'Piv',  [ 1.0,         1.0,  1.0]],
-            [ 1, 'RTX',   2, 'CTR',  [ 1.0,         1.0,  1.0]],
-            [ 2, 'RTX',   3, 'PRP',  [-l_rotor+1.0, 1.0,  l_rotor+1.0]],
-            [ 3, 'RTB',   4, 'BLO',  [-l_rotor+1.0, 1.0,  l_rotor+1.0]],
-            [ 4, 'RTB', 186, 'BLO',  [-l_in+1.0,    1.0,  l_in+1.0]],
-            [ 5, 'RTB', 368, 'BLO',  [-l_rotor+1.0, 1.0,  l_rotor+1.0]],
-            [ 6, 'RTB', 550, 'BLO',  [-l_in+1.0,    1.0,  l_in+1.0]],
-            [ 7, 'RTL', 732, 'z-ax', [-l_out+1.0,   1.0,  l_out+1.0]],
-            [ 3, 'CNE', 733, 'APX',  [ 1.0,         1.0,  1.0]],
-            [ 3, 'CNE', 734, 'H2',   [-proj+1.0,    1.0,  proj+1.0]],
-            [ 4, 'CON', 735, 'H3',   [-proj+1.0,    1.0,  proj+1.0]],
-            [ 1, 'TLE', 736, 'a',    [-label+1.0,   1.0,  label+1.0]],
-        ], [
-            [ 1, 'PIV',   1, 'Piv',  [ 1.0,         1.0,  1.0]],
-            [ 1, 'RTX',   2, 'CTR',  [ 1.0,         1.0,  1.0]],
-            [ 2, 'RTX',   3, 'PRP',  [ l_rotor+1.0, 1.0, -l_rotor+1.0]],
-            [ 3, 'RTB',   4, 'BLO',  [ l_rotor+1.0, 1.0, -l_rotor+1.0]],
-            [ 4, 'RTB', 186, 'BLO',  [ l_in+1.0,    1.0, -l_in+1.0]],
-            [ 5, 'RTB', 368, 'BLO',  [ l_rotor+1.0, 1.0, -l_rotor+1.0]],
-            [ 6, 'RTB', 550, 'BLO',  [ l_in+1.0,    1.0, -l_in+1.0]],
-            [ 7, 'RTL', 732, 'z-ax', [ l_out+1.0,   1.0, -l_out+1.0]],
-            [ 3, 'CNE', 733, 'APX',  [ 1.0,         1.0,  1.0]],
-            [ 3, 'CNE', 734, 'H2',   [ proj+1.0,    1.0, -proj+1.0]],
-            [ 4, 'CON', 735, 'H3',   [ proj+1.0,    1.0, -proj+1.0]],
-            [ 1, 'TLE', 736, 'b',    [ label+1.0,   1.0, -label+1.0]],
-        ]]
+        neg = [False, True]
+        tle = ['a', 'b']
+        data = []
+        for i in range(2):
+            data.append([
+                [ 1, 'PIV',   1, 'Piv',  pivot],
+                [ 1, 'RTX',   2, 'CTR',  pivot],
+                [ 2, 'RTX',   3, 'PRP',  self.rotate_from_Z(origin=pivot, length=l_rotor, angle=axis_theta, neg=neg[i])],
+                [ 3, 'RTB',   4, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor, angle=axis_theta, neg=neg[i])],
+                [ 4, 'RTB', 186, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor-2.0, angle=axis_theta, neg=neg[i])],
+                [ 5, 'RTB', 368, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor, angle=axis_theta, neg=neg[i])],
+                [ 6, 'RTB', 550, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor-2.0, angle=axis_theta, neg=neg[i])],
+                [ 7, 'RTL', 732, 'z-ax', self.rotate_from_Z(origin=pivot, length=l_rotor+2.0, angle=axis_theta, neg=neg[i])],
+                [ 3, 'CNE', 733, 'APX',  pivot],
+                [ 3, 'CNE', 734, 'H2',   self.rotate_from_Z(origin=pivot, length=l, angle=axis_theta, neg=neg[i])],
+                [ 4, 'CON', 735, 'H3',   self.rotate_from_Z(origin=pivot, length=l, angle=axis_theta, neg=neg[i])],
+                [ 1, 'TLE', 736, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=axis_theta, neg=neg[i])]
+            ])
 
         # Loop over the representations.
         for i in range(2):
@@ -1816,10 +1839,9 @@ class Frame_order(SystemTestCase):
     def test_pdb_model_rotor_z_axis(self):
         """Check the frame_order.pdb_model user function PDB file for the rotor model along the z-axis."""
 
-        # Lengths.
+        # Init.
+        pivot = array([1, 0, 0], float64)
         l = 30.0
-        l2 = l - 2.0
-        l3 = l + 2.0
 
         # Create a data pipe.
         self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
@@ -1829,7 +1851,8 @@ class Frame_order(SystemTestCase):
 
         # The axis alpha parameter, and printout.
         axis_alpha = pi / 2.0
-        print("Rotor axis:  %s" % create_rotor_axis_alpha(pi/2, array([1, 0, 0], float64), array([0, 0, 0], float64)))
+        print("\nRotor axis:  %s" % create_rotor_axis_alpha(pi/2, pivot, array([0, 0, 0], float64)))
+        print("Rotor apex (100*axis + [1, 0, 0]):\n    %s" % (100.0*axis + pivot))
 
         # Set the average domain position translation parameters.
         self.interpreter.value.set(param='ave_pos_x', val=0.0)
@@ -1842,7 +1865,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.value.set(param='cone_sigma_max', val=0.0)
 
         # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=[1, 0, 0], fix=True)
+        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=l)
@@ -1856,20 +1879,20 @@ class Frame_order(SystemTestCase):
 
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
         data = [
-            [ 1, 'PIV',    1, 'Piv',  [1.0, 0.0,  0.0]],
-            [ 1, 'RTX',    2, 'CTR',  [1.0, 0.0,  0.0]],
-            [ 2, 'RTX',    3, 'PRP',  [1.0, 0.0,  l]],
-            [ 3, 'RTX',    4, 'PRP',  [1.0, 0.0, -l]],
-            [ 4, 'RTB',    5, 'BLO',  [1.0, 0.0,  l]],
-            [ 5, 'RTB',  187, 'BLO',  [1.0, 0.0,  l2]],
-            [ 6, 'RTB',  369, 'BLO',  [1.0, 0.0,  l]],
-            [ 7, 'RTB',  551, 'BLO',  [1.0, 0.0,  l2]],
-            [ 8, 'RTB',  733, 'BLO',  [1.0, 0.0, -l]],
-            [ 9, 'RTB',  915, 'BLO',  [1.0, 0.0, -l2]],
-            [10, 'RTB', 1097, 'BLO',  [1.0, 0.0, -l]],
-            [11, 'RTB', 1279, 'BLO',  [1.0, 0.0, -l2]],
-            [12, 'RTL', 1461, 'z-ax', [1.0, 0.0,  l3]],
-            [12, 'RTL', 1462, 'z-ax', [1.0, 0.0, -l3]]
+            [ 1, 'PIV',    1, 'Piv',  pivot],
+            [ 1, 'RTX',    2, 'CTR',  pivot],
+            [ 2, 'RTX',    3, 'PRP',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0)],
+            [ 3, 'RTX',    4, 'PRP',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0, neg=True)],
+            [ 4, 'RTB',    5, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0)],
+            [ 5, 'RTB',  187, 'BLO',  self.rotate_from_Z(origin=pivot, length=l-2.0, angle=0.0)],
+            [ 6, 'RTB',  369, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0)],
+            [ 7, 'RTB',  551, 'BLO',  self.rotate_from_Z(origin=pivot, length=l-2.0, angle=0.0)],
+            [ 8, 'RTB',  733, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0, neg=True)],
+            [ 9, 'RTB',  915, 'BLO',  self.rotate_from_Z(origin=pivot, length=l-2.0, angle=0.0, neg=True)],
+            [10, 'RTB', 1097, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0, neg=True)],
+            [11, 'RTB', 1279, 'BLO',  self.rotate_from_Z(origin=pivot, length=l-2.0, angle=0.0, neg=True)],
+            [12, 'RTL', 1461, 'z-ax', self.rotate_from_Z(origin=pivot, length=l+2.0, angle=0.0)],
+            [12, 'RTL', 1462, 'z-ax', self.rotate_from_Z(origin=pivot, length=l+2.0, angle=0.0, neg=True)]
         ]
 
         # Check the atomic coordinates.
@@ -1897,6 +1920,10 @@ class Frame_order(SystemTestCase):
     def test_pdb_model_rotor_xz_plane_tilt(self):
         """Check the frame_order.pdb_model user function PDB file for the rotor model with a xz-plane tilt."""
 
+        # Init.
+        pivot = array([1, 0, 1], float64)
+        l = 100.0
+
         # Create a data pipe.
         self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
 
@@ -1905,9 +1932,9 @@ class Frame_order(SystemTestCase):
 
         # The axis alpha parameter, and printout.
         axis_alpha = pi / 2.0
-        axis =  create_rotor_axis_alpha(pi/2, array([1, 0, 1], float64), array([0, 0, 0], float64))
+        axis =  create_rotor_axis_alpha(pi/2, pivot, array([0, 0, 0], float64))
         print("\nRotor axis:\n    %s" % axis)
-        print("Rotor apex (100*axis + [1, 0, 1]):\n    %s" % (100.0*axis + [1.0, 0.0, 1.0]))
+        print("Rotor apex (100*axis + [1, 0, 1]):\n    %s" % (100.0*axis + pivot))
 
         # Set the average domain position translation parameters.
         self.interpreter.value.set(param='ave_pos_x', val=0.0)
@@ -1920,7 +1947,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.value.set(param='cone_sigma_max', val=0.0)
 
         # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=[1, 0, 1], fix=True)
+        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=100.0)
@@ -1933,25 +1960,21 @@ class Frame_order(SystemTestCase):
         self.interpreter.structure.read_pdb(file='frame_order.pdb', dir=ds.tmpdir)
 
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
-        l = 100.0
-        proj = sqrt(0.5*l**2)
-        proj2 = sqrt(0.5*(l-2.0)**2)
-        proj3 = sqrt(0.5*(l+2.0)**2)
         data = [
-            [ 1, 'PIV',    1, 'Piv',  [ 1.0,       0.0,  1.0]],
-            [ 1, 'RTX',    2, 'CTR',  [ 1.0,       0.0,  1.0]],
-            [ 2, 'RTX',    3, 'PRP',  [-proj+1.0,  0.0,  proj+1.0]],
-            [ 3, 'RTX',    4, 'PRP',  [ proj+1.0,  0.0, -proj+1.0]],
-            [ 4, 'RTB',    5, 'BLO',  [-proj+1.0,  0.0,  proj+1.0]],
-            [ 5, 'RTB',  187, 'BLO',  [-proj2+1.0, 0.0,  proj2+1.0]],
-            [ 6, 'RTB',  369, 'BLO',  [-proj+1.0,  0.0,  proj+1.0]],
-            [ 7, 'RTB',  551, 'BLO',  [-proj2+1.0, 0.0,  proj2+1.0]],
-            [ 8, 'RTB',  733, 'BLO',  [ proj+1.0,  0.0, -proj+1.0]],
-            [ 9, 'RTB',  915, 'BLO',  [ proj2+1.0, 0.0, -proj2+1.0]],
-            [10, 'RTB', 1097, 'BLO',  [ proj+1.0,  0.0, -proj+1.0]],
-            [11, 'RTB', 1279, 'BLO',  [ proj2+1.0, 0.0, -proj2+1.0]],
-            [12, 'RTL', 1461, 'z-ax', [-proj3+1.0, 0.0,  proj3+1.0]],
-            [12, 'RTL', 1462, 'z-ax', [ proj3+1.0, 0.0, -proj3+1.0]]
+            [ 1, 'PIV',    1, 'Piv',  pivot],
+            [ 1, 'RTX',    2, 'CTR',  pivot],
+            [ 2, 'RTX',    3, 'PRP',  self.rotate_from_Z(origin=pivot, length=l, angle=-pi/4.0)],
+            [ 3, 'RTX',    4, 'PRP',  self.rotate_from_Z(origin=pivot, length=l, angle=-pi/4.0, neg=True)],
+            [ 4, 'RTB',    5, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=-pi/4.0)],
+            [ 5, 'RTB',  187, 'BLO',  self.rotate_from_Z(origin=pivot, length=l-2.0, angle=-pi/4.0)],
+            [ 6, 'RTB',  369, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=-pi/4.0)],
+            [ 7, 'RTB',  551, 'BLO',  self.rotate_from_Z(origin=pivot, length=l-2.0, angle=-pi/4.0)],
+            [ 8, 'RTB',  733, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=-pi/4.0, neg=True)],
+            [ 9, 'RTB',  915, 'BLO',  self.rotate_from_Z(origin=pivot, length=l-2.0, angle=-pi/4.0, neg=True)],
+            [10, 'RTB', 1097, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=-pi/4.0, neg=True)],
+            [11, 'RTB', 1279, 'BLO',  self.rotate_from_Z(origin=pivot, length=l-2.0, angle=-pi/4.0, neg=True)],
+            [12, 'RTL', 1461, 'z-ax', self.rotate_from_Z(origin=pivot, length=l+2.0, angle=-pi/4.0)],
+            [12, 'RTL', 1462, 'z-ax', self.rotate_from_Z(origin=pivot, length=l+2.0, angle=-pi/4.0, neg=True)]
         ]
 
         # Check the atomic coordinates.
