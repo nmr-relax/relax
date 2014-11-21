@@ -142,46 +142,6 @@ class Frame_order(SystemTestCase):
             status.skipped_tests.append([methodName, 'Scipy', self._skip_type])
 
 
-    def rotate_from_Z(self, origin=origin, length=0.0, angle=0.0, axis=x_axis, neg=False):
-        """Rotate a vector along Z-axis around the origin.
-
-        @keyword origin:    The origin of the final vector.
-        @type origin:       numpy 3D, rank-1 array
-        @keyword length:    The length of the Z-vector to rotate.
-        @type length:       float
-        @keyword angle:     The angle in rad to rotate by.
-        @type angle:        float
-        @keyword axis:      The direction in the xy-plane to rotate the vector along.
-        @type axis:         numpy 3D, rank-1 array
-        @keyword neg:       A flag which if True causes the negative Z-axis to be used.
-        @type neg:          bool
-        @return:            The final rotated vector shifted by the origin.
-        @rtype:             numpy 3D, rank-1 array
-        """
-
-        # The final point.
-        point = zeros(3, float64)
-
-        # Z-axis reduction.
-        point[2] = cos(angle)
-
-        # The X and Y-axis increases.
-        point[0] = axis[0]*sin(angle)
-        point[1] = axis[1]*sin(angle)
-
-        # Inversion.
-        if neg:
-            for i in range(3):
-                point[i] = -point[i]
-
-        # Extend the length and add the origin.
-        for i in range(3):
-            point[i] = point[i]*length + origin[i]
-
-        # Return the point.
-        return point
-
-
     def setUp(self):
         """Set up for all the functional tests."""
 
@@ -275,6 +235,46 @@ class Frame_order(SystemTestCase):
 
         # Return the string.
         return string
+
+
+    def rotate_from_Z(self, origin=origin, length=0.0, angle=0.0, axis=x_axis, neg=False):
+        """Rotate a vector along Z-axis around the origin.
+
+        @keyword origin:    The origin of the final vector.
+        @type origin:       numpy 3D, rank-1 array
+        @keyword length:    The length of the Z-vector to rotate.
+        @type length:       float
+        @keyword angle:     The angle in rad to rotate by.
+        @type angle:        float
+        @keyword axis:      The direction in the xy-plane to rotate the vector along.
+        @type axis:         numpy 3D, rank-1 array
+        @keyword neg:       A flag which if True causes the negative Z-axis to be used.
+        @type neg:          bool
+        @return:            The final rotated vector shifted by the origin.
+        @rtype:             numpy 3D, rank-1 array
+        """
+
+        # The final point.
+        point = zeros(3, float64)
+
+        # Z-axis reduction.
+        point[2] = cos(angle)
+
+        # The X and Y-axis increases.
+        point[0] = axis[0]*sin(angle)
+        point[1] = axis[1]*sin(angle)
+
+        # Inversion.
+        if neg:
+            for i in range(3):
+                point[i] = -point[i]
+
+        # Extend the length and add the origin.
+        for i in range(3):
+            point[i] = point[i]*length + origin[i]
+
+        # Return the point.
+        return point
 
 
     def space_probe(self, ref_chi2=None, params=None, delta=3.0 / 360.0 * 2.0 * pi):
@@ -1566,43 +1566,6 @@ class Frame_order(SystemTestCase):
         self.assertEqual(cdp.sobol_points_used, 20)
 
 
-    def test_frame_order_pdb_model_failed_pivot(self):
-        """Test the operation of the frame_order.pdb_model user function when the pivot is outside of the PDB limits."""
-
-        # Create a data pipe.
-        self.interpreter.pipe.create('frame_order.pdb_model ensemble failure', 'frame order')
-
-        # Load one lactose structure.
-        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
-        self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=data_path, set_mol_name='lactose')
-
-        # Set the pivot point.
-        self.interpreter.frame_order.pivot([-995, 0, 0], fix=True)
-
-        # Select a frame order model.
-        self.interpreter.frame_order.select_model('rotor')
-
-        # Define the moving part.
-        self.interpreter.domain(id='lactose', spin_id=':UNK')
-
-        # Set up the system.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='axis_alpha', val=0.5)
-        self.interpreter.value.set(param='cone_sigma_max', val=0.1)
-
-        # Set up Monte Carlo data structures.
-        self.interpreter.monte_carlo.setup(10)
-        self.interpreter.monte_carlo.initial_values()
-
-        # Create the PDB model.
-        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir)
-
-
     def test_frame_order_pdb_model_ensemble(self):
         """Test the operation of the frame_order.pdb_model user function when an ensemble of structures are loaded."""
 
@@ -1642,6 +1605,43 @@ class Frame_order(SystemTestCase):
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir)
 
 
+    def test_frame_order_pdb_model_failed_pivot(self):
+        """Test the operation of the frame_order.pdb_model user function when the pivot is outside of the PDB limits."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('frame_order.pdb_model ensemble failure', 'frame order')
+
+        # Load one lactose structure.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+        self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=data_path, set_mol_name='lactose')
+
+        # Set the pivot point.
+        self.interpreter.frame_order.pivot([-995, 0, 0], fix=True)
+
+        # Select a frame order model.
+        self.interpreter.frame_order.select_model('rotor')
+
+        # Define the moving part.
+        self.interpreter.domain(id='lactose', spin_id=':UNK')
+
+        # Set up the system.
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='axis_alpha', val=0.5)
+        self.interpreter.value.set(param='cone_sigma_max', val=0.1)
+
+        # Set up Monte Carlo data structures.
+        self.interpreter.monte_carlo.setup(10)
+        self.interpreter.monte_carlo.initial_values()
+
+        # Create the PDB model.
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir)
+
+
     def test_generate_rotor2_distribution(self):
         """Generate the rotor2 distribution of CaM."""
 
@@ -1654,96 +1654,6 @@ class Frame_order(SystemTestCase):
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opendx_euler_angle_map.py')
-
-
-    def test_pdb_model_iso_cone_z_axis(self):
-        """Check the frame_order.pdb_model user function PDB file for the isotropic cone model along the z-axis."""
-
-        # Init.
-        pivot = array([1, 0, -2], float64)
-        l = 25.0
-        l_rotor = l + 5.0
-
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('iso cone')
-
-        # The axis parameters, and printout.
-        axis_theta = 0.0
-        axis_phi = 0.0
-        print("Rotor axis:  %s" % create_rotor_axis_spherical(axis_theta, axis_phi))
-
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='axis_theta', val=axis_theta)
-        self.interpreter.value.set(param='axis_phi', val=axis_phi)
-        self.interpreter.value.set(param='cone_theta', val=0.0)
-        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
-
-        # Create the PDB.
-        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=l)
-
-        # The files.
-        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
-
-        # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
-        neg = [False, True]
-        tle = ['a', 'b']
-        data = []
-        for i in range(2):
-            data.append([
-                [ 1, 'PIV',   1, 'Piv',  pivot],
-                [ 1, 'RTX',   2, 'CTR',  pivot],
-                [ 2, 'RTX',   3, 'PRP',  self.rotate_from_Z(origin=pivot, length=l_rotor, angle=axis_theta, neg=neg[i])],
-                [ 3, 'RTB',   4, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor, angle=axis_theta, neg=neg[i])],
-                [ 4, 'RTB', 186, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor-2.0, angle=axis_theta, neg=neg[i])],
-                [ 5, 'RTB', 368, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor, angle=axis_theta, neg=neg[i])],
-                [ 6, 'RTB', 550, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor-2.0, angle=axis_theta, neg=neg[i])],
-                [ 7, 'RTL', 732, 'z-ax', self.rotate_from_Z(origin=pivot, length=l_rotor+2.0, angle=axis_theta, neg=neg[i])],
-                [ 3, 'CNE', 733, 'APX',  pivot],
-                [ 3, 'CNE', 734, 'H2',   self.rotate_from_Z(origin=pivot, length=l, angle=axis_theta, neg=neg[i])],
-                [ 4, 'CON', 735, 'H3',   self.rotate_from_Z(origin=pivot, length=l, angle=axis_theta, neg=neg[i])],
-                [ 1, 'TLE', 736, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=axis_theta, neg=neg[i])]
-            ])
-
-        # Loop over the representations.
-        for i in range(2):
-            # Delete all structural data.
-            self.interpreter.structure.delete()
-
-            # Read the contents of the file.
-            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
-
-            # Check the atomic coordinates.
-            selection = cdp.structure.selection()
-            index = 0
-            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-                # Skip the propeller blades.
-                if atom_name == 'BLD':
-                    continue
-
-                # Checks.
-                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
-                self.assertEqual(data[i][index][0], res_num)
-                self.assertEqual(data[i][index][1], res_name)
-                self.assertEqual(data[i][index][2], atom_num)
-                self.assertEqual(data[i][index][3], atom_name)
-                self.assertEqual(data[i][index][4][0], pos[0][0])
-                self.assertEqual(data[i][index][4][1], pos[0][1])
-                self.assertEqual(data[i][index][4][2], pos[0][2])
-
-                # Increment the index.
-                index += 1
 
 
     def test_pdb_model_iso_cone_xz_plane_tilt(self):
@@ -1836,24 +1746,24 @@ class Frame_order(SystemTestCase):
                 index += 1
 
 
-    def test_pdb_model_rotor_z_axis(self):
-        """Check the frame_order.pdb_model user function PDB file for the rotor model along the z-axis."""
+    def test_pdb_model_iso_cone_z_axis(self):
+        """Check the frame_order.pdb_model user function PDB file for the isotropic cone model along the z-axis."""
 
         # Init.
-        pivot = array([1, 0, 0], float64)
-        l = 30.0
+        pivot = array([1, 0, -2], float64)
+        l = 25.0
+        l_rotor = l + 5.0
 
         # Create a data pipe.
         self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
 
         # Select the model.
-        self.interpreter.frame_order.select_model('rotor')
+        self.interpreter.frame_order.select_model('iso cone')
 
-        # The axis alpha parameter, and printout.
-        axis_alpha = pi / 2.0
-        axis = create_rotor_axis_alpha(pi/2, pivot, array([0, 0, 0], float64))
-        print("\nRotor axis:  %s" % axis)
-        print("Rotor apex (100*axis + [1, 0, 0]):\n    %s" % (l*axis + pivot))
+        # The axis parameters, and printout.
+        axis_theta = 0.0
+        axis_phi = 0.0
+        print("Rotor axis:  %s" % create_rotor_axis_spherical(axis_theta, axis_phi))
 
         # Set the average domain position translation parameters.
         self.interpreter.value.set(param='ave_pos_x', val=0.0)
@@ -1862,7 +1772,9 @@ class Frame_order(SystemTestCase):
         self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
         self.interpreter.value.set(param='ave_pos_beta', val=0.0)
         self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='axis_alpha', val=axis_alpha)
+        self.interpreter.value.set(param='axis_theta', val=axis_theta)
+        self.interpreter.value.set(param='axis_phi', val=axis_phi)
+        self.interpreter.value.set(param='cone_theta', val=0.0)
         self.interpreter.value.set(param='cone_sigma_max', val=0.0)
 
         # Set the pivot.
@@ -1871,51 +1783,57 @@ class Frame_order(SystemTestCase):
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=l)
 
-        # Create a data pipe for the new structure.
-        self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
-        self.interpreter.pipe.display()
-
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='frame_order.pdb', dir=ds.tmpdir)
+        # The files.
+        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
 
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
-        data = [
-            [ 1, 'PIV',    1, 'Piv',  pivot],
-            [ 1, 'RTX',    2, 'CTR',  pivot],
-            [ 2, 'RTX',    3, 'PRP',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0)],
-            [ 3, 'RTX',    4, 'PRP',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0, neg=True)],
-            [ 4, 'RTB',    5, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0)],
-            [ 5, 'RTB',  187, 'BLO',  self.rotate_from_Z(origin=pivot, length=l-2.0, angle=0.0)],
-            [ 6, 'RTB',  369, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0)],
-            [ 7, 'RTB',  551, 'BLO',  self.rotate_from_Z(origin=pivot, length=l-2.0, angle=0.0)],
-            [ 8, 'RTB',  733, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0, neg=True)],
-            [ 9, 'RTB',  915, 'BLO',  self.rotate_from_Z(origin=pivot, length=l-2.0, angle=0.0, neg=True)],
-            [10, 'RTB', 1097, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0, neg=True)],
-            [11, 'RTB', 1279, 'BLO',  self.rotate_from_Z(origin=pivot, length=l-2.0, angle=0.0, neg=True)],
-            [12, 'RTL', 1461, 'z-ax', self.rotate_from_Z(origin=pivot, length=l+2.0, angle=0.0)],
-            [12, 'RTL', 1462, 'z-ax', self.rotate_from_Z(origin=pivot, length=l+2.0, angle=0.0, neg=True)]
-        ]
+        neg = [False, True]
+        tle = ['a', 'b']
+        data = []
+        for i in range(2):
+            data.append([
+                [ 1, 'PIV',   1, 'Piv',  pivot],
+                [ 1, 'RTX',   2, 'CTR',  pivot],
+                [ 2, 'RTX',   3, 'PRP',  self.rotate_from_Z(origin=pivot, length=l_rotor, angle=axis_theta, neg=neg[i])],
+                [ 3, 'RTB',   4, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor, angle=axis_theta, neg=neg[i])],
+                [ 4, 'RTB', 186, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor-2.0, angle=axis_theta, neg=neg[i])],
+                [ 5, 'RTB', 368, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor, angle=axis_theta, neg=neg[i])],
+                [ 6, 'RTB', 550, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor-2.0, angle=axis_theta, neg=neg[i])],
+                [ 7, 'RTL', 732, 'z-ax', self.rotate_from_Z(origin=pivot, length=l_rotor+2.0, angle=axis_theta, neg=neg[i])],
+                [ 3, 'CNE', 733, 'APX',  pivot],
+                [ 3, 'CNE', 734, 'H2',   self.rotate_from_Z(origin=pivot, length=l, angle=axis_theta, neg=neg[i])],
+                [ 4, 'CON', 735, 'H3',   self.rotate_from_Z(origin=pivot, length=l, angle=axis_theta, neg=neg[i])],
+                [ 1, 'TLE', 736, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=axis_theta, neg=neg[i])]
+            ])
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        index = 0
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Skip the propeller blades.
-            if atom_name == 'BLD':
-                continue
+        # Loop over the representations.
+        for i in range(2):
+            # Delete all structural data.
+            self.interpreter.structure.delete()
 
-            # Checks.
-            print("Checking residue %s %s, atom %s %s, at position %s." % (data[index][0], data[index][1], data[index][2], data[index][3], data[index][4]))
-            self.assertEqual(data[index][0], res_num)
-            self.assertEqual(data[index][1], res_name)
-            self.assertEqual(data[index][2], atom_num)
-            self.assertEqual(data[index][3], atom_name)
-            self.assertEqual(data[index][4][0], pos[0][0])
-            self.assertEqual(data[index][4][1], pos[0][1])
-            self.assertEqual(data[index][4][2], pos[0][2])
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
 
-            # Increment the index.
-            index += 1
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            index = 0
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Skip the propeller blades.
+                if atom_name == 'BLD':
+                    continue
+
+                # Checks.
+                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
+                self.assertEqual(data[i][index][0], res_num)
+                self.assertEqual(data[i][index][1], res_name)
+                self.assertEqual(data[i][index][2], atom_num)
+                self.assertEqual(data[i][index][3], atom_name)
+                self.assertEqual(data[i][index][4][0], pos[0][0])
+                self.assertEqual(data[i][index][4][1], pos[0][1])
+                self.assertEqual(data[i][index][4][2], pos[0][2])
+
+                # Increment the index.
+                index += 1
 
 
     def test_pdb_model_rotor_xz_plane_tilt(self):
@@ -1995,6 +1913,88 @@ class Frame_order(SystemTestCase):
             self.assertAlmostEqual(data[index][4][0], pos[0][0], 3)
             self.assertAlmostEqual(data[index][4][1], pos[0][1], 3)
             self.assertAlmostEqual(data[index][4][2], pos[0][2], 3)
+
+            # Increment the index.
+            index += 1
+
+
+    def test_pdb_model_rotor_z_axis(self):
+        """Check the frame_order.pdb_model user function PDB file for the rotor model along the z-axis."""
+
+        # Init.
+        pivot = array([1, 0, 0], float64)
+        l = 30.0
+
+        # Create a data pipe.
+        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
+
+        # Select the model.
+        self.interpreter.frame_order.select_model('rotor')
+
+        # The axis alpha parameter, and printout.
+        axis_alpha = pi / 2.0
+        axis = create_rotor_axis_alpha(pi/2, pivot, array([0, 0, 0], float64))
+        print("\nRotor axis:  %s" % axis)
+        print("Rotor apex (100*axis + [1, 0, 0]):\n    %s" % (l*axis + pivot))
+
+        # Set the average domain position translation parameters.
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='axis_alpha', val=axis_alpha)
+        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
+
+        # Set the pivot.
+        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+
+        # Create the PDB.
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=l)
+
+        # Create a data pipe for the new structure.
+        self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
+        self.interpreter.pipe.display()
+
+        # Read the contents of the file.
+        self.interpreter.structure.read_pdb(file='frame_order.pdb', dir=ds.tmpdir)
+
+        # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
+        data = [
+            [ 1, 'PIV',    1, 'Piv',  pivot],
+            [ 1, 'RTX',    2, 'CTR',  pivot],
+            [ 2, 'RTX',    3, 'PRP',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0)],
+            [ 3, 'RTX',    4, 'PRP',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0, neg=True)],
+            [ 4, 'RTB',    5, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0)],
+            [ 5, 'RTB',  187, 'BLO',  self.rotate_from_Z(origin=pivot, length=l-2.0, angle=0.0)],
+            [ 6, 'RTB',  369, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0)],
+            [ 7, 'RTB',  551, 'BLO',  self.rotate_from_Z(origin=pivot, length=l-2.0, angle=0.0)],
+            [ 8, 'RTB',  733, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0, neg=True)],
+            [ 9, 'RTB',  915, 'BLO',  self.rotate_from_Z(origin=pivot, length=l-2.0, angle=0.0, neg=True)],
+            [10, 'RTB', 1097, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0, neg=True)],
+            [11, 'RTB', 1279, 'BLO',  self.rotate_from_Z(origin=pivot, length=l-2.0, angle=0.0, neg=True)],
+            [12, 'RTL', 1461, 'z-ax', self.rotate_from_Z(origin=pivot, length=l+2.0, angle=0.0)],
+            [12, 'RTL', 1462, 'z-ax', self.rotate_from_Z(origin=pivot, length=l+2.0, angle=0.0, neg=True)]
+        ]
+
+        # Check the atomic coordinates.
+        selection = cdp.structure.selection()
+        index = 0
+        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+            # Skip the propeller blades.
+            if atom_name == 'BLD':
+                continue
+
+            # Checks.
+            print("Checking residue %s %s, atom %s %s, at position %s." % (data[index][0], data[index][1], data[index][2], data[index][3], data[index][4]))
+            self.assertEqual(data[index][0], res_num)
+            self.assertEqual(data[index][1], res_name)
+            self.assertEqual(data[index][2], atom_num)
+            self.assertEqual(data[index][3], atom_name)
+            self.assertEqual(data[index][4][0], pos[0][0])
+            self.assertEqual(data[index][4][1], pos[0][1])
+            self.assertEqual(data[index][4][2], pos[0][2])
 
             # Increment the index.
             index += 1
@@ -2083,32 +2083,6 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.chi2, 0.01137748706675365, 5)
 
 
-    def test_rigid_data_to_rigid_model(self):
-        """Test the rigid target function for the data from a rigid test molecule."""
-
-        # Set the model.
-        ds.model = MODEL_RIGID
-
-        # Execute the script.
-        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
-
-        # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 0.0113763520134, 5)
-
-
-    def test_rigid_data_to_rotor_model(self):
-        """Test the rotor target function for the data from a rigid test molecule."""
-
-        # Set the model.
-        ds.model = MODEL_ROTOR
-
-        # Execute the script.
-        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
-
-        # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 0.011377487066752203, 5)
-
-
     def test_rigid_data_to_pseudo_ellipse_model(self):
         """Test the pseudo-ellipse target function for the data from a rigid test molecule."""
 
@@ -2133,6 +2107,32 @@ class Frame_order(SystemTestCase):
 
         # Check the chi2 value.
         self.assertAlmostEqual(cdp.chi2, 0.011377491600681364)
+
+
+    def test_rigid_data_to_rigid_model(self):
+        """Test the rigid target function for the data from a rigid test molecule."""
+
+        # Set the model.
+        ds.model = MODEL_RIGID
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 0.0113763520134, 5)
+
+
+    def test_rigid_data_to_rotor_model(self):
+        """Test the rotor target function for the data from a rigid test molecule."""
+
+        # Set the model.
+        ds.model = MODEL_ROTOR
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 0.011377487066752203, 5)
 
 
     def test_sobol_setup(self):
