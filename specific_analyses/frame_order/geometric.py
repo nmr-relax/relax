@@ -211,7 +211,7 @@ def add_cones(structure=None, representation=None, size=None, inc=None, sims=Fal
             cone_obj = Iso_cone(cone_theta)
 
         # Create the cone.
-        cone(mol=mol, cone_obj=cone_obj, start_res=1, apex=pivot, R=R, inc=inc, distribution='regular', axis_flag=False)
+        cone(mol=mol, cone_obj=cone_obj, start_res=1, apex=pivot, R=R, inc=inc, scale=size, distribution='regular', axis_flag=False)
 
 
 def add_pivots(structure=None, sims=False):
