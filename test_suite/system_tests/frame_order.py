@@ -32,7 +32,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from lib.frame_order.conversions import create_rotor_axis_alpha, create_rotor_axis_spherical
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
-from lib.geometry.rotations import euler_to_R_zyz, R_to_euler_zyz
+from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz, R_to_euler_zyz
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
@@ -1679,7 +1679,15 @@ class Frame_order(SystemTestCase):
         # The axis parameters, and printout.
         axis_theta = -pi/4.0
         axis_phi = 0.0
-        print("Rotor axis:  %s" % create_rotor_axis_spherical(axis_theta, axis_phi))
+        axis = create_rotor_axis_spherical(axis_theta, axis_phi)
+        print("Rotor axis:  %s" % axis)
+
+        # Rotation matrix.
+        R = zeros((3, 3), float64)
+        axis_angle_to_R([0, 1, 0], axis_theta, R)
+
+        # Cone parameters.
+        theta = 2.0
 
         # Set the average domain position translation parameters.
         self.interpreter.value.set(param='ave_pos_x', val=0.0)
@@ -1690,17 +1698,28 @@ class Frame_order(SystemTestCase):
         self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
         self.interpreter.value.set(param='axis_theta', val=axis_theta)
         self.interpreter.value.set(param='axis_phi', val=axis_phi)
-        self.interpreter.value.set(param='cone_theta', val=0.0)
+        self.interpreter.value.set(param='cone_theta', val=theta)
         self.interpreter.value.set(param='cone_sigma_max', val=0.0)
 
         # Set the pivot.
         self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
 
         # Create the PDB.
-        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=l)
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
 
         # The files.
         files = ['frame_order_A.pdb', 'frame_order_B.pdb']
+
+        # The xy-plane vectors.
+        inc = 2.0 * pi / 10.0
+        vectors = zeros((10, 3), float64)
+        for i in range(10):
+            # The angle phi.
+            phi = inc * i
+
+            # The xy-plane, starting along the x-axis.
+            vectors[i, 0] = cos(phi)
+            vectors[i, 1] = sin(phi)
 
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
         neg = [False, True]
@@ -1708,7 +1727,10 @@ class Frame_order(SystemTestCase):
         data = []
         for i in range(2):
             data.append([
+                # The pivot.
                 [ 1, 'PIV',   1, 'Piv',  pivot],
+
+                # The rotor.
                 [ 1, 'RTX',   2, 'CTR',  pivot],
                 [ 2, 'RTX',   3, 'PRP',  self.rotate_from_Z(origin=pivot, length=l_rotor, angle=axis_theta, neg=neg[i])],
                 [ 3, 'RTB',   4, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor, angle=axis_theta, neg=neg[i])],
@@ -1716,10 +1738,22 @@ class Frame_order(SystemTestCase):
                 [ 5, 'RTB', 368, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor, angle=axis_theta, neg=neg[i])],
                 [ 6, 'RTB', 550, 'BLO',  self.rotate_from_Z(origin=pivot, length=l_rotor-2.0, angle=axis_theta, neg=neg[i])],
                 [ 7, 'RTL', 732, 'z-ax', self.rotate_from_Z(origin=pivot, length=l_rotor+2.0, angle=axis_theta, neg=neg[i])],
+
+                # The cone edge.
                 [ 3, 'CNE', 733, 'APX',  pivot],
-                [ 3, 'CNE', 734, 'H2',   self.rotate_from_Z(origin=pivot, length=l, angle=axis_theta, neg=neg[i])],
-                [ 4, 'CON', 735, 'H3',   self.rotate_from_Z(origin=pivot, length=l, angle=axis_theta, neg=neg[i])],
-                [ 1, 'TLE', 736, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=axis_theta, neg=neg[i])]
+                [ 3, 'CNE', 734, 'H2',   self.rotate_from_Z(origin=pivot, length=l, angle=theta, axis=vectors[0], R=R, neg=neg[i])],
+                [ 3, 'CNE', 735, 'H3',   self.rotate_from_Z(origin=pivot, length=l, angle=theta, axis=vectors[1], R=R, neg=neg[i])],
+                [ 3, 'CNE', 736, 'H4',   self.rotate_from_Z(origin=pivot, length=l, angle=theta, axis=vectors[2], R=R, neg=neg[i])],
+                [ 3, 'CNE', 737, 'H5',   self.rotate_from_Z(origin=pivot, length=l, angle=theta, axis=vectors[3], R=R, neg=neg[i])],
+                [ 3, 'CNE', 738, 'H6',   self.rotate_from_Z(origin=pivot, length=l, angle=theta, axis=vectors[4], R=R, neg=neg[i])],
+                [ 3, 'CNE', 739, 'H7',   self.rotate_from_Z(origin=pivot, length=l, angle=theta, axis=vectors[5], R=R, neg=neg[i])],
+                [ 3, 'CNE', 740, 'H8',   self.rotate_from_Z(origin=pivot, length=l, angle=theta, axis=vectors[6], R=R, neg=neg[i])],
+                [ 3, 'CNE', 741, 'H9',   self.rotate_from_Z(origin=pivot, length=l, angle=theta, axis=vectors[7], R=R, neg=neg[i])],
+                [ 3, 'CNE', 742, 'H10',  self.rotate_from_Z(origin=pivot, length=l, angle=theta, axis=vectors[8], R=R, neg=neg[i])],
+                [ 3, 'CNE', 743, 'H11',  self.rotate_from_Z(origin=pivot, length=l, angle=theta, axis=vectors[9], R=R, neg=neg[i])],
+
+                # Titles.
+                [ 1, 'TLE', 804, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=axis_theta, neg=neg[i])]
             ])
 
         # Loop over the representations.
@@ -1738,8 +1772,13 @@ class Frame_order(SystemTestCase):
                 if atom_name == 'BLD':
                     continue
 
+                # Skip the cone interior (checking the edge will be sufficient).
+                if res_name == 'CON':
+                    continue
+
                 # Checks.
                 print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
+                print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
                 self.assertEqual(data[i][index][0], res_num)
                 self.assertEqual(data[i][index][1], res_name)
                 self.assertEqual(data[i][index][2], atom_num)
