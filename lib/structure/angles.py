@@ -40,9 +40,9 @@ def angles_regular(inc=None):
         u[i] = float(i) * val
 
     # Generate the increment values of v.
-    v = zeros(inc/2+1, float64)
-    val = 1.0 / float(inc/2)
-    for i in range(int(inc/2+1)):
+    v = zeros(int(inc/2.0+1.0), float64)
+    val = 1.0 / float(inc/2.0)
+    for i in range(int(inc/2.0+1.0)):
         v[i] = float(i) * val
 
     # Generate the distribution of spherical angles theta.
@@ -73,9 +73,9 @@ def angles_uniform(inc=None):
         u[i] = float(i) * val
 
     # Generate the increment values of v.
-    v = zeros(inc/2+2, float64)
-    val = 1.0 / float(inc/2)
-    for i in range(1, int(inc/2)+1):
+    v = zeros(int(inc/2.0+2.0), float64)
+    val = 1.0 / float(inc/2.0)
+    for i in range(1, int(inc/2.0)+1):
         v[i] = float(i-1) * val + val/2.0
     v[-1] = 1.0
 

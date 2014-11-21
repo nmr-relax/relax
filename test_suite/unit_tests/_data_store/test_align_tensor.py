@@ -140,7 +140,7 @@ class Test_align_tensor(TestCase):
         print("DATA IRREDUCIBLE GENERAL_MAGNITUDE   1.0816e-03")
         print("")
         print("Calculated values:\n")
-        print("A0:    %15.4e" % self.align_data.A0.real)
+        print("A0:    %15.4e" % self.align_data.A0)
         print("A1:    %15.4e %11.4ei" % (self.align_data.A1.real, self.align_data.A1.imag))
         print("Am1:   %15.4e %11.4ei" % (self.align_data.Am1.real, self.align_data.Am1.imag))
         print("A2:    %15.4e %11.4ei" % (self.align_data.A2.real, self.align_data.A2.imag))
