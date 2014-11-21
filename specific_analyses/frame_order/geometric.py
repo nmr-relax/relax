@@ -717,7 +717,7 @@ def create_geometric_rep(format='PDB', file=None, dir=None, compress_type=0, siz
             add_cones(structure=structures[i], representation=representation[i], size=size, inc=inc, sims=sims[i])
 
         # Add atoms for creating titles.
-        add_titles(structure=structures[i], representation=representation[i], sims=sims[i])
+        add_titles(structure=structures[i], representation=representation[i], displacement=size+10, sims=sims[i])
 
         # Create the PDB file.
         if format == 'PDB':
