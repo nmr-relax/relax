@@ -1610,6 +1610,107 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opendx_euler_angle_map.py')
 
 
+    def test_pdb_model_iso_cone(self):
+        """Check the PDB file from frame_order.pdb_model for the isotropic cone model."""
+
+        # Lengths.
+        l = 25.0
+        l_rotor = l + 5.0
+        l_in = l_rotor - 2.0
+        l_out = l_rotor + 2.0
+        label = l + 10.0
+
+        # Create a data pipe.
+        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
+
+        # Select the model.
+        self.interpreter.frame_order.select_model('iso cone')
+
+        # The axis parameters, and printout.
+        axis_theta = 0.0
+        axis_phi = 0.0
+        print("Rotor axis:  %s" % create_rotor_axis_alpha(pi/2, array([1, 0, 0], float64), array([0, 0, 0], float64)))
+
+        # Set the average domain position translation parameters.
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='axis_theta', val=axis_theta)
+        self.interpreter.value.set(param='axis_phi', val=axis_phi)
+        self.interpreter.value.set(param='cone_theta', val=0.0)
+        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
+
+        # Set the pivot.
+        self.interpreter.frame_order.pivot(pivot=[1, 0, 0], fix=True)
+
+        # Create the PDB.
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=l)
+
+        # The files.
+        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
+
+        # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
+        data = [[
+            [ 1, 'PIV',   1, 'Piv',  [1.0, 0.0,  0.0]],
+            [ 1, 'RTX',   2, 'CTR',  [1.0, 0.0,  0.0]],
+            [ 2, 'RTX',   3, 'PRP',  [1.0, 0.0,  l_rotor]],
+            [ 3, 'RTB',   4, 'BLO',  [1.0, 0.0,  l_rotor]],
+            [ 4, 'RTB', 186, 'BLO',  [1.0, 0.0,  l_in]],
+            [ 5, 'RTB', 368, 'BLO',  [1.0, 0.0,  l_rotor]],
+            [ 6, 'RTB', 550, 'BLO',  [1.0, 0.0,  l_in]],
+            [ 7, 'RTL', 732, 'z-ax', [1.0, 0.0,  l_out]],
+            [ 3, 'CNE', 733, 'APX',  [1.0, 0.0,  0.0]],
+            [ 3, 'CNE', 734, 'H2',   [1.0, 0.0,  l]],
+            [ 4, 'CON', 735, 'H3',   [1.0, 0.0,  l]],
+            [ 1, 'TLE', 736, 'a',    [1.0, 0.0,  label]],
+        ], [
+            [ 1, 'PIV',   1, 'Piv',  [1.0, 0.0,  0.0]],
+            [ 1, 'RTX',   2, 'CTR',  [1.0, 0.0,  0.0]],
+            [ 2, 'RTX',   3, 'PRP',  [1.0, 0.0, -l_rotor]],
+            [ 3, 'RTB',   4, 'BLO',  [1.0, 0.0, -l_rotor]],
+            [ 4, 'RTB', 186, 'BLO',  [1.0, 0.0, -l_in]],
+            [ 5, 'RTB', 368, 'BLO',  [1.0, 0.0, -l_rotor]],
+            [ 6, 'RTB', 550, 'BLO',  [1.0, 0.0, -l_in]],
+            [ 7, 'RTL', 732, 'z-ax', [1.0, 0.0, -l_out]],
+            [ 3, 'CNE', 733, 'APX',  [1.0, 0.0,  0.0]],
+            [ 3, 'CNE', 734, 'H2',   [1.0, 0.0, -l]],
+            [ 4, 'CON', 735, 'H3',   [1.0, 0.0, -l]],
+            [ 1, 'TLE', 736, 'a',    [1.0, 0.0, -label]],
+        ]]
+
+        # Loop over the representations.
+        for i in range(2):
+            # Delete all structural data.
+            self.interpreter.structure.delete()
+
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
+
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            index = 0
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Skip the propeller blades.
+                if atom_name == 'BLD':
+                    continue
+
+                # Checks.
+                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
+                self.assertEqual(data[i][index][0], res_num)
+                self.assertEqual(data[i][index][1], res_name)
+                self.assertEqual(data[i][index][2], atom_num)
+                self.assertEqual(data[i][index][3], atom_name)
+                self.assertEqual(data[i][index][4][0], pos[0][0])
+                self.assertEqual(data[i][index][4][1], pos[0][1])
+                self.assertEqual(data[i][index][4][2], pos[0][2])
+
+                # Increment the index.
+                index += 1
+
+
     def test_pdb_model_rotor(self):
         """Check the PDB file created by the frame_order.pdb_model user function for the rotor model."""
 
