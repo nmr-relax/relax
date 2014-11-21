@@ -1613,6 +1613,11 @@ class Frame_order(SystemTestCase):
     def test_pdb_model_rotor(self):
         """Check the PDB file created by the frame_order.pdb_model user function for the rotor model."""
 
+        # Lengths.
+        l = 30.0
+        l2 = l - 2.0
+        l3 = l + 2.0
+
         # Create a data pipe.
         self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
 
@@ -1637,7 +1642,7 @@ class Frame_order(SystemTestCase):
         self.interpreter.frame_order.pivot(pivot=[1, 0, 0], fix=True)
 
         # Create the PDB.
-        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1)
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=l)
 
         # Create a data pipe for the new structure.
         self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
@@ -1648,20 +1653,20 @@ class Frame_order(SystemTestCase):
 
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
         data = [
-            [ 1, 'PIV',    1, 'Piv',  [1.0, 0.0,   0.0]],
-            [ 1, 'RTX',    2, 'CTR',  [1.0, 0.0,   0.0]],
-            [ 2, 'RTX',    3, 'PRP',  [1.0, 0.0,  30.0]],
-            [ 3, 'RTX',    4, 'PRP',  [1.0, 0.0, -30.0]],
-            [ 4, 'RTB',    5, 'BLO',  [1.0, 0.0,  30.0]],
-            [ 5, 'RTB',  187, 'BLO',  [1.0, 0.0,  28.0]],
-            [ 6, 'RTB',  369, 'BLO',  [1.0, 0.0,  30.0]],
-            [ 7, 'RTB',  551, 'BLO',  [1.0, 0.0,  28.0]],
-            [ 8, 'RTB',  733, 'BLO',  [1.0, 0.0, -30.0]],
-            [ 9, 'RTB',  915, 'BLO',  [1.0, 0.0, -28.0]],
-            [10, 'RTB', 1097, 'BLO',  [1.0, 0.0, -30.0]],
-            [11, 'RTB', 1279, 'BLO',  [1.0, 0.0, -28.0]],
-            [12, 'RTL', 1461, 'z-ax', [1.0, 0.0,  32.0]],
-            [12, 'RTL', 1462, 'z-ax', [1.0, 0.0, -32.0]]
+            [ 1, 'PIV',    1, 'Piv',  [1.0, 0.0,  0.0]],
+            [ 1, 'RTX',    2, 'CTR',  [1.0, 0.0,  0.0]],
+            [ 2, 'RTX',    3, 'PRP',  [1.0, 0.0,  l]],
+            [ 3, 'RTX',    4, 'PRP',  [1.0, 0.0, -l]],
+            [ 4, 'RTB',    5, 'BLO',  [1.0, 0.0,  l]],
+            [ 5, 'RTB',  187, 'BLO',  [1.0, 0.0,  l2]],
+            [ 6, 'RTB',  369, 'BLO',  [1.0, 0.0,  l]],
+            [ 7, 'RTB',  551, 'BLO',  [1.0, 0.0,  l2]],
+            [ 8, 'RTB',  733, 'BLO',  [1.0, 0.0, -l]],
+            [ 9, 'RTB',  915, 'BLO',  [1.0, 0.0, -l2]],
+            [10, 'RTB', 1097, 'BLO',  [1.0, 0.0, -l]],
+            [11, 'RTB', 1279, 'BLO',  [1.0, 0.0, -l2]],
+            [12, 'RTL', 1461, 'z-ax', [1.0, 0.0,  l3]],
+            [12, 'RTL', 1462, 'z-ax', [1.0, 0.0, -l3]]
         ]
 
         # Check the atomic coordinates.
