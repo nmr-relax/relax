@@ -155,8 +155,8 @@ class Frame_order(SystemTestCase):
     def tearDown(self):
         """Clean up after the tests."""
 
-        # Reset the relax data store.
-        self.interpreter.reset()
+        # Call the base class tearDown() method to remove the temporary directory.
+        super(Frame_order, self).tearDown()
 
         # Remove flags from the status object.
         if hasattr(status, 'flag_rdc'):
