@@ -1851,8 +1851,9 @@ class Frame_order(SystemTestCase):
 
         # The axis alpha parameter, and printout.
         axis_alpha = pi / 2.0
-        print("\nRotor axis:  %s" % create_rotor_axis_alpha(pi/2, pivot, array([0, 0, 0], float64)))
-        print("Rotor apex (100*axis + [1, 0, 0]):\n    %s" % (100.0*axis + pivot))
+        axis = create_rotor_axis_alpha(pi/2, pivot, array([0, 0, 0], float64))
+        print("\nRotor axis:  %s" % axis)
+        print("Rotor apex (100*axis + [1, 0, 0]):\n    %s" % (l*axis + pivot))
 
         # Set the average domain position translation parameters.
         self.interpreter.value.set(param='ave_pos_x', val=0.0)
@@ -1934,7 +1935,7 @@ class Frame_order(SystemTestCase):
         axis_alpha = pi / 2.0
         axis =  create_rotor_axis_alpha(pi/2, pivot, array([0, 0, 0], float64))
         print("\nRotor axis:\n    %s" % axis)
-        print("Rotor apex (100*axis + [1, 0, 1]):\n    %s" % (100.0*axis + pivot))
+        print("Rotor apex (100*axis + [1, 0, 1]):\n    %s" % (l*axis + pivot))
 
         # Set the average domain position translation parameters.
         self.interpreter.value.set(param='ave_pos_x', val=0.0)
