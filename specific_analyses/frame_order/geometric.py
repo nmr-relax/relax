@@ -25,7 +25,8 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import array, dot, eye, float64, zeros
+from numpy import array, cross, dot, eye, float64, zeros
+from numpy.linalg import norm
 import sys
 from warnings import warn
 
@@ -33,7 +34,7 @@ from warnings import warn
 from lib.errors import RelaxFault
 from lib.frame_order.conversions import create_rotor_axis_alpha, create_rotor_axis_euler, create_rotor_axis_spherical
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_DOUBLE, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_ROTOR
-from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
+from lib.geometry.rotations import euler_to_R_zyz
 from lib.io import open_write_file
 from lib.order import order_parameters
 from lib.structure.cones import Iso_cone, Pseudo_elliptic
@@ -723,6 +724,30 @@ def create_geometric_rep(format='PDB', file=None, dir=None, compress_type=0, siz
             pdb_file.close()
 
 
+def frame_from_axis(axis, frame):
+    """Build a full 3D frame from the single axis.
+
+    @param axis:    The Z-axis of the system.
+    @type axis:     numpy rank-1, 3D array
+    @param frame:   The empty frame to populate.
+    @type frame:    numpy rank-2, 3D array
+    """
+
+    # Store the Z-axis.
+    frame[:, 2] = axis
+
+    # The temporary eigenframe X-axis.
+    frame[0, 0] = 1.0
+
+    # The Y-axis (orthonormal to Z and X).
+    frame[:, 1] = cross(frame[:, 2], frame[:, 0])
+    frame[:, 1] /= norm(frame[:, 1])
+
+    # The orthonormal X-axis.
+    frame[:, 0] = cross(frame[:, 1], frame[:, 2])
+    frame[:, 0] /= norm(frame[:, 0])
+
+
 def generate_axis_system(sim_index=None):
     """Generate and return the full 3D axis system for the current frame order model.
 
@@ -751,7 +776,7 @@ def generate_axis_system(sim_index=None):
             axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha_sim[sim_index], pivot=pivot, point=com)
 
         # Create a full normalised axis system.
-        two_vect_to_R(array([1, 0, 0], float64), axis, frame)
+        frame_from_axis(axis, frame)
 
     # The system for the isotropic cones.
     elif cdp.model in MODEL_LIST_ISO_CONE:
@@ -762,7 +787,7 @@ def generate_axis_system(sim_index=None):
             axis = create_rotor_axis_spherical(theta=cdp.axis_theta_sim[sim_index], phi=cdp.axis_phi_sim[sim_index])
 
         # Create a full normalised axis system.
-        two_vect_to_R(array([1, 0, 0], float64), axis, frame)
+        frame_from_axis(axis, frame)
 
     # The system for the pseudo-ellipses and double rotor.
     elif cdp.model in MODEL_LIST_PSEUDO_ELLIPSE + MODEL_LIST_DOUBLE:
