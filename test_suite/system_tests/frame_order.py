@@ -1678,7 +1678,7 @@ class Frame_order(SystemTestCase):
             [ 3, 'CNE', 733, 'APX',  [1.0, 0.0,  0.0]],
             [ 3, 'CNE', 734, 'H2',   [1.0, 0.0, -l]],
             [ 4, 'CON', 735, 'H3',   [1.0, 0.0, -l]],
-            [ 1, 'TLE', 736, 'a',    [1.0, 0.0, -label]],
+            [ 1, 'TLE', 736, 'b',    [1.0, 0.0, -label]],
         ]]
 
         # Loop over the representations.
