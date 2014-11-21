@@ -30,7 +30,7 @@ from tempfile import mkdtemp
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
-from lib.frame_order.conversions import create_rotor_axis_alpha
+from lib.frame_order.conversions import create_rotor_axis_alpha, create_rotor_axis_spherical
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from lib.geometry.rotations import R_to_euler_zyz
 from status import Status; status = Status()
@@ -1629,7 +1629,7 @@ class Frame_order(SystemTestCase):
         # The axis parameters, and printout.
         axis_theta = 0.0
         axis_phi = 0.0
-        print("Rotor axis:  %s" % create_rotor_axis_alpha(pi/2, array([1, 0, 0], float64), array([0, 0, 0], float64)))
+        print("Rotor axis:  %s" % create_rotor_axis_spherical(axis_theta, axis_phi))
 
         # Set the average domain position translation parameters.
         self.interpreter.value.set(param='ave_pos_x', val=0.0)
