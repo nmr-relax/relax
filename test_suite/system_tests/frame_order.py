@@ -1734,10 +1734,10 @@ class Frame_order(SystemTestCase):
 
                 # Checks.
                 print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
-                self.assertAlmostEqual(data[i][index][0], res_num, 3)
-                self.assertAlmostEqual(data[i][index][1], res_name, 3)
-                self.assertAlmostEqual(data[i][index][2], atom_num, 3)
-                self.assertAlmostEqual(data[i][index][3], atom_name, 3)
+                self.assertEqual(data[i][index][0], res_num)
+                self.assertEqual(data[i][index][1], res_name)
+                self.assertEqual(data[i][index][2], atom_num)
+                self.assertEqual(data[i][index][3], atom_name)
                 self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
                 self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
                 self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
@@ -1828,9 +1828,9 @@ class Frame_order(SystemTestCase):
                 self.assertEqual(data[i][index][1], res_name)
                 self.assertEqual(data[i][index][2], atom_num)
                 self.assertEqual(data[i][index][3], atom_name)
-                self.assertEqual(data[i][index][4][0], pos[0][0])
-                self.assertEqual(data[i][index][4][1], pos[0][1])
-                self.assertEqual(data[i][index][4][2], pos[0][2])
+                self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
+                self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
+                self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
 
                 # Increment the index.
                 index += 1
@@ -2049,10 +2049,10 @@ class Frame_order(SystemTestCase):
 
             # Checks (to the 3 places accuracy of a PDB file).
             print("Checking residue %s %s, atom %s %s, at position %s." % (data[index][0], data[index][1], data[index][2], data[index][3], data[index][4]))
-            self.assertAlmostEqual(data[index][0], res_num, 3)
-            self.assertAlmostEqual(data[index][1], res_name, 3)
-            self.assertAlmostEqual(data[index][2], atom_num, 3)
-            self.assertAlmostEqual(data[index][3], atom_name, 3)
+            self.assertEqual(data[index][0], res_num)
+            self.assertEqual(data[index][1], res_name)
+            self.assertEqual(data[index][2], atom_num)
+            self.assertEqual(data[index][3], atom_name)
             self.assertAlmostEqual(data[index][4][0], pos[0][0], 3)
             self.assertAlmostEqual(data[index][4][1], pos[0][1], 3)
             self.assertAlmostEqual(data[index][4][2], pos[0][2], 3)
@@ -2135,9 +2135,9 @@ class Frame_order(SystemTestCase):
             self.assertEqual(data[index][1], res_name)
             self.assertEqual(data[index][2], atom_num)
             self.assertEqual(data[index][3], atom_name)
-            self.assertEqual(data[index][4][0], pos[0][0])
-            self.assertEqual(data[index][4][1], pos[0][1])
-            self.assertEqual(data[index][4][2], pos[0][2])
+            self.assertAlmostEqual(data[index][4][0], pos[0][0], 3)
+            self.assertAlmostEqual(data[index][4][1], pos[0][1], 3)
+            self.assertAlmostEqual(data[index][4][2], pos[0][2], 3)
 
             # Increment the index.
             index += 1
