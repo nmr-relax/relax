@@ -1,3 +1,80 @@
+Version 3.3.3
+(24 November 2014, from /trunk)
+http://svn.gna.org/svn/relax/tags/3.3.3
+
+    Features:
+        * Implemented the lib.geometry.vectors.vector_angle_atan2() relax library function.  This is for calculating the inter-vector angle using the more numerically stable atan2() formula.
+        * Implemented the lib.geometry.vectors.vector_angle_acos() relax library function.  This is used to calculate the inter-vector angle using the arccos of the dot product formula.  The function has been introduced into the relax library as the calculation is repeated throughout relax.
+        * Expanded the basis sets for the align_tensor.matrix_angles user function to allow the correct inter-tensor angles to be calculated.  This includes the standard inter-matrix angles via the arccos of the Euclidean inner product of the alignment matrices in rank-2, 3D form divided by the Frobenius norm of the matrices, irreducible spherical tensor 5D basis set {A-2, A-1, A0, A1, A2}, and the unitary 9D basis set {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz} (all of which produce the same result).
+        * Expanded the basis sets for the align_tensor.svd user function to allow the correct singular values and condition number to be calculated.  This includes the irreducible spherical tensor 5D basis set {A-2, A-1, A0, A1, A2} and the unitary 9D basis set {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz} (both of which produce the same result).
+        * Added the angle_units and precision arguments to the align_tensor.matrix_angles user function to allow either degrees or radians to be output and the number of decimal points to be specified.
+        * Added the precision argument to the align_tensor.svd user function to allow the number of decimal points for the singular values and condition number to be specified.
+        * Updated the align_tensor.display user function to output the irreducible spherical harmonic weights.  This is the alignment tensor in the {A-2, A-1, A0, A1, A2} notation.
+
+
+    Changes:
+        * Basic Epydoc fix for the data_store.exp_info module.
+        * Epydoc fix for the name_pipe() method of the relaxation dispersion auto-analysis for repeated data.
+        * Fixes for the HTML user manual compilation.  The index.html file was not being created as the main page has changed from 'relax_user_manual.html' to 'The_relax_user_manual.html'.
+        * Added a line to the release checklist document about updating the wiki release links.  These are for the combined release notes pages at http://wiki.nmr-relax.com/Relax_releases, http://wiki.nmr-relax.com/Relax_release_descriptions, http://wiki.nmr-relax.com/Relax_release_metadata, http://wiki.nmr-relax.com/Relax_release_features, http://wiki.nmr-relax.com/Relax_release_changes, http://wiki.nmr-relax.com/Relax_release_bugfixes, http://wiki.nmr-relax.com/Relax_release_links.
+        * Updates for the release announcement section of the release checklist document.
+        * Created a system test to catch a rare relaxation data loading problem.
+        * Created the Mf.test_dauvergne_protocol_sphere system test.  This catches bug #22963 (https://gna.org/bugs/?22963):  Using '@N*' to define the interatomic interactions for a model-free analysis fails when using non-backbone 15N spins.
+        * Set more reasonable default values for the lib.structure.pdb_write functions atom() and hetatm().  The occupancy now defaults to 1.0 instead of '', and the temperature factor to 0.0 instead of ''.  This avoid painful errors when using these functions, as these arguments must be floating point numbers at all times, hence the default value of '' causes a TypeError.
+        * Updated the PDB file in the test_suite/shared_data/model_free/sphere/ directory.  The relax library is now being used to create the PDB file.  Additional TER and CONECT records are now being created so the result is a more correct PDB file.
+        * Converted all ATOM records to HETATM in the sphere.pdb file.
+        * Renamed vector_angle() to vector_angle_normal() in the lib.geometry.vectors module.  This is to standardise the naming as there are now the standard vector angle formula implemented as the vector_angle_acos() and vector_angle_atan2() functions.
+        * Added 6 unit tests for the lib.geometry.vectors.vector_angle_acos() function.  These are similar to those of the vector_angle_normal() function but unsigned angles are checked for.
+        * Created 6 unit tests for the lib.geometry.vectors.vector_angle_atan2() function.
+        * Created a script and log file to demonstrate differences between alignment tensor basis sets.  This shows that the inter-tensor angles and condition numbers are dependent on the basis set used.
+        * Improved the printouts from the align_tensor.svd user function by including the basis set text.
+        * Updated the log file for comparing different alignment tensor basis sets for align_tensor.svd changes.
+        * Implemented a new default basis set for the align_tensor.matrix_angles user function.  This is uses standard definition of the inter-matrix angle using the Euclidean inner product of the two matrices divided by the product of the Frobenius norm of each matrix.  As this is a linear map, it should produce the correct definition of inter-tensor angles.
+        * Improvements to the description of the align_tensor.matrix_angles user function.
+        * Updated the test_matrix_angles_identity() unit test for pipe_control.align_tensor.matrix_angles().  This is the test in the _prompt.test_align_tensor.Test_align_tensor module.  The basis set has been set back to the now non-default value of 0, and the value checks have been converted from assertEqual() to assertAlmostEqual() to allow for small truncation errors.
+        * Conversion of the basis_set argument for the align_tensor.matrix_angles user function.  The argument is now a string that accepts the values of 'matrix', 'unitary 5D', and 'geometric 5D' to select between the different matrix angles techniques.  This has been updated in the test suite as well.
+        * Added a check for the values of the basis_set argument.  This is to the align_tensor.matrix_angles user function backend.
+        * Printout improvements clarifying the align_tensor.matrix_angles user function.
+        * Conversion of the basis_set argument for the align_tensor.svd user function.  The argument is now a string that accepts the values of 'unitary 9D', 'unitary 5D', and 'geometric 5D' to select between the different SVD matrices.  This has been updated in the test suite as well.
+        * Expanded the N_state_model.test_5_state_xz system test.  This now covers the new 'unitary 9D' basis set for the align_tensor.svd user function and the new 'matrix' basis set for the align_tensor.matrix_angles user function.
+        * Expansion of the align_tensor.matrix_angles user function.  The new basis set 'unitary 9D' has been introduced.  This creates vectors as {Sxx, Sxy, Sxz, Syx, Syy, Syz, Szx, Szy, Szz} and computes the inter-vector angles.  These match the 'matrix' basis set whereby the Euclidean inner product divided by the Frobenius norms is used to calculate the inter-tensor angles.  In addition, the user function documentation and printouts have been improved.  And the backend code has been simplified.
+        * Updated the script and log file for demonstrating differences between alignment tensor basis sets.  This now handles the changes to the basis_set arguments used in the align_tensor.matrix_angles and align_tensor.svd user functions, and includes the new basis sets.
+        * Added the irreducible tensor notation of {A-2, A-1, A0, A1, A2} to the alignment tensor object.  This follows from the definition of Sass et al, J. Am. Chem. Soc. 1999, 121, 2047-2055, http://dx.doi.org/10.1021/ja983887w.  The equations of (2) were converted using Gaussian elimination to obtain a reduced row echelon form, so that the equations in terms of {A-2, A-1, A0, A1, A2} were derived.  These have been coded into the alignment tensor object calc_Am2, calc_Am1, calc_A0, calc_A1 and calc_A2 methods respectively, and the values can be obtained by accessing the Am2, Am1, A0, A1, and A2 objects.  To check that the implementation is correct, a unit test has been created to compare the calculated values with those determined using Pales.
+        * Expanded the unit test of the alignment tensor {A-2, A-1, A0, A1, A2} parameters to cover all values.
+        * Created functions in the relax library for calculating the inter-vector angle for complex vectors.  This is in the lib.geometry.vectors module.  The function vector_angle_complex_conjugate() has been created to calculate the angle between two complex vectors.  This uses the new auxiliary function complex_inner_product() to calculate <v1|v2>.
+        * Added the 'irreducible 5D' basis set option to the align_tensor.matrix_angles user function.  This is for the inter-tensor vector angle for the irreducible 5D basis set {S-2, S-1, S0, S1, S2}.  Its results match that of the standard tensor angle as well as the 'unitary 9D' basis sets.
+        * Added the 'irreducible 5D' basis set option to the align_tensor.svd user function.  This is for the inter-tensor vector angle for the irreducible 5D basis set {A-2, A-1, A0, A1, A2}.  Its results match that of the 'unitary 9D' basis set.
+        * Editing of the description for the 'irreducible 5D' alignment tensor basis set.  This is for the align_tensor.matrix_angles and align_tensor.svd user functions.  All Sm element have been converted to Am.
+        * Editing of the description for the align_tensor.matrix_angles user function.
+        * Editing of the align_tensor.svd user function description.
+        * Updated the script and log file for demonstrating differences between alignment tensor basis sets.  The 'irreducible 5D' basis set in now used for both the align_tensor.matrix_angles and align_tensor.svd user functions.
+        * Fix for a spelling mistake in the align_tensor.matrix_angles user function printouts.
+        * Small fix for the align_tensor.matrix_angles user function documentation.
+        * Expanded the N_state_model.test_5_state_xz system test for more alignment tensor basis sets.  The align_tensor.matrix_angles and align_tensor.svd user functions are now being called with the additional 'irreducible 5D', and 'unitary 9D' basis sets, to make sure these work correctly.
+        * Created the Align_tensor.test_align_tensor_matrix_angles system test.  This is to check the angles calculated by the align_tensor.matrix_angles user function.  As there are no external references, this essentially fixes the angles to the currently calculated values to catch any accidental changes in the future.
+        * Created the Align_tensor.test_align_tensor_svd system test.  This is to check the angles calculated by the align_tensor.svd user function.  As there are no external references, this essentially fixes the singular values and condition numbers to the currently calculated values to catch any accidental changes in the future.
+        * Fixes for the proportions of the align_tensor.matrix_angle user function GUI wizard.
+        * Expanded the 'irreducible 5D' text in the align_tensor.matrix_angles and align_tensor.svd user functions.  This now explains that these are the coefficients for the spherical harmonic decomposition.
+        * Improved the text for the irreducible tensor notation in the align_tensor.display user function.
+        * Formatting fix for the magnetic susceptibility tensor part of the align_tensor.display user function.
+        * More improvements for the align_tensor.matrix_angles user function description.
+        * Epydoc docstring fixes and expansion for the lib.io.sort_filenames() function.
+        * Epydoc docstring fixes for the lib.spectrum.nmrpipe module.  This is for the API documentation at http://www.nmr-relax.com/api/index.html.  The show_apod_rmsd_to_file() and show_apod_rmsd_dir_to_files() function docstrings have both been modified.
+        * Epydoc docstring fixes for the pipe_control.opendx.map() function.  This is for http://www.nmr-relax.com/api/3.3/pipe_control.opendx-module.html#map.  The fixes include whitespace and textwrapping changes.
+        * Python 2.5 fix for the align_tensor.display user function.  The new irreducible spherical tensor coefficient printout was failing as the float.real variable was introduced from Python 2.6 onwards.
+        * Shifted the structure checks into their own module.  This shifts the special check_structure Check object from pipe_control.structure.main into the new checks module.  It allows the check to be performed by other modules in the pipe_control.structure package.
+        * Added the missing_error keyword argument to the pipe_centre_of_mass() function.  This is from the pipe_control.structure.mass module.  The new keyword controls what happens with the absence of structural data.  The pipe_control.structure.checks.check_structure() function is now being used to either throw a warning and return [0, 0, 0] or to raise a RelaxError.
+        * Fix for the new unit tests - Python 2.5 floats do not have a 'real' property.
+
+
+    Bugfixes:
+        * Fix for bug #22961 (https://gna.org/bugs/?22961), the failure of relaxation data loading with the message "IndexError: list index out of range".  The bug was found by Julien Orts.  It is triggered by loading relaxation data from a file containing spin name information and supplying the spin ID using the spin name to restrict data loading to a spin subset.  To solve the problem, the pipe_control.relax_data.pack_data() function has been redesigned.  Now the selection union concept of Chris MacRaild's selection object is being used by joining the spin ID constructed from the data file and the user supplied spin ID with '&', and using this to isolate the correct spin system.
+        * Big Python 3 bug fix for the dep_check module for the detection of the NMRPipe showApod software.  The showApod program was falsely detected as always not being present when using Python 3.  This is because the output of the program was being tested using string comparisons.  However the output from programs obtained from the subprocess module is no longer strings but rather byte-arrays in Python 3.  Therefore the byte-array is not being converted to text if Python 3 is being used, allowing the showApod software to be detected.
+        * Python 3 bug fix for the lib.spectrum.nmrpipe.show_apod_extract() function.  The subprocess module output from the showApod program, or any software, is a byte array in Python 3 rather than text.  This is now detected and the byte array converted to text before any processing.
+        * Bug fix for the lib.structure.angles.angles_*() functions for odd increments.  This affects the PDB representations of the diffusion tensor and frame order when the number of increments in the respective user functions is set to an odd number.  It really only affects the frame_order.pdb_model user functions, as the number of increments cannot be set in any of the other user functions (structure.create_diff_tensor_pdb, structure.create_rotor_pdb, structure.create_vector_dist, n_state_model.cone_pdb).
+
+
+
 Version 3.3.2
 (13 November 2014, from /trunk)
 http://svn.gna.org/svn/relax/tags/3.3.2
