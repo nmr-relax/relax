@@ -226,6 +226,10 @@ def show_apod_extract(file_name=None, dir=None, path_to_command='showApod'):
     # Wait for finish and get return code.
     return_value = Temp.wait()
 
+    # Python 3 support - convert byte arrays to text.
+    if hasattr(output, 'decode'):
+        output = output.decode()
+
     return output.splitlines()
 
 

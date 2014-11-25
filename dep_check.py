@@ -268,8 +268,13 @@ if subprocess_module:
         # Split the output into lines.
         line_split = output.splitlines()
 
+        # The first line, decoding Python 3 byte arrays.
+        line = line_split[0]
+        if hasattr(line, 'decode'):
+            line = line.decode()
+
         # Now make test.
-        if line_split[0] == 'showApod: Show Effect of Processing on Noise and Linewidth.':
+        if line == 'showApod: Show Effect of Processing on Noise and Linewidth.':
             showApod_software = True
         else:
             showApod_software = False

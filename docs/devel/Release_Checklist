@@ -200,7 +200,7 @@ For the changes file text, make the following conversions:
 
     - For all bugs, support requests, and tasks, make links to the trackers including the full description in the link.  (for vim, go to the start of the text and use the register: "3dwr[/_<80>kb)^Mi ^[pxr]").
     - Make links to the relax manual for all user functions (Vim register:  "v/[ ,\r\n]^M<80>kl<80>kDi[http://www.nmr-relax.com/manual/^[pa.html ^[pa]^[/user function^M", then search for "www.nmr-relax.com\/manual\/[a-z0-9_]*\.\|html" and replace all '.'.)
-    - Make internal links for all relax versions.
+    - Make internal links for all relax versions (search for "[1-3]\.[0-9]*\.[0-9]*").
     - Convert all symbols/parameters to use wiki formatting.
     - Convert all model names to internal wiki links (vi search "\<m[0-9]\>\|\<tm[0-9]\>\|No Rex\|R2eff\|LM63\|LM63 3-site\|CR72\|CR72 full\|IT99\|TSMFK01\|B14\|B14 full\|NS CPMG\|MMQ CR72\|NS MMQ\|M61\|DPL94\|TP02\|TAP03\|MP05\|NS R1rho\|BK13").
     - Add as many links as possible to the API documentation (to help users dive into the relax code and to help with search engine indexing).
@@ -225,7 +225,7 @@ Gna! news item
 The steps are:
 
     - Log into Gna! and go to https://gna.org/news/submit.php?group=relax.
-    - Cut and paste all of the wiki text.  Delete the initial lower case title formatting text, the final 'See also' section, and any wiki markup.
+    - Cut and paste all of the wiki text.  Delete the initial lower case title formatting text, the final 'Links', 'Announcements' and 'See also' sections, and any wiki markup.
     - Add a paragraph before the 'Download' paragraph with the text 'For the official, easy to navigate release notes, please see http://wiki.nmr-relax.com/Relax_3.3.1.'.
     - Use the Savane markup to format the text (recipe #236, https://gna.org/cookbook/?func=detailitem&item_id=236).
     - As the Savane markup for sectioning is the same as the wiki, the section titles = Description =, = Download =, and = Full list of changes = do not need to be modified (except changing the text 'CHANGES file' to 'Full list of changes' and deleting the metadata).  The same for the subtitles == Features ==, == Changes ==, and == Bugfixes ==.
