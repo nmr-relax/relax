@@ -1662,6 +1662,170 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opendx_euler_angle_map.py')
 
 
+    def test_pdb_model_free_rotor_xz_plane_tilt(self):
+        """Check the frame_order.pdb_model user function PDB file for the rotor model with a xz-plane tilt."""
+
+        # Init.
+        pivot = array([1, 0, 1], float64)
+        l = 100.0
+
+        # Create a data pipe.
+        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
+
+        # Select the model.
+        self.interpreter.frame_order.select_model('free rotor')
+
+        # The axis alpha parameter, and printout.
+        axis_alpha = pi / 2.0
+        axis =  create_rotor_axis_alpha(pi/2, pivot, array([0, 0, 0], float64))
+        print("\nRotor axis:\n    %s" % axis)
+        print("Rotor apex (100*axis + [1, 0, 1]):\n    %s" % (l*axis + pivot))
+
+        # Set the average domain position translation parameters.
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='axis_alpha', val=axis_alpha)
+        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
+
+        # Set the pivot.
+        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+
+        # Create the PDB.
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=100.0)
+
+        # Create a data pipe for the new structure.
+        self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
+        self.interpreter.pipe.display()
+
+        # Read the contents of the file.
+        self.interpreter.structure.read_pdb(file='frame_order.pdb', dir=ds.tmpdir)
+
+        # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
+        data = [
+            [ 1, 'PIV',    1, 'Piv',  pivot],
+            [ 1, 'RTX',    2, 'CTR',  pivot],
+            [ 2, 'RTX',    3, 'PRP',  self.rotate_from_Z(origin=pivot, length=l, angle=-pi/4.0)],
+            [ 3, 'RTX',    4, 'PRP',  self.rotate_from_Z(origin=pivot, length=l, angle=-pi/4.0, neg=True)],
+            [ 4, 'RTB',    5, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=-pi/4.0)],
+            [ 5, 'RTB',  187, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=-pi/4.0)],
+            [ 6, 'RTB',  369, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=-pi/4.0)],
+            [ 7, 'RTB',  551, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=-pi/4.0)],
+            [ 8, 'RTB',  733, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=-pi/4.0, neg=True)],
+            [ 9, 'RTB',  915, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=-pi/4.0, neg=True)],
+            [10, 'RTB', 1097, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=-pi/4.0, neg=True)],
+            [11, 'RTB', 1279, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=-pi/4.0, neg=True)],
+            [12, 'RTL', 1461, 'z-ax', self.rotate_from_Z(origin=pivot, length=l+2.0, angle=-pi/4.0)],
+            [12, 'RTL', 1462, 'z-ax', self.rotate_from_Z(origin=pivot, length=l+2.0, angle=-pi/4.0, neg=True)]
+        ]
+
+        # Check the atomic coordinates.
+        selection = cdp.structure.selection()
+        index = 0
+        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+            # Skip the propeller blades.
+            if atom_name == 'BLD':
+                continue
+
+            # Checks (to the 3 places accuracy of a PDB file).
+            print("Checking residue %s %s, atom %s %s, at position %s." % (data[index][0], data[index][1], data[index][2], data[index][3], data[index][4]))
+            self.assertEqual(data[index][0], res_num)
+            self.assertEqual(data[index][1], res_name)
+            self.assertEqual(data[index][2], atom_num)
+            self.assertEqual(data[index][3], atom_name)
+            self.assertAlmostEqual(data[index][4][0], pos[0][0], 3)
+            self.assertAlmostEqual(data[index][4][1], pos[0][1], 3)
+            self.assertAlmostEqual(data[index][4][2], pos[0][2], 3)
+
+            # Increment the index.
+            index += 1
+
+
+    def test_pdb_model_free_rotor_z_axis(self):
+        """Check the frame_order.pdb_model user function PDB file for the free rotor model along the z-axis."""
+
+        # Init.
+        pivot = array([1, 0, 0], float64)
+        l = 30.0
+
+        # Create a data pipe.
+        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
+
+        # Select the model.
+        self.interpreter.frame_order.select_model('free rotor')
+
+        # The axis alpha parameter, and printout.
+        axis_alpha = pi / 2.0
+        axis = create_rotor_axis_alpha(pi/2, pivot, array([0, 0, 0], float64))
+        print("\nRotor axis:  %s" % axis)
+        print("Rotor apex (100*axis + [1, 0, 0]):\n    %s" % (l*axis + pivot))
+
+        # Set the average domain position translation parameters.
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='axis_alpha', val=axis_alpha)
+        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
+
+        # Set the pivot.
+        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+
+        # Create the PDB.
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=l)
+
+        # Create a data pipe for the new structure.
+        self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
+        self.interpreter.pipe.display()
+
+        # Read the contents of the file.
+        self.interpreter.structure.read_pdb(file='frame_order.pdb', dir=ds.tmpdir)
+
+        # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
+        data = [
+            [ 1, 'PIV',    1, 'Piv',  pivot],
+            [ 1, 'RTX',    2, 'CTR',  pivot],
+            [ 2, 'RTX',    3, 'PRP',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0)],
+            [ 3, 'RTX',    4, 'PRP',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0, neg=True)],
+            [ 4, 'RTB',    5, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0)],
+            [ 5, 'RTB',  187, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0)],
+            [ 6, 'RTB',  369, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0)],
+            [ 7, 'RTB',  551, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0)],
+            [ 8, 'RTB',  733, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0, neg=True)],
+            [ 9, 'RTB',  915, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0, neg=True)],
+            [10, 'RTB', 1097, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0, neg=True)],
+            [11, 'RTB', 1279, 'BLO',  self.rotate_from_Z(origin=pivot, length=l, angle=0.0, neg=True)],
+            [12, 'RTL', 1461, 'z-ax', self.rotate_from_Z(origin=pivot, length=l+2.0, angle=0.0)],
+            [12, 'RTL', 1462, 'z-ax', self.rotate_from_Z(origin=pivot, length=l+2.0, angle=0.0, neg=True)]
+        ]
+
+        # Check the atomic coordinates.
+        selection = cdp.structure.selection()
+        index = 0
+        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+            # Skip the propeller blades.
+            if atom_name == 'BLD':
+                continue
+
+            # Checks.
+            print("Checking residue %s %s, atom %s %s, at position %s." % (data[index][0], data[index][1], data[index][2], data[index][3], data[index][4]))
+            self.assertEqual(data[index][0], res_num)
+            self.assertEqual(data[index][1], res_name)
+            self.assertEqual(data[index][2], atom_num)
+            self.assertEqual(data[index][3], atom_name)
+            self.assertAlmostEqual(data[index][4][0], pos[0][0], 3)
+            self.assertAlmostEqual(data[index][4][1], pos[0][1], 3)
+            self.assertAlmostEqual(data[index][4][2], pos[0][2], 3)
+
+            # Increment the index.
+            index += 1
+
+
     def test_pdb_model_iso_cone_xz_plane_tilt(self):
         """Check the frame_order.pdb_model user function PDB file for the isotropic cone model with a xz-plane tilt."""
 
