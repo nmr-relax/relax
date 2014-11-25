@@ -3143,6 +3143,278 @@ class Frame_order(SystemTestCase):
                 index += 1
 
 
+    def test_pdb_model_pseudo_ellipse_torsionless_xz_plane_tilt(self):
+        """Check the frame_order.pdb_model user function PDB file for the torsionless pseudo-ellipse model with a xz-plane tilt."""
+
+        # Init.
+        pivot = array([1, -2, 1.1], float64)
+        l = 50.0
+        l_rotor = l + 5.0
+
+        # Create a data pipe.
+        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
+
+        # Select the model.
+        self.interpreter.frame_order.select_model('pseudo-ellipse, torsionless')
+
+        # The axis parameters, and printout.
+        eigen_alpha = 0.0
+        eigen_beta = -pi/2.0
+        eigen_gamma = 0.0
+        R = zeros((3, 3), float64)
+        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
+        print("Motional eigenframe:\n%s" % R)
+
+        # Cone parameters.
+        theta_x = 2.0
+        theta_y = 0.1
+
+        # Set the average domain position translation parameters.
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='eigen_alpha', val=eigen_alpha)
+        self.interpreter.value.set(param='eigen_beta', val=eigen_beta)
+        self.interpreter.value.set(param='eigen_gamma', val=eigen_gamma)
+        self.interpreter.value.set(param='cone_theta_x', val=theta_x)
+        self.interpreter.value.set(param='cone_theta_y', val=theta_y)
+
+        # Set the pivot.
+        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+
+        # Create the PDB.
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
+
+        # The files.
+        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
+
+        # The xy-plane vectors and angles.
+        inc = 2.0 * pi / 10.0
+        vectors = zeros((10, 3), float64)
+        theta_max = zeros(10, float64)
+        for i in range(10):
+            # The angle phi.
+            phi = inc * i
+
+            # The xy-plane, starting along the x-axis.
+            vectors[i, 0] = cos(phi)
+            vectors[i, 1] = sin(phi)
+
+            # The cone opening angle.
+            theta_max[i] = theta_x * theta_y / sqrt((cos(phi)*theta_y)**2 + (sin(phi)*theta_x)**2)
+
+        # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
+        neg = [False, True]
+        tle = ['a', 'b']
+        data = []
+        for i in range(2):
+            data.append([
+                # The pivot.
+                [ 1, 'PIV',   1, 'Piv',  pivot],
+
+                # The axis system.
+                [ 1, 'AXE',   2, 'R',  pivot],
+                [ 2, 'AXE',   3, 'R',  pivot],
+                [ 2, 'AXE',   4, 'x-ax', self.rotate_from_Z(origin=pivot, length=l, angle=pi/2.0, R=R, neg=neg[i])],
+                [ 2, 'AXE',   5, 'x-ax', self.rotate_from_Z(origin=pivot, length=l*1.1, angle=pi/2.0, R=R, neg=neg[i])],
+                [ 2, 'AXE',   6, 'R',  pivot],
+                [ 2, 'AXE',   7, 'y-ax', self.rotate_from_Z(origin=pivot, length=l, angle=pi/2.0, axis=y_axis, R=R, neg=neg[i])],
+                [ 2, 'AXE',   8, 'y-ax', self.rotate_from_Z(origin=pivot, length=l*1.1, angle=pi/2.0, axis=y_axis, R=R, neg=neg[i])],
+                [ 2, 'AXE',   9, 'R',  pivot],
+                [ 2, 'AXE',  10, 'z-ax', self.rotate_from_Z(origin=pivot, length=l, angle=0.0, R=R, neg=neg[i])],
+                [ 2, 'AXE',  11, 'z-ax', self.rotate_from_Z(origin=pivot, length=l*1.1, angle=0.0, R=R, neg=neg[i])],
+
+                # The cone edge.
+                [ 3, 'CNE',  12, 'APX',  pivot],
+                [ 3, 'CNE',  13, 'H2',   self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[0], axis=vectors[0], R=R, neg=neg[i])],
+                [ 3, 'CNE',  14, 'H3',   self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[1], axis=vectors[1], R=R, neg=neg[i])],
+                [ 3, 'CNE',  15, 'H4',   self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[2], axis=vectors[2], R=R, neg=neg[i])],
+                [ 3, 'CNE',  16, 'H5',   self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[3], axis=vectors[3], R=R, neg=neg[i])],
+                [ 3, 'CNE',  17, 'H6',   self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[4], axis=vectors[4], R=R, neg=neg[i])],
+                [ 3, 'CNE',  18, 'H7',   self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[5], axis=vectors[5], R=R, neg=neg[i])],
+                [ 3, 'CNE',  19, 'H8',   self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[6], axis=vectors[6], R=R, neg=neg[i])],
+                [ 3, 'CNE',  20, 'H9',   self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[7], axis=vectors[7], R=R, neg=neg[i])],
+                [ 3, 'CNE',  21, 'H10',  self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[8], axis=vectors[8], R=R, neg=neg[i])],
+                [ 3, 'CNE',  22, 'H11',  self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[9], axis=vectors[9], R=R, neg=neg[i])],
+
+                # Titles.
+                [ 1, 'TLE',  83, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=eigen_beta, neg=neg[i])]
+            ])
+
+        # Loop over the representations.
+        for i in range(2):
+            # Delete all structural data.
+            self.interpreter.structure.delete()
+
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
+
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            index = 0
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Skip the propeller blades.
+                if atom_name == 'BLD':
+                    continue
+
+                # Skip the cone interior (checking the edge will be sufficient).
+                if res_name == 'CON':
+                    continue
+
+                # Checks.
+                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
+                print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
+                self.assertEqual(data[i][index][0], res_num)
+                self.assertEqual(data[i][index][1], res_name)
+                self.assertEqual(data[i][index][2], atom_num)
+                self.assertEqual(data[i][index][3], atom_name)
+                self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
+                self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
+                self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
+
+                # Increment the index.
+                index += 1
+
+
+    def test_pdb_model_pseudo_ellipse_torsionless_z_axis(self):
+        """Check the frame_order.pdb_model user function PDB file for the torsionless pseudo-ellipse model along the z-axis."""
+
+        # Init.
+        pivot = array([1, 1, 1], float64)
+        l = 40.0
+        l_rotor = l + 5.0
+
+        # Create a data pipe.
+        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
+
+        # Select the model.
+        self.interpreter.frame_order.select_model('pseudo-ellipse, torsionless')
+
+        # The axis parameters, and printout.
+        eigen_alpha = 0.0
+        eigen_beta = 0.0
+        eigen_gamma = 0.0
+        R = zeros((3, 3), float64)
+        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
+        print("Motional eigenframe:\n%s" % R)
+
+        # Cone parameters.
+        theta_x = 2.0
+        theta_y = 0.1
+
+        # Set the average domain position translation parameters.
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='eigen_alpha', val=eigen_alpha)
+        self.interpreter.value.set(param='eigen_beta', val=eigen_beta)
+        self.interpreter.value.set(param='eigen_gamma', val=eigen_gamma)
+        self.interpreter.value.set(param='cone_theta_x', val=theta_x)
+        self.interpreter.value.set(param='cone_theta_y', val=theta_y)
+
+        # Set the pivot.
+        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+
+        # Create the PDB.
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
+
+        # The files.
+        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
+
+        # The xy-plane vectors and angles.
+        inc = 2.0 * pi / 10.0
+        vectors = zeros((10, 3), float64)
+        theta_max = zeros(10, float64)
+        for i in range(10):
+            # The angle phi.
+            phi = inc * i
+
+            # The xy-plane, starting along the x-axis.
+            vectors[i, 0] = cos(phi)
+            vectors[i, 1] = sin(phi)
+
+            # The cone opening angle.
+            theta_max[i] = theta_x * theta_y / sqrt((cos(phi)*theta_y)**2 + (sin(phi)*theta_x)**2)
+
+        # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
+        neg = [False, True]
+        tle = ['a', 'b']
+        data = []
+        for i in range(2):
+            data.append([
+                # The pivot.
+                [ 1, 'PIV',   1, 'Piv',  pivot],
+
+                # The axis system.
+                [ 1, 'AXE',   2, 'R',  pivot],
+                [ 2, 'AXE',   3, 'R',  pivot],
+                [ 2, 'AXE',   4, 'x-ax', self.rotate_from_Z(origin=pivot, length=l, angle=pi/2.0, neg=neg[i])],
+                [ 2, 'AXE',   5, 'x-ax', self.rotate_from_Z(origin=pivot, length=l*1.1, angle=pi/2.0, neg=neg[i])],
+                [ 2, 'AXE',   6, 'R',  pivot],
+                [ 2, 'AXE',   7, 'y-ax', self.rotate_from_Z(origin=pivot, length=l, angle=pi/2.0, axis=y_axis, neg=neg[i])],
+                [ 2, 'AXE',   8, 'y-ax', self.rotate_from_Z(origin=pivot, length=l*1.1, angle=pi/2.0, axis=y_axis, neg=neg[i])],
+                [ 2, 'AXE',   9, 'R',  pivot],
+                [ 2, 'AXE',  10, 'z-ax', self.rotate_from_Z(origin=pivot, length=l, angle=0.0, neg=neg[i])],
+                [ 2, 'AXE',  11, 'z-ax', self.rotate_from_Z(origin=pivot, length=l*1.1, angle=0.0, neg=neg[i])],
+
+                # The cone edge.
+                [ 3, 'CNE',  12, 'APX',  pivot],
+                [ 3, 'CNE',  13, 'H2',   self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[0], axis=vectors[0], neg=neg[i])],
+                [ 3, 'CNE',  14, 'H3',   self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[1], axis=vectors[1], neg=neg[i])],
+                [ 3, 'CNE',  15, 'H4',   self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[2], axis=vectors[2], neg=neg[i])],
+                [ 3, 'CNE',  16, 'H5',   self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[3], axis=vectors[3], neg=neg[i])],
+                [ 3, 'CNE',  17, 'H6',   self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[4], axis=vectors[4], neg=neg[i])],
+                [ 3, 'CNE',  18, 'H7',   self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[5], axis=vectors[5], neg=neg[i])],
+                [ 3, 'CNE',  19, 'H8',   self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[6], axis=vectors[6], neg=neg[i])],
+                [ 3, 'CNE',  20, 'H9',   self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[7], axis=vectors[7], neg=neg[i])],
+                [ 3, 'CNE',  21, 'H10',  self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[8], axis=vectors[8], neg=neg[i])],
+                [ 3, 'CNE',  22, 'H11',  self.rotate_from_Z(origin=pivot, length=l, angle=theta_max[9], axis=vectors[9], neg=neg[i])],
+
+                # Titles.
+                [ 1, 'TLE',  83, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=0.0, neg=neg[i])]
+            ])
+
+        # Loop over the representations.
+        for i in range(2):
+            # Delete all structural data.
+            self.interpreter.structure.delete()
+
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
+
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            index = 0
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Skip the propeller blades.
+                if atom_name == 'BLD':
+                    continue
+
+                # Skip the cone interior (checking the edge will be sufficient).
+                if res_name == 'CON':
+                    continue
+
+                # Checks.
+                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
+                print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
+                self.assertEqual(data[i][index][0], res_num)
+                self.assertEqual(data[i][index][1], res_name)
+                self.assertEqual(data[i][index][2], atom_num)
+                self.assertEqual(data[i][index][3], atom_name)
+                self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
+                self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
+                self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
+
+                # Increment the index.
+                index += 1
+
+
     def test_pdb_model_rotor_xz_plane_tilt(self):
         """Check the frame_order.pdb_model user function PDB file for the rotor model with a xz-plane tilt."""
 
