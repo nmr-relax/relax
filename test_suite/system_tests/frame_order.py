@@ -1662,6 +1662,236 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'opendx_euler_angle_map.py')
 
 
+    def test_pdb_model_double_rotor_xz_plane_tilt(self):
+        """Check the frame_order.pdb_model user function PDB file for the rotor model along the z-axis."""
+
+        # Init.
+        pivot2 = array([1, 0, 0], float64)
+        pivot_disp = 100
+        pivot1 = pivot2 + (z_axis-x_axis)/sqrt(2.0)*pivot_disp
+        l = 20.0
+
+        # Create a data pipe.
+        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
+
+        # Select the model.
+        self.interpreter.frame_order.select_model('double rotor')
+
+        # The axis parameters, and printout.
+        eigen_alpha = 0.0
+        eigen_beta = -pi/4.0
+        eigen_gamma = 0.0
+        R = zeros((3, 3), float64)
+        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
+        print("Motional eigenframe:\n%s" % R)
+
+        # Set the average domain position translation parameters.
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='pivot_disp', val=pivot_disp)
+        self.interpreter.value.set(param='eigen_alpha', val=eigen_alpha)
+        self.interpreter.value.set(param='eigen_beta', val=eigen_beta)
+        self.interpreter.value.set(param='eigen_gamma', val=eigen_gamma)
+        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
+        self.interpreter.value.set(param='cone_sigma_max_2', val=0.0)
+
+        # Set the pivot.
+        self.interpreter.frame_order.pivot(pivot=pivot2, fix=True)
+
+        # Create the PDB.
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=l)
+
+        # Create a data pipe for the new structure.
+        self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
+        self.interpreter.pipe.display()
+
+        # Read the contents of the file.
+        self.interpreter.structure.read_pdb(file='frame_order.pdb', dir=ds.tmpdir)
+
+        # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
+        data = [
+            # The pivots.
+            [ 1, 'PIV',    1, 'Piv1',  pivot1],
+            [ 1, 'PIV',    2, 'Piv2',  pivot2],
+
+            # The x-axis rotor.
+            [ 1, 'RTX',    3, 'CTR',  pivot2],
+            [ 2, 'RTX',    4, 'PRP',  self.rotate_from_Z(origin=pivot2, length=l, angle=pi/2.0+eigen_beta)],
+            [ 3, 'RTX',    5, 'PRP',  self.rotate_from_Z(origin=pivot2, length=l, angle=pi/2.0+eigen_beta, neg=True)],
+            [ 4, 'RTB',    6, 'BLO',  self.rotate_from_Z(origin=pivot2, length=l, angle=pi/2.0+eigen_beta)],
+            [ 5, 'RTB',  188, 'BLO',  self.rotate_from_Z(origin=pivot2, length=l-2.0, angle=pi/2.0+eigen_beta)],
+            [ 6, 'RTB',  370, 'BLO',  self.rotate_from_Z(origin=pivot2, length=l, angle=pi/2.0+eigen_beta)],
+            [ 7, 'RTB',  552, 'BLO',  self.rotate_from_Z(origin=pivot2, length=l-2.0, angle=pi/2.0+eigen_beta)],
+            [ 8, 'RTB',  734, 'BLO',  self.rotate_from_Z(origin=pivot2, length=l, angle=pi/2.0+eigen_beta, neg=True)],
+            [ 9, 'RTB',  916, 'BLO',  self.rotate_from_Z(origin=pivot2, length=l-2.0, angle=pi/2.0+eigen_beta, neg=True)],
+            [10, 'RTB', 1098, 'BLO',  self.rotate_from_Z(origin=pivot2, length=l, angle=pi/2.0+eigen_beta, neg=True)],
+            [11, 'RTB', 1280, 'BLO',  self.rotate_from_Z(origin=pivot2, length=l-2.0, angle=pi/2.0+eigen_beta, neg=True)],
+            [12, 'RTL', 1462, 'x-ax', self.rotate_from_Z(origin=pivot2, length=l+2.0, angle=pi/2.0+eigen_beta)],
+            [12, 'RTL', 1463, 'x-ax', self.rotate_from_Z(origin=pivot2, length=l+2.0, angle=pi/2.0+eigen_beta, neg=True)],
+
+            # The y-axis rotor.
+            [ 1, 'RTX', 1464, 'CTR',  pivot1],
+            [ 2, 'RTX', 1465, 'PRP',  self.rotate_from_Z(origin=pivot1, length=l, angle=pi/2.0, axis=y_axis)],
+            [ 3, 'RTX', 1466, 'PRP',  self.rotate_from_Z(origin=pivot1, length=l, angle=pi/2.0, axis=y_axis, neg=True)],
+            [ 4, 'RTB', 1467, 'BLO',  self.rotate_from_Z(origin=pivot1, length=l, angle=pi/2.0, axis=y_axis)],
+            [ 5, 'RTB', 1649, 'BLO',  self.rotate_from_Z(origin=pivot1, length=l-2.0, angle=pi/2.0, axis=y_axis)],
+            [ 6, 'RTB', 1831, 'BLO',  self.rotate_from_Z(origin=pivot1, length=l, angle=pi/2.0, axis=y_axis)],
+            [ 7, 'RTB', 2013, 'BLO',  self.rotate_from_Z(origin=pivot1, length=l-2.0, angle=pi/2.0, axis=y_axis)],
+            [ 8, 'RTB', 2195, 'BLO',  self.rotate_from_Z(origin=pivot1, length=l, angle=pi/2.0, axis=y_axis, neg=True)],
+            [ 9, 'RTB', 2377, 'BLO',  self.rotate_from_Z(origin=pivot1, length=l-2.0, angle=pi/2.0, axis=y_axis, neg=True)],
+            [10, 'RTB', 2559, 'BLO',  self.rotate_from_Z(origin=pivot1, length=l, angle=pi/2.0, axis=y_axis, neg=True)],
+            [11, 'RTB', 2741, 'BLO',  self.rotate_from_Z(origin=pivot1, length=l-2.0, angle=pi/2.0, axis=y_axis, neg=True)],
+            [12, 'RTL', 2923, 'y-ax', self.rotate_from_Z(origin=pivot1, length=l+2.0, angle=pi/2.0, axis=y_axis)],
+            [12, 'RTL', 2924, 'y-ax', self.rotate_from_Z(origin=pivot1, length=l+2.0, angle=pi/2.0, axis=y_axis, neg=True)],
+
+            # The z-axis.
+            [ 1, 'AXE', 2925, 'R',  pivot2],
+            [ 1, 'AXE', 2926, 'z-ax', pivot1],
+            [ 1, 'AXE', 2927, 'z-ax', (pivot1-pivot2)*1.1+pivot2],
+        ]
+
+        # Check the atomic coordinates.
+        selection = cdp.structure.selection()
+        index = 0
+        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+            # Skip the propeller blades.
+            if atom_name == 'BLD':
+                continue
+
+            # Checks.
+            print("Checking residue %s %s, atom %s %s, at position %s." % (data[index][0], data[index][1], data[index][2], data[index][3], data[index][4]))
+            print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
+            self.assertEqual(data[index][0], res_num)
+            self.assertEqual(data[index][1], res_name)
+            self.assertEqual(data[index][2], atom_num)
+            self.assertEqual(data[index][3], atom_name)
+            self.assertAlmostEqual(data[index][4][0], pos[0][0], 3)
+            self.assertAlmostEqual(data[index][4][1], pos[0][1], 3)
+            self.assertAlmostEqual(data[index][4][2], pos[0][2], 3)
+
+            # Increment the index.
+            index += 1
+
+
+    def test_pdb_model_double_rotor_z_axis(self):
+        """Check the frame_order.pdb_model user function PDB file for the rotor model along the z-axis."""
+
+        # Init.
+        pivot2 = array([1, 0, 0], float64)
+        pivot_disp = 100
+        pivot1 = pivot2 + z_axis*pivot_disp
+        l = 30.0
+
+        # Create a data pipe.
+        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
+
+        # Select the model.
+        self.interpreter.frame_order.select_model('double rotor')
+
+        # The axis parameters, and printout.
+        eigen_alpha = 0.0
+        eigen_beta = 0.0
+        eigen_gamma = 0.0
+        R = zeros((3, 3), float64)
+        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
+        print("Motional eigenframe:\n%s" % R)
+
+        # Set the average domain position translation parameters.
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='pivot_disp', val=pivot_disp)
+        self.interpreter.value.set(param='eigen_alpha', val=eigen_alpha)
+        self.interpreter.value.set(param='eigen_beta', val=eigen_beta)
+        self.interpreter.value.set(param='eigen_gamma', val=eigen_gamma)
+        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
+        self.interpreter.value.set(param='cone_sigma_max_2', val=0.0)
+
+        # Set the pivot.
+        self.interpreter.frame_order.pivot(pivot=pivot2, fix=True)
+
+        # Create the PDB.
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=l)
+
+        # Create a data pipe for the new structure.
+        self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
+        self.interpreter.pipe.display()
+
+        # Read the contents of the file.
+        self.interpreter.structure.read_pdb(file='frame_order.pdb', dir=ds.tmpdir)
+
+        # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
+        data = [
+            # The pivots.
+            [ 1, 'PIV',    1, 'Piv1',  pivot1],
+            [ 1, 'PIV',    2, 'Piv2',  pivot2],
+
+            # The x-axis rotor.
+            [ 1, 'RTX',    3, 'CTR',  pivot2],
+            [ 2, 'RTX',    4, 'PRP',  self.rotate_from_Z(origin=pivot2, length=l, angle=pi/2.0)],
+            [ 3, 'RTX',    5, 'PRP',  self.rotate_from_Z(origin=pivot2, length=l, angle=pi/2.0, neg=True)],
+            [ 4, 'RTB',    6, 'BLO',  self.rotate_from_Z(origin=pivot2, length=l, angle=pi/2.0)],
+            [ 5, 'RTB',  188, 'BLO',  self.rotate_from_Z(origin=pivot2, length=l-2.0, angle=pi/2.0)],
+            [ 6, 'RTB',  370, 'BLO',  self.rotate_from_Z(origin=pivot2, length=l, angle=pi/2.0)],
+            [ 7, 'RTB',  552, 'BLO',  self.rotate_from_Z(origin=pivot2, length=l-2.0, angle=pi/2.0)],
+            [ 8, 'RTB',  734, 'BLO',  self.rotate_from_Z(origin=pivot2, length=l, angle=pi/2.0, neg=True)],
+            [ 9, 'RTB',  916, 'BLO',  self.rotate_from_Z(origin=pivot2, length=l-2.0, angle=pi/2.0, neg=True)],
+            [10, 'RTB', 1098, 'BLO',  self.rotate_from_Z(origin=pivot2, length=l, angle=pi/2.0, neg=True)],
+            [11, 'RTB', 1280, 'BLO',  self.rotate_from_Z(origin=pivot2, length=l-2.0, angle=pi/2.0, neg=True)],
+            [12, 'RTL', 1462, 'x-ax', self.rotate_from_Z(origin=pivot2, length=l+2.0, angle=pi/2.0)],
+            [12, 'RTL', 1463, 'x-ax', self.rotate_from_Z(origin=pivot2, length=l+2.0, angle=pi/2.0, neg=True)],
+
+            # The y-axis rotor.
+            [ 1, 'RTX', 1464, 'CTR',  pivot1],
+            [ 2, 'RTX', 1465, 'PRP',  self.rotate_from_Z(origin=pivot1, length=l, angle=pi/2.0, axis=y_axis)],
+            [ 3, 'RTX', 1466, 'PRP',  self.rotate_from_Z(origin=pivot1, length=l, angle=pi/2.0, axis=y_axis, neg=True)],
+            [ 4, 'RTB', 1467, 'BLO',  self.rotate_from_Z(origin=pivot1, length=l, angle=pi/2.0, axis=y_axis)],
+            [ 5, 'RTB', 1649, 'BLO',  self.rotate_from_Z(origin=pivot1, length=l-2.0, angle=pi/2.0, axis=y_axis)],
+            [ 6, 'RTB', 1831, 'BLO',  self.rotate_from_Z(origin=pivot1, length=l, angle=pi/2.0, axis=y_axis)],
+            [ 7, 'RTB', 2013, 'BLO',  self.rotate_from_Z(origin=pivot1, length=l-2.0, angle=pi/2.0, axis=y_axis)],
+            [ 8, 'RTB', 2195, 'BLO',  self.rotate_from_Z(origin=pivot1, length=l, angle=pi/2.0, axis=y_axis, neg=True)],
+            [ 9, 'RTB', 2377, 'BLO',  self.rotate_from_Z(origin=pivot1, length=l-2.0, angle=pi/2.0, axis=y_axis, neg=True)],
+            [10, 'RTB', 2559, 'BLO',  self.rotate_from_Z(origin=pivot1, length=l, angle=pi/2.0, axis=y_axis, neg=True)],
+            [11, 'RTB', 2741, 'BLO',  self.rotate_from_Z(origin=pivot1, length=l-2.0, angle=pi/2.0, axis=y_axis, neg=True)],
+            [12, 'RTL', 2923, 'y-ax', self.rotate_from_Z(origin=pivot1, length=l+2.0, angle=pi/2.0, axis=y_axis)],
+            [12, 'RTL', 2924, 'y-ax', self.rotate_from_Z(origin=pivot1, length=l+2.0, angle=pi/2.0, axis=y_axis, neg=True)],
+
+            # The z-axis.
+            [ 1, 'AXE', 2925, 'R',  pivot2],
+            [ 1, 'AXE', 2926, 'z-ax', pivot1],
+            [ 1, 'AXE', 2927, 'z-ax', self.rotate_from_Z(origin=pivot2, length=pivot_disp*1.1, angle=0.0)],
+        ]
+
+        # Check the atomic coordinates.
+        selection = cdp.structure.selection()
+        index = 0
+        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+            # Skip the propeller blades.
+            if atom_name == 'BLD':
+                continue
+
+            # Checks.
+            print("Checking residue %s %s, atom %s %s, at position %s." % (data[index][0], data[index][1], data[index][2], data[index][3], data[index][4]))
+            print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
+            self.assertEqual(data[index][0], res_num)
+            self.assertEqual(data[index][1], res_name)
+            self.assertEqual(data[index][2], atom_num)
+            self.assertEqual(data[index][3], atom_name)
+            self.assertAlmostEqual(data[index][4][0], pos[0][0], 3)
+            self.assertAlmostEqual(data[index][4][1], pos[0][1], 3)
+            self.assertAlmostEqual(data[index][4][2], pos[0][2], 3)
+
+            # Increment the index.
+            index += 1
+
+
     def test_pdb_model_free_rotor_xz_plane_tilt(self):
         """Check the frame_order.pdb_model user function PDB file for the rotor model with a xz-plane tilt."""
 
