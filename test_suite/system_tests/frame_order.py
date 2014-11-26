@@ -178,6 +178,53 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.chi2, chi2, places, msg=mesg)
 
 
+    def check_pdb_model_representation(self, data=None, files=None):
+        """Check the PDB model representation atom and residue names and numbers and coordinates.
+
+        Propeller blade atoms with the name 'BLD' are skipped, as well as the cone interior residues with the name 'CON'.
+
+
+        @keyword data:  The list of data to check.  The first dimension is for the representation, and the second for each atom.  The lists of each atom consist of the residue number, residue name, atom number, atom name, and the 3D position.
+        @type data:     list of list of lists
+        @keyword files: The list of files for each representation.
+        @type files:    list of str
+        """
+
+        # Loop over the representations.
+        for i in range(len(data)):
+            # Delete all structural data.
+            self.interpreter.structure.delete()
+
+            # Read the contents of the file.
+            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
+
+            # Check the atomic coordinates.
+            selection = cdp.structure.selection()
+            index = 0
+            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+                # Skip the propeller blades.
+                if atom_name == 'BLD':
+                    continue
+
+                # Skip the cone interior (checking the edge will be sufficient).
+                if res_name == 'CON':
+                    continue
+
+                # Checks.
+                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
+                print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
+                self.assertEqual(data[i][index][0], res_num)
+                self.assertEqual(data[i][index][1], res_name)
+                self.assertEqual(data[i][index][2], atom_num)
+                self.assertEqual(data[i][index][3], atom_name)
+                self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
+                self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
+                self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
+
+                # Increment the index.
+                index += 1
+
+
     def flags(self, rdc=True, pcs=True, opt=False, quad_int=False):
         """Set a number of flags for the scripts."""
 
@@ -1709,9 +1756,6 @@ class Frame_order(SystemTestCase):
         self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
         self.interpreter.pipe.display()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='frame_order.pdb', dir=ds.tmpdir)
-
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
         data = [
             # The pivots.
@@ -1754,27 +1798,8 @@ class Frame_order(SystemTestCase):
             [ 1, 'AXE', 2927, 'z-ax', (pivot1-pivot2)*1.1+pivot2],
         ]
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        index = 0
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Skip the propeller blades.
-            if atom_name == 'BLD':
-                continue
-
-            # Checks.
-            print("Checking residue %s %s, atom %s %s, at position %s." % (data[index][0], data[index][1], data[index][2], data[index][3], data[index][4]))
-            print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
-            self.assertEqual(data[index][0], res_num)
-            self.assertEqual(data[index][1], res_name)
-            self.assertEqual(data[index][2], atom_num)
-            self.assertEqual(data[index][3], atom_name)
-            self.assertAlmostEqual(data[index][4][0], pos[0][0], 3)
-            self.assertAlmostEqual(data[index][4][1], pos[0][1], 3)
-            self.assertAlmostEqual(data[index][4][2], pos[0][2], 3)
-
-            # Increment the index.
-            index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=[data], files=['frame_order.pdb'])
 
 
     def test_pdb_model_double_rotor_z_axis(self):
@@ -1824,9 +1849,6 @@ class Frame_order(SystemTestCase):
         self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
         self.interpreter.pipe.display()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='frame_order.pdb', dir=ds.tmpdir)
-
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
         data = [
             # The pivots.
@@ -1869,27 +1891,8 @@ class Frame_order(SystemTestCase):
             [ 1, 'AXE', 2927, 'z-ax', self.rotate_from_Z(origin=pivot2, length=pivot_disp*1.1, angle=0.0)],
         ]
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        index = 0
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Skip the propeller blades.
-            if atom_name == 'BLD':
-                continue
-
-            # Checks.
-            print("Checking residue %s %s, atom %s %s, at position %s." % (data[index][0], data[index][1], data[index][2], data[index][3], data[index][4]))
-            print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
-            self.assertEqual(data[index][0], res_num)
-            self.assertEqual(data[index][1], res_name)
-            self.assertEqual(data[index][2], atom_num)
-            self.assertEqual(data[index][3], atom_name)
-            self.assertAlmostEqual(data[index][4][0], pos[0][0], 3)
-            self.assertAlmostEqual(data[index][4][1], pos[0][1], 3)
-            self.assertAlmostEqual(data[index][4][2], pos[0][2], 3)
-
-            # Increment the index.
-            index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=[data], files=['frame_order.pdb'])
 
 
     def test_pdb_model_free_rotor_xz_plane_tilt(self):
@@ -1931,9 +1934,6 @@ class Frame_order(SystemTestCase):
         self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
         self.interpreter.pipe.display()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='frame_order.pdb', dir=ds.tmpdir)
-
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
         data = [
             [ 1, 'PIV',    1, 'Piv',  pivot],
@@ -1952,26 +1952,8 @@ class Frame_order(SystemTestCase):
             [12, 'RTL', 1462, 'z-ax', self.rotate_from_Z(origin=pivot, length=l+2.0, angle=-pi/4.0, neg=True)]
         ]
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        index = 0
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Skip the propeller blades.
-            if atom_name == 'BLD':
-                continue
-
-            # Checks (to the 3 places accuracy of a PDB file).
-            print("Checking residue %s %s, atom %s %s, at position %s." % (data[index][0], data[index][1], data[index][2], data[index][3], data[index][4]))
-            self.assertEqual(data[index][0], res_num)
-            self.assertEqual(data[index][1], res_name)
-            self.assertEqual(data[index][2], atom_num)
-            self.assertEqual(data[index][3], atom_name)
-            self.assertAlmostEqual(data[index][4][0], pos[0][0], 3)
-            self.assertAlmostEqual(data[index][4][1], pos[0][1], 3)
-            self.assertAlmostEqual(data[index][4][2], pos[0][2], 3)
-
-            # Increment the index.
-            index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=[data], files=['frame_order.pdb'])
 
 
     def test_pdb_model_free_rotor_z_axis(self):
@@ -2013,9 +1995,6 @@ class Frame_order(SystemTestCase):
         self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
         self.interpreter.pipe.display()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='frame_order.pdb', dir=ds.tmpdir)
-
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
         data = [
             [ 1, 'PIV',    1, 'Piv',  pivot],
@@ -2034,26 +2013,8 @@ class Frame_order(SystemTestCase):
             [12, 'RTL', 1462, 'z-ax', self.rotate_from_Z(origin=pivot, length=l+2.0, angle=0.0, neg=True)]
         ]
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        index = 0
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Skip the propeller blades.
-            if atom_name == 'BLD':
-                continue
-
-            # Checks.
-            print("Checking residue %s %s, atom %s %s, at position %s." % (data[index][0], data[index][1], data[index][2], data[index][3], data[index][4]))
-            self.assertEqual(data[index][0], res_num)
-            self.assertEqual(data[index][1], res_name)
-            self.assertEqual(data[index][2], atom_num)
-            self.assertEqual(data[index][3], atom_name)
-            self.assertAlmostEqual(data[index][4][0], pos[0][0], 3)
-            self.assertAlmostEqual(data[index][4][1], pos[0][1], 3)
-            self.assertAlmostEqual(data[index][4][2], pos[0][2], 3)
-
-            # Increment the index.
-            index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=[data], files=['frame_order.pdb'])
 
 
     def test_pdb_model_iso_cone_xz_plane_tilt(self):
@@ -2101,9 +2062,6 @@ class Frame_order(SystemTestCase):
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
 
-        # The files.
-        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
-
         # The xy-plane vectors.
         inc = 2.0 * pi / 10.0
         vectors = zeros((10, 3), float64)
@@ -2150,39 +2108,8 @@ class Frame_order(SystemTestCase):
                 [ 1, 'TLE', 804, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=axis_theta, neg=neg[i])]
             ])
 
-        # Loop over the representations.
-        for i in range(2):
-            # Delete all structural data.
-            self.interpreter.structure.delete()
-
-            # Read the contents of the file.
-            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
-
-            # Check the atomic coordinates.
-            selection = cdp.structure.selection()
-            index = 0
-            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-                # Skip the propeller blades.
-                if atom_name == 'BLD':
-                    continue
-
-                # Skip the cone interior (checking the edge will be sufficient).
-                if res_name == 'CON':
-                    continue
-
-                # Checks.
-                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
-                print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
-                self.assertEqual(data[i][index][0], res_num)
-                self.assertEqual(data[i][index][1], res_name)
-                self.assertEqual(data[i][index][2], atom_num)
-                self.assertEqual(data[i][index][3], atom_name)
-                self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
-                self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
-                self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
-
-                # Increment the index.
-                index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=data, files=['frame_order_A.pdb', 'frame_order_B.pdb'])
 
 
     def test_pdb_model_iso_cone_z_axis(self):
@@ -2224,9 +2151,6 @@ class Frame_order(SystemTestCase):
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
-
-        # The files.
-        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
 
         # The xy-plane vectors.
         inc = 2.0 * pi / 10.0
@@ -2274,39 +2198,8 @@ class Frame_order(SystemTestCase):
                 [ 1, 'TLE', 804, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=axis_theta, neg=neg[i])]
             ])
 
-        # Loop over the representations.
-        for i in range(2):
-            # Delete all structural data.
-            self.interpreter.structure.delete()
-
-            # Read the contents of the file.
-            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
-
-            # Check the atomic coordinates.
-            selection = cdp.structure.selection()
-            index = 0
-            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-                # Skip the propeller blades.
-                if atom_name == 'BLD':
-                    continue
-
-                # Skip the cone interior (checking the edge will be sufficient).
-                if res_name == 'CON':
-                    continue
-
-                # Checks.
-                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
-                print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
-                self.assertEqual(data[i][index][0], res_num)
-                self.assertEqual(data[i][index][1], res_name)
-                self.assertEqual(data[i][index][2], atom_num)
-                self.assertEqual(data[i][index][3], atom_name)
-                self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
-                self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
-                self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
-
-                # Increment the index.
-                index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=data, files=['frame_order_A.pdb', 'frame_order_B.pdb'])
 
 
     def test_pdb_model_iso_cone_free_rotor_xz_plane_tilt(self):
@@ -2353,9 +2246,6 @@ class Frame_order(SystemTestCase):
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
 
-        # The files.
-        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
-
         # The xy-plane vectors.
         inc = 2.0 * pi / 10.0
         vectors = zeros((10, 3), float64)
@@ -2402,39 +2292,8 @@ class Frame_order(SystemTestCase):
                 [ 1, 'TLE', 804, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=axis_theta, neg=neg[i])]
             ])
 
-        # Loop over the representations.
-        for i in range(2):
-            # Delete all structural data.
-            self.interpreter.structure.delete()
-
-            # Read the contents of the file.
-            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
-
-            # Check the atomic coordinates.
-            selection = cdp.structure.selection()
-            index = 0
-            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-                # Skip the propeller blades.
-                if atom_name == 'BLD':
-                    continue
-
-                # Skip the cone interior (checking the edge will be sufficient).
-                if res_name == 'CON':
-                    continue
-
-                # Checks.
-                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
-                print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
-                self.assertEqual(data[i][index][0], res_num)
-                self.assertEqual(data[i][index][1], res_name)
-                self.assertEqual(data[i][index][2], atom_num)
-                self.assertEqual(data[i][index][3], atom_name)
-                self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
-                self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
-                self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
-
-                # Increment the index.
-                index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=data, files=['frame_order_A.pdb', 'frame_order_B.pdb'])
 
 
     def test_pdb_model_iso_cone_free_rotor_z_axis(self):
@@ -2475,9 +2334,6 @@ class Frame_order(SystemTestCase):
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
-
-        # The files.
-        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
 
         # The xy-plane vectors.
         inc = 2.0 * pi / 10.0
@@ -2525,39 +2381,8 @@ class Frame_order(SystemTestCase):
                 [ 1, 'TLE', 804, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=axis_theta, neg=neg[i])]
             ])
 
-        # Loop over the representations.
-        for i in range(2):
-            # Delete all structural data.
-            self.interpreter.structure.delete()
-
-            # Read the contents of the file.
-            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
-
-            # Check the atomic coordinates.
-            selection = cdp.structure.selection()
-            index = 0
-            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-                # Skip the propeller blades.
-                if atom_name == 'BLD':
-                    continue
-
-                # Skip the cone interior (checking the edge will be sufficient).
-                if res_name == 'CON':
-                    continue
-
-                # Checks.
-                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
-                print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
-                self.assertEqual(data[i][index][0], res_num)
-                self.assertEqual(data[i][index][1], res_name)
-                self.assertEqual(data[i][index][2], atom_num)
-                self.assertEqual(data[i][index][3], atom_name)
-                self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
-                self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
-                self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
-
-                # Increment the index.
-                index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=data, files=['frame_order_A.pdb', 'frame_order_B.pdb'])
 
 
     def test_pdb_model_iso_cone_torsionless_xz_plane_tilt(self):
@@ -2604,9 +2429,6 @@ class Frame_order(SystemTestCase):
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
 
-        # The files.
-        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
-
         # The xy-plane vectors.
         inc = 2.0 * pi / 10.0
         vectors = zeros((10, 3), float64)
@@ -2649,39 +2471,8 @@ class Frame_order(SystemTestCase):
                 [ 1, 'TLE',  76, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=axis_theta, neg=neg[i])]
             ])
 
-        # Loop over the representations.
-        for i in range(2):
-            # Delete all structural data.
-            self.interpreter.structure.delete()
-
-            # Read the contents of the file.
-            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
-
-            # Check the atomic coordinates.
-            selection = cdp.structure.selection()
-            index = 0
-            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-                # Skip the propeller blades.
-                if atom_name == 'BLD':
-                    continue
-
-                # Skip the cone interior (checking the edge will be sufficient).
-                if res_name == 'CON':
-                    continue
-
-                # Checks.
-                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
-                print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
-                self.assertEqual(data[i][index][0], res_num)
-                self.assertEqual(data[i][index][1], res_name)
-                self.assertEqual(data[i][index][2], atom_num)
-                self.assertEqual(data[i][index][3], atom_name)
-                self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
-                self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
-                self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
-
-                # Increment the index.
-                index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=data, files=['frame_order_A.pdb', 'frame_order_B.pdb'])
 
 
     def test_pdb_model_iso_cone_torsionless_z_axis(self):
@@ -2722,9 +2513,6 @@ class Frame_order(SystemTestCase):
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
-
-        # The files.
-        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
 
         # The xy-plane vectors.
         inc = 2.0 * pi / 10.0
@@ -2768,39 +2556,8 @@ class Frame_order(SystemTestCase):
                 [ 1, 'TLE',  76, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=axis_theta, neg=neg[i])]
             ])
 
-        # Loop over the representations.
-        for i in range(2):
-            # Delete all structural data.
-            self.interpreter.structure.delete()
-
-            # Read the contents of the file.
-            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
-
-            # Check the atomic coordinates.
-            selection = cdp.structure.selection()
-            index = 0
-            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-                # Skip the propeller blades.
-                if atom_name == 'BLD':
-                    continue
-
-                # Skip the cone interior (checking the edge will be sufficient).
-                if res_name == 'CON':
-                    continue
-
-                # Checks.
-                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
-                print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
-                self.assertEqual(data[i][index][0], res_num)
-                self.assertEqual(data[i][index][1], res_name)
-                self.assertEqual(data[i][index][2], atom_num)
-                self.assertEqual(data[i][index][3], atom_name)
-                self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
-                self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
-                self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
-
-                # Increment the index.
-                index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=data, files=['frame_order_A.pdb', 'frame_order_B.pdb'])
 
 
     def test_pdb_model_pseudo_ellipse_xz_plane_tilt(self):
@@ -2848,9 +2605,6 @@ class Frame_order(SystemTestCase):
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
-
-        # The files.
-        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
 
         # The xy-plane vectors and angles.
         inc = 2.0 * pi / 10.0
@@ -2911,39 +2665,8 @@ class Frame_order(SystemTestCase):
                 [ 1, 'TLE', 811, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=eigen_beta, neg=neg[i])]
             ])
 
-        # Loop over the representations.
-        for i in range(2):
-            # Delete all structural data.
-            self.interpreter.structure.delete()
-
-            # Read the contents of the file.
-            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
-
-            # Check the atomic coordinates.
-            selection = cdp.structure.selection()
-            index = 0
-            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-                # Skip the propeller blades.
-                if atom_name == 'BLD':
-                    continue
-
-                # Skip the cone interior (checking the edge will be sufficient).
-                if res_name == 'CON':
-                    continue
-
-                # Checks.
-                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
-                print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
-                self.assertEqual(data[i][index][0], res_num)
-                self.assertEqual(data[i][index][1], res_name)
-                self.assertEqual(data[i][index][2], atom_num)
-                self.assertEqual(data[i][index][3], atom_name)
-                self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
-                self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
-                self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
-
-                # Increment the index.
-                index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=data, files=['frame_order_A.pdb', 'frame_order_B.pdb'])
 
 
     def test_pdb_model_pseudo_ellipse_z_axis(self):
@@ -2991,9 +2714,6 @@ class Frame_order(SystemTestCase):
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
-
-        # The files.
-        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
 
         # The xy-plane vectors and angles.
         inc = 2.0 * pi / 10.0
@@ -3054,39 +2774,8 @@ class Frame_order(SystemTestCase):
                 [ 1, 'TLE', 811, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=0.0, neg=neg[i])]
             ])
 
-        # Loop over the representations.
-        for i in range(2):
-            # Delete all structural data.
-            self.interpreter.structure.delete()
-
-            # Read the contents of the file.
-            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
-
-            # Check the atomic coordinates.
-            selection = cdp.structure.selection()
-            index = 0
-            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-                # Skip the propeller blades.
-                if atom_name == 'BLD':
-                    continue
-
-                # Skip the cone interior (checking the edge will be sufficient).
-                if res_name == 'CON':
-                    continue
-
-                # Checks.
-                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
-                print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
-                self.assertEqual(data[i][index][0], res_num)
-                self.assertEqual(data[i][index][1], res_name)
-                self.assertEqual(data[i][index][2], atom_num)
-                self.assertEqual(data[i][index][3], atom_name)
-                self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
-                self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
-                self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
-
-                # Increment the index.
-                index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=data, files=['frame_order_A.pdb', 'frame_order_B.pdb'])
 
 
     def test_pdb_model_pseudo_ellipse_free_rotor_xz_plane_tilt(self):
@@ -3133,9 +2822,6 @@ class Frame_order(SystemTestCase):
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
-
-        # The files.
-        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
 
         # The xy-plane vectors and angles.
         inc = 2.0 * pi / 10.0
@@ -3196,39 +2882,8 @@ class Frame_order(SystemTestCase):
                 [ 1, 'TLE', 811, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=eigen_beta, neg=neg[i])]
             ])
 
-        # Loop over the representations.
-        for i in range(2):
-            # Delete all structural data.
-            self.interpreter.structure.delete()
-
-            # Read the contents of the file.
-            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
-
-            # Check the atomic coordinates.
-            selection = cdp.structure.selection()
-            index = 0
-            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-                # Skip the propeller blades.
-                if atom_name == 'BLD':
-                    continue
-
-                # Skip the cone interior (checking the edge will be sufficient).
-                if res_name == 'CON':
-                    continue
-
-                # Checks.
-                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
-                print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
-                self.assertEqual(data[i][index][0], res_num)
-                self.assertEqual(data[i][index][1], res_name)
-                self.assertEqual(data[i][index][2], atom_num)
-                self.assertEqual(data[i][index][3], atom_name)
-                self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
-                self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
-                self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
-
-                # Increment the index.
-                index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=data, files=['frame_order_A.pdb', 'frame_order_B.pdb'])
 
 
     def test_pdb_model_pseudo_ellipse_free_rotor_z_axis(self):
@@ -3275,9 +2930,6 @@ class Frame_order(SystemTestCase):
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
-
-        # The files.
-        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
 
         # The xy-plane vectors and angles.
         inc = 2.0 * pi / 10.0
@@ -3338,39 +2990,8 @@ class Frame_order(SystemTestCase):
                 [ 1, 'TLE', 811, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=0.0, neg=neg[i])]
             ])
 
-        # Loop over the representations.
-        for i in range(2):
-            # Delete all structural data.
-            self.interpreter.structure.delete()
-
-            # Read the contents of the file.
-            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
-
-            # Check the atomic coordinates.
-            selection = cdp.structure.selection()
-            index = 0
-            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-                # Skip the propeller blades.
-                if atom_name == 'BLD':
-                    continue
-
-                # Skip the cone interior (checking the edge will be sufficient).
-                if res_name == 'CON':
-                    continue
-
-                # Checks.
-                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
-                print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
-                self.assertEqual(data[i][index][0], res_num)
-                self.assertEqual(data[i][index][1], res_name)
-                self.assertEqual(data[i][index][2], atom_num)
-                self.assertEqual(data[i][index][3], atom_name)
-                self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
-                self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
-                self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
-
-                # Increment the index.
-                index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=data, files=['frame_order_A.pdb', 'frame_order_B.pdb'])
 
 
     def test_pdb_model_pseudo_ellipse_torsionless_xz_plane_tilt(self):
@@ -3417,9 +3038,6 @@ class Frame_order(SystemTestCase):
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
-
-        # The files.
-        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
 
         # The xy-plane vectors and angles.
         inc = 2.0 * pi / 10.0
@@ -3474,39 +3092,8 @@ class Frame_order(SystemTestCase):
                 [ 1, 'TLE',  83, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=eigen_beta, neg=neg[i])]
             ])
 
-        # Loop over the representations.
-        for i in range(2):
-            # Delete all structural data.
-            self.interpreter.structure.delete()
-
-            # Read the contents of the file.
-            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
-
-            # Check the atomic coordinates.
-            selection = cdp.structure.selection()
-            index = 0
-            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-                # Skip the propeller blades.
-                if atom_name == 'BLD':
-                    continue
-
-                # Skip the cone interior (checking the edge will be sufficient).
-                if res_name == 'CON':
-                    continue
-
-                # Checks.
-                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
-                print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
-                self.assertEqual(data[i][index][0], res_num)
-                self.assertEqual(data[i][index][1], res_name)
-                self.assertEqual(data[i][index][2], atom_num)
-                self.assertEqual(data[i][index][3], atom_name)
-                self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
-                self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
-                self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
-
-                # Increment the index.
-                index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=data, files=['frame_order_A.pdb', 'frame_order_B.pdb'])
 
 
     def test_pdb_model_pseudo_ellipse_torsionless_z_axis(self):
@@ -3553,9 +3140,6 @@ class Frame_order(SystemTestCase):
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
-
-        # The files.
-        files = ['frame_order_A.pdb', 'frame_order_B.pdb']
 
         # The xy-plane vectors and angles.
         inc = 2.0 * pi / 10.0
@@ -3610,39 +3194,8 @@ class Frame_order(SystemTestCase):
                 [ 1, 'TLE',  83, tle[i], self.rotate_from_Z(origin=pivot, length=l+10, angle=0.0, neg=neg[i])]
             ])
 
-        # Loop over the representations.
-        for i in range(2):
-            # Delete all structural data.
-            self.interpreter.structure.delete()
-
-            # Read the contents of the file.
-            self.interpreter.structure.read_pdb(file=files[i], dir=ds.tmpdir)
-
-            # Check the atomic coordinates.
-            selection = cdp.structure.selection()
-            index = 0
-            for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-                # Skip the propeller blades.
-                if atom_name == 'BLD':
-                    continue
-
-                # Skip the cone interior (checking the edge will be sufficient).
-                if res_name == 'CON':
-                    continue
-
-                # Checks.
-                print("Checking residue %s %s, atom %s %s, at position %s." % (data[i][index][0], data[i][index][1], data[i][index][2], data[i][index][3], data[i][index][4]))
-                print("      to residue %s %s, atom %s %s, at position %s." % (res_num, res_name, atom_num, atom_name, pos[0]))
-                self.assertEqual(data[i][index][0], res_num)
-                self.assertEqual(data[i][index][1], res_name)
-                self.assertEqual(data[i][index][2], atom_num)
-                self.assertEqual(data[i][index][3], atom_name)
-                self.assertAlmostEqual(data[i][index][4][0], pos[0][0], 3)
-                self.assertAlmostEqual(data[i][index][4][1], pos[0][1], 3)
-                self.assertAlmostEqual(data[i][index][4][2], pos[0][2], 3)
-
-                # Increment the index.
-                index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=data, files=['frame_order_A.pdb', 'frame_order_B.pdb'])
 
 
     def test_pdb_model_rotor_xz_plane_tilt(self):
@@ -3684,9 +3237,6 @@ class Frame_order(SystemTestCase):
         self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
         self.interpreter.pipe.display()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='frame_order.pdb', dir=ds.tmpdir)
-
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
         data = [
             [ 1, 'PIV',    1, 'Piv',  pivot],
@@ -3705,26 +3255,8 @@ class Frame_order(SystemTestCase):
             [12, 'RTL', 1462, 'z-ax', self.rotate_from_Z(origin=pivot, length=l+2.0, angle=-pi/4.0, neg=True)]
         ]
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        index = 0
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Skip the propeller blades.
-            if atom_name == 'BLD':
-                continue
-
-            # Checks (to the 3 places accuracy of a PDB file).
-            print("Checking residue %s %s, atom %s %s, at position %s." % (data[index][0], data[index][1], data[index][2], data[index][3], data[index][4]))
-            self.assertEqual(data[index][0], res_num)
-            self.assertEqual(data[index][1], res_name)
-            self.assertEqual(data[index][2], atom_num)
-            self.assertEqual(data[index][3], atom_name)
-            self.assertAlmostEqual(data[index][4][0], pos[0][0], 3)
-            self.assertAlmostEqual(data[index][4][1], pos[0][1], 3)
-            self.assertAlmostEqual(data[index][4][2], pos[0][2], 3)
-
-            # Increment the index.
-            index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=[data], files=['frame_order.pdb'])
 
 
     def test_pdb_model_rotor_z_axis(self):
@@ -3766,9 +3298,6 @@ class Frame_order(SystemTestCase):
         self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
         self.interpreter.pipe.display()
 
-        # Read the contents of the file.
-        self.interpreter.structure.read_pdb(file='frame_order.pdb', dir=ds.tmpdir)
-
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
         data = [
             [ 1, 'PIV',    1, 'Piv',  pivot],
@@ -3787,26 +3316,8 @@ class Frame_order(SystemTestCase):
             [12, 'RTL', 1462, 'z-ax', self.rotate_from_Z(origin=pivot, length=l+2.0, angle=0.0, neg=True)]
         ]
 
-        # Check the atomic coordinates.
-        selection = cdp.structure.selection()
-        index = 0
-        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
-            # Skip the propeller blades.
-            if atom_name == 'BLD':
-                continue
-
-            # Checks.
-            print("Checking residue %s %s, atom %s %s, at position %s." % (data[index][0], data[index][1], data[index][2], data[index][3], data[index][4]))
-            self.assertEqual(data[index][0], res_num)
-            self.assertEqual(data[index][1], res_name)
-            self.assertEqual(data[index][2], atom_num)
-            self.assertEqual(data[index][3], atom_name)
-            self.assertAlmostEqual(data[index][4][0], pos[0][0], 3)
-            self.assertAlmostEqual(data[index][4][1], pos[0][1], 3)
-            self.assertAlmostEqual(data[index][4][2], pos[0][2], 3)
-
-            # Increment the index.
-            index += 1
+        # Check the data. 
+        self.check_pdb_model_representation(data=[data], files=['frame_order.pdb'])
 
 
     def test_pseudo_ellipse_zero_cone_angle(self):
