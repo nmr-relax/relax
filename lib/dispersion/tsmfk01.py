@@ -61,7 +61,7 @@ Links
 More information on the TSMFK01 model can be found in the:
 
     - U{relax wiki<http://wiki.nmr-relax.com/TSMFK01>},
-    - U{relax manual<http://www.nmr-relax.com/manual/TSMFK01_2_site_CPMG_model.html>},
+    - U{relax manual<http://www.nmr-relax.com/manual/The_TSMFK01_2_site_CPMG_model.html>},
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#TSMFK01>}.
 """
 

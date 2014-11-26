@@ -45,7 +45,7 @@ Links
 More information on the NS MMQ 2-site model can be found in the:
 
     - U{relax wiki<http://wiki.nmr-relax.com/NS_MMQ_2-site>},
-    - U{relax manual<http://www.nmr-relax.com/manual/NS_MMQ_2_site_model.html>},
+    - U{relax manual<http://www.nmr-relax.com/manual/The_NS_MMQ_2_site_model.html>},
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_MMQ_2-site>}.
 """
 

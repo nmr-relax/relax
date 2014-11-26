@@ -43,7 +43,7 @@ Links
 More information on the MMQ CR72 model can be found in the:
 
     - U{relax wiki<http://wiki.nmr-relax.com/MMQ_CR72>},
-    - U{relax manual<http://www.nmr-relax.com/manual/MMQ_CR72_model.html>},
+    - U{relax manual<http://www.nmr-relax.com/manual/The_MMQ_CR72_model.html>},
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#MMQ_CR72>}.
 """
 
