@@ -40,9 +40,10 @@ from lib.warnings import RelaxDeselectWarning
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.relax_fit.optimisation import back_calc, d2func_wrapper, dfunc_wrapper, func_wrapper
+from specific_analyses.relax_fit.optimisation import back_calc
 from specific_analyses.relax_fit.parameter_object import Relax_fit_params
 from specific_analyses.relax_fit.parameters import assemble_param_vector, disassemble_param_vector, linear_constraints
+from target_functions.relax_fit_wrapper import Relax_fit_opt
 
 # C modules.
 if C_module_exp_fn:
@@ -366,7 +367,8 @@ class Relax_fit(API_base, API_common):
                 for i in range(len(scaling_matrix[model_index])):
                     scaling_list.append(scaling_matrix[model_index][i, i])
 
-            setup(num_params=len(spin.params), num_times=len(values), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
+            # Set up the target function.
+            model = Relax_fit_opt(num_params=len(spin.params), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
 
 
             # Setup the minimisation algorithm when constraints are present.
@@ -397,7 +399,7 @@ class Relax_fit(API_base, API_common):
 
             # Grid search.
             if search('^[Gg]rid', min_algor):
-                results = grid(func=func_wrapper, args=(), num_incs=inc[model_index], lower=lower[model_index], upper=upper[model_index], A=A, b=b, verbosity=verbosity)
+                results = grid(func=model.func, args=(), num_incs=inc[model_index], lower=lower[model_index], upper=upper[model_index], A=A, b=b, verbosity=verbosity)
 
                 # Unpack the results.
                 param_vector, chi2, iter_count, warning = results
@@ -407,7 +409,7 @@ class Relax_fit(API_base, API_common):
 
             # Minimisation.
             else:
-                results = generic_minimise(func=func_wrapper, dfunc=dfunc_wrapper, d2func=d2func_wrapper, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
+                results = generic_minimise(func=model.func, dfunc=model.dfunc, d2func=model.d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
 
                 # Unpack the results.
                 if results == None:
