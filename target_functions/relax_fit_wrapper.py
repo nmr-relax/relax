@@ -32,7 +32,7 @@ from specific_analyses.relax_fit.parameters import assemble_param_vector
 
 # C modules.
 if C_module_exp_fn:
-    from target_functions.relax_fit import setup, func, dfunc, d2func, back_calc_I
+    from target_functions.relax_fit import jacobian, jacobian_chi2, setup, func, dfunc, d2func, back_calc_I
 
 
 class Relax_fit_opt:
@@ -60,6 +60,10 @@ class Relax_fit_opt:
         self.func = self.func_wrapper
         self.dfunc = self.dfunc_wrapper
         self.d2func = self.d2func_wrapper
+
+        # Alias the Jacobian C functions.
+        self.jacobian = jacobian
+        self.jacobian_chi2 = jacobian_chi2
 
 
     def back_calc_data(self):

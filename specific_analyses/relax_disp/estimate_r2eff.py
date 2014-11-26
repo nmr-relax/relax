@@ -44,10 +44,6 @@ from specific_analyses.relax_disp.parameters import disassemble_param_vector
 from target_functions.chi2 import chi2_rankN, dchi2
 from target_functions.relax_fit_wrapper import Relax_fit_opt
 
-# C modules.
-if C_module_exp_fn:
-    from target_functions.relax_fit import jacobian, jacobian_chi2, setup
-
 # Scipy installed.
 if scipy_module:
     # Import leastsq.
@@ -123,10 +119,10 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
 
             # Initialise data in C code.
             scaling_list = [1.0, 1.0]
-            setup(num_params=len(param_vector), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
+            model = Relax_fit_opt(num_params=len(param_vector), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
 
             # Use the direct Jacobian from function.
-            jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
+            jacobian_matrix_exp = transpose(asarray( model.jacobian(param_vector) ) )
             weights = 1. / errors**2
 
             # Get the co-variance
@@ -823,12 +819,12 @@ def minimise_minfx(E=None):
     if E.c_code == True:
         if E.chi2_jacobian:
             # Use the chi2 Jacobian from C.
-            jacobian_matrix_exp = transpose(asarray( jacobian_chi2(param_vector) ) )
+            jacobian_matrix_exp = transpose(asarray( model.jacobian_chi2(param_vector) ) )
             weights = ones(E.errors.shape)
 
         else:
             # Use the direct Jacobian from C.
-            jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
+            jacobian_matrix_exp = transpose(asarray( model.jacobian(param_vector) ) )
             weights = 1. / E.errors**2
 
     elif E.c_code == False:

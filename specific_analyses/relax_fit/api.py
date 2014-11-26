@@ -45,10 +45,6 @@ from specific_analyses.relax_fit.parameter_object import Relax_fit_params
 from specific_analyses.relax_fit.parameters import assemble_param_vector, disassemble_param_vector, linear_constraints
 from target_functions.relax_fit_wrapper import Relax_fit_opt
 
-# C modules.
-if C_module_exp_fn:
-    from target_functions.relax_fit import jacobian, setup
-
 
 class Relax_fit(API_base, API_common):
     """Class containing functions for relaxation curve fitting."""
@@ -139,10 +135,10 @@ class Relax_fit(API_base, API_common):
 
         # Initialise data in C code.
         scaling_list = [1.0, 1.0]
-        setup(num_params=len(param_vector), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
+        model = Relax_fit_opt(num_params=len(param_vector), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
 
         # Use the direct Jacobian from function.
-        jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
+        jacobian_matrix_exp = transpose(asarray( model.jacobian(param_vector) ) )
         weights = 1. / errors**2
 
         # Return the matrices.
