@@ -60,7 +60,7 @@ Links
 More information on the LM63 model can be found in the:
 
     - U{relax wiki<http://wiki.nmr-relax.com/LM63>},
-    - U{relax manual<http://www.nmr-relax.com/manual/LM63_2_site_fast_exchange_CPMG_model.html>},
+    - U{relax manual<http://www.nmr-relax.com/manual/The_LM63_2_site_fast_exchange_CPMG_model.html>},
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#LM63>}.
 """
 

@@ -45,13 +45,13 @@ Links
 More information on the NS R1rho 3-site linear model can be found in the:
 
     - U{relax wiki<http://wiki.nmr-relax.com/NS_R1rho_3-site_linear>},
-    - U{relax manual<http://www.nmr-relax.com/manual/NS_3_site_linear_R1_model.html>},
+    - U{relax manual<http://www.nmr-relax.com/manual/The_NS_3_site_linear_R1_rho_model.html>},
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_R1rho_3-site_linear>}.
 
 More information on the NS R1rho 3-site model can be found in the:
 
     - U{relax wiki<http://wiki.nmr-relax.com/NS_R1rho_3-site>},
-    - U{relax manual<http://www.nmr-relax.com/manual/NS_3_site_R1_model.html>},
+    - U{relax manual<http://www.nmr-relax.com/manual/The_NS_3_site_R1_rho_model.html>},
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_R1rho_3-site>}.
 """
 
