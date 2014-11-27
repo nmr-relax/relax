@@ -24,7 +24,7 @@
 
 # relax module imports.
 from lib.errors import RelaxError
-from lib.software.nmrglue import read_spectrum
+from lib.software.nmrglue import contour_plot, read_spectrum
 from pipe_control.pipes import check_pipe
 from pipe_control.spectrum import add_spectrum_id, check_spectrum_id, delete
 
@@ -72,3 +72,29 @@ def read(file=None, dir=None, spectrum_id=None):
 
     # Store the data.
     add_nmrglue_data(spectrum_id=spectrum_id, nmrglue_data=nmrglue_data)
+
+
+def plot_contour(spectrum_id=None, contour_start=30000., contour_num=20, contour_factor=1.20, ppm=True, show=False):
+    """Plot the spectrum as contour plot.
+
+    @keyword spectrum_id:       The spectrum identification string.
+    @type spectrum_id:          str or list of str
+    @keyword contour_start:     Contour level start value
+    @type contour_start:        float
+    @keyword contour_num:       Number of contour levels
+    @type contour_num:          int
+    @keyword contour_factor:    Scaling factor between contour levels
+    @type contour_factor:       float
+    @keyword ppm:               A flag which if True will make the plot in ppm scale. Else it is in points.
+    @type ppm:                  bool
+    @keyword show:              A flag which if True will make a call to matplotlib.pyplot.show().
+    @type show:                 bool
+    @return:                    The matplotlib.axes.AxesSubplot class, which can be manipulated to add additional text to the axis.
+    @rtype:                     matplotlib.axes.AxesSubplot
+    """
+
+    # Call the contour plot.
+    ax = contour_plot(spectrum_id=spectrum_id, contour_start=contour_start, contour_num=contour_num, contour_factor=contour_factor, ppm=ppm, show=show)
+
+    return ax
+

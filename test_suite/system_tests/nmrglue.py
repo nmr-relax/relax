@@ -26,6 +26,7 @@ from tempfile import mkdtemp, NamedTemporaryFile
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
+from pipe_control.nmrglue import plot_contour
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 from extern import nmrglue
@@ -82,3 +83,27 @@ class Nmrglue(SystemTestCase):
 
         # Assert the version to be 0.4.
         self.assertEqual(ng_vers, '0.4')
+
+
+    def xtest_plot_contour(self):
+        """Test the plot_contour function in pipe_control.
+        This is from the U{tutorial<http://jjhelmus.github.io/nmrglue/current/examples/plot_2d_spectrum.html>}."""
+
+        # Read the spectrum.
+        fname = 'freq_real.ft2'
+        sp_id = 'test'
+        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ds.ng_test, spectrum_id=sp_id)
+
+        # Call the pipe_control function and get the return axis.
+        ax = plot_contour(spectrum_id=sp_id, ppm=True, show=False)
+
+        # Set new limits.
+        ax.set_xlim(30, 0)
+        ax.set_ylim(15, -20)
+
+        # add some labels
+        ax.text(25.0, 0.0, "Test", size=8, color='r')
+
+        # Now show
+        import matplotlib.pyplot as plt
+        plt.show()
