@@ -22,6 +22,7 @@
 
 # Python module imports.
 from os import sep
+from tempfile import mkdtemp, NamedTemporaryFile
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -39,6 +40,37 @@ class Nmrglue(SystemTestCase):
 
         # Create a data pipe.
         self.interpreter.pipe.create('mf', 'mf')
+
+        # Create a temporary directory for dumping files.
+        ds.tmpdir = mkdtemp()
+
+        # Create path to nmrglue test data.
+        ds.ng_test = status.install_path +sep+ 'extern' +sep+ 'nmrglue' +sep+ 'nmrglue_0_4' +sep+ 'tests' +sep+ 'pipe_proc_tests'
+
+
+    def test_nmrglue_read(self):
+        """Test the userfunction spectrum.nmrglue_read."""
+
+        # Read the spectrum.
+        fname = 'freq_real.ft2'
+        sp_id = 'test'
+        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ds.ng_test, spectrum_id=sp_id)
+
+        # Test that the spectrum id has been stored.
+        self.assertEqual(cdp.spectrum_ids[0], sp_id)
+
+        # Extract the data.
+        dic  = cdp.ngdata[sp_id].dic
+        udic  = cdp.ngdata[sp_id].udic
+        data = cdp.ngdata[sp_id].data
+
+        # Test the data.
+        self.assertEqual(udic[0]['label'], '15N')
+        self.assertEqual(udic[1]['label'], '13C')
+        self.assertEqual(udic[0]['freq'], True)
+        self.assertEqual(udic[1]['freq'], True)
+        self.assertEqual(udic[0]['size'], 512)
+        self.assertEqual(udic[1]['size'], 4096)
 
 
     def test_version(self):
