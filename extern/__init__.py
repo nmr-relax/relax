@@ -28,3 +28,6 @@ __all__ = [
     'numpy_future',
     'sobol'
 ]
+
+# Import version 0.4 as standard version of nmrglue.
+from extern.nmrglue.nmrglue_0_4 import nmrglue as nmrglue
