@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,50 +19,42 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""Package of analysis independent code."""
+# Module docstring.
+"""Module for the wrapper functions around the nmrglue module."""
 
-# The available modules.
-__all__ = [ 'align_tensor',
-            'angles',
-            'bmrb',
-            'bruker',
-            'chemical_shift',
-            'dasha',
-            'diffusion_tensor',
-            'domain',
-            'eliminate',
-            'error_analysis',
-            'exp_info',
-            'fix',
-            'grace',
-            'interatomic',
-            'j_coupling',
-            'minimise',
-            'model_selection',
-            'mol_res_spin',
-            'molmol',
-            'nmrglue',
-            'noesy',
-            'opendx',
-            'palmer',
-            'paramag',
-            'pcs',
-            'pipes',
-            'plotting',
-            'pymol_control',
-            'rdc',
-            'relax_data',
-            'reset',
-            'result_files',
-            'results',
-            'script',
-            'selection',
-            'sequence',
-            'spectrometer',
-            'spectrum',
-            'state',
-            'structure',
-            'value',
-            'vmd'
-]
+# Python module imports.
+from re import search, split
+
+# relax module imports.
+from extern import nmrglue
+from lib.errors import RelaxError
+from lib.io import get_file_path
+from lib.spectrum.objects import Nmrglue_data
+
+
+def read_spectrum(file=None, dir=None):
+    """Read the spectrum data.
+
+    @keyword file:          The name of the file containing the spectrum.
+    @type file:             str
+    @keyword dir:           The directory where the file is located.
+    @type dir:              str
+    @return:                The nmrglue data object containing all relevant data in the spectrum.
+    @rtype:                 lib.spectrum.objects.Nmrglue_data instance
+    """
+
+    # File path.
+    file_path = get_file_path(file, dir)
+
+    # Open file
+    dic, data = nmrglue.pipe.read(file_path)
+    udic = nmrglue.pipe.guess_udic(dic, data)
+
+    # Initialise the nmrglue data object.
+    nmrglue_data = Nmrglue_data()
+
+    # Add the data.
+    nmrglue_data.add(file_path=file_path, dic=dic, udic=udic, data=data)
+
+    # Return the nmrglue data object.
+    return nmrglue_data
