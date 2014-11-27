@@ -242,7 +242,7 @@ Links
 More information on the NS CPMG 2-site expanded model can be found in the:
 
     - U{relax wiki<http://wiki.nmr-relax.com/NS_CPMG_2-site_expanded>},
-    - U{relax manual<http://www.nmr-relax.com/manual/NS_2_site_expanded_CPMG_model.html>},
+    - U{relax manual<http://www.nmr-relax.com/manual/The_NS_2_site_expanded_CPMG_model.html>},
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_CPMG_2-site_expanded>}.
 """
 

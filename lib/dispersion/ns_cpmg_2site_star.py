@@ -46,13 +46,13 @@ Links
 More information on the NS CPMG 2-site star model can be found in the:
 
     - U{relax wiki<http://wiki.nmr-relax.com/NS_CPMG_2-site_star>},
-    - U{relax manual<http://www.nmr-relax.com/manual/reduced_NS_2_site_star_CPMG_model.html>},
+    - U{relax manual<http://www.nmr-relax.com/manual/The_reduced_NS_2_site_star_CPMG_model.html>},
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_CPMG_2-site_star>}.
 
 More information on the NS CPMG 2-site star full model can be found in the:
 
     - U{relax wiki<http://wiki.nmr-relax.com/NS_CPMG_2-site_star_full>},
-    - U{relax manual<http://www.nmr-relax.com/manual/full_NS_2_site_star_CPMG_model.html>},
+    - U{relax manual<http://www.nmr-relax.com/manual/The_full_NS_2_site_star_CPMG_model.html>},
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_CPMG_2-site_star_full>}.
 """
 

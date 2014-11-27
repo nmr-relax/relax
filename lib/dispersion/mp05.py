@@ -56,7 +56,7 @@ Links
 More information on the MP05 model can be found in the:
 
     - U{relax wiki<http://wiki.nmr-relax.com/MP05>},
-    - U{relax manual<http://www.nmr-relax.com/manual/MP05_2_site_exchange_R1_model.html>},
+    - U{relax manual<http://www.nmr-relax.com/manual/The_MP05_2_site_exchange_R1_rho_model.html>},
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#MP05>}.
 """
 

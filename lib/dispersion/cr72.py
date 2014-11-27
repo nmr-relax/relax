@@ -82,13 +82,13 @@ Links
 More information on the CR72 model can be found in the:
 
     - U{relax wiki<http://wiki.nmr-relax.com/CR72>},
-    - U{relax manual<http://www.nmr-relax.com/manual/reduced_CR72_2_site_CPMG_model.html>},
+    - U{relax manual<http://www.nmr-relax.com/manual/The_reduced_CR72_2_site_CPMG_model.html>},
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#CR72>}.
 
 More information on the CR72 full model can be found in the:
 
     - U{relax wiki<http://wiki.nmr-relax.com/CR72_full>},
-    - U{relax manual<http://www.nmr-relax.com/manual/full_CR72_2_site_CPMG_model.html>},
+    - U{relax manual<http://www.nmr-relax.com/manual/The_full_CR72_2_site_CPMG_model.html>},
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#CR72_full>}.
 """
 

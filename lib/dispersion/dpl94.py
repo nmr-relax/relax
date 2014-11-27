@@ -59,7 +59,7 @@ Links
 More information on the DPL94 model can be found in the:
 
     - U{relax wiki<http://wiki.nmr-relax.com/DPL94>},
-    - U{relax manual<http://www.nmr-relax.com/manual/DPL94_2_site_fast_exchange_R1_model.html>},
+    - U{relax manual<http://www.nmr-relax.com/manual/The_DPL94_2_site_fast_exchange_R1_rho_model.html>},
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#DPL94>}.
 """
 

@@ -42,15 +42,7 @@ from specific_analyses.relax_disp.checks import check_model_type
 from specific_analyses.relax_disp.data import average_intensity, loop_exp_frq_offset_point, loop_time, return_param_key_from_data
 from specific_analyses.relax_disp.parameters import disassemble_param_vector
 from target_functions.chi2 import chi2_rankN, dchi2
-
-# C modules.
-if C_module_exp_fn:
-    from specific_analyses.relax_fit.optimisation import func_wrapper, dfunc_wrapper, d2func_wrapper
-    from target_functions.relax_fit import jacobian, jacobian_chi2, setup
-    # Call the python wrapper function to help with list to numpy array conversion.
-    func = func_wrapper
-    dfunc = dfunc_wrapper
-    d2func = d2func_wrapper
+from target_functions.relax_fit_wrapper import Relax_fit_opt
 
 # Scipy installed.
 if scipy_module:
@@ -127,10 +119,10 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
 
             # Initialise data in C code.
             scaling_list = [1.0, 1.0]
-            setup(num_params=len(param_vector), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
+            model = Relax_fit_opt(num_params=len(param_vector), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
 
             # Use the direct Jacobian from function.
-            jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
+            jacobian_matrix_exp = transpose(asarray( model.jacobian(param_vector) ) )
             weights = 1. / errors**2
 
             # Get the co-variance
@@ -797,12 +789,12 @@ def minimise_minfx(E=None):
 
         # Initialise the function to minimise.
         scaling_list = [1.0, 1.0]
-        setup(num_params=len(x0), num_times=len(E.times), values=E.values, sd=E.errors, relax_times=E.times, scaling_matrix=scaling_list)
+        model = Relax_fit_opt(num_params=len(x0), values=E.values, errors=E.errors, relax_times=E.times, scaling_matrix=scaling_list)
 
         # Define function to minimise for minfx.
-        t_func = func_wrapper
-        t_dfunc = dfunc_wrapper
-        t_d2func = d2func_wrapper
+        t_func = model.func
+        t_dfunc = model.dfunc
+        t_d2func = model.d2func
         args=()
 
     else:
@@ -827,12 +819,12 @@ def minimise_minfx(E=None):
     if E.c_code == True:
         if E.chi2_jacobian:
             # Use the chi2 Jacobian from C.
-            jacobian_matrix_exp = transpose(asarray( jacobian_chi2(param_vector) ) )
+            jacobian_matrix_exp = transpose(asarray( model.jacobian_chi2(param_vector) ) )
             weights = ones(E.errors.shape)
 
         else:
             # Use the direct Jacobian from C.
-            jacobian_matrix_exp = transpose(asarray( jacobian(param_vector) ) )
+            jacobian_matrix_exp = transpose(asarray( model.jacobian(param_vector) ) )
             weights = 1. / E.errors**2
 
     elif E.c_code == False:

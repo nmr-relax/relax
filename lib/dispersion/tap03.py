@@ -56,7 +56,7 @@ Links
 More information on the TAP03 model can be found in the:
 
     - U{relax wiki<http://wiki.nmr-relax.com/TAP03>},
-    - U{relax manual<http://www.nmr-relax.com/manual/TAP03_2_site_exchange_R1_model.html>},
+    - U{relax manual<http://www.nmr-relax.com/manual/The_TAP03_2_site_exchange_R1_rho_model.html>},
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#TAP03>}.
 """
 
