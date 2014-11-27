@@ -1,0 +1,83 @@
+To Do and other updates
+=======================
+
+Idea list broken down by directory.
+
+global
+------
+-Use CapCase for classes
+
+nmrglue
+-------
+
+    filio
+    -----
+    - lowmemory (in-place) writing of regions of data.
+        Use data_nd functionality with put_slice.
+    - ability to write slices to file in all modules (ala pipe.write_slice3d)
+    - global iter3D object
+    - update simpson module with write functions
+    - update glue module?
+    - sparky_nd object? or dimension agnostic functions?
+    - spinev module?
+
+    gui? 
+    ----
+    - gui module with common gui functions?
+
+    process
+    ------
+    - test and document proc_lp module and lp/lpc/lp2d in pipe_proc module.
+    - glue_proc module?
+    - debug XXX in pipe_proc
+    - more work on broken tests in test_pipe_proc
+    - proc_mem module (Maximum Entropy)?
+    - add missing functions in pipe_proc
+    - FWHT in proc_base
+    - profile processing and optimize
+    - poly_td and poly_fd in proc_bl.py
+
+test
+----
+
+-   The following modules do not have tests, decide how to test them and where
+    such tests belong:
+
+Module          Notes
+------          ------
+fileiobase      Tested       
+glue            Not currently imported      
+table       
+proc_base       Partially tested with pipe_proc test     
+proc_bl         Partially tested with pipe_proc test
+proc_lp         Partially tested with pipe_proc test
+analysisbase    No tests needed    
+helpers         
+leastsqbound    
+lineshapes1d    
+linesh          
+peakpick        
+segmentation    
+misc
+
+- Check coverage on current tests, get to 80%+
+- Create unit tests?
+
+
+doc
+---
+
+-   Rewrite tutorial including a mention of analysis modules. 
+-   pipe_proc: Add References to low level function / better description
+-   proc_base : Additional documentation, indication which functions work on 
+    arbitrary dimensional data.
+-   proc_bl : Flesh out the sol_* functions?
+-   helpers : Better documentation, examples?
+-   lineshapes1d : add .. math:: in lineshape documentation?
+-   peakpick : Add links to the picking algorithms.
+-   segmentation : Add See Also sections?
+
+Other thoughts
+--------------
+- Unix like commands (coadd_pipe, seperate_varian, ...)
+- GUI to create conversions scripts
