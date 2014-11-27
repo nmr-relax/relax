@@ -33,7 +33,7 @@ else:
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
-from pipe_control import spectrum
+from pipe_control import nmrglue, spectrum
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -210,6 +210,52 @@ uf.backend = spectrum.integration_points
 uf.menu_text = "&integration_points"
 uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_size = (900, 600)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
+
+
+# The spectrum.nmrglue_read user function.
+uf = uf_info.add_uf('spectrum.nmrglue_read')
+uf.title = "Read spectrum with nmrglue."
+uf.title_short = "spectrum reading."
+uf.add_keyarg(
+    name = "file",
+    py_type = "str_or_str_list",
+    arg_type = "file sel multi",
+    desc_short = "file name(s)",
+    desc = "The name of the file or the list of files containing the intensity data.",
+    wiz_filesel_wildcard = WILDCARD_SPECTRUM_PEAKLIST,
+    wiz_filesel_style = FD_OPEN
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory where the file is located.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "spectrum_id",
+    py_type = "str_or_str_list",
+    desc_short = "spectrum ID string",
+    desc = "The unique spectrum ID string or list of strings to associate with the peak intensity values.  If multiple files are given, then each file should have a corresponding spectrum ID string.  If 'auto' is provided for a NMRPipe seriesTab formatted file, the IDs are auto generated in form of Z_A{i}."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("Read spectrum with nmrglue.")
+## File formats.
+#uf.desc.append(Desc_container("File formats"))
+#uf.desc[-1].add_paragraph("The peak list or intensity file will be automatically determined.")
+#uf.desc.append(Desc_container("Multiple files"))
+#uf.desc[-1].add_paragraph("The data from multiple files can be loaded simultaneously if a list of files is supplied.  In this case, a list of spectrum ID strings of equal length must be supplied.")
+## Prompt examples.
+#uf.desc.append(Desc_container("Prompt examples"))
+#uf.desc[-1].add_paragraph("To read the reference and saturated spectra peak heights from the Sparky formatted files 'ref.list' and 'sat.list', type:")
+uf.backend = nmrglue.read
+uf.menu_text = "&nmrglue_read"
+uf.gui_icon = "oxygen.actions.document-open"
+uf.wizard_height_desc = 300
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
 
 
