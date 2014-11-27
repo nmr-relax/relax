@@ -29,6 +29,7 @@ import os
 from os import F_OK, access, curdir, sep
 from os.path import abspath
 from re import search
+import sys
 from time import asctime
 from warnings import warn
 
@@ -2799,6 +2800,10 @@ class Internal:
         # Coordinate section #
         ######################
 
+        # Initial printout if models are present.
+        if model_records:
+            print("\nMODEL records:")
+
         # Loop over the models.
         for model in self.model_loop(model_num):
             # Initialise record counts.
@@ -2811,8 +2816,8 @@ class Internal:
             ####################################
 
             if model_records:
-                # Print out.
-                print("\nMODEL %s" % model.num)
+                # Printout.
+                sys.stdout.write('.')
 
                 # Write the model record.
                 pdb_write.model(file, serial=model.num)
@@ -2825,8 +2830,9 @@ class Internal:
             index = 0
             atom_serial = 0
             for mol in model.mol_loop():
-                # Print out.
-                print("ATOM, HETATM, TER")
+                # Printout.
+                if not model_records:
+                    print("ATOM, HETATM, TER")
 
                 # Loop over the atomic data.
                 atom_record = False
@@ -2889,7 +2895,8 @@ class Internal:
             ########################################
 
             if model_records:
-                print("ENDMDL")
+                if not model_records:
+                    print("ENDMDL")
                 pdb_write.endmdl(file)
 
 
@@ -2897,6 +2904,8 @@ class Internal:
         ############################
 
         # Print out.
+        if model_records:
+            sys.stdout.write('\n')
         print("CONECT")
 
         # Initialise record counts.
