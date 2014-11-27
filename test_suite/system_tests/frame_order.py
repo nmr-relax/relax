@@ -395,10 +395,13 @@ class Frame_order(SystemTestCase):
         # The 3 atomic positions.
         atom_pos = 100.0 * eye(3)
 
-        # Create a single atom structure.
+        # Create a 6 atom structure.
         self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='X', res_num=1, pos=atom_pos[0]+pivot, element='N')
         self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='Y', res_num=2, pos=atom_pos[1]+pivot, element='N')
         self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='Z', res_num=3, pos=atom_pos[2]+pivot, element='N')
+        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='nX', res_num=4, pos=-atom_pos[0]+pivot, element='N')
+        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='nY', res_num=5, pos=-atom_pos[1]+pivot, element='N')
+        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='nZ', res_num=6, pos=-atom_pos[2]+pivot, element='N')
 
         # Set up the moving domain.
         self.interpreter.domain(id='X', spin_id=':1')
@@ -3214,7 +3217,7 @@ class Frame_order(SystemTestCase):
                 print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
                 # The vector length.
-                self.assertAlmostEqual(r, 100.0, 3)
+                self.assertAlmostEqual(r/100.0, 1.0, 4)
 
                 # Check the X vector.
                 if res_name == 'X':
