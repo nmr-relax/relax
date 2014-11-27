@@ -29,7 +29,7 @@ from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
 
-class Bruker(SystemTestCase):
+class Nmrglue(SystemTestCase):
     """TestCase class for the Bruker Dynamics Center files."""
 
     def setUp(self):

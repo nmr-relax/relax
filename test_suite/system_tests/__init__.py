@@ -50,6 +50,7 @@ from test_suite.system_tests.model_free import Mf
 from test_suite.system_tests.model_selection import Modsel
 from test_suite.system_tests.mol_res_spin import Mol_res_spin
 from test_suite.system_tests.n_state_model import N_state_model
+from test_suite.system_tests.nmrglue import Nmrglue
 from test_suite.system_tests.noe import Noe
 from test_suite.system_tests.noe_restraints import Noe_restraints
 from test_suite.system_tests.palmer import Palmer
@@ -87,6 +88,7 @@ __all__ = ['align_tensor',
            'model_free',
            'model_selection',
            'n_state_model',
+           'nmrglue',
            'noe',
            'noe_restraints',
            'palmer',
@@ -178,6 +180,7 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Modsel))
             suite_array.append(TestLoader().loadTestsFromTestCase(Mol_res_spin))
             suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Nmrglue))
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe_restraints))
             suite_array.append(TestLoader().loadTestsFromTestCase(Palmer))
