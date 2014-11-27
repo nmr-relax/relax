@@ -330,6 +330,109 @@ class Frame_order(SystemTestCase):
         return point
 
 
+    def setup_model(self, pipe_name='model', model=None, pivot=None, ave_pos_x=None, ave_pos_y=None, ave_pos_z=None, ave_pos_alpha=None, ave_pos_beta=None, ave_pos_gamma=None, pivot_disp=None, axis_alpha=None, axis_theta=None, axis_phi=None, eigen_alpha=None, eigen_beta=None, eigen_gamma=None, cone_theta=None, cone_theta_x=None, cone_theta_y=None, cone_sigma_max=None, cone_sigma_max_2=None):
+        """Set up for the given frame order model.
+
+        This will execute the following user functions:
+
+            - pipe.create to set up a data pipe for the model.
+            - frame_order.select_model.
+            - value.set for all given parameters.
+            - frame_order.pivot to define the pivot point.
+
+
+        @keyword pipe_name:         The name of the new data pipe.
+        @type pipe_name:            str
+        @keyword model:             The frame order model to setup.
+        @type model:                str
+        @keyword pivot:             The pivot to setup.
+        @type pivot:                list of float
+        @keyword ave_pos_x:         The average domain position X coordinate.
+        @type ave_pos_x:            None or float
+        @keyword ave_pos_y:         The average domain position Y coordinate.
+        @type ave_pos_y:            None or float
+        @keyword ave_pos_z:         The average domain position Z coordinate.
+        @type ave_pos_z:            None or float
+        @keyword ave_pos_alpha:     The average domain position alpha Euler rotation angle.
+        @type ave_pos_alpha:        None or float
+        @keyword ave_pos_beta:      The average domain position beta Euler rotation angle.
+        @type ave_pos_beta:         None or float
+        @keyword ave_pos_gamma:     The average domain position gamma Euler rotation angle.
+        @type ave_pos_gamma:        None or float
+        @keyword pivot_disp:        The pivot displacement parameter.
+        @type pivot_disp:           None or float
+        @keyword axis_alpha:        The motional eigenframe axis alpha angle.
+        @type axis_alpha:           None or float
+        @keyword axis_theta:        The motional eigenframe axis theta spherical angle.
+        @type axis_theta:           None or float
+        @keyword axis_phi:          The motional eigenframe axis phi spherical angle.
+        @type axis_phi:             None or float
+        @keyword eigen_alpha:       The motional eigenframe alpha Euler rotation angle.
+        @type eigen_alpha:          None or float
+        @keyword eigen_beta:        The motional eigenframe beta Euler rotation angle.
+        @type eigen_beta:           None or float
+        @keyword eigen_gamma:       The motional eigenframe gamma Euler rotation angle.
+        @type eigen_gamma:          None or float
+        @keyword cone_theta:        The isotropic cone opening half angle.
+        @type cone_theta:           None or float
+        @keyword cone_theta_x:      The x-axis half cone angle.
+        @type cone_theta_x:         None or float
+        @keyword cone_theta_y:      The y-axis half cone angle.
+        @type cone_theta_y:         None or float
+        @keyword cone_sigma_max:    The maximum torsion angle.
+        @type cone_sigma_max:       None or float
+        @keyword cone_sigma_max_2:  The second maximum torsion angle.
+        @type cone_sigma_max_2:     None or float
+        """
+
+        # Create a data pipe.
+        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
+
+        # Select the model.
+        self.interpreter.frame_order.select_model(model)
+
+        # Set the average domain position translation parameters.
+        if ave_pos_x != None:
+            self.interpreter.value.set(param='ave_pos_x', val=ave_pos_x)
+        if ave_pos_y != None:
+            self.interpreter.value.set(param='ave_pos_y', val=ave_pos_y)
+        if ave_pos_z != None:
+            self.interpreter.value.set(param='ave_pos_z', val=ave_pos_z)
+        if ave_pos_alpha != None:
+            self.interpreter.value.set(param='ave_pos_alpha', val=ave_pos_alpha)
+        if ave_pos_beta != None:
+            self.interpreter.value.set(param='ave_pos_beta', val=ave_pos_beta)
+        if ave_pos_gamma != None:
+            self.interpreter.value.set(param='ave_pos_gamma', val=ave_pos_gamma)
+        if pivot_disp != None:
+            self.interpreter.value.set(param='pivot_disp', val=pivot_disp)
+        if axis_alpha != None:
+            self.interpreter.value.set(param='axis_alpha', val=axis_alpha)
+        if axis_theta != None:
+            self.interpreter.value.set(param='axis_theta', val=axis_theta)
+        if axis_phi != None:
+            self.interpreter.value.set(param='axis_phi', val=axis_phi)
+        if eigen_alpha != None:
+            self.interpreter.value.set(param='eigen_alpha', val=eigen_alpha)
+        if eigen_beta != None:
+            self.interpreter.value.set(param='eigen_beta', val=eigen_beta)
+        if eigen_gamma != None:
+            self.interpreter.value.set(param='eigen_gamma', val=eigen_gamma)
+        if cone_theta != None:
+            self.interpreter.value.set(param='cone_theta', val=cone_theta)
+        if cone_theta_x != None:
+            self.interpreter.value.set(param='cone_theta_x', val=cone_theta_x)
+        if cone_theta_y != None:
+            self.interpreter.value.set(param='cone_theta_y', val=cone_theta_y)
+        if cone_sigma_max != None:
+            self.interpreter.value.set(param='cone_sigma_max', val=cone_sigma_max)
+        if cone_sigma_max_2 != None:
+            self.interpreter.value.set(param='cone_sigma_max_2', val=cone_sigma_max_2)
+
+        # Set the pivot.
+        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+
+
     def space_probe(self, ref_chi2=None, params=None, delta=3.0 / 360.0 * 2.0 * pi):
         """Probe the space around the supposed minimum."""
 
@@ -1718,43 +1821,17 @@ class Frame_order(SystemTestCase):
         pivot1 = pivot2 + (z_axis-x_axis)/sqrt(2.0)*pivot_disp
         l = 20.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('double rotor')
-
         # The axis parameters, and printout.
-        eigen_alpha = 0.0
         eigen_beta = -pi/4.0
-        eigen_gamma = 0.0
         R = zeros((3, 3), float64)
-        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
+        euler_to_R_zyz(0.0, eigen_beta, 0.0, R)
         print("Motional eigenframe:\n%s" % R)
 
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='pivot_disp', val=pivot_disp)
-        self.interpreter.value.set(param='eigen_alpha', val=eigen_alpha)
-        self.interpreter.value.set(param='eigen_beta', val=eigen_beta)
-        self.interpreter.value.set(param='eigen_gamma', val=eigen_gamma)
-        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
-        self.interpreter.value.set(param='cone_sigma_max_2', val=0.0)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot2, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='double rotor', pivot=pivot2, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, pivot_disp=pivot_disp, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_sigma_max=0.0, cone_sigma_max_2=0.0)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=l)
-
-        # Create a data pipe for the new structure.
-        self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
-        self.interpreter.pipe.display()
 
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
         data = [
@@ -1811,43 +1888,17 @@ class Frame_order(SystemTestCase):
         pivot1 = pivot2 + z_axis*pivot_disp
         l = 30.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('double rotor')
-
         # The axis parameters, and printout.
-        eigen_alpha = 0.0
         eigen_beta = 0.0
-        eigen_gamma = 0.0
         R = zeros((3, 3), float64)
-        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
+        euler_to_R_zyz(0.0, eigen_beta, 0.0, R)
         print("Motional eigenframe:\n%s" % R)
 
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='pivot_disp', val=pivot_disp)
-        self.interpreter.value.set(param='eigen_alpha', val=eigen_alpha)
-        self.interpreter.value.set(param='eigen_beta', val=eigen_beta)
-        self.interpreter.value.set(param='eigen_gamma', val=eigen_gamma)
-        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
-        self.interpreter.value.set(param='cone_sigma_max_2', val=0.0)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot2, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='double rotor', pivot=pivot2, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, pivot_disp=pivot_disp, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_sigma_max=0.0, cone_sigma_max_2=0.0)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=l)
-
-        # Create a data pipe for the new structure.
-        self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
-        self.interpreter.pipe.display()
 
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
         data = [
@@ -1902,37 +1953,17 @@ class Frame_order(SystemTestCase):
         pivot = array([1, 0, 1], float64)
         l = 100.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('free rotor')
-
         # The axis alpha parameter, and printout.
         axis_alpha = pi / 2.0
         axis =  create_rotor_axis_alpha(pi/2, pivot, array([0, 0, 0], float64))
         print("\nRotor axis:\n    %s" % axis)
         print("Rotor apex (100*axis + [1, 0, 1]):\n    %s" % (l*axis + pivot))
 
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='axis_alpha', val=axis_alpha)
-        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='free rotor', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_alpha=axis_alpha)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=100.0)
-
-        # Create a data pipe for the new structure.
-        self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
-        self.interpreter.pipe.display()
 
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
         data = [
@@ -1963,37 +1994,17 @@ class Frame_order(SystemTestCase):
         pivot = array([1, 0, 0], float64)
         l = 30.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('free rotor')
-
         # The axis alpha parameter, and printout.
         axis_alpha = pi / 2.0
         axis = create_rotor_axis_alpha(pi/2, pivot, array([0, 0, 0], float64))
         print("\nRotor axis:  %s" % axis)
         print("Rotor apex (100*axis + [1, 0, 0]):\n    %s" % (l*axis + pivot))
 
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='axis_alpha', val=axis_alpha)
-        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='free rotor', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_alpha=axis_alpha)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=l)
-
-        # Create a data pipe for the new structure.
-        self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
-        self.interpreter.pipe.display()
 
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
         data = [
@@ -2021,43 +2032,20 @@ class Frame_order(SystemTestCase):
         """Check the frame_order.pdb_model user function PDB file for the isotropic cone model with a xz-plane tilt."""
 
         # Init.
+        theta = 2.0
         pivot = array([1, 1, 1], float64)
         l = 45.0
         l_rotor = l + 5.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('iso cone')
-
         # The axis parameters, and printout.
         axis_theta = -pi/4.0
-        axis_phi = 0.0
-        axis = create_rotor_axis_spherical(axis_theta, axis_phi)
+        axis = create_rotor_axis_spherical(axis_theta, 0.0)
         print("Rotor axis:  %s" % axis)
-
-        # Rotation matrix.
         R = zeros((3, 3), float64)
         axis_angle_to_R([0, 1, 0], axis_theta, R)
 
-        # Cone parameters.
-        theta = 2.0
-
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='axis_theta', val=axis_theta)
-        self.interpreter.value.set(param='axis_phi', val=axis_phi)
-        self.interpreter.value.set(param='cone_theta', val=theta)
-        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='iso cone', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_theta=axis_theta, axis_phi=0.0, cone_theta=theta, cone_sigma_max=0.0)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
@@ -2116,38 +2104,17 @@ class Frame_order(SystemTestCase):
         """Check the frame_order.pdb_model user function PDB file for the isotropic cone model along the z-axis."""
 
         # Init.
+        theta = 2.0
         pivot = array([1, 0, -2], float64)
         l = 25.0
         l_rotor = l + 5.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('iso cone')
-
         # The axis parameters, and printout.
         axis_theta = 0.0
-        axis_phi = 0.0
-        print("Rotor axis:  %s" % create_rotor_axis_spherical(axis_theta, axis_phi))
+        print("Rotor axis:  %s" % create_rotor_axis_spherical(axis_theta, 0.0))
 
-        # Cone parameters.
-        theta = 2.0
-
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='axis_theta', val=axis_theta)
-        self.interpreter.value.set(param='axis_phi', val=axis_phi)
-        self.interpreter.value.set(param='cone_theta', val=theta)
-        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='iso cone', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_theta=axis_theta, axis_phi=0.0, cone_theta=theta, cone_sigma_max=0.0)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
@@ -2206,42 +2173,20 @@ class Frame_order(SystemTestCase):
         """Check the frame_order.pdb_model user function PDB file for the free rotor isotropic cone model with a xz-plane tilt."""
 
         # Init.
+        theta = 2.0
         pivot = array([1, 1, 1], float64)
         l = 40.0
         l_rotor = l + 5.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('iso cone, free rotor')
-
         # The axis parameters, and printout.
         axis_theta = -pi/4.0
-        axis_phi = 0.0
-        axis = create_rotor_axis_spherical(axis_theta, axis_phi)
+        axis = create_rotor_axis_spherical(axis_theta, 0.0)
         print("Rotor axis:  %s" % axis)
-
-        # Rotation matrix.
         R = zeros((3, 3), float64)
         axis_angle_to_R([0, 1, 0], axis_theta, R)
 
-        # Cone parameters.
-        theta = 2.0
-
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='axis_theta', val=axis_theta)
-        self.interpreter.value.set(param='axis_phi', val=axis_phi)
-        self.interpreter.value.set(param='cone_theta', val=theta)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='iso cone, free rotor', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_theta=axis_theta, axis_phi=0.0, cone_theta=theta)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
@@ -2300,37 +2245,18 @@ class Frame_order(SystemTestCase):
         """Check the frame_order.pdb_model user function PDB file for the free rotor isotropic cone model along the z-axis."""
 
         # Init.
+        theta = 2.0
         pivot = array([1, 0, -2], float64)
         l = 25.0
         l_rotor = l + 5.0
-
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('iso cone, free rotor')
 
         # The axis parameters, and printout.
         axis_theta = 0.0
         axis_phi = 0.0
         print("Rotor axis:  %s" % create_rotor_axis_spherical(axis_theta, axis_phi))
 
-        # Cone parameters.
-        theta = 2.0
-
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='axis_theta', val=axis_theta)
-        self.interpreter.value.set(param='axis_phi', val=axis_phi)
-        self.interpreter.value.set(param='cone_theta', val=theta)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='iso cone, free rotor', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_theta=axis_theta, axis_phi=0.0, cone_theta=theta)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
@@ -2389,42 +2315,20 @@ class Frame_order(SystemTestCase):
         """Check the frame_order.pdb_model user function PDB file for the torsionless isotropic cone model with a xz-plane tilt."""
 
         # Init.
+        theta = 2.0
         pivot = array([1, 1, 1], float64)
         l = 40.0
         l_rotor = l + 5.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('iso cone, torsionless')
-
         # The axis parameters, and printout.
         axis_theta = -pi/4.0
-        axis_phi = 0.0
-        axis = create_rotor_axis_spherical(axis_theta, axis_phi)
+        axis = create_rotor_axis_spherical(axis_theta, 0.0)
         print("Rotor axis:  %s" % axis)
-
-        # Rotation matrix.
         R = zeros((3, 3), float64)
         axis_angle_to_R([0, 1, 0], axis_theta, R)
 
-        # Cone parameters.
-        theta = 2.0
-
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='axis_theta', val=axis_theta)
-        self.interpreter.value.set(param='axis_phi', val=axis_phi)
-        self.interpreter.value.set(param='cone_theta', val=theta)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='iso cone, torsionless', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_theta=axis_theta, axis_phi=0.0, cone_theta=theta)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
@@ -2479,37 +2383,17 @@ class Frame_order(SystemTestCase):
         """Check the frame_order.pdb_model user function PDB file for the torsionless isotropic cone model along the z-axis."""
 
         # Init.
+        theta = 2.0
         pivot = array([1, 0, -2], float64)
         l = 25.0
         l_rotor = l + 5.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('iso cone, torsionless')
-
         # The axis parameters, and printout.
         axis_theta = 0.0
-        axis_phi = 0.0
-        print("Rotor axis:  %s" % create_rotor_axis_spherical(axis_theta, axis_phi))
+        print("Rotor axis:  %s" % create_rotor_axis_spherical(axis_theta, 0.0))
 
-        # Cone parameters.
-        theta = 2.0
-
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='axis_theta', val=axis_theta)
-        self.interpreter.value.set(param='axis_phi', val=axis_phi)
-        self.interpreter.value.set(param='cone_theta', val=theta)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='iso cone, torsionless', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_theta=axis_theta, axis_phi=0.0, cone_theta=theta)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
@@ -2564,44 +2448,20 @@ class Frame_order(SystemTestCase):
         """Check the frame_order.pdb_model user function PDB file for the pseudo-ellipse model with a xz-plane tilt."""
 
         # Init.
+        theta_x = 2.0
+        theta_y = 0.1
         pivot = array([1, -2, 1.1], float64)
         l = 50.0
         l_rotor = l + 5.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('pseudo-ellipse')
-
         # The axis parameters, and printout.
-        eigen_alpha = 0.0
         eigen_beta = -pi/2.0
-        eigen_gamma = 0.0
         R = zeros((3, 3), float64)
-        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
+        euler_to_R_zyz(0.0, eigen_beta, 0.0, R)
         print("Motional eigenframe:\n%s" % R)
 
-        # Cone parameters.
-        theta_x = 2.0
-        theta_y = 0.1
-
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='eigen_alpha', val=eigen_alpha)
-        self.interpreter.value.set(param='eigen_beta', val=eigen_beta)
-        self.interpreter.value.set(param='eigen_gamma', val=eigen_gamma)
-        self.interpreter.value.set(param='cone_theta_x', val=theta_x)
-        self.interpreter.value.set(param='cone_theta_y', val=theta_y)
-        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='pseudo-ellipse', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=theta_x, cone_theta_y=theta_y, cone_sigma_max=0.0)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
@@ -2673,44 +2533,20 @@ class Frame_order(SystemTestCase):
         """Check the frame_order.pdb_model user function PDB file for the pseudo-ellipse model along the z-axis."""
 
         # Init.
+        theta_x = 2.0
+        theta_y = 0.1
         pivot = array([1, 1, 1], float64)
         l = 40.0
         l_rotor = l + 5.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('pseudo-ellipse')
-
         # The axis parameters, and printout.
-        eigen_alpha = 0.0
         eigen_beta = 0.0
-        eigen_gamma = 0.0
         R = zeros((3, 3), float64)
-        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
+        euler_to_R_zyz(0.0, eigen_beta, 0.0, R)
         print("Motional eigenframe:\n%s" % R)
 
-        # Cone parameters.
-        theta_x = 2.0
-        theta_y = 0.1
-
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='eigen_alpha', val=eigen_alpha)
-        self.interpreter.value.set(param='eigen_beta', val=eigen_beta)
-        self.interpreter.value.set(param='eigen_gamma', val=eigen_gamma)
-        self.interpreter.value.set(param='cone_theta_x', val=theta_x)
-        self.interpreter.value.set(param='cone_theta_y', val=theta_y)
-        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='pseudo-ellipse', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=theta_x, cone_theta_y=theta_y, cone_sigma_max=0.0)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
@@ -2782,43 +2618,20 @@ class Frame_order(SystemTestCase):
         """Check the frame_order.pdb_model user function PDB file for the free rotor pseudo-ellipse model with a xz-plane tilt."""
 
         # Init.
+        theta_x = 2.0
+        theta_y = 0.1
         pivot = array([1, -2, 1.1], float64)
         l = 50.0
         l_rotor = l + 5.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('pseudo-ellipse, free rotor')
-
         # The axis parameters, and printout.
-        eigen_alpha = 0.0
         eigen_beta = -pi/2.0
-        eigen_gamma = 0.0
         R = zeros((3, 3), float64)
-        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
+        euler_to_R_zyz(0.0, eigen_beta, 0.0, R)
         print("Motional eigenframe:\n%s" % R)
 
-        # Cone parameters.
-        theta_x = 2.0
-        theta_y = 0.1
-
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='eigen_alpha', val=eigen_alpha)
-        self.interpreter.value.set(param='eigen_beta', val=eigen_beta)
-        self.interpreter.value.set(param='eigen_gamma', val=eigen_gamma)
-        self.interpreter.value.set(param='cone_theta_x', val=theta_x)
-        self.interpreter.value.set(param='cone_theta_y', val=theta_y)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='pseudo-ellipse, free rotor', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=theta_x, cone_theta_y=theta_y)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
@@ -2890,43 +2703,20 @@ class Frame_order(SystemTestCase):
         """Check the frame_order.pdb_model user function PDB file for the free rotor pseudo-ellipse model along the z-axis."""
 
         # Init.
+        theta_x = 2.0
+        theta_y = 0.1
         pivot = array([1, 1, 1], float64)
         l = 40.0
         l_rotor = l + 5.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('pseudo-ellipse, free rotor')
-
         # The axis parameters, and printout.
-        eigen_alpha = 0.0
         eigen_beta = 0.0
-        eigen_gamma = 0.0
         R = zeros((3, 3), float64)
-        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
+        euler_to_R_zyz(0.0, eigen_beta, 0.0, R)
         print("Motional eigenframe:\n%s" % R)
 
-        # Cone parameters.
-        theta_x = 2.0
-        theta_y = 0.1
-
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='eigen_alpha', val=eigen_alpha)
-        self.interpreter.value.set(param='eigen_beta', val=eigen_beta)
-        self.interpreter.value.set(param='eigen_gamma', val=eigen_gamma)
-        self.interpreter.value.set(param='cone_theta_x', val=theta_x)
-        self.interpreter.value.set(param='cone_theta_y', val=theta_y)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='pseudo-ellipse, free rotor', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=theta_x, cone_theta_y=theta_y)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
@@ -2998,43 +2788,20 @@ class Frame_order(SystemTestCase):
         """Check the frame_order.pdb_model user function PDB file for the torsionless pseudo-ellipse model with a xz-plane tilt."""
 
         # Init.
+        theta_x = 2.0
+        theta_y = 0.1
         pivot = array([1, -2, 1.1], float64)
         l = 50.0
         l_rotor = l + 5.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('pseudo-ellipse, torsionless')
-
         # The axis parameters, and printout.
-        eigen_alpha = 0.0
         eigen_beta = -pi/2.0
-        eigen_gamma = 0.0
         R = zeros((3, 3), float64)
-        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
+        euler_to_R_zyz(0.0, eigen_beta, 0.0, R)
         print("Motional eigenframe:\n%s" % R)
 
-        # Cone parameters.
-        theta_x = 2.0
-        theta_y = 0.1
-
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='eigen_alpha', val=eigen_alpha)
-        self.interpreter.value.set(param='eigen_beta', val=eigen_beta)
-        self.interpreter.value.set(param='eigen_gamma', val=eigen_gamma)
-        self.interpreter.value.set(param='cone_theta_x', val=theta_x)
-        self.interpreter.value.set(param='cone_theta_y', val=theta_y)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='pseudo-ellipse, torsionless', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=theta_x, cone_theta_y=theta_y)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
@@ -3100,43 +2867,20 @@ class Frame_order(SystemTestCase):
         """Check the frame_order.pdb_model user function PDB file for the torsionless pseudo-ellipse model along the z-axis."""
 
         # Init.
+        theta_x = 2.0
+        theta_y = 0.1
         pivot = array([1, 1, 1], float64)
         l = 40.0
         l_rotor = l + 5.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('pseudo-ellipse, torsionless')
-
         # The axis parameters, and printout.
-        eigen_alpha = 0.0
         eigen_beta = 0.0
-        eigen_gamma = 0.0
         R = zeros((3, 3), float64)
-        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, R)
+        euler_to_R_zyz(0.0, eigen_beta, 0.0, R)
         print("Motional eigenframe:\n%s" % R)
 
-        # Cone parameters.
-        theta_x = 2.0
-        theta_y = 0.1
-
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='eigen_alpha', val=eigen_alpha)
-        self.interpreter.value.set(param='eigen_beta', val=eigen_beta)
-        self.interpreter.value.set(param='eigen_gamma', val=eigen_gamma)
-        self.interpreter.value.set(param='cone_theta_x', val=theta_x)
-        self.interpreter.value.set(param='cone_theta_y', val=theta_y)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='pseudo-ellipse, torsionless', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=theta_x, cone_theta_y=theta_y)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=10, size=l)
@@ -3205,37 +2949,17 @@ class Frame_order(SystemTestCase):
         pivot = array([1, 0, 1], float64)
         l = 100.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('rotor')
-
         # The axis alpha parameter, and printout.
         axis_alpha = pi / 2.0
         axis =  create_rotor_axis_alpha(pi/2, pivot, array([0, 0, 0], float64))
         print("\nRotor axis:\n    %s" % axis)
         print("Rotor apex (100*axis + [1, 0, 1]):\n    %s" % (l*axis + pivot))
 
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='axis_alpha', val=axis_alpha)
-        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='rotor', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_alpha=axis_alpha, cone_sigma_max=0.0)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=100.0)
-
-        # Create a data pipe for the new structure.
-        self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
-        self.interpreter.pipe.display()
 
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
         data = [
@@ -3266,37 +2990,17 @@ class Frame_order(SystemTestCase):
         pivot = array([1, 0, 0], float64)
         l = 30.0
 
-        # Create a data pipe.
-        self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
-
-        # Select the model.
-        self.interpreter.frame_order.select_model('rotor')
-
         # The axis alpha parameter, and printout.
         axis_alpha = pi / 2.0
         axis = create_rotor_axis_alpha(pi/2, pivot, array([0, 0, 0], float64))
         print("\nRotor axis:  %s" % axis)
         print("Rotor apex (100*axis + [1, 0, 0]):\n    %s" % (l*axis + pivot))
 
-        # Set the average domain position translation parameters.
-        self.interpreter.value.set(param='ave_pos_x', val=0.0)
-        self.interpreter.value.set(param='ave_pos_y', val=0.0)
-        self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
-        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
-        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
-        self.interpreter.value.set(param='axis_alpha', val=axis_alpha)
-        self.interpreter.value.set(param='cone_sigma_max', val=0.0)
-
-        # Set the pivot.
-        self.interpreter.frame_order.pivot(pivot=pivot, fix=True)
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='rotor', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_alpha=axis_alpha, cone_sigma_max=0.0)
 
         # Create the PDB.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir, inc=1, size=l)
-
-        # Create a data pipe for the new structure.
-        self.interpreter.pipe.create(pipe_name='PDB check', pipe_type='frame order')
-        self.interpreter.pipe.display()
 
         # The data, as it should be with everything along the z-axis, shifted from the origin to the pivot.
         data = [
