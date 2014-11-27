@@ -96,7 +96,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The supported relaxation experiments include the default two parameter exponential fit, selected by setting the model type to 'exp', and the three parameter inversion recovery experiment in which the peak intensity limit is a non-zero value, selected by setting the model to 'inv'.")
 uf.desc[-1].add_paragraph("The two models are:")
-uf.desc[-1].add_item_list_element("'exp'", "The parameters are [Rx, I0], and the equation is I = I0*exp(-Rx*t).")
+uf.desc[-1].add_item_list_element("'exp'", "The parameters are [Rx, I0], and the equation is I(t) = I0*exp(-Rx*t).")
 uf.desc[-1].add_item_list_element("'inv'", "The parameters are [Rx, I0, Iinf].  This has not been implemented yet.")
 uf.backend = select_model
 uf.menu_text = "&select_model"
