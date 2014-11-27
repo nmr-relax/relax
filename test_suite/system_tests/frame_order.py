@@ -23,7 +23,7 @@
 from math import cos, pi, sin, sqrt
 import platform
 import numpy
-from numpy import array, dot, float64, transpose, zeros
+from numpy import array, dot, eye, float64, transpose, zeros
 from os import sep
 from tempfile import mkdtemp
 
@@ -32,6 +32,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from lib.frame_order.conversions import create_rotor_axis_alpha, create_rotor_axis_spherical
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
+from lib.geometry.coord_transform import cartesian_to_spherical
 from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz, R_to_euler_zyz
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
@@ -387,6 +388,20 @@ class Frame_order(SystemTestCase):
 
         # Create a data pipe.
         self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
+
+        # Convert the pivot to a numpy array.
+        pivot = array(pivot)
+
+        # The 3 atomic positions.
+        atom_pos = 100.0 * eye(3)
+
+        # Create a single atom structure.
+        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='X', res_num=1, pos=atom_pos[0]+pivot, element='N')
+        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='Y', res_num=2, pos=atom_pos[1]+pivot, element='N')
+        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='Z', res_num=3, pos=atom_pos[2]+pivot, element='N')
+
+        # Set up the moving domain.
+        self.interpreter.domain(id='X', spin_id=':1')
 
         # Select the model.
         self.interpreter.frame_order.select_model(model)
@@ -3157,6 +3172,69 @@ class Frame_order(SystemTestCase):
 
         # Check the chi2 value.
         self.assertAlmostEqual(cdp.chi2, 0.011377487066752203, 5)
+
+
+    def test_simulate_rotor_z_axis(self):
+        """Check the frame_order.simulate user function PDB file for the rotor model along the z-axis."""
+
+        # Init.
+        cone_sigma_max = 0.3
+        pivot = array([1, 0, 0], float64)
+        l = 30.0
+        sim_num = 500
+
+        # The axis alpha parameter, and printout.
+        axis_alpha = pi / 2.0
+        axis = create_rotor_axis_alpha(pi/2, pivot, array([0, 0, 0], float64))
+        print("\nRotor axis:  %s" % axis)
+        print("Rotor apex (100*axis + [1, 0, 0]):\n    %s" % (l*axis + pivot))
+
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='rotor', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_alpha=axis_alpha, cone_sigma_max=cone_sigma_max)
+
+        # Create the PDB.
+        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+
+        # Delete all structural data.
+        self.interpreter.structure.delete()
+
+        # Read the contents of the file.
+        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+
+        # Check the atomic coordinates.
+        selection = cdp.structure.selection()
+        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+            # Loop over all positions.
+            for i in range(sim_num):
+                # Shift the position back to the origin, and decompose into spherical coordinates.
+                new_pos = pos[i] - pivot
+                r, theta, phi = cartesian_to_spherical(new_pos)
+
+                # Printout.
+                print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
+
+                # The vector length.
+                self.assertAlmostEqual(r, 100.0, 3)
+
+                # Check the X vector.
+                if res_name == 'X':
+                    self.assertAlmostEqual(theta, pi/2.0, 3)
+                    self.assert_(phi >= -cone_sigma_max)
+                    self.assert_(phi <= cone_sigma_max)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the Y vector.
+                elif res_name == 'Y':
+                    self.assertAlmostEqual(theta, pi/2.0, 3)
+                    self.assert_(phi-pi/2.0 >= -cone_sigma_max)
+                    self.assert_(phi-pi/2.0 <= cone_sigma_max)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the Z vector (should not move).
+                elif res_name == 'Z':
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 100.0, 3)
 
 
     def test_sobol_setup(self):
