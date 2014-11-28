@@ -33,5 +33,7 @@ __all__ = [
     'mf',
     'n_state_model',
     'potential',
-    'relax_disp'
+    'relax_disp',
+    'relax_fit',
+    'relax_fit_wrapper'
 ]
