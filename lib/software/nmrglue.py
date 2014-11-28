@@ -23,9 +23,11 @@
 """Module for the wrapper functions around the nmrglue module."""
 
 # Python module imports.
-from numpy import arange, argmax, exp, log, ones, pi, sqrt
 import matplotlib.pyplot as plt
 import matplotlib.cm
+from minfx.generic import generic_minimise
+from numpy import arange, argmax, asarray, exp, log, max, ones, pi, sqrt
+
 
 # relax module imports.
 from extern import nmrglue
@@ -123,12 +125,12 @@ def func_gauss(params=None, x=None):
 
     # Unpack,
     # a: The amplitude of the distribution.
-    # x0: The center of the distribution.
+    # mu: The center of the distribution.
     # sigma: The standard deviation of the distribution.
-    a, x0, sigma = params
+    a, mu, sigma = params
 
     # Calculate and return the probability.
-    return a*exp(-(x-x0)**2/(2*sigma**2))
+    return a*exp(-(x-mu)**2/(2*sigma**2))
 
 
 def func_gauss_chi2(params=None, x=None, values=None):
@@ -192,14 +194,14 @@ def hist_plot(ndarray=None, hist_kwargs=None, show=False):
     i = argmax(n)
 
     # Get the position for the maximum.
-    x0 = bincenters[i]
+    bin_max_x = bincenters[i]
 
     # Get the amplitude for the maximum.
-    amp = n[i]
+    bin_max_y = n[i]
 
     # Try find Full width at half maximum (FWHM). FWHM = 2 * sqrt(2 ln(2 )) * sigma ~ 2.355 * sigma.
     # Half maximum
-    hm = 0.5 * amp
+    hm = 0.5 * bin_max_y
 
     # Find the first instances of left and right bin, where is lower than hm.
     for j in range(1, len(bins)):
@@ -216,25 +218,44 @@ def hist_plot(ndarray=None, hist_kwargs=None, show=False):
             fwhm_std = fwhm / (2 * sqrt(2 * log(2)))
             break
 
+    # Define function to minimise for minfx.
+    t_func = func_gauss_chi2
+
+    # All args to function. Params are packed out through function, then other parameters.
+    args=(bincenters, n)
+
+    # Initial guess for minimisation.
+    x0 = asarray( [bin_max_y, bin_max_x, fwhm_std] )
+
+    # Minimise.
+    results_minfx = generic_minimise(func=t_func, args=args, x0=x0, min_algor='simplex', min_options=(), func_tol=1e-25, grad_tol=None, maxiter=10000000, A=None, b=None, full_output=True, print_flag=1)
+
+    # Unpack
+    param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results_minfx
+
+    # Extract parameters from vector.
+    amp, mu, sigma  = param_vector
+
+    # Recalculate Full width at half maximum (FWHM)
+    hm = 0.5 * amp
+    fwhm = (2 * sqrt(2 * log(2))) * sigma
+    left_bin_x = mu - 0.5 * fwhm
+    right_bin_x = mu + 0.5 * fwhm
+
     # Annotate the center.
-    ax.annotate("%3.2f"%x0, xy=(x0, 0.0), xycoords='data', xytext=(x0, 0.25*amp), textcoords='data', size=8, horizontalalignment="center", arrowprops=dict(arrowstyle="->", connectionstyle="arc3, rad=0"))
+    ax.annotate("%3.2f"%mu, xy=(mu, 0.0), xycoords='data', xytext=(mu, 0.25*amp), textcoords='data', size=8, horizontalalignment="center", arrowprops=dict(arrowstyle="->", connectionstyle="arc3, rad=0"), bbox=dict(boxstyle="round", facecolor="w"))
 
     # Annotate the Full width at half maximum.
     ax.annotate("", xy=(left_bin_x, hm), xycoords='data', xytext=(right_bin_x, hm), textcoords='data', arrowprops=dict(arrowstyle="<->", connectionstyle="arc3, rad=0"))
-    #ax.annotate("Test 1", xy=(0.5, 0.5), xycoords="data", va="center", ha="center", bbox=dict(boxstyle="round", fc="w"))
-    ax.annotate("FWHM=%3.2f std=%3.2f"%(fwhm, fwhm_std), xy=(x0, hm), xycoords="data", size=8, va="center", horizontalalignment="center", bbox=dict(boxstyle="round", facecolor="w"))
+    ax.annotate("HM=%3.2f\nFWHM=%3.2f\nstd=%3.2f"%(hm, fwhm, sigma), xy=(mu, hm), xycoords="data", size=8, va="center", horizontalalignment="center", bbox=dict(boxstyle="round", facecolor="w"))
 
-    # Calculate the gauss values.
-    params = amp, x0, fwhm_std
-    gauss = func_gauss(params=params, x=bincenters)
-    sigma = fwhm_std
-
-    # Plot the values.
+    # Calculate and plot the gauss values.
+    gauss = func_gauss(params=param_vector, x=bincenters)
     ax.plot(bincenters, gauss, 'r-', label='gauss')
 
     # Set limits.
-    ax.set_xlim(x0-5*sigma, x0+5*sigma)
-    ax.set_ylim(0, amp)
+    ax.set_xlim(mu-5*sigma, mu+25*sigma)
+    ax.set_ylim(0, amp*1.01)
 
     # If show.
     if show:
