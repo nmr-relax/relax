@@ -24,7 +24,7 @@
 
 # relax module imports.
 from lib.errors import RelaxError
-from lib.software.nmrglue import contour_plot, read_spectrum
+from lib.software.nmrglue import contour_plot, hist_plot, read_spectrum
 from pipe_control.pipes import check_pipe
 from pipe_control.spectrum import add_spectrum_id, check_spectrum_id, delete
 
@@ -95,6 +95,24 @@ def plot_contour(spectrum_id=None, contour_start=30000., contour_num=20, contour
 
     # Call the contour plot.
     ax = contour_plot(spectrum_id=spectrum_id, contour_start=contour_start, contour_num=contour_num, contour_factor=contour_factor, ppm=ppm, show=show)
+
+    # Return the axis instance, for possibility for additional decoration.
+    return ax
+
+
+def plot_hist(ndarray=None, show=False):
+    """Flatten the 2D numpy array, and plot as histogram.
+
+    @keyword ndarray:           The numpy array to flatten, and plot as histogram.
+    @type ndarray:              numpy array
+    @keyword show:              A flag which if True will make a call to matplotlib.pyplot.show().
+    @type show:                 bool
+    @return:                    The matplotlib.axes.AxesSubplot class, which can be manipulated to add additional text to the axis.
+    @rtype:                     matplotlib.axes.AxesSubplot
+    """
+
+    # Call the contour plot.
+    ax = hist_plot(ndarray=ndarray, show=show)
 
     # Return the axis instance, for possibility for additional decoration.
     return ax
