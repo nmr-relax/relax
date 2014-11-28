@@ -34,9 +34,11 @@ if dep_check.subprocess_module:
     from subprocess import PIPE, Popen
 from tempfile import mktemp
 from time import sleep
+from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError
+from lib.warnings import RelaxWarning
 from lib.io import delete, file_root, get_file_path, open_read_file, open_write_file, test_binary
 from pipe_control.mol_res_spin import exists_mol_res_spin_data
 from pipe_control.pipes import check_pipe
@@ -144,6 +146,11 @@ class Pymol:
         open_files = []
         for model in cdp.structure.structural_data:
             for mol in model.mol:
+                # No file path.
+                if not hasattr(mol, 'file_name'):
+                    warn(RelaxWarning("Cannot display the current molecular data in PyMOL as it has not be exported as a PDB file."))
+                    continue
+
                 # The file path as the current directory.
                 file_path = None
                 if access(mol.file_name, F_OK):
