@@ -26,6 +26,7 @@ from tempfile import mkdtemp, NamedTemporaryFile
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
+from lib.io import file_root
 from pipe_control.nmrglue import plot_contour
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
@@ -103,6 +104,37 @@ class Nmrglue(SystemTestCase):
 
         # add some labels
         ax.text(25.0, 0.0, "Test", size=8, color='r')
+
+        # Now show
+        import matplotlib.pyplot as plt
+        plt.show()
+
+
+    def xtest_plot_contour_cpmg(self):
+        """Test the plot_contour function in pipe_control.
+        This is from the U{tutorial<http://jjhelmus.github.io/nmrglue/current/examples/plot_2d_spectrum.html>}.
+
+        The data is from systemtest -s Relax_disp.test_repeat_cpmg
+        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
+        """
+
+        # Define base path to files.
+        base_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'
+
+        # Define folder to all ft files.
+        ft2_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'ft2_data'
+        ft2_folder_2 = base_path +sep+ 'cpmg_disp_sod1d90a_060521' +sep+ 'cpmg_disp_sod1d90a_060521_normal.fid' +sep+ 'ft2_data'
+
+        # Read the spectrum.
+        fname = '128_0_FT.ft2'
+        sp_id = file_root(fname)
+        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ft2_folder_1, spectrum_id=sp_id)
+
+        # Call the pipe_control function and get the return axis.
+        ax = plot_contour(spectrum_id=sp_id, contour_start=200000., contour_num=20, contour_factor=1.20, ppm=True, show=False)
+
+        # Set a new title.
+        ax.set_title("CPMG Spectrum")
 
         # Now show
         import matplotlib.pyplot as plt
