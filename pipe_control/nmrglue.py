@@ -96,5 +96,6 @@ def plot_contour(spectrum_id=None, contour_start=30000., contour_num=20, contour
     # Call the contour plot.
     ax = contour_plot(spectrum_id=spectrum_id, contour_start=contour_start, contour_num=contour_num, contour_factor=contour_factor, ppm=ppm, show=show)
 
+    # Return the axis instance, for possibility for additional decoration.
     return ax
 
