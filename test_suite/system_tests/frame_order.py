@@ -389,19 +389,14 @@ class Frame_order(SystemTestCase):
         # Create a data pipe.
         self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
 
-        # Convert the pivot to a numpy array.
-        pivot = array(pivot)
-
-        # The 3 atomic positions.
+        # Create a 6 atom structure with the CoM at [0, 0, 0].
         atom_pos = 100.0 * eye(3)
-
-        # Create a 6 atom structure.
-        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='X', res_num=1, pos=atom_pos[0]+pivot, element='N')
-        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='Y', res_num=2, pos=atom_pos[1]+pivot, element='N')
-        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='Z', res_num=3, pos=atom_pos[2]+pivot, element='N')
-        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='nX', res_num=4, pos=-atom_pos[0]+pivot, element='N')
-        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='nY', res_num=5, pos=-atom_pos[1]+pivot, element='N')
-        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='nZ', res_num=6, pos=-atom_pos[2]+pivot, element='N')
+        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='X', res_num=1, pos=atom_pos[0], element='N')
+        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='Y', res_num=2, pos=atom_pos[1], element='N')
+        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='Z', res_num=3, pos=atom_pos[2], element='N')
+        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='nX', res_num=4, pos=-atom_pos[0], element='N')
+        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='nY', res_num=5, pos=-atom_pos[1], element='N')
+        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='nZ', res_num=6, pos=-atom_pos[2], element='N')
 
         # Set up the moving domain.
         self.interpreter.domain(id='X', spin_id=':1')
@@ -3193,7 +3188,7 @@ class Frame_order(SystemTestCase):
         print("Rotor apex (100*axis + [1, 0, 0]):\n    %s" % (l*axis + pivot))
 
         # Set up.
-        self.setup_model(pipe_name='PDB model', model='rotor', pivot=pivot, ave_pos_x=0.0, ave_pos_y=0.0, ave_pos_z=0.0, ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_alpha=axis_alpha, cone_sigma_max=cone_sigma_max)
+        self.setup_model(pipe_name='PDB model', model='rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_alpha=axis_alpha, cone_sigma_max=cone_sigma_max)
 
         # Create the PDB.
         self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
