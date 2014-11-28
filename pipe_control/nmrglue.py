@@ -100,11 +100,13 @@ def plot_contour(spectrum_id=None, contour_start=30000., contour_num=20, contour
     return ax
 
 
-def plot_hist(ndarray=None, show=False):
+def plot_hist(ndarray=None, hist_kwargs=None, show=False):
     """Flatten the 2D numpy array, and plot as histogram.
 
     @keyword ndarray:           The numpy array to flatten, and plot as histogram.
     @type ndarray:              numpy array
+    @keyword hist_kwargs:       The dictionary of keyword arguments to be send to matplotlib.pyplot.hist() plot function.  If None, standard values will be used.
+    @type hist_kwargs:          None or dic
     @keyword show:              A flag which if True will make a call to matplotlib.pyplot.show().
     @type show:                 bool
     @return:                    The matplotlib.axes.AxesSubplot class, which can be manipulated to add additional text to the axis.
@@ -112,7 +114,7 @@ def plot_hist(ndarray=None, show=False):
     """
 
     # Call the contour plot.
-    ax = hist_plot(ndarray=ndarray, show=show)
+    ax = hist_plot(ndarray=ndarray, hist_kwargs=hist_kwargs, show=show)
 
     # Return the axis instance, for possibility for additional decoration.
     return ax

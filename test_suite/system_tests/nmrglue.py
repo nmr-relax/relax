@@ -165,4 +165,5 @@ class Nmrglue(SystemTestCase):
         data = cdp.ngdata[sp_id].data
 
         # Plot the histogram.
-        plot_hist(ndarray=data, show=True)
+        kwargs = {'bins': 3000, 'range': None, 'normed': False, 'facecolor':'green', 'alpha':0.75}
+        plot_hist(ndarray=data, hist_kwargs=kwargs, show=True)
