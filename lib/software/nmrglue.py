@@ -109,6 +109,45 @@ def contour_plot(spectrum_id=None, contour_start=30000., contour_num=20, contour
     return ax
 
 
+def hist_plot(ndarray=None, show=False):
+    """Flatten the 2D numpy array, and plot as histogram.
+
+    @keyword ndarray:           The numpy array to flatten, and plot as histogram.
+    @type ndarray:              numpy array
+    @keyword show:              A flag which if True will make a call to matplotlib.pyplot.show().
+    @type show:                 bool
+    @return:                    The matplotlib.axes.AxesSubplot class, which can be manipulated to add additional text to the axis.
+    @rtype:                     matplotlib.axes.AxesSubplot
+    """
+
+    # Flatten the numpy data array.
+    data = ndarray.flatten()
+
+    # Now make a histogram.
+    # http://matplotlib.org/1.2.1/examples/api/histogram_demo.html
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    #kwargs = {'bins': 3000, 'spam': 'ham'}
+
+    # Make the plot.
+    n, bins, patches = ax.hist(data, bins=1000, range=None, normed=False, facecolor='green', alpha=0.75)
+
+    # Calculate the bin centers.
+    bincenters = 0.5*(bins[1:]+bins[:-1])
+
+    # Set limits.
+    ax.set_ylim(0, 10000)
+    ax.set_xlim(-30000, 50000)
+
+    # If show.
+    if show:
+        plt.show()
+
+    # Return ax
+    return ax
+
+
 def read_spectrum(file=None, dir=None):
     """Read the spectrum data.
 
