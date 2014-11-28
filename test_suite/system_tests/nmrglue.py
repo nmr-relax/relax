@@ -27,7 +27,7 @@ from tempfile import mkdtemp, NamedTemporaryFile
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.io import file_root
-from pipe_control.nmrglue import plot_contour
+from pipe_control.nmrglue import plot_contour, plot_hist
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 from extern import nmrglue
@@ -139,3 +139,30 @@ class Nmrglue(SystemTestCase):
         # Now show
         import matplotlib.pyplot as plt
         plt.show()
+
+
+    def xtest_plot_hist_cpmg(self):
+        """Test the plot_hist function in pipe_control.
+
+        The data is from systemtest -s Relax_disp.test_repeat_cpmg
+        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
+        """
+
+        # Define base path to files.
+        base_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'
+
+        # Define folder to all ft files.
+        ft2_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'ft2_data'
+
+        # Read the spectrum.
+        fname = '128_0_FT.ft2'
+        sp_id = file_root(fname)
+        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ft2_folder_1, spectrum_id=sp_id)
+
+        # Extract the data.
+        dic = cdp.ngdata[sp_id].dic
+        udic = cdp.ngdata[sp_id].udic
+        data = cdp.ngdata[sp_id].data
+
+        # Plot the histogram.
+        plot_hist(ndarray=data, show=True)
