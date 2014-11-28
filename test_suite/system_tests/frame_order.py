@@ -3172,6 +3172,64 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.chi2, 0.011377487066752203, 5)
 
 
+    def test_simulate_free_rotor_z_axis(self):
+        """Check the frame_order.simulate user function PDB file for the free rotor model along the z-axis."""
+
+        # Init.
+        pivot = array([1, 0, 0], float64)
+        l = 10.0
+        sim_num = 500
+
+        # The axis alpha parameter, and printout.
+        axis_alpha = pi / 2.0
+        axis = create_rotor_axis_alpha(pi/2, pivot, array([0, 0, 0], float64))
+        print("\nRotor axis:  %s" % axis)
+        print("Rotor apex (100*axis + [1, 0, 0]):\n    %s" % (l*axis + pivot))
+
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='free rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_alpha=axis_alpha)
+
+        # Create the PDB.
+        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+
+        # Delete all structural data.
+        self.interpreter.structure.delete()
+
+        # Read the contents of the file.
+        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+
+        # Check the atomic coordinates.
+        selection = cdp.structure.selection()
+        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+            # Loop over all positions.
+            for i in range(sim_num):
+                # Shift the position back to the origin, and decompose into spherical coordinates.
+                new_pos = pos[i] - pivot
+                r, theta, phi = cartesian_to_spherical(new_pos)
+
+                # Printout.
+                print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
+
+                # The vector length.
+                self.assertAlmostEqual(r/100.0, 1.0, 4)
+
+                # Check the X vector.
+                if res_name == 'X':
+                    self.assertAlmostEqual(theta, pi/2.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the Y vector.
+                elif res_name == 'Y':
+                    self.assertAlmostEqual(theta, pi/2.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the Z vector (should not move).
+                elif res_name == 'Z':
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 100.0, 3)
+
+
     def test_simulate_rotor_z_axis(self):
         """Check the frame_order.simulate user function PDB file for the rotor model along the z-axis."""
 
