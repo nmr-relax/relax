@@ -35,6 +35,7 @@ except ImportError:
     bz2 = None
     message = sys.exc_info()[1]
     bz2_module_message = message.args[0]
+from glob import glob
 from os import devnull
 from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep
 from os.path import expanduser, basename, splitext, isfile
@@ -173,6 +174,42 @@ def file_root(file_path):
 
     # Return the file root with the directories stripped.
     return basename(file_path)
+
+
+def get_file_list(glob_pattern=None, dir=None):
+    """Return a list of file basenames and a list of fileroot matching a pathname pattern.
+
+    @param glob_pattern:    Pattern may contain simple shell-style wildcards.
+    @type glob_pattern:     str
+    @param dir:             The path where the files is located.  If None, then the current directory is assumed.
+    @type dir:              str
+    @return:                list of file basenames, list of fileroots.
+    @rtype:                 list of str, list of str
+    """
+
+    # Get the file path.
+    file_path = get_file_path(file_name=glob_pattern, dir=dir)
+
+    # Get the file list.
+    file_list = glob(file_path)
+
+    # Make a list if of basenames.
+    basename_list = []
+
+    # Loop over the file list.
+    for file_i in file_list:
+        basename_list.append(basename(file_i))
+
+    # Sort the file list Alphanumeric.
+    basename_list = sort_filenames(filenames=basename_list)
+
+    # Now make a list of file_root, which is the file name striped of extension detail.
+    # This can be useful when assigning spectrum IDs.
+    file_root_list = []
+    for file_i in basename_list:
+        file_root_list.append(file_root(file_i))
+
+    return basename_list, file_root_list
 
 
 def get_file_path(file_name=None, dir=None):
