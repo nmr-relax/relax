@@ -23,7 +23,7 @@
 """Module for the wrapper functions around the nmrglue module."""
 
 # Python module imports.
-from numpy import arange, argmax, exp, log, pi, sqrt
+from numpy import arange, argmax, exp, log, ones, pi, sqrt
 import matplotlib.pyplot as plt
 import matplotlib.cm
 
@@ -32,6 +32,7 @@ from extern import nmrglue
 from lib.errors import RelaxError
 from lib.io import get_file_path
 from lib.spectrum.objects import Nmrglue_data
+from target_functions.chi2 import chi2_rankN
 
 
 def contour_plot(spectrum_id=None, contour_start=30000., contour_num=20, contour_factor=1.20, ppm=True, show=False):
@@ -109,6 +110,51 @@ def contour_plot(spectrum_id=None, contour_start=30000., contour_num=20, contour
     return ax
 
 
+def func_gauss(params=None, x=None):
+    """Calculate the Gaussian distribution for a given x value.
+
+    @param params:  The vector of parameter values.
+    @type params:   numpy rank-1 float array
+    @keyword x:     The x value to calculate the probability for.
+    @type x:        numpy array
+    @return:        The probability corresponding to x.
+    @rtype:         float
+    """
+
+    # Unpack,
+    # a: The amplitude of the distribution.
+    # x0: The center of the distribution.
+    # sigma: The standard deviation of the distribution.
+    a, x0, sigma = params
+
+    # Calculate and return the probability.
+    return a*exp(-(x-x0)**2/(2*sigma**2))
+
+
+def func_gauss_chi2(params=None, x=None, values=None):
+    """Target function for minimising chi2 in minfx, for Gaussian function fit.
+
+    @param params:  The vector of parameter values.
+    @type params:   numpy rank-1 float array
+    @keyword x:     The x points.
+    @type x:        numpy array
+    @param values:  The measured y values.
+    @type values:   numpy array
+    @return:        The chi2 value.
+    @rtype:         float
+    """
+
+    # Calculate.
+    back_calc = func_gauss(params=params, x=x)
+
+    # Return the total chi-squared value.
+    errors = ones(values.shape)
+    chi2 = chi2_rankN(data=values, back_calc_vals=back_calc, errors=errors)
+
+    # Calculate and return the chi-squared value.
+    return chi2
+
+
 def hist_plot(ndarray=None, hist_kwargs=None, show=False):
     """Flatten the 2D numpy array, and plot as histogram.
 
@@ -178,13 +224,10 @@ def hist_plot(ndarray=None, hist_kwargs=None, show=False):
     #ax.annotate("Test 1", xy=(0.5, 0.5), xycoords="data", va="center", ha="center", bbox=dict(boxstyle="round", fc="w"))
     ax.annotate("FWHM=%3.2f std=%3.2f"%(fwhm, fwhm_std), xy=(x0, hm), xycoords="data", size=8, va="center", horizontalalignment="center", bbox=dict(boxstyle="round", facecolor="w"))
 
-    # Plot the gaussian function.
-    a = amp
-    sigma = fwhm_std
-    x = bincenters
-
     # Calculate the gauss values.
-    gauss = a*exp(-(x-x0)**2/(2*sigma**2))
+    params = amp, x0, fwhm_std
+    gauss = func_gauss(params=params, x=bincenters)
+    sigma = fwhm_std
 
     # Plot the values.
     ax.plot(bincenters, gauss, 'r-', label='gauss')
