@@ -32,7 +32,7 @@ from specific_analyses.relax_fit.parameters import assemble_param_vector
 
 # C modules.
 if C_module_exp_fn:
-    from target_functions.relax_fit import jacobian_exp, jacobian_chi2_exp, setup, func_exp, dfunc_exp, d2func_exp, back_calc_I
+    from target_functions.relax_fit import back_calc_I, d2func_exp, dfunc_exp, func_exp, jacobian_chi2_exp, jacobian_exp, setup 
 
 
 class Relax_fit_opt:
