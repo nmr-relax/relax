@@ -513,7 +513,7 @@ class Relax_fit(SystemTestCase):
         spin = return_spin(":17@H")
         self.assertAlmostEqual(spin.chi2, 0.0)
         self.assertAlmostEqual(spin.rx, 0.5)
-        self.assertAlmostEqual(spin.i0/1e15, 1.0)
+        self.assertAlmostEqual(spin.iinf/1e15, 1.0)
 
 
     def test_zooming_grid_search(self):
