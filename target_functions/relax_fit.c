@@ -19,6 +19,7 @@
 
 /* This include must come first. */
 #include <Python.h>
+#include <stdio.h>
 
 /* Include all of the variable definitions. */
 #include "relax_fit.h"
@@ -128,6 +129,33 @@ func_exp(PyObject *self, PyObject *args) {
 
 
 static PyObject *
+func_sat(PyObject *self, PyObject *args) {
+    /* Saturation recovery experiment target function for calculating and returning the chi-squared value.
+     *
+     * Firstly the back calculated intensities are generated, then the chi-squared statistic is
+     * calculated.
+     */
+
+    /* Declarations. */
+    PyObject *params_arg;
+
+    /* Parse the function arguments, the only argument should be the parameter array. */
+    if (!PyArg_ParseTuple(args, "O", &params_arg))
+        return NULL;
+
+    /* Convert the parameters Python list to a C array. */
+    param_to_c(params_arg);
+
+    /* Back calculated the peak intensities. */
+    exponential_sat(params[index_Iinf], params[index_R], relax_times, back_calc, num_times);
+
+
+    /* Calculate and return the chi-squared value. */
+    return PyFloat_FromDouble(chi2(values, variance, back_calc, num_times));
+}
+
+
+static PyObject *
 dfunc_exp(PyObject *self, PyObject *args) {
     /* Target function for the two parameter exponential for calculating and returning the chi-squared gradient.
      * 
@@ -166,6 +194,47 @@ dfunc_exp(PyObject *self, PyObject *args) {
     return list;
 }
 
+
+static PyObject *
+dfunc_sat(PyObject *self, PyObject *args) {
+    /* Saturation recovery experiment target function for the two parameter exponential for calculating and returning the chi-squared gradient.
+     * 
+     */
+
+    /* Declarations. */
+    PyObject *params_arg;
+    PyObject *list;
+    int i;
+
+    /* Parse the function arguments, the only argument should be the parameter array. */
+    if (!PyArg_ParseTuple(args, "O", &params_arg))
+        return NULL;
+
+    /* Convert the parameters Python list to a C array. */
+    param_to_c(params_arg);
+
+    /* Back calculated the peak intensities. */
+    exponential_sat(params[index_Iinf], params[index_R], relax_times, back_calc, num_times);
+
+    /* The partial derivates. */
+    exponential_sat_dR(params[index_Iinf], params[index_R], index_R, relax_times, back_calc_grad, num_times);
+    exponential_sat_dIinf(params[index_Iinf], params[index_R], index_Iinf, relax_times, back_calc_grad, num_times);
+
+    /* The chi-squared gradient. */
+    dchi2(dchi2_vals, values, back_calc, back_calc_grad, variance, num_times, num_params);
+
+    /* Convert to a Python list, and scale the values. */
+    list = PyList_New(0);
+    Py_INCREF(list);
+    for (i = 0; i < num_params; i++) {
+        PyList_Append(list, PyFloat_FromDouble(dchi2_vals[i] * scaling_matrix[i]));
+    }
+
+    /* Return the gradient. */
+    return list;
+}
+
+
 static PyObject *
 d2func_exp(PyObject *self, PyObject *args) {
     /* Target function for the two parameter exponential for calculating and returning the chi-squared Hessian.
@@ -195,6 +264,56 @@ d2func_exp(PyObject *self, PyObject *args) {
     exponential_dR2(params[index_I0], params[index_R], index_R, relax_times, back_calc_hess, num_times);
     exponential_dI02(params[index_I0], params[index_R], index_I0, relax_times, back_calc_hess, num_times);
     exponential_dR_dI0(params[index_I0], params[index_R], index_R, index_I0, relax_times, back_calc_hess, num_times);
+
+    /* The chi-squared Hessian. */
+    d2chi2(d2chi2_vals, values, back_calc, back_calc_grad, back_calc_hess, variance, num_times, num_params);
+
+    /* Convert to a Python list, and scale the values. */
+    list = PyList_New(0);
+    Py_INCREF(list);
+    for (j = 0; j < num_params; j++) {
+        list2 = PyList_New(0);
+        Py_INCREF(list2);
+        for (k = 0; k < num_params; k++) {
+            PyList_Append(list2, PyFloat_FromDouble(d2chi2_vals[j][k] * scaling_matrix[j] * scaling_matrix[k]));
+        }
+        PyList_Append(list, list2);
+    }
+
+    /* Return the Hessian. */
+    return list;
+}
+
+
+static PyObject *
+d2func_sat(PyObject *self, PyObject *args) {
+    /* Saturation recovery experiment target function for the two parameter exponential for calculating and returning the chi-squared Hessian.
+     * 
+     */
+
+    /* Declarations. */
+    PyObject *params_arg;
+    PyObject *list, *list2;
+    int j, k;
+
+    /* Parse the function arguments, the only argument should be the parameter array. */
+    if (!PyArg_ParseTuple(args, "O", &params_arg))
+        return NULL;
+
+    /* Convert the parameters Python list to a C array. */
+    param_to_c(params_arg);
+
+    /* Back calculated the peak intensities. */
+    exponential_sat(params[index_Iinf], params[index_R], relax_times, back_calc, num_times);
+
+    /* The partial derivatives. */
+    exponential_sat_dR(params[index_Iinf], params[index_R], index_R, relax_times, back_calc_grad, num_times);
+    exponential_sat_dIinf(params[index_Iinf], params[index_R], index_Iinf, relax_times, back_calc_grad, num_times);
+
+    /* The second partial derivatives. */
+    exponential_sat_dR2(params[index_Iinf], params[index_R], index_R, relax_times, back_calc_hess, num_times);
+    exponential_sat_dIinf2(params[index_Iinf], params[index_R], index_Iinf, relax_times, back_calc_hess, num_times);
+    exponential_sat_dR_dIinf(params[index_Iinf], params[index_R], index_R, index_Iinf, relax_times, back_calc_hess, num_times);
 
     /* The chi-squared Hessian. */
     d2chi2(d2chi2_vals, values, back_calc, back_calc_grad, back_calc_hess, variance, num_times, num_params);
@@ -252,6 +371,43 @@ jacobian_exp(PyObject *self, PyObject *args) {
     /* The partial derivatives. */
     exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, num_times);
     exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
+
+    /* Convert to a Python list of lists. */
+    list = PyList_New(0);
+    Py_INCREF(list);
+    for (i = 0; i < num_params; i++) {
+        list2 = PyList_New(0);
+        Py_INCREF(list2);
+        for (j = 0; j < num_times; j++) {
+            PyList_Append(list2, PyFloat_FromDouble(back_calc_grad[i][j]));
+        }
+        PyList_Append(list, list2);
+    }
+
+    /* Return the Jacobian. */
+    return list;
+}
+
+
+static PyObject *
+jacobian_sat(PyObject *self, PyObject *args) {
+    /* Return the Jacobian for the two parameter exponential as a Python list of lists. */
+
+    /* Declarations. */
+    PyObject *params_arg;
+    PyObject *list, *list2;
+    int i, j;
+
+    /* Parse the function arguments, the only argument should be the parameter array. */
+    if (!PyArg_ParseTuple(args, "O", &params_arg))
+        return NULL;
+
+    /* Convert the parameters Python list to a C array. */
+    param_to_c(params_arg);
+
+    /* The partial derivatives. */
+    exponential_sat_dR(params[index_Iinf], params[index_R], index_R, relax_times, back_calc_grad, num_times);
+    exponential_sat_dIinf(params[index_Iinf], params[index_R], index_Iinf, relax_times, back_calc_grad, num_times);
 
     /* Convert to a Python list of lists. */
     list = PyList_New(0);
@@ -337,6 +493,73 @@ jacobian_chi2_exp(PyObject *self, PyObject *args) {
 }
 
 
+static PyObject *
+jacobian_chi2_sat(PyObject *self, PyObject *args) {
+    /* Return the Jacobian for the saturation recovery experiment as a Python list of lists.
+
+    The Jacobian
+    ============
+
+    The equation is::
+
+                     / yi - yi(theta)     dyi(theta) \
+        J_ji  =  -2  | --------------  .  ---------- |
+                     \   sigma_i**2        dthetaj   /
+
+    where
+        - i is the index over data sets.
+        - j is the parameter index.
+        - theta is the parameter vector.
+        - yi are the values of the measured data set.
+        - yi(theta) are the values of the back calculated data set.
+        - dyi(theta)/dthetaj are the values of the back calculated gradient for parameter j.
+        - sigma_i are the values of the error set.
+
+     */
+
+    /* Declarations. */
+    PyObject *params_arg;
+    PyObject *list, *list2;
+    int i, j;
+
+    /* Parse the function arguments, the only argument should be the parameter array. */
+    if (!PyArg_ParseTuple(args, "O", &params_arg))
+        return NULL;
+
+    /* Convert the parameters Python list to a C array. */
+    param_to_c(params_arg);
+
+    /* Back calculated the peak intensities. */
+    exponential_sat(params[index_Iinf], params[index_R], relax_times, back_calc, num_times);
+
+    /* The partial derivatives. */
+    exponential_sat_dR(params[index_Iinf], params[index_R], index_R, relax_times, back_calc_grad, num_times);
+    exponential_sat_dIinf(params[index_Iinf], params[index_R], index_Iinf, relax_times, back_calc_grad, num_times);
+
+    /* Assemble the chi-squared Jacobian. */
+    for (j = 0; j < num_params; ++j) {
+        for (i = 0; i < num_times; ++i) {
+            jacobian_matrix[j][i] = -2.0 / variance[i] * (values[i] - back_calc[i]) * back_calc_grad[j][i];
+        }
+    }
+
+    /* Convert to a Python list of lists. */
+    list = PyList_New(0);
+    Py_INCREF(list);
+    for (i = 0; i < num_params; i++) {
+        list2 = PyList_New(0);
+        Py_INCREF(list2);
+        for (j = 0; j < num_times; j++) {
+            PyList_Append(list2, PyFloat_FromDouble(jacobian_matrix[i][j]));
+        }
+        PyList_Append(list, list2);
+    }
+
+    /* Return the Jacobian. */
+    return list;
+}
+
+
 /* The method table for the functions called by Python. */
 static PyMethodDef relax_fit_methods[] = {
     {
@@ -350,15 +573,30 @@ static PyMethodDef relax_fit_methods[] = {
         METH_VARARGS,
         "Target function for the two parameter exponential for calculating and returning the chi-squared value.\n\nFirstly the back calculated intensities are generated, then the chi-squared statistic is calculated."
     }, {
+        "func_sat",
+        func_sat,
+        METH_VARARGS,
+        "Target function for the saturation recovery experiment for calculating and returning the chi-squared value.\n\nFirstly the back calculated intensities are generated, then the chi-squared statistic is calculated."
+    }, {
         "dfunc_exp",
         dfunc_exp,
         METH_VARARGS,
         "Target function for the two parameter exponential for calculating and returning the chi-squared gradient."
     }, {
+        "dfunc_sat",
+        dfunc_sat,
+        METH_VARARGS,
+        "Target function for the saturation recovery experiment for calculating and returning the chi-squared gradient."
+    }, {
         "d2func_exp",
         d2func_exp,
         METH_VARARGS,
         "Target function for the two parameter exponential for calculating and returning the chi-squared Hessian."
+    }, {
+        "d2func_sat",
+        d2func_sat,
+        METH_VARARGS,
+        "Target function for the saturation recovery experiment for calculating and returning the chi-squared Hessian."
     }, {
         "back_calc_I",
         back_calc_I,
@@ -370,10 +608,20 @@ static PyMethodDef relax_fit_methods[] = {
         METH_VARARGS,
         "Return the Jacobian matrix for the two parameter exponential as a Python list."
     }, {
+        "jacobian_sat",
+        jacobian_sat,
+        METH_VARARGS,
+        "Return the Jacobian matrix for the saturation recovery experiment as a Python list."
+    }, {
         "jacobian_chi2_exp",
         jacobian_chi2_exp,
         METH_VARARGS,
         "Return the Jacobian matrix of the chi-squared function for the two parameter exponential as a Python list."
+    }, {
+        "jacobian_chi2_sat",
+        jacobian_chi2_sat,
+        METH_VARARGS,
+        "Return the Jacobian matrix of the chi-squared function for the saturation recovery experiment as a Python list."
     },
         {NULL, NULL, 0, NULL}        /* Sentinel. */
 };

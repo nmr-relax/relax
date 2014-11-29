@@ -50,6 +50,31 @@ void exponential(double I0, double R, double relax_times[MAX_DATA], double back_
 }
 
 
+void exponential_sat(double Iinf, double R, double relax_times[MAX_DATA], double back_calc[MAX_DATA], int num_times) {
+    /* Back calculate the intensity values from the exponential of the saturation recovery experiment.
+     *
+     * The function used is::
+     *
+     *     I = Iinf * (1 - exp(-R.t)).
+    */
+
+    /* Declarations. */
+    int i;
+
+    /* Loop over the time points. */
+    for (i = 0; i < num_times; i++) {
+        /* Zero Rx value. */
+        if (R == 0.0)
+            back_calc[i] = 0.0;
+
+        /* Back calculate. */
+        else
+            back_calc[i] = Iinf * (1.0 - exp(-relax_times[i] * R));
+
+    }
+}
+
+
 void exponential_dI0(double I0, double R, int param_index, double relax_times[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], int num_times) {
     /* Calculate the dI0 partial derivate of the 2-parameter exponential curve.
     */
@@ -66,6 +91,26 @@ void exponential_dI0(double I0, double R, int param_index, double relax_times[MA
         /* The partial derivate. */
         else
             back_calc_grad[param_index][i] = exp(-relax_times[i] * R);
+    }
+}
+
+
+void exponential_sat_dIinf(double Iinf, double R, int param_index, double relax_times[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], int num_times) {
+    /* Calculate the dIinf partial derivate of the saturation recovery exponential curve.
+    */
+
+    /* Declarations. */
+    int i;
+
+    /* Loop over the time points. */
+    for (i = 0; i < num_times; i++) {
+        /* Zero Rx value. */
+        if (R == 0.0)
+            back_calc_grad[param_index][i] = 0.0;
+
+        /* The partial derivate. */
+        else
+            back_calc_grad[param_index][i] = (1.0 - exp(-relax_times[i] * R));
     }
 }
 
@@ -90,6 +135,26 @@ void exponential_dR(double I0, double R, int param_index, double relax_times[MAX
 }
 
 
+void exponential_sat_dR(double Iinf, double R, int param_index, double relax_times[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], int num_times) {
+    /* Calculate the dR partial derivate of the 2-parameter exponential curve.
+    */
+
+    /* Declarations. */
+    int i;
+
+    /* Loop over the time points. */
+    for (i = 0; i < num_times; i++) {
+        /* Zero Rx value. */
+        if (R == 0.0)
+            back_calc_grad[param_index][i] = Iinf * relax_times[i];
+
+        /* The partial derivate. */
+        else
+            back_calc_grad[param_index][i] = Iinf * relax_times[i] * exp(-relax_times[i] * R);
+    }
+}
+
+
 void exponential_dI02(double I0, double R, int I0_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times) {
     /* Calculate the dI0 double partial derivate of the 2-parameter exponential curve.
     */
@@ -101,6 +166,21 @@ void exponential_dI02(double I0, double R, int I0_index, double relax_times[MAX_
     for (i = 0; i < num_times; i++) {
         /* Everything is zero! */
         back_calc_hess[I0_index][I0_index][i] = 0.0;
+    }
+}
+
+
+void exponential_sat_dIinf2(double Iinf, double R, int Iinf_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times) {
+    /* Calculate the dIinf double partial derivate of the saturation recovery experiment.
+    */
+
+    /* Declarations. */
+    int i;
+
+    /* Loop over the time points. */
+    for (i = 0; i < num_times; i++) {
+        /* Everything is zero! */
+        back_calc_hess[Iinf_index][Iinf_index][i] = 0.0;
     }
 }
 
@@ -128,6 +208,29 @@ void exponential_dR_dI0(double I0, double R, int R_index, int IO_index, double r
 }
 
 
+void exponential_sat_dR_dIinf(double Iinf, double R, int R_index, int Iinf_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times) {
+    /* Calculate the dR, dIinf second partial derivate of the 2-parameter exponential curve.
+    */
+
+    /* Declarations. */
+    int i;
+
+    /* Loop over the time points. */
+    for (i = 0; i < num_times; i++) {
+        /* Zero Rx value. */
+        if (R == 0.0)
+            back_calc_hess[Iinf_index][R_index][i] = relax_times[i];
+
+        /* The second partial derivate. */
+        else
+            back_calc_hess[Iinf_index][R_index][i] = relax_times[i] * exp(-relax_times[i] * R);
+
+        /* Hessian symmetry. */
+        back_calc_hess[R_index][Iinf_index][i] = back_calc_hess[Iinf_index][R_index][i];
+    }
+}
+
+
 void exponential_dR2(double I0, double R, int R_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times) {
     /* Calculate the dR second partial derivate of the 2-parameter exponential curve.
     */
@@ -144,5 +247,25 @@ void exponential_dR2(double I0, double R, int R_index, double relax_times[MAX_DA
         /* The partial derivate. */
         else
             back_calc_hess[R_index][R_index][i] = I0 * square(relax_times[i]) * exp(-relax_times[i] * R);
+    }
+}
+
+
+void exponential_sat_dR2(double Iinf, double R, int R_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times) {
+    /* Calculate the dR second partial derivate of the saturation recovery experiment.
+    */
+
+    /* Declarations. */
+    int i;
+
+    /* Loop over the time points. */
+    for (i = 0; i < num_times; i++) {
+        /* Zero Rx value. */
+        if (R == 0.0)
+            back_calc_hess[R_index][R_index][i] = -Iinf * square(relax_times[i]);
+
+        /* The partial derivate. */
+        else
+            back_calc_hess[R_index][R_index][i] = -Iinf * square(relax_times[i]) * exp(-relax_times[i] * R);
     }
 }
