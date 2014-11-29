@@ -109,7 +109,7 @@ def select_model(model='exp'):
         params = ['rx', 'i0', 'iinf']
 
     # The saturation recovery.
-    if model == 'sat':
+    elif model == 'sat':
         print("Saturation recovery.")
         params = ['rx', 'iinf']
 
