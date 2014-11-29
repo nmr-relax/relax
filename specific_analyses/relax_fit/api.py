@@ -90,10 +90,6 @@ class Relax_fit(API_base, API_common):
         if not C_module_exp_fn:
             raise RelaxError("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
 
-        # Perform checks.
-        if not cdp.curve_type == 'exp':
-            raise RelaxError("Only curve type of 'exp' is allowed for error estimation.  Set by: relax_fit.select_model('exp').")
-
         # Raise Error, if not optimised.
         if not (hasattr(spin, 'rx') and hasattr(spin, 'i0')):
             raise RelaxError("Spin '%s' does not contain optimised 'rx' and 'i0' values.  Try execute: minimise.execute(min_algor='Newton', constraints=False)"%(spin_id))
@@ -126,12 +122,8 @@ class Relax_fit(API_base, API_common):
         errors = asarray(errors)
         times = asarray(times)
 
-        # Extract values.
-        rx = getattr(spin, 'rx')
-        i0 = getattr(spin, 'i0')
-
-        # Pack data
-        param_vector = [rx, i0]
+        # Create the parameter vector.
+        param_vector = assemble_param_vector(spin=spin)
 
         # Initialise data in C code.
         scaling_list = [1.0, 1.0]
