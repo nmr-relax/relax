@@ -68,6 +68,7 @@ uf.backend = relax_time
 uf.menu_text = "&relax_time"
 uf.gui_icon = "oxygen.actions.chronometer"
 uf.wizard_size = (700, 500)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'r1_200x200.png'
 
 
 # The relax_fit.select_model user function.
@@ -106,3 +107,4 @@ uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_height_desc = 500
 uf.wizard_size = (900, 600)
 uf.wizard_apply_button = False
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'r1_200x200.png'
