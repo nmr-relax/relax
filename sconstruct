@@ -567,6 +567,7 @@ class Main:
         # File names.
         files = ['c_chi2.c',
                  'exponential.c',
+                 'exponential_sat.c',
                  'relax_fit.c']
 
         # Construct the python include path (for Python.h).
