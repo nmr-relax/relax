@@ -109,6 +109,9 @@ minimise.grid_search(inc=11)
 # Minimise.
 minimise.execute('newton', constraints=False)
 
+# Try out the covariance matrix technique.
+error_analysis.covariance_matrix()
+
 # Monte Carlo simulations.
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
