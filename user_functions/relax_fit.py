@@ -98,9 +98,9 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("A number of relaxation experiments are supported and include:")
-uf.desc[-1].add_paragraph("The 'exp' model.  This is the default two parameter exponential fit.  The magnetisation starts at I0 and decays to zero.  The parameters are [Rx, I0], and the equation is I(t) = I0*exp(-Rx*t).")
-uf.desc[-1].add_paragraph("The 'inv' model.  This is the inversion recovery experiment in which the peak intensity limit is a non-zero value.  The magnetisation starts at a negative I0 value and decays to a positive Iinf value.  The parameters are [Rx, I0, Iinf] and the equation is I(t) = Iinf - I0*exp(-Rx*t).  This has not been implemented yet.")
-uf.desc[-1].add_paragraph("The 'sat' model.  This is the saturation recovery experiment.  The magnetisation starts at zero and decays to a positive Iinf value.  The parameters are [Rx, Iinf] and the equation is I(t) = Iinf*(1 - exp(-Rx*t)).")
+uf.desc[-1].add_paragraph("The 'exp' model.  This is the default two parameter exponential fit.  The magnetisation starts at I0 and decays to zero.  The parameters are [Rx, I0] and the equation is I(t) = I0*exp(-Rx*t).")
+uf.desc[-1].add_paragraph("The 'inv' model.  This is the inversion recovery experiment (IR).  The magnetisation starts at a negative value at -I0 and relaxes to a positive Iinf value.  The parameters are [Rx, I0, Iinf] and the equation is I(t) = Iinf - I0*exp(-Rx*t).  This has not been implemented yet.")
+uf.desc[-1].add_paragraph("The 'sat' model.  This is the saturation recovery experiment (SR).  The magnetisation starts at zero and relaxes to a positive Iinf value.  The parameters are [Rx, Iinf] and the equation is I(t) = Iinf*(1 - exp(-Rx*t)).")
 uf.backend = select_model
 uf.menu_text = "&select_model"
 uf.gui_icon = "oxygen.actions.list-add"
