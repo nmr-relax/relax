@@ -87,27 +87,27 @@ def disassemble_param_vector(param_vector=None, spin=None, sim_index=None):
 
     # Monte Carlo simulations.
     if sim_index != None:
-        # The relaxation rate.
-        spin.rx_sim[sim_index] = param_vector[0]
+        # Two parameter exponential.
+        if spin.model == 'exp':
+            spin.rx_sim[sim_index] = param_vector[0]
+            spin.i0_sim[sim_index] = param_vector[1]
 
-        # Initial intensity.
-        spin.i0_sim[sim_index] = param_vector[1]
-
-        # Intensity at infinity.
-        if cdp.curve_type == 'inv':
-            spin.iinf_sim[sim_index] = param_vector[2]
+        # Saturation recovery.
+        elif spin.model == 'sat':
+            spin.rx_sim[sim_index] = param_vector[0]
+            spin.iinf_sim[sim_index] = param_vector[1]
 
     # Parameter values.
     else:
-        # The relaxation rate.
-        spin.rx = param_vector[0]
+        # Two parameter exponential.
+        if spin.model == 'exp':
+            spin.rx = param_vector[0]
+            spin.i0 = param_vector[1]
 
-        # Initial intensity.
-        spin.i0 = param_vector[1]
-
-        # Intensity at infinity.
-        if cdp.curve_type == 'inv':
-            spin.iinf = param_vector[2]
+        # Saturation recovery.
+        elif spin.model == 'sat':
+            spin.rx = param_vector[0]
+            spin.iinf = param_vector[1]
 
 
 def linear_constraints(spin=None, scaling_matrix=None):
