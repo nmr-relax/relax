@@ -38,9 +38,11 @@ if C_module_exp_fn:
 class Relax_fit_opt:
     """The exponential curve-fitting Python to C wrapper target function class."""
 
-    def __init__(self, num_params=None, values=None, errors=None, relax_times=None, scaling_matrix=None):
+    def __init__(self, model=None, num_params=None, values=None, errors=None, relax_times=None, scaling_matrix=None):
         """Set up the target function class and alias the target functions.
 
+        @keyword model:             The exponential curve type.  This can be 'exp' for the standard two parameter exponential curve, 'inv' for the inversion recovery experiment, and 'sat' for the saturation recovery experiment.
+        @type model:                str
         @keyword num_params:        The number of parameters in the model.
         @type num_params:           int
         @keyword values:            The peak intensities.
@@ -52,6 +54,9 @@ class Relax_fit_opt:
         @keyword scaling_matrix:    The scaling matrix in a diagonalised list form.
         @type scaling_matrix:       list of float
         """
+
+        # Store the args.
+        self.model = model
 
         # Initialise the C code.
         setup(num_params=num_params, num_times=len(relax_times), values=values, sd=errors, relax_times=relax_times, scaling_matrix=scaling_matrix)

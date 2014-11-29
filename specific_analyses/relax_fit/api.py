@@ -135,7 +135,7 @@ class Relax_fit(API_base, API_common):
 
         # Initialise data in C code.
         scaling_list = [1.0, 1.0]
-        model = Relax_fit_opt(num_params=len(param_vector), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+        model = Relax_fit_opt(model=spin.model, num_params=len(param_vector), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
 
         # Use the direct Jacobian from function.
         jacobian_matrix_exp = transpose(asarray( model.jacobian(param_vector) ) )
@@ -364,7 +364,7 @@ class Relax_fit(API_base, API_common):
                     scaling_list.append(scaling_matrix[model_index][i, i])
 
             # Set up the target function.
-            model = Relax_fit_opt(num_params=len(spin.params), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+            model = Relax_fit_opt(model=spin.model, num_params=len(spin.params), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
 
 
             # Setup the minimisation algorithm when constraints are present.
