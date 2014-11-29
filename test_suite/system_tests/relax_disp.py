@@ -3591,7 +3591,7 @@ class Relax_disp(SystemTestCase):
                         I_err = asarray(I_err)
 
                         x0 = [r2eff, i0]
-                        model = Relax_fit_opt(num_params=len(x0), values=I_err, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+                        model = Relax_fit_opt(model='exp', num_params=len(x0), values=I_err, errors=errors, relax_times=times, scaling_matrix=scaling_list)
 
                         params_minfx_sim_j, chi2_minfx_sim_j, iter_count, f_count, g_count, h_count, warning = generic_minimise(func=model.func, dfunc=model.dfunc, d2func=model.d2func, args=(), x0=x0, min_algor=min_algor, min_options=min_options, full_output=True, print_flag=0)
                         R_m_sim_j, I0_m_sim_j = params_minfx_sim_j
@@ -3730,7 +3730,7 @@ class Relax_disp(SystemTestCase):
         errors = array([  9.48032653,  11.34093541,   9.35149017,  10.84867928,  12.17590736])
 
         scaling_list = [1.0, 1.0]
-        model = Relax_fit_opt(num_params=2, values=I, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+        model = Relax_fit_opt(model='exp', num_params=2, values=I, errors=errors, relax_times=times, scaling_matrix=scaling_list)
 
         R = - 500.
         I0 = 1000.
