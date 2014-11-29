@@ -26,6 +26,7 @@ from tempfile import mkdtemp, NamedTemporaryFile
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
+from lib.errors import RelaxError
 from lib.io import file_root, get_file_list
 from pipe_control.nmrglue import plot_contour, plot_hist
 from status import Status; status = Status()
@@ -90,6 +91,35 @@ class Nmrglue(SystemTestCase):
         self.assertEqual(udic[1]['freq'], True)
         self.assertEqual(udic[0]['size'], 512)
         self.assertEqual(udic[1]['size'], 4096)
+
+
+    def test_nmrglue_read_several(self):
+        """Test the userfunction spectrum.nmrglue_read with several spectra.
+
+        The data is from systemtest -s Relax_disp.test_repeat_cpmg
+        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
+        """
+
+        # Define base path to files.
+        base_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'
+
+        # Define folder to all ft files.
+        ft2_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'ft2_data'
+
+        # Get the file list matching a glob pattern.
+        ft2_glob_pat = '128_*_FT.ft2'
+        basename_list, file_root_list = get_file_list(glob_pattern=ft2_glob_pat, dir=ft2_folder_1)
+
+        # First test that expected RelaxErrors are raised.
+        self.assertRaises(RelaxError, self.interpreter.spectrum.nmrglue_read, file=basename_list, dir=ft2_folder_1, spectrum_id='test')
+        self.assertRaises(RelaxError, self.interpreter.spectrum.nmrglue_read, file='128_0_FT.ft2', dir=ft2_folder_1, spectrum_id=file_root_list)
+
+        # Read the spectra.
+        self.interpreter.spectrum.nmrglue_read(file=basename_list, dir=ft2_folder_1, spectrum_id=file_root_list)
+
+        # Test that the spectrum id has been stored.
+        self.assertEqual(cdp.spectrum_ids[0], file_root_list[0])
+        self.assertEqual(cdp.spectrum_ids[1], file_root_list[1])
 
 
     def test_version(self):
