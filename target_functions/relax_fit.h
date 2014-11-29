@@ -41,6 +41,7 @@ static int num_params, num_times;
 static int index_R = 0;
 static int index_I0 = 1;
 static int index_Iinf = 1;
+static int index_inv_Iinf = 2;
 
 /* Variables used for storage during the function calls of optimisation. */
 static double back_calc[MAX_DATA];

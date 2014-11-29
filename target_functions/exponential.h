@@ -33,6 +33,17 @@ void exponential_dI02(double I0, double R, int I0_index, double relax_times[MAX_
 void exponential_dR_dI0(double I0, double R, int R_index, int IO_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times);
 void exponential_dR2(double I0, double R, int R_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times);
 
+void exponential_inv(double I0, double Iinf, double R, double relax_times[MAX_DATA], double back_calc[MAX_DATA], int num_times);
+void exponential_inv_dI0(double I0, double Iinf, double R, int param_index, double relax_times[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], int num_times);
+void exponential_inv_dIinf(double I0, double Iinf, double R, int param_index, double relax_times[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], int num_times);
+void exponential_inv_dR(double I0, double Iinf, double R, int param_index, double relax_times[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], int num_times);
+void exponential_inv_dI02(double I0, double Iinf, double R, int I0_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times);
+void exponential_inv_dIinf2(double I0, double Iinf, double R, int Iinf_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times);
+void exponential_inv_dI0_dIinf(double I0, double Iinf, double R, int I0_index, int Iinf_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times);
+void exponential_inv_dR_dI0(double I0, double Iinf, double R, int R_index, int I0_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times);
+void exponential_inv_dR_dIinf(double I0, double Iinf, double R, int R_index, int Iinf_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times);
+void exponential_inv_dR2(double I0, double Iinf, double R, int R_index, double relax_times[MAX_DATA], double back_calc_hess[MAX_PARAMS][MAX_PARAMS][MAX_DATA], int num_times);
+
 void exponential_sat(double Iinf, double R, double relax_times[MAX_DATA], double back_calc[MAX_DATA], int num_times);
 void exponential_sat_dIinf(double Iinf, double R, int param_index, double relax_times[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], int num_times);
 void exponential_sat_dR(double Iinf, double R, int param_index, double relax_times[MAX_DATA], double back_calc_grad[MAX_PARAMS][MAX_DATA], int num_times);
