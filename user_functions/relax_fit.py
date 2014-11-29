@@ -28,6 +28,7 @@ from os import sep
 
 # relax module imports.
 from graphics import ANALYSIS_IMAGE_PATH
+from lib.text.gui import i0, iinf, rx
 from pipe_control import spectrum
 from specific_analyses.relax_fit.uf import relax_time, select_model
 from user_functions.data import Uf_info; uf_info = Uf_info()
@@ -84,9 +85,9 @@ uf.add_keyarg(
     desc = "The type of relaxation curve to fit.",
     wiz_element_type = "combo",
     wiz_combo_choices = [
-        "Two parameter exponential fit: [Rx, I0]",
-        "Inversion recovery: [Rx, I0, Iinf]",
-        "Saturation recovery: [Rx, Iinf]"
+        "Two parameter exponential fit: [%s, %s]" % (rx, i0),
+        "Inversion recovery: [%s, %s, %s]" % (rx, i0, iinf),
+        "Saturation recovery: [%s, %s]" % (rx, iinf)
     ],
     wiz_combo_data = [
         "exp",
