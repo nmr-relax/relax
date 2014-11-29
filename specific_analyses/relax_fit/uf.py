@@ -105,12 +105,12 @@ def select_model(model='exp'):
 
     # Three parameter inversion recovery fit.
     elif model == 'inv':
-        print("Three parameter inversion recovery fit.")
+        print("The inversion recovery experiment.")
         params = ['rx', 'i0', 'iinf']
 
     # The saturation recovery.
     elif model == 'sat':
-        print("Saturation recovery.")
+        print("The saturation recovery experiment.")
         params = ['rx', 'iinf']
 
     # Invalid model.
