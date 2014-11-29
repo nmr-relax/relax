@@ -122,11 +122,13 @@ class Relax_fit(API_base, API_common):
         errors = asarray(errors)
         times = asarray(times)
 
-        # Create the parameter vector.
+        # Create the parameter vector and scaling matrix (as a diagonalised list).
         param_vector = assemble_param_vector(spin=spin)
+        scaling_list = []
+        for i in range(len(spin.params)):
+            scaling_list.append(1.0)
 
         # Initialise data in C code.
-        scaling_list = [1.0, 1.0]
         model = Relax_fit_opt(model=spin.model, num_params=len(param_vector), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
 
         # Use the direct Jacobian from function.
