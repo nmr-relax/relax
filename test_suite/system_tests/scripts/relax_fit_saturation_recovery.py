@@ -86,16 +86,16 @@ for i in range(len(names)):
     relax_fit.relax_time(time=times[i], spectrum_id=names[i])
 
 # Spectrum baseplane noise for non-duplicated spectra
-spectrum.baseplane_rmsd(error=92440.562999, spectrum_id='0.070s', spin_id=None)
-spectrum.baseplane_rmsd(error=91770.380636, spectrum_id='0.150s', spin_id=None)
-spectrum.baseplane_rmsd(error=95226.122047, spectrum_id='0.250s', spin_id=None)
-spectrum.baseplane_rmsd(error=94428.183988, spectrum_id='0.350s', spin_id=None)
-spectrum.baseplane_rmsd(error=92478.391627, spectrum_id='0.500s', spin_id=None)
-spectrum.baseplane_rmsd(error=92167.856579, spectrum_id='0.750s', spin_id=None)
-spectrum.baseplane_rmsd(error=95071.442069, spectrum_id='1.000s', spin_id=None)
-spectrum.baseplane_rmsd(error=92479.274501, spectrum_id='2.000s', spin_id=None)
-spectrum.baseplane_rmsd(error=95735.516944, spectrum_id='3.000s', spin_id=None)
-spectrum.baseplane_rmsd(error=106627.326030, spectrum_id='5.000s', spin_id=None)
+spectrum.baseplane_rmsd(error=5e13, spectrum_id='0.070s', spin_id=None)
+spectrum.baseplane_rmsd(error=5e13, spectrum_id='0.150s', spin_id=None)
+spectrum.baseplane_rmsd(error=5e13, spectrum_id='0.250s', spin_id=None)
+spectrum.baseplane_rmsd(error=5e13, spectrum_id='0.350s', spin_id=None)
+spectrum.baseplane_rmsd(error=5e13, spectrum_id='0.500s', spin_id=None)
+spectrum.baseplane_rmsd(error=5e13, spectrum_id='0.750s', spin_id=None)
+spectrum.baseplane_rmsd(error=5e13, spectrum_id='1.000s', spin_id=None)
+spectrum.baseplane_rmsd(error=5e13, spectrum_id='2.000s', spin_id=None)
+spectrum.baseplane_rmsd(error=5e13, spectrum_id='3.000s', spin_id=None)
+spectrum.baseplane_rmsd(error=5e13, spectrum_id='5.000s', spin_id=None)
 
 # Peak intensity error analysis.
 spectrum.error_analysis()
