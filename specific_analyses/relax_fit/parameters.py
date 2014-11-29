@@ -92,6 +92,12 @@ def disassemble_param_vector(param_vector=None, spin=None, sim_index=None):
             spin.rx_sim[sim_index] = param_vector[0]
             spin.i0_sim[sim_index] = param_vector[1]
 
+        # Two parameter exponential.
+        elif spin.model == 'inv':
+            spin.rx_sim[sim_index] = param_vector[0]
+            spin.i0_sim[sim_index] = param_vector[1]
+            spin.iinf_sim[sim_index] = param_vector[2]
+
         # Saturation recovery.
         elif spin.model == 'sat':
             spin.rx_sim[sim_index] = param_vector[0]
@@ -103,6 +109,12 @@ def disassemble_param_vector(param_vector=None, spin=None, sim_index=None):
         if spin.model == 'exp':
             spin.rx = param_vector[0]
             spin.i0 = param_vector[1]
+
+        # Two parameter exponential.
+        elif spin.model == 'inv':
+            spin.rx = param_vector[0]
+            spin.i0 = param_vector[1]
+            spin.iinf = param_vector[2]
 
         # Saturation recovery.
         elif spin.model == 'sat':
