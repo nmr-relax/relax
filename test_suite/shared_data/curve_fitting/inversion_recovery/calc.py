@@ -10,5 +10,4 @@ iinf = 22
 
 # Calculate I(t) for each t.
 for time in relax_times:
-    print("%s, %s" % (time, iinf - i0 * exp(-rx*time)))
-
+    print("%.3f, %.15f" % (time, iinf - i0 * exp(-rx*time)))
