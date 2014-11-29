@@ -37,9 +37,10 @@ from dep_check import C_module_exp_fn
 from lib.errors import RelaxError, RelaxNoModelError, RelaxNoSequenceError
 from lib.text.sectioning import subsection
 from lib.warnings import RelaxDeselectWarning
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
+from pipe_control.mol_res_spin import check_mol_res_spin_data, return_spin, spin_loop
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
+from specific_analyses.relax_fit.checks import check_model_setup
 from specific_analyses.relax_fit.optimisation import back_calc
 from specific_analyses.relax_fit.parameter_object import Relax_fit_params
 from specific_analyses.relax_fit.parameters import assemble_param_vector, disassemble_param_vector, linear_constraints
@@ -215,6 +216,9 @@ class Relax_fit(API_base, API_common):
         @rtype:                 list of str
         """
 
+        # Check that the model is setup.
+        check_model_setup()
+
         # Unpack the data.
         spin, spin_id = model_info
 
@@ -292,9 +296,8 @@ class Relax_fit(API_base, API_common):
         @type inc:                  list of lists of int
         """
 
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
+        # Checks.
+        check_mol_res_spin_data()
 
         # Loop over the sequence.
         model_index = 0
@@ -474,9 +477,9 @@ class Relax_fit(API_base, API_common):
         if verbose:
             print("\nOver-fit spin deselection:")
 
-        # Test the sequence data exists.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
+        # Checks.
+        check_mol_res_spin_data()
+        check_model_setup()
 
         # Loop over spin data.
         deselect_flag = False
