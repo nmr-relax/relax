@@ -32,7 +32,7 @@ from specific_analyses.relax_fit.parameters import assemble_param_vector
 
 # C modules.
 if C_module_exp_fn:
-    from target_functions.relax_fit import jacobian, jacobian_chi2, setup, func, dfunc, d2func, back_calc_I
+    from target_functions.relax_fit import jacobian_exp, jacobian_chi2_exp, setup, func_exp, dfunc_exp, d2func_exp, back_calc_I
 
 
 class Relax_fit_opt:
@@ -62,13 +62,15 @@ class Relax_fit_opt:
         setup(num_params=num_params, num_times=len(relax_times), values=values, sd=errors, relax_times=relax_times, scaling_matrix=scaling_matrix)
 
         # Alias the target functions.
-        self.func = self.func_wrapper
-        self.dfunc = self.dfunc_wrapper
-        self.d2func = self.d2func_wrapper
+        if model == 'exp':
+            self.func = self.func_exp
+            self.dfunc = self.dfunc_exp
+            self.d2func = self.d2func_exp
 
         # Alias the Jacobian C functions.
-        self.jacobian = jacobian
-        self.jacobian_chi2 = jacobian_chi2
+        if model == 'exp':
+            self.jacobian = jacobian_exp
+            self.jacobian_chi2 = jacobian_chi2_exp
 
 
     def back_calc_data(self):
@@ -82,7 +84,7 @@ class Relax_fit_opt:
         return back_calc_I()
 
 
-    def func_wrapper(self, params):
+    def func_exp(self, params):
         """Wrapper function for the C module, for converting numpy arrays.
 
         @param params:  The parameter array from the minimisation code.
@@ -96,13 +98,13 @@ class Relax_fit_opt:
             params = params.tolist()
 
         # Call the C code.
-        chi2 = func(params)
+        chi2 = func_exp(params)
 
         # Return the chi2 value.
         return nan_to_num(chi2)
 
 
-    def dfunc_wrapper(self, params):
+    def dfunc_exp(self, params):
         """Wrapper function for the C module, for converting numpy arrays.
 
         @param params:  The parameter array from the minimisation code.
@@ -116,13 +118,13 @@ class Relax_fit_opt:
             params = params.tolist()
 
         # Call the C code.
-        dchi2 = dfunc(params)
+        dchi2 = dfunc_exp(params)
 
         # Return the chi2 gradient as a numpy array.
         return array(dchi2, float64)
 
 
-    def d2func_wrapper(self, params):
+    def d2func_exp(self, params):
         """Wrapper function for the C module, for converting numpy arrays.
 
         @param params:  The parameter array from the minimisation code.
@@ -136,7 +138,7 @@ class Relax_fit_opt:
             params = params.tolist()
 
         # Call the C code.
-        d2chi2 = d2func(params)
+        d2chi2 = d2func_exp(params)
 
         # Return the chi2 Hessian as a numpy array.
         return array(d2chi2, float64)

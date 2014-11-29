@@ -102,8 +102,8 @@ void param_to_c(PyObject *params_arg) {
 }
 
 static PyObject *
-func(PyObject *self, PyObject *args) {
-    /* Target function for calculating and returning the chi-squared value.
+func_exp(PyObject *self, PyObject *args) {
+    /* Target function for the two parameter exponential for calculating and returning the chi-squared value.
      *
      * Firstly the back calculated intensities are generated, then the chi-squared statistic is
      * calculated.
@@ -128,8 +128,8 @@ func(PyObject *self, PyObject *args) {
 
 
 static PyObject *
-dfunc(PyObject *self, PyObject *args) {
-    /* Target function for calculating and returning the chi-squared gradient.
+dfunc_exp(PyObject *self, PyObject *args) {
+    /* Target function for the two parameter exponential for calculating and returning the chi-squared gradient.
      * 
      */
 
@@ -167,8 +167,8 @@ dfunc(PyObject *self, PyObject *args) {
 }
 
 static PyObject *
-d2func(PyObject *self, PyObject *args) {
-    /* Target function for calculating and returning the chi-squared Hessian.
+d2func_exp(PyObject *self, PyObject *args) {
+    /* Target function for the two parameter exponential for calculating and returning the chi-squared Hessian.
      * 
      */
 
@@ -234,8 +234,8 @@ back_calc_I(PyObject *self, PyObject *args) {
 
 
 static PyObject *
-jacobian(PyObject *self, PyObject *args) {
-    /* Return the Jacobian as a Python list of lists. */
+jacobian_exp(PyObject *self, PyObject *args) {
+    /* Return the Jacobian for the two parameter exponential as a Python list of lists. */
 
     /* Declarations. */
     PyObject *params_arg;
@@ -271,8 +271,8 @@ jacobian(PyObject *self, PyObject *args) {
 
 
 static PyObject *
-jacobian_chi2(PyObject *self, PyObject *args) {
-    /* Return the Jacobian as a Python list of lists.
+jacobian_chi2_exp(PyObject *self, PyObject *args) {
+    /* Return the Jacobian for the two parameter exponential as a Python list of lists.
 
     The Jacobian
     ============
@@ -345,35 +345,35 @@ static PyMethodDef relax_fit_methods[] = {
         METH_VARARGS | METH_KEYWORDS,
         "Set up the module in preparation for calls to the target function."
     }, {
-        "func",
-        func,
+        "func_exp",
+        func_exp,
         METH_VARARGS,
-        "Target function for calculating and returning the chi-squared value.\n\nFirstly the back calculated intensities are generated, then the chi-squared statistic is calculated."
+        "Target function for the two parameter exponential for calculating and returning the chi-squared value.\n\nFirstly the back calculated intensities are generated, then the chi-squared statistic is calculated."
     }, {
-        "dfunc",
-        dfunc,
+        "dfunc_exp",
+        dfunc_exp,
         METH_VARARGS,
-        "Target function for calculating and returning the chi-squared gradient."
+        "Target function for the two parameter exponential for calculating and returning the chi-squared gradient."
     }, {
-        "d2func",
-        d2func,
+        "d2func_exp",
+        d2func_exp,
         METH_VARARGS,
-        "Target function for calculating and returning the chi-squared Hessian."
+        "Target function for the two parameter exponential for calculating and returning the chi-squared Hessian."
     }, {
         "back_calc_I",
         back_calc_I,
         METH_VARARGS,
         "Return the back calculated peak intensities as a Python list."
     }, {
-        "jacobian",
-        jacobian,
+        "jacobian_exp",
+        jacobian_exp,
         METH_VARARGS,
-        "Return the Jacobian matrix as a Python list."
+        "Return the Jacobian matrix for the two parameter exponential as a Python list."
     }, {
-        "jacobian_chi2",
-        jacobian_chi2,
+        "jacobian_chi2_exp",
+        jacobian_chi2_exp,
         METH_VARARGS,
-        "Return the Jacobian matrix of the chi-squared function as a Python list."
+        "Return the Jacobian matrix of the chi-squared function for the two parameter exponential as a Python list."
     },
         {NULL, NULL, 0, NULL}        /* Sentinel. */
 };
