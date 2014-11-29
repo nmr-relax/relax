@@ -64,7 +64,7 @@ def covariance_matrix(epsrel=0.0, verbosity=2):
 
         # Loop over the parameters.
         index = 0
-        for name in api.get_param_names():
+        for name in api.get_param_names(model_info):
             # Set the parameter error.
             api.set_error(index, sd[index], model_info=model_info)
 
