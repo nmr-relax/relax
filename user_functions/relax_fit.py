@@ -84,20 +84,23 @@ uf.add_keyarg(
     wiz_element_type = "combo",
     wiz_combo_choices = [
         "exp: [Rx, I0]",
-        "inv: [Rx, I0, Iinf]"
+        "inv: [Rx, I0, Iinf]",
+        "Saturation recovery, [Rx, Iinf]"
     ],
     wiz_combo_data = [
         "exp",
-        "inv"
+        "inv",
+        "sat"
     ],
     wiz_read_only = True
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("The supported relaxation experiments include the default two parameter exponential fit, selected by setting the model type to 'exp', and the three parameter inversion recovery experiment in which the peak intensity limit is a non-zero value, selected by setting the model to 'inv'.")
+uf.desc[-1].add_paragraph("The supported relaxation experiments include the default two parameter exponential fit, selected by setting the model type to 'exp', the three parameter inversion recovery experiment in which the peak intensity limit is a non-zero value, selected by setting the model to 'inv', and the saturation recovery R1 experiment.")
 uf.desc[-1].add_paragraph("The two models are:")
 uf.desc[-1].add_item_list_element("'exp'", "The parameters are [Rx, I0], and the equation is I(t) = I0*exp(-Rx*t).")
 uf.desc[-1].add_item_list_element("'inv'", "The parameters are [Rx, I0, Iinf].  This has not been implemented yet.")
+uf.desc[-1].add_item_list_element("'sat'", "The saturation recovery experiment.  The parameters are [Rx, Iinf] and the equation is I(t) = Iinf*(1-exp(-Rx*t)).")
 uf.backend = select_model
 uf.menu_text = "&select_model"
 uf.gui_icon = "oxygen.actions.list-add"
