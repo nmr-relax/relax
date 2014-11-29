@@ -213,8 +213,11 @@ class Relax_fit(API_base, API_common):
         @rtype:                 list of str
         """
 
-        # Simply return the two parameter names.
-        return ['rx', 'i0']
+        # Unpack the data.
+        spin, spin_id = model_info
+
+        # Return the parameter names.
+        return spin.params
 
 
     def get_param_values(self, model_info=None, sim_index=None):
