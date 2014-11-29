@@ -100,8 +100,8 @@ spectrum.baseplane_rmsd(error=106627.326030, spectrum_id='5.000s', spin_id=None)
 # Peak intensity error analysis.
 spectrum.error_analysis()
 
-# Set the relaxation curve type.
-relax_fit.select_model('exp')
+# Set the relaxation curve type for the saturation recovery.
+relax_fit.select_model('sat')
 
 # Grid search.
 minimise.grid_search(inc=11)
