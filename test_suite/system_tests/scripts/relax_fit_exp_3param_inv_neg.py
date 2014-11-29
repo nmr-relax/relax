@@ -5,7 +5,7 @@ from os import sep
 import sys
 
 # relax module imports.
-from data import Relax_data_store; ds = Relax_data_store()
+from data_store import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
 
 
@@ -18,7 +18,7 @@ if not hasattr(ds, 'int_type'):
 pipe.create('rx', 'relax_fit')
 
 # The path to the data files.
-data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting'
+data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'curve_fitting'+sep+'inversion_recovery'
 
 # Load the sequence.
 sequence.read('Ap4Aase.seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
@@ -75,22 +75,22 @@ for iter in range(2):
             spectrum.delete(names[i])
 
 # Deselect unresolved spins.
-deselect.read(file='unresolved', dir=data_path, res_num_col=1)
+deselect.read(file='unresolved', dir=data_path+sep+'..', res_num_col=1)
 
 # Set the relaxation curve type.
-relax_fit.select_model('exp_2param_neg')
+relax_fit.select_model('inv')
 
 # Grid search.
-grid_search(inc=11)
+minimise.grid_search(inc=11)
 
 # Minimise.
-minimise('simplex', constraints=False)
+minimise.execute('newton', constraints=False)
 
 # Monte Carlo simulations.
 monte_carlo.setup(number=3)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex', constraints=False)
+minimise.execute('newton', constraints=False)
 monte_carlo.error_analysis()
 
 # Save the relaxation rates.
@@ -103,8 +103,8 @@ results.write(file='devnull', force=True)
 grace.write(y_data_type='chi2', file='devnull', force=True)    # Minimised chi-squared value.
 grace.write(y_data_type='i0', file='devnull', force=True)    # Initial peak intensity.
 grace.write(y_data_type='rx', file='devnull', force=True)    # Relaxation rate.
-grace.write(x_data_type='relax_times', y_data_type='intensities', file='devnull', force=True)    # Average peak intensities.
-grace.write(x_data_type='relax_times', y_data_type='intensities', norm=True, file='devnull', force=True)    # Average peak intensities (normalised).
+grace.write(x_data_type='relax_times', y_data_type='peak_intensity', file='devnull', force=True)    # Average peak intensities.
+grace.write(x_data_type='relax_times', y_data_type='peak_intensity', norm=True, file='devnull', force=True)    # Average peak intensities (normalised).
 
 # Save the program state.
 state.save('devnull', force=True)
