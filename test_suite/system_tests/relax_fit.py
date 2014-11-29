@@ -289,6 +289,9 @@ class Relax_fit(SystemTestCase):
         # De select one more.
         self.interpreter.deselect.spin(':512@ND2')
 
+        # Set the relaxation curve type.
+        self.interpreter.relax_fit.select_model('exp')
+
         # Do automatic
         if True:
             relax_fit.Relax_fit(pipe_name=pipe_name, pipe_bundle=pipe_bundle, file_root='R2', results_dir=results_dir, grid_inc=GRID_INC, mc_sim_num=MC_SIM, view_plots=False)
@@ -335,9 +338,6 @@ class Relax_fit(SystemTestCase):
 
             # Peak intensity error analysis.
             self.interpreter.spectrum.error_analysis()
-
-            # Set the relaxation curve type.
-            self.interpreter.relax_fit.select_model('exp')
 
             # Grid search.
             self.interpreter.minimise.grid_search(inc=GRID_INC)
