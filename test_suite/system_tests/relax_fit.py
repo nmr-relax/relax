@@ -503,6 +503,19 @@ class Relax_fit(SystemTestCase):
                     self.assertEqual(orig_spin.peak_intensity[id], new_spin.peak_intensity[id])
 
 
+    def test_saturation_recovery(self):
+        """Test the fitting for the saturation recovery R1 experiment."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_saturation_recovery.py')
+
+        # Check the curve-fitting results.
+        spin = return_spin(":17@H")
+        self.assertAlmostEqual(spin.chi2, 0.0)
+        self.assertAlmostEqual(spin.rx, 0.5)
+        self.assertAlmostEqual(spin.i0/1e15, 1.0)
+
+
     def test_zooming_grid_search(self):
         """Test the relaxation curve fitting C modules."""
 
