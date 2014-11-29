@@ -26,6 +26,7 @@
 # The available modules.
 __all__ = [
     'api',
+    'checks',
     'optimisation',
     'parameter_object',
     'parameters',
