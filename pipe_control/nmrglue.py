@@ -64,14 +64,51 @@ def read(file=None, dir=None, spectrum_id=None):
     if file == None:
         raise RelaxError("The file name must be supplied.")
 
-    # Add spectrum ID.
-    add_spectrum_id(spectrum_id)
+    # Multiple ID flags.
+    flag_multi = False
+    flag_multi_file = False
+    if isinstance(spectrum_id, list):
+        flag_multi = True
+    if isinstance(file, list):
+        flag_multi_file = True
 
-    # Read the spectrum, and get it back as a class instance object.
-    nmrglue_data = read_spectrum(file=file, dir=dir)
+    # List argument checks.
+    if flag_multi:
+        # Both of list type,
+        if not flag_multi_file:
+            raise RelaxError("The file and spectrum ID  must both be of list type.")
 
-    # Store the data.
-    add_nmrglue_data(spectrum_id=spectrum_id, nmrglue_data=nmrglue_data)
+        # List lengths for multiple files.
+        if flag_multi_file and len(spectrum_id) != len(file):
+            raise RelaxError("The file list %s and spectrum ID list %s do not have the same number of elements." % (file, spectrum_id))
+
+    # More list argument checks (when only one spectrum ID is supplied).
+    else:
+        # Multiple files.
+        if flag_multi_file:
+            raise RelaxError("If multiple files are supplied, then multiple spectrum IDs must also be supplied.")
+
+    # Convert the file argument to a list if necessary.
+    if not isinstance(file, list):
+        file = [file]
+
+    # Convert the spectrum_id argument to a list if necessary.
+    if not isinstance(spectrum_id, list):
+        spectrum_id = [spectrum_id]
+
+    # Loop over the files.
+    for i, file_i in enumerate(file):
+        # Assign spectrum id.
+        spectrum_id_i = spectrum_id[i]
+
+        # Add spectrum ID.
+        add_spectrum_id(spectrum_id_i)
+
+        # Read the spectrum, and get it back as a class instance object.
+        nmrglue_data = read_spectrum(file=file_i, dir=dir)
+
+        # Store the data.
+        add_nmrglue_data(spectrum_id=spectrum_id_i, nmrglue_data=nmrglue_data)
 
 
 def plot_contour(spectrum_id=None, contour_start=30000., contour_num=20, contour_factor=1.20, ppm=True, show=False):
