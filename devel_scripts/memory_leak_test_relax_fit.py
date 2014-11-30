@@ -2,14 +2,16 @@
 
 Run with a debugging compiled version of Python, eg:
 
-/data/python/pydebug/bin/python relax relax_fit.py
+/data/python/pydebug/bin/python relax devel_scripts/memory_leak_test_relax_fit.py
 
 and build the C module with:
 
 gcc -o target_functions/c_chi2.os -c -I/data/python/pydebug/include/python2.7/ -fPIC target_functions/c_chi2.c
 gcc -o target_functions/exponential.os -c -I/data/python/pydebug/include/python2.7/ -fPIC target_functions/exponential.c
+gcc -o target_functions/exponential_inv.os -c -I/data/python/pydebug/include/python2.7/ -fPIC target_functions/exponential_inv.c
+gcc -o target_functions/exponential_sat.os -c -I/data/python/pydebug/include/python2.7/ -fPIC target_functions/exponential_sat.c
 gcc -o target_functions/relax_fit.os -c -I/data/python/pydebug/include/python2.7/ -fPIC target_functions/relax_fit.c
-gcc -o target_functions/relax_fit.so -shared target_functions/c_chi2.os target_functions/exponential.os target_functions/relax_fit.os
+gcc -o target_functions/relax_fit.so -shared target_functions/c_chi2.os target_functions/exponential.os target_functions/exponential_inv.os target_functions/exponential_sat.os target_functions/relax_fit.os
 """
 
 
