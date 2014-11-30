@@ -454,6 +454,19 @@ class Relax_fit(SystemTestCase):
         self.check_curve_fitting()
 
 
+    def test_inversion_recovery(self):
+        """Test the fitting for the inversion recovery R1 experiment."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_exp_3param_inv_neg.py')
+
+        # Check the curve-fitting results.
+        spin = return_spin(":4@N")
+        self.assertAlmostEqual(spin.rx, 1.2)
+        self.assertAlmostEqual(spin.i0, 30.0)
+        self.assertAlmostEqual(spin.iinf, 22.0)
+
+
     def test_read_sparky(self):
         """The Sparky peak height loading test."""
 
