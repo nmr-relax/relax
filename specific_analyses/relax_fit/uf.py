@@ -82,7 +82,7 @@ def relax_time(time=0.0, spectrum_id=None):
 def select_model(model='exp'):
     """Function for selecting the model of the exponential curve.
 
-    @keyword model: The exponential curve type.  Can be one of 'exp' or 'inv'.
+    @keyword model: The exponential curve type.  Can be one of 'exp', 'inv', or 'sat'.
     @type model:    str
     """
 
@@ -105,8 +105,13 @@ def select_model(model='exp'):
 
     # Three parameter inversion recovery fit.
     elif model == 'inv':
-        print("Three parameter inversion recovery fit.")
+        print("The inversion recovery experiment.")
         params = ['rx', 'i0', 'iinf']
+
+    # The saturation recovery.
+    elif model == 'sat':
+        print("The saturation recovery experiment.")
+        params = ['rx', 'iinf']
 
     # Invalid model.
     else:

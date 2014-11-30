@@ -1,7 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
-# Copyright (C) 2014 Troels E. Linnet                                         #
+# Copyright (C) 2014 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,15 +19,31 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The R1 and R2 exponential relaxation curve fitting analysis."""
+# Module docstring.
+"""Module of functions for checking different aspects of the relaxation curve-fitting setup."""
 
-# The available modules.
-__all__ = [
-    'api',
-    'checks',
-    'optimisation',
-    'parameter_object',
-    'parameters',
-    'uf'
-]
+# relax module imports.
+from lib.checks import Check
+from lib.errors import RelaxError
+from pipe_control.mol_res_spin import spin_loop
+
+
+def check_model_setup_func():
+    """Check that the model has been correctly set up.
+
+    @return:        The initialised RelaxError object or nothing.
+    @rtype:         None or RelaxError instance
+    """
+
+    # Test if the model has been set.
+    for spin in spin_loop():
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        # No model set.
+        if not hasattr(spin, 'model'):
+            return RelaxError("The exponential curve model has not been set, please use the relax_fit.select_model user function.")
+
+# Create the checking object.
+check_model_setup = Check(check_model_setup_func)

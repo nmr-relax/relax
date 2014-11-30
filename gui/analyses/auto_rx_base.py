@@ -37,6 +37,7 @@ from gui.analyses.execute import Execute
 from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.filedialog import RelaxDirDialog
+from gui.fonts import font
 from gui.message import error_message, Missing_data
 from gui.string_conv import gui_to_int, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
@@ -142,6 +143,34 @@ class Auto_rx(Base_analysis):
         wx.CallAfter(self.button_exec_relax.Enable, enable)
 
 
+    def add_buttons(self, box):
+        """Add all of the buttons.
+
+        @param box:     The box element to pack the GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Sizer.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Isotope type button.
+        self.button_select_model = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Exponential curve model")
+        self.button_select_model.SetBitmapLabel(wx.Bitmap(fetch_icon("oxygen.actions.list-add", "22x22"), wx.BITMAP_TYPE_ANY))
+        self.button_select_model.SetFont(font.normal)
+        self.button_select_model.SetSize((-1, 25))
+        self.button_select_model.SetToolTipString("Select the model for the exponential curve via the relax_fit.select_model user function.")
+        self.gui.Bind(wx.EVT_BUTTON, self.select_model, self.button_select_model)
+        sizer.Add(self.button_select_model, 1, wx.ALL|wx.EXPAND, 0)
+
+        # 3 invisible 'buttons' for better button layout.
+        sizer.AddStretchSpacer()
+        sizer.AddStretchSpacer()
+        sizer.AddStretchSpacer()
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
+
+
     def assemble_data(self):
         """Assemble the data required for the auto-analysis.
 
@@ -216,6 +245,11 @@ class Auto_rx(Base_analysis):
         # Add the peak list wizard and selection GUI element, with spacing.
         box.AddSpacer(20)
         self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard_launch, relax_fit_flag=True)
+        box.AddSpacer(10)
+
+        # Add the buttons, with spacing.
+        box.AddSpacer(10)
+        self.add_buttons(box=box)
         box.AddSpacer(10)
 
         # The optimisation settings.
@@ -343,6 +377,17 @@ class Auto_rx(Base_analysis):
 
         # Place the path in the text box.
         self.field_results_dir.SetValue(str_to_gui(path))
+
+
+    def select_model(self, event=None):
+        """Launch the relax_fit.select_model user function.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Call the user function.
+        uf_store['relax_fit.select_model'](wx_wizard_modal=True)
 
 
     def sync_ds(self, upload=False):
