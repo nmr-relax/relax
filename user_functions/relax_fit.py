@@ -28,6 +28,7 @@ from os import sep
 
 # relax module imports.
 from graphics import ANALYSIS_IMAGE_PATH
+from lib.text.gui import i0, iinf, rx
 from pipe_control import spectrum
 from specific_analyses.relax_fit.uf import relax_time, select_model
 from user_functions.data import Uf_info; uf_info = Uf_info()
@@ -68,6 +69,7 @@ uf.backend = relax_time
 uf.menu_text = "&relax_time"
 uf.gui_icon = "oxygen.actions.chronometer"
 uf.wizard_size = (700, 500)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'r1_200x200.png'
 
 
 # The relax_fit.select_model user function.
@@ -83,24 +85,27 @@ uf.add_keyarg(
     desc = "The type of relaxation curve to fit.",
     wiz_element_type = "combo",
     wiz_combo_choices = [
-        "exp: [Rx, I0]",
-        "inv: [Rx, I0, Iinf]"
+        "Two parameter exponential fit: [%s, %s]" % (rx, i0),
+        "Inversion recovery: [%s, %s, %s]" % (rx, i0, iinf),
+        "Saturation recovery: [%s, %s]" % (rx, iinf)
     ],
     wiz_combo_data = [
         "exp",
-        "inv"
+        "inv",
+        "sat"
     ],
     wiz_read_only = True
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("The supported relaxation experiments include the default two parameter exponential fit, selected by setting the model type to 'exp', and the three parameter inversion recovery experiment in which the peak intensity limit is a non-zero value, selected by setting the model to 'inv'.")
-uf.desc[-1].add_paragraph("The two models are:")
-uf.desc[-1].add_item_list_element("'exp'", "The parameters are [Rx, I0], and the equation is I(t) = I0*exp(-Rx*t).")
-uf.desc[-1].add_item_list_element("'inv'", "The parameters are [Rx, I0, Iinf].  This has not been implemented yet.")
+uf.desc[-1].add_paragraph("A number of relaxation experiments are supported and include:")
+uf.desc[-1].add_paragraph("The 'exp' model.  This is the default two parameter exponential fit.  The magnetisation starts at I0 and decays to zero.  The parameters are [Rx, I0] and the equation is I(t) = I0*exp(-Rx*t).")
+uf.desc[-1].add_paragraph("The 'inv' model.  This is the inversion recovery experiment (IR).  The magnetisation starts at a negative value at -I0 and relaxes to a positive Iinf value.  The parameters are [Rx, I0, Iinf] and the equation is I(t) = Iinf - I0*exp(-Rx*t).")
+uf.desc[-1].add_paragraph("The 'sat' model.  This is the saturation recovery experiment (SR).  The magnetisation starts at zero and relaxes to a positive Iinf value.  The parameters are [Rx, Iinf] and the equation is I(t) = Iinf*(1 - exp(-Rx*t)).")
 uf.backend = select_model
 uf.menu_text = "&select_model"
 uf.gui_icon = "oxygen.actions.list-add"
-uf.wizard_height_desc = 300
-uf.wizard_size = (800, 500)
+uf.wizard_height_desc = 500
+uf.wizard_size = (900, 600)
 uf.wizard_apply_button = False
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'r1_200x200.png'

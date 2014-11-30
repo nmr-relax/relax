@@ -92,7 +92,7 @@ def back_calc_peak_intensities(spin=None, exp_type=None, frq=None, offset=None, 
         scaling_list.append(1.0)
 
     # Initialise the relaxation fit functions.
-    model = Relax_fit_opt(num_params=len(spin.params), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+    model = Relax_fit_opt(model='exp', num_params=len(spin.params), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
 
     # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
     model.func(param_vector)
@@ -403,7 +403,7 @@ def minimise_r2eff(spins=None, spin_ids=None, min_algor=None, min_options=None, 
                     scaling_list.append(scaling_matrix[i, i])
 
             # Initialise the function to minimise.
-            model = Relax_fit_opt(num_params=len(param_vector), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+            model = Relax_fit_opt(model='exp', num_params=len(param_vector), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
 
             # Grid search.
             if search('^[Gg]rid', min_algor):

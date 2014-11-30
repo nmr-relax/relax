@@ -28,6 +28,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.string_conv import float_to_gui, float_to_gui, str_to_gui
+from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from pipe_control.mol_res_spin import spin_loop
 from pipe_control.pipes import cdp_name
 from status import Status; status = Status()
@@ -195,6 +196,11 @@ class Rx(GuiTestCase):
 
             # Go to the next page (i.e. finish).
             wizard._go_next(None)
+
+        # Set up the nuclear isotopes.
+        analysis.select_model()
+        uf_store['relax_fit.select_model'].wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
 
         # Set the number of MC sims.
         analysis.mc_sim_num.SetValue(3)

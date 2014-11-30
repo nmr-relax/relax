@@ -27,7 +27,7 @@ from unittest import TestCase
 from dep_check import C_module_exp_fn
 from status import Status; status = Status()
 if C_module_exp_fn:
-    from target_functions.relax_fit import setup, func, dfunc, d2func, jacobian, jacobian_chi2
+    from target_functions.relax_fit import setup, func_exp, dfunc_exp, d2func_exp, jacobian_exp, jacobian_chi2_exp
 
 
 class Test_relax_fit(TestCase):
@@ -73,21 +73,21 @@ class Test_relax_fit(TestCase):
         setup(num_params=2, num_times=len(relax_times), values=I, sd=errors, relax_times=relax_times, scaling_matrix=self.scaling_list)
 
 
-    def test_func(self):
-        """Unit test for the value returned by the func() function at the minimum."""
+    def test_func_exp(self):
+        """Unit test for the value returned by the func_exp() function at the minimum."""
 
         # Get the chi-squared value.
-        val = func(self.params)
+        val = func_exp(self.params)
 
         # Assert that the value must be 0.0.
         self.assertAlmostEqual(val, 0.0)
 
 
-    def test_dfunc(self):
-        """Unit test for the gradient returned by the dfunc() function at the minimum."""
+    def test_dfunc_exp(self):
+        """Unit test for the gradient returned by the dfunc_exp() function at the minimum."""
 
         # Get the chi-squared gradient.
-        grad = dfunc(self.params)
+        grad = dfunc_exp(self.params)
 
         # Printout.
         print("The gradient at the minimum is:\n%s" % grad)
@@ -97,8 +97,8 @@ class Test_relax_fit(TestCase):
         self.assertAlmostEqual(grad[1], 0.0, 6)
 
 
-    def test_dfunc_off_minimum(self):
-        """Unit test for the gradient returned by the dfunc() function at a position away from the minimum.
+    def test_dfunc_exp_off_minimum(self):
+        """Unit test for the gradient returned by the dfunc_exp() function at a position away from the minimum.
 
         This uses the data from test_suite/shared_data/curve_fitting/numeric_gradient/integrate.log.
         """
@@ -109,7 +109,7 @@ class Test_relax_fit(TestCase):
         params = [R/self.scaling_list[0], I0/self.scaling_list[1]]
 
         # Get the chi-squared gradient.
-        grad = dfunc(params)
+        grad = dfunc_exp(params)
 
         # Printout.
         print("The gradient at %s is:\n    %s" % (params, grad))
@@ -119,14 +119,14 @@ class Test_relax_fit(TestCase):
         self.assertAlmostEqual(grad[1], -10.8613338920982*self.scaling_list[1], 3)
 
 
-    def test_d2func(self):
-        """Unit test for the Hessian returned by the d2func() function at the minimum.
+    def test_d2func_exp(self):
+        """Unit test for the Hessian returned by the d2func_exp() function at the minimum.
 
         This uses the data from test_suite/shared_data/curve_fitting/numeric_gradient/Hessian.log.
         """
 
         # Get the chi-squared Hessian.
-        hess = d2func(self.params)
+        hess = d2func_exp(self.params)
 
         # Printout.
         print("The Hessian at the minimum is:\n%s" % hess)
@@ -138,8 +138,8 @@ class Test_relax_fit(TestCase):
         self.assertAlmostEqual(hess[1][1],  2.31293027e-02*self.scaling_list[1]**2, 3)
 
 
-    def test_d2func_off_minimum(self):
-        """Unit test for the Hessian returned by the d2func() function at a position away from the minimum.
+    def test_d2func_exp_off_minimum(self):
+        """Unit test for the Hessian returned by the d2func_exp() function at a position away from the minimum.
 
         This uses the data from test_suite/shared_data/curve_fitting/numeric_gradient/Hessian.log.
         """
@@ -150,7 +150,7 @@ class Test_relax_fit(TestCase):
         params = [R/self.scaling_list[0], I0/self.scaling_list[1]]
 
         # Get the chi-squared Hessian.
-        hess = d2func(params)
+        hess = d2func_exp(params)
 
         # Printout.
         print("The Hessian at %s is:\n%s" % (params, hess))
@@ -162,14 +162,14 @@ class Test_relax_fit(TestCase):
         self.assertAlmostEqual(hess[1][1],  2.03731472e-02*self.scaling_list[1]**2, 3)
 
 
-    def test_jacobian(self):
-        """Unit test for the Jacobian returned by the jacobian() function at the minimum.
+    def test_jacobian_exp(self):
+        """Unit test for the Jacobian returned by the jacobian_exp() function at the minimum.
 
         This uses the data from test_suite/shared_data/curve_fitting/numeric_gradient/Hessian.log.
         """
 
         # Get the exponential curve Jacobian.
-        matrix = jacobian(self.params)
+        matrix = jacobian_exp(self.params)
 
         # The real Jacobian.
         real = [[  0.00000000e+00,   1.00000000e+00],
@@ -192,14 +192,14 @@ class Test_relax_fit(TestCase):
                 self.assertAlmostEqual(matrix[i, j], real[i, j], 3)
 
 
-    def test_jacobian_chi2(self):
-        """Unit test for the Jacobian returned by the jacobian_chi2() function at the minimum.
+    def test_jacobian_chi2_exp(self):
+        """Unit test for the Jacobian returned by the jacobian_chi2_exp() function at the minimum.
 
         This uses the data from test_suite/shared_data/curve_fitting/numeric_gradient/jacobian_chi2.log.
         """
 
         # Get the exponential curve Jacobian.
-        matrix = jacobian_chi2(self.params)
+        matrix = jacobian_chi2_exp(self.params)
 
         # The real Jacobian.
         real = [[  0.00000000e+00,   0.00000000e+00],
@@ -222,8 +222,8 @@ class Test_relax_fit(TestCase):
                 self.assertAlmostEqual(matrix[i, j], real[i, j], 3)
 
 
-    def test_jacobian_chi2_off_minimum(self):
-        """Unit test for the Jacobian returned by the jacobian_chi2() function at a position away from the minimum.
+    def test_jacobian_chi2_exp_off_minimum(self):
+        """Unit test for the Jacobian returned by the jacobian_chi2_exp() function at a position away from the minimum.
 
         This uses the data from test_suite/shared_data/curve_fitting/numeric_gradient/jacobian_chi2.log.
         """
@@ -234,7 +234,7 @@ class Test_relax_fit(TestCase):
         params = [R/self.scaling_list[0], I0/self.scaling_list[1]]
 
         # Get the exponential curve Jacobian.
-        matrix = jacobian_chi2(params)
+        matrix = jacobian_chi2_exp(params)
 
         # The real Jacobian.
         real = [[  0.00000000e+00,  -1.00000000e+01],
@@ -257,8 +257,8 @@ class Test_relax_fit(TestCase):
                 self.assertAlmostEqual(matrix[i, j], real[i, j], 3)
 
 
-    def test_jacobian_off_minimum(self):
-        """Unit test for the Jacobian returned by the jacobian() function at a position away from the minimum.
+    def test_jacobian_exp_off_minimum(self):
+        """Unit test for the Jacobian returned by the jacobian_exp() function at a position away from the minimum.
 
         This uses the data from test_suite/shared_data/curve_fitting/numeric_gradient/Hessian.log.
         """
@@ -269,7 +269,7 @@ class Test_relax_fit(TestCase):
         params = [R/self.scaling_list[0], I0/self.scaling_list[1]]
 
         # Get the exponential curve Jacobian.
-        matrix = jacobian(params)
+        matrix = jacobian_exp(params)
 
         # The real Jacobian.
         real = [[  0.00000000e+00,   1.00000000e+00],

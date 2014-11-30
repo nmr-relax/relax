@@ -119,7 +119,7 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
 
             # Initialise data in C code.
             scaling_list = [1.0, 1.0]
-            model = Relax_fit_opt(num_params=len(param_vector), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+            model = Relax_fit_opt(model='exp', num_params=len(param_vector), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
 
             # Use the direct Jacobian from function.
             jacobian_matrix_exp = transpose(asarray( model.jacobian(param_vector) ) )
@@ -789,7 +789,7 @@ def minimise_minfx(E=None):
 
         # Initialise the function to minimise.
         scaling_list = [1.0, 1.0]
-        model = Relax_fit_opt(num_params=len(x0), values=E.values, errors=E.errors, relax_times=E.times, scaling_matrix=scaling_list)
+        model = Relax_fit_opt(model='exp', num_params=len(x0), values=E.values, errors=E.errors, relax_times=E.times, scaling_matrix=scaling_list)
 
         # Define function to minimise for minfx.
         t_func = model.func

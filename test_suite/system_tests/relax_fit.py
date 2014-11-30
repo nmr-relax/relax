@@ -289,6 +289,9 @@ class Relax_fit(SystemTestCase):
         # De select one more.
         self.interpreter.deselect.spin(':512@ND2')
 
+        # Set the relaxation curve type.
+        self.interpreter.relax_fit.select_model('exp')
+
         # Do automatic
         if True:
             relax_fit.Relax_fit(pipe_name=pipe_name, pipe_bundle=pipe_bundle, file_root='R2', results_dir=results_dir, grid_inc=GRID_INC, mc_sim_num=MC_SIM, view_plots=False)
@@ -335,9 +338,6 @@ class Relax_fit(SystemTestCase):
 
             # Peak intensity error analysis.
             self.interpreter.spectrum.error_analysis()
-
-            # Set the relaxation curve type.
-            self.interpreter.relax_fit.select_model('exp')
 
             # Grid search.
             self.interpreter.minimise.grid_search(inc=GRID_INC)
@@ -454,6 +454,19 @@ class Relax_fit(SystemTestCase):
         self.check_curve_fitting()
 
 
+    def test_inversion_recovery(self):
+        """Test the fitting for the inversion recovery R1 experiment."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_exp_3param_inv_neg.py')
+
+        # Check the curve-fitting results.
+        spin = return_spin(":4@N")
+        self.assertAlmostEqual(spin.rx, 1.2)
+        self.assertAlmostEqual(spin.i0, 30.0)
+        self.assertAlmostEqual(spin.iinf, 22.0)
+
+
     def test_read_sparky(self):
         """The Sparky peak height loading test."""
 
@@ -501,6 +514,19 @@ class Relax_fit(SystemTestCase):
             if hasattr(orig_spin, 'peak_intensity'):
                 for id in dp_new.spectrum_ids:
                     self.assertEqual(orig_spin.peak_intensity[id], new_spin.peak_intensity[id])
+
+
+    def test_saturation_recovery(self):
+        """Test the fitting for the saturation recovery R1 experiment."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_saturation_recovery.py')
+
+        # Check the curve-fitting results.
+        spin = return_spin(":17@H")
+        self.assertAlmostEqual(spin.chi2, 0.0)
+        self.assertAlmostEqual(spin.rx, 0.5)
+        self.assertAlmostEqual(spin.iinf/1e15, 1.0)
 
 
     def test_zooming_grid_search(self):
