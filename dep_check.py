@@ -312,8 +312,8 @@ except ImportError:
 # Relaxation curve fitting.
 try:
     from target_functions import relax_fit
-    from target_functions.relax_fit import setup
-    del setup
+    from target_functions.relax_fit import Relax_fit
+    del Relax_fit
     C_module_exp_fn = True
 except ImportError:
     # The OS.
