@@ -26,6 +26,7 @@
 
 
 # Import statements.
+from numpy import get_include, get_numarray_include
 from os import F_OK, access, getcwd, path, remove, rmdir, sep, walk, environ
 import platform
 from re import search
@@ -598,11 +599,15 @@ class Main:
         if env['PLATFORM'] == 'darwin':
             archs = self.det_arch()
 
+        # Get the numpy include path (for numpy/arrayobject.h).
+        numpy_path = get_include()
+        numarray_path = get_numarray_include()
+
         # C flags.
         if SYSTEM == 'Windows':
-            cflags = '/nologo /I\"' + py_include_minpath + '\"'
+            cflags = '/nologo /I\"' + py_include_minpath + '\" /I\"' + numpy_path + '\" /I\"' + numarray_path + '\"'
         else:
-            cflags = '-I' + py_include_fullpath
+            cflags = '-I' + py_include_fullpath + ' -I' + numpy_path + ' -I' + numarray_path
         if env['PLATFORM'] == 'darwin':
             for arch in archs:
                 cflags += ' -arch %s' % arch
