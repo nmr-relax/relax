@@ -34,6 +34,10 @@
 /* External, hence permanent, variables. */
 /*****************************************/
 
+/* The model info. */
+static char *model_str = "";
+static char model_list[3][4] = {"exp", "inv", "sat"};
+
 /* Variables sent to the setup function to be stored for later use. */
 static int num_params, num_times;
 

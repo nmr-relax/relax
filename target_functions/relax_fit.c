@@ -19,6 +19,14 @@
 
 /* This include must come first. */
 #include <Python.h>
+#include "structmember.h"
+
+/* The numpy array object header file, must come second */
+#include <numpy/arrayobject.h>
+#include <numpy/libnumarray.h>
+
+
+/* Allow for debugging printouts. */
 #include <stdio.h>
 
 /* Include all of the variable definitions. */
@@ -29,81 +37,34 @@
 #include "exponential.h"
 
 
-static PyObject *
-setup(PyObject *self, PyObject *args, PyObject *keywords) {
-    /* Set up the module in preparation for calls to the target function. */
-
-    /* Python object declarations. */
-    PyObject *values_arg, *sd_arg, *relax_times_arg, *scaling_matrix_arg;
-    PyObject *element;
-
-    /* Normal declarations. */
-    int i;
-
-    /* The keyword list. */
-    static char *keyword_list[] = {"num_params", "num_times", "values", "sd", "relax_times", "scaling_matrix", NULL};
-
-    /* Parse the function arguments. */
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "iiOOOO", keyword_list, &num_params, &num_times, &values_arg, &sd_arg, &relax_times_arg, &scaling_matrix_arg))
-        return NULL;
-
-    /* Place the parameter related arguments into C arrays. */
-    for (i = 0; i < num_params; i++) {
-        /* The diagonalised scaling matrix list argument element. */
-        element = PySequence_GetItem(scaling_matrix_arg, i);
-        scaling_matrix[i] = PyFloat_AsDouble(element);
-        Py_CLEAR(element);
-    }
-
-    /* Place the time related arguments into C arrays. */
-    for (i = 0; i < num_times; i++) {
-        /* The value argument element. */
-        element = PySequence_GetItem(values_arg, i);
-        values[i] = PyFloat_AsDouble(element);
-        Py_CLEAR(element);
-
-        /* The sd argument element. */
-        element = PySequence_GetItem(sd_arg, i);
-        sd[i] = PyFloat_AsDouble(element);
-        Py_CLEAR(element);
-
-        /* Convert the errors to variances to avoid duplicated maths operations for faster calculations. */
-        variance[i] = square(sd[i]);
-
-        /* The relax_times argument element. */
-        element = PySequence_GetItem(relax_times_arg, i);
-        relax_times[i] = PyFloat_AsDouble(element);
-        Py_CLEAR(element);
-    }
-
-    /* The macro for returning the Python None object. */
-    Py_RETURN_NONE;
-}
+/* Declaration of the Relax_fit class and its contents. */
+typedef struct {
+    PyObject_HEAD
+    PyObject *model;    /* The exponential curve type.  This can be 'exp' for the standard two parameter exponential curve, 'inv' for the inversion recovery experiment, and 'sat' for the saturation recovery experiment. */
+    int num_params;
+    int num_times;
+    PyArrayObject *dchi2;
+    PyArrayObject *d2chi2;
+    PyArrayObject *jacobian;
+    PyArrayObject *jacobian_chi2;
+} Relax_fit;
 
 
-void param_to_c(PyObject *params_arg) {
+void param_to_c(Relax_fit *self, PyArrayObject *params_arg) {
     /* Convert the Python parameter list to a C array. */
 
     /* Declarations. */
-    PyObject *element;
     int i;
 
     /* Place the parameter array elements into the C array. */
-    for (i = 0; i < num_params; i++) {
-        /* Get the element. */
-        element = PySequence_GetItem(params_arg, i);
-
-        /* Convert to a C double, then free the memory. */
-        params[i] = PyFloat_AsDouble(element);
-        Py_CLEAR(element);
-
+    for (i = 0; i < self->num_params; i++) {
         /* Scale the parameter. */
-        params[i] = params[i] * scaling_matrix[i];
+        params[i] = *(double *)(params_arg->data + i*params_arg->strides[0]) * scaling_matrix[i];
     }
 }
 
 static PyObject *
-func_exp(PyObject *self, PyObject *args) {
+func_exp(Relax_fit *self, PyObject *args) {
     /* Target function for the two parameter exponential for calculating and returning the chi-squared value.
      *
      * Firstly the back calculated intensities are generated, then the chi-squared statistic is
@@ -111,25 +72,26 @@ func_exp(PyObject *self, PyObject *args) {
      */
 
     /* Declarations. */
-    PyObject *params_arg;
+    PyArrayObject *params_arg;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
     if (!PyArg_ParseTuple(args, "O", &params_arg))
         return NULL;
 
-    /* Convert the parameters Python list to a C array. */
-    param_to_c(params_arg);
+    /* Convert the parameters numpy array to a C array. */
+    param_to_c(self, params_arg);
+
 
     /* Back calculated the peak intensities. */
-    exponential(params[index_I0], params[index_R], relax_times, back_calc, num_times);
+    exponential(params[index_I0], params[index_R], relax_times, back_calc, self->num_times);
 
     /* Calculate and return the chi-squared value. */
-    return PyFloat_FromDouble(chi2(values, variance, back_calc, num_times));
+    return PyFloat_FromDouble(chi2(values, variance, back_calc, self->num_times));
 }
 
 
 static PyObject *
-func_inv(PyObject *self, PyObject *args) {
+func_inv(Relax_fit *self, PyObject *args) {
     /* Inversion recovery experiment target function for calculating and returning the chi-squared value.
      *
      * Firstly the back calculated intensities are generated, then the chi-squared statistic is
@@ -137,25 +99,25 @@ func_inv(PyObject *self, PyObject *args) {
      */
 
     /* Declarations. */
-    PyObject *params_arg;
+    PyArrayObject *params_arg;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
     if (!PyArg_ParseTuple(args, "O", &params_arg))
         return NULL;
 
     /* Convert the parameters Python list to a C array. */
-    param_to_c(params_arg);
+    param_to_c(self, params_arg);
 
     /* Back calculated the peak intensities. */
-    exponential_inv(params[index_I0], params[index_inv_Iinf], params[index_R], relax_times, back_calc, num_times);
+    exponential_inv(params[index_I0], params[index_inv_Iinf], params[index_R], relax_times, back_calc, self->num_times);
 
     /* Calculate and return the chi-squared value. */
-    return PyFloat_FromDouble(chi2(values, variance, back_calc, num_times));
+    return PyFloat_FromDouble(chi2(values, variance, back_calc, self->num_times));
 }
 
 
 static PyObject *
-func_sat(PyObject *self, PyObject *args) {
+func_sat(Relax_fit *self, PyObject *args) {
     /* Saturation recovery experiment target function for calculating and returning the chi-squared value.
      *
      * Firstly the back calculated intensities are generated, then the chi-squared statistic is
@@ -163,33 +125,31 @@ func_sat(PyObject *self, PyObject *args) {
      */
 
     /* Declarations. */
-    PyObject *params_arg;
+    PyArrayObject *params_arg;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
     if (!PyArg_ParseTuple(args, "O", &params_arg))
         return NULL;
 
     /* Convert the parameters Python list to a C array. */
-    param_to_c(params_arg);
+    param_to_c(self, params_arg);
 
     /* Back calculated the peak intensities. */
-    exponential_sat(params[index_Iinf], params[index_R], relax_times, back_calc, num_times);
-
+    exponential_sat(params[index_Iinf], params[index_R], relax_times, back_calc, self->num_times);
 
     /* Calculate and return the chi-squared value. */
-    return PyFloat_FromDouble(chi2(values, variance, back_calc, num_times));
+    return PyFloat_FromDouble(chi2(values, variance, back_calc, self->num_times));
 }
 
 
 static PyObject *
-dfunc_exp(PyObject *self, PyObject *args) {
+dfunc_exp(Relax_fit *self, PyObject *args) {
     /* Target function for the two parameter exponential for calculating and returning the chi-squared gradient.
-     * 
+     *
      */
 
     /* Declarations. */
-    PyObject *params_arg;
-    PyObject *list;
+    PyArrayObject *params_arg;
     int i;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
@@ -197,37 +157,35 @@ dfunc_exp(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Convert the parameters Python list to a C array. */
-    param_to_c(params_arg);
+    param_to_c(self, params_arg);
 
     /* Back calculated the peak intensities. */
-    exponential(params[index_I0], params[index_R], relax_times, back_calc, num_times);
+    exponential(params[index_I0], params[index_R], relax_times, back_calc, self->num_times);
 
     /* The partial derivates. */
-    exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, num_times);
-    exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
+    exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, self->num_times);
+    exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, self->num_times);
 
     /* The chi-squared gradient. */
-    dchi2(dchi2_vals, values, back_calc, back_calc_grad, variance, num_times, num_params);
+    dchi2(dchi2_vals, values, back_calc, back_calc_grad, variance, self->num_times, self->num_params);
 
-    /* Convert to a Python list, and scale the values. */
-    list = PyList_New(0);
-    Py_INCREF(list);
-    for (i = 0; i < num_params; i++) {
-        PyList_Append(list, PyFloat_FromDouble(dchi2_vals[i] * scaling_matrix[i]));
+    /* Store in the numpy array, and scale the values. */
+    for (i = 0; i < self->num_params; i++) {
+        NA_set1_Float64(self->dchi2, i, dchi2_vals[i] * scaling_matrix[i]);
     }
 
-    /* Return the gradient. */
-    return list;
+    /* Return the gradient, incrementing the reference count. */
+    Py_INCREF(self->dchi2);
+    return PyArray_Return(self->dchi2);
 }
 
 
 static PyObject *
-dfunc_inv(PyObject *self, PyObject *args) {
+dfunc_inv(Relax_fit *self, PyObject *args) {
     /* Inversion recovery experiment target function for the two parameter exponential for calculating and returning the chi-squared gradient. */
 
     /* Declarations. */
-    PyObject *params_arg;
-    PyObject *list;
+    PyArrayObject *params_arg;
     int i;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
@@ -235,40 +193,38 @@ dfunc_inv(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Convert the parameters Python list to a C array. */
-    param_to_c(params_arg);
+    param_to_c(self, params_arg);
 
     /* Back calculated the peak intensities. */
-    exponential_inv(params[index_I0], params[index_inv_Iinf], params[index_R], relax_times, back_calc, num_times);
+    exponential_inv(params[index_I0], params[index_inv_Iinf], params[index_R], relax_times, back_calc, self->num_times);
 
     /* The partial derivates. */
-    exponential_inv_dR(params[index_I0], params[index_inv_Iinf], params[index_R], index_R, relax_times, back_calc_grad, num_times);
-    exponential_inv_dI0(params[index_I0], params[index_inv_Iinf], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
-    exponential_inv_dIinf(params[index_I0], params[index_inv_Iinf], params[index_R], index_inv_Iinf, relax_times, back_calc_grad, num_times);
+    exponential_inv_dR(params[index_I0], params[index_inv_Iinf], params[index_R], index_R, relax_times, back_calc_grad, self->num_times);
+    exponential_inv_dI0(params[index_I0], params[index_inv_Iinf], params[index_R], index_I0, relax_times, back_calc_grad, self->num_times);
+    exponential_inv_dIinf(params[index_I0], params[index_inv_Iinf], params[index_R], index_inv_Iinf, relax_times, back_calc_grad, self->num_times);
 
     /* The chi-squared gradient. */
-    dchi2(dchi2_vals, values, back_calc, back_calc_grad, variance, num_times, num_params);
+    dchi2(dchi2_vals, values, back_calc, back_calc_grad, variance, self->num_times, self->num_params);
 
-    /* Convert to a Python list, and scale the values. */
-    list = PyList_New(0);
-    Py_INCREF(list);
-    for (i = 0; i < num_params; i++) {
-        PyList_Append(list, PyFloat_FromDouble(dchi2_vals[i] * scaling_matrix[i]));
+    /* Store in the numpy array, and scale the values. */
+    for (i = 0; i < self->num_params; i++) {
+        NA_set1_Float64(self->dchi2, i, dchi2_vals[i] * scaling_matrix[i]);
     }
 
-    /* Return the gradient. */
-    return list;
+    /* Return the gradient, incrementing the reference count. */
+    Py_INCREF(self->dchi2);
+    return PyArray_Return(self->dchi2);
 }
 
 
 static PyObject *
-dfunc_sat(PyObject *self, PyObject *args) {
+dfunc_sat(Relax_fit *self, PyObject *args) {
     /* Saturation recovery experiment target function for the two parameter exponential for calculating and returning the chi-squared gradient.
-     * 
+     *
      */
 
     /* Declarations. */
-    PyObject *params_arg;
-    PyObject *list;
+    PyArrayObject *params_arg;
     int i;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
@@ -276,39 +232,37 @@ dfunc_sat(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Convert the parameters Python list to a C array. */
-    param_to_c(params_arg);
+    param_to_c(self, params_arg);
 
     /* Back calculated the peak intensities. */
-    exponential_sat(params[index_Iinf], params[index_R], relax_times, back_calc, num_times);
+    exponential_sat(params[index_Iinf], params[index_R], relax_times, back_calc, self->num_times);
 
     /* The partial derivates. */
-    exponential_sat_dR(params[index_Iinf], params[index_R], index_R, relax_times, back_calc_grad, num_times);
-    exponential_sat_dIinf(params[index_Iinf], params[index_R], index_Iinf, relax_times, back_calc_grad, num_times);
+    exponential_sat_dR(params[index_Iinf], params[index_R], index_R, relax_times, back_calc_grad, self->num_times);
+    exponential_sat_dIinf(params[index_Iinf], params[index_R], index_Iinf, relax_times, back_calc_grad, self->num_times);
 
     /* The chi-squared gradient. */
-    dchi2(dchi2_vals, values, back_calc, back_calc_grad, variance, num_times, num_params);
+    dchi2(dchi2_vals, values, back_calc, back_calc_grad, variance, self->num_times, self->num_params);
 
-    /* Convert to a Python list, and scale the values. */
-    list = PyList_New(0);
-    Py_INCREF(list);
-    for (i = 0; i < num_params; i++) {
-        PyList_Append(list, PyFloat_FromDouble(dchi2_vals[i] * scaling_matrix[i]));
+    /* Store in the numpy array, and scale the values. */
+    for (i = 0; i < self->num_params; i++) {
+        NA_set1_Float64(self->dchi2, i, dchi2_vals[i] * scaling_matrix[i]);
     }
 
-    /* Return the gradient. */
-    return list;
+    /* Return the gradient, incrementing the reference count. */
+    Py_INCREF(self->dchi2);
+    return PyArray_Return(self->dchi2);
 }
 
 
 static PyObject *
-d2func_exp(PyObject *self, PyObject *args) {
+d2func_exp(Relax_fit *self, PyObject *args) {
     /* Target function for the two parameter exponential for calculating and returning the chi-squared Hessian.
-     * 
+     *
      */
 
     /* Declarations. */
-    PyObject *params_arg;
-    PyObject *list, *list2;
+    PyArrayObject *params_arg;
     int j, k;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
@@ -316,49 +270,44 @@ d2func_exp(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Convert the parameters Python list to a C array. */
-    param_to_c(params_arg);
+    param_to_c(self, params_arg);
 
     /* Back calculated the peak intensities. */
-    exponential(params[index_I0], params[index_R], relax_times, back_calc, num_times);
+    exponential(params[index_I0], params[index_R], relax_times, back_calc, self->num_times);
 
     /* The partial derivatives. */
-    exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, num_times);
-    exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
+    exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, self->num_times);
+    exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, self->num_times);
 
     /* The second partial derivatives. */
-    exponential_dR2(params[index_I0], params[index_R], index_R, relax_times, back_calc_hess, num_times);
-    exponential_dI02(params[index_I0], params[index_R], index_I0, relax_times, back_calc_hess, num_times);
-    exponential_dR_dI0(params[index_I0], params[index_R], index_R, index_I0, relax_times, back_calc_hess, num_times);
+    exponential_dR2(params[index_I0], params[index_R], index_R, relax_times, back_calc_hess, self->num_times);
+    exponential_dI02(params[index_I0], params[index_R], index_I0, relax_times, back_calc_hess, self->num_times);
+    exponential_dR_dI0(params[index_I0], params[index_R], index_R, index_I0, relax_times, back_calc_hess, self->num_times);
 
     /* The chi-squared Hessian. */
-    d2chi2(d2chi2_vals, values, back_calc, back_calc_grad, back_calc_hess, variance, num_times, num_params);
+    d2chi2(d2chi2_vals, values, back_calc, back_calc_grad, back_calc_hess, variance, self->num_times, self->num_params);
 
-    /* Convert to a Python list, and scale the values. */
-    list = PyList_New(0);
-    Py_INCREF(list);
-    for (j = 0; j < num_params; j++) {
-        list2 = PyList_New(0);
-        Py_INCREF(list2);
-        for (k = 0; k < num_params; k++) {
-            PyList_Append(list2, PyFloat_FromDouble(d2chi2_vals[j][k] * scaling_matrix[j] * scaling_matrix[k]));
+    /* Store in the numpy array, and scale the values. */
+    for (j = 0; j < self->num_params; j++) {
+        for (k = 0; k < self->num_params; k++) {
+            NA_set2_Float64(self->d2chi2, j, k, d2chi2_vals[j][k] * scaling_matrix[j] * scaling_matrix[k]);
         }
-        PyList_Append(list, list2);
     }
 
-    /* Return the Hessian. */
-    return list;
+    /* Return the Hessian, incrementing the reference count. */
+    Py_INCREF(self->d2chi2);
+    return PyArray_Return(self->d2chi2);
 }
 
 
 static PyObject *
-d2func_inv(PyObject *self, PyObject *args) {
+d2func_inv(Relax_fit *self, PyObject *args) {
     /* Target function for the two parameter exponential for calculating and returning the chi-squared Hessian.
-     * 
+     *
      */
 
     /* Declarations. */
-    PyObject *params_arg;
-    PyObject *list, *list2;
+    PyArrayObject *params_arg;
     int j, k;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
@@ -366,53 +315,48 @@ d2func_inv(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Convert the parameters Python list to a C array. */
-    param_to_c(params_arg);
+    param_to_c(self, params_arg);
 
     /* Back calculated the peak intensities. */
-    exponential_inv(params[index_I0], params[index_inv_Iinf], params[index_R], relax_times, back_calc, num_times);
+    exponential_inv(params[index_I0], params[index_inv_Iinf], params[index_R], relax_times, back_calc, self->num_times);
 
     /* The partial derivatives. */
-    exponential_inv_dR(params[index_I0], params[index_inv_Iinf], params[index_R], index_R, relax_times, back_calc_grad, num_times);
-    exponential_inv_dI0(params[index_I0], params[index_inv_Iinf], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
-    exponential_inv_dIinf(params[index_I0], params[index_inv_Iinf], params[index_R], index_inv_Iinf, relax_times, back_calc_grad, num_times);
+    exponential_inv_dR(params[index_I0], params[index_inv_Iinf], params[index_R], index_R, relax_times, back_calc_grad, self->num_times);
+    exponential_inv_dI0(params[index_I0], params[index_inv_Iinf], params[index_R], index_I0, relax_times, back_calc_grad, self->num_times);
+    exponential_inv_dIinf(params[index_I0], params[index_inv_Iinf], params[index_R], index_inv_Iinf, relax_times, back_calc_grad, self->num_times);
 
     /* The second partial derivatives. */
-    exponential_inv_dR2(params[index_I0], params[index_inv_Iinf], params[index_R], index_R, relax_times, back_calc_hess, num_times);
-    exponential_inv_dI02(params[index_I0], params[index_inv_Iinf], params[index_R], index_I0, relax_times, back_calc_hess, num_times);
-    exponential_inv_dIinf2(params[index_I0], params[index_inv_Iinf], params[index_R], index_inv_Iinf, relax_times, back_calc_hess, num_times);
-    exponential_inv_dR_dI0(params[index_I0], params[index_inv_Iinf], params[index_R], index_R, index_I0, relax_times, back_calc_hess, num_times);
-    exponential_inv_dR_dIinf(params[index_I0], params[index_inv_Iinf], params[index_R], index_R, index_inv_Iinf, relax_times, back_calc_hess, num_times);
-    exponential_inv_dI0_dIinf(params[index_I0], params[index_inv_Iinf], params[index_R], index_I0, index_inv_Iinf, relax_times, back_calc_hess, num_times);
+    exponential_inv_dR2(params[index_I0], params[index_inv_Iinf], params[index_R], index_R, relax_times, back_calc_hess, self->num_times);
+    exponential_inv_dI02(params[index_I0], params[index_inv_Iinf], params[index_R], index_I0, relax_times, back_calc_hess, self->num_times);
+    exponential_inv_dIinf2(params[index_I0], params[index_inv_Iinf], params[index_R], index_inv_Iinf, relax_times, back_calc_hess, self->num_times);
+    exponential_inv_dR_dI0(params[index_I0], params[index_inv_Iinf], params[index_R], index_R, index_I0, relax_times, back_calc_hess, self->num_times);
+    exponential_inv_dR_dIinf(params[index_I0], params[index_inv_Iinf], params[index_R], index_R, index_inv_Iinf, relax_times, back_calc_hess, self->num_times);
+    exponential_inv_dI0_dIinf(params[index_I0], params[index_inv_Iinf], params[index_R], index_I0, index_inv_Iinf, relax_times, back_calc_hess, self->num_times);
 
     /* The chi-squared Hessian. */
-    d2chi2(d2chi2_vals, values, back_calc, back_calc_grad, back_calc_hess, variance, num_times, num_params);
+    d2chi2(d2chi2_vals, values, back_calc, back_calc_grad, back_calc_hess, variance, self->num_times, self->num_params);
 
-    /* Convert to a Python list, and scale the values. */
-    list = PyList_New(0);
-    Py_INCREF(list);
-    for (j = 0; j < num_params; j++) {
-        list2 = PyList_New(0);
-        Py_INCREF(list2);
-        for (k = 0; k < num_params; k++) {
-            PyList_Append(list2, PyFloat_FromDouble(d2chi2_vals[j][k] * scaling_matrix[j] * scaling_matrix[k]));
+    /* Store in the numpy array, and scale the values. */
+    for (j = 0; j < self->num_params; j++) {
+        for (k = 0; k < self->num_params; k++) {
+            NA_set2_Float64(self->d2chi2, j, k, d2chi2_vals[j][k] * scaling_matrix[j] * scaling_matrix[k]);
         }
-        PyList_Append(list, list2);
     }
 
-    /* Return the Hessian. */
-    return list;
+    /* Return the Hessian, incrementing the reference count. */
+    Py_INCREF(self->d2chi2);
+    return PyArray_Return(self->d2chi2);
 }
 
 
 static PyObject *
-d2func_sat(PyObject *self, PyObject *args) {
+d2func_sat(Relax_fit *self, PyObject *args) {
     /* Saturation recovery experiment target function for the two parameter exponential for calculating and returning the chi-squared Hessian.
-     * 
+     *
      */
 
     /* Declarations. */
-    PyObject *params_arg;
-    PyObject *list, *list2;
+    PyArrayObject *params_arg;
     int j, k;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
@@ -420,64 +364,63 @@ d2func_sat(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Convert the parameters Python list to a C array. */
-    param_to_c(params_arg);
+    param_to_c(self, params_arg);
 
     /* Back calculated the peak intensities. */
-    exponential_sat(params[index_Iinf], params[index_R], relax_times, back_calc, num_times);
+    exponential_sat(params[index_Iinf], params[index_R], relax_times, back_calc, self->num_times);
 
     /* The partial derivatives. */
-    exponential_sat_dR(params[index_Iinf], params[index_R], index_R, relax_times, back_calc_grad, num_times);
-    exponential_sat_dIinf(params[index_Iinf], params[index_R], index_Iinf, relax_times, back_calc_grad, num_times);
+    exponential_sat_dR(params[index_Iinf], params[index_R], index_R, relax_times, back_calc_grad, self->num_times);
+    exponential_sat_dIinf(params[index_Iinf], params[index_R], index_Iinf, relax_times, back_calc_grad, self->num_times);
 
     /* The second partial derivatives. */
-    exponential_sat_dR2(params[index_Iinf], params[index_R], index_R, relax_times, back_calc_hess, num_times);
-    exponential_sat_dIinf2(params[index_Iinf], params[index_R], index_Iinf, relax_times, back_calc_hess, num_times);
-    exponential_sat_dR_dIinf(params[index_Iinf], params[index_R], index_R, index_Iinf, relax_times, back_calc_hess, num_times);
+    exponential_sat_dR2(params[index_Iinf], params[index_R], index_R, relax_times, back_calc_hess, self->num_times);
+    exponential_sat_dIinf2(params[index_Iinf], params[index_R], index_Iinf, relax_times, back_calc_hess, self->num_times);
+    exponential_sat_dR_dIinf(params[index_Iinf], params[index_R], index_R, index_Iinf, relax_times, back_calc_hess, self->num_times);
 
     /* The chi-squared Hessian. */
-    d2chi2(d2chi2_vals, values, back_calc, back_calc_grad, back_calc_hess, variance, num_times, num_params);
+    d2chi2(d2chi2_vals, values, back_calc, back_calc_grad, back_calc_hess, variance, self->num_times, self->num_params);
 
-    /* Convert to a Python list, and scale the values. */
-    list = PyList_New(0);
-    Py_INCREF(list);
-    for (j = 0; j < num_params; j++) {
-        list2 = PyList_New(0);
-        Py_INCREF(list2);
-        for (k = 0; k < num_params; k++) {
-            PyList_Append(list2, PyFloat_FromDouble(d2chi2_vals[j][k] * scaling_matrix[j] * scaling_matrix[k]));
+    /* Store in the numpy array, and scale the values. */
+    for (j = 0; j < self->num_params; j++) {
+        for (k = 0; k < self->num_params; k++) {
+            NA_set2_Float64(self->d2chi2, j, k, d2chi2_vals[j][k] * scaling_matrix[j] * scaling_matrix[k]);
         }
-        PyList_Append(list, list2);
     }
 
-    /* Return the Hessian. */
-    return list;
+    /* Return the Hessian, incrementing the reference count. */
+    Py_INCREF(self->d2chi2);
+    return PyArray_Return(self->d2chi2);
 }
 
 
 static PyObject *
-back_calc_I(PyObject *self, PyObject *args) {
+back_calc_data(Relax_fit *self, PyObject *args) {
     /* Return the back calculated peak intensities as a Python list. */
 
     /* Declarations. */
-    PyObject *back_calc_py = PyList_New(num_times);
-    int i;
+    PyArrayObject *back_calc_array;
+    int i, dims[1];
+
+    dims[0] = self->num_times;
+    back_calc_array = (PyArrayObject *) PyArray_FromDims(1, dims, NPY_DOUBLE);
 
     /* Copy the values out of the C array into the Python array. */
-    for (i = 0; i < num_times; i++)
-        PyList_SetItem(back_calc_py, i, PyFloat_FromDouble(back_calc[i]));
+    for (i = 0; i < self->num_times; i++) {
+        NA_set1_Float64(back_calc_array, i, back_calc[i]);
+    }
 
-    /* Return the Python list. */
-    return back_calc_py;
+    /* Return the numpy array. */
+    return PyArray_Return(back_calc_array);
 }
 
 
 static PyObject *
-jacobian_exp(PyObject *self, PyObject *args) {
+jacobian_exp(Relax_fit *self, PyObject *args) {
     /* Return the Jacobian for the two parameter exponential as a Python list of lists. */
 
     /* Declarations. */
-    PyObject *params_arg;
-    PyObject *list, *list2;
+    PyArrayObject *params_arg;
     int i, j;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
@@ -485,36 +428,31 @@ jacobian_exp(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Convert the parameters Python list to a C array. */
-    param_to_c(params_arg);
+    param_to_c(self, params_arg);
 
     /* The partial derivatives. */
-    exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, num_times);
-    exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
+    exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, self->num_times);
+    exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, self->num_times);
 
-    /* Convert to a Python list of lists. */
-    list = PyList_New(0);
-    Py_INCREF(list);
-    for (i = 0; i < num_params; i++) {
-        list2 = PyList_New(0);
-        Py_INCREF(list2);
-        for (j = 0; j < num_times; j++) {
-            PyList_Append(list2, PyFloat_FromDouble(back_calc_grad[i][j]));
+    /* Store in the numpy array. */
+    for (i = 0; i < self->num_params; i++) {
+        for (j = 0; j < self->num_times; j++) {
+            NA_set2_Float64(self->jacobian, i, j, back_calc_grad[i][j]);
         }
-        PyList_Append(list, list2);
     }
 
-    /* Return the Jacobian. */
-    return list;
+    /* Return the Jacobian, incrementing the reference count. */
+    Py_INCREF(self->jacobian);
+    return PyArray_Return(self->jacobian);
 }
 
 
 static PyObject *
-jacobian_inv(PyObject *self, PyObject *args) {
+jacobian_inv(Relax_fit *self, PyObject *args) {
     /* Return the Jacobian for the two parameter exponential as a Python list of lists. */
 
     /* Declarations. */
-    PyObject *params_arg;
-    PyObject *list, *list2;
+    PyArrayObject *params_arg;
     int i, j;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
@@ -522,37 +460,32 @@ jacobian_inv(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Convert the parameters Python list to a C array. */
-    param_to_c(params_arg);
+    param_to_c(self, params_arg);
 
     /* The partial derivatives. */
-    exponential_inv_dR(params[index_I0], params[index_inv_Iinf], params[index_R], index_R, relax_times, back_calc_grad, num_times);
-    exponential_inv_dI0(params[index_I0], params[index_inv_Iinf], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
-    exponential_inv_dIinf(params[index_I0], params[index_inv_Iinf], params[index_R], index_inv_Iinf, relax_times, back_calc_grad, num_times);
+    exponential_inv_dR(params[index_I0], params[index_inv_Iinf], params[index_R], index_R, relax_times, back_calc_grad, self->num_times);
+    exponential_inv_dI0(params[index_I0], params[index_inv_Iinf], params[index_R], index_I0, relax_times, back_calc_grad, self->num_times);
+    exponential_inv_dIinf(params[index_I0], params[index_inv_Iinf], params[index_R], index_inv_Iinf, relax_times, back_calc_grad, self->num_times);
 
-    /* Convert to a Python list of lists. */
-    list = PyList_New(0);
-    Py_INCREF(list);
-    for (i = 0; i < num_params; i++) {
-        list2 = PyList_New(0);
-        Py_INCREF(list2);
-        for (j = 0; j < num_times; j++) {
-            PyList_Append(list2, PyFloat_FromDouble(back_calc_grad[i][j]));
+    /* Store in the numpy array. */
+    for (i = 0; i < self->num_params; i++) {
+        for (j = 0; j < self->num_times; j++) {
+            NA_set2_Float64(self->jacobian, i, j, back_calc_grad[i][j]);
         }
-        PyList_Append(list, list2);
     }
 
-    /* Return the Jacobian. */
-    return list;
+    /* Return the Jacobian, incrementing the reference count. */
+    Py_INCREF(self->jacobian);
+    return PyArray_Return(self->jacobian);
 }
 
 
 static PyObject *
-jacobian_sat(PyObject *self, PyObject *args) {
+jacobian_sat(Relax_fit *self, PyObject *args) {
     /* Return the Jacobian for the two parameter exponential as a Python list of lists. */
 
     /* Declarations. */
-    PyObject *params_arg;
-    PyObject *list, *list2;
+    PyArrayObject *params_arg;
     int i, j;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
@@ -560,31 +493,27 @@ jacobian_sat(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Convert the parameters Python list to a C array. */
-    param_to_c(params_arg);
+    param_to_c(self, params_arg);
 
     /* The partial derivatives. */
-    exponential_sat_dR(params[index_Iinf], params[index_R], index_R, relax_times, back_calc_grad, num_times);
-    exponential_sat_dIinf(params[index_Iinf], params[index_R], index_Iinf, relax_times, back_calc_grad, num_times);
+    exponential_sat_dR(params[index_Iinf], params[index_R], index_R, relax_times, back_calc_grad, self->num_times);
+    exponential_sat_dIinf(params[index_Iinf], params[index_R], index_Iinf, relax_times, back_calc_grad, self->num_times);
 
-    /* Convert to a Python list of lists. */
-    list = PyList_New(0);
-    Py_INCREF(list);
-    for (i = 0; i < num_params; i++) {
-        list2 = PyList_New(0);
-        Py_INCREF(list2);
-        for (j = 0; j < num_times; j++) {
-            PyList_Append(list2, PyFloat_FromDouble(back_calc_grad[i][j]));
+    /* Store in the numpy array. */
+    for (i = 0; i < self->num_params; i++) {
+        for (j = 0; j < self->num_times; j++) {
+            NA_set2_Float64(self->jacobian, i, j, back_calc_grad[i][j]);
         }
-        PyList_Append(list, list2);
     }
 
-    /* Return the Jacobian. */
-    return list;
+    /* Return the Jacobian, incrementing the reference count. */
+    Py_INCREF(self->jacobian);
+    return PyArray_Return(self->jacobian);
 }
 
 
 static PyObject *
-jacobian_chi2_exp(PyObject *self, PyObject *args) {
+jacobian_chi2_exp(Relax_fit *self, PyObject *args) {
     /* Return the Jacobian for the two parameter exponential as a Python list of lists.
 
     The Jacobian
@@ -608,8 +537,7 @@ jacobian_chi2_exp(PyObject *self, PyObject *args) {
      */
 
     /* Declarations. */
-    PyObject *params_arg;
-    PyObject *list, *list2;
+    PyArrayObject *params_arg;
     int i, j;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
@@ -617,41 +545,37 @@ jacobian_chi2_exp(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Convert the parameters Python list to a C array. */
-    param_to_c(params_arg);
+    param_to_c(self, params_arg);
 
     /* Back calculated the peak intensities. */
-    exponential(params[index_I0], params[index_R], relax_times, back_calc, num_times);
+    exponential(params[index_I0], params[index_R], relax_times, back_calc, self->num_times);
 
     /* The partial derivatives. */
-    exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, num_times);
-    exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
+    exponential_dR(params[index_I0], params[index_R], index_R, relax_times, back_calc_grad, self->num_times);
+    exponential_dI0(params[index_I0], params[index_R], index_I0, relax_times, back_calc_grad, self->num_times);
 
     /* Assemble the chi-squared Jacobian. */
-    for (j = 0; j < num_params; ++j) {
-        for (i = 0; i < num_times; ++i) {
+    for (j = 0; j < self->num_params; ++j) {
+        for (i = 0; i < self->num_times; ++i) {
             jacobian_matrix[j][i] = -2.0 / variance[i] * (values[i] - back_calc[i]) * back_calc_grad[j][i];
         }
     }
 
-    /* Convert to a Python list of lists. */
-    list = PyList_New(0);
-    Py_INCREF(list);
-    for (i = 0; i < num_params; i++) {
-        list2 = PyList_New(0);
-        Py_INCREF(list2);
-        for (j = 0; j < num_times; j++) {
-            PyList_Append(list2, PyFloat_FromDouble(jacobian_matrix[i][j]));
+    /* Store in the numpy array. */
+    for (i = 0; i < self->num_params; i++) {
+        for (j = 0; j < self->num_times; j++) {
+            NA_set2_Float64(self->jacobian_chi2, i, j, jacobian_matrix[i][j]);
         }
-        PyList_Append(list, list2);
     }
 
-    /* Return the Jacobian. */
-    return list;
+    /* Return the Jacobian, incrementing the reference count. */
+    Py_INCREF(self->jacobian_chi2);
+    return PyArray_Return(self->jacobian_chi2);
 }
 
 
 static PyObject *
-jacobian_chi2_inv(PyObject *self, PyObject *args) {
+jacobian_chi2_inv(Relax_fit *self, PyObject *args) {
     /* Return the Jacobian for the inversion recovery experiment as a Python list of lists.
 
     The Jacobian
@@ -675,8 +599,7 @@ jacobian_chi2_inv(PyObject *self, PyObject *args) {
      */
 
     /* Declarations. */
-    PyObject *params_arg;
-    PyObject *list, *list2;
+    PyArrayObject *params_arg;
     int i, j;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
@@ -684,42 +607,38 @@ jacobian_chi2_inv(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Convert the parameters Python list to a C array. */
-    param_to_c(params_arg);
+    param_to_c(self, params_arg);
 
     /* Back calculated the peak intensities. */
-    exponential_inv(params[index_I0], params[index_inv_Iinf], params[index_R], relax_times, back_calc, num_times);
+    exponential_inv(params[index_I0], params[index_inv_Iinf], params[index_R], relax_times, back_calc, self->num_times);
 
     /* The partial derivatives. */
-    exponential_inv_dR(params[index_I0], params[index_inv_Iinf], params[index_R], index_R, relax_times, back_calc_grad, num_times);
-    exponential_inv_dI0(params[index_I0], params[index_inv_Iinf], params[index_R], index_I0, relax_times, back_calc_grad, num_times);
-    exponential_inv_dIinf(params[index_I0], params[index_inv_Iinf], params[index_R], index_inv_Iinf, relax_times, back_calc_grad, num_times);
+    exponential_inv_dR(params[index_I0], params[index_inv_Iinf], params[index_R], index_R, relax_times, back_calc_grad, self->num_times);
+    exponential_inv_dI0(params[index_I0], params[index_inv_Iinf], params[index_R], index_I0, relax_times, back_calc_grad, self->num_times);
+    exponential_inv_dIinf(params[index_I0], params[index_inv_Iinf], params[index_R], index_inv_Iinf, relax_times, back_calc_grad, self->num_times);
 
     /* Assemble the chi-squared Jacobian. */
-    for (j = 0; j < num_params; ++j) {
-        for (i = 0; i < num_times; ++i) {
+    for (j = 0; j < self->num_params; ++j) {
+        for (i = 0; i < self->num_times; ++i) {
             jacobian_matrix[j][i] = -2.0 / variance[i] * (values[i] - back_calc[i]) * back_calc_grad[j][i];
         }
     }
 
-    /* Convert to a Python list of lists. */
-    list = PyList_New(0);
-    Py_INCREF(list);
-    for (i = 0; i < num_params; i++) {
-        list2 = PyList_New(0);
-        Py_INCREF(list2);
-        for (j = 0; j < num_times; j++) {
-            PyList_Append(list2, PyFloat_FromDouble(jacobian_matrix[i][j]));
+    /* Store in the numpy array. */
+    for (i = 0; i < self->num_params; i++) {
+        for (j = 0; j < self->num_times; j++) {
+            NA_set2_Float64(self->jacobian_chi2, i, j, jacobian_matrix[i][j]);
         }
-        PyList_Append(list, list2);
     }
 
-    /* Return the Jacobian. */
-    return list;
+    /* Return the Jacobian, incrementing the reference count. */
+    Py_INCREF(self->jacobian_chi2);
+    return PyArray_Return(self->jacobian_chi2);
 }
 
 
 static PyObject *
-jacobian_chi2_sat(PyObject *self, PyObject *args) {
+jacobian_chi2_sat(Relax_fit *self, PyObject *args) {
     /* Return the Jacobian for the saturation recovery experiment as a Python list of lists.
 
     The Jacobian
@@ -743,8 +662,7 @@ jacobian_chi2_sat(PyObject *self, PyObject *args) {
      */
 
     /* Declarations. */
-    PyObject *params_arg;
-    PyObject *list, *list2;
+    PyArrayObject *params_arg;
     int i, j;
 
     /* Parse the function arguments, the only argument should be the parameter array. */
@@ -752,139 +670,410 @@ jacobian_chi2_sat(PyObject *self, PyObject *args) {
         return NULL;
 
     /* Convert the parameters Python list to a C array. */
-    param_to_c(params_arg);
+    param_to_c(self, params_arg);
 
     /* Back calculated the peak intensities. */
-    exponential_sat(params[index_Iinf], params[index_R], relax_times, back_calc, num_times);
+    exponential_sat(params[index_Iinf], params[index_R], relax_times, back_calc, self->num_times);
 
     /* The partial derivatives. */
-    exponential_sat_dR(params[index_Iinf], params[index_R], index_R, relax_times, back_calc_grad, num_times);
-    exponential_sat_dIinf(params[index_Iinf], params[index_R], index_Iinf, relax_times, back_calc_grad, num_times);
+    exponential_sat_dR(params[index_Iinf], params[index_R], index_R, relax_times, back_calc_grad, self->num_times);
+    exponential_sat_dIinf(params[index_Iinf], params[index_R], index_Iinf, relax_times, back_calc_grad, self->num_times);
 
     /* Assemble the chi-squared Jacobian. */
-    for (j = 0; j < num_params; ++j) {
-        for (i = 0; i < num_times; ++i) {
+    for (j = 0; j < self->num_params; ++j) {
+        for (i = 0; i < self->num_times; ++i) {
             jacobian_matrix[j][i] = -2.0 / variance[i] * (values[i] - back_calc[i]) * back_calc_grad[j][i];
         }
     }
 
-    /* Convert to a Python list of lists. */
-    list = PyList_New(0);
-    Py_INCREF(list);
-    for (i = 0; i < num_params; i++) {
-        list2 = PyList_New(0);
-        Py_INCREF(list2);
-        for (j = 0; j < num_times; j++) {
-            PyList_Append(list2, PyFloat_FromDouble(jacobian_matrix[i][j]));
+    /* Store in the numpy array. */
+    for (i = 0; i < self->num_params; i++) {
+        for (j = 0; j < self->num_times; j++) {
+            NA_set2_Float64(self->jacobian_chi2, i, j, jacobian_matrix[i][j]);
         }
-        PyList_Append(list, list2);
     }
 
-    /* Return the Jacobian. */
-    return list;
+    /* Return the Jacobian, incrementing the reference count. */
+    Py_INCREF(self->jacobian_chi2);
+    return PyArray_Return(self->jacobian_chi2);
 }
 
 
-/* The method table for the functions called by Python. */
+/* Definition of all functions of the relax_fit module. */
 static PyMethodDef relax_fit_methods[] = {
+    {NULL, NULL, 0, NULL}        /* Sentinel. */
+};
+
+
+/* Definition of all methods of the Relax_fit class. */
+static PyMethodDef Relax_fit_methods[] = {
     {
-        "setup",
-        (PyCFunction)setup,
-        METH_VARARGS | METH_KEYWORDS,
-        "Set up the module in preparation for calls to the target function."
+        "func",
+        NULL,
+        METH_VARARGS,
+        "Target function alias."
     }, {
         "func_exp",
-        func_exp,
+        (PyCFunction)func_exp,
         METH_VARARGS,
         "Target function for the two parameter exponential for calculating and returning the chi-squared value.\n\nFirstly the back calculated intensities are generated, then the chi-squared statistic is calculated."
     }, {
         "func_inv",
-        func_inv,
+        (PyCFunction)func_inv,
         METH_VARARGS,
         "Target function for the inversion recovery experiment for calculating and returning the chi-squared value.\n\nFirstly the back calculated intensities are generated, then the chi-squared statistic is calculated."
     }, {
         "func_sat",
-        func_sat,
+        (PyCFunction)func_sat,
         METH_VARARGS,
         "Target function for the saturation recovery experiment for calculating and returning the chi-squared value.\n\nFirstly the back calculated intensities are generated, then the chi-squared statistic is calculated."
     }, {
+        "dfunc",
+        NULL,
+        METH_VARARGS,
+        "Target function alias."
+    }, {
         "dfunc_exp",
-        dfunc_exp,
+        (PyCFunction)dfunc_exp,
         METH_VARARGS,
         "Target function for the two parameter exponential for calculating and returning the chi-squared gradient."
     }, {
         "dfunc_inv",
-        dfunc_inv,
+        (PyCFunction)dfunc_inv,
         METH_VARARGS,
         "Target function for the inversion recovery experiment for calculating and returning the chi-squared gradient."
     }, {
         "dfunc_sat",
-        dfunc_sat,
+        (PyCFunction)dfunc_sat,
         METH_VARARGS,
         "Target function for the saturation recovery experiment for calculating and returning the chi-squared gradient."
     }, {
+        "d2func",
+        NULL,
+        METH_VARARGS,
+        "Target function alias."
+    }, {
         "d2func_exp",
-        d2func_exp,
+        (PyCFunction)d2func_exp,
         METH_VARARGS,
         "Target function for the two parameter exponential for calculating and returning the chi-squared Hessian."
     }, {
         "d2func_inv",
-        d2func_inv,
+        (PyCFunction)d2func_inv,
         METH_VARARGS,
         "Target function for the inversion recovery experiment for calculating and returning the chi-squared Hessian."
     }, {
         "d2func_sat",
-        d2func_sat,
+        (PyCFunction)d2func_sat,
         METH_VARARGS,
         "Target function for the saturation recovery experiment for calculating and returning the chi-squared Hessian."
     }, {
-        "back_calc_I",
-        back_calc_I,
+        "jacobian",
+        NULL,
         METH_VARARGS,
-        "Return the back calculated peak intensities as a Python list."
+        "Jacobian matrix function alias."
     }, {
         "jacobian_exp",
-        jacobian_exp,
+        (PyCFunction)jacobian_exp,
         METH_VARARGS,
         "Return the Jacobian matrix for the two parameter exponential as a Python list."
     }, {
         "jacobian_inv",
-        jacobian_inv,
+        (PyCFunction)jacobian_inv,
         METH_VARARGS,
         "Return the Jacobian matrix for the inversion recovery experiment as a Python list."
     }, {
         "jacobian_sat",
-        jacobian_sat,
+        (PyCFunction)jacobian_sat,
         METH_VARARGS,
         "Return the Jacobian matrix for the saturation recovery experiment as a Python list."
     }, {
+        "jacobian_chi2",
+        NULL,
+        METH_VARARGS,
+        "Chi-squared Jacobian matrix function alias."
+    }, {
         "jacobian_chi2_exp",
-        jacobian_chi2_exp,
+        (PyCFunction)jacobian_chi2_exp,
         METH_VARARGS,
         "Return the Jacobian matrix of the chi-squared function for the two parameter exponential as a Python list."
     }, {
         "jacobian_chi2_inv",
-        jacobian_chi2_inv,
+        (PyCFunction)jacobian_chi2_inv,
         METH_VARARGS,
         "Return the Jacobian matrix of the chi-squared function for the inversion recovery experiment as a Python list."
     }, {
         "jacobian_chi2_sat",
-        jacobian_chi2_sat,
+        (PyCFunction)jacobian_chi2_sat,
         METH_VARARGS,
         "Return the Jacobian matrix of the chi-squared function for the saturation recovery experiment as a Python list."
+    }, {
+        "back_calc_data",
+        (PyCFunction)back_calc_data,
+        METH_VARARGS,
+        "Return the back calculated peak intensities as a Python list."
+    }, {
+        NULL  /* Sentinel */
+    }
+};
+
+
+/* Definition of the class instance objects. */
+static PyMemberDef Relax_fit_members[] = {
+    {
+        "model",
+        T_OBJECT_EX,
+        offsetof(Relax_fit, model),
+        0,
+        "The exponential curve type.  This can be 'exp' for the standard two parameter exponential curve, 'inv' for the inversion recovery experiment, and 'sat' for the saturation recovery experiment."
+    }, {
+        "num_params",
+        T_INT,
+        offsetof(Relax_fit, num_params),
+        0,
+        "The number of model parameters."
+    }, {
+        "num_times",
+        T_INT,
+        offsetof(Relax_fit, num_times),
+        0,
+        "The number of relaxation times."
+    }, {
+        "dchi2",
+        T_OBJECT, 
+        offsetof(Relax_fit, dchi2), 
+        0,
+        "The gradient numpy array data structure."
+    }, {
+        "d2chi2",
+        T_OBJECT, 
+        offsetof(Relax_fit, d2chi2), 
+        0,
+        "The Hessian numpy array data structure."
+    }, {
+        "jacobian",
+        T_OBJECT, 
+        offsetof(Relax_fit, jacobian), 
+        0,
+        "The Jacobian numpy array data structure."
+    }, {
+        "jacobian_chi2",
+        T_OBJECT, 
+        offsetof(Relax_fit, jacobian_chi2), 
+        0,
+        "The chi-squared Jacobian numpy array data structure."
     },
-        {NULL, NULL, 0, NULL}        /* Sentinel. */
+      {NULL}  /* Sentinel */
+};
+
+
+/* Class destruction. */
+static void
+Relax_fit_dealloc(Relax_fit *self)
+{
+    Py_XDECREF(self->model);
+    Py_XDECREF(self->dchi2);
+    Py_XDECREF(self->d2chi2);
+    Py_XDECREF(self->jacobian);
+    Py_XDECREF(self->jacobian_chi2);
+    #if PY_MAJOR_VERSION >= 3
+        Py_TYPE(self)->tp_free((PyObject*)self);
+    #else
+        self->ob_type->tp_free((PyObject*)self);
+    #endif
+}
+
+
+/* The Relax_fit.__new__() method definition for creating the class. */
+static PyObject *
+Relax_fit_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+    Relax_fit *self;
+
+    self = (Relax_fit *)type->tp_alloc(type, 0);
+    if (self != NULL) {
+        /* Set up the model name to the empty string. */
+        #if PY_MAJOR_VERSION >= 3
+            self->model = PyUnicode_FromString("");
+        #else
+            self->model = PyString_FromString("");
+        #endif
+        if (self->model == NULL)
+          {
+            Py_DECREF(self);
+            return NULL;
+          }
+
+        /* The number of model parameters. */
+        self->num_params = 0;
+
+        /* The number of relaxation times. */
+        self->num_times = 0;
+    }
+
+    return (PyObject *)self;
+}
+
+
+/* The Relax_fit.__init__() method definition for initialising the class. */
+static int
+Relax_fit_init(Relax_fit *self, PyObject *args, PyObject *keywords)
+{
+    /* Python object declarations. */
+    PyObject *model=NULL, *values_arg=NULL, *sd_arg=NULL, *relax_times_arg=NULL, *scaling_matrix_arg=NULL, *tmp;
+    PyObject *element;
+
+    /* Normal declarations. */
+    int i, dims_gradient[1], dims_hessian[2], dims_jacobian[2];
+
+    /* The keyword list. */
+    static char *keyword_list[] = {"model", "num_params", "num_times", "values", "sd", "relax_times", "scaling_matrix", NULL};
+
+    /* Parse the function arguments. */
+    if (! PyArg_ParseTupleAndKeywords(args, keywords, "|SiiOOOO", keyword_list, &model, &self->num_params, &self->num_times, &values_arg, &sd_arg, &relax_times_arg, &scaling_matrix_arg))
+        return -1;
+
+    /* Store the arguments in self. */
+    if (model) {
+        tmp = self->model;
+        Py_INCREF(model);
+        self->model = model;
+        Py_XDECREF(tmp);
+    }
+
+    /* Convert the model to a C character array. */
+    model_str = PyString_AsString(model);
+
+    /* Place the parameter related arguments into C arrays. */
+    for (i = 0; i < self->num_params; i++) {
+        /* The diagonalised scaling matrix list argument element. */
+        element = PySequence_GetItem(scaling_matrix_arg, i);
+        scaling_matrix[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
+    }
+
+    /* Place the time related arguments into C arrays. */
+    for (i = 0; i < self->num_times; i++) {
+        /* The value argument element. */
+        element = PySequence_GetItem(values_arg, i);
+        values[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
+
+        /* The sd argument element. */
+        element = PySequence_GetItem(sd_arg, i);
+        sd[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
+
+        /* Convert the errors to variances to avoid duplicated maths operations for faster calculations. */
+        variance[i] = square(sd[i]);
+
+        /* The relax_times argument element. */
+        element = PySequence_GetItem(relax_times_arg, i);
+        relax_times[i] = PyFloat_AsDouble(element);
+        Py_CLEAR(element);
+    }
+
+    /* Initialise the gradient, Hessian, and Jacobians. */
+    dims_gradient[0] = self->num_params;
+    self->dchi2 = (PyArrayObject *) PyArray_FromDims(1, dims_gradient, NPY_DOUBLE);
+    dims_hessian[0] = self->num_params;
+    dims_hessian[1] = self->num_params;
+    self->d2chi2 = (PyArrayObject *) PyArray_FromDims(2, dims_hessian, NPY_DOUBLE);
+    dims_jacobian[0] = self->num_params;
+    dims_jacobian[1] = self->num_times;
+    self->jacobian = (PyArrayObject *) PyArray_FromDims(2, dims_jacobian, NPY_DOUBLE);
+    self->jacobian_chi2 = (PyArrayObject *) PyArray_FromDims(2, dims_jacobian, NPY_DOUBLE);
+
+    /* Target function aliasing. */
+    if (strcmp(model_str, model_list[0]) == 0) {
+        Relax_fit_methods[0] = Relax_fit_methods[0+1];    /* func() */
+        Relax_fit_methods[4] = Relax_fit_methods[4+1];    /* dfunc() */
+        Relax_fit_methods[8] = Relax_fit_methods[8+1];    /* d2func() */
+    }
+    else if (strcmp(model_str, model_list[1]) == 0) {
+        Relax_fit_methods[0] = Relax_fit_methods[0+2];    /* func() */
+        Relax_fit_methods[4] = Relax_fit_methods[4+2];    /* dfunc() */
+        Relax_fit_methods[8] = Relax_fit_methods[8+2];    /* d2func() */
+    }
+    else if (strcmp(model_str, model_list[2]) == 0) {
+        Relax_fit_methods[0] = Relax_fit_methods[0+3];    /* func() */
+        Relax_fit_methods[4] = Relax_fit_methods[4+3];    /* dfunc() */
+        Relax_fit_methods[8] = Relax_fit_methods[8+3];    /* d2func() */
+    }
+
+    /* Jacobian function aliasing. */
+    if (strcmp(model_str, model_list[0]) == 0) {
+        Relax_fit_methods[12] = Relax_fit_methods[12+1];    /* jacobian() */
+        Relax_fit_methods[16] = Relax_fit_methods[16+1];    /* jacobian_chi2() */
+    }
+    else if (strcmp(model_str, model_list[1]) == 0) {
+        Relax_fit_methods[12] = Relax_fit_methods[12+2];    /* jacobian() */
+        Relax_fit_methods[16] = Relax_fit_methods[16+2];    /* jacobian_chi2() */
+    }
+    else if (strcmp(model_str, model_list[2]) == 0) {
+        Relax_fit_methods[12] = Relax_fit_methods[12+3];    /* jacobian() */
+        Relax_fit_methods[16] = Relax_fit_methods[16+3];    /* jacobian_chi2() */
+    }
+
+    return 0;
+}
+
+
+/* Define the type object to create the class. */
+static PyTypeObject Relax_fit_type = {
+    #if PY_MAJOR_VERSION >= 3
+        PyVarObject_HEAD_INIT(NULL, 0)
+    #else
+        PyObject_HEAD_INIT(NULL)
+        0,                                  /*ob_size*/
+    #endif
+    "relax_fit.Relax_fit",                  /*tp_name*/
+    sizeof(Relax_fit),                      /*tp_basicsize*/
+    0,                                      /*tp_itemsize*/
+    (destructor)Relax_fit_dealloc,          /*tp_dealloc*/
+    0,                                      /*tp_print*/
+    0,                                      /*tp_getattr*/
+    0,                                      /*tp_setattr*/
+    0,                                      /*tp_compare*/
+    0,                                      /*tp_repr*/
+    0,                                      /*tp_as_number*/
+    0,                                      /*tp_as_sequence*/
+    0,                                      /*tp_as_mapping*/
+    0,                                      /*tp_hash */
+    0,                                      /*tp_call*/
+    0,                                      /*tp_str*/
+    0,                                      /*tp_getattro*/
+    0,                                      /*tp_setattro*/
+    0,                                      /*tp_as_buffer*/
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,    /*tp_flags*/
+    "The exponential curve-fitting C module target function class.",    /* tp_doc */
+    0,                                      /* tp_traverse */
+    0,                                      /* tp_clear */
+    0,                                      /* tp_richcompare */
+    0,                                      /* tp_weaklistoffset */
+    0,                                      /* tp_iter */
+    0,                                      /* tp_iternext */
+    Relax_fit_methods,                      /* tp_methods */
+    Relax_fit_members,                      /* tp_members */
+    0,                                      /* tp_getset */
+    0,                                      /* tp_base */
+    0,                                      /* tp_dict */
+    0,                                      /* tp_descr_get */
+    0,                                      /* tp_descr_set */
+    0,                                      /* tp_dictoffset */
+    (initproc)Relax_fit_init,               /* tp_init */
+    0,                                      /* tp_alloc */
+    Relax_fit_new,                          /* tp_new */
 };
 
 
 /* Define the Python 3 module. */
 #if PY_MAJOR_VERSION >= 3
-    static struct PyModuleDef moduledef = {
+    static PyModuleDef moduledef = {
         PyModuleDef_HEAD_INIT,
         "relax_fit",         /* m_name */
         "Relaxation curve-fitting C module.",  /* m_doc */
         -1,                  /* m_size */
-        relax_fit_methods,   /* m_methods */
         NULL,                /* m_reload */
         NULL,                /* m_traverse */
         NULL,                /* m_clear */
@@ -892,16 +1081,54 @@ static PyMethodDef relax_fit_methods[] = {
     };
 #endif
 
+
+/* Declarations for DLL import/export */
+#ifndef PyMODINIT_FUNC
+#define PyMODINIT_FUNC void
+#endif
+
+
 /* Initialise as a Python module. */
 PyMODINIT_FUNC
 #if PY_MAJOR_VERSION >= 3
     PyInit_relax_fit(void)
     {
-        return PyModule_Create(&moduledef);
+        PyObject* m;
+
+        if (PyType_Ready(&Relax_fit_type) < 0)
+            return NULL;
+
+        m = PyModule_Create(&moduledef);
+        if (m == NULL)
+            return NULL;
+
+        Py_INCREF(&Relax_fit_type);
+        PyModule_AddObject(m, "Relax_fit", (PyObject *)&Relax_fit_type);
+
+        /* Import the numpy array and numarray modules.  This is essential. */
+        import_libnumarray();
+        import_array();
+
+        return m;
     }
 #else
     initrelax_fit(void)
     {
-        (void) Py_InitModule("relax_fit", relax_fit_methods);
+        PyObject* m;
+
+        if (PyType_Ready(&Relax_fit_type) < 0)
+            return;
+
+        m = Py_InitModule3("relax_fit", relax_fit_methods,
+                           "Example module that creates an extension type.");
+        if (m == NULL)
+            return;
+
+        Py_INCREF(&Relax_fit_type);
+        PyModule_AddObject(m, "Relax_fit", (PyObject *)&Relax_fit_type);
+
+        /* Import the numpy array and numarray modules.  This is essential. */
+        import_libnumarray();
+        import_array();
     }
 #endif
