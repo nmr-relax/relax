@@ -44,7 +44,7 @@ from specific_analyses.relax_fit.checks import check_model_setup
 from specific_analyses.relax_fit.optimisation import back_calc
 from specific_analyses.relax_fit.parameter_object import Relax_fit_params
 from specific_analyses.relax_fit.parameters import assemble_param_vector, disassemble_param_vector, linear_constraints
-from target_functions.relax_fit_wrapper import Relax_fit_opt
+from target_functions import relax_fit
 
 
 class Relax_fit(API_base, API_common):
@@ -130,7 +130,7 @@ class Relax_fit(API_base, API_common):
             scaling_list.append(1.0)
 
         # Initialise data in C code.
-        model = Relax_fit_opt(model=spin.model, num_params=len(param_vector), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+        model = relax_fit.Relax_fit(model=spin.model, num_params=len(param_vector), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
         # Use the direct Jacobian from function.
         jacobian_matrix_exp = transpose(asarray( model.jacobian(param_vector) ) )
@@ -364,7 +364,7 @@ class Relax_fit(API_base, API_common):
                     scaling_list.append(scaling_matrix[model_index][i, i])
 
             # Set up the target function.
-            model = Relax_fit_opt(model=spin.model, num_params=len(spin.params), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+            model = relax_fit.Relax_fit(model=spin.model, num_params=len(spin.params), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
 
             # Setup the minimisation algorithm when constraints are present.

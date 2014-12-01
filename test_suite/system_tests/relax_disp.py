@@ -50,7 +50,7 @@ from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFS
 from specific_analyses.relax_disp.model import models_info, nesting_param
 from specific_analyses.relax_disp.parameters import linear_constraints
 from status import Status; status = Status()
-from target_functions.relax_fit_wrapper import Relax_fit_opt
+from target_functions.relax_fit import Relax_fit
 from test_suite.system_tests.base_classes import SystemTestCase
 
 
@@ -3591,7 +3591,7 @@ class Relax_disp(SystemTestCase):
                         I_err = asarray(I_err)
 
                         x0 = [r2eff, i0]
-                        model = Relax_fit_opt(model='exp', num_params=len(x0), values=I_err, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+                        model = Relax_fit(model='exp', num_params=len(x0), num_times=len(times), values=I_err, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
                         params_minfx_sim_j, chi2_minfx_sim_j, iter_count, f_count, g_count, h_count, warning = generic_minimise(func=model.func, dfunc=model.dfunc, d2func=model.d2func, args=(), x0=x0, min_algor=min_algor, min_options=min_options, full_output=True, print_flag=0)
                         R_m_sim_j, I0_m_sim_j = params_minfx_sim_j
@@ -3730,11 +3730,11 @@ class Relax_disp(SystemTestCase):
         errors = array([  9.48032653,  11.34093541,   9.35149017,  10.84867928,  12.17590736])
 
         scaling_list = [1.0, 1.0]
-        model = Relax_fit_opt(model='exp', num_params=2, values=I, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+        model = Relax_fit(model='exp', num_params=2, num_times=len(times), values=I, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
         R = - 500.
         I0 = 1000.
-        params = [R, I0]
+        params = array([R, I0])
 
         chi2 = model.func(params)
 
@@ -9027,7 +9027,7 @@ class Relax_disp(SystemTestCase):
                     I_err = asarray(I_err)
 
                     x0 = [r2eff, i0]
-                    model = Relax_fit_opt(num_params=len(x0), values=I_err, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+                    model = Relax_fit(num_params=len(x0), num_times=len(times), values=I_err, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
                     # Ref input.
                     #def generic_minimise(func=None, dfunc=None, d2func=None, args=(), x0=None, min_algor=None, min_options=None, func_tol=1e-25, grad_tol=None, maxiter=1e6, A=None, b=None, l=None, u=None, c=None, dc=None, d2c=None, print_flag=0, print_prefix="", full_output=False):

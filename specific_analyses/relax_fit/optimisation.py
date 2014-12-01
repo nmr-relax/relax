@@ -25,7 +25,7 @@
 
 # relax module imports.
 from specific_analyses.relax_fit.parameters import assemble_param_vector
-from target_functions.relax_fit_wrapper import Relax_fit_opt
+from target_functions.relax_fit import Relax_fit
 
 
 def back_calc(spin=None, relax_time_id=None):
@@ -60,7 +60,7 @@ def back_calc(spin=None, relax_time_id=None):
         scaling_list.append(1.0)
 
     # Initialise the relaxation fit functions.
-    model = Relax_fit_opt(model=spin.model, num_params=len(spin.params), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+    model = Relax_fit(model=spin.model, num_params=len(spin.params), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
     # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
     model.func(param_vector)

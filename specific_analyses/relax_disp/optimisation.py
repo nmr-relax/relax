@@ -46,7 +46,7 @@ from specific_analyses.relax_disp.checks import check_disp_points, check_exp_typ
 from specific_analyses.relax_disp.data import average_intensity, count_spins, find_intensity_keys, has_exponential_exp_type, has_proton_mmq_cpmg, is_r1_optimised, loop_exp, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_frq, loop_offset, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1
 from specific_analyses.relax_disp.parameters import assemble_param_vector, disassemble_param_vector, linear_constraints, param_conversion, param_num, r1_setup
 from target_functions.relax_disp import Dispersion
-from target_functions.relax_fit_wrapper import Relax_fit_opt
+from target_functions.relax_fit import Relax_fit
 
 
 def back_calc_peak_intensities(spin=None, exp_type=None, frq=None, offset=None, point=None):
@@ -92,7 +92,7 @@ def back_calc_peak_intensities(spin=None, exp_type=None, frq=None, offset=None, 
         scaling_list.append(1.0)
 
     # Initialise the relaxation fit functions.
-    model = Relax_fit_opt(model='exp', num_params=len(spin.params), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+    model = Relax_fit(model='exp', num_params=len(spin.params), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
     # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
     model.func(param_vector)
@@ -403,7 +403,7 @@ def minimise_r2eff(spins=None, spin_ids=None, min_algor=None, min_options=None, 
                     scaling_list.append(scaling_matrix[i, i])
 
             # Initialise the function to minimise.
-            model = Relax_fit_opt(model='exp', num_params=len(param_vector), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+            model = Relax_fit(model='exp', num_params=len(param_vector), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
             # Grid search.
             if search('^[Gg]rid', min_algor):

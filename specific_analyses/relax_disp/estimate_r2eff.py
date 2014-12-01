@@ -25,7 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import array, asarray, diag, dot, exp, eye, log, multiply, ones, sqrt, sum, transpose, zeros
+from numpy import array, asarray, diag, dot, exp, eye, float64, log, multiply, ones, sqrt, sum, transpose, zeros
 from minfx.generic import generic_minimise
 import sys
 from warnings import warn
@@ -42,7 +42,7 @@ from specific_analyses.relax_disp.checks import check_model_type
 from specific_analyses.relax_disp.data import average_intensity, loop_exp_frq_offset_point, loop_time, return_param_key_from_data
 from specific_analyses.relax_disp.parameters import disassemble_param_vector
 from target_functions.chi2 import chi2_rankN, dchi2
-from target_functions.relax_fit_wrapper import Relax_fit_opt
+from target_functions.relax_fit import Relax_fit
 
 # Scipy installed.
 if scipy_module:
@@ -101,7 +101,7 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
             i0 = getattr(cur_spin, 'i0')[param_key]
 
             # Pack data
-            param_vector = [r2eff, i0]
+            param_vector = array([r2eff, i0], float64)
 
             # The peak intensities, errors and times.
             values = []
@@ -119,10 +119,10 @@ def estimate_r2eff_err(spin_id=None, epsrel=0.0, verbosity=1):
 
             # Initialise data in C code.
             scaling_list = [1.0, 1.0]
-            model = Relax_fit_opt(model='exp', num_params=len(param_vector), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+            model = Relax_fit(model='exp', num_params=len(param_vector), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
             # Use the direct Jacobian from function.
-            jacobian_matrix_exp = transpose(asarray( model.jacobian(param_vector) ) )
+            jacobian_matrix_exp = transpose(model.jacobian(param_vector))
             weights = 1. / errors**2
 
             # Get the co-variance
@@ -789,7 +789,7 @@ def minimise_minfx(E=None):
 
         # Initialise the function to minimise.
         scaling_list = [1.0, 1.0]
-        model = Relax_fit_opt(model='exp', num_params=len(x0), values=E.values, errors=E.errors, relax_times=E.times, scaling_matrix=scaling_list)
+        model = Relax_fit(model='exp', num_params=len(x0), num_times=len(E.times), values=E.values, sd=E.errors, relax_times=E.times, scaling_matrix=scaling_list)
 
         # Define function to minimise for minfx.
         t_func = model.func
