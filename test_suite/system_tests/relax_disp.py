@@ -3590,7 +3590,7 @@ class Relax_disp(SystemTestCase):
                         # Convert to numpy array.
                         I_err = asarray(I_err)
 
-                        x0 = [r2eff, i0]
+                        x0 = array([r2eff, i0], float64)
                         model = Relax_fit(model='exp', num_params=len(x0), num_times=len(times), values=I_err, sd=errors, relax_times=times, scaling_matrix=scaling_list)
 
                         params_minfx_sim_j, chi2_minfx_sim_j, iter_count, f_count, g_count, h_count, warning = generic_minimise(func=model.func, dfunc=model.dfunc, d2func=model.d2func, args=(), x0=x0, min_algor=min_algor, min_options=min_options, full_output=True, print_flag=0)
