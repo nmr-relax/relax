@@ -27,7 +27,7 @@ from unittest import TestCase
 from dep_check import C_module_exp_fn
 from status import Status; status = Status()
 if C_module_exp_fn:
-    from target_functions.relax_fit import setup, func_exp, dfunc_exp, d2func_exp, jacobian_exp, jacobian_chi2_exp
+    from target_functions.relax_fit import Relax_fit
 
 
 class Test_relax_fit(TestCase):
@@ -58,7 +58,7 @@ class Test_relax_fit(TestCase):
         # The parameter values at the minimum.
         self.I0 = 1000.0
         self.R = 1.0
-        self.params = [self.R/self.scaling_list[0], self.I0/self.scaling_list[1]]
+        self.params = array([self.R/self.scaling_list[0], self.I0/self.scaling_list[1]], float64)
 
         # The time points.
         relax_times = [0.0, 1.0, 2.0, 3.0, 4.0]
@@ -70,14 +70,14 @@ class Test_relax_fit(TestCase):
         errors = [10.0, 10.0, 10.0, 10.0, 10.0]
 
         # Setup the C module.
-        setup(num_params=2, num_times=len(relax_times), values=I, sd=errors, relax_times=relax_times, scaling_matrix=self.scaling_list)
+        self.model = Relax_fit(model='exp', num_params=2, num_times=len(relax_times), values=I, sd=errors, relax_times=relax_times, scaling_matrix=self.scaling_list)
 
 
     def test_func_exp(self):
         """Unit test for the value returned by the func_exp() function at the minimum."""
 
         # Get the chi-squared value.
-        val = func_exp(self.params)
+        val = self.model.func_exp(self.params)
 
         # Assert that the value must be 0.0.
         self.assertAlmostEqual(val, 0.0)
@@ -87,7 +87,7 @@ class Test_relax_fit(TestCase):
         """Unit test for the gradient returned by the dfunc_exp() function at the minimum."""
 
         # Get the chi-squared gradient.
-        grad = dfunc_exp(self.params)
+        grad = self.model.dfunc_exp(self.params)
 
         # Printout.
         print("The gradient at the minimum is:\n%s" % grad)
@@ -106,10 +106,10 @@ class Test_relax_fit(TestCase):
         # The off-minimum parameter values.
         I0 = 500.0
         R = 2.0
-        params = [R/self.scaling_list[0], I0/self.scaling_list[1]]
+        params = array([R/self.scaling_list[0], I0/self.scaling_list[1]], float64)
 
         # Get the chi-squared gradient.
-        grad = dfunc_exp(params)
+        grad = self.model.dfunc_exp(params)
 
         # Printout.
         print("The gradient at %s is:\n    %s" % (params, grad))
@@ -126,7 +126,7 @@ class Test_relax_fit(TestCase):
         """
 
         # Get the chi-squared Hessian.
-        hess = d2func_exp(self.params)
+        hess = self.model.d2func_exp(self.params)
 
         # Printout.
         print("The Hessian at the minimum is:\n%s" % hess)
@@ -147,10 +147,10 @@ class Test_relax_fit(TestCase):
         # The off-minimum parameter values.
         I0 = 500.0
         R = 2.0
-        params = [R/self.scaling_list[0], I0/self.scaling_list[1]]
+        params = array([R/self.scaling_list[0], I0/self.scaling_list[1]], float64)
 
         # Get the chi-squared Hessian.
-        hess = d2func_exp(params)
+        hess = self.model.d2func_exp(params)
 
         # Printout.
         print("The Hessian at %s is:\n%s" % (params, hess))
@@ -169,7 +169,7 @@ class Test_relax_fit(TestCase):
         """
 
         # Get the exponential curve Jacobian.
-        matrix = jacobian_exp(self.params)
+        matrix = self.model.jacobian_exp(self.params)
 
         # The real Jacobian.
         real = [[  0.00000000e+00,   1.00000000e+00],
@@ -199,7 +199,7 @@ class Test_relax_fit(TestCase):
         """
 
         # Get the exponential curve Jacobian.
-        matrix = jacobian_chi2_exp(self.params)
+        matrix = self.model.jacobian_chi2_exp(self.params)
 
         # The real Jacobian.
         real = [[  0.00000000e+00,   0.00000000e+00],
@@ -231,10 +231,10 @@ class Test_relax_fit(TestCase):
         # The off-minimum parameter values.
         I0 = 500.0
         R = 2.0
-        params = [R/self.scaling_list[0], I0/self.scaling_list[1]]
+        params = array([R/self.scaling_list[0], I0/self.scaling_list[1]], float64)
 
         # Get the exponential curve Jacobian.
-        matrix = jacobian_chi2_exp(params)
+        matrix = self.model.jacobian_chi2_exp(params)
 
         # The real Jacobian.
         real = [[  0.00000000e+00,  -1.00000000e+01],
@@ -266,10 +266,10 @@ class Test_relax_fit(TestCase):
         # The off-minimum parameter values.
         I0 = 500.0
         R = 2.0
-        params = [R/self.scaling_list[0], I0/self.scaling_list[1]]
+        params = array([R/self.scaling_list[0], I0/self.scaling_list[1]], float64)
 
         # Get the exponential curve Jacobian.
-        matrix = jacobian_exp(params)
+        matrix = self.model.jacobian_exp(params)
 
         # The real Jacobian.
         real = [[  0.00000000e+00,   1.00000000e+00],
