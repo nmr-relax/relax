@@ -3493,7 +3493,7 @@ class Frame_order(SystemTestCase):
         print("Maximum phi for X and Y: %s" % max_phi)
 
 
-    def test_simulate_pseudo_ellipse_xy_plane_tilt(self):
+    def test_simulate_pseudo_ellipse_xz_plane_tilt(self):
         """Check the frame_order.simulate user function PDB file for the pseudo-ellipse model along the z-axis."""
 
         # Init.
