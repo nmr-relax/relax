@@ -119,13 +119,13 @@ def determine_compression(file_path):
 def extract_data(file=None, dir=None, file_data=None, sep=None):
     """Return all data in the file as a list of lines where each line is a list of line elements.
 
-    @param file:            The file to extract the data from.
+    @keyword file:          The file to extract the data from.
     @type file:             str or file object
-    @param dir:             The path where the file is located.  If None and the file argument is a string, then the current directory is assumed.
+    @keyword dir:           The path where the file is located.  If None and the file argument is a string, then the current directory is assumed.
     @type dir:              str or None
-    @param file_data:       If the file data has already been extracted from the file, it can be passed into this function using this argument.  If data is supplied here, then the file_name and dir args are ignored.
+    @keyword file_data:     If the file data has already been extracted from the file, it can be passed into this function using this argument.  If data is supplied here, then the file_name and dir args are ignored.
     @type file_data:        list of str
-    @param sep:             The character separating the columns in the file data.  If None, then whitespace is assumed.
+    @keyword sep:           The character separating the columns in the file data.  If None, then whitespace is assumed.
     @type sep:              str
     @return:                The file data.
     @rtype:                 list of lists of str
@@ -178,9 +178,9 @@ def file_root(file_path):
 def get_file_path(file_name=None, dir=None):
     """Generate and expand the full file path.
 
-    @param file_name:   The name of the file to extract the data from.
+    @keyword file_name: The name of the file to extract the data from.
     @type file_name:    str
-    @param dir:         The path where the file is located.  If None, then the current directory is assumed.
+    @keyword dir:       The path where the file is located.  If None, then the current directory is assumed.
     @type dir:          str
     @return:            The full file path.
     @rtype:             str
@@ -204,7 +204,7 @@ def get_file_path(file_name=None, dir=None):
 def io_streams_restore(verbosity=1):
     """Restore all IO streams to the Python defaults.
 
-    @param verbosity:   The verbosity level.
+    @keyword verbosity: The verbosity level.
     @type verbosity:    int
     """
 
@@ -223,11 +223,11 @@ def io_streams_restore(verbosity=1):
 def io_streams_log(file_name=None, dir=None, verbosity=1):
     """Turn on logging, sending both STDOUT and STDERR streams to a file.
 
-    @param file_name:   The name of the file.
+    @keyword file_name: The name of the file.
     @type file_name:    str
-    @param dir:         The path where the file is located.  If None, then the current directory is assumed.
+    @keyword dir:       The path where the file is located.  If None, then the current directory is assumed.
     @type dir:          str
-    @param verbosity:   The verbosity level.
+    @keyword verbosity: The verbosity level.
     @type verbosity:    int
     """
 
@@ -258,13 +258,13 @@ def io_streams_log(file_name=None, dir=None, verbosity=1):
 def io_streams_tee(file_name=None, dir=None, compress_type=0, verbosity=1):
     """Turn on teeing to split both STDOUT and STDERR streams and sending second part to a file.
 
-    @param file_name:       The name of the file.
+    @keyword file_name:     The name of the file.
     @type file_name:        str
-    @param dir:             The path where the file is located.  If None, then the current directory is assumed.
+    @keyword dir:           The path where the file is located.  If None, then the current directory is assumed.
     @type dir:              str
-    @param compress_type:   The compression type.  The integer values correspond to the compression type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @keyword compress_type: The compression type.  The integer values correspond to the compression type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
     @type compress_type:    int
-    @param verbosity:       The verbosity level.
+    @keyword verbosity:     The verbosity level.
     @type verbosity:        int
     """
 
@@ -295,9 +295,9 @@ def io_streams_tee(file_name=None, dir=None, compress_type=0, verbosity=1):
 def mkdir_nofail(dir=None, verbosity=1):
     """Create the given directory, or exit without raising an error if the directory exists.
 
-    @param dir:         The directory to create.
+    @keyword dir:       The directory to create.
     @type dir:          str
-    @param verbosity:   The verbosity level.
+    @keyword verbosity: The verbosity level.
     @type verbosity:    int
     """
 
@@ -319,11 +319,11 @@ def mkdir_nofail(dir=None, verbosity=1):
 def open_read_file(file_name=None, dir=None, verbosity=1):
     """Open the file 'file' and return all the data.
 
-    @param file_name:   The name of the file to extract the data from.
+    @keyword file_name: The name of the file to extract the data from.
     @type file_name:    str
-    @param dir:         The path where the file is located.  If None, then the current directory is assumed.
+    @keyword dir:       The path where the file is located.  If None, then the current directory is assumed.
     @type dir:          str
-    @param verbosity:   The verbosity level.
+    @keyword verbosity: The verbosity level.
     @type verbosity:    int
     @return:            The open file object.
     @rtype:             file object
@@ -374,17 +374,17 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
 def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verbosity=1, return_path=False):
     """Function for opening a file for writing and creating directories if necessary.
 
-    @param file_name:       The name of the file to extract the data from.
+    @keyword file_name:     The name of the file to extract the data from.
     @type file_name:        str
-    @param dir:             The path where the file is located.  If None, then the current directory is assumed.
+    @keyword dir:           The path where the file is located.  If None, then the current directory is assumed.
     @type dir:              str
-    @param force:           Boolean argument which if True causes the file to be overwritten if it already exists.
+    @keyword force:         Boolean argument which if True causes the file to be overwritten if it already exists.
     @type force:            bool
-    @param compress_type:   The compression type.  The integer values correspond to the compression type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.  If no compression is given but the file name ends in '.gz' or '.bz2', then the compression will be automatically set.
+    @keyword compress_type: The compression type.  The integer values correspond to the compression type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.  If no compression is given but the file name ends in '.gz' or '.bz2', then the compression will be automatically set.
     @type compress_type:    int
-    @param verbosity:       The verbosity level.
+    @keyword verbosity:     The verbosity level.
     @type verbosity:        int
-    @param return_path:     If True, the function will return a tuple of the file object and the full file path.
+    @keyword return_path:   If True, the function will return a tuple of the file object and the full file path.
     @type return_path:      bool
     @return:                The open, writable file object and, if the return_path is True, then the full file path is returned as well.
     @rtype:                 writable file object (if return_path, then a tuple of the writable file and the full file path)
