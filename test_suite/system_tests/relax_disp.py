@@ -23,7 +23,7 @@
 
 # Python module imports.
 from os import F_OK, access, getcwd, path, sep
-from numpy import array, asarray, exp, median, inf, log, save, std, sum, zeros
+from numpy import array, asarray, exp, float64, median, inf, log, save, std, sum, zeros
 from minfx.generic import generic_minimise
 from random import gauss
 import re, math
