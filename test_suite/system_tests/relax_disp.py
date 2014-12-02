@@ -3722,26 +3722,6 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(cdp.clustering['cluster'], [':1@N', ':3@N'])
 
 
-    def test_finite_value(self):
-        """Test return from C code, when parameters are wrong.  This can happen, if minfx takes a wrong step."""
-
-        times = array([ 0.7,  1.,  0.8,  0.4,  0.9])
-        I = array([ 476.76174875,  372.43328777,  454.20339981,  656.87936253,  419.16726341])
-        errors = array([  9.48032653,  11.34093541,   9.35149017,  10.84867928,  12.17590736])
-
-        scaling_list = [1.0, 1.0]
-        model = Relax_fit(model='exp', num_params=2, num_times=len(times), values=I, sd=errors, relax_times=times, scaling_matrix=scaling_list)
-
-        R = - 500.
-        I0 = 1000.
-        params = array([R, I0])
-
-        chi2 = model.func(params)
-
-        print("The chi2 value returned from C-code for R=%3.2f and I0=%3.2f, then chi2=%3.2f"%(R, I0, chi2))
-        self.assertNotEqual(chi2, inf)
-
-
     def test_hansen_catia_input(self):
         """Conversion of Dr. Flemming Hansen's CPMG R2eff values into input files for CATIA.
 
@@ -4946,6 +4926,26 @@ class Relax_disp(SystemTestCase):
             print("%s\"%s\\n\"," % (" "*12, lines[i][:-1]))
         for i in range(len(spin2)):
             self.assertEqual(spin2[i], lines[i])
+
+
+    def test_infinite_value(self):
+        """Test return from C code, when parameters are wrong.  This can happen, if minfx takes a wrong step."""
+
+        times = array([ 0.7,  1.,  0.8,  0.4,  0.9])
+        I = array([ 476.76174875,  372.43328777,  454.20339981,  656.87936253,  419.16726341])
+        errors = array([  9.48032653,  11.34093541,   9.35149017,  10.84867928,  12.17590736])
+
+        scaling_list = [1.0, 1.0]
+        model = Relax_fit(model='exp', num_params=2, num_times=len(times), values=I, sd=errors, relax_times=times, scaling_matrix=scaling_list)
+
+        R = - 500.
+        I0 = 1000.
+        params = array([R, I0])
+
+        chi2 = model.func(params)
+
+        print("The chi2 value returned from C-code for R=%3.2f and I0=%3.2f, then chi2=%3.2f"%(R, I0, chi2))
+        self.assertEqual(chi2, inf)
 
 
     def test_korzhnev_2005_15n_dq_data(self):
