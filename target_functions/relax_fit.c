@@ -884,6 +884,79 @@ Relax_fit_dealloc(Relax_fit *self)
 }
 
 
+/* The Relax_fit.__getattr__() instance method for obtaining instance attributes. */
+static PyObject *
+Relax_fit_getattro(Relax_fit *self, PyObject *object)
+{
+    PyObject *objname_bytes, *result = NULL;
+    char *objname;
+
+    /* The object name. */
+    #if PY_MAJOR_VERSION >= 3
+        objname_bytes = PyUnicode_AsEncodedString(object, "utf-8", "strict");
+        objname = PyBytes_AsString(objname_bytes);
+    #else
+        objname = PyString_AsString(object);
+    #endif
+
+    /* Target function aliasing. */
+    if (strcmp(objname, "func") == 0) {
+        if (strcmp(model_str, model_list[0]) == 0)
+            result = PyObject_GetAttrString((PyObject *)self, "func_exp");
+        else if (strcmp(model_str, model_list[1]) == 0)
+            result = PyObject_GetAttrString((PyObject *)self, "func_inv");
+        else if (strcmp(model_str, model_list[2]) == 0)
+            result = PyObject_GetAttrString((PyObject *)self, "func_sat");
+    }
+
+    /* Target function gradient aliasing. */
+    else if (strcmp(objname, "dfunc") == 0) {
+        if (strcmp(model_str, model_list[0]) == 0)
+            result = PyObject_GetAttrString((PyObject *)self, "dfunc_exp");
+        else if (strcmp(model_str, model_list[1]) == 0)
+            result = PyObject_GetAttrString((PyObject *)self, "dfunc_inv");
+        else if (strcmp(model_str, model_list[2]) == 0)
+            result = PyObject_GetAttrString((PyObject *)self, "dfunc_sat");
+    }
+
+    /* Target function Hessian aliasing. */
+    else if (strcmp(objname, "d2func") == 0) {
+        if (strcmp(model_str, model_list[0]) == 0)
+            result = PyObject_GetAttrString((PyObject *)self, "d2func_exp");
+        else if (strcmp(model_str, model_list[1]) == 0)
+            result = PyObject_GetAttrString((PyObject *)self, "d2func_inv");
+        else if (strcmp(model_str, model_list[2]) == 0)
+            result = PyObject_GetAttrString((PyObject *)self, "d2func_sat");
+    }
+
+    /* Jacobian aliasing. */
+    else if (strcmp(objname, "jacobian") == 0) {
+        if (strcmp(model_str, model_list[0]) == 0)
+            result = PyObject_GetAttrString((PyObject *)self, "jacobian_exp");
+        else if (strcmp(model_str, model_list[1]) == 0)
+            result = PyObject_GetAttrString((PyObject *)self, "jacobian_inv");
+        else if (strcmp(model_str, model_list[2]) == 0)
+            result = PyObject_GetAttrString((PyObject *)self, "jacobian_sat");
+    }
+
+    /* Chi-squared Jacobian aliasing. */
+    else if (strcmp(objname, "jacobian_chi2") == 0) {
+        if (strcmp(model_str, model_list[0]) == 0)
+            result = PyObject_GetAttrString((PyObject *)self, "jacobian_chi2_exp");
+        else if (strcmp(model_str, model_list[1]) == 0)
+            result = PyObject_GetAttrString((PyObject *)self, "jacobian_chi2_inv");
+        else if (strcmp(model_str, model_list[2]) == 0)
+            result = PyObject_GetAttrString((PyObject *)self, "jacobian_chi2_sat");
+    }
+
+    /* Normal attribute handling (nothing else to return). */
+    else
+        result = PyObject_GenericGetAttr((PyObject *)self, object);
+
+    return result;
+}
+
+
 /* The Relax_fit.__new__() method definition for creating the class. */
 static PyObject *
 Relax_fit_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
@@ -984,37 +1057,6 @@ Relax_fit_init(Relax_fit *self, PyObject *args, PyObject *keywords)
     self->jacobian = (PyArrayObject *) PyArray_FromDims(2, dims_jacobian, NPY_DOUBLE);
     self->jacobian_chi2 = (PyArrayObject *) PyArray_FromDims(2, dims_jacobian, NPY_DOUBLE);
 
-    /* Target function aliasing. */
-    if (strcmp(model_str, model_list[0]) == 0) {
-        Relax_fit_methods[0] = Relax_fit_methods[0+1];    /* func() */
-        Relax_fit_methods[4] = Relax_fit_methods[4+1];    /* dfunc() */
-        Relax_fit_methods[8] = Relax_fit_methods[8+1];    /* d2func() */
-    }
-    else if (strcmp(model_str, model_list[1]) == 0) {
-        Relax_fit_methods[0] = Relax_fit_methods[0+2];    /* func() */
-        Relax_fit_methods[4] = Relax_fit_methods[4+2];    /* dfunc() */
-        Relax_fit_methods[8] = Relax_fit_methods[8+2];    /* d2func() */
-    }
-    else if (strcmp(model_str, model_list[2]) == 0) {
-        Relax_fit_methods[0] = Relax_fit_methods[0+3];    /* func() */
-        Relax_fit_methods[4] = Relax_fit_methods[4+3];    /* dfunc() */
-        Relax_fit_methods[8] = Relax_fit_methods[8+3];    /* d2func() */
-    }
-
-    /* Jacobian function aliasing. */
-    if (strcmp(model_str, model_list[0]) == 0) {
-        Relax_fit_methods[12] = Relax_fit_methods[12+1];    /* jacobian() */
-        Relax_fit_methods[16] = Relax_fit_methods[16+1];    /* jacobian_chi2() */
-    }
-    else if (strcmp(model_str, model_list[1]) == 0) {
-        Relax_fit_methods[12] = Relax_fit_methods[12+2];    /* jacobian() */
-        Relax_fit_methods[16] = Relax_fit_methods[16+2];    /* jacobian_chi2() */
-    }
-    else if (strcmp(model_str, model_list[2]) == 0) {
-        Relax_fit_methods[12] = Relax_fit_methods[12+3];    /* jacobian() */
-        Relax_fit_methods[16] = Relax_fit_methods[16+3];    /* jacobian_chi2() */
-    }
-
     return 0;
 }
 
@@ -1042,7 +1084,7 @@ static PyTypeObject Relax_fit_type = {
     0,                                      /*tp_hash */
     0,                                      /*tp_call*/
     0,                                      /*tp_str*/
-    0,                                      /*tp_getattro*/
+    (getattrofunc)Relax_fit_getattro,       /*tp_getattro*/
     0,                                      /*tp_setattro*/
     0,                                      /*tp_as_buffer*/
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,    /*tp_flags*/
