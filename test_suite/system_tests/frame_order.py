@@ -3298,6 +3298,78 @@ class Frame_order(SystemTestCase):
         print("Maximum phi for X and Y: %s" % max_phi)
 
 
+    def test_simulate_iso_cone_xz_plane_tilt(self):
+        """Check the frame_order.simulate user function PDB file for the isotropic cone model with a xz-plane tilt."""
+
+        # Init.
+        cone_theta = 0.5
+        cone_sigma_max = 0.3
+        pivot = array([1, 0, -2], float64)
+        l = 24.0
+        sim_num = 500
+
+        # The axis parameters, and printout.
+        axis_theta = -pi/4.0
+        axis = create_rotor_axis_spherical(axis_theta, 0.0)
+        print("Rotor axis:  %s" % axis)
+        R = zeros((3, 3), float64)
+        axis_angle_to_R([0, 1, 0], axis_theta, R)
+
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='iso cone', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=axis_theta, ave_pos_gamma=0.0, axis_theta=axis_theta, axis_phi=0.0, cone_theta=cone_theta, cone_sigma_max=cone_sigma_max)
+
+        # Create the PDB.
+        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+
+        # Delete all structural data.
+        self.interpreter.structure.delete()
+
+        # Read the contents of the file.
+        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+
+        # Check the atomic coordinates.
+        selection = cdp.structure.selection()
+        epsilon = 1e-3
+        max_phi = 0.0
+        lateral_slide = 0.07
+        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+            # Loop over all positions.
+            for i in range(sim_num):
+                # Shift the position back to the origin, and decompose into spherical coordinates.
+                new_pos = pos[i] - pivot
+                r, theta, phi = cartesian_to_spherical(dot(transpose(R), new_pos))
+
+                # Printout.
+                print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
+
+                # The vector length.
+                self.assertAlmostEqual(r/100.0, 1.0, 4)
+
+                # Check the X vector.
+                if res_name == 'X':
+                    if abs(phi) > max_phi:
+                        max_phi = abs(phi)
+                    print pi/2.0 - cone_theta - epsilon
+                    self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
+                    self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
+                    self.assert_(phi >= -cone_sigma_max - lateral_slide)
+                    self.assert_(phi <= cone_sigma_max + lateral_slide)
+
+                # Check the Y vector.
+                elif res_name == 'Y':
+                    self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
+                    self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
+                    self.assert_(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
+                    self.assert_(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
+
+                # Check the Z vector (should be in the cone defined by theta).
+                elif res_name == 'Z':
+                    self.assert_(theta <= cone_theta + epsilon)
+
+        # Print out the maximum phi value.
+        print("Maximum phi for X and Y: %s" % max_phi)
+
+
     def test_simulate_iso_cone_free_rotor_z_axis(self):
         """Check the frame_order.simulate user function PDB file for the free rotor isotropic cone model along the z-axis."""
 
