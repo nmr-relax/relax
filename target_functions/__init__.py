@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -34,6 +34,5 @@ __all__ = [
     'n_state_model',
     'potential',
     'relax_disp',
-    'relax_fit',
-    'relax_fit_wrapper'
+    'relax_fit'
 ]
