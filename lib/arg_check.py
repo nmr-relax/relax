@@ -150,7 +150,7 @@ def is_float_array(arg, name=None, size=None, can_be_none=False, raise_error=Tru
     return True
 
 
-def is_float_matrix(arg, name=None, dim=(3, 3), can_be_none=False, none_elements=False, raise_error=True):
+def is_float_matrix(arg, name=None, dim=None, can_be_none=False, none_elements=False, raise_error=True):
     """Test if the argument is a matrix of floats.
 
     @param arg:                         The argument.
