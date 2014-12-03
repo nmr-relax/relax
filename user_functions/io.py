@@ -49,7 +49,7 @@ uf_class.gui_icon = "relax.relax"
 # The io.file_list user function.
 uf = uf_info.add_uf('io.file_list')
 uf.title = "Store a file list matching a file pattern in a directory."
-uf.title_short = "Chemical shift reading."
+uf.title_short = "IO file list."
 uf.add_keyarg(
     name = "glob",
     py_type = "str",
