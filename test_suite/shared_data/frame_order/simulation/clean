@@ -1,0 +1,3 @@
+#! /bin/sh
+
+rm -f *.pdb *.pdb.gz *.pdb.bz2
