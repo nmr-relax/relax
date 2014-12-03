@@ -35,7 +35,7 @@ from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import spin_loop
 from pipe_control.pipes import check_pipe
-from specific_analyses.frame_order.checks import check_pivot
+from specific_analyses.frame_order.checks import check_model, check_pivot
 
 
 def base_data_types():
@@ -117,14 +117,13 @@ def generate_pivot(order=1, sim_index=None, pipe_name=None, pdb_limit=False):
     """
 
     # Checks.
+    check_pipe(pipe_name)
     check_pivot(pipe_name=pipe_name)
+    check_model(pipe_name=pipe_name)
 
     # The data pipe.
     if pipe_name == None:
         pipe_name = pipes.cdp_name()
-
-    # Test the data pipe.
-    check_pipe(pipe_name)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe_name)
