@@ -92,7 +92,17 @@ class Nmrglue(SystemTestCase):
 
         # Get the file list matching a glob pattern.
         ft2_glob_pat = '128_*_FT.ft2'
-        basename_list, file_root_list = get_file_list(glob_pattern=ft2_glob_pat, dir=ft2_folder_1)
+        self.interpreter.io.file_list(glob=ft2_glob_pat, dir=ft2_folder_1, id=None)
+
+        # Test the list of stored id.
+        self.assertEqual(cdp.io_ids[-1], ft2_glob_pat)
+
+        self.assertEqual(cdp.io_basename[ft2_glob_pat], ['128_0_FT.ft2', '128_1_FT.ft2'])
+        self.assertEqual(cdp.io_file_root[ft2_glob_pat], ['128_0_FT', '128_1_FT'])
+        self.assertEqual(cdp.io_dir[ft2_glob_pat], ft2_folder_1)
+
+        # Extract from cdp.
+        basename_list, file_root_list = cdp.io_basename[ft2_glob_pat], cdp.io_file_root[ft2_glob_pat]
 
         # First test that expected RelaxErrors are raised.
         self.assertRaises(RelaxError, self.interpreter.spectrum.nmrglue_read, file=basename_list, dir=ft2_folder_1, spectrum_id='test')
