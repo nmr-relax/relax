@@ -345,7 +345,7 @@ uf.desc[-1].add_item_list_element(repr(MODEL_ISO_CONE_FREE_ROTOR), "The isotropi
 uf.desc[-1].add_item_list_element(repr(MODEL_ROTOR), "The only motion is a rotation about the cone axis restricted by the torsion angle cone_sigma_max.")
 uf.desc[-1].add_item_list_element(repr(MODEL_RIGID), "No domain motions.")
 uf.desc[-1].add_item_list_element(repr(MODEL_FREE_ROTOR), "The only motion is free rotation about the cone axis.")
-uf.desc[-1].add_item_list_element(repr(MODEL_DOUBLE_ROTOR), "Restricted motions about two independent rotor axes.")
+uf.desc[-1].add_item_list_element(repr(MODEL_DOUBLE_ROTOR), "Restricted motions about two independent but orthogonal rotor axes.  The first rotation is about the y-axis and the second is about the x-axis.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To select the isotropic cone model, type:")
