@@ -48,6 +48,25 @@ def add_io_data(object_name=None, io_id=None, io_data=None):
     obj_dict[io_id] = io_data
 
 
+def add_io_id(io_id=None):
+    """Add the io ID to the data store.
+
+    @keyword io_id:   The io ID string.
+    @type io_id:      str
+    """
+
+    # Initialise the structure, if needed.
+    if not hasattr(cdp, 'io_ids'):
+        cdp.io_ids = []
+
+    # The ID already exists.
+    if io_id in cdp.io_ids:
+        return
+
+    # Add the ID.
+    cdp.io_ids.append(io_id)
+
+
 def file_list(glob=None, dir=None, id=None):
     """Store in cdp.io_basename and cdp.io_file_root, a list of file basenames and a list of fileroot matching the pathname pattern.  It is stored in a dictionary with key 'id'.
     If 'id' is set to None, it is stored with the key set to the glob pattern.
@@ -66,6 +85,9 @@ def file_list(glob=None, dir=None, id=None):
     # Store the results.
     if id == None:
         id = glob
+
+    # Add the io_id to the data store.
+    add_io_id(io_id=id)
 
     # Store in cdp.
     add_io_data(object_name='io_basename', io_id=id, io_data=basename_list)
