@@ -50,6 +50,7 @@ __all__ += [
     'frame_order',
     'grace',
     'interatom',
+    'io',
     'j_coupling',
     'jw_mapping',
     'minimisation',
@@ -108,6 +109,7 @@ def initialise():
     import user_functions.frame_order
     import user_functions.grace
     import user_functions.interatom
+    import user_functions.io
     import user_functions.j_coupling
     import user_functions.jw_mapping
     import user_functions.minimisation
