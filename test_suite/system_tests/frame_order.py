@@ -389,7 +389,7 @@ class Frame_order(SystemTestCase):
         # Create a data pipe.
         self.interpreter.pipe.create(pipe_name='PDB model', pipe_type='frame order')
 
-        # Create a 6 atom structure with the CoM at [0, 0, 0].
+        # Create a 8 atom structure with the CoM at [0, 0, 0].
         atom_pos = 100.0 * eye(3)
         self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='X', res_num=1, pos=atom_pos[0], element='N')
         self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='Y', res_num=2, pos=atom_pos[1], element='N')
@@ -397,6 +397,8 @@ class Frame_order(SystemTestCase):
         self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='nX', res_num=4, pos=-atom_pos[0], element='N')
         self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='nY', res_num=5, pos=-atom_pos[1], element='N')
         self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='nZ', res_num=6, pos=-atom_pos[2], element='N')
+        self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='C', res_num=7, pos=[0.0, 0.0, 0.0], element='N')
+        self.interpreter.structure.add_atom(mol_name='axes', atom_name='Ti', res_name='O', res_num=8, pos=[0.0, 0.0, 0.0], element='Ti')
 
         # Set up the domains.
         self.interpreter.domain(id='moving', spin_id=':1-7')
@@ -3214,8 +3216,11 @@ class Frame_order(SystemTestCase):
                 # Printout.
                 print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
-                # The vector length.
-                self.assertAlmostEqual(r/100.0, 1.0, 4)
+                # The vector lengths.
+                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                    self.assertAlmostEqual(r/100.0, 1.0, 4)
+                elif res_name == 'C':
+                    self.assertAlmostEqual(r, 0.0, 4)
 
                 # Check the X vector.
                 if res_name == 'X':
@@ -3232,6 +3237,18 @@ class Frame_order(SystemTestCase):
                     self.assertAlmostEqual(new_pos[0], 0.0, 3)
                     self.assertAlmostEqual(new_pos[1], 0.0, 3)
                     self.assertAlmostEqual(new_pos[2], 100.0, 3)
+
+                # Check the centre.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the origin.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(pos[0], 0.0, 3)
+                    self.assertAlmostEqual(pos[1], 0.0, 3)
+                    self.assertAlmostEqual(pos[2], 0.0, 3)
 
 
     def test_simulate_iso_cone_z_axis(self):
@@ -3275,8 +3292,11 @@ class Frame_order(SystemTestCase):
                 # Printout.
                 print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
-                # The vector length.
-                self.assertAlmostEqual(r/100.0, 1.0, 4)
+                # The vector lengths.
+                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                    self.assertAlmostEqual(r/100.0, 1.0, 4)
+                elif res_name == 'C':
+                    self.assertAlmostEqual(r, 0.0, 4)
 
                 # Check the X vector.
                 if res_name == 'X':
@@ -3297,6 +3317,18 @@ class Frame_order(SystemTestCase):
                 # Check the Z vector (should be in the cone defined by theta).
                 elif res_name == 'Z':
                     self.assert_(theta <= cone_theta + epsilon)
+
+                # Check the centre.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the origin.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(pos[0], 0.0, 3)
+                    self.assertAlmostEqual(pos[1], 0.0, 3)
+                    self.assertAlmostEqual(pos[2], 0.0, 3)
 
         # Print out the maximum phi value.
         print("Maximum phi for X and Y: %s" % max_phi)
@@ -3346,8 +3378,11 @@ class Frame_order(SystemTestCase):
                 # Printout.
                 print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
-                # The vector length.
-                self.assertAlmostEqual(r/100.0, 1.0, 4)
+                # The vector lengths.
+                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                    self.assertAlmostEqual(r/100.0, 1.0, 4)
+                elif res_name == 'C':
+                    self.assertAlmostEqual(r, 0.0, 4)
 
                 # Check the X vector.
                 if res_name == 'X':
@@ -3369,6 +3404,18 @@ class Frame_order(SystemTestCase):
                 # Check the Z vector (should be in the cone defined by theta).
                 elif res_name == 'Z':
                     self.assert_(theta <= cone_theta + epsilon)
+
+                # Check the centre.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the origin.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(pos[0], 0.0, 3)
+                    self.assertAlmostEqual(pos[1], 0.0, 3)
+                    self.assertAlmostEqual(pos[2], 0.0, 3)
 
         # Print out the maximum phi value.
         print("Maximum phi for X and Y: %s" % max_phi)
@@ -3412,8 +3459,11 @@ class Frame_order(SystemTestCase):
                 # Printout.
                 print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
-                # The vector length.
-                self.assertAlmostEqual(r/100.0, 1.0, 4)
+                # The vector lengths.
+                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                    self.assertAlmostEqual(r/100.0, 1.0, 4)
+                elif res_name == 'C':
+                    self.assertAlmostEqual(r, 0.0, 4)
 
                 # Check the X vector.
                 if res_name == 'X':
@@ -3428,6 +3478,18 @@ class Frame_order(SystemTestCase):
                 # Check the Z vector (should be in the cone defined by theta).
                 elif res_name == 'Z':
                     self.assert_(theta <= cone_theta + epsilon)
+
+                # Check the centre.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the origin.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(pos[0], 0.0, 3)
+                    self.assertAlmostEqual(pos[1], 0.0, 3)
+                    self.assertAlmostEqual(pos[2], 0.0, 3)
 
 
     def test_simulate_iso_cone_torsionless_z_axis(self):
@@ -3470,8 +3532,11 @@ class Frame_order(SystemTestCase):
                 # Printout.
                 print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
-                # The vector length.
-                self.assertAlmostEqual(r/100.0, 1.0, 4)
+                # The vector lengths.
+                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                    self.assertAlmostEqual(r/100.0, 1.0, 4)
+                elif res_name == 'C':
+                    self.assertAlmostEqual(r, 0.0, 4)
 
                 # Check the X vector.
                 if res_name == 'X':
@@ -3492,6 +3557,18 @@ class Frame_order(SystemTestCase):
                 # Check the Z vector (should be in the cone defined by theta).
                 elif res_name == 'Z':
                     self.assert_(theta <= cone_theta + epsilon)
+
+                # Check the centre.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the origin.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(pos[0], 0.0, 3)
+                    self.assertAlmostEqual(pos[1], 0.0, 3)
+                    self.assertAlmostEqual(pos[2], 0.0, 3)
 
         # Print out the maximum phi value.
         print("Maximum phi for X and Y: %s" % max_phi)
@@ -3542,8 +3619,11 @@ class Frame_order(SystemTestCase):
                 # Printout.
                 print("Checking residue %s %s, atom %s %s, at shifted position [%8.3f, %8.3f, %8.3f], with spherical coordinates [%8.3f, %8.3f, %8.3f]." % (res_num, res_name, atom_num, atom_name, new_pos[0], new_pos[1], new_pos[2], r, theta, phi))
 
-                # The vector length.
-                self.assertAlmostEqual(r/100.0, 1.0, 4)
+                # The vector lengths.
+                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                    self.assertAlmostEqual(r/100.0, 1.0, 4)
+                elif res_name == 'C':
+                    self.assertAlmostEqual(r, 0.0, 4)
 
                 # Check the X vector.
                 if res_name == 'X':
@@ -3563,6 +3643,18 @@ class Frame_order(SystemTestCase):
                 elif res_name == 'Z':
                     theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
                     self.assert_(theta <= theta_max + epsilon)
+
+                # Check the centre.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the origin.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(pos[0], 0.0, 3)
+                    self.assertAlmostEqual(pos[1], 0.0, 3)
+                    self.assertAlmostEqual(pos[2], 0.0, 3)
 
         # Print out the maximum phi value.
         print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
@@ -3610,8 +3702,11 @@ class Frame_order(SystemTestCase):
                 # Printout.
                 print("Checking residue %s %s, atom %s %s, at shifted position [%8.3f, %8.3f, %8.3f], with spherical coordinates [%8.3f, %8.3f, %8.3f]." % (res_num, res_name, atom_num, atom_name, new_pos[0], new_pos[1], new_pos[2], r, theta, phi))
 
-                # The vector length.
-                self.assertAlmostEqual(r/100.0, 1.0, 4)
+                # The vector lengths.
+                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                    self.assertAlmostEqual(r/100.0, 1.0, 4)
+                elif res_name == 'C':
+                    self.assertAlmostEqual(r, 0.0, 4)
 
                 # Check the X vector.
                 if res_name == 'X':
@@ -3631,6 +3726,18 @@ class Frame_order(SystemTestCase):
                 elif res_name == 'Z':
                     theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
                     self.assert_(theta <= theta_max + epsilon)
+
+                # Check the centre.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the origin.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(pos[0], 0.0, 3)
+                    self.assertAlmostEqual(pos[1], 0.0, 3)
+                    self.assertAlmostEqual(pos[2], 0.0, 3)
 
         # Print out the maximum phi value.
         print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
@@ -3675,8 +3782,11 @@ class Frame_order(SystemTestCase):
                 # Printout.
                 print("Checking residue %s %s, atom %s %s, at shifted position [%8.3f, %8.3f, %8.3f], with spherical coordinates [%8.3f, %8.3f, %8.3f]." % (res_num, res_name, atom_num, atom_name, new_pos[0], new_pos[1], new_pos[2], r, theta, phi))
 
-                # The vector length.
-                self.assertAlmostEqual(r/100.0, 1.0, 4)
+                # The vector lengths.
+                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                    self.assertAlmostEqual(r/100.0, 1.0, 4)
+                elif res_name == 'C':
+                    self.assertAlmostEqual(r, 0.0, 4)
 
                 # Check the X and Y vectors.
                 if res_name in ['X', 'Y']:
@@ -3687,6 +3797,18 @@ class Frame_order(SystemTestCase):
                 elif res_name == 'Z':
                     theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
                     self.assert_(theta <= theta_max + epsilon)
+
+                # Check the centre.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the origin.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(pos[0], 0.0, 3)
+                    self.assertAlmostEqual(pos[1], 0.0, 3)
+                    self.assertAlmostEqual(pos[2], 0.0, 3)
 
         # Print out the maximum phi value.
         print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
@@ -3733,8 +3855,11 @@ class Frame_order(SystemTestCase):
                 # Printout.
                 print("Checking residue %s %s, atom %s %s, at shifted position [%8.3f, %8.3f, %8.3f], with spherical coordinates [%8.3f, %8.3f, %8.3f]." % (res_num, res_name, atom_num, atom_name, new_pos[0], new_pos[1], new_pos[2], r, theta, phi))
 
-                # The vector length.
-                self.assertAlmostEqual(r/100.0, 1.0, 4)
+                # The vector lengths.
+                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                    self.assertAlmostEqual(r/100.0, 1.0, 4)
+                elif res_name == 'C':
+                    self.assertAlmostEqual(r, 0.0, 4)
 
                 # Check the X vector.
                 if res_name == 'X':
@@ -3754,6 +3879,18 @@ class Frame_order(SystemTestCase):
                 elif res_name == 'Z':
                     theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
                     self.assert_(theta <= theta_max + epsilon)
+
+                # Check the centre.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the origin.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(pos[0], 0.0, 3)
+                    self.assertAlmostEqual(pos[1], 0.0, 3)
+                    self.assertAlmostEqual(pos[2], 0.0, 3)
 
         # Print out the maximum phi value.
         print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
@@ -3798,8 +3935,11 @@ class Frame_order(SystemTestCase):
                 # Printout.
                 print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
 
-                # The vector length.
-                self.assertAlmostEqual(r/100.0, 1.0, 4)
+                # The vector lengths.
+                if res_name in ['X', 'Y', 'Z', 'Xn', 'Yn', 'Zn']:
+                    self.assertAlmostEqual(r/100.0, 1.0, 4)
+                elif res_name == 'C':
+                    self.assertAlmostEqual(r, 0.0, 4)
 
                 # Check the X vector.
                 if res_name == 'X':
@@ -3820,6 +3960,18 @@ class Frame_order(SystemTestCase):
                     self.assertAlmostEqual(new_pos[0], 0.0, 3)
                     self.assertAlmostEqual(new_pos[1], 0.0, 3)
                     self.assertAlmostEqual(new_pos[2], 100.0, 3)
+
+                # Check the centre.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the origin.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(pos[0], 0.0, 3)
+                    self.assertAlmostEqual(pos[1], 0.0, 3)
+                    self.assertAlmostEqual(pos[2], 0.0, 3)
 
 
     def test_sobol_setup(self):
