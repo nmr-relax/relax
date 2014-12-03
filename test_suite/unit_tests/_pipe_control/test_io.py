@@ -71,6 +71,9 @@ class Test_io(UnitTestCase):
         ft2_glob_pat = '128_*_FT.ft2'
         io.file_list(glob=ft2_glob_pat, dir=ft2_folder_1, id=None)
 
+        # Test the list of stored id.
+        self.assertEqual(cdp.io_ids[-1], ft2_glob_pat)
+
         self.assertEqual(cdp.io_basename[ft2_glob_pat], ['128_0_FT.ft2', '128_1_FT.ft2'])
         self.assertEqual(cdp.io_file_root[ft2_glob_pat], ['128_0_FT', '128_1_FT'])
         self.assertEqual(cdp.io_dir[ft2_glob_pat], ft2_folder_1)
