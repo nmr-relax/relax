@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The chemical_shift user function definitions."""
+"""The io user function definitions."""
 
 # Python module imports.
 import dep_check
@@ -32,112 +33,53 @@ from os import sep
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
-from pipe_control import chemical_shift
+from pipe_control import io
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 from user_functions.wildcards import WILDCARD_SPECTRUM_PEAKLIST
 
 
 # The user function class.
-uf_class = uf_info.add_class('chemical_shift')
-uf_class.title = "Class for handling chemical shifts."
-uf_class.menu_text = "&chemical_shift"
-uf_class.gui_icon = "relax.chemical_shift"
+uf_class = uf_info.add_class('io')
+uf_class.title = "Class for handling IO operations."
+uf_class.menu_text = "&io"
+uf_class.gui_icon = "relax.relax"
 
 
-# The chemical_shift.read user function.
-uf = uf_info.add_uf('chemical_shift.read')
-uf.title = "Read chemical shifts from a file."
+# The io.file_list user function.
+uf = uf_info.add_uf('io.file_list')
+uf.title = "Store a file list matching a file pattern in a directory."
 uf.title_short = "Chemical shift reading."
 uf.add_keyarg(
-    name = "file",
+    name = "glob",
     py_type = "str",
-    arg_type = "file sel",
-    desc_short = "file name",
-    desc = "The name of the peak list of generic formatted file containing the chemical shifts.",
-    wiz_filesel_wildcard = WILDCARD_SPECTRUM_PEAKLIST,
-    wiz_filesel_style = FD_OPEN
+    desc_short = "file pattern",
+    desc = "The pattern that may contain simple shell-style wildcards.",
 )
 uf.add_keyarg(
     name = "dir",
     py_type = "str",
-    arg_type = "dir",
+    arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory where the file is located.",
     can_be_none = True
 )
 uf.add_keyarg(
-    name = "spin_id_col",
-    py_type = "int",
-    arg_type = "free format",
-    desc_short = "spin ID string column",
-    desc = "The spin ID string column used by the generic file format (an alternative to the mol, res, and spin name and number columns).",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "mol_name_col",
-    py_type = "int",
-    arg_type = "free format",
-    desc_short = "molecule name column",
-    desc = "The molecule name column used by the generic file format (alternative to the spin ID column).",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "res_num_col",
-    py_type = "int",
-    arg_type = "free format",
-    desc_short = "residue number column",
-    desc = "The residue number column used by the generic file format (alternative to the spin ID column).",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "res_name_col",
-    py_type = "int",
-    arg_type = "free format",
-    desc_short = "residue name column",
-    desc = "The residue name column used by the generic file format (alternative to the spin ID column).",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "spin_num_col",
-    py_type = "int",
-    arg_type = "free format",
-    desc_short = "spin number column",
-    desc = "The spin number column used by the generic file format (alternative to the spin ID column).",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "spin_name_col",
-    py_type = "int",
-    arg_type = "free format",
-    desc_short = "spin name column",
-    desc = "The spin name column used by the generic file format (alternative to the spin ID column).",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "sep",
+    name = "id",
     py_type = "str",
-    arg_type = "free format",
-    desc_short = "column separator",
-    desc = "The column separator used by the generic format (the default is white space).",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "spin_id",
-    py_type = "str",
-    desc_short = "spin ID string",
-    desc = "The spin ID string used to restrict the loading of data to certain spin subsets.",
+    desc_short = "IO ID string",
+    desc = "The IO ID string used to store the filelist under.",
     can_be_none = True
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will read chemical shifts from a peak list or a generic column formatted file.")
+uf.desc[-1].add_paragraph("This will store a list of file basenames and fileroot matching the file pattern.  These are stored in cdp.io_basename and cdp.io_file_root.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("The following commands will read the chemical shifts out of the Sparky peak list '10ms.list':")
-uf.desc[-1].add_prompt("relax> chemical_shift.read('10ms.list')")
-uf.backend = chemical_shift.read
+uf.desc[-1].add_paragraph("The following commands will store a filelist to cdp:")
+uf.desc[-1].add_prompt("relax> io.file_list(glob='128_*_FT.ft2', dir='/path/to/foolder', id='750MHz_128_NI')")
+uf.backend = io.file_list
 uf.menu_text = "&read"
-uf.gui_icon = "oxygen.actions.document-open"
+uf.gui_icon = "oxygen.actions.document-preview"
 uf.wizard_size = (800, 500)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
+uf.wizard_image = WIZARD_IMAGE_PATH + 'document-preview.png'
