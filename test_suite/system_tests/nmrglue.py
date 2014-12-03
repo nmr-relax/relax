@@ -345,6 +345,42 @@ class Nmrglue(SystemTestCase):
         self.setup_plot_hist_cpmg_several(show=False)
 
 
+    def test_save_state(self):
+        """Test saving a state with numpy arrays, reset relax, and read the state again."""
+
+        # Read the spectrum.
+        fname = 'freq_real.ft2'
+        sp_id = 'test'
+        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ds.ng_test, spectrum_id=sp_id)
+
+        # Test that the spectrum id has been stored.
+        self.assertEqual(cdp.spectrum_ids[0], sp_id)
+
+        # Extract the data.
+        dic  = cdp.ngdata[sp_id].dic
+        udic  = cdp.ngdata[sp_id].udic
+        data = cdp.ngdata[sp_id].data
+
+        # Store the directory path, before reset of the controller.
+        dirpath = ds.tmpdir
+
+        cdp.hello = "HELLO WORLD"
+        print(cdp)
+        print(type(cdp.ngdata))
+        print(type(cdp.ngdata[sp_id]))
+
+        # Save the results.
+        self.interpreter.state.save('state', dir=dirpath, compress_type=1, force=True)
+
+        # Reset of the controller.
+        self.interpreter.reset()
+
+        # Load the state again.
+        self.interpreter.state.load(dirpath+sep+'state')
+
+        print(cdp.hello)
+
+
     def test_version(self):
         """Test version of nmrglue."""
 
