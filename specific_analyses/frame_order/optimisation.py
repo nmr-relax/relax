@@ -580,7 +580,7 @@ def minimise_setup_tensors(sim_index=None):
 
     # Checks.
     if not hasattr(cdp, 'ref_domain'):
-        raise RelaxError("The reference domain has not been set up.")
+        raise RelaxError("The reference non-moving domain has not been specified.")
     if not hasattr(cdp.align_tensors, 'reduction'):
         raise RelaxError("The tensor reductions have not been specified.")
     for i, tensor in tensor_loop():
