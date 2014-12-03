@@ -45,6 +45,7 @@ class Nmrglue(SystemTestCase):
     """TestCase class for the functionality of the external module nmrglue.
     This is from U{Task #7873<https://gna.org/task/index.php?7873>}: Write wrapper function to nmrglue, to read .ft2 files and process them."""
 
+
     def plot_plot_contour(self):
         """Plot the plot_contour function in pipe_control.
         This is from the U{tutorial<http://jjhelmus.github.io/nmrglue/current/examples/plot_2d_spectrum.html>}."""
@@ -56,8 +57,8 @@ class Nmrglue(SystemTestCase):
         plt.show()
 
 
-    def plot_plot_contour_cpmg(self, show=False):
-        """Tetst the plot_contour function in pipe_control.
+    def plot_plot_contour_cpmg(self):
+        """Plot the plot_contour function in pipe_control.
         This is from the U{tutorial<http://jjhelmus.github.io/nmrglue/current/examples/plot_2d_spectrum.html>}.
 
         The data is from systemtest -s Relax_disp.test_repeat_cpmg
@@ -69,6 +70,17 @@ class Nmrglue(SystemTestCase):
 
         # Now show
         plt.show()
+
+
+    def plot_plot_hist_cpmg(self):
+        """Test the plot_hist function in pipe_control.
+
+        The data is from systemtest -s Relax_disp.test_repeat_cpmg
+        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
+        """
+
+        # Call setup function.
+        self.setup_plot_hist_cpmg(show=True)
 
 
     def setUp(self):
@@ -129,6 +141,34 @@ class Nmrglue(SystemTestCase):
 
         # Set a new title.
         ax.set_title("CPMG Spectrum")
+
+
+    def setup_plot_hist_cpmg(self, show=False):
+        """Setup the plot_hist function in pipe_control.
+
+        The data is from systemtest -s Relax_disp.test_repeat_cpmg
+        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
+        """
+
+        # Define base path to files.
+        base_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'
+
+        # Define folder to all ft files.
+        ft2_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'ft2_data'
+
+        # Read the spectrum.
+        fname = '128_0_FT.ft2'
+        sp_id = file_root(fname)
+        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ft2_folder_1, spectrum_id=sp_id)
+
+        # Extract the data.
+        dic = cdp.ngdata[sp_id].dic
+        udic = cdp.ngdata[sp_id].udic
+        data = cdp.ngdata[sp_id].data
+
+        # Plot the histogram.
+        kwargs = {'bins': 3000, 'range': None, 'normed': False, 'facecolor':'green', 'alpha':0.75}
+        plot_hist(ndarray=data, hist_kwargs=kwargs, show=show)
 
 
     def test_nmrglue_read(self):
@@ -203,8 +243,8 @@ class Nmrglue(SystemTestCase):
         self.setup_plot_contour(show=False)
 
 
-    def test_plot_contour_cpmg(self, show=False):
-        """Tetst the plot_contour function in pipe_control.
+    def test_plot_contour_cpmg(self):
+        """Test the plot_contour function in pipe_control.
         This is from the U{tutorial<http://jjhelmus.github.io/nmrglue/current/examples/plot_2d_spectrum.html>}.
 
         The data is from systemtest -s Relax_disp.test_repeat_cpmg
@@ -213,6 +253,17 @@ class Nmrglue(SystemTestCase):
 
         # Call setup function.
         self.setup_plot_contour_cpmg(show=False)
+
+
+    def test_plot_hist_cpmg(self):
+        """Test the plot_hist function in pipe_control.
+
+        The data is from systemtest -s Relax_disp.test_repeat_cpmg
+        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
+        """
+
+        # Call setup function.
+        self.setup_plot_hist_cpmg(show=False)
 
 
     def test_version(self):
@@ -224,34 +275,6 @@ class Nmrglue(SystemTestCase):
 
         # Assert the version to be 0.4.
         self.assertEqual(ng_vers, '0.4')
-
-
-    def xtest_plot_hist_cpmg(self):
-        """Test the plot_hist function in pipe_control.
-
-        The data is from systemtest -s Relax_disp.test_repeat_cpmg
-        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
-        """
-
-        # Define base path to files.
-        base_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'
-
-        # Define folder to all ft files.
-        ft2_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'ft2_data'
-
-        # Read the spectrum.
-        fname = '128_0_FT.ft2'
-        sp_id = file_root(fname)
-        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ft2_folder_1, spectrum_id=sp_id)
-
-        # Extract the data.
-        dic = cdp.ngdata[sp_id].dic
-        udic = cdp.ngdata[sp_id].udic
-        data = cdp.ngdata[sp_id].data
-
-        # Plot the histogram.
-        kwargs = {'bins': 3000, 'range': None, 'normed': False, 'facecolor':'green', 'alpha':0.75}
-        plot_hist(ndarray=data, hist_kwargs=kwargs, show=True)
 
 
     def xtest_plot_hist_cpmg_several(self):
