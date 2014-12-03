@@ -3178,6 +3178,211 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.chi2, 0.011377487066752203, 5)
 
 
+    def test_simulate_double_rotor_mode1_z_axis(self):
+        """Check the frame_order.simulate user function PDB file for the double rotor model along the z-axis for the first rotation mode."""
+
+        # Init.
+        cone_sigma_max = pi / 2.0
+        cone_sigma_max_2 = 0.0
+        pivot = array([20, 20, -20], float64)
+        l = 100.0
+        sim_num = 500
+        pivot_disp = 100.0
+
+        # The eigenframe.
+        eigen_beta = 0.0
+        R = zeros((3, 3), float64)
+        euler_to_R_zyz(0.0, eigen_beta, 0.0, R)
+        print("Motional eigenframe:\n%s" % R)
+
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='double rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=eigen_beta, ave_pos_gamma=0.0, pivot_disp=pivot_disp, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_sigma_max=cone_sigma_max, cone_sigma_max_2=cone_sigma_max_2)
+
+        # Create the PDB.
+        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+
+        # Delete all structural data.
+        self.interpreter.structure.delete()
+
+        # Read the contents of the file.
+        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+
+        # X vector maxima.
+        X_theta_min = cartesian_to_spherical([100, 0, 200])[1]
+        X_theta_max = cartesian_to_spherical([-100, 0, 0])[1] + pi
+        print("X vector theta range of [%.5f, %.5f]" % (X_theta_min, X_theta_max))
+
+        # Check the atomic coordinates.
+        selection = cdp.structure.selection()
+        epsilon = 1e-3
+        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+            # Loop over all positions.
+            for i in range(sim_num):
+                # Shift the position back to the origin, and decompose into spherical coordinates.
+                new_pos = pos[i] - pivot
+                r, theta, phi = cartesian_to_spherical(new_pos)
+
+                # Printout.
+                print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
+
+                # Check the X and nX vectors.
+                if res_name in ['X', 'nX']:
+                    self.assert_(theta >= X_theta_min - epsilon)
+                    self.assert_(theta <= X_theta_max + epsilon)
+                    if phi < 0.1:
+                        self.assertAlmostEqual(phi, 0.0, 3)
+                    else:
+                        self.assertAlmostEqual(phi, pi, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+
+                # Check the Y vector.
+                elif res_name == 'Y':
+                    self.assert_(r/100.0 >= 1.0 - epsilon)
+                    self.assert_(theta >= pi/4.0 - epsilon)
+                    self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                    self.assertAlmostEqual(new_pos[1], 100.0, 3)
+
+                # Check the Z vector (should not move).
+                elif res_name == 'Z':
+                    self.assert_(r/100.0 >= 1.0 - epsilon)
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 100.0, 3)
+
+                # Check the nY vector.
+                elif res_name == 'nY':
+                    self.assert_(r/100.0 >= 1.0 - epsilon)
+                    self.assert_(theta >= pi/4.0 - epsilon)
+                    self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                    self.assertAlmostEqual(new_pos[1], -100.0, 3)
+
+                # Check the nZ vector (should not move).
+                elif res_name == 'nZ':
+                    self.assert_(r/100.0 >= 1.0 - epsilon)
+                    self.assert_(theta >= pi/4.0 - epsilon)
+                    self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+
+                # Check the centre.
+                elif res_name == 'C':
+                    self.assert_(r/100.0 <= 1.4142135623730951 + epsilon)
+                    if not (new_pos[0] == 0.0 and new_pos[1] == 0.0 and new_pos[2] == 0.0):
+                        self.assert_(theta >= pi/4.0 - epsilon)
+                        self.assert_(theta <= 2.0*pi - pi/4.0 + epsilon)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+
+                # Check the origin.
+                elif res_name == '0':
+                    self.assertAlmostEqual(r, 34.641016151377549, 4)
+                    self.assertAlmostEqual(pos[0], 0.0, 3)
+                    self.assertAlmostEqual(pos[1], 0.0, 3)
+                    self.assertAlmostEqual(pos[2], 0.0, 3)
+
+
+    def test_simulate_double_rotor_mode2_z_axis(self):
+        """Check the frame_order.simulate user function PDB file for the double rotor model along the z-axis for the second rotation mode."""
+
+        # Init.
+        cone_sigma_max = 0.0
+        cone_sigma_max_2 = pi / 2.0
+        pivot = array([20, 20, -20], float64)
+        l = 100.0
+        sim_num = 500
+        pivot_disp = 100.0
+
+        # The eigenframe.
+        eigen_beta = 0.0
+        R = zeros((3, 3), float64)
+        euler_to_R_zyz(0.0, eigen_beta, 0.0, R)
+        print("Motional eigenframe:\n%s" % R)
+
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='double rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=eigen_beta, ave_pos_gamma=0.0, pivot_disp=pivot_disp, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_sigma_max=cone_sigma_max, cone_sigma_max_2=cone_sigma_max_2)
+
+        # Create the PDB.
+        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+
+        # Delete all structural data.
+        self.interpreter.structure.delete()
+
+        # Read the contents of the file.
+        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+
+        # Check the atomic coordinates.
+        selection = cdp.structure.selection()
+        epsilon = 1e-3
+        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+            # Loop over all positions.
+            for i in range(sim_num):
+                # Shift the position back to the origin, and decompose into spherical coordinates.
+                new_pos = pos[i] - pivot
+                r, theta, phi = cartesian_to_spherical(new_pos)
+
+                # Printout.
+                print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
+
+                # Check the X and nX vectors.
+                if res_name == 'X':
+                    self.assertAlmostEqual(new_pos[0], 100.0, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the Y vector.
+                elif res_name == 'Y':
+                    self.assertAlmostEqual(r/100.0, 1.0, 3)
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assert_(new_pos[1] >= 0.0 - epsilon)
+                    self.assert_(new_pos[1] <= 100.0 + epsilon)
+                    self.assert_(new_pos[2] >= -100.0 - epsilon)
+                    self.assert_(new_pos[2] <= 100.0 + epsilon)
+
+                # Check the Z vector (should not move).
+                elif res_name == 'Z':
+                    self.assertAlmostEqual(r/100.0, 1.0, 3)
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assert_(new_pos[1] >= -100.0 - epsilon)
+                    self.assert_(new_pos[1] <= 100.0 + epsilon)
+                    self.assert_(new_pos[2] >= 0.0 - epsilon)
+                    self.assert_(new_pos[2] <= 100.0 + epsilon)
+
+                # Check the X and nX vectors.
+                elif res_name == 'nX':
+                    self.assertAlmostEqual(new_pos[0], -100.0, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the nY vector.
+                elif res_name == 'nY':
+                    self.assertAlmostEqual(r/100.0, 1.0, 3)
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assert_(new_pos[1] >= -100.0 - epsilon)
+                    self.assert_(new_pos[1] <= 0.0 + epsilon)
+                    self.assert_(new_pos[2] >= -100.0 - epsilon)
+                    self.assert_(new_pos[2] <= 100.0 + epsilon)
+
+                # Check the nZ vector (should not move).
+                elif res_name == 'nZ':
+                    self.assertAlmostEqual(r/100.0, 1.0, 3)
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assert_(new_pos[1] >= -100.0 - epsilon)
+                    self.assert_(new_pos[1] <= 100.0 + epsilon)
+                    self.assert_(new_pos[2] >= -100.0 - epsilon)
+                    self.assert_(new_pos[2] <= 0.0 + epsilon)
+
+                # Check the centre.
+                elif res_name == 'C':
+                    self.assertAlmostEqual(r, 0.0, 3)
+                    self.assertAlmostEqual(new_pos[0], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[1], 0.0, 3)
+                    self.assertAlmostEqual(new_pos[2], 0.0, 3)
+
+                # Check the origin.
+                elif res_name == '0':
+                    self.assertAlmostEqual(pos[0], 20.0, 3)
+                    self.assertAlmostEqual(pos[1], 20.0, 3)
+                    self.assertAlmostEqual(pos[2], -20.0, 3)
+
+
     def test_simulate_free_rotor_z_axis(self):
         """Check the frame_order.simulate user function PDB file for the free rotor model along the z-axis."""
 
