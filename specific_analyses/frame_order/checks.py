@@ -65,9 +65,11 @@ def check_domain(domain=None, escalate=0):
     return defined
 
 
-def check_model(escalate=0):
+def check_model(pipe_name=None, escalate=0):
     """Check if the frame order model has been set up.
 
+    @keyword pipe_name:     The data pipe to check for, if not the current pipe.
+    @type pipe_name:        None or str
     @keyword escalate:      The feedback to give if the model is not set up.  This can be 0 for no printouts, 1 to throw a RelaxWarning, or 2 to raise a RelaxError.
     @type escalate:         int
     @raises RelaxError:     If escalate is set to 2 and the model is not set up.
@@ -104,27 +106,34 @@ def check_parameters(escalate=0):
     @rtype:                 bool
     """
 
+    # The data pipe.
+    if pipe_name == None:
+        pipe_name = cdp_name()
+
+    # Get the data pipe.
+    dp = get_pipe(pipe_name)
+
     # Init.
     flag = True
     msg = ''
     missing = []
 
     # The model has not been set up.
-    if not hasattr(cdp, 'params'):
+    if not hasattr(dp, 'params'):
         flag = False
         msg = "The frame order model has not been set up, no parameters have been defined."
 
     # The model has been set up.
     else:
         # Loop over all parameters.
-        for param in cdp.params:
+        for param in dp.params:
             # Check that the parameters exists.
-            if not hasattr(cdp, param):
+            if not hasattr(dp, param):
                 missing.append(param)
 
             # Check that it has a value.
             else:
-                obj = getattr(cdp, param)
+                obj = getattr(dp, param)
                 if obj == None:
                     missing.append(param)
 
