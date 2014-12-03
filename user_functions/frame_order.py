@@ -271,17 +271,17 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 # The frame_order.ref_domain user function.
 uf = uf_info.add_uf('frame_order.ref_domain')
-uf.title = "Set the reference domain for the '2-domain' Frame Order theories."
-uf.title_short = "Reference domain setting."
+uf.title = "Set the reference non-moving domain for the 2-domain frame order theories."
+uf.title_short = "Reference non-moving domain set up."
 uf.add_keyarg(
     name = "ref",
     py_type = "str",
-    desc_short = "reference frame",
-    desc = "The domain which will act as the frame of reference.  This is only valid for the '2-domain' Frame Order theories."
+    desc_short = "non-moving reference domain",
+    desc = "The non-moving domain which will act as the frame of reference."
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("Prior to optimisation of the '2-domain' Frame Order theories, which of the two domains will act as the frame of reference must be specified.  This is important for the attachment of cones to domains, etc.")
+uf.desc[-1].add_paragraph("Prior to optimisation of the frame order model, the frame of reference non-moving domain must be specified.  This is essential for determining which spins will be used in the analysis, which will be shifted to the average position, etc.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set up the isotropic cone frame order model with 'centre' domain being the frame of reference, type:")
@@ -289,6 +289,7 @@ uf.desc[-1].add_prompt("relax> frame_order.ref_domain(ref='centre')")
 uf.backend = ref_domain
 uf.menu_text = "&ref_domain"
 uf.gui_icon = "oxygen.actions.edit-rename"
+uf.wizard_size = (900, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 
