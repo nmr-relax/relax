@@ -398,8 +398,10 @@ class Frame_order(SystemTestCase):
         self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='nY', res_num=5, pos=-atom_pos[1], element='N')
         self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='nZ', res_num=6, pos=-atom_pos[2], element='N')
 
-        # Set up the moving domain.
-        self.interpreter.domain(id='X', spin_id=':1')
+        # Set up the domains.
+        self.interpreter.domain(id='moving', spin_id=':1-7')
+        self.interpreter.domain(id='origin', spin_id=':8')
+        self.interpreter.frame_order.ref_domain('origin')
 
         # Select the model.
         self.interpreter.frame_order.select_model(model)
@@ -1755,6 +1757,7 @@ class Frame_order(SystemTestCase):
 
         # Define the moving part.
         self.interpreter.domain(id='lactose', spin_id=':UNK')
+        self.interpreter.frame_order.ref_domain('lactose')
 
         # Set up the system.
         self.interpreter.value.set(param='ave_pos_x', val=0.0)
@@ -1792,6 +1795,7 @@ class Frame_order(SystemTestCase):
 
         # Define the moving part.
         self.interpreter.domain(id='lactose', spin_id=':UNK')
+        self.interpreter.frame_order.ref_domain('lactose')
 
         # Set up the system.
         self.interpreter.value.set(param='ave_pos_x', val=0.0)
