@@ -23,7 +23,7 @@
 # Python module imports.
 from numpy import concatenate
 from os import sep
-from tempfile import mkdtemp, NamedTemporaryFile
+from tempfile import mkdtemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -36,7 +36,7 @@ from test_suite.system_tests.base_classes import SystemTestCase
 from extern import nmrglue
 
 # Dependent import.
-# If not matplotlib module
+# If matplotlib module available, then import.
 if dep_check.matplotlib_module:
     import matplotlib.pyplot as plt
 
@@ -44,6 +44,31 @@ if dep_check.matplotlib_module:
 class Nmrglue(SystemTestCase):
     """TestCase class for the functionality of the external module nmrglue.
     This is from U{Task #7873<https://gna.org/task/index.php?7873>}: Write wrapper function to nmrglue, to read .ft2 files and process them."""
+
+    def __init__(self, methodName='runTest'):
+        """Skip certain tests if the C modules are non-functional.
+
+        @keyword methodName:    The name of the test.
+        @type methodName:       str
+        """
+
+        # Execute the base class method.
+        super(Nmrglue, self).__init__(methodName)
+
+        # If not matplotlib module
+        if not dep_check.matplotlib_module:
+            # The list of tests to skip.
+            to_skip = [
+                "test_plot_contour",
+                "test_plot_contour_cpmg",
+                "test_plot_hist_cpmg",
+                "test_plot_hist_cpmg_several",
+            ]
+
+            # Store in the status object.
+            if methodName in to_skip:
+                status.skipped_tests.append([methodName, 'matplotlib module', self._skip_type])
+
 
 
     def plot_plot_contour(self):
