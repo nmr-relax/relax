@@ -22,6 +22,7 @@
 
 __all__ = ['_opendx',
            '_structure',
+           'test_io',
            'test_molecule',
            'test_pipes',
            'test_relax_data',
