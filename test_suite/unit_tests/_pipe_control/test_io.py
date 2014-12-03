@@ -20,9 +20,13 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
+from os import sep
+
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control import io
+from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
@@ -49,3 +53,24 @@ class Test_io(UnitTestCase):
 
         # Test data pipe has the object 'io_basename' and that its value is the expected list.
         self.assertEqual(cdp.io_basename[io_id], base_name)
+
+
+    def test_file_list(self):
+        """Test storing file list to current pipe.
+
+        The function tested is pipe_control.file_list().
+        """
+
+        # Define base path to files.
+        base_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'
+
+        # Define folder to all ft files.
+        ft2_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'ft2_data'
+
+        # Get the file list matching a glob pattern.
+        ft2_glob_pat = '128_*_FT.ft2'
+        io.file_list(glob=ft2_glob_pat, dir=ft2_folder_1, id=None)
+
+        self.assertEqual(cdp.io_basename[ft2_glob_pat], ['128_0_FT.ft2', '128_1_FT.ft2'])
+        self.assertEqual(cdp.io_file_root[ft2_glob_pat], ['128_0_FT', '128_1_FT'])
+        self.assertEqual(cdp.io_dir[ft2_glob_pat], ft2_folder_1)
