@@ -52,13 +52,6 @@ class Nmrglue(SystemTestCase):
         # Call setup function.
         self.setup_plot_contour(show=False)
 
-        # Set new limits.
-        ds.ax.set_xlim(30, 0)
-        ds.ax.set_ylim(15, -20)
-
-        # add some labels
-        ds.ax.text(25.0, 0.0, "Test", size=8, color='r')
-
         # Now show
         plt.show()
 
@@ -101,7 +94,14 @@ class Nmrglue(SystemTestCase):
         self.interpreter.spectrum.nmrglue_read(file=fname, dir=ds.ng_test, spectrum_id=sp_id)
 
         # Call the pipe_control function and get the return axis.
-        ds.ax = plot_contour(spectrum_id=sp_id, ppm=True, show=show)
+        ax = plot_contour(spectrum_id=sp_id, ppm=True, show=show)
+
+        # Set new limits.
+        ax.set_xlim(30, 0)
+        ax.set_ylim(15, -20)
+
+        # add some labels
+        ax.text(25.0, 0.0, "Test", size=8, color='r')
 
 
     def setup_plot_contour_cpmg(self, show=False):
@@ -125,10 +125,10 @@ class Nmrglue(SystemTestCase):
         self.interpreter.spectrum.nmrglue_read(file=fname, dir=ft2_folder_1, spectrum_id=sp_id)
 
         # Call the pipe_control function and get the return axis.
-        ds.ax = plot_contour(spectrum_id=sp_id, contour_start=200000., contour_num=20, contour_factor=1.20, ppm=True, show=show)
+        ax = plot_contour(spectrum_id=sp_id, contour_start=200000., contour_num=20, contour_factor=1.20, ppm=True, show=show)
 
         # Set a new title.
-        ds.ax.set_title("CPMG Spectrum")
+        ax.set_title("CPMG Spectrum")
 
 
     def test_nmrglue_read(self):
