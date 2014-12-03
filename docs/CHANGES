@@ -1,3 +1,94 @@
+Version 3.3.4
+(3 December 2014, from /trunk)
+http://svn.gna.org/svn/relax/tags/3.3.4
+
+    Features:
+        * Numerous improvements for the relax_fit.select_model user function.
+        * Support for the saturation recovery experiment in the relaxation exponential curve-fitting analysis.
+        * Support for the inversion recovery experiment in the relaxation exponential curve-fitting analysis.
+        * Added a section to the start of the relaxation curve-fitting chapter of the manual to include descriptions of all supported models.
+        * Addition of a button to the R1 and R2 GUI analyses for selecting the desired exponential curve model via the relax_fit.select_model user function.
+
+
+    Changes:
+        * Small updates for the wiki section of the release checklist document.
+        * Fixes for the links at the bottom of all HTML manual pages.  This is for the automatically generated documentation at http://www.nmr-relax.com/manual/index.html, created using latex2html.  The links all require double quotes, and some a trailing '/'.  The links fixed are http://www.nmr-relax.com, http://www.nmr-relax.com/manual/ and http://download.gna.org/relax/manual/relax.pdf.
+        * Removed the repository backup file text from the relax manual.  This is for http://www.nmr-relax.com/manual/Latest_sources_the_relax_repositories.html.  The gzipped repository dump file has not been created by Gna! for many, many years.  The problem was identified by the W3C link checker (http://validator.w3.org/checklink).
+        * Updated all of the http://www.nmr-relax.com/manual/ links in the lib.dispersion package.  This is for all of the individual model pages in the HTML manual.
+        * Improved the description for the relax_fit.select_model user function.
+        * A small code rearrangement to create the new target_functions.relax_fit_wrapper module.  This follows from the idea at https://gna.org/task/?7415#comment6.  The *func_wrapper() functions of the specific_analyses.relax_fit.optimisation module have been shifted out and converted to class methods to create the target_functions.relax_fit_wrapper module.  This will be used to abstract away all of the C code, and will form the infrastructure to allow new exponential curves to be quickly supported.  The modules of the specific_analyses.relax_fit and specific_analyses.relax_disp packages now import the target_functions.relax_fit_wrapper.Relax_fit_opt target function class and use that instead.
+        * Shifted the C code Jacobian functions into the new target_functions.relax_fit_wrapper module.  This shifts all of the relaxation curve-fitting C code access into the target_functions.relax_fit_wrapper module so that the rest of relax does not need to handle the C code.  This will allow for new models to be very easily supported, as they would all be set up in this target function module.
+        * Updated the formula in the description of the relax_fit.select_model user function.
+        * Modified the printouts from the structure.write_pdb user function if models are present.  Instead of printing out 'MODEL', 'ATOM, HETATM, TER' and 'ENDMDL' for each model, the header 'MODEL records' is printed followed by a single '.' character for each model.  For structures with many models, this results in a huge speed up of the user function which is strongly limited by how fast the terminal can display text.
+        * Added the synthetic saturation-recovery data in the form of Sparky peak lists to the repository.  These files were created by Andras Boeszoermenyi.  They are attached to the task at http://gna.org/task/?7415 as the Relax_sym.tar.gz file at http://gna.org/task/download.php?file_id=22989.  They were created for the formula I0*(1 - exp(−R1*t)) where I0 = 1000000000000000.00 and R1 = 0.5.  These files and the associated relax_sim.py script (which needs to be updated for the latest relax version) could form the basis of a basic system test.  This system test could then be used to implement the saturation-recovery experiment equations in relax.
+        * Updated the target_functions package __all__ list to include the relax_fit* modules.
+        * Modified the package __all__ list checking unit test to accept *.so C modules.
+        * Removal of an unused import in the relax_fit_zooming_grid.py system test script.
+        * Added a system test script for testing the saturation-recovery R1 experiment.  This was created by Andras Boeszoermenyi.  The file was taken from the saturation_recovery.tar.gaz file (https://gna.org/task/download.php?file_id=22997) are attached to the task at http://gna.org/task/?7415.  The only difference with the original script is that the grace.view user function calls have been removed, as these cannot be used in a system test.
+        * Modified the relax_fit_saturation_recovery.py script to work as a system test.  This is the script from Andras Boeszoermenyi.  The change follows from the discussion of http://thread.gmane.org/gmane.science.nmr.relax.devel/7308/focus=7369.  The status.install_path variable is now used to point to the location of the files.  The relax data store ds.tmpdir variable is used for outputting all files.  And commented out user functions have been deleted.
+        * Added a copyright notice for Andras Boeszoermenyi for the newly added saturation-recovery R1 script.  This change follows the discussion in the message http://thread.gmane.org/gmane.science.nmr.relax.devel/7308/focus=7369.
+        * Created the Relax_fit.test_saturation_recovery system test.  This follows from the discussion of http://thread.gmane.org/gmane.science.nmr.relax.devel/7308/focus=7369.
+        * Added the saturation recovery experiment to the relax_fit.select_model user function.  This simply adds a new option and sets up a different parameter set [Rx, Iinf].
+        * Modified the Relax_fit.test_saturation_recovery system test script.  The relax_fit.select_model user function call now selects the 'sat' model.
+        * Fix for the relax_fit.select_model user function backend for the 'sat' model.
+        * The exponential model name is now being passed into the target function class.  The model as specified by the relax_fit.select_model user function is now finally being sent into the target function, in this case the Relax_fit_opt class in target_functions.relax_fit_wrapper.
+        * Small fix for the relax_fit.select_model user function.
+        * Renamed all of the relaxation curve-fitting target functions.  This includes all of the C functions which are model specific, by appending '_exp' to the current names to now be func_exp, dfunc_exp, d2func_exp, jacobian_exp, and jacobian_chi2_exp.  And all of the Relax_fit_opt target function class *_wrapper() methods to *_exp().  The target function class is now only aliasing the *_exp() methods when the model is set to 'exp'.
+        * Alphabetical ordering of the C function imports in the target_functions.relax_fit_wrapper module.
+        * Modified the relax_fit.test_saturation_recovery system test to check for Iinf instead of I0.
+        * Added support for the saturation recovery experiment to parameter disassembly function.  This is in the disassemble_param_vector() function of the specific_analyses.relax_fit.parameters module.  This function requires each experiment to be handled separately.
+        * Implemented the target functions for the saturation recovery exponential curve.  In the Python target function class Relax_fit_opt, the new func_sat(), dfunc_sat() and d2func_sat() methods have been created as wrappers for the new C functions.  These are aliased to func(), dfunc() and d2func() in the __init__() method.  In the target_functions/exponential.c C file, the functions exponential_sat(), exponential_sat_dIinf(), exponential_sat_dR(), exponential_sat_dIinf2(), exponential_sat_dR_dIinf() and exponential_sat_dR2() have been created to implement the function, gradient, and Hessian for the equation I = Iinf * (1 - exp(-R.t)).  In the target_functions/relax_fit.c file, the functions func_sat(), dfunc_sat(), d2func_sat(), jacobian_sat() and jacobian_chi2_sat() have been created as duplications of the *_exp() functions, but pointing to the exponential_sat*() functions and using Iinf instead of I0.
+        * Split the saturation recovery exponential equations and partial derivatives into their own C file.
+        * Expansion and improvements for the relax_fit.select_model user function documentation and printouts.
+        * The relax_fit.relax_time and relax_fit.select_model user functions now have wizard graphics.  The R1 graphic from graphics/analyses/r1_200x200.png is now being used.
+        * Added support for the inversion recovery experiment to parameter disassembly function.  This matches the change for the saturation recovery experiment.  This is in the disassemble_param_vector() function of the specific_analyses.relax_fit.parameters module.  This function requires each experiment to be handled separately.
+        * Expanded the relax_fit_saturation_recovery.py system test script.  This now calls the error_analysis.covariance_matrix user function to test that code path.
+        * Updated the relaxation curve-fitting covariance_matrix() API method to handle all models.  The check for the 'exp' model type has been eliminated, and the parameter vector is assembled using the flexible assemble_param_vector() function rather than manually constructing the vector.
+        * The errors in the Relax_fit.test_saturation_recovery system test are now reasonable.  They have been set to 5% of Iinf so that the chi-squared value during optimisation is more realistic.
+        * Updated the relaxation curve-fitting get_param_names() API method to handle all models.  This now simply returns the spin container 'params' list, allowing all models to be properly supported.
+        * Big bug fix for the error_analysis.covariance_matrix user function.  The model_info structure is now being passed into the get_param_names() API method, as required by the API.
+        * Another change for the relaxation curve-fitting covariance_matrix() API method to handle all models.  The scaling matrix diagonalised list of 1.0 values now has the same number of elements as there are parameters.
+        * Implemented the target functions for the inversion recovery exponential curve.  In the Python target function class Relax_fit_opt, the new func_inv(), dfunc_inv() and d2func_inv() methods have been created as wrappers for the new C functions.  These are aliased to func(), dfunc() and d2func() in the __init__() method.  The target_functions/exponential_inv.c C file has been created with the functions exponential_inv(), exponential_inv_d0(), exponential_inv_dIinf(), exponential_inv_dR(), exponential_inv_dI02(), exponential_inv_dIinf2(), exponential_inv_dI0_dIinf(), exponential_inv_dR_dI0(), exponential_inv_dR_dIinf() and exponential_inv_dR2() have been created to implement the function, gradient, and Hessian for the equation I(t) = Iinf - I0*exp(-R.t).  In the target_functions/relax_fit.c file, the functions func_inv(), dfunc_inv(), d2func_inv(), jacobian_inv() and jacobian_chi2_inv() have been created as duplications of the *_exp() functions, but pointing to the exponential_inv*() functions and adding the Iinf dimension.
+        * More editing of the relax_fit.select_model user function.  The IR and SR abbreviations have been added, and a lot of text cleaned up.
+        * Improvement for the relax_fit.select_model user function in the GUI.  Unicode text is now being used to display the parameters as R_x and I_0 and to show an infinity symbol in the Iinf parameter.  The Rx and Iinf parameters have been added to lib.text.gui to allow this.
+        * Expanded the relaxation curve-fitting chapter of the manual to include descriptions of the models.  A new section at the start of this chapter has been added to explain the different models and their equations.  This was taken from the script mode section and expanded to include the new saturation recovery experiment.
+        * Removed the relax_fit.select_model user function call from the relax_fit auto-analysis.  This is to allow the user in a script, or in the GUI, to choose the model themselves.
+        * Added a button to the R1 and R2 GUI analyses for executing the relax_fit.select_model user function.  This is just after the peak list GUI element and before the optimisation settings.  It allows different curve types to be selected for the analysis.
+        * Created the new specific_analyses.relax_fit.checks module.  This creates the check_model_setup Check object, following the check_*() function design at http://wiki.nmr-relax.com/Relax_source_design#The_check_.2A.28.29_functions.  This will be used to make sure that the exponential curve model is set prior to executing certain user functions.
+        * Improved the checking in the relaxation curve-fitting analysis.  The new specific_analyses.relax_fit.checks.check_model_setup() function is now called prior to minimisation and in the get_param_names() API method to prevent Python errors from occurring due to missing data structures.  In addition, the pipe_control.mol_res_spin module function exists_mol_res_spin_data() has been replaced with check_mol_res_spin_data().
+        * Fix for the recently broken Relax_fit.test_curve_fitting_height_estimate_error system test.  The relax_fit.select_model user function is now called as this is no longer performed in the auto-analysis.
+        * Removed the text that the inversion recovery experiment is not implemented yet.  This is in the documentation for the relax_fit.select_model user function and is in preparation for completing this.
+        * Added the checks module to the specific_analyses.relax_fit package __all__ list.
+        * Fixes for the relaxation dispersion analysis for the recent relaxation curve-fitting analysis changes.  The Relax_fit_opt target function class requires the model argument to be supplied to be correctly set up.
+        * Fixes for the unit tests of the target_functions.relax_fit C module.  This is for the recent renaming of all the C functions based on the model type.
+        * Fix for the Rx.test_r1_analysis GUI test.  A click on the relax_fit.select_model user function button is now being simulated.
+        * Created a directory for holding synthetic inversion recovery R1 data.
+        * Copied synthetic inversion recovery Sparky peak lists from Sébastien Morin's inversion-recovery branch.
+        * Created a system test script for the inversion-recovery function.  This is based on a copy of the script 'relax_fit_exp_2param_neg.py'.
+
+        * The 3-parameter curve fitting test script now uses the corresponding peak lists.
+        * Prepared the "exp_3param" test for inclusion of artificial data.
+        * Added missing delays in the list.  The duplicates had been omitted...
+        * Manually fix the script based on changes made during branch updating.  This is as discussed by Edward d'Auvergne in a post at https://mail.gna.org/public/relax-devel/2012-01/msg00001.html.
+        * Updated Séb's relax_fit_exp_3param_inv_neg.py system test script to work with the current relax design.
+        * Added a script for calculating the expected peak intensities for an inversion recovery curve.  This is based on the values used by Sébastien Morin in his inversion-recovery branch, as the check_curve_fitting_exp_3param_inv_neg() function of the test_suite/system_tests/relax_fit.py file.
+        * Increased the precision of the printout from the calc.py script of the last commit.
+        * Changed the peak intensities for Gly 4 in the synthetic inversion recovery Sparky lists.  The values have been changed to match that determined from the calc.py script.  The replicate spectra intensities are simply the calculated intensity +/-1, to preserve the average.
+        * Created the Relax_fit.test_inversion_recovery system test.  This simply calls Sébastien Morin's relax_fit_exp_3param_inv_neg.py system test script, ported from the inversion-recovery branch, and then checks the parameter values for the single optimised spin.
+        * Updated the manual_c_module.py C module compilation development script for the recent changes.  The exponential_inv.c and exponential_sat.c files need to be compiled as well.
+        * Python 3 fix for the relax_fit_exp_3param_inv_neg.py system test script.  The xrange() function does not exist in Python 3, so was replaced by range().
+        * Updated the memory_leak_test_relax_fit.py development script for the C module changes.  This is only the docstring description which changed.
+        * Epydoc docstring fixes for the lib.io module - keyword arguments were not correctly identified.  These were identified by Troels in the post at http://thread.gmane.org/gmane.science.nmr.relax.scm/24565/focus=7384.
+        * Created the State.test_bug_23017_ieee_754_multidim_numpy_arrays system test.  This is to catch bug #23017 (https://gna.org/bugs/?23017), the multidimensional numpy arrays are not being stored as IEEE 754 arrays in the XML state and results files.  This test checks a rank-2 float64 numpy array stored in the current data pipe against what the IEEE 754 int list should be for it.
+        * Grammar fix for a warning from the pymol.display user function.
+
+
+    Bugfixes:
+        * Bug fix for the pymol.view user function for when no PDB file exists.  The pymol.view user function would fail with an AttributeError when the currently loaded data does not exist as a PDB file.  This is now caught and the non-existent PDB is no longer displayed.  A better solution might be to dump all the current structural data into a temporary file and load that, all within a try-finally statement to be sure to delete the temporary file.  This solution may not be what the user is interested in anyway.
+        * Simple fix for bug #23017 (https://gna.org/bugs/?23017).  This is the multidimensional numpy arrays are not being stored as IEEE 754 arrays in the XML state and results files.  The problem was a relatively recent regression caused by a change to the is_float_matrix() function of the lib.arg_check module.  It was simply that the default dims keyword argument value was changed from None to (3, 3).  Therefore any call to the function without supplying the dims argument would fail if the matrix was not of the (3, 3) shape.
+
+
+
 Version 3.3.3
 (24 November 2014, from /trunk)
 http://svn.gna.org/svn/relax/tags/3.3.3
