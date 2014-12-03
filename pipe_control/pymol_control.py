@@ -148,7 +148,7 @@ class Pymol:
             for mol in model.mol:
                 # No file path.
                 if not hasattr(mol, 'file_name'):
-                    warn(RelaxWarning("Cannot display the current molecular data in PyMOL as it has not be exported as a PDB file."))
+                    warn(RelaxWarning("Cannot display the current molecular data in PyMOL as it has not been exported as a PDB file."))
                     continue
 
                 # The file path as the current directory.
