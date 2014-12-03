@@ -25,6 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 import lib.io
+from status import Status; status = Status()
 
 
 class Test_io(TestCase):
@@ -65,6 +66,23 @@ class Test_io(TestCase):
         self.assertEqual(lib.io.get_file_path(file1), file1)
         self.assertEqual(lib.io.get_file_path(file2), file2)
         self.assertEqual(lib.io.get_file_path(file3), file3)
+
+
+    def test_get_file_list(self):
+        """Test getting a file list with glob through lib.io.get_file_list."""
+
+        # Define base path to files.
+        base_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'
+
+        # Define folder to all ft files.
+        ft2_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'ft2_data'
+
+        # Get the file list matching a glob pattern.
+        ft2_glob_pat = '128_*_FT.ft2'
+        basename_list, file_root_list = lib.io.get_file_list(glob_pattern=ft2_glob_pat, dir=ft2_folder_1)
+
+        self.assertEqual(basename_list, ['128_0_FT.ft2', '128_1_FT.ft2'])
+        self.assertEqual(file_root_list, ['128_0_FT', '128_1_FT'])
 
 
     def test_get_file_path_with_dir(self):

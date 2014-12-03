@@ -52,23 +52,6 @@ class Nmrglue(SystemTestCase):
         ds.ng_test = status.install_path +sep+ 'extern' +sep+ 'nmrglue' +sep+ 'nmrglue_0_4' +sep+ 'tests' +sep+ 'pipe_proc_tests'
 
 
-    def test_get_file_list(self):
-        """Test getting a file list with glob."""
-
-        # Define base path to files.
-        base_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'
-
-        # Define folder to all ft files.
-        ft2_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'ft2_data'
-
-        # Get the file list matching a glob pattern.
-        ft2_glob_pat = '128_*_FT.ft2'
-        basename_list, file_root_list = get_file_list(glob_pattern=ft2_glob_pat, dir=ft2_folder_1)
-
-        self.assertEqual(basename_list, ['128_0_FT.ft2', '128_1_FT.ft2'])
-        self.assertEqual(file_root_list, ['128_0_FT', '128_1_FT'])
-
-
     def test_nmrglue_read(self):
         """Test the userfunction spectrum.nmrglue_read."""
 
