@@ -20,81 +20,28 @@
 ###############################################################################
 
 # Module docstring.
-"""Module for the using of nmrglue."""
+"""Module for the using of pipe_control.io."""
 
 # relax module imports.
 from lib.errors import RelaxError
-from lib.software.nmrglue import contour_plot, read_spectrum
 from pipe_control.pipes import check_pipe
-from pipe_control.spectrum import add_spectrum_id, check_spectrum_id, delete
 
 
-def add_nmrglue_data(spectrum_id=None, nmrglue_data=None):
-    """Add the nmrglue_data to the data store.
+def add_io_data(object_name=None, io_id=None, io_data=None):
+    """Add the io data to the data store under the the given object_name within a dictionary with io_id key.
 
-    @keyword spectrum_id:   The spectrum ID string.
-    @type spectrum_id:      str
-    @keyword nmrglue_data:  The nmrglue data as class instance object.
-    @type nmrglue_data:     lib.spectrum.objects.Nmrglue_data instance
+    @keyword object_name:   The object name for where to store the data.  As cdp.object_name.
+    @type object_name:      str
+    @keyword io_id:         The dictionary key, to access the data.  As As cdp.object_name['io_id']
+    @type io_id:            str
+    @keyword io_data:       The type of data depending on called function.
+    @type io_data:          depend on function
     """
 
     # Initialise the structure, if needed.
-    if not hasattr(cdp, 'ngdata'):
-        cdp.ngdata = {}
+    if not hasattr(cdp, object_name):
+        setattr(cdp, object_name, {})
 
-    # Add the data under the spectrum ID.
-    cdp.ngdata[spectrum_id] = nmrglue_data[0]
-
-
-def read(file=None, dir=None, spectrum_id=None):
-    """Read the spectrum file.
-
-    @keyword file:          The name of the file(s) containing the spectrum.
-    @type file:             str or list of str
-    @keyword dir:           The directory where the file is located.
-    @type dir:              str
-    @keyword spectrum_id:   The spectrum identification string.
-    @type spectrum_id:      str or list of str
-    """
-
-    # Data checks.
-    check_pipe()
-
-    # Check the file name.
-    if file == None:
-        raise RelaxError("The file name must be supplied.")
-
-    # Add spectrum ID.
-    add_spectrum_id(spectrum_id)
-
-    # Read the spectrum, and get it back as a class instance object.
-    nmrglue_data = read_spectrum(file=file, dir=dir)
-
-    # Store the data.
-    add_nmrglue_data(spectrum_id=spectrum_id, nmrglue_data=nmrglue_data)
-
-
-def plot_contour(spectrum_id=None, contour_start=30000., contour_num=20, contour_factor=1.20, ppm=True, show=False):
-    """Plot the spectrum as contour plot.
-
-    @keyword spectrum_id:       The spectrum identification string.
-    @type spectrum_id:          str or list of str
-    @keyword contour_start:     Contour level start value
-    @type contour_start:        float
-    @keyword contour_num:       Number of contour levels
-    @type contour_num:          int
-    @keyword contour_factor:    Scaling factor between contour levels
-    @type contour_factor:       float
-    @keyword ppm:               A flag which if True will make the plot in ppm scale. Else it is in points.
-    @type ppm:                  bool
-    @keyword show:              A flag which if True will make a call to matplotlib.pyplot.show().
-    @type show:                 bool
-    @return:                    The matplotlib.axes.AxesSubplot class, which can be manipulated to add additional text to the axis.
-    @rtype:                     matplotlib.axes.AxesSubplot
-    """
-
-    # Call the contour plot.
-    ax = contour_plot(spectrum_id=spectrum_id, contour_start=contour_start, contour_num=contour_num, contour_factor=contour_factor, ppm=ppm, show=show)
-
-    return ax
-
+    # Add the data under the dictionary key.
+    obj_dict = getattr(cdp, object_name)
+    obj_dict[io_id] = io_data
