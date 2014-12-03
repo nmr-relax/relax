@@ -22,9 +22,13 @@
 # Module docstring.
 """Module for the using of pipe_control.io."""
 
+# Python module imports.
+import sys
+
 # relax module imports.
 from lib.errors import RelaxError
 from lib.io import get_file_list
+from lib.text.sectioning import section
 from pipe_control.pipes import check_pipe
 
 
@@ -79,6 +83,9 @@ def file_list(glob=None, dir=None, id=None):
     @type id:               None or str
     """
 
+    # Data checks.
+    check_pipe()
+
     # Get the file list.
     basename_list, file_root_list = get_file_list(glob_pattern=glob, dir=dir)
 
@@ -88,8 +95,18 @@ def file_list(glob=None, dir=None, id=None):
 
     # Add the io_id to the data store.
     add_io_id(io_id=id)
+    # Printout.
+    section(file=sys.stdout, text="File list for ID='%s'"%(id), prespace=2)
 
-    # Store in cdp.
+    # Store in cdp and print info.
+    add_io_data(object_name='io_glob', io_id=id, io_data=glob)
+    print('cdp.io_glob["%s"] = "%s"'%(id, cdp.io_glob[id]))
+
     add_io_data(object_name='io_basename', io_id=id, io_data=basename_list)
+    print('cdp.io_basename["%s"] = %s'%(id, cdp.io_basename[id]))
+
     add_io_data(object_name='io_file_root', io_id=id, io_data=file_root_list)
+    print('cdp.io_file_root["%s"] = %s'%(id, cdp.io_file_root[id]))
+
     add_io_data(object_name='io_dir', io_id=id, io_data=dir)
+    print('cdp.io_dir["%s"] = "%s"'%(id, cdp.io_dir[id]))
