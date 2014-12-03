@@ -73,7 +73,7 @@ class Nmrglue(SystemTestCase):
 
 
     def plot_plot_hist_cpmg(self):
-        """Test the plot_hist function in pipe_control.
+        """Plot the plot_hist function in pipe_control.
 
         The data is from systemtest -s Relax_disp.test_repeat_cpmg
         U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
@@ -81,6 +81,17 @@ class Nmrglue(SystemTestCase):
 
         # Call setup function.
         self.setup_plot_hist_cpmg(show=True)
+
+
+    def plot_plot_hist_cpmg_several(self):
+        """Plot the plot_hist function in pipe_control with several spectra.
+
+        The data is from systemtest -s Relax_disp.test_repeat_cpmg
+        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
+        """
+
+        # Call setup function.
+        self.setup_plot_hist_cpmg_several(show=True)
 
 
     def setUp(self):
@@ -165,6 +176,38 @@ class Nmrglue(SystemTestCase):
         dic = cdp.ngdata[sp_id].dic
         udic = cdp.ngdata[sp_id].udic
         data = cdp.ngdata[sp_id].data
+
+        # Plot the histogram.
+        kwargs = {'bins': 3000, 'range': None, 'normed': False, 'facecolor':'green', 'alpha':0.75}
+        plot_hist(ndarray=data, hist_kwargs=kwargs, show=show)
+
+
+    def setup_plot_hist_cpmg_several(self, show=False):
+        """Setup the plot_hist function in pipe_control with several spectra.
+
+        The data is from systemtest -s Relax_disp.test_repeat_cpmg
+        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
+        """
+
+        # Define base path to files.
+        base_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'
+
+        # Define folder to all ft files.
+        ft2_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'ft2_data'
+
+        # Get the file list matching a glob pattern.
+        ft2_glob_pat = '128_*_FT.ft2'
+        basename_list, file_root_list = get_file_list(glob_pattern=ft2_glob_pat, dir=ft2_folder_1)
+
+        # Read the spectra.
+        self.interpreter.spectrum.nmrglue_read(file=basename_list, dir=ft2_folder_1, spectrum_id=file_root_list)
+
+        # Extract the data.
+        data_0 = cdp.ngdata[file_root_list[0]].data
+        data_1 = cdp.ngdata[file_root_list[1]].data
+
+        # First flatten arrays, and then merge them.
+        data = concatenate( (data_0.flatten(), data_1.flatten() ) )
 
         # Plot the histogram.
         kwargs = {'bins': 3000, 'range': None, 'normed': False, 'facecolor':'green', 'alpha':0.75}
@@ -266,6 +309,17 @@ class Nmrglue(SystemTestCase):
         self.setup_plot_hist_cpmg(show=False)
 
 
+    def test_plot_hist_cpmg_several(self):
+        """Test the plot_hist function in pipe_control with several spectra.
+
+        The data is from systemtest -s Relax_disp.test_repeat_cpmg
+        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
+        """
+
+        # Call setup function.
+        self.setup_plot_hist_cpmg_several(show=False)
+
+
     def test_version(self):
         """Test version of nmrglue."""
 
@@ -275,35 +329,3 @@ class Nmrglue(SystemTestCase):
 
         # Assert the version to be 0.4.
         self.assertEqual(ng_vers, '0.4')
-
-
-    def xtest_plot_hist_cpmg_several(self):
-        """Test the plot_hist function in pipe_control with several spectra.
-
-        The data is from systemtest -s Relax_disp.test_repeat_cpmg
-        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
-        """
-
-        # Define base path to files.
-        base_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'
-
-        # Define folder to all ft files.
-        ft2_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'ft2_data'
-
-        # Get the file list matching a glob pattern.
-        ft2_glob_pat = '128_*_FT.ft2'
-        basename_list, file_root_list = get_file_list(glob_pattern=ft2_glob_pat, dir=ft2_folder_1)
-
-        # Read the spectra.
-        self.interpreter.spectrum.nmrglue_read(file=basename_list, dir=ft2_folder_1, spectrum_id=file_root_list)
-
-        # Extract the data.
-        data_0 = cdp.ngdata[file_root_list[0]].data
-        data_1 = cdp.ngdata[file_root_list[1]].data
-
-        # First flatten arrays, and then merge them.
-        data = concatenate( (data_0.flatten(), data_1.flatten() ) )
-
-        # Plot the histogram.
-        kwargs = {'bins': 3000, 'range': None, 'normed': False, 'facecolor':'green', 'alpha':0.75}
-        plot_hist(ndarray=data, hist_kwargs=kwargs, show=True)
