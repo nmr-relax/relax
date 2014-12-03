@@ -21,7 +21,9 @@
 
 # Python module imports.
 from copy import deepcopy
+from numpy import array, float64
 from os import sep
+from re import search
 from tempfile import mktemp
 
 # relax module imports.
@@ -51,6 +53,86 @@ class State(SystemTestCase):
         if not dep_check.C_module_exp_fn and methodName in ['test_write_read_pipes']:
             # Store in the status object. 
             status.skipped_tests.append([methodName, 'Relax curve-fitting C module', self._skip_type])
+
+
+    def get_ieee_754(self, lines=None):
+        """Find and convert the IEEE 754 int list from the list of text lines.
+
+        @keyword lines: The lines of XML text to extract the IEEE 754 array from.
+        @type lines:    list of str
+        @return:        The IEEE 754 array, if it exists.
+        @rtype:         list of int
+        """
+
+        # Loop over the lines, finding the IEEE 754 lines.
+        ieee_754 = ""
+        in_tag = False
+        for line in lines:
+            # The tag start line, so switch the flag.
+            if search("<ieee_754", line):
+                in_tag = True
+
+            # The tag  end line, so store the line and switch the flag.
+            if search("</ieee_754", line):
+                ieee_754 += line
+                in_tag = False
+
+            # Store the line.
+            if in_tag:
+                ieee_754 += line
+
+        # Strip the tags and newlines.
+        ieee_754 = ieee_754.replace('<ieee_754_byte_array>', '')
+        ieee_754 = ieee_754.replace('</ieee_754_byte_array>', '')
+        ieee_754 = ieee_754.replace('\n', '')
+
+        # Nothing left.
+        if ieee_754 == '':
+            return None
+
+        # Convert the remaining text to an int list.
+        ieee_754 = eval(ieee_754)
+
+        # Return the array.
+        return ieee_754
+
+
+
+    def get_xml_tag(self, file=None, name=None):
+        """Extract the text lines for the given XML tag.
+
+        @keyword file:  The file name top open.
+        @type file:     str
+        @keyword name:  The XML tag name to isolate.
+        @type name:     str
+        @return:        The list of lines corresponding to the XML tag.
+        @rtype:         list of str
+        """
+
+        # Read the contents of the file.
+        file = open(file)
+        lines = file.readlines()
+        file.close()
+
+        # Loop over the lines, finding all corresponding tags.
+        tag_lines = []
+        in_tag = False
+        for line in lines:
+            # The tag start line, so switch the flag.
+            if search("<%s "%name, line):
+                in_tag = True
+
+            # The tag  end line, so store the line and switch the flag.
+            if search("</%s>"%name, line):
+                tag_lines.append(line)
+                in_tag = False
+
+            # Store the line.
+            if in_tag:
+                tag_lines.append(line)
+
+        # Return the lines.
+        return tag_lines
 
 
     def setUp(self):
@@ -116,6 +198,28 @@ class State(SystemTestCase):
 
         # Save the state.
         self.interpreter.state.save(self.tmpfile, force=True)
+
+
+    def test_bug_23017_ieee_754_multidim_numpy_arrays(self):
+        """Test catching U{bug #23017<https://gna.org/bugs/?23017>}, the multidimensional numpy arrays are not being stored as IEEE 754 arrays in the XML state and results files."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('test', 'mf')
+
+        # The numpy structure.
+        cdp.test = array([[1, 2, 3], [4, 5, 6]], float64)
+
+        # Save the state.
+        self.interpreter.state.save(self.tmpfile, compress_type=0, force=True)
+
+        # Get the tag lines.
+        lines = self.get_xml_tag(file=self.tmpfile, name='test')
+
+        # Extract the IEEE 754 array as an int list.
+        ieee_754 = self.get_ieee_754(lines=lines)
+
+        # Check.
+        self.assertEqual(ieee_754, [[[0, 0, 0, 0, 0, 0, 240, 63], [0, 0, 0, 0, 0, 0, 0, 64], [0, 0, 0, 0, 0, 0, 8, 64]], [[0, 0, 0, 0, 0, 0, 16, 64], [0, 0, 0, 0, 0, 0, 20, 64], [0, 0, 0, 0, 0, 0, 24, 64]]])
 
 
     def test_state_xml(self):

@@ -113,9 +113,6 @@ class Relax_fit:
         # Peak intensity error analysis.
         self.error_analysis()
 
-        # Set the relaxation curve type.
-        self.interpreter.relax_fit.select_model('exp')
-
         # Grid search.
         self.interpreter.minimise.grid_search(inc=self.grid_inc)
 

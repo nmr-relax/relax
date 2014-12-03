@@ -89,6 +89,10 @@ class PackageTestCase(UnitTestCase):
             if access(self.package_path+sep+module+'.py', F_OK):
                 continue
 
+            # Check for the C module.
+            if access(self.package_path+sep+module+'.so', F_OK):
+                continue
+
             # Check for the package.
             if access(self.package_path+sep+module, F_OK):
                 continue

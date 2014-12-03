@@ -37,9 +37,10 @@ from dep_check import C_module_exp_fn
 from lib.errors import RelaxError, RelaxNoModelError, RelaxNoSequenceError
 from lib.text.sectioning import subsection
 from lib.warnings import RelaxDeselectWarning
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
+from pipe_control.mol_res_spin import check_mol_res_spin_data, return_spin, spin_loop
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
+from specific_analyses.relax_fit.checks import check_model_setup
 from specific_analyses.relax_fit.optimisation import back_calc
 from specific_analyses.relax_fit.parameter_object import Relax_fit_params
 from specific_analyses.relax_fit.parameters import assemble_param_vector, disassemble_param_vector, linear_constraints
@@ -90,10 +91,6 @@ class Relax_fit(API_base, API_common):
         if not C_module_exp_fn:
             raise RelaxError("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
 
-        # Perform checks.
-        if not cdp.curve_type == 'exp':
-            raise RelaxError("Only curve type of 'exp' is allowed for error estimation.  Set by: relax_fit.select_model('exp').")
-
         # Raise Error, if not optimised.
         if not (hasattr(spin, 'rx') and hasattr(spin, 'i0')):
             raise RelaxError("Spin '%s' does not contain optimised 'rx' and 'i0' values.  Try execute: minimise.execute(min_algor='Newton', constraints=False)"%(spin_id))
@@ -126,16 +123,14 @@ class Relax_fit(API_base, API_common):
         errors = asarray(errors)
         times = asarray(times)
 
-        # Extract values.
-        rx = getattr(spin, 'rx')
-        i0 = getattr(spin, 'i0')
-
-        # Pack data
-        param_vector = [rx, i0]
+        # Create the parameter vector and scaling matrix (as a diagonalised list).
+        param_vector = assemble_param_vector(spin=spin)
+        scaling_list = []
+        for i in range(len(spin.params)):
+            scaling_list.append(1.0)
 
         # Initialise data in C code.
-        scaling_list = [1.0, 1.0]
-        model = Relax_fit_opt(num_params=len(param_vector), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+        model = Relax_fit_opt(model=spin.model, num_params=len(param_vector), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
 
         # Use the direct Jacobian from function.
         jacobian_matrix_exp = transpose(asarray( model.jacobian(param_vector) ) )
@@ -221,8 +216,14 @@ class Relax_fit(API_base, API_common):
         @rtype:                 list of str
         """
 
-        # Simply return the two parameter names.
-        return ['rx', 'i0']
+        # Check that the model is setup.
+        check_model_setup()
+
+        # Unpack the data.
+        spin, spin_id = model_info
+
+        # Return the parameter names.
+        return spin.params
 
 
     def get_param_values(self, model_info=None, sim_index=None):
@@ -295,9 +296,8 @@ class Relax_fit(API_base, API_common):
         @type inc:                  list of lists of int
         """
 
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
+        # Checks.
+        check_mol_res_spin_data()
 
         # Loop over the sequence.
         model_index = 0
@@ -364,7 +364,7 @@ class Relax_fit(API_base, API_common):
                     scaling_list.append(scaling_matrix[model_index][i, i])
 
             # Set up the target function.
-            model = Relax_fit_opt(num_params=len(spin.params), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
+            model = Relax_fit_opt(model=spin.model, num_params=len(spin.params), values=values, errors=errors, relax_times=times, scaling_matrix=scaling_list)
 
 
             # Setup the minimisation algorithm when constraints are present.
@@ -477,9 +477,9 @@ class Relax_fit(API_base, API_common):
         if verbose:
             print("\nOver-fit spin deselection:")
 
-        # Test the sequence data exists.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
+        # Checks.
+        check_mol_res_spin_data()
+        check_model_setup()
 
         # Loop over spin data.
         deselect_flag = False
