@@ -3802,7 +3802,6 @@ class Frame_order(SystemTestCase):
                 if res_name == 'X':
                     if abs(phi) > max_phi:
                         max_phi = abs(phi)
-                    print pi/2.0 - cone_theta - epsilon
                     self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
                     self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
                     self.assert_(phi >= -cone_sigma_max - lateral_slide)
