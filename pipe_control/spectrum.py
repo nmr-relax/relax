@@ -33,6 +33,7 @@ from warnings import warn
 # relax module imports.
 from lib.errors import RelaxError, RelaxImplementError, RelaxNoSpectraError
 from lib.io import write_data
+from lib.text.sectioning import section
 from lib.spectrum.peak_list import read_peak_list
 from lib.statistics import std
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
@@ -435,6 +436,54 @@ def error_analysis(subset=None):
 
             # Set the errors.
             __errors_vol_no_repl()
+
+
+def error_analysis_per_field():
+    """Perform an error analysis of the peak intensities for each field strength separately."""
+
+    # Printout.
+    section(file=sys.stdout, text="Automatic Error analysis per field strength", prespace=2)
+
+    # Check if intensity errors have already been calculated by the user.
+    precalc = True
+    for spin in spin_loop(skip_desel=True):
+        # No structure.
+        if not hasattr(spin, 'peak_intensity_err'):
+            precalc = False
+            break
+
+        # Determine if a spectrum ID is missing from the list.
+        for id in cdp.spectrum_ids:
+            if id not in spin.peak_intensity_err:
+                precalc = False
+                break
+
+    # Skip.
+    if precalc:
+        print("Skipping the error analysis as it has already been performed.")
+        return
+
+    # Handle missing frequency data.
+    frqs = [None]
+    if hasattr(cdp, 'spectrometer_frq_list'):
+        frqs = cdp.spectrometer_frq_list
+
+    # Loop over the spectrometer frequencies.
+    for frq in frqs:
+        # Generate a list of spectrum IDs matching the frequency.
+        ids = []
+        for id in cdp.spectrum_ids:
+            # Check that the spectrometer frequency matches.
+            match_frq = True
+            if frq != None and cdp.spectrometer_frq[id] != frq:
+                match_frq = False
+
+            # Add the ID.
+            if match_frq:
+                ids.append(id)
+
+        # Run the error analysis on the subset.
+        error_analysis(subset=ids)
 
 
 def get_ids():
