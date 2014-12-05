@@ -38,7 +38,6 @@ from lib.text.sectioning import section, subsection, subtitle, title
 from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pipes import has_pipe
-from pipe_control.spectrum import error_analysis_per_field
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, is_r1_optimised
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
@@ -525,7 +524,7 @@ class Relax_disp:
 
         # Peak intensity error analysis.
         if MODEL_R2EFF in self.models:
-            error_analysis_per_field()
+            self.interpreter.spectrum.error_analysis_per_field()
 
         # R1 parameter fitting.
         if self.r1_fit:
