@@ -38,8 +38,9 @@ from lib.text.sectioning import section, subsection, subtitle, title
 from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pipes import has_pipe
+from pipe_control.spectrum import error_analysis_per_field
 from prompt.interpreter import Interpreter
-from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, is_r1_optimised, loop_frq
+from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, is_r1_optimised
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.model import nesting_model, nesting_param
 from status import Status; status = Status()
@@ -218,49 +219,6 @@ class Relax_disp:
                 # Loop over models.
                 for model in models:
                     warn(RelaxWarning("This could make the numerical analysis with model '%s', 5 to 6 times slower." % (model)))
-
-
-    def error_analysis(self):
-        """Perform an error analysis of the peak intensities for each field strength separately."""
-
-        # Printout.
-        section(file=sys.stdout, text="Error analysis", prespace=2)
-
-        # Check if intensity errors have already been calculated by the user.
-        precalc = True
-        for spin in spin_loop(skip_desel=True):
-            # No structure.
-            if not hasattr(spin, 'peak_intensity_err'):
-                precalc = False
-                break
-
-            # Determine if a spectrum ID is missing from the list.
-            for id in cdp.spectrum_ids:
-                if id not in spin.peak_intensity_err:
-                    precalc = False
-                    break
-
-        # Skip.
-        if precalc:
-            print("Skipping the error analysis as it has already been performed.")
-            return
-
-        # Loop over the spectrometer frequencies.
-        for frq in loop_frq():
-            # Generate a list of spectrum IDs matching the frequency.
-            ids = []
-            for id in cdp.spectrum_ids:
-                # Check that the spectrometer frequency matches.
-                match_frq = True
-                if frq != None and cdp.spectrometer_frq[id] != frq:
-                    match_frq = False
-
-                # Add the ID.
-                if match_frq:
-                    ids.append(id)
-
-            # Run the error analysis on the subset.
-            self.interpreter.spectrum.error_analysis(subset=ids)
 
 
     def name_pipe(self, prefix):
@@ -567,7 +525,7 @@ class Relax_disp:
 
         # Peak intensity error analysis.
         if MODEL_R2EFF in self.models:
-            self.error_analysis()
+            error_analysis_per_field()
 
         # R1 parameter fitting.
         if self.r1_fit:
