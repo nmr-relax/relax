@@ -483,6 +483,7 @@ def error_analysis_per_field():
                 ids.append(id)
 
         # Run the error analysis on the subset.
+        print("For field strength %.8f MHz, subset ids for spectrum.error_analysis is: %s" % (frq/1e6, ids))
         error_analysis(subset=ids)
 
 
