@@ -23,6 +23,8 @@
 
 # Python module imports.
 from os import sep
+from os.path import basename, dirname
+from tempfile import mkdtemp, NamedTemporaryFile
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -35,6 +37,13 @@ from test_suite.system_tests.base_classes import SystemTestCase
 class Spectrum(SystemTestCase):
     """TestCase class for the functional tests for the support of different spectrum intensity calculation or errors, signal to noise and plotting."""
 
+
+    def setUp(self):
+        """Set up for all the functional tests."""
+
+        # Create a temporary directory for dumping files.
+        ds.tmpdir = mkdtemp()
+        self.tmpdir = ds.tmpdir
 
     def setup_signal_noise_ratio(self):
         """Setup intensity data.
@@ -126,7 +135,8 @@ class Spectrum(SystemTestCase):
         # Setup data.
         self.setup_signal_noise_ratio()
 
-        # Test 
+        # Test the signal to noise ratio calculation.
+        self.interpreter.spectrum.sn_ratio()
 
         # Assign counter
         i = 0
@@ -138,14 +148,49 @@ class Spectrum(SystemTestCase):
             for j in range(17):
                 # Test intensity.
                 data_int = ds.data[i][j+7] * ds.data[i][5]
-                self.assertEqual(cur_spin.peak_intensity['Z_A%i'%j], data_int)
+                pint = cur_spin.peak_intensity['Z_A%i'%j]
+                self.assertEqual(pint, data_int)
 
                 # Test baseplane_rmsd.
-                self.assertEqual(cur_spin.baseplane_rmsd['Z_A%i'%j], ds.rmsd[j])
+                data_rmsd = ds.rmsd[j]
+                self.assertEqual(cur_spin.baseplane_rmsd['Z_A%i'%j], data_rmsd)
 
                 # Test the calculated peak_intensity_err.
                 # Since we have measured intensity height, and have not specified replications, this is the same as rmsd.
-                self.assertEqual(cur_spin.peak_intensity_err['Z_A%i'%j], ds.rmsd[j])
+                pint_err = cur_spin.peak_intensity_err['Z_A%i'%j]
+                self.assertEqual(pint_err, ds.rmsd[j])
+
+                # Test the signal to noise ratio.
+                sn_ratio = data_int / data_rmsd
+                self.assertEqual(cur_spin.sn_ratio['Z_A%i'%j], sn_ratio)
+                self.assertEqual(cur_spin.sn_ratio['Z_A%i'%j], pint/pint_err)
 
             # Add to counter
             i += 1
+
+
+    def test_grace_int(self):
+        """Test grace plotting function for plotting the intensities per residue.
+        """
+
+
+        # Setup data.
+        self.setup_signal_noise_ratio()
+
+        # Deselect spin with negative intensity.
+        self.interpreter.deselect.spin(spin_id=':4@N', boolean='AND', change_all=False)
+
+        # Test show grace. If showing, the temporary directory created, should not be deleted.
+        show_grace = False
+        if show_grace:
+            outfile= NamedTemporaryFile(delete=False).name
+            filedir = dirname(outfile)
+        else:
+            filedir = self.tmpdir
+        outfile = 'int.agr'
+
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='peak_intensity', file=outfile, dir=filedir, force=True)
+
+        # View the plotting.
+        if show_grace:
+            self.interpreter.grace.view(file=outfile, dir=filedir, grace_exe='xmgrace')
