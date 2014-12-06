@@ -32,7 +32,7 @@ from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxImplementError, RelaxNoSpectraError
-from lib.io import write_data
+from lib.io import sort_filenames, write_data
 from lib.text.sectioning import section
 from lib.spectrum.peak_list import read_peak_list
 from lib.statistics import std
@@ -865,3 +865,73 @@ def replicated_ids(spectrum_id):
 
     # Return the list.
     return repl
+
+
+def signal_noise_ratio(verbose=True):
+    """Calculate the signal to noise ratio per spin.
+
+    @keyword verbose:       A flag which if True will print additional information out.
+    @type verbose:          bool
+    """
+
+    # Tests.
+    check_pipe()
+    check_mol_res_spin_data()
+
+    # Test if spectra have been loaded.
+    if not hasattr(cdp, 'spectrum_ids'):
+        raise RelaxError("No spectra have been loaded.")
+
+    # Possible print.
+    if verbose:
+        print("\nThe following signal to noise ratios has been calculated:\n")
+
+    # Set the spin specific signal to noise ratio.
+    for spin, spin_id in spin_loop(return_id=True):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        # Skip spins missing intensity data.
+        if not hasattr(spin, 'peak_intensity'):
+            continue
+
+        # Test if error analysis has been performed.
+        if not hasattr(spin, 'peak_intensity_err'):
+            raise RelaxError("Intensity error analysis has not been performed.  Please see spectrum.error_analysis().")
+
+        # If necessary, create the dictionary.
+        if not hasattr(spin, 'sn_ratio'):
+            spin.sn_ratio = {}
+
+        # Loop over the ID.
+        ids = []
+        for id in spin.peak_intensity:
+            # Append the ID to the list.
+            ids.append(id)
+
+            # Calculate the sn_ratio.
+            pint = spin.peak_intensity[id]
+            pint_err = spin.peak_intensity_err[id]
+            sn_ratio = pint / pint_err
+
+            # Assign the sn_ratio.
+            spin.sn_ratio[id] = sn_ratio
+
+        # Sort the ids alphanumeric.
+        ids = sort_filenames(filenames=ids, rev=False)
+
+        # Collect the data under sorted ids.
+        data_i = []
+        for id in ids:
+            # Get the values.
+            pint = spin.peak_intensity[id]
+            pint_err = spin.peak_intensity_err[id]
+            sn_ratio = spin.sn_ratio[id]
+
+            # Store the data.
+            data_i.append([id, repr(pint), repr(pint_err), repr(sn_ratio)])
+
+        if verbose:
+            section(file=sys.stdout, text="Signal to noise ratio for spin ID '%s'"%spin_id, prespace=1)
+            write_data(out=sys.stdout, headings=["Spectrum ID", "Signal", "Noise", "S/N"], data=data_i)
