@@ -538,3 +538,23 @@ uf.menu_text = "re&plicated"
 uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_size = (700, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
+
+
+# The spectrum.sn_ratio user function.
+uf = uf_info.add_uf('spectrum.sn_ratio')
+uf.title = "Calculate the signal to noise ratio for all selected spins."
+uf.title_short = "Signal to noise calculation."
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This user function will per spin calculate the signal to noise ratio: S/N.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To calculate the Signal to Noise ratio per spin.")
+uf.desc[-1].add_prompt("relax> spectrum.sn_ratio()")
+uf.backend = spectrum.signal_noise_ratio
+uf.menu_text = "&sn_ratio"
+uf.gui_icon = "relax.fid"
+uf.wizard_height_desc = 530
+uf.wizard_size = (1000, 700)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
+uf.wizard_apply_button = False
