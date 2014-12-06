@@ -194,3 +194,32 @@ class Spectrum(SystemTestCase):
         # View the plotting.
         if show_grace:
             self.interpreter.grace.view(file=outfile, dir=filedir, grace_exe='xmgrace')
+
+
+    def test_grace_sn_ratio(self):
+        """Test grace plotting function for plotting the signal to noise ratio per residue.
+        """
+
+        # Setup data.
+        self.setup_signal_noise_ratio()
+
+        # Calculate the signal to noise ratio calculation.
+        self.interpreter.spectrum.sn_ratio()
+
+        # Deselect spin with negative intensity.
+        self.interpreter.deselect.spin(spin_id=':4@N', boolean='AND', change_all=False)
+
+        # Test show grace. If showing, the temporary directory created, should not be deleted.
+        show_grace = False
+        if show_grace:
+            outfile= NamedTemporaryFile(delete=False).name
+            filedir = dirname(outfile)
+        else:
+            filedir = self.tmpdir
+        outfile = 'int_sn.agr'
+
+        self.interpreter.grace.write(x_data_type='res_num', y_data_type='sn_ratio', file=outfile, dir=filedir, force=True)
+
+        # View the plotting.
+        if show_grace:
+            self.interpreter.grace.view(file=outfile, dir=filedir, grace_exe='xmgrace')
