@@ -673,6 +673,19 @@ class Param_list(object):
         )
 
 
+    def _add_sn_ratio(self):
+        """Add the signal to noise ratio structure 'sn_ratio'."""
+
+        # Add the peak intensity structure.
+        self._add(
+            'sn_ratio',
+            scope = 'spin',
+            desc = 'The signal to noise ratios',
+            py_type = dict,
+            grace_string = '\\qS/N ratio\\Q'
+        )
+
+
     def _set_uf_title(self, title):
         """Set the title for the user function documentation.
 
