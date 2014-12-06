@@ -146,6 +146,9 @@ class Relax_disp_params(Param_list):
         # Add the base data for the 'R2eff' model.
         self._add_peak_intensity()
 
+        # Add the signal to noise ratio.
+        self._add_sn_ratio()
+
         # Add the base information for the dispersion analysis.
         self._add(
             'relax_times',
