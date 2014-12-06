@@ -444,25 +444,6 @@ def error_analysis_per_field():
     # Printout.
     section(file=sys.stdout, text="Automatic Error analysis per field strength", prespace=2)
 
-    # Check if intensity errors have already been calculated by the user.
-    precalc = True
-    for spin in spin_loop(skip_desel=True):
-        # No structure.
-        if not hasattr(spin, 'peak_intensity_err'):
-            precalc = False
-            break
-
-        # Determine if a spectrum ID is missing from the list.
-        for id in cdp.spectrum_ids:
-            if id not in spin.peak_intensity_err:
-                precalc = False
-                break
-
-    # Skip.
-    if precalc:
-        print("Skipping the error analysis as it has already been performed.")
-        return
-
     # Handle missing frequency data.
     frqs = [None]
     if hasattr(cdp, 'spectrometer_frq_list'):
