@@ -32,6 +32,7 @@ else:
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from pipe_control import selection
+from pipe_control import spectrum
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -281,6 +282,67 @@ uf.menu_text = "re&verse"
 uf.gui_icon = "oxygen.actions.system-switch-user"
 uf.wizard_size = (700, 550)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'deselect.png'
+
+
+# The deselect.sn_ratio user function.
+uf = uf_info.add_uf("deselect.sn_ratio")
+uf.title = "Deselect spins with signal to noise ratio higher or lower than ratio."
+uf.title_short = "Spin signal to noise deselection."
+uf.display = True
+uf.add_keyarg(
+    name = "ratio",
+    default = 1.0,
+    py_type = "float",
+    desc_short = "ratio",
+    desc = "The signal to noise ratio to compare to."
+)
+uf.add_keyarg(
+    name = "operation",
+    default = "<",
+    py_type = "str",
+    desc_short = "comparison operation",
+    desc = "The comparison operation by which to deselect the spins.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        "'<' : strictly less than",
+        "'<=' : less than or equal",
+        "'>' : strictly greater than",
+        "'>=' : greater than or equal",
+        "'==' : equal",
+        "'!=' : not equal",
+    ],
+    wiz_combo_data = [
+        "<",
+        "<=",
+        ">",
+        ">=",
+        "==",
+        "!=",
+    ],
+    wiz_read_only = True
+)
+uf.add_keyarg(
+    name = "all_sn",
+    default = False,
+    py_type = "bool",
+    desc_short = "all spin S/N flag",
+    desc = "A flag specifying if all the signal to noise ratios per spin should match the comparison operator, of if just a single comparison match is enough."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The comparison operation is the method which to deselect spins accorfing to: operation(sn_ratio, ratio).")
+uf.desc[-1].add_paragraph("The 'all_sn' flag default is False, meaning that if any of the spins signal to noise levels evaluates to True in the comparison, the spin is deselected.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To deselect all spins with a signal to noise ratio lower than 10.0:")
+uf.desc[-1].add_prompt("relax> deselect.spin(ratio=10.0, operation='<')")
+uf.desc[-1].add_prompt("relax> deselect.spin(ratio=10.0, operation='<', all_sn=True)")
+uf.backend = spectrum.sn_ratio_deselection
+uf.menu_text = "&sn_ratio"
+uf.gui_icon = "relax.fid"
+uf.wizard_height_desc = 500
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'deselect.png'
 
 
