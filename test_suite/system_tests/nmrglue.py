@@ -373,7 +373,7 @@ class Nmrglue(SystemTestCase):
         print("Filesize of .npy file is: %i"%(data_numpy_size) )
 
         # Delete the large data array, for faster saving.
-        cdp.nmrglue_data[sp_id] = 0
+        #cdp.nmrglue_data[sp_id] = 0
 
         # Store the directory path, before reset of the controller.
         dirpath = ds.tmpdir
