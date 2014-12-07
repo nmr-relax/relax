@@ -281,3 +281,67 @@ class Spectrum(SystemTestCase):
         # Make the test:
         self.assertEqual(spin_ids_sel, [':3@N'])
         self.assertEqual(spin_ids_desel, [':4@N', ':5@N', ':6@N'])
+
+
+    def test_select_sn_ratio_all(self):
+        """Test the select.sn_ratio for signal to noise ratios, where all ID should evaluate to True.
+        """
+
+        # Setup data.
+        self.setup_signal_noise_ratio()
+
+        # Calculate the signal to noise ratio calculation.
+        self.interpreter.spectrum.sn_ratio()
+
+        # First deselect all spins.
+        self.interpreter.deselect.all()
+
+        # Select spins.
+        self.interpreter.select.sn_ratio(ratio=400.0, operation='<', all_sn=True)
+
+        # Test
+        spin_ids_sel = []
+        spin_ids_desel = []
+
+        # Collect spin ids which are selected.
+        for cur_spin, cur_spin_id in spin_loop(return_id=True, skip_desel=False):
+            if cur_spin.select:
+                spin_ids_sel.append(cur_spin_id)
+            else:
+                spin_ids_desel.append(cur_spin_id)
+
+        # Make the test:
+        self.assertEqual(spin_ids_sel, [':5@N', ':6@N'])
+        self.assertEqual(spin_ids_desel, [':3@N', ':4@N'])
+
+
+    def test_select_sn_ratio_any(self):
+        """Test the select.sn_ratio for signal to noise ratios, where any ID should evaluate to True.
+        """
+
+        # Setup data.
+        self.setup_signal_noise_ratio()
+
+        # Calculate the signal to noise ratio calculation.
+        self.interpreter.spectrum.sn_ratio()
+
+        # First deselect all spins.
+        self.interpreter.deselect.all()
+
+        # Select spins.
+        self.interpreter.select.sn_ratio(ratio=200.0, operation='<', all_sn=False)
+
+        # Test
+        spin_ids_sel = []
+        spin_ids_desel = []
+
+        # Collect spin ids which are selected.
+        for cur_spin, cur_spin_id in spin_loop(return_id=True, skip_desel=False):
+            if cur_spin.select:
+                spin_ids_sel.append(cur_spin_id)
+            else:
+                spin_ids_desel.append(cur_spin_id)
+
+        # Make the test:
+        self.assertEqual(spin_ids_sel, [':4@N', ':5@N', ':6@N'])
+        self.assertEqual(spin_ids_desel, [':3@N'])
