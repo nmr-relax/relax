@@ -223,3 +223,61 @@ class Spectrum(SystemTestCase):
         # View the plotting.
         if show_grace:
             self.interpreter.grace.view(file=outfile, dir=filedir, grace_exe='xmgrace')
+
+
+    def test_deselect_sn_ratio_all(self):
+        """Test the deselect.sn_ratio for signal to noise ratios, where all ID should evaluate to True.
+        """
+
+        # Setup data.
+        self.setup_signal_noise_ratio()
+
+        # Calculate the signal to noise ratio calculation.
+        self.interpreter.spectrum.sn_ratio()
+
+        # deselect spins.
+        self.interpreter.deselect.sn_ratio(ratio=400.0, operation='<', all_sn=True)
+
+        # Test
+        spin_ids_sel = []
+        spin_ids_desel = []
+
+        # Collect spin ids which are selected.
+        for cur_spin, cur_spin_id in spin_loop(return_id=True, skip_desel=False):
+            if cur_spin.select:
+                spin_ids_sel.append(cur_spin_id)
+            else:
+                spin_ids_desel.append(cur_spin_id)
+
+        # Make the test:
+        self.assertEqual(spin_ids_sel, [':3@N', ':4@N'])
+        self.assertEqual(spin_ids_desel, [':5@N', ':6@N'])
+
+
+    def test_deselect_sn_ratio_any(self):
+        """Test the deselect.sn_ratio for signal to noise ratios, where any ID should evaluate to True.
+        """
+
+        # Setup data.
+        self.setup_signal_noise_ratio()
+
+        # Calculate the signal to noise ratio calculation.
+        self.interpreter.spectrum.sn_ratio()
+
+        # Deselect spins.
+        self.interpreter.deselect.sn_ratio(ratio=200.0, operation='<', all_sn=False)
+
+        # Test
+        spin_ids_sel = []
+        spin_ids_desel = []
+
+        # Collect spin ids which are selected.
+        for cur_spin, cur_spin_id in spin_loop(return_id=True, skip_desel=False):
+            if cur_spin.select:
+                spin_ids_sel.append(cur_spin_id)
+            else:
+                spin_ids_desel.append(cur_spin_id)
+
+        # Make the test:
+        self.assertEqual(spin_ids_sel, [':3@N'])
+        self.assertEqual(spin_ids_desel, [':4@N', ':5@N', ':6@N'])
