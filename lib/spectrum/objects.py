@@ -33,38 +33,6 @@ class Assignment:
     """A special container for a single assignment in a peak list."""
 
 
-class Nmrglue_data(list):
-    """The object used to represent a nmrglue data."""
-
-    def __init__(self):
-        """Set up the object."""
-
-
-    def add(self, file_path=None, dic=None, udic=None, data=None):
-        """Add a nmrglue data element.
-
-
-        @keyword file_path:         The path to the spectrum.
-        @type file_path:            str
-        @keyword dic:               The data dictionary.
-        @type dic:                  dic
-        @keyword udic:              The universal data dictionary.
-        @type udic:                 dic
-        @keyword data:              The data as numpy array.
-        @type data:                 numpy array
-        """
-
-        # Add a new element.
-        self.append(Assignment())
-
-        # Store the data.
-        assign = self[-1]
-        assign.file_path = file_path
-        assign.dic = dic
-        assign.udic = udic
-        assign.data = data
-
-
 class Peak_list(list):
     """The object used to represent a peak list."""
 
