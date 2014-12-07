@@ -26,35 +26,57 @@
 from lib.errors import RelaxError
 from lib.software.nmrglue import contour_plot, hist_plot, read_spectrum
 from pipe_control.pipes import check_pipe
-from pipe_control.spectrum import add_spectrum_id, check_spectrum_id, delete
+from pipe_control.spectrum import check_spectrum_id, delete
 
 
-def add_nmrglue_data(spectrum_id=None, nmrglue_data=None):
-    """Add the nmrglue_data to the data store.
+def add_nmrglue_data(object_name=None, nmrglue_id=None, nmrglue_data=None):
+    """Add the nmrglue data to the data store under the the given object_name within a dictionary with nmrglue_id key.
 
-    @keyword spectrum_id:   The spectrum ID string.
-    @type spectrum_id:      str
-    @keyword nmrglue_data:  The nmrglue data as class instance object.
-    @type nmrglue_data:     lib.spectrum.objects.Nmrglue_data instance
+    @keyword object_name:       The object name for where to store the data.  As cdp.object_name.
+    @type object_name:          str
+    @keyword nmrglue_id:        The dictionary key, to access the data.  As As cdp.object_name['nmrglue_id']
+    @type nmrglue_id:           str
+    @keyword nmrglue_data:      The type of data depending on called function.
+    @type nmrglue_data:         depend on function
     """
 
     # Initialise the structure, if needed.
-    if not hasattr(cdp, 'ngdata'):
-        cdp.ngdata = {}
+    if not hasattr(cdp, object_name):
+        setattr(cdp, object_name, {})
 
-    # Add the data under the spectrum ID.
-    cdp.ngdata[spectrum_id] = nmrglue_data[0]
+    # Add the data under the dictionary key.
+    obj_dict = getattr(cdp, object_name)
+    obj_dict[nmrglue_id] = nmrglue_data
 
 
-def read(file=None, dir=None, spectrum_id=None):
+def add_nmrglue_id(nmrglue_id=None):
+    """Add the nmrglue ID to the data store.
+
+    @keyword nmrglue_id:   The nmrglue ID string.
+    @type nmrglue_id:      str
+    """
+
+    # Initialise the structure, if needed.
+    if not hasattr(cdp, 'nmrglue_ids'):
+        cdp.nmrglue_ids = []
+
+    # The ID already exists.
+    if nmrglue_id in cdp.nmrglue_ids:
+        return
+
+    # Add the ID.
+    cdp.nmrglue_ids.append(nmrglue_id)
+
+
+def read(file=None, dir=None, nmrglue_id=None):
     """Read the spectrum file.
 
     @keyword file:          The name of the file(s) containing the spectrum.
     @type file:             str or list of str
     @keyword dir:           The directory where the file is located.
     @type dir:              str
-    @keyword spectrum_id:   The spectrum identification string.
-    @type spectrum_id:      str or list of str
+    @keyword nmrglue_id:    The spectrum identification string.
+    @type nmrglue_id:       str or list of str
     """
 
     # Data checks.
@@ -67,7 +89,7 @@ def read(file=None, dir=None, spectrum_id=None):
     # Multiple ID flags.
     flag_multi = False
     flag_multi_file = False
-    if isinstance(spectrum_id, list):
+    if isinstance(nmrglue_id, list):
         flag_multi = True
     if isinstance(file, list):
         flag_multi_file = True
@@ -79,8 +101,8 @@ def read(file=None, dir=None, spectrum_id=None):
             raise RelaxError("The file and spectrum ID  must both be of list type.")
 
         # List lengths for multiple files.
-        if flag_multi_file and len(spectrum_id) != len(file):
-            raise RelaxError("The file list %s and spectrum ID list %s do not have the same number of elements." % (file, spectrum_id))
+        if flag_multi_file and len(nmrglue_id) != len(file):
+            raise RelaxError("The file list %s and spectrum ID list %s do not have the same number of elements." % (file, nmrglue_id))
 
     # More list argument checks (when only one spectrum ID is supplied).
     else:
@@ -92,30 +114,32 @@ def read(file=None, dir=None, spectrum_id=None):
     if not isinstance(file, list):
         file = [file]
 
-    # Convert the spectrum_id argument to a list if necessary.
-    if not isinstance(spectrum_id, list):
-        spectrum_id = [spectrum_id]
+    # Convert the nmrglue_id argument to a list if necessary.
+    if not isinstance(nmrglue_id, list):
+        nmrglue_id = [nmrglue_id]
 
     # Loop over the files.
     for i, file_i in enumerate(file):
         # Assign spectrum id.
-        spectrum_id_i = spectrum_id[i]
+        nmrglue_id_i = nmrglue_id[i]
 
         # Add spectrum ID.
-        add_spectrum_id(spectrum_id_i)
+        add_nmrglue_id(nmrglue_id_i)
 
-        # Read the spectrum, and get it back as a class instance object.
-        nmrglue_data = read_spectrum(file=file_i, dir=dir)
+        # Read the spectrum, and get it back two dictionaries, and a numpy array.
+        dic, udic, data = read_spectrum(file=file_i, dir=dir)
 
         # Store the data.
-        add_nmrglue_data(spectrum_id=spectrum_id_i, nmrglue_data=nmrglue_data)
+        add_nmrglue_data(object_name='nmrglue_dic', nmrglue_id=nmrglue_id_i, nmrglue_data=dic)
+        add_nmrglue_data(object_name='nmrglue_udic', nmrglue_id=nmrglue_id_i, nmrglue_data=udic)
+        add_nmrglue_data(object_name='nmrglue_data', nmrglue_id=nmrglue_id_i, nmrglue_data=data)
 
 
-def plot_contour(spectrum_id=None, contour_start=30000., contour_num=20, contour_factor=1.20, ppm=True, show=False):
+def plot_contour(nmrglue_id=None, contour_start=30000., contour_num=20, contour_factor=1.20, ppm=True, show=False):
     """Plot the spectrum as contour plot.
 
-    @keyword spectrum_id:       The spectrum identification string.
-    @type spectrum_id:          str or list of str
+    @keyword nmrglue_id:        The spectrum identification string.
+    @type nmrglue_id:           str or list of str
     @keyword contour_start:     Contour level start value
     @type contour_start:        float
     @keyword contour_num:       Number of contour levels
@@ -131,7 +155,7 @@ def plot_contour(spectrum_id=None, contour_start=30000., contour_num=20, contour
     """
 
     # Call the contour plot.
-    ax = contour_plot(spectrum_id=spectrum_id, contour_start=contour_start, contour_num=contour_num, contour_factor=contour_factor, ppm=ppm, show=show)
+    ax = contour_plot(nmrglue_id=nmrglue_id, contour_start=contour_start, contour_num=contour_num, contour_factor=contour_factor, ppm=ppm, show=show)
 
     # Return the axis instance, for possibility for additional decoration.
     return ax
