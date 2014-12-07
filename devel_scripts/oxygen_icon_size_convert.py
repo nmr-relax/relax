@@ -37,6 +37,12 @@ filein = odir + sep + 'scalable' + sep + cat + sep + icon + '.svgz'
 shutil.copy(filein, cdir)
 filein = cdir + sep + icon + '.svgz'
 
+# Copy to scalable folder
+sdir = cdir + sep + '..' + sep + 'scalable' + sep + cat
+if not path.exists(sdir):
+    makedirs(sdir)
+shutil.copy(filein, sdir)
+
 # Define Call function.
 def call_prog(list_args):
     Temp = subprocess.Popen(list_args, stdout=subprocess.PIPE)
@@ -81,6 +87,14 @@ if True:
         print(file_ex, fileor)
 
         # It the file exists:
+        fileoutpos = cdir + sep + '..' + sep + '%sx%s'%(x, y) + sep + cat + sep + icon + '.png'
         if file_ex:
             fileout = cdir + sep + "%s_%sx%s_or.png" %(icon, x, y)
             shutil.copy(fileor, fileout)
+        else:
+            fileout = cdir + sep + "%s_%sx%s.png" %(icon, x, y)
+
+        # Copy into correct folders
+        if not path.exists(path.dirname(fileoutpos)):
+            makedirs(path.dirname(fileoutpos))
+        shutil.copy(fileout, fileoutpos)
