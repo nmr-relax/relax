@@ -21,8 +21,8 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import concatenate
-from os import sep
+from numpy import concatenate, save
+from os import path, sep
 from tempfile import mkdtemp
 
 # relax module imports.
@@ -139,10 +139,10 @@ class Nmrglue(SystemTestCase):
         # Read the spectrum.
         fname = 'freq_real.ft2'
         sp_id = 'test'
-        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ds.ng_test, spectrum_id=sp_id)
+        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ds.ng_test, nmrglue_id=sp_id)
 
         # Call the pipe_control function and get the return axis.
-        ax = plot_contour(spectrum_id=sp_id, ppm=True, show=show)
+        ax = plot_contour(nmrglue_id=sp_id, ppm=True, show=show)
 
         # Set new limits.
         ax.set_xlim(30, 0)
@@ -170,10 +170,10 @@ class Nmrglue(SystemTestCase):
         # Read the spectrum.
         fname = '128_0_FT.ft2'
         sp_id = file_root(fname)
-        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ft2_folder_1, spectrum_id=sp_id)
+        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ft2_folder_1, nmrglue_id=sp_id)
 
         # Call the pipe_control function and get the return axis.
-        ax = plot_contour(spectrum_id=sp_id, contour_start=200000., contour_num=20, contour_factor=1.20, ppm=True, show=show)
+        ax = plot_contour(nmrglue_id=sp_id, contour_start=200000., contour_num=20, contour_factor=1.20, ppm=True, show=show)
 
         # Set a new title.
         ax.set_title("CPMG Spectrum")
@@ -195,12 +195,12 @@ class Nmrglue(SystemTestCase):
         # Read the spectrum.
         fname = '128_0_FT.ft2'
         sp_id = file_root(fname)
-        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ft2_folder_1, spectrum_id=sp_id)
+        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ft2_folder_1, nmrglue_id=sp_id)
 
         # Extract the data.
-        dic = cdp.ngdata[sp_id].dic
-        udic = cdp.ngdata[sp_id].udic
-        data = cdp.ngdata[sp_id].data
+        dic  = cdp.nmrglue_dic[sp_id]
+        udic  = cdp.nmrglue_udic[sp_id]
+        data = cdp.nmrglue_data[sp_id]
 
         # Plot the histogram.
         kwargs = {'bins': 3000, 'range': None, 'normed': False, 'facecolor':'green', 'alpha':0.75}
@@ -225,11 +225,11 @@ class Nmrglue(SystemTestCase):
         basename_list, file_root_list = get_file_list(glob_pattern=ft2_glob_pat, dir=ft2_folder_1)
 
         # Read the spectra.
-        self.interpreter.spectrum.nmrglue_read(file=basename_list, dir=ft2_folder_1, spectrum_id=file_root_list)
+        self.interpreter.spectrum.nmrglue_read(file=basename_list, dir=ft2_folder_1, nmrglue_id=file_root_list)
 
         # Extract the data.
-        data_0 = cdp.ngdata[file_root_list[0]].data
-        data_1 = cdp.ngdata[file_root_list[1]].data
+        data_0 = cdp.nmrglue_data[file_root_list[0]]
+        data_1 = cdp.nmrglue_data[file_root_list[1]]
 
         # First flatten arrays, and then merge them.
         data = concatenate( (data_0.flatten(), data_1.flatten() ) )
@@ -245,15 +245,15 @@ class Nmrglue(SystemTestCase):
         # Read the spectrum.
         fname = 'freq_real.ft2'
         sp_id = 'test'
-        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ds.ng_test, spectrum_id=sp_id)
+        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ds.ng_test, nmrglue_id=sp_id)
 
         # Test that the spectrum id has been stored.
-        self.assertEqual(cdp.spectrum_ids[0], sp_id)
+        self.assertEqual(cdp.nmrglue_ids[0], sp_id)
 
         # Extract the data.
-        dic  = cdp.ngdata[sp_id].dic
-        udic  = cdp.ngdata[sp_id].udic
-        data = cdp.ngdata[sp_id].data
+        dic  = cdp.nmrglue_dic[sp_id]
+        udic  = cdp.nmrglue_udic[sp_id]
+        data = cdp.nmrglue_data[sp_id]
 
         # Test the data.
         self.assertEqual(udic[0]['label'], '15N')
@@ -292,15 +292,15 @@ class Nmrglue(SystemTestCase):
         basename_list, file_root_list = cdp.io_basename[ft2_glob_pat], cdp.io_file_root[ft2_glob_pat]
 
         # First test that expected RelaxErrors are raised.
-        self.assertRaises(RelaxError, self.interpreter.spectrum.nmrglue_read, file=basename_list, dir=ft2_folder_1, spectrum_id='test')
-        self.assertRaises(RelaxError, self.interpreter.spectrum.nmrglue_read, file='128_0_FT.ft2', dir=ft2_folder_1, spectrum_id=file_root_list)
+        self.assertRaises(RelaxError, self.interpreter.spectrum.nmrglue_read, file=basename_list, dir=ft2_folder_1, nmrglue_id='test')
+        self.assertRaises(RelaxError, self.interpreter.spectrum.nmrglue_read, file='128_0_FT.ft2', dir=ft2_folder_1, nmrglue_id=file_root_list)
 
         # Read the spectra.
-        self.interpreter.spectrum.nmrglue_read(file=basename_list, dir=ft2_folder_1, spectrum_id=file_root_list)
+        self.interpreter.spectrum.nmrglue_read(file=basename_list, dir=ft2_folder_1, nmrglue_id=file_root_list)
 
         # Test that the spectrum id has been stored.
-        self.assertEqual(cdp.spectrum_ids[0], file_root_list[0])
-        self.assertEqual(cdp.spectrum_ids[1], file_root_list[1])
+        self.assertEqual(cdp.nmrglue_ids[0], file_root_list[0])
+        self.assertEqual(cdp.nmrglue_ids[1], file_root_list[1])
 
 
     def test_plot_contour(self):
@@ -351,26 +351,41 @@ class Nmrglue(SystemTestCase):
         # Read the spectrum.
         fname = 'freq_real.ft2'
         sp_id = 'test'
-        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ds.ng_test, spectrum_id=sp_id)
+        self.interpreter.spectrum.nmrglue_read(file=fname, dir=ds.ng_test, nmrglue_id=sp_id)
+
+        # Get the file size.
+        data_size_file = path.getsize(ds.ng_test + sep + fname)
+        print("Filesize of .ft2 file is: %i"%(data_size_file) )
 
         # Test that the spectrum id has been stored.
-        self.assertEqual(cdp.spectrum_ids[0], sp_id)
+        self.assertEqual(cdp.nmrglue_ids[0], sp_id)
 
         # Extract the data.
-        dic  = cdp.ngdata[sp_id].dic
-        udic  = cdp.ngdata[sp_id].udic
-        data = cdp.ngdata[sp_id].data
+        dic  = cdp.nmrglue_dic[sp_id]
+        udic  = cdp.nmrglue_udic[sp_id]
+        data = cdp.nmrglue_data[sp_id]
+
+        # Try storing the numpy array, and print size
+        data_numpy = ds.tmpdir + sep + 'data.npy'
+        print("Storing numpy array to: %s"%data_numpy)
+        save(data_numpy, data)
+        data_numpy_size = path.getsize(data_numpy)
+        print("Filesize of .npy file is: %i"%(data_numpy_size) )
+
+        # Delete the large data array, for faster saving.
+        cdp.nmrglue_data[sp_id] = 0
 
         # Store the directory path, before reset of the controller.
         dirpath = ds.tmpdir
 
-        cdp.hello = "HELLO WORLD"
-        print(cdp)
-        print(type(cdp.ngdata))
-        print(type(cdp.ngdata[sp_id]))
+        print("Shape of data is %ix%i"%(data.shape[0], data.shape[1]))
 
         # Save the results.
         self.interpreter.state.save('state', dir=dirpath, compress_type=1, force=True)
+
+        # Get the file size.
+        state_size_file = path.getsize(dirpath + sep + 'state.bz2')
+        print("Filesize of state file is %i"%(state_size_file) )
 
         # Reset of the controller.
         self.interpreter.reset()
@@ -378,7 +393,14 @@ class Nmrglue(SystemTestCase):
         # Load the state again.
         self.interpreter.state.load(dirpath+sep+'state')
 
-        print(cdp.hello)
+        # Make tests that they are the same.
+        self.assertEqual(dic, cdp.nmrglue_dic[sp_id])
+        for id in dic:
+            self.assertEqual(dic[id], cdp.nmrglue_dic[sp_id][id])
+
+        self.assertEqual(udic, cdp.nmrglue_udic[sp_id])
+        for id in udic:
+            self.assertEqual(udic[id], cdp.nmrglue_udic[sp_id][id])
 
 
     def test_version(self):
