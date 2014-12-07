@@ -365,7 +365,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'select.png'
 
 # The select.sn_ratio user function.
 uf = uf_info.add_uf("select.sn_ratio")
-uf.title = "Select spins with signal to noise ratio higher or lower than ratio."
+uf.title = "Select spins with signal to noise ratio higher or lower than the given ratio."
 uf.title_short = "Spin signal to noise selection."
 uf.display = True
 uf.add_keyarg(
@@ -409,8 +409,9 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("The comparison operation is the method which to select spins accorfing to: operation(sn_ratio, ratio).")
-uf.desc[-1].add_paragraph("The 'all_sn' flag default is True, meaning that if all of the spins signal to noise levels evaluates to True in the comparison, the spin is selected.")
+uf.desc[-1].add_paragraph("The comparison operation is the method which to select spins according to: operation(sn_ratio, ratio).")
+uf.desc[-1].add_paragraph("The possible operations are: '<':strictly less than, '<=':less than or equal, '>':strictly greater than, '>=':greater than or equal, '==':equal, '!=':not equal.")
+uf.desc[-1].add_paragraph("The 'all_sn' flag default is True, meaning that if all of the spin's signal to noise levels evaluates to True in the comparison, the spin is selected.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To select all spins with a signal to noise ratio higher than 10.0:")
