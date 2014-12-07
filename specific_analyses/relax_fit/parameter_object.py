@@ -120,6 +120,9 @@ class Relax_fit_params(Param_list):
         # Add the base data.
         self._add_peak_intensity()
 
+        # Add the signal to noise ratio.
+        self._add_sn_ratio()
+
         # Add the base information for the analysis.
         self._add(
             'relax_times',

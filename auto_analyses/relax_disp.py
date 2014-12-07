@@ -39,7 +39,7 @@ from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
-from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, is_r1_optimised, loop_frq
+from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, is_r1_optimised
 from specific_analyses.relax_disp.data import INTERPOLATE_DISP, INTERPOLATE_OFFSET, X_AXIS_DISP, X_AXIS_W_EFF, X_AXIS_THETA, Y_AXIS_R2_R1RHO, Y_AXIS_R2_EFF
 from specific_analyses.relax_disp.model import nesting_model, nesting_param
 from status import Status; status = Status()
@@ -245,22 +245,8 @@ class Relax_disp:
             print("Skipping the error analysis as it has already been performed.")
             return
 
-        # Loop over the spectrometer frequencies.
-        for frq in loop_frq():
-            # Generate a list of spectrum IDs matching the frequency.
-            ids = []
-            for id in cdp.spectrum_ids:
-                # Check that the spectrometer frequency matches.
-                match_frq = True
-                if frq != None and cdp.spectrometer_frq[id] != frq:
-                    match_frq = False
-
-                # Add the ID.
-                if match_frq:
-                    ids.append(id)
-
-            # Run the error analysis on the subset.
-            self.interpreter.spectrum.error_analysis(subset=ids)
+        # Perform the error analysis.
+        self.interpreter.spectrum.error_analysis_per_field()
 
 
     def name_pipe(self, prefix):
