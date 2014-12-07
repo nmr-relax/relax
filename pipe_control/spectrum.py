@@ -1078,3 +1078,20 @@ def sn_ratio_deselection(ratio=1.0, operation='<', all_sn=False, select=False, v
         if len(spin_ids) > 0:
             subsection(file=sys.stdout, text="For all of the S/N comparion test, the following spin ID's was %s"%text_sel, prespace=1, postspace=0)
             print(spin_ids)
+
+
+def sn_ratio_selection(ratio=1.0, operation='<', all_sn=False, verbose=True):
+    """Use user function select.spin on spins with signal to noise ratio higher or lower than ratio.  The operation determines the selection operation.
+
+    @keyword ratio:         The ratio to compare to.
+    @type ratio:            float
+    @keyword operation:     The comparison operation by which to select the spins.  Of the operation(sn_ratio, ratio), where operation can either be:  '<', '<=', '>', '>=', '==', '!='.
+    @type operation:        str
+    @keyword all_sn:        A flag specifying if all the signal to noise ratios per spin should match the comparison operator, of if just a single comparison match is enough.
+    @type all_sn:           bool
+    @keyword verbose:       A flag which if True will print additional information out.
+    @type verbose:          bool
+    """
+
+    # Forward function.
+    sn_ratio_deselection(ratio=ratio, operation=operation, all_sn=all_sn, select=True, verbose=verbose)
