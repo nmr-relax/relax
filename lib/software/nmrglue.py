@@ -33,15 +33,14 @@ from numpy import arange, argmax, asarray, exp, log, max, ones, pi, sqrt
 from extern import nmrglue
 from lib.errors import RelaxError
 from lib.io import get_file_path
-from lib.spectrum.objects import Nmrglue_data
 from target_functions.chi2 import chi2_rankN
 
 
-def contour_plot(spectrum_id=None, contour_start=30000., contour_num=20, contour_factor=1.20, ppm=True, show=False):
+def contour_plot(nmrglue_id=None, contour_start=30000., contour_num=20, contour_factor=1.20, ppm=True, show=False):
     """Plot the spectrum as contour plot.
 
-    @keyword spectrum_id:       The spectrum identification string.
-    @type spectrum_id:          str or list of str
+    @keyword nmrglue_id:        The spectrum identification string.
+    @type nmrglue_id:           str or list of str
     @keyword contour_start:     Contour level start value
     @type contour_start:        float
     @keyword contour_num:       Number of contour levels
@@ -57,9 +56,9 @@ def contour_plot(spectrum_id=None, contour_start=30000., contour_num=20, contour
     """
 
     # Extract the data.
-    dic  = cdp.ngdata[spectrum_id].dic
-    udic  = cdp.ngdata[spectrum_id].udic
-    data = cdp.ngdata[spectrum_id].data
+    dic  = cdp.nmrglue_dic[nmrglue_id]
+    udic  = cdp.nmrglue_udic[nmrglue_id]
+    data = cdp.nmrglue_data[nmrglue_id]
 
     # Setup plot parameters
     # contour map (colors to use for contours)
@@ -272,8 +271,8 @@ def read_spectrum(file=None, dir=None):
     @type file:             str
     @keyword dir:           The directory where the file is located.
     @type dir:              str
-    @return:                The nmrglue data object containing all relevant data in the spectrum.
-    @rtype:                 lib.spectrum.objects.Nmrglue_data instance
+    @return:                The nmrglue data dictionary, the universal dictionary, and the data as numpy array.
+    @rtype:                 dic, dic, numpy array
     """
 
     # File path.
@@ -283,11 +282,5 @@ def read_spectrum(file=None, dir=None):
     dic, data = nmrglue.pipe.read(file_path)
     udic = nmrglue.pipe.guess_udic(dic, data)
 
-    # Initialise the nmrglue data object.
-    nmrglue_data = Nmrglue_data()
-
-    # Add the data.
-    nmrglue_data.add(file_path=file_path, dic=dic, udic=udic, data=data)
-
     # Return the nmrglue data object.
-    return nmrglue_data
+    return dic, udic, data
