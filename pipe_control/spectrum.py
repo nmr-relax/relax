@@ -911,8 +911,8 @@ def signal_noise_ratio(verbose=True):
             ids.append(id)
 
             # Calculate the sn_ratio.
-            pint = spin.peak_intensity[id]
-            pint_err = spin.peak_intensity_err[id]
+            pint = float(spin.peak_intensity[id])
+            pint_err = float(spin.peak_intensity_err[id])
             sn_ratio = pint / pint_err
 
             # Assign the sn_ratio.
