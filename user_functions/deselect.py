@@ -31,8 +31,7 @@ else:
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
-from pipe_control import selection
-from pipe_control import spectrum
+from pipe_control import selection, spectrum
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -292,7 +291,7 @@ uf.title_short = "Spin signal to noise deselection."
 uf.display = True
 uf.add_keyarg(
     name = "ratio",
-    default = 1.0,
+    default = 10.0,
     py_type = "float",
     desc_short = "ratio",
     desc = "The signal to noise ratio to compare to."
@@ -326,7 +325,7 @@ uf.add_keyarg(
     name = "all_sn",
     default = False,
     py_type = "bool",
-    desc_short = "all spin S/N flag",
+    desc_short = "all S/N per spin flag",
     desc = "A flag specifying if all the signal to noise ratios per spin should match the comparison operator, of if just a single comparison match is enough."
 )
 # Description.
@@ -336,8 +335,8 @@ uf.desc[-1].add_paragraph("The 'all_sn' flag default is False, meaning that if a
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To deselect all spins with a signal to noise ratio lower than 10.0:")
-uf.desc[-1].add_prompt("relax> deselect.spin(ratio=10.0, operation='<')")
-uf.desc[-1].add_prompt("relax> deselect.spin(ratio=10.0, operation='<', all_sn=True)")
+uf.desc[-1].add_prompt("relax> deselect.sn_ratio(ratio=10.0, operation='<')")
+uf.desc[-1].add_prompt("relax> deselect.sn_ratio(ratio=10.0, operation='<', all_sn=True)")
 uf.backend = spectrum.sn_ratio_deselection
 uf.menu_text = "&sn_ratio"
 uf.gui_icon = "relax.fid"
