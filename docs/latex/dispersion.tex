@@ -2206,7 +2206,7 @@ When not using the auto-analysis, constraints can be modified or turned off.
 
 The concept of diagonal scaling is explained in Section~\ref{sect: diagonal scaling} on page~\pageref{sect: diagonal scaling}.
 
-For the dispersion analysis the scaling factor of 10 is used for the relaxation rates, 1e$^5$ for the exchange rates, 1e$^{-4}$ for exchange times, and 1 for all other parameters.
+For the dispersion analysis the scaling factor of 10 is used for the relaxation rates, 1e$^4$ for the exchange rates, 1e$^{-4}$ for exchange times, and 1 for all other parameters.
 The scaling matrix for the parameters \{$\Rtwozero$, $\RtwozeroA$, $\RtwozeroB$, $\Phiex$, $\PhiexB$, $\PhiexC$, $\pA\dw^2$, $\dw$, $\dwH$, $\pA$, $\pB$, $\kex$, $\kB$, $\kC$, $\kAB$, $\tex$\} is
 \begin{equation}
     \begin{pmatrix}
@@ -2221,10 +2221,10 @@ The scaling matrix for the parameters \{$\Rtwozero$, $\RtwozeroA$, $\RtwozeroB$,
         0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
         0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0    & 0    & 0    & 0    & 0       \\
         0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0    & 0    & 0    & 0    & 0       \\
-        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1e^5 & 0    & 0    & 0    & 0       \\
-        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 1e^5 & 0    & 0    & 0       \\
-        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 1e^5 & 0    & 0       \\
-        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 1e^5 & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1e^4 & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 1e^4 & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 1e^4 & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 20   & 0       \\
         0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 1e^{-4} \\
     \end{pmatrix}.
 \end{equation}
