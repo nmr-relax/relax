@@ -43,8 +43,7 @@ from user_functions.wildcards import WILDCARD_SPECTRUM_PEAKLIST
 uf_class = uf_info.add_class('io')
 uf_class.title = "Class for handling IO operations."
 uf_class.menu_text = "&io"
-uf_class.gui_icon = "relax.relax"
-
+uf_class.gui_icon = "oxygen.actions.document-preview-archive"
 
 # The io.file_list user function.
 uf = uf_info.add_uf('io.file_list')
@@ -80,6 +79,6 @@ uf.desc[-1].add_paragraph("The following commands will store a filelist to cdp:"
 uf.desc[-1].add_prompt("relax> io.file_list(glob='128_*_FT.ft2', dir='/path/to/foolder', id='750MHz_128_NI')")
 uf.backend = io.file_list
 uf.menu_text = "&read"
-uf.gui_icon = "oxygen.actions.document-preview"
+uf.gui_icon = "oxygen.actions.document-preview-archive"
 uf.wizard_size = (800, 500)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'document-preview.png'
+uf.wizard_image = WIZARD_IMAGE_PATH + 'oxygen-document-preview-archive.png'
