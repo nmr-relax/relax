@@ -554,7 +554,6 @@ uf.desc[-1].add_prompt("relax> spectrum.sn_ratio()")
 uf.backend = spectrum.signal_noise_ratio
 uf.menu_text = "&sn_ratio"
 uf.gui_icon = "relax.fid"
-uf.wizard_height_desc = 530
-uf.wizard_size = (1000, 700)
+uf.wizard_size = (600, 400)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
 uf.wizard_apply_button = False
