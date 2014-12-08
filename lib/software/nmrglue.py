@@ -36,11 +36,15 @@ from lib.io import get_file_path
 from target_functions.chi2 import chi2_rankN
 
 
-def contour_plot(nmrglue_id=None, contour_start=30000., contour_num=20, contour_factor=1.20, ppm=True, show=False):
+def contour_plot(dic=None, udic=None, data=None, contour_start=30000., contour_num=20, contour_factor=1.20, ppm=True, show=False):
     """Plot the spectrum as contour plot.
 
-    @keyword nmrglue_id:        The spectrum identification string.
-    @type nmrglue_id:           str or list of str
+    @keyword dic:               The data dictionary, from nmrglue.
+    @type dic:                  dict
+    @keyword udic:              The universal dictionary, from nmrglue.
+    @type udic:                 dict
+    @keyword data:              The spectrum data as 2D numpy array.
+    @type data:                 2D numpy array
     @keyword contour_start:     Contour level start value
     @type contour_start:        float
     @keyword contour_num:       Number of contour levels
@@ -54,11 +58,6 @@ def contour_plot(nmrglue_id=None, contour_start=30000., contour_num=20, contour_
     @return:                    The matplotlib.axes.AxesSubplot class, which can be manipulated to add additional text to the axis.
     @rtype:                     matplotlib.axes.AxesSubplot
     """
-
-    # Extract the data.
-    dic  = cdp.nmrglue[nmrglue_id].dic
-    udic  = cdp.nmrglue[nmrglue_id].udic
-    data = cdp.nmrglue[nmrglue_id].data
 
     # Setup plot parameters
     # contour map (colors to use for contours)

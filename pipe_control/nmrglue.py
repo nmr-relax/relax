@@ -154,8 +154,13 @@ def plot_contour(nmrglue_id=None, contour_start=30000., contour_num=20, contour_
     @rtype:                     matplotlib.axes.AxesSubplot
     """
 
+    # Extract the data.
+    dic  = cdp.nmrglue[nmrglue_id].dic
+    udic  = cdp.nmrglue[nmrglue_id].udic
+    data = cdp.nmrglue[nmrglue_id].data
+
     # Call the contour plot.
-    ax = contour_plot(nmrglue_id=nmrglue_id, contour_start=contour_start, contour_num=contour_num, contour_factor=contour_factor, ppm=ppm, show=show)
+    ax = contour_plot(dic=dic, udic=udic, data=data, contour_start=contour_start, contour_num=contour_num, contour_factor=contour_factor, ppm=ppm, show=show)
 
     # Return the axis instance, for possibility for additional decoration.
     return ax
