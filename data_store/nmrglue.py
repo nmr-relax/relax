@@ -36,10 +36,8 @@ class Nmrglue(Element):
     """Container for the global GUI data structures."""
 
     def __repr__(self):
-        # Header.
-        text = "\n%-25s%-100s\n\n" % ("Data structure", "Value")
-
         # Data structures.
+        text = "\n"
         for name in dir(self):
             # Skip Nmrglue and derived class methods.
             if name in Element.__dict__ or name in Nmrglue.__dict__ or name in self.__class__.__dict__:
@@ -52,10 +50,14 @@ class Nmrglue(Element):
             # Get the object.
             obj = getattr(self, name)
 
-            # The data.
+            # The objects to add.
             if name == 'data':
                 name = "data.shape"
                 obj = obj.shape
+            elif name in ['dic', 'udic']:
+                pass
+            else:
+                continue
 
             # Generate the text.
             text = text + "%-25s %-100s\n" % (name, repr(obj))
