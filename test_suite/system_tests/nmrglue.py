@@ -470,12 +470,10 @@ class Nmrglue(SystemTestCase):
         self.assertEqual(cdp.nmrglue_ids[0], sp_id)
 
         # Extract the data.
-        dic  = cdp.nmrglue_dic[sp_id]
-        udic  = cdp.nmrglue_udic[sp_id]
-        data = cdp.nmrglue_data[sp_id]
-        s = base64.b64encode(data)
-        cdp.nmrglue_data[sp_id] = s
-        print("Type of encoding is:", type(cdp.nmrglue_data[sp_id]))
+        dic  = cdp.nmrglue[sp_id].dic
+        udic  = cdp.nmrglue[sp_id].udic
+        data = cdp.nmrglue[sp_id].data
+        print("Type of encoding is:", type(cdp.nmrglue[sp_id].data))
 
         # Try storing the numpy array, and print size
         data_numpy = ds.tmpdir + sep + 'data.npy'
@@ -483,9 +481,6 @@ class Nmrglue(SystemTestCase):
         save(data_numpy, data)
         data_numpy_size = path.getsize(data_numpy)
         print("Filesize of .npy file is: %i"%(data_numpy_size) )
-
-        # Delete the large data array, for faster saving.
-        #cdp.nmrglue_data[sp_id] = 0
 
         # Store the directory path, before reset of the controller.
         dirpath = ds.tmpdir
@@ -508,29 +503,25 @@ class Nmrglue(SystemTestCase):
         self.interpreter.state.load(dirpath+sep+'state')
 
         # Decode
-        print("Decoding")
-        r = base64.decodestring(cdp.nmrglue_data[sp_id])
-        q = frombuffer(r,dtype=float32)
-        cdp.nmrglue_data[sp_id] = q.reshape((512, 4096))
-        print("Type of decoded is:", type(cdp.nmrglue_data[sp_id]))
-        print("Shape of numpy array is:", cdp.nmrglue_data[sp_id].shape)
+        print("Type of decoded is:", type(cdp.nmrglue[sp_id].data))
+        print("Shape of numpy array is:", cdp.nmrglue[sp_id].data.shape)
 
         # Test data.
         print("Testing data array.")
-        print("Shape of data is %ix%i, and of cdp.nmrglue_data is %ix%i"%(data.shape[0], data.shape[1], cdp.nmrglue_data[sp_id].shape[0], cdp.nmrglue_data[sp_id].shape[1]))
-        test = data == cdp.nmrglue_data[sp_id]
+        print("Shape of data is %ix%i, and of cdp.nmrglue[].data is %ix%i"%(data.shape[0], data.shape[1], cdp.nmrglue[sp_id].data.shape[0], cdp.nmrglue[sp_id].data.shape[1]))
+        test = data == cdp.nmrglue[sp_id].data
         print(test.all())
         self.assert_(test.all())
 
         print("Testing dics.")
         # Make tests that they are the same.
-        self.assertEqual(dic, cdp.nmrglue_dic[sp_id])
+        self.assertEqual(dic, cdp.nmrglue[sp_id].dic)
         for id in dic:
-            self.assertEqual(dic[id], cdp.nmrglue_dic[sp_id][id])
+            self.assertEqual(dic[id], cdp.nmrglue[sp_id].dic[id])
 
-        self.assertEqual(udic, cdp.nmrglue_udic[sp_id])
+        self.assertEqual(udic, cdp.nmrglue[sp_id].udic)
         for id in udic:
-            self.assertEqual(udic[id], cdp.nmrglue_udic[sp_id][id])
+            self.assertEqual(udic[id], cdp.nmrglue[sp_id].udic[id])
 
 
     def test_version(self):
