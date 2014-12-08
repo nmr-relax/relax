@@ -259,7 +259,7 @@ class Nmrglue(SystemTestCase):
 
         # Loop over id ref:
         for ng_id in ids_ref:
-            data = cdp.nmrglue_data[ng_id]
+            data = cdp.nmrglue[ng_id].data
             data_flat = data.flatten()
             print(ng_id, data.shape, data_flat.shape)
             np_arr_ref = concatenate( (np_arr_ref,  data_flat) )
@@ -269,7 +269,7 @@ class Nmrglue(SystemTestCase):
 
         # Loop over id ref:
         for ng_id in ids_met:
-            data = cdp.nmrglue_data[ng_id]
+            data = cdp.nmrglue[ng_id].data
             data_flat = data.flatten()
             print(ng_id, data.shape, data_flat.shape)
             np_arr_met = concatenate( (np_arr_met,  data_flat) )
@@ -316,9 +316,9 @@ class Nmrglue(SystemTestCase):
         self.interpreter.spectrum.nmrglue_read(file=fname, dir=ft2_folder_1, nmrglue_id=sp_id)
 
         # Extract the data.
-        dic  = cdp.nmrglue_dic[sp_id]
-        udic  = cdp.nmrglue_udic[sp_id]
-        data = cdp.nmrglue_data[sp_id]
+        dic  = cdp.nmrglue[sp_id].dic
+        udic  = cdp.nmrglue[sp_id].udic
+        data = cdp.nmrglue[sp_id].data
 
         # Plot the histogram.
         kwargs = {'bins': 3000, 'range': None, 'normed': False, 'facecolor':'green', 'alpha':0.75}
@@ -346,8 +346,8 @@ class Nmrglue(SystemTestCase):
         self.interpreter.spectrum.nmrglue_read(file=basename_list, dir=ft2_folder_1, nmrglue_id=file_root_list)
 
         # Extract the data.
-        data_0 = cdp.nmrglue_data[file_root_list[0]]
-        data_1 = cdp.nmrglue_data[file_root_list[1]]
+        data_0 = cdp.nmrglue[file_root_list[0]].data
+        data_1 = cdp.nmrglue[file_root_list[1]].data
 
         # First flatten arrays, and then merge them.
         data = concatenate( (data_0.flatten(), data_1.flatten() ) )
@@ -369,9 +369,9 @@ class Nmrglue(SystemTestCase):
         self.assertEqual(cdp.nmrglue_ids[0], sp_id)
 
         # Extract the data.
-        dic  = cdp.nmrglue_dic[sp_id]
-        udic  = cdp.nmrglue_udic[sp_id]
-        data = cdp.nmrglue_data[sp_id]
+        dic  = cdp.nmrglue[sp_id].dic
+        udic  = cdp.nmrglue[sp_id].udic
+        data = cdp.nmrglue[sp_id].data
 
         # Test the data.
         self.assertEqual(udic[0]['label'], '15N')
