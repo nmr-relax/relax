@@ -22,7 +22,7 @@
 
 # Python module imports.
 import base64
-from numpy import concatenate, float32, float64, frombuffer, save
+from numpy import array, concatenate, float32, float64, frombuffer, save
 from os import path, sep
 from tempfile import mkdtemp
 
@@ -95,6 +95,20 @@ class Nmrglue(SystemTestCase):
         self.setup_plot_contour_cpmg(show=False)
 
         # Now show
+        plt.show()
+
+
+    def plot_plot_correlation(self):
+        """Plot data for correlation plot.
+
+        The data is from systemtest -s Relax_disp.test_repeat_cpmg
+        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
+        """
+
+        # Call setup function.
+        self.setup_plot_correlation()
+
+        # Show
         plt.show()
 
 
@@ -178,6 +192,100 @@ class Nmrglue(SystemTestCase):
 
         # Set a new title.
         ax.set_title("CPMG Spectrum")
+
+
+    def setup_plot_correlation(self):
+        """Setup data for correlation plot.
+
+        The data is from systemtest -s Relax_disp.test_repeat_cpmg
+        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
+        """
+
+        # Define base path to files.
+        base_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'
+
+        # Define folder to all ft files.
+        ft2_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'ft2_data'
+        ft2_folder_2 = base_path +sep+ 'cpmg_disp_sod1d90a_060521' +sep+ 'cpmg_disp_sod1d90a_060521_normal.fid' +sep+ 'ft2_data'
+
+        # Get the file list matching a glob pattern for the reference.
+        ref_500 = '128_*_FT.ft2'
+        ref_500_id = 'ref_500'
+        ref_600 = '128_*_FT.ft2'
+        ref_600_id = 'ref_600'
+
+        # Get the file lists.
+        self.interpreter.io.file_list(glob=ref_500, dir=ft2_folder_1, id=ref_500_id)
+        self.interpreter.io.file_list(glob=ref_600, dir=ft2_folder_2, id=ref_600_id)
+
+        # Then get the file list for method.
+        met_500 = '126_*_MDD.ft2'
+        met_500_id = 'met_500'
+        met_600 = '126_*_MDD.ft2'
+        met_600_id = 'met_600'
+
+        # Get the file lists.
+        self.interpreter.io.file_list(glob=met_500, dir=ft2_folder_1, id=met_500_id)
+        self.interpreter.io.file_list(glob=met_600, dir=ft2_folder_2, id=met_600_id)
+
+        # Read the spectra.
+        # First loop over the glob id.
+        ids_ref = []
+        ids_met = []
+        for io_id in cdp.io_ids:
+            # Get the directory
+            io_dir = cdp.io_dir[io_id]
+
+            # Then loop over the file_roots:
+            for i, froot in enumerate(cdp.io_file_root[io_id]):
+                # Get the basename
+                bname = cdp.io_basename[io_id][i]
+
+                # Form new nmrglue id.
+                ng_id = froot + '_' + io_id
+
+                # Assign ids to list.
+                if 'ref_' in ng_id:
+                    ids_ref.append(ng_id)
+                elif 'met_' in ng_id:
+                    ids_met.append(ng_id)
+
+                # Read the spectrum data.
+                self.interpreter.spectrum.nmrglue_read(file=bname, dir=io_dir, nmrglue_id=ng_id)
+
+        # Create an empty reference array.
+        np_arr_ref = array([])
+
+        # Loop over id ref:
+        for ng_id in ids_ref:
+            data = cdp.nmrglue_data[ng_id]
+            data_flat = data.flatten()
+            print(ng_id, data.shape, data_flat.shape)
+            np_arr_ref = concatenate( (np_arr_ref,  data_flat) )
+
+        # Create an empty method array.
+        np_arr_met = array([])
+
+        # Loop over id ref:
+        for ng_id in ids_met:
+            data = cdp.nmrglue_data[ng_id]
+            data_flat = data.flatten()
+            print(ng_id, data.shape, data_flat.shape)
+            np_arr_met = concatenate( (np_arr_met,  data_flat) )
+
+        # Create correlation plot.
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+
+        line = array( [np_arr_ref.min(), np_arr_ref.max()] )
+
+        ax.plot(np_arr_ref, np_arr_met, '+', label='corr')
+        ax.plot(line, line, 'r-', label='corr')
+
+        # Set text.
+        ax.set_xlabel("All spectrum intensities for reference")
+        ax.set_ylabel("All spectrum intensities for method")
+        ax.set_title("Correlation plot")
 
 
     def setup_plot_hist_cpmg(self, show=False):
