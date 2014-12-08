@@ -63,6 +63,7 @@ from test_suite.system_tests.relax_fit import Relax_fit
 from test_suite.system_tests.results import Results
 from test_suite.system_tests.selection import Selection
 from test_suite.system_tests.sequence import Sequence
+from test_suite.system_tests.spectrum import Spectrum
 from test_suite.system_tests.state import State
 from test_suite.system_tests.structure import Structure
 from test_suite.system_tests.unit_vectors import Unit_vectors
@@ -101,6 +102,7 @@ __all__ = ['align_tensor',
            'scripts',
            'selection',
            'sequence',
+           'spectrum',
            'state',
            'structure',
            'unit_vectors',
@@ -191,6 +193,7 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Results))
             suite_array.append(TestLoader().loadTestsFromTestCase(Selection))
             suite_array.append(TestLoader().loadTestsFromTestCase(Sequence))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Spectrum))
             suite_array.append(TestLoader().loadTestsFromTestCase(State))
             suite_array.append(TestLoader().loadTestsFromTestCase(Structure))
             suite_array.append(TestLoader().loadTestsFromTestCase(Unit_vectors))

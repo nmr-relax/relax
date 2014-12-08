@@ -27,17 +27,21 @@
 
 # Python module imports.
 from math import sqrt
+from numpy import asarray
+import operator
 import sys
 from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxImplementError, RelaxNoSpectraError
-from lib.io import write_data
+from lib.io import sort_filenames, write_data
+from lib.text.sectioning import section, subsection
 from lib.spectrum.peak_list import read_peak_list
 from lib.statistics import std
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control.mol_res_spin import check_mol_res_spin_data, create_spin, generate_spin_id_unique, return_spin, spin_loop
 from pipe_control.pipes import check_pipe
+from pipe_control.selection import desel_spin, sel_spin
 
 
 def __errors_height_no_repl():
@@ -437,6 +441,36 @@ def error_analysis(subset=None):
             __errors_vol_no_repl()
 
 
+def error_analysis_per_field():
+    """Perform an error analysis of the peak intensities for each field strength separately."""
+
+    # Printout.
+    section(file=sys.stdout, text="Automatic Error analysis per field strength", prespace=2)
+
+    # Handle missing frequency data.
+    frqs = [None]
+    if hasattr(cdp, 'spectrometer_frq_list'):
+        frqs = cdp.spectrometer_frq_list
+
+    # Loop over the spectrometer frequencies.
+    for frq in frqs:
+        # Generate a list of spectrum IDs matching the frequency.
+        ids = []
+        for id in cdp.spectrum_ids:
+            # Check that the spectrometer frequency matches.
+            match_frq = True
+            if frq != None and cdp.spectrometer_frq[id] != frq:
+                match_frq = False
+
+            # Add the ID.
+            if match_frq:
+                ids.append(id)
+
+        # Run the error analysis on the subset.
+        print("For field strength %.8f MHz, subset ids for spectrum.error_analysis is: %s" % (frq/1e6, ids))
+        error_analysis(subset=ids)
+
+
 def get_ids():
     """Return a list of all spectrum IDs.
 
@@ -834,3 +868,230 @@ def replicated_ids(spectrum_id):
 
     # Return the list.
     return repl
+
+
+def signal_noise_ratio(verbose=True):
+    """Calculate the signal to noise ratio per spin.
+
+    @keyword verbose:       A flag which if True will print additional information out.
+    @type verbose:          bool
+    """
+
+    # Tests.
+    check_pipe()
+    check_mol_res_spin_data()
+
+    # Test if spectra have been loaded.
+    if not hasattr(cdp, 'spectrum_ids'):
+        raise RelaxError("No spectra have been loaded.")
+
+    # Possible print.
+    if verbose:
+        print("\nThe following signal to noise ratios has been calculated:\n")
+
+    # Set the spin specific signal to noise ratio.
+    for spin, spin_id in spin_loop(return_id=True):
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        # Skip spins missing intensity data.
+        if not hasattr(spin, 'peak_intensity'):
+            continue
+
+        # Test if error analysis has been performed.
+        if not hasattr(spin, 'peak_intensity_err'):
+            raise RelaxError("Intensity error analysis has not been performed.  Please see spectrum.error_analysis().")
+
+        # If necessary, create the dictionary.
+        if not hasattr(spin, 'sn_ratio'):
+            spin.sn_ratio = {}
+
+        # Loop over the ID.
+        ids = []
+        for id in spin.peak_intensity:
+            # Append the ID to the list.
+            ids.append(id)
+
+            # Calculate the sn_ratio.
+            pint = float(spin.peak_intensity[id])
+            pint_err = float(spin.peak_intensity_err[id])
+            sn_ratio = pint / pint_err
+
+            # Assign the sn_ratio.
+            spin.sn_ratio[id] = sn_ratio
+
+        # Sort the ids alphanumeric.
+        ids = sort_filenames(filenames=ids, rev=False)
+
+        # Collect the data under sorted ids.
+        data_i = []
+        for id in ids:
+            # Get the values.
+            pint = spin.peak_intensity[id]
+            pint_err = spin.peak_intensity_err[id]
+            sn_ratio = spin.sn_ratio[id]
+
+            # Store the data.
+            data_i.append([id, repr(pint), repr(pint_err), repr(sn_ratio)])
+
+        if verbose:
+            section(file=sys.stdout, text="Signal to noise ratio for spin ID '%s'"%spin_id, prespace=1)
+            write_data(out=sys.stdout, headings=["Spectrum ID", "Signal", "Noise", "S/N"], data=data_i)
+
+
+def sn_ratio_deselection(ratio=10.0, operation='<', all_sn=False, select=False, verbose=True):
+    """Use user function deselect.spin on spins with signal to noise ratio higher or lower than ratio.  The operation determines the selection operation.
+
+    @keyword ratio:         The ratio to compare to.
+    @type ratio:            float
+    @keyword operation:     The comparison operation by which to select the spins.  Of the operation(sn_ratio, ratio), where operation can either be:  '<', '<=', '>', '>=', '==', '!='.
+    @type operation:        str
+    @keyword all_sn:        A flag specifying if all the signal to noise ratios per spin should match the comparison operator, of if just a single comparison match is enough.
+    @type all_sn:           bool
+    @keyword select:        A flag specifying if the user function select.spin should be used instead.
+    @type select:           bool
+    @keyword verbose:       A flag which if True will print additional information out.
+    @type verbose:          bool
+    """
+
+    # Tests.
+    check_pipe()
+    check_mol_res_spin_data()
+
+    # Test if spectra have been loaded.
+    if not hasattr(cdp, 'spectrum_ids'):
+        raise RelaxError("No spectra have been loaded.")
+
+    # Assign the comparison operator.
+    # "'<' : strictly less than"
+    if operation == '<':
+        op = operator.lt
+
+    # "'<=' : less than or equal"
+    elif operation == '<=':
+        op = operator.le
+
+    # "'>' : strictly greater than"
+    elif operation == '>':
+        op = operator.gt
+
+    # "'>=' : greater than or equal"
+    elif operation == '>=':
+        op = operator.ge
+
+    # "'==' : equal"
+    elif operation == '==':
+        op = operator.eq
+
+    # "'!=' : not equal",
+    elif operation == '!=':
+        op = operator.ne
+
+    # If not assigned, raise error.
+    else:
+        raise RelaxError("The compare operation does not belong to the allowed list of methods: ['<', '<=', '>', '>=', '==', '!=']")
+
+    # Assign text for print out.
+    if all_sn:
+        text_all_sn = "all"
+    else:
+        text_all_sn = "any"
+
+    if select:
+        text_sel = "selected"
+        sel_func = sel_spin
+    else:
+        text_sel = "deselected"
+        sel_func = desel_spin
+
+    # Print
+    section(file=sys.stdout, text="Signal to noise ratio comparison selection", prespace=1, postspace=0)
+    print("For the comparion test: S/N %s %1.1f"%(operation, ratio))
+
+    # Loop over the spins.
+    spin_ids = []
+    for spin, spin_id in spin_loop(return_id=True):
+        # Skip spins missing sn_ratio.
+        if not hasattr(spin, 'sn_ratio'):
+            # Skip warning for deselected spins.
+            if spin.select:
+                warn(RelaxWarning("Spin '%s' does not contain Signal to Noise calculations. Perform the user function 'spectrum.sn_ratio'. This spin is skipped." % spin_id))
+            continue
+
+        # Loop over the ID, collect and sort.
+        ids = []
+        for id in spin.peak_intensity:
+            # Append the ID to the list.
+            ids.append(id)
+
+        # Sort the ids alphanumeric.
+        ids = sort_filenames(filenames=ids, rev=False)
+
+        # Loop over the sorted ids.
+        sn_val = []
+        for id in ids:
+            # Append the Signal to Noise in the list.
+            sn_val.append(spin.sn_ratio[id])
+
+        # Convert the list to array.
+        sn_val = asarray(sn_val)
+
+        # Make the comparison for the whole array.
+        test_arr = op(sn_val, ratio)
+
+        # Determine how the test should evaluate.
+        if all_sn:
+            test = test_arr.all()
+        else:
+            test = test_arr.any()
+
+        # Make an numpy array for the ids, an extract id which failed the test.
+        ids_arr = asarray(ids)
+        ids_test_arr = ids_arr[test_arr]
+
+        # Make inversion of bool
+        test_arr_inv = test_arr == False
+        ids_test_arr_inv = ids_arr[test_arr_inv]
+
+        # print
+        if verbose:
+            subsection(file=sys.stdout, text="Signal to noise ratio comparison for spin ID '%s'"%spin_id, prespace=1, postspace=0)
+            print("Following spectra ID evaluated to True: %s"%ids_test_arr)
+            print("Following spectra ID evaluated to False: %s"%ids_test_arr_inv)
+            print("'%s' comparisons have been used for evaluation, which evaluated to: %s"%(text_all_sn, test))
+            if test:
+                print("The spin ID '%s' is %s"%(spin_id, text_sel))
+            else:
+                print("The spin ID '%s' is skipped"%spin_id)
+
+        # If the test evaluates to True, then do selection action.
+        if test:
+            # Select/Deselect the spin.
+            sel_func(spin_id=spin_id)
+
+            # Assign spin_id to list, for printing.
+            spin_ids.append(spin_id)
+
+    # Make summary
+    if verbose:
+        if len(spin_ids) > 0:
+            subsection(file=sys.stdout, text="For all of the S/N comparion test, the following spin ID's was %s"%text_sel, prespace=1, postspace=0)
+            print(spin_ids)
+
+
+def sn_ratio_selection(ratio=10.0, operation='>', all_sn=True, verbose=True):
+    """Use user function select.spin on spins with signal to noise ratio higher or lower than ratio.  The operation determines the selection operation.
+
+    @keyword ratio:         The ratio to compare to.
+    @type ratio:            float
+    @keyword operation:     The comparison operation by which to select the spins.  Of the operation(sn_ratio, ratio), where operation can either be:  '<', '<=', '>', '>=', '==', '!='.
+    @type operation:        str
+    @keyword all_sn:        A flag specifying if all the signal to noise ratios per spin should match the comparison operator, of if just a single comparison match is enough.
+    @type all_sn:           bool
+    @keyword verbose:       A flag which if True will print additional information out.
+    @type verbose:          bool
+    """
+
+    # Forward function.
+    sn_ratio_deselection(ratio=ratio, operation=operation, all_sn=all_sn, select=True, verbose=verbose)

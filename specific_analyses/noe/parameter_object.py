@@ -44,6 +44,9 @@ class Noe_params(Param_list):
         # Add the base data.
         self._add_peak_intensity()
 
+        # Add the signal to noise ratio.
+        self._add_sn_ratio()
+
         # Add the single model parameter.
         self._add(
             'noe',
