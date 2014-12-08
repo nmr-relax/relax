@@ -403,14 +403,16 @@ class Nmrglue(SystemTestCase):
         print("Decoding")
         r = base64.decodestring(cdp.nmrglue_data[sp_id])
         q = frombuffer(r,dtype=float32)
-        cdp.nmrglue_data[sp_id] = q
+        cdp.nmrglue_data[sp_id] = q.reshape((512, 4096))
         print("Type of decoded is:", type(cdp.nmrglue_data[sp_id]))
         print("Shape of numpy array is:", cdp.nmrglue_data[sp_id].shape)
 
         # Test data.
         print("Testing data array.")
         print("Shape of data is %ix%i, and of cdp.nmrglue_data is %ix%i"%(data.shape[0], data.shape[1], cdp.nmrglue_data[sp_id].shape[0], cdp.nmrglue_data[sp_id].shape[1]))
-        self.assertEqual(data, cdp.nmrglue_data[sp_id])
+        test = data == cdp.nmrglue_data[sp_id]
+        print(test.all())
+        self.assert_(test.all())
 
         print("Testing dics.")
         # Make tests that they are the same.
