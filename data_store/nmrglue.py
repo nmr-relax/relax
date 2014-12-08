@@ -37,12 +37,12 @@ class Nmrglue(Element):
 
     def __repr__(self):
         # Header.
-        text = "%-25s%-100s\n\n" % ("Data structure", "Value")
+        text = "\n%-25s%-100s\n\n" % ("Data structure", "Value")
 
         # Data structures.
         for name in dir(self):
             # Skip Nmrglue and derived class methods.
-            if name in Nmrglue.__dict__ or name in self.__class__.__dict__:
+            if name in Element.__dict__ or name in Nmrglue.__dict__ or name in self.__class__.__dict__:
                 continue
 
             # Skip special objects.
@@ -54,6 +54,7 @@ class Nmrglue(Element):
 
             # The data.
             if name == 'data':
+                name = "data.shape"
                 obj = obj.shape
 
             # Generate the text.
