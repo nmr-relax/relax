@@ -441,6 +441,17 @@ class Nmrglue(SystemTestCase):
         self.setup_plot_contour_cpmg(show=False)
 
 
+    def test_plot_correlation(self):
+        """Test data for correlation plot.
+
+        The data is from systemtest -s Relax_disp.test_repeat_cpmg
+        U{task #7826<https://gna.org/task/index.php?7826>}. Write an python class for the repeated analysis of dispersion data.
+        """
+
+        # Call setup function.
+        self.setup_plot_correlation()
+
+
     def test_plot_hist_cpmg(self):
         """Test the plot_hist function in pipe_control.
 
