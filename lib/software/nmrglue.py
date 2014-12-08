@@ -56,9 +56,9 @@ def contour_plot(nmrglue_id=None, contour_start=30000., contour_num=20, contour_
     """
 
     # Extract the data.
-    dic  = cdp.nmrglue_dic[nmrglue_id]
-    udic  = cdp.nmrglue_udic[nmrglue_id]
-    data = cdp.nmrglue_data[nmrglue_id]
+    dic  = cdp.nmrglue[nmrglue_id].dic
+    udic  = cdp.nmrglue[nmrglue_id].udic
+    data = cdp.nmrglue[nmrglue_id].data
 
     # Setup plot parameters
     # contour map (colors to use for contours)
