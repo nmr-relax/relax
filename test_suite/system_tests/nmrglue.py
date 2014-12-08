@@ -31,6 +31,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from lib.errors import RelaxError
 from lib.io import file_root, get_file_list
+from lib.statistics import linear_corr, linear_corr_intercept
 from pipe_control.nmrglue import plot_contour, plot_hist
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
@@ -281,6 +282,14 @@ class Nmrglue(SystemTestCase):
 
         ax.plot(np_arr_ref, np_arr_met, '+', label='corr')
         ax.plot(line, line, 'r-', label='corr')
+
+        # Try get the linear correlation
+        a, r_xy = linear_corr(x=np_arr_ref, y=np_arr_met)
+        print(a, r_xy)
+        a_int, b_int, r_xy_int = linear_corr_intercept(x=np_arr_ref, y=np_arr_met)
+        print(a_int, r_xy, b_int)
+
+        ax.plot(np_arr_ref, np_arr_ref*a, 'g-', label='corr')
 
         # Set text.
         ax.set_xlabel("All spectrum intensities for reference")
