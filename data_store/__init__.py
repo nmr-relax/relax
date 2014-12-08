@@ -47,6 +47,7 @@ __all__ = [ 'align_tensor',
             'gui',
             'interatomic',
             'mol_res_spin',
+            'nmrglue',
             'pipe_container',
             'prototype'
 ]
