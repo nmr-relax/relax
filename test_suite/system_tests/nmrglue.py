@@ -63,6 +63,7 @@ class Nmrglue(SystemTestCase):
             to_skip = [
                 "test_plot_contour",
                 "test_plot_contour_cpmg",
+                "test_plot_correlation",
                 "test_plot_hist_cpmg",
                 "test_plot_hist_cpmg_several",
             ]
