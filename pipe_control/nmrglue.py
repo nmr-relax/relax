@@ -23,30 +23,32 @@
 """Module for the using of nmrglue."""
 
 # relax module imports.
+from data_store.nmrglue import Nmrglue, Nmrglue_dict
 from lib.errors import RelaxError
 from lib.software.nmrglue import contour_plot, hist_plot, read_spectrum
 from pipe_control.pipes import check_pipe
 from pipe_control.spectrum import check_spectrum_id, delete
 
 
-def add_nmrglue_data(object_name=None, nmrglue_id=None, nmrglue_data=None):
+def add_nmrglue_data(nmrglue_id=None, dic=None, udic=None, data=None):
     """Add the nmrglue data to the data store under the the given object_name within a dictionary with nmrglue_id key.
 
-    @keyword object_name:       The object name for where to store the data.  As cdp.object_name.
-    @type object_name:          str
-    @keyword nmrglue_id:        The dictionary key, to access the data.  As As cdp.object_name['nmrglue_id']
-    @type nmrglue_id:           str
-    @keyword nmrglue_data:      The type of data depending on called function.
-    @type nmrglue_data:         depend on function
+    @keyword nmrglue_id:    The dictionary key, to access the data as cdp.nmrglue['nmrglue_id'].
+    @type nmrglue_id:       str
+    @keyword dic:           The dic structure from nmrglue.
+    @type dic:              dict
+    @keyword udic:          The dic structure from nmrglue.
+    @type udic:             dict
+    @keyword data:          The type of data depending on called function.
+    @type data:             depend on function
     """
 
     # Initialise the structure, if needed.
-    if not hasattr(cdp, object_name):
-        setattr(cdp, object_name, {})
+    if not hasattr(cdp, 'nmrglue'):
+        cdp.nmrglue = Nmrglue_dict()
 
     # Add the data under the dictionary key.
-    obj_dict = getattr(cdp, object_name)
-    obj_dict[nmrglue_id] = nmrglue_data
+    cdp.nmrglue[nmrglue_id] = Nmrglue(dic=dic, udic=udic, data=data)
 
 
 def add_nmrglue_id(nmrglue_id=None):
@@ -130,9 +132,7 @@ def read(file=None, dir=None, nmrglue_id=None):
         dic, udic, data = read_spectrum(file=file_i, dir=dir)
 
         # Store the data.
-        add_nmrglue_data(object_name='nmrglue_dic', nmrglue_id=nmrglue_id_i, nmrglue_data=dic)
-        add_nmrglue_data(object_name='nmrglue_udic', nmrglue_id=nmrglue_id_i, nmrglue_data=udic)
-        add_nmrglue_data(object_name='nmrglue_data', nmrglue_id=nmrglue_id_i, nmrglue_data=data)
+        add_nmrglue_data(nmrglue_id=nmrglue_id_i, dic=dic, udic=udic, data=data)
 
 
 def plot_contour(nmrglue_id=None, contour_start=30000., contour_num=20, contour_factor=1.20, ppm=True, show=False):

@@ -31,6 +31,7 @@ from data_store.diff_tensor import DiffTensorData
 from data_store.exp_info import ExpInfo
 from data_store.interatomic import InteratomList
 from data_store.mol_res_spin import MoleculeList
+from data_store.nmrglue import Nmrglue, Nmrglue_dict
 from data_store.prototype import Prototype
 from lib.errors import RelaxFromXMLNotEmptyError
 from lib.structure.internal.object import Internal
@@ -224,6 +225,15 @@ class PipeContainer(Prototype):
             # Fill its contents.
             self.align_tensors.from_xml(align_tensor_nodes[0], file_version=file_version)
 
+        # Get the nmrglue data nodes and, if they exist, fill the contents.
+        nmrglue_nodes = pipe_node.getElementsByTagName('nmrglue')
+        if nmrglue_nodes:
+            # Create the data container.
+            self.nmrglue = Nmrglue_dict()
+
+            # Fill its contents.
+            self.nmrglue.from_xml(nmrglue_nodes[0], file_version=file_version)
+
         # Recreate the interatomic data structure (this needs to be before the 'mol' structure as the backward compatibility hooks can create interatomic data containers!).
         interatom_nodes = pipe_node.getElementsByTagName('interatomic')
         self.interatomic.from_xml(interatom_nodes, file_version=file_version)
@@ -303,7 +313,7 @@ class PipeContainer(Prototype):
         global_element = doc.createElement('global')
         element.appendChild(global_element)
         global_element.setAttribute('desc', 'Global data located in the top level of the data pipe')
-        fill_object_contents(doc, global_element, object=self, blacklist=['align_tensors', 'diff_tensor', 'exp_info', 'interatomic', 'hybrid_pipes', 'mol', 'pipe_type', 'structure'] + list(self.__class__.__dict__.keys()))
+        fill_object_contents(doc, global_element, object=self, blacklist=['align_tensors', 'diff_tensor', 'exp_info', 'interatomic', 'hybrid_pipes', 'mol', 'pipe_type', 'structure', 'nmrglue'] + list(self.__class__.__dict__.keys()))
 
         # Hybrid info.
         self.xml_create_hybrid_element(doc, element)
@@ -319,6 +329,10 @@ class PipeContainer(Prototype):
         # Add the alignment tensor data.
         if hasattr(self, 'align_tensors'):
             self.align_tensors.to_xml(doc, element)
+
+        # Add the experimental information.
+        if hasattr(self, 'nmrglue'):
+            self.nmrglue.to_xml(doc, element)
 
         # Add the molecule-residue-spin data.
         self.mol.to_xml(doc, element, pipe_type=pipe_type)

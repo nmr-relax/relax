@@ -165,6 +165,110 @@ class Element(object):
 
 
 
+class RelaxDictType(dict):
+    """An empty dict type container."""
+
+    def __init__(self):
+        """Initialise some class variables."""
+
+        # Execute the base class __init__() method.
+        super(RelaxDictType, self).__init__()
+
+        # Some generic initial names.
+        self.dict_name = 'relax_dict'
+        self.dict_desc = 'relax dict container'
+        self.element_name = 'relax_dict_element'
+        self.element_desc = 'relax container'
+
+        # Blacklisted objects.
+        self.blacklist = []
+
+
+    def from_xml(self, super_node, file_version=1):
+        """Recreate the data structure from the XML node.
+
+        @param super_node:      The XML nodes.
+        @type super_node:       xml.dom.minicompat.Element instance
+        @keyword file_version:  The relax XML version of the XML file.
+        @type file_version:     int
+        """
+
+        # Recreate all the data structures.
+        xml_to_object(super_node, self, file_version=file_version, blacklist=self.blacklist)
+
+        # Get the individual elements.
+        nodes = super_node.getElementsByTagName(self.element_name)
+
+        # Loop over the child nodes (each element).
+        for node in nodes:
+            # Get the key.
+            key = str(node.getAttribute('key'))
+            key = key.strip("'")
+
+            # Add the data container.
+            self.add_item(key=key, node=node, file_version=file_version)
+
+
+    def to_xml(self, doc, element):
+        """Create an XML element for the dict data structure.
+
+        @param doc:     The XML document object.
+        @type doc:      xml.dom.minidom.Document instance
+        @param element: The element to add the dict data structure XML element to.
+        @type element:  XML element object
+        """
+
+        # Create the element and add it to the higher level element.
+        dict_element = doc.createElement(self.dict_name)
+        element.appendChild(dict_element)
+
+        # Set the dict attributes.
+        dict_element.setAttribute('desc', self.dict_desc)
+
+        # Blacklisted objects.
+        blacklist = ['dict_name', 'dict_desc', 'element_name', 'element_desc', 'blacklist'] + list(self.__dict__.keys()) + list(RelaxListType.__dict__.keys()) + list(self.__class__.__dict__.keys()) + list(dict.__dict__.keys()) + list(dict.__dict__.keys())
+
+        # Add all simple python objects within the list to the list element.
+        fill_object_contents(doc, dict_element, object=self, blacklist=blacklist)
+
+        # Loop over the keys.
+        for key in self:
+            # Create an XML element for each container.
+            dict_item_element = doc.createElement(self.element_name)
+            dict_element.appendChild(dict_item_element)
+            dict_item_element.setAttribute('key', repr(key))
+            dict_item_element.setAttribute('desc', self.element_desc)
+
+            # The element has its own to_xml() method.
+            if hasattr(self[key], 'to_xml'):
+                self[key].to_xml(doc, dict_item_element)
+
+            # Normal element.
+            else:
+                # Blacklisted objects.
+                blacklist = list(self[key].__class__.__dict__.keys())
+
+                # Add objects which have to_xml() methods.
+                for name in dir(self[key]):
+                    # Skip blacklisted objects.
+                    if name in blacklist:
+                        continue
+
+                    # Skip special objects.
+                    if search('^_', name):
+                        continue
+
+                    # Execute any to_xml() methods, and add that object to the blacklist.
+                    obj = getattr(self[key], name)
+                    if hasattr(obj, 'to_xml'):
+                        obj.to_xml(doc, list_item_element)
+                        blacklist = blacklist + [name]
+
+                # Add all simple python objects within the container to the XML element.
+                fill_object_contents(doc, dict_item_element, object=self[key], blacklist=blacklist)
+
+
+
 class RelaxListType(list):
     """An empty list type container."""
 
