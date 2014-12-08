@@ -21,7 +21,8 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import concatenate, save
+import base64
+from numpy import concatenate, float32, float64, frombuffer, save
 from os import path, sep
 from tempfile import mkdtemp
 
@@ -364,6 +365,9 @@ class Nmrglue(SystemTestCase):
         dic  = cdp.nmrglue_dic[sp_id]
         udic  = cdp.nmrglue_udic[sp_id]
         data = cdp.nmrglue_data[sp_id]
+        s = base64.b64encode(data)
+        cdp.nmrglue_data[sp_id] = s
+        print("Type of encoding is:", type(cdp.nmrglue_data[sp_id]))
 
         # Try storing the numpy array, and print size
         data_numpy = ds.tmpdir + sep + 'data.npy'
@@ -379,6 +383,8 @@ class Nmrglue(SystemTestCase):
         dirpath = ds.tmpdir
 
         print("Shape of data is %ix%i"%(data.shape[0], data.shape[1]))
+        print("dtype of data is", data.dtype)
+        print("Type of data[0][0]: ", type(data[0][0]))
 
         # Save the results.
         self.interpreter.state.save('state', dir=dirpath, compress_type=1, force=True)
@@ -393,6 +399,20 @@ class Nmrglue(SystemTestCase):
         # Load the state again.
         self.interpreter.state.load(dirpath+sep+'state')
 
+        # Decode
+        print("Decoding")
+        r = base64.decodestring(cdp.nmrglue_data[sp_id])
+        q = frombuffer(r,dtype=float32)
+        cdp.nmrglue_data[sp_id] = q
+        print("Type of decoded is:", type(cdp.nmrglue_data[sp_id]))
+        print("Shape of numpy array is:", cdp.nmrglue_data[sp_id].shape)
+
+        # Test data.
+        print("Testing data array.")
+        print("Shape of data is %ix%i, and of cdp.nmrglue_data is %ix%i"%(data.shape[0], data.shape[1], cdp.nmrglue_data[sp_id].shape[0], cdp.nmrglue_data[sp_id].shape[1]))
+        self.assertEqual(data, cdp.nmrglue_data[sp_id])
+
+        print("Testing dics.")
         # Make tests that they are the same.
         self.assertEqual(dic, cdp.nmrglue_dic[sp_id])
         for id in dic:
