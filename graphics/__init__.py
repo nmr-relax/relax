@@ -77,6 +77,8 @@ def fetch_icon(icon=None, size='16x16', format='png', sep=sep, full_path=True):
         path += 'relax_icons' + sep
     elif elements[0] == 'oxygen':
         path += 'oxygen_icons' + sep
+    elif elements[0] == 'nmrglue':
+        path += 'extern' + sep + 'nmrglue' + sep
     else:
         raise RelaxError("The icon type '%s' is unknown." % elements[0])
 
