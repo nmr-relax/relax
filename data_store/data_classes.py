@@ -137,7 +137,7 @@ class Element(object):
         cont_element.setAttribute('desc', self.desc)
 
         # Blacklisted objects.
-        blacklist = ['name', 'desc', 'blacklist'] + list(Element.__dict__.keys()) + list(self.__class__.__dict__.keys()) + list(object.__dict__.keys())
+        blacklist = self.blacklist + ['name', 'desc', 'blacklist'] + list(Element.__dict__.keys()) + list(self.__class__.__dict__.keys()) + list(object.__dict__.keys())
 
         # Store and blacklist the objects which have to_xml() methods.
         to_xml_list = []
