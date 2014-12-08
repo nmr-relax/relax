@@ -244,7 +244,7 @@ uf.add_keyarg(
     py_type = "str_or_str_list",
     arg_type = "file sel multi",
     desc_short = "file name(s)",
-    desc = "The name of the file or the list of files containing the intensity data.",
+    desc = "The name of the file or the list of files containing the spectrum data.",
     wiz_filesel_wildcard = WILDCARD_SPECTRUM_PEAKLIST,
     wiz_filesel_style = FD_OPEN
 )
@@ -253,32 +253,36 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "dir",
     desc_short = "directory name",
-    desc = "The directory where the file is located.",
+    desc = "The directory where the file(s) is located.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "nmrglue_id",
     py_type = "str_or_str_list",
-    desc_short = "nmrglue ID string",
+    desc_short = "nmrglue ID string(s)",
     desc = "The unique nmrglue ID string or list of strings to associate with the data values.  If multiple files are given, then each file should have a corresponding mnrglue ID string."
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("Read spectrum with nmrglue.")
-## File formats.
-#uf.desc.append(Desc_container("File formats"))
-#uf.desc[-1].add_paragraph("The peak list or intensity file will be automatically determined.")
-#uf.desc.append(Desc_container("Multiple files"))
-#uf.desc[-1].add_paragraph("The data from multiple files can be loaded simultaneously if a list of files is supplied.  In this case, a list of spectrum ID strings of equal length must be supplied.")
-## Prompt examples.
-#uf.desc.append(Desc_container("Prompt examples"))
-#uf.desc[-1].add_paragraph("To read the reference and saturated spectra peak heights from the Sparky formatted files 'ref.list' and 'sat.list', type:")
+uf.desc[-1].add_paragraph("This reads spectrum data with nmrglue.  Please refer to the documentation of nmrglue: http://nmrglue.readthedocs.org/en/latest/tutorial.html#reading-nmr-files")
+uf.desc[-1].add_paragraph("To read a spectrum file, you need to assign a nmrglue id 'ng_id' to the spectrum.")
+uf.desc.append(Desc_container("Data storage"))
+uf.desc[-1].add_paragraph("The data numpy array, the data dictionary and the universal in dictionary is then stored in the current data pipe 'cdp' under:")
+uf.desc[-1].add_paragraph("cdp.nmglue['ng_id'].data")
+uf.desc[-1].add_paragraph("cdp.nmglue['ng_id'].dic")
+uf.desc[-1].add_paragraph("cdp.nmglue['ng_id'].udic.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To read the spectrum data with nmrglue_read, and access the data.:")
+uf.desc[-1].add_prompt("relax> spectrum.nmrglue_read(file='test.ft2', dir='/path/to/folder', nmrglue_id='test')")
+uf.desc[-1].add_prompt("relax> spectrum.nmrglue_read(file=['128_0_FT.ft2', '128_1_FT.ft2'], dir='/path/to/folder', nmrglue_id=['128_0_FT', '128_1_FT'])")
+uf.desc[-1].add_prompt("relax> print(cdp.nmglue['ng_id'].data.shape)")
 uf.backend = nmrglue.read
 uf.menu_text = "&nmrglue_read"
-uf.gui_icon = "oxygen.actions.document-open"
-uf.wizard_height_desc = 300
+uf.gui_icon = "nmrglue.nmrglue_logo"
+uf.wizard_height_desc = 600
 uf.wizard_size = (1000, 750)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
+uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'nmrglue_logo_200x.png'
 
 
 # The spectrum.read_intensities user function.
