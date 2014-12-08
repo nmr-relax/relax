@@ -176,16 +176,16 @@ uf.wizard_apply_button = False
 
 # The spectrum.error_analysis_per_field user function.
 uf = uf_info.add_uf('spectrum.error_analysis_per_field')
-uf.title = "Use spectrum ID's per each field strength for an error analysis for peak intensities."
+uf.title = "Use spectrum IDs per each field strength for an error analysis for peak intensities."
 uf.title_short = "Per field strength peak intensity error analysis."
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("Please see the spectrum.error_analysis user function documentation.")
-uf.desc[-1].add_paragraph("This user function will collect all spectrum ID's for each field strength separately, and call the spectrum.error_analysis with these.")
+uf.desc[-1].add_paragraph("This user function will collect all spectrum IDs for each field strength separately, and call the spectrum.error_analysis with these.")
 uf.desc[-1].add_paragraph("This function is meant as a short-cut for the spectrum.error_analysis function.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To collect all spectrum ID's per field strength, and perform peak intensity error analysis:")
+uf.desc[-1].add_paragraph("To collect all spectrum IDs per field strength, and perform peak intensity error analysis:")
 uf.desc[-1].add_prompt("relax> spectrum.error_analysis_per_field()")
 uf.backend = spectrum.error_analysis_per_field
 uf.menu_text = "&error_analysis_per_field"
