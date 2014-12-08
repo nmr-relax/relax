@@ -34,16 +34,24 @@ from lib.xml import object_to_xml, xml_to_object
 class Nmrglue(Element):
     """Container for the global GUI data structures."""
 
-    def __init__(self):
-        """Initialise the container info."""
+    def __init__(self, dic=None, udic=None, data=None):
+        """Initialise the container info.
+
+        @keyword dic:           The dic structure from nmrglue.
+        @type dic:              dict
+        @keyword udic:          The dic structure from nmrglue.
+        @type udic:             dict
+        @keyword data:          The type of data depending on called function.
+        @type data:             depend on function
+        """
 
         # Execute the base class __init__() method.
-        super(Gui, self).__init__()
+        super(Nmrglue, self).__init__()
 
         # Initialise the data.
-        self.dic = None
-        self.udic = None
-        self.data = None
+        self.dic = dic
+        self.udic = udic
+        self.data = data
 
 
     def from_xml(self, nmrglue_node, file_version=1):
