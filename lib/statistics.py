@@ -24,11 +24,11 @@
 """Module for calculating simple statistics."""
 
 # Python module imports.
-from numpy import absolute, diag, dot, eye, multiply, transpose
+from numpy import absolute, diag, dot, eye, mean, multiply, sqrt, sum, transpose
 from numpy.linalg import inv, qr
 
 # Python module imports.
-from math import exp, pi, sqrt
+from math import exp, pi
 
 
 def bucket(values=None, lower=0.0, upper=200.0, inc=100, verbose=False):
@@ -158,6 +158,51 @@ def std(values=None, skip=None, dof=1):
 
     # Return the SD.
     return sd
+
+
+def linear_corr(x=None, y=None):
+    """Calculate the linear correlation 'a', for the function y=a*x.  The function returns "a" and the sample correlation coefficient 'r_xy'.
+
+    @keyword x:         The data for the X-axis.
+    @type x:            float or numpy array.
+    @keyword y:         The data for the Y-axis.
+    @type y:            float or numpy array.
+    @return:            The correlation 'a', and sample correlation coefficient 'r_xy'.
+    @rtype:             float, float
+    """
+
+    # The correlation is.
+    a = sum(x*y) / sum(x**2)
+
+    # The sample correlation coefficient is.
+    r_xy = sum(x*y) / sqrt(sum(x**2) * sum(y**2))
+
+    return a, r_xy
+
+
+def linear_corr_intercept(x=None, y=None):
+    """Calculate the linear correlation 'a', the intercept 'b' for the function y=a*x + b.  The function returns "a", "b" and the sample correlation coefficient 'r_xy'.
+
+    @keyword x:         The data for the X-axis.
+    @type x:            float or numpy array.
+    @keyword y:         The data for the Y-axis.
+    @type y:            float or numpy array.
+    @return:            The correlation 'a', the intercept 'b', and sample correlation coefficient 'r_xy'.
+    @rtype:             float, float, float
+    """
+
+    # Get the mean.
+    x_m = mean(x)
+    y_m = mean(y)
+
+    # Solve by linear least squares
+    n = len(y)
+    a = (sum(x*y) - 1./n * sum(x) * sum(y) ) / ( sum(x**2) - 1./n * (sum(x))**2 )
+    b = 1./n * sum(y) - a * 1./n * sum(x)
+
+    r_xy = sum( (x - x_m)*(y - y_m) ) / sqrt( sum((x - x_m)**2) * sum((y - y_m)**2) )
+
+    return a, b, r_xy
 
 
 def multifit_covar(J=None, epsrel=0.0, weights=None):
