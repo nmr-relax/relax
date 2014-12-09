@@ -1,0 +1,16 @@
+REMARK SeriesTab Input: /home/tlinnet/kte/SOD1/cpmg_disp_sod1d90a_060518/cpmg_disp_sod1d90a_060518_normal.fid/analysis_FT/peaks.dat Output: 126_MDD.ser
+REMARK Mode: Maximum Dimensions: 2
+REMARK Input Region:    X +/- 0 X-ZF: 1
+REMARK Analysis Region: X +/- 0
+REMARK Input Region:    Y +/- 0 Y-ZF: 1
+REMARK Analysis Region: Y +/- 0
+
+VARS   INDEX X_AXIS Y_AXIS X_PPM Y_PPM VOL ASS X1 X3 Y1 Y3 Z_A0 Z_A1
+FORMAT %5d %9.3f %9.3f %8.3f %8.3f %+e %s %4d %4d %4d %4d %7.4f %7.4f
+
+NULLVALUE -666
+NULLSTRING *
+
+    1   254.059   150.545    8.525  116.014 +1.890275e+05 T2N-H  253  255  150  152  1.0000  2.8000
+    2   236.553    58.937    8.696  125.904 +9.639756e+05 K3N-H  236  238   58   60  1.0000  2.0054
+    3   193.454    86.021    9.117  122.980 +5.754448e+05 A4N-H  192  194   85   87  1.0000  2.0712
