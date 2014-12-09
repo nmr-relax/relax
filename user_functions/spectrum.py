@@ -279,7 +279,7 @@ uf.desc[-1].add_prompt("relax> spectrum.nmrglue_read(file=['128_0_FT.ft2', '128_
 uf.desc[-1].add_prompt("relax> print(cdp.nmglue['ng_id'].data.shape)")
 uf.backend = nmrglue.read
 uf.menu_text = "&nmrglue_read"
-uf.gui_icon = "nmrglue.nmrglue_logo"
+uf.gui_icon = "relax.nmrglue_logo"
 uf.wizard_height_desc = 600
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'nmrglue_logo_200x.png'
