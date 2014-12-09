@@ -132,12 +132,19 @@ class Relax_fit:
         # Save the results.
         self.interpreter.results.write(file='results', dir=self.results_dir, force=True)
 
+        # Determine the normalisation type.
+        norm_type = 'last'
+        for spin in spin_loop(skip_desel=True):
+            if spin.model != 'sat':
+                norm_type = 'first'
+                break
+
         # Create Grace plots of the data.
         self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir=self.grace_dir, force=True)    # Minimised chi-squared value.
         self.interpreter.grace.write(y_data_type='i0', file='i0.agr', dir=self.grace_dir, force=True)    # Initial peak intensity.
         self.interpreter.grace.write(y_data_type='rx', file=self.file_root+'.agr', dir=self.grace_dir, force=True)    # Relaxation rate.
         self.interpreter.grace.write(x_data_type='relax_times', y_data_type='peak_intensity', file='intensities.agr', dir=self.grace_dir, force=True)    # Average peak intensities.
-        self.interpreter.grace.write(x_data_type='relax_times', y_data_type='peak_intensity', norm=True, file='intensities_norm.agr', dir=self.grace_dir, force=True)    # Average peak intensities (normalised).
+        self.interpreter.grace.write(x_data_type='relax_times', y_data_type='peak_intensity', norm_type=norm_type, norm=True, file='intensities_norm.agr', dir=self.grace_dir, force=True)    # Average peak intensities (normalised).
 
         # Write a python "grace to PNG/EPS/SVG..." conversion script.
         # Open the file for writing.
