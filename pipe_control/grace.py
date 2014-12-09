@@ -205,7 +205,7 @@ def view(file=None, dir=None, grace_exe='xmgrace'):
     system(grace_exe + " \"" + file_path + "\" &")
 
 
-def write(x_data_type='res_num', y_data_type=None, spin_id=None, plot_data='value', file=None, dir=None, force=False, norm=True):
+def write(x_data_type='res_num', y_data_type=None, spin_id=None, plot_data='value', norm_type='first', file=None, dir=None, force=False, norm=True):
     """Writing data to a file.
 
     @keyword x_data_type:   The category of the X-axis data.
@@ -216,6 +216,8 @@ def write(x_data_type='res_num', y_data_type=None, spin_id=None, plot_data='valu
     @type spin_id:          str
     @keyword plot_data:     The type of the plotted data, one of 'value', 'error', or 'sim'.
     @type plot_data:        str
+    @keyword norm_type:     The point to normalise to 1.  This can be 'first' or 'last'.
+    @type norm_type:        str
     @keyword file:          The name of the Grace file to create.
     @type file:             str
     @keyword dir:           The optional directory to place the file into.
