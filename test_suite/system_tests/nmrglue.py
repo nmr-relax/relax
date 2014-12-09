@@ -33,6 +33,7 @@ from lib.errors import RelaxError
 from lib.io import file_root, get_file_list
 from lib.statistics import linear_corr, linear_corr_intercept
 from pipe_control.nmrglue import plot_contour, plot_hist
+from pipe_control.mol_res_spin import spin_loop
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 from extern import nmrglue
@@ -209,11 +210,15 @@ class Nmrglue(SystemTestCase):
         # Define folder to all ft files.
         ft2_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'ft2_data'
         ft2_folder_2 = base_path +sep+ 'cpmg_disp_sod1d90a_060521' +sep+ 'cpmg_disp_sod1d90a_060521_normal.fid' +sep+ 'ft2_data'
+        peak_folder_1 = base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'analysis_FT' +sep+ 'ser_files'
+        peak_folder_2 = base_path +sep+ 'cpmg_disp_sod1d90a_060521' +sep+ 'cpmg_disp_sod1d90a_060521_normal.fid' +sep+ 'analysis_FT' +sep+ 'ser_files'
 
         # Get the file list matching a glob pattern for the reference.
-        ref_500 = '128_*_FT.ft2'
+        ref_NI = 128
+        ref_MET = 'FT'
+        ref_500 = '%i_*_%s.ft2' % (ref_NI, ref_MET)
         ref_500_id = 'ref_500'
-        ref_600 = '128_*_FT.ft2'
+        ref_600 = '%i_*_%s.ft2' % (ref_NI, ref_MET)
         ref_600_id = 'ref_600'
 
         # Get the file lists.
@@ -221,9 +226,11 @@ class Nmrglue(SystemTestCase):
         self.interpreter.io.file_list(glob=ref_600, dir=ft2_folder_2, id=ref_600_id)
 
         # Then get the file list for method.
-        met_500 = '126_*_MDD.ft2'
+        met_NI = 126
+        met_MET = 'MDD'
+        met_500 = '%i_*_%s.ft2' % (met_NI, met_MET)
         met_500_id = 'met_500'
-        met_600 = '126_*_MDD.ft2'
+        met_600 = '%i_*_%s.ft2' % (met_NI, met_MET)
         met_600_id = 'met_600'
 
         # Get the file lists.
@@ -234,6 +241,10 @@ class Nmrglue(SystemTestCase):
         # First loop over the glob id.
         ids_ref = []
         ids_met = []
+        ids_ref_500 = []
+        ids_ref_600 = []
+        ids_met_500 = []
+        ids_met_600 = []
         for io_id in cdp.io_ids:
             # Get the directory
             io_dir = cdp.io_dir[io_id]
@@ -252,8 +263,50 @@ class Nmrglue(SystemTestCase):
                 elif 'met_' in ng_id:
                     ids_met.append(ng_id)
 
+                # Assign id per sfrq to list
+                if ref_500_id in ng_id:
+                    ids_ref_500.append(ng_id)
+                elif ref_600_id in ng_id:
+                    ids_ref_600.append(ng_id)
+                elif met_500_id in ng_id:
+                    ids_met_500.append(ng_id)
+                elif met_600_id in ng_id:
+                    ids_met_600.append(ng_id)
+
                 # Read the spectrum data.
                 self.interpreter.spectrum.nmrglue_read(file=bname, dir=io_dir, nmrglue_id=ng_id)
+
+        # Create the spins.
+        self.interpreter.spectrum.read_spins(file=str(ref_NI) + '_' + ref_MET + '_trunc.ser', dir=peak_folder_1 + sep + ref_MET)
+        self.interpreter.spectrum.read_spins(file=str(ref_NI) + '_' + ref_MET + '_trunc.ser', dir=peak_folder_2 + sep + ref_MET)
+
+        # Then read spin intensities.
+        self.interpreter.spectrum.read_intensities(file=str(ref_NI) + '_' + ref_MET + '_trunc.ser', dir=peak_folder_1 + sep + ref_MET, spectrum_id=ids_ref_500, int_method='height', int_col=list(range(len(ids_ref_500))))
+        self.interpreter.spectrum.read_intensities(file=str(ref_NI) + '_' + ref_MET + '_trunc.ser', dir=peak_folder_2 + sep + ref_MET, spectrum_id=ids_ref_600, int_method='height', int_col=list(range(len(ids_ref_600))))
+
+        self.interpreter.spectrum.read_intensities(file=str(met_NI) + '_' + met_MET + '_trunc.ser', dir=peak_folder_1 + sep + met_MET, spectrum_id=ids_met_500, int_method='height', int_col=list(range(len(ids_met_500))))
+        self.interpreter.spectrum.read_intensities(file=str(met_NI) + '_' + met_MET + '_trunc.ser', dir=peak_folder_2 + sep + met_MET, spectrum_id=ids_met_600, int_method='height', int_col=list(range(len(ids_met_600))))
+
+        # Collect spin intensities
+        spin_int_ref = []
+        spin_int_met = []
+
+        # Loop over spins.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Loop over ids.
+            for i_id in ids_ref_500 + ids_ref_600 + ids_met_500 + ids_met_600:
+                # Add int to ref.
+                if i_id in ids_ref_500 or i_id in ids_ref_600:
+                    #print "ref"
+                    spin_int_ref.append(spin.peak_intensity[i_id])
+                # Add int to met.
+                elif i_id in ids_met_500 or i_id in ids_met_600:
+                    #print "met"
+                    spin_int_met.append(spin.peak_intensity[i_id])
+
+        # Convert to numpy
+        spin_int_ref = array(spin_int_ref)
+        spin_int_met = array(spin_int_met)
 
         # Create an empty reference array.
         np_arr_ref = array([])
@@ -281,16 +334,17 @@ class Nmrglue(SystemTestCase):
 
         line = array( [np_arr_ref.min(), np_arr_ref.max()] )
 
-        ax.plot(np_arr_ref, np_arr_met, '+', label='corr')
-        ax.plot(line, line, 'r-', label='corr')
-
         # Try get the linear correlation
         a, r_xy = linear_corr(x=np_arr_ref, y=np_arr_met)
         print(a, r_xy)
         a_int, b_int, r_xy_int = linear_corr_intercept(x=np_arr_ref, y=np_arr_met)
         print(a_int, r_xy, b_int)
 
-        ax.plot(np_arr_ref, np_arr_ref*a, 'g-', label='corr')
+        ax.plot(np_arr_ref, np_arr_ref*a, 'b-', linewidth=0.2, label='corr')
+
+        ax.plot(np_arr_ref, np_arr_met, 'b.', markersize=1.5, label='all int')
+        ax.plot(spin_int_ref, spin_int_met, 'r+', markersize=10, label='peak int')
+        ax.plot(line, line, 'g-', linewidth=0.5, label='corr')
 
         # Set text.
         ax.set_xlabel("All spectrum intensities for reference")
