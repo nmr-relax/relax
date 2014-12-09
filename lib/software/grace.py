@@ -26,6 +26,10 @@
 # Python module imports.
 from math import ceil, sqrt
 
+# relax module imports.
+from lib.errors import RelaxError
+
+
 # This script is used to batch convert the Grace *.agr files into graphics files using the Grace
 # program itself.
 
@@ -119,7 +123,7 @@ def script_grace2images(file=None):
     file.write("        return_code = subprocess.call(im_args)\n")
 
 
-def write_xy_data(data, file=None, graph_type=None, norm=None, autoscale=True):
+def write_xy_data(data, file=None, graph_type=None, norm_type='first', norm=None, autoscale=True):
     """Write the data into the Grace xy-scatter plot.
 
     The numerical data should be supplied as a 4 dimensional list or array object.  The first dimension corresponds to the graphs, Gx.  The second corresponds the sets of each graph, Sx.  The third corresponds to the data series (i.e. each data point).  The forth is a list of the information about each point, it is a list where the first element is the x value, the second is the y value, the third is the optional dx or dy error (either dx or dy dependent upon the graph_type arg), and the forth is the optional dy error when graph_type is xydxdy (the third position is then dx).
@@ -131,6 +135,8 @@ def write_xy_data(data, file=None, graph_type=None, norm=None, autoscale=True):
     @type file:             file object
     @keyword graph_type:    The graph type which can be one of xy, xydy, xydx, or xydxdy.
     @type graph_type:       str
+    @keyword norm_type:     The point to normalise to 1.  This can be 'first' or 'last'.
+    @type norm_type:        str
     @keyword norm:          The normalisation flag which if set to True will cause all graphs to be normalised to 1.  The first dimension is the graph.
     @type norm:             None or list of bool
     @keyword autoscale:     A flag which if True will cause the world view of each graph to be autoscaled (by placing the Grace command "@autoscale" at the end of the file).  If you have supplied a world view for the header or the tick spacing, this argument should be set to False to prevent that world view from being overwritten.
@@ -164,7 +170,12 @@ def write_xy_data(data, file=None, graph_type=None, norm=None, autoscale=True):
             # Normalisation (to the first data point y value!).
             norm_fact = 1.0
             if norm[gi]:
-                norm_fact = data[gi][si][0][1]
+                if norm_type == 'first':
+                    norm_fact = data[gi][si][0][1]
+                elif norm_type == 'last':
+                    norm_fact = data[gi][si][-1][1]
+                else:
+                    raise RelaxError("The normalisation type '%s' must be one of ['first', 'last']." % norm_fact)
 
             # Loop over the data points.
             for point in data[gi][si]:
