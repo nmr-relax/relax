@@ -40,7 +40,7 @@ class ExpInfo(Element):
         self.desc = "Experimental information"
 
         # Blacklisted objects.
-        self.blacklist = ["citations", "software", "temp_calibration", "temp_control"]
+        self.blacklist = []
 
 
     def add_citation(self, cite_id=None, authors=None, doi=None, pubmed_id=None, full_citation=None, title=None, status=None, type=None, journal_abbrev=None, journal_full=None, volume=None, issue=None, page_first=None, page_last=None, year=None):
