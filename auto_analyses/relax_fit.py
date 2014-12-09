@@ -135,7 +135,7 @@ class Relax_fit:
         # Determine the normalisation type.
         norm_type = 'last'
         for spin in spin_loop(skip_desel=True):
-            if spin.model != 'sat':
+            if spin.model not in ['sat', 'inv']:
                 norm_type = 'first'
                 break
 
