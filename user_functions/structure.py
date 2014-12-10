@@ -171,8 +171,15 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "models",
     py_type = "int_list_of_lists",
-    desc_short = "model list",
-    desc = "The list of models for each data pipe to superimpose.  The number of elements must match the pipes argument.",
+    desc_short = "model list for each data pipe",
+    desc = "The list of models for each data pipe to superimpose.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "molecules",
+    py_type = "str_list_of_lists",
+    desc_short = "molecule list for each data pipe",
+    desc = "The molecules to include in the alignment and superimposition.  This allows differently named molecules in the same or different data pipes to be superimposed.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
