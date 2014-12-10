@@ -256,8 +256,6 @@ def align(pipes=None, molecules=None, models=None, method='fit to mean', atom_id
         # The data pipe object.
         dp = get_pipe(pipes[pipe_index])
 
-        print("    Data pipe: %s" % pipes[pipe_index])
-
         # The selection object.
         selection = dp.structure.selection(atom_id=atom_id)
 
@@ -266,8 +264,6 @@ def align(pipes=None, molecules=None, models=None, method='fit to mean', atom_id
             # No model match.
             if models != None and model.num not in models[pipe_index]:
                 continue
-
-            print("        Model: %s" % model.num)
 
             # Loop over the molecules.
             current_mol = ''
@@ -278,9 +274,6 @@ def align(pipes=None, molecules=None, models=None, method='fit to mean', atom_id
 
                 # A new molecule.
                 if mol_name != current_mol:
-
-                    print("            Molecule: %s" % mol_name)
-
                     # Change the current molecule name.
                     current_mol = mol_name
 
