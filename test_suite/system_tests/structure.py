@@ -220,7 +220,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.translate(T=[0., 0., 1.], model=2, atom_id='#2')
 
         # The alignment.
-        self.interpreter.structure.align(pipes=['ref', 'align'], molecules=['ref', '1', '2'], method='fit to first', atom_id='@N,H')
+        #self.interpreter.structure.align(pipes=['ref', 'align'], molecules=['ref', '1', '2'], method='fit to first', atom_id='@N,H')
 
         # Output PDB to stdout to help in debugging.
         self.interpreter.structure.write_pdb(file=sys.stdout)
@@ -276,7 +276,7 @@ class Structure(SystemTestCase):
         self.assertEqual(len(data), len(cdp.structure.structural_data[0].mol[0].atom_name))
         self.assertEqual(len(data), len(cdp.structure.structural_data[0].mol[1].atom_name))
         current_mol = ''
-        for mol_name, res_num, res_name, atom_name, pos in cdp.structure.atom_loop(selection=selection, model_num=1, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_name_flag=True, pos_flag=True):
+        for mol_name, res_num, res_name, atom_name, pos in cdp.structure.atom_loop(selection=selection, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_name_flag=True, pos_flag=True):
             if mol_name != current_mol:
                 current_mol = mol_name
                 i = 0
