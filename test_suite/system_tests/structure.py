@@ -220,7 +220,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.translate(T=[0., 0., 1.], atom_id='#2')
 
         # The alignment.
-        self.interpreter.structure.align(pipes=['ref', 'align'], molecules=['ref', '1', '2'], method='fit to first', atom_id='@N,H')
+        self.interpreter.structure.align(pipes=['ref', 'align'], molecules=[['ref'], ['1', '2']], method='fit to first', atom_id='@N,H')
 
         # Output PDB to stdout to help in debugging.
         self.interpreter.structure.write_pdb(file=sys.stdout)
