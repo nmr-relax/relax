@@ -213,14 +213,14 @@ class Structure(SystemTestCase):
         # Translate and rotate the models.
         R = zeros((3, 3), float64)
         axis_angle_to_R(array([1, 0, 0], float64), 1.0, R)
-        self.interpreter.structure.rotate(R=R, model=1, atom_id='#1')
+        self.interpreter.structure.rotate(R=R, atom_id='#1')
         axis_angle_to_R(array([0, 0, 1], float64), 2.0, R)
-        self.interpreter.structure.rotate(R=R, model=2, atom_id='#2')
-        self.interpreter.structure.translate(T=[1., 1., 1.], model=1, atom_id='#1')
-        self.interpreter.structure.translate(T=[0., 0., 1.], model=2, atom_id='#2')
+        self.interpreter.structure.rotate(R=R, atom_id='#2')
+        self.interpreter.structure.translate(T=[1., 1., 1.], atom_id='#1')
+        self.interpreter.structure.translate(T=[0., 0., 1.], atom_id='#2')
 
         # The alignment.
-        #self.interpreter.structure.align(pipes=['ref', 'align'], molecules=['ref', '1', '2'], method='fit to first', atom_id='@N,H')
+        self.interpreter.structure.align(pipes=['ref', 'align'], molecules=['ref', '1', '2'], method='fit to first', atom_id='@N,H')
 
         # Output PDB to stdout to help in debugging.
         self.interpreter.structure.write_pdb(file=sys.stdout)
