@@ -623,6 +623,13 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "molecules",
+    py_type = "str_list",
+    desc_short = "molecule list",
+    desc = "The optional molecule list to perform the displacement calculation on rather than the models.  The displacements will only be calculated for atoms with identical residue name and number and atom name.",
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "centroid",
     py_type = "float_array",
     desc_short = "centroid position",
@@ -634,6 +641,7 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This user function allows the rotational and translational displacement between two models of the same structure to be calculated.  The information will be printed out in various formats and held in the relax data store.  This is directional, so there is a starting and ending position for each displacement.  If the starting and ending models are not specified, then the displacements in all directions between all models will be calculated.")
 uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the displacement calculation to certain molecules, residues, or atoms.  This is useful if studying domain motions, secondary structure rearrangements, amino acid side chain rotations, etc.")
 uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the motion.  The allows, for example, a pivot of a rotational domain motion to be specified.  This is not a formally correct algorithm, all translations will be zero, but does give an indication to the amplitude of the pivoting angle.")
+uf.desc[-1].add_paragraph("If the optional molecules list is supplied, then the displacements will be calculated between the molecules in the list rather than the models.  Therefore no models are allowed to be present in the current data pipe.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To determine the rotational and translational displacements between all sets of models, type:")
