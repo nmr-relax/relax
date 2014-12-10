@@ -3158,6 +3158,43 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(cdp.structure.pivot[2], pivot[2], 3)
 
 
+    def test_find_pivot_molecules(self):
+        """Test the structure.find_pivot user function.
+
+        This checks the U{structure.find_pivot user function<http://www.nmr-relax.com/manual/structure_find_pivot.html>} when the molecules argument is given.
+        """
+
+        # Path of the PDB file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+
+        # Load the PDB twice as different molecules.
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_mol_name='X')
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_mol_name='Y')
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_mol_name='Z')
+
+        # Delete some structural info.
+        self.interpreter.structure.delete("#X:8")
+        self.interpreter.structure.delete("#X:2@N")
+        self.interpreter.structure.delete("#Y:12")
+        self.interpreter.structure.delete("#Y:20@H")
+
+        # Rotate two of the models (the pivot will be the origin).
+        pivot = [1., 2., 3.]
+        R = zeros((3, 3), float64)
+        axis_angle_to_R(array([1, 0, 0], float64), 0.1, R)
+        self.interpreter.structure.rotate(R=R, atom_id='#Y', origin=pivot)
+        axis_angle_to_R(array([0, 1, 0], float64), 0.2, R)
+        self.interpreter.structure.rotate(R=R, atom_id='#Z', origin=pivot)
+
+        # Find the pivot.
+        self.interpreter.structure.find_pivot(molecules=['X', 'Y', 'Z'], init_pos=[0.95, 2.05, 3.02])
+
+        # Check the pivot.
+        self.assertAlmostEqual(cdp.structure.pivot[0], pivot[0], 3)
+        self.assertAlmostEqual(cdp.structure.pivot[1], pivot[1], 3)
+        self.assertAlmostEqual(cdp.structure.pivot[2], pivot[2], 3)
+
+
     def test_get_model(self):
         """Test the get_model() method of the internal structural object."""
 
