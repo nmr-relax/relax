@@ -4085,6 +4085,31 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(cdp.structure.rmsd, 2./3*sqrt(2))
 
 
+    def test_rmsd_molecules(self):
+        """Test the structure.rmsd user function for different molecules in one pipe.
+
+        This checks the molecules argument of the U{structure.rmsd user function<http://www.nmr-relax.com/manual/structure_rmsd.html>}.
+        """
+
+        # Create three molecules 'X', 'Y', and 'Z' with a some atoms.
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='X', pos=[1., 0., -1.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='Y', pos=[0., 0., 0.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='Z', pos=[-1., 0., 1.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='X', pos=[1., 2., -1.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='Y', pos=[0., 2., 0.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='Z', pos=[-1., 2., 1.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='X', pos=[1., 20., -1.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='Y', pos=[0., 20., 0.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='Z', pos=[-1., 20., 1.], element='S')
+
+        # Calculate the RMSD.
+        self.interpreter.structure.rmsd(molecules=['X', 'Y', 'Z'])
+
+        # Checks.
+        self.assert_(hasattr(cdp.structure, 'rmsd'))
+        self.assertAlmostEqual(cdp.structure.rmsd, 2./3*sqrt(2))
+
+
     def test_rmsd_ubi(self):
         """Test the structure.rmsd user function on the truncated ubiquitin ensemble."""
 
