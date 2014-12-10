@@ -3127,6 +3127,37 @@ class Structure(SystemTestCase):
                         self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[i][j][k], rot_axis[i][j][k])
 
 
+    def test_find_pivot(self):
+        """Test the structure.find_pivot user function.
+
+        This checks the default operation of the U{structure.find_pivot user function<http://www.nmr-relax.com/manual/structure_find_pivot.html>}.
+        """
+
+        # Path of the PDB file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the PDB three times as different models.
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=1)
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=2)
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=3)
+
+        # Rotate two of the models (the pivot will be the origin).
+        pivot = [1., 2., 3.]
+        R = zeros((3, 3), float64)
+        axis_angle_to_R(array([1, 0, 0], float64), 0.1, R)
+        self.interpreter.structure.rotate(R=R, model=2, origin=pivot)
+        axis_angle_to_R(array([0, 1, 0], float64), 0.2, R)
+        self.interpreter.structure.rotate(R=R, model=3, origin=pivot)
+
+        # Find the pivot.
+        self.interpreter.structure.find_pivot(init_pos=[0.95, 2.05, 3.02])
+
+        # Check the pivot.
+        self.assertAlmostEqual(cdp.structure.pivot[0], pivot[0], 3)
+        self.assertAlmostEqual(cdp.structure.pivot[1], pivot[1], 3)
+        self.assertAlmostEqual(cdp.structure.pivot[2], pivot[2], 3)
+
+
     def test_get_model(self):
         """Test the get_model() method of the internal structural object."""
 
