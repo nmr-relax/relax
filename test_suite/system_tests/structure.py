@@ -179,6 +179,111 @@ class Structure(SystemTestCase):
             i += 1
 
 
+    def test_align_molecules(self):
+        """Test the U{structure.align user function<http://www.nmr-relax.com/manual/structure_align.html>} for aligning different molecules in one pipe."""
+
+        # Path of the PDB file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+
+        # Load the reference structure.
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_mol_name='ref')
+
+        # Delete a residue and atom.
+        self.interpreter.structure.delete("#ref:8")
+        self.interpreter.structure.delete("#ref:2@N")
+
+        # Output PDB to stdout to help in debugging.
+        self.interpreter.structure.write_pdb(file=sys.stdout)
+
+        # Load the PDB twice as different models.
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_mol_name='1')
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_mol_name='2')
+
+        # Delete a residue and atom from these two structures.
+        self.interpreter.structure.delete("#1,2:12")
+        self.interpreter.structure.delete("#1,2:20@H")
+
+        # Translate and rotate the models.
+        R = zeros((3, 3), float64)
+        axis_angle_to_R(array([1, 0, 0], float64), 1.0, R)
+        self.interpreter.structure.rotate(R=R, model=1, atom_id='#1')
+        axis_angle_to_R(array([0, 0, 1], float64), 2.0, R)
+        self.interpreter.structure.rotate(R=R, model=2, atom_id='#2')
+        self.interpreter.structure.translate(T=[1., 1., 1.], model=1, atom_id='#1')
+        self.interpreter.structure.translate(T=[0., 0., 1.], model=2, atom_id='#2')
+
+        # The alignment.
+        self.interpreter.structure.align(molecules=['ref', '1', '2'], method='fit to first', atom_id='@N,H')
+
+        # Output PDB to stdout to help in debugging.
+        self.interpreter.structure.write_pdb(file=sys.stdout)
+
+        # The atomic data.
+        data = [
+            ["N", "NH",  1,   0.000,  0.000,  0.000],
+            ["H", "NH",  1,   0.000,  0.000, -1.020],
+            ["N", "NH",  2,   0.000,  0.000,  0.000],
+            ["H", "NH",  2,   0.883,  0.000, -0.510],
+            ["N", "NH",  3,   0.000,  0.000,  0.000],
+            ["H", "NH",  3,   0.883,  0.000,  0.510],
+            ["N", "NH",  4,   0.000,  0.000,  0.000],
+            ["H", "NH",  4,   0.000,  0.000,  1.020],
+            ["N", "NH",  5,   0.000,  0.000,  0.000],
+            ["H", "NH",  5,   0.000,  0.000, -1.020],
+            ["N", "NH",  6,   0.000,  0.000,  0.000],
+            ["H", "NH",  6,   0.273,  0.840, -0.510],
+            ["N", "NH",  7,   0.000,  0.000,  0.000],
+            ["H", "NH",  7,   0.273,  0.840,  0.510],
+            ["N", "NH",  8,   0.000,  0.000,  0.000],
+            ["H", "NH",  8,   0.000,  0.000,  1.020],
+            ["N", "NH",  9,   0.000,  0.000,  0.000],
+            ["H", "NH",  9,  -0.000,  0.000, -1.020],
+            ["N", "NH", 10,   0.000,  0.000,  0.000],
+            ["H", "NH", 10,  -0.715,  0.519, -0.510],
+            ["N", "NH", 11,   0.000,  0.000,  0.000],
+            ["H", "NH", 11,  -0.715,  0.519,  0.510],
+            #["N", "NH", 12,   0.000,  0.000,  0.000],
+            #["H", "NH", 12,  -0.000,  0.000,  1.020],
+            ["N", "NH", 13,   0.000,  0.000,  0.000],
+            ["H", "NH", 13,  -0.000, -0.000, -1.020],
+            ["N", "NH", 14,   0.000,  0.000,  0.000],
+            ["H", "NH", 14,  -0.715, -0.519, -0.510],
+            ["N", "NH", 15,   0.000,  0.000,  0.000],
+            ["H", "NH", 15,  -0.715, -0.519,  0.510],
+            ["N", "NH", 16,   0.000,  0.000,  0.000],
+            ["H", "NH", 16,  -0.000, -0.000,  1.020],
+            ["N", "NH", 17,   0.000,  0.000,  0.000],
+            ["H", "NH", 17,   0.000, -0.000, -1.020],
+            ["N", "NH", 18,   0.000,  0.000,  0.000],
+            ["H", "NH", 18,   0.273, -0.840, -0.510],
+            ["N", "NH", 19,   0.000,  0.000,  0.000],
+            ["H", "NH", 19,   0.273, -0.840,  0.510],
+            ["N", "NH", 20,   0.000,  0.000,  0.000],
+            #["H", "NH", 20,   0.000, -0.000,  1.020]
+        ]
+
+        # The selection object.
+        selection = cdp.structure.selection()
+
+        # Check the molecules.
+        self.assertEqual(len(data), len(cdp.structure.structural_data[0].mol[0].atom_name))
+        self.assertEqual(len(data), len(cdp.structure.structural_data[0].mol[1].atom_name))
+        self.assertEqual(len(data), len(cdp.structure.structural_data[0].mol[2].atom_name))
+        current_mol = ''
+        for mol_name, res_num, res_name, atom_name, pos in cdp.structure.atom_loop(selection=selection, model_num=1, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_name_flag=True, pos_flag=True):
+            print mol_name, res_num, res_name, atom_name, pos
+            if mol_name != current_mol:
+                current_mol = mol_name
+                i = 0
+            self.assertEqual(atom_name, data[i][0])
+            self.assertEqual(res_name, data[i][1])
+            self.assertEqual(res_num, data[i][2])
+            self.assertAlmostEqual(pos[0][0], data[i][3])
+            self.assertAlmostEqual(pos[0][1], data[i][4])
+            self.assertAlmostEqual(pos[0][2], data[i][5])
+            i += 1
+
+
     def test_alt_loc_missing(self):
         """Test that a RelaxError occurs when the alternate location indicator is present but not specified."""
 
