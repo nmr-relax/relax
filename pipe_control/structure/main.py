@@ -1108,13 +1108,15 @@ def read_xyz(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     cdp.structure.load_xyz(file_path, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, verbosity=verbosity)
 
 
-def rmsd(atom_id=None, models=None):
+def rmsd(atom_id=None, models=None, molecules=None):
     """Calculate the RMSD between the loaded models.
 
     @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
     @type atom_id:      str or None
-    @keyword models:    The list of models to calculate the RMDS of.  If set to None, then all models will be used.
+    @keyword models:    The list of models to calculate the RMSD of.  If set to None, then all models will be used.
     @type models:       list of int or None
+    @keyword molecules: The list of molecules to calculate the RMSD between.  This overrides the models.
+    @type molecules:    None or list of str
     @return:            The RMSD value.
     @rtype:             float
     """
@@ -1122,22 +1124,53 @@ def rmsd(atom_id=None, models=None):
     # Test if the current data pipe exists.
     check_pipe()
 
-    # Create a list of all models.
-    if models == None:
-        models = []
-        for model in cdp.structure.model_loop():
-            models.append(model.num)
-
     # The selection object.
     selection = cdp.structure.selection(atom_id=atom_id)
 
-    # Assemble the atomic coordinates of all models.
-    coord = []
-    for model in models:
-        coord.append([])
-        for pos in cdp.structure.atom_loop(selection=selection, model_num=model, pos_flag=True):
+    # RMSD between models.
+    if molecules == None:
+        # Create a list of all models.
+        if models == None:
+            models = []
+            for model in cdp.structure.model_loop():
+                models.append(model.num)
+
+        # Assemble the atomic coordinates of all models.
+        coord = []
+        for model in models:
+            coord.append([])
+            for pos in cdp.structure.atom_loop(selection=selection, model_num=model, pos_flag=True):
+                coord[-1].append(pos[0])
+            coord[-1] = array(coord[-1])
+
+    # RMSD between structures.
+    else:
+        # No models allowed.
+        if cdp.structure.num_models() > 1:
+            raise RelaxError("When calculating the RMSD between different molecules, no models are allowed to be present.")
+
+        # Assemble the atomic coordinates of all molecules.
+        coord = []
+        current_mol = ''
+        for mol_name, pos in cdp.structure.atom_loop(selection=selection, mol_name_flag=True, pos_flag=True):
+            # No molecule match, so skip.
+            if mol_name not in molecules:
+                continue
+
+            # A new molecule.
+            if mol_name != current_mol:
+                # Change the current molecule name.
+                current_mol = mol_name
+
+                # Extend the coordinates.
+                coord.append([])
+
+            # Append the coordinate.
             coord[-1].append(pos[0])
-        coord[-1] = array(coord[-1])
+
+        # Numpy conversion.
+        for i in range(len(coord)):
+            coord[i] = array(coord[i])
 
     # Calculate the RMSD.
     cdp.structure.rmsd = atomic_rmsd(coord, verbosity=1)

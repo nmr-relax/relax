@@ -1041,17 +1041,25 @@ uf.add_keyarg(
     desc = "The atom identification string.",
     can_be_none = True
 )
+uf.add_keyarg(
+    name = "molecules",
+    py_type = "str_list",
+    desc_short = "molecule list",
+    desc = "The optional molecule list to perform the RMSD calculation on rather than the models.  The RMSD will only be calculated for atoms with identical residue name and number and atom name.",
+    can_be_none = True
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows the root mean squared deviation (RMSD) between all models to be calculated.")
 uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the RMSD calculation to certain molecules, residues, or atoms.")
+uf.desc[-1].add_paragraph("If the optional molecules list is supplied, then the RMSD calculation will be between the molecules in the list rather than the models.  Therefore no models are allowed to be present in the current data pipe.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To determine the RMSD, simply type:")
 uf.desc[-1].add_prompt("relax> structure.rmsd()")
 uf.backend = pipe_control.structure.main.rmsd
 uf.menu_text = "&rmsd"
-uf.wizard_size = (700, 500)
+uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
