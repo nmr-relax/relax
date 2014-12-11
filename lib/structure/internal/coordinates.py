@@ -97,9 +97,11 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
 
                     # Create a new structure ID.
                     if len(object_names) > 1 and model.num != None:
-                        ids.append('%s, %i, %s' % (object_names[struct_index], model.num, mol_name))
+                        ids.append('%s, model %i, %s' % (object_names[struct_index], model.num, mol_name))
                     elif len(object_names) > 1:
                         ids.append('%s, %s' % (object_names[struct_index], mol_name))
+                    elif model.num != None:
+                        ids.append('model %i, %s' % (model.num, mol_name))
                     else:
                         ids.append('%s' % mol_name)
 
