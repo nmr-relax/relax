@@ -96,10 +96,12 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
                         atom_elem.append({})
 
                     # Create a new structure ID.
+                    ids.append('')
+                    if len(object_names) > 1:
+                        ids[-1] += object_names[struct_index]
                     if model.num != None:
-                        ids.append("%s, %i, %s" % (object_names[struct_index], model.num, mol_name))
-                    else:
-                        ids.append("%s, %s" % (object_names[struct_index], mol_name))
+                        ids[-1] += ", %i" % model.num
+                    ids[-1] += ", %s" % mol_name
 
                 # A unique identifier.
                 if molecules != None:
