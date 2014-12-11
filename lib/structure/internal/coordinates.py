@@ -152,3 +152,51 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
         return coord, ids, elements
     else:
         return coord, ids
+
+
+def loop_coord_structures(objects=None, molecules=None, models=None, atom_id=None):
+    """Generator function for looping over all internal structural objects, models and molecules.
+ 
+    @keyword objects:       The list of internal structural objects to loop over.
+    @type objects:          list of str
+    @keyword models:        The list of models for each structural object.  The number of elements must match the objects argument.  If set to None, then all models will be used.
+    @type models:           None or list of lists of int
+    @keyword molecules:     The list of molecules for each structural object.  The number of elements must match the objects argument.  If set to None, then all molecules will be used.
+    @type molecules:        None or list of lists of str
+    @keyword atom_id:       The molecule, residue, and atom identifier string of the coordinates of interest.  This matches the spin ID string format.
+    @type atom_id:          None or str
+    @return:                The structural object index, model number, and molecule name.
+    @rtype:                 int, int or None, str
+    """
+
+    # Loop over all structural objects.
+    for struct_index in range(len(objects)):
+        # Validate the models.
+        objects[struct_index].validate_models(verbosity=0)
+
+        # The number of models.
+        num_models = objects[struct_index].num_models()
+
+        # The selection object.
+        selection = objects[struct_index].selection(atom_id=atom_id)
+
+        # Loop over the models.
+        for model in objects[struct_index].model_loop():
+            # No model match.
+            if models != None and model.num not in models[struct_index]:
+                continue
+
+            # Coordinate loop.
+            current_mol = ''
+            for mol_name, res_num, res_name, atom_name, elem, pos in objects[struct_index].atom_loop(selection=selection, model_num=model.num, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_name_flag=True, pos_flag=True, element_flag=True):
+                # No molecule match, so skip.
+                if molecules != None and mol_name not in molecules[struct_index]:
+                    continue
+
+                # A new molecule.
+                if mol_name != current_mol:
+                    # Change the current molecule name.
+                    current_mol = mol_name
+
+                    # Yield the data.
+                    yield struct_index, model.num, mol_name

@@ -34,7 +34,7 @@ from lib.errors import RelaxError, RelaxFileError
 from lib.io import get_file_path, open_write_file, write_data
 from lib.selection import tokenise
 from lib.sequence import write_spin_data
-from lib.structure.internal.coordinates import assemble_coord_array
+from lib.structure.internal.coordinates import assemble_coord_array, loop_coord_structures
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.object import Internal
 from lib.structure.represent.diffusion_tensor import diffusion_tensor
@@ -144,44 +144,20 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, method='fit to 
     elif method == 'fit to first':
         T, R, pivot = fit_to_first(models=list(range(len(elements))), coord=coord, centre_type=centre_type, elements=elements[0], centroid=centroid)
 
-    # Update to the new coordinates.
+    # Loop over all pipes, models, and molecules.
     i = 0
-    for pipe_index in range(len(pipes)):
-        # The data pipe object.
-        dp = get_pipe(pipes[pipe_index])
+    for pipe_index, model_num, mol_name in structure_loop(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id):
+        # The atom ID from the molecule name.
+        id = '#%s' % mol_name
 
-        # The selection object.
-        selection = dp.structure.selection(atom_id=atom_id)
+        # Translate the molecule first (the rotational pivot is defined in the first model).
+        translate(T=T[i], model=model_num, pipe_name=pipes[pipe_index], atom_id=id)
 
-        # Loop over the models.
-        for model in dp.structure.model_loop():
-            # No model match.
-            if models != None and model.num not in models[pipe_index]:
-                continue
+        # Rotate the molecule.
+        rotate(R=R[i], origin=pivot[i], model=model_num, pipe_name=pipes[pipe_index], atom_id=id)
 
-            # Loop over the molecules.
-            current_mol = ''
-            for mol_name in dp.structure.atom_loop(selection=selection, model_num=model.num, mol_name_flag=True):
-                # No molecule match, so skip.
-                if molecules != None and mol_name not in molecules[pipe_index]:
-                    continue
-
-                # A new molecule.
-                if mol_name != current_mol:
-                    # Change the current molecule name.
-                    current_mol = mol_name
-
-                    # The atom ID from the molecule name.
-                    id = '#%s' % mol_name
-
-                    # Translate the molecule first (the rotational pivot is defined in the first model).
-                    translate(T=T[i], model=model.num, pipe_name=pipes[pipe_index], atom_id=id)
-
-                    # Rotate the molecule.
-                    rotate(R=R[i], origin=pivot[i], model=model.num, pipe_name=pipes[pipe_index], atom_id=id)
-
-                    # Increment the index.
-                    i += 1
+        # Increment the index.
+        i += 1
 
 
 def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, elements_flag=False):
@@ -1076,6 +1052,49 @@ def set_vector(spin=None, xh_vect=None):
 
     # Place the XH unit vector into the container.
     spin.xh_vect = xh_vect
+
+
+def structure_loop(pipes=None, molecules=None, models=None, atom_id=None):
+    """Generator function for looping over all internal structural objects, models and molecules.
+ 
+    @keyword pipes:         The data pipes to loop over.
+    @type pipes:            None or list of str
+    @keyword models:        The list of models for each data pipe.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:           None or list of lists of int
+    @keyword molecules:     The list of molecules for each data pipe.  The number of elements must match the pipes argument.
+    @type molecules:        None or list of lists of str
+    @keyword atom_id:       The molecule, residue, and atom identifier string of the coordinates of interest.  This matches the spin ID string format.
+    @type atom_id:          None or str
+    @return:                The data pipe index, model number, and molecule name.
+    @rtype:                 int, int or None, str
+    """
+
+    # The data pipes to use.
+    if pipes == None:
+        pipes = [cdp_name()]
+    num_pipes = len(pipes)
+
+    # Checks.
+    for pipe in pipes:
+        check_pipe(pipe)
+
+    # Check the models and molecules arguments.
+    if models != None:
+        if len(models) != num_pipes:
+            raise RelaxError("The %i elements of the models argument does not match the %i data pipes." % (len(models), num_pipes))
+    if molecules != None:
+        if len(molecules) != num_pipes:
+            raise RelaxError("The %i elements of the molecules argument does not match the %i data pipes." % (len(molecules), num_pipes))
+
+    # Assemble the structural objects.
+    objects = []
+    for pipe_index in range(len(pipes)):
+        dp = get_pipe(pipes[pipe_index])
+        objects.append(dp.structure)
+
+    # Call the library method to do all of the work.
+    for pipe_index, model_num, mol_name in loop_coord_structures(objects=objects, molecules=molecules, models=models, atom_id=atom_id):
+        yield pipe_index, model_num, mol_name
 
 
 def superimpose(models=None, method='fit to mean', atom_id=None, centre_type="centroid", centroid=None):
