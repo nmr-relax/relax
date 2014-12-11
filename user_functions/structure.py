@@ -1259,8 +1259,38 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 # The structure.web_of_motion user function.
 uf = uf_info.add_uf('structure.web_of_motion')
-uf.title = "Create a PDB representation of motion between models using a web of interconnecting lines."
+uf.title = "Create a PDB representation of motion between structures using a web of interconnecting lines."
 uf.title_short = "Web of motion between models."
+uf.add_keyarg(
+    name = "pipes",
+    py_type = "str_list",
+    desc_short = "data pipes",
+    desc = "The data pipes to generate the web between.",
+    wiz_combo_iter = pipe_names,
+    wiz_read_only = False,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "models",
+    py_type = "int_list_of_lists",
+    desc_short = "model list for each data pipe",
+    desc = "The list of models for each data pipe to generate the web between.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "molecules",
+    py_type = "str_list_of_lists",
+    desc_short = "molecule list for each data pipe",
+    desc = "The list of molecules for each data pipe to generate the web between.  This allows differently named molecules in the same or different data pipes to be superimposed.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "atom_id",
+    py_type = "str",
+    desc_short = "atom identification string",
+    desc = "The atom identification string of the coordinates of interest.",
+    can_be_none = True
+)
 uf.add_keyarg(
     name = "file",
     py_type = "str_or_inst",
@@ -1279,13 +1309,6 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
-    name = "models",
-    py_type = "int_list",
-    desc_short = "model numbers",
-    desc = "Restrict the web to a subset of models.",
-    can_be_none = True
-)
-uf.add_keyarg(
     name = "force",
     default = False,
     py_type = "bool",
@@ -1294,16 +1317,19 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will create a PDB representation of the motion between the atoms of a given set of structural models.  Identical atoms of the selected models are concatenated into one model, within a temporary internal structural object, and linked together using PDB CONECT records.")
+uf.desc[-1].add_paragraph("This will create a PDB representation of the motion between the atoms of a given set of structures.  Identical atoms of the structures are concatenated into one model, within a temporary internal structural object, linked together using PDB CONECT records, and then written to the PDB file.")
+uf.desc[-1].add_paragraph(paragraph_multi_struct)
+uf.desc[-1].add_paragraph(paragraph_atom_id)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To create a web of motion for the models 1, 3, and 5, type one of:")
-uf.desc[-1].add_prompt("relax> structure.web_of_motion('web.pdb', '.', [1, 3, 5])")
-uf.desc[-1].add_prompt("relax> structure.web_of_motion(file='web.pdb', models=[1, 3, 5])")
-uf.desc[-1].add_prompt("relax> structure.web_of_motion(file='web.pdb', dir='.', models=[1, 3, 5])")
+uf.desc[-1].add_paragraph("To create a web of motion for the models 1, 3, and 5, type:")
+uf.desc[-1].add_prompt("relax> structure.web_of_motion(models=[[1, 3, 5]], file='web.pdb')")
+uf.desc[-1].add_paragraph("To create a web of motion for the molecules 'A', 'B', 'C', and 'D', type:")
+uf.desc[-1].add_prompt("relax> structure.web_of_motion(molecules=[['A', 'B', 'C', 'D']], file='web.pdb')")
 uf.backend = pipe_control.structure.main.web_of_motion
 uf.menu_text = "&web_of_motion"
-uf.wizard_size = (900, 600)
+uf.wizard_height_desc = 450
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 

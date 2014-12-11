@@ -1331,69 +1331,62 @@ def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, uni
         raise RelaxError("No vectors could be extracted.")
 
 
-def web_of_motion(file=None, dir=None, models=None, force=False):
+def web_of_motion(pipes=None, models=None, molecules=None, atom_id=None, file=None, dir=None, force=False):
     """Create a PDB representation of the motion between a set of models.
 
     This will create a PDB file containing the atoms of all models, with identical atoms links using CONECT records.  This function only supports the internal structural object.
 
-    @keyword file:          The name of the PDB file to write.
-    @type file:             str
-    @keyword dir:           The directory where the PDB file will be placed.  If set to None, then the file will be placed in the current directory.
-    @type dir:              str or None
-    @keyword models:        The optional list of models to restrict this to.
-    @type models:           list of int or None
-    @keyword force:         The force flag which if True will cause the file to be overwritten.
-    @type force:            bool
+
+    @keyword pipes:     The data pipes to generate the web between.
+    @type pipes:        None or list of str
+    @keyword models:    The list of models to generate the web between.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:       None or list of lists of int
+    @keyword molecules: The list of molecules to generate the web between.  The number of elements must match the pipes argument.
+    @type molecules:    None or list of lists of str
+    @keyword atom_id:   The atom identification string of the coordinates of interest.  This matches the spin ID string format.
+    @type atom_id:      str or None
+    @keyword file:      The name of the PDB file to write.
+    @type file:         str
+    @keyword dir:       The directory where the PDB file will be placed.  If set to None, then the file will be placed in the current directory.
+    @type dir:          str or None
+    @keyword force:     The force flag which if True will cause the file to be overwritten.
+    @type force:        bool
     """
 
     # Checks.
     check_pipe()
     check_structure()
 
-    # Validate the models.
-    cdp.structure.validate_models()
+    # Assemble the atomic coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=True)
+
+    # Check that more than one structure is present.
+    if not len(coord) > 1:
+        raise RelaxError("Two or more structures are required.")
 
     # Initialise the structural object.
     web = Internal()
 
-    # The model list.
-    if models == None:
-        models = []
-        for k in range(len(cdp.structure.structural_data)):
-            models.append(cdp.structure.structural_data[k].num)
+    # Loop over the atoms.
+    for atom_index in range(len(atom_names)):
+        # Loop over the structures.
+        for struct_index in range(len(ids)):
+            # Add the atom.
+            web.add_atom(mol_name=mol_names[atom_index], atom_name=atom_names[atom_index], res_name=res_names[atom_index], res_num=res_nums[atom_index], pos=coord[struct_index, atom_index], element=elements[atom_index])
 
-    # Loop over the molecules.
-    for i in range(len(cdp.structure.structural_data[0].mol)):
-        # Alias the molecule of the first model.
-        mol1 = cdp.structure.structural_data[0].mol[i]
-
-        # Loop over the atoms.
-        for j in range(len(mol1.atom_name)):
-            # Loop over the models.
-            for k in range(len(cdp.structure.structural_data)):
-                # Skip the model.
-                if cdp.structure.structural_data[k].num not in models:
+        # Loop over the structures again, this time twice.
+        for k in range(len(ids)):
+            for l in range(len(ids)):
+                # Skip identical atoms.
+                if k == l:
                     continue
 
-                # Alias.
-                mol = cdp.structure.structural_data[k].mol[i]
+                # The atom index.
+                index1 = atom_index*len(ids) + k
+                index2 = atom_index*len(ids) + l
 
-                # Add the atom.
-                web.add_atom(mol_name=mol1.mol_name, atom_name=mol.atom_name[j], res_name=mol.res_name[j], res_num=mol.res_num[j], pos=[mol.x[j], mol.y[j], mol.z[j]], element=mol.element[j], chain_id=mol.chain_id[j], segment_id=mol.seg_id[j], pdb_record=mol.pdb_record[j])
-
-            # Loop over the models again, this time twice.
-            for k in range(len(models)):
-                for l in range(len(models)):
-                    # Skip identical atoms.
-                    if k == l:
-                        continue
-
-                    # The atom index.
-                    index1 = j*len(models) + k
-                    index2 = j*len(models) + l
-
-                    # Connect to the previous atoms.
-                    web.connect_atom(mol_name=mol1.mol_name, index1=index1, index2=index2)
+                # Connect to the previous atoms.
+                web.connect_atom(mol_name=mol_names[atom_index], index1=index1, index2=index2)
 
     # Append the PDB extension if needed.
     if isinstance(file, str):

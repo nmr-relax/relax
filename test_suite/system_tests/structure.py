@@ -4381,7 +4381,67 @@ class Structure(SystemTestCase):
 
         # Run the structure.web_of_motion user function and collect the results in a dummy file object.
         file = DummyFileObject()
-        self.interpreter.structure.web_of_motion(file=file, models=[1, 2])
+        self.interpreter.structure.web_of_motion(file=file, models=[[1, 2]])
+
+        # The result, without remarks.
+        result = [
+            "ATOM      1  N   LEU A   4       9.464  -9.232  27.573  1.00  0.00           N  ",
+            "ATOM      2  N   LEU A   4       9.211  -9.425  26.970  1.00  0.00           N  ",
+            "ATOM      3  H   LEU A   4       8.575  -8.953  27.963  1.00  0.00           H  ",
+            "ATOM      4  H   LEU A   4       9.085  -9.743  27.919  1.00  0.00           H  ",
+            "ATOM      5 CA   LEU A   4      10.302  -8.195  26.930  1.00  0.00           C  ",
+            "ATOM      6 CA   LEU A   4      10.077  -8.221  26.720  1.00  0.00           C  ",
+            "ATOM      7 CB   LEU A   4       9.494  -7.221  26.051  1.00  0.00           C  ",
+            "ATOM      8 CB   LEU A   4       9.297  -7.096  26.024  1.00  0.00           C  ",
+            "ATOM      9 CG   LEU A   4      10.107  -5.862  25.665  1.00  0.00           C  ",
+            "ATOM     10 CG   LEU A   4      10.061  -5.803  25.679  1.00  0.00           C  ",
+            "ATOM     11 CD1  LEU A   4      11.182  -6.007  24.608  1.00  0.00           C  ",
+            "ATOM     12 CD1  LEU A   4      11.029  -6.002  24.507  1.00  0.00           C  ",
+            "ATOM     13 CD2  LEU A   4       9.036  -4.875  25.171  1.00  0.00           C  ",
+            "ATOM     14 CD2  LEU A   4       9.120  -4.618  25.384  1.00  0.00           C  ",
+            "ATOM     15  C   LEU A   4      10.999  -7.436  28.046  1.00  0.00           C  ",
+            "ATOM     16  C   LEU A   4      10.625  -7.721  28.047  1.00  0.00           C  ",
+            "TER      17      LEU A   4                                                      ",
+            "CONECT    1    2                                                                ",
+            "CONECT    2    1                                                                ",
+            "CONECT    3    4                                                                ",
+            "CONECT    4    3                                                                ",
+            "CONECT    5    6                                                                ",
+            "CONECT    6    5                                                                ",
+            "CONECT    7    8                                                                ",
+            "CONECT    8    7                                                                ",
+            "CONECT    9   10                                                                ",
+            "CONECT   10    9                                                                ",
+            "CONECT   11   12                                                                ",
+            "CONECT   12   11                                                                ",
+            "CONECT   13   14                                                                ",
+            "CONECT   14   13                                                                ",
+            "CONECT   15   16                                                                ",
+            "CONECT   16   15                                                                ",
+            "MASTER        0    0    0    0    0    0    0    0   16    1   16    0          ",
+            "END                                                                             "
+        ]
+
+        # Check the created PDB file.
+        lines = file.readlines()
+        self.strip_remarks(lines)
+        self.assertEqual(len(result), len(lines))
+        for i in range(len(lines)):
+            self.assertEqual(result[i]+'\n', lines[i])
+
+
+    def test_web_of_motion_12_molecules(self):
+        """Check the operation of the structure.web_of_motion user function using molecules 1 and 2 (of 3)."""
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=1, set_mol_name='1', set_model_num=1)
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=2, set_mol_name='2', set_model_num=1)
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=3, set_mol_name='3', set_model_num=1)
+
+        # Run the structure.web_of_motion user function and collect the results in a dummy file object.
+        file = DummyFileObject()
+        self.interpreter.structure.web_of_motion(file=file, molecules=[['1', '2']])
 
         # The result, without remarks.
         result = [
@@ -4439,7 +4499,67 @@ class Structure(SystemTestCase):
 
         # Run the structure.web_of_motion user function and collect the results in a dummy file object.
         file = DummyFileObject()
-        self.interpreter.structure.web_of_motion(file=file, models=[1, 3])
+        self.interpreter.structure.web_of_motion(file=file, models=[[1, 3]])
+
+        # The result, without remarks.
+        result = [
+            "ATOM      1  N   LEU A   4       9.464  -9.232  27.573  1.00  0.00           N  ",
+            "ATOM      2  N   LEU A   4       7.761  -6.392  27.161  1.00  0.00           N  ",
+            "ATOM      3  H   LEU A   4       8.575  -8.953  27.963  1.00  0.00           H  ",
+            "ATOM      4  H   LEU A   4       7.278  -6.195  28.026  1.00  0.00           H  ",
+            "ATOM      5 CA   LEU A   4      10.302  -8.195  26.930  1.00  0.00           C  ",
+            "ATOM      6 CA   LEU A   4       9.256  -6.332  27.183  1.00  0.00           C  ",
+            "ATOM      7 CB   LEU A   4       9.494  -7.221  26.051  1.00  0.00           C  ",
+            "ATOM      8 CB   LEU A   4       9.799  -5.331  26.144  1.00  0.00           C  ",
+            "ATOM      9 CG   LEU A   4      10.107  -5.862  25.665  1.00  0.00           C  ",
+            "ATOM     10 CG   LEU A   4      10.293  -5.882  24.803  1.00  0.00           C  ",
+            "ATOM     11 CD1  LEU A   4      11.182  -6.007  24.608  1.00  0.00           C  ",
+            "ATOM     12 CD1  LEU A   4       9.404  -6.984  24.274  1.00  0.00           C  ",
+            "ATOM     13 CD2  LEU A   4       9.036  -4.875  25.171  1.00  0.00           C  ",
+            "ATOM     14 CD2  LEU A   4      10.355  -4.772  23.792  1.00  0.00           C  ",
+            "ATOM     15  C   LEU A   4      10.999  -7.436  28.046  1.00  0.00           C  ",
+            "ATOM     16  C   LEU A   4       9.816  -6.033  28.572  1.00  0.00           C  ",
+            "TER      17      LEU A   4                                                      ",
+            "CONECT    1    2                                                                ",
+            "CONECT    2    1                                                                ",
+            "CONECT    3    4                                                                ",
+            "CONECT    4    3                                                                ",
+            "CONECT    5    6                                                                ",
+            "CONECT    6    5                                                                ",
+            "CONECT    7    8                                                                ",
+            "CONECT    8    7                                                                ",
+            "CONECT    9   10                                                                ",
+            "CONECT   10    9                                                                ",
+            "CONECT   11   12                                                                ",
+            "CONECT   12   11                                                                ",
+            "CONECT   13   14                                                                ",
+            "CONECT   14   13                                                                ",
+            "CONECT   15   16                                                                ",
+            "CONECT   16   15                                                                ",
+            "MASTER        0    0    0    0    0    0    0    0   16    1   16    0          ",
+            "END                                                                             "
+        ]
+
+        # Check the created PDB file.
+        lines = file.readlines()
+        self.strip_remarks(lines)
+        self.assertEqual(len(result), len(lines))
+        for i in range(len(lines)):
+            self.assertEqual(result[i]+'\n', lines[i])
+
+
+    def test_web_of_motion_13_molecules(self):
+        """Check the operation of the structure.web_of_motion user function using molecules 1 and 3 (of 3)."""
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=1, set_mol_name='1', set_model_num=1)
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=2, set_mol_name='2', set_model_num=1)
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=3, set_mol_name='3', set_model_num=1)
+
+        # Run the structure.web_of_motion user function and collect the results in a dummy file object.
+        file = DummyFileObject()
+        self.interpreter.structure.web_of_motion(file=file, molecules=[['1', '3']])
 
         # The result, without remarks.
         result = [
@@ -4498,6 +4618,82 @@ class Structure(SystemTestCase):
         # Run the structure.web_of_motion user function and collect the results in a dummy file object.
         file = DummyFileObject()
         self.interpreter.structure.web_of_motion(file=file)
+
+        # The result, without remarks.
+        result = [
+            "ATOM      1  N   LEU A   4       9.464  -9.232  27.573  1.00  0.00           N  ",
+            "ATOM      2  N   LEU A   4       9.211  -9.425  26.970  1.00  0.00           N  ",
+            "ATOM      3  N   LEU A   4       7.761  -6.392  27.161  1.00  0.00           N  ",
+            "ATOM      4  H   LEU A   4       8.575  -8.953  27.963  1.00  0.00           H  ",
+            "ATOM      5  H   LEU A   4       9.085  -9.743  27.919  1.00  0.00           H  ",
+            "ATOM      6  H   LEU A   4       7.278  -6.195  28.026  1.00  0.00           H  ",
+            "ATOM      7 CA   LEU A   4      10.302  -8.195  26.930  1.00  0.00           C  ",
+            "ATOM      8 CA   LEU A   4      10.077  -8.221  26.720  1.00  0.00           C  ",
+            "ATOM      9 CA   LEU A   4       9.256  -6.332  27.183  1.00  0.00           C  ",
+            "ATOM     10 CB   LEU A   4       9.494  -7.221  26.051  1.00  0.00           C  ",
+            "ATOM     11 CB   LEU A   4       9.297  -7.096  26.024  1.00  0.00           C  ",
+            "ATOM     12 CB   LEU A   4       9.799  -5.331  26.144  1.00  0.00           C  ",
+            "ATOM     13 CG   LEU A   4      10.107  -5.862  25.665  1.00  0.00           C  ",
+            "ATOM     14 CG   LEU A   4      10.061  -5.803  25.679  1.00  0.00           C  ",
+            "ATOM     15 CG   LEU A   4      10.293  -5.882  24.803  1.00  0.00           C  ",
+            "ATOM     16 CD1  LEU A   4      11.182  -6.007  24.608  1.00  0.00           C  ",
+            "ATOM     17 CD1  LEU A   4      11.029  -6.002  24.507  1.00  0.00           C  ",
+            "ATOM     18 CD1  LEU A   4       9.404  -6.984  24.274  1.00  0.00           C  ",
+            "ATOM     19 CD2  LEU A   4       9.036  -4.875  25.171  1.00  0.00           C  ",
+            "ATOM     20 CD2  LEU A   4       9.120  -4.618  25.384  1.00  0.00           C  ",
+            "ATOM     21 CD2  LEU A   4      10.355  -4.772  23.792  1.00  0.00           C  ",
+            "ATOM     22  C   LEU A   4      10.999  -7.436  28.046  1.00  0.00           C  ",
+            "ATOM     23  C   LEU A   4      10.625  -7.721  28.047  1.00  0.00           C  ",
+            "ATOM     24  C   LEU A   4       9.816  -6.033  28.572  1.00  0.00           C  ",
+            "TER      25      LEU A   4                                                      ",
+            "CONECT    1    2    3                                                           ",
+            "CONECT    2    1    3                                                           ",
+            "CONECT    3    1    2                                                           ",
+            "CONECT    4    5    6                                                           ",
+            "CONECT    5    4    6                                                           ",
+            "CONECT    6    4    5                                                           ",
+            "CONECT    7    8    9                                                           ",
+            "CONECT    8    7    9                                                           ",
+            "CONECT    9    7    8                                                           ",
+            "CONECT   10   11   12                                                           ",
+            "CONECT   11   10   12                                                           ",
+            "CONECT   12   10   11                                                           ",
+            "CONECT   13   14   15                                                           ",
+            "CONECT   14   13   15                                                           ",
+            "CONECT   15   13   14                                                           ",
+            "CONECT   16   17   18                                                           ",
+            "CONECT   17   16   18                                                           ",
+            "CONECT   18   16   17                                                           ",
+            "CONECT   19   20   21                                                           ",
+            "CONECT   20   19   21                                                           ",
+            "CONECT   21   19   20                                                           ",
+            "CONECT   22   23   24                                                           ",
+            "CONECT   23   22   24                                                           ",
+            "CONECT   24   22   23                                                           ",
+            "MASTER        0    0    0    0    0    0    0    0   24    1   24    0          ",
+            "END                                                                             "
+        ]
+
+        # Check the created PDB file.
+        lines = file.readlines()
+        self.strip_remarks(lines)
+        self.assertEqual(len(result), len(lines))
+        for i in range(len(lines)):
+            self.assertEqual(result[i]+'\n', lines[i])
+
+
+    def test_web_of_motion_all_molecules(self):
+        """Check the operation of the structure.web_of_motion user function using all molecules."""
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=1, set_mol_name='1', set_model_num=1)
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=2, set_mol_name='2', set_model_num=1)
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=3, set_mol_name='3', set_model_num=1)
+
+        # Run the structure.web_of_motion user function and collect the results in a dummy file object.
+        file = DummyFileObject()
+        self.interpreter.structure.web_of_motion(file=file, molecules=[['1', '2', '3']])
 
         # The result, without remarks.
         result = [
