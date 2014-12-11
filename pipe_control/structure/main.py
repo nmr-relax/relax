@@ -34,6 +34,7 @@ from lib.errors import RelaxError, RelaxFileError
 from lib.io import get_file_path, open_write_file, write_data
 from lib.selection import tokenise
 from lib.sequence import write_spin_data
+from lib.structure.internal.coordinates import assemble_coord_array
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.object import Internal
 from lib.structure.represent.diffusion_tensor import diffusion_tensor
@@ -186,14 +187,14 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, method='fit to 
 def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, elements_flag=False):
     """Assemble the atomic coordinates 
  
-    @keyword pipes:         The data pipes to include in the alignment and superimposition.
+    @keyword pipes:         The data pipes to assemble the coordinates from.
     @type pipes:            None or list of str
-    @keyword models:        The list of models to for each data pipe superimpose.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @keyword models:        The list of models for each data pipe.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
     @type models:           None or list of lists of int
-    @keyword molecules:     The molecule names to include in the alignment and superimposition.  The number of elements must match the pipes argument.
+    @keyword molecules:     The list of molecules for each data pipe.  The number of elements must match the pipes argument.
     @type molecules:        None or list of lists of str
-    @keyword atom_id:       The molecule, residue, and atom identifier string.  This matches the spin ID string format.
-    @type atom_id:          str or None
+    @keyword atom_id:       The molecule, residue, and atom identifier string of the coordinates of interest.  This matches the spin ID string format.
+    @type atom_id:          None or str
     @return:                The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates), and the list of element names for each atom (if the elements flag is set).
     @rtype:                 numpy rank-3 float64 array, list of str
     """
@@ -215,104 +216,16 @@ def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, 
         if len(molecules) != num_pipes:
             raise RelaxError("The %i elements of the molecules argument does not match the %i data pipes." % (len(molecules), num_pipes))
 
-    # Assemble the atomic coordinates of all structures.
-    print("Assembling all atomic coordinates:")
-    atom_ids = []
-    atom_pos = []
-    atom_elem = []
+    # Assemble the structural objects.
+    objects = []
+    object_names = []
     for pipe_index in range(len(pipes)):
-        # Printout.
-        print("    Data pipe: %s" % pipes[pipe_index])
-
-        # The data pipe object.
         dp = get_pipe(pipes[pipe_index])
+        objects.append(dp.structure)
+        object_names.append(pipes[pipe_index])
 
-        # Validate the models.
-        dp.structure.validate_models(verbosity=0)
-
-        # The selection object.
-        selection = dp.structure.selection(atom_id=atom_id)
-
-        # Loop over the models.
-        for model in dp.structure.model_loop():
-            # No model match.
-            if models != None and model.num not in models[pipe_index]:
-                continue
-
-            # Printout.
-            print("        Model: %s" % model.num)
-
-            # Extend the lists.
-            if molecules == None:
-                atom_ids.append([])
-                atom_pos.append({})
-                atom_elem.append({})
-
-            # Add all coordinates and elements.
-            current_mol = ''
-            for mol_name, res_num, res_name, atom_name, elem, pos in dp.structure.atom_loop(selection=selection, model_num=model.num, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_name_flag=True, pos_flag=True, element_flag=True):
-                # No molecule match, so skip.
-                if molecules != None and mol_name not in molecules[pipe_index]:
-                    continue
-
-                # A new molecule.
-                if mol_name != current_mol:
-                    # Printout.
-                    print("            Molecule: %s" % mol_name)
-
-                    # Change the current molecule name.
-                    current_mol = mol_name
-
-                    # Extend the lists.
-                    if molecules != None:
-                        atom_ids.append([])
-                        atom_pos.append({})
-                        atom_elem.append({})
-
-                # A unique identifier.
-                if molecules != None:
-                    id = ":%s&%s@%s" % (res_num, res_name, atom_name)
-                else:
-                    id = "#%s:%s&%s@%s" % (mol_name, res_num, res_name, atom_name)
-
-                atom_ids[-1].append(id)
-                atom_pos[-1][id] = pos[0]
-                atom_elem[-1][id] = elem
-
-    # Set up the structures for the superimposition algorithm.
-    num = len(atom_ids)
-    coord = []
-    elements = []
-    for i in range(num):
-        coord.append([])
-        elements.append([])
-
-    # Find the common atoms and create the coordinate data structure.
-    for id in atom_ids[0]:
-        # Is the atom ID present in all other structures?
-        present = True
-        for i in range(num):
-            if id not in atom_ids[i]:
-                present = False
-                break
-
-        # Not present, so skip the atom.
-        if not present:
-            continue
-
-        # Add the atomic position to the coordinate list and the element to the element list.
-        for i in range(num):
-            coord[i].append(atom_pos[i][id])
-            elements[i].append(atom_elem[i][id])
-
-    # Convert to a numpy array.
-    coord = array(coord, float64)
-
-    # Return the information.
-    if elements_flag:
-        return coord, elements
-    else:
-        return coord
+    # Call the library method to do all of the work.
+    return assemble_coord_array(objects=objects, object_names=object_names, molecules=molecules, models=models, atom_id=atom_id, elements_flag=elements_flag)
 
 
 def connect_atom(index1=None, index2=None):
