@@ -43,6 +43,11 @@ from user_functions.objects import Desc_container
 from user_functions.wildcards import WILDCARD_STRUCT_GAUSSIAN_ALL, WILDCARD_STRUCT_PDB_ALL, WILDCARD_STRUCT_XYZ_ALL
 
 
+# Text for the multi-structure paragraph.
+paragraph_multi_struct = "Support for multiple structures is provided by the data pipes, model numbers and molecule names arguments.  Each data pipe, model and molecule combination will be treated as a separate structure.  As only atomic coordinates with the same residue name and number and atom name will be assembled, structures with slightly different atomic structures can be compared.  If the list of models is not supplied, then all models of all data pipes will be used.  If the optional molecules list is supplied, each molecule in the list will be considered as a separate structure for comparison between each other."
+paragraph_atom_id = "The atom ID string, which uses the same notation as the spin ID, can be used to restrict the coordinates compared to a subset of molecules, residues, or atoms.  For example to only use backbone heavy atoms in a protein, set the atom ID to '@N,C,CA,O', assuming those are the names of the atoms in the 3D structural file."
+
+
 # The user function class.
 uf_class = uf_info.add_class('structure')
 uf_class.title = "Class containing the structural related functions."
@@ -221,9 +226,9 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows a set of related structures to be superimposed to each other.  The current algorithm will only use atoms with the same residue name and number and atom name in the superimposition, hence this is not a true sequence alignment.  Just as with the structure.superimpose user function two methods are currently supported:")
 uf.desc[-1].add_item_list_element("'fit to mean'", "All models are fit to the mean structure.  This is the default and most accurate method for an ensemble description.  It is an iterative method which first calculates a mean structure and then fits each model to the mean structure using the Kabsch algorithm.  This is repeated until convergence.")
 uf.desc[-1].add_item_list_element("'fit to first'", "This is quicker but is not as accurate for an ensemble description.  The Kabsch algorithm is used to rotate and translate each model to be superimposed onto the first model of the first data pipe.")
-uf.desc[-1].add_paragraph("If the list of models is not supplied, then all models of all data pipes will be superimposed.")
-uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the superimpose calculation to certain molecules, residues, or atoms.  For example to only superimpose backbone heavy atoms in a protein, use the atom ID of '@N,C,CA,O', assuming those are the names of the atoms from the structural file.")
 uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.")
+uf.desc[-1].add_paragraph(paragraph_multi_struct)
+uf.desc[-1].add_paragraph(paragraph_atom_id)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To superimpose all sets of models, exactly as in the structure.superimpose user function, type one of:")
@@ -240,7 +245,7 @@ uf.desc[-1].add_prompt("relax> structure.align(pipes=['B', 'A'], method='fit to 
 uf.backend = pipe_control.structure.main.align
 uf.menu_text = "&align"
 uf.wizard_apply_button = False
-uf.wizard_height_desc = 450
+uf.wizard_height_desc = 400
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
@@ -641,17 +646,17 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This user function allows the rotational and translational displacement between different models or molecules to be calculated.  The information will be printed out in various formats and held in the relax data store.  This is directional, so there is a starting and ending position for each displacement.  Therefore the displacements in all directions between all models and molecules will be calculated.")
-uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the displacement calculation to certain molecules, residues, or atoms.  This is useful if studying domain motions, secondary structure rearrangements, amino acid side chain rotations, etc.")
 uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the motion.  The allows, for example, a pivot of a rotational domain motion to be specified.  This is not a formally correct algorithm, all translations will be zero, but does give an indication to the amplitude of the pivoting angle.")
-uf.desc[-1].add_paragraph("If the optional molecules list is supplied, then the displacements will be calculated between the molecules in the list rather than the models.  Therefore no models are allowed to be present in the current data pipe.")
+uf.desc[-1].add_paragraph(paragraph_multi_struct)
+uf.desc[-1].add_paragraph(paragraph_atom_id)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To determine the rotational and translational displacements between all sets of models, type:")
 uf.desc[-1].add_prompt("relax> structure.displacement()")
 uf.backend = pipe_control.structure.main.displacement
 uf.menu_text = "displace&ment"
-uf.wizard_height_desc = 400
-uf.wizard_size = (900, 700)
+uf.wizard_height_desc = 450
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
@@ -713,13 +718,13 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This is used to find pivot point of motion between a set of structural models.  If the list of models is not supplied, then all models will be used.")
-uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the search to certain molecules, residues, or atoms.  For example to only use backbone heavy atoms in a protein, use the atom ID of '@N,C,CA,O', assuming those are the names of the atoms from the structural file.")
 uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.")
-uf.desc[-1].add_paragraph("If the optional molecules list is supplied, then the optimisation will be performed on molecules in the list rather than the models.  Therefore no models are allowed to be present in the current data pipe.")
+uf.desc[-1].add_paragraph(paragraph_multi_struct)
+uf.desc[-1].add_paragraph(paragraph_atom_id)
 uf.backend = pipe_control.structure.main.find_pivot
 uf.menu_text = "&find_pivot"
-uf.wizard_height_desc = 400
-uf.wizard_size = (900, 700)
+uf.wizard_height_desc = 450
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
@@ -1087,15 +1092,16 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows the root mean squared deviation (RMSD) between all models to be calculated.")
-uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the RMSD calculation to certain molecules, residues, or atoms.")
-uf.desc[-1].add_paragraph("If the optional molecules list is supplied, then the RMSD calculation will be between the molecules in the list.")
+uf.desc[-1].add_paragraph(paragraph_multi_struct)
+uf.desc[-1].add_paragraph(paragraph_atom_id)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To determine the RMSD of all models in the current data pipe, simply type:")
 uf.desc[-1].add_prompt("relax> structure.rmsd()")
 uf.backend = pipe_control.structure.main.rmsd
 uf.menu_text = "&rmsd"
-uf.wizard_size = (800, 600)
+uf.wizard_height_desc = 400
+uf.wizard_size = (900, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
@@ -1194,7 +1200,7 @@ uf.desc[-1].add_paragraph("This allows a set of models of the same structure to 
 uf.desc[-1].add_item_list_element("'fit to mean'", "All models are fit to the mean structure.  This is the default and most accurate method for an ensemble description.  It is an iterative method which first calculates a mean structure and then fits each model to the mean structure using the Kabsch algorithm.  This is repeated until convergence.")
 uf.desc[-1].add_item_list_element("'fit to first'", "This is quicker but is not as accurate for an ensemble description.  The Kabsch algorithm is used to rotate and translate each model to be superimposed onto the first model.")
 uf.desc[-1].add_paragraph("If the list of models is not supplied, then all models will be superimposed.")
-uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the superimpose calculation to certain molecules, residues, or atoms.  For example to only superimpose backbone heavy atoms in a protein, use the atom ID of '@N,C,CA,O', assuming those are the names of the atoms from the structural file.")
+uf.desc[-1].add_paragraph(paragraph_atom_id)
 uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
