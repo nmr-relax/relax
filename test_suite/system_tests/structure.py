@@ -4331,6 +4331,9 @@ class Structure(SystemTestCase):
         self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM')
         self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_model_num=2, set_mol_name='CaM')
 
+        # Add an atom that should not be superimposed.
+        self.interpreter.structure.add_atom(mol_name='uniform_mol1', atom_name='Ti', res_name='TST', res_num=1, pos=[[1.0, 2.0, 3.0], [2.0, 3.0, 4.0]], element='Ti', pdb_record='HETATM')
+
         # Superimpose the backbone heavy atoms.
         self.interpreter.structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O')
 
@@ -4341,6 +4344,11 @@ class Structure(SystemTestCase):
             self.assertAlmostEqual(model1.x[i], model2.x[i], 2)
             self.assertAlmostEqual(model1.y[i], model2.y[i], 2)
             self.assertAlmostEqual(model1.z[i], model2.z[i], 2)
+
+        # The last atom must be different.
+        self.assertNotAlmostEqual(model1.x[-1], model2.x[-1], 2)
+        self.assertNotAlmostEqual(model1.y[-1], model2.y[-1], 2)
+        self.assertNotAlmostEqual(model1.z[-1], model2.z[-1], 2)
 
 
     def test_superimpose_fit_to_mean2(self):
