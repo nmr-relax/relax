@@ -77,6 +77,17 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
             # Printout.
             print("        Model: %s" % model.num)
 
+            # Create a new structure ID for all the molecules of this model (if the molecules argument is not supplied).
+            if molecules == None:
+                if len(object_names) > 1 and num_models > 1:
+                    ids.append('%s, model %i' % (object_names[struct_index], model.num))
+                elif len(object_names) > 1:
+                    ids.append('%s' % (object_names[struct_index]))
+                elif num_models > 1:
+                    ids.append('model %i' % (model.num))
+                else:
+                    ids.append(None)
+
             # Extend the lists.
             if molecules == None:
                 atom_ids.append([])
@@ -115,14 +126,15 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
                             elements.append({})
 
                     # Create a new structure ID.
-                    if len(object_names) > 1 and num_models > 1:
-                        ids.append('%s, model %i, %s' % (object_names[struct_index], model.num, mol_name))
-                    elif len(object_names) > 1:
-                        ids.append('%s, %s' % (object_names[struct_index], mol_name))
-                    elif num_models > 1:
-                        ids.append('model %i, %s' % (model.num, mol_name))
-                    else:
-                        ids.append('%s' % mol_name)
+                    if molecules != None:
+                        if len(object_names) > 1 and num_models > 1:
+                            ids.append('%s, model %i, %s' % (object_names[struct_index], model.num, mol_name))
+                        elif len(object_names) > 1:
+                            ids.append('%s, %s' % (object_names[struct_index], mol_name))
+                        elif num_models > 1:
+                            ids.append('model %i, %s' % (model.num, mol_name))
+                        else:
+                            ids.append('%s' % mol_name)
 
                 # A unique identifier.
                 if molecules != None:
