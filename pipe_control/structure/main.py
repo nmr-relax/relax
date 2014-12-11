@@ -556,7 +556,7 @@ def find_pivot(pipes=None, models=None, molecules=None, atom_id=None, init_pos=N
         init_pos = zeros(3, float64)
     init_pos = array(init_pos)
 
-    # Assemble the atomic coordinates and obtain the corresponding element information.
+    # Assemble the atomic coordinates.
     coord = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id)
 
     # Linear constraints for the pivot position (between -1000 and 1000 Angstrom).
