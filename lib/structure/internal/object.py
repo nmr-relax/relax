@@ -2157,6 +2157,22 @@ class Internal:
             self.delete(model=self.structural_data[model_index].num)
 
 
+    def model_list(self):
+        """Create a list of all models.
+
+        @return:    The list of all models.
+        @rtype:     list of int
+        """
+
+        # Assemble the list.
+        models = []
+        for model in self.model_loop():
+            models.append(model.num)
+
+        # Return the list.
+        return models
+
+
     def model_loop(self, model=None):
         """Generator method for looping over the models in numerical order.
 
