@@ -140,9 +140,9 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, method='fit to 
 
     # The different algorithms.
     if method == 'fit to mean':
-        T, R, pivot = fit_to_mean(models=list(range(len(elements))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+        T, R, pivot = fit_to_mean(models=list(range(len(elements))), coord=coord, centre_type=centre_type, elements=elements[0], centroid=centroid)
     elif method == 'fit to first':
-        T, R, pivot = fit_to_first(models=list(range(len(elements))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+        T, R, pivot = fit_to_first(models=list(range(len(elements))), coord=coord, centre_type=centre_type, elements=elements[0], centroid=centroid)
 
     # Update to the new coordinates.
     i = 0
@@ -1112,9 +1112,9 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centre_type="ce
 
     # The different algorithms.
     if method == 'fit to mean':
-        T, R, pivot = fit_to_mean(models=models, coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+        T, R, pivot = fit_to_mean(models=models, coord=coord, centre_type=centre_type, elements=elements[0], centroid=centroid)
     elif method == 'fit to first':
-        T, R, pivot = fit_to_first(models=models, coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+        T, R, pivot = fit_to_first(models=models, coord=coord, centre_type=centre_type, elements=elements[0], centroid=centroid)
 
     # Update to the new coordinates.
     for i in range(len(models)):
