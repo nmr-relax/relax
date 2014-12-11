@@ -3187,7 +3187,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.rotate(R=R, atom_id='#Z', origin=pivot)
 
         # Find the pivot.
-        self.interpreter.structure.find_pivot(molecules=['X', 'Y', 'Z'], init_pos=[0.95, 2.05, 3.02], func_tol=1e-7)
+        self.interpreter.structure.find_pivot(molecules=[['X', 'Y', 'Z']], init_pos=[0.95, 2.05, 3.02], func_tol=1e-7)
 
         # Check the pivot.
         self.assertAlmostEqual(cdp.structure.pivot[0], pivot[0], 3)

@@ -112,7 +112,7 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, method='fit to 
     @type pipes:            None or list of str
     @keyword models:        The list of models to for each data pipe superimpose.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
     @type models:           list of lists of int or None
-    @keyword molecules:     The molecule names to include in the alignment and superimposition.
+    @keyword molecules:     The molecule names to include in the alignment and superimposition.  The number of elements must match the pipes argument.
     @type molecules:        None or list of str
     @keyword atom_id:       The molecule, residue, and atom identifier string.  This matches the spin ID string format.
     @type atom_id:          str or None
@@ -616,13 +616,15 @@ def displacement(model_from=None, model_to=None, atom_id=None, molecules=None, c
                 cdp.structure.displacements._calculate(model_from=i, model_to=j, coord_from=array(coord_from), coord_to=array(coord_to), centroid=centroid)
 
 
-def find_pivot(models=None, molecules=None, atom_id=None, init_pos=None, func_tol=1e-5, box_limit=200):
+def find_pivot(pipes=None, models=None, molecules=None, atom_id=None, init_pos=None, func_tol=1e-5, box_limit=200):
     """Find the pivoted motion of a set of structural models or structures.
 
-    @keyword models:    The list of models to use.  If set to None, then all models will be used.
-    @type models:       list of int or None
-    @keyword molecules: The list of molecules to find the pivoted motion for.  This overrides the models.
-    @type molecules:    None or list of str
+    @keyword pipes:     The data pipes to use in the motional pivot algorithm.
+    @type pipes:        None or list of str
+    @keyword models:    The list of models to use.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:       None or list of lists of int
+    @keyword molecules: The list of molecules to find the pivoted motion for.  The number of elements must match the pipes argument.
+    @type molecules:    None or list of lists of str
     @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.
     @type atom_id:      str or None
     @keyword init_pos:  The starting pivot position for the pivot point optimisation.
@@ -641,60 +643,8 @@ def find_pivot(models=None, molecules=None, atom_id=None, init_pos=None, func_to
         init_pos = zeros(3, float64)
     init_pos = array(init_pos)
 
-    # The selection object.
-    selection = cdp.structure.selection(atom_id=atom_id)
-
-    # Motional pivot between models.
-    if molecules == None:
-        # Validate the models.
-        cdp.structure.validate_models()
-
-        # Create a list of all models.
-        if models == None:
-            models = []
-            for model in cdp.structure.model_loop():
-                models.append(model.num)
-
-        # Assemble the atomic coordinates of all models.
-        coord = []
-        for model in models:
-            coord.append([])
-            for pos in cdp.structure.atom_loop(selection=selection, model_num=model, pos_flag=True):
-                coord[-1].append(pos[0])
-            coord[-1] = array(coord[-1])
-        coord = array(coord)
-
-    # Motional pivot between molecules.
-    else:
-        # No models allowed.
-        if cdp.structure.num_models() > 1:
-            raise RelaxError("When calculating the RMSD between different molecules, no models are allowed to be present.")
-
-        # Assemble the atomic coordinates of all models.
-        coord = []
-        current_mol = ''
-        for mol_name, pos in cdp.structure.atom_loop(selection=selection, mol_name_flag=True, pos_flag=True):
-            # No molecule match, so skip.
-            if mol_name not in molecules:
-                continue
-
-            # A new molecule.
-            if mol_name != current_mol:
-                # Change the current molecule name.
-                current_mol = mol_name
-
-                # Extend the coordinates.
-                coord.append([])
-
-            # Append the coordinate.
-            coord[-1].append(pos[0])
-
-        # Numpy conversion.
-        for i in range(len(coord)):
-            coord[i] = array(coord[i])
-
-        # The models list.
-        models = list(range(len(molecules)))
+    # Assemble the atomic coordinates and obtain the corresponding element information.
+    coord = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id)
 
     # Linear constraints for the pivot position (between -1000 and 1000 Angstrom).
     A = zeros((6, 3), float64)
@@ -706,7 +656,7 @@ def find_pivot(models=None, molecules=None, atom_id=None, init_pos=None, func_to
         b[2*i+1] = -box_limit
 
     # The target function.
-    finder = Pivot_finder(models, coord)
+    finder = Pivot_finder(list(range(len(coord))), coord)
     results = generic_minimise(func=finder.func, x0=init_pos, min_algor='Log barrier', min_options=('simplex',), A=A, b=b, func_tol=func_tol, print_flag=1)
 
     # No result.

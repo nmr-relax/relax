@@ -665,17 +665,26 @@ uf = uf_info.add_uf('structure.find_pivot')
 uf.title = "Find the pivot point of the motion of a set of structures."
 uf.title_short = "Pivot search."
 uf.add_keyarg(
+    name = "pipes",
+    py_type = "str_list",
+    desc_short = "data pipes",
+    desc = "The data pipes to use in the motional pivot algorithm.",
+    wiz_combo_iter = pipe_names,
+    wiz_read_only = False,
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "models",
-    py_type = "int_list",
-    desc_short = "model list",
-    desc = "The list of models to use.",
+    py_type = "int_list_of_lists",
+    desc_short = "model list for each data pipe",
+    desc = "The list of models for each data pipe to use in the motional pivot algorithm.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "molecules",
-    py_type = "str_list",
-    desc_short = "molecule list",
-    desc = "The optional molecule list to perform the optimisation on rather than the models.  Only atoms with identical residue name and number and atom name will be used.",
+    py_type = "str_list_of_lists",
+    desc_short = "molecule list for each data pipe",
+    desc = "The list of molecules for each data pipe to use in the motional pivot algorithm.  This allows differently named molecules in the same or different data pipes to be used.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
