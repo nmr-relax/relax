@@ -39,8 +39,8 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
     @type molecules:        None or list of lists of str
     @keyword atom_id:       The molecule, residue, and atom identifier string of the coordinates of interest.  This matches the spin ID string format.
     @type atom_id:          None or str
-    @return:                The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates); a list of unique IDs for each structural object, model, and molecule; the list of element names for each atom (if the elements flag is set).
-    @rtype:                 numpy rank-3 float64 array, list of str, list of str
+    @return:                The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates); a list of unique IDs for each structural object, model, and molecule; the list of element names for each structural object and each atom (if the elements flag is set).
+    @rtype:                 numpy rank-3 float64 array, list of str, list of list of str
     """
 
     # Assemble the atomic coordinates of all structures.
