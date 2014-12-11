@@ -134,6 +134,70 @@ def align(pipes=None, molecules=None, models=None, method='fit to mean', atom_id
     if centre_type not in allowed:
         raise RelaxError("The superimposition centre type '%s' is unknown.  It must be one of %s." % (centre_type, allowed))
 
+    # Assemble the atomic coordinates and obtain the corresponding element information.
+    coord, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, elements_flag=True)
+
+    # The different algorithms.
+    if method == 'fit to mean':
+        T, R, pivot = fit_to_mean(models=list(range(len(elements))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+    elif method == 'fit to first':
+        T, R, pivot = fit_to_first(models=list(range(len(elements))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+
+    # Update to the new coordinates.
+    i = 0
+    for pipe_index in range(len(pipes)):
+        # The data pipe object.
+        dp = get_pipe(pipes[pipe_index])
+
+        # The selection object.
+        selection = dp.structure.selection(atom_id=atom_id)
+
+        # Loop over the models.
+        for model in dp.structure.model_loop():
+            # No model match.
+            if models != None and model.num not in models[pipe_index]:
+                continue
+
+            # Loop over the molecules.
+            current_mol = ''
+            for mol_name in dp.structure.atom_loop(selection=selection, model_num=model.num, mol_name_flag=True):
+                # No molecule match, so skip.
+                if molecules != None and mol_name not in molecules[pipe_index]:
+                    continue
+
+                # A new molecule.
+                if mol_name != current_mol:
+                    # Change the current molecule name.
+                    current_mol = mol_name
+
+                    # The atom ID from the molecule name.
+                    id = '#%s' % mol_name
+
+                    # Translate the molecule first (the rotational pivot is defined in the first model).
+                    translate(T=T[i], model=model.num, pipe_name=pipes[pipe_index], atom_id=id)
+
+                    # Rotate the molecule.
+                    rotate(R=R[i], origin=pivot[i], model=model.num, pipe_name=pipes[pipe_index], atom_id=id)
+
+                    # Increment the index.
+                    i += 1
+
+
+def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, elements_flag=False):
+    """Assemble the atomic coordinates 
+ 
+    @keyword pipes:         The data pipes to include in the alignment and superimposition.
+    @type pipes:            None or list of str
+    @keyword models:        The list of models to for each data pipe superimpose.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:           None or list of lists of int
+    @keyword molecules:     The molecule names to include in the alignment and superimposition.  The number of elements must match the pipes argument.
+    @type molecules:        None or list of lists of str
+    @keyword atom_id:       The molecule, residue, and atom identifier string.  This matches the spin ID string format.
+    @type atom_id:          str or None
+    @return:                The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates), and the list of element names for each atom (if the elements flag is set).
+    @rtype:                 numpy rank-3 float64 array, list of str
+    """
+
     # The data pipes to use.
     if pipes == None:
         pipes = [cdp_name()]
@@ -244,50 +308,11 @@ def align(pipes=None, molecules=None, models=None, method='fit to mean', atom_id
     # Convert to a numpy array.
     coord = array(coord, float64)
 
-    # The different algorithms.
-    if method == 'fit to mean':
-        T, R, pivot = fit_to_mean(models=list(range(num)), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
-    elif method == 'fit to first':
-        T, R, pivot = fit_to_first(models=list(range(num)), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
-
-    # Update to the new coordinates.
-    i = 0
-    for pipe_index in range(len(pipes)):
-        # The data pipe object.
-        dp = get_pipe(pipes[pipe_index])
-
-        # The selection object.
-        selection = dp.structure.selection(atom_id=atom_id)
-
-        # Loop over the models.
-        for model in dp.structure.model_loop():
-            # No model match.
-            if models != None and model.num not in models[pipe_index]:
-                continue
-
-            # Loop over the molecules.
-            current_mol = ''
-            for mol_name in dp.structure.atom_loop(selection=selection, model_num=model.num, mol_name_flag=True):
-                # No molecule match, so skip.
-                if molecules != None and mol_name not in molecules[pipe_index]:
-                    continue
-
-                # A new molecule.
-                if mol_name != current_mol:
-                    # Change the current molecule name.
-                    current_mol = mol_name
-
-                    # The atom ID from the molecule name.
-                    id = '#%s' % mol_name
-
-                    # Translate the molecule first (the rotational pivot is defined in the first model).
-                    translate(T=T[i], model=model.num, pipe_name=pipes[pipe_index], atom_id=id)
-
-                    # Rotate the molecule.
-                    rotate(R=R[i], origin=pivot[i], model=model.num, pipe_name=pipes[pipe_index], atom_id=id)
-
-                    # Increment the index.
-                    i += 1
+    # Return the information.
+    if elements_flag:
+        return coord, elements
+    else:
+        return coord
 
 
 def connect_atom(index1=None, index2=None):
