@@ -4262,7 +4262,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='Z', pos=[-1., 20., 1.], element='S')
 
         # Calculate the RMSD.
-        self.interpreter.structure.rmsd(molecules=['X', 'Y', 'Z'])
+        self.interpreter.structure.rmsd(molecules=[['X', 'Y', 'Z']])
 
         # Checks.
         self.assert_(hasattr(cdp.structure, 'rmsd'))

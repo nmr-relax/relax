@@ -1052,30 +1052,46 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + 'read_xyz.png'
 
 # The structure.rmsd user function.
 uf = uf_info.add_uf('structure.rmsd')
-uf.title = "Determine the RMSD between the models."
+uf.title = "Determine the RMSD between structures."
 uf.title_short = "Structural RMSD."
 uf.add_keyarg(
-    name = "atom_id",
-    py_type = "str",
-    desc_short = "atom identification string",
-    desc = "The atom identification string.",
+    name = "pipes",
+    py_type = "str_list",
+    desc_short = "data pipes",
+    desc = "The data pipes to determine the RMSD for.",
+    wiz_combo_iter = pipe_names,
+    wiz_read_only = False,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "models",
+    py_type = "int_list_of_lists",
+    desc_short = "model list for each data pipe",
+    desc = "The list of models for each data pipe to determine the RMSD for.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "molecules",
-    py_type = "str_list",
-    desc_short = "molecule list",
-    desc = "The optional molecule list to perform the RMSD calculation on rather than the models.  The RMSD will only be calculated for atoms with identical residue name and number and atom name.",
+    py_type = "str_list_of_lists",
+    desc_short = "molecule list for each data pipe",
+    desc = "The list of molecules for each data pipe to determine the RMSD for.  The RMSD will only be calculated for atoms with identical residue name and number and atom name.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "atom_id",
+    py_type = "str",
+    desc_short = "atom identification string",
+    desc = "The atom identification string of the coordinates of interest.",
     can_be_none = True
 )
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows the root mean squared deviation (RMSD) between all models to be calculated.")
 uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the RMSD calculation to certain molecules, residues, or atoms.")
-uf.desc[-1].add_paragraph("If the optional molecules list is supplied, then the RMSD calculation will be between the molecules in the list rather than the models.  Therefore no models are allowed to be present in the current data pipe.")
+uf.desc[-1].add_paragraph("If the optional molecules list is supplied, then the RMSD calculation will be between the molecules in the list.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To determine the RMSD, simply type:")
+uf.desc[-1].add_paragraph("To determine the RMSD of all models in the current data pipe, simply type:")
 uf.desc[-1].add_prompt("relax> structure.rmsd()")
 uf.backend = pipe_control.structure.main.rmsd
 uf.menu_text = "&rmsd"
