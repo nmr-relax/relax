@@ -56,6 +56,9 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
         # Validate the models.
         objects[struct_index].validate_models(verbosity=0)
 
+        # The number of models.
+        num_models = objects[struct_index].num_models()
+
         # The selection object.
         selection = objects[struct_index].selection(atom_id=atom_id)
 
@@ -96,11 +99,11 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
                         atom_elem.append({})
 
                     # Create a new structure ID.
-                    if len(object_names) > 1 and model.num != None:
+                    if len(object_names) > 1 and num_models > 1:
                         ids.append('%s, model %i, %s' % (object_names[struct_index], model.num, mol_name))
                     elif len(object_names) > 1:
                         ids.append('%s, %s' % (object_names[struct_index], mol_name))
-                    elif model.num != None:
+                    elif num_models > 1:
                         ids.append('model %i, %s' % (model.num, mol_name))
                     else:
                         ids.append('%s' % mol_name)
