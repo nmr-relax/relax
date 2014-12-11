@@ -1103,33 +1103,12 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centre_type="ce
     if centre_type not in allowed:
         raise RelaxError("The superimposition centre type '%s' is unknown.  It must be one of %s." % (centre_type, allowed))
 
-    # Test if the current data pipe exists.
-    check_pipe()
-
-    # Validate the models.
-    cdp.structure.validate_models()
-
     # Create a list of all models.
     if models == None:
-        models = []
-        for model in cdp.structure.model_loop():
-            models.append(model.num)
+        models = cdp.structure.model_list()
 
-    # The selection object.
-    selection = cdp.structure.selection(atom_id=atom_id)
-
-    # Assemble the atomic coordinates of all models.
-    coord = []
-    for model in models:
-        coord.append([])
-        for pos in cdp.structure.atom_loop(selection=selection, model_num=model, pos_flag=True):
-            coord[-1].append(pos[0])
-        coord[-1] = array(coord[-1])
-
-    # Assemble the element types.
-    elements = []
-    for elem in cdp.structure.atom_loop(selection=selection, model_num=model, element_flag=True):
-        elements.append(elem)
+    # Assemble the atomic coordinates and obtain the corresponding element information.
+    coord, ids, elements = assemble_coordinates(models=[models], atom_id=atom_id, elements_flag=True)
 
     # The different algorithms.
     if method == 'fit to mean':
