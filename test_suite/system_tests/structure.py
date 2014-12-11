@@ -105,7 +105,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_atom(mol_name='uniform_mol1', atom_name='Ti', res_name='TST', res_num=1, pos=[[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]], element='Ti', pdb_record='HETATM')
 
         # The alignment.
-        self.interpreter.structure.align(pipes=['ref', 'align'], method='fit to first', atom_id='@N,H')
+        self.interpreter.structure.align(pipes=['ref', 'align'], method='fit to first', atom_id='@N,H', displace_id='@N,H')
 
         # Output PDB to stdout to help in debugging.
         self.interpreter.structure.write_pdb(file=sys.stdout)
@@ -4335,7 +4335,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_atom(mol_name='uniform_mol1', atom_name='Ti', res_name='TST', res_num=1, pos=[[1.0, 2.0, 3.0], [2.0, 3.0, 4.0]], element='Ti', pdb_record='HETATM')
 
         # Superimpose the backbone heavy atoms.
-        self.interpreter.structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O')
+        self.interpreter.structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O', displace_id=':82-114')
 
         # Check that the two structures now have the same atomic coordinates.
         model1 = cdp.structure.structural_data[0].mol[0]
@@ -4346,9 +4346,9 @@ class Structure(SystemTestCase):
             self.assertAlmostEqual(model1.z[i], model2.z[i], 2)
 
         # The last atom must be different.
-        self.assertNotAlmostEqual(model1.x[-1], model2.x[-1], 2)
-        self.assertNotAlmostEqual(model1.y[-1], model2.y[-1], 2)
-        self.assertNotAlmostEqual(model1.z[-1], model2.z[-1], 2)
+        self.assertAlmostEqual(model1.x[-1] - model2.x[-1], -1.0, 2)
+        self.assertAlmostEqual(model1.y[-1] - model2.y[-1], -1.0, 2)
+        self.assertAlmostEqual(model1.z[-1] - model2.z[-1], -1.0, 2)
 
 
     def test_superimpose_fit_to_mean2(self):
