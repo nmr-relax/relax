@@ -144,6 +144,10 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, method='fit to 
     elif method == 'fit to first':
         T, R, pivot = fit_to_first(models=list(range(len(ids))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
 
+    # The data pipes to use.
+    if pipes == None:
+        pipes = [cdp_name()]
+
     # Loop over all pipes, models, and molecules.
     i = 0
     for pipe_index, model_num, mol_name in structure_loop(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id):
