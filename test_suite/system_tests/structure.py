@@ -4332,20 +4332,22 @@ class Structure(SystemTestCase):
         self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_model_num=2, set_mol_name='CaM')
 
         # Add an atom that should not be superimposed.
-        self.interpreter.structure.add_atom(mol_name='uniform_mol1', atom_name='Ti', res_name='TST', res_num=1, pos=[[1.0, 2.0, 3.0], [2.0, 3.0, 4.0]], element='Ti', pdb_record='HETATM')
+        self.interpreter.structure.add_atom(mol_name='CaM', atom_name='Ti', res_name='TST', res_num=1, pos=[[1.0, 2.0, 3.0], [2.0, 3.0, 4.0]], element='Ti', pdb_record='HETATM')
 
         # Superimpose the backbone heavy atoms.
-        self.interpreter.structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O', displace_id=':82-114')
+        self.interpreter.structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O', displace_id=':82-5000')
 
         # Check that the two structures now have the same atomic coordinates.
         model1 = cdp.structure.structural_data[0].mol[0]
         model2 = cdp.structure.structural_data[1].mol[0]
         for i in range(len(model1.atom_name)):
+            if model1.res_num[i] == 1:
+                continue
             self.assertAlmostEqual(model1.x[i], model2.x[i], 2)
             self.assertAlmostEqual(model1.y[i], model2.y[i], 2)
             self.assertAlmostEqual(model1.z[i], model2.z[i], 2)
 
-        # The last atom must be different.
+        # The last atom must be different - it is not displaced.
         self.assertAlmostEqual(model1.x[-1] - model2.x[-1], -1.0, 2)
         self.assertAlmostEqual(model1.y[-1] - model2.y[-1], -1.0, 2)
         self.assertAlmostEqual(model1.z[-1] - model2.z[-1], -1.0, 2)
