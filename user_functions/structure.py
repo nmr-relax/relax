@@ -599,34 +599,36 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 # The structure.displacement user function.
 uf = uf_info.add_uf('structure.displacement')
-uf.title = "Determine the rotational and translational displacement between a set of models."
+uf.title = "Determine the rotational and translational displacement between a set of models or molecules."
 uf.title_short = "Rotational and translational displacement."
 uf.add_keyarg(
-    name = "model_from",
-    py_type = "int",
-    desc_short = "model from",
-    desc = "The optional model number for the starting position of the displacement.",
+    name = "pipes",
+    py_type = "str_list",
+    desc_short = "data pipes",
+    desc = "The data pipes to determine the displacements for.",
+    wiz_combo_iter = pipe_names,
+    wiz_read_only = False,
     can_be_none = True
 )
 uf.add_keyarg(
-    name = "model_to",
-    py_type = "int",
-    desc_short = "model to",
-    desc = "The optional model number for the ending position of the displacement.",
+    name = "models",
+    py_type = "int_list_of_lists",
+    desc_short = "model list for each data pipe",
+    desc = "The list of models for each data pipe to determine the displacements for.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "molecules",
+    py_type = "str_list_of_lists",
+    desc_short = "molecule list for each data pipe",
+    desc = "The list of molecules for each data pipe to determine the displacements for.  This allows differently named molecules in the same or different data pipes to be superimposed.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "atom_id",
     py_type = "str",
     desc_short = "atom identification string",
-    desc = "The atom identification string.",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "molecules",
-    py_type = "str_list",
-    desc_short = "molecule list",
-    desc = "The optional molecule list to perform the displacement calculation on rather than the models.  The displacements will only be calculated for atoms with identical residue name and number and atom name.",
+    desc = "The atom identification string of the coordinates of interest.",
     can_be_none = True
 )
 uf.add_keyarg(
@@ -638,7 +640,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This user function allows the rotational and translational displacement between two models of the same structure to be calculated.  The information will be printed out in various formats and held in the relax data store.  This is directional, so there is a starting and ending position for each displacement.  If the starting and ending models are not specified, then the displacements in all directions between all models will be calculated.")
+uf.desc[-1].add_paragraph("This user function allows the rotational and translational displacement between different models or molecules to be calculated.  The information will be printed out in various formats and held in the relax data store.  This is directional, so there is a starting and ending position for each displacement.  Therefore the displacements in all directions between all models and molecules will be calculated.")
 uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the displacement calculation to certain molecules, residues, or atoms.  This is useful if studying domain motions, secondary structure rearrangements, amino acid side chain rotations, etc.")
 uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the motion.  The allows, for example, a pivot of a rotational domain motion to be specified.  This is not a formally correct algorithm, all translations will be zero, but does give an indication to the amplitude of the pivoting angle.")
 uf.desc[-1].add_paragraph("If the optional molecules list is supplied, then the displacements will be calculated between the molecules in the list rather than the models.  Therefore no models are allowed to be present in the current data pipe.")
@@ -646,13 +648,6 @@ uf.desc[-1].add_paragraph("If the optional molecules list is supplied, then the 
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To determine the rotational and translational displacements between all sets of models, type:")
 uf.desc[-1].add_prompt("relax> structure.displacement()")
-uf.desc[-1].add_paragraph("To determine the displacement from model 5 to all other models, type:")
-uf.desc[-1].add_prompt("relax> structure.displacement(model_from=5)")
-uf.desc[-1].add_paragraph("To determine the displacement of all models to model 5, type:")
-uf.desc[-1].add_prompt("relax> structure.displacement(model_to=5)")
-uf.desc[-1].add_paragraph("To determine the displacement of model 2 to model 3, type one of:")
-uf.desc[-1].add_prompt("relax> structure.displacement(2, 3)")
-uf.desc[-1].add_prompt("relax> structure.displacement(model_from=2, model_to=3)")
 uf.backend = pipe_control.structure.main.displacement
 uf.menu_text = "displace&ment"
 uf.wizard_height_desc = 400

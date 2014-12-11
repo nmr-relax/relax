@@ -427,106 +427,35 @@ def delete(atom_id=None, model=None, verbosity=1, spin_info=True):
             del interatom.vector
 
 
-def displacement(model_from=None, model_to=None, atom_id=None, molecules=None, centroid=None):
-    """Calculate the rotational and translational displacement between two structural models.
+def displacement(pipes=None, models=None, molecules=None, atom_id=None, centroid=None):
+    """Calculate the rotational and translational displacement between structures or models.
 
-    @keyword model_from:        The optional model number for the starting position of the displacement.
-    @type model_from:           int or None
-    @keyword model_to:          The optional model number for the ending position of the displacement.
-    @type model_to:             int or None
-    @keyword atom_id:           The molecule, residue, and atom identifier string.  This matches the spin ID string format.
-    @type atom_id:              str or None
-    @keyword molecules:         The list of molecules to calculate the displacements between.  This overrides the models.
-    @type molecules:            None or list of str
-    @keyword centroid:          An alternative position of the centroid, used for studying pivoted systems.
-    @type centroid:             list of float or numpy rank-1, 3D array
+    @keyword pipes:     The data pipes to determine the displacements for.
+    @type pipes:        None or list of str
+    @keyword models:    The list of models to determine the displacements for.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:       None or list of lists of int
+    @keyword molecules: The list of molecules to determine the displacements for.  The number of elements must match the pipes argument.
+    @type molecules:    None or list of lists of str
+    @keyword atom_id:   The atom identification string of the coordinates of interest.  This matches the spin ID string format.
+    @type atom_id:      str or None
+    @keyword centroid:  An alternative position of the centroid, used for studying pivoted systems.
+    @type centroid:     list of float or numpy rank-1, 3D array
     """
 
     # Test if the current data pipe exists.
     check_pipe()
 
-    # Displacements between models.
-    if molecules == None:
-        # Convert the model_from and model_to args to lists, is supplied.
-        if model_from != None:
-            model_from = [model_from]
-        if model_to != None:
-            model_to = [model_to]
+    # Assemble the atomic coordinates.
+    coord, ids = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id)
 
-        # Create a list of all models.
-        models = []
-        for model in cdp.structure.model_loop():
-            models.append(model.num)
+    # Initialise the data structure.
+    if not hasattr(cdp.structure, 'displacments'):
+        cdp.structure.displacements = Displacements()
 
-        # Set model_from or model_to to all models if None.
-        if model_from == None:
-            model_from = models
-        if model_to == None:
-            model_to = models
-
-        # Initialise the data structure.
-        if not hasattr(cdp.structure, 'displacements'):
-            cdp.structure.displacements = Displacements()
-
-        # The selection object.
-        selection = cdp.structure.selection(atom_id=atom_id)
-
-        # Loop over the starting models.
-        for i in range(len(model_from)):
-            # Assemble the atomic coordinates.
-            coord_from = []
-            for pos in cdp.structure.atom_loop(selection=selection, model_num=model_from[i], pos_flag=True):
-                coord_from.append(pos[0])
-
-            # Loop over the ending models.
-            for j in range(len(model_to)):
-                # Assemble the atomic coordinates.
-                coord_to = []
-                for pos in cdp.structure.atom_loop(selection=selection, model_num=model_to[j], pos_flag=True):
-                    coord_to.append(pos[0])
-
-                # Send to the base container for the calculations.
-                cdp.structure.displacements._calculate(model_from=model_from[i], model_to=model_to[j], coord_from=array(coord_from), coord_to=array(coord_to), centroid=centroid)
-
-    # Displacements between molecules.
-    else:
-        # No models allowed.
-        if cdp.structure.num_models() > 1:
-            raise RelaxError("When calculating the RMSD between different molecules, no models are allowed to be present.")
-
-        # Initialise the data structure.
-        if not hasattr(cdp.structure, 'displacements'):
-            cdp.structure.displacements = Displacements()
-
-        # The selection object.
-        selection = cdp.structure.selection(atom_id=atom_id)
-
-        # Loop over the starting molecules.
-        for i in range(len(molecules)):
-            # Assemble the atomic coordinates.
-            coord_from = []
-            for mol_name, pos in cdp.structure.atom_loop(selection=selection, mol_name_flag=True, pos_flag=True):
-                # No molecule match, so skip.
-                if mol_name != molecules[i]:
-                    continue
-
-                # Add the coordinate.
-                coord_from.append(pos[0])
-
-            # Loop over the ending molecules.
-            for j in range(len(molecules)):
-                # Assemble the atomic coordinates.
-                coord_to = []
-                for mol_name, pos in cdp.structure.atom_loop(selection=selection, mol_name_flag=True, pos_flag=True):
-                    # No molecule match, so skip.
-                    if mol_name != molecules[j]:
-                        continue
-
-                    # Add the coordinate.
-                    coord_to.append(pos[0])
-
-                # Send to the base container for the calculations.
-                cdp.structure.displacements._calculate(model_from=i, model_to=j, coord_from=array(coord_from), coord_to=array(coord_to), centroid=centroid)
+    # Double loop over all structures, sending the data to the base container for the calculations.
+    for i in range(len(ids)):
+        for j in range(len(ids)):
+            cdp.structure.displacements._calculate(id_from=ids[i], id_to=ids[j], coord_from=coord[i], coord_to=coord[j], centroid=centroid)
 
 
 def find_pivot(pipes=None, models=None, molecules=None, atom_id=None, init_pos=None, func_tol=1e-5, box_limit=200):
