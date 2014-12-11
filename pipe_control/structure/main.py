@@ -106,7 +106,7 @@ def add_model(model_num=None):
     print("Created the empty model number %s." % model_num)
 
 
-def align(pipes=None, models=None, molecules=None, atom_id=None, method='fit to mean', centre_type="centroid", centroid=None):
+def align(pipes=None, models=None, molecules=None, atom_id=None, displace_id=None, method='fit to mean', centre_type="centroid", centroid=None):
     """Superimpose a set of related, but not identical structures.
 
     @keyword pipes:         The data pipes to include in the alignment and superimposition.
@@ -117,6 +117,8 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, method='fit to 
     @type molecules:        None or list of str
     @keyword atom_id:       The molecule, residue, and atom identifier string.  This matches the spin ID string format.
     @type atom_id:          str or None
+    @keyword displace_id:   The atom ID string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.
+    @type displace_id:      str or None
     @keyword method:        The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
     @type method:           str
     @keyword centre_type:   The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
@@ -151,8 +153,15 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, method='fit to 
     # Loop over all pipes, models, and molecules.
     i = 0
     for pipe_index, model_num, mol_name in structure_loop(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id):
-        # The atom ID from the molecule name.
-        id = '#%s' % mol_name
+        # Add the molecule name to the displacement ID if required.
+        id = displace_id
+        if molecules != None:
+            if displace_id == None:
+                id = '#%s' % mol_name
+            elif not search('#', displace_id):
+                id = '#%s' % mol_name
+            else:
+                id = '#%s%s' % (mol_name, displace_id)
 
         # Translate the molecule first (the rotational pivot is defined in the first model).
         translate(T=T[i], model=model_num, pipe_name=pipes[pipe_index], atom_id=id)
@@ -1110,7 +1119,7 @@ def structure_loop(pipes=None, molecules=None, models=None, atom_id=None):
         yield pipe_index, model_num, mol_name
 
 
-def superimpose(models=None, method='fit to mean', atom_id=None, centre_type="centroid", centroid=None):
+def superimpose(models=None, method='fit to mean', atom_id=None, displace_id=None, centre_type="centroid", centroid=None):
     """Superimpose a set of structural models.
 
     @keyword models:        The list of models to superimpose.  If set to None, then all models will be used.
@@ -1119,6 +1128,8 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centre_type="ce
     @type method:           str
     @keyword atom_id:       The molecule, residue, and atom identifier string.  This matches the spin ID string format.
     @type atom_id:          str or None
+    @keyword displace_id:   The atom ID string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.
+    @type displace_id:      str or None
     @keyword centre_type:   The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
     @type centre_type:      str
     @keyword centroid:      An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
@@ -1151,10 +1162,10 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centre_type="ce
     # Update to the new coordinates.
     for i in range(len(models)):
         # Translate the molecule first (the rotational pivot is defined in the first model).
-        translate(T=T[i], model=models[i])
+        translate(T=T[i], model=models[i], atom_id=displace_id)
 
         # Rotate the molecule.
-        rotate(R=R[i], origin=pivot[i], model=models[i])
+        rotate(R=R[i], origin=pivot[i], model=models[i], atom_id=displace_id)
 
 
 def translate(T=None, model=None, atom_id=None, pipe_name=None):

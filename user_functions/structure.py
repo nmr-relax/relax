@@ -46,6 +46,7 @@ from user_functions.wildcards import WILDCARD_STRUCT_GAUSSIAN_ALL, WILDCARD_STRU
 # Text for the multi-structure paragraph.
 paragraph_multi_struct = "Support for multiple structures is provided by the data pipes, model numbers and molecule names arguments.  Each data pipe, model and molecule combination will be treated as a separate structure.  As only atomic coordinates with the same residue name and number and atom name will be assembled, structures with slightly different atomic structures can be compared.  If the list of models is not supplied, then all models of all data pipes will be used.  If the optional molecules list is supplied, each molecule in the list will be considered as a separate structure for comparison between each other."
 paragraph_atom_id = "The atom ID string, which uses the same notation as the spin ID, can be used to restrict the coordinates compared to a subset of molecules, residues, or atoms.  For example to only use backbone heavy atoms in a protein, set the atom ID to '@N,C,CA,O', assuming those are the names of the atoms in the 3D structural file."
+paragraph_displace_id = "The displacement ID string, which is similar to the atom ID, gives finer control over which atoms are translated and rotated by the algorithm.  When not set this allows, for example, to align structures based on a set of backbone heavy atoms and the backbone protons and side-chains are displaced by default.  Or if set to the same as the atom ID, if a single domain is aligned, then just that domain will be displaced."
 
 
 # The user function class.
@@ -195,6 +196,13 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "displace_id",
+    py_type = "str",
+    desc_short = "displacement ID string",
+    desc = "The atom identification string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.",
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "method",
     default = "fit to mean",
     py_type = "str",
@@ -229,6 +237,7 @@ uf.desc[-1].add_item_list_element("'fit to first'", "This is quicker but is not 
 uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.")
 uf.desc[-1].add_paragraph(paragraph_multi_struct)
 uf.desc[-1].add_paragraph(paragraph_atom_id)
+uf.desc[-1].add_paragraph(paragraph_displace_id)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To superimpose all sets of models, exactly as in the structure.superimpose user function, type one of:")
@@ -1178,6 +1187,13 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "displace_id",
+    py_type = "str",
+    desc_short = "displacement ID string",
+    desc = "The atom identification string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.",
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "centre_type",
     py_type = "str",
     default = "centroid",
@@ -1201,6 +1217,7 @@ uf.desc[-1].add_item_list_element("'fit to mean'", "All models are fit to the me
 uf.desc[-1].add_item_list_element("'fit to first'", "This is quicker but is not as accurate for an ensemble description.  The Kabsch algorithm is used to rotate and translate each model to be superimposed onto the first model.")
 uf.desc[-1].add_paragraph("If the list of models is not supplied, then all models will be superimposed.")
 uf.desc[-1].add_paragraph(paragraph_atom_id)
+uf.desc[-1].add_paragraph(paragraph_displace_id)
 uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
