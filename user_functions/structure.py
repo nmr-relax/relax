@@ -672,6 +672,13 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "molecules",
+    py_type = "str_list",
+    desc_short = "molecule list",
+    desc = "The optional molecule list to perform the optimisation on rather than the models.  Only atoms with identical residue name and number and atom name will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "atom_id",
     py_type = "str",
     desc_short = "atom ID string",
@@ -704,6 +711,7 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This is used to find pivot point of motion between a set of structural models.  If the list of models is not supplied, then all models will be used.")
 uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the search to certain molecules, residues, or atoms.  For example to only use backbone heavy atoms in a protein, use the atom ID of '@N,C,CA,O', assuming those are the names of the atoms from the structural file.")
 uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.")
+uf.desc[-1].add_paragraph("If the optional molecules list is supplied, then the optimisation will be performed on molecules in the list rather than the models.  Therefore no models are allowed to be present in the current data pipe.")
 uf.backend = pipe_control.structure.main.find_pivot
 uf.menu_text = "&find_pivot"
 uf.wizard_height_desc = 400

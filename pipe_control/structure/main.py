@@ -591,11 +591,13 @@ def displacement(model_from=None, model_to=None, atom_id=None, molecules=None, c
                 cdp.structure.displacements._calculate(model_from=i, model_to=j, coord_from=array(coord_from), coord_to=array(coord_to), centroid=centroid)
 
 
-def find_pivot(models=None, atom_id=None, init_pos=None, func_tol=1e-5, box_limit=200):
-    """Superimpose a set of structural models.
+def find_pivot(models=None, molecules=None, atom_id=None, init_pos=None, func_tol=1e-5, box_limit=200):
+    """Find the pivoted motion of a set of structural models or structures.
 
     @keyword models:    The list of models to use.  If set to None, then all models will be used.
     @type models:       list of int or None
+    @keyword molecules: The list of molecules to find the pivoted motion for.  This overrides the models.
+    @type molecules:    None or list of str
     @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.
     @type atom_id:      str or None
     @keyword init_pos:  The starting pivot position for the pivot point optimisation.
@@ -614,26 +616,60 @@ def find_pivot(models=None, atom_id=None, init_pos=None, func_tol=1e-5, box_limi
         init_pos = zeros(3, float64)
     init_pos = array(init_pos)
 
-    # Validate the models.
-    cdp.structure.validate_models()
-
-    # Create a list of all models.
-    if models == None:
-        models = []
-        for model in cdp.structure.model_loop():
-            models.append(model.num)
-
     # The selection object.
     selection = cdp.structure.selection(atom_id=atom_id)
 
-    # Assemble the atomic coordinates of all models.
-    coord = []
-    for model in models:
-        coord.append([])
-        for pos in cdp.structure.atom_loop(selection=selection, model_num=model, pos_flag=True):
+    # Motional pivot between models.
+    if molecules == None:
+        # Validate the models.
+        cdp.structure.validate_models()
+
+        # Create a list of all models.
+        if models == None:
+            models = []
+            for model in cdp.structure.model_loop():
+                models.append(model.num)
+
+        # Assemble the atomic coordinates of all models.
+        coord = []
+        for model in models:
+            coord.append([])
+            for pos in cdp.structure.atom_loop(selection=selection, model_num=model, pos_flag=True):
+                coord[-1].append(pos[0])
+            coord[-1] = array(coord[-1])
+        coord = array(coord)
+
+    # Motional pivot between molecules.
+    else:
+        # No models allowed.
+        if cdp.structure.num_models() > 1:
+            raise RelaxError("When calculating the RMSD between different molecules, no models are allowed to be present.")
+
+        # Assemble the atomic coordinates of all models.
+        coord = []
+        current_mol = ''
+        for mol_name, pos in cdp.structure.atom_loop(selection=selection, mol_name_flag=True, pos_flag=True):
+            # No molecule match, so skip.
+            if mol_name not in molecules:
+                continue
+
+            # A new molecule.
+            if mol_name != current_mol:
+                # Change the current molecule name.
+                current_mol = mol_name
+
+                # Extend the coordinates.
+                coord.append([])
+
+            # Append the coordinate.
             coord[-1].append(pos[0])
-        coord[-1] = array(coord[-1])
-    coord = array(coord)
+
+        # Numpy conversion.
+        for i in range(len(coord)):
+            coord[i] = array(coord[i])
+
+        # The models list.
+        models = list(range(len(molecules)))
 
     # Linear constraints for the pivot position (between -1000 and 1000 Angstrom).
     A = zeros((6, 3), float64)
