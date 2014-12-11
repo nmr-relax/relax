@@ -415,11 +415,11 @@ def is_int_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False
     if can_be_none and arg == None:
         return True
 
-    # Not a list.
+    # Fail if not a list.
     if not isinstance(arg, list):
         fail = True
 
-    # A list.
+    # Other checks.
     else:
         # Fail size is wrong.
         if size != None and len(arg) != size:
@@ -439,11 +439,13 @@ def is_int_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False
             if list_of_lists and isinstance(arg[i], list):
                 for j in range(len(arg[i])):
                     if not isinstance(arg[i][j], int):
+                        print "here"
                         fail = True
 
-            # Check if it is an integer.
-            if not isinstance(arg[i], int):
-                fail = True
+            # Simple list.
+            else:
+                if not isinstance(arg[i], int):
+                    fail = True
 
     # Fail.
     if fail:
