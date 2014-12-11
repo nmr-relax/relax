@@ -439,7 +439,6 @@ def is_int_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False
             if list_of_lists and isinstance(arg[i], list):
                 for j in range(len(arg[i])):
                     if not isinstance(arg[i][j], int):
-                        print "here"
                         fail = True
 
             # Simple list.
