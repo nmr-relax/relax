@@ -101,6 +101,9 @@ class Structure(SystemTestCase):
         self.interpreter.structure.translate(T=[1., 1., 1.], model=1)
         self.interpreter.structure.translate(T=[0., 0., 1.], model=2)
 
+        # Add some atoms that should not be aligned.
+        self.interpreter.structure.add_atom(mol_name='uniform_mol1', atom_name='Ti', res_name='TST', res_num=1, pos=[[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]], element='Ti', pdb_record='HETATM')
+
         # The alignment.
         self.interpreter.structure.align(pipes=['ref', 'align'], method='fit to first', atom_id='@N,H')
 
@@ -149,6 +152,7 @@ class Structure(SystemTestCase):
             ["H", "NH", 19,   0.273, -0.840,  0.510],
             ["N", "NH", 20,   0.000,  0.000,  0.000],
             #["H", "NH", 20,   0.000, -0.000,  1.020]
+            ["Ti", "TST", 1,  1.000,  2.000,  3.000]
         ]
 
         # The selection object.
