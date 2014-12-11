@@ -42,16 +42,16 @@ class Displacements:
         self._rotation_angle = {}
 
 
-    def _calculate(self, model_from=None, model_to=None, coord_from=None, coord_to=None, centroid=None):
+    def _calculate(self, id_from=None, id_to=None, coord_from=None, coord_to=None, centroid=None):
         """Calculate the rotational and translational displacements using the given coordinate sets.
 
         This uses the U{Kabsch algorithm<http://en.wikipedia.org/wiki/Kabsch_algorithm>}.
 
 
-        @keyword model_from:    The model number of the starting structure.
-        @type model_from:       int
-        @keyword model_to:      The model number of the ending structure.
-        @type model_to:         int
+        @keyword id_from:       The ID string of the starting structure.
+        @type id_from:          str
+        @keyword id_to:         The ID string of the ending structure.
+        @type id_to:            str
         @keyword coord_from:    The list of atomic coordinates for the starting structure.
         @type coord_from:       numpy rank-2, Nx3 array
         @keyword coord_to:      The list of atomic coordinates for the ending structure.
@@ -61,26 +61,26 @@ class Displacements:
         """
 
         # Initialise structures if necessary.
-        if not model_from in self._translation_vector:
-            self._translation_vector[model_from] = {}
-        if not model_from in self._translation_distance:
-            self._translation_distance[model_from] = {}
-        if not model_from in self._rotation_matrix:
-            self._rotation_matrix[model_from] = {}
-        if not model_from in self._rotation_axis:
-            self._rotation_axis[model_from] = {}
-        if not model_from in self._rotation_angle:
-            self._rotation_angle[model_from] = {}
+        if not id_from in self._translation_vector:
+            self._translation_vector[id_from] = {}
+        if not id_from in self._translation_distance:
+            self._translation_distance[id_from] = {}
+        if not id_from in self._rotation_matrix:
+            self._rotation_matrix[id_from] = {}
+        if not id_from in self._rotation_axis:
+            self._rotation_axis[id_from] = {}
+        if not id_from in self._rotation_angle:
+            self._rotation_angle[id_from] = {}
 
         # The Kabsch algorithm.
-        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%model_from, name_to='model %s'%model_to, coord_from=coord_from, coord_to=coord_to, centroid=centroid)
+        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from="'%s'"%id_from, name_to="'%s'"%id_to, coord_from=coord_from, coord_to=coord_to, centroid=centroid)
 
         # Store the data.
-        self._translation_vector[model_from][model_to] = trans_vect
-        self._translation_distance[model_from][model_to] = trans_dist
-        self._rotation_matrix[model_from][model_to] = R
-        self._rotation_axis[model_from][model_to] = axis
-        self._rotation_angle[model_from][model_to] = angle
+        self._translation_vector[id_from][id_to] = trans_vect
+        self._translation_distance[id_from][id_to] = trans_dist
+        self._rotation_matrix[id_from][id_to] = R
+        self._rotation_axis[id_from][id_to] = axis
+        self._rotation_angle[id_from][id_to] = angle
 
 
     def from_xml(self, str_node, dir=None, file_version=1):
@@ -100,20 +100,20 @@ class Displacements:
         # Loop over the pairs.
         for pair_node in pair_nodes:
             # Get the two models.
-            model_from = int(pair_node.getAttribute('model_from'))
-            model_to = int(pair_node.getAttribute('model_to'))
+            id_from = str(pair_node.getAttribute('id_from'))
+            id_to = str(pair_node.getAttribute('id_to'))
 
             # Initialise structures if necessary.
-            if not model_from in self._translation_vector:
-                self._translation_vector[model_from] = {}
-            if not model_from in self._translation_distance:
-                self._translation_distance[model_from] = {}
-            if not model_from in self._rotation_matrix:
-                self._rotation_matrix[model_from] = {}
-            if not model_from in self._rotation_axis:
-                self._rotation_axis[model_from] = {}
-            if not model_from in self._rotation_angle:
-                self._rotation_angle[model_from] = {}
+            if not id_from in self._translation_vector:
+                self._translation_vector[id_from] = {}
+            if not id_from in self._translation_distance:
+                self._translation_distance[id_from] = {}
+            if not id_from in self._rotation_matrix:
+                self._rotation_matrix[id_from] = {}
+            if not id_from in self._rotation_axis:
+                self._rotation_axis[id_from] = {}
+            if not id_from in self._rotation_angle:
+                self._rotation_angle[id_from] = {}
 
             # A temporary container to place the Python objects into.
             cont = ModelContainer()
@@ -128,7 +128,7 @@ class Displacements:
                 obj_temp = getattr(cont, name)
 
                 # Store.
-                obj[model_from][model_to] = obj_temp
+                obj[id_from][id_to] = obj_temp
 
 
     def to_xml(self, doc, element):
@@ -142,18 +142,18 @@ class Displacements:
 
         # Loop over the starting models.
         start_models = sorted(self._translation_vector.keys())
-        for model_from in start_models:
+        for id_from in start_models:
             # Loop over the ending models.
-            end_models = sorted(self._translation_vector[model_from].keys())
-            for model_to in end_models:
+            end_models = sorted(self._translation_vector[id_from].keys())
+            for id_to in end_models:
                 # Create an XML element for each pair.
                 pair_element = doc.createElement('pair')
                 element.appendChild(pair_element)
 
                 # Set the attributes.
-                pair_element.setAttribute('desc', 'The displacement from model %s to model %s' % (model_from, model_to))
-                pair_element.setAttribute('model_from', str(model_from))
-                pair_element.setAttribute('model_to', str(model_to))
+                pair_element.setAttribute('desc', 'The displacement from model %s to model %s' % (id_from, id_to))
+                pair_element.setAttribute('id_from', id_from)
+                pair_element.setAttribute('id_to', id_to)
 
                 # The objects to store.
                 obj_names = [
@@ -171,7 +171,7 @@ class Displacements:
                     pair_element.appendChild(sub_elem)
 
                     # Get the sub-object.
-                    subobj = getattr(self, obj_names[i])[model_from][model_to]
+                    subobj = getattr(self, obj_names[i])[id_from][id_to]
 
                     # Add the value to the sub element.
                     object_to_xml(doc, sub_elem, value=subobj)
