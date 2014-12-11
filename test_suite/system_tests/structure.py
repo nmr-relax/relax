@@ -474,6 +474,9 @@ class Structure(SystemTestCase):
         # Superimpose.
         self.interpreter.structure.superimpose(method='fit to first', centre_type='CoM')
 
+        # Align.
+        self.interpreter.structure.align(method='fit to first', centre_type='CoM')
+
 
     def test_bug_22860_CoM_after_deletion(self):
         """Catch U{bug #22860<https://gna.org/bugs/?22860>}, the failure of the structure.com user function after calling structure.delete."""
