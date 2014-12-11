@@ -406,6 +406,9 @@ def delete(atom_id=None, model=None, verbosity=1, spin_info=True):
 def displacement(pipes=None, models=None, molecules=None, atom_id=None, centroid=None):
     """Calculate the rotational and translational displacement between structures or models.
 
+    All results will be placed into the current data pipe cdp.structure.displacements data structure.
+
+
     @keyword pipes:     The data pipes to determine the displacements for.
     @type pipes:        None or list of str
     @keyword models:    The list of models to determine the displacements for.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
@@ -436,6 +439,9 @@ def displacement(pipes=None, models=None, molecules=None, atom_id=None, centroid
 
 def find_pivot(pipes=None, models=None, molecules=None, atom_id=None, init_pos=None, func_tol=1e-5, box_limit=200):
     """Find the pivoted motion of a set of structural models or structures.
+
+    The pivot will be placed into the current data pipe cdp.structure.pivot data structure.
+
 
     @keyword pipes:     The data pipes to use in the motional pivot algorithm.
     @type pipes:        None or list of str
@@ -976,6 +982,9 @@ def read_xyz(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
 
 def rmsd(pipes=None, models=None, molecules=None, atom_id=None):
     """Calculate the RMSD between the loaded models.
+
+    The RMSD value will be placed into the current data pipe cdp.structure.rmsd data structure.
+
 
     @keyword pipes:     The data pipes to determine the RMSD for.
     @type pipes:        None or list of str
