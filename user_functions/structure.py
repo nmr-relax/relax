@@ -183,6 +183,13 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "atom_id",
+    py_type = "str",
+    desc_short = "atom ID string",
+    desc = "The atom identification string.",
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "method",
     default = "fit to mean",
     py_type = "str",
@@ -191,13 +198,6 @@ uf.add_keyarg(
     wiz_element_type = "combo",
     wiz_combo_choices = ["fit to mean", "fit to first"],
     wiz_read_only = True
-)
-uf.add_keyarg(
-    name = "atom_id",
-    py_type = "str",
-    desc_short = "atom ID string",
-    desc = "The atom identification string.",
-    can_be_none = True
 )
 uf.add_keyarg(
     name = "centre_type",

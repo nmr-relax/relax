@@ -105,19 +105,19 @@ def add_model(model_num=None):
     print("Created the empty model number %s." % model_num)
 
 
-def align(pipes=None, molecules=None, models=None, method='fit to mean', atom_id=None, centre_type="centroid", centroid=None):
+def align(pipes=None, models=None, molecules=None, atom_id=None, method='fit to mean', centre_type="centroid", centroid=None):
     """Superimpose a set of related, but not identical structures.
 
     @keyword pipes:         The data pipes to include in the alignment and superimposition.
     @type pipes:            None or list of str
-    @keyword molecules:     The molecule names to include in the alignment and superimposition.
-    @type molecules:        None or list of str
     @keyword models:        The list of models to for each data pipe superimpose.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
     @type models:           list of lists of int or None
-    @keyword method:        The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
-    @type method:           str
+    @keyword molecules:     The molecule names to include in the alignment and superimposition.
+    @type molecules:        None or list of str
     @keyword atom_id:       The molecule, residue, and atom identifier string.  This matches the spin ID string format.
     @type atom_id:          str or None
+    @keyword method:        The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
+    @type method:           str
     @keyword centre_type:   The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
     @type centre_type:      str
     @keyword centroid:      An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
