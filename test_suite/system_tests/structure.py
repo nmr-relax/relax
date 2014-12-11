@@ -3057,14 +3057,14 @@ class Structure(SystemTestCase):
         self.interpreter.structure.rotate(R, atom_id='#2')
 
         # Calculate the displacement.
-        self.interpreter.structure.displacement(molecules=['1', '2'])
+        self.interpreter.structure.displacement(molecules=[['1', '2']])
 
         # Shift a third structure back using the calculated displacement.
         self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_mol_name='3')
         self.interpreter.structure.rotate(R, atom_id='#3')
 
         # The data to check.
-        molecules = ['1', '2']
+        ids = ['1', '2']
         trans_vect = [
             [[0.0, 0.0, 0.0],
              [   2.270857972754659,   -1.811667138656451,    1.878400649688508]],
@@ -3088,18 +3088,18 @@ class Structure(SystemTestCase):
 
         # Test the results.
         self.assert_(hasattr(cdp.structure, 'displacements'))
-        for i in range(len(molecules)):
-            for j in range(len(molecules)):
+        for i in range(len(ids)):
+            for j in range(len(ids)):
                 # Check the translation.
-                self.assertAlmostEqual(cdp.structure.displacements._translation_distance[i][j], dist[i][j])
+                self.assertAlmostEqual(cdp.structure.displacements._translation_distance[ids[i]][ids[j]], dist[i][j])
                 for k in range(3):
-                    self.assertAlmostEqual(cdp.structure.displacements._translation_vector[i][j][k], trans_vect[i][j][k])
+                    self.assertAlmostEqual(cdp.structure.displacements._translation_vector[ids[i]][ids[j]][k], trans_vect[i][j][k])
 
                 # Check the rotation.
-                self.assertAlmostEqual(cdp.structure.displacements._rotation_angle[i][j], angle[i][j])
+                self.assertAlmostEqual(cdp.structure.displacements._rotation_angle[ids[i]][ids[j]], angle[i][j])
                 if rot_axis[i][j] != None:
                     for k in range(3):
-                        self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[i][j][k], rot_axis[i][j][k])
+                        self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[ids[i]][ids[j]][k], rot_axis[i][j][k])
 
         # Save the results.
         self.tmpfile = mktemp()
@@ -3113,18 +3113,18 @@ class Structure(SystemTestCase):
 
         # Test the re-loaded data.
         self.assert_(hasattr(cdp.structure, 'displacements'))
-        for i in range(len(molecules)):
-            for j in range(len(molecules)):
+        for i in range(len(ids)):
+            for j in range(len(ids)):
                 # Check the translation.
-                self.assertAlmostEqual(cdp.structure.displacements._translation_distance[i][j], dist[i][j])
+                self.assertAlmostEqual(cdp.structure.displacements._translation_distance[ids[i]][ids[j]], dist[i][j])
                 for k in range(3):
-                    self.assertAlmostEqual(cdp.structure.displacements._translation_vector[i][j][k], trans_vect[i][j][k])
+                    self.assertAlmostEqual(cdp.structure.displacements._translation_vector[ids[i]][ids[j]][k], trans_vect[i][j][k])
 
                 # Check the rotation.
-                self.assertAlmostEqual(cdp.structure.displacements._rotation_angle[i][j], angle[i][j])
+                self.assertAlmostEqual(cdp.structure.displacements._rotation_angle[ids[i]][ids[j]], angle[i][j])
                 if rot_axis[i][j] != None:
                     for k in range(3):
-                        self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[i][j][k], rot_axis[i][j][k])
+                        self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[ids[i]][ids[j]][k], rot_axis[i][j][k])
 
 
     def test_find_pivot(self):
