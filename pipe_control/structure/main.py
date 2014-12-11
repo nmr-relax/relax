@@ -136,13 +136,13 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, method='fit to 
         raise RelaxError("The superimposition centre type '%s' is unknown.  It must be one of %s." % (centre_type, allowed))
 
     # Assemble the atomic coordinates and obtain the corresponding element information.
-    coord, ids, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, elements_flag=True)
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=True)
 
     # The different algorithms.
     if method == 'fit to mean':
-        T, R, pivot = fit_to_mean(models=list(range(len(elements))), coord=coord, centre_type=centre_type, elements=elements[0], centroid=centroid)
+        T, R, pivot = fit_to_mean(models=list(range(len(ids))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
     elif method == 'fit to first':
-        T, R, pivot = fit_to_first(models=list(range(len(elements))), coord=coord, centre_type=centre_type, elements=elements[0], centroid=centroid)
+        T, R, pivot = fit_to_first(models=list(range(len(ids))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
 
     # Loop over all pipes, models, and molecules.
     i = 0
@@ -160,7 +160,7 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, method='fit to 
         i += 1
 
 
-def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, elements_flag=False):
+def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, seq_info_flag=False):
     """Assemble the atomic coordinates 
  
     @keyword pipes:         The data pipes to assemble the coordinates from.
@@ -171,8 +171,8 @@ def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, 
     @type molecules:        None or list of lists of str
     @keyword atom_id:       The molecule, residue, and atom identifier string of the coordinates of interest.  This matches the spin ID string format.
     @type atom_id:          None or str
-    @return:                The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates); a list of unique IDs for each pipe, model, and molecule; the list of element names for each atom (if the elements flag is set).
-    @rtype:                 numpy rank-3 float64 array, list of str, list of str
+    @return:                The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates); a list of unique IDs for each structural object, model, and molecule; the common list of molecule names (if the seq_info_flag is set); the common list of residue names (if the seq_info_flag is set); the common list of residue numbers (if the seq_info_flag is set); the common list of atom names (if the seq_info_flag is set); the common list of element names (if the seq_info_flag is set).
+    @rtype:                 numpy rank-3 float64 array, list of str, list of str, list of str, list of int, list of str, list of str
     """
 
     # The data pipes to use.
@@ -201,7 +201,7 @@ def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, 
         object_names.append(pipes[pipe_index])
 
     # Call the library method to do all of the work.
-    return assemble_coord_array(objects=objects, object_names=object_names, molecules=molecules, models=models, atom_id=atom_id, elements_flag=elements_flag)
+    return assemble_coord_array(objects=objects, object_names=object_names, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=seq_info_flag)
 
 
 def connect_atom(index1=None, index2=None):
@@ -1136,13 +1136,13 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centre_type="ce
         models = cdp.structure.model_list()
 
     # Assemble the atomic coordinates and obtain the corresponding element information.
-    coord, ids, elements = assemble_coordinates(models=[models], atom_id=atom_id, elements_flag=True)
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(models=[models], atom_id=atom_id, seq_info_flag=True)
 
     # The different algorithms.
     if method == 'fit to mean':
-        T, R, pivot = fit_to_mean(models=models, coord=coord, centre_type=centre_type, elements=elements[0], centroid=centroid)
+        T, R, pivot = fit_to_mean(models=models, coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
     elif method == 'fit to first':
-        T, R, pivot = fit_to_first(models=models, coord=coord, centre_type=centre_type, elements=elements[0], centroid=centroid)
+        T, R, pivot = fit_to_first(models=models, coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
 
     # Update to the new coordinates.
     for i in range(len(models)):

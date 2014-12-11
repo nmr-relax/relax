@@ -26,7 +26,7 @@
 from numpy import array, float64
 
 
-def assemble_coord_array(objects=None, object_names=None, molecules=None, models=None, atom_id=None, elements_flag=False):
+def assemble_coord_array(objects=None, object_names=None, molecules=None, models=None, atom_id=None, seq_info_flag=False):
     """Assemble the atomic coordinates 
  
     @keyword objects:       The list of internal structural objects to assemble the coordinates from.
@@ -39,8 +39,10 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
     @type molecules:        None or list of lists of str
     @keyword atom_id:       The molecule, residue, and atom identifier string of the coordinates of interest.  This matches the spin ID string format.
     @type atom_id:          None or str
-    @return:                The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates); a list of unique IDs for each structural object, model, and molecule; the list of element names for each structural object and each atom (if the elements flag is set).
-    @rtype:                 numpy rank-3 float64 array, list of str, list of list of str
+    @keyword seq_info_flag: A flag which if True will cause the atomic sequence information to be assembled and returned.  This includes the molecule names, residue names, residue numbers, atom names, and elements.
+    @type seq_info_flag:    bool
+    @return:                The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates); a list of unique IDs for each structural object, model, and molecule; the common list of molecule names (if the seq_info_flag is set); the common list of residue names (if the seq_info_flag is set); the common list of residue numbers (if the seq_info_flag is set); the common list of atom names (if the seq_info_flag is set); the common list of element names (if the seq_info_flag is set).
+    @rtype:                 numpy rank-3 float64 array, list of str, list of str, list of str, list of int, list of str, list of str
     """
 
     # Assemble the atomic coordinates of all structures.
@@ -48,7 +50,11 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
     ids = []
     atom_ids = []
     atom_pos = []
-    atom_elem = []
+    mol_names = []
+    res_names = []
+    res_nums = []
+    atom_names = []
+    elements = []
     for struct_index in range(len(objects)):
         # Printout.
         print("    Data pipe: %s" % object_names[struct_index])
@@ -75,7 +81,12 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
             if molecules == None:
                 atom_ids.append([])
                 atom_pos.append({})
-                atom_elem.append({})
+                if seq_info_flag:
+                    mol_names.append({})
+                    res_names.append({})
+                    res_nums.append({})
+                    atom_names.append({})
+                    elements.append({})
 
             # Add all coordinates and elements.
             current_mol = ''
@@ -96,7 +107,12 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
                     if molecules != None:
                         atom_ids.append([])
                         atom_pos.append({})
-                        atom_elem.append({})
+                        if seq_info_flag:
+                            mol_names.append({})
+                            res_names.append({})
+                            res_nums.append({})
+                            atom_names.append({})
+                            elements.append({})
 
                     # Create a new structure ID.
                     if len(object_names) > 1 and num_models > 1:
@@ -114,17 +130,28 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
                 else:
                     id = "#%s:%s&%s@%s" % (mol_name, res_num, res_name, atom_name)
 
+                # Store the per-structure ID and coordinate.
                 atom_ids[-1].append(id)
                 atom_pos[-1][id] = pos[0]
-                atom_elem[-1][id] = elem
+
+                # Store the per-structure sequence information.
+                if seq_info_flag:
+                    mol_names[-1][id] = mol_name
+                    res_names[-1][id] = res_name
+                    res_nums[-1][id] = res_num
+                    atom_names[-1][id] = atom_name
+                    elements[-1][id] = elem
 
     # Set up the structures for the superimposition algorithm.
     num = len(atom_ids)
     coord = []
-    elements = []
+    mol_name_common = []
+    res_name_common = []
+    res_num_common = []
+    atom_name_common = []
+    element_common = []
     for i in range(num):
         coord.append([])
-        elements.append([])
 
     # Find the common atoms and create the coordinate data structure.
     for id in atom_ids[0]:
@@ -142,14 +169,21 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
         # Add the atomic position to the coordinate list and the element to the element list.
         for i in range(num):
             coord[i].append(atom_pos[i][id])
-            elements[i].append(atom_elem[i][id])
+
+        # The common sequence information.
+        if seq_info_flag:
+            mol_name_common.append(mol_names[0][id])
+            res_name_common.append(res_names[0][id])
+            res_num_common.append(res_nums[0][id])
+            atom_name_common.append(atom_names[0][id])
+            element_common.append(elements[0][id])
 
     # Convert to a numpy array.
     coord = array(coord, float64)
 
     # Return the information.
-    if elements_flag:
-        return coord, ids, elements
+    if seq_info_flag:
+        return coord, ids, mol_name_common, res_name_common, res_num_common, atom_name_common, element_common
     else:
         return coord, ids
 
