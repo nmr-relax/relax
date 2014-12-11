@@ -39,12 +39,13 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
     @type molecules:        None or list of lists of str
     @keyword atom_id:       The molecule, residue, and atom identifier string of the coordinates of interest.  This matches the spin ID string format.
     @type atom_id:          None or str
-    @return:                The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates), and the list of element names for each atom (if the elements flag is set).
-    @rtype:                 numpy rank-3 float64 array, list of str
+    @return:                The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates); a list of unique IDs for each structural object, model, and molecule; the list of element names for each atom (if the elements flag is set).
+    @rtype:                 numpy rank-3 float64 array, list of str, list of str
     """
 
     # Assemble the atomic coordinates of all structures.
     print("Assembling all atomic coordinates:")
+    ids = []
     atom_ids = []
     atom_pos = []
     atom_elem = []
@@ -94,6 +95,12 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
                         atom_pos.append({})
                         atom_elem.append({})
 
+                    # Create a new structure ID.
+                    if model.num != None:
+                        ids.append("%s, %i, %s" % (object_names[struct_index], model.num, mol_name))
+                    else:
+                        ids.append("%s, %s" % (object_names[struct_index], mol_name))
+
                 # A unique identifier.
                 if molecules != None:
                     id = ":%s&%s@%s" % (res_num, res_name, atom_name)
@@ -135,6 +142,6 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
 
     # Return the information.
     if elements_flag:
-        return coord, elements
+        return coord, ids, elements
     else:
-        return coord
+        return coord, ids

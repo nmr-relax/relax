@@ -136,7 +136,7 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, method='fit to 
         raise RelaxError("The superimposition centre type '%s' is unknown.  It must be one of %s." % (centre_type, allowed))
 
     # Assemble the atomic coordinates and obtain the corresponding element information.
-    coord, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, elements_flag=True)
+    coord, ids, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, elements_flag=True)
 
     # The different algorithms.
     if method == 'fit to mean':
@@ -195,8 +195,8 @@ def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, 
     @type molecules:        None or list of lists of str
     @keyword atom_id:       The molecule, residue, and atom identifier string of the coordinates of interest.  This matches the spin ID string format.
     @type atom_id:          None or str
-    @return:                The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates), and the list of element names for each atom (if the elements flag is set).
-    @rtype:                 numpy rank-3 float64 array, list of str
+    @return:                The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates); a list of unique IDs for each pipe, model, and molecule; the list of element names for each atom (if the elements flag is set).
+    @rtype:                 numpy rank-3 float64 array, list of str, list of str
     """
 
     # The data pipes to use.
@@ -557,7 +557,7 @@ def find_pivot(pipes=None, models=None, molecules=None, atom_id=None, init_pos=N
     init_pos = array(init_pos)
 
     # Assemble the atomic coordinates.
-    coord = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id)
+    coord, ids = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id)
 
     # Linear constraints for the pivot position (between -1000 and 1000 Angstrom).
     A = zeros((6, 3), float64)
