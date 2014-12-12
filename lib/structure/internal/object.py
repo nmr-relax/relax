@@ -465,7 +465,7 @@ class Internal:
         return lines[i:]
 
 
-    def _parse_pdb_ss(self, lines):
+    def _parse_pdb_ss(self, lines, read_mol=None):
         """Loop over and parse the PDB secondary structure records.
 
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect5.html}.
@@ -473,6 +473,8 @@ class Internal:
 
         @param lines:       The lines of the PDB file excluding the sections prior to the secondary structure section.
         @type lines:        list of str
+        @keyword read_mol:  The molecule(s) to read from the file, independent of model.  The molecules are determined differently by the different parsers, but are numbered consecutively from 1.  If set to None, then all molecules will be loaded.
+        @type read_mol:     None, int, or list of int
         @return:            The remaining PDB lines with the secondary structure records stripped.
         @rtype:             list of str
         """
@@ -495,6 +497,13 @@ class Internal:
                 # Parse the record.
                 record_type, ser_num, helix_id, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, helix_class, comment, length = pdb_read.helix(lines[i])
 
+                # Only load the desired molecule.
+                if read_mol != None:
+                    if self._pdb_chain_id_to_mol_index(init_chain_id) not in read_mol:
+                        continue
+                    if self._pdb_chain_id_to_mol_index(end_chain_id) not in read_mol:
+                        continue
+
                 # Store the data.
                 if not hasattr(self, 'helices'):
                     self.helices = []
@@ -504,6 +513,13 @@ class Internal:
             if lines[i][:5] == 'SHEET':
                 # Parse the record.
                 record_type, strand, sheet_id, num_strands, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, sense, cur_atom, cur_res_name, cur_chain_id, cur_res_seq, cur_icode, prev_atom, prev_res_name, prev_chain_id, prev_res_seq, prev_icode = pdb_read.sheet(lines[i])
+
+                # Only load the desired molecule.
+                if read_mol != None:
+                    if self._pdb_chain_id_to_mol_index(init_chain_id) not in read_mol:
+                        continue
+                    if self._pdb_chain_id_to_mol_index(end_chain_id) not in read_mol:
+                        continue
 
                 # Store the data.
                 if not hasattr(self, 'sheets'):
@@ -1951,7 +1967,7 @@ class Internal:
         pdb_lines = self._parse_pdb_title(pdb_lines)
         pdb_lines = self._parse_pdb_prim_struct(pdb_lines)
         pdb_lines = self._parse_pdb_hetrogen(pdb_lines)
-        pdb_lines = self._parse_pdb_ss(pdb_lines)
+        pdb_lines = self._parse_pdb_ss(pdb_lines, read_mol=read_mol)
         pdb_lines = self._parse_pdb_connectivity_annotation(pdb_lines)
         pdb_lines = self._parse_pdb_misc(pdb_lines)
         pdb_lines = self._parse_pdb_transform(pdb_lines)
