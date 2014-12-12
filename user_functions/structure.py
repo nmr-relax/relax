@@ -197,9 +197,9 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "displace_id",
-    py_type = "str",
-    desc_short = "displacement ID string",
-    desc = "The atom identification string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.",
+    py_type = "str_or_str_list",
+    desc_short = "displacement ID string(s)",
+    desc = "The atom identification string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.  If supplied as a list of IDs, then the number of items must match the number of structures.",
     can_be_none = True
 )
 uf.add_keyarg(

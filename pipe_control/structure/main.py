@@ -117,8 +117,8 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, displace_id=Non
     @type molecules:        None or list of str
     @keyword atom_id:       The molecule, residue, and atom identifier string.  This matches the spin ID string format.
     @type atom_id:          str or None
-    @keyword displace_id:   The atom ID string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.
-    @type displace_id:      str or None
+    @keyword displace_id:   The atom ID string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.  This can be a list of atom IDs with each element corresponding to one of the structures.
+    @type displace_id:      None, str, or list of str
     @keyword method:        The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
     @type method:           str
     @keyword centre_type:   The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
@@ -153,15 +153,24 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, displace_id=Non
     # Loop over all pipes, models, and molecules.
     i = 0
     for pipe_index, model_num, mol_name in structure_loop(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id):
+        # The current displacement ID.
+        curr_displace_id = None
+        if isinstance(displace_id, str):
+            curr_displace_id = displace_id
+        elif isinstance(displace_id, list):
+            if len(displace_id) <= i:
+                raise RelaxError("Not enough displacement ID strings have been provided.")
+            curr_displace_id = displace_id[i]
+
         # Add the molecule name to the displacement ID if required.
-        id = displace_id
+        id = curr_displace_id
         if molecules != None:
-            if displace_id == None:
+            if curr_displace_id == None:
                 id = '#%s' % mol_name
-            elif search('#', displace_id):
-                id = displace_id
+            elif search('#', curr_displace_id):
+                id = curr_displace_id
             else:
-                id = '#%s%s' % (mol_name, displace_id)
+                id = '#%s%s' % (mol_name, curr_displace_id)
 
         # Translate the molecule first (the rotational pivot is defined in the first model).
         translate(T=T[i], model=model_num, pipe_name=pipes[pipe_index], atom_id=id)
