@@ -16,7 +16,7 @@ path_struct = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'stru
 path_lists = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists'+sep+'bug_21562'
 
 # Load the structure.
-structure.read_pdb(file='2AT7_fmf.pdb', dir=path_struct)
+structure.read_pdb(file='2AT7_fmf.pdb', dir=path_struct, set_mol_name='2AT7_fmf')
 
 # Load the sequence.
 structure.load_spins(spin_id='@N', mol_name_target=None, ave_pos=True)
