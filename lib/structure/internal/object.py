@@ -499,9 +499,9 @@ class Internal:
 
                 # Only load the desired molecule.
                 if read_mol != None:
-                    if self._pdb_chain_id_to_mol_index(init_chain_id) not in read_mol:
+                    if self._pdb_chain_id_to_mol_index(init_chain_id)+1 not in read_mol:
                         continue
-                    if self._pdb_chain_id_to_mol_index(end_chain_id) not in read_mol:
+                    if self._pdb_chain_id_to_mol_index(end_chain_id)+1 not in read_mol:
                         continue
 
                 # Store the data.
@@ -516,9 +516,9 @@ class Internal:
 
                 # Only load the desired molecule.
                 if read_mol != None:
-                    if self._pdb_chain_id_to_mol_index(init_chain_id) not in read_mol:
+                    if self._pdb_chain_id_to_mol_index(init_chain_id)+1 not in read_mol:
                         continue
-                    if self._pdb_chain_id_to_mol_index(end_chain_id) not in read_mol:
+                    if self._pdb_chain_id_to_mol_index(end_chain_id)+1 not in read_mol:
                         continue
 
                 # Store the data.
