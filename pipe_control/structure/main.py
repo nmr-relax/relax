@@ -158,8 +158,8 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, displace_id=Non
         if molecules != None:
             if displace_id == None:
                 id = '#%s' % mol_name
-            elif not search('#', displace_id):
-                id = '#%s' % mol_name
+            elif search('#', displace_id):
+                id = displace_id
             else:
                 id = '#%s%s' % (mol_name, displace_id)
 
