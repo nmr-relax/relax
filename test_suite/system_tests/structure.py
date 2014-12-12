@@ -223,8 +223,12 @@ class Structure(SystemTestCase):
         self.interpreter.structure.translate(T=[1., 1., 1.], atom_id='#1')
         self.interpreter.structure.translate(T=[0., 0., 1.], atom_id='#2')
 
+        # Add some atoms that should not be aligned.
+        self.interpreter.structure.add_atom(mol_name='1', atom_name='Ti', res_name='TST', res_num=1, pos=[1.0, 2.0, 3.0], element='Ti', pdb_record='HETATM')
+        self.interpreter.structure.add_atom(mol_name='2', atom_name='Ti', res_name='TST', res_num=1, pos=[1.0, 2.0, 3.0], element='Ti', pdb_record='HETATM')
+
         # The alignment.
-        self.interpreter.structure.align(pipes=['ref', 'align'], molecules=[['ref'], ['1', '2']], method='fit to first', atom_id='@N,H')
+        self.interpreter.structure.align(pipes=['ref', 'align'], molecules=[['ref'], ['1', '2']], method='fit to first', atom_id='@N,H', displace_id='@N,H')
 
         # Output PDB to stdout to help in debugging.
         self.interpreter.structure.write_pdb(file=sys.stdout)
@@ -270,7 +274,8 @@ class Structure(SystemTestCase):
             ["N", "NH", 19,   0.000,  0.000,  0.000],
             ["H", "NH", 19,   0.273, -0.840,  0.510],
             ["N", "NH", 20,   0.000,  0.000,  0.000],
-            #["H", "NH", 20,   0.000, -0.000,  1.020]
+            #["H", "NH", 20,   0.000, -0.000,  1.020],
+            ["Ti", "TST", 1,  1.000,  2.000,  3.000]
         ]
 
         # The selection object.
@@ -281,6 +286,7 @@ class Structure(SystemTestCase):
         self.assertEqual(len(data), len(cdp.structure.structural_data[0].mol[1].atom_name))
         current_mol = ''
         for mol_name, res_num, res_name, atom_name, pos in cdp.structure.atom_loop(selection=selection, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_name_flag=True, pos_flag=True):
+            print("Molecule '%s', residue '%s %s', atom '%s', position %s" % (mol_name, res_num, res_name, atom_name, pos))
             if mol_name != current_mol:
                 current_mol = mol_name
                 i = 0
