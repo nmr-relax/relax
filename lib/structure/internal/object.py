@@ -2334,16 +2334,25 @@ class Internal:
 
             # Loop over the molecules.
             for j in range(len(set_mol_name)):
+                # Override the merge argument if the molecule does not exist.
+                found = False
+                merge_new = True
+                for k in range(len(model.mol)):
+                    if model.mol[k].mol_name == set_mol_name[j]:
+                        found = True
+                if not found:
+                    merge_new = False
+
                 # Printout.
                 if verbosity:
-                    if merge:
+                    if merge_new:
                         print("Merging with model %s of molecule '%s' (from the original molecule number %s of model %s)" % (set_model_num[i], set_mol_name[j], orig_mol_num[j], orig_model_num[i]))
                     else:
                         print("Adding molecule '%s' to model %s (from the original molecule number %s of model %s)" % (set_mol_name[j], set_model_num[i], orig_mol_num[j], orig_model_num[i]))
 
                 # The index of the new molecule to add or merge.
                 index = len(model.mol)
-                if merge:
+                if merge_new:
                     index -= 1
 
                 # Consistency check.
@@ -2351,7 +2360,7 @@ class Internal:
                     raise RelaxError("The new molecule name of '%s' in model %s does not match the corresponding molecule's name of '%s' in model %s." % (set_mol_name[j], set_model_num[i], self.structural_data[0].mol[index].mol_name, self.structural_data[0].num))
 
                 # Pack the structures.
-                if merge:
+                if merge_new:
                     mol = model.mol.merge_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
                 else:
                     mol = model.mol.add_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
