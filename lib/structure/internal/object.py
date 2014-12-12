@@ -659,7 +659,7 @@ class Internal:
             yield records
 
 
-    def _parse_mols(self, records):
+    def _parse_mols_pdb(self, records):
         """Generator function for looping over the molecules in the PDB records of a model.
 
         @param records:     The list of PDB records for the model, or if no models exist the entire PDB file.
@@ -673,8 +673,8 @@ class Internal:
             raise RelaxError("There are no PDB records for this model.")
 
         # Init.
-        mol_num = 1
-        mol_records = []
+        mol_count = 1
+        mol_records = [[]]
         end = False
 
         # Loop over the data.
@@ -701,14 +701,8 @@ class Internal:
 
             # End.
             if end:
-                # Yield the info.
-                yield mol_num, mol_records
-
-                # Reset the records.
-                mol_records = []
-
-                # Increment the molecule number.
-                mol_num = mol_num + 1
+                # Increment the molecule counter.
+                mol_count = mol_count + 1
 
                 # Reset the flag.
                 end = False
@@ -716,12 +710,27 @@ class Internal:
                 # Skip the rest of this loop.
                 continue
 
-            # Append the line as a record of the molecule.
-            mol_records.append(records[i])
+            # The molecule number.
+            chain_id = records[i][21]
+            if chain_id == ' ':
+                mol_index = mol_count - 1
+            else:
+                mol_index = self._pdb_chain_id_to_mol_index(chain_id)
 
-        # If records is not empty then there is only a single molecule, so yield the lot.
-        if len(mol_records):
-            yield mol_num, mol_records
+            # Add a new records list as required.
+            while True:
+                if len(mol_records) <= mol_index:
+                    mol_records.append([])
+                else:
+                    break
+
+            # Append the line as a record of the molecule.
+            mol_records[mol_index].append(records[i])
+
+        # Loop over the molecules and yield the molecule number and records.
+        for i in range(len(mol_records)):
+            if mol_records[i] != []:
+                yield i+1, mol_records[i]
 
 
     def _pdb_chain_id_to_mol_index(self, chain_id=None):
@@ -1989,7 +1998,7 @@ class Internal:
             mol_index = 0
             orig_mol_num = []
             new_mol_name = []
-            for mol_num, mol_records in self._parse_mols(model_records):
+            for mol_num, mol_records in self._parse_mols_pdb(model_records):
                 # Only load the desired model.
                 if read_mol and mol_num not in read_mol:
                     continue
