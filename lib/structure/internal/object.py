@@ -2666,6 +2666,10 @@ class Internal:
                 if mol.pdb_record[i] != 'HETATM' or mol.res_name[i] == None:
                     continue
 
+                # Skip waters.
+                if mol.res_name[i] == 'HOH':
+                    continue
+
                 # If the residue is not already stored initialise a new het_data element.
                 # (residue number, residue name, chain ID, number of atoms, atom count array).
                 if not het_data[index] or not mol.res_num[i] == het_data[index][-1][0]:
