@@ -1100,7 +1100,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows the root mean squared deviation (RMSD) between all models to be calculated.")
+uf.desc[-1].add_paragraph("This allows the root mean squared deviation (RMSD) between all structures to be calculated.  The RMSDs for individual structures to the mean structure will be calculated and reported, and then these values averaged for the global RMSD.  This will be stored in the structural object of the current data pipe.")
 uf.desc[-1].add_paragraph(paragraph_multi_struct)
 uf.desc[-1].add_paragraph(paragraph_atom_id)
 # Prompt examples.
