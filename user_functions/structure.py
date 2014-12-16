@@ -254,7 +254,7 @@ uf.desc[-1].add_prompt("relax> structure.align(pipes=['B', 'A'], method='fit to 
 uf.backend = pipe_control.structure.main.align
 uf.menu_text = "&align"
 uf.wizard_apply_button = False
-uf.wizard_height_desc = 400
+uf.wizard_height_desc = 370
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
