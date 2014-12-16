@@ -34,6 +34,7 @@ from lib.errors import RelaxError, RelaxFileError
 from lib.io import get_file_path, open_write_file, write_data
 from lib.selection import tokenise
 from lib.sequence import write_spin_data
+from lib.structure.internal.coordinates import assemble_coord_array, loop_coord_structures
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.object import Internal
 from lib.structure.represent.diffusion_tensor import diffusion_tensor
@@ -105,17 +106,21 @@ def add_model(model_num=None):
     print("Created the empty model number %s." % model_num)
 
 
-def align(pipes=None, models=None, method='fit to mean', atom_id=None, centre_type="centroid", centroid=None):
+def align(pipes=None, models=None, molecules=None, atom_id=None, displace_id=None, method='fit to mean', centre_type="centroid", centroid=None):
     """Superimpose a set of related, but not identical structures.
 
     @keyword pipes:         The data pipes to include in the alignment and superimposition.
-    @type pipes:            list of str
+    @type pipes:            None or list of str
     @keyword models:        The list of models to for each data pipe superimpose.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
     @type models:           list of lists of int or None
-    @keyword method:        The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
-    @type method:           str
+    @keyword molecules:     The molecule names to include in the alignment and superimposition.  The number of elements must match the pipes argument.
+    @type molecules:        None or list of str
     @keyword atom_id:       The molecule, residue, and atom identifier string.  This matches the spin ID string format.
     @type atom_id:          str or None
+    @keyword displace_id:   The atom ID string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.  This can be a list of atom IDs with each element corresponding to one of the structures.
+    @type displace_id:      None, str, or list of str
+    @keyword method:        The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
+    @type method:           str
     @keyword centre_type:   The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
     @type centre_type:      str
     @keyword centroid:      An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
@@ -132,123 +137,93 @@ def align(pipes=None, models=None, method='fit to mean', atom_id=None, centre_ty
     if centre_type not in allowed:
         raise RelaxError("The superimposition centre type '%s' is unknown.  It must be one of %s." % (centre_type, allowed))
 
+    # Assemble the atomic coordinates and obtain the corresponding element information.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=True)
+
+    # The different algorithms.
+    if method == 'fit to mean':
+        T, R, pivot = fit_to_mean(models=list(range(len(ids))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+    elif method == 'fit to first':
+        T, R, pivot = fit_to_first(models=list(range(len(ids))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+
     # The data pipes to use.
     if pipes == None:
         pipes = [cdp_name()]
+
+    # Loop over all pipes, models, and molecules.
+    i = 0
+    for pipe_index, model_num, mol_name in structure_loop(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id):
+        # The current displacement ID.
+        curr_displace_id = None
+        if isinstance(displace_id, str):
+            curr_displace_id = displace_id
+        elif isinstance(displace_id, list):
+            if len(displace_id) <= i:
+                raise RelaxError("Not enough displacement ID strings have been provided.")
+            curr_displace_id = displace_id[i]
+
+        # Add the molecule name to the displacement ID if required.
+        id = curr_displace_id
+        if molecules != None:
+            if curr_displace_id == None:
+                id = '#%s' % mol_name
+            elif search('#', curr_displace_id):
+                id = curr_displace_id
+            else:
+                id = '#%s%s' % (mol_name, curr_displace_id)
+
+        # Translate the molecule first (the rotational pivot is defined in the first model).
+        translate(T=T[i], model=model_num, pipe_name=pipes[pipe_index], atom_id=id)
+
+        # Rotate the molecule.
+        rotate(R=R[i], origin=pivot[i], model=model_num, pipe_name=pipes[pipe_index], atom_id=id)
+
+        # Increment the index.
+        i += 1
+
+
+def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, seq_info_flag=False):
+    """Assemble the atomic coordinates 
+ 
+    @keyword pipes:         The data pipes to assemble the coordinates from.
+    @type pipes:            None or list of str
+    @keyword models:        The list of models for each data pipe.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:           None or list of lists of int
+    @keyword molecules:     The list of molecules for each data pipe.  The number of elements must match the pipes argument.
+    @type molecules:        None or list of lists of str
+    @keyword atom_id:       The molecule, residue, and atom identifier string of the coordinates of interest.  This matches the spin ID string format.
+    @type atom_id:          None or str
+    @return:                The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates); a list of unique IDs for each structural object, model, and molecule; the common list of molecule names (if the seq_info_flag is set); the common list of residue names (if the seq_info_flag is set); the common list of residue numbers (if the seq_info_flag is set); the common list of atom names (if the seq_info_flag is set); the common list of element names (if the seq_info_flag is set).
+    @rtype:                 numpy rank-3 float64 array, list of str, list of str, list of str, list of int, list of str, list of str
+    """
+
+    # The data pipes to use.
+    if pipes == None:
+        pipes = [cdp_name()]
+    num_pipes = len(pipes)
 
     # Checks.
     for pipe in pipes:
         check_pipe(pipe)
 
-    # Initialise the models data structure.
-    if models == None:
-        models = []
-        for i in range(len(pipes)):
-            models.append(None)
+    # Check the models and molecules arguments.
+    if models != None:
+        if len(models) != num_pipes:
+            raise RelaxError("The %i elements of the models argument does not match the %i data pipes." % (len(models), num_pipes))
+    if molecules != None:
+        if len(molecules) != num_pipes:
+            raise RelaxError("The %i elements of the molecules argument does not match the %i data pipes." % (len(molecules), num_pipes))
 
-    # Assemble the atomic coordinates of all structures.
-    print("Assembling all atomic coordinates:")
-    atom_ids = []
-    atom_pos = []
-    atom_elem = []
-    mol_ids = []
+    # Assemble the structural objects.
+    objects = []
+    object_names = []
     for pipe_index in range(len(pipes)):
-        # Printout.
-        print("    Data pipe: %s" % pipes[pipe_index])
-
-        # The data pipe object.
         dp = get_pipe(pipes[pipe_index])
+        objects.append(dp.structure)
+        object_names.append(pipes[pipe_index])
 
-        # Validate the models.
-        dp.structure.validate_models(verbosity=0)
-
-        # The selection object.
-        selection = dp.structure.selection(atom_id=atom_id)
-
-        # Create a list of all models for this pipe.
-        if models[pipe_index] == None:
-            models[pipe_index] = []
-            for model in dp.structure.model_loop():
-                models[pipe_index].append(model.num)
-
-        # Loop over the models.
-        for model in models[pipe_index]:
-            # Printout.
-            print("        Model: %s" % model)
-
-            # Extend the lists.
-            atom_ids.append([])
-            atom_pos.append({})
-            atom_elem.append({})
-            mol_ids.append([])
-
-            # Add all coordinates and elements.
-            for mol_name, res_num, res_name, atom_name, elem, pos in dp.structure.atom_loop(selection=selection, model_num=model, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_name_flag=True, pos_flag=True, element_flag=True):
-                # A unique identifier.
-                id = "#%s:%s&%s@%s" % (mol_name, res_num, res_name, atom_name)
-
-                atom_ids[-1].append(id)
-                atom_pos[-1][id] = pos[0]
-                atom_elem[-1][id] = elem
-
-                # Store the molecule name for later checks.
-                if mol_name not in mol_ids[-1]:
-                    print("            Molecule: %s" % mol_name)
-                    mol_ids[-1].append(mol_name)
-
-    # Check for the molecule names.
-    for mol_name in mol_ids[0]:
-        for i in range(len(mol_ids)):
-            if mol_name not in mol_ids[i]:
-                raise RelaxError("The molecule name '%s' cannot be found in all data pipes." % mol_name)
-
-    # Set up the structures for the superimposition algorithm.
-    num = len(atom_ids)
-    coord = []
-    elements = []
-    for i in range(num):
-        coord.append([])
-        elements.append([])
-
-    # Find the common atoms and create the coordinate data structure.
-    for id in atom_ids[0]:
-        # Is the atom ID present in all other structures?
-        present = True
-        for i in range(num):
-            if id not in atom_ids[i]:
-                present = False
-                break
-
-        # Not present, so skip the atom.
-        if not present:
-            continue
-
-        # Add the atomic position to the coordinate list and the element to the element list.
-        for i in range(num):
-            coord[i].append(atom_pos[i][id])
-            elements[i].append(atom_elem[i][id])
-
-    # Convert to a numpy array.
-    coord = array(coord, float64)
-
-    # The different algorithms.
-    if method == 'fit to mean':
-        T, R, pivot = fit_to_mean(models=list(range(num)), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
-    elif method == 'fit to first':
-        T, R, pivot = fit_to_first(models=list(range(num)), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
-
-    # Update to the new coordinates.
-    i = 0
-    for pipe_index in range(len(pipes)):
-        for model in models[pipe_index]:
-            # Translate the molecule first (the rotational pivot is defined in the first model).
-            translate(T=T[i], model=model, pipe_name=pipes[pipe_index])
-
-            # Rotate the molecule.
-            rotate(R=R[i], origin=pivot[i], model=model, pipe_name=pipes[pipe_index])
-
-            # Increment the index.
-            i += 1
+    # Call the library method to do all of the work.
+    return assemble_coord_array(objects=objects, object_names=object_names, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=seq_info_flag)
 
 
 def connect_atom(index1=None, index2=None):
@@ -450,69 +425,52 @@ def delete(atom_id=None, model=None, verbosity=1, spin_info=True):
             del interatom.vector
 
 
-def displacement(model_from=None, model_to=None, atom_id=None, centroid=None):
-    """Calculate the rotational and translational displacement between two structural models.
+def displacement(pipes=None, models=None, molecules=None, atom_id=None, centroid=None):
+    """Calculate the rotational and translational displacement between structures or models.
 
-    @keyword model_from:        The optional model number for the starting position of the displacement.
-    @type model_from:           int or None
-    @keyword model_to:          The optional model number for the ending position of the displacement.
-    @type model_to:             int or None
-    @keyword atom_id:           The molecule, residue, and atom identifier string.  This matches the spin ID string format.
-    @type atom_id:              str or None
-    @keyword centroid:          An alternative position of the centroid, used for studying pivoted systems.
-    @type centroid:             list of float or numpy rank-1, 3D array
+    All results will be placed into the current data pipe cdp.structure.displacements data structure.
+
+
+    @keyword pipes:     The data pipes to determine the displacements for.
+    @type pipes:        None or list of str
+    @keyword models:    The list of models to determine the displacements for.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:       None or list of lists of int
+    @keyword molecules: The list of molecules to determine the displacements for.  The number of elements must match the pipes argument.
+    @type molecules:    None or list of lists of str
+    @keyword atom_id:   The atom identification string of the coordinates of interest.  This matches the spin ID string format.
+    @type atom_id:      str or None
+    @keyword centroid:  An alternative position of the centroid, used for studying pivoted systems.
+    @type centroid:     list of float or numpy rank-1, 3D array
     """
 
     # Test if the current data pipe exists.
     check_pipe()
 
-    # Convert the model_from and model_to args to lists, is supplied.
-    if model_from != None:
-        model_from = [model_from]
-    if model_to != None:
-        model_to = [model_to]
-
-    # Create a list of all models.
-    models = []
-    for model in cdp.structure.model_loop():
-        models.append(model.num)
-
-    # Set model_from or model_to to all models if None.
-    if model_from == None:
-        model_from = models
-    if model_to == None:
-        model_to = models
+    # Assemble the atomic coordinates.
+    coord, ids = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id)
 
     # Initialise the data structure.
-    if not hasattr(cdp.structure, 'displacements'):
+    if not hasattr(cdp.structure, 'displacments'):
         cdp.structure.displacements = Displacements()
 
-    # The selection object.
-    selection = cdp.structure.selection(atom_id=atom_id)
-
-    # Loop over the starting models.
-    for i in range(len(model_from)):
-        # Assemble the atomic coordinates.
-        coord_from = []
-        for pos in cdp.structure.atom_loop(selection=selection, model_num=model_from[i], pos_flag=True):
-            coord_from.append(pos[0])
-
-        # Loop over the ending models.
-        for j in range(len(model_to)):
-            # Assemble the atomic coordinates.
-            coord_to = []
-            for pos in cdp.structure.atom_loop(selection=selection, model_num=model_to[j], pos_flag=True):
-                coord_to.append(pos[0])
-
-            # Send to the base container for the calculations.
-            cdp.structure.displacements._calculate(model_from=model_from[i], model_to=model_to[j], coord_from=array(coord_from), coord_to=array(coord_to), centroid=centroid)
+    # Double loop over all structures, sending the data to the base container for the calculations.
+    for i in range(len(ids)):
+        for j in range(len(ids)):
+            cdp.structure.displacements._calculate(id_from=ids[i], id_to=ids[j], coord_from=coord[i], coord_to=coord[j], centroid=centroid)
 
 
-def find_pivot(models=None, atom_id=None, init_pos=None, func_tol=1e-5, box_limit=200):
-    """Superimpose a set of structural models.
+def find_pivot(pipes=None, models=None, molecules=None, atom_id=None, init_pos=None, func_tol=1e-5, box_limit=200):
+    """Find the pivoted motion of a set of structural models or structures.
 
-    @keyword models:    The list of models to use.  If set to None, then all models will be used.
-    @type models:       list of int or None
+    The pivot will be placed into the current data pipe cdp.structure.pivot data structure.
+
+
+    @keyword pipes:     The data pipes to use in the motional pivot algorithm.
+    @type pipes:        None or list of str
+    @keyword models:    The list of models to use.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:       None or list of lists of int
+    @keyword molecules: The list of molecules to find the pivoted motion for.  The number of elements must match the pipes argument.
+    @type molecules:    None or list of lists of str
     @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.
     @type atom_id:      str or None
     @keyword init_pos:  The starting pivot position for the pivot point optimisation.
@@ -531,26 +489,8 @@ def find_pivot(models=None, atom_id=None, init_pos=None, func_tol=1e-5, box_limi
         init_pos = zeros(3, float64)
     init_pos = array(init_pos)
 
-    # Validate the models.
-    cdp.structure.validate_models()
-
-    # Create a list of all models.
-    if models == None:
-        models = []
-        for model in cdp.structure.model_loop():
-            models.append(model.num)
-
-    # The selection object.
-    selection = cdp.structure.selection(atom_id=atom_id)
-
-    # Assemble the atomic coordinates of all models.
-    coord = []
-    for model in models:
-        coord.append([])
-        for pos in cdp.structure.atom_loop(selection=selection, model_num=model, pos_flag=True):
-            coord[-1].append(pos[0])
-        coord[-1] = array(coord[-1])
-    coord = array(coord)
+    # Assemble the atomic coordinates.
+    coord, ids = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id)
 
     # Linear constraints for the pivot position (between -1000 and 1000 Angstrom).
     A = zeros((6, 3), float64)
@@ -562,7 +502,7 @@ def find_pivot(models=None, atom_id=None, init_pos=None, func_tol=1e-5, box_limi
         b[2*i+1] = -box_limit
 
     # The target function.
-    finder = Pivot_finder(models, coord)
+    finder = Pivot_finder(list(range(len(coord))), coord)
     results = generic_minimise(func=finder.func, x0=init_pos, min_algor='Log barrier', min_options=('simplex',), A=A, b=b, func_tol=func_tol, print_flag=1)
 
     # No result.
@@ -1062,13 +1002,20 @@ def read_xyz(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=N
     cdp.structure.load_xyz(file_path, read_mol=read_mol, set_mol_name=set_mol_name, read_model=read_model, set_model_num=set_model_num, verbosity=verbosity)
 
 
-def rmsd(atom_id=None, models=None):
+def rmsd(pipes=None, models=None, molecules=None, atom_id=None):
     """Calculate the RMSD between the loaded models.
 
-    @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
+    The RMSD value will be placed into the current data pipe cdp.structure.rmsd data structure.
+
+
+    @keyword pipes:     The data pipes to determine the RMSD for.
+    @type pipes:        None or list of str
+    @keyword models:    The list of models to determine the RMSD for.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:       None or list of lists of int
+    @keyword molecules: The list of molecules to determine the RMSD for.  The number of elements must match the pipes argument.
+    @type molecules:    None or list of lists of str
+    @keyword atom_id:   The atom identification string of the coordinates of interest.  This matches the spin ID string format.
     @type atom_id:      str or None
-    @keyword models:    The list of models to calculate the RMDS of.  If set to None, then all models will be used.
-    @type models:       list of int or None
     @return:            The RMSD value.
     @rtype:             float
     """
@@ -1076,22 +1023,8 @@ def rmsd(atom_id=None, models=None):
     # Test if the current data pipe exists.
     check_pipe()
 
-    # Create a list of all models.
-    if models == None:
-        models = []
-        for model in cdp.structure.model_loop():
-            models.append(model.num)
-
-    # The selection object.
-    selection = cdp.structure.selection(atom_id=atom_id)
-
-    # Assemble the atomic coordinates of all models.
-    coord = []
-    for model in models:
-        coord.append([])
-        for pos in cdp.structure.atom_loop(selection=selection, model_num=model, pos_flag=True):
-            coord[-1].append(pos[0])
-        coord[-1] = array(coord[-1])
+    # Assemble the atomic coordinates.
+    coord, ids = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id)
 
     # Calculate the RMSD.
     cdp.structure.rmsd = atomic_rmsd(coord, verbosity=1)
@@ -1152,7 +1085,50 @@ def set_vector(spin=None, xh_vect=None):
     spin.xh_vect = xh_vect
 
 
-def superimpose(models=None, method='fit to mean', atom_id=None, centre_type="centroid", centroid=None):
+def structure_loop(pipes=None, molecules=None, models=None, atom_id=None):
+    """Generator function for looping over all internal structural objects, models and molecules.
+ 
+    @keyword pipes:         The data pipes to loop over.
+    @type pipes:            None or list of str
+    @keyword models:        The list of models for each data pipe.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:           None or list of lists of int
+    @keyword molecules:     The list of molecules for each data pipe.  The number of elements must match the pipes argument.
+    @type molecules:        None or list of lists of str
+    @keyword atom_id:       The molecule, residue, and atom identifier string of the coordinates of interest.  This matches the spin ID string format.
+    @type atom_id:          None or str
+    @return:                The data pipe index, model number, and molecule name.
+    @rtype:                 int, int or None, str
+    """
+
+    # The data pipes to use.
+    if pipes == None:
+        pipes = [cdp_name()]
+    num_pipes = len(pipes)
+
+    # Checks.
+    for pipe in pipes:
+        check_pipe(pipe)
+
+    # Check the models and molecules arguments.
+    if models != None:
+        if len(models) != num_pipes:
+            raise RelaxError("The %i elements of the models argument does not match the %i data pipes." % (len(models), num_pipes))
+    if molecules != None:
+        if len(molecules) != num_pipes:
+            raise RelaxError("The %i elements of the molecules argument does not match the %i data pipes." % (len(molecules), num_pipes))
+
+    # Assemble the structural objects.
+    objects = []
+    for pipe_index in range(len(pipes)):
+        dp = get_pipe(pipes[pipe_index])
+        objects.append(dp.structure)
+
+    # Call the library method to do all of the work.
+    for pipe_index, model_num, mol_name in loop_coord_structures(objects=objects, molecules=molecules, models=models, atom_id=atom_id):
+        yield pipe_index, model_num, mol_name
+
+
+def superimpose(models=None, method='fit to mean', atom_id=None, displace_id=None, centre_type="centroid", centroid=None):
     """Superimpose a set of structural models.
 
     @keyword models:        The list of models to superimpose.  If set to None, then all models will be used.
@@ -1161,6 +1137,8 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centre_type="ce
     @type method:           str
     @keyword atom_id:       The molecule, residue, and atom identifier string.  This matches the spin ID string format.
     @type atom_id:          str or None
+    @keyword displace_id:   The atom ID string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.
+    @type displace_id:      str or None
     @keyword centre_type:   The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
     @type centre_type:      str
     @keyword centroid:      An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
@@ -1177,33 +1155,12 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centre_type="ce
     if centre_type not in allowed:
         raise RelaxError("The superimposition centre type '%s' is unknown.  It must be one of %s." % (centre_type, allowed))
 
-    # Test if the current data pipe exists.
-    check_pipe()
-
-    # Validate the models.
-    cdp.structure.validate_models()
-
     # Create a list of all models.
     if models == None:
-        models = []
-        for model in cdp.structure.model_loop():
-            models.append(model.num)
+        models = cdp.structure.model_list()
 
-    # The selection object.
-    selection = cdp.structure.selection(atom_id=atom_id)
-
-    # Assemble the atomic coordinates of all models.
-    coord = []
-    for model in models:
-        coord.append([])
-        for pos in cdp.structure.atom_loop(selection=selection, model_num=model, pos_flag=True):
-            coord[-1].append(pos[0])
-        coord[-1] = array(coord[-1])
-
-    # Assemble the element types.
-    elements = []
-    for elem in cdp.structure.atom_loop(selection=selection, model_num=model, element_flag=True):
-        elements.append(elem)
+    # Assemble the atomic coordinates and obtain the corresponding element information.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(models=[models], atom_id=atom_id, seq_info_flag=True)
 
     # The different algorithms.
     if method == 'fit to mean':
@@ -1214,10 +1171,10 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centre_type="ce
     # Update to the new coordinates.
     for i in range(len(models)):
         # Translate the molecule first (the rotational pivot is defined in the first model).
-        translate(T=T[i], model=models[i])
+        translate(T=T[i], model=models[i], atom_id=displace_id)
 
         # Rotate the molecule.
-        rotate(R=R[i], origin=pivot[i], model=models[i])
+        rotate(R=R[i], origin=pivot[i], model=models[i], atom_id=displace_id)
 
 
 def translate(T=None, model=None, atom_id=None, pipe_name=None):
@@ -1394,69 +1351,62 @@ def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, uni
         raise RelaxError("No vectors could be extracted.")
 
 
-def web_of_motion(file=None, dir=None, models=None, force=False):
+def web_of_motion(pipes=None, models=None, molecules=None, atom_id=None, file=None, dir=None, force=False):
     """Create a PDB representation of the motion between a set of models.
 
     This will create a PDB file containing the atoms of all models, with identical atoms links using CONECT records.  This function only supports the internal structural object.
 
-    @keyword file:          The name of the PDB file to write.
-    @type file:             str
-    @keyword dir:           The directory where the PDB file will be placed.  If set to None, then the file will be placed in the current directory.
-    @type dir:              str or None
-    @keyword models:        The optional list of models to restrict this to.
-    @type models:           list of int or None
-    @keyword force:         The force flag which if True will cause the file to be overwritten.
-    @type force:            bool
+
+    @keyword pipes:     The data pipes to generate the web between.
+    @type pipes:        None or list of str
+    @keyword models:    The list of models to generate the web between.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:       None or list of lists of int
+    @keyword molecules: The list of molecules to generate the web between.  The number of elements must match the pipes argument.
+    @type molecules:    None or list of lists of str
+    @keyword atom_id:   The atom identification string of the coordinates of interest.  This matches the spin ID string format.
+    @type atom_id:      str or None
+    @keyword file:      The name of the PDB file to write.
+    @type file:         str
+    @keyword dir:       The directory where the PDB file will be placed.  If set to None, then the file will be placed in the current directory.
+    @type dir:          str or None
+    @keyword force:     The force flag which if True will cause the file to be overwritten.
+    @type force:        bool
     """
 
     # Checks.
     check_pipe()
     check_structure()
 
-    # Validate the models.
-    cdp.structure.validate_models()
+    # Assemble the atomic coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=True)
+
+    # Check that more than one structure is present.
+    if not len(coord) > 1:
+        raise RelaxError("Two or more structures are required.")
 
     # Initialise the structural object.
     web = Internal()
 
-    # The model list.
-    if models == None:
-        models = []
-        for k in range(len(cdp.structure.structural_data)):
-            models.append(cdp.structure.structural_data[k].num)
+    # Loop over the atoms.
+    for atom_index in range(len(atom_names)):
+        # Loop over the structures.
+        for struct_index in range(len(ids)):
+            # Add the atom.
+            web.add_atom(mol_name=mol_names[atom_index], atom_name=atom_names[atom_index], res_name=res_names[atom_index], res_num=res_nums[atom_index], pos=coord[struct_index, atom_index], element=elements[atom_index])
 
-    # Loop over the molecules.
-    for i in range(len(cdp.structure.structural_data[0].mol)):
-        # Alias the molecule of the first model.
-        mol1 = cdp.structure.structural_data[0].mol[i]
-
-        # Loop over the atoms.
-        for j in range(len(mol1.atom_name)):
-            # Loop over the models.
-            for k in range(len(cdp.structure.structural_data)):
-                # Skip the model.
-                if cdp.structure.structural_data[k].num not in models:
+        # Loop over the structures again, this time twice.
+        for k in range(len(ids)):
+            for l in range(len(ids)):
+                # Skip identical atoms.
+                if k == l:
                     continue
 
-                # Alias.
-                mol = cdp.structure.structural_data[k].mol[i]
+                # The atom index.
+                index1 = atom_index*len(ids) + k
+                index2 = atom_index*len(ids) + l
 
-                # Add the atom.
-                web.add_atom(mol_name=mol1.mol_name, atom_name=mol.atom_name[j], res_name=mol.res_name[j], res_num=mol.res_num[j], pos=[mol.x[j], mol.y[j], mol.z[j]], element=mol.element[j], chain_id=mol.chain_id[j], segment_id=mol.seg_id[j], pdb_record=mol.pdb_record[j])
-
-            # Loop over the models again, this time twice.
-            for k in range(len(models)):
-                for l in range(len(models)):
-                    # Skip identical atoms.
-                    if k == l:
-                        continue
-
-                    # The atom index.
-                    index1 = j*len(models) + k
-                    index2 = j*len(models) + l
-
-                    # Connect to the previous atoms.
-                    web.connect_atom(mol_name=mol1.mol_name, index1=index1, index2=index2)
+                # Connect to the previous atoms.
+                web.connect_atom(mol_name=mol_names[atom_index], index1=index1, index2=index2)
 
     # Append the PDB extension if needed.
     if isinstance(file, str):

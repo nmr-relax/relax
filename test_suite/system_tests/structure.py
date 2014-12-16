@@ -101,8 +101,11 @@ class Structure(SystemTestCase):
         self.interpreter.structure.translate(T=[1., 1., 1.], model=1)
         self.interpreter.structure.translate(T=[0., 0., 1.], model=2)
 
+        # Add some atoms that should not be aligned.
+        self.interpreter.structure.add_atom(mol_name='uniform_mol1', atom_name='Ti', res_name='TST', res_num=1, pos=[[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]], element='Ti', pdb_record='HETATM')
+
         # The alignment.
-        self.interpreter.structure.align(pipes=['ref', 'align'], method='fit to first', atom_id='@N,H')
+        self.interpreter.structure.align(pipes=['ref', 'align'], method='fit to first', atom_id='@N,H', displace_id='@N,H')
 
         # Output PDB to stdout to help in debugging.
         self.interpreter.structure.write_pdb(file=sys.stdout)
@@ -149,6 +152,7 @@ class Structure(SystemTestCase):
             ["H", "NH", 19,   0.273, -0.840,  0.510],
             ["N", "NH", 20,   0.000,  0.000,  0.000],
             #["H", "NH", 20,   0.000, -0.000,  1.020]
+            ["Ti", "TST", 1,  1.000,  2.000,  3.000]
         ]
 
         # The selection object.
@@ -170,6 +174,122 @@ class Structure(SystemTestCase):
         self.assertEqual(len(data), len(cdp.structure.structural_data[1].mol[0].atom_name))
         i = 0
         for res_num, res_name, atom_name, pos in cdp.structure.atom_loop(selection=selection, model_num=2, res_num_flag=True, res_name_flag=True, atom_name_flag=True, pos_flag=True):
+            self.assertEqual(atom_name, data[i][0])
+            self.assertEqual(res_name, data[i][1])
+            self.assertEqual(res_num, data[i][2])
+            self.assertAlmostEqual(pos[0][0], data[i][3])
+            self.assertAlmostEqual(pos[0][1], data[i][4])
+            self.assertAlmostEqual(pos[0][2], data[i][5])
+            i += 1
+
+
+    def test_align_molecules(self):
+        """Test the U{structure.align user function<http://www.nmr-relax.com/manual/structure_align.html>} for aligning different molecules in one pipe."""
+
+        # Reset relax.
+        self.interpreter.reset()
+
+        # Path of the PDB file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+
+        # Create a data pipe for the reference structure, then load it.
+        self.interpreter.pipe.create('ref', 'N-state')
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_mol_name='ref')
+
+        # Delete a residue and atom.
+        self.interpreter.structure.delete("#ref:8")
+        self.interpreter.structure.delete("#ref:2@N")
+
+        # Output PDB to stdout to help in debugging.
+        self.interpreter.structure.write_pdb(file=sys.stdout)
+
+        # Create a second data pipe for the structures to align and superimpose.
+        self.interpreter.pipe.create('align', 'N-state')
+
+        # Load the PDB twice as different models.
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_mol_name='1')
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_mol_name='2')
+
+        # Delete a residue and atom from these two structures.
+        self.interpreter.structure.delete("#1,2:12")
+        self.interpreter.structure.delete("#1,2:20@H")
+
+        # Translate and rotate the models.
+        R = zeros((3, 3), float64)
+        axis_angle_to_R(array([1, 0, 0], float64), 1.0, R)
+        self.interpreter.structure.rotate(R=R, atom_id='#1')
+        axis_angle_to_R(array([0, 0, 1], float64), 2.0, R)
+        self.interpreter.structure.rotate(R=R, atom_id='#2')
+        self.interpreter.structure.translate(T=[1., 1., 1.], atom_id='#1')
+        self.interpreter.structure.translate(T=[0., 0., 1.], atom_id='#2')
+
+        # Add some atoms that should not be aligned.
+        self.interpreter.structure.add_atom(mol_name='1', atom_name='Ti', res_name='TST', res_num=1, pos=[1.0, 2.0, 3.0], element='Ti', pdb_record='HETATM')
+        self.interpreter.structure.add_atom(mol_name='2', atom_name='Ti', res_name='TST', res_num=1, pos=[1.0, 2.0, 3.0], element='Ti', pdb_record='HETATM')
+
+        # The alignment.
+        self.interpreter.structure.align(pipes=['ref', 'align'], molecules=[['ref'], ['1', '2']], method='fit to first', atom_id='@N,H', displace_id='@N,H')
+
+        # Output PDB to stdout to help in debugging.
+        self.interpreter.structure.write_pdb(file=sys.stdout)
+
+        # The atomic data.
+        data = [
+            ["N", "NH",  1,   0.000,  0.000,  0.000],
+            ["H", "NH",  1,   0.000,  0.000, -1.020],
+            ["N", "NH",  2,   0.000,  0.000,  0.000],
+            ["H", "NH",  2,   0.883,  0.000, -0.510],
+            ["N", "NH",  3,   0.000,  0.000,  0.000],
+            ["H", "NH",  3,   0.883,  0.000,  0.510],
+            ["N", "NH",  4,   0.000,  0.000,  0.000],
+            ["H", "NH",  4,   0.000,  0.000,  1.020],
+            ["N", "NH",  5,   0.000,  0.000,  0.000],
+            ["H", "NH",  5,   0.000,  0.000, -1.020],
+            ["N", "NH",  6,   0.000,  0.000,  0.000],
+            ["H", "NH",  6,   0.273,  0.840, -0.510],
+            ["N", "NH",  7,   0.000,  0.000,  0.000],
+            ["H", "NH",  7,   0.273,  0.840,  0.510],
+            ["N", "NH",  8,   0.000,  0.000,  0.000],
+            ["H", "NH",  8,   0.000,  0.000,  1.020],
+            ["N", "NH",  9,   0.000,  0.000,  0.000],
+            ["H", "NH",  9,  -0.000,  0.000, -1.020],
+            ["N", "NH", 10,   0.000,  0.000,  0.000],
+            ["H", "NH", 10,  -0.715,  0.519, -0.510],
+            ["N", "NH", 11,   0.000,  0.000,  0.000],
+            ["H", "NH", 11,  -0.715,  0.519,  0.510],
+            #["N", "NH", 12,   0.000,  0.000,  0.000],
+            #["H", "NH", 12,  -0.000,  0.000,  1.020],
+            ["N", "NH", 13,   0.000,  0.000,  0.000],
+            ["H", "NH", 13,  -0.000, -0.000, -1.020],
+            ["N", "NH", 14,   0.000,  0.000,  0.000],
+            ["H", "NH", 14,  -0.715, -0.519, -0.510],
+            ["N", "NH", 15,   0.000,  0.000,  0.000],
+            ["H", "NH", 15,  -0.715, -0.519,  0.510],
+            ["N", "NH", 16,   0.000,  0.000,  0.000],
+            ["H", "NH", 16,  -0.000, -0.000,  1.020],
+            ["N", "NH", 17,   0.000,  0.000,  0.000],
+            ["H", "NH", 17,   0.000, -0.000, -1.020],
+            ["N", "NH", 18,   0.000,  0.000,  0.000],
+            ["H", "NH", 18,   0.273, -0.840, -0.510],
+            ["N", "NH", 19,   0.000,  0.000,  0.000],
+            ["H", "NH", 19,   0.273, -0.840,  0.510],
+            ["N", "NH", 20,   0.000,  0.000,  0.000],
+            #["H", "NH", 20,   0.000, -0.000,  1.020],
+            ["Ti", "TST", 1,  1.000,  2.000,  3.000]
+        ]
+
+        # The selection object.
+        selection = cdp.structure.selection()
+
+        # Check the molecules.
+        self.assertEqual(len(data), len(cdp.structure.structural_data[0].mol[0].atom_name))
+        self.assertEqual(len(data), len(cdp.structure.structural_data[0].mol[1].atom_name))
+        current_mol = ''
+        for mol_name, res_num, res_name, atom_name, pos in cdp.structure.atom_loop(selection=selection, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_name_flag=True, pos_flag=True):
+            print("Molecule '%s', residue '%s %s', atom '%s', position %s" % (mol_name, res_num, res_name, atom_name, pos))
+            if mol_name != current_mol:
+                current_mol = mol_name
+                i = 0
             self.assertEqual(atom_name, data[i][0])
             self.assertEqual(res_name, data[i][1])
             self.assertEqual(res_num, data[i][2])
@@ -363,6 +483,9 @@ class Structure(SystemTestCase):
 
         # Superimpose.
         self.interpreter.structure.superimpose(method='fit to first', centre_type='CoM')
+
+        # Align.
+        self.interpreter.structure.align(method='fit to first', centre_type='CoM')
 
 
     def test_bug_22860_CoM_after_deletion(self):
@@ -2863,7 +2986,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.rotate(R, model=3)
 
         # The data to check.
-        models = [1, 2]
+        ids = ['model 1', 'model 2']
         trans_vect = [
             [[0.0, 0.0, 0.0],
              [   2.270857972754659,   -1.811667138656451,    1.878400649688508]],
@@ -2887,18 +3010,18 @@ class Structure(SystemTestCase):
 
         # Test the results.
         self.assert_(hasattr(cdp.structure, 'displacements'))
-        for i in range(len(models)):
-            for j in range(len(models)):
+        for i in range(len(ids)):
+            for j in range(len(ids)):
                 # Check the translation.
-                self.assertAlmostEqual(cdp.structure.displacements._translation_distance[models[i]][models[j]], dist[i][j])
+                self.assertAlmostEqual(cdp.structure.displacements._translation_distance[ids[i]][ids[j]], dist[i][j])
                 for k in range(3):
-                    self.assertAlmostEqual(cdp.structure.displacements._translation_vector[models[i]][models[j]][k], trans_vect[i][j][k])
+                    self.assertAlmostEqual(cdp.structure.displacements._translation_vector[ids[i]][ids[j]][k], trans_vect[i][j][k])
 
                 # Check the rotation.
-                self.assertAlmostEqual(cdp.structure.displacements._rotation_angle[models[i]][models[j]], angle[i][j])
+                self.assertAlmostEqual(cdp.structure.displacements._rotation_angle[ids[i]][ids[j]], angle[i][j])
                 if rot_axis[i][j] != None:
                     for k in range(3):
-                        self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[models[i]][models[j]][k], rot_axis[i][j][k])
+                        self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[ids[i]][ids[j]][k], rot_axis[i][j][k])
 
         # Save the results.
         self.tmpfile = mktemp()
@@ -2912,18 +3035,177 @@ class Structure(SystemTestCase):
 
         # Test the re-loaded data.
         self.assert_(hasattr(cdp.structure, 'displacements'))
-        for i in range(len(models)):
-            for j in range(len(models)):
+        for i in range(len(ids)):
+            for j in range(len(ids)):
                 # Check the translation.
-                self.assertAlmostEqual(cdp.structure.displacements._translation_distance[models[i]][models[j]], dist[i][j])
+                self.assertAlmostEqual(cdp.structure.displacements._translation_distance[ids[i]][ids[j]], dist[i][j])
                 for k in range(3):
-                    self.assertAlmostEqual(cdp.structure.displacements._translation_vector[models[i]][models[j]][k], trans_vect[i][j][k])
+                    self.assertAlmostEqual(cdp.structure.displacements._translation_vector[ids[i]][ids[j]][k], trans_vect[i][j][k])
 
                 # Check the rotation.
-                self.assertAlmostEqual(cdp.structure.displacements._rotation_angle[models[i]][models[j]], angle[i][j])
+                self.assertAlmostEqual(cdp.structure.displacements._rotation_angle[ids[i]][ids[j]], angle[i][j])
                 if rot_axis[i][j] != None:
                     for k in range(3):
-                        self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[models[i]][models[j]][k], rot_axis[i][j][k])
+                        self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[ids[i]][ids[j]][k], rot_axis[i][j][k])
+
+
+    def test_displacement_molecules(self):
+        """Test of the structure.displacement user function for different molecules in one pipe.
+
+        This checks the molecules argument of the U{structure.displacement user function<http://www.nmr-relax.com/manual/structure_displacement.html>}.
+        """
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the file as two molecules.
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_mol_name='1')
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_mol_name='2')
+
+        # A rotation.
+        R = zeros((3, 3), float64)
+        euler_to_R_zyz(1.3, 0.4, 4.5, R)
+
+        # Rotate the second molecule.
+        self.interpreter.structure.rotate(R, atom_id='#2')
+
+        # Calculate the displacement.
+        self.interpreter.structure.displacement(molecules=[['1', '2']])
+
+        # Shift a third structure back using the calculated displacement.
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_mol_name='3')
+        self.interpreter.structure.rotate(R, atom_id='#3')
+
+        # The data to check.
+        ids = ['1', '2']
+        trans_vect = [
+            [[0.0, 0.0, 0.0],
+             [   2.270857972754659,   -1.811667138656451,    1.878400649688508]],
+            [[  -2.270857972754659,    1.811667138656451,   -1.878400649688508],
+             [0.0, 0.0, 0.0]]
+        ]
+        dist = [
+            [0.0000000000000000, 3.4593818457148173],
+            [3.4593818457148173, 0.0000000000000000]
+        ]
+        rot_axis = [
+            [None,
+             [   0.646165066909452,    0.018875759848125,   -0.762964227206007]],
+            [[  -0.646165066909452,   -0.018875759848125,    0.762964227206007],
+             None]
+        ]
+        angle = [
+            [0.0000000000000000, 0.6247677290742989],
+            [0.6247677290742989, 0.0000000000000000]
+        ]
+
+        # Test the results.
+        self.assert_(hasattr(cdp.structure, 'displacements'))
+        for i in range(len(ids)):
+            for j in range(len(ids)):
+                # Check the translation.
+                self.assertAlmostEqual(cdp.structure.displacements._translation_distance[ids[i]][ids[j]], dist[i][j])
+                for k in range(3):
+                    self.assertAlmostEqual(cdp.structure.displacements._translation_vector[ids[i]][ids[j]][k], trans_vect[i][j][k])
+
+                # Check the rotation.
+                self.assertAlmostEqual(cdp.structure.displacements._rotation_angle[ids[i]][ids[j]], angle[i][j])
+                if rot_axis[i][j] != None:
+                    for k in range(3):
+                        self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[ids[i]][ids[j]][k], rot_axis[i][j][k])
+
+        # Save the results.
+        self.tmpfile = mktemp()
+        self.interpreter.state.save(self.tmpfile, dir=None, force=True)
+
+        # Reset relax.
+        self.interpreter.reset()
+
+        # Load the results.
+        self.interpreter.state.load(self.tmpfile)
+
+        # Test the re-loaded data.
+        self.assert_(hasattr(cdp.structure, 'displacements'))
+        for i in range(len(ids)):
+            for j in range(len(ids)):
+                # Check the translation.
+                self.assertAlmostEqual(cdp.structure.displacements._translation_distance[ids[i]][ids[j]], dist[i][j])
+                for k in range(3):
+                    self.assertAlmostEqual(cdp.structure.displacements._translation_vector[ids[i]][ids[j]][k], trans_vect[i][j][k])
+
+                # Check the rotation.
+                self.assertAlmostEqual(cdp.structure.displacements._rotation_angle[ids[i]][ids[j]], angle[i][j])
+                if rot_axis[i][j] != None:
+                    for k in range(3):
+                        self.assertAlmostEqual(cdp.structure.displacements._rotation_axis[ids[i]][ids[j]][k], rot_axis[i][j][k])
+
+
+    def test_find_pivot(self):
+        """Test the structure.find_pivot user function.
+
+        This checks the default operation of the U{structure.find_pivot user function<http://www.nmr-relax.com/manual/structure_find_pivot.html>}.
+        """
+
+        # Path of the PDB file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the PDB three times as different models.
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=1)
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=2)
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path, set_model_num=3)
+
+        # Rotate two of the models (the pivot will be the origin).
+        pivot = [1., 2., 3.]
+        R = zeros((3, 3), float64)
+        axis_angle_to_R(array([1, 0, 0], float64), 0.1, R)
+        self.interpreter.structure.rotate(R=R, model=2, origin=pivot)
+        axis_angle_to_R(array([0, 1, 0], float64), 0.2, R)
+        self.interpreter.structure.rotate(R=R, model=3, origin=pivot)
+
+        # Find the pivot.
+        self.interpreter.structure.find_pivot(init_pos=[0.95, 2.05, 3.02])
+
+        # Check the pivot.
+        self.assertAlmostEqual(cdp.structure.pivot[0], pivot[0], 3)
+        self.assertAlmostEqual(cdp.structure.pivot[1], pivot[1], 3)
+        self.assertAlmostEqual(cdp.structure.pivot[2], pivot[2], 3)
+
+
+    def test_find_pivot_molecules(self):
+        """Test the structure.find_pivot user function.
+
+        This checks the U{structure.find_pivot user function<http://www.nmr-relax.com/manual/structure_find_pivot.html>} when the molecules argument is given.
+        """
+
+        # Path of the PDB file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+
+        # Load the PDB twice as different molecules.
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_mol_name='X')
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_mol_name='Y')
+        self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_mol_name='Z')
+
+        # Delete some structural info.
+        self.interpreter.structure.delete("#X:8")
+        self.interpreter.structure.delete("#X:2@N")
+        self.interpreter.structure.delete("#Y:12")
+        self.interpreter.structure.delete("#Y:20@H")
+
+        # Rotate two of the models (the pivot will be the origin).
+        pivot = [1., 2., 3.]
+        R = zeros((3, 3), float64)
+        axis_angle_to_R(array([1, 0, 0], float64), 0.1, R)
+        self.interpreter.structure.rotate(R=R, atom_id='#Y', origin=pivot)
+        axis_angle_to_R(array([0, 1, 0], float64), 0.2, R)
+        self.interpreter.structure.rotate(R=R, atom_id='#Z', origin=pivot)
+
+        # Find the pivot.
+        self.interpreter.structure.find_pivot(molecules=[['X', 'Y', 'Z']], init_pos=[0.95, 2.05, 3.02], func_tol=1e-7)
+
+        # Check the pivot.
+        self.assertAlmostEqual(cdp.structure.pivot[0], pivot[0], 3)
+        self.assertAlmostEqual(cdp.structure.pivot[1], pivot[1], 3)
+        self.assertAlmostEqual(cdp.structure.pivot[2], pivot[2], 3)
 
 
     def test_get_model(self):
@@ -3975,6 +4257,31 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(cdp.structure.rmsd, 2./3*sqrt(2))
 
 
+    def test_rmsd_molecules(self):
+        """Test the structure.rmsd user function for different molecules in one pipe.
+
+        This checks the molecules argument of the U{structure.rmsd user function<http://www.nmr-relax.com/manual/structure_rmsd.html>}.
+        """
+
+        # Create three molecules 'X', 'Y', and 'Z' with a some atoms.
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='X', pos=[1., 0., -1.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='Y', pos=[0., 0., 0.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='Z', pos=[-1., 0., 1.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='X', pos=[1., 2., -1.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='Y', pos=[0., 2., 0.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='Z', pos=[-1., 2., 1.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='X', pos=[1., 20., -1.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='Y', pos=[0., 20., 0.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='Z', pos=[-1., 20., 1.], element='S')
+
+        # Calculate the RMSD.
+        self.interpreter.structure.rmsd(molecules=[['X', 'Y', 'Z']])
+
+        # Checks.
+        self.assert_(hasattr(cdp.structure, 'rmsd'))
+        self.assertAlmostEqual(cdp.structure.rmsd, 2./3*sqrt(2))
+
+
     def test_rmsd_ubi(self):
         """Test the structure.rmsd user function on the truncated ubiquitin ensemble."""
 
@@ -4030,16 +4337,26 @@ class Structure(SystemTestCase):
         self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM')
         self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_model_num=2, set_mol_name='CaM')
 
+        # Add an atom that should not be superimposed.
+        self.interpreter.structure.add_atom(mol_name='CaM', atom_name='Ti', res_name='TST', res_num=1, pos=[[1.0, 2.0, 3.0], [2.0, 3.0, 4.0]], element='Ti', pdb_record='HETATM')
+
         # Superimpose the backbone heavy atoms.
-        self.interpreter.structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O')
+        self.interpreter.structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O', displace_id=':82-5000')
 
         # Check that the two structures now have the same atomic coordinates.
         model1 = cdp.structure.structural_data[0].mol[0]
         model2 = cdp.structure.structural_data[1].mol[0]
         for i in range(len(model1.atom_name)):
+            if model1.res_num[i] == 1:
+                continue
             self.assertAlmostEqual(model1.x[i], model2.x[i], 2)
             self.assertAlmostEqual(model1.y[i], model2.y[i], 2)
             self.assertAlmostEqual(model1.z[i], model2.z[i], 2)
+
+        # The last atom must be different - it is not displaced.
+        self.assertAlmostEqual(model1.x[-1] - model2.x[-1], -1.0, 2)
+        self.assertAlmostEqual(model1.y[-1] - model2.y[-1], -1.0, 2)
+        self.assertAlmostEqual(model1.z[-1] - model2.z[-1], -1.0, 2)
 
 
     def test_superimpose_fit_to_mean2(self):
@@ -4084,7 +4401,67 @@ class Structure(SystemTestCase):
 
         # Run the structure.web_of_motion user function and collect the results in a dummy file object.
         file = DummyFileObject()
-        self.interpreter.structure.web_of_motion(file=file, models=[1, 2])
+        self.interpreter.structure.web_of_motion(file=file, models=[[1, 2]])
+
+        # The result, without remarks.
+        result = [
+            "ATOM      1  N   LEU A   4       9.464  -9.232  27.573  1.00  0.00           N  ",
+            "ATOM      2  N   LEU A   4       9.211  -9.425  26.970  1.00  0.00           N  ",
+            "ATOM      3  H   LEU A   4       8.575  -8.953  27.963  1.00  0.00           H  ",
+            "ATOM      4  H   LEU A   4       9.085  -9.743  27.919  1.00  0.00           H  ",
+            "ATOM      5 CA   LEU A   4      10.302  -8.195  26.930  1.00  0.00           C  ",
+            "ATOM      6 CA   LEU A   4      10.077  -8.221  26.720  1.00  0.00           C  ",
+            "ATOM      7 CB   LEU A   4       9.494  -7.221  26.051  1.00  0.00           C  ",
+            "ATOM      8 CB   LEU A   4       9.297  -7.096  26.024  1.00  0.00           C  ",
+            "ATOM      9 CG   LEU A   4      10.107  -5.862  25.665  1.00  0.00           C  ",
+            "ATOM     10 CG   LEU A   4      10.061  -5.803  25.679  1.00  0.00           C  ",
+            "ATOM     11 CD1  LEU A   4      11.182  -6.007  24.608  1.00  0.00           C  ",
+            "ATOM     12 CD1  LEU A   4      11.029  -6.002  24.507  1.00  0.00           C  ",
+            "ATOM     13 CD2  LEU A   4       9.036  -4.875  25.171  1.00  0.00           C  ",
+            "ATOM     14 CD2  LEU A   4       9.120  -4.618  25.384  1.00  0.00           C  ",
+            "ATOM     15  C   LEU A   4      10.999  -7.436  28.046  1.00  0.00           C  ",
+            "ATOM     16  C   LEU A   4      10.625  -7.721  28.047  1.00  0.00           C  ",
+            "TER      17      LEU A   4                                                      ",
+            "CONECT    1    2                                                                ",
+            "CONECT    2    1                                                                ",
+            "CONECT    3    4                                                                ",
+            "CONECT    4    3                                                                ",
+            "CONECT    5    6                                                                ",
+            "CONECT    6    5                                                                ",
+            "CONECT    7    8                                                                ",
+            "CONECT    8    7                                                                ",
+            "CONECT    9   10                                                                ",
+            "CONECT   10    9                                                                ",
+            "CONECT   11   12                                                                ",
+            "CONECT   12   11                                                                ",
+            "CONECT   13   14                                                                ",
+            "CONECT   14   13                                                                ",
+            "CONECT   15   16                                                                ",
+            "CONECT   16   15                                                                ",
+            "MASTER        0    0    0    0    0    0    0    0   16    1   16    0          ",
+            "END                                                                             "
+        ]
+
+        # Check the created PDB file.
+        lines = file.readlines()
+        self.strip_remarks(lines)
+        self.assertEqual(len(result), len(lines))
+        for i in range(len(lines)):
+            self.assertEqual(result[i]+'\n', lines[i])
+
+
+    def test_web_of_motion_12_molecules(self):
+        """Check the operation of the structure.web_of_motion user function using molecules 1 and 2 (of 3)."""
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=1, set_mol_name='1', set_model_num=1)
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=2, set_mol_name='2', set_model_num=1)
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=3, set_mol_name='3', set_model_num=1)
+
+        # Run the structure.web_of_motion user function and collect the results in a dummy file object.
+        file = DummyFileObject()
+        self.interpreter.structure.web_of_motion(file=file, molecules=[['1', '2']])
 
         # The result, without remarks.
         result = [
@@ -4142,7 +4519,67 @@ class Structure(SystemTestCase):
 
         # Run the structure.web_of_motion user function and collect the results in a dummy file object.
         file = DummyFileObject()
-        self.interpreter.structure.web_of_motion(file=file, models=[1, 3])
+        self.interpreter.structure.web_of_motion(file=file, models=[[1, 3]])
+
+        # The result, without remarks.
+        result = [
+            "ATOM      1  N   LEU A   4       9.464  -9.232  27.573  1.00  0.00           N  ",
+            "ATOM      2  N   LEU A   4       7.761  -6.392  27.161  1.00  0.00           N  ",
+            "ATOM      3  H   LEU A   4       8.575  -8.953  27.963  1.00  0.00           H  ",
+            "ATOM      4  H   LEU A   4       7.278  -6.195  28.026  1.00  0.00           H  ",
+            "ATOM      5 CA   LEU A   4      10.302  -8.195  26.930  1.00  0.00           C  ",
+            "ATOM      6 CA   LEU A   4       9.256  -6.332  27.183  1.00  0.00           C  ",
+            "ATOM      7 CB   LEU A   4       9.494  -7.221  26.051  1.00  0.00           C  ",
+            "ATOM      8 CB   LEU A   4       9.799  -5.331  26.144  1.00  0.00           C  ",
+            "ATOM      9 CG   LEU A   4      10.107  -5.862  25.665  1.00  0.00           C  ",
+            "ATOM     10 CG   LEU A   4      10.293  -5.882  24.803  1.00  0.00           C  ",
+            "ATOM     11 CD1  LEU A   4      11.182  -6.007  24.608  1.00  0.00           C  ",
+            "ATOM     12 CD1  LEU A   4       9.404  -6.984  24.274  1.00  0.00           C  ",
+            "ATOM     13 CD2  LEU A   4       9.036  -4.875  25.171  1.00  0.00           C  ",
+            "ATOM     14 CD2  LEU A   4      10.355  -4.772  23.792  1.00  0.00           C  ",
+            "ATOM     15  C   LEU A   4      10.999  -7.436  28.046  1.00  0.00           C  ",
+            "ATOM     16  C   LEU A   4       9.816  -6.033  28.572  1.00  0.00           C  ",
+            "TER      17      LEU A   4                                                      ",
+            "CONECT    1    2                                                                ",
+            "CONECT    2    1                                                                ",
+            "CONECT    3    4                                                                ",
+            "CONECT    4    3                                                                ",
+            "CONECT    5    6                                                                ",
+            "CONECT    6    5                                                                ",
+            "CONECT    7    8                                                                ",
+            "CONECT    8    7                                                                ",
+            "CONECT    9   10                                                                ",
+            "CONECT   10    9                                                                ",
+            "CONECT   11   12                                                                ",
+            "CONECT   12   11                                                                ",
+            "CONECT   13   14                                                                ",
+            "CONECT   14   13                                                                ",
+            "CONECT   15   16                                                                ",
+            "CONECT   16   15                                                                ",
+            "MASTER        0    0    0    0    0    0    0    0   16    1   16    0          ",
+            "END                                                                             "
+        ]
+
+        # Check the created PDB file.
+        lines = file.readlines()
+        self.strip_remarks(lines)
+        self.assertEqual(len(result), len(lines))
+        for i in range(len(lines)):
+            self.assertEqual(result[i]+'\n', lines[i])
+
+
+    def test_web_of_motion_13_molecules(self):
+        """Check the operation of the structure.web_of_motion user function using molecules 1 and 3 (of 3)."""
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=1, set_mol_name='1', set_model_num=1)
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=2, set_mol_name='2', set_model_num=1)
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=3, set_mol_name='3', set_model_num=1)
+
+        # Run the structure.web_of_motion user function and collect the results in a dummy file object.
+        file = DummyFileObject()
+        self.interpreter.structure.web_of_motion(file=file, molecules=[['1', '3']])
 
         # The result, without remarks.
         result = [
@@ -4201,6 +4638,82 @@ class Structure(SystemTestCase):
         # Run the structure.web_of_motion user function and collect the results in a dummy file object.
         file = DummyFileObject()
         self.interpreter.structure.web_of_motion(file=file)
+
+        # The result, without remarks.
+        result = [
+            "ATOM      1  N   LEU A   4       9.464  -9.232  27.573  1.00  0.00           N  ",
+            "ATOM      2  N   LEU A   4       9.211  -9.425  26.970  1.00  0.00           N  ",
+            "ATOM      3  N   LEU A   4       7.761  -6.392  27.161  1.00  0.00           N  ",
+            "ATOM      4  H   LEU A   4       8.575  -8.953  27.963  1.00  0.00           H  ",
+            "ATOM      5  H   LEU A   4       9.085  -9.743  27.919  1.00  0.00           H  ",
+            "ATOM      6  H   LEU A   4       7.278  -6.195  28.026  1.00  0.00           H  ",
+            "ATOM      7 CA   LEU A   4      10.302  -8.195  26.930  1.00  0.00           C  ",
+            "ATOM      8 CA   LEU A   4      10.077  -8.221  26.720  1.00  0.00           C  ",
+            "ATOM      9 CA   LEU A   4       9.256  -6.332  27.183  1.00  0.00           C  ",
+            "ATOM     10 CB   LEU A   4       9.494  -7.221  26.051  1.00  0.00           C  ",
+            "ATOM     11 CB   LEU A   4       9.297  -7.096  26.024  1.00  0.00           C  ",
+            "ATOM     12 CB   LEU A   4       9.799  -5.331  26.144  1.00  0.00           C  ",
+            "ATOM     13 CG   LEU A   4      10.107  -5.862  25.665  1.00  0.00           C  ",
+            "ATOM     14 CG   LEU A   4      10.061  -5.803  25.679  1.00  0.00           C  ",
+            "ATOM     15 CG   LEU A   4      10.293  -5.882  24.803  1.00  0.00           C  ",
+            "ATOM     16 CD1  LEU A   4      11.182  -6.007  24.608  1.00  0.00           C  ",
+            "ATOM     17 CD1  LEU A   4      11.029  -6.002  24.507  1.00  0.00           C  ",
+            "ATOM     18 CD1  LEU A   4       9.404  -6.984  24.274  1.00  0.00           C  ",
+            "ATOM     19 CD2  LEU A   4       9.036  -4.875  25.171  1.00  0.00           C  ",
+            "ATOM     20 CD2  LEU A   4       9.120  -4.618  25.384  1.00  0.00           C  ",
+            "ATOM     21 CD2  LEU A   4      10.355  -4.772  23.792  1.00  0.00           C  ",
+            "ATOM     22  C   LEU A   4      10.999  -7.436  28.046  1.00  0.00           C  ",
+            "ATOM     23  C   LEU A   4      10.625  -7.721  28.047  1.00  0.00           C  ",
+            "ATOM     24  C   LEU A   4       9.816  -6.033  28.572  1.00  0.00           C  ",
+            "TER      25      LEU A   4                                                      ",
+            "CONECT    1    2    3                                                           ",
+            "CONECT    2    1    3                                                           ",
+            "CONECT    3    1    2                                                           ",
+            "CONECT    4    5    6                                                           ",
+            "CONECT    5    4    6                                                           ",
+            "CONECT    6    4    5                                                           ",
+            "CONECT    7    8    9                                                           ",
+            "CONECT    8    7    9                                                           ",
+            "CONECT    9    7    8                                                           ",
+            "CONECT   10   11   12                                                           ",
+            "CONECT   11   10   12                                                           ",
+            "CONECT   12   10   11                                                           ",
+            "CONECT   13   14   15                                                           ",
+            "CONECT   14   13   15                                                           ",
+            "CONECT   15   13   14                                                           ",
+            "CONECT   16   17   18                                                           ",
+            "CONECT   17   16   18                                                           ",
+            "CONECT   18   16   17                                                           ",
+            "CONECT   19   20   21                                                           ",
+            "CONECT   20   19   21                                                           ",
+            "CONECT   21   19   20                                                           ",
+            "CONECT   22   23   24                                                           ",
+            "CONECT   23   22   24                                                           ",
+            "CONECT   24   22   23                                                           ",
+            "MASTER        0    0    0    0    0    0    0    0   24    1   24    0          ",
+            "END                                                                             "
+        ]
+
+        # Check the created PDB file.
+        lines = file.readlines()
+        self.strip_remarks(lines)
+        self.assertEqual(len(result), len(lines))
+        for i in range(len(lines)):
+            self.assertEqual(result[i]+'\n', lines[i])
+
+
+    def test_web_of_motion_all_molecules(self):
+        """Check the operation of the structure.web_of_motion user function using all molecules."""
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=1, set_mol_name='1', set_model_num=1)
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=2, set_mol_name='2', set_model_num=1)
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path, read_model=3, set_mol_name='3', set_model_num=1)
+
+        # Run the structure.web_of_motion user function and collect the results in a dummy file object.
+        file = DummyFileObject()
+        self.interpreter.structure.web_of_motion(file=file, molecules=[['1', '2', '3']])
 
         # The result, without remarks.
         result = [

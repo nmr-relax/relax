@@ -42,7 +42,7 @@ class NOE_calc:
             - All the spins loaded.
             - Unresolved spins deselected.
             - The NOE peak intensities from the saturated and reference spectra.
-            - Either the baseplane noise RMDS values should be set or replicated spectra loaded.
+            - Either the baseplane noise RMSD values should be set or replicated spectra loaded.
 
         @keyword pipe_name:     The name of the data pipe containing all of the data for the analysis.
         @type pipe_name:        str

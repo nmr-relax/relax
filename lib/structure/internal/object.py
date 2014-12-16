@@ -468,7 +468,7 @@ class Internal:
         return lines[i:]
 
 
-    def _parse_pdb_ss(self, lines):
+    def _parse_pdb_ss(self, lines, read_mol=None):
         """Loop over and parse the PDB secondary structure records.
 
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect5.html}.
@@ -476,6 +476,8 @@ class Internal:
 
         @param lines:       The lines of the PDB file excluding the sections prior to the secondary structure section.
         @type lines:        list of str
+        @keyword read_mol:  The molecule(s) to read from the file, independent of model.  The molecules are determined differently by the different parsers, but are numbered consecutively from 1.  If set to None, then all molecules will be loaded.
+        @type read_mol:     None, int, or list of int
         @return:            The remaining PDB lines with the secondary structure records stripped.
         @rtype:             list of str
         """
@@ -498,6 +500,13 @@ class Internal:
                 # Parse the record.
                 record_type, ser_num, helix_id, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, helix_class, comment, length = pdb_read.helix(lines[i])
 
+                # Only load the desired molecule.
+                if read_mol != None:
+                    if self._pdb_chain_id_to_mol_index(init_chain_id)+1 not in read_mol:
+                        continue
+                    if self._pdb_chain_id_to_mol_index(end_chain_id)+1 not in read_mol:
+                        continue
+
                 # Store the data.
                 if not hasattr(self, 'helices'):
                     self.helices = []
@@ -507,6 +516,13 @@ class Internal:
             if lines[i][:5] == 'SHEET':
                 # Parse the record.
                 record_type, strand, sheet_id, num_strands, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, sense, cur_atom, cur_res_name, cur_chain_id, cur_res_seq, cur_icode, prev_atom, prev_res_name, prev_chain_id, prev_res_seq, prev_icode = pdb_read.sheet(lines[i])
+
+                # Only load the desired molecule.
+                if read_mol != None:
+                    if self._pdb_chain_id_to_mol_index(init_chain_id)+1 not in read_mol:
+                        continue
+                    if self._pdb_chain_id_to_mol_index(end_chain_id)+1 not in read_mol:
+                        continue
 
                 # Store the data.
                 if not hasattr(self, 'sheets'):
@@ -646,7 +662,7 @@ class Internal:
             yield records
 
 
-    def _parse_mols(self, records):
+    def _parse_mols_pdb(self, records):
         """Generator function for looping over the molecules in the PDB records of a model.
 
         @param records:     The list of PDB records for the model, or if no models exist the entire PDB file.
@@ -660,8 +676,8 @@ class Internal:
             raise RelaxError("There are no PDB records for this model.")
 
         # Init.
-        mol_num = 1
-        mol_records = []
+        mol_count = 1
+        mol_records = [[]]
         end = False
 
         # Loop over the data.
@@ -688,14 +704,8 @@ class Internal:
 
             # End.
             if end:
-                # Yield the info.
-                yield mol_num, mol_records
-
-                # Reset the records.
-                mol_records = []
-
-                # Increment the molecule number.
-                mol_num = mol_num + 1
+                # Increment the molecule counter.
+                mol_count = mol_count + 1
 
                 # Reset the flag.
                 end = False
@@ -703,12 +713,27 @@ class Internal:
                 # Skip the rest of this loop.
                 continue
 
-            # Append the line as a record of the molecule.
-            mol_records.append(records[i])
+            # The molecule number.
+            chain_id = records[i][21]
+            if chain_id == ' ':
+                mol_index = mol_count - 1
+            else:
+                mol_index = self._pdb_chain_id_to_mol_index(chain_id)
 
-        # If records is not empty then there is only a single molecule, so yield the lot.
-        if len(mol_records):
-            yield mol_num, mol_records
+            # Add a new records list as required.
+            while True:
+                if len(mol_records) <= mol_index:
+                    mol_records.append([])
+                else:
+                    break
+
+            # Append the line as a record of the molecule.
+            mol_records[mol_index].append(records[i])
+
+        # Loop over the molecules and yield the molecule number and records.
+        for i in range(len(mol_records)):
+            if mol_records[i] != []:
+                yield i+1, mol_records[i]
 
 
     def _pdb_chain_id_to_mol_index(self, chain_id=None):
@@ -1954,7 +1979,7 @@ class Internal:
         pdb_lines = self._parse_pdb_title(pdb_lines)
         pdb_lines = self._parse_pdb_prim_struct(pdb_lines)
         pdb_lines = self._parse_pdb_hetrogen(pdb_lines)
-        pdb_lines = self._parse_pdb_ss(pdb_lines)
+        pdb_lines = self._parse_pdb_ss(pdb_lines, read_mol=read_mol)
         pdb_lines = self._parse_pdb_connectivity_annotation(pdb_lines)
         pdb_lines = self._parse_pdb_misc(pdb_lines)
         pdb_lines = self._parse_pdb_transform(pdb_lines)
@@ -1976,7 +2001,7 @@ class Internal:
             mol_index = 0
             orig_mol_num = []
             new_mol_name = []
-            for mol_num, mol_records in self._parse_mols(model_records):
+            for mol_num, mol_records in self._parse_mols_pdb(model_records):
                 # Only load the desired model.
                 if read_mol and mol_num not in read_mol:
                     continue
@@ -2160,6 +2185,22 @@ class Internal:
             self.delete(model=self.structural_data[model_index].num)
 
 
+    def model_list(self):
+        """Create a list of all models.
+
+        @return:    The list of all models.
+        @rtype:     list of int
+        """
+
+        # Assemble the list.
+        models = []
+        for model in self.model_loop():
+            models.append(model.num)
+
+        # Return the list.
+        return models
+
+
     def model_loop(self, model=None):
         """Generator method for looping over the models in numerical order.
 
@@ -2305,16 +2346,25 @@ class Internal:
 
             # Loop over the molecules.
             for j in range(len(set_mol_name)):
+                # Override the merge argument if the molecule does not exist.
+                found = False
+                merge_new = True
+                for k in range(len(model.mol)):
+                    if model.mol[k].mol_name == set_mol_name[j]:
+                        found = True
+                if not found:
+                    merge_new = False
+
                 # Printout.
                 if verbosity:
-                    if merge:
+                    if merge_new:
                         print("Merging with model %s of molecule '%s' (from the original molecule number %s of model %s)" % (set_model_num[i], set_mol_name[j], orig_mol_num[j], orig_model_num[i]))
                     else:
                         print("Adding molecule '%s' to model %s (from the original molecule number %s of model %s)" % (set_mol_name[j], set_model_num[i], orig_mol_num[j], orig_model_num[i]))
 
                 # The index of the new molecule to add or merge.
                 index = len(model.mol)
-                if merge:
+                if merge_new:
                     index -= 1
 
                 # Consistency check.
@@ -2322,7 +2372,7 @@ class Internal:
                     raise RelaxError("The new molecule name of '%s' in model %s does not match the corresponding molecule's name of '%s' in model %s." % (set_mol_name[j], set_model_num[i], self.structural_data[0].mol[index].mol_name, self.structural_data[0].num))
 
                 # Pack the structures.
-                if merge:
+                if merge_new:
                     mol = model.mol.merge_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
                 else:
                     mol = model.mol.add_item(mol_name=set_mol_name[j], mol_cont=data_matrix[i][j])
@@ -2651,6 +2701,10 @@ class Internal:
             for i in range(len(mol.atom_name)):
                 # Skip non-HETATM records and HETATM records with no residue info.
                 if mol.pdb_record[i] != 'HETATM' or mol.res_name[i] == None:
+                    continue
+
+                # Skip waters.
+                if mol.res_name[i] == 'HOH':
                     continue
 
                 # If the residue is not already stored initialise a new het_data element.
