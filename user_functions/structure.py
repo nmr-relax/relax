@@ -1235,7 +1235,7 @@ uf.desc[-1].add_prompt("relax> structure.superimpose(models=[3, 2], method='fit 
 uf.backend = pipe_control.structure.main.superimpose
 uf.menu_text = "&superimpose"
 uf.wizard_apply_button = False
-uf.wizard_height_desc = 450
+uf.wizard_height_desc = 420
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
