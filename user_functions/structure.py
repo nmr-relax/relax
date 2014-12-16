@@ -244,7 +244,7 @@ uf.desc[-1].add_paragraph("To superimpose all sets of models, exactly as in the 
 uf.desc[-1].add_prompt("relax> structure.align()")
 uf.desc[-1].add_prompt("relax> structure.align(method='fit to mean')")
 uf.desc[-1].add_paragraph("To superimpose the models 1, 2, 3, 5 onto model 4, type:")
-uf.desc[-1].add_prompt("relax> structure.align(models=[4, 1, 2, 3, 5], method='fit to first')")
+uf.desc[-1].add_prompt("relax> structure.align(models=[[4, 1, 2, 3, 5]], method='fit to first')")
 uf.desc[-1].add_paragraph("To superimpose an ensemble of protein structures using only the backbone heavy atoms, type one of:")
 uf.desc[-1].add_prompt("relax> structure.align(atom_id='@N,C,CA,O')")
 uf.desc[-1].add_prompt("relax> structure.align(method='fit to mean', atom_id='@N,C,CA,O')")
