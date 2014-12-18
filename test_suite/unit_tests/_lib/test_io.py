@@ -96,3 +96,35 @@ class Test_io(TestCase):
         # Check that nothing changes.
         self.assertNotEqual(lib.io.get_file_path(file1), file1)
         self.assertNotEqual(lib.io.get_file_path(file2), file2)
+
+
+    def test_swap_extension_no_ext(self):
+        """Test the lib.io.swap_extension function with a file with no extension."""
+
+        # Check for a file name with no extension.
+        file_name = lib.io.swap_extension('test', 'txt')
+        self.assertEqual(file_name, 'test.txt')
+
+
+    def test_swap_extension_ext(self):
+        """Test the lib.io.swap_extension function with a file with an extension."""
+
+        # Check for a file name with no extension.
+        file_name = lib.io.swap_extension('test.txt', 'png')
+        self.assertEqual(file_name, 'test.png')
+
+
+    def test_swap_extension_double_ext(self):
+        """Test the lib.io.swap_extension function with a file with a double extension."""
+
+        # Check for a file name with no extension.
+        file_name = lib.io.swap_extension('test.txt.gz', 'png')
+        self.assertEqual(file_name, 'test.png')
+
+
+    def test_swap_extension_broken_ext(self):
+        """Test the lib.io.swap_extension function with a file with a broken extension."""
+
+        # Check for a file name with no extension.
+        file_name = lib.io.swap_extension('test.', 'png')
+        self.assertEqual(file_name, 'test.png')
