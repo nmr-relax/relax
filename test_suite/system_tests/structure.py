@@ -368,11 +368,33 @@ class Structure(SystemTestCase):
 
         # Check the gnuplot file.
         script = [
+            "\n",
+            "# Set the plot type.\n",
             "set pm3d map\n",
+            "\n",
+            "# Set up the terminal type and make the plot square.\n",
+            "set terminal postscript eps size 10,10 enhanced color font 'Helvetica,20' linewidth 0.1\n",
+            "\n",
+            "# Blue-red colour map.\n",
+            "set palette defined (0 \"#000090\", 1 \"#000fff\", 2 \"#0090ff\", 3 \"#0fffee\", 4 \"#90ff70\", 5 \"#ffee00\", 6 \"#ff7000\", 7 \"#ee0000\", 8 \"#7f0000\")\n",
+            "\n",
+            "# Labels.\n",
+            "set xtics out rotate font \",8\" (\":4\\\\@N\" 0, \":4\\\\@CA\" 1)\n",
+            "set ytics out font \",8\" (\":4\\\\@N\" 0, \":4\\\\@CA\" 1)\n",
+            "\n",
+            "# Output to EPS.\n",
+            "set output \"matrix.eps\"\n",
+            "\n",
+            "# Load and show the text data\n",
             "splot \"matrix\" matrix\n"
         ]
         file = open("%s%s%s" % (ds.tmpdir, sep, 'matrix.gnu'))
         lines = file.readlines()
+        print("Script:")
+        print("\"\"\"")
+        for line in lines:
+            print(line[:-1])
+        print("\"\"\"")
         self.assertEqual(len(script), len(lines))
         for i in range(len(lines)):
             self.assertEqual(script[i], lines[i])
