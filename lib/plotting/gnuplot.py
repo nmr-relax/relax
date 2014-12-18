@@ -52,33 +52,14 @@ def correlation_matrix(matrix=None, labels=None, file=None, dir=None, force=Fals
     # Open the script file for writing.
     output = open_write_file(file_name, dir=dir, force=force)
 
-    # Set the plot type.
-    output.write("\n# Set the plot type.\n")
-    output.write("set pm3d map\n")
-
     # Set up the terminal type and make the plot square.
-    output.write("\n# Set up the terminal type and make the plot square.\n")
+    output.write("# Set up the terminal type and make the plot square.\n")
     output.write("set terminal postscript eps size 10,10 enhanced color font 'Helvetica,20' linewidth 0.1\n")
 
-    # The blue-red colour map.
+    # The colour map.
     output.write("\n# Blue-red colour map.\n")
-    colours = [
-        "#000090",
-        "#000fff",
-        "#0090ff",
-        "#0fffee",
-        "#90ff70",
-        "#ffee00",
-        "#ff7000",
-        "#ee0000",
-        "#7f0000"
-    ]
-    output.write("set palette defined (")
-    for i in range(len(colours)):
-        if i != 0:
-            output.write(", ")
-        output.write("%s \"%s\"" % (i, colours[i]))
-    output.write(")\n")
+    output.write("set palette model RGB\n")
+    output.write("set palette defined\n")
 
     # The labels.
     if labels != None:
@@ -100,7 +81,7 @@ def correlation_matrix(matrix=None, labels=None, file=None, dir=None, force=Fals
 
     # Load and show the text data.
     output.write("\n# Load and show the text data\n")
-    output.write("splot \"%s\" matrix\n" % file)
+    output.write("plot \"%s\" matrix with image\n" % file)
 
     # Close the file.
     output.close()
