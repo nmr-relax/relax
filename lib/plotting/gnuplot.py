@@ -55,6 +55,7 @@ def correlation_matrix(matrix=None, labels=None, file=None, dir=None, force=Fals
     # Set up the terminal type and make the plot square.
     output.write("# Set up the terminal type and make the plot square.\n")
     output.write("set terminal postscript eps size 10,10 enhanced color font 'Helvetica,20' linewidth 0.1\n")
+    output.write("set size square\n")
 
     # The colour map.
     output.write("\n# Blue-red colour map.\n")
