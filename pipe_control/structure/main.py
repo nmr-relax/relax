@@ -251,9 +251,6 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, f
     # Checks.
     check_pipe()
     check_structure()
-    format_list = ['text', 'gnuplot']
-    if format not in format_list:
-        raise RelaxError("The format '%s' must be one of %s." % (format, format_list))
 
     # Assemble the atomic coordinates.
     coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=True)
@@ -266,18 +263,10 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, f
     output = open_write_file(file, dir=dir, force=force)
 
     # The header line.
-    output.write('#')
     labels = []
     for i in range(len(atom_names)):
         # The spin identification string.
         labels.append(generate_spin_id_unique(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i], spin_name=atom_names[i]))
-
-        # Output the spin ID.
-        if i == 0:
-            output.write(" %18s" % labels[i])
-        else:
-            output.write(" %20s" % labels[i])
-    output.write('\n')
 
     # Generate the pairwise matrix.
     n = len(atom_names)
@@ -292,22 +281,8 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, f
             # Calculate and store the corrected sample standard deviation.
             matrix[i, j] = std(array(dist, float64), ddof=1)
 
-            # Output the matrix.
-            if j == 0:
-                output.write("%20.15f" % matrix[i, j])
-            else:
-                output.write(" %20.15f" % matrix[i, j])
-
-        # End of the current line.
-        output.write('\n')
-
-    # Close the file.
-    output.close()
-
-    # The gnuplot script.
-    if format == 'gnuplot':
-        # Call the plotting API.
-        correlation_matrix(format=format, matrix=matrix, labels=labels, file=file, dir=dir, force=force)
+    # Call the plotting API.
+    correlation_matrix(format=format, matrix=matrix, labels=labels, file=file, dir=dir, force=force)
 
 
 def connect_atom(index1=None, index2=None):

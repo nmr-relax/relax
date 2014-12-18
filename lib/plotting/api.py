@@ -25,6 +25,7 @@
 # relax module imports.
 from lib.errors import RelaxError
 from lib.plotting import gnuplot
+from lib.plotting import text
 
 
 def correlation_matrix(format=None, matrix=None, labels=None, file=None, dir=None, force=False):
@@ -44,7 +45,8 @@ def correlation_matrix(format=None, matrix=None, labels=None, file=None, dir=Non
 
     # The supported formats.
     function = {
-        'gnuplot': gnuplot.correlation_matrix
+        'gnuplot': gnuplot.correlation_matrix,
+        'text': text.correlation_matrix
     }
 
     # Unsupported format.
