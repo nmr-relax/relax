@@ -334,7 +334,7 @@ class Structure(SystemTestCase):
         lines = file.readlines()
         self.assertEqual(len(expected), len(lines))
         for i in range(len(lines)):
-            self.assertEqual(expected[i]+'\n', lines[i])
+            self.assertEqual(expected[i], lines[i])
 
 
     def test_bug_sr_2998_broken_conect_records(self):
