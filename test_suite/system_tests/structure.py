@@ -337,6 +337,48 @@ class Structure(SystemTestCase):
             self.assertEqual(expected[i], lines[i])
 
 
+    def test_atomic_fluctuations_gnuplot(self):
+        """Check the operation of the structure.rmsd user function for creating a gnuplot script.
+
+        This checks the format argument of the U{structure.rmsd user function<http://www.nmr-relax.com/manual/structure_rmsd.html>} when set to 'gnuplot'.
+        """
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path)
+
+        # Run the structure.atomic_fluctuations user function.
+        self.interpreter.structure.atomic_fluctuations(atom_id='@N,CA', file='matrix', dir=ds.tmpdir, format='gnuplot')
+
+        # The fluctuations.
+        n =  array([[ 9.464,  -9.232,  27.573], [ 9.211,  -9.425,  26.970], [ 7.761,  -6.392,  27.161]], float64)
+        ca = array([[10.302,  -8.195,  26.930], [10.077,  -8.221,  26.720], [ 9.256,  -6.332,  27.183]], float64)
+        sd = std(array([norm(n[0] - ca[0]), norm(n[1] - ca[1]), norm(n[2] - ca[2])], float64), ddof=1)
+        expected = []
+        expected.append("# %18s %20s\n" % (":4@N", ":4@CA"))
+        expected.append("%20.15f %20.15f\n" % (0.0, sd))
+        expected.append("%20.15f %20.15f\n" % (sd, 0.0))
+
+        # Check the text file.
+        file = open("%s%s%s" % (ds.tmpdir, sep, 'matrix'))
+        lines = file.readlines()
+        self.assertEqual(len(expected), len(lines))
+        for i in range(len(lines)):
+            self.assertEqual(expected[i], lines[i])
+
+        # Check the gnuplot file.
+        script = [
+            "set pm3d map\n",
+            "splot \"matrix\" matrix\n"
+        ]
+        file = open("%s%s%s" % (ds.tmpdir, sep, 'matrix.gnu'))
+        lines = file.readlines()
+        self.assertEqual(len(script), len(lines))
+        for i in range(len(lines)):
+            self.assertEqual(script[i], lines[i])
+
+
+
     def test_bug_sr_2998_broken_conect_records(self):
         """Test the bug reported as the U{support request #2998<https://gna.org/support/?2998>}, the broken CONECT records."""
 
