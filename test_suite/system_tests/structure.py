@@ -327,8 +327,8 @@ class Structure(SystemTestCase):
         sd = std(array([norm(n[0] - ca[0]), norm(n[1] - ca[1]), norm(n[2] - ca[2])], float64), ddof=1)
         expected = []
         expected.append("# %18s %20s\n" % (":4@N", ":4@CA"))
-        expected.append("%20.15f %20.15f\n" % (sd, 0.0))
         expected.append("%20.15f %20.15f\n" % (0.0, sd))
+        expected.append("%20.15f %20.15f\n" % (sd, 0.0))
 
         # Check the file.
         lines = file.readlines()
