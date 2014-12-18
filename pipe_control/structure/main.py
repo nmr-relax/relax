@@ -21,7 +21,7 @@
 
 # Python module imports.
 from minfx.generic import generic_minimise
-from numpy import array, float64, zeros
+from numpy import array, float64, std, zeros
 from numpy.linalg import norm
 from os import F_OK, access, getcwd
 from re import search
@@ -224,6 +224,80 @@ def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, 
 
     # Call the library method to do all of the work.
     return assemble_coord_array(objects=objects, object_names=object_names, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=seq_info_flag)
+
+
+def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, file=None, format='text', dir=None, force=False):
+    """Write out a correlation matrix of pairwise interatomic distance fluctuations between different structures.
+
+    @keyword pipes:     The data pipes to generate the interatomic distance fluctuation correlation matrix for.
+    @type pipes:        None or list of str
+    @keyword models:    The list of models to generate the interatomic distance fluctuation correlation matrix for.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:       None or list of lists of int
+    @keyword molecules: The list of molecules to generate the interatomic distance fluctuation correlation matrix for.  The number of elements must match the pipes argument.
+    @type molecules:    None or list of lists of str
+    @keyword atom_id:   The atom identification string of the coordinates of interest.  This matches the spin ID string format.
+    @type atom_id:      str or None
+    @keyword file:      The name of the PDB file to write.
+    @type file:         str
+    @keyword format:    The output format.  This is currently only "text" for text file output.
+    @type format:       str
+    @keyword dir:       The directory where the PDB file will be placed.  If set to None, then the file will be placed in the current directory.
+    @type dir:          str or None
+    @keyword force:     The force flag which if True will cause the file to be overwritten.
+    @type force:        bool
+    """
+
+    # Checks.
+    check_pipe()
+    check_structure()
+    format_list = ['text']
+    if format not in format_list:
+        raise RelaxError("The format '%s' must be one of %s." % (format, format_list))
+
+    # Assemble the atomic coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=True)
+
+    # Check that more than one structure is present.
+    if not len(coord) > 1:
+        raise RelaxError("Two or more structures are required.")
+
+    # The output file.
+    file = open_write_file(file, dir=dir, force=force)
+
+    # The header line.
+    file.write('#')
+    for i in range(len(atom_names)):
+        # The spin identification string.
+        id = generate_spin_id_unique(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i], spin_name=atom_names[i])
+
+        # Output the spin ID.
+        if i == 0:
+            file.write(" %18s" % id)
+        else:
+            file.write(" %20s" % id)
+    file.write('\n')
+
+    # Generate the pairwise matrix.
+    n = len(atom_names)
+    matrix = zeros((n, n), float64)
+    for i in range(n):
+        for j in range(n):
+            # The interatomic distances between each structure.
+            dist = []
+            for k in range(len(coord)):
+                dist.append(norm(coord[k, i] - coord[k, j]))
+
+            # Calculate and store the corrected sample standard deviation.
+            matrix[i, j] = std(array(dist, float64), ddof=1)
+
+            # Output the matrix.
+            if j == 0:
+                file.write("%20.15f" % matrix[i, j])
+            else:
+                file.write(" %20.15f" % matrix[i, j])
+
+        # End of the current line.
+        file.write('\n')
 
 
 def connect_atom(index1=None, index2=None):

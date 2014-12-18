@@ -259,6 +259,92 @@ uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
+# The structure.atomic_fluctuations user function.
+uf = uf_info.add_uf('structure.atomic_fluctuations')
+uf.title = "Create an interatomic distance fluctuation correlation matrix."
+uf.title_short = "Interatomic distance fluctuation correlation matrix."
+uf.add_keyarg(
+    name = "pipes",
+    py_type = "str_list",
+    desc_short = "data pipes",
+    desc = "The data pipes to generate the interatomic distance fluctuation correlation matrix for.",
+    wiz_combo_iter = pipe_names,
+    wiz_read_only = False,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "models",
+    py_type = "int_list_of_lists",
+    desc_short = "model list for each data pipe",
+    desc = "The list of models for each data pipe to generate the interatomic distance fluctuation correlation matrix for.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "molecules",
+    py_type = "str_list_of_lists",
+    desc_short = "molecule list for each data pipe",
+    desc = "The list of molecules for each data pipe to generate the interatomic distance fluctuation correlation matrix for.  This allows differently named molecules in the same or different data pipes to be superimposed.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "atom_id",
+    py_type = "str",
+    desc_short = "atom identification string",
+    desc = "The atom identification string of the coordinates of interest.  This can be used to restrict the correlation matrix to one atom per residue, for example.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "file",
+    py_type = "str_or_inst",
+    arg_type = "file sel",
+    desc_short = "file name",
+    desc = "The name of the text file.",
+    wiz_filesel_style = FD_SAVE
+)
+uf.add_keyarg(
+    name = "format",
+    py_type = "str",
+    default = "text",
+    desc_short = "output format",
+    desc = "The output format.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["Text file"],
+    wiz_combo_data = ["text"]
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory to save the file to.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which if set to True will cause any pre-existing files to be overwritten."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is used to visualise the interatomic distance fluctuations between different structures.  The corrected sample standard deviation (SD) is calculated for the distances between all atom pairs, resulting in a pairwise matrix of SD values.  The matrix will be output into a text file.")
+uf.desc[-1].add_paragraph(paragraph_multi_struct)
+uf.desc[-1].add_paragraph(paragraph_atom_id)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To create the interatomic distance fluctuation correlation matrix for the models 1, 3, and 5, type:")
+uf.desc[-1].add_prompt("relax> structure.atomic_fluctuations(models=[[1, 3, 5]], file='atomic_fluctuation_matrix')")
+uf.desc[-1].add_paragraph("To create the interatomic distance fluctuation correlation matrix for the molecules 'A', 'B', 'C', and 'D', type:")
+uf.desc[-1].add_prompt("relax> structure.atomic_fluctuations(molecules=[['A', 'B', 'C', 'D']], file='atomic_fluctuation_matrix')")
+uf.backend = pipe_control.structure.main.atomic_fluctuations
+uf.menu_text = "&atomic_fluctuations"
+uf.wizard_height_desc = 450
+uf.wizard_size = (1000, 750)
+uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
+
+
 # The structure.com user function.
 uf = uf_info.add_uf('structure.com')
 uf.title = "Calculate the centre of mass (CoM) for all structures."
