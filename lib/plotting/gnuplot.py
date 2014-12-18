@@ -57,7 +57,7 @@ def correlation_matrix(matrix=None, labels=None, file=None, dir=None, force=Fals
     output.write("set pm3d map\n")
 
     # Set up the terminal type and make the plot square.
-    output.write("\n# Make the plot square.\n")
+    output.write("\n# Set up the terminal type and make the plot square.\n")
     output.write("set terminal postscript eps size 10,10 enhanced color font 'Helvetica,20' linewidth 0.1\n")
 
     # The blue-red colour map.
@@ -94,8 +94,8 @@ def correlation_matrix(matrix=None, labels=None, file=None, dir=None, force=Fals
                 output.write("\"%s\" %s" % (format_enhanced(labels[i]), i))
             output.write(")\n")
 
-    # Output to EPS by default.
-    output.write("\n# Output to EPS by default.\n")
+    # Output to EPS.
+    output.write("\n# Output to EPS.\n")
     output.write("set output \"%s.eps\"\n" % file_root(file))
 
     # Load and show the text data.
