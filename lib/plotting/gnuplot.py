@@ -20,18 +20,15 @@
 ###############################################################################
 
 # Module docstring.
-"""The relax library plotting API."""
+"""Module for data plotting using gnuplot."""
 
 # relax module imports.
-from lib.errors import RelaxError
-from lib.plotting import gnuplot
+from lib.io import open_write_file, swap_extension
 
 
-def correlation_matrix(format=None, matrix=None, labels=None, file=None, dir=None, force=False):
-    """Plotting API function for representing correlation matrices.
+def correlation_matrix(matrix=None, labels=None, file=None, dir=None, force=False):
+    """Gnuplot plotting function for representing correlation matrices.
 
-    @keyword format:    The specific backend to use.
-    @type format:       str
     @keyword matrix:    The correlation matrix.  This must be a square matrix.
     @type matrix:       numpy rank-2 array.
     @keyword labels:    The labels for each element of the matrix.  The same label is assumed for each [i, i] pair in the matrix.
@@ -42,14 +39,17 @@ def correlation_matrix(format=None, matrix=None, labels=None, file=None, dir=Non
     @type dir:          str or None
     """
 
-    # The supported formats.
-    function = {
-        'gnuplot': gnuplot.correlation_matrix
-    }
+    # The script file name.
+    file_name = swap_extension(file=file, ext='gnu')
 
-    # Unsupported format.
-    if format not in function:
-        raise RelaxError("The plotting of correlation matrix data using the '%s' format is not supported." % format)
+    # Open the script file for writing.
+    output = open_write_file(file_name, dir=dir, force=force)
 
-    # Call the backend function.
-    function[format](matrix=matrix, labels=labels, file=file, dir=dir, force=force)
+    # Set the plot type.
+    output.write("set pm3d map\n")
+
+    # Load and show the text data.
+    output.write("splot \"%s\" matrix\n" % file)
+
+    # Close the file.
+    output.close()

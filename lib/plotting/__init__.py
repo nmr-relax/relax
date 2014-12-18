@@ -24,5 +24,6 @@
 
 # The package content list.
 __all__ = [
-    'api'
+    'api',
+    'gnuplot'
 ]
