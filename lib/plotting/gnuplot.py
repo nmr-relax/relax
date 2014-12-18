@@ -24,6 +24,7 @@
 
 # relax module imports.
 from lib.io import open_write_file, swap_extension
+from lib.plotting import text
 
 
 def correlation_matrix(matrix=None, labels=None, file=None, dir=None, force=False):
@@ -39,7 +40,10 @@ def correlation_matrix(matrix=None, labels=None, file=None, dir=None, force=Fals
     @type dir:          str or None
     """
 
-    # The script file name.
+    # Generate the text file for loading into gnuplot.
+    text.correlation_matrix(matrix=matrix, labels=labels, file=file, dir=dir, force=force)
+
+    # The script file name, with a swapped extension.
     file_name = swap_extension(file=file, ext='gnu')
 
     # Open the script file for writing.
