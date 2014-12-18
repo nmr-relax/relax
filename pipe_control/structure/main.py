@@ -262,14 +262,15 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, f
     # The output file.
     output = open_write_file(file, dir=dir, force=force)
 
-    # The header line.
+    # The number of dimensions.
+    n = len(atom_names)
+
+    # The labels as spin ID strings.
     labels = []
-    for i in range(len(atom_names)):
-        # The spin identification string.
+    for i in range(n):
         labels.append(generate_spin_id_unique(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i], spin_name=atom_names[i]))
 
     # Generate the pairwise matrix.
-    n = len(atom_names)
     matrix = zeros((n, n), float64)
     for i in range(n):
         for j in range(n):
