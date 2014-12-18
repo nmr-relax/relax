@@ -259,9 +259,6 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, f
     if not len(coord) > 1:
         raise RelaxError("Two or more structures are required.")
 
-    # The output file.
-    output = open_write_file(file, dir=dir, force=force)
-
     # The number of dimensions.
     n = len(atom_names)
 
