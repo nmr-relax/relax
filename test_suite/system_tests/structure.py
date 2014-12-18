@@ -338,9 +338,9 @@ class Structure(SystemTestCase):
 
 
     def test_atomic_fluctuations_gnuplot(self):
-        """Check the operation of the structure.rmsd user function for creating a gnuplot script.
+        """Check the operation of the structure.atomic_fluctuations user function for creating a gnuplot script.
 
-        This checks the format argument of the U{structure.rmsd user function<http://www.nmr-relax.com/manual/structure_rmsd.html>} when set to 'gnuplot'.
+        This checks the format argument of the U{structure.atomic_fluctuations user function<http://www.nmr-relax.com/manual/structure_atomic_fluctuations.html>} when set to 'gnuplot'.
         """
 
         # Load the file.
