@@ -298,7 +298,7 @@ uf.add_keyarg(
     py_type = "str_or_inst",
     arg_type = "file sel",
     desc_short = "file name",
-    desc = "The name of the text file.",
+    desc = "The name of the text file to create.",
     wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
@@ -306,10 +306,10 @@ uf.add_keyarg(
     py_type = "str",
     default = "text",
     desc_short = "output format",
-    desc = "The output format.",
+    desc = "The output format.  For all formats other than the text file, a second file will be created with the same name as the text file but with the appropriate file extension added.",
     wiz_element_type = "combo",
-    wiz_combo_choices = ["Text file"],
-    wiz_combo_data = ["text"]
+    wiz_combo_choices = ["Text file", "Gnuplot script"],
+    wiz_combo_data = ["text", "gnuplot"]
 )
 uf.add_keyarg(
     name = "dir",
@@ -329,6 +329,9 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This is used to visualise the interatomic distance fluctuations between different structures.  The corrected sample standard deviation (SD) is calculated for the distances between all atom pairs, resulting in a pairwise matrix of SD values.  The matrix will be output into a text file.")
+uf.desc[-1].add_paragraph("In addition to creating the text file, a second file will be created if the format argument is set to anything other than the text file.  It will have the same name as the text file, however the file extension will be changed to match the format.  The currently supported formats are:")
+uf.desc[-1].add_item_list_element("'text'", "This is the default value and will result in a single text file being created.")
+uf.desc[-1].add_item_list_element("'gnuplot'", "This will create a script for visualising the correlation matrix using gnuplot.")
 uf.desc[-1].add_paragraph(paragraph_multi_struct)
 uf.desc[-1].add_paragraph(paragraph_atom_id)
 # Prompt examples.
@@ -339,7 +342,7 @@ uf.desc[-1].add_paragraph("To create the interatomic distance fluctuation correl
 uf.desc[-1].add_prompt("relax> structure.atomic_fluctuations(molecules=[['A', 'B', 'C', 'D']], file='atomic_fluctuation_matrix')")
 uf.backend = pipe_control.structure.main.atomic_fluctuations
 uf.menu_text = "&atomic_fluctuations"
-uf.wizard_height_desc = 450
+uf.wizard_height_desc = 400
 uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'

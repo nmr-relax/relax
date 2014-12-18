@@ -32,6 +32,7 @@ from warnings import warn
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxFileError
 from lib.io import get_file_path, open_write_file, write_data
+from lib.plotting.api import correlation_matrix
 from lib.selection import tokenise
 from lib.sequence import write_spin_data
 from lib.structure.internal.coordinates import assemble_coord_array, loop_coord_structures
@@ -237,11 +238,11 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, f
     @type molecules:    None or list of lists of str
     @keyword atom_id:   The atom identification string of the coordinates of interest.  This matches the spin ID string format.
     @type atom_id:      str or None
-    @keyword file:      The name of the PDB file to write.
+    @keyword file:      The name of the file to write.
     @type file:         str
-    @keyword format:    The output format.  This is currently only "text" for text file output.
+    @keyword format:    The output format.  This can be set to "text" for text file output, or "gnuplot" for creating a gnuplot script.
     @type format:       str
-    @keyword dir:       The directory where the PDB file will be placed.  If set to None, then the file will be placed in the current directory.
+    @keyword dir:       The directory where the file will be placed.  If set to None, then the file will be placed in the current directory.
     @type dir:          str or None
     @keyword force:     The force flag which if True will cause the file to be overwritten.
     @type force:        bool
@@ -250,7 +251,7 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, f
     # Checks.
     check_pipe()
     check_structure()
-    format_list = ['text']
+    format_list = ['text', 'gnuplot']
     if format not in format_list:
         raise RelaxError("The format '%s' must be one of %s." % (format, format_list))
 
@@ -262,20 +263,21 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, f
         raise RelaxError("Two or more structures are required.")
 
     # The output file.
-    file = open_write_file(file, dir=dir, force=force)
+    output = open_write_file(file, dir=dir, force=force)
 
     # The header line.
-    file.write('#')
+    output.write('#')
+    labels = []
     for i in range(len(atom_names)):
         # The spin identification string.
-        id = generate_spin_id_unique(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i], spin_name=atom_names[i])
+        labels.append(generate_spin_id_unique(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i], spin_name=atom_names[i]))
 
         # Output the spin ID.
         if i == 0:
-            file.write(" %18s" % id)
+            output.write(" %18s" % labels[i])
         else:
-            file.write(" %20s" % id)
-    file.write('\n')
+            output.write(" %20s" % labels[i])
+    output.write('\n')
 
     # Generate the pairwise matrix.
     n = len(atom_names)
@@ -292,12 +294,20 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, f
 
             # Output the matrix.
             if j == 0:
-                file.write("%20.15f" % matrix[i, j])
+                output.write("%20.15f" % matrix[i, j])
             else:
-                file.write(" %20.15f" % matrix[i, j])
+                output.write(" %20.15f" % matrix[i, j])
 
         # End of the current line.
-        file.write('\n')
+        output.write('\n')
+
+    # Close the file.
+    output.close()
+
+    # The gnuplot script.
+    if format == 'gnuplot':
+        # Call the plotting API.
+        correlation_matrix(format=format, matrix=matrix, labels=labels, file=file, dir=dir, force=force)
 
 
 def connect_atom(index1=None, index2=None):
