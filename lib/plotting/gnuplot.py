@@ -23,7 +23,7 @@
 """Module for data plotting using gnuplot."""
 
 # relax module imports.
-from lib.io import open_write_file, swap_extension
+from lib.io import file_root, open_write_file, swap_extension
 from lib.plotting import text
 
 
@@ -40,20 +40,83 @@ def correlation_matrix(matrix=None, labels=None, file=None, dir=None, force=Fals
     @type dir:          str or None
     """
 
+    # The dimensions.
+    n = len(matrix)
+
     # Generate the text file for loading into gnuplot.
     text.correlation_matrix(matrix=matrix, labels=labels, file=file, dir=dir, force=force)
 
-    # The script file name, with a swapped extension.
+    # The script file name with the extension swapped.
     file_name = swap_extension(file=file, ext='gnu')
 
     # Open the script file for writing.
     output = open_write_file(file_name, dir=dir, force=force)
 
     # Set the plot type.
+    output.write("\n# Set the plot type.\n")
     output.write("set pm3d map\n")
 
+    # Set up the terminal type and make the plot square.
+    output.write("\n# Make the plot square.\n")
+    output.write("set terminal postscript eps size 10,10 enhanced color font 'Helvetica,20' linewidth 0.1\n")
+
+    # The blue-red colour map.
+    output.write("\n# Blue-red colour map.\n")
+    colours = [
+        "#000090",
+        "#000fff",
+        "#0090ff",
+        "#0fffee",
+        "#90ff70",
+        "#ffee00",
+        "#ff7000",
+        "#ee0000",
+        "#7f0000"
+    ]
+    output.write("set palette defined (")
+    for i in range(len(colours)):
+        if i != 0:
+            output.write(", ")
+        output.write("%s \"%s\"" % (i, colours[i]))
+    output.write(")\n")
+
+    # The labels.
+    if labels != None:
+        output.write("\n# Labels.\n")
+        for axis in ['x', 'y']:
+            output.write("set %stics out " % axis)
+            if axis == 'x':
+                output.write("rotate ")
+            output.write("font \",8\" (")
+            for i in range(n):
+                if i != 0:
+                    output.write(", ")
+                output.write("\"%s\" %s" % (format_enhanced(labels[i]), i))
+            output.write(")\n")
+
+    # Output to EPS by default.
+    output.write("\n# Output to EPS by default.\n")
+    output.write("set output \"%s.eps\"\n" % file_root(file))
+
     # Load and show the text data.
+    output.write("\n# Load and show the text data\n")
     output.write("splot \"%s\" matrix\n" % file)
 
     # Close the file.
     output.close()
+
+
+def format_enhanced(text):
+    """Convert and return the text to handle enhanced postscript.
+
+    @param text:    The text to convert to enhanced mode.
+    @type text:     str
+    @return:        The formatted text for enhanced postscript mode.
+    @rtype:         str
+    """
+
+    # Handle the '@' character.
+    text = text.replace('@', '\\\\@')
+
+    # Return the text.
+    return text
