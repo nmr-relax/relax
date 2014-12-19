@@ -311,7 +311,10 @@ class Structure(SystemTestCase):
 
 
     def test_atomic_fluctuations(self):
-        """Check the operation of the U{structure.rmsd user function<http://www.nmr-relax.com/manual/structure_rmsd.html>}."""
+        """Check the operation of the structure.atomic_fluctuations user function.
+
+        This interatomic distance fluctuations calculated by the U{structure.atomic_fluctuations user function<http://www.nmr-relax.com/manual/structure_atomic_fluctuations.html>}.
+        """
 
         # Load the file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
