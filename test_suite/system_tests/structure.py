@@ -21,7 +21,7 @@
 
 # Python module imports.
 from math import sqrt
-from numpy import array, float64, std, zeros
+from numpy import array, average, float64, std, zeros
 from numpy.linalg import norm
 from os import sep
 from re import search
@@ -31,8 +31,9 @@ from tempfile import mkdtemp, mktemp
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.mol_res_spin import count_spins, return_spin, spin_loop
-from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz
 from lib.errors import RelaxError, RelaxNoPdbError
+from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz
+from lib.geometry.vectors import vector_angle_acos
 from lib.io import DummyFileObject
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
@@ -328,6 +329,49 @@ class Structure(SystemTestCase):
         n =  array([[ 9.464,  -9.232,  27.573], [ 9.211,  -9.425,  26.970], [ 7.761,  -6.392,  27.161]], float64)
         ca = array([[10.302,  -8.195,  26.930], [10.077,  -8.221,  26.720], [ 9.256,  -6.332,  27.183]], float64)
         sd = std(array([norm(n[0] - ca[0]), norm(n[1] - ca[1]), norm(n[2] - ca[2])], float64), ddof=1)
+        expected = []
+        expected.append("# %18s %20s\n" % (":4@N", ":4@CA"))
+        expected.append("%20.15f %20.15f\n" % (0.0, sd))
+        expected.append("%20.15f %20.15f\n" % (sd, 0.0))
+
+        # Check the file.
+        lines = file.readlines()
+        self.assertEqual(len(expected), len(lines))
+        for i in range(len(lines)):
+            self.assertEqual(expected[i], lines[i])
+
+
+    def test_atomic_fluctuations_angle(self):
+        """Check the angular fluctuations calculated by the structure.atomic_fluctuations user function.
+
+        This checks the text file (with the format argument set to text) of interatomic angle fluctuations calculated by the U{structure.atomic_fluctuations user function<http://www.nmr-relax.com/manual/structure_atomic_fluctuations.html>}.
+        """
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path)
+
+        # Run the structure.atomic_fluctuations user function and collect the results in a dummy file object.
+        file = DummyFileObject()
+        self.interpreter.structure.atomic_fluctuations(measure='angles', atom_id='@N,CA', file=file, format='text')
+
+        # The atom positions.
+        n =  array([[ 9.464,  -9.232,  27.573], [ 9.211,  -9.425,  26.970], [ 7.761,  -6.392,  27.161]], float64)
+        ca = array([[10.302,  -8.195,  26.930], [10.077,  -8.221,  26.720], [ 9.256,  -6.332,  27.183]], float64)
+
+        # The interatom vectors.
+        vectors = ca - n
+
+        # The inter-vector angles to the average.
+        vect_ave = average(vectors, axis=0)
+        angles = [
+            vector_angle_acos(vect_ave, vectors[0]),
+            vector_angle_acos(vect_ave, vectors[1]),
+            vector_angle_acos(vect_ave, vectors[2])
+        ]
+
+        # The fluctuations.
+        sd = std(array(angles, float64), ddof=1)
         expected = []
         expected.append("# %18s %20s\n" % (":4@N", ":4@CA"))
         expected.append("%20.15f %20.15f\n" % (0.0, sd))
