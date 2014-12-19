@@ -353,7 +353,7 @@ class Structure(SystemTestCase):
 
         # Run the structure.atomic_fluctuations user function and collect the results in a dummy file object.
         file = DummyFileObject()
-        self.interpreter.structure.atomic_fluctuations(measure='angles', atom_id='@N,CA', file=file, format='text')
+        self.interpreter.structure.atomic_fluctuations(measure='angle', atom_id='@N,CA', file=file, format='text')
 
         # The atom positions.
         n =  array([[ 9.464,  -9.232,  27.573], [ 9.211,  -9.425,  26.970], [ 7.761,  -6.392,  27.161]], float64)

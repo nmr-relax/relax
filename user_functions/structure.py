@@ -294,6 +294,16 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "measure",
+    py_type = "str",
+    default = "distance",
+    desc_short = "measure",
+    desc = "The type of fluctuation to investigate.  This allows for both interatomic distance and vector angle fluctuations to be calculated.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["Interatomic distance fluctuations", "Interatomic vector angle fluctuations"],
+    wiz_combo_data = ["distance", "angle"]
+)
+uf.add_keyarg(
     name = "file",
     py_type = "str_or_inst",
     arg_type = "file sel",
@@ -328,7 +338,9 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This is used to visualise the interatomic distance fluctuations between different structures.  The corrected sample standard deviation (SD) is calculated for the distances between all atom pairs, resulting in a pairwise matrix of SD values.  The matrix will be output into a text file.")
+uf.desc[-1].add_paragraph("This is used to visualise the interatomic fluctuations between different structures.  By setting the measure argument, this can be set to either the fluctuations of the interatomic distances or the fluctuations of the interatomic vector angles:")
+uf.desc[-1].add_item_list_element("'distance'", "This is the default.  The corrected sample standard deviation (SD) is calculated for the distances between all atom pairs, resulting in a pairwise matrix of SD values.")
+uf.desc[-1].add_item_list_element("'angle'", "The corrected sample standard deviation (SD) is calculated for the angles between the inter atom vectors all atom pairs to an average vector.  This also produces a pairwise matrix of SD values.")
 uf.desc[-1].add_paragraph("In addition to creating the text file, a second file will be created if the format argument is set to anything other than the text file.  It will have the same name as the text file, however the file extension will be changed to match the format.  The currently supported formats are:")
 uf.desc[-1].add_item_list_element("'text'", "This is the default value and will result in a single text file being created.")
 uf.desc[-1].add_item_list_element("'gnuplot'", "This will create a script for visualising the correlation matrix using gnuplot.")
