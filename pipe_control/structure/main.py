@@ -254,7 +254,7 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, m
     # Checks.
     check_pipe()
     check_structure()
-    allowed_measures = ['distance', 'angle']
+    allowed_measures = ['distance', 'angle', 'parallax shift']
     if measure not in allowed_measures:
         raise RelaxError("The measure '%s' must be one of %s." % (measure, allowed_measures))
 
@@ -278,6 +278,7 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, m
     matrix = zeros((n, n), float64)
     dist = zeros(m, float64)
     vectors = zeros((m, 3), float64)
+    parallax_vectors = zeros((m, 3), float64)
     angles = zeros(m, float64)
 
     # Generate the pairwise distance SD matrix.
@@ -317,6 +318,29 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, m
 
                 # Calculate and store the corrected sample standard deviation.
                 matrix[i, j] = matrix[j, i] = std(angles, ddof=1)
+
+    # Generate the pairwise parallax shift SD matrix.
+    elif measure == 'parallax shift':
+        # Loop over the atom pairs.
+        for i in range(n):
+            for j in range(n):
+                # Only calculate the upper triangle to avoid duplicate calculations.
+                if j > i:
+                    continue
+
+                # The interatomic vectors between each structure.
+                for k in range(m):
+                    vectors[k] = coord[k, i] - coord[k, j]
+
+                # The average vector.
+                ave_vect = average(vectors, axis=0)
+
+                # The parallax shift.
+                for k in range(m):
+                    dist[k] = norm(vectors[k] - ave_vect)
+
+                # Calculate and store the corrected sample standard deviation.
+                matrix[i, j] = matrix[j, i] = std(dist, ddof=1)
 
     # Call the plotting API.
     correlation_matrix(format=format, matrix=matrix, labels=labels, file=file, dir=dir, force=force)
