@@ -415,6 +415,8 @@ class Structure(SystemTestCase):
 
         # Check the gnuplot file.
         script = [
+            "#!/usr/bin/env gnuplot\n",
+            "\n",
             "# Set up the terminal type and make the plot square.\n",
             "set terminal postscript eps size 10,10 enhanced color font 'Helvetica,20' linewidth 0.1\n",
             "set size square\n",

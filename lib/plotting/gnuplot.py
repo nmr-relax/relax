@@ -22,8 +22,12 @@
 # Module docstring.
 """Module for data plotting using gnuplot."""
 
+# Python module imports.
+from os import chmod
+from stat import S_IRWXU, S_IRGRP, S_IROTH
+
 # relax module imports.
-from lib.io import file_root, open_write_file, swap_extension
+from lib.io import file_root, get_file_path, open_write_file, swap_extension
 from lib.plotting import text
 
 
@@ -51,6 +55,10 @@ def correlation_matrix(matrix=None, labels=None, file=None, dir=None, force=Fals
 
     # Open the script file for writing.
     output = open_write_file(file_name, dir=dir, force=force)
+
+    # Gnuplot script setup. 
+    output.write("#!/usr/bin/env gnuplot\n\n")
+
 
     # Set up the terminal type and make the plot square.
     output.write("# Set up the terminal type and make the plot square.\n")
@@ -86,6 +94,9 @@ def correlation_matrix(matrix=None, labels=None, file=None, dir=None, force=Fals
 
     # Close the file.
     output.close()
+
+    # Make the script executable.
+    chmod(get_file_path(file_name=file_name, dir=dir), S_IRWXU|S_IRGRP|S_IROTH)
 
 
 def format_enhanced(text):
