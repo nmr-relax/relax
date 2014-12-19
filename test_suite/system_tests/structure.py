@@ -313,7 +313,7 @@ class Structure(SystemTestCase):
     def test_atomic_fluctuations(self):
         """Check the operation of the structure.atomic_fluctuations user function.
 
-        This interatomic distance fluctuations calculated by the U{structure.atomic_fluctuations user function<http://www.nmr-relax.com/manual/structure_atomic_fluctuations.html>}.
+        This checks the interatomic distance fluctuations calculated by the U{structure.atomic_fluctuations user function<http://www.nmr-relax.com/manual/structure_atomic_fluctuations.html>}.
         """
 
         # Load the file.
