@@ -261,12 +261,13 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, m
     # Assemble the atomic coordinates.
     coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=True)
 
-    # Check that more than one structure is present.
-    if not len(coord) > 1:
-        raise RelaxError("Two or more structures are required.")
-
     # The number of dimensions.
     n = len(atom_names)
+    m = len(coord)
+
+    # Check that more than one structure is present.
+    if not m > 1:
+        raise RelaxError("Two or more structures are required.")
 
     # The labels as spin ID strings.
     labels = []
@@ -275,39 +276,47 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, m
 
     # Initialise the SD matrix and other structures.
     matrix = zeros((n, n), float64)
-    vectors = zeros((len(coord), 3), float64)
-    angles = zeros(len(coord), float64)
+    dist = zeros(m, float64)
+    vectors = zeros((m, 3), float64)
+    angles = zeros(m, float64)
 
     # Generate the pairwise distance SD matrix.
     if measure == 'distance':
         for i in range(n):
             for j in range(n):
+                # Only calculate the upper triangle to avoid duplicate calculations.
+                if j > i:
+                    continue
+
                 # The interatomic distances between each structure.
-                dist = []
-                for k in range(len(coord)):
-                    dist.append(norm(coord[k, i] - coord[k, j]))
+                for k in range(m):
+                    dist[k] = norm(coord[k, i] - coord[k, j])
 
                 # Calculate and store the corrected sample standard deviation.
-                matrix[i, j] = std(array(dist, float64), ddof=1)
+                matrix[i, j] = matrix[j, i] = std(dist, ddof=1)
 
     # Generate the pairwise angle SD matrix.
     elif measure == 'angle':
         # Loop over the atom pairs.
         for i in range(n):
             for j in range(n):
-                # The interatomic vectors.
-                for k in range(len(coord)):
+                # Only calculate the upper triangle to avoid duplicate calculations.
+                if j > i:
+                    continue
+
+                # The interatomic vectors between each structure.
+                for k in range(m):
                     vectors[k] = coord[k, i] - coord[k, j]
 
                 # The average vector.
                 ave_vect = average(vectors, axis=0)
 
                 # The intervector angles.
-                for k in range(len(coord)):
+                for k in range(m):
                     angles[k] = vector_angle_atan2(ave_vect, vectors[k])
 
                 # Calculate and store the corrected sample standard deviation.
-                matrix[i, j] = std(angles, ddof=1)
+                matrix[i, j] = matrix[j, i] = std(angles, ddof=1)
 
     # Call the plotting API.
     correlation_matrix(format=format, matrix=matrix, labels=labels, file=file, dir=dir, force=force)
