@@ -477,9 +477,9 @@ class Structure(SystemTestCase):
             dot(vectors[2], unit) * unit
         ]
         shift = [
-            vectors[0] - proj[0],
-            vectors[1] - proj[1],
-            vectors[2] - proj[2]
+            norm(vectors[0] - proj[0]),
+            norm(vectors[1] - proj[1]),
+            norm(vectors[2] - proj[2])
         ]
 
         # The fluctuations.
