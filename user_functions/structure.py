@@ -300,8 +300,8 @@ uf.add_keyarg(
     desc_short = "measure",
     desc = "The type of fluctuation to investigate.  This allows for both interatomic distance and vector angle fluctuations to be calculated.",
     wiz_element_type = "combo",
-    wiz_combo_choices = ["Interatomic distance fluctuations", "Interatomic vector angle fluctuations"],
-    wiz_combo_data = ["distance", "angle"]
+    wiz_combo_choices = ["Interatomic distance fluctuations", "Interatomic vector angle fluctuations", "Interatomic parallax shift fluctuations"],
+    wiz_combo_data = ["distance", "angle", "parallax shift"]
 )
 uf.add_keyarg(
     name = "file",
@@ -338,10 +338,10 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This is used to visualise the interatomic fluctuations between different structures.  By setting the measure argument, this can be set to either the fluctuations of the interatomic distances or the fluctuations of the interatomic vector angles:")
-uf.desc[-1].add_item_list_element("'distance'", "This is the default.  The corrected sample standard deviation (SD) is calculated for the distances between all atom pairs, resulting in a pairwise matrix of SD values.")
-uf.desc[-1].add_item_list_element("'angle'", "The corrected sample standard deviation (SD) is calculated for the angles between the inter atom vectors all atom pairs to an average vector.  This also produces a pairwise matrix of SD values.")
-uf.desc[-1].add_item_list_element("'parallax shift'", "The corrected sample standard deviation (SD) is calculated for the parallax shift between the inter atom vectors all atom pairs to an average vector.  This also produces a pairwise matrix of SD values.  The parallax shift is the length of the average vector minus the interatomic vector.  It is similar to the angle measure however, importantly, it is independent of the distance between the two atoms.")
+uf.desc[-1].add_paragraph("This is used to visualise the interatomic fluctuations between different structures.  By setting the measure argument, different categories of fluctuations can seen:")
+uf.desc[-1].add_item_list_element("'distance'", "The interatomic distance fluctuations is the default option.  The corrected sample standard deviation (SD) is calculated for the distances between all atom pairs, resulting in a pairwise matrix of SD values.  This is frame independent and hence is superimposition independent.")
+uf.desc[-1].add_item_list_element("'angle'", "The interatomic vector angle fluctuations.  The corrected sample standard deviation (SD) is calculated for the angles between the inter atom vectors all atom pairs to an average vector.  This also produces a pairwise matrix of SD values.")
+uf.desc[-1].add_item_list_element("'parallax shift'", "The interatomic parallax shift fluctuations.  The corrected sample standard deviation (SD) is calculated for the parallax shift between the inter atom vectors all atom pairs to an average vector.  This also produces a pairwise matrix of SD values.  The parallax shift is calculated as the dot product of the interatomic vector and the unit average vector, times the unit average vector.  It is a frame and superimposition dependent measure orthogonal to the interatomic distance fluctuations.  It is similar to the angle measure however, importantly, it is independent of the distance between the two atoms.")
 uf.desc[-1].add_paragraph("For the output file, the currently supported formats are:")
 uf.desc[-1].add_item_list_element("'text'", "This is the default value and will result in a single text file being created.")
 uf.desc[-1].add_item_list_element("'gnuplot'", "This will create a both a text file with the data and a script for visualising the correlation matrix using gnuplot.  The script will have the same name as the text file, however the file extension will be changed to *.gnu.")
