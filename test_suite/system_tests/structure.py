@@ -21,7 +21,7 @@
 
 # Python module imports.
 from math import sqrt
-from numpy import array, average, float64, std, zeros
+from numpy import array, average, dot, float64, std, zeros
 from numpy.linalg import norm
 from os import sep
 from re import search
@@ -446,6 +446,54 @@ class Structure(SystemTestCase):
         for i in range(len(lines)):
             self.assertEqual(script[i], lines[i])
 
+
+    def test_atomic_fluctuations_parallax(self):
+        """Check the parallax shift fluctuations calculated by the structure.atomic_fluctuations user function.
+
+        This checks the text file (with the format argument set to text) of interatomic parallax shift fluctuations calculated by the U{structure.atomic_fluctuations user function<http://www.nmr-relax.com/manual/structure_atomic_fluctuations.html>}.
+        """
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path)
+
+        # Run the structure.atomic_fluctuations user function and collect the results in a dummy file object.
+        file = DummyFileObject()
+        self.interpreter.structure.atomic_fluctuations(measure='parallax shift', atom_id='@N,CA', file=file, format='text')
+
+        # The atom positions.
+        n =  array([[ 9.464,  -9.232,  27.573], [ 9.211,  -9.425,  26.970], [ 7.761,  -6.392,  27.161]], float64)
+        ca = array([[10.302,  -8.195,  26.930], [10.077,  -8.221,  26.720], [ 9.256,  -6.332,  27.183]], float64)
+
+        # The interatom vectors.
+        vectors = ca - n
+
+        # The inter-vector projections to the average.
+        vect_ave = average(vectors, axis=0)
+        unit = vect_ave / norm(vect_ave)
+        proj = [
+            dot(vectors[0], unit) * unit,
+            dot(vectors[1], unit) * unit,
+            dot(vectors[2], unit) * unit
+        ]
+        shift = [
+            vectors[0] - proj[0],
+            vectors[1] - proj[1],
+            vectors[2] - proj[2]
+        ]
+
+        # The fluctuations.
+        sd = std(array(shift, float64), ddof=1)
+        expected = []
+        expected.append("# %18s %20s\n" % (":4@N", ":4@CA"))
+        expected.append("%20.15f %20.15f\n" % (0.0, sd))
+        expected.append("%20.15f %20.15f\n" % (sd, 0.0))
+
+        # Check the file.
+        lines = file.readlines()
+        self.assertEqual(len(expected), len(lines))
+        for i in range(len(lines)):
+            self.assertEqual(expected[i], lines[i])
 
 
     def test_bug_sr_2998_broken_conect_records(self):
