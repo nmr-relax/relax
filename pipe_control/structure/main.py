@@ -21,7 +21,7 @@
 
 # Python module imports.
 from minfx.generic import generic_minimise
-from numpy import array, average, float64, std, zeros
+from numpy import array, average, dot, float64, std, zeros
 from numpy.linalg import norm
 from os import F_OK, access, getcwd
 from re import search
@@ -335,9 +335,22 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, m
                 # The average vector.
                 ave_vect = average(vectors, axis=0)
 
+                # Catch the zero vector.
+                length = norm(ave_vect)
+                if length == 0.0:
+                    matrix[i, j] = matrix[j, i] = 0.0
+                    continue
+
+                # The unit average vector.
+                unit = ave_vect / length
+
                 # The parallax shift.
                 for k in range(m):
-                    dist[k] = norm(vectors[k] - ave_vect)
+                    # The projection onto the average vector.
+                    proj = dot(vectors[k], unit) * unit
+
+                    # The distance shift.
+                    dist[k] = norm(vectors[k] - proj)
 
                 # Calculate and store the corrected sample standard deviation.
                 matrix[i, j] = matrix[j, i] = std(dist, ddof=1)
