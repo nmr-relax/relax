@@ -43,6 +43,12 @@ from user_functions.objects import Desc_container
 from user_functions.wildcards import WILDCARD_STRUCT_GAUSSIAN_ALL, WILDCARD_STRUCT_PDB_ALL, WILDCARD_STRUCT_XYZ_ALL
 
 
+# Text for the multi-structure paragraph.
+paragraph_multi_struct = "Support for multiple structures is provided by the data pipes, model numbers and molecule names arguments.  Each data pipe, model and molecule combination will be treated as a separate structure.  As only atomic coordinates with the same residue name and number and atom name will be assembled, structures with slightly different atomic structures can be compared.  If the list of models is not supplied, then all models of all data pipes will be used.  If the optional molecules list is supplied, each molecule in the list will be considered as a separate structure for comparison between each other."
+paragraph_atom_id = "The atom ID string, which uses the same notation as the spin ID, can be used to restrict the coordinates compared to a subset of molecules, residues, or atoms.  For example to only use backbone heavy atoms in a protein, set the atom ID to '@N,C,CA,O', assuming those are the names of the atoms in the 3D structural file."
+paragraph_displace_id = "The displacement ID string, which is similar to the atom ID, gives finer control over which atoms are translated and rotated by the algorithm.  When not set this allows, for example, to align structures based on a set of backbone heavy atoms and the backbone protons and side-chains are displaced by default.  Or if set to the same as the atom ID, if a single domain is aligned, then just that domain will be displaced."
+
+
 # The user function class.
 uf_class = uf_info.add_class('structure')
 uf_class.title = "Class containing the structural related functions."
@@ -163,7 +169,7 @@ uf.add_keyarg(
     name = "pipes",
     py_type = "str_list",
     desc_short = "data pipes",
-    desc = "The data pipes to include in the alignment and superimposition.",
+    desc = "The data pipes to use in the alignment and superimposition.",
     wiz_combo_iter = pipe_names,
     wiz_read_only = False,
     can_be_none = True
@@ -171,8 +177,29 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "models",
     py_type = "int_list_of_lists",
-    desc_short = "model list",
-    desc = "The list of models for each data pipe to superimpose.  The number of elements must match the pipes argument.",
+    desc_short = "model list for each data pipe",
+    desc = "The list of models for each data pipe to use in the alignment and superimposition.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "molecules",
+    py_type = "str_list_of_lists",
+    desc_short = "molecule list for each data pipe",
+    desc = "The list of molecules for each data pipe to use in the alignment and superimposition.  This allows differently named molecules in the same or different data pipes to be superimposed.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "atom_id",
+    py_type = "str",
+    desc_short = "atom ID string",
+    desc = "The atom identification string of the coordinates of interest.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "displace_id",
+    py_type = "str_or_str_list",
+    desc_short = "displacement ID string(s)",
+    desc = "The atom identification string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.  If supplied as a list of IDs, then the number of items must match the number of structures.",
     can_be_none = True
 )
 uf.add_keyarg(
@@ -184,13 +211,6 @@ uf.add_keyarg(
     wiz_element_type = "combo",
     wiz_combo_choices = ["fit to mean", "fit to first"],
     wiz_read_only = True
-)
-uf.add_keyarg(
-    name = "atom_id",
-    py_type = "str",
-    desc_short = "atom ID string",
-    desc = "The atom identification string.",
-    can_be_none = True
 )
 uf.add_keyarg(
     name = "centre_type",
@@ -214,8 +234,9 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows a set of related structures to be superimposed to each other.  The current algorithm will only use atoms with the same residue name and number and atom name in the superimposition, hence this is not a true sequence alignment.  Just as with the structure.superimpose user function two methods are currently supported:")
 uf.desc[-1].add_item_list_element("'fit to mean'", "All models are fit to the mean structure.  This is the default and most accurate method for an ensemble description.  It is an iterative method which first calculates a mean structure and then fits each model to the mean structure using the Kabsch algorithm.  This is repeated until convergence.")
 uf.desc[-1].add_item_list_element("'fit to first'", "This is quicker but is not as accurate for an ensemble description.  The Kabsch algorithm is used to rotate and translate each model to be superimposed onto the first model of the first data pipe.")
-uf.desc[-1].add_paragraph("If the list of models is not supplied, then all models of all data pipes will be superimposed.")
-uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the superimpose calculation to certain molecules, residues, or atoms.  For example to only superimpose backbone heavy atoms in a protein, use the atom ID of '@N,C,CA,O', assuming those are the names of the atoms from the structural file.")
+uf.desc[-1].add_paragraph(paragraph_multi_struct)
+uf.desc[-1].add_paragraph(paragraph_atom_id)
+uf.desc[-1].add_paragraph(paragraph_displace_id)
 uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
@@ -223,7 +244,7 @@ uf.desc[-1].add_paragraph("To superimpose all sets of models, exactly as in the 
 uf.desc[-1].add_prompt("relax> structure.align()")
 uf.desc[-1].add_prompt("relax> structure.align(method='fit to mean')")
 uf.desc[-1].add_paragraph("To superimpose the models 1, 2, 3, 5 onto model 4, type:")
-uf.desc[-1].add_prompt("relax> structure.align(models=[4, 1, 2, 3, 5], method='fit to first')")
+uf.desc[-1].add_prompt("relax> structure.align(models=[[4, 1, 2, 3, 5]], method='fit to first')")
 uf.desc[-1].add_paragraph("To superimpose an ensemble of protein structures using only the backbone heavy atoms, type one of:")
 uf.desc[-1].add_prompt("relax> structure.align(atom_id='@N,C,CA,O')")
 uf.desc[-1].add_prompt("relax> structure.align(method='fit to mean', atom_id='@N,C,CA,O')")
@@ -233,8 +254,110 @@ uf.desc[-1].add_prompt("relax> structure.align(pipes=['B', 'A'], method='fit to 
 uf.backend = pipe_control.structure.main.align
 uf.menu_text = "&align"
 uf.wizard_apply_button = False
-uf.wizard_height_desc = 450
+uf.wizard_height_desc = 370
 uf.wizard_size = (1000, 750)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
+
+
+# The structure.atomic_fluctuations user function.
+uf = uf_info.add_uf('structure.atomic_fluctuations')
+uf.title = "Create an interatomic distance fluctuation correlation matrix."
+uf.title_short = "Interatomic distance fluctuation correlation matrix."
+uf.add_keyarg(
+    name = "pipes",
+    py_type = "str_list",
+    desc_short = "data pipes",
+    desc = "The data pipes to generate the interatomic distance fluctuation correlation matrix for.",
+    wiz_combo_iter = pipe_names,
+    wiz_read_only = False,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "models",
+    py_type = "int_list_of_lists",
+    desc_short = "model list for each data pipe",
+    desc = "The list of models for each data pipe to generate the interatomic distance fluctuation correlation matrix for.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "molecules",
+    py_type = "str_list_of_lists",
+    desc_short = "molecule list for each data pipe",
+    desc = "The list of molecules for each data pipe to generate the interatomic distance fluctuation correlation matrix for.  This allows differently named molecules in the same or different data pipes to be superimposed.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "atom_id",
+    py_type = "str",
+    desc_short = "atom identification string",
+    desc = "The atom identification string of the coordinates of interest.  This can be used to restrict the correlation matrix to one atom per residue, for example.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "measure",
+    py_type = "str",
+    default = "distance",
+    desc_short = "measure",
+    desc = "The type of fluctuation to investigate.  This allows for both interatomic distance and vector angle fluctuations to be calculated.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["Interatomic distance fluctuations", "Interatomic vector angle fluctuations", "Interatomic parallax shift fluctuations"],
+    wiz_combo_data = ["distance", "angle", "parallax shift"]
+)
+uf.add_keyarg(
+    name = "file",
+    py_type = "str_or_inst",
+    arg_type = "file sel",
+    desc_short = "file name",
+    desc = "The name of the text file to create.",
+    wiz_filesel_style = FD_SAVE
+)
+uf.add_keyarg(
+    name = "format",
+    py_type = "str",
+    default = "text",
+    desc_short = "output format",
+    desc = "The output format.  For all formats other than the text file, a second file will be created with the same name as the text file but with the appropriate file extension added.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["Text file", "Gnuplot script"],
+    wiz_combo_data = ["text", "gnuplot"]
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory to save the file to.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which if set to True will cause any pre-existing files to be overwritten."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is used to visualise the interatomic fluctuations between different structures.  By setting the measure argument, different categories of fluctuations can seen:")
+uf.desc[-1].add_item_list_element("'distance'", "The interatomic distance fluctuations is the default option.  The corrected sample standard deviation (SD) is calculated for the distances between all atom pairs, resulting in a pairwise matrix of SD values.  This is frame independent and hence is superimposition independent.")
+uf.desc[-1].add_item_list_element("'angle'", "The interatomic vector angle fluctuations.  The corrected sample standard deviation (SD) is calculated for the angles between the inter atom vectors all atom pairs to an average vector.  This also produces a pairwise matrix of SD values.")
+uf.desc[-1].add_item_list_element("'parallax shift'", "The interatomic parallax shift fluctuations.  The corrected sample standard deviation (SD) is calculated for the parallax shift between the inter atom vectors all atom pairs to an average vector.  This also produces a pairwise matrix of SD values.  The parallax shift is calculated as the dot product of the interatomic vector and the unit average vector, times the unit average vector.  It is a frame and superimposition dependent measure close to orthogonal to the interatomic distance fluctuations.  It is similar to the angle measure however, importantly, it is independent of the distance between the two atoms.")
+uf.desc[-1].add_paragraph("For the output file, the currently supported formats are:")
+uf.desc[-1].add_item_list_element("'text'", "This is the default value and will result in a single text file being created.")
+uf.desc[-1].add_item_list_element("'gnuplot'", "This will create a both a text file with the data and a script for visualising the correlation matrix using gnuplot.  The script will have the same name as the text file, however the file extension will be changed to *.gnu.")
+uf.desc[-1].add_paragraph(paragraph_multi_struct)
+uf.desc[-1].add_paragraph(paragraph_atom_id)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To create the interatomic distance fluctuation correlation matrix for the models 1, 3, and 5, type:")
+uf.desc[-1].add_prompt("relax> structure.atomic_fluctuations(models=[[1, 3, 5]], file='atomic_fluctuation_matrix')")
+uf.desc[-1].add_paragraph("To create the interatomic distance fluctuation correlation matrix for the molecules 'A', 'B', 'C', and 'D', type:")
+uf.desc[-1].add_prompt("relax> structure.atomic_fluctuations(molecules=[['A', 'B', 'C', 'D']], file='atomic_fluctuation_matrix')")
+uf.backend = pipe_control.structure.main.atomic_fluctuations
+uf.menu_text = "&atomic_fluctuations"
+uf.wizard_height_desc = 370
+uf.wizard_size = (1000, 750)
+uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
@@ -592,27 +715,36 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 # The structure.displacement user function.
 uf = uf_info.add_uf('structure.displacement')
-uf.title = "Determine the rotational and translational displacement between a set of models."
+uf.title = "Determine the rotational and translational displacement between a set of models or molecules."
 uf.title_short = "Rotational and translational displacement."
 uf.add_keyarg(
-    name = "model_from",
-    py_type = "int",
-    desc_short = "model from",
-    desc = "The optional model number for the starting position of the displacement.",
+    name = "pipes",
+    py_type = "str_list",
+    desc_short = "data pipes",
+    desc = "The data pipes to determine the displacements for.",
+    wiz_combo_iter = pipe_names,
+    wiz_read_only = False,
     can_be_none = True
 )
 uf.add_keyarg(
-    name = "model_to",
-    py_type = "int",
-    desc_short = "model to",
-    desc = "The optional model number for the ending position of the displacement.",
+    name = "models",
+    py_type = "int_list_of_lists",
+    desc_short = "model list for each data pipe",
+    desc = "The list of models for each data pipe to determine the displacements for.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "molecules",
+    py_type = "str_list_of_lists",
+    desc_short = "molecule list for each data pipe",
+    desc = "The list of molecules for each data pipe to determine the displacements for.  This allows differently named molecules in the same or different data pipes to be superimposed.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "atom_id",
     py_type = "str",
     desc_short = "atom identification string",
-    desc = "The atom identification string.",
+    desc = "The atom identification string of the coordinates of interest.",
     can_be_none = True
 )
 uf.add_keyarg(
@@ -624,24 +756,18 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This user function allows the rotational and translational displacement between two models of the same structure to be calculated.  The information will be printed out in various formats and held in the relax data store.  This is directional, so there is a starting and ending position for each displacement.  If the starting and ending models are not specified, then the displacements in all directions between all models will be calculated.")
-uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the displacement calculation to certain molecules, residues, or atoms.  This is useful if studying domain motions, secondary structure rearrangements, amino acid side chain rotations, etc.")
+uf.desc[-1].add_paragraph("This user function allows the rotational and translational displacement between different models or molecules to be calculated.  The information will be printed out in various formats and held in the relax data store.  This is directional, so there is a starting and ending position for each displacement.  Therefore the displacements in all directions between all models and molecules will be calculated.")
+uf.desc[-1].add_paragraph(paragraph_multi_struct)
+uf.desc[-1].add_paragraph(paragraph_atom_id)
 uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the motion.  The allows, for example, a pivot of a rotational domain motion to be specified.  This is not a formally correct algorithm, all translations will be zero, but does give an indication to the amplitude of the pivoting angle.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To determine the rotational and translational displacements between all sets of models, type:")
 uf.desc[-1].add_prompt("relax> structure.displacement()")
-uf.desc[-1].add_paragraph("To determine the displacement from model 5 to all other models, type:")
-uf.desc[-1].add_prompt("relax> structure.displacement(model_from=5)")
-uf.desc[-1].add_paragraph("To determine the displacement of all models to model 5, type:")
-uf.desc[-1].add_prompt("relax> structure.displacement(model_to=5)")
-uf.desc[-1].add_paragraph("To determine the displacement of model 2 to model 3, type one of:")
-uf.desc[-1].add_prompt("relax> structure.displacement(2, 3)")
-uf.desc[-1].add_prompt("relax> structure.displacement(model_from=2, model_to=3)")
 uf.backend = pipe_control.structure.main.displacement
 uf.menu_text = "displace&ment"
-uf.wizard_height_desc = 400
-uf.wizard_size = (900, 700)
+uf.wizard_height_desc = 450
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
@@ -650,17 +776,33 @@ uf = uf_info.add_uf('structure.find_pivot')
 uf.title = "Find the pivot point of the motion of a set of structures."
 uf.title_short = "Pivot search."
 uf.add_keyarg(
+    name = "pipes",
+    py_type = "str_list",
+    desc_short = "data pipes",
+    desc = "The data pipes to use in the motional pivot algorithm.",
+    wiz_combo_iter = pipe_names,
+    wiz_read_only = False,
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "models",
-    py_type = "int_list",
-    desc_short = "model list",
-    desc = "The list of models to use.",
+    py_type = "int_list_of_lists",
+    desc_short = "model list for each data pipe",
+    desc = "The list of models for each data pipe to use in the motional pivot algorithm.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "molecules",
+    py_type = "str_list_of_lists",
+    desc_short = "molecule list for each data pipe",
+    desc = "The list of molecules for each data pipe to use in the motional pivot algorithm.  This allows differently named molecules in the same or different data pipes to be used.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
     can_be_none = True
 )
 uf.add_keyarg(
     name = "atom_id",
     py_type = "str",
     desc_short = "atom ID string",
-    desc = "The atom identification string.",
+    desc = "The atom identification string of the coordinates of interest.",
     can_be_none = True
 )
 uf.add_keyarg(
@@ -687,12 +829,13 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This is used to find pivot point of motion between a set of structural models.  If the list of models is not supplied, then all models will be used.")
-uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the search to certain molecules, residues, or atoms.  For example to only use backbone heavy atoms in a protein, use the atom ID of '@N,C,CA,O', assuming those are the names of the atoms from the structural file.")
+uf.desc[-1].add_paragraph(paragraph_multi_struct)
+uf.desc[-1].add_paragraph(paragraph_atom_id)
 uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.")
 uf.backend = pipe_control.structure.main.find_pivot
 uf.menu_text = "&find_pivot"
-uf.wizard_height_desc = 400
-uf.wizard_size = (900, 700)
+uf.wizard_height_desc = 450
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
@@ -1025,26 +1168,51 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + 'read_xyz.png'
 
 # The structure.rmsd user function.
 uf = uf_info.add_uf('structure.rmsd')
-uf.title = "Determine the RMSD between the models."
+uf.title = "Determine the RMSD between structures."
 uf.title_short = "Structural RMSD."
+uf.add_keyarg(
+    name = "pipes",
+    py_type = "str_list",
+    desc_short = "data pipes",
+    desc = "The data pipes to determine the RMSD for.",
+    wiz_combo_iter = pipe_names,
+    wiz_read_only = False,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "models",
+    py_type = "int_list_of_lists",
+    desc_short = "model list for each data pipe",
+    desc = "The list of models for each data pipe to determine the RMSD for.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "molecules",
+    py_type = "str_list_of_lists",
+    desc_short = "molecule list for each data pipe",
+    desc = "The list of molecules for each data pipe to determine the RMSD for.  The RMSD will only be calculated for atoms with identical residue name and number and atom name.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
+    can_be_none = True
+)
 uf.add_keyarg(
     name = "atom_id",
     py_type = "str",
     desc_short = "atom identification string",
-    desc = "The atom identification string.",
+    desc = "The atom identification string of the coordinates of interest.",
     can_be_none = True
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows the root mean squared deviation (RMSD) between all models to be calculated.")
-uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the RMSD calculation to certain molecules, residues, or atoms.")
+uf.desc[-1].add_paragraph("This allows the root mean squared deviation (RMSD) between all structures to be calculated.  The RMSDs for individual structures to the mean structure will be calculated and reported, and then these values averaged for the global RMSD.  This will be stored in the structural object of the current data pipe.")
+uf.desc[-1].add_paragraph(paragraph_multi_struct)
+uf.desc[-1].add_paragraph(paragraph_atom_id)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To determine the RMSD, simply type:")
+uf.desc[-1].add_paragraph("To determine the RMSD of all models in the current data pipe, simply type:")
 uf.desc[-1].add_prompt("relax> structure.rmsd()")
 uf.backend = pipe_control.structure.main.rmsd
 uf.menu_text = "&rmsd"
-uf.wizard_size = (700, 500)
+uf.wizard_height_desc = 400
+uf.wizard_size = (900, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
@@ -1121,6 +1289,13 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "displace_id",
+    py_type = "str",
+    desc_short = "displacement ID string",
+    desc = "The atom identification string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.",
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "centre_type",
     py_type = "str",
     default = "centroid",
@@ -1143,7 +1318,8 @@ uf.desc[-1].add_paragraph("This allows a set of models of the same structure to 
 uf.desc[-1].add_item_list_element("'fit to mean'", "All models are fit to the mean structure.  This is the default and most accurate method for an ensemble description.  It is an iterative method which first calculates a mean structure and then fits each model to the mean structure using the Kabsch algorithm.  This is repeated until convergence.")
 uf.desc[-1].add_item_list_element("'fit to first'", "This is quicker but is not as accurate for an ensemble description.  The Kabsch algorithm is used to rotate and translate each model to be superimposed onto the first model.")
 uf.desc[-1].add_paragraph("If the list of models is not supplied, then all models will be superimposed.")
-uf.desc[-1].add_paragraph("The atom ID, which uses the same notation as the spin ID strings, can be used to restrict the superimpose calculation to certain molecules, residues, or atoms.  For example to only superimpose backbone heavy atoms in a protein, use the atom ID of '@N,C,CA,O', assuming those are the names of the atoms from the structural file.")
+uf.desc[-1].add_paragraph(paragraph_atom_id)
+uf.desc[-1].add_paragraph(paragraph_displace_id)
 uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
@@ -1161,7 +1337,7 @@ uf.desc[-1].add_prompt("relax> structure.superimpose(models=[3, 2], method='fit 
 uf.backend = pipe_control.structure.main.superimpose
 uf.menu_text = "&superimpose"
 uf.wizard_apply_button = False
-uf.wizard_height_desc = 450
+uf.wizard_height_desc = 420
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
@@ -1202,8 +1378,38 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 # The structure.web_of_motion user function.
 uf = uf_info.add_uf('structure.web_of_motion')
-uf.title = "Create a PDB representation of motion between models using a web of interconnecting lines."
+uf.title = "Create a PDB representation of motion between structures using a web of interconnecting lines."
 uf.title_short = "Web of motion between models."
+uf.add_keyarg(
+    name = "pipes",
+    py_type = "str_list",
+    desc_short = "data pipes",
+    desc = "The data pipes to generate the web between.",
+    wiz_combo_iter = pipe_names,
+    wiz_read_only = False,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "models",
+    py_type = "int_list_of_lists",
+    desc_short = "model list for each data pipe",
+    desc = "The list of models for each data pipe to generate the web between.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "molecules",
+    py_type = "str_list_of_lists",
+    desc_short = "molecule list for each data pipe",
+    desc = "The list of molecules for each data pipe to generate the web between.  This allows differently named molecules in the same or different data pipes to be superimposed.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "atom_id",
+    py_type = "str",
+    desc_short = "atom identification string",
+    desc = "The atom identification string of the coordinates of interest.",
+    can_be_none = True
+)
 uf.add_keyarg(
     name = "file",
     py_type = "str_or_inst",
@@ -1222,13 +1428,6 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
-    name = "models",
-    py_type = "int_list",
-    desc_short = "model numbers",
-    desc = "Restrict the web to a subset of models.",
-    can_be_none = True
-)
-uf.add_keyarg(
     name = "force",
     default = False,
     py_type = "bool",
@@ -1237,16 +1436,19 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will create a PDB representation of the motion between the atoms of a given set of structural models.  Identical atoms of the selected models are concatenated into one model, within a temporary internal structural object, and linked together using PDB CONECT records.")
+uf.desc[-1].add_paragraph("This will create a PDB representation of the motion between the atoms of a given set of structures.  Identical atoms of the structures are concatenated into one model, within a temporary internal structural object, linked together using PDB CONECT records, and then written to the PDB file.")
+uf.desc[-1].add_paragraph(paragraph_multi_struct)
+uf.desc[-1].add_paragraph(paragraph_atom_id)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To create a web of motion for the models 1, 3, and 5, type one of:")
-uf.desc[-1].add_prompt("relax> structure.web_of_motion('web.pdb', '.', [1, 3, 5])")
-uf.desc[-1].add_prompt("relax> structure.web_of_motion(file='web.pdb', models=[1, 3, 5])")
-uf.desc[-1].add_prompt("relax> structure.web_of_motion(file='web.pdb', dir='.', models=[1, 3, 5])")
+uf.desc[-1].add_paragraph("To create a web of motion for the models 1, 3, and 5, type:")
+uf.desc[-1].add_prompt("relax> structure.web_of_motion(models=[[1, 3, 5]], file='web.pdb')")
+uf.desc[-1].add_paragraph("To create a web of motion for the molecules 'A', 'B', 'C', and 'D', type:")
+uf.desc[-1].add_prompt("relax> structure.web_of_motion(molecules=[['A', 'B', 'C', 'D']], file='web.pdb')")
 uf.backend = pipe_control.structure.main.web_of_motion
 uf.menu_text = "&web_of_motion"
-uf.wizard_size = (900, 600)
+uf.wizard_height_desc = 450
+uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 

@@ -146,6 +146,23 @@ uf.add_keyarg(
     wiz_read_only = True
 )
 uf.add_keyarg(
+    name = "norm_type",
+    default = "first",
+    py_type = "str",
+    desc_short = "normalisation point",
+    desc = "How the graph should be normalised, if the norm flag is set.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        "First point normalisation",
+        "Last point normalisation"
+    ],
+    wiz_combo_data = [
+        "first",
+        "last"
+    ],
+    wiz_read_only = True
+)
+uf.add_keyarg(
     name = "file",
     py_type = "str",
     arg_type = "file sel",
@@ -175,7 +192,7 @@ uf.add_keyarg(
     default = False,
     py_type = "bool",
     desc_short = "normalisation flag",
-    desc = "A flag which, if set to True, will cause all graphs to be normalised to a starting value of 1.  This is for the normalisation of series type data."
+    desc = "A flag which, if set to True, will cause all graphs to be normalised to 1.  This is for the normalisation of series type data.  The point for normalisation is set with the norm_type argument."
 )
 # Description.
 uf.desc.append(Desc_container())

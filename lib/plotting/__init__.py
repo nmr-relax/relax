@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2014 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,13 +20,11 @@
 ###############################################################################
 
 # Package docstring.
-"""The relax-lib structure.internal package - the internal structural object."""
+"""The relax library plotting package - a library of functions for plotting data via different software packages."""
 
+# The package content list.
 __all__ = [
-    'coordinates',
-    'displacements',
-    'models',
-    'molecules',
-    'object',
-    'selection'
+    'api',
+    'gnuplot',
+    'text'
 ]

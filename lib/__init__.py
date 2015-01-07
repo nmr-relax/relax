@@ -48,6 +48,7 @@ __all__ = [
     'order',
     'periodic_table',
     'physical_constants',
+    'plotting',
     'regex',
     'selection',
     'sequence',

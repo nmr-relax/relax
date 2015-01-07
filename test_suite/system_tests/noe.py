@@ -62,10 +62,10 @@ class Noe(SystemTestCase):
         data = [
             "# Parameter description:  The steady-state NOE value.\n",
             "#\n",
-            "# mol_name       res_num    res_name    spin_num    spin_name    value                   error                   \n",
-            "2AT7_fmf_mol1    12         PHE         150         N               0.803029108487728      0.0199040298831904    \n",
-            "2AT7_fmf_mol1    13         ASN         170         N               0.829415981681132      0.0339996453012768    \n",
-            "2AT7_fmf_mol1    14         LYS         184         N               0.755789564728523      0.0250941717735858    \n"
+            "# mol_name    res_num    res_name    spin_num    spin_name    value                   error                   \n",
+            "2AT7_fmf      12         PHE         150         N               0.803029108487728      0.0199040298831904    \n",
+            "2AT7_fmf      13         ASN         170         N               0.829415981681132      0.0339996453012768    \n",
+            "2AT7_fmf      14         LYS         184         N               0.755789564728523      0.0250941717735858    \n"
         ]
 
         # Printout of the real and generated data.
