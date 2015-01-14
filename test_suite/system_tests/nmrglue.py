@@ -534,7 +534,7 @@ class Nmrglue(SystemTestCase):
         """Test saving a state with numpy arrays, reset relax, and read the state again."""
 
         # Read the spectrum.
-        fname = 'freq_real.ft2'
+        fname = '128_0_FT.ft2'
         sp_id = 'test'
         self.interpreter.spectrum.nmrglue_read(file=fname, dir=ds.ng_test, nmrglue_id=sp_id)
 
