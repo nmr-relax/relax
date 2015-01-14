@@ -29,5 +29,5 @@ __all__ = [
     'sobol'
 ]
 
-# Import version 0.4 as standard version of nmrglue.
-from extern.nmrglue.nmrglue_0_4 import nmrglue as nmrglue
+# Import version 0.5 as standard version of nmrglue.
+from extern.nmrglue.nmrglue_0_5 import nmrglue as nmrglue
