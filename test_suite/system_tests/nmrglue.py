@@ -147,7 +147,8 @@ class Nmrglue(SystemTestCase):
         ds.tmpdir = mkdtemp()
 
         # Create path to nmrglue test data.
-        ds.ng_test = status.install_path +sep+ 'extern' +sep+ 'nmrglue' +sep+ 'nmrglue_0_5' +sep+ 'tests' +sep+ 'pipe_proc_tests'
+        ds.base_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'repeated_analysis'+sep+'SOD1'
+        ds.ng_test = ds.base_path +sep+ 'cpmg_disp_sod1d90a_060518' +sep+ 'cpmg_disp_sod1d90a_060518_normal.fid' +sep+ 'ft2_data'
 
 
     def setup_plot_contour(self, show=False):
@@ -416,7 +417,7 @@ class Nmrglue(SystemTestCase):
         """Test the userfunction spectrum.nmrglue_read."""
 
         # Read the spectrum.
-        fname = 'freq_real.ft2'
+        fname = '128_0_FT.ft2'
         sp_id = 'test'
         self.interpreter.spectrum.nmrglue_read(file=fname, dir=ds.ng_test, nmrglue_id=sp_id)
 
@@ -429,12 +430,12 @@ class Nmrglue(SystemTestCase):
         data = cdp.nmrglue[sp_id].data
 
         # Test the data.
-        self.assertEqual(udic[0]['label'], '15N')
-        self.assertEqual(udic[1]['label'], '13C')
+        self.assertEqual(udic[0]['label'], 'N15')
+        self.assertEqual(udic[1]['label'], 'H1')
         self.assertEqual(udic[0]['freq'], True)
         self.assertEqual(udic[1]['freq'], True)
-        self.assertEqual(udic[0]['size'], 512)
-        self.assertEqual(udic[1]['size'], 4096)
+        self.assertEqual(udic[0]['size'], 256)
+        self.assertEqual(udic[1]['size'], 513)
 
 
     def test_nmrglue_read_several(self):
