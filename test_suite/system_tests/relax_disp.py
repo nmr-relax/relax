@@ -1451,6 +1451,78 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(nr_split_header, len(line_split_val) + 1)
 
 
+    def test_bug_23186_cluster_error_calc_dw(self):
+        """Catch U{bug #23186<https://gna.org/bugs/?23186>}: Error calculation of individual parameter "dw" from Monte-Carlo, is based on first spin."""
+
+        # Clear the data store.
+        self.interpreter.reset()
+
+        # Load the state.
+        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_23186.bz2'
+        self.interpreter.state.load(state, force=True)
+
+        # Dic key to spectrometer frq.
+        dickey = 'SQ CPMG - 599.89086220 MHz'
+
+        # First get the resi 0 array of sim r2a.
+        resi_0_r2a = []
+
+        # Loop over the dics in spin.
+        for cdic in cdp.mol[0].res[0].spin[0].r2a_sim:
+            resi_0_r2a.append(cdic[dickey])
+
+        # Get stats with numpy
+        resi_0_r2a_std = std(asarray(resi_0_r2a), ddof=1)
+
+        # First get the resi 86 array of sim r2a.
+        resi_86_r2a = []
+
+        # Loop over the dics in spin.
+        for cdic in cdp.mol[0].res[1].spin[0].r2a_sim:
+            resi_86_r2a.append(cdic[dickey])
+
+        # Get stats with numpy
+        resi_86_r2a_std = std(asarray(resi_86_r2a), ddof=1)
+
+        # Then get for dw.
+
+        # First get the array of sim dw.
+        resi_0_dw = cdp.mol[0].res[0].spin[0].dw_sim
+        resi_86_dw = cdp.mol[0].res[1].spin[0].dw_sim
+
+        # Get stats with numpy
+        resi_0_dw_std = std(asarray(resi_0_dw), ddof=1)
+        resi_86_dw_std = std(asarray(resi_86_dw), ddof=1)
+
+        # Then get for spin independent parameter.
+
+        # First get the array of sim dw.
+        resi_0_kAB = cdp.mol[0].res[0].spin[0].k_AB_sim
+        resi_86_kAB = cdp.mol[0].res[1].spin[0].k_AB_sim
+
+        # Get stats with numpy
+        resi_0_kAB_std = std(asarray(resi_0_kAB), ddof=1)
+        resi_86_kAB_std = std(asarray(resi_0_kAB), ddof=1)
+
+        # Assume they both std of k_AB values are equal
+        self.assertEqual(resi_0_kAB_std, resi_86_kAB_std)
+
+        # Perform error analysis.
+        self.interpreter.monte_carlo.error_analysis()
+
+        # Check values for k_AB.
+        self.assertEqual(resi_0_kAB_std, cdp.mol[0].res[0].spin[0].k_AB_err)
+        self.assertEqual(resi_86_kAB_std, cdp.mol[0].res[1].spin[0].k_AB_err)
+
+        # Check values for r2a.
+        self.assertEqual(resi_0_r2a_std, cdp.mol[0].res[0].spin[0].r2a_err[dickey])
+        self.assertEqual(resi_86_r2a_std, cdp.mol[0].res[1].spin[0].r2a_err[dickey])
+
+        # Check values for dw.
+        self.assertEqual(resi_0_dw_std, cdp.mol[0].res[0].spin[0].dw_err)
+        self.assertEqual(resi_86_dw_std, cdp.mol[0].res[1].spin[0].dw_err)
+
+
     def test_bug_9999_slow_r1rho_r2eff_error_with_mc(self):
         """Catch U{bug #9999<https://gna.org/bugs/?9999>}, The slow optimisation of R1rho R2eff error estimation with Monte Carlo simulations."""
 

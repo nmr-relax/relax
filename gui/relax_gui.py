@@ -779,8 +779,8 @@ class Main(wx.Frame):
             return
 
         # Open the window (the GUI flag check is inside the Show method).
-        if status.show_gui and not self.spin_viewer.IsShown():
-            self.spin_viewer.Show()
+        if not self.spin_viewer.IsShown():
+            self.spin_viewer.Show(show=status.show_gui)
 
 
     def state_load(self, event=None, file_name=None):

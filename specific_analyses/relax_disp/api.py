@@ -1123,8 +1123,8 @@ class Relax_disp(API_base, API_common):
             param_name, si, mi = param_index_to_param_info(index=index, spins=spins)
         else:
             param_name = aux_params[index - total_param_num]
-            si = 0
-            mi = 0
+            si = None
+            mi = None
 
         # The parameter error name.
         err_name = param_name + "_err"
@@ -1140,8 +1140,15 @@ class Relax_disp(API_base, API_common):
 
         # Model and auxiliary parameters.
         else:
-            for spin in spins:
-                setattr(spin, err_name, error)
+            # If clustered paramater:
+            if si == None:
+                for spin in spins:
+                    setattr(spin, err_name, error)
+
+            # If independent value.
+            else:
+                # Set the value.
+                setattr(spins[si], err_name, error)
 
 
     def set_param_values(self, param=None, value=None, index=None, spin_id=None, error=False, force=True):
@@ -1486,7 +1493,9 @@ class Relax_disp(API_base, API_common):
         if model_param:
             param_name, si, mi = param_index_to_param_info(index=index, spins=spins)
             if not param_name in ['r2eff', 'i0']:
-                si = 0
+                if si == None:
+                    si = 0
+
         else:
             param_name = aux_params[index - total_param_num]
             si = 0
