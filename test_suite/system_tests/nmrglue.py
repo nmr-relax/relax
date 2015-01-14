@@ -156,7 +156,7 @@ class Nmrglue(SystemTestCase):
         This is from the U{tutorial<http://jjhelmus.github.io/nmrglue/current/examples/plot_2d_spectrum.html>}."""
 
         # Read the spectrum.
-        fname = 'freq_real.ft2'
+        fname = '128_0_FT.ft2'
         sp_id = 'test'
         self.interpreter.spectrum.nmrglue_read(file=fname, dir=ds.ng_test, nmrglue_id=sp_id)
 
@@ -164,11 +164,11 @@ class Nmrglue(SystemTestCase):
         ax = plot_contour(nmrglue_id=sp_id, ppm=True, show=show)
 
         # Set new limits.
-        ax.set_xlim(30, 0)
-        ax.set_ylim(15, -20)
+        ax.set_xlim(11, 6)
+        ax.set_ylim(132, 105)
 
         # add some labels
-        ax.text(25.0, 0.0, "Test", size=8, color='r')
+        ax.text(10.0, 115.0, "Test", size=8, color='r')
 
 
     def setup_plot_contour_cpmg(self, show=False):
