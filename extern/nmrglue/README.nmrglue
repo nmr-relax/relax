@@ -2,17 +2,17 @@ To get new version from: https://github.com/jjhelmus/nmrglue/releases
 
 # Put an empty __init__.py into the extern/nmrglue folder.
 
-# Version 0.4
+# Version 0.5
 ## Get the tar file
-wget https://github.com/jjhelmus/nmrglue/archive/v0.4.tar.gz
+wget https://github.com/jjhelmus/nmrglue/archive/v0.5.tar.gz
 
 ## Unpack
-tar -zxvf v0.4.tar.gz
+tar -zxvf v0.5.tar.gz
 
-## Remove tar file.
-rm v0.4.tar.gz
+From nmrglue-0.5, move folder "nmrglue" into /extern
 
-## Rename directory to not contain "-" and "."
-mv nmrglue-0.4 nmrglue_0_4
+Delete folder /extern/nmrglue/fileio/tests" to save space.
+This contains binary files for test-suite.
 
-## Put an empty __init__.py into the extern/nmrglue/nmrglue_0_4 folder.
+Copy /nmrglue-0.5/LICENSE.txt + PKG-INFO + README.rst into /extern/nmrglue.
+
