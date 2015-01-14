@@ -1451,6 +1451,32 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(nr_split_header, len(line_split_val) + 1)
 
 
+    def test_bug_23186_cluster_error_calc_dw(self):
+        """Catch U{bug #23186<https://gna.org/bugs/?23186>}: Error calculation of individual parameter "dw" from Monte-Carlo, is based on first spin."""
+
+        # Clear the data store.
+        self.interpreter.reset()
+
+        # Load the state.
+        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_23186.bz2'
+        self.interpreter.state.load(state, force=True)
+
+        # First get the array of sim dw.
+        resi_0_dw = cdp.mol[0].res[0].spin[0].dw_sim
+        resi_86_dw = cdp.mol[0].res[1].spin[0].dw_sim
+
+        # Get stats with numpy
+        resi_0_dw_std = std(asarray(resi_0_dw), ddof=1)
+        resi_86_dw_std = std(asarray(resi_86_dw), ddof=1)
+
+        # Perform error analysis.
+        self.interpreter.monte_carlo.error_analysis()
+
+        # Check values.
+        self.assertEqual(resi_0_dw_std, cdp.mol[0].res[0].spin[0].dw_err)
+        self.assertEqual(resi_86_dw_std, cdp.mol[0].res[1].spin[0].dw_err)
+
+
     def test_bug_9999_slow_r1rho_r2eff_error_with_mc(self):
         """Catch U{bug #9999<https://gna.org/bugs/?9999>}, The slow optimisation of R1rho R2eff error estimation with Monte Carlo simulations."""
 
