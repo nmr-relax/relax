@@ -147,7 +147,7 @@ class Nmrglue(SystemTestCase):
         ds.tmpdir = mkdtemp()
 
         # Create path to nmrglue test data.
-        ds.ng_test = status.install_path +sep+ 'extern' +sep+ 'nmrglue' +sep+ 'nmrglue_0_4' +sep+ 'tests' +sep+ 'pipe_proc_tests'
+        ds.ng_test = status.install_path +sep+ 'extern' +sep+ 'nmrglue' +sep+ 'nmrglue_0_5' +sep+ 'tests' +sep+ 'pipe_proc_tests'
 
 
     def setup_plot_contour(self, show=False):
@@ -606,5 +606,5 @@ class Nmrglue(SystemTestCase):
         ng_vers = nmrglue.__version__
         print("Version of nmrglue is %s"%ng_vers)
 
-        # Assert the version to be 0.4.
-        self.assertEqual(ng_vers, '0.4')
+        # Assert the version to be 0.5.
+        self.assertEqual(ng_vers, '0.5')
