@@ -24,10 +24,8 @@
 """External Python modules bundled with relax."""
 
 __all__ = [
+    'nmrglue',
     'numdifftools',
     'numpy_future',
     'sobol'
 ]
-
-# Import version 0.5 as standard version of nmrglue.
-from extern.nmrglue.nmrglue_0_5 import nmrglue as nmrglue
