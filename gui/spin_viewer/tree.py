@@ -740,6 +740,10 @@ class Mol_res_spin_tree(wx.Window):
             # Get the python data.
             info = self.tree.GetItemPyData(key)
 
+            # No info.
+            if info == None:
+                continue
+
             # Add to the prune list if it has been removed.
             if info['id'] not in mol_ids:
                 prune_list.append(key)
@@ -764,6 +768,10 @@ class Mol_res_spin_tree(wx.Window):
         for key in self.tree_ids[mol_branch_id]:
             # Get the python data.
             info = self.tree.GetItemPyData(key)
+
+            # No info.
+            if info == None:
+                continue
 
             # Get the residue.
             res = return_residue(info['id'])
@@ -794,6 +802,10 @@ class Mol_res_spin_tree(wx.Window):
         for key in self.tree_ids[mol_branch_id][res_branch_id]:
             # Get the python data.
             info = self.tree.GetItemPyData(key)
+
+            # No info.
+            if info == None:
+                continue
 
             # Get the spin.
             spin = return_spin(info['id'])
