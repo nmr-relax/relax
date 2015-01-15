@@ -933,7 +933,7 @@ class Mol_res_spin_tree(wx.Window):
             data = self.tree.GetItemPyData(key)
 
             # No info.
-            if data == None:
+            if data == None or 'id' not in data:
                 continue
 
             # Check the mol_id for a match and, if so, terminate to speed things up.
@@ -1010,7 +1010,7 @@ class Mol_res_spin_tree(wx.Window):
             data = self.tree.GetItemPyData(key)
 
             # No info.
-            if data == None:
+            if data == None or 'id' not in data:
                 continue
 
             # Check the res_id, res name, and res number for a match and, if so, terminate to speed things up.
@@ -1090,7 +1090,7 @@ class Mol_res_spin_tree(wx.Window):
             data = self.tree.GetItemPyData(key)
 
             # No info.
-            if data == None:
+            if data == None or 'id' not in data:
                 continue
 
             # Check the spin_id, spin name and spin number for a match and, if so, terminate to speed things up.
