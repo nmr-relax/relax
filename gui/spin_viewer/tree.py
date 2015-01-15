@@ -741,7 +741,7 @@ class Mol_res_spin_tree(wx.Window):
             info = self.tree.GetItemPyData(key)
 
             # No info.
-            if info == None:
+            if info == None or 'id' not in info:
                 continue
 
             # Add to the prune list if it has been removed.
@@ -770,7 +770,7 @@ class Mol_res_spin_tree(wx.Window):
             info = self.tree.GetItemPyData(key)
 
             # No info.
-            if info == None:
+            if info == None or 'id' not in info:
                 continue
 
             # Get the residue.
@@ -804,7 +804,7 @@ class Mol_res_spin_tree(wx.Window):
             info = self.tree.GetItemPyData(key)
 
             # No info.
-            if info == None:
+            if info == None or 'id' not in info:
                 continue
 
             # Get the spin.
