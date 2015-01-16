@@ -119,7 +119,7 @@ def back_calc_r2eff(spins=None, spin_ids=None, cpmg_frqs=None, spin_lock_offset=
     @type spin_lock_nu1:        list of lists of numpy rank-1 float arrays
     @keyword relax_times_new:   The interpolated experiment specific fixed time period for relaxation (in seconds).  The dimensions are {Ei, Mi, Oi, Di, Ti}.
     @type relax_times_new:      rank-4 list of floats
-    @keyword store_chi2:        A flag which if True will cause the spin specific chi-squared value to be stored in the spin container.
+    @keyword store_chi2:        A flag which if True will cause the spin specific chi-squared value to be stored in the spin container together with the sum of squares of the residuals and the standard deviation of the sum of squares of the residuals.
     @type store_chi2:           bool
     @return:                    The back-calculated R2eff/R1rho value for the given spin.
     @rtype:                     numpy rank-1 float array
@@ -215,10 +215,15 @@ def back_calc_r2eff(spins=None, spin_ids=None, cpmg_frqs=None, spin_lock_offset=
     # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
     chi2 = model.func(param_vector)
 
-    # Store the chi-squared value.
+    # Get the sum of squares 'sos' of the residuals between the fitted values and the measured values. Get the std deviation of these, std_sos.
+    sos, sos_std = model.get_sum_of_squares()
+
+    # Store the chi-squared value, sums of squares of residual and the standard deviation of sums of squares of residual.
     if store_chi2:
         for spin in spins:
             spin.chi2 = chi2
+            spin.sos = sos
+            spin.sos_std = sos_std
 
     # Return the structure.
     return model.get_back_calc()
