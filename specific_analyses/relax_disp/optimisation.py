@@ -637,6 +637,9 @@ class Disp_minimise_command(Slave_command):
             g_count = 0.0
             h_count = 0.0
 
+            # Get the sum of squares of the residuals and the standard deviation of this.
+            sos, sos_std = model.get_sum_of_squares()
+
         # Minimisation.
         else:
             results = generic_minimise(func=model.func, args=(), x0=self.param_vector, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.max_iterations, A=self.A, b=self.b, full_output=True, print_flag=self.verbosity)
