@@ -342,11 +342,15 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
                 spin_to.pcs_err[align_id] = spin_from.pcs_err[align_id]
 
 
-def corr_plot(format=None, file=None, dir=None, force=False):
+def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force=False):
     """Generate a correlation plot of the measured vs. back-calculated PCSs.
 
     @keyword format:    The format for the plot file.  The following values are accepted: 'grace', a Grace plot; None, a plain text file.
     @type format:       str or None
+    @keyword title:     The title for the plot, overriding the default.
+    @type title:        None or str
+    @keyword subtitle:  The subtitle for the plot, overriding the default.
+    @type subtitle:     None or str
     @keyword file:      The file name or object to write to.
     @type file:         str or file object
     @keyword dir:       The name of the directory to place the file into (defaults to the current directory).
@@ -368,6 +372,10 @@ def corr_plot(format=None, file=None, dir=None, force=False):
 
     # Init.
     data = []
+    orig_title = title
+    if orig_title == None:
+        title = "PCS correlation plot"
+    axis_labels = ["Back-calculated PCS (ppm)", "Measured PCS (ppm)"]
 
     # The diagonal.
     data.append([[-100, -100, 0], [100, 100, 0]])
@@ -445,10 +453,10 @@ def corr_plot(format=None, file=None, dir=None, force=False):
                 set_names.append("%s (%s)" % (cdp.pcs_ids[i], types[j]))
 
         # The header.
-        grace.write_xy_header(file=file, title="PCS correlation plot", data_type=['pcs_bc', 'pcs'], sets=[size], set_names=[set_names], linestyle=[[2]+[0]*size], legend_pos=[[1, 0.5]])
+        grace.write_xy_header(file=file, title=title, subtitle=subtitle, world=[[-10, -10, 10, 10]], sets=[size], set_names=[set_names], linestyle=[[2]+[0]*size], data_type=['pcs_bc', 'pcs'], axis_labels=[axis_labels], tick_major_spacing=[[1, 1]], tick_minor_count=[[9, 9]], legend_pos=[[1, 0.5]])
 
         # The main data.
-        grace.write_xy_data(data=data, file=file, graph_type=graph_type)
+        grace.write_xy_data(data=data, file=file, graph_type=graph_type, autoscale=False)
 
 
 def delete(align_id=None):
