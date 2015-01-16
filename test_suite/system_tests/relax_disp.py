@@ -8534,13 +8534,35 @@ class Relax_disp(SystemTestCase):
         file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'error_testing'+sep+'task_7882'
         self.interpreter.results.read(file_name)
 
+        # Get the spins, which was used for clustering.
+        spins_cluster = cdp.clustering['sel']
+        spins_free = cdp.clustering['free spins']
+
         # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and its standard deviation is stored.
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=10, verbosity=0)
+
+        # For sanity check, calculate degree of freedom.
+        cur_spin_id = spins_cluster[0]
+        cur_spin = return_spin(cur_spin_id)
+
+        # Calculate total number of datapoins.
+        N = len(spins_cluster)
+        N_dp = N * len(cur_spin.r2eff)
+
+        # Calculate number of paramaters. For CR72, there is R2 per spectrometer field, individual dw, and shared kex and pA.
+        N_par = cdp.spectrometer_frq_count * N + N + 1 + 1
+        dof = N_dp - N_par
 
         # Make sure they are stored for all spins.
         for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
             self.assert_(hasattr(spin, 'sos'))
             self.assert_(hasattr(spin, 'sos_std'))
+
+            # Calculate degree of freedoms.
+            dof_spin = int(round(spin.sos / spin.sos_std**2))
+
+            # Assert that this is the same.
+            self.assertEqual(dof, dof_spin)
 
         # Then check the results are stored after a call to grid search function.
         # First reset.
@@ -8561,6 +8583,12 @@ class Relax_disp(SystemTestCase):
             self.assert_(hasattr(spin, 'sos'))
             self.assert_(hasattr(spin, 'sos_std'))
 
+            # Calculate degree of freedoms.
+            dof_spin = int(round(spin.sos / spin.sos_std**2))
+
+            # Assert that this is the same.
+            self.assertEqual(dof, dof_spin)
+
         # Then check the results are stored after a call to calculate function.
         # First reset.
         self.interpreter.reset()
@@ -8580,9 +8608,11 @@ class Relax_disp(SystemTestCase):
             self.assert_(hasattr(spin, 'sos'))
             self.assert_(hasattr(spin, 'sos_std'))
 
-        # Get the spins, which was used for clustering.
-        spins_cluster = cdp.clustering['sel']
-        spins_free = cdp.clustering['free spins']
+            # Calculate degree of freedoms.
+            dof_spin = int(round(spin.sos / spin.sos_std**2))
+
+            # Assert that this is the same.
+            self.assertEqual(dof, dof_spin)
 
 
     def test_tp02_data_to_tp02(self):
