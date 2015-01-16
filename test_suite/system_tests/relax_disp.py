@@ -8538,6 +8538,14 @@ class Relax_disp(SystemTestCase):
         spins_cluster = cdp.clustering['sel']
         spins_free = cdp.clustering['free spins']
 
+        # Make 3 copies of the pipe.
+        self.interpreter.pipe.copy(pipe_from='relax_disp', pipe_to='relax_disp_min')
+        self.interpreter.pipe.copy(pipe_from='relax_disp', pipe_to='relax_disp_grid')
+        self.interpreter.pipe.copy(pipe_from='relax_disp', pipe_to='relax_disp_calc')
+
+        # Switch pipe.
+        self.interpreter.pipe.switch(pipe_name='relax_disp_min')
+
         # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and its standard deviation is stored.
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=10, verbosity=0)
 
@@ -8564,16 +8572,8 @@ class Relax_disp(SystemTestCase):
             # Assert that this is the same.
             self.assertEqual(dof, dof_spin)
 
-        # Then check the results are stored after a call to grid search function.
-        # First reset.
-        self.interpreter.reset()
-
-        # Run the setup function to create pipe.
-        self.setUp()
-        
-        # Load the results file from a clustered minimisation.
-        file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'error_testing'+sep+'task_7882'
-        self.interpreter.results.read(file_name)
+        # Switch pipe.
+        self.interpreter.pipe.switch(pipe_name='relax_disp_grid')
 
         # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and its standard deviation is stored.
         self.interpreter.minimise.grid_search(lower=None, upper=None, inc=3, constraints=True, verbosity=0)
@@ -8589,16 +8589,8 @@ class Relax_disp(SystemTestCase):
             # Assert that this is the same.
             self.assertEqual(dof, dof_spin)
 
-        # Then check the results are stored after a call to calculate function.
-        # First reset.
-        self.interpreter.reset()
-
-        # Run the setup function to create pipe.
-        self.setUp()
-        
-        # Load the results file from a clustered minimisation.
-        file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'error_testing'+sep+'task_7882'
-        self.interpreter.results.read(file_name)
+        # Switch pipe.
+        self.interpreter.pipe.switch(pipe_name='relax_disp_calc')
 
         # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and its standard deviation is stored.
         self.interpreter.minimise.calculate(verbosity=1)
@@ -8613,6 +8605,26 @@ class Relax_disp(SystemTestCase):
 
             # Assert that this is the same.
             self.assertEqual(dof, dof_spin)
+
+        # De-select all spins, and select first spin of cluster.
+        self.interpreter.deselect.all()
+
+        # Select initial spin from cluster.
+        self.interpreter.select.spin(spins_cluster[0])
+
+        # Number of MC
+        mc_nr = 10
+
+        # Setup MC.
+        self.interpreter.monte_carlo.setup(number=mc_nr)
+
+        # Create data.
+        self.interpreter.monte_carlo.create_data(method="sum_squares")
+
+        # Loop over spins
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            # Test the number of simulations fits.
+            self.assertEqual(len(spin.r2eff_sim), mc_nr)
 
 
     def test_tp02_data_to_tp02(self):
