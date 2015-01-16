@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import pi, sqrt
+from math import ceil, floor, pi, sqrt
 from numpy import array, int32, float64, ones, transpose, zeros
 from numpy.linalg import norm
 import sys
@@ -416,6 +416,8 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
     data.append([[-100, -100, 0], [100, 100, 0]])
 
     # Loop over the RDC data.
+    min_rdc = 1e100
+    max_rdc = -1e100
     for align_id in cdp.rdc_ids:
         # Append a new list for this alignment.
         data.append([])
@@ -432,6 +434,8 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
         for interatom in interatomic_loop():
             # Skip if data is missing.
             if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'rdc_bc') or not align_id in interatom.rdc or not align_id in interatom.rdc_bc:
+                continue
+            if interatom.rdc[align_id] == None or interatom.rdc_bc[align_id] == None:
                 continue
 
             # Convert between the 2D and D notation.
@@ -454,6 +458,18 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
             # Append the data.
             data[-1].append([rdc_bc, rdc])
 
+            # The minimum of all data sets.
+            if rdc < min_rdc:
+                min_rdc = rdc
+            if rdc_bc < min_rdc:
+                min_rdc = rdc_bc
+
+            # The maximum of all data sets.
+            if rdc > max_rdc:
+                max_rdc = rdc
+            if rdc_bc > max_rdc:
+                max_rdc = rdc_bc
+
             # Errors.
             if err_flag:
                 if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err:
@@ -467,6 +483,10 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
     # The data size.
     size = len(data)
 
+    # Round the data limits.
+    max_rdc = ceil(max_rdc)
+    min_rdc = floor(min_rdc)
+
     # Only one data set.
     data = [data]
 
@@ -479,7 +499,7 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
     # Grace file.
     if format == 'grace':
         # The header.
-        grace.write_xy_header(file=file, title=title, subtitle=subtitle, world=[[-50, -50, 50, 50]], sets=[size], set_names=[[None]+cdp.rdc_ids], linestyle=[[2]+[0]*size], data_type=['rdc', 'rdc_bc'], axis_labels=[axis_labels], tick_major_spacing=[[10, 10]], tick_minor_count=[[9, 9]], legend_pos=[[1, 0.5]])
+        grace.write_xy_header(file=file, title=title, subtitle=subtitle, world=[[min_rdc, min_rdc, max_rdc, max_rdc]], sets=[size], set_names=[[None]+cdp.rdc_ids], linestyle=[[2]+[0]*size], data_type=['rdc', 'rdc_bc'], axis_labels=[axis_labels], tick_major_spacing=[[10, 10]], tick_minor_count=[[9, 9]], legend_pos=[[1, 0.5]])
 
         # The main data.
         grace.write_xy_data(data=data, file=file, graph_type=graph_type, autoscale=False)
