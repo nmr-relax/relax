@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import pi, sqrt
+from math import ceil, floor, pi, sqrt
 from numpy import array, float64, int32, ones, std, zeros
 from numpy.linalg import norm
 from random import gauss
@@ -39,8 +39,9 @@ from lib.io import open_write_file
 from lib.periodic_table import periodic_table
 from lib.physical_constants import pcs_constant
 from lib.sequence import read_spin_data, write_spin_data
+from lib.software import grace
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
-from pipe_control import grace, pipes
+from pipe_control import pipes
 from pipe_control.align_tensor import get_tensor_index, get_tensor_object, opt_uses_align_data, opt_uses_tensor
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, is_pseudoatom, return_spin, spin_index_loop, spin_loop
 from pipe_control.pipes import check_pipe
@@ -387,6 +388,8 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
             types.append(spin.element)
 
     # Loop over the PCS data.
+    min_pcs = 1e100
+    max_pcs = -1e100
     for align_id in cdp.pcs_ids:
         # Loop over the spin types.
         for i in range(len(types)):
@@ -418,9 +421,23 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
                 # Skip if data is missing.
                 if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or not align_id in spin.pcs or not align_id in spin.pcs_bc:
                     continue
+                if spin.pcs[align_id] == None or spin.pcs_bc[align_id] == None:
+                    continue
 
                 # Append the data.
                 data[-1].append([spin.pcs_bc[align_id], spin.pcs[align_id]])
+
+                # The minimum of all data sets.
+                if spin.pcs[align_id] < min_pcs:
+                    min_pcs = spin.pcs[align_id]
+                if spin.pcs_bc[align_id] < min_pcs:
+                    min_pcs = spin.pcs_bc[align_id]
+
+                # The maximum of all data sets.
+                if spin.pcs[align_id] > max_pcs:
+                    max_pcs = spin.pcs[align_id]
+                if spin.pcs_bc[align_id] > max_pcs:
+                    max_pcs = spin.pcs_bc[align_id]
 
                 # Errors.
                 if err_flag:
@@ -434,6 +451,10 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
 
     # The data size.
     size = len(data)
+
+    # Round the data limits.
+    max_pcs = ceil(max_pcs)
+    min_pcs = floor(min_pcs)
 
     # Only one data set.
     data = [data]
@@ -453,7 +474,7 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
                 set_names.append("%s (%s)" % (cdp.pcs_ids[i], types[j]))
 
         # The header.
-        grace.write_xy_header(file=file, title=title, subtitle=subtitle, world=[[-10, -10, 10, 10]], sets=[size], set_names=[set_names], linestyle=[[2]+[0]*size], data_type=['pcs_bc', 'pcs'], axis_labels=[axis_labels], tick_major_spacing=[[1, 1]], tick_minor_count=[[9, 9]], legend_pos=[[1, 0.5]])
+        grace.write_xy_header(file=file, title=title, subtitle=subtitle, world=[[min_pcs, min_pcs, max_pcs, max_pcs]], sets=[size], set_names=[set_names], linestyle=[[2]+[0]*size], data_type=['pcs_bc', 'pcs'], axis_labels=[axis_labels], tick_major_spacing=[[1, 1]], tick_minor_count=[[9, 9]], legend_pos=[[1, 0.5]])
 
         # The main data.
         grace.write_xy_data(data=data, file=file, graph_type=graph_type, autoscale=False)
