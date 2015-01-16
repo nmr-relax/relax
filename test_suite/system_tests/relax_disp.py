@@ -8525,6 +8525,47 @@ class Relax_disp(SystemTestCase):
             spin_index += 1
 
 
+    def test_task_7882_monte_carlo_std_residual(self):
+        """Implementation of Task #7882 U{https://gna.org/task/?7882}: Implement Monte-Carlo simulation, where errors are generated with width of standard deviation or residuals"""
+
+        # First check that results are stored with minimisation, to make sure that Sum of Squares are stored (Chi2 without weighting) and degrees of freedom (dof) is stored.
+
+        # Load the results file from a clustered minimisation.
+        file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'error_testing'+sep+'task_7882'
+        self.interpreter.results.read(file_name)
+
+        # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and standard deviation is stored.
+        self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=10, verbosity=0)
+
+        # Make sure they are stored for all spins.
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            self.assert_(hasattr(spin, 'sos'))
+            self.assert_(hasattr(spin, 'sos_std'))
+
+        # Then check the results are stored after a call to calculate function.
+        # First reset.
+        self.interpreter.reset()
+
+        # Run the setup function to create pipe.
+        self.setUp()
+        
+        # Load the results file from a clustered minimisation.
+        file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'error_testing'+sep+'task_7882'
+        self.interpreter.results.read(file_name)
+
+        # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and standard deviation (dof) is stored.
+        self.interpreter.minimise.calculate(verbosity=1)
+
+        # Make sure they are stored for all spins.
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            self.assert_(hasattr(spin, 'sos'))
+            self.assert_(hasattr(spin, 'sos_std'))
+
+        # Get the spins, which was used for clustering.
+        spins_cluster = cdp.clustering['sel']
+        spins_free = cdp.clustering['free spins']
+
+
     def test_tp02_data_to_tp02(self):
         """Test the relaxation dispersion 'TP02' model curve fitting to fixed time synthetic data."""
 
