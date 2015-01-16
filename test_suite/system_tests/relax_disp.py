@@ -8534,8 +8534,27 @@ class Relax_disp(SystemTestCase):
         file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'error_testing'+sep+'task_7882'
         self.interpreter.results.read(file_name)
 
-        # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and standard deviation is stored.
+        # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and its standard deviation is stored.
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=10, verbosity=0)
+
+        # Make sure they are stored for all spins.
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            self.assert_(hasattr(spin, 'sos'))
+            self.assert_(hasattr(spin, 'sos_std'))
+
+        # Then check the results are stored after a call to grid search function.
+        # First reset.
+        self.interpreter.reset()
+
+        # Run the setup function to create pipe.
+        self.setUp()
+        
+        # Load the results file from a clustered minimisation.
+        file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'error_testing'+sep+'task_7882'
+        self.interpreter.results.read(file_name)
+
+        # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and its standard deviation is stored.
+        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=3, constraints=True, verbosity=0)
 
         # Make sure they are stored for all spins.
         for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
@@ -8553,7 +8572,7 @@ class Relax_disp(SystemTestCase):
         file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'error_testing'+sep+'task_7882'
         self.interpreter.results.read(file_name)
 
-        # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and standard deviation (dof) is stored.
+        # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and its standard deviation is stored.
         self.interpreter.minimise.calculate(verbosity=1)
 
         # Make sure they are stored for all spins.
