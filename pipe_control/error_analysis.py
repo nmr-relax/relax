@@ -72,11 +72,13 @@ def covariance_matrix(epsrel=0.0, verbosity=2):
             index = index + 1
 
 
-def monte_carlo_create_data(method=None):
+def monte_carlo_create_data(method=None, distribution=None):
     """Function for creating simulation data.
 
-    @keyword method:    The type of Monte Carlo simulation to perform.
-    @type method:       str
+    @keyword method:        The type of Monte Carlo simulation to perform.
+    @type method:           str
+    @keyword distribution:  Which gauss distribution to draw errors from.
+    @type distribution:     str
     """
 
     # Test if the current data pipe exists.
@@ -107,6 +109,10 @@ def monte_carlo_create_data(method=None):
         # No data, so skip.
         if data == None:
             continue
+
+        # Possible get the errors from reduced chi2 distribution.
+        if distribution == 'red_chi2':
+            error_red_chi2 = api.return_error_red_chi2(data_index)
 
         # Get the errors.
         error = api.return_error(data_index)
@@ -140,8 +146,21 @@ def monte_carlo_create_data(method=None):
                         random[j][id] = None
                         continue
 
-                    # Gaussian randomisation.
-                    random[j][id] = gauss(data[id], error[id])
+                    # If errors are drawn from the reduced chi2 distribution.
+                    if distribution == 'red_chi2':
+                        # Gaussian randomisation, centered at 0, with width of reduced chi2 distribution.
+                        g_error = gauss(0.0, error_red_chi2[id])
+
+                        # We need to scale the gauss error, before adding to datapoint.
+                        new_point = data[id] + g_error * error[id]
+
+                    # If errors are drawn from measured values.
+                    else:
+                        # Gaussian randomisation, centered at data point, with width of measured error.
+                        new_point = gauss(data[id], error[id])
+
+                    # Assign datapoint the new value.
+                    random[j][id] = new_point
 
         # Pack the simulation data.
         api.sim_pack_data(data_index, random)
