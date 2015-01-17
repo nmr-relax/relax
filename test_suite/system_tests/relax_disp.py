@@ -8534,65 +8534,26 @@ class Relax_disp(SystemTestCase):
         file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'error_testing'+sep+'task_7882'
         self.interpreter.results.read(file_name)
 
-        # Get the spins, which was used for clustering.
-        spins_cluster = cdp.clustering['sel']
-        spins_free = cdp.clustering['free spins']
-
-        # Make 3 copies of the pipe.
-        self.interpreter.pipe.copy(pipe_from='relax_disp', pipe_to='relax_disp_min')
-        self.interpreter.pipe.copy(pipe_from='relax_disp', pipe_to='relax_disp_grid')
-        self.interpreter.pipe.copy(pipe_from='relax_disp', pipe_to='relax_disp_calc')
-
-        # Switch pipe.
-        self.interpreter.pipe.switch(pipe_name='relax_disp_min')
-
-        # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and its standard deviation is stored.
+        # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and standard deviation is stored.
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=10, verbosity=0)
 
-        # For sanity check, calculate degree of freedom.
-        cur_spin_id = spins_cluster[0]
-        cur_spin = return_spin(cur_spin_id)
-
-        # Calculate total number of datapoins.
-        N = len(spins_cluster)
-        N_dp = N * len(cur_spin.r2eff)
-
-        # Calculate number of paramaters. For CR72, there is R2 per spectrometer field, individual dw, and shared kex and pA.
-        N_par = cdp.spectrometer_frq_count * N + N + 1 + 1
-        dof = N_dp - N_par
-
         # Make sure they are stored for all spins.
         for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
             self.assert_(hasattr(spin, 'sos'))
             self.assert_(hasattr(spin, 'sos_std'))
 
-            # Calculate degree of freedoms.
-            dof_spin = int(round(spin.sos / spin.sos_std**2))
+        # Then check the results are stored after a call to calculate function.
+        # First reset.
+        self.interpreter.reset()
 
-            # Assert that this is the same.
-            self.assertEqual(dof, dof_spin)
+        # Run the setup function to create pipe.
+        self.setUp()
+        
+        # Load the results file from a clustered minimisation.
+        file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'error_testing'+sep+'task_7882'
+        self.interpreter.results.read(file_name)
 
-        # Switch pipe.
-        self.interpreter.pipe.switch(pipe_name='relax_disp_grid')
-
-        # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and its standard deviation is stored.
-        self.interpreter.minimise.grid_search(lower=None, upper=None, inc=3, constraints=True, verbosity=0)
-
-        # Make sure they are stored for all spins.
-        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-            self.assert_(hasattr(spin, 'sos'))
-            self.assert_(hasattr(spin, 'sos_std'))
-
-            # Calculate degree of freedoms.
-            dof_spin = int(round(spin.sos / spin.sos_std**2))
-
-            # Assert that this is the same.
-            self.assertEqual(dof, dof_spin)
-
-        # Switch pipe.
-        self.interpreter.pipe.switch(pipe_name='relax_disp_calc')
-
-        # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and its standard deviation is stored.
+        # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and standard deviation (dof) is stored.
         self.interpreter.minimise.calculate(verbosity=1)
 
         # Make sure they are stored for all spins.
@@ -8600,31 +8561,9 @@ class Relax_disp(SystemTestCase):
             self.assert_(hasattr(spin, 'sos'))
             self.assert_(hasattr(spin, 'sos_std'))
 
-            # Calculate degree of freedoms.
-            dof_spin = int(round(spin.sos / spin.sos_std**2))
-
-            # Assert that this is the same.
-            self.assertEqual(dof, dof_spin)
-
-        # De-select all spins, and select first spin of cluster.
-        self.interpreter.deselect.all()
-
-        # Select initial spin from cluster.
-        self.interpreter.select.spin(spins_cluster[0])
-
-        # Number of MC
-        mc_nr = 10
-
-        # Setup MC.
-        self.interpreter.monte_carlo.setup(number=mc_nr)
-
-        # Create data.
-        self.interpreter.monte_carlo.create_data(method="sum_squares")
-
-        # Loop over spins
-        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-            # Test the number of simulations fits.
-            self.assertEqual(len(spin.r2eff_sim), mc_nr)
+        # Get the spins, which was used for clustering.
+        spins_cluster = cdp.clustering['sel']
+        spins_free = cdp.clustering['free spins']
 
 
     def test_tp02_data_to_tp02(self):

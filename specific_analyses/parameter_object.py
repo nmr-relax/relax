@@ -574,26 +574,6 @@ class Param_list(object):
                 sim = True
             )
             self._add(
-                'sos',
-                scope = scope,
-                desc = 'Sums of squared residuals',
-                py_type = float,
-                set = 'min',
-                grace_string = '\\xS\\f{}(y\\si\\N-f(x\\si\\N))\\S2',
-                err = False,
-                sim = True
-            )
-            self._add(
-                'sos_std',
-                scope = scope,
-                desc = 'Standard deviation of sums of squared residuals',
-                py_type = float,
-                set = 'min',
-                grace_string = '\\xs\\f{} sums of squared residuals',
-                err = False,
-                sim = True
-            )
-            self._add(
                 'iter',
                 scope = scope,
                 desc = 'Optimisation iterations',

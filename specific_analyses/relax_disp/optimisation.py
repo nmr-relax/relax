@@ -119,7 +119,7 @@ def back_calc_r2eff(spins=None, spin_ids=None, cpmg_frqs=None, spin_lock_offset=
     @type spin_lock_nu1:        list of lists of numpy rank-1 float arrays
     @keyword relax_times_new:   The interpolated experiment specific fixed time period for relaxation (in seconds).  The dimensions are {Ei, Mi, Oi, Di, Ti}.
     @type relax_times_new:      rank-4 list of floats
-    @keyword store_chi2:        A flag which if True will cause the spin specific chi-squared value to be stored in the spin container together with the sum of squares of the residuals and the standard deviation of the sum of squares of the residuals.
+    @keyword store_chi2:        A flag which if True will cause the spin specific chi-squared value to be stored in the spin container.
     @type store_chi2:           bool
     @return:                    The back-calculated R2eff/R1rho value for the given spin.
     @rtype:                     numpy rank-1 float array
@@ -215,15 +215,10 @@ def back_calc_r2eff(spins=None, spin_ids=None, cpmg_frqs=None, spin_lock_offset=
     # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
     chi2 = model.func(param_vector)
 
-    # Get the sum of squares 'sos' of the residuals between the fitted values and the measured values. Get the std deviation of these, std_sos.
-    sos, sos_std = model.get_sum_of_squares()
-
-    # Store the chi-squared value, sums of squares of residual and the standard deviation of sums of squares of residual.
+    # Store the chi-squared value.
     if store_chi2:
         for spin in spins:
             spin.chi2 = chi2
-            spin.sos = sos
-            spin.sos_std = sos_std
 
     # Return the structure.
     return model.get_back_calc()
@@ -637,9 +632,6 @@ class Disp_minimise_command(Slave_command):
             g_count = 0.0
             h_count = 0.0
 
-            # Get the sum of squares of the residuals and the standard deviation of this.
-            sos, sos_std = model.get_sum_of_squares()
-
         # Minimisation.
         else:
             results = generic_minimise(func=model.func, args=(), x0=self.param_vector, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.max_iterations, A=self.A, b=self.b, full_output=True, print_flag=self.verbosity)
@@ -649,9 +641,6 @@ class Disp_minimise_command(Slave_command):
                 return
             param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
 
-            # Get the sum of squares of the residuals and the standard deviation of this.
-            sos, sos_std = model.get_sum_of_squares()
-
         # Optimisation printout.
         if self.verbosity:
             print("\nOptimised parameter values:")
@@ -659,7 +648,7 @@ class Disp_minimise_command(Slave_command):
                 print("%-20s %25.15f" % (self.param_names[i], param_vector[i]*self.scaling_matrix[i, i]))
 
         # Create the result command object to send back to the master.
-        processor.return_object(Disp_result_command(processor=processor, memo_id=self.memo_id, param_vector=param_vector, chi2=chi2, sos=sos, sos_std=sos_std, iter_count=iter_count, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning, missing=self.missing, back_calc=model.get_back_calc(), completed=False))
+        processor.return_object(Disp_result_command(processor=processor, memo_id=self.memo_id, param_vector=param_vector, chi2=chi2, iter_count=iter_count, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning, missing=self.missing, back_calc=model.get_back_calc(), completed=False))
 
 
 
@@ -669,7 +658,7 @@ class Disp_result_command(Result_command):
     This object will be sent from the slave back to the master to have its run() method executed.
     """
 
-    def __init__(self, processor=None, memo_id=None, param_vector=None, chi2=None, sos=None, sos_std=None, iter_count=None, f_count=None, g_count=None, h_count=None, warning=None, missing=None, back_calc=None, completed=True):
+    def __init__(self, processor=None, memo_id=None, param_vector=None, chi2=None, iter_count=None, f_count=None, g_count=None, h_count=None, warning=None, missing=None, back_calc=None, completed=True):
         """Set up this class object on the slave, placing the minimisation results here.
 
         @keyword processor:     The processor object.
@@ -680,10 +669,6 @@ class Disp_result_command(Result_command):
         @type param_vector:     numpy rank-1 array
         @keyword chi2:          The final target function value.
         @type chi2:             float
-        @keyword sos:           The sums of squares of residuals between measured values and fitted values.
-        @type sos:              float
-        @keyword sos_std:       The standard deviation of sums of squares of residuals between measured values and fitted values.
-        @type sos_std:          float
         @keyword iter_count:    The number of optimisation iterations.
         @type iter_count:       int
         @keyword f_count:       The total function call count.
@@ -709,8 +694,6 @@ class Disp_result_command(Result_command):
         self.memo_id = memo_id
         self.param_vector = param_vector
         self.chi2 = chi2
-        self.sos = sos
-        self.sos_std = sos_std
         self.iter_count = iter_count
         self.f_count = f_count
         self.g_count = g_count
@@ -752,12 +735,6 @@ class Disp_result_command(Result_command):
                 # Chi-squared statistic.
                 spin.chi2_sim[memo.sim_index] = self.chi2
 
-                # Sums of squares of residuals.
-                spin.sos_sim[memo.sim_index] = self.sos
-
-                # Standard deviation of sums of squares of residuals.
-                spin.sos_std_sim[memo.sim_index] = self.sos_std
-
                 # Iterations.
                 spin.iter_sim[memo.sim_index] = self.iter_count
 
@@ -782,12 +759,6 @@ class Disp_result_command(Result_command):
 
                 # Chi-squared statistic.
                 spin.chi2 = self.chi2
-
-                # Sums of squares of residuals.
-                spin.sos = self.sos
-
-                # Standard deviation of sums of squares of residuals.
-                spin.sos_std = self.sos_std
 
                 # Iterations.
                 spin.iter = self.iter_count

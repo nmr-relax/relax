@@ -87,7 +87,7 @@ def monte_carlo_create_data(method=None):
         raise RelaxError("Monte Carlo simulations have not been set up.")
 
     # Test the method argument.
-    valid_methods = ['back_calc', 'direct', 'sum_squares']
+    valid_methods = ['back_calc', 'direct']
     if method not in valid_methods:
         raise RelaxError("The simulation creation method " + repr(method) + " is not valid.")
 
@@ -97,7 +97,7 @@ def monte_carlo_create_data(method=None):
     # Loop over the models.
     for data_index in api.base_data_loop():
         # Create the Monte Carlo data.
-        if method == 'back_calc' or method == 'sum_squares':
+        if method == 'back_calc':
             data = api.create_mc_data(data_index)
 
         # Get the original data.
@@ -109,12 +109,7 @@ def monte_carlo_create_data(method=None):
             continue
 
         # Get the errors.
-        # If the distribution to which to draw the errors from, should come from the standard deviation from the sum of squares of residuals from the minimisation.
-        if method == 'sum_squares':
-            error = api.return_error_sum_squares(data_index)
-
-        else:
-            error = api.return_error(data_index)
+        error = api.return_error(data_index)
 
         # List type data.
         if isinstance(data, list) or isinstance(data, ndarray):

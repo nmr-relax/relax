@@ -26,7 +26,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import all, arctan2, cos, dot, float64, int16, isfinite, max, multiply, ones, rollaxis, pi, sin, sqrt, sum, version, zeros
+from numpy import all, arctan2, cos, dot, float64, int16, isfinite, max, multiply, ones, rollaxis, pi, sin, sum, version, zeros
 from numpy.ma import masked_equal
 
 # relax module imports.
@@ -2192,27 +2192,4 @@ class Dispersion:
                         back_calc_return[ei][si][mi][oi][:] = self.back_calc[ei, si, mi, oi, :num]
 
         return back_calc_return
-
-
-    def get_sum_of_squares(self):
-        """Class function to return sum of squares, the sum of residuals between fitted values and measured values.  This is not taking weights into account.  Also return the standard deviation of these values.
-
-        @return:        sum of squares of residual, standard deviation of sum of squares.
-        @rtype:         float, float
-        """
-
-        # Get the measured values, and the fitted values.
-        measured = self.values
-        fitted = self.back_calc
-
-        # Calculate the sum of squares between fitted and measured values.
-        sos = sum((measured-fitted)**2)
-
-        # Calculate the degrees of freedom
-        dof = sum(self.disp_struct) - self.num_params
-
-        # Calculate the standard deviation of the sum of squares.
-        std_sos = sqrt(sos / dof)
-
-        return sos, std_sos
 

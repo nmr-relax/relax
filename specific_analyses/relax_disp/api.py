@@ -1037,31 +1037,6 @@ class Relax_disp(API_base, API_common):
         return errors
 
 
-    def return_error_sum_squares(self, data_id=None):
-        """Return the sum of squares standard deviation data structure.
-
-        @param data_id: The tuple of the spin container and the exponential curve identifying key, as yielded by the base_data_loop() generator method.
-        @type data_id:  SpinContainer instance and float
-        @return:        The sum of squares standard deviation data structure.
-        @rtype:         list of float
-        """
-
-        # Use same method as return_error() function.
-        errors = self.return_error(data_id=data_id)
-
-        # Replace if not the R2eff model.
-        if cdp.model_type != MODEL_R2EFF:
-            # Unpack the data.
-            spin, spin_id = data_id
-
-            # Replace values with the stored value.
-            for id in errors:
-                errors[id] = spin.sos_std
-
-        # Return the error list or dictionary.
-        return errors
-
-
     def return_value(self, spin, param, sim=None, bc=False):
         """Return the value and error corresponding to the parameter.
 
