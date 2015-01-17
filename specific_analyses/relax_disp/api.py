@@ -27,7 +27,7 @@
 # Python module imports.
 import bmrblib
 from copy import deepcopy
-from numpy import int32, zeros
+from numpy import int32, sqrt, zeros
 from re import match, search
 import string
 import sys
@@ -1035,6 +1035,44 @@ class Relax_disp(API_base, API_common):
 
         # Return the error list.
         return errors
+
+
+    def return_error_red_chi2(self, data_id=None):
+        """Return the standard deviation data structure, where standard deviation is from the overall gauss distribution described by the STD_fit of the goodness of fit, where STD_fit = sqrt(chi2/(N-p))
+
+        @param data_id: The tuple of the spin container and the exponential curve identifying key, as yielded by the base_data_loop() generator method.
+        @type data_id:  SpinContainer instance and float
+        @return:        The standard deviation data structure.
+        @rtype:         list of float
+        """
+
+        # Get the errors structure as above.
+        errors = self.return_error(data_id=data_id)
+
+        # Unpack the data.
+        spin, spin_id = data_id
+
+        # Loop over the spin groupings for the model.
+        for spin_ids in self.model_loop():
+            # If the spin of interest is in the returned spin cluster.
+            if spin_id in spin_ids:
+                # Get the statistics
+                k, n, chi2 = self.model_statistics(model_info=spin_ids)
+
+                # Calculate degrees of freedom.
+                dof = n - k
+
+                # Calculate reduced chi2, or named as the variance of the squared residuals.
+                red_chi2 = chi2 / float(dof)
+
+                # Calculated the standard deviation.
+                std_red_chi2 = sqrt(red_chi2)
+
+                # Replace values with the stored value.
+                for id in errors:
+                    errors[id] = std_red_chi2
+
+                return errors
 
 
     def return_value(self, spin, param, sim=None, bc=False):
