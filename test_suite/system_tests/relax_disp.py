@@ -8534,36 +8534,33 @@ class Relax_disp(SystemTestCase):
         file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'error_testing'+sep+'task_7882'
         self.interpreter.results.read(file_name)
 
-        # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and standard deviation is stored.
-        self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=10, verbosity=0)
-
-        # Make sure they are stored for all spins.
-        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-            self.assert_(hasattr(spin, 'sos'))
-            self.assert_(hasattr(spin, 'sos_std'))
-
-        # Then check the results are stored after a call to calculate function.
-        # First reset.
-        self.interpreter.reset()
-
-        # Run the setup function to create pipe.
-        self.setUp()
-        
-        # Load the results file from a clustered minimisation.
-        file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'error_testing'+sep+'task_7882'
-        self.interpreter.results.read(file_name)
-
-        # Recalc the values at this step, to make sure that Sum of Squares are stored (Chi2 without weighting) and standard deviation (dof) is stored.
-        self.interpreter.minimise.calculate(verbosity=1)
-
-        # Make sure they are stored for all spins.
-        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-            self.assert_(hasattr(spin, 'sos'))
-            self.assert_(hasattr(spin, 'sos_std'))
-
         # Get the spins, which was used for clustering.
         spins_cluster = cdp.clustering['sel']
         spins_free = cdp.clustering['free spins']
+
+        # For sanity check, calculate degree of freedom.
+        cur_spin_id = spins_cluster[0]
+        cur_spin = return_spin(cur_spin_id)
+
+        # Calculate total number of datapoins.
+        N = len(spins_cluster)
+        N_dp = N * len(cur_spin.r2eff)
+
+        # Calculate number of paramaters. For CR72, there is R2 per spectrometer field, individual dw, and shared kex and pA.
+        N_par = cdp.spectrometer_frq_count * N + N + 1 + 1
+        dof = N_dp - N_par
+
+        # Sanity check of parameters.
+        print(N_par, N_dp)
+
+        # Number of MC
+        mc_nr = 3
+
+        # Setup MC.
+        self.interpreter.monte_carlo.setup(number=mc_nr)
+
+        # Create data.
+        self.interpreter.monte_carlo.create_data(distribution="red_chi2")
 
 
     def test_tp02_data_to_tp02(self):
