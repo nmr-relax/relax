@@ -23,7 +23,7 @@
 
 # Python module imports.
 from os import F_OK, access, getcwd, path, sep
-from numpy import array, asarray, exp, median, inf, log, save, std, sum, zeros
+from numpy import array, asarray, exp, median, inf, linspace, log, save, std, sum, zeros
 from minfx.generic import generic_minimise
 from random import gauss
 import re, math
@@ -8561,6 +8561,104 @@ class Relax_disp(SystemTestCase):
 
         # Create data.
         self.interpreter.monte_carlo.create_data(distribution="red_chi2")
+
+
+    def x_test_task_7882_kex_conf(self):
+        """Test related to Task #7882 U{https://gna.org/task/?7882}: Try making a confidence interval of kex.
+        According to the regression book of Graphpad: U{http://www.graphpad.com/faq/file/Prism4RegressionBook.pdf}.
+        Page 109-111.
+        """
+
+        # Load the results file from a clustered minimisation.
+        file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'error_testing'+sep+'task_7882'
+        self.interpreter.results.read(file_name)
+
+        # Get the spins, which was used for clustering.
+        spins_cluster = cdp.clustering['sel']
+        spins_free = cdp.clustering['free spins']
+
+        # For sanity check, calculate degree of freedom.
+        cur_spin_id = spins_cluster[0]
+        cur_spin = return_spin(cur_spin_id)
+
+        # Calculate total number of datapoins.
+        Ns = len(spins_cluster)
+        N_dp = Ns * len(cur_spin.r2eff)
+
+        # Calculate number of paramaters. For CR72, there is R2 per spectrometer field, individual dw, and shared kex and pA.
+        N_par = cdp.spectrometer_frq_count * Ns + Ns + 1 + 1
+        dof_fit = N_dp - N_par
+
+        # Assert values.
+        self.assertEqual(Ns, 61)
+        self.assertEqual(N_dp, 1952)
+        self.assertEqual(N_par, 185)
+
+        # Confidence interval of kex.
+        # The number of parameters to check is kex = 1.
+        P = 1
+        # Number of datapoints
+        N = N_dp
+        # The degrees of freedom for this confidence interval
+        dof_conf = N - P
+
+        # The critical value of the F distribution with p-value of 0.05 for 95% confidence.
+        # Can be calculated with microsoft excel:
+        # F=FINV(0,05; P; dof_conf), F=FINV(0,05; P; dof_conf), F=FINV(0,05; 1; 1951)=3,846229551
+        # Can also be calculated with: import scipy.stats; scipy.stats.f.isf(0.05, 1, 1951)=3.8462295505435562
+        F = 3.8462295505435562
+        # Then calculate the scaling of chi2, which is the weighted sum of squares of best fit.
+        scale = F*P/dof_conf +1
+
+        # Get the sum of best fit.
+        SSbest_fit = cur_spin.chi2
+        SSbest_kex = cur_spin.kex
+
+        # Get the scaled sum of best fit
+        SSall_fixed = SSbest_fit * scale
+
+        print(SSbest_fit, scale, SSall_fixed)
+
+        # Now generate a list of kex values to try.
+        kex_cur = cur_spin.kex
+        kex_list = linspace(kex_cur - 1500, kex_cur + 3000, 1000)
+
+        chi2_list = []
+
+        for kex in kex_list:
+            self.interpreter.value.set(val=kex, param='kex')
+
+            # Calculate the chi2 values.
+            self.interpreter.minimise.calculate(verbosity=0)
+
+            # Get the chi2 value
+            chi2_cur = cur_spin.chi2
+            print("kex=%3.2f, chi2=%3.2f"%(kex, chi2_cur), chi2_cur<SSall_fixed)
+
+            # Add to list
+            chi2_list.append(chi2_cur)
+
+        # Now make to numpy array.
+        chi2_list = asarray(chi2_list)
+
+        # Now make a selection mask based on the criteria.
+        sel_mask = chi2_list < SSall_fixed
+
+        # Select values of kex, and chi2_list
+        kex_sel = kex_list[sel_mask]
+        chi2_sel = chi2_list[sel_mask]
+
+        # Now make plot
+        print(SSbest_kex, SSbest_fit, SSall_fixed)
+        print(kex_sel)
+        print(chi2_sel)
+
+        if False:
+            import matplotlib.pyplot as plt
+
+            plt.plot(kex_sel, chi2_sel)
+            plt.plot(SSbest_kex, SSbest_fit)
+            plt.show()
 
 
     def test_tp02_data_to_tp02(self):
