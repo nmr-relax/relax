@@ -8621,7 +8621,7 @@ class Relax_disp(SystemTestCase):
 
         # Now generate a list of kex values to try.
         kex_cur = cur_spin.kex
-        kex_list = linspace(kex_cur - 1500, kex_cur + 3000, 1000)
+        kex_list = linspace(kex_cur - 1500, kex_cur + 3000, 200)
 
         chi2_list = []
 
@@ -8653,11 +8653,11 @@ class Relax_disp(SystemTestCase):
         print(kex_sel)
         print(chi2_sel)
 
-        if False:
+        if True:
             import matplotlib.pyplot as plt
 
-            plt.plot(kex_sel, chi2_sel)
-            plt.plot(SSbest_kex, SSbest_fit)
+            plt.plot(kex_sel, chi2_sel, "bo")
+            plt.plot(SSbest_kex, SSbest_fit, "g*")
             plt.show()
 
 
