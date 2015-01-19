@@ -1046,6 +1046,10 @@ class Relax_disp(API_base, API_common):
         @rtype:         list of float
         """
 
+        # The R2eff model.
+        if cdp.model_type == MODEL_R2EFF:
+            raise RelaxError("Drawing errors from the gauss distribution described by the STD_fit of the goodness of fit, is not possible for the '%s' model."%MODEL_R2EFF)
+
         # Get the errors structure as above.
         errors = self.return_error(data_id=data_id)
 
