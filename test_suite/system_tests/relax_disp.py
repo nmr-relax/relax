@@ -8562,6 +8562,16 @@ class Relax_disp(SystemTestCase):
         # Create data.
         self.interpreter.monte_carlo.create_data(distribution="red_chi2")
 
+        # Now select the R2eff model, and try again. Expect raising an error.
+        self.interpreter.relax_disp.select_model(MODEL_R2EFF)
+
+        # Setup MC.
+        self.interpreter.monte_carlo.setup(number=mc_nr)
+
+        # Create data, and assert failure.
+        self.assertRaises(RelaxError, self.interpreter.monte_carlo.create_data, distribution="red_chi2")
+        self.assertRaises(RelaxError, self.interpreter.monte_carlo.create_data, method="direct", distribution="red_chi2")
+
 
     def x_test_task_7882_kex_conf(self):
         """Test related to Task #7882 U{https://gna.org/task/?7882}: Try making a confidence interval of kex.
