@@ -169,6 +169,11 @@ def monte_carlo_create_data(method=None, distribution=None, fixed_error=None):
                         # We need to scale the gauss error, before adding to datapoint.
                         new_point = data[id] + g_error * error[id]
 
+                    # If errors are drawn from fixed distribution.
+                    elif distribution == 'fixed':
+                        # Gaussian randomisation, centered at data point, with width of fixed error.
+                        new_point = gauss(data[id], float(fixed_error))
+
                     # If errors are drawn from measured values.
                     else:
                         # Gaussian randomisation, centered at data point, with width of measured error.
