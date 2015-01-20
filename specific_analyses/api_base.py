@@ -596,6 +596,19 @@ class API_base(object):
         raise RelaxImplementError('return_error')
 
 
+    def return_error_red_chi2(self, data_id=None):
+        """Return the error points corresponding to the overall gauss distribution described by the STD_fit of the goodness of fit, where STD_fit = sqrt(chi2/(N-p)).
+
+        @keyword data_id:   The data identification information, as yielded by the base_data_loop() generator method.
+        @type data_id:      anything
+        @return:            The array of data error values.
+        @rtype:             list of float
+        """
+
+        # Not implemented.
+        raise RelaxImplementError('return_error_red_chi2')
+
+
     def return_grace_string(self, param):
         """Return the Grace string representation of the parameter.
 

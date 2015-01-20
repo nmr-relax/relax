@@ -72,11 +72,15 @@ def covariance_matrix(epsrel=0.0, verbosity=2):
             index = index + 1
 
 
-def monte_carlo_create_data(method=None):
+def monte_carlo_create_data(method=None, distribution=None, fixed_error=None):
     """Function for creating simulation data.
 
-    @keyword method:    The type of Monte Carlo simulation to perform.
-    @type method:       str
+    @keyword method:        The type of Monte Carlo simulation to perform.
+    @type method:           str
+    @keyword distribution:  Which gauss distribution to draw errors from. Can be: 'measured', 'red_chi2', 'fixed'.
+    @type distribution:     str
+    @keyword fixed_error:   If distribution is set to 'fixed', use this value as the standard deviation for the gauss distribution.
+    @type fixed_error:      float
     """
 
     # Test if the current data pipe exists.
@@ -90,6 +94,19 @@ def monte_carlo_create_data(method=None):
     valid_methods = ['back_calc', 'direct']
     if method not in valid_methods:
         raise RelaxError("The simulation creation method " + repr(method) + " is not valid.")
+
+    # Test the distribution argument.
+    valid_distributions = ['measured', 'red_chi2', 'fixed']
+    if distribution not in valid_distributions:
+        raise RelaxError("The simulation error distribution method " + repr(distribution) + " is not valid.  Try one of the following: " + repr(valid_distributions))
+
+    # Test the fixed_error argument.
+    if fixed_error != None and distribution != 'fixed':
+        raise RelaxError("The argument 'fixed_error' is set to a value, but the argument 'distribution' is not set to 'fixed'.")
+
+    # Test the distribution argument, equal to 'fixed', but no error is set.
+    if distribution == 'fixed' and fixed_error == None:
+        raise RelaxError("The argument 'distribution' is set to 'fixed', but you have not provided a value to the argument 'fixed_error'.")
 
     # The specific analysis API object.
     api = return_api()
@@ -108,6 +125,10 @@ def monte_carlo_create_data(method=None):
         if data == None:
             continue
 
+        # Possible get the errors from reduced chi2 distribution.
+        if distribution == 'red_chi2':
+            error_red_chi2 = api.return_error_red_chi2(data_index)
+
         # Get the errors.
         error = api.return_error(data_index)
 
@@ -125,7 +146,11 @@ def monte_carlo_create_data(method=None):
                         continue
 
                     # Gaussian randomisation.
-                    random[j].append(gauss(data[k], error[k]))
+                    if distribution == 'fixed':
+                        random[j].append(gauss(data[k], float(fixed_error)))
+
+                    else:
+                        random[j].append(gauss(data[k], error[k]))
 
         # Dictionary type data.
         if isinstance(data, dict):
@@ -140,8 +165,26 @@ def monte_carlo_create_data(method=None):
                         random[j][id] = None
                         continue
 
-                    # Gaussian randomisation.
-                    random[j][id] = gauss(data[id], error[id])
+                    # If errors are drawn from the reduced chi2 distribution.
+                    if distribution == 'red_chi2':
+                        # Gaussian randomisation, centered at 0, with width of reduced chi2 distribution.
+                        g_error = gauss(0.0, error_red_chi2[id])
+
+                        # We need to scale the gauss error, before adding to datapoint.
+                        new_point = data[id] + g_error * error[id]
+
+                    # If errors are drawn from fixed distribution.
+                    elif distribution == 'fixed':
+                        # Gaussian randomisation, centered at data point, with width of fixed error.
+                        new_point = gauss(data[id], float(fixed_error))
+
+                    # If errors are drawn from measured values.
+                    else:
+                        # Gaussian randomisation, centered at data point, with width of measured error.
+                        new_point = gauss(data[id], error[id])
+
+                    # Assign datapoint the new value.
+                    random[j][id] = new_point
 
         # Pack the simulation data.
         api.sim_pack_data(data_index, random)
