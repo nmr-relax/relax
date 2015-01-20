@@ -521,7 +521,13 @@ class Frame_order_analysis:
                 self.interpreter.state.save('final_state', dir=self.results_dir, force=True)
 
             # Count the number of Sobol' points and create a summary file.
-            count_sobol_points(dir=self.results_dir, force=True)
+            count = False
+            for model in self.models:
+                if model != MODEL_RIGID:
+                    count = True
+                    break
+            if count:
+                count_sobol_points(dir=self.results_dir, force=True)
             summarise(dir=self.results_dir, force=True)
 
         # Clean up.
