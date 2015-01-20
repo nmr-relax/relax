@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
 # Copyright (C) 2013-2014 Troels E. Linnet                                    #
 #                                                                             #
@@ -1511,16 +1511,16 @@ class Relax_disp(SystemTestCase):
         self.interpreter.monte_carlo.error_analysis()
 
         # Check values for k_AB.
-        self.assertEqual(resi_0_kAB_std, cdp.mol[0].res[0].spin[0].k_AB_err)
-        self.assertEqual(resi_86_kAB_std, cdp.mol[0].res[1].spin[0].k_AB_err)
+        self.assertAlmostEqual(resi_0_kAB_std, cdp.mol[0].res[0].spin[0].k_AB_err)
+        self.assertAlmostEqual(resi_86_kAB_std, cdp.mol[0].res[1].spin[0].k_AB_err)
 
         # Check values for r2a.
-        self.assertEqual(resi_0_r2a_std, cdp.mol[0].res[0].spin[0].r2a_err[dickey])
-        self.assertEqual(resi_86_r2a_std, cdp.mol[0].res[1].spin[0].r2a_err[dickey])
+        self.assertAlmostEqual(resi_0_r2a_std, cdp.mol[0].res[0].spin[0].r2a_err[dickey])
+        self.assertAlmostEqual(resi_86_r2a_std, cdp.mol[0].res[1].spin[0].r2a_err[dickey])
 
         # Check values for dw.
-        self.assertEqual(resi_0_dw_std, cdp.mol[0].res[0].spin[0].dw_err)
-        self.assertEqual(resi_86_dw_std, cdp.mol[0].res[1].spin[0].dw_err)
+        self.assertAlmostEqual(resi_0_dw_std, cdp.mol[0].res[0].spin[0].dw_err)
+        self.assertAlmostEqual(resi_86_dw_std, cdp.mol[0].res[1].spin[0].dw_err)
 
 
     def test_bug_9999_slow_r1rho_r2eff_error_with_mc(self):
