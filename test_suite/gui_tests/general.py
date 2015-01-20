@@ -72,6 +72,28 @@ class General(GuiTestCase):
         self.assertEqual(cdp_name(), 'mf')
 
 
+    def test_bug_23187_residue_delete_gui(self):
+        """Catch U{bug #23187<https://gna.org/bugs/?23187>}, deleting residue in GUI, and then open spin viewer crashes relax."""
+
+        # Mf tab:  Simulate the new analysis wizard.
+        analysis = self.new_analysis_wizard(analysis_type='mf', analysis_name='Mf test', pipe_name='mf', pipe_bundle='mf bundle')
+
+        self._execute_uf(uf_name='residue.create', res_num=1)
+        self._execute_uf(uf_name='residue.create', res_num=2)
+
+        # Launch the spin viewer window.
+        self.app.gui.show_tree()
+
+        # Close the spin viewer window.
+        self.app.gui.spin_viewer.handler_close()
+
+        # Delete spin,
+        self._execute_uf(uf_name='residue.delete', res_id=":2")
+
+        # Launch the spin viewer window.
+        self.app.gui.show_tree()
+
+
     def test_new_analysis_wizard_memory_leak(self):
         """Test for memory leaks in the new analysis wizard."""
 
