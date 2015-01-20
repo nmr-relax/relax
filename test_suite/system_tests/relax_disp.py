@@ -1494,8 +1494,25 @@ class Relax_disp(SystemTestCase):
         resi_0_dw_std = std(asarray(resi_0_dw), ddof=1)
         resi_86_dw_std = std(asarray(resi_86_dw), ddof=1)
 
+        # Then get for spin independent parameter.
+
+        # First get the array of sim dw.
+        resi_0_kAB = cdp.mol[0].res[0].spin[0].k_AB_sim
+        resi_86_kAB = cdp.mol[0].res[1].spin[0].k_AB_sim
+
+        # Get stats with numpy
+        resi_0_kAB_std = std(asarray(resi_0_kAB), ddof=1)
+        resi_86_kAB_std = std(asarray(resi_0_kAB), ddof=1)
+
+        # Assume they both std of k_AB values are equal
+        self.assertEqual(resi_0_kAB_std, resi_86_kAB_std)
+
         # Perform error analysis.
         self.interpreter.monte_carlo.error_analysis()
+
+        # Check values for k_AB.
+        self.assertEqual(resi_0_kAB_std, cdp.mol[0].res[0].spin[0].k_AB_err)
+        self.assertEqual(resi_86_kAB_std, cdp.mol[0].res[1].spin[0].k_AB_err)
 
         # Check values for r2a.
         self.assertEqual(resi_0_r2a_std, cdp.mol[0].res[0].spin[0].r2a_err[dickey])
