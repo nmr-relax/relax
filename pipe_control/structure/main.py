@@ -21,7 +21,7 @@
 
 # Python module imports.
 from minfx.generic import generic_minimise
-from numpy import array, float64, zeros
+from numpy import array, average, dot, float64, std, zeros
 from numpy.linalg import norm
 from os import F_OK, access, getcwd
 from re import search
@@ -31,7 +31,9 @@ from warnings import warn
 # relax module imports.
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxFileError
+from lib.geometry.vectors import vector_angle_atan2
 from lib.io import get_file_path, open_write_file, write_data
+from lib.plotting.api import correlation_matrix
 from lib.selection import tokenise
 from lib.sequence import write_spin_data
 from lib.structure.internal.coordinates import assemble_coord_array, loop_coord_structures
@@ -224,6 +226,137 @@ def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, 
 
     # Call the library method to do all of the work.
     return assemble_coord_array(objects=objects, object_names=object_names, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=seq_info_flag)
+
+
+def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, measure='distance', file=None, format='text', dir=None, force=False):
+    """Write out a correlation matrix of pairwise interatomic distance fluctuations between different structures.
+
+    @keyword pipes:     The data pipes to generate the interatomic distance fluctuation correlation matrix for.
+    @type pipes:        None or list of str
+    @keyword models:    The list of models to generate the interatomic distance fluctuation correlation matrix for.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:       None or list of lists of int
+    @keyword molecules: The list of molecules to generate the interatomic distance fluctuation correlation matrix for.  The number of elements must match the pipes argument.
+    @type molecules:    None or list of lists of str
+    @keyword atom_id:   The atom identification string of the coordinates of interest.  This matches the spin ID string format.
+    @type atom_id:      str or None
+    @keyword measure:   The type of fluctuation to measure.  This can be either 'distance' or 'angle'.
+    @type measure:      str
+    @keyword file:      The name of the file to write.
+    @type file:         str
+    @keyword format:    The output format.  This can be set to "text" for text file output, or "gnuplot" for creating a gnuplot script.
+    @type format:       str
+    @keyword dir:       The directory where the file will be placed.  If set to None, then the file will be placed in the current directory.
+    @type dir:          str or None
+    @keyword force:     The force flag which if True will cause the file to be overwritten.
+    @type force:        bool
+    """
+
+    # Checks.
+    check_pipe()
+    check_structure()
+    allowed_measures = ['distance', 'angle', 'parallax shift']
+    if measure not in allowed_measures:
+        raise RelaxError("The measure '%s' must be one of %s." % (measure, allowed_measures))
+
+    # Assemble the atomic coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=True)
+
+    # The number of dimensions.
+    n = len(atom_names)
+    m = len(coord)
+
+    # Check that more than one structure is present.
+    if not m > 1:
+        raise RelaxError("Two or more structures are required.")
+
+    # The labels as spin ID strings.
+    labels = []
+    for i in range(n):
+        labels.append(generate_spin_id_unique(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i], spin_name=atom_names[i]))
+
+    # Initialise the SD matrix and other structures.
+    matrix = zeros((n, n), float64)
+    dist = zeros(m, float64)
+    vectors = zeros((m, 3), float64)
+    parallax_vectors = zeros((m, 3), float64)
+    angles = zeros(m, float64)
+
+    # Generate the pairwise distance SD matrix.
+    if measure == 'distance':
+        for i in range(n):
+            for j in range(n):
+                # Only calculate the upper triangle to avoid duplicate calculations.
+                if j > i:
+                    continue
+
+                # The interatomic distances between each structure.
+                for k in range(m):
+                    dist[k] = norm(coord[k, i] - coord[k, j])
+
+                # Calculate and store the corrected sample standard deviation.
+                matrix[i, j] = matrix[j, i] = std(dist, ddof=1)
+
+    # Generate the pairwise angle SD matrix.
+    elif measure == 'angle':
+        # Loop over the atom pairs.
+        for i in range(n):
+            for j in range(n):
+                # Only calculate the upper triangle to avoid duplicate calculations.
+                if j > i:
+                    continue
+
+                # The interatomic vectors between each structure.
+                for k in range(m):
+                    vectors[k] = coord[k, i] - coord[k, j]
+
+                # The average vector.
+                ave_vect = average(vectors, axis=0)
+
+                # The intervector angles.
+                for k in range(m):
+                    angles[k] = vector_angle_atan2(ave_vect, vectors[k])
+
+                # Calculate and store the corrected sample standard deviation.
+                matrix[i, j] = matrix[j, i] = std(angles, ddof=1)
+
+    # Generate the pairwise parallax shift SD matrix.
+    elif measure == 'parallax shift':
+        # Loop over the atom pairs.
+        for i in range(n):
+            for j in range(n):
+                # Only calculate the upper triangle to avoid duplicate calculations.
+                if j > i:
+                    continue
+
+                # The interatomic vectors between each structure.
+                for k in range(m):
+                    vectors[k] = coord[k, i] - coord[k, j]
+
+                # The average vector.
+                ave_vect = average(vectors, axis=0)
+
+                # Catch the zero vector.
+                length = norm(ave_vect)
+                if length == 0.0:
+                    matrix[i, j] = matrix[j, i] = 0.0
+                    continue
+
+                # The unit average vector.
+                unit = ave_vect / length
+
+                # The parallax shift.
+                for k in range(m):
+                    # The projection onto the average vector.
+                    proj = dot(vectors[k], unit) * unit
+
+                    # The distance shift.
+                    dist[k] = norm(vectors[k] - proj)
+
+                # Calculate and store the corrected sample standard deviation.
+                matrix[i, j] = matrix[j, i] = std(dist, ddof=1)
+
+    # Call the plotting API.
+    correlation_matrix(format=format, matrix=matrix, labels=labels, file=file, dir=dir, force=force)
 
 
 def connect_atom(index1=None, index2=None):

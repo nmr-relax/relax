@@ -539,6 +539,28 @@ def strip(data, comments=True):
     return new
 
 
+def swap_extension(file=None, ext=None):
+    """Swap one file name extension for another.
+
+    @keyword file:  The name of the original file.
+    @type file:     str
+    @keyword ext:   The new file name extension to use.
+    @type ext:      str
+    @return:        The name of the file with the new file name extension.
+    @rtype:         str
+    """
+
+    # The file root.
+    new_file = file_root(file)
+
+    # Add the new extension.
+    new_file += '.'
+    new_file += ext
+
+    # Return the new file name.
+    return new_file
+
+
 def test_binary(binary):
     """Function for testing that the binary string corresponds to a valid executable file.
 

@@ -61,6 +61,45 @@ if dep_check.matplotlib_module:
 # Define sfrq key to dic.
 DIC_KEY_FORMAT = "%.8f"
 
+# Define function for the Ordinary least squares of y=A + Bx
+def ordinary_least_squares(x=None, y=None):
+    """Calculate the linear correlation 'B', the intercept 'A' for the function y=A + Bx.
+
+    @keyword x:         The data for the X-axis.
+    @type x:            float or numpy array.
+    @keyword y:         The data for the Y-axis.
+    @type y:            float or numpy array.
+    @return:            The intercept A, the standard deviation for A, the slope B, the standard deviation for B, standard deviation of the residuals, the linear correlation coefficient
+    @rtype:             float, float, float, float, float, float
+    """
+
+    # Get the mean.
+    x_m = mean(x)
+    y_m = mean(y)
+
+    # Get number of observations
+    N = len(y)
+
+    # Calculate the denominator
+    denom = N * sum(x**2) - (sum(x))**2
+
+    # Solve by Ordinary linear least squares
+    A = ( sum(x**2) * sum(y) - sum(x) * sum(x*y) ) / denom
+    B = (N * sum(x*y) - sum(x) * sum(y) ) / denom
+
+    # Calculate standard deviation of the residuals
+    std_y = sqrt( (1. / (N-2) ) * sum( (y - A - B*x)**2 ) )
+
+    # Calculate uncertainty of Constants
+    # This require than uncertainty in x is negligible
+    std_A = std_y * sqrt( sum(x**2) / denom )
+    std_B = std_y * sqrt( N / denom )
+
+    # Linear correlation coefficient
+    r_xy = sum( (x - x_m)*(y - y_m) ) / sqrt( sum((x - x_m)**2) * sum((y - y_m)**2) )
+
+    return A, std_A, B, std_B, std_y, r_xy
+
 
 class Relax_disp_rep:
 

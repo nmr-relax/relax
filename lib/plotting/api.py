@@ -1,7 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
-# Copyright (C) 2014 Troels E. Linnet                                         #
+# Copyright (C) 2014 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,45 +19,39 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relax-lib package - a collection of functions, objects, and methods for the study of dynamics."""
+# Module docstring.
+"""The relax library plotting API."""
 
-__all__ = [
-    'alignment',
-    'ansi',
-    'arg_check',
-    'auto_relaxation',
-    'check_types',
-    'checks',
-    'chemical_shift',
-    'compat',
-    'curve_fit',
-    'diffusion',
-    'dispersion',
-    'errors',
-    'float',
-    'frame_order',
-    'geometry',
-    'io',
-    'linear_algebra',
-    'list',
-    'mathematics',
-    'model_selection',
-    'nmr',
-    'order',
-    'periodic_table',
-    'physical_constants',
-    'plotting',
-    'regex',
-    'selection',
-    'sequence',
-    'software',
-    'spectral_densities',
-    'spectrum',
-    'statistics',
-    'structure',
-    'text',
-    'timing',
-    'warnings',
-    'xml'
-]
+# relax module imports.
+from lib.errors import RelaxError
+from lib.plotting import gnuplot
+from lib.plotting import text
+
+
+def correlation_matrix(format=None, matrix=None, labels=None, file=None, dir=None, force=False):
+    """Plotting API function for representing correlation matrices.
+
+    @keyword format:    The specific backend to use.
+    @type format:       str
+    @keyword matrix:    The correlation matrix.  This must be a square matrix.
+    @type matrix:       numpy rank-2 array.
+    @keyword labels:    The labels for each element of the matrix.  The same label is assumed for each [i, i] pair in the matrix.
+    @type labels:       list of str
+    @keyword file:      The name of the file to create.
+    @type file:         str
+    @keyword dir:       The directory where the PDB file will be placed.  If set to None, then the file will be placed in the current directory.
+    @type dir:          str or None
+    """
+
+    # The supported formats.
+    function = {
+        'gnuplot': gnuplot.correlation_matrix,
+        'text': text.correlation_matrix
+    }
+
+    # Unsupported format.
+    if format not in function:
+        raise RelaxError("The plotting of correlation matrix data using the '%s' format is not supported." % format)
+
+    # Call the backend function.
+    function[format](matrix=matrix, labels=labels, file=file, dir=dir, force=force)
