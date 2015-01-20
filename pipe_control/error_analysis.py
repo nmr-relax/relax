@@ -72,13 +72,15 @@ def covariance_matrix(epsrel=0.0, verbosity=2):
             index = index + 1
 
 
-def monte_carlo_create_data(method=None, distribution=None):
+def monte_carlo_create_data(method=None, distribution=None, fixed_error=None):
     """Function for creating simulation data.
 
     @keyword method:        The type of Monte Carlo simulation to perform.
     @type method:           str
-    @keyword distribution:  Which gauss distribution to draw errors from.
+    @keyword distribution:  Which gauss distribution to draw errors from. Can be: 'measured', 'red_chi2', 'fixed'.
     @type distribution:     str
+    @keyword fixed_error:   If distribution is set to 'fixed', use this value as the standard deviation for the gauss distribution.
+    @type fixed_error:      float
     """
 
     # Test if the current data pipe exists.
@@ -94,9 +96,17 @@ def monte_carlo_create_data(method=None, distribution=None):
         raise RelaxError("The simulation creation method " + repr(method) + " is not valid.")
 
     # Test the distribution argument.
-    valid_distributions = ['measured', 'red_chi2']
+    valid_distributions = ['measured', 'red_chi2', 'fixed']
     if distribution not in valid_distributions:
         raise RelaxError("The simulation error distribution method " + repr(distribution) + " is not valid.  Try one of the following: " + repr(valid_distributions))
+
+    # Test the fixed_error argument.
+    if fixed_error != None and distribution != 'fixed':
+        raise RelaxError("The argument 'fixed_error' is set to a value, but the argument 'distribution' is not set to 'fixed'.")
+
+    # Test the distribution argument, equal to 'fixed', but no error is set.
+    if distribution == 'fixed' and fixed_error == None:
+        raise RelaxError("The argument 'distribution' is set to 'fixed', but you have not provided a value to the argument 'fixed_error'.")
 
     # The specific analysis API object.
     api = return_api()
