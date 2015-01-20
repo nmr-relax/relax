@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2014 Edward d'Auvergne                                        #
+# Copyright (C) 2014-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,6 +31,7 @@ from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.string_conv import str_to_gui
 
 
@@ -78,8 +79,10 @@ class General(GuiTestCase):
         # Mf tab:  Simulate the new analysis wizard.
         analysis = self.new_analysis_wizard(analysis_type='mf', analysis_name='Mf test', pipe_name='mf', pipe_bundle='mf bundle')
 
+        # Create some residues.
         self._execute_uf(uf_name='residue.create', res_num=1)
         self._execute_uf(uf_name='residue.create', res_num=2)
+        interpreter.flush()    # Required because of the asynchronous uf call.
 
         # Launch the spin viewer window.
         self.app.gui.show_tree()
@@ -87,8 +90,9 @@ class General(GuiTestCase):
         # Close the spin viewer window.
         self.app.gui.spin_viewer.handler_close()
 
-        # Delete spin,
+        # Delete residue 2.
         self._execute_uf(uf_name='residue.delete', res_id=":2")
+        interpreter.flush()    # Required because of the asynchronous uf call.
 
         # Launch the spin viewer window.
         self.app.gui.show_tree()

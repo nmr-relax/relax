@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
 # Copyright (C) 2013-2014 Troels E. Linnet                                    #
 #                                                                             #
@@ -23,7 +23,7 @@
 
 # Python module imports.
 from os import F_OK, access, getcwd, path, sep
-from numpy import array, asarray, exp, median, inf, log, save, std, sum, zeros
+from numpy import array, asarray, exp, median, inf, linspace, log, save, std, sum, zeros
 from minfx.generic import generic_minimise
 from random import gauss
 import re, math
@@ -1511,16 +1511,16 @@ class Relax_disp(SystemTestCase):
         self.interpreter.monte_carlo.error_analysis()
 
         # Check values for k_AB.
-        self.assertEqual(resi_0_kAB_std, cdp.mol[0].res[0].spin[0].k_AB_err)
-        self.assertEqual(resi_86_kAB_std, cdp.mol[0].res[1].spin[0].k_AB_err)
+        self.assertAlmostEqual(resi_0_kAB_std, cdp.mol[0].res[0].spin[0].k_AB_err)
+        self.assertAlmostEqual(resi_86_kAB_std, cdp.mol[0].res[1].spin[0].k_AB_err)
 
         # Check values for r2a.
-        self.assertEqual(resi_0_r2a_std, cdp.mol[0].res[0].spin[0].r2a_err[dickey])
-        self.assertEqual(resi_86_r2a_std, cdp.mol[0].res[1].spin[0].r2a_err[dickey])
+        self.assertAlmostEqual(resi_0_r2a_std, cdp.mol[0].res[0].spin[0].r2a_err[dickey])
+        self.assertAlmostEqual(resi_86_r2a_std, cdp.mol[0].res[1].spin[0].r2a_err[dickey])
 
         # Check values for dw.
-        self.assertEqual(resi_0_dw_std, cdp.mol[0].res[0].spin[0].dw_err)
-        self.assertEqual(resi_86_dw_std, cdp.mol[0].res[1].spin[0].dw_err)
+        self.assertAlmostEqual(resi_0_dw_std, cdp.mol[0].res[0].spin[0].dw_err)
+        self.assertAlmostEqual(resi_86_dw_std, cdp.mol[0].res[1].spin[0].dw_err)
 
 
     def test_bug_9999_slow_r1rho_r2eff_error_with_mc(self):
@@ -8523,6 +8523,167 @@ class Relax_disp(SystemTestCase):
 
             # Increment the spin index.
             spin_index += 1
+
+
+    def test_task_7882_monte_carlo_std_residual(self):
+        """Implementation of Task #7882 U{https://gna.org/task/?7882}: Implement Monte-Carlo simulation, where errors are generated with width of standard deviation or residuals"""
+
+        # First check that results are stored with minimisation, to make sure that Sum of Squares are stored (Chi2 without weighting) and degrees of freedom (dof) is stored.
+
+        # Load the results file from a clustered minimisation.
+        file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'error_testing'+sep+'task_7882'
+        self.interpreter.results.read(file_name)
+
+        # Get the spins, which was used for clustering.
+        spins_cluster = cdp.clustering['sel']
+        spins_free = cdp.clustering['free spins']
+
+        # For sanity check, calculate degree of freedom.
+        cur_spin_id = spins_cluster[0]
+        cur_spin = return_spin(cur_spin_id)
+
+        # Calculate total number of datapoins.
+        N = len(spins_cluster)
+        N_dp = N * len(cur_spin.r2eff)
+
+        # Calculate number of paramaters. For CR72, there is R2 per spectrometer field, individual dw, and shared kex and pA.
+        N_par = cdp.spectrometer_frq_count * N + N + 1 + 1
+        dof = N_dp - N_par
+
+        # Sanity check of parameters.
+        print(N_par, N_dp)
+
+        # Number of MC
+        mc_nr = 3
+
+        # Setup MC for errors generated from the distribution described by chi2 and degrees of freedom from best fit.
+        self.interpreter.monte_carlo.setup(number=mc_nr)
+
+        # Create data.
+        self.interpreter.monte_carlo.create_data(distribution="red_chi2")
+
+        # Setup MC again.
+        self.interpreter.monte_carlo.setup(number=mc_nr)
+
+        # Create data, and set the fixed error value, without setting the correct distribution.
+        self.assertRaises(RelaxError, self.interpreter.monte_carlo.create_data, fixed_error=1.)
+
+        # Setup MC again.
+        self.interpreter.monte_carlo.setup(number=mc_nr)
+
+        # Create data, with fixed error distribution, but not setting the error value.
+        self.assertRaises(RelaxError, self.interpreter.monte_carlo.create_data, distribution="fixed")
+
+        # Setup MC again.
+        self.interpreter.monte_carlo.create_data(distribution="fixed", fixed_error=1.)
+
+        # Now select the R2eff model, and try again. Expect raising an error.
+        self.interpreter.relax_disp.select_model(MODEL_R2EFF)
+
+        # Setup MC again.
+        self.interpreter.monte_carlo.setup(number=mc_nr)
+
+        # Create data, and assert failure.
+        self.assertRaises(RelaxError, self.interpreter.monte_carlo.create_data, distribution="red_chi2")
+        self.assertRaises(RelaxError, self.interpreter.monte_carlo.create_data, method="direct", distribution="red_chi2")
+
+
+    def x_test_task_7882_kex_conf(self):
+        """Test related to Task #7882 U{https://gna.org/task/?7882}: Try making a confidence interval of kex.
+        According to the regression book of Graphpad: U{http://www.graphpad.com/faq/file/Prism4RegressionBook.pdf}.
+        Page 109-111.
+        """
+
+        # Load the results file from a clustered minimisation.
+        file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'error_testing'+sep+'task_7882'
+        self.interpreter.results.read(file_name)
+
+        # Get the spins, which was used for clustering.
+        spins_cluster = cdp.clustering['sel']
+        spins_free = cdp.clustering['free spins']
+
+        # For sanity check, calculate degree of freedom.
+        cur_spin_id = spins_cluster[0]
+        cur_spin = return_spin(cur_spin_id)
+
+        # Calculate total number of datapoins.
+        Ns = len(spins_cluster)
+        N_dp = Ns * len(cur_spin.r2eff)
+
+        # Calculate number of paramaters. For CR72, there is R2 per spectrometer field, individual dw, and shared kex and pA.
+        N_par = cdp.spectrometer_frq_count * Ns + Ns + 1 + 1
+        dof_fit = N_dp - N_par
+
+        # Assert values.
+        self.assertEqual(Ns, 61)
+        self.assertEqual(N_dp, 1952)
+        self.assertEqual(N_par, 185)
+
+        # Confidence interval of kex.
+        # The number of parameters to check is kex = 1.
+        P = 1
+        # Number of datapoints
+        N = N_dp
+        # The degrees of freedom for this confidence interval
+        dof_conf = N - P
+
+        # The critical value of the F distribution with p-value of 0.05 for 95% confidence.
+        # Can be calculated with microsoft excel:
+        # F=FINV(0,05; P; dof_conf), F=FINV(0,05; P; dof_conf), F=FINV(0,05; 1; 1951)=3,846229551
+        # Can also be calculated with: import scipy.stats; scipy.stats.f.isf(0.05, 1, 1951)=3.8462295505435562
+        F = 3.8462295505435562
+        # Then calculate the scaling of chi2, which is the weighted sum of squares of best fit.
+        scale = F*P/dof_conf +1
+
+        # Get the sum of best fit.
+        SSbest_fit = cur_spin.chi2
+        SSbest_kex = cur_spin.kex
+
+        # Get the scaled sum of best fit
+        SSall_fixed = SSbest_fit * scale
+
+        print(SSbest_fit, scale, SSall_fixed)
+
+        # Now generate a list of kex values to try.
+        kex_cur = cur_spin.kex
+        kex_list = linspace(kex_cur - 1500, kex_cur + 3000, 200)
+
+        chi2_list = []
+
+        for kex in kex_list:
+            self.interpreter.value.set(val=kex, param='kex')
+
+            # Calculate the chi2 values.
+            self.interpreter.minimise.calculate(verbosity=0)
+
+            # Get the chi2 value
+            chi2_cur = cur_spin.chi2
+            print("kex=%3.2f, chi2=%3.2f"%(kex, chi2_cur), chi2_cur<SSall_fixed)
+
+            # Add to list
+            chi2_list.append(chi2_cur)
+
+        # Now make to numpy array.
+        chi2_list = asarray(chi2_list)
+
+        # Now make a selection mask based on the criteria.
+        sel_mask = chi2_list < SSall_fixed
+
+        # Select values of kex, and chi2_list
+        kex_sel = kex_list[sel_mask]
+        chi2_sel = chi2_list[sel_mask]
+
+        # Now make plot
+        print(SSbest_kex, SSbest_fit, SSall_fixed)
+        print(kex_sel)
+        print(chi2_sel)
+
+        if True:
+            import matplotlib.pyplot as plt
+
+            plt.plot(kex_sel, chi2_sel, "bo")
+            plt.plot(SSbest_kex, SSbest_fit, "g*")
+            plt.show()
 
 
     def test_tp02_data_to_tp02(self):

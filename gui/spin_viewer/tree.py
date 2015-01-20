@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -740,6 +740,10 @@ class Mol_res_spin_tree(wx.Window):
             # Get the python data.
             info = self.tree.GetItemPyData(key)
 
+            # No info.
+            if info == None or 'id' not in info:
+                continue
+
             # Add to the prune list if it has been removed.
             if info['id'] not in mol_ids:
                 prune_list.append(key)
@@ -764,6 +768,10 @@ class Mol_res_spin_tree(wx.Window):
         for key in self.tree_ids[mol_branch_id]:
             # Get the python data.
             info = self.tree.GetItemPyData(key)
+
+            # No info.
+            if info == None or 'id' not in info:
+                continue
 
             # Get the residue.
             res = return_residue(info['id'])
@@ -794,6 +802,10 @@ class Mol_res_spin_tree(wx.Window):
         for key in self.tree_ids[mol_branch_id][res_branch_id]:
             # Get the python data.
             info = self.tree.GetItemPyData(key)
+
+            # No info.
+            if info == None or 'id' not in info:
+                continue
 
             # Get the spin.
             spin = return_spin(info['id'])
@@ -920,6 +932,10 @@ class Mol_res_spin_tree(wx.Window):
             # Get the python data.
             data = self.tree.GetItemPyData(key)
 
+            # No info.
+            if data == None or 'id' not in data:
+                continue
+
             # Check the mol_id for a match and, if so, terminate to speed things up.
             if mol_id == data['id']:
                 new_mol = False
@@ -992,6 +1008,10 @@ class Mol_res_spin_tree(wx.Window):
         for key in self.tree_ids[mol_branch_id]:
             # Get the python data.
             data = self.tree.GetItemPyData(key)
+
+            # No info.
+            if data == None or 'id' not in data:
+                continue
 
             # Check the res_id, res name, and res number for a match and, if so, terminate to speed things up.
             if res_id == data['id'] and res.name == data['res_name'] and res.num == data['res_num']:
@@ -1068,6 +1088,10 @@ class Mol_res_spin_tree(wx.Window):
         for key in self.tree_ids[mol_branch_id][res_branch_id]:
             # Get the python data.
             data = self.tree.GetItemPyData(key)
+
+            # No info.
+            if data == None or 'id' not in data:
+                continue
 
             # Check the spin_id, spin name and spin number for a match and, if so, terminate to speed things up.
             if spin_id == data['id'] and spin.name == data['spin_name'] and spin.num == data['spin_num']:

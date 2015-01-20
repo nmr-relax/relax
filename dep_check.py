@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -107,6 +107,9 @@ except ImportError:
 try:
     import wx
     wx_module = True
+    wx_version = wx.version().split()[0]
+    if version_comparison(wx_version, '2.9') == -1:
+        sys.stderr.write("RelaxWarning:  Version %s of wxPython dependency is too old and buggy, version 2.9 or higher is required otherwise the GUI may be unstable.\n" % wx_version)
 except ImportError:
     wx_module = False
     message = sys.exc_info()[1]
