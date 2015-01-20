@@ -740,10 +740,14 @@ class Mol_res_spin_tree(wx.Window):
             # Get the python data.
             info = self.tree.GetItemPyData(key)
 
-            # Prune if it has been removed.
+            # Add to the prune list if it has been removed.
             if info['id'] not in mol_ids:
-                self.tree.Delete(key)
-                self.tree_ids.pop(key)
+                prune_list.append(key)
+
+        # Delete the data.
+        for key in prune_list:
+            self.tree.Delete(key)
+            self.tree_ids.pop(key)
 
 
     def prune_res(self, mol_branch_id, mol_id):
@@ -764,10 +768,14 @@ class Mol_res_spin_tree(wx.Window):
             # Get the residue.
             res = return_residue(info['id'])
 
-            # Prune if it has been removed or renamed/renumbered.
+            # Add to the prune list if it has been removed or renamed/renumbered.
             if res == None or res.name != info['res_name'] or res.num != info['res_num']:
-                self.tree.Delete(key)
-                self.tree_ids[mol_branch_id].pop(key)
+                prune_list.append(key)
+
+        # Delete the data.
+        for key in prune_list:
+            self.tree.Delete(key)
+            self.tree_ids[mol_branch_id].pop(key)
 
 
     def prune_spin(self, mol_branch_id, res_branch_id, res_id):
@@ -790,10 +798,14 @@ class Mol_res_spin_tree(wx.Window):
             # Get the spin.
             spin = return_spin(info['id'])
 
-            # Prune if it has been removed or renamed/renumbered.
+            # Add to the prune list if it has been removed or renamed/renumbered.
             if spin == None or spin.name != info['spin_name'] or spin.num != info['spin_num']:
-                self.tree.Delete(key)
-                self.tree_ids[mol_branch_id][res_branch_id].pop(key)
+                prune_list.append(key)
+
+        # Delete the data.
+        for key in prune_list:
+            self.tree.Delete(key)
+            self.tree_ids[mol_branch_id][res_branch_id].pop(key)
 
 
     def set_bitmap_mol(self, mol_branch_id, select=True):
