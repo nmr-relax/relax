@@ -93,6 +93,11 @@ def monte_carlo_create_data(method=None, distribution=None):
     if method not in valid_methods:
         raise RelaxError("The simulation creation method " + repr(method) + " is not valid.")
 
+    # Test the distribution argument.
+    valid_distributions = ['measured', 'red_chi2']
+    if distribution not in valid_distributions:
+        raise RelaxError("The simulation error distribution method " + repr(distribution) + " is not valid.  Try one of the following: " + repr(valid_distributions))
+
     # The specific analysis API object.
     api = return_api()
 
