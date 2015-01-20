@@ -146,7 +146,11 @@ def monte_carlo_create_data(method=None, distribution=None, fixed_error=None):
                         continue
 
                     # Gaussian randomisation.
-                    random[j].append(gauss(data[k], error[k]))
+                    if distribution == 'fixed':
+                        random[j].append(gauss(data[k], float(fixed_error)))
+
+                    else:
+                        random[j].append(gauss(data[k], error[k]))
 
         # Dictionary type data.
         if isinstance(data, dict):
