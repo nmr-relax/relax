@@ -1,0 +1,7 @@
+Due to the design of wxPython, not all errors can be caught in the GUI tests of the test suite.  In addition, segmentation faults due to racing, wxPython bugs or other problems can be difficult to pin down.  The following command can help with the debugging:
+
+$ rm -f gui_tests.log; for i in {1..10}; do echo Round $i; ./relax --gui-tests --time -d >> gui_tests.log 2>&1 || echo -e "\n\nCrash with" $? "\n\n\n" >> gui_tests.log; done
+
+This will run the GUI component of the test suite 10 times, to catch non-reproducible problems, outputting all results and program faults into the 'gui_tests.log' file.  To find the problems, run:
+
+$ grep "Error:\|Crash" gui_tests.log

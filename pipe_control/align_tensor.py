@@ -225,7 +225,7 @@ def display(tensor=None):
         data = get_tensor_object(tensor)
 
         # Header.
-        section(file=sys.stdout, text="Tensor  '%s'" % tensor, prespace=3, postspace=1)
+        section(file=sys.stdout, text="Tensor '%s'" % tensor, prespace=3, postspace=1)
 
 
         # The Saupe matrix.

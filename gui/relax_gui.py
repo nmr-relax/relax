@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -920,7 +920,10 @@ class Main(wx.Frame):
         if pipe == None:
             pipe = ''
 
+        # The relax information box.
+        info = Info_box()
+
         # Set the status.
-        wx.CallAfter(self.status_bar.SetStatusText, "(C) 2001-2014 the relax development team", 0)
+        wx.CallAfter(self.status_bar.SetStatusText, info.copyright[1], 0)
         wx.CallAfter(self.status_bar.SetStatusText, "Current data pipe:", 1)
         wx.CallAfter(self.status_bar.SetStatusText, pipe, 2)
