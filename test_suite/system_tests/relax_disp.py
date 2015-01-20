@@ -8556,16 +8556,31 @@ class Relax_disp(SystemTestCase):
         # Number of MC
         mc_nr = 3
 
-        # Setup MC.
+        # Setup MC for errors generated from the distribution described by chi2 and degrees of freedom from best fit.
         self.interpreter.monte_carlo.setup(number=mc_nr)
 
         # Create data.
         self.interpreter.monte_carlo.create_data(distribution="red_chi2")
 
+        # Setup MC again.
+        self.interpreter.monte_carlo.setup(number=mc_nr)
+
+        # Create data, and set the fixed error value, without setting the correct distribution.
+        self.assertRaises(RelaxError, self.interpreter.monte_carlo.create_data, fixed_error=1.)
+
+        # Setup MC again.
+        self.interpreter.monte_carlo.setup(number=mc_nr)
+
+        # Create data, with fixed error distribution, but not setting the error value.
+        self.assertRaises(RelaxError, self.interpreter.monte_carlo.create_data, distribution="fixed")
+
+        # Setup MC again.
+        self.interpreter.monte_carlo.create_data(distribution="fixed", fixed_error=1.)
+
         # Now select the R2eff model, and try again. Expect raising an error.
         self.interpreter.relax_disp.select_model(MODEL_R2EFF)
 
-        # Setup MC.
+        # Setup MC again.
         self.interpreter.monte_carlo.setup(number=mc_nr)
 
         # Create data, and assert failure.
