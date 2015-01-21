@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2013-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -52,6 +52,7 @@ __all__ = [
     'regex',
     'selection',
     'sequence',
+    'sequence_alignment',
     'software',
     'spectral_densities',
     'spectrum',
