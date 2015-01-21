@@ -1,7 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2015 Edward d'Auvergne                                   #
-# Copyright (C) 2014 Troels E. Linnet                                         #
+# Copyright (C) 2009-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,27 +19,21 @@
 #                                                                             #
 ###############################################################################
 
+# Python module imports.
+from os import sep
+import sys
 
-__all__ = [
-    '_alignment',
-    '_auto_relaxation',
-    '_chemical_shift',
-    '_diffusion',
-    '_dispersion',
-    '_frame_order',
-    '_geometry',
-    '_linear_algebra',
-    '_order',
-    '_sequence_alignment',
-    '_software',
-    '_spectral_densities',
-    '_structure',
-    '_text',
-    'test___init__',
-    'test_float',
-    'test_io',
-    'test_mathematics',
-    'test_periodic_table',
-    'test_regex',
-    'test_selection'
-]
+# relax module imports.
+from test_suite.unit_tests.package_checking import PackageTestCase
+import lib.sequence_alignment
+
+
+class Test___init__(PackageTestCase):
+    """Unit tests for the lib.sequence_alignment package."""
+
+    def setUp(self):
+        """Set up for the package checking."""
+
+        self.package = lib.sequence_alignment
+        self.package_name = 'lib.sequence_alignment'
+        self.package_path = sys.path[0] + sep + 'lib' + sep + 'sequence_alignment'

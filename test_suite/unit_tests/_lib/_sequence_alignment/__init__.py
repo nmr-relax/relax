@@ -1,7 +1,6 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2013-2015 Edward d'Auvergne                                   #
-# Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,25 +21,5 @@
 
 
 __all__ = [
-    '_alignment',
-    '_auto_relaxation',
-    '_chemical_shift',
-    '_diffusion',
-    '_dispersion',
-    '_frame_order',
-    '_geometry',
-    '_linear_algebra',
-    '_order',
-    '_sequence_alignment',
-    '_software',
-    '_spectral_densities',
-    '_structure',
-    '_text',
-    'test___init__',
-    'test_float',
-    'test_io',
-    'test_mathematics',
-    'test_periodic_table',
-    'test_regex',
-    'test_selection'
+    'test___init__'
 ]
