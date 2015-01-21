@@ -35,14 +35,17 @@ class Test_needleman_wunsch(TestCase):
         # The sequences.
         seq1 = 'GCATGCU'
         seq2 = 'GATTACA'
+        print("\nIn:")
         print(seq1)
         print(seq2)
 
         # Perform the alignment. 
         align1, align2, gaps = needleman_wunsch_align(seq1, seq2)
+        print("\nOut:")
         print(align1)
         print(align2)
         print(gaps)
+        print("\n")
 
         # Check the alignment.
         self.assertEqual(align1, 'GCA-TGCU')
