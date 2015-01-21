@@ -49,6 +49,8 @@ def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', ga
     @type gap_penalty:          float
     @keyword extend_penalty:    The penalty for extending a gap, as a positive number.
     @type extend_penalty:       float
+    @return:                    The two alignment strings and the gap matrix.
+    @rtype:                     str, str, numpy rank-2 int array
     """
 
     # Checks.
@@ -95,4 +97,7 @@ def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', ga
         else:
             sys.stdout.write(" ")
     sys.stdout.write("\n\n")
+
+    # Return the results.
+    return align1, align2, gaps
 
