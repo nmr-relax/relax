@@ -28,7 +28,7 @@ from numpy import float32, int16, zeros
 # Default scores.
 SCORE_MATCH = 1
 SCORE_MISMATCH = -1
-SCORE_GAP_PENALTY = -1
+SCORE_GAP_PENALTY = 1
 SCORES = zeros(3, int16)
 
 # Indices.
