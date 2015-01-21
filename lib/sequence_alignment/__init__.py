@@ -23,4 +23,5 @@
 """The relax-lib sequence alignment package - a library of functions for aligning proteins, DNA, RNA or other molecules."""
 
 __all__ = [
+    'needleman_wunsch'
 ]
