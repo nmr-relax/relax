@@ -142,6 +142,10 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, displace_id=Non
     # Assemble the atomic coordinates and obtain the corresponding element information.
     coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=True)
 
+    # Catch missing data.
+    if len(coord[0]) == 0:
+        raise RelaxError("No common atoms could be found between the structures.")
+
     # The different algorithms.
     if method == 'fit to mean':
         T, R, pivot = fit_to_mean(models=list(range(len(ids))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
