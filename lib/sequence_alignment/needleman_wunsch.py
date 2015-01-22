@@ -26,7 +26,7 @@
 from numpy import float32, int16, zeros
 
 # relax module imports.
-from lib.errors import RelaxError
+from lib.errors import RelaxError, RelaxFault
 
 
 # Default scores.
@@ -84,28 +84,32 @@ def needleman_wunsch_align(sequence1, sequence2, sub_matrix=None, sub_seq=None, 
     alignment1 = ""
     alignment2 = ""
     while 1:
-        # Termination.
-        if i < 0 or j < 0:
-            break
-
-        # Diagonal.
-        if traceback_matrix[i, j] == TRACEBACK_DIAG:
-            alignment1 += sequence1[i]
-            alignment2 += sequence2[j]
-            i -= 1
-            j -= 1
-
         # Top.
-        elif traceback_matrix[i, j] == TRACEBACK_TOP:
+        if j < 0 or traceback_matrix[i, j] == TRACEBACK_TOP:
             alignment1 += sequence1[i]
             alignment2 += '-'
             i -= 1
 
         # Left.
-        elif traceback_matrix[i, j] == TRACEBACK_LEFT:
+        elif i < 0 or traceback_matrix[i, j] == TRACEBACK_LEFT:
             alignment1 += '-'
             alignment2 += sequence2[j]
             j -= 1
+
+        # Diagonal.
+        elif traceback_matrix[i, j] == TRACEBACK_DIAG:
+            alignment1 += sequence1[i]
+            alignment2 += sequence2[j]
+            i -= 1
+            j -= 1
+
+        # Unknown behaviour.
+        else:
+            raise RelaxFault
+
+        # Termination.
+        if i < 0 and j < 0:
+            break
 
     # Reverse the alignments.
     align1 = alignment1[::-1]
