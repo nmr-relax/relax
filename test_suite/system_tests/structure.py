@@ -301,6 +301,13 @@ class Structure(SystemTestCase):
             i += 1
 
 
+    def test_align_CaM_BLOSUM62(self):
+        """Test the alignment of CaM molecules from different species using the BLOSUM62 substitution matrix."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'structure_align.py')
+
+
     def test_alt_loc_missing(self):
         """Test that a RelaxError occurs when the alternate location indicator is present but not specified."""
 
