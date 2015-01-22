@@ -32,23 +32,27 @@ from lib.sequence_alignment.needleman_wunsch import needleman_wunsch_align
 from lib.sequence_alignment.substitution_matrices import BLOSUM62, BLOSUM62_SEQ
 
 
-def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0):
+def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0):
     """Align two protein sequences.
 
-    @param sequence1:               The first protein sequence as one letter codes.
-    @type sequence1:                str
-    @param sequence2:               The second protein sequence as one letter codes.
-    @type sequence2:                str
-    @keyword algorithm:             The alignment algorithm to use.
-    @type algorithm:                str
-    @keyword matrix:                The substitution matrix to use.
-    @type matrix:                   str
-    @keyword gap_open_penalty:      The penalty for introducing gaps, as a positive number.
-    @type gap_open_penalty:         float
-    @keyword gap_extend_penalty:    The penalty for extending a gap, as a positive number.
-    @type gap_extend_penalty:       float
-    @return:                        The two alignment strings and the gap matrix.
-    @rtype:                         str, str, numpy rank-2 int array
+    @param sequence1:                   The first protein sequence as one letter codes.
+    @type sequence1:                    str
+    @param sequence2:                   The second protein sequence as one letter codes.
+    @type sequence2:                    str
+    @keyword algorithm:                 The alignment algorithm to use.
+    @type algorithm:                    str
+    @keyword matrix:                    The substitution matrix to use.
+    @type matrix:                       str
+    @keyword gap_open_penalty:          The penalty for introducing gaps, as a positive number.
+    @type gap_open_penalty:             float
+    @keyword gap_extend_penalty:        The penalty for extending a gap, as a positive number.
+    @type gap_extend_penalty:           float
+    @keyword end_gap_open_penalty:      The optional penalty for opening a gap at the end of a sequence.
+    @type end_gap_open_penalty:         float
+    @keyword end_gap_extend_penalty:    The optional penalty for extending a gap at the end of a sequence.
+    @type end_gap_extend_penalty:       float
+    @return:                            The two alignment strings and the gap matrix.
+    @rtype:                             str, str, numpy rank-2 int array
     """
 
     # Checks.
@@ -78,7 +82,7 @@ def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', ga
 
     # The alignment.
     if algorithm == 'NW70':
-        align1, align2, gaps = needleman_wunsch_align(sequence1, sequence2, sub_matrix=sub_matrix, sub_seq=sub_seq, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty)
+        align1, align2, gaps = needleman_wunsch_align(sequence1, sequence2, sub_matrix=sub_matrix, sub_seq=sub_seq, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
 
     # Final printout.
     sys.stdout.write("\n%-30s %s\n" % ("Aligned sequence 1:", align1))
