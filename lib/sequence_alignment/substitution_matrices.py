@@ -26,6 +26,14 @@
 from numpy import array, int16
 
 
+SIMILARITY_DNA_SEQ = 'AGCT'
+SIMILARITY_DNA = array([
+    [ 1, -1, -1, -1],
+    [-1,  1, -1, -1],
+    [-1, -1,  1, -1],
+    [-1, -1, -1,  1]
+], int16)
+
 BLOSUM62_SEQ = 'ARNDCQEGHILKMFPSTWYVBZX*'
 BLOSUM62 = array([
     # A,  R,  N,  D,  C,  Q,  E,  G,  H,  I,  L,  K,  M,  F,  P,  S,  T,  W,  Y,  V,  B,  Z,  X,  *
