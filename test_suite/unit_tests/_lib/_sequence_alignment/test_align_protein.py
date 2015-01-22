@@ -38,13 +38,13 @@ class Test_align_protein(TestCase):
             - 'IHAAEEKDWKTAYSYbgFYEAFEGYdsidspkaitslkymllckimlntpedvqalvsgkla',
             - 'LHAADEKDFKTAFSYabiggapFYEAFEGYdsvdekvsaltalkymllckvmldlpdevnsllsakl'.
 
-        From online servers, the results should be::
-        
+        From online servers, the results with a gap open penalty of 5 and gap extend of 1 should be::
+
             https://www.ebi.ac.uk/Tools/psa/emboss_needle/
             EMBOSS_001           IHAAEEKDWKTAYSY-B-G---FYEAFEGYDSIDSP-KAITSLKYMLLCKIMLNTPEDVQALVSGKLA
-                                 :|||:|||:|||:|| | |   ||||||||||:|.. .|:|:||||||||:||:.|::|.:|:|.|| 
+                                 :|||:|||:|||:|| | |   ||||||||||:|.. .|:|:||||||||:||:.|::|.:|:|.||
             EMBOSS_001           LHAADEKDFKTAFSYABIGGAPFYEAFEGYDSVDEKVSALTALKYMLLCKVMLDLPDEVNSLLSAKL-
-            
+
             http://web.expasy.org/cgi-bin/sim/sim.pl?prot
             UserSeq1             IHAAEEKDWKTAYSY-B-G---FYEAFEGYDSIDSP-KAITSLKYMLLCKIMLNTPEDVQALVSGKL
             UserSeq2             LHAADEKDFKTAFSYABIGGAPFYEAFEGYDSVDEKVSALTALKYMLLCKVMLDLPDEVNSLLSAKL
@@ -57,8 +57,8 @@ class Test_align_protein(TestCase):
         print(seq1)
         print(seq2)
 
-        # Perform the alignment. 
-        align1, align2, gaps = align_pairwise(seq1, seq2, matrix='BLOSUM62', gap_penalty=10.0)
+        # Perform the alignment.
+        align1, align2, gaps = align_pairwise(seq1, seq2, matrix='BLOSUM62', gap_open_penalty=5.0, gap_extend_penalty=1.0)
         print(align1)
         print(align2)
         print(gaps)
