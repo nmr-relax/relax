@@ -33,7 +33,7 @@ from lib.errors import RelaxError, RelaxFault
 SCORE_MATCH = 1
 SCORE_MISMATCH = -1
 SCORE_GAP_PENALTY = 1
-SCORES = zeros(3, int16)
+SCORES = zeros(3, float32)
 
 # Indices.
 TRACEBACK_DIAG = 0
