@@ -29,7 +29,7 @@ import sys
 # relax module imports.
 from lib.errors import RelaxError
 from lib.sequence_alignment.needleman_wunsch import needleman_wunsch_align
-from lib.sequence_alignment.substitution_matrices import BLOSUM62, BLOSUM62_SEQ
+from lib.sequence_alignment.substitution_matrices import BLOSUM62, BLOSUM62_SEQ, PAM250, PAM250_SEQ
 
 
 def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0):
@@ -59,7 +59,7 @@ def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', ga
     allowed_algor = ['NW70']
     if algorithm not in allowed_algor:
         raise RelaxError("The sequence alignment algorithm '%s' is unknown, it must be one of %s." % (algorithm, allowed_algor))
-    allowed_matrices = ['BLOSUM62']
+    allowed_matrices = ['BLOSUM62', 'PAM250']
     if matrix not in allowed_matrices:
         raise RelaxError("The substitution matrix '%s' is unknown, it must be one of %s." % (matrix, allowed_matrices))
 
@@ -79,6 +79,9 @@ def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', ga
     if matrix == 'BLOSUM62':
         sub_matrix = BLOSUM62
         sub_seq = BLOSUM62_SEQ
+    elif matrix == 'PAM250':
+        sub_matrix = PAM250
+        sub_seq = PAM250_SEQ
 
     # The alignment.
     if algorithm == 'NW70':
