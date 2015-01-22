@@ -25,6 +25,10 @@
 # Python module imports.
 from numpy import float32, int16, zeros
 
+# relax module imports.
+from lib.errors import RelaxError
+
+
 # Default scores.
 SCORE_MATCH = 1
 SCORE_MISMATCH = -1
@@ -62,6 +66,14 @@ def needleman_wunsch_align(sequence1, sequence2, sub_matrix=None, sub_seq=None, 
     # The sequence lengths.
     M = len(sequence1)
     N = len(sequence2)
+
+    # Sanity check.
+    for i in range(M):
+        if sequence1[i] not in sub_seq:
+            raise RelaxError("The residue '%s' from the first sequence cannot be found in the substitution matrix residues '%s'." % (sequence1[i], sub_seq))
+    for j in range(N):
+        if sequence2[j] not in sub_seq:
+            raise RelaxError("The residue '%s' from the second sequence cannot be found in the substitution matrix residues '%s'." % (sequence2[j], sub_seq))
 
     # Calculate the scoring and traceback matrices.
     matrix, traceback_matrix = needleman_wunsch_matrix(sequence1, sequence2, sub_matrix=sub_matrix, sub_seq=sub_seq, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty)
