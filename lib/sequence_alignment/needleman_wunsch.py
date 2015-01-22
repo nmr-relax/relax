@@ -41,26 +41,30 @@ TRACEBACK_TOP = 1
 TRACEBACK_LEFT = 2
 
 
-def needleman_wunsch_align(sequence1, sequence2, sub_matrix=None, sub_seq=None, gap_open_penalty=SCORE_GAP_PENALTY, gap_extend_penalty=1.0):
+def needleman_wunsch_align(sequence1, sequence2, sub_matrix=None, sub_seq=None, gap_open_penalty=SCORE_GAP_PENALTY, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0):
     """Align two sequences using the Needleman-Wunsch algorithm using the EMBOSS logic for extensions.
 
     This is implemented as described in the U{Wikipedia article on the Needleman-Wunsch algorithm <https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm>}.  The algorithm has been modified to match that of U{EMBOSS<http://emboss.sourceforge.net/>} to allow for gap opening and extension penalties, as well as end penalties.
 
 
-    @param sequence1:               The first sequence.
-    @type sequence1:                str
-    @param sequence2:               The second sequence.
-    @type sequence2:                str
-    @keyword sub_matrix:            The substitution matrix to use to determine the penalties.
-    @type sub_matrix:               numpy rank-2 int array
-    @keyword sub_seq:               The one letter code sequence corresponding to the substitution matrix indices.
-    @type sub_seq:                  str
-    @keyword gap_open_penalty:      The penalty for introducing gaps, as a positive number.
-    @type gap_open_penalty:         float
-    @keyword gap_extend_penalty:    The penalty for extending a gap, as a positive number.
-    @type gap_extend_penalty:       float
-    @return:                        The two alignment strings and the gap matrix.
-    @rtype:                         str, str, numpy rank-2 int array
+    @param sequence1:                   The first sequence.
+    @type sequence1:                    str
+    @param sequence2:                   The second sequence.
+    @type sequence2:                    str
+    @keyword sub_matrix:                The substitution matrix to use to determine the penalties.
+    @type sub_matrix:                   numpy rank-2 int array
+    @keyword sub_seq:                   The one letter code sequence corresponding to the substitution matrix indices.
+    @type sub_seq:                      str
+    @keyword gap_open_penalty:          The penalty for introducing gaps, as a positive number.
+    @type gap_open_penalty:             float
+    @keyword gap_extend_penalty:        The penalty for extending a gap, as a positive number.
+    @type gap_extend_penalty:           float
+    @keyword end_gap_open_penalty:      The optional penalty for opening a gap at the end of a sequence.
+    @type end_gap_open_penalty:         float
+    @keyword end_gap_extend_penalty:    The optional penalty for extending a gap at the end of a sequence.
+    @type end_gap_extend_penalty:       float
+    @return:                            The two alignment strings and the gap matrix.
+    @rtype:                             str, str, numpy rank-2 int array
     """
 
     # The sequence lengths.
@@ -76,7 +80,7 @@ def needleman_wunsch_align(sequence1, sequence2, sub_matrix=None, sub_seq=None, 
             raise RelaxError("The residue '%s' from the second sequence cannot be found in the substitution matrix residues '%s'." % (sequence2[j], sub_seq))
 
     # Calculate the scoring and traceback matrices.
-    matrix, traceback_matrix = needleman_wunsch_matrix(sequence1, sequence2, sub_matrix=sub_matrix, sub_seq=sub_seq, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty)
+    matrix, traceback_matrix = needleman_wunsch_matrix(sequence1, sequence2, sub_matrix=sub_matrix, sub_seq=sub_seq, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
 
     # Generate the alignment.
     i = M - 1
