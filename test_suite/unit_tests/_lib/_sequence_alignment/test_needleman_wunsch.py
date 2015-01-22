@@ -24,6 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from lib.sequence_alignment.needleman_wunsch import needleman_wunsch_align
+from lib.sequence_alignment.substitution_matrices import NUC_4_4, NUC_4_4_SEQ, SIMILARITY_DNA, SIMILARITY_DNA_SEQ
 
 
 class Test_needleman_wunsch(TestCase):
@@ -33,14 +34,14 @@ class Test_needleman_wunsch(TestCase):
         """Test the Needleman-Wunsch sequence alignment for two DNA sequences."""
 
         # The sequences.
-        seq1 = 'GCATGCU'
-        seq2 = 'GATTACA'
+        seq1 = 'GCATTACT'
+        seq2 = 'GATTACT'
         print("\nIn:")
         print(seq1)
         print(seq2)
 
         # Perform the alignment. 
-        align1, align2, gaps = needleman_wunsch_align(seq1, seq2)
+        align1, align2, gaps = needleman_wunsch_align(seq1, seq2, sub_matrix=SIMILARITY_DNA, sub_seq=SIMILARITY_DNA_SEQ, gap_open_penalty=1, gap_extend_penalty=1)
         print("\nOut:")
         print(align1)
         print(align2)
@@ -48,12 +49,12 @@ class Test_needleman_wunsch(TestCase):
         print("\n")
 
         # Check the alignment.
-        self.assertEqual(align1, 'GCA-TGCU')
-        self.assertEqual(align2, 'G-ATTACA')
+        self.assertEqual(align1, 'GCATTACT')
+        self.assertEqual(align2, 'G-ATTACT')
 
         # The gap matrix.
         real_gaps = [
-                [0, 0, 0, 1, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 1, 0, 0, 0, 0, 0, 0]
         ]
         for i in range(2):
