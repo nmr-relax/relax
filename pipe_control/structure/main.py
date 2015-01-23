@@ -108,25 +108,37 @@ def add_model(model_num=None):
     print("Created the empty model number %s." % model_num)
 
 
-def align(pipes=None, models=None, molecules=None, atom_id=None, displace_id=None, method='fit to mean', centre_type="centroid", centroid=None):
+def align(pipes=None, models=None, molecules=None, atom_id=None, displace_id=None, method='fit to mean', algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0, centre_type="centroid", centroid=None):
     """Superimpose a set of related, but not identical structures.
 
-    @keyword pipes:         The data pipes to include in the alignment and superimposition.
-    @type pipes:            None or list of str
-    @keyword models:        The list of models to for each data pipe superimpose.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
-    @type models:           list of lists of int or None
-    @keyword molecules:     The molecule names to include in the alignment and superimposition.  The number of elements must match the pipes argument.
-    @type molecules:        None or list of str
-    @keyword atom_id:       The molecule, residue, and atom identifier string.  This matches the spin ID string format.
-    @type atom_id:          str or None
-    @keyword displace_id:   The atom ID string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.  This can be a list of atom IDs with each element corresponding to one of the structures.
-    @type displace_id:      None, str, or list of str
-    @keyword method:        The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
-    @type method:           str
-    @keyword centre_type:   The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
-    @type centre_type:      str
-    @keyword centroid:      An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
-    @type centroid:         list of float or numpy rank-1, 3D array
+    @keyword pipes:                     The data pipes to include in the alignment and superimposition.
+    @type pipes:                        None or list of str
+    @keyword models:                    The list of models to for each data pipe superimpose.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:                       list of lists of int or None
+    @keyword molecules:                 The molecule names to include in the alignment and superimposition.  The number of elements must match the pipes argument.
+    @type molecules:                    None or list of str
+    @keyword atom_id:                   The molecule, residue, and atom identifier string.  This matches the spin ID string format.
+    @type atom_id:                      str or None
+    @keyword displace_id:               The atom ID string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.  This can be a list of atom IDs with each element corresponding to one of the structures.
+    @type displace_id:                  None, str, or list of str
+    @keyword method:                    The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
+    @type method:                       str
+    @keyword algorithm:                 The pairwise sequence alignment algorithm to use.
+    @type algorithm:                    str
+    @keyword matrix:                    The substitution matrix to use.
+    @type matrix:                       str
+    @keyword gap_open_penalty:          The penalty for introducing gaps, as a positive number.
+    @type gap_open_penalty:             float
+    @keyword gap_extend_penalty:        The penalty for extending a gap, as a positive number.
+    @type gap_extend_penalty:           float
+    @keyword end_gap_open_penalty:      The optional penalty for opening a gap at the end of a sequence.
+    @type end_gap_open_penalty:         float
+    @keyword end_gap_extend_penalty:    The optional penalty for extending a gap at the end of a sequence.
+    @type end_gap_extend_penalty:       float
+    @keyword centre_type:               The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
+    @type centre_type:                  str
+    @keyword centroid:                  An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
+    @type centroid:                     list of float or numpy rank-1, 3D array
     """
 
     # Check the method.
