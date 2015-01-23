@@ -64,12 +64,12 @@ AA_CODES = {
 def aa_codes_three_to_one(code):
     """Convert the given three letter amino acid code to the corresponding one letter code.
 
-    Any non-standard residues will be converted to 'X'.
+    Any non-standard residues will be converted to '*'.
 
 
     @param code:    The three letter amino acid code to convert.
     @type code:     str
-    @return:        The corresponding one letter amino acid code, or 'X'.
+    @return:        The corresponding one letter amino acid code, or '*'.
     @rtype:         str
     """
 
@@ -81,7 +81,7 @@ def aa_codes_three_to_one(code):
         return AA_CODES[upper_code]
 
     # No code.
-    return 'X'
+    return '*'
 
 
 def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
