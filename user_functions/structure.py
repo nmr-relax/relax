@@ -227,32 +227,28 @@ uf.add_keyarg(
     default = 10.0,
     py_type = "float",
     desc_short = "gap opening penalty",
-    desc = "The penalty for introducing gaps, as a positive number.",
-    can_be_none = False
+    desc = "The penalty for introducing gaps, as a positive number."
 )
 uf.add_keyarg(
     name = "gap_extend_penalty",
     default = 1.0,
     py_type = "float",
     desc_short = "gap extension penalty",
-    desc = "The penalty for extending a gap, as a positive number.",
-    can_be_none = False
+    desc = "The penalty for extending a gap, as a positive number."
 )
 uf.add_keyarg(
     name = "end_gap_open_penalty",
-    default = None,
+    default = 0.0,
     py_type = "float",
     desc_short = "end gap opening penalty",
-    desc = "The optional penalty for opening a gap at the end of a sequence.",
-    can_be_none = True
+    desc = "The optional penalty for opening a gap at the end of a sequence."
 )
 uf.add_keyarg(
     name = "end_gap_extend_penalty",
-    default = None,
+    default = 0.0,
     py_type = "float",
     desc_short = "end gap extension penalty",
-    desc = "The optional penalty for extending a gap at the end of a sequence.",
-    can_be_none = True
+    desc = "The optional penalty for extending a gap at the end of a sequence."
 )
 uf.add_keyarg(
     name = "centre_type",
