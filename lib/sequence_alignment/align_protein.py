@@ -39,7 +39,7 @@ def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', ga
     @type sequence1:                    str
     @param sequence2:                   The second protein sequence as one letter codes.
     @type sequence2:                    str
-    @keyword algorithm:                 The alignment algorithm to use.
+    @keyword algorithm:                 The pairwise sequence alignment algorithm to use.
     @type algorithm:                    str
     @keyword matrix:                    The substitution matrix to use.
     @type matrix:                       str
