@@ -213,6 +213,48 @@ uf.add_keyarg(
     wiz_read_only = True
 )
 uf.add_keyarg(
+    name = "matrix",
+    default = "BLOSUM62",
+    py_type = "str",
+    desc_short = "substitution matrix",
+    desc = "The substitution matrix to use in the pairwise sequence alignment algorithm.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["BLOSUM62", "PAM250", "NUC 4.4"],
+    wiz_read_only = True
+)
+uf.add_keyarg(
+    name = "gap_open_penalty",
+    default = 10.0,
+    py_type = "float",
+    desc_short = "gap opening penalty",
+    desc = "The penalty for introducing gaps, as a positive number.",
+    can_be_none = False
+)
+uf.add_keyarg(
+    name = "gap_extend_penalty",
+    default = 1.0,
+    py_type = "float",
+    desc_short = "gap extension penalty",
+    desc = "The penalty for extending a gap, as a positive number.",
+    can_be_none = False
+)
+uf.add_keyarg(
+    name = "end_gap_open_penalty",
+    default = None,
+    py_type = "float",
+    desc_short = "end gap opening penalty",
+    desc = "The optional penalty for opening a gap at the end of a sequence.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "end_gap_extend_penalty",
+    default = None,
+    py_type = "float",
+    desc_short = "end gap extension penalty",
+    desc = "The optional penalty for extending a gap at the end of a sequence.",
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "centre_type",
     py_type = "str",
     default = "centroid",
@@ -237,6 +279,7 @@ uf.desc[-1].add_item_list_element("'fit to first'", "This is quicker but is not 
 uf.desc[-1].add_paragraph(paragraph_multi_struct)
 uf.desc[-1].add_paragraph(paragraph_atom_id)
 uf.desc[-1].add_paragraph(paragraph_displace_id)
+uf.desc[-1].add_paragraph("To find common atoms between diverse structures, a sequence alignment is performed between the molecules.  This will be a pairwise alignment of each structure to the first.  The Needleman-Wunsch algorithm (NW70), modified to use the logic of the EMBOSS software for handling gap opening and extension penalties, as well as end penalties, will be used.  The substitution matrix can be one of BLOSUM62 or PAM250 for proteins, or NUC 4.4 for DNA/RNA.")
 uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
@@ -254,7 +297,7 @@ uf.desc[-1].add_prompt("relax> structure.align(pipes=['B', 'A'], method='fit to 
 uf.backend = pipe_control.structure.main.align
 uf.menu_text = "&align"
 uf.wizard_apply_button = False
-uf.wizard_height_desc = 370
+uf.wizard_height_desc = 250
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
