@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,6 +24,7 @@ from __future__ import absolute_import
 """Module for handling the molecule, residue, and spin sequence data."""
 
 # Python module imports.
+from string import upper
 import sys
 from warnings import warn
 
@@ -33,6 +34,54 @@ from lib.errors import RelaxError, RelaxInvalidSeqError
 from lib.io import extract_data, open_write_file, strip, write_data
 from lib.selection import spin_id_to_data_list
 from lib.warnings import RelaxWarning, RelaxFileEmptyWarning
+
+
+# The 3 letter to 1 letter amino acid code table.
+AA_CODES = {
+    "ALA": "A",
+    "ARG": "R",
+    "ASN": "N",
+    "ASP": "D",
+    "CYS": "C",
+    "GLU": "E",
+    "GLN": "Q",
+    "GLY": "G",
+    "HIS": "H",
+    "ILE": "I",
+    "LEU": "L",
+    "LYS": "K",
+    "MET": "M",
+    "PHE": "F",
+    "PRO": "P",
+    "SER": "S",
+    "THR": "T",
+    "TRP": "W",
+    "TYR": "Y",
+    "VAL": "V",
+}
+
+
+def aa_codes_three_to_one(code):
+    """Convert the given three letter amino acid code to the corresponding one letter code.
+
+    Any non-standard residues will be converted to 'X'.
+
+
+    @param code:    The three letter amino acid code to convert.
+    @type code:     str
+    @return:        The corresponding one letter amino acid code, or 'X'.
+    @rtype:         str
+    """
+
+    # Convert to uppercase.
+    upper_code = upper(code)
+
+    # The code exists.
+    if upper_code in AA_CODES:
+        return AA_CODES[upper_code]
+
+    # No code.
+    return 'X'
 
 
 def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
