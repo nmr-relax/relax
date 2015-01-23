@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2014 Edward d'Auvergne                                        #
+# Copyright (C) 2014-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,6 +24,9 @@
 
 # Python module imports.
 from numpy import array, float64
+
+# relax module imports.
+from lib.sequence_alignment.align_protein import align_pairwise
 
 
 def assemble_coord_array(objects=None, object_names=None, molecules=None, models=None, atom_id=None, algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0, seq_info_flag=False):
@@ -67,6 +70,7 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
     res_nums = []
     atom_names = []
     elements = []
+    one_letter_codes = []
     for struct_index in range(len(objects)):
         # Printout.
         print("    Data pipe: %s" % object_names[struct_index])
@@ -126,6 +130,9 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
                     # Change the current molecule name.
                     current_mol = mol_name
 
+                    # Store the one letter codes for sequence alignment.
+                    one_letter_codes.append(objects[struct_index].one_letter_codes(mol_name=mol_name))
+
                     # Extend the lists.
                     if molecules != None:
                         atom_ids.append([])
@@ -165,6 +172,14 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
                     res_nums[-1][id] = res_num
                     atom_names[-1][id] = atom_name
                     elements[-1][id] = elem
+
+    # Sequence alignment.
+    print("\nPairwise sequence alignment to the first molecule:\n")
+    gap_matrices = []
+    for i in range(1, len(one_letter_codes)):
+        print("Molecules 1-%i" % (i+1))
+        align1, align2, gaps = align_pairwise(one_letter_codes[0], one_letter_codes[i], matrix='BLOSUM62', gap_open_penalty=5.0, gap_extend_penalty=1.0)
+        gap_matrices.append(gaps)
 
     # Set up the structures for the superimposition algorithm.
     num = len(atom_ids)
