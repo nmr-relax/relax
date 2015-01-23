@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -39,6 +39,7 @@ from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
 from lib.io import file_root, open_read_file
 from lib.selection import Selection
+from lib.sequence import aa_codes_three_to_one
 from lib.structure import pdb_read, pdb_write
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.models import ModelList
@@ -2264,6 +2265,38 @@ class Internal:
 
         # Return the number.
         return len(self.structural_data[0].mol)
+
+
+    def one_letter_codes(self, mol_name=None):
+        """Generate and return the one letter code sequence for the given molecule.
+
+        @keyword mol_name:  The name of the molecule to return the one letter codes for.
+        @type mol_name:     str
+        @return:            The one letter code sequence for the given molecule.
+        @rtype:             str
+        """
+
+        # Initialise.
+        codes = ''
+
+        # Use the first model.
+        model = self.structural_data[0]
+
+        # Loop over the molecules.
+        for mol_index in range(len(model.mol)):
+            # Alias.
+            mol = model.mol[mol_index]
+
+            # Skip non-matching molecules.
+            if mol_name and mol_name != mol.mol_name:
+                continue
+
+            # Loop over the residues.
+            for res_name, res_num in mol.loop_residues():
+                codes += aa_codes_three_to_one(res_name)
+            
+        # Return the codes.
+        return codes
 
 
     def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None, file_path_abs=None, verbosity=1, merge=False):
