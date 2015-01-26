@@ -339,6 +339,11 @@ def common_residues(gap_matrices=None, one_letter_codes=None):
         if skip[0][j]:
             sys.stdout.write("-")
 
+        # A gap, so skip the residue.
+        elif gap_matrices[0][0, j]:
+            sys.stdout.write("-")
+            sys.stdout.write(one_letter_codes[0][j])
+
         # Keep the residue.
         else:
             sys.stdout.write(one_letter_codes[0][j])
@@ -355,12 +360,7 @@ def common_residues(gap_matrices=None, one_letter_codes=None):
         # Loop over the residues of alignment mol_index.
         seq1_index = -1
         seq2_index = -1
-        for j in range(max(res_counts)):
-            # No more residues.
-            if j >= len(gap_matrices[mol_index-1][1]):
-                sys.stdout.write("-")
-                continue
-
+        for j in range(len(gap_matrices[mol_index-1][0])):
             # Increment the sequence indices.
             if not gap_matrices[mol_index-1][0, j]:
                 seq1_index += 1
@@ -386,7 +386,7 @@ def common_residues(gap_matrices=None, one_letter_codes=None):
 
             # Already skipped in the first molecule.
             elif skip[0][seq1_index] and not gap_matrices[mol_index-1][1, j]:
-                skip[mol_index][seq2_index] = 1
+                skip[mol_index][seq1_index] = 1
                 skip_counts[mol_index] += 1
                 sys.stdout.write("-")
 
