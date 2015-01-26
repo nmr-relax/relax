@@ -268,6 +268,9 @@ def pdb(r=1.02, file_name='uniform.pdb', inc=None):
             mol.atom_add(pdb_record='ATOM', atom_num=atom_num,   atom_name='N', res_name=upper(AA_TABLE[SEQ[index]]), res_num=res, pos=pos1, element='N')
             mol.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name='H', res_name=upper(AA_TABLE[SEQ[index]]), res_num=res, pos=pos2,   element='H')
 
+            # Connect.
+            mol.atom_connect(atom_num-1, atom_num)
+
             # Move 2 atoms forwards.
             atom_num += 2
 

@@ -4,7 +4,7 @@ REMARK  40 CREATED USING RELAX (HTTP://WWW.NMR-RELAX.COM).
 REMARK  40                                                                      
 REMARK  40 RELAX VERSION REPOSITORY CHECKOUT R27296                             
 REMARK  40 SVN+SSH://BUGMAN@SVN.GNA.ORG/SVN/RELAX/TRUNK.                        
-REMARK  40 CREATED ON MON JAN 26 11:23:12 2015.                                 
+REMARK  40 CREATED ON MON JAN 26 11:27:33 2015.                                 
 ATOM      1  N   PRO A   1       0.000   0.000 -10.000  1.00  0.00           N  
 ATOM      2  H   PRO A   1       0.000   0.000 -11.020  1.00  0.00           H  
 ATOM      3  N   PRO A   2       7.454   0.000  -6.667  1.00  0.00           N  
@@ -66,5 +66,65 @@ ATOM     58  H   HIS A  29       4.107  -7.113   7.347  1.00  0.00           H
 ATOM     59  N   ALA A  30       0.000  -0.000  10.000  1.00  0.00           N  
 ATOM     60  H   ALA A  30       0.000  -0.000  11.020  1.00  0.00           H  
 TER      61      ALA A  30                                                      
-MASTER        0    0    0    0    0    0    0    0   60    1    0    0          
+CONECT    1    2                                                                
+CONECT    2    1                                                                
+CONECT    3    4                                                                
+CONECT    4    3                                                                
+CONECT    5    6                                                                
+CONECT    6    5                                                                
+CONECT    7    8                                                                
+CONECT    8    7                                                                
+CONECT    9   10                                                                
+CONECT   10    9                                                                
+CONECT   11   12                                                                
+CONECT   12   11                                                                
+CONECT   13   14                                                                
+CONECT   14   13                                                                
+CONECT   15   16                                                                
+CONECT   16   15                                                                
+CONECT   17   18                                                                
+CONECT   18   17                                                                
+CONECT   19   20                                                                
+CONECT   20   19                                                                
+CONECT   21   22                                                                
+CONECT   22   21                                                                
+CONECT   23   24                                                                
+CONECT   24   23                                                                
+CONECT   25   26                                                                
+CONECT   26   25                                                                
+CONECT   27   28                                                                
+CONECT   28   27                                                                
+CONECT   29   30                                                                
+CONECT   30   29                                                                
+CONECT   31   32                                                                
+CONECT   32   31                                                                
+CONECT   33   34                                                                
+CONECT   34   33                                                                
+CONECT   35   36                                                                
+CONECT   36   35                                                                
+CONECT   37   38                                                                
+CONECT   38   37                                                                
+CONECT   39   40                                                                
+CONECT   40   39                                                                
+CONECT   41   42                                                                
+CONECT   42   41                                                                
+CONECT   43   44                                                                
+CONECT   44   43                                                                
+CONECT   45   46                                                                
+CONECT   46   45                                                                
+CONECT   47   48                                                                
+CONECT   48   47                                                                
+CONECT   49   50                                                                
+CONECT   50   49                                                                
+CONECT   51   52                                                                
+CONECT   52   51                                                                
+CONECT   53   54                                                                
+CONECT   54   53                                                                
+CONECT   55   56                                                                
+CONECT   56   55                                                                
+CONECT   57   58                                                                
+CONECT   58   57                                                                
+CONECT   59   60                                                                
+CONECT   60   59                                                                
+MASTER        0    0    0    0    0    0    0    0   60    1   60    0          
 END                                                                             
