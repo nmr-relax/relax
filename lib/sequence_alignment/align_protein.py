@@ -23,7 +23,6 @@
 """General sequence alignment functions."""
 
 # Python module imports.
-from string import upper
 import sys
 
 # relax module imports.
@@ -64,8 +63,8 @@ def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', ga
         raise RelaxError("The substitution matrix '%s' is unknown, it must be one of %s." % (matrix, allowed_matrices))
 
     # Capitalise the sequences.
-    sequence1 = upper(sequence1)
-    sequence2 = upper(sequence2)
+    sequence1 = sequence1.upper()
+    sequence2 = sequence2.upper()
 
     # Initial printout.
     sys.stdout.write("\nPairwise protein alignment.\n")
