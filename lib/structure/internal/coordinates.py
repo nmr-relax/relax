@@ -386,7 +386,7 @@ def common_residues(gap_matrices=None, one_letter_codes=None):
 
             # Already skipped in the first molecule.
             elif skip[0][seq1_index] and not gap_matrices[mol_index-1][1, j]:
-                skip[mol_index][seq1_index] = 1
+                skip[mol_index][seq2_index] = 1
                 skip_counts[mol_index] += 1
                 sys.stdout.write("-")
 
