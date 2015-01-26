@@ -250,8 +250,10 @@ def pdb(r=1.02, file_name='uniform.pdb', inc=None):
             # The index.
             index = i + j*len(theta)
 
-            # Scale the vector.
-            vector = vectors[index] * r
+            # The atomic positions.
+            pos1 = vectors[index] * 10
+            pos2 = pos1 + vectors[index] * r
+            vector = pos2 - pos1
 
             # Store the rearranged vector (truncated as in the PDB).
             trunc_vect = zeros(3, float64)
@@ -263,8 +265,8 @@ def pdb(r=1.02, file_name='uniform.pdb', inc=None):
             res = (atom_num + 1) / 2
 
             # Add the vector as a N-H atom pair.
-            mol.atom_add(pdb_record='ATOM', atom_num=atom_num,   atom_name='N', res_name=upper(AA_TABLE[SEQ[index]]), res_num=res, pos=zeros(3), element='N')
-            mol.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name='H', res_name=upper(AA_TABLE[SEQ[index]]), res_num=res, pos=vector,   element='H')
+            mol.atom_add(pdb_record='ATOM', atom_num=atom_num,   atom_name='N', res_name=upper(AA_TABLE[SEQ[index]]), res_num=res, pos=pos1, element='N')
+            mol.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name='H', res_name=upper(AA_TABLE[SEQ[index]]), res_num=res, pos=pos2,   element='H')
 
             # Move 2 atoms forwards.
             atom_num += 2
