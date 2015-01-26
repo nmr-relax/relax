@@ -28,7 +28,6 @@ The PDB file consists of uniformly distributed bond vectors.  The relaxation dat
 from math import pi, sqrt
 from numpy import array, cross, dot, eye, float64, transpose, zeros
 from numpy.linalg import norm
-from string import upper
 
 # relax module imports.
 from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz
@@ -261,8 +260,8 @@ def pdb(r=1.02, file_name='uniform.pdb', inc=None):
             res = (atom_num + 1) / 2
 
             # Add the vector as a N-H atom pair.
-            mol.atom_add(pdb_record='ATOM', atom_num=atom_num,   atom_name='N', res_name=upper(AA_TABLE[SEQ[index]]), res_num=res, pos=pos1, element='N')
-            mol.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name='H', res_name=upper(AA_TABLE[SEQ[index]]), res_num=res, pos=pos2,   element='H')
+            mol.atom_add(pdb_record='ATOM', atom_num=atom_num,   atom_name='N', res_name=AA_TABLE[SEQ[index]].upper(), res_num=res, pos=pos1, element='N')
+            mol.atom_add(pdb_record='ATOM', atom_num=atom_num+1, atom_name='H', res_name=AA_TABLE[SEQ[index]].upper(), res_num=res, pos=pos2,   element='H')
 
             # Connect.
             mol.atom_connect(atom_num-1, atom_num)
