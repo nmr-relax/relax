@@ -692,8 +692,8 @@ class Internal:
             if records[i][:6] == 'ENDMDL':
                 end = True
 
-            # A molecule termination record with no trailing HETATM.
-            elif i < len(records)-1 and records[i][:3] == 'TER' and not records[i+1][:6] == 'HETATM':
+            # A molecule termination record with no trailing HETATM or CONECT.
+            elif i < len(records)-1 and records[i][:3] == 'TER' and not records[i+1][:6] == 'HETATM' and not records[i+1][:6] == 'CONECT':
                 end = True
 
             # A HETATM followed by an ATOM record.
