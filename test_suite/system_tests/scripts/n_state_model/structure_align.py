@@ -17,7 +17,7 @@ for code in codes:
     structure.read_pdb('%s.pdb' % code, dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures')
 
 # Backbone heavy atom align all structures.
-structure.align(pipes=codes, atom_id='@N,C,CA,O', method='fit to first', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0)
+structure.align(pipes=codes, atom_id='@N,C,CA,O', method='fit to first', matrix='BLOSUM62', gap_open_penalty=10.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0)
 
 # Write out the result.
 structure.write_pdb('devnull', force=True)
