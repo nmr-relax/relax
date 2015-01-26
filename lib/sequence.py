@@ -24,7 +24,6 @@ from __future__ import absolute_import
 """Module for handling the molecule, residue, and spin sequence data."""
 
 # Python module imports.
-from string import upper
 import sys
 from warnings import warn
 
@@ -74,7 +73,7 @@ def aa_codes_three_to_one(code):
     """
 
     # Convert to uppercase.
-    upper_code = upper(code)
+    upper_code = code.upper()
 
     # The code exists.
     if upper_code in AA_CODES:
