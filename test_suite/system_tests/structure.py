@@ -1921,8 +1921,6 @@ class Structure(SystemTestCase):
         self.strip_remarks(lines)
         self.assertEqual(len(real_data), len(lines))
         for i in range(len(lines)):
-            print lines[i][:-1]
-        for i in range(len(lines)):
             self.assertEqual(real_data[i], lines[i])
 
 
