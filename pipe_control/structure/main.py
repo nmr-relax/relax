@@ -225,8 +225,8 @@ def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, 
     @type molecules:                    None or list of lists of str
     @keyword atom_id:                   The molecule, residue, and atom identifier string of the coordinates of interest.  This matches the spin ID string format.
     @type atom_id:                      None or str
-    @keyword algorithm:                 The pairwise sequence alignment algorithm to use.
-    @type algorithm:                    str
+    @keyword algorithm:                 The pairwise sequence alignment algorithm to use.  If set to None, then no alignment will be performed.
+    @type algorithm:                    str or None
     @keyword matrix:                    The substitution matrix to use.
     @type matrix:                       str
     @keyword gap_open_penalty:          The penalty for introducing gaps, as a positive number.
