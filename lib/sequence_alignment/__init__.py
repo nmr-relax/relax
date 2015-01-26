@@ -1,7 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2015 Edward d'Auvergne                                   #
-# Copyright (C) 2014 Troels E. Linnet                                         #
+# Copyright (C) 2015 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -21,45 +20,10 @@
 ###############################################################################
 
 # Package docstring.
-"""The relax-lib package - a collection of functions, objects, and methods for the study of dynamics."""
+"""The relax-lib sequence alignment package - a library of functions for aligning proteins, DNA, RNA or other molecules."""
 
 __all__ = [
-    'alignment',
-    'ansi',
-    'arg_check',
-    'auto_relaxation',
-    'check_types',
-    'checks',
-    'chemical_shift',
-    'compat',
-    'curve_fit',
-    'diffusion',
-    'dispersion',
-    'errors',
-    'float',
-    'frame_order',
-    'geometry',
-    'io',
-    'linear_algebra',
-    'list',
-    'mathematics',
-    'model_selection',
-    'nmr',
-    'order',
-    'periodic_table',
-    'physical_constants',
-    'plotting',
-    'regex',
-    'selection',
-    'sequence',
-    'sequence_alignment',
-    'software',
-    'spectral_densities',
-    'spectrum',
-    'statistics',
-    'structure',
-    'text',
-    'timing',
-    'warnings',
-    'xml'
+    'align_protein',
+    'needleman_wunsch',
+    'substitution_matrices'
 ]
