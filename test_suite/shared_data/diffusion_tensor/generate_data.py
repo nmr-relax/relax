@@ -253,8 +253,11 @@ def pdb(r=1.02, file_name='uniform.pdb', inc=None):
             pos1 = vectors[index] * 10
             pos2 = pos1 + vectors[index] * r
 
-            # Store the vector.
-            new_vectors.append(vectors[index] * r)
+            # Store the rearranged vector (truncated as in the PDB).
+            trunc_vect = zeros(3, float64)
+            for k in range(3):
+                trunc_vect[k] = float("%.3f" % pos2[k]) - float("%.3f" % pos1[k])
+            new_vectors.append(trunc_vect)
 
             # Residue number.
             res = (atom_num + 1) / 2

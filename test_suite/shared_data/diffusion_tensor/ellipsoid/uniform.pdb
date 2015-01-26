@@ -2,9 +2,9 @@ REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.
 REMARK  40                                                                      
 REMARK  40 CREATED USING RELAX (HTTP://WWW.NMR-RELAX.COM).                      
 REMARK  40                                                                      
-REMARK  40 RELAX VERSION REPOSITORY CHECKOUT R27296                             
+REMARK  40 RELAX VERSION REPOSITORY CHECKOUT R27302                             
 REMARK  40 SVN+SSH://BUGMAN@SVN.GNA.ORG/SVN/RELAX/TRUNK.                        
-REMARK  40 CREATED ON MON JAN 26 11:27:43 2015.                                 
+REMARK  40 CREATED ON MON JAN 26 16:08:12 2015.                                 
 ATOM      1  N   PRO A   1       0.000   0.000 -10.000  1.00  0.00           N  
 ATOM      2  H   PRO A   1       0.000   0.000 -11.020  1.00  0.00           H  
 ATOM      3  N   PRO A   2       7.454   0.000  -6.667  1.00  0.00           N  
