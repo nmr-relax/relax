@@ -3657,11 +3657,11 @@ class Structure(SystemTestCase):
 
         # What the data should look like.
         helices = [
-            ['H1', 'A', 'ILE', 23, 'A', 'GLU', 34, 1, 12]
+            ['H1', 0, 'ILE', 23, 0, 'GLU', 34, 1, 12]
         ]
         sheets = [
-            [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None],
-            [2, 'BET', 5, 'MET', 'A', 1, None, 'THR', 'A', 7, None, -1, None, None, None, None, None, None, None, None, None, None]
+            [1, 'BET', 5, 'GLY', 0, 10, None, 'VAL', 0, 17, None, 0, None, None, None, None, None, None, None, None, None, None],
+            [2, 'BET', 5, 'MET', 0, 1, None, 'THR', 0, 7, None, -1, None, None, None, None, None, None, None, None, None, None]
         ]
 
         # Check the helix data.
