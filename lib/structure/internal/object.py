@@ -487,6 +487,12 @@ class Internal:
             'TURN  '
         ]
 
+        # The number of pre-existing molecules.
+        if not len(self.structural_data):
+            mol_num = 0
+        else:
+            mol_num = len(self.structural_data[0].mol)
+
         # Loop over the lines.
         for i in range(len(lines)):
             # No match, therefore assume to be out of the secondary structure section.
@@ -498,34 +504,56 @@ class Internal:
                 # Parse the record.
                 record_type, ser_num, helix_id, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, helix_class, comment, length = pdb_read.helix(lines[i])
 
+                # The molecule indices.
+                mol_init_index = self._pdb_chain_id_to_mol_index(init_chain_id)
+                mol_end_index = self._pdb_chain_id_to_mol_index(end_chain_id)
+
                 # Only load the desired molecule.
                 if read_mol != None:
-                    if self._pdb_chain_id_to_mol_index(init_chain_id)+1 not in read_mol:
+                    if mol_init_index + 1 not in read_mol:
                         continue
-                    if self._pdb_chain_id_to_mol_index(end_chain_id)+1 not in read_mol:
+                    if mol_end_index + 1 not in read_mol:
                         continue
+
+                # New molecule indices based on currently loaded data.
+                mol_init_index += mol_num
+                mol_end_index += mol_num
 
                 # Store the data.
                 if not hasattr(self, 'helices'):
                     self.helices = []
-                self.helices.append([helix_id, init_chain_id, init_res_name, init_seq_num, end_chain_id, end_res_name, end_seq_num, helix_class, length])
+                self.helices.append([helix_id, mol_init_index, init_res_name, init_seq_num, mol_end_index, end_res_name, end_seq_num, helix_class, length])
 
             # A sheet.
             if lines[i][:5] == 'SHEET':
                 # Parse the record.
                 record_type, strand, sheet_id, num_strands, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, sense, cur_atom, cur_res_name, cur_chain_id, cur_res_seq, cur_icode, prev_atom, prev_res_name, prev_chain_id, prev_res_seq, prev_icode = pdb_read.sheet(lines[i])
 
+                # The molecule indices.
+                mol_init_index = self._pdb_chain_id_to_mol_index(init_chain_id)
+                mol_end_index = self._pdb_chain_id_to_mol_index(end_chain_id)
+
                 # Only load the desired molecule.
                 if read_mol != None:
-                    if self._pdb_chain_id_to_mol_index(init_chain_id)+1 not in read_mol:
+                    if mol_init_index + 1 not in read_mol:
                         continue
-                    if self._pdb_chain_id_to_mol_index(end_chain_id)+1 not in read_mol:
+                    if mol_end_index + 1 not in read_mol:
                         continue
+
+                # New molecule indices based on currently loaded data.
+                mol_init_index += mol_num
+                mol_end_index += mol_num
+                mol_cur_index = None
+                if cur_chain_id:
+                    mol_cur_index = self._pdb_chain_id_to_mol_index(cur_chain_id) + mol_num
+                mol_prev_index = None
+                if prev_chain_id:
+                    mol_prev_index = self._pdb_chain_id_to_mol_index(prev_chain_id) + mol_num
 
                 # Store the data.
                 if not hasattr(self, 'sheets'):
                     self.sheets = []
-                self.sheets.append([strand, sheet_id, num_strands, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, sense, cur_atom, cur_res_name, cur_chain_id, cur_res_seq, cur_icode, prev_atom, prev_res_name, prev_chain_id, prev_res_seq, prev_icode])
+                self.sheets.append([strand, sheet_id, num_strands, init_res_name, mol_init_index, init_seq_num, init_icode, end_res_name, mol_end_index, end_seq_num, end_icode, sense, cur_atom, cur_res_name, mol_cur_index, cur_res_seq, cur_icode, prev_atom, prev_res_name, mol_prev_index, prev_res_seq, prev_icode])
 
         # Return the remaining lines.
         return lines[i:]
@@ -2865,8 +2893,8 @@ class Internal:
 
             # Loop over and unpack the helix data.
             index = 1
-            for helix_id, init_chain_id, init_res_name, init_seq_num, end_chain_id, end_res_name, end_seq_num, helix_class, length in self.helices:
-                pdb_write.helix(file, ser_num=index, helix_id=helix_id, init_chain_id=init_chain_id, init_res_name=init_res_name, init_seq_num=init_seq_num, end_chain_id=end_chain_id, end_res_name=end_res_name, end_seq_num=end_seq_num, helix_class=helix_class, length=length)
+            for helix_id, mol_init_index, init_res_name, init_seq_num, mol_end_index, end_res_name, end_seq_num, helix_class, length in self.helices:
+                pdb_write.helix(file, ser_num=index, helix_id=helix_id, init_chain_id=CHAIN_ID_LIST[mol_init_index], init_res_name=init_res_name, init_seq_num=init_seq_num, end_chain_id=CHAIN_ID_LIST[mol_end_index], end_res_name=end_res_name, end_seq_num=end_seq_num, helix_class=helix_class, length=length)
                 index += 1
 
         # The SHEET records.
@@ -2878,7 +2906,18 @@ class Internal:
 
             # Loop over and unpack the helix data.
             index = 1
-            for strand, sheet_id, num_strands, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, sense, cur_atom, cur_res_name, cur_chain_id, cur_res_seq, cur_icode, prev_atom, prev_res_name, prev_chain_id, prev_res_seq, prev_icode in self.sheets:
+            for strand, sheet_id, num_strands, init_res_name, mol_init_index, init_seq_num, init_icode, end_res_name, mol_end_index, end_seq_num, end_icode, sense, cur_atom, cur_res_name, mol_cur_index, cur_res_seq, cur_icode, prev_atom, prev_res_name, mol_prev_index, prev_res_seq, prev_icode in self.sheets:
+                # Translate molecule indices to chain IDs.
+                init_chain_id = CHAIN_ID_LIST[mol_init_index]
+                end_chain_id = CHAIN_ID_LIST[mol_end_index]
+                cur_chain_id = None
+                if mol_cur_index != None:
+                    cur_chain_id = CHAIN_ID_LIST[mol_cur_index]
+                prev_chain_id = None
+                if mol_prev_index != None:
+                    prev_chain_id = CHAIN_ID_LIST[mol_prev_index]
+
+                # Write out.
                 pdb_write.sheet(file, strand=strand, sheet_id=sheet_id, num_strands=num_strands, init_res_name=init_res_name, init_chain_id=init_chain_id, init_seq_num=init_seq_num, init_icode=init_icode, end_res_name=end_res_name, end_chain_id=end_chain_id, end_seq_num=end_seq_num, end_icode=end_icode, sense=sense, cur_atom=cur_atom, cur_res_name=cur_res_name, cur_chain_id=cur_chain_id, cur_res_seq=cur_res_seq, cur_icode=cur_icode, prev_atom=prev_atom, prev_res_name=prev_res_name, prev_chain_id=prev_chain_id, prev_res_seq=prev_res_seq, prev_icode=prev_icode)
                 index += 1
 
