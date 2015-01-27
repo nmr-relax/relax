@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -3657,11 +3657,11 @@ class Structure(SystemTestCase):
 
         # What the data should look like.
         helices = [
-            ['H1', 'A', 'ILE', 23, 'A', 'GLU', 34, 1, 12]
+            ['H1', 0, 'ILE', 23, 0, 'GLU', 34, 1, 12]
         ]
         sheets = [
-            [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None],
-            [2, 'BET', 5, 'MET', 'A', 1, None, 'THR', 'A', 7, None, -1, None, None, None, None, None, None, None, None, None, None]
+            [1, 'BET', 5, 'GLY', 0, 10, None, 'VAL', 0, 17, None, 0, None, None, None, None, None, None, None, None, None, None],
+            [2, 'BET', 5, 'MET', 0, 1, None, 'THR', 0, 7, None, -1, None, None, None, None, None, None, None, None, None, None]
         ]
 
         # Check the helix data.
@@ -3674,6 +3674,49 @@ class Structure(SystemTestCase):
         self.assertEqual(len(cdp.structure.sheets), 2)
         self.assertEqual(cdp.structure.sheets[0], sheets[0])
         self.assertEqual(cdp.structure.sheets[1], sheets[1])
+
+
+    def test_pdb_combined_secondary_structure(self):
+        """Test the handling of secondary structure metadata when combining multiple PDB structures."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Read a PDB file twice as two different molecules.
+        self.interpreter.structure.read_pdb('1J7O.pdb', dir=path, set_mol_name='N-dom', read_model=1, set_model_num=1)
+        self.interpreter.structure.read_pdb('1J7P.pdb', dir=path, set_mol_name='C-dom', read_model=1, set_model_num=1)
+
+        # Create a PDB file.
+        file = DummyFileObject()
+        self.interpreter.structure.write_pdb(file=file, force=True)
+
+        # The file secondary structure contents, as they should be.
+        contents = [
+            "HELIX    1   1 THR A    5  ASP A   20  1                                  16    \n",
+            "HELIX    2   2 THR A   28  LEU A   39  1                                  12    \n",
+            "HELIX    3   3 THR A   44  GLU A   54  1                                  11    \n",
+            "HELIX    4   4 ASP A   64  MET A   76  1                                  13    \n",
+            "HELIX    5   1 GLU B   82  ASP B   93  1                                  12    \n",
+            "HELIX    6   2 SER B  101  LEU B  112  1                                  12    \n",
+            "HELIX    7   3 THR B  117  ASP B  129  1                                  13    \n",
+            "HELIX    8   4 TYR B  138  THR B  146  1                                   9    \n",
+            "SHEET    1   A 2 TYR B  99  ILE B 100  0                                        \n",
+            "SHEET    2   A 2 VAL B 136  ASN B 137 -1    OVAL B 136     NILE B 100           \n"
+        ]
+
+        # Check secondary structure contents of the created PDB file.
+        lines = file.readlines()
+        index = 0
+        print("\n\nChecking the records:\n")
+        for i in range(len(lines)):
+            # Only secondary structure records.
+            if lines[i][:5] not in ['HELIX', 'SHEET']:
+                continue
+
+            # Check and increment the index.
+            print(lines[i][:-1])
+            self.assertEqual(contents[index], lines[i])
+            index += 1
 
 
     def test_read_gaussian_strychnine(self):
