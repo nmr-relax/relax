@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2015 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,8 +19,12 @@
 #                                                                             #
 ###############################################################################
 
+# relax module imports.
+from lib.structure.internal import coordinates
+from test_suite.unit_tests.base_classes import UnitTestCase
 
-__all__ = [
-    'test___init__'
-    'test_coordinates'
-]
+
+class Test_coordinates(UnitTestCase):
+    """Unit tests for the functions of the 'lib.structure.internal.coordinates' module."""
+
+
