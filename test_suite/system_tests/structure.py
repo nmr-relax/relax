@@ -374,6 +374,42 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(mol1.z[-1] - mol2.z[-1], -1.0, 2)
 
 
+    def test_align_molecules_end_truncation(self):
+        """Test of the structure.align user function, fitting to the mean structure."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the two rotated structures.
+        self.interpreter.structure.read_pdb('1J7O.pdb', dir=path, read_model=1, set_model_num=1, set_mol_name='CaM A')
+        self.interpreter.structure.read_pdb('1J7O.pdb', dir=path, read_model=1, set_model_num=1, set_mol_name='CaM B')
+        self.interpreter.structure.read_pdb('1J7O.pdb', dir=path, read_model=1, set_model_num=1, set_mol_name='CaM C')
+
+        # Delete some end residues.
+        self.interpreter.structure.delete(atom_id="#CaM A:1-4")
+        self.interpreter.structure.delete(atom_id="#CaM A:60-100")
+        self.interpreter.structure.delete(atom_id="#CaM C:1-3")
+        self.interpreter.structure.delete(atom_id="#CaM C:75-100")
+
+        # Superimpose the backbone heavy atoms.
+        self.interpreter.structure.align(method='fit to mean', atom_id='@N,C,CA,O', displace_id=':82-5000')
+
+        # Check that the two structures now have the same atomic coordinates.
+        mol1 = cdp.structure.structural_data[0].mol[0]
+        mol2 = cdp.structure.structural_data[0].mol[1]
+        for i in range(len(mol1.atom_name)):
+            if mol1.res_num[i] == 1:
+                continue
+            self.assertAlmostEqual(mol1.x[i], mol2.x[i], 2)
+            self.assertAlmostEqual(mol1.y[i], mol2.y[i], 2)
+            self.assertAlmostEqual(mol1.z[i], mol2.z[i], 2)
+
+        # The last atom must be different - it is not displaced.
+        self.assertAlmostEqual(mol1.x[-1] - mol2.x[-1], -1.0, 2)
+        self.assertAlmostEqual(mol1.y[-1] - mol2.y[-1], -1.0, 2)
+        self.assertAlmostEqual(mol1.z[-1] - mol2.z[-1], -1.0, 2)
+
+
     def test_align_CaM_BLOSUM62(self):
         """Test the alignment of CaM molecules from different species using the BLOSUM62 substitution matrix."""
 
