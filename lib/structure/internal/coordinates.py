@@ -65,7 +65,6 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
     # Assemble the atomic coordinates of all structures.
     print("Assembling all atomic coordinates:")
     ids = []
-    atom_ids = []
     atom_pos = []
     mol_names = []
     res_names = []
@@ -95,28 +94,6 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
             # Printout.
             print("        Model: %s" % model.num)
 
-            # Create a new structure ID for all the molecules of this model (if the molecules argument is not supplied).
-            if molecules == None:
-                if len(object_names) > 1 and num_models > 1:
-                    ids.append('%s, model %i' % (object_names[struct_index], model.num))
-                elif len(object_names) > 1:
-                    ids.append('%s' % (object_names[struct_index]))
-                elif num_models > 1:
-                    ids.append('model %i' % (model.num))
-                else:
-                    ids.append(None)
-
-            # Extend the lists.
-            if molecules == None:
-                atom_names.append([])
-                atom_ids.append([])
-                atom_pos.append([])
-                if seq_info_flag:
-                    mol_names.append([])
-                    res_names.append([])
-                    res_nums.append([])
-                    elements.append([])
-
             # Add all coordinates and elements.
             current_mol = ''
             current_res = None
@@ -138,26 +115,23 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
                     one_letter_codes.append(objects[struct_index].one_letter_codes(mol_name=mol_name))
 
                     # Extend the lists.
-                    if molecules != None:
-                        atom_names.append([])
-                        atom_ids.append([])
-                        atom_pos.append([])
-                        if seq_info_flag:
-                            mol_names.append([])
-                            res_names.append([])
-                            res_nums.append([])
-                            elements.append([])
+                    atom_names.append([])
+                    atom_pos.append([])
+                    if seq_info_flag:
+                        mol_names.append([])
+                        res_names.append([])
+                        res_nums.append([])
+                        elements.append([])
 
                     # Create a new structure ID.
-                    if molecules != None:
-                        if len(object_names) > 1 and num_models > 1:
-                            ids.append('%s, model %i, %s' % (object_names[struct_index], model.num, mol_name))
-                        elif len(object_names) > 1:
-                            ids.append('%s, %s' % (object_names[struct_index], mol_name))
-                        elif num_models > 1:
-                            ids.append('model %i, %s' % (model.num, mol_name))
-                        else:
-                            ids.append('%s' % mol_name)
+                    if len(object_names) > 1 and num_models > 1:
+                        ids.append('%s, model %i, %s' % (object_names[struct_index], model.num, mol_name))
+                    elif len(object_names) > 1:
+                        ids.append('%s, %s' % (object_names[struct_index], mol_name))
+                    elif num_models > 1:
+                        ids.append('model %i, %s' % (model.num, mol_name))
+                    else:
+                        ids.append('%s' % mol_name)
 
                 # A new residue.
                 if res_num != current_res:
@@ -166,7 +140,6 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
 
                     # Extend the lists.
                     atom_names[-1].append([])
-                    atom_ids[-1].append({})
                     atom_pos[-1].append({})
                     if seq_info_flag:
                         mol_names[-1].append({})
@@ -174,15 +147,8 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
                         res_nums[-1].append({})
                         elements[-1].append({})
 
-                # A unique identifier.
-                if molecules != None:
-                    id = ":%s&%s@%s" % (res_num, res_name, atom_name)
-                else:
-                    id = "#%s:%s&%s@%s" % (mol_name, res_num, res_name, atom_name)
-
                 # Store the per-structure ID and coordinate.
                 atom_names[-1][-1].append(atom_name)
-                atom_ids[-1][-1][atom_name] = id
                 atom_pos[-1][-1][atom_name] = pos[0]
 
                 # Store the per-structure sequence information.
@@ -193,7 +159,7 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
                     elements[-1][-1][atom_name] = elem
 
     # The total number of molecules.
-    num_mols = len(atom_ids)
+    num_mols = len(atom_names)
 
     # Sequence alignment.
     if algorithm == 'NW70':
