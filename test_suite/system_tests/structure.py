@@ -3255,7 +3255,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.rotate(R, model=3)
 
         # The data to check.
-        ids = ['model 1', 'model 2']
+        ids = ['model 1, Ap4Aase_res1-12_mol1', 'model 2, Ap4Aase_res1-12_mol1']
         trans_vect = [
             [[0.0, 0.0, 0.0],
              [   2.270857972754659,   -1.811667138656451,    1.878400649688508]],
