@@ -24,7 +24,6 @@
 
 # Python module imports.
 from numpy import array, float64
-import sys
 
 # relax module imports.
 from lib.errors import RelaxFault
@@ -254,14 +253,16 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
         return coord, ids
 
 
-def common_residues(gap_matrices=None, one_letter_codes=None):
+def common_residues(gap_matrices=None, one_letter_codes=None, seq=False):
     """Determine the common residues between all the pairwise alignments.
 
     @keyword gap_matrices:      The list of gap matrices from the pairwise alignments.
     @type gap_matrices:         list of numpy rank-2 arrays.
     @keyword one_letter_codes:  The list of strings of one letter residue codes for each molecule.
     @type one_letter_codes:     list of str
-    @return:                    The residue skipping data structure.  The first dimension corresponds to the molecule, the second to the residue.  A one means the residue should be skipped, whereas zero means keep the residue.
+    @keyword seq:               A flag which if True will cause the gapped sequence strings to be returned.
+    @type seq:                  bool
+    @return:                    The residue skipping data structure and the optional gapped sequence strings.  For the skipping structure, the first dimension corresponds to the molecule and the second to the residue.  A one means the residue should be skipped, whereas zero means keep the residue.
     @rtype:                     list of list of int
     """
 
@@ -292,40 +293,35 @@ def common_residues(gap_matrices=None, one_letter_codes=None):
             if gap_matrices[mol_index][1, j]:
                 skip[0][seq_index] = 1
 
-    # Printout.
-    sys.stdout.write("Shared residues:\n")
-    sys.stdout.write("Molecule %3i:  " % 1)
+    # Initialise the gapped strings data structure for the first molecule.
+    gapped_strings = ['']
     for j in range(max(res_counts)):
         # No more residues.
         if j >= res_counts[0]:
-            sys.stdout.write("-")
+            gapped_strings[0] += "-"
             continue
 
         # A skip.
         if skip[0][j]:
-            sys.stdout.write("-")
+            gapped_strings[0] += "-"
 
         # A gap, so skip the residue.
         elif gap_matrices[0][0, j]:
-            sys.stdout.write("-")
-            sys.stdout.write(one_letter_codes[0][j])
+            gapped_strings[0] += "-" + one_letter_codes[0][j]
 
         # Keep the residue.
         else:
-            sys.stdout.write(one_letter_codes[0][j])
-    sys.stdout.write("\n")
+            gapped_strings[0] += one_letter_codes[0][j]
 
     # Update the first molecule skip counts.
     skip_counts[0] = sum(skip[0])
 
     # Update the residue skipping structures for all other molecules.
     for mol_index in range(1, num_mols):
-        # Printout.
-        sys.stdout.write("Molecule %3i:  " % (mol_index+1))
-
         # Loop over the residues of alignment mol_index.
         seq1_index = -1
         seq2_index = -1
+        gapped_strings.append('')
         for j in range(len(gap_matrices[mol_index-1][0])):
             # Increment the sequence indices.
             if not gap_matrices[mol_index-1][0, j]:
@@ -339,7 +335,7 @@ def common_residues(gap_matrices=None, one_letter_codes=None):
                 for k in range(seq2_index, res_counts[mol_index]):
                     skip[mol_index][k] = 1
                     skip_counts[mol_index] += 1
-                    sys.stdout.write("-")
+                    gapped_strings[mol_index] += "-"
 
                 # Terminate the loop.
                 break
@@ -348,24 +344,26 @@ def common_residues(gap_matrices=None, one_letter_codes=None):
             if gap_matrices[mol_index-1][0, j]:
                 skip[mol_index][seq2_index] = 1
                 skip_counts[mol_index] += 1
-                sys.stdout.write("-")
+                gapped_strings[mol_index] += "-"
 
             # Already skipped in the first molecule.
             elif skip[0][seq1_index] and not gap_matrices[mol_index-1][1, j]:
                 skip[mol_index][seq2_index] = 1
                 skip_counts[mol_index] += 1
-                sys.stdout.write("-")
+                gapped_strings[mol_index] += "-"
 
             # Skipped in the second molecule.
             elif gap_matrices[mol_index-1][1, j]:
-                sys.stdout.write("-")
+                gapped_strings[mol_index] += "-"
 
             # Print out the one letter code.
             else:
-                sys.stdout.write(one_letter_codes[mol_index][seq2_index])
+                gapped_strings[mol_index] += one_letter_codes[mol_index][seq2_index]
 
-        # EOL.
-        sys.stdout.write("\n")
+    # Printout.
+    print("Shared residues:")
+    for mol_index in range(num_mols):
+        print("Molecule %3i:  %s" % (mol_index, gapped_strings[mol_index]))
 
     # Sanity checks.
     total = res_counts[0] - skip_counts[0]
@@ -375,7 +373,10 @@ def common_residues(gap_matrices=None, one_letter_codes=None):
             raise RelaxFault
 
     # Return the skipping data structure.
-    return skip
+    if seq:
+        return skip, gapped_strings
+    else:
+        return skip
 
 
 def loop_coord_structures(objects=None, molecules=None, models=None, atom_id=None):
