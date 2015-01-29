@@ -1249,7 +1249,7 @@ def rotate(R=None, origin=None, model=None, atom_id=None, pipe_name=None):
     dp.structure.rotate(R=R, origin=origin, model=model, selection=selection)
 
     # Final printout.
-    if model:
+    if model != None:
         print("Rotated %i atoms of model %i." % (selection.count_atoms(), model))
     else:
         print("Rotated %i atoms." % selection.count_atoms())
@@ -1392,7 +1392,7 @@ def translate(T=None, model=None, atom_id=None, pipe_name=None):
     dp.structure.translate(T=T, model=model, selection=selection)
 
     # Final printout.
-    if model:
+    if model != None:
         print("Translated %i atoms of model %i." % (selection.count_atoms(), model))
     else:
         print("Translated %i atoms." % selection.count_atoms())
