@@ -70,7 +70,7 @@ def central_star(sequences, algorithm='NW70', matrix='BLOSUM62', gap_open_penalt
                 align2_matrix[i].append(None)
 
     # Printout.
-    sys.stdout.write("Central Star multiple sequence alignment.\n\n")
+    sys.stdout.write("\nCentral Star multiple sequence alignment.\n\n")
     sys.stdout.write("%-30s %s\n" % ("Pairwise algorithm:", algorithm))
     sys.stdout.write("%-30s %s\n" % ("Substitution matrix:", matrix))
     sys.stdout.write("%-30s %s\n" % ("Gap opening penalty:", gap_open_penalty))
