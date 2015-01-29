@@ -63,8 +63,8 @@ def needleman_wunsch_align(sequence1, sequence2, sub_matrix=None, sub_seq=None, 
     @type end_gap_open_penalty:         float
     @keyword end_gap_extend_penalty:    The optional penalty for extending a gap at the end of a sequence.
     @type end_gap_extend_penalty:       float
-    @return:                            The two alignment strings and the gap matrix.
-    @rtype:                             str, str, numpy rank-2 int array
+    @return:                            The alignment score, two alignment strings and the gap matrix.
+    @rtype:                             float, str, str, numpy rank-2 int array
     """
 
     # The sequence lengths.
@@ -83,6 +83,7 @@ def needleman_wunsch_align(sequence1, sequence2, sub_matrix=None, sub_seq=None, 
     matrix, traceback_matrix = needleman_wunsch_matrix(sequence1, sequence2, sub_matrix=sub_matrix, sub_seq=sub_seq, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
 
     # Generate the alignment.
+    score = 0.0
     i = M - 1
     j = N - 1
     alignment1 = ""
@@ -115,6 +116,9 @@ def needleman_wunsch_align(sequence1, sequence2, sub_matrix=None, sub_seq=None, 
         if i < 0 and j < 0:
             break
 
+        # Update the total score.
+        score += matrix[i, j]
+
     # Reverse the alignments.
     align1 = alignment1[::-1]
     align2 = alignment2[::-1]
@@ -128,7 +132,7 @@ def needleman_wunsch_align(sequence1, sequence2, sub_matrix=None, sub_seq=None, 
             gaps[1, l] = 1
 
     # Return the alignments and gap matrix.
-    return align1, align2, gaps
+    return score, align1, align2, gaps
 
 
 def needleman_wunsch_matrix(sequence1, sequence2, sub_matrix=None, sub_seq=None, gap_open_penalty=SCORE_GAP_PENALTY, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0, epsilon=1e-7):
