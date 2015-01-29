@@ -75,9 +75,6 @@ class Test_msa(TestCase):
         seq1 =     'TEEQVDADGGT'
         seq2 = 'ADQLTEEQVDADGNGTIDFPEFLTMMARKM'
         seq3 =    'LTEEQMINEVDAGNGTIDFPEFLTMMAR'
-        print(seq1)
-        print(seq2)
-        print(seq3)
 
         # Perform the alignment.
         strings, gaps = central_star([seq1, seq2, seq3], matrix='BLOSUM62', gap_open_penalty=5.0, gap_extend_penalty=1.0)
@@ -97,7 +94,7 @@ class Test_msa(TestCase):
             real_gaps[0, i] = 1
         for i in range(8, 12):
             real_gaps[1, i] = 1
-        for i in (range(3) + [15, 33, 34]):
+        for i in (range(3) + [15, 32, 33]):
             real_gaps[2, i] = 1
         for i in range(3):
             for j in range(34):
