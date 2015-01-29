@@ -196,7 +196,7 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, displace_id=Non
 
         # Add the molecule name to the displacement ID if required.
         id = curr_displace_id
-        if molecules != None:
+        if id == None or (mol_name and not search('#', id)):
             if curr_displace_id == None:
                 id = '#%s' % mol_name
             elif search('#', curr_displace_id):
