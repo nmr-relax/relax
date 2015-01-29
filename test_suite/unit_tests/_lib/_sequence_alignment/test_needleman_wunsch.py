@@ -41,8 +41,9 @@ class Test_needleman_wunsch(TestCase):
         print(seq2)
 
         # Perform the alignment. 
-        align1, align2, gaps = needleman_wunsch_align(seq1, seq2, sub_matrix=SIMILARITY_DNA, sub_seq=SIMILARITY_DNA_SEQ, gap_open_penalty=1, gap_extend_penalty=1)
+        score, align1, align2, gaps = needleman_wunsch_align(seq1, seq2, sub_matrix=SIMILARITY_DNA, sub_seq=SIMILARITY_DNA_SEQ, gap_open_penalty=1, gap_extend_penalty=1)
         print("\nOut:")
+        print(score)
         print(align1)
         print(align2)
         print(gaps)
@@ -81,8 +82,9 @@ class Test_needleman_wunsch(TestCase):
         print(seq2)
 
         # Perform the alignment. 
-        align1, align2, gaps = needleman_wunsch_align(seq1, seq2, sub_matrix=NUC_4_4, sub_seq=NUC_4_4_SEQ, gap_open_penalty=5, gap_extend_penalty=1)
+        score, align1, align2, gaps = needleman_wunsch_align(seq1, seq2, sub_matrix=NUC_4_4, sub_seq=NUC_4_4_SEQ, gap_open_penalty=5, gap_extend_penalty=1)
         print("\nOut:")
+        print(score)
         print(align1)
         print(align2)
         print(gaps)
@@ -121,8 +123,9 @@ class Test_needleman_wunsch(TestCase):
         print(seq2)
 
         # Perform the alignment. 
-        align1, align2, gaps = needleman_wunsch_align(seq1, seq2, sub_matrix=NUC_4_4, sub_seq=NUC_4_4_SEQ, gap_open_penalty=5, gap_extend_penalty=1)
+        score, align1, align2, gaps = needleman_wunsch_align(seq1, seq2, sub_matrix=NUC_4_4, sub_seq=NUC_4_4_SEQ, gap_open_penalty=5, gap_extend_penalty=1)
         print("\nOut:")
+        print(score)
         print(align1)
         print(align2)
         print(gaps)
