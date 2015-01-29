@@ -141,12 +141,19 @@ def central_star(sequences, algorithm='NW70', matrix='BLOSUM62', gap_open_penalt
     # Rebuild the alignment lists and create a gap matrix.
     strings = []
     M = len(Sc_prime)
-    gaps = zeros((N, M), int16)
     strings.append(Sc_prime)
     for i in range(N-1):
         strings.append(''.join(string_lists[i]))
     for i in range(N):
         strings[i] = strings[i].replace('X', '-')
+
+    # Restore the original sequence ordering.
+    string = strings.pop(0)
+    strings.insert(Sc_index, string)
+
+    # Create the gap matrix.
+    gaps = zeros((N, M), int16)
+    for i in range(N):
         for j in range(M):
             if strings[i][j] == '-':
                 gaps[i, j] = 1
