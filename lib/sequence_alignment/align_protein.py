@@ -52,8 +52,8 @@ def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', ga
     @type end_gap_extend_penalty:       float
     @keyword verbosity:                 The level of verbosity.  Setting this to zero silences all printouts.
     @type verbosity:                    int
-    @return:                            The two alignment strings and the gap matrix.
-    @rtype:                             str, str, numpy rank-2 int array
+    @return:                            The alignment score, two alignment strings and the gap matrix.
+    @rtype:                             float, str, str, numpy rank-2 int array
     """
 
     # Checks.
@@ -87,7 +87,7 @@ def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', ga
 
     # The alignment.
     if algorithm == 'NW70':
-        align1, align2, gaps = needleman_wunsch_align(sequence1, sequence2, sub_matrix=sub_matrix, sub_seq=sub_seq, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
+        score, align1, align2, gaps = needleman_wunsch_align(sequence1, sequence2, sub_matrix=sub_matrix, sub_seq=sub_seq, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
 
     # Final printout.
     if verbosity:
@@ -102,4 +102,4 @@ def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', ga
         sys.stdout.write("\n\n")
 
     # Return the results.
-    return align1, align2, gaps
+    return score, align1, align2, gaps
