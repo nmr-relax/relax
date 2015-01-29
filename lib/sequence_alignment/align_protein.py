@@ -31,7 +31,7 @@ from lib.sequence_alignment.needleman_wunsch import needleman_wunsch_align
 from lib.sequence_alignment.substitution_matrices import BLOSUM62, BLOSUM62_SEQ, PAM250, PAM250_SEQ
 
 
-def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0):
+def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0, verbosity=1):
     """Align two protein sequences.
 
     @param sequence1:                   The first protein sequence as one letter codes.
@@ -50,6 +50,8 @@ def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', ga
     @type end_gap_open_penalty:         float
     @keyword end_gap_extend_penalty:    The optional penalty for extending a gap at the end of a sequence.
     @type end_gap_extend_penalty:       float
+    @keyword verbosity:                 The level of verbosity.  Setting this to zero silences all printouts.
+    @type verbosity:                    int
     @return:                            The two alignment strings and the gap matrix.
     @rtype:                             str, str, numpy rank-2 int array
     """
@@ -67,12 +69,13 @@ def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', ga
     sequence2 = sequence2.upper()
 
     # Initial printout.
-    sys.stdout.write("\nPairwise protein alignment.\n")
-    sys.stdout.write("%-30s %s\n" % ("Substitution matrix:", matrix))
-    sys.stdout.write("%-30s %s\n" % ("Gap opening penalty:", gap_open_penalty))
-    sys.stdout.write("%-30s %s\n" % ("Gap extend penalty:", gap_extend_penalty))
-    sys.stdout.write("\n%-30s %s\n" % ("Input sequence 1:", sequence1))
-    sys.stdout.write("%-30s %s\n" % ("Input sequence 2:", sequence2))
+    if verbosity:
+        sys.stdout.write("\nPairwise protein alignment.\n")
+        sys.stdout.write("%-30s %s\n" % ("Substitution matrix:", matrix))
+        sys.stdout.write("%-30s %s\n" % ("Gap opening penalty:", gap_open_penalty))
+        sys.stdout.write("%-30s %s\n" % ("Gap extend penalty:", gap_extend_penalty))
+        sys.stdout.write("\n%-30s %s\n" % ("Input sequence 1:", sequence1))
+        sys.stdout.write("%-30s %s\n" % ("Input sequence 2:", sequence2))
 
     # Select the substitution matrix.
     if matrix == 'BLOSUM62':
@@ -87,15 +90,16 @@ def align_pairwise(sequence1, sequence2, algorithm='NW70', matrix='BLOSUM62', ga
         align1, align2, gaps = needleman_wunsch_align(sequence1, sequence2, sub_matrix=sub_matrix, sub_seq=sub_seq, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
 
     # Final printout.
-    sys.stdout.write("\n%-30s %s\n" % ("Aligned sequence 1:", align1))
-    sys.stdout.write("%-30s %s\n" % ("Aligned sequence 2:", align2))
-    sys.stdout.write("%-30s " % "")
-    for i in range(len(align1)):
-        if align1[i] == align2[i]:
-            sys.stdout.write("*")
-        else:
-            sys.stdout.write(" ")
-    sys.stdout.write("\n\n")
+    if verbosity:
+        sys.stdout.write("\n%-30s %s\n" % ("Aligned sequence 1:", align1))
+        sys.stdout.write("%-30s %s\n" % ("Aligned sequence 2:", align2))
+        sys.stdout.write("%-30s " % "")
+        for i in range(len(align1)):
+            if align1[i] == align2[i]:
+                sys.stdout.write("*")
+            else:
+                sys.stdout.write(" ")
+        sys.stdout.write("\n\n")
 
     # Return the results.
     return align1, align2, gaps
