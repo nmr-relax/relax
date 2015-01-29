@@ -75,8 +75,8 @@ class Internal_selection:
 
         # Sum the atoms of all molecules.
         sum = 0
-        for mol_index in self._mol_indices:
-            sum += len(self._atom_indices[mol_index])
+        for i in range(len(self._atom_indices)):
+            sum += len(self._atom_indices[i])
 
         # Return the sum.
         return sum
