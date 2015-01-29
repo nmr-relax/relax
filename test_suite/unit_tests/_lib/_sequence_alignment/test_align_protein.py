@@ -39,12 +39,36 @@ class Test_align_protein(TestCase):
             - 'ADQLTEEQVDADGNGTIDFPEFLTMMARKM',
             - 'LTEEQMINEVDAGNGTIDFPEFLTMMAR'.
 
-        The result should be:
+        The result should be::
 
-            - '----TEEQ----VDADG-GT--------------',
-            - 'ADQLTEEQ----VDADGNGTIDFPEFLTMMARKM',
-            - '
----LTEEQMINEVDA-GNGTIDFPEFLTMMAR--'.
+            Pairwise protein alignment.
+            Substitution matrix:           BLOSUM62
+            Gap opening penalty:           5.0
+            Gap extend penalty:            1.0
+            
+            Input sequence 1:              TEEQVDADGGT
+            Input sequence 2:              ADQLTEEQVDADGNGTIDFPEFLTMMARKM
+            
+            Aligned sequence 1:            ----TEEQVDADG-GT--------------
+            Aligned sequence 2:            ADQLTEEQVDADGNGTIDFPEFLTMMARKM
+                                               ********* **              
+            
+            
+            Pairwise protein alignment.
+            Substitution matrix:           BLOSUM62
+            Gap opening penalty:           5.0
+            Gap extend penalty:            1.0
+            
+            Input sequence 1:              TEEQVDADGGT
+            Input sequence 2:              LTEEQMINEVDAGNGTIDFPEFLTMMAR
+            
+            Aligned sequence 1:            -TEEQ----VDADGGT------------
+            Aligned sequence 2:            LTEEQMINEVDAGNGTIDFPEFLTMMAR
+                                            ****    ***  **            
+
+            ----TEEQ----VDADG-GT--------------
+            ADQLTEEQ----VDADGNGTIDFPEFLTMMARKM
+            ---LTEEQMINEVDA-GNGTIDFPEFLTMMAR--
         """
 
         # The sequences.
