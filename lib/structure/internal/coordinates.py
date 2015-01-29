@@ -23,7 +23,7 @@
 """Module for handling atomic coordinate information."""
 
 # Python module imports.
-from numpy import array, float64
+from numpy import array, float64, int16, zeros
 
 # relax module imports.
 from lib.errors import RelaxFault
@@ -271,11 +271,10 @@ def common_residues(gap_matrices=None, one_letter_codes=None, seq=False):
 
     # Initialise the residue skipping structures.
     skip = []
-    skip_counts = []
-    res_counts = []
+    skip_counts = zeros(num_mols, int16)
+    res_counts = zeros(num_mols, int16)
     for mol_index in range(num_mols):
-        res_counts.append(len(one_letter_codes[mol_index]))
-        skip_counts.append(0)
+        res_counts[mol_index] = len(one_letter_codes[mol_index])
         skip.append([])
         for j in range(res_counts[mol_index]):
             skip[mol_index].append(0)
@@ -295,23 +294,37 @@ def common_residues(gap_matrices=None, one_letter_codes=None, seq=False):
 
     # Initialise the gapped strings data structure for the first molecule.
     gapped_strings = ['']
-    for j in range(max(res_counts)):
-        # No more residues.
-        if j >= res_counts[0]:
-            gapped_strings[0] += "-"
-            continue
+    string_length = max(res_counts)
+    offsets = zeros((num_mols-1), int16)
+    prev_offsets = zeros((num_mols-1), int16)
+    for seq_index in range(res_counts[0]):
+        # Increment the offsets indices.
+        for mol_index in range(1, num_mols):
+            while gap_matrices[mol_index-1][0, seq_index+offsets[mol_index-1]]:
+                offsets[mol_index-1] += 1
 
-        # A skip.
-        if skip[0][j]:
+        # A gap.
+        for i in range(max(offsets - prev_offsets)):
             gapped_strings[0] += "-"
 
-        # A gap, so skip the residue.
-        elif gap_matrices[0][0, j]:
-            gapped_strings[0] += "-" + one_letter_codes[0][j]
+        # Missing in one of the other molecule.
+        missing = False
+        for mol_index in range(1, num_mols):
+            if gap_matrices[mol_index-1][1, seq_index+offsets[mol_index-1]]:
+                missing = True
+        if missing:
+            gapped_strings[0] += "-"
 
         # Keep the residue.
         else:
-            gapped_strings[0] += one_letter_codes[0][j]
+            gapped_strings[0] += one_letter_codes[0][seq_index]
+
+        # Store the old offsets.
+        prev_offsets = offsets * 1
+
+    # Final padding.
+    for j in range(max(res_counts) - res_counts[0] - 1):
+        gapped_strings[0] += "-"
 
     # Update the first molecule skip counts.
     skip_counts[0] = sum(skip[0])
