@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2014 Edward d'Auvergne                                        #
+# Copyright (C) 2014-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -64,6 +64,12 @@ class Internal_selection:
 
         # Add a new atom list.
         self._atom_indices.append([])
+
+
+    def count_atoms(self):
+        """Return the number of atoms in the selection."""
+
+        return len(self._atom_indices)
 
 
     def loop(self):
