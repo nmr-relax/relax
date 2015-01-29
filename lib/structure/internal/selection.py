@@ -69,7 +69,17 @@ class Internal_selection:
     def count_atoms(self):
         """Return the number of atoms in the selection."""
 
-        return len(self._atom_indices)
+        # No data.
+        if self._atom_indices == []:
+            return 0
+
+        # Sum the atoms of all molecules.
+        sum = 0
+        for i in range(len(self._atom_indices)):
+            sum += len(self._atom_indices[i])
+
+        # Return the sum.
+        return sum
 
 
     def loop(self):
