@@ -24,7 +24,7 @@ from numpy import int16, zeros
 from unittest import TestCase
 
 # relax module imports.
-from lib.sequence_alignment.align_protein import align_multiple_from_pairwise, align_pairwise
+from lib.sequence_alignment.align_protein import align_pairwise
 
 
 class Test_align_protein(TestCase):
