@@ -205,6 +205,13 @@ class Structure(SystemTestCase):
             i += 1
 
 
+    def test_align_CaM_BLOSUM62(self):
+        """Test the alignment of CaM molecules from different species using the BLOSUM62 substitution matrix."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'structure_align.py')
+
+
     def test_align_molecules(self):
         """Test the U{structure.align user function<http://www.nmr-relax.com/manual/structure_align.html>} for aligning different molecules in one pipe."""
 
@@ -410,13 +417,6 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(mol1.z[-1] - mol2.z[-1], -1.0, 2)
 
 
-    def test_align_CaM_BLOSUM62(self):
-        """Test the alignment of CaM molecules from different species using the BLOSUM62 substitution matrix."""
-
-        # Execute the script.
-        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'structure_align.py')
-
-
     def test_alt_loc_missing(self):
         """Test that a RelaxError occurs when the alternate location indicator is present but not specified."""
 
@@ -610,16 +610,6 @@ class Structure(SystemTestCase):
         self.assertEqual(len(expected), len(lines))
         for i in range(len(lines)):
             self.assertEqual(expected[i], lines[i])
-
-
-    def test_bug_sr_2998_broken_conect_records(self):
-        """Test the bug reported as the U{support request #2998<https://gna.org/support/?2998>}, the broken CONECT records."""
-
-        # Path of the structure file.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
-
-        # Load the file.
-        self.interpreter.structure.read_pdb('1RTE_trunc.pdb', dir=path)
 
 
     def test_bug_20470_alternate_location_indicator(self):
@@ -837,6 +827,16 @@ class Structure(SystemTestCase):
         self.assertEqual(len(contents), len(lines))
         for i in range(len(lines)):
             self.assertEqual(contents[i], lines[i])
+
+
+    def test_bug_sr_2998_broken_conect_records(self):
+        """Test the bug reported as the U{support request #2998<https://gna.org/support/?2998>}, the broken CONECT records."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the file.
+        self.interpreter.structure.read_pdb('1RTE_trunc.pdb', dir=path)
 
 
     def test_collapse_ensemble(self):
@@ -1458,541 +1458,6 @@ class Structure(SystemTestCase):
             self.assertEqual(real_data[i], lines[i])
 
 
-    def test_create_diff_tensor_pdb_prolate(self):
-        """Check the 3D coordinates of the PDB representation of the optimised prolate diffusion tensor."""
-
-        # Reset relax.
-        self.interpreter.reset()
-
-        # Create a temporary file.
-        ds.tmpfile = mktemp()
-
-        # The diffusion type (used by the script).
-        ds.diff_dir = 'spheroid'
-        ds.diff_type = 'prolate'
-
-        # Execute the script.
-        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
-
-        # Create the PDB representation.
-        self.interpreter.structure.create_diff_tensor_pdb(scale=1.8e-06, file=ds.tmpfile, force=True)
-
-        # Read the contents of the file.
-        file = open(ds.tmpfile)
-        lines = file.readlines()
-        file.close()
-
-        # What the contents should be, without remarks.
-        real_data = [
-            "HET    COM  A   1       1                                                       \n",
-            "HET    TNS  A   2     240                                                       \n",
-            "HET    AXS  A   3       5                                                       \n",
-            "HETNAM     COM CENTRE OF MASS                                                   \n",
-            "HETNAM     TNS TENSOR                                                           \n",
-            "HETNAM     AXS TENSOR AXES                                                      \n",
-            "FORMUL   1  COM    C1                                                           \n",
-            "FORMUL   2  TNS    H240                                                         \n",
-            "FORMUL   3  AXS    C3N2                                                         \n",
-            "HETATM    1    R COM A   1      -0.000   0.000   0.000  1.00  0.00           C  \n",
-            "HETATM    2   H2 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM    3   H3 TNS A   2      48.132 -10.602  13.384  1.00  0.00           H  \n",
-            "HETATM    4   H4 TNS A   2      45.482   0.862   4.523  1.00  0.00           H  \n",
-            "HETATM    5   H5 TNS A   2      40.121   9.258  -2.355  1.00  0.00           H  \n",
-            "HETATM    6   H6 TNS A   2      33.389  16.101  -8.229  1.00  0.00           H  \n",
-            "HETATM    7   H7 TNS A   2      25.651  21.806 -13.368  1.00  0.00           H  \n",
-            "HETATM    8   H8 TNS A   2      17.033  26.514 -17.862  1.00  0.00           H  \n",
-            "HETATM    9   H9 TNS A   2       7.534  30.226 -21.713  1.00  0.00           H  \n",
-            "HETATM   10  H10 TNS A   2      -2.970  32.799 -24.827  1.00  0.00           H  \n",
-            "HETATM   11  H11 TNS A   2     -14.846  33.819 -26.938  1.00  0.00           H  \n",
-            "HETATM   12  H12 TNS A   2     -29.432  31.771 -27.066  1.00  0.00           H  \n",
-            "HETATM   13  H13 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM   14  H14 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM   15  H15 TNS A   2      48.114 -14.010   9.849  1.00  0.00           H  \n",
-            "HETATM   16  H16 TNS A   2      45.452  -4.720  -1.268  1.00  0.00           H  \n",
-            "HETATM   17  H17 TNS A   2      40.086   2.489  -9.378  1.00  0.00           H  \n",
-            "HETATM   18  H18 TNS A   2      33.349   8.645 -15.965  1.00  0.00           H  \n",
-            "HETATM   19  H19 TNS A   2      25.610  14.029 -21.436  1.00  0.00           H  \n",
-            "HETATM   20  H20 TNS A   2      16.992  18.737 -25.931  1.00  0.00           H  \n",
-            "HETATM   21  H21 TNS A   2       7.495  22.769 -29.448  1.00  0.00           H  \n",
-            "HETATM   22  H22 TNS A   2      -3.005  26.030 -31.850  1.00  0.00           H  \n",
-            "HETATM   23  H23 TNS A   2     -14.875  28.237 -32.729  1.00  0.00           H  \n",
-            "HETATM   24  H24 TNS A   2     -29.450  28.364 -30.600  1.00  0.00           H  \n",
-            "HETATM   25  H25 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM   26  H26 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM   27  H27 TNS A   2      47.182 -18.119   7.330  1.00  0.00           H  \n",
-            "HETATM   28  H28 TNS A   2      43.926 -11.453  -5.396  1.00  0.00           H  \n",
-            "HETATM   29  H29 TNS A   2      38.235  -5.676 -14.383  1.00  0.00           H  \n",
-            "HETATM   30  H30 TNS A   2      31.311  -0.350 -21.478  1.00  0.00           H  \n",
-            "HETATM   31  H31 TNS A   2      23.484   4.647 -27.187  1.00  0.00           H  \n",
-            "HETATM   32  H32 TNS A   2      14.866   9.356 -31.681  1.00  0.00           H  \n",
-            "HETATM   33  H33 TNS A   2       5.456  13.775 -34.961  1.00  0.00           H  \n",
-            "HETATM   34  H34 TNS A   2      -4.856  17.864 -36.855  1.00  0.00           H  \n",
-            "HETATM   35  H35 TNS A   2     -16.401  21.504 -36.856  1.00  0.00           H  \n",
-            "HETATM   36  H36 TNS A   2     -30.382  24.254 -33.119  1.00  0.00           H  \n",
-            "HETATM   37  H37 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM   38  H38 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM   39  H39 TNS A   2      45.428 -22.529   6.073  1.00  0.00           H  \n",
-            "HETATM   40  H40 TNS A   2      41.053 -18.678  -7.455  1.00  0.00           H  \n",
-            "HETATM   41  H41 TNS A   2      34.751 -14.438 -16.880  1.00  0.00           H  \n",
-            "HETATM   42  H42 TNS A   2      27.473 -10.001 -24.229  1.00  0.00           H  \n",
-            "HETATM   43  H43 TNS A   2      19.481  -5.419 -30.056  1.00  0.00           H  \n",
-            "HETATM   44  H44 TNS A   2      10.862  -0.711 -34.550  1.00  0.00           H  \n",
-            "HETATM   45  H45 TNS A   2       1.618   4.124 -37.712  1.00  0.00           H  \n",
-            "HETATM   46  H46 TNS A   2      -8.341   9.103 -39.352  1.00  0.00           H  \n",
-            "HETATM   47  H47 TNS A   2     -19.275  14.279 -38.915  1.00  0.00           H  \n",
-            "HETATM   48  H48 TNS A   2     -32.136  19.844 -34.376  1.00  0.00           H  \n",
-            "HETATM   49  H49 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM   50  H50 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM   51  H51 TNS A   2      43.024 -26.808   6.202  1.00  0.00           H  \n",
-            "HETATM   52  H52 TNS A   2      37.114 -25.688  -7.244  1.00  0.00           H  \n",
-            "HETATM   53  H53 TNS A   2      29.974 -22.939 -16.625  1.00  0.00           H  \n",
-            "HETATM   54  H54 TNS A   2      22.211 -19.364 -23.948  1.00  0.00           H  \n",
-            "HETATM   55  H55 TNS A   2      13.992 -15.186 -29.763  1.00  0.00           H  \n",
-            "HETATM   56  H56 TNS A   2       5.374 -10.478 -34.257  1.00  0.00           H  \n",
-            "HETATM   57  H57 TNS A   2      -3.644  -5.240 -37.431  1.00  0.00           H  \n",
-            "HETATM   58  H58 TNS A   2     -13.117   0.602 -39.097  1.00  0.00           H  \n",
-            "HETATM   59  H59 TNS A   2     -23.214   7.269 -38.705  1.00  0.00           H  \n",
-            "HETATM   60  H60 TNS A   2     -34.540  15.565 -34.248  1.00  0.00           H  \n",
-            "HETATM   61  H61 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM   62  H62 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM   63  H63 TNS A   2      40.204 -30.536   7.703  1.00  0.00           H  \n",
-            "HETATM   64  H64 TNS A   2      32.494 -31.797  -4.785  1.00  0.00           H  \n",
-            "HETATM   65  H65 TNS A   2      24.372 -30.346 -13.643  1.00  0.00           H  \n",
-            "HETATM   66  H66 TNS A   2      16.040 -27.524 -20.663  1.00  0.00           H  \n",
-            "HETATM   67  H67 TNS A   2       7.556 -23.696 -26.336  1.00  0.00           H  \n",
-            "HETATM   68  H68 TNS A   2      -1.062 -18.988 -30.831  1.00  0.00           H  \n",
-            "HETATM   69  H69 TNS A   2      -9.814 -13.399 -34.146  1.00  0.00           H  \n",
-            "HETATM   70  H70 TNS A   2     -18.719  -6.806 -36.115  1.00  0.00           H  \n",
-            "HETATM   71  H71 TNS A   2     -27.833   1.160 -36.246  1.00  0.00           H  \n",
-            "HETATM   72  H72 TNS A   2     -37.360  11.837 -32.747  1.00  0.00           H  \n",
-            "HETATM   73  H73 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM   74  H74 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM   75  H75 TNS A   2      37.246 -33.350  10.430  1.00  0.00           H  \n",
-            "HETATM   76  H76 TNS A   2      27.647 -36.406  -0.318  1.00  0.00           H  \n",
-            "HETATM   77  H77 TNS A   2      18.493 -35.935  -8.225  1.00  0.00           H  \n",
-            "HETATM   78  H78 TNS A   2       9.565 -33.680 -14.695  1.00  0.00           H  \n",
-            "HETATM   79  H79 TNS A   2       0.802 -30.118 -20.112  1.00  0.00           H  \n",
-            "HETATM   80  H80 TNS A   2      -7.816 -25.409 -24.606  1.00  0.00           H  \n",
-            "HETATM   81  H81 TNS A   2     -16.290 -19.556 -28.178  1.00  0.00           H  \n",
-            "HETATM   82  H82 TNS A   2     -24.598 -12.395 -30.697  1.00  0.00           H  \n",
-            "HETATM   83  H83 TNS A   2     -32.681  -3.448 -31.778  1.00  0.00           H  \n",
-            "HETATM   84  H84 TNS A   2     -40.318   9.024 -30.020  1.00  0.00           H  \n",
-            "HETATM   85  H85 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM   86  H86 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM   87  H87 TNS A   2      34.437 -34.972  14.115  1.00  0.00           H  \n",
-            "HETATM   88  H88 TNS A   2      23.045 -39.064   5.721  1.00  0.00           H  \n",
-            "HETATM   89  H89 TNS A   2      12.913 -39.159  -0.903  1.00  0.00           H  \n",
-            "HETATM   90  H90 TNS A   2       3.419 -37.231  -6.629  1.00  0.00           H  \n",
-            "HETATM   91  H91 TNS A   2      -5.609 -33.821 -11.699  1.00  0.00           H  \n",
-            "HETATM   92  H92 TNS A   2     -14.227 -29.113 -16.193  1.00  0.00           H  \n",
-            "HETATM   93  H93 TNS A   2     -22.436 -23.107 -20.112  1.00  0.00           H  \n",
-            "HETATM   94  H94 TNS A   2     -30.178 -15.618 -23.374  1.00  0.00           H  \n",
-            "HETATM   95  H95 TNS A   2     -37.282  -6.107 -25.740  1.00  0.00           H  \n",
-            "HETATM   96  H96 TNS A   2     -43.127   7.401 -26.334  1.00  0.00           H  \n",
-            "HETATM   97  H97 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM   98  H98 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM   99  H99 TNS A   2      32.054 -35.245  18.399  1.00  0.00           H  \n",
-            "HETATM  100 H100 TNS A   2      19.141 -39.511  12.739  1.00  0.00           H  \n",
-            "HETATM  101 H101 TNS A   2       8.178 -39.702   7.608  1.00  0.00           H  \n",
-            "HETATM  102 H102 TNS A   2      -1.797 -37.829   2.746  1.00  0.00           H  \n",
-            "HETATM  103 H103 TNS A   2     -11.049 -34.445  -1.921  1.00  0.00           H  \n",
-            "HETATM  104 H104 TNS A   2     -19.667 -29.737  -6.415  1.00  0.00           H  \n",
-            "HETATM  105 H105 TNS A   2     -27.651 -23.705 -10.738  1.00  0.00           H  \n",
-            "HETATM  106 H106 TNS A   2     -34.913 -16.161 -14.864  1.00  0.00           H  \n",
-            "HETATM  107 H107 TNS A   2     -41.187  -6.554 -18.722  1.00  0.00           H  \n",
-            "HETATM  108 H108 TNS A   2     -45.510   7.128 -22.051  1.00  0.00           H  \n",
-            "HETATM  109 H109 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM  110 H110 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM  111 H111 TNS A   2      30.329 -34.142  22.861  1.00  0.00           H  \n",
-            "HETATM  112 H112 TNS A   2      16.316 -37.704  20.050  1.00  0.00           H  \n",
-            "HETATM  113 H113 TNS A   2       4.752 -37.510  16.474  1.00  0.00           H  \n",
-            "HETATM  114 H114 TNS A   2      -5.571 -35.415  12.511  1.00  0.00           H  \n",
-            "HETATM  115 H115 TNS A   2     -14.985 -31.927   8.265  1.00  0.00           H  \n",
-            "HETATM  116 H116 TNS A   2     -23.603 -27.219   3.771  1.00  0.00           H  \n",
-            "HETATM  117 H117 TNS A   2     -31.426 -21.291  -0.972  1.00  0.00           H  \n",
-            "HETATM  118 H118 TNS A   2     -38.339 -13.970  -5.998  1.00  0.00           H  \n",
-            "HETATM  119 H119 TNS A   2     -44.012  -4.747 -11.411  1.00  0.00           H  \n",
-            "HETATM  120 H120 TNS A   2     -47.235   8.231 -17.588  1.00  0.00           H  \n",
-            "HETATM  121 H121 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM  122 H122 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM  123 H123 TNS A   2      29.432 -31.771  27.066  1.00  0.00           H  \n",
-            "HETATM  124 H124 TNS A   2      14.846 -33.819  26.938  1.00  0.00           H  \n",
-            "HETATM  125 H125 TNS A   2       2.970 -32.799  24.827  1.00  0.00           H  \n",
-            "HETATM  126 H126 TNS A   2      -7.534 -30.226  21.713  1.00  0.00           H  \n",
-            "HETATM  127 H127 TNS A   2     -17.033 -26.514  17.862  1.00  0.00           H  \n",
-            "HETATM  128 H128 TNS A   2     -25.651 -21.806  13.368  1.00  0.00           H  \n",
-            "HETATM  129 H129 TNS A   2     -33.389 -16.101   8.229  1.00  0.00           H  \n",
-            "HETATM  130 H130 TNS A   2     -40.121  -9.258   2.355  1.00  0.00           H  \n",
-            "HETATM  131 H131 TNS A   2     -45.482  -0.862  -4.523  1.00  0.00           H  \n",
-            "HETATM  132 H132 TNS A   2     -48.132  10.602 -13.384  1.00  0.00           H  \n",
-            "HETATM  133 H133 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM  134 H134 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM  135 H135 TNS A   2      29.450 -28.364  30.600  1.00  0.00           H  \n",
-            "HETATM  136 H136 TNS A   2      14.875 -28.237  32.729  1.00  0.00           H  \n",
-            "HETATM  137 H137 TNS A   2       3.005 -26.030  31.850  1.00  0.00           H  \n",
-            "HETATM  138 H138 TNS A   2      -7.495 -22.769  29.448  1.00  0.00           H  \n",
-            "HETATM  139 H139 TNS A   2     -16.992 -18.737  25.931  1.00  0.00           H  \n",
-            "HETATM  140 H140 TNS A   2     -25.610 -14.029  21.436  1.00  0.00           H  \n",
-            "HETATM  141 H141 TNS A   2     -33.349  -8.645  15.965  1.00  0.00           H  \n",
-            "HETATM  142 H142 TNS A   2     -40.086  -2.489   9.378  1.00  0.00           H  \n",
-            "HETATM  143 H143 TNS A   2     -45.452   4.720   1.268  1.00  0.00           H  \n",
-            "HETATM  144 H144 TNS A   2     -48.114  14.010  -9.849  1.00  0.00           H  \n",
-            "HETATM  145 H145 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM  146 H146 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM  147 H147 TNS A   2      30.382 -24.254  33.119  1.00  0.00           H  \n",
-            "HETATM  148 H148 TNS A   2      16.401 -21.504  36.856  1.00  0.00           H  \n",
-            "HETATM  149 H149 TNS A   2       4.856 -17.864  36.855  1.00  0.00           H  \n",
-            "HETATM  150 H150 TNS A   2      -5.456 -13.775  34.961  1.00  0.00           H  \n",
-            "HETATM  151 H151 TNS A   2     -14.866  -9.356  31.681  1.00  0.00           H  \n",
-            "HETATM  152 H152 TNS A   2     -23.484  -4.647  27.187  1.00  0.00           H  \n",
-            "HETATM  153 H153 TNS A   2     -31.311   0.350  21.478  1.00  0.00           H  \n",
-            "HETATM  154 H154 TNS A   2     -38.235   5.676  14.383  1.00  0.00           H  \n",
-            "HETATM  155 H155 TNS A   2     -43.926  11.453   5.396  1.00  0.00           H  \n",
-            "HETATM  156 H156 TNS A   2     -47.182  18.119  -7.330  1.00  0.00           H  \n",
-            "HETATM  157 H157 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM  158 H158 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM  159 H159 TNS A   2      32.136 -19.844  34.376  1.00  0.00           H  \n",
-            "HETATM  160 H160 TNS A   2      19.275 -14.279  38.915  1.00  0.00           H  \n",
-            "HETATM  161 H161 TNS A   2       8.341  -9.103  39.352  1.00  0.00           H  \n",
-            "HETATM  162 H162 TNS A   2      -1.618  -4.124  37.712  1.00  0.00           H  \n",
-            "HETATM  163 H163 TNS A   2     -10.862   0.711  34.550  1.00  0.00           H  \n",
-            "HETATM  164 H164 TNS A   2     -19.481   5.419  30.056  1.00  0.00           H  \n",
-            "HETATM  165 H165 TNS A   2     -27.473  10.001  24.229  1.00  0.00           H  \n",
-            "HETATM  166 H166 TNS A   2     -34.751  14.438  16.880  1.00  0.00           H  \n",
-            "HETATM  167 H167 TNS A   2     -41.053  18.678   7.455  1.00  0.00           H  \n",
-            "HETATM  168 H168 TNS A   2     -45.428  22.529  -6.073  1.00  0.00           H  \n",
-            "HETATM  169 H169 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM  170 H170 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM  171 H171 TNS A   2      34.540 -15.565  34.248  1.00  0.00           H  \n",
-            "HETATM  172 H172 TNS A   2      23.214  -7.269  38.705  1.00  0.00           H  \n",
-            "HETATM  173 H173 TNS A   2      13.117  -0.602  39.097  1.00  0.00           H  \n",
-            "HETATM  174 H174 TNS A   2       3.644   5.240  37.431  1.00  0.00           H  \n",
-            "HETATM  175 H175 TNS A   2      -5.374  10.478  34.257  1.00  0.00           H  \n",
-            "HETATM  176 H176 TNS A   2     -13.992  15.186  29.763  1.00  0.00           H  \n",
-            "HETATM  177 H177 TNS A   2     -22.211  19.364  23.948  1.00  0.00           H  \n",
-            "HETATM  178 H178 TNS A   2     -29.974  22.939  16.625  1.00  0.00           H  \n",
-            "HETATM  179 H179 TNS A   2     -37.114  25.688   7.244  1.00  0.00           H  \n",
-            "HETATM  180 H180 TNS A   2     -43.024  26.808  -6.202  1.00  0.00           H  \n",
-            "HETATM  181 H181 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM  182 H182 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM  183 H183 TNS A   2      37.360 -11.837  32.747  1.00  0.00           H  \n",
-            "HETATM  184 H184 TNS A   2      27.833  -1.160  36.246  1.00  0.00           H  \n",
-            "HETATM  185 H185 TNS A   2      18.719   6.806  36.115  1.00  0.00           H  \n",
-            "HETATM  186 H186 TNS A   2       9.814  13.399  34.146  1.00  0.00           H  \n",
-            "HETATM  187 H187 TNS A   2       1.062  18.988  30.831  1.00  0.00           H  \n",
-            "HETATM  188 H188 TNS A   2      -7.556  23.696  26.336  1.00  0.00           H  \n",
-            "HETATM  189 H189 TNS A   2     -16.040  27.524  20.663  1.00  0.00           H  \n",
-            "HETATM  190 H190 TNS A   2     -24.372  30.346  13.643  1.00  0.00           H  \n",
-            "HETATM  191 H191 TNS A   2     -32.494  31.797   4.785  1.00  0.00           H  \n",
-            "HETATM  192 H192 TNS A   2     -40.204  30.536  -7.703  1.00  0.00           H  \n",
-            "HETATM  193 H193 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM  194 H194 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM  195 H195 TNS A   2      40.318  -9.024  30.020  1.00  0.00           H  \n",
-            "HETATM  196 H196 TNS A   2      32.681   3.448  31.778  1.00  0.00           H  \n",
-            "HETATM  197 H197 TNS A   2      24.598  12.395  30.697  1.00  0.00           H  \n",
-            "HETATM  198 H198 TNS A   2      16.290  19.556  28.178  1.00  0.00           H  \n",
-            "HETATM  199 H199 TNS A   2       7.816  25.409  24.606  1.00  0.00           H  \n",
-            "HETATM  200 H200 TNS A   2      -0.802  30.118  20.112  1.00  0.00           H  \n",
-            "HETATM  201 H201 TNS A   2      -9.565  33.680  14.695  1.00  0.00           H  \n",
-            "HETATM  202 H202 TNS A   2     -18.493  35.935   8.225  1.00  0.00           H  \n",
-            "HETATM  203 H203 TNS A   2     -27.647  36.406   0.318  1.00  0.00           H  \n",
-            "HETATM  204 H204 TNS A   2     -37.246  33.350 -10.430  1.00  0.00           H  \n",
-            "HETATM  205 H205 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM  206 H206 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM  207 H207 TNS A   2      43.127  -7.401  26.334  1.00  0.00           H  \n",
-            "HETATM  208 H208 TNS A   2      37.282   6.107  25.740  1.00  0.00           H  \n",
-            "HETATM  209 H209 TNS A   2      30.178  15.618  23.374  1.00  0.00           H  \n",
-            "HETATM  210 H210 TNS A   2      22.436  23.107  20.112  1.00  0.00           H  \n",
-            "HETATM  211 H211 TNS A   2      14.227  29.113  16.193  1.00  0.00           H  \n",
-            "HETATM  212 H212 TNS A   2       5.609  33.821  11.699  1.00  0.00           H  \n",
-            "HETATM  213 H213 TNS A   2      -3.419  37.231   6.629  1.00  0.00           H  \n",
-            "HETATM  214 H214 TNS A   2     -12.913  39.159   0.903  1.00  0.00           H  \n",
-            "HETATM  215 H215 TNS A   2     -23.045  39.064  -5.721  1.00  0.00           H  \n",
-            "HETATM  216 H216 TNS A   2     -34.437  34.972 -14.115  1.00  0.00           H  \n",
-            "HETATM  217 H217 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM  218 H218 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM  219 H219 TNS A   2      45.510  -7.128  22.051  1.00  0.00           H  \n",
-            "HETATM  220 H220 TNS A   2      41.187   6.554  18.722  1.00  0.00           H  \n",
-            "HETATM  221 H221 TNS A   2      34.913  16.161  14.864  1.00  0.00           H  \n",
-            "HETATM  222 H222 TNS A   2      27.651  23.705  10.738  1.00  0.00           H  \n",
-            "HETATM  223 H223 TNS A   2      19.667  29.737   6.415  1.00  0.00           H  \n",
-            "HETATM  224 H224 TNS A   2      11.049  34.445   1.921  1.00  0.00           H  \n",
-            "HETATM  225 H225 TNS A   2       1.797  37.829  -2.746  1.00  0.00           H  \n",
-            "HETATM  226 H226 TNS A   2      -8.178  39.702  -7.608  1.00  0.00           H  \n",
-            "HETATM  227 H227 TNS A   2     -19.141  39.511 -12.739  1.00  0.00           H  \n",
-            "HETATM  228 H228 TNS A   2     -32.054  35.245 -18.399  1.00  0.00           H  \n",
-            "HETATM  229 H229 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM  230 H230 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM  231 H231 TNS A   2      47.235  -8.231  17.588  1.00  0.00           H  \n",
-            "HETATM  232 H232 TNS A   2      44.012   4.747  11.411  1.00  0.00           H  \n",
-            "HETATM  233 H233 TNS A   2      38.339  13.970   5.998  1.00  0.00           H  \n",
-            "HETATM  234 H234 TNS A   2      31.426  21.291   0.972  1.00  0.00           H  \n",
-            "HETATM  235 H235 TNS A   2      23.603  27.219  -3.771  1.00  0.00           H  \n",
-            "HETATM  236 H236 TNS A   2      14.985  31.927  -8.265  1.00  0.00           H  \n",
-            "HETATM  237 H237 TNS A   2       5.571  35.415 -12.511  1.00  0.00           H  \n",
-            "HETATM  238 H238 TNS A   2      -4.752  37.510 -16.474  1.00  0.00           H  \n",
-            "HETATM  239 H239 TNS A   2     -16.316  37.704 -20.050  1.00  0.00           H  \n",
-            "HETATM  240 H240 TNS A   2     -30.329  34.142 -22.861  1.00  0.00           H  \n",
-            "HETATM  241 H241 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
-            "HETATM  242    R AXS A   3      -0.000   0.000   0.000  1.00  0.00           C  \n",
-            "HETATM  243 Dpar AXS A   3     -43.091  23.541 -22.472  1.00  0.00           C  \n",
-            "HETATM  244 Dpar AXS A   3      43.091 -23.541  22.472  1.00  0.00           C  \n",
-            "HETATM  245 Dpar AXS A   3     -47.400  25.895 -24.719  1.00  0.00           N  \n",
-            "HETATM  246 Dpar AXS A   3      47.400 -25.895  24.719  1.00  0.00           N  \n",
-            "CONECT    2    3   14  230                                                      \n",
-            "CONECT    3    2    4   15  231                                                 \n",
-            "CONECT    4    3    5   16  232                                                 \n",
-            "CONECT    5    4    6   17  233                                                 \n",
-            "CONECT    6    5    7   18  234                                                 \n",
-            "CONECT    7    6    8   19  235                                                 \n",
-            "CONECT    8    7    9   20  236                                                 \n",
-            "CONECT    9    8   10   21  237                                                 \n",
-            "CONECT   10    9   11   22  238                                                 \n",
-            "CONECT   11   10   12   23  239                                                 \n",
-            "CONECT   12   11   13   24  240                                                 \n",
-            "CONECT   13   12   25  241                                                      \n",
-            "CONECT   14    2   15   26                                                      \n",
-            "CONECT   15   14    3   16   27                                                 \n",
-            "CONECT   16   15    4   17   28                                                 \n",
-            "CONECT   17   16    5   18   29                                                 \n",
-            "CONECT   18   17    6   19   30                                                 \n",
-            "CONECT   19   18    7   20   31                                                 \n",
-            "CONECT   20   19    8   21   32                                                 \n",
-            "CONECT   21   20    9   22   33                                                 \n",
-            "CONECT   22   21   10   23   34                                                 \n",
-            "CONECT   23   22   11   24   35                                                 \n",
-            "CONECT   24   23   12   25   36                                                 \n",
-            "CONECT   25   24   13   37                                                      \n",
-            "CONECT   26   14   27   38                                                      \n",
-            "CONECT   27   26   15   28   39                                                 \n",
-            "CONECT   28   27   16   29   40                                                 \n",
-            "CONECT   29   28   17   30   41                                                 \n",
-            "CONECT   30   29   18   31   42                                                 \n",
-            "CONECT   31   30   19   32   43                                                 \n",
-            "CONECT   32   31   20   33   44                                                 \n",
-            "CONECT   33   32   21   34   45                                                 \n",
-            "CONECT   34   33   22   35   46                                                 \n",
-            "CONECT   35   34   23   36   47                                                 \n",
-            "CONECT   36   35   24   37   48                                                 \n",
-            "CONECT   37   36   25   49                                                      \n",
-            "CONECT   38   26   39   50                                                      \n",
-            "CONECT   39   38   27   40   51                                                 \n",
-            "CONECT   40   39   28   41   52                                                 \n",
-            "CONECT   41   40   29   42   53                                                 \n",
-            "CONECT   42   41   30   43   54                                                 \n",
-            "CONECT   43   42   31   44   55                                                 \n",
-            "CONECT   44   43   32   45   56                                                 \n",
-            "CONECT   45   44   33   46   57                                                 \n",
-            "CONECT   46   45   34   47   58                                                 \n",
-            "CONECT   47   46   35   48   59                                                 \n",
-            "CONECT   48   47   36   49   60                                                 \n",
-            "CONECT   49   48   37   61                                                      \n",
-            "CONECT   50   38   51   62                                                      \n",
-            "CONECT   51   50   39   52   63                                                 \n",
-            "CONECT   52   51   40   53   64                                                 \n",
-            "CONECT   53   52   41   54   65                                                 \n",
-            "CONECT   54   53   42   55   66                                                 \n",
-            "CONECT   55   54   43   56   67                                                 \n",
-            "CONECT   56   55   44   57   68                                                 \n",
-            "CONECT   57   56   45   58   69                                                 \n",
-            "CONECT   58   57   46   59   70                                                 \n",
-            "CONECT   59   58   47   60   71                                                 \n",
-            "CONECT   60   59   48   61   72                                                 \n",
-            "CONECT   61   60   49   73                                                      \n",
-            "CONECT   62   50   63   74                                                      \n",
-            "CONECT   63   62   51   64   75                                                 \n",
-            "CONECT   64   63   52   65   76                                                 \n",
-            "CONECT   65   64   53   66   77                                                 \n",
-            "CONECT   66   65   54   67   78                                                 \n",
-            "CONECT   67   66   55   68   79                                                 \n",
-            "CONECT   68   67   56   69   80                                                 \n",
-            "CONECT   69   68   57   70   81                                                 \n",
-            "CONECT   70   69   58   71   82                                                 \n",
-            "CONECT   71   70   59   72   83                                                 \n",
-            "CONECT   72   71   60   73   84                                                 \n",
-            "CONECT   73   72   61   85                                                      \n",
-            "CONECT   74   62   75   86                                                      \n",
-            "CONECT   75   74   63   76   87                                                 \n",
-            "CONECT   76   75   64   77   88                                                 \n",
-            "CONECT   77   76   65   78   89                                                 \n",
-            "CONECT   78   77   66   79   90                                                 \n",
-            "CONECT   79   78   67   80   91                                                 \n",
-            "CONECT   80   79   68   81   92                                                 \n",
-            "CONECT   81   80   69   82   93                                                 \n",
-            "CONECT   82   81   70   83   94                                                 \n",
-            "CONECT   83   82   71   84   95                                                 \n",
-            "CONECT   84   83   72   85   96                                                 \n",
-            "CONECT   85   84   73   97                                                      \n",
-            "CONECT   86   74   87   98                                                      \n",
-            "CONECT   87   86   75   88   99                                                 \n",
-            "CONECT   88   87   76   89  100                                                 \n",
-            "CONECT   89   88   77   90  101                                                 \n",
-            "CONECT   90   89   78   91  102                                                 \n",
-            "CONECT   91   90   79   92  103                                                 \n",
-            "CONECT   92   91   80   93  104                                                 \n",
-            "CONECT   93   92   81   94  105                                                 \n",
-            "CONECT   94   93   82   95  106                                                 \n",
-            "CONECT   95   94   83   96  107                                                 \n",
-            "CONECT   96   95   84   97  108                                                 \n",
-            "CONECT   97   96   85  109                                                      \n",
-            "CONECT   98   86   99  110                                                      \n",
-            "CONECT   99   98   87  100  111                                                 \n",
-            "CONECT  100   99   88  101  112                                                 \n",
-            "CONECT  101  100   89  102  113                                                 \n",
-            "CONECT  102  101   90  103  114                                                 \n",
-            "CONECT  103  102   91  104  115                                                 \n",
-            "CONECT  104  103   92  105  116                                                 \n",
-            "CONECT  105  104   93  106  117                                                 \n",
-            "CONECT  106  105   94  107  118                                                 \n",
-            "CONECT  107  106   95  108  119                                                 \n",
-            "CONECT  108  107   96  109  120                                                 \n",
-            "CONECT  109  108   97  121                                                      \n",
-            "CONECT  110   98  111  122                                                      \n",
-            "CONECT  111  110   99  112  123                                                 \n",
-            "CONECT  112  111  100  113  124                                                 \n",
-            "CONECT  113  112  101  114  125                                                 \n",
-            "CONECT  114  113  102  115  126                                                 \n",
-            "CONECT  115  114  103  116  127                                                 \n",
-            "CONECT  116  115  104  117  128                                                 \n",
-            "CONECT  117  116  105  118  129                                                 \n",
-            "CONECT  118  117  106  119  130                                                 \n",
-            "CONECT  119  118  107  120  131                                                 \n",
-            "CONECT  120  119  108  121  132                                                 \n",
-            "CONECT  121  120  109  133                                                      \n",
-            "CONECT  122  110  123  134                                                      \n",
-            "CONECT  123  122  111  124  135                                                 \n",
-            "CONECT  124  123  112  125  136                                                 \n",
-            "CONECT  125  124  113  126  137                                                 \n",
-            "CONECT  126  125  114  127  138                                                 \n",
-            "CONECT  127  126  115  128  139                                                 \n",
-            "CONECT  128  127  116  129  140                                                 \n",
-            "CONECT  129  128  117  130  141                                                 \n",
-            "CONECT  130  129  118  131  142                                                 \n",
-            "CONECT  131  130  119  132  143                                                 \n",
-            "CONECT  132  131  120  133  144                                                 \n",
-            "CONECT  133  132  121  145                                                      \n",
-            "CONECT  134  122  135  146                                                      \n",
-            "CONECT  135  134  123  136  147                                                 \n",
-            "CONECT  136  135  124  137  148                                                 \n",
-            "CONECT  137  136  125  138  149                                                 \n",
-            "CONECT  138  137  126  139  150                                                 \n",
-            "CONECT  139  138  127  140  151                                                 \n",
-            "CONECT  140  139  128  141  152                                                 \n",
-            "CONECT  141  140  129  142  153                                                 \n",
-            "CONECT  142  141  130  143  154                                                 \n",
-            "CONECT  143  142  131  144  155                                                 \n",
-            "CONECT  144  143  132  145  156                                                 \n",
-            "CONECT  145  144  133  157                                                      \n",
-            "CONECT  146  134  147  158                                                      \n",
-            "CONECT  147  146  135  148  159                                                 \n",
-            "CONECT  148  147  136  149  160                                                 \n",
-            "CONECT  149  148  137  150  161                                                 \n",
-            "CONECT  150  149  138  151  162                                                 \n",
-            "CONECT  151  150  139  152  163                                                 \n",
-            "CONECT  152  151  140  153  164                                                 \n",
-            "CONECT  153  152  141  154  165                                                 \n",
-            "CONECT  154  153  142  155  166                                                 \n",
-            "CONECT  155  154  143  156  167                                                 \n",
-            "CONECT  156  155  144  157  168                                                 \n",
-            "CONECT  157  156  145  169                                                      \n",
-            "CONECT  158  146  159  170                                                      \n",
-            "CONECT  159  158  147  160  171                                                 \n",
-            "CONECT  160  159  148  161  172                                                 \n",
-            "CONECT  161  160  149  162  173                                                 \n",
-            "CONECT  162  161  150  163  174                                                 \n",
-            "CONECT  163  162  151  164  175                                                 \n",
-            "CONECT  164  163  152  165  176                                                 \n",
-            "CONECT  165  164  153  166  177                                                 \n",
-            "CONECT  166  165  154  167  178                                                 \n",
-            "CONECT  167  166  155  168  179                                                 \n",
-            "CONECT  168  167  156  169  180                                                 \n",
-            "CONECT  169  168  157  181                                                      \n",
-            "CONECT  170  158  171  182                                                      \n",
-            "CONECT  171  170  159  172  183                                                 \n",
-            "CONECT  172  171  160  173  184                                                 \n",
-            "CONECT  173  172  161  174  185                                                 \n",
-            "CONECT  174  173  162  175  186                                                 \n",
-            "CONECT  175  174  163  176  187                                                 \n",
-            "CONECT  176  175  164  177  188                                                 \n",
-            "CONECT  177  176  165  178  189                                                 \n",
-            "CONECT  178  177  166  179  190                                                 \n",
-            "CONECT  179  178  167  180  191                                                 \n",
-            "CONECT  180  179  168  181  192                                                 \n",
-            "CONECT  181  180  169  193                                                      \n",
-            "CONECT  182  170  183  194                                                      \n",
-            "CONECT  183  182  171  184  195                                                 \n",
-            "CONECT  184  183  172  185  196                                                 \n",
-            "CONECT  185  184  173  186  197                                                 \n",
-            "CONECT  186  185  174  187  198                                                 \n",
-            "CONECT  187  186  175  188  199                                                 \n",
-            "CONECT  188  187  176  189  200                                                 \n",
-            "CONECT  189  188  177  190  201                                                 \n",
-            "CONECT  190  189  178  191  202                                                 \n",
-            "CONECT  191  190  179  192  203                                                 \n",
-            "CONECT  192  191  180  193  204                                                 \n",
-            "CONECT  193  192  181  205                                                      \n",
-            "CONECT  194  182  195  206                                                      \n",
-            "CONECT  195  194  183  196  207                                                 \n",
-            "CONECT  196  195  184  197  208                                                 \n",
-            "CONECT  197  196  185  198  209                                                 \n",
-            "CONECT  198  197  186  199  210                                                 \n",
-            "CONECT  199  198  187  200  211                                                 \n",
-            "CONECT  200  199  188  201  212                                                 \n",
-            "CONECT  201  200  189  202  213                                                 \n",
-            "CONECT  202  201  190  203  214                                                 \n",
-            "CONECT  203  202  191  204  215                                                 \n",
-            "CONECT  204  203  192  205  216                                                 \n",
-            "CONECT  205  204  193  217                                                      \n",
-            "CONECT  206  194  207  218                                                      \n",
-            "CONECT  207  206  195  208  219                                                 \n",
-            "CONECT  208  207  196  209  220                                                 \n",
-            "CONECT  209  208  197  210  221                                                 \n",
-            "CONECT  210  209  198  211  222                                                 \n",
-            "CONECT  211  210  199  212  223                                                 \n",
-            "CONECT  212  211  200  213  224                                                 \n",
-            "CONECT  213  212  201  214  225                                                 \n",
-            "CONECT  214  213  202  215  226                                                 \n",
-            "CONECT  215  214  203  216  227                                                 \n",
-            "CONECT  216  215  204  217  228                                                 \n",
-            "CONECT  217  216  205  229                                                      \n",
-            "CONECT  218  206  219  230                                                      \n",
-            "CONECT  219  218  207  220  231                                                 \n",
-            "CONECT  220  219  208  221  232                                                 \n",
-            "CONECT  221  220  209  222  233                                                 \n",
-            "CONECT  222  221  210  223  234                                                 \n",
-            "CONECT  223  222  211  224  235                                                 \n",
-            "CONECT  224  223  212  225  236                                                 \n",
-            "CONECT  225  224  213  226  237                                                 \n",
-            "CONECT  226  225  214  227  238                                                 \n",
-            "CONECT  227  226  215  228  239                                                 \n",
-            "CONECT  228  227  216  229  240                                                 \n",
-            "CONECT  229  228  217  241                                                      \n",
-            "CONECT  230  218    2  231                                                      \n",
-            "CONECT  231  230  219    3  232                                                 \n",
-            "CONECT  232  231  220    4  233                                                 \n",
-            "CONECT  233  232  221    5  234                                                 \n",
-            "CONECT  234  233  222    6  235                                                 \n",
-            "CONECT  235  234  223    7  236                                                 \n",
-            "CONECT  236  235  224    8  237                                                 \n",
-            "CONECT  237  236  225    9  238                                                 \n",
-            "CONECT  238  237  226   10  239                                                 \n",
-            "CONECT  239  238  227   11  240                                                 \n",
-            "CONECT  240  239  228   12  241                                                 \n",
-            "CONECT  241  240  229   13                                                      \n",
-            "CONECT  242  243  244                                                           \n",
-            "CONECT  243  242                                                                \n",
-            "CONECT  244  242                                                                \n",
-            "MASTER        0    0    3    0    0    0    0    0  246    0  243    0          \n",
-            "END                                                                             \n"
-        ]
-
-        # Check the data.
-        self.strip_remarks(lines)
-        self.assertEqual(len(real_data), len(lines))
-        for i in range(len(lines)):
-            self.assertEqual(real_data[i], lines[i])
-
-
     def test_create_diff_tensor_pdb_oblate(self):
         """Check the 3D coordinates of the PDB representation of the optimised oblate diffusion tensor."""
 
@@ -2274,6 +1739,541 @@ class Structure(SystemTestCase):
             "HETATM  244 Dpar AXS A   3      34.661 -18.854  14.744  1.00  0.00           C  \n",
             "HETATM  245 Dpar AXS A   3     -38.127  20.740 -16.219  1.00  0.00           N  \n",
             "HETATM  246 Dpar AXS A   3      38.127 -20.740  16.219  1.00  0.00           N  \n",
+            "CONECT    2    3   14  230                                                      \n",
+            "CONECT    3    2    4   15  231                                                 \n",
+            "CONECT    4    3    5   16  232                                                 \n",
+            "CONECT    5    4    6   17  233                                                 \n",
+            "CONECT    6    5    7   18  234                                                 \n",
+            "CONECT    7    6    8   19  235                                                 \n",
+            "CONECT    8    7    9   20  236                                                 \n",
+            "CONECT    9    8   10   21  237                                                 \n",
+            "CONECT   10    9   11   22  238                                                 \n",
+            "CONECT   11   10   12   23  239                                                 \n",
+            "CONECT   12   11   13   24  240                                                 \n",
+            "CONECT   13   12   25  241                                                      \n",
+            "CONECT   14    2   15   26                                                      \n",
+            "CONECT   15   14    3   16   27                                                 \n",
+            "CONECT   16   15    4   17   28                                                 \n",
+            "CONECT   17   16    5   18   29                                                 \n",
+            "CONECT   18   17    6   19   30                                                 \n",
+            "CONECT   19   18    7   20   31                                                 \n",
+            "CONECT   20   19    8   21   32                                                 \n",
+            "CONECT   21   20    9   22   33                                                 \n",
+            "CONECT   22   21   10   23   34                                                 \n",
+            "CONECT   23   22   11   24   35                                                 \n",
+            "CONECT   24   23   12   25   36                                                 \n",
+            "CONECT   25   24   13   37                                                      \n",
+            "CONECT   26   14   27   38                                                      \n",
+            "CONECT   27   26   15   28   39                                                 \n",
+            "CONECT   28   27   16   29   40                                                 \n",
+            "CONECT   29   28   17   30   41                                                 \n",
+            "CONECT   30   29   18   31   42                                                 \n",
+            "CONECT   31   30   19   32   43                                                 \n",
+            "CONECT   32   31   20   33   44                                                 \n",
+            "CONECT   33   32   21   34   45                                                 \n",
+            "CONECT   34   33   22   35   46                                                 \n",
+            "CONECT   35   34   23   36   47                                                 \n",
+            "CONECT   36   35   24   37   48                                                 \n",
+            "CONECT   37   36   25   49                                                      \n",
+            "CONECT   38   26   39   50                                                      \n",
+            "CONECT   39   38   27   40   51                                                 \n",
+            "CONECT   40   39   28   41   52                                                 \n",
+            "CONECT   41   40   29   42   53                                                 \n",
+            "CONECT   42   41   30   43   54                                                 \n",
+            "CONECT   43   42   31   44   55                                                 \n",
+            "CONECT   44   43   32   45   56                                                 \n",
+            "CONECT   45   44   33   46   57                                                 \n",
+            "CONECT   46   45   34   47   58                                                 \n",
+            "CONECT   47   46   35   48   59                                                 \n",
+            "CONECT   48   47   36   49   60                                                 \n",
+            "CONECT   49   48   37   61                                                      \n",
+            "CONECT   50   38   51   62                                                      \n",
+            "CONECT   51   50   39   52   63                                                 \n",
+            "CONECT   52   51   40   53   64                                                 \n",
+            "CONECT   53   52   41   54   65                                                 \n",
+            "CONECT   54   53   42   55   66                                                 \n",
+            "CONECT   55   54   43   56   67                                                 \n",
+            "CONECT   56   55   44   57   68                                                 \n",
+            "CONECT   57   56   45   58   69                                                 \n",
+            "CONECT   58   57   46   59   70                                                 \n",
+            "CONECT   59   58   47   60   71                                                 \n",
+            "CONECT   60   59   48   61   72                                                 \n",
+            "CONECT   61   60   49   73                                                      \n",
+            "CONECT   62   50   63   74                                                      \n",
+            "CONECT   63   62   51   64   75                                                 \n",
+            "CONECT   64   63   52   65   76                                                 \n",
+            "CONECT   65   64   53   66   77                                                 \n",
+            "CONECT   66   65   54   67   78                                                 \n",
+            "CONECT   67   66   55   68   79                                                 \n",
+            "CONECT   68   67   56   69   80                                                 \n",
+            "CONECT   69   68   57   70   81                                                 \n",
+            "CONECT   70   69   58   71   82                                                 \n",
+            "CONECT   71   70   59   72   83                                                 \n",
+            "CONECT   72   71   60   73   84                                                 \n",
+            "CONECT   73   72   61   85                                                      \n",
+            "CONECT   74   62   75   86                                                      \n",
+            "CONECT   75   74   63   76   87                                                 \n",
+            "CONECT   76   75   64   77   88                                                 \n",
+            "CONECT   77   76   65   78   89                                                 \n",
+            "CONECT   78   77   66   79   90                                                 \n",
+            "CONECT   79   78   67   80   91                                                 \n",
+            "CONECT   80   79   68   81   92                                                 \n",
+            "CONECT   81   80   69   82   93                                                 \n",
+            "CONECT   82   81   70   83   94                                                 \n",
+            "CONECT   83   82   71   84   95                                                 \n",
+            "CONECT   84   83   72   85   96                                                 \n",
+            "CONECT   85   84   73   97                                                      \n",
+            "CONECT   86   74   87   98                                                      \n",
+            "CONECT   87   86   75   88   99                                                 \n",
+            "CONECT   88   87   76   89  100                                                 \n",
+            "CONECT   89   88   77   90  101                                                 \n",
+            "CONECT   90   89   78   91  102                                                 \n",
+            "CONECT   91   90   79   92  103                                                 \n",
+            "CONECT   92   91   80   93  104                                                 \n",
+            "CONECT   93   92   81   94  105                                                 \n",
+            "CONECT   94   93   82   95  106                                                 \n",
+            "CONECT   95   94   83   96  107                                                 \n",
+            "CONECT   96   95   84   97  108                                                 \n",
+            "CONECT   97   96   85  109                                                      \n",
+            "CONECT   98   86   99  110                                                      \n",
+            "CONECT   99   98   87  100  111                                                 \n",
+            "CONECT  100   99   88  101  112                                                 \n",
+            "CONECT  101  100   89  102  113                                                 \n",
+            "CONECT  102  101   90  103  114                                                 \n",
+            "CONECT  103  102   91  104  115                                                 \n",
+            "CONECT  104  103   92  105  116                                                 \n",
+            "CONECT  105  104   93  106  117                                                 \n",
+            "CONECT  106  105   94  107  118                                                 \n",
+            "CONECT  107  106   95  108  119                                                 \n",
+            "CONECT  108  107   96  109  120                                                 \n",
+            "CONECT  109  108   97  121                                                      \n",
+            "CONECT  110   98  111  122                                                      \n",
+            "CONECT  111  110   99  112  123                                                 \n",
+            "CONECT  112  111  100  113  124                                                 \n",
+            "CONECT  113  112  101  114  125                                                 \n",
+            "CONECT  114  113  102  115  126                                                 \n",
+            "CONECT  115  114  103  116  127                                                 \n",
+            "CONECT  116  115  104  117  128                                                 \n",
+            "CONECT  117  116  105  118  129                                                 \n",
+            "CONECT  118  117  106  119  130                                                 \n",
+            "CONECT  119  118  107  120  131                                                 \n",
+            "CONECT  120  119  108  121  132                                                 \n",
+            "CONECT  121  120  109  133                                                      \n",
+            "CONECT  122  110  123  134                                                      \n",
+            "CONECT  123  122  111  124  135                                                 \n",
+            "CONECT  124  123  112  125  136                                                 \n",
+            "CONECT  125  124  113  126  137                                                 \n",
+            "CONECT  126  125  114  127  138                                                 \n",
+            "CONECT  127  126  115  128  139                                                 \n",
+            "CONECT  128  127  116  129  140                                                 \n",
+            "CONECT  129  128  117  130  141                                                 \n",
+            "CONECT  130  129  118  131  142                                                 \n",
+            "CONECT  131  130  119  132  143                                                 \n",
+            "CONECT  132  131  120  133  144                                                 \n",
+            "CONECT  133  132  121  145                                                      \n",
+            "CONECT  134  122  135  146                                                      \n",
+            "CONECT  135  134  123  136  147                                                 \n",
+            "CONECT  136  135  124  137  148                                                 \n",
+            "CONECT  137  136  125  138  149                                                 \n",
+            "CONECT  138  137  126  139  150                                                 \n",
+            "CONECT  139  138  127  140  151                                                 \n",
+            "CONECT  140  139  128  141  152                                                 \n",
+            "CONECT  141  140  129  142  153                                                 \n",
+            "CONECT  142  141  130  143  154                                                 \n",
+            "CONECT  143  142  131  144  155                                                 \n",
+            "CONECT  144  143  132  145  156                                                 \n",
+            "CONECT  145  144  133  157                                                      \n",
+            "CONECT  146  134  147  158                                                      \n",
+            "CONECT  147  146  135  148  159                                                 \n",
+            "CONECT  148  147  136  149  160                                                 \n",
+            "CONECT  149  148  137  150  161                                                 \n",
+            "CONECT  150  149  138  151  162                                                 \n",
+            "CONECT  151  150  139  152  163                                                 \n",
+            "CONECT  152  151  140  153  164                                                 \n",
+            "CONECT  153  152  141  154  165                                                 \n",
+            "CONECT  154  153  142  155  166                                                 \n",
+            "CONECT  155  154  143  156  167                                                 \n",
+            "CONECT  156  155  144  157  168                                                 \n",
+            "CONECT  157  156  145  169                                                      \n",
+            "CONECT  158  146  159  170                                                      \n",
+            "CONECT  159  158  147  160  171                                                 \n",
+            "CONECT  160  159  148  161  172                                                 \n",
+            "CONECT  161  160  149  162  173                                                 \n",
+            "CONECT  162  161  150  163  174                                                 \n",
+            "CONECT  163  162  151  164  175                                                 \n",
+            "CONECT  164  163  152  165  176                                                 \n",
+            "CONECT  165  164  153  166  177                                                 \n",
+            "CONECT  166  165  154  167  178                                                 \n",
+            "CONECT  167  166  155  168  179                                                 \n",
+            "CONECT  168  167  156  169  180                                                 \n",
+            "CONECT  169  168  157  181                                                      \n",
+            "CONECT  170  158  171  182                                                      \n",
+            "CONECT  171  170  159  172  183                                                 \n",
+            "CONECT  172  171  160  173  184                                                 \n",
+            "CONECT  173  172  161  174  185                                                 \n",
+            "CONECT  174  173  162  175  186                                                 \n",
+            "CONECT  175  174  163  176  187                                                 \n",
+            "CONECT  176  175  164  177  188                                                 \n",
+            "CONECT  177  176  165  178  189                                                 \n",
+            "CONECT  178  177  166  179  190                                                 \n",
+            "CONECT  179  178  167  180  191                                                 \n",
+            "CONECT  180  179  168  181  192                                                 \n",
+            "CONECT  181  180  169  193                                                      \n",
+            "CONECT  182  170  183  194                                                      \n",
+            "CONECT  183  182  171  184  195                                                 \n",
+            "CONECT  184  183  172  185  196                                                 \n",
+            "CONECT  185  184  173  186  197                                                 \n",
+            "CONECT  186  185  174  187  198                                                 \n",
+            "CONECT  187  186  175  188  199                                                 \n",
+            "CONECT  188  187  176  189  200                                                 \n",
+            "CONECT  189  188  177  190  201                                                 \n",
+            "CONECT  190  189  178  191  202                                                 \n",
+            "CONECT  191  190  179  192  203                                                 \n",
+            "CONECT  192  191  180  193  204                                                 \n",
+            "CONECT  193  192  181  205                                                      \n",
+            "CONECT  194  182  195  206                                                      \n",
+            "CONECT  195  194  183  196  207                                                 \n",
+            "CONECT  196  195  184  197  208                                                 \n",
+            "CONECT  197  196  185  198  209                                                 \n",
+            "CONECT  198  197  186  199  210                                                 \n",
+            "CONECT  199  198  187  200  211                                                 \n",
+            "CONECT  200  199  188  201  212                                                 \n",
+            "CONECT  201  200  189  202  213                                                 \n",
+            "CONECT  202  201  190  203  214                                                 \n",
+            "CONECT  203  202  191  204  215                                                 \n",
+            "CONECT  204  203  192  205  216                                                 \n",
+            "CONECT  205  204  193  217                                                      \n",
+            "CONECT  206  194  207  218                                                      \n",
+            "CONECT  207  206  195  208  219                                                 \n",
+            "CONECT  208  207  196  209  220                                                 \n",
+            "CONECT  209  208  197  210  221                                                 \n",
+            "CONECT  210  209  198  211  222                                                 \n",
+            "CONECT  211  210  199  212  223                                                 \n",
+            "CONECT  212  211  200  213  224                                                 \n",
+            "CONECT  213  212  201  214  225                                                 \n",
+            "CONECT  214  213  202  215  226                                                 \n",
+            "CONECT  215  214  203  216  227                                                 \n",
+            "CONECT  216  215  204  217  228                                                 \n",
+            "CONECT  217  216  205  229                                                      \n",
+            "CONECT  218  206  219  230                                                      \n",
+            "CONECT  219  218  207  220  231                                                 \n",
+            "CONECT  220  219  208  221  232                                                 \n",
+            "CONECT  221  220  209  222  233                                                 \n",
+            "CONECT  222  221  210  223  234                                                 \n",
+            "CONECT  223  222  211  224  235                                                 \n",
+            "CONECT  224  223  212  225  236                                                 \n",
+            "CONECT  225  224  213  226  237                                                 \n",
+            "CONECT  226  225  214  227  238                                                 \n",
+            "CONECT  227  226  215  228  239                                                 \n",
+            "CONECT  228  227  216  229  240                                                 \n",
+            "CONECT  229  228  217  241                                                      \n",
+            "CONECT  230  218    2  231                                                      \n",
+            "CONECT  231  230  219    3  232                                                 \n",
+            "CONECT  232  231  220    4  233                                                 \n",
+            "CONECT  233  232  221    5  234                                                 \n",
+            "CONECT  234  233  222    6  235                                                 \n",
+            "CONECT  235  234  223    7  236                                                 \n",
+            "CONECT  236  235  224    8  237                                                 \n",
+            "CONECT  237  236  225    9  238                                                 \n",
+            "CONECT  238  237  226   10  239                                                 \n",
+            "CONECT  239  238  227   11  240                                                 \n",
+            "CONECT  240  239  228   12  241                                                 \n",
+            "CONECT  241  240  229   13                                                      \n",
+            "CONECT  242  243  244                                                           \n",
+            "CONECT  243  242                                                                \n",
+            "CONECT  244  242                                                                \n",
+            "MASTER        0    0    3    0    0    0    0    0  246    0  243    0          \n",
+            "END                                                                             \n"
+        ]
+
+        # Check the data.
+        self.strip_remarks(lines)
+        self.assertEqual(len(real_data), len(lines))
+        for i in range(len(lines)):
+            self.assertEqual(real_data[i], lines[i])
+
+
+    def test_create_diff_tensor_pdb_prolate(self):
+        """Check the 3D coordinates of the PDB representation of the optimised prolate diffusion tensor."""
+
+        # Reset relax.
+        self.interpreter.reset()
+
+        # Create a temporary file.
+        ds.tmpfile = mktemp()
+
+        # The diffusion type (used by the script).
+        ds.diff_dir = 'spheroid'
+        ds.diff_type = 'prolate'
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
+
+        # Create the PDB representation.
+        self.interpreter.structure.create_diff_tensor_pdb(scale=1.8e-06, file=ds.tmpfile, force=True)
+
+        # Read the contents of the file.
+        file = open(ds.tmpfile)
+        lines = file.readlines()
+        file.close()
+
+        # What the contents should be, without remarks.
+        real_data = [
+            "HET    COM  A   1       1                                                       \n",
+            "HET    TNS  A   2     240                                                       \n",
+            "HET    AXS  A   3       5                                                       \n",
+            "HETNAM     COM CENTRE OF MASS                                                   \n",
+            "HETNAM     TNS TENSOR                                                           \n",
+            "HETNAM     AXS TENSOR AXES                                                      \n",
+            "FORMUL   1  COM    C1                                                           \n",
+            "FORMUL   2  TNS    H240                                                         \n",
+            "FORMUL   3  AXS    C3N2                                                         \n",
+            "HETATM    1    R COM A   1      -0.000   0.000   0.000  1.00  0.00           C  \n",
+            "HETATM    2   H2 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM    3   H3 TNS A   2      48.132 -10.602  13.384  1.00  0.00           H  \n",
+            "HETATM    4   H4 TNS A   2      45.482   0.862   4.523  1.00  0.00           H  \n",
+            "HETATM    5   H5 TNS A   2      40.121   9.258  -2.355  1.00  0.00           H  \n",
+            "HETATM    6   H6 TNS A   2      33.389  16.101  -8.229  1.00  0.00           H  \n",
+            "HETATM    7   H7 TNS A   2      25.651  21.806 -13.368  1.00  0.00           H  \n",
+            "HETATM    8   H8 TNS A   2      17.033  26.514 -17.862  1.00  0.00           H  \n",
+            "HETATM    9   H9 TNS A   2       7.534  30.226 -21.713  1.00  0.00           H  \n",
+            "HETATM   10  H10 TNS A   2      -2.970  32.799 -24.827  1.00  0.00           H  \n",
+            "HETATM   11  H11 TNS A   2     -14.846  33.819 -26.938  1.00  0.00           H  \n",
+            "HETATM   12  H12 TNS A   2     -29.432  31.771 -27.066  1.00  0.00           H  \n",
+            "HETATM   13  H13 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM   14  H14 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM   15  H15 TNS A   2      48.114 -14.010   9.849  1.00  0.00           H  \n",
+            "HETATM   16  H16 TNS A   2      45.452  -4.720  -1.268  1.00  0.00           H  \n",
+            "HETATM   17  H17 TNS A   2      40.086   2.489  -9.378  1.00  0.00           H  \n",
+            "HETATM   18  H18 TNS A   2      33.349   8.645 -15.965  1.00  0.00           H  \n",
+            "HETATM   19  H19 TNS A   2      25.610  14.029 -21.436  1.00  0.00           H  \n",
+            "HETATM   20  H20 TNS A   2      16.992  18.737 -25.931  1.00  0.00           H  \n",
+            "HETATM   21  H21 TNS A   2       7.495  22.769 -29.448  1.00  0.00           H  \n",
+            "HETATM   22  H22 TNS A   2      -3.005  26.030 -31.850  1.00  0.00           H  \n",
+            "HETATM   23  H23 TNS A   2     -14.875  28.237 -32.729  1.00  0.00           H  \n",
+            "HETATM   24  H24 TNS A   2     -29.450  28.364 -30.600  1.00  0.00           H  \n",
+            "HETATM   25  H25 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM   26  H26 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM   27  H27 TNS A   2      47.182 -18.119   7.330  1.00  0.00           H  \n",
+            "HETATM   28  H28 TNS A   2      43.926 -11.453  -5.396  1.00  0.00           H  \n",
+            "HETATM   29  H29 TNS A   2      38.235  -5.676 -14.383  1.00  0.00           H  \n",
+            "HETATM   30  H30 TNS A   2      31.311  -0.350 -21.478  1.00  0.00           H  \n",
+            "HETATM   31  H31 TNS A   2      23.484   4.647 -27.187  1.00  0.00           H  \n",
+            "HETATM   32  H32 TNS A   2      14.866   9.356 -31.681  1.00  0.00           H  \n",
+            "HETATM   33  H33 TNS A   2       5.456  13.775 -34.961  1.00  0.00           H  \n",
+            "HETATM   34  H34 TNS A   2      -4.856  17.864 -36.855  1.00  0.00           H  \n",
+            "HETATM   35  H35 TNS A   2     -16.401  21.504 -36.856  1.00  0.00           H  \n",
+            "HETATM   36  H36 TNS A   2     -30.382  24.254 -33.119  1.00  0.00           H  \n",
+            "HETATM   37  H37 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM   38  H38 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM   39  H39 TNS A   2      45.428 -22.529   6.073  1.00  0.00           H  \n",
+            "HETATM   40  H40 TNS A   2      41.053 -18.678  -7.455  1.00  0.00           H  \n",
+            "HETATM   41  H41 TNS A   2      34.751 -14.438 -16.880  1.00  0.00           H  \n",
+            "HETATM   42  H42 TNS A   2      27.473 -10.001 -24.229  1.00  0.00           H  \n",
+            "HETATM   43  H43 TNS A   2      19.481  -5.419 -30.056  1.00  0.00           H  \n",
+            "HETATM   44  H44 TNS A   2      10.862  -0.711 -34.550  1.00  0.00           H  \n",
+            "HETATM   45  H45 TNS A   2       1.618   4.124 -37.712  1.00  0.00           H  \n",
+            "HETATM   46  H46 TNS A   2      -8.341   9.103 -39.352  1.00  0.00           H  \n",
+            "HETATM   47  H47 TNS A   2     -19.275  14.279 -38.915  1.00  0.00           H  \n",
+            "HETATM   48  H48 TNS A   2     -32.136  19.844 -34.376  1.00  0.00           H  \n",
+            "HETATM   49  H49 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM   50  H50 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM   51  H51 TNS A   2      43.024 -26.808   6.202  1.00  0.00           H  \n",
+            "HETATM   52  H52 TNS A   2      37.114 -25.688  -7.244  1.00  0.00           H  \n",
+            "HETATM   53  H53 TNS A   2      29.974 -22.939 -16.625  1.00  0.00           H  \n",
+            "HETATM   54  H54 TNS A   2      22.211 -19.364 -23.948  1.00  0.00           H  \n",
+            "HETATM   55  H55 TNS A   2      13.992 -15.186 -29.763  1.00  0.00           H  \n",
+            "HETATM   56  H56 TNS A   2       5.374 -10.478 -34.257  1.00  0.00           H  \n",
+            "HETATM   57  H57 TNS A   2      -3.644  -5.240 -37.431  1.00  0.00           H  \n",
+            "HETATM   58  H58 TNS A   2     -13.117   0.602 -39.097  1.00  0.00           H  \n",
+            "HETATM   59  H59 TNS A   2     -23.214   7.269 -38.705  1.00  0.00           H  \n",
+            "HETATM   60  H60 TNS A   2     -34.540  15.565 -34.248  1.00  0.00           H  \n",
+            "HETATM   61  H61 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM   62  H62 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM   63  H63 TNS A   2      40.204 -30.536   7.703  1.00  0.00           H  \n",
+            "HETATM   64  H64 TNS A   2      32.494 -31.797  -4.785  1.00  0.00           H  \n",
+            "HETATM   65  H65 TNS A   2      24.372 -30.346 -13.643  1.00  0.00           H  \n",
+            "HETATM   66  H66 TNS A   2      16.040 -27.524 -20.663  1.00  0.00           H  \n",
+            "HETATM   67  H67 TNS A   2       7.556 -23.696 -26.336  1.00  0.00           H  \n",
+            "HETATM   68  H68 TNS A   2      -1.062 -18.988 -30.831  1.00  0.00           H  \n",
+            "HETATM   69  H69 TNS A   2      -9.814 -13.399 -34.146  1.00  0.00           H  \n",
+            "HETATM   70  H70 TNS A   2     -18.719  -6.806 -36.115  1.00  0.00           H  \n",
+            "HETATM   71  H71 TNS A   2     -27.833   1.160 -36.246  1.00  0.00           H  \n",
+            "HETATM   72  H72 TNS A   2     -37.360  11.837 -32.747  1.00  0.00           H  \n",
+            "HETATM   73  H73 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM   74  H74 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM   75  H75 TNS A   2      37.246 -33.350  10.430  1.00  0.00           H  \n",
+            "HETATM   76  H76 TNS A   2      27.647 -36.406  -0.318  1.00  0.00           H  \n",
+            "HETATM   77  H77 TNS A   2      18.493 -35.935  -8.225  1.00  0.00           H  \n",
+            "HETATM   78  H78 TNS A   2       9.565 -33.680 -14.695  1.00  0.00           H  \n",
+            "HETATM   79  H79 TNS A   2       0.802 -30.118 -20.112  1.00  0.00           H  \n",
+            "HETATM   80  H80 TNS A   2      -7.816 -25.409 -24.606  1.00  0.00           H  \n",
+            "HETATM   81  H81 TNS A   2     -16.290 -19.556 -28.178  1.00  0.00           H  \n",
+            "HETATM   82  H82 TNS A   2     -24.598 -12.395 -30.697  1.00  0.00           H  \n",
+            "HETATM   83  H83 TNS A   2     -32.681  -3.448 -31.778  1.00  0.00           H  \n",
+            "HETATM   84  H84 TNS A   2     -40.318   9.024 -30.020  1.00  0.00           H  \n",
+            "HETATM   85  H85 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM   86  H86 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM   87  H87 TNS A   2      34.437 -34.972  14.115  1.00  0.00           H  \n",
+            "HETATM   88  H88 TNS A   2      23.045 -39.064   5.721  1.00  0.00           H  \n",
+            "HETATM   89  H89 TNS A   2      12.913 -39.159  -0.903  1.00  0.00           H  \n",
+            "HETATM   90  H90 TNS A   2       3.419 -37.231  -6.629  1.00  0.00           H  \n",
+            "HETATM   91  H91 TNS A   2      -5.609 -33.821 -11.699  1.00  0.00           H  \n",
+            "HETATM   92  H92 TNS A   2     -14.227 -29.113 -16.193  1.00  0.00           H  \n",
+            "HETATM   93  H93 TNS A   2     -22.436 -23.107 -20.112  1.00  0.00           H  \n",
+            "HETATM   94  H94 TNS A   2     -30.178 -15.618 -23.374  1.00  0.00           H  \n",
+            "HETATM   95  H95 TNS A   2     -37.282  -6.107 -25.740  1.00  0.00           H  \n",
+            "HETATM   96  H96 TNS A   2     -43.127   7.401 -26.334  1.00  0.00           H  \n",
+            "HETATM   97  H97 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM   98  H98 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM   99  H99 TNS A   2      32.054 -35.245  18.399  1.00  0.00           H  \n",
+            "HETATM  100 H100 TNS A   2      19.141 -39.511  12.739  1.00  0.00           H  \n",
+            "HETATM  101 H101 TNS A   2       8.178 -39.702   7.608  1.00  0.00           H  \n",
+            "HETATM  102 H102 TNS A   2      -1.797 -37.829   2.746  1.00  0.00           H  \n",
+            "HETATM  103 H103 TNS A   2     -11.049 -34.445  -1.921  1.00  0.00           H  \n",
+            "HETATM  104 H104 TNS A   2     -19.667 -29.737  -6.415  1.00  0.00           H  \n",
+            "HETATM  105 H105 TNS A   2     -27.651 -23.705 -10.738  1.00  0.00           H  \n",
+            "HETATM  106 H106 TNS A   2     -34.913 -16.161 -14.864  1.00  0.00           H  \n",
+            "HETATM  107 H107 TNS A   2     -41.187  -6.554 -18.722  1.00  0.00           H  \n",
+            "HETATM  108 H108 TNS A   2     -45.510   7.128 -22.051  1.00  0.00           H  \n",
+            "HETATM  109 H109 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  110 H110 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  111 H111 TNS A   2      30.329 -34.142  22.861  1.00  0.00           H  \n",
+            "HETATM  112 H112 TNS A   2      16.316 -37.704  20.050  1.00  0.00           H  \n",
+            "HETATM  113 H113 TNS A   2       4.752 -37.510  16.474  1.00  0.00           H  \n",
+            "HETATM  114 H114 TNS A   2      -5.571 -35.415  12.511  1.00  0.00           H  \n",
+            "HETATM  115 H115 TNS A   2     -14.985 -31.927   8.265  1.00  0.00           H  \n",
+            "HETATM  116 H116 TNS A   2     -23.603 -27.219   3.771  1.00  0.00           H  \n",
+            "HETATM  117 H117 TNS A   2     -31.426 -21.291  -0.972  1.00  0.00           H  \n",
+            "HETATM  118 H118 TNS A   2     -38.339 -13.970  -5.998  1.00  0.00           H  \n",
+            "HETATM  119 H119 TNS A   2     -44.012  -4.747 -11.411  1.00  0.00           H  \n",
+            "HETATM  120 H120 TNS A   2     -47.235   8.231 -17.588  1.00  0.00           H  \n",
+            "HETATM  121 H121 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  122 H122 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  123 H123 TNS A   2      29.432 -31.771  27.066  1.00  0.00           H  \n",
+            "HETATM  124 H124 TNS A   2      14.846 -33.819  26.938  1.00  0.00           H  \n",
+            "HETATM  125 H125 TNS A   2       2.970 -32.799  24.827  1.00  0.00           H  \n",
+            "HETATM  126 H126 TNS A   2      -7.534 -30.226  21.713  1.00  0.00           H  \n",
+            "HETATM  127 H127 TNS A   2     -17.033 -26.514  17.862  1.00  0.00           H  \n",
+            "HETATM  128 H128 TNS A   2     -25.651 -21.806  13.368  1.00  0.00           H  \n",
+            "HETATM  129 H129 TNS A   2     -33.389 -16.101   8.229  1.00  0.00           H  \n",
+            "HETATM  130 H130 TNS A   2     -40.121  -9.258   2.355  1.00  0.00           H  \n",
+            "HETATM  131 H131 TNS A   2     -45.482  -0.862  -4.523  1.00  0.00           H  \n",
+            "HETATM  132 H132 TNS A   2     -48.132  10.602 -13.384  1.00  0.00           H  \n",
+            "HETATM  133 H133 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  134 H134 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  135 H135 TNS A   2      29.450 -28.364  30.600  1.00  0.00           H  \n",
+            "HETATM  136 H136 TNS A   2      14.875 -28.237  32.729  1.00  0.00           H  \n",
+            "HETATM  137 H137 TNS A   2       3.005 -26.030  31.850  1.00  0.00           H  \n",
+            "HETATM  138 H138 TNS A   2      -7.495 -22.769  29.448  1.00  0.00           H  \n",
+            "HETATM  139 H139 TNS A   2     -16.992 -18.737  25.931  1.00  0.00           H  \n",
+            "HETATM  140 H140 TNS A   2     -25.610 -14.029  21.436  1.00  0.00           H  \n",
+            "HETATM  141 H141 TNS A   2     -33.349  -8.645  15.965  1.00  0.00           H  \n",
+            "HETATM  142 H142 TNS A   2     -40.086  -2.489   9.378  1.00  0.00           H  \n",
+            "HETATM  143 H143 TNS A   2     -45.452   4.720   1.268  1.00  0.00           H  \n",
+            "HETATM  144 H144 TNS A   2     -48.114  14.010  -9.849  1.00  0.00           H  \n",
+            "HETATM  145 H145 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  146 H146 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  147 H147 TNS A   2      30.382 -24.254  33.119  1.00  0.00           H  \n",
+            "HETATM  148 H148 TNS A   2      16.401 -21.504  36.856  1.00  0.00           H  \n",
+            "HETATM  149 H149 TNS A   2       4.856 -17.864  36.855  1.00  0.00           H  \n",
+            "HETATM  150 H150 TNS A   2      -5.456 -13.775  34.961  1.00  0.00           H  \n",
+            "HETATM  151 H151 TNS A   2     -14.866  -9.356  31.681  1.00  0.00           H  \n",
+            "HETATM  152 H152 TNS A   2     -23.484  -4.647  27.187  1.00  0.00           H  \n",
+            "HETATM  153 H153 TNS A   2     -31.311   0.350  21.478  1.00  0.00           H  \n",
+            "HETATM  154 H154 TNS A   2     -38.235   5.676  14.383  1.00  0.00           H  \n",
+            "HETATM  155 H155 TNS A   2     -43.926  11.453   5.396  1.00  0.00           H  \n",
+            "HETATM  156 H156 TNS A   2     -47.182  18.119  -7.330  1.00  0.00           H  \n",
+            "HETATM  157 H157 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  158 H158 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  159 H159 TNS A   2      32.136 -19.844  34.376  1.00  0.00           H  \n",
+            "HETATM  160 H160 TNS A   2      19.275 -14.279  38.915  1.00  0.00           H  \n",
+            "HETATM  161 H161 TNS A   2       8.341  -9.103  39.352  1.00  0.00           H  \n",
+            "HETATM  162 H162 TNS A   2      -1.618  -4.124  37.712  1.00  0.00           H  \n",
+            "HETATM  163 H163 TNS A   2     -10.862   0.711  34.550  1.00  0.00           H  \n",
+            "HETATM  164 H164 TNS A   2     -19.481   5.419  30.056  1.00  0.00           H  \n",
+            "HETATM  165 H165 TNS A   2     -27.473  10.001  24.229  1.00  0.00           H  \n",
+            "HETATM  166 H166 TNS A   2     -34.751  14.438  16.880  1.00  0.00           H  \n",
+            "HETATM  167 H167 TNS A   2     -41.053  18.678   7.455  1.00  0.00           H  \n",
+            "HETATM  168 H168 TNS A   2     -45.428  22.529  -6.073  1.00  0.00           H  \n",
+            "HETATM  169 H169 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  170 H170 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  171 H171 TNS A   2      34.540 -15.565  34.248  1.00  0.00           H  \n",
+            "HETATM  172 H172 TNS A   2      23.214  -7.269  38.705  1.00  0.00           H  \n",
+            "HETATM  173 H173 TNS A   2      13.117  -0.602  39.097  1.00  0.00           H  \n",
+            "HETATM  174 H174 TNS A   2       3.644   5.240  37.431  1.00  0.00           H  \n",
+            "HETATM  175 H175 TNS A   2      -5.374  10.478  34.257  1.00  0.00           H  \n",
+            "HETATM  176 H176 TNS A   2     -13.992  15.186  29.763  1.00  0.00           H  \n",
+            "HETATM  177 H177 TNS A   2     -22.211  19.364  23.948  1.00  0.00           H  \n",
+            "HETATM  178 H178 TNS A   2     -29.974  22.939  16.625  1.00  0.00           H  \n",
+            "HETATM  179 H179 TNS A   2     -37.114  25.688   7.244  1.00  0.00           H  \n",
+            "HETATM  180 H180 TNS A   2     -43.024  26.808  -6.202  1.00  0.00           H  \n",
+            "HETATM  181 H181 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  182 H182 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  183 H183 TNS A   2      37.360 -11.837  32.747  1.00  0.00           H  \n",
+            "HETATM  184 H184 TNS A   2      27.833  -1.160  36.246  1.00  0.00           H  \n",
+            "HETATM  185 H185 TNS A   2      18.719   6.806  36.115  1.00  0.00           H  \n",
+            "HETATM  186 H186 TNS A   2       9.814  13.399  34.146  1.00  0.00           H  \n",
+            "HETATM  187 H187 TNS A   2       1.062  18.988  30.831  1.00  0.00           H  \n",
+            "HETATM  188 H188 TNS A   2      -7.556  23.696  26.336  1.00  0.00           H  \n",
+            "HETATM  189 H189 TNS A   2     -16.040  27.524  20.663  1.00  0.00           H  \n",
+            "HETATM  190 H190 TNS A   2     -24.372  30.346  13.643  1.00  0.00           H  \n",
+            "HETATM  191 H191 TNS A   2     -32.494  31.797   4.785  1.00  0.00           H  \n",
+            "HETATM  192 H192 TNS A   2     -40.204  30.536  -7.703  1.00  0.00           H  \n",
+            "HETATM  193 H193 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  194 H194 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  195 H195 TNS A   2      40.318  -9.024  30.020  1.00  0.00           H  \n",
+            "HETATM  196 H196 TNS A   2      32.681   3.448  31.778  1.00  0.00           H  \n",
+            "HETATM  197 H197 TNS A   2      24.598  12.395  30.697  1.00  0.00           H  \n",
+            "HETATM  198 H198 TNS A   2      16.290  19.556  28.178  1.00  0.00           H  \n",
+            "HETATM  199 H199 TNS A   2       7.816  25.409  24.606  1.00  0.00           H  \n",
+            "HETATM  200 H200 TNS A   2      -0.802  30.118  20.112  1.00  0.00           H  \n",
+            "HETATM  201 H201 TNS A   2      -9.565  33.680  14.695  1.00  0.00           H  \n",
+            "HETATM  202 H202 TNS A   2     -18.493  35.935   8.225  1.00  0.00           H  \n",
+            "HETATM  203 H203 TNS A   2     -27.647  36.406   0.318  1.00  0.00           H  \n",
+            "HETATM  204 H204 TNS A   2     -37.246  33.350 -10.430  1.00  0.00           H  \n",
+            "HETATM  205 H205 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  206 H206 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  207 H207 TNS A   2      43.127  -7.401  26.334  1.00  0.00           H  \n",
+            "HETATM  208 H208 TNS A   2      37.282   6.107  25.740  1.00  0.00           H  \n",
+            "HETATM  209 H209 TNS A   2      30.178  15.618  23.374  1.00  0.00           H  \n",
+            "HETATM  210 H210 TNS A   2      22.436  23.107  20.112  1.00  0.00           H  \n",
+            "HETATM  211 H211 TNS A   2      14.227  29.113  16.193  1.00  0.00           H  \n",
+            "HETATM  212 H212 TNS A   2       5.609  33.821  11.699  1.00  0.00           H  \n",
+            "HETATM  213 H213 TNS A   2      -3.419  37.231   6.629  1.00  0.00           H  \n",
+            "HETATM  214 H214 TNS A   2     -12.913  39.159   0.903  1.00  0.00           H  \n",
+            "HETATM  215 H215 TNS A   2     -23.045  39.064  -5.721  1.00  0.00           H  \n",
+            "HETATM  216 H216 TNS A   2     -34.437  34.972 -14.115  1.00  0.00           H  \n",
+            "HETATM  217 H217 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  218 H218 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  219 H219 TNS A   2      45.510  -7.128  22.051  1.00  0.00           H  \n",
+            "HETATM  220 H220 TNS A   2      41.187   6.554  18.722  1.00  0.00           H  \n",
+            "HETATM  221 H221 TNS A   2      34.913  16.161  14.864  1.00  0.00           H  \n",
+            "HETATM  222 H222 TNS A   2      27.651  23.705  10.738  1.00  0.00           H  \n",
+            "HETATM  223 H223 TNS A   2      19.667  29.737   6.415  1.00  0.00           H  \n",
+            "HETATM  224 H224 TNS A   2      11.049  34.445   1.921  1.00  0.00           H  \n",
+            "HETATM  225 H225 TNS A   2       1.797  37.829  -2.746  1.00  0.00           H  \n",
+            "HETATM  226 H226 TNS A   2      -8.178  39.702  -7.608  1.00  0.00           H  \n",
+            "HETATM  227 H227 TNS A   2     -19.141  39.511 -12.739  1.00  0.00           H  \n",
+            "HETATM  228 H228 TNS A   2     -32.054  35.245 -18.399  1.00  0.00           H  \n",
+            "HETATM  229 H229 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  230 H230 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  231 H231 TNS A   2      47.235  -8.231  17.588  1.00  0.00           H  \n",
+            "HETATM  232 H232 TNS A   2      44.012   4.747  11.411  1.00  0.00           H  \n",
+            "HETATM  233 H233 TNS A   2      38.339  13.970   5.998  1.00  0.00           H  \n",
+            "HETATM  234 H234 TNS A   2      31.426  21.291   0.972  1.00  0.00           H  \n",
+            "HETATM  235 H235 TNS A   2      23.603  27.219  -3.771  1.00  0.00           H  \n",
+            "HETATM  236 H236 TNS A   2      14.985  31.927  -8.265  1.00  0.00           H  \n",
+            "HETATM  237 H237 TNS A   2       5.571  35.415 -12.511  1.00  0.00           H  \n",
+            "HETATM  238 H238 TNS A   2      -4.752  37.510 -16.474  1.00  0.00           H  \n",
+            "HETATM  239 H239 TNS A   2     -16.316  37.704 -20.050  1.00  0.00           H  \n",
+            "HETATM  240 H240 TNS A   2     -30.329  34.142 -22.861  1.00  0.00           H  \n",
+            "HETATM  241 H241 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  242    R AXS A   3      -0.000   0.000   0.000  1.00  0.00           C  \n",
+            "HETATM  243 Dpar AXS A   3     -43.091  23.541 -22.472  1.00  0.00           C  \n",
+            "HETATM  244 Dpar AXS A   3      43.091 -23.541  22.472  1.00  0.00           C  \n",
+            "HETATM  245 Dpar AXS A   3     -47.400  25.895 -24.719  1.00  0.00           N  \n",
+            "HETATM  246 Dpar AXS A   3      47.400 -25.895  24.719  1.00  0.00           N  \n",
             "CONECT    2    3   14  230                                                      \n",
             "CONECT    3    2    4   15  231                                                 \n",
             "CONECT    4    3    5   16  232                                                 \n",
@@ -3529,6 +3529,66 @@ class Structure(SystemTestCase):
         self.assertEqual(len(model.mol), 0)
 
 
+    def test_load_internal_results(self):
+        """Load the PDB file using the information in a results file (using the internal structural object)."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Read the results file.
+        self.interpreter.results.read(file='str_internal', dir=path)
+
+        # Test the structure metadata.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assert_(len(cdp.structure.structural_data))
+        self.assert_(len(cdp.structure.structural_data[0].mol))
+
+        mol = cdp.structure.structural_data[0].mol[0]
+        self.assertEqual(mol.file_name, 'Ap4Aase_res1-12.pdb')
+        self.assertEqual(mol.file_path, '')
+        self.assertEqual(mol.file_model, 1)
+        self.assertEqual(mol.file_mol_num, 1)
+
+        # The real atomic data.
+        atom_name = ['N', 'CA', '1HA', '2HA', 'C', 'O', '1HT', '2HT', '3HT', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'HG', 'CD1', '1HD1', '2HD1', '3HD1', 'CD2', '1HD2', '2HD2', '3HD2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'SD', 'CE', '1HE', '2HE', '3HE', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'OD1', 'OD2', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'CD', 'OE1', 'OE2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O']
+        bonded = [[]]*174
+        chain_id = [None]*174
+        element = ['N', 'C', 'H', 'H', 'C', 'O', 'H', 'H', 'H', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'C', 'H', 'H', 'H', 'C', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'O', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'S', 'C', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'O', 'O', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'O', 'H', 'C', 'O', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'C', 'O', 'O', 'C', 'O', 'N', 'H', 'C', 'H', 'H', 'C', 'O']
+        pdb_record = ['ATOM']*174
+        res_name = ['GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY']
+        res_num = [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12]
+        seg_id = [None]*174
+        x = [8.442, 7.469, 8.013, 6.825, 6.610, 6.827, 9.398, 8.180, 8.448, 5.613, 5.281, 4.714, 5.222, 3.646, 3.332, 2.800, 4.319, 4.853, 3.587, 6.162, 4.805, 4.075, 3.593, 4.074, 4.475, 3.498, 3.572, 2.025, 1.965, 1.609, 1.176, 1.823, 0.176, 0.096, 0.509, -0.789, 0.474, 0.809, -0.595, 0.707, 4.264, 4.364, 4.809, 4.697, 5.561, 6.220, 6.156, 4.659, 4.746, 3.786, 3.770, 2.851, 2.368, 1.785, 1.177, 1.165, 2.360, 1.690, 3.546, 3.804, 3.814, 3.563, 4.442, 4.984, 5.411, 6.192, 4.872, 6.068, 6.868, 5.332, 6.747, 6.155, 5.409, 6.977, 5.721, 3.369, 2.255, 3.703, 4.604, 2.753, 1.851, 3.329, 4.182, 3.644, 2.319, 1.992, 1.854, 2.419, 1.251, 3.451, 4.359, 3.267, 2.246, 4.223, 4.054, 4.040, 5.573, 6.142, 3.488, 4.276, 2.795, 1.828, 2.929, 2.810, 1.772, 0.912, 2.067, 1.505, 0.464, 2.138, 0.938, 2.273, 4.268, 4.585, 5.076, 4.776, 6.392, 6.925, 7.120, 7.968, 7.464, 6.130, 6.384, 6.135, 4.210, 4.246, 6.325, 5.263, 7.477, 8.281, 7.587, 7.039, 9.047, 9.133, 9.654, 9.590, 10.670, 9.215, 9.190, 10.055, 8.012, 7.007, 7.361, 6.144, 5.925, 5.555, 6.329, 4.814, 4.894, 4.761]
+        y = [10.188, 9.889, 9.712, 10.745, 8.674, 7.991, 10.291, 11.073, 9.416, 8.385, 9.152, 7.243, 6.302, 7.443, 6.483, 7.963, 8.253, 7.605, 8.842, 9.327, 10.088, 7.251, 8.285, 6.099, 5.309, 5.986, 4.953, 6.396, 7.471, 6.106, 5.775, 5.225, 4.796, 4.954, 3.787, 4.949, 6.853, 7.828, 6.775, 6.720, 6.853, 8.068, 6.222, 5.251, 6.956, 6.273, 7.706, 7.634, 8.841, 6.847, 5.889, 7.360, 6.511, 8.230, 7.620, 8.669, 9.269, 9.652, 8.174, 9.362, 7.546, 6.604, 8.253, 9.095, 7.354, 7.976, 6.886, 6.258, 5.824, 5.499, 6.846, 5.570, 5.985, 5.190, 4.766, 8.771, 8.245, 9.789, 10.161, 10.351, 10.605, 11.610, 11.341, 12.287, 12.322, 11.787, 13.410, 9.322, 9.015, 8.776, 9.052, 7.758, 7.826, 7.990, 8.977, 7.248, 7.894, 8.285, 6.370, 6.214, 5.342, 5.431, 3.973, 3.943, 3.230, 3.234, 2.212, 3.991, 3.892, 3.624, 5.960, 5.908, 3.339, 3.179, 2.980, 3.150, 2.375, 2.876, 2.616, 3.262, 1.675, 3.264, 4.305, 2.758, 4.055, 2.299, 0.876, 0.258, 0.312, 0.871, -1.106, -1.253, -1.489, -2.564, -1.049, -1.041, -1.011, -0.052, -1.970, -2.740, -1.931, -2.037, -1.962, -2.949, -2.983, -3.917, -4.588, -4.488, -3.289, -3.932]
+        z = [6.302, 7.391, 8.306, 7.526, 7.089, 6.087, 6.697, 5.822, 5.604, 7.943, 9.155, 7.752, 7.908, 8.829, 9.212, 8.407, 9.880, 10.560, 10.415, 9.754, 8.900, 6.374, 5.909, 5.719, 6.139, 4.391, 4.081, 4.415, 4.326, 5.367, 3.307, 2.640, 3.889, 4.956, 3.700, 3.430, 2.493, 2.814, 2.633, 1.449, 3.403, 3.572, 2.369, 2.281, 1.371, 0.855, 1.868, 0.359, 0.149, -0.269, -0.055, -1.268, -1.726, -0.608, 0.037, -1.377, 0.162, 0.731, -2.354, -2.175, -3.496, -3.603, -4.606, -4.199, -5.387, -5.803, -6.196, -4.563, -5.146, -4.350, -3.001, -1.895, -1.241, -1.307, -2.472, -5.551, -5.582, -6.328, -6.269, -7.274, -6.735, -7.913, -8.518, -7.133, -8.791, -9.871, -8.395, -8.346, -8.584, -8.977, -8.732, -10.002, -10.355, -11.174, -11.584, -11.936, -10.759, -11.425, -9.403, -8.469, -9.921, -11.030, -9.410, -8.336, -10.080, -9.428, -10.291, -11.333, -11.606, -12.128, -10.723, -11.893, -9.781, -10.959, -8.768, -7.344, -8.971, -9.765, -7.642, -7.816, -7.251, -6.715, -6.584, -5.765, -7.175, -6.955, -9.288, -9.222, -9.654, -9.696, -10.009, -10.928, -10.249, -10.194, -9.475, -11.596, -11.540, -11.813, -12.724, -13.193, -13.137, -8.947, -7.774, -9.383, -10.338, -8.477, -8.138, -9.017, -7.265, -6.226]
+
+        # Test the atomic data.
+        mol = cdp.structure.structural_data[0].mol[0]
+        for i in range(len(mol.atom_name)):
+            self.assertEqual(mol.atom_name[i], atom_name[i])
+            self.assertEqual(mol.bonded[i], bonded[i])
+            self.assertEqual(mol.chain_id[i], chain_id[i])
+            self.assertEqual(mol.element[i], element[i])
+            self.assertEqual(mol.pdb_record[i], pdb_record[i])
+            self.assertEqual(mol.res_name[i], res_name[i])
+            self.assertEqual(mol.res_num[i], res_num[i])
+            self.assertEqual(mol.seg_id[i], seg_id[i])
+            self.assertEqual(mol.x[i], x[i])
+            self.assertEqual(mol.y[i], y[i])
+            self.assertEqual(mol.z[i], z[i])
+
+
+    def test_load_internal_results2(self):
+        """Load the PDB file using the information in a results file (using the internal structural object)."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Read the results file.
+        self.interpreter.results.read(file=path+sep+'str_internal')
+
+
     def test_load_spins_mol_cat(self):
         """Test the loading of spins from different molecules into one molecule container."""
 
@@ -3613,66 +3673,6 @@ class Structure(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[0].spin[2].pos[1][0], 8.062)
         self.assertEqual(cdp.mol[0].res[0].spin[2].pos[1][1], 0.431)
         self.assertEqual(cdp.mol[0].res[0].spin[2].pos[1][2], 3.048)
-
-
-    def test_load_internal_results(self):
-        """Load the PDB file using the information in a results file (using the internal structural object)."""
-
-        # Path of the files.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
-
-        # Read the results file.
-        self.interpreter.results.read(file='str_internal', dir=path)
-
-        # Test the structure metadata.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
-        self.assert_(len(cdp.structure.structural_data))
-        self.assert_(len(cdp.structure.structural_data[0].mol))
-
-        mol = cdp.structure.structural_data[0].mol[0]
-        self.assertEqual(mol.file_name, 'Ap4Aase_res1-12.pdb')
-        self.assertEqual(mol.file_path, '')
-        self.assertEqual(mol.file_model, 1)
-        self.assertEqual(mol.file_mol_num, 1)
-
-        # The real atomic data.
-        atom_name = ['N', 'CA', '1HA', '2HA', 'C', 'O', '1HT', '2HT', '3HT', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'HG', 'CD1', '1HD1', '2HD1', '3HD1', 'CD2', '1HD2', '2HD2', '3HD2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'SD', 'CE', '1HE', '2HE', '3HE', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'OD1', 'OD2', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'CD', 'OE1', 'OE2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O']
-        bonded = [[]]*174
-        chain_id = [None]*174
-        element = ['N', 'C', 'H', 'H', 'C', 'O', 'H', 'H', 'H', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'C', 'H', 'H', 'H', 'C', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'O', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'S', 'C', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'O', 'O', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'O', 'H', 'C', 'O', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'C', 'O', 'O', 'C', 'O', 'N', 'H', 'C', 'H', 'H', 'C', 'O']
-        pdb_record = ['ATOM']*174
-        res_name = ['GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY']
-        res_num = [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12]
-        seg_id = [None]*174
-        x = [8.442, 7.469, 8.013, 6.825, 6.610, 6.827, 9.398, 8.180, 8.448, 5.613, 5.281, 4.714, 5.222, 3.646, 3.332, 2.800, 4.319, 4.853, 3.587, 6.162, 4.805, 4.075, 3.593, 4.074, 4.475, 3.498, 3.572, 2.025, 1.965, 1.609, 1.176, 1.823, 0.176, 0.096, 0.509, -0.789, 0.474, 0.809, -0.595, 0.707, 4.264, 4.364, 4.809, 4.697, 5.561, 6.220, 6.156, 4.659, 4.746, 3.786, 3.770, 2.851, 2.368, 1.785, 1.177, 1.165, 2.360, 1.690, 3.546, 3.804, 3.814, 3.563, 4.442, 4.984, 5.411, 6.192, 4.872, 6.068, 6.868, 5.332, 6.747, 6.155, 5.409, 6.977, 5.721, 3.369, 2.255, 3.703, 4.604, 2.753, 1.851, 3.329, 4.182, 3.644, 2.319, 1.992, 1.854, 2.419, 1.251, 3.451, 4.359, 3.267, 2.246, 4.223, 4.054, 4.040, 5.573, 6.142, 3.488, 4.276, 2.795, 1.828, 2.929, 2.810, 1.772, 0.912, 2.067, 1.505, 0.464, 2.138, 0.938, 2.273, 4.268, 4.585, 5.076, 4.776, 6.392, 6.925, 7.120, 7.968, 7.464, 6.130, 6.384, 6.135, 4.210, 4.246, 6.325, 5.263, 7.477, 8.281, 7.587, 7.039, 9.047, 9.133, 9.654, 9.590, 10.670, 9.215, 9.190, 10.055, 8.012, 7.007, 7.361, 6.144, 5.925, 5.555, 6.329, 4.814, 4.894, 4.761]
-        y = [10.188, 9.889, 9.712, 10.745, 8.674, 7.991, 10.291, 11.073, 9.416, 8.385, 9.152, 7.243, 6.302, 7.443, 6.483, 7.963, 8.253, 7.605, 8.842, 9.327, 10.088, 7.251, 8.285, 6.099, 5.309, 5.986, 4.953, 6.396, 7.471, 6.106, 5.775, 5.225, 4.796, 4.954, 3.787, 4.949, 6.853, 7.828, 6.775, 6.720, 6.853, 8.068, 6.222, 5.251, 6.956, 6.273, 7.706, 7.634, 8.841, 6.847, 5.889, 7.360, 6.511, 8.230, 7.620, 8.669, 9.269, 9.652, 8.174, 9.362, 7.546, 6.604, 8.253, 9.095, 7.354, 7.976, 6.886, 6.258, 5.824, 5.499, 6.846, 5.570, 5.985, 5.190, 4.766, 8.771, 8.245, 9.789, 10.161, 10.351, 10.605, 11.610, 11.341, 12.287, 12.322, 11.787, 13.410, 9.322, 9.015, 8.776, 9.052, 7.758, 7.826, 7.990, 8.977, 7.248, 7.894, 8.285, 6.370, 6.214, 5.342, 5.431, 3.973, 3.943, 3.230, 3.234, 2.212, 3.991, 3.892, 3.624, 5.960, 5.908, 3.339, 3.179, 2.980, 3.150, 2.375, 2.876, 2.616, 3.262, 1.675, 3.264, 4.305, 2.758, 4.055, 2.299, 0.876, 0.258, 0.312, 0.871, -1.106, -1.253, -1.489, -2.564, -1.049, -1.041, -1.011, -0.052, -1.970, -2.740, -1.931, -2.037, -1.962, -2.949, -2.983, -3.917, -4.588, -4.488, -3.289, -3.932]
-        z = [6.302, 7.391, 8.306, 7.526, 7.089, 6.087, 6.697, 5.822, 5.604, 7.943, 9.155, 7.752, 7.908, 8.829, 9.212, 8.407, 9.880, 10.560, 10.415, 9.754, 8.900, 6.374, 5.909, 5.719, 6.139, 4.391, 4.081, 4.415, 4.326, 5.367, 3.307, 2.640, 3.889, 4.956, 3.700, 3.430, 2.493, 2.814, 2.633, 1.449, 3.403, 3.572, 2.369, 2.281, 1.371, 0.855, 1.868, 0.359, 0.149, -0.269, -0.055, -1.268, -1.726, -0.608, 0.037, -1.377, 0.162, 0.731, -2.354, -2.175, -3.496, -3.603, -4.606, -4.199, -5.387, -5.803, -6.196, -4.563, -5.146, -4.350, -3.001, -1.895, -1.241, -1.307, -2.472, -5.551, -5.582, -6.328, -6.269, -7.274, -6.735, -7.913, -8.518, -7.133, -8.791, -9.871, -8.395, -8.346, -8.584, -8.977, -8.732, -10.002, -10.355, -11.174, -11.584, -11.936, -10.759, -11.425, -9.403, -8.469, -9.921, -11.030, -9.410, -8.336, -10.080, -9.428, -10.291, -11.333, -11.606, -12.128, -10.723, -11.893, -9.781, -10.959, -8.768, -7.344, -8.971, -9.765, -7.642, -7.816, -7.251, -6.715, -6.584, -5.765, -7.175, -6.955, -9.288, -9.222, -9.654, -9.696, -10.009, -10.928, -10.249, -10.194, -9.475, -11.596, -11.540, -11.813, -12.724, -13.193, -13.137, -8.947, -7.774, -9.383, -10.338, -8.477, -8.138, -9.017, -7.265, -6.226]
-
-        # Test the atomic data.
-        mol = cdp.structure.structural_data[0].mol[0]
-        for i in range(len(mol.atom_name)):
-            self.assertEqual(mol.atom_name[i], atom_name[i])
-            self.assertEqual(mol.bonded[i], bonded[i])
-            self.assertEqual(mol.chain_id[i], chain_id[i])
-            self.assertEqual(mol.element[i], element[i])
-            self.assertEqual(mol.pdb_record[i], pdb_record[i])
-            self.assertEqual(mol.res_name[i], res_name[i])
-            self.assertEqual(mol.res_num[i], res_num[i])
-            self.assertEqual(mol.seg_id[i], seg_id[i])
-            self.assertEqual(mol.x[i], x[i])
-            self.assertEqual(mol.y[i], y[i])
-            self.assertEqual(mol.z[i], z[i])
-
-
-    def test_load_internal_results2(self):
-        """Load the PDB file using the information in a results file (using the internal structural object)."""
-
-        # Path of the files.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
-
-        # Read the results file.
-        self.interpreter.results.read(file=path+sep+'str_internal')
 
 
     def test_mean(self):
@@ -3902,6 +3902,83 @@ class Structure(SystemTestCase):
         self.interpreter.structure.read_pdb(file='basic_single_pipe.bz2', dir=path)
 
 
+    def test_read_pdb_1UBQ(self):
+        """Test the reading of the complete 1UBQ PDB file."""
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('1UBQ.pdb', dir=path)
+
+        # Check the data.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 1)
+
+        # Check the first atom.
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[0], 1)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_name[0], 'N')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].chain_id[0], 'A')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_name[0], 'MET')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_num[0], 1)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].x[0], 27.340)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].y[0], 24.430)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].z[0], 2.614)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].element[0], 'N')
+
+        # Check the last atom (from the last water HETATM record).
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[-1], 661)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_name[-1], 'O')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].chain_id[-1], None)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_name[-1], 'HOH')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_num[-1], 58)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].x[-1], 37.667)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].y[-1], 43.421)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].z[-1], 17.000)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].element[-1], 'O')
+
+
+    def test_read_pdb_complex_internal(self):
+        """Test the packing of models and molecules using 'gromacs.pdb' and 'lactose_MCMM4_S1_*.pdb' (using the internal structural object PDB reader)."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Read the PDB models.
+        self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path+sep+'phthalic_acid')
+        self.interpreter.structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_1.pdb', dir=path, set_model_num=1, set_mol_name='lactose_MCMM4_S1')
+        self.interpreter.structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_2.pdb', dir=path, set_model_num=2, set_mol_name='lactose_MCMM4_S1')
+        self.interpreter.structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_3.pdb', dir=path, set_model_num=1, set_mol_name='lactose_MCMM4_S1b')
+        self.interpreter.structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_4.pdb', dir=path, set_model_num=2, set_mol_name='lactose_MCMM4_S1b')
+
+        # Try loading a few protons.
+        self.interpreter.structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.interpreter.structure.load_spins()
+
+        # Test the structural data.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 2)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 3)
+        self.assertEqual(len(cdp.structure.structural_data[1].mol), 3)
+
+        files = [['gromacs.pdb', 'lactose_MCMM4_S1_1.pdb', 'lactose_MCMM4_S1_3.pdb'],
+                 ['gromacs.pdb', 'lactose_MCMM4_S1_2.pdb', 'lactose_MCMM4_S1_4.pdb']]
+        paths = [[path+sep+'phthalic_acid', path+sep+'lactose', path+sep+'lactose'],
+                 [path+sep+'phthalic_acid', path+sep+'lactose', path+sep+'lactose']]
+        models = [[1, 1, 1], [2, 1, 1]]
+
+        for i in range(len(cdp.structure.structural_data)):
+            for j in range(len(cdp.structure.structural_data[i].mol)):
+                mol = cdp.structure.structural_data[i].mol[j]
+                self.assertEqual(mol.file_name, files[i][j])
+                self.assertEqual(mol.file_path, paths[i][j])
+                self.assertEqual(mol.file_model, models[i][j])
+                self.assertEqual(mol.file_mol_num, 1)
+
+
     def test_read_pdb_internal1(self):
         """Load the '1F35_N_H_molmol.pdb' PDB file (using the internal structural object PDB reader)."""
 
@@ -4032,6 +4109,37 @@ class Structure(SystemTestCase):
         self.interpreter.structure.load_spins()
 
 
+    def test_read_pdb_model_2_mol_internal(self):
+        """Load the 2 models of the 'gromacs.pdb' PDB file as separate molecules of the same model (using the internal structural object PDB reader)."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'phthalic_acid'
+
+        # Read the PDB models.
+        self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path, read_model=1, set_model_num=1)
+        self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path, read_model=2, set_model_num=1)
+
+        # Try loading a few protons.
+        self.interpreter.structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.interpreter.structure.load_spins()
+
+        # Test the structural data.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 2)
+
+        i = 0
+        for mol in cdp.structure.structural_data[0].mol:
+            self.assertEqual(mol.file_name, 'gromacs.pdb')
+            self.assertEqual(mol.file_path, path)
+            self.assertEqual(mol.file_model, i+1)
+            self.assertEqual(mol.file_mol_num, 1)
+            i = i + 1
+
+
     def test_read_pdb_mol_2_model_internal(self):
         """Load a few 'lactose_MCMM4_S1_*.pdb' PDB files as models (using the internal structural object PDB reader)."""
 
@@ -4067,114 +4175,6 @@ class Structure(SystemTestCase):
             self.assertEqual(mol.file_model, 1)
             self.assertEqual(mol.file_mol_num, 1)
             i = i + 1
-
-
-    def test_read_pdb_model_2_mol_internal(self):
-        """Load the 2 models of the 'gromacs.pdb' PDB file as separate molecules of the same model (using the internal structural object PDB reader)."""
-
-        # Path of the files.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'phthalic_acid'
-
-        # Read the PDB models.
-        self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path, read_model=1, set_model_num=1)
-        self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path, read_model=2, set_model_num=1)
-
-        # Try loading a few protons.
-        self.interpreter.structure.load_spins('@*H*')
-
-        # And now all the rest of the atoms.
-        self.interpreter.structure.load_spins()
-
-        # Test the structural data.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
-        self.assertEqual(len(cdp.structure.structural_data), 1)
-        self.assertEqual(len(cdp.structure.structural_data[0].mol), 2)
-
-        i = 0
-        for mol in cdp.structure.structural_data[0].mol:
-            self.assertEqual(mol.file_name, 'gromacs.pdb')
-            self.assertEqual(mol.file_path, path)
-            self.assertEqual(mol.file_model, i+1)
-            self.assertEqual(mol.file_mol_num, 1)
-            i = i + 1
-
-
-    def test_read_pdb_complex_internal(self):
-        """Test the packing of models and molecules using 'gromacs.pdb' and 'lactose_MCMM4_S1_*.pdb' (using the internal structural object PDB reader)."""
-
-        # Path of the files.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
-
-        # Read the PDB models.
-        self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path+sep+'phthalic_acid')
-        self.interpreter.structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_1.pdb', dir=path, set_model_num=1, set_mol_name='lactose_MCMM4_S1')
-        self.interpreter.structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_2.pdb', dir=path, set_model_num=2, set_mol_name='lactose_MCMM4_S1')
-        self.interpreter.structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_3.pdb', dir=path, set_model_num=1, set_mol_name='lactose_MCMM4_S1b')
-        self.interpreter.structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_4.pdb', dir=path, set_model_num=2, set_mol_name='lactose_MCMM4_S1b')
-
-        # Try loading a few protons.
-        self.interpreter.structure.load_spins('@*H*')
-
-        # And now all the rest of the atoms.
-        self.interpreter.structure.load_spins()
-
-        # Test the structural data.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
-        self.assertEqual(len(cdp.structure.structural_data), 2)
-        self.assertEqual(len(cdp.structure.structural_data[0].mol), 3)
-        self.assertEqual(len(cdp.structure.structural_data[1].mol), 3)
-
-        files = [['gromacs.pdb', 'lactose_MCMM4_S1_1.pdb', 'lactose_MCMM4_S1_3.pdb'],
-                 ['gromacs.pdb', 'lactose_MCMM4_S1_2.pdb', 'lactose_MCMM4_S1_4.pdb']]
-        paths = [[path+sep+'phthalic_acid', path+sep+'lactose', path+sep+'lactose'],
-                 [path+sep+'phthalic_acid', path+sep+'lactose', path+sep+'lactose']]
-        models = [[1, 1, 1], [2, 1, 1]]
-
-        for i in range(len(cdp.structure.structural_data)):
-            for j in range(len(cdp.structure.structural_data[i].mol)):
-                mol = cdp.structure.structural_data[i].mol[j]
-                self.assertEqual(mol.file_name, files[i][j])
-                self.assertEqual(mol.file_path, paths[i][j])
-                self.assertEqual(mol.file_model, models[i][j])
-                self.assertEqual(mol.file_mol_num, 1)
-
-
-    def test_read_pdb_1UBQ(self):
-        """Test the reading of the complete 1UBQ PDB file."""
-
-        # Load the file.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
-        self.interpreter.structure.read_pdb('1UBQ.pdb', dir=path)
-
-        # Check the data.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
-        self.assertEqual(len(cdp.structure.structural_data), 1)
-        self.assertEqual(len(cdp.structure.structural_data[0].mol), 1)
-
-        # Check the first atom.
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[0], 1)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_name[0], 'N')
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].chain_id[0], 'A')
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_name[0], 'MET')
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_num[0], 1)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].x[0], 27.340)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].y[0], 24.430)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].z[0], 2.614)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].element[0], 'N')
-
-        # Check the last atom (from the last water HETATM record).
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[-1], 661)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_name[-1], 'O')
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].chain_id[-1], None)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_name[-1], 'HOH')
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_num[-1], 58)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].x[-1], 37.667)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].y[-1], 43.421)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].z[-1], 17.000)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].element[-1], 'O')
 
 
     def test_read_write_pdb_1UBQ(self):
