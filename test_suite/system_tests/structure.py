@@ -398,23 +398,20 @@ class Structure(SystemTestCase):
         self.interpreter.structure.delete(atom_id="#CaM C:1-3")
         self.interpreter.structure.delete(atom_id="#CaM C:75-100")
 
+        # Copy the data pipe for late comparison.
+        self.interpreter.pipe.copy('mf', 'comp')
+
         # Superimpose the backbone heavy atoms.
-        self.interpreter.structure.align(method='fit to mean', atom_id='@N,C,CA,O', displace_id=':82-5000')
+        self.interpreter.structure.align(method='fit to mean', atom_id='@N,C,CA,O')
 
-        # Check that the two structures now have the same atomic coordinates.
-        mol1 = cdp.structure.structural_data[0].mol[0]
-        mol2 = cdp.structure.structural_data[0].mol[1]
-        for i in range(len(mol1.atom_name)):
-            if mol1.res_num[i] == 1:
-                continue
-            self.assertAlmostEqual(mol1.x[i], mol2.x[i], 2)
-            self.assertAlmostEqual(mol1.y[i], mol2.y[i], 2)
-            self.assertAlmostEqual(mol1.z[i], mol2.z[i], 2)
-
-        # The last atom must be different - it is not displaced.
-        self.assertAlmostEqual(mol1.x[-1] - mol2.x[-1], -1.0, 2)
-        self.assertAlmostEqual(mol1.y[-1] - mol2.y[-1], -1.0, 2)
-        self.assertAlmostEqual(mol1.z[-1] - mol2.z[-1], -1.0, 2)
+        # Check that nothing has moved.
+        for mol_index in range(3):
+            mol1 = ds['mf'].structure.structural_data[0].mol[mol_index]
+            mol2 = ds['comp'].structure.structural_data[0].mol[mol_index]
+            for i in range(len(mol1.atom_name)):
+                self.assertAlmostEqual(mol1.x[i], mol2.x[i])
+                self.assertAlmostEqual(mol1.y[i], mol2.y[i])
+                self.assertAlmostEqual(mol1.z[i], mol2.z[i])
 
 
     def test_alt_loc_missing(self):
