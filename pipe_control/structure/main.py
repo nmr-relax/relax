@@ -1248,6 +1248,12 @@ def rotate(R=None, origin=None, model=None, atom_id=None, pipe_name=None):
     selection = dp.structure.selection(atom_id=atom_id)
     dp.structure.rotate(R=R, origin=origin, model=model, selection=selection)
 
+    # Final printout.
+    if model:
+        print("Rotated %i atoms of model %i." % (selection.count_atoms(), model))
+    else:
+        print("Rotated %i atoms." % selection.count_atoms())
+
 
 def set_vector(spin=None, xh_vect=None):
     """Place the XH unit vector into the spin container object.
@@ -1384,6 +1390,12 @@ def translate(T=None, model=None, atom_id=None, pipe_name=None):
     # Call the specific code.
     selection = dp.structure.selection(atom_id=atom_id)
     dp.structure.translate(T=T, model=model, selection=selection)
+
+    # Final printout.
+    if model:
+        print("Translated %i atoms of model %i." % (selection.count_atoms(), model))
+    else:
+        print("Translated %i atoms." % selection.count_atoms())
 
 
 def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, unit=True):
