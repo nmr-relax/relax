@@ -58,7 +58,8 @@ class Test_align_protein(TestCase):
         print(seq2)
 
         # Perform the alignment.
-        align1, align2, gaps = align_pairwise(seq1, seq2, matrix='BLOSUM62', gap_open_penalty=5.0, gap_extend_penalty=1.0)
+        score, align1, align2, gaps = align_pairwise(seq1, seq2, matrix='BLOSUM62', gap_open_penalty=5.0, gap_extend_penalty=1.0)
+        print(score)
         print(align1)
         print(align2)
         print(gaps)
@@ -109,7 +110,8 @@ class Test_align_protein(TestCase):
         print(seq2)
 
         # Perform the alignment.
-        align1, align2, gaps = align_pairwise(seq1, seq2, matrix='PAM250', gap_open_penalty=5.0, gap_extend_penalty=0.5)
+        score, align1, align2, gaps = align_pairwise(seq1, seq2, matrix='PAM250', gap_open_penalty=5.0, gap_extend_penalty=0.5)
+        print(score)
         print(align1)
         print(align2)
         print(gaps)

@@ -23,12 +23,11 @@
 """Module for handling atomic coordinate information."""
 
 # Python module imports.
-from numpy import array, float64
-import sys
+from numpy import array, float64, int16, zeros
 
 # relax module imports.
 from lib.errors import RelaxFault
-from lib.sequence_alignment.align_protein import align_pairwise
+from lib.sequence_alignment.msa import central_star
 
 
 def assemble_coord_array(objects=None, object_names=None, molecules=None, models=None, atom_id=None, algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0, seq_info_flag=False):
@@ -65,7 +64,6 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
     # Assemble the atomic coordinates of all structures.
     print("Assembling all atomic coordinates:")
     ids = []
-    atom_ids = []
     atom_pos = []
     mol_names = []
     res_names = []
@@ -95,28 +93,6 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
             # Printout.
             print("        Model: %s" % model.num)
 
-            # Create a new structure ID for all the molecules of this model (if the molecules argument is not supplied).
-            if molecules == None:
-                if len(object_names) > 1 and num_models > 1:
-                    ids.append('%s, model %i' % (object_names[struct_index], model.num))
-                elif len(object_names) > 1:
-                    ids.append('%s' % (object_names[struct_index]))
-                elif num_models > 1:
-                    ids.append('model %i' % (model.num))
-                else:
-                    ids.append(None)
-
-            # Extend the lists.
-            if molecules == None:
-                atom_names.append([])
-                atom_ids.append([])
-                atom_pos.append([])
-                if seq_info_flag:
-                    mol_names.append([])
-                    res_names.append([])
-                    res_nums.append([])
-                    elements.append([])
-
             # Add all coordinates and elements.
             current_mol = ''
             current_res = None
@@ -138,26 +114,23 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
                     one_letter_codes.append(objects[struct_index].one_letter_codes(mol_name=mol_name))
 
                     # Extend the lists.
-                    if molecules != None:
-                        atom_names.append([])
-                        atom_ids.append([])
-                        atom_pos.append([])
-                        if seq_info_flag:
-                            mol_names.append([])
-                            res_names.append([])
-                            res_nums.append([])
-                            elements.append([])
+                    atom_names.append([])
+                    atom_pos.append([])
+                    if seq_info_flag:
+                        mol_names.append([])
+                        res_names.append([])
+                        res_nums.append([])
+                        elements.append([])
 
                     # Create a new structure ID.
-                    if molecules != None:
-                        if len(object_names) > 1 and num_models > 1:
-                            ids.append('%s, model %i, %s' % (object_names[struct_index], model.num, mol_name))
-                        elif len(object_names) > 1:
-                            ids.append('%s, %s' % (object_names[struct_index], mol_name))
-                        elif num_models > 1:
-                            ids.append('model %i, %s' % (model.num, mol_name))
-                        else:
-                            ids.append('%s' % mol_name)
+                    if len(object_names) > 1 and num_models > 1:
+                        ids.append('%s, model %i, %s' % (object_names[struct_index], model.num, mol_name))
+                    elif len(object_names) > 1:
+                        ids.append('%s, %s' % (object_names[struct_index], mol_name))
+                    elif num_models > 1:
+                        ids.append('model %i, %s' % (model.num, mol_name))
+                    else:
+                        ids.append('%s' % mol_name)
 
                 # A new residue.
                 if res_num != current_res:
@@ -166,7 +139,6 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
 
                     # Extend the lists.
                     atom_names[-1].append([])
-                    atom_ids[-1].append({})
                     atom_pos[-1].append({})
                     if seq_info_flag:
                         mol_names[-1].append({})
@@ -174,15 +146,8 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
                         res_nums[-1].append({})
                         elements[-1].append({})
 
-                # A unique identifier.
-                if molecules != None:
-                    id = ":%s&%s@%s" % (res_num, res_name, atom_name)
-                else:
-                    id = "#%s:%s&%s@%s" % (mol_name, res_num, res_name, atom_name)
-
                 # Store the per-structure ID and coordinate.
                 atom_names[-1][-1].append(atom_name)
-                atom_ids[-1][-1][atom_name] = id
                 atom_pos[-1][-1][atom_name] = pos[0]
 
                 # Store the per-structure sequence information.
@@ -193,23 +158,37 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
                     elements[-1][-1][atom_name] = elem
 
     # The total number of molecules.
-    num_mols = len(atom_ids)
+    num_mols = len(atom_names)
 
-    # Sequence alignment.
-    if algorithm == 'NW70':
-        print("\nPairwise sequence alignment to the first molecule:\n")
-        gap_matrices = []
-        for mol_index in range(1, num_mols):
-            print("Molecules 1-%i" % (mol_index+1))
-            align1, align2, gaps = align_pairwise(one_letter_codes[0], one_letter_codes[mol_index], algorithm=algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
-            gap_matrices.append(gaps)
+    # Multiple sequence alignment.
+    if algorithm != None:
+        # Use the central star multiple alignment algorithm.
+        strings, gaps = central_star(one_letter_codes, algorithm=algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
 
-        # Determine the residues in common.
-        skip = common_residues(gap_matrices=gap_matrices, one_letter_codes=one_letter_codes)
+        # Create the residue skipping data structure. 
+        skip = []
+        for mol_index in range(num_mols):
+            skip.append([])
+            for i in range(len(strings[0])):
+                # No residue in the current sequence.
+                if gaps[mol_index][i]:
+                    continue
 
-    # No alignment, so create an empty residue skipping data structure.
+                # A gap in one of the other sequences.
+                gap = False
+                for mol_index2 in range(num_mols):
+                    if gaps[mol_index2][i]:
+                        gap = True
+
+                # Skip the residue.
+                if gap:
+                    skip[mol_index].append(1)
+                else:
+                    skip[mol_index].append(0)
+
+    # No alignment.
     else:
-        # Create
+        # Create an empty residue skipping data structure. 
         skip = []
         for mol_index in range(num_mols):
             skip.append([])
@@ -286,130 +265,6 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
         return coord, ids, mol_name_common, res_name_common, res_num_common, atom_name_common, element_common
     else:
         return coord, ids
-
-
-def common_residues(gap_matrices=None, one_letter_codes=None):
-    """Determine the common residues between all the pairwise alignments.
-
-    @keyword gap_matrices:      The list of gap matrices from the pairwise alignments.
-    @type gap_matrices:         list of numpy rank-2 arrays.
-    @keyword one_letter_codes:  The list of strings of one letter residue codes for each molecule.
-    @type one_letter_codes:     list of str
-    @return:                    The residue skipping data structure.  The first dimension corresponds to the molecule, the second to the residue.  A one means the residue should be skipped, whereas zero means keep the residue.
-    @rtype:                     list of list of int
-    """
-
-    # The number of molecules.
-    num_mols = len(gap_matrices) + 1
-
-    # Initialise the residue skipping structures.
-    skip = []
-    skip_counts = []
-    res_counts = []
-    for mol_index in range(num_mols):
-        res_counts.append(len(one_letter_codes[mol_index]))
-        skip_counts.append(0)
-        skip.append([])
-        for j in range(res_counts[mol_index]):
-            skip[mol_index].append(0)
-
-    # Update the residue skipping structures for the first molecule.
-    for mol_index in range(num_mols-1):
-        # Loop over the residues of alignment i.
-        seq_index = -1
-        for j in range(len(gap_matrices[mol_index][0])):
-            # Increment the sequence index.
-            if not gap_matrices[mol_index][0, j]:
-                seq_index += 1
-
-            # A gap in the second sequence, so skip the residue.
-            if gap_matrices[mol_index][1, j]:
-                skip[0][seq_index] = 1
-
-    # Printout.
-    sys.stdout.write("Shared residues:\n")
-    sys.stdout.write("Molecule %3i:  " % 1)
-    for j in range(max(res_counts)):
-        # No more residues.
-        if j >= res_counts[0]:
-            sys.stdout.write("-")
-            continue
-
-        # A skip.
-        if skip[0][j]:
-            sys.stdout.write("-")
-
-        # A gap, so skip the residue.
-        elif gap_matrices[0][0, j]:
-            sys.stdout.write("-")
-            sys.stdout.write(one_letter_codes[0][j])
-
-        # Keep the residue.
-        else:
-            sys.stdout.write(one_letter_codes[0][j])
-    sys.stdout.write("\n")
-
-    # Update the first molecule skip counts.
-    skip_counts[0] = sum(skip[0])
-
-    # Update the residue skipping structures for all other molecules.
-    for mol_index in range(1, num_mols):
-        # Printout.
-        sys.stdout.write("Molecule %3i:  " % (mol_index+1))
-
-        # Loop over the residues of alignment mol_index.
-        seq1_index = -1
-        seq2_index = -1
-        for j in range(len(gap_matrices[mol_index-1][0])):
-            # Increment the sequence indices.
-            if not gap_matrices[mol_index-1][0, j]:
-                seq1_index += 1
-            if not gap_matrices[mol_index-1][1, j]:
-                seq2_index += 1
-
-            # End condition for the first molecule.
-            if seq1_index >= res_counts[0]:
-                # Skip the rest of the second molecule.
-                for k in range(seq2_index, res_counts[mol_index]):
-                    skip[mol_index][k] = 1
-                    skip_counts[mol_index] += 1
-                    sys.stdout.write("-")
-
-                # Terminate the loop.
-                break
-
-            # A gap in the first sequence, so skip the residue.
-            if gap_matrices[mol_index-1][0, j]:
-                skip[mol_index][seq2_index] = 1
-                skip_counts[mol_index] += 1
-                sys.stdout.write("-")
-
-            # Already skipped in the first molecule.
-            elif skip[0][seq1_index] and not gap_matrices[mol_index-1][1, j]:
-                skip[mol_index][seq2_index] = 1
-                skip_counts[mol_index] += 1
-                sys.stdout.write("-")
-
-            # Skipped in the second molecule.
-            elif gap_matrices[mol_index-1][1, j]:
-                sys.stdout.write("-")
-
-            # Print out the one letter code.
-            else:
-                sys.stdout.write(one_letter_codes[mol_index][seq2_index])
-
-        # EOL.
-        sys.stdout.write("\n")
-
-    # Sanity checks.
-    total = res_counts[0] - skip_counts[0]
-    for mol_index in range(1, num_mols):
-        if total != res_counts[mol_index] - skip_counts[mol_index]:
-            print("\nThe total shared residue counts between molcule 1 and %i of %i and %i respectively do not match." % ((mol_index+1), total, res_counts[mol_index] - skip_counts[mol_index]))
-            raise RelaxFault
-
-    # Return the skipping data structure.
-    return skip
 
 
 def loop_coord_structures(objects=None, molecules=None, models=None, atom_id=None):

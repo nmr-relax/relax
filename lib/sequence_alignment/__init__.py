@@ -24,6 +24,7 @@
 
 __all__ = [
     'align_protein',
+    'msa',
     'needleman_wunsch',
     'substitution_matrices'
 ]
