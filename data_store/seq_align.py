@@ -27,7 +27,7 @@ from data_store.data_classes import Element, RelaxListType
 from lib.errors import RelaxError
 
 
-class Seqence_alignments(RelaxListType):
+class Sequence_alignments(RelaxListType):
     """The structure for holding all sequence alignments."""
 
     def add(self, object_ids=None, models=None, molecules=None, sequences=None, strings=None, gaps=None, msa_algorithm=None, pairwise_algorithm=None, matrix=None, gap_open_penalty=None, gap_extend_penalty=None, end_gap_open_penalty=None, end_gap_extend_penalty=None):
