@@ -1299,8 +1299,8 @@ def sequence_alignment(pipes=None, models=None, molecules=None, msa_algorithm='C
     # Assemble the structural objects.
     objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
 
-    # Assemble the atomic coordinates of all structures.
-    ids, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols = assemble_atomic_coordinates(objects=objects, object_names=object_names, molecules=molecules, models=models)
+    # Assemble the atomic coordinates of all molecules.
+    ids, object_id_list, model_list, molecule_list, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols = assemble_atomic_coordinates(objects=objects, object_names=object_names, molecules=molecules, models=models)
 
     # MSA.
     if msa_algorithm == 'Central Star':
@@ -1311,15 +1311,8 @@ def sequence_alignment(pipes=None, models=None, molecules=None, msa_algorithm='C
     if not hasattr(ds, 'sequence_alignment'):
         ds.sequence_alignment = Sequence_alignments()
 
-    # Flatten the lists.
-    flat_models = []
-    flat_molecules = []
-    for i in range(len(pipes)):
-        flat_models += models[i]
-        flat_molecules += molecules[i]
-
     # Store the alignment.
-    ds.sequence_alignment.add(object_ids=ids, models=flat_models, molecules=flat_molecules, sequences=one_letter_codes, strings=strings, gaps=gaps, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
+    ds.sequence_alignment.add(object_ids=object_id_list, models=model_list, molecules=molecule_list, sequences=one_letter_codes, strings=strings, gaps=gaps, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
 
 
 def set_vector(spin=None, xh_vect=None):
