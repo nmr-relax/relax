@@ -4643,6 +4643,73 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(cdp.structure.rmsd, 0.77282758781333061)
 
 
+    def test_sequence_alignment_molecules(self):
+        """Test of the structure.sequence_alignment user function."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
+
+        # Load the two rotated structures.
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM A')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_model_num=1, set_mol_name='CaM B')
+
+        # Perform the alignment.
+        self.interpreter.structure.sequence_alignment(msa_algorithm='Central Star', algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=10.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.5, end_gap_extend_penalty=0.1)
+
+        # Save the relax state.
+        self.tmpfile = mktemp()
+        self.interpreter.state.save(self.tmpfile, dir=None, force=True)
+
+        # Reset relax.
+        self.interpreter.reset()
+
+        # Load the results.
+        self.interpreter.state.load(self.tmpfile)
+
+        # The real data.
+        object_ids = ['mf', 'mf']
+        models = [1, 1]
+        molecules = ['CaM A', 'CaM B']
+        sequences = [
+            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK***',
+            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK***'
+        ]
+        strings = [
+            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK***',
+            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK***'
+        ]
+        gaps = []
+        for i in range(len(strings)):
+            gaps.append([])
+            for j in range(len(strings[0])):
+                gaps[i].append(0)
+        msa_algorithm = 'Central Star'
+        pairwise_algorithm = 'NW70'
+        matrix = 'BLOSUM62'
+        gap_open_penalty = 10.0
+        gap_extend_penalty = 1.0
+        end_gap_open_penalty = 0.5
+        end_gap_extend_penalty = 0.1
+
+        # Check the data.
+        for i in range(2):
+            print("Checking \"%s\"" % molecules[i])
+            self.assertEqual(ds.sequence_alignments[0].ids[i], ids[i])
+            self.assertEqual(ds.sequence_alignments[0].object_ids[i], object_ids[i])
+            self.assertEqual(ds.sequence_alignments[0].models[i], models[i])
+            self.assertEqual(ds.sequence_alignments[0].molecules[i], molecules[i])
+            self.assertEqual(ds.sequence_alignments[0].sequences[i], sequences[i])
+            self.assertEqual(ds.sequence_alignments[0].strings[i], strings[i])
+            self.assertEqual(ds.sequence_alignments[0].gaps[i], gaps[i])
+            self.assertEqual(ds.sequence_alignments[0].msa_algorithm, msa_algorithm)
+            self.assertEqual(ds.sequence_alignments[0].pairwise_algorithm, pairwise_algorithm)
+            self.assertEqual(ds.sequence_alignments[0].matrix, matrix)
+            self.assertEqual(ds.sequence_alignments[0].gap_open_penalty, gap_open_penalty)
+            self.assertEqual(ds.sequence_alignments[0].gap_extend_penalty, gap_extend_penalty)
+            self.assertEqual(ds.sequence_alignments[0].end_gap_open_penalty, end_gap_open_penalty)
+            self.assertEqual(ds.sequence_alignments[0].end_gap_extend_penalty, end_gap_extend_penalty)
+
+
     def test_superimpose_fit_to_first(self):
         """Test of the structure.superimpose user function, fitting to the first structure."""
 
