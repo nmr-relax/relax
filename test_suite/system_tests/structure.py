@@ -4654,7 +4654,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_model_num=1, set_mol_name='CaM B')
 
         # Perform the alignment.
-        self.interpreter.structure.sequence_alignment(msa_algorithm='Central Star', algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=10.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.5, end_gap_extend_penalty=0.1)
+        self.interpreter.structure.sequence_alignment(pipes=['mf'], models=[[1, 1]], molecules=[['CaM A', 'CaM B']], msa_algorithm='Central Star', pairwise_algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=10.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.5, end_gap_extend_penalty=0.1)
 
         # Save the relax state.
         self.tmpfile = mktemp()
