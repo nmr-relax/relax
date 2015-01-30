@@ -227,7 +227,7 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
         for mol_index in range(num_mols):
             if res_indices[0] >= len(atom_names[0]):
                 terminate = True
-            if res_indices[mol_index] >= len(atom_names[0]):
+            if res_indices[mol_index] >= len(atom_names[mol_index]):
                 terminate = True
         if terminate:
             break
