@@ -31,6 +31,17 @@ from lib.structure.internal.coordinates import generate_id
 class Sequence_alignments(RelaxListType):
     """The structure for holding all sequence alignments."""
 
+    def __init__(self):
+        """Initialise some class variables."""
+
+        # Execute the base class __init__() method.
+        super(Sequence_alignments, self).__init__()
+
+        # Some generic initial names.
+        self.list_name = 'sequence_alignments'
+        self.list_desc = 'List of all multiple sequence alignments'
+
+
     def add(self, object_ids=None, models=None, molecules=None, sequences=None, strings=None, gaps=None, msa_algorithm=None, pairwise_algorithm=None, matrix=None, gap_open_penalty=None, gap_extend_penalty=None, end_gap_open_penalty=None, end_gap_extend_penalty=None):
         """Add a new sequence alignment.
 
@@ -174,6 +185,9 @@ class Alignment(Element):
         @keyword end_gap_extend_penalty:    The optional penalty for extending a gap at the end of a sequence.
         @type end_gap_extend_penalty:       float
         """
+
+        # Execute the base class __init__() method.
+        super(Alignment, self).__init__(name='sequence_alignment', desc='Multiple sequence alignment container.')
 
         # Store the values.
         self.object_ids = object_ids
