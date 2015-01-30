@@ -36,6 +36,21 @@ class Test_seq_align(TestCase):
         self.seq_align = Sequence_alignments()
 
 
+    def generate_ids(self, object_ids, models, molecules):
+        """Generate the expected IDs."""
+
+        # Generate the IDs.
+        ids = []
+        for i in range(len(object_ids)):
+            ids.append("Object '%s'" % object_ids[i])
+            if models[i] != None:
+                ids[-1] += "; Model %i" % models[i]
+            ids[-1] += "; Molecule '%s'" % molecules[i]
+
+        # Return the IDs.
+        return ids
+
+
     def return_align_data(self):
         """Return a data set for alignment testing."""
 
@@ -106,12 +121,7 @@ class Test_seq_align(TestCase):
         self.seq_align.add(object_ids=object_ids, models=models, molecules=molecules, sequences=sequences, strings=strings, gaps=gaps, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
 
         # Generate the expected IDs.
-        ids = []
-        for i in range(len(object_ids)):
-            ids.append("Object '%s'" % object_ids[i])
-            if models[i] != None:
-                ids[-1] += "; Model %i" % models[i]
-            ids[-1] += "; Molecule '%s'" % molecules[i]
+        ids = self.generate_ids(object_ids, models, molecules)
 
         # Check the data.
         for i in range(8):
@@ -146,6 +156,9 @@ class Test_seq_align(TestCase):
 
         # Check that something was returned.
         self.assertNotEqual(align, None)
+
+        # Generate the expected IDs.
+        ids = self.generate_ids(object_ids, models, molecules)
 
         # Check some of the data.
         for i in range(8):
