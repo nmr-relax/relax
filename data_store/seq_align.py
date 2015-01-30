@@ -65,6 +65,80 @@ class Sequence_alignments(RelaxListType):
         self.append(Alignment(object_ids=object_ids, molecules=molecules, models=models, sequences=sequences, strings=strings, gaps=gaps, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty))
 
 
+    def find_alignment(self, object_ids=None, models=None, molecules=None, sequences=None, msa_algorithm=None, pairwise_algorithm=None, matrix=None, gap_open_penalty=None, gap_extend_penalty=None, end_gap_open_penalty=None, end_gap_extend_penalty=None):
+        """Find any pre-existing sequence alignment.
+
+        @keyword object_ids:                The list of IDs for each structural object in the alignment.  In most cases this will be the data pipe name.  This will be used to retrieve alignments.
+        @type object_ids:                   list of str
+        @keyword models:                    The list of model numbers used in the alignment.  This will be used to retrieve alignments.
+        @type models:                       list of int
+        @keyword molecules:                 The list of molecules used in the alignment.  This will be used to retrieve alignments.
+        @type molecules:                    list of str
+        @keyword sequences:                 The list of residue sequences for the alignment as one letter codes.
+        @type sequences:                    list of str
+        @keyword msa_algorithm:             The global multiple sequence alignment (MSA) algorithm.
+        @type msa_algorithm:                str
+        @keyword pairwise_algorithm:        The pairwise sequence alignment algorithm.
+        @type pairwise_algorithm:           str
+        @keyword matrix:                    The substitution matrix
+        @type matrix:                       str
+        @keyword gap_open_penalty:          The penalty for introducing gaps, as a positive number.
+        @type gap_open_penalty:             float
+        @keyword gap_extend_penalty:        The penalty for extending a gap, as a positive number.
+        @type gap_extend_penalty:           float
+        @keyword end_gap_open_penalty:      The optional penalty for opening a gap at the end of a sequence.
+        @type end_gap_open_penalty:         float
+        @keyword end_gap_extend_penalty:    The optional penalty for extending a gap at the end of a sequence.
+        @type end_gap_extend_penalty:       float
+        @return:                            Any matching sequence alignment object.
+        @rtype:                             Alignment instance
+        """
+
+        # Loop over all current alignments.
+        for i in range(len(self)):
+            # Starting flag.
+            found = True
+
+            # Loop over the molecules.
+            for j in range(len(object_ids)):
+                # Check for any mismatches (breaking the loop for speed by avoiding unnecessary checks).
+                if self[i].object_ids[j] != object_ids[j]:
+                    found = False
+                    break
+                if self[i].models[j] != models[j]:
+                    found = False
+                    break
+                if self[i].molecules[j] != molecules[j]:
+                    found = False
+                    break
+                if self[i].sequences[j] != sequences[j]:
+                    found = False
+                    break
+
+            # No match (skip the rest of the checks for speed).
+            if not found:
+                continue
+
+            # Check the alignment settings for mismatches.
+            if self[i].msa_algorithm != msa_algorithm:
+                continue
+            if self[i].pairwise_algorithm != pairwise_algorithm:
+                continue
+            if self[i].matrix != matrix:
+                continue
+            if self[i].gap_open_penalty != gap_open_penalty:
+                continue
+            if self[i].gap_extend_penalty != gap_extend_penalty:
+                continue
+            if self[i].end_gap_open_penalty != end_gap_open_penalty:
+                continue
+            if self[i].end_gap_extend_penalty != end_gap_extend_penalty:
+                continue
+
+            # No mismatches, so this must be the alignment.
+            return self[i]
+
+
 
 class Alignment(Element):
     """Container for an individual sequence alignment."""
