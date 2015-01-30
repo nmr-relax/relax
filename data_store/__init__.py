@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -48,7 +48,8 @@ __all__ = [ 'align_tensor',
             'interatomic',
             'mol_res_spin',
             'pipe_container',
-            'prototype'
+            'prototype',
+            'seq_align'
 ]
 
 
