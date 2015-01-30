@@ -151,6 +151,27 @@ class Sequence_alignments(RelaxListType):
             return self[i]
 
 
+    def from_xml(self, sequence_alignments_node, file_version=1):
+        """Recreate the analyses data structure from the XML analyses node.
+
+        @param sequence_alignments_node:    The sequence alignments XML node.
+        @type sequence_alignments_node:     xml.dom.minicompat.Element instance
+        @keyword file_version:              The relax XML version of the XML file.
+        @type file_version:                 int
+        """
+
+        # Get all the alignment nodes.
+        align_nodes = sequence_alignments_node.getElementsByTagName('sequence_alignment')
+
+        # Loop over the nodes.
+        for node in align_nodes:
+            # Add a blank alignment container.
+            self.append(Alignment(object_ids=[]))
+
+            # Recreate the analysis container.
+            self[-1].from_xml(node, file_version=file_version)
+
+
 
 class Alignment(Element):
     """Container for an individual sequence alignment."""
