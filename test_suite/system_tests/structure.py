@@ -4667,16 +4667,17 @@ class Structure(SystemTestCase):
         self.interpreter.state.load(self.tmpfile)
 
         # The real data.
-        object_ids = ['mf', 'mf']
+        pipes = ['mf', 'mf']
         models = [1, 1]
         molecules = ['CaM A', 'CaM B']
+        ids = ["Object 'mf'; Model 1; Molecule 'CaM A'", "Object 'mf'; Model 1; Molecule 'CaM B'"]
         sequences = [
-            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK***',
-            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK***'
+            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**',
+            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**'
         ]
         strings = [
-            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK***',
-            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK***'
+            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**',
+            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**'
         ]
         gaps = []
         for i in range(len(strings)):
@@ -4695,12 +4696,13 @@ class Structure(SystemTestCase):
         for i in range(2):
             print("Checking \"%s\"" % molecules[i])
             self.assertEqual(ds.sequence_alignments[0].ids[i], ids[i])
-            self.assertEqual(ds.sequence_alignments[0].object_ids[i], object_ids[i])
+            self.assertEqual(ds.sequence_alignments[0].object_ids[i], pipes[i])
             self.assertEqual(ds.sequence_alignments[0].models[i], models[i])
             self.assertEqual(ds.sequence_alignments[0].molecules[i], molecules[i])
             self.assertEqual(ds.sequence_alignments[0].sequences[i], sequences[i])
             self.assertEqual(ds.sequence_alignments[0].strings[i], strings[i])
-            self.assertEqual(ds.sequence_alignments[0].gaps[i], gaps[i])
+            for j in range(len(strings[0])):
+                self.assertEqual(ds.sequence_alignments[0].gaps[i, j], gaps[i][j])
             self.assertEqual(ds.sequence_alignments[0].msa_algorithm, msa_algorithm)
             self.assertEqual(ds.sequence_alignments[0].pairwise_algorithm, pairwise_algorithm)
             self.assertEqual(ds.sequence_alignments[0].matrix, matrix)
