@@ -45,12 +45,15 @@ def assemble_atomic_coordinates(objects=None, object_names=None, molecules=None,
     @type atom_id:                      None or str
     @keyword seq_info_flag:             A flag which if True will cause the atomic sequence information to be assembled and returned.  This includes the molecule names, residue names, residue numbers, atom names, and elements.
     @type seq_info_flag:                bool
-    @return:                            The list of structure IDs for each molecule, the atom positions per molecule and per residue, the molecule names per molecule and per residue, the residue names per molecule and per residue, the residue numbers per molecule and per residue, the atom names per molecule and per residue, the atomic elements per molecule and per residue, the one letter codes for the residue sequence, the number of molecules.
-    @rtype:                             list of str, list of list of dict of str, list of list of dict of str, list of list of dict of str, list of list of dict of str, list of list of dict of str, list of list of dict of str, list of str, int
+    @return:                            The list of structure IDs for each molecule, the object ID list per molecule, the model number list per molecule, the molecule name list per molecule, the atom positions per molecule and per residue, the molecule names per molecule and per residue, the residue names per molecule and per residue, the residue numbers per molecule and per residue, the atom names per molecule and per residue, the atomic elements per molecule and per residue, the one letter codes for the residue sequence, the number of molecules.
+    @rtype:                             list of str, list of str, list of int, list of str, list of list of dict of str, list of list of dict of str, list of list of dict of str, list of list of dict of str, list of list of dict of str, list of list of dict of str, list of str, int
     """
 
     print("Assembling all atomic coordinates:")
     ids = []
+    object_id_list = []
+    model_list = []
+    molecule_list = []
     atom_pos = []
     mol_names = []
     res_names = []
@@ -60,7 +63,7 @@ def assemble_atomic_coordinates(objects=None, object_names=None, molecules=None,
     one_letter_codes = []
     for struct_index in range(len(objects)):
         # Printout.
-        print("    Data pipe: %s" % object_names[struct_index])
+        print("    Object ID: %s" % object_names[struct_index])
 
         # Validate the models.
         objects[struct_index].validate_models(verbosity=0)
@@ -96,6 +99,11 @@ def assemble_atomic_coordinates(objects=None, object_names=None, molecules=None,
                     # Change the current molecule name and residue number.
                     current_mol = mol_name
                     current_res = None
+
+                    # Update the molecule lists.
+                    object_id_list.append(object_names[struct_index])
+                    model_list.append(model.num)
+                    molecule_list.append(mol_name)
 
                     # Store the one letter codes for sequence alignment.
                     one_letter_codes.append(objects[struct_index].one_letter_codes(mol_name=mol_name))
@@ -148,7 +156,7 @@ def assemble_atomic_coordinates(objects=None, object_names=None, molecules=None,
     num_mols = len(atom_names)
 
     # Return the data.
-    return ids, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols
+    return ids, object_id_list, model_list, molecule_list, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols
 
 
 def assemble_coord_array(objects=None, object_names=None, molecules=None, models=None, atom_id=None, algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0, seq_info_flag=False):
@@ -183,7 +191,7 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
     """
 
     # Assemble the atomic coordinates of all structures.
-    ids, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols = assemble_atomic_coordinates(objects=objects, object_names=object_names, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=seq_info_flag)
+    ids, object_id_list, model_list, molecule_list, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols = assemble_atomic_coordinates(objects=objects, object_names=object_names, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=seq_info_flag)
 
     # Multiple sequence alignment.
     if algorithm != None:
