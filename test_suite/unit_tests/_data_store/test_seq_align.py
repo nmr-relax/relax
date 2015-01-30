@@ -36,8 +36,8 @@ class Test_seq_align(TestCase):
         self.seq_align = Sequence_alignments()
 
 
-    def test_alignment_addition(self):
-        """Test the creation of a new sequence alignment object."""
+    def return_align_data(self):
+        """Return a data set for alignment testing."""
 
         # The data.
         object_ids = ['frame_order', 'ensemble', 'ensemble', 'ensemble', 'ensemble', 'ensemble', 'ensemble', 'ensemble']
@@ -92,6 +92,16 @@ class Test_seq_align(TestCase):
         end_gap_open_penalty = 0.0
         end_gap_extend_penalty = 0.0
 
+        # Return the data.
+        return object_ids, models, molecules, sequences, strings, gaps, msa_algorithm, pairwise_algorithm, matrix, gap_open_penalty, gap_extend_penalty, end_gap_open_penalty, end_gap_extend_penalty
+
+
+    def test_alignment_addition(self):
+        """Test the creation of a new sequence alignment object."""
+
+        # The data.
+        object_ids, models, molecules, sequences, strings, gaps, msa_algorithm, pairwise_algorithm, matrix, gap_open_penalty, gap_extend_penalty, end_gap_open_penalty, end_gap_extend_penalty = self.return_align_data()
+
         # Add the alignment.
         self.seq_align.add(object_ids=object_ids, models=models, molecules=molecules, sequences=sequences, strings=strings, gaps=gaps, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
 
@@ -120,3 +130,45 @@ class Test_seq_align(TestCase):
             self.assertEqual(self.seq_align[0].gap_extend_penalty, gap_extend_penalty)
             self.assertEqual(self.seq_align[0].end_gap_open_penalty, end_gap_open_penalty)
             self.assertEqual(self.seq_align[0].end_gap_extend_penalty, end_gap_extend_penalty)
+
+
+    def test_find_alignment(self):
+        """Test the retrieval of pre-existing alignment."""
+
+        # Execute the body of the test_alignment_addition() unit test to set up the object.
+        self.test_alignment_addition()
+
+        # The identifying data.
+        object_ids, models, molecules, sequences, strings, gaps, msa_algorithm, pairwise_algorithm, matrix, gap_open_penalty, gap_extend_penalty, end_gap_open_penalty, end_gap_extend_penalty = self.return_align_data()
+
+        # Retrieve the alignment.
+        align = self.seq_align.find_alignment(object_ids=object_ids, models=models, molecules=molecules, sequences=sequences, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
+
+        # Check that something was returned.
+        self.assertNotEqual(align, None)
+
+        # Check some of the data.
+        for i in range(8):
+            print("Checking \"%s\"" % ids[i])
+            self.assertEqual(self.seq_align[0].object_ids[i], object_ids[i])
+            self.assertEqual(self.seq_align[0].models[i], models[i])
+            self.assertEqual(self.seq_align[0].molecules[i], molecules[i])
+
+
+    def test_find_missing_alignment(self):
+        """Test the retrieval of non-existent alignment."""
+
+        # Execute the body of the test_alignment_addition() unit test to set up the object.
+        self.test_alignment_addition()
+
+        # The identifying data.
+        object_ids, models, molecules, sequences, strings, gaps, msa_algorithm, pairwise_algorithm, matrix, gap_open_penalty, gap_extend_penalty, end_gap_open_penalty, end_gap_extend_penalty = self.return_align_data()
+
+        # Change a gap penalty.
+        gap_open_penalty = 0.5
+
+        # Retrieve the alignment.
+        align = self.seq_align.find_alignment(object_ids=object_ids, models=models, molecules=molecules, sequences=sequences, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
+
+        # Check that nothing was returned.
+        self.assertEqual(align, None)
