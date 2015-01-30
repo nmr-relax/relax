@@ -397,6 +397,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.delete(atom_id="#CaM A:60-100")
         self.interpreter.structure.delete(atom_id="#CaM C:1-3")
         self.interpreter.structure.delete(atom_id="#CaM C:75-100")
+        self.interpreter.structure.delete(atom_id=":1000-1001")
 
         # Copy the data pipe for late comparison.
         self.interpreter.pipe.copy('mf', 'comp')
