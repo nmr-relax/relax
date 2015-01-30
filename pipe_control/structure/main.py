@@ -165,8 +165,11 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, displace_id=Non
         if end_gap_extend_penalty < 0.0:
             raise RelaxError("The end gap extension penalty %s must be a positive number." % end_gap_extend_penalty)
 
-    # Assemble the atomic coordinates and obtain the corresponding element information.
-    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, algorithm=algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty, seq_info_flag=True)
+    # Assemble the structural objects.
+    objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
+
+    # Assemble the atomic coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coord_array(objects=objects, object_names=object_names, models=models, molecules=molecules, atom_id=atom_id, algorithm=algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty, seq_info_flag=True)
 
     # Catch missing data.
     if len(coord[0]) == 0:
@@ -184,7 +187,7 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, displace_id=Non
 
     # Loop over all pipes, models, and molecules.
     i = 0
-    for pipe_index, model_num, mol_name in structure_loop(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id):
+    for pipe_index, model_num, mol_name in structure_loop(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id):
         # The current displacement ID.
         curr_displace_id = None
         if isinstance(displace_id, str):
@@ -214,7 +217,7 @@ def align(pipes=None, models=None, molecules=None, atom_id=None, displace_id=Non
         i += 1
 
 
-def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0, seq_info_flag=False):
+def assemble_structural_objects(pipes=None, models=None, molecules=None):
     """Assemble the atomic coordinates.
  
     @keyword pipes:                     The data pipes to assemble the coordinates from.
@@ -223,24 +226,8 @@ def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, 
     @type models:                       None or list of lists of int
     @keyword molecules:                 The list of molecules for each data pipe.  The number of elements must match the pipes argument.
     @type molecules:                    None or list of lists of str
-    @keyword atom_id:                   The molecule, residue, and atom identifier string of the coordinates of interest.  This matches the spin ID string format.
-    @type atom_id:                      None or str
-    @keyword algorithm:                 The pairwise sequence alignment algorithm to use.  If set to None, then no alignment will be performed.
-    @type algorithm:                    str or None
-    @keyword matrix:                    The substitution matrix to use.
-    @type matrix:                       str
-    @keyword gap_open_penalty:          The penalty for introducing gaps, as a positive number.
-    @type gap_open_penalty:             float
-    @keyword gap_extend_penalty:        The penalty for extending a gap, as a positive number.
-    @type gap_extend_penalty:           float
-    @keyword end_gap_open_penalty:      The optional penalty for opening a gap at the end of a sequence.
-    @type end_gap_open_penalty:         float
-    @keyword end_gap_extend_penalty:    The optional penalty for extending a gap at the end of a sequence.
-    @type end_gap_extend_penalty:       float
-    @keyword seq_info_flag:             A flag which if True will cause the atomic sequence information to be assembled and returned.  This includes the molecule names, residue names, residue numbers, atom names, and elements.
-    @type seq_info_flag:                bool
-    @return:                            The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates); a list of unique IDs for each structural object, model, and molecule; the common list of molecule names (if the seq_info_flag is set); the common list of residue names (if the seq_info_flag is set); the common list of residue numbers (if the seq_info_flag is set); the common list of atom names (if the seq_info_flag is set); the common list of element names (if the seq_info_flag is set).
-    @rtype:                             numpy rank-3 float64 array, list of str, list of str, list of str, list of int, list of str, list of str
+    @return:                            The structural objects, structural object names, and data pipes list.
+    @rtype:                             list of lib.structure.internal.object.Internal instances, list of str, list of str
     """
 
     # The data pipes to use.
@@ -268,8 +255,8 @@ def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, 
         objects.append(dp.structure)
         object_names.append(pipes[pipe_index])
 
-    # Call the library method to do all of the work.
-    return assemble_coord_array(objects=objects, object_names=object_names, molecules=molecules, models=models, atom_id=atom_id, algorithm=algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty, seq_info_flag=seq_info_flag)
+    # Return the structural objects, object names, and the new pipes list.
+    return objects, object_names, pipes
 
 
 def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, measure='distance', file=None, format='text', dir=None, force=False):
@@ -302,8 +289,11 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, m
     if measure not in allowed_measures:
         raise RelaxError("The measure '%s' must be one of %s." % (measure, allowed_measures))
 
+    # Assemble the structural objects.
+    objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
+
     # Assemble the atomic coordinates.
-    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=True)
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coord_array(objects=objects, object_names=object_names, models=models, molecules=molecules, atom_id=atom_id, seq_info_flag=True)
 
     # The number of dimensions.
     n = len(atom_names)
@@ -623,8 +613,11 @@ def displacement(pipes=None, models=None, molecules=None, atom_id=None, centroid
     # Test if the current data pipe exists.
     check_pipe()
 
+    # Assemble the structural objects.
+    objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
+
     # Assemble the atomic coordinates.
-    coord, ids = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id)
+    coord, ids = assemble_coord_array(objects=objects, object_names=object_names, models=models, molecules=molecules, atom_id=atom_id)
 
     # Initialise the data structure.
     if not hasattr(cdp.structure, 'displacments'):
@@ -666,8 +659,11 @@ def find_pivot(pipes=None, models=None, molecules=None, atom_id=None, init_pos=N
         init_pos = zeros(3, float64)
     init_pos = array(init_pos)
 
+    # Assemble the structural objects.
+    objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
+
     # Assemble the atomic coordinates.
-    coord, ids = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id)
+    coord, ids = assemble_coord_array(objects=objects, object_names=object_names, models=models, molecules=molecules, atom_id=atom_id)
 
     # Linear constraints for the pivot position (between -1000 and 1000 Angstrom).
     A = zeros((6, 3), float64)
@@ -1200,8 +1196,11 @@ def rmsd(pipes=None, models=None, molecules=None, atom_id=None):
     # Test if the current data pipe exists.
     check_pipe()
 
+    # Assemble the structural objects.
+    objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
+
     # Assemble the atomic coordinates.
-    coord, ids = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id)
+    coord, ids = assemble_coord_array(objects=objects, object_names=object_names, models=models, molecules=molecules, atom_id=atom_id)
 
     # Calculate the RMSD.
     cdp.structure.rmsd = atomic_rmsd(coord, verbosity=1)
@@ -1307,7 +1306,7 @@ def structure_loop(pipes=None, molecules=None, models=None, atom_id=None):
         objects.append(dp.structure)
 
     # Call the library method to do all of the work.
-    for pipe_index, model_num, mol_name in loop_coord_structures(objects=objects, molecules=molecules, models=models, atom_id=atom_id):
+    for pipe_index, model_num, mol_name in loop_coord_structures(objects=objects, models=models, molecules=molecules, atom_id=atom_id):
         yield pipe_index, model_num, mol_name
 
 
@@ -1342,8 +1341,11 @@ def superimpose(models=None, method='fit to mean', atom_id=None, displace_id=Non
     if models == None:
         models = cdp.structure.model_list()
 
-    # Assemble the atomic coordinates and obtain the corresponding element information.
-    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(models=[models], atom_id=atom_id, seq_info_flag=True)
+    # Assemble the structural objects.
+    objects, object_names, pipes = assemble_structural_objects(models=[models])
+
+    # Assemble the atomic coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coord_array(objects=objects, object_names=object_names, models=[models], atom_id=atom_id, seq_info_flag=True)
 
     # The different algorithms.
     if method == 'fit to mean':
@@ -1566,8 +1568,11 @@ def web_of_motion(pipes=None, models=None, molecules=None, atom_id=None, file=No
     check_pipe()
     check_structure()
 
+    # Assemble the structural objects.
+    objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
+
     # Assemble the atomic coordinates.
-    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=True)
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coord_array(objects=objects, object_names=object_names, models=models, molecules=molecules, atom_id=atom_id, seq_info_flag=True)
 
     # Check that more than one structure is present.
     if not len(coord) > 1:
