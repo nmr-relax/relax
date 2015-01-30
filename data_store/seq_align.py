@@ -129,7 +129,7 @@ class Alignment(Element):
                     raise RelaxError("The molecule ID '%s' is not unique." % self.ids[i])
 
 
-    def generate_id(object_id=None, model=None, molecule=None):
+    def generate_id(self, object_id=None, model=None, molecule=None):
         """Generate a unique ID.
 
         @keyword object_id: The structural object ID.
@@ -150,9 +150,9 @@ class Alignment(Element):
             id += "Object '%s'" % object_id
 
         # The model number.
-        if len(id):
-            id += '; '
         if model != None:
+            if len(id):
+                id += '; '
             id += "Model %i" % model
 
         # The molecule name.
