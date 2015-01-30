@@ -30,9 +30,9 @@ from lib.errors import RelaxFault
 from lib.sequence_alignment.msa import central_star
 
 
-def assemble_coord_array(objects=None, object_names=None, molecules=None, models=None, atom_id=None, algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0, seq_info_flag=False):
-    """Assemble the atomic coordinates 
- 
+def assemble_atomic_coordinates(objects=None, object_names=None, molecules=None, models=None, atom_id=None, seq_info_flag=False):
+    """Assemble the atomic coordinates of all structures.
+
     @keyword objects:                   The list of internal structural objects to assemble the coordinates from.
     @type objects:                      list of str
     @keyword object_names:              The list of names for each structural object to use in printouts.
@@ -43,25 +43,12 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
     @type molecules:                    None or list of lists of str
     @keyword atom_id:                   The molecule, residue, and atom identifier string of the coordinates of interest.  This matches the spin ID string format.
     @type atom_id:                      None or str
-    @keyword algorithm:                 The pairwise sequence alignment algorithm to use.  If set to None, then no alignment will be performed.
-    @type algorithm:                    str or None
-    @keyword matrix:                    The substitution matrix to use.
-    @type matrix:                       str
-    @keyword gap_open_penalty:          The penalty for introducing gaps, as a positive number.
-    @type gap_open_penalty:             float
-    @keyword gap_extend_penalty:        The penalty for extending a gap, as a positive number.
-    @type gap_extend_penalty:           float
-    @keyword end_gap_open_penalty:      The optional penalty for opening a gap at the end of a sequence.
-    @type end_gap_open_penalty:         float
-    @keyword end_gap_extend_penalty:    The optional penalty for extending a gap at the end of a sequence.
-    @type end_gap_extend_penalty:       float
     @keyword seq_info_flag:             A flag which if True will cause the atomic sequence information to be assembled and returned.  This includes the molecule names, residue names, residue numbers, atom names, and elements.
     @type seq_info_flag:                bool
-    @return:                            The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates); a list of unique IDs for each structural object, model, and molecule; the common list of molecule names (if the seq_info_flag is set); the common list of residue names (if the seq_info_flag is set); the common list of residue numbers (if the seq_info_flag is set); the common list of atom names (if the seq_info_flag is set); the common list of element names (if the seq_info_flag is set).
-    @rtype:                             numpy rank-3 float64 array, list of str, list of str, list of str, list of int, list of str, list of str
+    @return:                            The list of structure IDs for each molecule, the atom positions per molecule and per residue, the molecule names per molecule and per residue, the residue names per molecule and per residue, the residue numbers per molecule and per residue, the atom names per molecule and per residue, the atomic elements per molecule and per residue, the one letter codes for the residue sequence, the number of molecules.
+    @rtype:                             list of str, list of list of dict of str, list of list of dict of str, list of list of dict of str, list of list of dict of str, list of list of dict of str, list of list of dict of str, list of str, int
     """
 
-    # Assemble the atomic coordinates of all structures.
     print("Assembling all atomic coordinates:")
     ids = []
     atom_pos = []
@@ -159,6 +146,44 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
 
     # The total number of molecules.
     num_mols = len(atom_names)
+
+    # Return the data.
+    return ids, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols
+
+
+def assemble_coord_array(objects=None, object_names=None, molecules=None, models=None, atom_id=None, algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0, seq_info_flag=False):
+    """Assemble the atomic coordinates 
+ 
+    @keyword objects:                   The list of internal structural objects to assemble the coordinates from.
+    @type objects:                      list of str
+    @keyword object_names:              The list of names for each structural object to use in printouts.
+    @type object_names:                 list of str
+    @keyword models:                    The list of models for each structural object.  The number of elements must match the objects argument.  If set to None, then all models will be used.
+    @type models:                       None or list of lists of int
+    @keyword molecules:                 The list of molecules for each structural object.  The number of elements must match the objects argument.  If set to None, then all molecules will be used.
+    @type molecules:                    None or list of lists of str
+    @keyword atom_id:                   The molecule, residue, and atom identifier string of the coordinates of interest.  This matches the spin ID string format.
+    @type atom_id:                      None or str
+    @keyword algorithm:                 The pairwise sequence alignment algorithm to use.  If set to None, then no alignment will be performed.
+    @type algorithm:                    str or None
+    @keyword matrix:                    The substitution matrix to use.
+    @type matrix:                       str
+    @keyword gap_open_penalty:          The penalty for introducing gaps, as a positive number.
+    @type gap_open_penalty:             float
+    @keyword gap_extend_penalty:        The penalty for extending a gap, as a positive number.
+    @type gap_extend_penalty:           float
+    @keyword end_gap_open_penalty:      The optional penalty for opening a gap at the end of a sequence.
+    @type end_gap_open_penalty:         float
+    @keyword end_gap_extend_penalty:    The optional penalty for extending a gap at the end of a sequence.
+    @type end_gap_extend_penalty:       float
+    @keyword seq_info_flag:             A flag which if True will cause the atomic sequence information to be assembled and returned.  This includes the molecule names, residue names, residue numbers, atom names, and elements.
+    @type seq_info_flag:                bool
+    @return:                            The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates); a list of unique IDs for each structural object, model, and molecule; the common list of molecule names (if the seq_info_flag is set); the common list of residue names (if the seq_info_flag is set); the common list of residue numbers (if the seq_info_flag is set); the common list of atom names (if the seq_info_flag is set); the common list of element names (if the seq_info_flag is set).
+    @rtype:                             numpy rank-3 float64 array, list of str, list of str, list of str, list of int, list of str, list of str
+    """
+
+    # Assemble the atomic coordinates of all structures.
+    ids, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols = assemble_atomic_coordinates(objects=objects, object_names=object_names, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=seq_info_flag)
 
     # Multiple sequence alignment.
     if algorithm != None:
