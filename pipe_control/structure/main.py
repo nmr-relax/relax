@@ -29,6 +29,8 @@ import sys
 from warnings import warn
 
 # relax module imports.
+from data_store import Relax_data_store; ds = Relax_data_store()
+from data_store.seq_align import Sequence_alignments
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxFileError
 from lib.geometry.vectors import vector_angle_atan2
@@ -36,7 +38,8 @@ from lib.io import get_file_path, open_write_file, write_data
 from lib.plotting.api import correlation_matrix
 from lib.selection import tokenise
 from lib.sequence import write_spin_data
-from lib.structure.internal.coordinates import assemble_coord_array, loop_coord_structures
+from lib.sequence_alignment.msa import central_star
+from lib.structure.internal.coordinates import assemble_atomic_coordinates, assemble_coord_array, loop_coord_structures
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.object import Internal
 from lib.structure.represent.diffusion_tensor import diffusion_tensor
@@ -1252,6 +1255,71 @@ def rotate(R=None, origin=None, model=None, atom_id=None, pipe_name=None):
         print("Rotated %i atoms of model %i." % (selection.count_atoms(), model))
     else:
         print("Rotated %i atoms." % selection.count_atoms())
+
+
+def sequence_alignment(pipes=None, models=None, molecules=None, msa_algorithm='Central Star', pairwise_algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0):
+    """Superimpose a set of related, but not identical structures.
+
+    @keyword pipes:                     The data pipes to include in the alignment and superimposition.
+    @type pipes:                        None or list of str
+    @keyword models:                    The list of models to for each data pipe superimpose.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:                       list of lists of int or None
+    @keyword molecules:                 The molecule names to include in the alignment and superimposition.  The number of elements must match the pipes argument.
+    @type molecules:                    None or list of str
+    @keyword msa_algorithm:             The multiple sequence alignment (MSA) algorithm to use.
+    @type msa_algorithm:                str
+    @keyword pairwise_algorithm:        The pairwise sequence alignment algorithm to use.
+    @type pairwise_algorithm:           str
+    @keyword matrix:                    The substitution matrix to use.
+    @type matrix:                       str
+    @keyword gap_open_penalty:          The penalty for introducing gaps, as a positive number.
+    @type gap_open_penalty:             float
+    @keyword gap_extend_penalty:        The penalty for extending a gap, as a positive number.
+    @type gap_extend_penalty:           float
+    @keyword end_gap_open_penalty:      The optional penalty for opening a gap at the end of a sequence.
+    @type end_gap_open_penalty:         float
+    @keyword end_gap_extend_penalty:    The optional penalty for extending a gap at the end of a sequence.
+    @type end_gap_extend_penalty:       float
+    """
+
+    # Check the penalty arguments.
+    if gap_open_penalty != None:
+        if gap_open_penalty < 0.0:
+            raise RelaxError("The gap opening penalty %s must be a positive number." % gap_open_penalty)
+    if gap_extend_penalty != None:
+        if gap_extend_penalty < 0.0:
+            raise RelaxError("The gap extension penalty %s must be a positive number." % gap_extend_penalty)
+    if end_gap_open_penalty != None:
+        if end_gap_open_penalty < 0.0:
+            raise RelaxError("The end gap opening penalty %s must be a positive number." % end_gap_open_penalty)
+    if end_gap_extend_penalty != None:
+        if end_gap_extend_penalty < 0.0:
+            raise RelaxError("The end gap extension penalty %s must be a positive number." % end_gap_extend_penalty)
+
+    # Assemble the structural objects.
+    objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
+
+    # Assemble the atomic coordinates of all structures.
+    ids, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols = assemble_atomic_coordinates(objects=objects, object_names=object_names, molecules=molecules, models=models)
+
+    # MSA.
+    if msa_algorithm == 'Central Star':
+        # Use the central star multiple alignment algorithm.
+        strings, gaps = central_star(one_letter_codes, algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
+
+    # Set up the data store object.
+    if not hasattr(ds, 'sequence_alignment'):
+        ds.sequence_alignment = Sequence_alignments()
+
+    # Flatten the lists.
+    flat_models = []
+    flat_molecules = []
+    for i in range(len(pipes)):
+        flat_models += models[i]
+        flat_molecules += molecules[i]
+
+    # Store the alignment.
+    ds.sequence_alignment.add(object_ids=ids, models=flat_models, molecules=flat_molecules, sequences=one_letter_codes, strings=strings, gaps=gaps, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
 
 
 def set_vector(spin=None, xh_vect=None):

@@ -1400,7 +1400,7 @@ uf.desc[-1].add_paragraph(paragraph_multi_struct)
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To superimpose the structures in the 'A' data pipe onto the structures of the 'B' data pipe using backbone heavy atoms, type:")
 uf.desc[-1].add_prompt("relax> structure.sequence_alignment(pipes=['B', 'A'], atom_id='@N,C,CA,O')")
-uf.backend = pipe_control.structure.main.align
+uf.backend = pipe_control.structure.main.sequence_alignment
 uf.menu_text = "&sequence_alignment"
 uf.wizard_apply_button = False
 uf.wizard_height_desc = 320
