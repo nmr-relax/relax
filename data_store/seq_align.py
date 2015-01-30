@@ -25,6 +25,7 @@
 # relax module imports.
 from data_store.data_classes import Element, RelaxListType
 from lib.errors import RelaxError
+from lib.structure.internal.coordinates import generate_id
 
 
 class Sequence_alignments(RelaxListType):
@@ -192,7 +193,7 @@ class Alignment(Element):
         # Create a unique ID for each molecule.
         self.ids = [] 
         for i in range(len(self.object_ids)):
-            self.ids.append(self.generate_id(object_id=self.object_ids[i], model=self.models[i], molecule=self.molecules[i]))
+            self.ids.append(generate_id(object_id=self.object_ids[i], model=self.models[i], molecule=self.molecules[i]))
 
         # Check the IDs for uniqueness.
         for i in range(len(self.ids)):
@@ -201,43 +202,3 @@ class Alignment(Element):
                     continue
                 if self.ids[i] == self.ids[j]:
                     raise RelaxError("The molecule ID '%s' is not unique." % self.ids[i])
-
-
-    def generate_id(self, object_id=None, model=None, molecule=None):
-        """Generate a unique ID.
-
-        @keyword object_id: The structural object ID.
-        @type object_id:    str
-        @keyword model:     The model number.
-        @type model:        int
-        @keyword molecule:  The molecule name.
-        @type molecule:     str
-        @return:            The unique ID constructed from the object ID, model number and molecule name.
-        @rtype:             str
-        """
-
-        # Init.
-        id = ''
-
-        # The object ID.
-        if object_id != None:
-            id += "Object '%s'" % object_id
-
-        # The model number.
-        if model != None:
-            if len(id):
-                id += '; '
-            id += "Model %i" % model
-
-        # The molecule name.
-        if len(id):
-            id += '; '
-        if molecule != None:
-            id += "Molecule '%s'" % molecule
-
-        # Sanity check.
-        if not len(id):
-            raise RelaxError("No alignment ID could be constructed.")
-
-        # Return the ID.
-        return id

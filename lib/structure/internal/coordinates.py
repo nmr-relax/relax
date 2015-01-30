@@ -267,6 +267,46 @@ def assemble_coord_array(objects=None, object_names=None, molecules=None, models
         return coord, ids
 
 
+def generate_id(object_id=None, model=None, molecule=None):
+    """Generate a unique ID.
+
+    @keyword object_id: The structural object ID.
+    @type object_id:    str
+    @keyword model:     The model number.
+    @type model:        int
+    @keyword molecule:  The molecule name.
+    @type molecule:     str
+    @return:            The unique ID constructed from the object ID, model number and molecule name.
+    @rtype:             str
+    """
+
+    # Init.
+    id = ''
+
+    # The object ID.
+    if object_id != None:
+        id += "Object '%s'" % object_id
+
+    # The model number.
+    if model != None:
+        if len(id):
+            id += '; '
+        id += "Model %i" % model
+
+    # The molecule name.
+    if len(id):
+        id += '; '
+    if molecule != None:
+        id += "Molecule '%s'" % molecule
+
+    # Sanity check.
+    if not len(id):
+        raise RelaxError("No alignment ID could be constructed.")
+
+    # Return the ID.
+    return id
+
+
 def loop_coord_structures(objects=None, molecules=None, models=None, atom_id=None):
     """Generator function for looping over all internal structural objects, models and molecules.
  
