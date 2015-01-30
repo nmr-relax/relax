@@ -490,7 +490,7 @@ class Relax_data_store(dict):
             self.sequence_alignment.from_xml(seq_align_nodes[0], file_version=file_version)
 
         # Recreate all the data store data structures.
-        xml_to_object(relax_node, self, file_version=file_version, blacklist=['pipe', 'relax_gui, sequence_alignment'])
+        xml_to_object(relax_node, self, file_version=file_version, blacklist=['pipe', 'relax_gui', 'sequence_alignment'])
 
         # Get the pipe nodes.
         pipe_nodes = relax_node.getElementsByTagName('pipe')
