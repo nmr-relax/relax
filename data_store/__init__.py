@@ -481,16 +481,16 @@ class Relax_data_store(dict):
             self.relax_gui.from_xml(gui_nodes[0], file_version=file_version)
 
         # Get the sequence alignment nodes.
-        seq_align_nodes = relax_node.getElementsByTagName('sequence_alignment')
+        seq_align_nodes = relax_node.getElementsByTagName('sequence_alignments')
         if seq_align_nodes:
             # Initialise the object.
-            self.sequence_alignment = Sequence_alignments()
+            self.sequence_alignments = Sequence_alignments()
 
             # Populate it.
-            self.sequence_alignment.from_xml(seq_align_nodes[0], file_version=file_version)
+            self.sequence_alignments.from_xml(seq_align_nodes[0], file_version=file_version)
 
         # Recreate all the data store data structures.
-        xml_to_object(relax_node, self, file_version=file_version, blacklist=['pipe', 'relax_gui', 'sequence_alignment'])
+        xml_to_object(relax_node, self, file_version=file_version, blacklist=['pipe', 'relax_gui', 'sequence_alignments'])
 
         # Get the pipe nodes.
         pipe_nodes = relax_node.getElementsByTagName('pipe')
