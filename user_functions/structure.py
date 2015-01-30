@@ -1299,6 +1299,115 @@ uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
+# The structure.sequence_alignment user function.
+uf = uf_info.add_uf('structure.sequence_alignment')
+uf.title = "Multiple sequence alignment (MSA) of structural data."
+uf.title_short = "Multiple sequence alignment."
+uf.add_keyarg(
+    name = "pipes",
+    py_type = "str_list",
+    desc_short = "data pipes",
+    desc = "The data pipes to use in the sequence alignment.",
+    wiz_combo_iter = pipe_names,
+    wiz_read_only = False,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "models",
+    py_type = "int_list_of_lists",
+    desc_short = "model list for each data pipe",
+    desc = "The list of models for each data pipe to use in the sequence alignment.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "molecules",
+    py_type = "str_list_of_lists",
+    desc_short = "molecule list for each data pipe",
+    desc = "The list of molecules for each data pipe to use in the sequence alignment.  This allows differently named molecules in the same or different data pipes to be superimposed.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "msa_algorithm",
+    default = "Central Star",
+    py_type = "str",
+    desc_short = "multiple sequence alignment (MSA) algorithm",
+    desc = "The multiple sequence alignment (MSA) algorithm used to align all the primary sequence of all structures of interest.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["Central Star", "residue number"],
+    wiz_read_only = True
+)
+uf.add_keyarg(
+    name = "pairwise_algorithm",
+    default = "NW70",
+    py_type = "str",
+    desc_short = "pairwise alignment algorithm",
+    desc = "The pairwise alignment algorithm to align each pair of sequences.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["NW70"],
+    wiz_read_only = True
+)
+uf.add_keyarg(
+    name = "matrix",
+    default = "BLOSUM62",
+    py_type = "str",
+    desc_short = "substitution matrix",
+    desc = "The substitution matrix to use in the pairwise sequence alignment algorithm.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["BLOSUM62", "PAM250", "NUC 4.4"],
+    wiz_read_only = True
+)
+uf.add_keyarg(
+    name = "gap_open_penalty",
+    default = 10.0,
+    py_type = "float",
+    desc_short = "gap opening penalty",
+    desc = "The penalty for introducing gaps, as a positive number."
+)
+uf.add_keyarg(
+    name = "gap_extend_penalty",
+    default = 1.0,
+    py_type = "float",
+    desc_short = "gap extension penalty",
+    desc = "The penalty for extending a gap, as a positive number."
+)
+uf.add_keyarg(
+    name = "end_gap_open_penalty",
+    default = 0.0,
+    py_type = "float",
+    desc_short = "end gap opening penalty",
+    desc = "The optional penalty for opening a gap at the end of a sequence."
+)
+uf.add_keyarg(
+    name = "end_gap_extend_penalty",
+    default = 0.0,
+    py_type = "float",
+    desc_short = "end gap extension penalty",
+    desc = "The optional penalty for extending a gap at the end of a sequence."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("To find the atoms in common between different molecules, a MSA of the primary sequence of the molecules is required.  This sequence alignment will then subsequently be used by any other user function which operates on multiple molecules.  The following MSA algorithms can be selected:")
+uf.desc[-1].add_item_list_element("'Central Star'", "This is a heuristic, progressive alignment method using pairwise alignments to construct a MSA.  It consists of four major steps - pairwise alignment between all sequence pairs, finding the central sequence, iteratively aligning the sequences to the gapped central sequence, and introducing gaps in previous alignments during the iterative alignment.")
+uf.desc[-1].add_item_list_element("'residue number'", "This will simply align the molecules based on residue number.")
+uf.desc[-1].add_paragraph("For the MSA algorithms which require pairwise alignments, the following subalgorithms can be used:")
+uf.desc[-1].add_item_list_element("'NW70'", "The Needleman-Wunsch alignment algorithm.  This has been modified to use the logic of the EMBOSS software for handling gap opening and extension penalties, as well as end penalties.")
+uf.desc[-1].add_paragraph("For the MSAs or pairwise alignments which require a substitution matrix, one of the following can be used:")
+uf.desc[-1].add_item_list_element("'BLOSUM62'", "The BLOcks SUbstitution Matrix for proteins with a cluster percentage >= 62%.")
+uf.desc[-1].add_item_list_element("'PAM250'", "The point accepted mutation matrix for proteins with n = 250 evolutionary distance.")
+uf.desc[-1].add_item_list_element("'NUC 4.4'", "The nucleotide 4.4 matrix for DNA/RNA.")
+uf.desc[-1].add_paragraph(paragraph_multi_struct)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To superimpose the structures in the 'A' data pipe onto the structures of the 'B' data pipe using backbone heavy atoms, type:")
+uf.desc[-1].add_prompt("relax> structure.sequence_alignment(pipes=['B', 'A'], atom_id='@N,C,CA,O')")
+uf.backend = pipe_control.structure.main.align
+uf.menu_text = "&sequence_alignment"
+uf.wizard_apply_button = False
+uf.wizard_height_desc = 320
+uf.wizard_size = (1000, 750)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
+
+
 # The structure.superimpose user function.
 uf = uf_info.add_uf('structure.superimpose')
 uf.title = "Superimpose a set of models of the same structure."
