@@ -627,11 +627,8 @@ def find_pivot(pipes=None, models=None, molecules=None, atom_id=None, init_pos=N
         init_pos = zeros(3, float64)
     init_pos = array(init_pos)
 
-    # Assemble the structural objects.
-    objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
-
-    # Assemble the atomic coordinates.
-    coord, ids = assemble_coord_array(objects=objects, object_names=object_names, models=models, molecules=molecules, atom_id=atom_id)
+    # Assemble the structural coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id)
 
     # Linear constraints for the pivot position (between -1000 and 1000 Angstrom).
     A = zeros((6, 3), float64)
