@@ -161,143 +161,6 @@ uf.wizard_size = (700, 400)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
-# The structure.align user function.
-uf = uf_info.add_uf('structure.align')
-uf.title = "Align and superimpose different structures."
-uf.title_short = "Structural alignment and superimposition."
-uf.add_keyarg(
-    name = "pipes",
-    py_type = "str_list",
-    desc_short = "data pipes",
-    desc = "The data pipes to use in the alignment and superimposition.",
-    wiz_combo_iter = pipe_names,
-    wiz_read_only = False,
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "models",
-    py_type = "int_list_of_lists",
-    desc_short = "model list for each data pipe",
-    desc = "The list of models for each data pipe to use in the alignment and superimposition.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "molecules",
-    py_type = "str_list_of_lists",
-    desc_short = "molecule list for each data pipe",
-    desc = "The list of molecules for each data pipe to use in the alignment and superimposition.  This allows differently named molecules in the same or different data pipes to be superimposed.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "atom_id",
-    py_type = "str",
-    desc_short = "atom ID string",
-    desc = "The atom identification string of the coordinates of interest.",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "displace_id",
-    py_type = "str_or_str_list",
-    desc_short = "displacement ID string(s)",
-    desc = "The atom identification string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.  If supplied as a list of IDs, then the number of items must match the number of structures.",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "method",
-    default = "fit to mean",
-    py_type = "str",
-    desc_short = "superimposition method",
-    desc = "The superimposition method.",
-    wiz_element_type = "combo",
-    wiz_combo_choices = ["fit to mean", "fit to first"],
-    wiz_read_only = True
-)
-uf.add_keyarg(
-    name = "matrix",
-    default = "BLOSUM62",
-    py_type = "str",
-    desc_short = "substitution matrix",
-    desc = "The substitution matrix to use in the pairwise sequence alignment algorithm.",
-    wiz_element_type = "combo",
-    wiz_combo_choices = ["BLOSUM62", "PAM250", "NUC 4.4"],
-    wiz_read_only = True
-)
-uf.add_keyarg(
-    name = "gap_open_penalty",
-    default = 10.0,
-    py_type = "float",
-    desc_short = "gap opening penalty",
-    desc = "The penalty for introducing gaps, as a positive number."
-)
-uf.add_keyarg(
-    name = "gap_extend_penalty",
-    default = 1.0,
-    py_type = "float",
-    desc_short = "gap extension penalty",
-    desc = "The penalty for extending a gap, as a positive number."
-)
-uf.add_keyarg(
-    name = "end_gap_open_penalty",
-    default = 0.0,
-    py_type = "float",
-    desc_short = "end gap opening penalty",
-    desc = "The optional penalty for opening a gap at the end of a sequence."
-)
-uf.add_keyarg(
-    name = "end_gap_extend_penalty",
-    default = 0.0,
-    py_type = "float",
-    desc_short = "end gap extension penalty",
-    desc = "The optional penalty for extending a gap at the end of a sequence."
-)
-uf.add_keyarg(
-    name = "centre_type",
-    py_type = "str",
-    default = "centroid",
-    desc_short = "centre type",
-    desc = "The type of centre to user for the superimposition, i.e. either the standard centroid superimposition or a superimposition using the centre of mass (CoM).",
-    wiz_element_type = "combo",
-    wiz_combo_choices = ["The centroid", "The centre of mass (CoM)"],
-    wiz_combo_data = ["centroid", "CoM"]
-)
-uf.add_keyarg(
-    name = "centroid",
-    py_type = "float_array",
-    desc_short = "centroid position",
-    desc = "The alternative position of the centroid.",
-    can_be_none = True
-)
-# Description.
-uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows a set of related structures to be superimposed to each other.  The current algorithm will only use atoms with the same residue name and number and atom name in the superimposition, hence this is not a true sequence alignment.  Just as with the structure.superimpose user function two methods are currently supported:")
-uf.desc[-1].add_item_list_element("'fit to mean'", "All models are fit to the mean structure.  This is the default and most accurate method for an ensemble description.  It is an iterative method which first calculates a mean structure and then fits each model to the mean structure using the Kabsch algorithm.  This is repeated until convergence.")
-uf.desc[-1].add_item_list_element("'fit to first'", "This is quicker but is not as accurate for an ensemble description.  The Kabsch algorithm is used to rotate and translate each model to be superimposed onto the first model of the first data pipe.")
-uf.desc[-1].add_paragraph(paragraph_multi_struct)
-uf.desc[-1].add_paragraph(paragraph_atom_id)
-uf.desc[-1].add_paragraph(paragraph_displace_id)
-uf.desc[-1].add_paragraph("To find common atoms between diverse structures, a sequence alignment is performed between the molecules.  This will be a pairwise alignment of each structure to the first.  The Needleman-Wunsch algorithm (NW70), modified to use the logic of the EMBOSS software for handling gap opening and extension penalties, as well as end penalties, will be used.  The substitution matrix can be one of BLOSUM62 or PAM250 for proteins, or NUC 4.4 for DNA/RNA.")
-uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.")
-# Prompt examples.
-uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To superimpose all sets of models, exactly as in the structure.superimpose user function, type one of:")
-uf.desc[-1].add_prompt("relax> structure.align()")
-uf.desc[-1].add_prompt("relax> structure.align(method='fit to mean')")
-uf.desc[-1].add_paragraph("To superimpose the models 1, 2, 3, 5 onto model 4, type:")
-uf.desc[-1].add_prompt("relax> structure.align(models=[[4, 1, 2, 3, 5]], method='fit to first')")
-uf.desc[-1].add_paragraph("To superimpose an ensemble of protein structures using only the backbone heavy atoms, type one of:")
-uf.desc[-1].add_prompt("relax> structure.align(atom_id='@N,C,CA,O')")
-uf.desc[-1].add_prompt("relax> structure.align(method='fit to mean', atom_id='@N,C,CA,O')")
-uf.desc[-1].add_paragraph("To superimpose the structures in the 'A' data pipe onto the structures of the 'B' data pipe using backbone heavy atoms, type one of:")
-uf.desc[-1].add_prompt("relax> structure.align(['B', 'A'], None, 'fit to first', '@N,C,CA,O')")
-uf.desc[-1].add_prompt("relax> structure.align(pipes=['B', 'A'], method='fit to first', atom_id='@N,C,CA,O')")
-uf.backend = pipe_control.structure.main.align
-uf.menu_text = "&align"
-uf.wizard_apply_button = False
-uf.wizard_height_desc = 250
-uf.wizard_size = (1000, 750)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
-
-
 # The structure.atomic_fluctuations user function.
 uf = uf_info.add_uf('structure.atomic_fluctuations')
 uf.title = "Create an interatomic distance fluctuation correlation matrix."
@@ -1410,13 +1273,43 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 # The structure.superimpose user function.
 uf = uf_info.add_uf('structure.superimpose')
-uf.title = "Superimpose a set of models of the same structure."
+uf.title = "Superimpose a set of structures."
 uf.title_short = "Structural superimposition."
 uf.add_keyarg(
+    name = "pipes",
+    py_type = "str_list",
+    desc_short = "data pipes",
+    desc = "The data pipes to use in the superimposition.",
+    wiz_combo_iter = pipe_names,
+    wiz_read_only = False,
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "models",
-    py_type = "int_list",
-    desc_short = "model list",
-    desc = "The list of models to superimpose.",
+    py_type = "int_list_of_lists",
+    desc_short = "model list for each data pipe",
+    desc = "The list of models for each data pipe to use in the superimposition.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "molecules",
+    py_type = "str_list_of_lists",
+    desc_short = "molecule list for each data pipe",
+    desc = "The list of molecules for each data pipe to use in the superimposition.  This allows differently named molecules in the same or different data pipes to be superimposed.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "atom_id",
+    py_type = "str",
+    desc_short = "atom ID string",
+    desc = "The atom identification string of the coordinates of interest.  This allows a subset of all residues or atoms to be used in the superimposition.  For example for protein backbone heavy atoms, this can be set to '@N,C,CA,O'.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "displace_id",
+    py_type = "str_or_str_list",
+    desc_short = "displacement ID string(s)",
+    desc = "The atom identification string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.  If supplied as a list of IDs, then the number of items must match the number of structures.",
     can_be_none = True
 )
 uf.add_keyarg(
@@ -1428,20 +1321,6 @@ uf.add_keyarg(
     wiz_element_type = "combo",
     wiz_combo_choices = ["fit to mean", "fit to first"],
     wiz_read_only = True
-)
-uf.add_keyarg(
-    name = "atom_id",
-    py_type = "str",
-    desc_short = "atom ID string",
-    desc = "The atom identification string.",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "displace_id",
-    py_type = "str",
-    desc_short = "displacement ID string",
-    desc = "The atom identification string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.",
-    can_be_none = True
 )
 uf.add_keyarg(
     name = "centre_type",
@@ -1462,10 +1341,10 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows a set of models of the same structure to be superimposed to each other.  Two superimposition methods are currently supported:")
+uf.desc[-1].add_paragraph("This allows a set of related structures to be superimposed to each other.  If a multiple sequence alignment (MSA) of the molecules has already been performed with the structure.sequence_alignment user function, this will allow residues with different numbering to be superimposed.  Otherwise only residues with the same numbering will be used in the superimposition.  Two superimposition methods are currently supported:")
 uf.desc[-1].add_item_list_element("'fit to mean'", "All models are fit to the mean structure.  This is the default and most accurate method for an ensemble description.  It is an iterative method which first calculates a mean structure and then fits each model to the mean structure using the Kabsch algorithm.  This is repeated until convergence.")
-uf.desc[-1].add_item_list_element("'fit to first'", "This is quicker but is not as accurate for an ensemble description.  The Kabsch algorithm is used to rotate and translate each model to be superimposed onto the first model.")
-uf.desc[-1].add_paragraph("If the list of models is not supplied, then all models will be superimposed.")
+uf.desc[-1].add_item_list_element("'fit to first'", "This is quicker but is not as accurate for an ensemble description.  The Kabsch algorithm is used to rotate and translate each model to be superimposed onto the first model of the first data pipe.")
+uf.desc[-1].add_paragraph(paragraph_multi_struct)
 uf.desc[-1].add_paragraph(paragraph_atom_id)
 uf.desc[-1].add_paragraph(paragraph_displace_id)
 uf.desc[-1].add_paragraph("By supplying the position of the centroid, an alternative position than the standard rigid body centre is used as the focal point of the superimposition.  The allows, for example, the superimposition about a pivot point.")
@@ -1475,17 +1354,17 @@ uf.desc[-1].add_paragraph("To superimpose all sets of models, type one of:")
 uf.desc[-1].add_prompt("relax> structure.superimpose()")
 uf.desc[-1].add_prompt("relax> structure.superimpose(method='fit to mean')")
 uf.desc[-1].add_paragraph("To superimpose the models 1, 2, 3, 5 onto model 4, type:")
-uf.desc[-1].add_prompt("relax> structure.superimpose(models=[4, 1, 2, 3, 5], method='fit to first')")
+uf.desc[-1].add_prompt("relax> structure.superimpose(models=[[4, 1, 2, 3, 5]], method='fit to first')")
 uf.desc[-1].add_paragraph("To superimpose an ensemble of protein structures using only the backbone heavy atoms, type one of:")
 uf.desc[-1].add_prompt("relax> structure.superimpose(atom_id='@N,C,CA,O')")
 uf.desc[-1].add_prompt("relax> structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O')")
-uf.desc[-1].add_paragraph("To superimpose model 2 onto model 3 using backbone heavy atoms, type one of:")
-uf.desc[-1].add_prompt("relax> structure.superimpose([3, 2], 'fit to first', '@N,C,CA,O')")
-uf.desc[-1].add_prompt("relax> structure.superimpose(models=[3, 2], method='fit to first', atom_id='@N,C,CA,O')")
+uf.desc[-1].add_paragraph("To superimpose the structures in the 'A' data pipe onto the structures of the 'B' data pipe using backbone heavy atoms, type one of:")
+uf.desc[-1].add_prompt("relax> structure.superimpose(['B', 'A'], None, 'fit to first', '@N,C,CA,O')")
+uf.desc[-1].add_prompt("relax> structure.superimpose(pipes=['B', 'A'], method='fit to first', atom_id='@N,C,CA,O')")
 uf.backend = pipe_control.structure.main.superimpose
 uf.menu_text = "&superimpose"
 uf.wizard_apply_button = False
-uf.wizard_height_desc = 420
+uf.wizard_height_desc = 370
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 

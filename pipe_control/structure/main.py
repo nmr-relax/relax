@@ -111,115 +111,6 @@ def add_model(model_num=None):
     print("Created the empty model number %s." % model_num)
 
 
-def align(pipes=None, models=None, molecules=None, atom_id=None, displace_id=None, method='fit to mean', algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0, centre_type="centroid", centroid=None):
-    """Superimpose a set of related, but not identical structures.
-
-    @keyword pipes:                     The data pipes to include in the alignment and superimposition.
-    @type pipes:                        None or list of str
-    @keyword models:                    The list of models to for each data pipe superimpose.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
-    @type models:                       list of lists of int or None
-    @keyword molecules:                 The molecule names to include in the alignment and superimposition.  The number of elements must match the pipes argument.
-    @type molecules:                    None or list of str
-    @keyword atom_id:                   The molecule, residue, and atom identifier string.  This matches the spin ID string format.
-    @type atom_id:                      str or None
-    @keyword displace_id:               The atom ID string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.  This can be a list of atom IDs with each element corresponding to one of the structures.
-    @type displace_id:                  None, str, or list of str
-    @keyword method:                    The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
-    @type method:                       str
-    @keyword algorithm:                 The pairwise sequence alignment algorithm to use.
-    @type algorithm:                    str
-    @keyword matrix:                    The substitution matrix to use.
-    @type matrix:                       str
-    @keyword gap_open_penalty:          The penalty for introducing gaps, as a positive number.
-    @type gap_open_penalty:             float
-    @keyword gap_extend_penalty:        The penalty for extending a gap, as a positive number.
-    @type gap_extend_penalty:           float
-    @keyword end_gap_open_penalty:      The optional penalty for opening a gap at the end of a sequence.
-    @type end_gap_open_penalty:         float
-    @keyword end_gap_extend_penalty:    The optional penalty for extending a gap at the end of a sequence.
-    @type end_gap_extend_penalty:       float
-    @keyword centre_type:               The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
-    @type centre_type:                  str
-    @keyword centroid:                  An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
-    @type centroid:                     list of float or numpy rank-1, 3D array
-    """
-
-    # Check the method.
-    allowed = ['fit to mean', 'fit to first']
-    if method not in allowed:
-        raise RelaxError("The superimposition method '%s' is unknown.  It must be one of %s." % (method, allowed))
-
-    # Check the type.
-    allowed = ['centroid', 'CoM']
-    if centre_type not in allowed:
-        raise RelaxError("The superimposition centre type '%s' is unknown.  It must be one of %s." % (centre_type, allowed))
-
-    # Check the penalty arguments.
-    if gap_open_penalty != None:
-        if gap_open_penalty < 0.0:
-            raise RelaxError("The gap opening penalty %s must be a positive number." % gap_open_penalty)
-    if gap_extend_penalty != None:
-        if gap_extend_penalty < 0.0:
-            raise RelaxError("The gap extension penalty %s must be a positive number." % gap_extend_penalty)
-    if end_gap_open_penalty != None:
-        if end_gap_open_penalty < 0.0:
-            raise RelaxError("The end gap opening penalty %s must be a positive number." % end_gap_open_penalty)
-    if end_gap_extend_penalty != None:
-        if end_gap_extend_penalty < 0.0:
-            raise RelaxError("The end gap extension penalty %s must be a positive number." % end_gap_extend_penalty)
-
-    # Assemble the structural objects.
-    objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
-
-    # Assemble the atomic coordinates.
-    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coord_array(objects=objects, object_names=object_names, models=models, molecules=molecules, atom_id=atom_id, algorithm=algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty, seq_info_flag=True)
-
-    # Catch missing data.
-    if len(coord[0]) == 0:
-        raise RelaxError("No common atoms could be found between the structures.")
-
-    # The different algorithms.
-    if method == 'fit to mean':
-        T, R, pivot = fit_to_mean(models=list(range(len(ids))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
-    elif method == 'fit to first':
-        T, R, pivot = fit_to_first(models=list(range(len(ids))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
-
-    # The data pipes to use.
-    if pipes == None:
-        pipes = [cdp_name()]
-
-    # Loop over all pipes, models, and molecules.
-    i = 0
-    for pipe_index, model_num, mol_name in structure_loop(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id):
-        # The current displacement ID.
-        curr_displace_id = None
-        if isinstance(displace_id, str):
-            curr_displace_id = displace_id
-        elif isinstance(displace_id, list):
-            if len(displace_id) <= i:
-                raise RelaxError("Not enough displacement ID strings have been provided.")
-            curr_displace_id = displace_id[i]
-
-        # Add the molecule name to the displacement ID if required.
-        id = curr_displace_id
-        if id == None or (mol_name and not search('#', id)):
-            if curr_displace_id == None:
-                id = '#%s' % mol_name
-            elif search('#', curr_displace_id):
-                id = curr_displace_id
-            else:
-                id = '#%s%s' % (mol_name, curr_displace_id)
-
-        # Translate the molecule first (the rotational pivot is defined in the first model).
-        translate(T=T[i], model=model_num, pipe_name=pipes[pipe_index], atom_id=id)
-
-        # Rotate the molecule.
-        rotate(R=R[i], origin=pivot[i], model=model_num, pipe_name=pipes[pipe_index], atom_id=id)
-
-        # Increment the index.
-        i += 1
-
-
 def assemble_structural_objects(pipes=None, models=None, molecules=None):
     """Assemble the atomic coordinates.
  
@@ -1371,17 +1262,21 @@ def structure_loop(pipes=None, molecules=None, models=None, atom_id=None):
         yield pipe_index, model_num, mol_name
 
 
-def superimpose(models=None, method='fit to mean', atom_id=None, displace_id=None, centre_type="centroid", centroid=None):
-    """Superimpose a set of structural models.
+def superimpose(pipes=None, models=None, molecules=None, atom_id=None, displace_id=None, method='fit to mean', centre_type="centroid", centroid=None):
+    """Superimpose a set of structures.
 
-    @keyword models:        The list of models to superimpose.  If set to None, then all models will be used.
-    @type models:           list of int or None
-    @keyword method:        The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
-    @type method:           str
+    @keyword pipes:         The data pipes to include in the alignment and superimposition.
+    @type pipes:            None or list of str
+    @keyword models:        The list of models to for each data pipe superimpose.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:           list of lists of int or None
+    @keyword molecules:     The molecule names to include in the alignment and superimposition.  The number of elements must match the pipes argument.
+    @type molecules:        None or list of str
     @keyword atom_id:       The molecule, residue, and atom identifier string.  This matches the spin ID string format.
     @type atom_id:          str or None
-    @keyword displace_id:   The atom ID string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.
-    @type displace_id:      str or None
+    @keyword displace_id:   The atom ID string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.  This can be a list of atom IDs with each element corresponding to one of the structures.
+    @type displace_id:      None, str, or list of str
+    @keyword method:        The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
+    @type method:           str
     @keyword centre_type:   The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
     @type centre_type:      str
     @keyword centroid:      An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
@@ -1398,29 +1293,60 @@ def superimpose(models=None, method='fit to mean', atom_id=None, displace_id=Non
     if centre_type not in allowed:
         raise RelaxError("The superimposition centre type '%s' is unknown.  It must be one of %s." % (centre_type, allowed))
 
-    # Create a list of all models.
-    if models == None:
-        models = cdp.structure.model_list()
-
     # Assemble the structural objects.
-    objects, object_names, pipes = assemble_structural_objects(models=[models])
+    objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
+
+    # Assemble the atomic coordinates of all molecules.
+    ids, object_id_list, model_list, molecule_list, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols = assemble_atomic_coordinates(objects=objects, object_names=object_names, molecules=molecules, models=models)
 
     # Assemble the atomic coordinates.
-    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coord_array(objects=objects, object_names=object_names, models=[models], atom_id=atom_id, seq_info_flag=True)
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coord_array(objects=objects, object_names=object_names, models=models, molecules=molecules, atom_id=atom_id, seq_info_flag=True)
+
+    # Retrieve the alignment.
+    align = None
+    if hasattr(ds, 'sequence_alignments'):
+        align = ds.sequence_alignments.find_alignment(object_ids=object_ids, models=models, molecules=molecules, sequences=sequences, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
+
+    # Catch missing data.
+    if len(coord[0]) == 0:
+        raise RelaxError("No common atoms could be found between the structures.")
 
     # The different algorithms.
     if method == 'fit to mean':
-        T, R, pivot = fit_to_mean(models=models, coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+        T, R, pivot = fit_to_mean(models=list(range(len(ids))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
     elif method == 'fit to first':
-        T, R, pivot = fit_to_first(models=models, coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+        T, R, pivot = fit_to_first(models=list(range(len(ids))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
 
-    # Update to the new coordinates.
-    for i in range(len(models)):
+    # Loop over all pipes, models, and molecules.
+    i = 0
+    for pipe_index, model_num, mol_name in structure_loop(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id):
+        # The current displacement ID.
+        curr_displace_id = None
+        if isinstance(displace_id, str):
+            curr_displace_id = displace_id
+        elif isinstance(displace_id, list):
+            if len(displace_id) <= i:
+                raise RelaxError("Not enough displacement ID strings have been provided.")
+            curr_displace_id = displace_id[i]
+
+        # Add the molecule name to the displacement ID if required.
+        id = curr_displace_id
+        if id == None or (mol_name and not search('#', id)):
+            if curr_displace_id == None:
+                id = '#%s' % mol_name
+            elif search('#', curr_displace_id):
+                id = curr_displace_id
+            else:
+                id = '#%s%s' % (mol_name, curr_displace_id)
+
         # Translate the molecule first (the rotational pivot is defined in the first model).
-        translate(T=T[i], model=models[i], atom_id=displace_id)
+        translate(T=T[i], model=model_num, pipe_name=pipes[pipe_index], atom_id=id)
 
         # Rotate the molecule.
-        rotate(R=R[i], origin=pivot[i], model=models[i], atom_id=displace_id)
+        rotate(R=R[i], origin=pivot[i], model=model_num, pipe_name=pipes[pipe_index], atom_id=id)
+
+        # Increment the index.
+        i += 1
 
 
 def translate(T=None, model=None, atom_id=None, pipe_name=None):
