@@ -260,11 +260,8 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, m
     if measure not in allowed_measures:
         raise RelaxError("The measure '%s' must be one of %s." % (measure, allowed_measures))
 
-    # Assemble the structural objects.
-    objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
-
-    # Assemble the atomic coordinates.
-    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coord_array(objects=objects, object_names=object_names, models=models, molecules=molecules, atom_id=atom_id, seq_info_flag=True)
+    # Assemble the structural coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id)
 
     # The number of dimensions.
     n = len(atom_names)
