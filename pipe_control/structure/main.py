@@ -130,7 +130,7 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
     objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
 
     # Assemble the atomic coordinates of all molecules.
-    ids, object_id_list, model_list, molecule_list, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols = assemble_atomic_coordinates(objects=objects, object_names=object_names, molecules=molecules, models=models)
+    ids, object_id_list, model_list, molecule_list, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols = assemble_atomic_coordinates(objects=objects, object_names=object_names, molecules=molecules, models=models, atom_id=atom_id)
 
     # Handle sequence alignments - retrieve the alignment.
     align = None
