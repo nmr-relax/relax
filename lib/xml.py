@@ -24,7 +24,7 @@
 
 # Python module imports (note that some of these are needed for the eval() function call).
 import numpy
-from numpy import set_printoptions, array, inf, nan, ndarray, zeros
+from numpy import set_printoptions, array, int16, int32, float32, float64, inf, nan, ndarray, zeros
 from re import search
 
 # Modify numpy for better output of numbers and structures.

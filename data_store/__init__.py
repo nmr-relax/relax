@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -32,6 +32,7 @@ import xml.dom.minidom
 # relax module imports.
 from data_store.gui import Gui
 from data_store.pipe_container import PipeContainer
+from data_store.seq_align import Sequence_alignments
 import pipe_control
 from lib.compat import builtins
 from lib.errors import RelaxError, RelaxPipeError, RelaxNoPipeError
@@ -48,7 +49,8 @@ __all__ = [ 'align_tensor',
             'interatomic',
             'mol_res_spin',
             'pipe_container',
-            'prototype'
+            'prototype',
+            'seq_align'
 ]
 
 
@@ -413,8 +415,8 @@ class Relax_data_store(dict):
 
         # Objects which should be in here.
         blacklist = [
-                'pipe_bundles',
-                'relax_gui'
+            'pipe_bundles',
+            'relax_gui'
         ]
 
         # An object has been added to the data store.
@@ -487,8 +489,17 @@ class Relax_data_store(dict):
         if gui_nodes:
             self.relax_gui.from_xml(gui_nodes[0], file_version=file_version)
 
+        # Get the sequence alignment nodes.
+        seq_align_nodes = relax_node.getElementsByTagName('sequence_alignments')
+        if seq_align_nodes:
+            # Initialise the object.
+            self.sequence_alignments = Sequence_alignments()
+
+            # Populate it.
+            self.sequence_alignments.from_xml(seq_align_nodes[0], file_version=file_version)
+
         # Recreate all the data store data structures.
-        xml_to_object(relax_node, self, file_version=file_version, blacklist=['pipe', 'relax_gui'])
+        xml_to_object(relax_node, self, file_version=file_version, blacklist=['pipe', 'relax_gui', 'sequence_alignments'])
 
         # Get the pipe nodes.
         pipe_nodes = relax_node.getElementsByTagName('pipe')

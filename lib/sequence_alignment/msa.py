@@ -165,3 +165,66 @@ def central_star(sequences, algorithm='NW70', matrix='BLOSUM62', gap_open_penalt
 
     # Return the results.
     return strings, gaps
+
+
+def msa_residue_numbers(sequences, residue_numbers=None):
+    """Align multiple sequences based on the residue numbering.
+
+    @param sequences:                   The list of residue sequences as one letter codes.
+    @type sequences:                    list of str
+    @keyword residue_numbers:           The list of residue numbers for each sequence.
+    @type residue_numbers:              list of list of int
+    @return:                            The list of alignment strings and the gap matrix.
+    @rtype:                             list of str, numpy rank-2 int array
+    """
+
+    # Initialise.
+    N = len(sequences)
+    strings = []
+    for i in range(N):
+        strings.append('')
+
+    # Printout.
+    sys.stdout.write("\nResidue number based multiple sequence alignment.\n\n")
+    sys.stdout.write("Initial sequences:\n")
+    for i in range(N):
+        sys.stdout.write("%3i %s\n" % (i+1, sequences[i]))
+
+    # The maximum and minimum residue numbers.
+    res_min = 1e100
+    res_max = -1e100
+    for i in range(N):
+        if min(residue_numbers[i]) < res_min:
+            res_min = min(residue_numbers[i])
+        if max(residue_numbers[i]) > res_max:
+            res_max = max(residue_numbers[i])
+
+    # The total number of residues.
+    M = res_max - res_min + 1
+
+    # Loop over the molecules and residues and determine if the residue is present.
+    for i in range(N):
+        for res_num in range(res_min, res_max+1):
+            # The residue is present.
+            if res_num in residue_numbers[i]:
+                index = residue_numbers[i].index(res_num)
+                strings[i] += sequences[i][index]
+
+            # A gap.
+            else:
+                strings[i] += '-'
+
+    # Create the gap matrix.
+    gaps = zeros((N, M), int16)
+    for i in range(N):
+        for j in range(M):
+            if strings[i][j] == '-':
+                gaps[i, j] = 1
+
+    # Final printout.
+    sys.stdout.write("\nFinal MSA:\n")
+    for i in range(N):
+        sys.stdout.write("%3i %s\n" % (i+1, strings[i]))
+
+    # Return the results.
+    return strings, gaps

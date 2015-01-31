@@ -64,7 +64,7 @@ class Structure(SystemTestCase):
 
 
     def test_align(self):
-        """Test the U{structure.align user function<http://www.nmr-relax.com/manual/structure_align.html>}."""
+        """Test the U{structure.superimpose user function<http://www.nmr-relax.com/manual/structure_superimpose.html>}."""
 
         # Reset relax.
         self.interpreter.reset()
@@ -107,7 +107,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_atom(mol_name='uniform_mol1', atom_name='Ti', res_name='TST', res_num=1, pos=[[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]], element='Ti', pdb_record='HETATM')
 
         # The alignment.
-        self.interpreter.structure.align(pipes=['ref', 'align'], method='fit to first', atom_id='@N,H', displace_id='@N,H')
+        self.interpreter.structure.superimpose(pipes=['ref', 'align'], method='fit to first', atom_id='@N,H', displace_id='@N,H')
 
         # Output PDB to stdout to help in debugging.
         self.interpreter.structure.write_pdb(file=sys.stdout)
@@ -213,7 +213,7 @@ class Structure(SystemTestCase):
 
 
     def test_align_molecules(self):
-        """Test the U{structure.align user function<http://www.nmr-relax.com/manual/structure_align.html>} for aligning different molecules in one pipe."""
+        """Test the U{structure.superimpose user function<http://www.nmr-relax.com/manual/structure_superimpose.html>} for aligning different molecules in one pipe."""
 
         # Reset relax.
         self.interpreter.reset()
@@ -257,7 +257,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_atom(mol_name='2', atom_name='Ti', res_name='TST', res_num=1, pos=[1.0, 2.0, 3.0], element='Ti', pdb_record='HETATM')
 
         # The alignment.
-        self.interpreter.structure.align(pipes=['ref', 'align'], molecules=[['ref'], ['1', '2']], method='fit to first', atom_id='@N,H', displace_id='@N,H')
+        self.interpreter.structure.superimpose(pipes=['ref', 'align'], molecules=[['ref'], ['1', '2']], method='fit to first', atom_id='@N,H', displace_id='@N,H')
 
         # Output PDB to stdout to help in debugging.
         self.interpreter.structure.write_pdb(file=sys.stdout)
@@ -349,7 +349,7 @@ class Structure(SystemTestCase):
 
 
     def test_align_molecules2(self):
-        """Test of the structure.align user function, fitting to the mean structure."""
+        """Test of the structure.superimpose user function, fitting to the mean structure."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
@@ -363,7 +363,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_atom(mol_name='CaM B', atom_name='Ti', res_name='TST', res_num=1, pos=[2.0, 3.0, 4.0], element='Ti', pdb_record='HETATM')
 
         # Superimpose the backbone heavy atoms.
-        self.interpreter.structure.align(method='fit to mean', atom_id='@N,C,CA,O', displace_id=':82-5000')
+        self.interpreter.structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O', displace_id=':82-5000')
 
         # Check that the two structures now have the same atomic coordinates.
         mol1 = cdp.structure.structural_data[0].mol[0]
@@ -382,7 +382,7 @@ class Structure(SystemTestCase):
 
 
     def test_align_molecules_end_truncation(self):
-        """Test of the structure.align user function, fitting to the mean structure."""
+        """Test of the structure.superimpose user function, fitting to the mean structure."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
@@ -397,12 +397,13 @@ class Structure(SystemTestCase):
         self.interpreter.structure.delete(atom_id="#CaM A:60-100")
         self.interpreter.structure.delete(atom_id="#CaM C:1-3")
         self.interpreter.structure.delete(atom_id="#CaM C:75-100")
+        self.interpreter.structure.delete(atom_id=":1000-1001")
 
         # Copy the data pipe for late comparison.
         self.interpreter.pipe.copy('mf', 'comp')
 
         # Superimpose the backbone heavy atoms.
-        self.interpreter.structure.align(method='fit to mean', atom_id='@N,C,CA,O')
+        self.interpreter.structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O')
 
         # Check that nothing has moved.
         for mol_index in range(3):
@@ -775,7 +776,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.superimpose(method='fit to first', centre_type='CoM')
 
         # Align.
-        self.interpreter.structure.align(method='fit to first', centre_type='CoM')
+        self.interpreter.structure.superimpose(method='fit to first', centre_type='CoM')
 
 
     def test_bug_22860_CoM_after_deletion(self):
@@ -4642,6 +4643,75 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(cdp.structure.rmsd, 0.77282758781333061)
 
 
+    def test_sequence_alignment_molecules(self):
+        """Test of the structure.sequence_alignment user function."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
+
+        # Load the two rotated structures.
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM A')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_model_num=1, set_mol_name='CaM B')
+
+        # Perform the alignment.
+        self.interpreter.structure.sequence_alignment(pipes=['mf'], models=[[1, 1]], molecules=[['CaM A', 'CaM B']], msa_algorithm='Central Star', pairwise_algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=10.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.5, end_gap_extend_penalty=0.1)
+
+        # Save the relax state.
+        self.tmpfile = mktemp()
+        self.interpreter.state.save(self.tmpfile, dir=None, force=True)
+
+        # Reset relax.
+        self.interpreter.reset()
+
+        # Load the results.
+        self.interpreter.state.load(self.tmpfile)
+
+        # The real data.
+        pipes = ['mf', 'mf']
+        models = [1, 1]
+        molecules = ['CaM A', 'CaM B']
+        ids = ["Object 'mf'; Model 1; Molecule 'CaM A'", "Object 'mf'; Model 1; Molecule 'CaM B'"]
+        sequences = [
+            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**',
+            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**'
+        ]
+        strings = [
+            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**',
+            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**'
+        ]
+        gaps = []
+        for i in range(len(strings)):
+            gaps.append([])
+            for j in range(len(strings[0])):
+                gaps[i].append(0)
+        msa_algorithm = 'Central Star'
+        pairwise_algorithm = 'NW70'
+        matrix = 'BLOSUM62'
+        gap_open_penalty = 10.0
+        gap_extend_penalty = 1.0
+        end_gap_open_penalty = 0.5
+        end_gap_extend_penalty = 0.1
+
+        # Check the data.
+        for i in range(2):
+            print("Checking \"%s\"" % molecules[i])
+            self.assertEqual(ds.sequence_alignments[0].ids[i], ids[i])
+            self.assertEqual(ds.sequence_alignments[0].object_ids[i], pipes[i])
+            self.assertEqual(ds.sequence_alignments[0].models[i], models[i])
+            self.assertEqual(ds.sequence_alignments[0].molecules[i], molecules[i])
+            self.assertEqual(ds.sequence_alignments[0].sequences[i], sequences[i])
+            self.assertEqual(ds.sequence_alignments[0].strings[i], strings[i])
+            for j in range(len(strings[0])):
+                self.assertEqual(ds.sequence_alignments[0].gaps[i, j], gaps[i][j])
+            self.assertEqual(ds.sequence_alignments[0].msa_algorithm, msa_algorithm)
+            self.assertEqual(ds.sequence_alignments[0].pairwise_algorithm, pairwise_algorithm)
+            self.assertEqual(ds.sequence_alignments[0].matrix, matrix)
+            self.assertEqual(ds.sequence_alignments[0].gap_open_penalty, gap_open_penalty)
+            self.assertEqual(ds.sequence_alignments[0].gap_extend_penalty, gap_extend_penalty)
+            self.assertEqual(ds.sequence_alignments[0].end_gap_open_penalty, end_gap_open_penalty)
+            self.assertEqual(ds.sequence_alignments[0].end_gap_extend_penalty, end_gap_extend_penalty)
+
+
     def test_superimpose_fit_to_first(self):
         """Test of the structure.superimpose user function, fitting to the first structure."""
 
@@ -4719,7 +4789,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.translate([20.0, 0.0, 0.0], model=3)
 
         # Superimpose the backbone heavy atoms.
-        self.interpreter.structure.superimpose(models=[2, 3], method='fit to mean', atom_id='@N,C,CA,O')
+        self.interpreter.structure.superimpose(models=[[2, 3]], method='fit to mean', atom_id='@N,C,CA,O')
 
         # Check that the two structures now have the same atomic coordinates as the original, but shifted 10 Angstrom in x.
         model1 = cdp.structure.structural_data[0].mol[0]
