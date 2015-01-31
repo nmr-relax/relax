@@ -1199,11 +1199,11 @@ def sequence_alignment(pipes=None, models=None, molecules=None, msa_algorithm='C
         strings, gaps = central_star(one_letter_codes, algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
 
     # Set up the data store object.
-    if not hasattr(ds, 'sequence_alignment'):
-        ds.sequence_alignment = Sequence_alignments()
+    if not hasattr(ds, 'sequence_alignments'):
+        ds.sequence_alignments = Sequence_alignments()
 
     # Store the alignment.
-    ds.sequence_alignment.add(object_ids=object_id_list, models=model_list, molecules=molecule_list, sequences=one_letter_codes, strings=strings, gaps=gaps, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
+    ds.sequence_alignments.add(object_ids=object_id_list, models=model_list, molecules=molecule_list, sequences=one_letter_codes, strings=strings, gaps=gaps, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
 
 
 def set_vector(spin=None, xh_vect=None):
