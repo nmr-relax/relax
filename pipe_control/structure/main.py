@@ -32,7 +32,7 @@ from warnings import warn
 from data_store import Relax_data_store; ds = Relax_data_store()
 from data_store.seq_align import Sequence_alignments
 from lib.check_types import is_float
-from lib.errors import RelaxError, RelaxFileError
+from lib.errors import RelaxError, RelaxFileError, RelaxImplementError
 from lib.geometry.vectors import vector_angle_atan2
 from lib.io import get_file_path, open_write_file, write_data
 from lib.plotting.api import correlation_matrix
@@ -109,6 +109,83 @@ def add_model(model_num=None):
     # Add a model.
     cdp.structure.structural_data.add_item(model_num=model_num)
     print("Created the empty model number %s." % model_num)
+
+
+def assemble_structural_coordinates(pipes=None, models=None, molecules=None, atom_id=None):
+    """Assemble the common atomic coordinates taking sequence alignments into account.
+ 
+    @keyword pipes:     The data pipes to assemble the coordinates from.
+    @type pipes:        None or list of str
+    @keyword models:    The list of models for each data pipe.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:       None or list of lists of int
+    @keyword molecules: The list of molecules for each data pipe.  The number of elements must match the pipes argument.
+    @type molecules:    None or list of lists of str
+    @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.
+    @type atom_id:      str or None
+    @return:            The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates); a list of unique IDs for each structural object, model, and molecule; the common list of molecule names; the common list of residue names; the common list of residue numbers; the common list of atom names; the common list of element names.
+    @rtype:             numpy rank-3 float64 array, list of str, list of str, list of str, list of int, list of str, list of str
+    """
+
+    # Assemble the structural objects.
+    objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
+
+    # Assemble the atomic coordinates of all molecules.
+    ids, object_id_list, model_list, molecule_list, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols = assemble_atomic_coordinates(objects=objects, object_names=object_names, molecules=molecules, models=models)
+
+    # Handle sequence alignments - retrieve the alignment.
+    align = None
+    if hasattr(ds, 'sequence_alignments'):
+        align = ds.sequence_alignments.find_alignment(object_ids=object_id_list, models=model_list, molecules=molecule_list, sequences=one_letter_codes)
+    if align != None:
+        # Printout.
+        print("\nSequence alignment found - common atoms will be determined based on this MSA:")
+        for i in range(len(align.object_ids)):
+            print(align.strings[i])
+
+        # Create the residue skipping data structure. 
+        skip = []
+        for mol_index in range(num_mols):
+            skip.append([])
+            for i in range(len(one_letter_codes[0])):
+                # No residue in the current sequence.
+                if align.gaps[mol_index][i]:
+                    continue
+
+                # A gap in one of the other sequences.
+                gap = False
+                for mol_index2 in range(num_mols):
+                    if align.gaps[mol_index2][i]:
+                        gap = True
+
+                # Skip the residue.
+                if gap:
+                    skip[mol_index].append(1)
+                else:
+                    skip[mol_index].append(0)
+
+    # Handle sequence alignments - no alignment required.
+    elif len(objects) == 1 and molecules == None:
+        # Printout.
+        print("\nSequence alignment disabled as only models with identical molecule, residue and atomic sequences are being superimposed.")
+
+        # Create the empty residue skipping data structure.
+        skip = []
+        for mol_index in range(num_mols):
+            skip.append([])
+            for i in range(len(one_letter_codes[0])):
+                skip[mol_index].append(0)
+
+    # Handle sequence alignments - fall back alignment based on residue numbering.
+    else:
+        # Printout.
+        print("\nSequence alignment cannot be found - falling back to a residue number based alignment.")
+
+        raise RelaxImplementError
+
+
+    # Assemble and return the atomic coordinates and common atom information.
+    coord, mol_name_common, res_name_common, res_num_common, atom_name_common, element_common = assemble_coord_array(atom_pos=atom_pos, mol_names=mol_names, res_names=res_names, res_nums=res_nums, atom_names=atom_names, elements=elements, sequences=one_letter_codes, skip=skip)
+    return coord, ids, mol_name_common, res_name_common, res_num_common, atom_name_common, element_common
 
 
 def assemble_structural_objects(pipes=None, models=None, molecules=None):
@@ -1293,19 +1370,8 @@ def superimpose(pipes=None, models=None, molecules=None, atom_id=None, displace_
     if centre_type not in allowed:
         raise RelaxError("The superimposition centre type '%s' is unknown.  It must be one of %s." % (centre_type, allowed))
 
-    # Assemble the structural objects.
-    objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
-
-    # Assemble the atomic coordinates of all molecules.
-    ids, object_id_list, model_list, molecule_list, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols = assemble_atomic_coordinates(objects=objects, object_names=object_names, molecules=molecules, models=models)
-
-    # Assemble the atomic coordinates.
-    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coord_array(objects=objects, object_names=object_names, models=models, molecules=molecules, atom_id=atom_id, seq_info_flag=True)
-
-    # Retrieve the alignment.
-    align = None
-    if hasattr(ds, 'sequence_alignments'):
-        align = ds.sequence_alignments.find_alignment(object_ids=object_ids, models=models, molecules=molecules, sequences=sequences, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
+    # Assemble the structural coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id)
 
     # Catch missing data.
     if len(coord[0]) == 0:
