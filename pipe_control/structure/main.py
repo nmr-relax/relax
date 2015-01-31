@@ -1358,6 +1358,10 @@ def superimpose(pipes=None, models=None, molecules=None, atom_id=None, displace_
     if centre_type not in allowed:
         raise RelaxError("The superimposition centre type '%s' is unknown.  It must be one of %s." % (centre_type, allowed))
 
+    # The data pipes to use.
+    if pipes == None:
+        pipes = [cdp_name()]
+
     # Assemble the structural coordinates.
     coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id)
 
