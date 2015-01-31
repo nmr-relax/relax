@@ -2295,11 +2295,13 @@ class Internal:
         return len(self.structural_data[0].mol)
 
 
-    def one_letter_codes(self, mol_name=None):
+    def one_letter_codes(self, mol_name=None, selection=None):
         """Generate and return the one letter code sequence for the given molecule.
 
         @keyword mol_name:  The name of the molecule to return the one letter codes for.
         @type mol_name:     str
+        @keyword selection: The internal structural selection object.  This is obtained by calling the selection() method with the atom ID string.
+        @type selection:    lib.structure.internal.Internal_selection instance
         @return:            The one letter code sequence for the given molecule.
         @rtype:             str
         """
@@ -2307,11 +2309,17 @@ class Internal:
         # Initialise.
         codes = ''
 
+        # Validate the models.
+        self.validate_models(verbosity=0)
+
         # Use the first model.
         model = self.structural_data[0]
 
+        # Residue numbers.
+        res_nums = []
+
         # Loop over the molecules.
-        for mol_index in range(len(model.mol)):
+        for mol_index, i in selection.loop():
             # Alias.
             mol = model.mol[mol_index]
 
@@ -2319,9 +2327,13 @@ class Internal:
             if mol_name and mol_name != mol.mol_name:
                 continue
 
-            # Loop over the residues.
-            for res_name, res_num in mol.loop_residues():
-                codes += aa_codes_three_to_one(res_name)
+            # Not a new residue.
+            if mol.res_num[i] in res_nums:
+                continue
+
+            # Convert to the one letter code and store the residue number.
+            codes += aa_codes_three_to_one(mol.res_name[i])
+            res_nums.append(mol.res_num[i])
             
         # Return the codes.
         return codes
