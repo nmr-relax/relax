@@ -38,7 +38,7 @@ from lib.io import get_file_path, open_write_file, write_data
 from lib.plotting.api import correlation_matrix
 from lib.selection import tokenise
 from lib.sequence import write_spin_data
-from lib.sequence_alignment.msa import central_star
+from lib.sequence_alignment.msa import central_star, msa_residue_numbers
 from lib.structure.internal.coordinates import assemble_atomic_coordinates, assemble_coord_array, loop_coord_structures
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.object import Internal
@@ -152,6 +152,10 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
         for i in range(len(align.object_ids)):
             print(align.strings[i])
 
+        # Alias the required data structures.
+        strings = align.strings
+        gaps = align.gaps
+
     # Handle sequence alignments - no alignment required.
     elif len(objects) == 1 and same_mol:
         # Printout.
@@ -184,13 +188,13 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
                 continue
 
             # No residue in the current sequence.
-            if align.gaps[mol_index][i]:
+            if gaps[mol_index][i]:
                 continue
 
             # A gap in one of the other sequences.
             gap = False
             for mol_index2 in range(num_mols):
-                if align.gaps[mol_index2][i]:
+                if gaps[mol_index2][i]:
                     gap = True
 
             # Skip the residue.
