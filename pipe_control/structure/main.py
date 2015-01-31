@@ -170,7 +170,7 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
         res_num_list = []
         for mol_index in range(num_mols):
             res_num_list.append([])
-            for i in range(len(one_letter_codes[0])):
+            for i in range(len(one_letter_codes[mol_index])):
                 key = res_nums[mol_index][i].keys()[0]
                 res_num_list[mol_index].append(res_nums[mol_index][i][key])
 
