@@ -32,7 +32,7 @@ from warnings import warn
 from data_store import Relax_data_store; ds = Relax_data_store()
 from data_store.seq_align import Sequence_alignments
 from lib.check_types import is_float
-from lib.errors import RelaxError, RelaxFileError, RelaxImplementError
+from lib.errors import RelaxError, RelaxFileError
 from lib.geometry.vectors import vector_angle_atan2
 from lib.io import get_file_path, open_write_file, write_data
 from lib.plotting.api import correlation_matrix
@@ -138,6 +138,10 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
         if mol != molecule_list[0]:
             same_mol = False
 
+    # Init.
+    strings = None
+    gaps = None
+
     # Handle sequence alignments - retrieve the alignment.
     align = None
     if hasattr(ds, 'sequence_alignments'):
@@ -148,46 +152,52 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
         for i in range(len(align.object_ids)):
             print(align.strings[i])
 
-        # Create the residue skipping data structure. 
-        skip = []
-        for mol_index in range(num_mols):
-            skip.append([])
-            for i in range(len(one_letter_codes[0])):
-                # No residue in the current sequence.
-                if align.gaps[mol_index][i]:
-                    continue
-
-                # A gap in one of the other sequences.
-                gap = False
-                for mol_index2 in range(num_mols):
-                    if align.gaps[mol_index2][i]:
-                        gap = True
-
-                # Skip the residue.
-                if gap:
-                    skip[mol_index].append(1)
-                else:
-                    skip[mol_index].append(0)
-
     # Handle sequence alignments - no alignment required.
     elif len(objects) == 1 and same_mol:
         # Printout.
         print("\nSequence alignment disabled as only models with identical molecule, residue and atomic sequences are being superimposed.")
-
-        # Create the empty residue skipping data structure.
-        skip = []
-        for mol_index in range(num_mols):
-            skip.append([])
-            for i in range(len(one_letter_codes[0])):
-                skip[mol_index].append(0)
 
     # Handle sequence alignments - fall back alignment based on residue numbering.
     else:
         # Printout.
         print("\nSequence alignment cannot be found - falling back to a residue number based alignment.")
 
-        raise RelaxImplementError
+        # Convert the residue number data structure.
+        res_num_list = []
+        for mol_index in range(num_mols):
+            res_num_list.append([])
+            for i in range(len(one_letter_codes[0])):
+                key = res_nums[mol_index][i].keys()[0]
+                res_num_list[mol_index].append(res_nums[mol_index][i][key])
 
+        # Sequence alignment.
+        strings, gaps = msa_residue_numbers(one_letter_codes, residue_numbers=res_num_list)
+
+    # Create the residue skipping data structure. 
+    skip = []
+    for mol_index in range(num_mols):
+        skip.append([])
+        for i in range(len(one_letter_codes[0])):
+            # Create the empty residue skipping data structure.
+            if strings == None:
+                skip[mol_index].append(0)
+                continue
+
+            # No residue in the current sequence.
+            if align.gaps[mol_index][i]:
+                continue
+
+            # A gap in one of the other sequences.
+            gap = False
+            for mol_index2 in range(num_mols):
+                if align.gaps[mol_index2][i]:
+                    gap = True
+
+            # Skip the residue.
+            if gap:
+                skip[mol_index].append(1)
+            else:
+                skip[mol_index].append(0)
 
     # Assemble and return the atomic coordinates and common atom information.
     coord, mol_name_common, res_name_common, res_num_common, atom_name_common, element_common = assemble_coord_array(atom_pos=atom_pos, mol_names=mol_names, res_names=res_names, res_nums=res_nums, atom_names=atom_names, elements=elements, sequences=one_letter_codes, skip=skip)
