@@ -103,7 +103,7 @@ def assemble_atomic_coordinates(objects=None, object_names=None, molecules=None,
                     molecule_list.append(mol_name)
 
                     # Store the one letter codes for sequence alignment.
-                    one_letter_codes.append(objects[struct_index].one_letter_codes(mol_name=mol_name))
+                    one_letter_codes.append(objects[struct_index].one_letter_codes(mol_name=mol_name, selection=selection))
 
                     # Extend the lists.
                     atom_names.append([])
