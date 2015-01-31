@@ -228,3 +228,50 @@ def msa_residue_numbers(sequences, residue_numbers=None):
 
     # Return the results.
     return strings, gaps
+
+
+def msa_residue_skipping(sequences=None, strings=None, gaps=None):
+    """Create the residue skipping data structure. 
+
+    @keyword sequences: The list of residue sequences as one letter codes.
+    @type sequences:    list of str
+    @keyword strings:   The list of alignment strings.
+    @type strings:      list of str
+    @keyword gaps:      The gap matrix.
+    @type gaps:         numpy rank-2 int array
+    @return:            The residue skipping data structure.  The first dimension is the molecule and the second is the residue.  As opposed to zero, a value of one means the residue should skipped.
+    @rtype:             list of lists of int
+    # 
+    """
+
+    # initialise.
+    skip = []
+    num_mols = len(sequences)
+
+    # Loop over each molecule.
+    for mol_index in range(num_mols):
+        skip.append([])
+        for i in range(len(sequences[0])):
+            # Create the empty residue skipping data structure.
+            if strings == None:
+                skip[mol_index].append(0)
+                continue
+
+            # No residue in the current sequence.
+            if gaps[mol_index][i]:
+                continue
+
+            # A gap in one of the other sequences.
+            gap = False
+            for mol_index2 in range(num_mols):
+                if gaps[mol_index2][i]:
+                    gap = True
+
+            # Skip the residue.
+            if gap:
+                skip[mol_index].append(1)
+            else:
+                skip[mol_index].append(0)
+
+    # Return the data structure.
+    return skip

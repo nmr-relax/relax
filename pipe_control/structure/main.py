@@ -38,7 +38,7 @@ from lib.io import get_file_path, open_write_file, write_data
 from lib.plotting.api import correlation_matrix
 from lib.selection import tokenise
 from lib.sequence import write_spin_data
-from lib.sequence_alignment.msa import central_star, msa_residue_numbers
+from lib.sequence_alignment.msa import central_star, msa_residue_numbers, msa_residue_skipping
 from lib.structure.internal.coordinates import assemble_atomic_coordinates, assemble_coord_array, loop_coord_structures
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.object import Internal
@@ -178,30 +178,7 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
         strings, gaps = msa_residue_numbers(one_letter_codes, residue_numbers=res_num_list)
 
     # Create the residue skipping data structure. 
-    skip = []
-    for mol_index in range(num_mols):
-        skip.append([])
-        for i in range(len(one_letter_codes[0])):
-            # Create the empty residue skipping data structure.
-            if strings == None:
-                skip[mol_index].append(0)
-                continue
-
-            # No residue in the current sequence.
-            if gaps[mol_index][i]:
-                continue
-
-            # A gap in one of the other sequences.
-            gap = False
-            for mol_index2 in range(num_mols):
-                if gaps[mol_index2][i]:
-                    gap = True
-
-            # Skip the residue.
-            if gap:
-                skip[mol_index].append(1)
-            else:
-                skip[mol_index].append(0)
+    skip = msa_residue_skipping(sequences=one_letter_codes, strings=strings, gaps=gaps)
 
     # Assemble and return the atomic coordinates and common atom information.
     coord, mol_name_common, res_name_common, res_num_common, atom_name_common, element_common = assemble_coord_array(atom_pos=atom_pos, mol_names=mol_names, res_names=res_names, res_nums=res_nums, atom_names=atom_names, elements=elements, sequences=one_letter_codes, skip=skip)
