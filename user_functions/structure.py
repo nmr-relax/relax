@@ -1201,23 +1201,25 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pairwise_algorithm",
-    default = "NW70",
+    default = None,
     py_type = "str",
     desc_short = "pairwise alignment algorithm",
     desc = "The pairwise alignment algorithm to align each pair of sequences.",
     wiz_element_type = "combo",
     wiz_combo_choices = ["NW70"],
-    wiz_read_only = True
+    wiz_read_only = True,
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "matrix",
-    default = "BLOSUM62",
+    default = None,
     py_type = "str",
     desc_short = "substitution matrix",
     desc = "The substitution matrix to use in the pairwise sequence alignment algorithm.",
     wiz_element_type = "combo",
     wiz_combo_choices = ["BLOSUM62", "PAM250", "NUC 4.4"],
-    wiz_read_only = True
+    wiz_read_only = True,
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "gap_open_penalty",
