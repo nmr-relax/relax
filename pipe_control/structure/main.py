@@ -1256,6 +1256,15 @@ def sequence_alignment(pipes=None, models=None, molecules=None, msa_algorithm='C
     if not hasattr(ds, 'sequence_alignments'):
         ds.sequence_alignments = Sequence_alignments()
 
+    # Set some unused arguments to None for storage.
+    if msa_algorithm == 'residue number':
+        pairwise_algorithm = None
+        matrix = None
+        gap_open_penalty = None
+        gap_extend_penalty = None
+        end_gap_open_penalty = None
+        end_gap_extend_penalty = None
+
     # Store the alignment.
     ds.sequence_alignments.add(object_ids=object_id_list, models=model_list, molecules=molecule_list, sequences=one_letter_codes, strings=strings, gaps=gaps, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
 
