@@ -4643,7 +4643,7 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(cdp.structure.rmsd, 0.77282758781333061)
 
 
-    def test_sequence_alignment_molecules(self):
+    def test_sequence_alignment_central_star_nw70_blosum62(self):
         """Test of the structure.sequence_alignment user function."""
 
         # Path of the structure file.
