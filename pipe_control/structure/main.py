@@ -132,6 +132,12 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
     # Assemble the atomic coordinates of all molecules.
     ids, object_id_list, model_list, molecule_list, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols = assemble_atomic_coordinates(objects=objects, object_names=object_names, molecules=molecules, models=models, atom_id=atom_id)
 
+    # Are all molecules the same?
+    same_mol = True
+    for mol in molecule_list:
+        if mol != molecule_list[0]:
+            same_mol = False
+
     # Handle sequence alignments - retrieve the alignment.
     align = None
     if hasattr(ds, 'sequence_alignments'):
@@ -164,7 +170,7 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
                     skip[mol_index].append(0)
 
     # Handle sequence alignments - no alignment required.
-    elif len(objects) == 1 and molecules == None:
+    elif len(objects) == 1 and same_mol:
         # Printout.
         print("\nSequence alignment disabled as only models with identical molecule, residue and atomic sequences are being superimposed.")
 
