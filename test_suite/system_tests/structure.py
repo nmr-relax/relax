@@ -4644,7 +4644,7 @@ class Structure(SystemTestCase):
 
 
     def test_sequence_alignment_central_star_nw70_blosum62(self):
-        """Test of the structure.sequence_alignment user function."""
+        """Test of the structure.sequence_alignment user function using the 'Central Star', 'NW70', and 'BLOSUM62' options."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
@@ -4652,6 +4652,10 @@ class Structure(SystemTestCase):
         # Load the two rotated structures.
         self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM A')
         self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_model_num=1, set_mol_name='CaM B')
+
+        # Delete some residues.
+        self.interpreter.structure.delete("#CaM B:82")
+        self.interpreter.structure.delete("#CaM A:100-120")
 
         # Perform the alignment.
         self.interpreter.structure.sequence_alignment(pipes=['mf'], models=[[1, 1]], molecules=[['CaM A', 'CaM B']], msa_algorithm='Central Star', pairwise_algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=10.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.5, end_gap_extend_penalty=0.1)
@@ -4672,18 +4676,21 @@ class Structure(SystemTestCase):
         molecules = ['CaM A', 'CaM B']
         ids = ["Object 'mf'; Model 1; Molecule 'CaM A'", "Object 'mf'; Model 1; Molecule 'CaM B'"]
         sequences = [
-            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**',
-            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**'
+            'EEEIREAFRVFDKDGNGYVDEMIREADIDGDGQVNYEEFVQMMTAK**',
+            'EEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**'
         ]
         strings = [
-            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**',
-            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**'
+            'EEEIREAFRVFDKDGNGY---------------------VDEMIREADIDGDGQVNYEEFVQMMTAK**',
+            '-EEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**'
         ]
         gaps = []
         for i in range(len(strings)):
             gaps.append([])
             for j in range(len(strings[0])):
                 gaps[i].append(0)
+        for i in range(18, 39):
+            gaps[0][i] = 1
+        gaps[1][0] = 1
         msa_algorithm = 'Central Star'
         pairwise_algorithm = 'NW70'
         matrix = 'BLOSUM62'
