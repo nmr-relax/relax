@@ -4732,6 +4732,7 @@ class Structure(SystemTestCase):
         # Delete some residues.
         self.interpreter.structure.delete("#CaM B:82")
         self.interpreter.structure.delete("#CaM A:100-120")
+        self.interpreter.structure.delete(":CA")
 
         # Perform the alignment.
         self.interpreter.structure.sequence_alignment(pipes=['mf'], models=[[1, 1]], molecules=[['CaM A', 'CaM B']], msa_algorithm='residue number')
@@ -4752,12 +4753,12 @@ class Structure(SystemTestCase):
         molecules = ['CaM A', 'CaM B']
         ids = ["Object 'mf'; Model 1; Molecule 'CaM A'", "Object 'mf'; Model 1; Molecule 'CaM B'"]
         sequences = [
-            'EEEIREAFRVFDKDGNGYVDEMIREADIDGDGQVNYEEFVQMMTAK**',
-            'EEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**'
+            'EEEIREAFRVFDKDGNGYVDEMIREADIDGDGQVNYEEFVQMMTAK',
+            'EEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK'
         ]
         strings = [
-            'EEEIREAFRVFDKDGNGY---------------------VDEMIREADIDGDGQVNYEEFVQMMTAK**',
-            '-EEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**'
+            'EEEIREAFRVFDKDGNGY---------------------VDEMIREADIDGDGQVNYEEFVQMMTAK',
+            '-EEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK'
         ]
         gaps = []
         for i in range(len(strings)):
@@ -4767,13 +4768,13 @@ class Structure(SystemTestCase):
         for i in range(18, 39):
             gaps[0][i] = 1
         gaps[1][0] = 1
-        msa_algorithm = 'Central Star'
-        pairwise_algorithm = 'NW70'
-        matrix = 'BLOSUM62'
-        gap_open_penalty = 10.0
-        gap_extend_penalty = 1.0
-        end_gap_open_penalty = 0.5
-        end_gap_extend_penalty = 0.1
+        msa_algorithm = 'residue number'
+        pairwise_algorithm = None
+        matrix = None
+        gap_open_penalty = None
+        gap_extend_penalty = None
+        end_gap_open_penalty = None
+        end_gap_extend_penalty = None
 
         # Check the data.
         for i in range(2):
