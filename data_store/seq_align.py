@@ -132,19 +132,19 @@ class Sequence_alignments(RelaxListType):
                 continue
 
             # Check the alignment settings for mismatches.
-            if self[i].msa_algorithm != msa_algorithm:
+            if msa_algorithm and self[i].msa_algorithm != msa_algorithm:
                 continue
-            if self[i].pairwise_algorithm != pairwise_algorithm:
+            if pairwise_algorithm and self[i].pairwise_algorithm != pairwise_algorithm:
                 continue
-            if self[i].matrix != matrix:
+            if matrix and self[i].matrix != matrix:
                 continue
-            if self[i].gap_open_penalty != gap_open_penalty:
+            if gap_open_penalty != None and self[i].gap_open_penalty != gap_open_penalty:
                 continue
-            if self[i].gap_extend_penalty != gap_extend_penalty:
+            if gap_extend_penalty != None and  self[i].gap_extend_penalty != gap_extend_penalty:
                 continue
-            if self[i].end_gap_open_penalty != end_gap_open_penalty:
+            if end_gap_open_penalty != None and  self[i].end_gap_open_penalty != end_gap_open_penalty:
                 continue
-            if self[i].end_gap_extend_penalty != end_gap_extend_penalty:
+            if end_gap_extend_penalty != None and  self[i].end_gap_extend_penalty != end_gap_extend_penalty:
                 continue
 
             # No mismatches, so this must be the alignment.
