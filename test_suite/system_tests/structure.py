@@ -64,7 +64,7 @@ class Structure(SystemTestCase):
 
 
     def test_align(self):
-        """Test the U{structure.align user function<http://www.nmr-relax.com/manual/structure_align.html>}."""
+        """Test the U{structure.superimpose user function<http://www.nmr-relax.com/manual/structure_superimpose.html>}."""
 
         # Reset relax.
         self.interpreter.reset()
@@ -107,7 +107,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_atom(mol_name='uniform_mol1', atom_name='Ti', res_name='TST', res_num=1, pos=[[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]], element='Ti', pdb_record='HETATM')
 
         # The alignment.
-        self.interpreter.structure.align(pipes=['ref', 'align'], method='fit to first', atom_id='@N,H', displace_id='@N,H')
+        self.interpreter.structure.superimpose(pipes=['ref', 'align'], method='fit to first', atom_id='@N,H', displace_id='@N,H')
 
         # Output PDB to stdout to help in debugging.
         self.interpreter.structure.write_pdb(file=sys.stdout)
@@ -213,7 +213,7 @@ class Structure(SystemTestCase):
 
 
     def test_align_molecules(self):
-        """Test the U{structure.align user function<http://www.nmr-relax.com/manual/structure_align.html>} for aligning different molecules in one pipe."""
+        """Test the U{structure.superimpose user function<http://www.nmr-relax.com/manual/structure_superimpose.html>} for aligning different molecules in one pipe."""
 
         # Reset relax.
         self.interpreter.reset()
@@ -257,7 +257,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_atom(mol_name='2', atom_name='Ti', res_name='TST', res_num=1, pos=[1.0, 2.0, 3.0], element='Ti', pdb_record='HETATM')
 
         # The alignment.
-        self.interpreter.structure.align(pipes=['ref', 'align'], molecules=[['ref'], ['1', '2']], method='fit to first', atom_id='@N,H', displace_id='@N,H')
+        self.interpreter.structure.superimpose(pipes=['ref', 'align'], molecules=[['ref'], ['1', '2']], method='fit to first', atom_id='@N,H', displace_id='@N,H')
 
         # Output PDB to stdout to help in debugging.
         self.interpreter.structure.write_pdb(file=sys.stdout)
@@ -349,7 +349,7 @@ class Structure(SystemTestCase):
 
 
     def test_align_molecules2(self):
-        """Test of the structure.align user function, fitting to the mean structure."""
+        """Test of the structure.superimpose user function, fitting to the mean structure."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
@@ -363,7 +363,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_atom(mol_name='CaM B', atom_name='Ti', res_name='TST', res_num=1, pos=[2.0, 3.0, 4.0], element='Ti', pdb_record='HETATM')
 
         # Superimpose the backbone heavy atoms.
-        self.interpreter.structure.align(method='fit to mean', atom_id='@N,C,CA,O', displace_id=':82-5000')
+        self.interpreter.structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O', displace_id=':82-5000')
 
         # Check that the two structures now have the same atomic coordinates.
         mol1 = cdp.structure.structural_data[0].mol[0]
@@ -382,7 +382,7 @@ class Structure(SystemTestCase):
 
 
     def test_align_molecules_end_truncation(self):
-        """Test of the structure.align user function, fitting to the mean structure."""
+        """Test of the structure.superimpose user function, fitting to the mean structure."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
@@ -403,7 +403,7 @@ class Structure(SystemTestCase):
         self.interpreter.pipe.copy('mf', 'comp')
 
         # Superimpose the backbone heavy atoms.
-        self.interpreter.structure.align(method='fit to mean', atom_id='@N,C,CA,O')
+        self.interpreter.structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O')
 
         # Check that nothing has moved.
         for mol_index in range(3):
@@ -776,7 +776,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.superimpose(method='fit to first', centre_type='CoM')
 
         # Align.
-        self.interpreter.structure.align(method='fit to first', centre_type='CoM')
+        self.interpreter.structure.superimpose(method='fit to first', centre_type='CoM')
 
 
     def test_bug_22860_CoM_after_deletion(self):
@@ -4789,7 +4789,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.translate([20.0, 0.0, 0.0], model=3)
 
         # Superimpose the backbone heavy atoms.
-        self.interpreter.structure.superimpose(models=[2, 3], method='fit to mean', atom_id='@N,C,CA,O')
+        self.interpreter.structure.superimpose(models=[[2, 3]], method='fit to mean', atom_id='@N,C,CA,O')
 
         # Check that the two structures now have the same atomic coordinates as the original, but shifted 10 Angstrom in x.
         model1 = cdp.structure.structural_data[0].mol[0]
