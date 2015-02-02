@@ -138,10 +138,6 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
         if mol != molecule_list[0]:
             same_mol = False
 
-    # Init.
-    strings = None
-    gaps = None
-
     # Handle sequence alignments - retrieve the alignment.
     align = None
     if hasattr(ds, 'sequence_alignments'):
@@ -160,6 +156,16 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
     elif len(objects) == 1 and same_mol:
         # Printout.
         print("\nSequence alignment disabled as only models with identical molecule, residue and atomic sequences are being superimposed.")
+
+        # Set the one letter codes to be the alignment strings.
+        strings = one_letter_codes
+
+        # Create an empty gap data structure.
+        gaps = []
+        for mol_index in range(num_mols):
+            gaps.append([])
+            for i in range(len(one_letter_codes[mol_index])):
+                gaps[mol_index].append(0)
 
     # Handle sequence alignments - fall back alignment based on residue numbering.
     else:
