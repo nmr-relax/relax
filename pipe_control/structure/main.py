@@ -178,7 +178,7 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
         strings, gaps = msa_residue_numbers(one_letter_codes, residue_numbers=res_num_list)
 
     # Create the residue skipping data structure. 
-    skip = msa_residue_skipping(sequences=one_letter_codes, strings=strings, gaps=gaps)
+    skip = msa_residue_skipping(strings=strings, gaps=gaps)
 
     # Assemble and return the atomic coordinates and common atom information.
     coord, mol_name_common, res_name_common, res_num_common, atom_name_common, element_common = assemble_coord_array(atom_pos=atom_pos, mol_names=mol_names, res_names=res_names, res_nums=res_nums, atom_names=atom_names, elements=elements, sequences=one_letter_codes, skip=skip)

@@ -293,11 +293,9 @@ def msa_residue_numbers(sequences, residue_numbers=None):
     return strings, gaps
 
 
-def msa_residue_skipping(sequences=None, strings=None, gaps=None):
+def msa_residue_skipping(strings=None, gaps=None):
     """Create the residue skipping data structure. 
 
-    @keyword sequences: The list of residue sequences as one letter codes.
-    @type sequences:    list of str
     @keyword strings:   The list of alignment strings.
     @type strings:      list of str
     @keyword gaps:      The gap matrix.
@@ -309,12 +307,12 @@ def msa_residue_skipping(sequences=None, strings=None, gaps=None):
 
     # initialise.
     skip = []
-    num_mols = len(sequences)
+    num_mols = len(strings)
 
     # Loop over each molecule.
     for mol_index in range(num_mols):
         skip.append([])
-        for i in range(len(sequences[0])):
+        for i in range(len(strings[0])):
             # Create the empty residue skipping data structure.
             if strings == None:
                 skip[mol_index].append(0)
