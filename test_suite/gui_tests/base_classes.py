@@ -255,5 +255,14 @@ class GuiTestCase(TestCase):
         # Reset relax.
         reset()
 
+        # Destroy all user function windows to save memory (specifically to avoid the 10,000 USER Object limit in MS Windows).
+        for name in uf_store:
+            if hasattr(uf_store[name], 'page') and uf_store[name].page != None:
+                uf_store[name].page.Destroy()
+                del uf_store[name].page
+            if uf_store[name].wizard != None:
+                uf_store[name].wizard.Close()
+                uf_store[name].wizard = None
+
         # Flush all wx events again to allow the reset event to propagate throughout the GUI and the execution lock to be released before the next test starts.
         wx.Yield()
