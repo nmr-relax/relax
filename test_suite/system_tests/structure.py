@@ -70,7 +70,7 @@ class Structure(SystemTestCase):
         self.interpreter.reset()
 
         # Path of the PDB file.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'sphere'
 
         # Create a data pipe for the reference structure, then load it.
         self.interpreter.pipe.create('ref', 'N-state')
@@ -219,7 +219,7 @@ class Structure(SystemTestCase):
         self.interpreter.reset()
 
         # Path of the PDB file.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'sphere'
 
         # Create a data pipe for the reference structure, then load it.
         self.interpreter.pipe.create('ref', 'N-state')
@@ -1466,7 +1466,7 @@ class Structure(SystemTestCase):
         ds.tmpfile = mktemp()
 
         # The diffusion type and directory (used by the script).
-        ds.diff_dir = 'spheroid'
+        ds.diff_dir = 'spheroid_prolate'
         ds.diff_type = 'oblate'
 
         # Execute the script.
@@ -2001,7 +2001,7 @@ class Structure(SystemTestCase):
         ds.tmpfile = mktemp()
 
         # The diffusion type (used by the script).
-        ds.diff_dir = 'spheroid'
+        ds.diff_dir = 'spheroid_prolate'
         ds.diff_type = 'prolate'
 
         # Execute the script.
@@ -3054,7 +3054,7 @@ class Structure(SystemTestCase):
         """Test the deletion of a single atom using the U{structure.delete user function<http://www.nmr-relax.com/manual/structure_delete.html>}"""
 
         # Load the test structure.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'sphere'
         self.interpreter.structure.read_pdb(file='uniform.pdb', dir=path)
 
         # Delete some atoms, testing different combinations.
@@ -3481,7 +3481,7 @@ class Structure(SystemTestCase):
         """
 
         # Path of the PDB file.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'sphere'
 
         # Load the PDB twice as different molecules.
         self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_mol_name='X')
