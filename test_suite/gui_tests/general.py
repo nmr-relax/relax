@@ -73,7 +73,7 @@ class General(GuiTestCase):
         self.assertEqual(cdp_name(), 'mf')
 
 
-    def xest_bug_23187_residue_delete_gui(self):
+    def test_bug_23187_residue_delete_gui(self):
         """Catch U{bug #23187<https://gna.org/bugs/?23187>}, deleting residue in GUI, and then open spin viewer crashes relax."""
 
         # Mf tab:  Simulate the new analysis wizard.
