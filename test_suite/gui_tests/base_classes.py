@@ -303,6 +303,6 @@ class GuiTestCase(TestCase):
         for window in wx.GetTopLevelWindows():
             print("    Window: %s" % window)
             if isinstance(window, Wiz_window):
-                print("        Wizard name: %s" % window.name)
+                print("        Wizard title: %s" % window.title)
                 print("        Wizard pages: %s" % window._pages)
         print("\n\n\n")
