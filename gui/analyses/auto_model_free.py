@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -562,6 +562,11 @@ class Auto_model_free(Base_analysis):
         # Clean up the relaxation data list object.
         self.relax_data.delete()
 
+        # Destroy the dipole-dipole interaction wizard.
+        if hasattr(self, 'dipole_wizard'):
+            self.dipole_wizard.Destroy()
+            del self.dipole_wizard
+
 
     def execute(self, event=None):
         """Set up, execute, and process the automatic model-free protocol.
@@ -678,6 +683,10 @@ class Auto_model_free(Base_analysis):
 
         # Change the cursor to busy.
         wx.BeginBusyCursor()
+
+        # Destroy the dipole-dipole interaction wizard, if it exists.
+        if hasattr(self, 'dipole_wizard'):
+            self.dipole_wizard.Destroy()
 
         # Create the wizard.
         self.dipole_wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=750, title="Dipole-dipole interaction setup")
