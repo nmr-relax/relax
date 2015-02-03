@@ -151,6 +151,24 @@ class GuiTestCase(TestCase):
             pass
 
 
+    def clean_up_windows(self):
+        """Kill all windows."""
+
+        # Destroy all user function windows to save memory (specifically to avoid the 10,000 USER Object limit in MS Windows).
+        for name in uf_store:
+            if hasattr(uf_store[name], 'page') and uf_store[name].page != None:
+                uf_store[name].page.Destroy()
+                del uf_store[name].page
+            if uf_store[name].wizard != None:
+                uf_store[name].wizard.Close()
+                uf_store[name].wizard = None
+
+        # Kill the spin viewer window.
+        if hasattr(self.app.gui, 'spin_viewer'):
+            self.app.gui.spin_viewer.Destroy()
+            del self.app.gui.spin_viewer
+
+
     def new_analysis_wizard(self, analysis_type=None, analysis_name=None, pipe_name=None, pipe_bundle=None):
         """Simulate the new analysis wizard, and return the analysis page.
 
@@ -255,14 +273,11 @@ class GuiTestCase(TestCase):
         # Reset relax.
         reset()
 
-        # Destroy all user function windows to save memory (specifically to avoid the 10,000 USER Object limit in MS Windows).
-        for name in uf_store:
-            if hasattr(uf_store[name], 'page') and uf_store[name].page != None:
-                uf_store[name].page.Destroy()
-                del uf_store[name].page
-            if uf_store[name].wizard != None:
-                uf_store[name].wizard.Close()
-                uf_store[name].wizard = None
+        # Get the wx app.
+        self.app = wx.GetApp()
+
+        # Kill all windows.
+        wx.CallAfter(self.clean_up_windows)
 
         # Flush all wx events again to allow the reset event to propagate throughout the GUI and the execution lock to be released before the next test starts.
         wx.Yield()
