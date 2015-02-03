@@ -308,7 +308,7 @@ class Uf_object(object):
             parent = app.gui
 
         # Create the wizard dialog.
-        self.wizard = Wiz_window(parent=parent, size_x=self._size[0], size_y=self._size[1], title=self._title)
+        self.wizard = Wiz_window(parent=parent, size_x=self._size[0], size_y=self._size[1], title="The %s user function"%self._name)
 
         # Create the page.
         self.page = self.create_page(self.wizard, sync=self._sync)
