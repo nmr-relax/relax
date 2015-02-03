@@ -567,6 +567,10 @@ class Auto_model_free(Base_analysis):
             self.dipole_wizard.Destroy()
             del self.dipole_wizard
 
+        # Destroy the mode selection window.
+        self.mode_win.Destroy()
+        del self.mode_win
+
 
     def execute(self, event=None):
         """Set up, execute, and process the automatic model-free protocol.
