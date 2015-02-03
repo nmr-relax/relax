@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -387,6 +387,7 @@ class Wiz_window(wx.Dialog):
         self._size_x = size_x
         self._size_y = size_y
         self._border = border
+        self.title = title
 
         # Execute the base class method.
         wx.Dialog.__init__(self, parent, id=-1, title=title, style=style)
