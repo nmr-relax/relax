@@ -167,6 +167,21 @@ class GuiTestCase(TestCase):
             self.app.gui.spin_viewer.Destroy()
             del self.app.gui.spin_viewer
 
+        # Kill the pipe editor window.
+        if hasattr(self.app.gui, 'pipe_editor'):
+            self.app.gui.pipe_editor.Destroy()
+            del self.app.gui.pipe_editor
+
+        # Kill the results viewer window.
+        if hasattr(self.app.gui, 'results_viewer'):
+            self.app.gui.results_viewer.Destroy()
+            del self.app.gui.results_viewer
+
+        # Kill the prompt window.
+        if hasattr(self.app.gui, 'relax_prompt'):
+            self.app.gui.relax_prompt.Destroy()
+            del self.app.gui.relax_prompt
+
 
     def new_analysis_wizard(self, analysis_type=None, analysis_name=None, pipe_name=None, pipe_bundle=None):
         """Simulate the new analysis wizard, and return the analysis page.
