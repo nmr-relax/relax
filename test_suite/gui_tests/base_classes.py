@@ -168,6 +168,11 @@ class GuiTestCase(TestCase):
             self.app.gui.spin_viewer.Destroy()
             del self.app.gui.spin_viewer
 
+        # Kill all other windows.
+        for window in wx.GetTopLevelWindows():
+            if window:
+                window.Destroy()
+
 
     def new_analysis_wizard(self, analysis_type=None, analysis_name=None, pipe_name=None, pipe_bundle=None):
         """Simulate the new analysis wizard, and return the analysis page.
