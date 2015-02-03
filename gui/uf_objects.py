@@ -249,6 +249,21 @@ class Uf_object(object):
         self._uf_id = wx.NewId()
 
 
+    def Destroy(self):
+        """Cleanly destroy the user function GUI elements."""
+
+        # First flush all events.
+        wx.Yield()
+
+        # Destroy the wizard, if it exists.
+        if self.wizard != None:
+            self.wizard.Destroy()
+            self.wizard = None
+
+        # Destroy the user function page.
+        del self.page
+
+
     def create_page(self, wizard=None, sync=None, execute=True):
         """Create the user function wizard page GUI object.
 
