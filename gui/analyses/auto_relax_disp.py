@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2013-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -404,6 +404,11 @@ class Auto_relax_disp(Base_analysis):
         # Clean up the peak intensity object.
         self.peak_intensity.delete()
 
+        # Destroy the peak intensity wizard, if it exists.
+        if hasattr(self, 'peak_wizard'):
+            self.peak_wizard.Destroy()
+            del self.peak_wizard
+
 
     def execute(self, event):
         """Set up, execute, and process the automatic Rx analysis.
@@ -522,6 +527,10 @@ class Auto_relax_disp(Base_analysis):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Destroy the peak intensity wizard, if it exists.
+        if hasattr(self, 'peak_wizard'):
+            self.peak_wizard.Destroy()
 
         # A new wizard instance.
         self.peak_wizard = Peak_intensity_wizard(relax_disp=True)
