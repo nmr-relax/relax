@@ -571,6 +571,12 @@ class Auto_model_free(Base_analysis):
         self.mode_win.Destroy()
         del self.mode_win
 
+        # Destroy the model list windows.
+        self.local_tm_model_field.model_win.Destroy()
+        del self.local_tm_model_field
+        self.mf_model_field.model_win.Destroy()
+        del self.mf_model_field
+
 
     def execute(self, event=None):
         """Set up, execute, and process the automatic model-free protocol.
