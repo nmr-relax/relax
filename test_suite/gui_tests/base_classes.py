@@ -160,12 +160,7 @@ class GuiTestCase(TestCase):
 
         # Destroy all user function windows to save memory (specifically to avoid the 10,000 USER Object limit in MS Windows).
         for name in uf_store:
-            if uf_store[name].wizard != None:
-                uf_store[name].wizard.Close()
-                uf_store[name].wizard = None
-            if hasattr(uf_store[name], 'page') and uf_store[name].page != None:
-                uf_store[name].page.Destroy()
-                del uf_store[name].page
+            uf_store[name].Destroy()
 
         # Kill the spin viewer window.
         if hasattr(self.app.gui, 'spin_viewer'):
