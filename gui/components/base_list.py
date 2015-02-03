@@ -371,7 +371,9 @@ class Base_list(object):
         # Pop up the menu.
         if status.show_gui:
             self.element.PopupMenu(menu)
-            menu.Destroy()
+
+        # Cleanup.
+        menu.Destroy()
 
 
     def resize(self, event):
