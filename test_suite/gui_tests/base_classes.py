@@ -131,6 +131,9 @@ class GuiTestCase(TestCase):
         # Restore the synchronous or asynchronous operation of the user functions so the GUI can return to normal.
         status.gui_uf_force_sync = False
 
+        # Destroy the user function object.
+        uf.Destroy()
+
 
     def check_exceptions(self):
         """Check that no exception has occurred."""
