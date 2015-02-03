@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2013-2014 Troels E. Linnet                                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -119,6 +119,25 @@ class Spin_view_window(wx.Frame):
 
         # The user function menus.
         self.menu_uf_ids = build_uf_menus(parent=self, menubar=self.menubar)
+
+
+    def Destroy(self, event=None):
+        """Cleanly destroy the spin viewer window.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # First unregister the methods from the observers.
+        status.observers.gui_uf.unregister(self.name)
+        status.observers.pipe_alteration.unregister(self.name)
+        status.observers.exec_lock.unregister(self.name)
+
+        # Destroy all children of the window.
+        super(Spin_view_window, self).DestroyChildren()
+
+        # Destroy the spin viewer window.
+        super(Spin_view_window, self).Destroy()
 
 
     def Show(self, show=True):
