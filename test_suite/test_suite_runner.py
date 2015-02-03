@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -140,7 +140,7 @@ class Test_suite_runner:
             title(file=sys.stdout, text='GUI tests')
 
             # Run the tests.
-            if dep_check.wx_module and dep_check.version_comparison(dep_check.wx_version, '2.9') >= 0:
+            if dep_check.wx_module:
                 # Set up the GUI if needed (i.e. not in GUI mode already).
                 app = wx.GetApp()
                 if app == None:
@@ -166,10 +166,7 @@ class Test_suite_runner:
 
             # No wx module installed.
             else:
-                if dep_check.wx_module and dep_check.version_comparison(dep_check.wx_version, '2.9') == -1:
-                    print("All GUI tests skipped to avoid segfaults due to bugs in wxPython versions <= 2.8.\n")
-                else:
-                    print("All GUI tests skipped due to the missing/broken wx module.\n")
+                print("All GUI tests skipped due to the missing/broken wx module.\n")
                 self.gui_result = 'skip'
 
             # Print out a summary of the test suite.
