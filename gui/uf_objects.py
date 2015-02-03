@@ -261,6 +261,8 @@ class Uf_object(object):
             self.wizard = None
 
         # Destroy the user function page.
+        if hasattr(self, 'page') and self.page != None:
+            self.page.Destroy()
         del self.page
 
 
