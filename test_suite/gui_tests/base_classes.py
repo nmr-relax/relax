@@ -173,14 +173,9 @@ class GuiTestCase(TestCase):
             del self.app.gui.pipe_editor
 
         # Kill the results viewer window.
-        #if hasattr(self.app.gui, 'results_viewer'):
-        #    self.app.gui.results_viewer.Destroy()
-        #    del self.app.gui.results_viewer
-
-        # Kill the prompt window.
-        if hasattr(self.app.gui, 'relax_prompt'):
-            self.app.gui.relax_prompt.Destroy()
-            del self.app.gui.relax_prompt
+        if hasattr(self.app.gui, 'results_viewer'):
+            self.app.gui.results_viewer.Destroy()
+            del self.app.gui.results_viewer
 
 
     def new_analysis_wizard(self, analysis_type=None, analysis_name=None, pipe_name=None, pipe_bundle=None):
@@ -289,6 +284,13 @@ class GuiTestCase(TestCase):
 
         # Get the wx app.
         self.app = wx.GetApp()
+
+        # Close all windows to unregister the observer objects.
+        if hasattr(self.app.gui, 'pipe_editor'):
+            self.app.gui.pipe_editor.Close()
+        if hasattr(self.app.gui, 'results_viewer'):
+            self.app.gui.results_viewer.Close()
+        wx.Yield()
 
         # Kill all windows.
         wx.CallAfter(self.clean_up_windows)
