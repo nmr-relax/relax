@@ -255,14 +255,21 @@ class Uf_object(object):
         # First flush all events.
         wx.Yield()
 
+        # Destroy the user function page.
+        if hasattr(self, 'page'):
+            # Loop over the user function arguments.
+            for key in self.page.uf_args:
+                # Destroy any selection windows.
+                if hasattr(self.page.uf_args[key], 'sel_win'):
+                    self.page.uf_args[key].sel_win.Destroy()
+
+            # Delete the page object.
+            del self.page
+
         # Destroy the wizard, if it exists.
         if self.wizard != None:
             self.wizard.Destroy()
             self.wizard = None
-
-        # Destroy the user function page.
-        if hasattr(self, 'page'):
-            del self.page
 
 
     def create_page(self, wizard=None, sync=None, execute=True):
