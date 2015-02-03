@@ -176,21 +176,25 @@ class GuiTestCase(TestCase):
         # Kill the spin viewer window.
         if hasattr(self.app.gui, 'spin_viewer'):
             self.app.gui.spin_viewer.Destroy()
+            wx.Yield()
             del self.app.gui.spin_viewer
 
         # Kill the pipe editor window.
         if hasattr(self.app.gui, 'pipe_editor'):
             self.app.gui.pipe_editor.Destroy()
+            wx.Yield()
             del self.app.gui.pipe_editor
 
         # Kill the results viewer window.
         if hasattr(self.app.gui, 'results_viewer'):
             self.app.gui.results_viewer.Destroy()
+            wx.Yield()
             del self.app.gui.results_viewer
 
         # Kill the relax prompt window.
         if hasattr(self.app.gui, 'relax_prompt'):
             self.app.gui.relax_prompt.Destroy()
+            wx.Yield()
             del self.app.gui.relax_prompt
 
 
