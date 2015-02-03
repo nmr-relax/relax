@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -366,11 +366,9 @@ class Wiz_window(wx.Dialog):
     TEXT_SKIP = " Skip"
 
 
-    def __init__(self, name=None, parent=None, size_x=400, size_y=400, title='', border=10, style=wx.DEFAULT_DIALOG_STYLE):
+    def __init__(self, parent=None, size_x=400, size_y=400, title='', border=10, style=wx.DEFAULT_DIALOG_STYLE):
         """Set up the window.
 
-        @keyword name:      The identifying name of the wizard window.
-        @type name:         str or None
         @keyword parent:    The parent window.
         @type parent:       wx.Window instance
         @keyword size_x:    The width of the wizard.
@@ -389,7 +387,6 @@ class Wiz_window(wx.Dialog):
         self._size_x = size_x
         self._size_y = size_y
         self._border = border
-        self.name = name
 
         # Execute the base class method.
         wx.Dialog.__init__(self, parent, id=-1, title=title, style=style)
