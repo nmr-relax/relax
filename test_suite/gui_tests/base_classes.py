@@ -169,11 +169,13 @@ class GuiTestCase(TestCase):
 
         # Kill the pipe editor window.
         if hasattr(self.app.gui, 'pipe_editor'):
+            self.app.gui.pipe_editor.handler_close()
             self.app.gui.pipe_editor.Destroy()
             del self.app.gui.pipe_editor
 
         # Kill the results viewer window.
         if hasattr(self.app.gui, 'results_viewer'):
+            self.app.gui.results_viewer.handler_close()
             self.app.gui.results_viewer.Destroy()
             del self.app.gui.results_viewer
 
