@@ -413,6 +413,11 @@ class Auto_relax_disp(Base_analysis):
         self.model_field.model_win.Destroy()
         del self.model_field
 
+        # Destroy the missing data dialog, if present.
+        if hasattr(self, 'missing_data'):
+            self.missing_data.Destroy()
+            del self.missing_data
+
 
     def execute(self, event):
         """Set up, execute, and process the automatic Rx analysis.
@@ -441,7 +446,7 @@ class Auto_relax_disp(Base_analysis):
 
         # Missing data.
         if len(missing):
-            Missing_data(missing)
+            self.missing_data = Missing_data(missing)
             return
 
         # Model mismatch.

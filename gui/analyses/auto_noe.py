@@ -232,6 +232,11 @@ class Auto_noe(Base_analysis):
             self.peak_wizard.Destroy()
             del self.peak_wizard
 
+        # Destroy the missing data dialog, if present.
+        if hasattr(self, 'missing_data'):
+            self.missing_data.Destroy()
+            del self.missing_data
+
 
     def execute(self, event):
         """Set up, execute, and process the automatic Rx analysis.
@@ -260,7 +265,7 @@ class Auto_noe(Base_analysis):
 
         # Missing data.
         if len(missing):
-            Missing_data(missing)
+            self.missing_data = Missing_data(missing)
             return
 
         # Display the relax controller, and go to the end of the log window.

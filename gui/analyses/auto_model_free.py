@@ -577,6 +577,11 @@ class Auto_model_free(Base_analysis):
         self.mf_model_field.model_win.Destroy()
         del self.mf_model_field
 
+        # Destroy the missing data dialog, if present.
+        if hasattr(self, 'missing_data'):
+            self.missing_data.Destroy()
+            del self.missing_data
+
 
     def execute(self, event=None):
         """Set up, execute, and process the automatic model-free protocol.
@@ -605,7 +610,7 @@ class Auto_model_free(Base_analysis):
 
         # Missing data.
         if len(missing):
-            Missing_data(missing)
+            self.missing_data = Missing_data(missing)
             return
 
         # Display the relax controller, and go to the end of the log window.
