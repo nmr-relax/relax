@@ -106,6 +106,23 @@ class Results_viewer(wx.Frame):
         self.name = 'results viewer'
 
 
+    def Destroy(self, event):
+        """Cleanly destroy the window.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Unregister the methods from the observers to avoid unnecessary updating.
+        status.observers.gui_uf.unregister(self.name)
+        status.observers.pipe_alteration.unregister(self.name)
+        status.observers.result_file.unregister(self.name)
+        status.observers.exec_lock.unregister(self.name)
+
+        # Call the parent Destroy() method.
+        super(Results_viewer, self).Destroy()
+
+
     def Show(self, show=True):
         """Change the behaviour of showing the window to update the content.
 

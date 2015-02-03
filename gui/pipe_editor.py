@@ -104,6 +104,20 @@ class Pipe_editor(wx.Frame):
         self.update_grid()
 
 
+    def Destroy(self, event):
+        """Cleanly destroy the window.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Unregister the methods from the observers to avoid unnecessary updating.
+        self.observer_setup(register=False)
+
+        # Call the parent Destroy() method.
+        super(Pipe_editor, self).Destroy()
+
+
     def activate(self):
         """Activate or deactivate certain elements in response to the execution lock."""
 
