@@ -824,6 +824,9 @@ class Wiz_window(wx.Dialog):
     def Destroy(self):
         """Override the default wx.Dialog.Destroy() method."""
 
+        # Call the parent method to close the dialog.
+        self.Close()
+
         # Loop over each page, destroying it and all its elements to avoid memory leaks.
         for i in range(self._num_pages):
             # Destroy the buttons.
@@ -838,8 +841,9 @@ class Wiz_window(wx.Dialog):
                 self._pages[i] = None
 
         # Call the parent method to destroy the dialog.
-        wx.Dialog.Destroy(self)
-
+        super(Wiz_window, self).DestroyChildren()
+        super(Wiz_window, self).Destroy()
+ 
 
     def add_page(self, panel, apply_button=True, skip_button=False, exec_on_next=True, proceed_on_error=True, uf_flush=False):
         """Add a new page to the wizard.
