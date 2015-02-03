@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -41,12 +41,7 @@ class Dead_uf_pages(GuiTestCase):
         """Test a failure detected via the molecule.create user function."""
 
         # First try to create a molecule (this will fail due to no data pipes being present).
-        try:
-            # Call the object.
-            self._execute_uf(uf_name='molecule.create', mol_name='x', mol_type='protein')
-        except RelaxNoPipeError:
-            instance = sys.exc_info()[1]
-            sys.stderr.write(instance.__str__())
+        self._execute_uf(uf_name='molecule.create', mol_name='x', mol_type='protein')
 
         # Create a data pipe.
         self._execute_uf(uf_name='pipe.create', pipe_name='test', pipe_type='mf')
