@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -226,6 +226,11 @@ class Auto_noe(Base_analysis):
 
         # Clean up the peak intensity object.
         self.peak_intensity.delete()
+
+        # Destroy the peak intensity wizard, if it exists.
+        if hasattr(self, 'peak_wizard'):
+            self.peak_wizard.Destroy()
+            del self.peak_wizard
 
 
     def execute(self, event):
