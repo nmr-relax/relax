@@ -304,6 +304,10 @@ class Auto_noe(Base_analysis):
         @type event:    wx event
         """
 
+        # Destroy the peak intensity wizard, if it exists.
+        if hasattr(self, 'peak_wizard'):
+            self.peak_wizard.Destroy()
+
         # A new wizard instance.
         self.peak_wizard = Peak_intensity_wizard(noe=True)
 
