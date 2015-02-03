@@ -167,14 +167,6 @@ class GuiTestCase(TestCase):
             self.app.gui.spin_viewer.Destroy()
             del self.app.gui.spin_viewer
 
-        # Print out a list of all living windows - to help ensure that custom Close() and Destroy() methods are cleaning up all objects.
-        print("\n\nList of remaining wx Windows (this should only be the main GUI window and the relax controller):")
-        for window in wx.GetTopLevelWindows():
-            print("    Window: %s" % window)
-            if isinstance(window, Wiz_window):
-                print("        Wizard pages: %s" % window._pages)
-        print("\n\n\n")
-
 
     def new_analysis_wizard(self, analysis_type=None, analysis_name=None, pipe_name=None, pipe_bundle=None):
         """Simulate the new analysis wizard, and return the analysis page.
@@ -288,3 +280,11 @@ class GuiTestCase(TestCase):
 
         # Flush all wx events again to allow the reset event to propagate throughout the GUI and the execution lock to be released before the next test starts.
         wx.Yield()
+
+        # Print out a list of all living windows to help ensure that custom Close() and Destroy() methods are cleaning up all objects.
+        print("\n\nList of all living GUI elements - this must only include the main GUI window and the relax controller:")
+        for window in wx.GetTopLevelWindows():
+            print("    Window: %s" % window)
+            if isinstance(window, Wiz_window):
+                print("        Wizard pages: %s" % window._pages)
+        print("\n\n\n")
