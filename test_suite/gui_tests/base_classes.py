@@ -177,6 +177,11 @@ class GuiTestCase(TestCase):
             self.app.gui.results_viewer.Destroy()
             del self.app.gui.results_viewer
 
+        # Kill the relax prompt window.
+        if hasattr(self.app.gui, 'relax_prompt'):
+            self.app.gui.relax_prompt.Destroy()
+            del self.app.gui.relax_prompt
+
 
     def new_analysis_wizard(self, analysis_type=None, analysis_name=None, pipe_name=None, pipe_bundle=None):
         """Simulate the new analysis wizard, and return the analysis page.
@@ -290,6 +295,8 @@ class GuiTestCase(TestCase):
             self.app.gui.pipe_editor.Close()
         if hasattr(self.app.gui, 'results_viewer'):
             self.app.gui.results_viewer.Close()
+        if hasattr(self.app.gui, 'relax_prompt'):
+            self.app.gui.relax_prompt.Close()
         wx.Yield()
 
         # Kill all windows.
