@@ -133,6 +133,11 @@ class Spin_view_window(wx.Frame):
         status.observers.pipe_alteration.unregister(self.name)
         status.observers.exec_lock.unregister(self.name)
 
+        # Destroy the spin loading wizard, if it exists.
+        if hasattr(self, 'wizard'):
+            self.wizard.Destroy()
+            del self.wizard
+
         # Destroy all children of the window.
         super(Spin_view_window, self).DestroyChildren()
 
@@ -224,6 +229,10 @@ class Spin_view_window(wx.Frame):
 
         # Change the cursor to busy.
         wx.BeginBusyCursor()
+
+        # Destroy the spin loading wizard, if it exists.
+        if hasattr(self, 'wizard'):
+            self.wizard.Destroy()
 
         # Initialise a wizard.
         self.wizard = Wiz_window(parent=self, size_x=1000, size_y=800, title="Load spins")
