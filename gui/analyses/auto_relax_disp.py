@@ -409,6 +409,10 @@ class Auto_relax_disp(Base_analysis):
             self.peak_wizard.Destroy()
             del self.peak_wizard
 
+        # Destroy the model list windows.
+        self.model_field.model_win.Destroy()
+        del self.model_field
+
 
     def execute(self, event):
         """Set up, execute, and process the automatic Rx analysis.
