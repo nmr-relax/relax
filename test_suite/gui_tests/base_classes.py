@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,6 +33,7 @@ import wx
 from data_store import Relax_data_store; ds = Relax_data_store()
 from gui.string_conv import str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+from gui.wizards.wiz_objects import Wiz_window
 from lib.compat import queue
 from lib.errors import RelaxError
 from pipe_control.reset import reset
