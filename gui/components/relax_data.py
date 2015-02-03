@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -372,6 +372,10 @@ class Relax_data_list(Base_list):
             title = "The Bruker Dynamics Centre data reading wizard"
         else:
             title = "The relaxation data reading wizard"
+
+        # Destroy any pre-existing wizards.
+        if hasattr(self, 'wizard'):
+            self.wizard.Destroy()
 
         # Initialise a wizard.
         self.wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=800, title=title)
