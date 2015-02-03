@@ -173,6 +173,7 @@ class GuiTestCase(TestCase):
             print("    Window: %s" % window)
             if isinstance(window, Wiz_window):
                 print("        Wizard pages: %s" % window._pages)
+        print("\n\n\n")
 
 
     def new_analysis_wizard(self, analysis_type=None, analysis_name=None, pipe_name=None, pipe_bundle=None):
