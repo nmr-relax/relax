@@ -171,10 +171,12 @@ class GuiTestCase(TestCase):
             self.app.gui.spin_viewer.Destroy()
             del self.app.gui.spin_viewer
 
-        # Kill all other windows.
+        # Print out a list of all living windows - to help ensure that custom Close() and Destroy() methods are cleaning up all objects.
+        print("\n\nList of remaining wx Windows (this should only be the main GUI window and the relax controller):")
         for window in wx.GetTopLevelWindows():
-            if window:
-                window.Destroy()
+            print("    Window: %s" % window)
+            if isinstance(window, Wiz_window):
+                print("        Wizard pages: %s" % window._pages)
 
 
     def new_analysis_wizard(self, analysis_type=None, analysis_name=None, pipe_name=None, pipe_bundle=None):
