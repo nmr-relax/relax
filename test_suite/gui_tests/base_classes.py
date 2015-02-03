@@ -31,6 +31,8 @@ import wx
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
+from gui.controller import Controller
+from gui.relax_gui import Main
 from gui.string_conv import str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.wiz_objects import Wiz_window
@@ -307,9 +309,22 @@ class GuiTestCase(TestCase):
 
         # Print out a list of all living windows to help ensure that custom Close() and Destroy() methods are cleaning up all objects.
         print("\n\nList of all living GUI elements - this must only include the main GUI window and the relax controller:")
+        all_destroyed = True
         for window in wx.GetTopLevelWindows():
+            # Printout.
             print("    Window: %s" % window)
             if isinstance(window, Wiz_window):
                 print("        Wizard title: %s" % window.title)
                 print("        Wizard pages: %s" % window._pages)
+
+            # Skip the main GUI window and the relax controller.
+            if isinstance(window, Main) or isinstance(window, Controller):
+                continue
+
+            # Failure of memory management.
+            all_destroyed = False
         print("\n\n\n")
+
+        # Memory management check.
+        if not all_destroyed:
+            raise RelaxError("Memory management failure - not all top level windows have been destroyed.")
