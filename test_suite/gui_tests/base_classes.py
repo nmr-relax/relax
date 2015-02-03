@@ -160,6 +160,15 @@ class GuiTestCase(TestCase):
     def clean_up_windows(self):
         """Kill all windows."""
 
+        # Close all windows to unregister the observer objects.
+        if hasattr(self.app.gui, 'pipe_editor'):
+            self.app.gui.pipe_editor.Close()
+        if hasattr(self.app.gui, 'results_viewer'):
+            self.app.gui.results_viewer.Close()
+        if hasattr(self.app.gui, 'relax_prompt'):
+            self.app.gui.relax_prompt.Close()
+        wx.Yield()
+
         # Destroy all user function windows to save memory (specifically to avoid the 10,000 USER Object limit in MS Windows).
         for name in uf_store:
             uf_store[name].Destroy()
@@ -292,20 +301,8 @@ class GuiTestCase(TestCase):
         # Get the wx app.
         self.app = wx.GetApp()
 
-        # Close all windows to unregister the observer objects.
-        if hasattr(self.app.gui, 'pipe_editor'):
-            self.app.gui.pipe_editor.Close()
-        if hasattr(self.app.gui, 'results_viewer'):
-            self.app.gui.results_viewer.Close()
-        if hasattr(self.app.gui, 'relax_prompt'):
-            self.app.gui.relax_prompt.Close()
-        wx.Yield()
-
         # Kill all windows.
-        wx.CallAfter(self.clean_up_windows)
-
-        # Flush all wx events again to allow the reset event to propagate throughout the GUI and the execution lock to be released before the next test starts.
-        wx.Yield()
+        self.clean_up_windows()
 
         # Print out a list of all living windows to help ensure that custom Close() and Destroy() methods are cleaning up all objects.
         print("\n\nList of all living GUI elements - this must only include the main GUI window and the relax controller:")
