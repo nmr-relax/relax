@@ -104,7 +104,7 @@ class Pipe_editor(wx.Frame):
         self.update_grid()
 
 
-    def Destroy(self, event):
+    def Destroy(self, event=None):
         """Cleanly destroy the window.
 
         @param event:   The wx event.

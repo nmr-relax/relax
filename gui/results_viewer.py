@@ -106,7 +106,7 @@ class Results_viewer(wx.Frame):
         self.name = 'results viewer'
 
 
-    def Destroy(self, event):
+    def Destroy(self, event=None):
         """Cleanly destroy the window.
 
         @param event:   The wx event.
