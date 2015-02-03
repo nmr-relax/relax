@@ -170,7 +170,7 @@ class Analysis_controller:
         return ds.relax_gui.analyses[self._current].analysis_type
 
 
-    def delete_all(self):
+    def delete_all(self, reset=False):
         """Remove all analyses."""
 
         # Debugging set up.
@@ -196,7 +196,7 @@ class Analysis_controller:
             # Remove the last analysis, until there is nothing left.
             if status.debug:
                 print("debug> %s:  Deleting the analysis at index %s." % (full_name, self._num_analyses-1))
-            self.delete_analysis(self._num_analyses-1)
+            self.delete_analysis(self._num_analyses-1, reset=reset)
 
         # Notify the observers of the change.
         if status.debug:
@@ -204,7 +204,7 @@ class Analysis_controller:
         status.observers.gui_analysis.notify()
 
 
-    def delete_analysis(self, index):
+    def delete_analysis(self, index, reset=False):
         """Delete the analysis tab and data store corresponding to the index.
 
         The order of these operations is very important due to the notification of observer objects and the updates, synchronisations, etc. that follow.  If the program debugging mode is on, then printouts at each stage will occur to allow the following of the code and observer object notifications.
@@ -249,20 +249,22 @@ class Analysis_controller:
             print("debug> %s:  Deleting the analysis GUI object." % full_name)
         self._analyses.pop(index)
 
-        # Store the pipe bundle.
-        pipe_bundle = ds.relax_gui.analyses[index].pipe_bundle
+        # Data store clean up.
+        if not reset:
+            # Store the pipe bundle.
+            pipe_bundle = ds.relax_gui.analyses[index].pipe_bundle
 
-        # Delete the data store object.
-        if status.debug:
-            print("debug> %s:  Deleting the data store object." % full_name)
-        ds.relax_gui.analyses.pop(index)
+            # Delete the data store object.
+            if status.debug:
+                print("debug> %s:  Deleting the data store object." % full_name)
+            ds.relax_gui.analyses.pop(index)
 
-        # Delete all data pipes associated with the analysis.
-        for pipe in pipes.pipe_names():
-            if pipes.get_bundle(pipe) == pipe_bundle:
-                if status.debug:
-                    print("debug> %s:  Deleting the data pipe '%s' from the '%s' bundle." % (full_name, pipe, pipe_bundle))
-                pipes.delete(pipe)
+            # Delete all data pipes associated with the analysis.
+            for pipe in pipes.pipe_names():
+                if pipes.get_bundle(pipe) == pipe_bundle:
+                    if status.debug:
+                        print("debug> %s:  Deleting the data pipe '%s' from the '%s' bundle." % (full_name, pipe, pipe_bundle))
+                    pipes.delete(pipe)
 
         # No more analyses, so in the initial state.
         if self._num_analyses == 0:
@@ -692,38 +694,8 @@ class Analysis_controller:
     def post_reset(self):
         """Post relax data store reset event handler."""
 
-        # Debugging set up.
-        if status.debug:
-            fn_name = sys._getframe().f_code.co_name
-            mod_name = inspect.getmodule(inspect.stack()[1][0]).__name__
-            class_name = self.__class__.__name__
-            full_name = "%s.%s.%s" % (mod_name, class_name, fn_name)
-            print("\n\n")
-            print("debug> %s:  Deleting all analyses." % full_name)
-
-        # Unregister all observer objects prior to analysis deletion.  This is to prevent queued wx events being sent to dead or non-existent objects.
-        if status.debug:
-            print("debug> %s:  Unregistering all methods with the observer objects." % full_name)
-        for i in range(self._num_analyses):
-            self._analyses[i].observer_register(remove=True)
-
-        # Delete all tabs.
-        while self._num_analyses:
-            # The index of the tab to remove.
-            index = self._num_analyses - 1
-
-            # Delete the tab.
-            if hasattr(self, 'notebook'):
-                self.notebook.DeletePage(index)
-
-            # Delete the tab object.
-            self._analyses.pop(index)
-
-            # Decrement the number of analyses.
-            self._num_analyses -= 1
-
-        # Set the initial state.
-        self.set_init_state()
+        # Defer to the delete_all() method.
+        self.delete_all(reset=True)
 
 
     def set_init_state(self):
