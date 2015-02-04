@@ -3,7 +3,7 @@
 
 # Python module imports.
 from math import exp, sqrt
-from numpy import array, dot, eye, float64, transpose
+from numpy import array, dot, eye, transpose
 from numpy.linalg import inv
 from numdifftools import Jacobian
 
