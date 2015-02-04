@@ -35,157 +35,28 @@ import wx
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from gui import relax_gui
-from gui.controller import Controller
-from gui.fonts import font
 from gui.interpreter import Interpreter
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from lib.errors import RelaxError
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
-
-
-class Controller:
-    """Dummy relax controller."""
-
-    def __init__(self):
-        self.log_panel = Log_panel()
+# Base module imports.
+from GUI_base import Testing_frame
 
 
 
-class Log_panel:
-    """Dummy relax controller log panel."""
-
-    def on_goto_end(self, arg1):
-        """Dummy function."""
-
-
-
-class Testing_frame(wx.Frame):
+class Frame(Testing_frame):
     """Testing frame."""
 
-    def __init__(self, parent, title):
-        """Set up a minimal relax GUI."""
-
-        # Initialise the frame.
-        wx.Frame.__init__(self, parent, title=title, size=(200,100))
-
-        # Set up a pseudo-relax GUI.
-        app = wx.GetApp()
-        app.gui = self
-
-        # Set up some standard interface-wide fonts.
-        font.setup()
-
-        # Initialise the special interpreter thread object.
-        self.interpreter = Interpreter()
-
-        # Build the controller, but don't show it.
-        self.controller = Controller()
-
-        self.test()
-        self.Show(True)
-
-
-    def _execute_uf(self, *args, **kargs):
-        """Execute the given user function.
-
-        @keyword uf_name:   The name of the user function.
-        @type uf_name:      str
-        """
-
-        # Checks.
-        if 'uf_name' not in kargs:
-            raise RelaxError("The user function name argument 'uf_name' has not been supplied.")
-
-        # Process the user function name.
-        uf_name = kargs.pop('uf_name')
-
-        # Get the user function data object.
-        uf_data = uf_info.get_uf(uf_name)
-
-        # Convert the args into keyword args.
-        for i in range(len(args)):
-            # The keyword name for this arg.
-            name = uf_data.kargs[i]['name']
-
-            # Check.
-            if name in kargs:
-                raise RelaxError("The argument '%s' clashes with the %s keyword argument of '%s'." % (arg[i], name, kargs[name]))
-
-            # Set the keyword arg.
-            kargs[name] = args[i]
-
-        # Add the keyword args not supplied, using the default value.
-        for i in range(len(uf_data.kargs)):
-            # Alias.
-            arg = uf_data.kargs[i]
-
-            # Already set.
-            if arg['name'] in kargs:
-                continue
-
-            # Set the default.
-            kargs[arg['name']] = arg['default']
-
-        # Merge the file and directory args, as needed.
-        for i in range(len(uf_data.kargs)):
-            # Alias.
-            arg = uf_data.kargs[i]
-
-            # File selection and associated directory arg.
-            if arg['arg_type'] == 'dir' and arg['name'] in kargs:
-                # Find the associated file selection arg name.
-                for j in range(len(uf_data.kargs)):
-                    if uf_data.kargs[j]['arg_type'] == 'file sel':
-                        file_sel_name = uf_data.kargs[j]['name']
-
-                # Prepend the directory to the file, if needed and supplied.
-                if file_sel_name in kargs and kargs[arg['name']]:
-                    kargs[file_sel_name] = kargs[arg['name']] + sep + kargs[file_sel_name]
-
-                # Remove the directory argument.
-                kargs.pop(arg['name'])
-
-        # The user function object.
-        uf = uf_store[uf_name]
-
-        # Force synchronous operation of the user functions.
-        status.gui_uf_force_sync = True
-
-        # Call the GUI user function object with all keyword args, but do not execute the wizard.
-        uf(wx_wizard_run=False, **kargs)
-
-        # Execute the user function, by mimicking a click on 'ok'.
-        uf.wizard._ok()
-
-        # Restore the synchronous or asynchronous operation of the user functions so the GUI can return to normal.
-        status.gui_uf_force_sync = False
-
-        # Destroy the user function object.
-        uf.Destroy()
-
-
-    def show_controller(self, arg1):
-        """Dummy function."""
-
-
     def test(self):
-        """Run the tests."""
+        """Run the test."""
 
-        # Minimise via the GUI user function.
-        file = open('muppy_log', 'w')
-        for i in range(10000):
+        # Run for the desired number of iterations.
+        for i in self.muppy_loop():
+            # Minimise via the GUI user function.
             self._execute_uf(uf_name='minimise.execute', min_algor='simplex', constraints=False)
-            if not i % 100:
-                file.write("Iteration %i\n" % i)
-                file.write("Muppy heap:\n")
-                for line in muppy.summary.format_(muppy.summary.summarize(muppy.get_objects())):
-                    file.write("%s\n" % line)
-                file.write("\n\n\n")
-                file.flush()
 
-        print("Finished!")
 
 
 # Missing intensity type (allow this script to run outside of the system test framework).
@@ -271,6 +142,6 @@ minimise.grid_search(inc=11)
 
 # Set up and execute the GUI.
 app = wx.App(False)
-frame = Testing_frame(None, "GUI memory test")
+frame = Frame(None, "GUI memory test")
 frame.Show(True)
 app.MainLoop()
