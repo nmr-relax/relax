@@ -45,7 +45,7 @@ elif ds.diff_type == 'spheroid':
 elif ds.diff_type == 'prolate':
     diffusion_tensor.init((1.0/(6.0*7e7/3.0), 1e7, 2.0, pi-0.5), angle_units='rad', fixed=False, spheroid_type=ds.diff_type)
 elif ds.diff_type == 'oblate':
-    diffusion_tensor.init((1.0/(6.0*7e7/3.0), -1e7, 2.0, pi-0.5), angle_units='rad', fixed=False, spheroid_type=ds.diff_type)
+    diffusion_tensor.init((1.0/(6.0*8e7/3.0), -1e7, 1.0572198179601542, 3.9512842391699796), angle_units='rad', fixed=False, spheroid_type=ds.diff_type)
 elif ds.diff_type == 'ellipsoid':
     diffusion_tensor.init((8.3333333333333335e-09, 15000000.0, 0.33333333333333331, 1.0, 2.0, 0.5), angle_units='rad', fixed=False)
 else:

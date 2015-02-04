@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -227,6 +227,16 @@ class Auto_noe(Base_analysis):
         # Clean up the peak intensity object.
         self.peak_intensity.delete()
 
+        # Destroy the peak intensity wizard, if it exists.
+        if hasattr(self, 'peak_wizard'):
+            self.peak_wizard.Destroy()
+            del self.peak_wizard
+
+        # Destroy the missing data dialog, if present.
+        if hasattr(self, 'missing_data'):
+            self.missing_data.Destroy()
+            del self.missing_data
+
 
     def execute(self, event):
         """Set up, execute, and process the automatic Rx analysis.
@@ -255,7 +265,7 @@ class Auto_noe(Base_analysis):
 
         # Missing data.
         if len(missing):
-            Missing_data(missing)
+            self.missing_data = Missing_data(missing)
             return
 
         # Display the relax controller, and go to the end of the log window.
@@ -298,6 +308,10 @@ class Auto_noe(Base_analysis):
         @param event:   The wx event.
         @type event:    wx event
         """
+
+        # Destroy the peak intensity wizard, if it exists.
+        if hasattr(self, 'peak_wizard'):
+            self.peak_wizard.Destroy()
 
         # A new wizard instance.
         self.peak_wizard = Peak_intensity_wizard(noe=True)

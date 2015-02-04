@@ -14,12 +14,14 @@ FRQ = [500, 600, 700, 800]
 # Stand alone operation.
 if not hasattr(ds, 'diff_type'):
     ds.diff_type = 'ellipsoid'
+if not hasattr(ds, 'diff_dir'):
+    ds.diff_dir = 'ellipsoid'
 
 # A data pipe.
 pipe.create('back_calc', 'mf')
 
 # Path of the files.
-path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+ds.diff_type
+path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+ds.diff_dir
 
 # Load the sequence.
 sequence.read('NOE.500.out', dir=path, res_num_col=1)

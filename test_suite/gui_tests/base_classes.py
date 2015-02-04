@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,8 +31,11 @@ import wx
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
+from gui.controller import Controller
+from gui.relax_gui import Main
 from gui.string_conv import str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+from gui.wizards.wiz_objects import Wiz_window
 from lib.compat import queue
 from lib.errors import RelaxError
 from pipe_control.reset import reset
@@ -131,6 +134,9 @@ class GuiTestCase(TestCase):
         # Restore the synchronous or asynchronous operation of the user functions so the GUI can return to normal.
         status.gui_uf_force_sync = False
 
+        # Destroy the user function object.
+        uf.Destroy()
+
 
     def check_exceptions(self):
         """Check that no exception has occurred."""
@@ -149,6 +155,47 @@ class GuiTestCase(TestCase):
         # No exception.
         except queue.Empty:
             pass
+
+
+    def clean_up_windows(self):
+        """Kill all windows."""
+
+        # Close all windows to unregister the observer objects.
+        if hasattr(self.app.gui, 'pipe_editor'):
+            self.app.gui.pipe_editor.Close()
+        if hasattr(self.app.gui, 'results_viewer'):
+            self.app.gui.results_viewer.Close()
+        if hasattr(self.app.gui, 'relax_prompt'):
+            self.app.gui.relax_prompt.Close()
+        wx.Yield()
+
+        # Destroy all user function windows to save memory (specifically to avoid the 10,000 USER Object limit in MS Windows).
+        for name in uf_store:
+            uf_store[name].Destroy()
+
+        # Kill the spin viewer window.
+        if hasattr(self.app.gui, 'spin_viewer'):
+            self.app.gui.spin_viewer.Destroy()
+            wx.Yield()
+            del self.app.gui.spin_viewer
+
+        # Kill the pipe editor window.
+        if hasattr(self.app.gui, 'pipe_editor'):
+            self.app.gui.pipe_editor.Destroy()
+            wx.Yield()
+            del self.app.gui.pipe_editor
+
+        # Kill the results viewer window.
+        if hasattr(self.app.gui, 'results_viewer'):
+            self.app.gui.results_viewer.Destroy()
+            wx.Yield()
+            del self.app.gui.results_viewer
+
+        # Kill the relax prompt window.
+        if hasattr(self.app.gui, 'relax_prompt'):
+            self.app.gui.relax_prompt.Destroy()
+            wx.Yield()
+            del self.app.gui.relax_prompt
 
 
     def new_analysis_wizard(self, analysis_type=None, analysis_name=None, pipe_name=None, pipe_bundle=None):
@@ -255,5 +302,30 @@ class GuiTestCase(TestCase):
         # Reset relax.
         reset()
 
-        # Flush all wx events again to allow the reset event to propagate throughout the GUI and the execution lock to be released before the next test starts.
-        wx.Yield()
+        # Get the wx app.
+        self.app = wx.GetApp()
+
+        # Kill all windows.
+        self.clean_up_windows()
+
+        # Print out a list of all living windows to help ensure that custom Close() and Destroy() methods are cleaning up all objects.
+        print("\n\nList of all living GUI elements - this must only include the main GUI window and the relax controller:")
+        all_destroyed = True
+        for window in wx.GetTopLevelWindows():
+            # Printout.
+            print("    Window: %s" % window)
+            if isinstance(window, Wiz_window):
+                print("        Wizard title: %s" % window.title)
+                print("        Wizard pages: %s" % window._pages)
+
+            # Skip the main GUI window and the relax controller.
+            if isinstance(window, Main) or isinstance(window, Controller):
+                continue
+
+            # Failure of memory management.
+            all_destroyed = False
+        print("\n\n\n")
+
+        # Memory management check.
+        #if not all_destroyed:
+        #    raise RelaxError("Memory management failure - not all top level windows have been destroyed.")
