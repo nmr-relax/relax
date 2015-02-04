@@ -648,7 +648,7 @@ class Wiz_window(wx.Dialog):
         next_page = self._seq_fn_list[self._current_page]()
 
         # No next page, so terminate.
-        if self._pages[next_page] == None:
+        if next_page >= len(self._pages):
             self._ok(None)
             return
 
