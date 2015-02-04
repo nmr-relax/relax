@@ -9,6 +9,8 @@ import sys
 # The target.
 target = sys.argv[1]
 path = '/data/python/'
+if len(sys.argv) == 3:
+    path = sys.argv[2]
 
 # The list of build commands to run.
 cmd = []
