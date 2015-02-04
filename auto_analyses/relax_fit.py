@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -40,7 +40,7 @@ from status import Status; status = Status()
 
 
 class Relax_fit:
-    def __init__(self, pipe_name=None, pipe_bundle=None, file_root='rx', results_dir=None, grid_inc='11', mc_sim_num=500, view_plots=True):
+    def __init__(self, pipe_name=None, pipe_bundle=None, file_root='rx', results_dir=None, grid_inc=11, mc_sim_num=500, view_plots=True):
         """Perform relaxation curve fitting.
 
         To use this auto-analysis, a data pipe with all the required data needs to be set up.  This data pipe should contain the following:
