@@ -574,8 +574,6 @@ class Wiz_window(wx.Dialog):
         @type i:    int
         """
 
-        print "Displaying page %i" % i
-
         # Hide all of the original contents.
         for j in range(self._num_pages):
             if self._main_sizer.IsShown(self._page_sizers[j]):
