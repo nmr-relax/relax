@@ -126,22 +126,29 @@ class Relax_fit:
         self.interpreter.minimise.execute('newton', scaling=False, constraints=False)
         self.interpreter.monte_carlo.error_analysis()
 
-        # Save the relaxation rates.
+        # Determine the normalisation type and if the Iinf parameter exists.
+        norm_type = 'last'
+        iinf = True
+        for spin in spin_loop(skip_desel=True):
+            if spin.model not in ['sat', 'inv']:
+                norm_type = 'first'
+                iinf = False
+                break
+
+        # Save the relaxation rates and other parameter values.
+        self.interpreter.value.write(param='i0', file='i0.out', dir=self.results_dir, force=True)
+        if iinf:
+            self.interpreter.value.write(param='iinf', file='iinf.out', dir=self.results_dir, force=True)
         self.interpreter.value.write(param='rx', file=self.file_root+'.out', dir=self.results_dir, force=True)
 
         # Save the results.
         self.interpreter.results.write(file='results', dir=self.results_dir, force=True)
 
-        # Determine the normalisation type.
-        norm_type = 'last'
-        for spin in spin_loop(skip_desel=True):
-            if spin.model not in ['sat', 'inv']:
-                norm_type = 'first'
-                break
-
         # Create Grace plots of the data.
         self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir=self.grace_dir, force=True)    # Minimised chi-squared value.
         self.interpreter.grace.write(y_data_type='i0', file='i0.agr', dir=self.grace_dir, force=True)    # Initial peak intensity.
+        if iinf:
+            self.interpreter.grace.write(y_data_type='iinf', file='iinf.agr', dir=self.grace_dir, force=True)    # Infinite peak intensity.
         self.interpreter.grace.write(y_data_type='rx', file=self.file_root+'.agr', dir=self.grace_dir, force=True)    # Relaxation rate.
         self.interpreter.grace.write(x_data_type='relax_times', y_data_type='peak_intensity', file='intensities.agr', dir=self.grace_dir, force=True)    # Average peak intensities.
         self.interpreter.grace.write(x_data_type='relax_times', y_data_type='peak_intensity', norm_type=norm_type, norm=True, file='intensities_norm.agr', dir=self.grace_dir, force=True)    # Average peak intensities (normalised).
