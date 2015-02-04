@@ -27,6 +27,7 @@ from numpy import float64, int16, zeros
 import sys
 
 # relax module imports.
+from lib.errors import RelaxError
 from lib.sequence_alignment.align_protein import align_pairwise
 
 
@@ -167,6 +168,68 @@ def central_star(sequences, algorithm='NW70', matrix='BLOSUM62', gap_open_penalt
     return strings, gaps
 
 
+def msa_general(sequences, residue_numbers=None, msa_algorithm='Central Star', pairwise_algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0):
+    """General interface for multiple sequence alignments (MSA).
+
+    This can be used to select between the following MSA algorithms:
+
+        - 'Central Star', to use the central_star() function.
+        - 'residue number', to use the msa_residue_numbers() function.
+
+
+    @param sequences:                   The list of residue sequences as one letter codes.
+    @type sequences:                    list of str
+    @keyword residue_numbers:           The list of residue numbers for each sequence.
+    @type residue_numbers:              list of list of int
+    @keyword msa_algorithm:             The multiple sequence alignment (MSA) algorithm to use.
+    @type msa_algorithm:                str
+    @keyword pairwise_algorithm:        The pairwise sequence alignment algorithm to use.
+    @type pairwise_algorithm:           str
+    @keyword matrix:                    The substitution matrix to use.
+    @type matrix:                       str
+    @keyword gap_open_penalty:          The penalty for introducing gaps, as a positive number.
+    @type gap_open_penalty:             float
+    @keyword gap_extend_penalty:        The penalty for extending a gap, as a positive number.
+    @type gap_extend_penalty:           float
+    @keyword end_gap_open_penalty:      The optional penalty for opening a gap at the end of a sequence.
+    @type end_gap_open_penalty:         float
+    @keyword end_gap_extend_penalty:    The optional penalty for extending a gap at the end of a sequence.
+    @type end_gap_extend_penalty:       float
+    @return:                            The list of alignment strings and the gap matrix.
+    @rtype:                             list of str, numpy rank-2 int array
+    """
+
+    # Check the MSA algorithm.
+    allowed_msa = ['Central Star', 'residue number']
+    if msa_algorithm not in allowed_msa:
+        raise RelaxError("The MSA algorithm must be one of %s." % allowed_msa)
+
+    # Check the penalty arguments.
+    if gap_open_penalty != None:
+        if gap_open_penalty < 0.0:
+            raise RelaxError("The gap opening penalty %s must be a positive number." % gap_open_penalty)
+    if gap_extend_penalty != None:
+        if gap_extend_penalty < 0.0:
+            raise RelaxError("The gap extension penalty %s must be a positive number." % gap_extend_penalty)
+    if end_gap_open_penalty != None:
+        if end_gap_open_penalty < 0.0:
+            raise RelaxError("The end gap opening penalty %s must be a positive number." % end_gap_open_penalty)
+    if end_gap_extend_penalty != None:
+        if end_gap_extend_penalty < 0.0:
+            raise RelaxError("The end gap extension penalty %s must be a positive number." % end_gap_extend_penalty)
+
+    # Use the central star multiple alignment algorithm.
+    if msa_algorithm == 'Central Star':
+        strings, gaps = central_star(sequences, algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
+
+    # Alignment by residue number.
+    elif msa_algorithm == 'residue number':
+        strings, gaps = msa_residue_numbers(sequences, residue_numbers=residue_numbers)
+
+    # Return the alignment strings and gap matrix.
+    return strings, gaps
+
+
 def msa_residue_numbers(sequences, residue_numbers=None):
     """Align multiple sequences based on the residue numbering.
 
@@ -228,3 +291,48 @@ def msa_residue_numbers(sequences, residue_numbers=None):
 
     # Return the results.
     return strings, gaps
+
+
+def msa_residue_skipping(strings=None, gaps=None):
+    """Create the residue skipping data structure. 
+
+    @keyword strings:   The list of alignment strings.
+    @type strings:      list of str
+    @keyword gaps:      The gap matrix.
+    @type gaps:         numpy rank-2 int array
+    @return:            The residue skipping data structure.  The first dimension is the molecule and the second is the residue.  As opposed to zero, a value of one means the residue should skipped.
+    @rtype:             list of lists of int
+    # 
+    """
+
+    # initialise.
+    skip = []
+    num_mols = len(strings)
+
+    # Loop over each molecule.
+    for mol_index in range(num_mols):
+        skip.append([])
+        for i in range(len(strings[0])):
+            # Create the empty residue skipping data structure.
+            if strings == None:
+                skip[mol_index].append(0)
+                continue
+
+            # No residue in the current sequence.
+            if gaps[mol_index][i]:
+                continue
+
+            # A gap in one of the other sequences.
+            gap = False
+            for mol_index2 in range(num_mols):
+                if gaps[mol_index2][i]:
+                    gap = True
+
+            # Skip the residue.
+            if gap:
+                skip[mol_index].append(1)
+            else:
+                skip[mol_index].append(0)
+
+    # Return the data structure.
+    return skip

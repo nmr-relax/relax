@@ -70,7 +70,7 @@ class Structure(SystemTestCase):
         self.interpreter.reset()
 
         # Path of the PDB file.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'sphere'
 
         # Create a data pipe for the reference structure, then load it.
         self.interpreter.pipe.create('ref', 'N-state')
@@ -219,7 +219,7 @@ class Structure(SystemTestCase):
         self.interpreter.reset()
 
         # Path of the PDB file.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'sphere'
 
         # Create a data pipe for the reference structure, then load it.
         self.interpreter.pipe.create('ref', 'N-state')
@@ -1466,7 +1466,7 @@ class Structure(SystemTestCase):
         ds.tmpfile = mktemp()
 
         # The diffusion type and directory (used by the script).
-        ds.diff_dir = 'spheroid'
+        ds.diff_dir = 'spheroid_prolate'
         ds.diff_type = 'oblate'
 
         # Execute the script.
@@ -2001,7 +2001,7 @@ class Structure(SystemTestCase):
         ds.tmpfile = mktemp()
 
         # The diffusion type (used by the script).
-        ds.diff_dir = 'spheroid'
+        ds.diff_dir = 'spheroid_prolate'
         ds.diff_type = 'prolate'
 
         # Execute the script.
@@ -3054,7 +3054,7 @@ class Structure(SystemTestCase):
         """Test the deletion of a single atom using the U{structure.delete user function<http://www.nmr-relax.com/manual/structure_delete.html>}"""
 
         # Load the test structure.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'sphere'
         self.interpreter.structure.read_pdb(file='uniform.pdb', dir=path)
 
         # Delete some atoms, testing different combinations.
@@ -3481,7 +3481,7 @@ class Structure(SystemTestCase):
         """
 
         # Path of the PDB file.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'sphere'
 
         # Load the PDB twice as different molecules.
         self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_mol_name='X')
@@ -4643,8 +4643,8 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(cdp.structure.rmsd, 0.77282758781333061)
 
 
-    def test_sequence_alignment_molecules(self):
-        """Test of the structure.sequence_alignment user function."""
+    def test_sequence_alignment_central_star_nw70_blosum62(self):
+        """Test of the structure.sequence_alignment user function using the 'Central Star', 'NW70', and 'BLOSUM62' options."""
 
         # Path of the structure file.
         path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
@@ -4652,6 +4652,10 @@ class Structure(SystemTestCase):
         # Load the two rotated structures.
         self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM A')
         self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_model_num=1, set_mol_name='CaM B')
+
+        # Delete some residues.
+        self.interpreter.structure.delete("#CaM B:82")
+        self.interpreter.structure.delete("#CaM A:100-120")
 
         # Perform the alignment.
         self.interpreter.structure.sequence_alignment(pipes=['mf'], models=[[1, 1]], molecules=[['CaM A', 'CaM B']], msa_algorithm='Central Star', pairwise_algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=10.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.5, end_gap_extend_penalty=0.1)
@@ -4672,18 +4676,21 @@ class Structure(SystemTestCase):
         molecules = ['CaM A', 'CaM B']
         ids = ["Object 'mf'; Model 1; Molecule 'CaM A'", "Object 'mf'; Model 1; Molecule 'CaM B'"]
         sequences = [
-            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**',
-            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**'
+            'EEEIREAFRVFDKDGNGYVDEMIREADIDGDGQVNYEEFVQMMTAK**',
+            'EEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**'
         ]
         strings = [
-            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**',
-            'EEEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**'
+            'EEEIREAFRVFDKDGNGY---------------------VDEMIREADIDGDGQVNYEEFVQMMTAK**',
+            '-EEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**'
         ]
         gaps = []
         for i in range(len(strings)):
             gaps.append([])
             for j in range(len(strings[0])):
                 gaps[i].append(0)
+        for i in range(18, 39):
+            gaps[0][i] = 1
+        gaps[1][0] = 1
         msa_algorithm = 'Central Star'
         pairwise_algorithm = 'NW70'
         matrix = 'BLOSUM62'
@@ -4691,6 +4698,83 @@ class Structure(SystemTestCase):
         gap_extend_penalty = 1.0
         end_gap_open_penalty = 0.5
         end_gap_extend_penalty = 0.1
+
+        # Check the data.
+        for i in range(2):
+            print("Checking \"%s\"" % molecules[i])
+            self.assertEqual(ds.sequence_alignments[0].ids[i], ids[i])
+            self.assertEqual(ds.sequence_alignments[0].object_ids[i], pipes[i])
+            self.assertEqual(ds.sequence_alignments[0].models[i], models[i])
+            self.assertEqual(ds.sequence_alignments[0].molecules[i], molecules[i])
+            self.assertEqual(ds.sequence_alignments[0].sequences[i], sequences[i])
+            self.assertEqual(ds.sequence_alignments[0].strings[i], strings[i])
+            for j in range(len(strings[0])):
+                self.assertEqual(ds.sequence_alignments[0].gaps[i, j], gaps[i][j])
+            self.assertEqual(ds.sequence_alignments[0].msa_algorithm, msa_algorithm)
+            self.assertEqual(ds.sequence_alignments[0].pairwise_algorithm, pairwise_algorithm)
+            self.assertEqual(ds.sequence_alignments[0].matrix, matrix)
+            self.assertEqual(ds.sequence_alignments[0].gap_open_penalty, gap_open_penalty)
+            self.assertEqual(ds.sequence_alignments[0].gap_extend_penalty, gap_extend_penalty)
+            self.assertEqual(ds.sequence_alignments[0].end_gap_open_penalty, end_gap_open_penalty)
+            self.assertEqual(ds.sequence_alignments[0].end_gap_extend_penalty, end_gap_extend_penalty)
+
+
+    def test_sequence_alignment_residue_number(self):
+        """Test of the structure.sequence_alignment user function using the 'residue number' MSA algorithm."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
+
+        # Load the two rotated structures.
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM A')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_model_num=1, set_mol_name='CaM B')
+
+        # Delete some residues.
+        self.interpreter.structure.delete("#CaM B:82")
+        self.interpreter.structure.delete("#CaM A:100-120")
+        self.interpreter.structure.delete(":CA")
+
+        # Perform the alignment.
+        self.interpreter.structure.sequence_alignment(pipes=['mf'], models=[[1, 1]], molecules=[['CaM A', 'CaM B']], msa_algorithm='residue number')
+
+        # Save the relax state.
+        self.tmpfile = mktemp()
+        self.interpreter.state.save(self.tmpfile, dir=None, force=True)
+
+        # Reset relax.
+        self.interpreter.reset()
+
+        # Load the results.
+        self.interpreter.state.load(self.tmpfile)
+
+        # The real data.
+        pipes = ['mf', 'mf']
+        models = [1, 1]
+        molecules = ['CaM A', 'CaM B']
+        ids = ["Object 'mf'; Model 1; Molecule 'CaM A'", "Object 'mf'; Model 1; Molecule 'CaM B'"]
+        sequences = [
+            'EEEIREAFRVFDKDGNGYVDEMIREADIDGDGQVNYEEFVQMMTAK',
+            'EEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK'
+        ]
+        strings = [
+            'EEEIREAFRVFDKDGNGY---------------------VDEMIREADIDGDGQVNYEEFVQMMTAK',
+            '-EEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK'
+        ]
+        gaps = []
+        for i in range(len(strings)):
+            gaps.append([])
+            for j in range(len(strings[0])):
+                gaps[i].append(0)
+        for i in range(18, 39):
+            gaps[0][i] = 1
+        gaps[1][0] = 1
+        msa_algorithm = 'residue number'
+        pairwise_algorithm = None
+        matrix = None
+        gap_open_penalty = None
+        gap_extend_penalty = None
+        end_gap_open_penalty = None
+        end_gap_extend_penalty = None
 
         # Check the data.
         for i in range(2):

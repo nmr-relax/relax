@@ -38,7 +38,7 @@ from lib.io import get_file_path, open_write_file, write_data
 from lib.plotting.api import correlation_matrix
 from lib.selection import tokenise
 from lib.sequence import write_spin_data
-from lib.sequence_alignment.msa import central_star, msa_residue_numbers
+from lib.sequence_alignment.msa import msa_general, msa_residue_numbers, msa_residue_skipping
 from lib.structure.internal.coordinates import assemble_atomic_coordinates, assemble_coord_array, loop_coord_structures
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.object import Internal
@@ -138,10 +138,6 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
         if mol != molecule_list[0]:
             same_mol = False
 
-    # Init.
-    strings = None
-    gaps = None
-
     # Handle sequence alignments - retrieve the alignment.
     align = None
     if hasattr(ds, 'sequence_alignments'):
@@ -161,6 +157,16 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
         # Printout.
         print("\nSequence alignment disabled as only models with identical molecule, residue and atomic sequences are being superimposed.")
 
+        # Set the one letter codes to be the alignment strings.
+        strings = one_letter_codes
+
+        # Create an empty gap data structure.
+        gaps = []
+        for mol_index in range(num_mols):
+            gaps.append([])
+            for i in range(len(one_letter_codes[mol_index])):
+                gaps[mol_index].append(0)
+
     # Handle sequence alignments - fall back alignment based on residue numbering.
     else:
         # Printout.
@@ -178,30 +184,7 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
         strings, gaps = msa_residue_numbers(one_letter_codes, residue_numbers=res_num_list)
 
     # Create the residue skipping data structure. 
-    skip = []
-    for mol_index in range(num_mols):
-        skip.append([])
-        for i in range(len(one_letter_codes[0])):
-            # Create the empty residue skipping data structure.
-            if strings == None:
-                skip[mol_index].append(0)
-                continue
-
-            # No residue in the current sequence.
-            if gaps[mol_index][i]:
-                continue
-
-            # A gap in one of the other sequences.
-            gap = False
-            for mol_index2 in range(num_mols):
-                if gaps[mol_index2][i]:
-                    gap = True
-
-            # Skip the residue.
-            if gap:
-                skip[mol_index].append(1)
-            else:
-                skip[mol_index].append(0)
+    skip = msa_residue_skipping(strings=strings, gaps=gaps)
 
     # Assemble and return the atomic coordinates and common atom information.
     coord, mol_name_common, res_name_common, res_num_common, atom_name_common, element_common = assemble_coord_array(atom_pos=atom_pos, mol_names=mol_names, res_names=res_names, res_nums=res_nums, atom_names=atom_names, elements=elements, sequences=one_letter_codes, skip=skip)
@@ -1258,34 +1241,35 @@ def sequence_alignment(pipes=None, models=None, molecules=None, msa_algorithm='C
     @type end_gap_extend_penalty:       float
     """
 
-    # Check the penalty arguments.
-    if gap_open_penalty != None:
-        if gap_open_penalty < 0.0:
-            raise RelaxError("The gap opening penalty %s must be a positive number." % gap_open_penalty)
-    if gap_extend_penalty != None:
-        if gap_extend_penalty < 0.0:
-            raise RelaxError("The gap extension penalty %s must be a positive number." % gap_extend_penalty)
-    if end_gap_open_penalty != None:
-        if end_gap_open_penalty < 0.0:
-            raise RelaxError("The end gap opening penalty %s must be a positive number." % end_gap_open_penalty)
-    if end_gap_extend_penalty != None:
-        if end_gap_extend_penalty < 0.0:
-            raise RelaxError("The end gap extension penalty %s must be a positive number." % end_gap_extend_penalty)
-
     # Assemble the structural objects.
     objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
 
     # Assemble the atomic coordinates of all molecules.
     ids, object_id_list, model_list, molecule_list, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols = assemble_atomic_coordinates(objects=objects, object_names=object_names, molecules=molecules, models=models)
 
+    # Convert the residue number data structure.
+    res_num_list = []
+    for mol_index in range(num_mols):
+        res_num_list.append([])
+        for i in range(len(one_letter_codes[mol_index])):
+            key = res_nums[mol_index][i].keys()[0]
+            res_num_list[mol_index].append(res_nums[mol_index][i][key])
+
     # MSA.
-    if msa_algorithm == 'Central Star':
-        # Use the central star multiple alignment algorithm.
-        strings, gaps = central_star(one_letter_codes, algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
+    strings, gaps = msa_general(one_letter_codes, residue_numbers=res_num_list, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
 
     # Set up the data store object.
     if not hasattr(ds, 'sequence_alignments'):
         ds.sequence_alignments = Sequence_alignments()
+
+    # Set some unused arguments to None for storage.
+    if msa_algorithm == 'residue number':
+        pairwise_algorithm = None
+        matrix = None
+        gap_open_penalty = None
+        gap_extend_penalty = None
+        end_gap_open_penalty = None
+        end_gap_extend_penalty = None
 
     # Store the alignment.
     ds.sequence_alignments.add(object_ids=object_id_list, models=model_list, molecules=molecule_list, sequences=one_letter_codes, strings=strings, gaps=gaps, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
