@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2015 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,36 +19,29 @@
 #                                                                             #
 ###############################################################################
 
-# Module docstring.
-"""GUI tests for catching dead user function pages."""
+"""Memory test of the time GUI user function."""
 
 # Python module imports.
-import sys
+import wx
 
-# relax module imports.
-from lib.errors import RelaxNoPipeError
-from test_suite.gui_tests.base_classes import GuiTestCase
-
-# relax GUI imports.
-from gui.interpreter import Interpreter; interpreter = Interpreter()
-from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+# Base module imports.
+from GUI_base import Testing_frame
 
 
-class Dead_uf_pages(GuiTestCase):
-    """Class for testing the failure of user function pages."""
+class Frame(Testing_frame):
+    """Testing frame."""
 
-    def test_mol_create(self):
-        """Test a failure detected via the molecule.create user function."""
+    def test(self):
+        """Run the test."""
 
-        # First try to create a molecule (this will fail due to no data pipes being present).
-        self._execute_uf(uf_name='molecule.create', mol_name='x', mol_type='protein')
+        # Repetitive calling of the time user function.
+        for i in self.muppy_loop():
+            self._execute_uf(uf_name='time')
 
-        # Create a data pipe.
-        self._execute_uf(uf_name='pipe.create', pipe_name='test', pipe_type='mf')
 
-        # Try to create the molecule a second time.
-        self._execute_uf(uf_name='molecule.create', mol_name='x', mol_type='protein')
 
-        # Checks.
-        self.assertEqual(len(cdp.mol), 1)
-        self.assertEqual(cdp.mol[0].name, 'x')
+# Set up and execute the GUI.
+app = wx.App(False)
+frame = Frame(None, "GUI memory test")
+frame.Show(True)
+app.MainLoop()

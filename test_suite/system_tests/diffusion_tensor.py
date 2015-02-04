@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -348,6 +348,7 @@ class Diffusion_tensor(SystemTestCase):
         reset()
 
         # The diffusion type (used by the script).
+        ds.diff_dir = 'ellipsoid'
         ds.diff_type = 'ellipsoid'
 
         # Execute the script.
@@ -370,6 +371,7 @@ class Diffusion_tensor(SystemTestCase):
         reset()
 
         # The diffusion type (used by the script).
+        ds.diff_dir = 'sphere'
         ds.diff_type = 'sphere'
 
         # Execute the script.
@@ -392,6 +394,7 @@ class Diffusion_tensor(SystemTestCase):
         reset()
 
         # The diffusion type (used by the script).
+        ds.diff_dir = 'spheroid_prolate'
         ds.diff_type = 'spheroid'
 
         # Execute the script.
@@ -927,6 +930,7 @@ class Diffusion_tensor(SystemTestCase):
         reset()
 
         # The diffusion type (used by the script).
+        ds.diff_dir = 'ellipsoid'
         ds.diff_type = 'ellipsoid'
 
         # Execute the script.
@@ -954,6 +958,7 @@ class Diffusion_tensor(SystemTestCase):
         reset()
 
         # The diffusion type (used by the script).
+        ds.diff_dir = 'sphere'
         ds.diff_type = 'sphere'
 
         # Execute the script.
@@ -982,6 +987,7 @@ class Diffusion_tensor(SystemTestCase):
         reset()
 
         # The diffusion type (used by the script).
+        ds.diff_dir = 'spheroid_prolate'
         ds.diff_type = 'spheroid'
 
         # Execute the script.

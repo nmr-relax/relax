@@ -3,10 +3,10 @@
 
 # Python module imports.
 from minfx.generic import generic_minimise
-from numpy import array, arange, asarray, diag, dot, exp, eye, float64, isfinite, log, nan_to_num, multiply, ones, sqrt, sum, std, transpose, where, zeros
+from numpy import array, arange, asarray, diag, dot, exp, eye, float64, isfinite, log, nan_to_num, multiply, sqrt, sum, std, transpose, where, zeros
 from numpy.linalg import inv, qr
 from numpy.ma import fix_invalid
-from random import gauss, sample, randint, randrange
+from random import gauss, sample, randint
 from collections import OrderedDict
 
 # relax module imports.

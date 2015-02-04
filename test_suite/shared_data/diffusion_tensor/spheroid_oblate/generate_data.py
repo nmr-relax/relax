@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -32,9 +32,9 @@ from test_suite.shared_data.diffusion_tensor import generate_data
 
 
 # The tensor values.
-Dx = 3e7
+Dx = 2e7
 Dy = 3e7
-Dz = 2e7
+Dz = 3e7
 alpha = 1.0
 beta = 2.0
 gamma = 0.5

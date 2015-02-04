@@ -2,7 +2,6 @@
 
 # Python module imports.
 from numpy import array, float64
-from os import sep
 
 
 # Loop over all diffusion tensor types.

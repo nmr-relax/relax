@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -367,6 +367,7 @@ class Sequence:
         self.selection_win_data()
 
         # Destroy the window.
+        self.sel_win.Destroy()
         del self.sel_win
 
 
@@ -387,6 +388,11 @@ class Sequence:
 
     def selection_win_show(self):
         """Show the selection window."""
+
+        # Destroy any pre-existing sequence window.
+        if hasattr(self, 'sel_win'):
+            self.sel_win.Destroy()
+            del self.sel_win
 
         # Initialise the model selection window.
         self.sel_win = Sequence_window(parent=self.parent, name=self.name, seq_type=self.seq_type, value_type=self.value_type, titles=self.titles, dim=self.dim)

@@ -66,6 +66,20 @@ class Prompt(wx.Frame):
         status.observers.exec_lock.register('GUI prompt', self.enable, method_name='enable')
 
 
+    def Destroy(self):
+        """Cleanly destroy the window."""
+
+        # First unregister with the observer objects.
+        status.observers.exec_lock.unregister('GUI prompt')
+
+        # Destroy the prompt.
+        self.prompt.Destroy()
+        del self.prompt
+
+        # Call the parent Destroy() method.
+        super(Prompt, self).Destroy()
+
+
     def add_shell(self, sizer):
         """Add the relax prompt to the sizer.
 

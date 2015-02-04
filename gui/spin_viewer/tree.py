@@ -541,7 +541,9 @@ class Mol_res_spin_tree(wx.Window):
         # Show the menu.
         if status.show_gui:
             self.PopupMenu(menu)
-            menu.Destroy()
+
+        # Cleanup.
+        menu.Destroy()
 
 
     def menu_molecule(self):
@@ -592,7 +594,9 @@ class Mol_res_spin_tree(wx.Window):
         # Show the menu.
         if status.show_gui:
             self.PopupMenu(menu)
-            menu.Destroy()
+
+        # Cleanup.
+        menu.Destroy()
 
 
     def menu_residue(self):
@@ -645,7 +649,9 @@ class Mol_res_spin_tree(wx.Window):
         # Show the menu.
         if status.show_gui:
             self.PopupMenu(menu)
-            menu.Destroy()
+
+        # Cleanup.
+        menu.Destroy()
 
 
     def menu_root(self):
@@ -674,7 +680,9 @@ class Mol_res_spin_tree(wx.Window):
         # Show the menu.
         if status.show_gui:
             self.PopupMenu(menu)
-            menu.Destroy()
+
+        # Cleanup.
+        menu.Destroy()
 
 
     def menu_spin(self):
@@ -725,7 +733,9 @@ class Mol_res_spin_tree(wx.Window):
         # Show the menu.
         if status.show_gui:
             self.PopupMenu(menu)
-            menu.Destroy()
+
+        # Cleanup.
+        menu.Destroy()
 
 
     def prune_mol(self):

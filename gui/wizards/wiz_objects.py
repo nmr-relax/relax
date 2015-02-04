@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -387,6 +387,7 @@ class Wiz_window(wx.Dialog):
         self._size_x = size_x
         self._size_y = size_y
         self._border = border
+        self.title = title
 
         # Execute the base class method.
         wx.Dialog.__init__(self, parent, id=-1, title=title, style=style)
@@ -413,6 +414,7 @@ class Wiz_window(wx.Dialog):
         self._pages = []
         self._page_sizers = []
         self._button_sizers = []
+        self._top_sizers = []
         self._button_apply_flag = []
         self._button_skip_flag = []
         self._buttons = []
@@ -425,57 +427,6 @@ class Wiz_window(wx.Dialog):
         self._seq_next = []
         self._seq_prev = []
         self._skip_flag = []
-
-        # A max of 15 pages should be enough.
-        for i in range(15):
-            # Append some Nones.
-            self._pages.append(None)
-
-            # Initialise all box sizers for the wizard pages.
-            self._page_sizers.append(wx.BoxSizer(wx.VERTICAL))
-
-            # Initialise all box sizers for the buttons.
-            self._button_sizers.append(wx.BoxSizer(wx.HORIZONTAL))
-
-            # Set all button flags.
-            self._button_apply_flag.append(True)
-            self._button_skip_flag.append(False)
-
-            # Initialise the button storage.
-            self._buttons.append({'back': None,
-                                  'apply': None,
-                                  'next': None,
-                                  'ok': None,
-                                  'finish': None,
-                                  'cancel': None})
-
-            # Initialise a set of unique button IDs.
-            self._button_ids.append({'back': -1,
-                                     'apply': -1,
-                                     'next': -1,
-                                     'ok': -1,
-                                     'finish': -1,
-                                     'cancel': -1})
-
-            # Execute on next by default.
-            self._exec_on_next.append(True)
-
-            # Execution count.
-            self._exec_count.append(0)
-
-            # Proceed to next page on errors by default.
-            self._proceed_on_error.append(True)
-
-            # No user function flushing of the GUI interpreter thread prior to proceeding.
-            self._uf_flush.append(False)
-
-            # Page sequence initialisation.
-            self._seq_fn_list.append(self._next_fn)
-            self._seq_next.append(None)
-            self._seq_prev.append(None)
-
-            # Page skipping.
-            self._skip_flag.append(False)
 
         # Flag to suppress later button addition.
         self._buttons_built = False
@@ -697,7 +648,7 @@ class Wiz_window(wx.Dialog):
         next_page = self._seq_fn_list[self._current_page]()
 
         # No next page, so terminate.
-        if self._pages[next_page] == None:
+        if next_page >= len(self._pages):
             self._ok(None)
             return
 
@@ -824,8 +775,11 @@ class Wiz_window(wx.Dialog):
     def Destroy(self):
         """Override the default wx.Dialog.Destroy() method."""
 
+        # Call the parent method to close the dialog.
+        self.Close()
+
         # Loop over each page, destroying it and all its elements to avoid memory leaks.
-        for i in range(self._num_pages):
+        for i in range(len(self._buttons)):
             # Destroy the buttons.
             for name in self._buttons[i]:
                 if hasattr(self._buttons[i][name], 'Destroy'):
@@ -838,7 +792,8 @@ class Wiz_window(wx.Dialog):
                 self._pages[i] = None
 
         # Call the parent method to destroy the dialog.
-        wx.Dialog.Destroy(self)
+        super(Wiz_window, self).DestroyChildren()
+        super(Wiz_window, self).Destroy()
 
 
     def add_page(self, panel, apply_button=True, skip_button=False, exec_on_next=True, proceed_on_error=True, uf_flush=False):
@@ -863,34 +818,73 @@ class Wiz_window(wx.Dialog):
         # Store the page.
         index = self._num_pages
         self._num_pages += 1
-        self._pages[index] = panel
+        self._pages.append(panel)
 
-        # Store a new sizer for the page and its buttons.
+        # Initialise all box sizers for the wizard page, and store them.
+        self._page_sizers.append(wx.BoxSizer(wx.VERTICAL))
         self._main_sizer.Add(self._page_sizers[index], 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the sizer for the top half.
-        top_sizer = wx.BoxSizer(wx.VERTICAL)
-        self._page_sizers[index].Add(top_sizer, 1, wx.ALL|wx.EXPAND, 0)
+        self._top_sizers.append(wx.BoxSizer(wx.VERTICAL))
+        self._page_sizers[index].Add(self._top_sizers[index], 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the page to the top sizer.
-        top_sizer.Add(panel, 1, wx.ALL|wx.EXPAND, 0)
+        self._top_sizers[index].Add(panel, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Initialise all box sizers for the buttons, and store them.
+        self._button_sizers.append(wx.BoxSizer(wx.HORIZONTAL))
 
         # Add the sizer for the wizard buttons.
         self._page_sizers[index].Add(self._button_sizers[index], 0, wx.ALIGN_RIGHT|wx.ALL, 0)
 
-        # Store the flags.
-        self._button_apply_flag[index] = apply_button
-        self._button_skip_flag[index] = skip_button
-        self._exec_on_next[index] = exec_on_next
-        self._proceed_on_error[index] = proceed_on_error
+        # Store all button flags.
+        self._button_apply_flag.append(apply_button)
+        self._button_skip_flag.append(skip_button)
+
+        # Initialise the button storage.
+        self._buttons.append({'back': None,
+                              'apply': None,
+                              'next': None,
+                              'ok': None,
+                              'finish': None,
+                              'cancel': None})
+
+        # Initialise a set of unique button IDs.
+        self._button_ids.append({'back': -1,
+                                 'apply': -1,
+                                 'next': -1,
+                                 'ok': -1,
+                                 'finish': -1,
+                                 'cancel': -1})
+
+        # Execute on next by default.
+        self._exec_on_next.append(exec_on_next)
+
+        # Execution count.
+        self._exec_count.append(0)
+
+        # Proceed to next page on errors by default.
+        self._proceed_on_error.append(proceed_on_error)
+
+        # User function flushing of the GUI interpreter thread prior to proceeding.
         if not proceed_on_error or uf_flush:
-            self._uf_flush[index] = True
+            self._uf_flush.append(True)
+        else:
+            self._uf_flush.append(False)
+
+        # Page sequence initialisation.
+        self._seq_fn_list.append(self._next_fn)
+        self._seq_next.append(None)
+        self._seq_prev.append(None)
+
+        # Page skipping.
+        self._skip_flag.append(False)
 
         # Store the index of the page.
-        panel.page_index = self._num_pages - 1
+        panel.page_index = index
 
         # Return the index of the page.
-        return panel.page_index
+        return index
 
 
     def block_next(self, block=True):

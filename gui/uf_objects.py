@@ -195,7 +195,7 @@ class Uf_object(object):
             self._sync = wx_wizard_sync
 
         # Create a new wizard if needed (checking that the parent of an old wizard is not the same).
-        if self.wizard == None or (wx_parent != None and wx_parent != self.wizard.GetParent()) or self.wizard._pages[0] == None:
+        if self.wizard == None or (wx_parent != None and wx_parent != self.wizard.GetParent()) or len(self.wizard._pages) == 0:
             status = self.create_wizard(wx_parent)
             if not status:
                 return False
@@ -249,6 +249,29 @@ class Uf_object(object):
         self._uf_id = wx.NewId()
 
 
+    def Destroy(self):
+        """Cleanly destroy the user function GUI elements."""
+
+        # First flush all events.
+        wx.Yield()
+
+        # Destroy the user function page.
+        if hasattr(self, 'page'):
+            # Loop over the user function arguments.
+            for key in self.page.uf_args:
+                # Destroy any selection windows.
+                if hasattr(self.page.uf_args[key], 'sel_win'):
+                    self.page.uf_args[key].sel_win.Destroy()
+
+            # Delete the page object.
+            del self.page
+
+        # Destroy the wizard, if it exists.
+        if self.wizard != None:
+            self.wizard.Destroy()
+            self.wizard = None
+
+
     def create_page(self, wizard=None, sync=None, execute=True):
         """Create the user function wizard page GUI object.
 
@@ -285,7 +308,7 @@ class Uf_object(object):
             parent = app.gui
 
         # Create the wizard dialog.
-        self.wizard = Wiz_window(parent=parent, size_x=self._size[0], size_y=self._size[1], title=self._title)
+        self.wizard = Wiz_window(parent=parent, size_x=self._size[0], size_y=self._size[1], title="The %s user function"%self._name)
 
         # Create the page.
         self.page = self.create_page(self.wizard, sync=self._sync)
