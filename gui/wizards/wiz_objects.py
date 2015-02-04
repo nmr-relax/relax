@@ -432,11 +432,13 @@ class Wiz_window(wx.Dialog):
             # Append some Nones.
             self._pages.append(None)
 
-            # Initialise all box sizers for the wizard pages.
+            # Initialise all box sizers for the wizard pages, and store them.
             self._page_sizers.append(wx.BoxSizer(wx.VERTICAL))
+            self._main_sizer.Add(self._page_sizers[i], 1, wx.ALL|wx.EXPAND, 0)
 
-            # Initialise all box sizers for the buttons.
+            # Initialise all box sizers for the buttons, and store them.
             self._button_sizers.append(wx.BoxSizer(wx.HORIZONTAL))
+            self._page_sizers[i].Add(self._button_sizers[i], 0, wx.ALIGN_RIGHT|wx.ALL, 0)
 
             # Set all button flags.
             self._button_apply_flag.append(True)
@@ -829,7 +831,7 @@ class Wiz_window(wx.Dialog):
         self.Close()
 
         # Loop over each page, destroying it and all its elements to avoid memory leaks.
-        for i in range(self._num_pages):
+        for i in range(len(self._buttons)):
             # Destroy the buttons.
             for name in self._buttons[i]:
                 if hasattr(self._buttons[i][name], 'Destroy'):
@@ -844,7 +846,7 @@ class Wiz_window(wx.Dialog):
         # Call the parent method to destroy the dialog.
         super(Wiz_window, self).DestroyChildren()
         super(Wiz_window, self).Destroy()
- 
+
 
     def add_page(self, panel, apply_button=True, skip_button=False, exec_on_next=True, proceed_on_error=True, uf_flush=False):
         """Add a new page to the wizard.
@@ -870,18 +872,12 @@ class Wiz_window(wx.Dialog):
         self._num_pages += 1
         self._pages[index] = panel
 
-        # Store a new sizer for the page and its buttons.
-        self._main_sizer.Add(self._page_sizers[index], 1, wx.ALL|wx.EXPAND, 0)
-
         # Add the sizer for the top half.
         top_sizer = wx.BoxSizer(wx.VERTICAL)
         self._page_sizers[index].Add(top_sizer, 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the page to the top sizer.
         top_sizer.Add(panel, 1, wx.ALL|wx.EXPAND, 0)
-
-        # Add the sizer for the wizard buttons.
-        self._page_sizers[index].Add(self._button_sizers[index], 0, wx.ALIGN_RIGHT|wx.ALL, 0)
 
         # Store the flags.
         self._button_apply_flag[index] = apply_button
