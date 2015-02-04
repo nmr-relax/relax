@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -22,9 +22,6 @@
 
 # Module docstring.
 """The relax_fit user function definitions."""
-
-# Python module imports.
-from os import sep
 
 # relax module imports.
 from graphics import ANALYSIS_IMAGE_PATH
