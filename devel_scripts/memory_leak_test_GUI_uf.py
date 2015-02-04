@@ -23,7 +23,7 @@
 
 Run with a normal version of Python, i.e. a debugging version is not needed, with:
 
-/data/python/bin/python relax devel_scripts/memory_leak_test_relax_fit.py
+$ ./relax devel_scripts/memory_leak_test_GUI_uf.py
 """
 
 # Python module imports.
@@ -179,13 +179,13 @@ class Testing_frame(wx.Frame):
             self._execute_uf(uf_name='minimise.execute', min_algor='simplex', constraints=False)
             if not i % 100:
                 file.write("Iteration %i\n" % i)
-                file.write("Muppy heap:\n%s\n\n\n")
+                file.write("Muppy heap:\n")
                 for line in muppy.summary.format_(muppy.summary.summarize(muppy.get_objects())):
                     file.write("%s\n" % line)
                 file.write("\n\n\n")
                 file.flush()
 
-        print("Finished :)")
+        print("Finished!")
 
 
 # Missing intensity type (allow this script to run outside of the system test framework).
@@ -269,7 +269,7 @@ relax_fit.select_model('exp')
 # Grid search.
 minimise.grid_search(inc=11)
 
-# Set up the GUI.
+# Set up and execute the GUI.
 app = wx.App(False)
 frame = Testing_frame(None, "GUI memory test")
 frame.Show(True)
