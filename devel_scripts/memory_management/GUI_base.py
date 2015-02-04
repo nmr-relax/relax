@@ -29,12 +29,10 @@ $ ./relax devel_scripts/memory_leak_test_GUI_uf.py
 # Python module imports.
 from os import sep
 from pympler import muppy
-import sys
 import wx
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from gui import relax_gui
 from gui.fonts import font
 from gui.interpreter import Interpreter
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
