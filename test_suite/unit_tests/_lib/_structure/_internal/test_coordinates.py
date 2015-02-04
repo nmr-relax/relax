@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2015 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,37 +19,13 @@
 #                                                                             #
 ###############################################################################
 
-"""relax script for creating a PDB file and relaxation data.
-
-The PDB file consists of uniformly distributed bond vectors.  The relaxation data is that of a NH bond vector with an ellipsoidal diffusion tensor and no internal motion.
-"""
-
 # Python module imports.
-from numpy import array, float64
+from numpy import array, int16
 
 # relax module imports.
-from test_suite.shared_data.diffusion_tensor import generate_data
+from lib.structure.internal import coordinates
+from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-# The tensor values.
-Dx = 2e7
-Dy = 2e7
-Dz = 3e7
-alpha = 1.0
-beta = 2.0
-gamma = 0.5
-
-# Other data.
-frq = array([500, 600, 700, 800], float64)
-wH = frq * 1e6 * 2*pi
-csa = -172e-6
-
-# The tensor.
-R, R_rev, D_prime, D = generate_data.tensor_setup(Dx, Dy, Dz, alpha, beta, gamma)
-
-# The bond vector distribution.
-vectors = generate_data.pdb(file_name='uniform.pdb', inc=5)
-
-# The relaxation data.
-for i in range(len(frq)):
-    generate_data.ri_data(Dx=Dx, Dy=Dy, Dz=Dz, R=R, vectors=vectors, frq_label=str(int(frq[i])), wH=wH[i], csa=csa)
+class Test_coordinates(UnitTestCase):
+    """Unit tests for the functions of the 'lib.structure.internal.coordinates' module."""

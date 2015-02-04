@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -415,12 +415,12 @@ class Selection(object):
         elif self._intersect:
             return self._intersect[0].contains_mol(mol) and self._intersect[1].contains_mol(mol)
 
-        # The check.
-        if regex.search(self.molecules, mol):
-            return True
-
         # Nothingness.
         if not self.molecules:
+            return True
+
+        # The check.
+        if regex.search(self.molecules, mol):
             return True
 
         # No match.
@@ -449,21 +449,22 @@ class Selection(object):
             return self._intersect[0].contains_res(res_num, res_name, mol) and self._intersect[1].contains_res(res_num, res_name, mol)
 
         # Does it contain the molecule.
-        select_mol = self.contains_mol(mol)
+        if not self.contains_mol(mol):
+            return False
 
         # Residue selection flag.
         select_res = False
 
-        # The residue checks.
-        if res_num in self.residues or regex.search(self.residues, res_name):
-            select_res = True
-
         # Nothingness.
         if not self.residues:
-            select_res = True
+            return True
 
-        # Return the result.
-        return select_res and select_mol
+        # The residue checks.
+        if res_num in self.residues or regex.search(self.residues, res_name):
+            return True
+
+        # No match.
+        return False
 
 
     def contains_spin(self, spin_num=None, spin_name=None, res_num=None, res_name=None, mol=None):
@@ -492,24 +493,23 @@ class Selection(object):
             return self._intersect[0].contains_spin(spin_num, spin_name, res_num, res_name, mol) and self._intersect[1].contains_spin(spin_num, spin_name, res_num, res_name, mol)
 
         # Does it contain the molecule.
-        select_mol = self.contains_mol(mol)
+        if not self.contains_mol(mol):
+            return False
 
         # Does it contain the residue.
-        select_res = self.contains_res(res_num, res_name, mol)
-
-        # Spin selection flag.
-        select_spin = False
-
-        # The spin checks.
-        if spin_num in self.spins or regex.search(self.spins, spin_name):
-            select_spin = True
+        if not self.contains_res(res_num, res_name, mol):
+            return False
 
         # Nothingness.
         if not self.spins:
-            select_spin = True
+            return True
 
-        # Return the result.
-        return select_spin and select_res and select_mol
+        # The spin checks.
+        if spin_num in self.spins or regex.search(self.spins, spin_name):
+            return True
+
+        # No match.
+        return False
 
 
     def contains_spin_id(self, spin_id):

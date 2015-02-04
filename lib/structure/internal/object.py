@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -39,6 +39,7 @@ from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
 from lib.io import file_root, open_read_file
 from lib.selection import Selection
+from lib.sequence import aa_codes_three_to_one
 from lib.structure import pdb_read, pdb_write
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.models import ModelList
@@ -486,6 +487,12 @@ class Internal:
             'TURN  '
         ]
 
+        # The number of pre-existing molecules.
+        if not len(self.structural_data):
+            mol_num = 0
+        else:
+            mol_num = len(self.structural_data[0].mol)
+
         # Loop over the lines.
         for i in range(len(lines)):
             # No match, therefore assume to be out of the secondary structure section.
@@ -497,34 +504,56 @@ class Internal:
                 # Parse the record.
                 record_type, ser_num, helix_id, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, helix_class, comment, length = pdb_read.helix(lines[i])
 
+                # The molecule indices.
+                mol_init_index = self._pdb_chain_id_to_mol_index(init_chain_id)
+                mol_end_index = self._pdb_chain_id_to_mol_index(end_chain_id)
+
                 # Only load the desired molecule.
                 if read_mol != None:
-                    if self._pdb_chain_id_to_mol_index(init_chain_id)+1 not in read_mol:
+                    if mol_init_index + 1 not in read_mol:
                         continue
-                    if self._pdb_chain_id_to_mol_index(end_chain_id)+1 not in read_mol:
+                    if mol_end_index + 1 not in read_mol:
                         continue
+
+                # New molecule indices based on currently loaded data.
+                mol_init_index += mol_num
+                mol_end_index += mol_num
 
                 # Store the data.
                 if not hasattr(self, 'helices'):
                     self.helices = []
-                self.helices.append([helix_id, init_chain_id, init_res_name, init_seq_num, end_chain_id, end_res_name, end_seq_num, helix_class, length])
+                self.helices.append([helix_id, mol_init_index, init_res_name, init_seq_num, mol_end_index, end_res_name, end_seq_num, helix_class, length])
 
             # A sheet.
             if lines[i][:5] == 'SHEET':
                 # Parse the record.
                 record_type, strand, sheet_id, num_strands, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, sense, cur_atom, cur_res_name, cur_chain_id, cur_res_seq, cur_icode, prev_atom, prev_res_name, prev_chain_id, prev_res_seq, prev_icode = pdb_read.sheet(lines[i])
 
+                # The molecule indices.
+                mol_init_index = self._pdb_chain_id_to_mol_index(init_chain_id)
+                mol_end_index = self._pdb_chain_id_to_mol_index(end_chain_id)
+
                 # Only load the desired molecule.
                 if read_mol != None:
-                    if self._pdb_chain_id_to_mol_index(init_chain_id)+1 not in read_mol:
+                    if mol_init_index + 1 not in read_mol:
                         continue
-                    if self._pdb_chain_id_to_mol_index(end_chain_id)+1 not in read_mol:
+                    if mol_end_index + 1 not in read_mol:
                         continue
+
+                # New molecule indices based on currently loaded data.
+                mol_init_index += mol_num
+                mol_end_index += mol_num
+                mol_cur_index = None
+                if cur_chain_id:
+                    mol_cur_index = self._pdb_chain_id_to_mol_index(cur_chain_id) + mol_num
+                mol_prev_index = None
+                if prev_chain_id:
+                    mol_prev_index = self._pdb_chain_id_to_mol_index(prev_chain_id) + mol_num
 
                 # Store the data.
                 if not hasattr(self, 'sheets'):
                     self.sheets = []
-                self.sheets.append([strand, sheet_id, num_strands, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, sense, cur_atom, cur_res_name, cur_chain_id, cur_res_seq, cur_icode, prev_atom, prev_res_name, prev_chain_id, prev_res_seq, prev_icode])
+                self.sheets.append([strand, sheet_id, num_strands, init_res_name, mol_init_index, init_seq_num, init_icode, end_res_name, mol_end_index, end_seq_num, end_icode, sense, cur_atom, cur_res_name, mol_cur_index, cur_res_seq, cur_icode, prev_atom, prev_res_name, mol_prev_index, prev_res_seq, prev_icode])
 
         # Return the remaining lines.
         return lines[i:]
@@ -691,8 +720,8 @@ class Internal:
             if records[i][:6] == 'ENDMDL':
                 end = True
 
-            # A molecule termination record with no trailing HETATM.
-            elif i < len(records)-1 and records[i][:3] == 'TER' and not records[i+1][:6] == 'HETATM':
+            # A molecule termination record with no trailing HETATM or CONECT.
+            elif i < len(records)-1 and records[i][:3] == 'TER' and not records[i+1][:6] == 'HETATM' and not records[i+1][:6] == 'CONECT':
                 end = True
 
             # A HETATM followed by an ATOM record.
@@ -2266,6 +2295,50 @@ class Internal:
         return len(self.structural_data[0].mol)
 
 
+    def one_letter_codes(self, mol_name=None, selection=None):
+        """Generate and return the one letter code sequence for the given molecule.
+
+        @keyword mol_name:  The name of the molecule to return the one letter codes for.
+        @type mol_name:     str
+        @keyword selection: The internal structural selection object.  This is obtained by calling the selection() method with the atom ID string.
+        @type selection:    lib.structure.internal.Internal_selection instance
+        @return:            The one letter code sequence for the given molecule.
+        @rtype:             str
+        """
+
+        # Initialise.
+        codes = ''
+
+        # Validate the models.
+        self.validate_models(verbosity=0)
+
+        # Use the first model.
+        model = self.structural_data[0]
+
+        # Residue numbers.
+        res_nums = []
+
+        # Loop over the molecules.
+        for mol_index, i in selection.loop():
+            # Alias.
+            mol = model.mol[mol_index]
+
+            # Skip non-matching molecules.
+            if mol_name and mol_name != mol.mol_name:
+                continue
+
+            # Not a new residue.
+            if mol.res_num[i] in res_nums:
+                continue
+
+            # Convert to the one letter code and store the residue number.
+            codes += aa_codes_three_to_one(mol.res_name[i])
+            res_nums.append(mol.res_num[i])
+            
+        # Return the codes.
+        return codes
+
+
     def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None, file_path_abs=None, verbosity=1, merge=False):
         """From the given structural data, expand the structural data data structure.
 
@@ -2832,8 +2905,8 @@ class Internal:
 
             # Loop over and unpack the helix data.
             index = 1
-            for helix_id, init_chain_id, init_res_name, init_seq_num, end_chain_id, end_res_name, end_seq_num, helix_class, length in self.helices:
-                pdb_write.helix(file, ser_num=index, helix_id=helix_id, init_chain_id=init_chain_id, init_res_name=init_res_name, init_seq_num=init_seq_num, end_chain_id=end_chain_id, end_res_name=end_res_name, end_seq_num=end_seq_num, helix_class=helix_class, length=length)
+            for helix_id, mol_init_index, init_res_name, init_seq_num, mol_end_index, end_res_name, end_seq_num, helix_class, length in self.helices:
+                pdb_write.helix(file, ser_num=index, helix_id=helix_id, init_chain_id=CHAIN_ID_LIST[mol_init_index], init_res_name=init_res_name, init_seq_num=init_seq_num, end_chain_id=CHAIN_ID_LIST[mol_end_index], end_res_name=end_res_name, end_seq_num=end_seq_num, helix_class=helix_class, length=length)
                 index += 1
 
         # The SHEET records.
@@ -2845,7 +2918,18 @@ class Internal:
 
             # Loop over and unpack the helix data.
             index = 1
-            for strand, sheet_id, num_strands, init_res_name, init_chain_id, init_seq_num, init_icode, end_res_name, end_chain_id, end_seq_num, end_icode, sense, cur_atom, cur_res_name, cur_chain_id, cur_res_seq, cur_icode, prev_atom, prev_res_name, prev_chain_id, prev_res_seq, prev_icode in self.sheets:
+            for strand, sheet_id, num_strands, init_res_name, mol_init_index, init_seq_num, init_icode, end_res_name, mol_end_index, end_seq_num, end_icode, sense, cur_atom, cur_res_name, mol_cur_index, cur_res_seq, cur_icode, prev_atom, prev_res_name, mol_prev_index, prev_res_seq, prev_icode in self.sheets:
+                # Translate molecule indices to chain IDs.
+                init_chain_id = CHAIN_ID_LIST[mol_init_index]
+                end_chain_id = CHAIN_ID_LIST[mol_end_index]
+                cur_chain_id = None
+                if mol_cur_index != None:
+                    cur_chain_id = CHAIN_ID_LIST[mol_cur_index]
+                prev_chain_id = None
+                if mol_prev_index != None:
+                    prev_chain_id = CHAIN_ID_LIST[mol_prev_index]
+
+                # Write out.
                 pdb_write.sheet(file, strand=strand, sheet_id=sheet_id, num_strands=num_strands, init_res_name=init_res_name, init_chain_id=init_chain_id, init_seq_num=init_seq_num, init_icode=init_icode, end_res_name=end_res_name, end_chain_id=end_chain_id, end_seq_num=end_seq_num, end_icode=end_icode, sense=sense, cur_atom=cur_atom, cur_res_name=cur_res_name, cur_chain_id=cur_chain_id, cur_res_seq=cur_res_seq, cur_icode=cur_icode, prev_atom=prev_atom, prev_res_name=prev_res_name, prev_chain_id=prev_chain_id, prev_res_seq=prev_res_seq, prev_icode=prev_icode)
                 index += 1
 

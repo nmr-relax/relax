@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -489,6 +489,22 @@ class MolContainer:
 
         # Return the number.
         return self.res_num[-1]
+
+
+    def loop_residues(self):
+        """Generator method for looping over the individual residues of the molecule.
+
+        @return:    The residue name and number.
+        @rtype:     str, int
+        """
+
+        # Loop over the atoms.
+        last_res = None
+        for i in range(len(self.atom_num)):
+            # A new residue.
+            if self.res_num[i] != last_res:
+                last_res = self.res_num[i]
+                yield self.res_name[i], self.res_num[i]
 
 
     def merge(self, mol_cont=None):

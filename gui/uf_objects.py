@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -706,6 +706,9 @@ class Uf_page(Wiz_page):
                         for j in range(len(element)):
                             text += "    - %s\n" % element[j]
 
+                        # Remove the last newline character.
+                        text = text[:-1]
+
                     # Format the item lists.
                     elif type == 'item list':
                         # Loop over the list elements.
@@ -716,10 +719,16 @@ class Uf_page(Wiz_page):
                             else:
                                 text += "    %s:  %s\n" % (element[j][0], element[j][1])
 
+                        # Remove the last newline character.
+                        text = text[:-1]
+
                     # Format prompt items.
                     elif type == 'prompt':
                         for j in range(len(element)):
                             text += "%s\n" % element[j]
+
+                        # Remove the last newline character.
+                        text = text[:-1]
 
                     # The text object.
                     text_obj = wx.StaticText(panel, -1, text, style=wx.TE_MULTILINE)

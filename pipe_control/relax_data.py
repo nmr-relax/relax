@@ -788,7 +788,7 @@ def pack_data(ri_id, ri_type, frq, values, errors, spin_ids=None, mol_names=None
             spins[j].ri_data_err[ri_id] = errors[i]
 
             # Append the data for printing out.
-            data.append([spin_ids[j], repr(values[i]), repr(errors[i])])
+            data.append([spin_ids[i], repr(values[i]), repr(errors[i])])
 
     # Print out.
     if verbose:

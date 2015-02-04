@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007 Edward d'Auvergne                                        #
+# Copyright (C) 2007-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,6 +19,9 @@
 #                                                                             #
 ###############################################################################
 
-__all__ = ['test___init__',
-           'test_diff_tensor',
-           'test_mol_res_spin']
+__all__ = [
+    'test___init__',
+    'test_diff_tensor',
+    'test_mol_res_spin',
+    'test_seq_align'
+]

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,6 +29,8 @@ import sys
 from warnings import warn
 
 # relax module imports.
+from data_store import Relax_data_store; ds = Relax_data_store()
+from data_store.seq_align import Sequence_alignments
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxFileError
 from lib.geometry.vectors import vector_angle_atan2
@@ -36,7 +38,8 @@ from lib.io import get_file_path, open_write_file, write_data
 from lib.plotting.api import correlation_matrix
 from lib.selection import tokenise
 from lib.sequence import write_spin_data
-from lib.structure.internal.coordinates import assemble_coord_array, loop_coord_structures
+from lib.sequence_alignment.msa import msa_general, msa_residue_numbers, msa_residue_skipping
+from lib.structure.internal.coordinates import assemble_atomic_coordinates, assemble_coord_array, loop_coord_structures
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.object import Internal
 from lib.structure.represent.diffusion_tensor import diffusion_tensor
@@ -108,95 +111,97 @@ def add_model(model_num=None):
     print("Created the empty model number %s." % model_num)
 
 
-def align(pipes=None, models=None, molecules=None, atom_id=None, displace_id=None, method='fit to mean', centre_type="centroid", centroid=None):
-    """Superimpose a set of related, but not identical structures.
-
-    @keyword pipes:         The data pipes to include in the alignment and superimposition.
-    @type pipes:            None or list of str
-    @keyword models:        The list of models to for each data pipe superimpose.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
-    @type models:           list of lists of int or None
-    @keyword molecules:     The molecule names to include in the alignment and superimposition.  The number of elements must match the pipes argument.
-    @type molecules:        None or list of str
-    @keyword atom_id:       The molecule, residue, and atom identifier string.  This matches the spin ID string format.
-    @type atom_id:          str or None
-    @keyword displace_id:   The atom ID string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.  This can be a list of atom IDs with each element corresponding to one of the structures.
-    @type displace_id:      None, str, or list of str
-    @keyword method:        The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
-    @type method:           str
-    @keyword centre_type:   The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
-    @type centre_type:      str
-    @keyword centroid:      An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
-    @type centroid:         list of float or numpy rank-1, 3D array
+def assemble_structural_coordinates(pipes=None, models=None, molecules=None, atom_id=None):
+    """Assemble the common atomic coordinates taking sequence alignments into account.
+ 
+    @keyword pipes:     The data pipes to assemble the coordinates from.
+    @type pipes:        None or list of str
+    @keyword models:    The list of models for each data pipe.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:       None or list of lists of int
+    @keyword molecules: The list of molecules for each data pipe.  The number of elements must match the pipes argument.
+    @type molecules:    None or list of lists of str
+    @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.
+    @type atom_id:      str or None
+    @return:            The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates); a list of unique IDs for each structural object, model, and molecule; the common list of molecule names; the common list of residue names; the common list of residue numbers; the common list of atom names; the common list of element names.
+    @rtype:             numpy rank-3 float64 array, list of str, list of str, list of str, list of int, list of str, list of str
     """
 
-    # Check the method.
-    allowed = ['fit to mean', 'fit to first']
-    if method not in allowed:
-        raise RelaxError("The superimposition method '%s' is unknown.  It must be one of %s." % (method, allowed))
+    # Assemble the structural objects.
+    objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
 
-    # Check the type.
-    allowed = ['centroid', 'CoM']
-    if centre_type not in allowed:
-        raise RelaxError("The superimposition centre type '%s' is unknown.  It must be one of %s." % (centre_type, allowed))
+    # Assemble the atomic coordinates of all molecules.
+    ids, object_id_list, model_list, molecule_list, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols = assemble_atomic_coordinates(objects=objects, object_names=object_names, molecules=molecules, models=models, atom_id=atom_id)
 
-    # Assemble the atomic coordinates and obtain the corresponding element information.
-    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=True)
+    # Are all molecules the same?
+    same_mol = True
+    for mol in molecule_list:
+        if mol != molecule_list[0]:
+            same_mol = False
 
-    # The different algorithms.
-    if method == 'fit to mean':
-        T, R, pivot = fit_to_mean(models=list(range(len(ids))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
-    elif method == 'fit to first':
-        T, R, pivot = fit_to_first(models=list(range(len(ids))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+    # Handle sequence alignments - retrieve the alignment.
+    align = None
+    if hasattr(ds, 'sequence_alignments'):
+        align = ds.sequence_alignments.find_alignment(object_ids=object_id_list, models=model_list, molecules=molecule_list, sequences=one_letter_codes)
+    if align != None:
+        # Printout.
+        print("\nSequence alignment found - common atoms will be determined based on this MSA:")
+        for i in range(len(align.object_ids)):
+            print(align.strings[i])
 
-    # The data pipes to use.
-    if pipes == None:
-        pipes = [cdp_name()]
+        # Alias the required data structures.
+        strings = align.strings
+        gaps = align.gaps
 
-    # Loop over all pipes, models, and molecules.
-    i = 0
-    for pipe_index, model_num, mol_name in structure_loop(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id):
-        # The current displacement ID.
-        curr_displace_id = None
-        if isinstance(displace_id, str):
-            curr_displace_id = displace_id
-        elif isinstance(displace_id, list):
-            if len(displace_id) <= i:
-                raise RelaxError("Not enough displacement ID strings have been provided.")
-            curr_displace_id = displace_id[i]
+    # Handle sequence alignments - no alignment required.
+    elif len(objects) == 1 and same_mol:
+        # Printout.
+        print("\nSequence alignment disabled as only models with identical molecule, residue and atomic sequences are being superimposed.")
 
-        # Add the molecule name to the displacement ID if required.
-        id = curr_displace_id
-        if molecules != None:
-            if curr_displace_id == None:
-                id = '#%s' % mol_name
-            elif search('#', curr_displace_id):
-                id = curr_displace_id
-            else:
-                id = '#%s%s' % (mol_name, curr_displace_id)
+        # Set the one letter codes to be the alignment strings.
+        strings = one_letter_codes
 
-        # Translate the molecule first (the rotational pivot is defined in the first model).
-        translate(T=T[i], model=model_num, pipe_name=pipes[pipe_index], atom_id=id)
+        # Create an empty gap data structure.
+        gaps = []
+        for mol_index in range(num_mols):
+            gaps.append([])
+            for i in range(len(one_letter_codes[mol_index])):
+                gaps[mol_index].append(0)
 
-        # Rotate the molecule.
-        rotate(R=R[i], origin=pivot[i], model=model_num, pipe_name=pipes[pipe_index], atom_id=id)
+    # Handle sequence alignments - fall back alignment based on residue numbering.
+    else:
+        # Printout.
+        print("\nSequence alignment cannot be found - falling back to a residue number based alignment.")
 
-        # Increment the index.
-        i += 1
+        # Convert the residue number data structure.
+        res_num_list = []
+        for mol_index in range(num_mols):
+            res_num_list.append([])
+            for i in range(len(one_letter_codes[mol_index])):
+                key = res_nums[mol_index][i].keys()[0]
+                res_num_list[mol_index].append(res_nums[mol_index][i][key])
+
+        # Sequence alignment.
+        strings, gaps = msa_residue_numbers(one_letter_codes, residue_numbers=res_num_list)
+
+    # Create the residue skipping data structure. 
+    skip = msa_residue_skipping(strings=strings, gaps=gaps)
+
+    # Assemble and return the atomic coordinates and common atom information.
+    coord, mol_name_common, res_name_common, res_num_common, atom_name_common, element_common = assemble_coord_array(atom_pos=atom_pos, mol_names=mol_names, res_names=res_names, res_nums=res_nums, atom_names=atom_names, elements=elements, sequences=one_letter_codes, skip=skip)
+    return coord, ids, mol_name_common, res_name_common, res_num_common, atom_name_common, element_common
 
 
-def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, seq_info_flag=False):
-    """Assemble the atomic coordinates 
+def assemble_structural_objects(pipes=None, models=None, molecules=None):
+    """Assemble the atomic coordinates.
  
-    @keyword pipes:         The data pipes to assemble the coordinates from.
-    @type pipes:            None or list of str
-    @keyword models:        The list of models for each data pipe.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
-    @type models:           None or list of lists of int
-    @keyword molecules:     The list of molecules for each data pipe.  The number of elements must match the pipes argument.
-    @type molecules:        None or list of lists of str
-    @keyword atom_id:       The molecule, residue, and atom identifier string of the coordinates of interest.  This matches the spin ID string format.
-    @type atom_id:          None or str
-    @return:                The array of atomic coordinates (first dimension is the model and/or molecule, the second are the atoms, and the third are the coordinates); a list of unique IDs for each structural object, model, and molecule; the common list of molecule names (if the seq_info_flag is set); the common list of residue names (if the seq_info_flag is set); the common list of residue numbers (if the seq_info_flag is set); the common list of atom names (if the seq_info_flag is set); the common list of element names (if the seq_info_flag is set).
-    @rtype:                 numpy rank-3 float64 array, list of str, list of str, list of str, list of int, list of str, list of str
+    @keyword pipes:                     The data pipes to assemble the coordinates from.
+    @type pipes:                        None or list of str
+    @keyword models:                    The list of models for each data pipe.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:                       None or list of lists of int
+    @keyword molecules:                 The list of molecules for each data pipe.  The number of elements must match the pipes argument.
+    @type molecules:                    None or list of lists of str
+    @return:                            The structural objects, structural object names, and data pipes list.
+    @rtype:                             list of lib.structure.internal.object.Internal instances, list of str, list of str
     """
 
     # The data pipes to use.
@@ -224,8 +229,8 @@ def assemble_coordinates(pipes=None, molecules=None, models=None, atom_id=None, 
         objects.append(dp.structure)
         object_names.append(pipes[pipe_index])
 
-    # Call the library method to do all of the work.
-    return assemble_coord_array(objects=objects, object_names=object_names, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=seq_info_flag)
+    # Return the structural objects, object names, and the new pipes list.
+    return objects, object_names, pipes
 
 
 def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, measure='distance', file=None, format='text', dir=None, force=False):
@@ -258,8 +263,8 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, m
     if measure not in allowed_measures:
         raise RelaxError("The measure '%s' must be one of %s." % (measure, allowed_measures))
 
-    # Assemble the atomic coordinates.
-    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=True)
+    # Assemble the structural coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id)
 
     # The number of dimensions.
     n = len(atom_names)
@@ -579,8 +584,8 @@ def displacement(pipes=None, models=None, molecules=None, atom_id=None, centroid
     # Test if the current data pipe exists.
     check_pipe()
 
-    # Assemble the atomic coordinates.
-    coord, ids = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id)
+    # Assemble the structural coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id)
 
     # Initialise the data structure.
     if not hasattr(cdp.structure, 'displacments'):
@@ -622,8 +627,8 @@ def find_pivot(pipes=None, models=None, molecules=None, atom_id=None, init_pos=N
         init_pos = zeros(3, float64)
     init_pos = array(init_pos)
 
-    # Assemble the atomic coordinates.
-    coord, ids = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id)
+    # Assemble the structural coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id)
 
     # Linear constraints for the pivot position (between -1000 and 1000 Angstrom).
     A = zeros((6, 3), float64)
@@ -1156,8 +1161,8 @@ def rmsd(pipes=None, models=None, molecules=None, atom_id=None):
     # Test if the current data pipe exists.
     check_pipe()
 
-    # Assemble the atomic coordinates.
-    coord, ids = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id)
+    # Assemble the structural coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id)
 
     # Calculate the RMSD.
     cdp.structure.rmsd = atomic_rmsd(coord, verbosity=1)
@@ -1203,6 +1208,71 @@ def rotate(R=None, origin=None, model=None, atom_id=None, pipe_name=None):
     # Call the specific code.
     selection = dp.structure.selection(atom_id=atom_id)
     dp.structure.rotate(R=R, origin=origin, model=model, selection=selection)
+
+    # Final printout.
+    if model != None:
+        print("Rotated %i atoms of model %i." % (selection.count_atoms(), model))
+    else:
+        print("Rotated %i atoms." % selection.count_atoms())
+
+
+def sequence_alignment(pipes=None, models=None, molecules=None, msa_algorithm='Central Star', pairwise_algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=1.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.0, end_gap_extend_penalty=0.0):
+    """Superimpose a set of related, but not identical structures.
+
+    @keyword pipes:                     The data pipes to include in the alignment and superimposition.
+    @type pipes:                        None or list of str
+    @keyword models:                    The list of models to for each data pipe superimpose.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:                       list of lists of int or None
+    @keyword molecules:                 The molecule names to include in the alignment and superimposition.  The number of elements must match the pipes argument.
+    @type molecules:                    None or list of str
+    @keyword msa_algorithm:             The multiple sequence alignment (MSA) algorithm to use.
+    @type msa_algorithm:                str
+    @keyword pairwise_algorithm:        The pairwise sequence alignment algorithm to use.
+    @type pairwise_algorithm:           str
+    @keyword matrix:                    The substitution matrix to use.
+    @type matrix:                       str
+    @keyword gap_open_penalty:          The penalty for introducing gaps, as a positive number.
+    @type gap_open_penalty:             float
+    @keyword gap_extend_penalty:        The penalty for extending a gap, as a positive number.
+    @type gap_extend_penalty:           float
+    @keyword end_gap_open_penalty:      The optional penalty for opening a gap at the end of a sequence.
+    @type end_gap_open_penalty:         float
+    @keyword end_gap_extend_penalty:    The optional penalty for extending a gap at the end of a sequence.
+    @type end_gap_extend_penalty:       float
+    """
+
+    # Assemble the structural objects.
+    objects, object_names, pipes = assemble_structural_objects(pipes=pipes, models=models, molecules=molecules)
+
+    # Assemble the atomic coordinates of all molecules.
+    ids, object_id_list, model_list, molecule_list, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols = assemble_atomic_coordinates(objects=objects, object_names=object_names, molecules=molecules, models=models)
+
+    # Convert the residue number data structure.
+    res_num_list = []
+    for mol_index in range(num_mols):
+        res_num_list.append([])
+        for i in range(len(one_letter_codes[mol_index])):
+            key = res_nums[mol_index][i].keys()[0]
+            res_num_list[mol_index].append(res_nums[mol_index][i][key])
+
+    # MSA.
+    strings, gaps = msa_general(one_letter_codes, residue_numbers=res_num_list, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
+
+    # Set up the data store object.
+    if not hasattr(ds, 'sequence_alignments'):
+        ds.sequence_alignments = Sequence_alignments()
+
+    # Set some unused arguments to None for storage.
+    if msa_algorithm == 'residue number':
+        pairwise_algorithm = None
+        matrix = None
+        gap_open_penalty = None
+        gap_extend_penalty = None
+        end_gap_open_penalty = None
+        end_gap_extend_penalty = None
+
+    # Store the alignment.
+    ds.sequence_alignments.add(object_ids=object_id_list, models=model_list, molecules=molecule_list, sequences=one_letter_codes, strings=strings, gaps=gaps, msa_algorithm=msa_algorithm, pairwise_algorithm=pairwise_algorithm, matrix=matrix, gap_open_penalty=gap_open_penalty, gap_extend_penalty=gap_extend_penalty, end_gap_open_penalty=end_gap_open_penalty, end_gap_extend_penalty=end_gap_extend_penalty)
 
 
 def set_vector(spin=None, xh_vect=None):
@@ -1257,21 +1327,25 @@ def structure_loop(pipes=None, molecules=None, models=None, atom_id=None):
         objects.append(dp.structure)
 
     # Call the library method to do all of the work.
-    for pipe_index, model_num, mol_name in loop_coord_structures(objects=objects, molecules=molecules, models=models, atom_id=atom_id):
+    for pipe_index, model_num, mol_name in loop_coord_structures(objects=objects, models=models, molecules=molecules, atom_id=atom_id):
         yield pipe_index, model_num, mol_name
 
 
-def superimpose(models=None, method='fit to mean', atom_id=None, displace_id=None, centre_type="centroid", centroid=None):
-    """Superimpose a set of structural models.
+def superimpose(pipes=None, models=None, molecules=None, atom_id=None, displace_id=None, method='fit to mean', centre_type="centroid", centroid=None):
+    """Superimpose a set of structures.
 
-    @keyword models:        The list of models to superimpose.  If set to None, then all models will be used.
-    @type models:           list of int or None
-    @keyword method:        The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
-    @type method:           str
+    @keyword pipes:         The data pipes to include in the alignment and superimposition.
+    @type pipes:            None or list of str
+    @keyword models:        The list of models to for each data pipe superimpose.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:           list of lists of int or None
+    @keyword molecules:     The molecule names to include in the alignment and superimposition.  The number of elements must match the pipes argument.
+    @type molecules:        None or list of str
     @keyword atom_id:       The molecule, residue, and atom identifier string.  This matches the spin ID string format.
     @type atom_id:          str or None
-    @keyword displace_id:   The atom ID string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.
-    @type displace_id:      str or None
+    @keyword displace_id:   The atom ID string for restricting the displacement to a subset of all atoms.  If not set, then all atoms will be translated and rotated.  This can be a list of atom IDs with each element corresponding to one of the structures.
+    @type displace_id:      None, str, or list of str
+    @keyword method:        The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
+    @type method:           str
     @keyword centre_type:   The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
     @type centre_type:      str
     @keyword centroid:      An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
@@ -1288,26 +1362,53 @@ def superimpose(models=None, method='fit to mean', atom_id=None, displace_id=Non
     if centre_type not in allowed:
         raise RelaxError("The superimposition centre type '%s' is unknown.  It must be one of %s." % (centre_type, allowed))
 
-    # Create a list of all models.
-    if models == None:
-        models = cdp.structure.model_list()
+    # The data pipes to use.
+    if pipes == None:
+        pipes = [cdp_name()]
 
-    # Assemble the atomic coordinates and obtain the corresponding element information.
-    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(models=[models], atom_id=atom_id, seq_info_flag=True)
+    # Assemble the structural coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id)
+
+    # Catch missing data.
+    if len(coord[0]) == 0:
+        raise RelaxError("No common atoms could be found between the structures.")
 
     # The different algorithms.
     if method == 'fit to mean':
-        T, R, pivot = fit_to_mean(models=models, coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+        T, R, pivot = fit_to_mean(models=list(range(len(ids))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
     elif method == 'fit to first':
-        T, R, pivot = fit_to_first(models=models, coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
+        T, R, pivot = fit_to_first(models=list(range(len(ids))), coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
 
-    # Update to the new coordinates.
-    for i in range(len(models)):
+    # Loop over all pipes, models, and molecules.
+    i = 0
+    for pipe_index, model_num, mol_name in structure_loop(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id):
+        # The current displacement ID.
+        curr_displace_id = None
+        if isinstance(displace_id, str):
+            curr_displace_id = displace_id
+        elif isinstance(displace_id, list):
+            if len(displace_id) <= i:
+                raise RelaxError("Not enough displacement ID strings have been provided.")
+            curr_displace_id = displace_id[i]
+
+        # Add the molecule name to the displacement ID if required.
+        id = curr_displace_id
+        if id == None or (mol_name and not search('#', id)):
+            if curr_displace_id == None:
+                id = '#%s' % mol_name
+            elif search('#', curr_displace_id):
+                id = curr_displace_id
+            else:
+                id = '#%s%s' % (mol_name, curr_displace_id)
+
         # Translate the molecule first (the rotational pivot is defined in the first model).
-        translate(T=T[i], model=models[i], atom_id=displace_id)
+        translate(T=T[i], model=model_num, pipe_name=pipes[pipe_index], atom_id=id)
 
         # Rotate the molecule.
-        rotate(R=R[i], origin=pivot[i], model=models[i], atom_id=displace_id)
+        rotate(R=R[i], origin=pivot[i], model=model_num, pipe_name=pipes[pipe_index], atom_id=id)
+
+        # Increment the index.
+        i += 1
 
 
 def translate(T=None, model=None, atom_id=None, pipe_name=None):
@@ -1340,6 +1441,12 @@ def translate(T=None, model=None, atom_id=None, pipe_name=None):
     # Call the specific code.
     selection = dp.structure.selection(atom_id=atom_id)
     dp.structure.translate(T=T, model=model, selection=selection)
+
+    # Final printout.
+    if model != None:
+        print("Translated %i atoms of model %i." % (selection.count_atoms(), model))
+    else:
+        print("Translated %i atoms." % selection.count_atoms())
 
 
 def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, unit=True):
@@ -1510,8 +1617,8 @@ def web_of_motion(pipes=None, models=None, molecules=None, atom_id=None, file=No
     check_pipe()
     check_structure()
 
-    # Assemble the atomic coordinates.
-    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_coordinates(pipes=pipes, molecules=molecules, models=models, atom_id=atom_id, seq_info_flag=True)
+    # Assemble the structural coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id)
 
     # Check that more than one structure is present.
     if not len(coord) > 1:

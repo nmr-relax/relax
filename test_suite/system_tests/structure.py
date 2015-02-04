@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -64,13 +64,13 @@ class Structure(SystemTestCase):
 
 
     def test_align(self):
-        """Test the U{structure.align user function<http://www.nmr-relax.com/manual/structure_align.html>}."""
+        """Test the U{structure.superimpose user function<http://www.nmr-relax.com/manual/structure_superimpose.html>}."""
 
         # Reset relax.
         self.interpreter.reset()
 
         # Path of the PDB file.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'sphere'
 
         # Create a data pipe for the reference structure, then load it.
         self.interpreter.pipe.create('ref', 'N-state')
@@ -107,53 +107,73 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_atom(mol_name='uniform_mol1', atom_name='Ti', res_name='TST', res_num=1, pos=[[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]], element='Ti', pdb_record='HETATM')
 
         # The alignment.
-        self.interpreter.structure.align(pipes=['ref', 'align'], method='fit to first', atom_id='@N,H', displace_id='@N,H')
+        self.interpreter.structure.superimpose(pipes=['ref', 'align'], method='fit to first', atom_id='@N,H', displace_id='@N,H')
 
         # Output PDB to stdout to help in debugging.
         self.interpreter.structure.write_pdb(file=sys.stdout)
 
         # The atomic data.
         data = [
-            ["N", "NH",  1,   0.000,  0.000,  0.000],
-            ["H", "NH",  1,   0.000,  0.000, -1.020],
-            ["N", "NH",  2,   0.000,  0.000,  0.000],
-            ["H", "NH",  2,   0.883,  0.000, -0.510],
-            ["N", "NH",  3,   0.000,  0.000,  0.000],
-            ["H", "NH",  3,   0.883,  0.000,  0.510],
-            ["N", "NH",  4,   0.000,  0.000,  0.000],
-            ["H", "NH",  4,   0.000,  0.000,  1.020],
-            ["N", "NH",  5,   0.000,  0.000,  0.000],
-            ["H", "NH",  5,   0.000,  0.000, -1.020],
-            ["N", "NH",  6,   0.000,  0.000,  0.000],
-            ["H", "NH",  6,   0.273,  0.840, -0.510],
-            ["N", "NH",  7,   0.000,  0.000,  0.000],
-            ["H", "NH",  7,   0.273,  0.840,  0.510],
-            ["N", "NH",  8,   0.000,  0.000,  0.000],
-            ["H", "NH",  8,   0.000,  0.000,  1.020],
-            ["N", "NH",  9,   0.000,  0.000,  0.000],
-            ["H", "NH",  9,  -0.000,  0.000, -1.020],
-            ["N", "NH", 10,   0.000,  0.000,  0.000],
-            ["H", "NH", 10,  -0.715,  0.519, -0.510],
-            ["N", "NH", 11,   0.000,  0.000,  0.000],
-            ["H", "NH", 11,  -0.715,  0.519,  0.510],
-            #["N", "NH", 12,   0.000,  0.000,  0.000],
-            #["H", "NH", 12,  -0.000,  0.000,  1.020],
-            ["N", "NH", 13,   0.000,  0.000,  0.000],
-            ["H", "NH", 13,  -0.000, -0.000, -1.020],
-            ["N", "NH", 14,   0.000,  0.000,  0.000],
-            ["H", "NH", 14,  -0.715, -0.519, -0.510],
-            ["N", "NH", 15,   0.000,  0.000,  0.000],
-            ["H", "NH", 15,  -0.715, -0.519,  0.510],
-            ["N", "NH", 16,   0.000,  0.000,  0.000],
-            ["H", "NH", 16,  -0.000, -0.000,  1.020],
-            ["N", "NH", 17,   0.000,  0.000,  0.000],
-            ["H", "NH", 17,   0.000, -0.000, -1.020],
-            ["N", "NH", 18,   0.000,  0.000,  0.000],
-            ["H", "NH", 18,   0.273, -0.840, -0.510],
-            ["N", "NH", 19,   0.000,  0.000,  0.000],
-            ["H", "NH", 19,   0.273, -0.840,  0.510],
-            ["N", "NH", 20,   0.000,  0.000,  0.000],
-            #["H", "NH", 20,   0.000, -0.000,  1.020]
+            ["N", "PRO",  1,    0.000,   0.000, -10.000],
+            ["H", "PRO",  1,    0.000,   0.000, -11.020],
+            ["N", "PRO",  2,    7.454,   0.000,  -6.667],
+            ["H", "PRO",  2,    8.214,   0.000,  -7.347],
+            ["N", "ILE",  3,   10.000,   0.000,   0.000],
+            ["H", "ILE",  3,   11.020,   0.000,   0.000],
+            ["N", "VAL",  4,    7.454,   0.000,   6.667],
+            ["H", "VAL",  4,    8.214,   0.000,   7.347],
+            ["N", "VAL",  5,    0.000,   0.000,  10.000],
+            ["H", "VAL",  5,    0.000,   0.000,  11.020],
+            ["N", "ASN",  6,    0.000,   0.000, -10.000],
+            ["H", "ASN",  6,    0.000,   0.000, -11.020],
+            ["N", "SER",  7,    3.727,   6.455,  -6.667],
+            ["H", "SER",  7,    4.107,   7.113,  -7.347],
+            ["N", "LEU",  8,    5.000,   8.660,   0.000],
+            ["H", "LEU",  8,    5.510,   9.544,   0.000],
+            ["N", "SER",  9,    3.727,   6.455,   6.667],
+            ["H", "SER",  9,    4.107,   7.113,   7.347],
+            ["N", "ASN", 10,    0.000,   0.000,  10.000],
+            ["H", "ASN", 10,    0.000,   0.000,  11.020],
+            ["N", "PHE", 11,   -0.000,   0.000, -10.000],
+            ["H", "PHE", 11,   -0.000,   0.000, -11.020],
+            #["N", "ALA", 12,   -3.727,   6.455,  -6.667],
+            #["H", "ALA", 12,   -4.107,   7.113,  -7.347],
+            ["N", "ILE", 13,   -5.000,   8.660,   0.000],
+            ["H", "ILE", 13,   -5.510,   9.544,   0.000],
+            ["N", "GLY", 14,   -3.727,   6.455,   6.667],
+            ["H", "GLY", 14,   -4.107,   7.113,   7.347],
+            ["N", "SER", 15,   -0.000,   0.000,  10.000],
+            ["H", "SER", 15,   -0.000,   0.000,  11.020],
+            ["N", "PHE", 16,   -0.000,   0.000, -10.000],
+            ["H", "PHE", 16,   -0.000,   0.000, -11.020],
+            ["N", "VAL", 17,   -7.454,   0.000,  -6.667],
+            ["H", "VAL", 17,   -8.214,   0.000,  -7.347],
+            ["N", "ILE", 18,  -10.000,   0.000,   0.000],
+            ["H", "ILE", 18,  -11.020,   0.000,   0.000],
+            ["N", "GLN", 19,   -7.454,   0.000,   6.667],
+            ["H", "GLN", 19,   -8.214,   0.000,   7.347],
+            ["N", "LEU", 20,   -0.000,   0.000,  10.000],
+            #["H", "LEU", 20,   -0.000,   0.000,  11.020],
+            ["N", "LEU", 21,   -0.000,  -0.000, -10.000],
+            ["H", "LEU", 21,   -0.000,  -0.000, -11.020],
+            ["N", "GLU", 22,   -3.727,  -6.455,  -6.667],
+            ["H", "GLU", 22,   -4.107,  -7.113,  -7.347],
+            ["N", "TRP", 23,   -5.000,  -8.660,   0.000],
+            ["H", "TRP", 23,   -5.510,  -9.544,   0.000],
+            ["N", "TYR", 24,   -3.727,  -6.455,   6.667],
+            ["H", "TYR", 24,   -4.107,  -7.113,   7.347],
+            ["N", "SER", 25,   -0.000,  -0.000,  10.000],
+            ["H", "SER", 25,   -0.000,  -0.000,  11.020],
+            ["N", "ARG", 26,    0.000,  -0.000, -10.000],
+            ["H", "ARG", 26,    0.000,  -0.000, -11.020],
+            ["N", "TYR", 27,    3.727,  -6.455,  -6.667],
+            ["H", "TYR", 27,    4.107,  -7.113,  -7.347],
+            ["N", "LEU", 28,    5.000,  -8.660,   0.000],
+            ["H", "LEU", 28,    5.510,  -9.544,   0.000],
+            ["N", "HIS", 29,    3.727,  -6.455,   6.667],
+            ["H", "HIS", 29,    4.107,  -7.113,   7.347],
+            ["N", "ALA", 30,    0.000,  -0.000,  10.000],
+            ["H", "ALA", 30,    0.000,  -0.000,  11.020],
             ["Ti", "TST", 1,  1.000,  2.000,  3.000]
         ]
 
@@ -185,14 +205,21 @@ class Structure(SystemTestCase):
             i += 1
 
 
+    def test_align_CaM_BLOSUM62(self):
+        """Test the alignment of CaM molecules from different species using the BLOSUM62 substitution matrix."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'structure_align.py')
+
+
     def test_align_molecules(self):
-        """Test the U{structure.align user function<http://www.nmr-relax.com/manual/structure_align.html>} for aligning different molecules in one pipe."""
+        """Test the U{structure.superimpose user function<http://www.nmr-relax.com/manual/structure_superimpose.html>} for aligning different molecules in one pipe."""
 
         # Reset relax.
         self.interpreter.reset()
 
         # Path of the PDB file.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'sphere'
 
         # Create a data pipe for the reference structure, then load it.
         self.interpreter.pipe.create('ref', 'N-state')
@@ -230,53 +257,73 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_atom(mol_name='2', atom_name='Ti', res_name='TST', res_num=1, pos=[1.0, 2.0, 3.0], element='Ti', pdb_record='HETATM')
 
         # The alignment.
-        self.interpreter.structure.align(pipes=['ref', 'align'], molecules=[['ref'], ['1', '2']], method='fit to first', atom_id='@N,H', displace_id='@N,H')
+        self.interpreter.structure.superimpose(pipes=['ref', 'align'], molecules=[['ref'], ['1', '2']], method='fit to first', atom_id='@N,H', displace_id='@N,H')
 
         # Output PDB to stdout to help in debugging.
         self.interpreter.structure.write_pdb(file=sys.stdout)
 
         # The atomic data.
         data = [
-            ["N", "NH",  1,   0.000,  0.000,  0.000],
-            ["H", "NH",  1,   0.000,  0.000, -1.020],
-            ["N", "NH",  2,   0.000,  0.000,  0.000],
-            ["H", "NH",  2,   0.883,  0.000, -0.510],
-            ["N", "NH",  3,   0.000,  0.000,  0.000],
-            ["H", "NH",  3,   0.883,  0.000,  0.510],
-            ["N", "NH",  4,   0.000,  0.000,  0.000],
-            ["H", "NH",  4,   0.000,  0.000,  1.020],
-            ["N", "NH",  5,   0.000,  0.000,  0.000],
-            ["H", "NH",  5,   0.000,  0.000, -1.020],
-            ["N", "NH",  6,   0.000,  0.000,  0.000],
-            ["H", "NH",  6,   0.273,  0.840, -0.510],
-            ["N", "NH",  7,   0.000,  0.000,  0.000],
-            ["H", "NH",  7,   0.273,  0.840,  0.510],
-            ["N", "NH",  8,   0.000,  0.000,  0.000],
-            ["H", "NH",  8,   0.000,  0.000,  1.020],
-            ["N", "NH",  9,   0.000,  0.000,  0.000],
-            ["H", "NH",  9,  -0.000,  0.000, -1.020],
-            ["N", "NH", 10,   0.000,  0.000,  0.000],
-            ["H", "NH", 10,  -0.715,  0.519, -0.510],
-            ["N", "NH", 11,   0.000,  0.000,  0.000],
-            ["H", "NH", 11,  -0.715,  0.519,  0.510],
-            #["N", "NH", 12,   0.000,  0.000,  0.000],
-            #["H", "NH", 12,  -0.000,  0.000,  1.020],
-            ["N", "NH", 13,   0.000,  0.000,  0.000],
-            ["H", "NH", 13,  -0.000, -0.000, -1.020],
-            ["N", "NH", 14,   0.000,  0.000,  0.000],
-            ["H", "NH", 14,  -0.715, -0.519, -0.510],
-            ["N", "NH", 15,   0.000,  0.000,  0.000],
-            ["H", "NH", 15,  -0.715, -0.519,  0.510],
-            ["N", "NH", 16,   0.000,  0.000,  0.000],
-            ["H", "NH", 16,  -0.000, -0.000,  1.020],
-            ["N", "NH", 17,   0.000,  0.000,  0.000],
-            ["H", "NH", 17,   0.000, -0.000, -1.020],
-            ["N", "NH", 18,   0.000,  0.000,  0.000],
-            ["H", "NH", 18,   0.273, -0.840, -0.510],
-            ["N", "NH", 19,   0.000,  0.000,  0.000],
-            ["H", "NH", 19,   0.273, -0.840,  0.510],
-            ["N", "NH", 20,   0.000,  0.000,  0.000],
-            #["H", "NH", 20,   0.000, -0.000,  1.020],
+            ["N", "PRO",  1,    0.000,   0.000, -10.000],
+            ["H", "PRO",  1,    0.000,   0.000, -11.020],
+            ["N", "PRO",  2,    7.454,   0.000,  -6.667],
+            ["H", "PRO",  2,    8.214,   0.000,  -7.347],
+            ["N", "ILE",  3,   10.000,   0.000,   0.000],
+            ["H", "ILE",  3,   11.020,   0.000,   0.000],
+            ["N", "VAL",  4,    7.454,   0.000,   6.667],
+            ["H", "VAL",  4,    8.214,   0.000,   7.347],
+            ["N", "VAL",  5,    0.000,   0.000,  10.000],
+            ["H", "VAL",  5,    0.000,   0.000,  11.020],
+            ["N", "ASN",  6,    0.000,   0.000, -10.000],
+            ["H", "ASN",  6,    0.000,   0.000, -11.020],
+            ["N", "SER",  7,    3.727,   6.455,  -6.667],
+            ["H", "SER",  7,    4.107,   7.113,  -7.347],
+            ["N", "LEU",  8,    5.000,   8.660,   0.000],
+            ["H", "LEU",  8,    5.510,   9.544,   0.000],
+            ["N", "SER",  9,    3.727,   6.455,   6.667],
+            ["H", "SER",  9,    4.107,   7.113,   7.347],
+            ["N", "ASN", 10,    0.000,   0.000,  10.000],
+            ["H", "ASN", 10,    0.000,   0.000,  11.020],
+            ["N", "PHE", 11,   -0.000,   0.000, -10.000],
+            ["H", "PHE", 11,   -0.000,   0.000, -11.020],
+            #["N", "ALA", 12,   -3.727,   6.455,  -6.667],
+            #["H", "ALA", 12,   -4.107,   7.113,  -7.347],
+            ["N", "ILE", 13,   -5.000,   8.660,   0.000],
+            ["H", "ILE", 13,   -5.510,   9.544,   0.000],
+            ["N", "GLY", 14,   -3.727,   6.455,   6.667],
+            ["H", "GLY", 14,   -4.107,   7.113,   7.347],
+            ["N", "SER", 15,   -0.000,   0.000,  10.000],
+            ["H", "SER", 15,   -0.000,   0.000,  11.020],
+            ["N", "PHE", 16,   -0.000,   0.000, -10.000],
+            ["H", "PHE", 16,   -0.000,   0.000, -11.020],
+            ["N", "VAL", 17,   -7.454,   0.000,  -6.667],
+            ["H", "VAL", 17,   -8.214,   0.000,  -7.347],
+            ["N", "ILE", 18,  -10.000,   0.000,   0.000],
+            ["H", "ILE", 18,  -11.020,   0.000,   0.000],
+            ["N", "GLN", 19,   -7.454,   0.000,   6.667],
+            ["H", "GLN", 19,   -8.214,   0.000,   7.347],
+            ["N", "LEU", 20,   -0.000,   0.000,  10.000],
+            #["H", "LEU", 20,   -0.000,   0.000,  11.020],
+            ["N", "LEU", 21,   -0.000,  -0.000, -10.000],
+            ["H", "LEU", 21,   -0.000,  -0.000, -11.020],
+            ["N", "GLU", 22,   -3.727,  -6.455,  -6.667],
+            ["H", "GLU", 22,   -4.107,  -7.113,  -7.347],
+            ["N", "TRP", 23,   -5.000,  -8.660,   0.000],
+            ["H", "TRP", 23,   -5.510,  -9.544,   0.000],
+            ["N", "TYR", 24,   -3.727,  -6.455,   6.667],
+            ["H", "TYR", 24,   -4.107,  -7.113,   7.347],
+            ["N", "SER", 25,   -0.000,  -0.000,  10.000],
+            ["H", "SER", 25,   -0.000,  -0.000,  11.020],
+            ["N", "ARG", 26,    0.000,  -0.000, -10.000],
+            ["H", "ARG", 26,    0.000,  -0.000, -11.020],
+            ["N", "TYR", 27,    3.727,  -6.455,  -6.667],
+            ["H", "TYR", 27,    4.107,  -7.113,  -7.347],
+            ["N", "LEU", 28,    5.000,  -8.660,   0.000],
+            ["H", "LEU", 28,    5.510,  -9.544,   0.000],
+            ["N", "HIS", 29,    3.727,  -6.455,   6.667],
+            ["H", "HIS", 29,    4.107,  -7.113,   7.347],
+            ["N", "ALA", 30,    0.000,  -0.000,  10.000],
+            ["H", "ALA", 30,    0.000,  -0.000,  11.020],
             ["Ti", "TST", 1,  1.000,  2.000,  3.000]
         ]
 
@@ -299,6 +346,73 @@ class Structure(SystemTestCase):
             self.assertAlmostEqual(pos[0][1], data[i][4])
             self.assertAlmostEqual(pos[0][2], data[i][5])
             i += 1
+
+
+    def test_align_molecules2(self):
+        """Test of the structure.superimpose user function, fitting to the mean structure."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
+
+        # Load the two rotated structures.
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM A')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_model_num=1, set_mol_name='CaM B')
+
+        # Add an atom that should not be superimposed.
+        self.interpreter.structure.add_atom(mol_name='CaM A', atom_name='Ti', res_name='TST', res_num=1, pos=[1.0, 2.0, 3.0], element='Ti', pdb_record='HETATM')
+        self.interpreter.structure.add_atom(mol_name='CaM B', atom_name='Ti', res_name='TST', res_num=1, pos=[2.0, 3.0, 4.0], element='Ti', pdb_record='HETATM')
+
+        # Superimpose the backbone heavy atoms.
+        self.interpreter.structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O', displace_id=':82-5000')
+
+        # Check that the two structures now have the same atomic coordinates.
+        mol1 = cdp.structure.structural_data[0].mol[0]
+        mol2 = cdp.structure.structural_data[0].mol[1]
+        for i in range(len(mol1.atom_name)):
+            if mol1.res_num[i] == 1:
+                continue
+            self.assertAlmostEqual(mol1.x[i], mol2.x[i], 2)
+            self.assertAlmostEqual(mol1.y[i], mol2.y[i], 2)
+            self.assertAlmostEqual(mol1.z[i], mol2.z[i], 2)
+
+        # The last atom must be different - it is not displaced.
+        self.assertAlmostEqual(mol1.x[-1] - mol2.x[-1], -1.0, 2)
+        self.assertAlmostEqual(mol1.y[-1] - mol2.y[-1], -1.0, 2)
+        self.assertAlmostEqual(mol1.z[-1] - mol2.z[-1], -1.0, 2)
+
+
+    def test_align_molecules_end_truncation(self):
+        """Test of the structure.superimpose user function, fitting to the mean structure."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the two rotated structures.
+        self.interpreter.structure.read_pdb('1J7O.pdb', dir=path, read_model=1, set_model_num=1, set_mol_name='CaM A')
+        self.interpreter.structure.read_pdb('1J7O.pdb', dir=path, read_model=1, set_model_num=1, set_mol_name='CaM B')
+        self.interpreter.structure.read_pdb('1J7O.pdb', dir=path, read_model=1, set_model_num=1, set_mol_name='CaM C')
+
+        # Delete some end residues.
+        self.interpreter.structure.delete(atom_id="#CaM A:1-4")
+        self.interpreter.structure.delete(atom_id="#CaM A:60-100")
+        self.interpreter.structure.delete(atom_id="#CaM C:1-3")
+        self.interpreter.structure.delete(atom_id="#CaM C:75-100")
+        self.interpreter.structure.delete(atom_id=":1000-1001")
+
+        # Copy the data pipe for late comparison.
+        self.interpreter.pipe.copy('mf', 'comp')
+
+        # Superimpose the backbone heavy atoms.
+        self.interpreter.structure.superimpose(method='fit to mean', atom_id='@N,C,CA,O')
+
+        # Check that nothing has moved.
+        for mol_index in range(3):
+            mol1 = ds['mf'].structure.structural_data[0].mol[mol_index]
+            mol2 = ds['comp'].structure.structural_data[0].mol[mol_index]
+            for i in range(len(mol1.atom_name)):
+                self.assertAlmostEqual(mol1.x[i], mol2.x[i])
+                self.assertAlmostEqual(mol1.y[i], mol2.y[i])
+                self.assertAlmostEqual(mol1.z[i], mol2.z[i])
 
 
     def test_alt_loc_missing(self):
@@ -496,16 +610,6 @@ class Structure(SystemTestCase):
             self.assertEqual(expected[i], lines[i])
 
 
-    def test_bug_sr_2998_broken_conect_records(self):
-        """Test the bug reported as the U{support request #2998<https://gna.org/support/?2998>}, the broken CONECT records."""
-
-        # Path of the structure file.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
-
-        # Load the file.
-        self.interpreter.structure.read_pdb('1RTE_trunc.pdb', dir=path)
-
-
     def test_bug_20470_alternate_location_indicator(self):
         """Catch U{bug #20470<https://gna.org/bugs/?20470>}, the alternate location indicator problem."""
 
@@ -672,7 +776,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.superimpose(method='fit to first', centre_type='CoM')
 
         # Align.
-        self.interpreter.structure.align(method='fit to first', centre_type='CoM')
+        self.interpreter.structure.superimpose(method='fit to first', centre_type='CoM')
 
 
     def test_bug_22860_CoM_after_deletion(self):
@@ -721,6 +825,16 @@ class Structure(SystemTestCase):
         self.assertEqual(len(contents), len(lines))
         for i in range(len(lines)):
             self.assertEqual(contents[i], lines[i])
+
+
+    def test_bug_sr_2998_broken_conect_records(self):
+        """Test the bug reported as the U{support request #2998<https://gna.org/support/?2998>}, the broken CONECT records."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the file.
+        self.interpreter.structure.read_pdb('1RTE_trunc.pdb', dir=path)
 
 
     def test_collapse_ensemble(self):
@@ -972,7 +1086,7 @@ class Structure(SystemTestCase):
             "HETATM  144 H144 TNS A   2     -34.065  22.779 -27.601  1.00  0.00           H  \n",
             "HETATM  145 H145 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
             "HETATM  146 H146 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM  147 H147 TNS A   2      43.040 -23.105  10.049  1.00  0.00           H  \n",
+            "HETATM  147 H147 TNS A   2      43.041 -23.105  10.049  1.00  0.00           H  \n",
             "HETATM  148 H148 TNS A   2      37.141 -19.622  -0.941  1.00  0.00           H  \n",
             "HETATM  149 H149 TNS A   2      30.006 -15.583  -8.982  1.00  0.00           H  \n",
             "HETATM  150 H150 TNS A   2      22.247 -11.261 -15.528  1.00  0.00           H  \n",
@@ -981,7 +1095,7 @@ class Structure(SystemTestCase):
             "HETATM  153 H153 TNS A   2      -3.608   2.863 -29.011  1.00  0.00           H  \n",
             "HETATM  154 H154 TNS A   2     -13.085   7.958 -31.453  1.00  0.00           H  \n",
             "HETATM  155 H155 TNS A   2     -23.187  13.335 -32.402  1.00  0.00           H  \n",
-            "HETATM  156 H156 TNS A   2     -34.524  19.268 -30.401  1.00  0.00           H  \n",
+            "HETATM  156 H156 TNS A   2     -34.523  19.268 -30.401  1.00  0.00           H  \n",
             "HETATM  157 H157 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
             "HETATM  158 H158 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
             "HETATM  159 H159 TNS A   2      42.165 -26.429   8.245  1.00  0.00           H  \n",
@@ -1008,7 +1122,7 @@ class Structure(SystemTestCase):
             "HETATM  180 H180 TNS A   2     -36.605  13.134 -32.835  1.00  0.00           H  \n",
             "HETATM  181 H181 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
             "HETATM  182 H182 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
-            "HETATM  183 H183 TNS A   2      39.539 -31.262   8.218  1.00  0.00           H  \n",
+            "HETATM  183 H183 TNS A   2      39.540 -31.262   8.218  1.00  0.00           H  \n",
             "HETATM  184 H184 TNS A   2      31.405 -32.985  -3.941  1.00  0.00           H  \n",
             "HETATM  185 H185 TNS A   2      23.051 -31.787 -12.619  1.00  0.00           H  \n",
             "HETATM  186 H186 TNS A   2      14.585 -29.111 -19.535  1.00  0.00           H  \n",
@@ -1017,7 +1131,7 @@ class Structure(SystemTestCase):
             "HETATM  189 H189 TNS A   2     -11.270 -14.987 -33.018  1.00  0.00           H  \n",
             "HETATM  190 H190 TNS A   2     -20.041  -8.247 -35.091  1.00  0.00           H  \n",
             "HETATM  191 H191 TNS A   2     -28.923  -0.028 -35.402  1.00  0.00           H  \n",
-            "HETATM  192 H192 TNS A   2     -38.025  11.112 -32.231  1.00  0.00           H  \n",
+            "HETATM  192 H192 TNS A   2     -38.024  11.112 -32.231  1.00  0.00           H  \n",
             "HETATM  193 H193 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
             "HETATM  194 H194 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
             "HETATM  195 H195 TNS A   2      38.046 -32.298   9.997  1.00  0.00           H  \n",
@@ -1047,7 +1161,7 @@ class Structure(SystemTestCase):
             "HETATM  219 H219 TNS A   2      35.414 -31.112  16.286  1.00  0.00           H  \n",
             "HETATM  220 H220 TNS A   2      24.646 -32.739   9.277  1.00  0.00           H  \n",
             "HETATM  221 H221 TNS A   2      14.854 -31.490   3.410  1.00  0.00           H  \n",
-            "HETATM  222 H222 TNS A   2       5.556 -28.783  -1.879  1.00  0.00           H  \n",
+            "HETATM  222 H222 TNS A   2       5.557 -28.783  -1.879  1.00  0.00           H  \n",
             "HETATM  223 H223 TNS A   2      -3.379 -25.010  -6.744  1.00  0.00           H  \n",
             "HETATM  224 H224 TNS A   2     -11.997 -20.302 -11.238  1.00  0.00           H  \n",
             "HETATM  225 H225 TNS A   2     -20.298 -14.659 -15.362  1.00  0.00           H  \n",
@@ -1342,8 +1456,8 @@ class Structure(SystemTestCase):
             self.assertEqual(real_data[i], lines[i])
 
 
-    def test_create_diff_tensor_pdb_prolate(self):
-        """Check the 3D coordinates of the PDB representation of the optimised prolate diffusion tensor."""
+    def test_create_diff_tensor_pdb_oblate(self):
+        """Check the 3D coordinates of the PDB representation of the optimised oblate diffusion tensor."""
 
         # Reset relax.
         self.interpreter.reset()
@@ -1351,9 +1465,9 @@ class Structure(SystemTestCase):
         # Create a temporary file.
         ds.tmpfile = mktemp()
 
-        # The diffusion type (used by the script).
-        ds.diff_dir = 'ellipsoid'
-        ds.diff_type = 'prolate'
+        # The diffusion type and directory (used by the script).
+        ds.diff_dir = 'spheroid_prolate'
+        ds.diff_type = 'oblate'
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
@@ -1378,251 +1492,251 @@ class Structure(SystemTestCase):
             "FORMUL   2  TNS    H240                                                         \n",
             "FORMUL   3  AXS    C3N2                                                         \n",
             "HETATM    1    R COM A   1      -0.000   0.000   0.000  1.00  0.00           C  \n",
-            "HETATM    2   H2 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM    3   H3 TNS A   2      43.545  -7.415  19.670  1.00  0.00           H  \n",
-            "HETATM    4   H4 TNS A   2      39.464   1.861  11.798  1.00  0.00           H  \n",
-            "HETATM    5   H5 TNS A   2      33.497   8.567   5.106  1.00  0.00           H  \n",
-            "HETATM    6   H6 TNS A   2      26.577  13.972  -0.989  1.00  0.00           H  \n",
-            "HETATM    7   H7 TNS A   2      18.957  18.424  -6.647  1.00  0.00           H  \n",
-            "HETATM    8   H8 TNS A   2      10.726  22.042 -11.922  1.00  0.00           H  \n",
-            "HETATM    9   H9 TNS A   2       1.881  24.825 -16.814  1.00  0.00           H  \n",
-            "HETATM   10  H10 TNS A   2      -7.662  26.655 -21.269  1.00  0.00           H  \n",
-            "HETATM   11  H11 TNS A   2     -18.159  27.184 -25.126  1.00  0.00           H  \n",
-            "HETATM   12  H12 TNS A   2     -30.541  25.143 -27.805  1.00  0.00           H  \n",
-            "HETATM   13  H13 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM   14  H14 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM   15  H15 TNS A   2      44.176  -9.858  17.009  1.00  0.00           H  \n",
-            "HETATM   16  H16 TNS A   2      40.498  -2.142   7.439  1.00  0.00           H  \n",
-            "HETATM   17  H17 TNS A   2      34.752   3.713  -0.181  1.00  0.00           H  \n",
-            "HETATM   18  H18 TNS A   2      27.959   8.626  -6.813  1.00  0.00           H  \n",
-            "HETATM   19  H19 TNS A   2      20.399  12.848 -12.721  1.00  0.00           H  \n",
-            "HETATM   20  H20 TNS A   2      12.167  16.465 -17.996  1.00  0.00           H  \n",
-            "HETATM   21  H21 TNS A   2       3.264  19.478 -22.638  1.00  0.00           H  \n",
-            "HETATM   22  H22 TNS A   2      -6.407  21.801 -26.556  1.00  0.00           H  \n",
-            "HETATM   23  H23 TNS A   2     -17.124  23.181 -29.486  1.00  0.00           H  \n",
-            "HETATM   24  H24 TNS A   2     -29.910  22.700 -30.466  1.00  0.00           H  \n",
-            "HETATM   25  H25 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM   26  H26 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM   27  H27 TNS A   2      44.110 -12.930  15.006  1.00  0.00           H  \n",
-            "HETATM   28  H28 TNS A   2      40.389  -7.174   4.158  1.00  0.00           H  \n",
-            "HETATM   29  H29 TNS A   2      34.620  -2.389  -4.159  1.00  0.00           H  \n",
-            "HETATM   30  H30 TNS A   2      27.813   1.904 -11.195  1.00  0.00           H  \n",
-            "HETATM   31  H31 TNS A   2      20.247   5.837 -17.292  1.00  0.00           H  \n",
-            "HETATM   32  H32 TNS A   2      12.015   9.454 -22.567  1.00  0.00           H  \n",
-            "HETATM   33  H33 TNS A   2       3.118  12.756 -27.020  1.00  0.00           H  \n",
-            "HETATM   34  H34 TNS A   2      -6.539  15.698 -30.534  1.00  0.00           H  \n",
-            "HETATM   35  H35 TNS A   2     -17.233  18.149 -32.767  1.00  0.00           H  \n",
-            "HETATM   36  H36 TNS A   2     -29.976  19.628 -32.468  1.00  0.00           H  \n",
-            "HETATM   37  H37 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM   38  H38 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM   39  H39 TNS A   2      43.351 -16.329  13.859  1.00  0.00           H  \n",
-            "HETATM   40  H40 TNS A   2      39.147 -12.744   2.277  1.00  0.00           H  \n",
-            "HETATM   41  H41 TNS A   2      33.113  -9.143  -6.440  1.00  0.00           H  \n",
-            "HETATM   42  H42 TNS A   2      26.153  -5.536 -13.707  1.00  0.00           H  \n",
-            "HETATM   43  H43 TNS A   2      18.516  -1.923 -19.912  1.00  0.00           H  \n",
-            "HETATM   44  H44 TNS A   2      10.284   1.695 -25.187  1.00  0.00           H  \n",
-            "HETATM   45  H45 TNS A   2       1.458   5.317 -29.532  1.00  0.00           H  \n",
-            "HETATM   46  H46 TNS A   2      -8.046   8.945 -32.814  1.00  0.00           H  \n",
-            "HETATM   47  H47 TNS A   2     -18.476  12.580 -34.647  1.00  0.00           H  \n",
-            "HETATM   48  H48 TNS A   2     -30.735  16.229 -33.616  1.00  0.00           H  \n",
-            "HETATM   49  H49 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM   50  H50 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM   51  H51 TNS A   2      41.975 -19.724  13.678  1.00  0.00           H  \n",
-            "HETATM   52  H52 TNS A   2      36.892 -18.305   1.981  1.00  0.00           H  \n",
-            "HETATM   53  H53 TNS A   2      30.379 -15.888  -6.799  1.00  0.00           H  \n",
-            "HETATM   54  H54 TNS A   2      23.142 -12.965 -14.103  1.00  0.00           H  \n",
-            "HETATM   55  H55 TNS A   2      15.375  -9.671 -20.325  1.00  0.00           H  \n",
-            "HETATM   56  H56 TNS A   2       7.143  -6.054 -25.600  1.00  0.00           H  \n",
-            "HETATM   57  H57 TNS A   2      -1.553  -2.112 -29.927  1.00  0.00           H  \n",
-            "HETATM   58  H58 TNS A   2     -10.780   2.200 -33.174  1.00  0.00           H  \n",
-            "HETATM   59  H59 TNS A   2     -20.730   7.018 -34.943  1.00  0.00           H  \n",
-            "HETATM   60  H60 TNS A   2     -32.111  12.835 -33.797  1.00  0.00           H  \n",
-            "HETATM   61  H61 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM   62  H62 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM   63  H63 TNS A   2      40.117 -22.781  14.482  1.00  0.00           H  \n",
-            "HETATM   64  H64 TNS A   2      33.847 -23.314   3.298  1.00  0.00           H  \n",
-            "HETATM   65  H65 TNS A   2      26.686 -21.962  -5.202  1.00  0.00           H  \n",
-            "HETATM   66  H66 TNS A   2      19.074 -19.656 -12.343  1.00  0.00           H  \n",
-            "HETATM   67  H67 TNS A   2      11.132 -16.650 -18.490  1.00  0.00           H  \n",
-            "HETATM   68  H68 TNS A   2       2.900 -13.033 -23.765  1.00  0.00           H  \n",
-            "HETATM   69  H69 TNS A   2      -5.621  -8.803 -28.168  1.00  0.00           H  \n",
-            "HETATM   70  H70 TNS A   2     -14.473  -3.874 -31.576  1.00  0.00           H  \n",
-            "HETATM   71  H71 TNS A   2     -23.776   2.009 -33.626  1.00  0.00           H  \n",
-            "HETATM   72  H72 TNS A   2     -33.969   9.777 -32.993  1.00  0.00           H  \n",
-            "HETATM   73  H73 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM   74  H74 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM   75  H75 TNS A   2      37.957 -25.202  16.192  1.00  0.00           H  \n",
-            "HETATM   76  H76 TNS A   2      30.309 -27.280   6.100  1.00  0.00           H  \n",
-            "HETATM   77  H77 TNS A   2      22.396 -26.772  -1.804  1.00  0.00           H  \n",
-            "HETATM   78  H78 TNS A   2      14.348 -24.954  -8.601  1.00  0.00           H  \n",
-            "HETATM   79  H79 TNS A   2       6.202 -22.176 -14.587  1.00  0.00           H  \n",
-            "HETATM   80  H80 TNS A   2      -2.029 -18.559 -19.862  1.00  0.00           H  \n",
-            "HETATM   81  H81 TNS A   2     -10.347 -14.101 -24.426  1.00  0.00           H  \n",
-            "HETATM   82  H82 TNS A   2     -18.763  -8.684 -28.179  1.00  0.00           H  \n",
-            "HETATM   83  H83 TNS A   2     -27.314  -1.957 -30.825  1.00  0.00           H  \n",
-            "HETATM   84  H84 TNS A   2     -36.129   7.356 -31.283  1.00  0.00           H  \n",
-            "HETATM   85  H85 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM   86  H86 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM   87  H87 TNS A   2      35.708 -26.749  18.640  1.00  0.00           H  \n",
-            "HETATM   88  H88 TNS A   2      26.624 -29.815  10.111  1.00  0.00           H  \n",
-            "HETATM   89  H89 TNS A   2      17.927 -29.846   3.060  1.00  0.00           H  \n",
-            "HETATM   90  H90 TNS A   2       9.426 -28.340  -3.242  1.00  0.00           H  \n",
-            "HETATM   91  H91 TNS A   2       1.068 -25.709  -8.997  1.00  0.00           H  \n",
-            "HETATM   92  H92 TNS A   2      -7.163 -22.091 -14.272  1.00  0.00           H  \n",
-            "HETATM   93  H93 TNS A   2     -15.269 -17.487 -19.067  1.00  0.00           H  \n",
-            "HETATM   94  H94 TNS A   2     -23.232 -11.758 -23.314  1.00  0.00           H  \n",
-            "HETATM   95  H95 TNS A   2     -30.999  -4.492 -26.813  1.00  0.00           H  \n",
-            "HETATM   96  H96 TNS A   2     -38.378   5.809 -28.834  1.00  0.00           H  \n",
-            "HETATM   97  H97 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM   98  H98 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM   99  H99 TNS A   2      33.590 -27.272  21.588  1.00  0.00           H  \n",
-            "HETATM  100 H100 TNS A   2      23.153 -30.671  14.941  1.00  0.00           H  \n",
-            "HETATM  101 H101 TNS A   2      13.718 -30.884   8.917  1.00  0.00           H  \n",
-            "HETATM  102 H102 TNS A   2       4.790 -29.484   3.208  1.00  0.00           H  \n",
-            "HETATM  103 H103 TNS A   2      -3.767 -26.901  -2.269  1.00  0.00           H  \n",
-            "HETATM  104 H104 TNS A   2     -11.999 -23.284  -7.544  1.00  0.00           H  \n",
-            "HETATM  105 H105 TNS A   2     -19.905 -18.631 -12.617  1.00  0.00           H  \n",
-            "HETATM  106 H106 TNS A   2     -27.441 -12.796 -17.458  1.00  0.00           H  \n",
-            "HETATM  107 H107 TNS A   2     -34.469  -5.348 -21.984  1.00  0.00           H  \n",
-            "HETATM  108 H108 TNS A   2     -40.497   5.286 -25.887  1.00  0.00           H  \n",
-            "HETATM  109 H109 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM  110 H110 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM  111 H111 TNS A   2      31.809 -26.718  24.746  1.00  0.00           H  \n",
-            "HETATM  112 H112 TNS A   2      20.236 -29.765  20.114  1.00  0.00           H  \n",
-            "HETATM  113 H113 TNS A   2      10.181 -29.785  15.191  1.00  0.00           H  \n",
-            "HETATM  114 H114 TNS A   2       0.894 -28.272  10.119  1.00  0.00           H  \n",
-            "HETATM  115 H115 TNS A   2      -7.831 -25.638   4.939  1.00  0.00           H  \n",
-            "HETATM  116 H116 TNS A   2     -16.063 -22.020  -0.336  1.00  0.00           H  \n",
-            "HETATM  117 H117 TNS A   2     -23.802 -17.420  -5.706  1.00  0.00           H  \n",
-            "HETATM  118 H118 TNS A   2     -30.978 -11.697 -11.184  1.00  0.00           H  \n",
-            "HETATM  119 H119 TNS A   2     -37.386  -4.442 -16.810  1.00  0.00           H  \n",
-            "HETATM  120 H120 TNS A   2     -42.277   5.840 -22.729  1.00  0.00           H  \n",
-            "HETATM  121 H121 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM  122 H122 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM  123 H123 TNS A   2      30.541 -25.143  27.805  1.00  0.00           H  \n",
-            "HETATM  124 H124 TNS A   2      18.159 -27.184  25.126  1.00  0.00           H  \n",
-            "HETATM  125 H125 TNS A   2       7.662 -26.655  21.269  1.00  0.00           H  \n",
-            "HETATM  126 H126 TNS A   2      -1.881 -24.825  16.814  1.00  0.00           H  \n",
-            "HETATM  127 H127 TNS A   2     -10.726 -22.042  11.922  1.00  0.00           H  \n",
-            "HETATM  128 H128 TNS A   2     -18.957 -18.424   6.647  1.00  0.00           H  \n",
-            "HETATM  129 H129 TNS A   2     -26.577 -13.972   0.989  1.00  0.00           H  \n",
-            "HETATM  130 H130 TNS A   2     -33.497  -8.567  -5.106  1.00  0.00           H  \n",
-            "HETATM  131 H131 TNS A   2     -39.464  -1.861 -11.798  1.00  0.00           H  \n",
-            "HETATM  132 H132 TNS A   2     -43.545   7.415 -19.670  1.00  0.00           H  \n",
-            "HETATM  133 H133 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM  134 H134 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM  135 H135 TNS A   2      29.910 -22.700  30.466  1.00  0.00           H  \n",
-            "HETATM  136 H136 TNS A   2      17.124 -23.181  29.486  1.00  0.00           H  \n",
-            "HETATM  137 H137 TNS A   2       6.407 -21.801  26.556  1.00  0.00           H  \n",
-            "HETATM  138 H138 TNS A   2      -3.264 -19.478  22.638  1.00  0.00           H  \n",
-            "HETATM  139 H139 TNS A   2     -12.167 -16.465  17.996  1.00  0.00           H  \n",
-            "HETATM  140 H140 TNS A   2     -20.399 -12.848  12.721  1.00  0.00           H  \n",
-            "HETATM  141 H141 TNS A   2     -27.959  -8.626   6.813  1.00  0.00           H  \n",
-            "HETATM  142 H142 TNS A   2     -34.752  -3.713   0.181  1.00  0.00           H  \n",
-            "HETATM  143 H143 TNS A   2     -40.498   2.142  -7.439  1.00  0.00           H  \n",
-            "HETATM  144 H144 TNS A   2     -44.177   9.858 -17.009  1.00  0.00           H  \n",
-            "HETATM  145 H145 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM  146 H146 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM  147 H147 TNS A   2      29.976 -19.628  32.468  1.00  0.00           H  \n",
-            "HETATM  148 H148 TNS A   2      17.233 -18.149  32.767  1.00  0.00           H  \n",
-            "HETATM  149 H149 TNS A   2       6.539 -15.698  30.534  1.00  0.00           H  \n",
-            "HETATM  150 H150 TNS A   2      -3.118 -12.756  27.020  1.00  0.00           H  \n",
-            "HETATM  151 H151 TNS A   2     -12.015  -9.454  22.567  1.00  0.00           H  \n",
-            "HETATM  152 H152 TNS A   2     -20.247  -5.837  17.292  1.00  0.00           H  \n",
-            "HETATM  153 H153 TNS A   2     -27.813  -1.904  11.195  1.00  0.00           H  \n",
-            "HETATM  154 H154 TNS A   2     -34.620   2.389   4.159  1.00  0.00           H  \n",
-            "HETATM  155 H155 TNS A   2     -40.389   7.174  -4.158  1.00  0.00           H  \n",
-            "HETATM  156 H156 TNS A   2     -44.110  12.930 -15.006  1.00  0.00           H  \n",
-            "HETATM  157 H157 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM  158 H158 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM  159 H159 TNS A   2      30.735 -16.229  33.616  1.00  0.00           H  \n",
-            "HETATM  160 H160 TNS A   2      18.476 -12.580  34.647  1.00  0.00           H  \n",
-            "HETATM  161 H161 TNS A   2       8.046  -8.945  32.814  1.00  0.00           H  \n",
-            "HETATM  162 H162 TNS A   2      -1.458  -5.317  29.532  1.00  0.00           H  \n",
-            "HETATM  163 H163 TNS A   2     -10.284  -1.695  25.187  1.00  0.00           H  \n",
-            "HETATM  164 H164 TNS A   2     -18.516   1.923  19.912  1.00  0.00           H  \n",
-            "HETATM  165 H165 TNS A   2     -26.153   5.536  13.707  1.00  0.00           H  \n",
-            "HETATM  166 H166 TNS A   2     -33.113   9.143   6.440  1.00  0.00           H  \n",
-            "HETATM  167 H167 TNS A   2     -39.147  12.744  -2.277  1.00  0.00           H  \n",
-            "HETATM  168 H168 TNS A   2     -43.351  16.329 -13.859  1.00  0.00           H  \n",
-            "HETATM  169 H169 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM  170 H170 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM  171 H171 TNS A   2      32.111 -12.835  33.797  1.00  0.00           H  \n",
-            "HETATM  172 H172 TNS A   2      20.730  -7.018  34.943  1.00  0.00           H  \n",
-            "HETATM  173 H173 TNS A   2      10.780  -2.200  33.174  1.00  0.00           H  \n",
-            "HETATM  174 H174 TNS A   2       1.553   2.112  29.927  1.00  0.00           H  \n",
-            "HETATM  175 H175 TNS A   2      -7.143   6.054  25.600  1.00  0.00           H  \n",
-            "HETATM  176 H176 TNS A   2     -15.375   9.671  20.325  1.00  0.00           H  \n",
-            "HETATM  177 H177 TNS A   2     -23.142  12.965  14.103  1.00  0.00           H  \n",
-            "HETATM  178 H178 TNS A   2     -30.379  15.888   6.799  1.00  0.00           H  \n",
-            "HETATM  179 H179 TNS A   2     -36.892  18.305  -1.981  1.00  0.00           H  \n",
-            "HETATM  180 H180 TNS A   2     -41.975  19.724 -13.678  1.00  0.00           H  \n",
-            "HETATM  181 H181 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM  182 H182 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM  183 H183 TNS A   2      33.969  -9.777  32.993  1.00  0.00           H  \n",
-            "HETATM  184 H184 TNS A   2      23.776  -2.009  33.626  1.00  0.00           H  \n",
-            "HETATM  185 H185 TNS A   2      14.473   3.874  31.576  1.00  0.00           H  \n",
-            "HETATM  186 H186 TNS A   2       5.621   8.803  28.168  1.00  0.00           H  \n",
-            "HETATM  187 H187 TNS A   2      -2.900  13.033  23.765  1.00  0.00           H  \n",
-            "HETATM  188 H188 TNS A   2     -11.132  16.650  18.490  1.00  0.00           H  \n",
-            "HETATM  189 H189 TNS A   2     -19.074  19.656  12.343  1.00  0.00           H  \n",
-            "HETATM  190 H190 TNS A   2     -26.686  21.962   5.202  1.00  0.00           H  \n",
-            "HETATM  191 H191 TNS A   2     -33.847  23.314  -3.298  1.00  0.00           H  \n",
-            "HETATM  192 H192 TNS A   2     -40.117  22.781 -14.482  1.00  0.00           H  \n",
-            "HETATM  193 H193 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM  194 H194 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM  195 H195 TNS A   2      36.129  -7.356  31.283  1.00  0.00           H  \n",
-            "HETATM  196 H196 TNS A   2      27.314   1.957  30.825  1.00  0.00           H  \n",
-            "HETATM  197 H197 TNS A   2      18.763   8.684  28.179  1.00  0.00           H  \n",
-            "HETATM  198 H198 TNS A   2      10.347  14.101  24.426  1.00  0.00           H  \n",
-            "HETATM  199 H199 TNS A   2       2.029  18.559  19.862  1.00  0.00           H  \n",
-            "HETATM  200 H200 TNS A   2      -6.202  22.176  14.587  1.00  0.00           H  \n",
-            "HETATM  201 H201 TNS A   2     -14.348  24.954   8.601  1.00  0.00           H  \n",
-            "HETATM  202 H202 TNS A   2     -22.396  26.772   1.804  1.00  0.00           H  \n",
-            "HETATM  203 H203 TNS A   2     -30.309  27.280  -6.100  1.00  0.00           H  \n",
-            "HETATM  204 H204 TNS A   2     -37.957  25.202 -16.192  1.00  0.00           H  \n",
-            "HETATM  205 H205 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM  206 H206 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM  207 H207 TNS A   2      38.378  -5.809  28.834  1.00  0.00           H  \n",
-            "HETATM  208 H208 TNS A   2      30.999   4.492  26.813  1.00  0.00           H  \n",
-            "HETATM  209 H209 TNS A   2      23.232  11.758  23.314  1.00  0.00           H  \n",
-            "HETATM  210 H210 TNS A   2      15.269  17.487  19.067  1.00  0.00           H  \n",
-            "HETATM  211 H211 TNS A   2       7.163  22.091  14.272  1.00  0.00           H  \n",
-            "HETATM  212 H212 TNS A   2      -1.068  25.709   8.997  1.00  0.00           H  \n",
-            "HETATM  213 H213 TNS A   2      -9.426  28.340   3.242  1.00  0.00           H  \n",
-            "HETATM  214 H214 TNS A   2     -17.927  29.846  -3.060  1.00  0.00           H  \n",
-            "HETATM  215 H215 TNS A   2     -26.624  29.815 -10.111  1.00  0.00           H  \n",
-            "HETATM  216 H216 TNS A   2     -35.708  26.749 -18.640  1.00  0.00           H  \n",
-            "HETATM  217 H217 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM  218 H218 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM  219 H219 TNS A   2      40.497  -5.286  25.887  1.00  0.00           H  \n",
-            "HETATM  220 H220 TNS A   2      34.469   5.348  21.984  1.00  0.00           H  \n",
-            "HETATM  221 H221 TNS A   2      27.441  12.796  17.458  1.00  0.00           H  \n",
-            "HETATM  222 H222 TNS A   2      19.905  18.631  12.617  1.00  0.00           H  \n",
-            "HETATM  223 H223 TNS A   2      11.999  23.284   7.544  1.00  0.00           H  \n",
-            "HETATM  224 H224 TNS A   2       3.767  26.901   2.269  1.00  0.00           H  \n",
-            "HETATM  225 H225 TNS A   2      -4.790  29.484  -3.208  1.00  0.00           H  \n",
-            "HETATM  226 H226 TNS A   2     -13.718  30.884  -8.917  1.00  0.00           H  \n",
-            "HETATM  227 H227 TNS A   2     -23.153  30.671 -14.941  1.00  0.00           H  \n",
-            "HETATM  228 H228 TNS A   2     -33.590  27.272 -21.588  1.00  0.00           H  \n",
-            "HETATM  229 H229 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
-            "HETATM  230 H230 TNS A   2      41.159 -18.088  26.375  1.00  0.00           H  \n",
-            "HETATM  231 H231 TNS A   2      42.277  -5.840  22.729  1.00  0.00           H  \n",
-            "HETATM  232 H232 TNS A   2      37.386   4.442  16.810  1.00  0.00           H  \n",
-            "HETATM  233 H233 TNS A   2      30.978  11.697  11.184  1.00  0.00           H  \n",
-            "HETATM  234 H234 TNS A   2      23.802  17.420   5.706  1.00  0.00           H  \n",
-            "HETATM  235 H235 TNS A   2      16.063  22.020   0.336  1.00  0.00           H  \n",
-            "HETATM  236 H236 TNS A   2       7.831  25.638  -4.939  1.00  0.00           H  \n",
-            "HETATM  237 H237 TNS A   2      -0.894  28.272 -10.119  1.00  0.00           H  \n",
-            "HETATM  238 H238 TNS A   2     -10.181  29.785 -15.191  1.00  0.00           H  \n",
-            "HETATM  239 H239 TNS A   2     -20.237  29.765 -20.114  1.00  0.00           H  \n",
-            "HETATM  240 H240 TNS A   2     -31.809  26.718 -24.746  1.00  0.00           H  \n",
-            "HETATM  241 H241 TNS A   2     -41.159  18.088 -26.375  1.00  0.00           H  \n",
+            "HETATM    2   H2 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM    3   H3 TNS A   2      24.768 -33.210   7.610  1.00  0.00           H  \n",
+            "HETATM    4   H4 TNS A   2      13.733 -39.806   1.048  1.00  0.00           H  \n",
+            "HETATM    5   H5 TNS A   2       4.562 -41.695  -3.873  1.00  0.00           H  \n",
+            "HETATM    6   H6 TNS A   2      -3.667 -41.199  -7.963  1.00  0.00           H  \n",
+            "HETATM    7   H7 TNS A   2     -11.204 -38.958 -11.445  1.00  0.00           H  \n",
+            "HETATM    8   H8 TNS A   2     -18.136 -35.187 -14.394  1.00  0.00           H  \n",
+            "HETATM    9   H9 TNS A   2     -24.463 -29.887 -16.810  1.00  0.00           H  \n",
+            "HETATM   10  H10 TNS A   2     -30.099 -22.840 -18.617  1.00  0.00           H  \n",
+            "HETATM   11  H11 TNS A   2     -34.792 -13.411 -19.594  1.00  0.00           H  \n",
+            "HETATM   12  H12 TNS A   2     -37.622   0.728 -18.930  1.00  0.00           H  \n",
+            "HETATM   13  H13 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM   14  H14 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM   15  H15 TNS A   2      22.543 -33.159  12.906  1.00  0.00           H  \n",
+            "HETATM   16  H16 TNS A   2      10.088 -39.723   9.724  1.00  0.00           H  \n",
+            "HETATM   17  H17 TNS A   2       0.141 -41.594   6.649  1.00  0.00           H  \n",
+            "HETATM   18  H18 TNS A   2      -8.536 -41.088   3.626  1.00  0.00           H  \n",
+            "HETATM   19  H19 TNS A   2     -16.283 -38.842   0.643  1.00  0.00           H  \n",
+            "HETATM   20  H20 TNS A   2     -23.215 -35.071  -2.306  1.00  0.00           H  \n",
+            "HETATM   21  H21 TNS A   2     -29.333 -29.776  -5.220  1.00  0.00           H  \n",
+            "HETATM   22  H22 TNS A   2     -34.520 -22.739  -8.096  1.00  0.00           H  \n",
+            "HETATM   23  H23 TNS A   2     -38.438 -13.327 -10.918  1.00  0.00           H  \n",
+            "HETATM   24  H24 TNS A   2     -39.847   0.779 -13.634  1.00  0.00           H  \n",
+            "HETATM   25  H25 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM   26  H26 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM   27  H27 TNS A   2      21.165 -31.523  18.237  1.00  0.00           H  \n",
+            "HETATM   28  H28 TNS A   2       7.830 -37.043  18.459  1.00  0.00           H  \n",
+            "HETATM   29  H29 TNS A   2      -2.597 -38.344  17.241  1.00  0.00           H  \n",
+            "HETATM   30  H30 TNS A   2     -11.552 -37.508  15.294  1.00  0.00           H  \n",
+            "HETATM   31  H31 TNS A   2     -19.429 -35.108  12.813  1.00  0.00           H  \n",
+            "HETATM   32  H32 TNS A   2     -26.361 -31.337   9.864  1.00  0.00           H  \n",
+            "HETATM   33  H33 TNS A   2     -32.349 -26.196   6.448  1.00  0.00           H  \n",
+            "HETATM   34  H34 TNS A   2     -37.258 -19.490   2.497  1.00  0.00           H  \n",
+            "HETATM   35  H35 TNS A   2     -40.695 -10.647  -2.183  1.00  0.00           H  \n",
+            "HETATM   36  H36 TNS A   2     -41.225   2.414  -8.303  1.00  0.00           H  \n",
+            "HETATM   37  H37 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM   38  H38 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM   39  H39 TNS A   2      20.768 -28.463  23.082  1.00  0.00           H  \n",
+            "HETATM   40  H40 TNS A   2       7.180 -32.029  26.397  1.00  0.00           H  \n",
+            "HETATM   41  H41 TNS A   2      -3.385 -32.264  26.867  1.00  0.00           H  \n",
+            "HETATM   42  H42 TNS A   2     -12.420 -30.811  25.898  1.00  0.00           H  \n",
+            "HETATM   43  H43 TNS A   2     -20.334 -28.122  23.873  1.00  0.00           H  \n",
+            "HETATM   44  H44 TNS A   2     -27.266 -24.352  20.924  1.00  0.00           H  \n",
+            "HETATM   45  H45 TNS A   2     -33.216 -19.498  17.051  1.00  0.00           H  \n",
+            "HETATM   46  H46 TNS A   2     -38.046 -13.409  12.123  1.00  0.00           H  \n",
+            "HETATM   47  H47 TNS A   2     -41.345  -5.633   5.755  1.00  0.00           H  \n",
+            "HETATM   48  H48 TNS A   2     -41.621   5.475  -3.457  1.00  0.00           H  \n",
+            "HETATM   49  H49 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM   50  H50 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM   51  H51 TNS A   2      21.393 -24.277  26.967  1.00  0.00           H  \n",
+            "HETATM   52  H52 TNS A   2       8.203 -25.172  32.762  1.00  0.00           H  \n",
+            "HETATM   53  H53 TNS A   2      -2.144 -23.948  34.585  1.00  0.00           H  \n",
+            "HETATM   54  H54 TNS A   2     -11.054 -21.651  34.399  1.00  0.00           H  \n",
+            "HETATM   55  H55 TNS A   2     -18.909 -18.568  32.740  1.00  0.00           H  \n",
+            "HETATM   56  H56 TNS A   2     -25.841 -14.798  29.791  1.00  0.00           H  \n",
+            "HETATM   57  H57 TNS A   2     -31.850 -10.339  25.553  1.00  0.00           H  \n",
+            "HETATM   58  H58 TNS A   2     -36.805  -5.094  19.841  1.00  0.00           H  \n",
+            "HETATM   59  H59 TNS A   2     -40.322   1.224  12.120  1.00  0.00           H  \n",
+            "HETATM   60  H60 TNS A   2     -40.997   9.660   0.427  1.00  0.00           H  \n",
+            "HETATM   61  H61 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM   62  H62 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM   63  H63 TNS A   2      22.976 -19.377  29.511  1.00  0.00           H  \n",
+            "HETATM   64  H64 TNS A   2      10.798 -17.143  36.929  1.00  0.00           H  \n",
+            "HETATM   65  H65 TNS A   2       1.002 -14.211  39.640  1.00  0.00           H  \n",
+            "HETATM   66  H66 TNS A   2      -7.588 -10.926  39.966  1.00  0.00           H  \n",
+            "HETATM   67  H67 TNS A   2     -15.294  -7.381  38.547  1.00  0.00           H  \n",
+            "HETATM   68  H68 TNS A   2     -22.226  -3.611  35.598  1.00  0.00           H  \n",
+            "HETATM   69  H69 TNS A   2     -28.384   0.387  31.120  1.00  0.00           H  \n",
+            "HETATM   70  H70 TNS A   2     -33.659   4.643  24.895  1.00  0.00           H  \n",
+            "HETATM   71  H71 TNS A   2     -37.727   9.253  16.288  1.00  0.00           H  \n",
+            "HETATM   72  H72 TNS A   2     -39.413  14.561   2.971  1.00  0.00           H  \n",
+            "HETATM   73  H73 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM   74  H74 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM   75  H75 TNS A   2      25.365 -14.240  30.465  1.00  0.00           H  \n",
+            "HETATM   76  H76 TNS A   2      14.711  -8.727  38.493  1.00  0.00           H  \n",
+            "HETATM   77  H77 TNS A   2       5.747  -4.005  41.535  1.00  0.00           H  \n",
+            "HETATM   78  H78 TNS A   2      -2.361   0.316  42.054  1.00  0.00           H  \n",
+            "HETATM   79  H79 TNS A   2      -9.842   4.344  40.725  1.00  0.00           H  \n",
+            "HETATM   80  H80 TNS A   2     -16.774   8.114  37.776  1.00  0.00           H  \n",
+            "HETATM   81  H81 TNS A   2     -23.157  11.628  33.208  1.00  0.00           H  \n",
+            "HETATM   82  H82 TNS A   2     -28.914  14.849  26.791  1.00  0.00           H  \n",
+            "HETATM   83  H83 TNS A   2     -33.814  17.669  17.851  1.00  0.00           H  \n",
+            "HETATM   84  H84 TNS A   2     -37.025  19.698   3.925  1.00  0.00           H  \n",
+            "HETATM   85  H85 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM   86  H86 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM   87  H87 TNS A   2      28.324  -9.370  29.736  1.00  0.00           H  \n",
+            "HETATM   88  H88 TNS A   2      19.559  -0.749  37.298  1.00  0.00           H  \n",
+            "HETATM   89  H89 TNS A   2      11.626   5.669  40.087  1.00  0.00           H  \n",
+            "HETATM   90  H90 TNS A   2       4.115  10.973  40.459  1.00  0.00           H  \n",
+            "HETATM   91  H91 TNS A   2      -3.088  15.459  39.061  1.00  0.00           H  \n",
+            "HETATM   92  H92 TNS A   2     -10.020  19.230  36.112  1.00  0.00           H  \n",
+            "HETATM   93  H93 TNS A   2     -16.682  22.285  31.612  1.00  0.00           H  \n",
+            "HETATM   94  H94 TNS A   2     -23.035  24.523  25.343  1.00  0.00           H  \n",
+            "HETATM   95  H95 TNS A   2     -28.967  25.647  16.656  1.00  0.00           H  \n",
+            "HETATM   96  H96 TNS A   2     -34.066  24.567   3.196  1.00  0.00           H  \n",
+            "HETATM   97  H97 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM   98  H98 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM   99  H99 TNS A   2      31.564  -5.245  27.395  1.00  0.00           H  \n",
+            "HETATM  100 H100 TNS A   2      24.867   6.010  33.463  1.00  0.00           H  \n",
+            "HETATM  101 H101 TNS A   2      18.063  13.866  35.436  1.00  0.00           H  \n",
+            "HETATM  102 H102 TNS A   2      11.205  20.002  35.336  1.00  0.00           H  \n",
+            "HETATM  103 H103 TNS A   2       4.308  24.876  33.717  1.00  0.00           H  \n",
+            "HETATM  104 H104 TNS A   2      -2.624  28.647  30.768  1.00  0.00           H  \n",
+            "HETATM  105 H105 TNS A   2      -9.591  31.314  26.489  1.00  0.00           H  \n",
+            "HETATM  106 H106 TNS A   2     -16.598  32.720  20.692  1.00  0.00           H  \n",
+            "HETATM  107 H107 TNS A   2     -23.658  32.406  12.821  1.00  0.00           H  \n",
+            "HETATM  108 H108 TNS A   2     -30.826  28.693   0.855  1.00  0.00           H  \n",
+            "HETATM  109 H109 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM  110 H110 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM  111 H111 TNS A   2      34.767  -2.267  23.671  1.00  0.00           H  \n",
+            "HETATM  112 H112 TNS A   2      30.116  10.889  27.362  1.00  0.00           H  \n",
+            "HETATM  113 H113 TNS A   2      24.429  19.783  28.038  1.00  0.00           H  \n",
+            "HETATM  114 H114 TNS A   2      18.217  26.519  27.187  1.00  0.00           H  \n",
+            "HETATM  115 H115 TNS A   2      11.621  31.674  25.218  1.00  0.00           H  \n",
+            "HETATM  116 H116 TNS A   2       4.689  35.445  22.269  1.00  0.00           H  \n",
+            "HETATM  117 H117 TNS A   2      -2.580  37.832  18.340  1.00  0.00           H  \n",
+            "HETATM  118 H118 TNS A   2     -10.232  38.637  13.294  1.00  0.00           H  \n",
+            "HETATM  119 H119 TNS A   2     -18.409  37.285   6.721  1.00  0.00           H  \n",
+            "HETATM  120 H120 TNS A   2     -27.622  31.671  -2.868  1.00  0.00           H  \n",
+            "HETATM  121 H121 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM  122 H122 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM  123 H123 TNS A   2      37.622  -0.728  18.930  1.00  0.00           H  \n",
+            "HETATM  124 H124 TNS A   2      34.792  13.411  19.594  1.00  0.00           H  \n",
+            "HETATM  125 H125 TNS A   2      30.099  22.840  18.617  1.00  0.00           H  \n",
+            "HETATM  126 H126 TNS A   2      24.463  29.887  16.810  1.00  0.00           H  \n",
+            "HETATM  127 H127 TNS A   2      18.136  35.187  14.394  1.00  0.00           H  \n",
+            "HETATM  128 H128 TNS A   2      11.204  38.958  11.445  1.00  0.00           H  \n",
+            "HETATM  129 H129 TNS A   2       3.667  41.199   7.963  1.00  0.00           H  \n",
+            "HETATM  130 H130 TNS A   2      -4.562  41.695   3.873  1.00  0.00           H  \n",
+            "HETATM  131 H131 TNS A   2     -13.733  39.806  -1.048  1.00  0.00           H  \n",
+            "HETATM  132 H132 TNS A   2     -24.768  33.210  -7.610  1.00  0.00           H  \n",
+            "HETATM  133 H133 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM  134 H134 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM  135 H135 TNS A   2      39.847  -0.779  13.634  1.00  0.00           H  \n",
+            "HETATM  136 H136 TNS A   2      38.438  13.327  10.918  1.00  0.00           H  \n",
+            "HETATM  137 H137 TNS A   2      34.520  22.739   8.096  1.00  0.00           H  \n",
+            "HETATM  138 H138 TNS A   2      29.333  29.776   5.220  1.00  0.00           H  \n",
+            "HETATM  139 H139 TNS A   2      23.215  35.071   2.306  1.00  0.00           H  \n",
+            "HETATM  140 H140 TNS A   2      16.283  38.842  -0.643  1.00  0.00           H  \n",
+            "HETATM  141 H141 TNS A   2       8.536  41.088  -3.626  1.00  0.00           H  \n",
+            "HETATM  142 H142 TNS A   2      -0.141  41.594  -6.649  1.00  0.00           H  \n",
+            "HETATM  143 H143 TNS A   2     -10.088  39.723  -9.724  1.00  0.00           H  \n",
+            "HETATM  144 H144 TNS A   2     -22.543  33.159 -12.906  1.00  0.00           H  \n",
+            "HETATM  145 H145 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM  146 H146 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM  147 H147 TNS A   2      41.225  -2.414   8.303  1.00  0.00           H  \n",
+            "HETATM  148 H148 TNS A   2      40.695  10.647   2.183  1.00  0.00           H  \n",
+            "HETATM  149 H149 TNS A   2      37.258  19.490  -2.497  1.00  0.00           H  \n",
+            "HETATM  150 H150 TNS A   2      32.349  26.196  -6.448  1.00  0.00           H  \n",
+            "HETATM  151 H151 TNS A   2      26.361  31.337  -9.864  1.00  0.00           H  \n",
+            "HETATM  152 H152 TNS A   2      19.429  35.108 -12.813  1.00  0.00           H  \n",
+            "HETATM  153 H153 TNS A   2      11.552  37.508 -15.294  1.00  0.00           H  \n",
+            "HETATM  154 H154 TNS A   2       2.597  38.344 -17.241  1.00  0.00           H  \n",
+            "HETATM  155 H155 TNS A   2      -7.830  37.043 -18.459  1.00  0.00           H  \n",
+            "HETATM  156 H156 TNS A   2     -21.165  31.523 -18.237  1.00  0.00           H  \n",
+            "HETATM  157 H157 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM  158 H158 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM  159 H159 TNS A   2      41.621  -5.475   3.457  1.00  0.00           H  \n",
+            "HETATM  160 H160 TNS A   2      41.345   5.633  -5.755  1.00  0.00           H  \n",
+            "HETATM  161 H161 TNS A   2      38.046  13.409 -12.123  1.00  0.00           H  \n",
+            "HETATM  162 H162 TNS A   2      33.216  19.498 -17.051  1.00  0.00           H  \n",
+            "HETATM  163 H163 TNS A   2      27.266  24.352 -20.924  1.00  0.00           H  \n",
+            "HETATM  164 H164 TNS A   2      20.334  28.122 -23.873  1.00  0.00           H  \n",
+            "HETATM  165 H165 TNS A   2      12.420  30.811 -25.898  1.00  0.00           H  \n",
+            "HETATM  166 H166 TNS A   2       3.385  32.264 -26.867  1.00  0.00           H  \n",
+            "HETATM  167 H167 TNS A   2      -7.180  32.029 -26.397  1.00  0.00           H  \n",
+            "HETATM  168 H168 TNS A   2     -20.768  28.463 -23.082  1.00  0.00           H  \n",
+            "HETATM  169 H169 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM  170 H170 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM  171 H171 TNS A   2      40.997  -9.660  -0.427  1.00  0.00           H  \n",
+            "HETATM  172 H172 TNS A   2      40.322  -1.224 -12.120  1.00  0.00           H  \n",
+            "HETATM  173 H173 TNS A   2      36.805   5.094 -19.841  1.00  0.00           H  \n",
+            "HETATM  174 H174 TNS A   2      31.850  10.339 -25.553  1.00  0.00           H  \n",
+            "HETATM  175 H175 TNS A   2      25.841  14.798 -29.791  1.00  0.00           H  \n",
+            "HETATM  176 H176 TNS A   2      18.909  18.568 -32.740  1.00  0.00           H  \n",
+            "HETATM  177 H177 TNS A   2      11.054  21.651 -34.399  1.00  0.00           H  \n",
+            "HETATM  178 H178 TNS A   2       2.144  23.948 -34.585  1.00  0.00           H  \n",
+            "HETATM  179 H179 TNS A   2      -8.203  25.172 -32.762  1.00  0.00           H  \n",
+            "HETATM  180 H180 TNS A   2     -21.393  24.277 -26.967  1.00  0.00           H  \n",
+            "HETATM  181 H181 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM  182 H182 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM  183 H183 TNS A   2      39.413 -14.561  -2.971  1.00  0.00           H  \n",
+            "HETATM  184 H184 TNS A   2      37.727  -9.253 -16.288  1.00  0.00           H  \n",
+            "HETATM  185 H185 TNS A   2      33.659  -4.643 -24.895  1.00  0.00           H  \n",
+            "HETATM  186 H186 TNS A   2      28.384  -0.387 -31.120  1.00  0.00           H  \n",
+            "HETATM  187 H187 TNS A   2      22.226   3.611 -35.598  1.00  0.00           H  \n",
+            "HETATM  188 H188 TNS A   2      15.294   7.381 -38.547  1.00  0.00           H  \n",
+            "HETATM  189 H189 TNS A   2       7.588  10.926 -39.966  1.00  0.00           H  \n",
+            "HETATM  190 H190 TNS A   2      -1.002  14.211 -39.640  1.00  0.00           H  \n",
+            "HETATM  191 H191 TNS A   2     -10.798  17.143 -36.929  1.00  0.00           H  \n",
+            "HETATM  192 H192 TNS A   2     -22.976  19.377 -29.511  1.00  0.00           H  \n",
+            "HETATM  193 H193 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM  194 H194 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM  195 H195 TNS A   2      37.025 -19.698  -3.925  1.00  0.00           H  \n",
+            "HETATM  196 H196 TNS A   2      33.814 -17.669 -17.851  1.00  0.00           H  \n",
+            "HETATM  197 H197 TNS A   2      28.914 -14.849 -26.791  1.00  0.00           H  \n",
+            "HETATM  198 H198 TNS A   2      23.157 -11.628 -33.208  1.00  0.00           H  \n",
+            "HETATM  199 H199 TNS A   2      16.774  -8.114 -37.776  1.00  0.00           H  \n",
+            "HETATM  200 H200 TNS A   2       9.842  -4.344 -40.725  1.00  0.00           H  \n",
+            "HETATM  201 H201 TNS A   2       2.361  -0.316 -42.054  1.00  0.00           H  \n",
+            "HETATM  202 H202 TNS A   2      -5.747   4.005 -41.535  1.00  0.00           H  \n",
+            "HETATM  203 H203 TNS A   2     -14.711   8.727 -38.493  1.00  0.00           H  \n",
+            "HETATM  204 H204 TNS A   2     -25.365  14.240 -30.465  1.00  0.00           H  \n",
+            "HETATM  205 H205 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM  206 H206 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM  207 H207 TNS A   2      34.066 -24.567  -3.196  1.00  0.00           H  \n",
+            "HETATM  208 H208 TNS A   2      28.967 -25.647 -16.656  1.00  0.00           H  \n",
+            "HETATM  209 H209 TNS A   2      23.035 -24.523 -25.343  1.00  0.00           H  \n",
+            "HETATM  210 H210 TNS A   2      16.682 -22.285 -31.612  1.00  0.00           H  \n",
+            "HETATM  211 H211 TNS A   2      10.020 -19.230 -36.112  1.00  0.00           H  \n",
+            "HETATM  212 H212 TNS A   2       3.088 -15.459 -39.061  1.00  0.00           H  \n",
+            "HETATM  213 H213 TNS A   2      -4.115 -10.973 -40.459  1.00  0.00           H  \n",
+            "HETATM  214 H214 TNS A   2     -11.626  -5.669 -40.087  1.00  0.00           H  \n",
+            "HETATM  215 H215 TNS A   2     -19.559   0.749 -37.298  1.00  0.00           H  \n",
+            "HETATM  216 H216 TNS A   2     -28.324   9.370 -29.736  1.00  0.00           H  \n",
+            "HETATM  217 H217 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM  218 H218 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM  219 H219 TNS A   2      30.826 -28.693  -0.855  1.00  0.00           H  \n",
+            "HETATM  220 H220 TNS A   2      23.658 -32.406 -12.821  1.00  0.00           H  \n",
+            "HETATM  221 H221 TNS A   2      16.598 -32.720 -20.692  1.00  0.00           H  \n",
+            "HETATM  222 H222 TNS A   2       9.591 -31.314 -26.489  1.00  0.00           H  \n",
+            "HETATM  223 H223 TNS A   2       2.624 -28.647 -30.768  1.00  0.00           H  \n",
+            "HETATM  224 H224 TNS A   2      -4.308 -24.876 -33.717  1.00  0.00           H  \n",
+            "HETATM  225 H225 TNS A   2     -11.205 -20.002 -35.336  1.00  0.00           H  \n",
+            "HETATM  226 H226 TNS A   2     -18.063 -13.866 -35.436  1.00  0.00           H  \n",
+            "HETATM  227 H227 TNS A   2     -24.867  -6.010 -33.463  1.00  0.00           H  \n",
+            "HETATM  228 H228 TNS A   2     -31.564   5.245 -27.395  1.00  0.00           H  \n",
+            "HETATM  229 H229 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
+            "HETATM  230 H230 TNS A   2      34.661 -18.854  14.744  1.00  0.00           H  \n",
+            "HETATM  231 H231 TNS A   2      27.622 -31.671   2.868  1.00  0.00           H  \n",
+            "HETATM  232 H232 TNS A   2      18.409 -37.285  -6.721  1.00  0.00           H  \n",
+            "HETATM  233 H233 TNS A   2      10.232 -38.637 -13.294  1.00  0.00           H  \n",
+            "HETATM  234 H234 TNS A   2       2.580 -37.832 -18.340  1.00  0.00           H  \n",
+            "HETATM  235 H235 TNS A   2      -4.689 -35.445 -22.269  1.00  0.00           H  \n",
+            "HETATM  236 H236 TNS A   2     -11.621 -31.674 -25.218  1.00  0.00           H  \n",
+            "HETATM  237 H237 TNS A   2     -18.217 -26.519 -27.187  1.00  0.00           H  \n",
+            "HETATM  238 H238 TNS A   2     -24.429 -19.783 -28.038  1.00  0.00           H  \n",
+            "HETATM  239 H239 TNS A   2     -30.116 -10.889 -27.362  1.00  0.00           H  \n",
+            "HETATM  240 H240 TNS A   2     -34.767   2.267 -23.671  1.00  0.00           H  \n",
+            "HETATM  241 H241 TNS A   2     -34.661  18.854 -14.744  1.00  0.00           H  \n",
             "HETATM  242    R AXS A   3      -0.000   0.000   0.000  1.00  0.00           C  \n",
-            "HETATM  243 Dpar AXS A   3     -41.159  18.088 -26.375  1.00  0.00           C  \n",
-            "HETATM  244 Dpar AXS A   3      41.159 -18.088  26.375  1.00  0.00           C  \n",
-            "HETATM  245 Dpar AXS A   3     -45.275  19.897 -29.012  1.00  0.00           N  \n",
-            "HETATM  246 Dpar AXS A   3      45.275 -19.897  29.012  1.00  0.00           N  \n",
+            "HETATM  243 Dpar AXS A   3     -34.661  18.854 -14.744  1.00  0.00           C  \n",
+            "HETATM  244 Dpar AXS A   3      34.661 -18.854  14.744  1.00  0.00           C  \n",
+            "HETATM  245 Dpar AXS A   3     -38.127  20.740 -16.219  1.00  0.00           N  \n",
+            "HETATM  246 Dpar AXS A   3      38.127 -20.740  16.219  1.00  0.00           N  \n",
             "CONECT    2    3   14  230                                                      \n",
             "CONECT    3    2    4   15  231                                                 \n",
             "CONECT    4    3    5   16  232                                                 \n",
@@ -1877,8 +1991,8 @@ class Structure(SystemTestCase):
             self.assertEqual(real_data[i], lines[i])
 
 
-    def test_create_diff_tensor_pdb_oblate(self):
-        """Check the 3D coordinates of the PDB representation of the optimised oblate diffusion tensor."""
+    def test_create_diff_tensor_pdb_prolate(self):
+        """Check the 3D coordinates of the PDB representation of the optimised prolate diffusion tensor."""
 
         # Reset relax.
         self.interpreter.reset()
@@ -1886,9 +2000,9 @@ class Structure(SystemTestCase):
         # Create a temporary file.
         ds.tmpfile = mktemp()
 
-        # The diffusion type and directory (used by the script).
-        ds.diff_dir = 'ellipsoid'
-        ds.diff_type = 'oblate'
+        # The diffusion type (used by the script).
+        ds.diff_dir = 'spheroid_prolate'
+        ds.diff_type = 'prolate'
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'diff_tensor'+sep+'tensor_opt.py')
@@ -1913,251 +2027,251 @@ class Structure(SystemTestCase):
             "FORMUL   2  TNS    H240                                                         \n",
             "FORMUL   3  AXS    C3N2                                                         \n",
             "HETATM    1    R COM A   1      -0.000   0.000   0.000  1.00  0.00           C  \n",
-            "HETATM    2   H2 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM    3   H3 TNS A   2      20.884  -6.374 -13.217  1.00  0.00           H  \n",
-            "HETATM    4   H4 TNS A   2      25.586 -18.453 -13.762  1.00  0.00           H  \n",
-            "HETATM    5   H5 TNS A   2      27.140 -25.986 -13.133  1.00  0.00           H  \n",
-            "HETATM    6   H6 TNS A   2      27.101 -31.218 -11.911  1.00  0.00           H  \n",
-            "HETATM    7   H7 TNS A   2      25.895 -34.763 -10.254  1.00  0.00           H  \n",
-            "HETATM    8   H8 TNS A   2      23.667 -36.831  -8.216  1.00  0.00           H  \n",
-            "HETATM    9   H9 TNS A   2      20.416 -37.423  -5.797  1.00  0.00           H  \n",
-            "HETATM   10  H10 TNS A   2      15.998 -36.328  -2.943  1.00  0.00           H  \n",
-            "HETATM   11  H11 TNS A   2       9.987 -32.932   0.505  1.00  0.00           H  \n",
-            "HETATM   12  H12 TNS A   2       0.828 -24.990   5.125  1.00  0.00           H  \n",
-            "HETATM   13  H13 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM   14  H14 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM   15  H15 TNS A   2      23.757  -4.500  -8.173  1.00  0.00           H  \n",
-            "HETATM   16  H16 TNS A   2      30.293 -15.383  -5.498  1.00  0.00           H  \n",
-            "HETATM   17  H17 TNS A   2      32.849 -22.262  -3.112  1.00  0.00           H  \n",
-            "HETATM   18  H18 TNS A   2      33.390 -27.116  -0.873  1.00  0.00           H  \n",
-            "HETATM   19  H19 TNS A   2      32.454 -30.484   1.260  1.00  0.00           H  \n",
-            "HETATM   20  H20 TNS A   2      30.226 -32.553   3.298  1.00  0.00           H  \n",
-            "HETATM   21  H21 TNS A   2      26.705 -33.321   5.242  1.00  0.00           H  \n",
-            "HETATM   22  H22 TNS A   2      21.707 -32.604   7.078  1.00  0.00           H  \n",
-            "HETATM   23  H23 TNS A   2      14.695 -29.862   8.769  1.00  0.00           H  \n",
-            "HETATM   24  H24 TNS A   2       3.702 -23.116  10.169  1.00  0.00           H  \n",
-            "HETATM   25  H25 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM   26  H26 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM   27  H27 TNS A   2      25.287  -1.274  -3.227  1.00  0.00           H  \n",
-            "HETATM   28  H28 TNS A   2      32.799 -10.097   2.606  1.00  0.00           H  \n",
-            "HETATM   29  H29 TNS A   2      35.888 -15.853   6.716  1.00  0.00           H  \n",
-            "HETATM   30  H30 TNS A   2      36.737 -20.056   9.953  1.00  0.00           H  \n",
-            "HETATM   31  H31 TNS A   2      35.946 -23.121  12.550  1.00  0.00           H  \n",
-            "HETATM   32  H32 TNS A   2      33.717 -25.189  14.588  1.00  0.00           H  \n",
-            "HETATM   33  H33 TNS A   2      30.052 -26.261  16.067  1.00  0.00           H  \n",
-            "HETATM   34  H34 TNS A   2      24.746 -26.195  16.906  1.00  0.00           H  \n",
-            "HETATM   35  H35 TNS A   2      17.201 -24.576  16.872  1.00  0.00           H  \n",
-            "HETATM   36  H36 TNS A   2       5.231 -19.890  15.116  1.00  0.00           H  \n",
-            "HETATM   37  H37 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM   38  H38 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM   39  H39 TNS A   2      25.323   2.988   1.138  1.00  0.00           H  \n",
-            "HETATM   40  H40 TNS A   2      32.858  -3.115   9.757  1.00  0.00           H  \n",
-            "HETATM   41  H41 TNS A   2      35.959  -7.386  15.387  1.00  0.00           H  \n",
-            "HETATM   42  H42 TNS A   2      36.815 -10.729  19.504  1.00  0.00           H  \n",
-            "HETATM   43  H43 TNS A   2      36.027 -13.393  22.513  1.00  0.00           H  \n",
-            "HETATM   44  H44 TNS A   2      33.799 -15.461  24.551  1.00  0.00           H  \n",
-            "HETATM   45  H45 TNS A   2      30.130 -16.934  25.618  1.00  0.00           H  \n",
-            "HETATM   46  H46 TNS A   2      24.817 -17.728  25.577  1.00  0.00           H  \n",
-            "HETATM   47  H47 TNS A   2      17.259 -17.594  24.023  1.00  0.00           H  \n",
-            "HETATM   48  H48 TNS A   2       5.267 -15.628  19.480  1.00  0.00           H  \n",
-            "HETATM   49  H49 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM   50  H50 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM   51  H51 TNS A   2      23.861   7.868   4.493  1.00  0.00           H  \n",
-            "HETATM   52  H52 TNS A   2      30.464   4.881  15.254  1.00  0.00           H  \n",
-            "HETATM   53  H53 TNS A   2      33.056   2.311  22.053  1.00  0.00           H  \n",
-            "HETATM   54  H54 TNS A   2      33.617  -0.048  26.847  1.00  0.00           H  \n",
-            "HETATM   55  H55 TNS A   2      32.692  -2.252  30.172  1.00  0.00           H  \n",
-            "HETATM   56  H56 TNS A   2      30.463  -4.321  32.210  1.00  0.00           H  \n",
-            "HETATM   57  H57 TNS A   2      26.932  -6.254  32.961  1.00  0.00           H  \n",
-            "HETATM   58  H58 TNS A   2      21.914  -8.032  32.243  1.00  0.00           H  \n",
-            "HETATM   59  H59 TNS A   2      14.865  -9.598  29.520  1.00  0.00           H  \n",
-            "HETATM   60  H60 TNS A   2       3.806 -10.748  22.836  1.00  0.00           H  \n",
-            "HETATM   61  H61 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM   62  H62 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM   63  H63 TNS A   2      21.046  12.890   6.511  1.00  0.00           H  \n",
-            "HETATM   64  H64 TNS A   2      25.851  13.107  18.560  1.00  0.00           H  \n",
-            "HETATM   65  H65 TNS A   2      27.462  12.287  26.062  1.00  0.00           H  \n",
-            "HETATM   66  H66 TNS A   2      27.456  10.941  31.263  1.00  0.00           H  \n",
-            "HETATM   67  H67 TNS A   2      26.265   9.210  34.778  1.00  0.00           H  \n",
-            "HETATM   68  H68 TNS A   2      24.036   7.141  36.816  1.00  0.00           H  \n",
-            "HETATM   69  H69 TNS A   2      20.770   4.736  37.377  1.00  0.00           H  \n",
-            "HETATM   70  H70 TNS A   2      16.320   1.945  36.252  1.00  0.00           H  \n",
-            "HETATM   71  H71 TNS A   2      10.252  -1.372  32.826  1.00  0.00           H  \n",
-            "HETATM   72  H72 TNS A   2       0.990  -5.726  24.853  1.00  0.00           H  \n",
-            "HETATM   73  H73 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM   74  H74 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM   75  H75 TNS A   2      17.152  17.560   6.994  1.00  0.00           H  \n",
-            "HETATM   76  H76 TNS A   2      19.471  20.760  19.351  1.00  0.00           H  \n",
-            "HETATM   77  H77 TNS A   2      19.725  21.567  27.021  1.00  0.00           H  \n",
-            "HETATM   78  H78 TNS A   2      18.934  21.163  32.320  1.00  0.00           H  \n",
-            "HETATM   79  H79 TNS A   2      17.376  19.871  35.880  1.00  0.00           H  \n",
-            "HETATM   80  H80 TNS A   2      15.148  17.803  37.918  1.00  0.00           H  \n",
-            "HETATM   81  H81 TNS A   2      12.248  14.957  38.434  1.00  0.00           H  \n",
-            "HETATM   82  H82 TNS A   2       8.583  11.225  37.211  1.00  0.00           H  \n",
-            "HETATM   83  H83 TNS A   2       3.872   6.281  33.617  1.00  0.00           H  \n",
-            "HETATM   84  H84 TNS A   2      -2.904  -1.056  25.336  1.00  0.00           H  \n",
-            "HETATM   85  H85 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM   86  H86 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM   87  H87 TNS A   2      12.560  21.423   5.894  1.00  0.00           H  \n",
-            "HETATM   88  H88 TNS A   2      11.949  27.089  17.549  1.00  0.00           H  \n",
-            "HETATM   89  H89 TNS A   2      10.603  29.242  24.837  1.00  0.00           H  \n",
-            "HETATM   90  H90 TNS A   2       8.885  29.617  29.913  1.00  0.00           H  \n",
-            "HETATM   91  H91 TNS A   2       6.896  28.689  33.370  1.00  0.00           H  \n",
-            "HETATM   92  H92 TNS A   2       4.667  26.621  35.408  1.00  0.00           H  \n",
-            "HETATM   93  H93 TNS A   2       2.200  23.412  36.027  1.00  0.00           H  \n",
-            "HETATM   94  H94 TNS A   2      -0.539  18.900  35.027  1.00  0.00           H  \n",
-            "HETATM   95  H95 TNS A   2      -3.650  12.610  31.815  1.00  0.00           H  \n",
-            "HETATM   96  H96 TNS A   2      -7.495   2.807  24.236  1.00  0.00           H  \n",
-            "HETATM   97  H97 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM   98  H98 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM   99  H99 TNS A   2       7.721  24.100   3.320  1.00  0.00           H  \n",
-            "HETATM  100 H100 TNS A   2       4.020  31.475  13.331  1.00  0.00           H  \n",
-            "HETATM  101 H101 TNS A   2       0.988  34.560  19.722  1.00  0.00           H  \n",
-            "HETATM  102 H102 TNS A   2      -1.705  35.475  24.279  1.00  0.00           H  \n",
-            "HETATM  103 H103 TNS A   2      -4.151  34.800  27.494  1.00  0.00           H  \n",
-            "HETATM  104 H104 TNS A   2      -6.379  32.732  29.532  1.00  0.00           H  \n",
-            "HETATM  105 H105 TNS A   2      -8.391  29.270  30.393  1.00  0.00           H  \n",
-            "HETATM  106 H106 TNS A   2     -10.154  24.218  29.912  1.00  0.00           H  \n",
-            "HETATM  107 H107 TNS A   2     -11.578  16.996  27.598  1.00  0.00           H  \n",
-            "HETATM  108 H108 TNS A   2     -12.334   5.484  21.662  1.00  0.00           H  \n",
-            "HETATM  109 H109 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM  110 H110 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM  111 H111 TNS A   2       3.108  25.329  -0.477  1.00  0.00           H  \n",
-            "HETATM  112 H112 TNS A   2      -3.538  33.488   7.111  1.00  0.00           H  \n",
-            "HETATM  113 H113 TNS A   2      -8.178  37.002  12.178  1.00  0.00           H  \n",
-            "HETATM  114 H114 TNS A   2     -11.802  38.165  15.969  1.00  0.00           H  \n",
-            "HETATM  115 H115 TNS A   2     -14.682  37.606  18.826  1.00  0.00           H  \n",
-            "HETATM  116 H116 TNS A   2     -16.910  35.537  20.864  1.00  0.00           H  \n",
-            "HETATM  117 H117 TNS A   2     -18.487  31.960  22.084  1.00  0.00           H  \n",
-            "HETATM  118 H118 TNS A   2     -19.320  26.660  22.368  1.00  0.00           H  \n",
-            "HETATM  119 H119 TNS A   2     -19.137  19.009  21.377  1.00  0.00           H  \n",
-            "HETATM  120 H120 TNS A   2     -16.948   6.713  17.865  1.00  0.00           H  \n",
-            "HETATM  121 H121 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM  122 H122 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM  123 H123 TNS A   2      -0.829  24.990  -5.125  1.00  0.00           H  \n",
-            "HETATM  124 H124 TNS A   2      -9.987  32.932  -0.505  1.00  0.00           H  \n",
-            "HETATM  125 H125 TNS A   2     -15.998  36.328   2.943  1.00  0.00           H  \n",
-            "HETATM  126 H126 TNS A   2     -20.416  37.423   5.797  1.00  0.00           H  \n",
-            "HETATM  127 H127 TNS A   2     -23.667  36.831   8.216  1.00  0.00           H  \n",
-            "HETATM  128 H128 TNS A   2     -25.895  34.763  10.254  1.00  0.00           H  \n",
-            "HETATM  129 H129 TNS A   2     -27.101  31.218  11.911  1.00  0.00           H  \n",
-            "HETATM  130 H130 TNS A   2     -27.140  25.986  13.133  1.00  0.00           H  \n",
-            "HETATM  131 H131 TNS A   2     -25.586  18.453  13.762  1.00  0.00           H  \n",
-            "HETATM  132 H132 TNS A   2     -20.884   6.374  13.217  1.00  0.00           H  \n",
-            "HETATM  133 H133 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM  134 H134 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM  135 H135 TNS A   2      -3.702  23.116 -10.169  1.00  0.00           H  \n",
-            "HETATM  136 H136 TNS A   2     -14.695  29.862  -8.769  1.00  0.00           H  \n",
-            "HETATM  137 H137 TNS A   2     -21.707  32.604  -7.078  1.00  0.00           H  \n",
-            "HETATM  138 H138 TNS A   2     -26.705  33.321  -5.242  1.00  0.00           H  \n",
-            "HETATM  139 H139 TNS A   2     -30.226  32.553  -3.298  1.00  0.00           H  \n",
-            "HETATM  140 H140 TNS A   2     -32.454  30.484  -1.260  1.00  0.00           H  \n",
-            "HETATM  141 H141 TNS A   2     -33.390  27.116   0.873  1.00  0.00           H  \n",
-            "HETATM  142 H142 TNS A   2     -32.849  22.262   3.112  1.00  0.00           H  \n",
-            "HETATM  143 H143 TNS A   2     -30.293  15.383   5.498  1.00  0.00           H  \n",
-            "HETATM  144 H144 TNS A   2     -23.757   4.500   8.173  1.00  0.00           H  \n",
-            "HETATM  145 H145 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM  146 H146 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM  147 H147 TNS A   2      -5.231  19.890 -15.116  1.00  0.00           H  \n",
-            "HETATM  148 H148 TNS A   2     -17.201  24.576 -16.872  1.00  0.00           H  \n",
-            "HETATM  149 H149 TNS A   2     -24.746  26.195 -16.906  1.00  0.00           H  \n",
-            "HETATM  150 H150 TNS A   2     -30.052  26.261 -16.067  1.00  0.00           H  \n",
-            "HETATM  151 H151 TNS A   2     -33.717  25.189 -14.588  1.00  0.00           H  \n",
-            "HETATM  152 H152 TNS A   2     -35.946  23.121 -12.550  1.00  0.00           H  \n",
-            "HETATM  153 H153 TNS A   2     -36.737  20.056  -9.953  1.00  0.00           H  \n",
-            "HETATM  154 H154 TNS A   2     -35.888  15.853  -6.716  1.00  0.00           H  \n",
-            "HETATM  155 H155 TNS A   2     -32.799  10.097  -2.606  1.00  0.00           H  \n",
-            "HETATM  156 H156 TNS A   2     -25.287   1.274   3.227  1.00  0.00           H  \n",
-            "HETATM  157 H157 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM  158 H158 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM  159 H159 TNS A   2      -5.267  15.628 -19.480  1.00  0.00           H  \n",
-            "HETATM  160 H160 TNS A   2     -17.259  17.594 -24.023  1.00  0.00           H  \n",
-            "HETATM  161 H161 TNS A   2     -24.817  17.728 -25.577  1.00  0.00           H  \n",
-            "HETATM  162 H162 TNS A   2     -30.130  16.934 -25.618  1.00  0.00           H  \n",
-            "HETATM  163 H163 TNS A   2     -33.799  15.461 -24.551  1.00  0.00           H  \n",
-            "HETATM  164 H164 TNS A   2     -36.027  13.393 -22.513  1.00  0.00           H  \n",
-            "HETATM  165 H165 TNS A   2     -36.815  10.729 -19.504  1.00  0.00           H  \n",
-            "HETATM  166 H166 TNS A   2     -35.959   7.386 -15.387  1.00  0.00           H  \n",
-            "HETATM  167 H167 TNS A   2     -32.858   3.115  -9.757  1.00  0.00           H  \n",
-            "HETATM  168 H168 TNS A   2     -25.323  -2.988  -1.138  1.00  0.00           H  \n",
-            "HETATM  169 H169 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM  170 H170 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM  171 H171 TNS A   2      -3.806  10.748 -22.836  1.00  0.00           H  \n",
-            "HETATM  172 H172 TNS A   2     -14.865   9.598 -29.520  1.00  0.00           H  \n",
-            "HETATM  173 H173 TNS A   2     -21.914   8.032 -32.243  1.00  0.00           H  \n",
-            "HETATM  174 H174 TNS A   2     -26.932   6.254 -32.961  1.00  0.00           H  \n",
-            "HETATM  175 H175 TNS A   2     -30.463   4.321 -32.210  1.00  0.00           H  \n",
-            "HETATM  176 H176 TNS A   2     -32.692   2.252 -30.172  1.00  0.00           H  \n",
-            "HETATM  177 H177 TNS A   2     -33.617   0.048 -26.847  1.00  0.00           H  \n",
-            "HETATM  178 H178 TNS A   2     -33.056  -2.311 -22.053  1.00  0.00           H  \n",
-            "HETATM  179 H179 TNS A   2     -30.464  -4.881 -15.254  1.00  0.00           H  \n",
-            "HETATM  180 H180 TNS A   2     -23.861  -7.868  -4.493  1.00  0.00           H  \n",
-            "HETATM  181 H181 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM  182 H182 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM  183 H183 TNS A   2      -0.990   5.726 -24.853  1.00  0.00           H  \n",
-            "HETATM  184 H184 TNS A   2     -10.252   1.372 -32.826  1.00  0.00           H  \n",
-            "HETATM  185 H185 TNS A   2     -16.320  -1.945 -36.252  1.00  0.00           H  \n",
-            "HETATM  186 H186 TNS A   2     -20.770  -4.736 -37.377  1.00  0.00           H  \n",
-            "HETATM  187 H187 TNS A   2     -24.036  -7.141 -36.816  1.00  0.00           H  \n",
-            "HETATM  188 H188 TNS A   2     -26.265  -9.210 -34.778  1.00  0.00           H  \n",
-            "HETATM  189 H189 TNS A   2     -27.456 -10.941 -31.263  1.00  0.00           H  \n",
-            "HETATM  190 H190 TNS A   2     -27.462 -12.287 -26.062  1.00  0.00           H  \n",
-            "HETATM  191 H191 TNS A   2     -25.851 -13.107 -18.560  1.00  0.00           H  \n",
-            "HETATM  192 H192 TNS A   2     -21.046 -12.890  -6.511  1.00  0.00           H  \n",
-            "HETATM  193 H193 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM  194 H194 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM  195 H195 TNS A   2       2.904   1.056 -25.336  1.00  0.00           H  \n",
-            "HETATM  196 H196 TNS A   2      -3.872  -6.281 -33.617  1.00  0.00           H  \n",
-            "HETATM  197 H197 TNS A   2      -8.583 -11.225 -37.211  1.00  0.00           H  \n",
-            "HETATM  198 H198 TNS A   2     -12.248 -14.957 -38.434  1.00  0.00           H  \n",
-            "HETATM  199 H199 TNS A   2     -15.148 -17.803 -37.918  1.00  0.00           H  \n",
-            "HETATM  200 H200 TNS A   2     -17.376 -19.871 -35.880  1.00  0.00           H  \n",
-            "HETATM  201 H201 TNS A   2     -18.934 -21.163 -32.320  1.00  0.00           H  \n",
-            "HETATM  202 H202 TNS A   2     -19.725 -21.567 -27.021  1.00  0.00           H  \n",
-            "HETATM  203 H203 TNS A   2     -19.471 -20.760 -19.351  1.00  0.00           H  \n",
-            "HETATM  204 H204 TNS A   2     -17.152 -17.560  -6.994  1.00  0.00           H  \n",
-            "HETATM  205 H205 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM  206 H206 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM  207 H207 TNS A   2       7.495  -2.807 -24.236  1.00  0.00           H  \n",
-            "HETATM  208 H208 TNS A   2       3.650 -12.610 -31.815  1.00  0.00           H  \n",
-            "HETATM  209 H209 TNS A   2       0.539 -18.900 -35.027  1.00  0.00           H  \n",
-            "HETATM  210 H210 TNS A   2      -2.200 -23.412 -36.027  1.00  0.00           H  \n",
-            "HETATM  211 H211 TNS A   2      -4.667 -26.621 -35.408  1.00  0.00           H  \n",
-            "HETATM  212 H212 TNS A   2      -6.896 -28.689 -33.370  1.00  0.00           H  \n",
-            "HETATM  213 H213 TNS A   2      -8.885 -29.617 -29.913  1.00  0.00           H  \n",
-            "HETATM  214 H214 TNS A   2     -10.603 -29.242 -24.837  1.00  0.00           H  \n",
-            "HETATM  215 H215 TNS A   2     -11.949 -27.089 -17.549  1.00  0.00           H  \n",
-            "HETATM  216 H216 TNS A   2     -12.560 -21.423  -5.894  1.00  0.00           H  \n",
-            "HETATM  217 H217 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM  218 H218 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM  219 H219 TNS A   2      12.334  -5.484 -21.662  1.00  0.00           H  \n",
-            "HETATM  220 H220 TNS A   2      11.578 -16.996 -27.598  1.00  0.00           H  \n",
-            "HETATM  221 H221 TNS A   2      10.154 -24.218 -29.912  1.00  0.00           H  \n",
-            "HETATM  222 H222 TNS A   2       8.390 -29.270 -30.393  1.00  0.00           H  \n",
-            "HETATM  223 H223 TNS A   2       6.379 -32.732 -29.532  1.00  0.00           H  \n",
-            "HETATM  224 H224 TNS A   2       4.151 -34.800 -27.494  1.00  0.00           H  \n",
-            "HETATM  225 H225 TNS A   2       1.705 -35.475 -24.279  1.00  0.00           H  \n",
-            "HETATM  226 H226 TNS A   2      -0.988 -34.560 -19.722  1.00  0.00           H  \n",
-            "HETATM  227 H227 TNS A   2      -4.020 -31.475 -13.331  1.00  0.00           H  \n",
-            "HETATM  228 H228 TNS A   2      -7.721 -24.100  -3.320  1.00  0.00           H  \n",
-            "HETATM  229 H229 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
-            "HETATM  230 H230 TNS A   2      11.142  10.342 -10.190  1.00  0.00           H  \n",
-            "HETATM  231 H231 TNS A   2      16.948  -6.713 -17.865  1.00  0.00           H  \n",
-            "HETATM  232 H232 TNS A   2      19.137 -19.009 -21.377  1.00  0.00           H  \n",
-            "HETATM  233 H233 TNS A   2      19.320 -26.660 -22.368  1.00  0.00           H  \n",
-            "HETATM  234 H234 TNS A   2      18.487 -31.960 -22.084  1.00  0.00           H  \n",
-            "HETATM  235 H235 TNS A   2      16.910 -35.537 -20.864  1.00  0.00           H  \n",
-            "HETATM  236 H236 TNS A   2      14.682 -37.606 -18.826  1.00  0.00           H  \n",
-            "HETATM  237 H237 TNS A   2      11.802 -38.165 -15.969  1.00  0.00           H  \n",
-            "HETATM  238 H238 TNS A   2       8.178 -37.002 -12.178  1.00  0.00           H  \n",
-            "HETATM  239 H239 TNS A   2       3.538 -33.488  -7.111  1.00  0.00           H  \n",
-            "HETATM  240 H240 TNS A   2      -3.108 -25.329   0.477  1.00  0.00           H  \n",
-            "HETATM  241 H241 TNS A   2     -11.142 -10.342  10.190  1.00  0.00           H  \n",
+            "HETATM    2   H2 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM    3   H3 TNS A   2      48.132 -10.602  13.384  1.00  0.00           H  \n",
+            "HETATM    4   H4 TNS A   2      45.482   0.862   4.523  1.00  0.00           H  \n",
+            "HETATM    5   H5 TNS A   2      40.121   9.258  -2.355  1.00  0.00           H  \n",
+            "HETATM    6   H6 TNS A   2      33.389  16.101  -8.229  1.00  0.00           H  \n",
+            "HETATM    7   H7 TNS A   2      25.651  21.806 -13.368  1.00  0.00           H  \n",
+            "HETATM    8   H8 TNS A   2      17.033  26.514 -17.862  1.00  0.00           H  \n",
+            "HETATM    9   H9 TNS A   2       7.534  30.226 -21.713  1.00  0.00           H  \n",
+            "HETATM   10  H10 TNS A   2      -2.970  32.799 -24.827  1.00  0.00           H  \n",
+            "HETATM   11  H11 TNS A   2     -14.846  33.819 -26.938  1.00  0.00           H  \n",
+            "HETATM   12  H12 TNS A   2     -29.432  31.771 -27.066  1.00  0.00           H  \n",
+            "HETATM   13  H13 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM   14  H14 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM   15  H15 TNS A   2      48.114 -14.010   9.849  1.00  0.00           H  \n",
+            "HETATM   16  H16 TNS A   2      45.452  -4.720  -1.268  1.00  0.00           H  \n",
+            "HETATM   17  H17 TNS A   2      40.086   2.489  -9.378  1.00  0.00           H  \n",
+            "HETATM   18  H18 TNS A   2      33.349   8.645 -15.965  1.00  0.00           H  \n",
+            "HETATM   19  H19 TNS A   2      25.610  14.029 -21.436  1.00  0.00           H  \n",
+            "HETATM   20  H20 TNS A   2      16.992  18.737 -25.931  1.00  0.00           H  \n",
+            "HETATM   21  H21 TNS A   2       7.495  22.769 -29.448  1.00  0.00           H  \n",
+            "HETATM   22  H22 TNS A   2      -3.005  26.030 -31.850  1.00  0.00           H  \n",
+            "HETATM   23  H23 TNS A   2     -14.875  28.237 -32.729  1.00  0.00           H  \n",
+            "HETATM   24  H24 TNS A   2     -29.450  28.364 -30.600  1.00  0.00           H  \n",
+            "HETATM   25  H25 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM   26  H26 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM   27  H27 TNS A   2      47.182 -18.119   7.330  1.00  0.00           H  \n",
+            "HETATM   28  H28 TNS A   2      43.926 -11.453  -5.396  1.00  0.00           H  \n",
+            "HETATM   29  H29 TNS A   2      38.235  -5.676 -14.383  1.00  0.00           H  \n",
+            "HETATM   30  H30 TNS A   2      31.311  -0.350 -21.478  1.00  0.00           H  \n",
+            "HETATM   31  H31 TNS A   2      23.484   4.647 -27.187  1.00  0.00           H  \n",
+            "HETATM   32  H32 TNS A   2      14.866   9.356 -31.681  1.00  0.00           H  \n",
+            "HETATM   33  H33 TNS A   2       5.456  13.775 -34.961  1.00  0.00           H  \n",
+            "HETATM   34  H34 TNS A   2      -4.856  17.864 -36.855  1.00  0.00           H  \n",
+            "HETATM   35  H35 TNS A   2     -16.401  21.504 -36.856  1.00  0.00           H  \n",
+            "HETATM   36  H36 TNS A   2     -30.382  24.254 -33.119  1.00  0.00           H  \n",
+            "HETATM   37  H37 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM   38  H38 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM   39  H39 TNS A   2      45.428 -22.529   6.073  1.00  0.00           H  \n",
+            "HETATM   40  H40 TNS A   2      41.053 -18.678  -7.455  1.00  0.00           H  \n",
+            "HETATM   41  H41 TNS A   2      34.751 -14.438 -16.880  1.00  0.00           H  \n",
+            "HETATM   42  H42 TNS A   2      27.473 -10.001 -24.229  1.00  0.00           H  \n",
+            "HETATM   43  H43 TNS A   2      19.481  -5.419 -30.056  1.00  0.00           H  \n",
+            "HETATM   44  H44 TNS A   2      10.862  -0.711 -34.550  1.00  0.00           H  \n",
+            "HETATM   45  H45 TNS A   2       1.618   4.124 -37.712  1.00  0.00           H  \n",
+            "HETATM   46  H46 TNS A   2      -8.341   9.103 -39.352  1.00  0.00           H  \n",
+            "HETATM   47  H47 TNS A   2     -19.275  14.279 -38.915  1.00  0.00           H  \n",
+            "HETATM   48  H48 TNS A   2     -32.136  19.844 -34.376  1.00  0.00           H  \n",
+            "HETATM   49  H49 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM   50  H50 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM   51  H51 TNS A   2      43.024 -26.808   6.202  1.00  0.00           H  \n",
+            "HETATM   52  H52 TNS A   2      37.114 -25.688  -7.244  1.00  0.00           H  \n",
+            "HETATM   53  H53 TNS A   2      29.974 -22.939 -16.625  1.00  0.00           H  \n",
+            "HETATM   54  H54 TNS A   2      22.211 -19.364 -23.948  1.00  0.00           H  \n",
+            "HETATM   55  H55 TNS A   2      13.992 -15.186 -29.763  1.00  0.00           H  \n",
+            "HETATM   56  H56 TNS A   2       5.374 -10.478 -34.257  1.00  0.00           H  \n",
+            "HETATM   57  H57 TNS A   2      -3.644  -5.240 -37.431  1.00  0.00           H  \n",
+            "HETATM   58  H58 TNS A   2     -13.117   0.602 -39.097  1.00  0.00           H  \n",
+            "HETATM   59  H59 TNS A   2     -23.214   7.269 -38.705  1.00  0.00           H  \n",
+            "HETATM   60  H60 TNS A   2     -34.540  15.565 -34.248  1.00  0.00           H  \n",
+            "HETATM   61  H61 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM   62  H62 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM   63  H63 TNS A   2      40.204 -30.536   7.703  1.00  0.00           H  \n",
+            "HETATM   64  H64 TNS A   2      32.494 -31.797  -4.785  1.00  0.00           H  \n",
+            "HETATM   65  H65 TNS A   2      24.372 -30.346 -13.643  1.00  0.00           H  \n",
+            "HETATM   66  H66 TNS A   2      16.040 -27.524 -20.663  1.00  0.00           H  \n",
+            "HETATM   67  H67 TNS A   2       7.556 -23.696 -26.336  1.00  0.00           H  \n",
+            "HETATM   68  H68 TNS A   2      -1.062 -18.988 -30.831  1.00  0.00           H  \n",
+            "HETATM   69  H69 TNS A   2      -9.814 -13.399 -34.146  1.00  0.00           H  \n",
+            "HETATM   70  H70 TNS A   2     -18.719  -6.806 -36.115  1.00  0.00           H  \n",
+            "HETATM   71  H71 TNS A   2     -27.833   1.160 -36.246  1.00  0.00           H  \n",
+            "HETATM   72  H72 TNS A   2     -37.360  11.837 -32.747  1.00  0.00           H  \n",
+            "HETATM   73  H73 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM   74  H74 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM   75  H75 TNS A   2      37.246 -33.350  10.430  1.00  0.00           H  \n",
+            "HETATM   76  H76 TNS A   2      27.647 -36.406  -0.318  1.00  0.00           H  \n",
+            "HETATM   77  H77 TNS A   2      18.493 -35.935  -8.225  1.00  0.00           H  \n",
+            "HETATM   78  H78 TNS A   2       9.565 -33.680 -14.695  1.00  0.00           H  \n",
+            "HETATM   79  H79 TNS A   2       0.802 -30.118 -20.112  1.00  0.00           H  \n",
+            "HETATM   80  H80 TNS A   2      -7.816 -25.409 -24.606  1.00  0.00           H  \n",
+            "HETATM   81  H81 TNS A   2     -16.290 -19.556 -28.178  1.00  0.00           H  \n",
+            "HETATM   82  H82 TNS A   2     -24.598 -12.395 -30.697  1.00  0.00           H  \n",
+            "HETATM   83  H83 TNS A   2     -32.681  -3.448 -31.778  1.00  0.00           H  \n",
+            "HETATM   84  H84 TNS A   2     -40.318   9.024 -30.020  1.00  0.00           H  \n",
+            "HETATM   85  H85 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM   86  H86 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM   87  H87 TNS A   2      34.437 -34.972  14.115  1.00  0.00           H  \n",
+            "HETATM   88  H88 TNS A   2      23.045 -39.064   5.721  1.00  0.00           H  \n",
+            "HETATM   89  H89 TNS A   2      12.913 -39.159  -0.903  1.00  0.00           H  \n",
+            "HETATM   90  H90 TNS A   2       3.419 -37.231  -6.629  1.00  0.00           H  \n",
+            "HETATM   91  H91 TNS A   2      -5.609 -33.821 -11.699  1.00  0.00           H  \n",
+            "HETATM   92  H92 TNS A   2     -14.227 -29.113 -16.193  1.00  0.00           H  \n",
+            "HETATM   93  H93 TNS A   2     -22.436 -23.107 -20.112  1.00  0.00           H  \n",
+            "HETATM   94  H94 TNS A   2     -30.178 -15.618 -23.374  1.00  0.00           H  \n",
+            "HETATM   95  H95 TNS A   2     -37.282  -6.107 -25.740  1.00  0.00           H  \n",
+            "HETATM   96  H96 TNS A   2     -43.127   7.401 -26.334  1.00  0.00           H  \n",
+            "HETATM   97  H97 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM   98  H98 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM   99  H99 TNS A   2      32.054 -35.245  18.399  1.00  0.00           H  \n",
+            "HETATM  100 H100 TNS A   2      19.141 -39.511  12.739  1.00  0.00           H  \n",
+            "HETATM  101 H101 TNS A   2       8.178 -39.702   7.608  1.00  0.00           H  \n",
+            "HETATM  102 H102 TNS A   2      -1.797 -37.829   2.746  1.00  0.00           H  \n",
+            "HETATM  103 H103 TNS A   2     -11.049 -34.445  -1.921  1.00  0.00           H  \n",
+            "HETATM  104 H104 TNS A   2     -19.667 -29.737  -6.415  1.00  0.00           H  \n",
+            "HETATM  105 H105 TNS A   2     -27.651 -23.705 -10.738  1.00  0.00           H  \n",
+            "HETATM  106 H106 TNS A   2     -34.913 -16.161 -14.864  1.00  0.00           H  \n",
+            "HETATM  107 H107 TNS A   2     -41.187  -6.554 -18.722  1.00  0.00           H  \n",
+            "HETATM  108 H108 TNS A   2     -45.510   7.128 -22.051  1.00  0.00           H  \n",
+            "HETATM  109 H109 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  110 H110 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  111 H111 TNS A   2      30.329 -34.142  22.861  1.00  0.00           H  \n",
+            "HETATM  112 H112 TNS A   2      16.316 -37.704  20.050  1.00  0.00           H  \n",
+            "HETATM  113 H113 TNS A   2       4.752 -37.510  16.474  1.00  0.00           H  \n",
+            "HETATM  114 H114 TNS A   2      -5.571 -35.415  12.511  1.00  0.00           H  \n",
+            "HETATM  115 H115 TNS A   2     -14.985 -31.927   8.265  1.00  0.00           H  \n",
+            "HETATM  116 H116 TNS A   2     -23.603 -27.219   3.771  1.00  0.00           H  \n",
+            "HETATM  117 H117 TNS A   2     -31.426 -21.291  -0.972  1.00  0.00           H  \n",
+            "HETATM  118 H118 TNS A   2     -38.339 -13.970  -5.998  1.00  0.00           H  \n",
+            "HETATM  119 H119 TNS A   2     -44.012  -4.747 -11.411  1.00  0.00           H  \n",
+            "HETATM  120 H120 TNS A   2     -47.235   8.231 -17.588  1.00  0.00           H  \n",
+            "HETATM  121 H121 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  122 H122 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  123 H123 TNS A   2      29.432 -31.771  27.066  1.00  0.00           H  \n",
+            "HETATM  124 H124 TNS A   2      14.846 -33.819  26.938  1.00  0.00           H  \n",
+            "HETATM  125 H125 TNS A   2       2.970 -32.799  24.827  1.00  0.00           H  \n",
+            "HETATM  126 H126 TNS A   2      -7.534 -30.226  21.713  1.00  0.00           H  \n",
+            "HETATM  127 H127 TNS A   2     -17.033 -26.514  17.862  1.00  0.00           H  \n",
+            "HETATM  128 H128 TNS A   2     -25.651 -21.806  13.368  1.00  0.00           H  \n",
+            "HETATM  129 H129 TNS A   2     -33.389 -16.101   8.229  1.00  0.00           H  \n",
+            "HETATM  130 H130 TNS A   2     -40.121  -9.258   2.355  1.00  0.00           H  \n",
+            "HETATM  131 H131 TNS A   2     -45.482  -0.862  -4.523  1.00  0.00           H  \n",
+            "HETATM  132 H132 TNS A   2     -48.132  10.602 -13.384  1.00  0.00           H  \n",
+            "HETATM  133 H133 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  134 H134 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  135 H135 TNS A   2      29.450 -28.364  30.600  1.00  0.00           H  \n",
+            "HETATM  136 H136 TNS A   2      14.875 -28.237  32.729  1.00  0.00           H  \n",
+            "HETATM  137 H137 TNS A   2       3.005 -26.030  31.850  1.00  0.00           H  \n",
+            "HETATM  138 H138 TNS A   2      -7.495 -22.769  29.448  1.00  0.00           H  \n",
+            "HETATM  139 H139 TNS A   2     -16.992 -18.737  25.931  1.00  0.00           H  \n",
+            "HETATM  140 H140 TNS A   2     -25.610 -14.029  21.436  1.00  0.00           H  \n",
+            "HETATM  141 H141 TNS A   2     -33.349  -8.645  15.965  1.00  0.00           H  \n",
+            "HETATM  142 H142 TNS A   2     -40.086  -2.489   9.378  1.00  0.00           H  \n",
+            "HETATM  143 H143 TNS A   2     -45.452   4.720   1.268  1.00  0.00           H  \n",
+            "HETATM  144 H144 TNS A   2     -48.114  14.010  -9.849  1.00  0.00           H  \n",
+            "HETATM  145 H145 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  146 H146 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  147 H147 TNS A   2      30.382 -24.254  33.119  1.00  0.00           H  \n",
+            "HETATM  148 H148 TNS A   2      16.401 -21.504  36.856  1.00  0.00           H  \n",
+            "HETATM  149 H149 TNS A   2       4.856 -17.864  36.855  1.00  0.00           H  \n",
+            "HETATM  150 H150 TNS A   2      -5.456 -13.775  34.961  1.00  0.00           H  \n",
+            "HETATM  151 H151 TNS A   2     -14.866  -9.356  31.681  1.00  0.00           H  \n",
+            "HETATM  152 H152 TNS A   2     -23.484  -4.647  27.187  1.00  0.00           H  \n",
+            "HETATM  153 H153 TNS A   2     -31.311   0.350  21.478  1.00  0.00           H  \n",
+            "HETATM  154 H154 TNS A   2     -38.235   5.676  14.383  1.00  0.00           H  \n",
+            "HETATM  155 H155 TNS A   2     -43.926  11.453   5.396  1.00  0.00           H  \n",
+            "HETATM  156 H156 TNS A   2     -47.182  18.119  -7.330  1.00  0.00           H  \n",
+            "HETATM  157 H157 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  158 H158 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  159 H159 TNS A   2      32.136 -19.844  34.376  1.00  0.00           H  \n",
+            "HETATM  160 H160 TNS A   2      19.275 -14.279  38.915  1.00  0.00           H  \n",
+            "HETATM  161 H161 TNS A   2       8.341  -9.103  39.352  1.00  0.00           H  \n",
+            "HETATM  162 H162 TNS A   2      -1.618  -4.124  37.712  1.00  0.00           H  \n",
+            "HETATM  163 H163 TNS A   2     -10.862   0.711  34.550  1.00  0.00           H  \n",
+            "HETATM  164 H164 TNS A   2     -19.481   5.419  30.056  1.00  0.00           H  \n",
+            "HETATM  165 H165 TNS A   2     -27.473  10.001  24.229  1.00  0.00           H  \n",
+            "HETATM  166 H166 TNS A   2     -34.751  14.438  16.880  1.00  0.00           H  \n",
+            "HETATM  167 H167 TNS A   2     -41.053  18.678   7.455  1.00  0.00           H  \n",
+            "HETATM  168 H168 TNS A   2     -45.428  22.529  -6.073  1.00  0.00           H  \n",
+            "HETATM  169 H169 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  170 H170 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  171 H171 TNS A   2      34.540 -15.565  34.248  1.00  0.00           H  \n",
+            "HETATM  172 H172 TNS A   2      23.214  -7.269  38.705  1.00  0.00           H  \n",
+            "HETATM  173 H173 TNS A   2      13.117  -0.602  39.097  1.00  0.00           H  \n",
+            "HETATM  174 H174 TNS A   2       3.644   5.240  37.431  1.00  0.00           H  \n",
+            "HETATM  175 H175 TNS A   2      -5.374  10.478  34.257  1.00  0.00           H  \n",
+            "HETATM  176 H176 TNS A   2     -13.992  15.186  29.763  1.00  0.00           H  \n",
+            "HETATM  177 H177 TNS A   2     -22.211  19.364  23.948  1.00  0.00           H  \n",
+            "HETATM  178 H178 TNS A   2     -29.974  22.939  16.625  1.00  0.00           H  \n",
+            "HETATM  179 H179 TNS A   2     -37.114  25.688   7.244  1.00  0.00           H  \n",
+            "HETATM  180 H180 TNS A   2     -43.024  26.808  -6.202  1.00  0.00           H  \n",
+            "HETATM  181 H181 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  182 H182 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  183 H183 TNS A   2      37.360 -11.837  32.747  1.00  0.00           H  \n",
+            "HETATM  184 H184 TNS A   2      27.833  -1.160  36.246  1.00  0.00           H  \n",
+            "HETATM  185 H185 TNS A   2      18.719   6.806  36.115  1.00  0.00           H  \n",
+            "HETATM  186 H186 TNS A   2       9.814  13.399  34.146  1.00  0.00           H  \n",
+            "HETATM  187 H187 TNS A   2       1.062  18.988  30.831  1.00  0.00           H  \n",
+            "HETATM  188 H188 TNS A   2      -7.556  23.696  26.336  1.00  0.00           H  \n",
+            "HETATM  189 H189 TNS A   2     -16.040  27.524  20.663  1.00  0.00           H  \n",
+            "HETATM  190 H190 TNS A   2     -24.372  30.346  13.643  1.00  0.00           H  \n",
+            "HETATM  191 H191 TNS A   2     -32.494  31.797   4.785  1.00  0.00           H  \n",
+            "HETATM  192 H192 TNS A   2     -40.204  30.536  -7.703  1.00  0.00           H  \n",
+            "HETATM  193 H193 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  194 H194 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  195 H195 TNS A   2      40.318  -9.024  30.020  1.00  0.00           H  \n",
+            "HETATM  196 H196 TNS A   2      32.681   3.448  31.778  1.00  0.00           H  \n",
+            "HETATM  197 H197 TNS A   2      24.598  12.395  30.697  1.00  0.00           H  \n",
+            "HETATM  198 H198 TNS A   2      16.290  19.556  28.178  1.00  0.00           H  \n",
+            "HETATM  199 H199 TNS A   2       7.816  25.409  24.606  1.00  0.00           H  \n",
+            "HETATM  200 H200 TNS A   2      -0.802  30.118  20.112  1.00  0.00           H  \n",
+            "HETATM  201 H201 TNS A   2      -9.565  33.680  14.695  1.00  0.00           H  \n",
+            "HETATM  202 H202 TNS A   2     -18.493  35.935   8.225  1.00  0.00           H  \n",
+            "HETATM  203 H203 TNS A   2     -27.647  36.406   0.318  1.00  0.00           H  \n",
+            "HETATM  204 H204 TNS A   2     -37.246  33.350 -10.430  1.00  0.00           H  \n",
+            "HETATM  205 H205 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  206 H206 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  207 H207 TNS A   2      43.127  -7.401  26.334  1.00  0.00           H  \n",
+            "HETATM  208 H208 TNS A   2      37.282   6.107  25.740  1.00  0.00           H  \n",
+            "HETATM  209 H209 TNS A   2      30.178  15.618  23.374  1.00  0.00           H  \n",
+            "HETATM  210 H210 TNS A   2      22.436  23.107  20.112  1.00  0.00           H  \n",
+            "HETATM  211 H211 TNS A   2      14.227  29.113  16.193  1.00  0.00           H  \n",
+            "HETATM  212 H212 TNS A   2       5.609  33.821  11.699  1.00  0.00           H  \n",
+            "HETATM  213 H213 TNS A   2      -3.419  37.231   6.629  1.00  0.00           H  \n",
+            "HETATM  214 H214 TNS A   2     -12.913  39.159   0.903  1.00  0.00           H  \n",
+            "HETATM  215 H215 TNS A   2     -23.045  39.064  -5.721  1.00  0.00           H  \n",
+            "HETATM  216 H216 TNS A   2     -34.437  34.972 -14.115  1.00  0.00           H  \n",
+            "HETATM  217 H217 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  218 H218 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  219 H219 TNS A   2      45.510  -7.128  22.051  1.00  0.00           H  \n",
+            "HETATM  220 H220 TNS A   2      41.187   6.554  18.722  1.00  0.00           H  \n",
+            "HETATM  221 H221 TNS A   2      34.913  16.161  14.864  1.00  0.00           H  \n",
+            "HETATM  222 H222 TNS A   2      27.651  23.705  10.738  1.00  0.00           H  \n",
+            "HETATM  223 H223 TNS A   2      19.667  29.737   6.415  1.00  0.00           H  \n",
+            "HETATM  224 H224 TNS A   2      11.049  34.445   1.921  1.00  0.00           H  \n",
+            "HETATM  225 H225 TNS A   2       1.797  37.829  -2.746  1.00  0.00           H  \n",
+            "HETATM  226 H226 TNS A   2      -8.178  39.702  -7.608  1.00  0.00           H  \n",
+            "HETATM  227 H227 TNS A   2     -19.141  39.511 -12.739  1.00  0.00           H  \n",
+            "HETATM  228 H228 TNS A   2     -32.054  35.245 -18.399  1.00  0.00           H  \n",
+            "HETATM  229 H229 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
+            "HETATM  230 H230 TNS A   2      43.091 -23.541  22.472  1.00  0.00           H  \n",
+            "HETATM  231 H231 TNS A   2      47.235  -8.231  17.588  1.00  0.00           H  \n",
+            "HETATM  232 H232 TNS A   2      44.012   4.747  11.411  1.00  0.00           H  \n",
+            "HETATM  233 H233 TNS A   2      38.339  13.970   5.998  1.00  0.00           H  \n",
+            "HETATM  234 H234 TNS A   2      31.426  21.291   0.972  1.00  0.00           H  \n",
+            "HETATM  235 H235 TNS A   2      23.603  27.219  -3.771  1.00  0.00           H  \n",
+            "HETATM  236 H236 TNS A   2      14.985  31.927  -8.265  1.00  0.00           H  \n",
+            "HETATM  237 H237 TNS A   2       5.571  35.415 -12.511  1.00  0.00           H  \n",
+            "HETATM  238 H238 TNS A   2      -4.752  37.510 -16.474  1.00  0.00           H  \n",
+            "HETATM  239 H239 TNS A   2     -16.316  37.704 -20.050  1.00  0.00           H  \n",
+            "HETATM  240 H240 TNS A   2     -30.329  34.142 -22.861  1.00  0.00           H  \n",
+            "HETATM  241 H241 TNS A   2     -43.091  23.541 -22.472  1.00  0.00           H  \n",
             "HETATM  242    R AXS A   3      -0.000   0.000   0.000  1.00  0.00           C  \n",
-            "HETATM  243 Dpar AXS A   3     -11.142 -10.342  10.190  1.00  0.00           C  \n",
-            "HETATM  244 Dpar AXS A   3      11.142  10.342 -10.190  1.00  0.00           C  \n",
-            "HETATM  245 Dpar AXS A   3     -12.256 -11.376  11.209  1.00  0.00           N  \n",
-            "HETATM  246 Dpar AXS A   3      12.256  11.376 -11.209  1.00  0.00           N  \n",
+            "HETATM  243 Dpar AXS A   3     -43.091  23.541 -22.472  1.00  0.00           C  \n",
+            "HETATM  244 Dpar AXS A   3      43.091 -23.541  22.472  1.00  0.00           C  \n",
+            "HETATM  245 Dpar AXS A   3     -47.400  25.895 -24.719  1.00  0.00           N  \n",
+            "HETATM  246 Dpar AXS A   3      47.400 -25.895  24.719  1.00  0.00           N  \n",
             "CONECT    2    3   14  230                                                      \n",
             "CONECT    3    2    4   15  231                                                 \n",
             "CONECT    4    3    5   16  232                                                 \n",
@@ -2422,7 +2536,7 @@ class Structure(SystemTestCase):
         ds.tmpfile = mktemp()
 
         # The diffusion type (used by the script).
-        ds.diff_dir = 'ellipsoid'
+        ds.diff_dir = 'sphere'
         ds.diff_type = 'sphere'
 
         # Execute the script.
@@ -2445,246 +2559,246 @@ class Structure(SystemTestCase):
             "FORMUL   1  COM    C1                                                           \n",
             "FORMUL   2  TNS    H240                                                         \n",
             "HETATM    1    R COM A   1      -0.000   0.000   0.000  1.00  0.00           C  \n",
-            "HETATM    2   H2 TNS A   2      -0.000   0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM    3   H3 TNS A   2      15.204   0.000 -31.393  1.00  0.00           H  \n",
-            "HETATM    4   H4 TNS A   2      24.910   0.000 -24.417  1.00  0.00           H  \n",
-            "HETATM    5   H5 TNS A   2      30.208   0.000 -17.440  1.00  0.00           H  \n",
-            "HETATM    6   H6 TNS A   2      33.274   0.000 -10.464  1.00  0.00           H  \n",
-            "HETATM    7   H7 TNS A   2      34.706   0.000  -3.488  1.00  0.00           H  \n",
-            "HETATM    8   H8 TNS A   2      34.706   0.000   3.488  1.00  0.00           H  \n",
-            "HETATM    9   H9 TNS A   2      33.274   0.000  10.464  1.00  0.00           H  \n",
-            "HETATM   10  H10 TNS A   2      30.208   0.000  17.440  1.00  0.00           H  \n",
-            "HETATM   11  H11 TNS A   2      24.910   0.000  24.417  1.00  0.00           H  \n",
-            "HETATM   12  H12 TNS A   2      15.204   0.000  31.393  1.00  0.00           H  \n",
-            "HETATM   13  H13 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM   14  H14 TNS A   2      -0.000   0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM   15  H15 TNS A   2      14.460   4.698 -31.393  1.00  0.00           H  \n",
-            "HETATM   16  H16 TNS A   2      23.691   7.698 -24.417  1.00  0.00           H  \n",
-            "HETATM   17  H17 TNS A   2      28.729   9.335 -17.440  1.00  0.00           H  \n",
-            "HETATM   18  H18 TNS A   2      31.646  10.282 -10.464  1.00  0.00           H  \n",
-            "HETATM   19  H19 TNS A   2      33.008  10.725  -3.488  1.00  0.00           H  \n",
-            "HETATM   20  H20 TNS A   2      33.008  10.725   3.488  1.00  0.00           H  \n",
-            "HETATM   21  H21 TNS A   2      31.646  10.282  10.464  1.00  0.00           H  \n",
-            "HETATM   22  H22 TNS A   2      28.729   9.335  17.440  1.00  0.00           H  \n",
-            "HETATM   23  H23 TNS A   2      23.691   7.698  24.417  1.00  0.00           H  \n",
-            "HETATM   24  H24 TNS A   2      14.460   4.698  31.393  1.00  0.00           H  \n",
-            "HETATM   25  H25 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM   26  H26 TNS A   2      -0.000   0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM   27  H27 TNS A   2      12.301   8.937 -31.393  1.00  0.00           H  \n",
-            "HETATM   28  H28 TNS A   2      20.153  14.642 -24.417  1.00  0.00           H  \n",
-            "HETATM   29  H29 TNS A   2      24.439  17.756 -17.440  1.00  0.00           H  \n",
-            "HETATM   30  H30 TNS A   2      26.920  19.558 -10.464  1.00  0.00           H  \n",
-            "HETATM   31  H31 TNS A   2      28.078  20.400  -3.488  1.00  0.00           H  \n",
-            "HETATM   32  H32 TNS A   2      28.078  20.400   3.488  1.00  0.00           H  \n",
-            "HETATM   33  H33 TNS A   2      26.920  19.558  10.464  1.00  0.00           H  \n",
-            "HETATM   34  H34 TNS A   2      24.439  17.756  17.440  1.00  0.00           H  \n",
-            "HETATM   35  H35 TNS A   2      20.153  14.642  24.417  1.00  0.00           H  \n",
-            "HETATM   36  H36 TNS A   2      12.301   8.937  31.393  1.00  0.00           H  \n",
-            "HETATM   37  H37 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM   38  H38 TNS A   2      -0.000   0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM   39  H39 TNS A   2       8.937  12.301 -31.393  1.00  0.00           H  \n",
-            "HETATM   40  H40 TNS A   2      14.642  20.153 -24.417  1.00  0.00           H  \n",
-            "HETATM   41  H41 TNS A   2      17.756  24.439 -17.440  1.00  0.00           H  \n",
-            "HETATM   42  H42 TNS A   2      19.558  26.920 -10.464  1.00  0.00           H  \n",
-            "HETATM   43  H43 TNS A   2      20.400  28.078  -3.488  1.00  0.00           H  \n",
-            "HETATM   44  H44 TNS A   2      20.400  28.078   3.488  1.00  0.00           H  \n",
-            "HETATM   45  H45 TNS A   2      19.558  26.920  10.464  1.00  0.00           H  \n",
-            "HETATM   46  H46 TNS A   2      17.756  24.439  17.440  1.00  0.00           H  \n",
-            "HETATM   47  H47 TNS A   2      14.642  20.153  24.417  1.00  0.00           H  \n",
-            "HETATM   48  H48 TNS A   2       8.937  12.301  31.393  1.00  0.00           H  \n",
-            "HETATM   49  H49 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM   50  H50 TNS A   2      -0.000   0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM   51  H51 TNS A   2       4.698  14.460 -31.393  1.00  0.00           H  \n",
-            "HETATM   52  H52 TNS A   2       7.698  23.691 -24.417  1.00  0.00           H  \n",
-            "HETATM   53  H53 TNS A   2       9.335  28.729 -17.440  1.00  0.00           H  \n",
-            "HETATM   54  H54 TNS A   2      10.282  31.646 -10.464  1.00  0.00           H  \n",
-            "HETATM   55  H55 TNS A   2      10.725  33.008  -3.488  1.00  0.00           H  \n",
-            "HETATM   56  H56 TNS A   2      10.725  33.008   3.488  1.00  0.00           H  \n",
-            "HETATM   57  H57 TNS A   2      10.282  31.646  10.464  1.00  0.00           H  \n",
-            "HETATM   58  H58 TNS A   2       9.335  28.729  17.440  1.00  0.00           H  \n",
-            "HETATM   59  H59 TNS A   2       7.698  23.691  24.417  1.00  0.00           H  \n",
-            "HETATM   60  H60 TNS A   2       4.698  14.460  31.393  1.00  0.00           H  \n",
-            "HETATM   61  H61 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM   62  H62 TNS A   2      -0.000   0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM   63  H63 TNS A   2      -0.000  15.204 -31.393  1.00  0.00           H  \n",
-            "HETATM   64  H64 TNS A   2      -0.000  24.910 -24.417  1.00  0.00           H  \n",
-            "HETATM   65  H65 TNS A   2      -0.000  30.208 -17.440  1.00  0.00           H  \n",
-            "HETATM   66  H66 TNS A   2      -0.000  33.274 -10.464  1.00  0.00           H  \n",
-            "HETATM   67  H67 TNS A   2      -0.000  34.706  -3.488  1.00  0.00           H  \n",
-            "HETATM   68  H68 TNS A   2      -0.000  34.706   3.488  1.00  0.00           H  \n",
-            "HETATM   69  H69 TNS A   2      -0.000  33.274  10.464  1.00  0.00           H  \n",
-            "HETATM   70  H70 TNS A   2      -0.000  30.208  17.440  1.00  0.00           H  \n",
-            "HETATM   71  H71 TNS A   2      -0.000  24.910  24.417  1.00  0.00           H  \n",
-            "HETATM   72  H72 TNS A   2      -0.000  15.204  31.393  1.00  0.00           H  \n",
-            "HETATM   73  H73 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM   74  H74 TNS A   2      -0.000   0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM   75  H75 TNS A   2      -4.698  14.460 -31.393  1.00  0.00           H  \n",
-            "HETATM   76  H76 TNS A   2      -7.698  23.691 -24.417  1.00  0.00           H  \n",
-            "HETATM   77  H77 TNS A   2      -9.335  28.729 -17.440  1.00  0.00           H  \n",
-            "HETATM   78  H78 TNS A   2     -10.282  31.646 -10.464  1.00  0.00           H  \n",
-            "HETATM   79  H79 TNS A   2     -10.725  33.008  -3.488  1.00  0.00           H  \n",
-            "HETATM   80  H80 TNS A   2     -10.725  33.008   3.488  1.00  0.00           H  \n",
-            "HETATM   81  H81 TNS A   2     -10.282  31.646  10.464  1.00  0.00           H  \n",
-            "HETATM   82  H82 TNS A   2      -9.335  28.729  17.440  1.00  0.00           H  \n",
-            "HETATM   83  H83 TNS A   2      -7.698  23.691  24.417  1.00  0.00           H  \n",
-            "HETATM   84  H84 TNS A   2      -4.698  14.460  31.393  1.00  0.00           H  \n",
-            "HETATM   85  H85 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM   86  H86 TNS A   2      -0.000   0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM   87  H87 TNS A   2      -8.937  12.301 -31.393  1.00  0.00           H  \n",
-            "HETATM   88  H88 TNS A   2     -14.642  20.153 -24.417  1.00  0.00           H  \n",
-            "HETATM   89  H89 TNS A   2     -17.756  24.439 -17.440  1.00  0.00           H  \n",
-            "HETATM   90  H90 TNS A   2     -19.558  26.920 -10.464  1.00  0.00           H  \n",
-            "HETATM   91  H91 TNS A   2     -20.400  28.078  -3.488  1.00  0.00           H  \n",
-            "HETATM   92  H92 TNS A   2     -20.400  28.078   3.488  1.00  0.00           H  \n",
-            "HETATM   93  H93 TNS A   2     -19.558  26.920  10.464  1.00  0.00           H  \n",
-            "HETATM   94  H94 TNS A   2     -17.756  24.439  17.440  1.00  0.00           H  \n",
-            "HETATM   95  H95 TNS A   2     -14.642  20.153  24.417  1.00  0.00           H  \n",
-            "HETATM   96  H96 TNS A   2      -8.937  12.301  31.393  1.00  0.00           H  \n",
-            "HETATM   97  H97 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM   98  H98 TNS A   2      -0.000   0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM   99  H99 TNS A   2     -12.301   8.937 -31.393  1.00  0.00           H  \n",
-            "HETATM  100 H100 TNS A   2     -20.153  14.642 -24.417  1.00  0.00           H  \n",
-            "HETATM  101 H101 TNS A   2     -24.439  17.756 -17.440  1.00  0.00           H  \n",
-            "HETATM  102 H102 TNS A   2     -26.920  19.558 -10.464  1.00  0.00           H  \n",
-            "HETATM  103 H103 TNS A   2     -28.078  20.400  -3.488  1.00  0.00           H  \n",
-            "HETATM  104 H104 TNS A   2     -28.078  20.400   3.488  1.00  0.00           H  \n",
-            "HETATM  105 H105 TNS A   2     -26.920  19.558  10.464  1.00  0.00           H  \n",
-            "HETATM  106 H106 TNS A   2     -24.439  17.756  17.440  1.00  0.00           H  \n",
-            "HETATM  107 H107 TNS A   2     -20.153  14.642  24.417  1.00  0.00           H  \n",
-            "HETATM  108 H108 TNS A   2     -12.301   8.937  31.393  1.00  0.00           H  \n",
-            "HETATM  109 H109 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM  110 H110 TNS A   2      -0.000   0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM  111 H111 TNS A   2     -14.460   4.698 -31.393  1.00  0.00           H  \n",
-            "HETATM  112 H112 TNS A   2     -23.691   7.698 -24.417  1.00  0.00           H  \n",
-            "HETATM  113 H113 TNS A   2     -28.729   9.335 -17.440  1.00  0.00           H  \n",
-            "HETATM  114 H114 TNS A   2     -31.646  10.282 -10.464  1.00  0.00           H  \n",
-            "HETATM  115 H115 TNS A   2     -33.008  10.725  -3.488  1.00  0.00           H  \n",
-            "HETATM  116 H116 TNS A   2     -33.008  10.725   3.488  1.00  0.00           H  \n",
-            "HETATM  117 H117 TNS A   2     -31.646  10.282  10.464  1.00  0.00           H  \n",
-            "HETATM  118 H118 TNS A   2     -28.729   9.335  17.440  1.00  0.00           H  \n",
-            "HETATM  119 H119 TNS A   2     -23.691   7.698  24.417  1.00  0.00           H  \n",
-            "HETATM  120 H120 TNS A   2     -14.460   4.698  31.393  1.00  0.00           H  \n",
-            "HETATM  121 H121 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM  122 H122 TNS A   2      -0.000   0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM  123 H123 TNS A   2     -15.204   0.000 -31.393  1.00  0.00           H  \n",
-            "HETATM  124 H124 TNS A   2     -24.910   0.000 -24.417  1.00  0.00           H  \n",
-            "HETATM  125 H125 TNS A   2     -30.208   0.000 -17.440  1.00  0.00           H  \n",
-            "HETATM  126 H126 TNS A   2     -33.274   0.000 -10.464  1.00  0.00           H  \n",
-            "HETATM  127 H127 TNS A   2     -34.706   0.000  -3.488  1.00  0.00           H  \n",
-            "HETATM  128 H128 TNS A   2     -34.706   0.000   3.488  1.00  0.00           H  \n",
-            "HETATM  129 H129 TNS A   2     -33.274   0.000  10.464  1.00  0.00           H  \n",
-            "HETATM  130 H130 TNS A   2     -30.208   0.000  17.440  1.00  0.00           H  \n",
-            "HETATM  131 H131 TNS A   2     -24.910   0.000  24.417  1.00  0.00           H  \n",
-            "HETATM  132 H132 TNS A   2     -15.204   0.000  31.393  1.00  0.00           H  \n",
-            "HETATM  133 H133 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM  134 H134 TNS A   2      -0.000  -0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM  135 H135 TNS A   2     -14.460  -4.698 -31.393  1.00  0.00           H  \n",
-            "HETATM  136 H136 TNS A   2     -23.691  -7.698 -24.417  1.00  0.00           H  \n",
-            "HETATM  137 H137 TNS A   2     -28.729  -9.335 -17.440  1.00  0.00           H  \n",
-            "HETATM  138 H138 TNS A   2     -31.646 -10.282 -10.464  1.00  0.00           H  \n",
-            "HETATM  139 H139 TNS A   2     -33.008 -10.725  -3.488  1.00  0.00           H  \n",
-            "HETATM  140 H140 TNS A   2     -33.008 -10.725   3.488  1.00  0.00           H  \n",
-            "HETATM  141 H141 TNS A   2     -31.646 -10.282  10.464  1.00  0.00           H  \n",
-            "HETATM  142 H142 TNS A   2     -28.729  -9.335  17.440  1.00  0.00           H  \n",
-            "HETATM  143 H143 TNS A   2     -23.691  -7.698  24.417  1.00  0.00           H  \n",
-            "HETATM  144 H144 TNS A   2     -14.460  -4.698  31.393  1.00  0.00           H  \n",
-            "HETATM  145 H145 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM  146 H146 TNS A   2      -0.000  -0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM  147 H147 TNS A   2     -12.301  -8.937 -31.393  1.00  0.00           H  \n",
-            "HETATM  148 H148 TNS A   2     -20.153 -14.642 -24.417  1.00  0.00           H  \n",
-            "HETATM  149 H149 TNS A   2     -24.439 -17.756 -17.440  1.00  0.00           H  \n",
-            "HETATM  150 H150 TNS A   2     -26.920 -19.558 -10.464  1.00  0.00           H  \n",
-            "HETATM  151 H151 TNS A   2     -28.078 -20.400  -3.488  1.00  0.00           H  \n",
-            "HETATM  152 H152 TNS A   2     -28.078 -20.400   3.488  1.00  0.00           H  \n",
-            "HETATM  153 H153 TNS A   2     -26.920 -19.558  10.464  1.00  0.00           H  \n",
-            "HETATM  154 H154 TNS A   2     -24.439 -17.756  17.440  1.00  0.00           H  \n",
-            "HETATM  155 H155 TNS A   2     -20.153 -14.642  24.417  1.00  0.00           H  \n",
-            "HETATM  156 H156 TNS A   2     -12.301  -8.937  31.393  1.00  0.00           H  \n",
-            "HETATM  157 H157 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM  158 H158 TNS A   2      -0.000  -0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM  159 H159 TNS A   2      -8.937 -12.301 -31.393  1.00  0.00           H  \n",
-            "HETATM  160 H160 TNS A   2     -14.642 -20.153 -24.417  1.00  0.00           H  \n",
-            "HETATM  161 H161 TNS A   2     -17.756 -24.439 -17.440  1.00  0.00           H  \n",
-            "HETATM  162 H162 TNS A   2     -19.558 -26.920 -10.464  1.00  0.00           H  \n",
-            "HETATM  163 H163 TNS A   2     -20.400 -28.078  -3.488  1.00  0.00           H  \n",
-            "HETATM  164 H164 TNS A   2     -20.400 -28.078   3.488  1.00  0.00           H  \n",
-            "HETATM  165 H165 TNS A   2     -19.558 -26.920  10.464  1.00  0.00           H  \n",
-            "HETATM  166 H166 TNS A   2     -17.756 -24.439  17.440  1.00  0.00           H  \n",
-            "HETATM  167 H167 TNS A   2     -14.642 -20.153  24.417  1.00  0.00           H  \n",
-            "HETATM  168 H168 TNS A   2      -8.937 -12.301  31.393  1.00  0.00           H  \n",
-            "HETATM  169 H169 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM  170 H170 TNS A   2      -0.000  -0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM  171 H171 TNS A   2      -4.698 -14.460 -31.393  1.00  0.00           H  \n",
-            "HETATM  172 H172 TNS A   2      -7.698 -23.691 -24.417  1.00  0.00           H  \n",
-            "HETATM  173 H173 TNS A   2      -9.335 -28.729 -17.440  1.00  0.00           H  \n",
-            "HETATM  174 H174 TNS A   2     -10.282 -31.646 -10.464  1.00  0.00           H  \n",
-            "HETATM  175 H175 TNS A   2     -10.725 -33.008  -3.488  1.00  0.00           H  \n",
-            "HETATM  176 H176 TNS A   2     -10.725 -33.008   3.488  1.00  0.00           H  \n",
-            "HETATM  177 H177 TNS A   2     -10.282 -31.646  10.464  1.00  0.00           H  \n",
-            "HETATM  178 H178 TNS A   2      -9.335 -28.729  17.440  1.00  0.00           H  \n",
-            "HETATM  179 H179 TNS A   2      -7.698 -23.691  24.417  1.00  0.00           H  \n",
-            "HETATM  180 H180 TNS A   2      -4.698 -14.460  31.393  1.00  0.00           H  \n",
-            "HETATM  181 H181 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM  182 H182 TNS A   2      -0.000  -0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM  183 H183 TNS A   2      -0.000 -15.204 -31.393  1.00  0.00           H  \n",
-            "HETATM  184 H184 TNS A   2      -0.000 -24.910 -24.417  1.00  0.00           H  \n",
-            "HETATM  185 H185 TNS A   2      -0.000 -30.208 -17.440  1.00  0.00           H  \n",
-            "HETATM  186 H186 TNS A   2      -0.000 -33.274 -10.464  1.00  0.00           H  \n",
-            "HETATM  187 H187 TNS A   2      -0.000 -34.706  -3.488  1.00  0.00           H  \n",
-            "HETATM  188 H188 TNS A   2      -0.000 -34.706   3.488  1.00  0.00           H  \n",
-            "HETATM  189 H189 TNS A   2      -0.000 -33.274  10.464  1.00  0.00           H  \n",
-            "HETATM  190 H190 TNS A   2      -0.000 -30.208  17.440  1.00  0.00           H  \n",
-            "HETATM  191 H191 TNS A   2      -0.000 -24.910  24.417  1.00  0.00           H  \n",
-            "HETATM  192 H192 TNS A   2      -0.000 -15.204  31.393  1.00  0.00           H  \n",
-            "HETATM  193 H193 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM  194 H194 TNS A   2      -0.000  -0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM  195 H195 TNS A   2       4.698 -14.460 -31.393  1.00  0.00           H  \n",
-            "HETATM  196 H196 TNS A   2       7.698 -23.691 -24.417  1.00  0.00           H  \n",
-            "HETATM  197 H197 TNS A   2       9.335 -28.729 -17.440  1.00  0.00           H  \n",
-            "HETATM  198 H198 TNS A   2      10.282 -31.646 -10.464  1.00  0.00           H  \n",
-            "HETATM  199 H199 TNS A   2      10.725 -33.008  -3.488  1.00  0.00           H  \n",
-            "HETATM  200 H200 TNS A   2      10.725 -33.008   3.488  1.00  0.00           H  \n",
-            "HETATM  201 H201 TNS A   2      10.282 -31.646  10.464  1.00  0.00           H  \n",
-            "HETATM  202 H202 TNS A   2       9.335 -28.729  17.440  1.00  0.00           H  \n",
-            "HETATM  203 H203 TNS A   2       7.698 -23.691  24.417  1.00  0.00           H  \n",
-            "HETATM  204 H204 TNS A   2       4.698 -14.460  31.393  1.00  0.00           H  \n",
-            "HETATM  205 H205 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM  206 H206 TNS A   2      -0.000  -0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM  207 H207 TNS A   2       8.937 -12.301 -31.393  1.00  0.00           H  \n",
-            "HETATM  208 H208 TNS A   2      14.642 -20.153 -24.417  1.00  0.00           H  \n",
-            "HETATM  209 H209 TNS A   2      17.756 -24.439 -17.440  1.00  0.00           H  \n",
-            "HETATM  210 H210 TNS A   2      19.558 -26.920 -10.464  1.00  0.00           H  \n",
-            "HETATM  211 H211 TNS A   2      20.400 -28.078  -3.488  1.00  0.00           H  \n",
-            "HETATM  212 H212 TNS A   2      20.400 -28.078   3.488  1.00  0.00           H  \n",
-            "HETATM  213 H213 TNS A   2      19.558 -26.920  10.464  1.00  0.00           H  \n",
-            "HETATM  214 H214 TNS A   2      17.756 -24.439  17.440  1.00  0.00           H  \n",
-            "HETATM  215 H215 TNS A   2      14.642 -20.153  24.417  1.00  0.00           H  \n",
-            "HETATM  216 H216 TNS A   2       8.937 -12.301  31.393  1.00  0.00           H  \n",
-            "HETATM  217 H217 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM  218 H218 TNS A   2      -0.000  -0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM  219 H219 TNS A   2      12.301  -8.937 -31.393  1.00  0.00           H  \n",
-            "HETATM  220 H220 TNS A   2      20.153 -14.642 -24.417  1.00  0.00           H  \n",
-            "HETATM  221 H221 TNS A   2      24.439 -17.756 -17.440  1.00  0.00           H  \n",
-            "HETATM  222 H222 TNS A   2      26.920 -19.558 -10.464  1.00  0.00           H  \n",
-            "HETATM  223 H223 TNS A   2      28.078 -20.400  -3.488  1.00  0.00           H  \n",
-            "HETATM  224 H224 TNS A   2      28.078 -20.400   3.488  1.00  0.00           H  \n",
-            "HETATM  225 H225 TNS A   2      26.920 -19.558  10.464  1.00  0.00           H  \n",
-            "HETATM  226 H226 TNS A   2      24.439 -17.756  17.440  1.00  0.00           H  \n",
-            "HETATM  227 H227 TNS A   2      20.153 -14.642  24.417  1.00  0.00           H  \n",
-            "HETATM  228 H228 TNS A   2      12.301  -8.937  31.393  1.00  0.00           H  \n",
-            "HETATM  229 H229 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
-            "HETATM  230 H230 TNS A   2      -0.000  -0.000 -34.881  1.00  0.00           H  \n",
-            "HETATM  231 H231 TNS A   2      14.460  -4.698 -31.393  1.00  0.00           H  \n",
-            "HETATM  232 H232 TNS A   2      23.691  -7.698 -24.417  1.00  0.00           H  \n",
-            "HETATM  233 H233 TNS A   2      28.729  -9.335 -17.440  1.00  0.00           H  \n",
-            "HETATM  234 H234 TNS A   2      31.646 -10.282 -10.464  1.00  0.00           H  \n",
-            "HETATM  235 H235 TNS A   2      33.008 -10.725  -3.488  1.00  0.00           H  \n",
-            "HETATM  236 H236 TNS A   2      33.008 -10.725   3.488  1.00  0.00           H  \n",
-            "HETATM  237 H237 TNS A   2      31.646 -10.282  10.464  1.00  0.00           H  \n",
-            "HETATM  238 H238 TNS A   2      28.729  -9.335  17.440  1.00  0.00           H  \n",
-            "HETATM  239 H239 TNS A   2      23.691  -7.698  24.417  1.00  0.00           H  \n",
-            "HETATM  240 H240 TNS A   2      14.460  -4.698  31.393  1.00  0.00           H  \n",
-            "HETATM  241 H241 TNS A   2      -0.000   0.000  34.881  1.00  0.00           H  \n",
+            "HETATM    2   H2 TNS A   2       0.000   0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM    3   H3 TNS A   2      15.692   0.000 -32.400  1.00  0.00           H  \n",
+            "HETATM    4   H4 TNS A   2      25.709   0.000 -25.200  1.00  0.00           H  \n",
+            "HETATM    5   H5 TNS A   2      31.177   0.000 -18.000  1.00  0.00           H  \n",
+            "HETATM    6   H6 TNS A   2      34.342   0.000 -10.800  1.00  0.00           H  \n",
+            "HETATM    7   H7 TNS A   2      35.820   0.000  -3.600  1.00  0.00           H  \n",
+            "HETATM    8   H8 TNS A   2      35.820   0.000   3.600  1.00  0.00           H  \n",
+            "HETATM    9   H9 TNS A   2      34.342   0.000  10.800  1.00  0.00           H  \n",
+            "HETATM   10  H10 TNS A   2      31.177   0.000  18.000  1.00  0.00           H  \n",
+            "HETATM   11  H11 TNS A   2      25.709   0.000  25.200  1.00  0.00           H  \n",
+            "HETATM   12  H12 TNS A   2      15.692   0.000  32.400  1.00  0.00           H  \n",
+            "HETATM   13  H13 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM   14  H14 TNS A   2       0.000   0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM   15  H15 TNS A   2      14.924   4.849 -32.400  1.00  0.00           H  \n",
+            "HETATM   16  H16 TNS A   2      24.451   7.945 -25.200  1.00  0.00           H  \n",
+            "HETATM   17  H17 TNS A   2      29.651   9.634 -18.000  1.00  0.00           H  \n",
+            "HETATM   18  H18 TNS A   2      32.661  10.612 -10.800  1.00  0.00           H  \n",
+            "HETATM   19  H19 TNS A   2      34.066  11.069  -3.600  1.00  0.00           H  \n",
+            "HETATM   20  H20 TNS A   2      34.066  11.069   3.600  1.00  0.00           H  \n",
+            "HETATM   21  H21 TNS A   2      32.661  10.612  10.800  1.00  0.00           H  \n",
+            "HETATM   22  H22 TNS A   2      29.651   9.634  18.000  1.00  0.00           H  \n",
+            "HETATM   23  H23 TNS A   2      24.451   7.945  25.200  1.00  0.00           H  \n",
+            "HETATM   24  H24 TNS A   2      14.924   4.849  32.400  1.00  0.00           H  \n",
+            "HETATM   25  H25 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM   26  H26 TNS A   2       0.000   0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM   27  H27 TNS A   2      12.695   9.224 -32.400  1.00  0.00           H  \n",
+            "HETATM   28  H28 TNS A   2      20.799  15.111 -25.200  1.00  0.00           H  \n",
+            "HETATM   29  H29 TNS A   2      25.223  18.325 -18.000  1.00  0.00           H  \n",
+            "HETATM   30  H30 TNS A   2      27.783  20.186 -10.800  1.00  0.00           H  \n",
+            "HETATM   31  H31 TNS A   2      28.979  21.054  -3.600  1.00  0.00           H  \n",
+            "HETATM   32  H32 TNS A   2      28.979  21.054   3.600  1.00  0.00           H  \n",
+            "HETATM   33  H33 TNS A   2      27.783  20.186  10.800  1.00  0.00           H  \n",
+            "HETATM   34  H34 TNS A   2      25.223  18.325  18.000  1.00  0.00           H  \n",
+            "HETATM   35  H35 TNS A   2      20.799  15.111  25.200  1.00  0.00           H  \n",
+            "HETATM   36  H36 TNS A   2      12.695   9.224  32.400  1.00  0.00           H  \n",
+            "HETATM   37  H37 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM   38  H38 TNS A   2       0.000   0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM   39  H39 TNS A   2       9.224  12.695 -32.400  1.00  0.00           H  \n",
+            "HETATM   40  H40 TNS A   2      15.111  20.799 -25.200  1.00  0.00           H  \n",
+            "HETATM   41  H41 TNS A   2      18.325  25.223 -18.000  1.00  0.00           H  \n",
+            "HETATM   42  H42 TNS A   2      20.186  27.783 -10.800  1.00  0.00           H  \n",
+            "HETATM   43  H43 TNS A   2      21.054  28.979  -3.600  1.00  0.00           H  \n",
+            "HETATM   44  H44 TNS A   2      21.054  28.979   3.600  1.00  0.00           H  \n",
+            "HETATM   45  H45 TNS A   2      20.186  27.783  10.800  1.00  0.00           H  \n",
+            "HETATM   46  H46 TNS A   2      18.325  25.223  18.000  1.00  0.00           H  \n",
+            "HETATM   47  H47 TNS A   2      15.111  20.799  25.200  1.00  0.00           H  \n",
+            "HETATM   48  H48 TNS A   2       9.224  12.695  32.400  1.00  0.00           H  \n",
+            "HETATM   49  H49 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM   50  H50 TNS A   2       0.000   0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM   51  H51 TNS A   2       4.849  14.924 -32.400  1.00  0.00           H  \n",
+            "HETATM   52  H52 TNS A   2       7.945  24.451 -25.200  1.00  0.00           H  \n",
+            "HETATM   53  H53 TNS A   2       9.634  29.651 -18.000  1.00  0.00           H  \n",
+            "HETATM   54  H54 TNS A   2      10.612  32.661 -10.800  1.00  0.00           H  \n",
+            "HETATM   55  H55 TNS A   2      11.069  34.066  -3.600  1.00  0.00           H  \n",
+            "HETATM   56  H56 TNS A   2      11.069  34.066   3.600  1.00  0.00           H  \n",
+            "HETATM   57  H57 TNS A   2      10.612  32.661  10.800  1.00  0.00           H  \n",
+            "HETATM   58  H58 TNS A   2       9.634  29.651  18.000  1.00  0.00           H  \n",
+            "HETATM   59  H59 TNS A   2       7.945  24.451  25.200  1.00  0.00           H  \n",
+            "HETATM   60  H60 TNS A   2       4.849  14.924  32.400  1.00  0.00           H  \n",
+            "HETATM   61  H61 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM   62  H62 TNS A   2      -0.000   0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM   63  H63 TNS A   2       0.000  15.692 -32.400  1.00  0.00           H  \n",
+            "HETATM   64  H64 TNS A   2       0.000  25.709 -25.200  1.00  0.00           H  \n",
+            "HETATM   65  H65 TNS A   2       0.000  31.177 -18.000  1.00  0.00           H  \n",
+            "HETATM   66  H66 TNS A   2       0.000  34.342 -10.800  1.00  0.00           H  \n",
+            "HETATM   67  H67 TNS A   2       0.000  35.820  -3.600  1.00  0.00           H  \n",
+            "HETATM   68  H68 TNS A   2       0.000  35.820   3.600  1.00  0.00           H  \n",
+            "HETATM   69  H69 TNS A   2       0.000  34.342  10.800  1.00  0.00           H  \n",
+            "HETATM   70  H70 TNS A   2       0.000  31.177  18.000  1.00  0.00           H  \n",
+            "HETATM   71  H71 TNS A   2       0.000  25.709  25.200  1.00  0.00           H  \n",
+            "HETATM   72  H72 TNS A   2       0.000  15.692  32.400  1.00  0.00           H  \n",
+            "HETATM   73  H73 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM   74  H74 TNS A   2      -0.000   0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM   75  H75 TNS A   2      -4.849  14.924 -32.400  1.00  0.00           H  \n",
+            "HETATM   76  H76 TNS A   2      -7.945  24.451 -25.200  1.00  0.00           H  \n",
+            "HETATM   77  H77 TNS A   2      -9.634  29.651 -18.000  1.00  0.00           H  \n",
+            "HETATM   78  H78 TNS A   2     -10.612  32.661 -10.800  1.00  0.00           H  \n",
+            "HETATM   79  H79 TNS A   2     -11.069  34.066  -3.600  1.00  0.00           H  \n",
+            "HETATM   80  H80 TNS A   2     -11.069  34.066   3.600  1.00  0.00           H  \n",
+            "HETATM   81  H81 TNS A   2     -10.612  32.661  10.800  1.00  0.00           H  \n",
+            "HETATM   82  H82 TNS A   2      -9.634  29.651  18.000  1.00  0.00           H  \n",
+            "HETATM   83  H83 TNS A   2      -7.945  24.451  25.200  1.00  0.00           H  \n",
+            "HETATM   84  H84 TNS A   2      -4.849  14.924  32.400  1.00  0.00           H  \n",
+            "HETATM   85  H85 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM   86  H86 TNS A   2      -0.000   0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM   87  H87 TNS A   2      -9.224  12.695 -32.400  1.00  0.00           H  \n",
+            "HETATM   88  H88 TNS A   2     -15.111  20.799 -25.200  1.00  0.00           H  \n",
+            "HETATM   89  H89 TNS A   2     -18.325  25.223 -18.000  1.00  0.00           H  \n",
+            "HETATM   90  H90 TNS A   2     -20.186  27.783 -10.800  1.00  0.00           H  \n",
+            "HETATM   91  H91 TNS A   2     -21.054  28.979  -3.600  1.00  0.00           H  \n",
+            "HETATM   92  H92 TNS A   2     -21.054  28.979   3.600  1.00  0.00           H  \n",
+            "HETATM   93  H93 TNS A   2     -20.186  27.783  10.800  1.00  0.00           H  \n",
+            "HETATM   94  H94 TNS A   2     -18.325  25.223  18.000  1.00  0.00           H  \n",
+            "HETATM   95  H95 TNS A   2     -15.111  20.799  25.200  1.00  0.00           H  \n",
+            "HETATM   96  H96 TNS A   2      -9.224  12.695  32.400  1.00  0.00           H  \n",
+            "HETATM   97  H97 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM   98  H98 TNS A   2      -0.000   0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM   99  H99 TNS A   2     -12.695   9.224 -32.400  1.00  0.00           H  \n",
+            "HETATM  100 H100 TNS A   2     -20.799  15.111 -25.200  1.00  0.00           H  \n",
+            "HETATM  101 H101 TNS A   2     -25.223  18.325 -18.000  1.00  0.00           H  \n",
+            "HETATM  102 H102 TNS A   2     -27.783  20.186 -10.800  1.00  0.00           H  \n",
+            "HETATM  103 H103 TNS A   2     -28.979  21.054  -3.600  1.00  0.00           H  \n",
+            "HETATM  104 H104 TNS A   2     -28.979  21.054   3.600  1.00  0.00           H  \n",
+            "HETATM  105 H105 TNS A   2     -27.783  20.186  10.800  1.00  0.00           H  \n",
+            "HETATM  106 H106 TNS A   2     -25.223  18.325  18.000  1.00  0.00           H  \n",
+            "HETATM  107 H107 TNS A   2     -20.799  15.111  25.200  1.00  0.00           H  \n",
+            "HETATM  108 H108 TNS A   2     -12.695   9.224  32.400  1.00  0.00           H  \n",
+            "HETATM  109 H109 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM  110 H110 TNS A   2      -0.000   0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM  111 H111 TNS A   2     -14.924   4.849 -32.400  1.00  0.00           H  \n",
+            "HETATM  112 H112 TNS A   2     -24.451   7.945 -25.200  1.00  0.00           H  \n",
+            "HETATM  113 H113 TNS A   2     -29.651   9.634 -18.000  1.00  0.00           H  \n",
+            "HETATM  114 H114 TNS A   2     -32.661  10.612 -10.800  1.00  0.00           H  \n",
+            "HETATM  115 H115 TNS A   2     -34.066  11.069  -3.600  1.00  0.00           H  \n",
+            "HETATM  116 H116 TNS A   2     -34.066  11.069   3.600  1.00  0.00           H  \n",
+            "HETATM  117 H117 TNS A   2     -32.661  10.612  10.800  1.00  0.00           H  \n",
+            "HETATM  118 H118 TNS A   2     -29.651   9.634  18.000  1.00  0.00           H  \n",
+            "HETATM  119 H119 TNS A   2     -24.451   7.945  25.200  1.00  0.00           H  \n",
+            "HETATM  120 H120 TNS A   2     -14.924   4.849  32.400  1.00  0.00           H  \n",
+            "HETATM  121 H121 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM  122 H122 TNS A   2      -0.000   0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM  123 H123 TNS A   2     -15.692   0.000 -32.400  1.00  0.00           H  \n",
+            "HETATM  124 H124 TNS A   2     -25.709   0.000 -25.200  1.00  0.00           H  \n",
+            "HETATM  125 H125 TNS A   2     -31.177   0.000 -18.000  1.00  0.00           H  \n",
+            "HETATM  126 H126 TNS A   2     -34.342   0.000 -10.800  1.00  0.00           H  \n",
+            "HETATM  127 H127 TNS A   2     -35.820   0.000  -3.600  1.00  0.00           H  \n",
+            "HETATM  128 H128 TNS A   2     -35.820   0.000   3.600  1.00  0.00           H  \n",
+            "HETATM  129 H129 TNS A   2     -34.342   0.000  10.800  1.00  0.00           H  \n",
+            "HETATM  130 H130 TNS A   2     -31.177   0.000  18.000  1.00  0.00           H  \n",
+            "HETATM  131 H131 TNS A   2     -25.709   0.000  25.200  1.00  0.00           H  \n",
+            "HETATM  132 H132 TNS A   2     -15.692   0.000  32.400  1.00  0.00           H  \n",
+            "HETATM  133 H133 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM  134 H134 TNS A   2      -0.000  -0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM  135 H135 TNS A   2     -14.924  -4.849 -32.400  1.00  0.00           H  \n",
+            "HETATM  136 H136 TNS A   2     -24.451  -7.945 -25.200  1.00  0.00           H  \n",
+            "HETATM  137 H137 TNS A   2     -29.651  -9.634 -18.000  1.00  0.00           H  \n",
+            "HETATM  138 H138 TNS A   2     -32.661 -10.612 -10.800  1.00  0.00           H  \n",
+            "HETATM  139 H139 TNS A   2     -34.066 -11.069  -3.600  1.00  0.00           H  \n",
+            "HETATM  140 H140 TNS A   2     -34.066 -11.069   3.600  1.00  0.00           H  \n",
+            "HETATM  141 H141 TNS A   2     -32.661 -10.612  10.800  1.00  0.00           H  \n",
+            "HETATM  142 H142 TNS A   2     -29.651  -9.634  18.000  1.00  0.00           H  \n",
+            "HETATM  143 H143 TNS A   2     -24.451  -7.945  25.200  1.00  0.00           H  \n",
+            "HETATM  144 H144 TNS A   2     -14.924  -4.849  32.400  1.00  0.00           H  \n",
+            "HETATM  145 H145 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM  146 H146 TNS A   2      -0.000  -0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM  147 H147 TNS A   2     -12.695  -9.224 -32.400  1.00  0.00           H  \n",
+            "HETATM  148 H148 TNS A   2     -20.799 -15.111 -25.200  1.00  0.00           H  \n",
+            "HETATM  149 H149 TNS A   2     -25.223 -18.325 -18.000  1.00  0.00           H  \n",
+            "HETATM  150 H150 TNS A   2     -27.783 -20.186 -10.800  1.00  0.00           H  \n",
+            "HETATM  151 H151 TNS A   2     -28.979 -21.054  -3.600  1.00  0.00           H  \n",
+            "HETATM  152 H152 TNS A   2     -28.979 -21.054   3.600  1.00  0.00           H  \n",
+            "HETATM  153 H153 TNS A   2     -27.783 -20.186  10.800  1.00  0.00           H  \n",
+            "HETATM  154 H154 TNS A   2     -25.223 -18.325  18.000  1.00  0.00           H  \n",
+            "HETATM  155 H155 TNS A   2     -20.799 -15.111  25.200  1.00  0.00           H  \n",
+            "HETATM  156 H156 TNS A   2     -12.695  -9.224  32.400  1.00  0.00           H  \n",
+            "HETATM  157 H157 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM  158 H158 TNS A   2      -0.000  -0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM  159 H159 TNS A   2      -9.224 -12.695 -32.400  1.00  0.00           H  \n",
+            "HETATM  160 H160 TNS A   2     -15.111 -20.799 -25.200  1.00  0.00           H  \n",
+            "HETATM  161 H161 TNS A   2     -18.325 -25.223 -18.000  1.00  0.00           H  \n",
+            "HETATM  162 H162 TNS A   2     -20.186 -27.783 -10.800  1.00  0.00           H  \n",
+            "HETATM  163 H163 TNS A   2     -21.054 -28.979  -3.600  1.00  0.00           H  \n",
+            "HETATM  164 H164 TNS A   2     -21.054 -28.979   3.600  1.00  0.00           H  \n",
+            "HETATM  165 H165 TNS A   2     -20.186 -27.783  10.800  1.00  0.00           H  \n",
+            "HETATM  166 H166 TNS A   2     -18.325 -25.223  18.000  1.00  0.00           H  \n",
+            "HETATM  167 H167 TNS A   2     -15.111 -20.799  25.200  1.00  0.00           H  \n",
+            "HETATM  168 H168 TNS A   2      -9.224 -12.695  32.400  1.00  0.00           H  \n",
+            "HETATM  169 H169 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM  170 H170 TNS A   2      -0.000  -0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM  171 H171 TNS A   2      -4.849 -14.924 -32.400  1.00  0.00           H  \n",
+            "HETATM  172 H172 TNS A   2      -7.945 -24.451 -25.200  1.00  0.00           H  \n",
+            "HETATM  173 H173 TNS A   2      -9.634 -29.651 -18.000  1.00  0.00           H  \n",
+            "HETATM  174 H174 TNS A   2     -10.612 -32.661 -10.800  1.00  0.00           H  \n",
+            "HETATM  175 H175 TNS A   2     -11.069 -34.066  -3.600  1.00  0.00           H  \n",
+            "HETATM  176 H176 TNS A   2     -11.069 -34.066   3.600  1.00  0.00           H  \n",
+            "HETATM  177 H177 TNS A   2     -10.612 -32.661  10.800  1.00  0.00           H  \n",
+            "HETATM  178 H178 TNS A   2      -9.634 -29.651  18.000  1.00  0.00           H  \n",
+            "HETATM  179 H179 TNS A   2      -7.945 -24.451  25.200  1.00  0.00           H  \n",
+            "HETATM  180 H180 TNS A   2      -4.849 -14.924  32.400  1.00  0.00           H  \n",
+            "HETATM  181 H181 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM  182 H182 TNS A   2      -0.000  -0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM  183 H183 TNS A   2      -0.000 -15.692 -32.400  1.00  0.00           H  \n",
+            "HETATM  184 H184 TNS A   2      -0.000 -25.709 -25.200  1.00  0.00           H  \n",
+            "HETATM  185 H185 TNS A   2      -0.000 -31.177 -18.000  1.00  0.00           H  \n",
+            "HETATM  186 H186 TNS A   2      -0.000 -34.342 -10.800  1.00  0.00           H  \n",
+            "HETATM  187 H187 TNS A   2      -0.000 -35.820  -3.600  1.00  0.00           H  \n",
+            "HETATM  188 H188 TNS A   2      -0.000 -35.820   3.600  1.00  0.00           H  \n",
+            "HETATM  189 H189 TNS A   2      -0.000 -34.342  10.800  1.00  0.00           H  \n",
+            "HETATM  190 H190 TNS A   2      -0.000 -31.177  18.000  1.00  0.00           H  \n",
+            "HETATM  191 H191 TNS A   2      -0.000 -25.709  25.200  1.00  0.00           H  \n",
+            "HETATM  192 H192 TNS A   2      -0.000 -15.692  32.400  1.00  0.00           H  \n",
+            "HETATM  193 H193 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM  194 H194 TNS A   2       0.000  -0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM  195 H195 TNS A   2       4.849 -14.924 -32.400  1.00  0.00           H  \n",
+            "HETATM  196 H196 TNS A   2       7.945 -24.451 -25.200  1.00  0.00           H  \n",
+            "HETATM  197 H197 TNS A   2       9.634 -29.651 -18.000  1.00  0.00           H  \n",
+            "HETATM  198 H198 TNS A   2      10.612 -32.661 -10.800  1.00  0.00           H  \n",
+            "HETATM  199 H199 TNS A   2      11.069 -34.066  -3.600  1.00  0.00           H  \n",
+            "HETATM  200 H200 TNS A   2      11.069 -34.066   3.600  1.00  0.00           H  \n",
+            "HETATM  201 H201 TNS A   2      10.612 -32.661  10.800  1.00  0.00           H  \n",
+            "HETATM  202 H202 TNS A   2       9.634 -29.651  18.000  1.00  0.00           H  \n",
+            "HETATM  203 H203 TNS A   2       7.945 -24.451  25.200  1.00  0.00           H  \n",
+            "HETATM  204 H204 TNS A   2       4.849 -14.924  32.400  1.00  0.00           H  \n",
+            "HETATM  205 H205 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM  206 H206 TNS A   2       0.000  -0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM  207 H207 TNS A   2       9.224 -12.695 -32.400  1.00  0.00           H  \n",
+            "HETATM  208 H208 TNS A   2      15.111 -20.799 -25.200  1.00  0.00           H  \n",
+            "HETATM  209 H209 TNS A   2      18.325 -25.223 -18.000  1.00  0.00           H  \n",
+            "HETATM  210 H210 TNS A   2      20.186 -27.783 -10.800  1.00  0.00           H  \n",
+            "HETATM  211 H211 TNS A   2      21.054 -28.979  -3.600  1.00  0.00           H  \n",
+            "HETATM  212 H212 TNS A   2      21.054 -28.979   3.600  1.00  0.00           H  \n",
+            "HETATM  213 H213 TNS A   2      20.186 -27.783  10.800  1.00  0.00           H  \n",
+            "HETATM  214 H214 TNS A   2      18.325 -25.223  18.000  1.00  0.00           H  \n",
+            "HETATM  215 H215 TNS A   2      15.111 -20.799  25.200  1.00  0.00           H  \n",
+            "HETATM  216 H216 TNS A   2       9.224 -12.695  32.400  1.00  0.00           H  \n",
+            "HETATM  217 H217 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM  218 H218 TNS A   2       0.000  -0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM  219 H219 TNS A   2      12.695  -9.224 -32.400  1.00  0.00           H  \n",
+            "HETATM  220 H220 TNS A   2      20.799 -15.111 -25.200  1.00  0.00           H  \n",
+            "HETATM  221 H221 TNS A   2      25.223 -18.325 -18.000  1.00  0.00           H  \n",
+            "HETATM  222 H222 TNS A   2      27.783 -20.186 -10.800  1.00  0.00           H  \n",
+            "HETATM  223 H223 TNS A   2      28.979 -21.054  -3.600  1.00  0.00           H  \n",
+            "HETATM  224 H224 TNS A   2      28.979 -21.054   3.600  1.00  0.00           H  \n",
+            "HETATM  225 H225 TNS A   2      27.783 -20.186  10.800  1.00  0.00           H  \n",
+            "HETATM  226 H226 TNS A   2      25.223 -18.325  18.000  1.00  0.00           H  \n",
+            "HETATM  227 H227 TNS A   2      20.799 -15.111  25.200  1.00  0.00           H  \n",
+            "HETATM  228 H228 TNS A   2      12.695  -9.224  32.400  1.00  0.00           H  \n",
+            "HETATM  229 H229 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
+            "HETATM  230 H230 TNS A   2       0.000  -0.000 -36.000  1.00  0.00           H  \n",
+            "HETATM  231 H231 TNS A   2      14.924  -4.849 -32.400  1.00  0.00           H  \n",
+            "HETATM  232 H232 TNS A   2      24.451  -7.945 -25.200  1.00  0.00           H  \n",
+            "HETATM  233 H233 TNS A   2      29.651  -9.634 -18.000  1.00  0.00           H  \n",
+            "HETATM  234 H234 TNS A   2      32.661 -10.612 -10.800  1.00  0.00           H  \n",
+            "HETATM  235 H235 TNS A   2      34.066 -11.069  -3.600  1.00  0.00           H  \n",
+            "HETATM  236 H236 TNS A   2      34.066 -11.069   3.600  1.00  0.00           H  \n",
+            "HETATM  237 H237 TNS A   2      32.661 -10.612  10.800  1.00  0.00           H  \n",
+            "HETATM  238 H238 TNS A   2      29.651  -9.634  18.000  1.00  0.00           H  \n",
+            "HETATM  239 H239 TNS A   2      24.451  -7.945  25.200  1.00  0.00           H  \n",
+            "HETATM  240 H240 TNS A   2      14.924  -4.849  32.400  1.00  0.00           H  \n",
+            "HETATM  241 H241 TNS A   2      -0.000   0.000  36.000  1.00  0.00           H  \n",
             "CONECT    2    3   14  230                                                      \n",
             "CONECT    3    2    4   15  231                                                 \n",
             "CONECT    4    3    5   16  232                                                 \n",
@@ -2940,52 +3054,53 @@ class Structure(SystemTestCase):
         """Test the deletion of a single atom using the U{structure.delete user function<http://www.nmr-relax.com/manual/structure_delete.html>}"""
 
         # Load the test structure.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'sphere'
         self.interpreter.structure.read_pdb(file='uniform.pdb', dir=path)
 
         # Delete some atoms, testing different combinations.
         self.interpreter.structure.delete(atom_id=':4@N', verbosity=1)
         self.interpreter.structure.delete(atom_id=':19', verbosity=1)
         self.interpreter.structure.delete(atom_id=':16@H', verbosity=1)
+        self.interpreter.structure.delete(atom_id=':21-100', verbosity=1)
 
         # The expected atomic data after deletion.
         data = [
-            ["N", "NH",  1,   0.000,  0.000,  0.000,  0, [1]],
-            ["H", "NH",  1,   0.000,  0.000, -1.020,  1, [0]],
-            ["N", "NH",  2,   0.000,  0.000,  0.000,  2, [3]],
-            ["H", "NH",  2,   0.883,  0.000, -0.510,  3, [2]],
-            ["N", "NH",  3,   0.000,  0.000,  0.000,  4, [5]],
-            ["H", "NH",  3,   0.883,  0.000,  0.510,  5, [4]],
-            ["H", "NH",  4,   0.000,  0.000,  1.020,  6, []],
-            ["N", "NH",  5,   0.000,  0.000,  0.000,  7, [8]],
-            ["H", "NH",  5,   0.000,  0.000, -1.020,  8, [7]],
-            ["N", "NH",  6,   0.000,  0.000,  0.000,  9, [10]],
-            ["H", "NH",  6,   0.273,  0.840, -0.510, 10, [9]],
-            ["N", "NH",  7,   0.000,  0.000,  0.000, 11, [12]],
-            ["H", "NH",  7,   0.273,  0.840,  0.510, 12, [11]],
-            ["N", "NH",  8,   0.000,  0.000,  0.000, 13, [14]],
-            ["H", "NH",  8,   0.000,  0.000,  1.020, 14, [13]],
-            ["N", "NH",  9,   0.000,  0.000,  0.000, 15, [16]],
-            ["H", "NH",  9,  -0.000,  0.000, -1.020, 16, [15]],
-            ["N", "NH", 10,   0.000,  0.000,  0.000, 17, [18]],
-            ["H", "NH", 10,  -0.715,  0.519, -0.510, 18, [17]],
-            ["N", "NH", 11,   0.000,  0.000,  0.000, 19, [20]],
-            ["H", "NH", 11,  -0.715,  0.519,  0.510, 20, [19]],
-            ["N", "NH", 12,   0.000,  0.000,  0.000, 21, [22]],
-            ["H", "NH", 12,  -0.000,  0.000,  1.020, 22, [21]],
-            ["N", "NH", 13,   0.000,  0.000,  0.000, 23, [24]],
-            ["H", "NH", 13,  -0.000, -0.000, -1.020, 24, [23]],
-            ["N", "NH", 14,   0.000,  0.000,  0.000, 25, [26]],
-            ["H", "NH", 14,  -0.715, -0.519, -0.510, 26, [25]],
-            ["N", "NH", 15,   0.000,  0.000,  0.000, 27, [28]],
-            ["H", "NH", 15,  -0.715, -0.519,  0.510, 28, [27]],
-            ["N", "NH", 16,   0.000,  0.000,  0.000, 29, []],
-            ["N", "NH", 17,   0.000,  0.000,  0.000, 30, [31]],
-            ["H", "NH", 17,   0.000, -0.000, -1.020, 31, [30]],
-            ["N", "NH", 18,   0.000,  0.000,  0.000, 32, [33]],
-            ["H", "NH", 18,   0.273, -0.840, -0.510, 33, [32]],
-            ["N", "NH", 20,   0.000,  0.000,  0.000, 34, [35]],
-            ["H", "NH", 20,   0.000, -0.000,  1.020, 35, [34]]
+            ["N", "PRO",  1,   0.000,   0.000, -10.000,  0, [1]],
+            ["H", "PRO",  1,   0.000,   0.000, -11.020,  1, [0]],
+            ["N", "PRO",  2,   7.454,   0.000,  -6.667,  2, [3]],
+            ["H", "PRO",  2,   8.214,   0.000,  -7.347,  3, [2]],
+            ["N", "ILE",  3,  10.000,   0.000,   0.000,  4, [5]],
+            ["H", "ILE",  3,  11.020,   0.000,   0.000,  5, [4]],
+            ["H", "VAL",  4,   8.214,   0.000,   7.347,  6, []],
+            ["N", "VAL",  5,   0.000,   0.000,  10.000,  7, [8]],
+            ["H", "VAL",  5,   0.000,   0.000,  11.020,  8, [7]],
+            ["N", "ASN",  6,   0.000,   0.000, -10.000,  9, [10]],
+            ["H", "ASN",  6,   0.000,   0.000, -11.020, 10, [9]],
+            ["N", "SER",  7,   3.727,   6.455,  -6.667, 11, [12]],
+            ["H", "SER",  7,   4.107,   7.113,  -7.347, 12, [11]],
+            ["N", "LEU",  8,   5.000,   8.660,   0.000, 13, [14]],
+            ["H", "LEU",  8,   5.510,   9.544,   0.000, 14, [13]],
+            ["N", "SER",  9,   3.727,   6.455,   6.667, 15, [16]],
+            ["H", "SER",  9,   4.107,   7.113,   7.347, 16, [15]],
+            ["N", "ASN", 10,   0.000,   0.000,  10.000, 17, [18]],
+            ["H", "ASN", 10,   0.000,   0.000,  11.020, 18, [17]],
+            ["N", "PHE", 11,  -0.000,   0.000, -10.000, 19, [20]],
+            ["H", "PHE", 11,  -0.000,   0.000, -11.020, 20, [19]],
+            ["N", "ALA", 12,  -3.727,   6.455,  -6.667, 21, [22]],
+            ["H", "ALA", 12,  -4.107,   7.113,  -7.347, 22, [21]],
+            ["N", "ILE", 13,  -5.000,   8.660,   0.000, 23, [24]],
+            ["H", "ILE", 13,  -5.510,   9.544,   0.000, 24, [23]],
+            ["N", "GLY", 14,  -3.727,   6.455,   6.667, 25, [26]],
+            ["H", "GLY", 14,  -4.107,   7.113,   7.347, 26, [25]],
+            ["N", "SER", 15,  -0.000,   0.000,  10.000, 27, [28]],
+            ["H", "SER", 15,  -0.000,   0.000,  11.020, 28, [27]],
+            ["N", "PHE", 16,  -0.000,   0.000, -10.000, 29, []],
+            ["N", "VAL", 17,  -7.454,   0.000,  -6.667, 30, [31]],
+            ["H", "VAL", 17,  -8.214,   0.000,  -7.347, 31, [30]],
+            ["N", "ILE", 18, -10.000,   0.000,   0.000, 32, [33]],
+            ["H", "ILE", 18, -11.020,   0.000,   0.000, 33, [32]],
+            ["N", "LEU", 20,  -0.000,   0.000,  10.000, 34, [35]],
+            ["H", "LEU", 20,  -0.000,   0.000,  11.020, 35, [34]]
         ]
 
         # The selection object.
@@ -2995,6 +3110,7 @@ class Structure(SystemTestCase):
         mol = cdp.structure.structural_data[0].mol[0]
         self.assertEqual(len(data), len(mol.atom_name))
         for i in range(len(mol.atom_name)):
+            print("Checking :%i@%s" % (data[i][2], data[i][0]))
             self.assertEqual(mol.atom_name[i], data[i][0])
             self.assertEqual(mol.res_name[i], data[i][1])
             self.assertEqual(mol.res_num[i], data[i][2])
@@ -3173,7 +3289,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.rotate(R, model=3)
 
         # The data to check.
-        ids = ['model 1', 'model 2']
+        ids = ['model 1, Ap4Aase_res1-12_mol1', 'model 2, Ap4Aase_res1-12_mol1']
         trans_vect = [
             [[0.0, 0.0, 0.0],
              [   2.270857972754659,   -1.811667138656451,    1.878400649688508]],
@@ -3365,7 +3481,7 @@ class Structure(SystemTestCase):
         """
 
         # Path of the PDB file.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'spheroid'
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'diffusion_tensor'+sep+'sphere'
 
         # Load the PDB twice as different molecules.
         self.interpreter.structure.read_pdb('uniform.pdb', dir=path, set_mol_name='X')
@@ -3409,6 +3525,66 @@ class Structure(SystemTestCase):
         self.assertNotEqual(model, None)
         self.assertEqual(model.num, 1)
         self.assertEqual(len(model.mol), 0)
+
+
+    def test_load_internal_results(self):
+        """Load the PDB file using the information in a results file (using the internal structural object)."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Read the results file.
+        self.interpreter.results.read(file='str_internal', dir=path)
+
+        # Test the structure metadata.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assert_(len(cdp.structure.structural_data))
+        self.assert_(len(cdp.structure.structural_data[0].mol))
+
+        mol = cdp.structure.structural_data[0].mol[0]
+        self.assertEqual(mol.file_name, 'Ap4Aase_res1-12.pdb')
+        self.assertEqual(mol.file_path, '')
+        self.assertEqual(mol.file_model, 1)
+        self.assertEqual(mol.file_mol_num, 1)
+
+        # The real atomic data.
+        atom_name = ['N', 'CA', '1HA', '2HA', 'C', 'O', '1HT', '2HT', '3HT', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'HG', 'CD1', '1HD1', '2HD1', '3HD1', 'CD2', '1HD2', '2HD2', '3HD2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'SD', 'CE', '1HE', '2HE', '3HE', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'OD1', 'OD2', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'CD', 'OE1', 'OE2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O']
+        bonded = [[]]*174
+        chain_id = [None]*174
+        element = ['N', 'C', 'H', 'H', 'C', 'O', 'H', 'H', 'H', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'C', 'H', 'H', 'H', 'C', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'O', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'S', 'C', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'O', 'O', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'O', 'H', 'C', 'O', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'C', 'O', 'O', 'C', 'O', 'N', 'H', 'C', 'H', 'H', 'C', 'O']
+        pdb_record = ['ATOM']*174
+        res_name = ['GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY']
+        res_num = [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12]
+        seg_id = [None]*174
+        x = [8.442, 7.469, 8.013, 6.825, 6.610, 6.827, 9.398, 8.180, 8.448, 5.613, 5.281, 4.714, 5.222, 3.646, 3.332, 2.800, 4.319, 4.853, 3.587, 6.162, 4.805, 4.075, 3.593, 4.074, 4.475, 3.498, 3.572, 2.025, 1.965, 1.609, 1.176, 1.823, 0.176, 0.096, 0.509, -0.789, 0.474, 0.809, -0.595, 0.707, 4.264, 4.364, 4.809, 4.697, 5.561, 6.220, 6.156, 4.659, 4.746, 3.786, 3.770, 2.851, 2.368, 1.785, 1.177, 1.165, 2.360, 1.690, 3.546, 3.804, 3.814, 3.563, 4.442, 4.984, 5.411, 6.192, 4.872, 6.068, 6.868, 5.332, 6.747, 6.155, 5.409, 6.977, 5.721, 3.369, 2.255, 3.703, 4.604, 2.753, 1.851, 3.329, 4.182, 3.644, 2.319, 1.992, 1.854, 2.419, 1.251, 3.451, 4.359, 3.267, 2.246, 4.223, 4.054, 4.040, 5.573, 6.142, 3.488, 4.276, 2.795, 1.828, 2.929, 2.810, 1.772, 0.912, 2.067, 1.505, 0.464, 2.138, 0.938, 2.273, 4.268, 4.585, 5.076, 4.776, 6.392, 6.925, 7.120, 7.968, 7.464, 6.130, 6.384, 6.135, 4.210, 4.246, 6.325, 5.263, 7.477, 8.281, 7.587, 7.039, 9.047, 9.133, 9.654, 9.590, 10.670, 9.215, 9.190, 10.055, 8.012, 7.007, 7.361, 6.144, 5.925, 5.555, 6.329, 4.814, 4.894, 4.761]
+        y = [10.188, 9.889, 9.712, 10.745, 8.674, 7.991, 10.291, 11.073, 9.416, 8.385, 9.152, 7.243, 6.302, 7.443, 6.483, 7.963, 8.253, 7.605, 8.842, 9.327, 10.088, 7.251, 8.285, 6.099, 5.309, 5.986, 4.953, 6.396, 7.471, 6.106, 5.775, 5.225, 4.796, 4.954, 3.787, 4.949, 6.853, 7.828, 6.775, 6.720, 6.853, 8.068, 6.222, 5.251, 6.956, 6.273, 7.706, 7.634, 8.841, 6.847, 5.889, 7.360, 6.511, 8.230, 7.620, 8.669, 9.269, 9.652, 8.174, 9.362, 7.546, 6.604, 8.253, 9.095, 7.354, 7.976, 6.886, 6.258, 5.824, 5.499, 6.846, 5.570, 5.985, 5.190, 4.766, 8.771, 8.245, 9.789, 10.161, 10.351, 10.605, 11.610, 11.341, 12.287, 12.322, 11.787, 13.410, 9.322, 9.015, 8.776, 9.052, 7.758, 7.826, 7.990, 8.977, 7.248, 7.894, 8.285, 6.370, 6.214, 5.342, 5.431, 3.973, 3.943, 3.230, 3.234, 2.212, 3.991, 3.892, 3.624, 5.960, 5.908, 3.339, 3.179, 2.980, 3.150, 2.375, 2.876, 2.616, 3.262, 1.675, 3.264, 4.305, 2.758, 4.055, 2.299, 0.876, 0.258, 0.312, 0.871, -1.106, -1.253, -1.489, -2.564, -1.049, -1.041, -1.011, -0.052, -1.970, -2.740, -1.931, -2.037, -1.962, -2.949, -2.983, -3.917, -4.588, -4.488, -3.289, -3.932]
+        z = [6.302, 7.391, 8.306, 7.526, 7.089, 6.087, 6.697, 5.822, 5.604, 7.943, 9.155, 7.752, 7.908, 8.829, 9.212, 8.407, 9.880, 10.560, 10.415, 9.754, 8.900, 6.374, 5.909, 5.719, 6.139, 4.391, 4.081, 4.415, 4.326, 5.367, 3.307, 2.640, 3.889, 4.956, 3.700, 3.430, 2.493, 2.814, 2.633, 1.449, 3.403, 3.572, 2.369, 2.281, 1.371, 0.855, 1.868, 0.359, 0.149, -0.269, -0.055, -1.268, -1.726, -0.608, 0.037, -1.377, 0.162, 0.731, -2.354, -2.175, -3.496, -3.603, -4.606, -4.199, -5.387, -5.803, -6.196, -4.563, -5.146, -4.350, -3.001, -1.895, -1.241, -1.307, -2.472, -5.551, -5.582, -6.328, -6.269, -7.274, -6.735, -7.913, -8.518, -7.133, -8.791, -9.871, -8.395, -8.346, -8.584, -8.977, -8.732, -10.002, -10.355, -11.174, -11.584, -11.936, -10.759, -11.425, -9.403, -8.469, -9.921, -11.030, -9.410, -8.336, -10.080, -9.428, -10.291, -11.333, -11.606, -12.128, -10.723, -11.893, -9.781, -10.959, -8.768, -7.344, -8.971, -9.765, -7.642, -7.816, -7.251, -6.715, -6.584, -5.765, -7.175, -6.955, -9.288, -9.222, -9.654, -9.696, -10.009, -10.928, -10.249, -10.194, -9.475, -11.596, -11.540, -11.813, -12.724, -13.193, -13.137, -8.947, -7.774, -9.383, -10.338, -8.477, -8.138, -9.017, -7.265, -6.226]
+
+        # Test the atomic data.
+        mol = cdp.structure.structural_data[0].mol[0]
+        for i in range(len(mol.atom_name)):
+            self.assertEqual(mol.atom_name[i], atom_name[i])
+            self.assertEqual(mol.bonded[i], bonded[i])
+            self.assertEqual(mol.chain_id[i], chain_id[i])
+            self.assertEqual(mol.element[i], element[i])
+            self.assertEqual(mol.pdb_record[i], pdb_record[i])
+            self.assertEqual(mol.res_name[i], res_name[i])
+            self.assertEqual(mol.res_num[i], res_num[i])
+            self.assertEqual(mol.seg_id[i], seg_id[i])
+            self.assertEqual(mol.x[i], x[i])
+            self.assertEqual(mol.y[i], y[i])
+            self.assertEqual(mol.z[i], z[i])
+
+
+    def test_load_internal_results2(self):
+        """Load the PDB file using the information in a results file (using the internal structural object)."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Read the results file.
+        self.interpreter.results.read(file=path+sep+'str_internal')
 
 
     def test_load_spins_mol_cat(self):
@@ -3497,66 +3673,6 @@ class Structure(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[0].spin[2].pos[1][2], 3.048)
 
 
-    def test_load_internal_results(self):
-        """Load the PDB file using the information in a results file (using the internal structural object)."""
-
-        # Path of the files.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
-
-        # Read the results file.
-        self.interpreter.results.read(file='str_internal', dir=path)
-
-        # Test the structure metadata.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
-        self.assert_(len(cdp.structure.structural_data))
-        self.assert_(len(cdp.structure.structural_data[0].mol))
-
-        mol = cdp.structure.structural_data[0].mol[0]
-        self.assertEqual(mol.file_name, 'Ap4Aase_res1-12.pdb')
-        self.assertEqual(mol.file_path, '')
-        self.assertEqual(mol.file_model, 1)
-        self.assertEqual(mol.file_mol_num, 1)
-
-        # The real atomic data.
-        atom_name = ['N', 'CA', '1HA', '2HA', 'C', 'O', '1HT', '2HT', '3HT', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'HG', 'CD1', '1HD1', '2HD1', '3HD1', 'CD2', '1HD2', '2HD2', '3HD2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'SD', 'CE', '1HE', '2HE', '3HE', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', 'OD1', 'OD2', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'OG', 'HG', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'CD', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', '1HD', '2HD', 'C', 'O', 'N', 'H', 'CA', 'HA', 'CB', '1HB', '2HB', 'CG', '1HG', '2HG', 'CD', 'OE1', 'OE2', 'C', 'O', 'N', 'H', 'CA', '1HA', '2HA', 'C', 'O']
-        bonded = [[]]*174
-        chain_id = [None]*174
-        element = ['N', 'C', 'H', 'H', 'C', 'O', 'H', 'H', 'H', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'C', 'H', 'H', 'H', 'C', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'O', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'S', 'C', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'O', 'O', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'O', 'H', 'C', 'O', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'C', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'H', 'H', 'C', 'O', 'N', 'H', 'C', 'H', 'C', 'H', 'H', 'C', 'H', 'H', 'C', 'O', 'O', 'C', 'O', 'N', 'H', 'C', 'H', 'H', 'C', 'O']
-        pdb_record = ['ATOM']*174
-        res_name = ['GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'LEU', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'MET', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'ASP', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'SER', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'PRO', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLU', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY', 'GLY']
-        res_num = [1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 12, 12]
-        seg_id = [None]*174
-        x = [8.442, 7.469, 8.013, 6.825, 6.610, 6.827, 9.398, 8.180, 8.448, 5.613, 5.281, 4.714, 5.222, 3.646, 3.332, 2.800, 4.319, 4.853, 3.587, 6.162, 4.805, 4.075, 3.593, 4.074, 4.475, 3.498, 3.572, 2.025, 1.965, 1.609, 1.176, 1.823, 0.176, 0.096, 0.509, -0.789, 0.474, 0.809, -0.595, 0.707, 4.264, 4.364, 4.809, 4.697, 5.561, 6.220, 6.156, 4.659, 4.746, 3.786, 3.770, 2.851, 2.368, 1.785, 1.177, 1.165, 2.360, 1.690, 3.546, 3.804, 3.814, 3.563, 4.442, 4.984, 5.411, 6.192, 4.872, 6.068, 6.868, 5.332, 6.747, 6.155, 5.409, 6.977, 5.721, 3.369, 2.255, 3.703, 4.604, 2.753, 1.851, 3.329, 4.182, 3.644, 2.319, 1.992, 1.854, 2.419, 1.251, 3.451, 4.359, 3.267, 2.246, 4.223, 4.054, 4.040, 5.573, 6.142, 3.488, 4.276, 2.795, 1.828, 2.929, 2.810, 1.772, 0.912, 2.067, 1.505, 0.464, 2.138, 0.938, 2.273, 4.268, 4.585, 5.076, 4.776, 6.392, 6.925, 7.120, 7.968, 7.464, 6.130, 6.384, 6.135, 4.210, 4.246, 6.325, 5.263, 7.477, 8.281, 7.587, 7.039, 9.047, 9.133, 9.654, 9.590, 10.670, 9.215, 9.190, 10.055, 8.012, 7.007, 7.361, 6.144, 5.925, 5.555, 6.329, 4.814, 4.894, 4.761]
-        y = [10.188, 9.889, 9.712, 10.745, 8.674, 7.991, 10.291, 11.073, 9.416, 8.385, 9.152, 7.243, 6.302, 7.443, 6.483, 7.963, 8.253, 7.605, 8.842, 9.327, 10.088, 7.251, 8.285, 6.099, 5.309, 5.986, 4.953, 6.396, 7.471, 6.106, 5.775, 5.225, 4.796, 4.954, 3.787, 4.949, 6.853, 7.828, 6.775, 6.720, 6.853, 8.068, 6.222, 5.251, 6.956, 6.273, 7.706, 7.634, 8.841, 6.847, 5.889, 7.360, 6.511, 8.230, 7.620, 8.669, 9.269, 9.652, 8.174, 9.362, 7.546, 6.604, 8.253, 9.095, 7.354, 7.976, 6.886, 6.258, 5.824, 5.499, 6.846, 5.570, 5.985, 5.190, 4.766, 8.771, 8.245, 9.789, 10.161, 10.351, 10.605, 11.610, 11.341, 12.287, 12.322, 11.787, 13.410, 9.322, 9.015, 8.776, 9.052, 7.758, 7.826, 7.990, 8.977, 7.248, 7.894, 8.285, 6.370, 6.214, 5.342, 5.431, 3.973, 3.943, 3.230, 3.234, 2.212, 3.991, 3.892, 3.624, 5.960, 5.908, 3.339, 3.179, 2.980, 3.150, 2.375, 2.876, 2.616, 3.262, 1.675, 3.264, 4.305, 2.758, 4.055, 2.299, 0.876, 0.258, 0.312, 0.871, -1.106, -1.253, -1.489, -2.564, -1.049, -1.041, -1.011, -0.052, -1.970, -2.740, -1.931, -2.037, -1.962, -2.949, -2.983, -3.917, -4.588, -4.488, -3.289, -3.932]
-        z = [6.302, 7.391, 8.306, 7.526, 7.089, 6.087, 6.697, 5.822, 5.604, 7.943, 9.155, 7.752, 7.908, 8.829, 9.212, 8.407, 9.880, 10.560, 10.415, 9.754, 8.900, 6.374, 5.909, 5.719, 6.139, 4.391, 4.081, 4.415, 4.326, 5.367, 3.307, 2.640, 3.889, 4.956, 3.700, 3.430, 2.493, 2.814, 2.633, 1.449, 3.403, 3.572, 2.369, 2.281, 1.371, 0.855, 1.868, 0.359, 0.149, -0.269, -0.055, -1.268, -1.726, -0.608, 0.037, -1.377, 0.162, 0.731, -2.354, -2.175, -3.496, -3.603, -4.606, -4.199, -5.387, -5.803, -6.196, -4.563, -5.146, -4.350, -3.001, -1.895, -1.241, -1.307, -2.472, -5.551, -5.582, -6.328, -6.269, -7.274, -6.735, -7.913, -8.518, -7.133, -8.791, -9.871, -8.395, -8.346, -8.584, -8.977, -8.732, -10.002, -10.355, -11.174, -11.584, -11.936, -10.759, -11.425, -9.403, -8.469, -9.921, -11.030, -9.410, -8.336, -10.080, -9.428, -10.291, -11.333, -11.606, -12.128, -10.723, -11.893, -9.781, -10.959, -8.768, -7.344, -8.971, -9.765, -7.642, -7.816, -7.251, -6.715, -6.584, -5.765, -7.175, -6.955, -9.288, -9.222, -9.654, -9.696, -10.009, -10.928, -10.249, -10.194, -9.475, -11.596, -11.540, -11.813, -12.724, -13.193, -13.137, -8.947, -7.774, -9.383, -10.338, -8.477, -8.138, -9.017, -7.265, -6.226]
-
-        # Test the atomic data.
-        mol = cdp.structure.structural_data[0].mol[0]
-        for i in range(len(mol.atom_name)):
-            self.assertEqual(mol.atom_name[i], atom_name[i])
-            self.assertEqual(mol.bonded[i], bonded[i])
-            self.assertEqual(mol.chain_id[i], chain_id[i])
-            self.assertEqual(mol.element[i], element[i])
-            self.assertEqual(mol.pdb_record[i], pdb_record[i])
-            self.assertEqual(mol.res_name[i], res_name[i])
-            self.assertEqual(mol.res_num[i], res_num[i])
-            self.assertEqual(mol.seg_id[i], seg_id[i])
-            self.assertEqual(mol.x[i], x[i])
-            self.assertEqual(mol.y[i], y[i])
-            self.assertEqual(mol.z[i], z[i])
-
-
-    def test_load_internal_results2(self):
-        """Load the PDB file using the information in a results file (using the internal structural object)."""
-
-        # Path of the files.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
-
-        # Read the results file.
-        self.interpreter.results.read(file=path+sep+'str_internal')
-
-
     def test_mean(self):
         """Test the U{structure.mean user function<http://www.nmr-relax.com/manual/structure_mean.html>}."""
 
@@ -3608,11 +3724,11 @@ class Structure(SystemTestCase):
 
         # What the data should look like.
         helices = [
-            ['H1', 'A', 'ILE', 23, 'A', 'GLU', 34, 1, 12]
+            ['H1', 0, 'ILE', 23, 0, 'GLU', 34, 1, 12]
         ]
         sheets = [
-            [1, 'BET', 5, 'GLY', 'A', 10, None, 'VAL', 'A', 17, None, 0, None, None, None, None, None, None, None, None, None, None],
-            [2, 'BET', 5, 'MET', 'A', 1, None, 'THR', 'A', 7, None, -1, None, None, None, None, None, None, None, None, None, None]
+            [1, 'BET', 5, 'GLY', 0, 10, None, 'VAL', 0, 17, None, 0, None, None, None, None, None, None, None, None, None, None],
+            [2, 'BET', 5, 'MET', 0, 1, None, 'THR', 0, 7, None, -1, None, None, None, None, None, None, None, None, None, None]
         ]
 
         # Check the helix data.
@@ -3625,6 +3741,49 @@ class Structure(SystemTestCase):
         self.assertEqual(len(cdp.structure.sheets), 2)
         self.assertEqual(cdp.structure.sheets[0], sheets[0])
         self.assertEqual(cdp.structure.sheets[1], sheets[1])
+
+
+    def test_pdb_combined_secondary_structure(self):
+        """Test the handling of secondary structure metadata when combining multiple PDB structures."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Read a PDB file twice as two different molecules.
+        self.interpreter.structure.read_pdb('1J7O.pdb', dir=path, set_mol_name='N-dom', read_model=1, set_model_num=1)
+        self.interpreter.structure.read_pdb('1J7P.pdb', dir=path, set_mol_name='C-dom', read_model=1, set_model_num=1)
+
+        # Create a PDB file.
+        file = DummyFileObject()
+        self.interpreter.structure.write_pdb(file=file, force=True)
+
+        # The file secondary structure contents, as they should be.
+        contents = [
+            "HELIX    1   1 THR A    5  ASP A   20  1                                  16    \n",
+            "HELIX    2   2 THR A   28  LEU A   39  1                                  12    \n",
+            "HELIX    3   3 THR A   44  GLU A   54  1                                  11    \n",
+            "HELIX    4   4 ASP A   64  MET A   76  1                                  13    \n",
+            "HELIX    5   1 GLU B   82  ASP B   93  1                                  12    \n",
+            "HELIX    6   2 SER B  101  LEU B  112  1                                  12    \n",
+            "HELIX    7   3 THR B  117  ASP B  129  1                                  13    \n",
+            "HELIX    8   4 TYR B  138  THR B  146  1                                   9    \n",
+            "SHEET    1   A 2 TYR B  99  ILE B 100  0                                        \n",
+            "SHEET    2   A 2 VAL B 136  ASN B 137 -1    OVAL B 136     NILE B 100           \n"
+        ]
+
+        # Check secondary structure contents of the created PDB file.
+        lines = file.readlines()
+        index = 0
+        print("\n\nChecking the records:\n")
+        for i in range(len(lines)):
+            # Only secondary structure records.
+            if lines[i][:5] not in ['HELIX', 'SHEET']:
+                continue
+
+            # Check and increment the index.
+            print(lines[i][:-1])
+            self.assertEqual(contents[index], lines[i])
+            index += 1
 
 
     def test_read_gaussian_strychnine(self):
@@ -3739,6 +3898,83 @@ class Structure(SystemTestCase):
 
         # Read the non-PDB file.
         self.interpreter.structure.read_pdb(file='basic_single_pipe.bz2', dir=path)
+
+
+    def test_read_pdb_1UBQ(self):
+        """Test the reading of the complete 1UBQ PDB file."""
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('1UBQ.pdb', dir=path)
+
+        # Check the data.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 1)
+
+        # Check the first atom.
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[0], 1)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_name[0], 'N')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].chain_id[0], 'A')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_name[0], 'MET')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_num[0], 1)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].x[0], 27.340)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].y[0], 24.430)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].z[0], 2.614)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].element[0], 'N')
+
+        # Check the last atom (from the last water HETATM record).
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[-1], 661)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_name[-1], 'O')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].chain_id[-1], None)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_name[-1], 'HOH')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_num[-1], 58)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].x[-1], 37.667)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].y[-1], 43.421)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].z[-1], 17.000)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].element[-1], 'O')
+
+
+    def test_read_pdb_complex_internal(self):
+        """Test the packing of models and molecules using 'gromacs.pdb' and 'lactose_MCMM4_S1_*.pdb' (using the internal structural object PDB reader)."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Read the PDB models.
+        self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path+sep+'phthalic_acid')
+        self.interpreter.structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_1.pdb', dir=path, set_model_num=1, set_mol_name='lactose_MCMM4_S1')
+        self.interpreter.structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_2.pdb', dir=path, set_model_num=2, set_mol_name='lactose_MCMM4_S1')
+        self.interpreter.structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_3.pdb', dir=path, set_model_num=1, set_mol_name='lactose_MCMM4_S1b')
+        self.interpreter.structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_4.pdb', dir=path, set_model_num=2, set_mol_name='lactose_MCMM4_S1b')
+
+        # Try loading a few protons.
+        self.interpreter.structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.interpreter.structure.load_spins()
+
+        # Test the structural data.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 2)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 3)
+        self.assertEqual(len(cdp.structure.structural_data[1].mol), 3)
+
+        files = [['gromacs.pdb', 'lactose_MCMM4_S1_1.pdb', 'lactose_MCMM4_S1_3.pdb'],
+                 ['gromacs.pdb', 'lactose_MCMM4_S1_2.pdb', 'lactose_MCMM4_S1_4.pdb']]
+        paths = [[path+sep+'phthalic_acid', path+sep+'lactose', path+sep+'lactose'],
+                 [path+sep+'phthalic_acid', path+sep+'lactose', path+sep+'lactose']]
+        models = [[1, 1, 1], [2, 1, 1]]
+
+        for i in range(len(cdp.structure.structural_data)):
+            for j in range(len(cdp.structure.structural_data[i].mol)):
+                mol = cdp.structure.structural_data[i].mol[j]
+                self.assertEqual(mol.file_name, files[i][j])
+                self.assertEqual(mol.file_path, paths[i][j])
+                self.assertEqual(mol.file_model, models[i][j])
+                self.assertEqual(mol.file_mol_num, 1)
 
 
     def test_read_pdb_internal1(self):
@@ -3871,6 +4107,37 @@ class Structure(SystemTestCase):
         self.interpreter.structure.load_spins()
 
 
+    def test_read_pdb_model_2_mol_internal(self):
+        """Load the 2 models of the 'gromacs.pdb' PDB file as separate molecules of the same model (using the internal structural object PDB reader)."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'phthalic_acid'
+
+        # Read the PDB models.
+        self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path, read_model=1, set_model_num=1)
+        self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path, read_model=2, set_model_num=1)
+
+        # Try loading a few protons.
+        self.interpreter.structure.load_spins('@*H*')
+
+        # And now all the rest of the atoms.
+        self.interpreter.structure.load_spins()
+
+        # Test the structural data.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 2)
+
+        i = 0
+        for mol in cdp.structure.structural_data[0].mol:
+            self.assertEqual(mol.file_name, 'gromacs.pdb')
+            self.assertEqual(mol.file_path, path)
+            self.assertEqual(mol.file_model, i+1)
+            self.assertEqual(mol.file_mol_num, 1)
+            i = i + 1
+
+
     def test_read_pdb_mol_2_model_internal(self):
         """Load a few 'lactose_MCMM4_S1_*.pdb' PDB files as models (using the internal structural object PDB reader)."""
 
@@ -3906,114 +4173,6 @@ class Structure(SystemTestCase):
             self.assertEqual(mol.file_model, 1)
             self.assertEqual(mol.file_mol_num, 1)
             i = i + 1
-
-
-    def test_read_pdb_model_2_mol_internal(self):
-        """Load the 2 models of the 'gromacs.pdb' PDB file as separate molecules of the same model (using the internal structural object PDB reader)."""
-
-        # Path of the files.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'phthalic_acid'
-
-        # Read the PDB models.
-        self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path, read_model=1, set_model_num=1)
-        self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path, read_model=2, set_model_num=1)
-
-        # Try loading a few protons.
-        self.interpreter.structure.load_spins('@*H*')
-
-        # And now all the rest of the atoms.
-        self.interpreter.structure.load_spins()
-
-        # Test the structural data.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
-        self.assertEqual(len(cdp.structure.structural_data), 1)
-        self.assertEqual(len(cdp.structure.structural_data[0].mol), 2)
-
-        i = 0
-        for mol in cdp.structure.structural_data[0].mol:
-            self.assertEqual(mol.file_name, 'gromacs.pdb')
-            self.assertEqual(mol.file_path, path)
-            self.assertEqual(mol.file_model, i+1)
-            self.assertEqual(mol.file_mol_num, 1)
-            i = i + 1
-
-
-    def test_read_pdb_complex_internal(self):
-        """Test the packing of models and molecules using 'gromacs.pdb' and 'lactose_MCMM4_S1_*.pdb' (using the internal structural object PDB reader)."""
-
-        # Path of the files.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
-
-        # Read the PDB models.
-        self.interpreter.structure.read_pdb(file='gromacs.pdb', dir=path+sep+'phthalic_acid')
-        self.interpreter.structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_1.pdb', dir=path, set_model_num=1, set_mol_name='lactose_MCMM4_S1')
-        self.interpreter.structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_2.pdb', dir=path, set_model_num=2, set_mol_name='lactose_MCMM4_S1')
-        self.interpreter.structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_3.pdb', dir=path, set_model_num=1, set_mol_name='lactose_MCMM4_S1b')
-        self.interpreter.structure.read_pdb(file='lactose'+sep+'lactose_MCMM4_S1_4.pdb', dir=path, set_model_num=2, set_mol_name='lactose_MCMM4_S1b')
-
-        # Try loading a few protons.
-        self.interpreter.structure.load_spins('@*H*')
-
-        # And now all the rest of the atoms.
-        self.interpreter.structure.load_spins()
-
-        # Test the structural data.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
-        self.assertEqual(len(cdp.structure.structural_data), 2)
-        self.assertEqual(len(cdp.structure.structural_data[0].mol), 3)
-        self.assertEqual(len(cdp.structure.structural_data[1].mol), 3)
-
-        files = [['gromacs.pdb', 'lactose_MCMM4_S1_1.pdb', 'lactose_MCMM4_S1_3.pdb'],
-                 ['gromacs.pdb', 'lactose_MCMM4_S1_2.pdb', 'lactose_MCMM4_S1_4.pdb']]
-        paths = [[path+sep+'phthalic_acid', path+sep+'lactose', path+sep+'lactose'],
-                 [path+sep+'phthalic_acid', path+sep+'lactose', path+sep+'lactose']]
-        models = [[1, 1, 1], [2, 1, 1]]
-
-        for i in range(len(cdp.structure.structural_data)):
-            for j in range(len(cdp.structure.structural_data[i].mol)):
-                mol = cdp.structure.structural_data[i].mol[j]
-                self.assertEqual(mol.file_name, files[i][j])
-                self.assertEqual(mol.file_path, paths[i][j])
-                self.assertEqual(mol.file_model, models[i][j])
-                self.assertEqual(mol.file_mol_num, 1)
-
-
-    def test_read_pdb_1UBQ(self):
-        """Test the reading of the complete 1UBQ PDB file."""
-
-        # Load the file.
-        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
-        self.interpreter.structure.read_pdb('1UBQ.pdb', dir=path)
-
-        # Check the data.
-        self.assert_(hasattr(cdp, 'structure'))
-        self.assert_(hasattr(cdp.structure, 'structural_data'))
-        self.assertEqual(len(cdp.structure.structural_data), 1)
-        self.assertEqual(len(cdp.structure.structural_data[0].mol), 1)
-
-        # Check the first atom.
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[0], 1)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_name[0], 'N')
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].chain_id[0], 'A')
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_name[0], 'MET')
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_num[0], 1)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].x[0], 27.340)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].y[0], 24.430)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].z[0], 2.614)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].element[0], 'N')
-
-        # Check the last atom (from the last water HETATM record).
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[-1], 661)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_name[-1], 'O')
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].chain_id[-1], None)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_name[-1], 'HOH')
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_num[-1], 58)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].x[-1], 37.667)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].y[-1], 43.421)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].z[-1], 17.000)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].element[-1], 'O')
 
 
     def test_read_write_pdb_1UBQ(self):
@@ -4484,6 +4643,159 @@ class Structure(SystemTestCase):
         self.assertAlmostEqual(cdp.structure.rmsd, 0.77282758781333061)
 
 
+    def test_sequence_alignment_central_star_nw70_blosum62(self):
+        """Test of the structure.sequence_alignment user function using the 'Central Star', 'NW70', and 'BLOSUM62' options."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
+
+        # Load the two rotated structures.
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM A')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_model_num=1, set_mol_name='CaM B')
+
+        # Delete some residues.
+        self.interpreter.structure.delete("#CaM B:82")
+        self.interpreter.structure.delete("#CaM A:100-120")
+
+        # Perform the alignment.
+        self.interpreter.structure.sequence_alignment(pipes=['mf'], models=[[1, 1]], molecules=[['CaM A', 'CaM B']], msa_algorithm='Central Star', pairwise_algorithm='NW70', matrix='BLOSUM62', gap_open_penalty=10.0, gap_extend_penalty=1.0, end_gap_open_penalty=0.5, end_gap_extend_penalty=0.1)
+
+        # Save the relax state.
+        self.tmpfile = mktemp()
+        self.interpreter.state.save(self.tmpfile, dir=None, force=True)
+
+        # Reset relax.
+        self.interpreter.reset()
+
+        # Load the results.
+        self.interpreter.state.load(self.tmpfile)
+
+        # The real data.
+        pipes = ['mf', 'mf']
+        models = [1, 1]
+        molecules = ['CaM A', 'CaM B']
+        ids = ["Object 'mf'; Model 1; Molecule 'CaM A'", "Object 'mf'; Model 1; Molecule 'CaM B'"]
+        sequences = [
+            'EEEIREAFRVFDKDGNGYVDEMIREADIDGDGQVNYEEFVQMMTAK**',
+            'EEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**'
+        ]
+        strings = [
+            'EEEIREAFRVFDKDGNGY---------------------VDEMIREADIDGDGQVNYEEFVQMMTAK**',
+            '-EEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK**'
+        ]
+        gaps = []
+        for i in range(len(strings)):
+            gaps.append([])
+            for j in range(len(strings[0])):
+                gaps[i].append(0)
+        for i in range(18, 39):
+            gaps[0][i] = 1
+        gaps[1][0] = 1
+        msa_algorithm = 'Central Star'
+        pairwise_algorithm = 'NW70'
+        matrix = 'BLOSUM62'
+        gap_open_penalty = 10.0
+        gap_extend_penalty = 1.0
+        end_gap_open_penalty = 0.5
+        end_gap_extend_penalty = 0.1
+
+        # Check the data.
+        for i in range(2):
+            print("Checking \"%s\"" % molecules[i])
+            self.assertEqual(ds.sequence_alignments[0].ids[i], ids[i])
+            self.assertEqual(ds.sequence_alignments[0].object_ids[i], pipes[i])
+            self.assertEqual(ds.sequence_alignments[0].models[i], models[i])
+            self.assertEqual(ds.sequence_alignments[0].molecules[i], molecules[i])
+            self.assertEqual(ds.sequence_alignments[0].sequences[i], sequences[i])
+            self.assertEqual(ds.sequence_alignments[0].strings[i], strings[i])
+            for j in range(len(strings[0])):
+                self.assertEqual(ds.sequence_alignments[0].gaps[i, j], gaps[i][j])
+            self.assertEqual(ds.sequence_alignments[0].msa_algorithm, msa_algorithm)
+            self.assertEqual(ds.sequence_alignments[0].pairwise_algorithm, pairwise_algorithm)
+            self.assertEqual(ds.sequence_alignments[0].matrix, matrix)
+            self.assertEqual(ds.sequence_alignments[0].gap_open_penalty, gap_open_penalty)
+            self.assertEqual(ds.sequence_alignments[0].gap_extend_penalty, gap_extend_penalty)
+            self.assertEqual(ds.sequence_alignments[0].end_gap_open_penalty, end_gap_open_penalty)
+            self.assertEqual(ds.sequence_alignments[0].end_gap_extend_penalty, end_gap_extend_penalty)
+
+
+    def test_sequence_alignment_residue_number(self):
+        """Test of the structure.sequence_alignment user function using the 'residue number' MSA algorithm."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
+
+        # Load the two rotated structures.
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_model_num=1, set_mol_name='CaM A')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_model_num=1, set_mol_name='CaM B')
+
+        # Delete some residues.
+        self.interpreter.structure.delete("#CaM B:82")
+        self.interpreter.structure.delete("#CaM A:100-120")
+        self.interpreter.structure.delete(":CA")
+
+        # Perform the alignment.
+        self.interpreter.structure.sequence_alignment(pipes=['mf'], models=[[1, 1]], molecules=[['CaM A', 'CaM B']], msa_algorithm='residue number')
+
+        # Save the relax state.
+        self.tmpfile = mktemp()
+        self.interpreter.state.save(self.tmpfile, dir=None, force=True)
+
+        # Reset relax.
+        self.interpreter.reset()
+
+        # Load the results.
+        self.interpreter.state.load(self.tmpfile)
+
+        # The real data.
+        pipes = ['mf', 'mf']
+        models = [1, 1]
+        molecules = ['CaM A', 'CaM B']
+        ids = ["Object 'mf'; Model 1; Molecule 'CaM A'", "Object 'mf'; Model 1; Molecule 'CaM B'"]
+        sequences = [
+            'EEEIREAFRVFDKDGNGYVDEMIREADIDGDGQVNYEEFVQMMTAK',
+            'EEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK'
+        ]
+        strings = [
+            'EEEIREAFRVFDKDGNGY---------------------VDEMIREADIDGDGQVNYEEFVQMMTAK',
+            '-EEIREAFRVFDKDGNGYISAAELRHVMTNLGEKLTDEEVDEMIREADIDGDGQVNYEEFVQMMTAK'
+        ]
+        gaps = []
+        for i in range(len(strings)):
+            gaps.append([])
+            for j in range(len(strings[0])):
+                gaps[i].append(0)
+        for i in range(18, 39):
+            gaps[0][i] = 1
+        gaps[1][0] = 1
+        msa_algorithm = 'residue number'
+        pairwise_algorithm = None
+        matrix = None
+        gap_open_penalty = None
+        gap_extend_penalty = None
+        end_gap_open_penalty = None
+        end_gap_extend_penalty = None
+
+        # Check the data.
+        for i in range(2):
+            print("Checking \"%s\"" % molecules[i])
+            self.assertEqual(ds.sequence_alignments[0].ids[i], ids[i])
+            self.assertEqual(ds.sequence_alignments[0].object_ids[i], pipes[i])
+            self.assertEqual(ds.sequence_alignments[0].models[i], models[i])
+            self.assertEqual(ds.sequence_alignments[0].molecules[i], molecules[i])
+            self.assertEqual(ds.sequence_alignments[0].sequences[i], sequences[i])
+            self.assertEqual(ds.sequence_alignments[0].strings[i], strings[i])
+            for j in range(len(strings[0])):
+                self.assertEqual(ds.sequence_alignments[0].gaps[i, j], gaps[i][j])
+            self.assertEqual(ds.sequence_alignments[0].msa_algorithm, msa_algorithm)
+            self.assertEqual(ds.sequence_alignments[0].pairwise_algorithm, pairwise_algorithm)
+            self.assertEqual(ds.sequence_alignments[0].matrix, matrix)
+            self.assertEqual(ds.sequence_alignments[0].gap_open_penalty, gap_open_penalty)
+            self.assertEqual(ds.sequence_alignments[0].gap_extend_penalty, gap_extend_penalty)
+            self.assertEqual(ds.sequence_alignments[0].end_gap_open_penalty, end_gap_open_penalty)
+            self.assertEqual(ds.sequence_alignments[0].end_gap_extend_penalty, end_gap_extend_penalty)
+
+
     def test_superimpose_fit_to_first(self):
         """Test of the structure.superimpose user function, fitting to the first structure."""
 
@@ -4561,7 +4873,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.translate([20.0, 0.0, 0.0], model=3)
 
         # Superimpose the backbone heavy atoms.
-        self.interpreter.structure.superimpose(models=[2, 3], method='fit to mean', atom_id='@N,C,CA,O')
+        self.interpreter.structure.superimpose(models=[[2, 3]], method='fit to mean', atom_id='@N,C,CA,O')
 
         # Check that the two structures now have the same atomic coordinates as the original, but shifted 10 Angstrom in x.
         model1 = cdp.structure.structural_data[0].mol[0]

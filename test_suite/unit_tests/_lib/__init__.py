@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2013-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -31,6 +31,7 @@ __all__ = [
     '_geometry',
     '_linear_algebra',
     '_order',
+    '_sequence_alignment',
     '_software',
     '_spectral_densities',
     '_structure',

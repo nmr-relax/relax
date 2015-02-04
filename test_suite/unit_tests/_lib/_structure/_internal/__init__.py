@@ -22,4 +22,5 @@
 
 __all__ = [
     'test___init__'
+    'test_coordinates'
 ]
