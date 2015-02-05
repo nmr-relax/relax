@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,6 +26,7 @@
 from numpy.linalg import norm
 
 # relax module imports.
+from lib.check_types import is_float
 from lib.errors import RelaxError
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import return_spin, spin_loop
@@ -145,8 +146,8 @@ def num_data_points():
         # PCS data (skipping array elements set to None).
         if 'pcs' in data_types:
             if hasattr(spin, 'pcs'):
-                for pcs in spin.pcs:
-                    if isinstance(pcs, float):
+                for id in spin.pcs:
+                    if is_float(spin.pcs[id]):
                         n = n + 1
 
     # Interatomic data loop.
@@ -154,8 +155,8 @@ def num_data_points():
         # RDC data (skipping array elements set to None).
         if 'rdc' in data_types:
             if hasattr(interatom, 'rdc'):
-                for rdc in interatom.rdc:
-                    if isinstance(rdc, float):
+                for id in interatom.rdc:
+                    if is_float(interatom.rdc[id]):
                         n = n + 1
 
     # Alignment tensors.
