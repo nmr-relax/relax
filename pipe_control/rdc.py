@@ -1156,6 +1156,9 @@ def return_rdc_data(sim_index=None, verbosity=0):
                     else:
                         error = interatom.rdc_err[align_id]
 
+                # Increment the RDC count.
+                j += 1
+
             # Append the RDCs to the list.
             rdc[-1].append(value)
 
@@ -1173,9 +1176,6 @@ def return_rdc_data(sim_index=None, verbosity=0):
                 absolute[-1].append(interatom.absolute_rdc[align_id])
             else:
                 absolute[-1].append(False)
-
-            # Interatom index.
-            j = j + 1
 
         # ID and RDC count printout.
         if verbosity:
