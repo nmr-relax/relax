@@ -138,11 +138,7 @@ def num_data_points():
     n = 0
 
     # Spin loop.
-    for spin in spin_loop():
-        # Skip deselected spins.
-        if not spin.select:
-            continue
-
+    for spin in spin_loop(skip_desel=True):
         # PCS data (skipping array elements set to None).
         if 'pcs' in data_types:
             if hasattr(spin, 'pcs'):
@@ -151,7 +147,7 @@ def num_data_points():
                         n += 1
 
     # Interatomic data loop.
-    for interatom in interatomic_loop():
+    for interatom in interatomic_loop(skip_desel=True):
         # RDC data (skipping array elements set to None).
         if 'rdc' in data_types:
             if hasattr(interatom, 'rdc'):
