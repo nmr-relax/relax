@@ -44,13 +44,13 @@ def model_statistics():
     print("\nStoring the model statistics.")
     for model_info in api.model_loop():
         # Printout.
-        api.print_model_title(model_info)
+        api.print_model_title(model_info=model_info)
 
         # Get the model statistics.
-        k, n, chi2 = api.model_statistics(model_info)
+        k, n, chi2 = api.model_statistics(model_info=model_info)
 
         # The model container.
-        container = api.get_model_container(model_info)
+        container = api.get_model_container(model_info=model_info)
 
         # Store the values.
         container.chi2 = chi2
