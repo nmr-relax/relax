@@ -313,8 +313,13 @@ class API_common:
         @type model_info:       int
         """
 
-        # Strip out the text from the colon.
-        text = prefix.split(':')[0]
+        # Create the text from the prefix and model info.
+        text = ''
+        if prefix:
+            text += prefix
+        else:
+            text += 'Model '
+        text += repr(model_info)
 
         # The printout.
         subsection(file=sys.stdout, text=text, prespace=2)
