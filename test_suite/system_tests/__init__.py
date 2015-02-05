@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -65,7 +65,6 @@ from test_suite.system_tests.selection import Selection
 from test_suite.system_tests.sequence import Sequence
 from test_suite.system_tests.spectrum import Spectrum
 from test_suite.system_tests.state import State
-from test_suite.system_tests.statistics import Statistics
 from test_suite.system_tests.structure import Structure
 from test_suite.system_tests.unit_vectors import Unit_vectors
 from test_suite.system_tests.value import Value
@@ -105,7 +104,6 @@ __all__ = ['align_tensor',
            'sequence',
            'spectrum',
            'state',
-           'statistics',
            'structure',
            'unit_vectors',
            'value']
@@ -197,7 +195,6 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Sequence))
             suite_array.append(TestLoader().loadTestsFromTestCase(Spectrum))
             suite_array.append(TestLoader().loadTestsFromTestCase(State))
-            suite_array.append(TestLoader().loadTestsFromTestCase(Statistics))
             suite_array.append(TestLoader().loadTestsFromTestCase(Structure))
             suite_array.append(TestLoader().loadTestsFromTestCase(Unit_vectors))
             suite_array.append(TestLoader().loadTestsFromTestCase(Value))
