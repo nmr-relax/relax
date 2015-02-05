@@ -22,7 +22,11 @@
 # Module docstring.
 """Module for handling statistics."""
 
+# Python module imports.
+import sys
+
 # relax module imports.
+from lib.io import write_data
 from pipe_control.pipes import check_pipe
 from specific_analyses.api import return_api
 
@@ -43,7 +47,7 @@ def model_statistics():
     # Loop over the base models.
     print("\nStoring the model statistics.")
     for model_info in api.model_loop():
-        # Printout.
+        # Title printout.
         api.print_model_title(model_info=model_info)
 
         # Get the model statistics.
@@ -56,3 +60,11 @@ def model_statistics():
         container.chi2 = chi2
         container.num_params = k
         container.num_data_points = n
+
+        # Statistics printout.
+        data = [
+            ['Chi-squared value:', "%20f" % chi2],
+            ['Number of parameters (k):', "%20i" % k],
+            ['Number of data points (n):', "%20i" % n]
+        ]
+        write_data(out=sys.stdout, data=data)
