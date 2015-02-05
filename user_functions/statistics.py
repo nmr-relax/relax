@@ -23,6 +23,7 @@
 """The statistics user function definitions."""
 
 # relax module imports.
+from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -46,3 +47,4 @@ uf.menu_text = "&model"
 uf.gui_icon = "oxygen.categories.applications-education"
 uf.wizard_apply_button = False
 uf.wizard_size = (700, 400)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'statistics.png'
