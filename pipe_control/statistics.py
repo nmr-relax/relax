@@ -31,6 +31,48 @@ from pipe_control.pipes import check_pipe
 from specific_analyses.api import return_api
 
 
+def aic():
+    """Calculate and store Akaike's Information Criterion (AIC) for each model."""
+
+    # Checks.
+    check_pipe()
+
+    # The specific analysis API object.
+    api = return_api()
+
+    # Calculate the chi2.
+    print("Calculating the chi-squared value for the current parameter values.")
+    api.calculate()
+
+    # Loop over the base models.
+    print("\nStoring the model statistics.")
+    for model_info in api.model_loop():
+        # Title printout.
+        api.print_model_title(model_info=model_info)
+
+        # Get the model statistics.
+        k, n, chi2 = api.model_statistics(model_info=model_info)
+
+        # Calculate the AIC value.
+        aic = chi2 + 2.0*k
+
+        # The model container.
+        container = api.get_model_container(model_info=model_info)
+
+        # Store the statistics.
+        container.chi2 = chi2
+        container.num_params = k
+        container.aic = aic
+
+        # Statistics printout.
+        data = [
+            ["Chi-squared value:", "%20f" % chi2],
+            ["Number of parameters (k):", "%20i" % k],
+            ["Akaike's Information Criterion (AIC):", "%20f" % aic]
+        ]
+        write_data(out=sys.stdout, data=data)
+        
+        
 def model_statistics():
     """Calculate and store the model statistics."""
 

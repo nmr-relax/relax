@@ -24,7 +24,7 @@
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
-from pipe_control.statistics import model_statistics
+from pipe_control.statistics import aic, model_statistics
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -34,6 +34,21 @@ uf_class = uf_info.add_class('statistics')
 uf_class.title = "Class containing the statistics related functions."
 uf_class.menu_text = "&statistics"
 uf_class.gui_icon = "oxygen.actions.office-chart-pie"
+
+
+# The statistics.aic user function.
+uf = uf_info.add_uf('statistics.aic')
+uf.title = "Calculate and store Akaike's Information Criterion (AIC) for each model."
+uf.title_short = "Calculate AIC values."
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will perform a calculation to obtain the chi-squared statistic for the current parameter values for each model, count the number of parameters per model and calculate Akaike's Information Criterion (AIC) using the formula AIC = chi2 + 2k.  The AIC values, chi-squared values, and number of parameters will be stored in the appropriate location for the model in the relax data store.")
+uf.backend = aic
+uf.menu_text = "&aic"
+uf.gui_icon = "relax.discrepancy_curve"
+uf.wizard_apply_button = False
+uf.wizard_size = (700, 400)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'statistics.png'
 
 
 # The statistics.model user function.
