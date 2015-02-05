@@ -1053,8 +1053,12 @@ class N_state_model(SystemTestCase):
                 (10.0e-05, 1.706576149818e-05, -7.790951217246e-06, -1.314676121261e-05, 4.526806452559e-08),
         ]
         chi2 = [1051728.8810718122, 5927446.9030144978]
-        k = 5*4
-        n = 22*4 + 10*4
+
+        # The number of parameters (4 alignment tensors and 3 probabilities).
+        k = 5*4 + 3
+
+        # The number of data sets (4 sets of 10 RDCs and 22 PCSs).
+        n = 10*4 + 22*4
 
         # Loop over the solution and non-solution.
         for i in range(2):
