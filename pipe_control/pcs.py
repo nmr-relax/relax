@@ -878,6 +878,11 @@ def return_pcs_data(sim_index=None, verbosity=0):
                     pcs[-1].append(spin.pcs_sim[align_id][sim_index])
                 else:
                     pcs[-1].append(spin.pcs[align_id])
+
+                # Increment the PCS count.
+                j += 1
+
+            # No data.
             else:
                 pcs[-1].append(None)
 
@@ -892,9 +897,6 @@ def return_pcs_data(sim_index=None, verbosity=0):
                 pcs_weight[-1].append(spin.pcs_weight[align_id])
             else:
                 pcs_weight[-1].append(1.0)
-
-            # Spin index.
-            j = j + 1
 
         # ID and PCS count printout.
         if verbosity:
