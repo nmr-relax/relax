@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2013-2014 Troels E. Linnet                                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -1031,6 +1031,47 @@ class N_state_model(SystemTestCase):
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'rdc_tensor.py')
+
+
+    def test_statistics(self):
+        """Test the statistics user functions for the N-state model.
+        
+        This uses the 4-state model analysis of lactose using RDCs and PCSs.
+        """
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'lactose_n_state.py')
+
+        # Test the optimised chi-squared, then delete the variable.
+        self.assertAlmostEqual(cdp.chi2, 1051728.8810718122)
+        del cdp.chi2
+
+
+        # Statistics at the solution and off the solution.
+        dy_tensor = [
+                (-1.809863649202e-05, 1.706576149818e-05, -7.790951217246e-06, -1.314676121261e-05, 4.526806452559e-08),
+                (10.0e-05, 1.706576149818e-05, -7.790951217246e-06, -1.314676121261e-05, 4.526806452559e-08),
+        ]
+        chi2 = [1051728.8810718122, 5927446.9030144978]
+        k = 5*4
+        n = 22*4 + 10*4
+
+        # Loop over the solution and non-solution.
+        for i in range(2):
+            # Reset the Dy tensor.
+            self.interpreter.align_tensor.init(tensor='Dy', align_id='Dy', params=dy_tensor[i], param_types=3)
+
+            # Calculate the statistics.
+            self.interpreter.statistics.model()
+
+            # Checks.
+            self.assertAlmostEqual(cdp.chi2, chi2[i])
+            self.assertAlmostEqual(cdp.num_params, k)
+            self.assertAlmostEqual(cdp.num_data_points, n)
+
+            # Test the AIC statistic.
+            self.interpreter.statistics.aic()
+            self.assertAlmostEqual(cdp.aic, chi2[i]+2.0*k)
 
 
     def test_stereochem_analysis(self):
