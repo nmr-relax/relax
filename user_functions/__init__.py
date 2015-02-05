@@ -79,6 +79,7 @@ __all__ += [
     'spectrum',
     'spin',
     'state',
+    'statistics',
     'structure',
     'sys_info',
     'wildcards',
@@ -137,6 +138,7 @@ def initialise():
     import user_functions.spectrum
     import user_functions.spin
     import user_functions.state
+    import user_functions.statistics
     import user_functions.structure
     import user_functions.sys_info
     import user_functions.value
