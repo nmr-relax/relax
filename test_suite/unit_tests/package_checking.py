@@ -72,6 +72,8 @@ class PackageTestCase(UnitTestCase):
                 module = module[:-3]
             if search('.so$', module):
                 module = module[:-3]
+            if search('.pyd$', module):
+                module = module[:-4]
 
             # Printout.
             print("    Module/package:  %s" % module)
@@ -91,6 +93,8 @@ class PackageTestCase(UnitTestCase):
 
             # Check for the C module.
             if access(self.package_path+sep+module+'.so', F_OK):
+                continue
+            if access(self.package_path+sep+module+'.pyd', F_OK):
                 continue
 
             # Check for the package.
