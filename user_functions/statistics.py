@@ -24,6 +24,7 @@
 
 # relax module imports.
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.objects import Desc_container
 
 
 # The user function class.
@@ -33,4 +34,15 @@ uf_class.menu_text = "&statistics"
 uf_class.gui_icon = "oxygen.actions.office-chart-pie"
 
 
-
+# The statistics.model user function.
+uf = uf_info.add_uf('statistics.model')
+uf.title = "Calculate and store the model statistics."
+uf.title_short = "Model statistics."
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will perform a back-calculation to obtain the chi-squared statistic for the current parameter values, count the number of parameters and data points per model, and place all the values in the relax data store.")
+uf.backend = ()
+uf.menu_text = "&model"
+uf.gui_icon = "oxygen.categories.applications-education"
+uf.wizard_apply_button = False
+uf.wizard_size = (700, 400)
