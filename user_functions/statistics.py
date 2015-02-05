@@ -24,6 +24,7 @@
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
+from pipe_control.statistics import model_statistics
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -42,7 +43,7 @@ uf.title_short = "Model statistics."
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will perform a back-calculation to obtain the chi-squared statistic for the current parameter values, count the number of parameters and data points per model, and place all the values in the relax data store.")
-uf.backend = ()
+uf.backend = model_statistics
 uf.menu_text = "&model"
 uf.gui_icon = "oxygen.categories.applications-education"
 uf.wizard_apply_button = False
