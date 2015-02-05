@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -180,6 +180,7 @@ uf_translation_table = {
     'relax_disp.set_grid_r20_from_min_r2eff': 'relax_disp.r20_from_min_r2eff',
     'relax_fit.mean_and_error': 'spectrum.error_analysis',
     'relax_fit.read': 'spectrum.read_intensities',
+    'structure.align': 'structure.superimpose',
     'structure.vectors': 'interatom.unit_vectors',
     'temperature': 'spectrometer.temperature'
 }
