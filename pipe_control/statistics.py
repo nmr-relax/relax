@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2015 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,51 +19,7 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""Package of analysis independent code."""
+# Module docstring.
+"""Module for handling statistics."""
 
-# The available modules.
-__all__ = [
-    'align_tensor',
-    'angles',
-    'bmrb',
-    'bruker',
-    'chemical_shift',
-    'dasha',
-    'diffusion_tensor',
-    'domain',
-    'eliminate',
-    'error_analysis',
-    'exp_info',
-    'fix',
-    'grace',
-    'interatomic',
-    'j_coupling',
-    'minimise',
-    'model_selection',
-    'mol_res_spin',
-    'molmol',
-    'noesy',
-    'opendx',
-    'palmer',
-    'paramag',
-    'pcs',
-    'pipes',
-    'plotting',
-    'pymol_control',
-    'rdc',
-    'relax_data',
-    'reset',
-    'result_files',
-    'results',
-    'script',
-    'selection',
-    'sequence',
-    'spectrometer',
-    'spectrum',
-    'state',
-    'statistics',
-    'structure',
-    'value',
-    'vmd'
-]
+
