@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -178,7 +178,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The isotropic and pseudo-elliptic cone frame order models consist of multiple solutions as the optimisation space contains multiple local minima.  Because of the constraint cone_theta_x <= cone_theta_y in the pseudo-ellipse model, there are exactly three local minima (out of 6 possible permutations).  However the cone_theta_x == cone_theta_y condition of the isotropic cone collapses this to two minima.  The multiple minima correspond to permutations of the motional system - the eigenframe x, y and z-axes as well as the cone opening angles cone_theta_x, cone_theta_y, and cone_sigma_max associated with these axes.  But as the mechanics of the cone angles is not identical to that of the torsion angle, only one of the three local minima is the global minimum.")
 uf.desc[-1].add_paragraph("When optimising the pseudo-elliptic models, specifically the '%s' and '%s' model, any of the three local minima can be found.  Convergence to the global minimum is not guaranteed.  Therefore this user function can be used to permute the motional system to jump from one local minimum to the other.  Optimisation will be required as the permuted parameters will not be exactly at the minimum." % (MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS))
-table = uf_tables.add_table(label="table: frame_order.permute_axes combinations", caption="The motional eigenframe permutations for the frame_order.permute_axes user function.", caption_short="The permutations for the frame_order.permute_axes user function.")
+table = uf_tables.add_table(label="table: frame_order.permute_axes combinations", caption="The motional eigenframe axis permutations for the frame order models.", caption_short="The frame order axis permutations.")
 table.add_headings(["Condition", "Permutation name", "Cone angles", "Axes"])
 table.add_row(["x < y < z", "Self", "[x, y, z]", "[x, y, z]"])
 table.add_row(["         ", " A  ", "[x, z, y]", "[-z, y, x]"])
