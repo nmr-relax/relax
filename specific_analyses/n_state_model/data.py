@@ -148,7 +148,7 @@ def num_data_points():
             if hasattr(spin, 'pcs'):
                 for id in spin.pcs:
                     if is_float(spin.pcs[id]):
-                        n = n + 1
+                        n += 1
 
     # Interatomic data loop.
     for interatom in interatomic_loop():
@@ -157,11 +157,11 @@ def num_data_points():
             if hasattr(interatom, 'rdc'):
                 for id in interatom.rdc:
                     if is_float(interatom.rdc[id]):
-                        n = n + 1
+                        n += 1
 
     # Alignment tensors.
     if 'tensor' in data_types:
-        n = n + 5*len(cdp.align_tensors)
+        n += 5*len(cdp.align_tensors)
 
     # Return the value.
     return n
