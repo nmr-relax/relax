@@ -1057,8 +1057,8 @@ class N_state_model(SystemTestCase):
         # The number of parameters (4 alignment tensors and 3 probabilities).
         k = 5*4 + 3
 
-        # The number of data sets (4 sets of 10 RDCs and 22 PCSs).
-        n = 10*4 + 22*4
+        # The number of data sets (4 sets of 9 RDCs and 20 PCSs).
+        n = 9*4 + 20*4
 
         # Loop over the solution and non-solution.
         for i in range(2):
