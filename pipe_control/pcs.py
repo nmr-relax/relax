@@ -880,7 +880,7 @@ def return_pcs_data(sim_index=None, verbosity=0):
                     pcs[-1].append(spin.pcs[align_id])
 
                 # Increment the PCS count.
-                if pcs[-1] != None:
+                if pcs[-1][-1] != None:
                     j += 1
 
             # No data.
