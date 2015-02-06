@@ -25,11 +25,14 @@
 The numerical graph data handled in these functions consists of a 4 dimensional list or array object.  The first dimension corresponds to different graphs.  The second corresponds the different data sets within a single each graph.  The third corresponds to the data series (i.e. each data point).  The forth is a list of the information about each point, it is a list where the first element is the X value, the second is the Y value, the third is the optional dX or dY error, and the forth is the optional dY error when X errors are present (the third position is then dx).
 """
 
+# Python module imports.
+from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError
 from lib.io import get_file_path, open_write_file
 from lib.plotting.api import write_xy_data, write_xy_header
+from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import check_mol_res_spin_data, spin_loop
 from pipe_control.pipes import cdp_name, check_pipe
 from pipe_control.result_files import add_result_file
