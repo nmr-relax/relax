@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2014 Edward d'Auvergne                                        #
+# Copyright (C) 2015 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,13 +19,7 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relax library plotting package - a library of functions for plotting data via different software packages."""
+# Module docstring.
+"""Module for data plotting using veusz."""
 
-# The package content list.
-__all__ = [
-    'api',
-    'gnuplot',
-    'text',
-    'veusz'
-]
+
