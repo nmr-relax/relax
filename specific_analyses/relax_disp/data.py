@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
 # Copyright (C) 2013-2014 Troels E. Linnet                                    #
 #                                                                             #
@@ -67,8 +67,8 @@ from lib.float import isNaN
 from lib.io import extract_data, get_file_path, open_write_file, strip, write_data
 from lib.nmr import frequency_to_ppm, frequency_to_ppm_from_rad, frequency_to_rad_per_s, rotating_frame_params
 from lib.periodic_table import periodic_table
+from lib.plotting.grace import write_xy_data, write_xy_header, script_grace2images
 from lib.sequence import read_spin_data, write_spin_data
-from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
 from lib.text.sectioning import section
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes

@@ -38,8 +38,8 @@ from lib.geometry.vectors import random_unit_vector
 from lib.io import open_write_file
 from lib.periodic_table import periodic_table
 from lib.physical_constants import pcs_constant
+from lib.plotting import grace
 from lib.sequence import read_spin_data, write_spin_data
-from lib.software import grace
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
 from pipe_control.align_tensor import get_tensor_index, get_tensor_object, opt_uses_align_data, opt_uses_tensor
