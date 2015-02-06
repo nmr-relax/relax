@@ -29,7 +29,7 @@ from warnings import warn
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoSimError
 from lib.io import get_file_path, open_write_file, test_binary
-from lib.plotting.grace import write_xy_data, write_xy_header
+from lib.plotting.api import write_xy_data, write_xy_header
 from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data
 from pipe_control import pipes
@@ -271,10 +271,10 @@ def write(x_data_type='res_num', y_data_type=None, spin_id=None, plot_data='valu
     seq_type, axis_labels = axis_setup(data_type=data_type, norm=norm)
 
     # Write the header.
-    write_xy_header(file=file, data_type=data_type, seq_type=seq_type, sets=[len(data[0])], set_names=[set_names], axis_labels=[axis_labels], norm=[norm])
+    write_xy_header(format='grace', file=file, data_type=data_type, seq_type=seq_type, sets=[len(data[0])], set_names=[set_names], axis_labels=[axis_labels], norm=[norm])
 
     # Write the data.
-    write_xy_data(data, file=file, graph_type=graph_type, norm_type=norm_type, norm=[norm])
+    write_xy_data(format='grace', data=data, file=file, graph_type=graph_type, norm_type=norm_type, norm=[norm])
 
     # Close the file.
     file.close()

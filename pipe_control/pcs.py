@@ -38,7 +38,7 @@ from lib.geometry.vectors import random_unit_vector
 from lib.io import open_write_file
 from lib.periodic_table import periodic_table
 from lib.physical_constants import pcs_constant
-from lib.plotting import grace
+from lib.plotting.api import write_xy_data, write_xy_header
 from lib.sequence import read_spin_data, write_spin_data
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
@@ -474,10 +474,10 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
                 set_names.append("%s (%s)" % (cdp.pcs_ids[i], types[j]))
 
         # The header.
-        grace.write_xy_header(file=file, title=title, subtitle=subtitle, world=[[min_pcs, min_pcs, max_pcs, max_pcs]], sets=[size], set_names=[set_names], linestyle=[[2]+[0]*size], data_type=['pcs_bc', 'pcs'], axis_labels=[axis_labels], tick_major_spacing=[[1, 1]], tick_minor_count=[[9, 9]], legend_pos=[[1, 0.5]])
+        write_xy_header(format=format, file=file, title=title, subtitle=subtitle, world=[[min_pcs, min_pcs, max_pcs, max_pcs]], sets=[size], set_names=[set_names], linestyle=[[2]+[0]*size], data_type=['pcs_bc', 'pcs'], axis_labels=[axis_labels], tick_major_spacing=[[1, 1]], tick_minor_count=[[9, 9]], legend_pos=[[1, 0.5]])
 
         # The main data.
-        grace.write_xy_data(data=data, file=file, graph_type=graph_type, autoscale=False)
+        write_xy_data(format=format, data=data, file=file, graph_type=graph_type, autoscale=False)
 
 
 def delete(align_id=None):

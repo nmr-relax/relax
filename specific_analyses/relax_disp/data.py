@@ -67,7 +67,8 @@ from lib.float import isNaN
 from lib.io import extract_data, get_file_path, open_write_file, strip, write_data
 from lib.nmr import frequency_to_ppm, frequency_to_ppm_from_rad, frequency_to_rad_per_s, rotating_frame_params
 from lib.periodic_table import periodic_table
-from lib.plotting.grace import write_xy_data, write_xy_header, script_grace2images
+from lib.plotting.api import write_xy_data, write_xy_header
+from lib.plotting.grace import script_grace2images
 from lib.sequence import read_spin_data, write_spin_data
 from lib.text.sectioning import section
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
@@ -2124,13 +2125,13 @@ def plot_disp_curves_to_file(file_name_ini=None, dir=None, y_axis=None, x_axis=N
             sets.append(len(data[gi]))
             legend.append(False)
         legend[0] = True
-        write_xy_header(file=file, title=title, subtitle=subtitle, graph_num=graph_num, sets=sets, set_names=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, symbol_sizes=symbol_sizes, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels, legend=legend, legend_box_fill_pattern=[0]*graph_num, legend_char_size=[0.8]*graph_num)
+        write_xy_header(format='grace', file=file, title=title, subtitle=subtitle, graph_num=graph_num, sets=sets, set_names=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, symbol_sizes=symbol_sizes, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels, legend=legend, legend_box_fill_pattern=[0]*graph_num, legend_char_size=[0.8]*graph_num)
 
         # Write the data.
         graph_type = 'xy'
         if err:
             graph_type = 'xydy'
-        write_xy_data(data, file=file, graph_type=graph_type)
+        write_xy_data(format='grace', data=data, file=file, graph_type=graph_type)
 
         # Close the file.
         file.close()
