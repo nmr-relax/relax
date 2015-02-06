@@ -28,7 +28,10 @@ The numerical graph data handled in these functions consists of a 4 dimensional 
 
 # relax module imports.
 from lib.errors import RelaxError
-from pipe_control.mol_res_spin import spin_loop
+from lib.io import get_file_path, open_write_file
+from lib.plotting.api import write_xy_data, write_xy_header
+from pipe_control.mol_res_spin import check_mol_res_spin_data, spin_loop
+from pipe_control.pipes import cdp_name, check_pipe
 from pipe_control.result_files import add_result_file
 from specific_analyses.api import return_api
 
@@ -468,6 +471,77 @@ def assemble_data_series_series(spin_id=None, x_data_name=None, y_data_name=None
     return data, set_labels, x_err_flag, y_err_flag
 
 
+def axis_setup(data_type=None, norm=True):
+    """Determine the axis information for relax data store specific data.
+
+    @keyword data_type: The axis data category (in the [X, Y] list format).
+    @type data_type:    list of str
+    @keyword norm:      The normalisation flag which if set to True will cause all graphs to be normalised to a starting value of 1.
+    @type norm:         bool
+    @return:            The axis information.  This includes the sequence type, the list of lower bounds, the list of upper bounds, and the axis labels.
+    @rtype:             list of str or None, list of int or None, list of int or None, list of str or None
+    """
+
+    # Axis specific settings.
+    axes = ['x', 'y']
+    seq_type = [None, None]
+    axis_labels = [None, None]
+    for i in range(2):
+        # Determine the sequence data type.
+        if data_type[i] == 'res_num':
+            seq_type[i] = 'res'
+
+        # Analysis specific methods for making labels.
+        analysis_spec = False
+        if cdp_name():
+            # Flag for making labels.
+            analysis_spec = True
+
+            # The specific analysis API object.
+            api = return_api()
+
+        # Some axis default values for spin data.
+        if data_type[i] == 'res_num':
+            # Residue only data.
+            if seq_type[i] == 'res':
+                # X-axis label.
+                if not axis_labels[i]:
+                    axis_labels[i] = "Residue number"
+
+            # Spin only data.
+            if seq_type[i] == 'spin':
+                # X-axis label.
+                if not axis_labels[i]:
+                    axis_labels[i] = "Spin number"
+
+            # Mixed data.
+            if seq_type[i] == 'mixed':
+                # X-axis label.
+                if not axis_labels[i]:
+                    axis_labels[i] = "Spin identification string"
+
+        # Some axis default values for other data types.
+        else:
+            # Label.
+            if analysis_spec and not axis_labels[i]:
+                # Get the units.
+                units = api.return_units(data_type[i])
+
+                # Set the label.
+                axis_labels[i] = api.return_grace_string(data_type[i])
+
+                # Add units.
+                if units:
+                    axis_labels[i] = axis_labels[i] + "\\N (" + units + ")"
+
+                # Normalised data.
+                if norm and axes[i] == 'y':
+                    axis_labels[i] = axis_labels[i] + " \\N\\q(normalised)\\Q"
+
+    # Return the data.
+    return seq_type, axis_labels
+
+
 def classify_graph_2D(x_data_name=None, y_data_name=None, x_type=None, y_type=None):
     """Determine the type of graph to produce.
 
@@ -663,12 +737,9 @@ def write_xy(format='grace', x_data_type='res_num', y_data_type=None, spin_id=No
     @type norm:             bool
     """
 
-    # Test if the current pipe exists.
+    # Checks.
     check_pipe()
-
-    # Test if the sequence data is loaded.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
+    check_mol_res_spin_data()
 
     # Test if the plot_data argument is one of 'value', 'error', or 'sim'.
     if plot_data not in ['value', 'error', 'sim']:
