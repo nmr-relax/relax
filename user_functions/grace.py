@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,6 +33,7 @@ else:
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from pipe_control import grace
+from pipe_control.plotting import write_xy
 from specific_analyses.consistency_tests.parameter_object import Consistency_tests_params; consistency_test_params = Consistency_tests_params()
 from specific_analyses.jw_mapping.parameter_object import Jw_mapping_params; jw_mapping_params = Jw_mapping_params()
 from specific_analyses.model_free.parameter_object import Model_free_params; model_free_params = Model_free_params()
@@ -229,7 +230,7 @@ uf.desc[-1].add_prompt("relax> grace.write('rex', 'te', spin_id=':123', plot_dat
 uf.desc[-1].add_prompt("relax> grace.write(x_data_type='rex', y_data_type='te', spin_id=':123', plot_data='sims', file='s2_te.agr')")
 uf.desc[-1].add_paragraph("By plotting the peak intensities, the integrity of exponential relaxation curves can be checked and anomalies searched for prior to model-free analysis or reduced spectral density mapping.  For example the normalised average peak intensities can be plotted verses the relaxation time periods for the relaxation curves of all residues of a protein.  The normalisation, whereby the initial peak intensity of each residue I(0) is set to 1, emphasises any problems.  To produce this Grace file, type:")
 uf.desc[-1].add_prompt("relax> grace.write(x_data_type='relax_times', y_data_type='ave_int', file='intensities_norm.agr', force=True, norm=True)")
-uf.backend = grace.write
+uf.backend = write_xy
 uf.menu_text = "&write"
 uf.gui_icon = "oxygen.actions.document-save"
 uf.wizard_size = (1000, 700)

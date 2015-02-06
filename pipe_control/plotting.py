@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2013-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,6 +29,7 @@ The numerical graph data handled in these functions consists of a 4 dimensional 
 # relax module imports.
 from lib.errors import RelaxError
 from pipe_control.mol_res_spin import spin_loop
+from pipe_control.result_files import add_result_file
 from specific_analyses.api import return_api
 
 
@@ -635,3 +636,86 @@ def get_data_type(data_name=None):
     # Analysis specific value returning functions.
     api = return_api()
     return api.data_type(data_name)
+
+
+def write_xy(format='grace', x_data_type='res_num', y_data_type=None, spin_id=None, plot_data='value', norm_type='first', file=None, dir=None, force=False, norm=True):
+    """Writing data to a file.
+
+    @keyword format:        The specific backend to use.  The currently support backends are 'grace'.
+    @type format:           str
+    @keyword x_data_type:   The category of the X-axis data.
+    @type x_data_type:      str
+    @keyword y_data_type:   The category of the Y-axis data.
+    @type y_data_type:      str
+    @keyword spin_id:       The spin identification string.
+    @type spin_id:          str
+    @keyword plot_data:     The type of the plotted data, one of 'value', 'error', or 'sim'.
+    @type plot_data:        str
+    @keyword norm_type:     The point to normalise to 1.  This can be 'first' or 'last'.
+    @type norm_type:        str
+    @keyword file:          The name of the Grace file to create.
+    @type file:             str
+    @keyword dir:           The optional directory to place the file into.
+    @type dir:              str
+    @param force:           Boolean argument which if True causes the file to be overwritten if it already exists.
+    @type force:            bool
+    @keyword norm:          The normalisation flag which if set to True will cause all graphs to be normalised to a starting value of 1.
+    @type norm:             bool
+    """
+
+    # Test if the current pipe exists.
+    check_pipe()
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Test if the plot_data argument is one of 'value', 'error', or 'sim'.
+    if plot_data not in ['value', 'error', 'sim']:
+        raise RelaxError("The plot data argument " + repr(plot_data) + " must be set to either 'value', 'error', 'sim'.")
+
+    # Test if the simulations exist.
+    if plot_data == 'sim' and not hasattr(cdp, 'sim_number'):
+        raise RelaxNoSimError
+
+    # Open the file for writing.
+    file_path = get_file_path(file, dir)
+    file = open_write_file(file, dir, force)
+
+    # Get the data.
+    data, set_names, graph_type = assemble_data(spin_id, x_data_name=x_data_type, y_data_name=y_data_type, plot_data=plot_data)
+
+    # Convert the graph type.
+    if graph_type == 'X,Y':
+        graph_type = 'xy'
+    elif graph_type == 'X,Y,dX':
+        graph_type = 'xydx'
+    elif graph_type == 'X,Y,dY':
+        graph_type = 'xydy'
+    elif graph_type == 'X,Y,dX,dY':
+        graph_type = 'xydxdy'
+
+    # No data, so close the empty file and exit.
+    if not len(data) or not len(data[0]) or not len(data[0][0]):
+        warn(RelaxWarning("No data could be found, creating an empty file."))
+        file.close()
+        return
+
+    # Get the axis information.
+    data_type = [x_data_type, y_data_type]
+    seq_type, axis_labels = axis_setup(data_type=data_type, norm=norm)
+
+    # Write the header.
+    write_xy_header(format=format, file=file, data_type=data_type, seq_type=seq_type, sets=[len(data[0])], set_names=[set_names], axis_labels=[axis_labels], norm=[norm])
+
+    # Write the data.
+    write_xy_data(format=format, data=data, file=file, graph_type=graph_type, norm_type=norm_type, norm=[norm])
+
+    # Close the file.
+    file.close()
+
+    # Add the file to the results file list.
+    label = None
+    if format == 'grace':
+        label = 'Grace'
+    add_result_file(type=format, label='Grace', file=file_path)
