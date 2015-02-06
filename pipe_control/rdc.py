@@ -38,8 +38,9 @@ from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoJError, RelaxNoRDCE
 from lib.io import extract_data, open_write_file, strip, write_data
 from lib.periodic_table import periodic_table
 from lib.physical_constants import dipolar_constant
+from lib.plotting.api import write_xy_data, write_xy_header
 from lib.warnings import RelaxWarning, RelaxSpinTypeWarning
-from pipe_control import grace, pipes
+from pipe_control import pipes
 from pipe_control.align_tensor import get_tensor_index, get_tensor_object, opt_uses_align_data, opt_uses_tensor
 from pipe_control.interatomic import consistent_interatomic_data, create_interatom, interatomic_loop, return_interatom
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, is_pseudoatom, pseudoatom_loop, return_spin
@@ -496,13 +497,11 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
     else:
         graph_type = 'xy'
 
-    # Grace file.
-    if format == 'grace':
-        # The header.
-        grace.write_xy_header(file=file, title=title, subtitle=subtitle, world=[[min_rdc, min_rdc, max_rdc, max_rdc]], sets=[size], set_names=[[None]+cdp.rdc_ids], linestyle=[[2]+[0]*size], data_type=['rdc', 'rdc_bc'], axis_labels=[axis_labels], tick_major_spacing=[[10, 10]], tick_minor_count=[[9, 9]], legend_pos=[[1, 0.5]])
+    # The header.
+    write_xy_header(format=format, file=file, title=title, subtitle=subtitle, world=[[min_rdc, min_rdc, max_rdc, max_rdc]], sets=[size], set_names=[[None]+cdp.rdc_ids], linestyle=[[2]+[0]*size], data_type=['rdc', 'rdc_bc'], axis_labels=[axis_labels], tick_major_spacing=[[10, 10]], tick_minor_count=[[9, 9]], legend_pos=[[1, 0.5]])
 
-        # The main data.
-        grace.write_xy_data(data=data, file=file, graph_type=graph_type, autoscale=False)
+    # The main data.
+    write_xy_data(format=format, data=data, file=file, graph_type=graph_type, autoscale=False)
 
 
 def delete(align_id=None):
