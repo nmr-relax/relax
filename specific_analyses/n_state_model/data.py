@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,6 +26,7 @@
 from numpy.linalg import norm
 
 # relax module imports.
+from lib.check_types import is_float
 from lib.errors import RelaxError
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import return_spin, spin_loop
@@ -137,30 +138,26 @@ def num_data_points():
     n = 0
 
     # Spin loop.
-    for spin in spin_loop():
-        # Skip deselected spins.
-        if not spin.select:
-            continue
-
+    for spin in spin_loop(skip_desel=True):
         # PCS data (skipping array elements set to None).
         if 'pcs' in data_types:
             if hasattr(spin, 'pcs'):
-                for pcs in spin.pcs:
-                    if isinstance(pcs, float):
-                        n = n + 1
+                for id in spin.pcs:
+                    if is_float(spin.pcs[id]):
+                        n += 1
 
     # Interatomic data loop.
-    for interatom in interatomic_loop():
+    for interatom in interatomic_loop(skip_desel=True):
         # RDC data (skipping array elements set to None).
         if 'rdc' in data_types:
             if hasattr(interatom, 'rdc'):
-                for rdc in interatom.rdc:
-                    if isinstance(rdc, float):
-                        n = n + 1
+                for id in interatom.rdc:
+                    if is_float(interatom.rdc[id]):
+                        n += 1
 
     # Alignment tensors.
     if 'tensor' in data_types:
-        n = n + 5*len(cdp.align_tensors)
+        n += 5*len(cdp.align_tensors)
 
     # Return the value.
     return n

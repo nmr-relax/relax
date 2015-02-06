@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -280,6 +280,19 @@ class API_base(object):
 
         # Not implemented.
         raise RelaxImplementError('eliminate')
+
+
+    def get_model_container(self, model_info=None):
+        """Return the data container for the model.
+
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
+        @return:                The data container corresponding to the model.
+        @rtype:                 class instance
+        """
+
+        # Not implemented.
+        raise RelaxImplementError('get_model_container')
 
 
     def get_param_names(self, model_info=None):
