@@ -96,7 +96,8 @@ class Frame_order(API_base, API_common):
             # Loop over the alignment IDs.
             for align_id in cdp.rdc_ids:
                 # Yield the info set.
-                yield ['rdc', interatom.spin_id1, interatom.spin_id2, align_id]
+                if align_id in interatom.rdc and interatom.rdc[align_id] != None:
+                    yield ['rdc', interatom.spin_id1, interatom.spin_id2, align_id]
 
         # Loop over the spin containers for the moving domain (for the PCS data).
         for spin, spin_id in spin_loop(selection=domain_moving(), return_id=True):
@@ -111,7 +112,8 @@ class Frame_order(API_base, API_common):
             # Loop over the alignment IDs.
             for align_id in cdp.pcs_ids:
                 # Yield the info set.
-                yield ['pcs', spin_id, align_id]
+                if align_id in spin.pcs and spin.pcs[align_id] != None:
+                    yield ['pcs', spin_id, align_id]
 
 
     def calculate(self, spin_id=None, scaling_matrix=None, verbosity=1, sim_index=None):
