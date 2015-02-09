@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -171,6 +171,9 @@ class Frame_order(SystemTestCase):
 
         # Switch back to the original pipe.
         self.interpreter.pipe.switch('frame order')
+
+        # Test the operation of the statistics.model user function.
+        self.interpreter.statistics.model()
 
         # Get the debugging message.
         mesg = self.mesg_opt_debug()
