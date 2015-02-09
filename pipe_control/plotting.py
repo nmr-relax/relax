@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2013-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,10 +25,17 @@
 The numerical graph data handled in these functions consists of a 4 dimensional list or array object.  The first dimension corresponds to different graphs.  The second corresponds the different data sets within a single each graph.  The third corresponds to the data series (i.e. each data point).  The forth is a list of the information about each point, it is a list where the first element is the X value, the second is the Y value, the third is the optional dX or dY error, and the forth is the optional dY error when X errors are present (the third position is then dx).
 """
 
+# Python module imports.
+from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError
-from pipe_control.mol_res_spin import spin_loop
+from lib.io import get_file_path, open_write_file
+from lib.plotting.api import write_xy_data, write_xy_header
+from lib.warnings import RelaxWarning
+from pipe_control.mol_res_spin import check_mol_res_spin_data, spin_loop
+from pipe_control.pipes import cdp_name, check_pipe
+from pipe_control.result_files import add_result_file
 from specific_analyses.api import return_api
 
 
@@ -467,6 +474,77 @@ def assemble_data_series_series(spin_id=None, x_data_name=None, y_data_name=None
     return data, set_labels, x_err_flag, y_err_flag
 
 
+def axis_setup(data_type=None, norm=True):
+    """Determine the axis information for relax data store specific data.
+
+    @keyword data_type: The axis data category (in the [X, Y] list format).
+    @type data_type:    list of str
+    @keyword norm:      The normalisation flag which if set to True will cause all graphs to be normalised to a starting value of 1.
+    @type norm:         bool
+    @return:            The axis information.  This includes the sequence type, the list of lower bounds, the list of upper bounds, and the axis labels.
+    @rtype:             list of str or None, list of int or None, list of int or None, list of str or None
+    """
+
+    # Axis specific settings.
+    axes = ['x', 'y']
+    seq_type = [None, None]
+    axis_labels = [None, None]
+    for i in range(2):
+        # Determine the sequence data type.
+        if data_type[i] == 'res_num':
+            seq_type[i] = 'res'
+
+        # Analysis specific methods for making labels.
+        analysis_spec = False
+        if cdp_name():
+            # Flag for making labels.
+            analysis_spec = True
+
+            # The specific analysis API object.
+            api = return_api()
+
+        # Some axis default values for spin data.
+        if data_type[i] == 'res_num':
+            # Residue only data.
+            if seq_type[i] == 'res':
+                # X-axis label.
+                if not axis_labels[i]:
+                    axis_labels[i] = "Residue number"
+
+            # Spin only data.
+            if seq_type[i] == 'spin':
+                # X-axis label.
+                if not axis_labels[i]:
+                    axis_labels[i] = "Spin number"
+
+            # Mixed data.
+            if seq_type[i] == 'mixed':
+                # X-axis label.
+                if not axis_labels[i]:
+                    axis_labels[i] = "Spin identification string"
+
+        # Some axis default values for other data types.
+        else:
+            # Label.
+            if analysis_spec and not axis_labels[i]:
+                # Get the units.
+                units = api.return_units(data_type[i])
+
+                # Set the label.
+                axis_labels[i] = api.return_grace_string(data_type[i])
+
+                # Add units.
+                if units:
+                    axis_labels[i] = axis_labels[i] + "\\N (" + units + ")"
+
+                # Normalised data.
+                if norm and axes[i] == 'y':
+                    axis_labels[i] = axis_labels[i] + " \\N\\q(normalised)\\Q"
+
+    # Return the data.
+    return seq_type, axis_labels
+
+
 def classify_graph_2D(x_data_name=None, y_data_name=None, x_type=None, y_type=None):
     """Determine the type of graph to produce.
 
@@ -635,3 +713,83 @@ def get_data_type(data_name=None):
     # Analysis specific value returning functions.
     api = return_api()
     return api.data_type(data_name)
+
+
+def write_xy(format='grace', x_data_type='res_num', y_data_type=None, spin_id=None, plot_data='value', norm_type='first', file=None, dir=None, force=False, norm=True):
+    """Writing data to a file.
+
+    @keyword format:        The specific backend to use.  The currently support backends are 'grace'.
+    @type format:           str
+    @keyword x_data_type:   The category of the X-axis data.
+    @type x_data_type:      str
+    @keyword y_data_type:   The category of the Y-axis data.
+    @type y_data_type:      str
+    @keyword spin_id:       The spin identification string.
+    @type spin_id:          str
+    @keyword plot_data:     The type of the plotted data, one of 'value', 'error', or 'sim'.
+    @type plot_data:        str
+    @keyword norm_type:     The point to normalise to 1.  This can be 'first' or 'last'.
+    @type norm_type:        str
+    @keyword file:          The name of the Grace file to create.
+    @type file:             str
+    @keyword dir:           The optional directory to place the file into.
+    @type dir:              str
+    @param force:           Boolean argument which if True causes the file to be overwritten if it already exists.
+    @type force:            bool
+    @keyword norm:          The normalisation flag which if set to True will cause all graphs to be normalised to a starting value of 1.
+    @type norm:             bool
+    """
+
+    # Checks.
+    check_pipe()
+    check_mol_res_spin_data()
+
+    # Test if the plot_data argument is one of 'value', 'error', or 'sim'.
+    if plot_data not in ['value', 'error', 'sim']:
+        raise RelaxError("The plot data argument " + repr(plot_data) + " must be set to either 'value', 'error', 'sim'.")
+
+    # Test if the simulations exist.
+    if plot_data == 'sim' and not hasattr(cdp, 'sim_number'):
+        raise RelaxNoSimError
+
+    # Open the file for writing.
+    file_path = get_file_path(file, dir)
+    file = open_write_file(file, dir, force)
+
+    # Get the data.
+    data, set_names, graph_type = assemble_data(spin_id, x_data_name=x_data_type, y_data_name=y_data_type, plot_data=plot_data)
+
+    # Convert the graph type.
+    if graph_type == 'X,Y':
+        graph_type = 'xy'
+    elif graph_type == 'X,Y,dX':
+        graph_type = 'xydx'
+    elif graph_type == 'X,Y,dY':
+        graph_type = 'xydy'
+    elif graph_type == 'X,Y,dX,dY':
+        graph_type = 'xydxdy'
+
+    # No data, so close the empty file and exit.
+    if not len(data) or not len(data[0]) or not len(data[0][0]):
+        warn(RelaxWarning("No data could be found, creating an empty file."))
+        file.close()
+        return
+
+    # Get the axis information.
+    data_type = [x_data_type, y_data_type]
+    seq_type, axis_labels = axis_setup(data_type=data_type, norm=norm)
+
+    # Write the header.
+    write_xy_header(format=format, file=file, data_type=data_type, seq_type=seq_type, sets=[len(data[0])], set_names=[set_names], axis_labels=[axis_labels], norm=[norm])
+
+    # Write the data.
+    write_xy_data(format=format, data=data, file=file, graph_type=graph_type, norm_type=norm_type, norm=[norm])
+
+    # Close the file.
+    file.close()
+
+    # Add the file to the results file list.
+    label = None
+    if format == 'grace':
+        label = 'Grace'
+    add_result_file(type=format, label='Grace', file=file_path)

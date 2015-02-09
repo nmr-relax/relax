@@ -58,6 +58,7 @@ class N_state_model(API_base, API_common):
         """Initialise the class by placing API_common methods into the API."""
 
         # Place methods into the API.
+        self.get_model_container = self._get_model_container_cdp
         self.model_loop = self._model_loop_single_global
         self.overfit_deselect = self._overfit_deselect_dummy
         self.print_model_title = self._print_model_title_global

@@ -38,8 +38,8 @@ from lib.geometry.vectors import random_unit_vector
 from lib.io import open_write_file
 from lib.periodic_table import periodic_table
 from lib.physical_constants import pcs_constant
+from lib.plotting.api import write_xy_data, write_xy_header
 from lib.sequence import read_spin_data, write_spin_data
-from lib.software import grace
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
 from pipe_control.align_tensor import get_tensor_index, get_tensor_object, opt_uses_align_data, opt_uses_tensor
@@ -474,10 +474,10 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
                 set_names.append("%s (%s)" % (cdp.pcs_ids[i], types[j]))
 
         # The header.
-        grace.write_xy_header(file=file, title=title, subtitle=subtitle, world=[[min_pcs, min_pcs, max_pcs, max_pcs]], sets=[size], set_names=[set_names], linestyle=[[2]+[0]*size], data_type=['pcs_bc', 'pcs'], axis_labels=[axis_labels], tick_major_spacing=[[1, 1]], tick_minor_count=[[9, 9]], legend_pos=[[1, 0.5]])
+        write_xy_header(format=format, file=file, title=title, subtitle=subtitle, world=[[min_pcs, min_pcs, max_pcs, max_pcs]], sets=[size], set_names=[set_names], linestyle=[[2]+[0]*size], data_type=['pcs_bc', 'pcs'], axis_labels=[axis_labels], tick_major_spacing=[[1, 1]], tick_minor_count=[[9, 9]], legend_pos=[[1, 0.5]])
 
         # The main data.
-        grace.write_xy_data(data=data, file=file, graph_type=graph_type, autoscale=False)
+        write_xy_data(format=format, data=data, file=file, graph_type=graph_type, autoscale=False)
 
 
 def delete(align_id=None):
@@ -878,6 +878,12 @@ def return_pcs_data(sim_index=None, verbosity=0):
                     pcs[-1].append(spin.pcs_sim[align_id][sim_index])
                 else:
                     pcs[-1].append(spin.pcs[align_id])
+
+                # Increment the PCS count.
+                if pcs[-1][-1] != None:
+                    j += 1
+
+            # No data.
             else:
                 pcs[-1].append(None)
 
@@ -892,9 +898,6 @@ def return_pcs_data(sim_index=None, verbosity=0):
                 pcs_weight[-1].append(spin.pcs_weight[align_id])
             else:
                 pcs_weight[-1].append(1.0)
-
-            # Spin index.
-            j = j + 1
 
         # ID and PCS count printout.
         if verbosity:
@@ -1128,10 +1131,10 @@ def structural_noise(align_id=None, rmsd=0.2, sim_num=1000, file=None, dir=None,
         file = open_write_file(file, dir, force)
 
         # The header.
-        grace.write_xy_header(file=file, title="PCS structural noise", subtitle="%s Angstrom structural noise"%rmsd, data_type=['pcs_bc', 'pcs'], sets=[len(align_ids)], set_names=[align_ids], symbol_sizes=[[0.5]*len(align_ids)], linetype=[[0]*len(align_ids)], axis_labels=[["Ln\\S3+\\N to spin distance (Angstrom)", "PCS standard deviation (ppm)"]])
+        write_xy_header(format='grace', file=file, title="PCS structural noise", subtitle="%s Angstrom structural noise"%rmsd, data_type=['pcs_bc', 'pcs'], sets=[len(align_ids)], set_names=[align_ids], symbol_sizes=[[0.5]*len(align_ids)], linetype=[[0]*len(align_ids)], axis_labels=[["Ln\\S3+\\N to spin distance (Angstrom)", "PCS standard deviation (ppm)"]])
 
         # The main data.
-        grace.write_xy_data(data=[grace_data], file=file, graph_type='xy')
+        write_xy_data(format='grace', data=[grace_data], file=file, graph_type='xy')
 
 
 def weight(align_id=None, spin_id=None, weight=1.0):

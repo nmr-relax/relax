@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -167,6 +167,19 @@ class API_common:
         return False
 
 
+    def _get_model_container_cdp(self, model_info=None):
+        """Return the current data pipe as the model container.
+
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
+        @return:                The data container corresponding to the model.
+        @rtype:                 class instance
+        """
+
+        # Simply return the current data pipe object.
+        return cdp
+
+
     def _has_errors_spin(self):
         """Testing if errors exist for the current data pipe (spin system specific).
 
@@ -313,8 +326,13 @@ class API_common:
         @type model_info:       int
         """
 
-        # Strip out the text from the colon.
-        text = prefix.split(':')[0]
+        # Create the text from the prefix and model info.
+        text = ''
+        if prefix:
+            text += prefix
+        else:
+            text += 'Model '
+        text += repr(model_info)
 
         # The printout.
         subsection(file=sys.stdout, text=text, prespace=2)

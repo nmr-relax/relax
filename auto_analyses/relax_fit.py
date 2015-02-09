@@ -31,7 +31,7 @@ import sys
 
 # relax module imports.
 from lib.io import get_file_path, open_write_file
-from lib.software.grace import script_grace2images
+from lib.plotting.grace import script_grace2images
 from lib.text.sectioning import section
 from pipe_control.mol_res_spin import spin_loop
 from pipe_control.pipes import cdp_name, has_pipe, switch

@@ -153,7 +153,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows new models to be added to the internal structural object.  Note that no structural information is allowed to be present")
+uf.desc[-1].add_paragraph("This allows new models to be added to the internal structural object.  Note that no structural information is allowed to be present.")
 uf.backend = pipe_control.structure.main.add_model
 uf.menu_text = "&add_model"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
