@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -597,7 +597,7 @@ def runcode(self, code):
         # Catch old user function calls or class method calls.
         if code.co_code in ['e\x00\x00\x83\x00\x00Fd\x00\x00S', 'e\x00\x00j\x01\x00\x83\x00\x00Fd\x00\x00S']:
             # Is this an old user function?
-            if len(code.co_names) and code.co_names[0] in uf_translation_table:
+            if len(code.co_names) and '.'.join(code.co_names) in uf_translation_table:
                 raise RelaxError("The user function '%s' has been renamed to '%s'." % (code.co_names[0], uf_translation_table[code.co_names[0]]))
 
         # Execute the code.
