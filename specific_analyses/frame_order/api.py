@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -59,6 +59,7 @@ class Frame_order(API_base, API_common):
 
         # Place methods into the API.
         self.deselect = self._deselect_global
+        self.get_model_container = self._get_model_container_cdp
         self.is_spin_param = self._is_spin_param_false
         self.model_loop = self._model_loop_single_global
         self.model_type = self._model_type_global
