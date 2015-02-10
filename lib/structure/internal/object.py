@@ -2312,9 +2312,6 @@ class Internal:
         # Initialise.
         codes = ''
 
-        # Validate the models.
-        self.validate_models(verbosity=0)
-
         # Use the first model.
         model = self.structural_data[0]
 
