@@ -573,11 +573,7 @@ class Structure(SystemTestCase):
 
         # Run the structure.atomic_fluctuations user function and collect the results in a dummy file object.
         file = DummyFileObject()
-        self.interpreter.structure.atomic_fluctuations(atom_id='@X', file=file, format='text')
-
-        # Check the file.
-        lines = file.readlines()
-        self.assertEqual(len(lines), 0)
+        self.assertRaises(RelaxError, self.interpreter.structure.atomic_fluctuations, atom_id='@X', file=file, format='text')
 
 
     def test_atomic_fluctuations_parallax(self):
