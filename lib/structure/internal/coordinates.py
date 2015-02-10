@@ -162,6 +162,10 @@ def assemble_coord_array(atom_pos=None, mol_names=None, res_names=None, res_nums
     @rtype:             numpy rank-3 float64 array, list of str, list of str, list of int, list of str, list of str
     """
 
+    # No data to assemble.
+    if mol_names == []:
+        return [], [], [], [], [], []
+
     # Set up the structures for common coordinates.
     num_mols = len(skip)
     coord = []
