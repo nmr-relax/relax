@@ -561,6 +561,25 @@ class Structure(SystemTestCase):
             self.assertEqual(script[i], lines[i])
 
 
+    def test_atomic_fluctuations_no_match(self):
+        """Check the operation of the structure.atomic_fluctuations user function when no data matches the atom ID.
+
+        This checks the interatomic distance fluctuations calculated by the U{structure.atomic_fluctuations user function<http://www.nmr-relax.com/manual/structure_atomic_fluctuations.html>}.
+        """
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path)
+
+        # Run the structure.atomic_fluctuations user function and collect the results in a dummy file object.
+        file = DummyFileObject()
+        self.interpreter.structure.atomic_fluctuations(atom_id='@X', file=file, format='text')
+
+        # Check the file.
+        lines = file.readlines()
+        self.assertEqual(len(lines), 0)
+
+
     def test_atomic_fluctuations_parallax(self):
         """Check the parallax shift fluctuations calculated by the structure.atomic_fluctuations user function.
 
