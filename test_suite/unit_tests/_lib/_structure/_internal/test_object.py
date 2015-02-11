@@ -33,30 +33,33 @@ class Test_object(UnitTestCase):
         # Initialise a structural object and add some atoms.
         struct = object.Internal()
 
-        # Create three molecules 'X', 'Y', and 'Z' with some atoms.
+        # Create three molecules 'X', 'Y', and 'Z' with some connected atoms.
         struct.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='X', pos=[1., 0., -1.], element='S')
         struct.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='Y', pos=[0., 0., 0.], element='S')
         struct.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='Z', pos=[-1., 0., 1.], element='S')
         struct.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='X', pos=[1., 2., -1.], element='S')
         struct.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='Y', pos=[0., 2., 0.], element='S')
         struct.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='Z', pos=[-1., 2., 1.], element='S')
+        struct.connect_atom(mol_name='X', index1=0, index2=1)
+        struct.connect_atom(mol_name='Y', index1=0, index2=1)
+        struct.connect_atom(mol_name='Z', index1=0, index2=1)
         struct.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='X', pos=[1., 20., -1.], element='S')
         struct.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='Y', pos=[0., 20., 0.], element='S')
         struct.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='Z', pos=[-1., 20., 1.], element='S')
 
         # The sorted data.
         data = [[
-            ['A', 'UNK', 1, [1., 0., -1.], 'S'],
-            ['A', 'UNK', 2, [1., 20., -1.], 'S'],
-            ['A', 'UNK', 3, [1., 2., -1.], 'S']
+            ['A', 'UNK', 1, [1., 0., -1.], 'S', [2]],
+            ['A', 'UNK', 2, [1., 20., -1.], 'S', []],
+            ['A', 'UNK', 3, [1., 2., -1.], 'S', [0]]
         ], [
-            ['A', 'UNK', 1, [0., 0., 0.], 'S'],
-            ['A', 'UNK', 2, [0., 20., 0.], 'S'],
-            ['A', 'UNK', 3, [0., 2., 0.], 'S']
+            ['A', 'UNK', 1, [0., 0., 0.], 'S', [2]],
+            ['A', 'UNK', 2, [0., 20., 0.], 'S', []],
+            ['A', 'UNK', 3, [0., 2., 0.], 'S', [0]]
         ], [
-            ['A', 'UNK', 1, [-1., 0., 1.], 'S'],
-            ['A', 'UNK', 2, [-1., 20., 1.], 'S'],
-            ['A', 'UNK', 3, [-1., 2., 1.], 'S']
+            ['A', 'UNK', 1, [-1., 0., 1.], 'S', [2]],
+            ['A', 'UNK', 2, [-1., 20., 1.], 'S', []],
+            ['A', 'UNK', 3, [-1., 2., 1.], 'S', [0]]
         ]]
         mol_names = ['X', 'Y', 'Z']
 
@@ -78,3 +81,4 @@ class Test_object(UnitTestCase):
                 self.assertEqual(mol.y[j], data[i][j][3][1])
                 self.assertEqual(mol.z[j], data[i][j][3][2])
                 self.assertEqual(mol.element[j], data[i][j][4])
+                self.assertEqual(mol.bonded[j], data[i][j][5])
