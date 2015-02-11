@@ -2455,6 +2455,9 @@ class Internal:
                 mol.file_mol_num = orig_mol_num[j]
                 mol.file_model = orig_model_num[i]
 
+                # Sort the structural data if a merge occurred.
+                mol._sort()
+
 
     def rotate(self, R=None, origin=None, model=None, selection=None):
         """Rotate the structural information about the given origin.
