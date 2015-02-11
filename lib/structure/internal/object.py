@@ -1160,6 +1160,9 @@ class Internal:
             # Add the atom.
             mol.atom_add(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=model_pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
 
+            # Sort.
+            mol._sort()
+
 
     def add_model(self, model=None, coords_from=None):
         """Add a new model to the store.
