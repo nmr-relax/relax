@@ -279,6 +279,11 @@ class MolContainer:
         self.y = [self.y[i] for i in indices]
         self.z = [self.z[i] for i in indices]
 
+        # Change the bonded numbers, as the indices are now different.
+        for i in range(len(self.bonded)):
+            for j in range(len(self.bonded[i])):
+                self.bonded[i][j] = indices.index(self.bonded[i][j])
+
 
     def _sort_key(self, i):
         """Return the information for sorting the sequence data."""
