@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2015 Edward d'Auvergne                                   #
+# Copyright (C) 2015 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,9 +19,10 @@
 #                                                                             #
 ###############################################################################
 
+# relax module imports.
+from lib.structure.internal import object
+from test_suite.unit_tests.base_classes import UnitTestCase
 
-__all__ = [
-    'test___init__',
-    'test_coordinates',
-    'test_object'
-]
+
+class Test_object(UnitTestCase):
+    """Unit tests for the lib.structure.internal.object internal structural object module."""
