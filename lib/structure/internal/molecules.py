@@ -388,6 +388,7 @@ class MolContainer:
         """
 
         # Loop over the records.
+        water = []
         for record in records:
             # Nothing to do.
             if not record or record == '\n':
@@ -400,6 +401,11 @@ class MolContainer:
                     record_type, serial, name, alt_loc, res_name, chain_id, res_seq, icode, x, y, z, occupancy, temp_factor, element, charge = pdb_read.atom(record)
                 if record[:6] == 'HETATM':
                     record_type, serial, name, alt_loc, res_name, chain_id, res_seq, icode, x, y, z, occupancy, temp_factor, element, charge = pdb_read.hetatm(record)
+
+                # Skip waters.
+                if res_name == 'HOH':
+                    water.append(res_seq)
+                    continue
 
                 # Handle the alternate locations.
                 if alt_loc != None:
@@ -435,6 +441,9 @@ class MolContainer:
 
                     # Make the connection.
                     self.atom_connect(index1=self._atom_index(serial), index2=self._atom_index(bonded))
+
+        if len(water):
+            warn(RelaxWarning("Skipping the water molecules HOH %s." % water))
 
 
     def fill_object_from_xyz(self, records):
