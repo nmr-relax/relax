@@ -1163,6 +1163,9 @@ class Internal:
             # Add the atom.
             mol.atom_add(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=model_pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
 
+            # Sort.
+            mol._sort()
+
 
     def add_model(self, model=None, coords_from=None):
         """Add a new model to the store.
@@ -2454,6 +2457,9 @@ class Internal:
                 mol.file_path_abs = file_path_abs
                 mol.file_mol_num = orig_mol_num[j]
                 mol.file_model = orig_model_num[i]
+
+                # Sort the structural data if a merge occurred.
+                mol._sort()
 
 
     def rotate(self, R=None, origin=None, model=None, selection=None):
