@@ -26,3 +26,55 @@ from test_suite.unit_tests.base_classes import UnitTestCase
 
 class Test_object(UnitTestCase):
     """Unit tests for the lib.structure.internal.object internal structural object module."""
+
+    def test_add_atom_sort(self):
+        """Test for automated atom sequence sorting of the add_atom() method."""
+
+        # Initialise a structural object and add some atoms.
+        struct = object.Internal()
+
+        # Create three molecules 'X', 'Y', and 'Z' with some atoms.
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='X', pos=[1., 0., -1.], element='S')
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='Y', pos=[0., 0., 0.], element='S')
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='Z', pos=[-1., 0., 1.], element='S')
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='X', pos=[1., 2., -1.], element='S')
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='Y', pos=[0., 2., 0.], element='S')
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='Z', pos=[-1., 2., 1.], element='S')
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='X', pos=[1., 20., -1.], element='S')
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='Y', pos=[0., 20., 0.], element='S')
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='Z', pos=[-1., 20., 1.], element='S')
+
+        # The sorted data.
+        data = [[
+            ['A', 'UNK', 1, [1., 0., -1.], 'S'],
+            ['A', 'UNK', 2, [1., 20., -1.], 'S'],
+            ['A', 'UNK', 3, [1., 2., -1.], 'S']
+        ], [
+            ['A', 'UNK', 1, [0., 0., 0.], 'S'],
+            ['A', 'UNK', 2, [0., 20., 0.], 'S'],
+            ['A', 'UNK', 3, [0., 2., 0.], 'S']
+        ], [
+            ['A', 'UNK', 1, [-1., 0., 1.], 'S'],
+            ['A', 'UNK', 2, [-1., 20., 1.], 'S'],
+            ['A', 'UNK', 3, [-1., 2., 1.], 'S']
+        ]]
+        mol_names = ['X', 'Y', 'Z']
+
+        # Test the object.
+        self.assertEqual(len(struct.structural_data), 1)
+        for i in range(len(struct.structural_data[0].mol)):
+            # Alias.
+            mol = struct.structural_data[0].mol[i]
+
+            # Check the molecule data.
+            self.assertEqual(mol.mol_name, mol_names[i])
+
+            # Loop over the atoms.
+            for j in range(len(mol.atom_name)):
+                self.assertEqual(mol.atom_name[j], data[i][j][0])
+                self.assertEqual(mol.res_name[j], data[i][j][1])
+                self.assertEqual(mol.res_num[j], data[i][j][2])
+                self.assertEqual(mol.x[j], data[i][j][3][0])
+                self.assertEqual(mol.y[j], data[i][j][3][1])
+                self.assertEqual(mol.z[j], data[i][j][3][2])
+                self.assertEqual(mol.element[j], data[i][j][4])
