@@ -161,7 +161,10 @@ class Sequence_window_2D(Sequence_window):
         # Store the titles.
         self.titles = titles
         if titles == None:
-            self.titles = [wx.EmptyString] * dim[1]
+            if dim == None:
+                self.titles = [wx.EmptyString]
+            else:
+                self.titles = [wx.EmptyString] * dim[1]
 
         # Determine the dimensions if not given.
         if dim == None:
