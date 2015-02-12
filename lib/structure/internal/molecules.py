@@ -258,6 +258,40 @@ class MolContainer:
         return fields
 
 
+    def _sort(self):
+        """Sort all structural data."""
+
+        # Create an index list for sorting the structural data.
+        indices = range(len(self.atom_name))
+        indices.sort(key=self._sort_key)
+
+        # Sort all lists.
+        self.atom_num = [self.atom_num[i] for i in indices]
+        self.atom_name = [self.atom_name[i] for i in indices]
+        self.bonded = [self.bonded[i] for i in indices]
+        self.chain_id = [self.chain_id[i] for i in indices]
+        self.element = [self.element[i] for i in indices]
+        self.pdb_record = [self.pdb_record[i] for i in indices]
+        self.res_name = [self.res_name[i] for i in indices]
+        self.res_num = [self.res_num[i] for i in indices]
+        self.seg_id = [self.seg_id[i] for i in indices]
+        self.x = [self.x[i] for i in indices]
+        self.y = [self.y[i] for i in indices]
+        self.z = [self.z[i] for i in indices]
+
+        # Change the bonded numbers, as the indices are now different.
+        for i in range(len(self.bonded)):
+            for j in range(len(self.bonded[i])):
+                self.bonded[i][j] = indices.index(self.bonded[i][j])
+
+
+    def _sort_key(self, i):
+        """Return the information for sorting the sequence data."""
+
+        # Sort based on residue number.
+        return self.res_num[i]
+
+
     def atom_add(self, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None):
         """Method for adding an atom to the structural data object.
 
@@ -359,6 +393,7 @@ class MolContainer:
         """
 
         # Loop over the records.
+        water = []
         for record in records:
             # Nothing to do.
             if not record or record == '\n':
@@ -371,6 +406,11 @@ class MolContainer:
                     record_type, serial, name, alt_loc, res_name, chain_id, res_seq, icode, x, y, z, occupancy, temp_factor, element, charge = pdb_read.atom(record)
                 if record[:6] == 'HETATM':
                     record_type, serial, name, alt_loc, res_name, chain_id, res_seq, icode, x, y, z, occupancy, temp_factor, element, charge = pdb_read.hetatm(record)
+
+                # Skip waters.
+                if res_name == 'HOH':
+                    water.append(res_seq)
+                    continue
 
                 # Handle the alternate locations.
                 if alt_loc != None:
@@ -406,6 +446,9 @@ class MolContainer:
 
                     # Make the connection.
                     self.atom_connect(index1=self._atom_index(serial), index2=self._atom_index(bonded))
+
+        if len(water):
+            warn(RelaxWarning("Skipping the water molecules HOH %s." % water))
 
 
     def fill_object_from_xyz(self, records):

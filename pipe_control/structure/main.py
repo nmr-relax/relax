@@ -132,6 +132,10 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
     # Assemble the atomic coordinates of all molecules.
     ids, object_id_list, model_list, molecule_list, atom_pos, mol_names, res_names, res_nums, atom_names, elements, one_letter_codes, num_mols = assemble_atomic_coordinates(objects=objects, object_names=object_names, molecules=molecules, models=models, atom_id=atom_id)
 
+    # No data.
+    if mol_names == []:
+        raise RelaxError("No structural data matching the atom ID string '%s' can be found." % atom_id)
+
     # Are all molecules the same?
     same_mol = True
     for mol in molecule_list:

@@ -1160,6 +1160,9 @@ class Internal:
             # Add the atom.
             mol.atom_add(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=model_pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
 
+            # Sort.
+            mol._sort()
+
 
     def add_model(self, model=None, coords_from=None):
         """Add a new model to the store.
@@ -2309,9 +2312,6 @@ class Internal:
         # Initialise.
         codes = ''
 
-        # Validate the models.
-        self.validate_models(verbosity=0)
-
         # Use the first model.
         model = self.structural_data[0]
 
@@ -2454,6 +2454,9 @@ class Internal:
                 mol.file_path_abs = file_path_abs
                 mol.file_mol_num = orig_mol_num[j]
                 mol.file_model = orig_model_num[i]
+
+                # Sort the structural data if a merge occurred.
+                mol._sort()
 
 
     def rotate(self, R=None, origin=None, model=None, selection=None):
@@ -2692,14 +2695,27 @@ class Internal:
 
                 # Loop over the atoms.
                 for k in range(len(mol.atom_name)):
-                    # Create pseudo-pdb formatted records (with no atomic coordinates).
-                    atom = "%-6s%5s %4s%1s%3s %1s%4s%1s   %8s%8s%8s%6.2f%6.2f      %4s%2s%2s" % ('ATOM', mol.atom_num[k], self._translate(mol.atom_name[k]), '', self._translate(mol.res_name[k]), self._translate(mol.chain_id[k]), self._translate(mol.res_num[k]), '', '#', '#', '#', 1.0, 0, self._translate(mol.seg_id[k]), self._translate(mol.element[k]), '')
-                    atom_ref = "%-6s%5s %4s%1s%3s %1s%4s%1s   %8s%8s%8s%6.2f%6.2f      %4s%2s%2s" % ('ATOM', mol_ref.atom_num[k], self._translate(mol_ref.atom_name[k]), '', self._translate(mol_ref.res_name[k]), self._translate(mol_ref.chain_id[k]), self._translate(mol_ref.res_num[k]), '', '#', '#', '#', 1.0, 0, self._translate(mol_ref.seg_id[k]), self._translate(mol_ref.element[k]), '')
+                    # Check all data.
+                    same = True
+                    if mol.chain_id[k] != mol_ref.chain_id[k]:
+                        same = False
+                    elif mol.atom_num[k] != mol_ref.atom_num[k]:
+                        same = False
+                    elif mol.atom_name[k] != mol_ref.atom_name[k]:
+                        same = False
+                    elif mol.res_name[k] != mol_ref.res_name[k]:
+                        same = False
+                    elif mol.res_num[k] != mol_ref.res_num[k]:
+                        same = False
+                    elif mol.seg_id[k] != mol_ref.seg_id[k]:
+                        same = False
+                    elif mol.element[k] != mol_ref.element[k]:
+                        same = False
 
-                    # Check the atom info.
-                    if atom != atom_ref:
-                        print(atom)
-                        print(atom_ref)
+                    # Failure.
+                    if not same:
+                        print("%-6s%5s %4s%1s%3s %1s%4s%1s   %8s%8s%8s%6.2f%6.2f      %4s%2s%2s" % ('ATOM', mol.atom_num[k], self._translate(mol.atom_name[k]), '', self._translate(mol.res_name[k]), self._translate(mol.chain_id[k]), self._translate(mol.res_num[k]), '', '#', '#', '#', 1.0, 0, self._translate(mol.seg_id[k]), self._translate(mol.element[k]), ''))
+                        print("%-6s%5s %4s%1s%3s %1s%4s%1s   %8s%8s%8s%6.2f%6.2f      %4s%2s%2s" % ('ATOM', mol_ref.atom_num[k], self._translate(mol_ref.atom_name[k]), '', self._translate(mol_ref.res_name[k]), self._translate(mol_ref.chain_id[k]), self._translate(mol_ref.res_num[k]), '', '#', '#', '#', 1.0, 0, self._translate(mol_ref.seg_id[k]), self._translate(mol_ref.element[k]), ''))
                         raise RelaxError("The atoms of model %i do not match the first model." % self.structural_data[i].num)
 
         # Final printout.

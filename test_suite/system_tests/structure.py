@@ -104,7 +104,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.translate(T=[0., 0., 1.], model=2)
 
         # Add some atoms that should not be aligned.
-        self.interpreter.structure.add_atom(mol_name='uniform_mol1', atom_name='Ti', res_name='TST', res_num=1, pos=[[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]], element='Ti', pdb_record='HETATM')
+        self.interpreter.structure.add_atom(mol_name='uniform_mol1', atom_name='Ti', res_name='TST', res_num=100, pos=[[1.0, 2.0, 3.0], [1.0, 2.0, 3.0]], element='Ti', pdb_record='HETATM')
 
         # The alignment.
         self.interpreter.structure.superimpose(pipes=['ref', 'align'], method='fit to first', atom_id='@N,H', displace_id='@N,H')
@@ -174,7 +174,7 @@ class Structure(SystemTestCase):
             ["H", "HIS", 29,    4.107,  -7.113,   7.347],
             ["N", "ALA", 30,    0.000,  -0.000,  10.000],
             ["H", "ALA", 30,    0.000,  -0.000,  11.020],
-            ["Ti", "TST", 1,  1.000,  2.000,  3.000]
+            ["Ti", "TST", 100,  1.000,   2.000,   3.000]
         ]
 
         # The selection object.
@@ -253,8 +253,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.translate(T=[0., 0., 1.], atom_id='#2')
 
         # Add some atoms that should not be aligned.
-        self.interpreter.structure.add_atom(mol_name='1', atom_name='Ti', res_name='TST', res_num=1, pos=[1.0, 2.0, 3.0], element='Ti', pdb_record='HETATM')
-        self.interpreter.structure.add_atom(mol_name='2', atom_name='Ti', res_name='TST', res_num=1, pos=[1.0, 2.0, 3.0], element='Ti', pdb_record='HETATM')
+        self.interpreter.structure.add_atom(mol_name='1', atom_name='Ti', res_name='TST', res_num=100, pos=[1.0, 2.0, 3.0], element='Ti', pdb_record='HETATM')
+        self.interpreter.structure.add_atom(mol_name='2', atom_name='Ti', res_name='TST', res_num=100, pos=[1.0, 2.0, 3.0], element='Ti', pdb_record='HETATM')
 
         # The alignment.
         self.interpreter.structure.superimpose(pipes=['ref', 'align'], molecules=[['ref'], ['1', '2']], method='fit to first', atom_id='@N,H', displace_id='@N,H')
@@ -324,7 +324,7 @@ class Structure(SystemTestCase):
             ["H", "HIS", 29,    4.107,  -7.113,   7.347],
             ["N", "ALA", 30,    0.000,  -0.000,  10.000],
             ["H", "ALA", 30,    0.000,  -0.000,  11.020],
-            ["Ti", "TST", 1,  1.000,  2.000,  3.000]
+            ["Ti", "TST", 100,  1.000,   2.000,   3.000]
         ]
 
         # The selection object.
@@ -375,10 +375,10 @@ class Structure(SystemTestCase):
             self.assertAlmostEqual(mol1.y[i], mol2.y[i], 2)
             self.assertAlmostEqual(mol1.z[i], mol2.z[i], 2)
 
-        # The last atom must be different - it is not displaced.
-        self.assertAlmostEqual(mol1.x[-1] - mol2.x[-1], -1.0, 2)
-        self.assertAlmostEqual(mol1.y[-1] - mol2.y[-1], -1.0, 2)
-        self.assertAlmostEqual(mol1.z[-1] - mol2.z[-1], -1.0, 2)
+        # The first 'Ti' atom must be different - it is not displaced.
+        self.assertAlmostEqual(mol1.x[0] - mol2.x[0], -1.0, 2)
+        self.assertAlmostEqual(mol1.y[0] - mol2.y[0], -1.0, 2)
+        self.assertAlmostEqual(mol1.z[0] - mol2.z[0], -1.0, 2)
 
 
     def test_align_molecules_end_truncation(self):
@@ -559,6 +559,21 @@ class Structure(SystemTestCase):
         self.assertEqual(len(script), len(lines))
         for i in range(len(lines)):
             self.assertEqual(script[i], lines[i])
+
+
+    def test_atomic_fluctuations_no_match(self):
+        """Check the operation of the structure.atomic_fluctuations user function when no data matches the atom ID.
+
+        This checks the interatomic distance fluctuations calculated by the U{structure.atomic_fluctuations user function<http://www.nmr-relax.com/manual/structure_atomic_fluctuations.html>}.
+        """
+
+        # Load the file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('web_of_motion.pdb', dir=path)
+
+        # Run the structure.atomic_fluctuations user function and collect the results in a dummy file object.
+        file = DummyFileObject()
+        self.assertRaises(RelaxError, self.interpreter.structure.atomic_fluctuations, atom_id='@X', file=file, format='text')
 
 
     def test_atomic_fluctuations_parallax(self):
@@ -3924,15 +3939,15 @@ class Structure(SystemTestCase):
         self.assertEqual(cdp.structure.structural_data[0].mol[0].z[0], 2.614)
         self.assertEqual(cdp.structure.structural_data[0].mol[0].element[0], 'N')
 
-        # Check the last atom (from the last water HETATM record).
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[-1], 661)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_name[-1], 'O')
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].chain_id[-1], None)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_name[-1], 'HOH')
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_num[-1], 58)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].x[-1], 37.667)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].y[-1], 43.421)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].z[-1], 17.000)
+        # Check the last atom (from the last ATOM record, as water HETATM records are skipped).
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_num[-1], 602)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].atom_name[-1], 'OXT')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].chain_id[-1], 'A')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_name[-1], 'GLY')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].res_num[-1], 76)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].x[-1], 40.862)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].y[-1], 39.575)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].z[-1], 36.251)
         self.assertEqual(cdp.structure.structural_data[0].mol[0].element[-1], 'O')
 
 
@@ -4852,10 +4867,10 @@ class Structure(SystemTestCase):
             self.assertAlmostEqual(model1.y[i], model2.y[i], 2)
             self.assertAlmostEqual(model1.z[i], model2.z[i], 2)
 
-        # The last atom must be different - it is not displaced.
-        self.assertAlmostEqual(model1.x[-1] - model2.x[-1], -1.0, 2)
-        self.assertAlmostEqual(model1.y[-1] - model2.y[-1], -1.0, 2)
-        self.assertAlmostEqual(model1.z[-1] - model2.z[-1], -1.0, 2)
+        # The first 'Ti' atom must be different - it is not displaced.
+        self.assertAlmostEqual(model1.x[0] - model2.x[0], -1.0, 2)
+        self.assertAlmostEqual(model1.y[0] - model2.y[0], -1.0, 2)
+        self.assertAlmostEqual(model1.z[0] - model2.z[0], -1.0, 2)
 
 
     def test_superimpose_fit_to_mean2(self):
