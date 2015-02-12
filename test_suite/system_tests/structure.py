@@ -3716,6 +3716,88 @@ class Structure(SystemTestCase):
         self.assertEqual(mol.z[1], 0.0)
 
 
+    def test_mean_models(self):
+        """Test the structure.mean user function for different models.
+
+        This checks the molecules argument of the U{structure.mean user function<http://www.nmr-relax.com/manual/structure_mean.html>}.
+        """
+
+        # Set up 3 models.
+        self.interpreter.structure.add_model(model_num=1)
+        self.interpreter.structure.add_model(model_num=2)
+        self.interpreter.structure.add_model(model_num=4)
+
+        # Check that the models were correctly created.
+        self.assert_(hasattr(cdp, 'structure'))
+        self.assert_(hasattr(cdp.structure, 'structural_data'))
+        self.assertEqual(len(cdp.structure.structural_data), 3)
+
+        # Create a structure with some atoms.
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=1, pos=[[1., 0., -1.], [0., 0., 0.], [-1., 0., 1.]], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=2, pos=[[1., 2., -1.], [0., 2., 0.], [-1., 2., 1.]], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, pos=[[1., 20., -1.], [0., 20., 0.], [-1., 20., 1.]], element='S')
+
+        # Calculate the mean structure and store it as model 3.
+        self.interpreter.structure.mean(models=[1, 2, 4], set_model_num=3)
+
+        # Check the internal atomic info.
+        self.assertEqual(cdp.structure.structural_data[0].num, 1)
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].x, [1., 1., 1.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].z, [-1., -1., -1.])
+        self.assertEqual(cdp.structure.structural_data[1].num, 2)
+        self.assertEqual(cdp.structure.structural_data[1].mol[0].x, [0., 0., 0.])
+        self.assertEqual(cdp.structure.structural_data[1].mol[0].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[1].mol[0].z, [0., 0., 0.])
+        self.assertEqual(cdp.structure.structural_data[2].num, 4)
+        self.assertEqual(cdp.structure.structural_data[2].mol[0].x, [-1., -1., -1.])
+        self.assertEqual(cdp.structure.structural_data[2].mol[0].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[2].mol[0].z, [1., 1., 1.])
+        self.assertEqual(cdp.structure.structural_data[3].num, 3)
+        self.assertEqual(cdp.structure.structural_data[3].mol[0].x, [0., 0., 0.])
+        self.assertEqual(cdp.structure.structural_data[3].mol[0].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[3].mol[0].z, [0., 0., 0.])
+
+
+    def test_mean_molecules(self):
+        """Test the structure.mean user function for different molecules in one pipe.
+
+        This checks the molecules argument of the U{structure.mean user function<http://www.nmr-relax.com/manual/structure_mean.html>}.
+        """
+
+        # Create three molecules 'X', 'Y', and 'Z' with a some atoms.
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='X', pos=[1., 0., -1.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='Y', pos=[0., 0., 0.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='Z', pos=[-1., 0., 1.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='X', pos=[1., 2., -1.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='Y', pos=[0., 2., 0.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='Z', pos=[-1., 2., 1.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='X', pos=[1., 20., -1.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='Y', pos=[0., 20., 0.], element='S')
+        self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='Z', pos=[-1., 20., 1.], element='S')
+
+        # Calculate the mean structure.
+        self.interpreter.structure.mean(molecules=[['X', 'Y', 'Z']], set_mol_name='A')
+
+        # Check the internal atomic info.
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].name, 'X')
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].x, [1., 1., 1.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[0].z, [-1., -1., -1.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[1].name, 'Y')
+        self.assertEqual(cdp.structure.structural_data[0].mol[1].x, [0., 0., 0.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[1].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[1].z, [0., 0., 0.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[2].name, 'Z')
+        self.assertEqual(cdp.structure.structural_data[0].mol[2].x, [-1., -1., -1.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[2].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[2].z, [1., 1., 1.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[3].name, 'A')
+        self.assertEqual(cdp.structure.structural_data[0].mol[3].x, [0., 0., 0.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[3].y, [0., 2., 20.])
+        self.assertEqual(cdp.structure.structural_data[0].mol[3].z, [0., 0., 0.])
+
+
     def test_metadata_xml(self):
         """Test the storage and loading of metadata into an XML state file."""
 
