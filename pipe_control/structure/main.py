@@ -21,7 +21,7 @@
 
 # Python module imports.
 from minfx.generic import generic_minimise
-from numpy import array, average, dot, float64, std, zeros
+from numpy import array, average, dot, float64, mean, std, zeros
 from numpy.linalg import norm
 from os import F_OK, access, getcwd
 from re import search
@@ -366,6 +366,36 @@ def atomic_fluctuations(pipes=None, models=None, molecules=None, atom_id=None, m
 
     # Call the plotting API.
     correlation_matrix(format=format, matrix=matrix, labels=labels, file=file, dir=dir, force=force)
+
+
+def average_structure(pipes=None, models=None, molecules=None, atom_id=None, set_mol_name=None, set_model_num=None):
+    """Calculate a mean structure.
+
+    @keyword pipes:         The data pipes containing structures to average.
+    @type pipes:            None or list of str
+    @keyword models:        The list of models for each data pipe.  The number of elements must match the pipes argument.  If set to None, then all models will be used.
+    @type models:           None or list of lists of int
+    @keyword molecules:     The list of molecules for each data pipe.  The number of elements must match the pipes argument.
+    @type molecules:        None or list of lists of str
+    @keyword atom_id:       The molecule, residue, and atom identifier string.  This matches the spin ID string format.
+    @type atom_id:          str or None
+    @keyword set_mol_name:  The molecule name for the averaged molecule.
+    @type set_mol_name:     None or str
+    @keyword set_model_num: The model number for the averaged molecule.
+    @type set_model_num:    None or int
+    """
+
+    # Checks.
+    check_pipe()
+
+    # Assemble the structural coordinates.
+    coord, ids, mol_names, res_names, res_nums, atom_names, elements = assemble_structural_coordinates(pipes=pipes, models=models, molecules=molecules, atom_id=atom_id)
+
+    # Calculate the mean structure.
+    struct = mean(coord, axis=0)
+
+    # Store the data.
+    cdp.structure.add_coordinates(coord=struct, mol_names=mol_names, res_names=res_names, res_nums=res_nums, atom_names=atom_names, elements=elements, set_mol_name=set_mol_name, set_model_num=set_model_num)
 
 
 def connect_atom(index1=None, index2=None):
@@ -964,17 +994,6 @@ def load_spins_multi_mol(spin_id=None, str_id=None, from_mols=None, mol_name_tar
 
     # Set the number of states for use in the specific analyses.
     cdp.N = len(from_mols)
-
-
-def mean():
-    """Calculate the mean structure from all models in the structural data object."""
-
-    # Checks.
-    check_pipe()
-    check_structure()
-
-    # Call the specific code.
-    cdp.structure.mean()
 
 
 def read_gaussian(file=None, dir=None, set_mol_name=None, set_model_num=None, verbosity=1, fail=True):
