@@ -3708,12 +3708,18 @@ class Structure(SystemTestCase):
         self.assertEqual(cdp.structure.structural_data[0].num, None)
         mol = cdp.structure.structural_data[0].mol[0]
         self.assertEqual(len(mol.atom_name), 2)
-        self.assertEqual(mol.x[0], 0.5)
-        self.assertEqual(mol.y[0], 1.0)
-        self.assertEqual(mol.z[0], -1.0)
-        self.assertEqual(mol.x[1], 0.0)
-        self.assertEqual(mol.y[1], 0.0)
-        self.assertEqual(mol.z[1], 0.0)
+        self.assertEqual(mol.atom_name, ['N', 'N'])
+        self.assertEqual(mol.atom_num, [None, None])
+        self.assertEqual(mol.bonded, [[], []])
+        self.assertEqual(mol.chain_id, [None, None])
+        self.assertEqual(mol.element, ['N', 'N'])
+        self.assertEqual(mol.pdb_record, [None, None])
+        self.assertEqual(mol.res_name, ['Tyr', 'Phe'])
+        self.assertEqual(mol.res_num, [2, 3])
+        self.assertEqual(mol.seg_id, [None, None])
+        self.assertEqual(mol.x, [0.5, 0.0])
+        self.assertEqual(mol.y, [1.0, 0.0])
+        self.assertEqual(mol.z, [-1.0, 0.0])
 
 
     def test_mean_models(self):
@@ -3740,23 +3746,39 @@ class Structure(SystemTestCase):
         # Calculate the mean structure and store it as model 3.
         self.interpreter.structure.mean(models=[[1, 2, 4]], set_model_num=3)
 
+        # The expected data.
+        model_num = [1, 2, 4, 3]
+        x = [
+            [1., 1., 1.],
+            [0., 0., 0.],
+            [-1., -1., -1.],
+            [0., 0., 0.]
+        ]
+        y = [0., 2., 20.]
+        z = [
+            [-1., -1., -1.],
+            [0., 0., 0.],
+            [1., 1., 1.],
+            [0., 0., 0.]
+        ]
+
         # Check the internal atomic info.
-        self.assertEqual(cdp.structure.structural_data[0].num, 1)
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].x, [1., 1., 1.])
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].y, [0., 2., 20.])
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].z, [-1., -1., -1.])
-        self.assertEqual(cdp.structure.structural_data[1].num, 2)
-        self.assertEqual(cdp.structure.structural_data[1].mol[0].x, [0., 0., 0.])
-        self.assertEqual(cdp.structure.structural_data[1].mol[0].y, [0., 2., 20.])
-        self.assertEqual(cdp.structure.structural_data[1].mol[0].z, [0., 0., 0.])
-        self.assertEqual(cdp.structure.structural_data[2].num, 4)
-        self.assertEqual(cdp.structure.structural_data[2].mol[0].x, [-1., -1., -1.])
-        self.assertEqual(cdp.structure.structural_data[2].mol[0].y, [0., 2., 20.])
-        self.assertEqual(cdp.structure.structural_data[2].mol[0].z, [1., 1., 1.])
-        self.assertEqual(cdp.structure.structural_data[3].num, 3)
-        self.assertEqual(cdp.structure.structural_data[3].mol[0].x, [0., 0., 0.])
-        self.assertEqual(cdp.structure.structural_data[3].mol[0].y, [0., 2., 20.])
-        self.assertEqual(cdp.structure.structural_data[3].mol[0].z, [0., 0., 0.])
+        self.assertEqual(len(cdp.structure.structural_data), 4)
+        for i in range(4):
+            self.assertEqual(len(cdp.structure.structural_data[i].mol), 1)
+            self.assertEqual(cdp.structure.structural_data[i].num, model_num[i])
+            self.assertEqual(cdp.structure.structural_data[i].mol[0].atom_num, [None, None, None])
+            self.assertEqual(cdp.structure.structural_data[i].mol[0].atom_name, ['A', 'A', 'A'])
+            self.assertEqual(cdp.structure.structural_data[i].mol[0].bonded, [[], [], []])
+            self.assertEqual(cdp.structure.structural_data[i].mol[0].chain_id, [None, None, None])
+            self.assertEqual(cdp.structure.structural_data[i].mol[0].element, ['S', 'S', 'S'])
+            self.assertEqual(cdp.structure.structural_data[i].mol[0].pdb_record, [None, None, None])
+            self.assertEqual(cdp.structure.structural_data[i].mol[0].res_name, ['UNK', 'UNK', 'UNK'])
+            self.assertEqual(cdp.structure.structural_data[i].mol[0].res_num, [1, 2, 3])
+            self.assertEqual(cdp.structure.structural_data[i].mol[0].seg_id, [None, None, None])
+            self.assertEqual(cdp.structure.structural_data[i].mol[0].x, x[i])
+            self.assertEqual(cdp.structure.structural_data[i].mol[0].y, y)
+            self.assertEqual(cdp.structure.structural_data[i].mol[0].z, z[i])
 
 
     def test_mean_molecules(self):
@@ -3779,23 +3801,39 @@ class Structure(SystemTestCase):
         # Calculate the mean structure.
         self.interpreter.structure.mean(molecules=[['X', 'Y', 'Z']], set_mol_name='A')
 
+        # The expected data.
+        mol_name = ['X', 'Y', 'Z', 'A']
+        x = [
+            [1., 1., 1.],
+            [0., 0., 0.],
+            [-1., -1., -1.],
+            [0., 0., 0.]
+        ]
+        y = [0., 2., 20.]
+        z = [
+            [-1., -1., -1.],
+            [0., 0., 0.],
+            [1., 1., 1.],
+            [0., 0., 0.]
+        ]
+
         # Check the internal atomic info.
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].mol_name, 'X')
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].x, [1., 1., 1.])
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].y, [0., 2., 20.])
-        self.assertEqual(cdp.structure.structural_data[0].mol[0].z, [-1., -1., -1.])
-        self.assertEqual(cdp.structure.structural_data[0].mol[1].mol_name, 'Y')
-        self.assertEqual(cdp.structure.structural_data[0].mol[1].x, [0., 0., 0.])
-        self.assertEqual(cdp.structure.structural_data[0].mol[1].y, [0., 2., 20.])
-        self.assertEqual(cdp.structure.structural_data[0].mol[1].z, [0., 0., 0.])
-        self.assertEqual(cdp.structure.structural_data[0].mol[2].mol_name, 'Z')
-        self.assertEqual(cdp.structure.structural_data[0].mol[2].x, [-1., -1., -1.])
-        self.assertEqual(cdp.structure.structural_data[0].mol[2].y, [0., 2., 20.])
-        self.assertEqual(cdp.structure.structural_data[0].mol[2].z, [1., 1., 1.])
-        self.assertEqual(cdp.structure.structural_data[0].mol[3].mol_name, 'A')
-        self.assertEqual(cdp.structure.structural_data[0].mol[3].x, [0., 0., 0.])
-        self.assertEqual(cdp.structure.structural_data[0].mol[3].y, [0., 2., 20.])
-        self.assertEqual(cdp.structure.structural_data[0].mol[3].z, [0., 0., 0.])
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        for i in range(4):
+            self.assertEqual(len(cdp.structure.structural_data[0].mol), 4)
+            self.assertEqual(cdp.structure.structural_data[0].mol[i].mol_name, mol_name[i])
+            self.assertEqual(cdp.structure.structural_data[0].mol[i].atom_num, [None, None, None])
+            self.assertEqual(cdp.structure.structural_data[0].mol[i].atom_name, ['A', 'A', 'A'])
+            self.assertEqual(cdp.structure.structural_data[0].mol[i].bonded, [[], [], []])
+            self.assertEqual(cdp.structure.structural_data[0].mol[i].chain_id, [None, None, None])
+            self.assertEqual(cdp.structure.structural_data[0].mol[i].element, ['S', 'S', 'S'])
+            self.assertEqual(cdp.structure.structural_data[0].mol[i].pdb_record, [None, None, None])
+            self.assertEqual(cdp.structure.structural_data[0].mol[i].res_name, ['UNK', 'UNK', 'UNK'])
+            self.assertEqual(cdp.structure.structural_data[0].mol[i].res_num, [1, 2, 3])
+            self.assertEqual(cdp.structure.structural_data[0].mol[i].seg_id, [None, None, None])
+            self.assertEqual(cdp.structure.structural_data[0].mol[i].x, x[i])
+            self.assertEqual(cdp.structure.structural_data[0].mol[i].y, y)
+            self.assertEqual(cdp.structure.structural_data[0].mol[i].z, z[i])
 
 
     def test_metadata_xml(self):
