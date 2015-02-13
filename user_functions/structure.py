@@ -812,13 +812,57 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + 'load_spins.png'
 uf = uf_info.add_uf('structure.mean')
 uf.title = "Calculate the mean structure from all loaded models."
 uf.title_short = "Mean structure."
+uf.add_keyarg(
+    name = "pipes",
+    py_type = "str_list",
+    desc_short = "data pipes",
+    desc = "The data pipes containing structures to average.",
+    wiz_combo_iter = pipe_names,
+    wiz_read_only = False,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "models",
+    py_type = "int_list_of_lists",
+    desc_short = "model list for each data pipe",
+    desc = "The list of models for each data pipe containing structures to average.  The number of elements must match the pipes argument.  If no models are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "molecules",
+    py_type = "str_list_of_lists",
+    desc_short = "molecule list for each data pipe",
+    desc = "The list of molecules for each data pipe to average.  This allows differently named molecules in the same or different data pipes to be averaged.  The number of elements must match the pipes argument.  If no molecules are given, then all will be used.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "atom_id",
+    py_type = "str",
+    desc_short = "atom identification string",
+    desc = "The atom identification string of the coordinates of interest.  This can be used to restrict the averaged structure to one atom per residue, for example.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "set_mol_name",
+    py_type = "str",
+    desc_short = "averaged molecule name",
+    desc = "Set the optional name of the averaged molecule.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "set_model_num",
+    py_type = "int",
+    desc_short = "averaged model number",
+    desc = "Set the optional model number of the averaged molecule.",
+    can_be_none = True
+)
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will calculate the mean structure from all loaded models.  The mean structure will replace all the models in the internal structural object.  This is provided as a structural aid, specifically for superimposition purposes.")
-uf.backend = pipe_control.structure.main.mean
+uf.desc[-1].add_paragraph("This will calculate and store the mean structure from a collection of related molecules.  If a new molecule name or model number is not supplied, the mean structure will replace all the models in the internal structural object.  This is provided as a structural aid, specifically for superimposition purposes.")
+uf.backend = pipe_control.structure.main.average_structure
 uf.menu_text = "&mean"
 uf.gui_icon = "oxygen.categories.applications-education"
-uf.wizard_size = (700, 400)
+uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
