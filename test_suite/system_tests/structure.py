@@ -3738,7 +3738,7 @@ class Structure(SystemTestCase):
         self.interpreter.structure.add_atom(atom_name='A', res_name='UNK', res_num=3, pos=[[1., 20., -1.], [0., 20., 0.], [-1., 20., 1.]], element='S')
 
         # Calculate the mean structure and store it as model 3.
-        self.interpreter.structure.mean(models=[1, 2, 4], set_model_num=3)
+        self.interpreter.structure.mean(models=[[1, 2, 4]], set_model_num=3)
 
         # Check the internal atomic info.
         self.assertEqual(cdp.structure.structural_data[0].num, 1)
