@@ -1742,6 +1742,97 @@ class Frame_order(SystemTestCase):
         self.assertEqual(cdp.sobol_points_used, 20)
 
 
+    def test_distribute_double_rotor_mode1_xz_plane_tilt(self):
+        """Check the frame_order.distribute user function PDB file for the double rotor model with a xz-plane tilt for the first rotation mode."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_double_rotor_mode1_xz_plane_tilt(type='dist')
+
+
+    def test_distribute_double_rotor_mode1_z_axis(self):
+        """Check the frame_order.distribute user function PDB file for the double rotor model along the z-axis for the first rotation mode."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_double_rotor_mode1_z_axis(type='dist')
+
+
+    def test_distribute_double_rotor_mode2_xz_plane_tilt(self):
+        """Check the frame_order.distribute user function PDB file for the double rotor model with a xz-plane tilt for the second rotation mode."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_double_rotor_mode2_xz_plane_tilt(type='dist')
+
+
+    def test_distribute_double_rotor_mode2_z_axis(self):
+        """Check the frame_order.distribute user function PDB file for the double rotor model along the z-axis for the second rotation mode."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_double_rotor_mode2_z_axis(type='dist')
+
+
+    def test_distribute_free_rotor_z_axis(self):
+        """Check the frame_order.distribute user function PDB file for the free rotor model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_free_rotor_z_axis(type='dist')
+
+
+    def test_distribute_iso_cone_z_axis(self):
+        """Check the frame_order.distribute user function PDB file for the isotropic cone model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_iso_cone_z_axis(type='dist')
+
+
+    def test_distribute_iso_cone_xz_plane_tilt(self):
+        """Check the frame_order.distribute user function PDB file for the isotropic cone model with a xz-plane tilt."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_iso_cone_xz_plane_tilt(type='dist')
+
+
+    def test_distribute_iso_cone_torsionless_z_axis(self):
+        """Check the frame_order.distribute user function PDB file for the torsionless isotropic cone model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_iso_cone_torsionless_z_axis(type='dist')
+
+
+    def test_distribute_pseudo_ellipse_xz_plane_tilt(self):
+        """Check the frame_order.distribute user function PDB file for the pseudo-ellipse model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_pseudo_ellipse_xz_plane_tilt(type='dist')
+
+
+    def test_distribute_pseudo_ellipse_z_axis(self):
+        """Check the frame_order.distribute user function PDB file for the pseudo-ellipse model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_pseudo_ellipse_z_axis(type='dist')
+
+
+    def test_distribute_pseudo_ellipse_free_rotor_z_axis(self):
+        """Check the frame_order.distribute user function PDB file for the free rotor pseudo-ellipse model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_pseudo_ellipse_free_rotor_z_axis(type='dist')
+
+
+    def test_distribute_pseudo_ellipse_torsionless_z_axis(self):
+        """Check the frame_order.distribute user function PDB file for the torsionless pseudo-ellipse model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_pseudo_ellipse_torsionless_z_axis(type='dist')
+
+
+    def test_distribute_rotor_z_axis(self):
+        """Check the frame_order.distribute user function PDB file for the rotor model along the z-axis."""
+
+        # Call the equivalent frame_order.simulate user function system test to do everything.
+        self.test_simulate_rotor_z_axis(type='dist')
+
+
     def test_frame_order_pdb_model_ensemble(self):
         """Test the operation of the frame_order.pdb_model user function when an ensemble of structures are loaded."""
 
@@ -3181,7 +3272,7 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.chi2, 0.011377487066752203, 5)
 
 
-    def test_simulate_double_rotor_mode1_xz_plane_tilt(self):
+    def test_simulate_double_rotor_mode1_xz_plane_tilt(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the double rotor model with a xz-plane tilt for the first rotation mode."""
 
         # Init.
@@ -3202,7 +3293,10 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='double rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=eigen_beta, ave_pos_gamma=0.0, pivot_disp=pivot_disp, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_sigma_max=cone_sigma_max, cone_sigma_max_2=cone_sigma_max_2)
 
         # Create the PDB.
-        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        if type == 'sim':
+            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        elif type == 'dist':
+            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
 
         # Delete all structural data.
         self.interpreter.structure.delete()
@@ -3282,7 +3376,7 @@ class Frame_order(SystemTestCase):
                     self.assertAlmostEqual(pos[2], 0.0, 3)
 
 
-    def test_simulate_double_rotor_mode1_z_axis(self):
+    def test_simulate_double_rotor_mode1_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the double rotor model along the z-axis for the first rotation mode."""
 
         # Init.
@@ -3303,7 +3397,10 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='double rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=eigen_beta, ave_pos_gamma=0.0, pivot_disp=pivot_disp, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_sigma_max=cone_sigma_max, cone_sigma_max_2=cone_sigma_max_2)
 
         # Create the PDB.
-        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        if type == 'sim':
+            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        elif type == 'dist':
+            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
 
         # Delete all structural data.
         self.interpreter.structure.delete()
@@ -3383,7 +3480,7 @@ class Frame_order(SystemTestCase):
                     self.assertAlmostEqual(pos[2], 0.0, 3)
 
 
-    def test_simulate_double_rotor_mode2_xz_plane_tilt(self):
+    def test_simulate_double_rotor_mode2_xz_plane_tilt(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the double rotor model with a xz-plane tilt for the second rotation mode."""
 
         # Init.
@@ -3404,7 +3501,10 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='double rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=eigen_beta, ave_pos_gamma=0.0, pivot_disp=pivot_disp, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_sigma_max=cone_sigma_max, cone_sigma_max_2=cone_sigma_max_2)
 
         # Create the PDB.
-        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        if type == 'sim':
+            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        elif type == 'dist':
+            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
 
         # Delete all structural data.
         self.interpreter.structure.delete()
@@ -3491,7 +3591,7 @@ class Frame_order(SystemTestCase):
                     self.assertAlmostEqual(pos[2], -20.0, 3)
 
 
-    def test_simulate_double_rotor_mode2_z_axis(self):
+    def test_simulate_double_rotor_mode2_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the double rotor model along the z-axis for the second rotation mode."""
 
         # Init.
@@ -3512,7 +3612,10 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='double rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=eigen_beta, ave_pos_gamma=0.0, pivot_disp=pivot_disp, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_sigma_max=cone_sigma_max, cone_sigma_max_2=cone_sigma_max_2)
 
         # Create the PDB.
-        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        if type == 'sim':
+            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        elif type == 'dist':
+            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
 
         # Delete all structural data.
         self.interpreter.structure.delete()
@@ -3595,7 +3698,7 @@ class Frame_order(SystemTestCase):
                     self.assertAlmostEqual(pos[2], -20.0, 3)
 
 
-    def test_simulate_free_rotor_z_axis(self):
+    def test_simulate_free_rotor_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the free rotor model along the z-axis."""
 
         # Init.
@@ -3613,7 +3716,10 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='free rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_alpha=axis_alpha)
 
         # Create the PDB.
-        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        if type == 'sim':
+            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        elif type == 'dist':
+            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
 
         # Delete all structural data.
         self.interpreter.structure.delete()
@@ -3668,7 +3774,7 @@ class Frame_order(SystemTestCase):
                     self.assertAlmostEqual(pos[2], 0.0, 3)
 
 
-    def test_simulate_iso_cone_z_axis(self):
+    def test_simulate_iso_cone_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the isotropic cone model along the z-axis."""
 
         # Init.
@@ -3686,7 +3792,10 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='iso cone', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_theta=axis_theta, axis_phi=0.0, cone_theta=cone_theta, cone_sigma_max=cone_sigma_max)
 
         # Create the PDB.
-        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        if type == 'sim':
+            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        elif type == 'dist':
+            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
 
         # Delete all structural data.
         self.interpreter.structure.delete()
@@ -3751,7 +3860,7 @@ class Frame_order(SystemTestCase):
         print("Maximum phi for X and Y: %s" % max_phi)
 
 
-    def test_simulate_iso_cone_xz_plane_tilt(self):
+    def test_simulate_iso_cone_xz_plane_tilt(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the isotropic cone model with a xz-plane tilt."""
 
         # Init.
@@ -3772,7 +3881,10 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='iso cone', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=axis_theta, ave_pos_gamma=0.0, axis_theta=axis_theta, axis_phi=0.0, cone_theta=cone_theta, cone_sigma_max=cone_sigma_max)
 
         # Create the PDB.
-        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        if type == 'sim':
+            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        elif type == 'dist':
+            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
 
         # Delete all structural data.
         self.interpreter.structure.delete()
@@ -3837,7 +3949,7 @@ class Frame_order(SystemTestCase):
         print("Maximum phi for X and Y: %s" % max_phi)
 
 
-    def test_simulate_iso_cone_free_rotor_z_axis(self):
+    def test_simulate_iso_cone_free_rotor_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the free rotor isotropic cone model along the z-axis."""
 
         # Init.
@@ -3854,7 +3966,10 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='iso cone, free rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_theta=axis_theta, axis_phi=0.0, cone_theta=cone_theta)
 
         # Create the PDB.
-        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        if type == 'sim':
+            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        elif type == 'dist':
+            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
 
         # Delete all structural data.
         self.interpreter.structure.delete()
@@ -3908,7 +4023,7 @@ class Frame_order(SystemTestCase):
                     self.assertAlmostEqual(pos[2], 0.0, 3)
 
 
-    def test_simulate_iso_cone_torsionless_z_axis(self):
+    def test_simulate_iso_cone_torsionless_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the torsionless isotropic cone model along the z-axis."""
 
         # Init.
@@ -3925,7 +4040,10 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='iso cone, torsionless', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_theta=axis_theta, axis_phi=0.0, cone_theta=cone_theta)
 
         # Create the PDB.
-        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        if type == 'sim':
+            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        elif type == 'dist':
+            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
 
         # Delete all structural data.
         self.interpreter.structure.delete()
@@ -3990,7 +4108,7 @@ class Frame_order(SystemTestCase):
         print("Maximum phi for X and Y: %s" % max_phi)
 
 
-    def test_simulate_pseudo_ellipse_xz_plane_tilt(self):
+    def test_simulate_pseudo_ellipse_xz_plane_tilt(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the pseudo-ellipse model along the z-axis."""
 
         # Init.
@@ -4011,7 +4129,10 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='pseudo-ellipse', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=eigen_beta, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=cone_theta_x, cone_theta_y=cone_theta_y, cone_sigma_max=cone_sigma_max)
 
         # Create the PDB.
-        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        if type == 'sim':
+            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        elif type == 'dist':
+            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
 
         # Delete all structural data.
         self.interpreter.structure.delete()
@@ -4076,7 +4197,7 @@ class Frame_order(SystemTestCase):
         print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
 
 
-    def test_simulate_pseudo_ellipse_z_axis(self):
+    def test_simulate_pseudo_ellipse_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the pseudo-ellipse model along the z-axis."""
 
         # Init.
@@ -4094,7 +4215,10 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='pseudo-ellipse', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=cone_theta_x, cone_theta_y=cone_theta_y, cone_sigma_max=cone_sigma_max)
 
         # Create the PDB.
-        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        if type == 'sim':
+            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        elif type == 'dist':
+            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
 
         # Delete all structural data.
         self.interpreter.structure.delete()
@@ -4159,7 +4283,7 @@ class Frame_order(SystemTestCase):
         print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
 
 
-    def test_simulate_pseudo_ellipse_free_rotor_z_axis(self):
+    def test_simulate_pseudo_ellipse_free_rotor_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the free rotor pseudo-ellipse model along the z-axis."""
 
         # Init.
@@ -4176,7 +4300,10 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='pseudo-ellipse, free rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=cone_theta_x, cone_theta_y=cone_theta_y)
 
         # Create the PDB.
-        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        if type == 'sim':
+            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        elif type == 'dist':
+            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
 
         # Delete all structural data.
         self.interpreter.structure.delete()
@@ -4230,7 +4357,7 @@ class Frame_order(SystemTestCase):
         print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
 
 
-    def test_simulate_pseudo_ellipse_torsionless_z_axis(self):
+    def test_simulate_pseudo_ellipse_torsionless_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the torsionless pseudo-ellipse model along the z-axis."""
 
         # Init.
@@ -4247,7 +4374,10 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='pseudo-ellipse, torsionless', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=cone_theta_x, cone_theta_y=cone_theta_y)
 
         # Create the PDB.
-        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        if type == 'sim':
+            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        elif type == 'dist':
+            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
 
         # Delete all structural data.
         self.interpreter.structure.delete()
@@ -4312,7 +4442,7 @@ class Frame_order(SystemTestCase):
         print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
 
 
-    def test_simulate_rotor_z_axis(self):
+    def test_simulate_rotor_z_axis(self, type='sim'):
         """Check the frame_order.simulate user function PDB file for the rotor model along the z-axis."""
 
         # Init.
@@ -4331,7 +4461,10 @@ class Frame_order(SystemTestCase):
         self.setup_model(pipe_name='PDB model', model='rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, axis_alpha=axis_alpha, cone_sigma_max=cone_sigma_max)
 
         # Create the PDB.
-        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        if type == 'sim':
+            self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+        elif type == 'dist':
+            self.interpreter.frame_order.distribute(file='simulation.pdb', dir=ds.tmpdir, total=sim_num)
 
         # Delete all structural data.
         self.interpreter.structure.delete()
