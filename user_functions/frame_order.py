@@ -38,7 +38,7 @@ from specific_analyses.frame_order.uf import sobol_setup, pdb_model, permute_axe
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
-from user_functions.wildcards import WILDCARD_RELAX_SAVE
+from user_functions.wildcards import WILDCARD_RELAX_SAVE, WILDCARD_STRUCT_PDB_ALL
 
 
 # The user function class.
@@ -59,6 +59,68 @@ uf.backend = count_sobol_points
 uf.menu_text = "&count_sobol_points"
 uf.gui_icon = "oxygen.categories.applications-education"
 uf.wizard_size = (800, 400)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
+
+
+# The frame_order.distribute user function.
+uf = uf_info.add_uf('frame_order.distribute')
+uf.title = "Structural distribution of the frame order motions."
+uf.title_short = "Frame order motional distribution."
+uf.add_keyarg(
+    name = "file",
+    default = "distribution.pdb.gz",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "distribution file",
+    desc = "The PDB file for storing the frame order motional distribution.  The compression is determined automatically by the file extensions '*.pdb', '*.pdb.gz', and '*.pdb.bz2'.",
+    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
+    wiz_filesel_style = FD_OPEN,
+    wiz_filesel_preview = False
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory where the files are to be located.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "total",
+    default = 1000,
+    min = 1,
+    max = 1000000,
+    py_type = "int",
+    desc_short = "total number of structures",
+    desc = "The total number of structures to include in the uniform distribution.",
+    wiz_element_type = "spin"
+)
+uf.add_keyarg(
+    name = "model",
+    default = 1,
+    min = 1,
+    py_type = "int",
+    desc_short = "original structural model",
+    desc = "Only one model from an analysed ensemble of structures can be used for the distribution, as the distribution PDB file consists of one model per state.",
+    wiz_element_type = "spin"
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which, if set to True, will overwrite the any pre-existing file."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("To visualise the frame order motions, this user function generates a distribution of structures randomly within the bounds of the uniform distribution of the frame order model.  The original structure is rotated randomly and only accepted for the distribution if it is within the bounds.  This is a more faithful representation of the dynamics than the pseudo-Brownian simulation user function.")
+uf.desc[-1].add_paragraph("Note that the RDC and PCS data does not contain information about all parts of the real distribution of structures.  Therefore the structures in this distribution only represent the components of the distribution present in the data, as modelled by the frame order models.")
+uf.desc[-1].add_paragraph("As the distribution consists of one model per state, if an ensemble of structures has been analysed, only one model from the ensemble can be used for the representation.")
+uf.backend = simulate
+uf.menu_text = "&distribute"
+uf.gui_icon = "oxygen.actions.document-save"
+uf.wizard_height_desc = 420
+uf.wizard_size = (900, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 
