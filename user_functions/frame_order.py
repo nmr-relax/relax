@@ -38,7 +38,7 @@ from specific_analyses.frame_order.uf import sobol_setup, pdb_model, permute_axe
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
-from user_functions.wildcards import WILDCARD_RELAX_SAVE, WILDCARD_STRUCT_PDB_ALL
+from user_functions.wildcards import WILDCARD_STRUCT_PDB_ALL
 
 
 # The user function class.
@@ -432,7 +432,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "simulation file",
     desc = "The PDB file for storing the frame order pseudo-Brownian dynamics simulation.  The compression is determined automatically by the file extensions '*.pdb', '*.pdb.gz', and '*.pdb.bz2'.",
-    wiz_filesel_wildcard = WILDCARD_RELAX_SAVE,
+    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
     wiz_filesel_style = FD_OPEN,
     wiz_filesel_preview = False
 )
