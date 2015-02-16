@@ -97,7 +97,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "max_rotations",
-    default = 1000000,
+    default = 100000,
     min = 1,
     max = 100000000,
     py_type = "int",
