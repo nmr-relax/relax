@@ -1742,34 +1742,6 @@ class Frame_order(SystemTestCase):
         self.assertEqual(cdp.sobol_points_used, 20)
 
 
-    def test_distribute_double_rotor_mode1_xz_plane_tilt(self):
-        """Check the frame_order.distribute user function PDB file for the double rotor model with a xz-plane tilt for the first rotation mode."""
-
-        # Call the equivalent frame_order.simulate user function system test to do everything.
-        self.test_simulate_double_rotor_mode1_xz_plane_tilt(type='dist')
-
-
-    def test_distribute_double_rotor_mode1_z_axis(self):
-        """Check the frame_order.distribute user function PDB file for the double rotor model along the z-axis for the first rotation mode."""
-
-        # Call the equivalent frame_order.simulate user function system test to do everything.
-        self.test_simulate_double_rotor_mode1_z_axis(type='dist')
-
-
-    def test_distribute_double_rotor_mode2_xz_plane_tilt(self):
-        """Check the frame_order.distribute user function PDB file for the double rotor model with a xz-plane tilt for the second rotation mode."""
-
-        # Call the equivalent frame_order.simulate user function system test to do everything.
-        self.test_simulate_double_rotor_mode2_xz_plane_tilt(type='dist')
-
-
-    def test_distribute_double_rotor_mode2_z_axis(self):
-        """Check the frame_order.distribute user function PDB file for the double rotor model along the z-axis for the second rotation mode."""
-
-        # Call the equivalent frame_order.simulate user function system test to do everything.
-        self.test_simulate_double_rotor_mode2_z_axis(type='dist')
-
-
     def test_distribute_free_rotor_z_axis(self):
         """Check the frame_order.distribute user function PDB file for the free rotor model along the z-axis."""
 
