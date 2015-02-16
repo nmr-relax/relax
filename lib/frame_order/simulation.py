@@ -26,9 +26,11 @@
 from math import cos, pi, sin, sqrt
 from numpy import dot, eye, float64, swapaxes, transpose, zeros
 import sys
+from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError
+from lib.warnings import RelaxWarning
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR
 from lib.geometry.angles import wrap_angles
 from lib.geometry.rotations import axis_angle_to_R, R_random_hypersphere, R_to_tilt_torsion, tilt_torsion_to_R
@@ -295,7 +297,11 @@ def uniform_distribution(file=None, model=None, structure=None, parameters={}, e
         num += 1
 
         # End.
-        if current_state == total or num >= max_rotations:
+        if current_state == total:
+            break
+        if num >= max_rotations:
+            sys.stdout.write('\n')
+            warn(RelaxWarning("Maximum number of rotations encountered - the distribution only contains %i states." % current_state))
             break
 
         # Loop over each state, or motional mode.
