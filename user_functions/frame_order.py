@@ -96,6 +96,16 @@ uf.add_keyarg(
     wiz_element_type = "spin"
 )
 uf.add_keyarg(
+    name = "max_rotations",
+    default = 1000000,
+    min = 1,
+    max = 100000000,
+    py_type = "int",
+    desc_short = "maximum number of rotations",
+    desc = "The maximum number of rotations to generate the distribution from.  This prevents the user function from executing for an infinite amount of time.  This occurs whenever a frame order amplitude parameter (cone opening angle or torsion angle) is zero so that the subset of all rotations within the motional distribution is also zero.",
+    wiz_element_type = "spin"
+)
+uf.add_keyarg(
     name = "model",
     default = 1,
     min = 1,

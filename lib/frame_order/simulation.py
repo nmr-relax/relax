@@ -211,7 +211,7 @@ def brownian(file=None, model=None, structure=None, parameters={}, eigenframe=No
     structure.write_pdb(file=file)
 
 
-def uniform_distribution(file=None, model=None, structure=None, parameters={}, eigenframe=None, pivot=None, atom_id=None, total=1000):
+def uniform_distribution(file=None, model=None, structure=None, parameters={}, eigenframe=None, pivot=None, atom_id=None, total=1000, max_rotations=100000):
     """Uniform distribution of the frame order motions.
 
     @keyword file:          The opened and writable file object to place the PDB models of the distribution into.
@@ -230,6 +230,8 @@ def uniform_distribution(file=None, model=None, structure=None, parameters={}, e
     @type atom_id:          None or str
     @keyword total:         The total number of states in the distribution.
     @type total:            int
+    @keyword max_rotations: The maximum number of rotations to generate the distribution from.  This prevents an execution for an infinite amount of time when a frame order amplitude parameter is close to zero so that the subset of all rotations within the distribution is close to zero.
+    @type max_rotations:    int
     """
 
     # Check the structural object.
@@ -287,9 +289,13 @@ def uniform_distribution(file=None, model=None, structure=None, parameters={}, e
 
     # Distribution.
     current_state = 1
+    num = -1
     while True:
+        # The total number of rotations.
+        num += 1
+
         # End.
-        if current_state == total:
+        if current_state == total or num >= max_rotations:
             break
 
         # Loop over each state, or motional mode.

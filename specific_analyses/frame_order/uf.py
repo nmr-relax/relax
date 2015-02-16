@@ -47,19 +47,21 @@ from specific_analyses.frame_order.optimisation import count_sobol_points
 from specific_analyses.frame_order.parameters import assemble_param_vector, update_model
 
 
-def distribute(file="distribution.pdb.bz2", dir=None, total=1000, model=1, force=True):
+def distribute(file="distribution.pdb.bz2", dir=None, total=1000, max_rotations=100000, model=1, force=True):
     """Create a uniform distribution of structures for the frame order motions.
 
-    @keyword file:      The PDB file for storing the frame order motional distribution.  The compression is determined automatically by the file extensions '*.pdb', '*.pdb.gz', and '*.pdb.bz2'.
-    @type file:         str
-    @keyword dir:       The directory name to place the file into.
-    @type dir:          str or None
-    @keyword total:     The total number of states/model/structures in the distribution.
-    @type total:        int
-    @keyword model:     Only one model from an analysed ensemble of structures can be used for the distribution, as the corresponding PDB file consists of one model per state.
-    @type model:        int
-    @keyword force:     A flag which, if set to True, will overwrite the any pre-existing file.
-    @type force:        bool
+    @keyword file:          The PDB file for storing the frame order motional distribution.  The compression is determined automatically by the file extensions '*.pdb', '*.pdb.gz', and '*.pdb.bz2'.
+    @type file:             str
+    @keyword dir:           The directory name to place the file into.
+    @type dir:              str or None
+    @keyword total:         The total number of states/model/structures in the distribution.
+    @type total:            int
+    @keyword max_rotations: The maximum number of rotations to generate the distribution from.  This prevents an execution for an infinite amount of time when a frame order amplitude parameter is close to zero so that the subset of all rotations within the distribution is close to zero.
+    @type max_rotations:    int
+    @keyword model:         Only one model from an analysed ensemble of structures can be used for the distribution, as the corresponding PDB file consists of one model per state.
+    @type model:            int
+    @keyword force:         A flag which, if set to True, will overwrite the any pre-existing file.
+    @type force:            bool
     """
 
     # Printout.
@@ -108,7 +110,7 @@ def distribute(file="distribution.pdb.bz2", dir=None, total=1000, model=1, force
     frame = generate_axis_system()
 
     # Create the distribution.
-    uniform_distribution(file=file, model=cdp.model, structure=structure, parameters=params, eigenframe=frame, pivot=pivot, atom_id=domain_moving(), total=total)
+    uniform_distribution(file=file, model=cdp.model, structure=structure, parameters=params, eigenframe=frame, pivot=pivot, atom_id=domain_moving(), total=total, max_rotations=max_rotations)
 
     # Close the file.
     file.close()
