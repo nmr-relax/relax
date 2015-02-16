@@ -385,7 +385,7 @@ class Frame_order_analysis:
     # Debugging and test suite variables.
     _final_state = True
 
-    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, pre_run_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000, dist_total=1000, dist_max_rotations=1000000, results_compress_type=0, rigid_grid_split=False, store_intermediate=True, nested_params_ave_dom_pos=True):
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, pre_run_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000, dist_total=1000, dist_max_rotations=1000000, results_compress_type=1, rigid_grid_split=False, store_intermediate=True, nested_params_ave_dom_pos=True):
         """Perform the full frame order analysis.
 
         @param data_pipe_full:              The name of the data pipe containing all of the RDC and PCS data.
