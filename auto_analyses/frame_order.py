@@ -385,7 +385,7 @@ class Frame_order_analysis:
     # Debugging and test suite variables.
     _final_state = True
 
-    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, pre_run_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000, distribution_total=1000, results_compress_type=0, rigid_grid_split=False, store_intermediate=True, nested_params_ave_dom_pos=True):
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, pre_run_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000, dist_total=1000, dist_max_rotations=1000000, results_compress_type=0, rigid_grid_split=False, store_intermediate=True, nested_params_ave_dom_pos=True):
         """Perform the full frame order analysis.
 
         @param data_pipe_full:              The name of the data pipe containing all of the RDC and PCS data.
@@ -416,8 +416,10 @@ class Frame_order_analysis:
         @type brownian_snapshot:            int
         @keyword brownian_total:            The total argument for the pseudo-Brownian dynamics simulation frame_order.simulate user function.
         @type brownian_total:               int
-        @keyword distribution_total:        The total argument for the uniform distribution frame_order.distribute user function.
-        @type distribution_total:           int
+        @keyword dist_total:                The total argument for the uniform distribution frame_order.distribute user function.
+        @type dist_total:                   int
+        @keyword dist_max_rotations:        The max_rotations argument for the uniform distribution frame_order.distribute user function.
+        @type dist_max_rotations:           int
         @keyword results_compress_type:     The type of compression to use when creating the results files.  See the results.write user function for details.
         @type results_compress_type:        int
         @keyword rigid_grid_split:          A flag which if True will cause the grid search for the rigid model to be split so that the rotation is optimised first followed by the translation.  When combined with grid zooming, this can save optimisation time.  However it may result in the global minimum being missed.
@@ -448,7 +450,8 @@ class Frame_order_analysis:
             self.brownian_step_size = brownian_step_size
             self.brownian_snapshot = brownian_snapshot
             self.brownian_total = brownian_total
-            self.distribution_total = distribution_total
+            self.dist_total = dist_total
+            self.dist_max_rotations = dist_max_rotations
             self.results_compress_type = results_compress_type
             self.rigid_grid_split = rigid_grid_split
             self.store_intermediate = store_intermediate
@@ -1420,7 +1423,7 @@ class Frame_order_analysis:
 
         # The uniform distribution of structures.
         if simulation:
-            self.interpreter.frame_order.distribute(dir=dir, total=self.distribution_total, force=True)
+            self.interpreter.frame_order.distribute(dir=dir, total=self.dist_total, max_rotations=self.dist_max_rotations, force=True)
 
         # The pseudo-Brownian dynamics simulation.
         if simulation:
