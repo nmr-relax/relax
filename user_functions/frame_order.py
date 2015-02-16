@@ -34,7 +34,7 @@ else:
 from graphics import WIZARD_IMAGE_PATH
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from specific_analyses.frame_order.optimisation import count_sobol_points
-from specific_analyses.frame_order.uf import sobol_setup, pdb_model, permute_axes, pivot, quad_int, ref_domain, select_model, simulate
+from specific_analyses.frame_order.uf import distribute, sobol_setup, pdb_model, permute_axes, pivot, quad_int, ref_domain, select_model, simulate
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -116,7 +116,7 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("To visualise the frame order motions, this user function generates a distribution of structures randomly within the bounds of the uniform distribution of the frame order model.  The original structure is rotated randomly and only accepted for the distribution if it is within the bounds.  This is a more faithful representation of the dynamics than the pseudo-Brownian simulation user function.")
 uf.desc[-1].add_paragraph("Note that the RDC and PCS data does not contain information about all parts of the real distribution of structures.  Therefore the structures in this distribution only represent the components of the distribution present in the data, as modelled by the frame order models.")
 uf.desc[-1].add_paragraph("As the distribution consists of one model per state, if an ensemble of structures has been analysed, only one model from the ensemble can be used for the representation.")
-uf.backend = simulate
+uf.backend = distribute
 uf.menu_text = "&distribute"
 uf.gui_icon = "oxygen.actions.document-save"
 uf.wizard_height_desc = 420
