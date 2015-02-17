@@ -1164,6 +1164,50 @@ class Internal:
             mol._sort()
 
 
+    def add_coordinates(self, coord=None, mol_names=None, res_names=None, res_nums=None, atom_names=None, elements=None, set_mol_name=None, set_model_num=None):
+        """Add a set of coordinates to the structural object.
+
+        @keyword coord:         The array of atomic coordinates (first dimension is the atoms and the second are the coordinates).
+        @type coord:            numpy rank-2 float64 array
+        @keyword mol_names:     The list of molecule names corresponding to the first dimension of the coordinate array.
+        @type mol_names:        list of str
+        @keyword res_names:     The list of residue names corresponding to the first dimension of the coordinate array.
+        @type res_names:        list of str
+        @keyword res_nums:      The list of residue numbers corresponding to the first dimension of the coordinate array.
+        @type res_nums:         list of str
+        @keyword atom_names:    The list of atom names corresponding to the first dimension of the coordinate array.
+        @type atom_names:       list of str
+        @keyword elements:      The list of elements corresponding to the first dimension of the coordinate array.
+        @type elements:         list of str
+        @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None, then all molecule names must be identical and the new molecule will have the same name.
+        @type set_mol_name:     None or str
+        @keyword set_model_num: Set the model number for the coordinates.
+        @type set_model_num:    None or int
+        """
+
+        # The new molecule name.
+        if not set_mol_name:
+            set_mol_name = mol_names[0]
+            for name in mol_names:
+                if set_mol_name != name:
+                    raise RelaxError("No unique molecule name can be found in the list %s for storing the new molecule structure.")
+
+        # No model set, so delete all current data.
+        if set_mol_name == None and set_model_num == None:
+            print("Deleting all structural data so that only the new molecule will be present.")
+            self.delete(verbosity=0)
+
+        # Generate a molecule container for the new data.
+        mol = MolContainer()
+
+        # Add the data.
+        for i in range(len(coord)):
+            mol.atom_add(atom_name=atom_names[i], res_name=res_names[i], res_num=res_nums[i], pos=coord[i], element=elements[i])
+
+        # Create the structural data data structures.
+        self.pack_structs([[mol]], orig_model_num=[None], set_model_num=[set_model_num], orig_mol_num=[None], set_mol_name=[set_mol_name])
+
+
     def add_model(self, model=None, coords_from=None):
         """Add a new model to the store.
 
