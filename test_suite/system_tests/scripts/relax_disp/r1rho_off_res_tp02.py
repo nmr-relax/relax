@@ -21,7 +21,7 @@ if not hasattr(ds, 'models'):
 GRID_INC = 4
 
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-MC_NUM = 1
+MC_NUM = 3
 
 
 # Set up the data pipe.

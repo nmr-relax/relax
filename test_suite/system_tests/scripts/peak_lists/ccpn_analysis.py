@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -116,7 +116,7 @@ minimise.grid_search(inc=11)
 minimise.execute('simplex', scaling=False, constraints=False)
 
 # Monte Carlo simulations.
-monte_carlo.setup(number=2)
+monte_carlo.setup(number=3)
 monte_carlo.create_data()
 monte_carlo.initial_values()
 minimise.execute('simplex', scaling=False, constraints=False)
