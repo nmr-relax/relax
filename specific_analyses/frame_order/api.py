@@ -794,27 +794,6 @@ class Frame_order(API_base, API_common):
         # Get the minimisation statistic object names.
         min_names = self.data_names(set='min')
 
-
-        # Test if Monte Carlo parameter values have already been set.
-        #############################################################
-
-        # Loop over all the parameter names.
-        for object_name in param_names:
-            # Not a parameter of the model.
-            if object_name not in model_params:
-                continue
-
-            # Name for the simulation object.
-            sim_object_name = object_name + '_sim'
-
-            # Test if the simulation object already exists.
-            if hasattr(cdp, sim_object_name):
-                raise RelaxError("Monte Carlo parameter values have already been set.")
-
-
-        # Set the Monte Carlo parameter values.
-        #######################################
-
         # Loop over all the data names.
         for object_name in param_names:
             # Not a parameter of the model.
