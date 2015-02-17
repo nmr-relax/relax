@@ -4025,6 +4025,19 @@ class Structure(SystemTestCase):
         cdp.structure.validate_models()
 
 
+    def test_read_merge_simultaneous(self):
+        """Test the simultaneous merging of two molecules into one."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Read the PDB files.
+        self.interpreter.structure.read_pdb(file='2BE6_core_I_IV.pdb', dir=path, read_mol=[1, 3], set_mol_name='CaM A')
+
+        # Check that everything is ok.
+        cdp.structure.validate_models()
+
+
     def test_read_not_pdb(self):
         """Test the reading of a file by structure.read_pdb that is not a PDB."""
 

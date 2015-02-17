@@ -1002,7 +1002,7 @@ uf.desc[-1].add_paragraph("In a PDB file, the models are specified by the MODEL 
 uf.desc[-1].add_paragraph("Setting the molecule name allows the molecule within the PDB (within one model) to have a custom name.  If not set, then the molecules will be named after the file name, with the molecule number appended if more than one exists.")
 uf.desc[-1].add_paragraph("Note that relax will complain if it cannot work out what to do.")
 uf.desc[-1].add_paragraph("This is able to handle uncompressed, bzip2 compressed files, or gzip compressed files automatically.  The full file name including extension can be supplied, however, if the file cannot be found, this function will search for the file name with '.bz2' appended followed by the file name with '.gz' appended.")
-uf.desc[-1].add_paragraph("If a PDB file contains alternative atomic locations, then the alternate location indicator must be specified to allow one of the multiple coordinate sets to be select.")
+uf.desc[-1].add_paragraph("If a PDB file contains alternative atomic locations, then the alternate location indicator must be specified to allow one of the multiple coordinate sets to be selected.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To load all structures from the PDB file 'test.pdb' in the directory '~/pdb', including all models and all molecules, type one of:")
