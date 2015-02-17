@@ -2031,10 +2031,14 @@ class Internal:
             read_mol = [read_mol]
         if set_mol_name and not isinstance(set_mol_name, list):
             set_mol_name = [set_mol_name]
+            if read_mol:
+                set_mol_name *= len(read_mol)
         if read_model and not isinstance(read_model, list):
             read_model = [read_model]
         if set_model_num and not isinstance(set_model_num, list):
             set_model_num = [set_model_num]
+            if read_model:
+                set_model_num *= len(read_model)
 
         # Open the PDB file.
         pdb_file = open_read_file(file_path, verbosity=verbosity)
