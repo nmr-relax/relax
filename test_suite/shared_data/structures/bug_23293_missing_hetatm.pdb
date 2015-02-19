@@ -2,8 +2,8 @@ HET     CA  A 501       1
 HET     CA  A 502       1                                                       
 HET     CA  B 503       1                                                       
 HET     CA  B 504       1                                                       
-HET     CA  B 505       1                                                       
-HET     CA  B 506       1                                                       
+HET     CA  C 505       1                                                       
+HET     CA  C 506       1                                                       
 HETNAM      CA UNKNOWN                                                          
 FORMUL   1   CA    CA1                                                          
 MODEL        1                                                                  
