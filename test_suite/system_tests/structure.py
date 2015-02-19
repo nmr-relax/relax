@@ -842,6 +842,58 @@ class Structure(SystemTestCase):
             self.assertEqual(contents[i], lines[i])
 
 
+    def test_bug_23293_missing_hetatm(self):
+        """Catch U{bug #23293<https://gna.org/bugs/?23293>}, the PDB HETATM loading error whereby the last HETATM record is sometimes not read from the PDB file."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the file.
+        self.interpreter.structure.read_pdb('bug_23293_missing_hetatm.pdb', dir=path)
+
+        # Create a PDB file.
+        file = DummyFileObject()
+        self.interpreter.structure.write_pdb(file=file, force=True)
+
+        # The file contents, without remarks, as they should be.
+        contents = [
+            "HET     CA  A 501       1                                                       \n",
+            "HET     CA  A 502       1                                                       \n",
+            "HET     CA  B 503       1                                                       \n",
+            "HET     CA  B 504       1                                                       \n",
+            "HET     CA  B 505       1                                                       \n",
+            "HET     CA  B 506       1                                                       \n",
+            "HETNAM      CA UNKNOWN                                                          \n",
+            "FORMUL   1   CA    CA1                                                          \n",
+            "MODEL        1                                                                  \n",
+            "ATOM      1  N   LEU A   1       1.000  -2.000  20.000  1.00  0.00           N  \n",
+            "ATOM      2  H   LEU A   1       2.000  -2.000  20.000  1.00  0.00           H  \n",
+            "TER       3      LEU A   1                                                      \n",
+            "HETATM    4   CA  CA A 501      17.000  12.000  14.000  1.00  0.00          CA  \n",
+            "HETATM    5   CA  CA A 502       6.000   9.000  14.000  1.00  0.00          CA  \n",
+            "ATOM      6  N   LEU B   1       9.000  -9.000  27.000  1.00  0.00           N  \n",
+            "ATOM      7  H   LEU B   1       8.000  -8.000  27.000  1.00  0.00           H  \n",
+            "TER       8      LEU B   1                                                      \n",
+            "HETATM    9   CA  CA B 503      17.000  12.000  14.000  1.00  0.00          CA  \n",
+            "HETATM   10   CA  CA B 504       6.000   9.000  14.000  1.00  0.00          CA  \n",
+            "ATOM     11  N   LEU C   1      12.000 -12.000   7.000  1.00  0.00           N  \n",
+            "ATOM     12  H   LEU C   1      11.000 -12.000   7.000  1.00  0.00           H  \n",
+            "TER      13      LEU C   1                                                      \n",
+            "HETATM   14   CA  CA C 505      31.000 -10.000  -0.000  1.00  0.00          CA  \n",
+            "HETATM   15   CA  CA C 506      31.000 -19.000   6.000  1.00  0.00          CA  \n",
+            "ENDMDL                                                                          \n",
+            "MASTER        0    0    6    0    0    0    0    0   12    3    0    0          \n",
+            "END                                                                             \n"
+        ]
+
+        # Check the created PDB file.
+        lines = file.readlines()
+        self.strip_remarks(lines)
+        self.assertEqual(len(contents), len(lines))
+        for i in range(len(lines)):
+            self.assertEqual(contents[i], lines[i])
+
+
     def test_bug_sr_2998_broken_conect_records(self):
         """Test the bug reported as the U{support request #2998<https://gna.org/support/?2998>}, the broken CONECT records."""
 
