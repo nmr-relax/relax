@@ -3939,6 +3939,9 @@ class Structure(SystemTestCase):
         # Load the file.
         self.interpreter.structure.read_pdb('multi_model_and_mol_test.pdb', dir=path)
 
+        # Check the model consistency.
+        cdp.structure.validate_models()
+
         # Create a PDB file.
         file = DummyFileObject()
         self.interpreter.structure.write_pdb(file=file, force=True)
