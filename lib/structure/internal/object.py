@@ -736,9 +736,6 @@ class Internal:
                 # Reset the flag.
                 end = False
 
-                # Skip the rest of this loop.
-                continue
-
             # The molecule number.
             chain_id = records[i][21]
             if chain_id == ' ':
@@ -3040,7 +3037,6 @@ class Internal:
 
             # Loop over the molecules.
             index = 0
-            atom_serial = 0
             for mol in model.mol_loop():
                 # Printout.
                 if not model_records:
@@ -3053,9 +3049,6 @@ class Internal:
                     if mol.pdb_record[i] in [None, 'ATOM']:
                         atom_record = True
 
-                        # The atom number.
-                        atom_serial += 1
-
                         # Handle the funky atom name alignment.  From the PDB format documents:
                         # "Alignment of one-letter atom name such as C starts at column 14, while two-letter atom name such as FE starts at column 13."
                         if len(mol.atom_name[i]) == 1:
@@ -3064,12 +3057,12 @@ class Internal:
                             atom_name = "%s" % mol.atom_name[i]
 
                         # Write out.
-                        pdb_write.atom(file, serial=atom_serial, name=atom_name, res_name=mol.res_name[i], chain_id=CHAIN_ID_LIST[index], res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0, element=mol.element[i])
+                        pdb_write.atom(file, serial=ser_num, name=atom_name, res_name=mol.res_name[i], chain_id=CHAIN_ID_LIST[index], res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0, element=mol.element[i])
                         num_atom += 1
                         ser_num += 1
 
                         # Info for the TER record.
-                        ter_num = atom_serial + 1
+                        ter_num = ser_num + 1
                         ter_name = mol.res_name[i]
                         ter_chain_id = CHAIN_ID_LIST[index]
                         ter_res_num = mol.res_num[i]
@@ -3085,14 +3078,9 @@ class Internal:
                 for i in range(len(mol.atom_name)):
                     # Write the HETATM record.
                     if mol.pdb_record[i] == 'HETATM':
-                        # The atom number.
-                        atom_serial += 1
-
                         # Increment the atom number if a TER record was created.
-                        if atom_record and atom_serial == ter_num:
+                        if atom_record and ser_num == ter_num:
                             count_shift = True
-                        if atom_record and count_shift:
-                            atom_serial += 1
 
                         # Write out.
                         pdb_write.hetatm(file, serial=ser_num, name=self._translate(mol.atom_name[i]), res_name=mol.res_name[i], chain_id=CHAIN_ID_LIST[index], res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0.0, element=mol.element[i])
