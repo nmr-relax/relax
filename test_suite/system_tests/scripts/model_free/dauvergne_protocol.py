@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -165,7 +165,7 @@ GRID_INC = 3
 MIN_ALGOR = 'newton'
 
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-MC_NUM = 2
+MC_NUM = 3
 
 # Automatic looping over all rounds until convergence (must be a boolean value of True or False).
 CONV_LOOP = True

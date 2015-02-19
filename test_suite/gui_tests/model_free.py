@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -132,7 +132,7 @@ class Mf(GuiTestCase):
         analysis.data.diff_tensor_grid_inc = {'sphere': 5, 'prolate': 5, 'oblate': 5, 'ellipsoid': 3}
 
         # Set the number of Monte Carlo simulations.
-        analysis.mc_sim_num.SetValue(2)
+        analysis.mc_sim_num.SetValue(3)
 
         # Set the maximum number of iterations (changing the allowed values).
         analysis.max_iter.control.SetRange(0, 100)
@@ -344,7 +344,7 @@ class Mf(GuiTestCase):
         analysis.data.diff_tensor_grid_inc = {'sphere': 5, 'prolate': 5, 'oblate': 5, 'ellipsoid': 3}
 
         # Set the number of Monte Carlo simulations.
-        analysis.mc_sim_num.SetValue(2)
+        analysis.mc_sim_num.SetValue(3)
 
         # Set the maximum number of iterations (changing the allowed values).
         analysis.max_iter.control.SetRange(0, 100)
@@ -360,7 +360,7 @@ class Mf(GuiTestCase):
         self.assertEqual(analysis.data.local_tm_models, ['tm0', 'tm1'])
         self.assertEqual(analysis.data.mf_models, ['m1', 'm2'])
         self.assertEqual(analysis.data.grid_inc, 3)
-        self.assertEqual(analysis.data.mc_sim_num, 2)
+        self.assertEqual(analysis.data.mc_sim_num, 3)
         self.assertEqual(analysis.data.max_iter, 1)
         self.assertEqual(analysis.data.diff_tensor_grid_inc['sphere'], 5)
         self.assertEqual(analysis.data.diff_tensor_grid_inc['prolate'], 5)

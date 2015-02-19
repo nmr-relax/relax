@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -362,18 +362,20 @@ def monte_carlo_select_all_sims(number=None, all_select_sim=None):
 
 
 def monte_carlo_setup(number=None, all_select_sim=None):
-    """Function for setting up Monte Carlo simulations.
+    """Store the Monte Carlo simulation number.
 
     @keyword number:            The number of Monte Carlo simulations to set up.
     @type number:               int
-    @keyword all_select_sim:    The selection status of the Monte Carlo simulations.  The first
-                                dimension of this matrix corresponds to the simulation and the
-                                second corresponds to the instance.
+    @keyword all_select_sim:    The selection status of the Monte Carlo simulations.  The first dimension of this matrix corresponds to the simulation and the second corresponds to the instance.
     @type all_select_sim:       list of lists of bool
     """
 
     # Test if the current data pipe exists.
     check_pipe()
+
+    # Check the value.
+    if number < 3:
+        raise RelaxError("A minimum of 3 Monte Carlo simulations is required.")
 
     # Create a number of MC sim data structures.
     cdp.sim_number = number

@@ -2970,6 +2970,12 @@ class Internal:
             # Loop over and unpack the helix data.
             index = 1
             for helix_id, mol_init_index, init_res_name, init_seq_num, mol_end_index, end_res_name, end_seq_num, helix_class, length in self.helices:
+                # The chain IDs.
+                if mol_init_index == None:
+                    mol_init_index = 0
+                if mol_end_index == None:
+                    mol_end_index = 0
+
                 pdb_write.helix(file, ser_num=index, helix_id=helix_id, init_chain_id=CHAIN_ID_LIST[mol_init_index], init_res_name=init_res_name, init_seq_num=init_seq_num, end_chain_id=CHAIN_ID_LIST[mol_end_index], end_res_name=end_res_name, end_seq_num=end_seq_num, helix_class=helix_class, length=length)
                 index += 1
 
@@ -2984,6 +2990,10 @@ class Internal:
             index = 1
             for strand, sheet_id, num_strands, init_res_name, mol_init_index, init_seq_num, init_icode, end_res_name, mol_end_index, end_seq_num, end_icode, sense, cur_atom, cur_res_name, mol_cur_index, cur_res_seq, cur_icode, prev_atom, prev_res_name, mol_prev_index, prev_res_seq, prev_icode in self.sheets:
                 # Translate molecule indices to chain IDs.
+                if mol_init_index == None:
+                    mol_init_index = 0
+                if mol_end_index == None:
+                    mol_end_index = 0
                 init_chain_id = CHAIN_ID_LIST[mol_init_index]
                 end_chain_id = CHAIN_ID_LIST[mol_end_index]
                 cur_chain_id = None
