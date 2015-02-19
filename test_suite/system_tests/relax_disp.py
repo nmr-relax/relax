@@ -1344,7 +1344,7 @@ class Relax_disp(SystemTestCase):
         pre_run_dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21715_clustered_indexerror'+sep+'non_clustered'
         relax_disp.Relax_disp.opt_func_tol = 1e-5
         relax_disp.Relax_disp.opt_max_iterations = 1000
-        relax_disp.Relax_disp(pipe_name='origin - relax_disp (Sun Feb 23 19:36:51 2014)', pipe_bundle='relax_disp (Sun Feb 23 19:36:51 2014)', results_dir=self.tmpdir, models=['R2eff', 'No Rex'], grid_inc=11, mc_sim_num=2, modsel='AIC', pre_run_dir=pre_run_dir, insignificance=1.0, numeric_only=True, mc_sim_all_models=False, eliminate=True)
+        relax_disp.Relax_disp(pipe_name='origin - relax_disp (Sun Feb 23 19:36:51 2014)', pipe_bundle='relax_disp (Sun Feb 23 19:36:51 2014)', results_dir=self.tmpdir, models=['R2eff', 'No Rex'], grid_inc=11, mc_sim_num=3, modsel='AIC', pre_run_dir=pre_run_dir, insignificance=1.0, numeric_only=True, mc_sim_all_models=False, eliminate=True)
 
 
     def test_bug_22146_unpacking_r2a_r2b_cluster_B14(self):
@@ -5057,7 +5057,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=1000)
 
         # Monte Carlo simulations.
-        self.interpreter.monte_carlo.setup(number=2)
+        self.interpreter.monte_carlo.setup(number=3)
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
         self.interpreter.minimise.execute(min_algor='simplex', max_iter=10)
@@ -5129,7 +5129,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=1000)
 
         # Monte Carlo simulations.
-        self.interpreter.monte_carlo.setup(number=2)
+        self.interpreter.monte_carlo.setup(number=3)
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
         self.interpreter.minimise.execute(min_algor='simplex', max_iter=10)
@@ -5199,7 +5199,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=1000)
 
         # Monte Carlo simulations.
-        self.interpreter.monte_carlo.setup(number=2)
+        self.interpreter.monte_carlo.setup(number=3)
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
         self.interpreter.minimise.execute(min_algor='simplex', max_iter=10)
@@ -5269,7 +5269,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=1000)
 
         # Monte Carlo simulations.
-        self.interpreter.monte_carlo.setup(number=2)
+        self.interpreter.monte_carlo.setup(number=3)
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
         self.interpreter.minimise.execute(min_algor='simplex', max_iter=10)
@@ -5341,7 +5341,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=100)
 
         # Monte Carlo simulations.
-        self.interpreter.monte_carlo.setup(number=2)
+        self.interpreter.monte_carlo.setup(number=3)
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
         self.interpreter.minimise.execute(min_algor='simplex', max_iter=10)
@@ -5411,7 +5411,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=1000)
 
         # Monte Carlo simulations.
-        self.interpreter.monte_carlo.setup(number=2)
+        self.interpreter.monte_carlo.setup(number=3)
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
         self.interpreter.minimise.execute(min_algor='simplex', max_iter=10)
@@ -5508,7 +5508,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.minimise.execute(min_algor='simplex', func_tol=1e-05, max_iter=10)
 
         # Monte Carlo simulations.
-        self.interpreter.monte_carlo.setup(number=2)
+        self.interpreter.monte_carlo.setup(number=3)
         self.interpreter.monte_carlo.create_data(method='back_calc')
         self.interpreter.monte_carlo.initial_values()
         self.interpreter.minimise.execute(min_algor='simplex', max_iter=10)
