@@ -3930,6 +3930,55 @@ class Structure(SystemTestCase):
         self.assertEqual(cdp.structure.sheets[1], sheets[1])
 
 
+    def test_multi_model_and_multi_molecule(self):
+        """Test the loading and writing of a multi-model and multi-molecule PDB file."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the file.
+        self.interpreter.structure.read_pdb('multi_model_and_mol_test.pdb', dir=path)
+
+        # Create a PDB file.
+        file = DummyFileObject()
+        self.interpreter.structure.write_pdb(file=file, force=True)
+
+        # The file contents, without remarks, as they should be.
+        contents = [
+            "MODEL        1                                                                  \n",
+            "ATOM      1  N   LEU A   1       1.000  -2.000  20.000  1.00  0.00           N  \n",
+            "ATOM      2  H   LEU A   1       2.000  -2.000  20.000  1.00  0.00           H  \n",
+            "TER       3      LEU A   1                                                      \n",
+            "ATOM      4  N   LEU B   1       9.000  -9.000  27.000  1.00  0.00           N  \n",
+            "ATOM      5  H   LEU B   1       8.000  -8.000  27.000  1.00  0.00           H  \n",
+            "TER       6      LEU B   1                                                      \n",
+            "ATOM      7  N   LEU C   1      12.000 -12.000   7.000  1.00  0.00           N  \n",
+            "ATOM      8  H   LEU C   1      11.000 -12.000   7.000  1.00  0.00           H  \n",
+            "TER       9      LEU C   1                                                      \n",
+            "ENDMDL                                                                          \n",
+            "MODEL        2                                                                  \n",
+            "ATOM      1  N   LEU A   1       1.000  -2.000  20.000  1.00  0.00           N  \n",
+            "ATOM      2  H   LEU A   1       2.000  -2.000  20.000  1.00  0.00           H  \n",
+            "TER       3      LEU A   1                                                      \n",
+            "ATOM      4  N   LEU B   1       9.000  -9.000  27.000  1.00  0.00           N  \n",
+            "ATOM      5  H   LEU B   1       8.000  -8.000  27.000  1.00  0.00           H  \n",
+            "TER       6      LEU B   1                                                      \n",
+            "ATOM      7  N   LEU C   1      12.000 -12.000   7.000  1.00  0.00           N  \n",
+            "ATOM      8  H   LEU C   1      11.000 -12.000   7.000  1.00  0.00           H  \n",
+            "TER       9      LEU C   1                                                      \n",
+            "ENDMDL                                                                          \n",
+            "MASTER        0    0    0    0    0    0    0    0    6    3    0    0          \n",
+            "END                                                                             \n"
+        ]
+
+        # Check the created PDB file.
+        lines = file.readlines()
+        self.strip_remarks(lines)
+        self.assertEqual(len(contents), len(lines))
+        for i in range(len(lines)):
+            self.assertEqual(contents[i], lines[i])
+
+
     def test_pdb_combined_secondary_structure(self):
         """Test the handling of secondary structure metadata when combining multiple PDB structures."""
 
