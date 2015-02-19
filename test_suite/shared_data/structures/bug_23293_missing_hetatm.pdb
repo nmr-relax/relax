@@ -1,0 +1,27 @@
+HET     CA  A 501       1                                                       
+HET     CA  A 502       1                                                       
+HET     CA  B 503       1                                                       
+HET     CA  B 504       1                                                       
+HET     CA  B 505       1                                                       
+HET     CA  B 506       1                                                       
+HETNAM      CA UNKNOWN                                                          
+FORMUL   1   CA    CA1                                                          
+MODEL        1                                                                  
+ATOM      1  N   LEU A   1       1.000  -2.000  20.000  1.00  0.00           N  
+ATOM      2  H   LEU A   1       2.000  -2.000  20.000  1.00  0.00           H  
+TER       3      LEU A   1                                                      
+HETATM    4   CA  CA A 501      17.000  12.000  14.000  1.00  0.00          CA  
+HETATM    5   CA  CA A 502       6.000   9.000  14.000  1.00  0.00          CA  
+ATOM      6  N   LEU B   1       9.000  -9.000  27.000  1.00  0.00           N  
+ATOM      7  H   LEU B   1       8.000  -8.000  27.000  1.00  0.00           H  
+TER       8      LEU B   1                                                      
+HETATM    9   CA  CA B 503      17.000  12.000  14.000  1.00  0.00          CA  
+HETATM   10   CA  CA B 504       6.000   9.000  14.000  1.00  0.00          CA  
+ATOM     11  N   LEU C   1      12.000 -12.000   7.000  1.00  0.00           N  
+ATOM     12  H   LEU C   1      11.000 -12.000   7.000  1.00  0.00           H  
+TER      13      LEU C   1                                                      
+HETATM   14   CA  CA C 505      31.000 -10.000  -0.000  1.00  0.00          CA  
+HETATM   15   CA  CA C 506      31.000 -19.000   6.000  1.00  0.00          CA  
+ENDMDL                                                                          
+MASTER        0    0    6    0    0    0    0    0   12    3    0    0          
+END                                                                             
