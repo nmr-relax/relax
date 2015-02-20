@@ -2480,10 +2480,23 @@ class Internal:
 
                 # Printout.
                 if verbosity:
+                    # Model text formatting.
+                    orig_model_text = ''
+                    if orig_model_num[i] != None:
+                        orig_model_text = " of model %s" % orig_model_num[i]
+                    new_model_text = ''
+                    if set_model_num[i] != None:
+                        if merge_new:
+                            new_model_text += ' of'
+                        else:
+                            new_model_text += ' to'
+                        new_model_text += ' model %s' % set_model_num[i]
+
+                    # The full text.
                     if merge_new:
-                        print("Merging with model %s of molecule '%s' (from the original molecule number %s of model %s)" % (set_model_num[i], set_mol_name[j], orig_mol_num[j], orig_model_num[i]))
+                        print("Merging with molecule '%s'%s (from the original molecule number %s%s)." % (set_mol_name[j], new_model_text, orig_mol_num[j], orig_model_text))
                     else:
-                        print("Adding molecule '%s' to model %s (from the original molecule number %s of model %s)" % (set_mol_name[j], set_model_num[i], orig_mol_num[j], orig_model_num[i]))
+                        print("Adding molecule '%s'%s (from the original molecule number %s%s)." % (set_mol_name[j], new_model_text, orig_mol_num[j], orig_model_text))
 
                 # The index of the new molecule to add or merge.
                 index = len(model.mol)
