@@ -2082,7 +2082,15 @@ class Internal:
 
                 # Set the target molecule name.
                 if set_mol_name:
-                    new_mol_name.append(set_mol_name[mol_index])
+                    # Single name.
+                    if len(set_mol_name) == 1:
+                        new_mol_name.append(set_mol_name[0])
+
+                    # Multiple names.
+                    else:
+                        new_mol_name.append(set_mol_name[mol_index])
+
+                # Auto-generated molecule name.
                 else:
                     # Number of structures already present for the model.
                     num_struct = 0
