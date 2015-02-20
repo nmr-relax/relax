@@ -36,7 +36,7 @@ from warnings import warn
 # relax module imports.
 from lib import regex
 from lib.check_types import is_float
-from lib.errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
+from lib.errors import RelaxError, RelaxFault, RelaxNoneIntError, RelaxNoPdbError
 from lib.io import file_root, open_read_file
 from lib.selection import Selection
 from lib.sequence import aa_codes_three_to_one
@@ -466,7 +466,7 @@ class Internal:
         return lines[i:]
 
 
-    def _parse_pdb_ss(self, lines, read_mol=None):
+    def _parse_pdb_ss(self, lines, read_mol=None, helices=None, sheets=None):
         """Loop over and parse the PDB secondary structure records.
 
         These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/file-format/format33/sect5.html}.
@@ -476,6 +476,10 @@ class Internal:
         @type lines:        list of str
         @keyword read_mol:  The molecule(s) to read from the file, independent of model.  The molecules are determined differently by the different parsers, but are numbered consecutively from 1.  If set to None, then all molecules will be loaded.
         @type read_mol:     None, int, or list of int
+        @keyword helices:   The list of helix data to append to.
+        @type helices:      list
+        @keyword sheets:    The list of sheet data to append to.
+        @type sheets:       list
         @return:            The remaining PDB lines with the secondary structure records stripped.
         @rtype:             list of str
         """
@@ -515,14 +519,8 @@ class Internal:
                     if mol_end_index + 1 not in read_mol:
                         continue
 
-                # New molecule indices based on currently loaded data.
-                mol_init_index += mol_num
-                mol_end_index += mol_num
-
                 # Store the data.
-                if not hasattr(self, 'helices'):
-                    self.helices = []
-                self.helices.append([helix_id, mol_init_index, init_res_name, init_seq_num, mol_end_index, end_res_name, end_seq_num, helix_class, length])
+                helices.append([helix_id, mol_init_index, init_res_name, init_seq_num, mol_end_index, end_res_name, end_seq_num, helix_class, length])
 
             # A sheet.
             if lines[i][:5] == 'SHEET':
@@ -541,19 +539,15 @@ class Internal:
                         continue
 
                 # New molecule indices based on currently loaded data.
-                mol_init_index += mol_num
-                mol_end_index += mol_num
                 mol_cur_index = None
                 if cur_chain_id:
-                    mol_cur_index = self._pdb_chain_id_to_mol_index(cur_chain_id) + mol_num
+                    mol_cur_index = self._pdb_chain_id_to_mol_index(cur_chain_id)
                 mol_prev_index = None
                 if prev_chain_id:
-                    mol_prev_index = self._pdb_chain_id_to_mol_index(prev_chain_id) + mol_num
+                    mol_prev_index = self._pdb_chain_id_to_mol_index(prev_chain_id)
 
                 # Store the data.
-                if not hasattr(self, 'sheets'):
-                    self.sheets = []
-                self.sheets.append([strand, sheet_id, num_strands, init_res_name, mol_init_index, init_seq_num, init_icode, end_res_name, mol_end_index, end_seq_num, end_icode, sense, cur_atom, cur_res_name, mol_cur_index, cur_res_seq, cur_icode, prev_atom, prev_res_name, mol_prev_index, prev_res_seq, prev_icode])
+                sheets.append([strand, sheet_id, num_strands, init_res_name, mol_init_index, init_seq_num, init_icode, end_res_name, mol_end_index, end_seq_num, end_icode, sense, cur_atom, cur_res_name, mol_cur_index, cur_res_seq, cur_icode, prev_atom, prev_res_name, mol_prev_index, prev_res_seq, prev_icode])
 
         # Return the remaining lines.
         return lines[i:]
@@ -1202,7 +1196,7 @@ class Internal:
             mol.atom_add(atom_name=atom_names[i], res_name=res_names[i], res_num=res_nums[i], pos=coord[i], element=elements[i])
 
         # Create the structural data data structures.
-        self.pack_structs([[mol]], orig_model_num=[None], set_model_num=[set_model_num], orig_mol_num=[None], set_mol_name=[set_mol_name])
+        self.pack_structs([[mol]], orig_model_num=[None], set_model_num=[set_model_num], orig_mol_num=[[None]], set_mol_name=[set_mol_name])
 
 
     def add_model(self, model=None, coords_from=None):
@@ -1979,7 +1973,7 @@ class Internal:
         mol.fill_object_from_gaussian(model_records)
 
         # Create the structural data data structures.
-        self.pack_structs([[mol]], orig_model_num=[1], set_model_num=set_model_num, orig_mol_num=[0], set_mol_name=set_mol_name, file_name=file_name, file_path=path, file_path_abs=path_abs, verbosity=verbosity)
+        self.pack_structs([[mol]], orig_model_num=[1], set_model_num=set_model_num, orig_mol_num=[[0]], set_mol_name=set_mol_name, file_name=file_name, file_path=path, file_path_abs=path_abs, verbosity=verbosity)
 
         # Loading worked.
         return True
@@ -2049,11 +2043,15 @@ class Internal:
         # Pre-process the lines, fixing PDB violations.
         pdb_lines = self._validate_records(pdb_lines)
 
+        # Secondary structure data.
+        helices = []
+        sheets = []
+
         # Process the different sections.
         pdb_lines = self._parse_pdb_title(pdb_lines)
         pdb_lines = self._parse_pdb_prim_struct(pdb_lines)
         pdb_lines = self._parse_pdb_hetrogen(pdb_lines)
-        pdb_lines = self._parse_pdb_ss(pdb_lines, read_mol=read_mol)
+        pdb_lines = self._parse_pdb_ss(pdb_lines, read_mol=read_mol, helices=helices, sheets=sheets)
         pdb_lines = self._parse_pdb_connectivity_annotation(pdb_lines)
         pdb_lines = self._parse_pdb_misc(pdb_lines)
         pdb_lines = self._parse_pdb_transform(pdb_lines)
@@ -2062,6 +2060,7 @@ class Internal:
         model_index = 0
         orig_model_num = []
         mol_conts = []
+        orig_mol_num = []
         for model_num, model_records in self._parse_pdb_coord(pdb_lines):
             # Only load the desired model.
             if read_model and model_num not in read_model:
@@ -2072,8 +2071,8 @@ class Internal:
 
             # Loop over the molecules of the model.
             mol_conts.append([])
+            orig_mol_num.append([])
             mol_index = 0
-            orig_mol_num = []
             new_mol_name = []
             for mol_num, mol_records in self._parse_mols_pdb(model_records):
                 # Only load the desired model.
@@ -2100,9 +2099,6 @@ class Internal:
                     # Set the name to the file name plus the structure number.
                     new_mol_name.append(file_root(file) + '_mol' + repr(mol_num+num_struct))
 
-                # Store the original mol number.
-                orig_mol_num.append(mol_num)
-
                 # Generate the molecule container.
                 mol = MolContainer()
 
@@ -2111,6 +2107,9 @@ class Internal:
 
                 # Store the molecule container.
                 mol_conts[model_index].append(mol)
+
+                # Store the original molecule number.
+                orig_mol_num[model_index].append(mol_num)
 
                 # Increment the molecule index.
                 mol_index = mol_index + 1
@@ -2124,7 +2123,7 @@ class Internal:
             return False
 
         # Create the structural data data structures.
-        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs, merge=merge, verbosity=verbosity)
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs, merge=merge, helices=helices, sheets=sheets, verbosity=verbosity)
 
         # Loading worked.
         return True
@@ -2225,7 +2224,7 @@ class Internal:
             model_index = model_index + 1
 
         # Create the structural data data structures.
-        orig_mol_num = [0]
+        orig_mol_num = [[0]]
         self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs, verbosity=verbosity)
 
         # Loading worked.
@@ -2392,17 +2391,17 @@ class Internal:
         return codes
 
 
-    def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None, file_path_abs=None, verbosity=1, merge=False):
+    def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None, file_path_abs=None, helices=None, sheets=None, verbosity=1, merge=False):
         """From the given structural data, expand the structural data data structure.
 
-        @param data_matrix:         A matrix of structural objects.
+        @param data_matrix:         A matrix of structural objects.  The first dimension is the models, the second is the molecules.
         @type data_matrix:          list of lists of structural objects
         @keyword orig_model_num:    The original model numbers (for storage).
         @type orig_model_num:       list of int
         @keyword set_model_num:     The new model numbers (for model renumbering).
         @type set_model_num:        list of int
-        @keyword orig_mol_num:      The original molecule numbers (for storage).
-        @type orig_mol_num:         list of int
+        @keyword orig_mol_num:      The original molecule numbers (for storage).  The dimensions match the data matrix.
+        @type orig_mol_num:         list of list of int
         @keyword set_mol_name:      The new molecule names.
         @type set_mol_name:         list of str
         @keyword file_name:         The name of the file from which the molecular data has been extracted.
@@ -2411,8 +2410,12 @@ class Internal:
         @type file_path:            None or str
         @keyword file_path_abs:     The absolute path to the file specified by 'file_name'.  This is a fallback mechanism in case results or save files are located somewhere other than the working directory.
         @type file_path_abs:        None or str
-        @keyword verbosity: The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
-        @type verbosity:    int
+        @keyword helices:           The helix secondary structure information to store.  The first dimension corresponds to each helix element.  The second dimension consists of the helix_id, mol_init_index, init_res_name, init_seq_num, mol_end_index, end_res_name, end_seq_num, helix_class, and length.
+        @type helices:              list of lists
+        @keyword sheets:            The sheet secondary structure information to store.
+        @type sheets:               list of lists
+        @keyword verbosity:         The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
+        @type verbosity:            int
         @keyword merge:             A flag which if set to True will try to merge the structure into the currently loaded structures.
         @type merge:                bool
         """
@@ -2422,8 +2425,9 @@ class Internal:
             raise RelaxError("Structural data mismatch, %s original models verses %s in the structural data." % (len(orig_model_num), len(data_matrix)))
 
         # Test the number of molecules.
-        if len(orig_mol_num) != len(data_matrix[0]):
-            raise RelaxError("Structural data mismatch, %s original molecules verses %s in the structural data." % (len(orig_mol_num), len(data_matrix[0])))
+        for i in range(len(data_matrix)):
+            if len(orig_mol_num[i]) != len(data_matrix[i]):
+                raise RelaxError("Structural data mismatch, %s original molecules verses %s in the structural data." % (len(orig_mol_num[i]), len(data_matrix[i])))
 
         # Model numbers do not change.
         if not set_model_num:
@@ -2454,7 +2458,12 @@ class Internal:
                     raise RelaxError("The molecule '%s' of model %s already exists." % (self.structural_data[i].mol[j].mol_name, self.structural_data[i].num))
 
         # Loop over the models.
+        store_mol_num_orig = []
+        store_mol_num_new = []
         for i in range(len(set_model_num)):
+            store_mol_num_orig.append([])
+            store_mol_num_new.append([])
+
             # The model doesn't currently exist.
             if set_model_num[i] not in self.structural_data.current_models:
                 # Create the model.
@@ -2494,14 +2503,18 @@ class Internal:
 
                     # The full text.
                     if merge_new:
-                        print("Merging with molecule '%s'%s (from the original molecule number %s%s)." % (set_mol_name[j], new_model_text, orig_mol_num[j], orig_model_text))
+                        print("Merging with molecule '%s'%s (from the original molecule number %s%s)." % (set_mol_name[j], new_model_text, orig_mol_num[i][j], orig_model_text))
                     else:
-                        print("Adding molecule '%s'%s (from the original molecule number %s%s)." % (set_mol_name[j], new_model_text, orig_mol_num[j], orig_model_text))
+                        print("Adding molecule '%s'%s (from the original molecule number %s%s)." % (set_mol_name[j], new_model_text, orig_mol_num[i][j], orig_model_text))
 
                 # The index of the new molecule to add or merge.
                 index = len(model.mol)
                 if merge_new:
                     index -= 1
+
+                # Store the index+1 as the new molecule number, and store the original molecule number.
+                store_mol_num_new[i].append(index+1)
+                store_mol_num_orig[i].append(orig_mol_num[i][j])
 
                 # Consistency check.
                 if model.num != self.structural_data[0].num and self.structural_data[0].mol[index].mol_name != set_mol_name[j]:
@@ -2518,11 +2531,65 @@ class Internal:
                 mol.file_name = file_name
                 mol.file_path = file_path
                 mol.file_path_abs = file_path_abs
-                mol.file_mol_num = orig_mol_num[j]
+                mol.file_mol_num = orig_mol_num[i][j]
                 mol.file_model = orig_model_num[i]
 
                 # Sort the structural data if a merge occurred.
                 mol._sort()
+
+        # Consistency checks.
+        for model_index in range(len(store_mol_num_new)):
+            if len(store_mol_num_new[model_index]) != len(store_mol_num_orig[model_index]):
+                raise RelaxFault
+
+        # The helix secondary structure information.
+        if helices != None:
+            # Initialise the data structure if required.
+            if not hasattr(self, 'helices'):
+                self.helices = []
+
+            # Loop over each helix.
+            for i in range(len(helices)):
+                # Append the data.
+                self.helices.append(helices[i])
+
+                # The initial molecule index remapping.
+                mol_init_index = store_mol_num_new[0][store_mol_num_orig[0].index(helices[i][1]+1)] - 1
+                self.helices[-1][1] = mol_init_index
+
+                # The end molecule index remapping.
+                mol_end_index = store_mol_num_new[0][store_mol_num_orig[0].index(helices[i][4]+1)] - 1
+                self.helices[-1][4] = mol_end_index
+
+        # The sheet secondary structure information.
+        if sheets != None:
+            # Initialise the data structure if required.
+            if not hasattr(self, 'sheets'):
+                self.sheets = []
+
+            # Loop over each sheet.
+            for i in range(len(sheets)):
+                # Append the data.
+                self.sheets.append(sheets[i])
+
+                # The initial molecule index remappings.
+                mol_init_index = store_mol_num_new[0][store_mol_num_orig[0].index(sheets[i][4]+1)] - 1
+                self.sheets[-1][4] = mol_init_index
+
+
+                # The end molecule index remapping.
+                mol_end_index = store_mol_num_new[0][store_mol_num_orig[0].index(sheets[i][8]+1)] - 1
+                self.sheets[-1][8] = mol_end_index
+
+                # The current molecule index remapping.
+                if sheets[i][14] != None:
+                    mol_cur_index = store_mol_num_new[0][store_mol_num_orig[0].index(sheets[i][14]+1)] - 1
+                    self.sheets[-1][14] = mol_cur_index
+
+                # The previous molecule index remapping.
+                if sheets[i][19] != None:
+                    mol_prev_index = store_mol_num_new[0][store_mol_num_orig[0].index(sheets[i][19]+1)] - 1
+                    self.sheets[-1][19] = mol_prev_index
 
 
     def rotate(self, R=None, origin=None, model=None, selection=None):
