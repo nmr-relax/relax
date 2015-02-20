@@ -3070,15 +3070,8 @@ class Internal:
                     if mol.pdb_record[i] in [None, 'ATOM']:
                         atom_record = True
 
-                        # Handle the funky atom name alignment.  From the PDB format documents:
-                        # "Alignment of one-letter atom name such as C starts at column 14, while two-letter atom name such as FE starts at column 13."
-                        if len(mol.atom_name[i]) == 1:
-                            atom_name = " %s" % mol.atom_name[i]
-                        else:
-                            atom_name = "%s" % mol.atom_name[i]
-
                         # Write out.
-                        pdb_write.atom(file, serial=ser_num, name=atom_name, res_name=mol.res_name[i], chain_id=CHAIN_ID_LIST[index], res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0, element=mol.element[i])
+                        pdb_write.atom(file, serial=ser_num, name=mol.atom_name[i], res_name=mol.res_name[i], chain_id=CHAIN_ID_LIST[index], res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0, element=mol.element[i])
                         num_atom += 1
                         ser_num += 1
 
