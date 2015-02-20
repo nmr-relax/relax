@@ -928,6 +928,120 @@ class Structure(SystemTestCase):
             self.assertEqual(contents[i], lines[i])
 
 
+    def test_bug_23295_ss_metadata_merge(self):
+        """Catch U{bug #23295<https://gna.org/bugs/?23295>}, the PDB secondary structure HELIX and SHEET records not updated when merging molecules."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the file.
+        self.interpreter.structure.read_pdb('2BE6_secondary_structure.pdb', dir=path, read_mol=[1, 4], set_mol_name='CaM A')
+        self.interpreter.structure.read_pdb('2BE6_secondary_structure.pdb', dir=path, read_mol=[2, 5], set_mol_name='CaM B')
+        self.interpreter.structure.read_pdb('2BE6_secondary_structure.pdb', dir=path, read_mol=[3, 6], set_mol_name='CaM C')
+
+        # Create a PDB file.
+        file = DummyFileObject()
+        self.interpreter.structure.write_pdb(file=file, force=True)
+
+        # The HELIX and SHEET contents, as they should be.
+        # First, the original contents:
+        #     "HELIX    1   1 THR A    5  ASP A   20  1                                  16    "
+        #     "HELIX    2   2 THR A   28  LEU A   39  1                                  12    "
+        #     "HELIX    3   3 THR A   44  ASP A   56  1                                  13    "
+        #     "HELIX    4   4 PHE A   65  MET A   76  1                                  12    "
+        #     "HELIX    5   5 SER A   81  ASP A   93  1                                  13    "
+        #     "HELIX    6   6 SER A  101  LEU A  112  1                                  12    "
+        #     "HELIX    7   7 THR A  117  ASP A  129  1                                  13    "
+        #     "HELIX    8   8 TYR A  138  THR A  146  1                                   9    "
+        #     "HELIX    9   9 VAL D 1615  GLY D 1638  1                                  24    "
+        #     "HELIX   10  10 THR B    5  ASP B   20  1                                  16    "
+        #     "HELIX   11  11 THR B   28  LEU B   39  1                                  12    "
+        #     "HELIX   12  12 THR B   44  ASP B   56  1                                  13    "
+        #     "HELIX   13  13 PHE B   65  ASP B   78  1                                  14    "
+        #     "HELIX   14  14 GLU B   82  ASP B   93  1                                  12    "
+        #     "HELIX   15  15 SER B  101  GLY B  113  1                                  13    "
+        #     "HELIX   16  16 THR B  117  ASP B  129  1                                  13    "
+        #     "HELIX   17  17 TYR B  138  MET B  145  1                                   8    "
+        #     "HELIX   18  18 GLU E 1612  GLN E 1625  1                                  14    "
+        #     "HELIX   19  19 THR C    5  ASP C   20  1                                  16    "
+        #     "HELIX   20  20 THR C   28  LEU C   39  1                                  12    "
+        #     "HELIX   21  21 THR C   44  ASP C   56  1                                  13    "
+        #     "HELIX   22  22 PHE C   65  LYS C   75  1                                  11    "
+        #     "HELIX   23  23 GLU C   82  ASP C   93  1                                  12    "
+        #     "HELIX   24  24 SER C  101  LEU C  112  1                                  12    "
+        #     "HELIX   25  25 THR C  117  ASP C  129  1                                  13    "
+        #     "HELIX   26  26 TYR C  138  MET C  145  1                                   8    "
+        #     "HELIX   27  27 LYS F 1617  GLU F 1636  1                                  20    "
+        #     "SHEET    1   A 2 THR A  26  ILE A  27  0                                        "
+        #     "SHEET    2   A 2 ILE A  63  ASP A  64 -1  O  ILE A  63   N  ILE A  27           "
+        #     "SHEET    1   B 2 TYR A  99  ILE A 100  0                                        "
+        #     "SHEET    2   B 2 VAL A 136  ASN A 137 -1  O  VAL A 136   N  ILE A 100           "
+        #     "SHEET    1   C 2 THR B  26  ILE B  27  0                                        "
+        #     "SHEET    2   C 2 ILE B  63  ASP B  64 -1  O  ILE B  63   N  ILE B  27           "
+        #     "SHEET    1   D 2 TYR B  99  ILE B 100  0                                        "
+        #     "SHEET    2   D 2 VAL B 136  ASN B 137 -1  O  VAL B 136   N  ILE B 100           "
+        #     "SHEET    1   E 2 THR C  26  ILE C  27  0                                        "
+        #     "SHEET    2   E 2 ILE C  63  ASP C  64 -1  O  ILE C  63   N  ILE C  27           "
+        #     "SHEET    1   F 2 TYR C  99  ILE C 100  0                                        "
+        #     "SHEET    2   F 2 VAL C 136  ASN C 137 -1  O  VAL C 136   N  ILE C 100           "
+        # Then the modified contents:
+        contents = [
+            "HELIX    1   1 THR A    5  ASP A   20  1                                  16    \n",
+            "HELIX    2   2 THR A   28  LEU A   39  1                                  12    \n",
+            "HELIX    3   3 THR A   44  ASP A   56  1                                  13    \n",
+            "HELIX    4   4 PHE A   65  MET A   76  1                                  12    \n",
+            "HELIX    5   5 SER A   81  ASP A   93  1                                  13    \n",
+            "HELIX    6   6 SER A  101  LEU A  112  1                                  12    \n",
+            "HELIX    7   7 THR A  117  ASP A  129  1                                  13    \n",
+            "HELIX    8   8 TYR A  138  THR A  146  1                                   9    \n",
+            "HELIX    9   9 VAL A 1615  GLY A 1638  1                                  24    \n",
+            "HELIX   10  10 THR B    5  ASP B   20  1                                  16    \n",
+            "HELIX   11  11 THR B   28  LEU B   39  1                                  12    \n",
+            "HELIX   12  12 THR B   44  ASP B   56  1                                  13    \n",
+            "HELIX   13  13 PHE B   65  ASP B   78  1                                  14    \n",
+            "HELIX   14  14 GLU B   82  ASP B   93  1                                  12    \n",
+            "HELIX   15  15 SER B  101  GLY B  113  1                                  13    \n",
+            "HELIX   16  16 THR B  117  ASP B  129  1                                  13    \n",
+            "HELIX   17  17 TYR B  138  MET B  145  1                                   8    \n",
+            "HELIX   18  18 GLU B 1612  GLN B 1625  1                                  14    \n",
+            "HELIX   19  19 THR C    5  ASP C   20  1                                  16    \n",
+            "HELIX   20  20 THR C   28  LEU C   39  1                                  12    \n",
+            "HELIX   21  21 THR C   44  ASP C   56  1                                  13    \n",
+            "HELIX   22  22 PHE C   65  LYS C   75  1                                  11    \n",
+            "HELIX   23  23 GLU C   82  ASP C   93  1                                  12    \n",
+            "HELIX   24  24 SER C  101  LEU C  112  1                                  12    \n",
+            "HELIX   25  25 THR C  117  ASP C  129  1                                  13    \n",
+            "HELIX   26  26 TYR C  138  MET C  145  1                                   8    \n",
+            "HELIX   27  27 LYS C 1617  GLU C 1636  1                                  20    \n",
+            "SHEET    1   A 2 THR A  26  ILE A  27  0                                        \n",
+            "SHEET    2   A 2 ILE A  63  ASP A  64 -1  O  ILE A  63   N  ILE A  27           \n",
+            "SHEET    1   B 2 TYR A  99  ILE A 100  0                                        \n",
+            "SHEET    2   B 2 VAL A 136  ASN A 137 -1  O  VAL A 136   N  ILE A 100           \n",
+            "SHEET    1   C 2 THR B  26  ILE B  27  0                                        \n",
+            "SHEET    2   C 2 ILE B  63  ASP B  64 -1  O  ILE B  63   N  ILE B  27           \n",
+            "SHEET    1   D 2 TYR B  99  ILE B 100  0                                        \n",
+            "SHEET    2   D 2 VAL B 136  ASN B 137 -1  O  VAL B 136   N  ILE B 100           \n",
+            "SHEET    1   E 2 THR C  26  ILE C  27  0                                        \n",
+            "SHEET    2   E 2 ILE C  63  ASP C  64 -1  O  ILE C  63   N  ILE C  27           \n",
+            "SHEET    1   F 2 TYR C  99  ILE C 100  0                                        \n",
+            "SHEET    2   F 2 VAL C 136  ASN C 137 -1  O  VAL C 136   N  ILE C 100           \n",
+        ]
+
+        # Check the created PDB file.
+        lines = file.readlines()
+        index = 0
+        for line in lines:
+            # Skip non-secondary structure records.
+            if not search('^HELIX', line) and not search('^SHEET', line):
+                continue
+
+            # Check the line.
+            self.assertEqual(contents[index], line)
+
+            # Increment the secondary structure index.
+            index += 1
+
+
     def test_bug_sr_2998_broken_conect_records(self):
         """Test the bug reported as the U{support request #2998<https://gna.org/support/?2998>}, the broken CONECT records."""
 
