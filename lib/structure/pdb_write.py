@@ -32,6 +32,40 @@ from textwrap import wrap
 from lib.errors import RelaxError
 
 
+def _handle_atom_name(name):
+    """Handle the funky PDB atom name alignment.
+
+    From the PDB format documents:
+
+        "Alignment of one-letter atom name such as C starts at column 14, while two-letter atom name such as FE starts at column 13."
+
+
+    @param name:    The atom name.
+    @type name:     str or None
+    @return:        The whitespace padded and PDB formatted atom name.  This will be exactly 4 characters.
+    @rtype:         str
+    """
+
+    # Handle none.
+    if name == None:
+        name = "    "
+
+    # Single letter name.
+    if len(name) == 1:
+        name = " %s  " % name
+
+    # Two letter name.
+    elif len(name) == 2:
+        name = "%s  " % name
+
+    # Three letter name.
+    elif len(name) == 3:
+        name = "%s " % name
+
+    # Return the name.
+    return name
+
+
 def _handle_none(value):
     """Auxiliary function for handling values of None.
 
@@ -283,7 +317,7 @@ def atom(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq
     text = "%-6s%5s %-4s%1s%3s %1s%4s%1s   %8.3f%8.3f%8.3f%6.2f%6.2f          %2s%2s" % (
         'ATOM',
         _handle_none(serial),
-        _handle_none(name),
+        _handle_atom_name(name),
         _handle_none(alt_loc),
         _handle_none(res_name),
         _handle_none(chain_id),
@@ -1725,12 +1759,12 @@ def sheet(file, strand='', sheet_id='', num_strands='', init_res_name='', init_c
         _handle_none(end_seq_num),
         _handle_none(end_icode),
         _handle_none(sense),
-        _handle_none(cur_atom),
+        _handle_atom_name(cur_atom),
         _handle_none(cur_res_name),
         _handle_none(cur_chain_id),
         _handle_none(cur_res_seq),
         _handle_none(cur_icode),
-        _handle_none(prev_atom),
+        _handle_atom_name(prev_atom),
         _handle_none(prev_res_name),
         _handle_none(prev_chain_id),
         _handle_none(prev_res_seq),
