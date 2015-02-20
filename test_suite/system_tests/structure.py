@@ -1036,13 +1036,15 @@ class Structure(SystemTestCase):
                 continue
 
             # Check the line.
+            print("\nOrig: %s" % repr(contents[index]))
+            print("New:  %s" % repr(line))
             self.assertEqual(contents[index], line)
 
             # Increment the secondary structure index.
             index += 1
 
         # Check the count to make sure that secondary structure records have at all been created.
-        self.assertEqual(len(contents), index+1)
+        self.assertEqual(len(contents), index)
 
 
     def test_bug_sr_2998_broken_conect_records(self):
