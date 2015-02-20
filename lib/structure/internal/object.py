@@ -303,7 +303,7 @@ class Internal:
     def _parse_pdb_connectivity_annotation(self, lines):
         """Loop over and parse the PDB connectivity annotation records.
 
-        These are the records identified in the U{PDB version 3.30 documentation<http://www.wwpdb.org/documentation/format33/sect6.html>}.
+        These are the records identified in the U{PDB version 3.30 documentation<http://www.wwpdb.org/documentation/file-format/format33/sect6.html>}.
 
 
         @param lines:       The lines of the PDB file excluding the sections prior to the connectivity annotation section.
@@ -332,7 +332,7 @@ class Internal:
     def _parse_pdb_coord(self, lines):
         """Generator function for looping over the models in the PDB file.
 
-        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect9.html}.
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/file-format/format33/sect9.html}.
 
 
         @param lines:       The lines of the coordinate section.
@@ -380,7 +380,7 @@ class Internal:
     def _parse_pdb_hetrogen(self, lines):
         """Loop over and parse the PDB hetrogen records.
 
-        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect4.html}.
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/file-format/format33/sect4.html}.
 
 
         @param lines:       The lines of the PDB file excluding the sections prior to the hetrogen section.
@@ -410,7 +410,7 @@ class Internal:
     def _parse_pdb_misc(self, lines):
         """Loop over and parse the PDB miscellaneous records.
 
-        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect7.html}.
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/file-format/format33/sect7.html}.
 
 
         @param lines:       The lines of the PDB file excluding the sections prior to the miscellaneous section.
@@ -437,7 +437,7 @@ class Internal:
     def _parse_pdb_prim_struct(self, lines):
         """Loop over and parse the PDB primary structure records.
 
-        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect3.html}.
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/file-format/format33/sect3.html}.
 
 
         @param lines:       The lines of the PDB file excluding the title section.
@@ -469,7 +469,7 @@ class Internal:
     def _parse_pdb_ss(self, lines, read_mol=None):
         """Loop over and parse the PDB secondary structure records.
 
-        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect5.html}.
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/file-format/format33/sect5.html}.
 
 
         @param lines:       The lines of the PDB file excluding the sections prior to the secondary structure section.
@@ -562,7 +562,7 @@ class Internal:
     def _parse_pdb_title(self, lines):
         """Loop over and parse the PDB title records.
 
-        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect2.html}.
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/file-format/format33/sect2.html}.
 
 
         @param lines:       All lines of the PDB file.
@@ -604,7 +604,7 @@ class Internal:
     def _parse_pdb_transform(self, lines):
         """Loop over and parse the PDB transform records.
 
-        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/format33/sect8.html}.
+        These are the records identified in the PDB version 3.30 documentation at U{http://www.wwpdb.org/documentation/file-format/format33/sect8.html}.
 
 
         @param lines:       The lines of the PDB file excluding the sections prior to the transform section.
