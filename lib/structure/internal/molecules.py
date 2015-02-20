@@ -259,7 +259,7 @@ class MolContainer:
         """Sort all structural data."""
 
         # Create an index list for sorting the structural data.
-        indices = range(len(self.atom_name))
+        indices = list(range(len(self.atom_name)))
         indices.sort(key=self._sort_key)
 
         # Sort all lists.
