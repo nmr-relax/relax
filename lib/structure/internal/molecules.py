@@ -114,9 +114,6 @@ class MolContainer:
             if self.atom_num[j] == atom_num:
                 return j
 
-        # Should not be here, the PDB connect records are incorrect.
-        warn(RelaxWarning("The atom number " + repr(atom_num) + " from the CONECT record cannot be found within the ATOM and HETATM records."))
-
 
     def _det_pdb_element(self, atom_name):
         """Try to determine the element from the PDB atom name.
@@ -394,6 +391,7 @@ class MolContainer:
 
         # Loop over the records.
         water = []
+        missing_connect = []
         for record in records:
             # Nothing to do.
             if not record or record == '\n':
@@ -440,13 +438,27 @@ class MolContainer:
                     if not bonded:
                         continue
 
+                    # The atom indices.
+                    serial_index = self._atom_index(serial)
+                    bonded_index = self._atom_index(bonded)
+
                     # Skip broken CONECT records (for when the record points to a non-existent atom).
-                    if self._atom_index(serial) == None or self._atom_index(bonded) == None:
+                    if serial_index == None:
+                        if serial not in missing_connect:
+                            missing_connect.append(serial)
+                        continue
+                    if bonded_index == None:
+                        if bonded not in missing_connect:
+                            missing_connect.append(bonded)
                         continue
 
                     # Make the connection.
-                    self.atom_connect(index1=self._atom_index(serial), index2=self._atom_index(bonded))
+                    self.atom_connect(index1=serial_index, index2=bonded_index)
 
+        # Warnings.
+        if len(missing_connect):
+            missing_connect.sort()
+            warn(RelaxWarning("The following atom numbers from the CONECT records cannot be found within the ATOM and HETATM records:  %s." % missing_connect))
         if len(water):
             warn(RelaxWarning("Skipping the water molecules HOH %s." % water))
 

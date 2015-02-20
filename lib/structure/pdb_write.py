@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2013-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,7 +22,7 @@
 # Module docstring.
 """Module for creating PDB records.
 
-This module currently used the PDB format version 3.30 from July, 2011 U{http://www.wwpdb.org/documentation/format33/v3.3.html}.
+This module currently used the PDB format version 3.30 from July, 2011 U{http://www.wwpdb.org/documentation/file-format/format33/v3.3.html}.
 """
 
 # Python module imports.
@@ -92,7 +92,7 @@ def _record_validate(record):
 def atom(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq='', icode='', x='', y='', z='', occupancy=1.0, temp_factor=0.0, element='', charge=''):
     """Generate the ATOM record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect9.html#ATOM}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect9.html#ATOM}.
 
     ATOM
     ====
@@ -309,7 +309,7 @@ def atom(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq
 def conect(file, serial='', bonded1='', bonded2='', bonded3='', bonded4=''):
     """Generate the CONECT record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect10.html#CONECT}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect10.html#CONECT}.
 
     CONECT
     ======
@@ -431,7 +431,7 @@ def conect(file, serial='', bonded1='', bonded2='', bonded3='', bonded4=''):
 def end(file):
     """Generate the END record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect11.html#END}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect11.html#END}.
 
     END
     ===
@@ -501,7 +501,7 @@ def end(file):
 def endmdl(file):
     """Generate the ENDMDL record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/v3.3.html}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/v3.3.html}.
 
     ENDMDL
     ======
@@ -591,7 +591,7 @@ def endmdl(file):
 def formul(file, comp_num='', het_id='', continuation='', asterisk='', text=''):
     """Generate the FORMUL record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect4.html#FORMUL}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect4.html#FORMUL}.
 
     FORMUL
     ======
@@ -703,7 +703,7 @@ def formul(file, comp_num='', het_id='', continuation='', asterisk='', text=''):
 def helix(file, ser_num='', helix_id='', init_res_name='', init_chain_id='', init_seq_num='', init_icode='', end_res_name='', end_chain_id='', end_seq_num='', end_icode='', helix_class='', comment='', length=''):
     """Generate the HELIX record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect5.html#HELIX}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect5.html#HELIX}.
 
     HELIX
     =====
@@ -851,7 +851,7 @@ def helix(file, ser_num='', helix_id='', init_res_name='', init_chain_id='', ini
 def het(file, het_id='', chain_id='', seq_num='', icode='', num_het_atoms='', text=''):
     """Generate the HET record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect4.html#HET}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect4.html#HET}.
 
     HET
     ===
@@ -975,7 +975,7 @@ def het(file, het_id='', chain_id='', seq_num='', icode='', num_het_atoms='', te
 def hetatm(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_seq='', icode='', x='', y='', z='', occupancy=1.0, temp_factor=0.0, element='', charge=''):
     """Generate the HETATM record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect9.html#HETATM}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect9.html#HETATM}.
 
     HETATM
     ======
@@ -1132,7 +1132,7 @@ def hetatm(file, serial='', name='', alt_loc='', res_name='', chain_id='', res_s
 def hetnam(file, continuation='', het_id='', text=''):
     """Generate the HETNAM record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect4.html#HETNAM}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect4.html#HETNAM}.
 
     HETNAM
     ======
@@ -1239,7 +1239,7 @@ def hetnam(file, continuation='', het_id='', text=''):
 def master(file, num_remark=0, num_het=0, num_helix=0, num_sheet=0, num_turn=0, num_site=0, num_xform=0, num_coord=0, num_ter=0, num_conect=0, num_seq=0):
     """Generate the MASTER record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect11.html#MASTER}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect11.html#MASTER}.
 
     MASTER
     ======
@@ -1361,7 +1361,7 @@ def master(file, num_remark=0, num_het=0, num_helix=0, num_sheet=0, num_turn=0, 
 def model(file, serial=''):
     """Generate the MODEL record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect9.html#MODEL}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect9.html#MODEL}.
 
     MODEL
     =====
@@ -1495,7 +1495,7 @@ def model(file, serial=''):
 def remark(file, num='', remark=''):
     """Generate the REMARK record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/remarks.html}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/remarks.html}.
 
     REMARK
     ======
@@ -1553,7 +1553,7 @@ def remark(file, num='', remark=''):
 def sheet(file, strand='', sheet_id='', num_strands='', init_res_name='', init_chain_id='', init_seq_num='', init_icode='', end_res_name='', end_chain_id='', end_seq_num='', end_icode='', sense='', cur_atom='', cur_res_name='', cur_chain_id='', cur_res_seq='', cur_icode='', prev_atom='', prev_res_name='', prev_chain_id='', prev_res_seq='', prev_icode=''):
     """Generate the SHEET record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect5.html#SHEET}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect5.html#SHEET}.
 
     SHEET
     =====
@@ -1749,7 +1749,7 @@ def sheet(file, strand='', sheet_id='', num_strands='', init_res_name='', init_c
 def ter(file, serial='', res_name='', chain_id='', res_seq='', icode=''):
     """Generate the TER record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect9.html#TER}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect9.html#TER}.
 
     TER
     ===

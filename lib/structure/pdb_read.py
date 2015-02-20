@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,7 +22,7 @@
 # Module docstring.
 """Module for parsing PDB records.
 
-This module currently used the PDB format version 3.30 from July, 2011 U{http://www.wwpdb.org/documentation/format33/v3.3.html}.
+This module currently used the PDB format version 3.30 from July, 2011 U{http://www.wwpdb.org/documentation/file-format/format33/v3.3.html}.
 """
 
 # relax module imports.
@@ -32,7 +32,7 @@ from lib.errors import RelaxImplementError
 def atom(record):
     """Parse the ATOM record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect9.html#ATOM}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect9.html#ATOM}.
 
     ATOM
     ====
@@ -235,7 +235,7 @@ def atom(record):
 def conect(record):
     """Parse the CONECT record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect10.html#CONECT}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect10.html#CONECT}.
 
     CONECT
     ======
@@ -366,7 +366,7 @@ def conect(record):
 def formul(record):
     """Parse the FORMUL record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect4.html#FORMUL}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect4.html#FORMUL}.
 
     FORMUL
     ======
@@ -454,7 +454,7 @@ def formul(record):
 def helix(record):
     """Parse the HELIX record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect5.html#HELIX}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect5.html#HELIX}.
 
     HELIX
     =====
@@ -596,7 +596,7 @@ def helix(record):
 def het(record):
     """Parse the HET record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect4.html#HET}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect4.html#HET}.
 
     HET
     ===
@@ -693,7 +693,7 @@ def het(record):
 def hetatm(record):
     """Parse the HETATM record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect9.html#HETATM}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect9.html#HETATM}.
 
     HETATM
     ======
@@ -836,7 +836,7 @@ def hetatm(record):
 def hetnam(record):
     """Parse the HETNAM record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect4.html#HETNAM}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect4.html#HETNAM}.
 
     HETNAM
     ======
@@ -925,7 +925,7 @@ def hetnam(record):
 def model(record):
     """Parse the MODEL record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect9.html#MODEL}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect9.html#MODEL}.
 
     MODEL
     =====
@@ -1047,7 +1047,7 @@ def model(record):
 def remark(record):
     """Parse the REMARK record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/remarks.html}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/remarks.html}.
 
     REMARK
     ======
@@ -1084,7 +1084,7 @@ def remark(record):
 def sheet(record):
     """Parse the SHEET record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect5.html#SHEET}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect5.html#SHEET}.
 
     SHEET
     =====
@@ -1259,7 +1259,7 @@ def sheet(record):
 def ter(record):
     """Parse the TER record.
 
-    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/format33/sect9.html#TER}.
+    The following is the PDB v3.3 documentation U{http://www.wwpdb.org/documentation/file-format/format33/sect9.html#TER}.
 
     TER
     ===
