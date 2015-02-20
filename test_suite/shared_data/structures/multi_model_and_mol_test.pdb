@@ -1,0 +1,24 @@
+MODEL        1                                                                  
+ATOM      1  N   LEU A   1       1.000  -2.000  20.000  1.00  0.00           N  
+ATOM      2  H   LEU A   1       2.000  -2.000  20.000  1.00  0.00           H  
+TER       3      LEU A   1                                                      
+ATOM      4  N   LEU B   1       9.000  -9.000  27.000  1.00  0.00           N  
+ATOM      5  H   LEU B   1       8.000  -8.000  27.000  1.00  0.00           H  
+TER       6      LEU B   1                                                      
+ATOM      7  N   LEU C   1      12.000 -12.000   7.000  1.00  0.00           N  
+ATOM      8  H   LEU C   1      11.000 -12.000   7.000  1.00  0.00           H  
+TER       9      LEU C   1                                                      
+ENDMDL                                                                          
+MODEL        2                                                                  
+ATOM      1  N   LEU A   1       1.000  -2.000  20.000  1.00  0.00           N  
+ATOM      2  H   LEU A   1       2.000  -2.000  20.000  1.00  0.00           H  
+TER       3      LEU A   1                                                      
+ATOM      4  N   LEU B   1       9.000  -9.000  27.000  1.00  0.00           N  
+ATOM      5  H   LEU B   1       8.000  -8.000  27.000  1.00  0.00           H  
+TER       6      LEU B   1                                                      
+ATOM      7  N   LEU C   1      12.000 -12.000   7.000  1.00  0.00           N  
+ATOM      8  H   LEU C   1      11.000 -12.000   7.000  1.00  0.00           H  
+TER       9      LEU C   1                                                      
+ENDMDL                                                                          
+MASTER        0    0    0    0    0    0    0    0    6    3    0    0          
+END                                                                             
