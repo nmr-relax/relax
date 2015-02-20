@@ -1041,6 +1041,9 @@ class Structure(SystemTestCase):
             # Increment the secondary structure index.
             index += 1
 
+        # Check the count to make sure that secondary structure records have at all been created.
+        self.assertEqual(len(contents), index+1)
+
 
     def test_bug_sr_2998_broken_conect_records(self):
         """Test the bug reported as the U{support request #2998<https://gna.org/support/?2998>}, the broken CONECT records."""
