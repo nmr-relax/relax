@@ -90,11 +90,11 @@ class Test_msa(TestCase):
 
         # The gap matrix.
         real_gaps = zeros((3, 34), int16)
-        for i in (range(4) + range(8, 12) + [17] + range(20, 34)):
+        for i in (list(range(4)) + list(range(8, 12)) + [17] + list(range(20, 34))):
             real_gaps[0, i] = 1
         for i in range(8, 12):
             real_gaps[1, i] = 1
-        for i in (range(3) + [15, 32, 33]):
+        for i in (list(range(3)) + [15, 32, 33]):
             real_gaps[2, i] = 1
         for i in range(3):
             for j in range(34):
