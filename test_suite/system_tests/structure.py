@@ -894,6 +894,39 @@ class Structure(SystemTestCase):
             self.assertEqual(contents[i], lines[i])
 
 
+    def test_bug_23294_multi_mol_automerge(self):
+        """Catch U{bug #23294<https://gna.org/bugs/?23294>}, the automatic merging of PDB molecules results in an IndexError."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the file.
+        self.interpreter.structure.read_pdb('bug_23294_multi_mol_automerge.pdb', dir=path, read_model=1, set_mol_name='merged mol')
+
+        # Create a PDB file.
+        file = DummyFileObject()
+        self.interpreter.structure.write_pdb(file=file, force=True)
+
+        # The file contents, without remarks, as they should be.
+        contents = [
+            "MODEL        1                                                                  \n",
+            "ATOM      1  N   LEU A   1       1.000   0.000   0.000  1.00  0.00           N  \n",
+            "ATOM      2  H   LEU A   1       2.000   0.000   0.000  1.00  0.00           H  \n",
+            "ATOM      3  N   GLU A   2       3.000   0.000   0.000  1.00  0.00           N  \n",
+            "ATOM      4  H   GLU A   2       4.000   0.000   0.000  1.00  0.00           H  \n",
+            "TER       5      GLU A   2                                                      \n",
+            "ENDMDL                                                                          \n",
+            "END                                                                             \n"
+        ]
+
+        # Check the created PDB file.
+        lines = file.readlines()
+        self.strip_remarks(lines)
+        self.assertEqual(len(contents), len(lines))
+        for i in range(len(lines)):
+            self.assertEqual(contents[i], lines[i])
+
+
     def test_bug_sr_2998_broken_conect_records(self):
         """Test the bug reported as the U{support request #2998<https://gna.org/support/?2998>}, the broken CONECT records."""
 
