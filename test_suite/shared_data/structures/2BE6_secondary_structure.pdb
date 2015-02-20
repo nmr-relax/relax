@@ -1,0 +1,58 @@
+HELIX    1   1 THR A    5  ASP A   20  1                                  16    
+HELIX    2   2 THR A   28  LEU A   39  1                                  12    
+HELIX    3   3 THR A   44  ASP A   56  1                                  13    
+HELIX    4   4 PHE A   65  MET A   76  1                                  12    
+HELIX    5   5 SER A   81  ASP A   93  1                                  13    
+HELIX    6   6 SER A  101  LEU A  112  1                                  12    
+HELIX    7   7 THR A  117  ASP A  129  1                                  13    
+HELIX    8   8 TYR A  138  THR A  146  1                                   9    
+HELIX    9   9 VAL D 1615  GLY D 1638  1                                  24    
+HELIX   10  10 THR B    5  ASP B   20  1                                  16    
+HELIX   11  11 THR B   28  LEU B   39  1                                  12    
+HELIX   12  12 THR B   44  ASP B   56  1                                  13    
+HELIX   13  13 PHE B   65  ASP B   78  1                                  14    
+HELIX   14  14 GLU B   82  ASP B   93  1                                  12    
+HELIX   15  15 SER B  101  GLY B  113  1                                  13    
+HELIX   16  16 THR B  117  ASP B  129  1                                  13    
+HELIX   17  17 TYR B  138  MET B  145  1                                   8    
+HELIX   18  18 GLU E 1612  GLN E 1625  1                                  14    
+HELIX   19  19 THR C    5  ASP C   20  1                                  16    
+HELIX   20  20 THR C   28  LEU C   39  1                                  12    
+HELIX   21  21 THR C   44  ASP C   56  1                                  13    
+HELIX   22  22 PHE C   65  LYS C   75  1                                  11    
+HELIX   23  23 GLU C   82  ASP C   93  1                                  12    
+HELIX   24  24 SER C  101  LEU C  112  1                                  12    
+HELIX   25  25 THR C  117  ASP C  129  1                                  13    
+HELIX   26  26 TYR C  138  MET C  145  1                                   8    
+HELIX   27  27 LYS F 1617  GLU F 1636  1                                  20    
+SHEET    1   A 2 THR A  26  ILE A  27  0                                        
+SHEET    2   A 2 ILE A  63  ASP A  64 -1  O  ILE A  63   N  ILE A  27           
+SHEET    1   B 2 TYR A  99  ILE A 100  0                                        
+SHEET    2   B 2 VAL A 136  ASN A 137 -1  O  VAL A 136   N  ILE A 100           
+SHEET    1   C 2 THR B  26  ILE B  27  0                                        
+SHEET    2   C 2 ILE B  63  ASP B  64 -1  O  ILE B  63   N  ILE B  27           
+SHEET    1   D 2 TYR B  99  ILE B 100  0                                        
+SHEET    2   D 2 VAL B 136  ASN B 137 -1  O  VAL B 136   N  ILE B 100           
+SHEET    1   E 2 THR C  26  ILE C  27  0                                        
+SHEET    2   E 2 ILE C  63  ASP C  64 -1  O  ILE C  63   N  ILE C  27           
+SHEET    1   F 2 TYR C  99  ILE C 100  0                                        
+SHEET    2   F 2 VAL C 136  ASN C 137 -1  O  VAL C 136   N  ILE C 100           
+ATOM      1  N   GLN A   3     -60.666  10.102 -15.189  1.00 45.02           N  
+ATOM      2  CA  GLN A   3     -59.700   9.668 -14.130  1.00 44.75           C  
+TER    1125      THR A 146                                                      
+ATOM   1126  N   GLU D1612     -37.971   8.936 -10.792  1.00 53.47           N  
+ATOM   1127  CA  GLU D1612     -36.823   8.395 -11.580  1.00 53.22           C  
+TER    1362      VAL D1640                                                      
+ATOM   1363  N   LEU B   4     -31.701   6.217  18.025  1.00 34.14           N  
+ATOM   1364  CA  LEU B   4     -30.741   7.335  17.723  1.00 34.28           C  
+TER    2461      THR B 146                                                      
+ATOM   2462  N   GLU E1612     -30.878   6.788  -3.987  1.00 23.15           N  
+ATOM   2463  CA  GLU E1612     -30.212   5.774  -3.112  1.00 23.48           C  
+TER    2568      GLN E1625                                                      
+ATOM   2569  N   LEU C   4     -15.700   1.591 -13.009  1.00 30.41           N  
+ATOM   2570  CA  LEU C   4     -14.296   1.964 -13.370  1.00 29.61           C  
+TER    3661      THR C 146                                                      
+ATOM   3662  N   VAL F1615     -13.922   9.423 -41.313  1.00 35.39           N  
+ATOM   3663  CA  VAL F1615     -14.225   8.920 -39.939  1.00 35.66           C  
+TER    3857      GLU F1636                                                      
+END                                                                             
