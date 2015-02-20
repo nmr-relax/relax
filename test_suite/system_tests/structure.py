@@ -916,6 +916,7 @@ class Structure(SystemTestCase):
             "ATOM      4  H   GLU A   2       4.000   0.000   0.000  1.00  0.00           H  \n",
             "TER       5      GLU A   2                                                      \n",
             "ENDMDL                                                                          \n",
+            "MASTER        0    0    0    0    0    0    0    0    4    1    0    0          \n",
             "END                                                                             \n"
         ]
 
