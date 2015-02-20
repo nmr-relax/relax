@@ -4160,7 +4160,7 @@ class Structure(SystemTestCase):
             "HELIX    7   3 THR B  117  ASP B  129  1                                  13    \n",
             "HELIX    8   4 TYR B  138  THR B  146  1                                   9    \n",
             "SHEET    1   A 2 TYR B  99  ILE B 100  0                                        \n",
-            "SHEET    2   A 2 VAL B 136  ASN B 137 -1    OVAL B 136     NILE B 100           \n"
+            "SHEET    2   A 2 VAL B 136  ASN B 137 -1  O  VAL B 136   N  ILE B 100           \n"
         ]
 
         # Check secondary structure contents of the created PDB file.
