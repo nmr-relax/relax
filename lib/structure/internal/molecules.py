@@ -285,6 +285,10 @@ class MolContainer:
     def _sort_key(self, i):
         """Return the information for sorting the sequence data."""
 
+        # Python 3 - return 0 instead of None.
+        if self.res_num[i] == None:
+            return 0
+
         # Sort based on residue number.
         return self.res_num[i]
 
