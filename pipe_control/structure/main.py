@@ -89,7 +89,7 @@ def add_atom(mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[No
         cdp.structure = Internal()
 
     # Add the atoms.
-    cdp.structure.add_atom(mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
+    cdp.structure.add_atom(mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record, sort=True)
 
 
 def add_model(model_num=None):
@@ -1655,7 +1655,7 @@ def web_of_motion(pipes=None, models=None, molecules=None, atom_id=None, file=No
         # Loop over the structures.
         for struct_index in range(len(ids)):
             # Add the atom.
-            web.add_atom(mol_name=mol_names[atom_index], atom_name=atom_names[atom_index], res_name=res_names[atom_index], res_num=res_nums[atom_index], pos=coord[struct_index, atom_index], element=elements[atom_index])
+            web.add_atom(mol_name=mol_names[atom_index], atom_name=atom_names[atom_index], res_name=res_names[atom_index], res_num=res_nums[atom_index], pos=coord[struct_index, atom_index], element=elements[atom_index], sort=False)
 
         # Loop over the structures again, this time twice.
         for k in range(len(ids)):
