@@ -1095,7 +1095,7 @@ class Internal:
         return sheet
 
 
-    def add_atom(self, mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None):
+    def add_atom(self, mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None, sort=False):
         """Add a new atom to the structural data object.
 
         @keyword mol_name:      The name of the molecule.
@@ -1118,6 +1118,8 @@ class Internal:
         @type segment_id:       str or None
         @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM' or 'HETATM'.
         @type pdb_record:       str or None
+        @keyword sort:          A flag which if True will cause the structural data to be sorted after adding the atom.
+        @type sort:             bool
         """
 
         # Add a model if not present.
@@ -1155,7 +1157,8 @@ class Internal:
             mol.atom_add(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=model_pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
 
             # Sort.
-            mol._sort()
+            if sort:
+                mol._sort()
 
 
     def add_coordinates(self, coord=None, mol_names=None, res_names=None, res_nums=None, atom_names=None, elements=None, set_mol_name=None, set_model_num=None):
@@ -2852,7 +2855,7 @@ class Internal:
                     if not same:
                         print("%-6s%5s %4s%1s%3s %1s%4s%1s   %8s%8s%8s%6.2f%6.2f      %4s%2s%2s" % ('ATOM', mol.atom_num[k], self._translate(mol.atom_name[k]), '', self._translate(mol.res_name[k]), self._translate(mol.chain_id[k]), self._translate(mol.res_num[k]), '', '#', '#', '#', 1.0, 0, self._translate(mol.seg_id[k]), self._translate(mol.element[k]), ''))
                         print("%-6s%5s %4s%1s%3s %1s%4s%1s   %8s%8s%8s%6.2f%6.2f      %4s%2s%2s" % ('ATOM', mol_ref.atom_num[k], self._translate(mol_ref.atom_name[k]), '', self._translate(mol_ref.res_name[k]), self._translate(mol_ref.chain_id[k]), self._translate(mol_ref.res_num[k]), '', '#', '#', '#', 1.0, 0, self._translate(mol_ref.seg_id[k]), self._translate(mol_ref.element[k]), ''))
-                        raise RelaxError("The atoms of model %i do not match the first model." % self.structural_data[i].num)
+                        raise RelaxError("The atoms of model %s do not match the first model." % self.structural_data[i].num)
 
         # Final printout.
         if verbosity:

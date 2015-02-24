@@ -34,18 +34,18 @@ class Test_object(UnitTestCase):
         struct = object.Internal()
 
         # Create three molecules 'X', 'Y', and 'Z' with some connected atoms.
-        struct.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='X', pos=[1., 0., -1.], element='S')
-        struct.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='Y', pos=[0., 0., 0.], element='S')
-        struct.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='Z', pos=[-1., 0., 1.], element='S')
-        struct.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='X', pos=[1., 2., -1.], element='S')
-        struct.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='Y', pos=[0., 2., 0.], element='S')
-        struct.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='Z', pos=[-1., 2., 1.], element='S')
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='X', pos=[1., 0., -1.], element='S', sort=True)
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='Y', pos=[0., 0., 0.], element='S', sort=True)
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=1, mol_name='Z', pos=[-1., 0., 1.], element='S', sort=True)
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='X', pos=[1., 2., -1.], element='S', sort=True)
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='Y', pos=[0., 2., 0.], element='S', sort=True)
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=3, mol_name='Z', pos=[-1., 2., 1.], element='S', sort=True)
         struct.connect_atom(mol_name='X', index1=0, index2=1)
         struct.connect_atom(mol_name='Y', index1=0, index2=1)
         struct.connect_atom(mol_name='Z', index1=0, index2=1)
-        struct.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='X', pos=[1., 20., -1.], element='S')
-        struct.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='Y', pos=[0., 20., 0.], element='S')
-        struct.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='Z', pos=[-1., 20., 1.], element='S')
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='X', pos=[1., 20., -1.], element='S', sort=True)
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='Y', pos=[0., 20., 0.], element='S', sort=True)
+        struct.add_atom(atom_name='A', res_name='UNK', res_num=2, mol_name='Z', pos=[-1., 20., 1.], element='S', sort=True)
 
         # The sorted data.
         data = [[
