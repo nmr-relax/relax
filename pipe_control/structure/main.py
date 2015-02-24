@@ -134,7 +134,10 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
 
     # No data.
     if mol_names == []:
-        raise RelaxError("No structural data matching the atom ID string '%s' can be found." % atom_id)
+        if atom_id != None:
+            raise RelaxError("No structural data matching the atom ID string '%s' can be found." % atom_id)
+        else:
+            raise RelaxError("No structural data can be found.")
 
     # Are all molecules the same?
     same_mol = True
