@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -460,6 +460,22 @@ class Test_internal(UnitTestCase):
         self.assertEqual(atom_count, 150)
 
 
+    def test_atom_loop_inv(self):
+        """Test the Internal.atom_loop() method with the inversion flag set."""
+
+        # Load the PDB file.
+        self.data.load_pdb(self.test_pdb_path)
+
+        # Loop over the atoms.
+        atom_count = 0
+        selection = self.data.selection(atom_id=None, inv=True)
+        for atom in self.data.atom_loop(selection=selection):
+            atom_count = atom_count + 1
+
+        # Test the number of atoms looped over.
+        self.assertEqual(atom_count, 0)
+
+
     def test_atom_loop_mol_selection(self):
         """Test the Internal.atom_loop() method with the '#XXX' mol selection."""
 
@@ -474,6 +490,22 @@ class Test_internal(UnitTestCase):
 
         # Test the number of atoms looped over.
         self.assertEqual(atom_count, 0)
+
+
+    def test_atom_loop_mol_selection_inv(self):
+        """Test the Internal.atom_loop() method with the '#XXX' mol selection with the inversion flag set."""
+
+        # Load the PDB file.
+        self.data.load_pdb(self.test_pdb_path)
+
+        # Loop over the atoms.
+        atom_count = 0
+        selection = self.data.selection(atom_id='#XXX', inv=True)
+        for atom in self.data.atom_loop(selection=selection):
+            atom_count = atom_count + 1
+
+        # Test the number of atoms looped over.
+        self.assertEqual(atom_count, 150)
 
 
     def test_atom_loop_res_selection1(self):
@@ -497,6 +529,26 @@ class Test_internal(UnitTestCase):
         self.assertEqual(atom_count, 11)
 
 
+    def test_atom_loop_res_selection1_inv(self):
+        """Test the Internal.atom_loop() method with the ':8' res selection with the inversion flag set."""
+
+        # Load the PDB file.
+        self.data.load_pdb(self.test_pdb_path)
+
+        # Loop over the atoms.
+        atom_count = 0
+        selection = self.data.selection(atom_id=':8', inv=True)
+        for res_num, res_name in self.data.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True):
+            # Test the residue name and number.
+            self.assertNotEqual(res_num, 8)
+
+            # Increment the atom count.
+            atom_count = atom_count + 1
+
+        # Test the number of atoms looped over.
+        self.assertEqual(atom_count, 150-11)
+
+
     def test_atom_loop_res_selection2(self):
         """Test the Internal.atom_loop() method with the ':PRO' res selection."""
 
@@ -517,6 +569,26 @@ class Test_internal(UnitTestCase):
         self.assertEqual(atom_count, 42)
 
 
+    def test_atom_loop_res_selection2_inv(self):
+        """Test the Internal.atom_loop() method with the ':PRO' res selection with the inversion flag set."""
+
+        # Load the PDB file.
+        self.data.load_pdb(self.test_pdb_path)
+
+        # Loop over the atoms.
+        atom_count = 0
+        selection = self.data.selection(atom_id=':PRO', inv=True)
+        for atom in self.data.atom_loop(selection=selection, res_name_flag=True):
+            # Test the residue name.
+            self.assertNotEqual(atom, 'PRO')
+
+            # Increment the atom count.
+            atom_count = atom_count + 1
+
+        # Test the number of atoms looped over.
+        self.assertEqual(atom_count, 150-42)
+
+
     def test_atom_loop_spin_selection1(self):
         """Test the Internal.atom_loop() method with the '@CA' spin selection."""
 
@@ -535,6 +607,26 @@ class Test_internal(UnitTestCase):
 
         # Test the number of atoms looped over.
         self.assertEqual(atom_count, 12)
+
+
+    def test_atom_loop_spin_selection1_inv(self):
+        """Test the Internal.atom_loop() method with the '@CA' spin selection with the inversion flag set."""
+
+        # Load the PDB file.
+        self.data.load_pdb(self.test_pdb_path)
+
+        # Loop over the atoms.
+        atom_count = 0
+        selection = self.data.selection(atom_id='@CA', inv=True)
+        for spin_name in self.data.atom_loop(selection=selection, atom_name_flag=True):
+            # Test the spin name.
+            self.assertNotEqual(spin_name, 'CA')
+
+            # Increment the atom count.
+            atom_count = atom_count + 1
+
+        # Test the number of atoms looped over.
+        self.assertEqual(atom_count, 150-12)
 
 
     def test_atom_loop_spin_selection2(self):
@@ -564,6 +656,29 @@ class Test_internal(UnitTestCase):
 
         # Test the number of atoms looped over.
         self.assertEqual(atom_count, 1)
+
+
+    def test_atom_loop_spin_selection2_inv(self):
+        """Test the Internal.atom_loop() method with the '@163' spin selection with the inversion flag set."""
+
+        # Load the PDB file.
+        self.data.load_pdb(self.test_pdb_path)
+
+        # Loop over the atoms.
+        atom_count = 0
+        selection = self.data.selection(atom_id='@140', inv=True)
+        for mol_name, res_num, res_name, spin_num, spin_name, element, pos in self.data.atom_loop(selection=selection, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
+            # Test the spin info.
+            self.assertNotEqual(spin_num, 140)
+            self.assertNotEqual(pos[0, 0], float('10.055'))
+            self.assertNotEqual(pos[0, 1], float('-2.74'))
+            self.assertNotEqual(pos[0, 2], float('-13.193'))
+
+            # Increment the atom count.
+            atom_count = atom_count + 1
+
+        # Test the number of atoms looped over.
+        self.assertEqual(atom_count, 150-1)
 
 
     def test_load_pdb(self):
