@@ -38,7 +38,7 @@ from lib import regex
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxFault, RelaxNoneIntError, RelaxNoPdbError
 from lib.io import file_root, open_read_file
-from lib.selection import Selection
+from lib.selection import Selection, tokenise
 from lib.sequence import aa_codes_three_to_one
 from lib.structure import pdb_read, pdb_write
 from lib.structure.internal.displacements import Displacements
@@ -2627,17 +2627,22 @@ class Internal:
                 mol.z[i] = pos[2]
 
 
-    def selection(self, atom_id=None):
+    def selection(self, atom_id=None, inv=False):
         """Convert the atom ID string into a special internal selection object for speed.
 
         @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
         @type atom_id:      str or None
+        @keyword inv:       A flag which if True will cause the selection to be inverted.
+        @type inv:          bool
         @return:            The internal structural selection object.
         @rtype:             Internal_selection instance
         """
 
         # Initialise the internal structural selection object.
         selection = Internal_selection()
+
+        # Split up the atom ID, to see if a molecule has been specified.
+        mol_token, res_token, spin_token = tokenise(atom_id)
 
         # Generate the atom ID selection object.
         sel_obj = None
@@ -2655,8 +2660,14 @@ class Internal:
             mol = model.mol[mol_index]
 
             # Skip non-matching molecules.
-            if sel_obj and not sel_obj.contains_mol(mol.mol_name):
-                continue
+            if not inv:
+                if sel_obj and not sel_obj.contains_mol(mol.mol_name):
+                    continue
+
+            # Skip matching molecules.
+            else:
+                if (not sel_obj) or (mol_token != None and sel_obj.contains_mol(mol.mol_name)):
+                    continue
 
             # Add the molecule index.
             selection.add_mol(mol_index=mol_index)
@@ -2664,8 +2675,14 @@ class Internal:
             # Loop over the atoms.
             for i in range(len(mol.atom_num)):
                 # Skip non-matching atoms.
-                if sel_obj and not sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
-                    continue
+                if not inv:
+                    if sel_obj and not sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
+                        continue
+
+                # Skip matching atoms.
+                else:
+                    if (not sel_obj) or sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
+                        continue
 
                 # Add the atom index.
                 selection.add_atom(mol_index=mol_index, atom_index=i)
