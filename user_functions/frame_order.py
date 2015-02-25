@@ -86,6 +86,13 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "atom_id",
+    py_type = "str",
+    desc_short = "atom identification string",
+    desc = "The atom identification string to allow the distribution to be a subset of all atoms.",
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "total",
     default = 1000,
     min = 1,
