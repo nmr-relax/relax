@@ -91,6 +91,7 @@ class Rdc(SystemTestCase):
 
             # Load the spins.
             self.interpreter.sequence.read(file='tb.txt', dir=dir, spin_id_col=1)
+            self.interpreter.spin.element('N')
 
             # Delete the residue.
             self.interpreter.residue.delete(delete[i])
@@ -98,6 +99,17 @@ class Rdc(SystemTestCase):
             # Attach protons.
             self.interpreter.sequence.attach_protons()
             self.interpreter.sequence.display()
+
+            # Create the interatomic data containers.
+            self.interpreter.interatom.define(spin_id1='@N', spin_id2='@H')
+
+        # Printout.
+        print("\n\nInteratomic data containers for the 'orig' data pipe:")
+        for interatom in interatomic_loop(pipe='orig'):
+            print("%s %s" % (interatom.spin_id1, interatom.spin_id2))
+        print("\nInteratomic data containers for the 'new' data pipe:")
+        for interatom in interatomic_loop(pipe='new'):
+            print("%s %s" % (interatom.spin_id1, interatom.spin_id2))
 
         # Load the RDCs into the first data pipe.
         self.interpreter.pipe.switch('orig')
