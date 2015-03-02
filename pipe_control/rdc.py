@@ -332,9 +332,6 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
     dp_from = pipes.get_pipe(pipe_from)
     dp_to = pipes.get_pipe(pipe_to)
 
-    # Test that the interatomic data is consistent between the two data pipe.
-    consistent_interatomic_data(pipe1=pipe_to, pipe2=pipe_from)
-
     # The IDs.
     if align_id == None:
         align_ids = dp_from.align_ids
@@ -355,11 +352,24 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
         if align_id in dp_from.rdc_ids and align_id not in dp_to.rdc_ids:
             dp_to.rdc_ids.append(align_id)
 
-        # Loop over the interatomic data.
-        for i in range(len(dp_from.interatomic)):
-            # Alias the containers.
-            interatom_from = dp_from.interatomic[i]
-            interatom_to = dp_to.interatomic[i]
+        # Loop over the interatomic data of the source data pipe.
+        for interatom_from in interatomic_loop(pipe=pipe_from):
+            # Find the matching interatomic data container in the target data pipe.
+            interatom_to = []
+            for interatom in interatomic_loop(selection1=interatom_from.spin_id1, selection2=interatom_from.spin_id2, pipe=pipe_to, skip_desel=False):
+                interatom_to.append(interatom)
+
+            # No matching interatomic data container.
+            if interatom_to == []:
+                warn(RelaxWarning("The interatomic data container between the spins '%s' and '%s' cannot be found in the target data pipe." % (interatom_from.spin_id1, interatom_from.spin_id2)))
+                continue
+
+            # Too many containers.
+            elif len(interatom_to) != 1:
+                raise RelaxError("Too many interatomic data containers between the spins '%s' and '%s' exist in the target data pipe." % (interatom_from.spin_id1, interatom_from.spin_id2))
+
+            # Collapse the container.
+            interatom_to = interatom_to[0]
 
             # No data or errors.
             if (not hasattr(interatom_from, 'rdc') or not align_id in interatom_from.rdc) and (not hasattr(interatom_from, 'rdc_err') or not align_id in interatom_from.rdc_err):
