@@ -84,19 +84,20 @@ class Rdc(SystemTestCase):
 
         # Set up two data identical pipes.
         pipes = ['orig', 'new']
-        delete = [':6', ':11']
+        delete = [':6@N', ':11@N']
         for i in range(2):
             # Create a data pipe.
             self.interpreter.pipe.create(pipes[i], 'N-state')
 
             # Load the spins.
             self.interpreter.sequence.read(file='tb.txt', dir=dir, spin_id_col=1)
+
+            # Delete the spin.
+            self.interpreter.spin.delete(spin_id=delete[i])
+
+            # Attach protons.
             self.interpreter.sequence.attach_protons()
             self.interpreter.sequence.display()
-
-            # Delete the N and H spins.
-            self.interpreter.spin.delete(spin_id='%s@N'%delete[i])
-            self.interpreter.spin.delete(spin_id='%s@H'%delete[i])
 
         # Load the RDCs into the first data pipe.
         self.interpreter.pipe.switch('orig')
