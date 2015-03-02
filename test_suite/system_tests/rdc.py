@@ -76,6 +76,50 @@ class Rdc(SystemTestCase):
             i += 1
 
 
+    def test_rdc_copy_different_spins(self):
+        """Test the operation of the rdc.copy user function for two data pipes with different spin system."""
+
+        # Data directory.
+        dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep
+
+        # Set up two data identical pipes.
+        pipes = ['orig', 'new']
+        delete = [':6', ':11']
+        for i in range(2):
+            # Create a data pipe.
+            self.interpreter.pipe.create(pipes[i], 'N-state')
+
+            # Load the spins.
+            self.interpreter.sequence.read(file='tb.txt', dir=dir, spin_id_col=1)
+            self.interpreter.sequence.attach_protons()
+            self.interpreter.sequence.display()
+
+            # Delete the N and H spins.
+            self.interpreter.spin.delete(spin_id='%s@N'%delete[i])
+            self.interpreter.spin.delete(spin_id='%s@H'%delete[i])
+
+        # Load the RDCs into the first data pipe.
+        self.interpreter.pipe.switch('orig')
+        self.interpreter.rdc.read(align_id='tb', file='tb.txt', dir=dir, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
+
+        # Copy the RDCs into the second data pipe.
+        self.interpreter.rdc.copy(pipe_from='orig', align_id='tb')
+
+        # Checks.
+        rdcs = [
+            [ -26.2501958629, 7.26317614156, -1.24840526981, 5.31803314334, 14.0362909456, 1.33652530397, -1.6021670281],
+            [ -26.2501958629, 9.93081766942, 7.26317614156, -1.24840526981, 5.31803314334, 14.0362909456, -1.6021670281]
+        ]
+        for i in range(2):
+            self.interpreter.pipe.switch(pipe_name=pipes[i])
+            self.assertEqual(count_spins(), 14)
+            self.assertEqual(len(cdp.interatomic), 7)
+            j = 0
+            for interatom in interatomic_loop():
+                self.assertAlmostEqual(rdcs[i][j], interatom.rdc['tb'])
+                j += 1
+
+
     def test_rdc_load(self):
         """Test for the loading of some RDC data with the spin ID format."""
 
