@@ -397,6 +397,10 @@ def average_structure(pipes=None, models=None, molecules=None, atom_id=None, set
     # Calculate the mean structure.
     struct = mean(coord, axis=0)
 
+    # Place the structural object into the relax data store if needed.
+    if not hasattr(cdp, 'structure'):
+        cdp.structure = Internal()
+
     # Store the data.
     cdp.structure.add_coordinates(coord=struct, mol_names=mol_names, res_names=res_names, res_nums=res_nums, atom_names=atom_names, elements=elements, set_mol_name=set_mol_name, set_model_num=set_model_num)
 
