@@ -74,9 +74,12 @@ def attach_protons():
         res_names.append(res_name)
 
     # Create all protons (this must be done out of the spin loop, as it affects the looping!).
+    ids = []
     for i in range(len(mol_names)):
         # Create the spin container.
-        create_spin(spin_name='H', res_name=res_names[i], res_num=res_nums[i], mol_name=mol_names[i])
+        spin = create_spin(spin_name='H', res_name=res_names[i], res_num=res_nums[i], mol_name=mol_names[i])
+        ids.append(generate_spin_id(mol_name=mol_names[i], res_num=res_nums[i], res_name=res_names[i], spin_name='H'))
+    print("Creating the spins %s." % ids)
 
     # Set the element and spin type.
     set_spin_element(spin_id='@H', element='H')
