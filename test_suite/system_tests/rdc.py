@@ -106,10 +106,10 @@ class Rdc(SystemTestCase):
         # Printout.
         print("\n\nInteratomic data containers for the 'orig' data pipe:")
         for interatom in interatomic_loop(pipe='orig'):
-            print("%s %s" % (interatom.spin_id1, interatom.spin_id2))
+            print("'%s' '%s'" % (interatom.spin_id1, interatom.spin_id2))
         print("\nInteratomic data containers for the 'new' data pipe:")
         for interatom in interatomic_loop(pipe='new'):
-            print("%s %s" % (interatom.spin_id1, interatom.spin_id2))
+            print("'%s' '%s'" % (interatom.spin_id1, interatom.spin_id2))
 
         # Load the RDCs into the first data pipe.
         self.interpreter.pipe.switch('orig')
@@ -129,7 +129,11 @@ class Rdc(SystemTestCase):
             self.assertEqual(len(cdp.interatomic), 7)
             j = 0
             for interatom in interatomic_loop():
-                self.assertAlmostEqual(rdcs[i][j], interatom.rdc['tb'])
+                # Residue 6 in the 'new' data pipe has no RDCs.
+                if i == 1 and j == 1:
+                    self.assert_(not hasattr(interatom, 'rdc'))
+                else:
+                    self.assertAlmostEqual(rdcs[i][j], interatom.rdc['tb'])
                 j += 1
 
 
