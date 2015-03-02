@@ -104,7 +104,7 @@ class Rdc(SystemTestCase):
         self.interpreter.rdc.read(align_id='tb', file='tb.txt', dir=dir, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
         # Copy the RDCs into the second data pipe.
-        self.interpreter.rdc.copy(pipe_from='orig', align_id='tb')
+        self.interpreter.rdc.copy(pipe_from='orig', pipe_to='new', align_id='tb')
 
         # Checks.
         rdcs = [
