@@ -442,24 +442,16 @@ class Relax_data_store(dict):
 
         @param file:                The open file object.
         @type file:                 file
-        @keyword dir:               The name of the directory containing the results file (needed
-                                    for loading external files).
+        @keyword dir:               The name of the directory containing the results file (needed for loading external files).
         @type dir:                  str
-        @keyword pipe_to:           The data pipe to load the XML data pipe into (the file must only
-                                    contain one data pipe).
+        @keyword pipe_to:           The data pipe to load the XML data pipe into (the file must only contain one data pipe).
         @type pipe_to:              str
-        @keyword verbosity:         A flag specifying the amount of information to print.  The
-                                    higher the value, the greater the verbosity.
+        @keyword verbosity:         A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:            int
-        @raises RelaxError:         If pipe_to is given and the file contains multiple pipe
-                                    elements;  or if the data pipes in the XML file already exist in
-                                    the relax data store;  or if the data pipe type is invalid;  or
-                                    if the target data pipe is not empty.
+        @raises RelaxError:         If pipe_to is given and the file contains multiple pipe elements;  or if the data pipes in the XML file already exist in the relax data store;  or if the data pipe type is invalid;  or if the target data pipe is not empty.
         @raises RelaxNoPipeError:   If pipe_to is given but the data pipe does not exist.
-        @raises RelaxError:         If the data pipes in the XML file already exist in the relax
-                                    data store, or if the data pipe type is invalid.
-        @raises RelaxPipeError:     If the data pipes of the XML file are already present in the
-                                    relax data store.
+        @raises RelaxError:         If the data pipes in the XML file already exist in the relax data store, or if the data pipe type is invalid.
+        @raises RelaxPipeError:     If the data pipes of the XML file are already present in the relax data store.
         """
 
         # Create the XML document from the file.
@@ -474,23 +466,6 @@ class Relax_data_store(dict):
             file_version = 1
         else:
             file_version = int(file_version)
-
-        # Get the GUI nodes.
-        gui_nodes = relax_node.getElementsByTagName('relax_gui')
-        if gui_nodes:
-            self.relax_gui.from_xml(gui_nodes[0], file_version=file_version)
-
-        # Get the sequence alignment nodes.
-        seq_align_nodes = relax_node.getElementsByTagName('sequence_alignments')
-        if seq_align_nodes:
-            # Initialise the object.
-            self.sequence_alignments = Sequence_alignments()
-
-            # Populate it.
-            self.sequence_alignments.from_xml(seq_align_nodes[0], file_version=file_version)
-
-        # Recreate all the data store data structures.
-        xml_to_object(relax_node, self, file_version=file_version, blacklist=['pipe', 'relax_gui', 'sequence_alignments'])
 
         # Get the pipe nodes.
         pipe_nodes = relax_node.getElementsByTagName('pipe')
@@ -527,6 +502,23 @@ class Relax_data_store(dict):
 
         # Load the state.
         else:
+            # Get the GUI nodes.
+            gui_nodes = relax_node.getElementsByTagName('relax_gui')
+            if gui_nodes:
+                self.relax_gui.from_xml(gui_nodes[0], file_version=file_version)
+
+            # Get the sequence alignment nodes.
+            seq_align_nodes = relax_node.getElementsByTagName('sequence_alignments')
+            if seq_align_nodes:
+                # Initialise the object.
+                self.sequence_alignments = Sequence_alignments()
+
+                # Populate it.
+                self.sequence_alignments.from_xml(seq_align_nodes[0], file_version=file_version)
+
+            # Recreate all the data store data structures.
+            xml_to_object(relax_node, self, file_version=file_version, blacklist=['pipe', 'relax_gui', 'sequence_alignments'])
+
             # Checks.
             for pipe_node in pipe_nodes:
                 # The pipe name and type.
