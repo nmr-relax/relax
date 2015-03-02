@@ -1338,7 +1338,7 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
 
         # Handle the missing rdc_data_types variable.
         data_type = None
-        if hasattr(interatom, 'rdc_data_types'):
+        if hasattr(interatom, 'rdc_data_types') and align_id in interatom.rdc_data_types:
             data_type = interatom.rdc_data_types[align_id]
 
         # The value.
