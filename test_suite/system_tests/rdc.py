@@ -27,6 +27,7 @@
 from os import sep
 
 # relax module imports.
+from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import count_spins
 from status import Status; status = Status()
@@ -35,6 +36,35 @@ from test_suite.system_tests.base_classes import SystemTestCase
 
 class Rdc(SystemTestCase):
     """Class for testing RDC operations."""
+
+    def test_calc_q_factors_no_tensor(self):
+        """Test the operation of the rdc.calc_q_factors user function when no alignment tensor is present."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('orig', 'N-state')
+
+        # Data directory.
+        dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep
+
+        # Load the spins.
+        self.interpreter.sequence.read(file='tb.txt', dir=dir, spin_id_col=1)
+        self.interpreter.sequence.attach_protons()
+        self.interpreter.sequence.display()
+
+        # Load the RDCs.
+        self.interpreter.rdc.read(align_id='tb', file='tb.txt', dir=dir, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
+        self.interpreter.sequence.display()
+
+        # Create back-calculated RDC values from the real values.
+        for interatom in interatomic_loop():
+            if hasattr(interatom, 'rdc'):
+                if not hasattr(interatom, 'rdc_bc'):
+                    interatom.rdc_bc = {}
+                interatom.rdc_bc['tb'] = interatom.rdc['tb'] + 1.0
+
+        # Q factors.
+        self.interpreter.rdc.calc_q_factors()
+
 
     def test_rdc_copy(self):
         """Test the operation of the rdc.copy user function."""
@@ -68,6 +98,10 @@ class Rdc(SystemTestCase):
         self.interpreter.rdc.copy(pipe_from='orig', align_id='tb')
 
         # Checks.
+        self.assert_(hasattr(cdp, 'align_ids'))
+        self.assert_('tb' in cdp.align_ids)
+        self.assert_(hasattr(cdp, 'rdc_ids'))
+        self.assert_('tb' in cdp.rdc_ids)
         self.assertEqual(count_spins(), 16)
         self.assertEqual(len(cdp.interatomic), 8)
         i = 0
@@ -124,6 +158,11 @@ class Rdc(SystemTestCase):
             [ -26.2501958629, 9.93081766942, 7.26317614156, -1.24840526981, 5.31803314334, 14.0362909456, -1.6021670281]
         ]
         for i in range(2):
+            print("\nChecking data pipe '%s'." % pipes[i])
+            self.assert_(hasattr(ds[pipes[i]], 'align_ids'))
+            self.assert_('tb' in ds[pipes[i]].align_ids)
+            self.assert_(hasattr(ds[pipes[i]], 'rdc_ids'))
+            self.assert_('tb' in ds[pipes[i]].rdc_ids)
             self.interpreter.pipe.switch(pipe_name=pipes[i])
             self.assertEqual(count_spins(), 14)
             self.assertEqual(len(cdp.interatomic), 7)
@@ -192,6 +231,11 @@ class Rdc(SystemTestCase):
             [ -26.2501958629, 9.93081766942, 7.26317614156, -1.24840526981, 5.31803314334, 14.0362909456, -1.6021670281]
         ]
         for i in range(2):
+            print("\nChecking data pipe '%s'." % pipes[i])
+            self.assert_(hasattr(ds[pipes[i]], 'align_ids'))
+            self.assert_('tb' in ds[pipes[i]].align_ids)
+            self.assert_(hasattr(ds[pipes[i]], 'rdc_ids'))
+            self.assert_('tb' in ds[pipes[i]].rdc_ids)
             self.interpreter.pipe.switch(pipe_name=pipes[i])
             self.assertEqual(count_spins(), 14)
             self.assertEqual(len(cdp.interatomic), 7)

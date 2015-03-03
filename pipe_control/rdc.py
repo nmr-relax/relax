@@ -734,17 +734,29 @@ def q_factors(spin_id=None, verbosity=1):
             else:
                 D2_sum = D2_sum + interatom.rdc[align_id]**2
 
-            # Gyromagnetic ratios.
-            g1 = periodic_table.gyromagnetic_ratio(spin1.isotope)
-            g2 = periodic_table.gyromagnetic_ratio(spin2.isotope)
+            # Skip the 2Da^2(4 + 3R)/5 normalised Q factor if no tensor is present.
+            if norm2_flag and not hasattr(cdp, 'align_tensors'):
+                warn(RelaxWarning("No alignment tensors are present, skipping the Q factor normalised with 2Da^2(4 + 3R)/5."))
+                norm2_flag = False
 
             # Skip the 2Da^2(4 + 3R)/5 normalised Q factor if pseudo-atoms are present.
-            if  norm2_flag and (is_pseudoatom(spin1) or is_pseudoatom(spin2)):
+            if norm2_flag and (is_pseudoatom(spin1) or is_pseudoatom(spin2)):
                 warn(RelaxWarning("Pseudo-atoms are present, skipping the Q factor normalised with 2Da^2(4 + 3R)/5."))
                 norm2_flag = False
 
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
             if norm2_flag:
+                # Data checks.
+                if not hasattr(spin1, 'isotope'):
+                    raise RelaxSpinTypeError(spin_id=interatom.spin_id1)
+                if not hasattr(spin2, 'isotope'):
+                    raise RelaxSpinTypeError(spin_id=interatom.spin_id2)
+
+                # Gyromagnetic ratios.
+                g1 = periodic_table.gyromagnetic_ratio(spin1.isotope)
+                g2 = periodic_table.gyromagnetic_ratio(spin2.isotope)
+
+                # Calculate the dipolar constant.
                 dj_new = 3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r)
                 if dj != None and dj_new != dj:
                     warn(RelaxWarning("The dipolar constant is not the same for all RDCs, skipping the Q factor normalised with 2Da^2(4 + 3R)/5."))
