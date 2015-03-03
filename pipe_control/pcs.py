@@ -328,7 +328,7 @@ def copy(pipe_from=None, pipe_to=None, align_id=None, back_calc=True):
 
         # Spin loop.
         data = []
-        for spin_from, spin_id in spin_loop(return_id=True, pipe=pipe_from):
+        for spin_from, spin_id in spin_loop(return_id=True, skip_desel=True, pipe=pipe_from):
             # Find the matching spin container in the target data pipe.
             spin_to = return_spin(spin_id, pipe=pipe_to)
 
