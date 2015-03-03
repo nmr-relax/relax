@@ -328,10 +328,14 @@ def copy(pipe_from=None, pipe_to=None, align_id=None, back_calc=True):
 
         # Spin loop.
         data = []
-        for mol_index, res_index, spin_index in spin_index_loop():
-            # Alias the spin containers.
-            spin_from = dp_from.mol[mol_index].res[res_index].spin[spin_index]
-            spin_to = dp_to.mol[mol_index].res[res_index].spin[spin_index]
+        for spin_from, spin_id in spin_loop(return_id=True):
+            # Find the matching spin container in the target data pipe.
+            spin_to = return_spin(spin_id, pipe=pipe_to)
+
+            # No matching spin container.
+            if spin_to == None:
+                warn(RelaxWarning("The spin container for the spin '%s' cannot be found in the target data pipe." % spin_id))
+                continue
 
             # No data or errors.
             if (not hasattr(spin_from, 'pcs') or not align_id in spin_from.pcs) and (not hasattr(spin_from, 'pcs_err') or not align_id in spin_from.pcs_err):
@@ -360,7 +364,7 @@ def copy(pipe_from=None, pipe_to=None, align_id=None, back_calc=True):
                 spin_to.pcs_err[align_id] = error
 
             # Append the data for printout.
-            data.append([spin_from._spin_ids[0]])
+            data.append([spin_id])
             if is_float(value):
                 data[-1].append("%20.15f" % value)
             else:
