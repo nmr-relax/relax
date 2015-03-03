@@ -256,16 +256,16 @@ class Pcs(SystemTestCase):
             [0.004, 0.008, 0.021, 0.029, 0.016, 0.010, 0.008, 0.003, 0.006, 0.003, 0.007, 0.005, 0.001, 0.070, None, 0.025, 0.098, 0.054, 0.075, 0.065, None, 0.070, 0.015, 0.098, 0.120]
         ]
         for i in range(2):
-            self.assertEqual(count_spins(), 26)
+            self.assertEqual(count_spins(), 25)
             self.assertEqual(len(cdp.interatomic), 0)
-            i = 0
-            for spin in spin_loop():
+            j = 0
+            for spin in spin_loop(pipe=pipes[i]):
                 # Atom C2 in the 'new' data pipe has no PCSs.
                 if i == 1 and j == 1:
                     self.assert_(not hasattr(spin, 'pcs'))
                 else:
                     self.assertAlmostEqual(pcs[i][j], spin.pcs['tb'])
-                i += 1
+                j += 1
 
 
     def test_pcs_copy_back_calc(self):
@@ -310,10 +310,10 @@ class Pcs(SystemTestCase):
             [0.004, 0.008, 0.021, 0.029, 0.016, 0.010, 0.008, 0.003, 0.006, 0.003, 0.007, 0.005, 0.001, 0.070, None, 0.025, 0.098, 0.054, 0.075, 0.065, None, 0.070, 0.015, 0.098, 0.120]
         ]
         for i in range(2):
-            self.assertEqual(count_spins(), 26)
+            self.assertEqual(count_spins(), 25)
             self.assertEqual(len(cdp.interatomic), 0)
-            i = 0
-            for spin in spin_loop():
+            j = 0
+            for spin in spin_loop(pipe=pipes[i]):
                 # Atom C2 in the 'new' data pipe has no PCSs.
                 if i == 1 and j == 1:
                     self.assert_(not hasattr(spin, 'pcs'))
@@ -323,7 +323,7 @@ class Pcs(SystemTestCase):
                         self.assertAlmostEqual(pcs[i][j]+1.0, spin.pcs_bc['tb'])
                     else:
                         self.assertEqual(None, spin.pcs_bc['tb'])
-                i += 1
+                j += 1
 
 
     def test_pcs_load(self):
