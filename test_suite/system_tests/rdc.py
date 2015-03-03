@@ -27,6 +27,7 @@
 from os import sep
 
 # relax module imports.
+from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import count_spins
 from status import Status; status = Status()
@@ -68,6 +69,10 @@ class Rdc(SystemTestCase):
         self.interpreter.rdc.copy(pipe_from='orig', align_id='tb')
 
         # Checks.
+        self.assert_(hasattr(cdp, 'align_ids'))
+        self.assert_('tb' in cdp.align_ids)
+        self.assert_(hasattr(cdp, 'rdc_ids'))
+        self.assert_('tb' in cdp.rdc_ids)
         self.assertEqual(count_spins(), 16)
         self.assertEqual(len(cdp.interatomic), 8)
         i = 0
@@ -124,6 +129,11 @@ class Rdc(SystemTestCase):
             [ -26.2501958629, 9.93081766942, 7.26317614156, -1.24840526981, 5.31803314334, 14.0362909456, -1.6021670281]
         ]
         for i in range(2):
+            print("\nChecking data pipe '%s'." % pipes[i])
+            self.assert_(hasattr(ds[pipes[i]], 'align_ids'))
+            self.assert_('tb' in ds[pipes[i]].align_ids)
+            self.assert_(hasattr(ds[pipes[i]], 'rdc_ids'))
+            self.assert_('tb' in ds[pipes[i]].rdc_ids)
             self.interpreter.pipe.switch(pipe_name=pipes[i])
             self.assertEqual(count_spins(), 14)
             self.assertEqual(len(cdp.interatomic), 7)
@@ -192,6 +202,11 @@ class Rdc(SystemTestCase):
             [ -26.2501958629, 9.93081766942, 7.26317614156, -1.24840526981, 5.31803314334, 14.0362909456, -1.6021670281]
         ]
         for i in range(2):
+            print("\nChecking data pipe '%s'." % pipes[i])
+            self.assert_(hasattr(ds[pipes[i]], 'align_ids'))
+            self.assert_('tb' in ds[pipes[i]].align_ids)
+            self.assert_(hasattr(ds[pipes[i]], 'rdc_ids'))
+            self.assert_('tb' in ds[pipes[i]].rdc_ids)
             self.interpreter.pipe.switch(pipe_name=pipes[i])
             self.assertEqual(count_spins(), 14)
             self.assertEqual(len(cdp.interatomic), 7)
