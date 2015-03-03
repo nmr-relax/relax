@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -448,14 +448,14 @@ def interatomic_loop(selection1=None, selection2=None, pipe=None, skip_desel=Tru
 
         # Aliases.
         interatom = dp.interatomic[i]
-        mol_index1, res_index1, spin_index1 = cdp.mol._spin_id_lookup[interatom.spin_id1]
-        mol_index2, res_index2, spin_index2 = cdp.mol._spin_id_lookup[interatom.spin_id2]
-        mol1 =  cdp.mol[mol_index1]
-        res1 =  cdp.mol[mol_index1].res[res_index1]
-        spin1 = cdp.mol[mol_index1].res[res_index1].spin[spin_index1]
-        mol2 = cdp.mol[mol_index2]
-        res2 =  cdp.mol[mol_index2].res[res_index2]
-        spin2 = cdp.mol[mol_index2].res[res_index2].spin[spin_index2]
+        mol_index1, res_index1, spin_index1 = dp.mol._spin_id_lookup[interatom.spin_id1]
+        mol_index2, res_index2, spin_index2 = dp.mol._spin_id_lookup[interatom.spin_id2]
+        mol1 =  dp.mol[mol_index1]
+        res1 =  dp.mol[mol_index1].res[res_index1]
+        spin1 = dp.mol[mol_index1].res[res_index1].spin[spin_index1]
+        mol2 = dp.mol[mol_index2]
+        res2 =  dp.mol[mol_index2].res[res_index2]
+        spin2 = dp.mol[mol_index2].res[res_index2].spin[spin_index2]
 
         # The different selection combinations.
         if select_obj:

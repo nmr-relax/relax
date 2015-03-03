@@ -33,9 +33,10 @@ from warnings import warn
 
 # relax module imports.
 from lib.alignment.pcs import ave_pcs_tensor, pcs_tensor
+from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoPdbError, RelaxNoPCSError, RelaxNoSequenceError
 from lib.geometry.vectors import random_unit_vector
-from lib.io import open_write_file
+from lib.io import open_write_file, write_data
 from lib.periodic_table import periodic_table
 from lib.physical_constants import pcs_constant
 from lib.plotting.api import write_xy_data, write_xy_header
@@ -273,15 +274,17 @@ def check_pipe_setup(pipe=None, pcs_id=None, sequence=False, N=False, tensors=Fa
         raise RelaxError("The paramagnetic centre has not been defined.")
 
 
-def copy(pipe_from=None, pipe_to=None, align_id=None):
+def copy(pipe_from=None, pipe_to=None, align_id=None, back_calc=True):
     """Copy the PCS data from one data pipe to another.
 
     @keyword pipe_from: The data pipe to copy the PCS data from.  This defaults to the current data pipe.
     @type pipe_from:    str
     @keyword pipe_to:   The data pipe to copy the PCS data to.  This defaults to the current data pipe.
     @type pipe_to:      str
-    @param align_id:    The alignment ID string.
+    @keyword align_id:  The alignment ID string.
     @type align_id:     str
+    @keyword back_calc: A flag which if True will cause any back-calculated RDCs present to also be copied with the real values and errors.
+    @type back_calc:    bool
     """
 
     # Defaults.
@@ -314,6 +317,9 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
 
     # Loop over the align IDs.
     for align_id in align_ids:
+        # Printout.
+        print("\nCoping PCSs for the alignment ID '%s'." % align_id)
+
         # Copy the global data.
         if align_id not in dp_to.align_ids and align_id not in dp_to.align_ids:
             dp_to.align_ids.append(align_id)
@@ -321,10 +327,15 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
             dp_to.pcs_ids.append(align_id)
 
         # Spin loop.
-        for mol_index, res_index, spin_index in spin_index_loop():
-            # Alias the spin containers.
-            spin_from = dp_from.mol[mol_index].res[res_index].spin[spin_index]
-            spin_to = dp_to.mol[mol_index].res[res_index].spin[spin_index]
+        data = []
+        for spin_from, spin_id in spin_loop(return_id=True, skip_desel=True, pipe=pipe_from):
+            # Find the matching spin container in the target data pipe.
+            spin_to = return_spin(spin_id, pipe=pipe_to)
+
+            # No matching spin container.
+            if spin_to == None:
+                warn(RelaxWarning("The spin container for the spin '%s' cannot be found in the target data pipe." % spin_id))
+                continue
 
             # No data or errors.
             if (not hasattr(spin_from, 'pcs') or not align_id in spin_from.pcs) and (not hasattr(spin_from, 'pcs_err') or not align_id in spin_from.pcs_err):
@@ -333,14 +344,47 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
             # Initialise the spin data if necessary.
             if hasattr(spin_from, 'pcs') and not hasattr(spin_to, 'pcs'):
                 spin_to.pcs = {}
+            if back_calc and hasattr(spin_from, 'pcs_bc') and not hasattr(spin_to, 'pcs_bc'):
+                spin_to.pcs_bc = {}
             if hasattr(spin_from, 'pcs_err') and not hasattr(spin_to, 'pcs_err'):
                 spin_to.pcs_err = {}
 
             # Copy the value and error from pipe_from.
+            value = None
+            error = None
+            value_bc = None
             if hasattr(spin_from, 'pcs'):
-                spin_to.pcs[align_id] = spin_from.pcs[align_id]
+                value = spin_from.pcs[align_id]
+                spin_to.pcs[align_id] = value
+            if back_calc and hasattr(spin_from, 'pcs_bc'):
+                value_bc = spin_from.pcs_bc[align_id]
+                spin_to.pcs_bc[align_id] = value_bc
             if hasattr(spin_from, 'pcs_err'):
-                spin_to.pcs_err[align_id] = spin_from.pcs_err[align_id]
+                error = spin_from.pcs_err[align_id]
+                spin_to.pcs_err[align_id] = error
+
+            # Append the data for printout.
+            data.append([spin_id])
+            if is_float(value):
+                data[-1].append("%20.15f" % value)
+            else:
+                data[-1].append("%20s" % value)
+            if back_calc:
+                if is_float(value_bc):
+                    data[-1].append("%20.15f" % value_bc)
+                else:
+                    data[-1].append("%20s" % value_bc)
+            if is_float(error):
+                data[-1].append("%20.15f" % error)
+            else:
+                data[-1].append("%20s" % error)
+
+        # Printout.
+        print("The following PCSs have been copied:\n")
+        if back_calc:
+            write_data(out=sys.stdout, headings=["Spin_ID", "Value", "Back-calculated", "Error"], data=data)
+        else:
+            write_data(out=sys.stdout, headings=["Spin_ID", "Value", "Error"], data=data)
 
 
 def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force=False):
@@ -734,7 +778,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
         # Get the corresponding spin container.
         id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
         spin = return_spin(id)
-        if spin == None and spin_id[0] == '@':    # Allow spin IDs of atom names to be used to specify multi column data.
+        if spin == None and spin_id and spin_id[0] == '@':    # Allow spin IDs of atom names to be used to specify multi column data.
             spin = return_spin(id+spin_id)
         if spin == None:
             warn(RelaxNoSpinWarning(id))

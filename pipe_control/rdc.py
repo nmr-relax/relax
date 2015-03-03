@@ -305,15 +305,17 @@ def convert(value, data_type, align_id, to_intern=False):
     return value * factor
 
 
-def copy(pipe_from=None, pipe_to=None, align_id=None):
+def copy(pipe_from=None, pipe_to=None, align_id=None, back_calc=True):
     """Copy the RDC data from one data pipe to another.
 
     @keyword pipe_from: The data pipe to copy the RDC data from.  This defaults to the current data pipe.
     @type pipe_from:    str
     @keyword pipe_to:   The data pipe to copy the RDC data to.  This defaults to the current data pipe.
     @type pipe_to:      str
-    @param align_id:    The alignment ID string.
+    @keyword align_id:  The alignment ID string.
     @type align_id:     str
+    @keyword back_calc: A flag which if True will cause any back-calculated RDCs present to also be copied with the real values and errors.
+    @type back_calc:    bool
     """
 
     # Defaults.
@@ -332,9 +334,6 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
     dp_from = pipes.get_pipe(pipe_from)
     dp_to = pipes.get_pipe(pipe_to)
 
-    # Test that the interatomic data is consistent between the two data pipe.
-    consistent_interatomic_data(pipe1=pipe_to, pipe2=pipe_from)
-
     # The IDs.
     if align_id == None:
         align_ids = dp_from.align_ids
@@ -349,17 +348,34 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
 
     # Loop over the align IDs.
     for align_id in align_ids:
+        # Printout.
+        print("\nCoping RDCs for the alignment ID '%s'." % align_id)
+
         # Copy the global data.
         if align_id not in dp_to.align_ids and align_id not in dp_to.align_ids:
             dp_to.align_ids.append(align_id)
         if align_id in dp_from.rdc_ids and align_id not in dp_to.rdc_ids:
             dp_to.rdc_ids.append(align_id)
 
-        # Loop over the interatomic data.
-        for i in range(len(dp_from.interatomic)):
-            # Alias the containers.
-            interatom_from = dp_from.interatomic[i]
-            interatom_to = dp_to.interatomic[i]
+        # Loop over the interatomic data of the source data pipe.
+        data = []
+        for interatom_from in interatomic_loop(pipe=pipe_from):
+            # Find the matching interatomic data container in the target data pipe.
+            interatom_to = []
+            for interatom in interatomic_loop(selection1=interatom_from.spin_id1, selection2=interatom_from.spin_id2, pipe=pipe_to, skip_desel=False):
+                interatom_to.append(interatom)
+
+            # No matching interatomic data container.
+            if interatom_to == []:
+                warn(RelaxWarning("The interatomic data container between the spins '%s' and '%s' cannot be found in the target data pipe." % (interatom_from.spin_id1, interatom_from.spin_id2)))
+                continue
+
+            # Too many containers.
+            elif len(interatom_to) != 1:
+                raise RelaxError("Too many interatomic data containers between the spins '%s' and '%s' exist in the target data pipe." % (interatom_from.spin_id1, interatom_from.spin_id2))
+
+            # Collapse the container.
+            interatom_to = interatom_to[0]
 
             # No data or errors.
             if (not hasattr(interatom_from, 'rdc') or not align_id in interatom_from.rdc) and (not hasattr(interatom_from, 'rdc_err') or not align_id in interatom_from.rdc_err):
@@ -368,14 +384,47 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
             # Initialise the data structures if necessary.
             if hasattr(interatom_from, 'rdc') and not hasattr(interatom_to, 'rdc'):
                 interatom_to.rdc = {}
+            if back_calc and hasattr(interatom_from, 'rdc_bc') and not hasattr(interatom_to, 'rdc_bc'):
+                interatom_to.rdc_bc = {}
             if hasattr(interatom_from, 'rdc_err') and not hasattr(interatom_to, 'rdc_err'):
                 interatom_to.rdc_err = {}
 
             # Copy the value and error from pipe_from.
+            value = None
+            error = None
+            value_bc = None
             if hasattr(interatom_from, 'rdc'):
-                interatom_to.rdc[align_id] = interatom_from.rdc[align_id]
+                value = interatom_from.rdc[align_id]
+                interatom_to.rdc[align_id] = value
+            if back_calc and hasattr(interatom_from, 'rdc_bc'):
+                value_bc = interatom_from.rdc_bc[align_id]
+                interatom_to.rdc_bc[align_id] = value_bc
             if hasattr(interatom_from, 'rdc_err'):
-                interatom_to.rdc_err[align_id] = interatom_from.rdc_err[align_id]
+                error = interatom_from.rdc_err[align_id]
+                interatom_to.rdc_err[align_id] = error
+
+            # Append the data for printout.
+            data.append([interatom_from.spin_id1, interatom_from.spin_id2])
+            if is_float(value):
+                data[-1].append("%20.15f" % value)
+            else:
+                data[-1].append("%20s" % value)
+            if back_calc:
+                if is_float(value_bc):
+                    data[-1].append("%20.15f" % value_bc)
+                else:
+                    data[-1].append("%20s" % value_bc)
+            if is_float(error):
+                data[-1].append("%20.15f" % error)
+            else:
+                data[-1].append("%20s" % error)
+
+        # Printout.
+        print("The following RDCs have been copied:\n")
+        if back_calc:
+            write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Back-calculated", "Error"], data=data)
+        else:
+            write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Error"], data=data)
 
 
 def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force=False):
@@ -1338,7 +1387,7 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
 
         # Handle the missing rdc_data_types variable.
         data_type = None
-        if hasattr(interatom, 'rdc_data_types'):
+        if hasattr(interatom, 'rdc_data_types') and align_id in interatom.rdc_data_types:
             data_type = interatom.rdc_data_types[align_id]
 
         # The value.

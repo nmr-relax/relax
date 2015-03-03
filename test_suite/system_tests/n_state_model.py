@@ -536,6 +536,10 @@ class N_state_model(SystemTestCase):
             spin_orig = orig.mol[mol_index].res[res_index].spin[spin_index]
             spin_new = new.mol[mol_index].res[res_index].spin[spin_index]
 
+            # Skip deselected spins.
+            if not spin_orig.select:
+                continue
+
             # Loop over the alignments.
             for id in orig.align_ids:
                 # RDC checks.
