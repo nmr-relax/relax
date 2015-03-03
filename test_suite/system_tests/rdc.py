@@ -25,6 +25,7 @@
 
 # Python module imports.
 from os import sep
+from tempfile import mktemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -64,6 +65,111 @@ class Rdc(SystemTestCase):
 
         # Q factors.
         self.interpreter.rdc.calc_q_factors()
+
+
+    def test_corr_plot(self):
+        """Test the operation of the rdc.corr_plot user function."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('orig', 'N-state')
+
+        # Data directory.
+        dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep
+
+        # Load the spins.
+        self.interpreter.sequence.read(file='tb.txt', dir=dir, spin_id_col=1)
+        self.interpreter.sequence.attach_protons()
+        self.interpreter.sequence.display()
+
+        # Load the RDCs.
+        self.interpreter.rdc.read(align_id='tb', file='tb.txt', dir=dir, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
+        self.interpreter.sequence.display()
+
+        # Create back-calculated RDC values from the real values.
+        for interatom in interatomic_loop():
+            if hasattr(interatom, 'rdc'):
+                if not hasattr(interatom, 'rdc_bc'):
+                    interatom.rdc_bc = {}
+                interatom.rdc_bc['tb'] = interatom.rdc['tb'] + 1.0
+
+        # Correlation plot.
+        ds.tmpfile = mktemp()
+        self.interpreter.rdc.corr_plot(format='grace', title='Test', subtitle='Test2', file=ds.tmpfile, dir=None, force=True)
+
+        # The expected file contents.
+        real_contents = [
+            "@version 50121",
+            "@page size 842, 595",
+            "@with g0",
+            "@    world -27.0, -27.0, 16.0, 16.0",
+            "@    view 0.15, 0.15, 1.28, 0.85",
+            "@    title \"Test\"",
+            "@    subtitle \"Test2\"",
+            "@    xaxis  label \"Back-calculated RDC (Hz)\"",
+            "@    xaxis  label char size 1.00",
+            "@    xaxis  tick major 10",
+            "@    xaxis  tick major size 0.50",
+            "@    xaxis  tick major linewidth 0.5",
+            "@    xaxis  tick minor ticks 9",
+            "@    xaxis  tick minor linewidth 0.5",
+            "@    xaxis  tick minor size 0.25",
+            "@    xaxis  ticklabel char size 0.70",
+            "@    yaxis  label \"Measured RDC (Hz)\"",
+            "@    yaxis  label char size 1.00",
+            "@    yaxis  tick major 10",
+            "@    yaxis  tick major size 0.50",
+            "@    yaxis  tick major linewidth 0.5",
+            "@    yaxis  tick minor ticks 9",
+            "@    yaxis  tick minor linewidth 0.5",
+            "@    yaxis  tick minor size 0.25",
+            "@    yaxis  ticklabel char size 0.70",
+            "@    legend on",
+            "@    legend 1, 0.5",
+            "@    legend box fill pattern 1",
+            "@    legend char size 1.0",
+            "@    frame linewidth 0.5",
+            "@    s0 symbol 1",
+            "@    s0 symbol size 0.45",
+            "@    s0 symbol linewidth 0.5",
+            "@    s0 errorbar size 0.5",
+            "@    s0 errorbar linewidth 0.5",
+            "@    s0 errorbar riser linewidth 0.5",
+            "@    s0 line linestyle 2",
+            "@    s1 symbol 2",
+            "@    s1 symbol size 0.45",
+            "@    s1 symbol linewidth 0.5",
+            "@    s1 errorbar size 0.5",
+            "@    s1 errorbar linewidth 0.5",
+            "@    s1 errorbar riser linewidth 0.5",
+            "@    s1 line linestyle 0",
+            "@    s1 legend \"tb\"",
+            "@target G0.S0",
+            "@type xydy",
+            "-100                           -100.000000000000000           0.000000000000000             ",
+            "100                            100.000000000000000            0.000000000000000             ",
+            "&",
+            "@target G0.S1",
+            "@type xydy",
+            "-25.2501958629                 -26.250195862900000            1.000000000000000                                            \"# #CaM:5@N-#CaM:5@H\"",
+            "10.9308176694                  9.930817669420000              1.000000000000000                                            \"# #CaM:6@N-#CaM:6@H\"",
+            "8.26317614156                  7.263176141560000              1.000000000000000                                            \"# #CaM:7@N-#CaM:7@H\"",
+            "-0.24840526981                 -1.248405269810000             0.000000000000000                                            \"# #CaM:8@N-#CaM:8@H\"",
+            "6.31803314334                  5.318033143340000              1.000000000000000                                            \"# #CaM:9@N-#CaM:9@H\"",
+            "15.0362909456                  14.036290945599999             1.000000000000000                                            \"# #CaM:10@N-#CaM:10@H\"",
+            "2.33652530397                  1.336525303970000              0.000000000000000                                            \"# #CaM:11@N-#CaM:11@H\"",
+            "-0.6021670281                  -1.602167028100000             0.000000000000000                                            \"# #CaM:12@N-#CaM:12@H\"",
+            "&",
+        ]
+
+        # Check the data.
+        print("\nChecking the Grace file contents.")
+        file = open(ds.tmpfile)
+        lines = file.readlines()
+        file.close()
+        self.assertEqual(len(real_contents), len(lines))
+        for i in range(len(lines)):
+            print(lines[i][:-1])
+            self.assertEqual(real_contents[i], lines[i][:-1])
 
 
     def test_rdc_copy(self):
