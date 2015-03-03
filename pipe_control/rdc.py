@@ -388,11 +388,17 @@ def copy(pipe_from=None, pipe_to=None, align_id=None, back_calc=True):
                 interatom_to.rdc_bc = {}
             if hasattr(interatom_from, 'rdc_err') and not hasattr(interatom_to, 'rdc_err'):
                 interatom_to.rdc_err = {}
+            if hasattr(interatom_from, 'rdc_data_types') and not hasattr(interatom_to, 'rdc_data_types'):
+                interatom_to.rdc_data_types = {}
+            if hasattr(interatom_from, 'absolute_rdc') and not hasattr(interatom_to, 'absolute_rdc'):
+                interatom_to.absolute_rdc = {}
 
             # Copy the value and error from pipe_from.
             value = None
             error = None
             value_bc = None
+            data_type = None
+            absolute_rdc = None
             if hasattr(interatom_from, 'rdc'):
                 value = interatom_from.rdc[align_id]
                 interatom_to.rdc[align_id] = value
@@ -402,6 +408,12 @@ def copy(pipe_from=None, pipe_to=None, align_id=None, back_calc=True):
             if hasattr(interatom_from, 'rdc_err'):
                 error = interatom_from.rdc_err[align_id]
                 interatom_to.rdc_err[align_id] = error
+            if hasattr(interatom_from, 'rdc_data_types'):
+                data_type = interatom_from.rdc_data_types[align_id]
+                interatom_to.rdc_data_types[align_id] = data_type
+            if hasattr(interatom_from, 'absolute_rdc'):
+                absolute_rdc = interatom_from.absolute_rdc[align_id]
+                interatom_to.absolute_rdc[align_id] = absolute_rdc
 
             # Append the data for printout.
             data.append([interatom_from.spin_id1, interatom_from.spin_id2])
@@ -418,13 +430,15 @@ def copy(pipe_from=None, pipe_to=None, align_id=None, back_calc=True):
                 data[-1].append("%20.15f" % error)
             else:
                 data[-1].append("%20s" % error)
+            data[-1].append("%20s" % data_type)
+            data[-1].append("%20s" % absolute_rdc)
 
         # Printout.
         print("The following RDCs have been copied:\n")
         if back_calc:
-            write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Back-calculated", "Error"], data=data)
+            write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Back-calculated", "Error", "Data_type", "Absolute_RDC"], data=data)
         else:
-            write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Error"], data=data)
+            write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Error", "Data_type", "Absolute_RDC"], data=data)
 
 
 def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force=False):
