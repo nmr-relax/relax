@@ -26,7 +26,7 @@
 # Python module imports.
 from os import sep
 from re import search
-from tempfile import mkdtemp
+from tempfile import mkdtemp, mktemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -37,6 +37,51 @@ from test_suite.system_tests.base_classes import SystemTestCase
 
 class Pcs(SystemTestCase):
     """Class for testing PCS operations."""
+
+    def test_corr_plot(self):
+        """Test the operation of the pcs.corr_plot user function."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('orig', 'N-state')
+
+        # Data directory.
+        dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep
+
+        # Load the spins.
+        self.interpreter.sequence.read(file='pcs.txt', dir=dir, spin_name_col=1)
+        self.interpreter.sequence.display()
+
+        # Load the PCSs.
+        self.interpreter.pcs.read(align_id='tb', file='pcs.txt', dir=dir, spin_name_col=1, data_col=2)
+        self.interpreter.sequence.display()
+
+        # Create back-calculated PCS values from the real values.
+        for spin in spin_loop():
+            if hasattr(spin, 'pcs'):
+                if not hasattr(spin, 'pcs_bc'):
+                    spin.pcs_bc = {}
+                spin.pcs_bc['tb'] = spin.pcs['tb']
+                if spin.pcs_bc['tb'] != None:
+                    spin.pcs_bc['tb'] += 1.0
+
+        # Correlation plot.
+        ds.tmpfile = mktemp()
+        self.interpreter.pcs.corr_plot(format='grace', title='Test', subtitle='Test2', file=ds.tmpfile, dir=None, force=True)
+
+        # The expected file contents (currently unknown).
+        real_contents = [
+        ]
+
+        # Check the data.
+        print("\nChecking the Grace file contents.")
+        file = open(ds.tmpfile)
+        lines = file.readlines()
+        file.close()
+        self.assertEqual(len(real_contents), len(lines))
+        for i in range(len(lines)):
+            print(lines[i][:-1])
+            self.assertEqual(real_contents[i], lines[i][:-1])
+
 
     def test_grace_plot(self):
         """Test the creation of Grace plots of PCS data."""
