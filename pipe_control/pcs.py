@@ -33,9 +33,10 @@ from warnings import warn
 
 # relax module imports.
 from lib.alignment.pcs import ave_pcs_tensor, pcs_tensor
+from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoPdbError, RelaxNoPCSError, RelaxNoSequenceError
 from lib.geometry.vectors import random_unit_vector
-from lib.io import open_write_file
+from lib.io import open_write_file, write_data
 from lib.periodic_table import periodic_table
 from lib.physical_constants import pcs_constant
 from lib.plotting.api import write_xy_data, write_xy_header
@@ -326,6 +327,7 @@ def copy(pipe_from=None, pipe_to=None, align_id=None, back_calc=True):
             dp_to.pcs_ids.append(align_id)
 
         # Spin loop.
+        data = []
         for mol_index, res_index, spin_index in spin_index_loop():
             # Alias the spin containers.
             spin_from = dp_from.mol[mol_index].res[res_index].spin[spin_index]
@@ -344,12 +346,41 @@ def copy(pipe_from=None, pipe_to=None, align_id=None, back_calc=True):
                 spin_to.pcs_err = {}
 
             # Copy the value and error from pipe_from.
+            value = None
+            error = None
+            value_bc = None
             if hasattr(spin_from, 'pcs'):
-                spin_to.pcs[align_id] = spin_from.pcs[align_id]
+                value = spin_from.pcs[align_id]
+                spin_to.pcs[align_id] = value
             if back_calc and hasattr(spin_from, 'pcs_bc'):
-                spin_to.pcs_bc[align_id] = spin_from.pcs_bc[align_id]
+                value_bc = spin_from.pcs_bc[align_id]
+                spin_to.pcs_bc[align_id] = value_bc
             if hasattr(spin_from, 'pcs_err'):
-                spin_to.pcs_err[align_id] = spin_from.pcs_err[align_id]
+                error = spin_from.pcs_err[align_id]
+                spin_to.pcs_err[align_id] = error
+
+            # Append the data for printout.
+            data.append([spin_from._spin_ids[0]])
+            if is_float(value):
+                data[-1].append("%20.15f" % value)
+            else:
+                data[-1].append("%20s" % value)
+            if back_calc:
+                if is_float(value_bc):
+                    data[-1].append("%20.15f" % value_bc)
+                else:
+                    data[-1].append("%20s" % value_bc)
+            if is_float(error):
+                data[-1].append("%20.15f" % error)
+            else:
+                data[-1].append("%20s" % error)
+
+        # Printout.
+        print("The following PCSs have been copied:\n")
+        if back_calc:
+            write_data(out=sys.stdout, headings=["Spin_ID", "Value", "Back-calculated", "Error"], data=data)
+        else:
+            write_data(out=sys.stdout, headings=["Spin_ID", "Value", "Error"], data=data)
 
 
 def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force=False):
