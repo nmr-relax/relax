@@ -305,15 +305,17 @@ def convert(value, data_type, align_id, to_intern=False):
     return value * factor
 
 
-def copy(pipe_from=None, pipe_to=None, align_id=None):
+def copy(pipe_from=None, pipe_to=None, align_id=None, back_calc=True):
     """Copy the RDC data from one data pipe to another.
 
     @keyword pipe_from: The data pipe to copy the RDC data from.  This defaults to the current data pipe.
     @type pipe_from:    str
     @keyword pipe_to:   The data pipe to copy the RDC data to.  This defaults to the current data pipe.
     @type pipe_to:      str
-    @param align_id:    The alignment ID string.
+    @keyword align_id:  The alignment ID string.
     @type align_id:     str
+    @keyword back_calc: A flag which if True will cause any back-calculated RDCs present to also be copied with the real values and errors.
+    @type back_calc:    bool
     """
 
     # Defaults.
@@ -382,15 +384,21 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
             # Initialise the data structures if necessary.
             if hasattr(interatom_from, 'rdc') and not hasattr(interatom_to, 'rdc'):
                 interatom_to.rdc = {}
+            if back_calc and hasattr(interatom_from, 'rdc_bc') and not hasattr(interatom_to, 'rdc_bc'):
+                interatom_to.rdc_bc = {}
             if hasattr(interatom_from, 'rdc_err') and not hasattr(interatom_to, 'rdc_err'):
                 interatom_to.rdc_err = {}
 
             # Copy the value and error from pipe_from.
             value = None
             error = None
+            value_bc = None
             if hasattr(interatom_from, 'rdc'):
                 value = interatom_from.rdc[align_id]
                 interatom_to.rdc[align_id] = value
+            if back_calc and hasattr(interatom_from, 'rdc_bc'):
+                value_bc = interatom_from.rdc_bc[align_id]
+                interatom_to.rdc_bc[align_id] = value_bc
             if hasattr(interatom_from, 'rdc_err'):
                 error = interatom_from.rdc_err[align_id]
                 interatom_to.rdc_err[align_id] = error
@@ -401,6 +409,11 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
                 data[-1].append("%20.15f" % value)
             else:
                 data[-1].append("%20s" % value)
+            if back_calc:
+                if is_float(value_bc):
+                    data[-1].append("%20.15f" % value_bc)
+                else:
+                    data[-1].append("%20s" % value_bc)
             if is_float(error):
                 data[-1].append("%20.15f" % error)
             else:
@@ -408,7 +421,10 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
 
         # Printout.
         print("The following RDCs have been copied:\n")
-        write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Error"], data=data)
+        if back_calc:
+            write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Back-calculated", "Error"], data=data)
+        else:
+            write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Error"], data=data)
 
 
 def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force=False):
