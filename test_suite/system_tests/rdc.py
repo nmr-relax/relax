@@ -37,6 +37,35 @@ from test_suite.system_tests.base_classes import SystemTestCase
 class Rdc(SystemTestCase):
     """Class for testing RDC operations."""
 
+    def test_calc_q_factors_no_tensor(self):
+        """Test the operation of the rdc.calc_q_factors user function when no alignment tensor is present."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('orig', 'N-state')
+
+        # Data directory.
+        dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep
+
+        # Load the spins.
+        self.interpreter.sequence.read(file='tb.txt', dir=dir, spin_id_col=1)
+        self.interpreter.sequence.attach_protons()
+        self.interpreter.sequence.display()
+
+        # Load the RDCs.
+        self.interpreter.rdc.read(align_id='tb', file='tb.txt', dir=dir, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
+        self.interpreter.sequence.display()
+
+        # Create back-calculated RDC values from the real values.
+        for interatom in interatomic_loop():
+            if hasattr(interatom, 'rdc'):
+                if not hasattr(interatom, 'rdc_bc'):
+                    interatom.rdc_bc = {}
+                interatom.rdc_bc['tb'] = interatom.rdc['tb'] + 1.0
+
+        # Q factors.
+        self.interpreter.rdc.calc_q_factors()
+
+
     def test_rdc_copy(self):
         """Test the operation of the rdc.copy user function."""
 
