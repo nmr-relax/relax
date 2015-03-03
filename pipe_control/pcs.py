@@ -428,7 +428,10 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
     # The spin types.
     types = []
     for spin in spin_loop():
-        if spin.element not in types:
+        if not hasattr(spin, 'element'):
+            if None not in types:
+                types.append(None)
+        elif spin.element not in types:
             types.append(spin.element)
 
     # Loop over the PCS data.
@@ -459,7 +462,7 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
                     continue
 
                 # Incorrect spin type.
-                if spin.element != types[i]:
+                if hasattr(spin, 'element') and spin.element != types[i]:
                     continue
 
                 # Skip if data is missing.

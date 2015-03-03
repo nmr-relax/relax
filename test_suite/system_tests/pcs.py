@@ -26,7 +26,7 @@
 # Python module imports.
 from os import sep
 from re import search
-from tempfile import mkdtemp
+from tempfile import mkdtemp, mktemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -37,6 +37,128 @@ from test_suite.system_tests.base_classes import SystemTestCase
 
 class Pcs(SystemTestCase):
     """Class for testing PCS operations."""
+
+    def test_corr_plot(self):
+        """Test the operation of the pcs.corr_plot user function."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('orig', 'N-state')
+
+        # Data directory.
+        dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep
+
+        # Load the spins.
+        self.interpreter.sequence.read(file='pcs.txt', dir=dir, spin_name_col=1)
+        self.interpreter.sequence.display()
+
+        # Load the PCSs.
+        self.interpreter.pcs.read(align_id='tb', file='pcs.txt', dir=dir, spin_name_col=1, data_col=2)
+        self.interpreter.sequence.display()
+
+        # Create back-calculated PCS values from the real values.
+        for spin in spin_loop():
+            if hasattr(spin, 'pcs'):
+                if not hasattr(spin, 'pcs_bc'):
+                    spin.pcs_bc = {}
+                spin.pcs_bc['tb'] = spin.pcs['tb']
+                if spin.pcs_bc['tb'] != None:
+                    spin.pcs_bc['tb'] += 1.0
+
+        # Correlation plot.
+        ds.tmpfile = mktemp()
+        self.interpreter.pcs.corr_plot(format='grace', title='Test', subtitle='Test2', file=ds.tmpfile, dir=None, force=True)
+
+        # The expected file contents.
+        real_contents = [
+            "@version 50121",
+            "@page size 842, 595",
+            "@with g0",
+            "@    world 0.0, 0.0, 2.0, 2.0",
+            "@    view 0.15, 0.15, 1.28, 0.85",
+            "@    title \"Test\"",
+            "@    subtitle \"Test2\"",
+            "@    xaxis  label \"Back-calculated PCS (ppm)\"",
+            "@    xaxis  label char size 1.00",
+            "@    xaxis  tick major 1",
+            "@    xaxis  tick major size 0.50",
+            "@    xaxis  tick major linewidth 0.5",
+            "@    xaxis  tick minor ticks 9",
+            "@    xaxis  tick minor linewidth 0.5",
+            "@    xaxis  tick minor size 0.25",
+            "@    xaxis  ticklabel char size 0.70",
+            "@    yaxis  label \"Measured PCS (ppm)\"",
+            "@    yaxis  label char size 1.00",
+            "@    yaxis  tick major 1",
+            "@    yaxis  tick major size 0.50",
+            "@    yaxis  tick major linewidth 0.5",
+            "@    yaxis  tick minor ticks 9",
+            "@    yaxis  tick minor linewidth 0.5",
+            "@    yaxis  tick minor size 0.25",
+            "@    yaxis  ticklabel char size 0.70",
+            "@    legend on",
+            "@    legend 1, 0.5",
+            "@    legend box fill pattern 1",
+            "@    legend char size 1.0",
+            "@    frame linewidth 0.5",
+            "@    s0 symbol 1",
+            "@    s0 symbol size 0.45",
+            "@    s0 symbol linewidth 0.5",
+            "@    s0 errorbar size 0.5",
+            "@    s0 errorbar linewidth 0.5",
+            "@    s0 errorbar riser linewidth 0.5",
+            "@    s0 line linestyle 2",
+            "@    s1 symbol 2",
+            "@    s1 symbol size 0.45",
+            "@    s1 symbol linewidth 0.5",
+            "@    s1 errorbar size 0.5",
+            "@    s1 errorbar linewidth 0.5",
+            "@    s1 errorbar riser linewidth 0.5",
+            "@    s1 line linestyle 0",
+            "@    s1 legend \"tb (None)\"",
+            "@target G0.S0",
+            "@type xy",
+            "-100                           -100.000000000000000                                         \"# 0\"",
+            "100                            100.000000000000000                                          \"# 0\"",
+            "&",
+            "@target G0.S1",
+            "@type xy",
+            "1.004                          0.004000000000000                                            \"# @C1\"",
+            "1.008                          0.008000000000000                                            \"# @C2\"",
+            "1.021                          0.021000000000000                                            \"# @C3\"",
+            "1.029                          0.029000000000000                                            \"# @C4\"",
+            "1.016                          0.016000000000000                                            \"# @C5\"",
+            "1.01                           0.010000000000000                                            \"# @C6\"",
+            "1.008                          0.008000000000000                                            \"# @H1\"",
+            "1.003                          0.003000000000000                                            \"# @H2\"",
+            "1.006                          0.006000000000000                                            \"# @H3\"",
+            "1.003                          0.003000000000000                                            \"# @H4\"",
+            "1.007                          0.007000000000000                                            \"# @H5\"",
+            "1.005                          0.005000000000000                                            \"# @H6\"",
+            "1.001                          0.001000000000000                                            \"# @H7\"",
+            "1.07                           0.070000000000000                                            \"# @C7\"",
+            "1.025                          0.025000000000000                                            \"# @C9\"",
+            "1.098                          0.098000000000000                                            \"# @C10\"",
+            "1.054                          0.054000000000000                                            \"# @C11\"",
+            "1.075                          0.075000000000000                                            \"# @C12\"",
+            "1.065                          0.065000000000000                                            \"# @H12\"",
+            "1.07                           0.070000000000000                                            \"# @H14\"",
+            "1.015                          0.015000000000000                                            \"# @H15\"",
+            "1.098                          0.098000000000000                                            \"# @H16\"",
+            "1.06                           0.060000000000000                                            \"# @H17\"",
+            "1.12                           0.120000000000000                                            \"# @H18\"",
+            "&"
+        ]
+
+        # Check the data.
+        print("\nChecking the Grace file contents.")
+        file = open(ds.tmpfile)
+        lines = file.readlines()
+        file.close()
+        self.assertEqual(len(real_contents), len(lines))
+        for i in range(len(lines)):
+            print(lines[i][:-1])
+            self.assertEqual(real_contents[i], lines[i][:-1])
+
 
     def test_grace_plot(self):
         """Test the creation of Grace plots of PCS data."""

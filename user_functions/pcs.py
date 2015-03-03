@@ -179,6 +179,20 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "title",
+    py_type = "str",
+    desc_short = "alternative plot title",
+    desc = "The title for the plot, overriding the default.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "subtitle",
+    py_type = "str",
+    desc_short = "alternative plot subtitle",
+    desc = "The subtitle for the plot, overriding the default.",
+    can_be_none = True
+)
+uf.add_keyarg(
     name = "file",
     default = "pcs_corr_plot.agr",
     py_type = "str",
