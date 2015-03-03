@@ -29,6 +29,7 @@ from re import search
 from tempfile import mkdtemp
 
 # relax module imports.
+from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.mol_res_spin import count_spins, spin_loop
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
@@ -215,6 +216,10 @@ class Pcs(SystemTestCase):
         self.interpreter.pcs.copy(pipe_from='orig', align_id='tb')
 
         # Checks.
+        self.assert_(hasattr(cdp, 'align_ids'))
+        self.assert_('tb' in cdp.align_ids)
+        self.assert_(hasattr(cdp, 'pcs_ids'))
+        self.assert_('tb' in cdp.pcs_ids)
         self.assertEqual(count_spins(), 26)
         self.assertEqual(len(cdp.interatomic), 0)
         i = 0
@@ -256,6 +261,11 @@ class Pcs(SystemTestCase):
             [0.004, 0.008, 0.021, 0.029, 0.016, 0.010, 0.008, 0.003, 0.006, 0.003, 0.007, 0.005, 0.001, 0.070, None, 0.025, 0.098, 0.054, 0.075, 0.065, None, 0.070, 0.015, 0.098, 0.120]
         ]
         for i in range(2):
+            print("\nChecking data pipe '%s'." % pipes[i])
+            self.assert_(hasattr(ds[pipes[i]], 'align_ids'))
+            self.assert_('tb' in ds[pipes[i]].align_ids)
+            self.assert_(hasattr(ds[pipes[i]], 'pcs_ids'))
+            self.assert_('tb' in ds[pipes[i]].pcs_ids)
             self.assertEqual(count_spins(), 25)
             self.assertEqual(len(cdp.interatomic), 0)
             j = 0
@@ -310,6 +320,11 @@ class Pcs(SystemTestCase):
             [0.004, 0.008, 0.021, 0.029, 0.016, 0.010, 0.008, 0.003, 0.006, 0.003, 0.007, 0.005, 0.001, 0.070, None, 0.025, 0.098, 0.054, 0.075, 0.065, None, 0.070, 0.015, 0.098, 0.120]
         ]
         for i in range(2):
+            print("\nChecking data pipe '%s'." % pipes[i])
+            self.assert_(hasattr(ds[pipes[i]], 'align_ids'))
+            self.assert_('tb' in ds[pipes[i]].align_ids)
+            self.assert_(hasattr(ds[pipes[i]], 'pcs_ids'))
+            self.assert_('tb' in ds[pipes[i]].pcs_ids)
             self.assertEqual(count_spins(), 25)
             self.assertEqual(len(cdp.interatomic), 0)
             j = 0
