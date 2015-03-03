@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -136,6 +136,13 @@ uf.add_keyarg(
     wiz_combo_iter = align_tensor.get_align_ids,
     wiz_read_only = True,
     can_be_none = True
+)
+uf.add_keyarg(
+    name = "back_calc",
+    default = True,
+    py_type = "bool",
+    desc_short = "back-calculated data flag",
+    desc = "A flag which if True will cause any back-calculated PCSs present to also be copied with the real values and errors."
 )
 # Description.
 uf.desc.append(Desc_container())

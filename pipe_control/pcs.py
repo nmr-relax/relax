@@ -273,15 +273,17 @@ def check_pipe_setup(pipe=None, pcs_id=None, sequence=False, N=False, tensors=Fa
         raise RelaxError("The paramagnetic centre has not been defined.")
 
 
-def copy(pipe_from=None, pipe_to=None, align_id=None):
+def copy(pipe_from=None, pipe_to=None, align_id=None, back_calc=True):
     """Copy the PCS data from one data pipe to another.
 
     @keyword pipe_from: The data pipe to copy the PCS data from.  This defaults to the current data pipe.
     @type pipe_from:    str
     @keyword pipe_to:   The data pipe to copy the PCS data to.  This defaults to the current data pipe.
     @type pipe_to:      str
-    @param align_id:    The alignment ID string.
+    @keyword align_id:  The alignment ID string.
     @type align_id:     str
+    @keyword back_calc: A flag which if True will cause any back-calculated RDCs present to also be copied with the real values and errors.
+    @type back_calc:    bool
     """
 
     # Defaults.
@@ -336,12 +338,16 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
             # Initialise the spin data if necessary.
             if hasattr(spin_from, 'pcs') and not hasattr(spin_to, 'pcs'):
                 spin_to.pcs = {}
+            if back_calc and hasattr(spin_from, 'pcs_bc') and not hasattr(spin_to, 'pcs_bc'):
+                spin_to.pcs_bc = {}
             if hasattr(spin_from, 'pcs_err') and not hasattr(spin_to, 'pcs_err'):
                 spin_to.pcs_err = {}
 
             # Copy the value and error from pipe_from.
             if hasattr(spin_from, 'pcs'):
                 spin_to.pcs[align_id] = spin_from.pcs[align_id]
+            if back_calc and hasattr(spin_from, 'pcs_bc'):
+                spin_to.pcs_bc[align_id] = spin_from.pcs_bc[align_id]
             if hasattr(spin_from, 'pcs_err'):
                 spin_to.pcs_err[align_id] = spin_from.pcs_err[align_id]
 
