@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -221,6 +221,51 @@ class Pcs(SystemTestCase):
         for spin in spin_loop():
             self.assertEqual(pcs[i], spin.pcs['tb'])
             i += 1
+
+
+    def test_pcs_copy_different_spins(self):
+        """Test the operation of the pcs.copy user function for two data pipes with different spin system."""
+
+        # Data directory.
+        dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep
+
+        # Set up two data identical pipes.
+        pipes = ['orig', 'new']
+        delete = ['@C2', '@H17']
+        for i in range(2):
+            # Create a data pipe.
+            self.interpreter.pipe.create(pipes[i], 'N-state')
+
+            # Load the spins.
+            self.interpreter.sequence.read(file='pcs.txt', dir=dir, spin_name_col=1)
+
+            # Delete the spin.
+            self.interpreter.spin.delete(delete[i])
+            self.interpreter.sequence.display()
+
+        # Load the PCSs into the first data pipe.
+        self.interpreter.pipe.switch('orig')
+        self.interpreter.pcs.read(align_id='tb', file='pcs.txt', dir=dir, spin_name_col=1, data_col=2)
+
+        # Copy the PCSs into the second data pipe.
+        self.interpreter.pcs.copy(pipe_from='orig', pipe_to='new', align_id='tb')
+
+        # Checks.
+        pcs = [
+            [0.004, 0.021, 0.029, 0.016, 0.010, 0.008, 0.003, 0.006, 0.003, 0.007, 0.005, 0.001, 0.070, None, 0.025, 0.098, 0.054, 0.075, 0.065, None, 0.070, 0.015, 0.098, 0.060, 0.120],
+            [0.004, 0.008, 0.021, 0.029, 0.016, 0.010, 0.008, 0.003, 0.006, 0.003, 0.007, 0.005, 0.001, 0.070, None, 0.025, 0.098, 0.054, 0.075, 0.065, None, 0.070, 0.015, 0.098, 0.120]
+        ]
+        for i in range(2):
+            self.assertEqual(count_spins(), 26)
+            self.assertEqual(len(cdp.interatomic), 0)
+            i = 0
+            for spin in spin_loop():
+                # Atom C2 in the 'new' data pipe has no PCSs.
+                if i == 1 and j == 1:
+                    self.assert_(not hasattr(spin, 'pcs'))
+                else:
+                    self.assertAlmostEqual(pcs[i][j], spin.pcs['tb'])
+                i += 1
 
 
     def test_pcs_load(self):
