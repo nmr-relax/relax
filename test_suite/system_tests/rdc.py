@@ -137,6 +137,75 @@ class Rdc(SystemTestCase):
                 j += 1
 
 
+    def test_rdc_copy_back_calc(self):
+        """Test the operation of the rdc.copy user function for back-calculated values."""
+
+        # Data directory.
+        dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep
+
+        # Set up two data identical pipes.
+        pipes = ['orig', 'new']
+        delete = [':6', ':11']
+        for i in range(2):
+            # Create a data pipe.
+            self.interpreter.pipe.create(pipes[i], 'N-state')
+
+            # Load the spins.
+            self.interpreter.sequence.read(file='tb.txt', dir=dir, spin_id_col=1)
+            self.interpreter.spin.element('N')
+
+            # Delete the residue.
+            self.interpreter.residue.delete(delete[i])
+
+            # Attach protons.
+            self.interpreter.sequence.attach_protons()
+            self.interpreter.sequence.display()
+
+            # Create the interatomic data containers.
+            self.interpreter.interatom.define(spin_id1='@N', spin_id2='@H')
+
+        # Printout.
+        print("\n\nInteratomic data containers for the 'orig' data pipe:")
+        for interatom in interatomic_loop(pipe='orig'):
+            print("'%s' '%s'" % (interatom.spin_id1, interatom.spin_id2))
+        print("\nInteratomic data containers for the 'new' data pipe:")
+        for interatom in interatomic_loop(pipe='new'):
+            print("'%s' '%s'" % (interatom.spin_id1, interatom.spin_id2))
+
+        # Load the RDCs into the first data pipe.
+        self.interpreter.pipe.switch('orig')
+        self.interpreter.rdc.read(align_id='tb', file='tb.txt', dir=dir, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
+
+        # Create back-calculated RDC values from the real values.
+        for interatom in interatomic_loop():
+            if hasattr(interatom, 'rdc'):
+                if not hasattr(interatom, 'rdc_bc'):
+                    interatom.rdc_bc = {}
+                interatom.rdc_bc['tb'] = interatom.rdc['tb'] + 1.0
+
+        # Copy the RDCs, including back-calculated values, into the second data pipe.
+        self.interpreter.rdc.copy(pipe_from='orig', pipe_to='new', align_id='tb', back_calc=True)
+
+        # Checks.
+        rdcs = [
+            [ -26.2501958629, 7.26317614156, -1.24840526981, 5.31803314334, 14.0362909456, 1.33652530397, -1.6021670281],
+            [ -26.2501958629, 9.93081766942, 7.26317614156, -1.24840526981, 5.31803314334, 14.0362909456, -1.6021670281]
+        ]
+        for i in range(2):
+            self.interpreter.pipe.switch(pipe_name=pipes[i])
+            self.assertEqual(count_spins(), 14)
+            self.assertEqual(len(cdp.interatomic), 7)
+            j = 0
+            for interatom in interatomic_loop():
+                # Residue 6 in the 'new' data pipe has no RDCs.
+                if i == 1 and j == 1:
+                    self.assert_(not hasattr(interatom, 'rdc'))
+                else:
+                    self.assertAlmostEqual(rdcs[i][j], interatom.rdc['tb'])
+                    self.assertAlmostEqual(rdcs[i][j]+1.0, interatom.rdc_bc['tb'])
+                j += 1
+
+
     def test_rdc_load(self):
         """Test for the loading of some RDC data with the spin ID format."""
 
