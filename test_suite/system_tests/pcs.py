@@ -268,6 +268,64 @@ class Pcs(SystemTestCase):
                 i += 1
 
 
+    def test_pcs_copy_back_calc(self):
+        """Test the operation of the pcs.copy user function for back-calculated values."""
+
+        # Data directory.
+        dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'align_data'+sep
+
+        # Set up two data identical pipes.
+        pipes = ['orig', 'new']
+        delete = ['@C2', '@H17']
+        for i in range(2):
+            # Create a data pipe.
+            self.interpreter.pipe.create(pipes[i], 'N-state')
+
+            # Load the spins.
+            self.interpreter.sequence.read(file='pcs.txt', dir=dir, spin_name_col=1)
+
+            # Delete the spin.
+            self.interpreter.spin.delete(delete[i])
+            self.interpreter.sequence.display()
+
+        # Load the PCSs into the first data pipe.
+        self.interpreter.pipe.switch('orig')
+        self.interpreter.pcs.read(align_id='tb', file='pcs.txt', dir=dir, spin_name_col=1, data_col=2)
+
+        # Create back-calculated PCS values from the real values.
+        for spin in spin_loop():
+            if hasattr(spin, 'pcs'):
+                if not hasattr(spin, 'pcs_bc'):
+                    spin.pcs_bc = {}
+                spin.pcs_bc['tb'] = spin.pcs['tb']
+                if spin.pcs_bc['tb'] != None:
+                    spin.pcs_bc['tb'] += 1.0
+
+        # Copy the PCSs into the second data pipe.
+        self.interpreter.pcs.copy(pipe_from='orig', pipe_to='new', align_id='tb', back_calc=True)
+
+        # Checks.
+        pcs = [
+            [0.004, 0.021, 0.029, 0.016, 0.010, 0.008, 0.003, 0.006, 0.003, 0.007, 0.005, 0.001, 0.070, None, 0.025, 0.098, 0.054, 0.075, 0.065, None, 0.070, 0.015, 0.098, 0.060, 0.120],
+            [0.004, 0.008, 0.021, 0.029, 0.016, 0.010, 0.008, 0.003, 0.006, 0.003, 0.007, 0.005, 0.001, 0.070, None, 0.025, 0.098, 0.054, 0.075, 0.065, None, 0.070, 0.015, 0.098, 0.120]
+        ]
+        for i in range(2):
+            self.assertEqual(count_spins(), 26)
+            self.assertEqual(len(cdp.interatomic), 0)
+            i = 0
+            for spin in spin_loop():
+                # Atom C2 in the 'new' data pipe has no PCSs.
+                if i == 1 and j == 1:
+                    self.assert_(not hasattr(spin, 'pcs'))
+                else:
+                    self.assertAlmostEqual(pcs[i][j], spin.pcs['tb'])
+                    if pcs[i][j] != None:
+                        self.assertAlmostEqual(pcs[i][j]+1.0, spin.pcs_bc['tb'])
+                    else:
+                        self.assertEqual(None, spin.pcs_bc['tb'])
+                i += 1
+
+
     def test_pcs_load(self):
         """Test for the loading of some PCS data with the spin ID format."""
 
