@@ -345,7 +345,6 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
         dp_to.rdc_ids = []
 
     # Loop over the align IDs.
-    data = []
     for align_id in align_ids:
         # Printout.
         print("Coping RDCs for the alignment ID '%s'." % align_id)
@@ -357,6 +356,7 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
             dp_to.rdc_ids.append(align_id)
 
         # Loop over the interatomic data of the source data pipe.
+        data = []
         for interatom_from in interatomic_loop(pipe=pipe_from):
             # Find the matching interatomic data container in the target data pipe.
             interatom_to = []
@@ -406,9 +406,9 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
             else:
                 data[-1].append("%20s" % error)
 
-    # Printout.
-    print("The following RDCs have been copied:\n")
-    write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Error"], data=data)
+        # Printout.
+        print("The following RDCs have been copied:\n")
+        write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Error"], data=data)
 
 
 def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force=False):
