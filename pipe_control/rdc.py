@@ -345,7 +345,11 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
         dp_to.rdc_ids = []
 
     # Loop over the align IDs.
+    data = []
     for align_id in align_ids:
+        # Printout.
+        print("Coping RDCs for the alignment ID '%s'." % align_id)
+
         # Copy the global data.
         if align_id not in dp_to.align_ids and align_id not in dp_to.align_ids:
             dp_to.align_ids.append(align_id)
@@ -382,10 +386,29 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
                 interatom_to.rdc_err = {}
 
             # Copy the value and error from pipe_from.
+            value = None
+            error = None
             if hasattr(interatom_from, 'rdc'):
-                interatom_to.rdc[align_id] = interatom_from.rdc[align_id]
+                value = interatom_from.rdc[align_id]
+                interatom_to.rdc[align_id] = value
             if hasattr(interatom_from, 'rdc_err'):
-                interatom_to.rdc_err[align_id] = interatom_from.rdc_err[align_id]
+                error = interatom_from.rdc_err[align_id]
+                interatom_to.rdc_err[align_id] = error
+
+            # Append the data for printout.
+            data.append([interatom_from.spin_id1, interatom_from.spin_id2])
+            if is_float(value):
+                data[-1].append("%20.15f" % value)
+            else:
+                data[-1].append("%20s" % value)
+            if is_float(error):
+                data[-1].append("%20.15f" % error)
+            else:
+                data[-1].append("%20s" % error)
+
+    # Printout.
+    print("The following RDCs have been copied:\n")
+    write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Error"], data=data)
 
 
 def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force=False):
