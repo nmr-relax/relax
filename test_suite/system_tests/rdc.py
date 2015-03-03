@@ -171,7 +171,6 @@ class Rdc(SystemTestCase):
             self.assertEqual(len(ds[pipes[i]].interatomic), 7)
             j = 0
             for interatom in interatomic_loop(pipe=pipes[i]):
-                print interatom
                 # Residue 6 in the 'new' data pipe has no RDCs.
                 if i == 1 and j == 1:
                     self.assert_(not hasattr(interatom, 'rdc'))
