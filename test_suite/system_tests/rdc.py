@@ -175,10 +175,15 @@ class Rdc(SystemTestCase):
                 if i == 1 and j == 1:
                     self.assert_(not hasattr(interatom, 'rdc'))
                     self.assert_(not hasattr(interatom, 'rdc_data_types'))
+                    self.assert_(not hasattr(interatom, 'absolute_rdc'))
                 else:
                     self.assertAlmostEqual(rdcs[i][j], interatom.rdc['tb'])
                     self.assert_(hasattr(interatom, 'rdc_data_types'))
                     self.assert_('tb' in interatom.rdc_data_types)
+                    self.assertEqual(interatom.rdc_data_types['tb'], 'D')
+                    self.assert_(hasattr(interatom, 'absolute_rdc'))
+                    self.assert_('tb' in interatom.absolute_rdc)
+                    self.assertEqual(interatom.absolute_rdc['tb'], False)
                 j += 1
 
 
@@ -254,11 +259,16 @@ class Rdc(SystemTestCase):
                 if i == 1 and j == 1:
                     self.assert_(not hasattr(interatom, 'rdc'))
                     self.assert_(not hasattr(interatom, 'rdc_data_types'))
+                    self.assert_(not hasattr(interatom, 'absolute_rdc'))
                 else:
                     self.assertAlmostEqual(rdcs[i][j], interatom.rdc['tb'])
                     self.assertAlmostEqual(rdcs[i][j]+1.0, interatom.rdc_bc['tb'])
                     self.assert_(hasattr(interatom, 'rdc_data_types'))
                     self.assert_('tb' in interatom.rdc_data_types)
+                    self.assertEqual(interatom.rdc_data_types['tb'], 'D')
+                    self.assert_(hasattr(interatom, 'absolute_rdc'))
+                    self.assert_('tb' in interatom.absolute_rdc)
+                    self.assertEqual(interatom.absolute_rdc['tb'], False)
                 j += 1
 
 
