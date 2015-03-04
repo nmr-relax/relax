@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -1497,9 +1497,3 @@ class AlignTensorSimList(list):
 
         # Execute the base class method.
         super(AlignTensorSimList, self).__setitem__(sim_index, value)
-
-
-    def append(self, value):
-        """This is a read-only object!"""
-
-        raise RelaxError("The alignment tensor is a read-only object.  The alignment tensor set() method must be used instead.")

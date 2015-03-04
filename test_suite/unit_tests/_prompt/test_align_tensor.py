@@ -53,11 +53,11 @@ class Test_align_tensor(Align_tensor_base_class):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            if data[0] == 'None' or data[0] == 'str':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.align_tensor_fns.copy, tensor_from=data[1])
+            self.assertRaises(RelaxNoneStrError, self.align_tensor_fns.copy, tensor_from=data[1])
 
 
     def test_copy_argfail_pipe_from(self):
@@ -79,11 +79,11 @@ class Test_align_tensor(Align_tensor_base_class):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            if data[0] == 'None' or  data[0] == 'str':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.align_tensor_fns.copy, tensor_to=data[1])
+            self.assertRaises(RelaxNoneStrError, self.align_tensor_fns.copy, tensor_to=data[1])
 
 
     def test_copy_argfail_pipe_to(self):

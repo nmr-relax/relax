@@ -20,6 +20,7 @@
 ###############################################################################
 
 # Python module imports.
+from copy import deepcopy
 from tempfile import mktemp
 
 # relax module imports.
@@ -300,6 +301,37 @@ class Align_tensor(SystemTestCase):
 
         # Initialise one tensor.
         self.interpreter.align_tensor.init(tensor='orig', align_id='test', params=self.tensors_full[0], param_types=0)
+
+        # Copy the tensor.
+        self.interpreter.align_tensor.copy(pipe_from='source', pipe_to='target')
+
+        # Checks.
+        self.interpreter.pipe.switch('target')
+        self.assertEqual(len(cdp.align_tensors), 1)
+        self.assertEqual(cdp.align_tensors[0].name, 'orig')
+
+
+    def test_copy_pipes_sims(self):
+        """Test the copying of alignment tensor Monte Carlo simulations between data pipes."""
+
+        # First reset.
+        self.interpreter.reset()
+
+        # Create two data pipes.
+        self.interpreter.pipe.create('target', 'N-state')
+        self.interpreter.pipe.create('source', 'N-state')
+
+        # Initialise one tensor.
+        self.interpreter.align_tensor.init(tensor='orig', align_id='test', params=self.tensors_full[0], param_types=0)
+
+        # Set up the number of simulations.
+        sim_number = 10
+        cdp.align_tensors[0].set_sim_num(sim_number)
+
+        # Initialise simulation tensors.
+        for object_name in ['Axx', 'Ayy', 'Axy', 'Axz', 'Ayz']:
+            for i in range(sim_number):
+                cdp.align_tensors[0].set(param=object_name, value=deepcopy(getattr(cdp.align_tensors[0], object_name)), category='sim', sim_index=i)
 
         # Copy the tensor.
         self.interpreter.align_tensor.copy(pipe_from='source', pipe_to='target')
