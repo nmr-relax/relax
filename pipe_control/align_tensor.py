@@ -136,29 +136,49 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
         dp_to.align_tensors = AlignTensorList()
 
     # Add the tensor if it doesn't already exist.
-    if tensor_to not in dp_to.align_tensors.names():
+    if tensor_to != None and tensor_to not in dp_to.align_tensors.names():
         dp_to.align_tensors.add_item(tensor_to)
 
-    # Find the tensor index.
-    index_from = get_tensor_index(tensor=tensor_from, pipe=pipe_from)
-    index_to = get_tensor_index(tensor=tensor_to, pipe=pipe_to)
+    # Copy all data.
+    if tensor_from == None:
+        # Check.
+        if tensor_to != tensor_from:
+            raise RelaxError("The tensor_to argument '%s' should not be supplied when tensor_from is None." % tensor_to)
 
-    # Copy the data.
-    if index_to == None:
-        dp_to.align_tensors.append(deepcopy(dp_from.align_tensors[index_from]))
-        index_to = len(dp_to.align_tensors) - 1
+        # The align IDs.
+        align_ids = []
+
+        # Loop over and copy all tensors.
+        for i in range(len(dp_from.align_tensors)):
+            dp_to.align_tensors.append(deepcopy(dp_from.align_tensors[i]))
+            align_ids.append(dp_from.align_tensors[i].align_id)
+
+    # Copy a single tensor.
     else:
-        dp_to.align_tensors[index_to] = deepcopy(dp_from.align_tensors[index_from])
+        # Find the tensor index.
+        index_from = get_tensor_index(tensor=tensor_from, pipe=pipe_from)
+        index_to = get_tensor_index(tensor=tensor_to, pipe=pipe_to)
 
-    # Update the tensor's name.
-    dp_to.align_tensors[index_to].set('name', tensor_to)
+        # Copy the tensor.
+        tensor = deepcopy(dp_from.align_tensors[index_from])
+        if index_to == None:
+            dp_to.align_tensors.append(tensor)
+            index_to = len(dp_to.align_tensors) - 1
+        else:
+            dp_to.align_tensors[index_to] = tensor
 
-    # Add the align ID to the target data pipe if needed.
-    align_id = dp_from.align_tensors[index_from].align_id
+        # Update the tensor's name.
+        dp_to.align_tensors[index_to].set('name', tensor_to)
+
+        # The align IDs.
+        align_ids = [dp_from.align_tensors[index_from].align_id]
+
+    # Add the align IDs to the target data pipe if needed.
     if not hasattr(dp_to, 'align_ids'):
         dp_to.align_ids = []
-    if align_id not in dp_to.align_ids:
-        dp_to.align_ids.append(align_id)
+    for align_id in align_ids:
+        if align_id not in dp_to.align_ids:
+            dp_to.align_ids.append(align_id)
 
 
 def delete(tensor=None):
