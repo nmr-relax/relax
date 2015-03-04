@@ -44,15 +44,15 @@ from pipe_control import pipes
 from pipe_control.pipes import check_pipe
 
 
-def align_data_exists(tensor, pipe=None):
+def align_data_exists(tensor=None, pipe=None):
     """Function for determining if alignment data exists in the current data pipe.
 
-    @param tensor:  The alignment tensor identification string.
-    @type tensor:   str
-    @param pipe:    The data pipe to search for data in.
-    @type pipe:     str
-    @return:        The answer to the question.
-    @rtype:         bool
+    @keyword tensor:    The alignment tensor ID string.  If not supplied, then any alignment data will result in the function returning True.
+    @type tensor:       str or None
+    @keyword pipe:      The data pipe to search for data in.  This defaults to the current data pipe if not supplied.
+    @type pipe:         str or None
+    @return:            The answer to the question.
+    @rtype:             bool
     """
 
     # The data pipe to check.
@@ -64,6 +64,8 @@ def align_data_exists(tensor, pipe=None):
 
     # Test if an alignment tensor corresponding to the arg 'tensor' exists.
     if hasattr(pipe, 'align_tensors'):
+        if tensor == None:
+            return True
         for data in pipe.align_tensors:
             if data.name == tensor:
                 return True
