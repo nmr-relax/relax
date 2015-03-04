@@ -630,10 +630,6 @@ def q_factors(spin_id=None, verbosity=1):
     @type verbosity:    int
     """
 
-    # Initial printout.
-    if verbosity:
-        print("\nPCS Q factors:")
-
     # Check the pipe setup.
     check_pipe_setup(sequence=True)
 
@@ -643,7 +639,7 @@ def q_factors(spin_id=None, verbosity=1):
         return
 
     # Q factor dictionary.
-    cdp.q_factors_pcs = {}
+    cdp.q_factors_pcs_norm_squared_sum = {}
 
     # Loop over the alignments.
     for align_id in cdp.pcs_ids:
@@ -682,7 +678,7 @@ def q_factors(spin_id=None, verbosity=1):
         # The Q factor for the alignment.
         if pcs2_sum:
             Q = sqrt(sse / pcs2_sum)
-            cdp.q_factors_pcs[align_id] = Q
+            cdp.q_factors_pcs_norm_squared_sum[align_id] = Q
 
         # Warnings (and then exit).
         if not spin_count:
@@ -695,16 +691,19 @@ def q_factors(spin_id=None, verbosity=1):
             warn(RelaxWarning("No back-calculated PCS data can be found for the alignment ID '%s', skipping the PCS Q factor calculation for this alignment." % align_id))
             continue
 
-        # ID and PCS Q factor printout.
-        if verbosity:
-            print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_pcs[align_id]))
+    # ID and PCS Q factor printout.
+    if verbosity:
+        print("\nPCS Q factors normalised by the sum of PCSs squared:")
+        for align_id in cdp.pcs_ids:
+            if align_id in cdp.q_factors_pcs_norm_squared_sum:
+                print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_pcs_norm_squared_sum[align_id]))
 
     # The total Q factor.
-    cdp.q_pcs = 0.0
-    for id in cdp.q_factors_pcs:
-        cdp.q_pcs = cdp.q_pcs + cdp.q_factors_pcs[id]**2
-    cdp.q_pcs = cdp.q_pcs / len(cdp.q_factors_pcs)
-    cdp.q_pcs = sqrt(cdp.q_pcs)
+    cdp.q_pcs_norm_squared_sum = 0.0
+    for id in cdp.q_factors_pcs_norm_squared_sum:
+        cdp.q_pcs_norm_squared_sum = cdp.q_pcs_norm_squared_sum + cdp.q_factors_pcs_norm_squared_sum[id]**2
+    cdp.q_pcs_norm_squared_sum = cdp.q_pcs_norm_squared_sum / len(cdp.q_factors_pcs_norm_squared_sum)
+    cdp.q_pcs_norm_squared_sum = sqrt(cdp.q_pcs_norm_squared_sum)
 
 
 def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):

@@ -686,8 +686,8 @@ class Stereochem_analysis:
                 self.interpreter.minimise.execute("simplex", constraints=False)
 
                 # Store and write out the Q factors.
-                q_factors.append([cdp.q_rdc, ens])
-                out.write("%-20i%20.15f%20.15f\n" % (ens, cdp.q_rdc, cdp.q_rdc_norm2))
+                q_factors.append([cdp.q_rdc_norm_squared_sum, ens])
+                out.write("%-20i%20.15f%20.15f\n" % (ens, cdp.q_rdc_norm_squared_sum, cdp.q_rdc_norm_squared_sum))
 
                 # Calculate the alignment tensor in Hz, and store it for reference.
                 cdp.align_tensor_Hz = d * cdp.align_tensors[0].A

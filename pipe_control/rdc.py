@@ -687,10 +687,6 @@ def q_factors(spin_id=None, verbosity=1):
     @type verbosity:    int
     """
 
-    # Initial printout.
-    if verbosity:
-        print("\nRDC Q factors (norm1, norm2):")
-
     # Check the pipe setup.
     check_pipe_setup(sequence=True)
 
@@ -700,8 +696,8 @@ def q_factors(spin_id=None, verbosity=1):
         return
 
     # Q factor dictonaries.
-    cdp.q_factors_rdc = {}
-    cdp.q_factors_rdc_norm2 = {}
+    cdp.q_factors_rdc_norm_tensor_size = {}
+    cdp.q_factors_rdc_norm_squared_sum = {}
 
     # Loop over the alignments.
     for align_id in cdp.rdc_ids:
@@ -750,12 +746,12 @@ def q_factors(spin_id=None, verbosity=1):
 
             # Skip the 2Da^2(4 + 3R)/5 normalised Q factor if no tensor is present.
             if norm2_flag and not hasattr(cdp, 'align_tensors'):
-                warn(RelaxWarning("No alignment tensors are present, skipping the Q factor normalised with 2Da^2(4 + 3R)/5."))
+                warn(RelaxWarning("No alignment tensors are present for the alignment '%s', skipping the Q factor normalised with 2Da^2(4 + 3R)/5." % align_id))
                 norm2_flag = False
 
             # Skip the 2Da^2(4 + 3R)/5 normalised Q factor if pseudo-atoms are present.
             if norm2_flag and (is_pseudoatom(spin1) or is_pseudoatom(spin2)):
-                warn(RelaxWarning("Pseudo-atoms are present, skipping the Q factor normalised with 2Da^2(4 + 3R)/5."))
+                warn(RelaxWarning("Pseudo-atoms are present for the alignment '%s', skipping the Q factor normalised with 2Da^2(4 + 3R)/5." % align_id))
                 norm2_flag = False
 
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
@@ -773,7 +769,7 @@ def q_factors(spin_id=None, verbosity=1):
                 # Calculate the dipolar constant.
                 dj_new = 3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r)
                 if dj != None and dj_new != dj:
-                    warn(RelaxWarning("The dipolar constant is not the same for all RDCs, skipping the Q factor normalised with 2Da^2(4 + 3R)/5."))
+                    warn(RelaxWarning("The dipolar constant is not the same for all RDCs for the alignment '%s', skipping the Q factor normalised with 2Da^2(4 + 3R)/5." % align_id))
                     norm2_flag = False
                 else:
                     dj = dj_new
@@ -806,27 +802,34 @@ def q_factors(spin_id=None, verbosity=1):
                 norm = 1e-15
 
             # The Q factor for the alignment.
-            cdp.q_factors_rdc[align_id] = sqrt(sse / N / norm)
+            cdp.q_factors_rdc_norm_tensor_size[align_id] = sqrt(sse / N / norm)
 
         else:
-            cdp.q_factors_rdc[align_id] = 0.0
+            cdp.q_factors_rdc_norm_tensor_size[align_id] = 0.0
 
         # The second Q factor definition.
-        cdp.q_factors_rdc_norm2[align_id] = sqrt(sse / D2_sum)
+        cdp.q_factors_rdc_norm_squared_sum[align_id] = sqrt(sse / D2_sum)
 
-        # ID and RDC Q factor printout.
-        if verbosity:
-            print("    Alignment ID '%s':  %.3f, %.3f" % (align_id, cdp.q_factors_rdc[align_id], cdp.q_factors_rdc_norm2[align_id]))
+    # ID and RDC Q factor printout.
+    if verbosity:
+        print("\nRDC Q factors normalised by the tensor size (2Da^2(4 + 3R)/5):")
+        for align_id in cdp.rdc_ids:
+            if align_id in cdp.q_factors_rdc_norm_tensor_size:
+                print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_rdc_norm_tensor_size[align_id]))
+        print("\nRDC Q factors normalised by the sum of RDCs squared:")
+        for align_id in cdp.rdc_ids:
+            if align_id in cdp.q_factors_rdc_norm_squared_sum:
+                print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_rdc_norm_squared_sum[align_id]))
 
     # The total Q factor.
-    cdp.q_rdc = 0.0
-    cdp.q_rdc_norm2 = 0.0
-    for id in cdp.q_factors_rdc:
-        cdp.q_rdc = cdp.q_rdc + cdp.q_factors_rdc[id]**2
-    for id in cdp.q_factors_rdc_norm2:
-        cdp.q_rdc_norm2 = cdp.q_rdc_norm2 + cdp.q_factors_rdc_norm2[id]**2
-    cdp.q_rdc = sqrt(cdp.q_rdc / len(cdp.q_factors_rdc))
-    cdp.q_rdc_norm2 = sqrt(cdp.q_rdc_norm2 / len(cdp.q_factors_rdc_norm2))
+    cdp.q_rdc_norm_tensor_size = 0.0
+    cdp.q_rdc_norm_squared_sum = 0.0
+    for id in cdp.q_factors_rdc_norm_tensor_size:
+        cdp.q_rdc_norm_tensor_size = cdp.q_rdc_norm_tensor_size + cdp.q_factors_rdc_norm_tensor_size[id]**2
+    for id in cdp.q_factors_rdc_norm_squared_sum:
+        cdp.q_rdc_norm_squared_sum = cdp.q_rdc_norm_squared_sum + cdp.q_factors_rdc_norm_squared_sum[id]**2
+    cdp.q_rdc_norm_tensor_size = sqrt(cdp.q_rdc_norm_tensor_size / len(cdp.q_factors_rdc_norm_tensor_size))
+    cdp.q_rdc_norm_squared_sum = sqrt(cdp.q_rdc_norm_squared_sum / len(cdp.q_factors_rdc_norm_squared_sum))
 
 
 def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin_id1_col=None, spin_id2_col=None, data_col=None, error_col=None, sep=None, neg_g_corr=False, absolute=False):
