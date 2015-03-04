@@ -1497,9 +1497,3 @@ class AlignTensorSimList(list):
 
         # Execute the base class method.
         super(AlignTensorSimList, self).__setitem__(sim_index, value)
-
-
-    def append(self, value):
-        """This is a read-only object!"""
-
-        raise RelaxError("The alignment tensor is a read-only object.  The alignment tensor set() method must be used instead.")
