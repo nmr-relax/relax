@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -286,6 +286,28 @@ class Align_tensor(SystemTestCase):
         self.assertEqual(len(cdp.align_tensors), 2)
         self.assertEqual(cdp.align_tensors[0].name, 'orig')
         self.assertEqual(cdp.align_tensors[1].name, 'new')
+
+
+    def test_copy_pipes(self):
+        """Test the copying of alignment tensors between data pipes."""
+
+        # First reset.
+        self.interpreter.reset()
+
+        # Create two data pipes.
+        self.interpreter.pipe.create('target', 'N-state')
+        self.interpreter.pipe.create('source', 'N-state')
+
+        # Initialise one tensor.
+        self.interpreter.align_tensor.init(tensor='orig', align_id='test', params=self.tensors_full[0], param_types=0)
+
+        # Copy the tensor.
+        self.interpreter.align_tensor.copy(pipe_from='source', pipe_to='target')
+
+        # Checks.
+        self.interpreter.pipe.switch('target')
+        self.assertEqual(len(cdp.align_tensors), 1)
+        self.assertEqual(cdp.align_tensors[0].name, 'orig')
 
 
     def test_fix(self):
