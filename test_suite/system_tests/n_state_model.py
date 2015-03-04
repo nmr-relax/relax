@@ -193,8 +193,8 @@ class N_state_model(SystemTestCase):
 
         # Check the minimisation stats.
         self.assertAlmostEqual(cdp.chi2, 496.36267335850528)
-        self.assertAlmostEqual(cdp.q_rdc, 0.142825408910208)
-        self.assertAlmostEqual(cdp.q_pcs, 0.07265356890310298)
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.142825408910208)
+        self.assertAlmostEqual(cdp.q_pcs_norm_squared_sum, 0.07265356890310298)
 
 
     def test_absolute_rdc(self):
@@ -210,7 +210,7 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
         self.assertAlmostEqual(cdp.chi2, 0.0)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0)
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.0)
 
         # The signless RDC data.
         rdcs = [5.59633342475, 13.31357940769, 7.03826972130, 3.39286328073, 2.09118060289, 11.44314950665, 9.06351706695, 2.33713806872, 5.81432510092, 13.10212128419, 2.52845064335, 4.70528375938, 4.07965480340, 6.28030444828, 4.69179757106, 2.34216201798, 3.89567105101, 5.51427513007, 0.72184322202, 3.81502890358, 10.88354253947, 1.66151988717, 4.29930397984, 4.46950447650, 6.99742077188, 2.27879506276, 3.64303288709, 6.83945430255, 3.19585334782]
@@ -246,8 +246,8 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, 3.646699595026552e-05)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, 2.592895195459969e-04)
         self.assertAlmostEqual(cdp.chi2, 728.32717233107246)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0)
-        self.assertAlmostEqual(cdp.q_rdc_norm2, 0.7547452273747645)
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.0)
+        self.assertAlmostEqual(cdp.q_rdc_norm_squared_sum, 0.7547452273747645)
 
 
     def test_absolute_T(self):
@@ -263,8 +263,8 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axz,  1.366097786433e-04)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -1.614772175671e-04)
         self.assertAlmostEqual(cdp.chi2, 311.70348701353225)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0)
-        self.assertAlmostEqual(cdp.q_rdc_norm2, 0.086891848854541404)
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.0)
+        self.assertAlmostEqual(cdp.q_rdc_norm_squared_sum, 0.086891848854541404)
 
         # The signless T data.
         T = [195.2, 205.9, 109.4, 113.8, 127.4, 156.0, 92.1, 173.2, 183.0, 174.3, 152.2, 97.3, 136.0, 129.2, 145.5, 156.0, 121.6, 128.0, 154.5, 94.2]
@@ -326,8 +326,8 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
         self.assertAlmostEqual(cdp.chi2, 0.0)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.0)
+        self.assertAlmostEqual(cdp.q_pcs_norm_squared_sum, 0.0)
 
         # The spin data.
         pcs = [1.0261275236, 0.75832284646, 0.65377417467, 0.88410306916, 0.83665620282, 1.887881182, 1.6564530832, 1.8489841033, -1.1143070855, -0.52863087918, -0.67600660991, -0.36996952054, -0.50720205688, -0.39889489474, -0.41237130008, -0.71313422816, -0.58642013802, -1.2160818959, -1.3990341569, -1.4084215541, -1.2007391713, -2.1392542193, -2.0165726596, -1.7623442985, -1.6437792517, -1.2415832517, -1.3008765368, -1.5872391105, -1.8060331465, -1.9063640494, -1.9817787999, -0.85264936663, -0.98332177588, -0.13370651687, -0.41762890604, -0.038212181921, -0.37986098085, 0.63582157322, 0.48346482178, 1.7566240094, 1.5694652222, 1.9914499872, 2.5316890107, 1.4559940851, 1.8661428328, 0.65003087965, 0.91690449156, 3.2096229388, 3.5547526651, 3.0579308183, 3.5933428117, 2.9062016872, 3.3750576279, 2.1848555929, 2.4769802024, 1.6466129291, 1.7719619979, 1.1373876736, 1.2182451528]
@@ -391,8 +391,8 @@ class N_state_model(SystemTestCase):
             self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.000284115871058)
             self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.000152207413184)
             self.assertAlmostEqual(cdp.chi2, 783.530808266)
-            self.assertAlmostEqual(cdp.q_pcs, 0.063345784112045375)
-            self.assertAlmostEqual(cdp.q_rdc, 0.084926009099013003)
+            self.assertAlmostEqual(cdp.q_pcs_norm_squared_sum, 0.063345784112045375)
+            self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.084926009099013003)
 
             # Get a spin to check.
             spin = return_spin(':114@N')
@@ -446,7 +446,7 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
         self.assertAlmostEqual(cdp.chi2, 0.0)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+        self.assertAlmostEqual(cdp.q_pcs_norm_squared_sum, 0.0)
 
 
     def test_align_fit_pcs_rand(self):
@@ -468,7 +468,7 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.000284180080857)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.00015165641132)
         self.assertAlmostEqual(cdp.chi2, 756.268087443)
-        self.assertAlmostEqual(cdp.q_pcs, 0.063341567973121266)
+        self.assertAlmostEqual(cdp.q_pcs_norm_squared_sum, 0.063341567973121266)
 
 
     def test_align_fit_rdc(self):
@@ -487,7 +487,7 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
         self.assertAlmostEqual(cdp.chi2, 0.0)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0)
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.0)
 
 
     def test_align_fit_rdc_rand(self):
@@ -511,8 +511,8 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.00029833)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.00015125)
         self.assertAlmostEqual(cdp.chi2, 23.5877482365)                 # Pales: 23.709
-        self.assertAlmostEqual(cdp.q_rdc, 0.078460000413257444)       # Pales (Q Saupe): 0.079
-        self.assertAlmostEqual(cdp.q_rdc_norm2, 0.14049691097282743)       # Pales (Q RDC_RMS): 0.141
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.078460000413257444)       # Pales (Q Saupe): 0.079
+        self.assertAlmostEqual(cdp.q_rdc_norm_squared_sum, 0.14049691097282743)       # Pales (Q RDC_RMS): 0.141
 
 
     def test_data_copying(self):
@@ -584,8 +584,8 @@ class N_state_model(SystemTestCase):
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.chi2, 0.0)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.0)
+        self.assertAlmostEqual(cdp.q_pcs_norm_squared_sum, 0.0)
 
 
     def test_lactose_n_state_fixed(self):
@@ -663,8 +663,8 @@ class N_state_model(SystemTestCase):
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.chi2, 0.0)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.0)
+        self.assertAlmostEqual(cdp.q_pcs_norm_squared_sum, 0.0)
 
         # The spin data.
         pcs = {
@@ -783,8 +783,8 @@ class N_state_model(SystemTestCase):
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.chi2, 0.0)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.0)
+        self.assertAlmostEqual(cdp.q_pcs_norm_squared_sum, 0.0)
 
 
     def test_monte_carlo_sims(self):
@@ -800,8 +800,8 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000)
         self.assertAlmostEqual(cdp.chi2 / 1e6, 1745860.0485368515 / 1e6, 6)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.0)
+        self.assertAlmostEqual(cdp.q_pcs_norm_squared_sum, 0.0)
 
         # The tensor key.
         key = 'synth'
@@ -861,11 +861,11 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[1].Axy,  0.001689957281873)
         self.assertAlmostEqual(cdp.align_tensors[1].Axz,  0.000838692329704)
         self.assertAlmostEqual(cdp.align_tensors[1].Ayz, -0.000984302159683)
-        self.assertAlmostEqual(cdp.q_factors_rdc['Er'], 0.0, 7)
-        self.assertAlmostEqual(cdp.q_factors_rdc_norm2['Er'], 0.0, 7)
-        self.assertAlmostEqual(cdp.q_factors_pcs['Er'], 0.0, 7)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0, 7)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0, 7)
+        self.assertAlmostEqual(cdp.q_factors_rdc_norm_tensor_size['Er'], 0.0, 7)
+        self.assertAlmostEqual(cdp.q_factors_rdc_norm_squared_sum['Er'], 0.0, 7)
+        self.assertAlmostEqual(cdp.q_factors_pcs_norm_squared_sum['Er'], 0.0, 7)
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.0, 7)
+        self.assertAlmostEqual(cdp.q_pcs_norm_squared_sum, 0.0, 7)
 
 
     def test_paramag_centre_fit(self):
@@ -889,8 +889,8 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.560544/2000, 5)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.286367/2000, 5)
         self.assertAlmostEqual(cdp.chi2, 0.0, 2)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0, 2)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0, 2)
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.0, 2)
+        self.assertAlmostEqual(cdp.q_pcs_norm_squared_sum, 0.0, 2)
 
 
     def test_pcs_back_calc(self):
@@ -921,7 +921,7 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, -6.01619494082773244303e-04)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz,  2.02008007072950861996e-04)
         self.assertAlmostEqual(cdp.chi2, 0.0)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0)
+        self.assertAlmostEqual(cdp.q_pcs_norm_squared_sum, 0.0)
 
 
     def test_pcs_fit_zero_pos(self):
@@ -940,7 +940,7 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axz,  5.105903556692e-07)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz,  1.676638764825e-05)
         self.assertAlmostEqual(cdp.chi2, 2125.9562247877066)
-        self.assertAlmostEqual(cdp.q_pcs, 0.76065986767333704)
+        self.assertAlmostEqual(cdp.q_pcs_norm_squared_sum, 0.76065986767333704)
 
         # The chi tensor.
         chi_diag = calc_chi_tensor(cdp.align_tensors[0].A_diag, 799.75376122 * 1e6, 298)
@@ -977,7 +977,7 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.000280272, 5)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.0001431835, 5)
         self.assertAlmostEqual(cdp.chi2, 0.0, 2)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0, 2)
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.0, 2)
 
 
     def test_pyrotartaric_anhydride_mix(self):
@@ -996,7 +996,7 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.000280272, 5)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.0001431835, 5)
         self.assertAlmostEqual(cdp.chi2, 0.0, 2)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0, 2)
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.0, 2)
 
 
     def test_pyrotartaric_anhydride_rdcs(self):
@@ -1027,7 +1027,7 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.000280272, 5)
         self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.0001431835, 5)
         self.assertAlmostEqual(cdp.chi2, 0.0, 2)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0, 2)
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.0, 2)
 
 
     def test_rdc_tensor(self):
@@ -1138,8 +1138,8 @@ class N_state_model(SystemTestCase):
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.chi2, 0.0, 2)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0, 2)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0, 1)
+        self.assertAlmostEqual(cdp.q_rdc_norm_tensor_size, 0.0, 2)
+        self.assertAlmostEqual(cdp.q_pcs_norm_squared_sum, 0.0, 1)
 
 
     def test_vector_loading1(self):
