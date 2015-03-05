@@ -759,6 +759,7 @@ def unit_vectors(ave=True):
             for i in range(len(spin1.pos)):
                 # No structural information.
                 if spin1.pos[i] == None or spin2.pos[i] == None:
+                    warn(RelaxWarning("No structural information for state %i can be found between spins '%s' and '%s'." % (i, interatom.spin_id1, interatom.spin_id2)))
                     vector_list.append(None)
 
                 # All data is present.
