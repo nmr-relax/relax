@@ -1145,6 +1145,12 @@ def return_rdc_data(sim_index=None, verbosity=0):
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
             rdc_const.append(3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r))
 
+        # Sanity check, to prevent cryptic Python errors.
+        indices = []
+        for i in range(len(unit_vect[-1])):
+            if unit_vect[-1][i] == None:
+                raise RelaxError("Unit vectors of None have been detected between the spins '%s' and '%s' %s." % (interatom.spin_id1, interatom.spin_id2, unit_vect[-1]))
+
         # Store the measured J coupling.
         if opt_uses_j_couplings():
             j_couplings.append(interatom.j_coupling)
@@ -1152,11 +1158,6 @@ def return_rdc_data(sim_index=None, verbosity=0):
     # Fix the unit vector data structure.
     num = None
     for rdc_index in range(len(unit_vect)):
-        # Sanity check, to prevent cryptic Python errors.
-        for i in range(len(unit_vect[rdc_index])):
-            if unit_vect[rdc_index][i] == None:
-                raise RelaxError("Unit vectors of None have been detected.")
-
         # Convert to numpy structures.
         unit_vect[rdc_index] = array(unit_vect[rdc_index], float64)
 
