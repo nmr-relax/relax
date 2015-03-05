@@ -1152,6 +1152,11 @@ def return_rdc_data(sim_index=None, verbosity=0):
     # Fix the unit vector data structure.
     num = None
     for rdc_index in range(len(unit_vect)):
+        # Sanity check, to prevent cryptic Python errors.
+        for i in range(len(unit_vect[rdc_index])):
+            if unit_vect[rdc_index][i] == None:
+                raise RelaxError("Unit vectors of None have been detected.")
+
         # Convert to numpy structures.
         unit_vect[rdc_index] = array(unit_vect[rdc_index], float64)
 
