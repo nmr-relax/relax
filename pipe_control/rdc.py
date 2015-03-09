@@ -495,7 +495,7 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
                 break
 
         # Loop over the interatomic data.
-        for interatom in interatomic_loop():
+        for interatom in interatomic_loop(skip_desel=True):
             # Skip if data is missing.
             if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'rdc_bc') or not align_id in interatom.rdc or not align_id in interatom.rdc_bc:
                 continue
