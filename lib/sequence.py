@@ -143,11 +143,11 @@ def check_sequence_func(data, spin_id_col=None, mol_name_col=None, res_num_col=N
 
         # Bad data in column.
         try:
-            res_num = eval(data[res_num_col-1])
-            if not (res_num == None or isinstance(res_num, int)):
-                return RelaxInvalidSeqError(data, "the spin number data '%s' is invalid" % data[res_num_col-1])
+            spin_num = eval(data[spin_num_col-1])
+            if not (spin_num == None or isinstance(spin_num, int)):
+                return RelaxInvalidSeqError(data, "the spin number data '%s' is invalid" % data[spin_num_col-1])
         except:
-            return RelaxInvalidSeqError(data, "the spin number data '%s' is invalid" % data[res_num_col-1])
+            return RelaxInvalidSeqError(data, "the spin number data '%s' is invalid" % data[spin_num_col-1])
 
     # Spin name data.
     if spin_name_col:
