@@ -305,15 +305,17 @@ def convert(value, data_type, align_id, to_intern=False):
     return value * factor
 
 
-def copy(pipe_from=None, pipe_to=None, align_id=None):
+def copy(pipe_from=None, pipe_to=None, align_id=None, back_calc=True):
     """Copy the RDC data from one data pipe to another.
 
     @keyword pipe_from: The data pipe to copy the RDC data from.  This defaults to the current data pipe.
     @type pipe_from:    str
     @keyword pipe_to:   The data pipe to copy the RDC data to.  This defaults to the current data pipe.
     @type pipe_to:      str
-    @param align_id:    The alignment ID string.
+    @keyword align_id:  The alignment ID string.
     @type align_id:     str
+    @keyword back_calc: A flag which if True will cause any back-calculated RDCs present to also be copied with the real values and errors.
+    @type back_calc:    bool
     """
 
     # Defaults.
@@ -332,9 +334,6 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
     dp_from = pipes.get_pipe(pipe_from)
     dp_to = pipes.get_pipe(pipe_to)
 
-    # Test that the interatomic data is consistent between the two data pipe.
-    consistent_interatomic_data(pipe1=pipe_to, pipe2=pipe_from)
-
     # The IDs.
     if align_id == None:
         align_ids = dp_from.align_ids
@@ -349,17 +348,34 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
 
     # Loop over the align IDs.
     for align_id in align_ids:
+        # Printout.
+        print("\nCoping RDCs for the alignment ID '%s'." % align_id)
+
         # Copy the global data.
         if align_id not in dp_to.align_ids and align_id not in dp_to.align_ids:
             dp_to.align_ids.append(align_id)
         if align_id in dp_from.rdc_ids and align_id not in dp_to.rdc_ids:
             dp_to.rdc_ids.append(align_id)
 
-        # Loop over the interatomic data.
-        for i in range(len(dp_from.interatomic)):
-            # Alias the containers.
-            interatom_from = dp_from.interatomic[i]
-            interatom_to = dp_to.interatomic[i]
+        # Loop over the interatomic data of the source data pipe.
+        data = []
+        for interatom_from in interatomic_loop(pipe=pipe_from):
+            # Find the matching interatomic data container in the target data pipe.
+            interatom_to = []
+            for interatom in interatomic_loop(selection1=interatom_from.spin_id1, selection2=interatom_from.spin_id2, pipe=pipe_to, skip_desel=False):
+                interatom_to.append(interatom)
+
+            # No matching interatomic data container.
+            if interatom_to == []:
+                warn(RelaxWarning("The interatomic data container between the spins '%s' and '%s' cannot be found in the target data pipe." % (interatom_from.spin_id1, interatom_from.spin_id2)))
+                continue
+
+            # Too many containers.
+            elif len(interatom_to) != 1:
+                raise RelaxError("Too many interatomic data containers between the spins '%s' and '%s' exist in the target data pipe." % (interatom_from.spin_id1, interatom_from.spin_id2))
+
+            # Collapse the container.
+            interatom_to = interatom_to[0]
 
             # No data or errors.
             if (not hasattr(interatom_from, 'rdc') or not align_id in interatom_from.rdc) and (not hasattr(interatom_from, 'rdc_err') or not align_id in interatom_from.rdc_err):
@@ -368,14 +384,61 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
             # Initialise the data structures if necessary.
             if hasattr(interatom_from, 'rdc') and not hasattr(interatom_to, 'rdc'):
                 interatom_to.rdc = {}
+            if back_calc and hasattr(interatom_from, 'rdc_bc') and not hasattr(interatom_to, 'rdc_bc'):
+                interatom_to.rdc_bc = {}
             if hasattr(interatom_from, 'rdc_err') and not hasattr(interatom_to, 'rdc_err'):
                 interatom_to.rdc_err = {}
+            if hasattr(interatom_from, 'rdc_data_types') and not hasattr(interatom_to, 'rdc_data_types'):
+                interatom_to.rdc_data_types = {}
+            if hasattr(interatom_from, 'absolute_rdc') and not hasattr(interatom_to, 'absolute_rdc'):
+                interatom_to.absolute_rdc = {}
 
             # Copy the value and error from pipe_from.
+            value = None
+            error = None
+            value_bc = None
+            data_type = None
+            absolute_rdc = None
             if hasattr(interatom_from, 'rdc'):
-                interatom_to.rdc[align_id] = interatom_from.rdc[align_id]
+                value = interatom_from.rdc[align_id]
+                interatom_to.rdc[align_id] = value
+            if back_calc and hasattr(interatom_from, 'rdc_bc'):
+                value_bc = interatom_from.rdc_bc[align_id]
+                interatom_to.rdc_bc[align_id] = value_bc
             if hasattr(interatom_from, 'rdc_err'):
-                interatom_to.rdc_err[align_id] = interatom_from.rdc_err[align_id]
+                error = interatom_from.rdc_err[align_id]
+                interatom_to.rdc_err[align_id] = error
+            if hasattr(interatom_from, 'rdc_data_types'):
+                data_type = interatom_from.rdc_data_types[align_id]
+                interatom_to.rdc_data_types[align_id] = data_type
+            if hasattr(interatom_from, 'absolute_rdc'):
+                absolute_rdc = interatom_from.absolute_rdc[align_id]
+                interatom_to.absolute_rdc[align_id] = absolute_rdc
+
+            # Append the data for printout.
+            data.append([interatom_from.spin_id1, interatom_from.spin_id2])
+            if is_float(value):
+                data[-1].append("%20.15f" % value)
+            else:
+                data[-1].append("%20s" % value)
+            if back_calc:
+                if is_float(value_bc):
+                    data[-1].append("%20.15f" % value_bc)
+                else:
+                    data[-1].append("%20s" % value_bc)
+            if is_float(error):
+                data[-1].append("%20.15f" % error)
+            else:
+                data[-1].append("%20s" % error)
+            data[-1].append("%20s" % data_type)
+            data[-1].append("%20s" % absolute_rdc)
+
+        # Printout.
+        print("The following RDCs have been copied:\n")
+        if back_calc:
+            write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Back-calculated", "Error", "Data_type", "Absolute_RDC"], data=data)
+        else:
+            write_data(out=sys.stdout, headings=["Spin_ID1", "Spin_ID2", "Value", "Error", "Data_type", "Absolute_RDC"], data=data)
 
 
 def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force=False):
@@ -432,7 +495,7 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
                 break
 
         # Loop over the interatomic data.
-        for interatom in interatomic_loop():
+        for interatom in interatomic_loop(skip_desel=True):
             # Skip if data is missing.
             if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'rdc_bc') or not align_id in interatom.rdc or not align_id in interatom.rdc_bc:
                 continue
@@ -624,10 +687,6 @@ def q_factors(spin_id=None, verbosity=1):
     @type verbosity:    int
     """
 
-    # Initial printout.
-    if verbosity:
-        print("\nRDC Q factors (norm1, norm2):")
-
     # Check the pipe setup.
     check_pipe_setup(sequence=True)
 
@@ -637,8 +696,8 @@ def q_factors(spin_id=None, verbosity=1):
         return
 
     # Q factor dictonaries.
-    cdp.q_factors_rdc = {}
-    cdp.q_factors_rdc_norm2 = {}
+    cdp.q_factors_rdc_norm_tensor_size = {}
+    cdp.q_factors_rdc_norm_squared_sum = {}
 
     # Loop over the alignments.
     for align_id in cdp.rdc_ids:
@@ -685,20 +744,32 @@ def q_factors(spin_id=None, verbosity=1):
             else:
                 D2_sum = D2_sum + interatom.rdc[align_id]**2
 
-            # Gyromagnetic ratios.
-            g1 = periodic_table.gyromagnetic_ratio(spin1.isotope)
-            g2 = periodic_table.gyromagnetic_ratio(spin2.isotope)
+            # Skip the 2Da^2(4 + 3R)/5 normalised Q factor if no tensor is present.
+            if norm2_flag and not hasattr(cdp, 'align_tensors'):
+                warn(RelaxWarning("No alignment tensors are present for the alignment '%s', skipping the Q factor normalised with 2Da^2(4 + 3R)/5." % align_id))
+                norm2_flag = False
 
             # Skip the 2Da^2(4 + 3R)/5 normalised Q factor if pseudo-atoms are present.
-            if  norm2_flag and (is_pseudoatom(spin1) or is_pseudoatom(spin2)):
-                warn(RelaxWarning("Pseudo-atoms are present, skipping the Q factor normalised with 2Da^2(4 + 3R)/5."))
+            if norm2_flag and (is_pseudoatom(spin1) or is_pseudoatom(spin2)):
+                warn(RelaxWarning("Pseudo-atoms are present for the alignment '%s', skipping the Q factor normalised with 2Da^2(4 + 3R)/5." % align_id))
                 norm2_flag = False
 
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
             if norm2_flag:
+                # Data checks.
+                if not hasattr(spin1, 'isotope'):
+                    raise RelaxSpinTypeError(spin_id=interatom.spin_id1)
+                if not hasattr(spin2, 'isotope'):
+                    raise RelaxSpinTypeError(spin_id=interatom.spin_id2)
+
+                # Gyromagnetic ratios.
+                g1 = periodic_table.gyromagnetic_ratio(spin1.isotope)
+                g2 = periodic_table.gyromagnetic_ratio(spin2.isotope)
+
+                # Calculate the dipolar constant.
                 dj_new = 3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r)
                 if dj != None and dj_new != dj:
-                    warn(RelaxWarning("The dipolar constant is not the same for all RDCs, skipping the Q factor normalised with 2Da^2(4 + 3R)/5."))
+                    warn(RelaxWarning("The dipolar constant is not the same for all RDCs for the alignment '%s', skipping the Q factor normalised with 2Da^2(4 + 3R)/5." % align_id))
                     norm2_flag = False
                 else:
                     dj = dj_new
@@ -731,27 +802,34 @@ def q_factors(spin_id=None, verbosity=1):
                 norm = 1e-15
 
             # The Q factor for the alignment.
-            cdp.q_factors_rdc[align_id] = sqrt(sse / N / norm)
+            cdp.q_factors_rdc_norm_tensor_size[align_id] = sqrt(sse / N / norm)
 
         else:
-            cdp.q_factors_rdc[align_id] = 0.0
+            cdp.q_factors_rdc_norm_tensor_size[align_id] = 0.0
 
         # The second Q factor definition.
-        cdp.q_factors_rdc_norm2[align_id] = sqrt(sse / D2_sum)
+        cdp.q_factors_rdc_norm_squared_sum[align_id] = sqrt(sse / D2_sum)
 
-        # ID and RDC Q factor printout.
-        if verbosity:
-            print("    Alignment ID '%s':  %.3f, %.3f" % (align_id, cdp.q_factors_rdc[align_id], cdp.q_factors_rdc_norm2[align_id]))
+    # ID and RDC Q factor printout.
+    if verbosity:
+        print("\nRDC Q factors normalised by the tensor size (2Da^2(4 + 3R)/5):")
+        for align_id in cdp.rdc_ids:
+            if align_id in cdp.q_factors_rdc_norm_tensor_size:
+                print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_rdc_norm_tensor_size[align_id]))
+        print("\nRDC Q factors normalised by the sum of RDCs squared:")
+        for align_id in cdp.rdc_ids:
+            if align_id in cdp.q_factors_rdc_norm_squared_sum:
+                print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_rdc_norm_squared_sum[align_id]))
 
     # The total Q factor.
-    cdp.q_rdc = 0.0
-    cdp.q_rdc_norm2 = 0.0
-    for id in cdp.q_factors_rdc:
-        cdp.q_rdc = cdp.q_rdc + cdp.q_factors_rdc[id]**2
-    for id in cdp.q_factors_rdc_norm2:
-        cdp.q_rdc_norm2 = cdp.q_rdc_norm2 + cdp.q_factors_rdc_norm2[id]**2
-    cdp.q_rdc = sqrt(cdp.q_rdc / len(cdp.q_factors_rdc))
-    cdp.q_rdc_norm2 = sqrt(cdp.q_rdc_norm2 / len(cdp.q_factors_rdc_norm2))
+    cdp.q_rdc_norm_tensor_size = 0.0
+    cdp.q_rdc_norm_squared_sum = 0.0
+    for id in cdp.q_factors_rdc_norm_tensor_size:
+        cdp.q_rdc_norm_tensor_size = cdp.q_rdc_norm_tensor_size + cdp.q_factors_rdc_norm_tensor_size[id]**2
+    for id in cdp.q_factors_rdc_norm_squared_sum:
+        cdp.q_rdc_norm_squared_sum = cdp.q_rdc_norm_squared_sum + cdp.q_factors_rdc_norm_squared_sum[id]**2
+    cdp.q_rdc_norm_tensor_size = sqrt(cdp.q_rdc_norm_tensor_size / len(cdp.q_factors_rdc_norm_tensor_size))
+    cdp.q_rdc_norm_squared_sum = sqrt(cdp.q_rdc_norm_squared_sum / len(cdp.q_factors_rdc_norm_squared_sum))
 
 
 def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin_id1_col=None, spin_id2_col=None, data_col=None, error_col=None, sep=None, neg_g_corr=False, absolute=False):
@@ -1067,6 +1145,12 @@ def return_rdc_data(sim_index=None, verbosity=0):
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
             rdc_const.append(3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r))
 
+        # Sanity check, to prevent cryptic Python errors.
+        indices = []
+        for i in range(len(unit_vect[-1])):
+            if unit_vect[-1][i] == None:
+                raise RelaxError("Unit vectors of None have been detected between the spins '%s' and '%s' %s." % (interatom.spin_id1, interatom.spin_id2, unit_vect[-1]))
+
         # Store the measured J coupling.
         if opt_uses_j_couplings():
             j_couplings.append(interatom.j_coupling)
@@ -1338,7 +1422,7 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
 
         # Handle the missing rdc_data_types variable.
         data_type = None
-        if hasattr(interatom, 'rdc_data_types'):
+        if hasattr(interatom, 'rdc_data_types') and align_id in interatom.rdc_data_types:
             data_type = interatom.rdc_data_types[align_id]
 
         # The value.

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -137,6 +137,13 @@ uf.add_keyarg(
     wiz_read_only = True,
     can_be_none = True
 )
+uf.add_keyarg(
+    name = "back_calc",
+    default = True,
+    py_type = "bool",
+    desc_short = "back-calculated data flag",
+    desc = "A flag which if True will cause any back-calculated PCSs present to also be copied with the real values and errors."
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This function will copy PCS data from 'pipe_from' to 'pipe_to'.  If align_id is not given then all PCS data will be copied, otherwise only a specific data set will be.")
@@ -169,6 +176,20 @@ uf.add_keyarg(
     wiz_element_type = "combo",
     wiz_combo_choices = ["grace"],
     wiz_read_only = True,
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "title",
+    py_type = "str",
+    desc_short = "alternative plot title",
+    desc = "The title for the plot, overriding the default.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "subtitle",
+    py_type = "str",
+    desc_short = "alternative plot subtitle",
+    desc = "The subtitle for the plot, overriding the default.",
     can_be_none = True
 )
 uf.add_keyarg(
@@ -538,7 +559,8 @@ uf.add_keyarg(
     name = "spin_id",
     py_type = "str",
     desc_short = "spin ID string",
-    desc = "The spin ID string."
+    desc = "The spin ID string.",
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "weight",

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -45,7 +45,8 @@ uf.add_keyarg(
     default = None,
     py_type = "str",
     desc_short = "source tensor ID",
-    desc = "The identification string of the alignment tensor to copy the data from."
+    desc = "The identification string of the alignment tensor to copy the data from.",
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "pipe_from",

@@ -89,7 +89,7 @@ def add_atom(mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[No
         cdp.structure = Internal()
 
     # Add the atoms.
-    cdp.structure.add_atom(mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
+    cdp.structure.add_atom(mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record, sort=True)
 
 
 def add_model(model_num=None):
@@ -134,7 +134,10 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
 
     # No data.
     if mol_names == []:
-        raise RelaxError("No structural data matching the atom ID string '%s' can be found." % atom_id)
+        if atom_id != None:
+            raise RelaxError("No structural data matching the atom ID string '%s' can be found." % atom_id)
+        else:
+            raise RelaxError("No structural data can be found.")
 
     # Are all molecules the same?
     same_mol = True
@@ -181,7 +184,7 @@ def assemble_structural_coordinates(pipes=None, models=None, molecules=None, ato
         for mol_index in range(num_mols):
             res_num_list.append([])
             for i in range(len(one_letter_codes[mol_index])):
-                key = res_nums[mol_index][i].keys()[0]
+                key = list(res_nums[mol_index][i].keys())[0]
                 res_num_list[mol_index].append(res_nums[mol_index][i][key])
 
         # Sequence alignment.
@@ -393,6 +396,10 @@ def average_structure(pipes=None, models=None, molecules=None, atom_id=None, set
 
     # Calculate the mean structure.
     struct = mean(coord, axis=0)
+
+    # Place the structural object into the relax data store if needed.
+    if not hasattr(cdp, 'structure'):
+        cdp.structure = Internal()
 
     # Store the data.
     cdp.structure.add_coordinates(coord=struct, mol_names=mol_names, res_names=res_names, res_nums=res_nums, atom_names=atom_names, elements=elements, set_mol_name=set_mol_name, set_model_num=set_model_num)
@@ -1275,7 +1282,7 @@ def sequence_alignment(pipes=None, models=None, molecules=None, msa_algorithm='C
     for mol_index in range(num_mols):
         res_num_list.append([])
         for i in range(len(one_letter_codes[mol_index])):
-            key = res_nums[mol_index][i].keys()[0]
+            key = list(res_nums[mol_index][i].keys())[0]
             res_num_list[mol_index].append(res_nums[mol_index][i][key])
 
     # MSA.
@@ -1655,7 +1662,7 @@ def web_of_motion(pipes=None, models=None, molecules=None, atom_id=None, file=No
         # Loop over the structures.
         for struct_index in range(len(ids)):
             # Add the atom.
-            web.add_atom(mol_name=mol_names[atom_index], atom_name=atom_names[atom_index], res_name=res_names[atom_index], res_num=res_nums[atom_index], pos=coord[struct_index, atom_index], element=elements[atom_index])
+            web.add_atom(mol_name=mol_names[atom_index], atom_name=atom_names[atom_index], res_name=res_names[atom_index], res_num=res_nums[atom_index], pos=coord[struct_index, atom_index], element=elements[atom_index], sort=False)
 
         # Loop over the structures again, this time twice.
         for k in range(len(ids)):

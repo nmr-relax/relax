@@ -38,7 +38,7 @@ from lib import regex
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxFault, RelaxNoneIntError, RelaxNoPdbError
 from lib.io import file_root, open_read_file
-from lib.selection import Selection
+from lib.selection import Selection, tokenise
 from lib.sequence import aa_codes_three_to_one
 from lib.structure import pdb_read, pdb_write
 from lib.structure.internal.displacements import Displacements
@@ -1092,7 +1092,7 @@ class Internal:
         return sheet
 
 
-    def add_atom(self, mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None):
+    def add_atom(self, mol_name=None, atom_name=None, res_name=None, res_num=None, pos=[None, None, None], element=None, atom_num=None, chain_id=None, segment_id=None, pdb_record=None, sort=False):
         """Add a new atom to the structural data object.
 
         @keyword mol_name:      The name of the molecule.
@@ -1115,6 +1115,8 @@ class Internal:
         @type segment_id:       str or None
         @keyword pdb_record:    The optional PDB record name, e.g. 'ATOM' or 'HETATM'.
         @type pdb_record:       str or None
+        @keyword sort:          A flag which if True will cause the structural data to be sorted after adding the atom.
+        @type sort:             bool
         """
 
         # Add a model if not present.
@@ -1152,7 +1154,8 @@ class Internal:
             mol.atom_add(atom_name=atom_name, res_name=res_name, res_num=res_num, pos=model_pos, element=element, atom_num=atom_num, chain_id=chain_id, segment_id=segment_id, pdb_record=pdb_record)
 
             # Sort.
-            mol._sort()
+            if sort:
+                mol._sort()
 
 
     def add_coordinates(self, coord=None, mol_names=None, res_names=None, res_nums=None, atom_names=None, elements=None, set_mol_name=None, set_model_num=None):
@@ -2624,17 +2627,22 @@ class Internal:
                 mol.z[i] = pos[2]
 
 
-    def selection(self, atom_id=None):
+    def selection(self, atom_id=None, inv=False):
         """Convert the atom ID string into a special internal selection object for speed.
 
         @keyword atom_id:   The molecule, residue, and atom identifier string.  Only atoms matching this selection will be used.
         @type atom_id:      str or None
+        @keyword inv:       A flag which if True will cause the selection to be inverted.
+        @type inv:          bool
         @return:            The internal structural selection object.
         @rtype:             Internal_selection instance
         """
 
         # Initialise the internal structural selection object.
         selection = Internal_selection()
+
+        # Split up the atom ID, to see if a molecule has been specified.
+        mol_token, res_token, spin_token = tokenise(atom_id)
 
         # Generate the atom ID selection object.
         sel_obj = None
@@ -2652,8 +2660,14 @@ class Internal:
             mol = model.mol[mol_index]
 
             # Skip non-matching molecules.
-            if sel_obj and not sel_obj.contains_mol(mol.mol_name):
-                continue
+            if not inv:
+                if sel_obj and not sel_obj.contains_mol(mol.mol_name):
+                    continue
+
+            # Skip matching molecules.
+            else:
+                if (not sel_obj) or (mol_token != None and sel_obj.contains_mol(mol.mol_name)):
+                    continue
 
             # Add the molecule index.
             selection.add_mol(mol_index=mol_index)
@@ -2661,8 +2675,14 @@ class Internal:
             # Loop over the atoms.
             for i in range(len(mol.atom_num)):
                 # Skip non-matching atoms.
-                if sel_obj and not sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
-                    continue
+                if not inv:
+                    if sel_obj and not sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
+                        continue
+
+                # Skip matching atoms.
+                else:
+                    if (not sel_obj) or sel_obj.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
+                        continue
 
                 # Add the atom index.
                 selection.add_atom(mol_index=mol_index, atom_index=i)
@@ -2849,7 +2869,7 @@ class Internal:
                     if not same:
                         print("%-6s%5s %4s%1s%3s %1s%4s%1s   %8s%8s%8s%6.2f%6.2f      %4s%2s%2s" % ('ATOM', mol.atom_num[k], self._translate(mol.atom_name[k]), '', self._translate(mol.res_name[k]), self._translate(mol.chain_id[k]), self._translate(mol.res_num[k]), '', '#', '#', '#', 1.0, 0, self._translate(mol.seg_id[k]), self._translate(mol.element[k]), ''))
                         print("%-6s%5s %4s%1s%3s %1s%4s%1s   %8s%8s%8s%6.2f%6.2f      %4s%2s%2s" % ('ATOM', mol_ref.atom_num[k], self._translate(mol_ref.atom_name[k]), '', self._translate(mol_ref.res_name[k]), self._translate(mol_ref.chain_id[k]), self._translate(mol_ref.res_num[k]), '', '#', '#', '#', 1.0, 0, self._translate(mol_ref.seg_id[k]), self._translate(mol_ref.element[k]), ''))
-                        raise RelaxError("The atoms of model %i do not match the first model." % self.structural_data[i].num)
+                        raise RelaxError("The atoms of model %s do not match the first model." % self.structural_data[i].num)
 
         # Final printout.
         if verbosity:

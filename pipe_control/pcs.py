@@ -33,9 +33,10 @@ from warnings import warn
 
 # relax module imports.
 from lib.alignment.pcs import ave_pcs_tensor, pcs_tensor
+from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoPdbError, RelaxNoPCSError, RelaxNoSequenceError
 from lib.geometry.vectors import random_unit_vector
-from lib.io import open_write_file
+from lib.io import open_write_file, write_data
 from lib.periodic_table import periodic_table
 from lib.physical_constants import pcs_constant
 from lib.plotting.api import write_xy_data, write_xy_header
@@ -273,15 +274,17 @@ def check_pipe_setup(pipe=None, pcs_id=None, sequence=False, N=False, tensors=Fa
         raise RelaxError("The paramagnetic centre has not been defined.")
 
 
-def copy(pipe_from=None, pipe_to=None, align_id=None):
+def copy(pipe_from=None, pipe_to=None, align_id=None, back_calc=True):
     """Copy the PCS data from one data pipe to another.
 
     @keyword pipe_from: The data pipe to copy the PCS data from.  This defaults to the current data pipe.
     @type pipe_from:    str
     @keyword pipe_to:   The data pipe to copy the PCS data to.  This defaults to the current data pipe.
     @type pipe_to:      str
-    @param align_id:    The alignment ID string.
+    @keyword align_id:  The alignment ID string.
     @type align_id:     str
+    @keyword back_calc: A flag which if True will cause any back-calculated RDCs present to also be copied with the real values and errors.
+    @type back_calc:    bool
     """
 
     # Defaults.
@@ -314,6 +317,9 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
 
     # Loop over the align IDs.
     for align_id in align_ids:
+        # Printout.
+        print("\nCoping PCSs for the alignment ID '%s'." % align_id)
+
         # Copy the global data.
         if align_id not in dp_to.align_ids and align_id not in dp_to.align_ids:
             dp_to.align_ids.append(align_id)
@@ -321,10 +327,15 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
             dp_to.pcs_ids.append(align_id)
 
         # Spin loop.
-        for mol_index, res_index, spin_index in spin_index_loop():
-            # Alias the spin containers.
-            spin_from = dp_from.mol[mol_index].res[res_index].spin[spin_index]
-            spin_to = dp_to.mol[mol_index].res[res_index].spin[spin_index]
+        data = []
+        for spin_from, spin_id in spin_loop(return_id=True, skip_desel=True, pipe=pipe_from):
+            # Find the matching spin container in the target data pipe.
+            spin_to = return_spin(spin_id, pipe=pipe_to)
+
+            # No matching spin container.
+            if spin_to == None:
+                warn(RelaxWarning("The spin container for the spin '%s' cannot be found in the target data pipe." % spin_id))
+                continue
 
             # No data or errors.
             if (not hasattr(spin_from, 'pcs') or not align_id in spin_from.pcs) and (not hasattr(spin_from, 'pcs_err') or not align_id in spin_from.pcs_err):
@@ -333,14 +344,47 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
             # Initialise the spin data if necessary.
             if hasattr(spin_from, 'pcs') and not hasattr(spin_to, 'pcs'):
                 spin_to.pcs = {}
+            if back_calc and hasattr(spin_from, 'pcs_bc') and not hasattr(spin_to, 'pcs_bc'):
+                spin_to.pcs_bc = {}
             if hasattr(spin_from, 'pcs_err') and not hasattr(spin_to, 'pcs_err'):
                 spin_to.pcs_err = {}
 
             # Copy the value and error from pipe_from.
+            value = None
+            error = None
+            value_bc = None
             if hasattr(spin_from, 'pcs'):
-                spin_to.pcs[align_id] = spin_from.pcs[align_id]
+                value = spin_from.pcs[align_id]
+                spin_to.pcs[align_id] = value
+            if back_calc and hasattr(spin_from, 'pcs_bc'):
+                value_bc = spin_from.pcs_bc[align_id]
+                spin_to.pcs_bc[align_id] = value_bc
             if hasattr(spin_from, 'pcs_err'):
-                spin_to.pcs_err[align_id] = spin_from.pcs_err[align_id]
+                error = spin_from.pcs_err[align_id]
+                spin_to.pcs_err[align_id] = error
+
+            # Append the data for printout.
+            data.append([spin_id])
+            if is_float(value):
+                data[-1].append("%20.15f" % value)
+            else:
+                data[-1].append("%20s" % value)
+            if back_calc:
+                if is_float(value_bc):
+                    data[-1].append("%20.15f" % value_bc)
+                else:
+                    data[-1].append("%20s" % value_bc)
+            if is_float(error):
+                data[-1].append("%20.15f" % error)
+            else:
+                data[-1].append("%20s" % error)
+
+        # Printout.
+        print("The following PCSs have been copied:\n")
+        if back_calc:
+            write_data(out=sys.stdout, headings=["Spin_ID", "Value", "Back-calculated", "Error"], data=data)
+        else:
+            write_data(out=sys.stdout, headings=["Spin_ID", "Value", "Error"], data=data)
 
 
 def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force=False):
@@ -384,7 +428,10 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
     # The spin types.
     types = []
     for spin in spin_loop():
-        if spin.element not in types:
+        if not hasattr(spin, 'element'):
+            if None not in types:
+                types.append(None)
+        elif spin.element not in types:
             types.append(spin.element)
 
     # Loop over the PCS data.
@@ -415,7 +462,7 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
                     continue
 
                 # Incorrect spin type.
-                if spin.element != types[i]:
+                if hasattr(spin, 'element') and spin.element != types[i]:
                     continue
 
                 # Skip if data is missing.
@@ -583,10 +630,6 @@ def q_factors(spin_id=None, verbosity=1):
     @type verbosity:    int
     """
 
-    # Initial printout.
-    if verbosity:
-        print("\nPCS Q factors:")
-
     # Check the pipe setup.
     check_pipe_setup(sequence=True)
 
@@ -596,7 +639,7 @@ def q_factors(spin_id=None, verbosity=1):
         return
 
     # Q factor dictionary.
-    cdp.q_factors_pcs = {}
+    cdp.q_factors_pcs_norm_squared_sum = {}
 
     # Loop over the alignments.
     for align_id in cdp.pcs_ids:
@@ -635,7 +678,7 @@ def q_factors(spin_id=None, verbosity=1):
         # The Q factor for the alignment.
         if pcs2_sum:
             Q = sqrt(sse / pcs2_sum)
-            cdp.q_factors_pcs[align_id] = Q
+            cdp.q_factors_pcs_norm_squared_sum[align_id] = Q
 
         # Warnings (and then exit).
         if not spin_count:
@@ -648,16 +691,19 @@ def q_factors(spin_id=None, verbosity=1):
             warn(RelaxWarning("No back-calculated PCS data can be found for the alignment ID '%s', skipping the PCS Q factor calculation for this alignment." % align_id))
             continue
 
-        # ID and PCS Q factor printout.
-        if verbosity:
-            print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_pcs[align_id]))
+    # ID and PCS Q factor printout.
+    if verbosity:
+        print("\nPCS Q factors normalised by the sum of PCSs squared:")
+        for align_id in cdp.pcs_ids:
+            if align_id in cdp.q_factors_pcs_norm_squared_sum:
+                print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_pcs_norm_squared_sum[align_id]))
 
     # The total Q factor.
-    cdp.q_pcs = 0.0
-    for id in cdp.q_factors_pcs:
-        cdp.q_pcs = cdp.q_pcs + cdp.q_factors_pcs[id]**2
-    cdp.q_pcs = cdp.q_pcs / len(cdp.q_factors_pcs)
-    cdp.q_pcs = sqrt(cdp.q_pcs)
+    cdp.q_pcs_norm_squared_sum = 0.0
+    for id in cdp.q_factors_pcs_norm_squared_sum:
+        cdp.q_pcs_norm_squared_sum = cdp.q_pcs_norm_squared_sum + cdp.q_factors_pcs_norm_squared_sum[id]**2
+    cdp.q_pcs_norm_squared_sum = cdp.q_pcs_norm_squared_sum / len(cdp.q_factors_pcs_norm_squared_sum)
+    cdp.q_pcs_norm_squared_sum = sqrt(cdp.q_pcs_norm_squared_sum)
 
 
 def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
@@ -734,7 +780,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
         # Get the corresponding spin container.
         id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
         spin = return_spin(id)
-        if spin == None and spin_id[0] == '@':    # Allow spin IDs of atom names to be used to specify multi column data.
+        if spin == None and spin_id and spin_id[0] == '@':    # Allow spin IDs of atom names to be used to specify multi column data.
             spin = return_spin(id+spin_id)
         if spin == None:
             warn(RelaxNoSpinWarning(id))

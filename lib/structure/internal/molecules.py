@@ -259,7 +259,7 @@ class MolContainer:
         """Sort all structural data."""
 
         # Create an index list for sorting the structural data.
-        indices = range(len(self.atom_name))
+        indices = list(range(len(self.atom_name)))
         indices.sort(key=self._sort_key)
 
         # Sort all lists.
@@ -284,6 +284,10 @@ class MolContainer:
 
     def _sort_key(self, i):
         """Return the information for sorting the sequence data."""
+
+        # Python 3 - return 0 instead of None.
+        if self.res_num[i] == None:
+            return 0
 
         # Sort based on residue number.
         return self.res_num[i]
