@@ -500,8 +500,8 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
     size = len(data)
 
     # Round the data limits.
-    max_pcs = ceil(max_pcs)
-    min_pcs = floor(min_pcs)
+    max_pcs = float(ceil(max_pcs))
+    min_pcs = float(floor(min_pcs))
 
     # Only one data set.
     data = [data]
