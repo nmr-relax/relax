@@ -1147,7 +1147,7 @@ def structural_noise(align_id=None, rmsd=0.2, sim_num=1000, file=None, dir=None,
         align_index = 0
         for id in align_ids:
             # No PCS value, so skip.
-            if id not in spin.pcs:
+            if id not in spin.pcs or spin.pcs[id] == None:
                 align_index += 1
                 continue
 
@@ -1166,7 +1166,7 @@ def structural_noise(align_id=None, rmsd=0.2, sim_num=1000, file=None, dir=None,
             spin.pcs_err[id] = sqrt(spin.pcs_err[id]**2 + sd**2)
 
             # Store the data for the Grace plot.
-            grace_data[align_index].append([orig_r, sd])
+            grace_data[align_index].append([orig_r, sd, spin_id])
 
             # Increment the alignment index.
             align_index += 1
