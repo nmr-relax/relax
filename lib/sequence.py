@@ -222,7 +222,7 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
     # Extract the data from the file.
     if not file_data:
         # Extract.
-        file_data = extract_data(file, dir)
+        file_data = extract_data(file, dir, sep=sep)
 
         # Strip the data of all comments and empty lines.
         if spin_id_col != None:
