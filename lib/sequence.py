@@ -28,6 +28,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
+from lib.checks import Check
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxInvalidSeqError
 from lib.io import extract_data, open_write_file, strip, write_data
@@ -81,6 +82,90 @@ def aa_codes_three_to_one(code):
 
     # No code.
     return '*'
+
+
+def check_sequence_func(data, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None):
+    """Test if the sequence data is valid.
+
+    The only function this performs is to raise a RelaxError if the data is invalid.
+
+
+    @param data:            The sequence data.
+    @type data:             list of lists.
+    @keyword spin_id_col:   The column containing the spin ID strings.
+    @type spin_id_col:      int or None
+    @param mol_name_col:    The column containing the molecule name information.
+    @type mol_name_col:     int or None
+    @param res_name_col:    The column containing the residue name information.
+    @type res_name_col:     int or None
+    @param res_num_col:     The column containing the residue number information.
+    @type res_num_col:      int or None
+    @param spin_name_col:   The column containing the spin name information.
+    @type spin_name_col:    int or None
+    @param spin_num_col:    The column containing the spin number information.
+    @type spin_num_col:     int or None
+    """
+
+    # Spin ID.
+    if spin_id_col:
+        if len(data) < spin_id_col:
+            return RelaxInvalidSeqError(data, "the Spin ID data is missing")
+
+    # Molecule name data.
+    if mol_name_col:
+        if len(data) < mol_name_col:
+            return RelaxInvalidSeqError(data, "the molecule name data is missing")
+
+    # Residue number data.
+    if res_num_col:
+        # No data in column.
+        if len(data) < res_num_col:
+            return RelaxInvalidSeqError(data, "the residue number data is missing")
+
+        # Bad data in column.
+        try:
+            res_num = eval(data[res_num_col-1])
+            if not (res_num == None or isinstance(res_num, int)):
+                return RelaxInvalidSeqError(data, "the residue number data '%s' is invalid" % data[res_num_col-1])
+        except:
+            return RelaxInvalidSeqError(data, "the residue number data '%s' is invalid" % data[res_num_col-1])
+
+    # Residue name data.
+    if res_name_col:
+        if len(data) < res_name_col:
+            return RelaxInvalidSeqError(data, "the residue name data is missing")
+
+    # Spin number data.
+    if spin_num_col:
+        # No data in column.
+        if len(data) < spin_num_col:
+            return RelaxInvalidSeqError(data, "the spin number data is missing")
+
+        # Bad data in column.
+        try:
+            res_num = eval(data[res_num_col-1])
+            if not (res_num == None or isinstance(res_num, int)):
+                return RelaxInvalidSeqError(data, "the spin number data '%s' is invalid" % data[res_num_col-1])
+        except:
+            return RelaxInvalidSeqError(data, "the spin number data '%s' is invalid" % data[res_num_col-1])
+
+    # Spin name data.
+    if spin_name_col:
+        if len(data) < spin_name_col:
+            return RelaxInvalidSeqError(data, "the spin name data is missing")
+
+    # Data.
+    if data_col:
+        if len(data) < data_col:
+            return RelaxInvalidSeqError(data, "the data is missing")
+
+    # Errors
+    if error_col:
+        if len(data) < error_col:
+            return RelaxInvalidSeqError(data, "the error data is missing")
+
+# Create the checking object.
+check_sequence = Check(check_sequence_func)
 
 
 def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
@@ -159,17 +244,7 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
 
         # Convert.
         # Validate the sequence.
-        try:
-            validate_sequence(line, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col)
-        except RelaxInvalidSeqError:
-            # Extract the message string, without the RelaxError bit.
-            msg = sys.exc_info()[1]
-            string = msg.__str__()[12:-1]
-
-            # Give a warning.
-            warn(RelaxWarning(string))
-
-            # Skip the line.
+        if not check_sequence(line, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, escalate=1):
             continue
 
         # Get the spin data from the ID.
@@ -272,87 +347,6 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
     # Hmmm, no data!
     if missing_data:
         raise RelaxError("No corresponding data could be found within the file.")
-
-
-def validate_sequence(data, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None):
-    """Test if the sequence data is valid.
-
-    The only function this performs is to raise a RelaxError if the data is invalid.
-
-
-    @param data:            The sequence data.
-    @type data:             list of lists.
-    @keyword spin_id_col:   The column containing the spin ID strings.
-    @type spin_id_col:      int or None
-    @param mol_name_col:    The column containing the molecule name information.
-    @type mol_name_col:     int or None
-    @param res_name_col:    The column containing the residue name information.
-    @type res_name_col:     int or None
-    @param res_num_col:     The column containing the residue number information.
-    @type res_num_col:      int or None
-    @param spin_name_col:   The column containing the spin name information.
-    @type spin_name_col:    int or None
-    @param spin_num_col:    The column containing the spin number information.
-    @type spin_num_col:     int or None
-    """
-
-    # Spin ID.
-    if spin_id_col:
-        if len(data) < spin_id_col:
-            raise RelaxInvalidSeqError(data, "the Spin ID data is missing")
-
-    # Molecule name data.
-    if mol_name_col:
-        if len(data) < mol_name_col:
-            raise RelaxInvalidSeqError(data, "the molecule name data is missing")
-
-    # Residue number data.
-    if res_num_col:
-        # No data in column.
-        if len(data) < res_num_col:
-            raise RelaxInvalidSeqError(data, "the residue number data is missing")
-
-        # Bad data in column.
-        try:
-            res_num = eval(data[res_num_col-1])
-            if not (res_num == None or isinstance(res_num, int)):
-                raise ValueError
-        except:
-            raise RelaxInvalidSeqError(data, "the residue number data '%s' is invalid" % data[res_num_col-1])
-
-    # Residue name data.
-    if res_name_col:
-        if len(data) < res_name_col:
-            raise RelaxInvalidSeqError(data, "the residue name data is missing")
-
-    # Spin number data.
-    if spin_num_col:
-        # No data in column.
-        if len(data) < spin_num_col:
-            raise RelaxInvalidSeqError(data, "the spin number data is missing")
-
-        # Bad data in column.
-        try:
-            res_num = eval(data[res_num_col-1])
-            if not (res_num == None or isinstance(res_num, int)):
-                raise ValueError
-        except:
-            raise RelaxInvalidSeqError(data, "the spin number data '%s' is invalid" % data[res_num_col-1])
-
-    # Spin name data.
-    if spin_name_col:
-        if len(data) < spin_name_col:
-            raise RelaxInvalidSeqError(data, "the spin name data is missing")
-
-    # Data.
-    if data_col:
-        if len(data) < data_col:
-            raise RelaxInvalidSeqError(data, "the data is missing")
-
-    # Errors
-    if error_col:
-        if len(data) < error_col:
-            raise RelaxInvalidSeqError(data, "the error data is missing")
 
 
 def write_spin_data(file, dir=None, sep=None, spin_ids=None, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, force=False, data=None, data_name=None, error=None, error_name=None, float_format="%20.15g"):

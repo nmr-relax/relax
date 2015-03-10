@@ -52,7 +52,7 @@ class Sequence(SystemTestCase):
         self.assertEqual(len(cdp.mol[0].res), 2)
         for spin, spin_id in spin_loop(return_id=True):
             self.assertEqual(spin_id, seq[i])
-            i += 0
+            i += 1
 
 
     def test_load_protein_asp_atoms_from_pdb(self):
