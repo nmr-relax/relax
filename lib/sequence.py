@@ -168,7 +168,7 @@ def check_sequence_func(data, spin_id_col=None, mol_name_col=None, res_num_col=N
 check_sequence = Check(check_sequence_func)
 
 
-def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):
+def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None, raise_flag=True):
     """Generator function for reading the spin specific data from file.
 
     Description
@@ -203,6 +203,8 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
     @type sep:              str or None
     @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.
     @type spin_id:          None or str
+    @keyword raise_flag:    A flag which if True will cause a RelaxError to be raised if no data can be found.
+    @type raise_flag:       bool
     @return:                A list of the spin specific data is yielded.  The format is a list consisting of the spin ID string, the data value (if data_col is give), and the error value (if error_col is given).  If both data_col and error_col are None, then the spin ID string is simply yielded.
     @rtype:                 str, list of [str, float], or list of [str, float, float]
     """
@@ -345,7 +347,7 @@ def read_spin_data(file=None, dir=None, file_data=None, spin_id_col=None, mol_na
             yield mol_name, res_num, res_name, spin_num, spin_name
 
     # Hmmm, no data!
-    if missing_data:
+    if raise_flag and missing_data:
         raise RelaxError("No corresponding data could be found within the file.")
 
 
