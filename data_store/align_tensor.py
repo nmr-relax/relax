@@ -1129,11 +1129,11 @@ class AlignTensorList(list):
 
                 # Normal parameters.
                 if category == 'val':
-                    self[-1].set(param=param, value=value)
+                    self[-1].set(param=param, value=value, category=category, update=False)
 
                 # Errors.
                 elif category == 'err':
-                    self[-1].set(param=param, value=value, category='err')
+                    self[-1].set(param=param, value=value, category=category, update=False)
 
                 # Simulation objects objects.
                 else:
@@ -1143,7 +1143,11 @@ class AlignTensorList(list):
 
                     # Recreate the list elements.
                     for i in range(len(value)):
-                        self[-1].set(param=param, value=value[i], category='sim', sim_index=i)
+                        self[-1].set(param=param, value=value[i], category=category, sim_index=i, update=False)
+
+                # Update the data structures.
+                for target, update_if_set, depends in dependency_generator():
+                    self[-1]._update_object(param, target, update_if_set, depends, category)
 
             # Delete the temporary object.
             del temp_obj
@@ -1375,7 +1379,7 @@ class AlignTensorData(Element):
                         self.__dict__[target+'_sim']._set(value=value, sim_index=i)
 
 
-    def set(self, param=None, value=None, category='val', sim_index=None):
+    def set(self, param=None, value=None, category='val', sim_index=None, update=True):
         """Set a alignment tensor parameter.
 
         @keyword param:     The name of the parameter to set.
@@ -1386,6 +1390,8 @@ class AlignTensorData(Element):
         @type category:     str
         @keyword sim_index: The index for a Monte Carlo simulation for simulated parameter.
         @type sim_index:    int or None
+        @keyword update:    A flag which if True will cause all the alignment tensor objects to be updated correctly.  This can be turned off for speed, as long as the _update_object() method is called prior to using the tensor.
+        @type update:       bool
         """
 
         # Check the type.
@@ -1428,8 +1434,9 @@ class AlignTensorData(Element):
             return
 
         # Update the data structures.
-        for target, update_if_set, depends in dependency_generator():
-            self._update_object(param, target, update_if_set, depends, category)
+        if update:
+            for target, update_if_set, depends in dependency_generator():
+                self._update_object(param, target, update_if_set, depends, category)
 
 
     def set_fixed(self, flag):

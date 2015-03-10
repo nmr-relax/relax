@@ -495,7 +495,7 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
                 break
 
         # Loop over the interatomic data.
-        for interatom in interatomic_loop():
+        for interatom in interatomic_loop(skip_desel=True):
             # Skip if data is missing.
             if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'rdc_bc') or not align_id in interatom.rdc or not align_id in interatom.rdc_bc:
                 continue
@@ -1144,6 +1144,12 @@ def return_rdc_data(sim_index=None, verbosity=0):
 
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
             rdc_const.append(3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r))
+
+        # Sanity check, to prevent cryptic Python errors.
+        indices = []
+        for i in range(len(unit_vect[-1])):
+            if unit_vect[-1][i] == None:
+                raise RelaxError("Unit vectors of None have been detected between the spins '%s' and '%s' %s." % (interatom.spin_id1, interatom.spin_id2, unit_vect[-1]))
 
         # Store the measured J coupling.
         if opt_uses_j_couplings():
