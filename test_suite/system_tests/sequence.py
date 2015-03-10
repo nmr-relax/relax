@@ -25,6 +25,7 @@ from os import sep
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
+from pipe_control.mol_res_spin import spin_loop
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
@@ -37,6 +38,21 @@ class Sequence(SystemTestCase):
 
         # Create the data pipe.
         self.interpreter.pipe.create('mf', 'mf')
+
+
+    def test_bug_23372_read_csv(self):
+        """Catch U{bug #23372<https://gna.org/bugs/?23372>}, the sequence.read failure with CSV files."""
+
+        # Load the sequence.
+        self.interpreter.sequence.read('Sam.csv', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', res_num_col=1, sep=',')
+
+        # Check the sequence.
+        seq = [":330", ":331"]
+        i = 0
+        self.assertEqual(len(cdp.mol[0].res), 2)
+        for spin, spin_id in spin_loop(return_id=True):
+            self.assertEqual(spin_id, seq[i])
+            i += 0
 
 
     def test_load_protein_asp_atoms_from_pdb(self):
