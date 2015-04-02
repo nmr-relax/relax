@@ -1,3 +1,21 @@
+Version 3.3.8
+(2 April 2015, from /trunk)
+http://svn.gna.org/svn/relax/tags/3.3.8
+
+    Features:
+        N/A
+
+
+    Changes:
+        * Fix for the pipe_control.reset.reset() function when resetting the GUI in non-standard contexts.  This is mainly for debugging scripts when simulating a GUI and hence the GUI reset() method does not exist.
+        * Created a GUI memory management debugging script for the align_tensor.init user function.  This repetitively calls the reset, pipe.create and align_tensor.init user functions, and opening the GUI element for setting alignment tensor elements (the Sequence window).  The pympler muppy_log file shows no memory leaks for these user functions on Linux systems.
+
+
+    Bugfixes:
+        * Resized all fixed-sized GUI wizards to fit on 1024x768 pixel wide displays.  The problem was reported by Lora Picton in the thread starting at http://thread.gmane.org/gmane.science.nmr.relax.user/1813.  Both the spin loading wizard of the spin viewer window and the relaxation data loading wizard used currently in the model-free analysis tab and BMRB export page were fixed.  These both had the y-dimension set to 800 pixels, hence parts of the window would be out of view.
+
+
+
 Version 3.3.7
 (13 March 2015, from /trunk)
 http://svn.gna.org/svn/relax/tags/3.3.7
