@@ -548,8 +548,8 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
     size = len(data)
 
     # Round the data limits.
-    max_rdc = ceil(max_rdc)
-    min_rdc = floor(min_rdc)
+    max_rdc = float(ceil(max_rdc))
+    min_rdc = float(floor(min_rdc))
 
     # Only one data set.
     data = [data]

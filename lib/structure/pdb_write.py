@@ -37,7 +37,7 @@ def _handle_atom_name(name):
 
     From the PDB format documents:
 
-        "Alignment of one-letter atom name such as C starts at column 14, while two-letter atom name such as FE starts at column 13."
+        - "Alignment of one-letter atom name such as C starts at column 14, while two-letter atom name such as FE starts at column 13."
 
 
     @param name:    The atom name.
