@@ -2795,7 +2795,7 @@ class Relax_disp_rep:
         file_obj.write('FILES=(*_${SEARCH}.out)' + '\n')
         file_obj.write('readarray -t FILESSORT < <(for a in "${FILES[@]}"; do echo "$a"; done | sort -Vr)' + '\n')
         file_obj.write('# Skip the first two lines of header' + '\n')
-        file_obj.write("tail -n+3 ${FILESSORT[0]} | sed 's,^# ,,' | grep -v "None                    None" | awk '{print $2,$3,$5}' | column -t > collect_${SEARCH}.tmp" + '\n')
+        file_obj.write("tail -n+3 ${FILESSORT[0]} | sed 's,^# ,,' | grep -v 'None                    None' | awk '{print $2,$3,$5}' | column -t > collect_${SEARCH}.tmp" + '\n')
         file_obj.write('# Make array' + '\n')
         file_obj.write('ACUT=(collect_${SEARCH}.tmp)' + '\n')
         file_obj.write('for f in "${FILESSORT[@]}"; do' + '\n')
