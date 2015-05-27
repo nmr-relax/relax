@@ -781,7 +781,7 @@ class Relax_disp_rep:
             print("Clustered spins are:", cdp.clustering)
 
 
-    def minimise_execute(self, verbosity=1, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False, mc_err_analysis=False):
+    def minimise_execute(self, verbosity=1, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False, mc_err_analysis=False, mp_verbosity=0):
         """Use value.set on all pipes."""
 
         # Set default
@@ -826,7 +826,7 @@ class Relax_disp_rep:
                     subsection(file=sys.stdout, text="Performing Monte-Carlo minimisations on %i simulations"%(getattr(cdp, "sim_number")), prespace=0)
 
                 # Do the minimisation.
-                self.interpreter.minimise.execute(min_algor=self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=self.constraints, scaling=True, verbosity=verbosity)
+                self.interpreter.minimise.execute(min_algor=self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=self.constraints, scaling=True, verbosity=verbosity, mp_verbosity=mp_verbosity)
 
                 # Do Monte-Carlo error analysis
                 if mc_err_analysis:
