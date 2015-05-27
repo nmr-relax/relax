@@ -781,7 +781,7 @@ class Relax_disp_rep:
             print("Clustered spins are:", cdp.clustering)
 
 
-    def minimise_execute(self, verbosity=1, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
+    def minimise_execute(self, verbosity=1, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False, mc_err_analysis=False):
         """Use value.set on all pipes."""
 
         # Set default
@@ -825,6 +825,10 @@ class Relax_disp_rep:
 
                 # Do the minimisation.
                 self.interpreter.minimise.execute(min_algor=self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=self.constraints, scaling=True, verbosity=verbosity)
+
+                # Do Monte-Carlo error analysis
+                if mc_err_analysis:
+                    self.interpreter.monte_carlo.error_analysis()
 
                 # Save results, and store the current settings dic to pipe.
                 cdp.settings = self.settings
@@ -2666,7 +2670,7 @@ class Relax_disp_rep:
             plt.show()
 
 
-    def write_results(self, method=None, model=None, analysis=None, list_glob_ini=None, selection=None):
+    def write_results(self, method=None, model=None, analysis=None, list_glob_ini=None, selection=None, write_disp=True):
 
         for glob_ini in list_glob_ini:
             # Check previous, and get the pipe name.
@@ -2686,9 +2690,10 @@ class Relax_disp_rep:
             path = self.results_dir+sep+model_path+sep+analysis_path
 
             # Dispersion curves.
-            path_disp = path+sep+"disp_curves"+sep+method+sep+str(glob_ini)
-            self.interpreter.relax_disp.plot_disp_curves(dir=path_disp, force=True)
-            self.interpreter.relax_disp.write_disp_curves(dir=path_disp, force=True)
+            if write_disp:
+                path_disp = path+sep+"disp_curves"+sep+method+sep+str(glob_ini)
+                self.interpreter.relax_disp.plot_disp_curves(dir=path_disp, force=True)
+                self.interpreter.relax_disp.write_disp_curves(dir=path_disp, force=True)
 
             # The selected models for the final run.
             self.interpreter.value.write(param='model', file='model.out', dir=path, force=True)
@@ -2813,6 +2818,58 @@ class Relax_disp_rep:
         file_obj.close()
 
         chmod(file_path, S_IRWXU|S_IRGRP|S_IROTH)
+
+
+    def create_mc_data(self, number=500, distribution="measured", fixed_error=None, methods=None, model=None, model_from=None, analysis=None, analysis_from=None, list_glob_ini=None, force=False):
+        """Create MC data."""
+
+        # Set default
+        if model_from == None:
+            model_from = model
+        if analysis_from == None:
+            analysis_from = analysis
+
+        # Loop over the methods.
+        for method in methods:
+            # Change the self key.
+            self.set_self(key='method', value=method)
+
+            # Loop over the glob ini:
+            for glob_ini in list_glob_ini:
+                # Check previous, and get the pipe name.
+                found_pipe, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=self.method)
+
+                # Try from analysis
+                if not found_pipe:
+                    # Check previous, and get the pipe name.
+                    found_analysis, pipe_name, resfile, path = self.check_previous_result(method=self.method, model=model, analysis=analysis_from, glob_ini=glob_ini, bundle=self.method)
+
+                # Print
+                subtitle(file=sys.stdout, text="MC data for pipe='%s'" % (pipe_name), prespace=3)
+
+                # Select the model.
+                self.interpreter.relax_disp.select_model(model)
+
+                # Create data
+                self.interpreter.monte_carlo.setup(number=number)
+                self.interpreter.monte_carlo.create_data(distribution=distribution, fixed_error=fixed_error)
+                self.interpreter.monte_carlo.initial_values()
+
+                # Save results, and store the current settings dic to pipe.
+                cdp.settings = self.settings
+
+                # Define new pipe names.
+                pipe_name = self.name_pipe(method=self.method, model=model, analysis=analysis, glob_ini=glob_ini)
+                resfile = pipe_name.replace(" ", "_")
+                model_path = model.replace(" ", "_")
+                path = self.results_dir+sep+model_path
+
+                if found_pipe and not force:
+                    file_path = get_file_path(file_name=resfile, dir=path)
+                    text = "The file '%s' already exists.  Set the force flag to True to overwrite." % (file_path)
+                    warn(RelaxWarning(text))
+                else:
+                    self.interpreter.results.write(file=resfile, dir=path, force=force)
 
 
     def interpreter_start(self):
