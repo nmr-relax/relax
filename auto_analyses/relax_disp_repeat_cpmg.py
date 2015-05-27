@@ -32,10 +32,11 @@ import dep_check
 from copy import deepcopy
 from datetime import datetime
 from glob import glob
-from os import F_OK, access, getcwd, sep
+from os import F_OK, access, chmod, getcwd, sep
 from numpy import any, asarray, arange, concatenate, max, mean, min, sqrt, std, sum
 if dep_check.scipy_module:
     from scipy.stats import pearsonr
+from stat import S_IRWXU, S_IRGRP, S_IROTH
 import sys
 from warnings import warn
 
@@ -48,7 +49,7 @@ from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import display_spin, generate_spin_string, return_spin, spin_loop
 from pipe_control import pipes
 from prompt.interpreter import Interpreter
-from specific_analyses.relax_disp.data import generate_r20_key, has_exponential_exp_type, is_r1_optimised, loop_exp_frq_offset, loop_exp_frq_offset_point, return_param_key_from_data
+from specific_analyses.relax_disp.data import generate_r20_key, has_exponential_exp_type, has_cpmg_exp_type, is_r1_optimised, loop_exp_frq_offset, loop_exp_frq_offset_point, return_param_key_from_data
 from status import Status; status = Status()
 
 if dep_check.matplotlib_module:
@@ -2663,6 +2664,149 @@ class Relax_disp_rep:
         # Plot data.
         if show:
             plt.show()
+
+
+    def write_results(self, method=None, model=None, analysis=None, list_glob_ini=None, selection=None):
+
+        for glob_ini in list_glob_ini:
+            # Check previous, and get the pipe name.
+            found, pipe_name, resfile, path = self.check_previous_result(method=method, model=model, analysis=analysis, glob_ini=glob_ini, bundle=method)
+
+            if pipes.cdp_name() != pipe_name:
+                self.interpreter.pipe.switch(pipe_name)
+
+            # Printout.
+            section(file=sys.stdout, text="Results writing for pipe='%s"%(pipe_name), prespace=2, postspace=0)
+            model_params = MODEL_PARAMS[model]
+            subsection(file=sys.stdout, text="Model %s, with params='%s"%(model, model_params), prespace=0)
+
+            # Set path
+            model_path = model.replace(" ", "_")
+            analysis_path = analysis.replace(" ", "_")
+            path = self.results_dir+sep+model_path+sep+analysis_path
+
+            # Dispersion curves.
+            path_disp = path+sep+"disp_curves"+sep+method+sep+str(glob_ini)
+            self.interpreter.relax_disp.plot_disp_curves(dir=path_disp, force=True)
+            self.interpreter.relax_disp.write_disp_curves(dir=path_disp, force=True)
+
+            # The selected models for the final run.
+            self.interpreter.value.write(param='model', file='model.out', dir=path, force=True)
+
+            models_tested = None
+
+            # For CPMG models.
+            filep = str(glob_ini)+"_"+method+"_"
+            path_par = path+sep+"r2"
+            if has_cpmg_exp_type():
+                # The R20 parameter.
+                self.write_results_test(path=path_par, model=model, models_tested=models_tested, param='r2', file_name_ini=filep+'r20')
+
+                # The R20A and R20B parameters.
+                self.write_results_test(path=path_par, model=model, models_tested=models_tested, param='r2a', file_name_ini=filep+'r20a')
+                self.write_results_test(path=path_par, model=model, models_tested=models_tested, param='r2b', file_name_ini=filep+'r20b')
+
+            # The pA and pB parameters.
+            path_par = path+sep+"pop"
+            self.write_results_test(path=path_par, model=model, models_tested=models_tested, param='pA', file_name_ini=filep+'pA')
+            self.write_results_test(path=path_par, model=model, models_tested=models_tested, param='pB', file_name_ini=filep+'pB')
+
+            # The dw parameter.
+            path_par = path+sep+"dw"
+            search = method+"_"+"dw"
+            self.write_results_test(path=path_par, model=model, models_tested=models_tested, search=search, param='dw', file_name_ini=filep+'dw')
+
+            # The k_AB, kex and tex parameters.
+            path_par = path+sep+"rate"
+            self.write_results_test(path=path_par, model=model, models_tested=models_tested, param='k_AB', file_name_ini=filep+'k_AB')
+            self.write_results_test(path=path_par, model=model, models_tested=models_tested, param='kex', file_name_ini=filep+'kex')
+            self.write_results_test(path=path_par, model=model, models_tested=models_tested, param='tex', file_name_ini=filep+'tex')
+
+            # Minimisation statistics.
+            if not (model == MODEL_R2EFF and has_fixed_time_exp_type()):
+                path_par = path+sep+"chi2"
+                self.interpreter.value.write(param='chi2', file=filep+'chi2.out', dir=path_par, force=True)
+                self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir=path_par+sep+"grace", force=True)
+
+
+    def write_results_test(self, path=None, model=None, models_tested=None, search=None, param=None, file_name_ini=None):
+        """Create a set of results, text and Grace files for the current data pipe.
+
+        @keyword path:              The directory to place the files into.
+        @type path:                 str
+        @keyword model:             The model tested.
+        @type model:                None or str
+        @keyword model_tested:      List of models tested, if the pipe is final.
+        @type model_tested:         None or list of str.
+        @keyword param:             The param to write out.
+        @type param:                None or list of str.
+        @keyword file_name_ini:     The initial part of the file name for the grace and text files.
+        @type file_name_ini:        None or str.
+        """
+
+        # If not set, use the name of the parameter.
+        if file_name_ini == None:
+            file_name_ini = param
+
+        # If the model is in the list of models which support the parameter.
+        write_result = False
+        if model != None:
+            # Get the model params.
+            model_params = MODEL_PARAMS[model]
+
+            if param in model_params:
+                write_result = True
+
+        # If this is the final pipe, then check if the model has been tested at any time.
+        elif model == None:
+            # Loop through all tested models.
+            for model_tested in models_tested:
+                # If one of the models tested has a parameter which belong in the list of models which support the parameter, then write it out.
+                model_params = MODEL_PARAMS[model_tested]
+
+                if param in model_params:
+                    write_result = True
+                    break
+
+        # Write results if some of the models supports the parameter.
+        if write_result:
+            self.interpreter.value.write(param=param, file='%s.out'%file_name_ini, dir=path, force=True)
+            # Write convert file
+            if search != None:
+                col_file_name="collect_%s.sh"%search
+                self.write_convert_file(file_name=col_file_name, path=path, search=search)
+
+            # Write grace
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type=param, file='%s.agr'%file_name_ini, dir=path+sep+"grace", force=True)
+
+
+    def write_convert_file(self, file_name=None, path=None, search=None):
+        file_obj, file_path = open_write_file(file_name=file_name, dir=path, force=True, compress_type=0, verbosity=1, return_path=True)
+
+        # Write file
+        file_obj.write('#! /bin/bash' + '\n')
+        file_obj.write('SEARCH=%s'%(search) + '\n')
+        file_obj.write('FILES=(*_${SEARCH}.out)' + '\n')
+        file_obj.write('readarray -t FILESSORT < <(for a in "${FILES[@]}"; do echo "$a"; done | sort -Vr)' + '\n')
+        file_obj.write('# Skip the first two lines of header' + '\n')
+        file_obj.write("tail -n+3 ${FILESSORT[0]} | sed 's,^# ,,' | awk '{print $2,$3,$5}' | column -t > collect_${SEARCH}.tmp" + '\n')
+        file_obj.write('# Make array' + '\n')
+        file_obj.write('ACUT=(collect_${SEARCH}.tmp)' + '\n')
+        file_obj.write('for f in "${FILESSORT[@]}"; do' + '\n')
+        file_obj.write('    FNAME="${f%.*}"' + '\n')
+        file_obj.write('    NI=`echo $f | cut -d"_" -f1`' + '\n')
+        file_obj.write('    echo "Processing $f with NI=$NI"' + '\n')
+        file_obj.write('    tail -n+3 $f | sed "s,^# ,," | sed "s,value,${NI}," | sed "s,error,${NI}," | awk %s{print $6,$7}%s | column -t > ${FNAME}.tmp'%("'","'") + '\n')
+        file_obj.write('    ACUT+=(${FNAME}.tmp)' + '\n')
+        file_obj.write('done' + '\n')
+        file_obj.write('paste "${ACUT[@]}" | column -t > collect_${SEARCH}.txt' + '\n')
+        file_obj.write('rm ${ACUT[@]}' + '\n')
+
+
+        # Close the batch script, then make it executable (expanding any ~ characters).
+        file_obj.close()
+
+        chmod(file_path, S_IRWXU|S_IRGRP|S_IROTH)
 
 
     def interpreter_start(self):
