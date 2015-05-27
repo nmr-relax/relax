@@ -822,6 +822,8 @@ class Relax_disp_rep:
 
                 # Print
                 subtitle(file=sys.stdout, text="Minimise for pipe='%s'" % (pipe_name), prespace=3)
+                if hasattr(cdp, "sim_number"):
+                    subsection(file=sys.stdout, text="Performing Monte-Carlo minimisations on %i simulations"%(getattr(cdp, "sim_number")), prespace=0)
 
                 # Do the minimisation.
                 self.interpreter.minimise.execute(min_algor=self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=self.constraints, scaling=True, verbosity=verbosity)
