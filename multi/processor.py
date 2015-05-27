@@ -633,8 +633,8 @@ class Processor(object):
         """
 
         #FIXME: need a finally here to cleanup exceptions states
-        lqueue = self.chunk_queue(self.command_queue)
-        self.run_command_queue(lqueue)
+        #lqueue = self.chunk_queue(self.command_queue)
+        self.run_command_queue(self.command_queue)
 
         del self.command_queue[:]
         self.memo_map.clear()
