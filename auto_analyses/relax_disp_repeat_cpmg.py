@@ -2708,7 +2708,8 @@ class Relax_disp_rep:
 
             # The pA and pB parameters.
             path_par = path+sep+"pop"
-            self.write_results_test(path=path_par, model=model, models_tested=models_tested, param='pA', file_name_ini=filep+'pA')
+            search = method+"_"+"pA"
+            self.write_results_test(path=path_par, model=model, models_tested=models_tested, search=search, param='pA', file_name_ini=filep+'pA')
             self.write_results_test(path=path_par, model=model, models_tested=models_tested, param='pB', file_name_ini=filep+'pB')
 
             # The dw parameter.
@@ -2718,14 +2719,19 @@ class Relax_disp_rep:
 
             # The k_AB, kex and tex parameters.
             path_par = path+sep+"rate"
-            self.write_results_test(path=path_par, model=model, models_tested=models_tested, param='k_AB', file_name_ini=filep+'k_AB')
-            self.write_results_test(path=path_par, model=model, models_tested=models_tested, param='kex', file_name_ini=filep+'kex')
-            self.write_results_test(path=path_par, model=model, models_tested=models_tested, param='tex', file_name_ini=filep+'tex')
+            params = ['k_AB', 'kex', 'tex']
+            for param in params:
+                search = method+"_"+param
+                self.write_results_test(path=path_par, model=model, models_tested=models_tested, search=search, param=param, file_name_ini=filep+param)
 
             # Minimisation statistics.
             if not (model == MODEL_R2EFF and has_fixed_time_exp_type()):
                 path_par = path+sep+"chi2"
                 self.interpreter.value.write(param='chi2', file=filep+'chi2.out', dir=path_par, force=True)
+                search = method+"_"+"chi2"
+                col_file_name="collect_%s.sh"%search
+                self.write_convert_file(file_name=col_file_name, path=path_par, search=search)
+
                 self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir=path_par+sep+"grace", force=True)
 
 
