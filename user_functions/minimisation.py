@@ -217,13 +217,6 @@ uf.add_keyarg(
     desc_short = "verbosity level",
     desc = "The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1."
 )
-uf.add_keyarg(
-    name = "mp_verbosity",
-    default = 0,
-    py_type = "int",
-    desc_short = "multi processor verbosity level",
-    desc = "The amount of information to print to screen when running multi processors.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 0."
-)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will perform an optimisation starting from the current parameter values.  This is only suitable for data pipe types which have target functions and hence support optimisation.")
