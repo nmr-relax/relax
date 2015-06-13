@@ -1072,7 +1072,7 @@ def delete_spin(spin_id=None):
 
             # Create an empty spin container if no spins remain.
             if len(res.spin) == 0:
-                res.spin.add_item()
+                res.spin.add_item(select=False)
 
         # Update all metadata.
         metadata_update()
