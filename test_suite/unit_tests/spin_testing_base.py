@@ -475,6 +475,7 @@ class Spin_base_class(UnitTestCase):
         # Test that the first spin defaults back to the empty spin.
         self.assertEqual(dp.mol[0].res[0].spin[0].num, None)
         self.assertEqual(dp.mol[0].res[0].spin[0].name, None)
+        self.assertEqual(dp.mol[0].res[0].spin[0].select, False)
 
 
     def test_delete_spin_shift(self):
