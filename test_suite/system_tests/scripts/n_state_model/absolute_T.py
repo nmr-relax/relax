@@ -41,6 +41,12 @@ self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 self._execute_uf(uf_name='minimise.grid_search', inc=3)
 self._execute_uf(uf_name='minimise.execute', min_algor='simplex')
 
+# Bootstrapping simulations.
+self._execute_uf(uf_name='monte_carlo.setup', number=10)
+self._execute_uf(uf_name='monte_carlo.create_data', method='direct')
+self._execute_uf(uf_name='minimise.execute', min_algor='simplex')
+self._execute_uf(uf_name='monte_carlo.error_analysis')
+
 # Show the tensors.
 self._execute_uf(uf_name='align_tensor.display')
 
