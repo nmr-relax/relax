@@ -44,6 +44,7 @@ self._execute_uf(uf_name='minimise.execute', min_algor='simplex')
 # Bootstrapping simulations.
 self._execute_uf(uf_name='monte_carlo.setup', number=10)
 self._execute_uf(uf_name='monte_carlo.create_data', method='direct')
+self._execute_uf(uf_name='monte_carlo.initial_values')
 self._execute_uf(uf_name='minimise.execute', min_algor='simplex')
 self._execute_uf(uf_name='monte_carlo.error_analysis')
 
