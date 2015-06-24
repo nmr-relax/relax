@@ -678,11 +678,13 @@ def opt_uses_rdc(align_id):
     return True
 
 
-def q_factors(spin_id=None, verbosity=1):
+def q_factors(spin_id=None, sim_index=None, verbosity=1):
     """Calculate the Q factors for the RDC data.
 
     @keyword spin_id:   The spin ID string used to restrict the Q factor calculation to a subset of all spins.
     @type spin_id:      None or str
+    @keyword sim_index: The optional Monte Carlo simulation index.
+    @type sim_index:    None or int
     @keyword verbosity: A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:    int
     """
@@ -690,20 +692,33 @@ def q_factors(spin_id=None, verbosity=1):
     # Check the pipe setup.
     check_pipe_setup(sequence=True)
 
+    # Simulation flag.
+    sim_flag = (sim_index != None)
+
     # No RDCs, so no Q factors can be calculated.
     if not hasattr(cdp, 'rdc_ids') or not len(cdp.rdc_ids):
         warn(RelaxWarning("No RDC data exists, Q factors cannot be calculated."))
         return
 
     # Q factor dictonaries.
-    cdp.q_factors_rdc_norm_tensor_size = {}
-    cdp.q_factors_rdc_norm_squared_sum = {}
+    if not sim_flag:
+        cdp.q_factors_rdc_norm_tensor_size = {}
+        cdp.q_factors_rdc_norm_squared_sum = {}
+    else:
+        if not hasattr(cdp, 'q_factors_rdc_norm_tensor_size_sim'):
+            cdp.q_factors_rdc_norm_tensor_size_sim = {}
+        if not hasattr(cdp, 'q_factors_rdc_norm_squared_sum_sim'):
+            cdp.q_factors_rdc_norm_squared_sum_sim = {}
 
     # Loop over the alignments.
     for align_id in cdp.rdc_ids:
         # Init.
         D2_sum = 0.0
         sse = 0.0
+        if sim_flag and align_id not in cdp.q_factors_rdc_norm_tensor_size_sim:
+            cdp.q_factors_rdc_norm_tensor_size_sim[align_id] = [None] * cdp.sim_number
+        if sim_flag and align_id not in cdp.q_factors_rdc_norm_squared_sum_sim:
+            cdp.q_factors_rdc_norm_squared_sum_sim[align_id] = [None] * cdp.sim_number
 
         # Interatomic data loop.
         dj = None
@@ -713,45 +728,69 @@ def q_factors(spin_id=None, verbosity=1):
         rdc_bc_data = False
         norm2_flag = True
         for interatom in interatomic_loop():
+            rdc_data_align_id = False
+            rdc_bc_data_align_id = False
+
             # Increment the counter.
             interatom_count += 1
 
             # Data checks.
-            if hasattr(interatom, 'rdc') and align_id in interatom.rdc:
-                rdc_data = True
-            if hasattr(interatom, 'rdc_bc') and align_id in interatom.rdc_bc:
-                rdc_bc_data = True
+            if not sim_flag:
+                if hasattr(interatom, 'rdc') and align_id in interatom.rdc and interatom.rdc[align_id] != None:
+                    rdc_data_align_id = True
+                if hasattr(interatom, 'rdc_bc') and align_id in interatom.rdc_bc and interatom.rdc_bc[align_id] != None:
+                    rdc_bc_data_align_id = True
+            else:
+                if hasattr(interatom, 'rdc_sim') and align_id in interatom.rdc_sim and interatom.rdc_sim[align_id][sim_index] != None:
+                    rdc_data_align_id = True
+                if hasattr(interatom, 'rdc_sim_bc') and align_id in interatom.rdc_sim_bc and interatom.rdc_sim_bc[align_id][sim_index] != None:
+                    rdc_bc_data_align_id = True
             j_flag = False
             if hasattr(interatom, 'rdc_data_types') and align_id in interatom.rdc_data_types and interatom.rdc_data_types[align_id] == 'T':
                 j_flag = True
                 if not hasattr(interatom, 'j_coupling'):
                     raise RelaxNoJError
 
+            # The global flags.
+            rdc_data = rdc_data or rdc_data_align_id
+            rdc_bc_data = rdc_bc_data or rdc_bc_data_align_id
+
             # Skip containers without RDC data.
-            if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'rdc_bc') or not align_id in interatom.rdc or interatom.rdc[align_id] == None or not align_id in interatom.rdc_bc or interatom.rdc_bc[align_id] == None:
+            if not rdc_data_align_id or not rdc_bc_data_align_id:
                 continue
 
             # Get the spins.
             spin1 = return_spin(interatom.spin_id1)
             spin2 = return_spin(interatom.spin_id2)
 
+            # Alias the RDC data.
+            if not sim_flag:
+                rdc = interatom.rdc[align_id]
+                rdc_bc = interatom.rdc_bc[align_id]
+            else:
+                rdc = interatom.rdc_sim[align_id][sim_index]
+                rdc_bc = interatom.rdc_sim_bc[align_id][sim_index]
+                print 'sim', interatom.rdc_sim
+
             # Sum of squares.
-            sse = sse + (interatom.rdc[align_id] - interatom.rdc_bc[align_id])**2
+            sse = sse + (rdc - rdc_bc)**2
 
             # Sum the RDCs squared (for one type of normalisation).
             if j_flag:
-                D2_sum = D2_sum + (interatom.rdc[align_id] - interatom.j_coupling)**2
+                D2_sum = D2_sum + (rdc - interatom.j_coupling)**2
             else:
-                D2_sum = D2_sum + interatom.rdc[align_id]**2
+                D2_sum = D2_sum + rdc**2
 
             # Skip the 2Da^2(4 + 3R)/5 normalised Q factor if no tensor is present.
             if norm2_flag and not hasattr(cdp, 'align_tensors'):
-                warn(RelaxWarning("No alignment tensors are present for the alignment '%s', skipping the Q factor normalised with 2Da^2(4 + 3R)/5." % align_id))
+                if not sim_flag:
+                    warn(RelaxWarning("No alignment tensors are present for the alignment '%s', skipping the Q factor normalised with 2Da^2(4 + 3R)/5." % align_id))
                 norm2_flag = False
 
             # Skip the 2Da^2(4 + 3R)/5 normalised Q factor if pseudo-atoms are present.
             if norm2_flag and (is_pseudoatom(spin1) or is_pseudoatom(spin2)):
-                warn(RelaxWarning("Pseudo-atoms are present for the alignment '%s', skipping the Q factor normalised with 2Da^2(4 + 3R)/5." % align_id))
+                if not sim_flag:
+                    warn(RelaxWarning("Pseudo-atoms are present for the alignment '%s', skipping the Q factor normalised with 2Da^2(4 + 3R)/5." % align_id))
                 norm2_flag = False
 
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
@@ -769,7 +808,8 @@ def q_factors(spin_id=None, verbosity=1):
                 # Calculate the dipolar constant.
                 dj_new = 3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r)
                 if dj != None and dj_new != dj:
-                    warn(RelaxWarning("The dipolar constant is not the same for all RDCs for the alignment '%s', skipping the Q factor normalised with 2Da^2(4 + 3R)/5." % align_id))
+                    if not sim_flag:
+                        warn(RelaxWarning("The dipolar constant is not the same for all RDCs for the alignment '%s', skipping the Q factor normalised with 2Da^2(4 + 3R)/5." % align_id))
                     norm2_flag = False
                 else:
                     dj = dj_new
@@ -788,9 +828,18 @@ def q_factors(spin_id=None, verbosity=1):
             warn(RelaxWarning("No back-calculated RDC data can be found for the alignment ID '%s', skipping the RDC Q factor calculation for this alignment." % align_id))
             continue
 
+        # Set up the sim Q factor structure if needed.
+        if sim_flag and not align_id in cdp.q_factors_rdc_norm_tensor_size_sim:
+            cdp.q_factors_rdc_norm_tensor_size_sim[align_id] = [None] * cdp.sim_number
+
         # Normalisation factor of 2Da^2(4 + 3R)/5.
         if norm2_flag:
-            D = dj * cdp.align_tensors[cdp.align_ids.index(align_id)].A_diag
+            A = cdp.align_tensors[cdp.align_ids.index(align_id)]
+            if not sim_flag:
+                D = dj * A.A_diag
+            else:
+                D = dj * A.A_diag_sim[sim_index]
+                print D
             Da = 1.0/3.0 * (D[2, 2] - (D[0, 0]+D[1, 1])/2.0)
             Dr = 1.0/3.0 * (D[0, 0] - D[1, 1])
             if Da == 0:
@@ -802,34 +851,64 @@ def q_factors(spin_id=None, verbosity=1):
                 norm = 1e-15
 
             # The Q factor for the alignment.
-            cdp.q_factors_rdc_norm_tensor_size[align_id] = sqrt(sse / N / norm)
+            if sim_flag:
+                cdp.q_factors_rdc_norm_tensor_size_sim[align_id][sim_index] = sqrt(sse / N / norm)
+            else:
+                cdp.q_factors_rdc_norm_tensor_size[align_id] = sqrt(sse / N / norm)
 
         else:
-            cdp.q_factors_rdc_norm_tensor_size[align_id] = 0.0
+            if sim_flag:
+                cdp.q_factors_rdc_norm_tensor_size_sim[align_id][sim_index] = 0.0
+            else:
+                cdp.q_factors_rdc_norm_tensor_size[align_id] = 0.0
 
         # The second Q factor definition.
-        cdp.q_factors_rdc_norm_squared_sum[align_id] = sqrt(sse / D2_sum)
+        if sim_flag:
+            cdp.q_factors_rdc_norm_squared_sum_sim[align_id][sim_index] = sqrt(sse / D2_sum)
+        else:
+            cdp.q_factors_rdc_norm_squared_sum[align_id] = sqrt(sse / D2_sum)
 
     # ID and RDC Q factor printout.
     if verbosity:
         print("\nRDC Q factors normalised by the tensor size (2Da^2(4 + 3R)/5):")
         for align_id in cdp.rdc_ids:
             if align_id in cdp.q_factors_rdc_norm_tensor_size:
-                print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_rdc_norm_tensor_size[align_id]))
+                if sim_flag:
+                    print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_rdc_norm_tensor_size_sim[align_id][sim_index]))
+                else:
+                    print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_rdc_norm_tensor_size[align_id]))
         print("\nRDC Q factors normalised by the sum of RDCs squared:")
         for align_id in cdp.rdc_ids:
+            print align_id
             if align_id in cdp.q_factors_rdc_norm_squared_sum:
-                print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_rdc_norm_squared_sum[align_id]))
+                if sim_flag:
+                    print("    Alignment ID '%s':  %.13f" % (align_id, cdp.q_factors_rdc_norm_squared_sum_sim[align_id][sim_index]))
+                else:
+                    print("    Alignment ID '%s':  %.13f" % (align_id, cdp.q_factors_rdc_norm_squared_sum[align_id]))
 
     # The total Q factor.
-    cdp.q_rdc_norm_tensor_size = 0.0
-    cdp.q_rdc_norm_squared_sum = 0.0
-    for id in cdp.q_factors_rdc_norm_tensor_size:
-        cdp.q_rdc_norm_tensor_size = cdp.q_rdc_norm_tensor_size + cdp.q_factors_rdc_norm_tensor_size[id]**2
-    for id in cdp.q_factors_rdc_norm_squared_sum:
-        cdp.q_rdc_norm_squared_sum = cdp.q_rdc_norm_squared_sum + cdp.q_factors_rdc_norm_squared_sum[id]**2
-    cdp.q_rdc_norm_tensor_size = sqrt(cdp.q_rdc_norm_tensor_size / len(cdp.q_factors_rdc_norm_tensor_size))
-    cdp.q_rdc_norm_squared_sum = sqrt(cdp.q_rdc_norm_squared_sum / len(cdp.q_factors_rdc_norm_squared_sum))
+    if sim_flag:
+        if not hasattr(cdp, 'q_rdc_norm_tensor_size_sim'):
+            cdp.q_rdc_norm_tensor_size_sim = [None] * cdp.sim_number
+        if not hasattr(cdp, 'q_rdc_norm_squared_sum_sim'):
+            cdp.q_rdc_norm_squared_sum_sim = [None] * cdp.sim_number
+        cdp.q_rdc_norm_tensor_size_sim[sim_index] = 0.0
+        cdp.q_rdc_norm_squared_sum_sim[sim_index] = 0.0
+        for id in cdp.q_factors_rdc_norm_tensor_size_sim:
+            cdp.q_rdc_norm_tensor_size_sim[sim_index] = cdp.q_rdc_norm_tensor_size_sim[sim_index] + cdp.q_factors_rdc_norm_tensor_size_sim[id][sim_index]**2
+        for id in cdp.q_factors_rdc_norm_squared_sum_sim:
+            cdp.q_rdc_norm_squared_sum_sim[sim_index] = cdp.q_rdc_norm_squared_sum_sim[sim_index] + cdp.q_factors_rdc_norm_squared_sum_sim[id][sim_index]**2
+        cdp.q_rdc_norm_tensor_size_sim[sim_index] = sqrt(cdp.q_rdc_norm_tensor_size_sim[sim_index] / len(cdp.q_factors_rdc_norm_tensor_size_sim))
+        cdp.q_rdc_norm_squared_sum_sim[sim_index] = sqrt(cdp.q_rdc_norm_squared_sum_sim[sim_index] / len(cdp.q_factors_rdc_norm_squared_sum_sim))
+    else:
+        cdp.q_rdc_norm_tensor_size = 0.0
+        cdp.q_rdc_norm_squared_sum = 0.0
+        for id in cdp.q_factors_rdc_norm_tensor_size:
+            cdp.q_rdc_norm_tensor_size = cdp.q_rdc_norm_tensor_size + cdp.q_factors_rdc_norm_tensor_size[id]**2
+        for id in cdp.q_factors_rdc_norm_squared_sum:
+            cdp.q_rdc_norm_squared_sum = cdp.q_rdc_norm_squared_sum + cdp.q_factors_rdc_norm_squared_sum[id]**2
+        cdp.q_rdc_norm_tensor_size = sqrt(cdp.q_rdc_norm_tensor_size / len(cdp.q_factors_rdc_norm_tensor_size))
+        cdp.q_rdc_norm_squared_sum = sqrt(cdp.q_rdc_norm_squared_sum / len(cdp.q_factors_rdc_norm_squared_sum))
 
 
 def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin_id1_col=None, spin_id2_col=None, data_col=None, error_col=None, sep=None, neg_g_corr=False, absolute=False):
