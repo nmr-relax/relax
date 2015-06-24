@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -163,15 +163,15 @@ class N_state_model(API_base, API_common):
             cdp.chi2 = chi2
 
             # Store the back-calculated data.
-            minimise_bc_data(model)
+            minimise_bc_data(model, sim_index=sim_index)
 
             # Calculate the RDC Q factors.
             if 'rdc' in data_types:
-                rdc.q_factors()
+                rdc.q_factors(sim_index=sim_index, verbosity=verbosity)
 
             # Calculate the PCS Q factors.
             if 'pcs' in data_types:
-                pcs.q_factors()
+                pcs.q_factors(sim_index=sim_index, verbosity=verbosity)
 
         # NOE potential.
         if hasattr(cdp, 'noe_restraints'):
@@ -579,17 +579,17 @@ class N_state_model(API_base, API_common):
             cdp.warning = warning
 
         # Statistical analysis.
-        if sim_index == None and ('rdc' in data_types or 'pcs' in data_types):
+        if 'rdc' in data_types or 'pcs' in data_types:
             # Get the final back calculated data (for the Q factor and
-            minimise_bc_data(model)
+            minimise_bc_data(model, sim_index=sim_index)
 
             # Calculate the RDC Q factors.
             if 'rdc' in data_types:
-                rdc.q_factors()
+                rdc.q_factors(sim_index=sim_index, verbosity=verbosity)
 
             # Calculate the PCS Q factors.
             if 'pcs' in data_types:
-                pcs.q_factors()
+                pcs.q_factors(sim_index=sim_index, verbosity=verbosity)
 
 
     def model_statistics(self, model_info=None, spin_id=None, global_stats=None):

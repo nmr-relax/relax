@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -40,16 +40,21 @@ from specific_analyses.n_state_model.parameters import assemble_param_vector, up
 from target_functions.n_state_model import N_state_opt
 
 
-def minimise_bc_data(model):
+def minimise_bc_data(model, sim_index=None):
     """Extract and unpack the back calculated data.
 
-    @param model:   The instantiated class containing the target function.
-    @type model:    class instance
+    @param model:       The instantiated class containing the target function.
+    @type model:        class instance
+    @keyword sim_index: The optional Monte Carlo simulation index.
+    @type sim_index:    None or int
     """
 
     # No alignment tensors, so nothing to do.
     if not hasattr(cdp, 'align_tensors'):
         return
+
+    # Simulation flag.
+    sim_flag = (sim_index != None)
 
     # Loop over each alignment.
     align_index = 0
@@ -79,11 +84,20 @@ def minimise_bc_data(model):
             # Spins with PCS data.
             if pcs_flag and hasattr(spin, 'pcs'):
                 # Initialise the data structure if necessary.
-                if not hasattr(spin, 'pcs_bc'):
-                    spin.pcs_bc = {}
+                if sim_flag:
+                    if not hasattr(spin, 'pcs_sim_bc'):
+                        spin.pcs_sim_bc = {}
+                    if align_id not in spin.pcs_sim_bc:
+                        spin.pcs_sim_bc[align_id] = [None] * cdp.sim_number
+                else:
+                    if not hasattr(spin, 'pcs_bc'):
+                        spin.pcs_bc = {}
 
                 # Add the back calculated PCS (in ppm).
-                spin.pcs_bc[align_id] = model.deltaij_theta[align_index, pcs_index] * 1e6
+                if sim_flag:
+                    spin.pcs_sim_bc[align_id][sim_index] = model.deltaij_theta[align_index, pcs_index] * 1e6
+                else:
+                    spin.pcs_bc[align_id] = model.deltaij_theta[align_index, pcs_index] * 1e6
 
                 # Increment the data index if the spin container has data.
                 pcs_index = pcs_index + 1
@@ -102,11 +116,20 @@ def minimise_bc_data(model):
             # Containers with RDC data.
             if rdc_flag and hasattr(interatom, 'rdc'):
                 # Initialise the data structure if necessary.
-                if not hasattr(interatom, 'rdc_bc'):
-                    interatom.rdc_bc = {}
+                if sim_flag:
+                    if not hasattr(interatom, 'rdc_sim_bc'):
+                        interatom.rdc_sim_bc = {}
+                    if align_id not in interatom.rdc_sim_bc:
+                        interatom.rdc_sim_bc[align_id] = [0.0] * cdp.sim_number
+                else:
+                    if not hasattr(interatom, 'rdc_bc'):
+                        interatom.rdc_bc = {}
 
                 # Append the back calculated PCS.
-                interatom.rdc_bc[align_id] = model.rdc_theta[align_index, rdc_index]
+                if sim_flag:
+                    interatom.rdc_sim_bc[align_id][sim_index] = model.rdc_theta[align_index, rdc_index]
+                else:
+                    interatom.rdc_bc[align_id] = model.rdc_theta[align_index, rdc_index]
 
                 # Increment the data index if the interatom container has data.
                 rdc_index = rdc_index + 1
