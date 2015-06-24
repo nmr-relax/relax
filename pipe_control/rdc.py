@@ -770,7 +770,6 @@ def q_factors(spin_id=None, sim_index=None, verbosity=1):
             else:
                 rdc = interatom.rdc_sim[align_id][sim_index]
                 rdc_bc = interatom.rdc_sim_bc[align_id][sim_index]
-                print 'sim', interatom.rdc_sim
 
             # Sum of squares.
             sse = sse + (rdc - rdc_bc)**2
@@ -839,7 +838,6 @@ def q_factors(spin_id=None, sim_index=None, verbosity=1):
                 D = dj * A.A_diag
             else:
                 D = dj * A.A_diag_sim[sim_index]
-                print D
             Da = 1.0/3.0 * (D[2, 2] - (D[0, 0]+D[1, 1])/2.0)
             Dr = 1.0/3.0 * (D[0, 0] - D[1, 1])
             if Da == 0:
@@ -879,7 +877,6 @@ def q_factors(spin_id=None, sim_index=None, verbosity=1):
                     print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_rdc_norm_tensor_size[align_id]))
         print("\nRDC Q factors normalised by the sum of RDCs squared:")
         for align_id in cdp.rdc_ids:
-            print align_id
             if align_id in cdp.q_factors_rdc_norm_squared_sum:
                 if sim_flag:
                     print("    Alignment ID '%s':  %.13f" % (align_id, cdp.q_factors_rdc_norm_squared_sum_sim[align_id][sim_index]))
