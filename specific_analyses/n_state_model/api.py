@@ -473,7 +473,8 @@ class N_state_model(API_base, API_common):
 
         # Right, constraints cannot be used for the 'fixed' model.
         if constraints and cdp.model == 'fixed':
-            warn(RelaxWarning("Turning constraints off.  These cannot be used for the 'fixed' model."))
+            if verbosity:
+                warn(RelaxWarning("Turning constraints off.  These cannot be used for the 'fixed' model."))
             constraints = False
 
             # Pop out the Method of Multipliers algorithm.
