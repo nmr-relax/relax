@@ -1242,7 +1242,7 @@ class AlignTensorData(Element):
         raise RelaxError("The alignment tensor is a read-only object.  The alignment tensor set() method must be used instead.")
 
 
-    def _update_object(self, param_name, target, update_if_set, depends, category):
+    def _update_object(self, param_name, target, update_if_set, depends, category, sim_index=None):
         """Function for updating the target object, its error, and the MC simulations.
 
         If the base name of the object is not within the 'update_if_set' list, this function returns
@@ -1254,14 +1254,13 @@ class AlignTensorData(Element):
         @type param_name:       str
         @param target:          The name of the object to update.
         @type target:           str
-        @param update_if_set:   If the parameter being set by the __setattr__() function is not
-            within this list of parameters, don't waste time updating the
-            target.
+        @param update_if_set:   If the parameter being set by the __setattr__() function is not within this list of parameters, don't waste time updating the target.
         @param depends:         An array of names objects that the target is dependent upon.
         @type depends:          array of str
-        @param category:        The category of the object to update (one of 'val', 'err', or
-            'sim').
+        @param category:        The category of the object to update (one of 'val', 'err', or 'sim').
         @type category:         str
+        @keyword sim_index:     The index for a Monte Carlo simulation for simulated parameter.
+        @type sim_index:        int or None
         @return:                None
         """
 
@@ -1327,6 +1326,12 @@ class AlignTensorData(Element):
         ##############################
 
         if category == 'sim':
+            # The simulation indices.
+            if sim_index != None:
+                sim_indices = [sim_index]
+            else:
+                sim_indices = range(self._sim_num)
+
             # Get all the dependencies if possible.
             missing_dep = 0
             deps = []
@@ -1352,7 +1357,7 @@ class AlignTensorData(Element):
                 # Repackage the deps structure.
                 args = []
                 skip = False
-                for i in range(self._sim_num):
+                for i in sim_indices:
                     args.append(())
 
                     # Loop over the dependent structures.
@@ -1371,9 +1376,9 @@ class AlignTensorData(Element):
 
                 # Loop over the sims and set the values.
                 if not skip:
-                    for i in range(self._sim_num):
+                    for i in sim_indices:
                         # Calculate the value.
-                        value = fn(*args[i])
+                        value = fn(*args[sim_indices.index(i)])
 
                         # Set the attribute.
                         self.__dict__[target+'_sim']._set(value=value, sim_index=i)
@@ -1436,7 +1441,7 @@ class AlignTensorData(Element):
         # Update the data structures.
         if update:
             for target, update_if_set, depends in dependency_generator():
-                self._update_object(param, target, update_if_set, depends, category)
+                self._update_object(param, target, update_if_set, depends, category, sim_index=sim_index)
 
 
     def set_fixed(self, flag):
