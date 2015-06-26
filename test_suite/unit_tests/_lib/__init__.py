@@ -42,5 +42,6 @@ __all__ = [
     'test_mathematics',
     'test_periodic_table',
     'test_regex',
-    'test_selection'
+    'test_selection',
+    'test_statistics'
 ]
