@@ -105,9 +105,6 @@ def gaussian(x=None, mu=0.0, sigma=1.0):
 def geometric_mean(values=None):
     """Calculate the geometric mean for the given values.
 
-    This uses the real mean to normalise all values to be centred at 1, so that truncation artifacts in the large multiplication are avoided.
-
-
     @keyword values:    The list of values to calculate the geometric mean of.
     @type values:       list of float
     @return:            The geometric mean.
@@ -133,9 +130,6 @@ def geometric_mean(values=None):
 
 def geometric_std(values=None, mean=None):
     """Calculate the geometric standard deviation for the given values.
-
-    This uses the real mean to normalise all values to be centred at 1, so that truncation artifacts in the large multiplication are avoided.
-
 
     @keyword values:    The list of values to calculate the geometric mean of.
     @type values:       list of float
