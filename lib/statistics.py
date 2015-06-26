@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -24,7 +24,8 @@
 """Module for calculating simple statistics."""
 
 # Python module imports.
-from numpy import absolute, diag, dot, eye, multiply, transpose
+from math import exp
+from numpy import absolute, array, diag, dot, eye, float64, log, multiply, transpose
 from numpy.linalg import inv, qr
 
 # Python module imports.
@@ -99,6 +100,67 @@ def gaussian(x=None, mu=0.0, sigma=1.0):
 
     # Calculate and return the probability.
     return exp(-(x-mu)**2 / (2.0*sigma**2)) / (sigma * sqrt(2.0 * pi))
+
+
+def geometric_mean(values=None):
+    """Calculate the geometric mean for the given values.
+
+    This uses the real mean to normalise all values to be centred at 1, so that truncation artifacts in the large multiplication are avoided.
+
+
+    @keyword values:    The list of values to calculate the geometric mean of.
+    @type values:       list of float
+    @return:            The geometric mean.
+    @rtype:             float
+    """
+
+    # Init.
+    n = len(values)
+    values = array(values, float64)
+
+    # The log of all values.
+    log_vals = log(values)
+
+    # Calculate the sum of the log values for all points.
+    Xsum = log_vals.sum()
+
+    # Average.
+    Xav = Xsum / float(n)
+
+    # Return the geometric mean.
+    return exp(Xav)
+
+
+def geometric_std(values=None, mean=None):
+    """Calculate the geometric standard deviation for the given values.
+
+    This uses the real mean to normalise all values to be centred at 1, so that truncation artifacts in the large multiplication are avoided.
+
+
+    @keyword values:    The list of values to calculate the geometric mean of.
+    @type values:       list of float
+    @keyword mean:      The pre-calculated geometric mean.  If not supplied, the value will be calculated.
+    @type mean:         float
+    @return:            The geometric mean.
+    @rtype:             float
+    """
+
+    # Init.
+    n = len(values)
+    values = array(values, float64)
+
+    # The geometric mean.
+    if mean == None:
+        mean = geometric_mean(values=values)
+
+    # Divide the values by the geometric mean, take the log, and square everything.
+    factor = (log(values / mean))**2
+
+    # The square root of the sum divided by n.
+    factor2 = sqrt(factor.sum() / n)
+
+    # Return the geometric std.
+    return exp(factor2)
 
 
 def std(values=None, skip=None, dof=1):
