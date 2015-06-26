@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2015 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,7 +20,7 @@
 ###############################################################################
 
 # relax module imports.
-from lib.statistics import geometric_mean
+from lib.statistics import geometric_mean, geometric_std
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
@@ -33,3 +33,11 @@ class Test_statistics(UnitTestCase):
         # Calculate the mean and check it.
         mean = geometric_mean(values=[2, 8])
         self.assertEqual(mean, 4.0)
+
+
+    def test_geometric_std(self):
+        """Check the geometric std value of 2 for the values [2, 8]."""
+
+        # Calculate the geometric std and check it.
+        std = geometric_std(values=[2, 8])
+        self.assertEqual(std, 2.0)
