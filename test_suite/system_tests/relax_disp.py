@@ -23,7 +23,8 @@
 
 # Python module imports.
 from os import F_OK, access, getcwd, path, sep
-from numpy import array, asarray, exp, median, inf, linspace, log, save, std, sum, zeros
+import copy
+from numpy import array, asarray, average, exp, median, inf, linspace, log, save, std, sum, zeros
 from minfx.generic import generic_minimise
 from random import gauss
 import re, math
@@ -1467,8 +1468,16 @@ class Relax_disp(SystemTestCase):
         # First get the resi 0 array of sim r2a.
         resi_0_r2a = []
 
+        # Assign spins
+        res0 = cdp.mol[0].res[0].spin[0]
+        res1 = cdp.mol[0].res[1].spin[0]
+
+        print("Chi2 before call to minimise: %3.3f"%res0.chi2)
+        self.interpreter.minimise.execute(min_algor='simplex', max_iter=100000, verbosity=0)
+        print("Chi2 after call to minimise: %3.3f"%res0.chi2)
+
         # Loop over the dics in spin.
-        for cdic in cdp.mol[0].res[0].spin[0].r2a_sim:
+        for cdic in res0.r2a_sim:
             resi_0_r2a.append(cdic[dickey])
 
         # Get stats with numpy
@@ -1478,7 +1487,7 @@ class Relax_disp(SystemTestCase):
         resi_86_r2a = []
 
         # Loop over the dics in spin.
-        for cdic in cdp.mol[0].res[1].spin[0].r2a_sim:
+        for cdic in res1.r2a_sim:
             resi_86_r2a.append(cdic[dickey])
 
         # Get stats with numpy
@@ -1487,8 +1496,8 @@ class Relax_disp(SystemTestCase):
         # Then get for dw.
 
         # First get the array of sim dw.
-        resi_0_dw = cdp.mol[0].res[0].spin[0].dw_sim
-        resi_86_dw = cdp.mol[0].res[1].spin[0].dw_sim
+        resi_0_dw = res0.dw_sim
+        resi_86_dw = res1.dw_sim
 
         # Get stats with numpy
         resi_0_dw_std = std(asarray(resi_0_dw), ddof=1)
@@ -1497,8 +1506,8 @@ class Relax_disp(SystemTestCase):
         # Then get for spin independent parameter.
 
         # First get the array of sim dw.
-        resi_0_kAB = cdp.mol[0].res[0].spin[0].k_AB_sim
-        resi_86_kAB = cdp.mol[0].res[1].spin[0].k_AB_sim
+        resi_0_kAB = res0.k_AB_sim
+        resi_86_kAB = res1.k_AB_sim
 
         # Get stats with numpy
         resi_0_kAB_std = std(asarray(resi_0_kAB), ddof=1)
@@ -1511,16 +1520,46 @@ class Relax_disp(SystemTestCase):
         self.interpreter.monte_carlo.error_analysis()
 
         # Check values for k_AB.
-        self.assertAlmostEqual(resi_0_kAB_std, cdp.mol[0].res[0].spin[0].k_AB_err)
-        self.assertAlmostEqual(resi_86_kAB_std, cdp.mol[0].res[1].spin[0].k_AB_err)
+        self.assertAlmostEqual(resi_0_kAB_std, res0.k_AB_err)
+        self.assertAlmostEqual(resi_86_kAB_std, res1.k_AB_err)
 
         # Check values for r2a.
-        self.assertAlmostEqual(resi_0_r2a_std, cdp.mol[0].res[0].spin[0].r2a_err[dickey])
-        self.assertAlmostEqual(resi_86_r2a_std, cdp.mol[0].res[1].spin[0].r2a_err[dickey])
+        self.assertAlmostEqual(resi_0_r2a_std, res0.r2a_err[dickey])
+        self.assertAlmostEqual(resi_86_r2a_std, res1.r2a_err[dickey])
 
         # Check values for dw.
-        self.assertAlmostEqual(resi_0_dw_std, cdp.mol[0].res[0].spin[0].dw_err)
-        self.assertAlmostEqual(resi_86_dw_std, cdp.mol[0].res[1].spin[0].dw_err)
+        self.assertAlmostEqual(resi_0_dw_std, res0.dw_err)
+        self.assertAlmostEqual(resi_86_dw_std, res1.dw_err)
+
+        # The following is for Bug #23619: (https://gna.org/bugs/index.php?23619): Stored chi2 sim values from Monte-Carlo simulations does not equal normal chi2 values.
+        # This is to show that this bug is invalid. The "very" different chi2 values stems from r2eff points being back-calculated values rather than original measured values.
+
+        # Check calculates the same Monte-Carlo chi2 values 
+        self.interpreter.monte_carlo.setup(number=3)
+        self.interpreter.monte_carlo.create_data(method='back_calc')
+        self.interpreter.monte_carlo.initial_values()
+
+        # Assign original data instead of back_calculated error.
+        res0.r2eff_sim[0] = copy.copy(res0.r2eff)
+        res0.r2eff_sim[1] = copy.copy(res0.r2eff)
+        res0.r2eff_sim[2] = copy.copy(res0.r2eff)
+        res1.r2eff_sim[0] = copy.copy(res1.r2eff)
+        res1.r2eff_sim[1] = copy.copy(res1.r2eff)
+        res1.r2eff_sim[2] = copy.copy(res1.r2eff)
+
+        self.interpreter.minimise.execute(min_algor='simplex', max_iter=100000)
+        self.interpreter.monte_carlo.error_analysis()
+
+        # Get the simulation array and calculate the average
+        spin_chi2_mc = res0.chi2
+        spin_chi2_mc_sim = res0.chi2_sim
+        spin_chi2_mc_sim_ave = average(spin_chi2_mc_sim)
+
+        print("The chi2 from calculation is: %3.3f"%spin_chi2_mc)
+        print("The array with monte-carlo chi2 values is: %s"%spin_chi2_mc_sim)
+        print("The average of this array is: %3.3f"%spin_chi2_mc_sim_ave)
+
+        self.assertAlmostEqual(spin_chi2_mc, spin_chi2_mc_sim_ave, 7)
 
 
     def test_bug_9999_slow_r1rho_r2eff_error_with_mc(self):
