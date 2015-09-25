@@ -378,7 +378,7 @@ class Relax_data_list(Base_list):
             self.wizard.Destroy()
 
         # Initialise a wizard.
-        self.wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=800, title=title)
+        self.wizard = Wiz_window(parent=self.gui, size_x=1000, size_y=750, title=title)
         self.page_indices = {}
 
         # The reading page.

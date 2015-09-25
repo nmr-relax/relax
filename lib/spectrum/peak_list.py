@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2015 Edward d'Auvergne                                   #
 # Copyright (C) 2008 Sebastien Morin                                          #
 # Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
@@ -112,9 +112,13 @@ def intensity_generic(peak_list=None, file_data=None, spin_id_col=None, mol_name
     for line in file_data:
         # Loop over the intensity columns, storing the data.
         intensity = []
+        data_flag = False
         for i in range(len(data_col)):
             # Extract the data for the single line (loop of a single element).
-            for values in read_spin_data(file_data=[line], spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col[i], sep=sep, spin_id=spin_id):
+            for values in read_spin_data(file_data=[line], spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col[i], sep=sep, spin_id=spin_id, raise_flag=False):
+                # The data flag.
+                data_flag = True
+
                 # Check the values.
                 if len(values) != 6 and data_present:
                     raise RelaxError("The molecule name, residue number and name, spin number and name, and value columns could not be found in the data %s." % repr(values))
@@ -133,7 +137,8 @@ def intensity_generic(peak_list=None, file_data=None, spin_id_col=None, mol_name
                     mol_name, res_num, res_name, spin_num, spin_name = values
 
         # Add the assignment to the peak list object.
-        peak_list.add(mol_names=[mol_name, mol_name], res_nums=[res_num, res_num], res_names=[res_name, res_name], spin_nums=[spin_num, spin_num], spin_names=[spin_name, spin_name], intensity=intensity)
+        if data_flag:
+            peak_list.add(mol_names=[mol_name, mol_name], res_nums=[res_num, res_num], res_names=[res_name, res_name], spin_nums=[spin_num, spin_num], spin_names=[spin_name, spin_name], intensity=intensity)
 
 
 def read_peak_list(file=None, dir=None, int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None):

@@ -184,7 +184,7 @@ def write_xy_data(data, file=None, graph_type=None, norm_type='first', norm=None
                     continue
 
                 # X and Y data.
-                file.write("%-30s %-30.15f" % (point[0], point[1]/norm_fact))
+                file.write("%30.15f %30.15f" % (point[0], point[1]/norm_fact))
 
                 # The dx and dy errors.
                 if graph_type in ['xydx', 'xydy', 'xydxdy']:
@@ -198,7 +198,7 @@ def write_xy_data(data, file=None, graph_type=None, norm_type='first', norm=None
                         error = 0.0
 
                     # Write the error.
-                    file.write(" %-30.15f" % (error/norm_fact))
+                    file.write(" %30.15f" % (error/norm_fact))
 
                 # The dy errors of xydxdy.
                 if graph_type == 'xydxdy':
@@ -208,11 +208,11 @@ def write_xy_data(data, file=None, graph_type=None, norm_type='first', norm=None
                         error = 0.0
 
                     # Write the error.
-                    file.write(" %-30.15f" % (error/norm_fact))
+                    file.write(" %30.15f" % (error/norm_fact))
 
                 # The comment if given.
                 try:
-                    file.write("%30s \"# %s\"" % ('', point[comment_col]))
+                    file.write("    \"%s\"" % point[comment_col])
                 except IndexError:
                     pass
 

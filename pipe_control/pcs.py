@@ -500,8 +500,8 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
     size = len(data)
 
     # Round the data limits.
-    max_pcs = ceil(max_pcs)
-    min_pcs = floor(min_pcs)
+    max_pcs = float(ceil(max_pcs))
+    min_pcs = float(floor(min_pcs))
 
     # Only one data set.
     data = [data]
@@ -1147,7 +1147,7 @@ def structural_noise(align_id=None, rmsd=0.2, sim_num=1000, file=None, dir=None,
         align_index = 0
         for id in align_ids:
             # No PCS value, so skip.
-            if id not in spin.pcs:
+            if id not in spin.pcs or spin.pcs[id] == None:
                 align_index += 1
                 continue
 
@@ -1166,7 +1166,7 @@ def structural_noise(align_id=None, rmsd=0.2, sim_num=1000, file=None, dir=None,
             spin.pcs_err[id] = sqrt(spin.pcs_err[id]**2 + sd**2)
 
             # Store the data for the Grace plot.
-            grace_data[align_index].append([orig_r, sd])
+            grace_data[align_index].append([orig_r, sd, spin_id])
 
             # Increment the alignment index.
             align_index += 1

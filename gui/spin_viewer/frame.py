@@ -235,7 +235,7 @@ class Spin_view_window(wx.Frame):
             self.wizard.Destroy()
 
         # Initialise a wizard.
-        self.wizard = Wiz_window(parent=self, size_x=1000, size_y=800, title="Load spins")
+        self.wizard = Wiz_window(parent=self, size_x=1000, size_y=750, title="Load spins")
         self.page_indices = {}
 
         # The loading method page.
