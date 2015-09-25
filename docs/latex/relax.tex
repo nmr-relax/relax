@@ -41,6 +41,10 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{mathdots}
+\usepackage{mathrsfs}
+\usepackage{accents}
+\usepackage{arydshln}
+\usepackage{bigints}
 
 % Source code and scripts.
 \usepackage[procnames]{listings}
@@ -76,6 +80,24 @@
     tabsize=4,
     upquote=true,
 }
+
+% Graphics for tables (after xcolor because of package clashing).
+\usepackage{tikz}
+\usetikzlibrary{calc}
+%\newcommand*\sethighlight[1]{\tikz[baseline=(char.base)]{\node[shape=circle,draw,inner sep=1pt] (char) {#1};}}
+\newcommand*\sethighlight[1]{\tikz[baseline=(char.base)]{\node[shape=rectangle,draw=blue,inner sep=2pt] (char) {#1};}}
+\newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \node (#1) {};}
+
+% Table row formatting.
+\usepackage{array}
+\newcolumntype{+}{>{\global\let\currentrowstyle\relax}}
+\newcolumntype{^}{>{\currentrowstyle}}
+\newcommand{\rowstyle}[1]{\gdef\currentrowstyle{#1}%
+    #1\ignorespaces
+}
+
+% New column type with settable width.
+\newcolumntype{C}[1]{>{\centering\arraybackslash$}p{#1}<{$}}
 
 % New commands.
 \newcommand{\example}[1]{\vspace{-1ex} \sloppy{\footnotesize \texttt{#1}}}
@@ -117,6 +139,9 @@
 \setlength{\cftfignumwidth}{12mm}
 \setlength{\cfttabnumwidth}{12mm}
 
+% The frame order symbol (the daeg runic character)
+\usepackage{allrunes}
+
 % Maths commands.
 \setcounter{MaxMatrixCols}{20}
 \DeclareMathOperator{\arccosh}{arccosh}
@@ -141,11 +166,11 @@
 \newcommand{\Localset}{\mathfrak{T}}
 \newcommand{\KL}{\Delta_{\scriptscriptstyle \text{K-L}}}
 
-\newcommand{\aveoffset}{\bar\Omega}
+\newcommand{\aveoffset}{\overline{\Omega}}
 \newcommand{\offsetA}{\Omega_{\textrm{A}}}
 \newcommand{\offsetB}{\Omega_{\textrm{B}}}
 \newcommand{\offsetC}{\Omega_{\textrm{C}}}
-\newcommand{\aveomega}{\bar\omega}
+\newcommand{\aveomega}{\overline{\omega}}
 \newcommand{\dw}{\Delta\omega}
 \newcommand{\dwAB}{\Delta\omega_{\textrm{AB}}}
 \newcommand{\dwAC}{\Delta\omega_{\textrm{AC}}}
@@ -216,6 +241,18 @@
 \newcommand{\tex}{\tau_{\textrm{ex}}}
 \newcommand{\taucpmg}{\tau_{\textrm{CPMG}}}
 \newcommand{\Trelax}{T_{\textrm{relax}}}
+
+% Maths commands - frame order specific.
+\newcommand{\diff}{\,\mathrm{d}}
+\newcommand{\FO}{\textarc{d}}
+\newcommand{\FOn}{\textarc{d}^{(n)}}
+\newcommand{\FOone}{\textarc{d}^{(1)}}
+\newcommand{\FOtwo}{\textarc{d}^{(2)}}
+\newcommand{\FOthree}{\textarc{d}^{(3)}}
+\newcommand{\FOfour}{\textarc{d}^{(4)}}
+\newcommand{\unitvectr}{\hat{r}}
+\newcommand{\vectr}{r}
+\newcommand{\tmax}{t_\textrm{max}}
 
 % Natbib Citation format.
 \bibpunct{(}{)}{;}{a}{,}{,}
@@ -434,32 +471,32 @@
 % Layout of the document.
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
-\part{The basics}
-\include{intro}
-\include{install}
-\include{infrastruct}
-\include{data_model}
-
+%\part{The basics}
+%\include{intro}
+%\include{install}
+%\include{infrastruct}
+%\include{data_model}
+%
 \part{The specific analyses}
-\include{curvefit}
-\include{noe}
-\include{model-free}
-\include{jw_mapping}
-\include{consistency_tests}
-\include{n_state}
-\include{dispersion}
+%\include{curvefit}
+%\include{noe}
+%\include{model-free}
+%\include{jw_mapping}
+%\include{consistency_tests}
+%\include{n_state}
+%\include{dispersion}
 \include{frame_order}
-
-\part{Power users}
-\include{develop}
-
-\part{Advanced topics}
-\include{optimisation}
-\include{maths}
-
-\part{Reference}
-\include{functions}
-\include{licence}
+%
+%\part{Power users}
+%\include{develop}
+%
+%\part{Advanced topics}
+%\include{optimisation}
+%\include{maths}
+%
+%\part{Reference}
+%\include{functions}
+%\include{licence}
 
 
 % End of the main chapters.
