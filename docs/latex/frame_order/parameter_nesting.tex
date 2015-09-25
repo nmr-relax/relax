@@ -1,0 +1,146 @@
+\begin{table}
+\begin{center}
+\caption[Frame order parameter nesting.]{The nesting of frame order model parameters and the resultant grid search dimensionality.  The boxes highlight parameter sets which are optimised in the initial grid search.  The start of each train of arrows are the optimised parameters which will be copied for the more complex model and excluded from the grid search.  The non-nested gird search dimensionality is given in brackets.}
+\begin{tabular*}{\textwidth}{l @{\extracolsep{\fill}} ccccccccc}
+
+% Spacing.
+\\[-5pt]
+
+% Header.
+\toprule
+Model & \multicolumn{4}{l}{Parameter sets} & \multicolumn{4}{l}{Order parameters} & Grid search \\
+      & & & & & & & & & dimensionality \\
+\midrule
+
+Rigid &
+\tikzmark{P1}\sethighlight{$\Posset$} &
+- &
+- &
+- &
+- &
+- &
+- &
+- \vphantom{\sethighlight{$\conesmaxtwo$}} &
+6 (6) \\
+
+Rotor &
+\tikzmark{P2}$\Posset$ &
+\tikzmark{E2}\sethighlight{$\Eigenseta$} &
+\tikzmark{p2}\sethighlight{$\Pivotsetone$} &
+- &
+- &
+- &
+\sethighlight{$\conesmax$}\tikzmark{s2} &
+- \vphantom{\sethighlight{$\conesmaxtwo$}} &
+5 (11) \\
+
+Isotropic cone &
+\tikzmark{P3}$\Posset$ &
+\tikzmark{E3}$\Eigensetax$\tikzmark{E3b} &
+\tikzmark{p3}$\Pivotsetone$ &
+- &
+\tikzmark{S3}\sethighlight{$\conetheta$} &
+- &
+$\conesmax$\tikzmark{s3} &
+- \vphantom{\sethighlight{$\conesmaxtwo$}} &
+1 (13) \\
+
+Pseudo-ellipse &
+\tikzmark{P4}$\Posset$ &
+\tikzmark{E4}\sethighlight{$\Eigensetabc$} &
+\tikzmark{p4}$\Pivotsetone$ &
+- &
+\tikzmark{S4}$\conethetax$\tikzmark{S4b} &
+\sethighlight{$\conethetay$}\tikzmark{Sy4} &
+$\conesmax$\tikzmark{s4} &
+- \vphantom{\sethighlight{$\conesmaxtwo$}} &
+4 (15) \\
+
+Isotropic cone, torsionless &
+\tikzmark{P5}$\Posset$ &
+$\Eigensetax$\tikzmark{E5} &
+\tikzmark{p5}$\Pivotsetone$ &
+- &
+\tikzmark{S5}$\conetheta$ &
+- &
+- &
+- \vphantom{\sethighlight{$\conesmaxtwo$}} &
+0 (12) \\
+
+Pseudo-ellipse, torsionless &
+\tikzmark{P6}$\Posset$ &
+\tikzmark{E6}$\Eigensetabc$ &
+\tikzmark{p6}$\Pivotsetone$ &
+- &
+$\conethetax$\tikzmark{S6} &
+$\conethetay$\tikzmark{Sy6} &
+- &
+- \vphantom{\sethighlight{$\conesmaxtwo$}} &
+0 (14) \\
+
+Free rotor &
+\sethighlight{$\Possetred$}\tikzmark{P7} &
+\tikzmark{E7}$\Eigenseta$ &
+\tikzmark{p7}$\Pivotsetone$ &
+- &
+- &
+- &
+- &
+- \vphantom{\sethighlight{$\conesmaxtwo$}} &
+5 (9) \\
+
+Isotropic cone, free rotor &
+$\Possetred$\tikzmark{P8} &
+$\Eigensetax$\tikzmark{E8} &
+\tikzmark{p8}$\Pivotsetone$ &
+- &
+\tikzmark{S8}$\conetheta$ &
+- &
+- &
+- \vphantom{\sethighlight{$\conesmaxtwo$}} &
+0 (11) \\
+
+Pseudo-ellipse, free rotor &
+$\Possetred$\tikzmark{P9} &
+\tikzmark{E9}$\Eigensetabc$ &
+\tikzmark{p9}$\Pivotsetone$ &
+- &
+$\conethetax$\tikzmark{S9} &
+$\conethetay$\tikzmark{Sy9} &
+- &
+- \vphantom{\sethighlight{$\conesmaxtwo$}} &
+0 (13) \\
+
+Double rotor &
+\tikzmark{P10}$\Posset$ &
+\tikzmark{E10}$\Eigensetabc$ &
+\tikzmark{p10}$\Pivotsetone$ &
+\sethighlight{$\Pivotsettwo$} &
+- &
+- &
+\sethighlight{$\conesmax$} &
+\sethighlight{$\conesmaxtwo$} &
+3 (15) \\
+
+\bottomrule
+
+\label{table: frame order parameter nesting}
+
+
+% Arrows.
+\begin{tikzpicture}[overlay,remember picture]
+     \draw[->,ForestGreen] (P1.center) to [out=-160,in=135](P2) to [out=-135,in=135](P3) to [out=-135,in=135](P4) to [out=-135,in=135](P5) to [out=-135,in=135](P6) to [out=-115,in=115](P10);
+     \draw[->,ForestGreen] (P7.center) to [out=-20,in=45](P8) to [out=-45,in=45](P9);
+     \draw[->,ForestGreen] (E2.center) to [out=-160,in=135](E3) to [out=-135,in=135](E7);
+     \draw[->,ForestGreen] (E3b.center) to [out=0,in=45](E5) to [out=-45,in=45](E8);
+     \draw[->,ForestGreen] (E4.center) to [out=-160,in=135](E6) to [out=-135,in=135](E9) to [out=-135,in=135](E10);
+     \draw[->,ForestGreen] (p2.center) to [out=-160,in=135](p3) to [out=-135,in=135](p4) to [out=-135,in=135](p5) to [out=-135,in=135](p6) to [out=-135,in=135](p7) to [out=-135,in=135](p8) to [out=-135,in=135](p9) to [out=-135,in=135](p10);
+     \draw[->,ForestGreen] (S3.center) to [out=-160,in=135](S4) to [out=-135,in=135](S5) to [out=-135,in=135](S8);
+     \draw[->,ForestGreen] (S4b.center) to [out=-20,in=45](S6) to [out=-45,in=45](S9);
+     \draw[->,ForestGreen] (Sy4.center) to [out=-20,in=45](Sy6) to [out=-45,in=45](Sy9);
+     \draw[->,ForestGreen] (s2.center) to [out=-20,in=45](s3) to [out=-45,in=45](s4);
+\end{tikzpicture}
+
+\end{tabular*}
+\end{center}
+\end{table}
