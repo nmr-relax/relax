@@ -621,11 +621,13 @@ def opt_uses_pcs(align_id):
     return True
 
 
-def q_factors(spin_id=None, verbosity=1):
+def q_factors(spin_id=None, sim_index=None, verbosity=1):
     """Calculate the Q factors for the PCS data.
 
     @keyword spin_id:   The spin ID string used to restrict the Q factor calculation to a subset of all spins.
     @type spin_id:      None or str
+    @keyword sim_index: The optional Monte Carlo simulation index.
+    @type sim_index:    None or int
     @keyword verbosity: A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:    int
     """
@@ -633,25 +635,37 @@ def q_factors(spin_id=None, verbosity=1):
     # Check the pipe setup.
     check_pipe_setup(sequence=True)
 
+    # Simulation flag.
+    sim_flag = (sim_index != None)
+
     # No PCSs, so no Q factors can be calculated.
     if not hasattr(cdp, 'pcs_ids') or not len(cdp.pcs_ids):
         warn(RelaxWarning("No PCS data exists, Q factors cannot be calculated."))
         return
 
     # Q factor dictionary.
-    cdp.q_factors_pcs_norm_squared_sum = {}
+    if not sim_flag:
+        cdp.q_factors_pcs_norm_squared_sum = {}
+    else:
+        if not hasattr(cdp, 'q_factors_pcs_norm_squared_sum_sim'):
+            cdp.q_factors_pcs_norm_squared_sum_sim = {}
 
     # Loop over the alignments.
     for align_id in cdp.pcs_ids:
         # Init.
         pcs2_sum = 0.0
         sse = 0.0
+        if sim_flag and align_id not in cdp.q_factors_pcs_norm_squared_sum_sim:
+            cdp.q_factors_pcs_norm_squared_sum_sim[align_id] = [None] * cdp.sim_number
 
         # Spin loop.
         spin_count = 0
         pcs_data = False
         pcs_bc_data = False
         for spin in spin_loop(spin_id):
+            pcs_data_align_id = False
+            pcs_bc_data_align_id = False
+
             # Skip deselected spins.
             if not spin.select:
                 continue
@@ -660,35 +674,59 @@ def q_factors(spin_id=None, verbosity=1):
             spin_count += 1
 
             # Data checks.
-            if hasattr(spin, 'pcs') and align_id in spin.pcs:
-                pcs_data = True
-            if hasattr(spin, 'pcs_bc') and align_id in spin.pcs_bc:
-                pcs_bc_data = True
+            if not sim_flag:
+                if hasattr(spin, 'pcs') and align_id in spin.pcs and spin.pcs[align_id] != None:
+                    pcs_data_align_id = True
+                if hasattr(spin, 'pcs_bc') and align_id in spin.pcs_bc and spin.pcs_bc[align_id] != None:
+                    pcs_bc_data_align_id = True
+            else:
+                if hasattr(spin, 'pcs_sim') and align_id in spin.pcs_sim and spin.pcs_sim[align_id][sim_index] != None:
+                    pcs_data_align_id = True
+                if hasattr(spin, 'pcs_sim_bc') and align_id in spin.pcs_sim_bc and spin.pcs_sim_bc[align_id][sim_index] != None:
+                    pcs_bc_data_align_id = True
+
+            # The global flags.
+            pcs_data = pcs_data or pcs_data_align_id
+            pcs_bc_data = pcs_bc_data or pcs_bc_data_align_id
 
             # Skip spins without PCS data.
-            if not hasattr(spin, 'pcs') or not hasattr(spin, 'pcs_bc') or not align_id in spin.pcs or spin.pcs[align_id] == None or not align_id in spin.pcs_bc or spin.pcs_bc[align_id] == None:
+            if not pcs_data_align_id or not pcs_bc_data_align_id:
                 continue
 
+            # Alias the PCS data.
+            if not sim_flag:
+                pcs = spin.pcs[align_id]
+                pcs_bc = spin.pcs_bc[align_id]
+            else:
+                pcs = spin.pcs_sim[align_id][sim_index]
+                pcs_bc = spin.pcs_sim_bc[align_id][sim_index]
+
             # Sum of squares.
-            sse = sse + (spin.pcs[align_id] - spin.pcs_bc[align_id])**2
+            sse = sse + (pcs - pcs_bc)**2
 
             # Sum the PCSs squared (for normalisation).
-            pcs2_sum = pcs2_sum + spin.pcs[align_id]**2
+            pcs2_sum = pcs2_sum + pcs**2
 
         # The Q factor for the alignment.
         if pcs2_sum:
             Q = sqrt(sse / pcs2_sum)
-            cdp.q_factors_pcs_norm_squared_sum[align_id] = Q
+            if sim_flag:
+                cdp.q_factors_pcs_norm_squared_sum_sim[align_id][sim_index] = Q
+            else:
+                cdp.q_factors_pcs_norm_squared_sum[align_id] = Q
 
         # Warnings (and then exit).
         if not spin_count:
-            warn(RelaxWarning("No spins have been used in the calculation, skipping the PCS Q factor calculation."))
+            if not sim_flag:
+                warn(RelaxWarning("No spins have been used in the calculation, skipping the PCS Q factor calculation."))
             return
         if not pcs_data:
-            warn(RelaxWarning("No PCS data can be found for the alignment ID '%s', skipping the PCS Q factor calculation for this alignment." % align_id))
+            if not sim_flag:
+                warn(RelaxWarning("No PCS data can be found for the alignment ID '%s', skipping the PCS Q factor calculation for this alignment." % align_id))
             continue
         if not pcs_bc_data:
-            warn(RelaxWarning("No back-calculated PCS data can be found for the alignment ID '%s', skipping the PCS Q factor calculation for this alignment." % align_id))
+            if not sim_flag:
+                warn(RelaxWarning("No back-calculated PCS data can be found for the alignment ID '%s', skipping the PCS Q factor calculation for this alignment." % align_id))
             continue
 
     # ID and PCS Q factor printout.
@@ -696,14 +734,26 @@ def q_factors(spin_id=None, verbosity=1):
         print("\nPCS Q factors normalised by the sum of PCSs squared:")
         for align_id in cdp.pcs_ids:
             if align_id in cdp.q_factors_pcs_norm_squared_sum:
-                print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_pcs_norm_squared_sum[align_id]))
+                if sim_flag:
+                    print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_pcs_norm_squared_sum_sim[align_id][sim_index]))
+                else:
+                    print("    Alignment ID '%s':  %.3f" % (align_id, cdp.q_factors_pcs_norm_squared_sum[align_id]))
 
     # The total Q factor.
-    cdp.q_pcs_norm_squared_sum = 0.0
-    for id in cdp.q_factors_pcs_norm_squared_sum:
-        cdp.q_pcs_norm_squared_sum = cdp.q_pcs_norm_squared_sum + cdp.q_factors_pcs_norm_squared_sum[id]**2
-    cdp.q_pcs_norm_squared_sum = cdp.q_pcs_norm_squared_sum / len(cdp.q_factors_pcs_norm_squared_sum)
-    cdp.q_pcs_norm_squared_sum = sqrt(cdp.q_pcs_norm_squared_sum)
+    if sim_flag:
+        if not hasattr(cdp, 'q_pcs_norm_squared_sum_sim'):
+            cdp.q_pcs_norm_squared_sum_sim = [None] * cdp.sim_number
+        cdp.q_pcs_norm_squared_sum_sim[sim_index] = 0.0
+        for id in cdp.q_factors_pcs_norm_squared_sum_sim:
+            cdp.q_pcs_norm_squared_sum_sim[sim_index] = cdp.q_pcs_norm_squared_sum_sim[sim_index] + cdp.q_factors_pcs_norm_squared_sum_sim[id][sim_index]**2
+        cdp.q_pcs_norm_squared_sum_sim[sim_index] = cdp.q_pcs_norm_squared_sum_sim[sim_index] / len(cdp.q_factors_pcs_norm_squared_sum_sim)
+        cdp.q_pcs_norm_squared_sum_sim[sim_index] = sqrt(cdp.q_pcs_norm_squared_sum_sim[sim_index])
+    else:
+        cdp.q_pcs_norm_squared_sum = 0.0
+        for id in cdp.q_factors_pcs_norm_squared_sum:
+            cdp.q_pcs_norm_squared_sum = cdp.q_pcs_norm_squared_sum + cdp.q_factors_pcs_norm_squared_sum[id]**2
+        cdp.q_pcs_norm_squared_sum = cdp.q_pcs_norm_squared_sum / len(cdp.q_factors_pcs_norm_squared_sum)
+        cdp.q_pcs_norm_squared_sum = sqrt(cdp.q_pcs_norm_squared_sum)
 
 
 def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None, spin_id=None):

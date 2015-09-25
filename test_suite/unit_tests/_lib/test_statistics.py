@@ -1,7 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2015 Edward d'Auvergne                                   #
-# Copyright (C) 2014 Troels E. Linnet                                         #
+# Copyright (C) 2015 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,28 +19,25 @@
 #                                                                             #
 ###############################################################################
 
+# relax module imports.
+from lib.statistics import geometric_mean, geometric_std
+from test_suite.unit_tests.base_classes import UnitTestCase
 
-__all__ = [
-    '_alignment',
-    '_auto_relaxation',
-    '_chemical_shift',
-    '_diffusion',
-    '_dispersion',
-    '_frame_order',
-    '_geometry',
-    '_linear_algebra',
-    '_order',
-    '_sequence_alignment',
-    '_software',
-    '_spectral_densities',
-    '_structure',
-    '_text',
-    'test___init__',
-    'test_float',
-    'test_io',
-    'test_mathematics',
-    'test_periodic_table',
-    'test_regex',
-    'test_selection',
-    'test_statistics'
-]
+
+class Test_statistics(UnitTestCase):
+    """Unit tests for the functions of the 'lib.statistics' module."""
+
+    def test_geometric_mean(self):
+        """Check the geometric mean value of 4 for the values [2, 8]."""
+
+        # Calculate the mean and check it.
+        mean = geometric_mean(values=[2, 8])
+        self.assertEqual(mean, 4.0)
+
+
+    def test_geometric_std(self):
+        """Check the geometric std value of 2 for the values [2, 8]."""
+
+        # Calculate the geometric std and check it.
+        std = geometric_std(values=[2, 8])
+        self.assertEqual(std, 2.0)
