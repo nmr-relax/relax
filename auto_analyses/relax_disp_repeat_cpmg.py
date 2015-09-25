@@ -2812,7 +2812,8 @@ class Relax_disp_rep:
         file_obj.write('    tail -n+3 $f | sed "s,^# ,," | grep -v "None                    None" | sed "s,value,${NI}," | sed "s,error,${NI}," | awk %s{print $6,$7}%s | column -t > ${FNAME}.tmp'%("'","'") + '\n')
         file_obj.write('    ACUT+=(${FNAME}.tmp)' + '\n')
         file_obj.write('done' + '\n')
-        file_obj.write('paste "${ACUT[@]}" | column -t > collect_${SEARCH}.txt' + '\n')
+        file_obj.write('#paste "${ACUT[@]}" | column -t > collect_${SEARCH}.txt' + '\n')
+        file_obj.write('paste "${ACUT[@]}" > collect_${SEARCH}.txt' + '\n')
         file_obj.write('rm ${ACUT[@]}' + '\n')
 
 
