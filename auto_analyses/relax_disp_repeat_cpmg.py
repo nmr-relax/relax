@@ -33,7 +33,7 @@ from copy import deepcopy
 from datetime import datetime
 from glob import glob
 from os import F_OK, access, chmod, getcwd, sep
-from numpy import any, asarray, arange, concatenate, max, mean, min, sqrt, std, sum
+from numpy import any, asarray, arange, concatenate, max, mean, min, savetxt, square, sqrt, std, sum, zeros_like
 if dep_check.scipy_module:
     from scipy.stats import pearsonr
 from stat import S_IRWXU, S_IRGRP, S_IROTH
@@ -2792,7 +2792,6 @@ class Relax_disp_rep:
             # Write grace
             self.interpreter.grace.write(x_data_type='res_num', y_data_type=param, file='%s.agr'%file_name_ini, dir=path+sep+"grace", force=True)
 
-
     def write_convert_file(self, file_name=None, path=None, search=None):
         file_obj, file_path = open_write_file(file_name=file_name, dir=path, force=True, compress_type=0, verbosity=1, return_path=True)
 
@@ -2873,6 +2872,286 @@ class Relax_disp_rep:
                     warn(RelaxWarning(text))
                 else:
                     self.interpreter.results.write(file=resfile, dir=path, force=force)
+
+
+    def summarize_results(self, methods=None, model=None, analysis=None, list_glob_ini=None, selections=None):
+        """ Collect all results and make statistics"""
+
+        ref_method, ni_method = methods
+        ref_ni, ni_list = list_glob_ini
+
+        def collect_data(pipe_name=None, selections=None, ni=None):
+            # Swith pipe
+            self.interpreter.pipe.switch(pipe_name)
+
+            # Collect intensities
+            all_intensities = []
+            all_intensities_err = []
+
+            for selection in selections:
+                sel_intensities = []
+                sel_intensities_err = []
+                for cur_spin, mol_name, resi, resn, spin_id in spin_loop(selection=selection, full_info=True, return_id=True, skip_desel=False):
+
+                    # Loop over spectrum_ids.
+                    for s_id in cdp.spectrum_ids:
+                        # Check for bad data has skipped peak_intensity points
+                        if s_id in cur_spin.peak_intensity:
+                            peak_intensity_point = cur_spin.peak_intensity[s_id]
+                            peak_intensity_err_point = cur_spin.peak_intensity_err[s_id]
+
+                            sel_intensities.append(peak_intensity_point)
+                            sel_intensities_err.append(peak_intensity_err_point)
+
+                # Collect
+                all_intensities.append(sel_intensities)
+                all_intensities_err.append(sel_intensities_err)
+
+            # Collect R2eff
+            all_r2eff = []
+            all_r2eff_err = []
+
+            for selection in selections:
+                sel_r2eff = []
+                sel_r2eff_err = []
+
+                # Loop over the spins.
+                for cur_spin, mol_name, resi, resn, spin_id in spin_loop(selection=selection, full_info=True, return_id=True, skip_desel=False):
+                    # Loop over the R2eff points
+                    for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                        # Define the key.
+                        data_key = return_param_key_from_data(exp_type=self.exp_type, frq=frq, offset=offset, point=point)
+
+                        # Check for bad data has skipped r2eff points
+                        if data_key in cur_spin.r2eff:
+                            r2eff_point = cur_spin.r2eff[data_key]
+                            r2eff_err_point = cur_spin.r2eff_err[data_key]
+
+                            sel_r2eff.append(r2eff_point)
+                            sel_r2eff_err.append(r2eff_err_point)
+
+                # Collect
+                all_r2eff.append(sel_r2eff)
+                all_r2eff_err.append(sel_r2eff_err)
+
+            # Collect minimisations parameteers
+            for cur_spin, mol_name, resi, resn, spin_id in spin_loop(selection=selection, full_info=True, return_id=True, skip_desel=True):
+                params_list = cur_spin.params
+
+                # Break after first round.
+                break
+
+            # Collect
+            all_pars = []
+            all_pars_err = []
+
+            # Loop over selections
+            for selection in selections:
+                sel_pars = []
+                sel_pars_err = []
+
+                # Loop over params
+                for param in params_list:
+                    # If param in PARAMS_R20, values are stored in with parameter key.
+                    sel_pars_list = []
+                    sel_pars_list_err = []
+
+                    # Loop over the spins.
+                    for cur_spin, mol_name, resi, resn, spin_id in spin_loop(selection=selection, full_info=True, return_id=True, skip_desel=True):
+                        if param in PARAMS_R20:
+                            # Loop over frq key.
+                            for exp_type, frq, offset, ei, mi, oi, in loop_exp_frq_offset(return_indices=True):
+                                # Get the parameter key.
+                                param_key = generate_r20_key(exp_type=exp_type, frq=frq)
+
+                                # Get the Value.
+                                param_val = deepcopy(getattr(cur_spin, param)[param_key])
+                                param_err = deepcopy(getattr(cur_spin, param+"_err")[param_key])
+
+                        else:
+                            # Get the value.
+                            param_val = deepcopy(getattr(cur_spin, param))
+                            param_err = deepcopy(getattr(cur_spin, param+"_err"))
+
+                        # Collect
+                        sel_pars_list.append(param_val)
+                        sel_pars_list_err.append(param_err)
+
+                    # Collect
+                    sel_pars.append(sel_pars_list)
+                    sel_pars_err.append(sel_pars_list_err)
+
+                # Collect
+                all_pars.append(sel_pars)
+                all_pars_err.append(sel_pars_err)
+
+            # Update data dictionary
+            data_dic[pipe_name] = {}
+            data_dic[pipe_name]['ni'] = ni
+            data_dic[pipe_name]['all_intensities'] = all_intensities
+            data_dic[pipe_name]['all_intensities_err'] = all_intensities_err
+            data_dic[pipe_name]['all_r2eff'] = all_r2eff
+            data_dic[pipe_name]['all_r2eff_err'] = all_r2eff_err
+            data_dic['params_list'] = params_list
+            data_dic[pipe_name]['all_pars'] = all_pars
+            data_dic[pipe_name]['all_pars_err'] = all_pars_err
+
+        # Load the reference pipe
+        found, ref_pipe_name, resfile, path = self.check_previous_result(method=ref_method, model=model, analysis=analysis, glob_ini=ref_ni, bundle=ref_method)
+
+        #Create data dic
+        data_dic = {}
+        # For ref
+        collect_data(pipe_name=ref_pipe_name, selections=selections, ni=ref_ni)
+
+        # For other
+        # Loop over ni and collect pipe names
+        ni_pipe_names = []
+        for i, ni in enumerate(ni_list):
+            # Get the ni pipe name
+            found, ni_pipe_name, resfile, path = self.check_previous_result(method=ni_method, model=model, analysis=analysis, glob_ini=ni, bundle=ref_method)
+            ni_pipe_names.append(ni_pipe_name)
+
+            # Collect data
+            collect_data(pipe_name=ni_pipe_name, selections=selections, ni=ni)
+
+            # Swith pipe back to ref
+            self.interpreter.pipe.switch(ref_pipe_name)
+
+            # Delete ni pipe, to free memory
+            if ni_pipe_name != ref_pipe_name:
+                self.interpreter.pipe.delete(pipe_name=ni_pipe_name)
+
+        # Now define method for stats
+        def get_stats(x=None, y=None, x_err=None, y_err=None):
+            # Convert to numpy
+            x = asarray(x)
+            y = asarray(y)
+
+            # Define the ratio weighted values
+            g = x/x
+            h = y/x
+
+            # Calculate the deviation
+            d_xy = x - y
+            d_gh = g - h
+
+            # Calculate the mean of the deviations
+            mean_d_xy = mean(d_xy)
+            mean_d_gh = mean(d_gh)
+
+            # Calculate the standard deviations
+            std_d_xy = std(d_xy, ddof=1)
+            std_d_gh = std(d_gh, ddof=1)
+
+            # Calculate the root mean square deviation
+            rmsd_xy = sqrt(mean(square(d_xy)))
+            rmsd_gh = sqrt(mean(square(d_gh)))
+
+            if x_err != None and y_err != None:
+                pool_std_xy = sqrt( mean(square(x_err) + square(y_err)) )
+
+                g_err = x_err / x
+                h_err = y_err / x
+
+                pool_std_gh= sqrt( mean(square(g_err) + square(h_err)) )
+
+                return mean_d_xy, mean_d_gh, std_d_xy, std_d_gh, pool_std_xy, pool_std_gh, rmsd_xy, rmsd_gh
+
+            else:
+                return mean_d_xy, mean_d_gh, std_d_xy, std_d_gh, rmsd_xy, rmsd_gh
+
+        # Analyse data
+        headers = ["ni", "pct"]
+        types = ["int", "r2eff"] + data_dic['params_list']
+
+        # Make list of
+        all_data = []
+        # Loop over rows in pct
+        for i, ni in enumerate(ni_list):
+            # Get the pipe name
+            pipe_name = ni_pipe_names[i]
+
+            # Define row list
+            d_row = []
+            pct = float(ni)/float(ref_ni)*100
+
+            # Append
+            d_row.append(ni)
+            d_row.append(pct)
+
+            # Loop over selections
+            for j, selection in enumerate(selections):
+                # Loop over types
+                k = 0
+                for type_i in types:
+                    if type_i == 'int':
+                        # Append the header type
+                        if i == 0:
+                            headers += ["%s_%s_mean_d_xy"%(j, type_i), "%s_%s_mean_d_gh"%(j, type_i), "%s_%s_std_d_xy"%(j, type_i), "%s_%s_std_d_gh"%(j, type_i), "%s_%s_pool_d_xy"%(j, type_i), "%s_%s_pool_d_gh"%(j, type_i), "%s_%s_rmsd_d_xy"%(j, type_i), "%s_%s_rmsd_d_gh"%(j, type_i)]
+                        x = data_dic[ref_pipe_name]['all_intensities'][j]
+                        y = data_dic[pipe_name]['all_intensities'][j]
+                        x_err = data_dic[ref_pipe_name]['all_intensities_err'][j]
+                        y_err = data_dic[pipe_name]['all_intensities_err'][j]
+
+                        mean_d_xy, mean_d_gh, std_d_xy, std_d_gh, pool_std_xy, pool_std_gh, rmsd_xy, rmsd_gh = get_stats(x=x, y=y, x_err=x_err, y_err=y_err)
+                        d_row += [mean_d_xy, mean_d_gh, std_d_xy, std_d_gh, pool_std_xy, pool_std_gh, rmsd_xy, rmsd_gh]
+
+                    elif type_i == 'r2eff':
+                        # Append the header type
+                        if i == 0:
+                            headers += ["%s_%s_mean_d_xy"%(j, type_i), "%s_%s_mean_d_gh"%(j, type_i), "%s_%s_std_d_xy"%(j, type_i), "%s_%s_std_d_gh"%(j, type_i), "%s_%s_pool_d_xy"%(j, type_i), "%s_%s_pool_d_gh"%(j, type_i), "%s_%s_rmsd_d_xy"%(j, type_i), "%s_%s_rmsd_d_gh"%(j, type_i)]
+                        x = data_dic[ref_pipe_name]['all_r2eff'][j]
+                        y = data_dic[pipe_name]['all_r2eff'][j]
+                        x_err = data_dic[ref_pipe_name]['all_r2eff_err'][j]
+                        y_err = data_dic[pipe_name]['all_r2eff_err'][j]
+
+                        if len(x) != len(y):
+                            d_row += [9999.0, 9999.0, 9999.0, 9999.0, 9999.0, 9999.0, 9999.0, 9999.0]
+                        else:
+                            mean_d_xy, mean_d_gh, std_d_xy, std_d_gh, pool_std_xy, pool_std_gh, rmsd_xy, rmsd_gh = get_stats(x=x, y=y, x_err=x_err, y_err=y_err)
+                            d_row += [mean_d_xy, mean_d_gh, std_d_xy, std_d_gh, pool_std_xy, pool_std_gh, rmsd_xy, rmsd_gh]
+
+                    elif type_i in data_dic['params_list']:
+                        #if type_i not in ['kex', 'k_AB']:
+                        #if type_i not in ['not']:
+                        if i == 0:
+                            headers += ["%s_%s_mean_d_xy"%(j, type_i), "%s_%s_mean_d_gh"%(j, type_i), "%s_%s_std_d_xy"%(j, type_i), "%s_%s_std_d_gh"%(j, type_i), "%s_%s_pool_d_xy"%(j, type_i), "%s_%s_pool_d_gh"%(j, type_i), "%s_%s_rmsd_d_xy"%(j, type_i), "%s_%s_rmsd_d_gh"%(j, type_i)]
+                        x = data_dic[ref_pipe_name]['all_pars'][j][k]
+                        y = data_dic[pipe_name]['all_pars'][j][k]
+                        x_err = data_dic[ref_pipe_name]['all_pars_err'][j][k]
+                        y_err = data_dic[pipe_name]['all_pars_err'][j][k]
+
+                        mean_d_xy, mean_d_gh, std_d_xy, std_d_gh, pool_std_xy, pool_std_gh, rmsd_xy, rmsd_gh = get_stats(x=x, y=y, x_err=x_err, y_err=y_err)
+                        d_row += [mean_d_xy, mean_d_gh, std_d_xy, std_d_gh, pool_std_xy, pool_std_gh, rmsd_xy, rmsd_gh]
+
+                        if type_i in ['kex', 'k_AB', 'pA']:
+                            if i == 0:
+                                headers += ["%s_%s_ref"%(j, type_i), "%s_%s_ref_std"%(j, type_i), "%s_%s_ni"%(j, type_i), "%s_%s_ni_std"%(j, type_i)]
+
+                            ref_val = data_dic[ref_pipe_name]['all_pars'][j][k][0]
+                            ni_val = data_dic[pipe_name]['all_pars'][j][k][0]
+                            ref_err = data_dic[ref_pipe_name]['all_pars_err'][j][k][0]
+                            ni_err = data_dic[pipe_name]['all_pars_err'][j][k][0]
+
+                            d_row += [ref_val, ref_err, ni_val, ni_err]
+
+                        k += 1    
+
+
+            # Add data
+            all_data.append(d_row)
+
+        file_name = ni_pipe_names[0] + '.txt'
+        path = self.results_dir
+        DAT = asarray(all_data)
+        fmt = " ".join(["%6d"] + ["%8.2f"] + ["%21.6e"] * (DAT.shape[1]-2))
+        headers_fmt = " ".join(["%4s"] + ["%8s"] + ["%21s"] * (DAT.shape[1]-2))
+        headers_num = []
+        for k, header_k in enumerate(headers):
+            headers_num.append("%i_%s"%(k, header_k))
+        headers_out = headers_fmt % tuple(headers_num)
+        savetxt(path+sep+file_name, DAT, fmt=fmt, header=headers_out, delimiter=' ')
 
 
     def interpreter_start(self):
