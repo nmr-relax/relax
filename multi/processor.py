@@ -604,13 +604,13 @@ class Processor(object):
 
             # Loop until the queue of calculations is depleted.
             while len(running_set) != 0:
-                # Get the result.
-                result = self.master_receive_result()
-
                 # Debugging printout.
                 if verbosity.level():
                     print('\nIdle set:    %s' % idle_set)
                     print('Running set: %s' % running_set)
+
+                # Get the result.
+                result = self.master_receive_result()
 
                 # Shift the processor rank to the idle set.
                 if result.completed:

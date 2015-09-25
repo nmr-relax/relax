@@ -31,6 +31,7 @@ from lib.errors import RelaxError, RelaxIntListIntError, RelaxLenError
 from lib.float import isNaN
 from lib.io import write_data
 from multi import Processor_box
+from multi.misc import Verbosity; mverbosity = Verbosity()
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control import pipes
 from pipe_control.pipes import check_pipe
@@ -428,7 +429,7 @@ def grid_zoom(level=0):
     cdp.grid_zoom_level = level
 
 
-def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=None, func_tol=None, grad_tol=None, max_iter=None, constraints=True, scaling=True, verbosity=1, sim_index=None):
+def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=None, func_tol=None, grad_tol=None, max_iter=None, constraints=True, scaling=True, verbosity=1, mp_verbosity=0, sim_index=None):
     """Minimisation function.
 
     @keyword min_algor:         The minimisation algorithm to use.
@@ -451,6 +452,8 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     @type scaling:              bool
     @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:            int
+    @keyword mp_verbosity:      The amount of information to print from the multi processor module.  The higher the value, the greater the verbosity.
+    @type mp_verbosity:         int
     @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
     @type sim_index:            None or int
     """
@@ -487,6 +490,9 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     processor_box = Processor_box() 
     processor = processor_box.processor
 
+    # Store the verbosity level for the multiprocessor.
+    mverbosity.set(mp_verbosity)
+
     # Single Monte Carlo simulation.
     if sim_index != None:
         # Reset the minimisation statistics.
@@ -511,8 +517,8 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
             api.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling_matrix=scaling_matrix, verbosity=verbosity-1, sim_index=i)
 
             # Print out.
-            if verbosity and not processor.is_queued():
-                print("Simulation " + repr(i+1))
+            if verbosity and processor.is_queued():
+                print("Queueing Simulation nr:" + repr(i+1))
 
         # Unset the status.
         if status.current_analysis:
