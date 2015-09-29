@@ -103,26 +103,26 @@ deselect.interatom(':146-148')
 ln = ['dy', 'tb', 'tm', 'er', 'yb', 'ho']
 pcs_files = [
     'PCS_DY_200911.txt',
-    'PCS_TB_200911.txt', 
-    'PCS_TM_200911.txt', 
-    'PCS_ER_200911.txt', 
-    'PCS_YB_211111.txt', 
+    'PCS_TB_200911.txt',
+    'PCS_TM_200911.txt',
+    'PCS_ER_200911.txt',
+    'PCS_YB_211111.txt',
     'PCS_HO_300412.txt'
 ]
 pcs_files_subset = [
-    'PCS_DY_200911_subset.txt', 
-    'PCS_TB_200911_subset.txt', 
-    'PCS_TM_200911_subset.txt', 
-    'PCS_ER_200911_subset.txt', 
-    'PCS_YB_211111_subset.txt', 
+    'PCS_DY_200911_subset.txt',
+    'PCS_TB_200911_subset.txt',
+    'PCS_TM_200911_subset.txt',
+    'PCS_ER_200911_subset.txt',
+    'PCS_YB_211111_subset.txt',
     'PCS_HO_300412_subset.txt'
 ]
 rdc_files = [
-    'RDC_DY_111011_spinID.txt', 
-    'RDC_TB_111011_spinID.txt', 
-    'RDC_TM_111011_spinID.txt', 
-    'RDC_ER_111011_spinID.txt', 
-    'RDC_YB_110112_spinID.txt', 
+    'RDC_DY_111011_spinID.txt',
+    'RDC_TB_111011_spinID.txt',
+    'RDC_TM_111011_spinID.txt',
+    'RDC_ER_111011_spinID.txt',
+    'RDC_YB_110112_spinID.txt',
     'RDC_HO_300512_spinID.txt'
 ]
 
