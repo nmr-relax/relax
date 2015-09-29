@@ -1,0 +1,40 @@
+% Frame order introduction.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+
+
+% Tensors of frame ordering.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Tensors of frame ordering}
+
+The frame order theory is a new analysis type designed for studying the rigid body motions of molecules.
+It provides a bridge between statistical mechanical molecular dynamics (MD) models and all rotational molecular physics techniques, by defining a series of rank-$2n$ frame order tensors.
+These tensors define the maximum information content of a rotational molecular physics experiment, as well as what type of information is contained in the data.
+To use the frame order theory, two steps are required:
+\begin{enumerate}
+\item The physics of the experiment should be decomposed into statistically mechanically averaged product of rotation matrix elements.
+\item The MD model should be expressed in terms of a rotation matrix which modulates the motion of the rigid body, within the reference frame matching that of the experimental data.
+\end{enumerate}
+
+
+
+
+% RDC and PCS data.
+%~~~~~~~~~~~~~~~~~~
+
+\subsection{Ln$^{3+}$ aligned RDC and PCS data}
+
+For the current implementation in relax, the frame order theory has been derived for molecules internally aligned using paramagnetic lanthanide ions.
+The data required for the analysis includes both residual dipolar couplings (RDCs) and pseudocontact shifts (PCSs).
+Both data sets are required as they are complementary, each carrying different dynamics information:
+\begin{description}
+\item[RDCs:]  This data is dominated by the amplitudes of the MD motions, and the orientation of the statical mechanical average structure.
+\item[PCSs:]  These mainly provide information about the directions of the MD motions, and the orientation and position of the statical mechanical average structure.
+\end{description}
+
+For a successful analysis, the data must be of the highest quality.
+In addition, multiple alignments are required, either using different lanthanide ions and/or a different attachment point for the lanthanide ion.
+Note that the current implementation only handles alignment of one rigid body or domain.
