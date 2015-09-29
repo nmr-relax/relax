@@ -160,7 +160,7 @@ The total list of models so far implemented are:
 \index{Frame order!simulation|textbf}
 
 To validate the derived frame order matrix equations for the models, the real frame order matrix values for a given parameter set can be simulated.
-The following \href{http://www.nmr-relax.com}{relax} script was used for simulating the isotropic cone and pseudo-ellipse frame order matrices.
+The following script was used for simulating the isotropic cone and pseudo-ellipse frame order matrices.
 As the other models are parametric restrictions of these two models, the simpler models were not simulated.
 The script allows for both an `in\_frame' and `out\_of\_frame' or `axis2\_1\_3' mode to observe the components both within the motional eigenframe and in a rotated frame.
 The value of \pycode{VAR} can be set to \pystring{ISO} for selecting the isotropic cone $\conetheta$ parameter to vary, or \pystring{X}, \pystring{Y}, or \pystring{Z} to vary the pseudo-ellipse $\conethetax$, $\conethetay$, and $\conesmax$ parameters respectively.
@@ -448,7 +448,7 @@ The active matrix elements which are not zero due to symmetries, in Kronecker pr
 
 \newsubparagraph[Frame order matrix simulation and calculation]{Rotor frame order matrix simulation and calculation}
 
-The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: rotor 1st degree frame order matrix} and~\ref{eq: rotor 2nd degree frame order matrix} above in the software relax.
+The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: rotor 1st degree frame order matrix} and~\ref{eq: rotor 2nd degree frame order matrix} above.
 Frame order matrix $\FOone$ and $\FOtwo$ values were both simulated and calculated, both within and out of the motional eigenframe.
 The in-frame $\FOone$ and $\FOtwo$ values are shown in figure~\ref{fig: simulated and calculated in-frame 1st and 2nd degree rotor frame order}.
 The out-of-frame $\FOone$ and $\FOtwo$ values are shown in figure~\ref{fig: simulated and calculated out-of-frame 1st and 2nd degree rotor frame order}.
@@ -577,7 +577,7 @@ The frame order matrix in Kronecker product notation is fixed as
 
 \newsubparagraph[Frame order matrix simulation and calculation]{Free rotor frame order matrix simulation and calculation}
 
-The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: free rotor 1st degree frame order matrix} and~\ref{eq: free rotor 2nd degree frame order matrix} above in the software relax.
+The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: free rotor 1st degree frame order matrix} and~\ref{eq: free rotor 2nd degree frame order matrix} above.
 Frame order matrix $\FOone$ and $\FOtwo$ values were both simulated and calculated, both within and out of the motional eigenframe.
 The in-frame $\FOone$ and $\FOtwo$ values are shown in figure~\ref{fig: simulated and calculated in-frame 1st and 2nd degree free rotor frame order}.
 The out-of-frame $\FOone$ and $\FOtwo$ values are shown in figure~\ref{fig: simulated and calculated out-of-frame 1st and 2nd degree free rotor frame order}.
@@ -773,7 +773,7 @@ The \nth{2} degree frame order matrix with tensor rank-4 consists of the followi
 
 \newsubparagraph[Frame order matrix simulation and calculation]{Isotropic cone frame order matrix simulation and calculation}
 
-The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: iso cone 1st degree frame order matrix} and~\ref{eq: iso cone 2nd degree frame order matrix} above in the software relax.
+The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: iso cone 1st degree frame order matrix} and~\ref{eq: iso cone 2nd degree frame order matrix} above.
 Frame order matrix $\FOone$ and $\FOtwo$ values were both simulated and calculated, both within and out of the motional eigenframe.
 The in-frame $\FOone$ values are shown in figure~\ref{fig: simulated and calculated in-frame 1st degree iso cone frame order} and $\FOtwo$ in figure~\ref{fig: simulated and calculated in-frame 2nd degree iso cone frame order}.
 The out-of-frame $\FOone$ values are shown in figure~\ref{fig: simulated and calculated out-of-frame 1st degree iso cone frame order} and $\FOtwo$ in figure~\ref{fig: simulated and calculated out-of-frame 2nd degree iso cone frame order}.
@@ -940,7 +940,7 @@ After factorisation, the equations are
 
 \newsubparagraph[Frame order matrix simulation and calculation]{Torsionless isotropic cone frame order matrix simulation and calculation}
 
-The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: iso cone, torsionless 1st degree frame order matrix} and~\ref{eq: iso cone, torsionless 2nd degree frame order matrix} above in the software relax.
+The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: iso cone, torsionless 1st degree frame order matrix} and~\ref{eq: iso cone, torsionless 2nd degree frame order matrix} above.
 Frame order matrix $\FOone$ and $\FOtwo$ values were both simulated and calculated, both within and out of the motional eigenframe.
 The in-frame $\FOone$ and $\FOtwo$ values are shown in figure~\ref{fig: simulated and calculated in-frame 1st and 2nd degree iso cone, torsionless frame order}.
 The out-of-frame $\FOone$ and $\FOtwo$ values are shown in figure~\ref{fig: simulated and calculated out-of-frame 1st and 2nd degree iso cone, torsionless frame order}.
@@ -1082,7 +1082,7 @@ The \nth{2} degree frame order matrix with tensor rank-4 consists of the followi
 
 \newsubparagraph[Frame order matrix simulation and calculation]{Free rotor isotropic cone frame order matrix simulation and calculation}
 
-The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: iso cone, free rotor 1st degree frame order matrix} and~\ref{eq: iso cone, free rotor 2nd degree frame order matrix} above in the software relax.
+The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: iso cone, free rotor 1st degree frame order matrix} and~\ref{eq: iso cone, free rotor 2nd degree frame order matrix} above.
 Frame order matrix $\FOone$ and $\FOtwo$ values were both simulated and calculated, both within and out of the motional eigenframe.
 The in-frame $\FOone$ and $\FOtwo$ values are shown in figure~\ref{fig: simulated and calculated in-frame 1st and 2nd degree iso cone, free rotor frame order}.
 The out-of-frame $\FOone$ and $\FOtwo$ values are shown in figure~\ref{fig: simulated and calculated out-of-frame 1st and 2nd degree iso cone, free rotor frame order}.
@@ -1579,7 +1579,7 @@ All other frame order matrix elements can be numerically shown to be zero.
 
 \newsubparagraph[Frame order matrix simulation and calculation]{Pseudo-ellipse frame order matrix simulation and calculation}
 
-The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: pseudo-ellipse 1st degree frame order matrix} and~\ref{eq: pseudo-ellipse 2nd degree frame order matrix} above in the software relax.
+The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: pseudo-ellipse 1st degree frame order matrix} and~\ref{eq: pseudo-ellipse 2nd degree frame order matrix} above.
 Frame order matrix $\FOone$ and $\FOtwo$ values were both simulated and calculated, both within and out of the motional eigenframe.
 The in-frame $\FOone$ values are shown in figure~\ref{fig: simulated and calculated in-frame 1st degree pseudo-ellipse frame order} and $\FOtwo$ in figure~\ref{fig: simulated and calculated in-frame 2nd degree pseudo-ellipse frame order}.
 The out-of-frame $\FOone$ values are shown in figure~\ref{fig: simulated and calculated out-of-frame 1st degree pseudo-ellipse frame order} and $\FOtwo$ in figure~\ref{fig: simulated and calculated out-of-frame 2nd degree pseudo-ellipse frame order}.
@@ -1881,7 +1881,7 @@ The \nth{2} degree frame order matrix with tensor rank-4 consists of the followi
 
 \newsubparagraph[Frame order matrix simulation and calculation]{Torsionless pseudo-ellipse frame order matrix simulation and calculation}
 
-The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: pseudo-ellipse, torsionless 1st degree frame order matrix} and~\ref{eq: pseudo-ellipse, torsionless 2nd degree frame order matrix} above in the software relax.
+The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: pseudo-ellipse, torsionless 1st degree frame order matrix} and~\ref{eq: pseudo-ellipse, torsionless 2nd degree frame order matrix} above.
 Frame order matrix $\FOone$ and $\FOtwo$ values were both simulated and calculated, both within and out of the motional eigenframe.
 The in-frame $\FOone$ values are shown in figure~\ref{fig: simulated and calculated in-frame 1st degree pseudo-ellipse, torsionless frame order} and $\FOtwo$ in figure~\ref{fig: simulated and calculated in-frame 2nd degree pseudo-ellipse, torsionless frame order}.
 The out-of-frame $\FOone$ values are shown in figure~\ref{fig: simulated and calculated out-of-frame 1st degree pseudo-ellipse, torsionless frame order} and $\FOtwo$ in figure~\ref{fig: simulated and calculated out-of-frame 2nd degree pseudo-ellipse, torsionless frame order}.
@@ -2141,7 +2141,7 @@ The \nth{2} degree frame order matrix with tensor rank-4 consists of the followi
 
 \newsubparagraph[Frame order matrix simulation and calculation]{Free rotor pseudo-ellipse frame order matrix simulation and calculation}
 
-The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: pseudo-ellipse, free rotor 1st degree frame order matrix} and~\ref{eq: pseudo-ellipse, free rotor 2nd degree frame order matrix} above in the software relax.
+The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: pseudo-ellipse, free rotor 1st degree frame order matrix} and~\ref{eq: pseudo-ellipse, free rotor 2nd degree frame order matrix} above.
 Frame order matrix $\FOone$ and $\FOtwo$ values were both simulated and calculated, both within and out of the motional eigenframe.
 The in-frame $\FOone$ values are shown in figure~\ref{fig: simulated and calculated in-frame 1st degree pseudo-ellipse, free rotor frame order} and $\FOtwo$ in figure~\ref{fig: simulated and calculated in-frame 2nd degree pseudo-ellipse, free rotor frame order}.
 The out-of-frame $\FOone$ values are shown in figure~\ref{fig: simulated and calculated out-of-frame 1st degree pseudo-ellipse, free rotor frame order} and $\FOtwo$ in figure~\ref{fig: simulated and calculated out-of-frame 2nd degree pseudo-ellipse, free rotor frame order}.
@@ -2379,7 +2379,7 @@ The \nth{2} degree frame order matrix with tensor rank-4 consists of the followi
 
 \newsubparagraph[Frame order matrix simulation and calculation]{Double rotor frame order matrix simulation and calculation}
 
-The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: double rotor 1st degree frame order matrix} and~\ref{eq: double rotor 2nd degree frame order matrix} above in the software relax.
+The frame order matrix element simulation script from Section~\ref{sect: frame order simulation}, page~\pageref{sect: frame order simulation} was used to compare the implementation of equations~\ref{eq: double rotor 1st degree frame order matrix} and~\ref{eq: double rotor 2nd degree frame order matrix} above.
 Frame order matrix $\FOone$ and $\FOtwo$ values were both simulated and calculated, both within and out of the motional eigenframe.
 The in-frame $\FOone$ values are shown in figure~\ref{fig: simulated and calculated in-frame 1st degree double rotor frame order} and $\FOtwo$ in figure~\ref{fig: simulated and calculated in-frame 2nd degree double rotor frame order}.
 The out-of-frame $\FOone$ values are shown in figure~\ref{fig: simulated and calculated out-of-frame 1st degree double rotor frame order} and $\FOtwo$ in figure~\ref{fig: simulated and calculated out-of-frame 2nd degree double rotor frame order}.

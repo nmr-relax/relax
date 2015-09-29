@@ -50,7 +50,7 @@ Two techniques with better convergence properties are the Monte Carlo integratio
 As the convergence properties are better than that of a uniform distribution, the Monte Carlo integration algorithm is a viable option for using the PCS in the frame order analysis.
 Less states N are required for a reasonable estimate of the back-calculated PCS value.
 By randomly selecting N orientations of the domain which lie within the cone half-angle limits, back-calculating the PCS value for each state, and then averaging over all N states, the PCS value for the model can be numerically integrated.
-The original implementation in the software relax used this technique.
+The original implementation used this technique.
 
 
 
@@ -63,7 +63,7 @@ The original implementation in the software relax used this technique.
 Although the Monte Carlo numerical integration algorithm is a huge improvement on both the quadratic integration and the uniform distribution numerical integration techniques, it was nevertheless still too slow for optimising the frame order models.
 Therefore the quasi-random integration techniques were investigated, specifically using the Sobol' point sequence \citep{Sobol67}.
 
-To implement the numerical integration of the PCS using the quasi-random Sobol' sequence, the LGPL licenced Sobol library of John Burkardt and Corrado Chisari from \url{http://people.sc.fsu.edu/~jburkardt/py_src/sobol/sobol.html} was integrated into the software relax.
+To implement the numerical integration of the PCS using the quasi-random Sobol' sequence, the LGPL licenced Sobol library of John Burkardt and Corrado Chisari from \url{http://people.sc.fsu.edu/~jburkardt/py_src/sobol/sobol.html} was integrated into the relax library.
 
 For each point coordinate $s_i$, the following functions were used to translate from linear space sampling to rotational space
 \begin{subequations}
@@ -90,7 +90,7 @@ As generating Sobol' points is computationally expensive, for speed this operati
 Hence the Sobol' points are not dynamically generated and a special algorithm is required to ensure adequate 1D, 2D and 3D sampling in the torsion-tilt angle space.
 The problem is that as the number of dimensions $M$ increases, the density of a fixed $N$ number of points in the $M$ dimensions decreases.
 For example if a fixed value of $N$ is chosen so that the pseudo-ellipse model is properly sampled, then the rotor model will be severely oversampled and take far too long to optimise.
-The protocol implemented in the software relax~\citep{dAuvergneGooley08ab} to avoid this problem is:
+The protocol implemented to avoid this problem is:
 \begin{itemize}
     \item Generate $N.Ov.10^M$ points, where $N$ is the maximum number of Sobol' points to be used, $Ov$ is the oversampling factor defaulting to 1, and $M$ is the dimensions of the torsion-tilt angle space.
     \item Convert all Sobol' points into torsion-tilt angles.
@@ -105,9 +105,9 @@ During optimisation, the following two checks are implemented:
 
 For most cases, N should be reached.
 However if the cone or torsion half-angles are extremely small, then the points used may be less than N.
-This is therefore monitored and printed out after each optimisation step in relax.
+This is therefore monitored and printed out after each optimisation step.
 For these cases, $Ov$ can be increased for better sampling.
-This is implemented in the relax \uf{frame\ufus{}order\ufsep{}sobol\ufus{}setup} user function.
+This is implemented in the \uf{frame\ufus{}order\ufsep{}sobol\ufus{}setup} user function.
 
 
 
@@ -118,7 +118,7 @@ This is implemented in the relax \uf{frame\ufus{}order\ufsep{}sobol\ufus{}setup}
 % From page 153, book 6.
 \subsection{Parallelization and running on a cluster}
 
-Four different attempts at parallelizing the calculations in relax using the MPI 2 protocol resulted in no speeds up.
+Four different attempts at parallelizing the calculations using the MPI 2 protocol resulted in no speeds up.
 In each case, the calculations were up to 2 times slower.
 It appears as though the data transfer of the PCS, atomics positions, vectors, etc. between nodes is slower than the calculations.
 As parallelization for speeding up the calculations can only achieve around two orders of magnitude faster calculations, the technique was abandoned.
@@ -301,7 +301,7 @@ This speeds up the calculation by two orders of magnitude.
 \subsubsection{The zooming grid search}
 \index{optimisation!algorithm!grid search!zooming|textbf}
 
-This is implemented in the software \href{http://www.nmr-relax.com}{relax} rather than in the \href{https://gna.org/projects/minfx/}{minfx optimisation library}\index{optimisation!minfx}.
+This is implemented in relax rather than in the \href{https://gna.org/projects/minfx/}{minfx optimisation library}\index{optimisation!minfx}.
 As the grid search is parallelised to run on a cluster using OpenMPI\index{MPI!OpenMPI}, it can sometimes be advantageous to use a fine grid search to find a better optimisation starting position for the Nelder-Mead simplex algorithm\index{optimisation!algorithm!Nelder-Mead simplex}.
 Rather than simply increasing the number of increments in the grid search, iteratively performing the grid search while zooming into the optimised parameter values is a more efficient alternative.
 This zooming grid search can be seen in the frame order optimisation script on page~\pageref{sect: frame order analysis script}.
@@ -339,7 +339,7 @@ For this the function tolerance cutoff for optimisation is used.
 But the use of the amount of sampling through the Sobol' sequence can result in much greater speed ups.
 The reason is because each point in the Sobol' sequence requires a fixed amount of time to calculate the PCSs for all spins, so time is linearly correlated with the number of points.
 
-Using the synthetic CaM data within relax (at \texttt{test\_suite/shared\_data/frame\_order/cam/}), the ideal number of Sobol' points was found to be \{100, 1000, 10000\}.
+Using synthetic CaM data found in \directory{test\_suite/shared\_data/frame\_order/cam/}, the ideal number of Sobol' points was found to be \{100, 1000, 10000\}.
 This is combined with a function tolerance cutoff of \{1e$^{-2}$, 1e$^{-3}$, 1e$^{-4}$\}.
 
 

@@ -146,7 +146,7 @@ In the isotropic cone, the $\conethetax \equiv \conethetay$ condition collapses 
 The multiple minima correspond to permutations of the motional system - the eigenframe x, y and z-axes as well as the cone opening angles $\conethetax$, $\conethetay$, and $\conesmax$ associated with these axes.
 But as the mechanics of the cone angles is not identical to that of the torsion angle, only one of the three local minima is the global minimum.
 
-As the \href{https://gna.org/projects/minfx/}{minfx library} used in the frame order analysis implemented in \href{http://www.nmr-relax.com}{relax} currently only implements local optimisation algorithms, and because a global optimiser cannot be guarranteed to converge to the correct minima, a different approach is required:
+As the \href{https://gna.org/projects/minfx/}{minfx library} used in the frame order analysis currently only implements local optimisation algorithms, and because a global optimiser cannot be guaranteed to converge to the correct minima, a different approach is required:
 \begin{itemize}
     \item Optimise to one solution.
     \item Duplicate the data pipe for the model as `permutation A'.
@@ -155,9 +155,9 @@ As the \href{https://gna.org/projects/minfx/}{minfx library} used in the frame o
     \item Repeat for the remaining `permutation B' solution (only for the pseudo-ellipse models).
 \end{itemize}
 
-These steps have been incorporated into the automated analysis protocol in relax.
+These steps have been incorporated into the automated analysis protocol.
 
-The permutation step has been implemented as the \uf{frame\ufus{}order\ufsep{}permute\ufus{}axes} user function in relax.
+The permutation step has been implemented as the \uf{frame\ufus{}order\ufsep{}permute\ufus{}axes} user function.
 It is complicated by the fact that $\conethetax$ is defined as a rotation about the y-axis and $\conethetay$ is about the x-axis.
 See table~\ref{table: frame order axis permutations} on page~\pageref{table: frame order axis permutations} for the pseudo-ellipse model permutations.
 These are also illustrated in figure~\ref{fig: pseudo-ellipse axis permutations} on page~\pageref{fig: pseudo-ellipse axis permutations}.
