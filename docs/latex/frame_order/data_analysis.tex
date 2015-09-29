@@ -461,3 +461,17 @@ PIPE_BUNDLE = "Frame Order (%s)" % asctime(localtime())
 # Do not change!
 Frame_order_analysis(pipe_bundle=PIPE_BUNDLE, results_dir='refinement', pre_run_dir='.', opt_full=OPT_FULL, opt_mc=OPT_MC, mc_sim_num=MC_NUM, models=MODELS)
 \end{lstlisting}
+
+
+
+% Computation times.
+%~~~~~~~~~~~~~~~~~~~
+
+\subsection{Computation times}
+
+It should be noted that computation times are currently very long, in the order of months.
+This depends on the models chosen, the amount and quality of the input data, and the refinement step.
+This is due to the numeric integration for the PCS data.
+Calculations can range from one to six months on a very fast computer.
+Unfortunately parallelization was not possible, but multiple analyses can be performed simultaneously on multiple core or multiple CPU systems.
+A dedicated machine with a reliable UPS system is highly recommended.
