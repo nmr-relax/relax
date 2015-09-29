@@ -17,7 +17,6 @@
 % The ordering of a vector.
 %--------------------------
 
-% From page 139-140, book 1.
 \subsubsection{The ordering of a vector}
 
 Let $\mu(t)$ be a time dependent vector defined within an arbitrary fixed frame $F$ as
@@ -79,7 +78,6 @@ Hence the non-zero order matrix is
 % The ordering of a frame.
 %--------------------------
 
-% From page 141, book 1.
 \subsubsection{The ordering of a frame}
 
 Let the frame $C(t)$ be time dependent within an arbitrary fixed frame $F$.
@@ -107,7 +105,7 @@ This is a rank-4, three dimensional rotational tensor defining the ordering of t
 This is the definition of the second degree frame order tensor.
 
 The matrix form of the second degree frame order tensor in rank-2, 9D Kronecker product notation is
-\begin{equation} \label{eq: frame order matrix 9D}    % From page 127, book 5.
+\begin{equation} \label{eq: frame order matrix 9D}
     \FOtwo(t) =
         \overline{\left[
             \begin{array}{@{}ccc;{2pt/4pt}ccc;{2pt/4pt}ccc@{}}
@@ -132,7 +130,7 @@ where
 
 This is a rank-2, 3D order matrix of rank-2, 3D order matrices.
 To see this, the $T_{14}$ rank-4 matrix transpose of $\FOtwo$ in Kronecker product notation is
-\begin{equation} \label{eq: frame order matrix 9D T14}    % From page 127, book 5.
+\begin{equation} \label{eq: frame order matrix 9D T14}
     \FO^{T_{14}}(t) =
         \overline{\left[
             \begin{array}{@{}ccc;{2pt/4pt}ccc;{2pt/4pt}ccc@{}}
@@ -153,7 +151,7 @@ To see this, the $T_{14}$ rank-4 matrix transpose of $\FOtwo$ in Kronecker produ
 The 3D matrix in the top left corner is the ordering of the x-axis with itself, the central matrix is the ordering of the y-axis with itself, and the bottom right is the ordering of the z-axis with itself.
 The off-diagonal 3D matrices are the cross-correlations between the three axes.
 Using the notation $e_x$, $e_y$ and $e_z$ for the orthogonal axis system of the time dependent frame $C(t)$, the second degree frame order matrix can be written as
-\begin{equation}    % From page 50, book 4.
+\begin{equation}
     \FO^{T_{14}}(t) =
         \begin{bmatrix}
             \overline{e_x \otimes e_x} & \overline{e_x \otimes e_y} & \overline{e_x \otimes e_z} \\
@@ -163,12 +161,12 @@ Using the notation $e_x$, $e_y$ and $e_z$ for the orthogonal axis system of the 
 \end{equation}
 
 If the rank-2, 3D order matrix between the axes A and B is denoted as
-\begin{equation}    % From page 127, book 5.
+\begin{equation}
     S_\textrm{AB}(t) = \overline{e_A \otimes e_B},
 \end{equation}
 
 then the frame order matrix is
-\begin{equation}    % From page 127, book 5.
+\begin{equation}
     \FO^{T_{14}}(t) =
         \begin{bmatrix}
             S_\textrm{XX}(t) & S_\textrm{XY}(t) & S_\textrm{XZ}(t) \\
@@ -181,7 +179,6 @@ then the frame order matrix is
 The frame order matrix is diagonally symmetric, as can be seen in the $T_{14}$ transpose of the matrix in rank-2, 9D Kronecker product form (equation~\ref{eq: frame order matrix 9D T14}, hence for the second degree frame order matrix there are 45 unique elements.
 For the 9D Kronecker product notation of equation~\ref{eq: frame order matrix 9D}, this transformed diagonal symmetry can be schematically represented as
 
-% From page 162, book 1.
 \setlength{\unitlength}{0.5cm}
 \begin{picture}(19,9)
     % Frame order symbol.
@@ -267,7 +264,7 @@ For the 9D Kronecker product notation of equation~\ref{eq: frame order matrix 9D
 
 When rotational symmetries are present in the time modulation of the frame $C(t)$ then, according to \citet{Perrin36}, the averages of the double products $\overline{c_{ij}c_{kl}}$ where an index appears only once is zero.
 In this case, the active frame order matrix elements are
-\begin{equation} \label{eq: frame order matrix 9D symmetry}    % From page 144, book 1.
+\begin{equation} \label{eq: frame order matrix 9D symmetry}
     \FOtwo(t) =
         \left[
             \begin{array}{@{}ccc;{2pt/4pt}ccc;{2pt/4pt}ccc@{}}
@@ -293,7 +290,6 @@ It is the weighted sum of the three rank-4 identity matrices $I_1$, $I_2$ and $I
 % The fourth rank identity matrices.
 %-----------------------------------
 
-% From pages 3-4, book 4.
 \subsubsection{The fourth rank identity matrices}
 
 According to \citet{Spencer80}, the rank-4 identity matrices are defined as
@@ -383,7 +379,6 @@ and
 % Tensor power of the frame order.
 %---------------------------------
 
-% From pages 39, 41-42, book 3.
 \subsubsection{Tensor power of the frame order}
 
 The rank-4, 3D frame order tensor of equation~\ref{eq: 2nd degree frame order definition} on page~\pageref{eq: 2nd degree frame order definition} was derived for second order rotational physical processes.
@@ -469,14 +464,13 @@ Generalising from the \nth{2} to the n$^\textrm{th}$-order, the generalised fram
 % Rotation to the average position frame of the rigid body.
 %----------------------------------------------------------
 
-% From page 42, book 3, page 41, book 4 and page 93&96, book 6.
 \subsubsection{Rotation to the average position frame of the rigid body}
 
 For the modelling aspect of the frame order theory, one more rotation is required.
 In equation~\ref{eq: frame order equation, arbitrary frame}, it is assumed that the starting position for the moving rigid body is that of its motional average.
 However in the initial 3D structure, this is not the case and an additional rotation to the average position $R_\textrm{ave}$ is required.
 Taking this into account, the generalised frame order tensor is defined as
-\begin{equation}    % From page 41, book 4.
+\begin{equation}
     \FOn(t) = R_\textrm{eigen}^{\otimes n} \cdot \overline{R^{\otimes n}(t)} \cdot R_\textrm{eigen}^{T \otimes n} \cdot R_\textrm{ave}^{T \otimes n} ,
 \end{equation}
 
@@ -507,7 +501,6 @@ Therefore the $R_\textrm{ave}$ can be dropped and equation~\ref{eq: frame order 
 % Frame order and the alignment tensor.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-% From pages 103-106, 114-115, book 3 and pages 128-129, book 5.
 \subsection{Frame order and the alignment tensor}
 
 
@@ -523,7 +516,6 @@ For a two domain molecular system, when one domain is internally aligned with fo
 
 
 % The RDC.
-% From page 106, book 1.
 \paragraph{The RDC}
 
 The residual dipolar coupling is given by
@@ -546,7 +538,6 @@ as the vector $\unitvectr$ is considered time independent in the molecular refer
 
 
 % The PCS.
-% From page 88, book 6.
 \paragraph{The PCS}
 
 The pseudo-contact shift equation is simply
@@ -709,7 +700,6 @@ For the alignment tensor, the 81 elements of the frame order matrix have recombi
 % The alignment tensor is the anisotropic part of a frame order matrix.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-% From page 174, book 3.
 \subsubsection{The alignment tensor is the anisotropic part of a frame order matrix}
 
 The alignment tensor is related to the orientational probability tensor by
@@ -745,7 +735,6 @@ Therefore the alignment tensor can then be written as the anisotropic part of th
 % Ball-and-socket joint.
 %-----------------------
 
-% From page 88-95, book 6.
 \subsubsection{Atomic level mechanics of the single pivot}
 
 For the PCS, the lanthanide ion to nuclear vector is
@@ -804,7 +793,6 @@ The vector $\vectr_{\textrm{PN}}$ is independent of alignment so can be calculat
 % Pivoted PCS.
 %-------------
 
-% From page 95-96, book 6.
 \subsubsection{PCS and single pivoted motions}
 
 For a single state $i$, the PCS value when substituting~\ref{eq: pivoted rotation vector i} into~\ref{eq: PCS equation} is
@@ -841,7 +829,6 @@ Due to the distance normalisation factor in these equations, the symbolic integr
 % Double pivot.
 %~~~~~~~~~~~~~~
 
-% From pages 41-43, book 7.
 \subsection{Double pivoted motions}
 
 When the motion of a multiple rigid body system can be described as two rotations about two different pivots, the modulation of the PCS becomes more complicated.
@@ -952,7 +939,6 @@ For the double motion of the lanthanide-atom vector $\vectr_{\textrm{LN}}^{(2)}$
 % Free ellipsoidal Brownian diffusion.
 %-------------------------------------
 
-% From pages 131-132, 148, book 3.
 \subsubsection{Free ellipsoidal Brownian diffusion}
 \label{sect: Free ellipsoidal Brownian diffusion}
 

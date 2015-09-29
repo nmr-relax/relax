@@ -1,7 +1,6 @@
 % The PCS.
 %%%%%%%%%%
 
-% From pages 151-156, book 6.
 \section{Computation time and the numerical integration of the PCS}
 
 The numerical integration of the PCS using standard quadratic integration for the frame order models is impractical and cannot be used.
@@ -13,7 +12,6 @@ Therefore a number of tricks have been implemented to speed up the calculations.
 % Numerical integration techniques.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-% From pages 102-106, book 6.
 \subsection{Numerical integration techniques}
 
 The numerical integration is approximated as
@@ -44,7 +42,6 @@ Two techniques with better convergence properties are the Monte Carlo integratio
 % Monte Carlo numerical integration.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-% From pages 102-106, book 6.
 \subsubsection{Monte Carlo numerical integration}
 
 As the convergence properties are better than that of a uniform distribution, the Monte Carlo integration algorithm is a viable option for using the PCS in the frame order analysis.
@@ -57,7 +54,6 @@ The original implementation used this technique.
 % Numerical integration using quasi-random Sobol' points.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-% From page 152, book 6.
 \subsubsection{Quasi-random numerical integration -- Sobol' point sequence}
 
 Although the Monte Carlo numerical integration algorithm is a huge improvement on both the quadratic integration and the uniform distribution numerical integration techniques, it was nevertheless still too slow for optimising the frame order models.
@@ -83,7 +79,6 @@ Each frame order model uses a different set of $\theta$, $\phi$, and $\sigma$ an
 % Sobol' oversampling.
 %~~~~~~~~~~~~~~~~~~~~~
 
-% From pages 82-84, book 7.
 \subsubsection{Oversampling the Sobol' sequence points}
 
 As generating Sobol' points is computationally expensive, for speed this operation occurs during target function initialisation prior to optimisation.
@@ -115,7 +110,6 @@ This is implemented in the \uf{frame\ufus{}order\ufsep{}sobol\ufus{}setup} user 
 % Parallelization and running on a cluster.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-% From page 153, book 6.
 \subsection{Parallelization and running on a cluster}
 
 Four different attempts at parallelizing the calculations using the MPI 2 protocol resulted in no speeds up.
@@ -129,7 +123,6 @@ As parallelization for speeding up the calculations can only achieve around two 
 % Frame order model nesting.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-% From pages 66-69, book 7.
 \subsection{Frame order model nesting}
 \index{Frame order!model nesting}
 
@@ -250,7 +243,6 @@ This massively collapses the dimensionality of the initial grid search.
 % PCS subset.
 %~~~~~~~~~~~~
 
-% From page 155, book 6.
 \subsection{PCS subset}
 
 Another trick that can be used to speed up the optimisation is to use a subset of all PCS values.
@@ -282,7 +274,6 @@ A number of optimisation techniques can help speed up this part including using 
 %---------------------------
 
 
-% From page 155, book 6.
 \subsubsection{Low precision grid search}
 \index{optimisation!algorithm!grid search!low precision|textbf}
 
@@ -297,7 +288,6 @@ This speeds up the calculation by two orders of magnitude.
 %-------------------------
 
 
-% From page 70, book 7.
 \subsubsection{The zooming grid search}
 \index{optimisation!algorithm!grid search!zooming|textbf}
 
@@ -313,7 +303,6 @@ This zooming grid search can be seen in the frame order optimisation script on p
 %-----------------------------
 
 
-% From page 70, book 7.
 \subsubsection{The alternating grid search}
 \index{optimisation!algorithm!grid search!alternating|textbf}
 
@@ -330,7 +319,6 @@ The results from the alternation should be carefully checked and the technique a
 %--------------------------------
 
 
-% From page 154, book 6.
 \subsubsection{Zooming precision optimisation}
 \index{optimisation!algorithm!precision!zooming|textbf}
 
@@ -357,7 +345,6 @@ This is combined with a function tolerance cutoff of \{1e$^{-2}$, 1e$^{-3}$, 1e$
 %---------------------------------------
 
 
-% From page 156, book 6.
 \subsubsection{Low precision Monte Carlo simulations}
 \index{Monte Carlo simulations|textbf}
 

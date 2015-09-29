@@ -52,7 +52,6 @@ The mechanical system consists of a single pivot point and three rotational degr
 % Tilt and torsion angles.
 %-------------------------
 
-% From pages 138-142, book 4.
 \subsection{Tilt and torsion angles from robotics}
 
 To describe the motional mechanics of a ball and socket joint, the Euler angle system is a poor representation as the angles do not correspond to the mechanical modes of motion.
@@ -105,7 +104,7 @@ The simplest model for the torsion angle would be the restriction
 
 The angle can be completely restricted as $\conesmax = 0$ to create torsionless models.
 In this case, the tilt and torsion rotation matrix simplifies to
-\begin{subequations}    % From page 120, book 5.
+\begin{subequations}
 \begin{align}
     R(\theta, \phi, 0)
         &= R_z(\phi)R_y(\theta)R_z(-\phi) , \\
@@ -257,7 +256,6 @@ The rotor model is defined by its rotation axis and a pivot point to position th
 
 
 % Rotor model parameterisation.
-% From pages 44-47, book 7.
 \subsection{Rotor parameterisation}
 
 The natural way to parameterise the rotation axis of rotor frame order model is to use a 3D point, the pivot point, and a unit vector using the spherical angle basis set.
@@ -306,7 +304,6 @@ The angle $\frameaxa$ is obtained from $\raxhat$ as
 
 
 % Rotor model equations.
-% This is from page 147, book 5.
 \subsection{Rotor equations}
 
 The only motion is in the torsion angle about the rotation axis.
@@ -477,7 +474,6 @@ where $\aveposi$ are the average domain position translations and rotations, $\f
 
 
 % Free rotor model equations.
-% This is from page 148, book 5.
 \subsection{Free rotor equations}
 
 \begin{figure}
@@ -595,7 +591,6 @@ The out-of-frame $\FOone$ and $\FOtwo$ values are shown in figure~\ref{fig: simu
 % Isotropic cone model parameterisation.
 %---------------------------------------
 
-% From page 116, book 3.
 \subsection{Isotropic cone parameterisation}
 
 In this model, the tilt component of the tilt and torsion angle system is modelled simply as
@@ -621,7 +616,6 @@ where $\aveposi$ are the average domain position translations and rotations, $\f
 
 
 % Isotropic cone model equations.
-% From pages 124 and 135-137, book 5.
 \subsection{Isotropic cone equations}
 
 \begin{figure}
@@ -800,7 +794,6 @@ where $\aveposi$ are the average domain position translations and rotations, $\f
 
 
 % Torsionless isotropic cone model equations.
-% This is from page 146, book 5.
 \subsection{Torsionless isotropic cone equations}
 
 \begin{figure}
@@ -967,7 +960,6 @@ where $\aveposi$ are the average domain position translations and rotations, $\f
 
 
 % Free rotor isotropic cone model equations.
-% This is from page 138, book 5.
 \subsection{Free rotor isotropic cone equations}
 
 \begin{figure}
@@ -1102,7 +1094,6 @@ The out-of-frame $\FOone$ and $\FOtwo$ values are shown in figure~\ref{fig: simu
 % Pseudo-ellipse model parameterisation.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-% From pages 14 and 62, book 5.
 \subsection{Pseudo-ellipse parameterisation}
 
 To extend to the next level of motional complexity above the isotropic cone models, an anisotropic cone can be modelled.
@@ -1152,7 +1143,6 @@ where $\aveposi$ are the average domain position translations and rotations, $\f
 % Pseudo-elliptic cosine 2D trigonometric function.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-% From pages 63-73, book 5.
 \subsection{Derivation of a 2D trigonometric function - the pseudo-elliptic cosine}
 
 For the surface normalisation factor of the pseudo-elliptic cone, the integral from equation~\ref{eq: pseudo-ellipse surface norm non-integratable} on page~\pageref{eq: pseudo-ellipse surface norm non-integratable} is
@@ -1250,7 +1240,6 @@ The numerical representation of this function is shown in figure~\ref{fig: pec f
 % Pseudo-ellipse model equations.
 %--------------------------------
 
-% This is from page 139-144, book 5.
 \subsection{Pseudo-ellipse equations}
 
 \begin{figure}
@@ -1343,7 +1332,6 @@ The numerical representation of this function is shown in figure~\ref{fig: pec f
 
 
 
-% From page 78, book 5.
 \subsubsection{Pseudo-ellipse rotation matrices}
 
 For the pseudo-ellipse model, the full torsion-tilt system is used.
@@ -1587,7 +1575,6 @@ The out-of-frame $\FOone$ values are shown in figure~\ref{fig: simulated and cal
 
 
 % The torsionless pseudo-ellipse model.
-% This is from pages 120-121 and 131-133, book 5.
 \section{Torsionless pseudo-ellipse frame order model}
 \index{Frame order!model!pseudo-ellipse, torsionless|textbf}
 
@@ -1689,7 +1676,6 @@ where $\aveposi$ are the average domain position translations and rotations, $\f
 \end{figure}
 
 
-% From page 120, book 5.
 \subsubsection{Torsionless pseudo-ellipse rotation matrices}
 
 Setting the torsion angle $\sigma$ to zero in the full torsion-tilt rotation matrix of equation~\ref{eq: R torsion-tilt}, the matrix becomes
@@ -1909,7 +1895,6 @@ where $\aveposi$ are the average domain position translations and rotations, $\f
 
 
 % Free rotor pseudo-ellipse model equations.
-% From pages 123 and 133-134, book 5.
 \subsection{Free rotor pseudo-ellipse equations}
 
 \begin{figure}
@@ -2158,7 +2143,6 @@ Due to the nature of the RDC and PCS data used, it may not be possible to distin
 
 
 % Double rotor parameterisation.
-% From pages 55-56, book 7.
 \subsection{Double rotor parameterisation}
 
 Assuming the axes are orthogonal for the model, the size of the set of non-redundant parameters is 15.
@@ -2187,7 +2171,6 @@ where $\aveposi$ are the average domain position translations and rotations, $\f
 
 
 % Double rotor equations.
-% From pages 58-64, book 7.
 \subsection{Double rotor equations}
 
 The double rotor model consists of two standard rotations, the first about the x-axis and the second about the y-axis.
