@@ -15,12 +15,10 @@ The resultant alignment tensor and optimised paramagnetic Ln$^{3+}$ position is 
 \subsection{The N-state model analysis scripts}
 \label{sect: N-state model analysis scripts}
 
-For determining the alignment tensor and paramagnetic Ln$^{3+}$ position from the RDC and PCS data, the N-state model or ensemble analysis in the software \href{http://www.nmr-relax.com}{relax} has been used.
-The script used was:
+For determining the alignment tensor and paramagnetic Ln$^{3+}$ position from the RDC and PCS data, the N-state model or ensemble analysis should be used.
+The script is:
 
 \begin{lstlisting}
-# Optimisation as described in Book 6, p126.
-
 # Python imports.
 from numpy import array
 
@@ -130,6 +128,25 @@ pcs.corr_plot(file="pcs_corr.agr", force=True)
 state.save('tensor_fit', force=True)
 \end{lstlisting}
 
+The calculation of the additional PCS error due to structural noise is very important for the subsequent frame order analysis.
+A plot of such a calculation is shown in Figure~\ref{fig: CaM-IQ ABC X-ray structural noise}
+
+% The structural noise figure.
+% This is from CaM/align_data/CaM_IQ/tensors/camiq_abc_fit_whole.
+\begin{figure}
+  \centerline{
+    \includegraphics[width=\textwidth]{images/cam_iq_abc_whole_structural_noise}
+  }
+  \caption[Structural noise and the PCS error.]{
+    Structural noise simulation using the 2BE6 CaM-IQ X-ray ABC ensemble as an example.
+    The simulated structural error, with the atom position uncertainty set to 0.3~\AA, is an extra contribution to the measured PCS error.
+    The PCS structural error is compared to the distance from the paramagnetic centre to illustrate the relationship between the two.
+    The atomic positions were randomised 10,000 times with the lanthanide position assumed fixed, the PCS value back-calculated using a pre-fit alignment tensor, and the PCS standard deviations calculated.
+  }
+  \label{fig: CaM-IQ ABC X-ray structural noise}
+\end{figure}
+
+
 Statistics for the tensors, including the matrix or inter-tensor angles, the singular value decomposition (SVD) values and condition number, and a printout of the tensors for copying directly in the frame order analysis script, are obtained via the script:
 
 \begin{lstlisting}
@@ -160,7 +177,7 @@ align_tensor.svd(basis_set=1)
 \subsection{The frame order analysis scripts}
 \label{sect: frame order analysis script}
 
-The following is one of the scripts used for the CaM-IQ domain motion analysis:
+The following is the example frame order analysis script located at \file{sample\_scripts/frame\_order/full\_analysis.py}:
 
 \begin{lstlisting}
 """Script for black-box Frame Order analysis.
@@ -234,8 +251,8 @@ SUBSET = "Data subset - " + PIPE_BUNDLE
 pipe.create(pipe_name=SUBSET, pipe_type='frame order', bundle=PIPE_BUNDLE)
 
 # Read the structures.
-structure.read_pdb('2BE6_bb_ndom_truncN.pdb', dir='../../../structures/2BE6_superimpose', set_mol_name='N-dom')
-structure.read_pdb('pivot_superimpose_truncC.pdb', dir='../../../structures/2BE6_superimpose/Ndom_pivot_point', set_mol_name='C-dom')
+structure.read_pdb('2BE6_ndom_truncN.pdb', dir='../../../structures/2BE6_superimpose', set_mol_name='N-dom')
+structure.read_pdb('2BE6_cdom_truncC.pdb', dir='../../../structures/2BE6_superimpose', set_mol_name='C-dom')
 
 # Set up the 15N and 1H spins.
 structure.load_spins(spin_id='@N', mol_name_target='CaM', ave_pos=False)
