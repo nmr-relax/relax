@@ -53,7 +53,9 @@ Review the SVN logs and add an entry into the CHANGES file (in the 'docs/' direc
 $ svn log -v -r18314:HEAD > log
 $ ./devel_scripts/log_converter.py log > log_formatted
 
-The result should be modified and every line checked.  Bugs should be in the 'Bugfixes' section only if it affects previous relax releases, otherwise it should be in the 'Changes' section.  The following should be removed:  minor, insignificant, and unidentifiable changes such as "Import fix." (this is highly subjective); all exclamation marks; message IDs for mailing list posts; svnmerge commits; the messages of all reverted commits; all revision numbers such as 'r19899' or the word 'revision'; the names and email addresses of committers or patch providers; and all email addresses.  Spelling should be checked and proper punctuation used throughout, including two spaces after a period.  Missing spaces after punctuation due to the log_converter.py script need to be corrected.  Commit the changes.  Port the revision back into the main line.
+The result should be modified and every line checked.  Bugs should be in the 'Bugfixes' section only if it affects previous relax releases, otherwise it should be in the 'Changes' section.  The following should be removed:  minor, insignificant, and unidentifiable changes such as "Import fix." (this is highly subjective); all exclamation marks; message IDs for mailing list posts; svnmerge commits; the messages of all reverted commits; all revision numbers such as 'r19899' or the word 'revision'; the names and email addresses of committers or patch providers; and all email addresses.  Spelling should be checked and proper punctuation used throughout, including two spaces after a period.  Missing spaces after punctuation due to the log_converter.py script need to be corrected.  Commit the changes.
+
+Port the revision back into the main line.
 
 
 
@@ -155,7 +157,7 @@ Replace the old manual with the new in the http://www.nmr-relax.com/manual SVN r
 API documentation
 -----------------
 
-Create the API documentation for the current version with the command:
+Firstly make sure that epydoc has been updated with the docs/devel/epydoc_graphvis_fix.patch changes, to allow for newer Graphvis versions to correctly create graphs.  Then create the API documentation for the current version with the command:
 
 $ scons api_manual_html
 
