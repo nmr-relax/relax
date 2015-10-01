@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -39,9 +39,7 @@ def compile_2nd_matrix_free_rotor(matrix, Rx2_eigen):
     """
 
     # Zeros.
-    for i in range(9):
-        for j in range(9):
-            matrix[i, j] = 0.0
+    matrix[:] = 0.0
 
     # Diagonal.
     matrix[0, 0] = 0.5

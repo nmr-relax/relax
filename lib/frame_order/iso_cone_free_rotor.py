@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -72,9 +72,7 @@ def populate_2nd_eigenframe_iso_cone_free_rotor(matrix, s1):
     """
 
     # Zeros.
-    for i in range(9):
-        for j in range(9):
-            matrix[i, j] = 0.0
+    matrix[:] = 0.0
 
     # The c11^2, c22^2, c12^2, and c21^2 elements.
     matrix[0, 0] = matrix[4, 4] = (s1 + 2.0) / 6.0

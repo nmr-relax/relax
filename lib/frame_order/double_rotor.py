@@ -47,9 +47,7 @@ def compile_2nd_matrix_double_rotor(matrix, Rx2_eigen, smax, smaxb):
     """
 
     # Zeros.
-    for i in range(9):
-        for j in range(9):
-            matrix[i, j] = 0.0
+    matrix[:] = 0.0
 
     # Repetitive trig calculations.
     sinc_smax = sinc(smax/pi)
@@ -114,10 +112,8 @@ def pcs_numeric_int_double_rotor(points=None, sigma_max=None, sigma_max_2=None, 
     """
 
     # Clear the data structures.
-    for i in range(len(pcs_theta)):
-        for j in range(len(pcs_theta[i])):
-            pcs_theta[i, j] = 0.0
-            pcs_theta_err[i, j] = 0.0
+    pcs_theta[:] = 0.0
+    pcs_theta_err[:] = 0.0
 
     # Loop over the samples.
     num = 0

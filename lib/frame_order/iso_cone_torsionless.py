@@ -44,9 +44,7 @@ def compile_2nd_matrix_iso_cone_torsionless(matrix, Rx2_eigen, cone_theta):
     """
 
     # Zeros.
-    for i in range(9):
-        for j in range(9):
-            matrix[i, j] = 0.0
+    matrix[:] = 0.0
 
     # Repetitive trig calculations.
     cos_tmax = cos(cone_theta)
@@ -113,10 +111,8 @@ def pcs_numeric_int_iso_cone_torsionless_qrint(points=None, theta_max=None, c=No
     """
 
     # Clear the data structures.
-    for i in range(len(pcs_theta)):
-        for j in range(len(pcs_theta[i])):
-            pcs_theta[i, j] = 0.0
-            pcs_theta_err[i, j] = 0.0
+    pcs_theta[:] = 0.0
+    pcs_theta_err[:] = 0.0
 
     # Loop over the samples.
     num = 0
