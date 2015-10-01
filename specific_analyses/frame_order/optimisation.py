@@ -41,8 +41,7 @@ from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.rdc import check_rdcs
 from pipe_control.structure.mass import pipe_centre_of_mass
-from specific_analyses.frame_order.checks import check_ave_domain_setup
-from specific_analyses.frame_order.data import base_data_types, domain_moving, pivot_fixed, tensor_loop, translation_fixed
+from specific_analyses.frame_order.data import base_data_types, domain_moving, pivot_fixed, tensor_loop
 from specific_analyses.frame_order.parameters import assemble_param_vector
 from target_functions import frame_order
 
@@ -619,9 +618,6 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling_matrix=None):
     @type scaling_matrix:       numpy rank-2, float64 array or None
     """
 
-    # Check for the average domain displacement information.
-    check_ave_domain_setup()
-
     # Assemble the parameter vector.
     param_vector = assemble_param_vector(sim_index=sim_index)
 
@@ -656,11 +652,6 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling_matrix=None):
     if 'pcs' in data_types or 'pre' in data_types:
         atomic_pos, paramag_centre = minimise_setup_atomic_pos(sim_index=sim_index)
 
-    # Average domain translation.
-    translation_opt = False
-    if not translation_fixed():
-        translation_opt = True
-
     # The fixed pivot point.
     pivot = None
     if hasattr(cdp, 'pivot_x'):
@@ -692,14 +683,7 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling_matrix=None):
             print("The centre of mass reference coordinate for the rotor models is at:\n    %s" % list(com))
 
     # The centre of mass of the moving domain - to use as the centroid for the average domain position rotation.
-    if cdp.ave_pos_pivot == 'com':
-        ave_pos_pivot = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
-        ave_pos_piv_sync = False
-
-    # The centre of mass of the moving domain - to use as the centroid for the average domain position rotation.
-    if cdp.ave_pos_pivot == 'motional':
-        ave_pos_pivot = pivot
-        ave_pos_piv_sync = True
+    ave_pos_pivot = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
 
     # Print outs.
     if sim_index == None:
@@ -717,7 +701,7 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling_matrix=None):
         sys.stdout.write("Base data: %s\n" % repr(base_data))
 
     # Set up the optimisation function.
-    target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, com=com, ave_pos_pivot=ave_pos_pivot, ave_pos_piv_sync=ave_pos_piv_sync, translation_opt=translation_opt, pivot=pivot, pivot2=pivot2, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts, quad_int=cdp.quad_int)
+    target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot2=pivot2, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts, quad_int=cdp.quad_int)
 
     # Return the data.
     return target, param_vector

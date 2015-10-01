@@ -185,9 +185,6 @@ frame_order.ref_domain('N')
 frame_order.domain_to_pdb(domain='N', pdb='1J7O_1st_NH.pdb')
 frame_order.domain_to_pdb(domain='C', pdb='1J7P_1st_NH_rot.pdb')
 
-# Set up the mechanics of the displacement to the average domain position.
-frame_order.average_position(pivot='motional', translation=False)
-
 # Set the initial pivot point.
 pivot = array([ 37.254, 0.5, 16.7465])
 frame_order.pivot(pivot, fix=True)

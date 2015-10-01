@@ -110,9 +110,6 @@ for i in range(len(full)):
 # Select the model.
 frame_order.select_model('rotor')
 
-# Set up the mechanics of the displacement to the average domain position.
-frame_order.average_position(pivot='motional', translation=False)
-
 # Set the reference domain.
 frame_order.ref_domain('N')
 

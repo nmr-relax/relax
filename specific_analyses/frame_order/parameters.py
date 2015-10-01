@@ -27,7 +27,7 @@ from math import pi
 from numpy import array, float64, zeros
 
 # relax module imports.
-from specific_analyses.frame_order.data import pivot_fixed, translation_fixed
+from specific_analyses.frame_order.data import pivot_fixed
 
 
 def assemble_param_vector(sim_index=None):
@@ -196,10 +196,9 @@ def update_model():
             cdp.params.append('pivot_z_2')
 
     # The average domain position translation parameters.
-    if not translation_fixed():
-        cdp.params.append('ave_pos_x')
-        cdp.params.append('ave_pos_y')
-        cdp.params.append('ave_pos_z')
+    cdp.params.append('ave_pos_x')
+    cdp.params.append('ave_pos_y')
+    cdp.params.append('ave_pos_z')
 
     # The tensor rotation, or average domain position.
     if cdp.model not in ['free rotor', 'iso cone, free rotor']:

@@ -211,8 +211,7 @@ class Frame_order_analysis:
         incs = []
         if hasattr(cdp, 'pivot_fixed') and not cdp.pivot_fixed:
             incs += [None, None, None]
-        if hasattr(cdp, 'ave_pos_translation') and cdp.ave_pos_translation:
-            incs += [None, None, None]
+        incs += [None, None, None]
 
         # The rotor model.
         if model == 'rotor':
@@ -419,22 +418,14 @@ class Frame_order_analysis:
         # Select the Frame Order model.
         self.interpreter.frame_order.select_model(model=model)
 
-        # Split grid search if translation is active.
-        if cdp.ave_pos_translation:
-            # Printout.
-            print("\n\nTranslation active - splitting the grid search and iterating.")
+        # Split grid search for the translation.
+        print("\n\nTranslation active - splitting the grid search and iterating.")
+        for i in range(2):
+            # First optimise the rotation.
+            self.interpreter.grid_search(inc=[None, None, None, self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid], constraints=False)
 
-            # Loop twice.
-            for i in range(2):
-                # First optimise the rotation.
-                self.interpreter.minimise.grid_search(inc=[None, None, None, self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid], constraints=False)
-
-                # Then the translation.
-                self.interpreter.minimise.grid_search(inc=[self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid, None, None, None], constraints=False)
-
-        # Standard grid search.
-        else:
-            self.interpreter.minimise.grid_search(inc=self.grid_inc_rigid, constraints=False)
+            # Then the translation.
+            self.interpreter.grid_search(inc=[self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid, None, None, None], constraints=False)
 
         # Minimise.
         self.interpreter.minimise.execute(self.min_algor, constraints=False)

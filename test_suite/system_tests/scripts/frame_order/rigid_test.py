@@ -121,9 +121,6 @@ for i in range(len(full)):
 # Set the reference domain.
 self._execute_uf(uf_name='frame_order.ref_domain', ref='fixed')
 
-# Set up the mechanics of the displacement to the average domain position.
-self._execute_uf(uf_name='frame_order.average_position', pivot='com', translation=True)
-
 # Set the initial pivot point (should make no difference for the rigid model).
 pivot = array([0, 0, 0], float64)
 self._execute_uf(uf_name='frame_order.pivot', pivot=pivot, fix=True)

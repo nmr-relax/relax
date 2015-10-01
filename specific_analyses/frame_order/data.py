@@ -138,20 +138,3 @@ def tensor_loop(red=False):
     # Loop over the reduction list.
     for i in range(n):
         yield i, data[list[i][index]]
-
-
-def translation_fixed():
-    """Is the translation of the average domain position fixed?
-
-    @return:    The answer to the question.
-    @rtype:     bool
-    """
-
-    # PCS data must be present.
-    if 'pcs' in base_data_types():
-        # The fixed flag is not set.
-        if hasattr(cdp, 'ave_pos_translation') and cdp.ave_pos_translation:
-            return False
-
-    # Default to being fixed.
-    return True

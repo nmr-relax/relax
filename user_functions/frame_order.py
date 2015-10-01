@@ -31,7 +31,7 @@ else:
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
-from specific_analyses.frame_order.uf import average_position, num_int_pts, pdb_model, pivot, quad_int, ref_domain, select_model
+from specific_analyses.frame_order.uf import num_int_pts, pdb_model, pivot, quad_int, ref_domain, select_model
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 from user_functions.wildcards import WILDCARD_STRUCT_PDB_ALL
@@ -42,58 +42,6 @@ uf_class = uf_info.add_class('frame_order')
 uf_class.title = "Class containing the user functions of the Frame Order theories."
 uf_class.menu_text = "&frame_order"
 uf_class.gui_icon = "relax.frame_order"
-
-
-# The frame_order.average_position user function.
-uf = uf_info.add_uf('frame_order.average_position')
-uf.title = "Define the mechanics of the average domain position."
-uf.title_short = "Average domain position mechanics."
-uf.add_keyarg(
-    name = "pivot",
-    default = "com",
-    py_type = "str",
-    dim = 3,
-    desc_short = "average position pivot",
-    desc = "The type of pivot to use for the rotation to the average domain position.  This can be one of 'com' or 'motional'.",
-    list_titles = ['X coordinate', 'Y coordinate', 'Z coordinate'],
-    wiz_element_type = "combo",
-    wiz_combo_choices = [
-        "Centre of Mass (CoM)",
-        "Motional pivot"
-    ],
-    wiz_combo_data = [
-        "com",
-        "motional"
-    ],
-    wiz_read_only = True
-)
-uf.add_keyarg(
-    name = "translation",
-    default = False,
-    py_type = "bool",
-    desc_short = "translation flag",
-    desc = "A flag specifying if the average domain position should be allowed to translate during optimisation.  If False, then translation can be disabled."
-)
-# Description.
-uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("Prior to optimisation, the mechanics of the average moving domain position must be specified.  Having the domain shifted to the correct average position is essential for understanding the dynamics as this information is the major contributor to the RDC and PCS.  The motional eigenframe (spherical or Euler angles) and ordering (via order parameters, cone angles or torsion angles) come second, and are therefore severely distorted by an incorrect average domain position.")
-uf.desc[-1].add_paragraph("There are two pieces of information affecting this average position - a rotation and translation.  For the rotation, a pivot point is required.  Note that this pivot is not related to the pivot of the motions.  However if you believe that your starting structure lies within the uniform distribution of positions of the domain motions, then the two pivots can be linked by setting the average position pivot to the motional pivot.  The default however is to set the pivot to the centre of mass (CoM) of the moving domain.")
-uf.desc[-1].add_paragraph("The second option allows the average domain position to translate during optimisation.  By default, only a rotation of the initial structure of the domain is rotated to the average position.  But if the rotation is not sufficient to shift the domain to the average position, then a translation will be required.  This option will be ignored if no PDC data is present, as RDCs do not contain information about the translation of the domain.")
-# Prompt examples.
-uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To use the centre of mass as the rotational pivot and to allow translation of the average domain position during optimisation, type one of:")
-uf.desc[-1].add_prompt("relax> frame_order.translate('com', True)")
-uf.desc[-1].add_prompt("relax> frame_order.translate(translation=True)")
-uf.desc[-1].add_prompt("relax> frame_order.translate(pivot='com', translation=True)")
-uf.desc[-1].add_paragraph("To use the motional pivot as the average domain rotational pivot while disallowing translation of, type one of:")
-uf.desc[-1].add_prompt("relax> frame_order.translate('motional')")
-uf.desc[-1].add_prompt("relax> frame_order.translate('motional', False)")
-uf.desc[-1].add_prompt("relax> frame_order.translate(pivot='motional', translation=False)")
-uf.backend = average_position
-uf.menu_text = "&average_position"
-uf.wizard_height_desc = 450
-uf.wizard_size = (1000, 750)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 
 # The frame_order.pdb_model user function.
