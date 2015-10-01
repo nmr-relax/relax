@@ -81,7 +81,7 @@ frame_order.pivot(pivot, fix=True)
 paramag.centre(pos=[35.934, 12.194, -4.206])
 
 # The optimisation settings.
-frame_order.num_int_pts(num=50)
+frame_order.num_int_pts(num=5000)
 
 # Check the minimum.
 value.set(param='ave_pos_x', val=AVE_POS_X)

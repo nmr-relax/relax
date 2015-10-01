@@ -27,6 +27,7 @@ from copy import deepcopy
 from math import pi
 from numpy import array, dot, eye, float64, transpose, zeros
 import sys
+from warnings import warn
 
 # relax module imports.
 from lib.arg_check import is_float_array
@@ -41,7 +42,8 @@ from lib.structure.internal.object import Internal
 from lib.structure.represent.cone import cone
 from lib.structure.represent.rotor import rotor_pdb
 from lib.text.sectioning import subsection
-from pipe_control.pipes import check_pipe
+from lib.warnings import RelaxWarning
+from pipe_control import pipes
 from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.data import domain_moving
 from specific_analyses.frame_order.parameters import update_model
@@ -57,6 +59,10 @@ def num_int_pts(num=200000):
     # Test if the current data pipe exists.
     check_pipe()
 
+    # Throw a warning to the user if not enough points are being used.
+    if num < 1000:
+        warn(RelaxWarning("To obtain reliable results in a frame order analysis, the number of integration points should be greater than 1000."))
+ 
     # Store the value.
     cdp.num_int_pts = num
 
