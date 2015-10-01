@@ -1,7 +1,47 @@
 # Script for optimising the rotor frame order test model applied to a 2-state system of CaM.
 
 # Python module imports.
-from numpy import array
+from numpy import array, cross, float64, zeros
+from numpy.linalg import norm
+
+# relax module imports.
+from lib.frame_order.rotor_axis import create_rotor_axis_alpha
+from lib.geometry.lines import closest_point_ax
+from lib.geometry.coord_transform import spherical_to_cartesian
+from lib.geometry.rotations import reverse_euler_zyz
+from lib.geometry.vectors import vector_angle
+from pipe_control.structure.mass import pipe_centre_of_mass
+
+
+def alpha_angle(pivot=None, com=None, axis=None):
+    """Calculate and return the rotor alpha angle."""
+
+    # The CoM-pivot axis.
+    com_piv = com - pivot
+    com_piv /= norm(com_piv)
+
+    # The mu_xy vector.
+    z_axis = array([0, 0, 1], float64)
+    mu_xy = cross(z_axis, com_piv)
+    mu_xy /= norm(mu_xy)
+
+    # The alpha angle.
+    return vector_angle(mu_xy, axis, com_piv)
+
+
+def shift_pivot(pivot_orig=None, com=None, axis=None):
+    """Shift the pivot to the closest point on the rotor axis to the CoM.)"""
+
+    # The closest point.
+    pivot_new = closest_point_ax(line_pt=pivot_orig, axis=axis, point=com)
+
+    # Printout.
+    print("\n%-20s%s" % ("Original pivot:", pivot_orig))
+    print("%-20s%s" % ("New pivot:", pivot_new))
+
+    # Return the shifted pivot.
+    return pivot_new
+
 
 # The real parameter values.
 AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -20.859750185691549,   -2.450606987447843,   -2.191854570352916]
@@ -9,6 +49,11 @@ AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [5.623468683852550, 0.4354397482829
 AXIS_THETA = 0.52344988559983696152
 AXIS_PHI = 0.89068285262982982
 CONE_SIGMA_MAX = 10.0 / 360.0 * 2.0 * pi
+
+# Reconstruct the rotation axis.
+AXIS = zeros(3, float64)
+spherical_to_cartesian([1, AXIS_THETA, AXIS_PHI], AXIS)
+print("Rotation axis: %s" % AXIS)
 
 # Create the data pipe.
 pipe.create(pipe_name='frame order', pipe_type='frame order')
@@ -70,46 +115,66 @@ frame_order.select_model('rotor')
 frame_order.ref_domain('N')
 
 # Set the initial pivot point.
-pivot = array([ 37.254, 0.5, 16.7465])
+pivot = shift_pivot(pivot_orig=array([ 37.254, 0.5, 16.7465]), com=pipe_centre_of_mass(verbosity=0), axis=AXIS)
 frame_order.pivot(pivot, fix=True)
 
 # Set the paramagnetic centre.
 paramag.centre(pos=[35.934, 12.194, -4.206])
 
-# The optimisation settings.
-frame_order.num_int_pts(num=5000)
-
-# Check the minimum.
+# Check the minimum (at a very high quality to check that the chi-squared value is zero).
+frame_order.num_int_pts(num=100000)
 value.set(param='ave_pos_x', val=AVE_POS_X)
 value.set(param='ave_pos_y', val=AVE_POS_Y)
 value.set(param='ave_pos_z', val=AVE_POS_Z)
 value.set(param='ave_pos_alpha', val=AVE_POS_ALPHA)
 value.set(param='ave_pos_beta', val=AVE_POS_BETA)
 value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
-value.set(param='axis_theta', val=AXIS_THETA)
-value.set(param='axis_phi', val=AXIS_PHI)
+value.set(param='axis_alpha', val=alpha_angle(pivot=pivot, com=pipe_centre_of_mass(verbosity=0), axis=AXIS))
 value.set(param='cone_sigma_max', val=CONE_SIGMA_MAX)
 minimise.calculate()
 
 # Create the PDB representation of the true state.
 frame_order.pdb_model(ave_pos_file='ave_pos_true.pdb.gz', rep_file='frame_order_true.pdb.gz', dist_file=None, force=True)
 
-# Optimise.
-grid_search(inc=3)
-minimise('simplex')
+# Grid search (low quality for speed).
+frame_order.num_int_pts(num=100)
+grid_search(inc=[None, None, None, None, None, None, 21, 21])
+
+# Iterative optimisation with increasing precision.
+num_int_pts = [100, 1000, 10000, 50000]
+func_tol = [1e-2, 1e-3, 5e-3, 1e-4]
+for i in range(len(num_int_pts)):
+    frame_order.num_int_pts(num=num_int_pts[i])
+    minimise('simplex', func_tol=func_tol[i])
 
 # Store the result.
 frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb.gz', rep_file='frame_order_fixed_piv.pdb.gz', dist_file=None, force=True)
 
-# Optimise the pivot and model.
+# Optimise the pivot and model, again iterating with increasing precision.
 frame_order.pivot(pivot, fix=False)
-minimise('simplex')
+num_int_pts = [100, 1000, 10000, 50000]
+func_tol = [1e-2, 1e-3, 5e-3, 1e-4]
+for i in range(len(num_int_pts)):
+    frame_order.num_int_pts(num=num_int_pts[i])
+    minimise('simplex', func_tol=func_tol[i])
 
-# Test Monte Carlo simulations.
+# The distance from the optimised pivot and the rotation axis.
+opt_piv = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z])
+print("\n\nOptimised pivot displacement: %s" % norm(pivot - opt_piv))
+pt = closest_point_ax(line_pt=pivot, axis=AXIS, point=opt_piv)
+print("Distance from axis: %s\n" % norm(pt - opt_piv))
+
+# Recreate the axis and compare to the original.
+opt_axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=opt_piv, point=pipe_centre_of_mass(verbosity=0))
+print("Original axis:   %s" % AXIS)
+print("Optimised axis:  %s" % opt_axis)
+
+# Test Monte Carlo simulations (at low quality for speed).
+frame_order.num_int_pts(num=100)
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex')
+minimise('simplex', func_tol=1e-2)
 eliminate()
 monte_carlo.error_analysis()
 

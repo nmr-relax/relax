@@ -78,10 +78,8 @@ frame_order.pivot(pivot, fix=True)
 # Set the paramagnetic centre.
 paramag.centre(pos=[35.934, 12.194, -4.206])
 
-# The optimisation settings.
-frame_order.num_int_pts(num=5000)
-
-# Check the minimum.
+# Check the minimum (at a very high quality to check that the chi-squared value is zero).
+frame_order.num_int_pts(num=100000)
 value.set(param='ave_pos_x', val=AVE_POS_X)
 value.set(param='ave_pos_y', val=AVE_POS_Y)
 value.set(param='ave_pos_z', val=AVE_POS_Z)
@@ -97,22 +95,34 @@ minimise.calculate()
 # Create the PDB representation of the true state.
 frame_order.pdb_model(ave_pos_file='ave_pos_true.pdb.gz', rep_file='frame_order_true.pdb.gz', dist_file=None, force=True)
 
-# Optimise.
+# Grid search (low quality for speed).
+frame_order.num_int_pts(num=100)
 grid_search(inc=[None, None, None, None, None, None, 11, 11, 11, 11])
-minimise('simplex')
+
+# Iterative optimisation with increasing precision.
+num_int_pts = [100, 1000, 10000, 50000]
+func_tol = [1e-2, 1e-3, 5e-3, 1e-4]
+for i in range(len(num_int_pts)):
+    frame_order.num_int_pts(num=num_int_pts[i])
+    minimise('simplex', func_tol=func_tol[i])
 
 # Store the result.
 frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb.gz', rep_file='frame_order_fixed_piv.pdb.gz', dist_file=None, force=True)
 
-# Optimise the pivot and model.
+# Optimise the pivot and model, again iterating with increasing precision.
 frame_order.pivot(pivot, fix=False)
-minimise('simplex')
+num_int_pts = [100, 1000, 10000, 50000]
+func_tol = [1e-2, 1e-3, 5e-3, 1e-4]
+for i in range(len(num_int_pts)):
+    frame_order.num_int_pts(num=num_int_pts[i])
+    minimise('simplex', func_tol=func_tol[i])
 
-# Test Monte Carlo simulations.
+# Test Monte Carlo simulations (at low quality for speed).
+frame_order.num_int_pts(num=100)
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex')
+minimise('simplex', func_tol=1e-2)
 eliminate()
 monte_carlo.error_analysis()
 
