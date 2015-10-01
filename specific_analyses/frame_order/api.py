@@ -29,9 +29,11 @@ from minfx.generic import generic_minimise
 from minfx.grid import grid_point_array
 from numpy import float64, zeros
 from re import search
+from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoModelError
+from lib.warnings import RelaxWarning
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop, return_interatom
 from pipe_control.mol_res_spin import return_spin, spin_loop
@@ -504,6 +506,16 @@ class Frame_order(API_base, API_common):
         A, b = None, None
         if constraints:
             A, b = linear_constraints(scaling_matrix=scaling_matrix[0])
+
+        # No constraints.
+        if len(A) == 0:
+            warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
+            constraints = False
+
+            # Pop out the log barrier algorithm.
+            if min_algor == 'Log barrier':
+                min_algor = min_options[0]
+                min_options = min_options[1:]
 
         # Grid search.
         if search('^[Gg]rid', min_algor):
