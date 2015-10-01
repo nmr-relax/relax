@@ -4,6 +4,16 @@
 from numpy import array
 
 
+# The real parameter values.
+AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -20.859750185691549,   -2.450606987447843,   -2.191854570352916]
+AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [5.623468683852550, 0.435439748282942, 5.081265879629926]
+EIGEN_ALPHA = 3.14159265358979311600
+EIGEN_BETA = 0.96007997859534310869
+EIGEN_GAMMA = 4.03227550621962294031
+CONE_THETA_X = 30.0 * 2.0 * pi / 360.0    # 0.52359877559829882
+CONE_THETA_Y = 50.0 * 2.0 * pi / 360.0    # 0.87266462599716477
+CONE_SIGMA_MAX = 60.0 * 2.0 * pi / 360.0  # 1.0471975511965976
+
 # Create the data pipe.
 pipe.create(pipe_name='frame order', pipe_type='frame order')
 
@@ -71,30 +81,42 @@ frame_order.pivot(pivot, fix=True)
 paramag.centre(pos=[35.934, 12.194, -4.206])
 
 # The optimisation settings.
-frame_order.num_int_pts(num=50)
+frame_order.num_int_pts(num=100)
 
 # Check the minimum.
-value.set(param='ave_pos_alpha', val=4.3434999280669997)
-value.set(param='ave_pos_beta', val=0.43544332764249905)
-value.set(param='ave_pos_gamma', val=3.8013235235956007)
-value.set(param='eigen_alpha', val=3.14159265358979311600)
-value.set(param='eigen_beta', val=0.96007997859534310869)
-value.set(param='eigen_gamma', val=4.03227550621962294031)
-value.set(param='cone_theta_x', val=30.0 * 2.0 * pi / 360.0)    # 0.52359877559829882
-value.set(param='cone_theta_y', val=50.0 * 2.0 * pi / 360.0)    # 0.87266462599716477
-value.set(param='cone_sigma_max', val=60.0 * 2.0 * pi / 360.0)  # 1.0471975511965976
+value.set(param='ave_pos_x', val=AVE_POS_X)
+value.set(param='ave_pos_y', val=AVE_POS_Y)
+value.set(param='ave_pos_z', val=AVE_POS_Z)
+value.set(param='ave_pos_alpha', val=AVE_POS_ALPHA)
+value.set(param='ave_pos_beta', val=AVE_POS_BETA)
+value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
+value.set(param='eigen_alpha', val=EIGEN_ALPHA)
+value.set(param='eigen_beta', val=EIGEN_BETA)
+value.set(param='eigen_gamma', val=EIGEN_GAMMA)
+value.set(param='cone_theta_x', val=CONE_THETA_X)
+value.set(param='cone_theta_y', val=CONE_THETA_Y)
+value.set(param='cone_sigma_max', val=CONE_SIGMA_MAX)
 minimise.calculate()
-print("\nchi2: %s" % repr(cdp.chi2))
+
+# Create the PDB representation of the true state.
+frame_order.pdb_model(ave_pos_file='ave_pos_true.pdb', rep_file='frame_order_true.pdb', dist_file=None, force=True)
 
 # Optimise.
-#minimise.grid_search(inc=5)
-minimise.execute('simplex', constraints=False)
+#grid_search(inc=[None, None, None, None, None, None, 11, 11, 11, 11, 11, 11])
+minimise('simplex')
+
+# Store the result.
+frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None, force=True)
+
+# Optimise the pivot and model.
+frame_order.pivot(pivot, fix=False)
+minimise('simplex')
 
 # Test Monte Carlo simulations.
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise.execute('simplex', constraints=False)
+minimise('simplex')
 eliminate()
 monte_carlo.error_analysis()
 
@@ -104,7 +126,9 @@ frame_order.pdb_model(force=True)
 # PyMOL.
 pymol.view()
 pymol.command('show spheres')
-pymol.cone_pdb('frame_order.pdb')
+pymol.frame_order(ave_pos_file='ave_pos_true.pdb', rep_file='frame_order_true.pdb', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos.pdb', rep_file='frame_order.pdb', dist_file=None)
 
 # Save the state.
 state.save('frame_order', force=True)

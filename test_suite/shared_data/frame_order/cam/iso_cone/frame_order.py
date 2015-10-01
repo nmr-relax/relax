@@ -5,8 +5,8 @@ from numpy import array
 
 
 # The real parameter values.
-AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -21.269217407269576,   -3.122610661328414,   -2.400652421655998]
-AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [   5.623469076122531,    0.435439405668396,    5.081265529106499]
+AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -20.859750185691549,   -2.450606987447843,   -2.191854570352916]
+AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [5.623468683852550, 0.435439748282942, 5.081265879629926]
 AXIS_THETA = 0.96007997859534299767
 AXIS_PHI = 4.03227550621962294031
 CONE_THETA = 0.6
@@ -79,7 +79,7 @@ frame_order.pivot(pivot, fix=True)
 paramag.centre(pos=[35.934, 12.194, -4.206])
 
 # The optimisation settings.
-frame_order.num_int_pts(num=1000)
+frame_order.num_int_pts(num=100)
 
 # Check the minimum.
 value.set(param='ave_pos_x', val=AVE_POS_X)
@@ -95,24 +95,24 @@ value.set(param='cone_sigma_max', val=CONE_SIGMA_MAX)
 minimise.calculate()
 
 # Create the PDB representation of the true state.
-frame_order.pdb_model(ave_pos_file=None, rep_file='true_frame_order.pdb', dist_file=None, force=True)
+frame_order.pdb_model(ave_pos_file=None, rep_file='frame_order_true.pdb', dist_file=None, force=True)
 
 # Optimise.
-#grid_search(inc=5)
-minimise('simplex', constraints=True)
+grid_search(inc=[None, None, None, None, None, None, 11, 11, 11, 11])
+minimise('simplex')
 
 # Store the result.
 frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None, force=True)
 
 # Optimise the pivot and model.
 frame_order.pivot(pivot, fix=False)
-minimise('simplex', constraints=True)
+minimise('simplex')
 
 # Test Monte Carlo simulations.
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise.execute('simplex', constraints=False)
+minimise('simplex')
 eliminate()
 monte_carlo.error_analysis()
 
@@ -122,7 +122,9 @@ frame_order.pdb_model(force=True)
 # PyMOL.
 pymol.view()
 pymol.command('show spheres')
-pymol.frame_order()
+pymol.frame_order(ave_pos_file=None, rep_file='frame_order_true.pdb', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos.pdb', rep_file='frame_order.pdb', dist_file=None)
 
 # Save the state.
 state.save('frame_order', force=True)
