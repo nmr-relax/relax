@@ -72,7 +72,6 @@ paramag.centre(pos=[35.934, 12.194, -4.206])
 
 # The optimisation settings.
 frame_order.num_int_pts(num=50)
-frame_order.quad_int(flag=False)
 
 # Check the minimum.
 value.set(param='ave_pos_beta', val=0.77485244603476433)

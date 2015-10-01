@@ -31,7 +31,7 @@ else:
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
-from specific_analyses.frame_order.uf import num_int_pts, pdb_model, pivot, quad_int, ref_domain, select_model
+from specific_analyses.frame_order.uf import num_int_pts, pdb_model, pivot, ref_domain, select_model
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 from user_functions.wildcards import WILDCARD_STRUCT_PDB_ALL
@@ -189,27 +189,6 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows the number of integration points used during the Frame Order target function optimisation to be changed from the default.  This is used in the quasi-random Sobol' sequence for the numerical integration.")
 uf.backend = num_int_pts
 uf.menu_text = "&num_int_pts"
-uf.gui_icon = "oxygen.actions.edit-rename"
-uf.wizard_size = (900, 500)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
-
-
-# The frame_order.quad_int user function.
-uf = uf_info.add_uf('frame_order.quad_int')
-uf.title = "Turn the high precision quadratic integration on or off."
-uf.title_short = "Quadratic integration."
-uf.add_keyarg(
-    name = "flag",
-    default = False,
-    py_type = "bool",
-    desc_short = "flag",
-    desc = "The flag with if True  will perform high precision numerical integration via the scipy.integrate quad(), dblquad() and tplquad() integration methods rather than the rough quasi-random numerical integration."
-)
-# Description.
-uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows the high precision numerical integration of the Scipy quad() and related functions to be used instead of the lower precision quasi-random Sobol' sequence integration.  This is for the optimisation of the Frame Order target functions.  The quadratic integration is orders of magnitude slower than the Sobol' sequence integration, but the precision is much higher.")
-uf.backend = quad_int
-uf.menu_text = "&quad_int"
 uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_size = (900, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'

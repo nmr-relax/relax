@@ -444,20 +444,6 @@ def pivot(pivot=None, order=1, fix=False):
         update_model()
 
 
-def quad_int(flag=False):
-    """Turn the high precision Scipy quadratic numerical integration on or off.
-
-    @keyword flag:  The flag which if True will perform high precision numerical integration via the scipy.integrate quad(), dblquad() and tplquad() integration methods rather than the rough quasi-random numerical integration.
-    @type flag:     bool
-    """
-
-    # Test if the current data pipe exists.
-    check_pipe()
-
-    # Store the flag.
-    cdp.quad_int = flag
-
-
 def ref_domain(ref=None):
     """Set the reference domain for the frame order, multi-domain models.
 
@@ -507,16 +493,6 @@ def select_model(model=None):
 
     # Initialise the list of model parameters.
     cdp.params = []
-
-    # Set the integration method if needed.
-    if not hasattr(cdp, 'quad_int'):
-        # Scipy quadratic numerical integration.
-        if cdp.model in []:
-            cdp.quad_int = True
-
-        # Quasi-random numerical integration.
-        else:
-            cdp.quad_int = False
 
     # Update the model.
     update_model()

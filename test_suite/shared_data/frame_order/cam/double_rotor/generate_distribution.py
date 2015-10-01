@@ -25,7 +25,7 @@ class Generate(Main):
     MODES = 2
 
     # The number of states for each rotation mode.
-    N = 500
+    N = 4500
 
     # The tilt angles.
     TILT_ANGLE = [11.5, 10.5]

@@ -16,8 +16,8 @@ from generate_base import Main
 
 class Generate(Main):
     # The number of structures.
-    INC = 0.00036
-    N = int(60 / INC)
+    N = 20000000
+    INC = 60.0 / N
 
     def __init__(self):
         """Model specific setup."""
@@ -31,7 +31,7 @@ class Generate(Main):
         """Set up the rotation for state i."""
 
         # The rotation angle.
-        angle = (i - self.N/2) * self.INC / 360.0 * 2.0 * pi
+        angle = (i - self.N/2) * self.INC[motion_index] / 360.0 * 2.0 * pi
 
         # The rotation matrix.
         axis_angle_to_R(self.axes[:, 2], angle, self.R)

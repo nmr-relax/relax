@@ -57,7 +57,7 @@ from target_functions.chi2 import chi2
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, com=None, ave_pos_pivot=zeros(3), pivot=None, pivot2=None, pivot_opt=False, quad_int=True):
+    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, com=None, ave_pos_pivot=zeros(3), pivot=None, pivot2=None, pivot_opt=False):
         """Set up the target functions for the Frame Order theories.
 
         @keyword model:             The name of the Frame Order model.
@@ -106,8 +106,6 @@ class Frame_order:
         @type pivot2:               numpy rank-1, 3D array or None
         @keyword pivot_opt:         A flag which if True will allow the pivot point of the motion to be optimised.
         @type pivot_opt:            bool
-        @keyword quad_int:          A flag which if True will perform high precision numerical integration via the scipy.integrate quad(), dblquad() and tplquad() integration methods rather than the rough quasi-random numerical integration.
-        @type quad_int:             bool
         """
 
         # Model test.
