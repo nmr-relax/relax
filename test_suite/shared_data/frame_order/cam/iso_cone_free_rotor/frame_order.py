@@ -3,6 +3,17 @@
 # Python module imports.
 from numpy import array
 
+# relax module imports.
+from lib.order.order_parameters import iso_cone_theta_to_S
+
+
+# The real parameter values.
+AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -20.859750185691549,   -2.450606987447843,   -2.191854570352916]
+AVE_POS_BETA = 0.19740471457956135
+AVE_POS_GAMMA = 4.6622313104265416
+AXIS_THETA = 0.96007997859534299767
+AXIS_PHI = 4.03227550621962294031
+CONE_S1 = iso_cone_theta_to_S(1.0)
 
 # Create the data pipe.
 pipe.create(pipe_name='frame order', pipe_type='frame order')
@@ -74,33 +85,47 @@ paramag.centre(pos=[35.934, 12.194, -4.206])
 frame_order.num_int_pts(num=50)
 
 # Check the minimum.
-value.set(param='ave_pos_beta', val=1.1824796065148637)
-value.set(param='ave_pos_gamma', val=0.35360993689599368)
-value.set(param='axis_theta', val=0.96007997859534299767)
-value.set(param='axis_phi', val=4.03227550621962294031)
-value.set(param='cone_s1', val=iso_cone_theta_to_S(1.0))
+value.set(param='ave_pos_x', val=AVE_POS_X)
+value.set(param='ave_pos_y', val=AVE_POS_Y)
+value.set(param='ave_pos_z', val=AVE_POS_Z)
+value.set(param='ave_pos_beta', val=AVE_POS_BETA)
+value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
+value.set(param='axis_theta', val=AXIS_THETA)
+value.set(param='axis_phi', val=AXIS_PHI)
+value.set(param='cone_s1', val=CONE_S1)
 minimise.calculate()
-print("\nchi2: %s" % repr(cdp.chi2))
+
+# Create the PDB representation of the true state.
+frame_order.pdb_model(ave_pos_file='ave_pos_true.pdb.gz', rep_file='frame_order_true.pdb.gz', dist_file=None, force=True)
 
 # Optimise.
-#minimise.grid_search(inc=5)
-minimise.execute('simplex', constraints=False)
+#grid_search(inc=5)
+minimise('simplex')
+
+# Store the result.
+frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb.gz', rep_file='frame_order_fixed_piv.pdb.gz', dist_file=None, force=True)
+
+# Optimise the pivot and model.
+frame_order.pivot(pivot, fix=False)
+minimise('simplex')
 
 # Test Monte Carlo simulations.
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise.execute('simplex', constraints=False)
+minimise('simplex')
 eliminate()
 monte_carlo.error_analysis()
 
 # Create the PDB representation.
-frame_order.pdb_model(force=True)
+frame_order.pdb_model(ave_pos_file='ave_pos.pdb.gz', rep_file='frame_order.pdb.gz', dist_file=None, force=True)
 
 # PyMOL.
 pymol.view()
 pymol.command('show spheres')
-pymol.cone_pdb('frame_order.pdb')
+pymol.frame_order(ave_pos_file='ave_pos_true.pdb.gz', rep_file='frame_order_true.pdb.gz', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos_fixed_piv.pdb.gz', rep_file='frame_order_fixed_piv.pdb.gz', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos.pdb.gz', rep_file='frame_order.pdb.gz', dist_file=None)
 
 # Save the state.
 state.save('frame_order', force=True)

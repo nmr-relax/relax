@@ -44,8 +44,8 @@ def shift_pivot(pivot_orig=None, com=None, axis=None):
 
 
 # The real parameter values.
-AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -21.269217407269576,   -3.122610661328414,   -2.400652421655998]
-AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [   5.623469076122531,    0.435439405668396,    5.081265529106499]
+AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -20.859750185691549,   -2.450606987447843,   -2.191854570352916]
+AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [5.623468683852550, 0.435439748282942, 5.081265879629926]
 AXIS_THETA = 0.69828059079619353433
 AXIS_PHI = 4.03227550621962294031
 CONE_SIGMA_MAX = 30.0 / 360.0 * 2.0 * pi
@@ -136,18 +136,18 @@ value.set(param='cone_sigma_max', val=CONE_SIGMA_MAX)
 minimise.calculate()
 
 # Create the PDB representation of the true state.
-frame_order.pdb_model(ave_pos_file=None, rep_file='true_frame_order.pdb', dist_file=None, force=True)
+frame_order.pdb_model(ave_pos_file='ave_pos_true.pdb.gz', rep_file='frame_order_true.pdb.gz', dist_file=None, force=True)
 
 # Optimise.
 #grid_search(inc=5)
-minimise('simplex', constraints=True)
+minimise('simplex')
 
 # Store the result.
-frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None, force=True)
+frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb.gz', rep_file='frame_order_fixed_piv.pdb.gz', dist_file=None, force=True)
 
 # Optimise the pivot and model.
 frame_order.pivot(pivot, fix=False)
-minimise.execute('simplex', constraints=True)
+minimise('simplex')
 
 # The distance from the optimised pivot and the rotation axis.
 opt_piv = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z])
@@ -164,19 +164,19 @@ print("Optimised axis:  %s" % opt_axis)
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise.execute('simplex', constraints=False)
+minimise('simplex')
 eliminate()
 monte_carlo.error_analysis()
 
 # Create the PDB representation.
-frame_order.pdb_model(force=True)
+frame_order.pdb_model(ave_pos_file='ave_pos.pdb.gz', rep_file='frame_order.pdb.gz', dist_file=None, force=True)
 
 # PyMOL.
 pymol.view()
 pymol.command('show spheres')
-pymol.frame_order(ave_pos_file=None, rep_file='true_frame_order.pdb', dist_file=None)
-pymol.frame_order(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None)
-pymol.frame_order(ave_pos_file='ave_pos.pdb', rep_file='frame_order.pdb', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos_true.pdb.gz', rep_file='frame_order_true.pdb.gz', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos_fixed_piv.pdb.gz', rep_file='frame_order_fixed_piv.pdb.gz', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos.pdb.gz', rep_file='frame_order.pdb.gz', dist_file=None)
 
 # Save the state.
 state.save('frame_order', force=True)

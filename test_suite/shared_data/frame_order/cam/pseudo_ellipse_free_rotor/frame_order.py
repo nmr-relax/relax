@@ -4,6 +4,16 @@
 from numpy import array
 
 
+# The real parameter values.
+AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -20.859750185691549,   -2.450606987447843,   -2.191854570352916]
+AVE_POS_BETA = 0.19740471457956135
+AVE_POS_GAMMA = 4.6622313104265416
+EIGEN_ALPHA = 3.1415926535897931
+EIGEN_BETA = 0.96007997859534311
+EIGEN_GAMMA = 4.0322755062196229
+CONE_THETA_X = 0.5
+CONE_THETA_Y = 0.3
+
 # Create the data pipe.
 pipe.create(pipe_name='frame order', pipe_type='frame order')
 
@@ -74,36 +84,49 @@ paramag.centre(pos=[35.934, 12.194, -4.206])
 frame_order.num_int_pts(num=50)
 
 # Check the minimum.
-value.set(param='ave_pos_alpha', val=4.3434999280669997)
-value.set(param='ave_pos_beta', val=0.43544332764249905)
-value.set(param='ave_pos_gamma', val=3.8013235235956007)
-value.set(param='eigen_alpha', val=3.1415926535897931)
-value.set(param='eigen_beta', val=0.96007997859534311)
-value.set(param='eigen_gamma', val=4.0322755062196229)
-value.set(param='cone_theta_x', val=0.5)
-value.set(param='cone_theta_y', val=0.3)
+value.set(param='ave_pos_x', val=AVE_POS_X)
+value.set(param='ave_pos_y', val=AVE_POS_Y)
+value.set(param='ave_pos_z', val=AVE_POS_Z)
+value.set(param='ave_pos_beta', val=AVE_POS_BETA)
+value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
+value.set(param='eigen_alpha', val=EIGEN_ALPHA)
+value.set(param='eigen_beta', val=EIGEN_BETA)
+value.set(param='eigen_gamma', val=EIGEN_GAMMA)
+value.set(param='cone_theta_x', val=CONE_THETA_X)
+value.set(param='cone_theta_y', val=CONE_THETA_Y)
 minimise.calculate()
-print("\nchi2: %s" % repr(cdp.chi2))
+
+# Create the PDB representation of the true state.
+frame_order.pdb_model(ave_pos_file='ave_pos_true.pdb.gz', rep_file='frame_order_true.pdb.gz', dist_file=None, force=True)
 
 # Optimise.
-#minimise.grid_search(inc=5)
-minimise.execute('simplex', constraints=False)
+#grid_search(inc=5)
+minimise('simplex')
+
+# Store the result.
+frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb.gz', rep_file='frame_order_fixed_piv.pdb.gz', dist_file=None, force=True)
+
+# Optimise the pivot and model.
+frame_order.pivot(pivot, fix=False)
+minimise('simplex')
 
 # Test Monte Carlo simulations.
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise.execute('simplex', constraints=False)
+minimise('simplex')
 eliminate()
 monte_carlo.error_analysis()
 
 # Create the PDB representation.
-frame_order.pdb_model(force=True)
+frame_order.pdb_model(ave_pos_file='ave_pos.pdb.gz', rep_file='frame_order.pdb.gz', dist_file=None, force=True)
 
 # PyMOL.
 pymol.view()
 pymol.command('show spheres')
-pymol.cone_pdb('frame_order.pdb')
+pymol.frame_order(ave_pos_file='ave_pos_true.pdb.gz', rep_file='frame_order_true.pdb.gz', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos_fixed_piv.pdb.gz', rep_file='frame_order_fixed_piv.pdb.gz', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos.pdb.gz', rep_file='frame_order.pdb.gz', dist_file=None)
 
 # Save the state.
 state.save('frame_order', force=True)

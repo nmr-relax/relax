@@ -1,4 +1,4 @@
-# Script for optimising the isotropic cone frame order test model of CaM.
+# Script for optimising the rotor frame order test model of CaM.
 
 # Python module imports.
 from numpy import array
@@ -7,10 +7,9 @@ from numpy import array
 # The real parameter values.
 AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -20.859750185691549,   -2.450606987447843,   -2.191854570352916]
 AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [5.623468683852550, 0.435439748282942, 5.081265879629926]
-AXIS_THETA = 0.96007997859534299767
-AXIS_PHI = 4.03227550621962294031
-CONE_THETA = 0.6
-CONE_SIGMA_MAX = 0.9
+AXIS_THETA = 0.9600799785953431
+AXIS_PHI = 4.0322755062196229
+CONE_SIGMA_MAX = 30.0 / 360.0 * 2.0 * pi
 
 # Create the data pipe.
 pipe.create(pipe_name='frame order', pipe_type='frame order')
@@ -66,7 +65,7 @@ for i in range(len(full)):
     align_tensor.reduction(full_tensor=full[i], red_tensor=red[i])
 
 # Select the model.
-frame_order.select_model('iso cone')
+frame_order.select_model('rotor')
 
 # Set the reference domain.
 frame_order.ref_domain('N')
@@ -90,15 +89,14 @@ value.set(param='ave_pos_beta', val=AVE_POS_BETA)
 value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
 value.set(param='axis_theta', val=AXIS_THETA)
 value.set(param='axis_phi', val=AXIS_PHI)
-value.set(param='cone_theta', val=CONE_THETA)
 value.set(param='cone_sigma_max', val=CONE_SIGMA_MAX)
-minimise.calculate()
+calc()
 
 # Create the PDB representation of the true state.
 frame_order.pdb_model(ave_pos_file='ave_pos_true.pdb.gz', rep_file='frame_order_true.pdb.gz', dist_file=None, force=True)
 
 # Optimise.
-grid_search(inc=[None, None, None, None, None, None, 11, 11, 11, 11])
+#grid_search(inc=[None, None, None, None, None, None, 11, 11, 11])
 minimise('simplex')
 
 # Store the result.
