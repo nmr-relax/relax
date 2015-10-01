@@ -57,7 +57,7 @@ from target_functions.chi2 import chi2
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, com=None, ave_pos_pivot=zeros(3), ave_pos_piv_sync=True, translation_opt=False, pivot=None, pivot2=None, pivot_opt=False, quad_int=True):
+    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, com=None, ave_pos_pivot=zeros(3), pivot=None, pivot2=None, pivot_opt=False, quad_int=True):
         """Set up the target functions for the Frame Order theories.
 
         @keyword model:             The name of the Frame Order model.
@@ -98,12 +98,8 @@ class Frame_order:
         @type num_int_pts:          int
         @keyword com:               The centre of mass of the system.  This is used for defining the rotor model systems.
         @type com:                  numpy 3D rank-1 array
-        @keyword ave_pos_pivot:     The pivot point to rotate all atoms about to the average domain position.  For example this can be the centre of mass of the moving domain.
+        @keyword ave_pos_pivot:     The pivot point to rotate all atoms about to the average domain position.  In most cases this will be the centre of mass of the moving domain.  This pivot is shifted by the translation vector.
         @type ave_pos_pivot:        numpy 3D rank-1 array
-        @keyword ave_pos_piv_sync:  A flag which if True will cause pivot point to rotate to the average domain position to be synchronised with the motional pivot.  This will cause ave_pos_pivot argument to be ignored.
-        @type ave_pos_piv_sync:     bool
-        @keyword translation_opt:   A flag which if True will allow the pivot point of the motion to be optimised.
-        @type translation_opt:      bool
         @keyword pivot:             The pivot point for the ball-and-socket joint motion.  This is needed if PCS or PRE values are used.
         @type pivot:                numpy rank-1, 3D array or None
         @keyword pivot2:            The second pivot point for the motion.  This is needed if PCS or PRE values are used and if a double-motional model is to be optimised.
@@ -139,8 +135,6 @@ class Frame_order:
         self.num_int_pts = num_int_pts
         self.com = com
         self.ave_pos_pivot = ave_pos_pivot
-        self.ave_pos_piv_sync = ave_pos_piv_sync
-        self.translation_opt = translation_opt
         self._param_pivot = pivot
         self._param_pivot2 = pivot2
         self.pivot_opt = pivot_opt
@@ -430,20 +424,14 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._param_pivot2 = params[3:6]
             self._translation_vector = params[6:9]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, axis_theta_2, axis_phi_2, sigma_max, sigma_max_2 = params[9:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, axis_theta_2, axis_phi_2, sigma_max, sigma_max_2 = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            self._param_pivot2 = params[3:6]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, axis_theta_2, axis_phi_2, sigma_max, sigma_max_2 = params[6:]
-        else:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, axis_theta_2, axis_phi_2, sigma_max, sigma_max_2 = params
 
         # Generate both rotation axes from the spherical angles.
         spherical_to_cartesian([1.0, axis_theta, axis_phi], self.rotor_axis)
@@ -519,18 +507,13 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[6:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[3:]
-        else:
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params
 
         # Generate the cone axis from the spherical angles.
         spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
@@ -610,18 +593,13 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[6:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[3:]
-        else:
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params
 
         # Generate the cone axis from the spherical angles.
         spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
@@ -693,18 +671,13 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[6:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[3:]
-        else:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params
 
         # Generate the cone axis from the spherical angles.
         spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
@@ -784,18 +757,13 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[6:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[3:]
-        else:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params
 
         # Generate the cone axis from the spherical angles.
         spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
@@ -866,18 +834,13 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[6:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[3:]
-        else:
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params
 
         # Generate the cone axis from the spherical angles.
         spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
@@ -960,18 +923,13 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[6:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[3:]
-        else:
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params
 
         # Generate the cone axis from the spherical angles.
         spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
@@ -1045,18 +1003,13 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[6:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[3:]
-        else:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params
 
         # Generate the cone axis from the spherical angles.
         spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
@@ -1136,18 +1089,13 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[6:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[3:]
-        else:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params
 
         # Generate the cone axis from the spherical angles.
         spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
@@ -1218,18 +1166,13 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[6:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[3:]
-        else:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params
 
         # Average position rotation.
         euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
@@ -1306,18 +1249,13 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[6:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[3:]
-        else:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params
 
         # Average position rotation.
         euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
@@ -1385,18 +1323,13 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[6:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
-        else:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params
 
         # Average position rotation.
         euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
@@ -1473,18 +1406,13 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[6:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
-        else:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params
 
         # Average position rotation.
         euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
@@ -1552,18 +1480,13 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[6:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
-        else:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params
 
         # Average position rotation.
         euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
@@ -1640,18 +1563,13 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[6:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
-        else:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params
 
         # Average position rotation.
         euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
@@ -1719,11 +1637,8 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt:
-            self._translation_vector = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma = params[3:6]
-        else:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma = params
+        self._translation_vector = params[:3]
+        ave_pos_alpha, ave_pos_beta, ave_pos_gamma = params[3:6]
 
         # The average frame rotation matrix (and reduce and rotate the tensors).
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma)
@@ -1792,18 +1707,13 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params[6:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params[3:]
-        else:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params
 
         # Generate the cone axis from the spherical angles.
         spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
@@ -1883,18 +1793,13 @@ class Frame_order:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameters.
-        if self.translation_opt and self.pivot_opt:
+        if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_alpha, sigma_max = params[6:]
-        elif self.translation_opt:
+        else:
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_alpha, sigma_max = params[3:]
-        elif self.pivot_opt:
-            self._param_pivot = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_alpha, sigma_max = params[3:]
-        else:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_alpha, sigma_max = params
 
         # Generate the rotor axis.
         self.cone_axis = create_rotor_axis_alpha(alpha=axis_alpha, pivot=array(self._param_pivot, float64), point=self.com)
@@ -1959,12 +1864,6 @@ class Frame_order:
         @type RT_ave:       numpy rank-2, 3D array
         """
 
-        # The rotational pivot.
-        if self.ave_pos_piv_sync:
-            ave_pos_pivot = self._param_pivot
-        else:
-            ave_pos_pivot = self.ave_pos_pivot
-
         # The pivot to atom vectors.
         for j in range(self.num_spins):
             # The lanthanide to pivot vector.
@@ -1972,10 +1871,10 @@ class Frame_order:
                 self.r_ln_pivot[:, j] = pivot - self.paramag_centre
 
             # Rotate then translate the atomic positions, then calculate the pivot to atom vector.
-            self.r_pivot_atom[:, j] = dot(R_ave, self.atomic_pos[j] - ave_pos_pivot) + ave_pos_pivot
+            self.r_pivot_atom[:, j] = dot(R_ave, self.atomic_pos[j] - self.ave_pos_pivot) + self.ave_pos_pivot
             self.r_pivot_atom[:, j] += self._translation_vector
             self.r_pivot_atom[:, j] -= pivot
-            self.r_pivot_atom_rev[:, j] = dot(RT_ave, self.atomic_pos[j] - ave_pos_pivot) + ave_pos_pivot
+            self.r_pivot_atom_rev[:, j] = dot(RT_ave, self.atomic_pos[j] - self.ave_pos_pivot) + self.ave_pos_pivot
             self.r_pivot_atom_rev[:, j] += self._translation_vector
             self.r_pivot_atom_rev[:, j] -= pivot
 
