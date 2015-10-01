@@ -984,7 +984,7 @@ class Frame_order_grid_command(Slave_command):
         @type frq:                  numpy rank-1 array
         @keyword paramag_centre:    The paramagnetic centre position (or positions).
         @type paramag_centre:       numpy rank-1, 3D array or rank-2, Nx3 array
-         @keyword com:               The centre of mass of the system.  This is used for defining the rotor model systems.
+        @keyword com:               The centre of mass of the system.  This is used for defining the rotor model systems.
         @type com:                  numpy 3D rank-1 array
         @keyword ave_pos_pivot:     The pivot point to rotate all atoms about to the average domain position.  In most cases this will be the centre of mass of the moving domain.  This pivot is shifted by the translation vector.
         @type ave_pos_pivot:        numpy 3D rank-1 array
@@ -1131,7 +1131,7 @@ class Frame_order_minimise_command(Slave_command):
         @type frq:                  numpy rank-1 array
         @keyword paramag_centre:    The paramagnetic centre position (or positions).
         @type paramag_centre:       numpy rank-1, 3D array or rank-2, Nx3 array
-         @keyword com:               The centre of mass of the system.  This is used for defining the rotor model systems.
+        @keyword com:               The centre of mass of the system.  This is used for defining the rotor model systems.
         @type com:                  numpy 3D rank-1 array
         @keyword ave_pos_pivot:     The pivot point to rotate all atoms about to the average domain position.  In most cases this will be the centre of mass of the moving domain.  This pivot is shifted by the translation vector.
         @type ave_pos_pivot:        numpy 3D rank-1 array
