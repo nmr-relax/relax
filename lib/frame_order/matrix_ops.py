@@ -91,7 +91,7 @@ def daeg_to_rotational_superoperator(daeg, Rsuper):
     transpose_23(daeg)
 
 
-def pcs_pivot_motion_full_qrint(theta_i=None, phi_i=None, sigma_i=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
+def pcs_pivot_motion_full_qrint(theta_i=None, phi_i=None, sigma_i=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Calculate the PCS value after a pivoted motion for the isotropic cone model.
 
     @keyword theta_i:           The half cone opening angle (polar angle).
@@ -122,8 +122,6 @@ def pcs_pivot_motion_full_qrint(theta_i=None, phi_i=None, sigma_i=None, full_in_
     @type pcs_theta_err:        numpy rank-2 array
     @keyword missing_pcs:       A structure used to indicate which PCS values are missing.
     @type missing_pcs:          numpy rank-2 array
-    @keyword error_flag:        A flag which if True will cause the PCS errors to be estimated and stored in pcs_theta_err.
-    @type error_flag:           bool
     """
 
     # The rotation matrix.
@@ -159,12 +157,8 @@ def pcs_pivot_motion_full_qrint(theta_i=None, phi_i=None, sigma_i=None, full_in_
             # The PCS.
             pcs_theta[i, j] += proj * length_i
 
-            # The square.
-            if error_flag:
-                pcs_theta_err[i, j] += (proj * length_i)**2
 
-
-def pcs_pivot_motion_torsionless_qrint(theta_i=None, phi_i=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
+def pcs_pivot_motion_torsionless_qrint(theta_i=None, phi_i=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Calculate the PCS value after a pivoted motion for the isotropic cone model.
 
     @keyword theta_i:           The half cone opening angle (polar angle).
@@ -193,8 +187,6 @@ def pcs_pivot_motion_torsionless_qrint(theta_i=None, phi_i=None, full_in_ref_fra
     @type pcs_theta_err:        numpy rank-2 array
     @keyword missing_pcs:       A structure used to indicate which PCS values are missing.
     @type missing_pcs:          numpy rank-2 array
-    @keyword error_flag:        A flag which if True will cause the PCS errors to be estimated and stored in pcs_theta_err.
-    @type error_flag:           bool
     """
 
     # The rotation matrix.
@@ -243,10 +235,6 @@ def pcs_pivot_motion_torsionless_qrint(theta_i=None, phi_i=None, full_in_ref_fra
 
             # The PCS.
             pcs_theta[i, j] += proj * length_i
-
-            # The square.
-            if error_flag:
-                pcs_theta_err[i, j] += (proj * length_i)**2
 
 
 def reduce_alignment_tensor(D, A, red_tensor):

@@ -256,7 +256,7 @@ def part_int_daeg2_pseudo_ellipse_torsionless_88(phi, x, y):
     return 2 - 2*cos(tmax)**3
 
 
-def pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=None, theta_x=None, theta_y=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
+def pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=None, theta_x=None, theta_y=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Determine the averaged PCS value via numerical integration.
 
     @keyword points:            The Sobol points in the torsion-tilt angle space.
@@ -289,8 +289,6 @@ def pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=None, theta_x=None, 
     @type pcs_theta_err:        numpy rank-2 array
     @keyword missing_pcs:       A structure used to indicate which PCS values are missing.
     @type missing_pcs:          numpy rank-2 array
-    @keyword error_flag:        A flag which if True will cause the PCS errors to be estimated and stored in pcs_theta_err.
-    @type error_flag:           bool
     """
 
     # Clear the data structures.
@@ -321,9 +319,3 @@ def pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=None, theta_x=None, 
         for j in range(len(pcs_theta[i])):
             # The average PCS.
             pcs_theta[i, j] = c[i] * pcs_theta[i, j] / float(num)
-
-            # The error.
-            if error_flag:
-                pcs_theta_err[i, j] = abs(pcs_theta_err[i, j] / float(num)  -  pcs_theta[i, j]**2) / float(num)
-                pcs_theta_err[i, j] = c[i] * sqrt(pcs_theta_err[i, j])
-                print("%8.3f +/- %-8.3f" % (pcs_theta[i, j]*1e6, pcs_theta_err[i, j]*1e6))

@@ -31,6 +31,9 @@ class Analysis(Base_script):
     # Set up some class variables.
     DIRECTORY = 'pseudo_ellipse_free_rotor'
     MODEL = 'pseudo-ellipse, free rotor'
+    AVE_POS_ALPHA = None
+    AVE_POS_BETA = 0.19740471457956135
+    AVE_POS_GAMMA = 4.6622313104265416
     EIGEN_ALPHA = 3.1415926535897931
     EIGEN_BETA = 0.96007997859534311
     EIGEN_GAMMA = 4.0322755062196229

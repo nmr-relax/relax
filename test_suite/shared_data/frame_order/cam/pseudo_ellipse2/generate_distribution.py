@@ -18,7 +18,7 @@ from generate_base import Main
 
 class Generate(Main):
     # The number of structures.
-    N = 1000000
+    N = 20000000
 
     # Cone parameters.
     THETA_X = 0.8
@@ -49,15 +49,15 @@ class Generate(Main):
             phi, theta, sigma = R_to_tilt_torsion(R_eigen)
             sigma = wrap_angles(sigma, -pi, pi)
 
+            # Skip the rotation if the torsion angle is violated.
+            if sigma > self.SIGMA_MAX or sigma < -self.SIGMA_MAX:
+                continue
+
             # Determine theta_max.
             theta_max = 1.0 / sqrt((cos(phi) / self.THETA_X)**2 + (sin(phi) / self.THETA_Y)**2)
 
             # Skip the rotation if the cone angle is violated.
             if theta > theta_max:
-                continue
-
-            # Skip the rotation if the torsion angle is violated.
-            if sigma > self.SIGMA_MAX or sigma < -self.SIGMA_MAX:
                 continue
 
             # Rotation is ok, so stop looping.

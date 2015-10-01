@@ -32,6 +32,9 @@ class Analysis(Base_script):
     # Set up some class variables.
     DIRECTORY = 'iso_cone_free_rotor'
     MODEL = 'iso cone, free rotor'
+    AVE_POS_ALPHA = None
+    AVE_POS_BETA = 0.19740471457956135
+    AVE_POS_GAMMA = 4.6622313104265416
     AXIS_THETA = 0.96007997859534299767
     AXIS_PHI = 4.03227550621962294031
     CONE_S1 = iso_cone_theta_to_S(1.0)
