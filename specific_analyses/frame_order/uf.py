@@ -239,7 +239,7 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
 
             # Fill the structure.
             for i in range(cdp.sim_number):
-                if cdp.model in ['rotor']:
+                if cdp.model in ['rotor', 'free rotor']:
                     axis_sim[i] = create_rotor_axis_alpha(alpha=cdp.axis_alpha_sim[i], pivot=pivot, point=com)
                 else:
                     axis_sim[i] = create_rotor_axis_spherical(theta=cdp.axis_theta_sim[i], phi=cdp.axis_phi_sim[i])

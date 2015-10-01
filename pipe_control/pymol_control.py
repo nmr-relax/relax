@@ -285,11 +285,14 @@ def cone_pdb(file=None):
     # Read in the cone PDB file.
     pymol_obj.exec_cmd("load " + file)
 
+    # The object ID.
+    id = file_root(file)
+
     # The cone axes.
-    represent_cone_axis()
+    represent_cone_axis(id=id)
 
     # The cone object.
-    represent_cone_object()
+    represent_cone_object(id=id)
 
 
 def create_macro(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
@@ -383,13 +386,13 @@ def frame_order_geometric(file=None):
     id = file_root(file)
 
     # Set up the rotor objects.
-    represent_rotor_object()
+    represent_rotor_object(id=id)
 
     # Set up the cone axis.
-    represent_cone_axis()
+    represent_cone_axis(id=id)
 
     # Set up the cone object.
-    represent_cone_object()
+    represent_cone_object(id=id)
 
 
 def macro_apply(data_type=None, style="classic", colour_start_name=None, colour_start_rgb=None, colour_end_name=None, colour_end_rgb=None, colour_list=None):
@@ -553,11 +556,19 @@ def macro_write(data_type=None, style="classic", colour_start_name=None, colour_
     add_result_file(type='pymol', label='PyMOL', file=file_path)
 
 
-def represent_cone_axis():
-    """Set up the PyMOL cone axis representation."""
+def represent_cone_axis(id=None):
+    """Set up the PyMOL cone axis representation.
+
+    @keyword id:    The PyMOL object ID.
+    @type id:       str
+    """
+
+    # Sanity check.
+    if id == None:
+        raise RelaxError("The PyMOL object ID must be supplied.")
 
     # Select the AVE, AXE, and SIM residues.
-    pymol_obj.exec_cmd("select (resn AVE,AXE,SIM)")
+    pymol_obj.exec_cmd("select (%s & resn AVE,AXE,SIM)" % id)
 
     # Show the vector as a stick.
     pymol_obj.exec_cmd("show stick, 'sele'")
@@ -566,7 +577,7 @@ def represent_cone_axis():
     pymol_obj.exec_cmd("color cyan, 'sele'")
 
     # Select the atom used for labelling.
-    pymol_obj.exec_cmd("select (resn AVE,AXE,SIM and symbol N)")
+    pymol_obj.exec_cmd("select (%s & resn AVE,AXE,SIM and symbol N)" % id)
 
     # Hide the atom.
     pymol_obj.exec_cmd("hide ('sele')")
@@ -578,11 +589,19 @@ def represent_cone_axis():
     pymol_obj.exec_cmd("cmd.delete('sele')")
 
 
-def represent_cone_object():
-    """Set up the PyMOL cone object representation."""
+def represent_cone_object(id=None):
+    """Set up the PyMOL cone object representation.
+
+    @keyword id:    The PyMOL object ID.
+    @type id:       str
+    """
+
+    # Sanity check.
+    if id == None:
+        raise RelaxError("The PyMOL object ID must be supplied.")
 
     # Select the CON and EDG residues.
-    pymol_obj.exec_cmd("select (resn CON,EDG)")
+    pymol_obj.exec_cmd("select (%s & resn CON,EDG)" % id)
 
     # Hide everything.
     pymol_obj.exec_cmd("hide ('sele')")
@@ -603,24 +622,32 @@ def represent_cone_object():
     pymol_obj.exec_cmd("cmd.delete('sele')")
 
 
-def represent_rotor_object():
-    """Set up the PyMOL rotor object representation."""
+def represent_rotor_object(id=None):
+    """Set up the PyMOL rotor object representation.
+
+    @keyword id:    The PyMOL object ID.
+    @type id:       str
+    """
+
+    # Sanity check.
+    if id == None:
+        raise RelaxError("The PyMOL object ID must be supplied.")
 
     # Rotor objects:  Set up the rotor axis (the residues AX and PRC).
-    pymol_obj.exec_cmd("select (resn AX,PRC)")
+    pymol_obj.exec_cmd("select (%s & resn AX,PRC)" % id)
     pymol_obj.exec_cmd("show stick, 'sele'")
     pymol_obj.exec_cmd("color red, 'sele'")
     pymol_obj.exec_cmd("cmd.delete('sele')")
 
     # Rotor objects:  Display the central point.
-    pymol_obj.exec_cmd("select (name CTR)")
+    pymol_obj.exec_cmd("select (%s & name CTR)" % id)
     pymol_obj.exec_cmd("show spheres, 'sele'")
     pymol_obj.exec_cmd("color red, 'sele'")
     pymol_obj.exec_cmd("set sphere_scale, 0.3, 'sele'")
     pymol_obj.exec_cmd("cmd.delete('sele')")
 
     # Rotor objects:  Set up the propellers.
-    pymol_obj.exec_cmd("select (resn PRB)")
+    pymol_obj.exec_cmd("select (%s & resn PRB)" % id)
     pymol_obj.exec_cmd("show stick, 'sele'")
     pymol_obj.exec_cmd("set stick_radius, 0.15, 'sele'")
     pymol_obj.exec_cmd("cmd.delete('sele')")
