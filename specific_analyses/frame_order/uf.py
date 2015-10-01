@@ -179,9 +179,9 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
             com = pipe_centre_of_mass(verbosity=0)
 
         # Generate the rotor axis.
-        if cdp.model in ['rotor']:
+        if cdp.model in ['rotor', 'free rotor']:
             axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot, point=com)
-        elif cdp.model in ['free rotor', 'iso cone', 'iso cone, free rotor']:
+        elif cdp.model in ['iso cone', 'iso cone, free rotor']:
             axis = create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi)
         else:
             axis = create_rotor_axis_euler(alpha=cdp.eigen_alpha, beta=cdp.eigen_beta, gamma=cdp.eigen_gamma)
@@ -220,7 +220,7 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
         print("\nGenerating the z-axis system.")
 
         # The axis.
-        if cdp.model in ['rotor']:
+        if cdp.model in ['rotor', 'free rotor']:
             axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot, point=com)
         else:
             axis = create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi)

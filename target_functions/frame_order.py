@@ -467,13 +467,13 @@ class Frame_order:
         if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[6:]
+            ave_pos_beta, ave_pos_gamma, axis_alpha = params[6:]
         else:
             self._translation_vector = params[:3]
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[3:]
+            ave_pos_beta, ave_pos_gamma, axis_alpha = params[3:]
 
-        # Generate the cone axis from the spherical angles.
-        spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
+        # Generate the rotor axis.
+        self.cone_axis = create_rotor_axis_alpha(alpha=axis_alpha, pivot=array(self._param_pivot, float64), point=self.com)
 
         # Pre-calculate the eigenframe rotation matrix.
         two_vect_to_R(self.z_axis, self.cone_axis, self.R_eigen)
@@ -853,10 +853,10 @@ class Frame_order:
         if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[6:]
+            ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[6:]
         else:
             self._translation_vector = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
+            ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
 
         # Average position rotation.
         euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
@@ -868,7 +868,7 @@ class Frame_order:
         frame_order_2nd = compile_2nd_matrix_pseudo_ellipse_free_rotor(self.frame_order_2nd, Rx2_eigen, cone_theta_x, cone_theta_y)
 
         # Reduce and rotate the tensors.
-        self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
+        self.reduce_and_rot(0.0, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
         # Pre-transpose matrices for faster calculations.
         RT_eigen = transpose(self.R_eigen)

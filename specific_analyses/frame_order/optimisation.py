@@ -678,7 +678,7 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling_matrix=None):
 
     # The centre of mass, for use in the rotor models.
     com = None
-    if cdp.model in ['rotor', 'double rotor']:
+    if cdp.model in ['rotor', 'free rotor', 'double rotor']:
         # The centre of mass of all objects in the data pipe.
         com = pipe_centre_of_mass(verbosity=0)
         com = array(com, float64)

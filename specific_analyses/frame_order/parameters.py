@@ -201,7 +201,7 @@ def update_model():
     cdp.params.append('ave_pos_z')
 
     # The tensor rotation, or average domain position.
-    if cdp.model not in ['free rotor', 'iso cone, free rotor']:
+    if cdp.model not in ['free rotor', 'iso cone, free rotor', 'pseudo-ellipse, free rotor']:
         cdp.params.append('ave_pos_alpha')
     cdp.params.append('ave_pos_beta')
     cdp.params.append('ave_pos_gamma')
@@ -213,7 +213,7 @@ def update_model():
         cdp.params.append('eigen_gamma')
 
     # Frame order eigenframe - the isotropic cone axis.
-    if cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'double rotor']:
+    if cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor', 'double rotor']:
         cdp.params.append('axis_theta')
         cdp.params.append('axis_phi')
 
@@ -223,7 +223,7 @@ def update_model():
         cdp.params.append('axis_phi_2')
 
     # Frame order eigenframe - the rotor axis alpha angle.
-    if cdp.model in ['rotor']:
+    if cdp.model in ['rotor', 'free rotor']:
         cdp.params.append('axis_alpha')
 
     # Cone parameters - pseudo-elliptic cone parameters.
