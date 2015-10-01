@@ -137,7 +137,7 @@ class Frame_order_analysis:
                 self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
                 self.interpreter.monte_carlo.create_data()
                 self.interpreter.monte_carlo.initial_values()
-                self.interpreter.minimise.execute(self.min_algor, func_tol=self.mc_func_tol, constraints=False)
+                self.interpreter.minimise(self.min_algor, func_tol=self.mc_func_tol)
                 self.interpreter.eliminate()
                 self.interpreter.monte_carlo.error_analysis()
 
@@ -357,12 +357,12 @@ class Frame_order_analysis:
 
             # Grid search.
             incs = self.custom_grid_incs(model)
-            self.interpreter.minimise.grid_search(inc=incs, constraints=False)
+            self.interpreter.grid_search(inc=incs)
 
             # Minimise (for the PCS data subset and full RDC set).
             for i in range(len(self.num_int_pts_subset)):
                 self.interpreter.frame_order.num_int_pts(num=self.num_int_pts_subset[i])
-                self.interpreter.minimise.execute(self.min_algor, func_tol=self.func_tol_subset[i], constraints=False)
+                self.interpreter.minimise(self.min_algor, func_tol=self.func_tol_subset[i])
 
             # Copy the PCS data.
             self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
@@ -370,7 +370,7 @@ class Frame_order_analysis:
             # Minimise (for the full data set).
             for i in range(len(self.num_int_pts_full)):
                 self.interpreter.frame_order.num_int_pts(num=self.num_int_pts_full[i])
-                self.interpreter.minimise.execute(self.min_algor, func_tol=self.func_tol_full[i], constraints=False)
+                self.interpreter.minimise(self.min_algor, func_tol=self.func_tol_full[i])
 
             # Results printout.
             self.print_results()
@@ -421,13 +421,13 @@ class Frame_order_analysis:
         print("\n\nTranslation active - splitting the grid search and iterating.")
         for i in range(2):
             # First optimise the rotation.
-            self.interpreter.grid_search(inc=[None, None, None, self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid], constraints=False)
+            self.interpreter.grid_search(inc=[None, None, None, self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid])
 
             # Then the translation.
-            self.interpreter.grid_search(inc=[self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid, None, None, None], constraints=False)
+            self.interpreter.grid_search(inc=[self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid, None, None, None])
 
         # Minimise.
-        self.interpreter.minimise.execute(self.min_algor, constraints=False)
+        self.interpreter.minimise(self.min_algor)
 
         # Results printout.
         self.print_results()
@@ -568,7 +568,7 @@ class Frame_order_analysis:
         script.write("# PyMOL visualisation.\n")
         script.write("pymol.view()\n")
         script.write("pymol.command('show spheres')\n")
-        script.write("pymol.frame_order(file='frame_order.pdb', dist_file='frame_order_distribution.pdb')\n")
+        script.write("pymol.frame_order()\n")
 
         # Close the file.
         script.close()

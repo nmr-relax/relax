@@ -100,6 +100,7 @@ class Frame_order(SystemTestCase):
             'test_cam_rotor2_pcs',
             'test_cam_rotor2_rdc'
         ]
+        blacklist = []
 
         # Skip the blacklisted tests.
         if skip_tests and methodName in blacklist:
@@ -336,7 +337,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(opt=True)
         self.interpreter.run(script_file=self.cam_path+'iso_cone.py')
-        self.check_chi2(4.1803675413260173)
+        self.check_chi2(0.043800618552313021)
 
 
     def test_cam_iso_cone_pcs(self):
@@ -345,7 +346,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'iso_cone.py')
-        self.check_chi2(4.4504224054021169)
+        self.check_chi2(0.003874070256189294)
 
 
     def test_cam_iso_cone_rdc(self):
@@ -363,7 +364,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'iso_cone_free_rotor.py')
-        self.check_chi2(0.35092758489647358)
+        self.check_chi2(0.011949107884566126)
 
 
     def test_cam_iso_cone_free_rotor_pcs(self):
@@ -372,7 +373,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'iso_cone_free_rotor.py')
-        self.check_chi2(0.33994118183030736)
+        self.check_chi2(0.00096270481839987672)
 
 
     def test_cam_iso_cone_free_rotor_rdc(self):
@@ -390,7 +391,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'iso_cone_free_rotor2.py')
-        self.check_chi2(0.056584109409327947)
+        self.check_chi2(0.0057702045844150304)
 
 
     def test_cam_iso_cone_free_rotor2_pcs(self):
@@ -399,7 +400,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'iso_cone_free_rotor2.py')
-        self.check_chi2(0.051025162527258534)
+        self.check_chi2(0.00021125770234561278)
 
 
     def test_cam_iso_cone_free_rotor2_rdc(self):
@@ -417,7 +418,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'iso_cone_torsionless.py')
-        self.check_chi2(0.18038652767579536)
+        self.check_chi2(0.048763839080641164)
 
 
     def test_cam_iso_cone_torsionless_pcs(self):
@@ -426,7 +427,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'iso_cone_torsionless.py')
-        self.check_chi2(0.13163732545584966)
+        self.check_chi2(1.4636860695480846e-05)
 
 
     def test_cam_iso_cone_torsionless_rdc(self):
@@ -444,7 +445,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(opt=True)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse.py')
-        self.check_chi2(1.6035432658413395)
+        self.check_chi2(0.035375873486145099)
 
 
     def test_cam_pseudo_ellipse_pcs(self):
@@ -453,7 +454,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse.py')
-        self.check_chi2(1.737507433470205)
+        self.check_chi2(0.0042333410710150678)
 
 
     def test_cam_pseudo_ellipse_rdc(self):
@@ -471,7 +472,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse2.py')
-        self.check_chi2(1.3108157689346795)
+        self.check_chi2(0.019236098257893068)
 
 
     def test_cam_pseudo_ellipse2_pcs(self):
@@ -480,7 +481,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse2.py')
-        self.check_chi2(1.2926861559790306)
+        self.check_chi2(0.0011064853022441333)
 
 
     def test_cam_pseudo_ellipse2_rdc(self):
@@ -498,7 +499,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_free_rotor.py')
-        self.check_chi2(3.2724883075092652)
+        self.check_chi2(0.037619377557162943)
 
 
     def test_cam_pseudo_ellipse_free_rotor_pcs(self):
@@ -507,7 +508,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_free_rotor.py')
-        self.check_chi2(3.2355129985962812)
+        self.check_chi2(0.00064406864417855384)
 
 
     def test_cam_pseudo_ellipse_free_rotor_rdc(self):
@@ -525,7 +526,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_torsionless.py')
-        self.check_chi2(4.0465940297969007)
+        self.check_chi2(0.10567214407060189)
 
 
     def test_cam_pseudo_ellipse_torsionless_pcs(self):
@@ -534,7 +535,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_torsionless.py')
-        self.check_chi2(4.0079857721854344)
+        self.check_chi2(0.06706388645913583)
 
 
     def test_cam_pseudo_ellipse_torsionless_rdc(self):
@@ -579,7 +580,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'rotor.py')
-        self.check_chi2(0.076190530269006254)
+        self.check_chi2(0.075072773007664212)
 
 
     def test_cam_rotor_pcs(self):
@@ -588,7 +589,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'rotor.py')
-        self.check_chi2(0.0011188968283402441)
+        self.check_chi2(1.139566998206629e-06)
 
 
     def test_cam_rotor_rdc(self):
@@ -606,7 +607,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'rotor_2_state.py')
-        self.check_chi2(1.0018669981509478)
+        self.check_chi2(0.98332032351549037)
 
 
     def test_cam_rotor_2_state_pcs(self):
@@ -615,7 +616,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'rotor_2_state.py')
-        self.check_chi2(0.01857582733972268)
+        self.check_chi2(2.9152704264897967e-05)
 
 
     def test_cam_rotor_2_state_rdc(self):
@@ -1193,7 +1194,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 94337.62007871762)
+        self.assertAlmostEqual(cdp.chi2, 94336.297626701955)
 
 
     def test_rigid_data_to_iso_cone_model(self):

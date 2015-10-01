@@ -285,56 +285,11 @@ def cone_pdb(file=None):
     # Read in the cone PDB file.
     pymol_obj.exec_cmd("load " + file)
 
-
     # The cone axes.
-    ################
-
-    # Select the AVE, AXE, and SIM residues.
-    pymol_obj.exec_cmd("select (resn AVE,AXE,SIM)")
-
-    # Show the vector as a stick.
-    pymol_obj.exec_cmd("show stick, 'sele'")
-
-    # Colour it blue.
-    pymol_obj.exec_cmd("color cyan, 'sele'")
-
-    # Select the atom used for labelling.
-    pymol_obj.exec_cmd("select (resn AVE,AXE,SIM and symbol N)")
-
-    # Hide the atom.
-    pymol_obj.exec_cmd("hide ('sele')")
-
-    # Label using the atom name.
-    pymol_obj.exec_cmd("cmd.label(\"sele\",\"name\")")
-
+    represent_cone_axis()
 
     # The cone object.
-    ##################
-
-    # Select the CON residue.
-    pymol_obj.exec_cmd("select (resn CON,EDG)")
-
-    # Hide everything.
-    pymol_obj.exec_cmd("hide ('sele')")
-
-    # Show as 'sticks'.
-    pymol_obj.exec_cmd("show sticks, 'sele'")
-
-    # Colour it white.
-    pymol_obj.exec_cmd("color white, 'sele'")
-
-    # Shorten the stick width from 0.25 to 0.15.
-    pymol_obj.exec_cmd("set stick_radius,0.15000")
-
-    # Set a bit of transparency.
-    pymol_obj.exec_cmd("set stick_transparency, 0.3")
-
-
-    # Clean up.
-    ###########
-
-    # Remove the selection.
-    pymol_obj.exec_cmd("cmd.delete('sele')")
+    represent_cone_object()
 
 
 def create_macro(data_type=None, style="classic", colour_start=None, colour_end=None, colour_list=None):
@@ -414,7 +369,6 @@ def frame_order_distribution(file=None):
     pymol_obj.exec_cmd("load " + file)
 
 
-
 def frame_order_geometric(file=None):
     """Display the frame order geometric object.
 
@@ -428,30 +382,14 @@ def frame_order_geometric(file=None):
     # The object ID.
     id = file_root(file)
 
+    # Set up the rotor objects.
+    represent_rotor_object()
 
-    # Rotor objects.
-    ################
+    # Set up the cone axis.
+    represent_cone_axis()
 
-    # Set up the rotor axis (the residues AX and PRC).
-    pymol_obj.exec_cmd("select (resn AX,PRC)")
-    pymol_obj.exec_cmd("show stick, 'sele'")
-    pymol_obj.exec_cmd("color red, 'sele'")
-    pymol_obj.exec_cmd("cmd.delete('sele')")
-
-    # Display the central point.
-    pymol_obj.exec_cmd("select (name CTR)")
-    pymol_obj.exec_cmd("show spheres, 'sele'")
-    pymol_obj.exec_cmd("color red, 'sele'")
-    pymol_obj.exec_cmd("set sphere_scale, 0.3, 'sele'")
-    pymol_obj.exec_cmd("cmd.delete('sele')")
-
-    # Set up the propellers.
-    pymol_obj.exec_cmd("select (resn PRB)")
-    pymol_obj.exec_cmd("show stick, 'sele'")
-    pymol_obj.exec_cmd("set stick_radius, 0.15, 'sele'")
-    pymol_obj.exec_cmd("cmd.delete('sele')")
-
-
+    # Set up the cone object.
+    represent_cone_object()
 
 
 def macro_apply(data_type=None, style="classic", colour_start_name=None, colour_start_rgb=None, colour_end_name=None, colour_end_rgb=None, colour_list=None):
@@ -613,6 +551,79 @@ def macro_write(data_type=None, style="classic", colour_start_name=None, colour_
 
     # Add the file to the results file list.
     add_result_file(type='pymol', label='PyMOL', file=file_path)
+
+
+def represent_cone_axis():
+    """Set up the PyMOL cone axis representation."""
+
+    # Select the AVE, AXE, and SIM residues.
+    pymol_obj.exec_cmd("select (resn AVE,AXE,SIM)")
+
+    # Show the vector as a stick.
+    pymol_obj.exec_cmd("show stick, 'sele'")
+
+    # Colour it blue.
+    pymol_obj.exec_cmd("color cyan, 'sele'")
+
+    # Select the atom used for labelling.
+    pymol_obj.exec_cmd("select (resn AVE,AXE,SIM and symbol N)")
+
+    # Hide the atom.
+    pymol_obj.exec_cmd("hide ('sele')")
+
+    # Label using the atom name.
+    pymol_obj.exec_cmd("cmd.label(\"sele\",\"name\")")
+
+    # Remove the selection.
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+
+def represent_cone_object():
+    """Set up the PyMOL cone object representation."""
+
+    # Select the CON and EDG residues.
+    pymol_obj.exec_cmd("select (resn CON,EDG)")
+
+    # Hide everything.
+    pymol_obj.exec_cmd("hide ('sele')")
+
+    # Show as 'sticks'.
+    pymol_obj.exec_cmd("show sticks, 'sele'")
+
+    # Colour it white.
+    pymol_obj.exec_cmd("color white, 'sele'")
+
+    # Shorten the stick width from 0.25 to 0.15.
+    pymol_obj.exec_cmd("set stick_radius, 0.15, 'sele'")
+
+    # Set a bit of transparency.
+    pymol_obj.exec_cmd("set stick_transparency, 0.3, 'sele'")
+
+    # Remove the selection.
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+
+def represent_rotor_object():
+    """Set up the PyMOL rotor object representation."""
+
+    # Rotor objects:  Set up the rotor axis (the residues AX and PRC).
+    pymol_obj.exec_cmd("select (resn AX,PRC)")
+    pymol_obj.exec_cmd("show stick, 'sele'")
+    pymol_obj.exec_cmd("color red, 'sele'")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+    # Rotor objects:  Display the central point.
+    pymol_obj.exec_cmd("select (name CTR)")
+    pymol_obj.exec_cmd("show spheres, 'sele'")
+    pymol_obj.exec_cmd("color red, 'sele'")
+    pymol_obj.exec_cmd("set sphere_scale, 0.3, 'sele'")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+    # Rotor objects:  Set up the propellers.
+    pymol_obj.exec_cmd("select (resn PRB)")
+    pymol_obj.exec_cmd("show stick, 'sele'")
+    pymol_obj.exec_cmd("set stick_radius, 0.15, 'sele'")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
 
 
 def tensor_pdb(file=None):

@@ -53,7 +53,7 @@ class Base_script:
     MODEL = None
 
     # The number of integration points.
-    NUM_INT_PTS = 50
+    NUM_INT_PTS = 2000
 
     # The model parameters.
     AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -20.859750185691549,   -2.450606987447843,   -2.191854570352916]

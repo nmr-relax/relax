@@ -37,7 +37,7 @@ class Analysis(Base_script):
     CONE_THETA_X = 30.0 * 2.0 * pi / 360.0
     CONE_THETA_Y = 50.0 * 2.0 * pi / 360.0
     CONE_SIGMA_MAX = 60.0 * 2.0 * pi / 360.0
-    NUM_INT_PTS = 15
+    NUM_INT_PTS = 600
 
 
 # Execute the analysis.
