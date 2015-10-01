@@ -24,7 +24,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import acos, pi, sqrt
+from math import acos, cos, pi, sin, sqrt
 from numpy import array, dot, float32, float64, ones, transpose, uint8, zeros
 from numpy.linalg import norm
 
@@ -47,7 +47,7 @@ from lib.frame_order.pseudo_ellipse_torsionless import compile_2nd_matrix_pseudo
 from lib.frame_order.rotor import compile_2nd_matrix_rotor, pcs_numeric_int_rotor_qrint
 from lib.frame_order.rotor_axis import create_rotor_axis_alpha
 from lib.geometry.coord_transform import spherical_to_cartesian
-from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
+from lib.geometry.rotations import euler_to_R_zyz, tilt_torsion_to_R, two_vect_to_R
 from lib.linear_algebra.kronecker_product import kron_prod
 from lib.order import order_parameters
 from lib.physical_constants import pcs_constant
@@ -347,7 +347,6 @@ class Frame_order:
         self.R_eigen = zeros((3, 3), float64)
         self.R_eigen_2 = zeros((3, 3), float64)
         self.R_ave = zeros((3, 3), float64)
-        self.Ri_prime = zeros((3, 3), float64)
         self.tensor_3D = zeros((3, 3), float64)
 
         # The cone axis storage and molecular frame z-axis.
@@ -1172,6 +1171,7 @@ class Frame_order:
 
         # Initialise.
         self.sobol_angles = zeros((n, m), float32)
+        self.Ri_prime = zeros((n, 3, 3), float64)
 
         # Loop over the points.
         for i in range(n):
@@ -1179,18 +1179,56 @@ class Frame_order:
             point, seed = i4_sobol(m, i)
 
             # Loop over the dimensions, converting the points to angles.
+            theta = None
+            phi = None
+            sigma = None
             for j in range(m):
                 # The tilt angle - the angle of rotation about the x-y plane rotation axis.
                 if dims[j] in ['theta']:
-                    self.sobol_angles[i, j] = acos(2.0*point[j] - 1.0)
+                    theta = acos(2.0*point[j] - 1.0)
+                    self.sobol_angles[i, j] = theta
 
                 # The angle defining the x-y plane rotation axis.
                 if dims[j] in ['phi']:
-                    self.sobol_angles[i, j] = 2.0 * pi * point[j]
+                    phi = 2.0 * pi * point[j]
+                    self.sobol_angles[i, j] = phi
 
                 # The torsion angle - the angle of rotation about the z' axis.
                 if dims[j] in ['sigma', 'sigma2']:
-                    self.sobol_angles[i, j] = 2.0 * pi * (point[j] - 0.5)
+                    sigma = 2.0 * pi * (point[j] - 0.5)
+                    self.sobol_angles[i, j] = sigma
+
+            # Pre-calculate the rotation matrix for the full tilt-torsion.
+            if theta != None and phi != None and sigma != None:
+                tilt_torsion_to_R(phi, theta, sigma, self.Ri_prime[i])
+
+            # Pre-calculate the rotation matrix for the torsionless models.
+            elif sigma == None:
+                c_theta = cos(theta)
+                s_theta = sin(theta)
+                c_phi = cos(phi)
+                s_phi = sin(phi)
+                c_phi_c_theta = c_phi * c_theta
+                s_phi_c_theta = s_phi * c_theta
+                self.Ri_prime[i, 0, 0] =  c_phi_c_theta*c_phi + s_phi**2
+                self.Ri_prime[i, 0, 1] =  c_phi_c_theta*s_phi - c_phi*s_phi
+                self.Ri_prime[i, 0, 2] =  c_phi*s_theta
+                self.Ri_prime[i, 1, 0] =  s_phi_c_theta*c_phi - c_phi*s_phi
+                self.Ri_prime[i, 1, 1] =  s_phi_c_theta*s_phi + c_phi**2
+                self.Ri_prime[i, 1, 2] =  s_phi*s_theta
+                self.Ri_prime[i, 2, 0] = -s_theta*c_phi
+                self.Ri_prime[i, 2, 1] = -s_theta*s_phi
+                self.Ri_prime[i, 2, 2] =  c_theta
+
+            # Pre-calculate the rotation matrix for the rotor models.
+            else:
+                c_sigma = cos(sigma)
+                s_sigma = sin(sigma)
+                self.Ri_prime[i, 0, 0] =  c_sigma
+                self.Ri_prime[i, 0, 1] = -s_sigma
+                self.Ri_prime[i, 1, 0] =  s_sigma
+                self.Ri_prime[i, 1, 1] =  c_sigma
+                self.Ri_prime[i, 2, 2] = 1.0
 
 
     def reduce_and_rot(self, ave_pos_alpha=None, ave_pos_beta=None, ave_pos_gamma=None, daeg=None):

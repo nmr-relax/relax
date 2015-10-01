@@ -4,6 +4,15 @@
 from numpy import array
 
 
+# The real parameter values.
+AVE_POS_X = -13.9092836985788
+AVE_POS_Y = -0.36893728819422167
+AVE_POS_Z = 2.8352640418129806
+AVE_POS_BETA = 5.389498937346155
+AVE_POS_GAMMA = 0.09243393677259322
+AXIS_THETA = 0.69828059079619353433
+AXIS_PHI = 4.03227550621962294031
+
 # Create the data pipe.
 pipe.create(pipe_name='frame order', pipe_type='frame order')
 
@@ -63,7 +72,7 @@ frame_order.select_model('free rotor')
 # Set the reference domain.
 frame_order.ref_domain('N')
 
-# The pivot point.
+# Set the initial pivot point.
 pivot = array([ 37.254, 0.5, 16.7465])
 frame_order.pivot(pivot, fix=True)
 
@@ -71,25 +80,37 @@ frame_order.pivot(pivot, fix=True)
 paramag.centre(pos=[35.934, 12.194, -4.206])
 
 # The optimisation settings.
-frame_order.num_int_pts(num=50)
+frame_order.num_int_pts(num=100)
 
 # Check the minimum.
-value.set(param='ave_pos_beta', val=0.77485244603476433)
-value.set(param='ave_pos_gamma', val=0.1420704587263735)
-value.set(param='axis_theta', val=0.69828059079619353433)
-value.set(param='axis_phi', val=4.03227550621962294031)
+value.set(param='ave_pos_x', val=AVE_POS_X)
+value.set(param='ave_pos_y', val=AVE_POS_Y)
+value.set(param='ave_pos_z', val=AVE_POS_Z)
+value.set(param='ave_pos_beta', val=AVE_POS_BETA)
+value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
+value.set(param='axis_theta', val=AXIS_THETA)
+value.set(param='axis_phi', val=AXIS_PHI)
 minimise.calculate()
-print("\nchi2: %s" % repr(cdp.chi2))
+
+# Create the PDB representation of the true state.
+frame_order.pdb_model(ave_pos_file=None, rep_file='frame_order_true.pdb', dist_file=None, force=True)
 
 # Optimise.
-minimise.grid_search(inc=5)
-minimise.execute('simplex', constraints=False)
+grid_search(inc=[None, None, None, None, None, 21, 21])
+minimise('simplex')
+
+# Store the result.
+frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None, force=True)
+
+# Optimise the pivot and model.
+frame_order.pivot(pivot, fix=False)
+minimise('simplex')
 
 # Test Monte Carlo simulations.
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise.execute('simplex', constraints=False)
+minimise('simplex')
 eliminate()
 monte_carlo.error_analysis()
 
@@ -99,7 +120,9 @@ frame_order.pdb_model(force=True)
 # PyMOL.
 pymol.view()
 pymol.command('show spheres')
-pymol.cone_pdb('frame_order.pdb')
+pymol.frame_order(ave_pos_file=None, rep_file='frame_order_true.pdb', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos.pdb', rep_file='frame_order.pdb', dist_file=None)
 
 # Save the state.
 state.save('frame_order', force=True)

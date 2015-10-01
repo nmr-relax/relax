@@ -509,7 +509,8 @@ class Frame_order(API_base, API_common):
 
         # Constraint flag set but no constraints present.
         if A != None and len(A) == 0:
-            warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
+            if verbosity:
+                warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
             constraints = False
 
             # Pop out the log barrier algorithm.

@@ -23,14 +23,12 @@
 """Module for the handling of Frame Order."""
 
 # Python module imports.
-from math import cos, sin, sqrt
-from numpy import dot, inner, transpose
+from numpy import dot, inner, sqrt, transpose
 from numpy.linalg import norm
 
 # relax module imports.
 from lib.compat import norm
 from lib.linear_algebra.kronecker_product import transpose_23
-from lib.geometry.rotations import tilt_torsion_to_R
 
 
 def daeg_to_rotational_superoperator(daeg, Rsuper):
@@ -91,15 +89,9 @@ def daeg_to_rotational_superoperator(daeg, Rsuper):
     transpose_23(daeg)
 
 
-def pcs_pivot_motion_full_qrint(theta_i=None, phi_i=None, sigma_i=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_pivot_motion_full_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Calculate the PCS value after a pivoted motion for the isotropic cone model.
 
-    @keyword theta_i:           The half cone opening angle (polar angle).
-    @type theta_i:              float
-    @keyword phi_i:             The cone azimuthal angle.
-    @type phi_i:                float
-    @keyword sigma_i:           The torsion angle for state i.
-    @type sigma_i:              float
     @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
     @type full_in_ref_frame:    numpy rank-1 array
     @keyword r_pivot_atom:      The pivot point to atom vector.
@@ -114,7 +106,7 @@ def pcs_pivot_motion_full_qrint(theta_i=None, phi_i=None, sigma_i=None, full_in_
     @type R_eigen:              numpy rank-2, 3D array
     @keyword RT_eigen:          The transpose of the eigenframe rotation matrix (for faster calculations).
     @type RT_eigen:             numpy rank-2, 3D array
-    @keyword Ri_prime:          The empty rotation matrix for the in-frame isotropic cone motion for state i.
+    @keyword Ri_prime:          The pre-calculated rotation matrix for state i.
     @type Ri_prime:             numpy rank-2, 3D array
     @keyword pcs_theta:         The storage structure for the back-calculated PCS values.
     @type pcs_theta:            numpy rank-2 array
@@ -123,9 +115,6 @@ def pcs_pivot_motion_full_qrint(theta_i=None, phi_i=None, sigma_i=None, full_in_
     @keyword missing_pcs:       A structure used to indicate which PCS values are missing.
     @type missing_pcs:          numpy rank-2 array
     """
-
-    # The rotation matrix.
-    tilt_torsion_to_R(phi_i, theta_i, sigma_i, Ri_prime)
 
     # The rotation.
     R_i = dot(R_eigen, dot(Ri_prime, RT_eigen))
@@ -158,13 +147,9 @@ def pcs_pivot_motion_full_qrint(theta_i=None, phi_i=None, sigma_i=None, full_in_
             pcs_theta[i, j] += proj * length_i
 
 
-def pcs_pivot_motion_torsionless_qrint(theta_i=None, phi_i=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_pivot_motion_torsionless_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Calculate the PCS value after a pivoted motion for the isotropic cone model.
 
-    @keyword theta_i:           The half cone opening angle (polar angle).
-    @type theta_i:              float
-    @keyword phi_i:             The cone azimuthal angle.
-    @type phi_i:                float
     @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
     @type full_in_ref_frame:    numpy rank-1 array
     @keyword r_pivot_atom:      The pivot point to atom vector.
@@ -179,7 +164,7 @@ def pcs_pivot_motion_torsionless_qrint(theta_i=None, phi_i=None, full_in_ref_fra
     @type R_eigen:              numpy rank-2, 3D array
     @keyword RT_eigen:          The transpose of the eigenframe rotation matrix (for faster calculations).
     @type RT_eigen:             numpy rank-2, 3D array
-    @keyword Ri_prime:          The empty rotation matrix for the in-frame isotropic cone motion for state i.
+    @keyword Ri_prime:          The pre-calculated rotation matrix for state i.
     @type Ri_prime:             numpy rank-2, 3D array
     @keyword pcs_theta:         The storage structure for the back-calculated PCS values.
     @type pcs_theta:            numpy rank-2 array
@@ -188,23 +173,6 @@ def pcs_pivot_motion_torsionless_qrint(theta_i=None, phi_i=None, full_in_ref_fra
     @keyword missing_pcs:       A structure used to indicate which PCS values are missing.
     @type missing_pcs:          numpy rank-2 array
     """
-
-    # The rotation matrix.
-    c_theta = cos(theta_i)
-    s_theta = sin(theta_i)
-    c_phi = cos(phi_i)
-    s_phi = sin(phi_i)
-    c_phi_c_theta = c_phi * c_theta
-    s_phi_c_theta = s_phi * c_theta
-    Ri_prime[0, 0] =  c_phi_c_theta*c_phi + s_phi**2
-    Ri_prime[0, 1] =  c_phi_c_theta*s_phi - c_phi*s_phi
-    Ri_prime[0, 2] =  c_phi*s_theta
-    Ri_prime[1, 0] =  s_phi_c_theta*c_phi - c_phi*s_phi
-    Ri_prime[1, 1] =  s_phi_c_theta*s_phi + c_phi**2
-    Ri_prime[1, 2] =  s_phi*s_theta
-    Ri_prime[2, 0] = -s_theta*c_phi
-    Ri_prime[2, 1] = -s_theta*s_phi
-    Ri_prime[2, 2] =  c_theta
 
     # The rotation.
     R_i = dot(R_eigen, dot(Ri_prime, RT_eigen))

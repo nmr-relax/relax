@@ -4,6 +4,13 @@
 from numpy import array
 
 
+# The real parameter values.
+AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -20.859750185691549,   -2.450606987447843,   -2.191854570352916]
+AVE_POS_BETA = 0.19740471457956135
+AVE_POS_GAMMA = 4.6622313104265416
+AXIS_THETA = 0.9600799785953431
+AXIS_PHI = 4.0322755062196229
+
 # Create the data pipe.
 pipe.create(pipe_name='frame order', pipe_type='frame order')
 
@@ -26,10 +33,12 @@ interatom.unit_vectors()
 ln = ['dy', 'tb', 'tm', 'er']
 for i in range(len(ln)):
     # Load the RDCs.
-    rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
+    if ln[i] != 'er':
+        rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
     # The PCS.
-    pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+    if ln[i] != 'tm':
+        pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
     # The temperature and field strength.
     spectrometer.temperature(id=ln[i], temp=303)
@@ -71,25 +80,37 @@ frame_order.pivot(pivot, fix=True)
 paramag.centre(pos=[35.934, 12.194, -4.206])
 
 # The optimisation settings.
-frame_order.num_int_pts(num=50)
+frame_order.num_int_pts(num=100)
 
 # Check the minimum.
-value.set(param='ave_pos_beta', val=1.1838868514111507)
-value.set(param='ave_pos_gamma', val=0.35219976958846927)
-value.set(param='axis_theta', val=0.9600799785953431)
-value.set(param='axis_phi', val=4.0322755062196229)
+value.set(param='ave_pos_x', val=AVE_POS_X)
+value.set(param='ave_pos_y', val=AVE_POS_Y)
+value.set(param='ave_pos_z', val=AVE_POS_Z)
+value.set(param='ave_pos_beta', val=AVE_POS_BETA)
+value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
+value.set(param='axis_theta', val=AXIS_THETA)
+value.set(param='axis_phi', val=AXIS_PHI)
 minimise.calculate()
-print("\nchi2: %s" % repr(cdp.chi2))
+
+# Create the PDB representation of the true state.
+frame_order.pdb_model(ave_pos_file=None, rep_file='frame_order_true.pdb', dist_file=None, force=True)
 
 # Optimise.
-#minimise.grid_search(inc=3)
-minimise.execute('simplex', constraints=False)
+grid_search(inc=[None, None, None, None, None, 21, 21])
+minimise('simplex')
+
+# Store the result.
+frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None, force=True)
+
+# Optimise the pivot and model.
+frame_order.pivot(pivot, fix=False)
+minimise('simplex')
 
 # Test Monte Carlo simulations.
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise.execute('simplex', constraints=False)
+minimise('simplex')
 eliminate()
 monte_carlo.error_analysis()
 
@@ -99,7 +120,9 @@ frame_order.pdb_model(force=True)
 # PyMOL.
 pymol.view()
 pymol.command('show spheres')
-pymol.cone_pdb('frame_order.pdb')
+pymol.frame_order(ave_pos_file=None, rep_file='frame_order_true.pdb', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos.pdb', rep_file='frame_order.pdb', dist_file=None)
 
 # Save the state.
 state.save('frame_order', force=True)

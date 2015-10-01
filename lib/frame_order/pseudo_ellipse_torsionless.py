@@ -281,8 +281,8 @@ def pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=None, theta_x=None, 
     @type R_eigen:              numpy rank-2, 3D array
     @keyword RT_eigen:          The transpose of the eigenframe rotation matrix (for faster calculations).
     @type RT_eigen:             numpy rank-2, 3D array
-    @keyword Ri_prime:          The empty rotation matrix for the in-frame isotropic cone motion, used to calculate the PCS for each state i in the numerical integration.
-    @type Ri_prime:             numpy rank-2, 3D array
+    @keyword Ri_prime:          The array of pre-calculated rotation matrices for the in-frame torsionless, pseudo-elliptic cone motion, used to calculate the PCS for each state i in the numerical integration.
+    @type Ri_prime:             numpy rank-3, array of 3D arrays
     @keyword pcs_theta:         The storage structure for the back-calculated PCS values.
     @type pcs_theta:            numpy rank-2 array
     @keyword pcs_theta_err:     The storage structure for the back-calculated PCS errors.
@@ -309,7 +309,7 @@ def pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=None, theta_x=None, 
             continue
 
         # Calculate the PCSs for this state.
-        pcs_pivot_motion_torsionless_qrint(theta_i=theta, phi_i=phi, full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        pcs_pivot_motion_torsionless_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
 
         # Increment the number of points.
         num += 1
