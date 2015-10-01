@@ -26,13 +26,13 @@
 from math import cos, pi, sin, sqrt
 from numpy import sinc
 try:
-    from scipy.integrate import quad, tplquad
+    from scipy.integrate import quad
 except ImportError:
     pass
 
 # relax module imports.
 from lib.geometry.pec import pec
-from lib.frame_order.matrix_ops import pcs_pivot_motion_full, pcs_pivot_motion_full_qrint, rotate_daeg
+from lib.frame_order.matrix_ops import pcs_pivot_motion_full_qrint, rotate_daeg
 
 
 def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
@@ -585,71 +585,6 @@ def part_int_daeg2_pseudo_ellipse_88(phi, x, y, smax):
     return cos(tmax)**3
 
 
-def pcs_numeric_int_pseudo_ellipse(theta_x=None, theta_y=None, sigma_max=None, c=None, r_pivot_atom=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None):
-    """Determine the averaged PCS value via numerical integration.
-
-    @keyword theta_x:       The x-axis half cone angle.
-    @type theta_x:          float
-    @keyword theta_y:       The y-axis half cone angle.
-    @type theta_y:          float
-    @keyword sigma_max:     The maximum torsion angle.
-    @type sigma_max:        float
-    @keyword c:             The PCS constant (without the interatomic distance and in Angstrom units).
-    @type c:                float
-    @keyword r_pivot_atom:  The pivot point to atom vector.
-    @type r_pivot_atom:     numpy rank-1, 3D array
-    @keyword r_ln_pivot:    The lanthanide position to pivot point vector.
-    @type r_ln_pivot:       numpy rank-1, 3D array
-    @keyword A:             The full alignment tensor of the non-moving domain.
-    @type A:                numpy rank-2, 3D array
-    @keyword R_eigen:       The eigenframe rotation matrix.
-    @type R_eigen:          numpy rank-2, 3D array
-    @keyword RT_eigen:      The transpose of the eigenframe rotation matrix (for faster calculations).
-    @type RT_eigen:         numpy rank-2, 3D array
-    @keyword Ri_prime:      The empty rotation matrix for the in-frame isotropic cone motion, used to calculate the PCS for each state i in the numerical integration.
-    @type Ri_prime:         numpy rank-2, 3D array
-    @return:                The averaged PCS value.
-    @rtype:                 float
-    """
-
-    def pseudo_ellipse(theta, phi):
-        """The pseudo-ellipse wrapper formula."""
-
-        return tmax_pseudo_ellipse(phi, theta_x, theta_y)
-
-    # Perform numerical integration.
-    result = tplquad(pcs_pivot_motion_full, -sigma_max, sigma_max, lambda phi: -pi, lambda phi: pi, lambda theta, phi: 0.0, pseudo_ellipse, args=(r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime))
-
-    # The surface area normalisation factor.
-    SA = 2.0 * sigma_max * pec(theta_x, theta_y)
-
-    # Return the value.
-    return c * result[0] / SA
-
-
-def tmax_pseudo_ellipse(phi, theta_x, theta_y):
-    """The pseudo-ellipse tilt-torsion polar angle.
-
-    @param phi:     The azimuthal tilt-torsion angle.
-    @type phi:      float
-    @param theta_x: The cone opening angle along x.
-    @type theta_x:  float
-    @param theta_y: The cone opening angle along y.
-    @type theta_y:  float
-    @return:        The theta max angle for the given phi angle.
-    @rtype:         float
-    """
-
-    # Zero points.
-    if theta_x == 0.0:
-        return 0.0
-    elif theta_y == 0.0:
-        return 0.0
-
-    # Return the maximum angle.
-    return theta_x * theta_y / sqrt((cos(phi)*theta_y)**2 + (sin(phi)*theta_x)**2)
-
-
 def pcs_numeric_int_pseudo_ellipse_qrint(points=None, theta_x=None, theta_y=None, sigma_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
     """Determine the averaged PCS value via numerical integration.
 
@@ -728,3 +663,26 @@ def pcs_numeric_int_pseudo_ellipse_qrint(points=None, theta_x=None, theta_y=None
                 pcs_theta_err[i, j] = abs(pcs_theta_err[i, j] / float(num)  -  pcs_theta[i, j]**2) / float(num)
                 pcs_theta_err[i, j] = c[i] * sqrt(pcs_theta_err[i, j])
                 print("%8.3f +/- %-8.3f" % (pcs_theta[i, j]*1e6, pcs_theta_err[i, j]*1e6))
+
+
+def tmax_pseudo_ellipse(phi, theta_x, theta_y):
+    """The pseudo-ellipse tilt-torsion polar angle.
+
+    @param phi:     The azimuthal tilt-torsion angle.
+    @type phi:      float
+    @param theta_x: The cone opening angle along x.
+    @type theta_x:  float
+    @param theta_y: The cone opening angle along y.
+    @type theta_y:  float
+    @return:        The theta max angle for the given phi angle.
+    @rtype:         float
+    """
+
+    # Zero points.
+    if theta_x == 0.0:
+        return 0.0
+    elif theta_y == 0.0:
+        return 0.0
+
+    # Return the maximum angle.
+    return theta_x * theta_y / sqrt((cos(phi)*theta_y)**2 + (sin(phi)*theta_x)**2)

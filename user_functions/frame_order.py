@@ -252,9 +252,6 @@ uf.add_keyarg(
         "Free rotor model",
         "Rigid model",
         "Rotor model",
-        "Free rotor line model",
-        "Torsionless line model",
-        "Line model",
         "Free rotor isotropic cone",
         "Torsionless isotropic cone",
         "Isotropic cone",
@@ -267,9 +264,6 @@ uf.add_keyarg(
         "free rotor",
         "rigid",
         "rotor",
-        "line, free rotor",
-        "line, torsionless",
-        "line",
         "iso cone, free rotor",
         "iso cone, torsionless",
         "iso cone",
@@ -293,9 +287,6 @@ uf.desc[-1].add_item_list_element("'pseudo-ellipse, free rotor'", "The pseudo-el
 uf.desc[-1].add_item_list_element("'iso cone'", "The isotropic cone model.  The cone is defined by a single order parameter s1 which is related to the single cone opening angle cone_theta_x = cone_theta_y.  Due to rotational symmetry about the cone axis, the average position alpha Euler angle ave_pos_alpha is dropped from the model.  The symmetry also collapses the eigenframe to a single z-axis defined by the parameters axis_theta and axis_phi.")
 uf.desc[-1].add_item_list_element("'iso cone, torsionless'", "The isotropic cone model with the torsion angle cone_sigma_max set to zero.")
 uf.desc[-1].add_item_list_element("'iso cone, free rotor'", "The isotropic cone model with no torsion angle restriction.")
-uf.desc[-1].add_item_list_element("'line'", "The line cone model.  This is the pseudo-elliptic cone with one of the cone angles, cone_theta_y, assumed to be statistically negligible.  I.e. the cone angle is so small that it cannot be distinguished from noise.")
-uf.desc[-1].add_item_list_element("'line, torsionless'", "The line cone model with the torsion angle cone_sigma_max set to zero.")
-uf.desc[-1].add_item_list_element("'line, free rotor'", "The line cone model with no torsion angle restriction.")
 uf.desc[-1].add_item_list_element("'rotor'", "The only motion is a rotation about the cone axis restricted by the torsion angle cone_sigma_max.")
 uf.desc[-1].add_item_list_element("'rigid'", "No domain motions.")
 uf.desc[-1].add_item_list_element("'free rotor'", "The only motion is free rotation about the cone axis.")

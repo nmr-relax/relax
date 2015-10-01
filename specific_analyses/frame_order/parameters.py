@@ -238,7 +238,7 @@ def update_model():
         cdp.params.append('cone_s1')
 
     # Cone parameters - torsion angle.
-    if cdp.model in ['double rotor', 'rotor', 'line', 'iso cone', 'pseudo-ellipse']:
+    if cdp.model in ['double rotor', 'rotor', 'iso cone', 'pseudo-ellipse']:
         cdp.params.append('cone_sigma_max')
 
     # Cone parameters - 2nd torsion angle.

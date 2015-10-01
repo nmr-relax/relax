@@ -491,7 +491,7 @@ def ref_domain(ref=None):
 def select_model(model=None):
     """Select the Frame Order model.
 
-    @param model:   The Frame Order model.  This can be one of 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor', 'iso cone', 'iso cone, torsionless', 'iso cone, free rotor', 'line', 'line, torsionless', 'line, free rotor', 'rotor', 'rigid', 'free rotor', 'double rotor'.
+    @param model:   The Frame Order model.  This can be one of 'pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor', 'iso cone', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor', 'rigid', 'free rotor', 'double rotor'.
     @type model:    str
     """
 
@@ -499,7 +499,7 @@ def select_model(model=None):
     check_pipe()
 
     # Test if the model name exists.
-    if not model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor', 'iso cone', 'iso cone, torsionless', 'iso cone, free rotor', 'line', 'line, torsionless', 'line, free rotor', 'rotor', 'rigid', 'free rotor', 'double rotor']:
+    if not model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor', 'iso cone', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor', 'rigid', 'free rotor', 'double rotor']:
         raise RelaxError("The model name " + repr(model) + " is invalid.")
 
     # Set the model

@@ -3,6 +3,16 @@
 # Python module imports.
 from numpy import array
 
+# relax module imports.
+from lib.geometry.rotations import reverse_euler_zyz
+
+
+# The real parameter values.
+AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = reverse_euler_zyz(4.3434999280669997, 0.43544332764249905, 3.8013235235956007)
+AXIS_THETA = 0.96007997859534299767
+AXIS_PHI = 4.03227550621962294031
+CONE_THETA = 0.6
+CONE_SIGMA_MAX = 0.9
 
 # Create the data pipe.
 pipe.create(pipe_name='frame order', pipe_type='frame order')
@@ -75,19 +85,29 @@ frame_order.num_int_pts(num=1000)
 frame_order.quad_int(flag=False)
 
 # Check the minimum.
-value.set(param='ave_pos_alpha', val=4.3434999280669997)
-value.set(param='ave_pos_beta', val=0.43544332764249905)
-value.set(param='ave_pos_gamma', val=3.8013235235956007)
-value.set(param='axis_theta', val=0.96007997859534299767)
-value.set(param='axis_phi', val=4.03227550621962294031)
-value.set(param='cone_theta', val=0.6)
-value.set(param='cone_sigma_max', val=0.9)
+value.set(param='ave_pos_alpha', val=AVE_POS_ALPHA)
+value.set(param='ave_pos_beta', val=AVE_POS_BETA)
+value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
+value.set(param='axis_theta', val=AXIS_THETA)
+value.set(param='axis_phi', val=AXIS_PHI)
+value.set(param='cone_theta', val=CONE_THETA)
+value.set(param='cone_sigma_max', val=CONE_SIGMA_MAX)
 minimise.calculate()
-print("\nchi2: %s" % repr(cdp.chi2))
+
+# Create the PDB representation of the true state.
+frame_order.pdb_model(ave_pos_file=None, rep_file='true_frame_order.pdb', dist_file=None, force=True)
 
 # Optimise.
-#minimise.grid_search(inc=5)
-minimise.execute('simplex', constraints=False)
+#grid_search(inc=5)
+minimise('simplex', constraints=True)
+
+# Store the result.
+frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None, force=True)
+
+# Optimise the pivot and model.
+frame_order.pivot(pivot, fix=False)
+minimise('simplex', constraints=True)
+
 
 # Test Monte Carlo simulations.
 monte_carlo.setup(number=5)
@@ -103,7 +123,7 @@ frame_order.pdb_model(force=True)
 # PyMOL.
 pymol.view()
 pymol.command('show spheres')
-pymol.cone_pdb('frame_order.pdb')
+pymol.frame_order()
 
 # Save the state.
 state.save('frame_order', force=True)
