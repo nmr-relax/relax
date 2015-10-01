@@ -1,3 +1,42 @@
+Version 3.3.9
+(30 September 2015, from /trunk)
+http://svn.gna.org/svn/relax/tags/3.3.9
+
+    Features:
+        * Improvements to the automatic relaxation dispersion protocol for repeated CPMG data.
+        * Support for Monte Carlo or Bootstrap simulating the RDC and PCS Q factors.
+        * Huge speedup of Monte Carlo simulations in the N-state model analysis.
+        * Geometric mean and standard deviation functions added to the relax library.
+
+
+    Changes:
+        * Wrote a method to store parameter data and dispersion curves, for the protocol of repeated CPMG analysis.  This is to prepare for analysis in other programs.  The method loops through the data pipes, and writes the data out.  It then writes a bash script that will concatenate the data in an matrix array style, for reading and processing in other programs.  Task #7826 (https://gna.org/task/?7826): Write an Python class for the repeated analysis of dispersion data.
+        * Added to write out a collection script for chi2 and rate parameters.  Task #7826 (https://gna.org/task/?7826): Write an Python class for the repeated analysis of dispersion data.
+        * In the collection bash script, removes spins which have not been fitted.  Task #7826 (https://gna.org/task/?7826): Write an Python class for the repeated analysis of dispersion data.
+        * Fix for use of " instead of ' in bash script.  Task #7826 (https://gna.org/task/?7826): Write an Python class for the repeated analysis of dispersion data.
+        * Adding option to minimise class function, to perform Monte Carlo error analysis.  Task #7826 (https://gna.org/task/?7826): Write an Python class for the repeated analysis of dispersion data.
+        * Printout when minimising Monte Carlo simulations.  Task #7826 (https://gna.org/task/?7826): Write an Python class for the repeated analysis of dispersion data.
+        * Added additional test to system test Relax_disp.test_bug_23186_cluster_error_calc_dw() to prove that Bug #23619 is invalid.  Bug #23619: (https://gna.org/bugs/index.php?23619): Stored chi2 sim values from Monte Carlo simulations does not equal normal chi2 values.
+        * Small fix for the shell script to collect data files, and not use the program "column" in the end.  The line width becomes to large to handle for column.  Task #7826 (https://gna.org/task/?7826): Write an Python class for the repeated analysis of dispersion data.
+        * Added a unit test that triggers the bug.  Test added in test_delete_spin_all, and can be accessed with: relax -u _pipe_control.test_spin.  Bug #23642 (https://gna.org/bugs/index.php?23642): When deleting all spins for a residue, an empty placeholder is where select=True.
+        * Added sample data and analysis script, that will eventually show that there is not much difference in the sample statistics used for comparing the output of two very similar datasets.  This is a multiple comparison test with many T-tests at once, where the familywise error is controlled by the Holm method. Even if the values are close to equal, and within the standard deviation, this procedure will reject up to 20% of the null hypothesis.  This is not deemed as a suitable method.  Bug #23644 /https://gna.org/bugs/?23644): monte_carlo.error_analysis() does not update the mean value/expectation value from simulations.
+        * Added Monte Carlo simulations to the N_state_model.test_absolute_T system test.  This is to demonstrate a failure of the simulations in certain N-state model setups.
+        * Added a missing call to monte_carlo.initial_values in the N_state_model.test_absolute_T system test.  This fixes the N_state_model.test_absolute_T system test, showing that there is not a problem with the Monte Carlo simulations.
+        * Added Monte Carlo and Bootstrap simulation support for the RDC and PCS Q factor calculations.  The pipe_control.rdc.q_factors() and pipe_control.pcs.q_factors() functions have been modified to support Monte Carlo and Bootstrap simulations.  The sim_index argument has been added to allow the Q factor for the given simulation number to be calculated.  All of the Q factor data structures in the base data pipe now have *_sim equivalents for permanently storing the simulation values.  For the simulation values, all the warnings have been silenced.
+        * Added simulation support for the RDC and PCS Q factors in the N-state model analysis.  This is for both Monte Carlo and Bootstrap simulation.  The simulation RDC and PCS values, as well as the simulation back calculated values are now stored via the minimise_bc_data() function of specific_analyses.n_state_model.optimisation in the respective spin or interatomic data containers. The analysis specific API methods now send the sim_index value into minimise_bc_data(), as well as the pipe_control.rdc.q_factors() and pipe_control.pcs.q_factors() functions.
+        * Silenced a warning in the N-state model optimisation if the verbosity is set to zero.  This removes a repetitive warning from the Monte Carlo or Bootstrap simulations.
+        * Huge speed up for the Monte Carlo simulations in the N-state model analyses.  This speed up is also for Bootstrap simulations and the frame order analysis.  The change affects the monte_carlo.initial_values user function.  The alignment tensor _update_object() method was very inefficient when updating the Monte Carlo simulation data structures.  For each simulation, each of the alignment tensor data structures were being updated for all simulations.  Now only the current simulations is being updated.  This speeds up the user function by many orders of magnitude.
+        * Added functions for calculating the geometric mean and standard deviation to the relax library.  These are the geometric_mean() and geometric_std() functions of the lib.statistics module.  The implementation is designed to be fast, using numpy array arithmetic rather than Python loops.
+        * Created a simple unit test for the new lib.statistics.geometric_mean() function.
+        * Added a unit test for the new lib.statistics.geometric_std() function.
+        * Made a summarize function to compare results.  Task #7826 (https://gna.org/task/?7826): Write an Python class for the repeated analysis of dispersion data.
+
+
+    Bugfixes:
+        * Fix committed, where an empty spin placeholder has the select flag set to False.  Bug #23642 (https://gna.org/bugs/index.php?23642): When deleting all spins for a residue, an empty placeholder is where select=True.
+
+
+
 Version 3.3.8
 (2 April 2015, from /trunk)
 http://svn.gna.org/svn/relax/tags/3.3.8

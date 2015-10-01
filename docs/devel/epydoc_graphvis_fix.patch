@@ -1,0 +1,33 @@
+Index: /data/software/epydoc/src/epydoc/docwriter/dotgraph.py
+===================================================================
+--- /data/software/epydoc/src/epydoc/docwriter/dotgraph.py      (revision 1812)
++++ /data/software/epydoc/src/epydoc/docwriter/dotgraph.py      (working copy)
+@@ -139,7 +139,7 @@
+             self.title = self.title.encode('ascii', 'xmlcharrefreplace')
+ 
+         # Make sure the UID isn't too long.
+-        self.uid = self.uid[:30]
++        #self.uid = self.uid[:30]
+         
+         # Make sure the UID is unique
+         if self.uid in self._uids:
+@@ -1496,6 +1496,7 @@
+ 
+ _dot_version = None
+ _DOT_VERSION_RE = re.compile(r'dot version ([\d\.]+)')
++_DOT_VERSION_RE2 = re.compile(r'dot - graphviz version ([\d\.]+)')
+ def get_dot_version():
+     global _dot_version
+     if _dot_version is None:
+@@ -1503,6 +1504,11 @@
+             out, err = run_subprocess([DOT_COMMAND, '-V'])
+             version_info = err or out
+             m = _DOT_VERSION_RE.match(version_info)
++
++            # Handle newer Graphviz version printouts.
++            if not m:
++                m = _DOT_VERSION_RE2.match(version_info)
++
+             if m:
+                 _dot_version = [int(x) for x in m.group(1).split('.')]
+             else:
