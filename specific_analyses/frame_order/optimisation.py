@@ -759,11 +759,6 @@ def unpack_opt_results(results, scaling_matrix=None, sim_index=None):
                 val = getattr(cdp, cdp.params[i])
                 param_vector[i] = wrap_angles(param_vector[i], val-pi, val+pi)
 
-            # FIXME: Implement linear constraints via the log-barrier algorithm, then delete this.
-            # Handle negative values of the cone_sigma_max parameter.
-            if cdp.params[i] == 'cone_sigma_max':
-                param_vector[i] = abs(param_vector[i])
-
             # Store the value.
             obj = getattr(cdp, cdp.params[i]+'_sim')
             obj[sim_index] = param_vector[i]
@@ -789,11 +784,6 @@ def unpack_opt_results(results, scaling_matrix=None, sim_index=None):
                 param_vector[i] = wrap_angles(param_vector[i], 0.0, 2.0*pi)
             if cdp.params[i] == 'axis_alpha':
                 param_vector[i] = wrap_angles(param_vector[i], -pi, pi)
-
-            # FIXME: Implement linear constraints via the log-barrier algorithm, then delete this.
-            # Handle negative values of the cone_sigma_max parameter.
-            if cdp.params[i] == 'cone_sigma_max':
-                param_vector[i] = abs(param_vector[i])
 
             # Store the value.
             setattr(cdp, cdp.params[i], param_vector[i])

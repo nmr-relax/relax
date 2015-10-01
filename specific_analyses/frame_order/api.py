@@ -27,7 +27,7 @@ from copy import deepcopy
 from math import pi
 from minfx.generic import generic_minimise
 from minfx.grid import grid_point_array
-from numpy import float64, zeros
+from numpy import array, dot, float64, zeros
 from re import search
 from warnings import warn
 
@@ -452,6 +452,23 @@ class Frame_order(API_base, API_common):
                     break    # Exit so that the other step numbers are not incremented.
                 else:
                     indices[j] = 0
+
+        # Eliminate all points outside of constraints (useful for the pseudo-ellipse models).
+        if constraints:
+            A, b = linear_constraints(scaling_matrix=scaling_matrix)
+
+            # Construct a new point array.
+            new_pts = []
+            for i in range(total_pts):
+                # Calculate A.x - b.
+                ci = dot(A, pts[i]) - b
+
+                # Only add the point if all constraints are satisfied.
+                if min(ci) >= 0.0:
+                    new_pts.append(pts[i])
+
+            # Convert to a numpy array.
+            pts = array(new_pts)
 
         # Minimisation.
         self.minimise(min_algor='grid', min_options=pts, scaling_matrix=scaling_matrix, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
