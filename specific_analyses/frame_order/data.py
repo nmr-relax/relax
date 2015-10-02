@@ -87,9 +87,9 @@ def domain_moving():
     if len(cdp.domain) > 2:
         raise RelaxError("Only two domains are supported in the frame order analysis.")
 
-    # Reference domain not set yet, so return nothing.
+    # Reference domain not set yet.
     if not hasattr(cdp, 'ref_domain'):
-        return None
+        raise RelaxError("The reference non-moving domain has not been specified.")
 
     # Loop over the domains.
     for id in cdp.domain:

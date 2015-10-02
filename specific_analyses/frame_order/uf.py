@@ -326,21 +326,6 @@ def ref_domain(ref=None):
     check_pipe()
     check_domain(domain=ref, escalate=0)
 
-<<<<<<< .working
-    # Check that the domain is defined.
-    if not hasattr(cdp, 'domain') or ref not in cdp.domain:
-        raise RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % ref)
-
-=======
->>>>>>> .merge-right.r25896
-    # Test if the reference domain exists.
-    exists = False
-    for tensor_cont in cdp.align_tensors:
-        if hasattr(tensor_cont, 'domain') and tensor_cont.domain == ref:
-            exists = True
-    if not exists:
-        raise RelaxError("The reference domain cannot be found within any of the loaded tensors.")
-
     # Set the reference domain.
     cdp.ref_domain = ref
 

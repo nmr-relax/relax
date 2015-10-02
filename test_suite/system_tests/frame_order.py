@@ -398,8 +398,10 @@ class Frame_order(SystemTestCase):
         self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='nY', res_num=5, pos=-atom_pos[1], element='N')
         self.interpreter.structure.add_atom(mol_name='axes', atom_name='N', res_name='nZ', res_num=6, pos=-atom_pos[2], element='N')
 
-        # Set up the moving domain.
-        self.interpreter.domain(id='X', spin_id=':1')
+        # Set up the domains.
+        self.interpreter.domain(id='moving', spin_id=':1-7')
+        self.interpreter.domain(id='origin', spin_id=':8')
+        self.interpreter.frame_order.ref_domain('origin')
 
         # Select the model.
         self.interpreter.frame_order.select_model(model)
@@ -1755,6 +1757,7 @@ class Frame_order(SystemTestCase):
 
         # Define the moving part.
         self.interpreter.domain(id='lactose', spin_id=':UNK')
+        self.interpreter.frame_order.ref_domain('lactose')
 
         # Set up the system.
         self.interpreter.value.set(param='ave_pos_x', val=0.0)
@@ -1792,6 +1795,7 @@ class Frame_order(SystemTestCase):
 
         # Define the moving part.
         self.interpreter.domain(id='lactose', spin_id=':UNK')
+        self.interpreter.frame_order.ref_domain('lactose')
 
         # Set up the system.
         self.interpreter.value.set(param='ave_pos_x', val=0.0)
@@ -3298,6 +3302,78 @@ class Frame_order(SystemTestCase):
         print("Maximum phi for X and Y: %s" % max_phi)
 
 
+    def test_simulate_iso_cone_xz_plane_tilt(self):
+        """Check the frame_order.simulate user function PDB file for the isotropic cone model with a xz-plane tilt."""
+
+        # Init.
+        cone_theta = 0.5
+        cone_sigma_max = 0.3
+        pivot = array([1, 0, -2], float64)
+        l = 24.0
+        sim_num = 500
+
+        # The axis parameters, and printout.
+        axis_theta = -pi/4.0
+        axis = create_rotor_axis_spherical(axis_theta, 0.0)
+        print("Rotor axis:  %s" % axis)
+        R = zeros((3, 3), float64)
+        axis_angle_to_R([0, 1, 0], axis_theta, R)
+
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='iso cone', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=axis_theta, ave_pos_gamma=0.0, axis_theta=axis_theta, axis_phi=0.0, cone_theta=cone_theta, cone_sigma_max=cone_sigma_max)
+
+        # Create the PDB.
+        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+
+        # Delete all structural data.
+        self.interpreter.structure.delete()
+
+        # Read the contents of the file.
+        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+
+        # Check the atomic coordinates.
+        selection = cdp.structure.selection()
+        epsilon = 1e-3
+        max_phi = 0.0
+        lateral_slide = 0.07
+        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+            # Loop over all positions.
+            for i in range(sim_num):
+                # Shift the position back to the origin, and decompose into spherical coordinates.
+                new_pos = pos[i] - pivot
+                r, theta, phi = cartesian_to_spherical(dot(transpose(R), new_pos))
+
+                # Printout.
+                print("Checking residue %s %s, atom %s %s, at shifted position %s, with spherical coordinates %s." % (res_num, res_name, atom_num, atom_name, new_pos, [r, theta, phi]))
+
+                # The vector length.
+                self.assertAlmostEqual(r/100.0, 1.0, 4)
+
+                # Check the X vector.
+                if res_name == 'X':
+                    if abs(phi) > max_phi:
+                        max_phi = abs(phi)
+                    print pi/2.0 - cone_theta - epsilon
+                    self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
+                    self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
+                    self.assert_(phi >= -cone_sigma_max - lateral_slide)
+                    self.assert_(phi <= cone_sigma_max + lateral_slide)
+
+                # Check the Y vector.
+                elif res_name == 'Y':
+                    self.assert_(theta >= pi/2.0 - cone_theta - epsilon)
+                    self.assert_(theta <= pi/2.0 + cone_theta + epsilon)
+                    self.assert_(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
+                    self.assert_(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
+
+                # Check the Z vector (should be in the cone defined by theta).
+                elif res_name == 'Z':
+                    self.assert_(theta <= cone_theta + epsilon)
+
+        # Print out the maximum phi value.
+        print("Maximum phi for X and Y: %s" % max_phi)
+
+
     def test_simulate_iso_cone_free_rotor_z_axis(self):
         """Check the frame_order.simulate user function PDB file for the free rotor isotropic cone model along the z-axis."""
 
@@ -3421,6 +3497,77 @@ class Frame_order(SystemTestCase):
         print("Maximum phi for X and Y: %s" % max_phi)
 
 
+    def test_simulate_pseudo_ellipse_xz_plane_tilt(self):
+        """Check the frame_order.simulate user function PDB file for the pseudo-ellipse model along the z-axis."""
+
+        # Init.
+        cone_theta_x = 2.0
+        cone_theta_y = 0.5
+        cone_sigma_max = 0.1
+        pivot = array([1, 0, -2], float64)
+        l = 50.0
+        sim_num = 500
+
+        # The axis parameters.
+        eigen_beta = -pi/4.0
+        R = zeros((3, 3), float64)
+        euler_to_R_zyz(0.0, eigen_beta, 0.0, R)
+        print("Motional eigenframe:\n%s" % R)
+
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='pseudo-ellipse', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=eigen_beta, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=cone_theta_x, cone_theta_y=cone_theta_y, cone_sigma_max=cone_sigma_max)
+
+        # Create the PDB.
+        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+
+        # Delete all structural data.
+        self.interpreter.structure.delete()
+
+        # Read the contents of the file.
+        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+
+        # Check the atomic coordinates.
+        selection = cdp.structure.selection()
+        epsilon = 1e-3
+        max_phi = 0.0
+        lateral_slide = 0.17
+        vertical_slide = 0.02
+        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+            # Loop over all positions.
+            for i in range(sim_num):
+                # Shift the position back to the origin, and decompose into spherical coordinates.
+                new_pos = pos[i] - pivot
+                r, theta, phi = cartesian_to_spherical(dot(transpose(R), new_pos))
+
+                # Printout.
+                print("Checking residue %s %s, atom %s %s, at shifted position [%8.3f, %8.3f, %8.3f], with spherical coordinates [%8.3f, %8.3f, %8.3f]." % (res_num, res_name, atom_num, atom_name, new_pos[0], new_pos[1], new_pos[2], r, theta, phi))
+
+                # The vector length.
+                self.assertAlmostEqual(r/100.0, 1.0, 4)
+
+                # Check the X vector.
+                if res_name == 'X':
+                    self.assert_(theta >= pi/2.0 - cone_theta_x - epsilon)
+                    self.assert_(theta <= pi/2.0 + cone_theta_x + epsilon)
+
+                # Check the Y vector.
+                elif res_name == 'Y':
+                    if abs(phi-pi/2.0) > max_phi:
+                        max_phi = abs(phi-pi/2.0)
+                    self.assert_(theta >= pi/2.0 - cone_theta_y - vertical_slide)
+                    self.assert_(theta <= pi/2.0 + cone_theta_y + vertical_slide)
+                    self.assert_(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
+                    self.assert_(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
+
+                # Check the Z vector (should be in the cone defined by theta).
+                elif res_name == 'Z':
+                    theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
+                    self.assert_(theta <= theta_max + epsilon)
+
+        # Print out the maximum phi value.
+        print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
+
+
     def test_simulate_pseudo_ellipse_z_axis(self):
         """Check the frame_order.simulate user function PDB file for the pseudo-ellipse model along the z-axis."""
 
@@ -3479,6 +3626,129 @@ class Frame_order(SystemTestCase):
                     self.assert_(theta <= pi/2.0 + cone_theta_y + vertical_slide)
                     self.assert_(phi-pi/2.0 >= -cone_sigma_max - lateral_slide)
                     self.assert_(phi-pi/2.0 <= cone_sigma_max + lateral_slide)
+
+                # Check the Z vector (should be in the cone defined by theta).
+                elif res_name == 'Z':
+                    theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
+                    self.assert_(theta <= theta_max + epsilon)
+
+        # Print out the maximum phi value.
+        print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
+
+
+    def test_simulate_pseudo_ellipse_free_rotor_z_axis(self):
+        """Check the frame_order.simulate user function PDB file for the free rotor pseudo-ellipse model along the z-axis."""
+
+        # Init.
+        cone_theta_x = 2.0
+        cone_theta_y = 0.5
+        pivot = array([1, 0, -2], float64)
+        l = 50.0
+        sim_num = 500
+
+        # The axis parameters.
+        eigen_beta = 0.0
+
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='pseudo-ellipse, free rotor', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=cone_theta_x, cone_theta_y=cone_theta_y)
+
+        # Create the PDB.
+        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+
+        # Delete all structural data.
+        self.interpreter.structure.delete()
+
+        # Read the contents of the file.
+        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+
+        # Check the atomic coordinates.
+        selection = cdp.structure.selection()
+        epsilon = 1e-3
+        max_phi = 0.0
+        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+            # Loop over all positions.
+            for i in range(sim_num):
+                # Shift the position back to the origin, and decompose into spherical coordinates.
+                new_pos = pos[i] - pivot
+                r, theta, phi = cartesian_to_spherical(new_pos)
+
+                # Printout.
+                print("Checking residue %s %s, atom %s %s, at shifted position [%8.3f, %8.3f, %8.3f], with spherical coordinates [%8.3f, %8.3f, %8.3f]." % (res_num, res_name, atom_num, atom_name, new_pos[0], new_pos[1], new_pos[2], r, theta, phi))
+
+                # The vector length.
+                self.assertAlmostEqual(r/100.0, 1.0, 4)
+
+                # Check the X and Y vectors.
+                if res_name in ['X', 'Y']:
+                    self.assert_(theta >= pi/2.0 - cone_theta_x - epsilon)
+                    self.assert_(theta <= pi/2.0 + cone_theta_x + epsilon)
+
+                # Check the Z vector (should be in the cone defined by theta).
+                elif res_name == 'Z':
+                    theta_max = cone_theta_x * cone_theta_y / sqrt((cos(phi)*cone_theta_y)**2 + (sin(phi)*cone_theta_x)**2)
+                    self.assert_(theta <= theta_max + epsilon)
+
+        # Print out the maximum phi value.
+        print("Maximum phi-pi/2.0 for Y: %s" % max_phi)
+
+
+    def test_simulate_pseudo_ellipse_torsionless_z_axis(self):
+        """Check the frame_order.simulate user function PDB file for the torsionless pseudo-ellipse model along the z-axis."""
+
+        # Init.
+        cone_theta_x = 2.0
+        cone_theta_y = 0.5
+        pivot = array([1, 0, -2], float64)
+        l = 50.0
+        sim_num = 500
+
+        # The axis parameters.
+        eigen_beta = 0.0
+
+        # Set up.
+        self.setup_model(pipe_name='PDB model', model='pseudo-ellipse, torsionless', pivot=pivot, ave_pos_x=pivot[0], ave_pos_y=pivot[1], ave_pos_z=pivot[2], ave_pos_alpha=0.0, ave_pos_beta=0.0, ave_pos_gamma=0.0, eigen_alpha=0.0, eigen_beta=eigen_beta, eigen_gamma=0.0, cone_theta_x=cone_theta_x, cone_theta_y=cone_theta_y)
+
+        # Create the PDB.
+        self.interpreter.frame_order.simulate(file='simulation.pdb', dir=ds.tmpdir, step_size=10.0, snapshot=10, total=sim_num)
+
+        # Delete all structural data.
+        self.interpreter.structure.delete()
+
+        # Read the contents of the file.
+        self.interpreter.structure.read_pdb(file='simulation.pdb', dir=ds.tmpdir)
+
+        # Check the atomic coordinates.
+        selection = cdp.structure.selection()
+        epsilon = 1e-3
+        max_phi = 0.0
+        lateral_slide = 0.23
+        vertical_slide = 0.02
+        for res_num, res_name, atom_num, atom_name, pos in cdp.structure.atom_loop(selection=selection, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, pos_flag=True):
+            # Loop over all positions.
+            for i in range(sim_num):
+                # Shift the position back to the origin, and decompose into spherical coordinates.
+                new_pos = pos[i] - pivot
+                r, theta, phi = cartesian_to_spherical(new_pos)
+
+                # Printout.
+                print("Checking residue %s %s, atom %s %s, at shifted position [%8.3f, %8.3f, %8.3f], with spherical coordinates [%8.3f, %8.3f, %8.3f]." % (res_num, res_name, atom_num, atom_name, new_pos[0], new_pos[1], new_pos[2], r, theta, phi))
+
+                # The vector length.
+                self.assertAlmostEqual(r/100.0, 1.0, 4)
+
+                # Check the X vector.
+                if res_name == 'X':
+                    self.assert_(theta >= pi/2.0 - cone_theta_x - epsilon)
+                    self.assert_(theta <= pi/2.0 + cone_theta_x + epsilon)
+
+                # Check the Y vector.
+                elif res_name == 'Y':
+                    if abs(phi-pi/2.0) > max_phi:
+                        max_phi = abs(phi-pi/2.0)
+                    self.assert_(theta >= pi/2.0 - cone_theta_y - vertical_slide)
+                    self.assert_(theta <= pi/2.0 + cone_theta_y + vertical_slide)
+                    self.assert_(phi-pi/2.0 >= -lateral_slide)
+                    self.assert_(phi-pi/2.0 <= lateral_slide)
 
                 # Check the Z vector (should be in the cone defined by theta).
                 elif res_name == 'Z':

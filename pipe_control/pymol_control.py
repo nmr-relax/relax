@@ -322,16 +322,16 @@ def create_macro(data_type=None, style="classic", colour_start=None, colour_end=
     return commands
 
 
-def frame_order(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", dir=None):
-    """Display the frame order results (the geometric object, average position and distribution).
+def frame_order(ave_pos="ave_pos", rep="frame_order", sim="simulation.pdb.gz", dir=None):
+    """Display the frame order results (geometric object, average position and Brownian simulation).
 
     @keyword ave_pos:   The file root of the average molecule structure.
     @type ave_pos:      str or None
     @keyword rep:       The file root of the PDB representation of the frame order dynamics to create.
     @type rep:          str or None
-    @keyword dist:      The file root which will contain multiple models spanning the full dynamics distribution of the frame order model.
-    @type dist:         str or None
-    @keyword dir:       The name of the directory to place the PDB file into.
+    @keyword sim:       The full Brownian diffusion file name.
+    @type sim:          str or None
+    @keyword dir:       The name of the directory where the files are located.
     @type dir:          str or None
     """
 
@@ -348,8 +348,8 @@ def frame_order(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution"
         frame_order_ave_pos(root=ave_pos, path=path)
     if rep:
         frame_order_geometric(root=rep, path=path)
-    if dist:
-        frame_order_distribution(root=dist, path=path)
+    if sim:
+        frame_order_sim(file=sim, path=path)
 
     # Centre all objects and zoom.
     pymol_obj.exec_cmd("center animate=3")
@@ -378,15 +378,15 @@ def frame_order_ave_pos(root=None, path=None):
     pymol_obj.exec_cmd("disable %s_sim" % root)
 
 
-def frame_order_distribution(root=None, path=None):
-    """Display the PDB structure for the frame order distribution of domain positions.
+def frame_order_sim(file=None, path=None):
+    """Display the PDB structure for the frame order Brownian simulation.
 
-    @keyword root:  The file root of the PDB file containing the frame order distribution of domain positions.
+    @keyword root:  The full Brownian diffusion file name.
     @type root:     str
     """
 
     # Find all PDB files.
-    pdb_files = find_pdb_files(path=path, file_root=root)
+    pdb_files = find_pdb_files(path=path, file_root=file)
 
     # Read in the PDB files.
     for file in pdb_files:

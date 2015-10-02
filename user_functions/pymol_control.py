@@ -146,7 +146,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'
 
 # The pymol.frame_order user function.
 uf = uf_info.add_uf('pymol.frame_order')
-uf.title = "Display the frame order results from the frame_order.pdb_model user function."
+uf.title = "Display the frame order results from the frame_order.pdb_model and frame_order.simulate user functions."
 uf.title_short = "Frame order results display."
 uf.add_keyarg(
     name = "ave_pos",
@@ -155,7 +155,6 @@ uf.add_keyarg(
     arg_type = "str",
     desc_short = "average structure file root",
     desc = "The file root of the 3D structure PDB file for the molecular structure with the moving domains shifted to the average position.",
-    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
     can_be_none = True
 )
 uf.add_keyarg(
@@ -165,17 +164,18 @@ uf.add_keyarg(
     arg_type = "str",
     desc_short = "PDB representation file root",
     desc = "The file root of the PDB file for the geometric object representation of the frame order dynamics.",
-    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
     can_be_none = True
 )
 uf.add_keyarg(
-    name = "dist",
-    default = "domain_distribution",
+    name = "sim",
+    default = "simulation.pdb.gz",
     py_type = "str",
-    arg_type = "str",
-    desc_short = "distribution file root",
-    desc = "The file root of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.",
+    arg_type = "file sel",
+    desc_short = "Brownian simulation file",
+    desc = "The full name the Brownian simulation PDB file.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
+    wiz_filesel_style = FD_OPEN,
+    wiz_filesel_preview = False,
     can_be_none = True
 )
 uf.add_keyarg(
@@ -183,21 +183,22 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "dir",
     desc_short = "directory name",
-    desc = "The directory where the file is to be located.",
+    desc = "The directory where the files are located.",
     can_be_none = True
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This user function is designed to be combined with the frame_order.pdb_model user function.  It will take the three PDB representations created by frame_order.pdb_model - the molecular structure with the averaged domain positions, the frame order dynamics representation files, and the moving domain distribution file - and display them in PyMOL.  Rather than loading the three representations into PyMOL manually, this user function will change the representation to significantly improve the visualisation.")
-uf.desc[-1].add_paragraph("For the frame order position files, if the file roots are left to the defaults then the following files will be loaded:")
-uf.desc[-1].add_list_element("The file root 'ave_pos' will load the 'ave_pos.pdb' and 'ave_pos_sim.pdb' files.")
-uf.desc[-1].add_list_element("The file root 'frame_order' will load the 'frame_order.pdb', 'frame_order_pos.pdb', 'frame_order_neg.pdb', 'frame_order_sim.pdb', 'frame_order_sim_pos.pdb' and 'frame_order_sim_neg.pdb' files.")
-uf.desc[-1].add_list_element("The file root 'dist' will load the 'dist.pdb' file.")
-uf.desc[-1].add_paragraph("The user function will not only search for these files, but also all *.gz and *.bz2 versions of these files.  This is to support all output files from the frame_order.pdb_model user function.")
+uf.desc[-1].add_paragraph("This user function is designed to be combined with the frame_order.pdb_model and frame_order.simulate user functions.  It will take the two PDB representations created by frame_order.pdb_model, the molecular structure with the averaged domain positions and the frame order dynamics representation files, and the Brownian simulation PDB file and display them in PyMOL.  Rather than loading the three representations into PyMOL manually, this user function will change the representation to improve visualisation.")
+uf.desc[-1].add_paragraph("For the PDB files, if the file roots are left to the defaults then the following files will be loaded:")
+uf.desc[-1].add_item_list_element("Average position", "The default is to load the 'ave_pos.pdb' and 'ave_pos_sim.pdb' files.")
+uf.desc[-1].add_item_list_element("Frame order motional representation", "The is to load the 'frame_order.pdb', 'frame_order_A.pdb', 'frame_order_B.pdb', 'frame_order_sim.pdb', 'frame_order_sim_A.pdb' and 'frame_order_sim_B.pdb' files, if present.")
+uf.desc[-1].add_item_list_element("Brownian simulation", "The default is to load the 'simulation.pdb.gz' file.")
+uf.desc[-1].add_paragraph("The user function will not only search for these files, but also all *.gz and *.bz2 versions of the average position and frame order representations.  This is to support all output files from the frame_order.pdb_model user function.")
 uf.backend = pymol_control.frame_order
 uf.menu_text = "&frame_order"
 uf.gui_icon = "relax.frame_order"
-uf.wizard_size = (900, 600)
+uf.wizard_height_desc = 400
+uf.wizard_size = (1000, 700)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'pymol' + sep + 'pymol.png'
 
