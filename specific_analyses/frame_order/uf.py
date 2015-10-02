@@ -23,29 +23,14 @@
 """Module for all of the frame order specific user functions."""
 
 # Python module imports.
-from copy import deepcopy
-from math import pi
-from numpy import array, dot, eye, float64, transpose, zeros
-import sys
+from numpy import array, float64
 from warnings import warn
 
 # relax module imports.
 from lib.arg_check import is_float_array
 from lib.errors import RelaxError
-from lib.frame_order.rotor_axis import create_rotor_axis_alpha, create_rotor_axis_euler, create_rotor_axis_spherical
-from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
-from lib.io import open_write_file
-from lib.order import order_parameters
-from lib.structure.cones import Iso_cone, Pseudo_elliptic
-from lib.structure.geometric import generate_vector_residues
-from lib.structure.internal.object import Internal
-from lib.structure.represent.cone import cone
-from lib.structure.represent.rotor import rotor_pdb
-from lib.text.sectioning import subsection
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
-from pipe_control.structure.mass import pipe_centre_of_mass
-from specific_analyses.frame_order.data import domain_moving
 from specific_analyses.frame_order.geometric import create_ave_pos, create_distribution, create_geometric_rep
 from specific_analyses.frame_order.parameters import update_model
 
@@ -68,49 +53,49 @@ def num_int_pts(num=200000):
     cdp.num_int_pts = num
 
 
-def pdb_model(ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_file="domain_distribution.pdb", dir=None, size=30.0, inc=36, force=False, neg_cone=True):
+def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", dir=None, compress_type=0, size=30.0, inc=36, force=False):
     """Create 3 different PDB files for representing the frame order dynamics of the system.
 
-    @keyword ave_pos_file:  The name of the file for the average molecule structure.
-    @type ave_pos_file:     str or None
-    @keyword rep_file:      The name of the file of the PDB representation of the frame order dynamics to create.
-    @type rep_file:         str or None
-    @keyword dist_file:     The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.
-    @type dist_file:        str or None
+    @keyword ave_pos:       The file root for the average molecule structure.
+    @type ave_pos:          str or None
+    @keyword rep:           The file root of the PDB representation of the frame order dynamics to create.
+    @type rep:              str or None
+    @keyword dist:          The file root which will contain multiple models spanning the full dynamics distribution of the frame order model.
+    @type dist:             str or None
     @keyword dir:           The name of the directory to place the PDB file into.
     @type dir:              str
+    @keyword compress_type: The compression type.  The integer values correspond to the compression type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @type compress_type:    int
     @keyword size:          The size of the geometric object in Angstroms.
     @type size:             float
     @keyword inc:           The number of increments for the filling of the cone objects.
     @type inc:              int
     @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
     @type force:            bool
-    @keyword neg_cone:      A flag which if True will cause the negative cone to be added to the representation.
-    @type neg_cone:         bool
     """
 
     # Check that at least one PDB file name is given.
-    if not ave_pos_file and not rep_file and not dist_file:
+    if not ave_pos and not rep and not dist:
         raise RelaxError("Minimally one PDB file name must be supplied.")
 
     # Test if the current data pipe exists.
     check_pipe()
 
     # Create the average position structure.
-    if ave_pos_file:
-        create_ave_pos(file=ave_pos_file, dir=dir, force=force)
+    if ave_pos:
+        create_ave_pos(file=ave_pos, dir=dir, compress_type=compress_type, force=force)
 
     # Nothing more to do for the rigid model.
     if cdp.model == 'rigid':
         return
 
     # Create the geometric representation.
-    if rep_file:
-        create_geometric_rep(file=rep_file, dir=dir, size=size, inc=inc, force=force, neg_cone=neg_cone)
+    if rep:
+        create_geometric_rep(file=rep, dir=dir, compress_type=compress_type, size=size, inc=inc, force=force)
 
     # Create the distribution.
-    if dist_file:
-        create_distribution(file=dist_file, dir=dir, force=force)
+    if dist:
+        create_distribution(file=dist, dir=dir, compress_type=compress_type, force=force)
 
 
 def pivot(pivot=None, order=1, fix=False):

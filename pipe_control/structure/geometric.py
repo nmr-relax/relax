@@ -27,7 +27,7 @@ from os import getcwd
 from lib.errors import RelaxNoPdbError, RelaxNoSequenceError, RelaxNoVectorsError
 from lib.io import get_file_path, open_write_file
 from lib.structure.internal.object import Internal
-from lib.structure.represent.rotor import rotor_pdb
+from lib.structure.represent.rotor import rotor
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
 from pipe_control.pipes import check_pipe
@@ -70,7 +70,7 @@ def create_rotor_pdb(file=None, dir=None, rotor_angle=None, axis=None, axis_pt=T
     structure = Internal()
 
     # Generate the rotor object.
-    rotor_pdb(structure=structure, rotor_angle=rotor_angle, axis=axis, axis_pt=axis_pt, centre=centre, span=span, blade_length=blade_length, staggered=staggered)
+    rotor(structure=structure, rotor_angle=rotor_angle, axis=axis, axis_pt=axis_pt, centre=centre, span=span, blade_length=blade_length, staggered=staggered)
 
     # Print out.
     print("\nGenerating the PDB file.")

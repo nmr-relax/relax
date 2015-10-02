@@ -32,7 +32,7 @@ from lib.geometry.lines import closest_point_ax
 from lib.geometry.rotations import axis_angle_to_R
 
 
-def rotor_pdb(structure=None, rotor_angle=None, axis=None, axis_pt=True, centre=None, span=2e-9, blade_length=5e-10, model=None, staggered=False):
+def rotor(structure=None, rotor_angle=None, axis=None, axis_pt=True, label=None, centre=None, span=2e-9, blade_length=5e-10, model_num=None, staggered=False):
     """Create a PDB representation of a rotor motional model.
 
     @keyword structure:     The internal structural object instance to add the rotor to as a molecule.
@@ -43,14 +43,16 @@ def rotor_pdb(structure=None, rotor_angle=None, axis=None, axis_pt=True, centre=
     @type axis:             numpy rank-1, 3D array
     @keyword axis_pt:       A point lying anywhere on the rotor axis.  This is used to define the position of the axis in 3D space.
     @type axis_pt:          numpy rank-1, 3D array
+    @keyword label:         The optional label for the rotor axis.  If supplied, this cannot be longer than 4 characters due to the PDB format restriction.
+    @type label:            str
     @keyword centre:        The central point of the representation.  If this point is not on the rotor axis, then the closest point on the axis will be used for the centre.
     @type centre:           numpy rank-1, 3D array
     @keyword span:          The distance from the central point to the rotor blades (meters).
     @type span:             float
     @keyword blade_length:  The length of the representative rotor blades.
     @type blade_length:     float
-    @keyword model:         The structural model number to add the rotor to.  If not supplied, the same rotor structure will be added to all models.
-    @type model:            int or None
+    @keyword model_num:     The structural model number to add the rotor to.  If not supplied, the same rotor structure will be added to all models.
+    @type model_num:        int or None
     @keyword staggered:     A flag which if True will cause the rotor blades to be staggered.  This is used to avoid blade overlap.
     @type staggered:        bool
     """
@@ -66,40 +68,47 @@ def rotor_pdb(structure=None, rotor_angle=None, axis=None, axis_pt=True, centre=
     axis_norm = axis / norm(axis)
 
     # Add a structure (handling up to 3 rotors).
-    if structure.has_molecule(name='rotor') and structure.has_molecule(name='rotor2'):
-        structure.add_molecule(name='rotor3')
+    if structure.has_molecule(model_num=model_num, name='rotor') and structure.has_molecule(model_num=model_num, name='rotor2'):
+        structure.add_molecule(model_num=model_num, name='rotor3')
         mol_name = 'rotor3'
-    elif structure.has_molecule(name='rotor'):
-        structure.add_molecule(name='rotor2')
+    elif structure.has_molecule(model_num=model_num, name='rotor'):
+        structure.add_molecule(model_num=model_num, name='rotor2')
         mol_name = 'rotor2'
     else:
-        structure.add_molecule(name='rotor')
+        structure.add_molecule(model_num=model_num, name='rotor')
         mol_name = 'rotor'
 
     # Loop over the models.
-    for model in structure.model_loop(model):
+    for model in structure.model_loop(model_num):
         # Alias the single molecule from the single model.
         mol = structure.get_molecule(mol_name, model=model.num)
 
         # The central point.
         mid_point = closest_point_ax(line_pt=axis_pt, axis=axis, point=centre)
-        pos_index = mol.atom_add(pdb_record='HETATM', atom_name='CTR', res_name='AX', res_num=1, pos=mid_point, element='PT')
+        pos_index = mol.atom_add(pdb_record='HETATM', atom_name='CTR', res_name='RTX', res_num=1, pos=mid_point, element='PT')
 
         # Centre of the propellers.
         prop1 = mid_point + axis_norm * span
         prop1_index = pos_index + 1
-        mol.atom_add(pdb_record='HETATM', atom_name='PRP', res_name='PRC', res_num=2, pos=prop1, element='O')
+        mol.atom_add(pdb_record='HETATM', atom_name='PRP', res_name='RTX', res_num=2, pos=prop1, element='O')
         mol.atom_connect(index1=pos_index, index2=prop1_index)
 
         # Centre of the propellers.
         prop2 = mid_point - axis_norm * span
         prop2_index = pos_index + 2
-        mol.atom_add(pdb_record='HETATM', atom_name='PRP', res_name='PRC', res_num=3, pos=prop2, element='O')
+        mol.atom_add(pdb_record='HETATM', atom_name='PRP', res_name='RTX', res_num=3, pos=prop2, element='O')
         mol.atom_connect(index1=pos_index, index2=prop2_index)
 
         # Create the rotor propellers.
         rotor_propellers(mol=mol, rotor_angle=rotor_angle, centre=prop1, axis=axis, blade_length=blade_length, staggered=staggered)
         rotor_propellers(mol=mol, rotor_angle=rotor_angle, centre=prop2, axis=-axis, blade_length=blade_length, staggered=staggered)
+
+        # Add atoms for the labels.
+        label_pos1 = mid_point + axis_norm * (span + 2.0)
+        label_pos2 = mid_point - axis_norm * (span + 2.0)
+        res_num = mol.res_num[-1]+1
+        mol.atom_add(pdb_record='HETATM', atom_name=label, res_name='RTL', res_num=res_num, pos=label_pos1, element='H')
+        mol.atom_add(pdb_record='HETATM', atom_name=label, res_name='RTL', res_num=res_num, pos=label_pos2, element='H')
 
 
 def rotor_propellers(mol=None, rotor_angle=None, centre=None, axis=None, blade_length=5.0, staggered=False):
@@ -147,11 +156,11 @@ def rotor_propellers(mol=None, rotor_angle=None, centre=None, axis=None, blade_l
             blade_origin = centre
 
         # Add an atom for the blage origin.
-        blade_origin_index = mol.atom_add(pdb_record='HETATM', atom_name='BLO', res_name='PRB', res_num=res_num, pos=blade_origin, element='O')
+        blade_origin_index = mol.atom_add(pdb_record='HETATM', atom_name='BLO', res_name='RTB', res_num=res_num, pos=blade_origin, element='O')
 
         # The centre edge point of the blade.
         mid_point = blade_origin + blades[i] * blade_length
-        mid_pt_index = mol.atom_add(pdb_record='HETATM', atom_name='BLD', res_name='PRB', res_num=res_num, pos=mid_point, element='N')
+        mid_pt_index = mol.atom_add(pdb_record='HETATM', atom_name='BLD', res_name='RTB', res_num=res_num, pos=mid_point, element='N')
         mol.atom_connect(index1=mid_pt_index, index2=blade_origin_index)
 
         # Build the blade.
@@ -172,13 +181,13 @@ def rotor_propellers(mol=None, rotor_angle=None, centre=None, axis=None, blade_l
 
             # The positive edge.
             pos_point = dot(R, mid_point - blade_origin) + blade_origin
-            pos_index = mol.atom_add(pdb_record='HETATM', atom_name='BLD', res_name='PRB', res_num=res_num, pos=pos_point, element='N')
+            pos_index = mol.atom_add(pdb_record='HETATM', atom_name='BLD', res_name='RTB', res_num=res_num, pos=pos_point, element='N')
             mol.atom_connect(index1=pos_index, index2=pos_last_index)
             mol.atom_connect(index1=pos_index, index2=blade_origin_index)
 
             # The negative edge.
             neg_point = dot(transpose(R), mid_point - blade_origin) + blade_origin
-            neg_index = mol.atom_add(pdb_record='HETATM', atom_name='BLD', res_name='PRB', res_num=res_num, pos=neg_point, element='N')
+            neg_index = mol.atom_add(pdb_record='HETATM', atom_name='BLD', res_name='RTB', res_num=res_num, pos=neg_point, element='N')
             mol.atom_connect(index1=neg_index, index2=neg_last_index)
             mol.atom_connect(index1=neg_index, index2=blade_origin_index)
 

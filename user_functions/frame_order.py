@@ -49,36 +49,30 @@ uf = uf_info.add_uf('frame_order.pdb_model')
 uf.title = "Create a PDB file representation of the frame order dynamics."
 uf.title_short = "Frame order dynamics PDB representation."
 uf.add_keyarg(
-    name = "ave_pos_file",
-    default = "ave_pos.pdb",
+    name = "ave_pos",
+    default = "ave_pos",
     py_type = "str",
-    arg_type = "file sel",
-    desc_short = "average structure file name",
-    desc = "The name of the 3D structure PDB file for the molecular structure with the moving domains shifted to the average position.",
-    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_SAVE,
+    arg_type = "str",
+    desc_short = "average structure file root",
+    desc = "The file root of the 3D structure PDB file for the molecular structure with the moving domains shifted to the average position.",
     can_be_none = True
 )
 uf.add_keyarg(
-    name = "rep_file",
-    default = "frame_order.pdb",
+    name = "rep",
+    default = "frame_order",
     py_type = "str",
-    arg_type = "file sel",
-    desc_short = "PDB representation file name",
-    desc = "The name of the PDB file for the geometric object representation of the frame order dynamics.",
-    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_SAVE,
+    arg_type = "str",
+    desc_short = "PDB representation file root",
+    desc = "The file root of the PDB file for the geometric object representation of the frame order dynamics.",
     can_be_none = True
 )
 uf.add_keyarg(
-    name = "dist_file",
-    default = "domain_distribution.pdb",
+    name = "dist",
+    default = "domain_distribution",
     py_type = "str",
-    arg_type = "file sel",
-    desc_short = "distribution file name",
-    desc = "The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.",
-    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_SAVE,
+    arg_type = "str",
+    desc_short = "distribution file root",
+    desc = "The file root of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.",
     can_be_none = True
 )
 uf.add_keyarg(
@@ -86,8 +80,27 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "dir",
     desc_short = "directory name",
-    desc = "The directory where the file is to be located.",
+    desc = "The directory where the files are to be located.",
     can_be_none = True
+)
+uf.add_keyarg(
+    name = "compress_type",
+    default = 0,
+    py_type = "int",
+    desc_short = "file compression",
+    desc = "The type of compression to use when creating the files.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        "No compression",
+        "bzip2 compression",
+        "gzip compression"
+    ],
+    wiz_combo_data = [
+        0,
+        1,
+        2
+    ],
+    wiz_read_only = True
 )
 uf.add_keyarg(
     name = "size",
@@ -113,7 +126,8 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This function creates a PDB file containing an artificial geometric structure representing the Frame Order cone models.")
+uf.desc[-1].add_paragraph("This function creates a set of PDB files for representing the frame order cone models.  This includes a file for the average position of the molecule, a file containing a geometric representation of the frame order motions, and a file containing a distribution of structures which sample the motional modes.")
+uf.desc[-1].add_paragraph("The three files are specified via the file root whereby the extensions '.pdb', '.pdb.gz', etc. should not be provided.  This is important for the geometric representation whereby different files are created for the positive and negative representations (due to symmetry in the NMR data, these cannot be differentiated), and for the Monte Carlo simulations.  For example if the file root is 'frame_order', the positive and negative representations will be placed in the 'frame_order_pos.pdb.gz' and 'frame_order_neg.pdb.gz' files and the Monte Carlo simulations in the 'frame_order_sim_pos.pdb.gz' and 'frame_order_sim_neg.pdb.gz' files.  For models where there is no difference in representation between the positive and negative directions, the files 'frame_order.pdb.gz' and 'frame_order_sim.pdb.gz' will be produced.")
 uf.desc[-1].add_paragraph("There are four different types of residue within the PDB.  The pivot point is represented as as a single carbon atom of the residue 'PIV'.  The cone consists of numerous H atoms of the residue 'CON'.  The cone axis vector is presented as the residue 'AXE' with one carbon atom positioned at the pivot and the other x Angstroms away on the cone axis (set by the geometric object size).  Finally, if Monte Carlo have been performed, there will be multiple 'MCC' residues representing the cone for each simulation, and multiple 'MCA' residues representing the multiple cone axes.")
 uf.desc[-1].add_paragraph("To create the diffusion in a cone PDB representation, a uniform distribution of vectors on a sphere is generated using spherical coordinates with the polar angle defined by the cone axis.  By incrementing the polar angle using an arccos distribution, a radial array of vectors representing latitude are created while incrementing the azimuthal angle evenly creates the longitudinal vectors.  These are all placed into the PDB file as H atoms and are all connected using PDB CONECT records.  Each H atom is connected to its two neighbours on the both the longitude and latitude.  This creates a geometric PDB object with longitudinal and latitudinal lines representing the filled cone.")
 uf.backend = pdb_model

@@ -33,7 +33,7 @@ def proj2(vect, A, N=1, verb=True):
 
 def proj3(vect, A, N=1, verb=True):
     for i in range(N):
-        d = diagonal(tensordot(tensordot(A, vect, axes=([0],[1])), vect, axes=([0],[1])))
+        d = diagonal(tensordot(tensordot(A, vect, axes=([0], [1])), vect, axes=([0], [1])))
     if verb:
         print("\n3rd projection - diag of double tensordot, no transpose.")
         print("Proj: %s" % d[:2])
@@ -42,9 +42,9 @@ def proj3(vect, A, N=1, verb=True):
 def proj4(vect, A, N=1, verb=True):
     d = zeros(len(vect), float64)
     for i in range(N):
-        a = tensordot(A, vect, axes=([0],[1]))
+        a = tensordot(A, vect, axes=([0], [1]))
         for j in range(len(vect)):
-            d[j] = dot(vect[j], a[:,j])
+            d[j] = dot(vect[j], a[:, j])
     if verb:
         print("\n4th projection - mixed tensordot() and per-vector dot().")
         print("Proj: %s" % d[:2])
@@ -65,7 +65,7 @@ def proj5(vect, A, N=1, verb=True):
 def proj6(vect, A, N=1, verb=True):
     d = zeros(len(vect), float64)
     for i in range(N):
-        d = vect[:,0]**2*A[0, 0] + vect[:,1]**2*A[1, 1] + vect[:,2]**2*(A[2, 2]) + 2.0*vect[:,0]*vect[:,1]*A[0, 1] + 2.0*vect[:,0]*vect[:,2]*A[0, 2] + 2.0*vect[:,1]*vect[:,2]*A[1, 2]
+        d = vect[:, 0]**2*A[0, 0] + vect[:, 1]**2*A[1, 1] + vect[:, 2]**2*(A[2, 2]) + 2.0*vect[:, 0]*vect[:, 1]*A[0, 1] + 2.0*vect[:, 0]*vect[:, 2]*A[0, 2] + 2.0*vect[:, 1]*vect[:, 2]*A[1, 2]
     if verb:
         print("\n6th projection - expansion.")
         print("Proj: %s" % d[:2])
@@ -76,7 +76,7 @@ def proj7(vect, A, N=1, verb=True):
     for i in range(N):
         vect2 = vect**2
         double_vect = 2.0 * vect
-        d = vect2[:,0]*A[0, 0] + vect2[:,1]*A[1, 1] + vect2[:,2]*(A[2, 2]) + double_vect[:,0]*vect[:,1]*A[0, 1] + double_vect[:,0]*vect[:,2]*A[0, 2] + double_vect[:,1]*vect[:,2]*A[1, 2]
+        d = vect2[:, 0]*A[0, 0] + vect2[:, 1]*A[1, 1] + vect2[:, 2]*(A[2, 2]) + double_vect[:, 0]*vect[:, 1]*A[0, 1] + double_vect[:, 0]*vect[:, 2]*A[0, 2] + double_vect[:, 1]*vect[:, 2]*A[1, 2]
     if verb:
         print("\n7th projection - expansion with pre-calculation.")
         print("Proj: %s" % d[:2])

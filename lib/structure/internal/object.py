@@ -194,19 +194,26 @@ class Internal:
         """Return the chemical name corresponding to the given residue ID.
 
         The following names are currently returned::
-         ________________________________________________
-         |        |                                     |
-         | hetID  | Chemical name                       |
-         |________|_____________________________________|
-         |        |                                     |
-         | TNS    | Tensor                              |
-         | COM    | Centre of mass                      |
-         | AXS    | Tensor axes                         |
-         | SIM    | Monte Carlo simulation tensor axes  |
-         | PIV    | Pivot point                         |
-         | CON    | Cone object                         |
-         | AVE    | Average vector                      |
-         |________|_____________________________________|
+         ___________________________________________________________
+         |        |                                                |
+         | hetID  | Chemical name                                  |
+         |________|________________________________________________|
+         |        |                                                |
+         | TNS    | Tensor                                         |
+         | COM    | Centre of mass                                 |
+         | AXS    | Tensor axes                                    |
+         | SIM    | Monte Carlo simulation tensor axes             |
+         | PIV    | Pivot point                                    |
+         | AVE    | Average vector                                 |
+         | RTX    | Axis of the rotor geometric object             |
+         | RTB    | Propeller blades of the rotor geometric object |
+         | RTL    | Labels for the rotor geometric object          |
+         | CON    | Cone object                                    |
+         | CNC    | Apex or centre of the cone geometric object    |
+         | CNX    | Axis of the cone geometric object              |
+         | CNE    | Edge of the cone geometric object              |
+         | AXE    | The axis geometric object                      |
+         |________|________________________________________________|
 
         For any other residues, no description is returned.
 
@@ -216,33 +223,27 @@ class Internal:
         @rtype:         str or None
         """
 
-        # Tensor.
-        if hetID == 'TNS':
-            return 'Tensor'
+        # Translation table.
+        table = {
+            "TNS": "Tensor",
+            "COM": "Centre of mass",
+            "AXS": "Tensor axes",
+            "SIM": "Monte Carlo simulation tensor axes",
+            "PIV": "Pivot point",
+            "AVE": "Average vector",
+            "RTX": "Axis of the rotor geometric object",
+            "RTB": "Propeller blades of the rotor geometric object",
+            "RTL": "Labels for the rotor geometric object",
+            "CON": "Cone object",
+            "CNC": "Apex or centre of the cone geometric object",
+            "CNX": "Axis of the cone geometric object",
+            "CNE": "Edge of the cone geometric object",
+            "AXE": "The axis geometric object",
+        }
 
-        # Centre of mass.
-        if hetID == 'COM':
-            return 'Centre of mass'
-
-        # Tensor axes.
-        if hetID == 'AXS':
-            return 'Tensor axes'
-
-        # Monte Carlo simulation tensor axes.
-        if hetID == 'SIM':
-            return 'Monte Carlo simulation tensor axes'
-
-        # Pivot point.
-        if hetID == 'PIV':
-            return 'Pivot point'
-
-        # Cone object.
-        if hetID == 'CON':
-            return 'Cone'
-
-        # Average vector.
-        if hetID == 'AVE':
-            return 'Average vector'
+        # Return the description, if one exists.
+        if hetID in table:
+            return table[hetID]
 
 
     def _parse_models_gaussian(self, file_path, verbosity=1):

@@ -149,36 +149,33 @@ uf = uf_info.add_uf('pymol.frame_order')
 uf.title = "Display the frame order results from the frame_order.pdb_model user function."
 uf.title_short = "Frame order results display."
 uf.add_keyarg(
-    name = "ave_pos_file",
-    default = "ave_pos.pdb",
+    name = "ave_pos",
+    default = "ave_pos",
     py_type = "str",
-    arg_type = "file sel",
-    desc_short = "average structure file name",
-    desc = "The name of the 3D structure PDB file for the molecular structure with the moving domains shifted to the average position.",
+    arg_type = "str",
+    desc_short = "average structure file root",
+    desc = "The file root of the 3D structure PDB file for the molecular structure with the moving domains shifted to the average position.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_OPEN,
     can_be_none = True
 )
 uf.add_keyarg(
-    name = "rep_file",
-    default = "frame_order.pdb",
+    name = "rep",
+    default = "frame_order",
     py_type = "str",
-    arg_type = "file sel",
-    desc_short = "PDB representation file name",
-    desc = "The name of the PDB file for the geometric object representation of the frame order dynamics.",
+    arg_type = "str",
+    desc_short = "PDB representation file root",
+    desc = "The file root of the PDB file for the geometric object representation of the frame order dynamics.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_OPEN,
     can_be_none = True
 )
 uf.add_keyarg(
-    name = "dist_file",
-    default = "domain_distribution.pdb",
+    name = "dist",
+    default = "domain_distribution",
     py_type = "str",
-    arg_type = "file sel",
-    desc_short = "distribution file name",
-    desc = "The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.",
+    arg_type = "str",
+    desc_short = "distribution file root",
+    desc = "The file root of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.",
     wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_OPEN,
     can_be_none = True
 )
 uf.add_keyarg(
@@ -191,7 +188,8 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This user function is designed to be combined with the frame_order.pdb_model user function.  It will take the three PDB files created by frame_order.pdb_model - the molecular structure with the averaged domain positions, the frame order dynamics representation file, and the moving domain distribution file - and display them in PyMOL.  Rather than loading the three files into PyMOL manually, this user function will change the representation to significantly improve the visualisation.")
+uf.desc[-1].add_paragraph("This user function is designed to be combined with the frame_order.pdb_model user function.  It will take the three PDB representations created by frame_order.pdb_model - the molecular structure with the averaged domain positions, the frame order dynamics representation files, and the moving domain distribution file - and display them in PyMOL.  Rather than loading the three representations into PyMOL manually, this user function will change the representation to significantly improve the visualisation.")
+uf.desc[-1].add_paragraph("For the frame order representation files,if the file root is left to the default of 'frame_order' then all of the following files will be loaded: 'frame_order.pdb', 'frame_order_pos.pdb', 'frame_order_neg.pdb', 'frame_order_sim.pdb', 'frame_order_sim_pos.pdb', 'frame_order_sim_neg.pdb'.  The user function will not only search for these files, but also all *.gz and *.bz2 versions of these files.  This is to support all output files from the frame_order.pdb_model user function.")
 uf.backend = pymol_control.frame_order
 uf.menu_text = "&frame_order"
 uf.gui_icon = "relax.frame_order"

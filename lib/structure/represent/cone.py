@@ -61,7 +61,9 @@ def cone_edge(mol=None, cone_obj=None, res_name='CON', res_num=None, chain_id=''
     """
 
     # The atom numbers (and indices).
-    atom_num = mol.atom_num[-1]+1
+    atom_num = 1
+    if hasattr(mol, 'atom_num') and len(mol.atom_num):
+        atom_num = mol.atom_num[-1]+1
 
     # Add an atom for the cone apex.
     mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name='APX', res_name=res_name, res_num=res_num, pos=apex, segment_id=None, element='H')
@@ -252,22 +254,24 @@ def cone(mol=None, cone_obj=None, start_res=1, apex=None, axis=None, R=None, inc
 
     # The first atom number.
     start_atom = 1
-    if hasattr(mol, 'atom_num'):
+    if hasattr(mol, 'atom_num') and len(mol.atom_num):
         start_atom = mol.atom_num[-1]+1
 
     # The axis.
     if axis_flag:
-        # Add the apex.
-        mol.atom_add(pdb_record='HETATM', atom_num=start_atom, atom_name='R', res_name='APX', res_num=start_res, pos=apex, element='C')
+        # Add the apex (or centre point).
+        mol.atom_add(pdb_record='HETATM', atom_num=start_atom, atom_name='R', res_name='CNC', res_num=start_res, pos=apex, element='C')
 
         # Generate the axis vectors.
         print("\nGenerating the axis vectors.")
-        res_num = generate_vector_residues(mol=mol, vector=dot(R, axis), atom_name='Axis', res_name_vect='AXE', res_num=start_res+1, origin=apex, scale=scale)
+        res_num = generate_vector_residues(mol=mol, vector=dot(R, axis), atom_name='Axis', res_name_vect='CNX', res_num=start_res+1, origin=apex, scale=scale)
 
     # Generate the cone outer edge.
     print("\nGenerating the cone outer edge.")
-    edge_start_atom = mol.atom_num[-1]+1
-    cone_edge(mol=mol, cone_obj=cone_obj, res_name='EDG', res_num=start_res+2, apex=apex, R=R, scale=scale, inc=inc, distribution=distribution)
+    edge_start_atom = 1
+    if hasattr(mol, 'atom_num') and len(mol.atom_num):
+        edge_start_atom = mol.atom_num[-1]+1
+    cone_edge(mol=mol, cone_obj=cone_obj, res_name='CNE', res_num=start_res+2, apex=apex, R=R, scale=scale, inc=inc, distribution=distribution)
 
     # Generate the cone cap, and stitch it to the cone edge.
     print("\nGenerating the cone cap.")
