@@ -39,7 +39,7 @@ from lib.geometry.coord_transform import cartesian_to_spherical, spherical_to_ca
 from lib.geometry.rotations import euler_to_R_zyz, R_to_euler_zyz
 from lib.io import open_write_file
 from lib.warnings import RelaxWarning
-from pipe_control import pipes
+from pipe_control.pipes import check_pipe
 from specific_analyses.frame_order.checks import check_domain, check_model, check_parameters, check_pivot
 from specific_analyses.frame_order.data import domain_moving, generate_pivot
 from specific_analyses.frame_order.geometric import average_position, create_ave_pos, create_geometric_rep, generate_axis_system
@@ -388,7 +388,7 @@ def quad_int(flag=False):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Store the flag.
     cdp.quad_int = flag
@@ -470,7 +470,7 @@ def simulate(file="simulation.pdb.bz2", dir=None, step_size=2.0, snapshot=10, to
     print("Pseudo-Brownian dynamics simulation of the frame order motions.")
 
     # Checks.
-    pipes.test()
+    check_pipe()
     check_model()
     check_domain()
     check_parameters()
@@ -528,7 +528,7 @@ def sobol_setup(max_num=200, oversample=100):
     """
 
     # Test if the current data pipe exists.
-    pipes.test()
+    check_pipe()
 
     # Throw a warning to the user if not enough points are being used.
     if max_num < 200:

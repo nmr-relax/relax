@@ -41,7 +41,6 @@ from lib.errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError
 from lib.warnings import RelaxWarning
 from lib.io import delete, file_root, get_file_path, open_read_file, open_write_file, test_binary
 from lib.structure.files import find_pdb_files
-from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data
 from pipe_control.pipes import check_pipe
 from pipe_control.result_files import add_result_file
