@@ -353,6 +353,28 @@ class Relax_data_store(dict):
                 # Add the oversampling variable.
                 cdp.sobol_oversample = 1
 
+            # PCS Q factor conversions.
+            if hasattr(dp, 'q_factors_pcs'):
+                dp.q_factors_pcs_norm_squared_sum = dp.q_factors_pcs
+                del dp.q_factors_pcs
+            if hasattr(dp, 'q_pcs'):
+                dp.q_pcs_norm_squared_sum = dp.q_pcs
+                del dp.q_pcs
+
+            # RDC Q factor conversions.
+            if hasattr(dp, 'q_factors_rdc'):
+                dp.q_factors_rdc_norm_tensor_size = dp.q_factors_rdc
+                del dp.q_factors_rdc
+            if hasattr(dp, 'q_rdc'):
+                dp.q_rdc_norm_tensor_size = dp.q_rdc
+                del dp.q_rdc
+            if hasattr(dp, 'q_factors_rdc_norm2'):
+                dp.q_factors_rdc_norm_squared_sum = dp.q_factors_rdc_norm2
+                del dp.q_factors_rdc_norm2
+            if hasattr(dp, 'q_rdc_norm2'):
+                dp.q_rdc_norm_squared_sum = dp.q_rdc_norm2
+                del dp.q_rdc_norm2
+
 
     def add(self, pipe_name, pipe_type, bundle=None, switch=True):
         """Method for adding a new data pipe container to the dictionary.
