@@ -268,8 +268,8 @@ def add_pivots(structure=None, sims=False):
         mol = structure.get_molecule(mol_name, model=model_nums[i])
 
         # The pivot points.
-        pivot1 = generate_pivot(order=1, sim_index=sim_indices[i])
-        pivot2 = generate_pivot(order=2, sim_index=sim_indices[i])
+        pivot1 = generate_pivot(order=1, sim_index=sim_indices[i], pdb_limit=True)
+        pivot2 = generate_pivot(order=2, sim_index=sim_indices[i], pdb_limit=True)
 
         # Add the pivots for the double motion models.
         if cdp.model in [MODEL_DOUBLE_ROTOR]:

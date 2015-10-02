@@ -24,9 +24,10 @@
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
-from specific_analyses.frame_order.uf import num_int_pts, pdb_model, pivot, ref_domain, select_model
+from specific_analyses.frame_order.uf import num_int_pts, pdb_model, permute_axes, pivot, ref_domain, select_model
 from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
@@ -127,6 +128,47 @@ uf.backend = pdb_model
 uf.menu_text = "pdb_&model"
 uf.gui_icon = "oxygen.actions.document-save"
 uf.wizard_height_desc = 400
+uf.wizard_size = (1000, 750)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
+
+
+# The frame_order.permute_axes user function.
+uf = uf_info.add_uf('frame_order.permute_axes')
+uf.title = "Permute the axes of the motional eigenframe to switch between local minima."
+uf.title_short = "Eigenframe axis permutation."
+uf.add_keyarg(
+    name = "permutation",
+    default = "A",
+    py_type = "str",
+    desc_short = "permutation",
+    desc = "Which of the two permutations 'A' or 'B' to create.  Three permutations are possible, and 'A' and 'B' select those which are not the starting combination.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        "A",
+        "B"
+    ],
+    wiz_read_only = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The pseudo-elliptic frame order models consist of multiple solutions as the optimisation space contains multiple local minima.  Because of the constraint cone_theta_x <= cone_theta_y, there are exactly three local minima (out of 6 possible permutations).  These correspond to permutations of the motional system - the eigenframe x, y and z-axes as well as the cone opening angles cone_theta_x, cone_theta_y, and cone_sigma_max associated with these axes.  But as the mechanics of the cone angles is not identical to that of the torsion angle, only one of the three local minima is the global minimum.")
+uf.desc[-1].add_paragraph("When optimising the pseudo-elliptic models, specifically the '%s' and '%s' model, any of the three local minima can be found.  Convergence to the global minimum is not guaranteed.  Therefore this user function can be used to permute the motional system to jump from one local minimum to the other.  Optimisation will be required as the permuted parameters will not be exactly at the minimum." % (MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS))
+table = uf_tables.add_table(label="table: frame_order.permute_axes combinations", caption="The motional eigenframe permutations for the frame_order.permute_axes user function.", caption_short="The permutations for the frame_order.permute_axes user function.")
+table.add_headings(["Permutation ",  "Axis inversion", "If x < y < z", "If x < z < y", "If z < x < y"])
+table.add_row([     "[x', y', z']", "      z        ", "    Self    ", "    Self    ", "    Self    "])
+table.add_row([     "[x', z', y']", "     -z        ", "     A      ", "     A      ", "     x      "])
+table.add_row([     "[y', x', z']", "     -z        ", "     x      ", "     x      ", "     x      "])
+table.add_row([     "[y', z', x']", "      z        ", "     B      ", "     x      ", "     x      "])
+table.add_row([     "[z', x', y']", "      z        ", "     x      ", "     x      ", "     A      "])
+table.add_row([     "[z', y', x']", "     -z        ", "     x      ", "     B      ", "     B      "])
+uf.desc[-1].add_table(table.label)
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("For combination 'A', simply type:")
+uf.desc[-1].add_prompt("relax> frame_order.permute_axes('A')")
+uf.backend = permute_axes
+uf.menu_text = "per&mute_axes"
+uf.wizard_height_desc = 550
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 

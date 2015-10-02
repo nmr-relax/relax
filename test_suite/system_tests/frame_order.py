@@ -247,8 +247,8 @@ class Frame_order(SystemTestCase):
         self.interpreter.run(script_file=self.cam_path+'auto_analysis_to_rigid.py')
 
 
-    def test_axis_permutation(self):
-        """Test the operation of the frame_order.permute_axes user function."""
+    def test_axis_perm_x_le_y_le_z_permA(self):
+        """Test the operation of the frame_order.permute_axes user function for permutation 'A' when x <= y <= z."""
 
         # Reset.
         self.interpreter.reset()
@@ -257,8 +257,188 @@ class Frame_order(SystemTestCase):
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
         self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
 
+        # Change the original parameters.
+        cdp.cone_theta_x = orig_cone_theta_x = 1.0
+        cdp.cone_theta_y = orig_cone_theta_y = 2.0
+        cdp.cone_sigma_max = orig_cone_sigma_max = 3.0
+
+        # Store the original parameters.
+        orig_eigen_alpha = cdp.eigen_alpha
+        orig_eigen_beta = cdp.eigen_beta
+        orig_eigen_gamma = cdp.eigen_gamma
+
         # Permute the axes.
-        self.interpreter.frame_order.permute_axes()
+        self.interpreter.frame_order.permute_axes('A')
+
+        # Checks of the cone opening angle permutations.
+        self.assertEqual(cdp.cone_theta_x, 1.0)
+        self.assertEqual(cdp.cone_theta_y, 3.0)
+        self.assertEqual(cdp.cone_sigma_max, 2.0)
+
+        # The optimised Eigenframe.
+        frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
+                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
+
+        # Manually permute the frame, and then obtain the Euler angles.
+        frame_new = transpose(array([frame[:, 0], -frame[:, 2], frame[:, 1]], float64))
+        alpha, beta, gamma = R_to_euler_zyz(frame_new)
+
+        # Check the Eigenframe Euler angles.
+        self.assertAlmostEqual(cdp.eigen_alpha, alpha)
+        self.assertAlmostEqual(cdp.eigen_beta, beta)
+        self.assertAlmostEqual(cdp.eigen_gamma, gamma)
+
+
+    def test_axis_perm_x_le_y_le_z_permB(self):
+        """Test the operation of the frame_order.permute_axes user function for permutation 'B' when x <= y <= z."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
+        self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
+
+        # Change the original parameters.
+        cdp.cone_theta_x = orig_cone_theta_x = 1.0
+        cdp.cone_theta_y = orig_cone_theta_y = 2.0
+        cdp.cone_sigma_max = orig_cone_sigma_max = 3.0
+
+        # Store the original parameters.
+        orig_eigen_alpha = cdp.eigen_alpha
+        orig_eigen_beta = cdp.eigen_beta
+        orig_eigen_gamma = cdp.eigen_gamma
+
+        # Permute the axes.
+        self.interpreter.frame_order.permute_axes('B')
+
+        # Checks of the cone opening angle permutations.
+        self.assertEqual(cdp.cone_theta_x, 2.0)
+        self.assertEqual(cdp.cone_theta_y, 3.0)
+        self.assertEqual(cdp.cone_sigma_max, 1.0)
+
+        # The optimised Eigenframe.
+        frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
+                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
+
+        # Manually permute the frame, and then obtain the Euler angles.
+        frame_new = transpose(array([frame[:, 2], frame[:, 0], frame[:, 1]], float64))
+        alpha, beta, gamma = R_to_euler_zyz(frame_new)
+
+        # Check the Eigenframe Euler angles.
+        self.assertAlmostEqual(cdp.eigen_alpha, alpha)
+        self.assertAlmostEqual(cdp.eigen_beta, beta)
+        self.assertAlmostEqual(cdp.eigen_gamma, gamma)
+
+
+    def test_axis_perm_x_le_z_le_y_permB(self):
+        """Test the operation of the frame_order.permute_axes user function for permutation 'B' when x <= z <= y."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
+        self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
+
+        # Change the original parameters.
+        cdp.cone_theta_x = orig_cone_theta_x = 1.0
+        cdp.cone_theta_y = orig_cone_theta_y = 3.0
+        cdp.cone_sigma_max = orig_cone_sigma_max = 2.0
+
+        # Store the original parameters.
+        orig_eigen_alpha = cdp.eigen_alpha
+        orig_eigen_beta = cdp.eigen_beta
+        orig_eigen_gamma = cdp.eigen_gamma
+
+        # Permute the axes.
+        self.interpreter.frame_order.permute_axes('B')
+
+        # Checks of the cone opening angle permutations.
+        self.assertEqual(cdp.cone_theta_x, 2.0)
+        self.assertEqual(cdp.cone_theta_y, 3.0)
+        self.assertEqual(cdp.cone_sigma_max, 1.0)
+
+        # The optimised Eigenframe.
+        frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
+                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
+
+        # Manually permute the frame, and then obtain the Euler angles.
+        frame_new = transpose(array([-frame[:, 2], frame[:, 1], frame[:, 0]], float64))
+        alpha, beta, gamma = R_to_euler_zyz(frame_new)
+
+        # Check the Eigenframe Euler angles.
+        self.assertAlmostEqual(cdp.eigen_alpha, alpha)
+        self.assertAlmostEqual(cdp.eigen_beta, beta)
+        self.assertAlmostEqual(cdp.eigen_gamma, gamma)
+
+
+    def test_axis_perm_x_le_z_le_y_permA(self):
+        """Test the operation of the frame_order.permute_axes user function for permutation 'A' when x <= z <= y."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
+        self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
+
+        # Change the original parameters.
+        cdp.cone_theta_x = orig_cone_theta_x = 1.0
+        cdp.cone_theta_y = orig_cone_theta_y = 3.0
+        cdp.cone_sigma_max = orig_cone_sigma_max = 2.0
+
+        # Store the original parameters.
+        orig_eigen_alpha = cdp.eigen_alpha
+        orig_eigen_beta = cdp.eigen_beta
+        orig_eigen_gamma = cdp.eigen_gamma
+
+        # Permute the axes.
+        self.interpreter.frame_order.permute_axes('A')
+
+        # Checks of the cone opening angle permutations.
+        self.assertEqual(cdp.cone_theta_x, 1.0)
+        self.assertEqual(cdp.cone_theta_y, 2.0)
+        self.assertEqual(cdp.cone_sigma_max, 3.0)
+
+        # The optimised Eigenframe.
+        frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
+                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
+
+        # Manually permute the frame, and then obtain the Euler angles.
+        frame_new = transpose(array([frame[:, 0], -frame[:, 2], frame[:, 1]], float64))
+        alpha, beta, gamma = R_to_euler_zyz(frame_new)
+
+        # Check the Eigenframe Euler angles.
+        self.assertAlmostEqual(cdp.eigen_alpha, alpha)
+        self.assertAlmostEqual(cdp.eigen_beta, beta)
+        self.assertAlmostEqual(cdp.eigen_gamma, gamma)
+
+
+    def test_axis_perm_z_le_x_le_y_permA(self):
+        """Test the operation of the frame_order.permute_axes user function for permutation 'A' when z <= x <= y."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
+        self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
+
+        # Store the original parameters.
+        orig_cone_theta_x = cdp.cone_theta_x
+        orig_cone_theta_y = cdp.cone_theta_y
+        orig_cone_sigma_max = cdp.cone_sigma_max
+        orig_eigen_alpha = cdp.eigen_alpha
+        orig_eigen_beta = cdp.eigen_beta
+        orig_eigen_gamma = cdp.eigen_gamma
+
+        # Permute the axes.
+        self.interpreter.frame_order.permute_axes('A')
 
         # Checks of the cone opening angle permutations.
         self.assertEqual(cdp.cone_theta_x, 0.53277077276728502)
@@ -266,12 +446,53 @@ class Frame_order(SystemTestCase):
         self.assertEqual(cdp.cone_sigma_max, 1.2119285953475074)
 
         # The optimised Eigenframe.
-        frame = array([[ 0.520453290203146, -0.300768532050924, -0.799166229794936],
-                       [ 0.623378128365549, -0.505769134549026,  0.596319789721082],
-                       [-0.583547840191518, -0.808539345156104, -0.07573668557808 ]], float64)
+        frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
+                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.
         frame_new = transpose(array([frame[:, 1], frame[:, 2], frame[:, 0]], float64))
+        alpha, beta, gamma = R_to_euler_zyz(frame_new)
+
+        # Check the Eigenframe Euler angles.
+        self.assertAlmostEqual(cdp.eigen_alpha, alpha)
+        self.assertAlmostEqual(cdp.eigen_beta, beta)
+        self.assertAlmostEqual(cdp.eigen_gamma, gamma)
+
+
+    def test_axis_perm_z_le_x_le_y_permB(self):
+        """Test the operation of the frame_order.permute_axes user function for permutation 'B' when z <= x <= y."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
+        self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
+
+        # Store the original parameters.
+        orig_cone_theta_x = cdp.cone_theta_x
+        orig_cone_theta_y = cdp.cone_theta_y
+        orig_cone_sigma_max = cdp.cone_sigma_max
+        orig_eigen_alpha = cdp.eigen_alpha
+        orig_eigen_beta = cdp.eigen_beta
+        orig_eigen_gamma = cdp.eigen_gamma
+
+        # Permute the axes.
+        self.interpreter.frame_order.permute_axes('B')
+
+        # Checks of the cone opening angle permutations.
+        self.assertEqual(cdp.cone_theta_x, 0.53277077276728502)
+        self.assertEqual(cdp.cone_theta_y, 1.2119285953475074)
+        self.assertEqual(cdp.cone_sigma_max, 0.8097621930390525)
+
+        # The optimised Eigenframe.
+        frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
+                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
+
+        # Manually permute the frame, and then obtain the Euler angles.
+        frame_new = transpose(array([-frame[:, 2], frame[:, 1], frame[:, 0]], float64))
         alpha, beta, gamma = R_to_euler_zyz(frame_new)
 
         # Check the Eigenframe Euler angles.
@@ -726,6 +947,44 @@ class Frame_order(SystemTestCase):
 
         # Execute the script.
         self.interpreter.run(script_file=self.cam_path+'generate_rotor2_distribution.py')
+
+
+    def test_frame_order_pdb_model_ensemble(self):
+        """Test the operation of the frame_order.pdb_model user function when an ensemble of structures are loaded."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('frame_order.pdb_model ensemble failure', 'frame order')
+
+        # Load some lactose structures to create an ensemble.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+        self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=data_path, set_model_num=1, set_mol_name='lactose')
+        self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_2.pdb', dir=data_path, set_model_num=2, set_mol_name='lactose')
+        self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_3.pdb', dir=data_path, set_model_num=3, set_mol_name='lactose')
+
+        # Set the pivot point.
+        self.interpreter.frame_order.pivot([0, 0, 0], fix=True)
+
+        # Select a frame order model.
+        self.interpreter.frame_order.select_model('rotor')
+
+        # Define the moving part.
+        self.interpreter.domain(id='lactose', spin_id=':UNK')
+
+        # Set up the system.
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='axis_alpha', val=0.5)
+        self.interpreter.value.set(param='cone_sigma_max', val=0.1)
+
+        # Set up Monte Carlo data structures.
+        self.interpreter.monte_carlo.setup(10)
+
+        # Create the PDB model.
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir)
 
 
     def fixme_test_model_free_rotor(self):

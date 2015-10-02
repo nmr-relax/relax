@@ -23,17 +23,23 @@
 """Module for all of the frame order specific user functions."""
 
 # Python module imports.
-from numpy import array, float64
+from math import pi
+from numpy import array, cross, float64, ones, transpose, zeros
+from numpy.linalg import norm
 from warnings import warn
 
 # relax module imports.
 from lib.arg_check import is_float_array
-from lib.errors import RelaxError
+from lib.check_types import is_float
+from lib.errors import RelaxError, RelaxFault
+from lib.geometry.coord_transform import cartesian_to_spherical, spherical_to_cartesian
+from lib.geometry.rotations import euler_to_R_zyz, R_to_euler_zyz
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
+from specific_analyses.frame_order.checks import check_pivot
 from specific_analyses.frame_order.geometric import create_ave_pos, create_distribution, create_geometric_rep
 from specific_analyses.frame_order.parameters import update_model
-from specific_analyses.frame_order.variables import MODEL_LIST, MODEL_RIGID
+from specific_analyses.frame_order.variables import MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_LIST_RESTRICTED_TORSION, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID
 
 
 def num_int_pts(num=200000):
@@ -97,6 +103,182 @@ def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", 
     # Create the distribution.
     if dist:
         create_distribution(file=dist, dir=dir, compress_type=compress_type, force=force)
+
+
+def permute_axes(permutation='A'):
+    """Permute the axes of the motional eigenframe to switch between local minima.
+
+    @keyword permutation:   The permutation to use.  This can be either 'A' or 'B' to select between the 3 permutations, excluding the current combination.
+    @type permutation:      str
+    """
+
+    # Check that the model is valid.
+    allowed = MODEL_LIST_ISO_CONE + MODEL_LIST_PSEUDO_ELLIPSE
+    if cdp.model not in allowed:
+        raise RelaxError("The permutation of the motional eigenframe is only valid for the frame order models %s." % allowed)
+
+    # Check that the model parameters are setup.
+    if cdp.model in MODEL_LIST_ISO_CONE:
+        if not hasattr(cdp, 'cone_theta') or not is_float(cdp.cone_theta):
+            raise RelaxError("The parameter values are not set up.")
+    else:
+        if not hasattr(cdp, 'cone_theta_y') or not is_float(cdp.cone_theta_y):
+            raise RelaxError("The parameter values are not set up.")
+
+    # The iso cones only have one permutation.
+    if cdp.model in MODEL_LIST_ISO_CONE and permutation == 'B':
+        raise RelaxError("The isotropic cones only have one permutation.")
+
+    # The angles.
+    cone_sigma_max = 0.0
+    if cdp.model in MODEL_LIST_RESTRICTED_TORSION:
+        cone_sigma_max = cdp.cone_sigma_max
+    elif cdp.model in MODEL_LIST_FREE_ROTORS:
+        cone_sigma_max = pi
+    if cdp.model in MODEL_LIST_ISO_CONE:
+        angles = array([cdp.cone_theta, cdp.cone_theta, cone_sigma_max], float64)
+    else:
+        angles = array([cdp.cone_theta_x, cdp.cone_theta_y, cone_sigma_max], float64)
+    x, y, z = angles
+
+    # The system for the isotropic cones.
+    if cdp.model in MODEL_LIST_ISO_CONE:
+        # Reconstruct the rotation axis.
+        axis = zeros(3, float64)
+        spherical_to_cartesian([1, cdp.axis_theta, cdp.axis_phi], axis)
+
+        # Create a full normalised axis system.
+        x_ax = array([1, 0, 0], float64)
+        y_ax = cross(axis, x_ax)
+        y_ax /= norm(y_ax)
+        x_ax = cross(y_ax, axis)
+        x_ax /= norm(x_ax)
+        axes = transpose(array([x_ax, y_ax, axis], float64))
+
+        # Start printout.
+        print("\nOriginal parameters:")
+        print("%-20s %20.10f" % ("cone_theta", cdp.cone_theta))
+        print("%-20s %20.10f" % ("cone_sigma_max", cone_sigma_max))
+        print("%-20s %20.10f" % ("axis_theta", cdp.axis_theta))
+        print("%-20s %20.10f" % ("axis_phi", cdp.axis_phi))
+        print("%-20s\n%s" % ("cone axis", axis))
+        print("%-20s\n%s" % ("full axis system", axes))
+        print("\nPermutation '%s':" % permutation)
+
+    # The system for the pseudo-ellipses.
+    else:
+        # Generate the eigenframe of the motion.
+        frame = zeros((3, 3), float64)
+        euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
+
+        # Start printout.
+        print("\nOriginal parameters:")
+        print("%-20s %20.10f" % ("cone_theta_x", cdp.cone_theta_x))
+        print("%-20s %20.10f" % ("cone_theta_y", cdp.cone_theta_y))
+        print("%-20s %20.10f" % ("cone_sigma_max", cone_sigma_max))
+        print("%-20s %20.10f" % ("eigen_alpha", cdp.eigen_alpha))
+        print("%-20s %20.10f" % ("eigen_beta", cdp.eigen_beta))
+        print("%-20s %20.10f" % ("eigen_gamma", cdp.eigen_gamma))
+        print("%-20s\n%s" % ("eigenframe", frame))
+        print("\nPermutation '%s':" % permutation)
+
+    # The axis inversion structure.
+    inv = ones(3, float64)
+
+    # The starting condition x <= y <= z.
+    if x <= y and y <= z:
+        # Printout.
+        print("%-20s %-20s" % ("Starting condition", "x <= y <= z"))
+
+        # The cone angle and axes permutations.
+        if permutation == 'A':
+            perm_angles = [0, 2, 1]
+            perm_axes   = [2, 1, 0]
+            inv[perm_axes[2]] = -1.0
+        else:
+            perm_angles = [1, 2, 0]
+            perm_axes   = [2, 0, 1]
+
+    # The starting condition x <= z <= y.
+    elif x <= z and z <= y:
+        # Printout.
+        print("%-20s %-20s" % ("Starting condition", "x <= z <= y"))
+
+        # The cone angle and axes permutations.
+        if permutation == 'A':
+            perm_angles = [0, 2, 1]
+            perm_axes   = [2, 1, 0]
+            inv[perm_axes[2]] = -1.0
+        else:
+            perm_angles = [2, 1, 0]
+            perm_axes   = [0, 2, 1]
+            inv[perm_axes[2]] = -1.0
+
+    # The starting condition z <= x <= y.
+    elif z <= x  and x <= y:
+        # Printout.
+        print("%-20s %-20s" % ("Starting condition", "z <= x <= y"))
+
+        # The cone angle and axes permutations.
+        if permutation == 'A':
+            perm_angles = [2, 0, 1]
+            perm_axes   = [1, 2, 0]
+        else:
+            perm_angles = [2, 1, 0]
+            perm_axes   = [0, 2, 1]
+            inv[perm_axes[2]] = -1.0
+
+    # Cannot be here.
+    else:
+        raise RelaxFault
+
+    # Printout.
+    print("%-20s %-20s" % ("Cone angle permutation", perm_angles))
+    print("%-20s %-20s" % ("Axes permutation", perm_axes))
+
+    # Permute the angles.
+    if cdp.model in MODEL_LIST_ISO_CONE:
+        cdp.cone_theta = (angles[perm_angles[0]] + angles[perm_angles[1]]) / 2.0
+    else:
+        cdp.cone_theta_x = angles[perm_angles[0]]
+        cdp.cone_theta_y = angles[perm_angles[1]]
+    if cdp.model in MODEL_LIST_RESTRICTED_TORSION:
+        cdp.cone_sigma_max = angles[perm_angles[2]]
+    elif cdp.model in MODEL_LIST_FREE_ROTORS:
+        cdp.cone_sigma_max = pi
+
+    # Permute the axes (iso cone).
+    if cdp.model in MODEL_LIST_ISO_CONE:
+        # Convert the y-axis to spherical coordinates (the x-axis would be ok too, or any vector in the x-y plane due to symmetry of the original permutation).
+        axis_new = axes[:, 1]
+        r, cdp.axis_theta, cdp.axis_phi = cartesian_to_spherical(axis_new)
+
+    # Permute the axes (pseudo-ellipses).
+    else:
+        frame_new = transpose(array([inv[0]*frame[:, perm_axes[0]], inv[1]*frame[:, perm_axes[1]], inv[2]*frame[:, perm_axes[2]]], float64))
+
+        # Convert the permuted frame to Euler angles and store them.
+        cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma = R_to_euler_zyz(frame_new)
+
+    # End printout.
+    if cdp.model in MODEL_LIST_ISO_CONE:
+        print("\nPermuted parameters:")
+        print("%-20s %20.10f" % ("cone_theta", cdp.cone_theta))
+        if cdp.model == MODEL_ISO_CONE:
+            print("%-20s %20.10f" % ("cone_sigma_max", cdp.cone_sigma_max))
+        print("%-20s %20.10f" % ("axis_theta", cdp.axis_theta))
+        print("%-20s %20.10f" % ("axis_phi", cdp.axis_phi))
+        print("%-20s\n%s" % ("cone axis", axis_new))
+    else:
+        print("\nPermuted parameters:")
+        print("%-20s %20.10f" % ("cone_theta_x", cdp.cone_theta_x))
+        print("%-20s %20.10f" % ("cone_theta_y", cdp.cone_theta_y))
+        if cdp.model == MODEL_PSEUDO_ELLIPSE:
+            print("%-20s %20.10f" % ("cone_sigma_max", cdp.cone_sigma_max))
+        print("%-20s %20.10f" % ("eigen_alpha", cdp.eigen_alpha))
+        print("%-20s %20.10f" % ("eigen_beta", cdp.eigen_beta))
+        print("%-20s %20.10f" % ("eigen_gamma", cdp.eigen_gamma))
+        print("%-20s\n%s" % ("eigenframe", frame_new))
 
 
 def pivot(pivot=None, order=1, fix=False):
@@ -186,8 +368,9 @@ def select_model(model=None):
     @type model:    str
     """
 
-    # Test if the current data pipe exists.
+    # Checks.
     check_pipe()
+    check_pivot()
 
     # Test if the model name exists.
     if not model in MODEL_LIST:

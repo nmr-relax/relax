@@ -31,6 +31,7 @@ from lib.geometry.rotations import euler_to_R_zyz
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import spin_loop
+from specific_analyses.frame_order.checks import check_pivot
 from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_RIGID
 
 
@@ -97,7 +98,7 @@ def domain_moving():
         return cdp.domain[id]
 
 
-def generate_pivot(order=1, sim_index=None, pipe_name=None):
+def generate_pivot(order=1, sim_index=None, pipe_name=None, pdb_limit=False):
     """Create and return the given pivot.
 
     @keyword order:     The pivot number with 1 corresponding to the first pivot, 2 to the second, etc.
@@ -105,9 +106,15 @@ def generate_pivot(order=1, sim_index=None, pipe_name=None):
     @keyword sim_index: The optional Monte Carlo simulation index.  If provided, the pivot for the given simulation will be returned instead.
     @type sim_index:    None or int
     @keyword pipe_name: The data pipe 
+    @type pipe_name:    str
+    @keyword pdb_limit: A flag which if True will cause the coordinate to be between -1000 and 1000.
+    @type pdb_limit:    bool
     @return:            The give pivot point.
     @rtype:             numpy 3D rank-1 float64 array
     """
+
+    # Checks.
+    check_pivot(pipe_name=pipe_name)
 
     # The data pipe.
     if pipe_name == None:
@@ -155,6 +162,14 @@ def generate_pivot(order=1, sim_index=None, pipe_name=None):
         else:
             pivot = array([dp.pivot_x, dp.pivot_y, dp.pivot_z], float64)
 
+    # PDB limits.
+    if pivot != None and pdb_limit:
+        for i in range(3):
+            if pivot[i] < -1000.0:
+                pivot[i] = -999.999
+            elif pivot[i] > 1000.0:
+                pivot[i] = 999.999
+
     # Return the pivot.
     return pivot
 
@@ -170,11 +185,9 @@ def pivot_fixed():
     if cdp.model in [MODEL_RIGID]:
         return True
 
-    # The PCS is loaded.
-    if 'pcs' in base_data_types():
-        # The fixed flag is not set.
-        if hasattr(cdp, 'pivot_fixed') and not cdp.pivot_fixed:
-            return False
+    # The fixed flag is not set.
+    if hasattr(cdp, 'pivot_fixed') and not cdp.pivot_fixed:
+        return False
 
     # The point is fixed.
     return True

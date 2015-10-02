@@ -24,16 +24,26 @@
 
 # relax module imports.
 from lib.errors import RelaxError
+from pipe_control.pipes import cdp_name, get_pipe
 
 
-def check_pivot():
+def check_pivot(pipe_name=None):
     """Check that the pivot point has been set.
 
+    @keyword pipe_name: The data pipe to check the pivot for.  This defaults to the current data pipe if not set.
+    @type pipe_name:    str
     @raises RelaxError: If the pivot point has not been set.
     """
 
+    # The data pipe.
+    if pipe_name == None:
+        pipe_name = cdp_name()
+
+    # Get the data pipe.
+    dp = get_pipe(pipe_name)
+
     # Check for the pivot_x parameter.
-    if not hasattr(cdp, 'pivot_x'):
+    if not hasattr(dp, 'pivot_x'):
         raise RelaxError("The pivot point has not been set, please use the frame_order.pivot user function to define the point.")
 
 

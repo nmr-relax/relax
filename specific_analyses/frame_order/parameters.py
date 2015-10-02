@@ -277,10 +277,14 @@ def param_num():
 def update_model():
     """Update the model parameters as necessary."""
 
+    # Printout.
+    print("Reinitialising the list of model parameters:")
+
     # Re-initialise the list of model parameters.
     cdp.params = []
 
     # The pivot parameters.
+    print("    - pivot parameters.")
     if not pivot_fixed():
         cdp.params.append('pivot_x')
         cdp.params.append('pivot_y')
@@ -291,6 +295,7 @@ def update_model():
         cdp.params.append('pivot_disp')
 
     # The average domain position translation parameters.
+    print("    - average domain position.")
     cdp.params.append('ave_pos_x')
     cdp.params.append('ave_pos_y')
     cdp.params.append('ave_pos_z')
@@ -302,6 +307,7 @@ def update_model():
     cdp.params.append('ave_pos_gamma')
 
     # Frame order eigenframe - the full frame.
+    print("    - frame order eigenframe.")
     if cdp.model in MODEL_LIST_PSEUDO_ELLIPSE + [MODEL_DOUBLE_ROTOR]:
         cdp.params.append('eigen_alpha')
         cdp.params.append('eigen_beta')
@@ -317,6 +323,7 @@ def update_model():
         cdp.params.append('axis_alpha')
 
     # Cone parameters - pseudo-elliptic cone parameters.
+    print("    - cone opening half-angles.")
     if cdp.model in MODEL_LIST_PSEUDO_ELLIPSE:
         cdp.params.append('cone_theta_x')
         cdp.params.append('cone_theta_y')
@@ -328,6 +335,7 @@ def update_model():
         cdp.params.append('cone_s1')
 
     # Cone parameters - torsion angle.
+    print("    - cone torsion half-angles.")
     if cdp.model in [MODEL_DOUBLE_ROTOR, MODEL_ROTOR, MODEL_ISO_CONE, MODEL_PSEUDO_ELLIPSE]:
         cdp.params.append('cone_sigma_max')
 
