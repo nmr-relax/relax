@@ -1,6 +1,5 @@
 # Python module imports.
 from numpy import array, eye, float64, zeros
-from os import pardir, sep
 
 
 # The pivot and atomic coordinates.
