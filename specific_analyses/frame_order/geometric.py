@@ -25,7 +25,8 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import array, dot, eye, float64, zeros
+from numpy import array, cross, dot, eye, float64, zeros
+from numpy.linalg import norm
 import sys
 from warnings import warn
 
@@ -33,7 +34,7 @@ from warnings import warn
 from lib.errors import RelaxFault
 from lib.frame_order.conversions import create_rotor_axis_alpha, create_rotor_axis_euler, create_rotor_axis_spherical
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_DOUBLE, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_ROTOR
-from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
+from lib.geometry.rotations import euler_to_R_zyz
 from lib.io import open_write_file
 from lib.order import order_parameters
 from lib.structure.cones import Iso_cone, Pseudo_elliptic
@@ -210,7 +211,7 @@ def add_cones(structure=None, representation=None, size=None, inc=None, sims=Fal
             cone_obj = Iso_cone(cone_theta)
 
         # Create the cone.
-        cone(mol=mol, cone_obj=cone_obj, start_res=1, apex=pivot, R=R, inc=inc, distribution='regular', axis_flag=False)
+        cone(mol=mol, cone_obj=cone_obj, start_res=1, apex=pivot, R=R, inc=inc, scale=size, distribution='regular', axis_flag=False)
 
 
 def add_pivots(structure=None, sims=False):
@@ -349,13 +350,15 @@ def add_titles(structure=None, representation=None, displacement=40.0, sims=Fals
         mol.atom_add(atom_name=atom_name, res_name='TLE', res_num=1, pos=pos, element='Ti', pdb_record='HETATM')
 
 
-def add_rotors(structure=None, representation=None, sims=False):
+def add_rotors(structure=None, representation=None, size=None, sims=False):
     """Add all rotor objects for the current frame order model to the structural object.
 
     @keyword structure:         The internal structural object to add the rotor objects to.
     @type structure:            lib.structure.internal.object.Internal instance
     @keyword representation:    The representation to create.  If this is set to None, the rotor will be dumbbell shaped with propellers at both ends.  If set to 'A' or 'B', only half of the rotor will be shown.
     @type representation:       None or str
+    @keyword size:              The size of the geometric object in Angstroms.
+    @type size:                 float
     @keyword sims:              A flag which if True will add the Monte Carlo simulation rotors to the structural object.  There must be one model for each Monte Carlo simulation already present in the structural object.
     @type sims:                 bool
     """
@@ -415,11 +418,11 @@ def add_rotors(structure=None, representation=None, sims=False):
             axes = generate_axis_system(sim_index=sim_indices[i])
             axis.append(axes[:, 2])
 
-            # The size of the rotor, taking the 30 Angstrom cone representation into account.
+            # The size of the rotor (Angstrom), taking the cone representation into account by adding 5 Angstrom.
             if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
-                span.append(20e-10)
+                span.append(size)
             else:
-                span.append(35e-10)
+                span.append(size + 5.0)
 
             # Stagger the propeller blades.
             if cdp.model in MODEL_LIST_FREE_ROTORS:
@@ -460,9 +463,9 @@ def add_rotors(structure=None, representation=None, sims=False):
             axis.append(frame[:, 0])
             axis.append(frame[:, 1])
 
-            # The rotor size.
-            span.append(20e-10)
-            span.append(20e-10)
+            # The rotor size (Angstrom).
+            span.append(size)
+            span.append(size)
 
             # Stagger the propeller blades.
             staggered.append(True)
@@ -486,7 +489,7 @@ def add_rotors(structure=None, representation=None, sims=False):
 
     # Add each rotor to the structure as a new molecule.
     for i in range(len(axis)):
-        rotor(structure=structure, rotor_angle=rotor_angle[i], axis=dot(T, axis[i]), axis_pt=pivot[i], label=label[i], centre=com[i], span=span[i], blade_length=5e-10, model_num=models[i], staggered=staggered[i], half_rotor=half_rotor)
+        rotor(structure=structure, rotor_angle=rotor_angle[i], axis=dot(T, axis[i]), axis_pt=pivot[i], label=label[i], centre=com[i], span=span[i]/1e10, blade_length=5e-10, model_num=models[i], staggered=staggered[i], half_rotor=half_rotor)
 
 
 def average_position(structure=None, models=None, sim=None):
@@ -704,7 +707,7 @@ def create_geometric_rep(format='PDB', file=None, dir=None, compress_type=0, siz
         add_pivots(structure=structures[i], sims=sims[i])
 
         # Add all rotor objects.
-        add_rotors(structure=structures[i], representation=representation[i], sims=sims[i])
+        add_rotors(structure=structures[i], representation=representation[i], size=size, sims=sims[i])
 
         # Add the axis systems.
         add_axes(structure=structures[i], representation=representation[i], size=size, sims=sims[i])
@@ -714,13 +717,37 @@ def create_geometric_rep(format='PDB', file=None, dir=None, compress_type=0, siz
             add_cones(structure=structures[i], representation=representation[i], size=size, inc=inc, sims=sims[i])
 
         # Add atoms for creating titles.
-        add_titles(structure=structures[i], representation=representation[i], sims=sims[i])
+        add_titles(structure=structures[i], representation=representation[i], displacement=size+10, sims=sims[i])
 
         # Create the PDB file.
         if format == 'PDB':
             pdb_file = open_write_file(file_root[i]+'.pdb', dir, compress_type=compress_type, force=force)
             structures[i].write_pdb(pdb_file)
             pdb_file.close()
+
+
+def frame_from_axis(axis, frame):
+    """Build a full 3D frame from the single axis.
+
+    @param axis:    The Z-axis of the system.
+    @type axis:     numpy rank-1, 3D array
+    @param frame:   The empty frame to populate.
+    @type frame:    numpy rank-2, 3D array
+    """
+
+    # Store the Z-axis.
+    frame[:, 2] = axis
+
+    # The temporary eigenframe X-axis.
+    frame[0, 0] = 1.0
+
+    # The Y-axis (orthonormal to Z and X).
+    frame[:, 1] = cross(frame[:, 2], frame[:, 0])
+    frame[:, 1] /= norm(frame[:, 1])
+
+    # The orthonormal X-axis.
+    frame[:, 0] = cross(frame[:, 1], frame[:, 2])
+    frame[:, 0] /= norm(frame[:, 0])
 
 
 def generate_axis_system(sim_index=None):
@@ -751,7 +778,7 @@ def generate_axis_system(sim_index=None):
             axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha_sim[sim_index], pivot=pivot, point=com)
 
         # Create a full normalised axis system.
-        two_vect_to_R(array([1, 0, 0], float64), axis, frame)
+        frame_from_axis(axis, frame)
 
     # The system for the isotropic cones.
     elif cdp.model in MODEL_LIST_ISO_CONE:
@@ -762,7 +789,7 @@ def generate_axis_system(sim_index=None):
             axis = create_rotor_axis_spherical(theta=cdp.axis_theta_sim[sim_index], phi=cdp.axis_phi_sim[sim_index])
 
         # Create a full normalised axis system.
-        two_vect_to_R(array([1, 0, 0], float64), axis, frame)
+        frame_from_axis(axis, frame)
 
     # The system for the pseudo-ellipses and double rotor.
     elif cdp.model in MODEL_LIST_PSEUDO_ELLIPSE + MODEL_LIST_DOUBLE:
