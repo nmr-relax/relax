@@ -33,14 +33,6 @@ for root, dirs, files in walk(getcwd()):
         # Close the pipe.
         pipe.stdin.close()
 
-        # Check for errors.
-        err = False
-        for line in pipe.stderr.readlines():
-            if search("command not found", line):
-                err = True
-        if err:
-            sys.exit()
-
         # Only display the import information.
         title_flag = True
         for line in pipe.stdout.readlines():
@@ -52,3 +44,11 @@ for root, dirs, files in walk(getcwd()):
 
                 # Then the unused import line.
                 sys.stdout.write("    %s\n" % line[:-1])
+
+        # Check for errors.
+        err = False
+        for line in pipe.stderr.readlines():
+            if search("command not found", line):
+                err = True
+        if err:
+            sys.exit()
