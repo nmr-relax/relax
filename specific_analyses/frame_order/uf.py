@@ -166,7 +166,7 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
     pivot = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z])
 
     # The rotor object.
-    if cdp.model in ['rotor', 'free rotor', 'iso cone', 'iso cone, free rotor', 'pseudo-ellipse']:
+    if cdp.model in ['rotor', 'free rotor', 'iso cone', 'iso cone, free rotor', 'pseudo-ellipse', 'pseudo-ellipse, free rotor']:
         # The rotor angle.
         if cdp.model in ['free rotor', 'iso cone, free rotor']:
             rotor_angle = pi
@@ -192,8 +192,13 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
         else:
             span = 35e-10
 
+        # Stagger the propeller blades.
+        staggered = True
+        if cdp.model in ['free rotor', 'iso cone, free rotor', 'pseudo-ellipse, free rotor']:
+            staggered = False
+
         # Add the rotor object to the structure as a new molecule.
-        rotor_pdb(structure=structure, rotor_angle=rotor_angle, axis=axis, axis_pt=pivot, centre=com, span=span, blade_length=5e-10, staggered=True)
+        rotor_pdb(structure=structure, rotor_angle=rotor_angle, axis=axis, axis_pt=pivot, centre=com, span=span, blade_length=5e-10, staggered=staggered)
 
     # Create the molecule.
     structure.add_molecule(name='rest')
