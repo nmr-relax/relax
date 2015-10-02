@@ -35,6 +35,7 @@ from lib.alignment.rdc import rdc_tensor
 from lib.compat import norm
 from lib.errors import RelaxError
 from lib.float import isNaN
+from lib.frame_order.conversions import create_rotor_axis_alpha
 from lib.frame_order.double_rotor import compile_2nd_matrix_double_rotor, pcs_numeric_int_double_rotor
 from lib.frame_order.free_rotor import compile_2nd_matrix_free_rotor
 from lib.frame_order.iso_cone import compile_2nd_matrix_iso_cone, pcs_numeric_int_iso_cone_qrint
@@ -45,7 +46,6 @@ from lib.frame_order.pseudo_ellipse import compile_2nd_matrix_pseudo_ellipse, pc
 from lib.frame_order.pseudo_ellipse_free_rotor import compile_2nd_matrix_pseudo_ellipse_free_rotor
 from lib.frame_order.pseudo_ellipse_torsionless import compile_2nd_matrix_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_qrint
 from lib.frame_order.rotor import compile_2nd_matrix_rotor, pcs_numeric_int_rotor_qrint
-from lib.frame_order.rotor_axis import create_rotor_axis_alpha
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import euler_to_R_zyz, tilt_torsion_to_R, two_vect_to_R
 from lib.linear_algebra.kronecker_product import kron_prod

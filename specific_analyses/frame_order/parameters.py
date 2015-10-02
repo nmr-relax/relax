@@ -27,17 +27,20 @@ from math import pi
 from numpy import array, float64, zeros
 
 # relax module imports.
+from lib.errors import RelaxError
 from specific_analyses.frame_order.data import pivot_fixed
 from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_ROTOR
 
 
-def assemble_param_vector(sim_index=None):
+def assemble_param_vector(sim_index=None, unset_fail=False):
     """Assemble and return the parameter vector.
 
-    @return:            The parameter vector.
-    @rtype:             numpy rank-1 array
-    @keyword sim_index: The Monte Carlo simulation index.
-    @type sim_index:    int
+    @keyword sim_index:     The Monte Carlo simulation index.
+    @type sim_index:        int
+    @keyword unset_fail:    A flag which if True will cause a RelaxError to be raised if the parameter is not set yet.
+    @type unset_fail:       bool
+    @return:                The parameter vector.
+    @rtype:                 numpy rank-1 array
     """
 
     # Initialise.
@@ -50,8 +53,19 @@ def assemble_param_vector(sim_index=None):
 
     # Loop over all model parameters.
     for param_name in cdp.params:
+        # Add the extension.
+        param_name += ext
+
+        # The parameter does not exist yet.
+        if not hasattr(cdp, param_name):
+            if unset_fail:
+                raise RelaxError("The parameter '%s' has not been set." % param_name)
+            else:
+                param_vect.append(None)
+                continue
+
         # Get the object.
-        obj = getattr(cdp, param_name+ext)
+        obj = getattr(cdp, param_name)
 
         # Add it to the parameter vector.
         if sim_index == None:
@@ -263,8 +277,3 @@ def update_model():
     # Cone parameters - 2nd torsion angle.
     if cdp.model in [MODEL_DOUBLE_ROTOR]:
         cdp.params.append('cone_sigma_max_2')
-
-    # Initialise the parameters in the current data pipe.
-    for param in cdp.params:
-        if not param in ['pivot_x', 'pivot_y', 'pivot_z'] and not hasattr(cdp, param):
-            setattr(cdp, param, 0.0)

@@ -23,6 +23,7 @@
 """The relax-lib NMR package - a library of functions for the frame order theories."""
 
 __all__ = [
+    'conversions',
     'double_rotor',
     'format',
     'free_rotor',
@@ -33,6 +34,5 @@ __all__ = [
     'pseudo_ellipse_free_rotor',
     'pseudo_ellipse',
     'pseudo_ellipse_torsionless',
-    'rotor',
-    'rotor_axis'
+    'rotor'
 ]

@@ -29,7 +29,7 @@ from numpy import array, dot, eye, float64, zeros
 import sys
 
 # relax module imports.
-from lib.frame_order.rotor_axis import create_rotor_axis_alpha, create_rotor_axis_euler, create_rotor_axis_spherical
+from lib.frame_order.conversions import create_rotor_axis_alpha, create_rotor_axis_euler, create_rotor_axis_spherical
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from lib.io import open_write_file
 from lib.order import order_parameters

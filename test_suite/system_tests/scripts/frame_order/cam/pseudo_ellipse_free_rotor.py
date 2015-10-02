@@ -38,8 +38,8 @@ class Analysis(Base_script):
     EIGEN_ALPHA = 3.1415926535897931
     EIGEN_BETA = 0.96007997859534311
     EIGEN_GAMMA = 4.0322755062196229
-    CONE_THETA_X = 0.5
-    CONE_THETA_Y = 0.3
+    CONE_THETA_X = 0.3
+    CONE_THETA_Y = 0.5
 
 
 # Execute the analysis.

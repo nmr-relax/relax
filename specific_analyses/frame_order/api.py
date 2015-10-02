@@ -125,7 +125,7 @@ class Frame_order(API_base, API_common):
         """
 
         # Set up the data structures for the target function.
-        param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(sim_index=sim_index, verbosity=verbosity)
+        param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(sim_index=sim_index, verbosity=verbosity, unset_fail=True)
 
         # Set up the optimisation target function class.
         target_fn = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix[0], com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts)
@@ -584,7 +584,7 @@ class Frame_order(API_base, API_common):
             raise RelaxError("Only the 'simplex' minimisation algorithm is supported for the relaxation dispersion analysis as function gradients are not implemented.")
 
         # Set up the data structures for the target function.
-        param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(sim_index=sim_index, verbosity=verbosity)
+        param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(sim_index=sim_index, verbosity=verbosity, unset_fail=True)
 
         # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
         processor_box = Processor_box() 

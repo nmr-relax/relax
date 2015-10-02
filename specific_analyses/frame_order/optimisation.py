@@ -625,7 +625,7 @@ def store_bc_data(A_5D_bc=None, pcs_theta=None, rdc_theta=None):
             rdc_index += 1
 
 
-def target_fn_data_setup(sim_index=None, verbosity=1, scaling=True):
+def target_fn_data_setup(sim_index=None, verbosity=1, scaling_matrix=None, unset_fail=False):
     """Initialise the target function for optimisation or direct calculation.
 
     @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
@@ -634,10 +634,12 @@ def target_fn_data_setup(sim_index=None, verbosity=1, scaling=True):
     @type verbosity:            int
     @keyword scaling_matrix:    The diagonal and square scaling matrices.
     @type scaling_matrix:       numpy rank-2, float64 array or None
+    @keyword unset_fail:        A flag which if True will cause a RelaxError to be raised if the parameter is not set yet.
+    @type unset_fail:           bool
     """
 
     # Assemble the parameter vector.
-    param_vector = assemble_param_vector(sim_index=sim_index)
+    param_vector = assemble_param_vector(sim_index=sim_index, unset_fail=unset_fail)
 
     # Determine the base data types (RDCs and/or PCSs).
     data_types = base_data_types()

@@ -11,8 +11,8 @@ AVE_POS_GAMMA = 4.6622313104265416
 EIGEN_ALPHA = 3.1415926535897931
 EIGEN_BETA = 0.96007997859534311
 EIGEN_GAMMA = 4.0322755062196229
-CONE_THETA_X = 0.5
-CONE_THETA_Y = 0.3
+CONE_THETA_X = 0.3
+CONE_THETA_Y = 0.5
 
 # Create the data pipe.
 pipe.create(pipe_name='frame order', pipe_type='frame order')
@@ -101,12 +101,12 @@ frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', dist=None,
 state.save('frame_order_true', force=True)
 
 # Grid search (low quality for speed).
-frame_order.num_int_pts(num=100)
+frame_order.num_int_pts(num=200)
 grid_search(inc=[None, None, None, None, None, 7, 7, 7, 7, 7])
 
 # Iterative optimisation with increasing precision.
-num_int_pts = [100, 1000, 10000, 50000]
-func_tol = [1e-2, 1e-3, 5e-3, 1e-4]
+num_int_pts = [1000, 10000, 50000]
+func_tol = [1e-2, 1e-3, 1e-4]
 for i in range(len(num_int_pts)):
     frame_order.num_int_pts(num=num_int_pts[i])
     minimise('simplex', func_tol=func_tol[i])
@@ -119,14 +119,14 @@ state.save('frame_order_fixed_piv', force=True)
 
 # Optimise the pivot and model, again iterating with increasing precision.
 frame_order.pivot(pivot, fix=False)
-num_int_pts = [100, 1000, 10000, 50000]
-func_tol = [1e-2, 1e-3, 5e-3, 1e-4]
+num_int_pts = [1000, 10000, 50000]
+func_tol = [1e-2, 1e-3, 1e-4]
 for i in range(len(num_int_pts)):
     frame_order.num_int_pts(num=num_int_pts[i])
     minimise('simplex', func_tol=func_tol[i])
 
-# Test Monte Carlo simulations (at low quality for speed).
-frame_order.num_int_pts(num=100)
+# Test Monte Carlo simulations.
+frame_order.num_int_pts(num=10000)
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()

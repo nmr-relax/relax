@@ -1,5 +1,10 @@
 REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.                    
-REMARK  40 CREATED BY RELAX (HTTP://WWW.NMR-RELAX.COM).                         
+REMARK  40                                                                      
+REMARK  40 CREATED USING RELAX (HTTP://WWW.NMR-RELAX.COM).                      
+REMARK  40                                                                      
+REMARK  40 RELAX VERSION REPOSITORY CHECKOUT R24753                             
+REMARK  40 SVN+SSH://BUGMAN@SVN.GNA.ORG/SVN/RELAX/BRANCHES/FRAME_ORDER_CLEANUP. 
+REMARK  40 CREATED ON SAT JUL 26 01:16:15 2014.                                 
 ATOM      1  C   AXE A   1      37.254   0.500  16.747  1.00  0.00           C  
 ATOM      2  N   AXE A   1      44.546   9.515  33.311  1.00  0.00           N  
 ATOM      3  N   AXE A   1      21.533  13.216  16.747  1.00  0.00           N  

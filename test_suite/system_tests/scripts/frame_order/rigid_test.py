@@ -139,12 +139,24 @@ cdp.ave_pos_alpha = 0.14159265359
 cdp.ave_pos_beta  = 2.0
 cdp.ave_pos_gamma = 2.14159265359
 
-# Set some parameters close to zero, but far enough away from zero to allow for the numerical integration.
+# Set the pivot parameter.
+cdp.pivot_disp = 100.0
+
+# Set the eigenframe parameters to allow the minimise.calculate user function to operate.
+cdp.axis_alpha = 1.0
+cdp.axis_theta = 1.0
+cdp.axis_phi = 1.0
+cdp.eigen_alpha = 1.0
+cdp.eigen_beta = 1.0
+cdp.eigen_gamma = 1.0
+
+# Set the order parameters to insignificant values.
 cdp.cone_s1 = 1.0
 cdp.cone_theta = 0.0
 cdp.cone_theta_x = 0.0
 cdp.cone_theta_y = 0.0
 cdp.cone_sigma_max = 0.0
+cdp.cone_sigma_max_2 = 0.0
 
 # Allow for stand-alone operation.
 if not hasattr(ds, 'model'):

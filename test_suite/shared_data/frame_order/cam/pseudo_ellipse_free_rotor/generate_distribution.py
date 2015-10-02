@@ -5,7 +5,7 @@ import sys
 sys.path.append('..')
 
 # Python module imports.
-from math import cos, sin, sqrt
+from math import cos, pi, sin, sqrt
 from numpy import dot, transpose
 
 # relax module imports.
@@ -20,8 +20,8 @@ class Generate(Main):
     N = 20000000
 
     # Cone parameters.
-    THETA_X = 0.5
-    THETA_Y = 0.3
+    THETA_X = 0.3
+    THETA_Y = 0.5
     SIGMA_MAX = pi
 
     def __init__(self):

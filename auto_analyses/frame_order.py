@@ -20,7 +20,14 @@
 ###############################################################################
 
 # Module docstring.
-"""The full frame order analysis."""
+"""The full frame order analysis.
+
+
+The nested model parameter copying protocol
+===========================================
+
+To allow the analysis to complete in under 1,000,000 years, the trick of copying parameters from simpler nested models is used in this auto-analysis.  The protocol is split into four categories for the average domain position, the pivot point, the motional eigenframe and the parameters of ordering.  These use the fact that the free rotor and torsionless models are the two extrema of the models where the torsion angle is restricted, whereby sigma_max is pi and 0 respectively.
+"""
 
 
 # Python module imports.
@@ -30,13 +37,17 @@ import sys
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from pipe_control.pipes import get_pipe
-from lib.text.sectioning import section, subsection, title
-from lib.geometry.coord_transform import spherical_to_cartesian
-from prompt.interpreter import Interpreter
 from lib.errors import RelaxError
+from lib.frame_order.conversions import convert_axis_alpha_to_spherical
+from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.io import open_write_file
-from specific_analyses.frame_order.variables import MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_NONREDUNDANT, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
+from lib.order.order_parameters import iso_cone_theta_to_S
+from lib.text.sectioning import section, subsection, title
+from pipe_control.pipes import get_pipe
+from pipe_control.structure.mass import pipe_centre_of_mass
+from prompt.interpreter import Interpreter
+from specific_analyses.frame_order.data import generate_pivot
+from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_NONREDUNDANT, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from status import Status; status = Status()
 
 
@@ -101,7 +112,9 @@ class Frame_order_analysis:
         self.mc_sim_num = mc_sim_num
         self.mc_int_pts = mc_int_pts
         self.mc_func_tol = mc_func_tol
-        self.models = models
+
+        # Re-order the models to enable the parameter nesting protocol.
+        self.models = self.reorder_models(models)
 
         # A dictionary and list of the data pipe names.
         self.pipe_name_dict = {}
@@ -250,64 +263,207 @@ class Frame_order_analysis:
         return incs
 
 
-    def nested_params(self, model):
-        """Copy the parameters from the simpler nested models for faster optimisation.
+    def nested_params_ave_dom_pos(self, model):
+        """Copy the average domain parameters from simpler nested models for faster optimisation.
 
         @param model:   The frame order model.
         @type model:    str
         """
 
+        # Skip the following models to allow for full optimisation.
+        if model in [MODEL_RIGID, MODEL_FREE_ROTOR]:
+            # Printout.
+            print("No nesting of the average domain position parameters.")
+
+            # Exit.
+            return
+
         # The average position from the rigid model.
-        if model not in []:
+        if model not in MODEL_LIST_FREE_ROTORS:
+            # Printout.
+            print("Obtaining the average position from the rigid model.")
+
             # Get the rigid data pipe.
-            rigid_pipe = get_pipe(self.pipe_name_dict[MODEL_RIGID])
+            pipe = get_pipe(self.pipe_name_dict[MODEL_RIGID])
 
             # Copy the average position parameters from the rigid model.
-            if hasattr(rigid_pipe, 'ave_pos_x'):
-                cdp.ave_pos_x = rigid_pipe.ave_pos_x
-            if hasattr(rigid_pipe, 'ave_pos_y'):
-                cdp.ave_pos_y = rigid_pipe.ave_pos_y
-            if hasattr(rigid_pipe, 'ave_pos_z'):
-                cdp.ave_pos_z = rigid_pipe.ave_pos_z
-            if model not in MODEL_LIST_FREE_ROTORS:
-                cdp.ave_pos_alpha = rigid_pipe.ave_pos_alpha
-            cdp.ave_pos_beta = rigid_pipe.ave_pos_beta
-            cdp.ave_pos_gamma = rigid_pipe.ave_pos_gamma
+            cdp.ave_pos_x = pipe.ave_pos_x
+            cdp.ave_pos_y = pipe.ave_pos_y
+            cdp.ave_pos_z = pipe.ave_pos_z
+            cdp.ave_pos_alpha = pipe.ave_pos_alpha
+            cdp.ave_pos_beta = pipe.ave_pos_beta
+            cdp.ave_pos_gamma = pipe.ave_pos_gamma
+
+        # The average position from the free rotor model.
+        else:
+            # Printout.
+            print("Obtaining the average position from the free rotor model.")
+
+            # Get the free rotor data pipe.
+            pipe = get_pipe(self.pipe_name_dict[MODEL_FREE_ROTOR])
+
+            # Copy the average position parameters from the free rotor model.
+            cdp.ave_pos_x = pipe.ave_pos_x
+            cdp.ave_pos_y = pipe.ave_pos_y
+            cdp.ave_pos_z = pipe.ave_pos_z
+            cdp.ave_pos_beta = pipe.ave_pos_beta
+            cdp.ave_pos_gamma = pipe.ave_pos_gamma
+
+
+    def nested_params_eigenframe(self, model):
+        """Copy the eigenframe parameters from simpler nested models for faster optimisation.
+
+        @param model:   The frame order model.
+        @type model:    str
+        """
+
+        # Skip the following models to allow for full optimisation.
+        if model in [MODEL_ROTOR, MODEL_PSEUDO_ELLIPSE]:
+            # Printout.
+            print("No nesting of the eigenframe parameters.")
+
+            # Exit.
+            return
 
         # The cone axis from the rotor model.
-        if model in [MODEL_ISO_CONE]:
+        if model in [MODEL_FREE_ROTOR, MODEL_ISO_CONE]:
+            # Printout.
+            print("Obtaining the cone axis from the rotor model.")
+
             # Get the rotor data pipe.
-            rotor_pipe = get_pipe(self.pipe_name_dict[MODEL_ROTOR])
+            pipe = get_pipe(self.pipe_name_dict[MODEL_ROTOR])
+
+            # The cone axis as the axis alpha angle.
+            if model == MODEL_FREE_ROTOR:
+                cdp.axis_alpha = pipe.axis_alpha
+
+            # The cone axis from the axis alpha angle to spherical angles.
+            if model == MODEL_ISO_CONE:
+                cdp.axis_theta, cdp_axis_phi = convert_axis_alpha_to_spherical(alpha=pipe.axis_alpha, pivot=generate_pivot(order=1, pipe_name=self.pipe_name_dict[MODEL_ROTOR]), point=pipe_centre_of_mass(verbosity=0))
+
+        # The cone axis from the isotropic cone model.
+        elif model in [MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS]:
+            # Printout.
+            print("Obtaining the cone axis from the isotropic cone model.")
+
+            # Get the iso cone data pipe.
+            pipe = get_pipe(self.pipe_name_dict[MODEL_ISO_CONE])
+
+            # Copy the cone axis parameters.
+            cdp.axis_theta = pipe.axis_theta
+            cdp.axis_phi = pipe.axis_phi
+
+        # The full eigenframe from the pseudo-ellipse model.
+        elif model in [MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_DOUBLE_ROTOR]:
+            # Printout.
+            print("Obtaining the full eigenframe from the pseudo-ellipse model.")
+
+            # Get the pseudo-ellipse data pipe.
+            pipe = get_pipe(self.pipe_name_dict[MODEL_PSEUDO_ELLIPSE])
+
+            # Copy the three Euler angles.
+            cdp.eigen_alpha = pipe.eigen_alpha
+            cdp.eigen_beta = pipe.eigen_beta
+            cdp.eigen_gamma = pipe.eigen_gamma
+
+
+    def nested_params_order(self, model):
+        """Copy the order parameters from simpler nested models for faster optimisation.
+
+        @param model:   The frame order model.
+        @type model:    str
+        """
+
+        # Skip the following models to allow for full optimisation.
+        if model in [MODEL_ROTOR, MODEL_DOUBLE_ROTOR]:
+            # Printout.
+            print("No nesting of the order parameters.")
+
+            # Exit.
+            return
+
+        # The cone angle from the isotropic cone model.
+        if model in [MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_ISO_CONE_FREE_ROTOR]:
+            # Get the iso cone data pipe.
+            pipe = get_pipe(self.pipe_name_dict[MODEL_ISO_CONE])
+
+            # Copy the cone angle directly.
+            if model == MODEL_ISO_CONE_TORSIONLESS:
+                print("Obtaining the cone angle from the isotropic cone model.")
+                cdp.cone_theta = pipe.cone_theta
+
+            # Copy as the X cone angle.
+            elif model == MODEL_PSEUDO_ELLIPSE:
+                print("Obtaining the cone X angle from the isotropic cone model.")
+                cdp.cone_theta_x = pipe.cone_theta
+
+            # Convert to the order parameter S.
+            elif model == MODEL_ISO_CONE_FREE_ROTOR:
+                print("Obtaining the cone order parameter from the isotropic cone model.")
+                cdp.cone_s1 = iso_cone_theta_to_S(pipe.cone_theta)
+
+        # The X and Y cone angles from the pseudo-ellipse model.
+        elif model in [MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR]:
+            # Printout.
+            print("Obtaining the cone X and Y angles from the pseudo-ellipse model.")
+
+            # Get the pseudo-ellipse data pipe.
+            pipe = get_pipe(self.pipe_name_dict[MODEL_PSEUDO_ELLIPSE])
 
             # Copy the cone axis.
-            cdp.axis_theta = rotor_pipe.axis_theta
-            cdp.axis_phi = rotor_pipe.axis_phi
+            cdp.cone_theta_x = pipe.cone_theta_x
+            cdp.cone_theta_y = pipe.cone_theta_y
 
-        # The cone axis from the free rotor model.
-        if model in [MODEL_ISO_CONE_FREE_ROTOR]:
-            # Get the rotor data pipe.
-            free_rotor_pipe = get_pipe(self.pipe_name_dict[MODEL_FREE_ROTOR])
-
-            # Copy the cone axis.
-            cdp.axis_theta = free_rotor_pipe.axis_theta
-            cdp.axis_phi = free_rotor_pipe.axis_phi
 
         # The torsion from the rotor model.
         if model in [MODEL_ISO_CONE, MODEL_PSEUDO_ELLIPSE]:
             # Get the rotor data pipe.
-            rotor_pipe = get_pipe(self.pipe_name_dict[MODEL_ROTOR])
+            pipe = get_pipe(self.pipe_name_dict[MODEL_ROTOR])
 
             # Copy the cone axis.
-            cdp.cone_sigma_max = rotor_pipe.cone_sigma_max
+            cdp.cone_sigma_max = pipe.cone_sigma_max
 
-        # The cone angles from from the torsionless isotropic cone model.
-        if model in MODEL_LIST_PSEUDO_ELLIPSE:
-            # Get the rotor data pipe.
-            pipe = get_pipe(self.pipe_name_dict[MODEL_ISO_CONE_TORSIONLESS])
 
-            # Copy the cone axis.
-            cdp.cone_theta_x = pipe.cone_theta
-            cdp.cone_theta_y = pipe.cone_theta
+    def nested_params_pivot(self, model):
+        """Copy the pivot parameters from simpler nested models for faster optimisation.
+
+        @param model:   The frame order model.
+        @type model:    str
+        """
+
+        # Skip the following models to allow for full optimisation.
+        if model in [MODEL_ROTOR]:
+            # Printout.
+            print("No nesting of the pivot parameters.")
+
+            # Exit.
+            return
+
+        # The pivot from the rotor model.
+        if model in [MODEL_ISO_CONE, MODEL_FREE_ROTOR]:
+            # Printout.
+            print("Obtaining the pivot point from the rotor model.")
+
+            # Get the iso cone data pipe.
+            pipe = get_pipe(self.pipe_name_dict[MODEL_ROTOR])
+
+            # Copy the pivot parameters.
+            cdp.pivot_x = pipe.pivot_x
+            cdp.pivot_y = pipe.pivot_y
+            cdp.pivot_z = pipe.pivot_z
+
+        # The pivot from the isotropic cone model.
+        else:
+            # Printout.
+            print("Obtaining the pivot point from the isotropic cone model.")
+
+            # Get the iso cone data pipe.
+            pipe = get_pipe(self.pipe_name_dict[MODEL_ISO_CONE])
+
+            # Copy the cone axis parameters.
+            cdp.pivot_x = pipe.pivot_x
+            cdp.pivot_y = pipe.pivot_y
+            cdp.pivot_z = pipe.pivot_z
 
 
     def nested_models(self):
@@ -351,7 +507,11 @@ class Frame_order_analysis:
             self.interpreter.frame_order.select_model(model=model)
 
             # Copy nested parameters.
-            self.nested_params(model)
+            subsection(file=sys.stdout, text="Parameter nesting.")
+            self.nested_params_ave_dom_pos(model)
+            self.nested_params_eigenframe(model)
+            self.nested_params_pivot(model)
+            self.nested_params_order(model)
 
             # The optimisation settings.
             self.interpreter.frame_order.num_int_pts(num=self.num_int_pts_grid)
@@ -418,14 +578,20 @@ class Frame_order_analysis:
         # Select the Frame Order model.
         self.interpreter.frame_order.select_model(model=model)
 
-        # Split grid search for the translation.
+        # Split zooming grid search for the translation.
         print("\n\nTranslation active - splitting the grid search and iterating.")
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
         for i in range(2):
+            # Set the zooming grid search level.
+            self.interpreter.minimise.grid_zoom(level=i)
+
             # First optimise the rotation.
-            self.interpreter.grid_search(inc=[None, None, None, self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid])
+            self.interpreter.minimise.grid_search(inc=[None, None, None, self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid], skip_preset=False)
 
             # Then the translation.
-            self.interpreter.grid_search(inc=[self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid, None, None, None])
+            self.interpreter.minimise.grid_search(inc=[self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid, None, None, None], skip_preset=False)
 
         # Minimise.
         self.interpreter.minimise(self.min_algor)
@@ -540,6 +706,44 @@ class Frame_order_analysis:
 
         # Success.
         return True
+
+
+    def reorder_models(self, models=None):
+        """Reorder the frame order models to enable the nested parameter copying protocol.
+
+        @keyword models:    The frame order models to be used in the auto-analysis.
+        @type models:       list of str
+        @return:            The reordered frame order models.
+        @rtype:             list of str
+        """
+
+        # The correct order for the nesting protocol.
+        order = [
+            MODEL_RIGID,
+            MODEL_ROTOR,
+            MODEL_ISO_CONE,
+            MODEL_PSEUDO_ELLIPSE,
+            MODEL_ISO_CONE_TORSIONLESS,
+            MODEL_PSEUDO_ELLIPSE_TORSIONLESS,
+            MODEL_FREE_ROTOR,
+            MODEL_ISO_CONE_FREE_ROTOR,
+            MODEL_PSEUDO_ELLIPSE_FREE_ROTOR,
+            MODEL_DOUBLE_ROTOR
+        ]
+
+        # Create the new list.
+        new = []
+        for i in range(len(order)):
+            if order[i] in models:
+                new.append(order[i])
+
+        # Sanity check - the models must all be in this list.
+        for i in range(len(models)):
+            if models[i] not in order:
+                raise RelaxError("The frame order model '%s' is unknown." % models[i])
+
+        # Return the reordered list.
+        return new
 
 
     def visualisation(self, model=None):
