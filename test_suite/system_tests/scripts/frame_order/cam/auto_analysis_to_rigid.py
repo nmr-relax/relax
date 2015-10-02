@@ -28,46 +28,13 @@ from os import sep
 from time import asctime, localtime
 
 # relax module imports.
-from auto_analyses.frame_order import Frame_order_analysis
+from auto_analyses.frame_order import Frame_order_analysis, Optimisation_settings
 from data_store import Relax_data_store; ds = Relax_data_store()
 from status import Status; status = Status()
 
 
 # Analysis variables.
 #####################
-
-# The grid search size (the number of increments per dimension).
-GRID_INC = 2
-
-# The more precise grid search size for the initial rigid model (the number of increments per dimension).
-GRID_INC_RIGID = 2
-
-# The number of Sobol' points for the PCS numerical integration in the grid searches.
-NUM_INT_PTS_GRID = 1
-
-# The list of the number of Sobol' points for the PCS numerical integration to use iteratively in the optimisations after the grid search (for the PCS data subset).
-NUM_INT_PTS_SUBSET = [1]
-
-# The minimisation function tolerance cutoff to terminate optimisation (for the PCS data subset, see the minimise user function).
-FUNC_TOL_SUBSET = [1e-2]
-
-# The list of the number of Sobol' points for the PCS numerical integration to use iteratively in the optimisations after the grid search (for all PCS and RDC data).
-NUM_INT_PTS_FULL = [1]
-
-# The minimisation function tolerance cutoff to terminate optimisation (for all PCS and RDC data, see the minimise user function).
-FUNC_TOL_FULL = [1e-2]
-
-# The optimisation technique.
-MIN_ALGOR = 'simplex'
-
-# The number of Monte Carlo simulations to be used for error analysis at the end of the protocol.
-MC_NUM = 3
-
-# The number of Sobol' points for the PCS numerical integration during Monte Carlo simulations.
-MC_INT_PTS = 1
-
-# The minimisation function tolerance cutoff to terminate optimisation during Monte Carlo simulations.
-MC_FUNC_TOL = 1e-2
 
 # The frame order models to use.
 MODELS = [
@@ -81,6 +48,29 @@ MODELS = [
     'pseudo-ellipse',
     'double rotor'
 ]
+
+# The number of Monte Carlo simulations to be used for error analysis at the end of the protocol.
+MC_NUM = 3
+
+# Rigid model optimisation setup.
+OPT_RIGID = Optimisation_settings()
+OPT_RIGID.add_grid(inc=8, zoom=0)
+OPT_RIGID.add_min(min_algor='simplex', func_tol=1e-2)
+
+# PCS subset optimisation setup.
+OPT_SUBSET = Optimisation_settings()
+OPT_SUBSET.add_grid(inc=2, num_int_pts=1)
+OPT_SUBSET.add_min(min_algor='simplex', func_tol=1e-2, max_iter=20, num_int_pts=1)
+
+# Full data set optimisation setup.
+OPT_FULL = Optimisation_settings()
+OPT_FULL.add_grid(inc=2, num_int_pts=1)
+OPT_FULL.add_min(min_algor='simplex', func_tol=1e-2, max_iter=20, num_int_pts=1)
+
+# Monte Carlo simulation optimisation setup.
+OPT_MC = Optimisation_settings()
+OPT_MC.add_min(min_algor='simplex', func_tol=1e-2, max_iter=20, num_int_pts=1)
+
 
 # Set up the base data pipes.
 #############################
@@ -114,10 +104,10 @@ interatom.unit_vectors()
 # The lanthanides and data files.
 ln = ['dy', 'tb', 'tm', 'er']
 pcs_files = [
-    'pcs_dy.txt',
-    'pcs_tb.txt', 
-    'pcs_tm.txt', 
-    'pcs_er.txt'
+    'pcs_dy_subset.txt',
+    'pcs_tb_subset.txt', 
+    'pcs_tm_subset.txt', 
+    'pcs_er_subset.txt'
 ]
 pcs_files_subset = [
     'pcs_dy_subset.txt', 
@@ -205,4 +195,4 @@ for i in range(len(ln)):
 ############
 
 # Do not change!
-Frame_order_analysis(data_pipe_full=DATA, data_pipe_subset=SUBSET, pipe_bundle=PIPE_BUNDLE, results_dir=ds.tmpdir, grid_inc=GRID_INC, grid_inc_rigid=GRID_INC_RIGID, min_algor=MIN_ALGOR, num_int_pts_grid=NUM_INT_PTS_GRID, num_int_pts_subset=NUM_INT_PTS_SUBSET, func_tol_subset=FUNC_TOL_SUBSET, num_int_pts_full=NUM_INT_PTS_FULL, func_tol_full=FUNC_TOL_FULL, mc_sim_num=MC_NUM, mc_int_pts=MC_INT_PTS, mc_func_tol=MC_FUNC_TOL, models=MODELS)
+Frame_order_analysis(data_pipe_full=DATA, data_pipe_subset=SUBSET, pipe_bundle=PIPE_BUNDLE, results_dir=ds.tmpdir, opt_rigid=OPT_RIGID, opt_subset=OPT_SUBSET, opt_full=OPT_FULL, opt_mc=OPT_MC, mc_sim_num=MC_NUM, models=MODELS)

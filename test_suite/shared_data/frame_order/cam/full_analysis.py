@@ -33,44 +33,11 @@ from numpy import array
 from time import asctime, localtime
 
 # relax module imports.
-from auto_analyses.frame_order import Frame_order_analysis
+from auto_analyses.frame_order import Frame_order_analysis, Optimisation_settings
 
 
 # Analysis variables.
 #####################
-
-# The grid search size (the number of increments per dimension).
-GRID_INC = 11
-
-# The more precise grid search size for the initial rigid model (the number of increments per dimension).
-GRID_INC_RIGID = 31
-
-# The number of Sobol' points for the PCS numerical integration in the grid searches.
-NUM_INT_PTS_GRID = 50
-
-# The list of the number of Sobol' points for the PCS numerical integration to use iteratively in the optimisations after the grid search (for the PCS data subset).
-NUM_INT_PTS_SUBSET = [100]
-
-# The minimisation function tolerance cutoff to terminate optimisation (for the PCS data subset, see the minimise user function).
-FUNC_TOL_SUBSET = [1e-2]
-
-# The list of the number of Sobol' points for the PCS numerical integration to use iteratively in the optimisations after the grid search (for all PCS and RDC data).
-NUM_INT_PTS_FULL = [100, 1000, 10000]
-
-# The minimisation function tolerance cutoff to terminate optimisation (for all PCS and RDC data, see the minimise user function).
-FUNC_TOL_FULL = [1e-2, 1e-3, 1e-4]
-
-# The optimisation technique.
-MIN_ALGOR = 'simplex'
-
-# The number of Monte Carlo simulations to be used for error analysis at the end of the protocol.
-MC_NUM = 100
-
-# The number of Sobol' points for the PCS numerical integration during Monte Carlo simulations.
-MC_INT_PTS = 100
-
-# The minimisation function tolerance cutoff to terminate optimisation during Monte Carlo simulations.
-MC_FUNC_TOL = 1e-2
 
 # The frame order models to use.
 MODELS = [
@@ -81,8 +48,36 @@ MODELS = [
     'iso cone, free rotor',
     'iso cone',
     'pseudo-ellipse, torsionless',
-    'pseudo-ellipse'
+    'pseudo-ellipse',
+    'double rotor'
 ]
+
+# The number of Monte Carlo simulations to be used for error analysis at the end of the protocol.
+MC_NUM = 100
+
+# Rigid model optimisation setup.
+OPT_RIGID = Optimisation_settings()
+OPT_RIGID.add_grid(inc=11, zoom=0, num_int_pts=50)
+OPT_RIGID.add_grid(inc=11, zoom=1, num_int_pts=50)
+OPT_RIGID.add_grid(inc=11, zoom=2, num_int_pts=50)
+OPT_RIGID.add_min(min_algor='simplex', func_tol=1e-2)
+
+# PCS subset optimisation setup.
+OPT_SUBSET = Optimisation_settings()
+OPT_SUBSET.add_grid(inc=11, num_int_pts=100)
+OPT_SUBSET.add_min(min_algor='simplex', func_tol=1e-2, num_int_pts=100)
+
+# Full data set optimisation setup.
+OPT_FULL = Optimisation_settings()
+OPT_FULL.add_grid(inc=11, num_int_pts=100)
+OPT_FULL.add_min(min_algor='simplex', func_tol=1e-2, num_int_pts=100)
+OPT_FULL.add_min(min_algor='simplex', func_tol=1e-3, num_int_pts=1000)
+OPT_FULL.add_min(min_algor='simplex', func_tol=1e-4, num_int_pts=10000)
+
+# Monte Carlo simulation optimisation setup.
+OPT_MC = Optimisation_settings()
+OPT_MC.add_min(min_algor='simplex', func_tol=1e-2, num_int_pts=100)
+
 
 # Set up the base data pipes.
 #############################
@@ -181,10 +176,6 @@ for i in range(len(full)):
 # Set the reference domain.
 frame_order.ref_domain('N')
 
-# Link the domains to the PDB files.
-frame_order.domain_to_pdb(domain='N', pdb='1J7O_1st_NH.pdb')
-frame_order.domain_to_pdb(domain='C', pdb='1J7P_1st_NH_rot.pdb')
-
 # Set the initial pivot point.
 pivot = array([ 37.254, 0.5, 16.7465])
 frame_order.pivot(pivot, fix=True)
@@ -199,7 +190,7 @@ pipe.switch(DATA)
 
 # Load the complete PCS data into the already filled data pipe.
 for i in range(len(ln)):
-    pcs.read(align_id=ln[i], file=pcs_files[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+    pcs.read(align_id=ln[i], file=pcs_files[i], dir='.', mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
 
 
@@ -207,4 +198,4 @@ for i in range(len(ln)):
 ############
 
 # Do not change!
-Frame_order_analysis(data_pipe_full=DATA, data_pipe_subset=SUBSET, pipe_bundle=PIPE_BUNDLE, grid_inc=GRID_INC, grid_inc_rigid=GRID_INC_RIGID, min_algor=MIN_ALGOR, num_int_pts_grid=NUM_INT_PTS_GRID, num_int_pts_subset=NUM_INT_PTS_SUBSET, func_tol_subset=FUNC_TOL_SUBSET, num_int_pts_full=NUM_INT_PTS_FULL, func_tol_full=FUNC_TOL_FULL, mc_sim_num=MC_NUM, mc_int_pts=MC_INT_PTS, mc_func_tol=MC_FUNC_TOL, models=MODELS)
+Frame_order_analysis(data_pipe_full=DATA, data_pipe_subset=SUBSET, pipe_bundle=PIPE_BUNDLE, results_dir='full_analysis', opt_rigid=OPT_RIGID, opt_subset=OPT_SUBSET, opt_full=OPT_FULL, opt_mc=OPT_MC, mc_sim_num=MC_NUM, models=MODELS)

@@ -37,6 +37,7 @@ import sys
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
+from lib.arg_check import is_float, is_int, is_str
 from lib.errors import RelaxError
 from lib.frame_order.conversions import convert_axis_alpha_to_spherical
 from lib.geometry.coord_transform import spherical_to_cartesian
@@ -54,7 +55,7 @@ from status import Status; status = Status()
 class Frame_order_analysis:
     """The frame order auto-analysis protocol."""
 
-    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, grid_inc=11, grid_inc_rigid=21, min_algor='simplex', num_int_pts_grid=200, num_int_pts_subset=[500, 1000], func_tol_subset=[1e-2, 1e-3], num_int_pts_full=[500, 1000, 10000, 100000], func_tol_full=[1e-2, 1e-3, 5e-3, 1e-4], mc_sim_num=500, mc_int_pts=10000, mc_func_tol=1e-3, models=MODEL_LIST_NONREDUNDANT):
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT):
         """Perform the full frame order analysis.
 
         @param data_pipe_full:          The name of the data pipe containing all of the RDC and PCS data.
@@ -65,28 +66,16 @@ class Frame_order_analysis:
         @type pipe_bundle:              str
         @keyword results_dir:           The directory where files are saved in.
         @type results_dir:              str
-        @keyword grid_inc:              The number of grid increments to use in the grid search of certain models.
-        @type grid_inc:                 int
-        @keyword grid_inc_rigid:        The number of grid increments to use in the grid search of the initial rigid model.
-        @type grid_inc_rigid:           int
-        @keyword min_algor:             The minimisation algorithm (in most cases this should not be changed).
-        @type min_algor:                str
-        @keyword num_int_pts_grid:      The number of Sobol' points for the PCS numerical integration in the grid searches.
-        @type num_int_pts_grid:         int
-        @keyword num_int_pts_subset:    The list of the number of Sobol' points for the PCS numerical integration to use iteratively in the optimisations after the grid search (for the PCS data subset).
-        @type num_int_pts_subset:       list of int
-        @keyword func_tol_subset:       The minimisation function tolerance cutoff to terminate optimisation (for the PCS data subset, see the minimise user function).
-        @type func_tol_subset:          list of float
-        @keyword num_int_pts_full:      The list of the number of Sobol' points for the PCS numerical integration to use iteratively in the optimisations after the grid search (for all PCS and RDC data).
-        @type num_int_pts_full:         list of int
-        @keyword func_tol_full:         The minimisation function tolerance cutoff to terminate optimisation (for all PCS and RDC data, see the minimise user function).
-        @type func_tol_full:            list of float
+        @keyword opt_rigid:             The grid search, zooming grid search and minimisation settings object for the rigid frame order model.
+        @type opt_rigid:                Optimisation_settings instance
+        @keyword opt_subset:            The grid search, zooming grid search and minimisation settings object for optimisation of all models, excluding the rigid model, for the PCS data subset.
+        @type opt_subset:               Optimisation_settings instance
+        @keyword opt_full:              The grid search, zooming grid search and minimisation settings object for optimisation of all models, excluding the rigid model, for the full data set.
+        @type opt_full:                 Optimisation_settings instance
+        @keyword opt_mc:                The grid search, zooming grid search and minimisation settings object for optimisation of the Monte Carlo simulations.  Any grid search settings will be ignored, as only the minimise.execute user function is run for the simulations.  And only the settings for the first iteration of the object will be accessed and used - iterative optimisation will be ignored.
+        @type opt_mc:                   Optimisation_settings instance
         @keyword mc_sim_num:            The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         @type mc_sim_num:               int
-        @keyword mc_int_num:            The number of Sobol' points for the PCS numerical integration during Monte Carlo simulations.
-        @type mc_int_num:               int
-        @keyword mc_func_tol:           The minimisation function tolerance cutoff to terminate optimisation during Monte Carlo simulations.
-        @type mc_func_tol:              float
         @keyword models:                The frame order models to use in the analysis.  The 'rigid' model must be included as this is essential for the analysis.
         @type models:                   list of str
         """
@@ -101,17 +90,11 @@ class Frame_order_analysis:
         self.data_pipe_full = data_pipe_full
         self.data_pipe_subset = data_pipe_subset
         self.pipe_bundle = pipe_bundle
-        self.grid_inc = grid_inc
-        self.grid_inc_rigid = grid_inc_rigid
-        self.min_algor = min_algor
-        self.num_int_pts_grid = num_int_pts_grid
-        self.num_int_pts_subset = num_int_pts_subset
-        self.func_tol_subset = func_tol_subset
-        self.num_int_pts_full = num_int_pts_full
-        self.func_tol_full = func_tol_full
+        self.opt_rigid = opt_rigid
+        self.opt_subset = opt_subset
+        self.opt_full = opt_full
+        self.opt_mc = opt_mc
         self.mc_sim_num = mc_sim_num
-        self.mc_int_pts = mc_int_pts
-        self.mc_func_tol = mc_func_tol
 
         # Re-order the models to enable the parameter nesting protocol.
         self.models = self.reorder_models(models)
@@ -144,14 +127,15 @@ class Frame_order_analysis:
                 # Model selection.
                 self.interpreter.model_selection(method='AIC', modsel_pipe='final', pipes=self.pipe_name_list)
 
-                # The number of integration points.
-                self.interpreter.frame_order.num_int_pts(num=self.mc_int_pts)
+                # The numerical optimisation settings.
+                opt = self.opt_mc
+                self.interpreter.frame_order.num_int_pts(num=opt.get_min_num_int_pts(0))
 
                 # Monte Carlo simulations.
                 self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
                 self.interpreter.monte_carlo.create_data()
                 self.interpreter.monte_carlo.initial_values()
-                self.interpreter.minimise(self.min_algor, func_tol=self.mc_func_tol)
+                self.interpreter.minimise.execute(opt.get_min_algor(0), func_tol=opt.get_min_func_tol(0), max_iter=opt.get_min_max_iter(0))
                 self.interpreter.eliminate()
                 self.interpreter.monte_carlo.error_analysis()
 
@@ -178,86 +162,81 @@ class Frame_order_analysis:
             raise RelaxError("The pipe bundle name '%s' is invalid." % self.pipe_bundle)
 
         # Minimisation variables.
-        if not isinstance(self.grid_inc, int):
-            raise RelaxError("The grid_inc user variable '%s' is incorrectly set.  It should be an integer." % self.grid_inc)
-        if not isinstance(self.grid_inc_rigid, int):
-            raise RelaxError("The grid_inc_rigid user variable '%s' is incorrectly set.  It should be an integer." % self.grid_inc)
-        if not isinstance(self.min_algor, str):
-            raise RelaxError("The min_algor user variable '%s' is incorrectly set.  It should be a string." % self.min_algor)
-        if not isinstance(self.num_int_pts_grid, int):
-            raise RelaxError("The num_int_pts_grid user variable '%s' is incorrectly set.  It should be an integer." % self.mc_sim_num)
         if not isinstance(self.mc_sim_num, int):
             raise RelaxError("The mc_sim_num user variable '%s' is incorrectly set.  It should be an integer." % self.mc_sim_num)
-        if not isinstance(self.mc_int_pts, int):
-            raise RelaxError("The mc_int_pts user variable '%s' is incorrectly set.  It should be an integer." % self.mc_int_pts)
-        if not isinstance(self.mc_func_tol, float):
-            raise RelaxError("The mc_func_tol user variable '%s' is incorrectly set.  It should be a floating point number." % self.mc_func_tol)
-
-        # Zooming minimisation (PCS subset).
-        if len(self.num_int_pts_subset) != len(self.func_tol_subset):
-            raise RelaxError("The num_int_pts_subset and func_tol_subset user variables of '%s' and '%s' respectively must be of the same length." % (self.num_int_pts_subset, self.func_tol_subset))
-        for i in range(len(self.num_int_pts_subset)):
-            if not isinstance(self.num_int_pts_subset[i], int):
-                raise RelaxError("The num_int_pts_subset user variable '%s' must be a list of integers." % self.num_int_pts_subset)
-            if not isinstance(self.func_tol_subset[i], float):
-                raise RelaxError("The func_tol_subset user variable '%s' must be a list of floats." % self.func_tol_subset)
-
-        # Zooming minimisation (all RDC and PCS data).
-        if len(self.num_int_pts_full) != len(self.func_tol_full):
-            raise RelaxError("The num_int_pts_full and func_tol_full user variables of '%s' and '%s' respectively must be of the same length." % (self.num_int_pts_full, self.func_tol_full))
-        for i in range(len(self.num_int_pts_full)):
-            if not isinstance(self.num_int_pts_full[i], int):
-                raise RelaxError("The num_int_pts_full user variable '%s' must be a list of integers." % self.num_int_pts_full)
-            if not isinstance(self.func_tol_full[i], float):
-                raise RelaxError("The func_tol_full user variable '%s' must be a list of floats." % self.func_tol_full)
 
 
-    def custom_grid_incs(self, model):
+    def custom_grid_incs(self, model, inc=None):
         """Set up a customised grid search increment number for each model.
 
         @param model:   The frame order model.
         @type model:    str
+        @keyword inc:   The number of grid search increments to use for each dimension.
+        @type inc:      int
         @return:        The list of increment values.
         @rtype:         list of int and None
         """
 
         # Initialise the structure.
         incs = []
+
+        # The pivot parameters.
         if hasattr(cdp, 'pivot_fixed') and not cdp.pivot_fixed:
-            incs += [None, None, None]
-        incs += [None, None, None]
+            # Optimise the pivot for the rotor model.
+            if model == MODEL_ROTOR:
+                incs += [inc, inc, inc]
 
-        # The rotor model.
-        if model == MODEL_ROTOR:
-            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc]
+            # Otherwise use preset values (copied from other models).
+            else:
+                incs += [None, None, None]
 
-        # The free rotor model.
+        # The 2nd pivot point parameters - the minimum inter rotor axis distance.
+        if model in [MODEL_DOUBLE_ROTOR]:
+            incs += [inc]
+
+        # The average domain position parameters.
         if model == MODEL_FREE_ROTOR:
-            incs += [self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc]
+            incs += [inc, inc, inc, inc, inc]
+        elif model in [MODEL_ISO_CONE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR]:
+            incs += [None, None, None, None, None]
+        else:
+            incs += [None, None, None, None, None, None]
 
-        # The torsionless isotropic cone model.
+        # The motional eigenframe and order parameters - the rotor model.
+        if model == MODEL_ROTOR:
+            incs += [inc, inc]
+
+        # The motional eigenframe and order parameters - the free rotor model.
+        if model == MODEL_FREE_ROTOR:
+            incs += [None]
+
+        # The motional eigenframe and order parameters - the torsionless isotropic cone model.
         if model == MODEL_ISO_CONE_TORSIONLESS:
-            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc]
+            incs += [None, None, None]
 
-        # The free rotor isotropic cone model.
+        # The motional eigenframe and order parameters - the free rotor isotropic cone model.
         if model == MODEL_ISO_CONE_FREE_ROTOR:
-            incs += [None, None, None, None, self.grid_inc]
+            incs += [None, None, None]
 
-        # The isotropic cone model.
+        # The motional eigenframe and order parameters - the isotropic cone model.
         if model == MODEL_ISO_CONE:
-            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, None]
+            incs += [None, None, inc, None]
 
-        # The torsionless pseudo-elliptic cone model.
+        # The motional eigenframe and order parameters - the torsionless pseudo-elliptic cone model.
         if model == MODEL_PSEUDO_ELLIPSE_TORSIONLESS:
-            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None]
+            incs += [None, None, None, None, None]
 
-        # The free rotor pseudo-elliptic cone model.
+        # The motional eigenframe and order parameters - the free rotor pseudo-elliptic cone model.
         if model == MODEL_PSEUDO_ELLIPSE_FREE_ROTOR:
-            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None]
+            incs += [None, None, None, None, None]
 
-        # The pseudo-elliptic cone model.
+        # The motional eigenframe and order parameters - the pseudo-elliptic cone model.
         if model == MODEL_PSEUDO_ELLIPSE:
-            incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None, None]
+            incs += [inc, inc, inc, None, inc, None]
+
+        # The motional eigenframe and order parameters - the double rotor model.
+        if model == MODEL_DOUBLE_ROTOR:
+            incs += [None, None, None, inc, inc]
 
         # Return the increment list.
         return incs
@@ -273,7 +252,7 @@ class Frame_order_analysis:
         # Skip the following models to allow for full optimisation.
         if model in [MODEL_RIGID, MODEL_FREE_ROTOR]:
             # Printout.
-            print("No nesting of the average domain position parameters.")
+            print("No nesting of the average domain position parameters for the '%s' model." % model)
 
             # Exit.
             return
@@ -320,7 +299,7 @@ class Frame_order_analysis:
         # Skip the following models to allow for full optimisation.
         if model in [MODEL_ROTOR, MODEL_PSEUDO_ELLIPSE]:
             # Printout.
-            print("No nesting of the eigenframe parameters.")
+            print("No nesting of the eigenframe parameters for the '%s' model." % model)
 
             # Exit.
             return
@@ -339,7 +318,7 @@ class Frame_order_analysis:
 
             # The cone axis from the axis alpha angle to spherical angles.
             if model == MODEL_ISO_CONE:
-                cdp.axis_theta, cdp_axis_phi = convert_axis_alpha_to_spherical(alpha=pipe.axis_alpha, pivot=generate_pivot(order=1, pipe_name=self.pipe_name_dict[MODEL_ROTOR]), point=pipe_centre_of_mass(verbosity=0))
+                cdp.axis_theta, cdp.axis_phi = convert_axis_alpha_to_spherical(alpha=pipe.axis_alpha, pivot=generate_pivot(order=1, pipe_name=self.pipe_name_dict[MODEL_ROTOR]), point=pipe_centre_of_mass(verbosity=0))
 
         # The cone axis from the isotropic cone model.
         elif model in [MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS]:
@@ -377,7 +356,7 @@ class Frame_order_analysis:
         # Skip the following models to allow for full optimisation.
         if model in [MODEL_ROTOR, MODEL_DOUBLE_ROTOR]:
             # Printout.
-            print("No nesting of the order parameters.")
+            print("No nesting of the order parameters for the '%s' model." % model)
 
             # Exit.
             return
@@ -417,6 +396,9 @@ class Frame_order_analysis:
 
         # The torsion from the rotor model.
         if model in [MODEL_ISO_CONE, MODEL_PSEUDO_ELLIPSE]:
+            # Printout.
+            print("Obtaining the torsion angle from the rotor model.")
+
             # Get the rotor data pipe.
             pipe = get_pipe(self.pipe_name_dict[MODEL_ROTOR])
 
@@ -434,7 +416,7 @@ class Frame_order_analysis:
         # Skip the following models to allow for full optimisation.
         if model in [MODEL_ROTOR]:
             # Printout.
-            print("No nesting of the pivot parameters.")
+            print("No nesting of the pivot parameters for the '%s' model." % model)
 
             # Exit.
             return
@@ -513,25 +495,66 @@ class Frame_order_analysis:
             self.nested_params_pivot(model)
             self.nested_params_order(model)
 
-            # The optimisation settings.
-            self.interpreter.frame_order.num_int_pts(num=self.num_int_pts_grid)
+            # Zooming grid search.
+            opt = self.opt_subset
+            for i in opt.loop_grid():
+                # Set the zooming grid search level.
+                zoom = opt.get_grid_zoom_level(i)
+                if zoom != None:
+                    self.interpreter.minimise.grid_zoom(level=zoom)
 
+<<<<<<< .working
             # Grid search.
             incs = self.custom_grid_incs(model)
             self.interpreter.grid_search(inc=incs)
+=======
+                # The numerical optimisation settings.
+                num_int_pts = opt.get_grid_num_int_pts(i)
+                if num_int_pts != None:
+                    self.interpreter.frame_order.num_int_pts(num=num_int_pts)
+>>>>>>> .merge-right.r24836
+
+                # Set up the custom grid increments.
+                incs = self.custom_grid_incs(model, inc=opt.get_grid_inc(i))
+
+                # Perform the grid search.
+                self.interpreter.minimise.grid_search(inc=incs)
 
             # Minimise (for the PCS data subset and full RDC set).
+<<<<<<< .working
             for i in range(len(self.num_int_pts_subset)):
                 self.interpreter.frame_order.num_int_pts(num=self.num_int_pts_subset[i])
                 self.interpreter.minimise(self.min_algor, func_tol=self.func_tol_subset[i])
+=======
+            for i in opt.loop_min():
+                # The numerical optimisation settings.
+                num_int_pts = opt.get_min_num_int_pts(i)
+                if num_int_pts != None:
+                    self.interpreter.frame_order.num_int_pts(num=num_int_pts)
+>>>>>>> .merge-right.r24836
+
+                # Perform the optimisation.
+                self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
 
             # Copy the PCS data.
             self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
 
             # Minimise (for the full data set).
+<<<<<<< .working
             for i in range(len(self.num_int_pts_full)):
                 self.interpreter.frame_order.num_int_pts(num=self.num_int_pts_full[i])
                 self.interpreter.minimise(self.min_algor, func_tol=self.func_tol_full[i])
+=======
+            opt = self.opt_full
+            for i in opt.loop_min():
+                # The numerical optimisation settings.
+                num_int_pts = opt.get_min_num_int_pts(i)
+                if num_int_pts != None:
+                    self.interpreter.frame_order.num_int_pts(num=num_int_pts)
+>>>>>>> .merge-right.r24836
+
+                # Perform the optimisation.
+                self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
 
             # Results printout.
             self.print_results()
@@ -583,18 +606,40 @@ class Frame_order_analysis:
         self.interpreter.value.set(param='ave_pos_x', val=0.0)
         self.interpreter.value.set(param='ave_pos_y', val=0.0)
         self.interpreter.value.set(param='ave_pos_z', val=0.0)
-        for i in range(2):
+        opt = self.opt_rigid
+        for i in opt.loop_grid():
             # Set the zooming grid search level.
-            self.interpreter.minimise.grid_zoom(level=i)
+            zoom = opt.get_grid_zoom_level(i)
+            if zoom != None:
+                self.interpreter.minimise.grid_zoom(level=zoom)
+
+            # The numerical optimisation settings.
+            num_int_pts = opt.get_grid_num_int_pts(i)
+            if num_int_pts != None:
+                self.interpreter.frame_order.num_int_pts(num=num_int_pts)
+
+            # The number of increments.
+            inc = opt.get_grid_inc(i)
 
             # First optimise the rotation.
-            self.interpreter.minimise.grid_search(inc=[None, None, None, self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid], skip_preset=False)
+            self.interpreter.minimise.grid_search(inc=[None, None, None, inc, inc, inc], skip_preset=False)
 
             # Then the translation.
-            self.interpreter.minimise.grid_search(inc=[self.grid_inc_rigid, self.grid_inc_rigid, self.grid_inc_rigid, None, None, None], skip_preset=False)
+            self.interpreter.minimise.grid_search(inc=[inc, inc, inc, None, None, None], skip_preset=False)
 
         # Minimise.
+<<<<<<< .working
         self.interpreter.minimise(self.min_algor)
+=======
+        for i in opt.loop_min():
+            # The numerical optimisation settings.
+            num_int_pts = opt.get_min_num_int_pts(i)
+            if num_int_pts != None:
+                self.interpreter.frame_order.num_int_pts(num=num_int_pts)
+>>>>>>> .merge-right.r24836
+
+            # Perform the optimisation.
+            self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
 
         # Results printout.
         self.print_results()
@@ -775,3 +820,237 @@ class Frame_order_analysis:
 
         # Close the file.
         script.close()
+
+
+
+class Optimisation_settings:
+    """A special object for storing the settings for optimisation.
+
+    This includes grid search information, zooming grid search settings, and settings for the minimisation.
+    """
+
+    def __init__(self):
+        """Set up the optimisation settings object."""
+
+        # Initialise some private structures for the grid search.
+        self._grid_count = 0
+        self._grid_incs = []
+        self._grid_zoom = []
+        self._grid_num_int_pts = []
+
+        # Initialise some private structures for the minimisation.
+        self._min_count = 0
+        self._min_algor = []
+        self._min_func_tol = []
+        self._min_max_iter = []
+        self._min_num_int_pts = []
+
+
+    def _check_index(self, i, iter_type=None):
+        """Check that the user supplied iteration index makes sense.
+
+        @param i:           The iteration index.
+        @type i:            int
+        @keyword iter_type: The type of the index.  This can be either 'grid' or 'min'.
+        @type iter_type:    str
+        @raises RelaxError: If the iteration is invalid.
+        """
+
+        # Check the index.
+        is_int(i, name='i', can_be_none=False)
+
+        # Is the value too high?
+        if iter_type == 'grid' and i >= self._grid_count:
+            raise RelaxError("The iteration index %i is too high, only %i grid searches are set up." % (i, self._grid_count))
+        if iter_type == 'min' and i >= self._min_count:
+            raise RelaxError("The iteration index %i is too high, only %i minimisations are set up." % (i, self._min_count))
+
+
+    def add_grid(self, inc=None, zoom=None, num_int_pts=None):
+        """Add a grid search step.
+
+        @keyword inc:           The grid search size (the number of increments per dimension).
+        @type inc:              int
+        @keyword zoom:          The grid zoom level for this grid search.
+        @type zoom:             None or int
+        @keyword num_int_pts:   The list of the number of Sobol' points for the PCS numerical integration to use in the grid search.  If not supplied, then the previous value will be used.
+        @type num_int_pts:      None or int
+        """
+
+        # Value checking, as this will be set up by a user.
+        is_int(inc, name='inc', can_be_none=False)
+        is_int(zoom, name='zoom', can_be_none=True)
+        is_int(num_int_pts, name='num_int_pts', can_be_none=True)
+
+        # Store the values.
+        self._grid_incs.append(inc)
+        self._grid_zoom.append(zoom)
+        self._grid_num_int_pts.append(num_int_pts)
+
+        # Increment the count.
+        self._grid_count += 1
+
+
+    def add_min(self, min_algor='simplex', func_tol=1e-25, max_iter=1000000, num_int_pts=None):
+        """Add an optimisation step.
+
+        @keyword min_algor:     The optimisation technique.
+        @type min_algor:        str
+        @keyword func_tol:      The minimisation function tolerance cutoff to terminate optimisation (see the minimise.execute user function).
+        @type func_tol:         int
+        @keyword max_iter:      The maximum number of iterations for the optimisation.
+        @type max_iter:         int
+        @keyword num_int_pts:   The list of the number of Sobol' points for the PCS numerical integration to use in the optimisations after the grid search.  If not supplied, then the previous value will be used.
+        @type num_int_pts:      None or int
+        """
+
+        # Value checking, as this will be set up by a user.
+        is_str(min_algor, name='min_algor', can_be_none=False)
+        is_float(func_tol, name='func_tol', can_be_none=True)
+        is_int(max_iter, name='max_iter', can_be_none=True)
+        is_int(num_int_pts, name='num_int_pts', can_be_none=True)
+
+        # Store the values.
+        self._min_algor.append(min_algor)
+        self._min_func_tol.append(func_tol)
+        self._min_max_iter.append(max_iter)
+        self._min_num_int_pts.append(num_int_pts)
+
+        # Increment the count.
+        self._min_count += 1
+
+
+    def get_grid_inc(self, i):
+        """Return the grid increments for the given iteration.
+
+        @param i:   The grid search iteration from the loop_grid() method.
+        @type i:    int
+        @return:    The grid increments for the iteration.
+        @rtype:     int
+        """
+
+        # Check the index.
+        self._check_index(i, iter_type='grid')
+
+        # Return the value.
+        return self._grid_incs[i]
+
+
+    def get_grid_num_int_pts(self, i):
+        """Return the number of numerical integration points for the given iteration.
+
+        @param i:   The grid search iteration from the loop_grid() method.
+        @type i:    int
+        @return:    The number of numerical integration points for the iteration.
+        @rtype:     int
+        """
+
+        # Check the index.
+        self._check_index(i, iter_type='grid')
+
+        # Return the value.
+        return self._grid_num_int_pts[i]
+
+
+    def get_grid_zoom_level(self, i):
+        """Return the grid zoom level for the given iteration.
+
+        @param i:   The grid search iteration from the loop_grid() method.
+        @type i:    int
+        @return:    The grid zoom level for the iteration.
+        @rtype:     None or int
+        """
+
+        # Check the index.
+        self._check_index(i, iter_type='grid')
+
+        # Return the value.
+        return self._grid_zoom[i]
+
+
+    def get_min_algor(self, i):
+        """Return the minimisation algorithm for the given iteration.
+
+        @param i:   The minimisation iteration from the loop_min() method.
+        @type i:    int
+        @return:    The minimisation algorithm for the iteration.
+        @rtype:     int
+        """
+
+        # Check the index.
+        self._check_index(i, iter_type='min')
+
+        # Return the value.
+        return self._min_algor[i]
+
+
+    def get_min_func_tol(self, i):
+        """Return the minimisation function tolerance level for the given iteration.
+
+        @param i:   The minimisation iteration from the loop_min() method.
+        @type i:    int
+        @return:    The minimisation function tolerance level for the iteration.
+        @rtype:     int
+        """
+
+        # Check the index.
+        self._check_index(i, iter_type='min')
+
+        # Return the value.
+        return self._min_func_tol[i]
+
+
+    def get_min_max_iter(self, i):
+        """Return the maximum number of iterations for the optimisation for the given iteration.
+
+        @param i:   The minimisation iteration from the loop_min() method.
+        @type i:    int
+        @return:    The maximum number of iterations for the optimisation for the iteration.
+        @rtype:     int
+        """
+
+        # Check the index.
+        self._check_index(i, iter_type='min')
+
+        # Return the value.
+        return self._min_max_iter[i]
+
+
+    def get_min_num_int_pts(self, i):
+        """Return the number of numerical integration points for the given iteration.
+
+        @param i:   The minimisation iteration from the loop_min() method.
+        @type i:    int
+        @return:    The number of numerical integration points for the iteration.
+        @rtype:     int
+        """
+
+        # Check the index.
+        self._check_index(i, iter_type='min')
+
+        # Return the value.
+        return self._min_num_int_pts[i]
+
+
+    def loop_grid(self):
+        """Generator method for looping over all grid search iterations.
+
+        @return:    The grid search iteration.
+        @rtype:     int
+        """
+
+        # Loop over the grid searches.
+        for i in range(self._grid_count):
+            yield i
+
+
+    def loop_min(self):
+        """Generator method for looping over all minimisation iterations.
+
+        @return:    The minimisation iteration.
+        @rtype:     int
+        """
+
+        # Loop over the minimisations.
+        for i in range(self._min_count):
+            yield i

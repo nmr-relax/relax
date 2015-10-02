@@ -110,7 +110,16 @@ def linear_constraints(scaling_matrix=None):
         -0.125 <= S <= 1,
         0 <= sigma_max <= pi,
 
-    The pivot point parameter, domain position parameters, and eigenframe parameters are unconstrained.
+    The pivot point and average domain position parameter constraints are::
+
+        -999 <= pivot_x <= 999
+        -999 <= pivot_y <= 999
+        -999 <= pivot_z <= 999
+        -500 <= ave_pos_x <= 500
+        -500 <= ave_pos_y <= 500
+        -500 <= ave_pos_y <= 500
+    
+    These are necessary to allow for valid PDB representations to be created.  The eigenframe parameters are unconstrained.
 
 
     Matrix notation
@@ -140,6 +149,32 @@ def linear_constraints(scaling_matrix=None):
         |               |                        |        |
         | 0  0  0  0 -1 |                        |  -pi   |
 
+    The pivot and average position constraints in the A.x >= b notation are::
+
+        | 1  0  0  0  0  0 |                        | -999.0 |
+        |                  |                        |        |
+        |-1  0  0  0  0  0 |                        | -999.0 |
+        |                  |                        |        |
+        | 0  1  0  0  0  0 |                        | -999.0 |
+        |                  |                        |        |
+        | 0 -1  0  0  0  0 |     |  pivot_x  |      | -999.0 |
+        |                  |     |           |      |        |
+        | 0  0  1  0  0  0 |     |  pivot_y  |      | -999.0 |
+        |                  |     |           |      |        |
+        | 0  0 -1  0  0  0 |     |  pivot_z  |      | -999.0 |
+        |                  |  .  |           |  >=  |        |
+        | 0  0  0  1  0  0 |     | ave_pos_x |      | -500.0 |
+        |                  |     |           |      |        |
+        | 0  0  0 -1  0  0 |     | ave_pos_y |      | -500.0 |
+        |                  |     |           |      |        |
+        | 0  0  0  0  1  0 |     | ave_pos_z |      | -500.0 |
+        |                  |                        |        |
+        | 0  0  0  0 -1  0 |                        | -500.0 |
+        |                  |                        |        |
+        | 0  0  0  0  0  1 |                        | -500.0 |
+        |                  |                        |        |
+        | 0  0  0  0  0 -1 |                        | -500.0 |
+
 
     @keyword scaling_matrix:    The diagonal, square scaling matrix.
     @type scaling_matrix:       numpy rank-2 square matrix
@@ -157,6 +192,28 @@ def linear_constraints(scaling_matrix=None):
 
     # Loop over the parameters of the model.
     for i in range(n):
+        # The pivot parameters.
+        if cdp.params[i] in ['pivot_x', 'pivot_y', 'pivot_z']:
+            # -999 <= pivot_i <= 999.
+            A.append(zero_array * 0.0)
+            A.append(zero_array * 0.0)
+            A[j][i] = 1.0
+            A[j+1][i] = -1.0
+            b.append(-999.0 / scaling_matrix[i, i])
+            b.append(-999.0 / scaling_matrix[i, i])
+            j = j + 2
+
+        # The average domain translation parameters.
+        if cdp.params[i] in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z']:
+            # -500 <= ave_pos_i <= 500.
+            A.append(zero_array * 0.0)
+            A.append(zero_array * 0.0)
+            A[j][i] = 1.0
+            A[j+1][i] = -1.0
+            b.append(-500.0 / scaling_matrix[i, i])
+            b.append(-500.0 / scaling_matrix[i, i])
+            j = j + 2
+
         # The cone opening angles and sigma_max.
         if cdp.params[i] in ['cone_theta', 'cone_theta_x', 'cone_theta_y', 'cone_sigma_max']:
             # 0 <= theta <= pi.
