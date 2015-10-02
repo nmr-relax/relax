@@ -25,10 +25,9 @@
 # Python module imports.
 import dep_check
 if dep_check.wx_module:
-    from wx import FD_OPEN, FD_SAVE
+    from wx import FD_OPEN
 else:
     FD_OPEN = -1
-    FD_SAVE = -1
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
