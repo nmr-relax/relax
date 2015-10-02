@@ -234,11 +234,13 @@ def grid_row(incs, lower, upper, dist_type=None, end_point=True):
     return list(row)
 
 
-def minimise_setup_atomic_pos(sim_index=None):
+def minimise_setup_atomic_pos(sim_index=None, verbosity=1):
     """Set up the atomic position data structures for optimisation using PCSs and PREs as base data sets.
 
     @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
     @type sim_index:    None or int
+    @keyword verbosity: If set to 1 or higher, then printouts and warnings will be active.
+    @type verbosity:    int
     @return:            The atomic positions (the first index is the spins, the second is the structures, and the third is the atomic coordinates) and the paramagnetic centre.
     @rtype:             numpy rank-3 array, numpy rank-1 array.
     """
@@ -247,6 +249,8 @@ def minimise_setup_atomic_pos(sim_index=None):
     atomic_pos = []
 
     # Store the atomic positions.
+    ave_warning_spin_ids = []
+    ave_warning_num = None
     for spin, spin_id in spin_loop(selection=domain_moving(), return_id=True):
         # Skip deselected spins.
         if not spin.select:
@@ -268,7 +272,11 @@ def minimise_setup_atomic_pos(sim_index=None):
         else:
             # First throw a warning to tell the user what is happening.
             if sim_index == None:
-                warn(RelaxWarning("Averaging the %s atomic positions for the PCS for the spin '%s'." % (len(spin.pos), spin_id)))
+                ave_warning_spin_ids.append(spin_id)
+                if ave_warning_num == None:
+                    ave_warning_num = len(spin.pos)
+                elif ave_warning_num != len(spin.pos):
+                    ave_warning_num = 'multiple'
 
             # The average position.
             ave_pos = zeros(3, float64)
@@ -278,6 +286,10 @@ def minimise_setup_atomic_pos(sim_index=None):
 
             # Store.
             atomic_pos.append(ave_pos)
+
+    # Give a warning about the atomic position averaging.
+    if verbosity and len(ave_warning_spin_ids):
+        warn(RelaxWarning("Averaging the %s atomic positions for the PCS for the spins %s." % (ave_warning_num, ave_warning_spin_ids)))
 
     # Convert to numpy objects.
     atomic_pos = array(atomic_pos, float64)
@@ -786,7 +798,7 @@ def target_fn_data_setup(sim_index=None, verbosity=1, scaling_matrix=None, unset
     # Get the atomic_positions.
     atomic_pos, paramag_centre = None, None
     if 'pcs' in data_types or 'pre' in data_types:
-        atomic_pos, paramag_centre = minimise_setup_atomic_pos(sim_index=sim_index)
+        atomic_pos, paramag_centre = minimise_setup_atomic_pos(sim_index=sim_index, verbosity=verbosity)
 
     # The fixed pivot point.
     pivot = None

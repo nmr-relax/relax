@@ -22,14 +22,23 @@
 # Module docstring.
 """The frame_order user function definitions."""
 
+# Python module imports.
+import dep_check
+if dep_check.wx_module:
+    from wx import FD_OPEN, FD_SAVE
+else:
+    FD_OPEN = -1
+    FD_SAVE = -1
+
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from specific_analyses.frame_order.optimisation import count_sobol_points
-from specific_analyses.frame_order.uf import sobol_setup, pdb_model, permute_axes, pivot, ref_domain, select_model
+from specific_analyses.frame_order.uf import sobol_setup, pdb_model, permute_axes, pivot, ref_domain, select_model, simulate
 from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
+from user_functions.wildcards import WILDCARD_RELAX_SAVE
 
 
 # The user function class.
@@ -73,15 +82,6 @@ uf.add_keyarg(
     arg_type = "str",
     desc_short = "PDB representation file root",
     desc = "The file root of the PDB file for the geometric object representation of the frame order dynamics.",
-    can_be_none = True
-)
-uf.add_keyarg(
-    name = "dist",
-    default = "domain_distribution",
-    py_type = "str",
-    arg_type = "str",
-    desc_short = "distribution file root",
-    desc = "The file root of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.",
     can_be_none = True
 )
 uf.add_keyarg(
@@ -132,7 +132,7 @@ uf.add_keyarg(
     min = 1,
     py_type = "int",
     desc_short = "structural model",
-    desc = "Only one model from an analysed ensemble can be used for the PDB representation of the Monte Carlo simulations of the average domain position, as these consists of one model per simulation, and also for the distribution of structures.",
+    desc = "Only one model from an analysed ensemble can be used for the PDB representation of the Monte Carlo simulations of the average domain position, as these consists of one model per simulation.",
     wiz_element_type = "spin"
 )
 uf.add_keyarg(
@@ -144,15 +144,15 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This function creates a set of PDB files for representing the frame order cone models.  This includes a file for the average position of the molecule, a file containing a geometric representation of the frame order motions, and a file containing a distribution of structures which sample the motional modes.")
+uf.desc[-1].add_paragraph("This function creates a set of PDB files for representing the frame order cone models.  This includes a file for the average position of the molecule and a file containing a geometric representation of the frame order motions.")
 uf.desc[-1].add_paragraph("The three files are specified via the file root whereby the extensions '.pdb', '.pdb.gz', etc. should not be provided.  This is important for the geometric representation whereby different files are created for the positive and negative representations (due to symmetry in the NMR data, these cannot be differentiated), and for the Monte Carlo simulations.  For example if the file root is 'frame_order', the positive and negative representations will be placed in the 'frame_order_pos.pdb.gz' and 'frame_order_neg.pdb.gz' files and the Monte Carlo simulations in the 'frame_order_sim_pos.pdb.gz' and 'frame_order_sim_neg.pdb.gz' files.  For models where there is no difference in representation between the positive and negative directions, the files 'frame_order.pdb.gz' and 'frame_order_sim.pdb.gz' will be produced.")
 uf.desc[-1].add_paragraph("There are four different types of residue within the PDB.  The pivot point is represented as as a single carbon atom of the residue 'PIV'.  The cone consists of numerous H atoms of the residue 'CON'.  The cone axis vector is presented as the residue 'AXE' with one carbon atom positioned at the pivot and the other x Angstroms away on the cone axis (set by the geometric object size).  Finally, if Monte Carlo have been performed, there will be multiple 'MCC' residues representing the cone for each simulation, and multiple 'MCA' residues representing the multiple cone axes.")
 uf.desc[-1].add_paragraph("To create the diffusion in a cone PDB representation, a uniform distribution of vectors on a sphere is generated using spherical coordinates with the polar angle defined by the cone axis.  By incrementing the polar angle using an arccos distribution, a radial array of vectors representing latitude are created while incrementing the azimuthal angle evenly creates the longitudinal vectors.  These are all placed into the PDB file as H atoms and are all connected using PDB CONECT records.  Each H atom is connected to its two neighbours on the both the longitude and latitude.  This creates a geometric PDB object with longitudinal and latitudinal lines representing the filled cone.")
-uf.desc[-1].add_paragraph("The PDB representation of the Monte Carlo simulations consists of one model per simulation.  And the distribution of structures consists of one model per motional simulation step.  Therefore if an ensemble of structures has been analysed ,only one model from the ensemble can be used for either representation.  This defaults to model number 1, but this can be changed.")
+uf.desc[-1].add_paragraph("The PDB representation of the Monte Carlo simulations consists of one model per simulation.  Therefore if an ensemble of structures has been analysed, only one model from the ensemble can be used for the representation.  This defaults to model number 1, but this can be changed.")
 uf.backend = pdb_model
 uf.menu_text = "pdb_&model"
 uf.gui_icon = "oxygen.actions.document-save"
-uf.wizard_height_desc = 370
+uf.wizard_height_desc = 400
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
@@ -330,6 +330,94 @@ uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_height_desc = 560
 uf.wizard_size = (1000, 750)
 uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
+
+
+# The frame_order.simulate user function.
+uf = uf_info.add_uf('frame_order.simulate')
+uf.title = "Pseudo-Brownian dynamics simulation of the frame order motions."
+uf.title_short = "Frame order pseudo-Brownian dynamics simulation."
+uf.add_keyarg(
+    name = "file",
+    default = "simulation.pdb",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "simulation file",
+    desc = "The PDB file for storing the frame order pseudo-Brownian dynamics simulation.  The compression is determined automatically by the file extensions '*.pdb', '*.pdb.gz', and '*.pdb.bz2'.",
+    wiz_filesel_wildcard = WILDCARD_RELAX_SAVE,
+    wiz_filesel_style = FD_OPEN,
+    wiz_filesel_preview = False
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory where the files are to be located.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "step_size",
+    default = 2.0,
+    py_type = "float",
+    desc_short = "angle of rotation",
+    desc = "The rotation will be of a random direction but with this fixed angle.  The value is in degrees."
+)
+uf.add_keyarg(
+    name = "snapshot",
+    default = 10,
+    min = 1,
+    max = 1000000,
+    py_type = "int",
+    desc_short = "number of steps per snapshot",
+    desc = "The number of steps in the simulation when snapshots will be taken."
+)
+uf.add_keyarg(
+    name = "total",
+    default = 1000,
+    min = 1,
+    max = 1000000,
+    py_type = "int",
+    desc_short = "total number of snapshots",
+    desc = "The total number of snapshots to take before stopping the simulation.",
+    wiz_element_type = "spin"
+)
+uf.add_keyarg(
+    name = "model",
+    default = 1,
+    min = 1,
+    py_type = "int",
+    desc_short = "original structural model",
+    desc = "Only one model from an analysed ensemble of structures can be used for the pseudo-Brownian simulation, as the simulation and corresponding PDB file consists of one model per simulation.",
+    wiz_element_type = "spin"
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which, if set to True, will overwrite the any pre-existing file."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("To visualise the frame order motions, this user function performs a type of simulation whereby structures are randomly rotated by a fixed angle within the bounds of the uniform distribution of the frame order model.  This can be thought of as a pseudo-Brownian dynamics simulation.  It is in no way a real molecular or Brownian dynamics simulation.")
+uf.desc[-1].add_paragraph("Note that the RDC and PCS data does not contain information about all parts of the real distribution of structures.  Therefore the snapshots in this simulation only represent the components of the distribution present in the data, as modelled by the frame order models.")
+uf.desc[-1].add_paragraph("The simulation algorithm is as follows.  The current state is initially defined as the identity matrix I.  The maximum opening angle theta or the torsion angle sigma are defined by the parameter values of the frame order model.  The algorithm for one step of the simulation is:")
+uf.desc[-1].add_item_list_element("1", "Generate a random vector in 3D.")
+uf.desc[-1].add_item_list_element("2", "Construct a rotation matrix from the random vector and the fixed rotation angle.")
+uf.desc[-1].add_item_list_element("3", "Pre-multiply the current state by the rotation matrix.")
+uf.desc[-1].add_item_list_element("4", "Decompose the new state into the torsion-tilt angles.")
+uf.desc[-1].add_item_list_element("5", "If theta or sigma are greater than model parameter values, set them to these maximum values.")
+uf.desc[-1].add_item_list_element("6", "Back convert the modified torsion-tilt angles to a rotation matrix - this is the current state.")
+uf.desc[-1].add_item_list_element("7", "Store a snapshot if the correct number of iterations has been reached.  This consists of rotating a new model about the pivot(s), as defined by the frame order model.")
+uf.desc[-1].add_item_list_element("8", "Terminate the loop if the maximum number of snapshots has been reached.")
+uf.desc[-1].add_paragraph("The setting of the steps outside of the distribution to the maximum parameter values is specifically to allow for models with parameter values close to zero.  Without this, the simulation would take a huge amount of time to complete.")
+uf.desc[-1].add_paragraph("As the simulation consists of one model per snapshot, if an ensemble of structures has been analysed, only one model from the ensemble can be used for the representation.  This defaults to model number 1, but this can be changed.")
+uf.backend = simulate
+uf.menu_text = "simula&te"
+uf.gui_icon = "oxygen.actions.document-save"
+uf.wizard_height_desc = 420
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 

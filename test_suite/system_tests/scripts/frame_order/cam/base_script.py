@@ -215,7 +215,8 @@ class Base_script:
         """Display the results in PyMOL."""
 
         # Create the PDB representation.
-        self._execute_uf(uf_name='frame_order.pdb_model', ave_pos='devnull', rep='devnull', dist='devnull', force=True)
+        self._execute_uf(uf_name='frame_order.pdb_model', ave_pos='devnull', rep='devnull', force=True)
+        self._execute_uf(uf_name='frame_order.simulate', file='devnull', total=20, force=True)
 
 
     def setup_full(self):

@@ -23,6 +23,7 @@
 """Module for all of the frame order specific user functions."""
 
 # Python module imports.
+from copy import deepcopy
 from math import pi
 from numpy import array, cross, float64, ones, transpose, zeros
 from numpy.linalg import norm
@@ -32,18 +33,21 @@ from warnings import warn
 from lib.arg_check import is_float_array
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxFault
+from lib.frame_order.simulation import brownian
 from lib.geometry.coord_transform import cartesian_to_spherical, spherical_to_cartesian
 from lib.geometry.rotations import euler_to_R_zyz, R_to_euler_zyz
+from lib.io import open_write_file
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
-from specific_analyses.frame_order.checks import check_domain
-from specific_analyses.frame_order.geometric import create_ave_pos, create_distribution, create_geometric_rep
+from specific_analyses.frame_order.checks import check_domain, check_model, check_parameters, check_pivot
+from specific_analyses.frame_order.data import domain_moving
+from specific_analyses.frame_order.geometric import average_position, create_ave_pos, create_geometric_rep, generate_axis_system
 from specific_analyses.frame_order.optimisation import count_sobol_points
-from specific_analyses.frame_order.parameters import update_model
+from specific_analyses.frame_order.parameters import assemble_param_vector, update_model
 from specific_analyses.frame_order.variables import MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_LIST_RESTRICTED_TORSION, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID
 
 
-def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", dir=None, compress_type=0, size=30.0, inc=36, model=1, force=False):
+def pdb_model(ave_pos="ave_pos", rep="frame_order", dir=None, compress_type=0, size=30.0, inc=36, model=1, force=False):
     """Create 3 different PDB files for representing the frame order dynamics of the system.
 
     @keyword ave_pos:       The file root for the average molecule structure.
@@ -85,10 +89,6 @@ def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", 
     if rep:
         create_geometric_rep(file=rep, dir=dir, compress_type=compress_type, size=size, inc=inc, force=force)
 
-    # Create the distribution.
-    if dist:
-        create_distribution(file=dist, dir=dir, compress_type=compress_type, model=model, force=force)
-
 
 def permute_axes(permutation='A'):
     """Permute the axes of the motional eigenframe to switch between local minima.
@@ -126,37 +126,22 @@ def permute_axes(permutation='A'):
         angles = array([cdp.cone_theta_x, cdp.cone_theta_y, cone_sigma_max], float64)
     x, y, z = angles
 
-    # The system for the isotropic cones.
+    # The axis system.
+    axes = generate_axis_system()
+
+    # Start printout for the isotropic cones.
     if cdp.model in MODEL_LIST_ISO_CONE:
-        # Reconstruct the rotation axis.
-        axis = zeros(3, float64)
-        spherical_to_cartesian([1, cdp.axis_theta, cdp.axis_phi], axis)
-
-        # Create a full normalised axis system.
-        x_ax = array([1, 0, 0], float64)
-        y_ax = cross(axis, x_ax)
-        y_ax /= norm(y_ax)
-        x_ax = cross(y_ax, axis)
-        x_ax /= norm(x_ax)
-        axes = transpose(array([x_ax, y_ax, axis], float64))
-
-        # Start printout.
         print("\nOriginal parameters:")
         print("%-20s %20.10f" % ("cone_theta", cdp.cone_theta))
         print("%-20s %20.10f" % ("cone_sigma_max", cone_sigma_max))
         print("%-20s %20.10f" % ("axis_theta", cdp.axis_theta))
         print("%-20s %20.10f" % ("axis_phi", cdp.axis_phi))
-        print("%-20s\n%s" % ("cone axis", axis))
+        print("%-20s\n%s" % ("cone axis", axes[:, 2]))
         print("%-20s\n%s" % ("full axis system", axes))
         print("\nPermutation '%s':" % permutation)
 
-    # The system for the pseudo-ellipses.
+    # Start printout for the pseudo-ellipses.
     else:
-        # Generate the eigenframe of the motion.
-        frame = zeros((3, 3), float64)
-        euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
-
-        # Start printout.
         print("\nOriginal parameters:")
         print("%-20s %20.10f" % ("cone_theta_x", cdp.cone_theta_x))
         print("%-20s %20.10f" % ("cone_theta_y", cdp.cone_theta_y))
@@ -164,7 +149,7 @@ def permute_axes(permutation='A'):
         print("%-20s %20.10f" % ("eigen_alpha", cdp.eigen_alpha))
         print("%-20s %20.10f" % ("eigen_beta", cdp.eigen_beta))
         print("%-20s %20.10f" % ("eigen_gamma", cdp.eigen_gamma))
-        print("%-20s\n%s" % ("eigenframe", frame))
+        print("%-20s\n%s" % ("eigenframe", axes))
         print("\nPermutation '%s':" % permutation)
 
     # The axis inversion structure.
@@ -240,10 +225,10 @@ def permute_axes(permutation='A'):
 
     # Permute the axes (pseudo-ellipses).
     else:
-        frame_new = transpose(array([inv[0]*frame[:, perm_axes[0]], inv[1]*frame[:, perm_axes[1]], inv[2]*frame[:, perm_axes[2]]], float64))
+        axes_new = transpose(array([inv[0]*axes[:, perm_axes[0]], inv[1]*axes[:, perm_axes[1]], inv[2]*axes[:, perm_axes[2]]], float64))
 
         # Convert the permuted frame to Euler angles and store them.
-        cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma = R_to_euler_zyz(frame_new)
+        cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma = R_to_euler_zyz(axes_new)
 
     # End printout.
     if cdp.model in MODEL_LIST_ISO_CONE:
@@ -263,7 +248,7 @@ def permute_axes(permutation='A'):
         print("%-20s %20.10f" % ("eigen_alpha", cdp.eigen_alpha))
         print("%-20s %20.10f" % ("eigen_beta", cdp.eigen_beta))
         print("%-20s %20.10f" % ("eigen_gamma", cdp.eigen_gamma))
-        print("%-20s\n%s" % ("eigenframe", frame_new))
+        print("%-20s\n%s" % ("eigenframe", axes_new))
 
 
 def pivot(pivot=None, order=1, fix=False):
@@ -372,6 +357,72 @@ def select_model(model=None):
 
     # Update the model.
     update_model()
+
+
+def simulate(file="simulation.pdb.bz2", dir=None, step_size=2.0, snapshot=10, total=1000, model=1, force=True):
+    """Pseudo-Brownian dynamics simulation of the frame order motions.
+
+    @keyword file:      The PDB file for storing the frame order pseudo-Brownian dynamics simulation.  The compression is determined automatically by the file extensions '*.pdb', '*.pdb.gz', and '*.pdb.bz2'.
+    @type file:         str
+    @keyword dir:       The directory name to place the file into.
+    @type dir:          str or None
+    @keyword step_size: The rotation will be of a random direction but with this fixed angle.  The value is in degrees.
+    @type step_size:    float
+    @keyword snapshot:  The number of steps in the simulation when snapshots will be taken.
+    @type snapshot:     int
+    @keyword total:     The total number of snapshots to take before stopping the simulation.
+    @type total:        int
+    @keyword model:     Only one model from an analysed ensemble of structures can be used for the pseudo-Brownian simulation, as the simulation and corresponding PDB file consists of one model per simulation.
+    @type model:        int
+    @keyword force:     A flag which, if set to True, will overwrite the any pre-existing file.
+    @type force:        bool
+    """
+
+    # Printout.
+    print("Pseudo-Brownian dynamics simulation of the frame order motions.")
+
+    # Checks.
+    pipes.test()
+    check_model()
+    check_domain()
+    check_parameters()
+    check_pivot()
+
+    # Skip the rigid model.
+    if cdp.model == MODEL_RIGID:
+        print("Skipping the rigid model.")
+        return
+
+    # Open the output file.
+    file = open_write_file(file_name=file, dir=dir, force=force)
+
+    # The parameter values.
+    values = assemble_param_vector()
+    params = {}
+    i = 0
+    for name in cdp.params:
+        params[name] = values[i]
+        i += 1
+
+    # The structure.
+    structure = deepcopy(cdp.structure)
+    if structure.num_models() > 1:
+        structure.collapse_ensemble(model_num=model)
+
+    # The pivot point.
+    pivot = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z], float64)
+
+    # Shift to the average position.
+    average_position(structure=structure, models=[1])
+
+    # The motional eigenframe.
+    frame = generate_axis_system()
+
+    # Create the distribution.
+    brownian(file=file, model=cdp.model, structure=structure, parameters=params, eigenframe=frame, pivot=pivot, atom_id=domain_moving(), step_size=step_size, snapshot=snapshot, total=total)
+
+    # Close the file.
+    file.close()
 
 
 def sobol_setup(max_num=200, oversample=100):

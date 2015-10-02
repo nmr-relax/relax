@@ -34,5 +34,6 @@ __all__ = [
     'pseudo_ellipse_free_rotor',
     'pseudo_ellipse',
     'pseudo_ellipse_torsionless',
-    'rotor'
+    'rotor',
+    'simulation'
 ]

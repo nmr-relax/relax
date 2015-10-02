@@ -683,16 +683,22 @@ class Frame_order(API_base, API_common):
             return
 
         # Loop over spin data, checking for PCS data.
+        ids = []
         for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
             if not hasattr(spin, 'pcs'):
-                print("No PCS data is present, deselecting the spin '%s'." % spin_id)
                 spin.select = False
+                ids.append(spin_id)
+        if verbose and len(ids):
+            warn(RelaxWarning("No PCS data is present, deselecting the spins %s." % ids))
 
         # Loop over the interatomic data containers, checking for RDC data.
+        ids = []
         for interatom in interatomic_loop(selection1=domain_moving()):
             if not hasattr(interatom, 'rdc'):
-                print("No RDC data is present, deselecting the interatomic data container between spins '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2))
                 interatom.select = False
+                ids.append("%s - %s" % (interatom.spin_id1, interatom.spin_id2))
+        if verbose and len(ids):
+            warn(RelaxWarning("No RDC data is present, deselecting the interatomic data containers between spin pairs %s." % ids))
 
 
     def return_error(self, data_id):

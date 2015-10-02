@@ -28,6 +28,7 @@ from numpy import array, float64, zeros
 
 # relax module imports.
 from lib.errors import RelaxError
+from lib.list import unique_elements
 from specific_analyses.frame_order.data import pivot_fixed
 from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_ROTOR
 
@@ -281,28 +282,24 @@ def update_model(verbosity=1):
     @type verbosity:    int
     """
 
-    # Printout.
-    if verbosity:
-        print("Reinitialising the list of model parameters:")
-
     # Re-initialise the list of model parameters.
     cdp.params = []
+    updated = []
 
     # The pivot parameters.
-    if verbosity:
-        print("    - pivot parameters.")
     if not pivot_fixed():
+        updated.append("pivot parameters")
         cdp.params.append('pivot_x')
         cdp.params.append('pivot_y')
         cdp.params.append('pivot_z')
 
     # The 2nd pivot point parameters - the minimum inter rotor axis distance.
     if cdp.model in [MODEL_DOUBLE_ROTOR]:
+        updated.append("pivot parameters")
         cdp.params.append('pivot_disp')
 
     # The average domain position translation parameters.
-    if verbosity:
-        print("    - average domain position.")
+    updated.append("average domain position")
     cdp.params.append('ave_pos_x')
     cdp.params.append('ave_pos_y')
     cdp.params.append('ave_pos_z')
@@ -314,41 +311,47 @@ def update_model(verbosity=1):
     cdp.params.append('ave_pos_gamma')
 
     # Frame order eigenframe - the full frame.
-    if verbosity:
-        print("    - frame order eigenframe.")
     if cdp.model in MODEL_LIST_PSEUDO_ELLIPSE + [MODEL_DOUBLE_ROTOR]:
+        updated.append("frame order eigenframe")
         cdp.params.append('eigen_alpha')
         cdp.params.append('eigen_beta')
         cdp.params.append('eigen_gamma')
 
     # Frame order eigenframe - the isotropic cone axis.
     if cdp.model in MODEL_LIST_ISO_CONE:
+        updated.append("frame order eigenframe")
         cdp.params.append('axis_theta')
         cdp.params.append('axis_phi')
 
     # Frame order eigenframe - the rotor axis alpha angle.
     if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
+        updated.append("frame order eigenframe")
         cdp.params.append('axis_alpha')
 
     # Cone parameters - pseudo-elliptic cone parameters.
-    if verbosity:
-        print("    - cone opening half-angles.")
     if cdp.model in MODEL_LIST_PSEUDO_ELLIPSE:
+        updated.append("cone opening half-angles")
         cdp.params.append('cone_theta_x')
         cdp.params.append('cone_theta_y')
 
     # Cone parameters - single isotropic angle or order parameter.
     if cdp.model in [MODEL_ISO_CONE, MODEL_ISO_CONE_TORSIONLESS]:
+        updated.append("cone opening half-angles")
         cdp.params.append('cone_theta')
     if cdp.model in [MODEL_ISO_CONE_FREE_ROTOR]:
+        updated.append("cone order parameter")
         cdp.params.append('cone_s1')
 
     # Cone parameters - torsion angle.
-    if verbosity:
-        print("    - cone torsion half-angles.")
     if cdp.model in [MODEL_DOUBLE_ROTOR, MODEL_ROTOR, MODEL_ISO_CONE, MODEL_PSEUDO_ELLIPSE]:
+        updated.append("cone torsion half-angles")
         cdp.params.append('cone_sigma_max')
 
     # Cone parameters - 2nd torsion angle.
     if cdp.model in [MODEL_DOUBLE_ROTOR]:
+        updated.append("cone torsion half-angles")
         cdp.params.append('cone_sigma_max_2')
+
+    # Printout.
+    if verbosity:
+        print("Reinitialising the list of model parameters:  %s" % unique_elements(updated))

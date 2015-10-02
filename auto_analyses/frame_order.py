@@ -56,7 +56,7 @@ from status import Status; status = Status()
 class Frame_order_analysis:
     """The frame order auto-analysis protocol."""
 
-    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT):
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000):
         """Perform the full frame order analysis.
 
         @param data_pipe_full:          The name of the data pipe containing all of the RDC and PCS data.
@@ -79,6 +79,12 @@ class Frame_order_analysis:
         @type mc_sim_num:               int
         @keyword models:                The frame order models to use in the analysis.  The 'rigid' model must be included as this is essential for the analysis.
         @type models:                   list of str
+        @keyword brownian_step_size:    The step_size argument for the pseudo-Brownian dynamics simulation frame_order.simulate user function.
+        @type brownian_step_size:       float
+        @keyword brownian_snapshot:     The snapshot argument for the pseudo-Brownian dynamics simulation frame_order.simulate user function.
+        @type brownian_snapshot:        int
+        @keyword brownian_total:        The total argument for the pseudo-Brownian dynamics simulation frame_order.simulate user function.
+        @type brownian_total:           int
         """
 
         # Execution lock.
@@ -98,6 +104,9 @@ class Frame_order_analysis:
             self.opt_full = opt_full
             self.opt_mc = opt_mc
             self.mc_sim_num = mc_sim_num
+            self.brownian_step_size = brownian_step_size
+            self.brownian_snapshot = brownian_snapshot
+            self.brownian_total = brownian_total
 
             # Re-order the models to enable the parameter nesting protocol.
             self.models = self.reorder_models(models)
@@ -186,6 +195,9 @@ class Frame_order_analysis:
             title = model[0].upper() + model[1:]
             text = "Axis permutation '%s' of the %s frame order model" % (perm, title)
             section(file=sys.stdout, text=text, prespace=5)
+
+            # Output the model staring time.
+            self.interpreter.time()
 
             # A new model name.
             perm_model = "%s permutation %s" % (model, perm)
@@ -686,8 +698,9 @@ class Frame_order_analysis:
 
         # The results file already exists, so read its contents instead.
         if self.read_results(model=model, pipe_name=self.pipe_name_dict[model]):
-            # The PDB representation of the model (in case this was not completed correctly).
+            # The PDB representation of the model and the pseudo-Brownian dynamics simulation (in case this was not completed correctly).
             self.interpreter.frame_order.pdb_model(dir=self.model_directory(model), force=True)
+            self.interpreter.frame_order.simulate(dir=self.model_directory(model), step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
 
             # Nothing more to do.
             return
@@ -741,8 +754,9 @@ class Frame_order_analysis:
         # Save the results.
         self.interpreter.results.write(dir=self.model_directory(model), force=True)
 
-        # The PDB representation of the model.
+        # The PDB representation of the model and the pseudo-Brownian dynamics simulation.
         self.interpreter.frame_order.pdb_model(dir=self.model_directory(model), force=True)
+        self.interpreter.frame_order.simulate(dir=self.model_directory(model), step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
 
 
     def print_results(self):
@@ -930,8 +944,9 @@ class Frame_order_analysis:
         if model != 'final' and model.replace(' permutation A', '').replace(' permutation B', '') != cdp.model:
             raise RelaxError("The model '%s' does not match the model '%s' of the current data pipe." % (model.replace(' permuted', ''), cdp.model))
 
-        # The PDB representation of the model.
+        # The PDB representation of the model and the pseudo-Brownian dynamics simulation.
         self.interpreter.frame_order.pdb_model(dir=self.model_directory(model), force=True)
+        self.interpreter.frame_order.simulate(dir=self.model_directory(model), step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
 
         # Create the visualisation script.
         subsection(file=sys.stdout, text="Creating a PyMOL visualisation script.")
