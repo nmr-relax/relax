@@ -26,7 +26,6 @@
 from numpy import array, cross, float32, float64, transpose, zeros
 from numpy.linalg import norm
 from os import F_OK, access, sep
-from string import upper
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -179,7 +178,7 @@ class Base_script:
         ]
         for param in params:
             # Variable name.
-            var_name = upper(param)
+            var_name = param.upper()
 
             # Not set.
             val = getattr(self, var_name)

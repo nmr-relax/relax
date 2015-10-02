@@ -1,0 +1,38 @@
+Original vectors:
+[[ 1.  2.  3.]
+ [ 2.  2.  2.]]
+Shape: (200, 3)
+
+Tensor:
+[[ 1.42219822 -7.07796212 -6.01619494]
+ [-7.07796212 -1.44543002  2.02008007]
+ [-6.01619494  2.02008007  0.02323179]]
+
+
+1st projection - element by element r[i].A.r[i].
+Proj: [-44.31849296 -88.59261589]
+Timing (s): 3.90826106071
+
+2nd projection - diag of double tensordot.
+Proj: [-44.31849296 -88.59261589]
+Timing (s): 2.68392705917
+
+3rd projection - diag of double tensordot, no transpose.
+Proj: [-44.31849296 -88.59261589]
+Timing (s): 2.58908486366
+
+4th projection - mixed tensordot() and per-vector dot().
+Proj: [-44.31849296 -88.59261589]
+Timing (s): 5.47785592079
+
+5th projection - expansion and sum.
+Proj: [-44.31849296 -88.59261589]
+Timing (s): 10.7986190319
+
+6th projection - expansion.
+Proj: [-44.31849296 -88.59261589]
+Timing (s): 0.54491686821
+
+7th projection - expansion with pre-calculation.
+Proj: [-44.31849296 -88.59261589]
+Timing (s): 0.395635128021

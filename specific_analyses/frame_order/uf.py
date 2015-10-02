@@ -313,7 +313,7 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
     ##################
 
     # Skip models missing a cone.
-    if cdp.model not in ['rotor', 'free rotor']:
+    if cdp.model not in ['rotor', 'free rotor', 'double rotor']:
         # The rotation matrix (rotation from the z-axis to the cone axis).
         if cdp.model not in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
             R = axes

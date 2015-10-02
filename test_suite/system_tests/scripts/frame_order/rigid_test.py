@@ -140,11 +140,11 @@ cdp.ave_pos_beta  = 2.0
 cdp.ave_pos_gamma = 2.14159265359
 
 # Set some parameters close to zero, but far enough away from zero to allow for the numerical integration.
-cdp.cone_s1 = 0.99
-cdp.cone_theta = 0.05
-cdp.cone_theta_x = 0.1
-cdp.cone_theta_y = 0.1
-cdp.cone_sigma_max = 0.05
+cdp.cone_s1 = 1.0
+cdp.cone_theta = 0.0
+cdp.cone_theta_x = 0.0
+cdp.cone_theta_y = 0.0
+cdp.cone_sigma_max = 0.0
 
 # Allow for stand-alone operation.
 if not hasattr(ds, 'model'):

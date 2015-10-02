@@ -1,0 +1,28 @@
+
+1st check - 0 in flags.
+Zeros present: True
+Timing (s): 2.36345410347
+
+2nd check - min(flags).
+Zeros present: True
+Timing (s): 1.0689060688
+
+3rd check - flags.min().
+Zeros present: True
+Timing (s): 5.45578408241
+
+4th check - sum(flags).
+Zeros present: True
+Timing (s): 2.30188107491
+
+5th check - for loop.
+Zeros present: True
+Timing (s): 0.846194982529
+
+6th check - not flags.all().
+Zeros present: True
+Timing (s): 4.40921497345
+
+7th check - pre-convert to single flag.
+Zeros present: True
+Timing (s): 0.0773220062256

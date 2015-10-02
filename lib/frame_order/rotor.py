@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import pi, sqrt
-from numpy import dot, inner, sinc, transpose
+from numpy import divide, dot, inner, multiply, sinc, swapaxes, tensordot, transpose
 from numpy.linalg import norm
 try:
     from scipy.integrate import quad
@@ -114,33 +114,46 @@ def pcs_numeric_int_rotor_qrint(points=None, sigma_max=None, c=None, full_in_ref
     pcs_theta[:] = 0.0
     pcs_theta_err[:] = 0.0
 
+    # Fast frame shift.
+    Ri = dot(R_eigen, tensordot(Ri_prime, RT_eigen, axes=1))
+    Ri = swapaxes(Ri, 0, 1)
+
+    # Unpack the points (in this case, just an alias).
+    sigma = points
+
     # Loop over the samples.
     num = 0
     for i in range(len(points)):
-        # Unpack the point.
-        sigma = points[i]
-
         # Outside of the distribution, so skip the point.
-        if sigma > sigma_max or sigma < -sigma_max:
+        if abs(sigma[i]) > sigma_max:
             continue
 
         # Calculate the PCSs for this state.
-        pcs_pivot_motion_rotor_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        pcs_pivot_motion_rotor_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
 
         # Increment the number of points.
         num += 1
 
     # Default to the rigid state if no points lie in the distribution.
     if num == 0:
-        pcs_pivot_motion_rotor_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=R_eigen, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        # Fast identity frame shift.
+        Ri_prime = eye(3, dtype=float64)
+        Ri = dot(R_eigen, tensordot(Ri_prime, RT_eigen, axes=1))
+        Ri = swapaxes(Ri, 0, 1)
+
+        # Calculate the PCSs for this state.
+        pcs_pivot_motion_rotor_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+
+        # Multiply the constant.
+        multiply(c, pcs_theta, pcs_theta)
 
     # Average the PCS.
     else:
-        for i in range(len(pcs_theta)):
-            pcs_theta[i] = c[i] * pcs_theta[i] / float(num)
+        multiply(c, pcs_theta, pcs_theta)
+        divide(pcs_theta, float(num), pcs_theta)
 
 
-def pcs_pivot_motion_rotor_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_pivot_motion_rotor_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, Ri=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Calculate the PCS value after a pivoted motion for the rotor model.
 
     @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
@@ -153,12 +166,8 @@ def pcs_pivot_motion_rotor_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pi
     @type r_ln_pivot:           numpy rank-2, 3D array
     @keyword A:                 The full alignment tensor of the non-moving domain.
     @type A:                    numpy rank-2, 3D array
-    @keyword R_eigen:           The eigenframe rotation matrix.
-    @type R_eigen:              numpy rank-2, 3D array
-    @keyword RT_eigen:          The transpose of the eigenframe rotation matrix (for faster calculations).
-    @type RT_eigen:             numpy rank-2, 3D array
-    @keyword Ri_prime:          The pre-calculated rotation matrix for the in-frame rotor motion for state i.
-    @type Ri_prime:             numpy rank-2, 3D array
+    @keyword Ri:                The frame-shifted, pre-calculated rotation matrix for state i.
+    @type Ri:                   numpy rank-2, 3D array
     @keyword pcs_theta:         The storage structure for the back-calculated PCS values.
     @type pcs_theta:            numpy rank-2 array
     @keyword pcs_theta_err:     The storage structure for the back-calculated PCS errors.
@@ -167,12 +176,9 @@ def pcs_pivot_motion_rotor_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pi
     @type missing_pcs:          numpy rank-2 array
     """
 
-    # The rotation.
-    R_i = transpose(dot(R_eigen, dot(Ri_prime, RT_eigen)))
-
     # Pre-calculate all the new vectors (forwards and reverse).
-    rot_vect_rev = dot(r_pivot_atom_rev, R_i) + r_ln_pivot
-    rot_vect = dot(r_pivot_atom, R_i) + r_ln_pivot
+    rot_vect_rev = dot(r_pivot_atom_rev, Ri) + r_ln_pivot
+    rot_vect = dot(r_pivot_atom, Ri) + r_ln_pivot
 
     # The vector length (to the 5th power).
     length_rev = 1.0 / norm(rot_vect_rev, axis=1)**5

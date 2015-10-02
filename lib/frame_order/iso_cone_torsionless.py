@@ -24,6 +24,7 @@
 
 # Python module imports.
 from math import cos, sqrt
+from numpy import divide, dot, eye, float64, multiply, swapaxes, tensordot
 
 # relax module imports.
 from lib.frame_order.matrix_ops import pcs_pivot_motion_torsionless_qrint, rotate_daeg
@@ -112,27 +113,40 @@ def pcs_numeric_int_iso_cone_torsionless_qrint(points=None, theta_max=None, c=No
     pcs_theta[:] = 0.0
     pcs_theta_err[:] = 0.0
 
+    # Fast frame shift.
+    Ri = dot(R_eigen, tensordot(Ri_prime, RT_eigen, axes=1))
+    Ri = swapaxes(Ri, 0, 1)
+
+    # Unpack the points.
+    theta, phi = swapaxes(points, 0, 1)
+
     # Loop over the samples.
     num = 0
     for i in range(len(points)):
-        # Unpack the point.
-        theta, phi = points[i]
-
         # Outside of the distribution, so skip the point.
-        if theta > theta_max:
+        if theta[i] > theta_max:
             continue
 
         # Calculate the PCSs for this state.
-        pcs_pivot_motion_torsionless_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        pcs_pivot_motion_torsionless_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
 
         # Increment the number of points.
         num += 1
 
     # Default to the rigid state if no points lie in the distribution.
     if num == 0:
-        pcs_pivot_motion_torsionless_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=R_eigen, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        # Fast identity frame shift.
+        Ri_prime = eye(3, dtype=float64)
+        Ri = dot(R_eigen, tensordot(Ri_prime, RT_eigen, axes=1))
+        Ri = swapaxes(Ri, 0, 1)
+
+        # Calculate the PCSs for this state.
+        pcs_pivot_motion_torsionless_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+
+        # Multiply the constant.
+        multiply(c, pcs_theta, pcs_theta)
 
     # Average the PCS.
     else:
-        for i in range(len(pcs_theta)):
-            pcs_theta[i] = c[i] * pcs_theta[i] / float(num)
+        multiply(c, pcs_theta, pcs_theta)
+        divide(pcs_theta, float(num), pcs_theta)

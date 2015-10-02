@@ -89,7 +89,7 @@ def daeg_to_rotational_superoperator(daeg, Rsuper):
     transpose_23(daeg)
 
 
-def pcs_pivot_motion_full_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_pivot_motion_full_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, Ri=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Calculate the PCS value after a pivoted motion for the isotropic cone model.
 
     @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
@@ -102,12 +102,8 @@ def pcs_pivot_motion_full_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_piv
     @type r_ln_pivot:           numpy rank-2, 3D array
     @keyword A:                 The full alignment tensor of the non-moving domain.
     @type A:                    numpy rank-2, 3D array
-    @keyword R_eigen:           The eigenframe rotation matrix.
-    @type R_eigen:              numpy rank-2, 3D array
-    @keyword RT_eigen:          The transpose of the eigenframe rotation matrix (for faster calculations).
-    @type RT_eigen:             numpy rank-2, 3D array
-    @keyword Ri_prime:          The pre-calculated rotation matrix for state i.
-    @type Ri_prime:             numpy rank-2, 3D array
+    @keyword Ri:                The frame-shifted, pre-calculated rotation matrix for state i.
+    @type Ri:                   numpy rank-2, 3D array
     @keyword pcs_theta:         The storage structure for the back-calculated PCS values.
     @type pcs_theta:            numpy rank-2 array
     @keyword pcs_theta_err:     The storage structure for the back-calculated PCS errors.
@@ -116,12 +112,9 @@ def pcs_pivot_motion_full_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_piv
     @type missing_pcs:          numpy rank-2 array
     """
 
-    # The rotation.
-    R_i = transpose(dot(R_eigen, dot(Ri_prime, RT_eigen)))
-
     # Pre-calculate all the new vectors (forwards and reverse).
-    rot_vect_rev = dot(r_pivot_atom_rev, R_i) + r_ln_pivot
-    rot_vect = dot(r_pivot_atom, R_i) + r_ln_pivot
+    rot_vect_rev = dot(r_pivot_atom_rev, Ri) + r_ln_pivot
+    rot_vect = dot(r_pivot_atom, Ri) + r_ln_pivot
 
     # The vector length (to the 5th power).
     length_rev = 1.0 / norm(rot_vect_rev, axis=1)**5
@@ -147,7 +140,7 @@ def pcs_pivot_motion_full_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_piv
             pcs_theta[i, j] += proj * length_i
 
 
-def pcs_pivot_motion_torsionless_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_pivot_motion_torsionless_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, Ri=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Calculate the PCS value after a pivoted motion for the isotropic cone model.
 
     @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
@@ -160,12 +153,8 @@ def pcs_pivot_motion_torsionless_qrint(full_in_ref_frame=None, r_pivot_atom=None
     @type r_ln_pivot:           numpy rank-2, 3D array
     @keyword A:                 The full alignment tensor of the non-moving domain.
     @type A:                    numpy rank-2, 3D array
-    @keyword R_eigen:           The eigenframe rotation matrix.
-    @type R_eigen:              numpy rank-2, 3D array
-    @keyword RT_eigen:          The transpose of the eigenframe rotation matrix (for faster calculations).
-    @type RT_eigen:             numpy rank-2, 3D array
-    @keyword Ri_prime:          The pre-calculated rotation matrix for state i.
-    @type Ri_prime:             numpy rank-2, 3D array
+    @keyword Ri:                The frame-shifted, pre-calculated rotation matrix for state i.
+    @type Ri:                   numpy rank-2, 3D array
     @keyword pcs_theta:         The storage structure for the back-calculated PCS values.
     @type pcs_theta:            numpy rank-2 array
     @keyword pcs_theta_err:     The storage structure for the back-calculated PCS errors.
@@ -174,12 +163,9 @@ def pcs_pivot_motion_torsionless_qrint(full_in_ref_frame=None, r_pivot_atom=None
     @type missing_pcs:          numpy rank-2 array
     """
 
-    # The rotation.
-    R_i = transpose(dot(R_eigen, dot(Ri_prime, RT_eigen)))
-
     # Pre-calculate all the new vectors (forwards and reverse).
-    rot_vect_rev = dot(r_pivot_atom_rev, R_i) + r_ln_pivot
-    rot_vect = dot(r_pivot_atom, R_i) + r_ln_pivot
+    rot_vect_rev = dot(r_pivot_atom_rev, Ri) + r_ln_pivot
+    rot_vect = dot(r_pivot_atom, Ri) + r_ln_pivot
 
     # The vector length (to the 5th power).
     length_rev = 1.0 / norm(rot_vect_rev, axis=1)**5

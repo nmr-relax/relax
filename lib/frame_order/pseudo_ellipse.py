@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import cos, pi, sin, sqrt
-from numpy import sinc
+from numpy import divide, dot, eye, float64, multiply, repeat, sinc, swapaxes, tensordot, tile
 try:
     from scipy.integrate import quad
 except ImportError:
@@ -71,6 +71,16 @@ def compile_2nd_matrix_pseudo_ellipse(matrix, Rx2_eigen, theta_x, theta_y, sigma
     @param sigma_max:   The maximum torsion angle.
     @type sigma_max:    float
     """
+
+    # The rigid case.
+    if theta_x == 0.0 and sigma_max == 0.0:
+        # Set up the matrix as the identity.
+        matrix[:] = 0.0
+        for i in range(len(matrix)):
+            matrix[i, i] = 1.0
+
+        # Rotate and return the frame order matrix.
+        return rotate_daeg(matrix, Rx2_eigen)
 
     # The surface area normalisation factor.
     fact = 12.0 * pec(theta_x, theta_y)
@@ -626,41 +636,54 @@ def pcs_numeric_int_pseudo_ellipse_qrint(points=None, theta_x=None, theta_y=None
     pcs_theta[:] = 0.0
     pcs_theta_err[:] = 0.0
 
+    # Fast frame shift.
+    Ri = dot(R_eigen, tensordot(Ri_prime, RT_eigen, axes=1))
+    Ri = swapaxes(Ri, 0, 1)
+
+    # Unpack the points.
+    theta, phi, sigma = swapaxes(points, 0, 1)
+
     # Loop over the samples.
     num = 0
     for i in range(len(points)):
-        # Unpack the point.
-        theta, phi, sigma = points[i]
-
         # Check the torsion angle first, for speed.
-        if sigma > sigma_max or sigma < -sigma_max:
+        if abs(sigma[i]) > sigma_max:
             continue
 
         # As theta_x <= theta_y, check if theta is outside of the isotropic cone defined by theta_y to minimise calculations for speed.
-        if theta > theta_y:
+        if theta[i] > theta_y:
             continue
 
         # Calculate theta_max.
-        theta_max = tmax_pseudo_ellipse(phi, theta_x, theta_y)
+        theta_max = tmax_pseudo_ellipse(phi[i], theta_x, theta_y)
 
         # Outside of the distribution, so skip the point.
-        if theta > theta_max:
+        if theta[i] > theta_max:
             continue
 
         # Calculate the PCSs for this state.
-        pcs_pivot_motion_full_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=Ri_prime[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        pcs_pivot_motion_full_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
 
         # Increment the number of points.
         num += 1
 
     # Default to the rigid state if no points lie in the distribution.
     if num == 0:
-        pcs_pivot_motion_full_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=R_eigen, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        # Fast identity frame shift.
+        Ri_prime = eye(3, dtype=float64)
+        Ri = dot(R_eigen, tensordot(Ri_prime, RT_eigen, axes=1))
+        Ri = swapaxes(Ri, 0, 1)
+
+        # Calculate the PCSs for this state.
+        pcs_pivot_motion_full_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+
+        # Multiply the constant.
+        multiply(c, pcs_theta, pcs_theta)
 
     # Average the PCS.
     else:
-        for i in range(len(pcs_theta)):
-            pcs_theta[i] = c[i] * pcs_theta[i] / float(num)
+        multiply(c, pcs_theta, pcs_theta)
+        divide(pcs_theta, float(num), pcs_theta)
 
 
 def tmax_pseudo_ellipse(phi, theta_x, theta_y):

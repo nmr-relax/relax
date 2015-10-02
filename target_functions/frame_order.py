@@ -270,7 +270,7 @@ class Frame_order:
             # Initialise the data structures.
             self.paramag_unit_vect = zeros(atomic_pos.shape, float64)
             self.paramag_dist = zeros(self.num_spins, float64)
-            self.pcs_const = zeros(self.num_align, float64)
+            self.pcs_const = zeros((self.num_align, self.num_spins), float64)
             self.r_pivot_atom = zeros((self.num_spins, 3), float32)
             self.r_pivot_atom_rev = zeros((self.num_spins, 3), float32)
             self.r_ln_pivot = self.pivot - self.paramag_centre
@@ -431,7 +431,7 @@ class Frame_order:
         # PCS via numerical integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_double_rotor(points=self.sobol_angles, sigma_max=sigma_max, sigma_max_2=sigma_max_2, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=R_eigen_full, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+            pcs_numeric_int_double_rotor(points=self.sobol_angles, sigma_max=sigma_max, sigma_max_2=sigma_max_2, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for align_index in range(self.num_align):
@@ -488,7 +488,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -567,7 +567,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -648,7 +648,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -726,7 +726,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -801,7 +801,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -876,7 +876,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -951,7 +951,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -1010,7 +1010,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self.pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=self.pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -1045,7 +1045,7 @@ class Frame_order:
                         # The PCS calculation.
                         vect = self.r_ln_pivot[0] + r_pivot_atom
                         length = norm(vect)
-                        self.pcs_theta[align_index, j] = pcs_tensor(self.pcs_const[align_index] / length**5, vect, self.A_3D[align_index])
+                        self.pcs_theta[align_index, j] = pcs_tensor(self.pcs_const[align_index, j] / length**5, vect, self.A_3D[align_index])
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[align_index], self.pcs_theta[align_index], self.pcs_error[align_index])
@@ -1101,7 +1101,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -1132,11 +1132,13 @@ class Frame_order:
         return chi2_sum
 
 
-    def calc_vectors(self, pivot=None, R_ave=None, RT_ave=None):
+    def calc_vectors(self, pivot=None, pivot2=None, R_ave=None, RT_ave=None):
         """Calculate the pivot to atom and lanthanide to pivot vectors for the target functions.
 
         @keyword pivot:     The pivot point.
         @type pivot:        numpy rank-1, 3D array
+        @keyword pivot2:    The 2nd pivot point.
+        @type pivot2:       numpy rank-1, 3D array
         @keyword R_ave:     The rotation matrix for rotating from the reference frame to the average position.
         @type R_ave:        numpy rank-2, 3D array
         @keyword RT_ave:    The transpose of R_ave.
