@@ -205,7 +205,7 @@ class Base_script:
             self._execute_uf(uf_name='monte_carlo.setup', number=3)
             self._execute_uf(uf_name='monte_carlo.create_data')
             self._execute_uf(uf_name='monte_carlo.initial_values')
-            self._execute_uf(uf_name='minimise', min_algor='simplex', constraints=True, max_iter=1)
+            self._execute_uf(uf_name='minimise.execute', min_algor='simplex', constraints=True, max_iter=1)
             self._execute_uf(uf_name='eliminate')
             self._execute_uf(uf_name='monte_carlo.error_analysis')
 

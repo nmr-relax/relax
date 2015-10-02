@@ -139,14 +139,14 @@ state.save('frame_order_true', force=True)
 
 # Grid search (low quality for speed).
 frame_order.num_int_pts(num=200)
-grid_search(inc=[None, None, None, None, None, 21])
+minimise.grid_search(inc=[None, None, None, None, None, 21])
 
 # Iterative optimisation with increasing precision.
 num_int_pts = [1000, 10000, 50000]
 func_tol = [1e-2, 1e-3, 1e-4]
 for i in range(len(num_int_pts)):
     frame_order.num_int_pts(num=num_int_pts[i])
-    minimise('simplex', func_tol=func_tol[i])
+    minimise.execute('simplex', func_tol=func_tol[i])
 
 # Store the result.
 frame_order.pdb_model(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', dist=None, compress_type=2, force=True)
@@ -160,7 +160,7 @@ num_int_pts = [1000, 10000, 50000]
 func_tol = [1e-2, 1e-3, 1e-4]
 for i in range(len(num_int_pts)):
     frame_order.num_int_pts(num=num_int_pts[i])
-    minimise('simplex', func_tol=func_tol[i])
+    minimise.execute('simplex', func_tol=func_tol[i])
 
 # The distance from the optimised pivot and the rotation axis.
 opt_piv = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z])
@@ -178,7 +178,7 @@ frame_order.num_int_pts(num=10000)
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex', func_tol=1e-2)
+minimise.execute('simplex', func_tol=1e-2)
 eliminate()
 monte_carlo.error_analysis()
 
