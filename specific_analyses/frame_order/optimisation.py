@@ -49,7 +49,7 @@ from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.checks import check_domain, check_model, check_parameters
 from specific_analyses.frame_order.data import base_data_types, domain_moving, pivot_fixed, tensor_loop
-from specific_analyses.frame_order.parameters import assemble_param_vector, assemble_scaling_matrix, linear_constraints
+from specific_analyses.frame_order.parameters import assemble_param_vector, linear_constraints
 from target_functions.frame_order import Frame_order, sobol_data
 
 
