@@ -117,18 +117,18 @@ def pcs_pivot_motion_full_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_piv
     """
 
     # The rotation.
-    R_i = dot(R_eigen, dot(Ri_prime, RT_eigen))
+    R_i = transpose(dot(R_eigen, dot(Ri_prime, RT_eigen)))
 
     # Pre-calculate all the new vectors (forwards and reverse).
-    rot_vect_rev = transpose(dot(R_i, r_pivot_atom_rev) + r_ln_pivot)
-    rot_vect = transpose(dot(R_i, r_pivot_atom) + r_ln_pivot)
+    rot_vect_rev = dot(r_pivot_atom_rev, R_i) + r_ln_pivot
+    rot_vect = dot(r_pivot_atom, R_i) + r_ln_pivot
 
     # The vector length (to the 5th power).
     length_rev = 1.0 / norm(rot_vect_rev, axis=1)**5
     length = 1.0 / norm(rot_vect, axis=1)**5
 
     # Loop over the atoms.
-    for j in range(len(r_pivot_atom[0])):
+    for j in range(len(r_pivot_atom[:, 0])):
         # Loop over the alignments.
         for i in range(len(pcs_theta)):
             # Skip missing data.
@@ -175,18 +175,18 @@ def pcs_pivot_motion_torsionless_qrint(full_in_ref_frame=None, r_pivot_atom=None
     """
 
     # The rotation.
-    R_i = dot(R_eigen, dot(Ri_prime, RT_eigen))
+    R_i = transpose(dot(R_eigen, dot(Ri_prime, RT_eigen)))
 
     # Pre-calculate all the new vectors (forwards and reverse).
-    rot_vect_rev = transpose(dot(R_i, r_pivot_atom_rev) + r_ln_pivot)
-    rot_vect = transpose(dot(R_i, r_pivot_atom) + r_ln_pivot)
+    rot_vect_rev = dot(r_pivot_atom_rev, R_i) + r_ln_pivot
+    rot_vect = dot(r_pivot_atom, R_i) + r_ln_pivot
 
     # The vector length (to the 5th power).
     length_rev = 1.0 / norm(rot_vect_rev, axis=1)**5
     length = 1.0 / norm(rot_vect, axis=1)**5
 
     # Loop over the atoms.
-    for j in range(len(r_pivot_atom[0])):
+    for j in range(len(r_pivot_atom[:, 0])):
         # Loop over the alignments.
         for i in range(len(pcs_theta)):
             # Skip missing data.

@@ -107,12 +107,6 @@ class Base_script:
         # Optimise.
         self.optimisation()
 
-        # Load the original structure.
-        self.original_structure()
-
-        # Domain transformation.
-        self.transform()
-
         # Display in pymol.
         self.pymol_display()
 
@@ -216,29 +210,8 @@ class Base_script:
         self._execute_uf(uf_name='results.write', file='devnull', dir=None, force=True)
 
 
-    def original_structure(self):
-        """Load the original structure into a dedicated data pipe."""
-
-        # Delete the data pipe (if a loaded state has been used).
-        if self.LOAD_STATE:
-            self._execute_uf(uf_name='pipe.delete', pipe_name='orig pos')
-
-        # Create a special data pipe for the original rigid body position.
-        self._execute_uf(uf_name='pipe.create', pipe_name='orig pos', pipe_type='frame order')
-
-        # Load the structure.
-        self._execute_uf(uf_name='structure.read_pdb', file='1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
-
-
     def pymol_display(self):
         """Display the results in PyMOL."""
-
-        # Switch back to the main data pipe.
-        self._execute_uf(uf_name='pipe.switch', pipe_name='frame order')
-
-        # Load the PDBs of the 2 domains.
-        self._execute_uf(uf_name='structure.read_pdb', file='1J7O_1st_NH.pdb', dir=BASE_PATH)
-        self._execute_uf(uf_name='structure.read_pdb', file='1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
 
         # Create the PDB representation.
         self._execute_uf(uf_name='frame_order.pdb_model', ave_pos_file='devnull', rep_file='devnull', dist_file='devnull', force=True)
@@ -308,10 +281,11 @@ class Base_script:
         # Set the reference domain.
         self._execute_uf(uf_name='frame_order.ref_domain', ref='N')
 
-        # Set the initial pivot point(s).
-        self._execute_uf(uf_name='frame_order.pivot', pivot=self.PIVOT, fix=True)
-        if self.PIVOT2 != None:
-            self._execute_uf(uf_name='frame_order.pivot', pivot=self.PIVOT2, order=2, fix=True)
+        # Set the initial pivot point - fixed when optimising, unfixed otherwise to check different code paths.
+        fix = False
+        if hasattr(status, 'flag_opt') and status.flag_opt:
+            fix = True
+        self._execute_uf(uf_name='frame_order.pivot', pivot=self.PIVOT, fix=fix)
 
         # Set the paramagnetic centre.
         self._execute_uf(uf_name='paramag.centre', pos=[35.934, 12.194, -4.206])
@@ -328,37 +302,3 @@ class Base_script:
             self._execute_uf(uf_name='rdc.delete')
         if hasattr(status, 'flag_pcs') and not status.flag_pcs:
             self._execute_uf(uf_name='pcs.delete')
-
-
-    def transform(self):
-        """Transform the domain to the average position."""
-
-        # Switch back to the main data pipe.
-        self._execute_uf(uf_name='pipe.switch', pipe_name='frame order')
-
-        # The rotation matrix.
-        R = zeros((3, 3), float64)
-        if hasattr(cdp, 'ave_pos_alpha'):
-            euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
-        else:
-            euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
-        print("Rotation matrix:\n%s\n" % R)
-        R = transpose(R)
-        print("Inverted rotation:\n%s\n" % R)
-        pivot = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z])
-
-        # Delete the data pipe (if a loaded state has been used).
-        if self.LOAD_STATE:
-            self._execute_uf(uf_name='pipe.delete', pipe_name='ave pos')
-
-        # Create a special data pipe for the average rigid body position.
-        self._execute_uf(uf_name='pipe.create', pipe_name='ave pos', pipe_type='frame order')
-
-        # Load the structure.
-        self._execute_uf(uf_name='structure.read_pdb', file='1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
-
-        # Rotate all atoms.
-        self._execute_uf(uf_name='structure.rotate', R=R, origin=pivot)
-
-        # Write out the new PDB.
-        self._execute_uf(uf_name='structure.write_pdb', file='devnull')

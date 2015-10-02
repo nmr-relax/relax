@@ -189,11 +189,9 @@ def update_model():
         cdp.params.append('pivot_y')
         cdp.params.append('pivot_z')
 
-        # Double rotor.
-        if cdp.model == 'double rotor':
-            cdp.params.append('pivot_x_2')
-            cdp.params.append('pivot_y_2')
-            cdp.params.append('pivot_z_2')
+    # The 2nd pivot point parameters - the minimum inter rotor axis distance.
+    if cdp.model in ['double rotor']:
+        cdp.params.append('pivot_disp')
 
     # The average domain position translation parameters.
     cdp.params.append('ave_pos_x')
@@ -207,20 +205,15 @@ def update_model():
     cdp.params.append('ave_pos_gamma')
 
     # Frame order eigenframe - the full frame.
-    if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+    if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor', 'double rotor']:
         cdp.params.append('eigen_alpha')
         cdp.params.append('eigen_beta')
         cdp.params.append('eigen_gamma')
 
     # Frame order eigenframe - the isotropic cone axis.
-    if cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor', 'double rotor']:
+    if cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
         cdp.params.append('axis_theta')
         cdp.params.append('axis_phi')
-
-    # Frame order eigenframe - the second rotation axis.
-    if cdp.model in ['double rotor']:
-        cdp.params.append('axis_theta_2')
-        cdp.params.append('axis_phi_2')
 
     # Frame order eigenframe - the rotor axis alpha angle.
     if cdp.model in ['rotor', 'free rotor']:
@@ -247,5 +240,5 @@ def update_model():
 
     # Initialise the parameters in the current data pipe.
     for param in cdp.params:
-        if not param in ['pivot_x', 'pivot_y', 'pivot_z', 'pivot_x_2', 'pivot_y_2', 'pivot_z_2'] and not hasattr(cdp, param):
+        if not param in ['pivot_x', 'pivot_y', 'pivot_z'] and not hasattr(cdp, param):
             setattr(cdp, param, 0.0)

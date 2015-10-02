@@ -168,7 +168,7 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
     # The rotor object.
     if cdp.model in ['rotor', 'free rotor', 'iso cone', 'iso cone, free rotor', 'pseudo-ellipse', 'pseudo-ellipse, free rotor']:
         # The rotor angle.
-        if cdp.model in ['free rotor', 'iso cone, free rotor']:
+        if cdp.model in ['free rotor', 'iso cone, free rotor', 'pseudo-ellipse, free rotor']:
             rotor_angle = pi
         else:
             rotor_angle = cdp.cone_sigma_max

@@ -253,249 +253,28 @@ class Frame_order_params(Param_list):
         self._add_align_data()
 
         # Add the parameters of all models.
-        self._add(
-            'pivot_x',
-            scope = 'global',
-            units = 'Angstrom',
-            desc = 'The pivot point position x coordinate',
-            py_type = float,
-            set = 'params',
-            scaling = 1e2,
-            grid_lower = pivot_x_lower,
-            grid_upper = pivot_x_upper,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'pivot_y',
-            scope = 'global',
-            units = 'Angstrom',
-            desc = 'The pivot point position y coordinate',
-            py_type = float,
-            set = 'params',
-            scaling = 1e2,
-            grid_lower = pivot_y_lower,
-            grid_upper = pivot_y_upper,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'pivot_z',
-            scope = 'global',
-            units = 'Angstrom',
-            desc = 'The pivot point position z coordinate',
-            py_type = float,
-            set = 'params',
-            scaling = 1e2,
-            grid_lower = pivot_z_lower,
-            grid_upper = pivot_z_upper,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'ave_pos_x',
-            scope = 'global',
-            units = 'Angstrom',
-            desc = 'The average position x translation',
-            py_type = float,
-            set = 'params',
-            grid_lower = -5,
-            grid_upper = 5,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'ave_pos_y',
-            scope = 'global',
-            units = 'Angstrom',
-            desc = 'The average position y translation',
-            py_type = float,
-            set = 'params',
-            grid_lower = -5,
-            grid_upper = 5,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'ave_pos_z',
-            scope = 'global',
-            units = 'Angstrom',
-            desc = 'The average position z translation',
-            py_type = float,
-            set = 'params',
-            grid_lower = -5,
-            grid_upper = 5,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'ave_pos_alpha',
-            scope = 'global',
-            units = 'rad',
-            desc = 'The average position alpha Euler angle',
-            py_type = float,
-            set = 'params',
-            grid_lower = 0.0,
-            grid_upper = angle_upper_excluding_bound,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'ave_pos_beta',
-            scope = 'global',
-            units = 'rad',
-            desc = 'The average position beta Euler angle',
-            py_type = float,
-            set = 'params',
-            grid_lower = 0.0,
-            grid_upper = pi,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'ave_pos_gamma',
-            scope = 'global',
-            units = 'rad',
-            desc = 'The average position gamma Euler angle',
-            py_type = float,
-            set = 'params',
-            grid_lower = 0.0,
-            grid_upper = angle_upper_excluding_bound,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'eigen_alpha',
-            scope = 'global',
-            units = 'rad',
-            desc = 'The Eigenframe alpha Euler angle',
-            py_type = float,
-            set = 'params',
-            grid_lower = 0.0,
-            grid_upper = angle_upper_excluding_bound,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'eigen_beta',
-            scope = 'global',
-            units = 'rad',
-            desc = 'The Eigenframe beta Euler angle',
-            py_type = float,
-            set = 'params',
-            grid_lower = 0.0,
-            grid_upper = pi,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'eigen_gamma',
-            scope = 'global',
-            units = 'rad',
-            desc = 'The Eigenframe gamma Euler angle',
-            py_type = float,
-            set = 'params',
-            grid_lower = 0.0,
-            grid_upper = angle_upper_excluding_bound,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'axis_theta',
-            scope = 'global',
-            units = 'rad',
-            desc = 'The cone axis polar angle (for the isotropic cone model)',
-            py_type = float,
-            set = 'params',
-            grid_lower = 0.0,
-            grid_upper = pi,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'axis_phi',
-            scope = 'global',
-            units = 'rad',
-            desc = 'The cone axis azimuthal angle (for the isotropic cone model)',
-            py_type = float,
-            set = 'params',
-            grid_lower = 0.0,
-            grid_upper = angle_upper_excluding_bound,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'axis_alpha',
-            scope = 'global',
-            units = 'rad',
-            desc = 'The rotor axis alpha angle (the rotation angle out of the xy plane)',
-            py_type = float,
-            set = 'params',
-            grid_lower = -pi,
-            grid_upper = axis_alpha_upper,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'cone_theta_x',
-            scope = 'global',
-            units = 'rad',
-            desc = 'The pseudo-ellipse cone opening half-angle for the x-axis',
-            py_type = float,
-            set = 'params',
-            grid_lower = cone_angle_lower,
-            grid_upper = cone_angle_upper,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'cone_theta_y',
-            scope = 'global',
-            units = 'rad',
-            desc = 'The pseudo-ellipse cone opening half-angle for the y-axis',
-            py_type = float,
-            set = 'params',
-            grid_lower = cone_angle_lower,
-            grid_upper = cone_angle_upper,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'cone_theta',
-            scope = 'global',
-            units = 'rad',
-            desc = 'The isotropic cone opening half-angle',
-            py_type = float,
-            set = 'params',
-            grid_lower = cone_angle_lower,
-            grid_upper = cone_angle_upper,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'cone_s1',
-            scope = 'global',
-            units = '',
-            desc = 'The isotropic cone order parameter',
-            py_type = float,
-            set = 'params',
-            grid_lower = -0.125,
-            grid_upper = 1.0,
-            err = True,
-            sim = True
-        )
-        self._add(
-            'cone_sigma_max',
-            scope = 'global',
-            units = 'rad',
-            desc = 'The torsion angle',
-            py_type = float,
-            set = 'params',
-            grid_lower = cone_angle_lower,
-            grid_upper = cone_angle_upper,
-            err = True,
-            sim = True
-        )
+        self._add('pivot_x', scope='global', units='Angstrom', desc='The pivot point position x coordinate', py_type=float, set='params', err=True, sim=True)
+        self._add('pivot_y', scope='global', units='Angstrom', desc='The pivot point position y coordinate', py_type=float, set='params', err=True, sim=True)
+        self._add('pivot_z', scope='global', units='Angstrom', desc='The pivot point position z coordinate', py_type=float, set='params', err=True, sim=True)
+        self._add('pivot_disp', scope='global', units='Angstrom', desc='The 2nd pivot point displacement - the minimum distance between the two rotor axes', py_type=float, set='params', err=True, sim=True)
+        self._add('ave_pos_x', scope='global', units='Angstrom', desc='The average position x translation', py_type=float, set='params', err=True, sim=True)
+        self._add('ave_pos_y', scope='global', units='Angstrom', desc='The average position y translation', py_type=float, set='params', err=True, sim=True)
+        self._add('ave_pos_z', scope='global', units='Angstrom', desc='The average position z translation', py_type=float, set='params', err=True, sim=True)
+        self._add('ave_pos_alpha', scope='global', units='rad', desc='The average position alpha Euler angle', py_type=float, set='params', err=True, sim=True)
+        self._add('ave_pos_beta', scope='global', units='rad', desc='The average position beta Euler angle', py_type=float, set='params', err=True, sim=True)
+        self._add('ave_pos_gamma', scope='global', units='rad', desc='The average position gamma Euler angle', py_type=float, set='params', err=True, sim=True)
+        self._add('eigen_alpha', scope='global', units='rad', desc='The Eigenframe alpha Euler angle', py_type=float, set='params', err=True, sim=True)
+        self._add('eigen_beta', scope='global', units='rad', desc='The Eigenframe beta Euler angle', py_type=float, set='params', err=True, sim=True)
+        self._add('eigen_gamma', scope='global', units='rad', desc='The Eigenframe gamma Euler angle', py_type=float, set='params', err=True, sim=True)
+        self._add('axis_theta', scope='global', units='rad', desc='The cone axis polar angle (for the isotropic cone model)', py_type=float, set='params', err=True, sim=True)
+        self._add('axis_phi', scope='global', units='rad', desc='The cone axis azimuthal angle (for the isotropic cone model)', py_type=float, set='params', err=True, sim=True)
+        self._add('axis_alpha', scope='global', units='rad', desc='The rotor axis alpha angle (the rotation angle out of the xy plane)', py_type=float, set='params', err=True, sim=True)
+        self._add('cone_theta_x', scope='global', units='rad', desc='The pseudo-ellipse cone opening half-angle for the x-axis', py_type=float, set='params', err=True, sim=True)
+        self._add('cone_theta_y', scope='global', units='rad', desc='The pseudo-ellipse cone opening half-angle for the y-axis', py_type=float, set='params', err=True, sim=True)
+        self._add('cone_theta', scope='global', units='rad', desc='The isotropic cone opening half-angle', py_type=float, set='params', err=True, sim=True)
+        self._add('cone_s1', scope='global', units='', desc='The isotropic cone order parameter', py_type=float, set='params', err=True, sim=True)
+        self._add('cone_sigma_max', scope='global', units='rad', desc='The torsion angle', py_type=float, set='params', err=True, sim=True)
+        self._add('cone_sigma_max_2', scope='global', units='rad', desc='The torsion angle of the 2nd motional mode', py_type=float, set='params', err=True, sim=True)
 
         # Add minimisation structures.
         self._add_min_data(min_stats_global=True)
