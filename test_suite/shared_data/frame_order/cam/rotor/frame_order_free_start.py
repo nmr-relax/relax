@@ -78,9 +78,14 @@ value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
 # Free the pivot, and set it to the CoM of both domains which is far enough away from the real pivot.
 frame_order.pivot([ 34.721619683345111,  -2.63891199102997 ,  12.941974078087899], fix=False)
 
-# Grid search (low quality for speed).
-frame_order.num_int_pts(num=500)
-minimise.grid_search(inc=[21, 21, 21, None, None, None, None, None, None, 21, 21])
+# Zooming grid search (low quality for speed).
+time()
+frame_order.num_int_pts(num=1000)
+incs = 11
+for i in range(5):
+    minimise.grid_zoom(i)
+    minimise.grid_search(inc=[incs, incs, incs, None, None, None, None, None, None, incs, incs], skip_preset=False)
+    time()
 
 # Iterative optimisation with increasing precision.
 num_int_pts = [500, 1000]
@@ -88,6 +93,7 @@ func_tol = [1e-2, 1e-3]
 for i in range(len(num_int_pts)):
     frame_order.num_int_pts(num=num_int_pts[i])
     minimise.execute('simplex', func_tol=func_tol[i])
+    time()
 
 # Load the full PCS data set.
 for i in range(len(ln)):
@@ -99,6 +105,7 @@ func_tol = [1e-2, 1e-3, 5e-3, 1e-4]
 for i in range(len(num_int_pts)):
     frame_order.num_int_pts(num=num_int_pts[i])
     minimise.execute('simplex', func_tol=func_tol[i])
+    time()
 
 # Test Monte Carlo simulations.
 frame_order.num_int_pts(num=10000)
@@ -108,6 +115,7 @@ monte_carlo.initial_values()
 minimise.execute('simplex', func_tol=1e-4)
 eliminate()
 monte_carlo.error_analysis()
+time()
 
 # Create the PDB representation.
 frame_order.pdb_model(ave_pos='ave_pos_free_start', rep='frame_order_free_start', dist=None, compress_type=2, force=True)

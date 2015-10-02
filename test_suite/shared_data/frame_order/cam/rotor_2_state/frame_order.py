@@ -139,12 +139,12 @@ frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', dist=None,
 state.save('frame_order_true', force=True)
 
 # Grid search (low quality for speed).
-frame_order.num_int_pts(num=100)
+frame_order.num_int_pts(num=200)
 grid_search(inc=[None, None, None, None, None, None, 21, 21])
 
 # Iterative optimisation with increasing precision.
-num_int_pts = [100, 1000, 10000, 50000]
-func_tol = [1e-2, 1e-3, 5e-3, 1e-4]
+num_int_pts = [1000, 10000, 50000]
+func_tol = [1e-2, 1e-3, 1e-4]
 for i in range(len(num_int_pts)):
     frame_order.num_int_pts(num=num_int_pts[i])
     minimise('simplex', func_tol=func_tol[i])
@@ -157,8 +157,8 @@ state.save('frame_order_fixed_piv', force=True)
 
 # Optimise the pivot and model, again iterating with increasing precision.
 frame_order.pivot(pivot, fix=False)
-num_int_pts = [100, 1000, 10000, 50000]
-func_tol = [1e-2, 1e-3, 5e-3, 1e-4]
+num_int_pts = [1000, 10000, 50000]
+func_tol = [1e-2, 1e-3, 1e-4]
 for i in range(len(num_int_pts)):
     frame_order.num_int_pts(num=num_int_pts[i])
     minimise('simplex', func_tol=func_tol[i])
@@ -174,8 +174,8 @@ opt_axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=opt_piv, point=pi
 print("Original axis:   %s" % AXIS)
 print("Optimised axis:  %s" % opt_axis)
 
-# Test Monte Carlo simulations (at low quality for speed).
-frame_order.num_int_pts(num=100)
+# Test Monte Carlo simulations.
+frame_order.num_int_pts(num=10000)
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()

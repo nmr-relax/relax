@@ -106,7 +106,7 @@ def cone_angle_upper(incs=None, model_info=None):
     return pi * (1.0 - 1.0/(incs+1))
 
 
-def pivot_grid_bound(param=None, extent=10.0):
+def pivot_grid_bound(param=None, extent=25.0):
     """Determine the grid bounds for the pivot coordinates.
 
     @keyword param:     The parameter to find the bound for.  This should be one of 'pivot_x', 'pivot_y', or 'pivot_z'.
@@ -128,7 +128,7 @@ def pivot_grid_bound(param=None, extent=10.0):
     return val + extent
 
 
-def pivot_x_lower(incs=None, model_info=None, size=10.0):
+def pivot_x_lower(incs=None, model_info=None, size=25.0):
     """Determine the lower grid bound for the pivot X coordinate.
 
     @keyword incs:          The number of grid search increments.
@@ -145,7 +145,7 @@ def pivot_x_lower(incs=None, model_info=None, size=10.0):
     return pivot_grid_bound(param='pivot_x', extent=-size)
 
 
-def pivot_x_upper(incs=None, model_info=None, size=10.0):
+def pivot_x_upper(incs=None, model_info=None, size=25.0):
     """Determine the upper grid bound for the pivot X coordinate.
 
     @keyword incs:          The number of grid search increments.
@@ -162,7 +162,7 @@ def pivot_x_upper(incs=None, model_info=None, size=10.0):
     return pivot_grid_bound(param='pivot_x', extent=size)
 
 
-def pivot_y_lower(incs=None, model_info=None, size=10.0):
+def pivot_y_lower(incs=None, model_info=None, size=25.0):
     """Determine the lower grid bound for the pivot Y coordinate.
 
     @keyword incs:          The number of grid search increments.
@@ -179,7 +179,7 @@ def pivot_y_lower(incs=None, model_info=None, size=10.0):
     return pivot_grid_bound(param='pivot_y', extent=-size)
 
 
-def pivot_y_upper(incs=None, model_info=None, size=10.0):
+def pivot_y_upper(incs=None, model_info=None, size=25.0):
     """Determine the upper grid bound for the pivot Y coordinate.
 
     @keyword incs:          The number of grid search increments.
@@ -196,7 +196,7 @@ def pivot_y_upper(incs=None, model_info=None, size=10.0):
     return pivot_grid_bound(param='pivot_y', extent=size)
 
 
-def pivot_z_lower(incs=None, model_info=None, size=10.0):
+def pivot_z_lower(incs=None, model_info=None, size=25.0):
     """Determine the lower grid bound for the pivot Z coordinate.
 
     @keyword incs:          The number of grid search increments.
@@ -213,7 +213,7 @@ def pivot_z_lower(incs=None, model_info=None, size=10.0):
     return pivot_grid_bound(param='pivot_z', extent=-size)
 
 
-def pivot_z_upper(incs=None, model_info=None, size=10.0):
+def pivot_z_upper(incs=None, model_info=None, size=25.0):
     """Determine the upper grid bound for the pivot Z coordinate.
 
     @keyword incs:          The number of grid search increments.
@@ -297,7 +297,7 @@ class Frame_order_params(Param_list):
             py_type = float,
             set = 'params',
             grid_lower  =  10.0,
-            grid_upper  =  50.0,
+            grid_upper  =  60.0,
             err = True,
             sim = True
         )
