@@ -176,13 +176,16 @@ def pcs_pivot_motion_rotor_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pi
     @type missing_pcs:          numpy rank-2 array
     """
 
-    # Pre-calculate all the new vectors (forwards and reverse).
-    rot_vect_rev = dot(r_pivot_atom_rev, Ri) + r_ln_pivot
+    # Pre-calculate all the new vectors.
     rot_vect = dot(r_pivot_atom, Ri) + r_ln_pivot
 
     # The vector length (to the 5th power).
-    length_rev = 1.0 / norm(rot_vect_rev, axis=1)**5
     length = 1.0 / norm(rot_vect, axis=1)**5
+
+    # The reverse vectors and lengths.
+    if min(full_in_ref_frame) == 0:
+        rot_vect_rev = dot(r_pivot_atom_rev, Ri) + r_ln_pivot
+        length_rev = 1.0 / norm(rot_vect_rev, axis=1)**5
 
     # Loop over the atoms.
     for j in range(len(r_pivot_atom[:, 0])):

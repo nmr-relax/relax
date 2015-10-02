@@ -267,6 +267,33 @@ class Frame_order(SystemTestCase):
         self.check_chi2(0.080669539157379247)
 
 
+    def test_cam_double_rotor_large_angle(self):
+        """Test the double rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags()
+        self.interpreter.run(script_file=self.cam_path+'double_rotor_large_angle.py')
+        self.check_chi2(0.081769384900455433)
+
+
+    def test_cam_double_rotor_large_angle_pcs(self):
+        """Test the double rotor frame order model of CaM (with only PCS data)."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(rdc=False)
+        self.interpreter.run(script_file=self.cam_path+'double_rotor_large_angle.py')
+        self.check_chi2(0.00016331682903726827)
+
+
+    def test_cam_double_rotor_large_angle_rdc(self):
+        """Test the double rotor frame order model of CaM (with only RDC data)."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(pcs=False)
+        self.interpreter.run(script_file=self.cam_path+'double_rotor_large_angle.py')
+        self.check_chi2(0.080669539157379247)
+
+
     def test_cam_free_rotor(self):
         """Test the free rotor frame order model of CaM."""
 
@@ -525,7 +552,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_torsionless.py')
-        self.check_chi2(0.22611932575925126)
+        self.check_chi2(0.01497741674116292)
 
 
     def test_cam_pseudo_ellipse_torsionless_pcs(self):
@@ -534,7 +561,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_torsionless.py')
-        self.check_chi2(0.18751106814778518)
+        self.check_chi2(2.9799363738575403e-05)
 
 
     def test_cam_pseudo_ellipse_torsionless_rdc(self):
@@ -543,7 +570,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_torsionless.py')
-        self.check_chi2(0.038608257611466051)
+        self.check_chi2(0.014947617377424345)
 
 
     def test_cam_rigid(self):
@@ -1183,6 +1210,19 @@ class Frame_order(SystemTestCase):
         self.space_probe(ref_chi2=chi2, params=['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'cone_theta_x', 'cone_theta_y'])
 
 
+    def test_rigid_data_to_double_rotor_model(self):
+        """Test the double rotor target function for the data from a rigid test molecule."""
+
+        # Set the model.
+        ds.model = 'double rotor'
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 0.01137748706675365, 5)
+
+
     def test_rigid_data_to_free_rotor_model(self):
         """Test the free rotor target function for the data from a rigid test molecule."""
 
@@ -1271,7 +1311,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 177.19654222741323, 5)
+        self.assertAlmostEqual(cdp.chi2, 0.01137748706675365, 5)
 
 
     def test_rigid_data_to_pseudo_ellipse_torsionless_model(self):
@@ -1284,4 +1324,4 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 2.4741390373203678)
+        self.assertAlmostEqual(cdp.chi2, 0.01137748706675365)

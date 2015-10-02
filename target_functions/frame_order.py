@@ -179,10 +179,13 @@ class Frame_order:
             self.num_interatom = len(rdcs[0])
 
         # Create multi-dimensional versions of certain structures for faster calculations.
-        self.spin_ones_struct = ones(self.num_spins, float64)
-        self.pivot = outer(self.spin_ones_struct, pivot)
-        self.paramag_centre = outer(self.spin_ones_struct, paramag_centre)
-        self.ave_pos_pivot = outer(self.spin_ones_struct, ave_pos_pivot)
+        if self.pcs_flag:
+            self.spin_ones_struct = ones(self.num_spins, float64)
+            self.pivot = outer(self.spin_ones_struct, pivot)
+            self.paramag_centre = outer(self.spin_ones_struct, paramag_centre)
+            self.ave_pos_pivot = outer(self.spin_ones_struct, ave_pos_pivot)
+        else:
+            self.pivot = array([pivot])
 
         # Set up the alignment data.
         for align_index in range(self.num_align):
@@ -366,7 +369,7 @@ class Frame_order:
         This function optimises the model parameters using the RDC and PCS base data.  Quasi-random, Sobol' sequence based, numerical integration is used for the PCS.
 
 
-        @param params:  The vector of parameter values.  These can include {pivot_x, pivot_y, pivot_z, pivot_disp, ave_pos_x, ave_pos_y, ave_pos_z, ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_sigma_max, cone_sigma_max2}.
+        @param params:  The vector of parameter values.  These can include {pivot_x, pivot_y, pivot_z, pivot_disp, ave_pos_x, ave_pos_y, ave_pos_z, ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_sigma_max, cone_sigma_max_2}.
         @type params:   list of float
         @return:        The chi-squared or SSE value.
         @rtype:         float
@@ -378,12 +381,12 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            pivot = outer(self.spin_ones_struct, params[:3])
+            pivot2 = outer(self.spin_ones_struct, params[:3])
             param_disp = params[3]
             self._translation_vector = params[4:7]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, sigma_max, sigma_max_2 = params[6:]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, sigma_max, sigma_max_2 = params[7:]
         else:
-            pivot = self.pivot
+            pivot2 = self.pivot
             param_disp = params[0]
             self._translation_vector = params[1:4]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, sigma_max, sigma_max_2 = params[4:]
@@ -406,8 +409,8 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            # The second pivot point (sum of the first pivot and the displacement along the eigenframe z-axis).
-            pivot2 = pivot + param_disp * self.R_eigen[:,2]
+            # The 1st pivot point (sum of the 2nd pivot and the displacement along the eigenframe z-axis).
+            pivot = pivot2 + param_disp * self.R_eigen[:,2]
 
             # Calculate the vectors.
             self.calc_vectors(pivot=pivot, pivot2=pivot2, R_ave=self.R_ave, RT_ave=RT_ave)
@@ -431,7 +434,7 @@ class Frame_order:
         # PCS via numerical integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_double_rotor(points=self.sobol_angles, sigma_max=sigma_max, sigma_max_2=sigma_max_2, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+            pcs_numeric_int_double_rotor(points=self.sobol_angles, sigma_max=sigma_max, sigma_max_2=sigma_max_2, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, r_inter_pivot=self.r_inter_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, Ri2_prime=self.Ri2_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for align_index in range(self.num_align):
@@ -1148,6 +1151,8 @@ class Frame_order:
         # The lanthanide to pivot vector.
         if self.pivot_opt:
             subtract(pivot, self.paramag_centre, self.r_ln_pivot)
+        if pivot2 != None:
+            subtract(pivot2, self.paramag_centre, self.r_ln_pivot)
 
         # Calculate the average position pivot point to atomic positions vectors once.
         vect = self.atomic_pos - self.ave_pos_pivot
@@ -1159,10 +1164,15 @@ class Frame_order:
         subtract(self.r_pivot_atom, pivot, self.r_pivot_atom)
 
         # And the reverse vectors.
-        self.r_pivot_atom_rev[:] = dot(vect, R_ave)
-        add(self.r_pivot_atom_rev, self.ave_pos_pivot, self.r_pivot_atom_rev)
-        add(self.r_pivot_atom_rev, self._translation_vector, self.r_pivot_atom_rev)
-        subtract(self.r_pivot_atom_rev, pivot, self.r_pivot_atom_rev)
+        if min(self.full_in_ref_frame) == 0:
+            self.r_pivot_atom_rev[:] = dot(vect, R_ave)
+            add(self.r_pivot_atom_rev, self.ave_pos_pivot, self.r_pivot_atom_rev)
+            add(self.r_pivot_atom_rev, self._translation_vector, self.r_pivot_atom_rev)
+            subtract(self.r_pivot_atom_rev, pivot, self.r_pivot_atom_rev)
+
+        # Calculate the inter-pivot vector for the double motion models.
+        if pivot2 != None:
+            self.r_inter_pivot = pivot - pivot2
 
 
     def create_sobol_data(self, n=10000, dims=None):
@@ -1183,6 +1193,7 @@ class Frame_order:
         # Initialise.
         self.sobol_angles = zeros((n, m), float32)
         self.Ri_prime = zeros((n, 3, 3), float64)
+        self.Ri2_prime = zeros((n, 3, 3), float64)
 
         # The Sobol' points.
         points = i4_sobol_generate(m, n, 0)
@@ -1204,13 +1215,38 @@ class Frame_order:
                     phi = 2.0 * pi * points[j, i]
                     self.sobol_angles[i, j] = phi
 
-                # The torsion angle - the angle of rotation about the z' axis.
-                if dims[j] in ['sigma', 'sigma2']:
+                # The 1st torsion angle - the angle of rotation about the z' axis (or y' for the double motion models).
+                if dims[j] in ['sigma']:
                     sigma = 2.0 * pi * (points[j, i] - 0.5)
                     self.sobol_angles[i, j] = sigma
 
+                # The 2nd torsion angle - the angle of rotation about the x' axis.
+                if dims[j] in ['sigma2']:
+                    sigma2 = 2.0 * pi * (points[j, i] - 0.5)
+                    self.sobol_angles[i, j] = sigma2
+
+            # Pre-calculate the rotation matrices for the double motion models.
+            if 'sigma2' in dims:
+                # The 1st rotation about the y-axis.
+                c_sigma = cos(sigma)
+                s_sigma = sin(sigma)
+                self.Ri_prime[i, 0, 0] =  c_sigma
+                self.Ri_prime[i, 0, 2] = -s_sigma
+                self.Ri_prime[i, 1, 1] = 1.0
+                self.Ri_prime[i, 2, 0] =  s_sigma
+                self.Ri_prime[i, 2, 2] =  c_sigma
+
+                # The 2nd rotation about the x-axis.
+                c_sigma2 = cos(sigma2)
+                s_sigma2 = sin(sigma2)
+                self.Ri2_prime[i, 0, 0] = 1.0
+                self.Ri2_prime[i, 1, 1] =  c_sigma2
+                self.Ri2_prime[i, 1, 2] = -s_sigma2
+                self.Ri2_prime[i, 2, 1] =  s_sigma2
+                self.Ri2_prime[i, 2, 2] =  c_sigma2
+
             # Pre-calculate the rotation matrix for the full tilt-torsion.
-            if theta != None and phi != None and sigma != None:
+            elif theta != None and phi != None and sigma != None:
                 tilt_torsion_to_R(phi, theta, sigma, self.Ri_prime[i])
 
             # Pre-calculate the rotation matrix for the torsionless models.
