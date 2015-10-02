@@ -37,7 +37,6 @@ from multi import Processor_box
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop, return_interatom
 from pipe_control.mol_res_spin import return_spin, spin_loop
-from pipe_control.rdc import check_rdcs
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.frame_order.checks import check_pivot
@@ -63,7 +62,6 @@ class Frame_order(API_base, API_common):
         self.is_spin_param = self._is_spin_param_false
         self.model_loop = self._model_loop_single_global
         self.model_type = self._model_type_global
-        self.overfit_deselect = self._overfit_deselect_dummy
         self.print_model_title = self._print_model_title_global
         self.return_conversion_factor = self._return_no_conversion_factor
         self.set_param_values = self._set_param_values_global
@@ -86,8 +84,12 @@ class Frame_order(API_base, API_common):
 
         # Loop over the interatomic data containers for the moving domain (for the RDC data).
         for interatom in interatomic_loop(selection1=domain_moving()):
-            # RDC checks.
-            if not check_rdcs(interatom):
+            # Skip deselected containers.
+            if not interatom.select:
+                continue
+
+            # No RDC, so skip.
+            if not hasattr(interatom, 'rdc'):
                 continue
 
             # Loop over the alignment IDs.
@@ -644,6 +646,32 @@ class Frame_order(API_base, API_common):
 
         # Return the data.
         return k, n, cdp.chi2
+
+
+    def overfit_deselect(self, data_check=True, verbose=True):
+        """Deselect spins which have insufficient data to support minimisation.
+
+        @keyword data_check:    A flag to signal if the presence of base data is to be checked for.
+        @type data_check:       bool
+        @keyword verbose:       A flag which if True will allow printouts.
+        @type verbose:          bool
+        """
+
+        # Nothing to do.
+        if not data_check:
+            return
+
+        # Loop over spin data, checking for PCS data.
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            if not hasattr(spin, 'pcs'):
+                print("No PCS data is present, deselecting the spin '%s'." % spin_id)
+                spin.select = False
+
+        # Loop over the interatomic data containers, checking for RDC data.
+        for interatom in interatomic_loop(selection1=domain_moving()):
+            if not hasattr(interatom, 'rdc'):
+                print("No RDC data is present, deselecting the interatomic data container between spins '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2))
+                interatom.select = False
 
 
     def return_error(self, data_id):

@@ -44,6 +44,7 @@ from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.io import open_write_file
 from lib.order.order_parameters import iso_cone_theta_to_S
 from lib.text.sectioning import section, subsection, title
+from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pipes import get_pipe
 from pipe_control.structure.mass import pipe_centre_of_mass
 from prompt.interpreter import Interpreter
@@ -119,6 +120,9 @@ class Frame_order_analysis:
 
         # Execute the full protocol.
         try:
+            # Output the starting time.
+            self.interpreter.time()
+
             # The nested model optimisation protocol.
             self.nested_models()
 
@@ -141,6 +145,9 @@ class Frame_order_analysis:
 
                 # Finish.
                 self.interpreter.results.write(file='results', dir=self.results_dir+'final', force=True)
+
+            # Output the finishing time.
+            self.interpreter.time()
 
             # Visualisation of the final results.
             self.visualisation(model='final')
@@ -240,6 +247,21 @@ class Frame_order_analysis:
 
         # Return the increment list.
         return incs
+
+
+    def model_directory(self, model):
+        """Return the directory to be used for the model.
+
+        @param model:   The frame order model.
+        @type model:    str
+        """
+
+        # Convert the model name.
+        dir = model.replace(' ', '_')
+        dir = dir.replace(',', '')
+
+        # Return the full path.
+        return self.results_dir + dir
 
 
     def nested_params_ave_dom_pos(self, model):
@@ -422,30 +444,15 @@ class Frame_order_analysis:
             return
 
         # The pivot from the rotor model.
-        if model in [MODEL_ISO_CONE, MODEL_FREE_ROTOR]:
-            # Printout.
-            print("Obtaining the pivot point from the rotor model.")
+        print("Obtaining the pivot point from the rotor model.")
 
-            # Get the iso cone data pipe.
-            pipe = get_pipe(self.pipe_name_dict[MODEL_ROTOR])
+        # Get the iso cone data pipe.
+        pipe = get_pipe(self.pipe_name_dict[MODEL_ROTOR])
 
-            # Copy the pivot parameters.
-            cdp.pivot_x = pipe.pivot_x
-            cdp.pivot_y = pipe.pivot_y
-            cdp.pivot_z = pipe.pivot_z
-
-        # The pivot from the isotropic cone model.
-        else:
-            # Printout.
-            print("Obtaining the pivot point from the isotropic cone model.")
-
-            # Get the iso cone data pipe.
-            pipe = get_pipe(self.pipe_name_dict[MODEL_ISO_CONE])
-
-            # Copy the cone axis parameters.
-            cdp.pivot_x = pipe.pivot_x
-            cdp.pivot_y = pipe.pivot_y
-            cdp.pivot_z = pipe.pivot_z
+        # Copy the pivot parameters.
+        cdp.pivot_x = pipe.pivot_x
+        cdp.pivot_y = pipe.pivot_y
+        cdp.pivot_z = pipe.pivot_z
 
 
     def nested_models(self):
@@ -465,6 +472,9 @@ class Frame_order_analysis:
 
             # Printout.
             section(file=sys.stdout, text="%s frame order model"%title, prespace=5)
+
+            # Output the model staring time.
+            self.interpreter.time()
 
             # The data pipe name.
             self.pipe_name_dict[model] = '%s - %s' % (title, self.pipe_bundle)
@@ -539,6 +549,14 @@ class Frame_order_analysis:
             # Copy the PCS data.
             self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
 
+            # Reset the selection status.
+            for spin, spin_id in spin_loop(return_id=True, skip_desel=False):
+                # Get the spin from the original pipe.
+                spin_orig = return_spin(spin_id=spin_id, pipe=self.data_pipe_full)
+
+                # Reset the spin selection.
+                spin.select = spin_orig.select
+
             # Minimise (for the full data set).
 <<<<<<< .working
             for i in range(len(self.num_int_pts_full)):
@@ -563,7 +581,7 @@ class Frame_order_analysis:
             self.interpreter.eliminate()
 
             # Save the results.
-            self.interpreter.results.write(dir=self.results_dir+model, force=True)
+            self.interpreter.results.write(dir=self.model_directory(model), force=True)
 
             # The PDB representation of the model and visualisation script.
             self.visualisation(model=model)
@@ -582,6 +600,9 @@ class Frame_order_analysis:
         # Print out.
         section(file=sys.stdout, text="%s frame order model"%title, prespace=5)
 
+        # Output the model staring time.
+        self.interpreter.time()
+
         # The data pipe name.
         self.pipe_name_dict[model] = '%s - %s' % (title, self.pipe_bundle)
         self.pipe_name_list.append(self.pipe_name_dict[model])
@@ -589,7 +610,7 @@ class Frame_order_analysis:
         # The results file already exists, so read its contents instead.
         if self.read_results(model=model, pipe_name=self.pipe_name_dict[model]):
             # The PDB representation of the model (in case this was not completed correctly).
-            self.interpreter.frame_order.pdb_model(dir=self.results_dir+model, force=True)
+            self.interpreter.frame_order.pdb_model(dir=self.model_directory(model), force=True)
 
             # Nothing more to do.
             return
@@ -645,10 +666,10 @@ class Frame_order_analysis:
         self.print_results()
 
         # Save the results.
-        self.interpreter.results.write(dir=self.results_dir+model, force=True)
+        self.interpreter.results.write(dir=self.model_directory(model), force=True)
 
         # The PDB representation of the model.
-        self.interpreter.frame_order.pdb_model(dir=self.results_dir+model, force=True)
+        self.interpreter.frame_order.pdb_model(dir=self.model_directory(model), force=True)
 
 
     def print_results(self):
@@ -660,6 +681,15 @@ class Frame_order_analysis:
         # Formatting string.
         format_float = "    %-20s %20.15f\n"
         format_vect = "    %-20s %20s\n"
+
+        # Pivot.
+        sys.stdout.write("\nPivot point:\n")
+        if hasattr(cdp, 'pivot_x'):
+            sys.stdout.write(format_float % ('x:', cdp.pivot_x))
+        if hasattr(cdp, 'pivot_y'):
+            sys.stdout.write(format_float % ('y:', cdp.pivot_y))
+        if hasattr(cdp, 'pivot_z'):
+            sys.stdout.write(format_float % ('z:', cdp.pivot_z))
 
         # Average position.
         if hasattr(cdp, 'ave_pos_x') or hasattr(cdp, 'ave_pos_alpha') or hasattr(cdp, 'ave_pos_beta') or hasattr(cdp, 'ave_pos_gamma'):
@@ -805,11 +835,11 @@ class Frame_order_analysis:
             raise RelaxError("The model '%s' does not match the model '%s' of the current data pipe." % (model, cdp.model))
 
         # The PDB representation of the model.
-        self.interpreter.frame_order.pdb_model(dir=self.results_dir+model, force=True)
+        self.interpreter.frame_order.pdb_model(dir=self.model_directory(model), force=True)
 
         # Create the visualisation script.
         subsection(file=sys.stdout, text="Creating a PyMOL visualisation script.")
-        script = open_write_file(file_name='pymol_display.py', dir=self.results_dir+model, force=True)
+        script = open_write_file(file_name='pymol_display.py', dir=self.model_directory(model), force=True)
 
         # Add a comment for the user.
         script.write("# relax script for displaying the frame order results of this '%s' model in PyMOL.\n\n" % model)

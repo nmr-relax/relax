@@ -365,14 +365,10 @@ def minimise_setup_rdcs(sim_index=None):
         absolute.append([])
 
         # Interatom loop over the domain.
-        for interatom in interatomic_loop(domain_moving()):
+        for interatom in interatomic_loop(domain_moving(), skip_desel=True):
             # Get the spins.
             spin1 = return_spin(interatom.spin_id1)
             spin2 = return_spin(interatom.spin_id2)
-
-            # Skip deselected spins.
-            if not spin1.select or not spin2.select:
-                continue
 
             # Only use interatomic data containers with RDC and vector data.
             if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'vector'):
@@ -604,7 +600,7 @@ def store_bc_data(A_5D_bc=None, pcs_theta=None, rdc_theta=None):
 
         # Interatomic data container loop.
         rdc_index = 0
-        for interatom in interatomic_loop(domain_moving()):
+        for interatom in interatomic_loop(domain_moving(), skip_desel=True):
             # Initialise the data structure.
             if not hasattr(interatom, 'rdc_bc'):
                 interatom.rdc_bc = {}
