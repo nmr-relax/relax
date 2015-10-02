@@ -36,7 +36,6 @@ for root, dirs, files in walk(getcwd()):
         # Check for errors.
         err = False
         for line in pipe.stderr.readlines():
-            sys.stdout.write(line)
             if search("command not found", line):
                 err = True
         if err:
