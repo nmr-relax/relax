@@ -34,17 +34,17 @@ from lib.arg_check import is_float_array
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxFault
 from lib.frame_order.simulation import brownian
+from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_LIST_RESTRICTED_TORSION, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID
 from lib.geometry.coord_transform import cartesian_to_spherical, spherical_to_cartesian
 from lib.geometry.rotations import euler_to_R_zyz, R_to_euler_zyz
 from lib.io import open_write_file
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
 from specific_analyses.frame_order.checks import check_domain, check_model, check_parameters, check_pivot
-from specific_analyses.frame_order.data import domain_moving
+from specific_analyses.frame_order.data import domain_moving, generate_pivot
 from specific_analyses.frame_order.geometric import average_position, create_ave_pos, create_geometric_rep, generate_axis_system
 from specific_analyses.frame_order.optimisation import count_sobol_points
 from specific_analyses.frame_order.parameters import assemble_param_vector, update_model
-from specific_analyses.frame_order.variables import MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_LIST_RESTRICTED_TORSION, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID
 
 
 def pdb_model(ave_pos="ave_pos", rep="frame_order", dir=None, compress_type=0, size=30.0, inc=36, model=1, force=False):
@@ -301,6 +301,20 @@ def pivot(pivot=None, order=1, fix=False):
         update_model()
 
 
+def quad_int(flag=False):
+    """Turn the high precision Scipy quadratic numerical integration on or off.
+
+    @keyword flag:  The flag which if True will perform high precision numerical integration via the scipy.integrate quad(), dblquad() and tplquad() integration methods rather than the rough quasi-random numerical integration.
+    @type flag:     bool
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Store the flag.
+    cdp.quad_int = flag
+
+
 def ref_domain(ref=None):
     """Set the reference domain for the frame order, multi-domain models.
 
@@ -354,6 +368,16 @@ def select_model(model=None):
 
     # Initialise the list of model parameters.
     cdp.params = []
+
+    # Set the integration method if needed.
+    if not hasattr(cdp, 'quad_int'):
+        # Scipy quadratic numerical integration.
+        if cdp.model in []:
+            cdp.quad_int = True
+
+        # Quasi-random numerical integration.
+        else:
+            cdp.quad_int = False
 
     # Update the model.
     update_model()
@@ -409,8 +433,13 @@ def simulate(file="simulation.pdb.bz2", dir=None, step_size=2.0, snapshot=10, to
     if structure.num_models() > 1:
         structure.collapse_ensemble(model_num=model)
 
-    # The pivot point.
-    pivot = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z], float64)
+    # The pivot points.
+    num_states = 1
+    if cdp.model == MODEL_DOUBLE_ROTOR:
+        num_states = 2
+    pivot = zeros((num_states, 3), float64)
+    for i in range(num_states):
+        pivot[i] = generate_pivot(order=i+1, pdb_limit=True)
 
     # Shift to the average position.
     average_position(structure=structure, models=[1])

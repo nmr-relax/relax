@@ -31,6 +31,7 @@ import sys
 # relax module imports.
 from lib.errors import RelaxFault
 from lib.frame_order.conversions import create_rotor_axis_alpha, create_rotor_axis_euler, create_rotor_axis_spherical
+from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_DOUBLE, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_ROTOR
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from lib.io import open_write_file
 from lib.order import order_parameters
@@ -42,7 +43,6 @@ from lib.structure.represent.rotor import rotor
 from lib.text.sectioning import subsection, subsubsection
 from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.data import domain_moving, generate_pivot
-from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_DOUBLE, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_ROTOR
 
 
 def add_axes(structure=None, representation=None, size=None, sims=False):
@@ -502,6 +502,9 @@ def average_position(structure=None, models=None, sim=None):
     @type sim:          bool
     """
 
+    # The selection object.
+    selection = structure.selection(atom_id=domain_moving())
+
     # Loop over each model.
     for i in range(len(models)):
         # First rotate the moving domain to the average position.
@@ -517,14 +520,14 @@ def average_position(structure=None, models=None, sim=None):
             else:
                 euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
         origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
-        structure.rotate(R=R, origin=origin, model=models[i], atom_id=domain_moving())
+        structure.rotate(R=R, origin=origin, model=models[i], selection=selection)
 
         # Then translate the moving domain.
         if sim:
             T = [cdp.ave_pos_x_sim[i], cdp.ave_pos_y_sim[i], cdp.ave_pos_z_sim[i]]
         else:
             T = [cdp.ave_pos_x, cdp.ave_pos_y, cdp.ave_pos_z]
-        structure.translate(T=T, model=models[i], atom_id=domain_moving())
+        structure.translate(T=T, model=models[i], selection=selection)
 
 
 def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, model=1, force=False):

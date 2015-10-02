@@ -36,6 +36,7 @@ from warnings import warn
 from lib.float import isNaN, isInf
 from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoPCSError, RelaxNoRDCError
 from lib.frame_order.pseudo_ellipse import tmax_pseudo_ellipse_array
+from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from lib.geometry.angles import wrap_angles
 from lib.order import order_parameters
 from lib.periodic_table import periodic_table
@@ -48,7 +49,6 @@ from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.checks import check_domain, check_model, check_parameters
 from specific_analyses.frame_order.data import base_data_types, domain_moving, pivot_fixed, tensor_loop
 from specific_analyses.frame_order.parameters import assemble_param_vector, assemble_scaling_matrix, linear_constraints
-from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from target_functions.frame_order import Frame_order, sobol_data
 
 
@@ -87,14 +87,16 @@ def count_sobol_points(target_fn=None, verbosity=1):
         # Set up the data structures for the target function.
         param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(verbosity=0, unset_fail=True)
 
-        # The Sobol' integration information.
+        # The numeric integration information.
+        if not hasattr(cdp, 'quad_int'):
+            cdp.quad_int = False
         sobol_max_points, sobol_oversample = None, None
         if hasattr(cdp, 'sobol_max_points'):
             sobol_max_points = cdp.sobol_max_points
             sobol_oversample = cdp.sobol_oversample
 
         # Set up the optimisation target function class.
-        target_fn = Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=None, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, sobol_max_points=sobol_max_points, sobol_oversample=sobol_oversample)
+        target_fn = Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=None, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, sobol_max_points=sobol_max_points, sobol_oversample=sobol_oversample, quad_int=cdp.quad_int)
 
     # The Sobol' sequence dimensions.
     if cdp.model in [MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR]:
@@ -941,7 +943,7 @@ def unpack_opt_results(param_vector=None, func=None, iter_count=None, f_count=No
 class Frame_order_grid_command(Slave_command):
     """Command class for relaxation dispersion optimisation on the slave processor."""
 
-    def __init__(self, points=None, scaling_matrix=None, sim_index=None, model=None, param_vector=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_err=None, rdc_weight=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_err=None, pcs_weight=None, atomic_pos=None, temp=None, frq=None, paramag_centre=None, com=None, ave_pos_pivot=None, pivot=None, pivot_opt=None, sobol_max_points=None, sobol_oversample=None, verbosity=None):
+    def __init__(self, points=None, scaling_matrix=None, sim_index=None, model=None, param_vector=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_err=None, rdc_weight=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_err=None, pcs_weight=None, atomic_pos=None, temp=None, frq=None, paramag_centre=None, com=None, ave_pos_pivot=None, pivot=None, pivot_opt=None, sobol_max_points=None, sobol_oversample=None, verbosity=None, quad_int=False):
         """Initialise the base class, storing all the master data to be sent to the slave processor.
 
         This method is run on the master processor whereas the run() method is run on the slave processor.
@@ -998,6 +1000,8 @@ class Frame_order_grid_command(Slave_command):
         @type sobol_oversample:     int
         @keyword verbosity:         The verbosity level.  This is used by the result command returned to the master for printouts.
         @type verbosity:            int
+        @keyword quad_int:          A flag which if True will perform high precision numerical integration via the scipy.integrate quad(), dblquad() and tplquad() integration methods rather than the rough quasi-random numerical integration.
+        @type quad_int:             bool
         """
 
         # Store the arguments.
@@ -1026,13 +1030,14 @@ class Frame_order_grid_command(Slave_command):
         self.sobol_max_points = sobol_max_points
         self.sobol_oversample = sobol_oversample
         self.verbosity = verbosity
+        self.quad_int = quad_int
 
 
     def run(self, processor, completed):
         """Set up and perform the optimisation."""
 
         # Set up the optimisation target function class.
-        target_fn = Frame_order(model=self.model, init_params=self.param_vector, full_tensors=self.full_tensors, full_in_ref_frame=self.full_in_ref_frame, rdcs=self.rdcs, rdc_errors=self.rdc_err, rdc_weights=self.rdc_weight, rdc_vect=self.rdc_vect, dip_const=self.rdc_const, pcs=self.pcs, pcs_errors=self.pcs_err, pcs_weights=self.pcs_weight, atomic_pos=self.atomic_pos, temp=self.temp, frq=self.frq, paramag_centre=self.paramag_centre, scaling_matrix=self.scaling_matrix, com=self.com, ave_pos_pivot=self.ave_pos_pivot, pivot=self.pivot, pivot_opt=self.pivot_opt, sobol_max_points=self.sobol_max_points, sobol_oversample=self.sobol_oversample)
+        target_fn = Frame_order(model=self.model, init_params=self.param_vector, full_tensors=self.full_tensors, full_in_ref_frame=self.full_in_ref_frame, rdcs=self.rdcs, rdc_errors=self.rdc_err, rdc_weights=self.rdc_weight, rdc_vect=self.rdc_vect, dip_const=self.rdc_const, pcs=self.pcs, pcs_errors=self.pcs_err, pcs_weights=self.pcs_weight, atomic_pos=self.atomic_pos, temp=self.temp, frq=self.frq, paramag_centre=self.paramag_centre, scaling_matrix=self.scaling_matrix, com=self.com, ave_pos_pivot=self.ave_pos_pivot, pivot=self.pivot, pivot_opt=self.pivot_opt, sobol_max_points=self.sobol_max_points, sobol_oversample=self.sobol_oversample, quad_int=self.quad_int)
 
         # Grid search.
         results = grid_point_array(func=target_fn.func, args=(), points=self.points, verbosity=self.verbosity)
@@ -1077,7 +1082,7 @@ class Frame_order_memo(Memo):
 class Frame_order_minimise_command(Slave_command):
     """Command class for relaxation dispersion optimisation on the slave processor."""
 
-    def __init__(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, scaling_matrix=None, constraints=False, sim_index=None, model=None, param_vector=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_err=None, rdc_weight=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_err=None, pcs_weight=None, atomic_pos=None, temp=None, frq=None, paramag_centre=None, com=None, ave_pos_pivot=None, pivot=None, pivot_opt=None, sobol_max_points=None, sobol_oversample=None, verbosity=None):
+    def __init__(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, scaling_matrix=None, constraints=False, sim_index=None, model=None, param_vector=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_err=None, rdc_weight=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_err=None, pcs_weight=None, atomic_pos=None, temp=None, frq=None, paramag_centre=None, com=None, ave_pos_pivot=None, pivot=None, pivot_opt=None, sobol_max_points=None, sobol_oversample=None, verbosity=None, quad_int=False):
         """Initialise the base class, storing all the master data to be sent to the slave processor.
 
         This method is run on the master processor whereas the run() method is run on the slave processor.
@@ -1142,6 +1147,8 @@ class Frame_order_minimise_command(Slave_command):
         @type sobol_oversample:     int
         @keyword scaling_matrix:    The diagonal, square scaling matrix.
         @type scaling_matrix:       numpy diagonal matrix
+        @keyword quad_int:          A flag which if True will perform high precision numerical integration via the scipy.integrate quad(), dblquad() and tplquad() integration methods rather than the rough quasi-random numerical integration.
+        @type quad_int:             bool
         """
 
         # Store some arguments.
@@ -1174,6 +1181,7 @@ class Frame_order_minimise_command(Slave_command):
         self.sobol_max_points = sobol_max_points
         self.sobol_oversample = sobol_oversample
         self.verbosity = verbosity
+        self.quad_int = quad_int
 
         # Linear constraints.
         self.A, self.b = None, None
@@ -1196,13 +1204,14 @@ class Frame_order_minimise_command(Slave_command):
         """Set up and perform the optimisation."""
 
         # Set up the optimisation target function class.
-        target_fn = Frame_order(model=self.model, init_params=self.param_vector, full_tensors=self.full_tensors, full_in_ref_frame=self.full_in_ref_frame, rdcs=self.rdcs, rdc_errors=self.rdc_err, rdc_weights=self.rdc_weight, rdc_vect=self.rdc_vect, dip_const=self.rdc_const, pcs=self.pcs, pcs_errors=self.pcs_err, pcs_weights=self.pcs_weight, atomic_pos=self.atomic_pos, temp=self.temp, frq=self.frq, paramag_centre=self.paramag_centre, scaling_matrix=self.scaling_matrix, com=self.com, ave_pos_pivot=self.ave_pos_pivot, pivot=self.pivot, pivot_opt=self.pivot_opt, sobol_max_points=self.sobol_max_points, sobol_oversample=self.sobol_oversample)
+        target_fn = Frame_order(model=self.model, init_params=self.param_vector, full_tensors=self.full_tensors, full_in_ref_frame=self.full_in_ref_frame, rdcs=self.rdcs, rdc_errors=self.rdc_err, rdc_weights=self.rdc_weight, rdc_vect=self.rdc_vect, dip_const=self.rdc_const, pcs=self.pcs, pcs_errors=self.pcs_err, pcs_weights=self.pcs_weight, atomic_pos=self.atomic_pos, temp=self.temp, frq=self.frq, paramag_centre=self.paramag_centre, scaling_matrix=self.scaling_matrix, com=self.com, ave_pos_pivot=self.ave_pos_pivot, pivot=self.pivot, pivot_opt=self.pivot_opt, sobol_max_points=self.sobol_max_points, sobol_oversample=self.sobol_oversample, quad_int=self.quad_int)
 
         # Minimisation.
         results = generic_minimise(func=target_fn.func, args=(), x0=self.param_vector, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.max_iterations, A=self.A, b=self.b, full_output=True, print_flag=self.verbosity)
 
         # Feedback on the number of integration points used.
-        count_sobol_points(target_fn=target_fn, verbosity=self.verbosity)
+        if not self.quad_int:
+            count_sobol_points(target_fn=target_fn, verbosity=self.verbosity)
 
         # Create the result command object on the slave to send back to the master.
         processor.return_object(Frame_order_result_command(processor=processor, memo_id=self.memo_id, results=results, A_5D_bc=target_fn.A_5D_bc, pcs_theta=target_fn.pcs_theta, rdc_theta=target_fn.rdc_theta, completed=completed))

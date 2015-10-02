@@ -24,7 +24,7 @@
 
 # relax module imports.
 from base_script import Base_script
-from specific_analyses.frame_order.variables import MODEL_RIGID
+from lib.frame_order.variables import MODEL_RIGID
 
 
 class Analysis(Base_script):

@@ -23,8 +23,12 @@
 """Module for the handling of Frame Order."""
 
 # Python module imports.
-from math import pi
+from math import cos, pi, sin
 from numpy import divide, dot, eye, float64, multiply, sinc, swapaxes, tensordot
+try:
+    from scipy.integrate import quad
+except ImportError:
+    pass
 
 # relax module imports.
 from lib.compat import norm
@@ -73,7 +77,7 @@ def compile_2nd_matrix_rotor(matrix, Rx2_eigen, smax):
     return rotate_daeg(matrix, Rx2_eigen)
 
 
-def pcs_numeric_int_rotor_qrint(points=None, max_points=None, sigma_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_numeric_qr_int_rotor(points=None, max_points=None, sigma_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Determine the averaged PCS value via numerical integration.
 
     @keyword points:            The Sobol points in the torsion-tilt angle space.
@@ -131,7 +135,7 @@ def pcs_numeric_int_rotor_qrint(points=None, max_points=None, sigma_max=None, c=
             continue
 
         # Calculate the PCSs for this state.
-        pcs_pivot_motion_rotor_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        pcs_pivot_motion_rotor_qr_int(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
 
         # Increment the number of points.
         num += 1
@@ -144,7 +148,7 @@ def pcs_numeric_int_rotor_qrint(points=None, max_points=None, sigma_max=None, c=
         Ri = swapaxes(Ri, 0, 1)
 
         # Calculate the PCSs for this state.
-        pcs_pivot_motion_rotor_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        pcs_pivot_motion_rotor_qr_int(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
 
         # Multiply the constant.
         multiply(c, pcs_theta, pcs_theta)
@@ -155,7 +159,47 @@ def pcs_numeric_int_rotor_qrint(points=None, max_points=None, sigma_max=None, c=
         divide(pcs_theta, float(num), pcs_theta)
 
 
-def pcs_pivot_motion_rotor_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, Ri=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_numeric_quad_int_rotor(sigma_max=None, c=None, r_pivot_atom=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None):
+    """Determine the averaged PCS value via SciPy quadratic numerical integration.
+
+    @keyword sigma_max:     The maximum rotor angle.
+    @type sigma_max:        float
+    @keyword c:             The PCS constant (without the interatomic distance and in Angstrom units).
+    @type c:                float
+    @keyword r_pivot_atom:  The pivot point to atom vector.
+    @type r_pivot_atom:     numpy rank-1, 3D array
+    @keyword r_ln_pivot:    The lanthanide position to pivot point vector.
+    @type r_ln_pivot:       numpy rank-1, 3D array
+    @keyword A:             The full alignment tensor of the non-moving domain.
+    @type A:                numpy rank-2, 3D array
+    @keyword R_eigen:       The eigenframe rotation matrix.
+    @type R_eigen:          numpy rank-2, 3D array
+    @keyword RT_eigen:      The transpose of the eigenframe rotation matrix (for faster calculations).
+    @type RT_eigen:         numpy rank-2, 3D array
+    @keyword Ri_prime:      The empty rotation matrix for the in-frame rotor motion, used to calculate the PCS for each state i in the numerical integration.
+    @type Ri_prime:         numpy rank-2, 3D array
+    @return:                The averaged PCS value.
+    @rtype:                 float
+    """
+
+    # Preset the rotation matrix elements for state i.
+    Ri_prime[0, 2] = 0.0
+    Ri_prime[1, 2] = 0.0
+    Ri_prime[2, 0] = 0.0
+    Ri_prime[2, 1] = 0.0
+    Ri_prime[2, 2] = 1.0
+
+    # Perform numerical integration.
+    result = quad(pcs_pivot_motion_rotor_quad_int, -sigma_max, sigma_max, args=(r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime))
+
+    # The surface area normalisation factor.
+    SA = 2.0 * sigma_max
+
+    # Return the value.
+    return c * result[0] / SA
+
+
+def pcs_pivot_motion_rotor_qr_int(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, Ri=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Calculate the PCS value after a pivoted motion for the rotor model.
 
     @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
@@ -207,3 +251,51 @@ def pcs_pivot_motion_rotor_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pi
 
             # The PCS.
             pcs_theta[i, j] += proj * length_i
+
+
+def pcs_pivot_motion_rotor_quad_int(sigma_i, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime):
+    """Calculate the PCS value after a pivoted motion for the rotor model.
+
+    @param sigma_i:             The rotor angle for state i.
+    @type sigma_i:              float
+    @param r_pivot_atom:        The pivot point to atom vector.
+    @type r_pivot_atom:         numpy rank-1, 3D array
+    @param r_ln_pivot:          The lanthanide position to pivot point vector.
+    @type r_ln_pivot:           numpy rank-1, 3D array
+    @param A:                   The full alignment tensor of the non-moving domain.
+    @type A:                    numpy rank-2, 3D array
+    @param R_eigen:             The eigenframe rotation matrix.
+    @type R_eigen:              numpy rank-2, 3D array
+    @param RT_eigen:            The transpose of the eigenframe rotation matrix (for faster calculations).
+    @type RT_eigen:             numpy rank-2, 3D array
+    @param Ri_prime:            The empty rotation matrix for the in-frame rotor motion for state i.
+    @type Ri_prime:             numpy rank-2, 3D array
+    @return:                    The PCS value for the changed position.
+    @rtype:                     float
+    """
+
+    # The rotation matrix.
+    c_sigma = cos(sigma_i)
+    s_sigma = sin(sigma_i)
+    Ri_prime[0, 0] =  c_sigma
+    Ri_prime[0, 1] = -s_sigma
+    Ri_prime[1, 0] =  s_sigma
+    Ri_prime[1, 1] =  c_sigma
+
+    # The rotation.
+    R_i = dot(R_eigen, dot(Ri_prime, RT_eigen))
+
+    # Calculate the new vector.
+    vect = dot(R_i, r_pivot_atom) + r_ln_pivot
+
+    # The vector length.
+    length = norm(vect)
+
+    # The projection.
+    proj = dot(vect, dot(A, vect))
+
+    # The PCS.
+    pcs = proj / length**5
+
+    # Return the PCS value (without the PCS constant).
+    return pcs

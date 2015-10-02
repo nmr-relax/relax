@@ -24,11 +24,12 @@
 
 # Python module imports.
 from math import cos, pi, sin, sqrt
-from numpy import dot, eye, float64, transpose, zeros
+from numpy import dot, eye, float64, swapaxes, transpose, zeros
 import sys
 
 # relax module imports.
 from lib.errors import RelaxError
+from lib.frame_order.variables import MODEL_DOUBLE_ROTOR
 from lib.geometry.angles import wrap_angles
 from lib.geometry.rotations import axis_angle_to_R, R_to_tilt_torsion, tilt_torsion_to_R
 from lib.geometry.vectors import random_unit_vector
@@ -47,8 +48,8 @@ def brownian(file=None, model=None, structure=None, parameters={}, eigenframe=No
     @type parameters:       dict of float
     @keyword eigenframe:    The full 3D eigenframe of the frame order motions.
     @type eigenframe:       numpy rank-2, 3D float64 array
-    @keyword pivot:         The pivot point of the frame order motions.
-    @type pivot:            numpy rank-1, 3D float64 array
+    @keyword pivot:         The list of pivot points of the frame order motions.
+    @type pivot:            numpy rank-2 (N, 3) float64 array
     @keyword atom_id:       The atom ID string for the atoms in the structure to rotate - i.e. the moving domain.
     @type atom_id:          None or str
     @keyword step_size:     The rotation will be of a random direction but with this fixed angle.  The value is in degrees.
@@ -66,18 +67,33 @@ def brownian(file=None, model=None, structure=None, parameters={}, eigenframe=No
     # Set the model number.
     structure.set_model(model_orig=None, model_new=1)
 
-    # The initial state.
-    state = eye(3, dtype=float64)
+    # Generate the internal structural selection object.
+    selection = structure.selection(atom_id)
+
+    # The initial states and motional limits.
+    num_states = len(pivot)
+    states = zeros((num_states, 3, 3), float64)
+    theta_max = []
+    sigma_max = []
+    for i in range(num_states):
+        states[i] = eye(3)
+        theta_max.append(None)
+        sigma_max.append(None)
 
     # Initialise the rotation matrix data structures.
     vector = zeros(3, float64)
     R = eye(3, dtype=float64)
     step_size = step_size / 360.0 * 2.0 * pi
 
+    # Axis permutations.
+    perm = [None]
+    if model == MODEL_DOUBLE_ROTOR:
+        perm = [[2, 0, 1], [1, 2, 0]]
+        perm_rev = [[1, 2, 0], [2, 0, 1]]
+
     # The maximum cone opening angles (isotropic cones).
-    theta_max = None
-    if 'cone_theta_max' in parameters:
-        theta_max = parameters['cone_theta_max']
+    if 'cone_theta' in parameters:
+        theta_max[0] = parameters['cone_theta']
 
     # The maximum cone opening angles (isotropic cones).
     theta_x = None
@@ -87,16 +103,14 @@ def brownian(file=None, model=None, structure=None, parameters={}, eigenframe=No
         theta_y = parameters['cone_theta_y']
 
     # The maximum torsion angle.
-    sigma_max = None
     if 'cone_sigma_max' in parameters:
-        sigma_max = parameters['cone_sigma_max']
+        sigma_max[0] = parameters['cone_sigma_max']
     elif 'free rotor' in model:
-        sigma_max = pi
+        sigma_max[0] = pi
 
     # The second torsion angle.
-    sigma_max_2 = None
     if 'cone_sigma_max_2' in parameters:
-        sigma_max_2 = parameters['cone_sigma_max_2']
+        sigma_max[1] = parameters['cone_sigma_max_2']
 
     # Printout.
     print("\nRunning the simulation:")
@@ -110,50 +124,66 @@ def brownian(file=None, model=None, structure=None, parameters={}, eigenframe=No
             print("\nEnd of simulation.")
             break
 
-        # The random vector.
-        random_unit_vector(vector)
+        # Loop over each state, or motional mode.
+        for i in range(num_states):
+            # The random vector.
+            random_unit_vector(vector)
 
-        # The rotation matrix.
-        axis_angle_to_R(vector, step_size, R)
+            # The rotation matrix.
+            axis_angle_to_R(vector, step_size, R)
 
-        # Shift the current state.
-        state = dot(R, state)
+            # Shift the current state.
+            states[i] = dot(R, states[i])
 
-        # Rotation in the eigenframe.
-        R_eigen = dot(transpose(eigenframe), dot(state, eigenframe))
+            # Rotation in the eigenframe.
+            R_eigen = dot(transpose(eigenframe), dot(states[i], eigenframe))
 
-        # The angles.
-        phi, theta, sigma = R_to_tilt_torsion(R_eigen)
-        sigma = wrap_angles(sigma, -pi, pi)
+            # Axis permutation to shift each rotation axis to Z.
+            if perm[i] != None:
+                for j in range(3):
+                    R_eigen[:, j] = R_eigen[perm[i], j]
+                for j in range(3):
+                    R_eigen[j, :] = R_eigen[j, perm[i]]
 
-        # Determine theta_max.
-        if theta_x != None:
-            theta_max = 1.0 / sqrt((cos(phi) / theta_x)**2 + (sin(phi) / theta_y)**2)
+            # The angles.
+            phi, theta, sigma = R_to_tilt_torsion(R_eigen)
+            sigma = wrap_angles(sigma, -pi, pi)
 
-        # Set the cone opening angle to the maximum if outside of the limit.
-        if theta_max != None:
-            if theta > theta_max:
-                theta = theta_max
+            # Determine theta_max for the pseudo-ellipse models.
+            if theta_x != None:
+                theta_max[i] = 1.0 / sqrt((cos(phi) / theta_x)**2 + (sin(phi) / theta_y)**2)
 
-        # No tilt component.
-        else:
-            theta = 0.0
-            phi = 0.0
+            # Set the cone opening angle to the maximum if outside of the limit.
+            if theta_max[i] != None:
+                if theta > theta_max[i]:
+                    theta = theta_max[i]
 
-        # Set the torsion angle to the maximum if outside of the limits.
-        if sigma_max != None:
-            if sigma > sigma_max:
-                sigma = sigma_max
-            elif sigma < -sigma_max:
-                sigma = -sigma_max
-        else:
-            sigma = 0.0
+            # No tilt component.
+            else:
+                theta = 0.0
+                phi = 0.0
 
-        # Reconstruct the rotation matrix, in the eigenframe, without sigma.
-        tilt_torsion_to_R(phi, theta, sigma, R_eigen)
+            # Set the torsion angle to the maximum if outside of the limits.
+            if sigma_max[i] != None:
+                if sigma > sigma_max[i]:
+                    sigma = sigma_max[i]
+                elif sigma < -sigma_max[i]:
+                    sigma = -sigma_max[i]
+            else:
+                sigma = 0.0
 
-        # Rotate back out of the eigenframe.
-        state = dot(eigenframe, dot(R_eigen, transpose(eigenframe)))
+            # Reconstruct the rotation matrix, in the eigenframe, without sigma.
+            tilt_torsion_to_R(phi, theta, sigma, R_eigen)
+
+            # Reverse axis permutation to shift each rotation z-axis back.
+            if perm[i] != None:
+                for j in range(3):
+                    R_eigen[:, j] = R_eigen[perm_rev[i], j]
+                for j in range(3):
+                    R_eigen[j, :] = R_eigen[j, perm_rev[i]]
+
+            # Rotate back out of the eigenframe.
+            states[i] = dot(eigenframe, dot(R_eigen, transpose(eigenframe)))
 
         # Take a snapshot.
         if step == snapshot:
@@ -168,7 +198,8 @@ def brownian(file=None, model=None, structure=None, parameters={}, eigenframe=No
             structure.add_model(model=current_snapshot, coords_from=1)
 
             # Rotate the model.
-            structure.rotate(R=state, origin=pivot, model=current_snapshot, atom_id=atom_id)
+            for i in range(num_states):
+                structure.rotate(R=states[i], origin=pivot[i], model=current_snapshot, selection=selection)
 
             # Reset the step counter.
             step = 0

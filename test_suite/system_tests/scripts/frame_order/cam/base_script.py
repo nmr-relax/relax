@@ -29,10 +29,10 @@ from os import F_OK, access, sep
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
+from lib.frame_order.variables import MODEL_FREE_ROTOR, MODEL_ROTOR
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.lines import closest_point_ax
 from lib.geometry.vectors import vector_angle_normal
-from specific_analyses.frame_order.variables import MODEL_FREE_ROTOR, MODEL_ROTOR
 from status import Status; status = Status()
 
 
@@ -155,6 +155,10 @@ class Base_script:
         # Set up the Sobol' sequence.
         if self.NUM_INT_PTS != None:
             self._execute_uf(uf_name='frame_order.sobol_setup', max_num=self.NUM_INT_PTS, oversample=1)
+
+        # Set up the SciPy quadratic integration.
+        if hasattr(status, 'flag_quad_int') and status.flag_quad_int:
+            self._execute_uf(uf_name='frame_order.quad_int', flag=True)
 
         # Set the parameter values.
         params = [

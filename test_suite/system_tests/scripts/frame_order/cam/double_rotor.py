@@ -28,8 +28,8 @@ from numpy.linalg import norm
 
 # relax module imports.
 from base_script import Base_script
+from lib.frame_order.variables import MODEL_DOUBLE_ROTOR
 from lib.geometry.rotations import R_to_euler_zyz
-from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR
 
 
 def eigen_system():

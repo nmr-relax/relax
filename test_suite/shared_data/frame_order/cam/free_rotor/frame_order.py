@@ -129,6 +129,7 @@ value.set(param='ave_pos_beta', val=AVE_POS_BETA)
 value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
 value.set(param='axis_alpha', val=alpha_angle(pivot=pivot, com=pipe_centre_of_mass(verbosity=0), axis=AXIS))
 minimise.calculate()
+frame_order.quad_int(flag=False)
 
 # Create the PDB representation of the true state.
 frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', dist=None, compress_type=2, force=True)

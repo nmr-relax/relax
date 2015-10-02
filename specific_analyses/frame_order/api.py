@@ -32,6 +32,7 @@ from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoModelError
+from lib.frame_order.variables import MODEL_ISO_CONE_FREE_ROTOR
 from lib.warnings import RelaxWarning
 from multi import Processor_box
 from pipe_control import pipes
@@ -44,7 +45,6 @@ from specific_analyses.frame_order.data import domain_moving
 from specific_analyses.frame_order.optimisation import Frame_order_grid_command, Frame_order_memo, Frame_order_minimise_command, count_sobol_points, grid_row, store_bc_data, target_fn_data_setup
 from specific_analyses.frame_order.parameter_object import Frame_order_params
 from specific_analyses.frame_order.parameters import assemble_param_vector, linear_constraints, param_num, update_model
-from specific_analyses.frame_order.variables import MODEL_ISO_CONE_FREE_ROTOR
 from target_functions import frame_order
 
 
@@ -129,14 +129,16 @@ class Frame_order(API_base, API_common):
         # Set up the data structures for the target function.
         param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(sim_index=sim_index, verbosity=verbosity, unset_fail=True)
 
-        # The Sobol' integration information.
+        # The numeric integration information.
+        if not hasattr(cdp, 'quad_int'):
+            cdp.quad_int = False
         sobol_max_points, sobol_oversample = None, None
         if hasattr(cdp, 'sobol_max_points'):
             sobol_max_points = cdp.sobol_max_points
             sobol_oversample = cdp.sobol_oversample
 
         # Set up the optimisation target function class.
-        target_fn = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix[0], com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, sobol_max_points=sobol_max_points, sobol_oversample=sobol_oversample)
+        target_fn = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix[0], com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, sobol_max_points=sobol_max_points, sobol_oversample=sobol_oversample, quad_int=cdp.quad_int)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         chi2 = target_fn.func(param_vector)
@@ -148,7 +150,8 @@ class Frame_order(API_base, API_common):
         store_bc_data(A_5D_bc=target_fn.A_5D_bc, pcs_theta=target_fn.pcs_theta, rdc_theta=target_fn.rdc_theta)
 
         # Feedback on the number of integration points used.
-        count_sobol_points(target_fn=target_fn)
+        if not cdp.quad_int:
+            count_sobol_points(target_fn=target_fn)
 
         # Printout.
         print("Chi2:  %s" % chi2)
@@ -492,7 +495,9 @@ class Frame_order(API_base, API_common):
                     warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
                 constraints = False
 
-        # The Sobol' integration information.
+        # The numeric integration information.
+        if not hasattr(cdp, 'quad_int'):
+            cdp.quad_int = False
         sobol_max_points, sobol_oversample = None, None
         if hasattr(cdp, 'sobol_max_points'):
             sobol_max_points = cdp.sobol_max_points
@@ -520,7 +525,7 @@ class Frame_order(API_base, API_common):
             memo = Frame_order_memo(sim_index=sim_index, scaling_matrix=scaling_matrix[0])
 
             # Set up the command object to send to the slave and execute.
-            command = Frame_order_grid_command(points=subdivision, scaling_matrix=scaling_matrix[0], sim_index=sim_index, model=cdp.model, param_vector=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_err=rdc_err, rdc_weight=rdc_weight, rdc_vect=rdc_vect, rdc_const=rdc_const, pcs=pcs, pcs_err=pcs_err, pcs_weight=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, sobol_max_points=sobol_max_points, sobol_oversample=sobol_oversample, verbosity=verbosity)
+            command = Frame_order_grid_command(points=subdivision, scaling_matrix=scaling_matrix[0], sim_index=sim_index, model=cdp.model, param_vector=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_err=rdc_err, rdc_weight=rdc_weight, rdc_vect=rdc_vect, rdc_const=rdc_const, pcs=pcs, pcs_err=pcs_err, pcs_weight=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, sobol_max_points=sobol_max_points, sobol_oversample=sobol_oversample, verbosity=verbosity, quad_int=cdp.quad_int)
 
             # Add the slave command and memo to the processor queue.
             processor.add_to_queue(command, memo)
@@ -603,7 +608,9 @@ class Frame_order(API_base, API_common):
         # Set up the data structures for the target function.
         param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(sim_index=sim_index, verbosity=verbosity, unset_fail=True)
 
-        # The Sobol' integration information.
+        # The numeric integration information.
+        if not hasattr(cdp, 'quad_int'):
+            cdp.quad_int = False
         sobol_max_points, sobol_oversample = None, None
         if hasattr(cdp, 'sobol_max_points'):
             sobol_max_points = cdp.sobol_max_points
@@ -617,7 +624,7 @@ class Frame_order(API_base, API_common):
         memo = Frame_order_memo(sim_index=sim_index, scaling_matrix=scaling_matrix[0])
 
         # Set up the command object to send to the slave and execute.
-        command = Frame_order_minimise_command(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, scaling_matrix=scaling_matrix[0], constraints=constraints, sim_index=sim_index, model=cdp.model, param_vector=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_err=rdc_err, rdc_weight=rdc_weight, rdc_vect=rdc_vect, rdc_const=rdc_const, pcs=pcs, pcs_err=pcs_err, pcs_weight=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, sobol_max_points=sobol_max_points, sobol_oversample=sobol_oversample, verbosity=verbosity)
+        command = Frame_order_minimise_command(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, scaling_matrix=scaling_matrix[0], constraints=constraints, sim_index=sim_index, model=cdp.model, param_vector=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_err=rdc_err, rdc_weight=rdc_weight, rdc_vect=rdc_vect, rdc_const=rdc_const, pcs=pcs, pcs_err=pcs_err, pcs_weight=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, sobol_max_points=sobol_max_points, sobol_oversample=sobol_oversample, verbosity=verbosity, quad_int=cdp.quad_int)
 
         # Add the slave command and memo to the processor queue.
         processor.add_to_queue(command, memo)

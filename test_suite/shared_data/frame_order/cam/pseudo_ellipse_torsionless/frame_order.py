@@ -93,6 +93,7 @@ value.set(param='eigen_gamma', val=EIGEN_GAMMA)
 value.set(param='cone_theta_x', val=CONE_THETA_X)
 value.set(param='cone_theta_y', val=CONE_THETA_Y)
 minimise.calculate()
+frame_order.quad_int(flag=False)
 
 # Create the PDB representation of the true state.
 frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', dist=None, compress_type=2, force=True)

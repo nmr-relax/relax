@@ -23,11 +23,15 @@
 """Module for the handling of Frame Order."""
 
 # Python module imports.
-from math import cos
+from math import cos, pi, sqrt
 from numpy import divide, dot, eye, float64, multiply, swapaxes, tensordot
+try:
+    from scipy.integrate import dblquad
+except ImportError:
+    pass
 
 # relax module imports.
-from lib.frame_order.matrix_ops import pcs_pivot_motion_torsionless_qrint, rotate_daeg
+from lib.frame_order.matrix_ops import pcs_pivot_motion_torsionless_qr_int, pcs_pivot_motion_torsionless_quad_int, rotate_daeg
 
 
 def compile_2nd_matrix_iso_cone_torsionless(matrix, Rx2_eigen, cone_theta):
@@ -76,7 +80,7 @@ def compile_2nd_matrix_iso_cone_torsionless(matrix, Rx2_eigen, cone_theta):
     return rotate_daeg(matrix, Rx2_eigen)
 
 
-def pcs_numeric_int_iso_cone_torsionless_qrint(points=None, max_points=None, theta_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_numeric_qr_int_iso_cone_torsionless(points=None, max_points=None, theta_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Determine the averaged PCS value via numerical integration.
 
     @keyword points:            The Sobol points in the torsion-tilt angle space.
@@ -134,7 +138,7 @@ def pcs_numeric_int_iso_cone_torsionless_qrint(points=None, max_points=None, the
             continue
 
         # Calculate the PCSs for this state.
-        pcs_pivot_motion_torsionless_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        pcs_pivot_motion_torsionless_qr_int(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
 
         # Increment the number of points.
         num += 1
@@ -147,7 +151,7 @@ def pcs_numeric_int_iso_cone_torsionless_qrint(points=None, max_points=None, the
         Ri = swapaxes(Ri, 0, 1)
 
         # Calculate the PCSs for this state.
-        pcs_pivot_motion_torsionless_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        pcs_pivot_motion_torsionless_qr_int(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
 
         # Multiply the constant.
         multiply(c, pcs_theta, pcs_theta)
@@ -156,3 +160,36 @@ def pcs_numeric_int_iso_cone_torsionless_qrint(points=None, max_points=None, the
     else:
         multiply(c, pcs_theta, pcs_theta)
         divide(pcs_theta, float(num), pcs_theta)
+
+
+def pcs_numeric_quad_int_iso_cone_torsionless(theta_max=None, c=None, r_pivot_atom=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None):
+    """Determine the averaged PCS value via numerical integration.
+
+    @keyword theta_max:     The half cone angle.
+    @type theta_max:        float
+    @keyword c:             The PCS constant (without the interatomic distance and in Angstrom units).
+    @type c:                float
+    @keyword r_pivot_atom:  The pivot point to atom vector.
+    @type r_pivot_atom:     numpy rank-1, 3D array
+    @keyword r_ln_pivot:    The lanthanide position to pivot point vector.
+    @type r_ln_pivot:       numpy rank-1, 3D array
+    @keyword A:             The full alignment tensor of the non-moving domain.
+    @type A:                numpy rank-2, 3D array
+    @keyword R_eigen:       The eigenframe rotation matrix.
+    @type R_eigen:          numpy rank-2, 3D array
+    @keyword RT_eigen:      The transpose of the eigenframe rotation matrix (for faster calculations).
+    @type RT_eigen:         numpy rank-2, 3D array
+    @keyword Ri_prime:      The empty rotation matrix for the in-frame isotropic cone motion, used to calculate the PCS for each state i in the numerical integration.
+    @type Ri_prime:         numpy rank-2, 3D array
+    @return:                The averaged PCS value.
+    @rtype:                 float
+    """
+
+    # Perform numerical integration.
+    result = dblquad(pcs_pivot_motion_torsionless_quad_int, -pi, pi, lambda phi: 0.0, lambda phi: theta_max, args=(r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime))
+
+    # The surface area normalisation factor.
+    SA = 2.0 * pi * (1.0 - cos(theta_max))
+
+    # Return the value.
+    return c * result[0] / SA

@@ -40,6 +40,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.arg_check import is_float, is_int, is_str
 from lib.errors import RelaxError
 from lib.frame_order.conversions import convert_axis_alpha_to_spherical
+from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_NONREDUNDANT, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.io import open_write_file
 from lib.order.order_parameters import iso_cone_theta_to_S
@@ -49,7 +50,6 @@ from pipe_control.pipes import get_pipe
 from pipe_control.structure.mass import pipe_centre_of_mass
 from prompt.interpreter import Interpreter
 from specific_analyses.frame_order.data import generate_pivot
-from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_NONREDUNDANT, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from status import Status; status = Status()
 
 

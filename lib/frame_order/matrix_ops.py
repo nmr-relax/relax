@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,8 @@
 """Module for the handling of Frame Order."""
 
 # Python module imports.
-from numpy import dot, inner, sqrt, transpose
+from math import cos, sin
+from numpy import dot, transpose
 from numpy.linalg import norm
 
 # relax module imports.
@@ -89,7 +90,7 @@ def daeg_to_rotational_superoperator(daeg, Rsuper):
     transpose_23(daeg)
 
 
-def pcs_pivot_motion_full_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, Ri=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_pivot_motion_full_qr_int(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, Ri=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Calculate the PCS value after a pivoted motion for the isotropic cone model.
 
     @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
@@ -143,7 +144,70 @@ def pcs_pivot_motion_full_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_piv
             pcs_theta[i, j] += proj * length_i
 
 
-def pcs_pivot_motion_torsionless_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, Ri=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_pivot_motion_full_quad_int(theta_i, phi_i, sigma_i, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime):
+    """Calculate the PCS value after a pivoted motion for the isotropic cone model.
+
+    @param theta_i:             The half cone opening angle (polar angle).
+    @type theta_i:              float
+    @param phi_i:               The cone azimuthal angle.
+    @type phi_i:                float
+    @param sigma_i:             The torsion angle for state i.
+    @type sigma_i:              float
+    @param r_pivot_atom:        The pivot point to atom vector.
+    @type r_pivot_atom:         numpy rank-1, 3D array
+    @param r_ln_pivot:          The lanthanide position to pivot point vector.
+    @type r_ln_pivot:           numpy rank-1, 3D array
+    @param A:                   The full alignment tensor of the non-moving domain.
+    @type A:                    numpy rank-2, 3D array
+    @param R_eigen:             The eigenframe rotation matrix.
+    @type R_eigen:              numpy rank-2, 3D array
+    @param RT_eigen:            The transpose of the eigenframe rotation matrix (for faster calculations).
+    @type RT_eigen:             numpy rank-2, 3D array
+    @param Ri_prime:            The empty rotation matrix for the in-frame isotropic cone motion for state i.
+    @type Ri_prime:             numpy rank-2, 3D array
+    @return:                    The PCS value for the changed position.
+    @rtype:                     float
+    """
+
+    # The rotation matrix.
+    c_theta = cos(theta_i)
+    s_theta = sin(theta_i)
+    c_phi = cos(phi_i)
+    s_phi = sin(phi_i)
+    c_sigma_phi = cos(sigma_i - phi_i)
+    s_sigma_phi = sin(sigma_i - phi_i)
+    c_phi_c_theta = c_phi * c_theta
+    s_phi_c_theta = s_phi * c_theta
+    Ri_prime[0, 0] =  c_phi_c_theta*c_sigma_phi - s_phi*s_sigma_phi
+    Ri_prime[0, 1] = -c_phi_c_theta*s_sigma_phi - s_phi*c_sigma_phi
+    Ri_prime[0, 2] =  c_phi*s_theta
+    Ri_prime[1, 0] =  s_phi_c_theta*c_sigma_phi + c_phi*s_sigma_phi
+    Ri_prime[1, 1] = -s_phi_c_theta*s_sigma_phi + c_phi*c_sigma_phi
+    Ri_prime[1, 2] =  s_phi*s_theta
+    Ri_prime[2, 0] = -s_theta*c_sigma_phi
+    Ri_prime[2, 1] =  s_theta*s_sigma_phi
+    Ri_prime[2, 2] =  c_theta
+
+    # The rotation.
+    R_i = dot(R_eigen, dot(Ri_prime, RT_eigen))
+
+    # Calculate the new vector.
+    vect = dot(R_i, r_pivot_atom) + r_ln_pivot
+
+    # The vector length.
+    length = norm(vect)
+
+    # The projection.
+    proj = dot(vect, dot(A, vect))
+
+    # The PCS (with sine surface normalisation).
+    pcs = proj / length**5 * s_theta
+
+    # Return the PCS value (without the PCS constant).
+    return pcs
+
+
+def pcs_pivot_motion_torsionless_qr_int(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, Ri=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Calculate the PCS value after a pivoted motion for the isotropic cone model.
 
     @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
@@ -195,6 +259,65 @@ def pcs_pivot_motion_torsionless_qrint(full_in_ref_frame=None, r_pivot_atom=None
 
             # The PCS.
             pcs_theta[i, j] += proj * length_i
+
+
+def pcs_pivot_motion_torsionless_quad_int(theta_i, phi_i, r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime):
+    """Calculate the PCS value after a pivoted motion for the isotropic cone model.
+
+    @param theta_i:             The half cone opening angle (polar angle).
+    @type theta_i:              float
+    @param phi_i:               The cone azimuthal angle.
+    @type phi_i:                float
+    @param r_pivot_atom:        The pivot point to atom vector.
+    @type r_pivot_atom:         numpy rank-1, 3D array
+    @param r_ln_pivot:          The lanthanide position to pivot point vector.
+    @type r_ln_pivot:           numpy rank-1, 3D array
+    @param A:                   The full alignment tensor of the non-moving domain.
+    @type A:                    numpy rank-2, 3D array
+    @param R_eigen:             The eigenframe rotation matrix.
+    @type R_eigen:              numpy rank-2, 3D array
+    @param RT_eigen:            The transpose of the eigenframe rotation matrix (for faster calculations).
+    @type RT_eigen:             numpy rank-2, 3D array
+    @param Ri_prime:            The empty rotation matrix for the in-frame isotropic cone motion for state i.
+    @type Ri_prime:             numpy rank-2, 3D array
+    @return:                    The PCS value for the changed position.
+    @rtype:                     float
+    """
+
+    # The rotation matrix.
+    c_theta = cos(theta_i)
+    s_theta = sin(theta_i)
+    c_phi = cos(phi_i)
+    s_phi = sin(phi_i)
+    c_phi_c_theta = c_phi * c_theta
+    s_phi_c_theta = s_phi * c_theta
+    Ri_prime[0, 0] =  c_phi_c_theta*c_phi + s_phi**2
+    Ri_prime[0, 1] =  c_phi_c_theta*s_phi - c_phi*s_phi
+    Ri_prime[0, 2] =  c_phi*s_theta
+    Ri_prime[1, 0] =  s_phi_c_theta*c_phi - c_phi*s_phi
+    Ri_prime[1, 1] =  s_phi_c_theta*s_phi + c_phi**2
+    Ri_prime[1, 2] =  s_phi*s_theta
+    Ri_prime[2, 0] = -s_theta*c_phi
+    Ri_prime[2, 1] = -s_theta*s_phi
+    Ri_prime[2, 2] =  c_theta
+
+    # The rotation.
+    R_i = dot(R_eigen, dot(Ri_prime, RT_eigen))
+
+    # Calculate the new vector.
+    vect = dot(R_i, r_pivot_atom) + r_ln_pivot
+
+    # The vector length.
+    length = norm(vect)
+
+    # The projection.
+    proj = dot(vect, dot(A, vect))
+
+    # The PCS (with sine surface normalisation).
+    pcs = proj / length**5 * s_theta
+
+    # Return the PCS value (without the PCS constant).
+    return pcs
 
 
 def reduce_alignment_tensor(D, A, red_tensor):

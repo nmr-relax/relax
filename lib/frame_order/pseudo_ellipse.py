@@ -29,13 +29,13 @@ from numpy import cos as np_cos
 from numpy import sin as np_sin
 from numpy import sqrt as np_sqrt
 try:
-    from scipy.integrate import quad
+    from scipy.integrate import quad, tplquad
 except ImportError:
     pass
 
 # relax module imports.
 from lib.geometry.pec import pec
-from lib.frame_order.matrix_ops import pcs_pivot_motion_full_qrint, rotate_daeg
+from lib.frame_order.matrix_ops import pcs_pivot_motion_full_qr_int, pcs_pivot_motion_full_quad_int, rotate_daeg
 
 
 def compile_1st_matrix_pseudo_ellipse(matrix, theta_x, theta_y, sigma_max):
@@ -598,7 +598,7 @@ def part_int_daeg2_pseudo_ellipse_88(phi, x, y, smax):
     return cos(tmax)**3
 
 
-def pcs_numeric_int_pseudo_ellipse_qrint(points=None, max_points=None, theta_x=None, theta_y=None, sigma_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_numeric_qr_int_pseudo_ellipse(points=None, max_points=None, theta_x=None, theta_y=None, sigma_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Determine the averaged PCS value via numerical integration.
 
     @keyword points:            The Sobol points in the torsion-tilt angle space.
@@ -671,7 +671,7 @@ def pcs_numeric_int_pseudo_ellipse_qrint(points=None, max_points=None, theta_x=N
             continue
 
         # Calculate the PCSs for this state.
-        pcs_pivot_motion_full_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        pcs_pivot_motion_full_qr_int(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
 
         # Increment the number of points.
         num += 1
@@ -684,7 +684,7 @@ def pcs_numeric_int_pseudo_ellipse_qrint(points=None, max_points=None, theta_x=N
         Ri = swapaxes(Ri, 0, 1)
 
         # Calculate the PCSs for this state.
-        pcs_pivot_motion_full_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        pcs_pivot_motion_full_qr_int(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
 
         # Multiply the constant.
         multiply(c, pcs_theta, pcs_theta)
@@ -693,6 +693,48 @@ def pcs_numeric_int_pseudo_ellipse_qrint(points=None, max_points=None, theta_x=N
     else:
         multiply(c, pcs_theta, pcs_theta)
         divide(pcs_theta, float(num), pcs_theta)
+
+
+def pcs_numeric_quad_int_pseudo_ellipse(theta_x=None, theta_y=None, sigma_max=None, c=None, r_pivot_atom=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None):
+    """Determine the averaged PCS value via numerical integration.
+
+    @keyword theta_x:       The x-axis half cone angle.
+    @type theta_x:          float
+    @keyword theta_y:       The y-axis half cone angle.
+    @type theta_y:          float
+    @keyword sigma_max:     The maximum torsion angle.
+    @type sigma_max:        float
+    @keyword c:             The PCS constant (without the interatomic distance and in Angstrom units).
+    @type c:                float
+    @keyword r_pivot_atom:  The pivot point to atom vector.
+    @type r_pivot_atom:     numpy rank-1, 3D array
+    @keyword r_ln_pivot:    The lanthanide position to pivot point vector.
+    @type r_ln_pivot:       numpy rank-1, 3D array
+    @keyword A:             The full alignment tensor of the non-moving domain.
+    @type A:                numpy rank-2, 3D array
+    @keyword R_eigen:       The eigenframe rotation matrix.
+    @type R_eigen:          numpy rank-2, 3D array
+    @keyword RT_eigen:      The transpose of the eigenframe rotation matrix (for faster calculations).
+    @type RT_eigen:         numpy rank-2, 3D array
+    @keyword Ri_prime:      The empty rotation matrix for the in-frame isotropic cone motion, used to calculate the PCS for each state i in the numerical integration.
+    @type Ri_prime:         numpy rank-2, 3D array
+    @return:                The averaged PCS value.
+    @rtype:                 float
+    """
+
+    def pseudo_ellipse(theta, phi):
+        """The pseudo-ellipse wrapper formula."""
+
+        return tmax_pseudo_ellipse(phi, theta_x, theta_y)
+
+    # Perform numerical integration.
+    result = tplquad(pcs_pivot_motion_full_quad_int, -sigma_max, sigma_max, lambda phi: -pi, lambda phi: pi, lambda theta, phi: 0.0, pseudo_ellipse, args=(r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime))
+
+    # The surface area normalisation factor.
+    SA = 2.0 * sigma_max * pec(theta_x, theta_y)
+
+    # Return the value.
+    return c * result[0] / SA
 
 
 def tmax_pseudo_ellipse(phi, theta_x, theta_y):
