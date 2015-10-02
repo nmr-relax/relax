@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,8 +23,8 @@
 """The frame order system test scripts."""
 
 
-__all__ = ['cam',
-           'model_calcs',
-           'opendx_euler_angle_map',
-           'opt_rigid_rand_rot',
-           'parametric_restriction']
+__all__ = [
+    'cam',
+    'opendx_euler_angle_map',
+    'rigid_test'
+]

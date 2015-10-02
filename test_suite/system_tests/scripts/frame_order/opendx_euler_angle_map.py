@@ -1,113 +1,87 @@
-from math import acos, atan2
-from numpy import array, float64
-from numpy.linalg import norm
+# Python module imports.
+from os import sep
+
+# relax module imports.
+from lib.frame_order.variables import MODEL_RIGID
+from status import Status; status = Status()
+
+
+# Data paths.
+BASE_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'+sep
+DATA_PATH = BASE_PATH + 'rigid'
 
 # Create a data pipe.
 self._execute_uf(uf_name='pipe.create', pipe_name='mapping test', pipe_type='frame order')
 
-# Tensor name lists.
-full_list = ['0 full', '1 full', '2 full', '3 full', '4 full', '5 full', '6 full', '7 full', '8 full', '9 full']
-red_list = ['0 red', '1 red', '2 red', '3 red', '4 red', '5 red', '6 red', '7 red', '8 red', '9 red']
+# Read the structures.
+self._execute_uf(uf_name='structure.read_pdb', file='1J7O_1st_NH.pdb', dir=BASE_PATH, set_mol_name='N-dom')
+self._execute_uf(uf_name='structure.read_pdb', file='1J7P_1st_NH_rot.pdb', dir=BASE_PATH, set_mol_name='C-dom')
 
-# Error.
-error = 1.47411211147e-05
+# Set up the 15N and 1H spins.
+self._execute_uf(uf_name='structure.load_spins', spin_id='@N', ave_pos=False)
+self._execute_uf(uf_name='structure.load_spins', spin_id='@H', ave_pos=False)
+self._execute_uf(uf_name='spin.isotope', isotope='15N', spin_id='@N')
+self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H')
 
-# Load tensor 0.
-self._execute_uf(uf_name='align_tensor.init', tensor='0 full', params=(0.00014221982216882766, -0.00014454300156652134, -0.00070779621164871397, -0.00060161949408277324, 0.00020200800707295083), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='0 red', params=(-0.00011836046893869115, 4.9498248427100159e-05, 0.00022159831770147845, 0.00020686032111030312, -0.00014457684371200341), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='0 full', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.init', tensor='0 red', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='0 full', domain='full')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='0 red', domain='red')
+# Define the magnetic dipole-dipole relaxation interaction.
+self._execute_uf(uf_name='interatom.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
+self._execute_uf(uf_name='interatom.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
+self._execute_uf(uf_name='interatom.unit_vectors')
 
-# Load tensor 1.
-self._execute_uf(uf_name='align_tensor.init', tensor='1 full', params=(-0.00014307694949297205, -0.00039671919293883539, -0.00024724524395487659, 0.00031948292975139144, 0.00018868359624777637), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='1 red', params=(0.00011073308524437112, -4.4908472564489152e-05, -0.00020840952358029579, -0.00019367496447130476, 0.00013375699704776413), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='1 full', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.init', tensor='1 red', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='1 full', domain='full')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='1 red', domain='red')
+# Loop over the alignments.
+ln = ['dy', 'tb', 'tm', 'er']
+for i in range(len(ln)):
+    # Load the RDCs.
+    self._execute_uf(uf_name='rdc.read', align_id=ln[i], file='rdc_%s.txt'%ln[i], dir=DATA_PATH, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
-# Load tensor 2.
-self._execute_uf(uf_name='align_tensor.init', tensor='2 full', params=(-0.00022967898444150887, -0.00027171643813494106, -0.00021961563147411279, 0.00010337393266477703, 0.00029030226175831515), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='2 red', params=(7.630988785196044e-05, -3.0574715776622166e-05, -0.00014400791235828983, -0.0001334408398573033, 9.2148652459171122e-05), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='2 full', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.init', tensor='2 red', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='2 full', domain='full')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='2 red', domain='red')
+    # The PCS.
+    self._execute_uf(uf_name='pcs.read', align_id=ln[i], file='pcs_%s_subset.txt'%ln[i], dir=DATA_PATH, mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
-# Load tensor 3.
-self._execute_uf(uf_name='align_tensor.init', tensor='3 full', params=(0.00043690692358615301, -0.00034379559287467062, -0.00019359695171683388, 0.00030194133983804048, -6.314162250164486e-05), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='3 red', params=(4.2495561808229555e-05, -1.7906536047563611e-05, -8.0120582739316314e-05, -7.5236323367401401e-05, 5.1448157890645449e-05), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='3 full', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.init', tensor='3 red', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='3 full', domain='full')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='3 red', domain='red')
+    # The temperature and field strength.
+    self._execute_uf(uf_name='spectrometer.temperature', id=ln[i], temp=303)
+    self._execute_uf(uf_name='spectrometer.frequency', id=ln[i], frq=900e6)
 
-# Load tensor 4.
-self._execute_uf(uf_name='align_tensor.init', tensor='4 full', params=(-0.00026249527958822807, 0.00073561736796410628, 6.3975419225898133e-05, 6.2788017118057252e-05, 0.00020119758245770023), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='4 red', params=(-3.3582069426662544e-05, 1.4153435527285773e-05, 6.2770118279639972e-05, 5.7554234327991369e-05, -3.9371819354409813e-05), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='4 full', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.init', tensor='4 red', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='4 full', domain='full')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='4 red', domain='red')
+# Load the N-domain tensors (the full tensors).
+self._execute_uf(uf_name='script', file=BASE_PATH + 'tensors.py')
 
-# Load tensor 5.
-self._execute_uf(uf_name='align_tensor.init', tensor='5 full', params=(0.00048180707211229368, -0.00033930112217225942, 0.00011094068795736053, 0.00070350646902989675, 0.00037537667271407197), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='5 red', params=(0.00016006323213470073, -6.6354800338631775e-05, -0.00030263172118385909, -0.00028275128737240135, 0.00019562910358850546), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='5 full', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.init', tensor='5 red', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='5 full', domain='full')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='5 red', domain='red')
+# Define the domains.
+self._execute_uf(uf_name='domain', id='N', spin_id="#N-dom")
+self._execute_uf(uf_name='domain', id='C', spin_id="#C-dom")
 
-# Load tensor 6.
-self._execute_uf(uf_name='align_tensor.init', tensor='6 full', params=(0.00035672066304092451, -0.00026838578790208884, -0.00016936140664230585, 0.00017187371551506447, -0.00030579015509609098), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='6 red', params=(-1.0290161178095163e-06, -1.0740699191825727e-07, 2.585758891502495e-06, 1.8893164051028607e-06, -1.8539717316651138e-06), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='6 full', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.init', tensor='6 red', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='6 full', domain='full')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='6 red', domain='red')
+# The tensor domains and reductions.
+full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
+red =  ['Dy C-dom', 'Tb C-dom', 'Tm C-dom', 'Er C-dom']
+ids =  ['dy', 'tb', 'tm', 'er']
+for i in range(len(full)):
+    # Initialise the reduced tensor.
+    self._execute_uf(uf_name='align_tensor.init', tensor=red[i], align_id=ids[i], params=(0, 0, 0, 0, 0))
 
-# Load tensor 7.
-self._execute_uf(uf_name='align_tensor.init', tensor='7 full', params=(0.00017061308478202151, -0.00076455273118810501, -0.00052048809712606505, 0.00049258369866413392, -0.00013905141064073534), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='7 red', params=(0.0001165645504013804, -4.7668554763300502e-05, -0.00021855196591591533, -0.00020346516952570335, 0.00013983261485280346), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='7 full', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.init', tensor='7 red', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='7 full', domain='full')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='7 red', domain='red')
+    # Set the domain info.
+    self._execute_uf(uf_name='align_tensor.set_domain', tensor=full[i], domain='N')
+    self._execute_uf(uf_name='align_tensor.set_domain', tensor=red[i], domain='C')
 
-# Load tensor 8.
-self._execute_uf(uf_name='align_tensor.init', tensor='8 full', params=(-0.00022193220790426714, -0.00090073235703922686, 0.00050867766236886724, 0.00028215012727179065, 0.0002562167583736733), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='8 red', params=(0.00021523501993235588, -8.8473909338291167e-05, -0.00040513799931943815, -0.00037529600509393239, 0.00026060767644550816), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='8 full', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.init', tensor='8 red', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='8 full', domain='full')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='8 red', domain='red')
+    # Specify which tensor is reduced.
+    self._execute_uf(uf_name='align_tensor.reduction', full_tensor=full[i], red_tensor=red[i])
 
-# Load tensor 9.
-self._execute_uf(uf_name='align_tensor.init', tensor='9 full', params=(0.00037091020965736575, -0.00012230875848954012, -0.00016247713611487416, -0.00042725170061841107, 9.0103851318397519e-05), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='9 red', params=(-8.6383945323905177e-05, 3.5327511625355711e-05, 0.00016146557018549071, 0.00015052498960728088, -0.00010484022540546174), param_types=0)
-self._execute_uf(uf_name='align_tensor.init', tensor='9 full', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.init', tensor='9 red', params=(error, error, error, error, error), param_types=0, errors=True)
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='9 full', domain='full')
-self._execute_uf(uf_name='align_tensor.set_domain', tensor='9 red', domain='red')
-
-# Tensor reductions.
-for i in range(len(full_list)):
-    self._execute_uf(uf_name='align_tensor.reduction', full_tensor=full_list[i], red_tensor=red_list[i])
-
-# Select the Frame Order model.
-self._execute_uf(uf_name='frame_order.select_model', model='iso cone, free rotor')
+# Select the model.
+self._execute_uf(uf_name='frame_order.select_model', model=MODEL_RIGID)
 
 # Set the reference domain.
-self._execute_uf(uf_name='frame_order.ref_domain', ref='full')
+self._execute_uf(uf_name='frame_order.ref_domain', ref='N')
 
-# Set the exact cone axis.
-axis = array([2, 1, 3], float64)
-axis = axis / norm(axis)
-cdp.axis_theta = acos(axis[2])
-cdp.axis_phi = atan2(axis[1], axis[0])
-cdp.cone_theta = 40.0 / 360.0 * 2 * pi
+# Set the initial pivot point - fixed when optimising, unfixed otherwise to check different code paths.
+self._execute_uf(uf_name='frame_order.pivot', pivot=[ 37.254, 0.5, 16.7465], fix=False)
+
+# Set the paramagnetic centre.
+self._execute_uf(uf_name='paramag.centre', pos=[35.934, 12.194, -4.206])
+
+# Set the initial parameter values.
+self._execute_uf(uf_name='value.set', val=-21.269217407269576, param='ave_pos_x', force=True)
+self._execute_uf(uf_name='value.set', val=-3.122610661328414, param='ave_pos_y', force=True)
+self._execute_uf(uf_name='value.set', val=-2.400652421655998, param='ave_pos_z', force=True)
+self._execute_uf(uf_name='value.set', val=5.623469076122531, param='ave_pos_alpha', force=True)
+self._execute_uf(uf_name='value.set', val=0.435439405668396, param='ave_pos_beta', force=True)
+self._execute_uf(uf_name='value.set', val=5.081265529106499, param='ave_pos_gamma', force=True)
 
 # Map the Euler angle space.
 self._execute_uf(uf_name='dx.map', params=['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma'], lower=[0, 0, 0], upper=[2*pi, 2*pi, 2*pi], inc=3, file_prefix='devnull', point_file='devnull')

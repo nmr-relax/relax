@@ -36,7 +36,7 @@ from lib.compat import norm
 from lib.errors import RelaxError
 from lib.float import isNaN
 from lib.frame_order.conversions import create_rotor_axis_alpha
-from lib.frame_order.double_rotor import compile_2nd_matrix_double_rotor, pcs_numeric_qr_int_double_rotor
+from lib.frame_order.double_rotor import compile_2nd_matrix_double_rotor, pcs_numeric_qr_int_double_rotor, pcs_numeric_quad_int_double_rotor
 from lib.frame_order.free_rotor import compile_2nd_matrix_free_rotor
 from lib.frame_order.iso_cone import compile_2nd_matrix_iso_cone, pcs_numeric_quad_int_iso_cone, pcs_numeric_qr_int_iso_cone
 from lib.frame_order.iso_cone_free_rotor import compile_2nd_matrix_iso_cone_free_rotor
@@ -365,6 +365,7 @@ class Frame_order:
         self.R_eigen_2 = zeros((3, 3), float64)
         self.R_ave = zeros((3, 3), float64)
         self.Ri_prime = zeros((3, 3), float64)
+        self.Ri2_prime = zeros((3, 3), float64)
         self.tensor_3D = zeros((3, 3), float64)
 
         # The cone axis storage and molecular frame z-axis.
@@ -457,6 +458,98 @@ class Frame_order:
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for align_index in range(self.num_align):
+                chi2_sum = chi2_sum + chi2(self.pcs[align_index], self.pcs_theta[align_index], self.pcs_error[align_index])
+
+        # Return the chi-squared value.
+        return chi2_sum
+
+
+    def func_double_rotor_quad_int(self, params):
+        """SciPy quadratic integration target function for the double rotor model.
+
+        This function optimises the model parameters using the RDC and PCS base data.  Quasi-random, Sobol' sequence based, numerical integration is used for the PCS.
+
+
+        @param params:  The vector of parameter values.  These can include {pivot_x, pivot_y, pivot_z, pivot_disp, ave_pos_x, ave_pos_y, ave_pos_z, ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_sigma_max, cone_sigma_max_2}.
+        @type params:   list of float
+        @return:        The chi-squared or SSE value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameters.
+        if self.pivot_opt:
+            pivot2 = outer(self.spin_ones_struct, params[:3])
+            param_disp = params[3]
+            self._translation_vector = params[4:7]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, sigma_max, sigma_max_2 = params[7:]
+        else:
+            pivot2 = self.pivot
+            param_disp = params[0]
+            self._translation_vector = params[1:4]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, sigma_max, sigma_max_2 = params[4:]
+
+        # Reconstruct the full eigenframe of the motion.
+        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
+
+        # The Kronecker product of the eigenframe.
+        Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
+
+        # Generate the 2nd degree Frame Order super matrix.
+        frame_order_2nd = compile_2nd_matrix_double_rotor(self.frame_order_2nd, Rx2_eigen, sigma_max, sigma_max_2)
+
+        # The average frame rotation matrix (and reduce and rotate the tensors).
+        self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
+
+        # Pre-transpose matrices for faster calculations.
+        RT_eigen = transpose(self.R_eigen)
+        RT_ave = transpose(self.R_ave)
+
+        # Pre-calculate all the necessary vectors.
+        if self.pcs_flag:
+            # The 1st pivot point (sum of the 2nd pivot and the displacement along the eigenframe z-axis).
+            pivot = pivot2 + param_disp * self.R_eigen[:, 2]
+
+            # Calculate the vectors.
+            self.calc_vectors(pivot=pivot, pivot2=pivot2, R_ave=self.R_ave, RT_ave=RT_ave)
+
+        # Initial chi-squared (or SSE) value.
+        chi2_sum = 0.0
+
+        # RDCs.
+        if self.rdc_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
+                # Loop over the RDCs.
+                for j in range(self.num_interatom):
+                    # The back calculated RDC.
+                    if not self.missing_rdc[align_index, j]:
+                        self.rdc_theta[align_index, j] = rdc_tensor(self.dip_const[j], self.rdc_vect[j], self.A_3D_bc[align_index])
+
+                # Calculate and sum the single alignment chi-squared value (for the RDC).
+                chi2_sum = chi2_sum + chi2(self.rdc[align_index], self.rdc_theta[align_index], self.rdc_error[align_index])
+
+        # PCS via numerical integration.
+        if self.pcs_flag:
+            # Loop over each alignment.
+            for align_index in range(self.num_align):
+                # Loop over the PCSs.
+                for j in range(self.num_spins):
+                    # The back calculated PCS.
+                    if not self.missing_pcs[align_index, j]:
+                        # Forwards and reverse rotations.
+                        if self.full_in_ref_frame[align_index]:
+                            r_pivot_atom = self.r_pivot_atom[j]
+                        else:
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
+
+                        # The numerical integration.
+                        self.pcs_theta[align_index, j] = pcs_numeric_quad_int_double_rotor(sigma_max=sigma_max, sigma_max_2=sigma_max_2, c=self.pcs_const[align_index, j], r_pivot_atom=r_pivot_atom, r_ln_pivot=self.r_ln_pivot[0], r_inter_pivot=self.r_inter_pivot[j], A=self.A_3D[align_index], R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, Ri2_prime=self.Ri2_prime)
+
+                # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[align_index], self.pcs_theta[align_index], self.pcs_error[align_index])
 
         # Return the chi-squared value.

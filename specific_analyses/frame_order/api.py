@@ -138,7 +138,7 @@ class Frame_order(API_base, API_common):
             sobol_oversample = cdp.sobol_oversample
 
         # Set up the optimisation target function class.
-        target_fn = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix[0], com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, sobol_max_points=sobol_max_points, sobol_oversample=sobol_oversample, quad_int=cdp.quad_int)
+        target_fn = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, sobol_max_points=sobol_max_points, sobol_oversample=sobol_oversample, quad_int=cdp.quad_int)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         chi2 = target_fn.func(param_vector)
@@ -151,10 +151,11 @@ class Frame_order(API_base, API_common):
 
         # Feedback on the number of integration points used.
         if not cdp.quad_int:
-            count_sobol_points(target_fn=target_fn)
+            count_sobol_points(target_fn=target_fn, verbosity=verbosity)
 
         # Printout.
-        print("Chi2:  %s" % chi2)
+        if verbosity:
+            print("Chi2:  %s" % chi2)
 
 
     def constraint_algorithm(self):
