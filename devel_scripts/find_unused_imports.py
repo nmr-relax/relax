@@ -28,10 +28,19 @@ for root, dirs, files in walk(getcwd()):
         cmd = 'pylint %s' % path
 
         # Execute.
+        print cmd
         pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
         # Close the pipe.
         pipe.stdin.close()
+
+        # Check for errors.
+        err = False
+        for line in pipe.stderr.readlines():
+            sys.stdout.write(line)
+            err = True
+        if err:
+            sys.exit()
 
         # Only display the import information.
         title_flag = True
