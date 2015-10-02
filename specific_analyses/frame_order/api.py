@@ -25,6 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
+from minfx.grid import grid_split_array
 from numpy import array, dot, float64, zeros
 from warnings import warn
 
@@ -40,7 +41,7 @@ from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.frame_order.checks import check_pivot
 from specific_analyses.frame_order.data import domain_moving
-from specific_analyses.frame_order.optimisation import Frame_order_memo, Frame_order_minimise_command, grid_row, store_bc_data, target_fn_setup
+from specific_analyses.frame_order.optimisation import Frame_order_grid_command, Frame_order_memo, Frame_order_minimise_command, grid_row, store_bc_data, target_fn_setup
 from specific_analyses.frame_order.parameter_object import Frame_order_params
 from specific_analyses.frame_order.parameters import assemble_param_vector, linear_constraints, param_num, update_model
 from specific_analyses.frame_order.variables import MODEL_ISO_CONE_FREE_ROTOR
@@ -484,23 +485,31 @@ class Frame_order(API_base, API_common):
                     warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
                 constraints = False
 
-        # Eliminate all points outside of constraints (useful for the pseudo-ellipse models).
-        if constraints:
-            # Construct a new point array.
-            new_pts = []
-            for i in range(total_pts):
-                # Calculate A.x - b.
-                ci = dot(A, pts[i]) - b
 
-                # Only add the point if all constraints are satisfied.
-                if min(ci) >= 0.0:
-                    new_pts.append(pts[i])
+        # Printout.
+        print("Parallelised grid search.")
 
-            # Convert to a numpy array.
-            pts = array(new_pts)
+        # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+        processor_box = Processor_box() 
+        processor = processor_box.processor
 
-        # Minimisation.
-        self.minimise(min_algor='grid', min_options=pts, scaling_matrix=scaling_matrix, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+        # Loop over each grid subdivision, with all points violating constraints being eliminated.
+        verbosity_init = True
+        for subdivision in grid_split_array(divisions=processor.processor_size(), points=pts, A=A, b=b):
+            # Set up the memo for storage on the master.
+            memo = Frame_order_memo(sim_index=sim_index, scaling=True, scaling_matrix=scaling_matrix)
+
+            # Set up the command object to send to the slave and execute.
+            command = Frame_order_grid_command(points=subdivision, scaling_matrix=scaling_matrix, sim_index=sim_index, verbosity=verbosity, verbosity_init=verbosity_init)
+
+            # Add the slave command and memo to the processor queue.
+            processor.add_to_queue(command, memo)
+
+            # Turn off the verbosity_init flag so that the target_fn_setup() call in Frame_order_grid_command only prints out the information once for the first subdivision.
+            verbosity_init = False
+
+        # Execute the queued elements.
+        processor.run_queue()
 
 
     def map_bounds(self, param, spin_id=None):
@@ -570,7 +579,7 @@ class Frame_order(API_base, API_common):
         algor = min_algor
         if min_algor == 'Log barrier':
             algor = min_options[0]
-        allowed = ['grid', 'simplex']
+        allowed = ['simplex']
         if algor not in allowed:
             raise RelaxError("Only the 'simplex' minimisation algorithm is supported for the relaxation dispersion analysis as function gradients are not implemented.")
 

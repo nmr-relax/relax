@@ -705,25 +705,28 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling_matrix=None):
     return param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt
 
 
-def unpack_opt_results(results, scaling_matrix=None, sim_index=None):
+def unpack_opt_results(param_vector=None, func=None, iter_count=None, f_count=None, g_count=None, h_count=None, warning=None, scaling=False, scaling_matrix=None, sim_index=None):
     """Unpack and store the Frame Order optimisation results.
 
-    @param results:             The results tuple returned by the minfx generic_minimise() function.
-    @type results:              tuple
+    @keyword param_vector:      The model-free parameter vector.
+    @type param_vector:         numpy array
+    @keyword func:              The optimised chi-squared value.
+    @type func:                 float
+    @keyword iter_count:        The number of optimisation steps required to find the minimum.
+    @type iter_count:           int
+    @keyword f_count:           The function count.
+    @type f_count:              int
+    @keyword g_count:           The gradient count.
+    @type g_count:              int
+    @keyword h_count:           The Hessian count.
+    @type h_count:              int
+    @keyword warning:           Any optimisation warnings.
+    @type warning:              str or None
     @keyword scaling_matrix:    The diagonal and square scaling matrices.
     @type scaling_matrix:       numpy rank-2, float64 array or None
     @keyword sim_index:         The index of the simulation to optimise.  This should be None for normal optimisation.
     @type sim_index:            None or int
      """
-
-    # Disassemble the results.
-    if len(results) == 4:    # Grid search.
-        param_vector, func, iter_count, warning = results
-        f_count = iter_count
-        g_count = 0.0
-        h_count = 0.0
-    else:
-        param_vector, func, iter_count, f_count, g_count, h_count, warning = results
 
     # Catch infinite chi-squared values.
     if isInf(func):
@@ -798,6 +801,53 @@ def unpack_opt_results(results, scaling_matrix=None, sim_index=None):
         cdp.g_count = g_count
         cdp.h_count = h_count
         cdp.warning = warning
+
+
+
+class Frame_order_grid_command(Slave_command):
+    """Command class for relaxation dispersion optimisation on the slave processor."""
+
+    def __init__(self, points=None, scaling_matrix=None, sim_index=None,verbosity=None, verbosity_init=False):
+        """Initialise the base class, storing all the master data to be sent to the slave processor.
+
+        This method is run on the master processor whereas the run() method is run on the slave processor.
+
+        @keyword points:            The points of the grid search subdivision to search over.
+        @type points:               numpy rank-2 array
+        @keyword scaling_matrix:    The diagonal, square scaling matrix.
+        @type scaling_matrix:       numpy diagonal matrix
+        @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:            None or int
+        @keyword verbosity:         The verbosity level.  This is used by the result command returned to the master for printouts.
+        @type verbosity:            int
+        @keyword verbosity_init:    The verbosity flag for the target_fn_setup() call so that it only prints out the information once for the first subdivision.
+        @type verbosity_init:       bool
+        """
+
+        # Store some arguments.
+        self.points = points
+        self.verbosity = verbosity
+        self.scaling_matrix = scaling_matrix
+
+        # Alias some data to be sent to the slave.
+        self.model = cdp.model
+        self.num_int_pts = cdp.num_int_pts
+
+        # Set up and store the data structures for the target function.
+        self.param_vector, self.full_tensors, self.full_in_ref_frame, self.rdcs, self.rdc_err, self.rdc_weight, self.rdc_vect, self.rdc_const, self.pcs, self.pcs_err, self.pcs_weight, self.atomic_pos, self.temp, self.frq, self.paramag_centre, self.com, self.ave_pos_pivot, self.pivot, self.pivot_opt = target_fn_setup(sim_index=sim_index, verbosity=verbosity_init)
+
+
+    def run(self, processor, completed):
+        """Set up and perform the optimisation."""
+
+        # Set up the optimisation target function class.
+        target_fn = Frame_order(model=self.model, init_params=self.param_vector, full_tensors=self.full_tensors, full_in_ref_frame=self.full_in_ref_frame, rdcs=self.rdcs, rdc_errors=self.rdc_err, rdc_weights=self.rdc_weight, rdc_vect=self.rdc_vect, dip_const=self.rdc_const, pcs=self.pcs, pcs_errors=self.pcs_err, pcs_weights=self.pcs_weight, atomic_pos=self.atomic_pos, temp=self.temp, frq=self.frq, paramag_centre=self.paramag_centre, scaling_matrix=self.scaling_matrix, com=self.com, ave_pos_pivot=self.ave_pos_pivot, pivot=self.pivot, pivot_opt=self.pivot_opt, num_int_pts=self.num_int_pts)
+
+        # Grid search.
+        results = grid_point_array(func=target_fn.func, args=(), points=self.points, verbosity=self.verbosity)
+
+        # Create the result command object on the slave to send back to the master.
+        processor.return_object(Frame_order_result_command(processor=processor, memo_id=self.memo_id, results=results, A_5D_bc=target_fn.A_5D_bc, pcs_theta=target_fn.pcs_theta, rdc_theta=target_fn.rdc_theta, completed=completed))
 
 
 
@@ -901,13 +951,8 @@ class Frame_order_minimise_command(Slave_command):
         # Set up the optimisation target function class.
         target_fn = Frame_order(model=self.model, init_params=self.param_vector, full_tensors=self.full_tensors, full_in_ref_frame=self.full_in_ref_frame, rdcs=self.rdcs, rdc_errors=self.rdc_err, rdc_weights=self.rdc_weight, rdc_vect=self.rdc_vect, dip_const=self.rdc_const, pcs=self.pcs, pcs_errors=self.pcs_err, pcs_weights=self.pcs_weight, atomic_pos=self.atomic_pos, temp=self.temp, frq=self.frq, paramag_centre=self.paramag_centre, scaling_matrix=self.scaling_matrix, com=self.com, ave_pos_pivot=self.ave_pos_pivot, pivot=self.pivot, pivot_opt=self.pivot_opt, num_int_pts=self.num_int_pts)
 
-        # Grid search.
-        if search('^[Gg]rid', self.min_algor):
-            results = grid_point_array(func=target_fn.func, args=(), points=self.min_options, verbosity=self.verbosity)
-
         # Minimisation.
-        else:
-            results = generic_minimise(func=target_fn.func, args=(), x0=self.param_vector, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.max_iterations, A=self.A, b=self.b, full_output=True, print_flag=self.verbosity)
+        results = generic_minimise(func=target_fn.func, args=(), x0=self.param_vector, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.max_iterations, A=self.A, b=self.b, full_output=True, print_flag=self.verbosity)
 
         # Create the result command object on the slave to send back to the master.
         processor.return_object(Frame_order_result_command(processor=processor, memo_id=self.memo_id, results=results, A_5D_bc=target_fn.A_5D_bc, pcs_theta=target_fn.pcs_theta, rdc_theta=target_fn.rdc_theta, completed=completed))
@@ -965,8 +1010,32 @@ class Frame_order_result_command(Result_command):
         if memo.sim_index != None:
             print("Simulation %i" % (memo.sim_index+1))
 
+        # Disassemble the results.
+        if len(self.results) == 4:    # Grid search.
+            param_vector, func, iter_count, warning = self.results
+            f_count = iter_count
+            g_count = 0.0
+            h_count = 0.0
+        else:
+            param_vector, func, iter_count, f_count, g_count, h_count, warning = self.results
+
+        # Check if the chi-squared value is lower - required for a parallelised grid search to work.
+        if memo.sim_index == None:
+            if hasattr(cdp, 'chi2') and cdp.chi2 != None:
+                # No improvement, so exit the function.
+                if func > cdp.chi2:
+                    print("Discarding the optimisation results, the optimised chi-squared value is higher than the current value (%s > %s)." % (func, cdp.chi2))
+                    return
+
+                # New minimum.
+                print("Storing the optimisation results, the optimised chi-squared value is lower than the current value (%s < %s)." % (func, cdp.chi2))
+
+            # Just print something to avoid user confusion in parallelised grid searches.
+            else:
+                print("Storing the optimisation results, no optimised values currently exist.")
+
         # Unpack the results.
-        unpack_opt_results(self.results, memo.scaling, memo.scaling_matrix, memo.sim_index)
+        unpack_opt_results(param_vector, func, iter_count, f_count, g_count, h_count, warning, memo.scaling, memo.scaling_matrix, memo.sim_index)
 
         # Store the back-calculated data.
         store_bc_data(A_5D_bc=self.A_5D_bc, pcs_theta=self.pcs_theta, rdc_theta=self.rdc_theta)
