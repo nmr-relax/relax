@@ -16,14 +16,14 @@ def eigen_system():
     C_COM = array([26.837, -12.379, 28.342], float64)
 
     # The Z-axis as the inter CoM vector.
-    z_axis = N_COM - C_COM
+    z_axis = C_COM - N_COM
     disp = norm(z_axis)
     z_axis /= disp
 
     # The eigenframe (partly from the system_create.log file).
     eigensystem = transpose(array([
-        [-0.487095774865268, -0.60362450312215, -0.63116968030708 ],
         [ -7.778375610280605e-01, 6.284649244351433e-01, -7.532653237683726e-04],
+        [-0.487095774865268, -0.60362450312215, -0.63116968030708 ],
         z_axis
     ], float64))
 
@@ -35,11 +35,11 @@ def eigen_system():
 
 
 # The real parameter values.
-AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -20.859750185691549,   -2.450606987447843,   -2.191854570352916]
-AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [5.623468683852550, 0.435439748282942, 5.081265879629926]
+AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -21.269217407269576,   -3.122610661328414,   -2.400652421655998]
+AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [5.623469076122531, 0.435439405668396, 5.081265529106499]
 EIGEN_ALPHA, EIGEN_BETA, EIGEN_GAMMA, PIVOT_DISP = eigen_system()
-CONE_SIGMA_MAX = 10.5 * 2.0 * pi / 360.0  # 0.1832595714594046
-CONE_SIGMA_MAX_2 = 11.5 * 2.0 * pi / 360.0   # 0.20071286397934787
+CONE_SIGMA_MAX = 11.5 / 2.0 * 2.0 * pi / 360.0  # 0.20071286397934787
+CONE_SIGMA_MAX_2 = 10.5 / 2.0 * 2.0 * pi / 360.0   # 0.1832595714594046
 
 # Create the data pipe.
 pipe.create(pipe_name='frame order', pipe_type='frame order')
@@ -63,7 +63,7 @@ interatom.unit_vectors()
 ln = ['dy', 'tb', 'tm', 'er']
 for i in range(len(ln)):
     # Load the RDCs.
-    #rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
+    rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
     # The PCS.
     pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
@@ -76,8 +76,8 @@ for i in range(len(ln)):
 script('../tensors.py')
 
 # Define the domains.
-domain(id='N', spin_id=":1-78")
-domain(id='C', spin_id=":80-148")
+domain(id='N', spin_id="#N-dom")
+domain(id='C', spin_id="#C-dom")
 
 # The tensor domains and reductions.
 full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
@@ -101,7 +101,7 @@ frame_order.select_model('double rotor')
 frame_order.ref_domain('N')
 
 # Set the initial pivot point.
-pivot = array([ 26.837, -12.379, 28.342])
+pivot = array([41.739, 6.03, -0.764])
 frame_order.pivot(pivot, fix=True)
 
 # Set the paramagnetic centre.
@@ -126,13 +126,16 @@ calc()
 # Create the PDB representation of the true state.
 frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', dist=None, compress_type=2, force=True)
 
+# Save the state.
+state.save('frame_order_true', force=True)
+
 # Grid search (low quality for speed).
-frame_order.num_int_pts(num=100)
-grid_search(inc=[None, None, None, None, None, None, None, 7, 7, 7, 7, 7])
+frame_order.num_int_pts(num=200)
+grid_search(inc=[21, None, None, None, None, None, None, 7, 7, 7, 7, 7])
 
 # Iterative optimisation with increasing precision.
-num_int_pts = [100, 1000, 10000, 50000]
-func_tol = [1e-2, 1e-3, 5e-3, 1e-4]
+num_int_pts = [1000, 10000, 50000]
+func_tol = [1e-2, 5e-3, 1e-4]
 for i in range(len(num_int_pts)):
     frame_order.num_int_pts(num=num_int_pts[i])
     minimise('simplex', func_tol=func_tol[i])
@@ -140,16 +143,19 @@ for i in range(len(num_int_pts)):
 # Store the result.
 frame_order.pdb_model(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', dist=None, compress_type=2, force=True)
 
+# Save the state.
+state.save('frame_order_fixed_piv', force=True)
+
 # Optimise the pivot and model, again iterating with increasing precision.
 frame_order.pivot(pivot, fix=False)
-num_int_pts = [100, 1000, 10000, 50000]
-func_tol = [1e-2, 1e-3, 5e-3, 1e-4]
+num_int_pts = [1000, 10000, 50000]
+func_tol = [1e-2, 5e-3, 1e-4]
 for i in range(len(num_int_pts)):
     frame_order.num_int_pts(num=num_int_pts[i])
     minimise('simplex', func_tol=func_tol[i])
 
 # Test Monte Carlo simulations (at low quality for speed).
-frame_order.num_int_pts(num=100)
+frame_order.num_int_pts(num=10000)
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
@@ -161,8 +167,6 @@ monte_carlo.error_analysis()
 frame_order.pdb_model(ave_pos='ave_pos', rep='frame_order', dist=None, compress_type=2, force=True)
 
 # PyMOL.
-pymol.view()
-pymol.command('show spheres')
 pymol.frame_order(ave_pos='ave_pos_true', rep='frame_order_true', dist=None)
 pymol.frame_order(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', dist=None)
 pymol.frame_order(ave_pos='ave_pos', rep='frame_order', dist=None)

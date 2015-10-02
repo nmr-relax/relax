@@ -22,19 +22,12 @@
 # Module docstring.
 """The frame_order user function definitions."""
 
-# Python module imports.
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_SAVE
-else:
-    FD_SAVE = -1
-
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from specific_analyses.frame_order.uf import num_int_pts, pdb_model, pivot, ref_domain, select_model
+from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
-from user_functions.wildcards import WILDCARD_STRUCT_PDB_ALL
 
 
 # The user function class.
@@ -242,28 +235,28 @@ uf.add_keyarg(
     desc = "The name of the preset Frame Order model.",
     wiz_element_type = "combo",
     wiz_combo_choices = [
-        "Free rotor model",
         "Rigid model",
         "Rotor model",
-        "Free rotor isotropic cone",
+        "Free rotor model",
         "Torsionless isotropic cone",
         "Isotropic cone",
-        "Free rotor pseudo-ellipse",
+        "Free rotor isotropic cone",
         "Torsionless pseudo-ellipse",
         "Pseudo-ellipse",
+        "Free rotor pseudo-ellipse",
         "Double rotor"
     ],
     wiz_combo_data = [
-        "free rotor",
-        "rigid",
-        "rotor",
-        "iso cone, free rotor",
-        "iso cone, torsionless",
-        "iso cone",
-        "pseudo-ellipse, free rotor",
-        "pseudo-ellipse, torsionless",
-        "pseudo-ellipse",
-        "double rotor"
+        MODEL_RIGID,
+        MODEL_ROTOR,
+        MODEL_FREE_ROTOR,
+        MODEL_ISO_CONE_TORSIONLESS,
+        MODEL_ISO_CONE,
+        MODEL_ISO_CONE_FREE_ROTOR,
+        MODEL_PSEUDO_ELLIPSE_TORSIONLESS,
+        MODEL_PSEUDO_ELLIPSE,
+        MODEL_PSEUDO_ELLIPSE_FREE_ROTOR,
+        MODEL_DOUBLE_ROTOR
     ],
     wiz_read_only = True,
 )
@@ -274,20 +267,20 @@ uf.desc[-1].add_list_element("The average domain position.  This includes the pa
 uf.desc[-1].add_list_element("The frame order eigenframe.  This includes the parameters eigen_alpha, eigen_beta, and eigen_gamma.  These Euler angles define the major modes of motion.  The cone central axis is defined as the z-axis.  The pseudo-elliptic cone x and y-axes are defined as the x and y-axes of the eigenframe.")
 uf.desc[-1].add_list_element("The cone parameters.  These are defined as the tilt-torsion angles cone_theta_x, cone_theta_y, and cone_sigma_max.  The cone_theta_x and cone_theta_y parameters define the two cone opening angles of the pseudo-ellipse.  The amount of domain torsion is defined as the average domain position, plus and minus cone_sigma_max.  The isotropic cones are defined by setting cone_theta_x = cone_theta_y and converting the single parameter into a 2nd rank order parameter.")
 uf.desc[-1].add_paragraph("The list of available models are:")
-uf.desc[-1].add_item_list_element("'pseudo-ellipse'", "The pseudo-elliptic cone model.  This is the full model consisting of the parameters ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, and cone_sigma_max.")
-uf.desc[-1].add_item_list_element("'pseudo-ellipse, torsionless'", "The pseudo-elliptic cone with the torsion angle cone_sigma_max set to zero.")
-uf.desc[-1].add_item_list_element("'pseudo-ellipse, free rotor'", "The pseudo-elliptic cone with no torsion angle restriction.")
-uf.desc[-1].add_item_list_element("'iso cone'", "The isotropic cone model.  The cone is defined by a single order parameter s1 which is related to the single cone opening angle cone_theta_x = cone_theta_y.  Due to rotational symmetry about the cone axis, the average position alpha Euler angle ave_pos_alpha is dropped from the model.  The symmetry also collapses the eigenframe to a single z-axis defined by the parameters axis_theta and axis_phi.")
-uf.desc[-1].add_item_list_element("'iso cone, torsionless'", "The isotropic cone model with the torsion angle cone_sigma_max set to zero.")
-uf.desc[-1].add_item_list_element("'iso cone, free rotor'", "The isotropic cone model with no torsion angle restriction.")
-uf.desc[-1].add_item_list_element("'rotor'", "The only motion is a rotation about the cone axis restricted by the torsion angle cone_sigma_max.")
-uf.desc[-1].add_item_list_element("'rigid'", "No domain motions.")
-uf.desc[-1].add_item_list_element("'free rotor'", "The only motion is free rotation about the cone axis.")
-uf.desc[-1].add_item_list_element("'double rotor'", "Restricted motions about two independent rotor axes.")
+uf.desc[-1].add_item_list_element(repr(MODEL_PSEUDO_ELLIPSE), "The pseudo-elliptic cone model.  This is the full model consisting of the parameters ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, and cone_sigma_max.")
+uf.desc[-1].add_item_list_element(repr(MODEL_PSEUDO_ELLIPSE_TORSIONLESS), "The pseudo-elliptic cone with the torsion angle cone_sigma_max set to zero.")
+uf.desc[-1].add_item_list_element(repr(MODEL_PSEUDO_ELLIPSE_FREE_ROTOR), "The pseudo-elliptic cone with no torsion angle restriction.")
+uf.desc[-1].add_item_list_element(repr(MODEL_ISO_CONE), "The isotropic cone model.  The cone is defined by a single order parameter s1 which is related to the single cone opening angle cone_theta_x = cone_theta_y.  Due to rotational symmetry about the cone axis, the average position alpha Euler angle ave_pos_alpha is dropped from the model.  The symmetry also collapses the eigenframe to a single z-axis defined by the parameters axis_theta and axis_phi.")
+uf.desc[-1].add_item_list_element(repr(MODEL_ISO_CONE_TORSIONLESS), "The isotropic cone model with the torsion angle cone_sigma_max set to zero.")
+uf.desc[-1].add_item_list_element(repr(MODEL_ISO_CONE_FREE_ROTOR), "The isotropic cone model with no torsion angle restriction.")
+uf.desc[-1].add_item_list_element(repr(MODEL_ROTOR), "The only motion is a rotation about the cone axis restricted by the torsion angle cone_sigma_max.")
+uf.desc[-1].add_item_list_element(repr(MODEL_RIGID), "No domain motions.")
+uf.desc[-1].add_item_list_element(repr(MODEL_FREE_ROTOR), "The only motion is free rotation about the cone axis.")
+uf.desc[-1].add_item_list_element(repr(MODEL_DOUBLE_ROTOR), "Restricted motions about two independent rotor axes.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To select the isotropic cone model, type:")
-uf.desc[-1].add_prompt("relax> frame_order.select_model(model='iso cone')")
+uf.desc[-1].add_prompt("relax> frame_order.select_model(model='%s')" % MODEL_ISO_CONE)
 uf.backend = select_model
 uf.menu_text = "&select_model"
 uf.gui_icon = "oxygen.actions.list-add"

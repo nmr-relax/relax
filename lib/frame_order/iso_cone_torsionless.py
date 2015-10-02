@@ -23,7 +23,7 @@
 """Module for the handling of Frame Order."""
 
 # Python module imports.
-from math import cos, sqrt
+from math import cos
 from numpy import divide, dot, eye, float64, multiply, swapaxes, tensordot
 
 # relax module imports.

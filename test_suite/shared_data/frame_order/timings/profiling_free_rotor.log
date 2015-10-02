@@ -1,0 +1,2052 @@
+
+
+
+                                  relax repository checkout r24495
+                svn+ssh://bugman@svn.gna.org/svn/relax/branches/frame_order_cleanup
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2014 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'profiling_free_rotor.py'
+----------------------------------------------------------------------------------------------------
+"""Script for profiling the pseudo-ellipse model.
+
+The user functions below were obtained by running:
+
+$ ./relax -sd Frame_order.test_cam_free_rotor | grep "relax>" > log
+
+To profile, set the profiling flag in the 'relax' file.
+"""
+
+# Python module imports.
+from numpy import array, float64
+
+# relax module imports.
+from specific_analyses.frame_order.optimisation import target_fn_setup
+
+
+# All the user functions from the Frame_order.test_cam_pseudo_ellipse system test until the first target function call.
+pipe.create(pipe_name='frame order', pipe_type='frame order', bundle=None)
+structure.read_pdb(file='1J7O_1st_NH.pdb', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/', read_mol=None, set_mol_name='N-dom', read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False)
+structure.read_pdb(file='1J7P_1st_NH_rot.pdb', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/', read_mol=None, set_mol_name='C-dom', read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False)
+structure.load_spins(spin_id='@N', mol_name_target=None, ave_pos=False)
+structure.load_spins(spin_id='@H', mol_name_target=None, ave_pos=False)
+spin.isotope(isotope='15N', spin_id='@N', force=False)
+spin.isotope(isotope='1H', spin_id='@H', force=False)
+interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True, pipe=None)
+interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.041e-10, unit='meter')
+interatom.unit_vectors(ave=True)
+rdc.read(align_id='dy', file='rdc_dy.txt', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor', data_type='D', spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4, sep=None, neg_g_corr=False, absolute=False)
+pcs.read(align_id='dy', file='pcs_dy_subset.txt', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor', spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=None, spin_num_col=None, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+spectrometer.temperature(id='dy', temp=303)
+spectrometer.frequency(id='dy', frq=900000000.0, units='Hz')
+rdc.read(align_id='tb', file='rdc_tb.txt', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor', data_type='D', spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4, sep=None, neg_g_corr=False, absolute=False)
+pcs.read(align_id='tb', file='pcs_tb_subset.txt', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor', spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=None, spin_num_col=None, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+spectrometer.temperature(id='tb', temp=303)
+spectrometer.frequency(id='tb', frq=900000000.0, units='Hz')
+rdc.read(align_id='tm', file='rdc_tm.txt', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor', data_type='D', spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4, sep=None, neg_g_corr=False, absolute=False)
+pcs.read(align_id='tm', file='pcs_tm_subset.txt', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor', spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=None, spin_num_col=None, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+spectrometer.temperature(id='tm', temp=303)
+spectrometer.frequency(id='tm', frq=900000000.0, units='Hz')
+rdc.read(align_id='er', file='rdc_er.txt', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor', data_type='D', spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4, sep=None, neg_g_corr=False, absolute=False)
+pcs.read(align_id='er', file='pcs_er_subset.txt', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor', spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=None, spin_num_col=None, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+spectrometer.temperature(id='er', temp=303)
+spectrometer.frequency(id='er', frq=900000000.0, units='Hz')
+script(file='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/tensors.py', dir=None)
+align_tensor.init(tensor='Dy N-dom', align_id='dy', domain=None, params=(0.000622191953772, 1.35210609663e-05, -0.000133742852942, 0.000756743581636, 0.000550729840729), scale=1.0, angle_units='deg', param_types=2, errors=False)
+align_tensor.init(tensor='Dy N-dom', align_id='dy', domain=None, params=(2.35766523882e-05, 2.51785772774e-05, 1.99369755031e-05, 1.86674275393e-05, 2.01343581166e-05), scale=1.0, angle_units='deg', param_types=2, errors=True)
+align_tensor.init(tensor='Tb N-dom', align_id='tb', domain=None, params=(0.000617222650166, -0.000438128542649, -0.000375477068228, 0.000760687126774, 0.00034129025543), scale=1.0, angle_units='deg', param_types=2, errors=False)
+align_tensor.init(tensor='Tb N-dom', align_id='tb', domain=None, params=(1.63152405109e-05, 1.86581336167e-05, 1.34361351013e-05, 1.46648001703e-05, 1.76633948194e-05), scale=1.0, angle_units='deg', param_types=2, errors=True)
+align_tensor.init(tensor='Tm N-dom', align_id='tm', domain=None, params=(-0.000385660891266, 0.000325292994524, 0.000318318888621, -0.00044409190064, -0.000473507384479), scale=1.0, angle_units='deg', param_types=2, errors=False)
+align_tensor.init(tensor='Tm N-dom', align_id='tm', domain=None, params=(1.47916817671e-05, 1.81460089395e-05, 1.27148330285e-05, 1.54915569205e-05, 1.55953362766e-05), scale=1.0, angle_units='deg', param_types=2, errors=True)
+align_tensor.init(tensor='Er N-dom', align_id='er', domain=None, params=(-0.000187529356988, 0.000130813961653, 7.14700966617e-05, -0.000264275852243, -0.000343164086618), scale=1.0, angle_units='deg', param_types=2, errors=False)
+align_tensor.init(tensor='Er N-dom', align_id='er', domain=None, params=(1.88459382279e-05, 1.66197299895e-05, 1.69306486018e-05, 2.12500669486e-05, 1.96610327688e-05), scale=1.0, angle_units='deg', param_types=2, errors=True)
+domain(id='N', spin_id='#N-dom')
+domain(id='C', spin_id='#C-dom')
+align_tensor.init(tensor='Dy C-dom', align_id='dy', domain=None, params=(0, 0, 0, 0, 0), scale=1.0, angle_units='deg', param_types=2, errors=False)
+align_tensor.set_domain(tensor='Dy N-dom', domain='N')
+align_tensor.set_domain(tensor='Dy C-dom', domain='C')
+align_tensor.reduction(full_tensor='Dy N-dom', red_tensor='Dy C-dom')
+align_tensor.init(tensor='Tb C-dom', align_id='tb', domain=None, params=(0, 0, 0, 0, 0), scale=1.0, angle_units='deg', param_types=2, errors=False)
+align_tensor.set_domain(tensor='Tb N-dom', domain='N')
+align_tensor.set_domain(tensor='Tb C-dom', domain='C')
+align_tensor.reduction(full_tensor='Tb N-dom', red_tensor='Tb C-dom')
+align_tensor.init(tensor='Tm C-dom', align_id='tm', domain=None, params=(0, 0, 0, 0, 0), scale=1.0, angle_units='deg', param_types=2, errors=False)
+align_tensor.set_domain(tensor='Tm N-dom', domain='N')
+align_tensor.set_domain(tensor='Tm C-dom', domain='C')
+align_tensor.reduction(full_tensor='Tm N-dom', red_tensor='Tm C-dom')
+align_tensor.init(tensor='Er C-dom', align_id='er', domain=None, params=(0, 0, 0, 0, 0), scale=1.0, angle_units='deg', param_types=2, errors=False)
+align_tensor.set_domain(tensor='Er N-dom', domain='N')
+align_tensor.set_domain(tensor='Er C-dom', domain='C')
+align_tensor.reduction(full_tensor='Er N-dom', red_tensor='Er C-dom')
+frame_order.select_model(model='free rotor')
+frame_order.ref_domain(ref='N')
+frame_order.pivot(pivot=array([ 39.482819802779524,   3.255542739800277,  14.265680648645716]), order=1, fix=False)
+paramag.centre(pos=[35.934, 12.194, -4.206], atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=True, force=False)
+frame_order.num_int_pts(num=2000)
+value.set(val=-21.269217407269576, param='ave_pos_x', index=0, spin_id=None, error=False)
+value.set(val=-3.122610661328414, param='ave_pos_y', index=0, spin_id=None, error=False)
+value.set(val=-2.400652421655998, param='ave_pos_z', index=0, spin_id=None, error=False)
+value.set(val=0.19740471457956135, param='ave_pos_beta', index=0, spin_id=None, error=False)
+value.set(val=4.662231310426542, param='ave_pos_gamma', index=0, spin_id=None, error=False)
+value.set(val=-0.6109933365884923, param='axis_alpha', index=0, spin_id=None, error=False)
+
+
+# Set up the target function for direct calculation.
+model, param_vector, scaling_matrix = target_fn_setup(sim_index=None, verbosity=1)
+
+# Make repeated function calls.
+N = 100
+print("Function calls.")
+for i in range(N):
+    print(i)
+    chi2 = model.func(param_vector)
+----------------------------------------------------------------------------------------------------
+
+relax> pipe.create(pipe_name='frame order', pipe_type='frame order', bundle=None)
+
+relax> structure.read_pdb(file='1J7O_1st_NH.pdb', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/', read_mol=None, set_mol_name='N-dom', read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False)
+
+Internal relax PDB parser.
+Opening the file '/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam//1J7O_1st_NH.pdb' for reading.
+Adding molecule 'N-dom' to model None (from the original molecule number 1 of model None)
+
+relax> structure.read_pdb(file='1J7P_1st_NH_rot.pdb', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/', read_mol=None, set_mol_name='C-dom', read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False)
+
+Internal relax PDB parser.
+Opening the file '/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam//1J7P_1st_NH_rot.pdb' for reading.
+Adding molecule 'C-dom' to model None (from the original molecule number 1 of model None)
+
+relax> structure.load_spins(spin_id='@N', mol_name_target=None, ave_pos=False)
+Adding the following spins to the relax data store.
+
+# mol_name    res_num    res_name    spin_num    spin_name    
+N-dom         1          ALA         1           N            
+N-dom         2          ASP         3           N            
+N-dom         3          GLN         5           N            
+N-dom         4          LEU         7           N            
+N-dom         5          THR         9           N            
+N-dom         6          GLU         11          N            
+N-dom         7          GLU         13          N            
+N-dom         8          GLN         15          N            
+N-dom         9          ILE         17          N            
+N-dom         10         ALA         19          N            
+N-dom         11         GLU         21          N            
+N-dom         12         PHE         23          N            
+N-dom         13         LYS         25          N            
+N-dom         14         GLU         27          N            
+N-dom         15         ALA         29          N            
+N-dom         16         PHE         31          N            
+N-dom         17         SER         33          N            
+N-dom         18         LEU         35          N            
+N-dom         19         PHE         37          N            
+N-dom         20         ASP         39          N            
+N-dom         21         LYS         41          N            
+N-dom         22         ASP         43          N            
+N-dom         23         GLY         45          N            
+N-dom         24         ASP         47          N            
+N-dom         25         GLY         49          N            
+N-dom         26         THR         51          N            
+N-dom         27         ILE         53          N            
+N-dom         28         THR         55          N            
+N-dom         29         THR         57          N            
+N-dom         30         LYS         59          N            
+N-dom         31         GLU         61          N            
+N-dom         32         LEU         63          N            
+N-dom         33         GLY         65          N            
+N-dom         34         THR         67          N            
+N-dom         35         VAL         69          N            
+N-dom         36         MET         71          N            
+N-dom         37         ARG         73          N            
+N-dom         38         SER         75          N            
+N-dom         39         LEU         77          N            
+N-dom         40         GLY         79          N            
+N-dom         41         GLN         81          N            
+N-dom         42         ASN         83          N            
+N-dom         43         PRO         85          N            
+N-dom         44         THR         86          N            
+N-dom         45         GLU         88          N            
+N-dom         46         ALA         90          N            
+N-dom         47         GLU         92          N            
+N-dom         48         LEU         94          N            
+N-dom         49         GLN         96          N            
+N-dom         50         ASP         98          N            
+N-dom         51         MET         100         N            
+N-dom         52         ILE         102         N            
+N-dom         53         ASN         104         N            
+N-dom         54         GLU         106         N            
+N-dom         55         VAL         108         N            
+N-dom         56         ASP         110         N            
+N-dom         57         ALA         112         N            
+N-dom         58         ASP         114         N            
+N-dom         59         GLY         116         N            
+N-dom         60         ASN         118         N            
+N-dom         61         GLY         120         N            
+N-dom         62         THR         122         N            
+N-dom         63         ILE         124         N            
+N-dom         64         ASP         126         N            
+N-dom         65         PHE         128         N            
+N-dom         66         PRO         130         N            
+N-dom         67         GLU         131         N            
+N-dom         68         PHE         133         N            
+N-dom         69         LEU         135         N            
+N-dom         70         THR         137         N            
+N-dom         71         MET         139         N            
+N-dom         72         MET         141         N            
+N-dom         73         ALA         143         N            
+N-dom         74         ARG         145         N            
+N-dom         75         LYS         147         N            
+N-dom         76         MET         149         N            
+C-dom         82         GLU         1           N            
+C-dom         83         GLU         2           N            
+C-dom         84         GLU         4           N            
+C-dom         85         ILE         6           N            
+C-dom         86         ARG         8           N            
+C-dom         87         GLU         10          N            
+C-dom         88         ALA         12          N            
+C-dom         89         PHE         14          N            
+C-dom         90         ARG         16          N            
+C-dom         91         VAL         18          N            
+C-dom         92         PHE         20          N            
+C-dom         93         ASP         22          N            
+C-dom         94         LYS         24          N            
+C-dom         95         ASP         26          N            
+C-dom         96         GLY         28          N            
+C-dom         97         ASN         30          N            
+C-dom         98         GLY         32          N            
+C-dom         99         TYR         34          N            
+C-dom         100        ILE         36          N            
+C-dom         101        SER         38          N            
+C-dom         102        ALA         40          N            
+C-dom         103        ALA         42          N            
+C-dom         104        GLU         44          N            
+C-dom         105        LEU         46          N            
+C-dom         106        ARG         48          N            
+C-dom         107        HIS         50          N            
+C-dom         108        VAL         52          N            
+C-dom         109        MET         54          N            
+C-dom         110        THR         56          N            
+C-dom         111        ASN         58          N            
+C-dom         112        LEU         60          N            
+C-dom         113        GLY         62          N            
+C-dom         114        GLU         64          N            
+C-dom         115        LYS         66          N            
+C-dom         116        LEU         68          N            
+C-dom         117        THR         70          N            
+C-dom         118        ASP         72          N            
+C-dom         119        GLU         74          N            
+C-dom         120        GLU         76          N            
+C-dom         121        VAL         78          N            
+C-dom         122        ASP         80          N            
+C-dom         123        GLU         82          N            
+C-dom         124        MET         84          N            
+C-dom         125        ILE         86          N            
+C-dom         126        ARG         88          N            
+C-dom         127        GLU         90          N            
+C-dom         128        ALA         92          N            
+C-dom         129        ASP         94          N            
+C-dom         130        ILE         96          N            
+C-dom         131        ASP         98          N            
+C-dom         132        GLY         100         N            
+C-dom         133        ASP         102         N            
+C-dom         134        GLY         104         N            
+C-dom         135        GLN         106         N            
+C-dom         136        VAL         108         N            
+C-dom         137        ASN         110         N            
+C-dom         138        TYR         112         N            
+C-dom         139        GLU         114         N            
+C-dom         140        GLU         116         N            
+C-dom         141        PHE         118         N            
+C-dom         142        VAL         120         N            
+C-dom         143        GLN         122         N            
+C-dom         144        MET         124         N            
+C-dom         145        MET         126         N            
+C-dom         146        THR         128         N            
+C-dom         147        ALA         130         N            
+C-dom         148        LYS         132         N            
+
+relax> structure.load_spins(spin_id='@H', mol_name_target=None, ave_pos=False)
+Adding the following spins to the relax data store.
+
+# mol_name    res_num    res_name    spin_num    spin_name    
+N-dom         1          ALA         2           H            
+N-dom         2          ASP         4           H            
+N-dom         3          GLN         6           H            
+N-dom         4          LEU         8           H            
+N-dom         5          THR         10          H            
+N-dom         6          GLU         12          H            
+N-dom         7          GLU         14          H            
+N-dom         8          GLN         16          H            
+N-dom         9          ILE         18          H            
+N-dom         10         ALA         20          H            
+N-dom         11         GLU         22          H            
+N-dom         12         PHE         24          H            
+N-dom         13         LYS         26          H            
+N-dom         14         GLU         28          H            
+N-dom         15         ALA         30          H            
+N-dom         16         PHE         32          H            
+N-dom         17         SER         34          H            
+N-dom         18         LEU         36          H            
+N-dom         19         PHE         38          H            
+N-dom         20         ASP         40          H            
+N-dom         21         LYS         42          H            
+N-dom         22         ASP         44          H            
+N-dom         23         GLY         46          H            
+N-dom         24         ASP         48          H            
+N-dom         25         GLY         50          H            
+N-dom         26         THR         52          H            
+N-dom         27         ILE         54          H            
+N-dom         28         THR         56          H            
+N-dom         29         THR         58          H            
+N-dom         30         LYS         60          H            
+N-dom         31         GLU         62          H            
+N-dom         32         LEU         64          H            
+N-dom         33         GLY         66          H            
+N-dom         34         THR         68          H            
+N-dom         35         VAL         70          H            
+N-dom         36         MET         72          H            
+N-dom         37         ARG         74          H            
+N-dom         38         SER         76          H            
+N-dom         39         LEU         78          H            
+N-dom         40         GLY         80          H            
+N-dom         41         GLN         82          H            
+N-dom         42         ASN         84          H            
+N-dom         44         THR         87          H            
+N-dom         45         GLU         89          H            
+N-dom         46         ALA         91          H            
+N-dom         47         GLU         93          H            
+N-dom         48         LEU         95          H            
+N-dom         49         GLN         97          H            
+N-dom         50         ASP         99          H            
+N-dom         51         MET         101         H            
+N-dom         52         ILE         103         H            
+N-dom         53         ASN         105         H            
+N-dom         54         GLU         107         H            
+N-dom         55         VAL         109         H            
+N-dom         56         ASP         111         H            
+N-dom         57         ALA         113         H            
+N-dom         58         ASP         115         H            
+N-dom         59         GLY         117         H            
+N-dom         60         ASN         119         H            
+N-dom         61         GLY         121         H            
+N-dom         62         THR         123         H            
+N-dom         63         ILE         125         H            
+N-dom         64         ASP         127         H            
+N-dom         65         PHE         129         H            
+N-dom         67         GLU         132         H            
+N-dom         68         PHE         134         H            
+N-dom         69         LEU         136         H            
+N-dom         70         THR         138         H            
+N-dom         71         MET         140         H            
+N-dom         72         MET         142         H            
+N-dom         73         ALA         144         H            
+N-dom         74         ARG         146         H            
+N-dom         75         LYS         148         H            
+N-dom         76         MET         150         H            
+C-dom         83         GLU         3           H            
+C-dom         84         GLU         5           H            
+C-dom         85         ILE         7           H            
+C-dom         86         ARG         9           H            
+C-dom         87         GLU         11          H            
+C-dom         88         ALA         13          H            
+C-dom         89         PHE         15          H            
+C-dom         90         ARG         17          H            
+C-dom         91         VAL         19          H            
+C-dom         92         PHE         21          H            
+C-dom         93         ASP         23          H            
+C-dom         94         LYS         25          H            
+C-dom         95         ASP         27          H            
+C-dom         96         GLY         29          H            
+C-dom         97         ASN         31          H            
+C-dom         98         GLY         33          H            
+C-dom         99         TYR         35          H            
+C-dom         100        ILE         37          H            
+C-dom         101        SER         39          H            
+C-dom         102        ALA         41          H            
+C-dom         103        ALA         43          H            
+C-dom         104        GLU         45          H            
+C-dom         105        LEU         47          H            
+C-dom         106        ARG         49          H            
+C-dom         107        HIS         51          H            
+C-dom         108        VAL         53          H            
+C-dom         109        MET         55          H            
+C-dom         110        THR         57          H            
+C-dom         111        ASN         59          H            
+C-dom         112        LEU         61          H            
+C-dom         113        GLY         63          H            
+C-dom         114        GLU         65          H            
+C-dom         115        LYS         67          H            
+C-dom         116        LEU         69          H            
+C-dom         117        THR         71          H            
+C-dom         118        ASP         73          H            
+C-dom         119        GLU         75          H            
+C-dom         120        GLU         77          H            
+C-dom         121        VAL         79          H            
+C-dom         122        ASP         81          H            
+C-dom         123        GLU         83          H            
+C-dom         124        MET         85          H            
+C-dom         125        ILE         87          H            
+C-dom         126        ARG         89          H            
+C-dom         127        GLU         91          H            
+C-dom         128        ALA         93          H            
+C-dom         129        ASP         95          H            
+C-dom         130        ILE         97          H            
+C-dom         131        ASP         99          H            
+C-dom         132        GLY         101         H            
+C-dom         133        ASP         103         H            
+C-dom         134        GLY         105         H            
+C-dom         135        GLN         107         H            
+C-dom         136        VAL         109         H            
+C-dom         137        ASN         111         H            
+C-dom         138        TYR         113         H            
+C-dom         139        GLU         115         H            
+C-dom         140        GLU         117         H            
+C-dom         141        PHE         119         H            
+C-dom         142        VAL         121         H            
+C-dom         143        GLN         123         H            
+C-dom         144        MET         125         H            
+C-dom         145        MET         127         H            
+C-dom         146        THR         129         H            
+C-dom         147        ALA         131         H            
+C-dom         148        LYS         133         H            
+
+relax> spin.isotope(isotope='15N', spin_id='@N', force=False)
+
+relax> spin.isotope(isotope='1H', spin_id='@H', force=False)
+
+relax> interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True, pipe=None)
+Interatomic interactions are now defined for the following spins:
+
+# Spin_ID_1       Spin_ID_2         
+'#N-dom:1@N'      '#N-dom:1@H'      
+'#N-dom:2@N'      '#N-dom:2@H'      
+'#N-dom:3@N'      '#N-dom:3@H'      
+'#N-dom:4@N'      '#N-dom:4@H'      
+'#N-dom:5@N'      '#N-dom:5@H'      
+'#N-dom:6@N'      '#N-dom:6@H'      
+'#N-dom:7@N'      '#N-dom:7@H'      
+'#N-dom:8@N'      '#N-dom:8@H'      
+'#N-dom:9@N'      '#N-dom:9@H'      
+'#N-dom:10@N'     '#N-dom:10@H'     
+'#N-dom:11@N'     '#N-dom:11@H'     
+'#N-dom:12@N'     '#N-dom:12@H'     
+'#N-dom:13@N'     '#N-dom:13@H'     
+'#N-dom:14@N'     '#N-dom:14@H'     
+'#N-dom:15@N'     '#N-dom:15@H'     
+'#N-dom:16@N'     '#N-dom:16@H'     
+'#N-dom:17@N'     '#N-dom:17@H'     
+'#N-dom:18@N'     '#N-dom:18@H'     
+'#N-dom:19@N'     '#N-dom:19@H'     
+'#N-dom:20@N'     '#N-dom:20@H'     
+'#N-dom:21@N'     '#N-dom:21@H'     
+'#N-dom:22@N'     '#N-dom:22@H'     
+'#N-dom:23@N'     '#N-dom:23@H'     
+'#N-dom:24@N'     '#N-dom:24@H'     
+'#N-dom:25@N'     '#N-dom:25@H'     
+'#N-dom:26@N'     '#N-dom:26@H'     
+'#N-dom:27@N'     '#N-dom:27@H'     
+'#N-dom:28@N'     '#N-dom:28@H'     
+'#N-dom:29@N'     '#N-dom:29@H'     
+'#N-dom:30@N'     '#N-dom:30@H'     
+'#N-dom:31@N'     '#N-dom:31@H'     
+'#N-dom:32@N'     '#N-dom:32@H'     
+'#N-dom:33@N'     '#N-dom:33@H'     
+'#N-dom:34@N'     '#N-dom:34@H'     
+'#N-dom:35@N'     '#N-dom:35@H'     
+'#N-dom:36@N'     '#N-dom:36@H'     
+'#N-dom:37@N'     '#N-dom:37@H'     
+'#N-dom:38@N'     '#N-dom:38@H'     
+'#N-dom:39@N'     '#N-dom:39@H'     
+'#N-dom:40@N'     '#N-dom:40@H'     
+'#N-dom:41@N'     '#N-dom:41@H'     
+'#N-dom:42@N'     '#N-dom:42@H'     
+'#N-dom:44@N'     '#N-dom:44@H'     
+'#N-dom:45@N'     '#N-dom:45@H'     
+'#N-dom:46@N'     '#N-dom:46@H'     
+'#N-dom:47@N'     '#N-dom:47@H'     
+'#N-dom:48@N'     '#N-dom:48@H'     
+'#N-dom:49@N'     '#N-dom:49@H'     
+'#N-dom:50@N'     '#N-dom:50@H'     
+'#N-dom:51@N'     '#N-dom:51@H'     
+'#N-dom:52@N'     '#N-dom:52@H'     
+'#N-dom:53@N'     '#N-dom:53@H'     
+'#N-dom:54@N'     '#N-dom:54@H'     
+'#N-dom:55@N'     '#N-dom:55@H'     
+'#N-dom:56@N'     '#N-dom:56@H'     
+'#N-dom:57@N'     '#N-dom:57@H'     
+'#N-dom:58@N'     '#N-dom:58@H'     
+'#N-dom:59@N'     '#N-dom:59@H'     
+'#N-dom:60@N'     '#N-dom:60@H'     
+'#N-dom:61@N'     '#N-dom:61@H'     
+'#N-dom:62@N'     '#N-dom:62@H'     
+'#N-dom:63@N'     '#N-dom:63@H'     
+'#N-dom:64@N'     '#N-dom:64@H'     
+'#N-dom:65@N'     '#N-dom:65@H'     
+'#N-dom:67@N'     '#N-dom:67@H'     
+'#N-dom:68@N'     '#N-dom:68@H'     
+'#N-dom:69@N'     '#N-dom:69@H'     
+'#N-dom:70@N'     '#N-dom:70@H'     
+'#N-dom:71@N'     '#N-dom:71@H'     
+'#N-dom:72@N'     '#N-dom:72@H'     
+'#N-dom:73@N'     '#N-dom:73@H'     
+'#N-dom:74@N'     '#N-dom:74@H'     
+'#N-dom:75@N'     '#N-dom:75@H'     
+'#N-dom:76@N'     '#N-dom:76@H'     
+'#C-dom:83@N'     '#C-dom:83@H'     
+'#C-dom:84@N'     '#C-dom:84@H'     
+'#C-dom:85@N'     '#C-dom:85@H'     
+'#C-dom:86@N'     '#C-dom:86@H'     
+'#C-dom:87@N'     '#C-dom:87@H'     
+'#C-dom:88@N'     '#C-dom:88@H'     
+'#C-dom:89@N'     '#C-dom:89@H'     
+'#C-dom:90@N'     '#C-dom:90@H'     
+'#C-dom:91@N'     '#C-dom:91@H'     
+'#C-dom:92@N'     '#C-dom:92@H'     
+'#C-dom:93@N'     '#C-dom:93@H'     
+'#C-dom:94@N'     '#C-dom:94@H'     
+'#C-dom:95@N'     '#C-dom:95@H'     
+'#C-dom:96@N'     '#C-dom:96@H'     
+'#C-dom:97@N'     '#C-dom:97@H'     
+'#C-dom:98@N'     '#C-dom:98@H'     
+'#C-dom:99@N'     '#C-dom:99@H'     
+'#C-dom:100@N'    '#C-dom:100@H'    
+'#C-dom:101@N'    '#C-dom:101@H'    
+'#C-dom:102@N'    '#C-dom:102@H'    
+'#C-dom:103@N'    '#C-dom:103@H'    
+'#C-dom:104@N'    '#C-dom:104@H'    
+'#C-dom:105@N'    '#C-dom:105@H'    
+'#C-dom:106@N'    '#C-dom:106@H'    
+'#C-dom:107@N'    '#C-dom:107@H'    
+'#C-dom:108@N'    '#C-dom:108@H'    
+'#C-dom:109@N'    '#C-dom:109@H'    
+'#C-dom:110@N'    '#C-dom:110@H'    
+'#C-dom:111@N'    '#C-dom:111@H'    
+'#C-dom:112@N'    '#C-dom:112@H'    
+'#C-dom:113@N'    '#C-dom:113@H'    
+'#C-dom:114@N'    '#C-dom:114@H'    
+'#C-dom:115@N'    '#C-dom:115@H'    
+'#C-dom:116@N'    '#C-dom:116@H'    
+'#C-dom:117@N'    '#C-dom:117@H'    
+'#C-dom:118@N'    '#C-dom:118@H'    
+'#C-dom:119@N'    '#C-dom:119@H'    
+'#C-dom:120@N'    '#C-dom:120@H'    
+'#C-dom:121@N'    '#C-dom:121@H'    
+'#C-dom:122@N'    '#C-dom:122@H'    
+'#C-dom:123@N'    '#C-dom:123@H'    
+'#C-dom:124@N'    '#C-dom:124@H'    
+'#C-dom:125@N'    '#C-dom:125@H'    
+'#C-dom:126@N'    '#C-dom:126@H'    
+'#C-dom:127@N'    '#C-dom:127@H'    
+'#C-dom:128@N'    '#C-dom:128@H'    
+'#C-dom:129@N'    '#C-dom:129@H'    
+'#C-dom:130@N'    '#C-dom:130@H'    
+'#C-dom:131@N'    '#C-dom:131@H'    
+'#C-dom:132@N'    '#C-dom:132@H'    
+'#C-dom:133@N'    '#C-dom:133@H'    
+'#C-dom:134@N'    '#C-dom:134@H'    
+'#C-dom:135@N'    '#C-dom:135@H'    
+'#C-dom:136@N'    '#C-dom:136@H'    
+'#C-dom:137@N'    '#C-dom:137@H'    
+'#C-dom:138@N'    '#C-dom:138@H'    
+'#C-dom:139@N'    '#C-dom:139@H'    
+'#C-dom:140@N'    '#C-dom:140@H'    
+'#C-dom:141@N'    '#C-dom:141@H'    
+'#C-dom:142@N'    '#C-dom:142@H'    
+'#C-dom:143@N'    '#C-dom:143@H'    
+'#C-dom:144@N'    '#C-dom:144@H'    
+'#C-dom:145@N'    '#C-dom:145@H'    
+'#C-dom:146@N'    '#C-dom:146@H'    
+'#C-dom:147@N'    '#C-dom:147@H'    
+'#C-dom:148@N'    '#C-dom:148@H'    
+
+relax> interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.041e-10, unit='meter')
+The following averaged distances have been set:
+
+# Spin_ID_1       Spin_ID_2         Ave_distance(meters)    
+'#N-dom:1@N'      '#N-dom:1@H'      1.041e-10               
+'#N-dom:2@N'      '#N-dom:2@H'      1.041e-10               
+'#N-dom:3@N'      '#N-dom:3@H'      1.041e-10               
+'#N-dom:4@N'      '#N-dom:4@H'      1.041e-10               
+'#N-dom:5@N'      '#N-dom:5@H'      1.041e-10               
+'#N-dom:6@N'      '#N-dom:6@H'      1.041e-10               
+'#N-dom:7@N'      '#N-dom:7@H'      1.041e-10               
+'#N-dom:8@N'      '#N-dom:8@H'      1.041e-10               
+'#N-dom:9@N'      '#N-dom:9@H'      1.041e-10               
+'#N-dom:10@N'     '#N-dom:10@H'     1.041e-10               
+'#N-dom:11@N'     '#N-dom:11@H'     1.041e-10               
+'#N-dom:12@N'     '#N-dom:12@H'     1.041e-10               
+'#N-dom:13@N'     '#N-dom:13@H'     1.041e-10               
+'#N-dom:14@N'     '#N-dom:14@H'     1.041e-10               
+'#N-dom:15@N'     '#N-dom:15@H'     1.041e-10               
+'#N-dom:16@N'     '#N-dom:16@H'     1.041e-10               
+'#N-dom:17@N'     '#N-dom:17@H'     1.041e-10               
+'#N-dom:18@N'     '#N-dom:18@H'     1.041e-10               
+'#N-dom:19@N'     '#N-dom:19@H'     1.041e-10               
+'#N-dom:20@N'     '#N-dom:20@H'     1.041e-10               
+'#N-dom:21@N'     '#N-dom:21@H'     1.041e-10               
+'#N-dom:22@N'     '#N-dom:22@H'     1.041e-10               
+'#N-dom:23@N'     '#N-dom:23@H'     1.041e-10               
+'#N-dom:24@N'     '#N-dom:24@H'     1.041e-10               
+'#N-dom:25@N'     '#N-dom:25@H'     1.041e-10               
+'#N-dom:26@N'     '#N-dom:26@H'     1.041e-10               
+'#N-dom:27@N'     '#N-dom:27@H'     1.041e-10               
+'#N-dom:28@N'     '#N-dom:28@H'     1.041e-10               
+'#N-dom:29@N'     '#N-dom:29@H'     1.041e-10               
+'#N-dom:30@N'     '#N-dom:30@H'     1.041e-10               
+'#N-dom:31@N'     '#N-dom:31@H'     1.041e-10               
+'#N-dom:32@N'     '#N-dom:32@H'     1.041e-10               
+'#N-dom:33@N'     '#N-dom:33@H'     1.041e-10               
+'#N-dom:34@N'     '#N-dom:34@H'     1.041e-10               
+'#N-dom:35@N'     '#N-dom:35@H'     1.041e-10               
+'#N-dom:36@N'     '#N-dom:36@H'     1.041e-10               
+'#N-dom:37@N'     '#N-dom:37@H'     1.041e-10               
+'#N-dom:38@N'     '#N-dom:38@H'     1.041e-10               
+'#N-dom:39@N'     '#N-dom:39@H'     1.041e-10               
+'#N-dom:40@N'     '#N-dom:40@H'     1.041e-10               
+'#N-dom:41@N'     '#N-dom:41@H'     1.041e-10               
+'#N-dom:42@N'     '#N-dom:42@H'     1.041e-10               
+'#N-dom:44@N'     '#N-dom:44@H'     1.041e-10               
+'#N-dom:45@N'     '#N-dom:45@H'     1.041e-10               
+'#N-dom:46@N'     '#N-dom:46@H'     1.041e-10               
+'#N-dom:47@N'     '#N-dom:47@H'     1.041e-10               
+'#N-dom:48@N'     '#N-dom:48@H'     1.041e-10               
+'#N-dom:49@N'     '#N-dom:49@H'     1.041e-10               
+'#N-dom:50@N'     '#N-dom:50@H'     1.041e-10               
+'#N-dom:51@N'     '#N-dom:51@H'     1.041e-10               
+'#N-dom:52@N'     '#N-dom:52@H'     1.041e-10               
+'#N-dom:53@N'     '#N-dom:53@H'     1.041e-10               
+'#N-dom:54@N'     '#N-dom:54@H'     1.041e-10               
+'#N-dom:55@N'     '#N-dom:55@H'     1.041e-10               
+'#N-dom:56@N'     '#N-dom:56@H'     1.041e-10               
+'#N-dom:57@N'     '#N-dom:57@H'     1.041e-10               
+'#N-dom:58@N'     '#N-dom:58@H'     1.041e-10               
+'#N-dom:59@N'     '#N-dom:59@H'     1.041e-10               
+'#N-dom:60@N'     '#N-dom:60@H'     1.041e-10               
+'#N-dom:61@N'     '#N-dom:61@H'     1.041e-10               
+'#N-dom:62@N'     '#N-dom:62@H'     1.041e-10               
+'#N-dom:63@N'     '#N-dom:63@H'     1.041e-10               
+'#N-dom:64@N'     '#N-dom:64@H'     1.041e-10               
+'#N-dom:65@N'     '#N-dom:65@H'     1.041e-10               
+'#N-dom:67@N'     '#N-dom:67@H'     1.041e-10               
+'#N-dom:68@N'     '#N-dom:68@H'     1.041e-10               
+'#N-dom:69@N'     '#N-dom:69@H'     1.041e-10               
+'#N-dom:70@N'     '#N-dom:70@H'     1.041e-10               
+'#N-dom:71@N'     '#N-dom:71@H'     1.041e-10               
+'#N-dom:72@N'     '#N-dom:72@H'     1.041e-10               
+'#N-dom:73@N'     '#N-dom:73@H'     1.041e-10               
+'#N-dom:74@N'     '#N-dom:74@H'     1.041e-10               
+'#N-dom:75@N'     '#N-dom:75@H'     1.041e-10               
+'#N-dom:76@N'     '#N-dom:76@H'     1.041e-10               
+'#C-dom:83@N'     '#C-dom:83@H'     1.041e-10               
+'#C-dom:84@N'     '#C-dom:84@H'     1.041e-10               
+'#C-dom:85@N'     '#C-dom:85@H'     1.041e-10               
+'#C-dom:86@N'     '#C-dom:86@H'     1.041e-10               
+'#C-dom:87@N'     '#C-dom:87@H'     1.041e-10               
+'#C-dom:88@N'     '#C-dom:88@H'     1.041e-10               
+'#C-dom:89@N'     '#C-dom:89@H'     1.041e-10               
+'#C-dom:90@N'     '#C-dom:90@H'     1.041e-10               
+'#C-dom:91@N'     '#C-dom:91@H'     1.041e-10               
+'#C-dom:92@N'     '#C-dom:92@H'     1.041e-10               
+'#C-dom:93@N'     '#C-dom:93@H'     1.041e-10               
+'#C-dom:94@N'     '#C-dom:94@H'     1.041e-10               
+'#C-dom:95@N'     '#C-dom:95@H'     1.041e-10               
+'#C-dom:96@N'     '#C-dom:96@H'     1.041e-10               
+'#C-dom:97@N'     '#C-dom:97@H'     1.041e-10               
+'#C-dom:98@N'     '#C-dom:98@H'     1.041e-10               
+'#C-dom:99@N'     '#C-dom:99@H'     1.041e-10               
+'#C-dom:100@N'    '#C-dom:100@H'    1.041e-10               
+'#C-dom:101@N'    '#C-dom:101@H'    1.041e-10               
+'#C-dom:102@N'    '#C-dom:102@H'    1.041e-10               
+'#C-dom:103@N'    '#C-dom:103@H'    1.041e-10               
+'#C-dom:104@N'    '#C-dom:104@H'    1.041e-10               
+'#C-dom:105@N'    '#C-dom:105@H'    1.041e-10               
+'#C-dom:106@N'    '#C-dom:106@H'    1.041e-10               
+'#C-dom:107@N'    '#C-dom:107@H'    1.041e-10               
+'#C-dom:108@N'    '#C-dom:108@H'    1.041e-10               
+'#C-dom:109@N'    '#C-dom:109@H'    1.041e-10               
+'#C-dom:110@N'    '#C-dom:110@H'    1.041e-10               
+'#C-dom:111@N'    '#C-dom:111@H'    1.041e-10               
+'#C-dom:112@N'    '#C-dom:112@H'    1.041e-10               
+'#C-dom:113@N'    '#C-dom:113@H'    1.041e-10               
+'#C-dom:114@N'    '#C-dom:114@H'    1.041e-10               
+'#C-dom:115@N'    '#C-dom:115@H'    1.041e-10               
+'#C-dom:116@N'    '#C-dom:116@H'    1.041e-10               
+'#C-dom:117@N'    '#C-dom:117@H'    1.041e-10               
+'#C-dom:118@N'    '#C-dom:118@H'    1.041e-10               
+'#C-dom:119@N'    '#C-dom:119@H'    1.041e-10               
+'#C-dom:120@N'    '#C-dom:120@H'    1.041e-10               
+'#C-dom:121@N'    '#C-dom:121@H'    1.041e-10               
+'#C-dom:122@N'    '#C-dom:122@H'    1.041e-10               
+'#C-dom:123@N'    '#C-dom:123@H'    1.041e-10               
+'#C-dom:124@N'    '#C-dom:124@H'    1.041e-10               
+'#C-dom:125@N'    '#C-dom:125@H'    1.041e-10               
+'#C-dom:126@N'    '#C-dom:126@H'    1.041e-10               
+'#C-dom:127@N'    '#C-dom:127@H'    1.041e-10               
+'#C-dom:128@N'    '#C-dom:128@H'    1.041e-10               
+'#C-dom:129@N'    '#C-dom:129@H'    1.041e-10               
+'#C-dom:130@N'    '#C-dom:130@H'    1.041e-10               
+'#C-dom:131@N'    '#C-dom:131@H'    1.041e-10               
+'#C-dom:132@N'    '#C-dom:132@H'    1.041e-10               
+'#C-dom:133@N'    '#C-dom:133@H'    1.041e-10               
+'#C-dom:134@N'    '#C-dom:134@H'    1.041e-10               
+'#C-dom:135@N'    '#C-dom:135@H'    1.041e-10               
+'#C-dom:136@N'    '#C-dom:136@H'    1.041e-10               
+'#C-dom:137@N'    '#C-dom:137@H'    1.041e-10               
+'#C-dom:138@N'    '#C-dom:138@H'    1.041e-10               
+'#C-dom:139@N'    '#C-dom:139@H'    1.041e-10               
+'#C-dom:140@N'    '#C-dom:140@H'    1.041e-10               
+'#C-dom:141@N'    '#C-dom:141@H'    1.041e-10               
+'#C-dom:142@N'    '#C-dom:142@H'    1.041e-10               
+'#C-dom:143@N'    '#C-dom:143@H'    1.041e-10               
+'#C-dom:144@N'    '#C-dom:144@H'    1.041e-10               
+'#C-dom:145@N'    '#C-dom:145@H'    1.041e-10               
+'#C-dom:146@N'    '#C-dom:146@H'    1.041e-10               
+'#C-dom:147@N'    '#C-dom:147@H'    1.041e-10               
+'#C-dom:148@N'    '#C-dom:148@H'    1.041e-10               
+
+relax> interatom.unit_vectors(ave=True)
+Averaging all vectors.
+Calculated 1 N-H unit vector between the spins '#N-dom:1@N' and '#N-dom:1@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:2@N' and '#N-dom:2@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:3@N' and '#N-dom:3@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:4@N' and '#N-dom:4@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:5@N' and '#N-dom:5@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:6@N' and '#N-dom:6@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:7@N' and '#N-dom:7@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:8@N' and '#N-dom:8@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:9@N' and '#N-dom:9@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:10@N' and '#N-dom:10@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:11@N' and '#N-dom:11@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:12@N' and '#N-dom:12@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:13@N' and '#N-dom:13@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:14@N' and '#N-dom:14@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:15@N' and '#N-dom:15@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:16@N' and '#N-dom:16@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:17@N' and '#N-dom:17@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:18@N' and '#N-dom:18@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:19@N' and '#N-dom:19@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:20@N' and '#N-dom:20@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:21@N' and '#N-dom:21@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:22@N' and '#N-dom:22@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:23@N' and '#N-dom:23@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:24@N' and '#N-dom:24@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:25@N' and '#N-dom:25@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:26@N' and '#N-dom:26@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:27@N' and '#N-dom:27@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:28@N' and '#N-dom:28@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:29@N' and '#N-dom:29@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:30@N' and '#N-dom:30@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:31@N' and '#N-dom:31@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:32@N' and '#N-dom:32@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:33@N' and '#N-dom:33@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:34@N' and '#N-dom:34@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:35@N' and '#N-dom:35@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:36@N' and '#N-dom:36@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:37@N' and '#N-dom:37@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:38@N' and '#N-dom:38@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:39@N' and '#N-dom:39@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:40@N' and '#N-dom:40@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:41@N' and '#N-dom:41@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:42@N' and '#N-dom:42@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:44@N' and '#N-dom:44@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:45@N' and '#N-dom:45@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:46@N' and '#N-dom:46@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:47@N' and '#N-dom:47@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:48@N' and '#N-dom:48@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:49@N' and '#N-dom:49@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:50@N' and '#N-dom:50@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:51@N' and '#N-dom:51@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:52@N' and '#N-dom:52@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:53@N' and '#N-dom:53@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:54@N' and '#N-dom:54@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:55@N' and '#N-dom:55@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:56@N' and '#N-dom:56@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:57@N' and '#N-dom:57@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:58@N' and '#N-dom:58@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:59@N' and '#N-dom:59@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:60@N' and '#N-dom:60@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:61@N' and '#N-dom:61@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:62@N' and '#N-dom:62@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:63@N' and '#N-dom:63@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:64@N' and '#N-dom:64@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:65@N' and '#N-dom:65@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:67@N' and '#N-dom:67@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:68@N' and '#N-dom:68@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:69@N' and '#N-dom:69@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:70@N' and '#N-dom:70@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:71@N' and '#N-dom:71@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:72@N' and '#N-dom:72@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:73@N' and '#N-dom:73@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:74@N' and '#N-dom:74@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:75@N' and '#N-dom:75@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:76@N' and '#N-dom:76@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:83@N' and '#C-dom:83@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:84@N' and '#C-dom:84@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:85@N' and '#C-dom:85@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:86@N' and '#C-dom:86@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:87@N' and '#C-dom:87@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:88@N' and '#C-dom:88@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:89@N' and '#C-dom:89@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:90@N' and '#C-dom:90@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:91@N' and '#C-dom:91@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:92@N' and '#C-dom:92@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:93@N' and '#C-dom:93@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:94@N' and '#C-dom:94@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:95@N' and '#C-dom:95@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:96@N' and '#C-dom:96@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:97@N' and '#C-dom:97@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:98@N' and '#C-dom:98@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:99@N' and '#C-dom:99@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:100@N' and '#C-dom:100@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:101@N' and '#C-dom:101@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:102@N' and '#C-dom:102@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:103@N' and '#C-dom:103@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:104@N' and '#C-dom:104@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:105@N' and '#C-dom:105@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:106@N' and '#C-dom:106@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:107@N' and '#C-dom:107@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:108@N' and '#C-dom:108@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:109@N' and '#C-dom:109@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:110@N' and '#C-dom:110@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:111@N' and '#C-dom:111@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:112@N' and '#C-dom:112@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:113@N' and '#C-dom:113@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:114@N' and '#C-dom:114@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:115@N' and '#C-dom:115@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:116@N' and '#C-dom:116@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:117@N' and '#C-dom:117@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:118@N' and '#C-dom:118@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:119@N' and '#C-dom:119@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:120@N' and '#C-dom:120@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:121@N' and '#C-dom:121@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:122@N' and '#C-dom:122@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:123@N' and '#C-dom:123@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:124@N' and '#C-dom:124@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:125@N' and '#C-dom:125@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:126@N' and '#C-dom:126@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:127@N' and '#C-dom:127@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:128@N' and '#C-dom:128@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:129@N' and '#C-dom:129@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:130@N' and '#C-dom:130@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:131@N' and '#C-dom:131@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:132@N' and '#C-dom:132@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:133@N' and '#C-dom:133@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:134@N' and '#C-dom:134@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:135@N' and '#C-dom:135@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:136@N' and '#C-dom:136@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:137@N' and '#C-dom:137@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:138@N' and '#C-dom:138@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:139@N' and '#C-dom:139@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:140@N' and '#C-dom:140@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:141@N' and '#C-dom:141@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:142@N' and '#C-dom:142@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:143@N' and '#C-dom:143@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:144@N' and '#C-dom:144@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:145@N' and '#C-dom:145@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:146@N' and '#C-dom:146@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:147@N' and '#C-dom:147@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:148@N' and '#C-dom:148@H'.
+
+relax> rdc.read(align_id='dy', file='rdc_dy.txt', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor', data_type='D', spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4, sep=None, neg_g_corr=False, absolute=False)
+Opening the file '/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor/rdc_dy.txt' for reading.
+The following RDCs have been loaded into the relax data store:
+
+# Spin_ID1      Spin_ID2        Value                   Error                   
+#C-dom:83@N     #C-dom:83@H      -22.608612146531797       1.000000000000000    
+#C-dom:84@N     #C-dom:84@H      -10.219956590393986       1.000000000000000    
+#C-dom:85@N     #C-dom:85@H      -18.368957683034246       1.000000000000000    
+#C-dom:86@N     #C-dom:86@H      -25.714857079933253       1.000000000000000    
+#C-dom:87@N     #C-dom:87@H      -17.314614670928574       1.000000000000000    
+#C-dom:88@N     #C-dom:88@H      -10.291822466325266       1.000000000000000    
+#C-dom:89@N     #C-dom:89@H      -23.409194026928393       1.000000000000000    
+#C-dom:90@N     #C-dom:90@H      -23.839877752929684       1.000000000000000    
+#C-dom:91@N     #C-dom:91@H       -5.375181642831349       1.000000000000000    
+#C-dom:92@N     #C-dom:92@H       -8.598783607456493       1.000000000000000    
+#C-dom:93@N     #C-dom:93@H      -28.360420355217251       1.000000000000000    
+#C-dom:94@N     #C-dom:94@H       -3.167939034219156       1.000000000000000    
+#C-dom:95@N     #C-dom:95@H        8.331478766365819       1.000000000000000    
+#C-dom:96@N     #C-dom:96@H       14.530485002574627       1.000000000000000    
+#C-dom:97@N     #C-dom:97@H       -1.560128733883056       1.000000000000000    
+#C-dom:98@N     #C-dom:98@H       15.105923525053971       1.000000000000000    
+#C-dom:99@N     #C-dom:99@H       10.293610095146033       1.000000000000000    
+#C-dom:100@N    #C-dom:100@H       8.049593144741975       1.000000000000000    
+#C-dom:101@N    #C-dom:101@H      13.063975139877021       1.000000000000000    
+#C-dom:102@N    #C-dom:102@H       6.761300107837348       1.000000000000000    
+#C-dom:103@N    #C-dom:103@H      12.962719989547532       1.000000000000000    
+#C-dom:104@N    #C-dom:104@H      15.719712435900862       1.000000000000000    
+#C-dom:105@N    #C-dom:105@H       6.192710686538856       1.000000000000000    
+#C-dom:106@N    #C-dom:106@H       8.379303661928589       1.000000000000000    
+#C-dom:107@N    #C-dom:107@H      15.785496598664958       1.000000000000000    
+#C-dom:108@N    #C-dom:108@H      15.122992755336666       1.000000000000000    
+#C-dom:109@N    #C-dom:109@H       9.458188817252923       1.000000000000000    
+#C-dom:110@N    #C-dom:110@H      14.345858669719957       1.000000000000000    
+#C-dom:111@N    #C-dom:111@H      15.476797626786276       1.000000000000000    
+#C-dom:112@N    #C-dom:112@H       8.160931265171442       1.000000000000000    
+#C-dom:113@N    #C-dom:113@H      -1.824593426386548       1.000000000000000    
+#C-dom:114@N    #C-dom:114@H       3.751724691219852       1.000000000000000    
+#C-dom:115@N    #C-dom:115@H      15.790873455863412       1.000000000000000    
+#C-dom:116@N    #C-dom:116@H       6.516365811483024       1.000000000000000    
+#C-dom:117@N    #C-dom:117@H      13.823174314765346       1.000000000000000    
+#C-dom:118@N    #C-dom:118@H     -15.486559897546060       1.000000000000000    
+#C-dom:119@N    #C-dom:119@H      -0.300468241484304       1.000000000000000    
+#C-dom:120@N    #C-dom:120@H       0.743353358379252       1.000000000000000    
+#C-dom:121@N    #C-dom:121@H     -15.175197145323644       1.000000000000000    
+#C-dom:122@N    #C-dom:122@H     -12.407224215030801       1.000000000000000    
+#C-dom:123@N    #C-dom:123@H       2.551771880576045       1.000000000000000    
+#C-dom:124@N    #C-dom:124@H      -0.216080310455713       1.000000000000000    
+#C-dom:125@N    #C-dom:125@H     -14.793939115875501       1.000000000000000    
+#C-dom:126@N    #C-dom:126@H      -6.840683004773200       1.000000000000000    
+#C-dom:127@N    #C-dom:127@H       7.629045157204158       1.000000000000000    
+#C-dom:128@N    #C-dom:128@H      -5.628454666041121       1.000000000000000    
+#C-dom:129@N    #C-dom:129@H     -12.529179235512153       1.000000000000000    
+#C-dom:130@N    #C-dom:130@H      -9.534372502123428       1.000000000000000    
+#C-dom:131@N    #C-dom:131@H      10.581585916123537       1.000000000000000    
+#C-dom:132@N    #C-dom:132@H       0.120156562843379       1.000000000000000    
+#C-dom:133@N    #C-dom:133@H     -25.276642041714041       1.000000000000000    
+#C-dom:134@N    #C-dom:134@H       2.937296894617115       1.000000000000000    
+#C-dom:135@N    #C-dom:135@H       9.893619898195238       1.000000000000000    
+#C-dom:136@N    #C-dom:136@H      11.738155016893195       1.000000000000000    
+#C-dom:137@N    #C-dom:137@H      14.875433815433505       1.000000000000000    
+#C-dom:138@N    #C-dom:138@H      15.779245455835083       1.000000000000000    
+#C-dom:139@N    #C-dom:139@H      12.216750686627828       1.000000000000000    
+#C-dom:140@N    #C-dom:140@H      10.273665314747575       1.000000000000000    
+#C-dom:141@N    #C-dom:141@H      15.707873307437652       1.000000000000000    
+#C-dom:142@N    #C-dom:142@H      15.787083080958160       1.000000000000000    
+#C-dom:143@N    #C-dom:143@H      12.836765621107608       1.000000000000000    
+#C-dom:144@N    #C-dom:144@H      15.042696116221604       1.000000000000000    
+#C-dom:145@N    #C-dom:145@H      14.181226801312594       1.000000000000000    
+#C-dom:146@N    #C-dom:146@H       5.325289664615227       1.000000000000000    
+#C-dom:147@N    #C-dom:147@H      -5.406167297309445       1.000000000000000    
+#C-dom:148@N    #C-dom:148@H      14.626810829817005       1.000000000000000    
+
+relax> pcs.read(align_id='dy', file='pcs_dy_subset.txt', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor', spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=None, spin_num_col=None, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+Opening the file '/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor/pcs_dy_subset.txt' for reading.
+# mol_name    res_num    res_name    spin_num    spin_name    PCSs                    PCS_error               
+C-dom         99         None        None        H              -0.220186157191076                     0.1    
+C-dom         108        None        None        H              -0.171681054876215                     0.1    
+C-dom         114        None        None        H              -0.151316876902483                     0.1    
+C-dom         119        None        None        H             -0.0961118851055609                     0.1    
+C-dom         126        None        None        H              -0.139018491594007                     0.1    
+
+relax> spectrometer.temperature(id='dy', temp=303)
+
+relax> spectrometer.frequency(id='dy', frq=900000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> rdc.read(align_id='tb', file='rdc_tb.txt', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor', data_type='D', spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4, sep=None, neg_g_corr=False, absolute=False)
+Opening the file '/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor/rdc_tb.txt' for reading.
+The following RDCs have been loaded into the relax data store:
+
+# Spin_ID1      Spin_ID2        Value                   Error                   
+#C-dom:83@N     #C-dom:83@H      -23.590774967983915       1.000000000000000    
+#C-dom:84@N     #C-dom:84@H      -10.663931715221775       1.000000000000000    
+#C-dom:85@N     #C-dom:85@H      -19.166941530435999       1.000000000000000    
+#C-dom:86@N     #C-dom:86@H      -26.831961324067031       1.000000000000000    
+#C-dom:87@N     #C-dom:87@H      -18.066795772861635       1.000000000000000    
+#C-dom:88@N     #C-dom:88@H      -10.738919586922336       1.000000000000000    
+#C-dom:89@N     #C-dom:89@H      -24.426135708460794       1.000000000000000    
+#C-dom:90@N     #C-dom:90@H      -24.875529187220966       1.000000000000000    
+#C-dom:91@N     #C-dom:91@H       -5.608690163121071       1.000000000000000    
+#C-dom:92@N     #C-dom:92@H       -8.972331771944388       1.000000000000000    
+#C-dom:93@N     #C-dom:93@H      -29.592453099780087       1.000000000000000    
+#C-dom:94@N     #C-dom:94@H       -3.305560570643906       1.000000000000000    
+#C-dom:95@N     #C-dom:95@H        8.693414679946322       1.000000000000000    
+#C-dom:96@N     #C-dom:96@H       15.161718005940811       1.000000000000000    
+#C-dom:97@N     #C-dom:97@H       -1.627903811325575       1.000000000000000    
+#C-dom:98@N     #C-dom:98@H       15.762154715798816       1.000000000000000    
+#C-dom:99@N     #C-dom:99@H       10.740784873874215       1.000000000000000    
+#C-dom:100@N    #C-dom:100@H       8.399283389474411       1.000000000000000    
+#C-dom:101@N    #C-dom:101@H      13.631500054701579       1.000000000000000    
+#C-dom:102@N    #C-dom:102@H       7.055024355374441       1.000000000000000    
+#C-dom:103@N    #C-dom:103@H      13.525846180404001       1.000000000000000    
+#C-dom:104@N    #C-dom:104@H      16.402607830735114       1.000000000000000    
+#C-dom:105@N    #C-dom:105@H       6.461734285197064       1.000000000000000    
+#C-dom:106@N    #C-dom:106@H       8.743317183548770       1.000000000000000    
+#C-dom:107@N    #C-dom:107@H      16.471249787621577       1.000000000000000    
+#C-dom:108@N    #C-dom:108@H      15.779965467200356       1.000000000000000    
+#C-dom:109@N    #C-dom:109@H       9.869071243576689       1.000000000000000    
+#C-dom:110@N    #C-dom:110@H      14.969071140077935       1.000000000000000    
+#C-dom:111@N    #C-dom:111@H      16.149140321934844       1.000000000000000    
+#C-dom:112@N    #C-dom:112@H       8.515458258032750       1.000000000000000    
+#C-dom:113@N    #C-dom:113@H      -1.903857373065279       1.000000000000000    
+#C-dom:114@N    #C-dom:114@H       3.914707031053804       1.000000000000000    
+#C-dom:115@N    #C-dom:115@H      16.476860226129773       1.000000000000000    
+#C-dom:116@N    #C-dom:116@H       6.799449628815089       1.000000000000000    
+#C-dom:117@N    #C-dom:117@H      14.423680343106279       1.000000000000000    
+#C-dom:118@N    #C-dom:118@H     -16.159326685041872       1.000000000000000    
+#C-dom:119@N    #C-dom:119@H      -0.313521176087290       1.000000000000000    
+#C-dom:120@N    #C-dom:120@H       0.775646098290475       1.000000000000000    
+#C-dom:121@N    #C-dom:121@H     -15.834437719125496       1.000000000000000    
+#C-dom:122@N    #C-dom:122@H     -12.946218570918012       1.000000000000000    
+#C-dom:123@N    #C-dom:123@H       2.662625897341210       1.000000000000000    
+#C-dom:124@N    #C-dom:124@H      -0.225467266452921       1.000000000000000    
+#C-dom:125@N    #C-dom:125@H     -15.436617086918853       1.000000000000000    
+#C-dom:126@N    #C-dom:126@H      -7.137855802337345       1.000000000000000    
+#C-dom:127@N    #C-dom:127@H       7.960465965700564       1.000000000000000    
+#C-dom:128@N    #C-dom:128@H      -5.872965867320775       1.000000000000000    
+#C-dom:129@N    #C-dom:129@H     -13.073471558662009       1.000000000000000    
+#C-dom:130@N    #C-dom:130@H      -9.948564498375509       1.000000000000000    
+#C-dom:131@N    #C-dom:131@H      11.041270934003423       1.000000000000000    
+#C-dom:132@N    #C-dom:132@H       0.125376401549681       1.000000000000000    
+#C-dom:133@N    #C-dom:133@H     -26.374709357992604       1.000000000000000    
+#C-dom:134@N    #C-dom:134@H       3.064898880389703       1.000000000000000    
+#C-dom:135@N    #C-dom:135@H      10.323418311764684       1.000000000000000    
+#C-dom:136@N    #C-dom:136@H      12.248083683691199       1.000000000000000    
+#C-dom:137@N    #C-dom:137@H      15.521652077386022       1.000000000000000    
+#C-dom:138@N    #C-dom:138@H      16.464727082785188       1.000000000000000    
+#C-dom:139@N    #C-dom:139@H      12.747470495769058       1.000000000000000    
+#C-dom:140@N    #C-dom:140@H      10.719973652773318       1.000000000000000    
+#C-dom:141@N    #C-dom:141@H      16.390254387118919       1.000000000000000    
+#C-dom:142@N    #C-dom:142@H      16.472905189842955       1.000000000000000    
+#C-dom:143@N    #C-dom:143@H      13.394420105117172       1.000000000000000    
+#C-dom:144@N    #C-dom:144@H      15.696180583291003       1.000000000000000    
+#C-dom:145@N    #C-dom:145@H      14.797287337738142       1.000000000000000    
+#C-dom:146@N    #C-dom:146@H       5.556630778707036       1.000000000000000    
+#C-dom:147@N    #C-dom:147@H      -5.641021895705576       1.000000000000000    
+#C-dom:148@N    #C-dom:148@H      15.262228417608354       1.000000000000000    
+
+relax> pcs.read(align_id='tb', file='pcs_tb_subset.txt', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor', spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=None, spin_num_col=None, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+Opening the file '/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor/pcs_tb_subset.txt' for reading.
+# mol_name    res_num    res_name    spin_num    spin_name    PCSs                    PCS_error               
+C-dom         99         None        None        H              -0.175351201662837                     0.1    
+C-dom         108        None        None        H              -0.139364226472634                     0.1    
+C-dom         114        None        None        H               -0.12620730667001                     0.1    
+C-dom         119        None        None        H               -0.08151214763885                     0.1    
+C-dom         126        None        None        H              -0.114757197064204                     0.1    
+
+relax> spectrometer.temperature(id='tb', temp=303)
+
+relax> spectrometer.frequency(id='tb', frq=900000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> rdc.read(align_id='tm', file='rdc_tm.txt', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor', data_type='D', spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4, sep=None, neg_g_corr=False, absolute=False)
+Opening the file '/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor/rdc_tm.txt' for reading.
+The following RDCs have been loaded into the relax data store:
+
+# Spin_ID1      Spin_ID2        Value                   Error                   
+#C-dom:83@N     #C-dom:83@H       20.083501898199078       1.000000000000000    
+#C-dom:84@N     #C-dom:84@H        9.078510270882591       1.000000000000000    
+#C-dom:85@N     #C-dom:85@H       16.317365882706280       1.000000000000000    
+#C-dom:86@N     #C-dom:86@H       22.842816605882682       1.000000000000000    
+#C-dom:87@N     #C-dom:87@H       15.380780313112817       1.000000000000000    
+#C-dom:88@N     #C-dom:88@H        9.142349592214087       1.000000000000000    
+#C-dom:89@N     #C-dom:89@H       20.794668404590546       1.000000000000000    
+#C-dom:90@N     #C-dom:90@H       21.177249934699962       1.000000000000000    
+#C-dom:91@N     #C-dom:91@H        4.774838456571443       1.000000000000000    
+#C-dom:92@N     #C-dom:92@H        7.638402825581982       1.000000000000000    
+#C-dom:93@N     #C-dom:93@H       25.192902259818879       1.000000000000000    
+#C-dom:94@N     #C-dom:94@H        2.814118318929156       1.000000000000000    
+#C-dom:95@N     #C-dom:95@H       -7.400952722557154       1.000000000000000    
+#C-dom:96@N     #C-dom:96@H      -12.907604466810536       1.000000000000000    
+#C-dom:97@N     #C-dom:97@H        1.385881105186803       1.000000000000000    
+#C-dom:98@N     #C-dom:98@H      -13.418773422410652       1.000000000000000    
+#C-dom:99@N     #C-dom:99@H       -9.143937564380730       1.000000000000000    
+#C-dom:100@N    #C-dom:100@H      -7.150550336941195       1.000000000000000    
+#C-dom:101@N    #C-dom:101@H     -11.604886130084452       1.000000000000000    
+#C-dom:102@N    #C-dom:102@H      -6.006144148519772       1.000000000000000    
+#C-dom:103@N    #C-dom:103@H     -11.514939963081153       1.000000000000000    
+#C-dom:104@N    #C-dom:104@H     -13.964009488923388       1.000000000000000    
+#C-dom:105@N    #C-dom:105@H      -5.501059331816597       1.000000000000000    
+#C-dom:106@N    #C-dom:106@H      -7.443436152083516       1.000000000000000    
+#C-dom:107@N    #C-dom:107@H     -14.022446351353565       1.000000000000000    
+#C-dom:108@N    #C-dom:108@H     -13.433936224822469       1.000000000000000    
+#C-dom:109@N    #C-dom:109@H      -8.401822802465279       1.000000000000000    
+#C-dom:110@N    #C-dom:110@H     -12.743598676348375       1.000000000000000    
+#C-dom:111@N    #C-dom:111@H     -13.748225344441884       1.000000000000000    
+#C-dom:112@N    #C-dom:112@H      -7.249453327469524       1.000000000000000    
+#C-dom:113@N    #C-dom:113@H       1.620808270086454       1.000000000000000    
+#C-dom:114@N    #C-dom:114@H      -3.332702134447148       1.000000000000000    
+#C-dom:115@N    #C-dom:115@H     -14.027222678226339       1.000000000000000    
+#C-dom:116@N    #C-dom:116@H      -5.788566069251395       1.000000000000000    
+#C-dom:117@N    #C-dom:117@H     -12.279291881802379       1.000000000000000    
+#C-dom:118@N    #C-dom:118@H      13.756897286888600       1.000000000000000    
+#C-dom:119@N    #C-dom:119@H       0.266909550178835       1.000000000000000    
+#C-dom:120@N    #C-dom:120@H      -0.660329722465186       1.000000000000000    
+#C-dom:121@N    #C-dom:121@H      13.480310011882134       1.000000000000000    
+#C-dom:122@N    #C-dom:122@H      11.021486390184167       1.000000000000000    
+#C-dom:123@N    #C-dom:123@H      -2.266769630756908       1.000000000000000    
+#C-dom:124@N    #C-dom:124@H       0.191946736804296       1.000000000000000    
+#C-dom:125@N    #C-dom:125@H      13.141633922058547       1.000000000000000    
+#C-dom:126@N    #C-dom:126@H       6.076660929955216       1.000000000000000    
+#C-dom:127@N    #C-dom:127@H      -6.776972505128320       1.000000000000000    
+#C-dom:128@N    #C-dom:128@H       4.999823927127022       1.000000000000000    
+#C-dom:129@N    #C-dom:129@H      11.129820500631004       1.000000000000000    
+#C-dom:130@N    #C-dom:130@H       8.469497685372383       1.000000000000000    
+#C-dom:131@N    #C-dom:131@H      -9.399749947279444       1.000000000000000    
+#C-dom:132@N    #C-dom:132@H      -0.106736518911722       1.000000000000000    
+#C-dom:133@N    #C-dom:133@H      22.453544920612742       1.000000000000000    
+#C-dom:134@N    #C-dom:134@H      -2.609236134278434       1.000000000000000    
+#C-dom:135@N    #C-dom:135@H      -8.788621465026324       1.000000000000000    
+#C-dom:136@N    #C-dom:136@H     -10.427144180068254       1.000000000000000    
+#C-dom:137@N    #C-dom:137@H     -13.214026643144587       1.000000000000000    
+#C-dom:138@N    #C-dom:138@H     -14.016893386046544       1.000000000000000    
+#C-dom:139@N    #C-dom:139@H     -10.852286465640166       1.000000000000000    
+#C-dom:140@N    #C-dom:140@H      -9.126220376240411       1.000000000000000    
+#C-dom:141@N    #C-dom:141@H     -13.953492648817379       1.000000000000000    
+#C-dom:142@N    #C-dom:142@H     -14.023855642642236       1.000000000000000    
+#C-dom:143@N    #C-dom:143@H     -11.403053183775341       1.000000000000000    
+#C-dom:144@N    #C-dom:144@H     -13.362607755227151       1.000000000000000    
+#C-dom:145@N    #C-dom:145@H     -12.597354208964271       1.000000000000000    
+#C-dom:146@N    #C-dom:146@H      -4.730518812680248       1.000000000000000    
+#C-dom:147@N    #C-dom:147@H       4.802363385854783       1.000000000000000    
+#C-dom:148@N    #C-dom:148@H     -12.993171856870992       1.000000000000000    
+
+relax> pcs.read(align_id='tm', file='pcs_tm_subset.txt', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor', spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=None, spin_num_col=None, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+Opening the file '/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor/pcs_tm_subset.txt' for reading.
+# mol_name    res_num    res_name    spin_num    spin_name    PCSs                    PCS_error               
+C-dom         99         None        None        H               0.154771153969134                     0.1    
+C-dom         108        None        None        H               0.122461697448716                     0.1    
+C-dom         114        None        None        H               0.110114792717188                     0.1    
+C-dom         119        None        None        H              0.0709402840673711                     0.1    
+C-dom         126        None        None        H               0.100452554906713                     0.1    
+
+relax> spectrometer.temperature(id='tm', temp=303)
+
+relax> spectrometer.frequency(id='tm', frq=900000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> rdc.read(align_id='er', file='rdc_er.txt', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor', data_type='D', spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4, sep=None, neg_g_corr=False, absolute=False)
+Opening the file '/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor/rdc_er.txt' for reading.
+The following RDCs have been loaded into the relax data store:
+
+# Spin_ID1      Spin_ID2        Value                   Error                   
+#C-dom:83@N     #C-dom:83@H       11.023184441274221       1.000000000000000    
+#C-dom:84@N     #C-dom:84@H        4.982900575567203       1.000000000000000    
+#C-dom:85@N     #C-dom:85@H        8.956074226126663       1.000000000000000    
+#C-dom:86@N     #C-dom:86@H       12.537683013709168       1.000000000000000    
+#C-dom:87@N     #C-dom:87@H        8.442012707821911       1.000000000000000    
+#C-dom:88@N     #C-dom:88@H        5.017939913687113       1.000000000000000    
+#C-dom:89@N     #C-dom:89@H       11.413520728648127       1.000000000000000    
+#C-dom:90@N     #C-dom:90@H       11.623507353072386       1.000000000000000    
+#C-dom:91@N     #C-dom:91@H        2.620754351052489       1.000000000000000    
+#C-dom:92@N     #C-dom:92@H        4.192472189857023       1.000000000000000    
+#C-dom:93@N     #C-dom:93@H       13.827568998107846       1.000000000000000    
+#C-dom:94@N     #C-dom:94@H        1.544578501616110       1.000000000000000    
+#C-dom:95@N     #C-dom:95@H       -4.062143510401127       1.000000000000000    
+#C-dom:96@N     #C-dom:96@H       -7.084566499103739       1.000000000000000    
+#C-dom:97@N     #C-dom:97@H        0.760665301977091       1.000000000000000    
+#C-dom:98@N     #C-dom:98@H       -7.365130601260589       1.000000000000000    
+#C-dom:99@N     #C-dom:99@H       -5.018811500234580       1.000000000000000    
+#C-dom:100@N    #C-dom:100@H      -3.924705742069136       1.000000000000000    
+#C-dom:101@N    #C-dom:101@H      -6.369546550214780       1.000000000000000    
+#C-dom:102@N    #C-dom:102@H      -3.296578209597513       1.000000000000000    
+#C-dom:103@N    #C-dom:103@H      -6.320178009126241       1.000000000000000    
+#C-dom:104@N    #C-dom:104@H      -7.664393038442607       1.000000000000000    
+#C-dom:105@N    #C-dom:105@H      -3.019353494444348       1.000000000000000    
+#C-dom:106@N    #C-dom:106@H      -4.085461290424788       1.000000000000000    
+#C-dom:107@N    #C-dom:107@H      -7.696467141654407       1.000000000000000    
+#C-dom:108@N    #C-dom:108@H      -7.373452972950511       1.000000000000000    
+#C-dom:109@N    #C-dom:109@H      -4.611488716655693       1.000000000000000    
+#C-dom:110@N    #C-dom:110@H      -6.994549026709472       1.000000000000000    
+#C-dom:111@N    #C-dom:111@H      -7.545956102684134       1.000000000000000    
+#C-dom:112@N    #C-dom:112@H      -3.978990393815311       1.000000000000000    
+#C-dom:113@N    #C-dom:113@H       0.889609222319326       1.000000000000000    
+#C-dom:114@N    #C-dom:114@H      -1.829212380492939       1.000000000000000    
+#C-dom:115@N    #C-dom:115@H      -7.699088712948958       1.000000000000000    
+#C-dom:116@N    #C-dom:116@H      -3.177156641072723       1.000000000000000    
+#C-dom:117@N    #C-dom:117@H      -6.739706048649141       1.000000000000000    
+#C-dom:118@N    #C-dom:118@H       7.550715851334484       1.000000000000000    
+#C-dom:119@N    #C-dom:119@H       0.146498016913209       1.000000000000000    
+#C-dom:120@N    #C-dom:120@H      -0.362433621371673       1.000000000000000    
+#C-dom:121@N    #C-dom:121@H       7.398906044361572       1.000000000000000    
+#C-dom:122@N    #C-dom:122@H       6.049337307398970       1.000000000000000    
+#C-dom:123@N    #C-dom:123@H      -1.244156514753689       1.000000000000000    
+#C-dom:124@N    #C-dom:124@H       0.105353353883180       1.000000000000000    
+#C-dom:125@N    #C-dom:125@H       7.213017695661303       1.000000000000000    
+#C-dom:126@N    #C-dom:126@H       3.335282589536233       1.000000000000000    
+#C-dom:127@N    #C-dom:127@H      -3.719660956348082       1.000000000000000    
+#C-dom:128@N    #C-dom:128@H       2.744241597007508       1.000000000000000    
+#C-dom:129@N    #C-dom:129@H       6.108798395748504       1.000000000000000    
+#C-dom:130@N    #C-dom:130@H       4.648633270434610       1.000000000000000    
+#C-dom:131@N    #C-dom:131@H      -5.159218641048367       1.000000000000000    
+#C-dom:132@N    #C-dom:132@H      -0.058584222041923       1.000000000000000    
+#C-dom:133@N    #C-dom:133@H      12.324024379560260       1.000000000000000    
+#C-dom:134@N    #C-dom:134@H      -1.432125298903558       1.000000000000000    
+#C-dom:135@N    #C-dom:135@H      -4.823789988648050       1.000000000000000    
+#C-dom:136@N    #C-dom:136@H      -5.723122096697606       1.000000000000000    
+#C-dom:137@N    #C-dom:137@H      -7.252751718182977       1.000000000000000    
+#C-dom:138@N    #C-dom:138@H      -7.693419298649458       1.000000000000000    
+#C-dom:139@N    #C-dom:139@H      -5.956468942850182       1.000000000000000    
+#C-dom:140@N    #C-dom:140@H      -5.009087108858941       1.000000000000000    
+#C-dom:141@N    #C-dom:141@H      -7.658620685154042       1.000000000000000    
+#C-dom:142@N    #C-dom:142@H      -7.697240656048721       1.000000000000000    
+#C-dom:143@N    #C-dom:143@H      -6.258766975777585       1.000000000000000    
+#C-dom:144@N    #C-dom:144@H      -7.334303083640941       1.000000000000000    
+#C-dom:145@N    #C-dom:145@H      -6.914280169930294       1.000000000000000    
+#C-dom:146@N    #C-dom:146@H      -2.596428732370019       1.000000000000000    
+#C-dom:147@N    #C-dom:147@H       2.635861894237002       1.000000000000000    
+#C-dom:148@N    #C-dom:148@H      -7.131531671192550       1.000000000000000    
+
+relax> pcs.read(align_id='er', file='pcs_er_subset.txt', dir='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor', spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=None, spin_num_col=None, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+Opening the file '/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/free_rotor/pcs_er_subset.txt' for reading.
+# mol_name    res_num    res_name    spin_num    spin_name    PCSs                    PCS_error               
+C-dom         99         None        None        H              0.0951548918126713                     0.1    
+C-dom         108        None        None        H              0.0747071543534462                     0.1    
+C-dom         114        None        None        H              0.0664619627355726                     0.1    
+C-dom         119        None        None        H               0.042511741743752                     0.1    
+C-dom         126        None        None        H              0.0608653096359675                     0.1    
+
+relax> spectrometer.temperature(id='er', temp=303)
+
+relax> spectrometer.frequency(id='er', frq=900000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> script(file='/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/tensors.py', dir=None)
+script = '/data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/tensors.py'
+----------------------------------------------------------------------------------------------------
+# The full alignment tensors (real RDC tensors from CaM-IQ).
+align_tensor.init(tensor='Dy N-dom', params=(0.000622191953772, 1.35210609663e-05, -0.000133742852942, 0.000756743581636, 0.000550729840729), param_types=2, align_id='dy')
+align_tensor.init(tensor='Dy N-dom', params=(2.35766523882e-05, 2.51785772774e-05, 1.99369755031e-05, 1.86674275393e-05, 2.01343581166e-05), param_types=2, errors=True, align_id='dy')
+
+align_tensor.init(tensor='Tb N-dom', params=(0.000617222650166, -0.000438128542649, -0.000375477068228, 0.000760687126774, 0.00034129025543), param_types=2, align_id='tb')
+align_tensor.init(tensor='Tb N-dom', params=(1.63152405109e-05, 1.86581336167e-05, 1.34361351013e-05, 1.46648001703e-05, 1.76633948194e-05), param_types=2, errors=True, align_id='tb')
+
+align_tensor.init(tensor='Tm N-dom', params=(-0.000385660891266, 0.000325292994524, 0.000318318888621, -0.00044409190064, -0.000473507384479), param_types=2, align_id='tm')
+align_tensor.init(tensor='Tm N-dom', params=(1.47916817671e-05, 1.81460089395e-05, 1.27148330285e-05, 1.54915569205e-05, 1.55953362766e-05), param_types=2, errors=True, align_id='tm')
+
+align_tensor.init(tensor='Er N-dom', params=(-0.000187529356988, 0.000130813961653, 7.14700966617e-05, -0.000264275852243, -0.000343164086618), param_types=2, align_id='er')
+align_tensor.init(tensor='Er N-dom', params=(1.88459382279e-05, 1.66197299895e-05, 1.69306486018e-05, 2.12500669486e-05, 1.96610327688e-05), param_types=2, errors=True, align_id='er')
+----------------------------------------------------------------------------------------------------
+
+relax> align_tensor.init(tensor='Dy N-dom', align_id='dy', domain=None, params=(0.000622191953772, 1.35210609663e-05, -0.000133742852942, 0.000756743581636, 0.000550729840729), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='Dy N-dom', align_id='dy', domain=None, params=(2.35766523882e-05, 2.51785772774e-05, 1.99369755031e-05, 1.86674275393e-05, 2.01343581166e-05), scale=1.0, angle_units='deg', param_types=2, errors=True)
+
+relax> align_tensor.init(tensor='Tb N-dom', align_id='tb', domain=None, params=(0.000617222650166, -0.000438128542649, -0.000375477068228, 0.000760687126774, 0.00034129025543), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='Tb N-dom', align_id='tb', domain=None, params=(1.63152405109e-05, 1.86581336167e-05, 1.34361351013e-05, 1.46648001703e-05, 1.76633948194e-05), scale=1.0, angle_units='deg', param_types=2, errors=True)
+
+relax> align_tensor.init(tensor='Tm N-dom', align_id='tm', domain=None, params=(-0.000385660891266, 0.000325292994524, 0.000318318888621, -0.00044409190064, -0.000473507384479), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='Tm N-dom', align_id='tm', domain=None, params=(1.47916817671e-05, 1.81460089395e-05, 1.27148330285e-05, 1.54915569205e-05, 1.55953362766e-05), scale=1.0, angle_units='deg', param_types=2, errors=True)
+
+relax> align_tensor.init(tensor='Er N-dom', align_id='er', domain=None, params=(-0.000187529356988, 0.000130813961653, 7.14700966617e-05, -0.000264275852243, -0.000343164086618), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='Er N-dom', align_id='er', domain=None, params=(1.88459382279e-05, 1.66197299895e-05, 1.69306486018e-05, 2.12500669486e-05, 1.96610327688e-05), scale=1.0, angle_units='deg', param_types=2, errors=True)
+
+
+relax> align_tensor.init(tensor='Dy N-dom', align_id='dy', domain=None, params=(0.000622191953772, 1.35210609663e-05, -0.000133742852942, 0.000756743581636, 0.000550729840729), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='Dy N-dom', align_id='dy', domain=None, params=(2.35766523882e-05, 2.51785772774e-05, 1.99369755031e-05, 1.86674275393e-05, 2.01343581166e-05), scale=1.0, angle_units='deg', param_types=2, errors=True)
+
+relax> align_tensor.init(tensor='Tb N-dom', align_id='tb', domain=None, params=(0.000617222650166, -0.000438128542649, -0.000375477068228, 0.000760687126774, 0.00034129025543), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='Tb N-dom', align_id='tb', domain=None, params=(1.63152405109e-05, 1.86581336167e-05, 1.34361351013e-05, 1.46648001703e-05, 1.76633948194e-05), scale=1.0, angle_units='deg', param_types=2, errors=True)
+
+relax> align_tensor.init(tensor='Tm N-dom', align_id='tm', domain=None, params=(-0.000385660891266, 0.000325292994524, 0.000318318888621, -0.00044409190064, -0.000473507384479), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='Tm N-dom', align_id='tm', domain=None, params=(1.47916817671e-05, 1.81460089395e-05, 1.27148330285e-05, 1.54915569205e-05, 1.55953362766e-05), scale=1.0, angle_units='deg', param_types=2, errors=True)
+
+relax> align_tensor.init(tensor='Er N-dom', align_id='er', domain=None, params=(-0.000187529356988, 0.000130813961653, 7.14700966617e-05, -0.000264275852243, -0.000343164086618), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='Er N-dom', align_id='er', domain=None, params=(1.88459382279e-05, 1.66197299895e-05, 1.69306486018e-05, 2.12500669486e-05, 1.96610327688e-05), scale=1.0, angle_units='deg', param_types=2, errors=True)
+
+relax> domain(id='N', spin_id='#N-dom')
+
+relax> domain(id='C', spin_id='#C-dom')
+
+relax> align_tensor.init(tensor='Dy C-dom', align_id='dy', domain=None, params=(0, 0, 0, 0, 0), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.set_domain(tensor='Dy N-dom', domain='N')
+
+relax> align_tensor.set_domain(tensor='Dy C-dom', domain='C')
+
+relax> align_tensor.reduction(full_tensor='Dy N-dom', red_tensor='Dy C-dom')
+
+relax> align_tensor.init(tensor='Tb C-dom', align_id='tb', domain=None, params=(0, 0, 0, 0, 0), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.set_domain(tensor='Tb N-dom', domain='N')
+
+relax> align_tensor.set_domain(tensor='Tb C-dom', domain='C')
+
+relax> align_tensor.reduction(full_tensor='Tb N-dom', red_tensor='Tb C-dom')
+
+relax> align_tensor.init(tensor='Tm C-dom', align_id='tm', domain=None, params=(0, 0, 0, 0, 0), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.set_domain(tensor='Tm N-dom', domain='N')
+
+relax> align_tensor.set_domain(tensor='Tm C-dom', domain='C')
+
+relax> align_tensor.reduction(full_tensor='Tm N-dom', red_tensor='Tm C-dom')
+
+relax> align_tensor.init(tensor='Er C-dom', align_id='er', domain=None, params=(0, 0, 0, 0, 0), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.set_domain(tensor='Er N-dom', domain='N')
+
+relax> align_tensor.set_domain(tensor='Er C-dom', domain='C')
+
+relax> align_tensor.reduction(full_tensor='Er N-dom', red_tensor='Er C-dom')
+
+relax> frame_order.select_model(model='free rotor')
+
+relax> frame_order.ref_domain(ref='N')
+
+relax> frame_order.pivot(pivot=array([ 39.482819802779524,   3.255542739800277,  14.265680648645716]), order=1, fix=False)
+
+relax> paramag.centre(pos=[35.934, 12.194, -4.206], atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=True, force=False)
+The paramagnetic centre position will be fixed during optimisation.
+Paramagnetic centres located at:
+
+Average paramagnetic centre located at:
+    [  35.934,   12.194,   -4.206]
+
+Using the average paramagnetic position.
+
+relax> frame_order.num_int_pts(num=2000)
+
+relax> value.set(val=-21.269217407269576, param='ave_pos_x', index=0, spin_id=None, error=False)
+
+relax> value.set(val=-3.122610661328414, param='ave_pos_y', index=0, spin_id=None, error=False)
+
+relax> value.set(val=-2.400652421655998, param='ave_pos_z', index=0, spin_id=None, error=False)
+
+relax> value.set(val=0.19740471457956135, param='ave_pos_beta', index=0, spin_id=None, error=False)
+
+relax> value.set(val=4.662231310426542, param='ave_pos_gamma', index=0, spin_id=None, error=False)
+
+relax> value.set(val=-0.6109933365884923, param='axis_alpha', index=0, spin_id=None, error=False)
+The average domain rotation centroid, taken as the CoM of all spins loaded for the moving domain, is at:
+    [48.105998313011526, -9.2564535118563871, 30.742193705588587]
+The centre of mass reference coordinate for the rotor models is at:
+    [44.737253525507697, -1.1684805963699558, 14.072436716990133]
+Numerical integration via the quasi-random Sobol' sequence.
+Number of integration points: 2000
+Base data: ['RDCs', 'PCSs']
+Function calls.
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+
+         15298523 function calls (15298465 primitive calls) in 27.492 seconds
+
+   Ordered by: internal time, function name
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+   200000   12.329    0.000   23.737    0.000 /data/relax/branches/frame_order_cleanup/lib/frame_order/rotor.py:152(pcs_pivot_motion_rotor_qrint)
+  8254401    7.487    0.000    7.487    0.000 {numpy.core.multiarray.dot}
+   211545    1.346    0.000    3.016    0.000 /usr/lib64/python2.7/site-packages/numpy/linalg/linalg.py:1924(norm)
+   212874    1.142    0.000    1.142    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+      100    0.967    0.010   25.080    0.251 /data/relax/branches/frame_order_cleanup/lib/frame_order/rotor.py:76(pcs_numeric_int_rotor_qrint)
+      856    0.394    0.000    0.417    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:1825(metadata_counts)
+  1305584    0.385    0.000    0.385    0.000 {range}
+   201678    0.377    0.000    0.377    0.000 {min}
+   200312    0.345    0.000    0.345    0.000 {abs}
+   259424    0.277    0.000    0.550    0.000 /data/relax/branches/frame_order_cleanup/lib/regex.py:29(search)
+   200000    0.228    0.000    3.132    0.000 /data/relax/branches/frame_order_cleanup/lib/compat.py:230(norm)
+   225041    0.214    0.000    0.214    0.000 {numpy.core.multiarray.array}
+1556089/1556080    0.164    0.000    0.164    0.000 {len}
+   212873    0.149    0.000    0.344    0.000 /usr/lib64/python2.7/site-packages/numpy/core/numeric.py:392(asarray)
+   469764    0.146    0.000    0.146    0.000 {isinstance}
+    99093    0.119    0.000    0.187    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:2654(return_spin)
+    37929    0.112    0.000    0.147    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/interatomic.py:391(interatomic_loop)
+    79233    0.083    0.000    0.446    0.000 /data/relax/branches/frame_order_cleanup/lib/selection.py:430(contains_res)
+   123000    0.076    0.000    0.122    0.000 /usr/lib64/python2.7/re.py:226(_compile)
+   131016    0.075    0.000    0.227    0.000 /data/relax/branches/frame_order_cleanup/lib/selection.py:401(contains_mol)
+    49591    0.071    0.000    0.486    0.000 /data/relax/branches/frame_order_cleanup/lib/selection.py:469(contains_spin)
+    21016    0.067    0.000    0.478    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:1253(atom_loop)
+   118512    0.063    0.000    0.231    0.000 /usr/lib64/python2.7/re.py:139(search)
+    48104    0.060    0.000    0.238    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/interatomic.py:362(id_match)
+   211545    0.051    0.000    0.051    0.000 {method 'conj' of 'numpy.ndarray' objects}
+   118512    0.050    0.000    0.050    0.000 {method 'search' of '_sre.SRE_Pattern' objects}
+      143    0.049    0.000    0.169    0.001 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:130(_find_bonded_atoms)
+      422    0.046    0.000    0.346    0.001 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:2558(return_residue)
+   103124    0.043    0.000    0.071    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/pipes.py:329(get_pipe)
+      100    0.040    0.000   25.238    0.252 /data/relax/branches/frame_order_cleanup/target_functions/frame_order.py:447(func_free_rotor)
+   123714    0.032    0.000    0.032    0.000 {method 'get' of 'dict' objects}
+   106074    0.029    0.000    0.029    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/pipes.py:480(test)
+   116866    0.023    0.000    0.023    0.000 {method 'replace' of 'str' objects}
+        2    0.019    0.010    0.019    0.010 {compile}
+      404    0.018    0.000    0.210    0.001 /data/relax/branches/frame_order_cleanup/pipe_control/interatomic.py:555(return_interatom)
+    26400    0.018    0.000    0.061    0.000 /data/relax/branches/frame_order_cleanup/lib/alignment/rdc.py:358(rdc_tensor)
+     2000    0.017    0.000    0.025    0.000 /data/relax/branches/frame_order_cleanup/extern/sobol/sobol_lib.py:158(i4_sobol)
+    57856    0.017    0.000    0.017    0.000 {hasattr}
+    10046    0.015    0.000    0.185    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:1220(are_bonded_index)
+     9013    0.015    0.000    0.015    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:1254(generate_spin_id)
+       66    0.013    0.000    0.129    0.002 /data/relax/branches/frame_order_cleanup/pipe_control/rdc.py:542(opt_uses_j_couplings)
+        1    0.013    0.013    0.769    0.769 /data/relax/branches/frame_order_cleanup/pipe_control/interatomic.py:197(define)
+     3480    0.011    0.000    0.014    0.000 /data/relax/branches/frame_order_cleanup/lib/selection.py:36(parse_token)
+      400    0.010    0.000    0.010    0.000 /data/relax/branches/frame_order_cleanup/lib/frame_order/matrix_ops.py:199(reduce_alignment_tensor)
+     9870    0.010    0.000    0.010    0.000 {method 'write' of 'file' objects}
+        1    0.009    0.009    0.016    0.016 /data/relax/branches/frame_order_cleanup/target_functions/frame_order.py:23(<module>)
+     1160    0.007    0.000    0.009    0.000 /data/relax/branches/frame_order_cleanup/lib/selection.py:125(tokenise)
+      646    0.007    0.000    0.015    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:3298(spin_id_variants_cleanup)
+      800    0.007    0.000    0.014    0.000 /data/relax/branches/frame_order_cleanup/target_functions/chi2.py:32(chi2)
+        1    0.007    0.007    0.031    0.031 /data/relax/branches/frame_order_cleanup/extern/sobol/sobol_lib.py:125(i4_sobol_generate)
+        1    0.007    0.007    0.039    0.039 /data/relax/branches/frame_order_cleanup/target_functions/frame_order.py:1185(create_sobol_data)
+      428    0.007    0.000    0.232    0.001 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:1753(metadata_cleanup)
+     4480    0.006    0.000    0.033    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:1120(_update_object)
+      548    0.006    0.000    0.006    0.000 {eval}
+      428    0.006    0.000    0.224    0.001 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:2004(metadata_update)
+        1    0.006    0.006    0.022    0.022 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/optimisation.py:23(<module>)
+     1167    0.006    0.000    0.030    0.000 /data/relax/branches/frame_order_cleanup/lib/selection.py:358(__init__)
+      208    0.005    0.000    0.012    0.000 /usr/lib64/python2.7/site-packages/numpy/linalg/linalg.py:820(eigvals)
+      140    0.005    0.000    0.054    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/interatomic.py:154(create_interatom)
+      100    0.005    0.000    0.005    0.000 /data/relax/branches/frame_order_cleanup/lib/linear_algebra/kronecker_product.py:147(transpose_23)
+        1    0.005    0.005   27.467   27.467 /data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/timings/profiling_free_rotor.py:8(<module>)
+     3061    0.004    0.000    0.059    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:3597(spin_loop)
+      584    0.004    0.000    0.004    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:2618(return_residue_by_info)
+     3228    0.004    0.000    0.004    0.000 {numpy.core.multiarray.zeros}
+        1    0.004    0.004    0.011    0.011 /data/relax/branches/frame_order_cleanup/pipe_control/interatomic.py:675(unit_vectors)
+      428    0.004    0.000    0.008    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:3156(spin_id_variants)
+        4    0.004    0.001    0.175    0.044 /data/relax/branches/frame_order_cleanup/pipe_control/rdc.py:726(read)
+    38735    0.004    0.000    0.004    0.000 {method 'append' of 'list' objects}
+       12    0.004    0.000    0.012    0.001 /data/relax/branches/frame_order_cleanup/lib/io.py:554(write_data)
+     4935    0.003    0.000    0.014    0.000 /data/relax/branches/frame_order_cleanup/lib/io.py:735(write)
+     1002    0.003    0.000    0.011    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:1392(generate_spin_id_unique)
+      480    0.003    0.000    0.004    0.000 /data/relax/branches/frame_order_cleanup/prompt/uf_objects.py:226(__init__)
+        6    0.003    0.001    0.003    0.001 /data/relax/branches/frame_order_cleanup/specific_analyses/api.py:77(return_api)
+      283    0.003    0.000    0.489    0.002 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:816(create_spin)
+      283    0.003    0.000    0.004    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/pdb_read.py:32(atom)
+      100    0.003    0.000    0.008    0.000 /data/relax/branches/frame_order_cleanup/lib/geometry/rotations.py:2347(two_vect_to_R)
+      128    0.003    0.000    0.038    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:1257(set)
+      283    0.002    0.000    0.003    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:1662(index_residue)
+      203    0.002    0.000    0.003    0.000 /usr/lib64/python2.7/site-packages/numpy/core/numeric.py:966(outer)
+        2    0.002    0.001    0.380    0.190 /data/relax/branches/frame_order_cleanup/pipe_control/structure/mass.py:33(pipe_centre_of_mass)
+      100    0.002    0.000    0.016    0.000 /data/relax/branches/frame_order_cleanup/target_functions/frame_order.py:1288(reduce_and_rot)
+     1998    0.002    0.000    0.003    0.000 /data/relax/branches/frame_order_cleanup/extern/sobol/sobol_lib.py:63(i4_bit_lo0)
+      426    0.002    0.000    0.012    0.000 /data/relax/branches/frame_order_cleanup/data_store/mol_res_spin.py:158(is_empty)
+      152    0.002    0.000    0.002    0.000 {dir}
+     4474    0.002    0.000    0.007    0.000 /usr/lib64/python2.7/re.py:134(match)
+  293/286    0.002    0.000    0.005    0.000 /usr/lib64/python2.7/sre_parse.py:379(_parse)
+      565    0.002    0.000    0.023    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:2475(return_molecule)
+    72/64    0.002    0.000    1.574    0.025 /data/relax/branches/frame_order_cleanup/prompt/uf_objects.py:113(__call__)
+        1    0.002    0.002    0.156    0.156 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/optimisation.py:260(minimise_setup_rdcs)
+        2    0.002    0.001    0.002    0.001 /data/relax/branches/frame_order_cleanup/lib/structure/mass.py:33(centre_of_mass)
+     2213    0.002    0.000    0.002    0.000 /usr/lib64/python2.7/sre_parse.py:182(__next)
+     4474    0.002    0.000    0.002    0.000 {method 'match' of '_sre.SRE_Pattern' objects}
+      100    0.002    0.000    0.018    0.000 /usr/lib64/python2.7/site-packages/numpy/core/numeric.py:1058(tensordot)
+      100    0.002    0.000    0.002    0.000 /data/relax/branches/frame_order_cleanup/target_functions/frame_order.py:1145(calc_vectors)
+        2    0.002    0.001    0.007    0.003 /data/relax/branches/frame_order_cleanup/prompt/interpreter.py:133(_setup)
+     1410    0.002    0.000    0.002    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:2069(model_loop)
+       52    0.002    0.000    0.003    0.000 /usr/lib64/python2.7/site-packages/numpy/linalg/linalg.py:982(eig)
+      143    0.002    0.000    0.003    0.000 /data/relax/branches/frame_order_cleanup/data_store/mol_res_spin.py:497(add_item)
+        6    0.002    0.000    0.017    0.003 /data/relax/branches/frame_order_cleanup/pipe_control/minimise.py:241(reset_min_stats)
+      200    0.002    0.000    0.003    0.000 /usr/lib64/python2.7/site-packages/numpy/core/numeric.py:1358(cross)
+        1    0.002    0.002    0.002    0.002 /data/relax/branches/frame_order_cleanup/lib/frame_order/double_rotor.py:23(<module>)
+      800    0.001    0.000    0.007    0.000 /usr/lib64/python2.7/site-packages/numpy/core/fromnumeric.py:1621(sum)
+        6    0.001    0.000    0.007    0.001 /data/relax/branches/frame_order_cleanup/lib/sequence.py:310(write_spin_data)
+        2    0.001    0.001    0.514    0.257 /data/relax/branches/frame_order_cleanup/pipe_control/structure/main.py:509(load_spins)
+     4608    0.001    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:867(dependency_generator)
+      100    0.001    0.000    0.006    0.000 /data/relax/branches/frame_order_cleanup/lib/frame_order/rotor_axis.py:38(create_rotor_axis_alpha)
+      143    0.001    0.000    0.113    0.001 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:651(create_residue)
+  300/286    0.001    0.000    0.001    0.000 /usr/lib64/python2.7/sre_compile.py:32(_compile)
+     4962    0.001    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/pipes.py:220(cdp_name)
+      286    0.001    0.000    0.003    0.000 /usr/lib64/python2.7/sre_compile.py:359(_compile_info)
+  303/293    0.001    0.000    0.001    0.000 /usr/lib64/python2.7/sre_parse.py:140(getwidth)
+        1    0.001    0.001    0.002    0.002 /usr/lib64/python2.7/site-packages/scipy/special/__init__.py:527(<module>)
+      100    0.001    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/lib/geometry/rotations.py:333(axis_angle_to_R)
+     2912    0.001    0.000    0.001    0.000 {method 'split' of 'str' objects}
+     1840    0.001    0.000    0.002    0.000 /data/relax/branches/frame_order_cleanup/lib/check_types.py:97(is_float)
+      286    0.001    0.000    0.014    0.000 /usr/lib64/python2.7/sre_compile.py:493(compile)
+     8017    0.001    0.000    0.001    0.000 {math.floor}
+     3355    0.001    0.000    0.001    0.000 {method 'keys' of 'dict' objects}
+      286    0.001    0.000    0.008    0.000 /usr/lib64/python2.7/sre_parse.py:675(parse)
+      404    0.001    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/lib/alignment/alignment_tensor.py:215(to_tensor)
+     2575    0.001    0.000    0.001    0.000 {repr}
+     2330    0.001    0.000    0.001    0.000 {method 'rfind' of 'str' objects}
+      800    0.001    0.000    0.005    0.000 /usr/lib64/python2.7/site-packages/numpy/core/_methods.py:23(_sum)
+      429    0.001    0.000    0.001    0.000 /usr/lib64/python2.7/threading.py:186(release)
+        1    0.001    0.001    0.001    0.001 /data/relax/branches/frame_order_cleanup/lib/frame_order/matrix_ops.py:23(<module>)
+      260    0.001    0.000    0.003    0.000 /usr/lib64/python2.7/site-packages/numpy/linalg/linalg.py:214(_assertFinite)
+      287    0.001    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/molecules.py:264(atom_add)
+     1910    0.001    0.000    0.002    0.000 /usr/lib64/python2.7/sre_parse.py:201(get)
+      429    0.001    0.000    0.001    0.000 /usr/lib64/python2.7/threading.py:146(acquire)
+       52    0.001    0.000    0.004    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:589(calc_P_diag)
+      313    0.001    0.000    0.001    0.000 /usr/lib64/python2.7/site-packages/numpy/linalg/linalg.py:139(_commonType)
+       52    0.001    0.000    0.001    0.000 /usr/lib64/python2.7/site-packages/numpy/linalg/linalg.py:1679(det)
+        1    0.001    0.001    0.004    0.004 /data/relax/branches/frame_order_cleanup/lib/frame_order/pseudo_ellipse.py:23(<module>)
+      568    0.001    0.000    0.003    0.000 /data/relax/branches/frame_order_cleanup/lib/float.py:561(isNaN)
+       52    0.001    0.000    0.006    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:776(calc_rotation)
+     4435    0.001    0.000    0.001    0.000 {getattr}
+     2154    0.001    0.000    0.001    0.000 {method 'count' of 'str' objects}
+      568    0.001    0.000    0.002    0.000 /data/relax/branches/frame_order_cleanup/lib/float.py:260(floatAsByteArray)
+        1    0.001    0.001    0.044    0.044 /data/relax/branches/frame_order_cleanup/target_functions/frame_order.py:60(__init__)
+        2    0.001    0.000    0.005    0.003 /data/relax/branches/frame_order_cleanup/lib/structure/internal/molecules.py:355(fill_object_from_pdb)
+     2500    0.001    0.000    0.001    0.000 {math.cos}
+     5911    0.001    0.000    0.001    0.000 {method 'strip' of 'str' objects}
+        1    0.001    0.001    0.001    0.001 /usr/lib64/python2.7/site-packages/scipy/special/basic.py:5(<module>)
+      100    0.001    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/lib/frame_order/free_rotor.py:29(compile_2nd_matrix_free_rotor)
+      568    0.001    0.000    0.002    0.000 /data/relax/branches/frame_order_cleanup/lib/float.py:465(getExponentBytes)
+     1257    0.001    0.000    0.001    0.000 {issubclass}
+        1    0.001    0.001    0.006    0.006 /data/relax/branches/frame_order_cleanup/pipe_control/interatomic.py:624(set_dist)
+       52    0.001    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/lib/geometry/rotations.py:1573(R_to_euler)
+      105    0.001    0.000    0.001    0.000 /usr/lib64/python2.7/site-packages/numpy/lib/twodim_base.py:170(eye)
+      100    0.001    0.000    0.007    0.000 /data/relax/branches/frame_order_cleanup/lib/linear_algebra/kronecker_product.py:30(kron_prod)
+      400    0.001    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/lib/alignment/alignment_tensor.py:197(to_5D)
+  291/286    0.000    0.000    0.006    0.000 /usr/lib64/python2.7/sre_parse.py:301(_parse_sub)
+       52    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:517(calc_P)
+       72    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/prompt/uf_objects.py:374(_intro_text)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/integrate/_ode.py:39(<module>)
+      520    0.000    0.000    0.003    0.000 /usr/lib64/python2.7/site-packages/numpy/core/_methods.py:35(_all)
+     1308    0.000    0.000    0.001    0.000 /usr/lib64/python2.7/sre_parse.py:138(append)
+      283    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/mol_res_spin.py:41(__init__)
+      708    0.000    0.000    0.001    0.000 /usr/lib64/python2.7/site-packages/numpy/core/fromnumeric.py:492(transpose)
+        1    0.000    0.000    0.004    0.004 /usr/lib64/python2.7/site-packages/scipy/integrate/__init__.py:48(<module>)
+      568    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/lib/float.py:234(floatToBinaryString)
+     1167    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/lib/check_types.py:210(is_unicode)
+     4340    0.000    0.000    0.000    0.000 {globals}
+      286    0.000    0.000    0.004    0.000 /usr/lib64/python2.7/sre_compile.py:478(_code)
+      140    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/data_store/mol_res_spin.py:220(add_item)
+     2500    0.000    0.000    0.000    0.000 {math.sin}
+      586    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:2525(return_molecule_by_name)
+      443    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:2695(return_spin_by_info)
+      283    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:1623(index_molecule)
+      520    0.000    0.000    0.004    0.000 {method 'all' of 'numpy.ndarray' objects}
+      783    0.000    0.000    0.000    0.000 {setattr}
+      313    0.000    0.000    0.000    0.000 {method 'astype' of 'numpy.ndarray' objects}
+      100    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/lib/geometry/rotations.py:1403(euler_to_R_zyz)
+      429    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/status.py:563(release)
+      429    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/status.py:526(acquire)
+      260    0.000    0.000    0.003    0.000 /usr/lib64/python2.7/site-packages/numpy/core/fromnumeric.py:1842(all)
+       52    0.000    0.000    0.004    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:107(calc_A_diag)
+      908    0.000    0.000    0.000    0.000 {method 'transpose' of 'numpy.ndarray' objects}
+       52    0.000    0.000    0.004    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:357(calc_S_diag)
+      568    0.000    0.000    0.003    0.000 /data/relax/branches/frame_order_cleanup/lib/float.py:539(isExpAllOnes)
+      886    0.000    0.000    0.001    0.000 /usr/lib64/python2.7/site-packages/numpy/linalg/linalg.py:111(isComplexType)
+      573    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/linalg/linalg.py:124(_realType)
+     1106    0.000    0.000    0.000    0.000 {method 'index' of 'list' objects}
+      581    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/lib/arg_check.py:60(is_float)
+      313    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/linalg/linalg.py:209(_assertNdSquareness)
+      300    0.000    0.000    0.000    0.000 {method 'reshape' of 'numpy.ndarray' objects}
+      286    0.000    0.000    0.000    0.000 {_sre.compile}
+      572    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/sre_compile.py:472(isstring)
+     1272    0.000    0.000    0.000    0.000 {method 'pop' of 'list' objects}
+        1    0.000    0.000    0.016    0.016 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/optimisation.py:153(minimise_setup_pcs)
+      261    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/linalg/linalg.py:101(get_linalg_error_extobj)
+        6    0.000    0.000    0.000    0.000 {method 'split' of '_sre.SRE_Pattern' objects}
+       20    0.000    0.000    0.037    0.002 /data/relax/branches/frame_order_cleanup/pipe_control/align_tensor.py:1149(set)
+      261    0.000    0.000    0.001    0.000 /usr/lib64/python2.7/site-packages/numpy/linalg/linalg.py:106(_makearray)
+      843    0.000    0.000    0.000    0.000 {max}
+        4    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:647(_parse_mols)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:1(<module>)
+      143    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/data_store/mol_res_spin.py:382(__init__)
+       52    0.000    0.000    0.004    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:227(calc_eigvals)
+       66    0.000    0.000    0.129    0.002 /data/relax/branches/frame_order_cleanup/pipe_control/rdc.py:193(check_rdcs)
+      263    0.000    0.000    0.001    0.000 /usr/lib64/python2.7/site-packages/numpy/core/numeric.py:462(asanyarray)
+      528    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/rdc.py:271(convert)
+      482    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/user_functions/data.py:152(uf_loop)
+      407    0.000    0.000    0.000    0.000 {method 'ravel' of 'numpy.ndarray' objects}
+      500    0.000    0.000    0.000    0.000 {method 'swapaxes' of 'numpy.ndarray' objects}
+       53    0.000    0.000    0.001    0.000 /usr/lib64/python2.7/copy.py:145(deepcopy)
+        8    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/lib/io.py:483(strip)
+        2    0.000    0.000    0.008    0.004 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:3107(set_spin_isotope)
+      286    0.000    0.000    0.001    0.000 /usr/lib64/python2.7/sre_parse.py:178(__init__)
+      568    0.000    0.000    0.000    0.000 {_struct.pack}
+        7    0.000    0.000    0.039    0.006 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/data.py:36(base_data_types)
+        6    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/textwrap.py:243(_wrap_chunks)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/api.py:23(<module>)
+      100    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/lib/frame_order/matrix_ops.py:271(rotate_daeg)
+      313    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/linalg/linalg.py:198(_assertRankAtLeast2)
+      862    0.000    0.000    0.000    0.000 {sys._getframe}
+       53    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/copy.py:267(_keep_alive)
+      858    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/threading.py:63(_note)
+      140    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/interatomic.py:135(add_item)
+      568    0.000    0.000    0.000    0.000 {_struct.unpack}
+       24    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/lib/sequence.py:38(read_spin_data)
+      858    0.000    0.000    0.000    0.000 {thread.get_ident}
+      286    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/sre_parse.py:67(__init__)
+       52    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:252(calc_eta)
+      260    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/linalg/linalg.py:219(_assertNoEmpty2d)
+      422    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/physical_constants.py:218(return_atomic_mass)
+        1    0.000    0.000    0.626    0.626 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/optimisation.py:610(target_fn_setup)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/integrate/quadpack.py:3(<module>)
+       52    0.000    0.000    0.000    0.000 {method 'astype' of 'numpy.generic' objects}
+       13    0.000    0.000    0.000    0.000 {open}
+      143    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/mol_res_spin.py:194(__init__)
+        4    0.000    0.000    0.003    0.001 /data/relax/branches/frame_order_cleanup/pipe_control/pcs.py:622(read)
+      300    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/sre_parse.py:90(__init__)
+       52    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:819(calc_unit_x)
+      260    0.000    0.000    0.000    0.000 {method 'tolist' of 'numpy.ndarray' objects}
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:774(_validate_records)
+        8    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/lib/io.py:118(extract_data)
+        4    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:332(_parse_pdb_coord)
+      144    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/molecules.py:310(atom_connect)
+      143    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/mol_res_spin.py:262(is_empty)
+        3    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/arrayprint.py:547(fillFormat)
+      140    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/interatomic.py:38(__init__)
+       20    0.000    0.000    0.038    0.002 /data/relax/branches/frame_order_cleanup/pipe_control/align_tensor.py:671(init)
+      285    0.000    0.000    0.000    0.000 {method 'acquire' of 'thread.lock' objects}
+       20    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/arg_check.py:811(is_num_tuple)
+      100    0.000    0.000    0.000    0.000 {iter}
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/integrate/odepack.py:2(<module>)
+      100    0.000    0.000    0.000    0.000 {math.acos}
+       10    0.000    0.000    0.000    0.000 {method 'readlines' of 'file' objects}
+      209    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/arg_check.py:875(is_str)
+      100    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/fromnumeric.py:444(swapaxes)
+        1    0.000    0.000    0.005    0.005 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/optimisation.py:95(minimise_setup_atomic_pos)
+       53    0.000    0.000    0.000    0.000 {method '__deepcopy__' of 'numpy.ndarray' objects}
+      561    0.000    0.000    0.000    0.000 {method 'pop' of 'dict' objects}
+       52    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:38(calc_A)
+       66    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/physical_constants.py:80(dipolar_constant)
+      343    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/sre_parse.py:195(match)
+       18    0.000    0.000    0.000    0.000 {posix.access}
+       52    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:288(calc_S)
+       52    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:752(calc_R)
+      144    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/data_store/mol_res_spin.py:523(is_empty)
+       10    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/lib/io.py:318(open_read_file)
+       52    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:835(calc_unit_y)
+        1    0.000    0.000    0.002    0.002 /usr/lib64/python2.7/site-packages/scipy/integrate/quadrature.py:1(<module>)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/special/orthogonal.py:79(<module>)
+       52    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:556(calc_P_5D)
+      746    0.000    0.000    0.000    0.000 {ord}
+       52    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:851(calc_unit_z)
+        7    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/io.py:373(open_write_file)
+      156    0.000    0.000    0.000    0.000 {math.atan2}
+       25    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/data.py:70(domain_moving)
+      404    0.000    0.000    0.000    0.000 {method 'startswith' of 'str' objects}
+      285    0.000    0.000    0.000    0.000 {method 'release' of 'thread.lock' objects}
+      156    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/geometry/angles.py:83(wrap_angles)
+      143    0.000    0.000    0.000    0.000 {method 'sort' of 'list' objects}
+       32    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:1152(exists_mol_res_spin_data)
+      198    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:1606(is_pseudoatom)
+       52    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:149(calc_Aa)
+        2    0.000    0.000    0.006    0.003 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:1834(load_pdb)
+        4    0.000    0.000    0.000    0.000 {method 'read' of 'file' objects}
+        4    0.000    0.000    0.000    0.000 {_warnings.warn}
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/linalg/linalg.py:455(inv)
+       52    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/lib/geometry/rotations.py:1819(R_to_euler_zyz)
+       67    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:110(__init__)
+       52    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:169(calc_Ar)
+        1    0.000    0.000   27.487   27.487 /data/relax/branches/frame_order_cleanup/prompt/interpreter.py:247(run)
+       20    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/sequence.py:229(validate_sequence)
+      2/1    0.000    0.000   27.486   27.486 /data/relax/branches/frame_order_cleanup/prompt/interpreter.py:323(exec_script)
+       52    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:74(calc_A_5D)
+        3    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/arrayprint.py:598(__call__)
+       52    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:324(calc_S_5D)
+      286    0.000    0.000    0.000    0.000 {method 'items' of 'dict' objects}
+        4    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/pdb_read.py:693(hetatm)
+        2    0.000    0.000    0.001    0.001 /data/relax/branches/frame_order_cleanup/info.py:271(intro_text)
+        4    0.000    0.000    0.020    0.005 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/parameters.py:206(update_model)
+      132    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/physical_constants.py:170(return_gyromagnetic_ratio)
+       84    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/user_functions/data.py:114(class_loop)
+        5    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/mol_res_spin.py:431(is_empty)
+       12    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/align_tensor.py:614(get_tensor_object)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/io.py:257(io_streams_tee)
+        2    0.000    0.000    0.000    0.000 {method 'clear' of 'dict' objects}
+       79    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/arg_check.py:343(is_int)
+        6    0.000    0.000    0.021    0.003 /data/relax/branches/frame_order_cleanup/pipe_control/value.py:349(set)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/pkgutil.py:366(get_importer)
+       12    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:1031(names)
+      322    0.000    0.000    0.000    0.000 {method 'rstrip' of 'str' objects}
+       67    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/sre_parse.py:130(__getitem__)
+       60    0.000    0.000    0.000    0.000 {math.sqrt}
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:2137(pack_structs)
+        6    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/api.py:57(__init__)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/optimisation.py:422(minimise_setup_tensors)
+       16    0.000    0.000    0.000    0.000 {posix.lstat}
+        6    0.000    0.000    0.000    0.000 {method 'close' of 'file' objects}
+       82    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/prompt/uf_objects.py:39(__init__)
+      2/1    0.000    0.000   27.487   27.487 /data/relax/branches/frame_order_cleanup/prompt/interpreter.py:406(interact_script)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/arrayprint.py:233(_array2string)
+        9    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/sre_compile.py:178(_compile_charset)
+       52    0.000    0.000    0.001    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:276(calc_euler)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/paramag.py:34(centre)
+        2    0.000    0.000    0.000    0.000 {imp.find_module}
+        4    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/spectrometer.py:123(frequency_checks)
+       14    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/io.py:177(get_file_path)
+       20    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/posixpath.py:68(join)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/extern/sobol/sobol_lib.py:1(<module>)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/posixpath.py:372(_joinrealpath)
+        8    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/fromnumeric.py:38(_wrapit)
+       52    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/arg_check.py:35(is_bool)
+       34    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/mol_res_spin.py:737(is_empty)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/arg_check.py:680(is_num_list)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/arrayprint.py:639(__init__)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:498(exec_)
+       12    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/numeric.py:2320(seterr)
+        6    0.000    0.000    0.001    0.000 /usr/lib64/python2.7/textwrap.py:115(__init__)
+       52    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/geometry/rotations.py:1463(matrix_indices)
+      140    0.000    0.000    0.000    0.000 {method 'count' of 'list' objects}
+       37    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:95(__init__)
+       10    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/ansi.py:48(enable_control_chars)
+        1    0.000    0.000    0.010    0.010 /data/relax/branches/frame_order_cleanup/test_suite/shared_data/frame_order/cam/tensors.py:2(<module>)
+      104    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:82(__init__)
+        9    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/sre_compile.py:207(_optimize_charset)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/info.py:123(_setup_references)
+        4    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/posixpath.py:321(normpath)
+       10    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/io.py:83(determine_compression)
+       12    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/numeric.py:2416(geterr)
+        2    0.000    0.000    0.006    0.003 /data/relax/branches/frame_order_cleanup/pipe_control/structure/main.py:635(read_pdb)
+       20    0.000    0.000    0.000    0.000 {method 'isatty' of 'file' objects}
+        2    0.000    0.000    0.003    0.002 /data/relax/branches/frame_order_cleanup/pipe_control/mol_res_spin.py:595(create_molecule)
+        8    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/align_tensor.py:1575(set_domain)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/frame_order/pseudo_ellipse_torsionless.py:23(<module>)
+        2    0.000    0.000    0.008    0.004 /data/relax/branches/frame_order_cleanup/prompt/interpreter.py:69(__init__)
+        6    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/arrayprint.py:632(_digits)
+      159    0.000    0.000    0.000    0.000 {id}
+       68    0.000    0.000    0.000    0.000 {locals}
+       14    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/arg_check.py:646(is_num)
+       10    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/io.py:716(isatty)
+        1    0.000    0.000    0.013    0.013 /data/relax/branches/frame_order_cleanup/pipe_control/script.py:35(script)
+        4    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/spectrometer.py:218(set_frequency)
+        4    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/pcs.py:215(check_pipe_setup)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/extern/sobol/sobol_lib.py:4(i4_bit_hi1)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/frame_order/pseudo_ellipse_free_rotor.py:23(<module>)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/mol_res_spin.py:653(is_empty)
+       17    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/check_types.py:79(is_filetype)
+       10    0.000    0.000    0.000    0.000 {filter}
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/frame_order/rotor.py:23(<module>)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/dual.py:12(<module>)
+        2    0.000    0.000    0.000    0.000 {numpy.core.multiarray.empty}
+       12    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/sre_parse.py:225(_class_escape)
+        2    0.000    0.000    0.020    0.010 /usr/lib64/python2.7/runpy.py:100(_get_module_details)
+        8    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:944(add_item)
+       10    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/info.py:144(centre)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/numeric.py:2025(identity)
+       16    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/posixpath.py:139(islink)
+      2/1    0.000    0.000   27.487   27.487 /data/relax/branches/frame_order_cleanup/prompt/interpreter.py:543(run_script)
+        6    0.000    0.000    0.001    0.000 /usr/lib64/python2.7/textwrap.py:316(wrap)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/frame_order/iso_cone.py:23(<module>)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/pkgutil.py:176(find_module)
+        2    0.000    0.000    0.020    0.010 /usr/lib64/python2.7/pkgutil.py:277(get_code)
+        4    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/align_tensor.py:1081(reduction)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/status.py:330(release)
+        1    0.000    0.000   27.492   27.492 /data/relax/branches/frame_order_cleanup/relax.py:159(run)
+        6    0.000    0.000    0.001    0.000 /usr/lib64/python2.7/textwrap.py:343(wrap)
+        3    0.000    0.000    0.000    0.000 {method 'compress' of 'numpy.ndarray' objects}
+       16    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/frame_order/iso_cone_torsionless.py:23(<module>)
+        1    0.000    0.000    0.000    0.000 {readline.parse_and_bind}
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/target_functions/frame_order.py:330(_init_tensors)
+        6    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/textwrap.py:146(_munge_whitespace)
+        6    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/specific_analyses/api_common.py:494(_set_param_values_global)
+        4    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/rdc.py:141(check_pipe_setup)
+        8    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/optimisation.py:474(opt_uses_align_data)
+        6    0.000    0.000    0.033    0.005 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/data.py:150(pivot_fixed)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/prompt/interpreter.py:223(populate_self)
+      2/1    0.000    0.000   27.486   27.486 /usr/lib64/python2.7/runpy.py:164(run_module)
+       53    0.000    0.000    0.000    0.000 {method '__array_prepare__' of 'numpy.ndarray' objects}
+        4    0.000    0.000    0.000    0.000 {method 'update' of 'dict' objects}
+        4    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/warnings.py:42(format)
+        6    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/arg_check.py:1274(is_val_or_list)
+        4    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/spectrometer.py:262(set_temperature)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/frame_order/iso_cone_free_rotor.py:23(<module>)
+        2    0.000    0.000    0.000    0.000 {numpy.core.multiarray.copyto}
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/info.py:70(__init__)
+      2/1    0.000    0.000   27.467   27.467 /usr/lib64/python2.7/runpy.py:62(_run_code)
+        4    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/warnings.py:24(_show_warning)
+        6    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/sre_compile.py:354(_simple)
+        6    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/textwrap.py:163(_split)
+        4    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/posixpath.py:350(abspath)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/status.py:269(acquire)
+       20    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:634(calc_Pxx)
+       14    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/posixpath.py:258(expanduser)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/warnings.py:45(filterwarnings)
+        4    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/posixpath.py:89(split)
+        4    0.000    0.000    0.000    0.000 {posix.getcwd}
+       16    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/stat.py:55(S_ISLNK)
+        3    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/arrayprint.py:533(__init__)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/arrayprint.py:465(_formatArray)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/pipes.py:160(create)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/pkgutil.py:466(find_loader)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/pkgutil.py:294(get_source)
+        8    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/arg_check.py:1150(is_str_or_str_list)
+        3    0.000    0.000    0.000    0.000 {method 'any' of 'numpy.ndarray' objects}
+       16    0.000    0.000    0.000    0.000 {method 'partition' of 'str' objects}
+       12    0.000    0.000    0.000    0.000 {numpy.core.umath.seterrobj}
+        1    0.000    0.000    0.000    0.000 {readline.set_completer}
+        6    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/numeric.py:2705(__enter__)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/lib/function_base.py:1518(__init__)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/testing/nosetester.py:140(__init__)
+        8    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:1097(__init__)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/__init__.py:345(add)
+       28    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:733(calc_Pzz)
+        4    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/pkgutil.py:400(iter_importers)
+        1    0.000    0.000    0.006    0.006 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/uf.py:152(ref_domain)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/linear_algebra/kronecker_product.py:23(<module>)
+        6    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/numeric.py:2710(__exit__)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/mol_res_spin.py:604(__init__)
+        6    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/numeric.py:2701(__init__)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/code.py:182(__init__)
+       32    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/sre_parse.py:126(__len__)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:518(_parse_pdb_title)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/molecules.py:557(add_item)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/arrayprint.py:343(array2string)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/numeric.py:1509(array_repr)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/parameters.py:34(assemble_param_vector)
+       28    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:208(calc_Azz)
+       28    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:650(calc_Pxxyy)
+       20    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:669(calc_Pxy)
+       20    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:701(calc_Pyy)
+       20    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:399(calc_Sxx)
+       28    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:415(calc_Sxxyy)
+       20    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:434(calc_Sxy)
+       28    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:498(calc_Szz)
+       14    0.000    0.000    0.001    0.000 /usr/lib64/python2.7/re.py:188(compile)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/posixpath.py:127(dirname)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/pkgutil.py:317(get_filename)
+        6    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/arg_check.py:520(is_list)
+        4    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/physical_constants.py:115(pcs_constant)
+        1    0.000    0.000    0.006    0.006 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/uf.py:102(pivot)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/prompt/interpreter.py:231(prompt_colour_off)
+        1    0.000    0.000   27.492   27.492 /data/relax/branches/frame_order_cleanup/multi/processor.py:479(run)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/special/spfun_stats.py:34(<module>)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/geometry/pec.py:23(<module>)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/target_functions/frame_order.py:57(Frame_order)
+        6    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/specific_analyses/api_base.py:38(__new__)
+        8    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/warnings.py:114(__str__)
+        1    0.000    0.000    0.012    0.012 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/parameters.py:66(assemble_scaling_matrix)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/pkgutil.py:441(get_loader)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/arg_check.py:94(is_float_array)
+        6    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/arg_check.py:909(is_str_list)
+        4    0.000    0.000    0.000    0.000 {math.modf}
+        6    0.000    0.000    0.000    0.000 {method 'expandtabs' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/checks.py:23(<module>)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/frame_order/free_rotor.py:23(<module>)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/special/lambertw.py:1(<module>)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/api.py:51(Frame_order)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/code.py:37(__init__)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/arrayprint.py:700(__init__)
+        3    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/fromnumeric.py:1762(any)
+       20    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:717(calc_Pyz)
+       20    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:466(calc_Syy)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/pkgutil.py:273(is_package)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/status.py:316(locked)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:2119(num_molecules)
+        8    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/optimisation.py:502(opt_uses_pcs)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/warnings.py:92(setup)
+       10    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/data.py:171(tensor_loop)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:2869(validate)
+        6    0.000    0.000    0.000    0.000 {method 'translate' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {readline.set_completer_delims}
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/pipe_container.py:43(__init__)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/molecules.py:62(__init__)
+        3    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/_methods.py:31(_any)
+        6    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/sre_parse.py:257(_escape)
+        3    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/arrayprint.py:457(_extendLine)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/runpy.py:92(_get_filename)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:380(_parse_pdb_hetrogen)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:410(_parse_pdb_misc)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:437(_parse_pdb_prim_struct)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:469(_parse_pdb_ss)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/genericpath.py:85(_splitext)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/mol_res_spin.py:718(add_item)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/models.py:64(add_item)
+       20    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:450(calc_Sxz)
+        6    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/posixpath.py:59(isabs)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/integrate/_ode.py:103(ode)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/prompt/interpreter.py:213(on)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/numeric.py:136(ones)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/fromnumeric.py:1281(ravel)
+        1    0.000    0.000    0.002    0.002 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/uf.py:182(select_model)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/posixpath.py:104(splitext)
+        2    0.000    0.000    0.000    0.000 {method 'insert' of 'list' objects}
+       24    0.000    0.000    0.000    0.000 {numpy.core.umath.geterrobj}
+       16    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/stat.py:24(S_IFMT)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/arrayprint.py:716(__init__)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/models.py:40(__init__)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/mol_res_spin.py:471(__init__)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/codeop.py:146(__init__)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:60(__init__)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:303(_parse_pdb_connectivity_annotation)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:560(_parse_pdb_transform)
+       28    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:189(calc_Axxyy)
+       20    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:685(calc_Pxz)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/integrate/_ode.py:434(complex_ode)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/domain.py:26(define)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/integrate/_ode.py:880(dopri5)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/interatomic.py:335(exists_data)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/molecules.py:589(is_empty)
+        3    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/status.py:404(notify)
+        1    0.000    0.000    0.006    0.006 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/parameters.py:192(param_num)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/multi/processor.py:406(pre_run)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/posixpath.py:364(realpath)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/integrate/_ode.py:612(vode)
+        1    0.000    0.000    0.000    0.000 {__import__}
+       19    0.000    0.000    0.000    0.000 {method 'endswith' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:326(Module_six_moves_urllib)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:85(__get__)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/codeop.py:129(__init__)
+        3    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/arrayprint.py:661(__init__)
+        4    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/warnings.py:122(__init__)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/pkgutil.py:237(__init__)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/models.py:171(__init__)
+        6    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/specific_analyses/parameter_object.py:80(__new__)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/status.py:45(__new__)
+        6    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/sre_parse.py:134(__setitem__)
+       15    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/sre_compile.py:24(_identityfunction)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/pkgutil.py:257(_reopen)
+       20    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/align_tensor.py:482(calc_Syz)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/sre_parse.py:83(closegroup)
+        1    0.000    0.000   27.492   27.492 /data/relax/branches/frame_order_cleanup/multi/__init__.py:311(default_init_master)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/integrate/_ode.py:965(dop853)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:1631(empty)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/integrate/_ode.py:1016(lsoda)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/uf.py:39(num_int_pts)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/object.py:2109(num_models)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/sre_parse.py:72(opengroup)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/dual.py:52(register_func)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/molmol.py:168(running)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/warnings.py:74(simplefilter)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/integrate/_ode.py:766(zvode)
+        1    0.000    0.000    0.000    0.000 {_functools.reduce}
+        1    0.000    0.000    0.000    0.000 {built-in method __new__ of type object at 0x7fa807a27d00}
+        4    0.000    0.000    0.000    0.000 {method 'extend' of 'list' objects}
+        2    0.000    0.000    0.000    0.000 {method 'locked' of 'thread.lock' objects}
+        2    0.000    0.000    0.000    0.000 {method 'remove' of 'list' objects}
+       10    0.000    0.000    0.000    0.000 {method 'reverse' of 'list' objects}
+        2    0.000    0.000    0.000    0.000 {method 'rpartition' of 'str' objects}
+        2    0.000    0.000    0.000    0.000 {method 'setdefault' of 'dict' objects}
+        6    0.000    0.000    0.000    0.000 {method 'upper' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 <string>:1(<module>)
+        2    0.000    0.000    0.000    0.000 {sum}
+        1    0.000    0.000    0.000    0.000 {time.time}
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/frame_order/matrix_ops.py:290(Data)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/integrate/_ode.py:564(IntegratorBase)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:411(Iterator)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:230(Module_six_moves_urllib_error)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:202(Module_six_moves_urllib_parse)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:311(Module_six_moves_urllib_robotparser)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:80(_LazyDescr)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/integrate/quadpack.py:643(_NQuad)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/integrate/quadpack.py:621(_RangeFunc)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/mol_res_spin.py:693(__init__)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/arrayprint.py:689(__init__)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/prompt/tab_completion.py:28(__init__)
+        6    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/specific_analyses/frame_order/parameter_object.py:35(__init__)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/info.py:112(__new__)
+        4    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:69(_add_doc)
+        8    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/pkgutil.py:265(_fix_name)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:74(_import_module)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:128(_resolve)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/pipes.py:199(check_type)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/data_store/interatomic.py:154(is_empty)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/structure/internal/molecules.py:455(is_empty)
+        6    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/arg_check.py:448(is_int_or_int_list)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/io.py:294(mkdir_nofail)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/multi/uni_processor.py:87(on_master)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/pipe_control/molmol.py:116(open_pdb)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/special/orthogonal.py:113(orthopoly1d)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/code.py:196(resetbuffer)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/io.py:727(split)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/sre_parse.py:205(tell)
+        1    0.000    0.000    0.000    0.000 {delattr}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/extern/sobol/__init__.py:26(<module>)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/integrate/quadrature.py:17(AccuracyWarning)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/integrate/_ode.py:550(IntegratorConcurrencyError)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:247(Module_six_moves_urllib_request)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:293(Module_six_moves_urllib_response)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:108(MovedAttribute)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:93(MovedModule)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/special/basic.py:38(SpecialFunctionWarning)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:55(X)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:134(_MovedItems)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/scipy/integrate/quadpack.py:634(_OptFunc)
+        2    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/pkgutil.py:173(__init__)
+        2    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/lib/io.py:704(__init__)
+        1    0.000    0.000    0.000    0.000 /usr/lib64/python2.7/site-packages/numpy/core/arrayprint.py:744(__init__)
+        1    0.000    0.000    0.000    0.000 /usr/lib/python2.7/site-packages/six.py:56(__len__)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/multi/processor.py:227(exit)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/multi/uni_processor.py:132(post_run)
+        1    0.000    0.000    0.000    0.000 /data/relax/branches/frame_order_cleanup/multi/uni_processor.py:146(rank)
+
+

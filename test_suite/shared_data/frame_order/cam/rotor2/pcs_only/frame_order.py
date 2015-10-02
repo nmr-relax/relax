@@ -39,8 +39,8 @@ for i in range(len(ln)):
 script('../../tensors.py')
 
 # Define the domains.
-domain(id='N', spin_id=":1-78")
-domain(id='C', spin_id=":80-148")
+domain(id='N', spin_id="#N-dom")
+domain(id='C', spin_id="#C-dom")
 
 # The tensor domains and reductions.
 full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
@@ -100,8 +100,6 @@ minimise.execute('simplex', constraints=False)
 frame_order.pdb_model(force=True)
 
 # PyMOL.
-pymol.view()
-pymol.command('show spheres')
 pymol.cone_pdb('frame_order.pdb')
 
 # Save the state.

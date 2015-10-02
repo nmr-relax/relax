@@ -24,13 +24,14 @@
 
 # relax module imports.
 from base_script import Base_script
+from specific_analyses.frame_order.variables import MODEL_PSEUDO_ELLIPSE_TORSIONLESS
 
 
 class Analysis(Base_script):
 
     # Set up some class variables.
     DIRECTORY = 'pseudo_ellipse_torsionless'
-    MODEL = 'pseudo-ellipse, torsionless'
+    MODEL = MODEL_PSEUDO_ELLIPSE_TORSIONLESS
     EIGEN_ALPHA = 3.1415926535897931
     EIGEN_BETA = 0.96007997859534311
     EIGEN_GAMMA = 4.0322755062196229

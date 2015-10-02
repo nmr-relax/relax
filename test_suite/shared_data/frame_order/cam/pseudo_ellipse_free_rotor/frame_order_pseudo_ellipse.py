@@ -149,8 +149,6 @@ class Analysis:
         frame_order.domain_to_pdb(domain='C', pdb='1J7P_1st_NH_rot.pdb')
 
         # PyMOL.
-        pymol.view()
-        pymol.command('show spheres')
         pymol.cone_pdb('cone_pseudo_ellipse.pdb')
 
 

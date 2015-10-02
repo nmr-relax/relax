@@ -25,14 +25,14 @@
 # Python module imports.
 from copy import deepcopy
 from math import acos, cos, pi, sin, sqrt
-from numpy import add, array, dot, float32, float64, ones, outer, subtract, transpose, uint8, zeros
-from numpy.linalg import norm
+from numpy import add, array, dot, float64, ones, outer, subtract, transpose, uint8, zeros
 
 # relax module imports.
 from extern.sobol.sobol_lib import i4_sobol_generate
 from lib.alignment.alignment_tensor import to_5D, to_tensor
 from lib.alignment.pcs import pcs_tensor
 from lib.alignment.rdc import rdc_tensor
+from lib.compat import norm
 from lib.errors import RelaxError
 from lib.float import isNaN
 from lib.frame_order.double_rotor import compile_2nd_matrix_double_rotor, pcs_numeric_int_double_rotor
@@ -51,6 +51,7 @@ from lib.geometry.rotations import euler_to_R_zyz, tilt_torsion_to_R, two_vect_t
 from lib.linear_algebra.kronecker_product import kron_prod
 from lib.order import order_parameters
 from lib.physical_constants import pcs_constant
+from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from target_functions.chi2 import chi2
 
 
@@ -274,8 +275,8 @@ class Frame_order:
             self.paramag_unit_vect = zeros(atomic_pos.shape, float64)
             self.paramag_dist = zeros(self.num_spins, float64)
             self.pcs_const = zeros((self.num_align, self.num_spins), float64)
-            self.r_pivot_atom = zeros((self.num_spins, 3), float32)
-            self.r_pivot_atom_rev = zeros((self.num_spins, 3), float32)
+            self.r_pivot_atom = zeros((self.num_spins, 3), float64)
+            self.r_pivot_atom_rev = zeros((self.num_spins, 3), float64)
             self.r_ln_pivot = self.pivot - self.paramag_centre
 
             # Set up the paramagnetic constant (without the interatomic distance and in Angstrom units).
@@ -296,33 +297,33 @@ class Frame_order:
             self.d2rdc_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_interatom), float64)
 
         # The Sobol' sequence data and target function aliases (quasi-random integration).
-        if model == 'pseudo-ellipse':
+        if model == MODEL_PSEUDO_ELLIPSE:
             self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
             self.func = self.func_pseudo_ellipse
-        elif model == 'pseudo-ellipse, torsionless':
+        elif model == MODEL_PSEUDO_ELLIPSE_TORSIONLESS:
             self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi'])
             self.func = self.func_pseudo_ellipse_torsionless
-        elif model == 'pseudo-ellipse, free rotor':
+        elif model == MODEL_PSEUDO_ELLIPSE_FREE_ROTOR:
             self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
             self.func = self.func_pseudo_ellipse_free_rotor
-        elif model == 'iso cone':
+        elif model == MODEL_ISO_CONE:
             self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
             self.func = self.func_iso_cone
-        elif model == 'iso cone, torsionless':
+        elif model == MODEL_ISO_CONE_TORSIONLESS:
             self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi'])
             self.func = self.func_iso_cone_torsionless
-        elif model == 'iso cone, free rotor':
+        elif model == MODEL_ISO_CONE_FREE_ROTOR:
             self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
             self.func = self.func_iso_cone_free_rotor
-        elif model == 'rotor':
+        elif model == MODEL_ROTOR:
             self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
             self.func = self.func_rotor
-        elif model == 'rigid':
+        elif model == MODEL_RIGID:
             self.func = self.func_rigid
-        elif model == 'free rotor':
+        elif model == MODEL_FREE_ROTOR:
             self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
             self.func = self.func_free_rotor
-        elif model == 'double rotor':
+        elif model == MODEL_DOUBLE_ROTOR:
             self.create_sobol_data(n=self.num_int_pts, dims=['sigma', 'sigma2'])
             self.func = self.func_double_rotor
 
@@ -1011,10 +1012,6 @@ class Frame_order:
         # Pre-transpose matrices for faster calculations.
         RT_ave = transpose(self.R_ave)
 
-        # Pre-calculate all the necessary vectors.
-        if self.pcs_flag:
-            self.calc_vectors(pivot=self.pivot, R_ave=self.R_ave, RT_ave=RT_ave)
-
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
 
@@ -1033,6 +1030,17 @@ class Frame_order:
 
         # PCS.
         if self.pcs_flag:
+            # Pre-calculate all the necessary vectors.
+            self.calc_vectors(pivot=self.pivot, R_ave=self.R_ave, RT_ave=RT_ave)
+            r_ln_atom = self.r_ln_pivot + self.r_pivot_atom
+            if min(self.full_in_ref_frame) == 0:
+                r_ln_atom_rev = self.r_ln_pivot + self.r_pivot_atom_rev
+
+            # The vector length (to the inverse 5th power).
+            length = 1.0 / norm(r_ln_atom, axis=1)**5
+            if min(self.full_in_ref_frame) == 0:
+                length_rev = 1.0 / norm(r_ln_atom, axis=1)**5
+
             # Loop over each alignment.
             for align_index in range(self.num_align):
                 # Loop over the PCSs.
@@ -1041,14 +1049,14 @@ class Frame_order:
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom[j]
+                            r_ln_atom_i = r_ln_atom[j]
+                            length_i = length[j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom_rev[j]
+                            r_ln_atom_i = r_ln_atom_rev[j]
+                            length_i = length_rev[j]
 
                         # The PCS calculation.
-                        vect = self.r_ln_pivot[0] + r_pivot_atom
-                        length = norm(vect)
-                        self.pcs_theta[align_index, j] = pcs_tensor(self.pcs_const[align_index, j] / length**5, vect, self.A_3D[align_index])
+                        self.pcs_theta[align_index, j] = pcs_tensor(self.pcs_const[align_index, j] * length_i, r_ln_atom_i, self.A_3D[align_index])
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[align_index], self.pcs_theta[align_index], self.pcs_error[align_index])
@@ -1191,7 +1199,7 @@ class Frame_order:
         m = len(dims)
 
         # Initialise.
-        self.sobol_angles = zeros((n, m), float32)
+        self.sobol_angles = zeros((n, m), float64)
         self.Ri_prime = zeros((n, 3, 3), float64)
         self.Ri2_prime = zeros((n, 3, 3), float64)
 
@@ -1231,9 +1239,9 @@ class Frame_order:
                 c_sigma = cos(sigma)
                 s_sigma = sin(sigma)
                 self.Ri_prime[i, 0, 0] =  c_sigma
-                self.Ri_prime[i, 0, 2] = -s_sigma
+                self.Ri_prime[i, 0, 2] =  s_sigma
                 self.Ri_prime[i, 1, 1] = 1.0
-                self.Ri_prime[i, 2, 0] =  s_sigma
+                self.Ri_prime[i, 2, 0] = -s_sigma
                 self.Ri_prime[i, 2, 2] =  c_sigma
 
                 # The 2nd rotation about the x-axis.

@@ -36,13 +36,14 @@ from lib.geometry.coord_transform import spherical_to_cartesian
 from prompt.interpreter import Interpreter
 from lib.errors import RelaxError
 from lib.io import open_write_file
+from specific_analyses.frame_order.variables import MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_NONREDUNDANT, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from status import Status; status = Status()
 
 
 class Frame_order_analysis:
     """The frame order auto-analysis protocol."""
 
-    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, grid_inc=11, grid_inc_rigid=21, min_algor='simplex', num_int_pts_grid=50, num_int_pts_subset=[20, 100], func_tol_subset=[1e-2, 1e-2], num_int_pts_full=[100, 1000, 10000, 100000], func_tol_full=[1e-2, 1e-3, 5e-3, 1e-4], mc_sim_num=500, mc_int_pts=1000, mc_func_tol=1e-3, models=['rigid', 'free rotor', 'rotor', 'iso cone, free rotor', 'iso cone, torsionless', 'iso cone', 'pseudo-ellipse, torsionless', 'pseudo-ellipse']):
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, grid_inc=11, grid_inc_rigid=21, min_algor='simplex', num_int_pts_grid=200, num_int_pts_subset=[500, 1000], func_tol_subset=[1e-2, 1e-3], num_int_pts_full=[500, 1000, 10000, 100000], func_tol_full=[1e-2, 1e-3, 5e-3, 1e-4], mc_sim_num=500, mc_int_pts=10000, mc_func_tol=1e-3, models=MODEL_LIST_NONREDUNDANT):
         """Perform the full frame order analysis.
 
         @param data_pipe_full:          The name of the data pipe containing all of the RDC and PCS data.
@@ -214,35 +215,35 @@ class Frame_order_analysis:
         incs += [None, None, None]
 
         # The rotor model.
-        if model == 'rotor':
+        if model == MODEL_ROTOR:
             incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc]
 
         # The free rotor model.
-        if model == 'free rotor':
+        if model == MODEL_FREE_ROTOR:
             incs += [self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc]
 
         # The torsionless isotropic cone model.
-        if model == 'iso cone, torsionless':
+        if model == MODEL_ISO_CONE_TORSIONLESS:
             incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc]
 
         # The free rotor isotropic cone model.
-        if model == 'iso cone, free rotor':
+        if model == MODEL_ISO_CONE_FREE_ROTOR:
             incs += [None, None, None, None, self.grid_inc]
 
         # The isotropic cone model.
-        if model == 'iso cone':
+        if model == MODEL_ISO_CONE:
             incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, None]
 
         # The torsionless pseudo-elliptic cone model.
-        if model == 'pseudo-ellipse, torsionless':
+        if model == MODEL_PSEUDO_ELLIPSE_TORSIONLESS:
             incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None]
 
         # The free rotor pseudo-elliptic cone model.
-        if model == 'pseudo-ellipse, free rotor':
+        if model == MODEL_PSEUDO_ELLIPSE_FREE_ROTOR:
             incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None]
 
         # The pseudo-elliptic cone model.
-        if model == 'pseudo-ellipse':
+        if model == MODEL_PSEUDO_ELLIPSE:
             incs += [None, None, None, self.grid_inc, self.grid_inc, self.grid_inc, self.grid_inc, None, None]
 
         # Return the increment list.
@@ -259,7 +260,7 @@ class Frame_order_analysis:
         # The average position from the rigid model.
         if model not in []:
             # Get the rigid data pipe.
-            rigid_pipe = get_pipe(self.pipe_name_dict['rigid'])
+            rigid_pipe = get_pipe(self.pipe_name_dict[MODEL_RIGID])
 
             # Copy the average position parameters from the rigid model.
             if hasattr(rigid_pipe, 'ave_pos_x'):
@@ -268,41 +269,41 @@ class Frame_order_analysis:
                 cdp.ave_pos_y = rigid_pipe.ave_pos_y
             if hasattr(rigid_pipe, 'ave_pos_z'):
                 cdp.ave_pos_z = rigid_pipe.ave_pos_z
-            if model not in ['free rotor', 'iso cone, free rotor']:
+            if model not in MODEL_LIST_FREE_ROTORS:
                 cdp.ave_pos_alpha = rigid_pipe.ave_pos_alpha
             cdp.ave_pos_beta = rigid_pipe.ave_pos_beta
             cdp.ave_pos_gamma = rigid_pipe.ave_pos_gamma
 
         # The cone axis from the rotor model.
-        if model in ['iso cone']:
+        if model in [MODEL_ISO_CONE]:
             # Get the rotor data pipe.
-            rotor_pipe = get_pipe(self.pipe_name_dict['rotor'])
+            rotor_pipe = get_pipe(self.pipe_name_dict[MODEL_ROTOR])
 
             # Copy the cone axis.
             cdp.axis_theta = rotor_pipe.axis_theta
             cdp.axis_phi = rotor_pipe.axis_phi
 
         # The cone axis from the free rotor model.
-        if model in ['iso cone, free rotor']:
+        if model in [MODEL_ISO_CONE_FREE_ROTOR]:
             # Get the rotor data pipe.
-            free_rotor_pipe = get_pipe(self.pipe_name_dict['free rotor'])
+            free_rotor_pipe = get_pipe(self.pipe_name_dict[MODEL_FREE_ROTOR])
 
             # Copy the cone axis.
             cdp.axis_theta = free_rotor_pipe.axis_theta
             cdp.axis_phi = free_rotor_pipe.axis_phi
 
         # The torsion from the rotor model.
-        if model in ['iso cone', 'pseudo-ellipse']:
+        if model in [MODEL_ISO_CONE, MODEL_PSEUDO_ELLIPSE]:
             # Get the rotor data pipe.
-            rotor_pipe = get_pipe(self.pipe_name_dict['rotor'])
+            rotor_pipe = get_pipe(self.pipe_name_dict[MODEL_ROTOR])
 
             # Copy the cone axis.
             cdp.cone_sigma_max = rotor_pipe.cone_sigma_max
 
         # The cone angles from from the torsionless isotropic cone model.
-        if model in ['pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor', 'pseudo-ellipse']:
+        if model in MODEL_LIST_PSEUDO_ELLIPSE:
             # Get the rotor data pipe.
-            pipe = get_pipe(self.pipe_name_dict['iso cone, torsionless'])
+            pipe = get_pipe(self.pipe_name_dict[MODEL_ISO_CONE_TORSIONLESS])
 
             # Copy the cone axis.
             cdp.cone_theta_x = pipe.cone_theta
@@ -318,7 +319,7 @@ class Frame_order_analysis:
         # Iteratively optimise the frame order models.
         for model in self.models:
             # Skip the already optimised rigid model.
-            if model == 'rigid':
+            if model == MODEL_RIGID:
                 continue
 
             # The model title.
@@ -392,7 +393,7 @@ class Frame_order_analysis:
         """
 
         # The model.
-        model = 'rigid'
+        model = MODEL_RIGID
         title = model[0].upper() + model[1:]
 
         # Print out.
@@ -566,8 +567,6 @@ class Frame_order_analysis:
 
         # The script contents.
         script.write("# PyMOL visualisation.\n")
-        script.write("pymol.view()\n")
-        script.write("pymol.command('show spheres')\n")
         script.write("pymol.frame_order()\n")
 
         # Close the file.

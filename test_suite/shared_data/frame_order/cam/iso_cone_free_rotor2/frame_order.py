@@ -52,8 +52,8 @@ for i in range(len(ln)):
 script('../tensors.py')
 
 # Define the domains.
-domain(id='N', spin_id=":1-78")
-domain(id='C', spin_id=":80-148")
+domain(id='N', spin_id="#N-dom")
+domain(id='C', spin_id="#C-dom")
 
 # The tensor domains and reductions.
 full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
@@ -98,6 +98,9 @@ minimise.calculate()
 # Create the PDB representation of the true state.
 frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', dist=None, compress_type=2, force=True)
 
+# Save the state.
+state.save('frame_order_true', force=True)
+
 # Grid search (low quality for speed).
 frame_order.num_int_pts(num=100)
 grid_search(inc=[None, None, None, None, None, 11, 11, 11])
@@ -111,6 +114,9 @@ for i in range(len(num_int_pts)):
 
 # Store the result.
 frame_order.pdb_model(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', dist=None, compress_type=2, force=True)
+
+# Save the state.
+state.save('frame_order_fixed_piv', force=True)
 
 # Optimise the pivot and model, again iterating with increasing precision.
 frame_order.pivot(pivot, fix=False)
@@ -133,8 +139,6 @@ monte_carlo.error_analysis()
 frame_order.pdb_model(ave_pos='ave_pos', rep='frame_order', dist=None, compress_type=2, force=True)
 
 # PyMOL.
-pymol.view()
-pymol.command('show spheres')
 pymol.frame_order(ave_pos='ave_pos_true', rep='frame_order_true', dist=None)
 pymol.frame_order(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', dist=None)
 pymol.frame_order(ave_pos='ave_pos', rep='frame_order', dist=None)

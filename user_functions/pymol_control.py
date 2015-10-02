@@ -189,7 +189,11 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This user function is designed to be combined with the frame_order.pdb_model user function.  It will take the three PDB representations created by frame_order.pdb_model - the molecular structure with the averaged domain positions, the frame order dynamics representation files, and the moving domain distribution file - and display them in PyMOL.  Rather than loading the three representations into PyMOL manually, this user function will change the representation to significantly improve the visualisation.")
-uf.desc[-1].add_paragraph("For the frame order representation files,if the file root is left to the default of 'frame_order' then all of the following files will be loaded: 'frame_order.pdb', 'frame_order_pos.pdb', 'frame_order_neg.pdb', 'frame_order_sim.pdb', 'frame_order_sim_pos.pdb', 'frame_order_sim_neg.pdb'.  The user function will not only search for these files, but also all *.gz and *.bz2 versions of these files.  This is to support all output files from the frame_order.pdb_model user function.")
+uf.desc[-1].add_paragraph("For the frame order position files, if the file roots are left to the defaults then the following files will be loaded:")
+uf.desc[-1].add_list_element("The file root 'ave_pos' will load the 'ave_pos.pdb' and 'ave_pos_sim.pdb' files.")
+uf.desc[-1].add_list_element("The file root 'frame_order' will load the 'frame_order.pdb', 'frame_order_pos.pdb', 'frame_order_neg.pdb', 'frame_order_sim.pdb', 'frame_order_sim_pos.pdb' and 'frame_order_sim_neg.pdb' files.")
+uf.desc[-1].add_list_element("The file root 'dist' will load the 'dist.pdb' file.")
+uf.desc[-1].add_paragraph("The user function will not only search for these files, but also all *.gz and *.bz2 versions of these files.  This is to support all output files from the frame_order.pdb_model user function.")
 uf.backend = pymol_control.frame_order
 uf.menu_text = "&frame_order"
 uf.gui_icon = "relax.frame_order"

@@ -24,7 +24,10 @@
 
 # Python module imports.
 from math import cos, pi, sin, sqrt
-from numpy import divide, dot, eye, float64, multiply, repeat, sinc, swapaxes, tensordot, tile
+from numpy import divide, dot, eye, float64, multiply, sinc, swapaxes, tensordot
+from numpy import cos as np_cos
+from numpy import sin as np_sin
+from numpy import sqrt as np_sqrt
 try:
     from scipy.integrate import quad
 except ImportError:
@@ -643,6 +646,9 @@ def pcs_numeric_int_pseudo_ellipse_qrint(points=None, theta_x=None, theta_y=None
     # Unpack the points.
     theta, phi, sigma = swapaxes(points, 0, 1)
 
+    # Calculate theta_max.
+    theta_max = tmax_pseudo_ellipse_array(phi, theta_x, theta_y)
+
     # Loop over the samples.
     num = 0
     for i in range(len(points)):
@@ -654,11 +660,8 @@ def pcs_numeric_int_pseudo_ellipse_qrint(points=None, theta_x=None, theta_y=None
         if theta[i] > theta_y:
             continue
 
-        # Calculate theta_max.
-        theta_max = tmax_pseudo_ellipse(phi[i], theta_x, theta_y)
-
         # Outside of the distribution, so skip the point.
-        if theta[i] > theta_max:
+        if theta[i] > theta_max[i]:
             continue
 
         # Calculate the PCSs for this state.
@@ -707,3 +710,26 @@ def tmax_pseudo_ellipse(phi, theta_x, theta_y):
 
     # Return the maximum angle.
     return theta_x * theta_y / sqrt((cos(phi)*theta_y)**2 + (sin(phi)*theta_x)**2)
+
+
+def tmax_pseudo_ellipse_array(phi, theta_x, theta_y):
+    """The pseudo-ellipse tilt-torsion polar angle for numpy arrays.
+
+    @param phi:     The azimuthal tilt-torsion angle.
+    @type phi:      numpy rank-1 float64 array
+    @param theta_x: The cone opening angle along x.
+    @type theta_x:  float
+    @param theta_y: The cone opening angle along y.
+    @type theta_y:  float
+    @return:        The theta max angle for the given phi angle.
+    @rtype:         float
+    """
+
+    # Zero points.
+    if theta_x == 0.0:
+        return 0.0
+    elif theta_y == 0.0:
+        return 0.0
+
+    # Return the maximum angle.
+    return theta_x * theta_y / np_sqrt((np_cos(phi)*theta_y)**2 + (np_sin(phi)*theta_x)**2)

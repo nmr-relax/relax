@@ -29,6 +29,7 @@ from numpy.linalg import norm
 # relax module imports.
 from base_script import Base_script
 from lib.geometry.rotations import R_to_euler_zyz
+from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR
 
 
 def eigen_system():
@@ -39,14 +40,14 @@ def eigen_system():
     C_COM = array([26.837, -12.379, 28.342], float64)
 
     # The Z-axis as the inter CoM vector.
-    z_axis = N_COM - C_COM
+    z_axis = C_COM - N_COM
     disp = norm(z_axis)
     z_axis /= disp
 
     # The eigenframe (partly from the system_create.log file).
     eigensystem = transpose(array([
-        [-0.487095774865268, -0.60362450312215, -0.63116968030708 ],
         [ -7.778375610280605e-01, 6.284649244351433e-01, -7.532653237683726e-04],
+        [-0.487095774865268, -0.60362450312215, -0.63116968030708 ],
         z_axis
     ], float64))
 
@@ -63,15 +64,15 @@ class Analysis(Base_script):
     DIRECTORY = 'double_rotor'
 
     # The frame order model.
-    MODEL = 'double rotor'
+    MODEL = MODEL_DOUBLE_ROTOR
 
     # The model parameters.
     EIGEN_ALPHA, EIGEN_BETA, EIGEN_GAMMA, PIVOT_DISP = eigen_system()
-    CONE_SIGMA_MAX = 10.5 / 2.0 / 360.0 * 2.0 * pi
-    CONE_SIGMA_MAX_2 = 11.5 / 2.0 / 360.0 * 2.0 * pi
+    CONE_SIGMA_MAX = 11.5 / 2.0 / 360.0 * 2.0 * pi
+    CONE_SIGMA_MAX_2 = 10.5 / 2.0 / 360.0 * 2.0 * pi
 
     # The pivot point.
-    PIVOT = array([26.837, -12.379, 28.342], float32)
+    PIVOT = array([41.739, 6.03, -0.764], float32)
 
 
 # Execute the analysis.

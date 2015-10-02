@@ -1,8 +1,8 @@
 
 
 
-                                  relax repository checkout r23353
-                    svn+ssh://svn.gna.org/svn/relax/branches/frame_order_cleanup
+                                  relax repository checkout r24470
+                svn+ssh://bugman@svn.gna.org/svn/relax/branches/frame_order_cleanup
 
                               Molecular dynamics by NMR data analysis
 
@@ -29,9 +29,6 @@ pipe.create('superimpose', 'N-state')
 structure.read_pdb('1J7P_1st_NH.pdb', set_mol_name='C-dom', set_model_num=1)
 structure.read_pdb('1J7P_1st_NH_rot.pdb', set_mol_name='C-dom', set_model_num=2)
 
-# Delete the calciums to match the data pipe CoM (from only 15N and 1H spins).
-structure.delete(atom_id='@CA')
-
 # Superimpose.
 structure.superimpose(method='fit to first', centre_type='CoM')
 
@@ -53,37 +50,32 @@ Internal relax PDB parser.
 Opening the file '1J7P_1st_NH_rot.pdb' for reading.
 Adding molecule 'C-dom' to model 2 (from the original molecule number 1 of model None)
 
-relax> structure.delete(atom_id='@CA', verbosity=1, spin_info=True)
-Deleting structural data from the current pipe.
-Deleting all spin specific structural info.
-Deleting all interatomic vectors.
-
 relax> structure.superimpose(models=None, method='fit to first', atom_id=None, centre_type='CoM', centroid=None)
 Validating models:
 	All models are consistent
 
 Superimposition of structural models [1, 2] using the 'fit to first' algorithm.
 Calculating the centre of mass.
-    Total mass:      M = 1004.9729400000001
-    Centre of mass:  R = array([ 47.63725241103505 ,  -9.48986557536564 ,  30.825358289766502])
+    Total mass:      M = 1085.12894
+    Centre of mass:  R = array([ 48.105998313011526,  -9.256453511856387,  30.742193705588587])
 Calculating the centre of mass.
-    Total mass:      M = 1004.9729400000001
-    Centre of mass:  R = array([ 26.7775022253435  , -11.940472562813483,  28.633503719413586])
+    Total mass:      M = 1085.12894
+    Centre of mass:  R = array([ 26.83678090574195 , -12.379064173184801,  28.341541283932589])
 
 
 Calculating the rotational and translational displacements from model 1 to model 2 using the Kabsch algorithm.
 
-Start CoM:               [  47.637252411035050,   -9.489865575365640,   30.825358289766502]
-End CoM:                 [  26.777502225343500,  -11.940472562813483,   28.633503719413586]
-Translation vector:      [ -20.859750185691549,   -2.450606987447843,   -2.191854570352916]
-Translation distance:    21.117264947761672
+Start CoM:               [  48.105998313011526,   -9.256453511856387,   30.742193705588587]
+End CoM:                 [  26.836780905741950,  -12.379064173184801,   28.341541283932589]
+Translation vector:      [ -21.269217407269576,   -3.122610661328414,   -2.400652421655998]
+Translation distance:    21.630844609250556
 Rotation matrix:
-   [[  -0.313343136727067,    0.937381687553936,    0.152090928409876]
-    [  -0.889228712298167,   -0.233411620017465,   -0.393435271506466]
-    [  -0.333299228757862,   -0.258523862495048,    0.906684640120288]]
-Rotation axis:           [   0.071200441865536,    0.256168058141030,   -0.964006443477639]
-Rotation euler angles:   [   5.623468683852550,    0.435439748282942,    5.081265879629926]
-Rotation angle (deg):    108.665045075655243
+   [[  -0.313343039541484,    0.937381760589709,    0.152090678493596]
+    [  -0.889228800536162,   -0.233411682389844,   -0.393435035070547]
+    [  -0.333299084709100,   -0.258523541360706,    0.906684784638187]]
+Rotation axis:           [   0.071200484289399,    0.256167842033371,   -0.964006497771110]
+Rotation euler angles:   [   5.623469076122531,    0.435439405668396,    5.081265529106499]
+Rotation angle (deg):    108.665039652996725
 
 relax> structure.write_pdb(file='superimpose.pdb', dir=None, model_num=None, compress_type=0, force=True)
 Opening the file 'superimpose.pdb' for writing.

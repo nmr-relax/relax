@@ -24,13 +24,14 @@
 
 # relax module imports.
 from base_script import Base_script
+from specific_analyses.frame_order.variables import MODEL_PSEUDO_ELLIPSE
 
 
 class Analysis(Base_script):
 
     # Set up some class variables.
     DIRECTORY = 'pseudo_ellipse'
-    MODEL = 'pseudo-ellipse'
+    MODEL = MODEL_PSEUDO_ELLIPSE
     EIGEN_ALPHA = 3.14159265358979311600
     EIGEN_BETA = 0.96007997859534310869
     EIGEN_GAMMA = 4.03227550621962294031

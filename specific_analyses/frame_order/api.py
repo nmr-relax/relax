@@ -40,10 +40,12 @@ from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.rdc import check_rdcs
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
+from specific_analyses.frame_order.checks import check_pivot
 from specific_analyses.frame_order.data import domain_moving
 from specific_analyses.frame_order.optimisation import grid_row, store_bc_data, target_fn_setup, unpack_opt_results
 from specific_analyses.frame_order.parameter_object import Frame_order_params
 from specific_analyses.frame_order.parameters import assemble_param_vector, linear_constraints, param_num, update_model
+from specific_analyses.frame_order.variables import MODEL_ISO_CONE_FREE_ROTOR
 
 
 class Frame_order(API_base, API_common):
@@ -353,6 +355,12 @@ class Frame_order(API_base, API_common):
         if not hasattr(cdp, 'model'):
             raise RelaxNoModelError('Frame Order')
 
+        # Test if the pivot has been set.
+        check_pivot()
+
+        # Parameter scaling.
+        scaling_matrix = assemble_scaling_matrix(scaling=True)
+
         # The number of parameters.
         n = param_num()
 
@@ -382,6 +390,12 @@ class Frame_order(API_base, API_common):
                 val = getattr(cdp, cdp.params[i])
                 lower = val - 10.0
                 upper = val + 10.0
+
+            # The pivot displacement.
+            if cdp.params[i] == 'pivot_disp':
+                val = getattr(cdp, cdp.params[i])
+                lower = 10.0
+                upper = 50.0
 
             # Average domain position translation (in a +/- 5 Angstrom box).
             if cdp.params[i] in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z']:
@@ -710,7 +724,7 @@ class Frame_order(API_base, API_common):
             inc = inc + 1
 
         # Add some additional parameters.
-        if cdp.model == 'iso cone, free rotor' and inc == index:
+        if cdp.model == MODEL_ISO_CONE_FREE_ROTOR and inc == index:
             setattr(cdp, 'cone_theta_err', error)
 
 
@@ -737,7 +751,7 @@ class Frame_order(API_base, API_common):
         model_params = deepcopy(cdp.params)
 
         # Add some additional parameters.
-        if cdp.model == 'iso cone, free rotor':
+        if cdp.model == MODEL_ISO_CONE_FREE_ROTOR:
             param_names.append('cone_theta')
             model_params.append('cone_theta')
 
@@ -877,7 +891,7 @@ class Frame_order(API_base, API_common):
             inc = inc + 1
 
         # Add some additional parameters.
-        if cdp.model == 'iso cone, free rotor' and inc == index:
+        if cdp.model == MODEL_ISO_CONE_FREE_ROTOR and inc == index:
             return getattr(cdp, 'cone_theta_sim')
 
 

@@ -23,7 +23,7 @@
 """Base script for the optimisation of the rigid frame order test models."""
 
 # Python module imports.
-from numpy import array, cross, float32, float64, transpose, zeros
+from numpy import array, cross, float32, float64, zeros
 from numpy.linalg import norm
 from os import F_OK, access, sep
 
@@ -31,8 +31,8 @@ from os import F_OK, access, sep
 from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.lines import closest_point_ax
-from lib.geometry.rotations import euler_to_R_zyz, reverse_euler_zyz
 from lib.geometry.vectors import vector_angle_normal
+from specific_analyses.frame_order.variables import MODEL_FREE_ROTOR, MODEL_ROTOR
 from status import Status; status = Status()
 
 
@@ -56,8 +56,8 @@ class Base_script:
 
     # The model parameters.
     PIVOT_DISP = None
-    AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -20.859750185691549,   -2.450606987447843,   -2.191854570352916]
-    AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [   5.623468683852550,    0.435439748282942,    5.081265879629926]
+    AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -21.269217407269576,   -3.122610661328414,   -2.400652421655998]
+    AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [5.623469076122531, 0.435439405668396, 5.081265529106499]
     AXIS_THETA = None
     AXIS_PHI = None
     AXIS_ALPHA = None
@@ -84,7 +84,7 @@ class Base_script:
         """Execute the frame order analysis."""
 
         # Parameter conversions.
-        if self.MODEL in ['rotor', 'free rotor']:
+        if self.MODEL in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
             self.convert_rotor(theta=self.AXIS_THETA, phi=self.AXIS_PHI, pivot=self.PIVOT, com=self.COM)
             self.AXIS_THETA = None
             self.AXIS_PHI = None
@@ -258,8 +258,8 @@ class Base_script:
         self._execute_uf(uf_name='script', file=BASE_PATH + 'tensors.py')
 
         # Define the domains.
-        self._execute_uf(uf_name='domain', id='N', spin_id=":1-78")
-        self._execute_uf(uf_name='domain', id='C', spin_id=":80-148")
+        self._execute_uf(uf_name='domain', id='N', spin_id="#N-dom")
+        self._execute_uf(uf_name='domain', id='C', spin_id="#C-dom")
 
         # The tensor domains and reductions.
         full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']

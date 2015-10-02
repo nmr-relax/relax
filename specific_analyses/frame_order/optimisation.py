@@ -43,6 +43,7 @@ from pipe_control.rdc import check_rdcs
 from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.data import base_data_types, domain_moving, pivot_fixed, tensor_loop
 from specific_analyses.frame_order.parameters import assemble_param_vector
+from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_RIGID, MODEL_ROTOR
 from target_functions import frame_order
 
 
@@ -673,7 +674,7 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling_matrix=None):
 
     # The centre of mass, for use in the rotor models.
     com = None
-    if cdp.model in ['rotor', 'free rotor', 'double rotor']:
+    if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR, MODEL_DOUBLE_ROTOR]:
         # The centre of mass of all objects in the data pipe.
         com = pipe_centre_of_mass(verbosity=0)
         com = array(com, float64)
@@ -684,7 +685,7 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling_matrix=None):
 
     # Print outs.
     if sim_index == None:
-        if cdp.model != 'rigid':
+        if cdp.model != MODEL_RIGID:
             sys.stdout.write("Numerical integration via the quasi-random Sobol' sequence.\n")
             sys.stdout.write("Number of integration points: %s\n" % cdp.num_int_pts)
         base_data = []

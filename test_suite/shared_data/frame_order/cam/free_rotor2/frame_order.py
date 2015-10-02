@@ -8,7 +8,6 @@ from numpy.linalg import norm
 from lib.frame_order.rotor_axis import create_rotor_axis_alpha
 from lib.geometry.lines import closest_point_ax
 from lib.geometry.coord_transform import spherical_to_cartesian
-from lib.geometry.rotations import reverse_euler_zyz
 from lib.geometry.vectors import vector_angle
 from pipe_control.structure.mass import pipe_centre_of_mass
 
@@ -92,8 +91,8 @@ for i in range(len(ln)):
 script('../tensors.py')
 
 # Define the domains.
-domain(id='N', spin_id=":1-78")
-domain(id='C', spin_id=":80-148")
+domain(id='N', spin_id="#N-dom")
+domain(id='C', spin_id="#C-dom")
 
 # The tensor domains and reductions.
 full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
@@ -136,6 +135,9 @@ minimise.calculate()
 # Create the PDB representation of the true state.
 frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', dist=None, compress_type=2, force=True)
 
+# Save the state.
+state.save('frame_order_true', force=True)
+
 # Grid search (low quality for speed).
 frame_order.num_int_pts(num=100)
 grid_search(inc=[None, None, None, None, None, 21])
@@ -149,6 +151,9 @@ for i in range(len(num_int_pts)):
 
 # Store the result.
 frame_order.pdb_model(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', dist=None, compress_type=2, force=True)
+
+# Save the state.
+state.save('frame_order_fixed_piv', force=True)
 
 # Optimise the pivot and model, again iterating with increasing precision.
 frame_order.pivot(pivot, fix=False)
@@ -182,8 +187,6 @@ monte_carlo.error_analysis()
 frame_order.pdb_model(ave_pos='ave_pos', rep='frame_order', dist=None, compress_type=2, force=True)
 
 # PyMOL.
-pymol.view()
-pymol.command('show spheres')
 pymol.frame_order(ave_pos='ave_pos_true', rep='frame_order_true', dist=None)
 pymol.frame_order(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', dist=None)
 pymol.frame_order(ave_pos='ave_pos', rep='frame_order', dist=None)

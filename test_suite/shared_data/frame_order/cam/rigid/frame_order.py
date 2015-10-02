@@ -5,8 +5,8 @@ from numpy import array
 
 
 # The real parameter values.
-AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -20.859750185691549,   -2.450606987447843,   -2.191854570352916]
-AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [5.623468683852550, 0.435439748282942, 5.081265879629926]
+AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -21.269217407269576,   -3.122610661328414,   -2.400652421655998]
+AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [5.623469076122531, 0.435439405668396, 5.081265529106499]
 
 # Create the data pipe.
 pipe.create(pipe_name='frame order', pipe_type='frame order')
@@ -43,8 +43,8 @@ for i in range(len(ln)):
 script('../tensors.py')
 
 # Define the domains.
-domain(id='N', spin_id=":1-78")
-domain(id='C', spin_id=":80-148")
+domain(id='N', spin_id="#N-dom")
+domain(id='C', spin_id="#C-dom")
 
 # The tensor domains and reductions.
 full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
@@ -74,9 +74,6 @@ frame_order.pivot(pivot, fix=True)
 # Set the paramagnetic centre.
 paramag.centre(pos=[35.934, 12.194, -4.206])
 
-# The optimisation settings.
-frame_order.num_int_pts(num=5000)
-
 # Check the minimum.
 value.set(param='ave_pos_x', val=AVE_POS_X)
 value.set(param='ave_pos_y', val=AVE_POS_Y)
@@ -89,12 +86,18 @@ minimise.calculate()
 # Create the PDB representation of the true state.
 frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', dist=None, compress_type=2, force=True)
 
+# Save the state.
+state.save('frame_order_true', force=True)
+
 # Optimise.
-#grid_search(inc=3)
+grid_search(inc=11)
 minimise('simplex')
 
 # Store the result.
 frame_order.pdb_model(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', dist=None, compress_type=2, force=True)
+
+# Save the state.
+state.save('frame_order_fixed_piv', force=True)
 
 # Optimise the pivot and model.
 frame_order.pivot(pivot, fix=False)
@@ -112,8 +115,6 @@ monte_carlo.error_analysis()
 frame_order.pdb_model(ave_pos='ave_pos', rep='frame_order', dist=None, compress_type=2, force=True)
 
 # PyMOL.
-pymol.view()
-pymol.command('show spheres')
 pymol.frame_order(ave_pos='ave_pos_true', rep='frame_order_true', dist=None)
 pymol.frame_order(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', dist=None)
 pymol.frame_order(ave_pos='ave_pos', rep='frame_order', dist=None)

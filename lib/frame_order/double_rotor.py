@@ -23,11 +23,11 @@
 """Module for the double rotor frame order model."""
 
 # Python module imports.
-from math import pi, sqrt
-from numpy import add, divide, dot, inner, multiply, sinc, swapaxes, tensordot, transpose
-from numpy.linalg import norm
+from math import pi
+from numpy import add, divide, dot, multiply, sinc, swapaxes, tensordot
 
 # relax module imports.
+from lib.compat import norm
 from lib.frame_order.matrix_ops import rotate_daeg
 
 
@@ -72,11 +72,11 @@ def compile_2nd_matrix_double_rotor(matrix, Rx2_eigen, smax1, smax2):
     matrix[8, 8] = 0.5 * sinc_2smax1p1 * sinc_2smax2p1
 
     # Off diagonal set 1.
-    matrix[0, 4] = 0.5 * sinc_2smax1n1 * sinc_2smax2n1
-    matrix[0, 8] = -0.5 * sinc_2smax1n1 * sinc_2smax2p1
-    matrix[8, 0] = -sinc_2smax1n1
-    matrix[4, 8] = -sinc_2smax2n1
-    matrix[8, 4] = -0.5 * sinc_2smax1p1 * sinc_2smax2n1
+    matrix[4, 0] = 0.5 * sinc_2smax1n1 * sinc_2smax2n1
+    matrix[0, 8] = -sinc_2smax1n1
+    matrix[8, 0] = -0.5 * sinc_2smax1n1 * sinc_2smax2p1
+    matrix[4, 8] = -0.5 * sinc_2smax1p1 * sinc_2smax2n1
+    matrix[8, 4] = -sinc_2smax2n1
 
     # Off diagonal set 2.
     matrix[2, 6] = matrix[6, 2] = sinc_smax2 * sinc_2smax1n1

@@ -25,7 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import array, dot, eye, float64, transpose, zeros
+from numpy import array, dot, eye, float64, zeros
 import sys
 
 # relax module imports.
@@ -41,6 +41,7 @@ from lib.structure.represent.rotor import rotor
 from lib.text.sectioning import subsection, subsubsection
 from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.data import domain_moving, generate_pivot
+from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_ROTOR
 
 
 def add_axes(structure=None, representation=None, size=None, sims=False):
@@ -48,7 +49,7 @@ def add_axes(structure=None, representation=None, size=None, sims=False):
 
     @keyword structure:         The internal structural object to add the rotor objects to.
     @type structure:            lib.structure.internal.object.Internal instance
-    @keyword representation:    The representation to create.  If this is set to None or 'pos', the standard representation will be created.  If set to 'neg', the axis system will be inverted.
+    @keyword representation:    The representation to create.  If this is set to None or 'A', the standard representation will be created.  If set to 'B', the axis system will be inverted.
     @type representation:       None or str
     @keyword size:              The size of the geometric object in Angstroms.
     @type size:                 float
@@ -61,7 +62,7 @@ def add_axes(structure=None, representation=None, size=None, sims=False):
     structure.add_molecule(name=mol_name)
 
     # The transformation matrix (identity matrix or inversion matrix).
-    if representation == 'neg':
+    if representation == 'B':
         T = -eye(3)
     else:
         T = eye(3)
@@ -83,7 +84,7 @@ def add_axes(structure=None, representation=None, size=None, sims=False):
         pivot2 = generate_pivot(order=2, sim_index=sim_indices[i])
 
         # A single z-axis, when no rotor object is present.
-        if cdp.model in ['iso cone, torsionless']:
+        if cdp.model in [MODEL_ISO_CONE_TORSIONLESS]:
             # Print out.
             print("\nGenerating the z-axis system.")
 
@@ -102,7 +103,7 @@ def add_axes(structure=None, representation=None, size=None, sims=False):
             res_num = generate_vector_residues(mol=mol, vector=axis, atom_name='z-ax', res_name_vect='AXE', res_num=2, origin=pivot1, scale=size)
 
         # The z-axis connecting two motional modes.
-        elif cdp.model in ['double rotor']:
+        elif cdp.model in [MODEL_DOUBLE_ROTOR]:
             # Printout.
             print("\nGenerating the z-axis linking the two pivot points.")
 
@@ -115,7 +116,7 @@ def add_axes(structure=None, representation=None, size=None, sims=False):
             res_num = generate_vector_residues(mol=mol, vector=axis, atom_name='z-ax', res_name_vect='AXE', res_num=1, origin=pivot2)
 
         # The full axis system.
-        elif cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+        elif cdp.model in MODEL_LIST_PSEUDO_ELLIPSE:
             # Print out.
             print("\nGenerating the full axis system.")
 
@@ -135,7 +136,7 @@ def add_axes(structure=None, representation=None, size=None, sims=False):
 
             # The axes to create.
             label = ['x', 'y']
-            if cdp.model in ['pseudo-ellipse, torsionless']:
+            if cdp.model in [MODEL_PSEUDO_ELLIPSE_TORSIONLESS]:
                 label = ['x', 'y', 'z']
 
             # Generate the axis vectors.
@@ -149,7 +150,7 @@ def add_cones(structure=None, representation=None, size=None, inc=None, sims=Fal
 
     @keyword structure:         The internal structural object to add the rotor objects to.
     @type structure:            lib.structure.internal.object.Internal instance
-    @keyword representation:    The representation to create.  If this is set to None or 'pos', the standard representation will be created.  If set to 'neg', the axis system will be inverted.
+    @keyword representation:    The representation to create.  If this is set to None or 'A', the standard representation will be created.  If set to 'B', the axis system will be inverted.
     @type representation:       str
     @keyword size:              The size of the geometric object in Angstroms.
     @type size:                 float
@@ -163,7 +164,7 @@ def add_cones(structure=None, representation=None, size=None, inc=None, sims=Fal
     structure.add_molecule(name='cones')
 
     # The transformation matrix (identity matrix or inversion matrix).
-    if representation == 'neg':
+    if representation == 'B':
         T = -eye(3)
     else:
         T = eye(3)
@@ -185,18 +186,18 @@ def add_cones(structure=None, representation=None, size=None, inc=None, sims=Fal
 
         # The rotation matrix (rotation from the z-axis to the cone axis).
         R = zeros((3, 3), float64)
-        if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+        if cdp.model in MODEL_LIST_PSEUDO_ELLIPSE:
             if sims:
                 euler_to_R_zyz(cdp.eigen_alpha_sim[sim_indices[i]], cdp.eigen_beta_sim[sim_indices[i]], cdp.eigen_gamma_sim[sim_indices[i]], R)
             else:
                 euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, R)
         else:
-            if cdp.model in ['rotor', 'free rotor']:
+            if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
                 if sims:
                     axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha_sim[sim_indices[i]], pivot=pivot, point=com)
                 else:
                     axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot, point=com)
-            elif cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+            elif cdp.model in MODEL_LIST_ISO_CONE:
                 if sims:
                     axis = create_rotor_axis_spherical(theta=cdp.axis_theta_sim[sim_indices[i]], phi=cdp.axis_phi_sim[sim_indices[i]])
                 else:
@@ -208,7 +209,7 @@ def add_cones(structure=None, representation=None, size=None, inc=None, sims=Fal
         R = dot(T, R)
 
         # The pseudo-ellipse cone object.
-        if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+        if cdp.model in MODEL_LIST_PSEUDO_ELLIPSE:
             if sims:
                 cone_obj = Pseudo_elliptic(cdp.cone_theta_x_sim[sim_indices[i]], cdp.cone_theta_y_sim[sim_indices[i]])
             else:
@@ -271,7 +272,7 @@ def add_pivots(structure=None, sims=False):
         pivot2 = generate_pivot(order=2, sim_index=sim_indices[i])
 
         # Add the pivots for the double motion models.
-        if cdp.model in ['double rotor']:
+        if cdp.model in [MODEL_DOUBLE_ROTOR]:
             # The 1st pivot.
             mols.append(mol)
             pivots.append(pivot1)
@@ -296,13 +297,106 @@ def add_pivots(structure=None, sims=False):
         mols[i].atom_add(atom_num=atom_nums[i], atom_name=atom_names[i], res_name='PIV', res_num=1, pos=pivots[i], element='C', pdb_record='HETATM')
 
 
-def add_rotors(structure=None, sims=False):
+def add_titles(structure=None, representation=None, displacement=40.0, sims=False):
+    """Add atoms to be used for the titles for the frame order geometric objects.
+
+    @keyword structure:         The internal structural object to add the rotor objects to.
+    @type structure:            lib.structure.internal.object.Internal instance
+    @keyword representation:    The representation to title.
+    @type representation:       None or str
+    @keyword displacement:      The distance away from the pivot point, in Angstrom, to place the title.  The simulation title will be shifted by a few extra Angstrom to avoid clashes.
+    @type displacement:         float
+    @keyword sims:              A flag which if True will add the Monte Carlo simulation pivots to the structural object.  There must be one model for each Monte Carlo simulation already present in the structural object.
+    @type sims:                 bool
+    """
+
+    # The title atom names.
+    atom_name = None
+    if representation == None and sims:
+        atom_name = 'mc'
+    elif representation == 'A':
+        if sims:
+            atom_name = 'mc-a'
+        else:
+            atom_name = 'a'
+    elif representation == 'B':
+        if sims:
+            atom_name = 'mc-b'
+        else:
+            atom_name = 'b'
+
+    # Nothing to do.
+    if atom_name == None:
+        return
+
+    # Avoid name overlaps.
+    if sims:
+        displacement += 3
+
+    # Create the molecule.
+    mol_name = 'titles'
+    structure.add_molecule(name=mol_name)
+
+    # The transformation matrix (identity matrix or inversion matrix).
+    if representation == 'B':
+        T = -eye(3)
+    else:
+        T = eye(3)
+
+    # The pivot points.
+    pivot1 = generate_pivot(order=1)
+    pivot2 = generate_pivot(order=2)
+
+    # The models to loop over.
+    model_nums = [None]
+    sim_indices = [None]
+    if sims:
+        model_nums = [i+1 for i in range(cdp.sim_number)]
+        sim_indices = list(range(cdp.sim_number))
+
+    # Loop over the models.
+    for i in range(len(model_nums)):
+        # Alias the molecule.
+        mol = structure.get_molecule(mol_name, model=model_nums[i])
+
+        # The single rotor models.
+        if cdp.model not in [MODEL_DOUBLE_ROTOR]:
+            # Generate the rotor axis.
+            if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
+                axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot1, point=pipe_centre_of_mass(verbosity=0))
+            elif cdp.model in MODEL_LIST_ISO_CONE:
+                axis = create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi)
+            else:
+                axis = create_rotor_axis_euler(alpha=cdp.eigen_alpha, beta=cdp.eigen_beta, gamma=cdp.eigen_gamma)
+
+        # The double rotor models.
+        else:
+            # Generate the eigenframe of the motion.
+            frame = zeros((3, 3), float64)
+            euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
+
+            # Add the z axis.
+            axis = frame[:, 2]
+
+        # Transform the central axis.
+        axis = dot(T, axis)
+
+        # The label position.
+        pos = pivot1 + displacement*axis
+
+        # Add the atom.
+        mol.atom_add(atom_name=atom_name, res_name='TLE', res_num=1, pos=pos, element='Ti', pdb_record='HETATM')
+
+
+def add_rotors(structure=None, representation=None, sims=False):
     """Add all rotor objects for the current frame order model to the structural object.
 
-    @keyword structure: The internal structural object to add the rotor objects to.
-    @type structure:    lib.structure.internal.object.Internal instance
-    @keyword sims:      A flag which if True will add the Monte Carlo simulation rotors to the structural object.  There must be one model for each Monte Carlo simulation already present in the structural object.
-    @type sims:         bool
+    @keyword structure:         The internal structural object to add the rotor objects to.
+    @type structure:            lib.structure.internal.object.Internal instance
+    @keyword representation:    The representation to create.  If this is set to None, the rotor will be dumbbell shaped with propellers at both ends.  If set to 'A' or 'B', only half of the rotor will be shown.
+    @type representation:       None or str
+    @keyword sims:              A flag which if True will add the Monte Carlo simulation rotors to the structural object.  There must be one model for each Monte Carlo simulation already present in the structural object.
+    @type sims:                 bool
     """
 
     # Initialise the list structures for the rotor data.
@@ -314,6 +408,17 @@ def add_rotors(structure=None, sims=False):
     com = []
     label = []
     models = []
+
+    # The half-rotor flag.
+    half_rotor = True
+    if representation == None:
+        half_rotor = False
+
+    # The transformation matrix (identity matrix or inversion matrix).
+    if representation == 'B':
+        T = -eye(3)
+    else:
+        T = eye(3)
 
     # The models to loop over.
     model_nums = [None]
@@ -329,38 +434,47 @@ def add_rotors(structure=None, sims=False):
         pivot2 = generate_pivot(order=2, sim_index=sim_indices[i])
 
         # The single rotor models.
-        if cdp.model in ['rotor', 'free rotor', 'iso cone', 'iso cone, free rotor', 'pseudo-ellipse', 'pseudo-ellipse, free rotor']:
+        if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR]:
             # The rotor angle.
-            if cdp.model in ['free rotor', 'iso cone, free rotor', 'pseudo-ellipse, free rotor']:
+            if cdp.model in MODEL_LIST_FREE_ROTORS:
                 rotor_angle.append(pi)
             else:
-                if sim_indices[i] == None:
-                    rotor_angle.append(cdp.cone_sigma_max)
-                else:
+                if sims:
                     rotor_angle.append(cdp.cone_sigma_max_sim[sim_indices[i]])
+                else:
+                    rotor_angle.append(cdp.cone_sigma_max)
 
             # Get the CoM of the entire molecule to use as the centre of the rotor.
-            if cdp.model in ['rotor', 'free rotor']:
+            if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
                 com.append(pipe_centre_of_mass(verbosity=0))
             else:
                 com.append(pivot1)
 
             # Generate the rotor axis.
-            if cdp.model in ['rotor', 'free rotor']:
-                axis.append(create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot1, point=com[i]))
-            elif cdp.model in ['iso cone', 'iso cone, free rotor']:
-                axis.append(create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi))
+            if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
+                if sims:
+                    axis.append(create_rotor_axis_alpha(alpha=cdp.axis_alpha_sim[sim_indices[i]], pivot=pivot1, point=com[i]))
+                else:
+                    axis.append(create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot1, point=com[i]))
+            elif cdp.model in [MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR]:
+                if sims:
+                    axis.append(create_rotor_axis_spherical(theta=cdp.axis_theta_sim[sim_indices[i]], phi=cdp.axis_phi_sim[sim_indices[i]]))
+                else:
+                    axis.append(create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi))
             else:
-                axis.append(create_rotor_axis_euler(alpha=cdp.eigen_alpha, beta=cdp.eigen_beta, gamma=cdp.eigen_gamma))
+                if sims:
+                    axis.append(create_rotor_axis_euler(alpha=cdp.eigen_alpha_sim[sim_indices[i]], beta=cdp.eigen_beta_sim[sim_indices[i]], gamma=cdp.eigen_gamma_sim[sim_indices[i]]))
+                else:
+                    axis.append(create_rotor_axis_euler(alpha=cdp.eigen_alpha, beta=cdp.eigen_beta, gamma=cdp.eigen_gamma))
 
             # The size of the rotor, taking the 30 Angstrom cone representation into account.
-            if cdp.model in ['rotor', 'free rotor']:
+            if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
                 span.append(20e-10)
             else:
                 span.append(35e-10)
 
             # Stagger the propeller blades.
-            if cdp.model in ['free rotor', 'iso cone, free rotor', 'pseudo-ellipse, free rotor']:
+            if cdp.model in MODEL_LIST_FREE_ROTORS:
                 staggered.append(False)
             else:
                 staggered.append(True)
@@ -378,14 +492,14 @@ def add_rotors(structure=None, sims=False):
                 models.append(None)
 
         # The double rotor models.
-        elif cdp.model in ['double rotor']:
+        elif cdp.model in [MODEL_DOUBLE_ROTOR]:
             # Add both rotor angles (the 2nd must come first).
-            if sim_indices[i] == None:
-                rotor_angle.append(cdp.cone_sigma_max_2)
-                rotor_angle.append(cdp.cone_sigma_max)
-            else:
+            if sims:
                 rotor_angle.append(cdp.cone_sigma_max_2_sim[sim_indices[i]])
                 rotor_angle.append(cdp.cone_sigma_max_sim[sim_indices[i]])
+            else:
+                rotor_angle.append(cdp.cone_sigma_max_2)
+                rotor_angle.append(cdp.cone_sigma_max)
 
             # Set the com to the pivot points.
             com.append(pivot2)
@@ -393,7 +507,10 @@ def add_rotors(structure=None, sims=False):
 
             # Generate the eigenframe of the motion.
             frame = zeros((3, 3), float64)
-            euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
+            if sims:
+                euler_to_R_zyz(cdp.eigen_alpha_sim[sim_indices[i]], cdp.eigen_beta_sim[sim_indices[i]], cdp.eigen_gamma_sim[sim_indices[i]], frame)
+            else:
+                euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
 
             # Add the x and y axes.
             axis.append(frame[:, 0])
@@ -425,7 +542,7 @@ def add_rotors(structure=None, sims=False):
 
     # Add each rotor to the structure as a new molecule.
     for i in range(len(axis)):
-        rotor(structure=structure, rotor_angle=rotor_angle[i], axis=axis[i], axis_pt=pivot[i], label=label[i], centre=com[i], span=span[i], blade_length=5e-10, model_num=models[i], staggered=staggered[i])
+        rotor(structure=structure, rotor_angle=rotor_angle[i], axis=dot(T, axis[i]), axis_pt=pivot[i], label=label[i], centre=com[i], span=span[i], blade_length=5e-10, model_num=models[i], staggered=staggered[i], half_rotor=half_rotor)
 
 
 def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, force=False):
@@ -446,26 +563,70 @@ def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, force=Fal
     # Printout.
     subsection(file=sys.stdout, text="Creating a PDB file with the moving domains shifted to the average position.")
 
-    # Make a copy of the structural object (so as to preserve the original structure).
-    structure = deepcopy(cdp.structure)
+    # Initialise.
+    titles = []
+    sims = []
+    file_root = []
+    models = []
 
-    # First rotate the moving domain to the average position.
-    R = zeros((3, 3), float64)
-    if hasattr(cdp, 'ave_pos_alpha'):
-        euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
-    else:
-        euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
-    origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
-    structure.rotate(R=R, origin=origin, atom_id=domain_moving())
+    # The real average position.
+    titles.append("real average position")
+    sims.append(False)
+    file_root.append(file)
+    models.append([None])
 
-    # Then translate the moving domain.
-    structure.translate(T=[cdp.ave_pos_x, cdp.ave_pos_y, cdp.ave_pos_z], atom_id=domain_moving())
+    # The positive MC simulation representation.
+    if hasattr(cdp, 'sim_number'):
+        titles.append("MC simulation representation")
+        sims.append(True)
+        file_root.append("%s_sim" % file)
+        models.append([i+1 for i in range(cdp.sim_number)])
 
-    # Output to PDB format.
-    if format == 'PDB':
-        file = open_write_file(file_name=file+'.pdb', dir=dir, compress_type=compress_type, force=force)
-        structure.write_pdb(file=file)
-        file.close()
+    # Loop over each representation and add the contents.
+    for i in range(len(titles)):
+        # Printout.
+        subsubsection(file=sys.stdout, text="Creating the %s." % titles[i])
+
+        # Make a copy of the structural object (so as to preserve the original structure).
+        structure = deepcopy(cdp.structure)
+
+        # Loop over each model.
+        for j in range(len(models[i])):
+            # Create or set the models, if needed.
+            if models[i][j] == 1:
+                structure.set_model(model_new=1)
+            elif models[i][j] != None:
+                structure.add_model(model=models[i][j])
+
+        # Loop over each model.
+        for j in range(len(models[i])):
+            # First rotate the moving domain to the average position.
+            R = zeros((3, 3), float64)
+            if hasattr(cdp, 'ave_pos_alpha'):
+                if sims[i]:
+                    euler_to_R_zyz(cdp.ave_pos_alpha_sim[j], cdp.ave_pos_beta_sim[j], cdp.ave_pos_gamma_sim[j], R)
+                else:
+                    euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
+            else:
+                if sims[i]:
+                    euler_to_R_zyz(0.0, cdp.ave_pos_beta_sim[j], cdp.ave_pos_gamma_sim[j], R)
+                else:
+                    euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
+            origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
+            structure.rotate(R=R, origin=origin, model=models[i][j], atom_id=domain_moving())
+
+            # Then translate the moving domain.
+            if sims[i]:
+                T = [cdp.ave_pos_x_sim[j], cdp.ave_pos_y_sim[j], cdp.ave_pos_z_sim[j]]
+            else:
+                T = [cdp.ave_pos_x, cdp.ave_pos_y, cdp.ave_pos_z]
+            structure.translate(T=T, model=models[i][j], atom_id=domain_moving())
+
+        # Output to PDB format.
+        if format == 'PDB':
+            pdb_file = open_write_file(file_name=file_root[i]+'.pdb', dir=dir, compress_type=compress_type, force=force)
+            structure.write_pdb(file=pdb_file)
+            pdb_file.close()
 
 
 def create_distribution(format='PDB', file=None, dir=None, compress_type=0, force=False):
@@ -518,46 +679,46 @@ def create_geometric_rep(format='PDB', file=None, dir=None, compress_type=0, siz
 
     # Symmetry for inverted representations?
     sym = True
-    if cdp.model in ['rotor', 'free rotor', 'double rotor']:
+    if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR, MODEL_DOUBLE_ROTOR]:
         sym = False
 
-    # The positive representation.
-    titles.append("positive representation")
+    # The standard representation.
+    titles.append("Representation A")
     structures.append(Internal())
     if sym:
-        representation.append('pos')
-        file_root.append("%s_pos" % file)
+        representation.append('A')
+        file_root.append("%s_A" % file)
     else:
         representation.append(None)
         file_root.append(file)
     sims.append(False)
 
-    # The negative (inverted) representation.
+    # The inverted representation.
     if sym:
-        titles.append("negative representation")
+        titles.append("Representation A")
         structures.append(Internal())
-        representation.append('neg')
-        file_root.append("%s_neg" % file)
+        representation.append('B')
+        file_root.append("%s_B" % file)
         sims.append(False)
 
-    # The positive MC simulation representation.
+    # The standard MC simulation representation.
     if hasattr(cdp, 'sim_number'):
-        titles.append("positive MC simulation representation")
+        titles.append("MC simulation representation A")
         structures.append(Internal())
         if sym:
-            representation.append('pos')
-            file_root.append("%s_sim_pos" % file)
+            representation.append('A')
+            file_root.append("%s_sim_A" % file)
         else:
             representation.append(None)
             file_root.append("%s_sim" % file)
         sims.append(True)
 
-    # The negative MC simulation representation.
+    # The inverted MC simulation representation.
     if hasattr(cdp, 'sim_number') and sym:
-        titles.append("negative MC simulation representation")
+        titles.append("MC simulation representation B")
         structures.append(Internal())
-        representation.append('neg')
-        file_root.append("%s_sim_neg" % file)
+        representation.append('B')
+        file_root.append("%s_sim_B" % file)
         sims.append(True)
 
     # Loop over each structure and add the contents.
@@ -574,14 +735,17 @@ def create_geometric_rep(format='PDB', file=None, dir=None, compress_type=0, siz
         add_pivots(structure=structures[i], sims=sims[i])
 
         # Add all rotor objects.
-        add_rotors(structure=structures[i], sims=sims[i])
+        add_rotors(structure=structures[i], representation=representation[i], sims=sims[i])
 
         # Add the axis systems.
         add_axes(structure=structures[i], representation=representation[i], size=size, sims=sims[i])
 
         # Add the cone objects.
-        if cdp.model not in ['rotor', 'free rotor', 'double rotor']:
+        if cdp.model not in [MODEL_ROTOR, MODEL_FREE_ROTOR, MODEL_DOUBLE_ROTOR]:
             add_cones(structure=structures[i], representation=representation[i], size=size, inc=inc, sims=sims[i])
+
+        # Add atoms for creating titles.
+        add_titles(structure=structures[i], representation=representation[i], sims=sims[i])
 
         # Create the PDB file.
         if format == 'PDB':

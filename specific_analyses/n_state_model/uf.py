@@ -34,7 +34,7 @@ from lib.io import open_write_file
 from lib.structure.cones import Iso_cone
 from lib.structure.internal.object import Internal
 from lib.structure.geometric import generate_vector_dist, generate_vector_residues
-from lib.structure.represent.cone import cone_edge, stitch_cone_to_edge
+from lib.structure.represent.cone import cone_edge
 from pipe_control.pipes import check_pipe
 from pipe_control.structure.mass import centre_of_mass
 
@@ -197,8 +197,7 @@ def cone_pdb(cone_type=None, scale=1.0, file=None, dir=None, force=False):
     if cone_type == 'diff in cone':
         print("\nGenerating the cone cap.")
         cone_start_atom = mol.atom_num[-1]+1
-        generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, limit_check=cone_obj.limit_check, scale=norm(cdp.pivot_CoM), inc=inc)
-        stitch_cone_to_edge(mol=mol, cone_obj=cone_obj, dome_start=cone_start_atom, edge_start=cap_start_atom+1, inc=inc)
+        generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, phi_max_fn=cone_obj.phi_max, scale=norm(cdp.pivot_CoM), inc=inc)
 
     # Create the PDB file.
     print("\nGenerating the PDB file.")

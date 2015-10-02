@@ -33,6 +33,7 @@ from lib.warnings import RelaxWarning
 from pipe_control import pipes
 from specific_analyses.frame_order.geometric import create_ave_pos, create_distribution, create_geometric_rep
 from specific_analyses.frame_order.parameters import update_model
+from specific_analyses.frame_order.variables import MODEL_LIST, MODEL_RIGID
 
 
 def num_int_pts(num=200000):
@@ -86,7 +87,7 @@ def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", 
         create_ave_pos(file=ave_pos, dir=dir, compress_type=compress_type, force=force)
 
     # Nothing more to do for the rigid model.
-    if cdp.model == 'rigid':
+    if cdp.model == MODEL_RIGID:
         return
 
     # Create the geometric representation.
@@ -189,8 +190,8 @@ def select_model(model=None):
     check_pipe()
 
     # Test if the model name exists.
-    if not model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor', 'iso cone', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor', 'rigid', 'free rotor', 'double rotor']:
-        raise RelaxError("The model name " + repr(model) + " is invalid.")
+    if not model in MODEL_LIST:
+        raise RelaxError("The model name '%s' is invalid, it must be one of %s." % MODEL_LIST)
 
     # Set the model
     cdp.model = model

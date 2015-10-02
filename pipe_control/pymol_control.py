@@ -340,6 +340,9 @@ def frame_order(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution"
     if dir != None:
         path = dir + sep
 
+    # First disable everything, so that the original domain positions and structures and previous frame order results are not shown by default.
+    pymol_obj.exec_cmd("disable all")
+
     # Set up the respective objects.
     if ave_pos:
         frame_order_ave_pos(root=ave_pos, path=path)
@@ -347,6 +350,10 @@ def frame_order(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution"
         frame_order_geometric(root=rep, path=path)
     if dist:
         frame_order_distribution(root=dist, path=path)
+
+    # Centre all objects and zoom.
+    pymol_obj.exec_cmd("center animate=3")
+    pymol_obj.exec_cmd("zoom animate=3")
 
 
 def frame_order_ave_pos(root=None, path=None):
@@ -358,14 +365,17 @@ def frame_order_ave_pos(root=None, path=None):
 
     # Find all PDB files.
     pdb_files = find_pdb_files(path=path, file_root=root)
+    pdb_files += find_pdb_files(path=path, file_root=root+'_sim')
 
     # Read in the PDB files.
-    print pdb_files
     for file in pdb_files:
         pymol_obj.exec_cmd("load " + file)
 
         # The object ID.
         id = file_root(file)
+
+    # Disable the MC simulation representation - the user can find this out for themselves.
+    pymol_obj.exec_cmd("disable %s_sim" % root)
 
 
 def frame_order_distribution(root=None, path=None):
@@ -392,11 +402,11 @@ def frame_order_geometric(root=None, path=None):
 
     # Find all PDB files.
     pdb_files = find_pdb_files(path=path, file_root=root)
-    pdb_files += find_pdb_files(path=path, file_root=root+'_pos')
-    pdb_files += find_pdb_files(path=path, file_root=root+'_neg')
+    pdb_files += find_pdb_files(path=path, file_root=root+'_A')
+    pdb_files += find_pdb_files(path=path, file_root=root+'_B')
     pdb_files += find_pdb_files(path=path, file_root=root+'_sim')
-    pdb_files += find_pdb_files(path=path, file_root=root+'_sim_pos')
-    pdb_files += find_pdb_files(path=path, file_root=root+'_sim_neg')
+    pdb_files += find_pdb_files(path=path, file_root=root+'_sim_A')
+    pdb_files += find_pdb_files(path=path, file_root=root+'_sim_B')
 
     # Read in the PDB files.
     for file in pdb_files:
@@ -411,6 +421,9 @@ def frame_order_geometric(root=None, path=None):
         pymol_obj.exec_cmd("hide ('sele')")
         pymol_obj.exec_cmd("cmd.delete('sele')")
 
+        # Set up the titles.
+        represent_titles(id=id)
+
         # Set up the pivot points.
         represent_pivots(id=id)
 
@@ -422,6 +435,11 @@ def frame_order_geometric(root=None, path=None):
 
         # Set up the cone object.
         represent_cone_object(id=id)
+
+    # Disable the MC simulation representation - the user can find this out for themselves.
+    pymol_obj.exec_cmd("disable %s_sim" % root)
+    pymol_obj.exec_cmd("disable %s_sim_A" % root)
+    pymol_obj.exec_cmd("disable %s_sim_B" % root)
 
 
 def macro_apply(data_type=None, style="classic", colour_start_name=None, colour_start_rgb=None, colour_end_name=None, colour_end_rgb=None, colour_list=None):
@@ -672,6 +690,48 @@ def represent_pivots(id=None):
     pymol_obj.exec_cmd("cmd.label(\"sele\",\"name\")")
 
     # Remove the selection.
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+
+def represent_titles(id=None):
+    """Set up the PyMOL title object representation.
+
+    @keyword id:    The PyMOL object ID.
+    @type id:       str
+    """
+
+    # Sanity check.
+    if id == None:
+        raise RelaxError("The PyMOL object ID must be supplied.")
+
+    # Frame order representation A.
+    pymol_obj.exec_cmd("select (%s & resn TLE & name a)" % id)
+    pymol_obj.exec_cmd("hide ('sele')")
+    pymol_obj.exec_cmd("label 'sele', 'Representation A'")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+    # Frame order representation B.
+    pymol_obj.exec_cmd("select (%s & resn TLE & name b)" % id)
+    pymol_obj.exec_cmd("hide ('sele')")
+    pymol_obj.exec_cmd("label 'sele', 'Representation B'")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+    # Frame order MC sim representation.
+    pymol_obj.exec_cmd("select (%s & resn TLE & name mc)" % id)
+    pymol_obj.exec_cmd("hide ('sele')")
+    pymol_obj.exec_cmd("label 'sele', 'MC sim representation'")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+    # Frame order MC sim representation A.
+    pymol_obj.exec_cmd("select (%s & resn TLE & name mc-a)" % id)
+    pymol_obj.exec_cmd("hide ('sele')")
+    pymol_obj.exec_cmd("label 'sele', 'MC sim representation A'")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+    # Frame order MC sim representation B.
+    pymol_obj.exec_cmd("select (%s & resn TLE & name mc-b)" % id)
+    pymol_obj.exec_cmd("hide ('sele')")
+    pymol_obj.exec_cmd("label 'sele', 'MC sim representation B'")
     pymol_obj.exec_cmd("cmd.delete('sele')")
 
 

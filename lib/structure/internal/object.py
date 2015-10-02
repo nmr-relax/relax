@@ -213,6 +213,7 @@ class Internal:
          | CNX    | Axis of the cone geometric object              |
          | CNE    | Edge of the cone geometric object              |
          | AXE    | The axis geometric object                      |
+         | TLE    | The title for the object                       |
          |________|________________________________________________|
 
         For any other residues, no description is returned.
@@ -239,6 +240,7 @@ class Internal:
             "CNX": "Axis of the cone geometric object",
             "CNE": "Edge of the cone geometric object",
             "AXE": "The axis geometric object",
+            "TLE": "The title for the object",
         }
 
         # Return the description, if one exists.

@@ -5,8 +5,8 @@ from numpy import array
 
 
 # The real parameter values.
-AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -20.859750185691549,   -2.450606987447843,   -2.191854570352916]
-AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [5.623468683852550, 0.435439748282942, 5.081265879629926]
+AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -21.269217407269576,   -3.122610661328414,   -2.400652421655998]
+AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [5.623469076122531, 0.435439405668396, 5.081265529106499]
 AXIS_THETA = 0.96007997859534299767
 AXIS_PHI = 4.03227550621962294031
 CONE_THETA = 1.3
@@ -46,8 +46,8 @@ for i in range(len(ln)):
 script('../tensors.py')
 
 # Define the domains.
-domain(id='N', spin_id=":1-78")
-domain(id='C', spin_id=":80-148")
+domain(id='N', spin_id="#N-dom")
+domain(id='C', spin_id="#C-dom")
 
 # The tensor domains and reductions.
 full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
@@ -93,6 +93,9 @@ minimise.calculate()
 # Create the PDB representation of the true state.
 frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', dist=None, compress_type=2, force=True)
 
+# Save the state.
+state.save('frame_order_true', force=True)
+
 # Grid search (low quality for speed).
 frame_order.num_int_pts(num=100)
 grid_search(inc=[None, None, None, None, None, None, 11, 11, 11])
@@ -106,6 +109,9 @@ for i in range(len(num_int_pts)):
 
 # Store the result.
 frame_order.pdb_model(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', dist=None, compress_type=2, force=True)
+
+# Save the state.
+state.save('frame_order_fixed_piv', force=True)
 
 # Optimise the pivot and model, again iterating with increasing precision.
 frame_order.pivot(pivot, fix=False)
@@ -128,8 +134,6 @@ monte_carlo.error_analysis()
 frame_order.pdb_model(ave_pos='ave_pos', rep='frame_order', dist=None, compress_type=2, force=True)
 
 # PyMOL.
-pymol.view()
-pymol.command('show spheres')
 pymol.frame_order(ave_pos='ave_pos_true', rep='frame_order_true', dist=None)
 pymol.frame_order(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', dist=None)
 pymol.frame_order(ave_pos='ave_pos', rep='frame_order', dist=None)

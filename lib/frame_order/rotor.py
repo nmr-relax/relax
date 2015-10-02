@@ -23,15 +23,11 @@
 """Module for the handling of Frame Order."""
 
 # Python module imports.
-from math import pi, sqrt
-from numpy import divide, dot, inner, multiply, sinc, swapaxes, tensordot, transpose
-from numpy.linalg import norm
-try:
-    from scipy.integrate import quad
-except ImportError:
-    pass
+from math import pi
+from numpy import divide, dot, multiply, sinc, swapaxes, tensordot
 
 # relax module imports.
+from lib.compat import norm
 from lib.frame_order.matrix_ops import rotate_daeg
 
 

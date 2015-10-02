@@ -24,13 +24,14 @@
 
 # relax module imports.
 from base_script import Base_script
+from specific_analyses.frame_order.variables import MODEL_FREE_ROTOR
 
 
 class Analysis(Base_script):
 
     # Set up some class variables.
     DIRECTORY = 'free_rotor_missing_data'
-    MODEL = 'free rotor'
+    MODEL = MODEL_FREE_ROTOR
     AVE_POS_ALPHA = None
     AVE_POS_BETA = 0.19740471457956135
     AVE_POS_GAMMA = 4.6622313104265416

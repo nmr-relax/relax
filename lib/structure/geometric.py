@@ -28,7 +28,7 @@ from lib.structure.angles import angles_regular, angles_uniform
 from lib.structure.conversion import get_proton_name
 
 
-def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), limit_check=None, scale=1.0, inc=20, distribution='uniform', debug=False):
+def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), phi_max_fn=None, scale=1.0, inc=20, distribution='uniform'):
     """Generate a uniformly distributed distribution of atoms on a warped sphere.
 
     The vectors from the function vect_dist_spherical_angles() are used to generate the distribution.  These vectors are rotated to the desired frame using the rotation matrix 'R', then each compressed or stretched by the dot product with the 'warp' matrix.  Each vector is centred and at the head of the vector, a proton is placed.
@@ -47,9 +47,9 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
     @keyword R:             The optional 3x3 rotation matrix.
     @type R:                3x3 numpy array
     @keyword warp:          The optional 3x3 warping matrix.
-    @type warp:             3x3 numpy array
-    @keyword limit_check:   A function with determines the limits of the distribution.  It should accept two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.
-    @type limit_check:      function
+    @type warp:             numpy array
+    @keyword phi_max_fn:    A function with determines the limits of the distribution.  It should accept the azimuthal angle theta as an argument and return the corresponding maximum allowed polar angle phi.
+    @type phi_max_fn:       function
     @keyword scale:         The scaling factor to stretch all rotated and warped vectors by.
     @type scale:            float
     @keyword inc:           The number of increments or number of vectors.
@@ -78,43 +78,39 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
     # Init the arrays for stitching together.
     edge = zeros(len(theta))
     edge_index = zeros(len(theta), int)
-    edge_phi = zeros(len(theta), float64)
     edge_atom = zeros(len(theta))
+
+    # Determine the maximum phi values of the point just above the edge, and create a set of vectors to use for all points outside of the limits.
+    if phi_max_fn:
+        phi_max = zeros(len(theta), float64)
+        edge_vectors = zeros((len(theta), 3), float64)
+        for i in range(len(theta)):
+            # The maximum angle.
+            phi_max[i] = phi_max_fn(theta[i])
+
+            # The vector in the unrotated frame.
+            edge_vectors[i, 0] = cos(theta[i]) * sin(phi_max[i])
+            edge_vectors[i, 1] = sin(theta[i])* sin(phi_max[i])
+            edge_vectors[i, 2] = cos(phi_max[i])
 
     # Loop over the radial array of vectors (change in longitude).
     for i in range(len(theta)):
-        # Debugging.
-        if debug:
-            print("i: %s; theta: %s" % (i, theta[i]))
-
         # Loop over the vectors of the radial array (change in latitude).
         for j in range(len(phi)):
-            # Debugging.
-            if debug:
-                print("%sj: %s; phi: %s" % (" "*4, j, phi[j]))
-
-            # Skip the vector if the point is outside of the limits.
-            if limit_check and not limit_check(phi[j], theta[i]):
-                if debug:
-                    print("%sOut of limits." % (" "*8))
-                continue
+            # The vector to use.
+            if phi_max_fn and phi[j] > phi_max_fn(theta[i]):
+                vector = edge_vectors[i]
+            else:
+                vector = vectors[i + j*len(theta)]
 
             # Update the edge for this longitude.
             if not edge[i]:
                 edge[i] = 1
                 edge_index[i] = j
-                edge_phi[i] = phi[j]
                 edge_atom[i] = atom_num
 
-                # Debugging.
-                if debug:
-                    print("%sEdge detected." % (" "*8))
-                    print("%sEdge index: %s" % (" "*8, edge_index[i]))
-                    print("%sEdge phi pos: %s" % (" "*8, edge_phi[i]))
-                    print("%sEdge atom: %s" % (" "*8, edge_atom[i]))
-
             # Rotate the vector into the frame.
-            vector = dot(R, vectors[i + j*len(theta)])
+            vector = dot(R, vector)
 
             # Warp the vector.
             vector = dot(warp, vector)
@@ -125,19 +121,11 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
             # Position relative to the centre of mass.
             pos = centre + vector
 
-            # Debugging.
-            if debug:
-                print("%sAdding atom %s." % (" "*8, get_proton_name(atom_num)))
-
             # Add the vector as a H atom of the TNS residue.
             mol.atom_add(pdb_record='HETATM', atom_num=atom_num, atom_name=get_proton_name(atom_num), res_name=res_name, chain_id=chain_id, res_num=res_num, pos=pos, segment_id=None, element='H')
 
             # Connect to the previous atom to generate the longitudinal lines (except for the first point).
             if j > edge_index[i]:
-                # Debugging.
-                if debug:
-                    print("%sLongitude line, connecting %s to %s" % (" "*8, get_proton_name(atom_num), get_proton_name(atom_num-1)))
-
                 mol.atom_connect(index1=atom_num-1, index2=atom_num-2)
 
             # Connect across the radial arrays (to generate the latitudinal lines).
@@ -145,10 +133,7 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
                 # The number of atoms back to the previous longitude.
                 num = len(phi) - edge_index[i]
 
-                # Debugging.
-                if debug:
-                    print("%sLatitude line, connecting %s to %s" % (" "*8, get_proton_name(atom_num), get_proton_name(atom_num-num)))
-
+                # Latitude line.
                 mol.atom_connect(index1=atom_num-1, index2=atom_num-1-num)
 
             # Connect the last radial array to the first (to zip up the geometric object and close the latitudinal lines).
@@ -156,10 +141,7 @@ def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', cen
                 # The number of atom in the first longitude line.
                 num = origin_num + j - edge_index[0]
 
-                # Debugging.
-                if debug:
-                    print("%sZipping up, connecting %s to %s" % (" "*8, get_proton_name(atom_num), get_proton_name(num)))
-
+                # Zipping up.
                 mol.atom_connect(index1=atom_num-1, index2=num-1)
 
             # Increment the atom number.

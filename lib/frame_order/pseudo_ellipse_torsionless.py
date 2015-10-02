@@ -23,7 +23,7 @@
 """Module for the handling of Frame Order."""
 
 # Python module imports.
-from math import cos, pi, sin, sqrt
+from math import cos, pi, sin
 from numpy import divide, dot, eye, float64, multiply, swapaxes, tensordot
 try:
     from scipy.integrate import quad
@@ -33,7 +33,7 @@ except ImportError:
 # relax module imports.
 from lib.geometry.pec import pec
 from lib.frame_order.matrix_ops import pcs_pivot_motion_torsionless_qrint, rotate_daeg
-from lib.frame_order.pseudo_ellipse import tmax_pseudo_ellipse
+from lib.frame_order.pseudo_ellipse import tmax_pseudo_ellipse, tmax_pseudo_ellipse_array
 
 
 def compile_2nd_matrix_pseudo_ellipse_torsionless(matrix, Rx2_eigen, theta_x, theta_y):
@@ -313,6 +313,9 @@ def pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=None, theta_x=None, 
     # Unpack the points.
     theta, phi = swapaxes(points, 0, 1)
 
+    # Calculate theta_max.
+    theta_max = tmax_pseudo_ellipse_array(phi, theta_x, theta_y)
+
     # Loop over the samples.
     num = 0
     for i in range(len(points)):
@@ -320,11 +323,8 @@ def pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=None, theta_x=None, 
         if theta[i] > theta_y:
             continue
 
-        # Calculate theta_max.
-        theta_max = tmax_pseudo_ellipse(phi[i], theta_x, theta_y)
-
         # Outside of the distribution, so skip the point.
-        if theta[i] > theta_max:
+        if theta[i] > theta_max[i]:
             continue
 
         # Calculate the PCSs for this state.
