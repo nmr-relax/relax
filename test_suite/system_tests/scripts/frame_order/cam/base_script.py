@@ -55,6 +55,7 @@ class Base_script:
     NUM_INT_PTS = 2000
 
     # The model parameters.
+    PIVOT_DISP = None
     AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -20.859750185691549,   -2.450606987447843,   -2.191854570352916]
     AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [   5.623468683852550,    0.435439748282942,    5.081265879629926]
     AXIS_THETA = None
@@ -70,11 +71,10 @@ class Base_script:
     CONE_SIGMA_MAX = None
     AXIS_THETA2 = None
     AXIS_PHI2 = None
-    CONE_SIGMA_MAX2 = None
+    CONE_SIGMA_MAX_2 = None
 
     # The pivot points.
     PIVOT = array([ 37.254, 0.5, 16.7465], float32)
-    PIVOT2 = None
 
     # The CoM - for use in the rotor models.
     COM = array([44.737253525507697, -1.1684805963699558, 14.072436716990133], float32)
@@ -158,6 +158,7 @@ class Base_script:
 
         # Set the parameter values.
         params = [
+            'pivot_disp',
             'ave_pos_x',
             'ave_pos_y',
             'ave_pos_z',
@@ -174,7 +175,8 @@ class Base_script:
             'cone_theta_y',
             'cone_theta',
             'cone_s1',
-            'cone_sigma_max'
+            'cone_sigma_max',
+            'cone_sigma_max_2'
         ]
         for param in params:
             # Variable name.

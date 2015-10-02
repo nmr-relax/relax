@@ -31,7 +31,7 @@ from numpy.linalg import norm
 from lib.frame_order.matrix_ops import rotate_daeg
 
 
-def compile_2nd_matrix_double_rotor(matrix, Rx2_eigen, smax, smaxb):
+def compile_2nd_matrix_double_rotor(matrix, Rx2_eigen, smax1, smax2):
     """Generate the rotated 2nd degree Frame Order matrix for the double rotor model.
 
     The cone axis is assumed to be parallel to the z-axis in the eigenframe.
@@ -41,35 +41,49 @@ def compile_2nd_matrix_double_rotor(matrix, Rx2_eigen, smax, smaxb):
     @type matrix:       numpy 9D, rank-2 array
     @param Rx2_eigen:   The Kronecker product of the eigenframe rotation matrix with itself.
     @type Rx2_eigen:    numpy 9D, rank-2 array
-    @param smax:        The maximum torsion angle for the first rotor.
-    @type smax:         float
-    @param smaxb:       The maximum torsion angle for the second rotor.
-    @type smaxb:        float
+    @param smax1:       The maximum torsion angle for the first rotor.
+    @type smax1:        float
+    @param smax2:       The maximum torsion angle for the second rotor.
+    @type smax2:        float
     """
 
     # Zeros.
     matrix[:] = 0.0
 
     # Repetitive trig calculations.
-    sinc_smax = sinc(smax/pi)
-    sinc_2smax = sinc(2.0*smax/pi)
+    sinc_smax1 = sinc(smax1/pi)
+    sinc_2smax1 = sinc(2.0*smax1/pi)
+    sinc_2smax1p1 = sinc_2smax1 + 1.0
+    sinc_2smax1n1 = sinc_2smax1 - 1.0
+    sinc_smax2 = sinc(smax2/pi)
+    sinc_2smax2 = sinc(2.0*smax2/pi)
+    sinc_2smax2p1 = sinc_2smax2 + 1.0
+    sinc_2smax2n1 = sinc_2smax2 - 1.0
 
     # Diagonal.
-    matrix[0, 0] = (sinc_2smax + 1.0) / 2.0
-    matrix[1, 1] = matrix[0, 0]
-    matrix[2, 2] = sinc_smax
-    matrix[3, 3] = matrix[0, 0]
-    matrix[4, 4] = matrix[0, 0]
-    matrix[5, 5] = matrix[2, 2]
+    matrix[0, 0] = sinc_2smax1 + 1.0
+    matrix[1, 1] = 2.0 * sinc_smax1 * sinc_smax2
+    matrix[2, 2] = sinc_smax2 * sinc_2smax1p1
+    matrix[3, 3] = matrix[1, 1]
+    matrix[4, 4] = sinc_2smax2p1
+    matrix[5, 5] = sinc_smax1 * sinc_2smax2p1
     matrix[6, 6] = matrix[2, 2]
-    matrix[7, 7] = matrix[2, 2]
-    matrix[8, 8] = 1.0
+    matrix[7, 7] = matrix[5, 5]
+    matrix[8, 8] = 0.5 * sinc_2smax1p1 * sinc_2smax2p1
 
     # Off diagonal set 1.
-    matrix[0, 4] = matrix[4, 0] = -(sinc_2smax - 1.0) / 2.0
+    matrix[0, 4] = 0.5 * sinc_2smax1n1 * sinc_2smax2n1
+    matrix[0, 8] = -0.5 * sinc_2smax1n1 * sinc_2smax2p1
+    matrix[8, 0] = -sinc_2smax1n1
+    matrix[4, 8] = -sinc_2smax2n1
+    matrix[8, 4] = -0.5 * sinc_2smax1p1 * sinc_2smax2n1
 
     # Off diagonal set 2.
-    matrix[1, 3] = matrix[3, 1] = -matrix[0, 4]
+    matrix[2, 6] = matrix[6, 2] = sinc_smax2 * sinc_2smax1n1
+    matrix[5, 7] = matrix[7, 5] = sinc_smax1 * sinc_2smax2n1
+
+    # Divide by 2.
+    multiply(0.5, matrix, matrix)
 
     # Rotate and return the frame order matrix.
     return rotate_daeg(matrix, Rx2_eigen)

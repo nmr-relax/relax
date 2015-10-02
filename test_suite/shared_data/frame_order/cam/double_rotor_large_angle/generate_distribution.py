@@ -29,7 +29,7 @@ class Generate(Main):
 
     # The tilt angles.
     TILT_ANGLE = [85.0, 55.0]
-    INC = [TILT_ANGLE[0] / float(N - 1), TILT_ANGLE[1] / float(N - 1)]
+    INC = [TILT_ANGLE[0] / float(N - 1.0), TILT_ANGLE[1] / float(N - 1.0)]
 
     # The PDB distribution flag.
     DIST_PDB = False
@@ -58,7 +58,7 @@ class Generate(Main):
         """Set up the rotation for state i."""
 
         # The rotation angle.
-        angle = (i - (self.N-1)/2) * self.INC[motion_index] / 360.0 * 2.0 * pi
+        angle = (i - (self.N - 1.0)/2.0) * self.INC[motion_index] / 360.0 * 2.0 * pi
 
         # The rotation matrix.
         axis_angle_to_R(self.axes[motion_index], angle, self.R)

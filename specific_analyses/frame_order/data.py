@@ -22,8 +22,12 @@
 # Module docstring.
 """Module for handling the frame order data in the relax data store."""
 
+# Python module imports.
+from numpy import array, float64, zeros
+
 # relax module imports.
 from lib.errors import RelaxError
+from lib.geometry.rotations import euler_to_R_zyz
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import spin_loop
 
@@ -89,6 +93,40 @@ def domain_moving():
 
         # Return the ID.
         return cdp.domain[id]
+
+
+def generate_pivot(order=1):
+    """Create and return the given pivot.
+
+    @keyword order: The pivot number with 1 corresponding to the first pivot, 2 to the second, etc.
+    @type order:    int
+    @return:        The give pivot point.
+    @rtype:         numpy 3D rank-1 float64 array
+    """
+
+    # Initialise.
+    pivot = None
+
+    # The first pivot point.
+    if order == 1:
+        pivot = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z], float64)
+
+    # The 2nd pivot.
+    elif order == 2:
+        # The double rotor parameterisation.
+        if cdp.model in ['double rotor']:
+            # The first pivot.
+            pivot_1st = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z], float64)
+
+            # The eigenframe.
+            frame = zeros((3, 3), float64)
+            euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
+
+            # The 2nd pivot.
+            pivot = pivot_1st + frame[:,2] * cdp.pivot_disp
+
+    # Return the pivot.
+    return pivot
 
 
 def pivot_fixed():

@@ -70,9 +70,6 @@ class Frame_order(SystemTestCase):
 
         # Tests to skip.
         blacklist = [
-            'test_cam_double_rotor',    # FIXME, this test needs to be reactived and fixed.
-            'test_cam_double_rotor_pcs',
-            'test_cam_double_rotor_rdc',
             'test_cam_free_rotor_pcs',
             'test_cam_free_rotor_rdc',
             'test_cam_free_rotor2_pcs',
@@ -182,7 +179,7 @@ class Frame_order(SystemTestCase):
 
         # Minimisation info.
         string = string + "\n"
-        for param in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z', 'ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'axis_theta', 'axis_phi', 'cone_theta_x', 'cone_theta_y', 'cone_theta', 'cone_s1', 'cone_sigma_max']:
+        for param in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z', 'ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'axis_theta', 'axis_phi', 'cone_theta_x', 'cone_theta_y', 'cone_theta', 'cone_s1', 'cone_sigma_max', 'cone_sigma_max_2']:
             if hasattr(cdp, param):
                 obj = getattr(cdp, param)
                 string = string + "%-15s %30.17g\n" % (param, obj)
@@ -246,7 +243,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'double_rotor.py')
-        self.check_chi2(0.081769384900455433)
+        self.check_chi2(0.082814499083005949)
 
 
     def test_cam_double_rotor_pcs(self):
@@ -255,7 +252,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'double_rotor.py')
-        self.check_chi2(0.0010998457430728529)
+        self.check_chi2(0.0030004452535101396)
 
 
     def test_cam_double_rotor_rdc(self):
@@ -264,7 +261,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
         self.interpreter.run(script_file=self.cam_path+'double_rotor.py')
-        self.check_chi2(0.080669539157379247)
+        self.check_chi2(0.079814053829495801)
 
 
     def test_cam_double_rotor_large_angle(self):
@@ -273,7 +270,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'double_rotor_large_angle.py')
-        self.check_chi2(0.081769384900455433)
+        self.check_chi2(0.047332316807645894)
 
 
     def test_cam_double_rotor_large_angle_pcs(self):
@@ -282,7 +279,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'double_rotor_large_angle.py')
-        self.check_chi2(0.00016331682903726827)
+        self.check_chi2(0.0033862617225179567)
 
 
     def test_cam_double_rotor_large_angle_rdc(self):
@@ -291,7 +288,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
         self.interpreter.run(script_file=self.cam_path+'double_rotor_large_angle.py')
-        self.check_chi2(0.080669539157379247)
+        self.check_chi2(0.043946055085127944)
 
 
     def test_cam_free_rotor(self):
