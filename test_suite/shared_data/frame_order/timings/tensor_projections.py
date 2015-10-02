@@ -1,5 +1,5 @@
 # Python module imports.
-from numpy import *
+from numpy import array, diagonal, dot, float64, tensordot, tile, transpose, zeros
 from os import pardir, sep
 import sys
 from timeit import timeit
