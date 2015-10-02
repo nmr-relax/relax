@@ -27,6 +27,7 @@ from copy import deepcopy
 from math import pi
 from minfx.grid import grid_split_array
 from numpy import array, dot, float64, zeros
+from random import shuffle
 from warnings import warn
 
 # relax module imports.
@@ -41,7 +42,7 @@ from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.frame_order.checks import check_pivot
 from specific_analyses.frame_order.data import domain_moving
-from specific_analyses.frame_order.optimisation import Frame_order_grid_command, Frame_order_memo, Frame_order_minimise_command, grid_row, store_bc_data, target_fn_setup
+from specific_analyses.frame_order.optimisation import Frame_order_grid_command, Frame_order_memo, Frame_order_minimise_command, grid_row, store_bc_data, target_fn_data_setup
 from specific_analyses.frame_order.parameter_object import Frame_order_params
 from specific_analyses.frame_order.parameters import assemble_param_vector, linear_constraints, param_num, update_model
 from specific_analyses.frame_order.variables import MODEL_ISO_CONE_FREE_ROTOR
@@ -123,7 +124,7 @@ class Frame_order(API_base, API_common):
         """
 
         # Set up the data structures for the target function.
-        param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_setup(sim_index=sim_index, verbosity=verbosity)
+        param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(sim_index=sim_index, verbosity=verbosity)
 
         # Parameter scaling.
         scaling_matrix = assemble_scaling_matrix(scaling=True)
@@ -485,28 +486,32 @@ class Frame_order(API_base, API_common):
                     warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
                 constraints = False
 
-
-        # Printout.
-        print("Parallelised grid search.")
+        # Set up the data structures for the target function.
+        param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(sim_index=sim_index, verbosity=verbosity)
 
         # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
         processor_box = Processor_box() 
         processor = processor_box.processor
 
+        # Set up for multi-processor execution.
+        if processor.processor_size() > 1:
+            # Printout.
+            print("Parallelised grid search.")
+            print("Randomising the grid points to equalise the time required for each grid subdivision.\n")
+
+            # Randomise the points.
+            shuffle(pts)
+
         # Loop over each grid subdivision, with all points violating constraints being eliminated.
-        verbosity_init = True
-        for subdivision in grid_split_array(divisions=processor.processor_size(), points=pts, A=A, b=b):
+        for subdivision in grid_split_array(divisions=processor.processor_size(), points=pts, A=A, b=b, verbosity=verbosity):
             # Set up the memo for storage on the master.
             memo = Frame_order_memo(sim_index=sim_index, scaling=True, scaling_matrix=scaling_matrix)
 
             # Set up the command object to send to the slave and execute.
-            command = Frame_order_grid_command(points=subdivision, scaling_matrix=scaling_matrix, sim_index=sim_index, verbosity=verbosity, verbosity_init=verbosity_init)
+            command = Frame_order_grid_command(points=subdivision, scaling_matrix=scaling_matrix, sim_index=sim_index, model=cdp.model, param_vector=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_err=rdc_err, rdc_weight=rdc_weight, rdc_vect=rdc_vect, rdc_const=rdc_const, pcs=pcs, pcs_err=pcs_err, pcs_weight=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts, verbosity=verbosity)
 
             # Add the slave command and memo to the processor queue.
             processor.add_to_queue(command, memo)
-
-            # Turn off the verbosity_init flag so that the target_fn_setup() call in Frame_order_grid_command only prints out the information once for the first subdivision.
-            verbosity_init = False
 
         # Execute the queued elements.
         processor.run_queue()
@@ -586,6 +591,9 @@ class Frame_order(API_base, API_common):
         # Obtain the scaling matrix.
         scaling_matrix = assemble_scaling_matrix()
 
+        # Set up the data structures for the target function.
+        param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_data_setup(sim_index=sim_index, verbosity=verbosity)
+
         # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
         processor_box = Processor_box() 
         processor = processor_box.processor
@@ -594,7 +602,7 @@ class Frame_order(API_base, API_common):
         memo = Frame_order_memo(sim_index=sim_index, scaling=scaling, scaling_matrix=scaling_matrix)
 
         # Set up the command object to send to the slave and execute.
-        command = Frame_order_minimise_command(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, scaling_matrix=scaling_matrix, constraints=constraints, sim_index=sim_index, verbosity=verbosity)
+        command = Frame_order_minimise_command(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, scaling_matrix=scaling_matrix, constraints=constraints, sim_index=sim_index, model=cdp.model, param_vector=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_err=rdc_err, rdc_weight=rdc_weight, rdc_vect=rdc_vect, rdc_const=rdc_const, pcs=pcs, pcs_err=pcs_err, pcs_weight=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts, verbosity=verbosity)
 
         # Add the slave command and memo to the processor queue.
         processor.add_to_queue(command, memo)

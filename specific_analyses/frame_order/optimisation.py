@@ -616,7 +616,7 @@ def store_bc_data(A_5D_bc=None, pcs_theta=None, rdc_theta=None):
             rdc_index += 1
 
 
-def target_fn_setup(sim_index=None, verbosity=1, scaling_matrix=None):
+def target_fn_data_setup(sim_index=None, verbosity=1, scaling=True):
     """Initialise the target function for optimisation or direct calculation.
 
     @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
@@ -687,7 +687,7 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling_matrix=None):
 
     # Information printout.
     if verbosity and sim_index == None:
-        sys.stdout.write("The average domain rotation centroid, taken as the CoM of the atoms defined as the moving domain, is:\n    %s\n" % list(ave_pos_pivot))
+        sys.stdout.write("\nThe average domain rotation centroid, taken as the CoM of the atoms defined as the moving domain, is:\n    %s\n" % list(ave_pos_pivot))
         if com != None:
             sys.stdout.write("The centre of mass reference coordinate for the rotor models is:\n    %s\n" % list(com))
         if cdp.model != MODEL_RIGID:
@@ -807,7 +807,7 @@ def unpack_opt_results(param_vector=None, func=None, iter_count=None, f_count=No
 class Frame_order_grid_command(Slave_command):
     """Command class for relaxation dispersion optimisation on the slave processor."""
 
-    def __init__(self, points=None, scaling_matrix=None, sim_index=None,verbosity=None, verbosity_init=False):
+    def __init__(self, points=None, scaling_matrix=None, sim_index=None, model=None, param_vector=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_err=None, rdc_weight=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_err=None, pcs_weight=None, atomic_pos=None, temp=None, frq=None, paramag_centre=None, com=None, ave_pos_pivot=None, pivot=None, pivot_opt=None, num_int_pts=None, verbosity=None):
         """Initialise the base class, storing all the master data to be sent to the slave processor.
 
         This method is run on the master processor whereas the run() method is run on the slave processor.
@@ -818,23 +818,77 @@ class Frame_order_grid_command(Slave_command):
         @type scaling_matrix:       numpy diagonal matrix
         @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:            None or int
+        @keyword model:             The name of the Frame Order model.
+        @type model:                str
+        @keyword param_vector:      The initial parameter values.
+        @type param_vector:         numpy float64 array
+        @keyword full_tensors:      An array of the {Axx, Ayy, Axy, Axz, Ayz} values for all full alignment tensors.  The format is [Axx1, Ayy1, Axy1, Axz1, Ayz1, Axx2, Ayy2, Axy2, Axz2, Ayz2, ..., Axxn, Ayyn, Axyn, Axzn, Ayzn].
+        @type full_tensors:         numpy nx5D, rank-1 float64 array
+        @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
+        @type full_in_ref_frame:    numpy rank-1 array
+        @keyword rdcs:              The RDC lists.  The first index must correspond to the different alignment media i and the second index to the spin systems j.
+        @type rdcs:                 numpy rank-2 array
+        @keyword rdc_err:           The RDC error lists.  The dimensions of this argument are the same as for 'rdcs'.
+        @type rdc_err:              numpy rank-2 array
+        @keyword rdc_weight:        The RDC weight lists.  The dimensions of this argument are the same as for 'rdcs'.
+        @type rdc_weight:           numpy rank-2 array
+        @keyword rdc_vect:          The unit XH vector lists corresponding to the RDC values.  The first index must correspond to the spin systems and the second index to the x, y, z elements.
+        @type rdc_vect:             numpy rank-2 array
+        @keyword rdc_const:         The dipolar constants for each RDC.  The indices correspond to the spin systems j.
+        @type rdc_const:            numpy rank-1 array
+        @keyword pcs:               The PCS lists.  The first index must correspond to the different alignment media i and the second index to the spin systems j.
+        @type pcs:                  numpy rank-2 array
+        @keyword pcs_err:           The PCS error lists.  The dimensions of this argument are the same as for 'pcs'.
+        @type pcs_err:              numpy rank-2 array
+        @keyword pcs_weight:        The PCS weight lists.  The dimensions of this argument are the same as for 'pcs'.
+        @type pcs_weight:           numpy rank-2 array
+        @keyword atomic_pos:        The atomic positions of all spins for the PCS and PRE data.  The first index is the spin systems j and the second is the structure or state c.
+        @type atomic_pos:           numpy rank-3 array
+        @keyword temp:              The temperature of each PCS data set.
+        @type temp:                 numpy rank-1 array
+        @keyword frq:               The frequency of each PCS data set.
+        @type frq:                  numpy rank-1 array
+        @keyword paramag_centre:    The paramagnetic centre position (or positions).
+        @type paramag_centre:       numpy rank-1, 3D array or rank-2, Nx3 array
+         @keyword com:               The centre of mass of the system.  This is used for defining the rotor model systems.
+        @type com:                  numpy 3D rank-1 array
+        @keyword ave_pos_pivot:     The pivot point to rotate all atoms about to the average domain position.  In most cases this will be the centre of mass of the moving domain.  This pivot is shifted by the translation vector.
+        @type ave_pos_pivot:        numpy 3D rank-1 array
+        @keyword pivot:             The pivot point for the ball-and-socket joint motion.  This is needed if PCS or PRE values are used.
+        @type pivot:                numpy rank-1, 3D array or None
+        @keyword pivot_opt:         A flag which if True will allow the pivot point of the motion to be optimised.
+        @type pivot_opt:            bool
+        @keyword num_int_pts:       The number of points to use for the numerical integration technique.
+        @type num_int_pts:          int
         @keyword verbosity:         The verbosity level.  This is used by the result command returned to the master for printouts.
         @type verbosity:            int
-        @keyword verbosity_init:    The verbosity flag for the target_fn_setup() call so that it only prints out the information once for the first subdivision.
-        @type verbosity_init:       bool
         """
 
-        # Store some arguments.
+        # Store the arguments.
         self.points = points
-        self.verbosity = verbosity
         self.scaling_matrix = scaling_matrix
-
-        # Alias some data to be sent to the slave.
-        self.model = cdp.model
-        self.num_int_pts = cdp.num_int_pts
-
-        # Set up and store the data structures for the target function.
-        self.param_vector, self.full_tensors, self.full_in_ref_frame, self.rdcs, self.rdc_err, self.rdc_weight, self.rdc_vect, self.rdc_const, self.pcs, self.pcs_err, self.pcs_weight, self.atomic_pos, self.temp, self.frq, self.paramag_centre, self.com, self.ave_pos_pivot, self.pivot, self.pivot_opt = target_fn_setup(sim_index=sim_index, verbosity=verbosity_init)
+        self.model = model
+        self.param_vector = param_vector
+        self.full_tensors = full_tensors
+        self.full_in_ref_frame = full_in_ref_frame
+        self.rdcs = rdcs
+        self.rdc_err = rdc_err
+        self.rdc_weight = rdc_weight
+        self.rdc_vect = rdc_vect
+        self.rdc_const = rdc_const
+        self.pcs = pcs
+        self.pcs_err = pcs_err
+        self.pcs_weight = pcs_weight
+        self.atomic_pos = atomic_pos
+        self.temp = temp
+        self.frq = frq
+        self.paramag_centre = paramag_centre
+        self.com = com
+        self.ave_pos_pivot = ave_pos_pivot
+        self.pivot = pivot
+        self.pivot_opt = pivot_opt
+        self.num_int_pts = num_int_pts
+        self.verbosity = verbosity
 
 
     def run(self, processor, completed):
@@ -889,7 +943,7 @@ class Frame_order_memo(Memo):
 class Frame_order_minimise_command(Slave_command):
     """Command class for relaxation dispersion optimisation on the slave processor."""
 
-    def __init__(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, scaling_matrix=None, constraints=False, sim_index=None,verbosity=None):
+    def __init__(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, scaling_matrix=None, constraints=False, sim_index=None, model=None, param_vector=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_err=None, rdc_weight=None, rdc_vect=None, rdc_const=None, pcs=None, pcs_err=None, pcs_weight=None, atomic_pos=None, temp=None, frq=None, paramag_centre=None, com=None, ave_pos_pivot=None, pivot=None, pivot_opt=None, num_int_pts=None, verbosity=None):
         """Initialise the base class, storing all the master data to be sent to the slave processor.
 
         This method is run on the master processor whereas the run() method is run on the slave processor.
@@ -908,6 +962,48 @@ class Frame_order_minimise_command(Slave_command):
         @type constraints:          bool
         @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:            None or int
+        @keyword model:             The name of the Frame Order model.
+        @type model:                str
+        @keyword param_vector:      The initial parameter values.
+        @type param_vector:         numpy float64 array
+        @keyword full_tensors:      An array of the {Axx, Ayy, Axy, Axz, Ayz} values for all full alignment tensors.  The format is [Axx1, Ayy1, Axy1, Axz1, Ayz1, Axx2, Ayy2, Axy2, Axz2, Ayz2, ..., Axxn, Ayyn, Axyn, Axzn, Ayzn].
+        @type full_tensors:         numpy nx5D, rank-1 float64 array
+        @keyword full_in_ref_frame: An array of flags specifying if the tensor in the reference frame is the full or reduced tensor.
+        @type full_in_ref_frame:    numpy rank-1 array
+        @keyword rdcs:              The RDC lists.  The first index must correspond to the different alignment media i and the second index to the spin systems j.
+        @type rdcs:                 numpy rank-2 array
+        @keyword rdc_err:           The RDC error lists.  The dimensions of this argument are the same as for 'rdcs'.
+        @type rdc_err:              numpy rank-2 array
+        @keyword rdc_weight:        The RDC weight lists.  The dimensions of this argument are the same as for 'rdcs'.
+        @type rdc_weight:           numpy rank-2 array
+        @keyword rdc_vect:          The unit XH vector lists corresponding to the RDC values.  The first index must correspond to the spin systems and the second index to the x, y, z elements.
+        @type rdc_vect:             numpy rank-2 array
+        @keyword rdc_const:         The dipolar constants for each RDC.  The indices correspond to the spin systems j.
+        @type rdc_const:            numpy rank-1 array
+        @keyword pcs:               The PCS lists.  The first index must correspond to the different alignment media i and the second index to the spin systems j.
+        @type pcs:                  numpy rank-2 array
+        @keyword pcs_err:           The PCS error lists.  The dimensions of this argument are the same as for 'pcs'.
+        @type pcs_err:              numpy rank-2 array
+        @keyword pcs_weight:        The PCS weight lists.  The dimensions of this argument are the same as for 'pcs'.
+        @type pcs_weight:           numpy rank-2 array
+        @keyword atomic_pos:        The atomic positions of all spins for the PCS and PRE data.  The first index is the spin systems j and the second is the structure or state c.
+        @type atomic_pos:           numpy rank-3 array
+        @keyword temp:              The temperature of each PCS data set.
+        @type temp:                 numpy rank-1 array
+        @keyword frq:               The frequency of each PCS data set.
+        @type frq:                  numpy rank-1 array
+        @keyword paramag_centre:    The paramagnetic centre position (or positions).
+        @type paramag_centre:       numpy rank-1, 3D array or rank-2, Nx3 array
+         @keyword com:               The centre of mass of the system.  This is used for defining the rotor model systems.
+        @type com:                  numpy 3D rank-1 array
+        @keyword ave_pos_pivot:     The pivot point to rotate all atoms about to the average domain position.  In most cases this will be the centre of mass of the moving domain.  This pivot is shifted by the translation vector.
+        @type ave_pos_pivot:        numpy 3D rank-1 array
+        @keyword pivot:             The pivot point for the ball-and-socket joint motion.  This is needed if PCS or PRE values are used.
+        @type pivot:                numpy rank-1, 3D array or None
+        @keyword pivot_opt:         A flag which if True will allow the pivot point of the motion to be optimised.
+        @type pivot_opt:            bool
+        @keyword num_int_pts:       The number of points to use for the numerical integration technique.
+        @type num_int_pts:          int
         @keyword scaling_matrix:    The diagonal, square scaling matrix.
         @type scaling_matrix:       numpy diagonal matrix
         """
@@ -918,15 +1014,29 @@ class Frame_order_minimise_command(Slave_command):
         self.func_tol = func_tol
         self.grad_tol = grad_tol
         self.max_iterations = max_iterations
-        self.verbosity = verbosity
         self.scaling_matrix = scaling_matrix
-
-        # Alias some data to be sent to the slave.
-        self.model = cdp.model
-        self.num_int_pts = cdp.num_int_pts
-
-        # Set up and store the data structures for the target function.
-        self.param_vector, self.full_tensors, self.full_in_ref_frame, self.rdcs, self.rdc_err, self.rdc_weight, self.rdc_vect, self.rdc_const, self.pcs, self.pcs_err, self.pcs_weight, self.atomic_pos, self.temp, self.frq, self.paramag_centre, self.com, self.ave_pos_pivot, self.pivot, self.pivot_opt = target_fn_setup(sim_index=sim_index, verbosity=verbosity)
+        self.model = model
+        self.param_vector = param_vector
+        self.full_tensors = full_tensors
+        self.full_in_ref_frame = full_in_ref_frame
+        self.rdcs = rdcs
+        self.rdc_err = rdc_err
+        self.rdc_weight = rdc_weight
+        self.rdc_vect = rdc_vect
+        self.rdc_const = rdc_const
+        self.pcs = pcs
+        self.pcs_err = pcs_err
+        self.pcs_weight = pcs_weight
+        self.atomic_pos = atomic_pos
+        self.temp = temp
+        self.frq = frq
+        self.paramag_centre = paramag_centre
+        self.com = com
+        self.ave_pos_pivot = ave_pos_pivot
+        self.pivot = pivot
+        self.pivot_opt = pivot_opt
+        self.num_int_pts = num_int_pts
+        self.verbosity = verbosity
 
         # Linear constraints.
         self.A, self.b = None, None
