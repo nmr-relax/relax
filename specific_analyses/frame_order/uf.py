@@ -36,31 +36,14 @@ from lib.geometry.coord_transform import cartesian_to_spherical, spherical_to_ca
 from lib.geometry.rotations import euler_to_R_zyz, R_to_euler_zyz
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
-from specific_analyses.frame_order.checks import check_pivot
+from specific_analyses.frame_order.checks import check_domain
 from specific_analyses.frame_order.geometric import create_ave_pos, create_distribution, create_geometric_rep
+from specific_analyses.frame_order.optimisation import count_sobol_points
 from specific_analyses.frame_order.parameters import update_model
 from specific_analyses.frame_order.variables import MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_LIST_RESTRICTED_TORSION, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID
 
 
-def num_int_pts(num=200000):
-    """Set the number of integration points to use in the quasi-random Sobol' sequence.
-
-    @keyword num:   The number of integration points.
-    @type num:      int
-    """
-
-    # Test if the current data pipe exists.
-    check_pipe()
-
-    # Throw a warning to the user if not enough points are being used.
-    if num < 1000:
-        warn(RelaxWarning("To obtain reliable results in a frame order analysis, the number of integration points should be greater than 1000."))
- 
-    # Store the value.
-    cdp.num_int_pts = num
-
-
-def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", dir=None, compress_type=0, size=30.0, inc=36, force=False):
+def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", dir=None, compress_type=0, size=30.0, inc=36, model=1, force=False):
     """Create 3 different PDB files for representing the frame order dynamics of the system.
 
     @keyword ave_pos:       The file root for the average molecule structure.
@@ -77,6 +60,8 @@ def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", 
     @type size:             float
     @keyword inc:           The number of increments for the filling of the cone objects.
     @type inc:              int
+    @keyword model:      Only one model from an analysed ensemble can be used for the PDB representation of the Monte Carlo simulations, as these consists of one model per simulation.
+    @type model:         int
     @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
     @type force:            bool
     """
@@ -90,7 +75,7 @@ def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", 
 
     # Create the average position structure.
     if ave_pos:
-        create_ave_pos(file=ave_pos, dir=dir, compress_type=compress_type, force=force)
+        create_ave_pos(file=ave_pos, dir=dir, compress_type=compress_type, model=model, force=force)
 
     # Nothing more to do for the rigid model.
     if cdp.model == MODEL_RIGID:
@@ -102,7 +87,7 @@ def pdb_model(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", 
 
     # Create the distribution.
     if dist:
-        create_distribution(file=dist, dir=dir, compress_type=compress_type, force=force)
+        create_distribution(file=dist, dir=dir, compress_type=compress_type, model=model, force=force)
 
 
 def permute_axes(permutation='A'):
@@ -338,13 +323,17 @@ def ref_domain(ref=None):
     @type ref:  str
     """
 
-    # Test if the current data pipe exists.
+    # Checks.
     check_pipe()
+    check_domain(domain=ref, escalate=0)
 
+<<<<<<< .working
     # Check that the domain is defined.
     if not hasattr(cdp, 'domain') or ref not in cdp.domain:
         raise RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % ref)
 
+=======
+>>>>>>> .merge-right.r25896
     # Test if the reference domain exists.
     exists = False
     for tensor_cont in cdp.align_tensors:
@@ -368,13 +357,12 @@ def select_model(model=None):
     @type model:    str
     """
 
-    # Checks.
+    # Test if the current data pipe exists.
     check_pipe()
-    check_pivot()
 
     # Test if the model name exists.
     if not model in MODEL_LIST:
-        raise RelaxError("The model name '%s' is invalid, it must be one of %s." % MODEL_LIST)
+        raise RelaxError("The model name '%s' is invalid, it must be one of %s." % (model, MODEL_LIST))
 
     # Set the model
     cdp.model = model
@@ -384,3 +372,27 @@ def select_model(model=None):
 
     # Update the model.
     update_model()
+
+
+def sobol_setup(max_num=200, oversample=100):
+    """Oversampling setup for the quasi-random Sobol' sequence used for numerical PCS integration.
+
+    @keyword max_num:       The maximum number of integration points N.
+    @type max_num:          int
+    @keyword oversample:    The oversampling factor Ov used for the N * Ov * 10**M, where M is the number of dimensions or torsion-tilt angles for the system.
+    @type oversample:       int
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Throw a warning to the user if not enough points are being used.
+    if max_num < 200:
+        warn(RelaxWarning("To obtain reliable results in a frame order analysis, the maximum number of integration points should be greater than 200."))
+ 
+    # Store the values.
+    cdp.sobol_max_points = max_num
+    cdp.sobol_oversample = oversample
+
+    # Count the number of Sobol' points for the current model.
+    count_sobol_points()

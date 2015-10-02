@@ -24,9 +24,11 @@
 
 # Python module imports.
 from numpy import array, float64, zeros
+from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError
+from lib.warnings import RelaxWarning
 from lib.geometry.rotations import euler_to_R_zyz
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop
@@ -164,11 +166,23 @@ def generate_pivot(order=1, sim_index=None, pipe_name=None, pdb_limit=False):
 
     # PDB limits.
     if pivot != None and pdb_limit:
+        # The original pivot, as text.
+        orig_pivot = "[%.3f, %.3f, %.3f]" % (pivot[0], pivot[1], pivot[2])
+
+        # Check each coordinate.
+        out = False
         for i in range(3):
-            if pivot[i] < -1000.0:
-                pivot[i] = -999.999
-            elif pivot[i] > 1000.0:
-                pivot[i] = 999.999
+            if pivot[i] <= -900.0:
+                pivot[i] = -900.0
+                out = True
+            elif pivot[i] > 9900.0:
+                pivot[i] = 9900.0
+                out = True
+
+        # Failure.
+        if out:
+            new_pivot = "[%.3f, %.3f, %.3f]" % (pivot[0], pivot[1], pivot[2])
+            warn(RelaxWarning("The pivot point %s is outside of the PDB coordinate limits of [-999.999, 9999.999], less a 100 Angstrom buffer, shifting to %s." % (orig_pivot, new_pivot)))
 
     # Return the pivot.
     return pivot
@@ -183,6 +197,10 @@ def pivot_fixed():
 
     # A pivot point is not supported by the model.
     if cdp.model in [MODEL_RIGID]:
+        return True
+
+    # No PCS data, so the pivot cannot be optimised.
+    if not hasattr(cdp, 'pcs_ids') or len(cdp.pcs_ids) == 0:
         return True
 
     # The fixed flag is not set.

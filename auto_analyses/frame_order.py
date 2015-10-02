@@ -84,42 +84,42 @@ class Frame_order_analysis:
         # Execution lock.
         status.exec_lock.acquire(pipe_bundle, mode='auto-analysis')
 
-        # Initial printout.
-        title(file=sys.stdout, text="Frame order auto-analysis", prespace=7)
-
-        # Store the args.
-        self.data_pipe_full = data_pipe_full
-        self.data_pipe_subset = data_pipe_subset
-        self.pipe_bundle = pipe_bundle
-        self.opt_rigid = opt_rigid
-        self.opt_subset = opt_subset
-        self.opt_full = opt_full
-        self.opt_mc = opt_mc
-        self.mc_sim_num = mc_sim_num
-
-        # Re-order the models to enable the parameter nesting protocol.
-        self.models = self.reorder_models(models)
-
-        # A dictionary and list of the data pipe names.
-        self.pipe_name_dict = {}
-        self.pipe_name_list = []
-
-        # Project directory (i.e. directory containing the model-free model results and the newly generated files)
-        if results_dir:
-            self.results_dir = results_dir + sep
-        else:
-            self.results_dir = getcwd() + sep
-
-        # Data checks.
-        self.check_vars()
-
-        # Load the interpreter.
-        self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
-        self.interpreter.populate_self()
-        self.interpreter.on(verbose=False)
-
         # Execute the full protocol.
         try:
+            # Initial printout.
+            title(file=sys.stdout, text="Frame order auto-analysis", prespace=7)
+
+            # Store the args.
+            self.data_pipe_full = data_pipe_full
+            self.data_pipe_subset = data_pipe_subset
+            self.pipe_bundle = pipe_bundle
+            self.opt_rigid = opt_rigid
+            self.opt_subset = opt_subset
+            self.opt_full = opt_full
+            self.opt_mc = opt_mc
+            self.mc_sim_num = mc_sim_num
+
+            # Re-order the models to enable the parameter nesting protocol.
+            self.models = self.reorder_models(models)
+
+            # A dictionary and list of the data pipe names.
+            self.pipe_name_dict = {}
+            self.pipe_name_list = []
+
+            # Project directory (i.e. directory containing the model-free model results and the newly generated files)
+            if results_dir:
+                self.results_dir = results_dir + sep
+            else:
+                self.results_dir = getcwd() + sep
+
+            # Data checks.
+            self.check_vars()
+
+            # Load the interpreter.
+            self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
+            self.interpreter.populate_self()
+            self.interpreter.on(verbose=False)
+
             # Output the starting time.
             self.interpreter.time()
 
@@ -133,7 +133,7 @@ class Frame_order_analysis:
 
                 # The numerical optimisation settings.
                 opt = self.opt_mc
-                self.interpreter.frame_order.num_int_pts(num=opt.get_min_num_int_pts(0))
+                self.sobol_setup(opt.get_min_sobol_info(0))
 
                 # Monte Carlo simulations.
                 self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
@@ -202,8 +202,8 @@ class Frame_order_analysis:
                 # The PDB representation of the model and visualisation script (in case this was not completed correctly).
                 self.visualisation(model=perm_model)
 
-                # Exit the function.
-                return
+                # Jump to the next permutation.
+                continue
 
             # Copy the data pipe, and add it to the list so it is included in the model selection.
             self.interpreter.pipe.copy(pipe_from=self.pipe_name_dict[model], pipe_to=self.pipe_name_dict[perm_model])
@@ -220,9 +220,7 @@ class Frame_order_analysis:
                 pass
 
             # The numerical optimisation settings.
-            num_int_pts = opt.get_min_num_int_pts(i)
-            if num_int_pts != None:
-                self.interpreter.frame_order.num_int_pts(num=num_int_pts)
+            self.sobol_setup(opt.get_min_sobol_info(i))
 
             # Perform the optimisation.
             self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
@@ -601,9 +599,7 @@ class Frame_order_analysis:
             self.interpreter.grid_search(inc=incs)
 =======
                 # The numerical optimisation settings.
-                num_int_pts = opt.get_grid_num_int_pts(i)
-                if num_int_pts != None:
-                    self.interpreter.frame_order.num_int_pts(num=num_int_pts)
+                self.sobol_setup(opt.get_grid_sobol_info(i))
 >>>>>>> .merge-right.r24836
 
                 # Set up the custom grid increments.
@@ -620,9 +616,7 @@ class Frame_order_analysis:
 =======
             for i in opt.loop_min():
                 # The numerical optimisation settings.
-                num_int_pts = opt.get_min_num_int_pts(i)
-                if num_int_pts != None:
-                    self.interpreter.frame_order.num_int_pts(num=num_int_pts)
+                self.sobol_setup(opt.get_min_sobol_info(i))
 >>>>>>> .merge-right.r24836
 
                 # Perform the optimisation.
@@ -648,9 +642,7 @@ class Frame_order_analysis:
             opt = self.opt_full
             for i in opt.loop_min():
                 # The numerical optimisation settings.
-                num_int_pts = opt.get_min_num_int_pts(i)
-                if num_int_pts != None:
-                    self.interpreter.frame_order.num_int_pts(num=num_int_pts)
+                self.sobol_setup(opt.get_min_sobol_info(i))
 >>>>>>> .merge-right.r24836
 
                 # Perform the optimisation.
@@ -720,9 +712,7 @@ class Frame_order_analysis:
                 self.interpreter.minimise.grid_zoom(level=zoom)
 
             # The numerical optimisation settings.
-            num_int_pts = opt.get_grid_num_int_pts(i)
-            if num_int_pts != None:
-                self.interpreter.frame_order.num_int_pts(num=num_int_pts)
+            self.sobol_setup(opt.get_grid_sobol_info(i))
 
             # The number of increments.
             inc = opt.get_grid_inc(i)
@@ -739,9 +729,7 @@ class Frame_order_analysis:
 =======
         for i in opt.loop_min():
             # The numerical optimisation settings.
-            num_int_pts = opt.get_min_num_int_pts(i)
-            if num_int_pts != None:
-                self.interpreter.frame_order.num_int_pts(num=num_int_pts)
+            self.sobol_setup(opt.get_min_sobol_info(i))
 >>>>>>> .merge-right.r24836
 
             # Perform the optimisation.
@@ -906,6 +894,29 @@ class Frame_order_analysis:
         return new
 
 
+    def sobol_setup(self, info=None):
+        """Correctly handle the frame_order.sobol_setup user function.
+
+        @keyword info:  The information from the Optimisation_settings.get_*_sobol_info() function.
+        @type info:     tuple of int or None
+        """
+
+        # Unpack the info.
+        max_num, oversample = info
+
+        # Nothing to do.
+        if max_num == None:
+            return
+
+        # No oversampling specified.
+        if oversample == None:
+            self.interpreter.frame_order.sobol_setup(max_num=max_num)
+
+        # Full setup.
+        else:
+            self.interpreter.frame_order.sobol_setup(max_num=max_num, oversample=oversample)
+
+
     def visualisation(self, model=None):
         """Create visual representations of the frame order results for the given model.
 
@@ -951,14 +962,16 @@ class Optimisation_settings:
         self._grid_count = 0
         self._grid_incs = []
         self._grid_zoom = []
-        self._grid_num_int_pts = []
+        self._grid_sobol_max_points = []
+        self._grid_sobol_oversample = []
 
         # Initialise some private structures for the minimisation.
         self._min_count = 0
         self._min_algor = []
         self._min_func_tol = []
         self._min_max_iter = []
-        self._min_num_int_pts = []
+        self._min_sobol_max_points = []
+        self._min_sobol_oversample = []
 
 
     def _check_index(self, i, iter_type=None):
@@ -981,55 +994,63 @@ class Optimisation_settings:
             raise RelaxError("The iteration index %i is too high, only %i minimisations are set up." % (i, self._min_count))
 
 
-    def add_grid(self, inc=None, zoom=None, num_int_pts=None):
+    def add_grid(self, inc=None, zoom=None, sobol_max_points=None, sobol_oversample=None):
         """Add a grid search step.
 
-        @keyword inc:           The grid search size (the number of increments per dimension).
-        @type inc:              int
-        @keyword zoom:          The grid zoom level for this grid search.
-        @type zoom:             None or int
-        @keyword num_int_pts:   The list of the number of Sobol' points for the PCS numerical integration to use in the grid search.  If not supplied, then the previous value will be used.
-        @type num_int_pts:      None or int
+        @keyword inc:               The grid search size (the number of increments per dimension).
+        @type inc:                  int
+        @keyword zoom:              The grid zoom level for this grid search.
+        @type zoom:                 None or int
+        @keyword sobol_max_points:  The maximum number of Sobol' points for the PCS numerical integration to use in the grid search.  See the frame_order.sobol_setup user function for details.  If not supplied, then the previous value will be used.
+        @type sobol_max_points:     None or int
+        @keyword sobol_oversample:  The Sobol' oversampling factor.  See the frame_order.sobol_setup user function for details.
+        @type sobol_oversample:     None or int
         """
 
         # Value checking, as this will be set up by a user.
         is_int(inc, name='inc', can_be_none=False)
         is_int(zoom, name='zoom', can_be_none=True)
-        is_int(num_int_pts, name='num_int_pts', can_be_none=True)
+        is_int(sobol_max_points, name='sobol_max_points', can_be_none=True)
+        is_int(sobol_oversample, name='sobol_oversample', can_be_none=True)
 
         # Store the values.
         self._grid_incs.append(inc)
         self._grid_zoom.append(zoom)
-        self._grid_num_int_pts.append(num_int_pts)
+        self._grid_sobol_max_points.append(sobol_max_points)
+        self._grid_sobol_oversample.append(sobol_oversample)
 
         # Increment the count.
         self._grid_count += 1
 
 
-    def add_min(self, min_algor='simplex', func_tol=1e-25, max_iter=1000000, num_int_pts=None):
+    def add_min(self, min_algor='simplex', func_tol=1e-25, max_iter=1000000, sobol_max_points=None, sobol_oversample=None):
         """Add an optimisation step.
 
-        @keyword min_algor:     The optimisation technique.
-        @type min_algor:        str
-        @keyword func_tol:      The minimisation function tolerance cutoff to terminate optimisation (see the minimise.execute user function).
-        @type func_tol:         int
-        @keyword max_iter:      The maximum number of iterations for the optimisation.
-        @type max_iter:         int
-        @keyword num_int_pts:   The list of the number of Sobol' points for the PCS numerical integration to use in the optimisations after the grid search.  If not supplied, then the previous value will be used.
-        @type num_int_pts:      None or int
+        @keyword min_algor:         The optimisation technique.
+        @type min_algor:            str
+        @keyword func_tol:          The minimisation function tolerance cutoff to terminate optimisation (see the minimise.execute user function).
+        @type func_tol:             int
+        @keyword max_iter:          The maximum number of iterations for the optimisation.
+        @type max_iter:             int
+        @keyword sobol_max_points:  The maximum number of Sobol' points for the PCS numerical integration to use in the optimisations after the grid search.  See the frame_order.sobol_setup user function for details.  If not supplied, then the previous value will be used.
+        @type sobol_max_points:     None or int
+        @keyword sobol_oversample:  The Sobol' oversampling factor.  See the frame_order.sobol_setup user function for details.
+        @type sobol_oversample:     None or int
         """
 
         # Value checking, as this will be set up by a user.
         is_str(min_algor, name='min_algor', can_be_none=False)
         is_float(func_tol, name='func_tol', can_be_none=True)
         is_int(max_iter, name='max_iter', can_be_none=True)
-        is_int(num_int_pts, name='num_int_pts', can_be_none=True)
+        is_int(sobol_max_points, name='sobol_max_points', can_be_none=True)
+        is_int(sobol_oversample, name='sobol_oversample', can_be_none=True)
 
         # Store the values.
         self._min_algor.append(min_algor)
         self._min_func_tol.append(func_tol)
         self._min_max_iter.append(max_iter)
-        self._min_num_int_pts.append(num_int_pts)
+        self._min_sobol_max_points.append(sobol_max_points)
+        self._min_sobol_oversample.append(sobol_oversample)
 
         # Increment the count.
         self._min_count += 1
@@ -1051,20 +1072,20 @@ class Optimisation_settings:
         return self._grid_incs[i]
 
 
-    def get_grid_num_int_pts(self, i):
-        """Return the number of numerical integration points for the given iteration.
+    def get_grid_sobol_info(self, i):
+        """Return the number of numerical integration points and oversampling factor for the given iteration.
 
         @param i:   The grid search iteration from the loop_grid() method.
         @type i:    int
-        @return:    The number of numerical integration points for the iteration.
-        @rtype:     int
+        @return:    The number of numerical integration points for the iteration and the oversampling factor.
+        @rtype:     int, int
         """
 
         # Check the index.
         self._check_index(i, iter_type='grid')
 
         # Return the value.
-        return self._grid_num_int_pts[i]
+        return self._grid_sobol_max_points[i], self._grid_sobol_oversample[i]
 
 
     def get_grid_zoom_level(self, i):
@@ -1131,20 +1152,20 @@ class Optimisation_settings:
         return self._min_max_iter[i]
 
 
-    def get_min_num_int_pts(self, i):
-        """Return the number of numerical integration points for the given iteration.
+    def get_min_sobol_info(self, i):
+        """Return the number of numerical integration points and oversampling factor for the given iteration.
 
         @param i:   The minimisation iteration from the loop_min() method.
         @type i:    int
-        @return:    The number of numerical integration points for the iteration.
-        @rtype:     int
+        @return:    The number of numerical integration points for the iteration and the oversampling factor.
+        @rtype:     int, int
         """
 
         # Check the index.
         self._check_index(i, iter_type='min')
 
         # Return the value.
-        return self._min_num_int_pts[i]
+        return self._min_sobol_max_points[i], self._min_sobol_oversample[i]
 
 
     def loop_grid(self):

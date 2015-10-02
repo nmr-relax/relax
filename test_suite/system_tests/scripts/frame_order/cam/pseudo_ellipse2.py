@@ -38,6 +38,7 @@ class Analysis(Base_script):
     CONE_THETA_X = 0.8
     CONE_THETA_Y = 1.2
     CONE_SIGMA_MAX = 0.9
+    NUM_INT_PTS = 20
 
 
 # Execute the analysis.

@@ -73,11 +73,13 @@ def compile_2nd_matrix_rotor(matrix, Rx2_eigen, smax):
     return rotate_daeg(matrix, Rx2_eigen)
 
 
-def pcs_numeric_int_rotor_qrint(points=None, sigma_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_numeric_int_rotor_qrint(points=None, max_points=None, sigma_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Determine the averaged PCS value via numerical integration.
 
     @keyword points:            The Sobol points in the torsion-tilt angle space.
     @type points:               numpy rank-2, 3D array
+    @keyword max_points:        The maximum number of Sobol' points to use.  Once this number is reached, the loop over the Sobol' torsion-tilt angles is terminated.
+    @type max_points:           int
     @keyword sigma_max:         The maximum rotor angle.
     @type sigma_max:            float
     @keyword c:                 The PCS constant (without the interatomic distance and in Angstrom units).
@@ -115,11 +117,15 @@ def pcs_numeric_int_rotor_qrint(points=None, sigma_max=None, c=None, full_in_ref
     Ri = swapaxes(Ri, 0, 1)
 
     # Unpack the points (in this case, just an alias).
-    sigma = points
+    sigma = points[0]
 
     # Loop over the samples.
     num = 0
-    for i in range(len(points)):
+    for i in range(len(points[0])):
+        # The maximum number of points has been reached (well, surpassed by one so exit the loop before it is used).
+        if num == max_points:
+            break
+
         # Outside of the distribution, so skip the point.
         if abs(sigma[i]) > sigma_max:
             continue

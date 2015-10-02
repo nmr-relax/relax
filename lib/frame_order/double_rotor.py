@@ -89,11 +89,13 @@ def compile_2nd_matrix_double_rotor(matrix, Rx2_eigen, smax1, smax2):
     return rotate_daeg(matrix, Rx2_eigen)
 
 
-def pcs_numeric_int_double_rotor(points=None, sigma_max=None, sigma_max_2=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, r_inter_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, Ri2_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_numeric_int_double_rotor(points=None, max_points=None, sigma_max=None, sigma_max_2=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, r_inter_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, Ri2_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """The averaged PCS value via numerical integration for the double rotor frame order model.
 
     @keyword points:            The Sobol points in the torsion-tilt angle space.
     @type points:               numpy rank-2, 3D array
+    @keyword max_points:        The maximum number of Sobol' points to use.  Once this number is reached, the loop over the Sobol' torsion-tilt angles is terminated.
+    @type max_points:           int
     @keyword sigma_max:         The maximum opening angle for the first rotor.
     @type sigma_max:            float
     @keyword sigma_max_2:       The maximum opening angle for the second rotor.
@@ -139,11 +141,15 @@ def pcs_numeric_int_double_rotor(points=None, sigma_max=None, sigma_max_2=None, 
     Ri2 = swapaxes(Ri2, 0, 1)
 
     # Unpack the points.
-    sigma, sigma2 = swapaxes(points, 0, 1)
+    sigma, sigma2 = points
 
     # Loop over the samples.
     num = 0
-    for i in range(len(points)):
+    for i in range(len(points[0])):
+        # The maximum number of points has been reached (well, surpassed by one so exit the loop before it is used).
+        if num == max_points:
+            break
+
         # Outside of the distribution, so skip the point.
         if abs(sigma[i]) > sigma_max:
             continue

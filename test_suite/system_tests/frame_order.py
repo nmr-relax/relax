@@ -281,7 +281,7 @@ class Frame_order(SystemTestCase):
                        [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.
-        frame_new = transpose(array([frame[:, 0], -frame[:, 2], frame[:, 1]], float64))
+        frame_new = transpose(array([-frame[:, 2], frame[:, 1], frame[:, 0]], float64))
         alpha, beta, gamma = R_to_euler_zyz(frame_new)
 
         # Check the Eigenframe Euler angles.
@@ -333,49 +333,6 @@ class Frame_order(SystemTestCase):
         self.assertAlmostEqual(cdp.eigen_gamma, gamma)
 
 
-    def test_axis_perm_x_le_z_le_y_permB(self):
-        """Test the operation of the frame_order.permute_axes user function for permutation 'B' when x <= z <= y."""
-
-        # Reset.
-        self.interpreter.reset()
-
-        # Load the state file.
-        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
-        self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
-
-        # Change the original parameters.
-        cdp.cone_theta_x = orig_cone_theta_x = 1.0
-        cdp.cone_theta_y = orig_cone_theta_y = 3.0
-        cdp.cone_sigma_max = orig_cone_sigma_max = 2.0
-
-        # Store the original parameters.
-        orig_eigen_alpha = cdp.eigen_alpha
-        orig_eigen_beta = cdp.eigen_beta
-        orig_eigen_gamma = cdp.eigen_gamma
-
-        # Permute the axes.
-        self.interpreter.frame_order.permute_axes('B')
-
-        # Checks of the cone opening angle permutations.
-        self.assertEqual(cdp.cone_theta_x, 2.0)
-        self.assertEqual(cdp.cone_theta_y, 3.0)
-        self.assertEqual(cdp.cone_sigma_max, 1.0)
-
-        # The optimised Eigenframe.
-        frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
-                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
-                       [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
-
-        # Manually permute the frame, and then obtain the Euler angles.
-        frame_new = transpose(array([-frame[:, 2], frame[:, 1], frame[:, 0]], float64))
-        alpha, beta, gamma = R_to_euler_zyz(frame_new)
-
-        # Check the Eigenframe Euler angles.
-        self.assertAlmostEqual(cdp.eigen_alpha, alpha)
-        self.assertAlmostEqual(cdp.eigen_beta, beta)
-        self.assertAlmostEqual(cdp.eigen_gamma, gamma)
-
-
     def test_axis_perm_x_le_z_le_y_permA(self):
         """Test the operation of the frame_order.permute_axes user function for permutation 'A' when x <= z <= y."""
 
@@ -403,6 +360,49 @@ class Frame_order(SystemTestCase):
         self.assertEqual(cdp.cone_theta_x, 1.0)
         self.assertEqual(cdp.cone_theta_y, 2.0)
         self.assertEqual(cdp.cone_sigma_max, 3.0)
+
+        # The optimised Eigenframe.
+        frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
+                       [ 0.62357991685585 , -0.505348769456744,  0.596465177946379],
+                       [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
+
+        # Manually permute the frame, and then obtain the Euler angles.
+        frame_new = transpose(array([-frame[:, 2], frame[:, 1], frame[:, 0]], float64))
+        alpha, beta, gamma = R_to_euler_zyz(frame_new)
+
+        # Check the Eigenframe Euler angles.
+        self.assertAlmostEqual(cdp.eigen_alpha, alpha)
+        self.assertAlmostEqual(cdp.eigen_beta, beta)
+        self.assertAlmostEqual(cdp.eigen_gamma, gamma)
+
+
+    def test_axis_perm_x_le_z_le_y_permB(self):
+        """Test the operation of the frame_order.permute_axes user function for permutation 'B' when x <= z <= y."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
+        self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
+
+        # Change the original parameters.
+        cdp.cone_theta_x = orig_cone_theta_x = 1.0
+        cdp.cone_theta_y = orig_cone_theta_y = 3.0
+        cdp.cone_sigma_max = orig_cone_sigma_max = 2.0
+
+        # Store the original parameters.
+        orig_eigen_alpha = cdp.eigen_alpha
+        orig_eigen_beta = cdp.eigen_beta
+        orig_eigen_gamma = cdp.eigen_gamma
+
+        # Permute the axes.
+        self.interpreter.frame_order.permute_axes('B')
+
+        # Checks of the cone opening angle permutations.
+        self.assertEqual(cdp.cone_theta_x, 2.0)
+        self.assertEqual(cdp.cone_theta_y, 3.0)
+        self.assertEqual(cdp.cone_sigma_max, 1.0)
 
         # The optimised Eigenframe.
         frame = array([[ 0.519591643135168, -0.302150522797118, -0.799205596800676],
@@ -492,7 +492,7 @@ class Frame_order(SystemTestCase):
                        [-0.584099830232939, -0.808286881485765, -0.074159999594586]], float64)
 
         # Manually permute the frame, and then obtain the Euler angles.
-        frame_new = transpose(array([-frame[:, 2], frame[:, 1], frame[:, 0]], float64))
+        frame_new = transpose(array([frame[:, 0], -frame[:, 2], frame[:, 1]], float64))
         alpha, beta, gamma = R_to_euler_zyz(frame_new)
 
         # Check the Eigenframe Euler angles.
@@ -507,7 +507,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'double_rotor.py')
-        self.check_chi2(0.082433008378229589)
+        self.check_chi2(0.080146041009531946)
 
 
     def test_cam_double_rotor_pcs(self):
@@ -516,7 +516,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'double_rotor.py')
-        self.check_chi2(0.0026189545487338103)
+        self.check_chi2(0.00033425735965255754)
 
 
     def test_cam_double_rotor_rdc(self):
@@ -534,7 +534,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'double_rotor_large_angle.py')
-        self.check_chi2(0.04420414251367831)
+        self.check_chi2(0.046993590502437441)
 
 
     def test_cam_double_rotor_large_angle_pcs(self):
@@ -543,7 +543,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'double_rotor_large_angle.py')
-        self.check_chi2(0.00025808742855180884)
+        self.check_chi2(0.0030482390409642141)
 
 
     def test_cam_double_rotor_large_angle_rdc(self):
@@ -561,7 +561,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(opt=True)
         self.interpreter.run(script_file=self.cam_path+'free_rotor.py')
-        self.check_chi2(0.048992338400504688)
+        self.check_chi2(0.049488502147038226)
 
 
     def test_cam_free_rotor_missing_data(self):
@@ -570,7 +570,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'free_rotor_missing_data.py')
-        self.check_chi2(0.037724884620487453)
+        self.check_chi2(0.038106832800436169)
 
 
     def test_cam_free_rotor_pcs(self):
@@ -579,7 +579,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'free_rotor.py')
-        self.check_chi2(1.0828246263831909e-07)
+        self.check_chi2(0.00049268587082683434)
 
 
     def test_cam_free_rotor_rdc(self):
@@ -597,7 +597,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'free_rotor2.py')
-        self.check_chi2(0.067540995069675966)
+        self.check_chi2(0.069952611688108693)
 
 
     def test_cam_free_rotor2_pcs(self):
@@ -606,7 +606,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'free_rotor2.py')
-        self.check_chi2(0.01079639889927377)
+        self.check_chi2(0.013207545726879745)
 
 
     def test_cam_free_rotor2_rdc(self):
@@ -624,7 +624,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(opt=True)
         self.interpreter.run(script_file=self.cam_path+'iso_cone.py')
-        self.check_chi2(0.047612694541267306)
+        self.check_chi2(0.046263256206108584)
 
 
     def test_cam_iso_cone_pcs(self):
@@ -633,7 +633,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'iso_cone.py')
-        self.check_chi2(0.0061842204344042893)
+        self.check_chi2(0.010223404689484922)
 
 
     def test_cam_iso_cone_rdc(self):
@@ -651,7 +651,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'iso_cone_free_rotor.py')
-        self.check_chi2(0.011527134355548144)
+        self.check_chi2(0.013068834561396353)
 
 
     def test_cam_iso_cone_free_rotor_pcs(self):
@@ -660,7 +660,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'iso_cone_free_rotor.py')
-        self.check_chi2(0.00054073128938189553)
+        self.check_chi2(0.0020824314952301057)
 
 
     def test_cam_iso_cone_free_rotor_rdc(self):
@@ -678,7 +678,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'iso_cone_free_rotor2.py')
-        self.check_chi2(0.02996954151455445)
+        self.check_chi2(0.13135988423081582)
 
 
     def test_cam_iso_cone_free_rotor2_pcs(self):
@@ -687,7 +687,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'iso_cone_free_rotor2.py')
-        self.check_chi2(0.024410594632485034)
+        self.check_chi2(0.12580093734874642)
 
 
     def test_cam_iso_cone_free_rotor2_rdc(self):
@@ -705,7 +705,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'iso_cone_torsionless.py')
-        self.check_chi2(0.048930632669473069)
+        self.check_chi2(0.058320273132310863)
 
 
     def test_cam_iso_cone_torsionless_pcs(self):
@@ -714,7 +714,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'iso_cone_torsionless.py')
-        self.check_chi2(0.0001814304495273832)
+        self.check_chi2(0.0095766977930929302)
 
 
     def test_cam_iso_cone_torsionless_rdc(self):
@@ -732,7 +732,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(opt=True)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse.py')
-        self.check_chi2(0.094228483127403714)
+        self.check_chi2(0.052923535071890106)
 
 
     def test_cam_pseudo_ellipse_pcs(self):
@@ -741,7 +741,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse.py')
-        self.check_chi2(0.06846727616648722)
+        self.check_chi2(0.025487205467282097)
 
 
     def test_cam_pseudo_ellipse_rdc(self):
@@ -759,7 +759,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse2.py')
-        self.check_chi2(0.023514665851808478)
+        self.check_chi2(0.041445854907868764)
 
 
     def test_cam_pseudo_ellipse2_pcs(self):
@@ -768,7 +768,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse2.py')
-        self.check_chi2(0.0053850528961595428)
+        self.check_chi2(0.02331739779637744)
 
 
     def test_cam_pseudo_ellipse2_rdc(self):
@@ -786,7 +786,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_free_rotor.py')
-        self.check_chi2(0.0543303786779369)
+        self.check_chi2(0.07886558371162268)
 
 
     def test_cam_pseudo_ellipse_free_rotor_pcs(self):
@@ -795,7 +795,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_free_rotor.py')
-        self.check_chi2(0.0041254537455716134)
+        self.check_chi2(0.038891355121051734)
 
 
     def test_cam_pseudo_ellipse_free_rotor_rdc(self):
@@ -813,7 +813,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_torsionless.py')
-        self.check_chi2(0.01497741674116292)
+        self.check_chi2(0.018922576784401186)
 
 
     def test_cam_pseudo_ellipse_torsionless_pcs(self):
@@ -822,7 +822,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_torsionless.py')
-        self.check_chi2(2.9799363738575403e-05)
+        self.check_chi2(0.003977725835776093)
 
 
     def test_cam_pseudo_ellipse_torsionless_rdc(self):
@@ -942,11 +942,152 @@ class Frame_order(SystemTestCase):
         self.check_chi2(0.075038911707627859)
 
 
-    def test_generate_rotor2_distribution(self):
-        """Generate the rotor2 distribution of CaM."""
+    def test_count_sobol_points(self):
+        """Test the ability of the frame_order.sobol_setup user function to be able to count the number of Sobol' points used for the current parameter values."""
 
-        # Execute the script.
-        self.interpreter.run(script_file=self.cam_path+'generate_rotor2_distribution.py')
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
+        self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
+
+        # Set the number of integration points, and see if they can be counted.
+        self.interpreter.frame_order.sobol_setup(20)
+
+        # Check the count.
+        self.assertEqual(cdp.sobol_points_used, 20)
+
+
+    def test_count_sobol_points2(self):
+        """Test the frame_order.count_sobol_points user function."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
+        self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
+
+        # Call the user function.
+        self.interpreter.frame_order.count_sobol_points()
+
+        # Check the count.
+        self.assertEqual(cdp.sobol_points_used, 20)
+
+
+    def test_count_sobol_points_free_rotor(self):
+        """Test the frame_order.count_sobol_points user function for the free-rotor model."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'+sep+'free_rotor'
+        self.interpreter.state.load(data_path+sep+'frame_order')
+
+        # Reset the number of points.
+        self.interpreter.frame_order.sobol_setup(20)
+
+        # Call the user function.
+        self.interpreter.frame_order.count_sobol_points()
+
+        # Check the count.
+        self.assertEqual(cdp.sobol_points_used, 20)
+
+
+    def test_count_sobol_points_iso_cone_free_rotor(self):
+        """Test the frame_order.count_sobol_points user function for the free-rotor isotropic cone model."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'+sep+'iso_cone_free_rotor'
+        self.interpreter.state.load(data_path+sep+'frame_order')
+
+        # Reset the number of points.
+        self.interpreter.frame_order.sobol_setup(20)
+
+        # Call the user function.
+        self.interpreter.frame_order.count_sobol_points()
+
+        # Check the count.
+        self.assertEqual(cdp.sobol_points_used, 20)
+
+
+    def test_count_sobol_points_rigid(self):
+        """Test the frame_order.count_sobol_points user function for the rigid model."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'+sep+'rigid'
+        self.interpreter.state.load(data_path+sep+'frame_order')
+
+        # Call the user function.
+        self.interpreter.frame_order.count_sobol_points()
+
+        # Check the count.
+        self.assert_(not hasattr(cdp, 'sobol_points_used'))
+
+
+    def test_count_sobol_points_rotor(self):
+        """Test the frame_order.count_sobol_points user function for the rotor model."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'+sep+'rotor'
+        self.interpreter.state.load(data_path+sep+'frame_order')
+
+        # Reset the number of points.
+        self.interpreter.frame_order.sobol_setup(20)
+
+        # Call the user function.
+        self.interpreter.frame_order.count_sobol_points()
+
+        # Check the count.
+        self.assertEqual(cdp.sobol_points_used, 20)
+
+
+    def test_frame_order_pdb_model_failed_pivot(self):
+        """Test the operation of the frame_order.pdb_model user function when the pivot is outside of the PDB limits."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('frame_order.pdb_model ensemble failure', 'frame order')
+
+        # Load one lactose structure.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'+sep+'lactose'
+        self.interpreter.structure.read_pdb(file='lactose_MCMM4_S1_1.pdb', dir=data_path, set_mol_name='lactose')
+
+        # Set the pivot point.
+        self.interpreter.frame_order.pivot([-995, 0, 0], fix=True)
+
+        # Select a frame order model.
+        self.interpreter.frame_order.select_model('rotor')
+
+        # Define the moving part.
+        self.interpreter.domain(id='lactose', spin_id=':UNK')
+
+        # Set up the system.
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='axis_alpha', val=0.5)
+        self.interpreter.value.set(param='cone_sigma_max', val=0.1)
+
+        # Set up Monte Carlo data structures.
+        self.interpreter.monte_carlo.setup(10)
+        self.interpreter.monte_carlo.initial_values()
+
+        # Create the PDB model.
+        self.interpreter.frame_order.pdb_model(dir=ds.tmpdir)
 
 
     def test_frame_order_pdb_model_ensemble(self):
@@ -982,9 +1123,17 @@ class Frame_order(SystemTestCase):
 
         # Set up Monte Carlo data structures.
         self.interpreter.monte_carlo.setup(10)
+        self.interpreter.monte_carlo.initial_values()
 
         # Create the PDB model.
         self.interpreter.frame_order.pdb_model(dir=ds.tmpdir)
+
+
+    def test_generate_rotor2_distribution(self):
+        """Generate the rotor2 distribution of CaM."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=self.cam_path+'generate_rotor2_distribution.py')
 
 
     def fixme_test_model_free_rotor(self):
@@ -1509,6 +1658,24 @@ class Frame_order(SystemTestCase):
         self.space_probe(ref_chi2=chi2, params=['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'cone_theta_x', 'cone_theta_y'])
 
 
+    def test_pseudo_ellipse_zero_cone_angle(self):
+        """Catch for a bug in optimisation when the cone_theta_x is set to zero in the pseudo-ellipse models."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the state file.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'axis_permutations'
+        self.interpreter.state.load(data_path+sep+'cam_pseudo_ellipse')
+
+        # Change the original parameters.
+        cdp.cone_theta_x = 0.0
+        cdp.cone_theta_y = 2.0
+
+        # Optimisation.
+        self.interpreter.minimise.execute('simplex', max_iter=2)
+
+
     def test_rigid_data_to_double_rotor_model(self):
         """Test the double rotor target function for the data from a rigid test molecule."""
 
@@ -1532,20 +1699,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 204026.70481594582)
-
-
-    def test_rigid_data_to_iso_cone_model(self):
-        """Test the iso cone target function for the data from a rigid test molecule."""
-
-        # Set the model.
-        ds.model = MODEL_ISO_CONE
-
-        # Execute the script.
-        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
-
-        # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 0.01137748706675365, 5)
+        self.assertAlmostEqual(cdp.chi2, 212124.83278674766)
 
 
     def test_rigid_data_to_iso_cone_free_rotor_model(self):
@@ -1559,6 +1713,19 @@ class Frame_order(SystemTestCase):
 
         # Check the chi2 value.
         self.assertAlmostEqual(cdp.chi2, 22295.503345237757)
+
+
+    def test_rigid_data_to_iso_cone_model(self):
+        """Test the iso cone target function for the data from a rigid test molecule."""
+
+        # Set the model.
+        ds.model = MODEL_ISO_CONE
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 0.01137748706675365, 5)
 
 
     def test_rigid_data_to_iso_cone_torsionless_model(self):
@@ -1624,3 +1791,51 @@ class Frame_order(SystemTestCase):
 
         # Check the chi2 value.
         self.assertAlmostEqual(cdp.chi2, 0.011378666767745968)
+
+
+    def test_sobol_setup(self):
+        """Check the basic operation of the frame_order.sobol_setup user function."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('test', 'frame order')
+
+        # Set a number of points.
+        self.interpreter.frame_order.sobol_setup(200)
+
+
+    def test_sobol_setup2(self):
+        """Check the operation of the frame_order.sobol_setup user function with just the model specified."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('test', 'frame order')
+
+        # Set the model.
+        self.interpreter.frame_order.select_model('iso cone')
+
+        # Set a number of points.
+        self.interpreter.frame_order.sobol_setup(200)
+
+
+    def test_sobol_setup3(self):
+        """Check the operation of the frame_order.sobol_setup user function with the model and parameters set up."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('test', 'frame order')
+
+        # Set the model.
+        self.interpreter.frame_order.select_model('iso cone')
+
+        # Set up the system.
+        self.interpreter.value.set(param='ave_pos_x', val=0.0)
+        self.interpreter.value.set(param='ave_pos_y', val=0.0)
+        self.interpreter.value.set(param='ave_pos_z', val=0.0)
+        self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+        self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+        self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+        self.interpreter.value.set(param='axis_theta', val=0.5)
+        self.interpreter.value.set(param='axis_phi', val=0.1)
+        self.interpreter.value.set(param='cone_theta', val=0.1)
+        self.interpreter.value.set(param='cone_sigma_max', val=0.1)
+
+        # Set a number of points.
+        self.interpreter.frame_order.sobol_setup(200)

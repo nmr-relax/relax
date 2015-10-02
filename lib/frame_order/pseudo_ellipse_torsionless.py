@@ -267,11 +267,13 @@ def part_int_daeg2_pseudo_ellipse_torsionless_88(phi, x, y):
     return 2 - 2*cos(tmax)**3
 
 
-def pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=None, theta_x=None, theta_y=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=None, max_points=None, theta_x=None, theta_y=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Determine the averaged PCS value via numerical integration.
 
     @keyword points:            The Sobol points in the torsion-tilt angle space.
     @type points:               numpy rank-2, 3D array
+    @keyword max_points:        The maximum number of Sobol' points to use.  Once this number is reached, the loop over the Sobol' torsion-tilt angles is terminated.
+    @type max_points:           int
     @keyword theta_x:           The x-axis half cone angle.
     @type theta_x:              float
     @keyword theta_y:           The y-axis half cone angle.
@@ -311,14 +313,18 @@ def pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=None, theta_x=None, 
     Ri = swapaxes(Ri, 0, 1)
 
     # Unpack the points.
-    theta, phi = swapaxes(points, 0, 1)
+    theta, phi = points
 
     # Calculate theta_max.
     theta_max = tmax_pseudo_ellipse_array(phi, theta_x, theta_y)
 
     # Loop over the samples.
     num = 0
-    for i in range(len(points)):
+    for i in range(len(points[0])):
+        # The maximum number of points has been reached (well, surpassed by one so exit the loop before it is used).
+        if num == max_points:
+            break
+
         # As theta_x <= theta_y, check if theta is outside of the isotropic cone defined by theta_y to minimise calculations for speed.
         if theta[i] > theta_y:
             continue

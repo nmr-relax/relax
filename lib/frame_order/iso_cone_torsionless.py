@@ -76,11 +76,13 @@ def compile_2nd_matrix_iso_cone_torsionless(matrix, Rx2_eigen, cone_theta):
     return rotate_daeg(matrix, Rx2_eigen)
 
 
-def pcs_numeric_int_iso_cone_torsionless_qrint(points=None, theta_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_numeric_int_iso_cone_torsionless_qrint(points=None, max_points=None, theta_max=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """Determine the averaged PCS value via numerical integration.
 
     @keyword points:            The Sobol points in the torsion-tilt angle space.
     @type points:               numpy rank-2, 3D array
+    @keyword max_points:        The maximum number of Sobol' points to use.  Once this number is reached, the loop over the Sobol' torsion-tilt angles is terminated.
+    @type max_points:           int
     @keyword theta_max:         The half cone angle.
     @type theta_max:            float
     @keyword c:                 The PCS constant (without the interatomic distance and in Angstrom units).
@@ -118,11 +120,15 @@ def pcs_numeric_int_iso_cone_torsionless_qrint(points=None, theta_max=None, c=No
     Ri = swapaxes(Ri, 0, 1)
 
     # Unpack the points.
-    theta, phi = swapaxes(points, 0, 1)
+    theta, phi = points
 
     # Loop over the samples.
     num = 0
-    for i in range(len(points)):
+    for i in range(len(points[0])):
+        # The maximum number of points has been reached (well, surpassed by one so exit the loop before it is used).
+        if num == max_points:
+            break
+
         # Outside of the distribution, so skip the point.
         if theta[i] > theta_max:
             continue

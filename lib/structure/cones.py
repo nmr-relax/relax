@@ -257,6 +257,10 @@ class Pseudo_elliptic(Base):
         @rtype:         float
         """
 
+        # Zero value handling.
+        if self._phi_x == 0.0 or self._phi_y == 0.0:
+            return 0.0
+
         # Determine phi_max.
         phi_max = 1.0/sqrt(((1.0/self._phi_x) * cos(theta))**2 + ((1.0/self._phi_y) * sin(theta))**2)
 
