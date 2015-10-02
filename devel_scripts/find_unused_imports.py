@@ -28,7 +28,6 @@ for root, dirs, files in walk(getcwd()):
         cmd = 'pylint %s' % path
 
         # Execute.
-        print cmd
         pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
         # Close the pipe.
