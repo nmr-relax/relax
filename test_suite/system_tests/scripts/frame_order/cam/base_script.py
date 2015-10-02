@@ -196,14 +196,14 @@ class Base_script:
 
         # Optimise.
         if hasattr(status, 'flag_opt') and status.flag_opt:
-            #self._execute_uf(uf_name='minimise.grid_search', inc=11)
-            self._execute_uf(uf_name='minimise.execute', min_algor='simplex', constraints=False, max_iter=10)
+            #self._execute_uf(uf_name='grid_search', inc=11)
+            self._execute_uf(uf_name='minimise', min_algor='simplex', constraints=True, max_iter=1)
 
             # Test Monte Carlo simulations.
             self._execute_uf(uf_name='monte_carlo.setup', number=3)
             self._execute_uf(uf_name='monte_carlo.create_data')
             self._execute_uf(uf_name='monte_carlo.initial_values')
-            self._execute_uf(uf_name='minimise.execute', min_algor='simplex', constraints=False, max_iter=10)
+            self._execute_uf(uf_name='minimise', min_algor='simplex', constraints=True, max_iter=1)
             self._execute_uf(uf_name='eliminate')
             self._execute_uf(uf_name='monte_carlo.error_analysis')
 

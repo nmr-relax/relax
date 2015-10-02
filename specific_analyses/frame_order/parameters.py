@@ -180,6 +180,11 @@ def linear_constraints(scaling_matrix=None):
     A = array(A, float64)
     b = array(b, float64)
 
+    # No constraints are present.
+    if len(A) == 0:
+        A = None
+        b = None
+
     # Return the constraint objects.
     return A, b
 
@@ -261,5 +266,5 @@ def update_model():
 
     # Initialise the parameters in the current data pipe.
     for param in cdp.params:
-        if not hasattr(cdp, param):
+        if not param in ['pivot_x', 'pivot_y', 'pivot_z'] and not hasattr(cdp, param):
             setattr(cdp, param, 0.0)

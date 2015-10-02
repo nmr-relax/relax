@@ -24,8 +24,11 @@
 
 # Python module imports.
 from math import cos, pi
+from minfx.generic import generic_minimise
+from minfx.grid import grid_point_array
 from numpy import arccos, array, dot, float64, ones, zeros
 from numpy.linalg import inv, norm
+from re import search
 import sys
 from warnings import warn
 
@@ -37,14 +40,15 @@ from lib.order import order_parameters
 from lib.periodic_table import periodic_table
 from lib.physical_constants import dipolar_constant
 from lib.warnings import RelaxWarning
+from multi import Memo, Result_command, Slave_command
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.rdc import check_rdcs
 from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.data import base_data_types, domain_moving, pivot_fixed, tensor_loop
-from specific_analyses.frame_order.parameters import assemble_param_vector
+from specific_analyses.frame_order.parameters import assemble_param_vector, assemble_scaling_matrix, linear_constraints
 from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_RIGID, MODEL_ROTOR
-from target_functions import frame_order
+from target_functions.frame_order import Frame_order
 
 
 def grid_row(incs, lower, upper, dist_type=None, end_point=True):
@@ -542,21 +546,25 @@ def opt_uses_rdc(align_id):
     return True
 
 
-def store_bc_data(target_fn):
+def store_bc_data(A_5D_bc=None, pcs_theta=None, rdc_theta=None):
     """Store the back-calculated data.
 
-    @param target_fn:   The frame-order target function class.
-    @type target_fn:    class instance
+    @keyword A_5D_bc:       The reduced back-calculated alignment tensors from the target function.
+    @type A_5D_bc:          numpy float64 array
+    @keyword pcs_theta:     The back calculated PCS values from the target function.
+    @type pcs_theta:        numpy float64 array
+    @keyword rdc_theta:     The back calculated RDC values from the target function.
+    @type rdc_theta:        numpy float64 array
     """
 
     # Loop over the reduced tensors.
     for i, tensor in tensor_loop(red=True):
         # Store the values.
-        tensor.set(param='Axx', value=target_fn.A_5D_bc[5*i + 0])
-        tensor.set(param='Ayy', value=target_fn.A_5D_bc[5*i + 1])
-        tensor.set(param='Axy', value=target_fn.A_5D_bc[5*i + 2])
-        tensor.set(param='Axz', value=target_fn.A_5D_bc[5*i + 3])
-        tensor.set(param='Ayz', value=target_fn.A_5D_bc[5*i + 4])
+        tensor.set(param='Axx', value=A_5D_bc[5*i + 0])
+        tensor.set(param='Ayy', value=A_5D_bc[5*i + 1])
+        tensor.set(param='Axy', value=A_5D_bc[5*i + 2])
+        tensor.set(param='Axz', value=A_5D_bc[5*i + 3])
+        tensor.set(param='Ayz', value=A_5D_bc[5*i + 4])
 
     # The RDC data.
     for i in range(len(cdp.align_ids)):
@@ -585,7 +593,7 @@ def store_bc_data(target_fn):
                     spin.pcs_bc = {}
 
                 # Store the back-calculated value (in ppm).
-                spin.pcs_bc[align_id] = target_fn.pcs_theta[i, pcs_index] * 1e6
+                spin.pcs_bc[align_id] = pcs_theta[i, pcs_index] * 1e6
 
                 # Increment the index.
                 pcs_index += 1
@@ -602,7 +610,7 @@ def store_bc_data(target_fn):
                 interatom.rdc_bc = {}
 
             # Store the back-calculated value.
-            interatom.rdc_bc[align_id] = target_fn.rdc_theta[i, rdc_index]
+            interatom.rdc_bc[align_id] = rdc_theta[i, rdc_index]
 
             # Increment the index.
             rdc_index += 1
@@ -669,8 +677,6 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling_matrix=None):
 
     # The centre of mass of the moving domain - to use as the centroid for the average domain position rotation.
     ave_pos_pivot = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
-    if verbosity:
-        print("The average domain rotation centroid, taken as the CoM of all spins loaded for the moving domain, is at:\n    %s" % list(ave_pos_pivot))
 
     # The centre of mass, for use in the rotor models.
     com = None
@@ -679,27 +685,24 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling_matrix=None):
         com = pipe_centre_of_mass(verbosity=0)
         com = array(com, float64)
 
-        # Printout.
-        if verbosity:
-            print("The centre of mass reference coordinate for the rotor models is at:\n    %s" % list(com))
-
-    # Print outs.
-    if sim_index == None:
+    # Information printout.
+    if verbosity and sim_index == None:
+        sys.stdout.write("The average domain rotation centroid, taken as the CoM of the atoms defined as the moving domain, is:\n    %s\n" % list(ave_pos_pivot))
+        if com != None:
+            sys.stdout.write("The centre of mass reference coordinate for the rotor models is:\n    %s\n" % list(com))
         if cdp.model != MODEL_RIGID:
-            sys.stdout.write("Numerical integration via the quasi-random Sobol' sequence.\n")
-            sys.stdout.write("Number of integration points: %s\n" % cdp.num_int_pts)
+            sys.stdout.write("Numerical integration:  Quasi-random Sobol' sequence.\n")
+            sys.stdout.write("Number of integration points:  %s\n" % cdp.num_int_pts)
         base_data = []
         if rdcs != None and len(rdcs):
             base_data.append("RDCs")
         if pcs != None and len(pcs):
             base_data.append("PCSs")
         sys.stdout.write("Base data: %s\n" % repr(base_data))
-
-    # Set up the optimisation function.
-    target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts)
+        sys.stdout.write("\n")
 
     # Return the data.
-    return target, param_vector
+    return param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt
 
 
 def unpack_opt_results(results, scaling_matrix=None, sim_index=None):
@@ -795,3 +798,175 @@ def unpack_opt_results(results, scaling_matrix=None, sim_index=None):
         cdp.g_count = g_count
         cdp.h_count = h_count
         cdp.warning = warning
+
+
+
+class Frame_order_memo(Memo):
+    """The frame order memo class."""
+
+    def __init__(self, spins=None, spin_ids=None, sim_index=None, scaling_matrix=None, verbosity=None, scaling=False):
+        """Initialise the relaxation dispersion memo class.
+
+        This is used for handling the optimisation results returned from a slave processor.  It runs on the master processor and is used to store data which is passed to the slave processor and then passed back to the master via the results command.
+
+
+        @keyword spins:             The list of spin data container for the cluster.  If this argument is supplied, then the spin_id argument will be ignored.
+        @type spins:                list of SpinContainer instances
+        @keyword spin_ids:          The spin ID strings for the cluster.
+        @type spin_ids:             list of str
+        @keyword sim_index:         The optional MC simulation index.
+        @type sim_index:            int
+        @keyword scaling_matrix:    The diagonal, square scaling matrix.
+        @type scaling_matrix:       numpy diagonal matrix
+        @keyword verbosity:         The verbosity level.  This is used by the result command returned to the master for printouts.
+        @type verbosity:            int
+        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
+        @type scaling:              bool
+        """
+
+        # Execute the base class __init__() method.
+        super(Frame_order_memo, self).__init__()
+
+        # Store the arguments.
+        self.spins = spins
+        self.spin_ids = spin_ids
+        self.sim_index = sim_index
+        self.scaling_matrix = scaling_matrix
+        self.scaling = scaling
+
+
+
+class Frame_order_minimise_command(Slave_command):
+    """Command class for relaxation dispersion optimisation on the slave processor."""
+
+    def __init__(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, scaling_matrix=None, constraints=False, sim_index=None,verbosity=None):
+        """Initialise the base class, storing all the master data to be sent to the slave processor.
+
+        This method is run on the master processor whereas the run() method is run on the slave processor.
+
+        @keyword min_algor:         The minimisation algorithm to use.
+        @type min_algor:            str
+        @keyword min_options:       An array of options to be used by the minimisation algorithm.
+        @type min_options:          array of str
+        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
+        @type func_tol:             None or float
+        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
+        @type grad_tol:             None or float
+        @keyword max_iterations:    The maximum number of iterations for the algorithm.
+        @type max_iterations:       int
+        @keyword constraints:       If True, constraints are used during optimisation.
+        @type constraints:          bool
+        @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:            None or int
+        @keyword scaling_matrix:    The diagonal, square scaling matrix.
+        @type scaling_matrix:       numpy diagonal matrix
+        """
+
+        # Store some arguments.
+        self.min_algor = min_algor
+        self.min_options = min_options
+        self.func_tol = func_tol
+        self.grad_tol = grad_tol
+        self.max_iterations = max_iterations
+        self.verbosity = verbosity
+        self.scaling_matrix = scaling_matrix
+
+        # Alias some data to be sent to the slave.
+        self.model = cdp.model
+        self.num_int_pts = cdp.num_int_pts
+
+        # Set up and store the data structures for the target function.
+        self.param_vector, self.full_tensors, self.full_in_ref_frame, self.rdcs, self.rdc_err, self.rdc_weight, self.rdc_vect, self.rdc_const, self.pcs, self.pcs_err, self.pcs_weight, self.atomic_pos, self.temp, self.frq, self.paramag_centre, self.com, self.ave_pos_pivot, self.pivot, self.pivot_opt = target_fn_setup(sim_index=sim_index, verbosity=verbosity)
+
+        # Linear constraints.
+        self.A, self.b = None, None
+        if constraints:
+            # Obtain the constraints.
+            self.A, self.b = linear_constraints(scaling_matrix=scaling_matrix)
+
+            # Constraint flag set but no constraints present.
+            if self.A == None:
+                if verbosity:
+                    warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
+
+                # Pop out the log barrier algorithm.
+                if self.min_algor == 'Log barrier':
+                    self.min_algor = self.min_options[0]
+                    self.min_options = self.min_options[1:]
+
+
+    def run(self, processor, completed):
+        """Set up and perform the optimisation."""
+
+        # Set up the optimisation target function class.
+        target_fn = Frame_order(model=self.model, init_params=self.param_vector, full_tensors=self.full_tensors, full_in_ref_frame=self.full_in_ref_frame, rdcs=self.rdcs, rdc_errors=self.rdc_err, rdc_weights=self.rdc_weight, rdc_vect=self.rdc_vect, dip_const=self.rdc_const, pcs=self.pcs, pcs_errors=self.pcs_err, pcs_weights=self.pcs_weight, atomic_pos=self.atomic_pos, temp=self.temp, frq=self.frq, paramag_centre=self.paramag_centre, scaling_matrix=self.scaling_matrix, com=self.com, ave_pos_pivot=self.ave_pos_pivot, pivot=self.pivot, pivot_opt=self.pivot_opt, num_int_pts=self.num_int_pts)
+
+        # Grid search.
+        if search('^[Gg]rid', self.min_algor):
+            results = grid_point_array(func=target_fn.func, args=(), points=self.min_options, verbosity=self.verbosity)
+
+        # Minimisation.
+        else:
+            results = generic_minimise(func=target_fn.func, args=(), x0=self.param_vector, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.max_iterations, A=self.A, b=self.b, full_output=True, print_flag=self.verbosity)
+
+        # Create the result command object on the slave to send back to the master.
+        processor.return_object(Frame_order_result_command(processor=processor, memo_id=self.memo_id, results=results, A_5D_bc=target_fn.A_5D_bc, pcs_theta=target_fn.pcs_theta, rdc_theta=target_fn.rdc_theta, completed=completed))
+
+
+
+class Frame_order_result_command(Result_command):
+    """Class for processing the frame order results.
+
+    This object will be sent from the slave back to the master to have its run() method executed.
+    """
+
+    def __init__(self, processor=None, memo_id=None, results=None, A_5D_bc=None, pcs_theta=None, rdc_theta=None, completed=False):
+        """Set up the class, placing the minimisation results here.
+
+        @keyword processor:     The processor object.
+        @type processor:        multi.processor.Processor instance
+        @keyword memo_id:       The memo identification string.
+        @type memo_id:          str
+        @keyword results:       The results as returned by minfx.
+        @type results:          tuple
+        @keyword A_5D_bc:       The reduced back-calculated alignment tensors from the target function.
+        @type A_5D_bc:          numpy float64 array
+        @keyword pcs_theta:     The back calculated PCS values from the target function.
+        @type pcs_theta:        numpy float64 array
+        @keyword rdc_theta:     The back calculated RDC values from the target function.
+        @type rdc_theta:        numpy float64 array
+        @keyword model:         The target function class instance which has been optimised.
+        @type model:            class instance
+        @keyword completed:     A flag which if True signals that the optimisation successfully completed.
+        @type completed:        bool
+        """
+
+        # Execute the base class __init__() method.
+        super(Frame_order_result_command, self).__init__(processor=processor, completed=completed)
+
+        # Store the arguments.
+        self.memo_id = memo_id
+        self.results = results
+        self.A_5D_bc = A_5D_bc
+        self.pcs_theta = pcs_theta
+        self.rdc_theta = rdc_theta
+
+
+    def run(self, processor, memo):
+        """Disassemble the frame order optimisation results.
+
+        @param processor:   Unused!
+        @type processor:    None
+        @param memo:        The model-free memo.
+        @type memo:         memo
+        """
+
+        # Printout.
+        if memo.sim_index != None:
+            print("Simulation %i" % (memo.sim_index+1))
+
+        # Unpack the results.
+        unpack_opt_results(self.results, memo.scaling, memo.scaling_matrix, memo.sim_index)
+
+        # Store the back-calculated data.
+        store_bc_data(A_5D_bc=self.A_5D_bc, pcs_theta=self.pcs_theta, rdc_theta=self.rdc_theta)

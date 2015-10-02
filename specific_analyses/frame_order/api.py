@@ -25,15 +25,13 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from minfx.generic import generic_minimise
-from minfx.grid import grid_point_array
 from numpy import array, dot, float64, zeros
-from re import search
 from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoModelError
 from lib.warnings import RelaxWarning
+from multi import Processor_box
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop, return_interatom
 from pipe_control.mol_res_spin import return_spin, spin_loop
@@ -42,10 +40,11 @@ from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.frame_order.checks import check_pivot
 from specific_analyses.frame_order.data import domain_moving
-from specific_analyses.frame_order.optimisation import grid_row, store_bc_data, target_fn_setup, unpack_opt_results
+from specific_analyses.frame_order.optimisation import Frame_order_memo, Frame_order_minimise_command, grid_row, store_bc_data, target_fn_setup
 from specific_analyses.frame_order.parameter_object import Frame_order_params
 from specific_analyses.frame_order.parameters import assemble_param_vector, linear_constraints, param_num, update_model
 from specific_analyses.frame_order.variables import MODEL_ISO_CONE_FREE_ROTOR
+from target_functions import frame_order
 
 
 class Frame_order(API_base, API_common):
@@ -122,17 +121,23 @@ class Frame_order(API_base, API_common):
         @type sim_index:            None or int
         """
 
-        # Set up the target function for direct calculation.
-        model, param_vector = target_fn_setup(sim_index=sim_index, verbosity=verbosity, scaling_matrix=scaling_matrix[0])
+        # Set up the data structures for the target function.
+        param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt = target_fn_setup(sim_index=sim_index, verbosity=verbosity)
+
+        # Parameter scaling.
+        scaling_matrix = assemble_scaling_matrix(scaling=True)
+
+        # Set up the optimisation target function class.
+        target_fn = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, com=com, ave_pos_pivot=ave_pos_pivot, pivot=pivot, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
-        chi2 = model.func(param_vector)
+        chi2 = target_fn.func(param_vector)
 
         # Set the chi2.
         cdp.chi2 = chi2
 
         # Store the back-calculated data.
-        store_bc_data(model)
+        store_bc_data(A_5D_bc=target_fn.A_5D_bc, pcs_theta=target_fn.pcs_theta, rdc_theta=target_fn.rdc_theta)
 
         # Printout.
         print("Chi2:  %s" % chi2)
@@ -470,13 +475,14 @@ class Frame_order(API_base, API_common):
         # Linear constraints.
         A, b = None, None
         if constraints:
+            # Obtain the constraints.
             A, b = linear_constraints(scaling_matrix=scaling_matrix)
 
-        # Constraint flag set but no constraints present.
-        if A != None and len(A) == 0:
-            if verbosity:
-                warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
-            constraints = False
+            # Constraint flag set but no constraints present.
+            if A == None:
+                if verbosity:
+                    warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
+                constraints = False
 
         # Eliminate all points outside of constraints (useful for the pseudo-ellipse models).
         if constraints:
@@ -560,38 +566,29 @@ class Frame_order(API_base, API_common):
         @type inc:                  list of lists of int
         """
 
-        # Set up the target function for direct calculation.
-        model, param_vector = target_fn_setup(sim_index=sim_index, verbosity=verbosity, scaling_matrix=scaling_matrix[0])
+        # Check the optimisation algorithm.
+        algor = min_algor
+        if min_algor == 'Log barrier':
+            algor = min_options[0]
+        allowed = ['grid', 'simplex']
+        if algor not in allowed:
+            raise RelaxError("Only the 'simplex' minimisation algorithm is supported for the relaxation dispersion analysis as function gradients are not implemented.")
 
-        # Linear constraints.
-        A, b = None, None
-        if constraints:
-            A, b = linear_constraints(scaling_matrix=scaling_matrix[0])
+        # Obtain the scaling matrix.
+        scaling_matrix = assemble_scaling_matrix()
 
-        # Constraint flag set but no constraints present.
-        if A != None and len(A) == 0:
-            if verbosity:
-                warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
-            constraints = False
+        # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+        processor_box = Processor_box() 
+        processor = processor_box.processor
 
-            # Pop out the log barrier algorithm.
-            if min_algor == 'Log barrier':
-                min_algor = min_options[0]
-                min_options = min_options[1:]
+        # Set up the memo for storage on the master.
+        memo = Frame_order_memo(sim_index=sim_index, scaling=scaling, scaling_matrix=scaling_matrix)
 
-        # Grid search.
-        if search('^[Gg]rid', min_algor):
-            results = grid_point_array(func=model.func, args=(), points=min_options, verbosity=verbosity)
+        # Set up the command object to send to the slave and execute.
+        command = Frame_order_minimise_command(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, scaling_matrix=scaling_matrix, constraints=constraints, sim_index=sim_index, verbosity=verbosity)
 
-        # Minimisation.
-        else:
-            results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
-
-        # Unpack the results.
-        unpack_opt_results(results, scaling_matrix[0], sim_index)
-
-        # Store the back-calculated data.
-        store_bc_data(model)
+        # Add the slave command and memo to the processor queue.
+        processor.add_to_queue(command, memo)
 
 
     def model_desc(self, model_info=None):
