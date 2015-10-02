@@ -705,7 +705,7 @@ def target_fn_data_setup(sim_index=None, verbosity=1, scaling=True):
     return param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt
 
 
-def unpack_opt_results(param_vector=None, func=None, iter_count=None, f_count=None, g_count=None, h_count=None, warning=None, scaling=False, scaling_matrix=None, sim_index=None):
+def unpack_opt_results(param_vector=None, func=None, iter_count=None, f_count=None, g_count=None, h_count=None, warning=None, scaling_matrix=None, sim_index=None):
     """Unpack and store the Frame Order optimisation results.
 
     @keyword param_vector:      The model-free parameter vector.
@@ -908,7 +908,7 @@ class Frame_order_grid_command(Slave_command):
 class Frame_order_memo(Memo):
     """The frame order memo class."""
 
-    def __init__(self, spins=None, spin_ids=None, sim_index=None, scaling_matrix=None, verbosity=None, scaling=False):
+    def __init__(self, spins=None, spin_ids=None, sim_index=None, scaling_matrix=None, verbosity=None):
         """Initialise the relaxation dispersion memo class.
 
         This is used for handling the optimisation results returned from a slave processor.  It runs on the master processor and is used to store data which is passed to the slave processor and then passed back to the master via the results command.
@@ -924,8 +924,6 @@ class Frame_order_memo(Memo):
         @type scaling_matrix:       numpy diagonal matrix
         @keyword verbosity:         The verbosity level.  This is used by the result command returned to the master for printouts.
         @type verbosity:            int
-        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
-        @type scaling:              bool
         """
 
         # Execute the base class __init__() method.
@@ -936,7 +934,6 @@ class Frame_order_memo(Memo):
         self.spin_ids = spin_ids
         self.sim_index = sim_index
         self.scaling_matrix = scaling_matrix
-        self.scaling = scaling
 
 
 
@@ -1145,7 +1142,7 @@ class Frame_order_result_command(Result_command):
                 print("Storing the optimisation results, no optimised values currently exist.")
 
         # Unpack the results.
-        unpack_opt_results(param_vector, func, iter_count, f_count, g_count, h_count, warning, memo.scaling, memo.scaling_matrix, memo.sim_index)
+        unpack_opt_results(param_vector, func, iter_count, f_count, g_count, h_count, warning, memo.scaling_matrix, memo.sim_index)
 
         # Store the back-calculated data.
         store_bc_data(A_5D_bc=self.A_5D_bc, pcs_theta=self.pcs_theta, rdc_theta=self.rdc_theta)
