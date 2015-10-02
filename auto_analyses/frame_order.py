@@ -59,10 +59,11 @@ from lib.arg_check import is_bool, is_float, is_int, is_str
 from lib.errors import RelaxError
 from lib.frame_order.conversions import convert_axis_alpha_to_spherical
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_NONREDUNDANT, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
+from lib.geometry.angles import wrap_angles
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.io import open_write_file
 from lib.order.order_parameters import iso_cone_theta_to_S
-from lib.text.sectioning import section, subsection, title
+from lib.text.sectioning import subtitle, subsubtitle, title
 from lib.text.table import MULTI_COL, format_table
 from pipe_control import pipes, results
 from pipe_control.mol_res_spin import return_spin, spin_loop
@@ -243,7 +244,7 @@ def summarise(file_name='summary', dir=None, force=True):
 
     # Table header.
     headings1 = []
-    headings1.append(["Model", "k", "chi2", "AIC", "Motional eigenframe", MULTI_COL, MULTI_COL, "Order parameters (deg)", MULTI_COL, MULTI_COL, MULTI_COL])
+    headings1.append(["Model", "k", "chi2", "AIC", "Motional eigenframe", MULTI_COL, MULTI_COL, "Cone half angles (deg)", MULTI_COL, MULTI_COL, MULTI_COL])
     headings1.append([None, None, None, None, "a", "b/th", "g/ph", "thx", "thy", "smax", "smax2"])
 
     # 2nd table header.
@@ -293,6 +294,12 @@ def summarise(file_name='summary', dir=None, force=True):
             contents1[-1][6] = cdp.eigen_gamma
         elif hasattr(cdp, 'axis_phi') and cdp.axis_phi != None:
             contents1[-1][6] = cdp.axis_phi
+
+        # Convert the axis alpha angle to spherical angles for comparison.
+        if hasattr(cdp, 'axis_alpha') and cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
+            axis_theta, axis_phi = convert_axis_alpha_to_spherical(alpha=cdp.axis_alpha, pivot=generate_pivot(order=1, pipe_name=models[i]), point=pipe_centre_of_mass(verbosity=0))
+            contents1[-1][5] = wrap_angles(axis_theta, 0.0, 2.0*pi)
+            contents1[-1][6] = wrap_angles(axis_phi, 0.0, 2.0*pi)
 
         # Order x.
         if hasattr(cdp, 'cone_theta_x') and cdp.cone_theta_x != None:
@@ -440,6 +447,9 @@ class Frame_order_analysis:
             # The nested model optimisation protocol.
             self.nested_models()
 
+            # Printout for the final run.
+            subtitle(file=sys.stdout, text="Final results")
+
             # The final results does not already exist.
             if not self.read_results(model='final', pipe_name='final'):
                 # Model selection.
@@ -458,21 +468,24 @@ class Frame_order_analysis:
                 self.interpreter.eliminate()
                 self.interpreter.monte_carlo.error_analysis()
 
-                # Finish.
-                self.interpreter.results.write(file='results', dir=self.results_dir+'final', force=True)
+                # Create the output and visualisation files.
+                self.results_output(model='final', dir=self.results_dir+'final', results_file=True)
+
+            # Regenerate the output and visualisation files for the final results.
+            else:
+                self.results_output(model='final', dir=self.results_dir+'final', results_file=False)
 
             # Output the finishing time.
             self.interpreter.time()
 
-            # Visualisation of the final results.
-            self.visualisation(model='final')
+            # Final title printout.
+            subtitle(file=sys.stdout, text="Summaries")
 
             # Save the final program state.
             if self._final_state:
                 self.interpreter.state.save('final_state', dir=self.results_dir, force=True)
 
             # Count the number of Sobol' points and create a summary file.
-            section(file=sys.stdout, text="Summaries")
             count_sobol_points(dir=self.results_dir, force=True)
             summarise(dir=self.results_dir, force=True)
 
@@ -506,7 +519,7 @@ class Frame_order_analysis:
             # The title printout.
             title = model[0].upper() + model[1:]
             text = "Axis permutation '%s' of the %s frame order model" % (perm, title)
-            section(file=sys.stdout, text=text, prespace=5)
+            subtitle(file=sys.stdout, text=text, prespace=5)
 
             # Output the model staring time.
             self.interpreter.time()
@@ -518,13 +531,16 @@ class Frame_order_analysis:
             self.pipe_name_dict[perm_model] = '%s permutation %s - %s' % (title, perm, self.pipe_bundle)
             self.pipe_name_list.append(self.pipe_name_dict[perm_model])
 
+            # The output directory.
+            dir = model_directory(perm_model, base_dir=self.results_dir)
+
             # The results file already exists, so read its contents instead.
             if self.read_results(model=perm_model, pipe_name=self.pipe_name_dict[perm_model]):
                 # Re-perform model elimination just in case.
                 self.interpreter.eliminate()
 
-                # The PDB representation of the model and visualisation script (in case this was not completed correctly).
-                self.visualisation(model=perm_model)
+                # Recreate the output and visualisation files (in case this was not completed correctly).
+                self.results_output(model=perm_model, dir=dir, results_file=False)
 
                 # Jump to the next permutation.
                 continue
@@ -556,11 +572,8 @@ class Frame_order_analysis:
             # Model elimination.
             self.interpreter.eliminate()
 
-            # Save the results.
-            self.interpreter.results.write(dir=model_directory(perm_model, base_dir=self.results_dir), force=True)
-
-            # The PDB representation of the model and visualisation script.
-            self.visualisation(model=perm_model)
+            # Create the output and visualisation files.
+            self.results_output(model=perm_model, dir=dir, results_file=True)
 
 
     def check_vars(self):
@@ -858,7 +871,7 @@ class Frame_order_analysis:
             title = model[0].upper() + model[1:]
 
             # Printout.
-            section(file=sys.stdout, text="%s frame order model"%title, prespace=5)
+            subtitle(file=sys.stdout, text="%s frame order model"%title, prespace=5)
 
             # Output the model staring time.
             self.interpreter.time()
@@ -867,13 +880,16 @@ class Frame_order_analysis:
             self.pipe_name_dict[model] = '%s - %s' % (title, self.pipe_bundle)
             self.pipe_name_list.append(self.pipe_name_dict[model])
 
+            # The output directory.
+            dir = model_directory(model, base_dir=self.results_dir)
+
             # The results file already exists, so read its contents instead.
             if self.read_results(model=model, pipe_name=self.pipe_name_dict[model]):
                 # Re-perform model elimination just in case.
                 self.interpreter.eliminate()
 
-                # The PDB representation of the model and visualisation script (in case this was not completed correctly).
-                self.visualisation(model=model)
+                # Recreate the output files (in case this was not completed correctly).
+                self.results_output(model=model, dir=dir, results_file=False)
 
                 # Perform the axis permutation analysis.
                 self.axis_permutation_analysis(model=model)
@@ -895,7 +911,7 @@ class Frame_order_analysis:
                 self.interpreter.frame_order.select_model(model=model)
 
                 # Copy nested parameters.
-                subsection(file=sys.stdout, text="Parameter nesting.")
+                subsubtitle(file=sys.stdout, text="Parameter nesting")
                 self.nested_params_ave_dom_pos(model)
                 self.nested_params_eigenframe(model)
                 self.nested_params_pivot(model)
@@ -904,6 +920,9 @@ class Frame_order_analysis:
             # Optimisation using the PCS subset (skipped if a pre-run directory is supplied).
             opt = self.opt_subset
             if opt != None and not self.pre_run_flag:
+                # Printout.
+                subsubtitle(file=sys.stdout, text="Optimisation using the PCS subset")
+
                 # Zooming grid search.
                 for i in opt.loop_grid():
                     # Set the zooming grid search level.
@@ -930,16 +949,19 @@ class Frame_order_analysis:
                     # Perform the optimisation.
                     self.interpreter.minimise.execute(min_algor=opt.get_min_algor(i), func_tol=opt.get_min_func_tol(i), max_iter=opt.get_min_max_iter(i))
 
-                # Copy the PCS data.
-                self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
+            # Printout.
+            subsubtitle(file=sys.stdout, text="Optimisation using the full data set")
 
-                # Reset the selection status.
-                for spin, spin_id in spin_loop(return_id=True, skip_desel=False):
-                    # Get the spin from the original pipe.
-                    spin_orig = return_spin(spin_id=spin_id, pipe=self.data_pipe_full)
+            # Copy the PCS data.
+            self.interpreter.pcs.copy(pipe_from=self.data_pipe_full, pipe_to=self.pipe_name_dict[model])
 
-                    # Reset the spin selection.
-                    spin.select = spin_orig.select
+            # Reset the selection status.
+            for spin, spin_id in spin_loop(return_id=True, skip_desel=False):
+                # Get the spin from the original pipe.
+                spin_orig = return_spin(spin_id=spin_id, pipe=self.data_pipe_full)
+
+                # Reset the spin selection.
+                spin.select = spin_orig.select
 
             # Optimisation using the full data set.
             opt = self.opt_full
@@ -958,11 +980,8 @@ class Frame_order_analysis:
             # Model elimination.
             self.interpreter.eliminate()
 
-            # Save the results.
-            self.interpreter.results.write(dir=model_directory(model, base_dir=self.results_dir), force=True)
-
-            # The PDB representation of the model and visualisation script.
-            self.visualisation(model=model)
+            # Create the output and visualisation files.
+            self.results_output(model=model, dir=dir, results_file=True)
 
             # Perform the axis permutation analysis.
             self.axis_permutation_analysis(model=model)
@@ -979,7 +998,7 @@ class Frame_order_analysis:
         title = model[0].upper() + model[1:]
 
         # Print out.
-        section(file=sys.stdout, text="%s frame order model"%title, prespace=5)
+        subtitle(file=sys.stdout, text="%s frame order model"%title, prespace=5)
 
         # Output the model staring time.
         self.interpreter.time()
@@ -988,11 +1007,13 @@ class Frame_order_analysis:
         self.pipe_name_dict[model] = '%s - %s' % (title, self.pipe_bundle)
         self.pipe_name_list.append(self.pipe_name_dict[model])
 
+        # The output directory.
+        dir = model_directory(model, base_dir=self.results_dir) 
+
         # The results file already exists, so read its contents instead.
         if self.read_results(model=model, pipe_name=self.pipe_name_dict[model]):
-            # The PDB representation of the model and the pseudo-Brownian dynamics simulation (in case this was not completed correctly).
-            self.interpreter.frame_order.pdb_model(dir=model_directory(model, base_dir=self.results_dir), force=True)
-            self.interpreter.frame_order.simulate(dir=model_directory(model, base_dir=self.results_dir), step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
+            # Recreate the output and visualisation files (in case this was not completed correctly).
+            self.results_output(model=model, dir=dir, results_file=False)
 
             # Nothing more to do.
             return
@@ -1049,12 +1070,8 @@ class Frame_order_analysis:
         # Results printout.
         self.print_results()
 
-        # Save the results.
-        self.interpreter.results.write(dir=model_directory(model, base_dir=self.results_dir), force=True)
-
-        # The PDB representation of the model and the pseudo-Brownian dynamics simulation.
-        self.interpreter.frame_order.pdb_model(dir=model_directory(model, base_dir=self.results_dir), force=True)
-        self.interpreter.frame_order.simulate(dir=model_directory(model, base_dir=self.results_dir), step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
+        # Create the output and visualisation files.
+        self.results_output(model=model, dir=dir, results_file=True)
 
 
     def print_results(self):
@@ -1211,6 +1228,58 @@ class Frame_order_analysis:
         return new
 
 
+    def results_output(self, dir=None, model=None, results_file=True):
+        """Create visual representations of the frame order results for the given model.
+
+        This will call the following user functions:
+
+            - results.write to output a results file (turned off if the results_file argument is False).
+            - rdc.corr_plot and pcs.corr_plot to visualise the quality of the data and fit as 2D Grace correlation plots.
+            - frame_order.pdb_model to generate a PDB representation of the frame order motions.
+            - frame_order.simulate to perform a pseudo-Brownian frame order dynamics simulation.
+
+        A relax script called 'pymol_display.py' will be created for easily visualising the PDB representation from the frame_order.pdb_model user function.
+
+
+        This includes a PDB representation of the motions (the 'cone.pdb' file located in each model directory) together with a relax script for displaying the average domain positions together with the cone/motion representation in PyMOL (the 'pymol_display.py' file, also created in the model directory).
+
+        @keyword dir:           The output directory.
+        @type dir:              str
+        @keyword model:         The frame order model.  This should match the model of the current data pipe, unless the special value of 'final' is used to indicate the visualisation of the final results.
+        @type model:            str
+        @keyword results_file:  A flag which if True will cause a results file to be created via the results.write user function.
+        @type results_file:     bool
+        """
+
+        # Printout.
+        subsubtitle(file=sys.stdout, text="Generating the results and data visualisation files")
+
+        # Sanity check.
+        if model != 'final' and model.replace(' permutation A', '').replace(' permutation B', '') != cdp.model:
+            raise RelaxError("The model '%s' does not match the model '%s' of the current data pipe." % (model.replace(' permuted', ''), cdp.model))
+
+        # The results file.
+        if results_file:
+            self.interpreter.results.write(dir=dir, force=True)
+
+        # The RDC and PCS correlation plots.
+        self.interpreter.rdc.corr_plot(dir=dir, force=True)
+        self.interpreter.pcs.corr_plot(dir=dir, force=True)
+
+        # The PDB representation of the model.
+        self.interpreter.frame_order.pdb_model(dir=dir, force=True)
+
+        # Create the visualisation script for the PDB representation.
+        script = open_write_file(file_name='pymol_display.py', dir=dir, force=True)
+        script.write("# relax script for displaying the frame order results of this '%s' model in PyMOL.\n\n" % model)
+        script.write("# PyMOL visualisation.\n")
+        script.write("pymol.frame_order()\n")
+        script.close()
+
+        # The pseudo-Brownian dynamics simulation.
+        self.interpreter.frame_order.simulate(dir=dir, step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
+
+
     def sobol_setup(self, info=None):
         """Correctly handle the frame_order.sobol_setup user function.
 
@@ -1232,38 +1301,6 @@ class Frame_order_analysis:
         # Full setup.
         else:
             self.interpreter.frame_order.sobol_setup(max_num=max_num, oversample=oversample)
-
-
-    def visualisation(self, model=None):
-        """Create visual representations of the frame order results for the given model.
-
-        This includes a PDB representation of the motions (the 'cone.pdb' file located in each model directory) together with a relax script for displaying the average domain positions together with the cone/motion representation in PyMOL (the 'pymol_display.py' file, also created in the model directory).
-
-        @keyword model:     The frame order model to visualise.  This should match the model of the current data pipe, unless the special value of 'final' is used to indicate the visualisation of the final results.
-        @type model:        str
-        """
-
-        # Sanity check.
-        if model != 'final' and model.replace(' permutation A', '').replace(' permutation B', '') != cdp.model:
-            raise RelaxError("The model '%s' does not match the model '%s' of the current data pipe." % (model.replace(' permuted', ''), cdp.model))
-
-        # The PDB representation of the model and the pseudo-Brownian dynamics simulation.
-        self.interpreter.frame_order.pdb_model(dir=model_directory(model, base_dir=self.results_dir), force=True)
-        self.interpreter.frame_order.simulate(dir=model_directory(model, base_dir=self.results_dir), step_size=self.brownian_step_size, snapshot=self.brownian_snapshot, total=self.brownian_total, force=True)
-
-        # Create the visualisation script.
-        subsection(file=sys.stdout, text="Creating a PyMOL visualisation script.")
-        script = open_write_file(file_name='pymol_display.py', dir=model_directory(model, base_dir=self.results_dir), force=True)
-
-        # Add a comment for the user.
-        script.write("# relax script for displaying the frame order results of this '%s' model in PyMOL.\n\n" % model)
-
-        # The script contents.
-        script.write("# PyMOL visualisation.\n")
-        script.write("pymol.frame_order()\n")
-
-        # Close the file.
-        script.close()
 
 
 

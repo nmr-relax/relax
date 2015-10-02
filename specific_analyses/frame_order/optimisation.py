@@ -828,7 +828,10 @@ def target_fn_data_setup(sim_index=None, verbosity=1, scaling_matrix=None, unset
         if com != None:
             sys.stdout.write("The centre of mass reference coordinate for the rotor models is:\n    %s\n" % list(com))
         if cdp.model != MODEL_RIGID:
-            sys.stdout.write("Numerical integration:  Quasi-random Sobol' sequence.\n")
+            if hasattr(cdp, 'quad_int') and cdp.quad_int:
+                sys.stdout.write("Numerical PCS integration:  SciPy quadratic integration.\n")
+            else:
+                sys.stdout.write("Numerical PCS integration:  Quasi-random Sobol' sequence.\n")
         base_data = []
         if rdcs != None and len(rdcs):
             base_data.append("RDCs")

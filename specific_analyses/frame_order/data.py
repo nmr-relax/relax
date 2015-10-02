@@ -34,6 +34,7 @@ from lib.geometry.rotations import euler_to_R_zyz
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import spin_loop
+from pipe_control.pipes import check_pipe
 from specific_analyses.frame_order.checks import check_pivot
 
 
@@ -123,7 +124,7 @@ def generate_pivot(order=1, sim_index=None, pipe_name=None, pdb_limit=False):
         pipe_name = pipes.cdp_name()
 
     # Test the data pipe.
-    pipes.test(pipe_name)
+    check_pipe(pipe_name)
 
     # Get the data pipe.
     dp = pipes.get_pipe(pipe_name)
