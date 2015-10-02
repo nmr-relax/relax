@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -120,21 +120,21 @@ class Frame_order:
 
         # Store the agrs.
         self.model = model
-        self.full_tensors = full_tensors
-        self.full_in_ref_frame = full_in_ref_frame
-        self.rdc = rdcs
-        self.rdc_weights = rdc_weights
-        self.rdc_vect = rdc_vect
-        self.dip_const = dip_const
-        self.pcs = pcs
-        self.pcs_weights = pcs_weights
-        self.atomic_pos = atomic_pos
-        self.temp = temp
-        self.frq = frq
+        self.full_tensors = deepcopy(full_tensors)
+        self.full_in_ref_frame = deepcopy(full_in_ref_frame)
+        self.rdc = deepcopy(rdcs)
+        self.rdc_weights = deepcopy(rdc_weights)
+        self.rdc_vect = deepcopy(rdc_vect)
+        self.dip_const = deepcopy(dip_const)
+        self.pcs = deepcopy(pcs)
+        self.pcs_weights = deepcopy(pcs_weights)
+        self.atomic_pos = deepcopy(atomic_pos)
+        self.temp = deepcopy(temp)
+        self.frq = deepcopy(frq)
         self.total_num_params = len(init_params)
         self.sobol_max_points = sobol_max_points
         self.sobol_oversample = sobol_oversample
-        self.com = com
+        self.com = deepcopy(com)
         self.pivot_opt = pivot_opt
         self.quad_int = quad_int
 

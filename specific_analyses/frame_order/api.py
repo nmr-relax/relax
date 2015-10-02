@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -59,6 +59,7 @@ class Frame_order(API_base, API_common):
 
         # Place methods into the API.
         self.deselect = self._deselect_global
+        self.get_model_container = self._get_model_container_cdp
         self.is_spin_param = self._is_spin_param_false
         self.model_loop = self._model_loop_single_global
         self.model_type = self._model_type_global
@@ -95,7 +96,8 @@ class Frame_order(API_base, API_common):
             # Loop over the alignment IDs.
             for align_id in cdp.rdc_ids:
                 # Yield the info set.
-                yield ['rdc', interatom.spin_id1, interatom.spin_id2, align_id]
+                if align_id in interatom.rdc and interatom.rdc[align_id] != None:
+                    yield ['rdc', interatom.spin_id1, interatom.spin_id2, align_id]
 
         # Loop over the spin containers for the moving domain (for the PCS data).
         for spin, spin_id in spin_loop(selection=domain_moving(), return_id=True):
@@ -110,7 +112,8 @@ class Frame_order(API_base, API_common):
             # Loop over the alignment IDs.
             for align_id in cdp.pcs_ids:
                 # Yield the info set.
-                yield ['pcs', spin_id, align_id]
+                if align_id in spin.pcs and spin.pcs[align_id] != None:
+                    yield ['pcs', spin_id, align_id]
 
 
     def calculate(self, spin_id=None, scaling_matrix=None, verbosity=1, sim_index=None):
@@ -817,27 +820,6 @@ class Frame_order(API_base, API_common):
 
         # Get the minimisation statistic object names.
         min_names = self.data_names(set='min')
-
-
-        # Test if Monte Carlo parameter values have already been set.
-        #############################################################
-
-        # Loop over all the parameter names.
-        for object_name in param_names:
-            # Not a parameter of the model.
-            if object_name not in model_params:
-                continue
-
-            # Name for the simulation object.
-            sim_object_name = object_name + '_sim'
-
-            # Test if the simulation object already exists.
-            if hasattr(cdp, sim_object_name):
-                raise RelaxError("Monte Carlo parameter values have already been set.")
-
-
-        # Set the Monte Carlo parameter values.
-        #######################################
 
         # Loop over all the data names.
         for object_name in param_names:

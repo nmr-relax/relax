@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -385,43 +385,49 @@ class Frame_order_analysis:
     # Debugging and test suite variables.
     _final_state = True
 
-    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, pre_run_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000, results_compress_type=0, rigid_grid_split=False, store_intermediate=True):
+    def __init__(self, data_pipe_full=None, data_pipe_subset=None, pipe_bundle=None, results_dir=None, pre_run_dir=None, opt_rigid=None, opt_subset=None, opt_full=None, opt_mc=None, mc_sim_num=500, models=MODEL_LIST_NONREDUNDANT, brownian_step_size=2.0, brownian_snapshot=10, brownian_total=1000, dist_total=1000, dist_max_rotations=1000000, results_compress_type=1, rigid_grid_split=False, store_intermediate=True, nested_params_ave_dom_pos=True):
         """Perform the full frame order analysis.
 
-        @param data_pipe_full:          The name of the data pipe containing all of the RDC and PCS data.
-        @type data_pipe_full:           str
-        @param data_pipe_subset:        The name of the data pipe containing all of the RDC data but only a small subset of ~5 PCS points.  This optional argument is used to massively speed up the analysis.
-        @type data_pipe_subset:         str or None
-        @keyword pipe_bundle:           The data pipe bundle to associate all spawned data pipes with.
-        @type pipe_bundle:              str
-        @keyword results_dir:           The directory where files are saved in.
-        @type results_dir:              str
-        @keyword pre_run_dir:           The optional directory containing the frame order auto-analysis results from a previous run.  If supplied, then the 'data_pipe_full', 'data_pipe_subset', and 'opt_subset' arguments will be ignored.  The results will be loaded from the results files in this directory, and then optimisation starts from there.  The model nesting algorithm will also be deactivated.
-        @keyword opt_rigid:             The grid search, zooming grid search and minimisation settings object for the rigid frame order model.
-        @type pre_run_dir:              None or str
-        @type opt_rigid:                Optimisation_settings instance
-        @keyword opt_subset:            The grid search, zooming grid search and minimisation settings object for optimisation of all models, excluding the rigid model, for the PCS data subset.
-        @type opt_subset:               Optimisation_settings instance
-        @keyword opt_full:              The grid search, zooming grid search and minimisation settings object for optimisation of all models, excluding the rigid model, for the full data set.
-        @type opt_full:                 Optimisation_settings instance
-        @keyword opt_mc:                The grid search, zooming grid search and minimisation settings object for optimisation of the Monte Carlo simulations.  Any grid search settings will be ignored, as only the minimise.execute user function is run for the simulations.  And only the settings for the first iteration of the object will be accessed and used - iterative optimisation will be ignored.
-        @type opt_mc:                   Optimisation_settings instance
-        @keyword mc_sim_num:            The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        @type mc_sim_num:               int
-        @keyword models:                The frame order models to use in the analysis.  The 'rigid' model must be included as this is essential for the analysis.
-        @type models:                   list of str
-        @keyword brownian_step_size:    The step_size argument for the pseudo-Brownian dynamics simulation frame_order.simulate user function.
-        @type brownian_step_size:       float
-        @keyword brownian_snapshot:     The snapshot argument for the pseudo-Brownian dynamics simulation frame_order.simulate user function.
-        @type brownian_snapshot:        int
-        @keyword brownian_total:        The total argument for the pseudo-Brownian dynamics simulation frame_order.simulate user function.
-        @type brownian_total:           int
-        @keyword results_compress_type: The type of compression to use when creating the results files.  See the results.write user function for details.
-        @type results_compress_type:    int
-        @keyword rigid_grid_split:      A flag which if True will cause the grid search for the rigid model to be split so that the rotation is optimised first followed by the translation.  When combined with grid zooming, this can save optimisation time.  However it may result in the global minimum being missed.
-        @type rigid_grid_split:         bool
-        @keyword store_intermediate:    A flag which if True will cause all intermediate optimisation results to be stored in the 'intermediate_results' directory.  These can then be used for studying the optimisation settings or loaded for subsequent analyses.
-        @type store_intermediate:       bool
+        @param data_pipe_full:              The name of the data pipe containing all of the RDC and PCS data.
+        @type data_pipe_full:               str
+        @param data_pipe_subset:            The name of the data pipe containing all of the RDC data but only a small subset of ~5 PCS points.  This optional argument is used to massively speed up the analysis.
+        @type data_pipe_subset:             str or None
+        @keyword pipe_bundle:               The data pipe bundle to associate all spawned data pipes with.
+        @type pipe_bundle:                  str
+        @keyword results_dir:               The directory where files are saved in.
+        @type results_dir:                  str
+        @keyword pre_run_dir:               The optional directory containing the frame order auto-analysis results from a previous run.  If supplied, then the 'data_pipe_full', 'data_pipe_subset', and 'opt_subset' arguments will be ignored.  The results will be loaded from the results files in this directory, and then optimisation starts from there.  The model nesting algorithm will also be deactivated.
+        @keyword opt_rigid:                 The grid search, zooming grid search and minimisation settings object for the rigid frame order model.
+        @type pre_run_dir:                  None or str
+        @type opt_rigid:                    Optimisation_settings instance
+        @keyword opt_subset:                The grid search, zooming grid search and minimisation settings object for optimisation of all models, excluding the rigid model, for the PCS data subset.
+        @type opt_subset:                   Optimisation_settings instance
+        @keyword opt_full:                  The grid search, zooming grid search and minimisation settings object for optimisation of all models, excluding the rigid model, for the full data set.
+        @type opt_full:                     Optimisation_settings instance
+        @keyword opt_mc:                    The grid search, zooming grid search and minimisation settings object for optimisation of the Monte Carlo simulations.  Any grid search settings will be ignored, as only the minimise.execute user function is run for the simulations.  And only the settings for the first iteration of the object will be accessed and used - iterative optimisation will be ignored.
+        @type opt_mc:                       Optimisation_settings instance
+        @keyword mc_sim_num:                The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        @type mc_sim_num:                   int
+        @keyword models:                    The frame order models to use in the analysis.  The 'rigid' model must be included as this is essential for the analysis.
+        @type models:                       list of str
+        @keyword brownian_step_size:        The step_size argument for the pseudo-Brownian dynamics simulation frame_order.simulate user function.
+        @type brownian_step_size:           float
+        @keyword brownian_snapshot:         The snapshot argument for the pseudo-Brownian dynamics simulation frame_order.simulate user function.
+        @type brownian_snapshot:            int
+        @keyword brownian_total:            The total argument for the pseudo-Brownian dynamics simulation frame_order.simulate user function.
+        @type brownian_total:               int
+        @keyword dist_total:                The total argument for the uniform distribution frame_order.distribute user function.
+        @type dist_total:                   int
+        @keyword dist_max_rotations:        The max_rotations argument for the uniform distribution frame_order.distribute user function.
+        @type dist_max_rotations:           int
+        @keyword results_compress_type:     The type of compression to use when creating the results files.  See the results.write user function for details.
+        @type results_compress_type:        int
+        @keyword rigid_grid_split:          A flag which if True will cause the grid search for the rigid model to be split so that the rotation is optimised first followed by the translation.  When combined with grid zooming, this can save optimisation time.  However it may result in the global minimum being missed.
+        @type rigid_grid_split:             bool
+        @keyword store_intermediate:        A flag which if True will cause all intermediate optimisation results to be stored in the 'intermediate_results' directory.  These can then be used for studying the optimisation settings or loaded for subsequent analyses.
+        @type store_intermediate:           bool
+        @keyword nested_params_ave_dom_pos: A flag which if True will cause the average domain position parameters to be taken from the rigid or free-rotor models.  If False, then these parameters will be set to zero.
+        @type nested_params_ave_dom_pos:    bool
         """
 
         # Execution lock.
@@ -444,9 +450,12 @@ class Frame_order_analysis:
             self.brownian_step_size = brownian_step_size
             self.brownian_snapshot = brownian_snapshot
             self.brownian_total = brownian_total
+            self.dist_total = dist_total
+            self.dist_max_rotations = dist_max_rotations
             self.results_compress_type = results_compress_type
             self.rigid_grid_split = rigid_grid_split
             self.store_intermediate = store_intermediate
+            self.flag_nested_params_ave_dom_pos = nested_params_ave_dom_pos
 
             # Re-order the models to enable the parameter nesting protocol.
             self.models = self.reorder_models(models)
@@ -521,7 +530,13 @@ class Frame_order_analysis:
                 self.interpreter.state.save('final_state', dir=self.results_dir, force=True)
 
             # Count the number of Sobol' points and create a summary file.
-            count_sobol_points(dir=self.results_dir, force=True)
+            count = False
+            for model in self.models:
+                if model != MODEL_RIGID:
+                    count = True
+                    break
+            if count:
+                count_sobol_points(dir=self.results_dir, force=True)
             summarise(dir=self.results_dir, force=True)
 
         # Clean up.
@@ -707,6 +722,16 @@ class Frame_order_analysis:
         @param model:   The frame order model.
         @type model:    str
         """
+
+        # No nesting, so set all parameters to zero.
+        if not self.flag_nested_params_ave_dom_pos:
+            self.interpreter.value.set(param='ave_pos_x', val=0.0)
+            self.interpreter.value.set(param='ave_pos_y', val=0.0)
+            self.interpreter.value.set(param='ave_pos_z', val=0.0)
+            self.interpreter.value.set(param='ave_pos_alpha', val=0.0)
+            self.interpreter.value.set(param='ave_pos_beta', val=0.0)
+            self.interpreter.value.set(param='ave_pos_gamma', val=0.0)
+            return
 
         # Skip the following models to allow for full optimisation.
         if model in [MODEL_RIGID, MODEL_FREE_ROTOR]:
@@ -1395,6 +1420,10 @@ class Frame_order_analysis:
         script.write("# PyMOL visualisation.\n")
         script.write("pymol.frame_order()\n")
         script.close()
+
+        # The uniform distribution of structures.
+        if simulation:
+            self.interpreter.frame_order.distribute(dir=dir, total=self.dist_total, max_rotations=self.dist_max_rotations, force=True)
 
         # The pseudo-Brownian dynamics simulation.
         if simulation:

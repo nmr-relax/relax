@@ -26,97 +26,70 @@
 from warnings import warn
 
 # relax module imports.
+from lib.checks import Check
 from lib.errors import RelaxError
 from lib.warnings import RelaxWarning
 from pipe_control.pipes import cdp_name, get_pipe
 
 
-def check_domain(domain=None, escalate=0):
+def check_domain_func(domain=None):
     """Check if the domain has been defined.
 
-    @keyword domain:        The domain to check for.  If None, then the check will be for any domain being defined.
-    @type domain:           None or str
-    @keyword escalate:      The feedback to give if the domain is not defined.  This can be 0 for no printouts, 1 to throw a RelaxWarning, or 2 to raise a RelaxError.
-    @type escalate:         int
-    @raises RelaxError:     If escalate is set to 2 and the domain is not defined.
-    @return:                True if the domain is defined, False otherwise.
-    @rtype:                 bool
+    @keyword domain:    The domain to check for.  If None, then the check will be for any domain being defined.
+    @type domain:       None or str
+    @return:            The initialised RelaxError object if the domain is not defined, or nothing.
+    @rtype:             None or RelaxError instance
     """
-
-    # Init.
-    defined = True
-    msg = ''
 
     # Check that the domain is defined.
     if not hasattr(cdp, 'domain'):
-        defined = False
-        msg = "No domains have been defined.  Please use the domain user function."
+        return RelaxError("No domains have been defined.  Please use the domain user function.")
     if domain != None and domain not in cdp.domain:
-        defined = False
-        msg = "The domain '%s' has not been defined.  Please use the domain user function." % domain
+        return RelaxError("The domain '%s' has not been defined.  Please use the domain user function." % domain)
 
-    # Warnings and errors.
-    if not defined and escalate == 1:
-        warn(RelaxWarning(msg))
-    elif not defined and escalate == 2:
-        raise RelaxError(msg)
-
-    # Return the answer.
-    return defined
+# Create the checking object.
+check_domain = Check(check_domain_func)
 
 
-def check_model(escalate=0):
+def check_model_func(pipe_name=None):
     """Check if the frame order model has been set up.
 
-    @keyword escalate:      The feedback to give if the model is not set up.  This can be 0 for no printouts, 1 to throw a RelaxWarning, or 2 to raise a RelaxError.
-    @type escalate:         int
-    @raises RelaxError:     If escalate is set to 2 and the model is not set up.
-    @return:                True if the model is set up, False otherwise.
-    @rtype:                 bool
+    @keyword pipe_name: The data pipe to check for, if not the current pipe.
+    @type pipe_name:    None or str
+    @return:            The initialised RelaxError object if the model is not set up, or nothing.
+    @rtype:             None or RelaxError instance
     """
 
-    # Init.
-    flag = True
-    msg = ''
+    # The data pipe.
+    if pipe_name == None:
+        pipe_name = cdp_name()
+
+    # Get the data pipe.
+    dp = get_pipe(pipe_name)
 
     # Check that the model is set up.
-    if not hasattr(cdp, 'model'):
-        flag = False
-        msg = "The frame order model has not been set up, please use the frame_order.select_model user function."
+    if not hasattr(dp, 'model'):
+        return RelaxError("The frame order model has not been set up, please use the frame_order.select_model user function.")
 
-    # Warnings and errors.
-    if not flag and escalate == 1:
-        warn(RelaxWarning(msg))
-    elif not flag and escalate == 2:
-        raise RelaxError(msg)
-
-    # Return the answer.
-    return flag
+# Create the checking object.
+check_model = Check(check_model_func)
 
 
-def check_parameters(escalate=0):
+def check_parameters_func():
     """Check if the frame order parameters exist.
 
-    @keyword escalate:      The feedback to give if the check fails.  This can be 0 for no printouts, 1 to throw a RelaxWarning, or 2 to raise a RelaxError.
-    @type escalate:         int
-    @raises RelaxError:     If escalate is set to 2 and the check fails.
-    @return:                True if the check passes, False otherwise.
-    @rtype:                 bool
+    @return:    The initialised RelaxError object if the model parameters have not been setup, or nothing.
+    @rtype:     None or RelaxError instance
     """
-
-    # Init.
-    flag = True
-    msg = ''
-    missing = []
 
     # The model has not been set up.
     if not hasattr(cdp, 'params'):
-        flag = False
-        msg = "The frame order model has not been set up, no parameters have been defined."
+        return RelaxError("The frame order model has not been set up, no parameters have been defined.")
 
     # The model has been set up.
     else:
-        # Loop over all parameters.
+        # Find missing parameters.
+        missing = []
         for param in cdp.params:
             # Check that the parameters exists.
             if not hasattr(cdp, param):
@@ -130,25 +103,19 @@ def check_parameters(escalate=0):
 
         # Failure.
         if len(missing):
-            flag = False
-            msg = "The frame order parameters %s have not been set up." % missing
+            return RelaxError("The frame order parameters %s have not been set up." % missing)
 
-    # Warnings and errors.
-    if not flag and escalate == 1:
-        warn(RelaxWarning(msg))
-    elif not flag and escalate == 2:
-        raise RelaxError(msg)
-
-    # Return the answer.
-    return flag
+# Create the checking object.
+check_parameters = Check(check_parameters_func)
 
 
-def check_pivot(pipe_name=None):
+def check_pivot_func(pipe_name=None):
     """Check that the pivot point has been set.
 
     @keyword pipe_name: The data pipe to check the pivot for.  This defaults to the current data pipe if not set.
     @type pipe_name:    str
-    @raises RelaxError: If the pivot point has not been set.
+    @return:            The initialised RelaxError object if the pivot point has not been set, or nothing.
+    @rtype:             None or RelaxError instance
     """
 
     # The data pipe.
@@ -160,6 +127,7 @@ def check_pivot(pipe_name=None):
 
     # Check for the pivot_x parameter.
     if not hasattr(dp, 'pivot_x'):
-        raise RelaxError("The pivot point has not been set, please use the frame_order.pivot user function to define the point.")
+        return RelaxError("The pivot point has not been set, please use the frame_order.pivot user function to define the point.")
 
-
+# Create the checking object.
+check_pivot = Check(check_pivot_func)

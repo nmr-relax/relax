@@ -1,0 +1,361 @@
+% Frame order modelling.
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Frame order modelling}
+\label{sect: Frame order modelling}
+
+
+
+
+% Rigid body motions for a two domain system.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Rigid body motions for a two domain system}
+
+
+
+
+% Ball and socket joint.
+%-----------------------
+
+\subsubsection{Ball and socket joint}
+
+For a molecule consisting of two rigid bodies with pivoted inter-domain or inter-segment motions, the most natural mechanical description of the motion would be that of the spherical joint.
+This is also known as the ball and socket joint.
+The mechanical system consists of a single pivot point and three rotational degrees of freedom.
+
+
+
+% Tilt and torsion angles.
+%-------------------------
+
+\subsubsection{Tilt and torsion angles from robotics}
+
+To describe the motional mechanics of a ball and socket joint, the Euler angle system is a poor representation as the angles do not correspond to the mechanical modes of motion.
+In the field of robotics, many different orientation parameter sets have been developed for describing three degree-of-freedom joint systems.
+For the spherical joint description of intra-molecular rigid body motions, an angle system for describing symmetrical spherical parallel mechanisms (SPMs), a parallel manipulator, was found to be ideal.
+This is the `tilt-and-torsion' angle system \citep{Huang99,BonevGosselin06}.
+These angles were derived independently a number of times to model human joint mechanics, originally as the `halfplane-deviation-twist' angles \citep{Korein85}, and then as the `tilt/twist' angles \citep{Crawford99}.
+
+In the tilt-and-torsion angle system, the rigid body is first tilted by the angle $\theta$ about the horizontal axis $a$.
+The axis $a$, which lies in the xy-plane, is defined by the azimuthal angle $\phi$ (the angle is between the rotated z' axis projection onto the xy-plane and the x-axis).
+The tilt component is hence defined by both $\theta$ and $\phi$.
+Finally the domain is rotated about the z' axis by the torsion angle $\sigma$.
+The resultant rotation matrix is
+\begin{subequations}
+\begin{align}
+    R(\theta, \phi, \sigma)
+        &= R_z(\phi)R_y(\theta)R_z(\sigma-\phi) , \\
+        &= R_{zyz}(\sigma-\phi, \theta, \phi) , \\
+        &= \begin{pmatrix}
+            \mathrm{c}_\phi \mathrm{c}_\theta \mathrm{c}_{\sigma-\phi} - \mathrm{s}_\phi \mathrm{s}_{\sigma-\phi} & -\mathrm{c}_\phi \mathrm{c}_\theta \mathrm{s}_{\sigma-\phi} - \mathrm{s}_\phi \mathrm{c}_{\sigma-\phi} & \mathrm{c}_\phi \mathrm{s}_\theta \\
+            \mathrm{s}_\phi \mathrm{c}_\theta \mathrm{c}_{\sigma-\phi} + \mathrm{c}_\phi \mathrm{s}_{\sigma-\phi} & -\mathrm{s}_\phi \mathrm{c}_\theta \mathrm{s}_{\sigma-\phi} + \mathrm{c}_\phi \mathrm{c}_{\sigma-\phi} & \mathrm{s}_\phi \mathrm{s}_\theta \\
+            -\mathrm{s}_\theta \mathrm{c}_{\sigma-\phi}                                                           &  \mathrm{s}_\theta \mathrm{s}_{\sigma-\phi}                                                            & \mathrm{c}_\theta \\
+        \end{pmatrix} , \label{eq: R torsion-tilt}
+\end{align}
+\end{subequations}
+
+where $\mathrm{c}_\eta = \cos(\eta)$ and $\mathrm{s}_\eta = \sin(\eta)$ and $R_{zyz}$ is the Euler rotation in $zyz$ axis rotation notation where
+\begin{subequations}
+\begin{align}
+    \alpha &= \sigma - \phi , \\
+    \beta  &= \theta , \\
+    \gamma &= \phi .
+\end{align}
+\end{subequations}
+
+As $\sigma = \alpha + \gamma$, it can be seen that both these Euler angles influence the torsion angle, demonstrating the problem with this parameterisation.
+
+%A distinct advantage of the tilt-torsion angles for describing molecular domain motions is that singularities are avoided.
+
+
+
+% Torsion angle restriction.
+\paragraph{Modelling torsion}
+
+An advantage of this angle system is that the tilt and torsion components can be treated separately in the modelling of domain motions.
+The simplest model for the torsion angle would be the restriction
+\begin{equation} \label{eq: torsion angle restriction}
+    -\conesmax \le \sigma \le \conesmax .
+\end{equation}
+
+The angle can be completely restricted as $\conesmax = 0$ to create torsionless models.
+In this case, the tilt and torsion rotation matrix simplifies to
+\begin{subequations}
+\begin{align}
+    R(\theta, \phi, 0)
+        &= R_z(\phi)R_y(\theta)R_z(-\phi) , \\
+        &= R_{zyz}(-\phi, \theta, \phi) , \\
+        &= \begin{pmatrix}
+            \mathrm{c}^2_\phi \mathrm{c}_\theta + \mathrm{s}^2_\phi                                 & \mathrm{c}_\phi \mathrm{s}_\phi \mathrm{c}_\theta - \mathrm{c}_{\phi} \mathrm{s}_\phi & \mathrm{c}_\phi \mathrm{s}_\theta \\
+            \mathrm{c}_{\phi} \mathrm{s}_\phi \mathrm{c}_\theta - \mathrm{c}_\phi \mathrm{s}_{\phi} & \mathrm{s}^2_\phi \mathrm{c}_\theta + \mathrm{c}^2_\phi                               & \mathrm{s}_\phi \mathrm{s}_\theta \\
+            -\mathrm{c}_{\phi} \mathrm{s}_\theta                                                    & -\mathrm{s}_{\phi} \mathrm{s}_\theta                                                  & \mathrm{c}_\theta \\
+        \end{pmatrix} . \label{eq: R matrix torsionless}
+\end{align}
+\end{subequations}
+
+
+
+% Modelling tilt.
+\paragraph{Modelling tilt}
+
+The tilt angles $\theta$ and $\phi$ are related to spherical angles, hence the modelling of this component relates to a distribution on the surface of a sphere.
+At the simplest level, this can be modelled as both isotropic and anisotropic cones of uniform distribution.
+
+
+
+
+% Model list.
+%------------
+
+\subsubsection{Model list}
+
+For the modelling of the ordering of the motional frame, the tilt and torsion angle system will be used together with uniform distributions of rigid body position.
+For the torsion angle $\conesmax$, this can be modelled as being rigid ($\conesmax = 0$), being a free rotor ($\conesmax = \pi$), or as having a torsional restriction ($0 < \conesmax < \pi$).
+For the $\theta$ and $\phi$ angles of the tilt component, the rigid body motion can be modelled as being rigid ($\theta = 0$), as moving in an isotropic cone, or moving anisotropically in a pseudo-elliptic cone.
+Both single and double modes of motion have been modelled.
+The total list of models so far implemented are:
+\begin{enumerate}
+    \item Rigid
+    \item Rotor
+    \item Free rotor
+    \item Isotropic cone
+    \item Isotropic cone, torsionless
+    \item Isotropic cone, free rotor
+    \item Pseudo-ellipse
+    \item Pseudo-ellipse, torsionless
+    \item Pseudo-ellipse, free rotor
+    \item Double rotor
+\end{enumerate}
+
+The equations for these models are derived in Chapter~\ref{ch: The frame order models} on page~\pageref{ch: The frame order models}.
+
+
+
+% Frame order axis permutations.
+\subsection{Frame order axis permutations}
+\label{sect: axis permutations}
+\index{Frame order!axis permutations}
+
+Multiple local minima exist in the optimisation space for the isotropic and pseudo-elliptic cone frame order models.
+In the case of the pseudo-ellipse, the eigenframes at each minimum are identical, however the $\conethetax$, $\conethetax$, and $\conesmax$ half-angles are permuted.
+Because of the constraint $\conethetax \le \conethetay$ in the pseudo-ellipse model, there are exactly three local minima (out of 6 possible permutations).
+In the isotropic cone, the $\conethetax \equiv \conethetay$ condition collapses this to two.
+The multiple minima correspond to permutations of the motional system - the eigenframe x, y and z-axes as well as the cone opening angles $\conethetax$, $\conethetay$, and $\conesmax$ associated with these axes.
+But as the mechanics of the cone angles is not identical to that of the torsion angle, only one of the three local minima is the global minimum.
+
+As the \href{https://gna.org/projects/minfx/}{minfx library} used in the frame order analysis currently only implements local optimisation algorithms, and because a global optimiser cannot be guaranteed to converge to the correct minima, a different approach is required:
+\begin{itemize}
+    \item Optimise to one solution.
+    \item Duplicate the data pipe for the model as `permutation A'.
+    \item Permute the axes and amplitude parameters to jump from one local minimum to the other.
+    \item Optimise the new permuted model,  as the permuted parameters will not be exactly at the minimum.
+    \item Repeat for the remaining `permutation B' solution (only for the pseudo-ellipse models).
+\end{itemize}
+
+These steps have been incorporated into the automated analysis protocol.
+
+The permutation step has been implemented as the \uf{frame\ufus{}order\ufsep{}permute\ufus{}axes} user function.
+It is complicated by the fact that $\conethetax$ is defined as a rotation about the y-axis and $\conethetay$ is about the x-axis.
+See table~\ref{table: frame order axis permutations} on page~\pageref{table: frame order axis permutations} for the pseudo-ellipse model permutations.
+These are also illustrated in figure~\ref{fig: pseudo-ellipse axis permutations} on page~\pageref{fig: pseudo-ellipse axis permutations}.
+
+For the isotropic cone model, the same permutations exist but with some differences:
+\begin{itemize}
+    \item The x and y axes are not defined in the x-y plane, therefore there are only two permutations (the first solution and `permutation A').
+    \item Any axis in the x-y plane can be used for the permutation, however different axes will result in different $\chi^2$ values.
+    \item As $\conethetax \equiv \conethetay$, the condition $\conethetax \le \conesmax \le \conethetay$ can only exist if the torsion and cone angles are identical.
+    \item Permutations A and B create identical cones as the x and y axes are equivalent.
+\end{itemize}
+
+The new isotropic cone angle is defined as
+\begin{equation}
+    \conetheta' = \frac{\conethetax' + \conethetay'}{2}.
+\end{equation}
+
+The isotropic cone axis permutations are shown in figure~\ref{fig: iso cone axis permutations} on page~\pageref{fig: iso cone axis permutations}.
+
+\begin{table}
+\begin{center}
+\begin{threeparttable}
+\caption[The pseudo-ellipse axis and half-angle permutations.]{The pseudo-ellipse motional eigenframe and half-angle permutations implemented in the \uf{frame\ufus{}order\ufsep{}permute\ufus{}axes} user function.}
+\begin{tabular*}{\textwidth}{c @{\extracolsep{\fill}} ccc}
+\toprule
+Condition & Permutation name & Cone half-angles & Axes \\
+          &                  & $[\conethetax', \conethetay', \conesmax']$ & $[x', y', z']$\\
+\midrule
+$\conethetax \le \conethetay \le \conesmax$ & Self\tnote{1} & $[\conethetax, \conethetay, \conesmax]$ & $[x, y, z]$ \\
+                                                & A             & $[\conethetax, \conesmax, \conethetay]$ & $[-z, y, x]$ \\
+                                                & B             & $[\conethetay, \conesmax, \conethetax]$ & $[z, x, y]$ \\
+$\conethetax \le \conesmax \le \conethetay$ & Self\tnote{1} & $[\conethetax, \conethetay, \conesmax]$ & $[x, y, z]$ \\
+                                                & A             & $[\conethetax, \conesmax, \conethetay]$ & $[-z, y, x]$ \\
+                                                & B             & $[\conesmax, \conethetay, \conethetax]$ & $[x, -z, y]$ \\
+$\conesmax \le \conethetax \le \conethetay$ & Self\tnote{1} & $[\conethetax, \conethetay, \conesmax]$ & $[x, y, z]$ \\
+                                                & A             & $[\conesmax, \conethetax, \conethetay]$ & $[y, z, x]$ \\
+                                                & B             & $[\conesmax, \conethetay, \conethetax]$ & $[x, -z, y]$ \\
+\bottomrule
+\label{table: frame order axis permutations}
+\end{tabular*}
+\begin{tablenotes}
+\item [1] The first optimised solution.
+\end{tablenotes}
+\end{threeparttable}
+\end{center}
+\end{table}
+
+% The pseudo-ellipse axis permutations figure.
+\begin{figure}
+  \centerline{
+    \includegraphics[
+      width=0.9\textwidth,
+      bb=14 14 1036 1384
+    ]
+    {images/perm_pseudo_ellipse}
+  }
+  \caption[Pseudo-ellipse axis permutations.]{
+      Pseudo-ellipse axis permutations.
+      This uses synthetic data for a rotor model applied to CaM, with the rotor axis defined as being between the centre of the two helices between the domains (the centre of all cones in the figure) and the centre of mass of the C-terminal domain, and the rotor half-angle set to 30$^{\circ}$.
+      The condition $\conethetax \le \conethetay \le \conesmax$ is shown in A and B.
+      The condition $\conethetax \le \conesmax \le \conethetay$ is shown in C and D.
+      The condition $\conesmax \le \conethetax \le \conethetay$ is shown in E and F.
+      A, C, and E are the axis permutations for a set of starting half-angles and B, D, and F are the results after low quality optimisation demonstrating the presence of the multiple local minima.
+      % This data can be found in the subdirectories of test_suite/shared_data/frame_order/cam/rotor/.
+  }
+  \label{fig: pseudo-ellipse axis permutations}
+\end{figure}
+
+
+% The isotropic cone axis permutations figure.
+\begin{figure}
+  \centerline{
+    \includegraphics[
+      width=0.75\textwidth,
+      bb=14 14 835 949
+    ]
+    {images/perm_iso_cone}
+  }
+  \caption[Isotropic cone axis permutations.]{
+      Isotropic cone axis permutations.
+      This uses synthetic data for a rotor model applied to CaM, with the rotor axis defined as being between the centre of the two helices between the domains (the centre of all cones in the figure) and the centre of mass of the C-terminal domain, and the rotor half-angle set to 30$^{\circ}$.
+      The condition $\conetheta \le \conesmax$ is shown in A and B.
+      The condition $\conesmax \le \conetheta$ is shown in C and D.
+      A and C are the axis permutations for a set of starting half-angles and B and D are the results after low quality optimisation demonstrating the presence of the multiple local minima.
+      % This data can be found in the subdirectories of test_suite/shared_data/frame_order/cam/rotor/.
+  }
+  \label{fig: iso cone axis permutations}
+\end{figure}
+
+
+
+% Frame order linear constraints.
+\subsection{Linear constraints for the frame order models}
+\index{Frame order!linear constraints|textbf}
+
+Linear constraints are implemented for the frame order models using the log-barrier constraint algorithm in \href{https://gna.org/projects/minfx/}{minfx}, as this does not require the derivation of gradients.
+
+The pivot point and average domain position parameter constraints in \AA ngstrom are:
+\begin{subequations}
+\begin{gather}
+    -500 \leqslant \aveposx \leqslant 500, \\
+    -500 \leqslant \aveposy \leqslant 500, \\
+    -500 \leqslant \aveposy \leqslant 500, \\
+    -999 \leqslant \pivotx \leqslant 999, \\
+    -999 \leqslant \pivoty \leqslant 999, \\
+    -999 \leqslant \pivotz \leqslant 999.
+\end{gather}
+\end{subequations}
+
+These translation parameter restrictions are simply to stop the optimisation in the case of model failures.
+Converting these to the $A \cdot x \geqslant b$ matrix notation required for the optimisation constraint algorithm, the constraints become
+\begin{equation}
+    \begin{pmatrix}
+         1 & 0 & 0 & 0 & 0 & 0 \\
+        -1 & 0 & 0 & 0 & 0 & 0 \\
+         0 & 1 & 0 & 0 & 0 & 0 \\
+         0 &-1 & 0 & 0 & 0 & 0 \\
+         0 & 0 & 1 & 0 & 0 & 0 \\
+         0 & 0 &-1 & 0 & 0 & 0 \\
+         0 & 0 & 0 & 1 & 0 & 0 \\
+         0 & 0 & 0 &-1 & 0 & 0 \\
+         0 & 0 & 0 & 0 & 1 & 0 \\
+         0 & 0 & 0 & 0 &-1 & 0 \\
+         0 & 0 & 0 & 0 & 0 & 1 \\
+         0 & 0 & 0 & 0 & 0 &-1 \\
+    \end{pmatrix}
+    \cdot
+    \begin{pmatrix}
+        \aveposx \\
+        \aveposy \\
+        \aveposz \\
+        \pivotx \\
+        \pivoty \\
+        \pivotz \\
+    \end{pmatrix}
+    \geqslant
+    \begin{pmatrix}
+        -500 \\
+        -500 \\
+        -500 \\
+        -500 \\
+        -500 \\
+        -500 \\
+        -999 \\
+        -999 \\
+        -999 \\
+        -999 \\
+        -999 \\
+        -999 \\
+    \end{pmatrix}
+\end{equation}
+
+For the order or motional amplitude parameters of the set $\Orderset$, the constraints used are
+\begin{subequations}
+\begin{gather}
+    0 \leqslant \conetheta \leqslant \pi, \\
+    0 \leqslant \conethetax \leqslant \conethetay \leqslant \pi, \\
+    0 \leqslant \conesmax \leqslant \pi, \\
+    0 \leqslant \conesmaxtwo \leqslant \pi.
+\end{gather}
+\end{subequations}
+
+These reflect the range of validity of these parameters.
+Converting to the $A \cdot x \geqslant b$ notation, the constraints are
+\begin{equation}
+    \begin{pmatrix}
+        1 & 0 & 0 & 0 & 0 \\
+        -1& 0 & 0 & 0 & 0 \\
+        0 & 1 & 0 & 0 & 0 \\
+        0 &-1 & 0 & 0 & 0 \\
+        0 &-1 & 1 & 0 & 0 \\
+        0 & 0 & 1 & 0 & 0 \\
+        0 & 0 &-1 & 0 & 0 \\
+        0 & 0 & 0 & 1 & 0 \\
+        0 & 0 & 0 &-1 & 0 \\
+        0 & 0 & 0 & 0 & 1 \\
+        0 & 0 & 0 & 0 &-1 \\
+    \end{pmatrix}
+    \cdot
+    \begin{pmatrix}
+        \conetheta \\
+        \conethetax \\
+        \conethetay \\
+        \conesmax \\
+        \conesmaxtwo \\
+    \end{pmatrix}
+    \geqslant
+    \begin{pmatrix}
+         0 \\
+         -\pi \\
+         0 \\
+         -\pi \\
+         0 \\
+         0 \\
+         -\pi \\
+          0 \\
+         -\pi \\
+          0 \\
+         -\pi \\
+    \end{pmatrix}
+\end{equation}
+
+The pseudo-elliptic cone model constraint $\conethetax \geqslant \conethetay$ is used to simplify the optimisation space by eliminating symmetry.

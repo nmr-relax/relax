@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -984,7 +984,7 @@ class Frame_order_grid_command(Slave_command):
         @type frq:                  numpy rank-1 array
         @keyword paramag_centre:    The paramagnetic centre position (or positions).
         @type paramag_centre:       numpy rank-1, 3D array or rank-2, Nx3 array
-         @keyword com:               The centre of mass of the system.  This is used for defining the rotor model systems.
+        @keyword com:               The centre of mass of the system.  This is used for defining the rotor model systems.
         @type com:                  numpy 3D rank-1 array
         @keyword ave_pos_pivot:     The pivot point to rotate all atoms about to the average domain position.  In most cases this will be the centre of mass of the moving domain.  This pivot is shifted by the translation vector.
         @type ave_pos_pivot:        numpy 3D rank-1 array
@@ -1131,7 +1131,7 @@ class Frame_order_minimise_command(Slave_command):
         @type frq:                  numpy rank-1 array
         @keyword paramag_centre:    The paramagnetic centre position (or positions).
         @type paramag_centre:       numpy rank-1, 3D array or rank-2, Nx3 array
-         @keyword com:               The centre of mass of the system.  This is used for defining the rotor model systems.
+        @keyword com:               The centre of mass of the system.  This is used for defining the rotor model systems.
         @type com:                  numpy 3D rank-1 array
         @keyword ave_pos_pivot:     The pivot point to rotate all atoms about to the average domain position.  In most cases this will be the centre of mass of the moving domain.  This pivot is shifted by the translation vector.
         @type ave_pos_pivot:        numpy 3D rank-1 array
@@ -1181,6 +1181,11 @@ class Frame_order_minimise_command(Slave_command):
         self.verbosity = verbosity
         self.quad_int = quad_int
 
+        # Feedback on the number of integration points used (target function setup required).  This must be run here on the master and not in run() on the slave.
+        target_fn = Frame_order(model=self.model, init_params=self.param_vector, full_tensors=self.full_tensors, full_in_ref_frame=self.full_in_ref_frame, rdcs=self.rdcs, rdc_errors=self.rdc_err, rdc_weights=self.rdc_weight, rdc_vect=self.rdc_vect, dip_const=self.rdc_const, pcs=self.pcs, pcs_errors=self.pcs_err, pcs_weights=self.pcs_weight, atomic_pos=self.atomic_pos, temp=self.temp, frq=self.frq, paramag_centre=self.paramag_centre, scaling_matrix=self.scaling_matrix, com=self.com, ave_pos_pivot=self.ave_pos_pivot, pivot=self.pivot, pivot_opt=self.pivot_opt, sobol_max_points=self.sobol_max_points, sobol_oversample=self.sobol_oversample, quad_int=self.quad_int)
+        if not self.quad_int:
+            count_sobol_points(target_fn=target_fn, verbosity=self.verbosity)
+
         # Linear constraints.
         self.A, self.b = None, None
         if constraints:
@@ -1206,10 +1211,6 @@ class Frame_order_minimise_command(Slave_command):
 
         # Minimisation.
         results = generic_minimise(func=target_fn.func, args=(), x0=self.param_vector, min_algor=self.min_algor, min_options=self.min_options, func_tol=self.func_tol, grad_tol=self.grad_tol, maxiter=self.max_iterations, A=self.A, b=self.b, full_output=True, print_flag=self.verbosity)
-
-        # Feedback on the number of integration points used.
-        if not self.quad_int:
-            count_sobol_points(target_fn=target_fn, verbosity=self.verbosity)
 
         # Create the result command object on the slave to send back to the master.
         processor.return_object(Frame_order_result_command(processor=processor, memo_id=self.memo_id, results=results, A_5D_bc=target_fn.A_5D_bc, pcs_theta=target_fn.pcs_theta, rdc_theta=target_fn.rdc_theta, completed=completed))

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -199,6 +199,5 @@ for i in range(len(ln)):
 # Execution.
 ############
 
-# Do not change!
 Frame_order_analysis._final_state = False
-Frame_order_analysis(data_pipe_full=DATA, data_pipe_subset=SUBSET, pipe_bundle=PIPE_BUNDLE, results_dir=ds.tmpdir, opt_rigid=OPT_RIGID, opt_subset=OPT_SUBSET, opt_full=OPT_FULL, opt_mc=OPT_MC, mc_sim_num=MC_NUM, models=MODELS, brownian_step_size=STEP_SIZE, brownian_snapshot=SNAPSHOT, brownian_total=TOTAL, rigid_grid_split=True, store_intermediate=False)
+Frame_order_analysis(data_pipe_full=DATA, data_pipe_subset=SUBSET, pipe_bundle=PIPE_BUNDLE, results_dir=ds.tmpdir, opt_rigid=OPT_RIGID, opt_subset=OPT_SUBSET, opt_full=OPT_FULL, opt_mc=OPT_MC, mc_sim_num=MC_NUM, models=MODELS, brownian_step_size=STEP_SIZE, brownian_snapshot=SNAPSHOT, brownian_total=TOTAL, dist_total=3, dist_max_rotations=5, results_compress_type=0, rigid_grid_split=True, store_intermediate=False)

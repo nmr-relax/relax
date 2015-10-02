@@ -15,6 +15,7 @@
 \usepackage{tabularx}
 \usepackage{rotating}
 \usepackage{lscape}
+\usepackage[flushleft]{threeparttable}
 
 % Nth.
 \usepackage[super]{nth}
@@ -27,6 +28,18 @@
 
 % Better Table of contents (Toc), List of figures (Lof), and List of tables (Lot).
 \usepackage{tocloft}
+
+% Paragraph section formatting.
+\newcommand{\newparagraph}[2][]{
+    \ifthenelse { \equal {#1} {} }
+        { \paragraph{#2}\mbox{} \\}
+        { \paragraph[#1]{#2}\mbox{} \\ }
+}
+\newcommand{\newsubparagraph}[2][]{
+    \ifthenelse { \equal {#1} {} }
+        { \subparagraph{#2}\mbox{} \\}
+        { \subparagraph[#1]{#2}\mbox{} \\ }
+}
 
 % Hyperlinks.
 \usepackage[pdftitle={The relax manual}]{hyperref}
@@ -41,6 +54,10 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{mathdots}
+\usepackage{mathrsfs}
+\usepackage{accents}
+\usepackage{arydshln}
+\usepackage{bigints}
 
 % Source code and scripts.
 \usepackage[procnames]{listings}
@@ -76,6 +93,24 @@
     tabsize=4,
     upquote=true,
 }
+
+% Graphics for tables (after xcolor because of package clashing).
+\usepackage{tikz}
+\usetikzlibrary{calc}
+%\newcommand*\sethighlight[1]{\tikz[baseline=(char.base)]{\node[shape=circle,draw,inner sep=1pt] (char) {#1};}}
+\newcommand*\sethighlight[1]{\tikz[baseline=(char.base)]{\node[shape=rectangle,draw=blue,inner sep=2pt] (char) {#1};}}
+\newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \node (#1) {};}
+
+% Table row formatting.
+\usepackage{array}
+\newcolumntype{+}{>{\global\let\currentrowstyle\relax}}
+\newcolumntype{^}{>{\currentrowstyle}}
+\newcommand{\rowstyle}[1]{\gdef\currentrowstyle{#1}%
+    #1\ignorespaces
+}
+
+% New column type with settable width.
+\newcolumntype{C}[1]{>{\centering\arraybackslash$}p{#1}<{$}}
 
 % New commands.
 \newcommand{\example}[1]{\vspace{-1ex} \sloppy{\footnotesize \texttt{#1}}}
@@ -117,6 +152,9 @@
 \setlength{\cftfignumwidth}{12mm}
 \setlength{\cfttabnumwidth}{12mm}
 
+% The frame order symbol (the daeg runic character)
+\usepackage{allrunes}
+
 % Maths commands.
 \setcounter{MaxMatrixCols}{20}
 \DeclareMathOperator{\arccosh}{arccosh}
@@ -141,11 +179,11 @@
 \newcommand{\Localset}{\mathfrak{T}}
 \newcommand{\KL}{\Delta_{\scriptscriptstyle \text{K-L}}}
 
-\newcommand{\aveoffset}{\bar\Omega}
+\newcommand{\aveoffset}{\overline{\Omega}}
 \newcommand{\offsetA}{\Omega_{\textrm{A}}}
 \newcommand{\offsetB}{\Omega_{\textrm{B}}}
 \newcommand{\offsetC}{\Omega_{\textrm{C}}}
-\newcommand{\aveomega}{\bar\omega}
+\newcommand{\aveomega}{\overline{\omega}}
 \newcommand{\dw}{\Delta\omega}
 \newcommand{\dwAB}{\Delta\omega_{\textrm{AB}}}
 \newcommand{\dwAC}{\Delta\omega_{\textrm{AC}}}
@@ -216,6 +254,75 @@
 \newcommand{\tex}{\tau_{\textrm{ex}}}
 \newcommand{\taucpmg}{\tau_{\textrm{CPMG}}}
 \newcommand{\Trelax}{T_{\textrm{relax}}}
+
+% Maths commands - frame order specific.
+\DeclareMathOperator{\pec}{pec}
+\DeclareMathOperator{\sinc}{sinc}
+\newcommand{\Eigenset}{\mathfrak{E}}
+\newcommand{\Eigensetabc}{\mathfrak{E}_{\alpha\beta\gamma}}
+\newcommand{\Eigenseta}{\mathfrak{E}^\alpha_\textrm{ax}}
+\newcommand{\Eigensetafull}{\left\{ \frameaxa \right\}}
+\newcommand{\Eigensetax}{\mathfrak{E}_\textrm{ax}}
+\newcommand{\Eigensetaxfull}{\left\{ \framet, \framep \right\}}
+\newcommand{\Eigensetfull}{\left\{ \framea, \frameb, \frameg \right\}}
+\newcommand{\FO}{\textarc{d}}
+\newcommand{\FOn}{\textarc{d}^{(n)}}
+\newcommand{\FOnp}{\textarc{d}^{(n)'}}
+\newcommand{\FOone}{\textarc{d}^{(1)}}
+\newcommand{\FOonep}{\textarc{d}^{(1)'}}
+\newcommand{\FOtwo}{\textarc{d}^{(2)}}
+\newcommand{\FOtwop}{\textarc{d}^{(2)'}}
+\newcommand{\FOthree}{\textarc{d}^{(3)}}
+\newcommand{\FOfour}{\textarc{d}^{(4)}}
+\newcommand{\Modelset}{\mathfrak{M}}
+\newcommand{\Orderset}{\mathfrak{S}}
+\newcommand{\Orientset}{\mathfrak{O}}
+\newcommand{\Pivotsetone}{\mathfrak{p}_1}
+\newcommand{\Pivotsetonefull}{\left\{ \pivotx, \pivoty, \pivotz \right\}}
+\newcommand{\Pivotsettwo}{\mathfrak{p}_2}
+\newcommand{\Posset}{\mathfrak{P}}
+\newcommand{\Possetfull}{\left\{ \aveposx, \aveposy, \aveposz, \aveposa, \aveposb, \aveposg \right\}}
+\newcommand{\Possetred}{\mathfrak{P}'}
+\newcommand{\Translateset}{\mathfrak{T}}
+\newcommand{\aveposa}{P_\alpha}
+\newcommand{\aveposb}{P_\beta}
+\newcommand{\aveposg}{P_\gamma}
+\newcommand{\aveposi}{P_i}
+\newcommand{\aveposx}{P_x}
+\newcommand{\aveposy}{P_y}
+\newcommand{\aveposz}{P_z}
+\newcommand{\conetheta}{\theta}
+\newcommand{\conethetamax}{\theta_\textrm{max}}
+\newcommand{\conethetax}{\theta_x}
+\newcommand{\conethetay}{\theta_y}
+\newcommand{\conesmax}{\sigma_\textrm{max}}
+\newcommand{\conesmaxi}{\sigma_\textrm{max,i}}
+\newcommand{\conesmaxone}{\sigma_{\textrm{max,1}}}
+\newcommand{\conesmaxtwo}{\sigma_{\textrm{max,2}}}
+\newcommand{\diff}{\,\mathrm{d}}
+\newcommand{\framea}{E_\alpha}
+\newcommand{\frameaxa}{E_\alpha^{\textrm{ax}}}
+\newcommand{\frameb}{E_\beta}
+\newcommand{\frameg}{E_\gamma}
+\newcommand{\framei}{E_i}
+\newcommand{\framep}{E_\phi}
+\newcommand{\framet}{E_\theta}
+\newcommand{\half}{\tfrac{1}{2}}
+\newcommand{\quart}{\tfrac{1}{4}}
+\newcommand{\permA}{^\textrm{A}}
+\newcommand{\permB}{^\textrm{B}}
+\newcommand{\pivotdisp}{p_d}
+\newcommand{\pivoti}{p_i}
+\newcommand{\pivotx}{p_x}
+\newcommand{\pivoty}{p_y}
+\newcommand{\pivotz}{p_z}
+\newcommand{\sincsigma}{\textrm{s}_\sigma}
+\newcommand{\sinctwosigma}{\textrm{s}_{2\sigma}}
+\newcommand{\raxhat}{\underaccent{\tilde}{\hat{r}}_{ax}}
+\newcommand{\rCoMpivhat}{\underaccent{\tilde}{\hat{r}}_{\textrm{CoM}-\Pivotsetone}}
+\newcommand{\tmax}{t_\textrm{max}}
+\newcommand{\vectr}{r}
+\newcommand{\unitvectr}{\hat{r}}
 
 % Natbib Citation format.
 \bibpunct{(}{)}{;}{a}{,}{,}
@@ -448,6 +555,7 @@
 \include{consistency_tests}
 \include{n_state}
 \include{dispersion}
+\include{frame_order}
 
 \part{Power users}
 \include{develop}
@@ -455,6 +563,7 @@
 \part{Advanced topics}
 \include{optimisation}
 \include{maths}
+\include{frame_order/models}
 
 \part{Reference}
 \include{functions}

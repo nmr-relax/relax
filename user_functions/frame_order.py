@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -34,11 +34,11 @@ else:
 from graphics import WIZARD_IMAGE_PATH
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from specific_analyses.frame_order.optimisation import count_sobol_points
-from specific_analyses.frame_order.uf import sobol_setup, pdb_model, permute_axes, pivot, quad_int, ref_domain, select_model, simulate
+from specific_analyses.frame_order.uf import distribute, sobol_setup, pdb_model, permute_axes, pivot, quad_int, ref_domain, select_model, simulate
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
-from user_functions.wildcards import WILDCARD_RELAX_SAVE
+from user_functions.wildcards import WILDCARD_STRUCT_PDB_ALL
 
 
 # The user function class.
@@ -59,6 +59,85 @@ uf.backend = count_sobol_points
 uf.menu_text = "&count_sobol_points"
 uf.gui_icon = "oxygen.categories.applications-education"
 uf.wizard_size = (800, 400)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
+
+
+# The frame_order.distribute user function.
+uf = uf_info.add_uf('frame_order.distribute')
+uf.title = "Structural distribution of the frame order motions."
+uf.title_short = "Frame order motional distribution."
+uf.add_keyarg(
+    name = "file",
+    default = "distribution.pdb.gz",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "distribution file",
+    desc = "The PDB file for storing the frame order motional distribution.  The compression is determined automatically by the file extensions '*.pdb', '*.pdb.gz', and '*.pdb.bz2'.",
+    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
+    wiz_filesel_style = FD_OPEN,
+    wiz_filesel_preview = False
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory where the files are to be located.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "atom_id",
+    py_type = "str",
+    desc_short = "atom identification string",
+    desc = "The atom identification string to allow the distribution to be a subset of all atoms.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "total",
+    default = 1000,
+    min = 1,
+    max = 1000000,
+    py_type = "int",
+    desc_short = "total number of structures",
+    desc = "The total number of structures to include in the uniform distribution.",
+    wiz_element_type = "spin"
+)
+uf.add_keyarg(
+    name = "max_rotations",
+    default = 100000,
+    min = 1,
+    max = 100000000,
+    py_type = "int",
+    desc_short = "maximum number of rotations",
+    desc = "The maximum number of rotations to generate the distribution from.  This prevents the user function from executing for an infinite amount of time.  This occurs whenever a frame order amplitude parameter (cone opening angle or torsion angle) is zero so that the subset of all rotations within the motional distribution is also zero.",
+    wiz_element_type = "spin"
+)
+uf.add_keyarg(
+    name = "model",
+    default = 1,
+    min = 1,
+    py_type = "int",
+    desc_short = "original structural model",
+    desc = "Only one model from an analysed ensemble of structures can be used for the distribution, as the distribution PDB file consists of one model per state.",
+    wiz_element_type = "spin"
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which, if set to True, will overwrite the any pre-existing file."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("To visualise the frame order motions, this user function generates a distribution of structures randomly within the bounds of the uniform distribution of the frame order model.  The original structure is rotated randomly and only accepted for the distribution if it is within the bounds.  This is a more faithful representation of the dynamics than the pseudo-Brownian simulation user function.")
+uf.desc[-1].add_paragraph("Note that the RDC and PCS data does not contain information about all parts of the real distribution of structures.  Therefore the structures in this distribution only represent the components of the distribution present in the data, as modelled by the frame order models.")
+uf.desc[-1].add_paragraph("As the distribution consists of one model per state, if an ensemble of structures has been analysed, only one model from the ensemble can be used for the representation.")
+uf.backend = distribute
+uf.menu_text = "&distribute"
+uf.gui_icon = "oxygen.actions.document-save"
+uf.wizard_height_desc = 420
+uf.wizard_size = (900, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 
@@ -178,7 +257,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The isotropic and pseudo-elliptic cone frame order models consist of multiple solutions as the optimisation space contains multiple local minima.  Because of the constraint cone_theta_x <= cone_theta_y in the pseudo-ellipse model, there are exactly three local minima (out of 6 possible permutations).  However the cone_theta_x == cone_theta_y condition of the isotropic cone collapses this to two minima.  The multiple minima correspond to permutations of the motional system - the eigenframe x, y and z-axes as well as the cone opening angles cone_theta_x, cone_theta_y, and cone_sigma_max associated with these axes.  But as the mechanics of the cone angles is not identical to that of the torsion angle, only one of the three local minima is the global minimum.")
 uf.desc[-1].add_paragraph("When optimising the pseudo-elliptic models, specifically the '%s' and '%s' model, any of the three local minima can be found.  Convergence to the global minimum is not guaranteed.  Therefore this user function can be used to permute the motional system to jump from one local minimum to the other.  Optimisation will be required as the permuted parameters will not be exactly at the minimum." % (MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS))
-table = uf_tables.add_table(label="table: frame_order.permute_axes combinations", caption="The motional eigenframe permutations for the frame_order.permute_axes user function.", caption_short="The permutations for the frame_order.permute_axes user function.")
+table = uf_tables.add_table(label="table: frame_order.permute_axes combinations", caption="The motional eigenframe axis permutations for the frame order models.", caption_short="The frame order axis permutations.")
 table.add_headings(["Condition", "Permutation name", "Cone angles", "Axes"])
 table.add_row(["x < y < z", "Self", "[x, y, z]", "[x, y, z]"])
 table.add_row(["         ", " A  ", "[x, z, y]", "[-z, y, x]"])
@@ -345,7 +424,7 @@ uf.desc[-1].add_item_list_element(repr(MODEL_ISO_CONE_FREE_ROTOR), "The isotropi
 uf.desc[-1].add_item_list_element(repr(MODEL_ROTOR), "The only motion is a rotation about the cone axis restricted by the torsion angle cone_sigma_max.")
 uf.desc[-1].add_item_list_element(repr(MODEL_RIGID), "No domain motions.")
 uf.desc[-1].add_item_list_element(repr(MODEL_FREE_ROTOR), "The only motion is free rotation about the cone axis.")
-uf.desc[-1].add_item_list_element(repr(MODEL_DOUBLE_ROTOR), "Restricted motions about two independent rotor axes.")
+uf.desc[-1].add_item_list_element(repr(MODEL_DOUBLE_ROTOR), "Restricted motions about two independent but orthogonal rotor axes.  The first rotation is about the y-axis and the second is about the x-axis.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To select the isotropic cone model, type:")
@@ -370,7 +449,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "simulation file",
     desc = "The PDB file for storing the frame order pseudo-Brownian dynamics simulation.  The compression is determined automatically by the file extensions '*.pdb', '*.pdb.gz', and '*.pdb.bz2'.",
-    wiz_filesel_wildcard = WILDCARD_RELAX_SAVE,
+    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
     wiz_filesel_style = FD_OPEN,
     wiz_filesel_preview = False
 )

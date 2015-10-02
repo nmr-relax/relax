@@ -62,6 +62,8 @@ def clean_manual_files(target, source, env):
     # LaTeX auxillary files.
     for file in glob(env['LATEX_DIR'] + '*.aux'):
         files.append(file)
+    for file in glob(env['LATEX_DIR'] + 'frame_order' + sep + '*.aux'):
+        files.append(file)
 
     # Remove the files.
     for file in files:

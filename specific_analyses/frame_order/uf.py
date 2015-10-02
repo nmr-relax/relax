@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2015 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,7 +33,7 @@ from warnings import warn
 from lib.arg_check import is_float_array
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxFault
-from lib.frame_order.simulation import brownian
+from lib.frame_order.simulation import brownian, uniform_distribution
 from lib.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_LIST_RESTRICTED_TORSION, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID
 from lib.geometry.coord_transform import cartesian_to_spherical, spherical_to_cartesian
 from lib.geometry.rotations import euler_to_R_zyz, R_to_euler_zyz
@@ -45,6 +45,85 @@ from specific_analyses.frame_order.data import domain_moving, generate_pivot
 from specific_analyses.frame_order.geometric import average_position, create_ave_pos, create_geometric_rep, generate_axis_system
 from specific_analyses.frame_order.optimisation import count_sobol_points
 from specific_analyses.frame_order.parameters import assemble_param_vector, update_model
+
+
+def distribute(file="distribution.pdb.bz2", dir=None, atom_id=None, total=1000, max_rotations=100000, model=1, force=True):
+    """Create a uniform distribution of structures for the frame order motions.
+
+    @keyword file:          The PDB file for storing the frame order motional distribution.  The compression is determined automatically by the file extensions '*.pdb', '*.pdb.gz', and '*.pdb.bz2'.
+    @type file:             str
+    @keyword dir:           The directory name to place the file into.
+    @type dir:              str or None
+    @keyword atom_id:       The atom identification string to allow the distribution to be a subset of all atoms.
+    @type atom_id:          None or str
+    @keyword total:         The total number of states/model/structures in the distribution.
+    @type total:            int
+    @keyword max_rotations: The maximum number of rotations to generate the distribution from.  This prevents an execution for an infinite amount of time when a frame order amplitude parameter is close to zero so that the subset of all rotations within the distribution is close to zero.
+    @type max_rotations:    int
+    @keyword model:         Only one model from an analysed ensemble of structures can be used for the distribution, as the corresponding PDB file consists of one model per state.
+    @type model:            int
+    @keyword force:         A flag which, if set to True, will overwrite the any pre-existing file.
+    @type force:            bool
+    """
+
+    # Printout.
+    print("Uniform distribution of structures representing the frame order motions.")
+
+    # Checks.
+    check_pipe()
+    check_model()
+    check_domain()
+    check_parameters()
+    check_pivot()
+
+    # Skip the rigid model.
+    if cdp.model == MODEL_RIGID:
+        print("Skipping the rigid model.")
+        return
+
+    # Open the output file.
+    file = open_write_file(file_name=file, dir=dir, force=force)
+
+    # The parameter values.
+    values = assemble_param_vector()
+    params = {}
+    i = 0
+    for name in cdp.params:
+        params[name] = values[i]
+        i += 1
+
+    # The structure.
+    structure = deepcopy(cdp.structure)
+    if structure.num_models() > 1:
+        structure.collapse_ensemble(model_num=model)
+
+    # The pivot points.
+    num_states = 1
+    if cdp.model == MODEL_DOUBLE_ROTOR:
+        num_states = 2
+    pivot = zeros((num_states, 3), float64)
+    for i in range(num_states):
+        pivot[i] = generate_pivot(order=i+1, pdb_limit=True)
+
+    # Shift to the average position.
+    average_position(structure=structure, models=[None])
+
+    # The motional eigenframe.
+    frame = generate_axis_system()
+
+    # Only work with a subset.
+    if atom_id:
+        # The inverted selection.
+        selection = structure.selection(atom_id=atom_id, inv=True)
+
+        # Delete the data.
+        structure.delete(selection=selection, verbosity=0)
+
+    # Create the distribution.
+    uniform_distribution(file=file, model=cdp.model, structure=structure, parameters=params, eigenframe=frame, pivot=pivot, atom_id=domain_moving(), total=total, max_rotations=max_rotations)
+
+    # Close the file.
+    file.close()
 
 
 def pdb_model(ave_pos="ave_pos", rep="frame_order", dir=None, compress_type=0, size=30.0, inc=36, model=1, force=False):
