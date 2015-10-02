@@ -38,7 +38,8 @@ for root, dirs, files in walk(getcwd()):
         err = False
         for line in pipe.stderr.readlines():
             sys.stdout.write(line)
-            err = True
+            if search("command not found", line):
+                err = True
         if err:
             sys.exit()
 
