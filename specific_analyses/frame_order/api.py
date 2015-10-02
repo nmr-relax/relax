@@ -396,33 +396,6 @@ class Frame_order(API_base, API_common):
             dist_type = None
             end_point = True
 
-            # The pivot point.
-            if cdp.params[i] in ['pivot_x', 'pivot_y', 'pivot_z']:
-                val = getattr(cdp, cdp.params[i])
-                lower = val - 10.0
-                upper = val + 10.0
-
-            # The pivot displacement.
-            if cdp.params[i] == 'pivot_disp':
-                val = getattr(cdp, cdp.params[i])
-                lower = 10.0
-                upper = 50.0
-
-            # Average domain position translation (in a +/- 5 Angstrom box).
-            if cdp.params[i] in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z']:
-                lower = -50
-                upper = 50
-
-            # Linear angle grid from 0 to one inc before 2pi.
-            if cdp.params[i] in ['ave_pos_alpha', 'ave_pos_gamma', 'eigen_alpha', 'eigen_gamma', 'axis_phi']:
-                lower = 0.0
-                upper = 2*pi * (1.0 - 1.0/incs[i])
-
-            # Linear angle grid from -pi to one inc before pi.
-            if cdp.params[i] in ['axis_alpha']:
-                lower = -pi
-                upper = pi * (1.0 - 1.0/incs[i])
-
             # Arccos grid from 0 to pi.
             if cdp.params[i] in ['ave_pos_beta', 'eigen_beta', 'axis_theta']:
                 # Change the default increment numbers.
@@ -482,7 +455,7 @@ class Frame_order(API_base, API_common):
         A, b = None, None
         if constraints:
             # Obtain the constraints.
-            A, b = linear_constraints(scaling_matrix=scaling_matrix)
+            A, b = linear_constraints(scaling_matrix=scaling_matrix[0])
 
             # Constraint flag set but no constraints present.
             if A == None:
