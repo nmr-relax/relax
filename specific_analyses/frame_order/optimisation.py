@@ -73,24 +73,33 @@ def grid_row(incs, lower, upper, dist_type=None, end_point=True):
 
     # Linear grid.
     if dist_type == None:
+        # Handle a single increment.
+        if incs == 1:
+            row.append((lower + upper) / 2.0)
+
         # Loop over the increments.
-        for i in range(incs):
-            # The row.
-            row.append(lower + i * (upper - lower) / (incs - 1.0))
+        else:
+            for i in range(incs):
+                row.append(lower + i * (upper - lower) / (incs - 1.0))
 
     # Inverse cos distribution.
     elif dist_type == 'acos':
-        # Generate the increment values of v from cos(upper) to cos(lower).
-        v = zeros(incs, float64)
-        val = (cos(lower) - cos(upper)) / (incs - 1.0)
-        for i in range(incs):
-            v[-i-1] = cos(upper) + float(i) * val
+        # Handle a single increment.
+        if incs == 1:
+            row.append((lower + upper) / 2.0)
 
-        # Generate the distribution.
-        row = arccos(v)
+        # Generate the increment values of v from cos(upper) to cos(lower).
+        else:
+            v = zeros(incs, float64)
+            val = (cos(lower) - cos(upper)) / (incs - 1.0)
+            for i in range(incs):
+                v[-i-1] = cos(upper) + float(i) * val
+
+            # Generate the distribution.
+            row = arccos(v)
 
     # Remove the last point.
-    if not end_point:
+    if incs != 1 and not end_point:
         row = row[:-1]
 
     # Return the row (as a list).

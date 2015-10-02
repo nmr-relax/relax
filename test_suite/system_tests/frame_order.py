@@ -575,7 +575,7 @@ class Frame_order(SystemTestCase):
         """Test the rigid frame order model of CaM."""
 
         # The flags, execute the script, and then check the chi2 value.
-        self.flags()
+        self.flags(opt=True)
         self.interpreter.run(script_file=self.cam_path+'rigid.py')
         self.check_chi2(0.081171019382935666)
 
